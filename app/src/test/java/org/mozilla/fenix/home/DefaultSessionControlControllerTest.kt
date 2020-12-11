@@ -12,14 +12,18 @@ import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.TestCoroutineScope
-import mozilla.components.browser.search.SearchEngine
-import mozilla.components.browser.search.SearchEngineManager
 import mozilla.components.browser.session.SessionManager
+import mozilla.components.browser.state.search.SearchEngine
+import mozilla.components.browser.state.state.BrowserState
+import mozilla.components.browser.state.state.SearchState
+import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.Engine
+import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.support.test.rule.MainCoroutineRule
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -32,7 +36,6 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.components.tips.Tip
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.searchEngineManager
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.sessioncontrol.DefaultSessionControlController
 import org.mozilla.fenix.settings.SupportUtils
@@ -42,8 +45,10 @@ import mozilla.components.feature.tab.collections.Tab as ComponentTab
 @OptIn(ExperimentalCoroutinesApi::class)
 class DefaultSessionControlControllerTest {
 
+    private val testDispatcher = TestCoroutineDispatcher()
+
     @get:Rule
-    val coroutinesTestRule = MainCoroutineRule(TestCoroutineDispatcher())
+    val coroutinesTestRule = MainCoroutineRule(testDispatcher)
 
     private val activity: HomeActivity = mockk(relaxed = true)
     private val fragmentStore: HomeFragmentStore = mockk(relaxed = true)
@@ -53,6 +58,7 @@ class DefaultSessionControlControllerTest {
     private val engine: Engine = mockk(relaxed = true)
     private val tabCollectionStorage: TabCollectionStorage = mockk(relaxed = true)
     private val tabsUseCases: TabsUseCases = mockk(relaxed = true)
+    private val reloadUrlUseCase: SessionUseCases = mockk(relaxed = true)
     private val hideOnboarding: () -> Unit = mockk(relaxed = true)
     private val registerCollectionStorageObserver: () -> Unit = mockk(relaxed = true)
     private val showTabTray: () -> Unit = mockk(relaxed = true)
@@ -64,15 +70,27 @@ class DefaultSessionControlControllerTest {
         wasSwiped: Boolean,
         handleSwipedItemDeletionCancel: () -> Unit
     ) -> Unit = mockk(relaxed = true)
-    private val searchEngine = mockk<SearchEngine>(relaxed = true)
-    private val searchEngineManager = mockk<SearchEngineManager>(relaxed = true)
     private val settings: Settings = mockk(relaxed = true)
     private val analytics: Analytics = mockk(relaxed = true)
-
+    private val scope = TestCoroutineScope()
+    private val searchEngine = SearchEngine(
+        id = "test",
+        name = "Test Engine",
+        icon = mockk(relaxed = true),
+        type = SearchEngine.Type.BUNDLED,
+        resultUrls = listOf("https://example.org/?q={searchTerms}")
+    )
+    private lateinit var store: BrowserStore
     private lateinit var controller: DefaultSessionControlController
 
     @Before
     fun setup() {
+        store = BrowserStore(BrowserState(
+            search = SearchState(
+                regionSearchEngines = listOf(searchEngine)
+            )
+        ))
+
         every { fragmentStore.state } returns HomeFragmentState(
             collections = emptyList(),
             expandedCollections = emptySet(),
@@ -86,30 +104,35 @@ class DefaultSessionControlControllerTest {
             every { id } returns R.id.homeFragment
         }
         every { activity.components.settings } returns settings
-        every { activity.components.search.provider.getDefaultEngine(activity) } returns searchEngine
         every { activity.settings() } returns settings
-        every { activity.searchEngineManager } returns searchEngineManager
-        every { searchEngineManager.defaultSearchEngine } returns searchEngine
         every { activity.components.analytics } returns analytics
         every { analytics.metrics } returns metrics
 
         controller = DefaultSessionControlController(
             activity = activity,
+            store = store,
             settings = settings,
             engine = engine,
             metrics = metrics,
             sessionManager = sessionManager,
             tabCollectionStorage = tabCollectionStorage,
             addTabUseCase = tabsUseCases.addTab,
+            reloadUrlUseCase = reloadUrlUseCase.reload,
             fragmentStore = fragmentStore,
             navController = navController,
-            viewLifecycleScope = TestCoroutineScope(),
+            viewLifecycleScope = scope,
             hideOnboarding = hideOnboarding,
             registerCollectionStorageObserver = registerCollectionStorageObserver,
             showDeleteCollectionPrompt = showDeleteCollectionPrompt,
             showTabTray = showTabTray,
             handleSwipedItemDeletionCancel = handleSwipedItemDeletionCancel
         )
+    }
+
+    @After
+    fun cleanUp() {
+        scope.cleanupTestCoroutines()
+        testDispatcher.cleanupTestCoroutines()
     }
 
     @Test
@@ -122,7 +145,9 @@ class DefaultSessionControlControllerTest {
         verify { metrics.track(Event.CollectionAddTabPressed) }
         verify {
             navController.navigate(
-                match<NavDirections> { it.actionId == R.id.action_global_collectionCreationFragment },
+                match<NavDirections> {
+                    it.actionId == R.id.action_global_collectionCreationFragment
+                },
                 null
             )
         }
@@ -158,6 +183,7 @@ class DefaultSessionControlControllerTest {
 
         verify { metrics.track(Event.CollectionTabRestored) }
         verify { activity.openToBrowser(BrowserDirection.FromHome) }
+        verify { reloadUrlUseCase.reload }
     }
 
     @Test
@@ -388,7 +414,6 @@ class DefaultSessionControlControllerTest {
                 from = BrowserDirection.FromHome,
                 engine = searchEngine
             )
-            settings.incrementActiveSearchCount()
             metrics.track(any<Event.PerformedSearch>())
         }
 
@@ -423,6 +448,32 @@ class DefaultSessionControlControllerTest {
         verify {
             settings.showCollectionsPlaceholderOnHome = false
             fragmentStore.dispatch(HomeFragmentAction.RemoveCollectionsPlaceholder)
+        }
+    }
+
+    @Test
+    fun handleMenuOpenedWhileSearchShowing() {
+        every { navController.currentDestination } returns mockk {
+            every { id } returns R.id.searchDialogFragment
+        }
+
+        controller.handleMenuOpened()
+
+        verify {
+            navController.navigateUp()
+        }
+    }
+
+    @Test
+    fun handleMenuOpenedWhileSearchNotShowing() {
+        every { navController.currentDestination } returns mockk {
+            every { id } returns R.id.homeFragment
+        }
+
+        controller.handleMenuOpened()
+
+        verify(exactly = 0) {
+            navController.navigateUp()
         }
     }
 }

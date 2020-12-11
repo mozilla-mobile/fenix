@@ -19,6 +19,10 @@
     <!-- No Private Tabs Message Description -->
     <string name="no_private_tabs_description">Тут зʼявлятимуться ваші приватні вкладки.</string>
 
+    <!-- Default title for pinned Baidu top site that links to Baidu home page  -->
+    <string name="default_top_site_baidu">Baidu</string>
+    <!-- Default title for pinned JD top site that links to JD home page  -->
+    <string name="default_top_site_jd">JD</string>
     <!-- Message announced to the user when tab tray is selected with 1 tab -->
     <string name="open_tab_tray_single">1 відкрита вкладка. Торкніться, щоб перемкнути вкладки.</string>
     <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
@@ -71,14 +75,6 @@
     <!-- Text for the negative button -->
     <string name="cfr_neg_button_text">Ні, дякую</string>
 
-    <!-- Search widget "contextual feature recommendation" (CFR) -->
-    <!-- Text for the main message. 'Firefox' intentionally hardcoded here.-->
-    <string name="search_widget_cfr_message">Відкривайте Firefox швидше. Додайте віджет на головний екран.</string>
-    <!-- Text for the positive button -->
-    <string name="search_widget_cfr_pos_button_text">Додати віджет</string>
-    <!-- Text for the negative button -->
-    <string name="search_widget_cfr_neg_button_text">Не зараз</string>
-
     <!-- Open in App "contextual feature recommendation" (CFR) -->
     <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
     <string name="open_in_app_cfr_info_message">Ви можете використати Firefox для автоматичного відкриття посилань у програмах.</string>
@@ -100,6 +96,13 @@
     <string name="tab_tray_close_tabs_banner_positive_button_text">Перейти до параметрів</string>
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">Закрити</string>
+
+    <!-- Text for the banner message to tell users about our grid view feature. -->
+    <string name="tab_tray_grid_view_banner_message">Змініть вигляд відкритих вкладок. Перейдіть до налаштувань і виберіть подання вкладок сіткою.</string>
+    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
+    <string name="tab_tray_grid_view_banner_positive_button_text">Перейти до налаштувань</string>
+    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
+    <string name="tab_tray_grid_view_banner_negative_button_text">Відхилити</string>
 
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
@@ -152,8 +155,6 @@
     <string name="browser_menu_find_in_page">Знайти на сторінці</string>
     <!-- Browser menu button that creates a private tab -->
     <string name="browser_menu_private_tab">Приватна вкладка</string>
-    <!-- Browser menu button that creates a new tab -->
-    <string name="browser_menu_new_tab">Нова вкладка</string>
     <!-- Browser menu button that saves the current tab to a collection -->
     <string name="browser_menu_save_to_collection_2">Зберегти до збірки</string>
     <!-- Browser menu button that open a share menu to share the current site -->
@@ -217,6 +218,8 @@
     <string name="search_suggestions_onboarding_learn_more_link">Докладніше</string>
 
     <!-- Search Widget -->
+    <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
+    <string name="search_widget_content_description">Відкрити нову вкладку Firefox</string>
     <!-- Text preview for smaller sized widgets -->
     <string name="search_widget_text_short">Пошук</string>
     <!-- Text preview for larger sized widgets -->
@@ -364,6 +367,12 @@
     <!-- Toast shown after confirming the custom add-on collection configuration -->
     <string name="toast_customize_addon_collection_done">Збірку додатків змінено. Вихід з програми для застосування змін…</string>
 
+    <!-- Add-on Installation from AMO-->
+    <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
+    <string name="addon_not_supported_error">Додаток не підтримується</string>
+    <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is already installed -->
+    <string name="addon_already_installed">Додаток вже встановлено</string>
+
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">Синхронізувати</string>
@@ -444,6 +453,10 @@
     <string name="preferences_marketing_data">Маркетингові дані</string>
     <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
     <string name="preferences_marketing_data_description">Надсилання даних про функції, які ви використовуєте в %1$s, нашій компанії з мобільного маркетингу Leanplum.</string>
+    <!-- Title for studies preferences -->
+    <string name="preference_experiments_2">Дослідження</string>
+    <!-- Summary for studies preferences -->
+    <string name="preference_experiments_summary_2">Дозволяє Mozilla встановлювати та запускати дослідження</string>
     <!-- Title for experiments preferences -->
     <string name="preference_experiments">Експерименти</string>
     <!-- Summary for experiments preferences -->
@@ -568,6 +581,15 @@
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">Через місяць</string>
 
+    <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
+    <string name="close_tabs_manually_summary">Закрити власноруч</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
+    <string name="close_tabs_after_one_day_summary">Закрити через день</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one week-->
+    <string name="close_tabs_after_one_week_summary">Закрити через тиждень</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one month-->
+    <string name="close_tabs_after_one_month_summary">Закрити через місяць</string>
+
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
     <string name="tab_header_label">Відкриті вкладки</string>
@@ -585,6 +607,8 @@
     <string name="tab_tray_title">Відкриті вкладки</string>
     <!-- Text shown in the menu for saving tabs to a collection -->
     <string name="tab_tray_menu_item_save">Зберегти до збірки</string>
+    <!-- Text shown in the menu for the collection selector -->
+    <string name="tab_tray_menu_select">Вибрати</string>
     <!-- Text shown in the menu for sharing all tabs -->
     <string name="tab_tray_menu_item_share">Поділитися всіма вкладками</string>
     <!-- Text shown in the menu to view recently closed tabs -->
@@ -599,8 +623,18 @@
     <string name="tab_tray_menu_home">Домівка</string>
     <!-- Shortcut action to toggle private mode -->
     <string name="tab_tray_menu_toggle">Перемкнути режим вкладок</string>
+    <!-- Text shown in the multiselect menu for bookmarking selected tabs. -->
+    <string name="tab_tray_multiselect_menu_item_bookmark">Закласти</string>
+    <!-- Text shown in the multiselect menu for closing selected tabs. -->
+    <string name="tab_tray_multiselect_menu_item_close">Закрити</string>
+    <!-- Content description for tabs tray multiselect share button -->
+    <string name="tab_tray_multiselect_share_content_description">Поділитися вибраними вкладками</string>
+    <!-- Content description for tabs tray multiselect menu -->
+    <string name="tab_tray_multiselect_menu_content_description">Меню вибраних вкладок</string>
     <!-- Content description (not visible, for screen readers etc.): Removes tab from collection button. Removes the selected tab from collection when pressed -->
     <string name="remove_tab_from_collection">Видалити вкладку зі збірки</string>
+    <!-- Text for button to enter multiselect mode in tabs tray -->
+    <string name="tabs_tray_select_tabs">Виберіть вкладки</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab button. Closes the current session when pressed -->
     <string name="close_tab">Закрити вкладку</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab <title> button. First parameter is tab title  -->
@@ -634,8 +668,12 @@
     <string name="collection_rename">Перейменувати збірку</string>
     <!-- Text for the button to open tabs of the selected collection -->
     <string name="collection_open_tabs">Відкрити вкладки</string>
-    <!-- Text for the menu button to remove a top site -->
-    <string name="remove_top_site">Вилучити</string>
+    <!-- Hint for adding name of a collection -->
+    <string name="collection_name_hint">Назва збірки</string>
+    <!-- Text for the menu button to rename a top site -->
+	<string name="rename_top_site">Перейменувати</string>
+	<!-- Text for the menu button to remove a top site -->
+	<string name="remove_top_site">Вилучити</string>
 
     <!-- Text for the menu button to delete a top site from history -->
     <string name="delete_from_history">Видалити з історії</string>
@@ -689,11 +727,23 @@
     <string name="history_empty_message">Історія відсутня</string>
 
     <!-- Downloads -->
+    <!-- Text for the button to clear all downloads -->
+    <string name="download_delete_all">Видалити завантаження</string>
+    <!-- Text for the dialog to confirm clearing all downloads -->
+    <string name="download_delete_all_dialog">Ви впевнені, що хочете очистити завантаження?</string>
+    <!-- Text for the snackbar to confirm that multiple downloads items have been deleted -->
+    <string name="download_delete_multiple_items_snackbar">Завантаження видалено</string>
     <!-- Text shown when no download exists -->
     <string name="download_empty_message">Завантажень немає</string>
     <!-- History multi select title in app bar
     The first parameter is the number of downloads selected -->
     <string name="download_multi_select_title">Вибрано %1$d</string>
+
+    <!-- History overflow menu open in new tab button -->
+    <string name="download_menu_open">Відкрити</string>
+    <!-- Text for the button to delete a single history item -->
+    <string name="download_delete_item">Видалити</string>
+
 
     <!-- Crashes -->
     <!-- Title text displayed on the tab crash page. This first parameter is the name of the application (For example: Fenix) -->
@@ -959,6 +1009,12 @@
     <string name="snackbar_tab_closed">Вкладку закрито</string>
     <!-- Text shown in snackbar when user closes all tabs -->
     <string name="snackbar_tabs_closed">Вкладки закрито</string>
+    <!-- Text shown in snackbar when user closes tabs -->
+    <string name="snackbar_message_tabs_closed">Вкладки закрито!</string>
+    <!-- Text shown in snackbar when user bookmarks a list of tabs -->
+    <string name="snackbar_message_bookmarks_saved">Закладки збережено!</string>
+    <!-- Text shown in snackbar action for viewing bookmarks -->
+    <string name="snackbar_message_bookmarks_view">Подання</string>
     <!-- Text shown in snackbar when user adds a site to top sites -->
     <string name="snackbar_added_to_top_sites">Додано до популярних сайтів!</string>
     <!-- Text shown in snackbar when user closes a private tab -->
@@ -1254,7 +1310,7 @@
     <!-- Option for enhanced tracking protection for the custom protection settings for cookies-->
     <string name="preference_enhanced_tracking_protection_custom_cookies_2">Куки з невідвіданих сайтів</string>
     <!-- Option for enhanced tracking protection for the custom protection settings for cookies-->
-    <string name="preference_enhanced_tracking_protection_custom_cookies_3">Сторонні куки (може пошкодити роботу вебсайтів)</string>
+    <string name="preference_enhanced_tracking_protection_custom_cookies_3">Усі сторонні куки (може пошкодити роботу вебсайтів)</string>
     <!-- Option for enhanced tracking protection for the custom protection settings for cookies-->
     <string name="preference_enhanced_tracking_protection_custom_cookies_4">Усі куки (буде пошкоджувати роботу вебсайтів)</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings for tracking content -->
@@ -1625,12 +1681,24 @@
     <!-- Label for the show most visited sites preference -->
     <string name="top_sites_toggle_top_frecent_sites">Показати найвідвідуваніші сайти</string>
 
+    <!-- Title text displayed in the rename top site dialog. -->
+	<string name="top_sites_rename_dialog_title">Назва</string>
+	<!-- Hint for renaming title of a top site -->
+	<string name="top_site_name_hint">Назва популярного сайту</string>
+	<!-- Button caption to confirm the renaming of the top site. -->
+	<string name="top_sites_rename_dialog_ok">OK</string>
+	<!-- Dialog button text for canceling the rename top site prompt. -->
+	<string name="top_sites_rename_dialog_cancel">Скасувати</string>
+
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">Вилучити</string>
 
     <!-- Deprecated: text for the firefox account onboarding card header
     The first parameter is the name of the app (e.g. Firefox Preview) -->
     <string name="onboarding_firefox_account_header">Отримайте якнайбільше від %s.</string>
+
+    <!-- Content description radio buttons with a link to more information -->
+    <string name="radio_preference_info_content_description">Показати подробиці</string>
 
     <!-- Deprecated: No Open Tabs Message Header -->
     <string name="no_collections_header1">Зберігайте важливе для вас</string>

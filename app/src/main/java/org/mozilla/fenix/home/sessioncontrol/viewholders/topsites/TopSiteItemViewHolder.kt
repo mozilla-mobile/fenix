@@ -36,11 +36,15 @@ class TopSiteItemViewHolder(
         }
 
         top_site_item.setOnLongClickListener {
+            interactor.onTopSiteMenuOpened()
             it.context.components.analytics.metrics.track(Event.TopSiteLongPress(topSite.type))
 
             val topSiteMenu = TopSiteItemMenu(view.context, topSite.type != FRECENT) { item ->
                 when (item) {
                     is TopSiteItemMenu.Item.OpenInPrivateTab -> interactor.onOpenInPrivateTabClicked(
+                        topSite
+                    )
+                    is TopSiteItemMenu.Item.RenameTopSite -> interactor.onRenameTopSiteClicked(
                         topSite
                     )
                     is TopSiteItemMenu.Item.RemoveTopSite -> interactor.onRemoveTopSiteClicked(
@@ -68,6 +72,12 @@ class TopSiteItemViewHolder(
         when (topSite.url) {
             SupportUtils.POCKET_TRENDING_URL -> {
                 favicon_image.setImageDrawable(getDrawable(itemView.context, R.drawable.ic_pocket))
+            }
+            SupportUtils.BAIDU_URL -> {
+                favicon_image.setImageDrawable(getDrawable(itemView.context, R.drawable.ic_baidu))
+            }
+            SupportUtils.JD_URL -> {
+                favicon_image.setImageDrawable(getDrawable(itemView.context, R.drawable.ic_jd))
             }
             else -> {
                 itemView.context.components.core.icons.loadIntoView(favicon_image, topSite.url)
@@ -100,18 +110,24 @@ class TopSiteItemMenu(
 ) {
     sealed class Item {
         object OpenInPrivateTab : Item()
+        object RenameTopSite : Item()
         object RemoveTopSite : Item()
     }
 
     val menuBuilder by lazy { BrowserMenuBuilder(menuItems) }
 
     private val menuItems by lazy {
-        listOf(
+        listOfNotNull(
             SimpleBrowserMenuItem(
                 context.getString(R.string.bookmark_menu_open_in_private_tab_button)
             ) {
                 onItemTapped.invoke(Item.OpenInPrivateTab)
             },
+            if (isPinnedSite) SimpleBrowserMenuItem(
+                context.getString(R.string.rename_top_site)
+            ) {
+                onItemTapped.invoke(Item.RenameTopSite)
+            } else null,
             SimpleBrowserMenuItem(
                 if (isPinnedSite) {
                     context.getString(R.string.remove_top_site)

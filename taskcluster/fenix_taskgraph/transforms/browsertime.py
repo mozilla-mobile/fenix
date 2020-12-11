@@ -98,10 +98,31 @@ def build_browsertime_task(config, tasks):
             task["run"]["command"].append("--browsertime-no-ffwindowrecorder")
             task["attributes"]["run-visual-metrics"] = True
 
+        # Setup chimera for combined warm+cold testing
+        if task.pop("chimera", False):
+            task["run"]["command"].append("--chimera")
+
         # taskcluster is merging task attributes with the default ones
         # resulting the --cold extra option in the ytp warm tasks
         if 'youtube-playback' in task["name"]:
             task["run"]["command"].remove("--cold")
+
+        yield task
+
+
+@transforms.add
+def enable_webrender(config, tasks):
+    for task in tasks:
+        if not task.pop("web-render-only", False):
+            newtask = copy.deepcopy(task)
+            yield newtask
+        task["run"]["command"].append("--enable-webrender")
+        task["name"] += "-wr"
+        task["description"] += "-wr"
+
+        # Setup group symbol
+        group, sym = task["treeherder"]["symbol"].split("(")
+        task["treeherder"]["symbol"] = "{}-wr({})".format(group, sym[:-1])
 
         yield task
 

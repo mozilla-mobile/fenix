@@ -22,6 +22,10 @@
     <!-- No Private Tabs Message Description -->
     <string name="no_private_tabs_description">Les onglets privés sont affichés ici.</string>
 
+    <!-- Default title for pinned Baidu top site that links to Baidu home page  -->
+    <string name="default_top_site_baidu">Baidu</string>
+    <!-- Default title for pinned JD top site that links to JD home page  -->
+    <string name="default_top_site_jd">JD</string>
     <!-- Message announced to the user when tab tray is selected with 1 tab -->
     <string name="open_tab_tray_single">1 onglet ouvert. Appuyez pour changer d’onglet.</string>
     <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
@@ -71,14 +75,6 @@
     <!-- Text for the negative button -->
     <string name="cfr_neg_button_text">Non merci</string>
 
-    <!-- Search widget "contextual feature recommendation" (CFR) -->
-    <!-- Text for the main message. 'Firefox' intentionally hardcoded here.-->
-    <string name="search_widget_cfr_message">Accédez à Firefox plus vite. Ajoutez un widget à votre écran d’accueil.</string>
-    <!-- Text for the positive button -->
-    <string name="search_widget_cfr_pos_button_text">Ajouter le widget</string>
-    <!-- Text for the negative button -->
-    <string name="search_widget_cfr_neg_button_text">Plus tard</string>
-
     <!-- Open in App "contextual feature recommendation" (CFR) -->
     <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
     <string name="open_in_app_cfr_info_message">Vous pouvez configurer Firefox pour ouvrir automatiquement les liens dans des applications.</string>
@@ -101,6 +97,13 @@
     <string name="tab_tray_close_tabs_banner_positive_button_text">Afficher les options</string>
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">Ignorer</string>
+
+    <!-- Text for the banner message to tell users about our grid view feature. -->
+    <string name="tab_tray_grid_view_banner_message">Modifiez la disposition des onglets ouverts. Allez dans les paramètres et sélectionnez « Grille » sous « Affichage des onglets ».</string>
+    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
+    <string name="tab_tray_grid_view_banner_positive_button_text">Ouvrir les paramètres</string>
+    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
+    <string name="tab_tray_grid_view_banner_negative_button_text">Ignorer</string>
 
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
@@ -218,6 +221,8 @@
     <string name="search_suggestions_onboarding_learn_more_link">En savoir plus</string>
 
     <!-- Search Widget -->
+    <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
+    <string name="search_widget_content_description">Ouvrir un nouvel onglet dans Firefox</string>
     <!-- Text preview for smaller sized widgets -->
     <string name="search_widget_text_short">Rechercher</string>
     <!-- Text preview for larger sized widgets -->
@@ -349,6 +354,20 @@
     <!-- Preference for notifications -->
     <string name="preferences_notifications">Notifications</string>
 
+    <!-- Add-on Preferences -->
+    <!-- Preference to customize the configured AMO (addons.mozilla.org) collection -->
+    <string name="preferences_customize_amo_collection">Collection de modules personnalisée</string>
+    <!-- Button caption to confirm the add-on collection configuration -->
+    <string name="customize_addon_collection_ok">OK</string>
+    <!-- Button caption to abort the add-on collection configuration -->
+    <string name="customize_addon_collection_cancel">Annuler</string>
+    <!-- Hint displayed on input field for custom collection name -->
+    <string name="customize_addon_collection_hint">Nom de la collection</string>
+    <!-- Hint displayed on input field for custom collection user ID-->
+    <string name="customize_addon_collection_user_hint">Propriétaire de la collection (identifiant utilisateur)</string>
+    <!-- Toast shown after confirming the custom add-on collection configuration -->
+    <string name="toast_customize_addon_collection_done">Collection de modules complémentaires modifiée. Fermeture de l’application pour appliquer les modifications…</string>
+
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">Synchroniser maintenant</string>
@@ -431,6 +450,10 @@
     <string name="preferences_marketing_data">Données marketing</string>
     <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
     <string name="preferences_marketing_data_description">Partage des données sur les fonctionnalités que vous utilisez dans %1$s avec Leanplum, notre fournisseur de marketing mobile.</string>
+    <!-- Title for studies preferences -->
+    <string name="preference_experiments_2">Études</string>
+    <!-- Summary for studies preferences -->
+    <string name="preference_experiments_summary_2">Autoriser Mozilla à installer et exécuter des études</string>
     <!-- Title for experiments preferences -->
     <string name="preference_experiments">Expérimentations</string>
     <!-- Summary for experiments preferences -->
@@ -539,6 +562,8 @@
     <!-- Tab Management -->
     <!-- Title of preference for tabs management -->
     <string name="preferences_tabs">Onglets</string>
+    <!-- Title of preference that allows a user to specify the tab view -->
+    <string name="preferences_tab_view">Affichage des onglets</string>
     <!-- Option for a list tab view -->
     <string name="tab_view_list">Liste</string>
     <!-- Option for a grid tab view -->
@@ -553,6 +578,15 @@
     <string name="close_tabs_after_one_week">Après une semaine</string>
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">Après un mois</string>
+
+    <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
+    <string name="close_tabs_manually_summary">Fermeture manuelle</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
+    <string name="close_tabs_after_one_day_summary">Fermeture après un jour</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one week-->
+    <string name="close_tabs_after_one_week_summary">Fermeture après une semaine</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one month-->
+    <string name="close_tabs_after_one_month_summary">Fermeture après un mois</string>
 
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
@@ -571,6 +605,8 @@
     <string name="tab_tray_title">Onglets ouverts</string>
     <!-- Text shown in the menu for saving tabs to a collection -->
     <string name="tab_tray_menu_item_save">Enregistrer dans une collection</string>
+    <!-- Text shown in the menu for the collection selector -->
+    <string name="tab_tray_menu_select">Sélectionner</string>
     <!-- Text shown in the menu for sharing all tabs -->
     <string name="tab_tray_menu_item_share">Partager tous les onglets</string>
     <!-- Text shown in the menu to view recently closed tabs -->
@@ -585,8 +621,18 @@
     <string name="tab_tray_menu_home">Accueil</string>
     <!-- Shortcut action to toggle private mode -->
     <string name="tab_tray_menu_toggle">Changer de mode d’onglets</string>
+    <!-- Text shown in the multiselect menu for bookmarking selected tabs. -->
+    <string name="tab_tray_multiselect_menu_item_bookmark">Marquer ces onglets</string>
+    <!-- Text shown in the multiselect menu for closing selected tabs. -->
+    <string name="tab_tray_multiselect_menu_item_close">Fermer ces onglets</string>
+    <!-- Content description for tabs tray multiselect share button -->
+    <string name="tab_tray_multiselect_share_content_description">Partager les onglets sélectionnés</string>
+    <!-- Content description for tabs tray multiselect menu -->
+    <string name="tab_tray_multiselect_menu_content_description">Menu des onglets sélectionnés</string>
     <!-- Content description (not visible, for screen readers etc.): Removes tab from collection button. Removes the selected tab from collection when pressed -->
     <string name="remove_tab_from_collection">Supprimer l’onglet de la collection</string>
+    <!-- Text for button to enter multiselect mode in tabs tray -->
+    <string name="tabs_tray_select_tabs">Sélectionner des onglets</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab button. Closes the current session when pressed -->
     <string name="close_tab">Fermer l’onglet</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab <title> button. First parameter is tab title  -->
@@ -621,8 +667,12 @@
     <string name="collection_open_tabs">Ouvrir les onglets</string>
 
 
-    <!-- Text for the menu button to remove a top site -->
-    <string name="remove_top_site">Supprimer</string>
+    <!-- Hint for adding name of a collection -->
+    <string name="collection_name_hint">Nom de la collection</string>
+    <!-- Text for the menu button to rename a top site -->
+	<string name="rename_top_site">Renommer</string>
+	<!-- Text for the menu button to remove a top site -->
+	<string name="remove_top_site">Supprimer</string>
 
     <!-- Text for the menu button to delete a top site from history -->
     <string name="delete_from_history">Supprimer de l’historique</string>
@@ -659,6 +709,10 @@
     <!-- Text for the button to clear selected history items. The first parameter
         is a digit showing the number of items you have selected -->
     <string name="history_delete_some">Supprimer %1$d éléments</string>
+    <!-- Text for the header that groups the history for today -->
+    <string name="history_today">Aujourd’hui</string>
+    <!-- Text for the header that groups the history for yesterday -->
+    <string name="history_yesterday">Hier</string>
     <!-- Text for the header that groups the history for last 24 hours -->
     <string name="history_24_hours">Dernières 24 heures</string>
     <!-- Text for the header that groups the history the past 7 days -->
@@ -672,11 +726,23 @@
     <string name="history_empty_message">Pas d’historique</string>
 
     <!-- Downloads -->
+    <!-- Text for the button to clear all downloads -->
+    <string name="download_delete_all">Effacer la liste des téléchargements</string>
+    <!-- Text for the dialog to confirm clearing all downloads -->
+    <string name="download_delete_all_dialog">Voulez-vous vraiment effacer la liste de vos téléchargements ?</string>
+    <!-- Text for the snackbar to confirm that multiple downloads items have been deleted -->
+    <string name="download_delete_multiple_items_snackbar">Liste des téléchargements vidée</string>
     <!-- Text shown when no download exists -->
     <string name="download_empty_message">Aucun téléchargement ici</string>
     <!-- History multi select title in app bar
     The first parameter is the number of downloads selected -->
     <string name="download_multi_select_title">%1$d sélectionné(s)</string>
+
+    <!-- History overflow menu open in new tab button -->
+    <string name="download_menu_open">Ouvrir</string>
+    <!-- Text for the button to delete a single history item -->
+    <string name="download_delete_item">Supprimer</string>
+
 
     <!-- Crashes -->
     <!-- Title text displayed on the tab crash page. This first parameter is the name of the application (For example: Fenix) -->
@@ -958,6 +1024,12 @@
     <string name="snackbar_tab_closed">Onglet fermé</string>
     <!-- Text shown in snackbar when user closes all tabs -->
     <string name="snackbar_tabs_closed">Onglets fermés</string>
+    <!-- Text shown in snackbar when user closes tabs -->
+    <string name="snackbar_message_tabs_closed">Onglets fermés !</string>
+    <!-- Text shown in snackbar when user bookmarks a list of tabs -->
+    <string name="snackbar_message_bookmarks_saved">Marque-pages enregistrés !</string>
+    <!-- Text shown in snackbar action for viewing bookmarks -->
+    <string name="snackbar_message_bookmarks_view">Afficher</string>
     <!-- Text shown in snackbar when user adds a site to top sites -->
     <string name="snackbar_added_to_top_sites">Ajouté aux sites principaux !</string>
     <!-- Text shown in snackbar when user closes a private tab -->
@@ -1624,12 +1696,24 @@ Cependant, il peut être moins stable. Téléchargez la version bêta de notre n
     <!-- Label for the show most visited sites preference -->
     <string name="top_sites_toggle_top_frecent_sites">Afficher les sites les plus visités</string>
 
+    <!-- Title text displayed in the rename top site dialog. -->
+	<string name="top_sites_rename_dialog_title">Nom</string>
+	<!-- Hint for renaming title of a top site -->
+	<string name="top_site_name_hint">Nom du site principal</string>
+	<!-- Button caption to confirm the renaming of the top site. -->
+	<string name="top_sites_rename_dialog_ok">OK</string>
+	<!-- Dialog button text for canceling the rename top site prompt. -->
+	<string name="top_sites_rename_dialog_cancel">Annuler</string>
+
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">Supprimer</string>
 
     <!-- Deprecated: text for the firefox account onboarding card header
     The first parameter is the name of the app (e.g. Firefox Preview) -->
     <string name="onboarding_firefox_account_header">Tirez le meilleur parti de %s.</string>
+
+    <!-- Content description radio buttons with a link to more information -->
+    <string name="radio_preference_info_content_description">Cliquez pour plus de précisions</string>
 
     <!-- Deprecated: No Open Tabs Message Header -->
     <string name="no_collections_header1">Rassemblez ce qui compte pour vous</string>

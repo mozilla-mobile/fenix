@@ -17,7 +17,6 @@ import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -31,6 +30,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
+import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.state.selector.findTab
 import mozilla.components.browser.state.state.TabSessionState
@@ -71,16 +72,29 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), UserInteractionHandler 
     private lateinit var tabTrayDialogStore: TabTrayDialogFragmentStore
 
     private val snackbarAnchor: View?
-        get() = if (tabTrayView.fabView.new_tab_button.isVisible) tabTrayView.fabView.new_tab_button
-        else null
+        get() =
+            // Fab is hidden when Talkback is activated. See #16592
+            if (requireContext().settings().accessibilityServicesEnabled) null
+            else if (tabTrayView.fabView.new_tab_button.isVisible ||
+                tabTrayView.mode != Mode.Normal
+            ) tabTrayView.fabView.new_tab_button
+            /* During selection of the tabs to the collection, the FAB is not visible,
+               which leads to not attaching a needed AnchorView. That's why, we're not only
+               checking, if it's not visible, but also if we're not in a "Normal" mode, so after
+               selecting tabs for a collection, we're pushing snackbar
+               above the FAB, as we're switching from "Multiselect" to "Normal". */
+            else null
 
     private val collectionStorageObserver = object : TabCollectionStorage.Observer {
-        override fun onCollectionCreated(title: String, sessions: List<Session>) {
-            showCollectionSnackbar(sessions.size, true)
+        override fun onCollectionCreated(title: String, sessions: List<Session>, id: Long?) {
+            showCollectionSnackbar(sessions.size, true, collectionToSelect = id)
         }
 
         override fun onTabsAdded(tabCollection: TabCollection, sessions: List<Session>) {
-            showCollectionSnackbar(sessions.size)
+            showCollectionSnackbar(
+                sessions.size,
+                collectionToSelect = tabCollection.id
+            )
         }
     }
 
@@ -161,19 +175,19 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), UserInteractionHandler 
 
         if (newConfig.orientation != currentOrientation) {
             tabTrayView.dismissMenu()
-            tabTrayView.expand()
+            tabTrayView.updateBottomSheetBehavior()
 
             if (requireContext().settings().gridTabView) {
                 // Update the number of columns to use in the grid view when the screen
                 // orientation changes.
                 tabTrayView.updateTabsTrayLayout()
             }
-
             currentOrientation = newConfig.orientation
         }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
+    @Suppress("LongMethod")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val activity = activity as HomeActivity
@@ -191,8 +205,13 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), UserInteractionHandler 
                     activity = activity,
                     profiler = activity.components.core.engine.profiler,
                     sessionManager = activity.components.core.sessionManager,
+                    browserStore = activity.components.core.store,
+                    tabsUseCases = activity.components.useCases.tabsUseCases,
+                    ioScope = lifecycleScope + Dispatchers.IO,
+                    metrics = activity.components.analytics.metrics,
                     browsingModeManager = activity.browsingModeManager,
                     tabCollectionStorage = activity.components.core.tabCollectionStorage,
+                    bookmarksStorage = activity.components.core.bookmarksStorage,
                     navController = findNavController(),
                     dismissTabTray = ::dismissAllowingStateLoss,
                     dismissTabTrayAndNavigateHome = ::dismissTabTrayAndNavigateHome,
@@ -200,13 +219,14 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), UserInteractionHandler 
                     tabTrayDialogFragmentStore = tabTrayDialogStore,
                     selectTabUseCase = selectTabUseCase,
                     showChooseCollectionDialog = ::showChooseCollectionDialog,
-                    showAddNewCollectionDialog = ::showAddNewCollectionDialog
+                    showAddNewCollectionDialog = ::showAddNewCollectionDialog,
+                    showUndoSnackbarForTabs = ::showUndoSnackbarForTabs,
+                    showBookmarksSnackbar = ::showBookmarksSnackbar
                 )
             ),
             store = tabTrayDialogStore,
             isPrivate = isPrivate,
-            startingInLandscape = requireContext().resources.configuration.orientation ==
-                    Configuration.ORIENTATION_LANDSCAPE,
+            isInLandscape = ::isInLandscape,
             lifecycleOwner = viewLifecycleOwner
         ) { private ->
             val filter: (TabSessionState) -> Boolean = { state -> private == state.content.private }
@@ -265,6 +285,20 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), UserInteractionHandler 
         }
     }
 
+    private fun showUndoSnackbarForTabs() {
+        lifecycleScope.allowUndo(
+            requireView().tabLayout,
+            getString(R.string.snackbar_message_tabs_closed),
+            getString(R.string.snackbar_deleted_undo),
+            {
+                requireComponents.useCases.tabsUseCases.undo.invoke()
+            },
+            operation = { },
+            elevation = ELEVATION,
+            anchorView = snackbarAnchor
+        )
+    }
+
     private fun showUndoSnackbarForTab(sessionId: String) {
         val store = requireComponents.core.store
         val tab = requireComponents.core.store.state.findTab(sessionId) ?: return
@@ -289,7 +323,7 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), UserInteractionHandler 
             getString(R.string.snackbar_deleted_undo),
             {
                 requireComponents.useCases.tabsUseCases.undo.invoke()
-                _tabTrayView?.scrollToTab(tab.id)
+                _tabTrayView?.scrollToSelectedBrowserTab(tab.id)
             },
             operation = { },
             elevation = ELEVATION,
@@ -297,9 +331,7 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), UserInteractionHandler 
         )
     }
 
-    private val homeViewModel: HomeScreenViewModel by activityViewModels {
-        ViewModelProvider.NewInstanceFactory() // this is a workaround for #4652
-    }
+    private val homeViewModel: HomeScreenViewModel by activityViewModels()
 
     private fun dismissTabTrayAndNavigateHome(sessionId: String) {
         homeViewModel.sessionToDelete = sessionId
@@ -325,7 +357,11 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), UserInteractionHandler 
         requireComponents.core.tabCollectionStorage.register(collectionStorageObserver, this)
     }
 
-    private fun showCollectionSnackbar(tabSize: Int, isNewCollection: Boolean = false) {
+    private fun showCollectionSnackbar(
+        tabSize: Int,
+        isNewCollection: Boolean = false,
+        collectionToSelect: Long?
+    ) {
         view.let {
             val messageStringRes = when {
                 isNewCollection -> {
@@ -349,13 +385,36 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), UserInteractionHandler 
                 .setAction(requireContext().getString(R.string.create_collection_view)) {
                     dismissAllowingStateLoss()
                     findNavController().navigate(
-                        TabTrayDialogFragmentDirections.actionGlobalHome(focusOnAddressBar = false)
+                        TabTrayDialogFragmentDirections.actionGlobalHome(
+                            focusOnAddressBar = false,
+                            focusOnCollection = collectionToSelect ?: -1L
+                        )
                     )
                 }
 
             snackbar.view.elevation = ELEVATION
             snackbar.show()
         }
+    }
+
+    private fun showBookmarksSnackbar() {
+        val snackbar = FenixSnackbar
+            .make(
+                duration = FenixSnackbar.LENGTH_LONG,
+                isDisplayedWithBrowserToolbar = false,
+                view = (view as View)
+            )
+            .setAnchorView(snackbarAnchor)
+            .setText(requireContext().getString(R.string.snackbar_message_bookmarks_saved))
+            .setAction(requireContext().getString(R.string.snackbar_message_bookmarks_view)) {
+                dismissAllowingStateLoss()
+                findNavController().navigate(
+                    TabTrayDialogFragmentDirections.actionGlobalBookmarkFragment(BookmarkRoot.Mobile.id)
+                )
+            }
+
+        snackbar.view.elevation = ELEVATION
+        snackbar.show()
     }
 
     override fun onBackPressed(): Boolean {
@@ -448,6 +507,10 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), UserInteractionHandler 
                     collectionNameEditText.showKeyboard()
                 }
         }
+    }
+
+    private fun isInLandscape(): Boolean {
+        return requireContext().resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     }
 
     companion object {

@@ -32,7 +32,7 @@ class ThreeDotMenuMainTest {
     @Before
     fun setUp() {
         mockWebServer = MockWebServer().apply {
-            setDispatcher(AndroidAssetDispatcher())
+            dispatcher = AndroidAssetDispatcher()
             start()
         }
     }
@@ -69,13 +69,13 @@ class ThreeDotMenuMainTest {
             verifyHelpUrl()
         }.openTabDrawer {
         }.openNewTab {
-        }.dismiss {
+        }.dismissSearchBar {
         }.openThreeDotMenu {
         }.openWhatsNew {
             verifyWhatsNewURL()
         }.openTabDrawer {
         }.openNewTab {
-        }.dismiss { }
+        }.dismissSearchBar { }
 
         homeScreen {
         }.openThreeDotMenu {

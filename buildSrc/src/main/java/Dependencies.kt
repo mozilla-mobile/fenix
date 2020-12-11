@@ -3,31 +3,37 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 object Versions {
-    const val kotlin = "1.3.72"
-    const val coroutines = "1.3.3"
-    const val android_gradle_plugin = "3.5.0"
+    const val kotlin = "1.4.10"
+    const val coroutines = "1.3.9"
+
+    // These versions are linked: lint should be X+23.Y.Z of gradle_plugin version, according to:
+    // https://github.com/alexjlockwood/android-lint-checks-demo/blob/0245fc027463137b1b4afb97c5295d60dce998b6/dependencies.gradle#L3
+    const val android_gradle_plugin = "4.0.1"
+    const val android_lint_api = "27.0.1"
+
     const val sentry = "1.7.10"
     const val leakcanary = "2.4"
     const val leanplum = "5.4.0"
     const val osslicenses_plugin = "0.9.5"
     const val detekt = "1.9.1"
+    const val jna = "5.6.0"
 
-    const val androidx_appcompat = "1.2.0-rc01"
-    const val androidx_biometric = "1.1.0-beta01"
-    const val androidx_coordinator_layout = "1.1.0-rc01"
-    const val androidx_constraint_layout = "2.0.0"
-    const val androidx_preference = "1.1.0"
+    const val androidx_appcompat = "1.2.0"
+    const val androidx_biometric = "1.1.0-rc01"
+    const val androidx_coordinator_layout = "1.1.0"
+    const val androidx_constraint_layout = "2.0.4"
+    const val androidx_preference = "1.1.1"
     const val androidx_legacy = "1.0.0"
     const val androidx_annotation = "1.1.0"
     const val androidx_lifecycle = "2.2.0"
     const val androidx_fragment = "1.2.5"
-    const val androidx_navigation = "2.3.0"
+    const val androidx_navigation = "2.3.1"
     const val androidx_recyclerview = "1.2.0-alpha06"
     const val androidx_core = "1.3.2"
     const val androidx_paging = "2.1.0"
     const val androidx_transition = "1.3.0"
-    const val androidx_work = "2.2.0"
-    const val google_material = "1.1.0"
+    const val androidx_work = "2.4.0"
+    const val google_material = "1.2.1"
 
     const val mozilla_android_components = AndroidComponents.VERSION
 
@@ -37,14 +43,13 @@ object Versions {
     const val junit = "5.5.2"
     const val mockk = "1.10.0"
 
-    const val mockwebserver = "3.11.0"
+    const val mockwebserver = "4.9.0"
     const val uiautomator = "2.2.0"
+    const val robolectric = "4.3.1"
 
     const val google_ads_id_version = "16.0.0"
 
     const val google_play_store_version = "1.8.0"
-
-    const val airbnb_lottie = "3.4.0"
 }
 
 @Suppress("unused")
@@ -52,6 +57,8 @@ object Deps {
     const val tools_androidgradle = "com.android.tools.build:gradle:${Versions.android_gradle_plugin}"
     const val tools_kotlingradle = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlin}"
     const val kotlin_stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${Versions.kotlin}"
+    const val kotlin_stdlib_jdk8 = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${Versions.kotlin}"
+    const val kotlin_reflect = "org.jetbrains.kotlin:kotlin-reflect:${Versions.kotlin}"
     const val kotlin_coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutines}"
     const val kotlin_coroutines_test = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.coroutines}"
     const val kotlin_coroutines_android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.coroutines}"
@@ -122,17 +129,17 @@ object Deps {
 
     const val mozilla_service_digitalassetlinks =
         "org.mozilla.components:service-digitalassetlinks:${Versions.mozilla_android_components}"
-    const val mozilla_service_experiments =
-        "org.mozilla.components:service-experiments:${Versions.mozilla_android_components}"
     const val mozilla_service_sync_logins =
         "org.mozilla.components:service-sync-logins:${Versions.mozilla_android_components}"
     const val mozilla_service_firefox_accounts = "org.mozilla.components:service-firefox-accounts:${Versions.mozilla_android_components}"
     const val mozilla_service_glean = "org.mozilla.components:service-glean:${Versions.mozilla_android_components}"
     const val mozilla_service_location = "org.mozilla.components:service-location:${Versions.mozilla_android_components}"
+    const val mozilla_service_nimbus = "org.mozilla.components:service-nimbus:${Versions.mozilla_android_components}"
 
     const val mozilla_ui_colors = "org.mozilla.components:ui-colors:${Versions.mozilla_android_components}"
     const val mozilla_ui_icons = "org.mozilla.components:ui-icons:${Versions.mozilla_android_components}"
     const val mozilla_ui_widgets = "org.mozilla.components:ui-widgets:${Versions.mozilla_android_components}"
+    const val mozilla_ui_tabcounter = "org.mozilla.components:ui-tabcounter:${Versions.mozilla_android_components}"
 
     const val mozilla_lib_crash = "org.mozilla.components:lib-crash:${Versions.mozilla_android_components}"
     const val mozilla_lib_push_firebase = "org.mozilla.components:lib-push-firebase:${Versions.mozilla_android_components}"
@@ -147,6 +154,7 @@ object Deps {
     const val mozilla_support_rustlog = "org.mozilla.components:support-rustlog:${Versions.mozilla_android_components}"
     const val mozilla_support_utils = "org.mozilla.components:support-utils:${Versions.mozilla_android_components}"
     const val mozilla_support_test = "org.mozilla.components:support-test:${Versions.mozilla_android_components}"
+    const val mozilla_support_test_libstate = "org.mozilla.components:support-test-libstate:${Versions.mozilla_android_components}"
     const val mozilla_support_migration = "org.mozilla.components:support-migration:${Versions.mozilla_android_components}"
     const val mozilla_support_locale = "org.mozilla.components:support-locale:${Versions.mozilla_android_components}"
 
@@ -182,6 +190,8 @@ object Deps {
     const val adjust = "com.adjust.sdk:adjust-android:${Versions.adjust}"
     const val installreferrer = "com.android.installreferrer:installreferrer:${Versions.installreferrer}"
 
+    const val jna = "net.java.dev.jna:jna:${Versions.jna}@jar"
+
     const val junit = "junit:junit:${Versions.junit}"
     const val mockk = "io.mockk:mockk:${Versions.mockk}"
 
@@ -209,14 +219,12 @@ object Deps {
 
     const val mockwebserver = "com.squareup.okhttp3:mockwebserver:${Versions.mockwebserver}"
     const val uiautomator = "androidx.test.uiautomator:uiautomator:${Versions.uiautomator}"
-    const val robolectric = "org.robolectric:robolectric:4.3.1"
+    const val robolectric = "org.robolectric:robolectric:${Versions.robolectric}"
 
     const val google_ads_id = "com.google.android.gms:play-services-ads-identifier:${Versions.google_ads_id_version}"
 
     // Required for in-app reviews
     const val google_play_store = "com.google.android.play:core:${Versions.google_play_store_version}"
-
-    const val lottie = "com.airbnb.android:lottie:${Versions.airbnb_lottie}"
 
     const val detektApi = "io.gitlab.arturbosch.detekt:detekt-api:${Versions.detekt}"
     const val detektTest = "io.gitlab.arturbosch.detekt:detekt-test:${Versions.detekt}"
@@ -235,7 +243,7 @@ object Deps {
 object RepoMatching {
     const val mozilla = "org\\.mozilla\\..*"
     const val androidx = "androidx\\..*"
-    const val comAndroid = "com\\.android\\..*"
+    const val comAndroid = "com\\.android.*"
     const val comGoogleFirebase = "com\\.google\\.firebase"
 
     /**

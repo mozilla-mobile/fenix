@@ -5,6 +5,7 @@
 package org.mozilla.fenix.helpers
 
 import org.mozilla.fenix.FenixApplication
+import org.mozilla.fenix.R
 import org.mozilla.fenix.components.TestComponents
 
 /**
@@ -14,6 +15,11 @@ import org.mozilla.fenix.components.TestComponents
  */
 class FenixRobolectricTestApplication : FenixApplication() {
 
+    override fun onCreate() {
+        super.onCreate()
+        setApplicationTheme()
+    }
+
     override val components = TestComponents(this)
 
     override fun initializeGlean() = Unit
@@ -21,4 +27,14 @@ class FenixRobolectricTestApplication : FenixApplication() {
     override fun setupInAllProcesses() = Unit
 
     override fun setupInMainProcessOnly() = Unit
+
+    private fun setApplicationTheme() {
+        // According to the Robolectric devs, the application context will not have the <application>'s
+        // theme but will use the platform's default team so we set our theme here. We change it here
+        // rather than the production application because, upon testing, the production code appears
+        // appears to be working correctly. Context here:
+        // https://github.com/mozilla-mobile/fenix/pull/15646#issuecomment-707345798
+        // https://github.com/mozilla-mobile/fenix/pull/15646#issuecomment-709411141
+        setTheme(R.style.NormalTheme)
+    }
 }

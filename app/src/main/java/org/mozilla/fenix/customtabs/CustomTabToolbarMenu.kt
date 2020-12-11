@@ -17,25 +17,27 @@ import mozilla.components.browser.menu.item.BrowserMenuImageSwitch
 import mozilla.components.browser.menu.item.BrowserMenuImageText
 import mozilla.components.browser.menu.item.BrowserMenuItemToolbar
 import mozilla.components.browser.menu.item.SimpleBrowserMenuItem
-import mozilla.components.browser.session.Session
-import mozilla.components.browser.session.SessionManager
+import mozilla.components.browser.state.selector.findTab
+import mozilla.components.browser.state.state.TabSessionState
+import mozilla.components.browser.state.store.BrowserStore
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.toolbar.ToolbarMenu
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getStringWithArgSafe
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.theme.ThemeManager
+import java.util.Locale
 
 /**
  * Builds the toolbar object used with the 3-dot menu in the custom tab browser fragment.
- * @param sessionManager Reference to the session manager that contains all tabs.
+ * @param store reference to the application's [BrowserStore].
  * @param sessionId ID of the open custom tab session.
  * @param shouldReverseItems If true, reverse the menu items.
  * @param onItemTapped Called when a menu item is tapped.
  */
 class CustomTabToolbarMenu(
     private val context: Context,
-    private val sessionManager: SessionManager,
+    private val store: BrowserStore,
     private val sessionId: String?,
     private val shouldReverseItems: Boolean,
     private val onItemTapped: (ToolbarMenu.Item) -> Unit = {}
@@ -44,7 +46,7 @@ class CustomTabToolbarMenu(
     override val menuBuilder by lazy { BrowserMenuBuilder(menuItems) }
 
     /** Gets the current custom tab session */
-    private val session: Session? get() = sessionId?.let { sessionManager.findSessionById(it) }
+    private val session: TabSessionState? get() = sessionId?.let { store.state.findTab(it) }
     private val appName = context.getString(R.string.app_name)
 
     override val menuToolbar by lazy {
@@ -53,7 +55,7 @@ class CustomTabToolbarMenu(
             primaryContentDescription = context.getString(R.string.browser_menu_back),
             primaryImageTintResource = primaryTextColor(),
             isInPrimaryState = {
-                session?.canGoBack ?: true
+                session?.content?.canGoBack ?: true
             },
             secondaryImageTintResource = ThemeManager.resolveAttribute(
                 R.attr.disabled,
@@ -70,7 +72,7 @@ class CustomTabToolbarMenu(
             primaryContentDescription = context.getString(R.string.browser_menu_forward),
             primaryImageTintResource = primaryTextColor(),
             isInPrimaryState = {
-                session?.canGoForward ?: true
+                session?.content?.canGoForward ?: true
             },
             secondaryImageTintResource = ThemeManager.resolveAttribute(
                 R.attr.disabled,
@@ -87,7 +89,7 @@ class CustomTabToolbarMenu(
             primaryContentDescription = context.getString(R.string.browser_menu_refresh),
             primaryImageTintResource = primaryTextColor(),
             isInPrimaryState = {
-                session?.loading == false
+                session?.content?.loading == false
             },
             secondaryImageResource = mozilla.components.ui.icons.R.drawable.mozac_ic_stop,
             secondaryContentDescription = context.getString(R.string.browser_menu_stop),
@@ -95,7 +97,7 @@ class CustomTabToolbarMenu(
             disableInSecondaryState = false,
             longClickListener = { onItemTapped.invoke(ToolbarMenu.Item.Reload(bypassCache = true)) }
         ) {
-            if (session?.loading == true) {
+            if (session?.content?.loading == true) {
                 onItemTapped.invoke(ToolbarMenu.Item.Stop)
             } else {
                 onItemTapped.invoke(ToolbarMenu.Item.Reload(bypassCache = false))
@@ -107,7 +109,7 @@ class CustomTabToolbarMenu(
 
     private fun shouldShowOpenInApp(): Boolean = session?.let { session ->
         val appLink = context.components.useCases.appLinksUseCases.appLinkRedirect
-        appLink(session.url).hasExternalApp()
+        appLink(session.content.url).hasExternalApp()
     } ?: false
 
     private val menuItems by lazy {
@@ -121,13 +123,17 @@ class CustomTabToolbarMenu(
             BrowserMenuDivider(),
             menuToolbar
         )
-        if (shouldReverseItems) { menuItems.reversed() } else { menuItems }
+        if (shouldReverseItems) {
+            menuItems.reversed()
+        } else {
+            menuItems
+        }
     }
 
     private val desktopMode = BrowserMenuImageSwitch(
         imageResource = R.drawable.ic_desktop,
         label = context.getString(R.string.browser_menu_desktop_site),
-        initialState = { session?.desktopMode ?: false }
+        initialState = { session?.content?.desktopMode ?: false }
     ) { checked ->
         onItemTapped.invoke(ToolbarMenu.Item.RequestDesktop(checked))
     }
@@ -161,7 +167,8 @@ class CustomTabToolbarMenu(
     }
 
     private val poweredBy = BrowserMenuCategory(
-        label = context.getStringWithArgSafe(R.string.browser_menu_powered_by, appName).toUpperCase(),
+        label = context.getStringWithArgSafe(R.string.browser_menu_powered_by, appName)
+            .toUpperCase(Locale.getDefault()),
         textSize = CAPTION_TEXT_SIZE,
         textColorResource = primaryTextColor(),
         textStyle = Typeface.NORMAL

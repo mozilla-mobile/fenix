@@ -11,7 +11,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
@@ -86,7 +85,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
 
             val readerModeAction =
                 BrowserToolbar.ToggleButton(
-                    image = ContextCompat.getDrawable(requireContext(), R.drawable.ic_readermode)!!,
+                    image = AppCompatResources.getDrawable(requireContext(), R.drawable.ic_readermode)!!,
                     imageSelected =
                         AppCompatResources.getDrawable(requireContext(), R.drawable.ic_readermode_selected)!!,
                     contentDescription = requireContext().getString(R.string.browser_menu_read),
@@ -157,6 +156,9 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
         ) {
             browserToolbarView.view
         }
+
+        @Suppress("DEPRECATION")
+        // TODO Use browser store instead of session observer: https://github.com/mozilla-mobile/fenix/issues/16945
         session?.register(toolbarSessionObserver, viewLifecycleOwner, autoPause = true)
 
         if (settings.shouldShowOpenInAppCfr && session != null) {
@@ -165,8 +167,10 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                 navController = findNavController(),
                 settings = settings,
                 appLinksUseCases = context.components.useCases.appLinksUseCases,
-                container = browserToolbarView.view.parent as ViewGroup
+                container = browserLayout as ViewGroup
             )
+            @Suppress("DEPRECATION")
+            // TODO Use browser store instead of session observer: https://github.com/mozilla-mobile/fenix/issues/16949
             session.register(
                 openInAppOnboardingObserver!!,
                 owner = this,
@@ -175,6 +179,8 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
         }
 
         if (!settings.userKnowsAboutPwas) {
+            @Suppress("DEPRECATION")
+            // TODO Use browser store instead of session observer: https://github.com/mozilla-mobile/fenix/issues/16946
             session?.register(
                 PwaOnboardingObserver(
                     navController = findNavController(),
@@ -194,6 +200,8 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
         // This observer initialized in onStart has a reference to fragment's view.
         // Prevent it leaking the view after the latter onDestroyView.
         if (openInAppOnboardingObserver != null) {
+            @Suppress("DEPRECATION")
+            // TODO Use browser store instead of session observer: https://github.com/mozilla-mobile/fenix/issues/16949
             getSessionById()?.unregister(openInAppOnboardingObserver!!)
             openInAppOnboardingObserver = null
         }
@@ -248,7 +256,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
     }
 
     private val collectionStorageObserver = object : TabCollectionStorage.Observer {
-        override fun onCollectionCreated(title: String, sessions: List<Session>) {
+        override fun onCollectionCreated(title: String, sessions: List<Session>, id: Long?) {
             showTabSavedToCollectionSnackbar(sessions.size, true)
         }
 

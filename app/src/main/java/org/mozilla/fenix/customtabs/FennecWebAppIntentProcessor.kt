@@ -9,7 +9,6 @@ import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_DOCUMENT
 import androidx.annotation.VisibleForTesting
 import androidx.core.content.ContextCompat
-import kotlinx.coroutines.runBlocking
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.browser.state.state.CustomTabConfig
@@ -24,10 +23,13 @@ import mozilla.components.feature.pwa.ManifestStorage
 import mozilla.components.feature.pwa.ext.putWebAppManifest
 import mozilla.components.feature.pwa.ext.toCustomTabConfig
 import mozilla.components.feature.session.SessionUseCases
+import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.utils.SafeIntent
 import mozilla.components.support.utils.toSafeIntent
+import org.json.JSONException
 import org.json.JSONObject
 import org.mozilla.fenix.R
+import org.mozilla.fenix.perf.runBlockingIncrement
 import java.io.File
 import java.io.IOException
 
@@ -40,6 +42,7 @@ class FennecWebAppIntentProcessor(
     private val loadUrlUseCase: SessionUseCases.DefaultLoadUrlUseCase,
     private val storage: ManifestStorage
 ) : IntentProcessor {
+    val logger = Logger("FennecWebAppIntentProcessor")
 
     /**
      * Returns true if this intent should launch a progressive web app created in Fennec.
@@ -58,7 +61,7 @@ class FennecWebAppIntentProcessor(
         val url = safeIntent.dataString
 
         return if (!url.isNullOrEmpty() && matches(intent)) {
-            val webAppManifest = runBlocking { loadManifest(safeIntent, url) }
+            val webAppManifest = runBlockingIncrement { loadManifest(safeIntent, url) }
 
             val session = Session(url, private = false, source = SessionState.Source.HOME_SCREEN)
             session.webAppManifest = webAppManifest
@@ -66,7 +69,7 @@ class FennecWebAppIntentProcessor(
                 webAppManifest?.toCustomTabConfig() ?: createFallbackCustomTabConfig()
 
             sessionManager.add(session)
-            loadUrlUseCase(url, session, EngineSession.LoadUrlFlags.external())
+            loadUrlUseCase(url, session.id, EngineSession.LoadUrlFlags.external())
 
             intent.putSessionId(session.id)
 
@@ -113,6 +116,10 @@ class FennecWebAppIntentProcessor(
 
             WebAppManifestParser().parse(manifestField).getOrNull()
         } catch (e: IOException) {
+            logger.error("Failed to parse web app manifest due to IOException", e)
+            null
+        } catch (e: JSONException) {
+            logger.error("Failed to parse web app manifest due to JSONException", e)
             null
         }
     }

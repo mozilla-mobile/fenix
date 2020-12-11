@@ -8,13 +8,17 @@ import android.app.Application
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import mozilla.components.lib.crash.CrashReporter
 import mozilla.components.lib.crash.service.CrashReporterService
 import mozilla.components.lib.crash.service.GleanCrashReporterService
 import mozilla.components.lib.crash.service.MozillaSocorroService
 import mozilla.components.lib.crash.service.SentryService
+import mozilla.components.service.nimbus.Nimbus
+import mozilla.components.service.nimbus.NimbusServerSettings
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ReleaseChannel
@@ -22,7 +26,9 @@ import org.mozilla.fenix.components.metrics.AdjustMetricsService
 import org.mozilla.fenix.components.metrics.GleanMetricsService
 import org.mozilla.fenix.components.metrics.LeanplumMetricsService
 import org.mozilla.fenix.components.metrics.MetricController
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.perf.lazyMonitored
 import org.mozilla.fenix.utils.Mockable
 import org.mozilla.geckoview.BuildConfig.MOZ_APP_BUILDID
 import org.mozilla.geckoview.BuildConfig.MOZ_APP_VENDOR
@@ -36,7 +42,7 @@ import org.mozilla.geckoview.BuildConfig.MOZ_UPDATE_CHANNEL
 class Analytics(
     private val context: Context
 ) {
-    val crashReporter: CrashReporter by lazy {
+    val crashReporter: CrashReporter by lazyMonitored {
         val services = mutableListOf<CrashReporterService>()
 
         if (isSentryEnabled()) {
@@ -84,18 +90,44 @@ class Analytics(
         )
     }
 
-    val leanplumMetricsService by lazy { LeanplumMetricsService(context as Application) }
+    val leanplumMetricsService by lazyMonitored { LeanplumMetricsService(context as Application) }
 
-    val metrics: MetricController by lazy {
+    val metrics: MetricController by lazyMonitored {
         MetricController.create(
             listOf(
-                GleanMetricsService(context),
+                GleanMetricsService(context, lazy { context.components.core.store }),
                 leanplumMetricsService,
                 AdjustMetricsService(context as Application)
             ),
             isDataTelemetryEnabled = { context.settings().isTelemetryEnabled },
             isMarketingDataTelemetryEnabled = { context.settings().isMarketingTelemetryEnabled }
         )
+    }
+
+    val experiments by lazyMonitored {
+        val url: String? = BuildConfig.NIMBUS_ENDPOINT
+        val serverSettings = if (!url.isNullOrBlank()) {
+            NimbusServerSettings(url = Uri.parse(url))
+        } else {
+            null
+        }
+        Nimbus(context, serverSettings).apply {
+            if (FeatureFlags.nimbusExperiments) {
+                // Global opt out state is stored in Nimbus, and shouldn't be toggled to `true`
+                // from the app unless the user does so from a UI control.
+                // However, the user may have opt-ed out of mako experiments already, so
+                // we should respect that setting here.
+                val enabled = context.settings().isExperimentationEnabled
+                if (!enabled) {
+                    globalUserParticipation = enabled
+                }
+                context.settings().isExperimentationEnabled = globalUserParticipation
+
+                // Nimbus should look after downloading experiment definitions from remote settings
+                // on another thread, and making sure we don't hit the server each time we start.
+                updateExperiments()
+            }
+        }
     }
 }
 

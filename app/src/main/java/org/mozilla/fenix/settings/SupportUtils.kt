@@ -11,7 +11,6 @@ import androidx.core.net.toUri
 import mozilla.components.support.ktx.android.content.appVersionName
 import mozilla.components.support.ktx.android.content.getColorFromAttr
 import org.mozilla.fenix.BuildConfig
-import org.mozilla.fenix.Config
 import org.mozilla.fenix.IntentReceiverActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.settings.account.AuthIntentReceiverActivity
@@ -27,6 +26,11 @@ object SupportUtils {
     const val FIREFOX_BETA_PLAY_STORE_URL = "market://details?id=org.mozilla.firefox_beta"
     const val FIREFOX_NIGHTLY_PLAY_STORE_URL = "market://details?id=org.mozilla.fenix"
     const val GOOGLE_URL = "https://www.google.com/"
+    const val BAIDU_URL = "https://m.baidu.com/?from=1000969a"
+    const val JD_URL = "https://union-click.jd.com/jdc" +
+            "?e=&p=AyIGZRprFDJWWA1FBCVbV0IUWVALHFRBEwQAQB1AWQkFVUVXfFkAF14lRFRbJXstVWR3WQ1rJ08AZnhS" +
+            "HDJBYh4LZR9eEAMUBlccWCUBEQZRGFoXCxc3ZRteJUl8BmUZWhQ" +
+            "AEwdRGF0cMhIAVB5ZFAETBVAaXRwyFQdcKydLSUpaCEtYFAIXN2UrWCUyIgdVK1slXVZaCCtZFAMWDg%3D%3D"
 
     enum class SumoTopic(internal val topicStr: String) {
         FENIX_MOVING("sync-delist"),
@@ -39,7 +43,6 @@ object SupportUtils {
         SET_AS_DEFAULT_BROWSER("set-firefox-preview-default"),
         SEARCH_SUGGESTION("how-search-firefox-preview"),
         CUSTOM_SEARCH_ENGINES("custom-search-engines"),
-        UPGRADE_FAQ("firefox-preview-upgrade-faqs"),
         SYNC_SETUP("how-set-firefox-sync-firefox-preview"),
         QR_CAMERA_ACCESS("qr-camera-access")
     }
@@ -85,11 +88,7 @@ object SupportUtils {
         return "https://www.mozilla.org/$langTag/$path"
     }
 
-    fun getWhatsNewUrl(context: Context) = if (Config.channel.isFennec) {
-        getGenericSumoURLForTopic(SumoTopic.UPGRADE_FAQ)
-    } else {
-        getSumoURLForTopic(context, SumoTopic.WHATS_NEW)
-    }
+    fun getWhatsNewUrl(context: Context) = getSumoURLForTopic(context, SumoTopic.WHATS_NEW)
 
     fun createCustomTabIntent(context: Context, url: String): Intent = CustomTabsIntent.Builder()
         .setInstantAppsEnabled(false)

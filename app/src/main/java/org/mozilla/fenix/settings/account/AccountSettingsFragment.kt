@@ -84,11 +84,6 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
         requireComponents.analytics.metrics.track(Event.SyncAccountOpened)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        requireComponents.analytics.metrics.track(Event.SyncAccountClosed)
-    }
-
     @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -403,8 +398,8 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
                     )
                 }
             }
-            is LastSyncTime.Success -> getString(
-                R.string.sync_last_synced_summary,
+            is LastSyncTime.Success -> String.format(
+                getString(R.string.sync_last_synced_summary),
                 DateUtils.getRelativeTimeSpanString(state.lastSyncedDate.lastSync)
             )
         }

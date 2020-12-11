@@ -12,7 +12,6 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.Ignore
 import org.mozilla.fenix.FenixApplication
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
@@ -39,7 +38,7 @@ class SettingsBasicsTest {
     @Before
     fun setUp() {
         mockWebServer = MockWebServer().apply {
-            setDispatcher(AndroidAssetDispatcher())
+            dispatcher = AndroidAssetDispatcher()
             start()
         }
     }
@@ -85,7 +84,7 @@ class SettingsBasicsTest {
             verifyThemes()
         }.goBack {
         }.openAccessibilitySubMenu {
-            verifyMenuItems()
+            verifyAutomaticFontSizingMenuItems()
         }.goBack {
             // drill down to submenu
         }
@@ -102,25 +101,6 @@ class SettingsBasicsTest {
         }.goBack {
         }.goBack {
             verifyDefaultSearchEngine("DuckDuckGo")
-        }
-    }
-
-    @Ignore("This test works locally, fails on firebase. https://github.com/mozilla-mobile/fenix/issues/8174")
-    @Test
-    fun toggleSearchSuggestions() {
-        // Goes through the settings and changes the search suggestion toggle, then verifies it changes.
-        homeScreen {
-        }.openNavigationToolbar {
-            verifySearchSuggestionsAreMoreThan(1, "mozilla")
-        }.goBack {
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openSearchSubMenu {
-            disableShowSearchSuggestions()
-        }.goBack {
-        }.goBack {
-        }.openNavigationToolbar {
-            verifySearchSuggestionsAreEqualTo(0, "mozilla")
         }
     }
 
@@ -181,7 +161,7 @@ class SettingsBasicsTest {
     }
 
     @Test
-    fun changeAccessibilitySettings() {
+    fun changeAccessibiltySettings() {
         // Goes through the settings and changes the default text on a webpage, then verifies if the text has changed.
         val fenixApp = activityIntentTestRule.activity.applicationContext as FenixApplication
         val webpage = getLoremIpsumAsset(mockWebServer).url
@@ -193,7 +173,8 @@ class SettingsBasicsTest {
         }.openThreeDotMenu {
         }.openSettings {
         }.openAccessibilitySubMenu {
-            verifyMenuItems()
+            clickFontSizingSwitch()
+            verifyEnabledMenuItems()
             changeTextSizeSlider(textSizePercentage)
             verifyTextSizePercentage(textSizePercentage)
         }.goBack {
@@ -201,6 +182,14 @@ class SettingsBasicsTest {
         }.openNavigationToolbar {
         }.enterURLAndEnterToBrowser(webpage) {
             checkTextSizeOnWebsite(textSizePercentage, fenixApp.components)
+        }.openTabDrawer {
+        }.openNewTab {
+        }.dismissSearchBar {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openAccessibilitySubMenu {
+            clickFontSizingSwitch()
+            verifyMenuItemsAreDisabled()
         }
     }
 

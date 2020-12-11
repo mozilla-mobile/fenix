@@ -20,6 +20,10 @@
     <!-- No Private Tabs Message Description -->
     <string name="no_private_tabs_description">Gizli sekmeleriniz burada gösterilecek.</string>
 
+    <!-- Default title for pinned Baidu top site that links to Baidu home page  -->
+    <string name="default_top_site_baidu">Baidu</string>
+    <!-- Default title for pinned JD top site that links to JD home page  -->
+    <string name="default_top_site_jd">JD</string>
     <!-- Message announced to the user when tab tray is selected with 1 tab -->
     <string name="open_tab_tray_single">1 açık sekme. Sekme değiştirmek için dokunun.</string>
     <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
@@ -71,14 +75,6 @@
     <!-- Text for the negative button -->
     <string name="cfr_neg_button_text">Gerek yok</string>
 
-    <!-- Search widget "contextual feature recommendation" (CFR) -->
-    <!-- Text for the main message. 'Firefox' intentionally hardcoded here.-->
-    <string name="search_widget_cfr_message">Firefox’a daha hızlı ulaşın. Ana ekranınıza bir widget ekleyin.</string>
-    <!-- Text for the positive button -->
-    <string name="search_widget_cfr_pos_button_text">Widget ekle</string>
-    <!-- Text for the negative button -->
-    <string name="search_widget_cfr_neg_button_text">Daha sonra</string>
-
     <!-- Open in App "contextual feature recommendation" (CFR) -->
     <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
     <string name="open_in_app_cfr_info_message">Firefox’u, bağlantıları otomatik olarak uygulamalarda açacak şekilde ayarlayabilirsiniz.</string>
@@ -100,6 +96,13 @@
     <string name="tab_tray_close_tabs_banner_positive_button_text">Seçeneklere git</string>
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">Kapat</string>
+
+    <!-- Text for the banner message to tell users about our grid view feature. -->
+    <string name="tab_tray_grid_view_banner_message">Açık sekmelerin görünümünü değiştirebilirsiniz. Ayarlara gidip “sekme görünümü” altından “ızgara”yı seçin.</string>
+    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
+    <string name="tab_tray_grid_view_banner_positive_button_text">Ayarlara git</string>
+    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
+    <string name="tab_tray_grid_view_banner_negative_button_text">Kapat</string>
 
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
@@ -151,8 +154,6 @@
     <string name="browser_menu_find_in_page">Sayfada bul</string>
     <!-- Browser menu button that creates a private tab -->
     <string name="browser_menu_private_tab">Gizli sekme</string>
-    <!-- Browser menu button that creates a new tab -->
-    <string name="browser_menu_new_tab">Yeni sekme</string>
     <!-- Browser menu button that saves the current tab to a collection -->
     <string name="browser_menu_save_to_collection_2">Koleksiyona kaydet</string>
     <!-- Browser menu button that open a share menu to share the current site -->
@@ -216,6 +217,8 @@
     <string name="search_suggestions_onboarding_learn_more_link">Daha fazla bilgi al</string>
 
     <!-- Search Widget -->
+    <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
+    <string name="search_widget_content_description">Yeni Firefox sekmesi aç</string>
     <!-- Text preview for smaller sized widgets -->
     <string name="search_widget_text_short">Ara</string>
     <!-- Text preview for larger sized widgets -->
@@ -255,7 +258,7 @@
     <!-- Preference for settings related to saved credit cards and addresses -->
     <string name="preferences_credit_cards_addresses">Kredi kartları ve adresler</string>
     <!-- Preference for settings related to changing the default browser -->
-    <string name="preferences_set_as_default_browser">Varsayılan tarayıcı olarak ayarla</string>
+    <string name="preferences_set_as_default_browser">Varsayılan tarayıcı yap</string>
     <!-- Preference category for advanced settings -->
     <string name="preferences_category_advanced">Gelişmiş</string>
     <!-- Preference category for privacy settings -->
@@ -346,6 +349,26 @@
     <!-- Preference for notifications -->
     <string name="preferences_notifications">Bildirimler</string>
 
+    <!-- Add-on Preferences -->
+    <!-- Preference to customize the configured AMO (addons.mozilla.org) collection -->
+    <string name="preferences_customize_amo_collection">Özel eklenti koleksiyonu</string>
+    <!-- Button caption to confirm the add-on collection configuration -->
+    <string name="customize_addon_collection_ok">Tamam</string>
+    <!-- Button caption to abort the add-on collection configuration -->
+    <string name="customize_addon_collection_cancel">İptal</string>
+    <!-- Hint displayed on input field for custom collection name -->
+    <string name="customize_addon_collection_hint">Koleksiyon adı</string>
+    <!-- Hint displayed on input field for custom collection user ID-->
+    <string name="customize_addon_collection_user_hint">Koleksiyon sahibi (kullanıcı kimliği)</string>
+    <!-- Toast shown after confirming the custom add-on collection configuration -->
+    <string name="toast_customize_addon_collection_done">Eklenti koleksiyonu değiştirildi. Değişiklikleri uygulamak için uygulamadan çıkılıyor…</string>
+
+    <!-- Add-on Installation from AMO-->
+    <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
+    <string name="addon_not_supported_error">Eklenti desteklenmiyor</string>
+    <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is already installed -->
+    <string name="addon_already_installed">Eklenti zaten yüklenmiş</string>
+
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">Şimdi eşitle</string>
@@ -425,6 +448,10 @@
     <string name="preferences_marketing_data">Pazarlama verileri</string>
     <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
     <string name="preferences_marketing_data_description">Kullandığınız %1$s özellikleri ile ilgili verileri mobil pazarlama hizmeti aldığımız Leanplum ile paylaşır.</string>
+    <!-- Title for studies preferences -->
+    <string name="preference_experiments_2">Araştırmalar</string>
+    <!-- Summary for studies preferences -->
+    <string name="preference_experiments_summary_2">Mozilla’nın araştırmalar yükleyip çalıştırmasına izin verir</string>
     <!-- Title for experiments preferences -->
     <string name="preference_experiments">Deneyler</string>
     <!-- Summary for experiments preferences -->
@@ -529,6 +556,14 @@
     <string name="recently_closed_empty_message">Yakın zamanda kapatılmış sekme yok</string>
 
     <!-- Tab Management -->
+    <!-- Title of preference for tabs management -->
+    <string name="preferences_tabs">Sekmeler</string>
+    <!-- Title of preference that allows a user to specify the tab view -->
+    <string name="preferences_tab_view">Sekme görünümü</string>
+    <!-- Option for a list tab view -->
+    <string name="tab_view_list">Liste</string>
+    <!-- Option for a grid tab view -->
+    <string name="tab_view_grid">Izgara</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
     <string name="preferences_close_tabs">Sekmeleri kapat</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
@@ -539,6 +574,15 @@
     <string name="close_tabs_after_one_week">Bir hafta sonra</string>
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">Bir ay sonra</string>
+
+    <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
+    <string name="close_tabs_manually_summary">Elle kapat</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
+    <string name="close_tabs_after_one_day_summary">Bir gün sonra kapat</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one week-->
+    <string name="close_tabs_after_one_week_summary">Bir hafta sonra kapat</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one month-->
+    <string name="close_tabs_after_one_month_summary">Bir ay sonra kapat</string>
 
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
@@ -557,6 +601,8 @@
     <string name="tab_tray_title">Açık sekmeler</string>
     <!-- Text shown in the menu for saving tabs to a collection -->
     <string name="tab_tray_menu_item_save">Koleksiyona kaydet</string>
+    <!-- Text shown in the menu for the collection selector -->
+    <string name="tab_tray_menu_select">Seç</string>
     <!-- Text shown in the menu for sharing all tabs -->
     <string name="tab_tray_menu_item_share">Tüm sekmeleri paylaş</string>
     <!-- Text shown in the menu to view recently closed tabs -->
@@ -571,8 +617,18 @@
     <string name="tab_tray_menu_home">Giriş sayfasına git</string>
     <!-- Shortcut action to toggle private mode -->
     <string name="tab_tray_menu_toggle">Sekme modunu değiştir</string>
+    <!-- Text shown in the multiselect menu for bookmarking selected tabs. -->
+    <string name="tab_tray_multiselect_menu_item_bookmark">Yer imlerine ekle</string>
+    <!-- Text shown in the multiselect menu for closing selected tabs. -->
+    <string name="tab_tray_multiselect_menu_item_close">Kapat</string>
+    <!-- Content description for tabs tray multiselect share button -->
+    <string name="tab_tray_multiselect_share_content_description">Seçili sekmeleri paylaş</string>
+    <!-- Content description for tabs tray multiselect menu -->
+    <string name="tab_tray_multiselect_menu_content_description">Seçili sekmeler menüsü</string>
     <!-- Content description (not visible, for screen readers etc.): Removes tab from collection button. Removes the selected tab from collection when pressed -->
     <string name="remove_tab_from_collection">Sekmeyi koleksiyondan çıkar</string>
+    <!-- Text for button to enter multiselect mode in tabs tray -->
+    <string name="tabs_tray_select_tabs">Sekmeleri seç</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab button. Closes the current session when pressed -->
     <string name="close_tab">Sekmeyi kapat</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab <title> button. First parameter is tab title  -->
@@ -607,8 +663,12 @@
     <string name="collection_open_tabs">Sekmeleri aç</string>
 
 
-    <!-- Text for the menu button to remove a top site -->
-    <string name="remove_top_site">Kaldır</string>
+    <!-- Hint for adding name of a collection -->
+    <string name="collection_name_hint">Koleksiyon adı</string>
+    <!-- Text for the menu button to rename a top site -->
+	<string name="rename_top_site">Adını değiștir</string>
+	<!-- Text for the menu button to remove a top site -->
+	<string name="remove_top_site">Kaldır</string>
 
     <!-- Text for the menu button to delete a top site from history -->
     <string name="delete_from_history">Geçmişten sil</string>
@@ -645,6 +705,10 @@
     <!-- Text for the button to clear selected history items. The first parameter
         is a digit showing the number of items you have selected -->
     <string name="history_delete_some">%1$d öğeyi sil</string>
+    <!-- Text for the header that groups the history for today -->
+    <string name="history_today">Bugün</string>
+    <!-- Text for the header that groups the history for yesterday -->
+    <string name="history_yesterday">Dün</string>
     <!-- Text for the header that groups the history for last 24 hours -->
     <string name="history_24_hours">Son 24 saat</string>
     <!-- Text for the header that groups the history the past 7 days -->
@@ -657,11 +721,23 @@
     <string name="history_empty_message">Geçmiş yok</string>
 
     <!-- Downloads -->
+    <!-- Text for the button to clear all downloads -->
+    <string name="download_delete_all">İndirmeleri sil</string>
+    <!-- Text for the dialog to confirm clearing all downloads -->
+    <string name="download_delete_all_dialog">İndirmelerinizi temizlemek istediğinizden emin misiniz?</string>
+    <!-- Text for the snackbar to confirm that multiple downloads items have been deleted -->
+    <string name="download_delete_multiple_items_snackbar">İndirmeler silindi</string>
     <!-- Text shown when no download exists -->
     <string name="download_empty_message">Hiçbir şey indirilmemiş</string>
     <!-- History multi select title in app bar
     The first parameter is the number of downloads selected -->
     <string name="download_multi_select_title">%1$d indirme seçildi</string>
+
+    <!-- History overflow menu open in new tab button -->
+    <string name="download_menu_open">Aç</string>
+    <!-- Text for the button to delete a single history item -->
+    <string name="download_delete_item">Sil</string>
+
 
     <!-- Crashes -->
     <!-- Title text displayed on the tab crash page. This first parameter is the name of the application (For example: Fenix) -->
@@ -782,6 +858,8 @@
     <string name="preference_phone_feature_location">Konum</string>
     <!-- Preference for altering the notification access for all websites -->
     <string name="preference_phone_feature_notification">Bildirim</string>
+    <!-- Preference for altering the persistent storage access for all websites -->
+    <string name="preference_phone_feature_persistent_storage">Kalıcı depolama</string>
     <!-- Label that indicates that a permission must be asked always -->
     <string name="preference_option_phone_feature_ask_to_allow">İzin iste</string>
     <!-- Label that indicates that a permission must be blocked -->
@@ -923,6 +1001,12 @@
     <string name="snackbar_tab_closed">Sekme kapatıldı</string>
     <!-- Text shown in snackbar when user closes all tabs -->
     <string name="snackbar_tabs_closed">Sekmeler kapatıldı</string>
+    <!-- Text shown in snackbar when user closes tabs -->
+    <string name="snackbar_message_tabs_closed">Sekmeler kapatıldı.</string>
+    <!-- Text shown in snackbar when user bookmarks a list of tabs -->
+    <string name="snackbar_message_bookmarks_saved">Yer imleri kaydedildi.</string>
+    <!-- Text shown in snackbar action for viewing bookmarks -->
+    <string name="snackbar_message_bookmarks_view">Göster</string>
     <!-- Text shown in snackbar when user adds a site to top sites -->
     <string name="snackbar_added_to_top_sites">Sık kullanılanlara eklendi!</string>
     <!-- Text shown in snackbar when user closes a private tab -->
@@ -1145,9 +1229,9 @@
     <string name="onboarding_theme_light_title">Açık tema</string>
 
     <!-- Text shown in snackbar when multiple tabs have been sent to device -->
-    <string name="sync_sent_tabs_snackbar">Sekmeler gönderildi!</string>
+    <string name="sync_sent_tabs_snackbar">Sekmeler gönderildi</string>
     <!-- Text shown in snackbar when one tab has been sent to device  -->
-    <string name="sync_sent_tab_snackbar">Sekme gönderildi!</string>
+    <string name="sync_sent_tab_snackbar">Sekme gönderildi</string>
     <!-- Text shown in snackbar when sharing tabs failed  -->
     <string name="sync_sent_tab_error_snackbar">Gönderilemedi</string>
     <!-- Text shown in snackbar for the "retry" action that the user has after sharing tabs failed -->
@@ -1157,7 +1241,7 @@
     <!-- Instructions on how to access pairing -->
     <string name="sign_in_instructions"><![CDATA[Bilgisayarınızda Firefox’u açıp <b>https://firefox.com/pair</b> adresine gidin]]></string>
     <!-- Text shown for sign in pairing when ready -->
-    <string name="sign_in_ready_for_scan">Taramaya hazır</string>
+    <string name="sign_in_ready_for_scan">Taramaya hazırım</string>
     <!-- Text shown for settings option for sign with pairing -->
     <string name="sign_in_with_camera">Kameranızla giriş yapın</string>
     <!-- Text shown for settings option for sign with email -->
@@ -1581,12 +1665,24 @@
     <!-- Label for the show most visited sites preference -->
     <string name="top_sites_toggle_top_frecent_sites">Sık ziyaret edilen siteleri göster</string>
 
+    <!-- Title text displayed in the rename top site dialog. -->
+	<string name="top_sites_rename_dialog_title">Adı</string>
+	<!-- Hint for renaming title of a top site -->
+	<string name="top_site_name_hint">Sık kullanılan adı</string>
+	<!-- Button caption to confirm the renaming of the top site. -->
+	<string name="top_sites_rename_dialog_ok">Tamam</string>
+	<!-- Dialog button text for canceling the rename top site prompt. -->
+	<string name="top_sites_rename_dialog_cancel">İptal</string>
+
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">Kaldır</string>
 
     <!-- Deprecated: text for the firefox account onboarding card header
     The first parameter is the name of the app (e.g. Firefox Preview) -->
     <string name="onboarding_firefox_account_header">%s tarayıcınızdan en iyi şekilde yararlanın.</string>
+
+    <!-- Content description radio buttons with a link to more information -->
+    <string name="radio_preference_info_content_description">Ayrıntılar için tıklayın</string>
 
     <!-- Deprecated: No Open Tabs Message Header -->
     <string name="no_collections_header1">Sizin için önemli olan şeyleri toplayın</string>

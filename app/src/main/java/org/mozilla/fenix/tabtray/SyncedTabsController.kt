@@ -50,7 +50,7 @@ class SyncedTabsController(
                 .collect { mode ->
                     when (mode) {
                         is TabTrayDialogFragmentState.Mode.Normal -> {
-                            concatAdapter.addAdapter(0, adapter)
+                            concatAdapter.addAdapter(adapter)
                         }
                         is TabTrayDialogFragmentState.Mode.MultiSelect -> {
                             concatAdapter.removeAdapter(adapter)

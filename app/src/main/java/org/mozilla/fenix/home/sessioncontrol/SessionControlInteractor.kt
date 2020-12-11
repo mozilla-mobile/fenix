@@ -23,6 +23,7 @@ interface TabSessionInteractor {
 /**
  * Interface for collection related actions in the [SessionControlInteractor].
  */
+@SuppressWarnings("TooManyFunctions")
 interface CollectionInteractor {
     /**
      * Shows the Collection Creation fragment for selecting the tabs to add to the given tab
@@ -98,6 +99,11 @@ interface CollectionInteractor {
      * User has removed the collections placeholder from home.
      */
     fun onRemoveCollectionsPlaceholder()
+
+    /**
+     * User has opened collection 3 dot menu.
+     */
+    fun onCollectionMenuOpened()
 }
 
 interface ToolbarInteractor {
@@ -157,6 +163,13 @@ interface TopSiteInteractor {
     fun onOpenInPrivateTabClicked(topSite: TopSite)
 
     /**
+     * Opens a dialog to rename the given top site. Called when an user clicks on the "Rename" top site menu item.
+     *
+     * @param topSite The top site that will be renamed.
+     */
+    fun onRenameTopSiteClicked(topSite: TopSite)
+
+    /**
      * Removes the given top site. Called when an user clicks on the "Remove" top site menu item.
      *
      * @param topSite The top site that will be removed.
@@ -170,6 +183,11 @@ interface TopSiteInteractor {
      * @param type The type of the top site.
      */
     fun onSelectTopSite(url: String, type: TopSite.Type)
+
+    /**
+     * Called when top site menu is opened.
+     */
+    fun onTopSiteMenuOpened()
 }
 
 /**
@@ -208,6 +226,10 @@ class SessionControlInteractor(
 
     override fun onOpenInPrivateTabClicked(topSite: TopSite) {
         controller.handleOpenInPrivateTabClicked(topSite)
+    }
+
+    override fun onRenameTopSiteClicked(topSite: TopSite) {
+        controller.handleRenameTopSiteClicked(topSite)
     }
 
     override fun onRemoveTopSiteClicked(topSite: TopSite) {
@@ -264,5 +286,13 @@ class SessionControlInteractor(
 
     override fun onRemoveCollectionsPlaceholder() {
         controller.handleRemoveCollectionsPlaceholder()
+    }
+
+    override fun onCollectionMenuOpened() {
+        controller.handleMenuOpened()
+    }
+
+    override fun onTopSiteMenuOpened() {
+        controller.handleMenuOpened()
     }
 }

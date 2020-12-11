@@ -20,6 +20,7 @@ import io.mockk.verify
 import io.mockk.verifyOrder
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.TestCoroutineScope
 import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.concept.sync.Device
@@ -28,10 +29,13 @@ import mozilla.components.concept.sync.TabData
 import mozilla.components.feature.accounts.push.SendTabUseCases
 import mozilla.components.feature.share.RecentAppsStorage
 import mozilla.components.support.test.robolectric.testContext
+import mozilla.components.support.test.rule.MainCoroutineRule
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.R
@@ -54,12 +58,14 @@ class ShareControllerTest {
         ShareData(url = "url0", title = "title0"),
         ShareData(url = "url1", title = "title1")
     )
+
     // Navigation between app fragments uses ShareTab as arguments. SendTabUseCases uses TabData.
     private val tabsData = listOf(
         TabData("title0", "url0"),
         TabData("title1", "url1")
     )
     private val textToShare = "${shareData[0].url}\n\n${shareData[1].url}"
+    private val testDispatcher = TestCoroutineDispatcher()
     private val testCoroutineScope = TestCoroutineScope()
     private val sendTabUseCases = mockk<SendTabUseCases>(relaxed = true)
     private val snackbar = mockk<FenixSnackbar>(relaxed = true)
@@ -68,12 +74,20 @@ class ShareControllerTest {
     private val recentAppStorage = mockk<RecentAppsStorage>(relaxed = true)
     private val controller = DefaultShareController(
         context, shareSubject, shareData, sendTabUseCases, snackbar, navController,
-        recentAppStorage, testCoroutineScope, dismiss
+        recentAppStorage, testCoroutineScope, testDispatcher, dismiss
     )
+
+    @get:Rule
+    val coroutinesTestRule = MainCoroutineRule(testDispatcher)
 
     @Before
     fun setUp() {
         every { context.metrics } returns metrics
+    }
+
+    @After
+    fun cleanUp() {
+        testCoroutineScope.cleanupTestCoroutines()
     }
 
     @Test
@@ -93,12 +107,15 @@ class ShareControllerTest {
         // needed for capturing the actual Intent used the `slot` one doesn't have this flag so we
         // need to use an Activity Context.
         val activityContext: Context = mockk<Activity>()
-        val testController = DefaultShareController(activityContext, shareSubject, shareData, mockk(),
-            mockk(), mockk(), recentAppStorage, testCoroutineScope, dismiss)
+        val testController = DefaultShareController(
+            activityContext, shareSubject, shareData, mockk(),
+            mockk(), mockk(), recentAppStorage, testCoroutineScope, testDispatcher, dismiss
+        )
         every { activityContext.startActivity(capture(shareIntent)) } just Runs
         every { recentAppStorage.updateRecentApp(appShareOption.activityName) } just Runs
 
         testController.handleShareToApp(appShareOption)
+        testDispatcher.advanceUntilIdle()
 
         // Check that the Intent used for querying apps has the expected structure
         assertTrue(shareIntent.isCaptured)
@@ -106,7 +123,7 @@ class ShareControllerTest {
         assertEquals(shareSubject, shareIntent.captured.extras!![Intent.EXTRA_SUBJECT])
         assertEquals(textToShare, shareIntent.captured.extras!![Intent.EXTRA_TEXT])
         assertEquals("text/plain", shareIntent.captured.type)
-        assertEquals(Intent.FLAG_ACTIVITY_NEW_TASK, shareIntent.captured.flags)
+        assertEquals(Intent.FLAG_ACTIVITY_NEW_DOCUMENT + Intent.FLAG_ACTIVITY_MULTIPLE_TASK, shareIntent.captured.flags)
         assertEquals(appPackageName, shareIntent.captured.component!!.packageName)
         assertEquals(appClassName, shareIntent.captured.component!!.className)
 
@@ -127,8 +144,11 @@ class ShareControllerTest {
         // needed for capturing the actual Intent used the `slot` one doesn't have this flag so we
         // need to use an Activity Context.
         val activityContext: Context = mockk<Activity>()
-        val testController = DefaultShareController(activityContext, shareSubject, shareData, mockk(),
-            snackbar, mockk(), mockk(), testCoroutineScope, dismiss)
+        val testController = DefaultShareController(
+            activityContext, shareSubject, shareData, mockk(),
+            snackbar, mockk(), recentAppStorage, testCoroutineScope, testDispatcher, dismiss
+        )
+        every { recentAppStorage.updateRecentApp(appShareOption.activityName) } just Runs
         every { activityContext.startActivity(capture(shareIntent)) } throws SecurityException()
         every { activityContext.getString(R.string.share_error_snackbar) } returns "Cannot share to this app"
 
@@ -152,8 +172,11 @@ class ShareControllerTest {
         // needed for capturing the actual Intent used the `slot` one doesn't have this flag so we
         // need to use an Activity Context.
         val activityContext: Context = mockk<Activity>()
-        val testController = DefaultShareController(activityContext, shareSubject, shareData, mockk(),
-            snackbar, mockk(), mockk(), testCoroutineScope, dismiss)
+        val testController = DefaultShareController(
+            activityContext, shareSubject, shareData, mockk(),
+            snackbar, mockk(), recentAppStorage, testCoroutineScope, testDispatcher, dismiss
+        )
+        every { recentAppStorage.updateRecentApp(appShareOption.activityName) } just Runs
         every { activityContext.startActivity(capture(shareIntent)) } throws ActivityNotFoundException()
         every { activityContext.getString(R.string.share_error_snackbar) } returns "Cannot share to this app"
 
@@ -171,7 +194,8 @@ class ShareControllerTest {
     @Suppress("DeferredResultUnused")
     fun `handleShareToDevice should share to account device, inform callbacks and dismiss`() {
         val deviceToShareTo = Device(
-            "deviceId", "deviceName", DeviceType.UNKNOWN, false, 0L, emptyList(), false, null)
+            "deviceId", "deviceName", DeviceType.UNKNOWN, false, 0L, emptyList(), false, null
+        )
         val deviceId = slot<String>()
         val tabsShared = slot<List<TabData>>()
 
@@ -194,8 +218,26 @@ class ShareControllerTest {
     @Suppress("DeferredResultUnused")
     fun `handleShareToAllDevices calls handleShareToDevice multiple times`() {
         val devicesToShareTo = listOf(
-            Device("deviceId0", "deviceName0", DeviceType.UNKNOWN, false, 0L, emptyList(), false, null),
-            Device("deviceId1", "deviceName1", DeviceType.UNKNOWN, true, 1L, emptyList(), false, null)
+            Device(
+                "deviceId0",
+                "deviceName0",
+                DeviceType.UNKNOWN,
+                false,
+                0L,
+                emptyList(),
+                false,
+                null
+            ),
+            Device(
+                "deviceId1",
+                "deviceName1",
+                DeviceType.UNKNOWN,
+                true,
+                1L,
+                emptyList(),
+                false,
+                null
+            )
         )
         val tabsShared = slot<List<TabData>>()
 
@@ -282,6 +324,7 @@ class ShareControllerTest {
             mockk(),
             mockk(),
             mockk(),
+            mockk(),
             mockk()
         )
         val controllerWithMoreSharedTabs = controller
@@ -310,7 +353,7 @@ class ShareControllerTest {
         )
         val controller = DefaultShareController(
             context, shareSubject, shareData, sendTabUseCases, snackbar, navController,
-            recentAppStorage, testCoroutineScope, dismiss
+            recentAppStorage, testCoroutineScope, testDispatcher, dismiss
         )
 
         val expectedShareText = "${shareData[0].url}\n\nurl0\n\n${shareData[2].url}"
@@ -326,7 +369,7 @@ class ShareControllerTest {
     fun `getShareSubject will return a concatenation of tab titles if "shareSubject" is null`() {
         val controller = DefaultShareController(
             context, null, shareData, sendTabUseCases, snackbar, navController,
-            recentAppStorage, testCoroutineScope, dismiss
+            recentAppStorage, testCoroutineScope, testDispatcher, dismiss
         )
 
         assertEquals("title0, title1", controller.getShareSubject())

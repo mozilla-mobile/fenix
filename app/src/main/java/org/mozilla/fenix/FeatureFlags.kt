@@ -12,7 +12,7 @@ object FeatureFlags {
      * Pull-to-refresh allows you to pull the web content down far enough to have the page to
      * reload.
      */
-    const val pullToRefreshEnabled = false
+    val pullToRefreshEnabled = Config.channel.isNightlyOrDebug
 
     /**
      * Shows Synced Tabs in the tabs tray.
@@ -22,32 +22,23 @@ object FeatureFlags {
     val syncedTabsInTabsTray = Config.channel.isNightlyOrDebug
 
     /**
-     * Enables showing the top frequently visited sites
-     */
-    const val topFrecentSite = true
-
-    /**
-     * Shows the grid view settings for the tabs tray.
-     */
-    val showGridViewInTabsSettings = Config.channel.isNightlyOrDebug
-
-    /**
-     * Enables wait til first contentful paint
-     */
-    val waitUntilPaintToDraw = Config.channel.isNightlyOrDebug
-
-    /**
      * Enables downloads with external download managers.
      */
     const val externalDownloadManager = true
 
     /**
-     * Enables swipe to delete in bookmarks
-     */
-    val bookmarkSwipeToDelete = Config.channel.isNightlyOrDebug
-
-    /**
      * Enables ETP cookie purging
      */
     val etpCookiePurging = Config.channel.isNightlyOrDebug
+
+    /**
+     * Enables the Nimbus experiments library, especially the settings toggle to opt-out of
+     * all experiments.
+     */
+    val nimbusExperiments = Config.channel.isNightlyOrDebug
+
+    /**
+     * Enables the new MediaSession API.
+     */
+    val newMediaSessionApi = Config.channel.isNightlyOrDebug
 }

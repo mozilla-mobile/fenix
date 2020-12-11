@@ -18,6 +18,7 @@ import mozilla.components.feature.syncedtabs.view.SyncedTabsView.ErrorType
 import mozilla.components.support.test.ext.joinBlocking
 import mozilla.components.support.test.robolectric.testContext
 import mozilla.components.support.test.rule.MainCoroutineRule
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -53,7 +54,7 @@ class SyncedTabsControllerTest {
         every { lifecycleOwner.lifecycle } returns lifecycle
 
         concatAdapter = mockk()
-        every { concatAdapter.addAdapter(any(), any()) } returns true
+        every { concatAdapter.addAdapter(any()) } returns true
         every { concatAdapter.removeAdapter(any()) } returns true
 
         store = TabTrayDialogFragmentStore(
@@ -66,6 +67,11 @@ class SyncedTabsControllerTest {
         view = LayoutInflater.from(testContext).inflate(R.layout.about_list_item, null)
         controller =
             SyncedTabsController(lifecycleOwner, view, store, concatAdapter, coroutineContext)
+    }
+
+    @After
+    fun cleanUp() {
+        testDispatcher.cleanupTestCoroutines()
     }
 
     @Test
@@ -123,11 +129,10 @@ class SyncedTabsControllerTest {
     @Test
     fun `concatAdapter updated on mode changes`() = testDispatcher.runBlockingTest {
         store.dispatch(EnterMultiSelectMode).joinBlocking()
-
         verify { concatAdapter.removeAdapter(any()) }
 
         store.dispatch(ExitMultiSelectMode).joinBlocking()
-
-        verify { concatAdapter.addAdapter(0, any()) }
+        // When returning from Multiselect the adapter should be added at the end
+        verify { concatAdapter.addAdapter(any()) }
     }
 }

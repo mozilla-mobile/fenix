@@ -15,7 +15,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import mozilla.components.browser.engine.gecko.fetch.GeckoViewFetchClient
-import mozilla.components.concept.fetch.Client
 import mozilla.components.service.glean.Glean
 import mozilla.components.service.glean.config.Configuration
 import mozilla.components.service.glean.net.ConceptFetchHttpUploader
@@ -78,7 +77,7 @@ class BaselinePingTest {
         @JvmStatic
         fun setupOnce() {
             val httpClient = ConceptFetchHttpUploader(lazy {
-                GeckoViewFetchClient(ApplicationProvider.getApplicationContext()) as Client
+                GeckoViewFetchClient(ApplicationProvider.getApplicationContext())
             })
 
             // Fenix does not initialize the Glean SDK in tests/debug builds, but this test
@@ -111,7 +110,7 @@ class BaselinePingTest {
         do {
             attempts += 1
             val request = server.takeRequest(20L, TimeUnit.SECONDS) ?: break
-            val docType = request.path.split("/")[3]
+            val docType = request.path!!.split("/")[3]
             if (pingName == docType) {
                 val parsedPayload = JSONObject(request.getPlainBody())
                 if (pingReason == null) {

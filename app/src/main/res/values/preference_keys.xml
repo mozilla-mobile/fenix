@@ -11,6 +11,7 @@
     <string name="pref_key_site_permissions" translatable="false">pref_key_site_permissions</string>
     <string name="pref_key_add_private_browsing_shortcut" translatable="false">pref_key_add_private_browsing_shortcut</string>
     <string name="pref_key_accessibility" translatable="false">pref_key_accessibility</string>
+    <string name="pref_key_accessibility_auto_size" translatable="false">pref_key_accessibility_auto_size</string>
     <string name="pref_key_accessibility_font_scale" translatable="false">pref_key_accessibility_font_scale</string>
     <string name="pref_key_accessibility_force_enable_zoom" translatable="false">pref_key_accessibility_force_enable_zoom</string>
     <string name="pref_key_advanced" translatable="false">pref_key_advanced</string>
@@ -110,6 +111,7 @@
     <string name="pref_key_browser_feature_autoplay_audible" translatable="false">pref_key_browser_feature_autoplay</string>
     <string name="pref_key_browser_feature_autoplay_inaudible" translatable="false">pref_key_browser_feature_autoplay_inaudible</string>
     <string name="pref_key_browser_feature_persistent_storage" translatable="false">pref_key_browser_feature_persistent_storage</string>
+    <string name="pref_key_browser_feature_media_key_system_access" translatable="false">pref_key_browser_feature_media_key_system_access</string>
     <string name="pref_key_phone_feature_camera" translatable="false">pref_key_phone_feature_camera</string>
     <string name="pref_key_phone_feature_location" translatable="false">pref_key_phone_feature_location</string>
     <string name="pref_key_phone_feature_microphone" translatable="false">pref_key_phone_feature_microphone</string>
@@ -128,7 +130,6 @@
     <string name="pref_key_follow_device_theme" translatable="false">pref_key_follow_device_theme</string>
 
     <!-- Customization Settings -->
-    <string name="pref_home_category" translatable="false">pref_home_category</string>
     <string name="pref_key_website_pull_to_refresh" translatable="false">pref_key_website_pull_to_refresh</string>
     <string name="pref_key_dynamic_toolbar" translatable="false">pref_key_dynamic_toolbar</string>
     <string name="pref_key_swipe_toolbar_switch_tabs" translatable="false">pref_key_swipe_toolbar_switch_tabs</string>
@@ -197,12 +198,13 @@
     <!-- A value  of `true` means the Auto Close Tabs Banner has not been shown yet -->
     <string name="pref_key_should_show_auto_close_tabs_banner" translatable="false">pref_key_should_show_auto_close_tabs_banner</string>
 
+    <!-- A value  of `true` means the Grid View Banner has not been shown yet -->
+    <string name="pref_key_should_show_grid_view_banner" translatable="false">pref_key_should_show_grid_view_banner</string>
+
     <string name="pref_key_migrating_from_fenix_nightly_tip" translatable="false">pref_key_migrating_from_fenix_nightly_tip</string>
     <string name="pref_key_migrating_from_firefox_nightly_tip" translatable="false">pref_key_migrating_from_firefox_nightly_tip</string>
     <string name="pref_key_migrating_from_fenix_tip" translatable="false">pref_key_migrating_from_fenix_tip</string>
     <string name="pref_key_master_password_tip" translatable="false">pref_key_master_password_tip</string>
-
-    <string name="pref_key_wait_first_paint" translatable="false">pref_key_wait_first_paint</string>
 
     <string name="pref_key_synced_tabs_tabs_tray" translatable="false">pref_key_synced_tabs_tabs_tray</string>
 
@@ -211,11 +213,6 @@
     <string name="pref_key_open_tabs_count" translatable="false">pref_key_open_tabs_count</string>
 
     <string name="pref_key_search_count" translatable="false">pref_key_search_count</string>
-    <string name="pref_key_search_widget_cfr_display_count" translatable="false">pref_key_search_widget_cfr_display_count</string>
-    <string name="pref_key_search_widget_cfr_dismiss_count" translatable="false">pref_key_search_widget_cfr_dismiss_count</string>
-    <string name="pref_key_search_widget_cfr_manually_dismissed" translatable="false">pref_key_search_widget_cfr_manually_dismissed</string>
-    <string name="pref_key_is_in_search_widget_experiment" translatable="false">pref_key_is_in_search_widget_experiment</string>
-    <string name="pref_key_show_search_widget_cfr" translatable="false">pref_key_show_search_widget_cfr</string>
 
     <string name="pref_key_default_browser" translatable="false">pref_key_default_browser</string>
 
@@ -224,7 +221,6 @@
     <string name="pref_key_show_collections_placeholder_home" translatable="false">pref_key_show_collections_home</string>
 
     <!-- Tabs Settings -->
-    <string name="pref_key_tab_view_category" translatable="false">pref_key_tab_view_category</string>
     <string name="pref_key_tab_view_list" translatable="false">pref_key_tab_view_list</string>
     <string name="pref_key_tab_view_grid" translatable="false">pref_key_tab_view_grid</string>
     <string name="pref_key_tabs" translatable="false">pref_key_tabs</string>
@@ -232,7 +228,8 @@
     <string name="pref_key_close_tabs_after_one_day" translatable="false">pref_key_close_tabs_after_one_day</string>
     <string name="pref_key_close_tabs_after_one_week" translatable="false">pref_key_close_tabs_after_one_week</string>
     <string name="pref_key_close_tabs_after_one_month" translatable="false">pref_key_close_tabs_after_one_month</string>
-    <string name="pref_key_show_grid_view_tabs_settings" translatable="false">pref_key_show_grid_view_tabs_settings</string>
 
     <string name="pref_key_camera_permissions_needed" translatable="false">pref_key_camera_permissions_needed</string>
+
+    <string name="pref_key_return_to_browser" translatable="false">pref_key_return_to_browser</string>
 </resources>

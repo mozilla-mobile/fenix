@@ -100,10 +100,9 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     override val preferences: SharedPreferences =
         appContext.getSharedPreferences(FENIX_PREFERENCES, MODE_PRIVATE)
 
-    var showTopFrecentSites by featureFlagPreference(
+    var showTopFrecentSites by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_enable_top_frecent_sites),
-        default = true,
-        featureFlag = FeatureFlags.topFrecentSite
+        default = true
     )
 
     var numberOfAppLaunches by intPreference(
@@ -123,18 +122,6 @@ class Settings(private val appContext: Context) : PreferencesHolder {
 
     val canShowCfr: Boolean
         get() = (System.currentTimeMillis() - lastCfrShownTimeInMillis) > THREE_DAYS_MS
-
-    var showGridViewInTabsSettings by featureFlagPreference(
-        appContext.getPreferenceKey(R.string.pref_key_show_grid_view_tabs_settings),
-        default = false,
-        featureFlag = FeatureFlags.showGridViewInTabsSettings
-    )
-
-    var waitToShowPageUntilFirstPaint by featureFlagPreference(
-        appContext.getPreferenceKey(R.string.pref_key_wait_first_paint),
-        default = false,
-        featureFlag = FeatureFlags.waitUntilPaintToDraw
-    )
 
     var syncedTabsInTabsTray by featureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_synced_tabs_tabs_tray),
@@ -182,6 +169,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         true
     )
 
+    var shouldReturnToBrowser by booleanPreference(
+        appContext.getString(R.string.pref_key_return_to_browser),
+        false
+    )
+
     // If any of the prefs have been modified, quit displaying the fenix moved tip
     fun shouldDisplayFenixMovingTip(): Boolean =
         preferences.getBoolean(
@@ -196,57 +188,6 @@ class Settings(private val appContext: Context) : PreferencesHolder {
                     appContext.getString(R.string.pref_key_migrating_from_fenix_tip),
                     true
                 )
-
-    private val activeSearchCount = counterPreference(
-        appContext.getPreferenceKey(R.string.pref_key_search_count)
-    )
-
-    fun incrementActiveSearchCount() = activeSearchCount.increment()
-
-    private val isActiveSearcher: Boolean
-        get() = activeSearchCount.value > 2
-
-    fun shouldDisplaySearchWidgetCfr(): Boolean = canShowCfr && isActiveSearcher &&
-            searchWidgetCFRDismissCount.underMaxCount() &&
-            !searchWidgetInstalled &&
-            !searchWidgetCFRManuallyDismissed
-
-    private val searchWidgetCFRDisplayCount = counterPreference(
-        appContext.getPreferenceKey(R.string.pref_key_search_widget_cfr_display_count)
-    )
-
-    fun incrementSearchWidgetCFRDisplayed() = searchWidgetCFRDisplayCount.increment()
-
-    private val searchWidgetCFRManuallyDismissed by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_search_widget_cfr_manually_dismissed),
-        default = false
-    )
-
-    fun manuallyDismissSearchWidgetCFR() {
-        preferences.edit().putBoolean(
-            appContext.getPreferenceKey(R.string.pref_key_search_widget_cfr_manually_dismissed),
-            true
-        ).apply()
-    }
-
-    private val searchWidgetCFRDismissCount = counterPreference(
-        appContext.getPreferenceKey(R.string.pref_key_search_widget_cfr_dismiss_count),
-        maxCount = 3
-    )
-
-    fun incrementSearchWidgetCFRDismissed() = searchWidgetCFRDismissCount.increment()
-
-    val isInSearchWidgetExperiment by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_is_in_search_widget_experiment),
-        default = false
-    )
-
-    fun setSearchWidgetExperiment(value: Boolean) {
-        preferences.edit().putBoolean(
-            appContext.getPreferenceKey(R.string.pref_key_is_in_search_widget_experiment),
-            value
-        ).apply()
-    }
 
     var defaultSearchEngineName by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_search_engine),
@@ -290,7 +231,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = true
     )
 
-    val isExperimentationEnabled by booleanPreference(
+    var isExperimentationEnabled by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_experimentation),
         default = true
     )
@@ -311,11 +252,14 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     val shouldShowSecurityPinWarning: Boolean
         get() = loginsSecureWarningCount.underMaxCount()
 
-    fun shouldUseAutoSize() = fontSizeFactor == 1F
-
     var shouldUseLightTheme by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_light_theme),
         default = false
+    )
+
+    var shouldUseAutoSize by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_accessibility_auto_size),
+        default = true
     )
 
     var fontSizeFactor by floatPreference(
@@ -385,18 +329,43 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         else -> System.currentTimeMillis()
     }
 
-    fun getTabTimeoutString(): String = when {
+    enum class TabView {
+        GRID, LIST
+    }
+
+    fun getTabViewPingString() = if (gridTabView) TabView.GRID.name else TabView.LIST.name
+
+    enum class TabTimout {
+        ONE_DAY, ONE_WEEK, ONE_MONTH, MANUAL
+    }
+
+    fun getTabTimeoutPingString(): String = when {
         closeTabsAfterOneDay -> {
-            appContext.getString(R.string.close_tabs_after_one_day)
+            TabTimout.ONE_DAY.name
         }
         closeTabsAfterOneWeek -> {
-            appContext.getString(R.string.close_tabs_after_one_week)
+            TabTimout.ONE_WEEK.name
         }
         closeTabsAfterOneMonth -> {
-            appContext.getString(R.string.close_tabs_after_one_month)
+            TabTimout.ONE_MONTH.name
         }
         else -> {
-            appContext.getString(R.string.close_tabs_manually)
+            TabTimout.MANUAL.name
+        }
+    }
+
+    fun getTabTimeoutString(): String = when {
+        closeTabsAfterOneDay -> {
+            appContext.getString(R.string.close_tabs_after_one_day_summary)
+        }
+        closeTabsAfterOneWeek -> {
+            appContext.getString(R.string.close_tabs_after_one_week_summary)
+        }
+        closeTabsAfterOneMonth -> {
+            appContext.getString(R.string.close_tabs_after_one_month_summary)
+        }
+        else -> {
+            appContext.getString(R.string.close_tabs_manually_summary)
         }
     }
 
@@ -707,6 +676,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = true
     )
 
+    var shouldShowGridViewBanner by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_should_show_grid_view_banner),
+        default = true
+    )
+
     @VisibleForTesting(otherwise = PRIVATE)
     internal val trackingProtectionOnboardingCount = counterPreference(
         appContext.getPreferenceKey(R.string.pref_key_tracking_protection_onboarding),
@@ -772,7 +746,8 @@ class Settings(private val appContext: Context) : PreferencesHolder {
             camera = getSitePermissionsPhoneFeatureAction(PhoneFeature.CAMERA),
             autoplayAudible = getSitePermissionsPhoneFeatureAutoplayAction(PhoneFeature.AUTOPLAY_AUDIBLE),
             autoplayInaudible = getSitePermissionsPhoneFeatureAutoplayAction(PhoneFeature.AUTOPLAY_INAUDIBLE),
-            persistentStorage = getSitePermissionsPhoneFeatureAction(PhoneFeature.PERSISTENT_STORAGE)
+            persistentStorage = getSitePermissionsPhoneFeatureAction(PhoneFeature.PERSISTENT_STORAGE),
+            mediaKeySystemAccess = getSitePermissionsPhoneFeatureAction(PhoneFeature.MEDIA_KEY_SYSTEM_ACCESS)
         )
     }
 
@@ -783,7 +758,9 @@ class Settings(private val appContext: Context) : PreferencesHolder {
             PhoneFeature.LOCATION,
             PhoneFeature.CAMERA,
             PhoneFeature.AUTOPLAY_AUDIBLE,
-            PhoneFeature.AUTOPLAY_INAUDIBLE
+            PhoneFeature.AUTOPLAY_INAUDIBLE,
+            PhoneFeature.PERSISTENT_STORAGE,
+            PhoneFeature.MEDIA_KEY_SYSTEM_ACCESS
         ).map { it.getPreferenceKey(appContext) }
 
         preferences.registerOnSharedPreferenceChangeListener(lifecycleOwner) { _, key ->
@@ -914,7 +891,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         return overrideAmoUser.isNotEmpty() || overrideAmoCollection.isNotEmpty()
     }
 
-    val topSitesSize by intPreference(
+    var topSitesSize by intPreference(
         appContext.getPreferenceKey(R.string.pref_key_top_sites_size),
         default = 0
     )
@@ -924,18 +901,10 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = topSitesMaxCount
     )
 
-    fun setOpenTabsCount(count: Int) {
-        preferences.edit().putInt(
-            appContext.getPreferenceKey(R.string.pref_key_open_tabs_count),
-            count
-        ).apply()
-    }
-
-    val openTabsCount: Int
-        get() = preferences.getInt(
-            appContext.getPreferenceKey(R.string.pref_key_open_tabs_count),
-            0
-        )
+    var openTabsCount by intPreference(
+        appContext.getPreferenceKey(R.string.pref_key_open_tabs_count),
+        0
+    )
 
     private var savedLoginsSortingStrategyString by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_saved_logins_sorting_strategy),

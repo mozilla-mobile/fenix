@@ -18,6 +18,10 @@
 
     <!-- No Private Tabs Message Description -->
     <string name="no_private_tabs_description">Skedat tuaja private do të shfaqen këtu.</string>
+    <!-- Default title for pinned Baidu top site that links to Baidu home page  -->
+    <string name="default_top_site_baidu">Baidu</string>
+    <!-- Default title for pinned JD top site that links to JD home page  -->
+    <string name="default_top_site_jd">JD</string>
     <!-- Message announced to the user when tab tray is selected with 1 tab -->
     <string name="open_tab_tray_single">1 skedë e hapur. Prekeni që të ndërroni skeda.</string>
     <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
@@ -69,14 +73,6 @@
     <!-- Text for the negative button -->
     <string name="cfr_neg_button_text">Jo, faleminderit</string>
 
-    <!-- Search widget "contextual feature recommendation" (CFR) -->
-    <!-- Text for the main message. 'Firefox' intentionally hardcoded here.-->
-    <string name="search_widget_cfr_message">Kaloni më shpejt te Firefox-i. Shtoni te skena juaj e Kreut një &lt;em&gt;widget&lt;/em&gt;.</string>
-    <!-- Text for the positive button -->
-    <string name="search_widget_cfr_pos_button_text">Shtoni &lt;em&gt;widget&lt;/em&gt;</string>
-    <!-- Text for the negative button -->
-    <string name="search_widget_cfr_neg_button_text">Jo tani</string>
-
     <!-- Open in App "contextual feature recommendation" (CFR) -->
     <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
     <string name="open_in_app_cfr_info_message">Mund ta ujdisni Firefox-in të hapë automatikisht lidhje në aplikacione.</string>
@@ -98,6 +94,13 @@
     <string name="tab_tray_close_tabs_banner_positive_button_text">Shihni mundësitë</string>
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">Hidhe tej</string>
+
+    <!-- Text for the banner message to tell users about our grid view feature. -->
+    <string name="tab_tray_grid_view_banner_message">Ndryshoni skemën e skedave të hapura. Shkoni te rregullimet dhe përzgjidhni rrjetë nën pamjen skeda.</string>
+    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
+    <string name="tab_tray_grid_view_banner_positive_button_text">Shko te rregullimet</string>
+    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
+    <string name="tab_tray_grid_view_banner_negative_button_text">Hidhe tej</string>
 
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
@@ -213,6 +216,8 @@
     <string name="search_suggestions_onboarding_learn_more_link">Mësoni më tepër</string>
 
     <!-- Search Widget -->
+    <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
+    <string name="search_widget_content_description">Hapni një skedë të re Firefox</string>
     <!-- Text preview for smaller sized widgets -->
     <string name="search_widget_text_short">Kërko</string>
     <!-- Text preview for larger sized widgets -->
@@ -343,6 +348,20 @@
     <!-- Preference for notifications -->
     <string name="preferences_notifications">Njoftime</string>
 
+    <!-- Add-on Preferences -->
+    <!-- Preference to customize the configured AMO (addons.mozilla.org) collection -->
+    <string name="preferences_customize_amo_collection">Koleksion vetjak shtesash</string>
+    <!-- Button caption to confirm the add-on collection configuration -->
+    <string name="customize_addon_collection_ok">OK</string>
+    <!-- Button caption to abort the add-on collection configuration -->
+    <string name="customize_addon_collection_cancel">Anuloje</string>
+    <!-- Hint displayed on input field for custom collection name -->
+    <string name="customize_addon_collection_hint">Emër koleksioni</string>
+    <!-- Hint displayed on input field for custom collection user ID-->
+    <string name="customize_addon_collection_user_hint">I zoti i koleksionit (ID Përdoruesi)</string>
+    <!-- Toast shown after confirming the custom add-on collection configuration -->
+    <string name="toast_customize_addon_collection_done">Koleksioni i shtesave u ndryshua. Po dilet nga aplikacioni, për të zbatuar ndryshimet…</string>
+
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">Njëkohësoje tani</string>
@@ -422,6 +441,10 @@
     <string name="preferences_marketing_data">Të dhëna marketingu</string>
     <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
     <string name="preferences_marketing_data_description">Ndan me Leanplum-in, furnizuesi ynë i marketingut për celular, të dhëna rreth se cilat veçori përdorni në %1$s.</string>
+    <!-- Title for studies preferences -->
+    <string name="preference_experiments_2">Studime</string>
+    <!-- Summary for studies preferences -->
+    <string name="preference_experiments_summary_2">E lejon Mozilla-n të instalojë dhe xhirojë studime</string>
     <!-- Title for experiments preferences -->
     <string name="preference_experiments">Eksperimente</string>
     <!-- Summary for experiments preferences -->
@@ -525,6 +548,14 @@
     <string name="recently_closed_empty_message">S’ka skeda të mbyllura së fundi këtu</string>
 
     <!-- Tab Management -->
+    <!-- Title of preference for tabs management -->
+    <string name="preferences_tabs">Skeda</string>
+    <!-- Title of preference that allows a user to specify the tab view -->
+    <string name="preferences_tab_view">Parje skedash</string>
+    <!-- Option for a list tab view -->
+    <string name="tab_view_list">Listë</string>
+    <!-- Option for a grid tab view -->
+    <string name="tab_view_grid">Rrjetë</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
     <string name="preferences_close_tabs">Mbylli skedat</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
@@ -535,6 +566,15 @@
     <string name="close_tabs_after_one_week">Pas një jave</string>
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">Pas një muaji</string>
+
+    <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
+    <string name="close_tabs_manually_summary">Mbylleni dorazi</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
+    <string name="close_tabs_after_one_day_summary">Mbylle pas një dite</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one week-->
+    <string name="close_tabs_after_one_week_summary">Mbylle pas një jave</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one month-->
+    <string name="close_tabs_after_one_month_summary">Mbylle pas një muaji</string>
 
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
@@ -553,6 +593,8 @@
     <string name="tab_tray_title">Hapi Skedat</string>
     <!-- Text shown in the menu for saving tabs to a collection -->
     <string name="tab_tray_menu_item_save">Ruaje në koleksion</string>
+    <!-- Text shown in the menu for the collection selector -->
+    <string name="tab_tray_menu_select">Përzgjidhe</string>
     <!-- Text shown in the menu for sharing all tabs -->
     <string name="tab_tray_menu_item_share">Nda krejt skedat</string>
     <!-- Text shown in the menu to view recently closed tabs -->
@@ -567,8 +609,18 @@
     <string name="tab_tray_menu_home">Shko te kreu</string>
     <!-- Shortcut action to toggle private mode -->
     <string name="tab_tray_menu_toggle">Ndërroni mënyrë skedash</string>
+    <!-- Text shown in the multiselect menu for bookmarking selected tabs. -->
+    <string name="tab_tray_multiselect_menu_item_bookmark">Faqeruaji</string>
+    <!-- Text shown in the multiselect menu for closing selected tabs. -->
+    <string name="tab_tray_multiselect_menu_item_close">Mbylle</string>
+    <!-- Content description for tabs tray multiselect share button -->
+    <string name="tab_tray_multiselect_share_content_description">Nda skedat e përzgjedhura</string>
+    <!-- Content description for tabs tray multiselect menu -->
+    <string name="tab_tray_multiselect_menu_content_description">Menu skedash të përzgjedhura</string>
     <!-- Content description (not visible, for screen readers etc.): Removes tab from collection button. Removes the selected tab from collection when pressed -->
     <string name="remove_tab_from_collection">Hiq skedë prej koleksionit</string>
+    <!-- Text for button to enter multiselect mode in tabs tray -->
+    <string name="tabs_tray_select_tabs">Përzgjidhni skeda</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab button. Closes the current session when pressed -->
     <string name="close_tab">Mbylle skedën</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab <title> button. First parameter is tab title  -->
@@ -603,8 +655,12 @@
     <!-- Text for the button to open tabs of the selected collection -->
     <string name="collection_open_tabs">Hapi skedat</string>
 
-    <!-- Text for the menu button to remove a top site -->
-    <string name="remove_top_site">Hiqe</string>
+    <!-- Hint for adding name of a collection -->
+    <string name="collection_name_hint">Emër koleksioni</string>
+    <!-- Text for the menu button to rename a top site -->
+	<string name="rename_top_site">Rimertojeni</string>
+	<!-- Text for the menu button to remove a top site -->
+	<string name="remove_top_site">Hiqe</string>
 
     <!-- Text for the menu button to delete a top site from history -->
     <string name="delete_from_history">Fshije prej historiku</string>
@@ -641,6 +697,10 @@
     <!-- Text for the button to clear selected history items. The first parameter
         is a digit showing the number of items you have selected -->
     <string name="history_delete_some">Fshi %1$d objekte</string>
+    <!-- Text for the header that groups the history for today -->
+    <string name="history_today">Sot</string>
+    <!-- Text for the header that groups the history for yesterday -->
+    <string name="history_yesterday">Dje</string>
     <!-- Text for the header that groups the history for last 24 hours -->
     <string name="history_24_hours">24 orët e fundit</string>
     <!-- Text for the header that groups the history the past 7 days -->
@@ -653,11 +713,23 @@
     <string name="history_empty_message">S’ka historik këtu</string>
 
     <!-- Downloads -->
+    <!-- Text for the button to clear all downloads -->
+    <string name="download_delete_all">Fshiji shkarkimet</string>
+    <!-- Text for the dialog to confirm clearing all downloads -->
+    <string name="download_delete_all_dialog">Jeni i sigurt se doni të spastrohet historiku i shfletimeve tuaja?</string>
+    <!-- Text for the snackbar to confirm that multiple downloads items have been deleted -->
+    <string name="download_delete_multiple_items_snackbar">Shkarkimet u Fshinë</string>
     <!-- Text shown when no download exists -->
     <string name="download_empty_message">S’ka shkarkime këtu</string>
     <!-- History multi select title in app bar
     The first parameter is the number of downloads selected -->
     <string name="download_multi_select_title">%1$d të përzgjedhura</string>
+
+    <!-- History overflow menu open in new tab button -->
+    <string name="download_menu_open">Hape</string>
+    <!-- Text for the button to delete a single history item -->
+    <string name="download_delete_item">Fshije</string>
+
 
     <!-- Crashes -->
     <!-- Title text displayed on the tab crash page. This first parameter is the name of the application (For example: Fenix) -->
@@ -779,6 +851,8 @@
     <string name="preference_phone_feature_location">Vendndodhje</string>
     <!-- Preference for altering the notification access for all websites -->
     <string name="preference_phone_feature_notification">Njoftim</string>
+    <!-- Preference for altering the persistent storage access for all websites -->
+    <string name="preference_phone_feature_persistent_storage">Depozitë e Qëndrueshme</string>
     <!-- Label that indicates that a permission must be asked always -->
     <string name="preference_option_phone_feature_ask_to_allow">Kërko të lejohet</string>
     <!-- Label that indicates that a permission must be blocked -->
@@ -918,6 +992,12 @@
     <string name="snackbar_tab_closed">Skeda u mbyll</string>
     <!-- Text shown in snackbar when user closes all tabs -->
     <string name="snackbar_tabs_closed">Skedat u mbyllën</string>
+    <!-- Text shown in snackbar when user closes tabs -->
+    <string name="snackbar_message_tabs_closed">Skedat u mbyllën!</string>
+    <!-- Text shown in snackbar when user bookmarks a list of tabs -->
+    <string name="snackbar_message_bookmarks_saved">Faqerojtësit u ruajtën! </string>
+    <!-- Text shown in snackbar action for viewing bookmarks -->
+    <string name="snackbar_message_bookmarks_view">Shihini</string>
     <!-- Text shown in snackbar when user adds a site to top sites -->
     <string name="snackbar_added_to_top_sites">U shtua te sajtet kryesuese!</string>
     <!-- Text shown in snackbar when user closes a private tab -->
@@ -1584,12 +1664,24 @@
     <!-- Label for the show most visited sites preference -->
     <string name="top_sites_toggle_top_frecent_sites">Shfaq sajtet më të vizituar</string>
 
+    <!-- Title text displayed in the rename top site dialog. -->
+	<string name="top_sites_rename_dialog_title">Emër</string>
+	<!-- Hint for renaming title of a top site -->
+	<string name="top_site_name_hint">Emër sajti kryesor</string>
+	<!-- Button caption to confirm the renaming of the top site. -->
+	<string name="top_sites_rename_dialog_ok">OK</string>
+	<!-- Dialog button text for canceling the rename top site prompt. -->
+	<string name="top_sites_rename_dialog_cancel">Anuloje</string>
+
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">Hiqe</string>
 
     <!-- Deprecated: text for the firefox account onboarding card header
     The first parameter is the name of the app (e.g. Firefox Preview) -->
     <string name="onboarding_firefox_account_header">Përfitoni maksimumin nga %s.</string>
+
+    <!-- Content description radio buttons with a link to more information -->
+    <string name="radio_preference_info_content_description">Klikoni për më tepër hollësi</string>
 
     <!-- Deprecated: No Open Tabs Message Header -->
     <string name="no_collections_header1">Koleksiononi gjërat që kanë rëndësi për ju</string>

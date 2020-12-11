@@ -27,7 +27,6 @@ import androidx.test.uiautomator.By
 import androidx.test.uiautomator.Until
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By.res
-import androidx.test.uiautomator.By.text
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import org.hamcrest.Matchers.allOf
@@ -44,7 +43,13 @@ import org.mozilla.fenix.helpers.ext.waitNotNull
  */
 class BookmarksRobot {
 
-    fun verifyBookmarksMenuView() = assertBookmarksView()
+    fun verifyBookmarksMenuView() {
+        mDevice.findObject(
+            UiSelector().text("Bookmarks")
+        ).waitForExists(waitingTime)
+
+        assertBookmarksView()
+    }
 
     fun verifyEmptyBookmarksList() = assertEmptyBookmarksList()
 
@@ -58,10 +63,7 @@ class BookmarksRobot {
     }
 
     fun verifyBookmarkTitle(title: String) {
-        mDevice.waitNotNull(
-            Until.findObject(text(title)),
-            TestAssetHelper.waitingTime
-        )
+        mDevice.findObject(UiSelector().text(title)).waitForExists(waitingTime)
         assertBookmarkTitle(title)
     }
 
@@ -164,7 +166,7 @@ class BookmarksRobot {
 
     fun saveEditBookmark() {
         saveBookmarkButton().click()
-        mDevice.waitNotNull(Until.findObject(text("Bookmarks")))
+        mDevice.findObject(UiSelector().resourceId("R.id.bookmark_list")).waitForExists(waitingTime)
     }
 
     fun clickParentFolderSelector() = bookmarkFolderSelector().click()

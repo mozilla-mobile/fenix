@@ -19,6 +19,10 @@
 
     <!-- No Private Tabs Message Description -->
     <string name="no_private_tabs_description">Los onglets privats se mostraràn aquí.</string>
+    <!-- Default title for pinned Baidu top site that links to Baidu home page  -->
+    <string name="default_top_site_baidu">Baidu</string>
+    <!-- Default title for pinned JD top site that links to JD home page  -->
+    <string name="default_top_site_jd">JD</string>
     <!-- Message announced to the user when tab tray is selected with 1 tab -->
     <string name="open_tab_tray_single">1 onglet dobèrt. Tocatz per i bascular.</string>
 
@@ -69,14 +73,6 @@
     <!-- Text for the negative button -->
     <string name="cfr_neg_button_text">Non, mercé</string>
 
-    <!-- Search widget "contextual feature recommendation" (CFR) -->
-    <!-- Text for the main message. 'Firefox' intentionally hardcoded here.-->
-    <string name="search_widget_cfr_message">Accedissètz mai rapidament a Firefox. Ajustatz un widget a l’ecran d’acuèlh.</string>
-    <!-- Text for the positive button -->
-    <string name="search_widget_cfr_pos_button_text">Apondre lo widget</string>
-    <!-- Text for the negative button -->
-    <string name="search_widget_cfr_neg_button_text">Pas ara</string>
-
     <!-- Open in App "contextual feature recommendation" (CFR) -->
     <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
     <string name="open_in_app_cfr_info_message">Podètz configurar Firefox per dobrir automaticament los ligams dins las aplicacions.</string>
@@ -92,10 +88,19 @@
     <!-- Text for the negative action button to dismiss the dialog. -->
     <string name="camera_permissions_needed_negative_button_text">Ignorar</string>
 
+    <!-- Text for the banner message to tell users about our auto close feature. -->
+    <string name="tab_tray_close_tabs_banner_message">Definir quand tampar automaticament los onglets pas visualizats lo jorn, la setmana o lo mes passat.</string>
     <!-- Text for the positive action button to go to Settings for auto close tabs. -->
     <string name="tab_tray_close_tabs_banner_positive_button_text">Veire las opcions</string>
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">Ignorar</string>
+
+    <!-- Text for the banner message to tell users about our grid view feature. -->
+    <string name="tab_tray_grid_view_banner_message">Cambiatz la disposicion dels onglet dubèrts. Anatz als paramètres e seleccionatz « »Gresilha » jos « Vista onglet ».</string>
+    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
+    <string name="tab_tray_grid_view_banner_positive_button_text">Anar als paramètres</string>
+    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
+    <string name="tab_tray_grid_view_banner_negative_button_text">Ignorar</string>
 
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
@@ -212,6 +217,8 @@
     <string name="search_suggestions_onboarding_learn_more_link">Ne saber mai</string>
 
     <!-- Search Widget -->
+    <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
+    <string name="search_widget_content_description">Dobrir dins un onglet Firefox novèl</string>
     <!-- Text preview for smaller sized widgets -->
     <string name="search_widget_text_short">Recercar</string>
     <!-- Text preview for larger sized widgets -->
@@ -342,12 +349,21 @@
     <!-- Preference for notifications -->
     <string name="preferences_notifications">Notificacions</string>
 
+    <!-- Add-on Preferences -->
+    <!-- Preference to customize the configured AMO (addons.mozilla.org) collection -->
+    <string name="preferences_customize_amo_collection">Colleccion de moduls personalizada</string>
     <!-- Button caption to confirm the add-on collection configuration -->
     <string name="customize_addon_collection_ok">D’acòrdi</string>
     <!-- Button caption to abort the add-on collection configuration -->
     <string name="customize_addon_collection_cancel">Anullar</string>
     <!-- Hint displayed on input field for custom collection name -->
     <string name="customize_addon_collection_hint">Nom de la collecion</string>
+
+    <!-- Hint displayed on input field for custom collection user ID-->
+    <string name="customize_addon_collection_user_hint">Proprietari de la colleccion (ID utilizaire)</string>
+
+    <!-- Toast shown after confirming the custom add-on collection configuration -->
+    <string name="toast_customize_addon_collection_done">Colleccion de moduls complementaris modificada. Tampadura de l’aplicacion per aplicar las modificacions…</string>
 
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
@@ -429,6 +445,10 @@
     <string name="preferences_marketing_data">Donadas marketing</string>
     <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
     <string name="preferences_marketing_data_description">Parteja de donadas sus las foncionalitats qu’utilizatz amb Leanplum, nòstre provesidor de marketing mobil.</string>
+    <!-- Title for studies preferences -->
+    <string name="preference_experiments_2">Estudis</string>
+    <!-- Summary for studies preferences -->
+    <string name="preference_experiments_summary_2">Permet a Mozilla d’installar e lançar estudis</string>
     <!-- Title for experiments preferences -->
     <string name="preference_experiments">Experimentacions</string>
 
@@ -555,6 +575,15 @@
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">Aprèp un mes</string>
 
+    <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
+    <string name="close_tabs_manually_summary">Tampar manualament</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
+    <string name="close_tabs_after_one_day_summary">Tampar aprèp un jorn</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one week-->
+    <string name="close_tabs_after_one_week_summary">Tampar aprèp una setmana</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one month-->
+    <string name="close_tabs_after_one_month_summary">Tampar aprèp un mes</string>
+
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
     <string name="tab_header_label">Onglets dobèrts</string>
@@ -572,6 +601,8 @@
     <string name="tab_tray_title">Onglets dobèrts</string>
     <!-- Text shown in the menu for saving tabs to a collection -->
     <string name="tab_tray_menu_item_save">Salvar a la colleccion</string>
+    <!-- Text shown in the menu for the collection selector -->
+    <string name="tab_tray_menu_select">Seleccionar</string>
     <!-- Text shown in the menu for sharing all tabs -->
     <string name="tab_tray_menu_item_share">Partejar totes los onglets</string>
     <!-- Text shown in the menu to view recently closed tabs -->
@@ -586,8 +617,18 @@
     <string name="tab_tray_menu_home">Acuèlh</string>
     <!-- Shortcut action to toggle private mode -->
     <string name="tab_tray_menu_toggle">Bascular de mòde d’onglets</string>
+    <!-- Text shown in the multiselect menu for bookmarking selected tabs. -->
+    <string name="tab_tray_multiselect_menu_item_bookmark">Marcar los onglets</string>
+    <!-- Text shown in the multiselect menu for closing selected tabs. -->
+    <string name="tab_tray_multiselect_menu_item_close">Tampar los onglets</string>
+    <!-- Content description for tabs tray multiselect share button -->
+    <string name="tab_tray_multiselect_share_content_description">Partejar los onglets seleccionats</string>
+    <!-- Content description for tabs tray multiselect menu -->
+    <string name="tab_tray_multiselect_menu_content_description">Menú dels onglets seleccionats</string>
     <!-- Content description (not visible, for screen readers etc.): Removes tab from collection button. Removes the selected tab from collection when pressed -->
     <string name="remove_tab_from_collection">Suprimir l’onglet de la colleccion</string>
+    <!-- Text for button to enter multiselect mode in tabs tray -->
+    <string name="tabs_tray_select_tabs">Seleccionar d’onglets</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab button. Closes the current session when pressed -->
     <string name="close_tab">Tampar l’onglet</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab <title> button. First parameter is tab title  -->
@@ -621,8 +662,12 @@
     <string name="collection_rename">Renomenar la colleccion</string>
     <!-- Text for the button to open tabs of the selected collection -->
     <string name="collection_open_tabs">Onglets dobèrts</string>
-    <!-- Text for the menu button to remove a top site -->
-    <string name="remove_top_site">Suprimir</string>
+    <!-- Hint for adding name of a collection -->
+    <string name="collection_name_hint">Nom de la collecion</string>
+    <!-- Text for the menu button to rename a top site -->
+	<string name="rename_top_site">Renommar</string>
+	<!-- Text for the menu button to remove a top site -->
+	<string name="remove_top_site">Suprimir</string>
 
     <!-- Text for the menu button to delete a top site from history -->
     <string name="delete_from_history">Suprimir de l’istoric</string>
@@ -676,11 +721,23 @@
     <string name="history_empty_message">Cap d’istoric</string>
 
     <!-- Downloads -->
+    <!-- Text for the button to clear all downloads -->
+    <string name="download_delete_all">Suprimir los telecargaments</string>
+    <!-- Text for the dialog to confirm clearing all downloads -->
+    <string name="download_delete_all_dialog">Volètz vertadièrament escafar los telecargaments ?</string>
+    <!-- Text for the snackbar to confirm that multiple downloads items have been deleted -->
+    <string name="download_delete_multiple_items_snackbar">Telecargament suprimits</string>
     <!-- Text shown when no download exists -->
     <string name="download_empty_message">Pas cap de telecargament</string>
     <!-- History multi select title in app bar
     The first parameter is the number of downloads selected -->
     <string name="download_multi_select_title">%1$d seleccionats</string>
+
+    <!-- History overflow menu open in new tab button -->
+    <string name="download_menu_open">Dobrir</string>
+    <!-- Text for the button to delete a single history item -->
+    <string name="download_delete_item">Suprimir</string>
+
 
     <!-- Crashes -->
     <!-- Title text displayed on the tab crash page. This first parameter is the name of the application (For example: Fenix) -->
@@ -950,6 +1007,12 @@
     <string name="snackbar_tab_closed">Onglet tampat</string>
     <!-- Text shown in snackbar when user closes all tabs -->
     <string name="snackbar_tabs_closed">Onglets tampats</string>
+    <!-- Text shown in snackbar when user closes tabs -->
+    <string name="snackbar_message_tabs_closed">Onglets tampats !</string>
+    <!-- Text shown in snackbar when user bookmarks a list of tabs -->
+    <string name="snackbar_message_bookmarks_saved">Marcapagina apondut !</string>
+    <!-- Text shown in snackbar action for viewing bookmarks -->
+    <string name="snackbar_message_bookmarks_view">Veire</string>
     <!-- Text shown in snackbar when user adds a site to top sites -->
     <string name="snackbar_added_to_top_sites">Ajustat als sites principals</string>
     <!-- Text shown in snackbar when user closes a private tab -->
@@ -989,6 +1052,8 @@
     <!-- Message for copying the URL via long press on the toolbar -->
     <string name="url_copied">URL copiada</string>
 
+    <!-- Sample text for accessibility font size -->
+    <string name="accessibility_text_size_sample_text_1">Aquò es un exemple de tèxt. Aquí es una demotracion de coma apareisserà lo tèxt quand aumentatz o redusissètz la talha amb aqueste paramètre.</string>
     <!-- Summary for Accessibility Text Size Scaling Preference -->
     <string name="preference_accessibility_text_size_summary">Va venir lo tèxt dels sites mai grand o mai pichon</string>
     <!-- Title for Accessibility Text Size Scaling Preference -->
@@ -996,6 +1061,9 @@
 
     <!-- Title for Accessibility Text Automatic Size Scaling Preference -->
     <string name="preference_accessibility_auto_size_2">Talha de poliça automatica</string>
+
+    <!-- Summary for Accessibility Text Automatic Size Scaling Preference -->
+    <string name="preference_accessibility_auto_size_summary">La talha de poliça correspondrà a la talha dels paramètres Android. Desactivatz aquesta opcion per gerir la talha de la poliça.</string>
 
     <!-- Title for the Delete browsing data preference -->
     <string name="preferences_delete_browsing_data">Suprimir las donadas de navegacion</string>
@@ -1122,6 +1190,8 @@
     <string name="onboarding_private_browsing_button">Dobrir los paramètres</string>
     <!-- text for the privacy notice onboarding card header -->
     <string name="onboarding_privacy_notice_header">Vòstra vida privada</string>
+    <!-- Text for the button to read the privacy notice -->
+    <string name="onboarding_privacy_notice_read_button">Legissètz nòstra politica de confidencialitat</string>
     <!-- Content description (not visible, for screen readers etc.): Close onboarding screen -->
     <string name="onboarding_close">Tampar</string>
 
@@ -1160,6 +1230,8 @@
     <string name="sign_in_with_camera">Connectatz-vos amb la camèra</string>
     <!-- Text shown for settings option for sign with email -->
     <string name="sign_in_with_email">Utilizar una adreça electronica allòc</string>
+    <!-- Text shown for settings option for create new account text.'Firefox' intentionally hardcoded here.-->
+    <string name="sign_in_create_account_text"><![CDATA[Cap de compte ? <u>Creatz-ne un</u> per sincronizar Firefox entre periferics.]]></string>
     <!-- Text shown in confirmation dialog to sign out of account -->
     <string name="sign_out_confirmation_message">Firefox quitarà de sincronizar vòstre compte mas escafarà pas las donadas de navegacion d’aqueste periferic.</string>
     <!-- Text shown in confirmation dialog to sign out of account. The first parameter is the name of the app (e.g. Firefox Preview) -->
@@ -1230,6 +1302,8 @@
     <string name="enhanced_tracking_protection_allowed">Autorizat</string>
     <!-- Category of trackers (social media trackers) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_social_media_trackers_title">Traçadors de malhums socials</string>
+    <!-- Description of social media trackers that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_social_media_trackers_description">Limita la capacitat dels malhums socials de seguir vòstra activitat en linha.</string>
     <!-- Category of trackers (cross-site tracking cookies) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_cookies_title">Cookies de seguiment entre sites</string>
     <!-- Category of trackers (cryptominers) that can be blocked by Enhanced Tracking Protection -->
@@ -1264,11 +1338,16 @@
     <!-- Category of trackers (redirect trackers) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_redirect_trackers_title">Traçador per redireccion</string>
 
+    <!-- Description of redirect tracker cookies that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_description">Escafa los cookies definits per redireccion cap als sites web coneguts per far seguiment</string>
+
     <!-- About page link text to open support link -->
     <string name="about_support">Assisténcia</string>
 
     <!-- About page link text to list of past crashes (like about:crashes on desktop) -->
     <string name="about_crashes">Plantatges</string>
+    <!-- About page link text to open privacy notice link -->
+    <string name="about_privacy_notice">Politica de confidencialitat</string>
     <!-- About page link text to open know your rights link -->
     <string name="about_know_your_rights">Vòstres dreches</string>
     <!-- About page link text to open licensing information link -->
@@ -1355,6 +1434,8 @@
     <string name="preferences_passwords_saved_logins_password">Senhal</string>
     <!-- Message displayed in security prompt to reenter a secret pin to access saved logins -->
     <string name="preferences_passwords_saved_logins_enter_pin">Tornatz picar lo PIN</string>
+    <!-- Message displayed in security prompt to access saved logins -->
+    <string name="preferences_passwords_saved_logins_enter_pin_description">Desblocatz per veire los identificants enregistrats</string>
     <!-- Message displayed when a connection is insecure and we detect the user is entering a password -->
     <string name="logins_insecure_connection_warning">Aquesta connexion es pas segura. Los identificant picats aquí poirián èsser divulgats.</string>
     <!-- Learn more link that will link to a page with more information displayed when a connection is insecure and we detect the user is entering a password -->
@@ -1388,6 +1469,8 @@
     <!-- Content Description (for screenreaders etc) read for the button to hide a password in logins -->
     <string name="saved_login_hide_password">Amagar lo senhal</string>
 
+    <!-- Message displayed in biometric prompt displayed for authentication before allowing users to view their logins -->
+    <string name="logins_biometric_prompt_message">Desblocatz per veire los identificants enregistrats</string>
     <!-- Title of warning dialog if users have no device authentication set up -->
     <string name="logins_warning_dialog_title">Protegissètz vòstres identificants e senhals</string>
     <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
@@ -1402,6 +1485,9 @@
     <string name="saved_logins_sort_strategy_alphabetically">Nom (A-Z)</string>
     <!-- Saved logins sorting strategy menu item -by last used- (if selected, it will sort saved logins by last used) -->
     <string name="saved_logins_sort_strategy_last_used">Darrièra utilizacion</string>
+
+    <!-- Content description (not visible, for screen readers etc.): Sort saved logins dropdown menu chevron icon -->
+    <string name="saved_logins_menu_dropdown_chevron_icon_content_description">Menú per triar los identificants</string>
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Apondre un motor de recèrca</string>
@@ -1438,6 +1524,8 @@
     <string name="search_add_custom_engine_error_existing_name">Existís ja un motor de recèrca amb lo nom « %s ».</string>
     <!-- Text shown when a user leaves the search string field empty -->
     <string name="search_add_custom_engine_error_empty_search_string">Picatz una cadena de recèrca</string>
+    <!-- Text shown when a user leaves out the required template string -->
+    <string name="search_add_custom_engine_error_missing_template">Verificatz que la cadena de recèrca correspond al format de l’exemple</string>
     <!-- Text shown when we aren't able to validate the custom search query. The first parameter is the url of the custom search engine -->
     <string name="search_add_custom_engine_error_cannot_reach">Error de connexion a « %s »</string>
     <!-- Text shown when a user creates a new search engine -->
@@ -1502,6 +1590,12 @@
 
     <!--  The saved login options menu description. -->
     <string name="login_options_menu">Opcions de l’identificant</string>
+    <!--  The editable text field for a login's web address. -->
+    <string name="saved_login_hostname_description">Lo camp de tèxt modificable per l’adreça web de l’identificant.</string>
+    <!--  The editable text field for a login's username. -->
+    <string name="saved_login_username_description">Lo camp de tèxt modificable pel nom d’utilizaire de l’identificant.</string>
+    <!--  The editable text field for a login's password. -->
+    <string name="saved_login_password_description">Lo camp de tèxt modificable pel senhal de l’identificant.</string>
     <!--  The button description to save changes to an edited login. -->
     <string name="save_changes_to_login">Enregistratz las modificacions de l’identificant.</string>
     <!--  The button description to discard changes to an edited login. -->
@@ -1538,11 +1632,22 @@
     <!-- Top Sites -->
     <!-- Title text displayed in the dialog when top sites limit is reached. -->
     <string name="top_sites_max_limit_title">Arribat a la limita dels sites principals</string>
+    <!-- Content description text displayed in the dialog when top sites limit is reached. -->
+    <string name="top_sites_max_limit_content_2">Per apondre un site als sites notables, suprimissètz-ne un. Tocatz e demoratz quichat per ne suprimir un.</string>
     <!-- Confirmation dialog button text when top sites limit is reached. -->
     <string name="top_sites_max_limit_confirmation_button">Òc, plan comprés</string>
 
     <!-- Label for the show most visited sites preference -->
     <string name="top_sites_toggle_top_frecent_sites">Mostrar los sites mai visitats</string>
+
+    <!-- Title text displayed in the rename top site dialog. -->
+	<string name="top_sites_rename_dialog_title">Nom</string>
+	<!-- Hint for renaming title of a top site -->
+	<string name="top_site_name_hint">Nom del site notable</string>
+	<!-- Button caption to confirm the renaming of the top site. -->
+	<string name="top_sites_rename_dialog_ok">D’acòrdi</string>
+	<!-- Dialog button text for canceling the rename top site prompt. -->
+	<string name="top_sites_rename_dialog_cancel">Anullar</string>
 
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">Suprimir</string>
@@ -1551,8 +1656,13 @@
     The first parameter is the name of the app (e.g. Firefox Preview) -->
     <string name="onboarding_firefox_account_header">Ne fasètz mai amb %s.</string>
 
+    <!-- Content description radio buttons with a link to more information -->
+    <string name="radio_preference_info_content_description">Clicatz per aver de detalhs</string>
+
     <!-- Deprecated: No Open Tabs Message Header -->
     <string name="no_collections_header1">Amassatz çò que compta per vos</string>
     <!-- Deprecated: Label to describe what collections are to a new user without any collections -->
     <string name="no_collections_description1">Agropatz de recèrcas, de sites e d’onglets similaris per i accedir rapidament mai tard.</string>
+    <!-- Deprecated: text for the firefox account onboarding card header when we detect you're already signed in to -->
+    <string name="onboarding_firefox_account_auto_signin_header_2">Sètz connectat coma %s sus un autre navegador Firefox sus aqueste telefòn. Volètz vos connectar amb aqueste compte ?</string>
     </resources>

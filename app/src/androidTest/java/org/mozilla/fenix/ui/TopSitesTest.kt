@@ -36,7 +36,7 @@ class TopSitesTest {
     @Before
     fun setUp() {
         mockWebServer = MockWebServer().apply {
-            setDispatcher(AndroidAssetDispatcher())
+            dispatcher = AndroidAssetDispatcher()
             start()
         }
     }
@@ -59,7 +59,7 @@ class TopSitesTest {
             verifySnackBarText("Added to top sites!")
         }.openTabDrawer {
         }.openNewTab {
-        }.dismiss {
+        }.dismissSearchBar {
             verifyExistingTopSitesList()
             verifyExistingTopSitesTabs(defaultWebPageTitle)
         }
@@ -78,14 +78,14 @@ class TopSitesTest {
             verifySnackBarText("Added to top sites!")
         }.openTabDrawer {
         }.openNewTab {
-        }.dismiss {
+        }.dismissSearchBar {
             verifyExistingTopSitesList()
             verifyExistingTopSitesTabs(defaultWebPageTitle)
         }.openTopSiteTabWithTitle(title = defaultWebPageTitle) {
             verifyUrl(defaultWebPage.url.toString().replace("http://", ""))
         }.openTabDrawer {
         }.openNewTab {
-        }.dismiss {
+        }.dismissSearchBar {
             verifyExistingTopSitesList()
             verifyExistingTopSitesTabs(defaultWebPageTitle)
         }.openContextMenuOnTopSitesWithTitle(defaultWebPageTitle) {
@@ -109,13 +109,38 @@ class TopSitesTest {
             verifySnackBarText("Added to top sites!")
         }.openTabDrawer {
         }.openNewTab {
-        }.dismiss {
+        }.dismissSearchBar {
             verifyExistingTopSitesList()
             verifyExistingTopSitesTabs(defaultWebPageTitle)
         }.openContextMenuOnTopSitesWithTitle(defaultWebPageTitle) {
             verifyTopSiteContextMenuItems()
         }.openTopSiteInPrivateTab {
             verifyCurrentPrivateSession(activityIntentTestRule.activity.applicationContext)
+        }
+    }
+
+    @Test
+    fun verifyRenameTopSite() {
+        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+        val defaultWebPageTitle = "Test_Page_1"
+        val defaultWebPageTitleNew = "Test_Page_2"
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+        }.openThreeDotMenu {
+            verifyAddFirefoxHome()
+        }.addToFirefoxHome {
+            verifySnackBarText("Added to top sites!")
+        }.openTabDrawer {
+        }.openNewTab {
+        }.dismissSearchBar {
+            verifyExistingTopSitesList()
+            verifyExistingTopSitesTabs(defaultWebPageTitle)
+        }.openContextMenuOnTopSitesWithTitle(defaultWebPageTitle) {
+            verifyTopSiteContextMenuItems()
+        }.renameTopSite(defaultWebPageTitleNew) {
+            verifyExistingTopSitesList()
+            verifyExistingTopSitesTabs(defaultWebPageTitleNew)
         }
     }
 
@@ -132,7 +157,7 @@ class TopSitesTest {
             verifySnackBarText("Added to top sites!")
         }.openTabDrawer {
         }.openNewTab {
-        }.dismiss {
+        }.dismissSearchBar {
             verifyExistingTopSitesList()
             verifyExistingTopSitesTabs(defaultWebPageTitle)
         }.openContextMenuOnTopSitesWithTitle(defaultWebPageTitle) {

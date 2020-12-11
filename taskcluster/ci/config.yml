@@ -4,6 +4,7 @@ treeherder:
     group-names:
         'beta': 'Beta-related tasks with same APK configuration as Fennec'
         'Btime': 'Raptor-Browsertime tests'
+        'Btime-wr': 'Raptor-Browsertime tests with webrender enabled'
         'bump': 'Bump dependencies'
         'debug': 'Builds made for testing'
         'Fetch': 'Fetch and store content'
@@ -77,6 +78,11 @@ workers:
                 by-level:
                     "3": mobile-3-signing
                     default: mobile-t-signing
+        tree:
+            provisioner: scriptworker-k8s
+            implementation: scriptworker-tree
+            os: scriptworker
+            worker-type: 'mobile-{level}-tree'
         t-bitbar.*:
             provisioner: proj-autophone
             implementation: generic-worker

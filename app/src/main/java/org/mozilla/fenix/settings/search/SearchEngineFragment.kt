@@ -10,6 +10,7 @@ import androidx.preference.CheckBoxPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
+import mozilla.components.support.ktx.android.view.hideKeyboard
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.settings
@@ -21,10 +22,12 @@ class SearchEngineFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.search_preferences, rootKey)
+        view?.hideKeyboard()
     }
 
     override fun onResume() {
         super.onResume()
+        view?.hideKeyboard()
         showToolbar(getString(R.string.preferences_search))
 
         val searchSuggestionsPreference =
@@ -67,15 +70,11 @@ class SearchEngineFragment : PreferenceFragmentCompat() {
                 isChecked = context.settings().shouldShowClipboardSuggestions
             }
 
-        val searchEngineListPreference =
-            requirePreference<SearchEngineListPreference>(R.string.pref_key_search_engine_list)
-
         val showVoiceSearchPreference =
             requirePreference<SwitchPreference>(R.string.pref_key_show_voice_search).apply {
                 isChecked = context.settings().shouldShowVoiceSearch
             }
 
-        searchEngineListPreference.reload(requireContext())
         searchSuggestionsPreference.onPreferenceChangeListener = SharedPreferenceUpdater()
         showSearchShortcuts.onPreferenceChangeListener = SharedPreferenceUpdater()
         showHistorySuggestions.onPreferenceChangeListener = SharedPreferenceUpdater()

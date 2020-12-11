@@ -20,6 +20,10 @@
     <!-- No Private Tabs Message Description -->
     <string name="no_private_tabs_description">Equí van amosase les llingüetes privaes abiertes.</string>
 
+    <!-- Default title for pinned Baidu top site that links to Baidu home page  -->
+    <string name="default_top_site_baidu">Baidu</string>
+    <!-- Default title for pinned JD top site that links to JD home page  -->
+    <string name="default_top_site_jd">JD</string>
     <!-- Message announced to the user when tab tray is selected with 1 tab -->
     <string name="open_tab_tray_single">1 llingüeta abierta. Toca pa cambiar a otra.</string>
     <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
@@ -39,6 +43,10 @@
     <string name="tab_tray_close_multiselect_content_description">Colar del mou d\'esbilla múltiple</string>
     <!-- Content description for save to collection button while in multiselect mode in tab tray -->
     <string name="tab_tray_collection_button_multiselect_content_description">Guardar les llingüetes esbillaes nuna coleición</string>
+    <!-- Content description for checkmark while tab is selected while in multiselect mode in tab tray. The first parameter is the title of the tab selected -->
+    <string name="tab_tray_item_selected_multiselect_content_description">Esbillóse %1$s</string>
+    <!-- Content description when tab is unselected while in multiselect mode in tab tray. The first parameter is the title of the tab unselected -->
+    <string name="tab_tray_item_unselected_multiselect_content_description">Deseleicionóse %1$s</string>
     <!-- Content description announcement when exiting multiselect mode in tab tray -->
     <string name="tab_tray_exit_multiselect_content_description">Colesti del mou d\'esbilla múltiple</string>
     <!-- Content description announcement when entering multiselect mode in tab tray -->
@@ -66,14 +74,6 @@
     <!-- Text for the negative button -->
     <string name="cfr_neg_button_text">Non, gracies</string>
 
-    <!-- Search widget "contextual feature recommendation" (CFR) -->
-    <!-- Text for the main message. 'Firefox' intentionally hardcoded here.-->
-    <string name="search_widget_cfr_message">Accedi aína a Firefox col amiestu d\'un widget a la pantalla d\'aniciu.</string>
-    <!-- Text for the positive button -->
-    <string name="search_widget_cfr_pos_button_text">Amestalu</string>
-    <!-- Text for the negative button -->
-    <string name="search_widget_cfr_neg_button_text">Agora non</string>
-
     <!-- Open in App "contextual feature recommendation" (CFR) -->
     <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
     <string name="open_in_app_cfr_info_message">Pues afitar que Firefox abra automáticamente enllaces nes aplicaciones.</string>
@@ -95,6 +95,13 @@
     <string name="tab_tray_close_tabs_banner_positive_button_text">Ver les opciones</string>
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">Escartar</string>
+
+    <!-- Text for the banner message to tell users about our grid view feature. -->
+    <string name="tab_tray_grid_view_banner_message">Cambia la distribución de les llingüetes abiertes. Vete a axustes y esbilla\'l rexáu na vista de llingüetes.</string>
+    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
+    <string name="tab_tray_grid_view_banner_positive_button_text">Dir a Axustes</string>
+    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
+    <string name="tab_tray_grid_view_banner_negative_button_text">Escartar</string>
 
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
@@ -208,7 +215,6 @@
     <!-- Search suggestion onboarding hint Learn more link text -->
     <string name="search_suggestions_onboarding_learn_more_link">Deprender más</string>
 
-    <!-- Search Widget -->
     <!-- Text preview for smaller sized widgets -->
     <string name="search_widget_text_short">Buscar</string>
 
@@ -337,6 +343,9 @@
     <!-- Button caption to abort the add-on collection configuration -->
     <string name="customize_addon_collection_cancel">Encaboxar</string>
 
+    <!-- Toast shown after confirming the custom add-on collection configuration -->
+    <string name="toast_customize_addon_collection_done">Modificóse la coleición de complementos. L\'aplicación va zarrase p\'aplicar los cambeos…</string>
+
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">Sincronizar agora</string>
@@ -408,6 +417,10 @@
     <string name="preferences_marketing_data">Datos de marketing</string>
     <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
     <string name="preferences_marketing_data_description">Comparte los datos tocante a les carauterístiques qu\'uses en %1$s con Leanplum, el nuesu fornidor de marketing móvil.</string>
+    <!-- Title for studies preferences -->
+    <string name="preference_experiments_2">Estudios</string>
+    <!-- Summary for studies preferences -->
+    <string name="preference_experiments_summary_2">Permite a Mozilla qu\'instale o execute estudios</string>
     <!-- Title for experiments preferences -->
     <string name="preference_experiments">Esperimentos</string>
     <!-- Summary for experiments preferences -->
@@ -451,6 +464,10 @@
 
     <!-- Preference for using following device theme -->
     <string name="preference_follow_device_theme">Siguir l\'estilu del preséu</string>
+
+    <!-- Gestures Preferences-->
+    <!-- Preferences for using pull to refresh in a webpage -->
+    <string name="preference_gestures_website_pull_to_refresh">Arrastrar p\'abaxo p\'anovar</string>
 
     <!-- Library -->
     <!-- Option in Library to open Sessions page -->
@@ -498,6 +515,8 @@
     <!-- Tab Management -->
     <!-- Title of preference for tabs management -->
     <string name="preferences_tabs">Llingüetes</string>
+    <!-- Title of preference that allows a user to specify the tab view -->
+    <string name="preferences_tab_view">Llista de les llinguüetes</string>
     <!-- Option for a list tab view -->
     <string name="tab_view_list">En llista</string>
     <!-- Option for a grid tab view -->
@@ -512,6 +531,15 @@
     <string name="close_tabs_after_one_week">Dempués d\'una selmana</string>
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">Dempués d\'un mes</string>
+
+    <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
+    <string name="close_tabs_manually_summary">Zarrales a mano</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
+    <string name="close_tabs_after_one_day_summary">Zarrales dempués d\'un día</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one week-->
+    <string name="close_tabs_after_one_week_summary">Zarrales dempués d\'una selmana</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one month-->
+    <string name="close_tabs_after_one_month_summary">Zarrales dempués d\'un mes</string>
 
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
@@ -537,6 +565,16 @@
     <string name="tab_tray_menu_item_close">Zarrar toles llingüetes</string>
     <!-- Shortcut action to open new tab -->
     <string name="tab_tray_menu_open_new_tab">Llingüeta nueva</string>
+    <!-- Text shown in the multiselect menu for bookmarking selected tabs. -->
+    <string name="tab_tray_multiselect_menu_item_bookmark">Amestar a Marcadores</string>
+    <!-- Text shown in the multiselect menu for closing selected tabs. -->
+    <string name="tab_tray_multiselect_menu_item_close">Zarrar</string>
+    <!-- Content description for tabs tray multiselect share button -->
+    <string name="tab_tray_multiselect_share_content_description">Compartir les llingüetes abiertes</string>
+    <!-- Content description for tabs tray multiselect menu -->
+    <string name="tab_tray_multiselect_menu_content_description">Menú de llingüetes abiertes</string>
+    <!-- Text for button to enter multiselect mode in tabs tray -->
+    <string name="tabs_tray_select_tabs">Esbillar llingüetes</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab button. Closes the current session when pressed -->
     <string name="close_tab">Zarrar la llingüeta</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab <title> button. First parameter is tab title  -->
@@ -569,7 +607,7 @@
     <!-- Text for the button to open tabs of the selected collection -->
     <string name="collection_open_tabs">Abrir lo qu\'heba</string>
     <!-- Text for the menu button to remove a top site -->
-    <string name="remove_top_site">Desaniciar</string>
+	<string name="remove_top_site">Desaniciar</string>
 
     <!-- Text for the menu button to delete a top site from history -->
     <string name="delete_from_history">Desaniciar del historial</string>
@@ -616,8 +654,13 @@
     <string name="history_empty_message">Nun hai nada</string>
 
     <!-- Downloads -->
+    <!-- Text for the button to clear all downloads -->
+    <string name="download_delete_all">Desaniciar les descargues</string>
+    <!-- Text for the dialog to confirm clearing all downloads -->
+    <string name="download_delete_all_dialog">¿De xuru que quies llimpiar les descargues?</string>
     <!-- Text shown when no download exists -->
     <string name="download_empty_message">Equí nun hai descargues</string>
+
 
     <!-- Crashes -->
     <!-- Title text displayed on the tab crash page. This first parameter is the name of the application (For example: Fenix) -->
@@ -723,6 +766,8 @@
     <string name="preference_phone_feature_location">Allugamientu</string>
     <!-- Preference for altering the notification access for all websites -->
     <string name="preference_phone_feature_notification">Avisos</string>
+    <!-- Preference for altering the persistent storage access for all websites -->
+    <string name="preference_phone_feature_persistent_storage">Almacenamientu permanente</string>
     <!-- Label that indicates that a permission must be asked always -->
     <string name="preference_option_phone_feature_ask_to_allow">Entrugar pa permitir</string>
     <!-- Label that indicates that a permission must be blocked -->
@@ -838,6 +883,8 @@
     <!-- The user visible name of the "notification channel" (Android 8+ feature) for the ongoing notification shown while a browsing session is active. -->
     <string name="notification_pbm_channel_name">Sesiones de restolar en privao</string>
     <!-- Text shown in the notification that pops up to remind the user that a private browsing session is active. -->
+    <string name="notification_pbm_delete_text">Toca pa desaniciar les llingüetes privaes</string>
+    <!-- Text shown in the notification that pops up to remind the user that a private browsing session is active. -->
     <string name="notification_pbm_delete_text_2">Toca pa zarrar les llingüetes privaes</string>
     <!-- Notification action to open Fenix and resume the current browsing session. -->
     <string name="notification_pbm_action_open">Abrir</string>
@@ -867,6 +914,8 @@
     <string name="snackbar_private_tabs_deleted">Desaniciáronse les llingüetes privaes</string>
     <!-- Text shown in snackbar to undo deleting a tab, top site or collection -->
     <string name="snackbar_deleted_undo">DESFACER</string>
+    <!-- Text shown in snackbar when user removes a top site -->
+    <string name="snackbar_top_site_removed">Desanicióse\'l sitiu</string>
     <!-- Text for action to undo deleting a tab or collection shown in a11y dialog -->
     <string name="a11y_dialog_deleted_undo">Desfacer</string>
     <!-- Text for action to confirm deleting a tab or collection shown in a11y dialog -->
@@ -1007,7 +1056,7 @@
     <!-- text for underlined clickable link that is part of "what's new" onboarding card description that links to an FAQ -->
     <string name="onboarding_whats_new_description_linktext">Consigui les rempuestes equí</string>
     <!-- text for the Firefox account onboarding sign in card header -->
-    <string name="onboarding_account_sign_in_header">Apenza a sincronizar los marcadores, les contraseñes y muncho más cola to cuenta de Firefox.</string>
+    <string name="onboarding_account_sign_in_header">Comienza a sincronizar los marcadores, les contraseñes y muncho más cola to cuenta de Firefox.</string>
     <!-- Text for the button to learn more about signing in to your Firefox account -->
     <string name="onboarding_manual_sign_in_learn_more">Deprender más</string>
     <!-- text for the automatic sign-in button while signing in is in process -->
@@ -1063,7 +1112,7 @@
     <string name="onboarding_close">Zarrar</string>
 
     <!-- text for the button to finish onboarding -->
-    <string name="onboarding_finish">Apenzar a restolar</string>
+    <string name="onboarding_finish">Comenzar a restolar</string>
 
     <!-- Onboarding theme -->
     <!-- text for the theme picker onboarding card header -->
@@ -1197,6 +1246,9 @@
     <string name="etp_panel_off">DESACTIVÓSE nesti sitiu</string>
     <!-- Header for exceptions list for which sites enhanced tracking protection is always off -->
     <string name="enhanced_tracking_protection_exceptions">La proteición ameyorada escontra\'l rastrexu ta desactivada pa estos sitios web</string>
+    <!-- Content description (not visible, for screen readers etc.): Navigate
+    back from ETP details (Ex: Tracking content) -->
+    <string name="etp_back_button_content_description">Dir p\'atrás</string>
     <!-- About page Your rights link text -->
     <string name="about_your_rights">Los tos drechos</string>
     <!-- About page link text to open open source licenses screen -->
@@ -1504,9 +1556,17 @@
     <!-- Label for the show most visited sites preference -->
     <string name="top_sites_toggle_top_frecent_sites">Amosar los sitios más visitaos</string>
 
+    <!-- Button caption to confirm the renaming of the top site. -->
+	<string name="top_sites_rename_dialog_ok">Aceutar</string>
+	<!-- Dialog button text for canceling the rename top site prompt. -->
+	<string name="top_sites_rename_dialog_cancel">Encaboxar</string>
+
     <!-- Deprecated: text for the firefox account onboarding card header
     The first parameter is the name of the app (e.g. Firefox Preview) -->
     <string name="onboarding_firefox_account_header">Aprovecha %s al máximu.</string>
+
+    <!-- Content description radio buttons with a link to more information -->
+    <string name="radio_preference_info_content_description">Calca pa más detalles</string>
 
     <!-- Deprecated: No Open Tabs Message Header -->
     <string name="no_collections_header1">Coleiciona les coses que t\'importen</string>

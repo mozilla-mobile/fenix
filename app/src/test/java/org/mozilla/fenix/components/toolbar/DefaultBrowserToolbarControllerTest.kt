@@ -15,13 +15,21 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
-import io.mockk.verifyOrder
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
+import mozilla.components.browser.state.action.BrowserAction
+import mozilla.components.browser.state.action.ContentAction
+import mozilla.components.browser.state.state.BrowserState
+import mozilla.components.browser.state.state.createTab
+import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.EngineView
 import mozilla.components.feature.search.SearchUseCases
 import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.feature.top.sites.TopSitesUseCases
+import mozilla.components.support.test.libstate.ext.waitUntilIdle
+import mozilla.components.support.test.middleware.CaptureActionsMiddleware
+import mozilla.components.ui.tabcounter.TabCounterMenu
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -45,32 +53,48 @@ class DefaultBrowserToolbarControllerTest {
 
     @RelaxedMockK
     private lateinit var activity: HomeActivity
+
     @MockK(relaxUnitFun = true)
     private lateinit var navController: NavController
+
     @RelaxedMockK
     private lateinit var onTabCounterClicked: () -> Unit
+
     @RelaxedMockK
     private lateinit var onCloseTab: (Session) -> Unit
+
     @RelaxedMockK
     private lateinit var sessionManager: SessionManager
+
     @MockK(relaxUnitFun = true)
     private lateinit var engineView: EngineView
+
     @MockK
     private lateinit var currentSession: Session
+
     @RelaxedMockK
     private lateinit var metrics: MetricController
+
     @RelaxedMockK
     private lateinit var searchUseCases: SearchUseCases
+
     @RelaxedMockK
     private lateinit var sessionUseCases: SessionUseCases
+
     @RelaxedMockK
     private lateinit var browserAnimator: BrowserAnimator
+
     @RelaxedMockK
     private lateinit var topSitesUseCase: TopSitesUseCases
+
     @RelaxedMockK
     private lateinit var readerModeController: ReaderModeController
+
     @RelaxedMockK
     private lateinit var homeViewModel: HomeScreenViewModel
+
+    private lateinit var store: BrowserStore
+    private val captureMiddleware = CaptureActionsMiddleware<BrowserState, BrowserAction>()
 
     @Before
     fun setUp() {
@@ -85,10 +109,24 @@ class DefaultBrowserToolbarControllerTest {
         }
         every { currentSession.id } returns "1"
         every { currentSession.private } returns false
-        every { currentSession.searchTerms = any() } just Runs
 
         val onComplete = slot<() -> Unit>()
         every { browserAnimator.captureEngineViewAndDrawStatically(capture(onComplete)) } answers { onComplete.captured.invoke() }
+
+        store = BrowserStore(
+            initialState = BrowserState(
+                tabs = listOf(
+                    createTab("https://www.mozilla.org", id = "1")
+                ),
+                selectedTabId = "1"
+            ),
+            middleware = listOf(captureMiddleware)
+        )
+    }
+
+    @After
+    fun tearDown() {
+        captureMiddleware.reset()
     }
 
     @Test
@@ -125,9 +163,16 @@ class DefaultBrowserToolbarControllerTest {
 
         val controller = createController()
         controller.handleToolbarPasteAndGo(pastedText)
-        verifyOrder {
-            currentSession.searchTerms = "Mozilla"
-            searchUseCases.defaultSearch.invoke(pastedText, currentSession)
+
+        verify {
+            searchUseCases.defaultSearch.invoke(pastedText, "1")
+        }
+
+        store.waitUntilIdle()
+
+        captureMiddleware.assertFirstAction(ContentAction.UpdateSearchTermsAction::class) { action ->
+            assertEquals("1", action.sessionId)
+            assertEquals(pastedText, action.searchTerms)
         }
     }
 
@@ -137,9 +182,16 @@ class DefaultBrowserToolbarControllerTest {
 
         val controller = createController()
         controller.handleToolbarPasteAndGo(pastedText)
-        verifyOrder {
-            currentSession.searchTerms = ""
+
+        verify {
             sessionUseCases.loadUrl(pastedText)
+        }
+
+        store.waitUntilIdle()
+
+        captureMiddleware.assertFirstAction(ContentAction.UpdateSearchTermsAction::class) { action ->
+            assertEquals("1", action.sessionId)
+            assertEquals("", action.searchTerms)
         }
     }
 
@@ -195,7 +247,6 @@ class DefaultBrowserToolbarControllerTest {
 
     @Test
     fun handleToolbarCloseTabPressWithLastPrivateSession() {
-        val browsingModeManager = SimpleBrowsingModeManager(BrowsingMode.Private)
         val item = TabCounterMenu.Item.CloseTab
         val sessions = listOf(
             mockk<Session> {
@@ -205,7 +256,6 @@ class DefaultBrowserToolbarControllerTest {
 
         every { currentSession.private } returns true
         every { sessionManager.sessions } returns sessions
-        every { activity.browsingModeManager } returns browsingModeManager
 
         val controller = createController()
         controller.handleTabCounterItemInteraction(item)
@@ -213,7 +263,6 @@ class DefaultBrowserToolbarControllerTest {
             homeViewModel.sessionToDelete = "1"
             navController.navigate(BrowserFragmentDirections.actionGlobalHome())
         }
-        assertEquals(BrowsingMode.Normal, browsingModeManager.mode)
     }
 
     @Test
@@ -230,29 +279,29 @@ class DefaultBrowserToolbarControllerTest {
     @Test
     fun handleToolbarNewTabPress() {
         val browsingModeManager = SimpleBrowsingModeManager(BrowsingMode.Private)
-        val item = TabCounterMenu.Item.NewTab(BrowsingMode.Normal)
+        val item = TabCounterMenu.Item.NewTab
 
         every { activity.browsingModeManager } returns browsingModeManager
-        every { navController.popBackStack(R.id.homeFragment, any()) } returns true
+        every { navController.navigate(BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = true)) } just Runs
 
         val controller = createController()
         controller.handleTabCounterItemInteraction(item)
         assertEquals(BrowsingMode.Normal, browsingModeManager.mode)
-        verify { navController.popBackStack(R.id.homeFragment, false) }
+        verify { navController.navigate(BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = true)) }
     }
 
     @Test
     fun handleToolbarNewPrivateTabPress() {
         val browsingModeManager = SimpleBrowsingModeManager(BrowsingMode.Normal)
-        val item = TabCounterMenu.Item.NewTab(BrowsingMode.Private)
+        val item = TabCounterMenu.Item.NewPrivateTab
 
         every { activity.browsingModeManager } returns browsingModeManager
-        every { navController.popBackStack(R.id.homeFragment, any()) } returns true
+        every { navController.navigate(BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = true)) } just Runs
 
         val controller = createController()
         controller.handleTabCounterItemInteraction(item)
         assertEquals(BrowsingMode.Private, browsingModeManager.mode)
-        verify { navController.popBackStack(R.id.homeFragment, false) }
+        verify { navController.navigate(BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = true)) }
     }
 
     @Test
@@ -277,6 +326,7 @@ class DefaultBrowserToolbarControllerTest {
         activity: HomeActivity = this.activity,
         customTabSession: Session? = null
     ) = DefaultBrowserToolbarController(
+        store = store,
         activity = activity,
         navController = navController,
         metrics = metrics,
