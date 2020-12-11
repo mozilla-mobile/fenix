@@ -11,7 +11,7 @@
     android:background="@drawable/collection_home_list_row_background"
     android:clickable="true"
     android:clipToPadding="false"
-    android:elevation="5dp"
+    android:elevation="@dimen/home_collection_elevation"
     android:focusable="true"
     android:foreground="?android:attr/selectableItemBackground">
 
@@ -68,7 +68,7 @@
         app:layout_constraintBottom_toBottomOf="@id/collection_icon"
         app:layout_constraintEnd_toStartOf="@id/collection_overflow_button"
         app:layout_constraintTop_toTopOf="@id/collection_icon"
-        app:srcCompat="@drawable/ic_hollow_share"
+        app:srcCompat="@drawable/ic_share_filled"
         tools:visibility="visible" />
 
     <ImageButton

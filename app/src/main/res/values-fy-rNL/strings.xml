@@ -19,6 +19,10 @@
     <!-- No Private Tabs Message Description -->
     <string name="no_private_tabs_description">Jo priveeljepblêden wurde hjir werjûn.</string>
 
+    <!-- Default title for pinned Baidu top site that links to Baidu home page  -->
+    <string name="default_top_site_baidu">Baidu</string>
+    <!-- Default title for pinned JD top site that links to JD home page  -->
+    <string name="default_top_site_jd">JD</string>
     <!-- Message announced to the user when tab tray is selected with 1 tab -->
     <string name="open_tab_tray_single">1 iepen ljepblêd. Tik om tusken ljepblêden te wikseljen.</string>
 
@@ -73,14 +77,6 @@
     <!-- Text for the negative button -->
     <string name="cfr_neg_button_text">Nee, tankewol</string>
 
-    <!-- Search widget "contextual feature recommendation" (CFR) -->
-    <!-- Text for the main message. 'Firefox' intentionally hardcoded here.-->
-    <string name="search_widget_cfr_message">Benaderje Firefox flugger. Foegje in widget ta oan jo startskerm.</string>
-    <!-- Text for the positive button -->
-    <string name="search_widget_cfr_pos_button_text">Widget tafoegje</string>
-    <!-- Text for the negative button -->
-    <string name="search_widget_cfr_neg_button_text">No net</string>
-
     <!-- Open in App "contextual feature recommendation" (CFR) -->
     <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
     <string name="open_in_app_cfr_info_message">Jo kinne Firefox ynstelle om keppelingen automatysk yn apps te iepenjen.</string>
@@ -102,6 +98,13 @@
     <string name="tab_tray_close_tabs_banner_positive_button_text">Byldopsjes</string>
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">Slute</string>
+
+    <!-- Text for the banner message to tell users about our grid view feature. -->
+    <string name="tab_tray_grid_view_banner_message">Wizigje de opmaak fan iepen ljepblêden. Gean nei Ynstellingen en selektearje ûnder Ljepblêdwerjefte ‘Raster’.</string>
+    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
+    <string name="tab_tray_grid_view_banner_positive_button_text">Nei Ynstellingen</string>
+    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
+    <string name="tab_tray_grid_view_banner_negative_button_text">Slute</string>
 
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
@@ -154,8 +157,6 @@
     <string name="browser_menu_find_in_page">Sykje op side</string>
     <!-- Browser menu button that creates a private tab -->
     <string name="browser_menu_private_tab">Priveeljepblêd</string>
-    <!-- Browser menu button that creates a new tab -->
-    <string name="browser_menu_new_tab">Nij ljepblêd</string>
     <!-- Browser menu button that saves the current tab to a collection -->
     <string name="browser_menu_save_to_collection_2">Yn kolleksje bewarje</string>
     <!-- Browser menu button that open a share menu to share the current site -->
@@ -217,6 +218,8 @@
     <string name="search_suggestions_onboarding_learn_more_link">Mear ynfo</string>
 
     <!-- Search Widget -->
+    <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
+    <string name="search_widget_content_description">In nij Firefox-ljepblêd iepenje</string>
     <!-- Text preview for smaller sized widgets -->
     <string name="search_widget_text_short">Sykje</string>
     <!-- Text preview for larger sized widgets -->
@@ -347,6 +350,26 @@
     <!-- Preference for notifications -->
     <string name="preferences_notifications">Notifikaasjes</string>
 
+    <!-- Add-on Preferences -->
+    <!-- Preference to customize the configured AMO (addons.mozilla.org) collection -->
+    <string name="preferences_customize_amo_collection">Oanpaste add-onkolleksje</string>
+    <!-- Button caption to confirm the add-on collection configuration -->
+    <string name="customize_addon_collection_ok">OK</string>
+    <!-- Button caption to abort the add-on collection configuration -->
+    <string name="customize_addon_collection_cancel">Annulearje</string>
+    <!-- Hint displayed on input field for custom collection name -->
+    <string name="customize_addon_collection_hint">Namme kolleksje</string>
+    <!-- Hint displayed on input field for custom collection user ID-->
+    <string name="customize_addon_collection_user_hint">Eigener kolleksje (brûkers-ID)</string>
+    <!-- Toast shown after confirming the custom add-on collection configuration -->
+    <string name="toast_customize_addon_collection_done">Add-onkolleksje oanpast. Tapassing wurdt ôfsluten om wizigingen ta te passen…</string>
+
+    <!-- Add-on Installation from AMO-->
+    <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
+    <string name="addon_not_supported_error">Add-on wurdt net stipe</string>
+    <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is already installed -->
+    <string name="addon_already_installed">Add-on is al ynstallearre</string>
+
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">No syngronisearje</string>
@@ -425,6 +448,10 @@
     <string name="preferences_marketing_data">Marketinggegevens</string>
     <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
     <string name="preferences_marketing_data_description">Dielt gegevens oer hokker funksjes jo yn %1$s brûke mei Leanplum, ús leveransier fan mobile marketing.</string>
+    <!-- Title for studies preferences -->
+    <string name="preference_experiments_2">Undersiken</string>
+    <!-- Summary for studies preferences -->
+    <string name="preference_experiments_summary_2">Stelt Mozilla yn steat om ûndersiken te ynstallearjen en út te fieren</string>
     <!-- Title for experiments preferences -->
     <string name="preference_experiments">Eksperiminten</string>
     <!-- Summary for experiments preferences -->
@@ -528,6 +555,14 @@
     <string name="recently_closed_empty_message">Gjin koartlyn sluten ljepblêden hjir</string>
 
     <!-- Tab Management -->
+    <!-- Title of preference for tabs management -->
+    <string name="preferences_tabs">Ljepblêden</string>
+    <!-- Title of preference that allows a user to specify the tab view -->
+    <string name="preferences_tab_view">Ljepblêdwerjefte</string>
+    <!-- Option for a list tab view -->
+    <string name="tab_view_list">List</string>
+    <!-- Option for a grid tab view -->
+    <string name="tab_view_grid">Roaster</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
     <string name="preferences_close_tabs">Ljepblêden slute</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
@@ -538,6 +573,15 @@
     <string name="close_tabs_after_one_week">Nei ien wike</string>
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">Nei ien moanne</string>
+
+    <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
+    <string name="close_tabs_manually_summary">Hânmjittich slute</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
+    <string name="close_tabs_after_one_day_summary">Nei in dei slute</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one week-->
+    <string name="close_tabs_after_one_week_summary">Nei in wike slute</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one month-->
+    <string name="close_tabs_after_one_month_summary">Nei in moanne slute</string>
 
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
@@ -556,6 +600,8 @@
     <string name="tab_tray_title">Iepen ljeplêden</string>
     <!-- Text shown in the menu for saving tabs to a collection -->
     <string name="tab_tray_menu_item_save">Yn kolleksje bewarje</string>
+    <!-- Text shown in the menu for the collection selector -->
+    <string name="tab_tray_menu_select">Selektearje</string>
     <!-- Text shown in the menu for sharing all tabs -->
     <string name="tab_tray_menu_item_share">Alle ljepblêden diele</string>
     <!-- Text shown in the menu to view recently closed tabs -->
@@ -570,8 +616,18 @@
     <string name="tab_tray_menu_home">Nei startside</string>
     <!-- Shortcut action to toggle private mode -->
     <string name="tab_tray_menu_toggle">Ljepblêdmodus wikselje</string>
+    <!-- Text shown in the multiselect menu for bookmarking selected tabs. -->
+    <string name="tab_tray_multiselect_menu_item_bookmark">Blêdwizer meitsje</string>
+    <!-- Text shown in the multiselect menu for closing selected tabs. -->
+    <string name="tab_tray_multiselect_menu_item_close">Slute</string>
+    <!-- Content description for tabs tray multiselect share button -->
+    <string name="tab_tray_multiselect_share_content_description">Selektearre ljepblêden diele</string>
+    <!-- Content description for tabs tray multiselect menu -->
+    <string name="tab_tray_multiselect_menu_content_description">Menu Selektearre ljepblêden</string>
     <!-- Content description (not visible, for screen readers etc.): Removes tab from collection button. Removes the selected tab from collection when pressed -->
     <string name="remove_tab_from_collection">Ljepblêd út kolleksje fuortsmite</string>
+    <!-- Text for button to enter multiselect mode in tabs tray -->
+    <string name="tabs_tray_select_tabs">Ljepblêden selektearje</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab button. Closes the current session when pressed -->
     <string name="close_tab">Ljepblêd slute</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab <title> button. First parameter is tab title  -->
@@ -605,8 +661,12 @@
     <!-- Text for the button to open tabs of the selected collection -->
     <string name="collection_open_tabs">Ljepblêden iepenje</string>
 
-    <!-- Text for the menu button to remove a top site -->
-    <string name="remove_top_site">Fuortsmite</string>
+    <!-- Hint for adding name of a collection -->
+    <string name="collection_name_hint">Namme kolleksje</string>
+    <!-- Text for the menu button to rename a top site -->
+	<string name="rename_top_site">Namme wizigje</string>
+	<!-- Text for the menu button to remove a top site -->
+	<string name="remove_top_site">Fuortsmite</string>
 
     <!-- Text for the menu button to delete a top site from history -->
     <string name="delete_from_history">Fuortsmite út skiednis</string>
@@ -643,6 +703,10 @@
     <!-- Text for the button to clear selected history items. The first parameter
         is a digit showing the number of items you have selected -->
     <string name="history_delete_some">%1$d items fuortsmite</string>
+    <!-- Text for the header that groups the history for today -->
+    <string name="history_today">Hjoed</string>
+    <!-- Text for the header that groups the history for yesterday -->
+    <string name="history_yesterday">Juster</string>
     <!-- Text for the header that groups the history for last 24 hours -->
     <string name="history_24_hours">Lêste 24 oer</string>
     <!-- Text for the header that groups the history the past 7 days -->
@@ -655,11 +719,23 @@
     <string name="history_empty_message">Gjin skiednis hjir</string>
 
     <!-- Downloads -->
+    <!-- Text for the button to clear all downloads -->
+    <string name="download_delete_all">Downloads wiskje</string>
+    <!-- Text for the dialog to confirm clearing all downloads -->
+    <string name="download_delete_all_dialog">Binne jo wis dat jo jo downloads wiskje wolle?</string>
+    <!-- Text for the snackbar to confirm that multiple downloads items have been deleted -->
+    <string name="download_delete_multiple_items_snackbar">Downloads fuortsmiten</string>
     <!-- Text shown when no download exists -->
     <string name="download_empty_message">Gjin downloads hjir</string>
     <!-- History multi select title in app bar
     The first parameter is the number of downloads selected -->
     <string name="download_multi_select_title">%1$d selektearre</string>
+
+    <!-- History overflow menu open in new tab button -->
+    <string name="download_menu_open">Iepenje</string>
+    <!-- Text for the button to delete a single history item -->
+    <string name="download_delete_item">Fuortsmite</string>
+
 
     <!-- Crashes -->
     <!-- Title text displayed on the tab crash page. This first parameter is the name of the application (For example: Fenix) -->
@@ -780,6 +856,8 @@
     <string name="preference_phone_feature_location">Lokaasje</string>
     <!-- Preference for altering the notification access for all websites -->
     <string name="preference_phone_feature_notification">Notifikaasje</string>
+    <!-- Preference for altering the persistent storage access for all websites -->
+    <string name="preference_phone_feature_persistent_storage">Fêst ûnthâld</string>
     <!-- Label that indicates that a permission must be asked always -->
     <string name="preference_option_phone_feature_ask_to_allow">Freegje om tastimming</string>
     <!-- Label that indicates that a permission must be blocked -->
@@ -920,6 +998,12 @@
     <string name="snackbar_tab_closed">Ljepblêd sluten</string>
     <!-- Text shown in snackbar when user closes all tabs -->
     <string name="snackbar_tabs_closed">Ljepblêden sluten</string>
+    <!-- Text shown in snackbar when user closes tabs -->
+    <string name="snackbar_message_tabs_closed">Ljepblêden sluten!</string>
+    <!-- Text shown in snackbar when user bookmarks a list of tabs -->
+    <string name="snackbar_message_bookmarks_saved">Blêdwizers bewarre!</string>
+    <!-- Text shown in snackbar action for viewing bookmarks -->
+    <string name="snackbar_message_bookmarks_view">Werjaan</string>
     <!-- Text shown in snackbar when user adds a site to top sites -->
     <string name="snackbar_added_to_top_sites">Tafoege oan topwebsites!</string>
     <!-- Text shown in snackbar when user closes a private tab -->
@@ -1573,7 +1657,7 @@
 
     <!-- Top Sites -->
     <!-- Title text displayed in the dialog when top sites limit is reached. -->
-    <string name="top_sites_max_limit_title">Limyt foar topwebsites berikke</string>
+    <string name="top_sites_max_limit_title">Limyt foar topwebsites berikt</string>
     <!-- Content description text displayed in the dialog when top sites limit is reached. -->
     <string name="top_sites_max_limit_content_2">Smyt in topwebsite fuort om in nije ta te foegjen. Hâld de website yndrukt en selektearje Fuortsmite.</string>
     <!-- Confirmation dialog button text when top sites limit is reached. -->
@@ -1582,12 +1666,25 @@
     <!-- Label for the show most visited sites preference -->
     <string name="top_sites_toggle_top_frecent_sites">Meast besochte websites toane</string>
 
+    <!-- Title text displayed in the rename top site dialog. -->
+	<string name="top_sites_rename_dialog_title">Namme</string>
+
+    <!-- Hint for renaming title of a top site -->
+	<string name="top_site_name_hint">Namme topwebsite</string>
+	<!-- Button caption to confirm the renaming of the top site. -->
+	<string name="top_sites_rename_dialog_ok">OK</string>
+	<!-- Dialog button text for canceling the rename top site prompt. -->
+	<string name="top_sites_rename_dialog_cancel">Annulearje</string>
+
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">Fuortsmite</string>
 
     <!-- Deprecated: text for the firefox account onboarding card header
     The first parameter is the name of the app (e.g. Firefox Preview) -->
     <string name="onboarding_firefox_account_header">Helje it measte út %s.</string>
+
+    <!-- Content description radio buttons with a link to more information -->
+    <string name="radio_preference_info_content_description">Klik foar mear details</string>
 
     <!-- Deprecated: No Open Tabs Message Header -->
     <string name="no_collections_header1">Sammelje de dingen dy\'t wichtich foar jo binne</string>

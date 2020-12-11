@@ -39,10 +39,12 @@ class HistoryRobot {
         assertEmptyHistoryView()
     }
 
+    fun verifyHistoryListExists() = assertHistoryListExists()
+
     fun verifyVisitedTimeTitle() {
         mDevice.waitNotNull(
             Until.findObject(
-                By.text("Last 24 hours")
+                By.text("Today")
             ),
             waitingTime
         )
@@ -84,22 +86,15 @@ class HistoryRobot {
     fun verifyDeleteSnackbarText(text: String) = assertSnackBarText(text)
 
     class Transition {
-        fun closeMenu(interact: HistoryRobot.() -> Unit): Transition {
-            closeButton().click()
-
-            HistoryRobot().interact()
-            return Transition()
-        }
-
         fun goBackToBrowser(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
-            closeButton().click()
+            mDevice.pressBack()
 
             BrowserRobot().interact()
             return BrowserRobot.Transition()
         }
 
         fun openThreeDotMenu(interact: ThreeDotMenuHistoryItemRobot.() -> Unit):
-            ThreeDotMenuHistoryItemRobot.Transition {
+                ThreeDotMenuHistoryItemRobot.Transition {
 
             threeDotMenu().click()
 
@@ -113,8 +108,6 @@ fun historyMenu(interact: HistoryRobot.() -> Unit): HistoryRobot.Transition {
     HistoryRobot().interact()
     return HistoryRobot.Transition()
 }
-
-private fun closeButton() = onView(withId(R.id.close_history))
 
 private fun testPageTitle() = onView(allOf(withId(R.id.title), withText("Test_Page_1")))
 
@@ -142,8 +135,11 @@ private fun assertEmptyHistoryView() =
     )
         .check(matches(withText("No history here")))
 
+private fun assertHistoryListExists() =
+    mDevice.findObject(UiSelector().resourceId("R.id.history_list")).waitForExists(waitingTime)
+
 private fun assertVisitedTimeTitle() =
-    onView(withId(R.id.header_title)).check(matches(withText("Last 24 hours")))
+    onView(withId(R.id.header_title)).check(matches(withText("Today")))
 
 private fun assertTestPageTitle(title: String) = testPageTitle()
     .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))

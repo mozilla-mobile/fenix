@@ -52,12 +52,28 @@ class WebsitePermissionsView(
     val view: View = LayoutInflater.from(context)
         .inflate(R.layout.quicksettings_permissions, containerView, true)
 
-    private val permissionViews: Map<PhoneFeature, PermissionViewHolder> = EnumMap(mapOf(
-        PhoneFeature.CAMERA to PermissionViewHolder(view.cameraLabel, view.cameraStatus),
-        PhoneFeature.LOCATION to PermissionViewHolder(view.locationLabel, view.locationStatus),
-        PhoneFeature.MICROPHONE to PermissionViewHolder(view.microphoneLabel, view.microphoneStatus),
-        PhoneFeature.NOTIFICATION to PermissionViewHolder(view.notificationLabel, view.notificationStatus)
-    ))
+    private val permissionViews: Map<PhoneFeature, PermissionViewHolder> = EnumMap(
+        mapOf(
+            PhoneFeature.CAMERA to PermissionViewHolder(view.cameraLabel, view.cameraStatus),
+            PhoneFeature.LOCATION to PermissionViewHolder(view.locationLabel, view.locationStatus),
+            PhoneFeature.MICROPHONE to PermissionViewHolder(
+                view.microphoneLabel,
+                view.microphoneStatus
+            ),
+            PhoneFeature.NOTIFICATION to PermissionViewHolder(
+                view.notificationLabel,
+                view.notificationStatus
+            ),
+            PhoneFeature.PERSISTENT_STORAGE to PermissionViewHolder(
+                view.persistentStorageLabel,
+                view.persistentStorageStatus
+            ),
+            PhoneFeature.MEDIA_KEY_SYSTEM_ACCESS to PermissionViewHolder(
+                view.mediaKeySystemAccessLabel,
+                view.mediaKeySystemAccessStatus
+            )
+        )
+    )
 
     /**
      * Allows changing what this View displays.

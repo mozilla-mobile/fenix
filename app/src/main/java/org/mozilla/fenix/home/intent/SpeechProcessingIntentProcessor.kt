@@ -5,7 +5,11 @@
 package org.mozilla.fenix.home.intent
 
 import android.content.Intent
+import android.os.StrictMode
 import androidx.navigation.NavController
+import mozilla.components.browser.state.search.SearchEngine
+import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.feature.search.ext.waitForSelectedOrDefaultSearchEngine
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.components.metrics.Event
@@ -20,29 +24,48 @@ import org.mozilla.fenix.widget.VoiceSearchActivity.Companion.SPEECH_PROCESSING
  */
 class SpeechProcessingIntentProcessor(
     private val activity: HomeActivity,
+    private val store: BrowserStore,
     private val metrics: MetricController
 ) : HomeIntentProcessor {
 
     override fun process(intent: Intent, navController: NavController, out: Intent): Boolean {
-        return if (intent.extras?.getBoolean(HomeActivity.OPEN_TO_BROWSER_AND_LOAD) == true) {
-            out.putExtra(HomeActivity.OPEN_TO_BROWSER_AND_LOAD, false)
+        if (
+            !intent.hasExtra(SPEECH_PROCESSING) ||
+            intent.extras?.getBoolean(HomeActivity.OPEN_TO_BROWSER_AND_LOAD) != true
+        ) {
+            return false
+        }
 
+        out.putExtra(HomeActivity.OPEN_TO_BROWSER_AND_LOAD, false)
+
+        store.waitForSelectedOrDefaultSearchEngine { searchEngine ->
+            if (searchEngine != null) {
+                launchToBrowser(
+                    searchEngine,
+                    intent.getStringExtra(SPEECH_PROCESSING).orEmpty()
+                )
+            }
+        }
+
+        return true
+    }
+
+    private fun launchToBrowser(searchEngine: SearchEngine, text: String) {
+        activity.components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
             val searchEvent = MetricsUtils.createSearchEvent(
-                activity.components.search.provider.getDefaultEngine(activity),
-                activity,
+                searchEngine,
+                store,
                 Event.PerformedSearch.SearchAccessPoint.WIDGET
             )
             searchEvent?.let { metrics.track(it) }
-
-            activity.openToBrowserAndLoad(
-                searchTermOrURL = intent.getStringExtra(SPEECH_PROCESSING).orEmpty(),
-                newTab = true,
-                from = BrowserDirection.FromGlobal,
-                forceSearch = true
-            )
-            true
-        } else {
-            false
         }
+
+        activity.openToBrowserAndLoad(
+            searchTermOrURL = text,
+            newTab = true,
+            from = BrowserDirection.FromGlobal,
+            engine = searchEngine,
+            forceSearch = true
+        )
     }
 }

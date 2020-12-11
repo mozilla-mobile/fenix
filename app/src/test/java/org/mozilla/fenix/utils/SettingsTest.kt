@@ -31,7 +31,9 @@ class SettingsTest {
         microphone = ASK_TO_ALLOW,
         notification = ASK_TO_ALLOW,
         autoplayAudible = AutoplayAction.BLOCKED,
-        autoplayInaudible = AutoplayAction.BLOCKED
+        autoplayInaudible = AutoplayAction.BLOCKED,
+        persistentStorage = ASK_TO_ALLOW,
+        mediaKeySystemAccess = ASK_TO_ALLOW
     )
 
     @Before
@@ -50,6 +52,19 @@ class SettingsTest {
 
         // Then
         assertTrue(settings.openLinksInAPrivateTab)
+    }
+
+    @Test
+    fun shouldReturnToBrowser() {
+        // When just created
+        // Then
+        assertFalse(settings.shouldReturnToBrowser)
+
+        // When
+        settings.shouldReturnToBrowser = true
+
+        // Then
+        assertTrue(settings.shouldReturnToBrowser)
     }
 
     @Test
@@ -573,6 +588,40 @@ class SettingsTest {
 
         assertEquals(
             defaultPermissions.copy(autoplayInaudible = ALLOWED),
+            settings.getSitePermissionsCustomSettingsRules()
+        )
+    }
+
+    @Test
+    fun getSitePermissionsCustomSettingsRules_persistentStorage() {
+        settings.setSitePermissionsPhoneFeatureAction(PhoneFeature.PERSISTENT_STORAGE, ALLOWED)
+
+        assertEquals(
+            defaultPermissions.copy(persistentStorage = ALLOWED),
+            settings.getSitePermissionsCustomSettingsRules()
+        )
+
+        settings.setSitePermissionsPhoneFeatureAction(PhoneFeature.PERSISTENT_STORAGE, BLOCKED)
+
+        assertEquals(
+            defaultPermissions.copy(persistentStorage = BLOCKED),
+            settings.getSitePermissionsCustomSettingsRules()
+        )
+    }
+
+    @Test
+    fun getSitePermissionsCustomSettingsRules_mediaKeySystemAccess() {
+        settings.setSitePermissionsPhoneFeatureAction(PhoneFeature.MEDIA_KEY_SYSTEM_ACCESS, ALLOWED)
+
+        assertEquals(
+            defaultPermissions.copy(mediaKeySystemAccess = ALLOWED),
+            settings.getSitePermissionsCustomSettingsRules()
+        )
+
+        settings.setSitePermissionsPhoneFeatureAction(PhoneFeature.MEDIA_KEY_SYSTEM_ACCESS, BLOCKED)
+
+        assertEquals(
+            defaultPermissions.copy(mediaKeySystemAccess = BLOCKED),
             settings.getSitePermissionsCustomSettingsRules()
         )
     }

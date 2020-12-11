@@ -22,18 +22,6 @@ class SecretSettingsFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.secret_settings_preferences, rootKey)
 
-        requirePreference<SwitchPreference>(R.string.pref_key_enable_top_frecent_sites).apply {
-            isVisible = FeatureFlags.topFrecentSite
-            isChecked = context.settings().showTopFrecentSites
-            onPreferenceChangeListener = SharedPreferenceUpdater()
-        }
-
-        requirePreference<SwitchPreference>(R.string.pref_key_wait_first_paint).apply {
-            isVisible = FeatureFlags.waitUntilPaintToDraw
-            isChecked = context.settings().waitToShowPageUntilFirstPaint
-            onPreferenceChangeListener = SharedPreferenceUpdater()
-        }
-
         requirePreference<SwitchPreference>(R.string.pref_key_synced_tabs_tabs_tray).apply {
             isVisible = FeatureFlags.syncedTabsInTabsTray
             isChecked = context.settings().syncedTabsInTabsTray

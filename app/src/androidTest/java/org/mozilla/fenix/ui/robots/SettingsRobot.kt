@@ -20,6 +20,7 @@ import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.Visibility
 import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
 import androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
@@ -51,7 +52,7 @@ class SettingsRobot {
     fun verifyAccessibilityButton() = assertAccessibilityButton()
     fun verifySetAsDefaultBrowserButton() = assertSetAsDefaultBrowserButton()
     fun verifyDefaultBrowserItem() = assertDefaultBrowserItem()
-    fun verifyCloseTabsItem() = assertCloseTabsItem()
+    fun verifyTabsItem() = assertTabsItem()
     fun verifyDefaultBrowserIsDisaled() = assertDefaultBrowserIsDisabled()
     fun clickDefaultBrowserSwitch() = toggleDefaultBrowserSwitch()
     fun verifyAndroidDefaultAppsMenuAppears() = assertAndroidDefaultAppsMenuAppears()
@@ -135,10 +136,10 @@ class SettingsRobot {
             return SettingsSubMenuThemeRobot.Transition()
         }
 
-        fun openCloseTabsSubMenu(interact: SettingsSubMenuTabsRobot.() -> Unit): SettingsSubMenuTabsRobot.Transition {
+        fun openTabsSubMenu(interact: SettingsSubMenuTabsRobot.() -> Unit): SettingsSubMenuTabsRobot.Transition {
 
-            fun closeTabsButton() = onView(withText("Close tabs"))
-            closeTabsButton().click()
+            fun tabsButton() = onView(withText("Tabs"))
+            tabsButton().click()
 
             SettingsSubMenuTabsRobot().interact()
             return SettingsSubMenuTabsRobot.Transition()
@@ -297,9 +298,9 @@ private fun assertDefaultBrowserItem() {
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
-private fun assertCloseTabsItem() {
-    mDevice.wait(Until.findObject(By.text("Close tabs")), waitingTime)
-    onView(withText("Close tabs"))
+private fun assertTabsItem() {
+    mDevice.wait(Until.findObject(By.text("Tabs")), waitingTime)
+    onView(withText("Tabs"))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
@@ -425,15 +426,17 @@ private fun assertAboutHeading(): ViewInteraction {
 }
 
 private fun assertRateOnGooglePlay(): ViewInteraction {
-    scrollToElementByText("About Firefox Preview")
+    onView(withId(R.id.recycler_view))
+        .perform(RecyclerViewActions.scrollTo<RecyclerView.ViewHolder>(hasDescendant(withText("Rate on Google Play"))))
     return onView(withText("Rate on Google Play"))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
 private fun assertAboutFirefoxPreview(): ViewInteraction {
-    scrollToElementByText("About Firefox Preview")
+    onView(withId(R.id.recycler_view))
+        .perform(RecyclerViewActions.scrollTo<RecyclerView.ViewHolder>(hasDescendant(withText("About Firefox Preview"))))
     return onView(withText("About Firefox Preview"))
-        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+        .check(matches(isDisplayed()))
 }
 
 fun swipeToBottom() = onView(withId(R.id.recycler_view)).perform(ViewActions.swipeUp())

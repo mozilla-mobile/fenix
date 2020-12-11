@@ -20,6 +20,10 @@
     <!-- No Private Tabs Message Description -->
     <string name="no_private_tabs_description">Accaren-ik n tbaḍnit ad d-ttwaseknen dagi.</string>
 
+    <!-- Default title for pinned Baidu top site that links to Baidu home page  -->
+    <string name="default_top_site_baidu">Baidu</string>
+    <!-- Default title for pinned JD top site that links to JD home page  -->
+    <string name="default_top_site_jd">JD</string>
     <!-- Message announced to the user when tab tray is selected with 1 tab -->
     <string name="open_tab_tray_single">1 yiccer i yeldin. Sit akken ad tbeddleḍ iccer.</string>
     <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
@@ -74,14 +78,6 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <!-- Text for the negative button -->
     <string name="cfr_neg_button_text">Ala, tanemmirt</string>
 
-    <!-- Search widget "contextual feature recommendation" (CFR) -->
-    <!-- Text for the main message. 'Firefox' intentionally hardcoded here.-->
-    <string name="search_widget_cfr_message">Kcem ɣer Firefox s lemɣawla. Rnu awiǧit ɣer ugdil-inek agejdan.</string>
-    <!-- Text for the positive button -->
-    <string name="search_widget_cfr_pos_button_text">Rnu awiǧit</string>
-    <!-- Text for the negative button -->
-    <string name="search_widget_cfr_neg_button_text">Mačči tura</string>
-
     <!-- Open in App "contextual feature recommendation" (CFR) -->
     <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
     <string name="open_in_app_cfr_info_message">Tzemreḍ ad tesbaduḍ akken ad yeldi iseɣwan s wudem awurman deg isnasen.</string>
@@ -103,6 +99,13 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <string name="tab_tray_close_tabs_banner_positive_button_text">Wali iɣewwaṛen</string>
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">Zgel</string>
+
+    <!-- Text for the banner message to tell users about our grid view feature. -->
+    <string name="tab_tray_grid_view_banner_message">Senfel taneɣruft n waccaren yeldin. Ddu ɣer yiɣewwaren syen fren iẓiki deg n yiccer.</string>
+    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
+    <string name="tab_tray_grid_view_banner_positive_button_text">Ddu ɣer yiɣewwaren</string>
+    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
+    <string name="tab_tray_grid_view_banner_negative_button_text">Zgel</string>
 
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
@@ -217,6 +220,8 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <string name="search_suggestions_onboarding_learn_more_link">Issin ugar</string>
 
     <!-- Search Widget -->
+    <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
+    <string name="search_widget_content_description">Ldi iccer amaynut n Firefox</string>
     <!-- Text preview for smaller sized widgets -->
     <string name="search_widget_text_short">Nadi</string>
     <!-- Text preview for larger sized widgets -->
@@ -348,6 +353,21 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <!-- Preference for notifications -->
     <string name="preferences_notifications">Ilɣa</string>
 
+    <!-- Add-on Preferences -->
+    <!-- Preference to customize the configured AMO (addons.mozilla.org) collection -->
+    <string name="preferences_customize_amo_collection">Sagen tagrumma n yizegrar</string>
+    <!-- Button caption to confirm the add-on collection configuration -->
+    <string name="customize_addon_collection_ok">IH</string>
+    <!-- Button caption to abort the add-on collection configuration -->
+    <string name="customize_addon_collection_cancel">Sefsex</string>
+    <!-- Hint displayed on input field for custom collection name -->
+    <string name="customize_addon_collection_hint">Isem n tegrumma</string>
+
+    <!-- Hint displayed on input field for custom collection user ID-->
+    <string name="customize_addon_collection_user_hint">Bab n tegrumma (ID n useqdac)</string>
+    <!-- Toast shown after confirming the custom add-on collection configuration -->
+    <string name="toast_customize_addon_collection_done">Tagrumma n yizegrar tettwabeddel. Ffeɣ seg usnas akken ad ddun  yibeddilen…</string>
+
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">Mtawi tura</string>
@@ -428,6 +448,10 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <string name="preferences_marketing_data">Isefka n uzenzi</string>
     <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
     <string name="preferences_marketing_data_description">Bḍu isefka ɣef timahilin i tseqdaceḍ deg %1$s s Leanplum, Imzenzi-nneɣ n izirazen.</string>
+    <!-- Title for studies preferences -->
+    <string name="preference_experiments_2">Studies</string>
+    <!-- Summary for studies preferences -->
+    <string name="preference_experiments_summary_2">Sireg Mozilla ad tesbedded sakin ad tseddu studies</string>
     <!-- Title for experiments preferences -->
     <string name="preference_experiments">Tisermiyin</string>
     <!-- Summary for experiments preferences -->
@@ -534,6 +558,14 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <string name="recently_closed_empty_message">Ulac iccaren imedlen melmi kan</string>
 
     <!-- Tab Management -->
+    <!-- Title of preference for tabs management -->
+    <string name="preferences_tabs">Iccaren</string>
+    <!-- Title of preference that allows a user to specify the tab view -->
+    <string name="preferences_tab_view">Sker iccer</string>
+    <!-- Option for a list tab view -->
+    <string name="tab_view_list">Tabdart</string>
+    <!-- Option for a grid tab view -->
+    <string name="tab_view_grid">Iẓiki</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
     <string name="preferences_close_tabs">Mdel iccaren</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
@@ -544,6 +576,17 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <string name="close_tabs_after_one_week">Seld yiwen n umalas</string>
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">Seld yiwen n waggur</string>
+
+    <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
+    <string name="close_tabs_manually_summary">Mdel s ufus</string>
+
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
+    <string name="close_tabs_after_one_day_summary">Mdel seld yiwen wass</string>
+
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one week-->
+    <string name="close_tabs_after_one_week_summary">Mdel seld yiwen umalas</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one month-->
+    <string name="close_tabs_after_one_month_summary">Mdel seld yiwen wayyur</string>
 
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
@@ -562,6 +605,8 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <string name="tab_tray_title">Ldi acarren</string>
     <!-- Text shown in the menu for saving tabs to a collection -->
     <string name="tab_tray_menu_item_save">Sekles ɣer tagrumma</string>
+    <!-- Text shown in the menu for the collection selector -->
+    <string name="tab_tray_menu_select">Fren</string>
     <!-- Text shown in the menu for sharing all tabs -->
     <string name="tab_tray_menu_item_share">Bḍu akk accaren</string>
     <!-- Text shown in the menu to view recently closed tabs -->
@@ -576,8 +621,18 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <string name="tab_tray_menu_home">Uɣal s axxam</string>
     <!-- Shortcut action to toggle private mode -->
     <string name="tab_tray_menu_toggle">Sken/ffer askar n waccaren</string>
+    <!-- Text shown in the multiselect menu for bookmarking selected tabs. -->
+    <string name="tab_tray_multiselect_menu_item_bookmark">Ticreḍt n usebter</string>
+    <!-- Text shown in the multiselect menu for closing selected tabs. -->
+    <string name="tab_tray_multiselect_menu_item_close">Mdel</string>
+    <!-- Content description for tabs tray multiselect share button -->
+    <string name="tab_tray_multiselect_share_content_description">Bḍu accaren yettwafernen</string>
+    <!-- Content description for tabs tray multiselect menu -->
+    <string name="tab_tray_multiselect_menu_content_description">Umuɣ n waccaren i yettwafernen</string>
     <!-- Content description (not visible, for screen readers etc.): Removes tab from collection button. Removes the selected tab from collection when pressed -->
     <string name="remove_tab_from_collection">Kkes iccer seg tegrumma</string>
+    <!-- Text for button to enter multiselect mode in tabs tray -->
+    <string name="tabs_tray_select_tabs">Fren accaren</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab button. Closes the current session when pressed -->
     <string name="close_tab">Mdel iccer</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab <title> button. First parameter is tab title  -->
@@ -611,8 +666,12 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <!-- Text for the button to open tabs of the selected collection -->
     <string name="collection_open_tabs">Iccaren yeldin</string>
 
-    <!-- Text for the menu button to remove a top site -->
-    <string name="remove_top_site">Kkes</string>
+    <!-- Hint for adding name of a collection -->
+    <string name="collection_name_hint">Isem n tegrumma</string>
+    <!-- Text for the menu button to rename a top site -->
+	<string name="rename_top_site">Senfel isem</string>
+	<!-- Text for the menu button to remove a top site -->
+	<string name="remove_top_site">Kkes</string>
 
     <!-- Text for the menu button to delete a top site from history -->
     <string name="delete_from_history">Kkes seg umazray</string>
@@ -649,6 +708,10 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <!-- Text for the button to clear selected history items. The first parameter
         is a digit showing the number of items you have selected -->
     <string name="history_delete_some">Kkes %1$d iferdisen</string>
+    <!-- Text for the header that groups the history for today -->
+    <string name="history_today">Ass-a</string>
+    <!-- Text for the header that groups the history for yesterday -->
+    <string name="history_yesterday">Iḍelli</string>
     <!-- Text for the header that groups the history for last 24 hours -->
     <string name="history_24_hours">24 isragen ineggura</string>
     <!-- Text for the header that groups the history the past 7 days -->
@@ -662,11 +725,24 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <string name="history_empty_message">Ulac amazray dagi</string>
 
     <!-- Downloads -->
+    <!-- Text for the button to clear all downloads -->
+    <string name="download_delete_all">Kkes isadaren</string>
+    <!-- Text for the dialog to confirm clearing all downloads -->
+    <string name="download_delete_all_dialog">D tidet tebɣiḍ ad tsefḍeḍ isadaren?</string>
+    <!-- Text for the snackbar to confirm that multiple downloads items have been deleted -->
+    <string name="download_delete_multiple_items_snackbar">Isadaren ttwakksen</string>
     <!-- Text shown when no download exists -->
     <string name="download_empty_message">Ulac isidar da</string>
     <!-- History multi select title in app bar
     The first parameter is the number of downloads selected -->
     <string name="download_multi_select_title">%1$d yettwafren</string>
+
+
+    <!-- History overflow menu open in new tab button -->
+    <string name="download_menu_open">Ldi</string>
+    <!-- Text for the button to delete a single history item -->
+    <string name="download_delete_item">Kkes</string>
+
 
     <!-- Crashes -->
     <!-- Title text displayed on the tab crash page. This first parameter is the name of the application (For example: Fenix) -->
@@ -789,6 +865,8 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <string name="preference_phone_feature_location">Adig</string>
     <!-- Preference for altering the notification access for all websites -->
     <string name="preference_phone_feature_notification">Alɣu</string>
+    <!-- Preference for altering the persistent storage access for all websites -->
+    <string name="preference_phone_feature_persistent_storage">Aklas imezgi</string>
     <!-- Label that indicates that a permission must be asked always -->
     <string name="preference_option_phone_feature_ask_to_allow">Suter asireg</string>
     <!-- Label that indicates that a permission must be blocked -->
@@ -930,6 +1008,12 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <string name="snackbar_tab_closed">Iccer imdel</string>
     <!-- Text shown in snackbar when user closes all tabs -->
     <string name="snackbar_tabs_closed">Medlen iccaren</string>
+    <!-- Text shown in snackbar when user closes tabs -->
+    <string name="snackbar_message_tabs_closed">Accaren medlen!</string>
+    <!-- Text shown in snackbar when user bookmarks a list of tabs -->
+    <string name="snackbar_message_bookmarks_saved">Ticraḍ n yisebtar ttwakelsent!</string>
+    <!-- Text shown in snackbar action for viewing bookmarks -->
+    <string name="snackbar_message_bookmarks_view">Sken</string>
     <!-- Text shown in snackbar when user adds a site to top sites -->
     <string name="snackbar_added_to_top_sites">Rnu ɣer ismal ifazen!</string>
     <!-- Text shown in snackbar when user closes a private tab -->
@@ -1598,12 +1682,24 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <!-- Label for the show most visited sites preference -->
     <string name="top_sites_toggle_top_frecent_sites">Sken-d ismal ittwarzan aṭas</string>
 
+    <!-- Title text displayed in the rename top site dialog. -->
+	<string name="top_sites_rename_dialog_title">Isem</string>
+	<!-- Hint for renaming title of a top site -->
+	<string name="top_site_name_hint">Isem n useɣwen ifazen</string>
+	<!-- Button caption to confirm the renaming of the top site. -->
+	<string name="top_sites_rename_dialog_ok">IH</string>
+	<!-- Dialog button text for canceling the rename top site prompt. -->
+	<string name="top_sites_rename_dialog_cancel">Sefsex</string>
+
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">Kkes</string>
 
     <!-- Deprecated: text for the firefox account onboarding card header
     The first parameter is the name of the app (e.g. Firefox Preview) -->
     <string name="onboarding_firefox_account_header">Awi %s amaynut akk.</string>
+
+    <!-- Content description radio buttons with a link to more information -->
+    <string name="radio_preference_info_content_description">Sit i wugar n telqayt</string>
 
     <!-- Deprecated: No Open Tabs Message Header -->
     <string name="no_collections_header1">Lqeḍ tiɣawsiwin i tḥemmleḍ</string>

@@ -94,6 +94,8 @@ class QuickSettingsFragmentStoreTest {
         every { permissions.microphone } returns SitePermissions.Status.NO_DECISION
         every { permissions.notification } returns SitePermissions.Status.BLOCKED
         every { permissions.location } returns SitePermissions.Status.ALLOWED
+        every { permissions.localStorage } returns SitePermissions.Status.ALLOWED
+        every { permissions.mediaKeySystemAccess } returns SitePermissions.Status.NO_DECISION
         every { permissions.autoplayAudible } returns SitePermissions.Status.BLOCKED
         every { permissions.autoplayInaudible } returns SitePermissions.Status.BLOCKED
         every { appSettings.getAutoplayUserSetting(any()) } returns AUTOPLAY_BLOCK_ALL
@@ -111,6 +113,8 @@ class QuickSettingsFragmentStoreTest {
         assertNotNull(state[PhoneFeature.LOCATION])
         assertNotNull(state[PhoneFeature.AUTOPLAY_AUDIBLE])
         assertNotNull(state[PhoneFeature.AUTOPLAY_INAUDIBLE])
+        assertNotNull(state[PhoneFeature.PERSISTENT_STORAGE])
+        assertNotNull(state[PhoneFeature.MEDIA_KEY_SYSTEM_ACCESS])
     }
 
     @Test

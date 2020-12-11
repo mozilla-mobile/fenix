@@ -7,7 +7,9 @@ package org.mozilla.fenix.components
 import GeckoProvider
 import android.content.Context
 import android.content.res.Configuration
+import android.os.Build
 import android.os.StrictMode
+import androidx.core.content.ContextCompat
 import io.sentry.Sentry
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -21,7 +23,7 @@ import mozilla.components.browser.session.SessionManager
 import mozilla.components.browser.session.engine.EngineMiddleware
 import mozilla.components.browser.session.storage.SessionStorage
 import mozilla.components.browser.session.undo.UndoMiddleware
-import mozilla.components.browser.state.action.RecentlyClosedAction
+import mozilla.components.browser.state.action.RestoreCompleteAction
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.browser.storage.sync.PlacesBookmarksStorage
@@ -37,12 +39,13 @@ import mozilla.components.concept.fetch.Client
 import mozilla.components.feature.customtabs.store.CustomTabsServiceStore
 import mozilla.components.feature.downloads.DownloadMiddleware
 import mozilla.components.feature.logins.exceptions.LoginExceptionStorage
-import mozilla.components.feature.media.RecordingDevicesNotificationFeature
-import mozilla.components.feature.media.middleware.MediaMiddleware
+import mozilla.components.feature.media.middleware.RecordingDevicesMiddleware
 import mozilla.components.feature.pwa.ManifestStorage
 import mozilla.components.feature.pwa.WebAppShortcutManager
 import mozilla.components.feature.readerview.ReaderViewMiddleware
 import mozilla.components.feature.recentlyclosed.RecentlyClosedMiddleware
+import mozilla.components.feature.search.middleware.SearchMiddleware
+import mozilla.components.feature.search.region.RegionMiddleware
 import mozilla.components.feature.session.HistoryDelegate
 import mozilla.components.feature.top.sites.DefaultTopSitesStorage
 import mozilla.components.feature.top.sites.PinnedSiteStorage
@@ -54,17 +57,22 @@ import mozilla.components.lib.dataprotect.generateEncryptionKey
 import mozilla.components.service.digitalassetlinks.RelationChecker
 import mozilla.components.service.digitalassetlinks.local.StatementApi
 import mozilla.components.service.digitalassetlinks.local.StatementRelationChecker
+import mozilla.components.service.location.LocationService
+import mozilla.components.service.location.MozillaLocationService
 import mozilla.components.service.sync.logins.SyncableLoginsStorage
 import mozilla.components.support.locale.LocaleManager
 import org.mozilla.fenix.AppRequestInterceptor
+import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
-import org.mozilla.fenix.StrictModeManager
+import org.mozilla.fenix.perf.StrictModeManager
+import org.mozilla.fenix.TelemetryMiddleware
+import org.mozilla.fenix.components.search.SearchMigration
 import org.mozilla.fenix.downloads.DownloadService
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.media.MediaService
+import org.mozilla.fenix.perf.lazyMonitored
 import org.mozilla.fenix.search.telemetry.ads.AdsTelemetry
 import org.mozilla.fenix.search.telemetry.incontent.InContentTelemetry
 import org.mozilla.fenix.settings.SupportUtils
@@ -72,11 +80,17 @@ import org.mozilla.fenix.settings.advanced.getSelectedLocale
 import org.mozilla.fenix.utils.Mockable
 import org.mozilla.fenix.utils.getUndoDelay
 import java.util.concurrent.TimeUnit
+import mozilla.components.feature.media.MediaSessionFeature
+import mozilla.components.feature.media.middleware.MediaMiddleware
+import org.mozilla.fenix.FeatureFlags.newMediaSessionApi
+import org.mozilla.fenix.media.MediaService
+import org.mozilla.fenix.media.MediaSessionService
 
 /**
  * Component group for all core browser functionality.
  */
 @Mockable
+@Suppress("LargeClass")
 class Core(
     private val context: Context,
     private val crashReporter: CrashReporting,
@@ -86,10 +100,11 @@ class Core(
      * The browser engine component initialized based on the build
      * configuration (see build variants).
      */
-    val engine: Engine by lazy {
+    val engine: Engine by lazyMonitored {
         val defaultSettings = DefaultSettings(
-            requestInterceptor = AppRequestInterceptor(context),
-            remoteDebuggingEnabled = context.settings().isRemoteDebuggingEnabled,
+            requestInterceptor = requestInterceptor,
+            remoteDebuggingEnabled = context.settings().isRemoteDebuggingEnabled &&
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.M,
             testingModeEnabled = false,
             trackingProtectionPolicy = trackingProtectionPolicyFactory.createTrackingProtectionPolicy(),
             historyTrackingDelegate = HistoryDelegate(lazyHistoryStorage),
@@ -98,7 +113,11 @@ class Core(
             fontInflationEnabled = context.settings().shouldUseAutoSize,
             suspendMediaWhenInactive = false,
             forceUserScalableContent = context.settings().forceEnableZoom,
-            loginAutofillEnabled = context.settings().shouldAutofillLogins
+            loginAutofillEnabled = context.settings().shouldAutofillLogins,
+            clearColor = ContextCompat.getColor(
+                context,
+                R.color.foundation_normal_theme
+            )
         )
 
         GeckoEngine(
@@ -125,9 +144,18 @@ class Core(
     }
 
     /**
+     * Passed to [engine] to intercept requests for app links,
+     * and various features triggered by page load requests.
+     *
+     * NB: This does not need to be lazy as it is initialized
+     * with the engine on startup.
+     */
+    val requestInterceptor = AppRequestInterceptor(context)
+
+    /**
      * [Client] implementation to be used for code depending on `concept-fetch``
      */
-    val client: Client by lazy {
+    val client: Client by lazyMonitored {
         GeckoViewFetchClient(
             context,
             GeckoProvider.getOrCreateRuntime(
@@ -138,26 +166,50 @@ class Core(
         )
     }
 
-    private val sessionStorage: SessionStorage by lazy {
+    private val sessionStorage: SessionStorage by lazyMonitored {
         SessionStorage(context, engine = engine)
+    }
+
+    private val locationService: LocationService by lazyMonitored {
+        if (Config.channel.isDebug || BuildConfig.MLS_TOKEN.isEmpty()) {
+            LocationService.default()
+        } else {
+            MozillaLocationService(context, client, BuildConfig.MLS_TOKEN)
+        }
     }
 
     /**
      * The [BrowserStore] holds the global [BrowserState].
      */
-    val store by lazy {
-        BrowserStore(
-            middleware = listOf(
+    val store by lazyMonitored {
+        val middlewareList =
+            mutableListOf(
                 RecentlyClosedMiddleware(context, RECENTLY_CLOSED_MAX, engine),
-                MediaMiddleware(context, MediaService::class.java),
                 DownloadMiddleware(context, DownloadService::class.java),
                 ReaderViewMiddleware(),
+                TelemetryMiddleware(
+                    context.settings(),
+                    adsTelemetry,
+                    metrics
+                ),
                 ThumbnailsMiddleware(thumbnailStorage),
-                UndoMiddleware(::lookupSessionManager, context.getUndoDelay())
-            ) + EngineMiddleware.create(engine, ::findSessionById)
-        ).also {
-            it.dispatch(RecentlyClosedAction.InitializeRecentlyClosedState)
+                UndoMiddleware(::lookupSessionManager, context.getUndoDelay()),
+                RegionMiddleware(context, locationService),
+                SearchMiddleware(
+                    context,
+                    additionalBundledSearchEngineIds = listOf("reddit", "youtube"),
+                    migration = SearchMigration(context)
+                ),
+                RecordingDevicesMiddleware(context)
+            )
+
+        if (!newMediaSessionApi) {
+            middlewareList.add(MediaMiddleware(context, MediaService::class.java))
         }
+
+        BrowserStore(
+            middleware = middlewareList + EngineMiddleware.create(engine, ::findSessionById)
+        )
     }
 
     private fun lookupSessionManager(): SessionManager {
@@ -171,12 +223,12 @@ class Core(
     /**
      * The [CustomTabsServiceStore] holds global custom tabs related data.
      */
-    val customTabsStore by lazy { CustomTabsServiceStore() }
+    val customTabsStore by lazyMonitored { CustomTabsServiceStore() }
 
     /**
      * The [RelationChecker] checks Digital Asset Links relationships for Trusted Web Activities.
      */
-    val relationChecker: RelationChecker by lazy {
+    val relationChecker: RelationChecker by lazyMonitored {
         StatementRelationChecker(StatementApi(client))
     }
 
@@ -186,7 +238,7 @@ class Core(
      * sessions from the [SessionStorage], and with a default session (about:blank) in
      * case all sessions/tabs are closed.
      */
-    val sessionManager by lazy {
+    val sessionManager by lazyMonitored {
         SessionManager(engine, store).also { sessionManager ->
             // Install the "icons" WebExtension to automatically load icons for every visited website.
             icons.install(engine, store)
@@ -196,10 +248,6 @@ class Core(
 
             // Install the "cookies" WebExtension and tracks user interaction with SERPs.
             searchTelemetry.install(engine, store)
-
-            // Show an ongoing notification when recording devices (camera, microphone) are used by web content
-            RecordingDevicesNotificationFeature(context, sessionManager)
-                .enable()
 
             // Restore the previous state.
             GlobalScope.launch(Dispatchers.Main) {
@@ -218,34 +266,57 @@ class Core(
                     .periodicallyInForeground(interval = 30, unit = TimeUnit.SECONDS)
                     .whenGoingToBackground()
                     .whenSessionsChange()
+
+                // Now that we have restored our previous state (if there's one) let's remove timed out tabs
+                if (!context.settings().manuallyCloseTabs) {
+                    store.state.tabs.filter {
+                        (System.currentTimeMillis() - it.lastAccess) > context.settings()
+                            .getTabTimeout()
+                    }.forEach {
+                        val session = sessionManager.findSessionById(it.id)
+                        if (session != null) {
+                            sessionManager.remove(session)
+                        }
+                    }
+                }
+
+                store.dispatch(RestoreCompleteAction)
             }
 
             WebNotificationFeature(
                 context, engine, icons, R.drawable.ic_status_logo,
                 permissionStorage.permissionsStorage, HomeActivity::class.java
             )
+
+            if (newMediaSessionApi) {
+                MediaSessionFeature(context, MediaSessionService::class.java, store).start()
+            }
         }
     }
 
     /**
      * Icons component for loading, caching and processing website icons.
      */
-    val icons by lazy {
+    val icons by lazyMonitored {
         BrowserIcons(context, client)
     }
 
-    val adsTelemetry by lazy {
-        AdsTelemetry(context.components.analytics.metrics)
+    val metrics by lazyMonitored {
+        context.components.analytics.metrics
     }
 
-    val searchTelemetry by lazy {
-        InContentTelemetry(context.components.analytics.metrics)
+    val adsTelemetry by lazyMonitored {
+        AdsTelemetry(metrics)
+    }
+
+    val searchTelemetry by lazyMonitored {
+        InContentTelemetry(metrics)
     }
 
     /**
      * Shortcut component for managing shortcuts on the device home screen.
      */
-    val webAppShortcutManager by lazy {
+    val webAppShortcutManager by lazyMonitored {
         WebAppShortcutManager(
             context,
             client,
@@ -258,60 +329,78 @@ class Core(
     // Use these for startup-path code, where we don't want to do any work that's not strictly necessary.
     // For example, this is how the GeckoEngine delegates (history, logins) are configured.
     // We can fully initialize GeckoEngine without initialized our storage.
-    val lazyHistoryStorage = lazy { PlacesHistoryStorage(context, crashReporter) }
-    val lazyBookmarksStorage = lazy { PlacesBookmarksStorage(context) }
-    val lazyPasswordsStorage = lazy { SyncableLoginsStorage(context, passwordsEncryptionKey) }
+    val lazyHistoryStorage = lazyMonitored { PlacesHistoryStorage(context, crashReporter) }
+    val lazyBookmarksStorage = lazyMonitored { PlacesBookmarksStorage(context) }
+    val lazyPasswordsStorage = lazyMonitored { SyncableLoginsStorage(context, passwordsEncryptionKey) }
 
     /**
      * The storage component to sync and persist tabs in a Firefox Sync account.
      */
-    val lazyRemoteTabsStorage = lazy { RemoteTabsStorage() }
+    val lazyRemoteTabsStorage = lazyMonitored { RemoteTabsStorage() }
 
     // For most other application code (non-startup), these wrappers are perfectly fine and more ergonomic.
-    val historyStorage by lazy { lazyHistoryStorage.value }
-    val bookmarksStorage by lazy { lazyBookmarksStorage.value }
-    val passwordsStorage by lazy { lazyPasswordsStorage.value }
+    val historyStorage: PlacesHistoryStorage get() = lazyHistoryStorage.value
+    val bookmarksStorage: PlacesBookmarksStorage get() = lazyBookmarksStorage.value
+    val passwordsStorage: SyncableLoginsStorage get() = lazyPasswordsStorage.value
 
-    val tabCollectionStorage by lazy { TabCollectionStorage(
-        context,
-        sessionManager,
-        strictMode
-    ) }
+    val tabCollectionStorage by lazyMonitored {
+        TabCollectionStorage(
+            context,
+            sessionManager,
+            strictMode
+        )
+    }
 
     /**
      * A storage component for persisting thumbnail images of tabs.
      */
-    val thumbnailStorage by lazy { ThumbnailStorage(context) }
+    val thumbnailStorage by lazyMonitored { ThumbnailStorage(context) }
 
-    val pinnedSiteStorage by lazy { PinnedSiteStorage(context) }
+    val pinnedSiteStorage by lazyMonitored { PinnedSiteStorage(context) }
 
-    val topSitesStorage by lazy {
+    val topSitesStorage by lazyMonitored {
         val defaultTopSites = mutableListOf<Pair<String, String>>()
 
         strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
             if (!context.settings().defaultTopSitesAdded) {
-                defaultTopSites.add(
-                    Pair(
-                        context.getString(R.string.default_top_site_google),
-                        SupportUtils.GOOGLE_URL
-                    )
-                )
-
-                if (LocaleManager.getSelectedLocale(context).language == "en") {
+                if (Config.channel.isMozillaOnline) {
                     defaultTopSites.add(
                         Pair(
-                            context.getString(R.string.pocket_pinned_top_articles),
-                            SupportUtils.POCKET_TRENDING_URL
+                            context.getString(R.string.default_top_site_baidu),
+                            SupportUtils.BAIDU_URL
+                        )
+                    )
+
+                    defaultTopSites.add(
+                        Pair(
+                            context.getString(R.string.default_top_site_jd),
+                            SupportUtils.JD_URL
+                        )
+                    )
+                } else {
+                    defaultTopSites.add(
+                        Pair(
+                            context.getString(R.string.default_top_site_google),
+                            SupportUtils.GOOGLE_URL
+                        )
+                    )
+
+                    if (LocaleManager.getSelectedLocale(context).language == "en") {
+                        defaultTopSites.add(
+                            Pair(
+                                context.getString(R.string.pocket_pinned_top_articles),
+                                SupportUtils.POCKET_TRENDING_URL
+                            )
+                        )
+                    }
+
+                    defaultTopSites.add(
+                        Pair(
+                            context.getString(R.string.default_top_site_wikipedia),
+                            SupportUtils.WIKIPEDIA_URL
                         )
                     )
                 }
-
-                defaultTopSites.add(
-                    Pair(
-                        context.getString(R.string.default_top_site_wikipedia),
-                        SupportUtils.WIKIPEDIA_URL
-                    )
-                )
 
                 context.settings().defaultTopSitesAdded = true
             }
@@ -324,11 +413,11 @@ class Core(
         )
     }
 
-    val permissionStorage by lazy { PermissionStorage(context) }
+    val permissionStorage by lazyMonitored { PermissionStorage(context) }
 
-    val webAppManifestStorage by lazy { ManifestStorage(context) }
+    val webAppManifestStorage by lazyMonitored { ManifestStorage(context) }
 
-    val loginExceptionStorage by lazy { LoginExceptionStorage(context) }
+    val loginExceptionStorage by lazyMonitored { LoginExceptionStorage(context) }
 
     /**
      * Shared Preferences that encrypt/decrypt using Android KeyStore and lib-dataprotect for 23+
@@ -342,7 +431,7 @@ class Core(
             forceInsecure = !Config.channel.isNightlyOrDebug
         )
 
-    private val passwordsEncryptionKey by lazy {
+    private val passwordsEncryptionKey by lazyMonitored {
         getSecureAbove22Preferences().getString(PASSWORDS_KEY)
             ?: generateEncryptionKey(KEY_STRENGTH).also {
                 if (context.settings().passwordsEncryptionKeyGenerated &&

@@ -19,7 +19,7 @@ import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.tab.collections.TabCollectionStorage
 import mozilla.components.support.base.observer.Observable
 import mozilla.components.support.base.observer.ObserverRegistry
-import org.mozilla.fenix.StrictModeManager
+import org.mozilla.fenix.perf.StrictModeManager
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.toShortUrl
 import org.mozilla.fenix.home.sessioncontrol.viewholders.CollectionViewHolder
@@ -40,7 +40,7 @@ class TabCollectionStorage(
         /**
          * A collection has been created
          */
-        fun onCollectionCreated(title: String, sessions: List<Session>) = Unit
+        fun onCollectionCreated(title: String, sessions: List<Session>, id: Long?) = Unit
 
         /**
          *  Tab(s) have been added to collection
@@ -63,8 +63,8 @@ class TabCollectionStorage(
     }
 
     suspend fun createCollection(title: String, sessions: List<Session>) = ioScope.launch {
-        collectionStorage.createCollection(title, sessions)
-        notifyObservers { onCollectionCreated(title, sessions) }
+        val id = collectionStorage.createCollection(title, sessions)
+        notifyObservers { onCollectionCreated(title, sessions, id) }
     }.join()
 
     suspend fun addTabsToCollection(tabCollection: TabCollection, sessions: List<Session>) = ioScope.launch {

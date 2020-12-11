@@ -17,6 +17,8 @@ import kotlinx.coroutines.launch
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
+import mozilla.components.browser.state.selector.findTab
+import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.EngineSession.LoadUrlFlags
 import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.feature.session.SessionFeature
@@ -63,10 +65,11 @@ class DefaultBrowserToolbarMenuController(
     private val swipeRefresh: SwipeRefreshLayout,
     private val customTabSession: Session?,
     private val openInFenixIntent: Intent,
-    private val bookmarkTapped: (Session) -> Unit,
+    private val bookmarkTapped: (String, String) -> Unit,
     private val scope: CoroutineScope,
     private val tabCollectionStorage: TabCollectionStorage,
-    private val topSitesStorage: DefaultTopSitesStorage
+    private val topSitesStorage: DefaultTopSitesStorage,
+    private val browserStore: BrowserStore
 ) : BrowserToolbarMenuController {
 
     private val currentSession
@@ -184,7 +187,7 @@ class DefaultBrowserToolbarMenuController(
                 val directions = NavGraphDirections.actionGlobalShareFragment(
                     data = arrayOf(
                         ShareData(
-                            url = currentSession?.url,
+                            url = getProperUrl(currentSession),
                             title = currentSession?.title
                         )
                     ),
@@ -233,10 +236,16 @@ class DefaultBrowserToolbarMenuController(
                 sessionManager.select(customTabSession)
 
                 // Switch to the actual browser which should now display our new selected session
-                activity.startActivity(openInFenixIntent)
+                activity.startActivity(openInFenixIntent.apply {
+                    // We never want to launch the browser in the same task as the external app
+                    // activity. So we force a new task here. IntentReceiverActivity will do the
+                    // right thing and take care of routing to an already existing browser and avoid
+                    // cloning a new one.
+                    flags = flags or Intent.FLAG_ACTIVITY_NEW_TASK
+                })
 
-                // Close this activity since it is no longer displaying any session
-                activity.finish()
+                // Close this activity (and the task) since it is no longer displaying any session
+                activity.finishAndRemoveTask()
             }
             ToolbarMenu.Item.Quit -> {
                 // We need to show the snackbar while the browsing data is deleting (if "Delete
@@ -270,7 +279,7 @@ class DefaultBrowserToolbarMenuController(
             }
             ToolbarMenu.Item.Bookmark -> {
                 sessionManager.selectedSession?.let {
-                    bookmarkTapped(it)
+                    getProperUrl(it)?.let { url -> bookmarkTapped(url, it.title) }
                 }
             }
             ToolbarMenu.Item.Bookmarks -> browserAnimator.captureEngineViewAndDrawStatically {
@@ -291,6 +300,17 @@ class DefaultBrowserToolbarMenuController(
                     R.id.browserFragment,
                     BrowserFragmentDirections.actionGlobalDownloadsFragment()
                 )
+            }
+        }
+    }
+
+    private fun getProperUrl(currentSession: Session?): String? {
+        return currentSession?.id?.let {
+            val currentTab = browserStore.state.findTab(it)
+            if (currentTab?.readerState?.active == true) {
+                currentTab.readerState.activeUrl
+            } else {
+                currentSession.url
             }
         }
     }

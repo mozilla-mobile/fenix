@@ -6,7 +6,7 @@ package org.mozilla.fenix.components.metrics
 
 import android.content.Context
 import mozilla.components.browser.errorpages.ErrorType
-import mozilla.components.browser.search.SearchEngine
+import mozilla.components.browser.state.search.SearchEngine
 import mozilla.components.feature.top.sites.TopSite
 import org.mozilla.fenix.GleanMetrics.Addons
 import org.mozilla.fenix.GleanMetrics.AppTheme
@@ -52,10 +52,6 @@ sealed class Event {
     object CustomTabsActionTapped : Event()
     object CustomTabsMenuOpened : Event()
     object UriOpened : Event()
-    object QRScannerOpened : Event()
-    object QRScannerPromptDisplayed : Event()
-    object QRScannerNavigationAllowed : Event()
-    object QRScannerNavigationDenied : Event()
     object SyncAuthOpened : Event()
     object SyncAuthClosed : Event()
     object SyncAuthSignUp : Event()
@@ -70,7 +66,6 @@ sealed class Event {
     object SyncAuthFromSharedReuse : Event()
     object SyncAuthFromSharedCopy : Event()
     object SyncAccountOpened : Event()
-    object SyncAccountClosed : Event()
     object SyncAccountSyncNow : Event()
     object SendTab : Event()
     object SignInToSendTab : Event()
@@ -98,11 +93,8 @@ sealed class Event {
     object FindInPageOpened : Event()
     object FindInPageClosed : Event()
     object FindInPageSearchCommitted : Event()
-    object PrivateBrowsingGarbageIconTapped : Event()
     object PrivateBrowsingSnackbarUndoTapped : Event()
     object PrivateBrowsingNotificationTapped : Event()
-    object PrivateBrowsingNotificationOpenTapped : Event()
-    object PrivateBrowsingNotificationDeleteAndOpenTapped : Event()
     object PrivateBrowsingCreateShortcut : Event()
     object PrivateBrowsingAddShortcutCFR : Event()
     object PrivateBrowsingCancelCFR : Event()
@@ -152,16 +144,11 @@ sealed class Event {
     object FennecToFenixMigrated : Event()
     object AddonsOpenInSettings : Event()
     object VoiceSearchTapped : Event()
-    object SearchWidgetCFRDisplayed : Event()
-    object SearchWidgetCFRCanceled : Event()
-    object SearchWidgetCFRNotNowPressed : Event()
-    object SearchWidgetCFRAddWidgetPressed : Event()
     object SearchWidgetInstalled : Event()
     object OnboardingAutoSignIn : Event()
     object OnboardingManualSignIn : Event()
     object OnboardingPrivacyNotice : Event()
     object OnboardingPrivateBrowsing : Event()
-    object OnboardingWhatsNew : Event()
     object OnboardingFinish : Event()
     object ChangedToDefaultBrowser : Event()
 
@@ -193,6 +180,8 @@ sealed class Event {
 
     object MasterPasswordMigrationSuccess : Event()
     object MasterPasswordMigrationDisplayed : Event()
+
+    object TabSettingsOpened : Event()
 
     // Interaction events with extras
 
@@ -337,7 +326,8 @@ sealed class Event {
     data class AppAllStartup(
         val source: Source,
         val type: Type,
-        val hasSavedInstanceState: Boolean? = null
+        val hasSavedInstanceState: Boolean? = null,
+        var launchTime: Long? = null
     ) : Event() {
         enum class Source { APP_ICON, LINK, CUSTOM_TAB, UNKNOWN }
         enum class Type { COLD, WARM, HOT, ERROR }
@@ -353,6 +343,10 @@ sealed class Event {
                 if (hasSavedInstanceState != null) {
                     extrasMap[Events.appOpenedAllStartupKeys.hasSavedInstanceState] =
                         hasSavedInstanceState.toString()
+                }
+                if (launchTime != null) {
+                    extrasMap[Events.appOpenedAllStartupKeys.firstFramePreDrawNanos] =
+                        launchTime.toString()
                 }
                 return extrasMap
             }
@@ -410,7 +404,7 @@ sealed class Event {
             // https://github.com/mozilla-mobile/fenix/issues/1607
             // Sanitize identifiers for custom search engines.
             val identifier: String
-                get() = if (isCustom) "custom" else engine.identifier
+                get() = if (isCustom) "custom" else engine.id
 
             val searchEngine: SearchEngine
                 get() = when (this) {
@@ -501,7 +495,8 @@ sealed class Event {
                 "mozac.feature.contextmenu.save_image" to "save_image",
                 "mozac.feature.contextmenu.share_link" to "share_link",
                 "mozac.feature.contextmenu.copy_link" to "copy_link",
-                "mozac.feature.contextmenu.copy_image_location" to "copy_image_location"
+                "mozac.feature.contextmenu.copy_image_location" to "copy_image_location",
+                "mozac.feature.contextmenu.share_image" to "share_image"
             )
         }
     }

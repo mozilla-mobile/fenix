@@ -56,6 +56,7 @@
     <dimen name="checkbox_preference_padding_vertical">12dp</dimen>
     <dimen name="radiobutton_preference_margin_start">8dp</dimen>
     <dimen name="top_bar_alignment_margin_start">72dp</dimen>
+    <dimen name="section_header_height">48dp</dimen>
 
     <!--Quick Settings-->
     <dimen name="quicksettings_item_height">28dp</dimen>
@@ -91,6 +92,7 @@
 
     <!-- Home Fragment -->
     <dimen name="home_fragment_top_toolbar_header_margin">60dp</dimen>
+    <dimen name="home_collection_elevation">5dp</dimen>
 
     <!-- Browser Fragment -->
     <!--The size of the gap between the tab preview and content layout.-->
@@ -171,8 +173,14 @@
 
     <!-- Tabs Tray -->
     <dimen name="tab_tray_top_offset">40dp</dimen>
-    <dimen name="tab_tray_thumbnail_width">92dp</dimen>
-    <dimen name="tab_tray_thumbnail_height">69dp</dimen>
+    <dimen name="tab_tray_tab_item_height">88dp</dimen>
+    <dimen name="tab_tray_list_item_thumbnail_width">92dp</dimen>
+    <dimen name="tab_tray_list_item_thumbnail_height">72dp</dimen>
+    <dimen name="tab_tray_grid_item_thumbnail_width">156dp</dimen>
+    <dimen name="tab_tray_grid_item_thumbnail_height">156dp</dimen>
+    <dimen name="tab_tray_grid_item_border_radius">8dp</dimen>
+    <dimen name="tab_tray_grid_item_outer_border_radius">10dp</dimen>
+    <dimen name="tab_tray_grid_item_selected_border_width">2dp</dimen>
     <dimen name="tab_tray_favicon_border_radius">4dp</dimen>
     <dimen name="tab_tray_multiselect_handle_height">11dp</dimen>
     <dimen name="tab_tray_multiselect_handle_top_margin">0dp</dimen>

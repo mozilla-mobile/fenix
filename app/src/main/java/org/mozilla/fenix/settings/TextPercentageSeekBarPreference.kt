@@ -67,30 +67,37 @@ class TextPercentageSeekBarPreference @JvmOverloads constructor(
 ) : Preference(context, attrs, defStyleAttr, defStyleRes) {
     /* synthetic access */
     internal var mSeekBarValue: Int = 0
+
     /* synthetic access */
     internal var mMin: Int = 0
     private var mMax: Int = 0
     private var mSeekBarIncrement: Int = 0
+
     /* synthetic access */
     internal var mTrackingTouch: Boolean = false
+
     /* synthetic access */
     internal var mSeekBar: SeekBar? = null
     private var mSeekBarValueTextView: TextView? = null
     private var mExampleTextTextView: TextView? = null
+
     /**
      * Whether the SeekBar should respond to the left/right keys
      */
     /* synthetic access */
     var isAdjustable: Boolean = false
+
     /**
      * Whether to show the SeekBar value TextView next to the bar
      */
     private var mShowSeekBarValue: Boolean = false
+
     /**
      * Whether the SeekBarPreference should continuously save the Seekbar value while it is being dragged.
      */
     /* synthetic access */
     var updatesContinuously: Boolean = false
+
     /**
      * Listener reacting to the [SeekBar] changing value by the user
      */
@@ -222,19 +229,19 @@ class TextPercentageSeekBarPreference @JvmOverloads constructor(
 
     init {
         val a = context.obtainStyledAttributes(
-            attrs, R.styleable.SeekBarPreference, defStyleAttr, defStyleRes
+            attrs, R.styleable.TextPercentageSeekBarPreference, defStyleAttr, defStyleRes
         )
 
         // The ordering of these two statements are important. If we want to set max first, we need
         // to perform the same steps by changing min/max to max/min as following:
         // mMax = a.getInt(...) and setMin(...).
-        mMin = a.getInt(R.styleable.SeekBarPreference_min, 0)
-        max = a.getInt(R.styleable.SeekBarPreference_android_max, SEEK_BAR_MAX)
-        seekBarIncrement = a.getInt(R.styleable.SeekBarPreference_seekBarIncrement, 0)
-        isAdjustable = a.getBoolean(R.styleable.SeekBarPreference_adjustable, true)
-        mShowSeekBarValue = a.getBoolean(R.styleable.SeekBarPreference_showSeekBarValue, false)
+        mMin = a.getInt(R.styleable.TextPercentageSeekBarPreference_min, 0)
+        max = a.getInt(R.styleable.TextPercentageSeekBarPreference_android_max, SEEK_BAR_MAX)
+        seekBarIncrement = a.getInt(R.styleable.TextPercentageSeekBarPreference_seekBarIncrement, 0)
+        isAdjustable = a.getBoolean(R.styleable.TextPercentageSeekBarPreference_adjustable, true)
+        mShowSeekBarValue = a.getBoolean(R.styleable.TextPercentageSeekBarPreference_showSeekBarValue, false)
         updatesContinuously = a.getBoolean(
-            R.styleable.SeekBarPreference_updatesContinuously,
+            R.styleable.TextPercentageSeekBarPreference_updatesContinuously,
             false
         )
         a.recycle()
@@ -273,6 +280,8 @@ class TextPercentageSeekBarPreference @JvmOverloads constructor(
         updateExampleTextValue(mSeekBarValue)
         updateLabelValue(mSeekBarValue)
         mSeekBar?.isEnabled = isEnabled
+        mSeekBarValueTextView?.alpha = if (isEnabled) 1F else HALF_ALPHA
+        mExampleTextTextView?.alpha = if (isEnabled) 1F else HALF_ALPHA
         mSeekBar?.let {
             it.thumbOffset = it.thumb.intrinsicWidth.div(2 * PI).roundToInt()
         }
@@ -461,6 +470,7 @@ class TextPercentageSeekBarPreference @JvmOverloads constructor(
     companion object {
         private const val TAG = "SeekBarPreference"
         private const val STEP_SIZE = 5
+        private const val HALF_ALPHA = 0.5F
         private const val MIN_VALUE = 50
         private const val DECIMAL_CONVERSION = 100f
         private const val TEXT_SIZE = 16f

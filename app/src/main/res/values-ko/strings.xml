@@ -22,6 +22,10 @@
     <!-- No Private Tabs Message Description -->
     <string name="no_private_tabs_description">사생활 보호 탭이 여기에 표시됩니다.</string>
 
+    <!-- Default title for pinned Baidu top site that links to Baidu home page  -->
+    <string name="default_top_site_baidu">Baidu</string>
+    <!-- Default title for pinned JD top site that links to JD home page  -->
+    <string name="default_top_site_jd">JD</string>
     <!-- Message announced to the user when tab tray is selected with 1 tab -->
     <string name="open_tab_tray_single">열린 탭 1개. 탭을 전환하려면 누르세요.</string>
     <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
@@ -78,14 +82,6 @@
     <!-- Text for the negative button -->
     <string name="cfr_neg_button_text">아니오</string>
 
-    <!-- Search widget "contextual feature recommendation" (CFR) -->
-    <!-- Text for the main message. 'Firefox' intentionally hardcoded here.-->
-    <string name="search_widget_cfr_message">Firefox를 더 빨리 사용하세요. 홈 화면에 위젯을 추가하세요.</string>
-    <!-- Text for the positive button -->
-    <string name="search_widget_cfr_pos_button_text">위젯 추가</string>
-    <!-- Text for the negative button -->
-    <string name="search_widget_cfr_neg_button_text">나중에</string>
-
     <!-- Open in App "contextual feature recommendation" (CFR) -->
     <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
     <string name="open_in_app_cfr_info_message">앱에서 링크를 자동으로 열도록 Firefox를 설정할 수 있습니다.</string>
@@ -107,6 +103,13 @@
     <string name="tab_tray_close_tabs_banner_positive_button_text">옵션 보기</string>
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">닫기</string>
+
+    <!-- Text for the banner message to tell users about our grid view feature. -->
+    <string name="tab_tray_grid_view_banner_message">열린 탭의 레이아웃을 변경하세요. 설정으로 이동하여 탭 보기에서 그리드를 선택하세요.</string>
+    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
+    <string name="tab_tray_grid_view_banner_positive_button_text">설정으로 이동</string>
+    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
+    <string name="tab_tray_grid_view_banner_negative_button_text">닫기</string>
 
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
@@ -158,8 +161,6 @@
     <string name="browser_menu_find_in_page">페이지에서 찾기</string>
     <!-- Browser menu button that creates a private tab -->
     <string name="browser_menu_private_tab">사생활 보호 탭</string>
-    <!-- Browser menu button that creates a new tab -->
-    <string name="browser_menu_new_tab">새 탭</string>
     <!-- Browser menu button that saves the current tab to a collection -->
     <string name="browser_menu_save_to_collection_2">모음집에 저장</string>
     <!-- Browser menu button that open a share menu to share the current site -->
@@ -225,6 +226,8 @@
     <string name="search_suggestions_onboarding_learn_more_link">더 알아보기</string>
 
     <!-- Search Widget -->
+    <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
+    <string name="search_widget_content_description">새 Firefox 탭 열기</string>
     <!-- Text preview for smaller sized widgets -->
     <string name="search_widget_text_short">검색</string>
     <!-- Text preview for larger sized widgets -->
@@ -356,6 +359,26 @@
     <!-- Preference for notifications -->
     <string name="preferences_notifications">알림</string>
 
+    <!-- Add-on Preferences -->
+    <!-- Preference to customize the configured AMO (addons.mozilla.org) collection -->
+    <string name="preferences_customize_amo_collection">사용자 지정 부가 기능 모음집</string>
+    <!-- Button caption to confirm the add-on collection configuration -->
+    <string name="customize_addon_collection_ok">확인</string>
+    <!-- Button caption to abort the add-on collection configuration -->
+    <string name="customize_addon_collection_cancel">취소</string>
+    <!-- Hint displayed on input field for custom collection name -->
+    <string name="customize_addon_collection_hint">모음집 이름</string>
+    <!-- Hint displayed on input field for custom collection user ID-->
+    <string name="customize_addon_collection_user_hint">모음집 소유자 (사용자 ID)</string>
+    <!-- Toast shown after confirming the custom add-on collection configuration -->
+    <string name="toast_customize_addon_collection_done">부가 기능 모음집이 변경되었습니다. 변경 사항을 적용하기 위해 응용 프로그램을 종료하는 중…</string>
+
+    <!-- Add-on Installation from AMO-->
+    <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
+    <string name="addon_not_supported_error">부가 기능이 지원되지 않음</string>
+    <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is already installed -->
+    <string name="addon_already_installed">부가 기능이 이미 설치됨</string>
+
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">지금 동기화</string>
@@ -438,6 +461,10 @@
     <string name="preferences_marketing_data">마케팅 데이터</string>
     <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
     <string name="preferences_marketing_data_description">%1$s에서 사용하는 기능에 대한 데이터를 모바일 마케팅 공급업체인 Leanplum과 공유합니다.</string>
+    <!-- Title for studies preferences -->
+    <string name="preference_experiments_2">연구</string>
+    <!-- Summary for studies preferences -->
+    <string name="preference_experiments_summary_2">Mozilla가 연구를 설치하고 실행하도록 허용</string>
     <!-- Title for experiments preferences -->
     <string name="preference_experiments">실험</string>
     <!-- Summary for experiments preferences -->
@@ -543,6 +570,14 @@
     <string name="recently_closed_empty_message">최근에 닫은 탭 없음</string>
 
     <!-- Tab Management -->
+    <!-- Title of preference for tabs management -->
+    <string name="preferences_tabs">탭</string>
+    <!-- Title of preference that allows a user to specify the tab view -->
+    <string name="preferences_tab_view">탭 보기</string>
+    <!-- Option for a list tab view -->
+    <string name="tab_view_list">목록</string>
+    <!-- Option for a grid tab view -->
+    <string name="tab_view_grid">그리드</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
     <string name="preferences_close_tabs">탭 닫기</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
@@ -553,6 +588,15 @@
     <string name="close_tabs_after_one_week">일주일 후</string>
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">한 달 후</string>
+
+    <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
+    <string name="close_tabs_manually_summary">수동으로 닫기</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
+    <string name="close_tabs_after_one_day_summary">하루 후 닫기</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one week-->
+    <string name="close_tabs_after_one_week_summary">일주일 후 닫기</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one month-->
+    <string name="close_tabs_after_one_month_summary">한 달 후 닫기</string>
 
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
@@ -571,6 +615,8 @@
     <string name="tab_tray_title">탭 열기</string>
     <!-- Text shown in the menu for saving tabs to a collection -->
     <string name="tab_tray_menu_item_save">모음집에 저장</string>
+    <!-- Text shown in the menu for the collection selector -->
+    <string name="tab_tray_menu_select">선택</string>
     <!-- Text shown in the menu for sharing all tabs -->
     <string name="tab_tray_menu_item_share">모든 탭 공유</string>
     <!-- Text shown in the menu to view recently closed tabs -->
@@ -585,8 +631,18 @@
     <string name="tab_tray_menu_home">홈으로 이동</string>
     <!-- Shortcut action to toggle private mode -->
     <string name="tab_tray_menu_toggle">탭 모드 전환</string>
+    <!-- Text shown in the multiselect menu for bookmarking selected tabs. -->
+    <string name="tab_tray_multiselect_menu_item_bookmark">북마크</string>
+    <!-- Text shown in the multiselect menu for closing selected tabs. -->
+    <string name="tab_tray_multiselect_menu_item_close">닫기</string>
+    <!-- Content description for tabs tray multiselect share button -->
+    <string name="tab_tray_multiselect_share_content_description">선택한 탭 공유</string>
+    <!-- Content description for tabs tray multiselect menu -->
+    <string name="tab_tray_multiselect_menu_content_description">선택한 탭 메뉴</string>
     <!-- Content description (not visible, for screen readers etc.): Removes tab from collection button. Removes the selected tab from collection when pressed -->
     <string name="remove_tab_from_collection">모음집에서 탭 삭제</string>
+    <!-- Text for button to enter multiselect mode in tabs tray -->
+    <string name="tabs_tray_select_tabs">탭 선택</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab button. Closes the current session when pressed -->
     <string name="close_tab">탭 닫기</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab <title> button. First parameter is tab title  -->
@@ -622,8 +678,12 @@
     <string name="collection_open_tabs">열린 탭</string>
 
 
-    <!-- Text for the menu button to remove a top site -->
-    <string name="remove_top_site">삭제</string>
+    <!-- Hint for adding name of a collection -->
+    <string name="collection_name_hint">모음집 이름</string>
+    <!-- Text for the menu button to rename a top site -->
+	<string name="rename_top_site">이름 변경</string>
+	<!-- Text for the menu button to remove a top site -->
+	<string name="remove_top_site">삭제</string>
 
     <!-- Text for the menu button to delete a top site from history -->
     <string name="delete_from_history">기록에서 삭제</string>
@@ -660,6 +720,10 @@
     <!-- Text for the button to clear selected history items. The first parameter
         is a digit showing the number of items you have selected -->
     <string name="history_delete_some">%1$d개 항목 삭제</string>
+    <!-- Text for the header that groups the history for today -->
+    <string name="history_today">오늘</string>
+    <!-- Text for the header that groups the history for yesterday -->
+    <string name="history_yesterday">어제</string>
     <!-- Text for the header that groups the history for last 24 hours -->
     <string name="history_24_hours">지난 24 시간</string>
     <!-- Text for the header that groups the history the past 7 days -->
@@ -673,11 +737,24 @@
     <string name="history_empty_message">기록 없음</string>
 
     <!-- Downloads -->
+    <!-- Text for the button to clear all downloads -->
+    <string name="download_delete_all">다운로드 삭제</string>
+    <!-- Text for the dialog to confirm clearing all downloads -->
+    <string name="download_delete_all_dialog">다운로드를 삭제하시겠습니까?</string>
+    <!-- Text for the snackbar to confirm that multiple downloads items have been deleted -->
+    <string name="download_delete_multiple_items_snackbar">다운로드 삭제됨</string>
     <!-- Text shown when no download exists -->
     <string name="download_empty_message">다운로드 없음</string>
     <!-- History multi select title in app bar
     The first parameter is the number of downloads selected -->
     <string name="download_multi_select_title">%1$d개 선택됨</string>
+
+
+    <!-- History overflow menu open in new tab button -->
+    <string name="download_menu_open">열기</string>
+    <!-- Text for the button to delete a single history item -->
+    <string name="download_delete_item">삭제</string>
+
 
     <!-- Crashes -->
     <!-- Title text displayed on the tab crash page. This first parameter is the name of the application (For example: Fenix) -->
@@ -805,6 +882,8 @@
     <string name="preference_phone_feature_location">위치</string>
     <!-- Preference for altering the notification access for all websites -->
     <string name="preference_phone_feature_notification">알림</string>
+    <!-- Preference for altering the persistent storage access for all websites -->
+    <string name="preference_phone_feature_persistent_storage">영구 저장소</string>
     <!-- Label that indicates that a permission must be asked always -->
     <string name="preference_option_phone_feature_ask_to_allow">항상 확인</string>
     <!-- Label that indicates that a permission must be blocked -->
@@ -961,6 +1040,12 @@
     <string name="snackbar_tab_closed">탭 닫힘</string>
     <!-- Text shown in snackbar when user closes all tabs -->
     <string name="snackbar_tabs_closed">탭 닫힘</string>
+    <!-- Text shown in snackbar when user closes tabs -->
+    <string name="snackbar_message_tabs_closed">탭이 닫혔습니다!</string>
+    <!-- Text shown in snackbar when user bookmarks a list of tabs -->
+    <string name="snackbar_message_bookmarks_saved">북마크가 저장되었습니다!</string>
+    <!-- Text shown in snackbar action for viewing bookmarks -->
+    <string name="snackbar_message_bookmarks_view">보기</string>
     <!-- Text shown in snackbar when user adds a site to top sites -->
     <string name="snackbar_added_to_top_sites">상위 사이트에 추가됨!</string>
     <!-- Text shown in snackbar when user closes a private tab -->
@@ -1634,12 +1719,25 @@
     <!-- Label for the show most visited sites preference -->
     <string name="top_sites_toggle_top_frecent_sites">자주 방문한 사이트 표시</string>
 
+    <!-- Title text displayed in the rename top site dialog. -->
+	<string name="top_sites_rename_dialog_title">이름</string>
+	<!-- Hint for renaming title of a top site -->
+	<string name="top_site_name_hint">상위 사이트 이름</string>
+
+    <!-- Button caption to confirm the renaming of the top site. -->
+	<string name="top_sites_rename_dialog_ok">확인</string>
+	<!-- Dialog button text for canceling the rename top site prompt. -->
+	<string name="top_sites_rename_dialog_cancel">취소</string>
+
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">삭제</string>
 
     <!-- Deprecated: text for the firefox account onboarding card header
     The first parameter is the name of the app (e.g. Firefox Preview) -->
     <string name="onboarding_firefox_account_header">%s를 최대한 활용해 보세요.</string>
+
+    <!-- Content description radio buttons with a link to more information -->
+    <string name="radio_preference_info_content_description">상세 정보</string>
 
     <!-- Deprecated: No Open Tabs Message Header -->
     <string name="no_collections_header1">중요한 것들 수집하기</string>

@@ -6,6 +6,7 @@ package org.mozilla.fenix.components
 
 import android.content.Context
 import io.mockk.mockk
+import org.mozilla.fenix.helpers.perf.TestStrictModeManager
 import org.mozilla.fenix.utils.ClipboardHandler
 import org.mozilla.fenix.utils.Settings
 
@@ -15,22 +16,22 @@ class TestComponents(private val context: Context) : Components(context) {
     }
     override val services by lazy { Services(context, backgroundServices.accountManager) }
     override val core by lazy { TestCore(context, analytics.crashReporter) }
-    override val search by lazy { Search(context) }
     override val useCases by lazy {
         UseCases(
             context,
             core.engine,
             core.sessionManager,
             core.store,
-            search.searchEngineManager,
             core.webAppShortcutManager,
             core.topSitesStorage
         )
     }
     override val intentProcessors by lazy { mockk<IntentProcessors>(relaxed = true) }
-    override val analytics by lazy { Analytics(context, strictMode) }
+    override val analytics by lazy { Analytics(context) }
 
     override val clipboardHandler by lazy { ClipboardHandler(context) }
 
     override val settings by lazy { mockk<Settings>(relaxed = true) }
+
+    override val strictMode by lazy { TestStrictModeManager() }
 }

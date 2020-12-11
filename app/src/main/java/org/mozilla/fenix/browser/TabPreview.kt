@@ -10,13 +10,13 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
-import androidx.core.content.res.ResourcesCompat
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.doOnNextLayout
 import androidx.core.view.updateLayoutParams
-import kotlinx.android.synthetic.main.mozac_ui_tabcounter_layout.view.*
 import kotlinx.android.synthetic.main.tab_preview.view.*
+import kotlinx.android.synthetic.main.tabs_tray_tab_counter.view.*
 import mozilla.components.browser.thumbnails.loader.ThumbnailLoader
-import mozilla.components.support.images.ImageLoadRequest
+import mozilla.components.concept.base.images.ImageLoadRequest
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
@@ -40,10 +40,9 @@ class TabPreview @JvmOverloads constructor(
                 gravity = Gravity.TOP
             }
 
-            fakeToolbar.background = ResourcesCompat.getDrawable(
-                resources,
-                ThemeManager.resolveAttribute(R.attr.bottomBarBackgroundTop, context),
-                null
+            fakeToolbar.background = AppCompatResources.getDrawable(
+                context,
+                ThemeManager.resolveAttribute(R.attr.bottomBarBackgroundTop, context)
             )
         }
 
@@ -64,7 +63,10 @@ class TabPreview @JvmOverloads constructor(
     fun loadPreviewThumbnail(thumbnailId: String) {
         doOnNextLayout {
             val thumbnailSize = max(previewThumbnail.height, previewThumbnail.width)
-            thumbnailLoader.loadIntoView(previewThumbnail, ImageLoadRequest(thumbnailId, thumbnailSize))
+            thumbnailLoader.loadIntoView(
+                previewThumbnail,
+                ImageLoadRequest(thumbnailId, thumbnailSize)
+            )
         }
     }
 }

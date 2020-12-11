@@ -84,11 +84,6 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
         requireComponents.analytics.metrics.track(Event.SyncAccountOpened)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        requireComponents.analytics.metrics.track(Event.SyncAccountClosed)
-    }
-
     @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -233,7 +228,8 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
 
                 setNegativeButton(getString(R.string.logins_warning_dialog_later)) { _: DialogInterface, _ ->
                     SyncEnginesStorage(context).setStatus(SyncEngine.Passwords, newValue)
-                    viewLifecycleOwner.lifecycleScope.launch {
+                    // Use fragment's lifecycle; the view may be gone by the time dialog is interacted with.
+                    lifecycleScope.launch {
                         context.components.backgroundServices.accountManager.syncNow(SyncReason.EngineChange)
                     }
                 }
@@ -402,8 +398,8 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
                     )
                 }
             }
-            is LastSyncTime.Success -> getString(
-                R.string.sync_last_synced_summary,
+            is LastSyncTime.Success -> String.format(
+                getString(R.string.sync_last_synced_summary),
                 DateUtils.getRelativeTimeSpanString(state.lastSyncedDate.lastSync)
             )
         }

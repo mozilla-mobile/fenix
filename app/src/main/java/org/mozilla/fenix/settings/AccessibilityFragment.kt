@@ -45,7 +45,8 @@ class AccessibilityFragment : PreferenceFragmentCompat() {
             val components = preference.context.components
 
             // Value is mapped from 0->30 in steps of 1 so let's convert to float in range 0.5->2.0
-            val newTextScale = ((newTextSize * STEP_SIZE) + MIN_SCALE_VALUE).toFloat() / PERCENT_TO_DECIMAL
+            val newTextScale =
+                ((newTextSize * STEP_SIZE) + MIN_SCALE_VALUE).toFloat() / PERCENT_TO_DECIMAL
 
             // Save new text scale value. We assume auto sizing is off if this change listener was called.
             settings.fontSizeFactor = newTextScale
@@ -55,7 +56,7 @@ class AccessibilityFragment : PreferenceFragmentCompat() {
             components.useCases.sessionUseCases.reload()
             true
         }
-        textSizePreference.isVisible = !requireContext().settings().shouldUseAutoSize
+        textSizePreference.isEnabled = !requireContext().settings().shouldUseAutoSize
 
         val useAutoSizePreference =
             requirePreference<SwitchPreference>(R.string.pref_key_accessibility_auto_size)
@@ -72,8 +73,9 @@ class AccessibilityFragment : PreferenceFragmentCompat() {
             if (!useAutoSize) {
                 components.core.engine.settings.fontSizeFactor = settings.fontSizeFactor
             }
-            // Show the manual sizing controls if automatic sizing is turned off.
-            textSizePreference.isVisible = !useAutoSize
+
+            // Enable the manual sizing controls if automatic sizing is turned off.
+            textSizePreference.isEnabled = !useAutoSize
 
             // Reload the current session to reflect the new text scale
             components.useCases.sessionUseCases.reload()

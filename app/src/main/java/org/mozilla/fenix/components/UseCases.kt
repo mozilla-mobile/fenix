@@ -5,7 +5,6 @@
 package org.mozilla.fenix.components
 
 import android.content.Context
-import mozilla.components.browser.search.SearchEngineManager
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.Engine
@@ -15,12 +14,14 @@ import mozilla.components.feature.downloads.DownloadsUseCases
 import mozilla.components.feature.pwa.WebAppShortcutManager
 import mozilla.components.feature.pwa.WebAppUseCases
 import mozilla.components.feature.search.SearchUseCases
+import mozilla.components.feature.search.ext.toDefaultSearchEngineProvider
 import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.feature.session.SettingsUseCases
 import mozilla.components.feature.session.TrackingProtectionUseCases
 import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.feature.top.sites.TopSitesStorage
 import mozilla.components.feature.top.sites.TopSitesUseCases
+import org.mozilla.fenix.perf.lazyMonitored
 import org.mozilla.fenix.utils.Mockable
 
 /**
@@ -34,44 +35,49 @@ class UseCases(
     private val engine: Engine,
     private val sessionManager: SessionManager,
     private val store: BrowserStore,
-    private val searchEngineManager: SearchEngineManager,
     private val shortcutManager: WebAppShortcutManager,
     private val topSitesStorage: TopSitesStorage
 ) {
     /**
      * Use cases that provide engine interactions for a given browser session.
      */
-    val sessionUseCases by lazy { SessionUseCases(store, sessionManager) }
+    val sessionUseCases by lazyMonitored { SessionUseCases(store, sessionManager) }
 
     /**
      * Use cases that provide tab management.
      */
-    val tabsUseCases: TabsUseCases by lazy { TabsUseCases(store, sessionManager) }
+    val tabsUseCases: TabsUseCases by lazyMonitored { TabsUseCases(store, sessionManager) }
 
     /**
      * Use cases that provide search engine integration.
      */
-    val searchUseCases by lazy { SearchUseCases(context, store, searchEngineManager, sessionManager) }
+    val searchUseCases by lazyMonitored {
+        SearchUseCases(
+            store,
+            store.toDefaultSearchEngineProvider(),
+            tabsUseCases
+        )
+    }
 
     /**
      * Use cases that provide settings management.
      */
-    val settingsUseCases by lazy { SettingsUseCases(engine, store) }
+    val settingsUseCases by lazyMonitored { SettingsUseCases(engine, store) }
 
-    val appLinksUseCases by lazy { AppLinksUseCases(context.applicationContext) }
+    val appLinksUseCases by lazyMonitored { AppLinksUseCases(context.applicationContext) }
 
-    val webAppUseCases by lazy {
-        WebAppUseCases(context, sessionManager, shortcutManager)
+    val webAppUseCases by lazyMonitored {
+        WebAppUseCases(context, store, shortcutManager)
     }
 
-    val downloadUseCases by lazy { DownloadsUseCases(store) }
+    val downloadUseCases by lazyMonitored { DownloadsUseCases(store) }
 
-    val contextMenuUseCases by lazy { ContextMenuUseCases(store) }
+    val contextMenuUseCases by lazyMonitored { ContextMenuUseCases(store) }
 
-    val trackingProtectionUseCases by lazy { TrackingProtectionUseCases(store, engine) }
+    val trackingProtectionUseCases by lazyMonitored { TrackingProtectionUseCases(store, engine) }
 
     /**
      * Use cases that provide top sites management.
      */
-    val topSitesUseCase by lazy { TopSitesUseCases(topSitesStorage) }
+    val topSitesUseCase by lazyMonitored { TopSitesUseCases(topSitesStorage) }
 }

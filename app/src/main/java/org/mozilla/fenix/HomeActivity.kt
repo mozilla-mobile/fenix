@@ -10,6 +10,7 @@ import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
+import android.os.SystemClock
 import android.text.format.DateUtils
 import android.util.AttributeSet
 import android.view.KeyEvent
@@ -32,13 +33,12 @@ import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import mozilla.components.browser.search.SearchEngine
-import mozilla.components.browser.session.SessionManager
+import mozilla.components.browser.state.search.SearchEngine
+import mozilla.components.browser.state.selector.getNormalOrPrivateTabs
 import mozilla.components.browser.state.state.SessionState
 import mozilla.components.browser.state.state.WebExtensionState
 import mozilla.components.concept.engine.EngineSession
@@ -46,6 +46,7 @@ import mozilla.components.concept.engine.EngineView
 import mozilla.components.feature.contextmenu.DefaultSelectionActionDelegate
 import mozilla.components.feature.privatemode.notification.PrivateNotificationFeature
 import mozilla.components.feature.search.BrowserStoreSearchAdapter
+import mozilla.components.feature.search.ext.legacy
 import mozilla.components.service.fxa.sync.SyncReason
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.ktx.android.arch.lifecycle.addObservers
@@ -61,7 +62,6 @@ import mozilla.components.support.webextensions.WebExtensionPopupFeature
 import org.mozilla.fenix.GleanMetrics.Metrics
 import org.mozilla.fenix.addons.AddonDetailsFragmentDirections
 import org.mozilla.fenix.addons.AddonPermissionsDetailsFragmentDirections
-import org.mozilla.fenix.browser.UriOpenedObserver
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
@@ -113,15 +113,20 @@ import java.lang.ref.WeakReference
 @OptIn(ExperimentalCoroutinesApi::class)
 @SuppressWarnings("TooManyFunctions", "LargeClass")
 open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
+    // DO NOT MOVE ANYTHING ABOVE THIS, GETTING INIT TIME IS CRITICAL
+    // we need to store startup timestamp for warm startup. we cant directly store
+    // inside AppStartupTelemetry since that class lives inside components and
+    // components requires context to access.
+    protected val homeActivityInitTimeStampNanoSeconds = SystemClock.elapsedRealtimeNanos()
 
     private var webExtScope: CoroutineScope? = null
     lateinit var themeManager: ThemeManager
     lateinit var browsingModeManager: BrowsingModeManager
-    private lateinit var sessionObserver: SessionManager.Observer
 
     private var isVisuallyComplete = false
 
-    private var privateNotificationObserver: PrivateNotificationFeature<PrivateNotificationService>? = null
+    private var privateNotificationObserver: PrivateNotificationFeature<PrivateNotificationService>? =
+        null
 
     private var isToolbarInflated = false
 
@@ -135,7 +140,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
     private val externalSourceIntentProcessors by lazy {
         listOf(
-            SpeechProcessingIntentProcessor(this, components.analytics.metrics),
+            SpeechProcessingIntentProcessor(this, components.core.store, components.analytics.metrics),
             StartSearchIntentProcessor(components.analytics.metrics),
             DeepLinkIntentProcessor(this, components.analytics.leanplumMetricsService),
             OpenBrowserIntentProcessor(this, ::getIntentSessionId),
@@ -176,9 +181,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
                 .attachViewToRunVisualCompletenessQueueLater(WeakReference(rootContainer))
         }
 
-        sessionObserver = UriOpenedObserver(this)
-
-        checkPrivateShortcutEntryPoint(intent)
         privateNotificationObserver = PrivateNotificationFeature(
             applicationContext,
             components.core.store,
@@ -187,14 +189,18 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             it.start()
         }
 
-        if (isActivityColdStarted(intent, savedInstanceState)) {
-            externalSourceIntentProcessors.any {
+        if (isActivityColdStarted(
+                intent,
+                savedInstanceState
+            ) && !externalSourceIntentProcessors.any {
                 it.process(
                     intent,
                     navHost.navController,
                     this.intent
                 )
             }
+        ) {
+            navigateToBrowserOnColdStart()
         }
 
         Performance.processIntentIfPerformanceTest(intent, this)
@@ -232,17 +238,31 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
         startupTelemetryOnCreateCalled(intent.toSafeIntent(), savedInstanceState != null)
 
+        components.core.requestInterceptor.setNavigationController(navHost.navController)
+
         StartupTimeline.onActivityCreateEndHome(this) // DO NOT MOVE ANYTHING BELOW HERE.
     }
 
-    protected open fun startupTelemetryOnCreateCalled(safeIntent: SafeIntent, hasSavedInstanceState: Boolean) {
-        components.appStartupTelemetry.onHomeActivityOnCreate(safeIntent, hasSavedInstanceState)
+    protected open fun startupTelemetryOnCreateCalled(
+        safeIntent: SafeIntent,
+        hasSavedInstanceState: Boolean
+    ) {
+        components.appStartupTelemetry.onHomeActivityOnCreate(
+            safeIntent,
+            hasSavedInstanceState,
+            homeActivityInitTimeStampNanoSeconds, rootContainer
+        )
     }
 
     override fun onRestart() {
+        // DO NOT MOVE ANYTHING ABOVE THIS..
+        // we are measuring startup time for hot startup type
+        startupTelemetryOnRestartCalled()
         super.onRestart()
+    }
 
-        components.appStartupTelemetry.onHomeActivityOnRestart()
+    private fun startupTelemetryOnRestartCalled() {
+        components.appStartupTelemetry.onHomeActivityOnRestart(rootContainer)
     }
 
     @CallSuper
@@ -254,8 +274,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         breadcrumb(
             message = "onResume()"
         )
-
-        components.appStartupTelemetry.onHomeActivityOnResume()
 
         components.backgroundServices.accountManagerAvailableQueue.runIfReadyOrQueue {
             lifecycleScope.launch {
@@ -281,16 +299,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             }
 
             settings().wasDefaultBrowserOnLastResume = settings().isDefaultBrowser()
-
-            if (!settings().manuallyCloseTabs) {
-                val toClose = components.core.store.state.tabs.filter {
-                    (System.currentTimeMillis() - it.lastAccess) > settings().getTabTimeout()
-                }
-                // Removal needs to happen on the main thread.
-                lifecycleScope.launch(Main) {
-                    toClose.forEach { components.useCases.tabsUseCases.removeTab(it.id) }
-                }
-            }
         }
     }
 
@@ -315,12 +323,22 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
                 "finishing" to isFinishing.toString()
             )
         )
+
+        components.appStartupTelemetry.onStop()
     }
 
     final override fun onPause() {
+        // We should return to the browser if there were normal tabs when we left the app
+        settings().shouldReturnToBrowser =
+            components.core.store.state.getNormalOrPrivateTabs(private = false).isNotEmpty()
+
         if (settings().lastKnownMode.isPrivate) {
             window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
         }
+
+        // We will remove this when AC code lands to emit a fact on getTopSites in DefaultTopSitesStorage
+        // https://github.com/mozilla-mobile/android-components/issues/8679
+        settings().topSitesSize = components.core.topSitesStorage.cachedTopSites.size
 
         super.onPause()
 
@@ -381,8 +399,12 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
      */
     final override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        intent ?: return
+        intent?.let {
+            handleNewIntent(it)
+        }
+    }
 
+    open fun handleNewIntent(intent: Intent) {
         // Diagnostic breadcrumb for "Display already aquired" crash:
         // https://github.com/mozilla-mobile/android-components/issues/7960
         breadcrumb(
@@ -583,17 +605,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         return false
     }
 
-    private fun checkPrivateShortcutEntryPoint(intent: Intent) {
-        if (intent.hasExtra(OPEN_TO_SEARCH) &&
-            (intent.getStringExtra(OPEN_TO_SEARCH) ==
-                    StartSearchIntentProcessor.STATIC_SHORTCUT_NEW_PRIVATE_TAB ||
-                    intent.getStringExtra(OPEN_TO_SEARCH) ==
-                    StartSearchIntentProcessor.PRIVATE_BROWSING_PINNED_SHORTCUT)
-        ) {
-            PrivateNotificationService.isStartedFromPrivateShortcut = true
-        }
-    }
-
     private fun setupThemeAndBrowsingMode(mode: BrowsingMode) {
         settings().lastKnownMode = mode
         browsingModeManager = createBrowsingModeManager(mode)
@@ -729,29 +740,44 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             }
         } else components.useCases.sessionUseCases.loadUrl
 
-        val searchUseCase: (String) -> Unit = { searchTerms ->
+        // In situations where we want to perform a search but have no search engine (e.g. the user
+        // has removed all of them, or we couldn't load any) we will pass searchTermOrURL to Gecko
+        // and let it try to load whatever was entered.
+        if ((!forceSearch && searchTermOrURL.isUrl()) || engine == null) {
+            loadUrlUseCase.invoke(searchTermOrURL.toNormalizedUrl(), flags)
+        } else {
             if (newTab) {
                 components.useCases.searchUseCases.newTabSearch
                     .invoke(
-                        searchTerms,
+                        searchTermOrURL,
                         SessionState.Source.USER_ENTERED,
                         true,
                         mode.isPrivate,
-                        searchEngine = engine
+                        searchEngine = engine.legacy()
                     )
-            } else components.useCases.searchUseCases.defaultSearch.invoke(searchTerms, engine)
-        }
-
-        if (!forceSearch && searchTermOrURL.isUrl()) {
-            loadUrlUseCase.invoke(searchTermOrURL.toNormalizedUrl(), flags)
-        } else {
-            searchUseCase.invoke(searchTermOrURL)
+            } else {
+                components.useCases.searchUseCases.defaultSearch.invoke(searchTermOrURL, engine.legacy())
+            }
         }
 
         if (components.core.engine.profiler?.isProfilerActive() == true) {
             // Wrapping the `addMarker` method with `isProfilerActive` even though it's no-op when
             // profiler is not active. That way, `text` argument will not create a string builder all the time.
-            components.core.engine.profiler?.addMarker("HomeActivity.load", startTime, "newTab: $newTab")
+            components.core.engine.profiler?.addMarker(
+                "HomeActivity.load",
+                startTime,
+                "newTab: $newTab"
+            )
+        }
+    }
+
+    open fun navigateToBrowserOnColdStart() {
+        // Normal tabs + cold start -> Should go back to browser if we had any tabs open when we left last
+        // except for PBM + Cold Start there won't be any tabs since they're evicted so we never will navigate
+        if (settings().shouldReturnToBrowser &&
+            !browsingModeManager.mode.isPrivate
+        ) {
+            openToBrowser(BrowserDirection.FromGlobal, null)
         }
     }
 

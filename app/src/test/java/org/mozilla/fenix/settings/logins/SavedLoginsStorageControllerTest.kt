@@ -33,8 +33,9 @@ import org.mozilla.fenix.settings.logins.fragment.EditLoginFragmentDirections
 @ExperimentalCoroutinesApi
 @RunWith(FenixRobolectricTestRunner::class)
 class SavedLoginsStorageControllerTest {
+    val testDispatcher = TestCoroutineDispatcher()
     @get:Rule
-    val coroutinesTestRule = MainCoroutineRule(TestCoroutineDispatcher())
+    val coroutinesTestRule = MainCoroutineRule(testDispatcher)
 
     private val passwordsStorage: SyncableLoginsStorage = mockk(relaxed = true)
     private lateinit var controller: SavedLoginsStorageController
@@ -54,7 +55,7 @@ class SavedLoginsStorageControllerTest {
 
         controller = SavedLoginsStorageController(
             passwordsStorage = passwordsStorage,
-            viewLifecycleScope = scope,
+            lifecycleScope = scope,
             navController = navController,
             loginsFragmentStore = loginsFragmentStore,
             ioDispatcher = ioDispatcher
@@ -65,6 +66,7 @@ class SavedLoginsStorageControllerTest {
     fun cleanUp() {
         scope.cleanupTestCoroutines()
         ioDispatcher.cleanupTestCoroutines()
+        testDispatcher.cleanupTestCoroutines()
     }
 
     @Test

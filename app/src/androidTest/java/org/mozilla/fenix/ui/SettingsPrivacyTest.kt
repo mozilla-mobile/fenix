@@ -41,7 +41,7 @@ class SettingsPrivacyTest {
     @Before
     fun setUp() {
         mockWebServer = MockWebServer().apply {
-            setDispatcher(AndroidAssetDispatcher())
+            dispatcher = AndroidAssetDispatcher()
             start()
         }
     }
@@ -119,6 +119,12 @@ class SettingsPrivacyTest {
             verifySitePermissionsNotificationSubMenuItems()
         }.goBack {
 
+            // SITE PERMISSIONS PERSISTENT STORAGE
+        }.openPersistentStorage {
+            verifyNavigationToolBarHeader("Persistent Storage")
+            verifySitePermissionsPersistentStorageSubMenuItems()
+        }.goBack {
+
             // SITE PERMISSIONS EXCEPTIONS
         }.openExceptions {
             verifyNavigationToolBarHeader()
@@ -168,7 +174,7 @@ class SettingsPrivacyTest {
             verifyDefaultValueAutofillLogins()
             verifyDefaultValueExceptions()
         }.openSavedLogins {
-            verifySavedLoginsView()
+            verifySecurityPromptForLogins()
             tapSetupLater()
             // Verify that logins list is empty
             // Issue #7272 nothing is shown
@@ -191,7 +197,7 @@ class SettingsPrivacyTest {
             saveLoginFromPrompt("Save")
         }.openTabDrawer {
         }.openNewTab {
-        }.dismiss {
+        }.dismissSearchBar {
         }.openThreeDotMenu {
         }.openSettings {
             TestHelper.scrollToElementByText("Logins and passwords")
@@ -199,7 +205,7 @@ class SettingsPrivacyTest {
             verifyDefaultView()
             verifyDefaultValueSyncLogins()
         }.openSavedLogins {
-            verifySavedLoginsView()
+            verifySecurityPromptForLogins()
             tapSetupLater()
             // Verify that the login appears correctly
             verifySavedLoginFromPrompt()
@@ -217,14 +223,14 @@ class SettingsPrivacyTest {
             saveLoginFromPrompt("Never save")
         }.openTabDrawer {
         }.openNewTab {
-        }.dismiss {
+        }.dismissSearchBar {
         }.openThreeDotMenu {
         }.openSettings {
         }.openLoginsAndPasswordSubMenu {
             verifyDefaultView()
             verifyDefaultValueSyncLogins()
         }.openSavedLogins {
-            verifySavedLoginsView()
+            verifySecurityPromptForLogins()
             tapSetupLater()
             // Verify that the login list is empty
             verifyNotSavedLoginFromPrompt()
@@ -272,7 +278,7 @@ class SettingsPrivacyTest {
         browserScreen {
         }.openTabDrawer {
             verifyPrivateModeSelected()
-        }.openNewTab { }.dismiss { }
+        }.openNewTab { }.dismissSearchBar { }
 
         setOpenLinksInPrivateOff()
 
@@ -319,7 +325,7 @@ class SettingsPrivacyTest {
             clickAddAutomaticallyButton()
         }.openHomeScreenShortcut(pageShortcutName) {
         }.openTabDrawer {
-        }.openNewTab { }.dismiss { }
+        }.openNewTab { }.dismissSearchBar { }
 
         setOpenLinksInPrivateOff()
         restartApp(activityTestRule)
@@ -330,7 +336,7 @@ class SettingsPrivacyTest {
         }.openTabDrawer {
             verifyNormalModeSelected()
         }.openNewTab {
-        }.dismiss {
+        }.dismissSearchBar {
         }.openThreeDotMenu {
         }.openSettings {
         }.openPrivateBrowsingSubMenu {

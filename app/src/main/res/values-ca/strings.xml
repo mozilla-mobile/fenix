@@ -21,6 +21,10 @@
     <!-- No Private Tabs Message Description -->
     <string name="no_private_tabs_description">Les pestanyes privades es mostraran aquí.</string>
 
+    <!-- Default title for pinned Baidu top site that links to Baidu home page  -->
+    <string name="default_top_site_baidu">Baidu</string>
+    <!-- Default title for pinned JD top site that links to JD home page  -->
+    <string name="default_top_site_jd">JD</string>
     <!-- Message announced to the user when tab tray is selected with 1 tab -->
     <string name="open_tab_tray_single">1 pestanya oberta. Toqueu per canviar de pestanya.</string>
     <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
@@ -70,14 +74,6 @@
     <!-- Text for the negative button -->
     <string name="cfr_neg_button_text">No, gràcies</string>
 
-    <!-- Search widget "contextual feature recommendation" (CFR) -->
-    <!-- Text for the main message. 'Firefox' intentionally hardcoded here.-->
-    <string name="search_widget_cfr_message">Accediu al Firefox més ràpid. Afegiu un giny a la pantalla d’inici.</string>
-    <!-- Text for the positive button -->
-    <string name="search_widget_cfr_pos_button_text">Afegeix giny</string>
-    <!-- Text for the negative button -->
-    <string name="search_widget_cfr_neg_button_text">Ara no</string>
-
     <!-- Open in App "contextual feature recommendation" (CFR) -->
     <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
     <string name="open_in_app_cfr_info_message">Podeu fer que el Firefox obri automàticament els enllaços en aplicacions.</string>
@@ -99,6 +95,13 @@
     <string name="tab_tray_close_tabs_banner_positive_button_text">Mostra les opcions</string>
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">Descarta</string>
+
+    <!-- Text for the banner message to tell users about our grid view feature. -->
+    <string name="tab_tray_grid_view_banner_message">Canvieu la disposició de les pestanyes obertes. Aneu als paràmetres i trieu «graella» a la vista de pestanyes.</string>
+    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
+    <string name="tab_tray_grid_view_banner_positive_button_text">Vés als paràmetres</string>
+    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
+    <string name="tab_tray_grid_view_banner_negative_button_text">Descarta</string>
 
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
@@ -144,12 +147,12 @@
     <string name="browser_menu_install_on_homescreen">Instal·la</string>
     <!-- Menu option on the toolbar that takes you to synced tabs page-->
     <string name="synced_tabs">Pestanyes sincronitzades</string>
+    <!-- Content description (not visible, for screen readers etc.) for the Resync tabs button -->
+    <string name="resync_button_content_description">Resincronitza</string>
     <!-- Browser menu button that opens the find in page menu -->
     <string name="browser_menu_find_in_page">Cerca a la pàgina</string>
     <!-- Browser menu button that creates a private tab -->
     <string name="browser_menu_private_tab">Pestanya privada</string>
-    <!-- Browser menu button that creates a new tab -->
-    <string name="browser_menu_new_tab">Pestanya nova</string>
     <!-- Browser menu button that saves the current tab to a collection -->
     <string name="browser_menu_save_to_collection_2">Desa a la col·lecció</string>
     <!-- Browser menu button that open a share menu to share the current site -->
@@ -214,6 +217,8 @@
     <string name="search_suggestions_onboarding_learn_more_link">Més informació</string>
 
     <!-- Search Widget -->
+    <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
+    <string name="search_widget_content_description">Obre una pestanya nova del Firefox</string>
     <!-- Text preview for smaller sized widgets -->
     <string name="search_widget_text_short">Cerca</string>
     <!-- Text preview for larger sized widgets -->
@@ -270,6 +275,8 @@
     <string name="preferences_open_links_in_a_private_tab">Obre els enllaços en una pestanya privada</string>
     <!-- Preference for allowing screenshots to be taken while in a private tab-->
     <string name="preferences_allow_screenshots_in_private_mode">Permet les captures de pantalla en la navegació privada</string>
+    <!-- Will inform the user of the risk of activating Allow screenshots in private browsing option -->
+    <string name="preferences_screenshots_in_private_mode_disclaimer">Si es permet, les pestanyes privades també seran visibles quan hi hagi diverses aplicacions obertes</string>
     <!-- Preference for adding private browsing shortcut -->
     <string name="preferences_add_private_browsing_shortcut">Afegeix una drecera de navegació privada</string>
     <!-- Preference for accessibility -->
@@ -290,6 +297,8 @@
     <string name="preferences_theme">Tema</string>
     <!-- Preference for customizing the home screen -->
     <string name="preferences_home">Inici</string>
+    <!-- Preference for gestures based actions -->
+    <string name="preferences_gestures">Gestos</string>
     <!-- Preference for settings related to visual options -->
     <string name="preferences_customize">Personalitza</string>
     <!-- Preference description for banner about signing in -->
@@ -324,9 +333,13 @@
     <string name="preferences_search_browsing_history">Cerca en l’historial de navegació</string>
     <!-- Preference title for switch preference to suggest bookmarks when searching -->
     <string name="preferences_search_bookmarks">Cerca en les adreces d’interès</string>
+    <!-- Preference title for switch preference to suggest synced tabs when searching -->
+    <string name="preferences_search_synced_tabs">Cerca en les pestanyes sincronitzades</string>
     <!-- Preference for account settings -->
     <string name="preferences_account_settings">Paràmetres del compte</string>
 
+    <!-- Preference for enabling url autocomplete-->
+    <string name="preferences_enable_autocomplete_urls">Emplenament automàtic dels URL</string>
     <!-- Preference for open links in third party apps -->
     <string name="preferences_open_links_in_apps">Obre els enllaços en les aplicacions</string>
     <!-- Preference for open download with an external download manager app -->
@@ -336,6 +349,26 @@
 
     <!-- Preference for notifications -->
     <string name="preferences_notifications">Notificacions</string>
+
+    <!-- Add-on Preferences -->
+    <!-- Preference to customize the configured AMO (addons.mozilla.org) collection -->
+    <string name="preferences_customize_amo_collection">Col·lecció de complements personalitzada</string>
+    <!-- Button caption to confirm the add-on collection configuration -->
+    <string name="customize_addon_collection_ok">D’acord</string>
+    <!-- Button caption to abort the add-on collection configuration -->
+    <string name="customize_addon_collection_cancel">Cancel·la</string>
+    <!-- Hint displayed on input field for custom collection name -->
+    <string name="customize_addon_collection_hint">Nom de la col·lecció</string>
+    <!-- Hint displayed on input field for custom collection user ID-->
+    <string name="customize_addon_collection_user_hint">Propietari de la col·lecció (identificador d’usuari)</string>
+    <!-- Toast shown after confirming the custom add-on collection configuration -->
+    <string name="toast_customize_addon_collection_done">S’ha modificat la col·lecció de complements. L’aplicació es tancarà per aplicar els canvis…</string>
+
+    <!-- Add-on Installation from AMO-->
+    <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
+    <string name="addon_not_supported_error">El complement no és compatible</string>
+    <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is already installed -->
+    <string name="addon_already_installed">El complement ja està instal·lat</string>
 
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
@@ -415,6 +448,10 @@
     <string name="preferences_marketing_data">Dades de màrqueting</string>
     <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
     <string name="preferences_marketing_data_description">Comparteix dades de funcions que utilitzeu al %1$s amb Leanplum, el nostre proveïdor de màrqueting mòbil.</string>
+    <!-- Title for studies preferences -->
+    <string name="preference_experiments_2">Estudis</string>
+    <!-- Summary for studies preferences -->
+    <string name="preference_experiments_summary_2">Permet a Mozilla instal·lar i executar estudis</string>
     <!-- Title for experiments preferences -->
     <string name="preference_experiments">Experiments</string>
     <!-- Summary for experiments preferences -->
@@ -463,6 +500,17 @@
     <!-- Preference for using following device theme -->
     <string name="preference_follow_device_theme">Segons el tema del dispositiu</string>
 
+    <!-- Gestures Preferences-->
+    <!-- Preferences for using pull to refresh in a webpage -->
+    <string name="preference_gestures_website_pull_to_refresh">Estira per actualitzar</string>
+    <!-- Preference for using the dynamic toolbar -->
+    <string name="preference_gestures_dynamic_toolbar">Amaga la barra d’eines en desplaçar-me</string>
+
+    <!-- Preference for switching tabs by swiping horizontally on the toolbar -->
+    <string name="preference_gestures_swipe_toolbar_switch_tabs">Canvia de pestanya en fer lliscar la barra d’eines cap als costats</string>
+    <!-- Preference for showing the opened tabs by swiping up on the toolbar-->
+    <string name="preference_gestures_swipe_toolbar_show_tabs">Mostra les pestanyes obertes en fer lliscar la barra d’eines cap amunt</string>
+
     <!-- Library -->
     <!-- Option in Library to open Sessions page -->
     <string name="library_sessions">Sessions</string>
@@ -509,6 +557,14 @@
     <string name="recently_closed_empty_message">No hi ha cap pestanya tancada recentment</string>
 
     <!-- Tab Management -->
+    <!-- Title of preference for tabs management -->
+    <string name="preferences_tabs">Pestanyes</string>
+    <!-- Title of preference that allows a user to specify the tab view -->
+    <string name="preferences_tab_view">Vista de pestanyes</string>
+    <!-- Option for a list tab view -->
+    <string name="tab_view_list">Llista</string>
+    <!-- Option for a grid tab view -->
+    <string name="tab_view_grid">Graella</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
     <string name="preferences_close_tabs">Tanca les pestanyes</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
@@ -519,6 +575,15 @@
     <string name="close_tabs_after_one_week">Al cap d’una setmana</string>
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">Al cap d’un mes</string>
+
+    <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
+    <string name="close_tabs_manually_summary">Tanca-les manualment</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
+    <string name="close_tabs_after_one_day_summary">Tanca-les al cap d’un dia</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one week-->
+    <string name="close_tabs_after_one_week_summary">Tanca-les al cap d’una setmana</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one month-->
+    <string name="close_tabs_after_one_month_summary">Tanca-les al cap d’un mes</string>
 
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
@@ -537,6 +602,8 @@
     <string name="tab_tray_title">Pestanyes obertes</string>
     <!-- Text shown in the menu for saving tabs to a collection -->
     <string name="tab_tray_menu_item_save">Desa a la col·lecció</string>
+    <!-- Text shown in the menu for the collection selector -->
+    <string name="tab_tray_menu_select">Selecciona</string>
     <!-- Text shown in the menu for sharing all tabs -->
     <string name="tab_tray_menu_item_share">Comparteix totes les pestanyes</string>
     <!-- Text shown in the menu to view recently closed tabs -->
@@ -551,8 +618,18 @@
     <string name="tab_tray_menu_home">Vés a la pantalla d’inici</string>
     <!-- Shortcut action to toggle private mode -->
     <string name="tab_tray_menu_toggle">Canvia el mode de pestanyes</string>
+    <!-- Text shown in the multiselect menu for bookmarking selected tabs. -->
+    <string name="tab_tray_multiselect_menu_item_bookmark">Afegeix a les adreces d’interès</string>
+    <!-- Text shown in the multiselect menu for closing selected tabs. -->
+    <string name="tab_tray_multiselect_menu_item_close">Tanca</string>
+    <!-- Content description for tabs tray multiselect share button -->
+    <string name="tab_tray_multiselect_share_content_description">Comparteix les pestanyes seleccionades</string>
+    <!-- Content description for tabs tray multiselect menu -->
+    <string name="tab_tray_multiselect_menu_content_description">Menú de pestanyes seleccionades</string>
     <!-- Content description (not visible, for screen readers etc.): Removes tab from collection button. Removes the selected tab from collection when pressed -->
     <string name="remove_tab_from_collection">Elimina la pestanya de la col·lecció</string>
+    <!-- Text for button to enter multiselect mode in tabs tray -->
+    <string name="tabs_tray_select_tabs">Selecciona pestanyes</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab button. Closes the current session when pressed -->
     <string name="close_tab">Tanca la pestanya</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab <title> button. First parameter is tab title  -->
@@ -586,8 +663,12 @@
     <!-- Text for the button to open tabs of the selected collection -->
     <string name="collection_open_tabs">Obre les pestanyes</string>
 
-    <!-- Text for the menu button to remove a top site -->
-    <string name="remove_top_site">Elimina</string>
+    <!-- Hint for adding name of a collection -->
+    <string name="collection_name_hint">Nom de la col·lecció</string>
+	<!-- Text for the menu button to rename a top site -->
+	<string name="rename_top_site">Reanomena</string>
+	<!-- Text for the menu button to remove a top site -->
+	<string name="remove_top_site">Elimina</string>
 
     <!-- Text for the menu button to delete a top site from history -->
     <string name="delete_from_history">Suprimeix de l’historial</string>
@@ -624,6 +705,10 @@
     <!-- Text for the button to clear selected history items. The first parameter
         is a digit showing the number of items you have selected -->
     <string name="history_delete_some">Suprimeix %1$d elements</string>
+    <!-- Text for the header that groups the history for today -->
+    <string name="history_today">Avui</string>
+    <!-- Text for the header that groups the history for yesterday -->
+    <string name="history_yesterday">Ahir</string>
     <!-- Text for the header that groups the history for last 24 hours -->
     <string name="history_24_hours">Darreres 24 hores</string>
     <!-- Text for the header that groups the history the past 7 days -->
@@ -637,11 +722,24 @@
     <string name="history_empty_message">No hi ha informació d’historial</string>
 
     <!-- Downloads -->
+    <!-- Text for the button to clear all downloads -->
+    <string name="download_delete_all">Suprimeix les baixades</string>
+    <!-- Text for the dialog to confirm clearing all downloads -->
+    <string name="download_delete_all_dialog">Segur que voleu esborrar les baixades?</string>
+    <!-- Text for the snackbar to confirm that multiple downloads items have been deleted -->
+    <string name="download_delete_multiple_items_snackbar">S’han suprimit les baixades</string>
     <!-- Text shown when no download exists -->
     <string name="download_empty_message">No hi ha cap baixada</string>
     <!-- History multi select title in app bar
     The first parameter is the number of downloads selected -->
     <string name="download_multi_select_title">%1$d seleccionades</string>
+
+
+    <!-- History overflow menu open in new tab button -->
+    <string name="download_menu_open">Obre</string>
+    <!-- Text for the button to delete a single history item -->
+    <string name="download_delete_item">Suprimeix</string>
+
 
     <!-- Crashes -->
     <!-- Title text displayed on the tab crash page. This first parameter is the name of the application (For example: Fenix) -->
@@ -762,6 +860,8 @@
     <string name="preference_phone_feature_location">Ubicació</string>
     <!-- Preference for altering the notification access for all websites -->
     <string name="preference_phone_feature_notification">Notificació</string>
+    <!-- Preference for altering the persistent storage access for all websites -->
+    <string name="preference_phone_feature_persistent_storage">Emmagatzematge persistent</string>
     <!-- Label that indicates that a permission must be asked always -->
     <string name="preference_option_phone_feature_ask_to_allow">Demana-m’ho</string>
 
@@ -903,6 +1003,12 @@
     <string name="snackbar_tab_closed">S’ha tancat la pestanya</string>
     <!-- Text shown in snackbar when user closes all tabs -->
     <string name="snackbar_tabs_closed">S’han tancat les pestanyes</string>
+    <!-- Text shown in snackbar when user closes tabs -->
+    <string name="snackbar_message_tabs_closed">S’han tancat les pestanyes</string>
+    <!-- Text shown in snackbar when user bookmarks a list of tabs -->
+    <string name="snackbar_message_bookmarks_saved">S’han desat les adreces d’interès</string>
+    <!-- Text shown in snackbar action for viewing bookmarks -->
+    <string name="snackbar_message_bookmarks_view">Mostra</string>
     <!-- Text shown in snackbar when user adds a site to top sites -->
     <string name="snackbar_added_to_top_sites">S’ha afegit als llocs principals</string>
     <!-- Text shown in snackbar when user closes a private tab -->
@@ -1055,7 +1161,7 @@
     <!-- text for the firefox account onboarding card header when we detect you're already signed in to
         another Firefox browser. (The word `Firefox` should not be translated)
         The first parameter is the email of the detected user's account -->
-    <string name="onboarding_firefox_account_auto_signin_header_2">Ja heu iniciat la sessió com a %s en un altre navegador Firefox d’aquest telèfon. Voleu iniciar la sessió amb aquest compte?</string>
+    <string name="onboarding_firefox_account_auto_signin_header_3">Ja heu iniciat la sessió com a %s en un altre navegador Firefox d’aquest dispositiu. Voleu iniciar la sessió amb aquest compte?</string>
     <!-- text for the button to confirm automatic sign-in -->
     <string name="onboarding_firefox_account_auto_signin_confirm">Sí, inicia la sessió</string>
     <!-- text for the automatic sign-in button while signing in is in process -->
@@ -1145,6 +1251,8 @@
     <string name="sign_in_with_camera">Inicieu la sessió amb la càmera</string>
     <!-- Text shown for settings option for sign with email -->
     <string name="sign_in_with_email">Usa el correu electrònic en lloc</string>
+    <!-- Text shown for settings option for create new account text.'Firefox' intentionally hardcoded here.-->
+    <string name="sign_in_create_account_text"><![CDATA[No teniu cap compte? <u>Creeu-ne un</u> per sincronitzar el Firefox entre dispositius.]]></string>
     <!-- Text shown in confirmation dialog to sign out of account -->
     <string name="sign_out_confirmation_message">El Firefox deixarà de sincronitzar-se amb el vostre compte, però les vostres dades de navegació d’aquest dispositiu no se suprimiran.</string>
 
@@ -1254,6 +1362,11 @@
     The first parameter is the app name -->
     <string name="open_source_licenses_title">%s | Biblioteques de codi obert</string>
 
+    <!-- Category of trackers (redirect trackers) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_title">Elements de seguiment de redirecció</string>
+    <!-- Description of redirect tracker cookies that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_description">Esborra les galetes definides per redireccions a llocs web que se sap que fan seguiment.</string>
+
     <!-- About page link text to open support link -->
     <string name="about_support">Assistència</string>
     <!-- About page link text to list of past crashes (like about:crashes on desktop) -->
@@ -1299,7 +1412,7 @@
     <string name="add_to_homescreen_text_placeholder">Nom de la drecera</string>
 
     <!-- Describes the add to homescreen functionality -->
-    <string name="add_to_homescreen_description">Podeu afegir fàcilment aquest lloc web a la pantalla d’inici del telèfon per accedir-hi directament i navegar-hi com si fos una aplicació.</string>
+    <string name="add_to_homescreen_description_2">Podeu afegir fàcilment aquest lloc web a la pantalla d’inici del vostre dispositiu per accedir-hi directament i navegar-hi com si fos una aplicació.</string>
 
     <!-- Preference for managing the settings for logins and passwords in Fenix -->
     <string name="preferences_passwords_logins_and_passwords">Inicis de sessió i contrasenyes</string>
@@ -1370,8 +1483,12 @@
     <string name="logins_site_copied">S’ha copiat el lloc al porta-retalls</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a password in logins-->
     <string name="saved_logins_copy_password">Copia la contrasenya</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear a password while editing a login-->
+    <string name="saved_logins_clear_password">Esborra la contrasenya</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a username in logins -->
     <string name="saved_login_copy_username">Copia el nom d’usuari</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear a username while editing a login -->
+    <string name="saved_login_clear_username">Esborra el nom d’usuari</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a site in logins -->
     <string name="saved_login_copy_site">Copia el lloc</string>
     <!-- Content Description (for screenreaders etc) read for the button to open a site in logins -->
@@ -1528,7 +1645,7 @@
     <string name="saved_login_duplicate">Ja existeix un inici de sessió amb aquest nom d’usuari</string>
 
     <!-- Synced Tabs -->
-   <!-- Text displayed to ask user to connect another device as no devices found with account -->
+    <!-- Text displayed to ask user to connect another device as no devices found with account -->
     <string name="synced_tabs_connect_another_device">Connecteu un altre dispositiu.</string>
     <!-- Text displayed asking user to re-authenticate -->
     <string name="synced_tabs_reauth">Torneu a autenticar-vos.</string>
@@ -1549,22 +1666,39 @@
     <!-- Title text displayed in the dialog when top sites limit is reached. -->
     <string name="top_sites_max_limit_title">S’ha arribat al límit de llocs principals</string>
     <!-- Content description text displayed in the dialog when top sites limit is reached. -->
-    <string name="top_sites_max_limit_content">Per afegir un lloc principal nou, primer cal que n’elimineu algun altre. Manteniu premut el lloc i seleccioneu eliminar-lo.</string>
+    <string name="top_sites_max_limit_content_2">Per afegir un lloc principal nou, primer cal que n’elimineu algun altre. Manteniu premut el lloc i seleccioneu eliminar-lo.</string>
     <!-- Confirmation dialog button text when top sites limit is reached. -->
     <string name="top_sites_max_limit_confirmation_button">Entesos</string>
 
     <!-- Label for the show most visited sites preference -->
     <string name="top_sites_toggle_top_frecent_sites">Mostra els llocs més visitats</string>
 
+    <!-- Title text displayed in the rename top site dialog. -->
+	<string name="top_sites_rename_dialog_title">Nom</string>
+	<!-- Hint for renaming title of a top site -->
+	<string name="top_site_name_hint">Nom del lloc principal</string>
+	<!-- Button caption to confirm the renaming of the top site. -->
+	<string name="top_sites_rename_dialog_ok">D’acord</string>
+	<!-- Dialog button text for canceling the rename top site prompt. -->
+	<string name="top_sites_rename_dialog_cancel">Cancel·la</string>
+
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">Elimina</string>
 
-    <!-- depcrecated: text for the firefox account onboarding card header
+    <!-- Deprecated: text for the firefox account onboarding card header
     The first parameter is the name of the app (e.g. Firefox Preview) -->
     <string name="onboarding_firefox_account_header">Traieu tot el profit al %s.</string>
+
+    <!-- Content description radio buttons with a link to more information -->
+    <string name="radio_preference_info_content_description">Feu clic aquí per a veure més informació</string>
 
     <!-- Deprecated: No Open Tabs Message Header -->
     <string name="no_collections_header1">Recolliu tot allò que us insteressa</string>
     <!-- Deprecated: Label to describe what collections are to a new user without any collections -->
     <string name="no_collections_description1">Agrupeu les cerques, els llocs i les pestanyes similars per accedir-hi ràpidament en el futur.</string>
+    <!-- Deprecated: text for the firefox account onboarding card header when we detect you're already signed in to -->
+    <string name="onboarding_firefox_account_auto_signin_header_2">Ja heu iniciat la sessió com a %s en un altre navegador Firefox d’aquest telèfon. Voleu iniciar la sessió amb aquest compte?</string>
+    <!-- Deprecated: Describes the add to homescreen functionality -->
+    <string name="add_to_homescreen_description">Podeu afegir fàcilment aquest lloc web a la pantalla d’inici del telèfon per accedir-hi directament i navegar-hi com si fos una aplicació.</string>
+
     </resources>

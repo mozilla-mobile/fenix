@@ -14,12 +14,18 @@ import com.android.build.OutputFile
 import groovy.json.JsonOutput
 import org.gradle.internal.logging.text.StyledTextOutput.Style
 import org.gradle.internal.logging.text.StyledTextOutputFactory
-import org.mozilla.fenix.gradle.tasks.LintUnitTestRunner
 
 import static org.gradle.api.tasks.testing.TestResult.ResultType
 
 android {
     compileSdkVersion Config.compileSdkVersion
+
+    if (project.hasProperty("testBuildType")) {
+        // Allowing to configure the test build type via command line flag (./gradlew -PtestBuildType=beta ..)
+        // in order to run UI tests against other build variants than debug in automation.
+        testBuildType project.property("testBuildType")
+    }
+
     defaultConfig {
         applicationId "org.mozilla"
         minSdkVersion Config.minSdkVersion
@@ -31,17 +37,26 @@ android {
         testInstrumentationRunnerArguments clearPackageData: 'true'
         resValue "bool", "IS_DEBUG", "false"
         buildConfigField "boolean", "USE_RELEASE_VERSIONING", "false"
-        buildConfigField "String", "AMO_COLLECTION", "\"83a9cccfe6e24a34bd7b155ff9ee32\""
+        buildConfigField "String", "AMO_COLLECTION", "\"7dfae8669acc4312a65e8ba5553036\""
         def deepLinkSchemeValue = "fenix-dev"
         buildConfigField "String", "DEEP_LINK_SCHEME", "\"$deepLinkSchemeValue\""
         manifestPlaceholders = [
                 "deepLinkScheme": deepLinkSchemeValue
         ]
+
+        // Build flag for "Mozilla Online" variants. See `Config.isMozillaOnline`.
+        if (project.hasProperty("mozillaOnline") || gradle.hasProperty("localProperties.mozillaOnline")) {
+            buildConfigField "boolean", "MOZILLA_ONLINE", "true"
+        } else {
+            buildConfigField "boolean", "MOZILLA_ONLINE", "false"
+        }
     }
 
     def releaseTemplate = {
-        shrinkResources true
-        minifyEnabled true
+        // We allow disabling optimization by passing `-PdisableOptimization` to gradle. This is used
+        // in automation for UI testing non-debug builds.
+        shrinkResources !project.hasProperty("disableOptimization")
+        minifyEnabled !project.hasProperty("disableOptimization")
         proguardFiles 'proguard-android-optimize-3.5.0-modified.txt', 'proguard-rules.pro'
         matchingFallbacks = ['release'] // Use on the "release" build type in dependencies (AARs)
 
@@ -59,14 +74,12 @@ android {
             shrinkResources false
             minifyEnabled false
             applicationIdSuffix ".fenix.debug"
-            buildConfigField "String", "AMO_COLLECTION", "\"7dfae8669acc4312a65e8ba5553036\""
             resValue "bool", "IS_DEBUG", "true"
             pseudoLocalesEnabled true
         }
         nightly releaseTemplate >> {
             applicationIdSuffix ".fenix"
             buildConfigField "boolean", "USE_RELEASE_VERSIONING", "true"
-            buildConfigField "String", "AMO_COLLECTION", "\"7dfae8669acc4312a65e8ba5553036\""
             def deepLinkSchemeValue = "fenix-nightly"
             buildConfigField "String", "DEEP_LINK_SCHEME", "\"$deepLinkSchemeValue\""
             manifestPlaceholders = ["deepLinkScheme": deepLinkSchemeValue]
@@ -164,6 +177,7 @@ android {
 
     lintOptions {
         lintConfig file("lint.xml")
+        baseline file("lint-baseline.xml")
     }
 
     packagingOptions {
@@ -172,6 +186,17 @@ android {
 
     testOptions {
         unitTests.returnDefaultValues = true
+
+        unitTests.all {
+            // We keep running into memory issues when running our tests. With this config we
+            // reserve more memory and also create a new process after every 80 test classes. This
+            // is a band-aid solution and eventually we should try to find and fix the leaks
+            // instead. :)
+            maxParallelForks = 2
+            forkEvery = 80
+            maxHeapSize = "2048m"
+            minHeapSize = "1024m"
+        }
     }
 }
 
@@ -306,6 +331,30 @@ android.applicationVariants.all { variant ->
         buildConfigField 'String', 'MLS_TOKEN', '""'
         println("X_X")
     }
+
+// -------------------------------------------------------------------------------------------------
+// Nimbus: Read endpoint from local.properties of a local file if it exists
+// -------------------------------------------------------------------------------------------------
+
+    print("Nimbus endpoint: ")
+
+    if (!isDebug) {
+        try {
+            def url = new File("${rootDir}/.nimbus").text.trim()
+            buildConfigField 'String', 'NIMBUS_ENDPOINT', '"' + url + '"'
+            println "(Added from .nimbus file)"
+        } catch (FileNotFoundException ignored) {
+            buildConfigField 'String', 'NIMBUS_ENDPOINT', 'null'
+            println("X_X")
+        }
+    } else if (gradle.hasProperty("localProperties.nimbus.remote-settings.url")) {
+        def url=gradle.getProperty("localProperties.nimbus.remote-settings.url")
+        buildConfigField 'String', 'NIMBUS_ENDPOINT', '"' + url + '"'
+        println "(Added from local.properties file)"
+    } else {
+        buildConfigField 'String', 'NIMBUS_ENDPOINT', 'null'
+        println("--")
+    }
 }
 
 androidExtensions {
@@ -317,7 +366,31 @@ ext.gleanGenerateMarkdownDocs = true
 ext.gleanDocsDirectory = "$rootDir/docs"
 apply plugin: "org.mozilla.telemetry.glean-gradle-plugin"
 
+configurations {
+    // There's an interaction between Gradle's resolution of dependencies with different types
+    // (@jar, @aar) for `implementation` and `testImplementation` and with Android Studio's built-in
+    // JUnit test runner.  The runtime classpath in the built-in JUnit test runner gets the
+    // dependency from the `implementation`, which is type @aar, and therefore the JNA dependency
+    // doesn't provide the JNI dispatch libraries in the correct Java resource directories.  I think
+    // what's happening is that @aar type in `implementation` resolves to the @jar type in
+    // `testImplementation`, and that it wins the dependency resolution battle.
+    //
+    // A workaround is to add a new configuration which depends on the @jar type and to reference
+    // the underlying JAR file directly in `testImplementation`.  This JAR file doesn't resolve to
+    // the @aar type in `implementation`.  This works when invoked via `gradle`, but also sets the
+    // correct runtime classpath when invoked with Android Studio's built-in JUnit test runner.
+    // Success!
+    jnaForTest
+    // Robolectric, through `com.google.android.apps.common.testing.accessibility.framework`
+    // depends on an old version of protobuf that conflict with the Application Services one.
+    // See: https://github.com/mozilla/application-services/issues/2952
+    all*.exclude group: 'com.google.protobuf', module: 'protobuf-java'
+}
+
 dependencies {
+    jnaForTest Deps.jna
+    testImplementation files(configurations.jnaForTest.copyRecursive().files)
+
     debugImplementation Deps.mozilla_browser_engine_gecko_nightly
 
     nightlyImplementation Deps.mozilla_browser_engine_gecko_nightly
@@ -337,6 +410,7 @@ dependencies {
     implementation Deps.leanplum_core
     implementation Deps.leanplum_fcm
 
+    implementation Deps.mozilla_concept_base
     implementation Deps.mozilla_concept_engine
     implementation Deps.mozilla_concept_menu
     implementation Deps.mozilla_concept_push
@@ -394,11 +468,11 @@ dependencies {
     implementation Deps.mozilla_feature_webcompat_reporter
 
     implementation Deps.mozilla_service_digitalassetlinks
-    implementation Deps.mozilla_service_experiments
     implementation Deps.mozilla_service_sync_logins
     implementation Deps.mozilla_service_firefox_accounts
     implementation Deps.mozilla_service_glean
     implementation Deps.mozilla_service_location
+    implementation Deps.mozilla_service_nimbus
 
     implementation Deps.mozilla_support_base
     implementation Deps.mozilla_support_images
@@ -413,6 +487,7 @@ dependencies {
     implementation Deps.mozilla_ui_icons
     implementation Deps.mozilla_lib_publicsuffixlist
     implementation Deps.mozilla_ui_widgets
+    implementation Deps.mozilla_ui_tabcounter
 
     implementation Deps.mozilla_lib_crash
     implementation Deps.mozilla_lib_push_firebase
@@ -435,8 +510,6 @@ dependencies {
     implementation Deps.androidx_transition
     implementation Deps.androidx_work_ktx
     implementation Deps.google_material
-
-    implementation Deps.lottie
 
     implementation Deps.adjust
     implementation Deps.installreferrer // Required by Adjust
@@ -477,7 +550,9 @@ dependencies {
     androidTestImplementation Deps.androidx_junit
     androidTestImplementation Deps.androidx_work_testing
     androidTestImplementation Deps.mockwebserver
+
     testImplementation Deps.mozilla_support_test
+    testImplementation Deps.mozilla_support_test_libstate
     testImplementation Deps.androidx_junit
     testImplementation Deps.androidx_work_testing
     testImplementation (Deps.robolectric) {
@@ -541,13 +616,13 @@ if (project.hasProperty("coverage")) {
 // -------------------------------------------------------------------------------------------------
 tasks.register('printVariants') {
     doLast {
-        def variants = android.applicationVariants.collect {[
-                apks: it.variantData.outputScope.apkDatas.collect {[
-                        abi: it.filters.find { it.filterType == 'ABI' }.identifier,
-                        fileName: it.outputFileName,
-                ]},
-                build_type: it.buildType.name,
-                name: it.name,
+        def variants = android.applicationVariants.collect { variant -> [
+            apks: variant.outputs.collect { output -> [
+                abi: output.getFilter(com.android.build.VariantOutput.FilterType.ABI),
+                fileName: output.outputFile.name
+            ]},
+            build_type: variant.buildType.name,
+            name: variant.name,
         ]}
         // AndroidTest is a special case not included above
         variants.add([
@@ -569,8 +644,8 @@ task buildTranslationArray {
     foundLocales.append("new String[]{")
 
     fileTree("src/main/res").visit { FileVisitDetails details ->
-        if(details.file.path.endsWith("/strings.xml")){
-            def languageCode = details.file.parent.tokenize('/').last().replaceAll('values-','').replaceAll('-r','-')
+        if(details.file.path.endsWith("${File.separator}strings.xml")){
+            def languageCode = details.file.parent.tokenize(File.separator).last().replaceAll('values-','').replaceAll('-r','-')
             languageCode = (languageCode == "values") ? "en-US" : languageCode
             foundLocales.append("\"").append(languageCode).append("\"").append(",")
         }
@@ -580,8 +655,6 @@ task buildTranslationArray {
     def foundLocalesString = foundLocales.toString().replaceAll(',}','}')
     android.defaultConfig.buildConfigField "String[]", "SUPPORTED_LOCALE_ARRAY", foundLocalesString
 }
-
-tasks.register('lintUnitTestRunner', LintUnitTestRunner)
 
 afterEvaluate {
 

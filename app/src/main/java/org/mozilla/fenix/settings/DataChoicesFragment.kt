@@ -7,7 +7,7 @@ package org.mozilla.fenix.settings
 import android.os.Bundle
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
-import org.mozilla.fenix.Config
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.MetricServiceType
 import org.mozilla.fenix.ext.components
@@ -24,8 +24,7 @@ class DataChoicesFragment : PreferenceFragmentCompat() {
         super.onCreate(savedInstanceState)
 
         val context = requireContext()
-        preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(this) {
-            _, key ->
+        preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(this) { _, key ->
             if (key == getPreferenceKey(R.string.pref_key_telemetry)) {
                 if (context.settings().isTelemetryEnabled) {
                     context.components.analytics.metrics.start(MetricServiceType.Data)
@@ -38,6 +37,9 @@ class DataChoicesFragment : PreferenceFragmentCompat() {
                 } else {
                     context.components.analytics.metrics.stop(MetricServiceType.Marketing)
                 }
+            } else if (key == getPreferenceKey(R.string.pref_key_experimentation)) {
+                val enabled = context.settings().isExperimentationEnabled
+                context.components.analytics.experiments.globalUserParticipation = enabled
             }
         }
     }
@@ -63,14 +65,17 @@ class DataChoicesFragment : PreferenceFragmentCompat() {
             isChecked = context.settings().isMarketingTelemetryEnabled
 
             val appName = context.getString(R.string.app_name)
-            summary = context.getString(R.string.preferences_marketing_data_description, appName)
+            summary = String.format(
+                context.getString(R.string.preferences_marketing_data_description),
+                appName
+            )
 
             onPreferenceChangeListener = SharedPreferenceUpdater()
         }
 
         requirePreference<SwitchPreference>(R.string.pref_key_experimentation).apply {
             isChecked = context.settings().isExperimentationEnabled
-            isVisible = Config.channel.isReleaseOrBeta
+            isVisible = FeatureFlags.nimbusExperiments
             onPreferenceChangeListener = SharedPreferenceUpdater()
         }
     }

@@ -23,6 +23,7 @@ Please read the [Community Participation Guidelines](https://www.mozilla.org/en-
   * [#android-tips:mozilla.org channel](https://chat.mozilla.org/#/room/#android-tips:mozilla.org): for tips on Android development
 
 * Check out the [project wiki](https://github.com/mozilla-mobile/fenix/wiki) for more information.
+  * See [our guide on Writing Custom Lint Rules](https://github.com/mozilla-mobile/shared-docs/blob/master/android/writing_lint_rules.md).
 
 * Localization happens on [Pontoon](https://pontoon.mozilla.org/projects/android-l10n/). Please get in touch with delphine (at) mozilla (dot) com directly for more information.
 
@@ -124,6 +125,7 @@ The known features that are disabled by default are:
 - Mozilla Location Services (also known as MLS)
 - Firebase Push Services
 - Telemetry (only disabled by default in debug builds)
+- Nimbus
 
 ## Pre-push hooks
 To reduce review turn-around time, we'd like all pushes to run tests locally. We'd
@@ -206,12 +208,27 @@ Once these flags are set, your Fenix builds will include any local modifications
 
 See a [demo of auto-publication workflow in action](https://www.youtube.com/watch?v=qZKlBzVvQGc).
 
+In order to build successfully, you need to check out a commit in the dependency repository that has no breaking changes. The two best ways to do this are:
+- Run the `<android-components>/tools/list_compatible_dependency_versions.py` script to output a compatible commit
+- Check out the latest commit from master in this repository and the dependency repository. However, this may fail if there were breaking changes added recently to the dependency.
+
+### Using Nimbus servers during local development
+If you're working with the Nimbus experiments platform, by default for local development Fenix configures Nimbus to not use a server.
+
+If you wish to use a Nimbus server during local development, you can add a `https://` or `file://` endpoint to the `local.properties` file.
+
+- `nimbus.remote-settings.url`
+
+Testing experimental branches should be possible without a server.
+
 ### GeckoView
 Specify a relative path to your local `mozilla-central` checkout via `dependencySubstitutions.geckoviewTopsrcdir`,
 and optional a path to m-c object directory via `dependencySubstitutions.geckoviewTopobjdir`.
 
 If these are configured, local builds of GeckoView will be used instead of what's configured in Dependencies.kt.
 For more details, see https://firefox-source-docs.mozilla.org/mobile/android/geckoview/contributor/geckoview-quick-start.html#include-geckoview-as-a-dependency
+
+See notes on building successfully in the `android-components` auto-publication section.
 
 ## License
 

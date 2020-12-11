@@ -12,7 +12,6 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.Ignore
 import org.mozilla.fenix.FenixApplication
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
@@ -39,7 +38,7 @@ class SettingsBasicsTest {
     @Before
     fun setUp() {
         mockWebServer = MockWebServer().apply {
-            setDispatcher(AndroidAssetDispatcher())
+            dispatcher = AndroidAssetDispatcher()
             start()
         }
     }
@@ -69,7 +68,7 @@ class SettingsBasicsTest {
             verifyBasicsHeading()
             verifySearchEngineButton()
             verifyDefaultBrowserItem()
-            verifyCloseTabsItem()
+            verifyTabsItem()
             // drill down to submenu
         }.openSearchSubMenu {
             verifyDefaultSearchEngineHeader()
@@ -102,25 +101,6 @@ class SettingsBasicsTest {
         }.goBack {
         }.goBack {
             verifyDefaultSearchEngine("DuckDuckGo")
-        }
-    }
-
-    @Ignore("This test works locally, fails on firebase. https://github.com/mozilla-mobile/fenix/issues/8174")
-    @Test
-    fun toggleSearchSuggestions() {
-        // Goes through the settings and changes the search suggestion toggle, then verifies it changes.
-        homeScreen {
-        }.openNavigationToolbar {
-            verifySearchSuggestionsAreMoreThan(1, "mozilla")
-        }.goBack {
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openSearchSubMenu {
-            disableShowSearchSuggestions()
-        }.goBack {
-        }.goBack {
-        }.openNavigationToolbar {
-            verifySearchSuggestionsAreEqualTo(0, "mozilla")
         }
     }
 
@@ -175,7 +155,7 @@ class SettingsBasicsTest {
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
-        }.openCloseTabsSubMenu {
+        }.openTabsSubMenu {
             verifyOptions()
         }
     }
@@ -194,7 +174,7 @@ class SettingsBasicsTest {
         }.openSettings {
         }.openAccessibilitySubMenu {
             clickFontSizingSwitch()
-            verifyNewMenuItems()
+            verifyEnabledMenuItems()
             changeTextSizeSlider(textSizePercentage)
             verifyTextSizePercentage(textSizePercentage)
         }.goBack {
@@ -204,12 +184,12 @@ class SettingsBasicsTest {
             checkTextSizeOnWebsite(textSizePercentage, fenixApp.components)
         }.openTabDrawer {
         }.openNewTab {
-        }.dismiss {
+        }.dismissSearchBar {
         }.openThreeDotMenu {
         }.openSettings {
         }.openAccessibilitySubMenu {
             clickFontSizingSwitch()
-            verifyNewMenuItemsAreGone()
+            verifyMenuItemsAreDisabled()
         }
     }
 

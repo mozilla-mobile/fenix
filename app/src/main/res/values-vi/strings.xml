@@ -20,6 +20,10 @@
     <!-- No Private Tabs Message Description -->
     <string name="no_private_tabs_description">Các thẻ riêng tư của bạn sẽ được hiển thị ở đây.</string>
 
+    <!-- Default title for pinned Baidu top site that links to Baidu home page  -->
+    <string name="default_top_site_baidu">Baidu</string>
+    <!-- Default title for pinned JD top site that links to JD home page  -->
+    <string name="default_top_site_jd">JD</string>
     <!-- Message announced to the user when tab tray is selected with 1 tab -->
     <string name="open_tab_tray_single">1 thẻ đang mở. Chạm để chuyển thẻ.</string>
     <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
@@ -71,14 +75,6 @@
     <!-- Text for the negative button -->
     <string name="cfr_neg_button_text">Không, cảm ơn</string>
 
-    <!-- Search widget "contextual feature recommendation" (CFR) -->
-    <!-- Text for the main message. 'Firefox' intentionally hardcoded here.-->
-    <string name="search_widget_cfr_message">Truy cập Firefox nhanh hơn. Thêm widget vào màn hình chính của bạn.</string>
-    <!-- Text for the positive button -->
-    <string name="search_widget_cfr_pos_button_text">Thêm widget</string>
-    <!-- Text for the negative button -->
-    <string name="search_widget_cfr_neg_button_text">Không phải bây giờ</string>
-
     <!-- Open in App "contextual feature recommendation" (CFR) -->
     <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
     <string name="open_in_app_cfr_info_message">Bạn có thể đặt Firefox để tự động mở các liên kết trong ứng dụng.</string>
@@ -100,6 +96,13 @@
     <string name="tab_tray_close_tabs_banner_positive_button_text">Xem tùy chọn</string>
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">Bỏ qua</string>
+
+    <!-- Text for the banner message to tell users about our grid view feature. -->
+    <string name="tab_tray_grid_view_banner_message">Thay đổi bố cục của các thẻ đang mở. Đi tới cài đặt và chọn lưới trong chế độ xem thẻ.</string>
+    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
+    <string name="tab_tray_grid_view_banner_positive_button_text">Đi tới cài đặt</string>
+    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
+    <string name="tab_tray_grid_view_banner_negative_button_text">Bỏ qua</string>
 
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
@@ -202,7 +205,7 @@
     <!-- Header displayed when selecting a shortcut search engine -->
     <string name="search_engines_search_with">Lần này, tìm kiếm với:</string>
     <!-- Button in the search view that lets a user navigate to the site in their clipboard -->
-    <string name="awesomebar_clipboard_title">Điền liên kết từ bộ nhớ tạm</string>
+    <string name="awesomebar_clipboard_title">Điền liên kết từ khay nhớ tạm</string>
     <!-- Button in the search suggestions onboarding that allows search suggestions in private sessions -->
     <string name="search_suggestions_onboarding_allow_button">Cho phép</string>
     <!-- Button in the search suggestions onboarding that does not allow search suggestions in private sessions -->
@@ -215,6 +218,8 @@
     <string name="search_suggestions_onboarding_learn_more_link">Tìm hiểu thêm</string>
 
     <!-- Search Widget -->
+    <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
+    <string name="search_widget_content_description">Mở một thẻ Firefox mới</string>
     <!-- Text preview for smaller sized widgets -->
     <string name="search_widget_text_short">Tìm kiếm</string>
     <!-- Text preview for larger sized widgets -->
@@ -316,13 +321,13 @@
     <!-- Preference title for switch preference to show search engines -->
     <string name="preferences_show_search_engines">Hiển thị công cụ tìm kiếm</string>
     <!-- Preference title for switch preference to show search suggestions -->
-    <string name="preferences_show_search_suggestions">Hiển thị gợi ý tìm kiếm</string>
+    <string name="preferences_show_search_suggestions">Hiển thị đề xuất tìm kiếm</string>
     <!-- Preference title for switch preference to show voice search button -->
     <string name="preferences_show_voice_search">Hiển thị tìm kiếm bằng giọng nói</string>
     <!-- Preference title for switch preference to show search suggestions also in private mode -->
     <string name="preferences_show_search_suggestions_in_private">Hiển thị trong phiên riêng tư</string>
     <!-- Preference title for switch preference to show a clipboard suggestion when searching -->
-    <string name="preferences_show_clipboard_suggestions">Hiển thị đề xuất bộ nhớ tạm</string>
+    <string name="preferences_show_clipboard_suggestions">Hiển thị đề xuất khay nhớ tạm</string>
     <!-- Preference title for switch preference to suggest browsing history when searching -->
     <string name="preferences_search_browsing_history">Tìm kiếm lịch sử duyệt web</string>
     <!-- Preference title for switch preference to suggest bookmarks when searching -->
@@ -343,6 +348,20 @@
 
     <!-- Preference for notifications -->
     <string name="preferences_notifications">Thông báo</string>
+
+    <!-- Add-on Preferences -->
+    <!-- Preference to customize the configured AMO (addons.mozilla.org) collection -->
+    <string name="preferences_customize_amo_collection">Bộ sưu tập tiện ích tùy chỉnh</string>
+    <!-- Button caption to confirm the add-on collection configuration -->
+    <string name="customize_addon_collection_ok">OK</string>
+    <!-- Button caption to abort the add-on collection configuration -->
+    <string name="customize_addon_collection_cancel">Hủy bỏ</string>
+    <!-- Hint displayed on input field for custom collection name -->
+    <string name="customize_addon_collection_hint">Tên bộ sưu tập</string>
+    <!-- Hint displayed on input field for custom collection user ID-->
+    <string name="customize_addon_collection_user_hint">Chủ sở hữu bộ sưu tập (ID người dùng)</string>
+    <!-- Toast shown after confirming the custom add-on collection configuration -->
+    <string name="toast_customize_addon_collection_done">Đã sửa đổi bộ sưu tập tiện ích mở rộng. Thoát ứng dụng để áp dụng các thay đổi…</string>
 
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
@@ -423,6 +442,10 @@
     <string name="preferences_marketing_data">Dữ liệu tiếp thị</string>
     <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
     <string name="preferences_marketing_data_description">Chia sẻ dữ liệu về những tính năng bạn sử dụng trong %1$s với Leanplum, nhà cung cấp tiếp thị di động của chúng tôi.</string>
+    <!-- Title for studies preferences -->
+    <string name="preference_experiments_2">Nghiên cứu</string>
+    <!-- Summary for studies preferences -->
+    <string name="preference_experiments_summary_2">Cho phép Mozilla cài đặt và chạy các nghiên cứu</string>
     <!-- Title for experiments preferences -->
     <string name="preference_experiments">Thử nghiệm</string>
     <!-- Summary for experiments preferences -->
@@ -526,6 +549,14 @@
     <string name="recently_closed_empty_message">Không có thẻ nào đã đóng gần đây ở đây</string>
 
     <!-- Tab Management -->
+    <!-- Title of preference for tabs management -->
+    <string name="preferences_tabs">Thẻ</string>
+    <!-- Title of preference that allows a user to specify the tab view -->
+    <string name="preferences_tab_view">Chế độ xem thẻ</string>
+    <!-- Option for a list tab view -->
+    <string name="tab_view_list">Danh sách</string>
+    <!-- Option for a grid tab view -->
+    <string name="tab_view_grid">Lưới</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
     <string name="preferences_close_tabs">Đóng thẻ</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
@@ -536,6 +567,15 @@
     <string name="close_tabs_after_one_week">Sau một tuần</string>
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">Sau một tháng</string>
+
+    <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
+    <string name="close_tabs_manually_summary">Đóng thủ công</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
+    <string name="close_tabs_after_one_day_summary">Đóng sau một ngày</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one week-->
+    <string name="close_tabs_after_one_week_summary">Đóng sau một tuần</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one month-->
+    <string name="close_tabs_after_one_month_summary">Đóng sau một tháng</string>
 
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
@@ -554,6 +594,8 @@
     <string name="tab_tray_title">Các thẻ đang mở</string>
     <!-- Text shown in the menu for saving tabs to a collection -->
     <string name="tab_tray_menu_item_save">Lưu vào bộ sưu tập</string>
+    <!-- Text shown in the menu for the collection selector -->
+    <string name="tab_tray_menu_select">Chọn</string>
     <!-- Text shown in the menu for sharing all tabs -->
     <string name="tab_tray_menu_item_share">Chia sẻ tất cả các thẻ</string>
     <!-- Text shown in the menu to view recently closed tabs -->
@@ -568,8 +610,18 @@
     <string name="tab_tray_menu_home">Đi đến trang chủ</string>
     <!-- Shortcut action to toggle private mode -->
     <string name="tab_tray_menu_toggle">Chuyển đổi chế độ thẻ</string>
+    <!-- Text shown in the multiselect menu for bookmarking selected tabs. -->
+    <string name="tab_tray_multiselect_menu_item_bookmark">Đánh dấu</string>
+    <!-- Text shown in the multiselect menu for closing selected tabs. -->
+    <string name="tab_tray_multiselect_menu_item_close">Đóng</string>
+    <!-- Content description for tabs tray multiselect share button -->
+    <string name="tab_tray_multiselect_share_content_description">Chia sẻ các thẻ đã chọn</string>
+    <!-- Content description for tabs tray multiselect menu -->
+    <string name="tab_tray_multiselect_menu_content_description">Menu thẻ đã chọn</string>
     <!-- Content description (not visible, for screen readers etc.): Removes tab from collection button. Removes the selected tab from collection when pressed -->
     <string name="remove_tab_from_collection">Xóa thẻ khỏi bộ sưu tập</string>
+    <!-- Text for button to enter multiselect mode in tabs tray -->
+    <string name="tabs_tray_select_tabs">Chọn các thẻ</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab button. Closes the current session when pressed -->
     <string name="close_tab">Đóng thẻ</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab <title> button. First parameter is tab title  -->
@@ -603,8 +655,12 @@
     <!-- Text for the button to open tabs of the selected collection -->
     <string name="collection_open_tabs">Các thẻ đang mở</string>
 
-    <!-- Text for the menu button to remove a top site -->
-    <string name="remove_top_site">Xóa</string>
+    <!-- Hint for adding name of a collection -->
+    <string name="collection_name_hint">Tên bộ sưu tập</string>
+    <!-- Text for the menu button to rename a top site -->
+	<string name="rename_top_site">Đổi tên</string>
+	<!-- Text for the menu button to remove a top site -->
+	<string name="remove_top_site">Xóa</string>
 
     <!-- Text for the menu button to delete a top site from history -->
     <string name="delete_from_history">Xóa khỏi lịch sử</string>
@@ -641,6 +697,10 @@
     <!-- Text for the button to clear selected history items. The first parameter
         is a digit showing the number of items you have selected -->
     <string name="history_delete_some">Xóa %1$d mục</string>
+    <!-- Text for the header that groups the history for today -->
+    <string name="history_today">Hôm nay</string>
+    <!-- Text for the header that groups the history for yesterday -->
+    <string name="history_yesterday">Hôm qua</string>
     <!-- Text for the header that groups the history for last 24 hours -->
     <string name="history_24_hours">24 giờ qua</string>
     <!-- Text for the header that groups the history the past 7 days -->
@@ -653,11 +713,23 @@
     <string name="history_empty_message">Không có lịch sử ở đây</string>
 
     <!-- Downloads -->
+    <!-- Text for the button to clear all downloads -->
+    <string name="download_delete_all">Xóa nội dung tải xuống</string>
+    <!-- Text for the dialog to confirm clearing all downloads -->
+    <string name="download_delete_all_dialog">Bạn có chắc chắn muốn xóa nội dung tải xuống của mình không?</string>
+    <!-- Text for the snackbar to confirm that multiple downloads items have been deleted -->
+    <string name="download_delete_multiple_items_snackbar">Đã xóa nội dung tải xuống</string>
     <!-- Text shown when no download exists -->
     <string name="download_empty_message">Không có tải xuống ở đây</string>
     <!-- History multi select title in app bar
     The first parameter is the number of downloads selected -->
     <string name="download_multi_select_title">%1$d đã chọn</string>
+
+    <!-- History overflow menu open in new tab button -->
+    <string name="download_menu_open">Mở</string>
+    <!-- Text for the button to delete a single history item -->
+    <string name="download_delete_item">Xóa</string>
+
 
     <!-- Crashes -->
     <!-- Title text displayed on the tab crash page. This first parameter is the name of the application (For example: Fenix) -->
@@ -779,6 +851,8 @@
 
     <!-- Preference for altering the notification access for all websites -->
     <string name="preference_phone_feature_notification">Thông báo</string>
+    <!-- Preference for altering the persistent storage access for all websites -->
+    <string name="preference_phone_feature_persistent_storage">Bộ nhớ liên tục</string>
     <!-- Label that indicates that a permission must be asked always -->
     <string name="preference_option_phone_feature_ask_to_allow">Hỏi để cho phép</string>
     <!-- Label that indicates that a permission must be blocked -->
@@ -918,6 +992,12 @@
     <string name="snackbar_tab_closed">Đã đóng thẻ</string>
     <!-- Text shown in snackbar when user closes all tabs -->
     <string name="snackbar_tabs_closed">Đã đóng các thẻ</string>
+    <!-- Text shown in snackbar when user closes tabs -->
+    <string name="snackbar_message_tabs_closed">Đã đóng các thẻ!</string>
+    <!-- Text shown in snackbar when user bookmarks a list of tabs -->
+    <string name="snackbar_message_bookmarks_saved">Đã lưu dấu trang!</string>
+    <!-- Text shown in snackbar action for viewing bookmarks -->
+    <string name="snackbar_message_bookmarks_view">Xem</string>
     <!-- Text shown in snackbar when user adds a site to top sites -->
     <string name="snackbar_added_to_top_sites">Đã thêm vào trang web hàng đầu!</string>
     <!-- Text shown in snackbar when user closes a private tab -->
@@ -1320,7 +1400,7 @@
     <string name="add_to_homescreen_description_2">Bạn có thể dễ dàng thêm trang web vào màn hình chính thiết bị của bạn để có thể truy cập và duyệt web nhanh hơn với trải nghiệm giống như trên ứng dụng.</string>
 
     <!-- Preference for managing the settings for logins and passwords in Fenix -->
-    <string name="preferences_passwords_logins_and_passwords">Đăng nhập và mật khẩu</string>
+    <string name="preferences_passwords_logins_and_passwords">Thông tin đăng nhập và mật khẩu</string>
     <!-- Preference for managing the saving of logins and passwords in Fenix -->
     <string name="preferences_passwords_save_logins">Lưu thông tin đăng nhập và mật khẩu</string>
     <!-- Preference option for asking to save passwords in Fenix -->
@@ -1330,7 +1410,7 @@
     <!-- Preference for autofilling saved logins in Fenix -->
     <string name="preferences_passwords_autofill">Tự động điền</string>
     <!-- Preference for syncing saved logins in Fenix -->
-    <string name="preferences_passwords_sync_logins">Đồng bộ hóa đăng nhập</string>
+    <string name="preferences_passwords_sync_logins">Đồng bộ hóa thông tin đăng nhập</string>
     <!-- Syncing saved logins in Fenix is on -->
     <string name="preferences_passwords_sync_logins_on">Bật</string>
     <!-- Syncing saved logins in Fenix is off -->
@@ -1340,7 +1420,7 @@
     <!-- Syncing saved logins in Fenix needs login -->
     <string name="preferences_passwords_sync_logins_sign_in">Đăng nhập vào đồng bộ hóa</string>
     <!-- Preference to access list of saved logins -->
-    <string name="preferences_passwords_saved_logins">Đăng nhập đã lưu</string>
+    <string name="preferences_passwords_saved_logins">Thông tin đăng nhập đã lưu</string>
     <!-- Description of empty list of saved passwords. Placeholder is replaced with app name.  -->
     <string name="preferences_passwords_saved_logins_description_empty_text">Thông tin đăng nhập bạn lưu hoặc đồng bộ hóa với %s sẽ hiển thị tại đây.</string>
     <!-- Preference to access list of saved logins -->
@@ -1348,9 +1428,9 @@
     <!-- Preference to access list of login exceptions that we never save logins for -->
     <string name="preferences_passwords_exceptions">Ngoại trừ</string>
     <!-- Empty description of list of login exceptions that we never save logins for -->
-    <string name="preferences_passwords_exceptions_description_empty">Đăng nhập và mật khẩu không được lưu sẽ được hiển thị ở đây.</string>
+    <string name="preferences_passwords_exceptions_description_empty">Thông tin đăng nhập và mật khẩu không được lưu sẽ được hiển thị ở đây.</string>
     <!-- Description of list of login exceptions that we never save logins for -->
-    <string name="preferences_passwords_exceptions_description">Đăng nhập và mật khẩu sẽ không được lưu cho các trang web này.</string>
+    <string name="preferences_passwords_exceptions_description">Thông tin đăng nhập và mật khẩu sẽ không được lưu cho các trang web này.</string>
     <!-- Text on button to remove all saved login exceptions -->
     <string name="preferences_passwords_exceptions_remove_all">Xóa tất cả các ngoại lệ</string>
     <!-- Hint for search box in logins list -->
@@ -1574,12 +1654,24 @@
     <!-- Label for the show most visited sites preference -->
     <string name="top_sites_toggle_top_frecent_sites">Hiển thị các trang web được truy cập nhiều nhất</string>
 
+    <!-- Title text displayed in the rename top site dialog. -->
+	<string name="top_sites_rename_dialog_title">Tên</string>
+	<!-- Hint for renaming title of a top site -->
+	<string name="top_site_name_hint">Tên trang web hàng đầu</string>
+	<!-- Button caption to confirm the renaming of the top site. -->
+	<string name="top_sites_rename_dialog_ok">OK</string>
+	<!-- Dialog button text for canceling the rename top site prompt. -->
+	<string name="top_sites_rename_dialog_cancel">Huỷ bỏ</string>
+
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">Xóa</string>
 
     <!-- Deprecated: text for the firefox account onboarding card header
     The first parameter is the name of the app (e.g. Firefox Preview) -->
     <string name="onboarding_firefox_account_header">Tận dụng tối đa %s.</string>
+
+    <!-- Content description radio buttons with a link to more information -->
+    <string name="radio_preference_info_content_description">Chạm để biết thêm chi tiết</string>
 
     <!-- Deprecated: No Open Tabs Message Header -->
     <string name="no_collections_header1">Thu thập những thứ quan trọng với bạn</string>

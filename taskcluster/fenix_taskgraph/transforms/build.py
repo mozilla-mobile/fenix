@@ -48,6 +48,7 @@ def add_shippable_secrets(config, tasks):
                 ('leanplum', '.leanplum_token'),
                 ('sentry_dsn', '.sentry_token'),
                 ('mls', '.mls_token'),
+                ('nimbus_url', '.nimbus'),
             )])
         else:
             dummy_secrets.extend([{
@@ -74,6 +75,24 @@ def build_gradle_command(config, tasks):
             "assemble{}".format(upper_case_first_letter(variant_config["name"]))
         ]
 
+        yield task
+
+@transforms.add
+def add_test_build_type(config, tasks):
+    for task in tasks:
+        test_build_type = task["run"].pop("test-build-type", "")
+        if test_build_type:
+            task["run"]["gradlew"].append(
+                "-PtestBuildType={}".format(test_build_type)
+            )
+        yield task
+
+
+@transforms.add
+def add_disable_optimization(config, tasks):
+    for task in tasks:
+        if task.pop("disable-optimization", False):
+            task["run"]["gradlew"].append("-PdisableOptimization")
         yield task
 
 

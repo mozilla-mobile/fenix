@@ -9,6 +9,7 @@ package org.mozilla.fenix.ui.robots
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.widget.EditText
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.action.ViewActions
@@ -33,16 +34,19 @@ import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.containsString
+import org.hamcrest.Matchers.not
 import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.Constants.LONG_CLICK_DURATION
-import org.mozilla.fenix.helpers.TestAssetHelper
+import org.mozilla.fenix.helpers.SessionLoadedIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
 
 class BrowserRobot {
+    private lateinit var sessionLoadedIdlingResource: SessionLoadedIdlingResource
+
     fun verifyCurrentPrivateSession(context: Context) {
         val session = context.components.core.sessionManager.selectedSession
         assertTrue("Current session is private", session?.private!!)
@@ -50,13 +54,16 @@ class BrowserRobot {
 
     fun verifyUrl(url: String) {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+        sessionLoadedIdlingResource = SessionLoadedIdlingResource()
+
         mDevice.waitNotNull(
             Until.findObject(By.res("org.mozilla.fenix.debug:id/mozac_browser_toolbar_url_view")),
             waitingTime
         )
-        TestAssetHelper.waitingTime
-        onView(withId(R.id.mozac_browser_toolbar_url_view))
-            .check(matches(withText(containsString(url.replace("http://", "")))))
+        runWithIdleRes(sessionLoadedIdlingResource) {
+            onView(withId(R.id.mozac_browser_toolbar_url_view))
+                .check(matches(withText(containsString(url.replace("http://", "")))))
+        }
     }
 
     fun verifyHelpUrl() {
@@ -77,11 +84,16 @@ class BrowserRobot {
     */
 
     fun verifyPageContent(expectedText: String) {
+        sessionLoadedIdlingResource = SessionLoadedIdlingResource()
+
         mDevice.waitNotNull(
             Until.findObject(By.res("org.mozilla.fenix.debug:id/engineView")),
             waitingTime
         )
-        assertTrue(mDevice.findObject(UiSelector().text(expectedText)).waitForExists(waitingTime))
+
+        runWithIdleRes(sessionLoadedIdlingResource) {
+            assertTrue(mDevice.findObject(UiSelector().textContains(expectedText)).waitForExists(waitingTime))
+        }
     }
 
     fun verifyTabCounter(expectedText: String) {
@@ -155,8 +167,6 @@ class BrowserRobot {
 
     fun verifyMenuButton() = assertMenuButton()
 
-    fun verifyBlueDot() = assertBlueDot()
-
     fun verifyNavURLBarItems() {
         verifyEnhancedTrackingOptions()
         pressBack()
@@ -187,10 +197,10 @@ class BrowserRobot {
             .perform(ViewActions.pressBack())
     }
 
-    fun clickEnhancedTrackingProtectionPanel() = enhancedTrackingProtectionPanel().click()
+    fun clickEnhancedTrackingProtectionPanel() = enhancedTrackingProtectionIndicator().click()
 
     fun verifyEnhancedTrackingProtectionPanelNotVisible() =
-        assertEnhancedTrackingProtectionPanelNotVisible()
+        assertEnhancedTrackingProtectionIndicatorNotVisible()
 
     fun clickContextOpenLinkInNewTab() {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
@@ -313,15 +323,34 @@ class BrowserRobot {
     }
 
     fun verifySaveLoginPromptIsShown() {
-        mDevice.waitNotNull(Until.findObjects(text("test@example.com")), waitingTime)
+        mDevice.findObject(UiSelector().text("test@example.com")).waitForExists(waitingTime)
         val submitButton = mDevice.findObject(By.res("submit"))
         submitButton.clickAndWait(Until.newWindow(), waitingTime)
         // Click save to save the login
         mDevice.waitNotNull(Until.findObjects(text("Save")))
     }
 
+    fun verifyUpdateLoginPromptIsShown() {
+        val submitButton = mDevice.findObject(By.res("submit"))
+        submitButton.clickAndWait(Until.newWindow(), waitingTime)
+
+        mDevice.waitNotNull(Until.findObjects(text("Update")))
+    }
+
     fun saveLoginFromPrompt(optionToSaveLogin: String) {
         mDevice.findObject(text(optionToSaveLogin)).click()
+    }
+
+    fun enterPassword(password: String) {
+        val passwordField = mDevice.findObject(
+            UiSelector()
+                .resourceId("password")
+                .className(EditText::class.java)
+        )
+        passwordField.waitForExists(waitingTime)
+        passwordField.setText(password)
+        // wait until the password is hidden
+        assertTrue(mDevice.findObject(UiSelector().text(password)).waitUntilGone(waitingTime))
     }
 
     fun clickMediaPlayerPlayButton() {
@@ -337,6 +366,28 @@ class BrowserRobot {
     fun verifyMediaIsPaused() {
         val pausedStateMessage = mDevice.findObject(UiSelector().text("Media file is paused"))
         assertTrue(pausedStateMessage.waitForExists(waitingTime))
+    }
+
+    fun swipeNavBarRight(tabUrl: String) {
+        // failing to swipe on Firebase sometimes, so it tries again
+        try {
+            navURLBar().perform(ViewActions.swipeRight())
+            assertTrue(mDevice.findObject(UiSelector().text(tabUrl)).waitUntilGone(waitingTime))
+        } catch (e: AssertionError) {
+            navURLBar().perform(ViewActions.swipeRight())
+            assertTrue(mDevice.findObject(UiSelector().text(tabUrl)).waitUntilGone(waitingTime))
+        }
+    }
+
+    fun swipeNavBarLeft(tabUrl: String) {
+        // failing to swipe on Firebase sometimes, so it tries again
+        try {
+            navURLBar().perform(ViewActions.swipeLeft())
+            assertTrue(mDevice.findObject(UiSelector().text(tabUrl)).waitUntilGone(waitingTime))
+        } catch (e: AssertionError) {
+            navURLBar().perform(ViewActions.swipeLeft())
+            assertTrue(mDevice.findObject(UiSelector().text(tabUrl)).waitUntilGone(waitingTime))
+        }
     }
 
     class Transition {
@@ -415,12 +466,11 @@ fun navURLBar() = onView(withId(R.id.mozac_browser_toolbar_url_view))
 private fun assertNavURLBar() = navURLBar()
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
-fun enhancedTrackingProtectionPanel() =
+fun enhancedTrackingProtectionIndicator() =
     onView(withId(R.id.mozac_browser_toolbar_tracking_protection_indicator))
 
-private fun assertEnhancedTrackingProtectionPanelNotVisible() {
-    enhancedTrackingProtectionPanel()
-        .check(matches(withEffectiveVisibility(Visibility.GONE)))
+private fun assertEnhancedTrackingProtectionIndicatorNotVisible() {
+    enhancedTrackingProtectionIndicator().check(matches(not(isDisplayed())))
 }
 
 private fun assertEnhancedTrackingProtectionSwitch() {
@@ -453,10 +503,3 @@ private fun mediaPlayerPlayButton() =
             .className("android.widget.Button")
             .text("Play")
     )
-
-private fun assertBlueDot() {
-    onView(withId(R.id.notification_dot))
-        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-}
-
-private fun addOnsReportSiteIssue() = onView(withText("Report Site Issue"))

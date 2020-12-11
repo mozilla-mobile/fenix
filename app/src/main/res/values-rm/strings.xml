@@ -19,6 +19,10 @@
     <!-- No Private Tabs Message Description -->
     <string name="no_private_tabs_description">Tabs privats averts vegnan mussads qua.</string>
 
+    <!-- Default title for pinned Baidu top site that links to Baidu home page  -->
+    <string name="default_top_site_baidu">Baidu</string>
+    <!-- Default title for pinned JD top site that links to JD home page  -->
+    <string name="default_top_site_jd">JD</string>
     <!-- Message announced to the user when tab tray is selected with 1 tab -->
     <string name="open_tab_tray_single">1 tab avert. Tutgar per midar tab.</string>
     <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
@@ -68,14 +72,6 @@
     <!-- Text for the negative button -->
     <string name="cfr_neg_button_text">Na, grazia</string>
 
-    <!-- Search widget "contextual feature recommendation" (CFR) -->
-    <!-- Text for the main message. 'Firefox' intentionally hardcoded here.-->
-    <string name="search_widget_cfr_message">Avra Firefox anc pli spert. Agiuntescha in widget al visur principal.</string>
-    <!-- Text for the positive button -->
-    <string name="search_widget_cfr_pos_button_text">Agiuntar il widget</string>
-    <!-- Text for the negative button -->
-    <string name="search_widget_cfr_neg_button_text">Betg ussa</string>
-
     <!-- Open in App "contextual feature recommendation" (CFR) -->
     <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
     <string name="open_in_app_cfr_info_message">Ti pos configurar Firefox uschia che colliaziuns vegnan avertas automaticamain en apps.</string>
@@ -97,6 +93,14 @@
     <string name="tab_tray_close_tabs_banner_positive_button_text">Mussar las opziuns</string>
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">Serrar</string>
+
+    <!-- Text for the banner message to tell users about our grid view feature. -->
+    <string name="tab_tray_grid_view_banner_message">Mida il layout da tabs averts. Acceda als parameters e tscherna griglia sut vista da tabs.</string>
+
+    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
+    <string name="tab_tray_grid_view_banner_positive_button_text">Ir als parameters</string>
+    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
+    <string name="tab_tray_grid_view_banner_negative_button_text">Ignorar</string>
 
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
@@ -211,6 +215,8 @@
     <string name="search_suggestions_onboarding_learn_more_link">Ulteriuras infurmaziuns</string>
 
     <!-- Search Widget -->
+    <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
+    <string name="search_widget_content_description">Avrir in nov tab da Firefox</string>
     <!-- Text preview for smaller sized widgets -->
     <string name="search_widget_text_short">Tschertgar</string>
     <!-- Text preview for larger sized widgets -->
@@ -340,6 +346,20 @@
     <!-- Preference for notifications -->
     <string name="preferences_notifications">Communicaziuns</string>
 
+    <!-- Add-on Preferences -->
+    <!-- Preference to customize the configured AMO (addons.mozilla.org) collection -->
+    <string name="preferences_customize_amo_collection">Collecziun da supplements persunalisada</string>
+    <!-- Button caption to confirm the add-on collection configuration -->
+    <string name="customize_addon_collection_ok">OK</string>
+    <!-- Button caption to abort the add-on collection configuration -->
+    <string name="customize_addon_collection_cancel">Interrumper</string>
+    <!-- Hint displayed on input field for custom collection name -->
+    <string name="customize_addon_collection_hint">Num da la collecziun</string>
+    <!-- Hint displayed on input field for custom collection user ID-->
+    <string name="customize_addon_collection_user_hint">Possessur da la collecziun (ID da l\'utilisader)</string>
+    <!-- Toast shown after confirming the custom add-on collection configuration -->
+    <string name="toast_customize_addon_collection_done">Modifitgà la collecziun da supplements. L\'applicaziun vegn serrada per applitgar las midadas…</string>
+
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">Sincronisar ussa</string>
@@ -419,6 +439,10 @@
     <string name="preferences_marketing_data">Datas da marketing</string>
     <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
     <string name="preferences_marketing_data_description">Transmetta datas davart las funcziunalitads che ti dovras en %1$s a Leanplum, noss partenari per il marketing sin apparats mobils.</string>
+    <!-- Title for studies preferences -->
+    <string name="preference_experiments_2">Studis</string>
+    <!-- Summary for studies preferences -->
+    <string name="preference_experiments_summary_2">Permetter a Mozilla dad installar ed exequir studis</string>
     <!-- Title for experiments preferences -->
     <string name="preference_experiments">Experiments</string>
     <!-- Summary for experiments preferences -->
@@ -522,6 +546,14 @@
     <string name="recently_closed_empty_message">Nagins tabs serrads dacurt</string>
 
     <!-- Tab Management -->
+    <!-- Title of preference for tabs management -->
+    <string name="preferences_tabs">Tabs</string>
+    <!-- Title of preference that allows a user to specify the tab view -->
+    <string name="preferences_tab_view">Vista da tab</string>
+    <!-- Option for a list tab view -->
+    <string name="tab_view_list">Glista</string>
+    <!-- Option for a grid tab view -->
+    <string name="tab_view_grid">Griglia</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
     <string name="preferences_close_tabs">Serrar ils tabs</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
@@ -532,6 +564,15 @@
     <string name="close_tabs_after_one_week">Suenter in\'emna</string>
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">Suenter in mais</string>
+
+    <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
+    <string name="close_tabs_manually_summary">Serrar a maun</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
+    <string name="close_tabs_after_one_day_summary">Serrar suenter in di</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one week-->
+    <string name="close_tabs_after_one_week_summary">Serrar suenter in\'emna</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one month-->
+    <string name="close_tabs_after_one_month_summary">Serrar suenter in mais</string>
 
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
@@ -550,6 +591,8 @@
     <string name="tab_tray_title">Tabs averts</string>
     <!-- Text shown in the menu for saving tabs to a collection -->
     <string name="tab_tray_menu_item_save">Memorisar en ina collecziun</string>
+    <!-- Text shown in the menu for the collection selector -->
+    <string name="tab_tray_menu_select">Tscherner</string>
     <!-- Text shown in the menu for sharing all tabs -->
     <string name="tab_tray_menu_item_share">Cundivider tut ils tabs</string>
     <!-- Text shown in the menu to view recently closed tabs -->
@@ -564,8 +607,18 @@
     <string name="tab_tray_menu_home">Ir a la pagina da partenza</string>
     <!-- Shortcut action to toggle private mode -->
     <string name="tab_tray_menu_toggle">Midar il modus da tab</string>
+    <!-- Text shown in the multiselect menu for bookmarking selected tabs. -->
+    <string name="tab_tray_multiselect_menu_item_bookmark">Segnapagina</string>
+    <!-- Text shown in the multiselect menu for closing selected tabs. -->
+    <string name="tab_tray_multiselect_menu_item_close">Serrar</string>
+    <!-- Content description for tabs tray multiselect share button -->
+    <string name="tab_tray_multiselect_share_content_description">Cundivider ils tabs tschernids</string>
+    <!-- Content description for tabs tray multiselect menu -->
+    <string name="tab_tray_multiselect_menu_content_description">Menu da tabs tschernids</string>
     <!-- Content description (not visible, for screen readers etc.): Removes tab from collection button. Removes the selected tab from collection when pressed -->
     <string name="remove_tab_from_collection">Allontanar il tab da la collecziun</string>
+    <!-- Text for button to enter multiselect mode in tabs tray -->
+    <string name="tabs_tray_select_tabs">Tscherner tabs</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab button. Closes the current session when pressed -->
     <string name="close_tab">Serrar il tab</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab <title> button. First parameter is tab title  -->
@@ -598,8 +651,12 @@
     <string name="collection_rename">Renumnar la collecziun</string>
     <!-- Text for the button to open tabs of the selected collection -->
     <string name="collection_open_tabs">Avrir ils tabs</string>
-    <!-- Text for the menu button to remove a top site -->
-    <string name="remove_top_site">Allontanar</string>
+    <!-- Hint for adding name of a collection -->
+    <string name="collection_name_hint">Num da collecziun</string>
+    <!-- Text for the menu button to rename a top site -->
+	<string name="rename_top_site">Renumnar</string>
+	<!-- Text for the menu button to remove a top site -->
+	<string name="remove_top_site">Allontanar</string>
 
     <!-- Text for the menu button to delete a top site from history -->
     <string name="delete_from_history">Stizzar da la cronologia</string>
@@ -636,6 +693,10 @@
     <!-- Text for the button to clear selected history items. The first parameter
         is a digit showing the number of items you have selected -->
     <string name="history_delete_some">Stizzar %1$d elements</string>
+    <!-- Text for the header that groups the history for today -->
+    <string name="history_today">Oz</string>
+    <!-- Text for the header that groups the history for yesterday -->
+    <string name="history_yesterday">Ier</string>
     <!-- Text for the header that groups the history for last 24 hours -->
     <string name="history_24_hours">Ultimas 24 uras</string>
     <!-- Text for the header that groups the history the past 7 days -->
@@ -648,11 +709,24 @@
     <string name="history_empty_message">Nagina cronologia</string>
 
     <!-- Downloads -->
+    <!-- Text for the button to clear all downloads -->
+    <string name="download_delete_all">Stizzar la glista da telechargiadas</string>
+    <!-- Text for the dialog to confirm clearing all downloads -->
+    <string name="download_delete_all_dialog">Vuls ti propi stizzar tia glista da telechargiadas?</string>
+    <!-- Text for the snackbar to confirm that multiple downloads items have been deleted -->
+    <string name="download_delete_multiple_items_snackbar">Stizzà la glista da telechargiadas</string>
     <!-- Text shown when no download exists -->
     <string name="download_empty_message">Naginas telechargiadas disponiblas</string>
     <!-- History multi select title in app bar
     The first parameter is the number of downloads selected -->
     <string name="download_multi_select_title">%1$d tschernidas</string>
+
+
+    <!-- History overflow menu open in new tab button -->
+    <string name="download_menu_open">Avrir</string>
+    <!-- Text for the button to delete a single history item -->
+    <string name="download_delete_item">Stizzar</string>
+
 
     <!-- Crashes -->
     <!-- Title text displayed on the tab crash page. This first parameter is the name of the application (For example: Fenix) -->
@@ -773,6 +847,8 @@
     <string name="preference_phone_feature_location">Posiziun</string>
     <!-- Preference for altering the notification access for all websites -->
     <string name="preference_phone_feature_notification">Communicaziuns</string>
+    <!-- Preference for altering the persistent storage access for all websites -->
+    <string name="preference_phone_feature_persistent_storage">Memoria durabla</string>
     <!-- Label that indicates that a permission must be asked always -->
     <string name="preference_option_phone_feature_ask_to_allow">Dumandar il permiss</string>
     <!-- Label that indicates that a permission must be blocked -->
@@ -914,6 +990,12 @@
     <string name="snackbar_tab_closed">Serrà il tab</string>
     <!-- Text shown in snackbar when user closes all tabs -->
     <string name="snackbar_tabs_closed">Serrà ils tabs</string>
+    <!-- Text shown in snackbar when user closes tabs -->
+    <string name="snackbar_message_tabs_closed">Serrà ils tabs!</string>
+    <!-- Text shown in snackbar when user bookmarks a list of tabs -->
+    <string name="snackbar_message_bookmarks_saved">Memorisà ils segnapaginas!</string>
+    <!-- Text shown in snackbar action for viewing bookmarks -->
+    <string name="snackbar_message_bookmarks_view">Vista</string>
     <!-- Text shown in snackbar when user adds a site to top sites -->
     <string name="snackbar_added_to_top_sites">Agiuntà a las paginas principalas!</string>
 
@@ -1272,6 +1354,12 @@
     The first parameter is the app name -->
     <string name="open_source_licenses_title">%s | Bibliotecas open source</string>
 
+    <!-- Category of trackers (redirect trackers) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_title">Fastizaders da renviament</string>
+
+    <!-- Description of redirect tracker cookies that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_description">Stizza cookies definids cun agid da renviaments a websites enconuschentas per fastizar.</string>
+
     <!-- About page link text to open support link -->
     <string name="about_support">Agid</string>
     <!-- About page link text to list of past crashes (like about:crashes on desktop) -->
@@ -1316,6 +1404,9 @@
     <string name="add_to_homescreen_continue">Cuntinuar vers la website</string>
     <!-- Placeholder text for the TextView in the Add to Homescreen dialog -->
     <string name="add_to_homescreen_text_placeholder">Num da la scursanida</string>
+
+    <!-- Describes the add to homescreen functionality -->
+    <string name="add_to_homescreen_description_2">Ti pos agiuntar a moda simpla questa website al visur da partenza da tes apparat per avair access direct e navigar pli svelt, sco sch\'i fiss ina app.</string>
 
     <!-- Preference for managing the settings for logins and passwords in Fenix -->
     <string name="preferences_passwords_logins_and_passwords">Infurmaziuns d\'annunzia e pleds-clav</string>
@@ -1387,8 +1478,12 @@
     <string name="logins_site_copied">Copià la pagina en l\'archiv provisoric</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a password in logins-->
     <string name="saved_logins_copy_password">Copiar il pled-clav</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear a password while editing a login-->
+    <string name="saved_logins_clear_password">Stizzar il pled-clav</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a username in logins -->
     <string name="saved_login_copy_username">Copiar il num d\'utilisader</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear a username while editing a login -->
+    <string name="saved_login_clear_username">Stizzar il num d\'utilisader</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a site in logins -->
     <string name="saved_login_copy_site">Copiar la pagina</string>
     <!-- Content Description (for screenreaders etc) read for the button to open a site in logins -->
@@ -1565,11 +1660,22 @@
     <!-- Top Sites -->
     <!-- Title text displayed in the dialog when top sites limit is reached. -->
     <string name="top_sites_max_limit_title">Cuntanschì la limita da paginas preferidas</string>
+    <!-- Content description text displayed in the dialog when top sites limit is reached. -->
+    <string name="top_sites_max_limit_content_2">Per pudair agiuntar ina nova pagina preferida stos ti l\'emprim allontanar in\'autra. Tegna smatgà la pagina e tscherna «Allontanar».</string>
     <!-- Confirmation dialog button text when top sites limit is reached. -->
     <string name="top_sites_max_limit_confirmation_button">OK, chapì</string>
 
     <!-- Label for the show most visited sites preference -->
     <string name="top_sites_toggle_top_frecent_sites">Mussar las websites visitadas il pli savens</string>
+
+    <!-- Title text displayed in the rename top site dialog. -->
+	<string name="top_sites_rename_dialog_title">Num</string>
+	<!-- Hint for renaming title of a top site -->
+	<string name="top_site_name_hint">Num da la pagina principala</string>
+	<!-- Button caption to confirm the renaming of the top site. -->
+	<string name="top_sites_rename_dialog_ok">OK</string>
+	<!-- Dialog button text for canceling the rename top site prompt. -->
+	<string name="top_sites_rename_dialog_cancel">Interrumper</string>
 
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">Allontanar</string>
@@ -1577,6 +1683,9 @@
     <!-- Deprecated: text for the firefox account onboarding card header
     The first parameter is the name of the app (e.g. Firefox Preview) -->
     <string name="onboarding_firefox_account_header">Rabla ora il maximum da %s.</string>
+
+    <!-- Content description radio buttons with a link to more information -->
+    <string name="radio_preference_info_content_description">Cliccar per ulteriurs detagls</string>
 
     <!-- Deprecated: No Open Tabs Message Header -->
     <string name="no_collections_header1">Rimna las chaussas che t\'èn impurtantas</string>

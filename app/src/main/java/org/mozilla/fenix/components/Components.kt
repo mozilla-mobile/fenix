@@ -19,9 +19,10 @@ import mozilla.components.support.migration.state.MigrationStore
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.HomeActivity
-import org.mozilla.fenix.StrictModeManager
+import org.mozilla.fenix.perf.StrictModeManager
 import org.mozilla.fenix.components.metrics.AppStartupTelemetry
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.perf.lazyMonitored
 import org.mozilla.fenix.utils.ClipboardHandler
 import org.mozilla.fenix.utils.Mockable
 import org.mozilla.fenix.utils.Settings
@@ -31,11 +32,15 @@ import java.util.concurrent.TimeUnit
 private const val DAY_IN_MINUTES = 24 * 60L
 
 /**
- * Provides access to all components.
+ * Provides access to all components. This class is an implementation of the Service Locator
+ * pattern, which helps us manage the dependencies in our app.
+ *
+ * Note: these aren't just "components" from "android-components": they're any "component" that
+ * can be considered a building block of our app.
  */
 @Mockable
 class Components(private val context: Context) {
-    val backgroundServices by lazy {
+    val backgroundServices by lazyMonitored {
         BackgroundServices(
             context,
             push,
@@ -47,25 +52,25 @@ class Components(private val context: Context) {
             strictMode
         )
     }
-    val services by lazy { Services(context, backgroundServices.accountManager) }
-    val core by lazy { Core(context, analytics.crashReporter, strictMode) }
-    val search by lazy { Search(context) }
-    val useCases by lazy {
+    val services by lazyMonitored { Services(context, backgroundServices.accountManager) }
+    val core by lazyMonitored { Core(context, analytics.crashReporter, strictMode) }
+    val useCases by lazyMonitored {
         UseCases(
             context,
             core.engine,
             core.sessionManager,
             core.store,
-            search.searchEngineManager,
             core.webAppShortcutManager,
             core.topSitesStorage
         )
     }
-    val intentProcessors by lazy {
+    val intentProcessors by lazyMonitored {
         IntentProcessors(
             context,
             core.sessionManager,
+            core.store,
             useCases.sessionUseCases,
+            useCases.tabsUseCases,
             useCases.searchUseCases,
             core.relationChecker,
             core.customTabsStore,
@@ -74,7 +79,7 @@ class Components(private val context: Context) {
         )
     }
 
-    val addonCollectionProvider by lazy {
+    val addonCollectionProvider by lazyMonitored {
         // Check if we have a customized (overridden) AMO collection (only supported in Nightly)
         if (Config.channel.isNightlyOrDebug && context.settings().amoCollectionOverrideConfigured()) {
             AddonCollectionProvider(
@@ -99,15 +104,15 @@ class Components(private val context: Context) {
         }
     }
 
-    val appStartupTelemetry by lazy { AppStartupTelemetry(analytics.metrics) }
+    val appStartupTelemetry by lazyMonitored { AppStartupTelemetry(analytics.metrics) }
 
     @Suppress("MagicNumber")
-    val addonUpdater by lazy {
+    val addonUpdater by lazyMonitored {
         DefaultAddonUpdater(context, AddonUpdater.Frequency(12, TimeUnit.HOURS))
     }
 
     @Suppress("MagicNumber")
-    val supportedAddonsChecker by lazy {
+    val supportedAddonsChecker by lazyMonitored {
         DefaultSupportedAddonsChecker(context, SupportedAddonsChecker.Frequency(12, TimeUnit.HOURS),
             onNotificationClickIntent = Intent(context, HomeActivity::class.java).apply {
                 action = Intent.ACTION_VIEW
@@ -117,22 +122,22 @@ class Components(private val context: Context) {
         )
     }
 
-    val addonManager by lazy {
+    val addonManager by lazyMonitored {
         AddonManager(core.store, core.engine, addonCollectionProvider, addonUpdater)
     }
 
-    val analytics by lazy { Analytics(context, strictMode) }
-    val publicSuffixList by lazy { PublicSuffixList(context) }
-    val clipboardHandler by lazy { ClipboardHandler(context) }
-    val migrationStore by lazy { MigrationStore() }
-    val performance by lazy { PerformanceComponent() }
-    val push by lazy { Push(context, analytics.crashReporter) }
-    val wifiConnectionMonitor by lazy { WifiConnectionMonitor(context as Application) }
-    val strictMode by lazy { StrictModeManager(Config) }
+    val analytics by lazyMonitored { Analytics(context) }
+    val publicSuffixList by lazyMonitored { PublicSuffixList(context) }
+    val clipboardHandler by lazyMonitored { ClipboardHandler(context) }
+    val migrationStore by lazyMonitored { MigrationStore() }
+    val performance by lazyMonitored { PerformanceComponent() }
+    val push by lazyMonitored { Push(context, analytics.crashReporter) }
+    val wifiConnectionMonitor by lazyMonitored { WifiConnectionMonitor(context as Application) }
+    val strictMode by lazyMonitored { StrictModeManager(Config, this) }
 
-    val settings by lazy { Settings(context) }
+    val settings by lazyMonitored { Settings(context) }
 
-    val reviewPromptController by lazy {
+    val reviewPromptController by lazyMonitored {
         ReviewPromptController(
             context,
             FenixReviewSettings(settings)

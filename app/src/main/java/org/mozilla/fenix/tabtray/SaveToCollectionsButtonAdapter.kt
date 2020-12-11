@@ -7,11 +7,13 @@ package org.mozilla.fenix.tabtray
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.accessibility.AccessibilityNodeInfo
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ext.setNewAccessibilityParent
 import org.mozilla.fenix.tabtray.SaveToCollectionsButtonAdapter.Item
 import org.mozilla.fenix.tabtray.SaveToCollectionsButtonAdapter.ViewHolder
 
@@ -34,6 +36,20 @@ class SaveToCollectionsButtonAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int, payloads: MutableList<Any>) {
+        // remove button from node info of tabs list for a11y services,and add it to the tab tray node
+        holder.itemView.accessibilityDelegate = object : View.AccessibilityDelegate() {
+            override fun onInitializeAccessibilityNodeInfo(
+                host: View?,
+                info: AccessibilityNodeInfo?
+            ) {
+                super.onInitializeAccessibilityNodeInfo(host, info)
+                info?.collectionItemInfo = null
+                (holder.itemView.parentForAccessibility.parentForAccessibility as? View)?.let {
+                    holder.itemView.setNewAccessibilityParent(it)
+                }
+            }
+        }
+
         if (payloads.isNullOrEmpty()) {
             onBindViewHolder(holder, position)
             return

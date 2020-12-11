@@ -36,11 +36,12 @@ import mozilla.components.service.sync.logins.SyncableLoginsStorage
 import mozilla.components.support.utils.RunWhenReadyQueue
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.R
-import org.mozilla.fenix.StrictModeManager
+import org.mozilla.fenix.perf.StrictModeManager
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.perf.lazyMonitored
 import org.mozilla.fenix.sync.SyncedTabsIntegration
 import org.mozilla.fenix.utils.Mockable
 import org.mozilla.fenix.utils.Settings
@@ -109,9 +110,11 @@ class BackgroundServices(
 
     val accountAbnormalities = AccountAbnormalities(context, crashReporter, strictMode)
 
-    val accountManager by lazy { makeAccountManager(context, serverConfig, deviceConfig, syncConfig) }
+    val accountManager by lazyMonitored {
+        makeAccountManager(context, serverConfig, deviceConfig, syncConfig, crashReporter)
+    }
 
-    val syncedTabsStorage by lazy {
+    val syncedTabsStorage by lazyMonitored {
         SyncedTabsStorage(accountManager, context.components.core.store, remoteTabsStorage.value)
     }
 
@@ -120,7 +123,8 @@ class BackgroundServices(
         context: Context,
         serverConfig: ServerConfig,
         deviceConfig: DeviceConfig,
-        syncConfig: SyncConfig?
+        syncConfig: SyncConfig?,
+        crashReporter: CrashReporter?
     ) = FxaAccountManager(
         context,
         serverConfig,
@@ -136,7 +140,8 @@ class BackgroundServices(
             // Necessary to enable "Manage Account" functionality and ability to generate OAuth
             // codes for certain scopes.
             SCOPE_SESSION
-        )
+        ),
+        crashReporter
     ).also { accountManager ->
         // TODO this needs to change once we have a SyncManager
         context.settings().fxaHasSyncedItems = accountManager.authenticatedAccount()?.let {
@@ -152,7 +157,7 @@ class BackgroundServices(
 
         // Enable push if it's configured.
         push.feature?.let { autoPushFeature ->
-            FxaPushSupportFeature(context, accountManager, autoPushFeature)
+            FxaPushSupportFeature(context, accountManager, autoPushFeature, crashReporter)
         }
 
         SendTabFeature(accountManager) { device, tabs ->
@@ -172,7 +177,7 @@ class BackgroundServices(
     /**
      * Provides notification functionality, manages notification channels.
      */
-    private val notificationManager by lazy {
+    private val notificationManager by lazyMonitored {
         NotificationManager(context)
     }
 }

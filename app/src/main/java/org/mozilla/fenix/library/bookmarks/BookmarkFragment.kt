@@ -6,6 +6,7 @@ package org.mozilla.fenix.library.bookmarks
 
 import android.content.DialogInterface
 import android.os.Bundle
+import android.text.SpannableString
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -16,7 +17,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.getSystemService
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
@@ -49,6 +49,7 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.minus
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
+import org.mozilla.fenix.ext.setTextColor
 import org.mozilla.fenix.ext.toShortUrl
 import org.mozilla.fenix.library.LibraryPageFragment
 import org.mozilla.fenix.utils.allowUndo
@@ -65,9 +66,7 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
     private val bookmarkInteractor: BookmarkFragmentInteractor
         get() = _bookmarkInteractor!!
 
-    private val sharedViewModel: BookmarksSharedViewModel by activityViewModels {
-        ViewModelProvider.NewInstanceFactory() // this is a workaround for #4652
-    }
+    private val sharedViewModel: BookmarksSharedViewModel by activityViewModels()
     private val desktopFolders by lazy { DesktopFolders(requireContext(), showMobileRoot = false) }
 
     private var pendingBookmarkDeletionJob: (suspend () -> Unit)? = null
@@ -185,6 +184,11 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
                     inflater.inflate(R.menu.bookmarks_select_multi_not_item, menu)
                 } else {
                     inflater.inflate(R.menu.bookmarks_select_multi, menu)
+
+                    menu.findItem(R.id.delete_bookmarks_multi_select).title =
+                        SpannableString(getString(R.string.bookmark_menu_delete_button)).apply {
+                            setTextColor(requireContext(), R.attr.destructive)
+                        }
                 }
             }
         }
@@ -365,7 +369,8 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
                     pendingBookmarkDeletionJob = getDeleteOperation(Event.RemoveBookmarkFolder)
                     dialog.dismiss()
                     val snackbarMessage = getRemoveBookmarksSnackBarMessage(selected, containsFolders = true)
-                    viewLifecycleOwner.lifecycleScope.allowUndo(
+                    // Use fragment's lifecycle; the view may be gone by the time dialog is interacted with.
+                    lifecycleScope.allowUndo(
                         requireView(),
                         snackbarMessage,
                         getString(R.string.bookmark_undo_deletion),
