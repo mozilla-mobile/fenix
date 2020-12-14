@@ -210,6 +210,6 @@ class AboutFragment : Fragment(), AboutPageListener {
     }
 
     companion object {
-        private const val ABOUT_LICENSE_URL = "about:license"
+        private const val ABOUT_LICENSE_URL = "about:cheese"
     }
 }
