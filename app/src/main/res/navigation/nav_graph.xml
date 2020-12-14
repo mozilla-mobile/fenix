@@ -25,7 +25,9 @@
 
     <action
         android:id="@+id/action_global_search_dialog"
-        app:destination="@id/searchDialogFragment" />
+        app:destination="@id/searchDialogFragment"
+        app:popUpTo="@id/searchDialogFragment"
+        app:popUpToInclusive="true"/>
 
     <action
         android:id="@+id/action_global_recently_closed"
@@ -109,7 +111,9 @@
         app:destination="@id/quickSettingsSheetDialogFragment" />
     <action
         android:id="@+id/action_global_tabTrayDialogFragment"
-        app:destination="@id/tabTrayDialogFragment" />
+        app:destination="@id/tabTrayDialogFragment"
+        app:popUpTo="@id/tabTrayDialogFragment"
+        app:popUpToInclusive="true"/>
     <action
         android:id="@+id/action_global_savedLoginsAuthFragment"
         app:destination="@id/savedLoginsAuthFragment" />
@@ -204,9 +208,6 @@
         <action
             android:id="@+id/action_browserFragment_to_trackingProtectionPanelDialogFragment"
             app:destination="@id/trackingProtectionPanelDialogFragment" />
-        <action
-            android:id="@+id/action_browserFragment_to_tabsTrayFragment"
-            app:destination="@+id/tabTrayFragment" />
     </fragment>
 
     <fragment
@@ -467,6 +468,13 @@
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
         <action
+            android:id="@+id/action_settingsFragment_to_secretInfoSettingsFragment"
+            app:destination="@id/secretInfoSettingsFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
             android:id="@+id/action_settingsFragment_to_customizationFragment"
             app:destination="@id/customizationFragment"
             app:enterAnim="@anim/slide_in_right"
@@ -609,6 +617,10 @@
         android:id="@+id/secretSettingsPreference"
         android:name="org.mozilla.fenix.settings.SecretSettingsFragment"
         android:label="@string/preferences_debug_settings" />
+    <fragment
+        android:id="@+id/secretInfoSettingsFragment"
+        android:name="org.mozilla.fenix.settings.SecretDebugSettingsFragment"
+        android:label="@string/preferences_debug_info" />
     <fragment
         android:id="@+id/crashReporterFragment"
         android:name="org.mozilla.fenix.crashes.CrashReporterFragment"
