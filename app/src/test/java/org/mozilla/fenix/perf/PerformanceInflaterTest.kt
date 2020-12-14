@@ -24,13 +24,6 @@ class PerformanceInflaterTest {
         "fragment_add_on_internal_settings"
     )
 
-    private val layoutWithMerge = setOf(
-        "mozac_ui_tabcounter_layout",
-        "tabstray_multiselect_items",
-        "tab_preview",
-        "tracking_protection_category"
-    )
-
     @Before
     fun setup() {
         InflationCounter.inflationCount.set(0)

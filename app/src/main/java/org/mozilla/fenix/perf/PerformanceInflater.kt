@@ -12,6 +12,13 @@ import android.view.ViewGroup
 import org.mozilla.fenix.ext.getAndIncrementNoOverflow
 import java.util.concurrent.atomic.AtomicInteger
 
+
+
+private val classPrefixList = arrayOf(
+        "android.widget.",
+        "android.webkit.",
+        "android.app."
+)
 /**
  * Counts the number of inflations fenix does. This class behaves only as an inflation counter since
  * it takes the `inflater` that is given by the base system. This is done in order not to change
@@ -26,14 +33,8 @@ open class PerformanceInflater(
     context
 ) {
 
-    private val sClassPrefixList = arrayOf(
-        "android.widget.",
-        "android.webkit.",
-        "android.app."
-    )
-
     override fun cloneInContext(newContext: Context?): LayoutInflater {
-        return PerformanceInflater(inflater, newContext!!)
+        return PerformanceInflater(this, newContext!!)
     }
 
     override fun inflate(resource: Int, root: ViewGroup?, attachToRoot: Boolean): View {
@@ -50,7 +51,7 @@ open class PerformanceInflater(
     @Suppress("EmptyCatchBlock")
     @Throws(ClassNotFoundException::class)
     override fun onCreateView(name: String?, attrs: AttributeSet?): View? {
-        for (prefix in sClassPrefixList) {
+        for (prefix in classPrefixList) {
             try {
                 val view = createView(name, prefix, attrs)
                 if (view != null) {
