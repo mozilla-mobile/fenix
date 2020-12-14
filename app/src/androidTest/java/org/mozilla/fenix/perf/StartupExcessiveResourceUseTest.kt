@@ -107,7 +107,7 @@ class StartupExcessiveResourceUseTest {
             EXPECTED_RECYCLER_VIEW_CONSTRAINT_LAYOUT_CHILDREN,
             actualRecyclerViewConstraintLayoutChildren
         )
-        assertEquals(failureMsgNumberOfInflation, EXPECTED_COMPONENT_INIT_COUNT, actualNumberOfInflations)
+        assertEquals(failureMsgNumberOfInflation, EXPECTED_NUMBER_OF_INFLATION, actualNumberOfInflations)
     }
 }
 

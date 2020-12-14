@@ -831,7 +831,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     override fun getSystemService(name: String): Any? {
         if (LAYOUT_INFLATER_SERVICE == name) {
             if (inflater == null) {
-                inflater = PerformanceInflater(LayoutInflater.from(baseContext).cloneInContext(this), this)
+                inflater = PerformanceInflater(LayoutInflater.from(baseContext), this)
             }
             return inflater
         }

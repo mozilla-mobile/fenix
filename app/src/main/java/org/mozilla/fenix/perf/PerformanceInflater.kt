@@ -9,10 +9,10 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.VisibleForTesting
 import org.mozilla.fenix.ext.getAndIncrementNoOverflow
+import java.lang.reflect.Modifier.PRIVATE
 import java.util.concurrent.atomic.AtomicInteger
-
-
 
 private val classPrefixList = arrayOf(
         "android.widget.",
@@ -43,10 +43,15 @@ open class PerformanceInflater(
     }
 
     /**
-     * This code was taken from the PhoneLayoutInflater.java (Similarly, AsyncLayoutInflater
-     * implements it the exact same way too). Looking at the `super.OnCreateView(name, attrs)`,
+     * This code was taken from the PhoneLayoutInflater.java located in the android source code
+     * (Similarly, AsyncLayoutInflater implements it the exact same way too which can be found in the
+     * Android Framework). This piece of code was taken from the other inflaters implemented by Android
+     * since we do not want to change the inflater behavior except to count the number of inflations
+     * that our app is doing for performance purposes. Looking at the `super.OnCreateView(name, attrs)`,
      * it hardcodes the prefix as "android.view." this means that a xml element such as
-     * ImageButton will crash the app using android.view.ImageButton.
+     * ImageButton will crash the app using android.view.ImageButton. This method only works with
+     * XML tag that contains no prefix. This means that views such as androidx.recyclerview... will not
+     * work with this method.
      */
     @Suppress("EmptyCatchBlock")
     @Throws(ClassNotFoundException::class)
@@ -64,6 +69,7 @@ open class PerformanceInflater(
     }
 }
 
+@VisibleForTesting(otherwise = PRIVATE)
 object InflationCounter {
     val inflationCount = AtomicInteger(0)
 }

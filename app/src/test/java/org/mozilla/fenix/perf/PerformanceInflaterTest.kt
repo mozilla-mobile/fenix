@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.perf
 
 import android.content.Context
@@ -32,7 +36,7 @@ class PerformanceInflaterTest {
     }
 
     @Test
-    fun `WHEN we inflate a view, the inflation counter should increase`() {
+    fun `WHEN we inflate a view,THEN the inflation counter should increase`() {
         assertEquals(0, InflationCounter.inflationCount.get())
         perfInflater.inflate(R.layout.fragment_home, null, false)
         assertEquals(1, InflationCounter.inflationCount.get())
