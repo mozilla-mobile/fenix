@@ -54,7 +54,7 @@ class SyncedTabsControllerTest {
         every { lifecycleOwner.lifecycle } returns lifecycle
 
         concatAdapter = mockk()
-        every { concatAdapter.addAdapter(any(), any()) } returns true
+        every { concatAdapter.addAdapter(any()) } returns true
         every { concatAdapter.removeAdapter(any()) } returns true
 
         store = TabTrayDialogFragmentStore(
@@ -129,11 +129,10 @@ class SyncedTabsControllerTest {
     @Test
     fun `concatAdapter updated on mode changes`() = testDispatcher.runBlockingTest {
         store.dispatch(EnterMultiSelectMode).joinBlocking()
-
         verify { concatAdapter.removeAdapter(any()) }
 
         store.dispatch(ExitMultiSelectMode).joinBlocking()
-
+        // When returning from Multiselect the adapter should be added at the end
         verify { concatAdapter.addAdapter(any()) }
     }
 }

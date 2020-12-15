@@ -38,17 +38,12 @@ class CustomizationFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.customization_preferences, rootKey)
 
-        requirePreference<SwitchPreference>(R.string.pref_key_strip_url).apply {
-            isChecked = context.settings().shouldStripUrl
-
-            onPreferenceChangeListener = SharedPreferenceUpdater()
-        }
+        setupPreferences()
     }
 
     override fun onResume() {
         super.onResume()
         showToolbar(getString(R.string.preferences_customize))
-        setupPreferences()
     }
 
     private fun setupPreferences() {
@@ -64,6 +59,12 @@ class CustomizationFragment : PreferenceFragmentCompat() {
         setupGesturesCategory()
         setupAddonsCustomizationCategory()
         setupSystemBehaviorCategory()
+        
+        requirePreference<SwitchPreference>(R.string.pref_key_strip_url).apply {
+            isChecked = context.settings().shouldStripUrl
+
+            onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
     }
 
     private fun setupRadioGroups() {

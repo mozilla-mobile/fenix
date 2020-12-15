@@ -19,6 +19,10 @@
     <!-- No Private Tabs Message Description -->
     <string name="no_private_tabs_description">Suas abas privativas são mostradas aqui.</string>
 
+    <!-- Default title for pinned Baidu top site that links to Baidu home page  -->
+    <string name="default_top_site_baidu">Baidu</string>
+    <!-- Default title for pinned JD top site that links to JD home page  -->
+    <string name="default_top_site_jd">JD</string>
     <!-- Message announced to the user when tab tray is selected with 1 tab -->
     <string name="open_tab_tray_single">1 aba aberta. Toque para alternar abas.</string>
     <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
@@ -70,14 +74,6 @@
     <!-- Text for the negative button -->
     <string name="cfr_neg_button_text">Não, obrigado</string>
 
-    <!-- Search widget "contextual feature recommendation" (CFR) -->
-    <!-- Text for the main message. 'Firefox' intentionally hardcoded here.-->
-    <string name="search_widget_cfr_message">Acesse o Firefox mais rápido. Adicione um widget à tela inicial.</string>
-    <!-- Text for the positive button -->
-    <string name="search_widget_cfr_pos_button_text">Adicionar widget</string>
-    <!-- Text for the negative button -->
-    <string name="search_widget_cfr_neg_button_text">Agora não</string>
-
     <!-- Open in App "contextual feature recommendation" (CFR) -->
     <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
     <string name="open_in_app_cfr_info_message">Você pode configurar o Firefox para abrir links automaticamente em aplicativos.</string>
@@ -95,11 +91,18 @@
     <string name="camera_permissions_needed_negative_button_text">Descartar</string>
 
     <!-- Text for the banner message to tell users about our auto close feature. -->
-    <string name="tab_tray_close_tabs_banner_message">Defina fechar automaticamente as abas abertas que não foram vistas no último dia, semana ou mês.</string>
+    <string name="tab_tray_close_tabs_banner_message">Você pode fazer com que abas abertas não vistas no último dia, semana ou mês sejam fechadas automaticamente.</string>
     <!-- Text for the positive action button to go to Settings for auto close tabs. -->
     <string name="tab_tray_close_tabs_banner_positive_button_text">Ver opções</string>
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">Descartar</string>
+
+    <!-- Text for the banner message to tell users about our grid view feature. -->
+    <string name="tab_tray_grid_view_banner_message">Altere o layout de abas abertas. Vá em configurações e selecione grade na visão de abas.</string>
+    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
+    <string name="tab_tray_grid_view_banner_positive_button_text">Ir para configurações</string>
+    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
+    <string name="tab_tray_grid_view_banner_negative_button_text">Descartar</string>
 
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
@@ -271,7 +274,7 @@
     <!-- Preference for opening links in a private tab-->
     <string name="preferences_open_links_in_a_private_tab">Abrir links em abas privativas</string>
     <!-- Preference for allowing screenshots to be taken while in a private tab-->
-    <string name="preferences_allow_screenshots_in_private_mode">Permitir capturas de tela na navegação privativa</string>
+    <string name="preferences_allow_screenshots_in_private_mode">Permitir captura de tela na navegação privativa</string>
     <!-- Will inform the user of the risk of activating Allow screenshots in private browsing option -->
     <string name="preferences_screenshots_in_private_mode_disclaimer">Se permitido, as abas privativas também ficam visíveis quando vários aplicativos estão abertos</string>
     <!-- Preference for adding private browsing shortcut -->
@@ -335,7 +338,7 @@
     <!-- Preference for account settings -->
     <string name="preferences_account_settings">Configurações da conta</string>
     <!-- Preference for enabling url autocomplete-->
-    <string name="preferences_enable_autocomplete_urls">Completar URLs automaticamente</string>
+    <string name="preferences_enable_autocomplete_urls">Completar endereços automaticamente</string>
     <!-- Preference for open links in third party apps -->
     <string name="preferences_open_links_in_apps">Abrir links em aplicativos</string>
 
@@ -444,7 +447,7 @@
     <string name="preference_experiments">Experimentos</string>
 
     <!-- Summary for experiments preferences -->
-    <string name="preference_experiments_summary">Permitir que a Mozilla instale e colete dados para recursos experimentais</string>
+    <string name="preference_experiments_summary">Permitir que a Mozilla instale e colete dados de recursos experimentais</string>
     <!-- Preference switch for crash reporter -->
     <string name="preferences_crash_reporter">Relator de travamentos</string>
     <!-- Preference switch for Mozilla location service -->
@@ -490,13 +493,13 @@
 
     <!-- Gestures Preferences-->
     <!-- Preferences for using pull to refresh in a webpage -->
-    <string name="preference_gestures_website_pull_to_refresh">Puxe para atualizar</string>
+    <string name="preference_gestures_website_pull_to_refresh">Puxar para atualizar</string>
     <!-- Preference for using the dynamic toolbar -->
-    <string name="preference_gestures_dynamic_toolbar">Deslize para ocultar a barra de ferramentas</string>
+    <string name="preference_gestures_dynamic_toolbar">Deslizar para ocultar a barra de ferramentas</string>
     <!-- Preference for switching tabs by swiping horizontally on the toolbar -->
-    <string name="preference_gestures_swipe_toolbar_switch_tabs">Deslize a barra de ferramentas para o lado para mudar de aba</string>
+    <string name="preference_gestures_swipe_toolbar_switch_tabs">Deslizar a barra de ferramentas para o lado para mudar de aba</string>
     <!-- Preference for showing the opened tabs by swiping up on the toolbar-->
-    <string name="preference_gestures_swipe_toolbar_show_tabs">Deslize a barra de ferramentas para cima para abrir abas</string>
+    <string name="preference_gestures_swipe_toolbar_show_tabs">Deslizar a barra de ferramentas para cima para abrir abas</string>
 
     <!-- Library -->
     <!-- Option in Library to open Sessions page -->
@@ -563,6 +566,15 @@
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">Após um mês</string>
 
+    <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
+    <string name="close_tabs_manually_summary">Fechar manualmente</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
+    <string name="close_tabs_after_one_day_summary">Fechar após um dia</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one week-->
+    <string name="close_tabs_after_one_week_summary">Fechar após uma semana</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one month-->
+    <string name="close_tabs_after_one_month_summary">Fechar após um mês</string>
+
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
     <string name="tab_header_label">Abas abertas</string>
@@ -580,6 +592,8 @@
     <string name="tab_tray_title">Abas abertas</string>
     <!-- Text shown in the menu for saving tabs to a collection -->
     <string name="tab_tray_menu_item_save">Salvar em coleção</string>
+    <!-- Text shown in the menu for the collection selector -->
+    <string name="tab_tray_menu_select">Selecionar</string>
     <!-- Text shown in the menu for sharing all tabs -->
     <string name="tab_tray_menu_item_share">Compartilhar todas as abas</string>
     <!-- Text shown in the menu to view recently closed tabs -->
@@ -594,8 +608,18 @@
     <string name="tab_tray_menu_home">Início</string>
     <!-- Shortcut action to toggle private mode -->
     <string name="tab_tray_menu_toggle">Alternar modo de aba</string>
+    <!-- Text shown in the multiselect menu for bookmarking selected tabs. -->
+    <string name="tab_tray_multiselect_menu_item_bookmark">Favorito</string>
+    <!-- Text shown in the multiselect menu for closing selected tabs. -->
+    <string name="tab_tray_multiselect_menu_item_close">Fechar</string>
+    <!-- Content description for tabs tray multiselect share button -->
+    <string name="tab_tray_multiselect_share_content_description">Compartilhar abas selecionadas</string>
+    <!-- Content description for tabs tray multiselect menu -->
+    <string name="tab_tray_multiselect_menu_content_description">Menu de abas selecionadas</string>
     <!-- Content description (not visible, for screen readers etc.): Removes tab from collection button. Removes the selected tab from collection when pressed -->
     <string name="remove_tab_from_collection">Remover aba da coleção</string>
+    <!-- Text for button to enter multiselect mode in tabs tray -->
+    <string name="tabs_tray_select_tabs">Selecionar abas</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab button. Closes the current session when pressed -->
     <string name="close_tab">Fechar aba</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab <title> button. First parameter is tab title  -->
@@ -631,8 +655,10 @@
 
     <!-- Hint for adding name of a collection -->
     <string name="collection_name_hint">Nome da coleção</string>
-    <!-- Text for the menu button to remove a top site -->
-    <string name="remove_top_site">Remover</string>
+    <!-- Text for the menu button to rename a top site -->
+	<string name="rename_top_site">Renomear</string>
+	<!-- Text for the menu button to remove a top site -->
+	<string name="remove_top_site">Remover</string>
 
     <!-- Text for the menu button to delete a top site from history -->
     <string name="delete_from_history">Excluir do histórico</string>
@@ -685,11 +711,23 @@
     <string name="history_empty_message">Nenhum histórico aqui</string>
 
     <!-- Downloads -->
+    <!-- Text for the button to clear all downloads -->
+    <string name="download_delete_all">Excluir downloads</string>
+    <!-- Text for the dialog to confirm clearing all downloads -->
+    <string name="download_delete_all_dialog">Tem certeza que quer limpar seus downloads?</string>
+    <!-- Text for the snackbar to confirm that multiple downloads items have been deleted -->
+    <string name="download_delete_multiple_items_snackbar">Downloads excluídos</string>
     <!-- Text shown when no download exists -->
     <string name="download_empty_message">Nenhum download aqui</string>
     <!-- History multi select title in app bar
     The first parameter is the number of downloads selected -->
     <string name="download_multi_select_title">%1$d selecionados</string>
+
+    <!-- History overflow menu open in new tab button -->
+    <string name="download_menu_open">Abrir</string>
+    <!-- Text for the button to delete a single history item -->
+    <string name="download_delete_item">Excluir</string>
+
 
     <!-- Crashes -->
     <!-- Title text displayed on the tab crash page. This first parameter is the name of the application (For example: Fenix) -->
@@ -953,6 +991,12 @@
     <string name="snackbar_tab_closed">Aba fechada</string>
     <!-- Text shown in snackbar when user closes all tabs -->
     <string name="snackbar_tabs_closed">Abas fechadas</string>
+    <!-- Text shown in snackbar when user closes tabs -->
+    <string name="snackbar_message_tabs_closed">Abas fechadas!</string>
+    <!-- Text shown in snackbar when user bookmarks a list of tabs -->
+    <string name="snackbar_message_bookmarks_saved">Favoritos salvos!</string>
+    <!-- Text shown in snackbar action for viewing bookmarks -->
+    <string name="snackbar_message_bookmarks_view">Ver</string>
     <!-- Text shown in snackbar when user adds a site to top sites -->
     <string name="snackbar_added_to_top_sites">Adicionado aos sites preferidos!</string>
     <!-- Text shown in snackbar when user closes a private tab -->
@@ -1038,7 +1082,7 @@
     <!-- Summary for the Delete browsing data on quit preference. "Quit" translation should match delete_browsing_data_on_quit_action translation. -->
     <string name="preference_summary_delete_browsing_data_on_quit">Excluir dados de navegação automaticamente ao selecionar &quot;Sair&quot; no menu principal.</string>
     <!-- Summary for the Delete browsing data on quit preference. "Quit" translation should match delete_browsing_data_on_quit_action translation. -->
-    <string name="preference_summary_delete_browsing_data_on_quit_2">Excluir automaticamente os dados de navegação quando você selecionar \&quot;Sair\&quot; no menu principal.</string>
+    <string name="preference_summary_delete_browsing_data_on_quit_2">Excluir automaticamente os dados de navegação selecionados abaixo ao selecionar \&quot;Sair\&quot; no menu principal</string>
     <!-- Action item in menu for the Delete browsing data on quit feature -->
     <string name="delete_browsing_data_on_quit_action">Sair</string>
 
@@ -1485,7 +1529,7 @@
     <!-- Placeholder text shown in the Search Engine Name TextField before a user enters text -->
     <string name="search_add_custom_engine_name_hint">Nome</string>
     <!-- Placeholder text shown in the Search String TextField before a user enters text -->
-    <string name="search_add_custom_engine_search_string_hint">Termo de pesquisa a ser usado</string>
+    <string name="search_add_custom_engine_search_string_hint">Código de pesquisa a ser usado</string>
     <!-- Description text for the Search String TextField. The %s is part of the string -->
     <string name="search_add_custom_engine_search_string_example">Substitua a consulta por “%s”. Por exemplo:\nhttps://www.google.com/search?q=%s</string>
     <!-- Text for the button to learn more about adding a custom search engine -->
@@ -1501,7 +1545,7 @@
     <!-- Text shown when a user tries to add a search engine that already exists -->
     <string name="search_add_custom_engine_error_existing_name">Já existe mecanismo de pesquisa com nome “%s”.</string>
     <!-- Text shown when a user leaves the search string field empty -->
-    <string name="search_add_custom_engine_error_empty_search_string">Digite um termo de pesquisa</string>
+    <string name="search_add_custom_engine_error_empty_search_string">Digite um código de pesquisa</string>
     <!-- Text shown when a user leaves out the required template string -->
     <string name="search_add_custom_engine_error_missing_template">Verifique se o termo da pesquisa corresponde ao formato do exemplo</string>
     <!-- Text shown when we aren't able to validate the custom search query. The first parameter is the url of the custom search engine -->
@@ -1616,6 +1660,15 @@
 
     <!-- Label for the show most visited sites preference -->
     <string name="top_sites_toggle_top_frecent_sites">Mostrar os sites mais visitados</string>
+
+    <!-- Title text displayed in the rename top site dialog. -->
+	<string name="top_sites_rename_dialog_title">Nome</string>
+	<!-- Hint for renaming title of a top site -->
+	<string name="top_site_name_hint">Nome do site preferido</string>
+	<!-- Button caption to confirm the renaming of the top site. -->
+	<string name="top_sites_rename_dialog_ok">OK</string>
+	<!-- Dialog button text for canceling the rename top site prompt. -->
+	<string name="top_sites_rename_dialog_cancel">Cancelar</string>
 
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">Remover</string>

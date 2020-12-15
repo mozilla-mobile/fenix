@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.fenix.lintrules
+package org.mozilla.fenix.lintrules.perf
 
 import com.android.resources.ResourceFolderType
 import com.android.tools.lint.detector.api.Category
@@ -168,8 +168,6 @@ class ConstraintLayoutPerfDetector : ResourceXmlDetector() {
     }
 
     override fun visitElement(context: XmlContext, element: Element) {
-        super.visitElement(context, element)
-
         // This scope is unideal: if the root element is a ConstraintLayout and is suppressed, all
         // ConstraintLayout children will also be suppressed. If more ConstraintLayout children are
         // added, the root ConstraintLayout will suppress them too. Ideally, we'd want a suppression

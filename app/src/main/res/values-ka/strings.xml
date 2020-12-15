@@ -19,6 +19,10 @@
     <!-- No Private Tabs Message Description -->
     <string name="no_private_tabs_description">თქვენი პირადი ჩანართები გამოჩნდება აქ.</string>
 
+    <!-- Default title for pinned Baidu top site that links to Baidu home page  -->
+    <string name="default_top_site_baidu">Baidu</string>
+    <!-- Default title for pinned JD top site that links to JD home page  -->
+    <string name="default_top_site_jd">JD</string>
     <!-- Message announced to the user when tab tray is selected with 1 tab -->
     <string name="open_tab_tray_single">1 გახსნილი ჩანართი. შეეხეთ ჩანართების გადასართველად.</string>
     <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
@@ -68,15 +72,6 @@
     <!-- Text for the negative button -->
     <string name="cfr_neg_button_text">არა, გმადლობთ</string>
 
-    <!-- Search widget "contextual feature recommendation" (CFR) -->
-    <!-- Text for the main message. 'Firefox' intentionally hardcoded here.-->
-    <string name="search_widget_cfr_message">აასწრაფეთ Firefox. დაამატეთ ვიჯეტი თქვენს მთავარ ეკრანზე.</string>
-
-    <!-- Text for the positive button -->
-    <string name="search_widget_cfr_pos_button_text">დაამატეთ ვიჯეტი</string>
-    <!-- Text for the negative button -->
-    <string name="search_widget_cfr_neg_button_text">ახლა არა</string>
-
     <!-- Open in App "contextual feature recommendation" (CFR) -->
     <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
     <string name="open_in_app_cfr_info_message">თუ მიუთითებთ, Firefox თავადვე გახსნის ბმულებს სხვა აპებში.</string>
@@ -98,6 +93,13 @@
     <string name="tab_tray_close_tabs_banner_positive_button_text">პარამეტრების გახსნა</string>
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">გამოტოვება</string>
+
+    <!-- Text for the banner message to tell users about our grid view feature. -->
+    <string name="tab_tray_grid_view_banner_message">შეცვალეთ გახსნილი ჩანართების განლაგება. გადადით პარამეტრებში და აირჩიეთ ბადისებრი, ჩანართის ხედში.</string>
+    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
+    <string name="tab_tray_grid_view_banner_positive_button_text">პარამეტრებში გადასვლა</string>
+    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
+    <string name="tab_tray_grid_view_banner_negative_button_text">გამოტოვება</string>
 
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
@@ -142,7 +144,7 @@
     <!-- Browser menu toggle that installs a Progressive Web App shortcut to the site on the device home screen. -->
     <string name="browser_menu_install_on_homescreen">დაყენება</string>
     <!-- Menu option on the toolbar that takes you to synced tabs page-->
-    <string name="synced_tabs">დასინქრონებული ჩანართები</string>
+    <string name="synced_tabs">დასინქრონებული</string>
     <!-- Content description (not visible, for screen readers etc.) for the Resync tabs button -->
     <string name="resync_button_content_description">კვლავ დასინქრონება</string>
     <!-- Browser menu button that opens the find in page menu -->
@@ -328,9 +330,9 @@
     <!-- Preference title for switch preference to suggest browsing history when searching -->
     <string name="preferences_search_browsing_history">ძიება დათვალიერების ისტორიაში</string>
     <!-- Preference title for switch preference to suggest bookmarks when searching -->
-    <string name="preferences_search_bookmarks">სანიშნების ძიება</string>
+    <string name="preferences_search_bookmarks">ძიება სანიშნებში</string>
     <!-- Preference title for switch preference to suggest synced tabs when searching -->
-    <string name="preferences_search_synced_tabs">დასინქრონებული ჩანართების მოძიება</string>
+    <string name="preferences_search_synced_tabs">დასინქრონებულ ჩანართებში ძიება</string>
     <!-- Preference for account settings -->
     <string name="preferences_account_settings">ანგარიშის პარამეტრები</string>
     <!-- Preference for enabling url autocomplete-->
@@ -464,7 +466,7 @@
 
     <!-- Pairing Feature strings -->
     <!-- Instructions on how to access pairing -->
-    <string name="pair_instructions_2"><![CDATA[QR-კოდის წააკითხეთ საიტიდან <b>firefox.com/pair</b>]]></string>
+    <string name="pair_instructions_2"><![CDATA[QR-კოდი წააკითხეთ გვერდიდან <b>firefox.com/pair</b>]]></string>
     <!-- Button to open camera for pairing -->
     <string name="pair_open_camera">ჩართეთ კამერა</string>
     <!-- Button to cancel pairing -->
@@ -488,12 +490,12 @@
 
     <!-- Gestures Preferences-->
     <!-- Preferences for using pull to refresh in a webpage -->
-    <string name="preference_gestures_website_pull_to_refresh">ჩამოწიეთ გასაახლებლად</string>
+    <string name="preference_gestures_website_pull_to_refresh">ჩამოწევით გაახლება</string>
     <!-- Preference for using the dynamic toolbar -->
-    <string name="preference_gestures_dynamic_toolbar">გადაადგილდით ხელსაწყოების დასამალად</string>
+    <string name="preference_gestures_dynamic_toolbar">გადაადგილებისას ხელსაწყოთა დამალვა</string>
 
     <!-- Preference for switching tabs by swiping horizontally on the toolbar -->
-    <string name="preference_gestures_swipe_toolbar_switch_tabs">გაუსვით ხელსაწყოთა ზოლის გვერდებზე, ჩანართებზე გადასართველად</string>
+    <string name="preference_gestures_swipe_toolbar_switch_tabs">ხელსაწყოთა ზოლზე გასმით, ჩანართებზე გადასვლა</string>
     <!-- Preference for showing the opened tabs by swiping up on the toolbar-->
     <string name="preference_gestures_swipe_toolbar_show_tabs">აუსვით ხელსაწყოთა ზოლზე ჩანართების გახსნისთვის</string>
 
@@ -550,7 +552,7 @@
     <!-- Option for a list tab view -->
     <string name="tab_view_list">სია</string>
     <!-- Option for a grid tab view -->
-    <string name="tab_view_grid">ბადე</string>
+    <string name="tab_view_grid">ბადისებრი</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
     <string name="preferences_close_tabs">ჩანართების დახურვა</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
@@ -562,6 +564,15 @@
 
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">ერთი თვის შემდეგ</string>
+
+    <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
+    <string name="close_tabs_manually_summary">ხელით დახურვა</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
+    <string name="close_tabs_after_one_day_summary">ერთ დღეში დახურვა</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one week-->
+    <string name="close_tabs_after_one_week_summary">ერთ კვირაში დახურვა</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one month-->
+    <string name="close_tabs_after_one_month_summary">ერთ თვეში დახურვა</string>
 
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
@@ -580,6 +591,8 @@
     <string name="tab_tray_title">გახსნილი ჩანართები</string>
     <!-- Text shown in the menu for saving tabs to a collection -->
     <string name="tab_tray_menu_item_save">კრებულში შენახვა</string>
+    <!-- Text shown in the menu for the collection selector -->
+    <string name="tab_tray_menu_select">არჩევა</string>
     <!-- Text shown in the menu for sharing all tabs -->
     <string name="tab_tray_menu_item_share">ყველა ჩანართის გაზიარება</string>
     <!-- Text shown in the menu to view recently closed tabs -->
@@ -594,8 +607,18 @@
     <string name="tab_tray_menu_home">მთავარზე გადასვლა</string>
     <!-- Shortcut action to toggle private mode -->
     <string name="tab_tray_menu_toggle">ჩანართის რეჟიმის გადართვა</string>
+    <!-- Text shown in the multiselect menu for bookmarking selected tabs. -->
+    <string name="tab_tray_multiselect_menu_item_bookmark">სანიშნი</string>
+    <!-- Text shown in the multiselect menu for closing selected tabs. -->
+    <string name="tab_tray_multiselect_menu_item_close">დახურვა</string>
+    <!-- Content description for tabs tray multiselect share button -->
+    <string name="tab_tray_multiselect_share_content_description">არჩეული ჩანართების გაზიარება</string>
+    <!-- Content description for tabs tray multiselect menu -->
+    <string name="tab_tray_multiselect_menu_content_description">არჩეული ჩანართების მენიუ</string>
     <!-- Content description (not visible, for screen readers etc.): Removes tab from collection button. Removes the selected tab from collection when pressed -->
     <string name="remove_tab_from_collection">ჩანართის მოცილება კრებულიდან</string>
+    <!-- Text for button to enter multiselect mode in tabs tray -->
+    <string name="tabs_tray_select_tabs">ჩანართების შერჩევა</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab button. Closes the current session when pressed -->
     <string name="close_tab">ჩანართის დახურვა</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab <title> button. First parameter is tab title  -->
@@ -630,8 +653,10 @@
     <string name="collection_open_tabs">ჩანართების გახსნა</string>
     <!-- Hint for adding name of a collection -->
     <string name="collection_name_hint">კრებულის დასახელება</string>
-    <!-- Text for the menu button to remove a top site -->
-    <string name="remove_top_site">მოცილება</string>
+    <!-- Text for the menu button to rename a top site -->
+	<string name="rename_top_site">გადარქმევა</string>
+	<!-- Text for the menu button to remove a top site -->
+	<string name="remove_top_site">მოცილება</string>
 
     <!-- Text for the menu button to delete a top site from history -->
     <string name="delete_from_history">ისტორიიდან ამოშლა</string>
@@ -685,11 +710,23 @@
     <string name="history_empty_message">ისტორია არ არის</string>
 
     <!-- Downloads -->
+    <!-- Text for the button to clear all downloads -->
+    <string name="download_delete_all">ჩამოტვირთვების წაშლა</string>
+    <!-- Text for the dialog to confirm clearing all downloads -->
+    <string name="download_delete_all_dialog">ნამდვილად გსურთ წაიშალოს ჩამოტვირთვები?</string>
+    <!-- Text for the snackbar to confirm that multiple downloads items have been deleted -->
+    <string name="download_delete_multiple_items_snackbar">ჩამოტვირთვები წაიშალა</string>
     <!-- Text shown when no download exists -->
     <string name="download_empty_message">ჩამოტვირთვები არაა</string>
     <!-- History multi select title in app bar
     The first parameter is the number of downloads selected -->
     <string name="download_multi_select_title">შერჩეულია %1$d</string>
+
+    <!-- History overflow menu open in new tab button -->
+    <string name="download_menu_open">გახსნა</string>
+    <!-- Text for the button to delete a single history item -->
+    <string name="download_delete_item">წაშლა</string>
+
 
     <!-- Crashes -->
     <!-- Title text displayed on the tab crash page. This first parameter is the name of the application (For example: Fenix) -->
@@ -954,6 +991,12 @@
     <string name="snackbar_tab_closed">ჩანართი დაიხურა</string>
     <!-- Text shown in snackbar when user closes all tabs -->
     <string name="snackbar_tabs_closed">ჩანართები დაიხურა</string>
+    <!-- Text shown in snackbar when user closes tabs -->
+    <string name="snackbar_message_tabs_closed">ჩანართები დაიხურა!</string>
+    <!-- Text shown in snackbar when user bookmarks a list of tabs -->
+    <string name="snackbar_message_bookmarks_saved">ჩანიშნულია!</string>
+    <!-- Text shown in snackbar action for viewing bookmarks -->
+    <string name="snackbar_message_bookmarks_view">ნახვა</string>
     <!-- Text shown in snackbar when user adds a site to top sites -->
     <string name="snackbar_added_to_top_sites">დაემატა რჩეულ საიტებში!</string>
     <!-- Text shown in snackbar when user closes a private tab -->
@@ -1503,7 +1546,7 @@
     <!-- Text shown when a user leaves the search string field empty -->
     <string name="search_add_custom_engine_error_empty_search_string">შეიყვანეთ საძიებო ფრაზა</string>
     <!-- Text shown when a user leaves out the required template string -->
-    <string name="search_add_custom_engine_error_missing_template">შეამოწმეთ, შეესაბამება თუ არა საძიებო ფრაზა მოცემულ ფორმატს</string>
+    <string name="search_add_custom_engine_error_missing_template">დარწმუნდით, რომ შეესაბამება მოცემულ მაგალითს</string>
     <!-- Text shown when we aren't able to validate the custom search query. The first parameter is the url of the custom search engine -->
     <string name="search_add_custom_engine_error_cannot_reach">შეცდომა კავშირისას – „%s“</string>
     <!-- Text shown when a user creates a new search engine -->
@@ -1617,6 +1660,15 @@
 
     <!-- Label for the show most visited sites preference -->
     <string name="top_sites_toggle_top_frecent_sites">ხშირად მონახულებულების ჩვენება</string>
+
+    <!-- Title text displayed in the rename top site dialog. -->
+	<string name="top_sites_rename_dialog_title">სახელი</string>
+	<!-- Hint for renaming title of a top site -->
+	<string name="top_site_name_hint">რჩეული საიტის სახელი</string>
+	<!-- Button caption to confirm the renaming of the top site. -->
+	<string name="top_sites_rename_dialog_ok">კარგი</string>
+	<!-- Dialog button text for canceling the rename top site prompt. -->
+	<string name="top_sites_rename_dialog_cancel">გაუქმება</string>
 
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">მოცილება</string>

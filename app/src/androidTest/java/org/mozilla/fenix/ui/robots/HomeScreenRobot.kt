@@ -7,6 +7,7 @@
 package org.mozilla.fenix.ui.robots
 
 import android.graphics.Bitmap
+import android.widget.EditText
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.NoMatchingViewException
@@ -36,14 +37,18 @@ import androidx.test.uiautomator.UiScrollable
 import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
 import androidx.test.uiautomator.Until.findObject
+import mozilla.components.support.ktx.android.content.appName
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.containsString
+import org.hamcrest.CoreMatchers.instanceOf
 import org.hamcrest.CoreMatchers.not
+import org.hamcrest.Matchers
 import org.junit.Assert
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.Search
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
+import org.mozilla.fenix.helpers.TestHelper.scrollToElementByText
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
 import org.mozilla.fenix.helpers.matchers.hasItem
@@ -53,6 +58,12 @@ import org.mozilla.fenix.helpers.withBitmapDrawable
  * Implementation of Robot Pattern for the home screen menu.
  */
 class HomeScreenRobot {
+    val privateSessionMessage =
+        "${appContext.appName} clears your search and browsing history from private tabs when you close them" +
+                " or quit the app. While this doesn’t make you anonymous to websites or your internet" +
+                " service provider, it makes it easier to keep what you do online private from anyone" +
+                " else who uses this device."
+
     fun verifyNavigationToolbar() = assertNavigationToolbar()
     fun verifyFocusedNavigationToolbar() = assertFocusedNavigationToolbar()
     fun verifyHomeScreen() = assertHomeScreen()
@@ -72,7 +83,7 @@ class HomeScreenRobot {
     // First Run elements
     fun verifyWelcomeHeader() = assertWelcomeHeader()
 
-    fun verifyGetTheMostHeader() = assertGetTheMostHeader()
+    fun verifyStartSyncHeader() = assertStartSyncHeader()
     fun verifyAccountsSignInButton() = assertAccountsSignInButton()
     fun verifyGetToKnowHeader() = assertGetToKnowHeader()
     fun verifyChooseThemeHeader() = assertChooseThemeHeader()
@@ -83,13 +94,9 @@ class HomeScreenRobot {
     fun verifyDarkThemeDescription() = assertDarkThemeDescription()
     fun verifyAutomaticThemeToggle() = assertAutomaticThemeToggle()
     fun verifyAutomaticThemeDescription() = assertAutomaticThemeDescription()
-    fun verifyAutomaticPrivacyfHeader() = assertAutomaticPrivacyHeader()
+    fun verifyAutomaticPrivacyHeader() = assertAutomaticPrivacyHeader()
     fun verifyTrackingProtectionToggle() = assertTrackingProtectionToggle()
     fun verifyAutomaticPrivacyText() = assertAutomaticPrivacyText()
-
-    // What's new elements
-    fun verifyWhatsNewHeader() = assertWhatsNewHeather()
-    fun verifyWhatsNewLink() = assertWhatsNewLink()
 
     // Browse privately
     fun verifyBrowsePrivatelyHeader() = assertBrowsePrivatelyHeader()
@@ -445,6 +452,18 @@ class HomeScreenRobot {
             return BrowserRobot.Transition()
         }
 
+        fun renameTopSite(title: String, interact: HomeScreenRobot.() -> Unit): Transition {
+            onView(withText("Rename"))
+                .check((matches(withEffectiveVisibility(Visibility.VISIBLE))))
+                .perform(click())
+            onView(Matchers.allOf(withId(R.id.top_site_title), instanceOf(EditText::class.java)))
+                .perform(ViewActions.replaceText(title))
+            onView(withId(android.R.id.button1)).perform((click()))
+
+            HomeScreenRobot().interact()
+            return Transition()
+        }
+
         fun removeTopSite(interact: HomeScreenRobot.() -> Unit): Transition {
             onView(withText("Remove"))
                 .check((matches(withEffectiveVisibility(Visibility.VISIBLE))))
@@ -569,10 +588,10 @@ private fun verifySearchEngineIcon(searchEngineName: String) {
 
 // First Run elements
 private fun assertWelcomeHeader() =
-    onView(allOf(withText("Welcome to Firefox Preview!")))
+    onView(allOf(withText("Welcome to ${appContext.appName}!")))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
-private fun assertGetTheMostHeader() =
+private fun assertStartSyncHeader() =
     onView(allOf(withText("Start syncing bookmarks, passwords, and more with your Firefox account.")))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
@@ -581,51 +600,69 @@ private fun assertAccountsSignInButton() =
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 private fun assertGetToKnowHeader() =
-    onView(allOf(withText("Get to know Firefox Preview")))
+    onView(allOf(withText("Get to know ${appContext.appName}")))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
-private fun assertChooseThemeHeader() =
-    onView(allOf(withText("Choose your theme")))
+private fun assertChooseThemeHeader() {
+    scrollToElementByText("Choose your theme")
+    onView(withText("Choose your theme"))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-
-private fun assertChooseThemeText() =
+}
+private fun assertChooseThemeText() {
+    scrollToElementByText("Choose your theme")
     onView(allOf(withText("Save some battery and your eyesight by enabling dark mode.")))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
 
-private fun assertLightThemeToggle() =
+private fun assertLightThemeToggle() {
+    scrollToElementByText("Choose your theme")
     onView(ViewMatchers.withResourceName("theme_light_radio_button"))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
 
-private fun assertLightThemeDescription() =
+private fun assertLightThemeDescription() {
+    scrollToElementByText("Choose your theme")
     onView(allOf(withText("Light theme")))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
 
-private fun assertDarkThemeToggle() =
+private fun assertDarkThemeToggle() {
+    scrollToElementByText("Choose your theme")
     onView(ViewMatchers.withResourceName("theme_dark_radio_button"))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
 
-private fun assertDarkThemeDescription() =
+private fun assertDarkThemeDescription() {
+    scrollToElementByText("Choose your theme")
     onView(allOf(withText("Dark theme")))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-
-private fun assertAutomaticThemeToggle() =
+}
+private fun assertAutomaticThemeToggle() {
+    scrollToElementByText("Choose your theme")
     onView(withId(R.id.theme_automatic_radio_button))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
 
-private fun assertAutomaticThemeDescription() =
+private fun assertAutomaticThemeDescription() {
+    scrollToElementByText("Choose your theme")
     onView(allOf(withText("Automatic")))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
 
-private fun assertAutomaticPrivacyHeader() =
+private fun assertAutomaticPrivacyHeader() {
+    scrollToElementByText("Automatic privacy")
     onView(allOf(withText("Automatic privacy")))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
 
-private fun assertTrackingProtectionToggle() = onView(
-    allOf(ViewMatchers.withResourceName("tracking_protection_toggle"))
-)
-    .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+private fun assertTrackingProtectionToggle() {
+    scrollToElementByText("Automatic privacy")
+    onView(withId(R.id.tracking_protection_toggle))
+        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
 
 private fun assertAutomaticPrivacyText() {
+    scrollToElementByText("Automatic privacy")
     onView(
         allOf(
             withText(
@@ -636,60 +673,65 @@ private fun assertAutomaticPrivacyText() {
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
-private fun assertBrowsePrivatelyHeader() =
+private fun assertBrowsePrivatelyHeader() {
+    scrollToElementByText("Browse privately")
     onView(allOf(withText("Browse privately")))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
 
-private fun assertBrowsePrivatelyText() =
+private fun assertBrowsePrivatelyText() {
+    scrollToElementByText("Browse privately")
     onView(allOf(withText(containsString("Update your private browsing settings."))))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-
-private fun assertYourPrivacyHeader() =
+}
+private fun assertYourPrivacyHeader() {
+    scrollToElementByText("Your privacy")
     onView(allOf(withText("Your privacy")))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
 
-private fun assertYourPrivacyText() =
+private fun assertYourPrivacyText() {
+    scrollToElementByText("Your privacy")
     onView(
         allOf(
             withText(
-                "We’ve designed Firefox Preview to give you control over what you share online and what you share with us."
+                "We’ve designed ${appContext.appName} to give you control over what you share online and what you share with us."
             )
         )
     )
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
 
-private fun assertPrivacyNoticeButton() =
+private fun assertPrivacyNoticeButton() {
+    scrollToElementByText("Your privacy")
     onView(allOf(withText("Read our privacy notice")))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
 
-// What's new elements
-private fun assertWhatsNewHeather() = onView(allOf(withText("See what’s new")))
-    .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-
-private fun assertWhatsNewLink() = onView(allOf(withText("Get answers here")))
-    .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-
-private fun assertStartBrowsingButton() =
+private fun assertStartBrowsingButton() {
+    scrollToElementByText("Start browsing")
     onView(allOf(withText("Start browsing")))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
 
 // Take a position
-private fun assertTakePositionheader() = onView(allOf(withText("Take a position")))
-    .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+private fun assertTakePositionheader() {
+    scrollToElementByText("Take a position")
+    onView(allOf(withText("Take a position")))
+        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
 
-private fun assertTakePositionTopRadioButton() =
+private fun assertTakePositionTopRadioButton() {
+    scrollToElementByText("Take a position")
     onView(ViewMatchers.withResourceName("toolbar_top_radio_button"))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
 
-private fun assertTakePositionBottomRadioButton() =
+private fun assertTakePositionBottomRadioButton() {
+    scrollToElementByText("Take a position")
     onView(ViewMatchers.withResourceName("toolbar_bottom_radio_button"))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-
-const val PRIVATE_SESSION_MESSAGE =
-    "Firefox Preview clears your search and browsing history from private tabs when you close them" +
-            " or quit the app. While this doesn’t make you anonymous to websites or your internet" +
-            " service provider, it makes it easier to keep what you do online private from anyone" +
-            " else who uses this device."
+}
 
 private fun assertPrivateSessionMessage() =
     onView(withId(R.id.private_session_description))

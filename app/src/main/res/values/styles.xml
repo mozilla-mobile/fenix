@@ -81,6 +81,7 @@
         <item name="awesomeBarIndicatorColor">@color/search_suggestion_indicator_icon_color_normal_theme</item>
         <item name="awesomeBarIndicatorBookmarkColor">@color/search_suggestion_indicator_icon_bookmark_color_normal_theme</item>
         <item name="selectLoginHeaderTextColor">@color/select_login_header_normal_theme</item>
+        <item name="preferenceSectionHeader">@color/preference_section_header_normal_theme</item>
         <!-- Shared widget colors -->
         <item name="mozac_primary_text_color">@color/primary_text_normal_theme</item>
         <item name="mozac_caption_text_color">@color/caption_text_normal_theme</item>
@@ -228,6 +229,7 @@
         <item name="awesomeBarIndicatorColor">@color/search_suggestion_indicator_icon_color_dark_theme</item>
         <item name="awesomeBarIndicatorBookmarkColor">@color/search_suggestion_indicator_icon_bookmark_color_dark_theme</item>
         <item name="selectLoginHeaderTextColor">@color/accent_high_contrast_private_theme</item>
+        <item name="preferenceSectionHeader">@color/preference_section_header_dark_theme</item>
 
         <!-- Shared widget colors -->
         <item name="mozac_primary_text_color">@color/primary_text_private_theme</item>
@@ -344,17 +346,6 @@
         <item name="android:paddingEnd">24dp</item>
         <item name="android:elevation">0dp</item>
         <item name="fontFamily">@font/metropolis_semibold</item>
-    </style>
-
-    <style name="SitePermissionCancelButton" parent="SitePermissionButton">
-        <item name="android:textColor">?accent</item>
-        <item name="android:backgroundTint">?foundation</item>
-    </style>
-
-    <style name="SitePermissionPrimaryButton" parent="SitePermissionButton">
-        <item name="android:background">@drawable/dialog_button_background</item>
-        <item name="android:textColor">?contrastText</item>
-        <item name="android:backgroundTint">?accent</item>
     </style>
 
     <style name="DialogStyleBase" parent="NormalTheme">
@@ -539,11 +530,6 @@
         <item name="fontFamily">@font/metropolis_semibold</item>
     </style>
 
-    <style name="FirefoxAccountsDialogStyle" parent="DialogStyleBase">
-        <item name="android:windowBackground">@drawable/scrim_background</item>
-        <item name="android:colorControlHighlight">@android:color/transparent</item>
-    </style>
-
     <style name="ShareDialogStyle" parent="DialogStyleBase"/>
 
     <style name="AboutItemText" parent="TextAppearance.MaterialComponents.Body2">
@@ -560,6 +546,11 @@
     <style name="AboutHeaderContentText" parent="TextAppearance.MaterialComponents.Subtitle1">
         <item name="android:textColor">?primaryText</item>
         <item name="android:lineSpacingExtra">@dimen/about_header_text_line_spacing_extra</item>
+    </style>
+
+    <style name="PreferenceSectionHeader" parent="@android:style/Widget.ListView">
+        <item name="android:textColor">?preferenceSectionHeader</item>
+        <item name="fontFamily">@font/metropolis_semibold</item>
     </style>
 
     <style name="EngineTextField" parent="TextAppearance.AppCompat">
@@ -638,9 +629,10 @@
     <style name="BottomSheetModal" parent="Widget.Design.BottomSheet.Modal">
         <item name="shapeAppearance">@style/BottomSheetShapeAppearance</item>
         <item name="behavior_fitToContents">false</item>
-        <item name="behavior_expandedOffset">80</item>
+        <item name="behavior_expandedOffset">80dp</item>
         <item name="behavior_skipCollapsed">false</item>
-        <item name="behavior_halfExpandedRatio">0.4</item>
+        <!-- Effectively disable STATE_HALF_EXPANDED by having the tray have a minuscule height in this state -->
+        <item name="behavior_halfExpandedRatio">0.001</item>
     </style>
 
     <style name="TopSite.Favicon" parent="Mozac.Widgets.Favicon">

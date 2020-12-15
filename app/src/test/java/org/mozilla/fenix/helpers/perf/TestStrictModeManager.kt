@@ -2,11 +2,11 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.fenix.helpers
+package org.mozilla.fenix.helpers.perf
 
 import android.os.StrictMode
 import io.mockk.mockk
-import org.mozilla.fenix.StrictModeManager
+import org.mozilla.fenix.perf.StrictModeManager
 
 /**
  * A test version of [StrictModeManager]. This class is difficult to mock because of [resetAfter]

@@ -7,7 +7,7 @@
 // methods so we suppress the check.
 @file:Suppress("MozillaStrictModeSuppression")
 
-package org.mozilla.fenix
+package org.mozilla.fenix.perf
 
 import android.os.Build
 import android.os.Looper
@@ -17,9 +17,10 @@ import androidx.annotation.VisibleForTesting.PRIVATE
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import mozilla.components.support.ktx.android.os.resetAfter
+import org.mozilla.fenix.Config
 import org.mozilla.fenix.components.Components
-import org.mozilla.fenix.perf.Performance
 import org.mozilla.fenix.utils.Mockable
+import java.util.concurrent.atomic.AtomicLong
 
 private const val MANUFACTURE_HUAWEI: String = "HUAWEI"
 private const val MANUFACTURE_ONE_PLUS: String = "OnePlus"
@@ -49,9 +50,11 @@ class StrictModeManager(
      * - a lint check: to ensure this value gets used instead of functions that work around it
      * - code owners: to prevent modifications to these above items without perf knowing
      * to make suppressions a more deliberate act.
+     *
+     * This is an Atomic* so it can be safely incremented from any thread.
      */
     @VisibleForTesting(otherwise = PRIVATE)
-    var suppressionCount: Long = 0
+    val suppressionCount = AtomicLong(0)
 
     /***
      * Enables strict mode for debug purposes. meant to be run only in the main process.
@@ -120,7 +123,7 @@ class StrictModeManager(
             // This can overflow and crash. However, it's unlikely we'll suppress StrictMode 9
             // quintillion times in a build config where StrictMode is enabled so we don't handle it
             // because it'd increase complexity.
-            suppressionCount += 1
+            val suppressionCount = suppressionCount.incrementAndGet()
 
             // We log so that devs are more likely to notice that we're suppressing StrictMode violations.
             // We add profiler markers so that the perf team can easily identify IO locations in profiles.

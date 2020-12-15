@@ -39,7 +39,7 @@ class SettingsBasicsTest {
     @Before
     fun setUp() {
         mockWebServer = MockWebServer().apply {
-            setDispatcher(AndroidAssetDispatcher())
+            dispatcher = AndroidAssetDispatcher()
             start()
         }
     }
@@ -204,7 +204,7 @@ class SettingsBasicsTest {
             checkTextSizeOnWebsite(textSizePercentage, fenixApp.components)
         }.openTabDrawer {
         }.openNewTab {
-        }.dismiss {
+        }.dismissSearchBar {
         }.openThreeDotMenu {
         }.openSettings {
         }.openAccessibilitySubMenu {

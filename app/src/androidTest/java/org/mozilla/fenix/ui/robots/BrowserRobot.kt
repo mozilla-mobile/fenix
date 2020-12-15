@@ -33,6 +33,7 @@ import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.containsString
+import org.hamcrest.Matchers.not
 import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
@@ -155,8 +156,6 @@ class BrowserRobot {
 
     fun verifyMenuButton() = assertMenuButton()
 
-    fun verifyBlueDot() = assertBlueDot()
-
     fun verifyNavURLBarItems() {
         verifyEnhancedTrackingOptions()
         pressBack()
@@ -187,10 +186,10 @@ class BrowserRobot {
             .perform(ViewActions.pressBack())
     }
 
-    fun clickEnhancedTrackingProtectionPanel() = enhancedTrackingProtectionPanel().click()
+    fun clickEnhancedTrackingProtectionPanel() = enhancedTrackingProtectionIndicator().click()
 
     fun verifyEnhancedTrackingProtectionPanelNotVisible() =
-        assertEnhancedTrackingProtectionPanelNotVisible()
+        assertEnhancedTrackingProtectionIndicatorNotVisible()
 
     fun clickContextOpenLinkInNewTab() {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
@@ -415,12 +414,11 @@ fun navURLBar() = onView(withId(R.id.mozac_browser_toolbar_url_view))
 private fun assertNavURLBar() = navURLBar()
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
-fun enhancedTrackingProtectionPanel() =
+fun enhancedTrackingProtectionIndicator() =
     onView(withId(R.id.mozac_browser_toolbar_tracking_protection_indicator))
 
-private fun assertEnhancedTrackingProtectionPanelNotVisible() {
-    enhancedTrackingProtectionPanel()
-        .check(matches(withEffectiveVisibility(Visibility.GONE)))
+private fun assertEnhancedTrackingProtectionIndicatorNotVisible() {
+    enhancedTrackingProtectionIndicator().check(matches(not(isDisplayed())))
 }
 
 private fun assertEnhancedTrackingProtectionSwitch() {
@@ -453,10 +451,3 @@ private fun mediaPlayerPlayButton() =
             .className("android.widget.Button")
             .text("Play")
     )
-
-private fun assertBlueDot() {
-    onView(withId(R.id.notification_dot))
-        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-}
-
-private fun addOnsReportSiteIssue() = onView(withText("Report Site Issue"))

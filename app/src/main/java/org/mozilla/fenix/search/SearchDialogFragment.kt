@@ -11,7 +11,9 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Typeface
+import android.os.Build
 import android.os.Bundle
+import android.os.StrictMode
 import android.speech.RecognizerIntent
 import android.text.style.StyleSpan
 import android.view.LayoutInflater
@@ -19,6 +21,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewStub
 import android.view.WindowManager
+import android.view.accessibility.AccessibilityEvent
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.appcompat.content.res.AppCompatResources
@@ -27,12 +30,14 @@ import androidx.constraintlayout.widget.ConstraintProperties.PARENT_ID
 import androidx.constraintlayout.widget.ConstraintProperties.TOP
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import kotlinx.android.synthetic.main.fragment_search_dialog.*
 import kotlinx.android.synthetic.main.fragment_search_dialog.view.*
 import kotlinx.android.synthetic.main.search_suggestions_hint.view.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.concept.storage.HistoryStorage
 import mozilla.components.feature.qr.QrFeature
@@ -211,11 +216,9 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             toolbarView.view.clearFocus()
 
             if (requireContext().settings().shouldShowCameraPermissionPrompt) {
-                requireComponents.analytics.metrics.track(Event.QRScannerOpened)
                 qrFeature.get()?.scan(R.id.search_wrapper)
             } else {
                 if (requireContext().isPermissionGranted(Manifest.permission.CAMERA)) {
-                    requireComponents.analytics.metrics.track(Event.QRScannerOpened)
                     qrFeature.get()?.scan(R.id.search_wrapper)
                 } else {
                     interactor.onCameraPermissionsNeeded()
@@ -277,6 +280,9 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         }
 
         view.search_suggestions_hint.setOnInflateListener((stubListener))
+        if (view.context.settings().accessibilityServicesEnabled) {
+            updateAccessibilityTraversalOrder()
+        }
 
         consumeFrom(store) {
             val shouldShowAwesomebar =
@@ -292,6 +298,19 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             toolbarView.update(it)
             awesomeBarView.update(it)
             firstUpdate = false
+        }
+    }
+
+    private fun updateAccessibilityTraversalOrder() {
+        val searchWrapperId = search_wrapper.id
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            qr_scan_button.accessibilityTraversalAfter = searchWrapperId
+            search_engines_shortcut_button.accessibilityTraversalAfter = searchWrapperId
+            fill_link_from_clipboard.accessibilityTraversalAfter = searchWrapperId
+        } else {
+            viewLifecycleOwner.lifecycleScope.launch {
+                search_wrapper.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED)
+            }
         }
     }
 
@@ -356,11 +375,9 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                         )
                         setMessage(spannable)
                         setNegativeButton(R.string.qr_scanner_dialog_negative) { dialog: DialogInterface, _ ->
-                            requireComponents.analytics.metrics.track(Event.QRScannerNavigationDenied)
                             dialog.cancel()
                         }
                         setPositiveButton(R.string.qr_scanner_dialog_positive) { dialog: DialogInterface, _ ->
-                            requireComponents.analytics.metrics.track(Event.QRScannerNavigationAllowed)
                             (activity as HomeActivity)
                                 .openToBrowserAndLoad(
                                     searchTermOrURL = result,
@@ -371,7 +388,6 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                         }
                         create()
                     }.show()
-                    requireComponents.analytics.metrics.track(Event.QRScannerPromptDisplayed)
                 }
             }
         )
@@ -470,11 +486,13 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
     private fun isSpeechAvailable(): Boolean = speechIntent.resolveActivity(requireContext().packageManager) != null
 
     private fun setShortcutsChangedListener(preferenceFileName: String) {
-        requireContext().getSharedPreferences(
-            preferenceFileName,
-            Context.MODE_PRIVATE
-        ).registerOnSharedPreferenceChangeListener(viewLifecycleOwner) { _, _ ->
-            awesomeBarView.update(store.state)
+        requireComponents.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
+            requireContext().getSharedPreferences(
+                preferenceFileName,
+                Context.MODE_PRIVATE
+            ).registerOnSharedPreferenceChangeListener(viewLifecycleOwner) { _, _ ->
+                awesomeBarView.update(store.state)
+            }
         }
     }
 

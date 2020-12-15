@@ -8,18 +8,21 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.checkbox_item.view.*
 import kotlinx.android.synthetic.main.tab_tray_item.view.*
 import mozilla.components.browser.tabstray.TabViewHolder
 import mozilla.components.browser.tabstray.TabsAdapter
+import mozilla.components.concept.base.images.ImageLoader
 import mozilla.components.concept.tabstray.Tab
 import mozilla.components.concept.tabstray.Tabs
-import mozilla.components.concept.base.images.ImageLoader
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.ext.updateAccessibilityCollectionItemInfo
 
 class FenixTabsAdapter(
     private val context: Context,
@@ -36,6 +39,7 @@ class FenixTabsAdapter(
         )
     }
 ) {
+    private lateinit var tabsList: RecyclerView
     var tabTrayInteractor: TabTrayInteractor? = null
 
     private val mode: TabTrayDialogFragmentState.Mode?
@@ -67,10 +71,27 @@ class FenixTabsAdapter(
 
     override fun onBindViewHolder(holder: TabViewHolder, position: Int) {
         super.onBindViewHolder(holder, position)
-        val newIndex = tabCount - position - 1
-        (holder as TabTrayViewHolder).updateAccessibilityRowInfo(
-            holder.itemView,
-            newIndex,
+
+        val isListTabView = context.settings().listTabView
+
+        val itemIndex: Int
+        val rowIndex: Int
+        val columnIndex: Int
+
+        if (isListTabView) {
+            itemIndex = tabCount - position - 1
+            rowIndex = itemIndex
+            columnIndex = 1
+        } else {
+            val columnsCount = (tabsList.layoutManager as GridLayoutManager).spanCount
+            itemIndex = position
+            rowIndex = itemIndex / columnsCount
+            columnIndex = itemIndex % columnsCount
+        }
+
+        holder.itemView.updateAccessibilityCollectionItemInfo(
+            rowIndex,
+            columnIndex,
             selectedItems.contains(holder.tab)
         )
 
@@ -105,6 +126,11 @@ class FenixTabsAdapter(
                 }
             }
         }
+    }
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+        tabsList = recyclerView
     }
 
     private fun showCheckedIfSelected(tab: Tab, view: View) {

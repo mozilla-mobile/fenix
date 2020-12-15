@@ -33,7 +33,7 @@ import kotlinx.coroutines.launch
 import mozilla.components.feature.addons.Addon
 import mozilla.components.feature.addons.AddonManagerException
 import mozilla.components.feature.addons.ui.PermissionsDialogFragment
-import mozilla.components.feature.addons.ui.translatedName
+import mozilla.components.feature.addons.ui.translateName
 import io.github.forkmaintainers.iceraven.components.PagedAddonInstallationDialogFragment
 import io.github.forkmaintainers.iceraven.components.PagedAddonsManagerAdapter
 import org.mozilla.fenix.R
@@ -45,12 +45,13 @@ import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.theme.ThemeManager
 import java.util.Locale
+import java.lang.ref.WeakReference
 import java.util.concurrent.CancellationException
 
 /**
  * Fragment use for managing add-ons.
  */
-@Suppress("LargeClass", "TooManyFunctions")
+@Suppress("TooManyFunctions", "LargeClass")
 class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) {
 
     /**
@@ -214,7 +215,7 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
 
     private fun hasExistingAddonInstallationDialogFragment(): Boolean {
         return parentFragmentManager.findFragmentByTag(INSTALLATION_DIALOG_FRAGMENT_TAG)
-            as? PagedAddonInstallationDialogFragment != null
+                as? PagedAddonInstallationDialogFragment != null
     }
 
     private fun showPermissionDialog(addon: Addon) {
@@ -243,7 +244,15 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
     private fun showInstallationDialog(addon: Addon) {
         if (!isInstallationInProgress && !hasExistingAddonInstallationDialogFragment()) {
             requireComponents.analytics.metrics.track(Event.AddonInstalled(addon.id))
-            val addonCollectionProvider = requireContext().components.addonCollectionProvider
+            val context = requireContext()
+            val addonCollectionProvider = context.components.addonCollectionProvider
+
+            // Fragment may not be attached to the context anymore during onConfirmButtonClicked handling,
+            // but we still want to be able to process user selection of the 'allowInPrivateBrowsing' pref.
+            // This is a best-effort attempt to do so - retain a weak reference to the application context
+            // (to avoid a leak), which we attempt to use to access addonManager.
+            // See https://github.com/mozilla-mobile/fenix/issues/15816
+            val weakApplicationContext: WeakReference<Context> = WeakReference(context)
 
             val dialog = PagedAddonInstallationDialogFragment.newInstance(
                 addon = addon,
@@ -263,7 +272,7 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
                 ),
                 onConfirmButtonClicked = { _, allowInPrivateBrowsing ->
                     if (allowInPrivateBrowsing) {
-                        requireContext().components.addonManager.setAddonAllowedInPrivateBrowsing(
+                        weakApplicationContext.get()?.components?.addonManager?.setAddonAllowedInPrivateBrowsing(
                             addon,
                             allowInPrivateBrowsing,
                             onSuccess = {
@@ -304,13 +313,15 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
                     // No need to display an error message if installation was cancelled by the user.
                     if (e !is CancellationException) {
                         val rootView = activity?.getRootView() ?: view
-                        showSnackBar(
-                            rootView,
-                            getString(
-                                R.string.mozac_feature_addons_failed_to_install,
-                                addon.translatedName
+                        context?.let {
+                            showSnackBar(
+                                rootView,
+                                getString(
+                                    R.string.mozac_feature_addons_failed_to_install,
+                                    addon.translateName(it)
+                                )
                             )
-                        )
+                        }
                     }
                     addonProgressOverlay?.visibility = View.GONE
                     isInstallationInProgress = false

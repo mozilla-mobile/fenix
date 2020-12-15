@@ -5,7 +5,6 @@
 package org.mozilla.fenix.tabtray
 
 import android.view.View
-import android.view.accessibility.AccessibilityNodeInfo
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
@@ -14,6 +13,7 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
+import kotlinx.android.synthetic.main.tab_tray_grid_item.view.*
 import mozilla.components.browser.state.state.MediaState
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.browser.tabstray.TabViewHolder
@@ -62,6 +62,7 @@ class TabTrayViewHolder(
     @VisibleForTesting
     internal val urlView: TextView? = itemView.findViewById(R.id.mozac_browser_tabstray_url)
     private val playPauseButtonView: ImageButton = itemView.findViewById(R.id.play_pause_button)
+    private val closeButton: AppCompatImageButton = itemView.findViewById(R.id.mozac_browser_tabstray_close)
 
     override var tab: Tab? = null
 
@@ -80,12 +81,16 @@ class TabTrayViewHolder(
         updateUrl(tab)
         updateIcon(tab)
         updateCloseButtonDescription(tab.title)
-        updateBackgroundColor(isSelected)
+        updateSelectedTabIndicator(isSelected)
 
         if (tab.thumbnail != null) {
             thumbnailView.setImageBitmap(tab.thumbnail)
         } else {
             loadIntoThumbnailView(thumbnailView, tab.id)
+        }
+
+        if (itemView.context.settings().gridTabView) {
+            closeButton.increaseTapArea(GRID_ITEM_CLOSE_BUTTON_EXTRA_DPS)
         }
 
         // Media state
@@ -176,6 +181,18 @@ class TabTrayViewHolder(
             iconCard.visibility = View.GONE
         }
     }
+    
+    @VisibleForTesting
+    internal fun updateSelectedTabIndicator(isSelected: Boolean) {
+        if (itemView.context.settings().gridTabView) {
+            itemView.tab_tray_grid_item.background = if (isSelected) {
+                AppCompatResources.getDrawable(itemView.context, R.drawable.tab_tray_grid_item_selected_border)
+            } else {
+                null
+            }
+            return
+        }
+    }
 
     @VisibleForTesting
     internal fun updateBackgroundColor(isSelected: Boolean) {
@@ -205,27 +222,8 @@ class TabTrayViewHolder(
         imageLoader.loadIntoView(thumbnailView, ImageLoadRequest(id, thumbnailSize))
     }
 
-    internal fun updateAccessibilityRowInfo(item: View, newIndex: Int, isSelected: Boolean) {
-        item.accessibilityDelegate = object : View.AccessibilityDelegate() {
-            override fun onInitializeAccessibilityNodeInfo(
-                host: View?,
-                info: AccessibilityNodeInfo?
-            ) {
-                super.onInitializeAccessibilityNodeInfo(host, info)
-                info?.collectionItemInfo =
-                    AccessibilityNodeInfo.CollectionItemInfo.obtain(
-                        newIndex,
-                        1,
-                        1,
-                        1,
-                        false,
-                        isSelected
-                    )
-            }
-        }
-    }
-
     companion object {
         private const val PLAY_PAUSE_BUTTON_EXTRA_DPS = 24
+        private const val GRID_ITEM_CLOSE_BUTTON_EXTRA_DPS = 24
     }
 }

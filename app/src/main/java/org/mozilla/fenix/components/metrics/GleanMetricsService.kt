@@ -9,6 +9,7 @@ import mozilla.components.service.fxa.manager.SyncEnginesStorage
 import mozilla.components.service.glean.Glean
 import mozilla.components.service.glean.private.NoExtraKeys
 import mozilla.components.support.base.log.logger.Logger
+import org.mozilla.fenix.Config
 import org.mozilla.fenix.GleanMetrics.AboutPage
 import org.mozilla.fenix.GleanMetrics.Addons
 import org.mozilla.fenix.GleanMetrics.AppTheme
@@ -38,13 +39,11 @@ import org.mozilla.fenix.GleanMetrics.Preferences
 import org.mozilla.fenix.GleanMetrics.PrivateBrowsingMode
 import org.mozilla.fenix.GleanMetrics.PrivateBrowsingShortcut
 import org.mozilla.fenix.GleanMetrics.ProgressiveWebApp
-import org.mozilla.fenix.GleanMetrics.QrScanner
 import org.mozilla.fenix.GleanMetrics.ReaderMode
 import org.mozilla.fenix.GleanMetrics.SearchDefaultEngine
 import org.mozilla.fenix.GleanMetrics.SearchShortcuts
 import org.mozilla.fenix.GleanMetrics.SearchSuggestions
 import org.mozilla.fenix.GleanMetrics.SearchWidget
-import org.mozilla.fenix.GleanMetrics.SearchWidgetCfr
 import org.mozilla.fenix.GleanMetrics.SyncAccount
 import org.mozilla.fenix.GleanMetrics.SyncAuth
 import org.mozilla.fenix.GleanMetrics.Tab
@@ -230,18 +229,6 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.UriOpened -> EventWrapper<NoExtraKeys>(
             { Events.totalUriCount.add(1) }
         )
-        is Event.QRScannerOpened -> EventWrapper<NoExtraKeys>(
-            { QrScanner.opened.record(it) }
-        )
-        is Event.QRScannerPromptDisplayed -> EventWrapper<NoExtraKeys>(
-            { QrScanner.promptDisplayed.record(it) }
-        )
-        is Event.QRScannerNavigationAllowed -> EventWrapper<NoExtraKeys>(
-            { QrScanner.navigationAllowed.record(it) }
-        )
-        is Event.QRScannerNavigationDenied -> EventWrapper<NoExtraKeys>(
-            { QrScanner.navigationDenied.record(it) }
-        )
         is Event.ErrorPageVisited -> EventWrapper(
             { ErrorPage.visitedError.record(it) },
             { ErrorPage.visitedErrorKeys.valueOf(it) }
@@ -270,9 +257,6 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.SyncAuthOtherExternal -> EventWrapper<NoExtraKeys>(
             { SyncAuth.otherExternal.record(it) }
         )
-        is Event.SyncAuthFromSharedReuse, Event.SyncAuthFromSharedCopy -> EventWrapper<NoExtraKeys>(
-            { SyncAuth.autoLogin.record(it) }
-        )
         is Event.SyncAuthRecovered -> EventWrapper<NoExtraKeys>(
             { SyncAuth.recovered.record(it) }
         )
@@ -284,9 +268,6 @@ private val Event.wrapper: EventWrapper<*>?
         )
         is Event.SyncAccountOpened -> EventWrapper<NoExtraKeys>(
             { SyncAccount.opened.record(it) }
-        )
-        is Event.SyncAccountClosed -> EventWrapper<NoExtraKeys>(
-            { SyncAccount.closed.record(it) }
         )
         is Event.SyncAccountSyncNow -> EventWrapper<NoExtraKeys>(
             { SyncAccount.syncNow.record(it) }
@@ -376,20 +357,11 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.SearchWidgetVoiceSearchPressed -> EventWrapper<NoExtraKeys>(
             { SearchWidget.voiceButton.record(it) }
         )
-        is Event.PrivateBrowsingGarbageIconTapped -> EventWrapper<NoExtraKeys>(
-            { PrivateBrowsingMode.garbageIcon.record(it) }
-        )
         is Event.PrivateBrowsingSnackbarUndoTapped -> EventWrapper<NoExtraKeys>(
             { PrivateBrowsingMode.snackbarUndo.record(it) }
         )
         is Event.PrivateBrowsingNotificationTapped -> EventWrapper<NoExtraKeys>(
             { PrivateBrowsingMode.notificationTapped.record(it) }
-        )
-        is Event.PrivateBrowsingNotificationOpenTapped -> EventWrapper<NoExtraKeys>(
-            { PrivateBrowsingMode.notificationOpen.record(it) }
-        )
-        is Event.PrivateBrowsingNotificationDeleteAndOpenTapped -> EventWrapper<NoExtraKeys>(
-            { PrivateBrowsingMode.notificationDelete.record(it) }
         )
         is Event.PrivateBrowsingCreateShortcut -> EventWrapper<NoExtraKeys>(
             { PrivateBrowsingShortcut.createShortcut.record(it) }
@@ -579,24 +551,9 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.VoiceSearchTapped -> EventWrapper<NoExtraKeys>(
             { VoiceSearch.tapped.record(it) }
         )
-        is Event.SearchWidgetCFRDisplayed -> EventWrapper<NoExtraKeys>(
-            { SearchWidgetCfr.displayed.record(it) }
-        )
-        is Event.SearchWidgetCFRCanceled -> EventWrapper<NoExtraKeys>(
-            { SearchWidgetCfr.canceled.record(it) }
-        )
-        is Event.SearchWidgetCFRNotNowPressed -> EventWrapper<NoExtraKeys>(
-            { SearchWidgetCfr.notNowPressed.record(it) }
-        )
-        is Event.SearchWidgetCFRAddWidgetPressed -> EventWrapper<NoExtraKeys>(
-            { SearchWidgetCfr.addWidgetPressed.record(it) }
-        )
         is Event.TabCounterMenuItemTapped -> EventWrapper(
             { Events.tabCounterMenuAction.record(it) },
             { Events.tabCounterMenuActionKeys.valueOf(it) }
-        )
-        is Event.OnboardingWhatsNew -> EventWrapper<NoExtraKeys>(
-            { Onboarding.whatsNew.record(it) }
         )
         is Event.OnboardingPrivateBrowsing -> EventWrapper<NoExtraKeys>(
             { Onboarding.prefToggledPrivateBrowsing.record(it) }
@@ -721,6 +678,7 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.AddonInstalled -> null
         is Event.SearchWidgetInstalled -> null
         is Event.ChangedToDefaultBrowser -> null
+        is Event.SyncAuthFromSharedReuse, Event.SyncAuthFromSharedCopy -> null
     }
 
 class GleanMetricsService(
@@ -767,6 +725,14 @@ class GleanMetricsService(
             mozillaProductDetector.getMozillaBrowserDefault(context)?.also {
                 defaultMozBrowser.set(it)
             }
+
+            distributionId.set(
+                when (Config.channel.isMozillaOnline) {
+                    true -> "MozillaOnline"
+                    false -> "Mozilla"
+                }
+            )
+
             mozillaProducts.set(mozillaProductDetector.getInstalledMozillaProducts(context))
 
             adjustCampaign.set(context.settings().adjustCampaignId)
