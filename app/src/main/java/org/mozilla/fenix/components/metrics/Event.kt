@@ -198,6 +198,10 @@ sealed class Event {
 
     object RecentlyClosedTabsOpened : Event()
 
+    object BannerOpenInAppDisplayed : Event()
+    object BannerOpenInAppDismissed : Event()
+    object BannerOpenInAppGoToSettings : Event()
+
     object ContextMenuCopyTapped : Event()
     object ContextMenuSearchTapped : Event()
     object ContextMenuSelectAllTapped : Event()
