@@ -181,7 +181,6 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), UserInteractionHandler 
         }
     }
 
-    @Suppress("LongMethod")
     @OptIn(ExperimentalCoroutinesApi::class)
     @Suppress("LongMethod")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

@@ -84,7 +84,7 @@ class Components(private val context: Context) {
             PagedAddonCollectionProvider(
                 context,
                 core.client,
-                collectionUser = context.settings().overrideAmoUser,
+                collectionAccount = context.settings().overrideAmoUser,
                 collectionName = context.settings().overrideAmoCollection
             )
         }

@@ -611,7 +611,7 @@
     <style name="TopSheetModal" parent="Widget.Design.BottomSheet.Modal">
         <item name="shapeAppearance">@style/TopSheetShapeAppearance</item>
         <item name="behavior_fitToContents">false</item>
-        <item name="behavior_expandedOffset">80</item>
+        <item name="behavior_expandedOffset">80dp</item>
         <item name="behavior_skipCollapsed">false</item>
         <item name="behavior_halfExpandedRatio">0.4</item>
     </style>

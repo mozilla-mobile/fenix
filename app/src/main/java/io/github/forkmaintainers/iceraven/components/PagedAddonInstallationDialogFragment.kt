@@ -34,7 +34,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import mozilla.components.feature.addons.Addon
 import mozilla.components.feature.addons.R
-import mozilla.components.feature.addons.ui.translatedName
+import mozilla.components.feature.addons.ui.translateName
 import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.ktx.android.content.appName
 import mozilla.components.support.ktx.android.content.res.resolveAttribute
@@ -158,7 +158,7 @@ class PagedAddonInstallationDialogFragment : AppCompatDialogFragment() {
         rootView.findViewById<TextView>(R.id.title).text =
             requireContext().getString(
                 R.string.mozac_feature_addons_installed_dialog_title,
-                addon.translatedName,
+                addon.translateName(requireContext()),
                 requireContext().appName
             )
 

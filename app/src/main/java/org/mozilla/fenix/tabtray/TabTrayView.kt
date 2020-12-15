@@ -25,8 +25,19 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.component_tabstray.view.*
-import kotlinx.android.synthetic.main.component_tabstray_fab.view.*
+import kotlinx.android.synthetic.main.component_tabs_screen_top.view.exit_tabs_screen
+import kotlinx.android.synthetic.main.component_tabstray_bottom.view.exit_multi_select
+import kotlinx.android.synthetic.main.component_tabstray_bottom.view.handle
+import kotlinx.android.synthetic.main.component_tabstray_bottom.view.infoBanner
+import kotlinx.android.synthetic.main.component_tabstray_bottom.view.multiselect_title
+import kotlinx.android.synthetic.main.component_tabstray_bottom.view.tab_layout
+import kotlinx.android.synthetic.main.component_tabstray_bottom.view.tab_tray_empty_view
+import kotlinx.android.synthetic.main.component_tabstray_bottom.view.tab_tray_new_tab
+import kotlinx.android.synthetic.main.component_tabstray_bottom.view.tab_tray_overflow
+import kotlinx.android.synthetic.main.component_tabstray_bottom.view.tab_wrapper
+import kotlinx.android.synthetic.main.component_tabstray_bottom.view.tabsTray
+import kotlinx.android.synthetic.main.component_tabstray_bottom.view.topBar
+import kotlinx.android.synthetic.main.component_tabstray_fab_bottom.view.new_tab_button
 import kotlinx.android.synthetic.main.tabs_tray_tab_counter.*
 import kotlinx.android.synthetic.main.tabstray_multiselect_items.view.*
 import kotlinx.coroutines.Dispatchers.Main
@@ -491,6 +502,9 @@ class TabTrayView(
             } else {
                 (behavior as BottomSheetBehavior).state = BottomSheetBehavior.STATE_EXPANDED
             }
+        }
+    }
+    
     /**
      * Updates the bottom sheet height based on the number tabs or screen orientation.
      * Show the bottom sheet fully expanded if it is in landscape mode or the number of
@@ -498,9 +512,17 @@ class TabTrayView(
      */
     fun updateBottomSheetBehavior() {
         if (isInLandscape() || getTabsNumberInAnyMode() >= getTabsNumberForExpandingTray()) {
-            behavior.state = BottomSheetBehavior.STATE_EXPANDED
+            if (useTopTabsTray) {
+                (behavior as TopSheetBehavior).state = TopSheetBehavior.STATE_EXPANDED
+            } else {
+                (behavior as BottomSheetBehavior).state = BottomSheetBehavior.STATE_EXPANDED
+            }
         } else {
-            behavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            if (useTopTabsTray) {
+                (behavior as TopSheetBehavior).state = TopSheetBehavior.STATE_COLLAPSED
+            } else {
+                (behavior as BottomSheetBehavior).state = BottomSheetBehavior.STATE_COLLAPSED
+            }
         }
     }
 
@@ -535,7 +557,7 @@ class TabTrayView(
 
     var mode: Mode = Mode.Normal
         private set
-
+      
     private fun setupGridTabView() {
         view.tabsTray.apply {
             val gridLayoutManager =
@@ -851,12 +873,6 @@ class TabTrayView(
 
     fun scrollToSelectedBrowserTab(selectedTabId: String? = null) {
         view.tabsTray.apply {
-            val tabs = if (isPrivateModeSelected) {
-                view.context.components.core.store.state.privateTabs
-            } else {
-                view.context.components.core.store.state.normalTabs
-            }
-
             val selectedBrowserTabIndex = getSelectedBrowserTabViewIndex(selectedTabId)
 
             val recyclerViewIndex = if (reverseTabOrderInTabsTray) {
@@ -910,21 +926,5 @@ class TabTrayView(
 
         // The remaining padding offset needed to provide a 16dp column spacing between the grid items.
         const val GRID_ITEM_PARENT_PADDING = 8
-    }
-}
-
-class TabTrayItemMenu(
-    private val context: Context,
-    private val shouldShowSaveToCollection: () -> Boolean,
-    private val hasOpenTabs: () -> Boolean,
-    private val onItemTapped: (Item) -> Unit = {}
-) {
-
-    sealed class Item {
-        object ShareAllTabs : Item()
-        object OpenTabSettings : Item()
-        object SaveToCollection : Item()
-        object CloseAllTabs : Item()
-        object OpenRecentlyClosed : Item()
     }
 }
