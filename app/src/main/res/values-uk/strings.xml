@@ -369,6 +369,12 @@
     <!-- Toast shown after confirming the custom add-on collection configuration -->
     <string name="toast_customize_addon_collection_done">Збірку додатків змінено. Вихід з програми для застосування змін…</string>
 
+    <!-- Add-on Installation from AMO-->
+    <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
+    <string name="addon_not_supported_error">Додаток не підтримується</string>
+    <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is already installed -->
+    <string name="addon_already_installed">Додаток вже встановлено</string>
+
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">Синхронізувати</string>
@@ -449,6 +455,10 @@
     <string name="preferences_marketing_data">Маркетингові дані</string>
     <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
     <string name="preferences_marketing_data_description">Надсилання даних про функції, які ви використовуєте в %1$s, нашій компанії з мобільного маркетингу Leanplum.</string>
+    <!-- Title for studies preferences -->
+    <string name="preference_experiments_2">Дослідження</string>
+    <!-- Summary for studies preferences -->
+    <string name="preference_experiments_summary_2">Дозволяє Mozilla встановлювати та запускати дослідження</string>
     <!-- Title for experiments preferences -->
     <string name="preference_experiments">Експерименти</string>
     <!-- Summary for experiments preferences -->
@@ -1302,7 +1312,7 @@
     <!-- Option for enhanced tracking protection for the custom protection settings for cookies-->
     <string name="preference_enhanced_tracking_protection_custom_cookies_2">Куки з невідвіданих сайтів</string>
     <!-- Option for enhanced tracking protection for the custom protection settings for cookies-->
-    <string name="preference_enhanced_tracking_protection_custom_cookies_3">Сторонні куки (може пошкодити роботу вебсайтів)</string>
+    <string name="preference_enhanced_tracking_protection_custom_cookies_3">Усі сторонні куки (може пошкодити роботу вебсайтів)</string>
     <!-- Option for enhanced tracking protection for the custom protection settings for cookies-->
     <string name="preference_enhanced_tracking_protection_custom_cookies_4">Усі куки (буде пошкоджувати роботу вебсайтів)</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings for tracking content -->
