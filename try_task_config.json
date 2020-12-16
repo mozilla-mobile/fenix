@@ -1,8 +1,0 @@
-{
-    "parameters": {
-        "optimize_target_tasks": true,
-        "head_ref": "releases_v85.0.0",
-        "tasks_for": "github-push"
-    },
-    "version": 2
-}
