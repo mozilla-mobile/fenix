@@ -71,6 +71,7 @@ jobs:
             build-type: beta-firebase
         description: Test Fenix
         run-on-tasks-for: [github-push]
+        run-on-git-branches: ["^releases/.+$", "^releases_.+$"]
         dependencies:
             signing: signing-beta-firebase
             signing-android-test: signing-android-test-beta
