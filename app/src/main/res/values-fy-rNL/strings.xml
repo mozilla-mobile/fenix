@@ -355,6 +355,12 @@
     <!-- Toast shown after confirming the custom add-on collection configuration -->
     <string name="toast_customize_addon_collection_done">Add-onkolleksje oanpast. Tapassing wurdt ôfsluten om wizigingen ta te passen…</string>
 
+    <!-- Add-on Installation from AMO-->
+    <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
+    <string name="addon_not_supported_error">Add-on wurdt net stipe</string>
+    <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is already installed -->
+    <string name="addon_already_installed">Add-on is al ynstallearre</string>
+
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">No syngronisearje</string>
@@ -433,6 +439,10 @@
     <string name="preferences_marketing_data">Marketinggegevens</string>
     <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
     <string name="preferences_marketing_data_description">Dielt gegevens oer hokker funksjes jo yn %1$s brûke mei Leanplum, ús leveransier fan mobile marketing.</string>
+    <!-- Title for studies preferences -->
+    <string name="preference_experiments_2">Undersiken</string>
+    <!-- Summary for studies preferences -->
+    <string name="preference_experiments_summary_2">Stelt Mozilla yn steat om ûndersiken te ynstallearjen en út te fieren</string>
     <!-- Title for experiments preferences -->
     <string name="preference_experiments">Eksperiminten</string>
     <!-- Summary for experiments preferences -->

@@ -364,6 +364,12 @@
     <!-- Toast shown after confirming the custom add-on collection configuration -->
     <string name="toast_customize_addon_collection_done">Coleção de extensões modificada. Saindo do aplicativo para aplicar as alterações…</string>
 
+    <!-- Add-on Installation from AMO-->
+    <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
+    <string name="addon_not_supported_error">Extensão não suportada</string>
+    <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is already installed -->
+    <string name="addon_already_installed">Extensão já instalada</string>
+
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">Sincronizar agora</string>
@@ -443,6 +449,10 @@
     <string name="preferences_marketing_data">Dados de marketing</string>
     <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
     <string name="preferences_marketing_data_description">Compartilhar dados sobre que recursos você usa no %1$s com o Leanplum, nosso fornecedor de marketing para celular.</string>
+    <!-- Title for studies preferences -->
+    <string name="preference_experiments_2">Estudos</string>
+    <!-- Summary for studies preferences -->
+    <string name="preference_experiments_summary_2">Permitir que a Mozilla instale e execute estudos</string>
     <!-- Title for experiments preferences -->
     <string name="preference_experiments">Experimentos</string>
 
@@ -1238,7 +1248,7 @@
     <!-- Text shown for settings option for sign with pairing -->
     <string name="sign_in_with_camera">Entre com sua câmera</string>
     <!-- Text shown for settings option for sign with email -->
-    <string name="sign_in_with_email">Usar e-mail</string>
+    <string name="sign_in_with_email">Usar email</string>
     <!-- Text shown for settings option for create new account text.'Firefox' intentionally hardcoded here.-->
     <string name="sign_in_create_account_text"><![CDATA[Não tem conta? <u>Crie uma</u> para sincronizar o Firefox entre dispositivos.]]></string>
     <!-- Text shown in confirmation dialog to sign out of account -->
