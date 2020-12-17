@@ -49,7 +49,7 @@ jobs:
     x86-debug:
         description: Test Fenix
         run-on-tasks-for: [github-pull-request, github-push]
-        run-on-git-branches: ["^((?!releases_)(?!releases/).)*$"]
+        run-on-git-branches: ["^((?!releases[_/]).+)$"]
         run:
             commands:
                 - [automation/taskcluster/androidTest/ui-test.sh, x86, app.apk, android-test.apk, '50']
@@ -71,7 +71,7 @@ jobs:
             build-type: beta-firebase
         description: Test Fenix
         run-on-tasks-for: [github-push]
-        run-on-git-branches: ["^releases/.+$", "^releases_.+$"]
+        run-on-git-branches: ["^releases[/_].+$"]
         dependencies:
             signing: signing-beta-firebase
             signing-android-test: signing-android-test-beta
