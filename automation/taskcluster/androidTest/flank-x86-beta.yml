@@ -38,7 +38,9 @@ gcloud:
   performance-metrics: true
 
   test-targets:
-   - class org.mozilla.fenix.ui.SmokeTest
+   # Let's start by running a single test, then if stable change to smoketest
+   - class org.mozilla.fenix.ui.NavigationToolbarTest#visitURLTest
+   # - class org.mozilla.fenix.ui.SmokeTest
 
   device:
    - model: Pixel2
