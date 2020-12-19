@@ -457,7 +457,7 @@ sealed class Event {
         }
 
         enum class SearchAccessPoint {
-            SUGGESTION, ACTION, WIDGET, SHORTCUT, NONE
+            SUGGESTION, ACTION, WIDGET, SHORTCUT, ASSIST, NONE
         }
 
         override val extras: Map<Events.performedSearchKeys, String>?

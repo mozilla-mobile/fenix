@@ -58,6 +58,11 @@ object MetricsUtils {
                     engineSource
                 )
             )
+            SearchAccessPoint.ASSIST -> Event.PerformedSearch(
+                Event.PerformedSearch.EventSource.Other(
+                    engineSource
+                )
+            )
             SearchAccessPoint.NONE -> Event.PerformedSearch(
                 Event.PerformedSearch.EventSource.Other(
                     engineSource
