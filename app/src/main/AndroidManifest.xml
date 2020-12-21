@@ -268,6 +268,9 @@
         </service>
 
         <meta-data
+            android:name="firebase_crashlytics_collection_enabled"
+            android:value="false" />
+        <meta-data
             android:name="firebase_messaging_auto_init_enabled"
             android:value="true" />
         <meta-data

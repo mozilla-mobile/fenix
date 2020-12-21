@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.getSystemService
 import androidx.work.Configuration.Builder
 import androidx.work.Configuration.Provider
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -223,6 +224,8 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         if (settings().isMarketingTelemetryEnabled) {
             components.analytics.metrics.start(MetricServiceType.Marketing)
         }
+
+        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(settings().isTelemetryEnabled)
     }
 
     // See https://github.com/mozilla-mobile/fenix/issues/7227 for context.

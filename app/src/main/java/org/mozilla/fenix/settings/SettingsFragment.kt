@@ -23,6 +23,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import kotlinx.android.synthetic.main.amo_collection_override_dialog.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -50,6 +51,7 @@ import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.settings.account.AccountUiView
 import org.mozilla.fenix.utils.Settings
 import kotlin.system.exitProcess
+import kotlinx.android.synthetic.main.fragment_installed_add_on_details.settings
 
 @Suppress("LargeClass", "TooManyFunctions")
 class SettingsFragment : PreferenceFragmentCompat() {
@@ -125,6 +127,15 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     // The event is not tracked
                 } catch (e: ClassCastException) {
                     // The setting is not a boolean, not tracked
+                }
+            }
+
+        preferenceManager.sharedPreferences
+            .registerOnSharedPreferenceChangeListener(this) { _, _ ->
+                if (context?.settings()?.isTelemetryEnabled == true) {
+                    FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
+                } else {
+                    FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(false)
                 }
             }
     }

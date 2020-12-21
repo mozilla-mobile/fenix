@@ -8,7 +8,7 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'jacoco'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
 apply plugin: 'com.google.android.gms.oss-licenses-plugin'
-
+apply plugin: 'com.google.firebase.crashlytics'
 
 import com.android.build.OutputFile
 import groovy.json.JsonOutput
@@ -510,6 +510,7 @@ dependencies {
     implementation Deps.androidx_transition
     implementation Deps.androidx_work_ktx
     implementation Deps.google_material
+    implementation Deps.firebase_crashlytics
 
     implementation Deps.adjust
     implementation Deps.installreferrer // Required by Adjust

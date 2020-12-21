@@ -50,6 +50,9 @@ object Versions {
     const val google_ads_id_version = "16.0.0"
 
     const val google_play_store_version = "1.8.0"
+    const val google_services_version = "4.3.4"
+    const val firebase_crashlytics = "17.2.2"
+    const val firebase_crashlytics_gradle_version = "2.3.0"
 }
 
 @Suppress("unused")
@@ -231,6 +234,9 @@ object Deps {
     const val junitApi = "org.junit.jupiter:junit-jupiter-api:${Versions.junit}"
     const val junitParams = "org.junit.jupiter:junit-jupiter-params:${Versions.junit}"
     const val junitEngine = "org.junit.jupiter:junit-jupiter-engine:${Versions.junit}"
+    const val google_services = "com.google.gms:google-services:${Versions.google_services_version}"
+    const val firebase_crashlytics_gradle = "com.google.firebase:firebase-crashlytics-gradle:${Versions.firebase_crashlytics_gradle_version}"
+    const val firebase_crashlytics = "com.google.firebase:firebase-crashlytics:${Versions.firebase_crashlytics}"
 }
 
 /**
@@ -245,6 +251,7 @@ object RepoMatching {
     const val androidx = "androidx\\..*"
     const val comAndroid = "com\\.android.*"
     const val comGoogleFirebase = "com\\.google\\.firebase"
+    const val comGoogleGms = "com\\.google\\.gms"
 
     /**
      * A matcher for com.google.android.* with one exception: the espresso-contrib dependency includes the
