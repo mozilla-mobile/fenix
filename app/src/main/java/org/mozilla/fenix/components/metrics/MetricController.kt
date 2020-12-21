@@ -248,7 +248,7 @@ internal class ReleaseMetricController(
     companion object {
         /**
          * Text selection long press context items to be tracked.
-         * */
+         */
         const val CONTEXT_MENU_COPY = "org.mozilla.geckoview.COPY"
         const val CONTEXT_MENU_SEARCH = "CUSTOM_CONTEXT_MENU_SEARCH"
         const val CONTEXT_MENU_SEARCH_PRIVATELY = "CUSTOM_CONTEXT_MENU_SEARCH_PRIVATELY"
