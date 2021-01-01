@@ -9,9 +9,7 @@ import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.content.edit
 import androidx.preference.EditTextPreference
-import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
 import org.mozilla.fenix.FeatureFlags
@@ -57,7 +55,7 @@ class CustomizationFragment : PreferenceFragmentCompat() {
         setupGesturesCategory()
         setupAddonsCustomizationCategory()
         setupSystemBehaviorCategory()
-        
+
         requirePreference<SwitchPreference>(R.string.pref_key_strip_url).apply {
             isChecked = context.settings().shouldStripUrl
 
