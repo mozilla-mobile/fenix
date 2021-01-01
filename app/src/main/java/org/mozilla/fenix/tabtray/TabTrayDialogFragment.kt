@@ -22,8 +22,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.component_tabstray_bottom.view.*
-import kotlinx.android.synthetic.main.component_tabstray_fab_bottom.view.*
+import kotlinx.android.synthetic.main.component_tabstray.view.*
+import kotlinx.android.synthetic.main.component_tabstray_fab.view.*
 import kotlinx.android.synthetic.main.fragment_tab_tray_dialog.*
 import kotlinx.android.synthetic.main.fragment_tab_tray_dialog.view.*
 import kotlinx.coroutines.Dispatchers
@@ -168,8 +168,6 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), UserInteractionHandler 
 
         if (newConfig.orientation != currentOrientation) {
             tabTrayView.dismissMenu()
-            tabTrayView.expand()
-            tabTrayView.updateTabsTrayLayout()
             tabTrayView.updateBottomSheetBehavior()
 
             if (requireContext().settings().gridTabView) {
@@ -187,10 +185,6 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), UserInteractionHandler 
         super.onViewCreated(view, savedInstanceState)
         val activity = activity as HomeActivity
         val isPrivate = activity.browsingModeManager.mode.isPrivate
-
-        if (requireContext().settings().useTopTabsTray) {
-            dialog?.window?.attributes?.windowAnimations = R.style.TopTabTrayAnimation
-        }
 
         val thumbnailLoader = ThumbnailLoader(requireContext().components.core.thumbnailStorage)
         val adapter = FenixTabsAdapter(requireContext(), thumbnailLoader)

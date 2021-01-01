@@ -21,7 +21,6 @@ import mozilla.components.browser.storage.sync.SyncedDeviceTabs
 import mozilla.components.feature.syncedtabs.view.SyncedTabsView
 import mozilla.components.lib.state.ext.flowScoped
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
-import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.sync.ListenerDelegate
 import org.mozilla.fenix.sync.SyncedTabsAdapter
 import org.mozilla.fenix.sync.ext.toAdapterList
@@ -64,11 +63,8 @@ class SyncedTabsController(
     override fun displaySyncedTabs(syncedTabs: List<SyncedDeviceTabs>) {
         scope.launch {
             val tabsList = listOf(SyncedTabsAdapter.AdapterItem.Title) + syncedTabs.toAdapterList()
-            if (view.context.settings().reverseTabOrderInTabsTray) {
-                adapter.submitList(tabsList.reversed())
-            } else {
-                adapter.submitList(tabsList)
-            }
+            // Reverse layout for TabTrayView which does things backwards.
+            adapter.submitList(tabsList.reversed())
         }
     }
 

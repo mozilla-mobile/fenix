@@ -11,7 +11,6 @@ import android.widget.TextView
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.AppCompatImageButton
-import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.tab_tray_grid_item.view.*
 import mozilla.components.browser.state.state.MediaState
@@ -51,8 +50,8 @@ class TabTrayViewHolder(
     private val metrics: MetricController = itemView.context.components.analytics.metrics
 ) : TabViewHolder(itemView) {
 
-    private val iconCard: CardView = itemView.findViewById(R.id.mozac_browser_tabstray_icon_card)
-    private val iconView: ImageView = itemView.findViewById(R.id.mozac_browser_tabstray_icon)
+    private val faviconView: ImageView? =
+        itemView.findViewById(R.id.mozac_browser_tabstray_favicon_icon)
     private val titleView: TextView = itemView.findViewById(R.id.mozac_browser_tabstray_title)
     private val closeView: AppCompatImageButton =
         itemView.findViewById(R.id.mozac_browser_tabstray_close)
@@ -79,7 +78,7 @@ class TabTrayViewHolder(
 
         updateTitle(tab)
         updateUrl(tab)
-        updateIcon(tab)
+        updateFavicon(tab)
         updateCloseButtonDescription(tab.title)
         updateSelectedTabIndicator(isSelected)
 
@@ -146,6 +145,15 @@ class TabTrayViewHolder(
         }
     }
 
+    private fun updateFavicon(tab: Tab) {
+        if (tab.icon != null) {
+            faviconView?.visibility = View.VISIBLE
+            faviconView?.setImageBitmap(tab.icon)
+        } else {
+            faviconView?.visibility = View.GONE
+        }
+    }
+
     private fun updateTitle(tab: Tab) {
         val title = if (tab.title.isNotEmpty()) {
             tab.title
@@ -161,27 +169,11 @@ class TabTrayViewHolder(
         // is done in the toolbar and awesomebar:
         // https://github.com/mozilla-mobile/fenix/issues/1824
         // https://github.com/mozilla-mobile/android-components/issues/6985
-        urlView?.apply {
-            text =
-                if (context.settings().shouldStripUrl) {
-                    tab.url
-                        .toShortUrl(itemView.context.components.publicSuffixList)
-                        .take(MAX_URI_LENGTH)
-                } else {
-                    tab.url.take(MAX_URI_LENGTH)
-                }
-        }
+        urlView?.text = tab.url
+            .toShortUrl(itemView.context.components.publicSuffixList)
+            .take(MAX_URI_LENGTH)
     }
 
-    private fun updateIcon(tab: Tab) {
-        if (tab.icon != null) {
-            iconCard.visibility = View.VISIBLE
-            iconView.setImageBitmap(tab.icon)
-        } else {
-            iconCard.visibility = View.GONE
-        }
-    }
-    
     @VisibleForTesting
     internal fun updateSelectedTabIndicator(isSelected: Boolean) {
         if (itemView.context.settings().gridTabView) {
@@ -192,10 +184,7 @@ class TabTrayViewHolder(
             }
             return
         }
-    }
 
-    @VisibleForTesting
-    internal fun updateBackgroundColor(isSelected: Boolean) {
         val color = if (isSelected) {
             R.color.tab_tray_item_selected_background_normal_theme
         } else {
@@ -215,10 +204,17 @@ class TabTrayViewHolder(
     }
 
     private fun loadIntoThumbnailView(thumbnailView: ImageView, id: String) {
-        val thumbnailSize = max(
-            itemView.resources.getDimensionPixelSize(R.dimen.tab_tray_thumbnail_height),
-            itemView.resources.getDimensionPixelSize(R.dimen.tab_tray_thumbnail_width)
-        )
+        val thumbnailSize = if (itemView.context.settings().gridTabView) {
+            max(
+                itemView.resources.getDimensionPixelSize(R.dimen.tab_tray_grid_item_thumbnail_height),
+                itemView.resources.getDimensionPixelSize(R.dimen.tab_tray_grid_item_thumbnail_width)
+            )
+        } else {
+            max(
+                itemView.resources.getDimensionPixelSize(R.dimen.tab_tray_list_item_thumbnail_height),
+                itemView.resources.getDimensionPixelSize(R.dimen.tab_tray_list_item_thumbnail_width)
+            )
+        }
         imageLoader.loadIntoView(thumbnailView, ImageLoadRequest(id, thumbnailSize))
     }
 

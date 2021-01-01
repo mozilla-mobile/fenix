@@ -31,7 +31,7 @@ class FenixTabsAdapter(
     viewHolderProvider = { parentView ->
         TabTrayViewHolder(
             LayoutInflater.from(context).inflate(
-                if (context.settings().enableCompactTabs) R.layout.tab_tray_item_compact else R.layout.tab_tray_item,
+                if (context.settings().gridTabView) R.layout.tab_tray_grid_item else R.layout.tab_tray_item,
                 parentView,
                 false
             ),
