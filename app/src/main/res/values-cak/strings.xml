@@ -366,6 +366,12 @@
     <!-- Toast shown after confirming the custom add-on collection configuration -->
     <string name="toast_customize_addon_collection_done">Xjal kimolaj tz\'aqat. Nitz\'apïx chokoy richin yesamajïx ri taq jaloj…</string>
 
+    <!-- Add-on Installation from AMO-->
+    <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
+    <string name="addon_not_supported_error">Man nuk\'äm ta ri\' ri tz\'aqat</string>
+    <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is already installed -->
+    <string name="addon_already_installed">Xyak ri tz\'aqat</string>
+
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">Tixim wakami</string>
@@ -447,6 +453,10 @@
     <string name="preferences_marketing_data">Marketin tzij</string>
     <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
     <string name="preferences_marketing_data_description">Ke\'akomonij taq tzij chi rij ri taq samaj nawokisaj pa %1$s rik\'in Leanplum, ri ya\'öl qamarketin richin oyonib\'äl.</string>
+    <!-- Title for studies preferences -->
+    <string name="preference_experiments_2">Taq tijonïk</string>
+    <!-- Summary for studies preferences -->
+    <string name="preference_experiments_summary_2">Taya\' q\'ij chi ri Mozilla nuyäk chuqa\' nub\'än taq tijonïk</string>
     <!-- Title for experiments preferences -->
     <string name="preference_experiments">Taq solna\'oj</string>
     <!-- Summary for experiments preferences -->

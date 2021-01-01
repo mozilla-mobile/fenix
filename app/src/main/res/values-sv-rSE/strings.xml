@@ -370,6 +370,12 @@
     <!-- Toast shown after confirming the custom add-on collection configuration -->
     <string name="toast_customize_addon_collection_done">Tilläggssamling ändrad. Avslutar applikationen för att tillämpa ändringar…</string>
 
+    <!-- Add-on Installation from AMO-->
+    <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
+    <string name="addon_not_supported_error">Tillägg stöds inte</string>
+    <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is already installed -->
+    <string name="addon_already_installed">Tillägget är redan installerat</string>
+
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">Synkronisera nu</string>
@@ -451,6 +457,10 @@
     <string name="preferences_marketing_data">Marknadsföringsdata</string>
     <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
     <string name="preferences_marketing_data_description">Delar data om vilka funktioner du använder i %1$s med Leanplum, vår mobila marknadsföringsleverantör.</string>
+    <!-- Title for studies preferences -->
+    <string name="preference_experiments_2">Undersökningar</string>
+    <!-- Summary for studies preferences -->
+    <string name="preference_experiments_summary_2">Tillåter Mozilla att installera och köra undersökningar</string>
     <!-- Title for experiments preferences -->
     <string name="preference_experiments">Experiment</string>
     <!-- Summary for experiments preferences -->
