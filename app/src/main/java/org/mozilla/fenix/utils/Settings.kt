@@ -299,7 +299,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
 
     var gridTabView by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_tab_view_grid),
-        default = false
+        default = true
     )
 
     var manuallyCloseTabs by booleanPreference(
