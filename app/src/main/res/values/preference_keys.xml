@@ -135,19 +135,6 @@
     <string name="pref_key_swipe_toolbar_switch_tabs" translatable="false">pref_key_swipe_toolbar_switch_tabs</string>
     <string name="pref_key_swipe_toolbar_show_tabs" translatable="false">pref_key_swipe_toolbar_show_tabs</string>
     
-    <!-- Tabs Tray Customization Settings -->
-    <string name="pref_tabs_tray_settings_category" translatable="false">pref_tabs_tray_settings_category</string>
-    <string name="pref_key_tabs_tray_compact_tab" translatable="false">pref_key_tabs_tray_compact_tab</string>
-    <string name="pref_key_tabs_tray_top_tray" translatable="false">pref_key_tabs_tray_top_tray</string>
-    <string name="pref_key_use_fullscreen_tabs_screen" translatable="false">pref_key_use_fullscreen_tabs_screen</string>
-    <string name="pref_key_use_fenix_tabs_tray" translatable="false">pref_key_use_fenix_tabs_tray</string>
-    <string name="pref_key_tabs_tray_reverse_tab_order" translatable="false">pref_key_tabs_tray_reverse_tab_order</string>
-
-    <!-- Tabs Tray FAB Customization Settings -->
-    <string name="pref_tabs_tray_fab_settings_category" translatable="false">pref_tabs_tray_fab_settings_category</string>
-    <string name="pref_key_tabs_tray_use_fab" translatable="false">pref_key_tabs_tray_use_fab</string>
-    <string name="pref_key_tabs_tray_fab_top_position" translatable="false">pref_key_tabs_tray_fab_top_position</string>
-
     <!-- Add-ons Source Customization Settings -->
     <string name="pref_addons_settings_category" translatable="false">pref_addons_settings_category</string>
     <string name="pref_key_addons_custom_account" translatable="false">pref_key_addons_custom_account</string>

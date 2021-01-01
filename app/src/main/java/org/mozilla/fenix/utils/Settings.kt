@@ -923,39 +923,6 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         BuildConfig.AMO_COLLECTION
     )
 
-    var enableCompactTabs by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_tabs_tray_compact_tab),
-        default = true
-    )
-
-    val useTopTabsTray by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_tabs_tray_top_tray),
-        default = false
-    )
-
-    var useFullScreenTabScreen by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_use_fullscreen_tabs_screen),
-        default = true
-    )
-
-    val shouldUseFennecStyleTabsScreen: Boolean
-        get() = enableCompactTabs && useFullScreenTabScreen
-
-    var reverseTabOrderInTabsTray by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_tabs_tray_reverse_tab_order),
-        default = false
-    )
-
-    var useNewTabFloatingActionButton by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_tabs_tray_use_fab),
-        default = false
-    )
-
-    var placeNewTabFloatingActionButtonAtTop by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_tabs_tray_fab_top_position),
-        default = false
-    )
-
     private var savedLoginsSortingStrategyString by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_saved_logins_sorting_strategy),
         default = SavedLoginsSortingStrategyMenu.Item.AlphabeticallySort.strategyString

@@ -74,9 +74,6 @@
     <dimen name="bottom_sheet_handle_height">3dp</dimen>
     <dimen name="bottom_sheet_handle_top_margin">8dp</dimen>
 
-    <!-- Top Sheet Fragment card -->
-    <dimen name="top_sheet_handle_bottom_margin">8dp</dimen>
-
 
     <!-- Browser Toolbar -->
     <dimen name="browser_toolbar_height">56dp</dimen>
@@ -176,10 +173,6 @@
 
     <!-- Tabs Tray -->
     <dimen name="tab_tray_top_offset">40dp</dimen>
-    <dimen name="tab_tray_thumbnail_width">125dp</dimen>
-    <dimen name="tab_tray_thumbnail_height">130dp</dimen>
-    <dimen name="tab_tray_thumbnail_width_original">92dp</dimen>
-    <dimen name="tab_tray_thumbnail_height_original">69dp</dimen>
     <dimen name="tab_tray_tab_item_height">88dp</dimen>
     <dimen name="tab_tray_list_item_thumbnail_width">92dp</dimen>
     <dimen name="tab_tray_list_item_thumbnail_height">72dp</dimen>
@@ -191,7 +184,6 @@
     <dimen name="tab_tray_favicon_border_radius">4dp</dimen>
     <dimen name="tab_tray_multiselect_handle_height">11dp</dimen>
     <dimen name="tab_tray_multiselect_handle_top_margin">0dp</dimen>
-    <dimen name="tab_tray_multiselect_handle_bottom_margin">0dp</dimen>
     <dimen name="tab_tray_new_collection_padding_start">24dp</dimen>
     <dimen name="tab_tray_new_collection_drawable_padding">28dp</dimen>
 
