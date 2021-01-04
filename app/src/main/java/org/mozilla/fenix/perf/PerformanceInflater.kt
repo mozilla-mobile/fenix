@@ -26,7 +26,7 @@ private val classPrefixList = arrayOf(
  *
  */
 open class PerformanceInflater(
-    val inflater: LayoutInflater,
+    inflater: LayoutInflater,
     context: Context
 ) : LayoutInflater(
     inflater,
@@ -63,6 +63,7 @@ open class PerformanceInflater(
                     return view
                 }
             } catch (e: ClassNotFoundException) {
+                // We want the super class to inflate if ever the view can't be inflated here
             }
         }
         return super.onCreateView(name, attrs)

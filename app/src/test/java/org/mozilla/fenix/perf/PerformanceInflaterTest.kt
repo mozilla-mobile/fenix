@@ -11,6 +11,7 @@ import android.view.View
 import android.widget.FrameLayout
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -23,7 +24,7 @@ class PerformanceInflaterTest {
 
     private lateinit var perfInflater: MockInflater
 
-    private val layoutNotToTest = setOf(
+    private val layoutsNotToTest = setOf(
         "fragment_browser",
         "fragment_add_on_internal_settings"
     )
@@ -45,17 +46,17 @@ class PerformanceInflaterTest {
     @Test
     fun `WHEN inflating one of our resource file, the inflater should not crash`() {
         val fileList = File("./src/main/res/layout").listFiles()
-        if (fileList != null) {
-            for (file in fileList) {
-                val layoutName = file.name.split(".")[0]
-                val layoutId = testContext.resources.getIdentifier(
+        for (file in fileList!!) {
+            val layoutName = file.name.split(".")[0]
+            val layoutId = testContext.resources.getIdentifier(
                     layoutName,
                     "layout",
                     testContext.packageName
                 )
-                if (layoutId != -1 && !layoutNotToTest.contains(layoutName)) {
-                    perfInflater.inflate(layoutId, FrameLayout(testContext), true)
-                }
+
+            assertNotEquals(-1, layoutId)
+            if (!layoutsNotToTest.contains(layoutName)) {
+                perfInflater.inflate(layoutId, FrameLayout(testContext), true)
             }
         }
     }
@@ -70,6 +71,11 @@ private class MockInflater(
 ) {
 
     override fun onCreateView(name: String?, attrs: AttributeSet?): View? {
+        // We skip the fragment layout for the simple reason that it implements
+        // a whole different inflate which is implemented in the activity.LayoutFactory
+        // methods. To be able to properly test it here, we would have to copy the whole
+        // inflater file (or create an activity) and pass our layout through the onCreateView
+        // method of that activity.
         if (name!!.contains("fragment")) {
             return FrameLayout(testContext)
         }
