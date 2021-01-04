@@ -495,6 +495,7 @@ class BookmarksTest {
             createFolder("1")
             getInstrumentation().waitForIdleSync()
             selectFolder("1")
+            verifyCurrentFolderTitle("1")
             createFolder("2")
             getInstrumentation().waitForIdleSync()
             selectFolder("2")
