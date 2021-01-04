@@ -103,6 +103,7 @@ class BookmarkFragmentInteractor(
             BookmarkNodeType.ITEM -> {
                 bookmarksController.handleBookmarkTapped(item)
                 metrics.track(Event.OpenedBookmark)
+                metrics.track(Event.OpenSavedTab("library", "bookmarks"))
             }
             BookmarkNodeType.FOLDER -> bookmarksController.handleBookmarkExpand(item)
             BookmarkNodeType.SEPARATOR -> throw IllegalStateException("Cannot open separators")

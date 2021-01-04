@@ -196,6 +196,7 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
         R.id.open_history_in_private_tabs_multi_select -> {
             openItemsInNewTab(private = true) { selectedItem ->
                 requireComponents.analytics.metrics.track(Event.HistoryItemOpened)
+                requireComponents.analytics.metrics.track(Event.OpenSavedTab("library", "history"))
                 selectedItem.url
             }
 
@@ -247,6 +248,7 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
 
     private fun openItem(item: HistoryItem, mode: BrowsingMode? = null) {
         requireComponents.analytics.metrics.track(Event.HistoryItemOpened)
+        requireComponents.analytics.metrics.track(Event.OpenSavedTab("library", "history"))
 
         mode?.let { (activity as HomeActivity).browsingModeManager.mode = it }
 
