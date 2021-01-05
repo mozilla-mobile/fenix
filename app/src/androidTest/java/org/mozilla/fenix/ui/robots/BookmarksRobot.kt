@@ -9,6 +9,7 @@ package org.mozilla.fenix.ui.robots
 import android.net.Uri
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.clearText
+import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.longClick
 import androidx.test.espresso.action.ViewActions.replaceText
 import androidx.test.espresso.action.ViewActions.typeText
@@ -169,7 +170,10 @@ class BookmarksRobot {
 
     fun clickParentFolderSelector() = bookmarkFolderSelector().click()
 
-    fun selectFolder(title: String) = onView(withText(title)).click()
+    fun selectFolder(title: String) =
+        onView(withText(title))
+            .check(matches(isDisplayed()))
+            .click()
 
     fun longTapDesktopFolder(title: String) = onView(withText(title)).perform(longClick())
 
