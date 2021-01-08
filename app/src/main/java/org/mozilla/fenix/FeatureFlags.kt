@@ -22,16 +22,6 @@ object FeatureFlags {
     val syncedTabsInTabsTray = Config.channel.isNightlyOrDebug
 
     /**
-     * Shows the grid view settings for the tabs tray.
-     */
-    val showGridViewInTabsSettings = Config.channel.isNightlyOrDebug
-
-    /**
-     * Enables wait til first contentful paint
-     */
-    const val waitUntilPaintToDraw = true
-
-    /**
      * Enables downloads with external download managers.
      */
     const val externalDownloadManager = true
@@ -45,9 +35,4 @@ object FeatureFlags {
      * Enables ETP cookie purging
      */
     val etpCookiePurging = Config.channel.isNightlyOrDebug
-
-    /**
-     * Returns user to browser on cold start if they have open tabs
-     */
-    val returnToBrowserOnColdStart = Config.channel.isNightlyOrDebug
 }

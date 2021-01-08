@@ -52,10 +52,6 @@ sealed class Event {
     object CustomTabsActionTapped : Event()
     object CustomTabsMenuOpened : Event()
     object UriOpened : Event()
-    object QRScannerOpened : Event()
-    object QRScannerPromptDisplayed : Event()
-    object QRScannerNavigationAllowed : Event()
-    object QRScannerNavigationDenied : Event()
     object SyncAuthOpened : Event()
     object SyncAuthClosed : Event()
     object SyncAuthSignUp : Event()
@@ -70,7 +66,6 @@ sealed class Event {
     object SyncAuthFromSharedReuse : Event()
     object SyncAuthFromSharedCopy : Event()
     object SyncAccountOpened : Event()
-    object SyncAccountClosed : Event()
     object SyncAccountSyncNow : Event()
     object SendTab : Event()
     object SignInToSendTab : Event()
@@ -98,11 +93,8 @@ sealed class Event {
     object FindInPageOpened : Event()
     object FindInPageClosed : Event()
     object FindInPageSearchCommitted : Event()
-    object PrivateBrowsingGarbageIconTapped : Event()
     object PrivateBrowsingSnackbarUndoTapped : Event()
     object PrivateBrowsingNotificationTapped : Event()
-    object PrivateBrowsingNotificationOpenTapped : Event()
-    object PrivateBrowsingNotificationDeleteAndOpenTapped : Event()
     object PrivateBrowsingCreateShortcut : Event()
     object PrivateBrowsingAddShortcutCFR : Event()
     object PrivateBrowsingCancelCFR : Event()
@@ -152,16 +144,11 @@ sealed class Event {
     object FennecToFenixMigrated : Event()
     object AddonsOpenInSettings : Event()
     object VoiceSearchTapped : Event()
-    object SearchWidgetCFRDisplayed : Event()
-    object SearchWidgetCFRCanceled : Event()
-    object SearchWidgetCFRNotNowPressed : Event()
-    object SearchWidgetCFRAddWidgetPressed : Event()
     object SearchWidgetInstalled : Event()
     object OnboardingAutoSignIn : Event()
     object OnboardingManualSignIn : Event()
     object OnboardingPrivacyNotice : Event()
     object OnboardingPrivateBrowsing : Event()
-    object OnboardingWhatsNew : Event()
     object OnboardingFinish : Event()
     object ChangedToDefaultBrowser : Event()
 
@@ -508,7 +495,8 @@ sealed class Event {
                 "mozac.feature.contextmenu.save_image" to "save_image",
                 "mozac.feature.contextmenu.share_link" to "share_link",
                 "mozac.feature.contextmenu.copy_link" to "copy_link",
-                "mozac.feature.contextmenu.copy_image_location" to "copy_image_location"
+                "mozac.feature.contextmenu.copy_image_location" to "copy_image_location",
+                "mozac.feature.contextmenu.share_image" to "share_image"
             )
         }
     }

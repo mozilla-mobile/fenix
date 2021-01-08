@@ -35,8 +35,8 @@ import mozilla.components.feature.addons.ui.CustomViewHolder
 import mozilla.components.feature.addons.ui.CustomViewHolder.AddonViewHolder
 import mozilla.components.feature.addons.ui.CustomViewHolder.SectionViewHolder
 import mozilla.components.feature.addons.ui.CustomViewHolder.UnsupportedSectionViewHolder
-import mozilla.components.feature.addons.ui.translatedName
-import mozilla.components.feature.addons.ui.translatedSummary
+import mozilla.components.feature.addons.ui.translateName
+import mozilla.components.feature.addons.ui.translateSummary
 import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.ktx.android.content.res.resolveAttribute
 import java.io.IOException
@@ -96,7 +96,8 @@ class PagedAddonsManagerAdapter(
         val inflater = LayoutInflater.from(context)
         val view = inflater.inflate(R.layout.mozac_feature_addons_section_item, parent, false)
         val titleView = view.findViewById<TextView>(R.id.title)
-        return SectionViewHolder(view, titleView)
+        val divider = view.findViewById<View>(R.id.divider)
+        return SectionViewHolder(view, titleView, divider)
     }
 
     private fun createUnsupportedSectionViewHolder(parent: ViewGroup): CustomViewHolder {
@@ -210,13 +211,13 @@ class PagedAddonsManagerAdapter(
 
         holder.titleView.text =
             if (addon.translatableName.isNotEmpty()) {
-                addon.translatedName
+                addon.translateName(context)
             } else {
                 addon.id
             }
 
         if (addon.translatableSummary.isNotEmpty()) {
-            holder.summaryView.text = addon.translatedSummary
+            holder.summaryView.text = addon.translateSummary(context)
         } else {
             holder.summaryView.visibility = View.GONE
         }

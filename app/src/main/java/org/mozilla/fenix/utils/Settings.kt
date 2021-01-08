@@ -123,18 +123,6 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     val canShowCfr: Boolean
         get() = (System.currentTimeMillis() - lastCfrShownTimeInMillis) > THREE_DAYS_MS
 
-    var showGridViewInTabsSettings by featureFlagPreference(
-        appContext.getPreferenceKey(R.string.pref_key_show_grid_view_tabs_settings),
-        default = false,
-        featureFlag = FeatureFlags.showGridViewInTabsSettings
-    )
-
-    var waitToShowPageUntilFirstPaint by featureFlagPreference(
-        appContext.getPreferenceKey(R.string.pref_key_wait_first_paint),
-        default = false,
-        featureFlag = FeatureFlags.waitUntilPaintToDraw
-    )
-
     var syncedTabsInTabsTray by featureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_synced_tabs_tabs_tray),
         default = false,
@@ -200,57 +188,6 @@ class Settings(private val appContext: Context) : PreferencesHolder {
                     appContext.getString(R.string.pref_key_migrating_from_fenix_tip),
                     true
                 )
-
-    private val activeSearchCount = counterPreference(
-        appContext.getPreferenceKey(R.string.pref_key_search_count)
-    )
-
-    fun incrementActiveSearchCount() = activeSearchCount.increment()
-
-    private val isActiveSearcher: Boolean
-        get() = activeSearchCount.value > 2
-
-    fun shouldDisplaySearchWidgetCfr(): Boolean = canShowCfr && isActiveSearcher &&
-            searchWidgetCFRDismissCount.underMaxCount() &&
-            !searchWidgetInstalled &&
-            !searchWidgetCFRManuallyDismissed
-
-    private val searchWidgetCFRDisplayCount = counterPreference(
-        appContext.getPreferenceKey(R.string.pref_key_search_widget_cfr_display_count)
-    )
-
-    fun incrementSearchWidgetCFRDisplayed() = searchWidgetCFRDisplayCount.increment()
-
-    private val searchWidgetCFRManuallyDismissed by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_search_widget_cfr_manually_dismissed),
-        default = false
-    )
-
-    fun manuallyDismissSearchWidgetCFR() {
-        preferences.edit().putBoolean(
-            appContext.getPreferenceKey(R.string.pref_key_search_widget_cfr_manually_dismissed),
-            true
-        ).apply()
-    }
-
-    private val searchWidgetCFRDismissCount = counterPreference(
-        appContext.getPreferenceKey(R.string.pref_key_search_widget_cfr_dismiss_count),
-        maxCount = 3
-    )
-
-    fun incrementSearchWidgetCFRDismissed() = searchWidgetCFRDismissCount.increment()
-
-    val isInSearchWidgetExperiment by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_is_in_search_widget_experiment),
-        default = false
-    )
-
-    fun setSearchWidgetExperiment(value: Boolean) {
-        preferences.edit().putBoolean(
-            appContext.getPreferenceKey(R.string.pref_key_is_in_search_widget_experiment),
-            value
-        ).apply()
-    }
 
     var defaultSearchEngineName by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_search_engine),
@@ -362,7 +299,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
 
     var gridTabView by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_tab_view_grid),
-        default = false
+        default = true
     )
 
     var manuallyCloseTabs by booleanPreference(
@@ -419,16 +356,16 @@ class Settings(private val appContext: Context) : PreferencesHolder {
 
     fun getTabTimeoutString(): String = when {
         closeTabsAfterOneDay -> {
-            appContext.getString(R.string.close_tabs_after_one_day)
+            appContext.getString(R.string.close_tabs_after_one_day_summary)
         }
         closeTabsAfterOneWeek -> {
-            appContext.getString(R.string.close_tabs_after_one_week)
+            appContext.getString(R.string.close_tabs_after_one_week_summary)
         }
         closeTabsAfterOneMonth -> {
-            appContext.getString(R.string.close_tabs_after_one_month)
+            appContext.getString(R.string.close_tabs_after_one_month_summary)
         }
         else -> {
-            appContext.getString(R.string.close_tabs_manually)
+            appContext.getString(R.string.close_tabs_manually_summary)
         }
     }
 
@@ -749,6 +686,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = true
     )
 
+    var shouldShowGridViewBanner by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_should_show_grid_view_banner),
+        default = false
+    )
+
     @VisibleForTesting(otherwise = PRIVATE)
     internal val trackingProtectionOnboardingCount = counterPreference(
         appContext.getPreferenceKey(R.string.pref_key_tracking_protection_onboarding),
@@ -979,39 +921,6 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     val customAddonsCollection by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_addons_custom_collection),
         BuildConfig.AMO_COLLECTION
-    )
-
-    var enableCompactTabs by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_tabs_tray_compact_tab),
-        default = true
-    )
-
-    val useTopTabsTray by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_tabs_tray_top_tray),
-        default = false
-    )
-
-    var useFullScreenTabScreen by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_use_fullscreen_tabs_screen),
-        default = true
-    )
-
-    val shouldUseFennecStyleTabsScreen: Boolean
-        get() = enableCompactTabs && useFullScreenTabScreen
-
-    var reverseTabOrderInTabsTray by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_tabs_tray_reverse_tab_order),
-        default = false
-    )
-
-    var useNewTabFloatingActionButton by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_tabs_tray_use_fab),
-        default = false
-    )
-
-    var placeNewTabFloatingActionButtonAtTop by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_tabs_tray_fab_top_position),
-        default = false
     )
 
     private var savedLoginsSortingStrategyString by stringPreference(

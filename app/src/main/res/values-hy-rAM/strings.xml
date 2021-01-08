@@ -100,6 +100,13 @@
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">Բաց թողնել</string>
 
+    <!-- Text for the banner message to tell users about our grid view feature. -->
+    <string name="tab_tray_grid_view_banner_message">Փոխել բաց ներդիրների դասավորությունը: Գնացեք կարգավորումներ և ընտրեք ցանցը՝ ներդիրի տեսքի ներքո:</string>
+    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
+    <string name="tab_tray_grid_view_banner_positive_button_text">Անցնել Կարգավորումներին</string>
+    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
+    <string name="tab_tray_grid_view_banner_negative_button_text">Բաց թողնել</string>
+
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
     <string name="home_screen_shortcut_open_new_tab_2">Նոր ներդիր</string>
@@ -215,6 +222,8 @@
     <string name="search_suggestions_onboarding_learn_more_link">Իմանալ ավելին</string>
 
     <!-- Search Widget -->
+    <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
+    <string name="search_widget_content_description">Բացել Firefox-ի նոր ներդիր</string>
     <!-- Text preview for smaller sized widgets -->
     <string name="search_widget_text_short">Որոնել</string>
     <!-- Text preview for larger sized widgets -->
@@ -345,6 +354,20 @@
     <!-- Preference for notifications -->
     <string name="preferences_notifications">Ծանուցումներ</string>
 
+    <!-- Add-on Preferences -->
+    <!-- Preference to customize the configured AMO (addons.mozilla.org) collection -->
+    <string name="preferences_customize_amo_collection">Հավելումների հատուկ հավաքածու</string>
+    <!-- Button caption to confirm the add-on collection configuration -->
+    <string name="customize_addon_collection_ok">Լավ</string>
+    <!-- Button caption to abort the add-on collection configuration -->
+    <string name="customize_addon_collection_cancel">Չեղարկել</string>
+    <!-- Hint displayed on input field for custom collection name -->
+    <string name="customize_addon_collection_hint">Հավաքածուի անունը</string>
+    <!-- Hint displayed on input field for custom collection user ID-->
+    <string name="customize_addon_collection_user_hint">Հավաքածուի սեփականատեր (օգտվողի ID)</string>
+    <!-- Toast shown after confirming the custom add-on collection configuration -->
+    <string name="toast_customize_addon_collection_done">Հավելումների հավաքածուն փոփոխվել է: Հավելվածը փակելիս փոփոխությունները կգործադրվեն:</string>
+
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">Համաժամեցնել</string>
@@ -423,6 +446,10 @@
     <string name="preferences_marketing_data">Շուկայավարման տվյալներ</string>
     <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
     <string name="preferences_marketing_data_description">Համօգտագործում է տվյալներն այն գործառույթների վերաբերյալ, որոնք դուք օգտագործում եք %1$s-ում Leanplum-ի հետ, բջջային մարկետինգի մեր մատակարարի:</string>
+    <!-- Title for studies preferences -->
+    <string name="preference_experiments_2">Ուսումնասիրություններ</string>
+    <!-- Summary for studies preferences -->
+    <string name="preference_experiments_summary_2">Թույլ է տալիս Mozilla-ին տեղադրել և իրականացնել ուսումնասիրություններ</string>
     <!-- Title for experiments preferences -->
     <string name="preference_experiments">Փորձեր</string>
     <!-- Summary for experiments preferences -->
@@ -527,6 +554,14 @@
     <string name="recently_closed_empty_message">Վերջերս փակված ներդիրներ չկան</string>
 
     <!-- Tab Management -->
+    <!-- Title of preference for tabs management -->
+    <string name="preferences_tabs">Ներդիրներ</string>
+    <!-- Title of preference that allows a user to specify the tab view -->
+    <string name="preferences_tab_view">Ներդիրի տեսք</string>
+    <!-- Option for a list tab view -->
+    <string name="tab_view_list">Ցանկ</string>
+    <!-- Option for a grid tab view -->
+    <string name="tab_view_grid">Ցանց</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
     <string name="preferences_close_tabs">Փակել ներդիրները</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
@@ -603,6 +638,8 @@
     <string name="collection_rename">Վերանվանել հավաքածուն</string>
     <!-- Text for the button to open tabs of the selected collection -->
     <string name="collection_open_tabs">Բաց ներդիրներ</string>
+    <!-- Hint for adding name of a collection -->
+    <string name="collection_name_hint">Հավաքածուի անունը</string>
     <!-- Text for the menu button to remove a top site -->
     <string name="remove_top_site">Ջնջել</string>
 
@@ -641,6 +678,10 @@
     <!-- Text for the button to clear selected history items. The first parameter
         is a digit showing the number of items you have selected -->
     <string name="history_delete_some">Ջնջել %1$d միույթները</string>
+    <!-- Text for the header that groups the history for today -->
+    <string name="history_today">Այսօր</string>
+    <!-- Text for the header that groups the history for yesterday -->
+    <string name="history_yesterday">Երեկ</string>
     <!-- Text for the header that groups the history for last 24 hours -->
     <string name="history_24_hours">Վերջին 24 ժամ</string>
     <!-- Text for the header that groups the history the past 7 days -->
@@ -780,6 +821,8 @@
     <string name="preference_phone_feature_location">Տեղադրություն</string>
     <!-- Preference for altering the notification access for all websites -->
     <string name="preference_phone_feature_notification">Ծանուցում</string>
+    <!-- Preference for altering the persistent storage access for all websites -->
+    <string name="preference_phone_feature_persistent_storage">Մշտական պահեստ</string>
     <!-- Label that indicates that a permission must be asked always -->
     <string name="preference_option_phone_feature_ask_to_allow">Խնդրել թույլտվություն</string>
     <!-- Label that indicates that a permission must be blocked -->
@@ -1590,6 +1633,9 @@
     <!-- Deprecated: text for the firefox account onboarding card header
     The first parameter is the name of the app (e.g. Firefox Preview) -->
     <string name="onboarding_firefox_account_header">Ստացեք առավելագույնը %s-ից:</string>
+
+    <!-- Content description radio buttons with a link to more information -->
+    <string name="radio_preference_info_content_description">Սեղմեք` մանրամասների համար</string>
 
     <!-- Deprecated: No Open Tabs Message Header -->
     <string name="no_collections_header1">Հավաքեք ձեզ համար կարևոր բաները</string>

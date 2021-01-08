@@ -20,6 +20,10 @@
     <!-- No Private Tabs Message Description -->
     <string name="no_private_tabs_description">Čia bus rodomos jūsų privačiosios kortelės.</string>
 
+    <!-- Default title for pinned Baidu top site that links to Baidu home page  -->
+    <string name="default_top_site_baidu">Baidu</string>
+    <!-- Default title for pinned JD top site that links to JD home page  -->
+    <string name="default_top_site_jd">JD</string>
     <!-- Message announced to the user when tab tray is selected with 1 tab -->
     <string name="open_tab_tray_single">1 atverta kortelė. Bakstelėkite, norėdami pereiti tarp kortelių.</string>
     <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
@@ -49,7 +53,7 @@
     <string name="tab_tray_multiselect_selected_content_description">Pažymėta</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
-    <string name="about_content">„%1$s“ kūrėjai yra „@fork-maintainers“.</string>
+    <string name="about_content">„%1$s“ kūrėjai yra „Mozilla“.</string>
 
     <!-- Private Browsing -->
     <!-- Title for private session option -->
@@ -69,14 +73,6 @@
 
     <!-- Text for the negative button -->
     <string name="cfr_neg_button_text">Ačiū, ne</string>
-
-    <!-- Search widget "contextual feature recommendation" (CFR) -->
-    <!-- Text for the main message. 'Firefox' intentionally hardcoded here.-->
-    <string name="search_widget_cfr_message">Atverkite „Firefox“ sparčiau. Pridėkite valdiklį į pradžios ekraną.</string>
-    <!-- Text for the positive button -->
-    <string name="search_widget_cfr_pos_button_text">Pridėti valdiklį</string>
-    <!-- Text for the negative button -->
-    <string name="search_widget_cfr_neg_button_text">Ne dabar</string>
 
     <!-- Open in App "contextual feature recommendation" (CFR) -->
     <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
@@ -99,6 +95,13 @@
     <string name="tab_tray_close_tabs_banner_positive_button_text">Peržiūrėti nustatymus</string>
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">Paslėpti</string>
+
+    <!-- Text for the banner message to tell users about our grid view feature. -->
+    <string name="tab_tray_grid_view_banner_message">Pakeiskite atvertų kortelių išdėstymą. Eikite į nuostatas, ir pasirinkite tinklelį prie kortelių rodinio.</string>
+    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
+    <string name="tab_tray_grid_view_banner_positive_button_text">Eiti į nuostatas</string>
+    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
+    <string name="tab_tray_grid_view_banner_negative_button_text">Paslėpti</string>
 
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
@@ -439,6 +442,10 @@
     <string name="preferences_marketing_data">Rinkodaros duomenys</string>
     <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
     <string name="preferences_marketing_data_description">Duomenys apie jūsų naudojamas „%1$s“ funkcijas bus perduodami „Leanplum“, mūsų mobiliosios rinkodaros pardavėjui.</string>
+    <!-- Title for studies preferences -->
+    <string name="preference_experiments_2">Tyrimai</string>
+    <!-- Summary for studies preferences -->
+    <string name="preference_experiments_summary_2">Leidžia „Mozillai“ diegti ir vykdyti tyrimus</string>
     <!-- Title for experiments preferences -->
     <string name="preference_experiments">Eksperimentai</string>
     <!-- Summary for experiments preferences -->
@@ -564,6 +571,15 @@
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">Po vieno mėnesio</string>
 
+    <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
+    <string name="close_tabs_manually_summary">Užverti rankiniu būdu</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
+    <string name="close_tabs_after_one_day_summary">Užverti po dienos</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one week-->
+    <string name="close_tabs_after_one_week_summary">Užverti po savaitės</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one month-->
+    <string name="close_tabs_after_one_month_summary">Užverti po mėnesio</string>
+
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
     <string name="tab_header_label">Atvertos kortelės</string>
@@ -586,7 +602,7 @@
     <!-- Text shown in the menu to view recently closed tabs -->
     <string name="tab_tray_menu_recently_closed">Paskiausiai užvertos kortelės</string>
     <!-- Text shown in the menu to view tab settings -->
-    <string name="tab_tray_menu_tab_settings">Kortelės nustatymai</string>
+    <string name="tab_tray_menu_tab_settings">Kortelių nustatymai</string>
     <!-- Text shown in the menu for closing all tabs -->
     <string name="tab_tray_menu_item_close">Užverti visas korteles</string>
     <!-- Shortcut action to open new tab -->
@@ -595,8 +611,18 @@
     <string name="tab_tray_menu_home">Eiti į pradžią</string>
     <!-- Shortcut action to toggle private mode -->
     <string name="tab_tray_menu_toggle">Keisti kortelių veikseną</string>
+    <!-- Text shown in the multiselect menu for bookmarking selected tabs. -->
+    <string name="tab_tray_multiselect_menu_item_bookmark">Įtraukti į adresyną</string>
+    <!-- Text shown in the multiselect menu for closing selected tabs. -->
+    <string name="tab_tray_multiselect_menu_item_close">Užverti</string>
+    <!-- Content description for tabs tray multiselect share button -->
+    <string name="tab_tray_multiselect_share_content_description">Dalintis pasirinktomis kortelėmis</string>
+    <!-- Content description for tabs tray multiselect menu -->
+    <string name="tab_tray_multiselect_menu_content_description">Pasirinktų kortelių meniu</string>
     <!-- Content description (not visible, for screen readers etc.): Removes tab from collection button. Removes the selected tab from collection when pressed -->
     <string name="remove_tab_from_collection">Pašalinti kortelę iš rinkinio</string>
+    <!-- Text for button to enter multiselect mode in tabs tray -->
+    <string name="tabs_tray_select_tabs">Pasirinkti korteles</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab button. Closes the current session when pressed -->
     <string name="close_tab">Užverti kortelę</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab <title> button. First parameter is tab title  -->
@@ -632,8 +658,10 @@
 
     <!-- Hint for adding name of a collection -->
     <string name="collection_name_hint">Rinkinio pavadinimas</string>
-    <!-- Text for the menu button to remove a top site -->
-    <string name="remove_top_site">Pašalinti</string>
+    <!-- Text for the menu button to rename a top site -->
+	<string name="rename_top_site">Pervadinti</string>
+	<!-- Text for the menu button to remove a top site -->
+	<string name="remove_top_site">Pašalinti</string>
 
     <!-- Text for the menu button to delete a top site from history -->
     <string name="delete_from_history">Pašalinti iš žurnalo</string>
@@ -687,11 +715,24 @@
     <string name="history_empty_message">Žurnalų įrašų nėra</string>
 
     <!-- Downloads -->
+    <!-- Text for the button to clear all downloads -->
+    <string name="download_delete_all">Pašalinti atsiuntimus</string>
+    <!-- Text for the dialog to confirm clearing all downloads -->
+    <string name="download_delete_all_dialog">Ar tikrai norite išvalyti savo atsiuntimus?</string>
+    <!-- Text for the snackbar to confirm that multiple downloads items have been deleted -->
+    <string name="download_delete_multiple_items_snackbar">Atsiuntimai pašalinti</string>
     <!-- Text shown when no download exists -->
     <string name="download_empty_message">Atsiuntimų nėra</string>
     <!-- History multi select title in app bar
     The first parameter is the number of downloads selected -->
     <string name="download_multi_select_title">Pasirinkta: %1$d</string>
+
+
+    <!-- History overflow menu open in new tab button -->
+    <string name="download_menu_open">Atverti</string>
+    <!-- Text for the button to delete a single history item -->
+    <string name="download_delete_item">Pašalinti</string>
+
 
     <!-- Crashes -->
     <!-- Title text displayed on the tab crash page. This first parameter is the name of the application (For example: Fenix) -->
@@ -957,6 +998,12 @@
     <string name="snackbar_tab_closed">Kortelė užverta</string>
     <!-- Text shown in snackbar when user closes all tabs -->
     <string name="snackbar_tabs_closed">Kortelės užvertos</string>
+    <!-- Text shown in snackbar when user closes tabs -->
+    <string name="snackbar_message_tabs_closed">Kortelės užvertos!</string>
+    <!-- Text shown in snackbar when user bookmarks a list of tabs -->
+    <string name="snackbar_message_bookmarks_saved">Adresynas papildytas!</string>
+    <!-- Text shown in snackbar action for viewing bookmarks -->
+    <string name="snackbar_message_bookmarks_view">Peržiūrėti</string>
     <!-- Text shown in snackbar when user adds a site to top sites -->
     <string name="snackbar_added_to_top_sites">Įtraukta į mėgstamiausias svetaines!</string>
     <!-- Text shown in snackbar when user closes a private tab -->
@@ -1627,6 +1674,15 @@
 
     <!-- Label for the show most visited sites preference -->
     <string name="top_sites_toggle_top_frecent_sites">Rodyti lankomiausias svetaines</string>
+
+    <!-- Title text displayed in the rename top site dialog. -->
+	<string name="top_sites_rename_dialog_title">Pavadinimas</string>
+	<!-- Hint for renaming title of a top site -->
+	<string name="top_site_name_hint">Lankomiausios svetainės pavadinimas</string>
+	<!-- Button caption to confirm the renaming of the top site. -->
+	<string name="top_sites_rename_dialog_ok">Gerai</string>
+	<!-- Dialog button text for canceling the rename top site prompt. -->
+	<string name="top_sites_rename_dialog_cancel">Atsisakyti</string>
 
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">Pašalinti</string>

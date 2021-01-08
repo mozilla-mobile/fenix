@@ -9,8 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.accessibility.AccessibilityEvent
-import android.view.accessibility.AccessibilityNodeInfo
-import android.view.accessibility.AccessibilityNodeInfo.CollectionInfo
 import androidx.annotation.IdRes
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -27,48 +25,37 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.component_tabs_screen_top.view.exit_tabs_screen
-import kotlinx.android.synthetic.main.component_tabstray_bottom.view.collect_multi_select
-import kotlinx.android.synthetic.main.component_tabstray_bottom.view.exit_multi_select
-import kotlinx.android.synthetic.main.component_tabstray_bottom.view.handle
-import kotlinx.android.synthetic.main.component_tabstray_bottom.view.infoBanner
-import kotlinx.android.synthetic.main.component_tabstray_bottom.view.multiselect_title
-import kotlinx.android.synthetic.main.component_tabstray_bottom.view.tab_layout
-import kotlinx.android.synthetic.main.component_tabstray_bottom.view.tab_tray_empty_view
-import kotlinx.android.synthetic.main.component_tabstray_bottom.view.tab_tray_new_tab
-import kotlinx.android.synthetic.main.component_tabstray_bottom.view.tab_tray_overflow
-import kotlinx.android.synthetic.main.component_tabstray_bottom.view.tab_wrapper
-import kotlinx.android.synthetic.main.component_tabstray_bottom.view.tabsTray
-import kotlinx.android.synthetic.main.component_tabstray_bottom.view.topBar
-import kotlinx.android.synthetic.main.component_tabstray_fab_bottom.view.new_tab_button
-import kotlinx.android.synthetic.main.tabs_tray_tab_counter.counter_text
+import kotlinx.android.synthetic.main.component_tabstray.view.*
+import kotlinx.android.synthetic.main.component_tabstray_fab.view.*
+import kotlinx.android.synthetic.main.tabs_tray_tab_counter.*
+import kotlinx.android.synthetic.main.tabstray_multiselect_items.view.*
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import mozilla.components.browser.menu.BrowserMenu
-import mozilla.components.browser.menu.BrowserMenuBuilder
-import mozilla.components.browser.menu.item.SimpleBrowserMenuItem
 import mozilla.components.browser.state.selector.getNormalOrPrivateTabs
 import mozilla.components.browser.state.selector.normalTabs
 import mozilla.components.browser.state.selector.privateTabs
 import mozilla.components.browser.state.state.BrowserState
+import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.tabstray.TabViewHolder
 import mozilla.components.feature.syncedtabs.SyncedTabsFeature
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
+import mozilla.components.support.ktx.android.util.dpToPx
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.InfoBanner
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.toolbar.TabCounter.Companion.INFINITE_CHAR_PADDING_BOTTOM
 import org.mozilla.fenix.components.toolbar.TabCounter.Companion.MAX_VISIBLE_TABS
 import org.mozilla.fenix.components.toolbar.TabCounter.Companion.SO_MANY_TABS_OPEN
-import org.mozilla.fenix.components.topsheet.TopSheetBehavior
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.ext.updateAccessibilityCollectionInfo
 import org.mozilla.fenix.tabtray.SaveToCollectionsButtonAdapter.MultiselectModeChange
 import org.mozilla.fenix.tabtray.TabTrayDialogFragmentState.Mode
 import java.text.NumberFormat
 import kotlin.math.max
-import kotlin.math.min
+import kotlin.math.roundToInt
 import mozilla.components.browser.storage.sync.Tab as SyncTab
 
 /**
@@ -81,52 +68,29 @@ class TabTrayView(
     private val interactor: TabTrayInteractor,
     store: TabTrayDialogFragmentStore,
     isPrivate: Boolean,
-    startingInLandscape: Boolean,
+    private val isInLandscape: () -> Boolean,
     lifecycleOwner: LifecycleOwner,
     private val filterTabs: (Boolean) -> Unit
 ) : LayoutContainer, TabLayout.OnTabSelectedListener {
     val lifecycleScope = lifecycleOwner.lifecycleScope
+    val fabView = LayoutInflater.from(container.context)
+        .inflate(R.layout.component_tabstray_fab, container, true)
 
-    private val useFab = container.context.settings().useNewTabFloatingActionButton
-    val fabView: View = when (container.context.settings().placeNewTabFloatingActionButtonAtTop) {
-        true -> LayoutInflater.from(container.context).inflate(R.layout.component_tabstray_fab_top, container, true)
-        false -> LayoutInflater.from(container.context).inflate(R.layout.component_tabstray_fab_bottom, container, true)
-    }
-
-    private val enableCompactTabs = container.context.settings().enableCompactTabs
-    private val reverseTabOrderInTabsTray = container.context.settings().reverseTabOrderInTabsTray
-    private val isTabsTrayFullScreenMode = container.context.settings().useFullScreenTabScreen
     private val hasAccessibilityEnabled = container.context.settings().accessibilityServicesEnabled
-    private val useTopTabsTray = container.context.settings().useTopTabsTray
 
-    val view: View = if (isTabsTrayFullScreenMode) {
-        when (useTopTabsTray) {
-            true -> LayoutInflater.from(container.context)
-                .inflate(R.layout.component_tabs_screen_bottom, container, true)
-            false -> LayoutInflater.from(container.context)
-                .inflate(R.layout.component_tabs_screen_top, container, true)
-        }
-    } else {
-        when (useTopTabsTray) {
-            true -> LayoutInflater.from(container.context)
-                .inflate(R.layout.component_tabstray_top, container, true)
-            false -> LayoutInflater.from(container.context)
-                .inflate(R.layout.component_tabstray_bottom, container, true)
-        }
-    }
+    val view = LayoutInflater.from(container.context)
+        .inflate(R.layout.component_tabstray, container, true)
 
     private val isPrivateModeSelected: Boolean get() = view.tab_layout.selectedTabPosition == PRIVATE_TAB_ID
 
-    private val behavior = if (isTabsTrayFullScreenMode) null else {
-        when (useTopTabsTray) {
-            true -> TopSheetBehavior.from(view.tab_wrapper)
-            false -> BottomSheetBehavior.from(view.tab_wrapper)
-        }
-    }
+    private val behavior = BottomSheetBehavior.from(view.tab_wrapper)
 
     private val concatAdapter = ConcatAdapter(tabsAdapter)
     private val tabTrayItemMenu: TabTrayItemMenu
     private var menu: BrowserMenu? = null
+
+    private val multiselectSelectionMenu: MultiselectSelectionMenu
+    private var multiselectMenu: BrowserMenu? = null
 
     private var tabsTouchHelper: TabsTouchHelper
     private val collectionsButtonAdapter = SaveToCollectionsButtonAdapter(interactor, isPrivate)
@@ -155,55 +119,31 @@ class TabTrayView(
 
         toggleFabText(isPrivate)
 
-        if (!isTabsTrayFullScreenMode) {
-            if (useTopTabsTray) {
-                (behavior as TopSheetBehavior).setTopSheetCallback(object :
-                    TopSheetBehavior.TopSheetCallback {
-                    override fun onSlide(topSheet: View, slideOffset: Float, isOpening: Boolean?) {
-                        if (interactor.onModeRequested() is Mode.Normal && useFab) {
-                            if (slideOffset >= SLIDE_OFFSET) {
-                                fabView.new_tab_button.show()
-                            } else {
-                                fabView.new_tab_button.hide()
-                            }
-                        }
-                    }
-
-                    override fun onStateChanged(topSheet: View, newState: Int) {
-                        if (newState == TopSheetBehavior.STATE_HIDDEN) {
-                            components.analytics.metrics.track(Event.TabsTrayClosed)
-                            interactor.onTabTrayDismissed()
-                        }
-                    }
-                })
-            } else {
-                (behavior as BottomSheetBehavior).addBottomSheetCallback(object :
-                    BottomSheetBehavior.BottomSheetCallback() {
-                    override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                        if (interactor.onModeRequested() is Mode.Normal && useFab) {
-                            if (slideOffset >= SLIDE_OFFSET) {
-                                fabView.new_tab_button.show()
-                            } else {
-                                fabView.new_tab_button.hide()
-                            }
-                        }
-                    }
-
-                    override fun onStateChanged(bottomSheet: View, newState: Int) {
-                        if (newState == BottomSheetBehavior.STATE_HIDDEN) {
-                            components.analytics.metrics.track(Event.TabsTrayClosed)
-                            interactor.onTabTrayDismissed()
-                        }
-                    }
-                })
-            }
+        view.topBar.setOnClickListener {
+            // no-op, consume the touch event to prevent it advancing the tray to the next state.
         }
-
-        if (isTabsTrayFullScreenMode) {
-            view.exit_tabs_screen.setOnClickListener {
-                interactor.onTabTrayDismissed()
+        behavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                if (interactor.onModeRequested() is Mode.Normal && !hasAccessibilityEnabled) {
+                    if (slideOffset >= SLIDE_OFFSET) {
+                        fabView.new_tab_button.show()
+                    } else {
+                        fabView.new_tab_button.hide()
+                    }
+                }
             }
-        }
+
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                if (newState == BottomSheetBehavior.STATE_HIDDEN) {
+                    components.analytics.metrics.track(Event.TabsTrayClosed)
+                    interactor.onTabTrayDismissed()
+                }
+                // We only support expanded and collapsed states. Don't allow STATE_HALF_EXPANDED.
+                else if (newState == BottomSheetBehavior.STATE_HALF_EXPANDED) {
+                    behavior.state = BottomSheetBehavior.STATE_HIDDEN
+                }
+            }
+        })
 
         val selectedTabIndex = if (!isPrivate) {
             DEFAULT_TAB_ID
@@ -217,20 +157,11 @@ class TabTrayView(
 
         view.tab_layout.addOnTabSelectedListener(this)
 
-        val tabs = if (isPrivate) {
-            view.context.components.core.store.state.privateTabs
-        } else {
-            view.context.components.core.store.state.normalTabs
-        }
+        val tabs = getTabs(isPrivate)
 
-        val selectedBrowserTabIndex = tabs
-            .indexOfFirst { it.id == view.context.components.core.store.state.selectedTabId }
+        updateBottomSheetBehavior()
 
-        if (tabs.size > EXPAND_AT_SIZE || startingInLandscape) {
-            expand()
-        }
-
-        setTopOffset(startingInLandscape)
+        setTopOffset(isInLandscape())
 
         if (view.context.settings().syncedTabsInTabsTray) {
             syncedTabsFeature.set(
@@ -261,32 +192,22 @@ class TabTrayView(
 
             tabsAdapter.tabTrayInteractor = interactor
             tabsAdapter.onTabsUpdated = {
-                // Put the 'Add to collections' button after the tabs have loaded.
-                // And, put the Synced Tabs adapter at the end.
-                if (reverseTabOrderInTabsTray) {
-                    // Put these at the start when reverse tab order is enabled. Also, we disallow
-                    // reverse tab order for compact tabs in settings.
-                    concatAdapter.addAdapter(0, collectionsButtonAdapter)
-                    concatAdapter.addAdapter(0, syncedTabsController.adapter)
-                } else {
-                    concatAdapter.addAdapter(collectionsButtonAdapter)
-                    concatAdapter.addAdapter(syncedTabsController.adapter)
-                }
+                concatAdapter.addAdapter(collectionsButtonAdapter)
+                concatAdapter.addAdapter(syncedTabsController.adapter)
 
                 if (hasAccessibilityEnabled) {
                     tabsAdapter.notifyItemRangeChanged(0, tabs.size)
                 }
-
                 if (!hasLoaded) {
                     hasLoaded = true
-                    scrollToTab(view.context.components.core.store.state.selectedTabId)
-                    if (hasAccessibilityEnabled) {
+                    scrollToSelectedBrowserTab()
+                    if (view.context.settings().accessibilityServicesEnabled) {
                         lifecycleScope.launch {
                             delay(SELECTION_DELAY.toLong())
                             lifecycleScope.launch(Main) {
-                                layoutManager?.findViewByPosition(selectedBrowserTabIndex)
+                                layoutManager?.findViewByPosition(getSelectedBrowserTabViewIndex())
                                     ?.requestFocus()
-                                layoutManager?.findViewByPosition(selectedBrowserTabIndex)
+                                layoutManager?.findViewByPosition(getSelectedBrowserTabViewIndex())
                                     ?.sendAccessibilityEvent(
                                         AccessibilityEvent.TYPE_VIEW_FOCUSED
                                     )
@@ -300,15 +221,16 @@ class TabTrayView(
         tabTrayItemMenu =
             TabTrayItemMenu(
                 context = view.context,
-                shouldShowSaveToCollection = { checkOpenTabs.invoke() && view.tab_layout.selectedTabPosition == 0 },
+                shouldShowShareAllTabs = { checkOpenTabs.invoke() && view.tab_layout.selectedTabPosition == 0 },
+                shouldShowSelectTabs = { checkOpenTabs.invoke() && view.tab_layout.selectedTabPosition == 0 },
                 hasOpenTabs = checkOpenTabs
             ) {
                 when (it) {
-                    is TabTrayItemMenu.Item.ShareAllTabs -> interactor.onShareTabsClicked(
+                    is TabTrayItemMenu.Item.ShareAllTabs -> interactor.onShareTabsOfTypeClicked(
                         isPrivateModeSelected
                     )
                     is TabTrayItemMenu.Item.OpenTabSettings -> interactor.onTabSettingsClicked()
-                    is TabTrayItemMenu.Item.SaveToCollection -> interactor.onEnterMultiselect()
+                    is TabTrayItemMenu.Item.SelectTabs -> interactor.onEnterMultiselect()
                     is TabTrayItemMenu.Item.CloseAllTabs -> interactor.onCloseAllTabsClicked(
                         isPrivateModeSelected
                     )
@@ -316,42 +238,96 @@ class TabTrayView(
                 }
             }
 
+        multiselectSelectionMenu = MultiselectSelectionMenu(
+            context = view.context
+        ) {
+            when (it) {
+                is MultiselectSelectionMenu.Item.BookmarkTabs -> interactor.onBookmarkSelectedTabs(
+                    mode.selectedItems
+                )
+                is MultiselectSelectionMenu.Item.DeleteTabs -> interactor.onDeleteSelectedTabs(
+                    mode.selectedItems
+                )
+            }
+        }
+
         view.tab_tray_overflow.setOnClickListener {
             components.analytics.metrics.track(Event.TabsTrayMenuOpened)
             menu = tabTrayItemMenu.menuBuilder.build(container.context)
-            menu?.show(it)
-                ?.also { pu ->
-                    (pu.contentView as? CardView)?.setCardBackgroundColor(
-                        ContextCompat.getColor(
-                            view.context,
-                            R.color.foundation_normal_theme
-                        )
+            menu?.show(it)?.also { popupMenu ->
+                (popupMenu.contentView as? CardView)?.setCardBackgroundColor(
+                    ContextCompat.getColor(
+                        view.context,
+                        R.color.foundation_normal_theme
                     )
-                }
+                )
+            }
         }
 
         adjustNewTabButtonsForNormalMode()
 
+        @Suppress("ComplexCondition")
         if (
-                view.context.settings().shouldShowAutoCloseTabsBanner &&
-                view.context.settings().canShowCfr &&
-                tabs.size >= TAB_COUNT_SHOW_CFR
+            view.context.settings().shouldShowGridViewBanner &&
+            view.context.settings().canShowCfr &&
+            tabs.size >= TAB_COUNT_SHOW_CFR
         ) {
             InfoBanner(
-                    context = view.context,
-                    message = view.context.getString(R.string.tab_tray_close_tabs_banner_message),
-                    dismissText = view.context.getString(R.string.tab_tray_close_tabs_banner_negative_button_text),
-                    actionText = view.context.getString(R.string.tab_tray_close_tabs_banner_positive_button_text),
-                    container = view.infoBanner,
-                    dismissByHiding = true,
-                    dismissAction = { view.context.settings().shouldShowAutoCloseTabsBanner = false }
+                context = view.context,
+                message = view.context.getString(R.string.tab_tray_grid_view_banner_message),
+                dismissText = view.context.getString(R.string.tab_tray_grid_view_banner_negative_button_text),
+                actionText = view.context.getString(R.string.tab_tray_grid_view_banner_positive_button_text),
+                container = view.infoBanner,
+                dismissByHiding = true,
+                dismissAction = { view.context.settings().shouldShowGridViewBanner = false }
             ) {
-                interactor.onSetUpAutoCloseTabsClicked()
+                interactor.onGoToTabsSettings()
+                view.context.settings().shouldShowGridViewBanner = false
+            }.apply {
+                view.infoBanner.visibility = View.VISIBLE
+                showBanner()
+            }
+        } else if (
+            view.context.settings().shouldShowAutoCloseTabsBanner &&
+            view.context.settings().canShowCfr &&
+            tabs.size >= TAB_COUNT_SHOW_CFR
+        ) {
+            InfoBanner(
+                context = view.context,
+                message = view.context.getString(R.string.tab_tray_close_tabs_banner_message),
+                dismissText = view.context.getString(R.string.tab_tray_close_tabs_banner_negative_button_text),
+                actionText = view.context.getString(R.string.tab_tray_close_tabs_banner_positive_button_text),
+                container = view.infoBanner,
+                dismissByHiding = true,
+                dismissAction = { view.context.settings().shouldShowAutoCloseTabsBanner = false }
+            ) {
+                interactor.onGoToTabsSettings()
                 view.context.settings().shouldShowAutoCloseTabsBanner = false
             }.apply {
                 view.infoBanner.visibility = View.VISIBLE
                 showBanner()
             }
+        }
+    }
+
+    private fun getTabs(isPrivate: Boolean): List<TabSessionState> = if (isPrivate) {
+        view.context.components.core.store.state.privateTabs
+    } else {
+        view.context.components.core.store.state.normalTabs
+    }
+
+    private fun getTabsNumberInAnyMode(): Int {
+        return max(
+            view.context.components.core.store.state.normalTabs.size,
+            view.context.components.core.store.state.privateTabs.size
+        )
+    }
+
+    private fun getTabsNumberForExpandingTray(): Int {
+        return if (container.context.settings().gridTabView) {
+            EXPAND_AT_GRID_SIZE
+        } else {
+            EXPAND_AT_LIST_SIZE
         }
     }
 
@@ -361,7 +337,7 @@ class TabTrayView(
 
     private fun adjustNewTabButtonsForNormalMode() {
         view.tab_tray_new_tab.apply {
-            isVisible = !useFab
+            isVisible = hasAccessibilityEnabled
             setOnClickListener {
                 sendNewTabEvent(isPrivateModeSelected)
                 interactor.onNewTabTapped(isPrivateModeSelected)
@@ -369,7 +345,7 @@ class TabTrayView(
         }
 
         fabView.new_tab_button.apply {
-            isVisible = useFab
+            isVisible = !hasAccessibilityEnabled
             setOnClickListener {
                 sendNewTabEvent(isPrivateModeSelected)
                 interactor.onNewTabTapped(isPrivateModeSelected)
@@ -387,64 +363,16 @@ class TabTrayView(
         components.analytics.metrics.track(eventToSend)
     }
 
-    fun updateTabsTrayLayout() {
-        if (enableCompactTabs) {
-            setupCompactTabsTrayLayout()
+    /**
+     * Updates the bottom sheet height based on the number tabs or screen orientation.
+     * Show the bottom sheet fully expanded if it is in landscape mode or the number of
+     * tabs are greater or equal to the expand size limit.
+     */
+    fun updateBottomSheetBehavior() {
+        if (isInLandscape() || getTabsNumberInAnyMode() >= getTabsNumberForExpandingTray()) {
+            behavior.state = BottomSheetBehavior.STATE_EXPANDED
         } else {
-            setupRegularTabsTrayLayout()
-        }
-        // We will need to learn call setupGridTabView(), Mozilla's new
-        // official grid layout, by preference.
-    }
-
-    private fun setupCompactTabsTrayLayout() {
-        view.tabsTray.apply {
-            val gridLayoutManager = GridLayoutManager(container.context, getNumberOfGridColumns(container.context))
-            if (useTopTabsTray) {
-                gridLayoutManager.reverseLayout = true
-            }
-            gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-                override fun getSpanSize(position: Int): Int {
-                    val numTabs = tabsAdapter.itemCount
-                    return if (position < numTabs) {
-                        1
-                    } else {
-                        getNumberOfGridColumns(container.context)
-                    }
-                }
-            }
-
-            layoutManager = gridLayoutManager
-        }
-    }
-
-    private fun setupRegularTabsTrayLayout() {
-        view.tabsTray.apply {
-            val linearLayoutManager = LinearLayoutManager(container.context)
-            if (useTopTabsTray) {
-                if (!reverseTabOrderInTabsTray) {
-                    linearLayoutManager.reverseLayout = true
-                } else {
-                    linearLayoutManager.stackFromEnd = true
-                }
-            } else {
-                if (reverseTabOrderInTabsTray) {
-                    linearLayoutManager.reverseLayout = true
-                    linearLayoutManager.stackFromEnd = true
-                }
-            }
-
-            layoutManager = linearLayoutManager
-        }
-    }
-
-    fun expand() {
-        if (!isTabsTrayFullScreenMode) {
-            if (useTopTabsTray) {
-                (behavior as TopSheetBehavior).state = TopSheetBehavior.STATE_EXPANDED
-            } else {
-                (behavior as BottomSheetBehavior).state = BottomSheetBehavior.STATE_EXPANDED
-            }
+            behavior.state = BottomSheetBehavior.STATE_COLLAPSED
         }
     }
 
@@ -465,7 +393,7 @@ class TabTrayView(
         toggleSaveToCollectionButton(isPrivateModeSelected)
 
         updateUINormalMode(view.context.components.core.store.state)
-        scrollToTab(view.context.components.core.store.state.selectedTabId)
+        scrollToSelectedBrowserTab()
 
         if (isPrivateModeSelected) {
             components.analytics.metrics.track(Event.TabsTrayPrivateModeTapped)
@@ -479,6 +407,14 @@ class TabTrayView(
 
     var mode: Mode = Mode.Normal
         private set
+
+    fun updateTabsTrayLayout() {
+        if (container.context.settings().gridTabView) {
+            setupGridTabView()
+        } else {
+            setupListTabView()
+        }
+    }
 
     private fun setupGridTabView() {
         view.tabsTray.apply {
@@ -497,6 +433,15 @@ class TabTrayView(
             }
 
             layoutManager = gridLayoutManager
+
+            // Ensure items have the same all around padding - 16 dp. Avoid the double spacing issue.
+            // A 8dp padding is already set in xml, pad the parent with the remaining needed 8dp.
+            updateLayoutParams<ConstraintLayout.LayoutParams> {
+                val padding = GRID_ITEM_PARENT_PADDING.dpToPx(resources.displayMetrics)
+                // Account for the already set bottom padding needed to accommodate the fab.
+                val bottomPadding = paddingBottom + padding
+                setPadding(padding, padding, padding, bottomPadding)
+            }
         }
     }
 
@@ -510,12 +455,18 @@ class TabTrayView(
         return if (columnCount >= 2) columnCount else 2
     }
 
+    private fun setupListTabView() {
+        view.tabsTray.apply {
+            layoutManager = LinearLayoutManager(container.context)
+        }
+    }
+
     fun updateState(state: TabTrayDialogFragmentState) {
         val oldMode = mode
 
         if (oldMode::class != state.mode::class) {
             updateTabsForMultiselectModeChanged(state.mode is Mode.MultiSelect)
-            if (hasAccessibilityEnabled) {
+            if (view.context.settings().accessibilityServicesEnabled) {
                 view.announceForAccessibility(
                     if (state.mode == Mode.Normal) view.context.getString(
                         R.string.tab_tray_exit_multiselect_content_description
@@ -544,6 +495,8 @@ class TabTrayView(
                 fabView.new_tab_button.isVisible = false
                 view.tab_tray_new_tab.isVisible = false
                 view.collect_multi_select.isVisible = state.mode.selectedItems.isNotEmpty()
+                view.share_multi_select.isVisible = state.mode.selectedItems.isNotEmpty()
+                view.menu_multi_select.isVisible = state.mode.selectedItems.isNotEmpty()
 
                 view.multiselect_title.text = view.context.getString(
                     R.string.tab_tray_multi_select_title,
@@ -551,6 +504,20 @@ class TabTrayView(
                 )
                 view.collect_multi_select.setOnClickListener {
                     interactor.onSaveToCollectionClicked(state.mode.selectedItems)
+                }
+                view.share_multi_select.setOnClickListener {
+                    interactor.onShareSelectedTabsClicked(state.mode.selectedItems)
+                }
+                view.menu_multi_select.setOnClickListener {
+                    multiselectMenu = multiselectSelectionMenu.menuBuilder.build(container.context)
+                    multiselectMenu?.show(it)?.also { popupMenu ->
+                        (popupMenu.contentView as? CardView)?.setCardBackgroundColor(
+                            ContextCompat.getColor(
+                                view.context,
+                                R.color.foundation_normal_theme
+                            )
+                        )
+                    }
                 }
                 view.exit_multi_select.setOnClickListener {
                     interactor.onBackPressed()
@@ -562,7 +529,7 @@ class TabTrayView(
             val unselectedItems = oldMode.selectedItems - state.mode.selectedItems
 
             state.mode.selectedItems.union(unselectedItems).forEach { item ->
-                if (hasAccessibilityEnabled) {
+                if (view.context.settings().accessibilityServicesEnabled) {
                     view.announceForAccessibility(
                         if (unselectedItems.contains(item)) view.context.getString(
                             R.string.tab_tray_item_unselected_multiselect_content_description,
@@ -611,7 +578,7 @@ class TabTrayView(
         }
 
         counter_text.text = updateTabCounter(browserState.normalTabs.size)
-        updateTabCounterContentDescription(browserState.normalTabs.size)
+        updateTabTrayViewAccessibility(browserState.normalTabs.size)
 
         adjustNewTabButtonsForNormalMode()
     }
@@ -619,6 +586,8 @@ class TabTrayView(
     private fun toggleUIMultiselect(multiselect: Boolean) {
         view.multiselect_title.isVisible = multiselect
         view.collect_multi_select.isVisible = multiselect
+        view.share_multi_select.isVisible = multiselect
+        view.menu_multi_select.isVisible = multiselect
         view.exit_multi_select.isVisible = multiselect
 
         view.topBar.setBackgroundColor(
@@ -636,23 +605,13 @@ class TabTrayView(
                     R.dimen.bottom_sheet_handle_height
                 }
             )
-            if (useTopTabsTray) {
-                bottomMargin = view.resources.getDimensionPixelSize(
-                    if (multiselect) {
-                        R.dimen.tab_tray_multiselect_handle_bottom_margin
-                    } else {
-                        R.dimen.top_sheet_handle_bottom_margin
-                    }
-                )
-            } else {
-                topMargin = view.resources.getDimensionPixelSize(
-                    if (multiselect) {
-                        R.dimen.tab_tray_multiselect_handle_top_margin
-                    } else {
-                        R.dimen.bottom_sheet_handle_top_margin
-                    }
-                )
-            }
+            topMargin = view.resources.getDimensionPixelSize(
+                if (multiselect) {
+                    R.dimen.tab_tray_multiselect_handle_top_margin
+                } else {
+                    R.dimen.bottom_sheet_handle_top_margin
+                }
+            )
         }
 
         view.tab_wrapper.setChildWPercent(
@@ -667,12 +626,10 @@ class TabTrayView(
             )
         )
 
-        if (isTabsTrayFullScreenMode) {
-            view.exit_tabs_screen.isVisible = !multiselect
-        }
         view.tab_layout.isVisible = !multiselect
         view.tab_tray_empty_view.isVisible = !multiselect
         view.tab_tray_overflow.isVisible = !multiselect
+        view.tab_layout.isVisible = !multiselect
     }
 
     private fun updateTabsForMultiselectModeChanged(inMultiselectMode: Boolean) {
@@ -704,28 +661,18 @@ class TabTrayView(
         }
     }
 
-    private fun updateTabCounterContentDescription(count: Int) {
+    private fun updateTabTrayViewAccessibility(count: Int) {
         view.tab_layout.getTabAt(0)?.contentDescription = if (count == 1) {
             view.context?.getString(R.string.open_tab_tray_single)
         } else {
             String.format(view.context.getString(R.string.open_tab_tray_plural), count.toString())
         }
 
-        view.tabsTray.accessibilityDelegate = object : View.AccessibilityDelegate() {
-            override fun onInitializeAccessibilityNodeInfo(
-                host: View?,
-                info: AccessibilityNodeInfo?
-            ) {
-                super.onInitializeAccessibilityNodeInfo(host, info)
-                info?.let {
-                    info.collectionInfo = CollectionInfo.obtain(
-                        tabsAdapter.tabCount,
-                        1,
-                        false
-                    )
-                }
-            }
-        }
+        val isListTabView = view.context.settings().listTabView
+        val columnCount = if (isListTabView) 1 else getNumberOfGridColumns(view.context)
+        val rowCount = count.toDouble().div(columnCount).roundToInt()
+
+        view.tabsTray.updateAccessibilityCollectionInfo(rowCount, columnCount)
     }
 
     private fun updateTabCounter(count: Int): String {
@@ -737,17 +684,13 @@ class TabTrayView(
     }
 
     fun setTopOffset(landscape: Boolean) {
-        if (!isTabsTrayFullScreenMode) {
-            val topOffset = if (landscape) {
-                0
-            } else {
-                view.context.resources.getDimensionPixelSize(R.dimen.tab_tray_top_offset)
-            }
-
-            if (!useTopTabsTray) {
-                (behavior as BottomSheetBehavior).setExpandedOffset(topOffset)
-            }
+        val topOffset = if (landscape) {
+            0
+        } else {
+            view.resources.getDimensionPixelSize(R.dimen.tab_tray_top_offset)
         }
+
+        behavior.setExpandedOffset(topOffset)
     }
 
     fun dismissMenu() {
@@ -770,34 +713,29 @@ class TabTrayView(
         return interactor.onBackPressed()
     }
 
-    fun scrollToTab(sessionId: String?) {
+    fun scrollToSelectedBrowserTab(selectedTabId: String? = null) {
         view.tabsTray.apply {
-            val tabs = if (isPrivateModeSelected) {
-                view.context.components.core.store.state.privateTabs
-            } else {
-                view.context.components.core.store.state.normalTabs
-            }
-
-            val selectedBrowserTabIndex = tabs
-                .indexOfFirst { it.id == sessionId }
-
-            val recyclerViewIndex = if (reverseTabOrderInTabsTray) {
-                // For reverse tab order and non-compact tabs, we add the items in collections button
-                // adapter and synced tabs adapter, and offset by 1 to show the tab above the
-                // current tab, unless current tab is first in reverse order.
-                min(selectedBrowserTabIndex + 1, tabsAdapter.itemCount - 1) +
-                        collectionsButtonAdapter.itemCount + syncedTabsController.adapter.itemCount
-            } else {
-                // We offset index by -1 to show the tab above the current tab, unless current tab
-                // is the first.
-                max(0, selectedBrowserTabIndex - 1)
-            }
+            val recyclerViewIndex = getSelectedBrowserTabViewIndex(selectedTabId)
 
             layoutManager?.scrollToPosition(recyclerViewIndex)
             smoothScrollBy(
                 0,
-                - resources.getDimensionPixelSize(R.dimen.tab_tray_tab_item_height) / 2
+                -resources.getDimensionPixelSize(R.dimen.tab_tray_tab_item_height) / 2
             )
+        }
+    }
+
+    private fun getSelectedBrowserTabViewIndex(sessionId: String? = null): Int {
+        val tabs = if (isPrivateModeSelected) {
+            view.context.components.core.store.state.privateTabs
+        } else {
+            view.context.components.core.store.state.normalTabs
+        }
+
+        return if (sessionId != null) {
+            tabs.indexOfFirst { it.id == sessionId }
+        } else {
+            tabs.indexOfFirst { it.id == view.context.components.core.store.state.selectedTabId }
         }
     }
 
@@ -805,70 +743,18 @@ class TabTrayView(
         private const val TAB_COUNT_SHOW_CFR = 6
         private const val DEFAULT_TAB_ID = 0
         private const val PRIVATE_TAB_ID = 1
-        private const val EXPAND_AT_SIZE = 3
+
+        // Minimum number of list items for which to show the tabs tray as expanded.
+        private const val EXPAND_AT_LIST_SIZE = 4
+
+        // Minimum number of grid items for which to show the tabs tray as expanded.
+        private const val EXPAND_AT_GRID_SIZE = 3
         private const val SLIDE_OFFSET = 0
         private const val SELECTION_DELAY = 500
         private const val NORMAL_HANDLE_PERCENT_WIDTH = 0.1F
-        private const val COLUMN_WIDTH_DP = 190
-    }
-}
+        private const val COLUMN_WIDTH_DP = 180
 
-class TabTrayItemMenu(
-    private val context: Context,
-    private val shouldShowSaveToCollection: () -> Boolean,
-    private val hasOpenTabs: () -> Boolean,
-    private val onItemTapped: (Item) -> Unit = {}
-) {
-
-    sealed class Item {
-        object ShareAllTabs : Item()
-        object OpenTabSettings : Item()
-        object SaveToCollection : Item()
-        object CloseAllTabs : Item()
-        object OpenRecentlyClosed : Item()
-    }
-
-    val menuBuilder by lazy { BrowserMenuBuilder(menuItems) }
-
-    private val menuItems by lazy {
-        listOf(
-            SimpleBrowserMenuItem(
-                context.getString(R.string.tab_tray_menu_item_save),
-                textColorResource = R.color.primary_text_normal_theme
-            ) {
-                context.components.analytics.metrics.track(Event.TabsTraySaveToCollectionPressed)
-                onItemTapped.invoke(Item.SaveToCollection)
-            }.apply { visible = shouldShowSaveToCollection },
-
-            SimpleBrowserMenuItem(
-                context.getString(R.string.tab_tray_menu_item_share),
-                textColorResource = R.color.primary_text_normal_theme
-            ) {
-                context.components.analytics.metrics.track(Event.TabsTrayShareAllTabsPressed)
-                onItemTapped.invoke(Item.ShareAllTabs)
-            }.apply { visible = hasOpenTabs },
-
-            SimpleBrowserMenuItem(
-                context.getString(R.string.tab_tray_menu_tab_settings),
-                textColorResource = R.color.primary_text_normal_theme
-            ) {
-                onItemTapped.invoke(Item.OpenTabSettings)
-            },
-
-            SimpleBrowserMenuItem(
-                context.getString(R.string.tab_tray_menu_recently_closed),
-                textColorResource = R.color.primary_text_normal_theme
-            ) {
-                onItemTapped.invoke(Item.OpenRecentlyClosed)
-            },
-
-            SimpleBrowserMenuItem(
-                context.getString(R.string.tab_tray_menu_item_close),
-                textColorResource = R.color.primary_text_normal_theme
-            ) {
-                context.components.analytics.metrics.track(Event.TabsTrayCloseAllTabsPressed)
-                onItemTapped.invoke(Item.CloseAllTabs)
-            }.apply { visible = hasOpenTabs }
-        )
+        // The remaining padding offset needed to provide a 16dp column spacing between the grid items.
+        const val GRID_ITEM_PARENT_PADDING = 8
     }
 }

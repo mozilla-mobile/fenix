@@ -7,7 +7,6 @@
     <androidx.preference.PreferenceCategory
         android:layout="@layout/preference_cat_style"
         android:title="@string/preferences_theme"
-        app:allowDividerBelow="true"
         app:iconSpaceReserved="false">
         <org.mozilla.fenix.settings.RadioButtonPreference
             android:defaultValue="@bool/underAPI28"
@@ -35,7 +34,6 @@
     <androidx.preference.PreferenceCategory
         android:layout="@layout/preference_cat_style"
         android:title="@string/preferences_toolbar"
-        app:allowDividerAbove="true"
         app:iconSpaceReserved="false">
         <org.mozilla.fenix.settings.RadioButtonPreference
             android:key="@string/pref_key_toolbar_top"
@@ -51,51 +49,8 @@
     </androidx.preference.PreferenceCategory>
 
     <androidx.preference.PreferenceCategory
-        android:key="@string/pref_tabs_tray_settings_category"
-        android:layout="@layout/preference_cat_style"
-        android:title="@string/preferences_tabs_tray"
-        app:allowDividerAbove="true"
-        app:iconSpaceReserved="false">
-        <SwitchPreference
-            android:defaultValue="true"
-            android:key="@string/pref_key_tabs_tray_compact_tab"
-            android:title="@string/enable_compact_tabs" />
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="@string/pref_key_tabs_tray_top_tray"
-            android:title="@string/enable_top_tabs_tray" />
-        <SwitchPreference
-            android:defaultValue="true"
-            android:key="@string/pref_key_use_fullscreen_tabs_screen"
-            android:title="@string/use_fullscreen_tabs_screen" />
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="@string/pref_key_tabs_tray_reverse_tab_order"
-            android:title="@string/reverse_tab_order_tabs_tray"
-            android:summary="@string/reverse_tab_order_description" />
-    </androidx.preference.PreferenceCategory>
-
-    <androidx.preference.PreferenceCategory
-        android:key="@string/pref_tabs_tray_fab_settings_category"
-        android:layout="@layout/preference_cat_style"
-        android:title="@string/preferences_tabs_tray_fab"
-        app:allowDividerAbove="false"
-        app:iconSpaceReserved="false">
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="@string/pref_key_tabs_tray_use_fab"
-            android:title="@string/enable_fab_tabs_tray" />
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="@string/pref_key_tabs_tray_fab_top_position"
-            android:title="@string/fab_tabs_tray_top"
-            android:summary="@string/fab_tabs_tray_top_description" />
-    </androidx.preference.PreferenceCategory>
-
-    <androidx.preference.PreferenceCategory
         android:layout="@layout/preference_cat_style"
         android:title="@string/preferences_home"
-        app:allowDividerAbove="true"
         app:iconSpaceReserved="false">
         <androidx.preference.SwitchPreference
             android:key="@string/pref_key_enable_top_frecent_sites"
@@ -105,7 +60,6 @@
     <androidx.preference.PreferenceCategory
         android:layout="@layout/preference_cat_style"
         android:title="@string/preferences_gestures"
-        app:allowDividerAbove="true"
         app:iconSpaceReserved="false">
         <androidx.preference.SwitchPreference
             android:key="@string/pref_key_website_pull_to_refresh"

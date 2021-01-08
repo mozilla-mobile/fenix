@@ -74,14 +74,6 @@
     <!-- Text for the negative button -->
     <string name="cfr_neg_button_text">Innò, vi ringraziu</string>
 
-    <!-- Search widget "contextual feature recommendation" (CFR) -->
-    <!-- Text for the main message. 'Firefox' intentionally hardcoded here.-->
-    <string name="search_widget_cfr_message">Accidite più prestu à Firefox. Aghjunghjite un widget à u vostru screnu d’accolta.</string>
-    <!-- Text for the positive button -->
-    <string name="search_widget_cfr_pos_button_text">Aghjunghje u widget</string>
-    <!-- Text for the negative button -->
-    <string name="search_widget_cfr_neg_button_text">Micca subitu</string>
-
     <!-- Open in App "contextual feature recommendation" (CFR) -->
     <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
     <string name="open_in_app_cfr_info_message">Pudete cunfigurà Firefox per apre autumaticamente e leie in d’altre appiecazioni.</string>
@@ -91,7 +83,7 @@
     <string name="open_in_app_cfr_negative_button_text">Ricusà</string>
 
     <!-- Text for the info dialog when camera permissions have been denied but user tries to access a camera feature. -->
-    <string name="camera_permissions_needed_message">Accessu richiestu à l’appareghju-fotò. Accidite à e preferenze d’Android, picchichjate Permessi, è dopu Permette.</string>
+    <string name="camera_permissions_needed_message">Accessu richiestu à l’apparechju-fotò. Accidite à e preferenze d’Android, picchichjate Permessi, è dopu Permette.</string>
     <!-- Text for the positive action button to go to Android Settings to grant permissions. -->
     <string name="camera_permissions_needed_positive_button_text">Apre e preferenze</string>
     <!-- Text for the negative action button to dismiss the dialog. -->
@@ -103,6 +95,14 @@
     <string name="tab_tray_close_tabs_banner_positive_button_text">Fighjà l’ozzioni</string>
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">Ricusà</string>
+
+    <!-- Text for the banner message to tell users about our grid view feature. -->
+    <string name="tab_tray_grid_view_banner_message">Mudificà l’accunciamentu di l’unghjette aperte. Andate in e preferenze è selezziunate « Quadrittere » sottu « Vista di l’unghjette ».</string>
+
+    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
+    <string name="tab_tray_grid_view_banner_positive_button_text">Andà à e preferenze</string>
+    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
+    <string name="tab_tray_grid_view_banner_negative_button_text">Ignurà</string>
 
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
@@ -367,6 +367,12 @@
     <!-- Toast shown after confirming the custom add-on collection configuration -->
     <string name="toast_customize_addon_collection_done">Cullezzione di moduli addiziunale mudificata. Chjusura di l’appiecazione per piglialla in contu…</string>
 
+    <!-- Add-on Installation from AMO-->
+    <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
+    <string name="addon_not_supported_error">U modulu addiziunale ùn hè micca accettatu</string>
+    <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is already installed -->
+    <string name="addon_already_installed">U modulu addiziunale hè dighjà installatu</string>
+
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">Sincrunizà avà</string>
@@ -445,6 +451,10 @@
     <string name="preferences_marketing_data">Dati di cummercializazione</string>
     <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
     <string name="preferences_marketing_data_description">Scumparte i dati nant’à e funzioni di %1$s chì voi impiegate cù Leanplum, u nostru furnidore di cummercializazione mubile.</string>
+    <!-- Title for studies preferences -->
+    <string name="preference_experiments_2">Studii</string>
+    <!-- Summary for studies preferences -->
+    <string name="preference_experiments_summary_2">Permette à Mozilla d’installà è di lancià studii</string>
     <!-- Title for experiments preferences -->
     <string name="preference_experiments">Sperimentazioni</string>
     <!-- Summary for experiments preferences -->
@@ -472,7 +482,7 @@
     <!-- Instructions on how to access pairing -->
     <string name="pair_instructions_2"><![CDATA[Analizate u codice QR affissatu nant’à <b>firefox.com/pair</b>]]></string>
     <!-- Button to open camera for pairing -->
-    <string name="pair_open_camera">Apre l’appareghju-fotò</string>
+    <string name="pair_open_camera">Apre l’apparechju-fotò</string>
     <!-- Button to cancel pairing -->
     <string name="pair_cancel">Abbandunà</string>
 
@@ -570,6 +580,15 @@
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">Dopu un mese</string>
 
+    <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
+    <string name="close_tabs_manually_summary">Chjusura manuale</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
+    <string name="close_tabs_after_one_day_summary">Chjusura dopu un ghjornu</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one week-->
+    <string name="close_tabs_after_one_week_summary">Chjusura dopu una settimana</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one month-->
+    <string name="close_tabs_after_one_month_summary">Chjusura dopu un mese</string>
+
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
     <string name="tab_header_label">Unghjette aperte</string>
@@ -603,6 +622,8 @@
     <string name="tab_tray_menu_toggle">Cambià di modu d’unghjette</string>
     <!-- Content description (not visible, for screen readers etc.): Removes tab from collection button. Removes the selected tab from collection when pressed -->
     <string name="remove_tab_from_collection">Caccià l’unghjetta da a cullezzione</string>
+    <!-- Text for button to enter multiselect mode in tabs tray -->
+    <string name="tabs_tray_select_tabs">Selezziunà unghjette</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab button. Closes the current session when pressed -->
     <string name="close_tab">Chjode l’unghjetta</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab <title> button. First parameter is tab title  -->
@@ -632,14 +653,16 @@
     <!-- Text for the menu button to delete a collection -->
     <string name="collection_delete">Squassà a cullezzione</string>
     <!-- Text for the menu button to rename a collection -->
-    <string name="collection_rename">Rinumà a cullezzione</string>
+    <string name="collection_rename">Rinuminà a cullezzione</string>
     <!-- Text for the button to open tabs of the selected collection -->
     <string name="collection_open_tabs">Apre l’unghjette</string>
 
     <!-- Hint for adding name of a collection -->
     <string name="collection_name_hint">Nome di a cullezzione</string>
-    <!-- Text for the menu button to remove a top site -->
-    <string name="remove_top_site">Caccià</string>
+    <!-- Text for the menu button to rename a top site -->
+	<string name="rename_top_site">Rinuminà</string>
+	<!-- Text for the menu button to remove a top site -->
+	<string name="remove_top_site">Caccià</string>
 
     <!-- Text for the menu button to delete a top site from history -->
     <string name="delete_from_history">Squassà da a crunulogia</string>
@@ -692,11 +715,24 @@
     <string name="history_empty_message">Alcuna crunulogia</string>
 
     <!-- Downloads -->
+    <!-- Text for the button to clear all downloads -->
+    <string name="download_delete_all">Squassà a lista di i scaricamenti</string>
+    <!-- Text for the dialog to confirm clearing all downloads -->
+    <string name="download_delete_all_dialog">Site sicuru di vulè squassà a lista di i vostri scaricamenti ?</string>
+    <!-- Text for the snackbar to confirm that multiple downloads items have been deleted -->
+    <string name="download_delete_multiple_items_snackbar">Lista di i scaricamenti squassata</string>
     <!-- Text shown when no download exists -->
     <string name="download_empty_message">Alcunu scaricamentu quì</string>
     <!-- History multi select title in app bar
     The first parameter is the number of downloads selected -->
     <string name="download_multi_select_title">%1$d selezziunatu(i)</string>
+
+
+    <!-- History overflow menu open in new tab button -->
+    <string name="download_menu_open">Apre</string>
+    <!-- Text for the button to delete a single history item -->
+    <string name="download_delete_item">Squassà</string>
+
 
     <!-- Crashes -->
     <!-- Title text displayed on the tab crash page. This first parameter is the name of the application (For example: Fenix) -->
@@ -813,7 +849,7 @@
     <!-- Preference for altering video and audio autoplay for all websites -->
     <string name="preference_browser_feature_autoplay">Leghje autumaticamente elementi multimedia</string>
     <!-- Preference for altering the camera access for all websites -->
-    <string name="preference_phone_feature_camera">Appareghju-fotò</string>
+    <string name="preference_phone_feature_camera">Apparechju-fotò</string>
     <!-- Preference for altering the microphone access for all websites -->
     <string name="preference_phone_feature_microphone">Microfonu</string>
     <!-- Preference for altering the location access for all websites -->
@@ -821,6 +857,8 @@
     <!-- Preference for altering the notification access for all websites -->
     <string name="preference_phone_feature_notification">
 </string>
+    <!-- Preference for altering the persistent storage access for all websites -->
+    <string name="preference_phone_feature_persistent_storage">Allucamentu permanente</string>
     <!-- Label that indicates that a permission must be asked always -->
     <string name="preference_option_phone_feature_ask_to_allow">Dumandà per permette</string>
     <!-- Label that indicates that a permission must be blocked -->
@@ -951,7 +989,7 @@
     <!-- Text shown in snackbar when user deletes a collection -->
     <string name="snackbar_collection_deleted">Cullezzione squassata</string>
     <!-- Text shown in snackbar when user renames a collection -->
-    <string name="snackbar_collection_renamed">Cullezzione rinumata</string>
+    <string name="snackbar_collection_renamed">Cullezzione rinuminata</string>
     <!-- Text shown in snackbar when user deletes a tab -->
     <string name="snackbar_tab_deleted">Unghjetta squassata</string>
     <!-- Text shown in snackbar when user deletes all tabs -->
@@ -1202,7 +1240,7 @@
     <!-- Text shown for sign in pairing when ready -->
     <string name="sign_in_ready_for_scan">Prontu à numerizà</string>
     <!-- Text shown for settings option for sign with pairing -->
-    <string name="sign_in_with_camera">Cunnettatevi cù u vostru appareghju-fotò</string>
+    <string name="sign_in_with_camera">Cunnettatevi cù u vostru apparechju-fotò</string>
     <!-- Text shown for settings option for sign with email -->
     <string name="sign_in_with_email">Impiegà piuttostu un messaghju elettronicu</string>
     <!-- Text shown for settings option for create new account text.'Firefox' intentionally hardcoded here.-->
@@ -1629,12 +1667,24 @@
     <!-- Label for the show most visited sites preference -->
     <string name="top_sites_toggle_top_frecent_sites">Affissà i siti visitati aspessu</string>
 
+    <!-- Title text displayed in the rename top site dialog. -->
+	<string name="top_sites_rename_dialog_title">Nome</string>
+	<!-- Hint for renaming title of a top site -->
+	<string name="top_site_name_hint">Nome di u situ principale</string>
+	<!-- Button caption to confirm the renaming of the top site. -->
+	<string name="top_sites_rename_dialog_ok">Vai</string>
+	<!-- Dialog button text for canceling the rename top site prompt. -->
+	<string name="top_sites_rename_dialog_cancel">Abbandunà</string>
+
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">Caccià</string>
 
     <!-- Deprecated: text for the firefox account onboarding card header
     The first parameter is the name of the app (e.g. Firefox Preview) -->
     <string name="onboarding_firefox_account_header">Ottene u più bellu da %s.</string>
+
+    <!-- Content description radio buttons with a link to more information -->
+    <string name="radio_preference_info_content_description">Cliccu per sapene di più</string>
 
     <!-- Deprecated: No Open Tabs Message Header -->
     <string name="no_collections_header1">Racuglite ciò chì conta per voi</string>

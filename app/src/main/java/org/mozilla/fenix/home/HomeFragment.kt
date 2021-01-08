@@ -28,13 +28,11 @@ import androidx.constraintlayout.widget.ConstraintSet.PARENT_ID
 import androidx.constraintlayout.widget.ConstraintSet.TOP
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
-import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -75,7 +73,6 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BrowserAnimator.Companion.getToolbarNavOptions
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
-import org.mozilla.fenix.cfr.SearchWidgetCFR
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.PrivateShortcutCreateManager
 import org.mozilla.fenix.components.StoreProvider
@@ -115,9 +112,7 @@ class HomeFragment : Fragment() {
     private val args by navArgs<HomeFragmentArgs>()
     private lateinit var bundleArgs: Bundle
 
-    private val homeViewModel: HomeScreenViewModel by activityViewModels {
-        ViewModelProvider.NewInstanceFactory() // this is a workaround for #4652
-    }
+    private val homeViewModel: HomeScreenViewModel by activityViewModels()
 
     private val snackbarAnchorView: View?
         get() = when (requireContext().settings().toolbarPosition) {
@@ -333,9 +328,6 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         FragmentPreDrawManager(this).execute {
-            val homeViewModel: HomeScreenViewModel by activityViewModels {
-                ViewModelProvider.NewInstanceFactory() // this is a workaround for #4652
-            }
             homeViewModel.layoutManagerState?.also { parcelable ->
                 sessionControlView!!.view.layoutManager?.onRestoreInstanceState(parcelable)
             }
@@ -424,21 +416,6 @@ class HomeFragment : Fragment() {
                 homeFragmentStore.dispatch(
                     HomeFragmentAction.ModeChange(Mode.fromBrowsingMode(newMode))
                 )
-            }
-        }
-
-        // We call this onLayout so that the bottom bar width is correctly set for us to center
-        // the CFR in.
-        view.toolbar_wrapper.doOnLayout {
-            val willNavigateToSearch = !bundleArgs.getBoolean(FOCUS_ON_ADDRESS_BAR)
-            if (!browsingModeManager.mode.isPrivate && !willNavigateToSearch) {
-                SearchWidgetCFR(
-                    context = view.context,
-                    settings = view.context.settings(),
-                    metrics = view.context.components.analytics.metrics
-                ) {
-                    view.toolbar_wrapper
-                }.displayIfNecessary()
             }
         }
 
@@ -639,9 +616,6 @@ class HomeFragment : Fragment() {
 
     override fun onStop() {
         super.onStop()
-        val homeViewModel: HomeScreenViewModel by activityViewModels {
-            ViewModelProvider.NewInstanceFactory() // this is a workaround for #4652
-        }
         homeViewModel.layoutManagerState =
             sessionControlView!!.view.layoutManager?.onSaveInstanceState()
     }

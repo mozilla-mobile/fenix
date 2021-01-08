@@ -19,6 +19,10 @@
 
     <!-- No Private Tabs Message Description -->
     <string name="no_private_tabs_description">ستظهر الألسنة الخاصة هنا.</string>
+    <!-- Default title for pinned Baidu top site that links to Baidu home page  -->
+    <string name="default_top_site_baidu">بايدو</string>
+    <!-- Default title for pinned JD top site that links to JD home page  -->
+    <string name="default_top_site_jd">JD</string>
     <!-- Message announced to the user when tab tray is selected with 1 tab -->
     <string name="open_tab_tray_single">لسان واحد مفتوح. انقر لتبديل الألسنة.</string>
 
@@ -72,14 +76,6 @@
     <!-- Text for the negative button -->
     <string name="cfr_neg_button_text">لا، شكرًا</string>
 
-    <!-- Search widget "contextual feature recommendation" (CFR) -->
-    <!-- Text for the main message. 'Firefox' intentionally hardcoded here.-->
-    <string name="search_widget_cfr_message">افتح Firefox بسرعة أكبر. أضف أداة Firefox إلى الشاشة الرئيسية.</string>
-    <!-- Text for the positive button -->
-    <string name="search_widget_cfr_pos_button_text">أضف الأداة</string>
-    <!-- Text for the negative button -->
-    <string name="search_widget_cfr_neg_button_text">ليس الآن</string>
-
     <!-- Open in App "contextual feature recommendation" (CFR) -->
     <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
     <string name="open_in_app_cfr_info_message">يمكنك ضبط Firefox ليفتح الروابط في التطبيقات تلقائيا.</string>
@@ -101,6 +97,14 @@
     <string name="tab_tray_close_tabs_banner_positive_button_text">خيارات المنظور</string>
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">أهمِل</string>
+
+    <!-- Text for the banner message to tell users about our grid view feature. -->
+    <string name="tab_tray_grid_view_banner_message">غيّر تخطيط الألسنة المفتوحة. انتقل إلى الإعدادات واختر ”شبكة“ من ”منظور الألسنة“.</string>
+    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
+    <string name="tab_tray_grid_view_banner_positive_button_text">انتقل إلى الإعدادات</string>
+
+    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
+    <string name="tab_tray_grid_view_banner_negative_button_text">تجاهَل</string>
 
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
@@ -361,6 +365,12 @@
     <!-- Toast shown after confirming the custom add-on collection configuration -->
     <string name="toast_customize_addon_collection_done">تعدّلت تجميعة الإضافات. يُنهي التطبيق لإجراء التغييرات…</string>
 
+    <!-- Add-on Installation from AMO-->
+    <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
+    <string name="addon_not_supported_error">الإضافة غير مدعومة</string>
+    <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is already installed -->
+    <string name="addon_already_installed">الإضافة مثبّتة فعلًا</string>
+
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">زامِن الآن</string>
@@ -441,6 +451,10 @@
     <string name="preferences_marketing_data">بيانات التسويق</string>
     <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
     <string name="preferences_marketing_data_description">يُشارك بيانات الميزات التي تستعملها في %1$s مع Leanplum، شركة التسويق للمحمول التي نتعامل معها.</string>
+    <!-- Title for studies preferences -->
+    <string name="preference_experiments_2">الدراسات</string>
+    <!-- Summary for studies preferences -->
+    <string name="preference_experiments_summary_2">تسمح لمؤسسة Mozilla بتثبيت الدراسات وتشغيلها</string>
     <!-- Title for experiments preferences -->
     <string name="preference_experiments">التجارب</string>
     <!-- Summary for experiments preferences -->
@@ -566,6 +580,16 @@
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">بعد شهر واحد</string>
 
+    <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
+    <string name="close_tabs_manually_summary">أغلِق يدويًا</string>
+
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
+    <string name="close_tabs_after_one_day_summary">أغلِق بعد يوم واحد</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one week-->
+    <string name="close_tabs_after_one_week_summary">أغلِق بعد أسبوع واحد</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one month-->
+    <string name="close_tabs_after_one_month_summary">أغلِق بعد شهر واحد</string>
+
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
     <string name="tab_header_label">الألسنة المفتوحة</string>
@@ -583,6 +607,8 @@
     <string name="tab_tray_title">الألسنة المفتوحة</string>
     <!-- Text shown in the menu for saving tabs to a collection -->
     <string name="tab_tray_menu_item_save">احفظ في التجميعة</string>
+    <!-- Text shown in the menu for the collection selector -->
+    <string name="tab_tray_menu_select">اختر</string>
     <!-- Text shown in the menu for sharing all tabs -->
     <string name="tab_tray_menu_item_share">شارِك كل الألسنة</string>
     <!-- Text shown in the menu to view recently closed tabs -->
@@ -633,8 +659,10 @@
     <string name="collection_open_tabs">افتح الألسنة</string>
     <!-- Hint for adding name of a collection -->
     <string name="collection_name_hint">اسم التجميعة</string>
-    <!-- Text for the menu button to remove a top site -->
-    <string name="remove_top_site">أزِل</string>
+    <!-- Text for the menu button to rename a top site -->
+	<string name="rename_top_site">غيّر الاسم</string>
+	<!-- Text for the menu button to remove a top site -->
+	<string name="remove_top_site">أزِل</string>
 
     <!-- Text for the menu button to delete a top site from history -->
     <string name="delete_from_history">احذف من التأريخ</string>
@@ -687,11 +715,23 @@
     <string name="history_empty_message">ما من تأريخ هنا</string>
 
     <!-- Downloads -->
+    <!-- Text for the button to clear all downloads -->
+    <string name="download_delete_all">احذف التنزيلات</string>
+    <!-- Text for the dialog to confirm clearing all downloads -->
+    <string name="download_delete_all_dialog">أمتاكّد من مسح كل التنزيلات؟</string>
+    <!-- Text for the snackbar to confirm that multiple downloads items have been deleted -->
+    <string name="download_delete_multiple_items_snackbar">حُذفت التنزيلات</string>
     <!-- Text shown when no download exists -->
     <string name="download_empty_message">لا تنزيلات هنا</string>
     <!-- History multi select title in app bar
     The first parameter is the number of downloads selected -->
     <string name="download_multi_select_title">حدّدتَ %1$d</string>
+
+    <!-- History overflow menu open in new tab button -->
+    <string name="download_menu_open">افتح</string>
+    <!-- Text for the button to delete a single history item -->
+    <string name="download_delete_item">احذف</string>
+
 
     <!-- Crashes -->
     <!-- Title text displayed on the tab crash page. This first parameter is the name of the application (For example: Fenix) -->
@@ -1279,6 +1319,8 @@
     <string name="etp_fingerprinters_title">مسجّلات البصمات</string>
     <!-- Category of trackers (tracking content) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_tracking_content_title">المحتوى الذي يتعقّبك</string>
+    <!-- Enhanced Tracking Protection Onboarding Message shown in a dialog above the toolbar. The first parameter is the name of the application (For example: Fenix) -->
+    <string name="etp_onboarding_cfr_message">متى ما رأيت الدرع بنفسجيًا اعرف أنّ %s حجب المتعقّبات في أحد المواقع. اضغط لتفاصيل أكثر.</string>
     <!-- Enhanced Tracking Protection message that protection is currently on for this site -->
     <string name="etp_panel_on">فُعّلت الحماية في هذا الموقع</string>
     <!-- Enhanced Tracking Protection message that protection is currently off for this site -->
@@ -1294,6 +1336,10 @@
     <string name="about_open_source_licenses">المكتبات مفتوحة المصدر التي نستخدم</string>
     <!-- About page link text to open what's new link -->
     <string name="about_whats_new">ما جديد %s</string>
+
+    <!-- Open source licenses page title
+    The first parameter is the app name -->
+    <string name="open_source_licenses_title">‏%s | المكتبات مفتوحة المصدر</string>
 
     <!-- About page link text to open support link -->
     <string name="about_support">الدعم</string>
@@ -1439,6 +1485,8 @@
     <string name="logins_biometric_prompt_message_pin">ألغِ قفل جهازك</string>
     <!-- Title for Accessibility Force Enable Zoom Preference -->
     <string name="preference_accessibility_force_enable_zoom">استعمل التقريب على كل المواقع</string>
+    <!-- Summary for Accessibility Force Enable Zoom Preference -->
+    <string name="preference_accessibility_force_enable_zoom_summary">فعّله للسماح بالتقريب والإبعاد حتّى على المواقع التي تمنع هذه الإيماءة.</string>
     <!-- Saved logins sorting strategy menu item -by name- (if selected, it will sort saved logins alphabetically) -->
     <string name="saved_logins_sort_strategy_alphabetically">الاسم (ا-ي)</string>
     <!-- Saved logins sorting strategy menu item -by last used- (if selected, it will sort saved logins by last used) -->
@@ -1466,9 +1514,13 @@
     <string name="search_add_custom_engine_name_hint">الاسم</string>
     <!-- Placeholder text shown in the Search String TextField before a user enters text -->
     <string name="search_add_custom_engine_search_string_hint">نص البحث المستخدم</string>
+    <!-- Description text for the Search String TextField. The %s is part of the string -->
+    <string name="search_add_custom_engine_search_string_example">استبدِل الاستعلام بِ‍ ”%s“. مثال:\nhttps://www.google.com/search?q=%s</string>
     <!-- Text for the button to learn more about adding a custom search engine -->
     <string name="search_add_custom_engine_learn_more_label">اطّلع على المزيد</string>
 
+    <!-- Accessibility description for the form in which details about the custom search engine are entered -->
+    <string name="search_add_custom_engine_form_description">تفاصيل محرك البحث المخصّص</string>
     <!-- Accessibility description for the 'Learn more' link -->
     <string name="search_add_custom_engine_learn_more_description">رابط ”اطّلع على المزيد“</string>
 
@@ -1579,11 +1631,20 @@
     <!-- Top Sites -->
     <!-- Title text displayed in the dialog when top sites limit is reached. -->
     <string name="top_sites_max_limit_title">وصلت إلى أقصى حدّ للمواقع الشائعة</string>
+    <!-- Content description text displayed in the dialog when top sites limit is reached. -->
+    <string name="top_sites_max_limit_content_2">لإضافة موقع شائع جديد، أزِل واحدًا. اضغط مطولًا على الموقع واختر ”أزِل“.</string>
     <!-- Confirmation dialog button text when top sites limit is reached. -->
     <string name="top_sites_max_limit_confirmation_button">حسنًا، فهمت</string>
 
     <!-- Label for the show most visited sites preference -->
     <string name="top_sites_toggle_top_frecent_sites">اعرض المواقع الأكثر زيارة</string>
+
+    <!-- Title text displayed in the rename top site dialog. -->
+	<string name="top_sites_rename_dialog_title">الاسم</string>
+	<!-- Button caption to confirm the renaming of the top site. -->
+	<string name="top_sites_rename_dialog_ok">حسنا</string>
+	<!-- Dialog button text for canceling the rename top site prompt. -->
+	<string name="top_sites_rename_dialog_cancel">ألغِ</string>
 
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">أزِل</string>

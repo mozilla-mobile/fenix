@@ -28,8 +28,8 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/mozac_browser_tabstray_card"
-        android:layout_width="@dimen/tab_tray_thumbnail_width_original"
-        android:layout_height="@dimen/tab_tray_thumbnail_height_original"
+        android:layout_width="@dimen/tab_tray_list_item_thumbnail_width"
+        android:layout_height="@dimen/tab_tray_list_item_thumbnail_height"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
@@ -57,42 +57,22 @@
 
     </androidx.cardview.widget.CardView>
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/mozac_browser_tabstray_icon_card"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_marginStart="8dp"
-        app:layout_constraintStart_toEndOf="@id/mozac_browser_tabstray_card"
-        app:layout_constraintBottom_toBottomOf="@id/mozac_browser_tabstray_title"
-        app:cardCornerRadius="5dp" >
-
-        <ImageView
-            android:id="@+id/mozac_browser_tabstray_icon"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:importantForAccessibility="no" />
-
-    </androidx.cardview.widget.CardView>
-
     <TextView
         android:id="@+id/mozac_browser_tabstray_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:requiresFadingEdge="horizontal"
-        android:fadingEdgeLength="25dp"
-        android:ellipsize="none"
-        android:singleLine="true"
         android:layout_marginTop="24dp"
         android:layout_marginStart="12dp"
+        android:ellipsize="end"
         android:textColor="@color/tab_tray_item_text_normal_theme"
         android:textSize="16sp"
         android:lineSpacingExtra="4sp"
         android:maxLines="2"
-        tools:text="Example Domain"
+        tools:text="Firefox"
         app:layout_constraintEnd_toStartOf="@id/mozac_browser_tabstray_close"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@id/mozac_browser_tabstray_icon_card"
+        app:layout_constraintStart_toEndOf="@id/mozac_browser_tabstray_card"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/mozac_browser_tabstray_url" />
 
@@ -101,16 +81,14 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:requiresFadingEdge="horizontal"
-        android:fadingEdgeLength="25dp"
         android:layout_marginTop="4dp"
         android:layout_marginBottom="24dp"
         android:layout_marginStart="12dp"
-        android:ellipsize="none"
-        android:singleLine="true"
+        android:ellipsize="end"
+        android:lines="1"
         android:textColor="@color/tab_tray_item_url_normal_theme"
         android:textSize="14sp"
-        tools:text="example.com"
+        tools:text="firefox.com"
         app:layout_constraintEnd_toStartOf="@id/mozac_browser_tabstray_close"
         app:layout_constraintStart_toEndOf="@id/mozac_browser_tabstray_card"
         app:layout_constraintTop_toBottomOf="@id/mozac_browser_tabstray_title"

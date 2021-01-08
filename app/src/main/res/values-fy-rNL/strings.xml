@@ -73,14 +73,6 @@
     <!-- Text for the negative button -->
     <string name="cfr_neg_button_text">Nee, tankewol</string>
 
-    <!-- Search widget "contextual feature recommendation" (CFR) -->
-    <!-- Text for the main message. 'Firefox' intentionally hardcoded here.-->
-    <string name="search_widget_cfr_message">Benaderje Firefox flugger. Foegje in widget ta oan jo startskerm.</string>
-    <!-- Text for the positive button -->
-    <string name="search_widget_cfr_pos_button_text">Widget tafoegje</string>
-    <!-- Text for the negative button -->
-    <string name="search_widget_cfr_neg_button_text">No net</string>
-
     <!-- Open in App "contextual feature recommendation" (CFR) -->
     <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
     <string name="open_in_app_cfr_info_message">Jo kinne Firefox ynstelle om keppelingen automatysk yn apps te iepenjen.</string>
@@ -217,6 +209,8 @@
     <string name="search_suggestions_onboarding_learn_more_link">Mear ynfo</string>
 
     <!-- Search Widget -->
+    <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
+    <string name="search_widget_content_description">In nij Firefox-ljepblêd iepenje</string>
     <!-- Text preview for smaller sized widgets -->
     <string name="search_widget_text_short">Sykje</string>
     <!-- Text preview for larger sized widgets -->
@@ -361,6 +355,12 @@
     <!-- Toast shown after confirming the custom add-on collection configuration -->
     <string name="toast_customize_addon_collection_done">Add-onkolleksje oanpast. Tapassing wurdt ôfsluten om wizigingen ta te passen…</string>
 
+    <!-- Add-on Installation from AMO-->
+    <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
+    <string name="addon_not_supported_error">Add-on wurdt net stipe</string>
+    <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is already installed -->
+    <string name="addon_already_installed">Add-on is al ynstallearre</string>
+
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">No syngronisearje</string>
@@ -439,6 +439,10 @@
     <string name="preferences_marketing_data">Marketinggegevens</string>
     <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
     <string name="preferences_marketing_data_description">Dielt gegevens oer hokker funksjes jo yn %1$s brûke mei Leanplum, ús leveransier fan mobile marketing.</string>
+    <!-- Title for studies preferences -->
+    <string name="preference_experiments_2">Undersiken</string>
+    <!-- Summary for studies preferences -->
+    <string name="preference_experiments_summary_2">Stelt Mozilla yn steat om ûndersiken te ynstallearjen en út te fieren</string>
     <!-- Title for experiments preferences -->
     <string name="preference_experiments">Eksperiminten</string>
     <!-- Summary for experiments preferences -->
@@ -561,6 +565,15 @@
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">Nei ien moanne</string>
 
+    <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
+    <string name="close_tabs_manually_summary">Hânmjittich slute</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
+    <string name="close_tabs_after_one_day_summary">Nei in dei slute</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one week-->
+    <string name="close_tabs_after_one_week_summary">Nei in wike slute</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one month-->
+    <string name="close_tabs_after_one_month_summary">Nei in moanne slute</string>
+
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
     <string name="tab_header_label">Iepen ljepblêden</string>
@@ -627,8 +640,12 @@
     <!-- Text for the button to open tabs of the selected collection -->
     <string name="collection_open_tabs">Ljepblêden iepenje</string>
 
-    <!-- Text for the menu button to remove a top site -->
-    <string name="remove_top_site">Fuortsmite</string>
+    <!-- Hint for adding name of a collection -->
+    <string name="collection_name_hint">Namme kolleksje</string>
+    <!-- Text for the menu button to rename a top site -->
+	<string name="rename_top_site">Namme wizigje</string>
+	<!-- Text for the menu button to remove a top site -->
+	<string name="remove_top_site">Fuortsmite</string>
 
     <!-- Text for the menu button to delete a top site from history -->
     <string name="delete_from_history">Fuortsmite út skiednis</string>
@@ -681,11 +698,23 @@
     <string name="history_empty_message">Gjin skiednis hjir</string>
 
     <!-- Downloads -->
+    <!-- Text for the button to clear all downloads -->
+    <string name="download_delete_all">Downloads wiskje</string>
+    <!-- Text for the dialog to confirm clearing all downloads -->
+    <string name="download_delete_all_dialog">Binne jo wis dat jo jo downloads wiskje wolle?</string>
+    <!-- Text for the snackbar to confirm that multiple downloads items have been deleted -->
+    <string name="download_delete_multiple_items_snackbar">Downloads fuortsmiten</string>
     <!-- Text shown when no download exists -->
     <string name="download_empty_message">Gjin downloads hjir</string>
     <!-- History multi select title in app bar
     The first parameter is the number of downloads selected -->
     <string name="download_multi_select_title">%1$d selektearre</string>
+
+    <!-- History overflow menu open in new tab button -->
+    <string name="download_menu_open">Iepenje</string>
+    <!-- Text for the button to delete a single history item -->
+    <string name="download_delete_item">Fuortsmite</string>
+
 
     <!-- Crashes -->
     <!-- Title text displayed on the tab crash page. This first parameter is the name of the application (For example: Fenix) -->
@@ -1601,7 +1630,7 @@
 
     <!-- Top Sites -->
     <!-- Title text displayed in the dialog when top sites limit is reached. -->
-    <string name="top_sites_max_limit_title">Limyt foar topwebsites berikke</string>
+    <string name="top_sites_max_limit_title">Limyt foar topwebsites berikt</string>
     <!-- Content description text displayed in the dialog when top sites limit is reached. -->
     <string name="top_sites_max_limit_content_2">Smyt in topwebsite fuort om in nije ta te foegjen. Hâld de website yndrukt en selektearje Fuortsmite.</string>
     <!-- Confirmation dialog button text when top sites limit is reached. -->
@@ -1610,12 +1639,25 @@
     <!-- Label for the show most visited sites preference -->
     <string name="top_sites_toggle_top_frecent_sites">Meast besochte websites toane</string>
 
+    <!-- Title text displayed in the rename top site dialog. -->
+	<string name="top_sites_rename_dialog_title">Namme</string>
+
+    <!-- Hint for renaming title of a top site -->
+	<string name="top_site_name_hint">Namme topwebsite</string>
+	<!-- Button caption to confirm the renaming of the top site. -->
+	<string name="top_sites_rename_dialog_ok">OK</string>
+	<!-- Dialog button text for canceling the rename top site prompt. -->
+	<string name="top_sites_rename_dialog_cancel">Annulearje</string>
+
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">Fuortsmite</string>
 
     <!-- Deprecated: text for the firefox account onboarding card header
     The first parameter is the name of the app (e.g. Firefox Preview) -->
     <string name="onboarding_firefox_account_header">Helje it measte út %s.</string>
+
+    <!-- Content description radio buttons with a link to more information -->
+    <string name="radio_preference_info_content_description">Klik foar mear details</string>
 
     <!-- Deprecated: No Open Tabs Message Header -->
     <string name="no_collections_header1">Sammelje de dingen dy\'t wichtich foar jo binne</string>

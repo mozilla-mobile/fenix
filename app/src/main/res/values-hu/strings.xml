@@ -20,6 +20,10 @@
     <!-- No Private Tabs Message Description -->
     <string name="no_private_tabs_description">A privát lapjai itt fognak megjelenni.</string>
 
+    <!-- Default title for pinned Baidu top site that links to Baidu home page  -->
+    <string name="default_top_site_baidu">Baidu</string>
+    <!-- Default title for pinned JD top site that links to JD home page  -->
+    <string name="default_top_site_jd">JD</string>
     <!-- Message announced to the user when tab tray is selected with 1 tab -->
     <string name="open_tab_tray_single">1 nyitott lap. Koppintson a lapváltáshoz.</string>
     <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
@@ -71,14 +75,6 @@
     <!-- Text for the negative button -->
     <string name="cfr_neg_button_text">Köszönöm, nem</string>
 
-    <!-- Search widget "contextual feature recommendation" (CFR) -->
-    <!-- Text for the main message. 'Firefox' intentionally hardcoded here.-->
-    <string name="search_widget_cfr_message">Gyorsabb hozzáférés a Firefoxhoz. Adjon egy ikont a Kezdőképernyőhöz.</string>
-    <!-- Text for the positive button -->
-    <string name="search_widget_cfr_pos_button_text">Ikon hozzáadása</string>
-    <!-- Text for the negative button -->
-    <string name="search_widget_cfr_neg_button_text">Most nem</string>
-
     <!-- Open in App "contextual feature recommendation" (CFR) -->
     <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
     <string name="open_in_app_cfr_info_message">Beállíthatja, hogy a Firefox automatikusan alkalmazásokban nyisson meg hivatkozásokat.</string>
@@ -100,6 +96,13 @@
     <string name="tab_tray_close_tabs_banner_positive_button_text">Beállítások megtekintése</string>
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">Eltüntetés</string>
+
+    <!-- Text for the banner message to tell users about our grid view feature. -->
+    <string name="tab_tray_grid_view_banner_message">A nyitott lapok elrendezésének módosítása. Ugorjon a beállításokhoz, és válassza ki a rácsot a lapnézet alatt.</string>
+    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
+    <string name="tab_tray_grid_view_banner_positive_button_text">Ugrás a beállításokhoz</string>
+    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
+    <string name="tab_tray_grid_view_banner_negative_button_text">Eltüntetés</string>
 
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
@@ -363,6 +366,12 @@
     <!-- Toast shown after confirming the custom add-on collection configuration -->
     <string name="toast_customize_addon_collection_done">A kiegészítőgyűjtemény módosítva. Kilépés az alkalmazásból a változások érvényesítéséhez…</string>
 
+    <!-- Add-on Installation from AMO-->
+    <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
+    <string name="addon_not_supported_error">A kiegészítő nem támogatott</string>
+    <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is already installed -->
+    <string name="addon_already_installed">A kiegészítő már telepítve van.</string>
+
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">Szinkronizálás most</string>
@@ -441,6 +450,10 @@
     <string name="preferences_marketing_data">Marketing adatok</string>
     <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
     <string name="preferences_marketing_data_description">Megosztja a Leanplummal, a mobil marketing szolgáltatónkkal, hogy mely funkciókat használja a %1$s böngészőben.</string>
+    <!-- Title for studies preferences -->
+    <string name="preference_experiments_2">Tanulmányok</string>
+    <!-- Summary for studies preferences -->
+    <string name="preference_experiments_summary_2">Engedélyezés, hogy a Mozilla tanulmányokat telepítsen és futtasson</string>
     <!-- Title for experiments preferences -->
     <string name="preference_experiments">Kísérletek</string>
     <!-- Summary for experiments preferences -->
@@ -567,6 +580,15 @@
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">Egy hónap után</string>
 
+    <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
+    <string name="close_tabs_manually_summary">Bezárás kézzel</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
+    <string name="close_tabs_after_one_day_summary">Bezárás egy nap után</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one week-->
+    <string name="close_tabs_after_one_week_summary">Bezárás egy hét után</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one month-->
+    <string name="close_tabs_after_one_month_summary">Bezárás egy hónap után</string>
+
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
     <string name="tab_header_label">Nyitott lapok</string>
@@ -598,8 +620,18 @@
     <string name="tab_tray_menu_home">Ugrás a kezdőlapra</string>
     <!-- Shortcut action to toggle private mode -->
     <string name="tab_tray_menu_toggle">Lapmód váltása</string>
+    <!-- Text shown in the multiselect menu for bookmarking selected tabs. -->
+    <string name="tab_tray_multiselect_menu_item_bookmark">Könyvjelzőzés</string>
+    <!-- Text shown in the multiselect menu for closing selected tabs. -->
+    <string name="tab_tray_multiselect_menu_item_close">Bezárás</string>
+    <!-- Content description for tabs tray multiselect share button -->
+    <string name="tab_tray_multiselect_share_content_description">Kijelölt lapok megosztása</string>
+    <!-- Content description for tabs tray multiselect menu -->
+    <string name="tab_tray_multiselect_menu_content_description">Kijelölt lapok menü</string>
     <!-- Content description (not visible, for screen readers etc.): Removes tab from collection button. Removes the selected tab from collection when pressed -->
     <string name="remove_tab_from_collection">Lap eltávolítása a gyűjteményből</string>
+    <!-- Text for button to enter multiselect mode in tabs tray -->
+    <string name="tabs_tray_select_tabs">Lapok kiválasztása</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab button. Closes the current session when pressed -->
     <string name="close_tab">Lap bezárása</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab <title> button. First parameter is tab title  -->
@@ -636,8 +668,10 @@
 
     <!-- Hint for adding name of a collection -->
     <string name="collection_name_hint">Gyűjtemény neve</string>
-    <!-- Text for the menu button to remove a top site -->
-    <string name="remove_top_site">Eltávolítás</string>
+    <!-- Text for the menu button to rename a top site -->
+	<string name="rename_top_site">Átnevezés</string>
+	<!-- Text for the menu button to remove a top site -->
+	<string name="remove_top_site">Eltávolítás</string>
 
     <!-- Text for the menu button to delete a top site from history -->
     <string name="delete_from_history">Törlés az előzményekből</string>
@@ -690,11 +724,23 @@
     <string name="history_empty_message">Nincsenek előzmények</string>
 
     <!-- Downloads -->
+    <!-- Text for the button to clear all downloads -->
+    <string name="download_delete_all">Letöltések törlése</string>
+    <!-- Text for the dialog to confirm clearing all downloads -->
+    <string name="download_delete_all_dialog">Biztos, hogy törli a letöltéseket?</string>
+    <!-- Text for the snackbar to confirm that multiple downloads items have been deleted -->
+    <string name="download_delete_multiple_items_snackbar">Letöltések törölve</string>
     <!-- Text shown when no download exists -->
     <string name="download_empty_message">Nincs itt letőltés</string>
     <!-- History multi select title in app bar
     The first parameter is the number of downloads selected -->
     <string name="download_multi_select_title">%1$d kiválasztva</string>
+
+    <!-- History overflow menu open in new tab button -->
+    <string name="download_menu_open">Megnyitás</string>
+    <!-- Text for the button to delete a single history item -->
+    <string name="download_delete_item">Törlés</string>
+
 
     <!-- Crashes -->
     <!-- Title text displayed on the tab crash page. This first parameter is the name of the application (For example: Fenix) -->
@@ -961,6 +1007,12 @@
     <string name="snackbar_tab_closed">Lap bezárva</string>
     <!-- Text shown in snackbar when user closes all tabs -->
     <string name="snackbar_tabs_closed">Lapok bezárva</string>
+    <!-- Text shown in snackbar when user closes tabs -->
+    <string name="snackbar_message_tabs_closed">Lapok bezárva!</string>
+    <!-- Text shown in snackbar when user bookmarks a list of tabs -->
+    <string name="snackbar_message_bookmarks_saved">Könyvjelzők mentve!</string>
+    <!-- Text shown in snackbar action for viewing bookmarks -->
+    <string name="snackbar_message_bookmarks_view">Nézet</string>
     <!-- Text shown in snackbar when user adds a site to top sites -->
     <string name="snackbar_added_to_top_sites">Hozzáadva a népszerű oldalakhoz.</string>
     <!-- Text shown in snackbar when user closes a private tab -->
@@ -1626,6 +1678,15 @@
 
     <!-- Label for the show most visited sites preference -->
     <string name="top_sites_toggle_top_frecent_sites">A leglátogatottabb oldalak megjelenítése</string>
+
+    <!-- Title text displayed in the rename top site dialog. -->
+	<string name="top_sites_rename_dialog_title">Név</string>
+	<!-- Hint for renaming title of a top site -->
+	<string name="top_site_name_hint">Legnépszerűbb webhely neve</string>
+	<!-- Button caption to confirm the renaming of the top site. -->
+	<string name="top_sites_rename_dialog_ok">OK</string>
+	<!-- Dialog button text for canceling the rename top site prompt. -->
+	<string name="top_sites_rename_dialog_cancel">Mégse</string>
 
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">Eltávolítás</string>

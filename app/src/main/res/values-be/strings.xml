@@ -20,6 +20,10 @@
     <!-- No Private Tabs Message Description -->
     <string name="no_private_tabs_description">Тут будуць паказаны вашы прыватныя карткі.</string>
 
+    <!-- Default title for pinned Baidu top site that links to Baidu home page  -->
+    <string name="default_top_site_baidu">Baidu</string>
+    <!-- Default title for pinned JD top site that links to JD home page  -->
+    <string name="default_top_site_jd">JD</string>
     <!-- Message announced to the user when tab tray is selected with 1 tab -->
     <string name="open_tab_tray_single">1 адкрытая картка. Націсніце, каб пераключыць карткі.</string>
     <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
@@ -69,14 +73,6 @@
     <!-- Text for the negative button -->
     <string name="cfr_neg_button_text">Не, дзякуй</string>
 
-    <!-- Search widget "contextual feature recommendation" (CFR) -->
-    <!-- Text for the main message. 'Firefox' intentionally hardcoded here.-->
-    <string name="search_widget_cfr_message">Знаходзьце Firefox хутчэй. Дадайце віджэт на галоўны экран.</string>
-    <!-- Text for the positive button -->
-    <string name="search_widget_cfr_pos_button_text">Дадаць віджэт</string>
-    <!-- Text for the negative button -->
-    <string name="search_widget_cfr_neg_button_text">Не зараз</string>
-
     <!-- Open in App "contextual feature recommendation" (CFR) -->
     <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
     <string name="open_in_app_cfr_info_message">Вы можаце наладзіць Firefox аўтаматычна адкрываць спасылкі ў праграмах.</string>
@@ -98,6 +94,14 @@
     <string name="tab_tray_close_tabs_banner_positive_button_text">Паглядзець параметры</string>
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">Адхіліць</string>
+
+    <!-- Text for the banner message to tell users about our grid view feature. -->
+    <string name="tab_tray_grid_view_banner_message">Змяніце выклад адкрытых картак. Перайдзіце ў налады і абярыце сетку ў раздзеле выгляду картак.</string>
+    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
+    <string name="tab_tray_grid_view_banner_positive_button_text">Перайсці ў налады</string>
+
+    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
+    <string name="tab_tray_grid_view_banner_negative_button_text">Закрыць</string>
 
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
@@ -436,6 +440,10 @@
     <string name="preferences_marketing_data">Маркетынгавыя дадзеныя</string>
     <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
     <string name="preferences_marketing_data_description">Дзяліцца звесткамі пра магчымасці, якімі вы карыстаецеся ў %1$s, з нашым пастаўшчыком мабільнага маркетынгу Leanplum.</string>
+    <!-- Title for studies preferences -->
+    <string name="preference_experiments_2">Даследаванні</string>
+    <!-- Summary for studies preferences -->
+    <string name="preference_experiments_summary_2">Дазволіць Mozilla ўсталёўваць і запускаць даследаванні</string>
     <!-- Title for experiments preferences -->
     <string name="preference_experiments">Доследы</string>
 
@@ -565,6 +573,15 @@
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">Праз месяц</string>
 
+    <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
+    <string name="close_tabs_manually_summary">Закрываць уручную</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
+    <string name="close_tabs_after_one_day_summary">Закрываць праз дзень</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one week-->
+    <string name="close_tabs_after_one_week_summary">Закрываць праз тыдзень</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one month-->
+    <string name="close_tabs_after_one_month_summary">Закрываць праз месяц</string>
+
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
     <string name="tab_header_label">Адкрытыя карткі</string>
@@ -583,6 +600,8 @@
     <string name="tab_tray_title">Адкрытыя карткі</string>
     <!-- Text shown in the menu for saving tabs to a collection -->
     <string name="tab_tray_menu_item_save">Захаваць у калекцыі</string>
+    <!-- Text shown in the menu for the collection selector -->
+    <string name="tab_tray_menu_select">Выбраць</string>
     <!-- Text shown in the menu for sharing all tabs -->
     <string name="tab_tray_menu_item_share">Падзяліцца ўсімі карткамі</string>
     <!-- Text shown in the menu to view recently closed tabs -->
@@ -597,8 +616,18 @@
     <string name="tab_tray_menu_home">Дадому</string>
     <!-- Shortcut action to toggle private mode -->
     <string name="tab_tray_menu_toggle">Пераключыць рэжым картак</string>
+    <!-- Text shown in the multiselect menu for bookmarking selected tabs. -->
+    <string name="tab_tray_multiselect_menu_item_bookmark">Закладка</string>
+    <!-- Text shown in the multiselect menu for closing selected tabs. -->
+    <string name="tab_tray_multiselect_menu_item_close">Закрыць</string>
+    <!-- Content description for tabs tray multiselect share button -->
+    <string name="tab_tray_multiselect_share_content_description">Падзяліцца выбранымі карткамі</string>
+    <!-- Content description for tabs tray multiselect menu -->
+    <string name="tab_tray_multiselect_menu_content_description">Меню выбраных картак</string>
     <!-- Content description (not visible, for screen readers etc.): Removes tab from collection button. Removes the selected tab from collection when pressed -->
     <string name="remove_tab_from_collection">Выдаліць картку з калекцыі</string>
+    <!-- Text for button to enter multiselect mode in tabs tray -->
+    <string name="tabs_tray_select_tabs">Выбраць карткі</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab button. Closes the current session when pressed -->
     <string name="close_tab">Закрыць картку</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab <title> button. First parameter is tab title  -->
@@ -633,8 +662,10 @@
     <string name="collection_open_tabs">Адкрыць карткі</string>
     <!-- Hint for adding name of a collection -->
     <string name="collection_name_hint">Назва калекцыі</string>
-    <!-- Text for the menu button to remove a top site -->
-    <string name="remove_top_site">Выдаліць</string>
+    <!-- Text for the menu button to rename a top site -->
+	<string name="rename_top_site">Перайменаваць</string>
+	<!-- Text for the menu button to remove a top site -->
+	<string name="remove_top_site">Выдаліць</string>
 
     <!-- Text for the menu button to delete a top site from history -->
     <string name="delete_from_history">Выдаліць з гісторыі</string>
@@ -689,11 +720,24 @@
     <string name="history_empty_message">Няма гісторыі</string>
 
     <!-- Downloads -->
+    <!-- Text for the button to clear all downloads -->
+    <string name="download_delete_all">Выдаліць сцягванні</string>
+    <!-- Text for the dialog to confirm clearing all downloads -->
+    <string name="download_delete_all_dialog">Вы сапраўды хочаце выдаліць свае сцягванні?</string>
+    <!-- Text for the snackbar to confirm that multiple downloads items have been deleted -->
+    <string name="download_delete_multiple_items_snackbar">Сцягванні выдалены</string>
     <!-- Text shown when no download exists -->
     <string name="download_empty_message">Тут яшчэ няма спамповак</string>
     <!-- History multi select title in app bar
     The first parameter is the number of downloads selected -->
     <string name="download_multi_select_title">Вылучана: %1$d</string>
+
+
+    <!-- History overflow menu open in new tab button -->
+    <string name="download_menu_open">Адкрыць</string>
+    <!-- Text for the button to delete a single history item -->
+    <string name="download_delete_item">Выдаліць</string>
+
 
     <!-- Crashes -->
     <!-- Title text displayed on the tab crash page. This first parameter is the name of the application (For example: Fenix) -->
@@ -964,6 +1008,12 @@
     <!-- Text shown in snackbar when user closes all tabs -->
     <string name="snackbar_tabs_closed">Карткі закрыты</string>
 
+    <!-- Text shown in snackbar when user closes tabs -->
+    <string name="snackbar_message_tabs_closed">Карткі закрыты!</string>
+    <!-- Text shown in snackbar when user bookmarks a list of tabs -->
+    <string name="snackbar_message_bookmarks_saved">Закладкі захаваны!</string>
+    <!-- Text shown in snackbar action for viewing bookmarks -->
+    <string name="snackbar_message_bookmarks_view">Паглядзець</string>
     <!-- Text shown in snackbar when user adds a site to top sites -->
     <string name="snackbar_added_to_top_sites">Дададзена да папулярных сайтаў</string>
     <!-- Text shown in snackbar when user closes a private tab -->
@@ -1639,6 +1689,15 @@
 
     <!-- Label for the show most visited sites preference -->
     <string name="top_sites_toggle_top_frecent_sites">Паказваць найбольш наведаныя сайты</string>
+
+    <!-- Title text displayed in the rename top site dialog. -->
+	<string name="top_sites_rename_dialog_title">Назва</string>
+	<!-- Hint for renaming title of a top site -->
+	<string name="top_site_name_hint">Назва папулярнага сайта</string>
+	<!-- Button caption to confirm the renaming of the top site. -->
+	<string name="top_sites_rename_dialog_ok">OK</string>
+	<!-- Dialog button text for canceling the rename top site prompt. -->
+	<string name="top_sites_rename_dialog_cancel">Адмена</string>
 
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">Выдаліць</string>

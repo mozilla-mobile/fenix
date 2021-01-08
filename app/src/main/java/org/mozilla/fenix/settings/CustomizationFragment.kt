@@ -9,9 +9,7 @@ import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.content.edit
 import androidx.preference.EditTextPreference
-import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
 import org.mozilla.fenix.FeatureFlags
@@ -38,17 +36,12 @@ class CustomizationFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.customization_preferences, rootKey)
 
-        requirePreference<SwitchPreference>(R.string.pref_key_strip_url).apply {
-            isChecked = context.settings().shouldStripUrl
-
-            onPreferenceChangeListener = SharedPreferenceUpdater()
-        }
+        setupPreferences()
     }
 
     override fun onResume() {
         super.onResume()
         showToolbar(getString(R.string.preferences_customize))
-        setupPreferences()
     }
 
     private fun setupPreferences() {
@@ -58,12 +51,16 @@ class CustomizationFragment : PreferenceFragmentCompat() {
         bindAutoBatteryTheme()
         setupRadioGroups()
         setupToolbarCategory()
-        setupTabsTrayCategory()
-        setupFabCategory()
         setupHomeCategory()
         setupGesturesCategory()
         setupAddonsCustomizationCategory()
         setupSystemBehaviorCategory()
+
+        requirePreference<SwitchPreference>(R.string.pref_key_strip_url).apply {
+            isChecked = context.settings().shouldStripUrl
+
+            onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
     }
 
     private fun setupRadioGroups() {
@@ -145,76 +142,6 @@ class CustomizationFragment : PreferenceFragmentCompat() {
         bottomPreference.setCheckedWithoutClickListener(toolbarPosition == ToolbarPosition.BOTTOM)
 
         addToRadioGroup(topPreference, bottomPreference)
-    }
-
-    private fun setupTabsTrayCategory() {
-        requirePreference<SwitchPreference>(R.string.pref_key_tabs_tray_top_tray).apply {
-            isChecked = context.settings().useTopTabsTray
-            onPreferenceChangeListener = SharedPreferenceUpdater()
-        }
-
-        requirePreference<SwitchPreference>(R.string.pref_key_use_fullscreen_tabs_screen).apply {
-            isChecked = context.settings().useFullScreenTabScreen
-            onPreferenceChangeListener = SharedPreferenceUpdater()
-        }
-
-        val reverseOrderPref = requirePreference<SwitchPreference>(
-                R.string.pref_key_tabs_tray_reverse_tab_order).apply {
-            if (context.settings().enableCompactTabs) {
-                isChecked = false
-                isEnabled = false
-            } else {
-                isChecked = context.settings().reverseTabOrderInTabsTray
-                isEnabled = true
-            }
-            onPreferenceChangeListener = SharedPreferenceUpdater()
-        }
-
-        requirePreference<SwitchPreference>(R.string.pref_key_tabs_tray_compact_tab).apply {
-            isChecked = context.settings().enableCompactTabs
-
-            onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, newValue ->
-                val newValueBoolean = newValue as Boolean
-                preference.context.settings().preferences.edit {
-                    putBoolean(preference.key, newValueBoolean)
-                    if (newValueBoolean) {
-                        reverseOrderPref.isChecked = false
-                        putBoolean(getString(R.string.pref_key_tabs_tray_reverse_tab_order), false)
-                    }
-                    reverseOrderPref.isEnabled = !newValueBoolean
-                }
-                true
-            }
-        }
-    }
-
-    private fun setupFabCategory() {
-        val fabPositionTop = requirePreference<SwitchPreference>(R.string.pref_key_tabs_tray_fab_top_position).apply {
-            if (context.settings().useNewTabFloatingActionButton) {
-                isChecked = context.settings().placeNewTabFloatingActionButtonAtTop
-                isEnabled = true
-            } else {
-                isChecked = false
-                isEnabled = false
-            }
-            onPreferenceChangeListener = SharedPreferenceUpdater()
-        }
-
-        requirePreference<SwitchPreference>(R.string.pref_key_tabs_tray_use_fab).apply {
-            isChecked = context.settings().useNewTabFloatingActionButton
-            onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, newValue ->
-                val newValueBoolean = newValue as Boolean
-                preference.context.settings().preferences.edit {
-                    putBoolean(preference.key, newValueBoolean)
-                    if (!newValueBoolean) {
-                        fabPositionTop.isChecked = false
-                        putBoolean(getString(R.string.pref_key_tabs_tray_fab_top_position), false)
-                    }
-                    fabPositionTop.isEnabled = newValueBoolean
-                }
-                true
-            }
-        }
     }
 
     private fun setupHomeCategory() {

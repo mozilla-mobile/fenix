@@ -4,12 +4,12 @@
 
 package org.mozilla.fenix.ui
 
+import androidx.core.net.toUri
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
@@ -34,7 +34,7 @@ class SmokeTest {
     @Before
     fun setUp() {
         mockWebServer = MockWebServer().apply {
-            setDispatcher(AndroidAssetDispatcher())
+            dispatcher = AndroidAssetDispatcher()
             start()
         }
     }
@@ -42,6 +42,56 @@ class SmokeTest {
     @After
     fun tearDown() {
         mockWebServer.shutdown()
+    }
+
+    // copied over from HomeScreenTest
+    @Test
+    fun firstRunScreenTest() {
+        homeScreen {
+            verifyHomeScreen()
+            verifyNavigationToolbar()
+            verifyHomePrivateBrowsingButton()
+            verifyHomeMenu()
+            verifyHomeWordmark()
+
+            verifyWelcomeHeader()
+            // Sign in to Firefox
+            verifyStartSyncHeader()
+            verifyAccountsSignInButton()
+
+            // Intro to other sections
+            verifyGetToKnowHeader()
+
+            // Automatic privacy
+            scrollToElementByText("Automatic privacy")
+            verifyAutomaticPrivacyHeader()
+            verifyTrackingProtectionToggle()
+            verifyAutomaticPrivacyText()
+
+            // Choose your theme
+            verifyChooseThemeHeader()
+            verifyChooseThemeText()
+            verifyDarkThemeDescription()
+            verifyDarkThemeToggle()
+            verifyLightThemeDescription()
+            verifyLightThemeToggle()
+
+            // Browse privately
+            verifyBrowsePrivatelyHeader()
+            verifyBrowsePrivatelyText()
+
+            // Take a position
+            verifyTakePositionHeader()
+            verifyTakePositionElements()
+
+            // Your privacy
+            verifyYourPrivacyHeader()
+            verifyYourPrivacyText()
+            verifyPrivacyNoticeButton()
+
+            // Start Browsing
+            verifyStartBrowsingButton()
+        }
     }
 
     @Test
@@ -58,15 +108,14 @@ class SmokeTest {
             }.openTabDrawer {
                 verifyExistingTabList()
             }.openNewTab {
-            }.dismiss {
+            }.dismissSearchBar {
                 verifyHomeScreen()
             }
         }
     }
 
-    @Ignore("Failing, see: https://github.com/mozilla-mobile/fenix/issues/13217")
     @Test
-    fun verifyPageMainMenuItemsListInPortraitNormalModeTest() {
+    fun verifyPageMainMenuItemsTest() {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
         // Add this to check openInApp and youtube is a default app available in every Android emulator/device
         val youtubeUrl = "www.youtube.com"
@@ -75,24 +124,16 @@ class SmokeTest {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
         }.openThreeDotMenu {
             verifyThreeDotMainMenuItems()
-            verifySaveCollection()
-        }.clickAddOnsReportSiteIssue {
-            verifyUrl("webcompat.com/issues/new")
-        }.openTabDrawer {
-        }.openTab(defaultWebPage.title) {
-        }.openThreeDotMenu {
         }.openHistory {
-            verifyTestPageUrl(defaultWebPage.url)
+            verifyHistoryMenuView()
         }.goBackToBrowser {
         }.openThreeDotMenu {
         }.openBookmarks {
             verifyBookmarksMenuView()
-            verifyEmptyBookmarksList()
         }.goBackToBrowser {
         }.openThreeDotMenu {
         }.openSyncedTabs {
-            verifyNavigationToolBarHeader()
-            verifySyncedTabsStatus()
+            verifySyncedTabsMenuHeader()
         }.goBack {
         }.openThreeDotMenu {
         }.openSettings {
@@ -107,7 +148,7 @@ class SmokeTest {
             verifySnackBarText("Added to top sites!")
         }.openTabDrawer {
         }.openNewTab {
-        }.dismiss {
+        }.dismissSearchBar {
             verifyExistingTopSitesTabs(defaultWebPage.title)
         }.openTabDrawer {
         }.openTab(defaultWebPage.title) {
@@ -120,7 +161,7 @@ class SmokeTest {
         }.openThreeDotMenu {
         }.openSaveToCollection {
             verifyCollectionNameTextField()
-        }.goBackToBrowser {
+        }.exitSaveCollection {
         }.openThreeDotMenu {
         }.bookmarkPage {
             verifySnackBarText("Bookmark saved!")
@@ -131,96 +172,15 @@ class SmokeTest {
         }.openThreeDotMenu {
         }.refreshPage {
             verifyUrl(defaultWebPage.url.toString())
-        }.openTabDrawer {
-            closeTabViaXButton(defaultWebPage.title)
-        }.openNewTab {
-        }.submitQuery(youtubeUrl) {
-            verifyBlueDot()
+        }.openNavigationToolbar {
+        }.enterURLAndEnterToBrowser(youtubeUrl.toUri()) {
         }.openThreeDotMenu {
             verifyOpenInAppButton()
         }
     }
 
-    @Ignore("Failing, see: https://github.com/mozilla-mobile/fenix/issues/13217")
     @Test
-    fun verifyPageMainMenuItemsListInPortraitPrivateModeTest() {
-        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-        // Add this to check openInApp and also youtube is a default app available in every Android emulator/device
-        val youtubeUrl = "www.youtube.com"
-
-        homeScreen {
-            togglePrivateBrowsingModeOnOff()
-            navigationToolbar {
-            }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-            }.openThreeDotMenu {
-                verifyThreeDotMainMenuItems()
-            }.clickAddOnsReportSiteIssue {
-                verifyUrl("webcompat.com/issues/new")
-            }.openTabDrawer {
-            }.openTab(defaultWebPage.title) {
-            }.openThreeDotMenu {
-            }.openHistory {
-                verifyEmptyHistoryView()
-            }.goBackToBrowser {
-            }.openThreeDotMenu {
-            }.openBookmarks {
-                verifyBookmarksMenuView()
-                verifyEmptyBookmarksList()
-            }.goBackToBrowser {
-            }.openThreeDotMenu {
-            }.openSyncedTabs {
-                verifyNavigationToolBarHeader()
-                verifySyncedTabsStatus()
-            }.goBack {
-            }.openThreeDotMenu {
-            }.openSettings {
-                verifySettingsView()
-            }.goBackToBrowser {
-            }.openThreeDotMenu {
-            }.openFindInPage {
-                verifyFindInPageSearchBarItems()
-            }.closeFindInPage {
-            }.openThreeDotMenu {
-            }.addToFirefoxHome {
-                verifySnackBarText("Added to top sites!")
-            }.openTabDrawer {
-            }.openNewTab {
-            }.dismiss {
-                togglePrivateBrowsingModeOnOff()
-                verifyExistingTopSitesTabs(defaultWebPage.title)
-                togglePrivateBrowsingModeOnOff()
-            }.openTabDrawer {
-            }.openTab(defaultWebPage.title) {
-            }.openThreeDotMenu {
-            }.openAddToHomeScreen {
-                verifyShortcutNameField(defaultWebPage.title)
-                clickAddShortcutButton()
-                clickAddAutomaticallyButton()
-            }.openHomeScreenShortcut(defaultWebPage.title) {
-            }.openThreeDotMenu {
-            }.bookmarkPage {
-                verifySnackBarText("Bookmark saved!")
-            }.openThreeDotMenu {
-            }.sharePage {
-                verifyShareAppsLayout()
-            }.closeShareDialogReturnToPage {
-            }.openThreeDotMenu {
-            }.refreshPage {
-                verifyUrl(defaultWebPage.url.toString())
-            }.openTabDrawer {
-                closeTabViaXButton(defaultWebPage.title)
-            }.openNewTab {
-            }.submitQuery(youtubeUrl) {
-                verifyBlueDot()
-            }.openThreeDotMenu {
-                verifyOpenInAppButton()
-            }
-        }
-    }
-
-    @Ignore("Flaky test: https://github.com/mozilla-mobile/fenix/issues/12899")
-    @Test
-    fun verifyETPToolbarShieldIconIsNotDisplayedIfETPIsOFFGloballyTest() {
+    fun verifyETPShieldNotDisplayedIfOFFGlobally() {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         homeScreen {
@@ -234,19 +194,11 @@ class SmokeTest {
             }.enterURLAndEnterToBrowser(defaultWebPage.url) {
                 verifyEnhancedTrackingProtectionPanelNotVisible()
             }.openThreeDotMenu {
-            }.clickAddOnsReportSiteIssue {
-                verifyUrl("webcompat.com/issues/new")
-                verifyTabCounter("2")
-            }.openTabDrawer {
-            }.openNewTab {
-            }.dismiss {
-            }.openThreeDotMenu {
             }.openSettings {
             }.openEnhancedTrackingProtectionSubMenu {
                 clickEnhancedTrackingProtectionDefaults()
-            }.goBackToHomeScreen {
-            }.openTabDrawer {
-            }.openTab(defaultWebPage.title) {
+            }.goBack {
+            }.goBackToBrowser {
                 clickEnhancedTrackingProtectionPanel()
                 verifyEnhancedTrackingProtectionSwitch()
                 // Turning off TP Switch results in adding the WebPage to exception list
