@@ -152,8 +152,6 @@
     <string name="browser_menu_find_in_page">Нађи на страници</string>
     <!-- Browser menu button that creates a private tab -->
     <string name="browser_menu_private_tab">Приватни језичак</string>
-    <!-- Browser menu button that creates a new tab -->
-    <string name="browser_menu_new_tab">Нови језичак</string>
     <!-- Browser menu button that saves the current tab to a collection -->
     <string name="browser_menu_save_to_collection_2">Сачувај у збирку</string>
 
@@ -361,6 +359,12 @@
     <string name="customize_addon_collection_user_hint">Власник колекције (Кориснички ID)</string>
     <!-- Toast shown after confirming the custom add-on collection configuration -->
     <string name="toast_customize_addon_collection_done">Колекција додатака је промењена. Затварам апликацију да би промене ступиле на снагу…</string>
+
+    <!-- Add-on Installation from AMO-->
+    <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
+    <string name="addon_not_supported_error">Додатак није подржан</string>
+    <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is already installed -->
+    <string name="addon_already_installed">Додатак је већ инсталиран</string>
 
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
@@ -719,10 +723,12 @@
     <string name="download_delete_all">Обриши преузимања</string>
     <!-- Text for the dialog to confirm clearing all downloads -->
     <string name="download_delete_all_dialog">Јесте ли сигурни да желите да обришете преузимања?</string>
-    <!-- Text for the snackbar to confirm that multiple downloads items have been deleted -->
-    <string name="download_delete_multiple_items_snackbar">Преузимања обрисана</string>
+    <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
+    <string name="download_delete_multiple_items_snackbar_1">Преузимања уклоњена</string>
+    <!-- Text for the snackbar to confirm that a single download item has been removed. The first parameter is the name of the download item. -->
+    <string name="download_delete_single_item_snackbar">Уклоњено %1$s</string>
     <!-- Text shown when no download exists -->
-    <string name="download_empty_message">Овде нема преузимања</string>
+    <string name="download_empty_message_1">Нема преузетих датотека</string>
     <!-- History multi select title in app bar
     The first parameter is the number of downloads selected -->
     <string name="download_multi_select_title">Изабрано %1$d</string>
@@ -730,8 +736,10 @@
 
     <!-- History overflow menu open in new tab button -->
     <string name="download_menu_open">Отвори</string>
-    <!-- Text for the button to delete a single history item -->
-    <string name="download_delete_item">Избриши</string>
+
+
+    <!-- Text for the button to remove a single download item -->
+    <string name="download_delete_item_1">Уклони</string>
 
 
     <!-- Crashes -->
@@ -856,6 +864,8 @@
     <string name="preference_phone_feature_notification">Обавештење</string>
     <!-- Preference for altering the persistent storage access for all websites -->
     <string name="preference_phone_feature_persistent_storage">Трајно складиште</string>
+    <!-- Preference for altering the EME access for all websites -->
+    <string name="preference_phone_feature_media_key_system_access">Садржај контолисан DRM-ом</string>
     <!-- Label that indicates that a permission must be asked always -->
     <string name="preference_option_phone_feature_ask_to_allow">Упитај за дозволу</string>
     <!-- Label that indicates that a permission must be blocked -->

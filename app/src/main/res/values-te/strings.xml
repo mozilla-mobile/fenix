@@ -205,6 +205,9 @@
     <!-- Search suggestion onboarding hint Learn more link text -->
     <string name="search_suggestions_onboarding_learn_more_link">ఇంకా తెలుసుకోండి</string>
 
+    <!-- Search Widget -->
+    <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
+    <string name="search_widget_content_description">ఒక కొత్త Firefox ట్యాబును తెరువండి</string>
     <!-- Text preview for smaller sized widgets -->
     <string name="search_widget_text_short">వెతకండి</string>
     <!-- Text preview for larger sized widgets -->
@@ -339,6 +342,9 @@
     <string name="customize_addon_collection_hint">సేకరణ పేరు</string>
     <!-- Hint displayed on input field for custom collection user ID-->
     <string name="customize_addon_collection_user_hint">సేకరణ యజమాని (వాడుకరి ID)</string>
+
+    <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is already installed -->
+    <string name="addon_already_installed">పొడగింత ఇప్పటికే స్థాపితమైవుంది</string>
 
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
@@ -539,6 +545,13 @@
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">ఒక నెల తరువాత</string>
 
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
+    <string name="close_tabs_after_one_day_summary">ఒక రోజు తర్వాత మూసివేయి</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one week-->
+    <string name="close_tabs_after_one_week_summary">ఒక వారం తర్వాత మూసివేయి</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one month-->
+    <string name="close_tabs_after_one_month_summary">ఒక నెల తర్వాత మూసివేయి</string>
+
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
     <string name="tab_header_label">తెరిచివున్న ట్యాబులు</string>
@@ -556,6 +569,8 @@
     <string name="tab_tray_title">తెరిచివున్న ట్యాబులు</string>
     <!-- Text shown in the menu for saving tabs to a collection -->
     <string name="tab_tray_menu_item_save">సేకరణకు భద్రపరుచు</string>
+    <!-- Text shown in the menu for the collection selector -->
+    <string name="tab_tray_menu_select">ఎంచుకోండి</string>
     <!-- Text shown in the menu for sharing all tabs -->
     <string name="tab_tray_menu_item_share">అన్ని ట్యాబులను పంచుకో</string>
     <!-- Text shown in the menu to view recently closed tabs -->
@@ -571,10 +586,18 @@
     <string name="tab_tray_menu_home">ముంగిలికి వెళ్ళు</string>
     <!-- Shortcut action to toggle private mode -->
     <string name="tab_tray_menu_toggle">ట్యాబు రీతిని మార్చు</string>
+    <!-- Text shown in the multiselect menu for bookmarking selected tabs. -->
+    <string name="tab_tray_multiselect_menu_item_bookmark">ఇష్టాంశం చేయి</string>
     <!-- Text shown in the multiselect menu for closing selected tabs. -->
     <string name="tab_tray_multiselect_menu_item_close">మూసివేయి</string>
+    <!-- Content description for tabs tray multiselect share button -->
+    <string name="tab_tray_multiselect_share_content_description">ఎంచుకున్న ట్యాబులను పంచుకో</string>
+    <!-- Content description for tabs tray multiselect menu -->
+    <string name="tab_tray_multiselect_menu_content_description">ఎంచుకున్న ట్యాబుల మెనూ</string>
     <!-- Content description (not visible, for screen readers etc.): Removes tab from collection button. Removes the selected tab from collection when pressed -->
     <string name="remove_tab_from_collection">ట్యాబును సేకరణ నుండి తీసివేయి</string>
+    <!-- Text for button to enter multiselect mode in tabs tray -->
+    <string name="tabs_tray_select_tabs">ట్యాబులను ఎంచుకో</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab button. Closes the current session when pressed -->
     <string name="close_tab">ట్యాబును మూసివేయి</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab <title> button. First parameter is tab title  -->
@@ -672,10 +695,12 @@
     <string name="download_delete_all">దింపుకోళ్ళను తొలగించు</string>
     <!-- Text for the dialog to confirm clearing all downloads -->
     <string name="download_delete_all_dialog">నిజంగానే మీ దింపుకోళ్ళను తుడిచేయాలనుకుంటున్నారా?</string>
-    <!-- Text for the snackbar to confirm that multiple downloads items have been deleted -->
-    <string name="download_delete_multiple_items_snackbar">దింపుకోలు తొలగించబడింది</string>
+    <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
+    <string name="download_delete_multiple_items_snackbar_1">దింపుకోళ్ళు తొలగించబడ్డాయి</string>
+    <!-- Text for the snackbar to confirm that a single download item has been removed. The first parameter is the name of the download item. -->
+    <string name="download_delete_single_item_snackbar">%1$s తొలగించబడింది</string>
     <!-- Text shown when no download exists -->
-    <string name="download_empty_message">దింపుకోళ్ళేమీ లేవు</string>
+    <string name="download_empty_message_1">దించుకున్న ఫైళ్ళేమీ లేవు</string>
     <!-- History multi select title in app bar
     The first parameter is the number of downloads selected -->
     <string name="download_multi_select_title">%1$d ఎంచుకున్నారు</string>
@@ -683,8 +708,10 @@
 
     <!-- History overflow menu open in new tab button -->
     <string name="download_menu_open">తెరువు</string>
-    <!-- Text for the button to delete a single history item -->
-    <string name="download_delete_item">తొలగించు</string>
+
+
+    <!-- Text for the button to remove a single download item -->
+    <string name="download_delete_item_1">తొలగించు</string>
 
 
     <!-- Crashes -->
@@ -1312,6 +1339,9 @@
     <!-- Open source licenses page title
     The first parameter is the app name -->
     <string name="open_source_licenses_title">%s| OSS లైబ్రరీలు</string>
+
+    <!-- Category of trackers (redirect trackers) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_title">దారిమళ్ళింపు ట్రాకర్లు</string>
 
     <!-- About page link text to open support link -->
     <string name="about_support">తోడ్పాటు</string>
