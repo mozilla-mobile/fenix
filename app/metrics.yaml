@@ -3918,7 +3918,7 @@ perf.awesomebar:
     notification_emails:
       - fenix-core@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2020-11-15"
+    expires: "2021-11-15"
   bookmark_suggestions:
     send_in_pings:
       - metrics
@@ -3936,7 +3936,7 @@ perf.awesomebar:
     notification_emails:
       - fenix-core@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2020-11-15"
+    expires: "2021-11-15"
   search_engine_suggestions:
     send_in_pings:
       - metrics
@@ -3954,7 +3954,7 @@ perf.awesomebar:
     notification_emails:
       - fenix-core@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2020-11-15"
+    expires: "2021-11-15"
   session_suggestions:
     send_in_pings:
       - metrics
@@ -3972,7 +3972,7 @@ perf.awesomebar:
     notification_emails:
       - fenix-core@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2020-11-15"
+    expires: "2021-11-15"
   synced_tabs_suggestions:
     send_in_pings:
       - metrics
@@ -3990,7 +3990,7 @@ perf.awesomebar:
     notification_emails:
       - fenix-core@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2020-11-15"
+    expires: "2021-11-15"
   clipboard_suggestions:
     send_in_pings:
       - metrics
@@ -4008,7 +4008,7 @@ perf.awesomebar:
     notification_emails:
       - fenix-core@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2020-11-15"
+    expires: "2021-11-15"
   shortcuts_suggestions:
     send_in_pings:
       - metrics
@@ -4026,7 +4026,7 @@ perf.awesomebar:
     notification_emails:
       - fenix-core@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2020-11-15"
+    expires: "2021-11-15"
 
 autoplay:
   visited_setting:
