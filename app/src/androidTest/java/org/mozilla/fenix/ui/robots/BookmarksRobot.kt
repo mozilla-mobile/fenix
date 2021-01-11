@@ -23,12 +23,12 @@ import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withParent
 import androidx.test.espresso.matcher.ViewMatchers.withText
-import androidx.test.uiautomator.By
-import androidx.test.uiautomator.Until
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.uiautomator.By
 import androidx.test.uiautomator.By.res
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
+import androidx.test.uiautomator.Until
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.containsString
 import org.junit.Assert.assertEquals
@@ -51,7 +51,7 @@ class BookmarksRobot {
         assertBookmarksView()
     }
 
-    fun verifyEmptyBookmarksList() = assertEmptyBookmarksList()
+    fun verifyDeleteMultplyBookmarks() = assertSnackBarText("Bookmarks deleted")
 
     fun verifyBookmarkFavicon(forUrl: Uri) = assertBookmarkFavicon(forUrl)
 
@@ -175,6 +175,13 @@ class BookmarksRobot {
 
     fun confirmFolderDeletion() {
         onView(withText(R.string.delete_browsing_data_prompt_allow))
+            .inRoot(RootMatchers.isDialog())
+            .check(matches(isDisplayed()))
+            .click()
+    }
+
+    fun cancelFolderDeletion() {
+        onView(withText("CANCEL"))
             .inRoot(RootMatchers.isDialog())
             .check(matches(isDisplayed()))
             .click()

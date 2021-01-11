@@ -40,10 +40,12 @@ class SmokeTest {
     private var searchSuggestionsIdlingResource: RecyclerViewIdlingResource? = null
     private var addonsListIdlingResource: RecyclerViewIdlingResource? = null
     private var recentlyClosedTabsListIdlingResource: RecyclerViewIdlingResource? = null
+    private var bookmarksListIdlingResource: RecyclerViewIdlingResource? = null
 
     // This finds the dialog fragment child of the homeFragment, otherwise the awesomeBar would return null
     private fun getAwesomebarView(): View? {
-        val homeFragment = activityTestRule.activity.supportFragmentManager.primaryNavigationFragment
+        val homeFragment =
+            activityTestRule.activity.supportFragmentManager.primaryNavigationFragment
         val searchDialogFragment = homeFragment?.childFragmentManager?.fragments?.first {
             it.javaClass.simpleName == "SearchDialogFragment"
         }
@@ -79,6 +81,10 @@ class SmokeTest {
 
         if (recentlyClosedTabsListIdlingResource != null) {
             IdlingRegistry.getInstance().unregister(recentlyClosedTabsListIdlingResource!!)
+        }
+
+        if (bookmarksListIdlingResource != null) {
+            IdlingRegistry.getInstance().unregister(bookmarksListIdlingResource!!)
         }
     }
 
@@ -143,7 +149,7 @@ class SmokeTest {
     }
 
     @Test
-    /* Verifies the nav bar:
+        /* Verifies the nav bar:
      - opening a web page
      - the existence of nav bar items
      - editing the url bar
@@ -588,7 +594,10 @@ class SmokeTest {
         }.openRecentlyClosedTabs {
             waitForListToExist()
             recentlyClosedTabsListIdlingResource =
-                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.recently_closed_list), 1)
+                RecyclerViewIdlingResource(
+                    activityTestRule.activity.findViewById(R.id.recently_closed_list),
+                    1
+                )
             IdlingRegistry.getInstance().register(recentlyClosedTabsListIdlingResource!!)
             verifyRecentlyClosedTabsMenuView()
             IdlingRegistry.getInstance().unregister(recentlyClosedTabsListIdlingResource!!)
@@ -611,7 +620,10 @@ class SmokeTest {
         }.openRecentlyClosedTabs {
             waitForListToExist()
             recentlyClosedTabsListIdlingResource =
-                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.recently_closed_list), 1)
+                RecyclerViewIdlingResource(
+                    activityTestRule.activity.findViewById(R.id.recently_closed_list),
+                    1
+                )
             IdlingRegistry.getInstance().register(recentlyClosedTabsListIdlingResource!!)
             verifyRecentlyClosedTabsMenuView()
             IdlingRegistry.getInstance().unregister(recentlyClosedTabsListIdlingResource!!)
@@ -638,7 +650,10 @@ class SmokeTest {
         }.openRecentlyClosedTabs {
             waitForListToExist()
             recentlyClosedTabsListIdlingResource =
-                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.recently_closed_list), 1)
+                RecyclerViewIdlingResource(
+                    activityTestRule.activity.findViewById(R.id.recently_closed_list),
+                    1
+                )
             IdlingRegistry.getInstance().register(recentlyClosedTabsListIdlingResource!!)
             verifyRecentlyClosedTabsMenuView()
             IdlingRegistry.getInstance().unregister(recentlyClosedTabsListIdlingResource!!)
@@ -663,7 +678,10 @@ class SmokeTest {
         }.openRecentlyClosedTabs {
             waitForListToExist()
             recentlyClosedTabsListIdlingResource =
-                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.recently_closed_list), 1)
+                RecyclerViewIdlingResource(
+                    activityTestRule.activity.findViewById(R.id.recently_closed_list),
+                    1
+                )
             IdlingRegistry.getInstance().register(recentlyClosedTabsListIdlingResource!!)
             verifyRecentlyClosedTabsMenuView()
             IdlingRegistry.getInstance().unregister(recentlyClosedTabsListIdlingResource!!)
@@ -691,7 +709,10 @@ class SmokeTest {
         }.openRecentlyClosedTabs {
             waitForListToExist()
             recentlyClosedTabsListIdlingResource =
-                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.recently_closed_list), 1)
+                RecyclerViewIdlingResource(
+                    activityTestRule.activity.findViewById(R.id.recently_closed_list),
+                    1
+                )
             IdlingRegistry.getInstance().register(recentlyClosedTabsListIdlingResource!!)
             verifyRecentlyClosedTabsMenuView()
             IdlingRegistry.getInstance().unregister(recentlyClosedTabsListIdlingResource!!)
@@ -718,7 +739,10 @@ class SmokeTest {
         }.openRecentlyClosedTabs {
             waitForListToExist()
             recentlyClosedTabsListIdlingResource =
-                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.recently_closed_list), 1)
+                RecyclerViewIdlingResource(
+                    activityTestRule.activity.findViewById(R.id.recently_closed_list),
+                    1
+                )
             IdlingRegistry.getInstance().register(recentlyClosedTabsListIdlingResource!!)
             verifyRecentlyClosedTabsMenuView()
             IdlingRegistry.getInstance().unregister(recentlyClosedTabsListIdlingResource!!)
@@ -745,7 +769,10 @@ class SmokeTest {
         }.openRecentlyClosedTabs {
             waitForListToExist()
             recentlyClosedTabsListIdlingResource =
-                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.recently_closed_list), 1)
+                RecyclerViewIdlingResource(
+                    activityTestRule.activity.findViewById(R.id.recently_closed_list),
+                    1
+                )
             IdlingRegistry.getInstance().register(recentlyClosedTabsListIdlingResource!!)
             verifyRecentlyClosedTabsMenuView()
             IdlingRegistry.getInstance().unregister(recentlyClosedTabsListIdlingResource!!)
@@ -753,6 +780,38 @@ class SmokeTest {
             verifyRecentlyClosedTabsMenuDelete()
             clickDeleteCopyRecentlyClosedTabs()
             verifyEmptyRecentlyClosedTabsList()
+        }
+    }
+
+    @Test
+    fun deleteNonEmtpyBookmarkFolderTest() {
+        val website = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        browserScreen {
+            createBookmark(website.url)
+        }.openThreeDotMenu {
+        }.openBookmarks {
+            bookmarksListIdlingResource =
+                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.bookmark_list), 1)
+            IdlingRegistry.getInstance().register(bookmarksListIdlingResource!!)
+            verifyBookmarkTitle("Test_Page_1")
+            createFolder("My Folder")
+            verifyFolderTitle("My Folder")
+            IdlingRegistry.getInstance().unregister(bookmarksListIdlingResource!!)
+        }.openThreeDotMenu("Test_Page_1") {
+        }.clickEdit {
+            clickParentFolderSelector()
+            selectFolder("My Folder")
+            navigateUp()
+            saveEditBookmark()
+        }.openThreeDotMenu("My Folder") {
+        }.clickDelete {
+            cancelFolderDeletion()
+            verifyFolderTitle("My Folder")
+        }.openThreeDotMenu("My Folder"){
+        }.clickDelete {
+            confirmFolderDeletion()
+            verifyDeleteSnackBarText()
         }
     }
 }
