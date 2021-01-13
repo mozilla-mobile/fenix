@@ -2214,7 +2214,7 @@ tabs_tray.cfr:
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/16485
     data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/TBD
+      - https://github.com/mozilla-mobile/fenix/pull/17442
       - https://github.com/mozilla-mobile/fenix/issues/16485#issuecomment-759641324
     data_sensitivity:
       - interaction
@@ -2228,7 +2228,7 @@ tabs_tray.cfr:
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/16485
     data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/TBD
+      - https://github.com/mozilla-mobile/fenix/pull/17442
       - https://github.com/mozilla-mobile/fenix/issues/16485#issuecomment-759641324
     data_sensitivity:
       - interaction
