@@ -14,7 +14,9 @@ import mozilla.components.lib.crash.service.CrashReporterService
 import mozilla.components.lib.crash.service.GleanCrashReporterService
 import mozilla.components.lib.crash.service.MozillaSocorroService
 import mozilla.components.lib.crash.service.SentryService
-import mozilla.components.service.nimbus.Nimbus
+import mozilla.components.service.nimbus.NimbusApi
+import mozilla.components.service.nimbus.Nimbus as NimbusEnabled
+import mozilla.components.service.nimbus.NimbusDisabled
 import mozilla.components.service.nimbus.NimbusServerSettings
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
@@ -104,29 +106,44 @@ class Analytics(
         )
     }
 
-    val experiments by lazyMonitored {
-        val url: String? = BuildConfig.NIMBUS_ENDPOINT
-        val serverSettings = if (!url.isNullOrBlank()) {
-            NimbusServerSettings(url = Uri.parse(url))
-        } else {
-            null
-        }
-        Nimbus(context, serverSettings).apply {
-            if (FeatureFlags.nimbusExperiments) {
+    val experiments: NimbusApi by lazyMonitored {
+        if (FeatureFlags.nimbusExperiments) {
+            // Eventually we'll want to use `NimbusDisabled` when we have no NIMBUS_ENDPOINT.
+            // but we keep this here to not mix feature flags and how we configure Nimbus.
+            val url: String? = BuildConfig.NIMBUS_ENDPOINT
+            val serverSettings = if (!url.isNullOrBlank()) {
+                NimbusServerSettings(url = Uri.parse(url))
+            } else {
+                null
+            }
+
+            NimbusEnabled(context, serverSettings).apply {
                 // Global opt out state is stored in Nimbus, and shouldn't be toggled to `true`
                 // from the app unless the user does so from a UI control.
                 // However, the user may have opt-ed out of mako experiments already, so
                 // we should respect that setting here.
+<<<<<<< HEAD
                 val enabled = context.settings().isExperimentationEnabled
                 if (!enabled) {
                     globalUserParticipation = enabled
                 }
                 context.settings().isExperimentationEnabled = globalUserParticipation
+=======
+                val enabled =
+                    context.components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
+                        context.settings().isExperimentationEnabled
+                    }
+                if (!enabled) {
+                    globalUserParticipation = enabled
+                }
+>>>>>>> 7a3524fae... SDK-158 Use disabled/no-op version of Nimbus object to eliminate unnecessary Rust call (#17372) r=christian
 
                 // Nimbus should look after downloading experiment definitions from remote settings
                 // on another thread, and making sure we don't hit the server each time we start.
                 updateExperiments()
             }
+        } else {
+            NimbusDisabled()
         }
     }
 }
