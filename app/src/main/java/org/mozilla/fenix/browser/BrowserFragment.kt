@@ -30,7 +30,6 @@ import mozilla.components.feature.tabs.WindowFeature
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import org.mozilla.fenix.R
-import org.mozilla.fenix.addons.runIfFragmentIsAttached
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.metrics.Event
@@ -122,11 +121,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
 
                         readerModeAvailable = available
                         readerModeAction.setSelected(active)
-
-                        runIfFragmentIsAttached {
-                            browserToolbarView.view.invalidateActions()
-                            browserToolbarView.toolbarIntegration.invalidateMenu()
-                        }
+                        safeInvalidateBrowserToolbarView()
                     }
                 },
                 owner = this,

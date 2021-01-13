@@ -146,7 +146,9 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler,
     protected val browserInteractor: BrowserToolbarViewInteractor
         get() = _browserInteractor!!
 
-    private var _browserToolbarView: BrowserToolbarView? = null
+    @VisibleForTesting
+    @Suppress("VariableNaming")
+    internal var _browserToolbarView: BrowserToolbarView? = null
     @VisibleForTesting
     internal val browserToolbarView: BrowserToolbarView
         get() = _browserToolbarView!!
@@ -1296,5 +1298,18 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler,
         val directions = QuickSettingsSheetDialogFragmentDirections
             .actionGlobalSitePermissionsManagePhoneFeature(PhoneFeature.AUTOPLAY_AUDIBLE)
         findNavController().navigate(directions)
+    }
+
+    // This method is called in response to native web extension messages from
+    // content scripts (e.g the reader view extension). By the time these
+    // messages are processed the fragment/view may no longer be attached.
+    internal fun safeInvalidateBrowserToolbarView() {
+        runIfFragmentIsAttached {
+            val toolbarView = _browserToolbarView
+            if (toolbarView != null) {
+                toolbarView.view.invalidateActions()
+                toolbarView.toolbarIntegration.invalidateMenu()
+            }
+        }
     }
 }
