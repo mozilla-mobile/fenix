@@ -198,15 +198,7 @@ internal class ReleaseMetricController(
                 else -> null
             }
         }
-        Component.SUPPORT_WEBEXTENSIONS to WebExtensionFacts.Items.WEB_EXTENSIONS_INITIALIZED -> {
-            metadata?.get("installed")?.let { installedAddons ->
-                if (installedAddons is List<*>) {
-                    Addons.installedAddons.set(installedAddons.map { it.toString() })
-                    Addons.hasInstalledAddons.set(installedAddons.size > 0)
-                    Leanplum.setUserAttributes(mapOf("installed_addons" to installedAddons.size))
-                }
-            }
-
+        Component.SUPPORT_WEBEXTENSIONS to WebExtensionFacts.Items.WEB_EXTENSION_ENABLED -> {
             metadata?.get("enabled")?.let { enabledAddons ->
                 if (enabledAddons is List<*>) {
                     Addons.enabledAddons.set(enabledAddons.map { it.toString() })
@@ -214,7 +206,16 @@ internal class ReleaseMetricController(
                     Leanplum.setUserAttributes(mapOf("enabled_addons" to enabledAddons.size))
                 }
             }
-
+            null
+        }
+        Component.SUPPORT_WEBEXTENSIONS to WebExtensionFacts.Items.WEB_EXTENSION_INSTALLED -> {
+            metadata?.get("installed")?.let { installedAddons ->
+                if (installedAddons is List<*>) {
+                    Addons.installedAddons.set(installedAddons.map { it.toString() })
+                    Addons.hasInstalledAddons.set(installedAddons.size > 0)
+                    Leanplum.setUserAttributes(mapOf("installed_addons" to installedAddons.size))
+                }
+            }
             null
         }
         Component.BROWSER_AWESOMEBAR to BrowserAwesomeBarFacts.Items.PROVIDER_DURATION -> {
