@@ -51,6 +51,7 @@ import mozilla.components.feature.contextmenu.DefaultSelectionActionDelegate
 import mozilla.components.feature.privatemode.notification.PrivateNotificationFeature
 import mozilla.components.feature.search.BrowserStoreSearchAdapter
 import mozilla.components.feature.search.ext.legacy
+import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.service.fxa.sync.SyncReason
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.ktx.android.arch.lifecycle.addObservers
@@ -785,7 +786,13 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         // has removed all of them, or we couldn't load any) we will pass searchTermOrURL to Gecko
         // and let it try to load whatever was entered.
         if ((!forceSearch && searchTermOrURL.isUrl()) || engine == null) {
-            loadUrlUseCase.invoke(searchTermOrURL.toNormalizedUrl(), flags)
+            if (loadUrlUseCase is SessionUseCases.DefaultLoadUrlUseCase) {
+                loadUrlUseCase.invoke(
+                    searchTermOrURL.toNormalizedUrl(), components.core.store.state.selectedTabId, flags
+                )
+            } else {
+                loadUrlUseCase.invoke(searchTermOrURL.toNormalizedUrl(), flags)
+            }
         } else {
             if (newTab) {
                 components.useCases.searchUseCases.newTabSearch
