@@ -26,6 +26,11 @@ import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
 import org.mozilla.fenix.helpers.Constants.PackageName.GOOGLE_APPS_PHOTOS
+<<<<<<< HEAD
+=======
+import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
+import org.mozilla.fenix.helpers.TestHelper.packageName
+>>>>>>> d8584ed63... Changes to run tests on beta builds (#16786)
 
 /**
  * Implementation of Robot Pattern for download UI handling.
@@ -40,7 +45,6 @@ class DownloadRobot {
     fun verifyPhotosAppOpens() = assertPhotosOpens()
 
     class Transition {
-
         fun clickDownload(interact: DownloadRobot.() -> Unit): Transition {
             clickDownloadButton().click()
 
@@ -93,7 +97,7 @@ fun downloadRobot(interact: DownloadRobot.() -> Unit): DownloadRobot.Transition 
 }
 
 private fun assertDownloadPrompt() {
-    mDevice.waitNotNull(Until.findObjects(By.res("org.mozilla.fenix.debug:id/download_button")))
+    mDevice.waitNotNull(Until.findObjects(By.res("$packageName:id/download_button")))
 }
 
 private fun assertDownloadNotificationPopup() {
