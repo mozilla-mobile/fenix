@@ -113,7 +113,6 @@ import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.settings.SupportUtils.SumoTopic.HELP
 import org.mozilla.fenix.settings.deletebrowsingdata.deleteAndQuit
 import org.mozilla.fenix.theme.ThemeManager
-import org.mozilla.fenix.utils.FragmentPreDrawManager
 import org.mozilla.fenix.utils.ToolbarPopupWindow
 import org.mozilla.fenix.utils.allowUndo
 import org.mozilla.fenix.whatsnew.WhatsNew
@@ -170,7 +169,6 @@ class HomeFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        postponeEnterTransition()
         bundleArgs = args.toBundle()
         lifecycleScope.launch(IO) {
             if (!onboarding.userHasBeenOnboarded()) {
@@ -339,19 +337,7 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        FragmentPreDrawManager(this).execute {
-            homeViewModel.layoutManagerState?.also { parcelable ->
-                sessionControlView!!.view.layoutManager?.onRestoreInstanceState(parcelable)
-            }
-            homeViewModel.layoutManagerState = null
-
-            // We have to delay so that the keyboard collapses and the view is resized before the
-            // animation from SearchFragment happens
-            delay(ANIMATION_DELAY)
-        }
-
         observeSearchEngineChanges()
-
         createHomeMenu(requireContext(), WeakReference(view.menuButton))
         createTabCounterMenu(view)
 
@@ -652,12 +638,6 @@ class HomeFragment : Fragment() {
             }
             create()
         }.show()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        homeViewModel.layoutManagerState =
-            sessionControlView!!.view.layoutManager?.onSaveInstanceState()
     }
 
     override fun onResume() {
