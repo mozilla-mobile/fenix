@@ -26,11 +26,8 @@ import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
 import org.mozilla.fenix.helpers.Constants.PackageName.GOOGLE_APPS_PHOTOS
-<<<<<<< HEAD
-=======
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestHelper.packageName
->>>>>>> d8584ed63... Changes to run tests on beta builds (#16786)
 
 /**
  * Implementation of Robot Pattern for download UI handling.
