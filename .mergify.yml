@@ -57,4 +57,3 @@ pull_request_rules:
         strict: smart
       delete_head_branch:
         force: false
-  
