@@ -1140,7 +1140,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler,
         }
     }
 
-    protected fun getCurrentTab(): SessionState? {
+    private fun getCurrentTab(): SessionState? {
         return requireComponents.core.store.state.findCustomTabOrSelectedTab(customTabSessionId)
     }
 
