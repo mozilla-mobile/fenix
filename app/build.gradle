@@ -495,6 +495,7 @@ dependencies {
     implementation Deps.mozilla_lib_dataprotect
     debugImplementation Deps.leakcanary
 
+    implementation Deps.androidx_annotation
     implementation Deps.androidx_legacy
     implementation Deps.androidx_biometric
     implementation Deps.androidx_paging
