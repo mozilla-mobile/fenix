@@ -24,17 +24,15 @@ object GeckoProvider {
     const val CN_GET_HASH_URL =
         "https://sb.firefox.com.cn/gethash?client=SAFEBROWSING_ID&appver=%MAJOR_VERSION%&pver=2.2"
 
-    @Synchronized
     fun getOrCreateRuntime(
         context: Context,
         storage: Lazy<LoginsStorage>,
         trackingProtectionPolicy: TrackingProtectionPolicy
     ): GeckoRuntime {
-        if (runtime == null) {
-            runtime = createRuntime(context, storage, trackingProtectionPolicy)
+        return runtime ?: synchronized(this) {
+            runtime ?: createRuntime(context, storage, trackingProtectionPolicy)
+                .also { runtime = it }
         }
-
-        return runtime!!
     }
 
     private fun createRuntime(
