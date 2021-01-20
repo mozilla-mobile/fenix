@@ -18,6 +18,7 @@ import org.mozilla.geckoview.ContentBlocking
 import org.mozilla.geckoview.ContentBlocking.SafeBrowsingProvider
 
 object GeckoProvider {
+    @Volatile
     private var runtime: GeckoRuntime? = null
     const val CN_UPDATE_URL =
         "https://sb.firefox.com.cn/downloads?client=SAFEBROWSING_ID&appver=%MAJOR_VERSION%&pver=2.2"
