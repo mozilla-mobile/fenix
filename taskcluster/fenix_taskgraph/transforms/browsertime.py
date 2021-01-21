@@ -26,7 +26,7 @@ def add_variants(config, tasks):
     tests = list(tasks)
 
     for dep_task in config.kind_dependencies_tasks:
-        build_type = dep_task.attributes.get("build-type", '')
+        build_type = dep_task.attributes.get("build-type", "")
         if build_type not in only_types:
             continue
 
@@ -91,6 +91,23 @@ def build_browsertime_task(config, tasks):
         task["run"]["command"].append("--test={}".format(test_name))
         task["run"]["command"].extend(task.pop("args", []))
 
+        # Setup treherder symbol
+        symbol = test_name
+
+        # taskcluster is merging task attributes with the default ones
+        # resulting the --cold extra option in the ytp warm tasks
+        if "youtube-playback" in task["name"]:
+            task["run"]["command"].remove("--cold")
+            symbol = test_name.replace("youtube-playback-", "ytp-")
+
+        # Setup chimera for combined warm+cold testing
+        if task.pop("chimera", False):
+            task["run"]["command"].append("--chimera")
+
+        # Add '-c' to taskcluster symbol when running cold tests
+        if "--cold" in task["run"]["command"]:
+            symbol += "-c"
+
         # Setup visual metrics
         run_visual_metrics = task.pop("run-visual-metrics", False)
         if run_visual_metrics:
@@ -98,14 +115,8 @@ def build_browsertime_task(config, tasks):
             task["run"]["command"].append("--browsertime-no-ffwindowrecorder")
             task["attributes"]["run-visual-metrics"] = True
 
-        # Setup chimera for combined warm+cold testing
-        if task.pop("chimera", False):
-            task["run"]["command"].append("--chimera")
-
-        # taskcluster is merging task attributes with the default ones
-        # resulting the --cold extra option in the ytp warm tasks
-        if 'youtube-playback' in task["name"]:
-            task["run"]["command"].remove("--cold")
+        # Build taskcluster group and symol
+        task["treeherder"]["symbol"] = "Btime(%s)" % symbol
 
         yield task
 
@@ -129,7 +140,7 @@ def enable_webrender(config, tasks):
 
 @transforms.add
 def fill_email_data(config, tasks):
-    product_name = config.graph_config['taskgraph']['repositories']['mobile']['name']
+    product_name = config.graph_config["taskgraph"]["repositories"]["mobile"]["name"]
     format_kwargs = {
         "product_name": product_name.lower(),
         "head_rev": config.params["head_rev"],
@@ -138,7 +149,9 @@ def fill_email_data(config, tasks):
     for task in tasks:
         format_kwargs["task_name"] = task["name"]
 
-        resolve_keyed_by(task, 'notify', item_name=task["name"], level=config.params["level"])
+        resolve_keyed_by(
+            task, "notify", item_name=task["name"], level=config.params["level"]
+        )
         email = task["notify"].get("email")
         if email:
             email["link"]["href"] = email["link"]["href"].format(**format_kwargs)
