@@ -733,22 +733,31 @@ if (gradle.hasProperty('localProperties.autoPublish.application-services.dir')) 
 // https://github.com/mozilla-mobile/android-components/issues/7249
 ext.updateExtensionVersion = { task, extDir ->
     configure(task) {
-        from extDir
-        include 'manifest.template.json'
-        rename { 'manifest.json' }
-        into extDir
+        final MANIFEST_FILE = 'manifest.json'
+        final MANIFEST_TEMPLATE = 'manifest.template.json'
 
-        def values = ['version': AndroidComponents.VERSION + "." + new Date().format('MMddHHmmss')]
-        inputs.properties(values)
-        expand(values)
+        inputs.dir project.fileTree(dir: extDir, exclude: MANIFEST_FILE)
+        outputs.file MANIFEST_FILE
+
+        doLast {
+            copy {
+                from extDir
+                include MANIFEST_TEMPLATE
+                rename { MANIFEST_FILE }
+                into extDir
+
+                def values = ['version': AndroidComponents.VERSION + "." + new Date().format('MMddHHmmss')]
+                expand(values)
+            }
+        }
     }
 }
 
-tasks.register("updateAdsExtensionVersion", Copy) { task ->
+tasks.register("updateAdsExtensionVersion") { task ->
     updateExtensionVersion(task, 'src/main/assets/extensions/ads')
 }
 
-tasks.register("updateCookiesExtensionVersion", Copy) { task ->
+tasks.register("updateCookiesExtensionVersion") { task ->
     updateExtensionVersion(task, 'src/main/assets/extensions/cookies')
 }
 
