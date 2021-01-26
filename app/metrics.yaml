@@ -4304,7 +4304,7 @@ banner_open_in_app:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-06-01"
+    expires: "2021-08-01"
   dismissed:
     type: event
     description: |
@@ -4317,7 +4317,7 @@ banner_open_in_app:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-06-01"
+    expires: "2021-08-01"
   go_to_settings:
     type: event
     description: |
@@ -4330,7 +4330,7 @@ banner_open_in_app:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-06-01"
+    expires: "2021-08-01"
 
 contextual_menu:
   copy_tapped:
