@@ -17,7 +17,7 @@ import org.mozilla.fenix.components.isSentryEnabled
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 
-
+@Suppress("TooGenericExceptionCaught")
 fun createNimbus(context: Context, url: String?): NimbusApi =
     try {
         // Eventually we'll want to use `NimbusDisabled` when we have no NIMBUS_ENDPOINT.
@@ -38,10 +38,10 @@ fun createNimbus(context: Context, url: String?): NimbusApi =
             }
 
         Nimbus(context, serverSettings).apply {
-            // This performs the minimal amount of work required to make branch and enrolment data
-            // into memory. This call launches on the db thread. If getExperimentBranch is called
-            // from another branch between here and the next nimbus disk write (setting
-            // `globalUserParticipation` or `applyPendingExperiments()`) then this has you covered.
+            // This performs the minimal amount of work required to load branch and enrolment data
+            // into memory. If `getExperimentBranch` is called from another thread between here
+            // and the next nimbus disk write (setting `globalUserParticipation` or
+            // `applyPendingExperiments()`) then this has you covered.
             // This call does its work on the db thread.
             initialize()
 
@@ -70,4 +70,3 @@ fun createNimbus(context: Context, url: String?): NimbusApi =
         }
         NimbusDisabled()
     }
-
