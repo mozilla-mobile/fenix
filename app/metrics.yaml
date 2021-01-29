@@ -4075,6 +4075,7 @@ storage.stats:
       - https://github.com/mozilla-mobile/fenix/issues/12802
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/12876#issuecomment-666770732
+      - https://github.com/mozilla-mobile/fenix/pull/17704#issue-564299127
     data_sensitivity:
       - technical
       - interaction
@@ -4082,7 +4083,7 @@ storage.stats:
       - fenix-core@mozilla.com
       - perf-android-fe@mozilla.com
       - mcomella@mozilla.com
-    expires: "2021-02-01"
+    expires: "2021-08-01"
   app_bytes:
     send_in_pings:
       - metrics
@@ -4099,6 +4100,7 @@ storage.stats:
       - https://github.com/mozilla-mobile/fenix/issues/12802
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/12876#issuecomment-666770732
+      - https://github.com/mozilla-mobile/fenix/pull/17704#issue-564299127
     data_sensitivity:
       - technical
       - interaction
@@ -4106,7 +4108,7 @@ storage.stats:
       - fenix-core@mozilla.com
       - perf-android-fe@mozilla.com
       - mcomella@mozilla.com
-    expires: "2021-02-01"
+    expires: "2021-08-01"
   cache_bytes:
     send_in_pings:
       - metrics
@@ -4120,6 +4122,7 @@ storage.stats:
       - https://github.com/mozilla-mobile/fenix/issues/12802
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/12876#issuecomment-666770732
+      - https://github.com/mozilla-mobile/fenix/pull/17704#issue-564299127
     data_sensitivity:
       - technical
       - interaction
@@ -4127,7 +4130,7 @@ storage.stats:
       - fenix-core@mozilla.com
       - perf-android-fe@mozilla.com
       - mcomella@mozilla.com
-    expires: "2021-02-01"
+    expires: "2021-08-01"
   data_dir_bytes:
     send_in_pings:
       - metrics
@@ -4143,6 +4146,7 @@ storage.stats:
       - https://github.com/mozilla-mobile/fenix/issues/12802
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/12876#issuecomment-666770732
+      - https://github.com/mozilla-mobile/fenix/pull/17704#issue-564299127
     data_sensitivity:
       - technical
       - interaction
@@ -4150,7 +4154,7 @@ storage.stats:
       - fenix-core@mozilla.com
       - perf-android-fe@mozilla.com
       - mcomella@mozilla.com
-    expires: "2021-02-01"
+    expires: "2021-08-01"
 
 progressive_web_app:
   homescreen_tap:
