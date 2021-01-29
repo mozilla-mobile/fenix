@@ -80,7 +80,7 @@ class NavigationToolbarTest {
             verifyUrl(nextWebPage.url.toString())
         }.openThreeDotMenu {
         }.goBack {
-             mDevice.waitForIdle()
+            mDevice.waitForIdle()
              verifyUrl(defaultWebPage.url.toString())
         }
 
