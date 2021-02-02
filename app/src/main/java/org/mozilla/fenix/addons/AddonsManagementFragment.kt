@@ -83,7 +83,6 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
             return arguments?.getBoolean(BUNDLE_KEY_INSTALL_EXTERNAL_ADDON_COMPLETE, false) ?: false
         }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         bindRecyclerView(view)
