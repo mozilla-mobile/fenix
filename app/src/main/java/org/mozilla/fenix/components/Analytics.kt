@@ -104,7 +104,7 @@ class Analytics(
 
     val experiments: NimbusApi by lazyMonitored {
         // No experiments for Iceraven
-        return NimbusDisabled()
+        NimbusDisabled()
     }
 }
 
