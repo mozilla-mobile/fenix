@@ -29,6 +29,7 @@ import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.browser.toolbar.behavior.BrowserToolbarBottomBehavior
 import mozilla.components.browser.toolbar.display.DisplayToolbar
 import mozilla.components.support.utils.URLStringUtils
+import mozilla.components.ui.tabcounter.TabCounterMenu
 import org.mozilla.fenix.R
 import org.mozilla.fenix.customtabs.CustomTabToolbarIntegration
 import org.mozilla.fenix.customtabs.CustomTabToolbarMenu
@@ -155,7 +156,8 @@ class BrowserToolbarView(
                     menu = primaryTextColor,
                     hint = secondaryTextColor,
                     separator = separatorColor,
-                    trackingProtection = primaryTextColor
+                    trackingProtection = primaryTextColor,
+                    permissionHighlights = primaryTextColor
                 )
 
                 display.hint = context.getString(R.string.search_hint)
@@ -164,9 +166,9 @@ class BrowserToolbarView(
             val menuToolbar: ToolbarMenu
             if (isCustomTabSession) {
                 menuToolbar = CustomTabToolbarMenu(
-                    this,
-                    sessionManager,
-                    customTabSession?.id,
+                    context = this,
+                    store = components.core.store,
+                    sessionId = customTabSession?.id,
                     shouldReverseItems = toolbarPosition == ToolbarPosition.TOP,
                     onItemTapped = {
                         it.performHapticIfNeeded(view)
@@ -183,7 +185,6 @@ class BrowserToolbarView(
                         interactor.onBrowserToolbarMenuItemTapped(it)
                     },
                     lifecycleOwner = lifecycleOwner,
-                    sessionManager = sessionManager,
                     store = components.core.store,
                     bookmarksStorage = bookmarkStorage,
                     isPinningSupported = isPinningSupported
@@ -270,10 +271,6 @@ class BrowserToolbarView(
                 }
             }
         }
-    }
-
-    companion object {
-        private const val TOOLBAR_ELEVATION = 16
     }
 
     @Suppress("ComplexCondition")

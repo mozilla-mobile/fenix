@@ -8,13 +8,20 @@ import android.app.Application
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
+import android.os.StrictMode
 import mozilla.components.lib.crash.CrashReporter
 import mozilla.components.lib.crash.service.CrashReporterService
 import mozilla.components.lib.crash.service.GleanCrashReporterService
 import mozilla.components.lib.crash.service.MozillaSocorroService
 import mozilla.components.lib.crash.service.SentryService
+import mozilla.components.service.nimbus.NimbusApi
+import mozilla.components.service.nimbus.Nimbus as NimbusEnabled
+import mozilla.components.service.nimbus.NimbusDisabled
+import mozilla.components.service.nimbus.NimbusServerSettings
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ReleaseChannel
@@ -22,6 +29,7 @@ import org.mozilla.fenix.components.metrics.AdjustMetricsService
 import org.mozilla.fenix.components.metrics.GleanMetricsService
 import org.mozilla.fenix.components.metrics.LeanplumMetricsService
 import org.mozilla.fenix.components.metrics.MetricController
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.perf.lazyMonitored
 import org.mozilla.fenix.utils.Mockable
@@ -90,13 +98,45 @@ class Analytics(
     val metrics: MetricController by lazyMonitored {
         MetricController.create(
             listOf(
-                GleanMetricsService(context),
+                GleanMetricsService(context, lazy { context.components.core.store }),
                 leanplumMetricsService,
                 AdjustMetricsService(context as Application)
             ),
             isDataTelemetryEnabled = { context.settings().isTelemetryEnabled },
             isMarketingDataTelemetryEnabled = { context.settings().isMarketingTelemetryEnabled }
         )
+    }
+
+    val experiments: NimbusApi by lazyMonitored {
+        if (FeatureFlags.nimbusExperiments) {
+            // Eventually we'll want to use `NimbusDisabled` when we have no NIMBUS_ENDPOINT.
+            // but we keep this here to not mix feature flags and how we configure Nimbus.
+            val url: String? = BuildConfig.NIMBUS_ENDPOINT
+            val serverSettings = if (!url.isNullOrBlank()) {
+                NimbusServerSettings(url = Uri.parse(url))
+            } else {
+                null
+            }
+
+            NimbusEnabled(context, serverSettings).apply {
+                // Global opt out state is stored in Nimbus, and shouldn't be toggled to `true`
+                // from the app unless the user does so from a UI control.
+                // However, the user may have opt-ed out of mako experiments already, so
+                // we should respect that setting here.
+                val enabled =
+                    context.components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
+                        context.settings().isExperimentationEnabled
+                    }
+                if (!enabled) {
+                    globalUserParticipation = enabled
+                }
+                // Nimbus should look after downloading experiment definitions from remote settings
+                // on another thread, and making sure we don't hit the server each time we start.
+                updateExperiments()
+            }
+        } else {
+            NimbusDisabled()
+        }
     }
 }
 

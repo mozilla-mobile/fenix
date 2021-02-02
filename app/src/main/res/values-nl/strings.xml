@@ -102,6 +102,8 @@
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">Sluiten</string>
 
+    <!-- Text for the banner message to tell users about our grid view feature. -->
+    <string name="tab_tray_grid_view_banner_message">Wijzig de opmaak van open tabbladen. Ga naar instellingen en selecteer onder Tabbladweergave ‘Raster’.</string>
     <!-- Text for the positive action button to go to Settings for auto close tabs. -->
     <string name="tab_tray_grid_view_banner_positive_button_text">Naar Instellingen</string>
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
@@ -157,8 +159,6 @@
     <string name="browser_menu_find_in_page">Zoeken op pagina</string>
     <!-- Browser menu button that creates a private tab -->
     <string name="browser_menu_private_tab">Privétabblad</string>
-    <!-- Browser menu button that creates a new tab -->
-    <string name="browser_menu_new_tab">Nieuw tabblad</string>
     <!-- Browser menu button that saves the current tab to a collection -->
     <string name="browser_menu_save_to_collection_2">In collectie opslaan</string>
     <!-- Browser menu button that open a share menu to share the current site -->
@@ -608,6 +608,8 @@
     <string name="tab_tray_title">Open tabbladen</string>
     <!-- Text shown in the menu for saving tabs to a collection -->
     <string name="tab_tray_menu_item_save">In collectie opslaan</string>
+    <!-- Text shown in the menu for the collection selector -->
+    <string name="tab_tray_menu_select">Selecteren</string>
     <!-- Text shown in the menu for sharing all tabs -->
     <string name="tab_tray_menu_item_share">Alle tabbladen delen</string>
     <!-- Text shown in the menu to view recently closed tabs -->
@@ -628,6 +630,8 @@
     <string name="tab_tray_multiselect_menu_item_close">Sluiten</string>
     <!-- Content description for tabs tray multiselect share button -->
     <string name="tab_tray_multiselect_share_content_description">Geselecteerde tabbladen delen</string>
+    <!-- Content description for tabs tray multiselect menu -->
+    <string name="tab_tray_multiselect_menu_content_description">Menu Geselecteerde tabbladen</string>
     <!-- Content description (not visible, for screen readers etc.): Removes tab from collection button. Removes the selected tab from collection when pressed -->
     <string name="remove_tab_from_collection">Tabblad uit collectie verwijderen</string>
     <!-- Text for button to enter multiselect mode in tabs tray -->
@@ -728,18 +732,22 @@
     <string name="download_delete_all">Downloads verwijderen</string>
     <!-- Text for the dialog to confirm clearing all downloads -->
     <string name="download_delete_all_dialog">Weet u zeker dat u uw downloads wilt wissen?</string>
-    <!-- Text for the snackbar to confirm that multiple downloads items have been deleted -->
-    <string name="download_delete_multiple_items_snackbar">Downloads verwijderd</string>
+    <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
+    <string name="download_delete_multiple_items_snackbar_1">Downloads verwijderd</string>
+    <!-- Text for the snackbar to confirm that a single download item has been removed. The first parameter is the name of the download item. -->
+    <string name="download_delete_single_item_snackbar">%1$s verwijderd</string>
     <!-- Text shown when no download exists -->
-    <string name="download_empty_message">Geen downloads hier</string>
+    <string name="download_empty_message_1">Geen gedownloade bestanden</string>
     <!-- History multi select title in app bar
     The first parameter is the number of downloads selected -->
     <string name="download_multi_select_title">%1$d geselecteerd</string>
 
     <!-- History overflow menu open in new tab button -->
     <string name="download_menu_open">Openen</string>
-    <!-- Text for the button to delete a single history item -->
-    <string name="download_delete_item">Verwijderen</string>
+
+
+    <!-- Text for the button to remove a single download item -->
+    <string name="download_delete_item_1">Verwijderen</string>
 
 
     <!-- Crashes -->
@@ -863,6 +871,8 @@
     <string name="preference_phone_feature_notification">Notificatie</string>
     <!-- Preference for altering the persistent storage access for all websites -->
     <string name="preference_phone_feature_persistent_storage">Vaste opslag</string>
+    <!-- Preference for altering the EME access for all websites -->
+    <string name="preference_phone_feature_media_key_system_access">DRM-beheerde inhoud</string>
     <!-- Label that indicates that a permission must be asked always -->
     <string name="preference_option_phone_feature_ask_to_allow">Vragen om toestemming</string>
     <!-- Label that indicates that a permission must be blocked -->
@@ -1010,6 +1020,8 @@
     <string name="snackbar_message_tabs_closed">Tabbladen gesloten!</string>
     <!-- Text shown in snackbar when user bookmarks a list of tabs -->
     <string name="snackbar_message_bookmarks_saved">Bladwijzers opgeslagen!</string>
+    <!-- Text shown in snackbar action for viewing bookmarks -->
+    <string name="snackbar_message_bookmarks_view">Weergeven</string>
     <!-- Text shown in snackbar when user adds a site to top sites -->
     <string name="snackbar_added_to_top_sites">Toegevoegd aan topwebsites!</string>
     <!-- Text shown in snackbar when user closes a private tab -->

@@ -20,6 +20,10 @@
     <!-- No Private Tabs Message Description -->
     <string name="no_private_tabs_description">Các thẻ riêng tư của bạn sẽ được hiển thị ở đây.</string>
 
+    <!-- Default title for pinned Baidu top site that links to Baidu home page  -->
+    <string name="default_top_site_baidu">Baidu</string>
+    <!-- Default title for pinned JD top site that links to JD home page  -->
+    <string name="default_top_site_jd">JD</string>
     <!-- Message announced to the user when tab tray is selected with 1 tab -->
     <string name="open_tab_tray_single">1 thẻ đang mở. Chạm để chuyển thẻ.</string>
     <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
@@ -93,6 +97,13 @@
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">Bỏ qua</string>
 
+    <!-- Text for the banner message to tell users about our grid view feature. -->
+    <string name="tab_tray_grid_view_banner_message">Thay đổi bố cục của các thẻ đang mở. Đi tới cài đặt và chọn lưới trong chế độ xem thẻ.</string>
+    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
+    <string name="tab_tray_grid_view_banner_positive_button_text">Đi tới cài đặt</string>
+    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
+    <string name="tab_tray_grid_view_banner_negative_button_text">Bỏ qua</string>
+
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
     <string name="home_screen_shortcut_open_new_tab_2">Thẻ mới</string>
@@ -144,8 +155,6 @@
     <string name="browser_menu_find_in_page">Tìm trong trang</string>
     <!-- Browser menu button that creates a private tab -->
     <string name="browser_menu_private_tab">Thẻ riêng tư</string>
-    <!-- Browser menu button that creates a new tab -->
-    <string name="browser_menu_new_tab">Thẻ mới</string>
     <!-- Browser menu button that saves the current tab to a collection -->
     <string name="browser_menu_save_to_collection_2">Lưu vào bộ sưu tập</string>
     <!-- Browser menu button that open a share menu to share the current site -->
@@ -351,6 +360,12 @@
     <string name="customize_addon_collection_user_hint">Chủ sở hữu bộ sưu tập (ID người dùng)</string>
     <!-- Toast shown after confirming the custom add-on collection configuration -->
     <string name="toast_customize_addon_collection_done">Đã sửa đổi bộ sưu tập tiện ích mở rộng. Thoát ứng dụng để áp dụng các thay đổi…</string>
+
+    <!-- Add-on Installation from AMO-->
+    <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
+    <string name="addon_not_supported_error">Tiện ích mở rộng không được hỗ trợ</string>
+    <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is already installed -->
+    <string name="addon_already_installed">Tiện ích mở rộng đã được cài đặt trước đó</string>
 
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
@@ -583,6 +598,8 @@
     <string name="tab_tray_title">Các thẻ đang mở</string>
     <!-- Text shown in the menu for saving tabs to a collection -->
     <string name="tab_tray_menu_item_save">Lưu vào bộ sưu tập</string>
+    <!-- Text shown in the menu for the collection selector -->
+    <string name="tab_tray_menu_select">Chọn</string>
     <!-- Text shown in the menu for sharing all tabs -->
     <string name="tab_tray_menu_item_share">Chia sẻ tất cả các thẻ</string>
     <!-- Text shown in the menu to view recently closed tabs -->
@@ -597,8 +614,18 @@
     <string name="tab_tray_menu_home">Đi đến trang chủ</string>
     <!-- Shortcut action to toggle private mode -->
     <string name="tab_tray_menu_toggle">Chuyển đổi chế độ thẻ</string>
+    <!-- Text shown in the multiselect menu for bookmarking selected tabs. -->
+    <string name="tab_tray_multiselect_menu_item_bookmark">Đánh dấu</string>
+    <!-- Text shown in the multiselect menu for closing selected tabs. -->
+    <string name="tab_tray_multiselect_menu_item_close">Đóng</string>
+    <!-- Content description for tabs tray multiselect share button -->
+    <string name="tab_tray_multiselect_share_content_description">Chia sẻ các thẻ đã chọn</string>
+    <!-- Content description for tabs tray multiselect menu -->
+    <string name="tab_tray_multiselect_menu_content_description">Menu thẻ đã chọn</string>
     <!-- Content description (not visible, for screen readers etc.): Removes tab from collection button. Removes the selected tab from collection when pressed -->
     <string name="remove_tab_from_collection">Xóa thẻ khỏi bộ sưu tập</string>
+    <!-- Text for button to enter multiselect mode in tabs tray -->
+    <string name="tabs_tray_select_tabs">Chọn các thẻ</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab button. Closes the current session when pressed -->
     <string name="close_tab">Đóng thẻ</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab <title> button. First parameter is tab title  -->
@@ -694,18 +721,22 @@
     <string name="download_delete_all">Xóa nội dung tải xuống</string>
     <!-- Text for the dialog to confirm clearing all downloads -->
     <string name="download_delete_all_dialog">Bạn có chắc chắn muốn xóa nội dung tải xuống của mình không?</string>
-    <!-- Text for the snackbar to confirm that multiple downloads items have been deleted -->
-    <string name="download_delete_multiple_items_snackbar">Đã xóa nội dung tải xuống</string>
+    <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
+    <string name="download_delete_multiple_items_snackbar_1">Đã xóa tải xuống</string>
+    <!-- Text for the snackbar to confirm that a single download item has been removed. The first parameter is the name of the download item. -->
+    <string name="download_delete_single_item_snackbar">Đã xóa %1$s</string>
     <!-- Text shown when no download exists -->
-    <string name="download_empty_message">Không có tải xuống ở đây</string>
+    <string name="download_empty_message_1">Không có tập tin đã tải xuống</string>
     <!-- History multi select title in app bar
     The first parameter is the number of downloads selected -->
     <string name="download_multi_select_title">%1$d đã chọn</string>
 
     <!-- History overflow menu open in new tab button -->
     <string name="download_menu_open">Mở</string>
-    <!-- Text for the button to delete a single history item -->
-    <string name="download_delete_item">Xóa</string>
+
+
+    <!-- Text for the button to remove a single download item -->
+    <string name="download_delete_item_1">Xóa</string>
 
 
     <!-- Crashes -->
@@ -830,6 +861,8 @@
     <string name="preference_phone_feature_notification">Thông báo</string>
     <!-- Preference for altering the persistent storage access for all websites -->
     <string name="preference_phone_feature_persistent_storage">Bộ nhớ liên tục</string>
+    <!-- Preference for altering the EME access for all websites -->
+    <string name="preference_phone_feature_media_key_system_access">Nội dung DRM được kiểm soát</string>
     <!-- Label that indicates that a permission must be asked always -->
     <string name="preference_option_phone_feature_ask_to_allow">Hỏi để cho phép</string>
     <!-- Label that indicates that a permission must be blocked -->
@@ -969,6 +1002,12 @@
     <string name="snackbar_tab_closed">Đã đóng thẻ</string>
     <!-- Text shown in snackbar when user closes all tabs -->
     <string name="snackbar_tabs_closed">Đã đóng các thẻ</string>
+    <!-- Text shown in snackbar when user closes tabs -->
+    <string name="snackbar_message_tabs_closed">Đã đóng các thẻ!</string>
+    <!-- Text shown in snackbar when user bookmarks a list of tabs -->
+    <string name="snackbar_message_bookmarks_saved">Đã lưu dấu trang!</string>
+    <!-- Text shown in snackbar action for viewing bookmarks -->
+    <string name="snackbar_message_bookmarks_view">Xem</string>
     <!-- Text shown in snackbar when user adds a site to top sites -->
     <string name="snackbar_added_to_top_sites">Đã thêm vào trang web hàng đầu!</string>
     <!-- Text shown in snackbar when user closes a private tab -->

@@ -22,10 +22,10 @@ import kotlinx.coroutines.launch
 import mozilla.appservices.Megazord
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.state.action.SystemAction
+import mozilla.components.concept.base.crash.Breadcrumb
 import mozilla.components.concept.push.PushProcessor
 import mozilla.components.feature.addons.update.GlobalAddonDependencyProvider
 import mozilla.components.lib.crash.CrashReporter
-import mozilla.components.service.experiments.Experiments
 import mozilla.components.service.glean.Glean
 import mozilla.components.service.glean.config.Configuration
 import mozilla.components.service.glean.net.ConceptFetchHttpUploader
@@ -170,25 +170,6 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             registerActivityLifecycleCallbacks(PerformanceActivityLifecycleCallbacks(queue))
         }
 
-        fun queueInitExperiments() {
-            @Suppress("ControlFlowWithEmptyBody")
-            if (settings().isExperimentationEnabled) {
-                queue.runIfReadyOrQueue {
-                    Experiments.initialize(
-                        applicationContext = applicationContext,
-                        onExperimentsUpdated = null,
-                        configuration = mozilla.components.service.experiments.Configuration(
-                            httpClient = components.core.client,
-                            kintoEndpoint = KINTO_ENDPOINT_PROD
-                        )
-                    )
-                }
-            } else {
-                // We should make a better way to opt out for when we have more experiments
-                // See https://github.com/mozilla-mobile/fenix/issues/6278
-            }
-        }
-
         fun queueInitStorageAndServices() {
             components.performance.visualCompletenessQueue.queue.runIfReadyOrQueue {
                 GlobalScope.launch(Dispatchers.IO) {
@@ -229,7 +210,6 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
 
         // We init these items in the visual completeness queue to avoid them initing in the critical
         // startup path, before the UI finishes drawing (i.e. visual completeness).
-        queueInitExperiments()
         queueInitStorageAndServices()
         queueMetrics()
         queueReviewPrompt()
@@ -316,6 +296,21 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
 
     override fun onTrimMemory(level: Int) {
         super.onTrimMemory(level)
+
+        // Additional logging and breadcrumb to debug memory issues:
+        // https://github.com/mozilla-mobile/fenix/issues/12731
+
+        logger.info("onTrimMemory(), level=$level, main=${isMainProcess()}")
+
+        components.analytics.crashReporter.recordCrashBreadcrumb(Breadcrumb(
+            category = "Memory",
+            message = "onTrimMemory()",
+            data = mapOf(
+                "level" to level.toString(),
+                "main" to isMainProcess().toString()
+            ),
+            level = Breadcrumb.Level.INFO
+        ))
 
         runOnlyInMainProcess {
             components.core.icons.onTrimMemory(level)
@@ -456,10 +451,6 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         } else {
             super.onConfigurationChanged(config)
         }
-    }
-
-    companion object {
-        private const val KINTO_ENDPOINT_PROD = "https://firefox.settings.services.mozilla.com/v1"
     }
 
     override fun getWorkManagerConfiguration() = Builder().setMinimumLoggingLevel(INFO).build()

@@ -26,13 +26,13 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
-import kotlinx.android.synthetic.main.fragment_search_dialog.view.*
 import org.hamcrest.CoreMatchers.anyOf
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.CoreMatchers.not
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.SessionLoadedIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
+import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.assertions.AwesomeBarAssertion.Companion.suggestionsAreEqualTo
 import org.mozilla.fenix.helpers.assertions.AwesomeBarAssertion.Companion.suggestionsAreGreaterThan
 import org.mozilla.fenix.helpers.click
@@ -43,15 +43,17 @@ import org.mozilla.fenix.helpers.ext.waitNotNull
  */
 class NavigationToolbarRobot {
 
-    fun verifySearchSuggestionsAreMoreThan(suggestionSize: Int, searchTerm: String) =
-        assertSuggestionsAreMoreThan(suggestionSize, searchTerm)
+    fun verifySearchSuggestionsAreMoreThan(suggestionSize: Int) =
+        assertSuggestionsAreMoreThan(suggestionSize)
 
-    fun verifySearchSuggestionsAreEqualTo(suggestionSize: Int, searchTerm: String) =
-        assertSuggestionsAreEqualTo(suggestionSize, searchTerm)
+    fun verifySearchSuggestionsAreEqualTo(suggestionSize: Int) =
+        assertSuggestionsAreEqualTo(suggestionSize)
 
     fun verifyNoHistoryBookmarks() = assertNoHistoryBookmarks()
 
     fun verifyTabButtonShortcutMenuItems() = assertTabButtonShortcutMenuItems()
+
+    fun typeSearchTerm(searchTerm: String) = awesomeBar().perform(typeText(searchTerm))
 
     class Transition {
 
@@ -60,12 +62,12 @@ class NavigationToolbarRobot {
 
         fun goBackToWebsite(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
             mDevice.waitNotNull(
-                Until.findObject(By.res("org.mozilla.fenix.debug:id/toolbar")),
+                Until.findObject(By.res("$packageName:id/toolbar")),
                 waitingTime
             )
             urlBar().click()
             mDevice.waitNotNull(
-                Until.findObject(By.res("org.mozilla.fenix.debug:id/mozac_browser_toolbar_edit_url_view")),
+                Until.findObject(By.res("$packageName:id/mozac_browser_toolbar_edit_url_view")),
                 waitingTime
             )
             clearAddressBar().click()
@@ -82,13 +84,12 @@ class NavigationToolbarRobot {
         ): BrowserRobot.Transition {
             sessionLoadedIdlingResource = SessionLoadedIdlingResource()
 
-            mDevice.waitNotNull(
-                Until.findObject(By.res("org.mozilla.fenix.debug:id/toolbar")),
-                waitingTime
+            mDevice.waitNotNull(Until.findObject(By.res("$packageName:id/toolbar")),
+            waitingTime
             )
             urlBar().click()
             mDevice.waitNotNull(
-                Until.findObject(By.res("org.mozilla.fenix.debug:id/mozac_browser_toolbar_edit_url_view")),
+                Until.findObject(By.res("$packageName:id/mozac_browser_toolbar_edit_url_view")),
                 waitingTime
             )
 
@@ -109,10 +110,7 @@ class NavigationToolbarRobot {
         }
 
         fun openThreeDotMenu(interact: ThreeDotMenuMainRobot.() -> Unit): ThreeDotMenuMainRobot.Transition {
-            mDevice.waitNotNull(
-                Until.findObject(By.res("org.mozilla.fenix.debug:id/mozac_browser_toolbar_menu")),
-                waitingTime
-            )
+            mDevice.waitNotNull(Until.findObject(By.res("$packageName:id/mozac_browser_toolbar_menu")), waitingTime)
             threeDotButton().click()
 
             ThreeDotMenuMainRobot().interact()
@@ -134,11 +132,7 @@ class NavigationToolbarRobot {
             interact: BrowserRobot.() -> Unit
         ): BrowserRobot.Transition {
             sessionLoadedIdlingResource = SessionLoadedIdlingResource()
-            mDevice.waitNotNull(
-                Until.findObject(By.res("org.mozilla.fenix.debug:id/toolbar")),
-                waitingTime
-            )
-
+            mDevice.waitNotNull(Until.findObject(By.res("$packageName:id/toolbar")), waitingTime)
             urlBar().click()
             awesomeBar().perform(replaceText(url.toString()), pressImeActionButton())
 
@@ -246,18 +240,12 @@ fun clickUrlbar(interact: SearchRobot.() -> Unit): SearchRobot.Transition {
     return SearchRobot.Transition()
 }
 
-private fun assertSuggestionsAreEqualTo(suggestionSize: Int, searchTerm: String) {
-    mDevice.waitForIdle()
-    awesomeBar().perform(typeText(searchTerm))
-
+private fun assertSuggestionsAreEqualTo(suggestionSize: Int) {
     mDevice.waitForIdle()
     onView(withId(R.id.awesome_bar)).check(suggestionsAreEqualTo(suggestionSize))
 }
 
-private fun assertSuggestionsAreMoreThan(suggestionSize: Int, searchTerm: String) {
-    mDevice.waitForIdle()
-    awesomeBar().perform(typeText(searchTerm))
-
+private fun assertSuggestionsAreMoreThan(suggestionSize: Int) {
     mDevice.waitForIdle()
     onView(withId(R.id.awesome_bar)).check(suggestionsAreGreaterThan(suggestionSize))
 }

@@ -19,9 +19,10 @@ import io.mockk.unmockkObject
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
-import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
+import mozilla.components.browser.state.search.SearchEngine
+import mozilla.components.browser.state.store.BrowserStore
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -47,6 +48,7 @@ class SearchDialogControllerTest {
     @MockK(relaxed = true) private lateinit var settings: Settings
     @MockK private lateinit var sessionManager: SessionManager
     @MockK(relaxed = true) private lateinit var clearToolbarFocus: () -> Unit
+    @MockK(relaxed = true) private lateinit var focusToolbar: () -> Unit
     @MockK(relaxed = true) private lateinit var dismissDialog: () -> Unit
 
     private lateinit var controller: SearchDialogController
@@ -56,23 +58,27 @@ class SearchDialogControllerTest {
         MockKAnnotations.init(this)
         mockkObject(MetricsUtils)
 
+        val browserStore = BrowserStore()
+
         every { store.state.tabId } returns "test-tab-id"
         every { store.state.searchEngineSource.searchEngine } returns searchEngine
         every { sessionManager.select(any()) } just Runs
         every { navController.currentDestination } returns mockk {
             every { id } returns R.id.searchDialogFragment
         }
-        every { MetricsUtils.createSearchEvent(searchEngine, activity, any()) } returns null
+        every { MetricsUtils.createSearchEvent(searchEngine, browserStore, any()) } returns null
 
         controller = SearchDialogController(
             activity = activity,
             sessionManager = sessionManager,
-            store = store,
+            store = browserStore,
+            fragmentStore = store,
             navController = navController,
             settings = settings,
             metrics = metrics,
             dismissDialog = dismissDialog,
-            clearToolbarFocus = clearToolbarFocus
+            clearToolbarFocus = clearToolbarFocus,
+            focusToolbar = focusToolbar
         )
     }
 
@@ -282,6 +288,7 @@ class SearchDialogControllerTest {
 
         controller.handleSearchShortcutEngineSelected(searchEngine)
 
+        verify { focusToolbar() }
         verify { store.dispatch(SearchFragmentAction.SearchShortcutEngineSelected(searchEngine)) }
         verify { metrics.track(Event.SearchShortcutSelected(searchEngine, false)) }
     }

@@ -155,8 +155,6 @@
     <string name="browser_menu_find_in_page">在頁面中搜尋</string>
     <!-- Browser menu button that creates a private tab -->
     <string name="browser_menu_private_tab">隱私分頁</string>
-    <!-- Browser menu button that creates a new tab -->
-    <string name="browser_menu_new_tab">開新分頁</string>
     <!-- Browser menu button that saves the current tab to a collection -->
     <string name="browser_menu_save_to_collection_2">儲存至收藏集</string>
     <!-- Browser menu button that open a share menu to share the current site -->
@@ -611,6 +609,8 @@
     <string name="tab_tray_title">開啟分頁</string>
     <!-- Text shown in the menu for saving tabs to a collection -->
     <string name="tab_tray_menu_item_save">儲存至收藏集</string>
+    <!-- Text shown in the menu for the collection selector -->
+    <string name="tab_tray_menu_select">選擇</string>
     <!-- Text shown in the menu for sharing all tabs -->
     <string name="tab_tray_menu_item_share">分享所有分頁</string>
     <!-- Text shown in the menu to view recently closed tabs -->
@@ -734,18 +734,22 @@
     <string name="download_delete_all">清除下載紀錄</string>
     <!-- Text for the dialog to confirm clearing all downloads -->
     <string name="download_delete_all_dialog">您確定要清除下載紀錄？</string>
-    <!-- Text for the snackbar to confirm that multiple downloads items have been deleted -->
-    <string name="download_delete_multiple_items_snackbar">已清除下載紀錄</string>
+    <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
+    <string name="download_delete_multiple_items_snackbar_1">已移除下載紀錄</string>
+    <!-- Text for the snackbar to confirm that a single download item has been removed. The first parameter is the name of the download item. -->
+    <string name="download_delete_single_item_snackbar">已移除 %1$s</string>
     <!-- Text shown when no download exists -->
-    <string name="download_empty_message">沒有下載的檔案</string>
+    <string name="download_empty_message_1">無已下載的檔案</string>
     <!-- History multi select title in app bar
     The first parameter is the number of downloads selected -->
     <string name="download_multi_select_title">已選擇 %1$d 個下載的檔案</string>
 
     <!-- History overflow menu open in new tab button -->
     <string name="download_menu_open">開啟</string>
-    <!-- Text for the button to delete a single history item -->
-    <string name="download_delete_item">刪除</string>
+
+
+    <!-- Text for the button to remove a single download item -->
+    <string name="download_delete_item_1">移除</string>
 
 
     <!-- Crashes -->
@@ -872,6 +876,8 @@
     <string name="preference_phone_feature_notification">通知</string>
     <!-- Preference for altering the persistent storage access for all websites -->
     <string name="preference_phone_feature_persistent_storage">持續性儲存空間</string>
+    <!-- Preference for altering the EME access for all websites -->
+    <string name="preference_phone_feature_media_key_system_access">由 DRM 控制的內容</string>
     <!-- Label that indicates that a permission must be asked always -->
     <string name="preference_option_phone_feature_ask_to_allow">總是詢問</string>
     <!-- Label that indicates that a permission must be blocked -->
@@ -974,7 +980,7 @@
     <!-- Sub-header in the dialog to share a link to an app from the most-recent sorted list -->
     <string name="share_link_recent_apps_subheader">最近使用</string>
     <!-- An option from the share dialog to sign into sync -->
-    <string name="sync_sign_in">登入至 Sync</string>
+    <string name="sync_sign_in">登入 Sync</string>
     <!-- An option from the share dialog to send link to all other sync devices -->
     <string name="sync_send_to_all">傳送到所有裝置</string>
     <!-- An option from the share dialog to reconnect to sync -->
@@ -1192,7 +1198,7 @@
     <!-- text for the automatic sign-in button while signing in is in process -->
     <string name="onboarding_firefox_account_signing_in">登入中…</string>
     <!-- text for the button to manually sign into Firefox account. The word "Firefox" should not be translated -->
-    <string name="onboarding_firefox_account_sign_in">登入至 Firefox</string>
+    <string name="onboarding_firefox_account_sign_in">登入 Firefox</string>
 
     <!-- text for the button to stay signed out when presented with an option to automatically sign-in. -->
     <string name="onboarding_firefox_account_stay_signed_out">不要登入</string>
@@ -1457,7 +1463,7 @@
     <!-- Syncing saved logins in Fenix needs reconnect to sync -->
     <string name="preferences_passwords_sync_logins_reconnect">重新連結</string>
     <!-- Syncing saved logins in Fenix needs login -->
-    <string name="preferences_passwords_sync_logins_sign_in">登入至 Sync</string>
+    <string name="preferences_passwords_sync_logins_sign_in">登入 Sync</string>
     <!-- Preference to access list of saved logins -->
     <string name="preferences_passwords_saved_logins">儲存的登入資訊</string>
     <!-- Description of empty list of saved passwords. Placeholder is replaced with app name.  -->
@@ -1677,7 +1683,7 @@
     <!-- Text displayed in the synced tabs screen when a user is not signed in to Firefox Sync describing Synced Tabs -->
     <string name="synced_tabs_sign_in_message">檢視您其他裝置中的分頁清單。</string>
     <!-- Text displayed on a button in the synced tabs screen to link users to sign in when a user is not signed in to Firefox Sync -->
-    <string name="synced_tabs_sign_in_button">登入至 Sync</string>
+    <string name="synced_tabs_sign_in_button">登入 Sync</string>
 
     <!-- The text displayed when a synced device has no tabs to show in the list of Synced Tabs. -->
     <string name="synced_tabs_no_open_tabs">無已開啟的分頁</string>

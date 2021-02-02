@@ -5,9 +5,7 @@
 package org.mozilla.fenix.browser
 
 import android.content.Context
-import android.os.Bundle
 import android.os.StrictMode
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
@@ -30,7 +28,6 @@ import mozilla.components.feature.tabs.WindowFeature
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import org.mozilla.fenix.R
-import org.mozilla.fenix.addons.runIfFragmentIsAttached
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.metrics.Event
@@ -53,17 +50,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
 
     private var readerModeAvailable = false
     private var openInAppOnboardingObserver: OpenInAppOnboardingObserver? = null
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val view = super.onCreateView(inflater, container, savedInstanceState)
-
-        startPostponedEnterTransition()
-        return view
-    }
+    private var pwaOnboardingObserver: PwaOnboardingObserver? = null
 
     @Suppress("LongMethod")
     override fun initializeUI(view: View): Session? {
@@ -121,11 +108,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
 
                         readerModeAvailable = available
                         readerModeAction.setSelected(active)
-
-                        runIfFragmentIsAttached {
-                            browserToolbarView.view.invalidateActions()
-                            browserToolbarView.toolbarIntegration.invalidateMenu()
-                        }
+                        safeInvalidateBrowserToolbarView()
                     }
                 },
                 owner = this,
@@ -156,6 +139,9 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
         ) {
             browserToolbarView.view
         }
+
+        @Suppress("DEPRECATION")
+        // TODO Use browser store instead of session observer: https://github.com/mozilla-mobile/fenix/issues/16945
         session?.register(toolbarSessionObserver, viewLifecycleOwner, autoPause = true)
 
         if (settings.shouldShowOpenInAppCfr && session != null) {
@@ -166,6 +152,8 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                 appLinksUseCases = context.components.useCases.appLinksUseCases,
                 container = browserLayout as ViewGroup
             )
+            @Suppress("DEPRECATION")
+            // TODO Use browser store instead of session observer: https://github.com/mozilla-mobile/fenix/issues/16949
             session.register(
                 openInAppOnboardingObserver!!,
                 owner = this,
@@ -174,15 +162,15 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
         }
 
         if (!settings.userKnowsAboutPwas) {
-            session?.register(
-                PwaOnboardingObserver(
-                    navController = findNavController(),
-                    settings = settings,
-                    webAppUseCases = context.components.useCases.webAppUseCases
-                ),
-                owner = this,
-                autoPause = true
-            )
+            pwaOnboardingObserver = PwaOnboardingObserver(
+                store = context.components.core.store,
+                lifecycleOwner = this,
+                navController = findNavController(),
+                settings = settings,
+                webAppUseCases = context.components.useCases.webAppUseCases
+            ).also {
+                it.start()
+            }
         }
 
         subscribeToTabCollections()
@@ -193,9 +181,13 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
         // This observer initialized in onStart has a reference to fragment's view.
         // Prevent it leaking the view after the latter onDestroyView.
         if (openInAppOnboardingObserver != null) {
+            @Suppress("DEPRECATION")
+            // TODO Use browser store instead of session observer: https://github.com/mozilla-mobile/fenix/issues/16949
             getSessionById()?.unregister(openInAppOnboardingObserver!!)
             openInAppOnboardingObserver = null
         }
+
+        pwaOnboardingObserver?.stop()
     }
 
     private fun subscribeToTabCollections() {
@@ -247,7 +239,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
     }
 
     private val collectionStorageObserver = object : TabCollectionStorage.Observer {
-        override fun onCollectionCreated(title: String, sessions: List<Session>) {
+        override fun onCollectionCreated(title: String, sessions: List<Session>, id: Long?) {
             showTabSavedToCollectionSnackbar(sessions.size, true)
         }
 

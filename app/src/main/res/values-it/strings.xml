@@ -154,8 +154,6 @@
     <string name="browser_menu_find_in_page">Trova nella pagina</string>
     <!-- Browser menu button that creates a private tab -->
     <string name="browser_menu_private_tab">Scheda anonima</string>
-    <!-- Browser menu button that creates a new tab -->
-    <string name="browser_menu_new_tab">Nuova scheda</string>
     <!-- Browser menu button that saves the current tab to a collection -->
     <string name="browser_menu_save_to_collection_2">Salva in una raccolta</string>
     <!-- Browser menu button that open a share menu to share the current site -->
@@ -740,18 +738,22 @@
     <string name="download_delete_all">Cancella download</string>
     <!-- Text for the dialog to confirm clearing all downloads -->
     <string name="download_delete_all_dialog">Cancellare i download?</string>
-    <!-- Text for the snackbar to confirm that multiple downloads items have been deleted -->
-    <string name="download_delete_multiple_items_snackbar">Download cancellati</string>
+    <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
+    <string name="download_delete_multiple_items_snackbar_1">Download eliminati</string>
+    <!-- Text for the snackbar to confirm that a single download item has been removed. The first parameter is the name of the download item. -->
+    <string name="download_delete_single_item_snackbar">È stato eliminato %1$s</string>
     <!-- Text shown when no download exists -->
-    <string name="download_empty_message">Nessun download disponibile</string>
+    <string name="download_empty_message_1">Nessun file scaricato</string>
     <!-- History multi select title in app bar
     The first parameter is the number of downloads selected -->
     <string name="download_multi_select_title">%1$d selezionati</string>
 
     <!-- History overflow menu open in new tab button -->
     <string name="download_menu_open">Apri</string>
-    <!-- Text for the button to delete a single history item -->
-    <string name="download_delete_item">Elimina</string>
+
+
+    <!-- Text for the button to remove a single download item -->
+    <string name="download_delete_item_1">Elimina</string>
 
 
     <!-- Crashes -->
@@ -878,6 +880,8 @@
     <string name="preference_phone_feature_notification">Notifica</string>
     <!-- Preference for altering the persistent storage access for all websites -->
     <string name="preference_phone_feature_persistent_storage">Archiviazione permanente</string>
+    <!-- Preference for altering the EME access for all websites -->
+    <string name="preference_phone_feature_media_key_system_access">Contenuti protetti da DRM</string>
     <!-- Label that indicates that a permission must be asked always -->
     <string name="preference_option_phone_feature_ask_to_allow">Chiedi il consenso</string>
     <!-- Label that indicates that a permission must be blocked -->

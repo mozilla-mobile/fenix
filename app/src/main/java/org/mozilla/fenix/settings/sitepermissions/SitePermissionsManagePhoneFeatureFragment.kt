@@ -28,11 +28,13 @@ import mozilla.components.feature.sitepermissions.SitePermissionsRules.Action.AS
 import mozilla.components.feature.sitepermissions.SitePermissionsRules.Action.BLOCKED
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.settings.PhoneFeature.AUTOPLAY_AUDIBLE
 import org.mozilla.fenix.settings.PhoneFeature.AUTOPLAY_INAUDIBLE
+import org.mozilla.fenix.settings.PhoneFeature.MEDIA_KEY_SYSTEM_ACCESS
 import org.mozilla.fenix.settings.setStartCheckedIndicator
 import org.mozilla.fenix.utils.Settings
 
@@ -132,6 +134,13 @@ class SitePermissionsManagePhoneFeatureFragment : Fragment() {
                     saveActionInSettings(AUTOPLAY_BLOCK_AUDIBLE)
                 }
                 restoreState(AUTOPLAY_BLOCK_AUDIBLE)
+            } else if (args.phoneFeature == MEDIA_KEY_SYSTEM_ACCESS) {
+                visibility = View.VISIBLE
+                text = getString(R.string.preference_option_phone_feature_allowed)
+                setOnClickListener {
+                    saveActionInSettings(ALLOWED)
+                }
+                restoreState(ALLOWED)
             } else {
                 visibility = View.GONE
             }
@@ -205,6 +214,7 @@ class SitePermissionsManagePhoneFeatureFragment : Fragment() {
         requireComponents.analytics.metrics.track(Event.AutoPlaySettingChanged(setting))
         settings.setSitePermissionsPhoneFeatureAction(AUTOPLAY_AUDIBLE, audible)
         settings.setSitePermissionsPhoneFeatureAction(AUTOPLAY_INAUDIBLE, inaudible)
+        context?.components?.useCases?.sessionUseCases?.reload?.invoke()
     }
 
     private fun bindBlockedByAndroidContainer(rootView: View) {

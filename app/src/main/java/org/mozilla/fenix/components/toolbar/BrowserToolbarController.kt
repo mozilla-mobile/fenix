@@ -7,8 +7,11 @@ package org.mozilla.fenix.components.toolbar
 import androidx.navigation.NavController
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
+import mozilla.components.browser.state.action.ContentAction
+import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.EngineView
 import mozilla.components.support.ktx.kotlin.isUrl
+import mozilla.components.ui.tabcounter.TabCounterMenu
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BrowserAnimator.Companion.getToolbarNavOptions
@@ -37,6 +40,7 @@ interface BrowserToolbarController {
 }
 
 class DefaultBrowserToolbarController(
+    private val store: BrowserStore,
     private val activity: HomeActivity,
     private val navController: NavController,
     private val metrics: MetricController,
@@ -65,15 +69,15 @@ class DefaultBrowserToolbarController(
 
     override fun handleToolbarPasteAndGo(text: String) {
         if (text.isUrl()) {
-            sessionManager.selectedSession?.searchTerms = ""
+            store.updateSearchTermsOfSelectedSession("")
             activity.components.useCases.sessionUseCases.loadUrl.invoke(text)
             return
         }
 
-        sessionManager.selectedSession?.searchTerms = text
+        store.updateSearchTermsOfSelectedSession(text)
         activity.components.useCases.searchUseCases.defaultSearch.invoke(
             text,
-            session = sessionManager.selectedSession
+            sessionId = sessionManager.selectedSession?.id
         )
     }
 
@@ -105,11 +109,12 @@ class DefaultBrowserToolbarController(
     override fun handleTabCounterItemInteraction(item: TabCounterMenu.Item) {
         when (item) {
             is TabCounterMenu.Item.CloseTab -> {
+                metrics.track(
+                    Event.TabCounterMenuItemTapped(Event.TabCounterMenuItemTapped.Item.CLOSE_TAB)
+                )
                 sessionManager.selectedSession?.let {
                     // When closing the last tab we must show the undo snackbar in the home fragment
                     if (sessionManager.sessionsOfType(it.private).count() == 1) {
-                        // The tab tray always returns to normal mode so do that here too
-                        activity.browsingModeManager.mode = BrowsingMode.Normal
                         homeViewModel.sessionToDelete = it.id
                         navController.navigate(
                             BrowserFragmentDirections.actionGlobalHome()
@@ -123,8 +128,24 @@ class DefaultBrowserToolbarController(
                 }
             }
             is TabCounterMenu.Item.NewTab -> {
-                activity.browsingModeManager.mode = item.mode
-                navController.navigate(BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = true))
+                metrics.track(
+                    Event.TabCounterMenuItemTapped(Event.TabCounterMenuItemTapped.Item.NEW_TAB)
+                )
+                activity.browsingModeManager.mode = BrowsingMode.Normal
+                navController.navigate(
+                    BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = true)
+                )
+            }
+            is TabCounterMenu.Item.NewPrivateTab -> {
+                metrics.track(
+                    Event.TabCounterMenuItemTapped(
+                        Event.TabCounterMenuItemTapped.Item.NEW_PRIVATE_TAB
+                    )
+                )
+                activity.browsingModeManager.mode = BrowsingMode.Private
+                navController.navigate(
+                    BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = true)
+                )
             }
         }
     }
@@ -138,4 +159,15 @@ class DefaultBrowserToolbarController(
     companion object {
         internal const val TELEMETRY_BROWSER_IDENTIFIER = "browserMenu"
     }
+}
+
+private fun BrowserStore.updateSearchTermsOfSelectedSession(
+    searchTerms: String
+) {
+    val selectedTabId = state.selectedTabId ?: return
+
+    dispatch(ContentAction.UpdateSearchTermsAction(
+        selectedTabId,
+        searchTerms
+    ))
 }

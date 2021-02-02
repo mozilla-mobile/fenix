@@ -4,7 +4,9 @@
 
 package org.mozilla.fenix.ui
 
-import androidx.core.net.toUri
+import android.view.View
+import androidx.recyclerview.widget.RecyclerView
+import androidx.test.espresso.IdlingRegistry
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
@@ -12,9 +14,13 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityTestRule
+import org.mozilla.fenix.helpers.RecyclerViewIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper
+import org.mozilla.fenix.helpers.TestHelper
+import org.mozilla.fenix.helpers.ViewVisibilityIdlingResource
 import org.mozilla.fenix.ui.robots.clickUrlbar
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
@@ -27,6 +33,17 @@ import org.mozilla.fenix.ui.robots.navigationToolbar
 class SmokeTest {
     private val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
     private lateinit var mockWebServer: MockWebServer
+    private var awesomeBar: ViewVisibilityIdlingResource? = null
+    private var searchSuggestionsIdlingResource: RecyclerViewIdlingResource? = null
+
+    // This finds the dialog fragment child of the homeFragment, otherwise the awesomeBar would return null
+    private fun getAwesomebarView(): View? {
+        val homeFragment = activityTestRule.activity.supportFragmentManager.primaryNavigationFragment
+        val searchDialogFragment = homeFragment?.childFragmentManager?.fragments?.first {
+            it.javaClass.simpleName == "SearchDialogFragment"
+        }
+        return searchDialogFragment?.view?.findViewById(R.id.awesome_bar)
+    }
 
     @get:Rule
     val activityTestRule = HomeActivityTestRule()
@@ -95,6 +112,15 @@ class SmokeTest {
     }
 
     @Test
+    fun startBrowsingButtonTest() {
+        homeScreen {
+            verifyStartBrowsingButton()
+        }.clickStartBrowsingButton {
+            verifySearchView()
+        }
+    }
+
+    @Test
     fun verifyBasicNavigationToolbarFunctionality() {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
@@ -117,32 +143,71 @@ class SmokeTest {
     @Test
     fun verifyPageMainMenuItemsTest() {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-        // Add this to check openInApp and youtube is a default app available in every Android emulator/device
-        val youtubeUrl = "www.youtube.com"
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
         }.openThreeDotMenu {
             verifyThreeDotMainMenuItems()
+        }
+    }
+
+    // Could be removed when more smoke tests from the History category are added
+    @Test
+    fun openMainMenuHistoryItemTest() {
+        homeScreen {
+        }.openThreeDotMenu {
         }.openHistory {
             verifyHistoryMenuView()
-        }.goBackToBrowser {
+        }
+    }
+
+    // Could be removed when more smoke tests from the Bookmarks category are added
+    @Test
+    fun openMainMenuBookmarksItemTest() {
+        homeScreen {
         }.openThreeDotMenu {
         }.openBookmarks {
             verifyBookmarksMenuView()
-        }.goBackToBrowser {
+        }
+    }
+
+    @Test
+    fun openMainMenuSyncedTabsItemTest() {
+        homeScreen {
         }.openThreeDotMenu {
         }.openSyncedTabs {
             verifySyncedTabsMenuHeader()
-        }.goBack {
+        }
+    }
+
+    // Could be removed when more smoke tests from the Settings category are added
+    @Test
+    fun openMainMenuSettingsItemTest() {
+        homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
             verifySettingsView()
-        }.goBackToBrowser {
+        }
+    }
+
+    @Test
+    fun openMainMenuFindInPageTest() {
+        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
         }.openThreeDotMenu {
         }.openFindInPage {
             verifyFindInPageSearchBarItems()
-        }.closeFindInPage {
+        }
+    }
+
+    @Test
+    fun openMainMenuAddTopSiteTest() {
+        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
         }.openThreeDotMenu {
         }.addToFirefoxHome {
             verifySnackBarText("Added to top sites!")
@@ -150,32 +215,73 @@ class SmokeTest {
         }.openNewTab {
         }.dismissSearchBar {
             verifyExistingTopSitesTabs(defaultWebPage.title)
-        }.openTabDrawer {
-        }.openTab(defaultWebPage.title) {
+        }
+    }
+
+    @Test
+    fun mainMenuAddToHomeScreenTest() {
+        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
         }.openThreeDotMenu {
         }.openAddToHomeScreen {
             verifyShortcutNameField(defaultWebPage.title)
             clickAddShortcutButton()
             clickAddAutomaticallyButton()
         }.openHomeScreenShortcut(defaultWebPage.title) {
+            verifyPageContent(defaultWebPage.content)
+        }
+    }
+
+    @Test
+    fun openMainMenuAddToCollectionTest() {
+        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
         }.openThreeDotMenu {
         }.openSaveToCollection {
             verifyCollectionNameTextField()
-        }.exitSaveCollection {
+        }
+    }
+
+    @Test
+    fun mainMenuBookmarkButtonTest() {
+        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
         }.openThreeDotMenu {
         }.bookmarkPage {
             verifySnackBarText("Bookmark saved!")
+        }
+    }
+
+    @Test
+    fun mainMenuShareButtonTest() {
+        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
         }.openThreeDotMenu {
         }.sharePage {
             verifyShareAppsLayout()
-        }.closeShareDialogReturnToPage {
+        }
+    }
+
+    @Test
+    fun mainMenuRefreshButtonTest() {
+        val refreshWebPage = TestAssetHelper.getRefreshAsset(mockWebServer)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(refreshWebPage.url) {
+            mDevice.waitForIdle()
         }.openThreeDotMenu {
+            verifyThreeDotMenuExists()
+            verifyRefreshButton()
         }.refreshPage {
-            verifyUrl(defaultWebPage.url.toString())
-        }.openNavigationToolbar {
-        }.enterURLAndEnterToBrowser(youtubeUrl.toUri()) {
-        }.openThreeDotMenu {
-            verifyOpenInAppButton()
+            verifyPageContent("REFRESHED")
         }
     }
 
@@ -201,7 +307,6 @@ class SmokeTest {
             }.goBackToBrowser {
                 clickEnhancedTrackingProtectionPanel()
                 verifyEnhancedTrackingProtectionSwitch()
-                // Turning off TP Switch results in adding the WebPage to exception list
                 clickEnhancedTrackingProtectionSwitchOffOn()
             }
         }
@@ -214,7 +319,7 @@ class SmokeTest {
         homeScreen {
         }.openSearch {
             verifyKeyboardVisibility()
-            clickSearchEngineButton()
+            clickSearchEngineShortcutButton()
             verifySearchEngineList()
             changeDefaultSearchEngine("Amazon.com")
             verifySearchEngineIcon("Amazon.com")
@@ -222,7 +327,7 @@ class SmokeTest {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
         }.openTabDrawer {
         }.openNewTab {
-            clickSearchEngineButton()
+            clickSearchEngineShortcutButton()
             mDevice.waitForIdle()
             changeDefaultSearchEngine("Bing")
             verifySearchEngineIcon("Bing")
@@ -230,7 +335,7 @@ class SmokeTest {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
         }.openTabDrawer {
         }.openNewTab {
-            clickSearchEngineButton()
+            clickSearchEngineShortcutButton()
             mDevice.waitForIdle()
             changeDefaultSearchEngine("DuckDuckGo")
             verifySearchEngineIcon("DuckDuckGo")
@@ -238,7 +343,7 @@ class SmokeTest {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
         }.openTabDrawer {
         }.openNewTab {
-            clickSearchEngineButton()
+            clickSearchEngineShortcutButton()
             changeDefaultSearchEngine("Wikipedia")
             verifySearchEngineIcon("Wikipedia")
         }.goToSearchEngine {
@@ -252,6 +357,137 @@ class SmokeTest {
             clickUrlbar {
                 verifyDefaultSearchEngine("Google")
             }
+        }
+    }
+
+    @Test
+    fun addPredefinedSearchEngineTest() {
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openSearchSubMenu {
+            openAddSearchEngineMenu()
+            verifyAddSearchEngineList()
+            addNewSearchEngine("YouTube")
+            verifyEngineListContains("YouTube")
+        }.goBack {
+        }.goBack {
+        }.openSearch {
+            verifyKeyboardVisibility()
+            clickSearchEngineShortcutButton()
+            verifyEnginesListShortcutContains("YouTube")
+        }
+    }
+
+    @Test
+    fun toggleSearchSuggestions() {
+        // Goes through the settings and changes the search suggestion toggle, then verifies it changes.
+        homeScreen {
+        }.openNavigationToolbar {
+            typeSearchTerm("mozilla")
+            val awesomeBarView = getAwesomebarView()
+            awesomeBarView?.let {
+                awesomeBar = ViewVisibilityIdlingResource(it, View.VISIBLE)
+            }
+            IdlingRegistry.getInstance().register(awesomeBar!!)
+            searchSuggestionsIdlingResource =
+                RecyclerViewIdlingResource(awesomeBarView as RecyclerView, 1)
+            IdlingRegistry.getInstance().register(searchSuggestionsIdlingResource!!)
+            verifySearchSuggestionsAreMoreThan(0)
+            IdlingRegistry.getInstance().unregister(searchSuggestionsIdlingResource!!)
+        }.goBack {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openSearchSubMenu {
+            disableShowSearchSuggestions()
+        }.goBack {
+        }.goBack {
+        }.openNavigationToolbar {
+            typeSearchTerm("mozilla")
+            searchSuggestionsIdlingResource =
+                RecyclerViewIdlingResource(getAwesomebarView() as RecyclerView)
+            IdlingRegistry.getInstance().register(searchSuggestionsIdlingResource!!)
+            verifySearchSuggestionsAreEqualTo(0)
+            IdlingRegistry.getInstance().unregister(searchSuggestionsIdlingResource!!)
+        }
+    }
+
+    @Test
+    fun swipeToSwitchTabTest() {
+        val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+        val secondWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 2)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(firstWebPage.url) {
+        }.openTabDrawer {
+        }.openNewTab {
+        }.submitQuery(secondWebPage.url.toString()) {
+            swipeNavBarRight(secondWebPage.url.toString())
+            verifyPageContent(firstWebPage.content)
+            swipeNavBarLeft(firstWebPage.url.toString())
+            verifyPageContent(secondWebPage.content)
+        }
+    }
+
+    @Test
+    fun updateSavedLoginTest() {
+        val saveLoginTest =
+            TestAssetHelper.getSaveLoginAsset(mockWebServer)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(saveLoginTest.url) {
+            verifySaveLoginPromptIsShown()
+            // Click Save to save the login
+            saveLoginFromPrompt("Save")
+        }.openNavigationToolbar {
+        }.enterURLAndEnterToBrowser(saveLoginTest.url) {
+            enterPassword("test")
+            verifyUpdateLoginPromptIsShown()
+            // Click Update to change the saved password
+            saveLoginFromPrompt("Update")
+        }.openThreeDotMenu {
+        }.openSettings {
+            TestHelper.scrollToElementByText("Logins and passwords")
+        }.openLoginsAndPasswordSubMenu {
+        }.openSavedLogins {
+            verifySecurityPromptForLogins()
+            tapSetupLater()
+            // Verify that the login appears correctly
+            verifySavedLoginFromPrompt()
+            viewSavedLoginDetails()
+            revealPassword()
+            verifyPasswordSaved("test")
+        }
+    }
+
+    @Test
+    fun redirectToAppPermissionsSystemSettingsTest() {
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openSettingsSubMenuSitePermissions {
+        }.openCamera {
+            verifyBlockedByAndroid()
+        }.goBack {
+        }.openLocation {
+            verifyBlockedByAndroid()
+        }.goBack {
+        }.openMicrophone {
+            verifyBlockedByAndroid()
+            clickGoToSettingsButton()
+            openAppSystemPermissionsSettings()
+            switchAppPermissionSystemSetting("Camera")
+            switchAppPermissionSystemSetting("Location")
+            switchAppPermissionSystemSetting("Microphone")
+            mDevice.pressBack()
+            mDevice.pressBack()
+            verifyUnblockedByAndroid()
+        }.goBack {
+        }.openLocation {
+            verifyUnblockedByAndroid()
+        }.goBack {
+        }.openCamera {
+            verifyUnblockedByAndroid()
         }
     }
 }

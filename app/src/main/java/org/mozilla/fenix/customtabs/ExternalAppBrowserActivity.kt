@@ -5,10 +5,13 @@
 package org.mozilla.fenix.customtabs
 
 import android.content.Intent
+import androidx.annotation.VisibleForTesting
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDirections
 import kotlinx.android.synthetic.main.activity_home.*
 import mozilla.components.browser.session.runWithSession
+import mozilla.components.browser.state.selector.findCustomTab
+import mozilla.components.browser.state.state.SessionState
 import mozilla.components.concept.engine.manifest.WebAppManifestParser
 import mozilla.components.feature.intent.ext.getSessionId
 import mozilla.components.feature.pwa.ext.getWebAppManifest
@@ -24,7 +27,20 @@ import java.security.InvalidParameterException
  * Activity that holds the [ExternalAppBrowserFragment] that is launched within an external app,
  * such as custom tabs and progressive web apps.
  */
+@Suppress("TooManyFunctions")
 open class ExternalAppBrowserActivity : HomeActivity() {
+    override fun onResume() {
+        super.onResume()
+
+        if (!hasExternalTab()) {
+            // An ExternalAppBrowserActivity is always bound to a specific tab. If this tab doesn't
+            // exist anymore on resume then this activity has nothing to display anymore. Let's just
+            // finish it AND remove this task to avoid it hanging around in the recent apps screen.
+            // Without this the parent HomeActivity class may decide to show the browser UI and we
+            // end up with multiple browsers (causing "display already acquired" crashes).
+            finishAndRemoveTask()
+        }
+    }
 
     final override fun getBreadcrumbMessage(destination: NavDestination): String {
         val fragmentName = resources.getResourceEntryName(destination.id)
@@ -86,8 +102,7 @@ open class ExternalAppBrowserActivity : HomeActivity() {
             // When this activity finishes, the process is staying around and the session still
             // exists then remove it now to free all its resources. Once this activity is finished
             // then there's no way to get back to it other than relaunching it.
-            val sessionId = getIntentSessionId(SafeIntent(intent))
-            components.core.sessionManager.runWithSession(sessionId) { session ->
+            components.core.sessionManager.runWithSession(getExternalTabId()) { session ->
                 // If the custom tag config has been removed we are opening this in normal browsing
                 if (session.customTabConfig != null) {
                     remove(session)
@@ -95,5 +110,21 @@ open class ExternalAppBrowserActivity : HomeActivity() {
                 true
             }
         }
+    }
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    internal fun hasExternalTab(): Boolean {
+        return getExternalTab() != null
+    }
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    internal fun getExternalTab(): SessionState? {
+        val id = getExternalTabId() ?: return null
+        return components.core.store.state.findCustomTab(id)
+    }
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    internal fun getExternalTabId(): String? {
+        return getIntentSessionId(SafeIntent(intent))
     }
 }

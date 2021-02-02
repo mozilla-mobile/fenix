@@ -155,8 +155,6 @@
     <string name="browser_menu_find_in_page">Знайти на сторінці</string>
     <!-- Browser menu button that creates a private tab -->
     <string name="browser_menu_private_tab">Приватна вкладка</string>
-    <!-- Browser menu button that creates a new tab -->
-    <string name="browser_menu_new_tab">Нова вкладка</string>
     <!-- Browser menu button that saves the current tab to a collection -->
     <string name="browser_menu_save_to_collection_2">Зберегти до збірки</string>
     <!-- Browser menu button that open a share menu to share the current site -->
@@ -475,7 +473,7 @@
     <!-- Header of the Turn on Sync preference view -->
     <string name="preferences_sync">Увімкнути синхронізацію</string>
     <!-- Preference for pairing -->
-    <string name="preferences_sync_pair">Скануйте код в Firefox на комп’ютері</string>
+    <string name="preferences_sync_pair">Скануйте код у Firefox на комп’ютері</string>
     <!-- Preference for account login -->
     <string name="preferences_sync_sign_in">Увійти</string>
     <!-- Preference for reconnecting to FxA sync -->
@@ -733,18 +731,22 @@
     <string name="download_delete_all">Видалити завантаження</string>
     <!-- Text for the dialog to confirm clearing all downloads -->
     <string name="download_delete_all_dialog">Ви впевнені, що хочете очистити завантаження?</string>
-    <!-- Text for the snackbar to confirm that multiple downloads items have been deleted -->
-    <string name="download_delete_multiple_items_snackbar">Завантаження видалено</string>
+    <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
+    <string name="download_delete_multiple_items_snackbar_1">Завантаження вилучено</string>
+    <!-- Text for the snackbar to confirm that a single download item has been removed. The first parameter is the name of the download item. -->
+    <string name="download_delete_single_item_snackbar">Вилучено %1$s</string>
     <!-- Text shown when no download exists -->
-    <string name="download_empty_message">Завантажень немає</string>
+    <string name="download_empty_message_1">Завантажених файлів немає</string>
     <!-- History multi select title in app bar
     The first parameter is the number of downloads selected -->
     <string name="download_multi_select_title">Вибрано %1$d</string>
 
     <!-- History overflow menu open in new tab button -->
     <string name="download_menu_open">Відкрити</string>
-    <!-- Text for the button to delete a single history item -->
-    <string name="download_delete_item">Видалити</string>
+
+
+    <!-- Text for the button to remove a single download item -->
+    <string name="download_delete_item_1">Вилучити</string>
 
 
     <!-- Crashes -->
@@ -869,6 +871,8 @@
     <string name="preference_phone_feature_notification">Сповіщення</string>
     <!-- Preference for altering the persistent storage access for all websites -->
     <string name="preference_phone_feature_persistent_storage">Постійне сховище</string>
+    <!-- Preference for altering the EME access for all websites -->
+    <string name="preference_phone_feature_media_key_system_access">Вміст, контрольований DRM</string>
     <!-- Label that indicates that a permission must be asked always -->
     <string name="preference_option_phone_feature_ask_to_allow">Запитувати дозвіл</string>
     <!-- Label that indicates that a permission must be blocked -->
@@ -1162,7 +1166,7 @@
     <string name="onboarding_whats_new_description_linktext">Отримайте відповіді тут</string>
 
     <!-- text for the Firefox account onboarding sign in card header -->
-    <string name="onboarding_account_sign_in_header">Почніть синхронізувати закладки, паролі та інші дані з Обліковим записом Firefox.</string>
+    <string name="onboarding_account_sign_in_header">Почніть синхронізувати закладки, паролі та інші дані з обліковим записом Firefox.</string>
     <!-- Text for the button to learn more about signing in to your Firefox account -->
     <string name="onboarding_manual_sign_in_learn_more">Докладніше</string>
     <!-- text for the firefox account onboarding card header when we detect you're already signed in to

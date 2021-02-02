@@ -231,7 +231,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = false
     )
 
-    val isExperimentationEnabled by booleanPreference(
+    var isExperimentationEnabled by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_experimentation),
         default = false
     )
@@ -756,7 +756,8 @@ class Settings(private val appContext: Context) : PreferencesHolder {
             camera = getSitePermissionsPhoneFeatureAction(PhoneFeature.CAMERA),
             autoplayAudible = getSitePermissionsPhoneFeatureAutoplayAction(PhoneFeature.AUTOPLAY_AUDIBLE),
             autoplayInaudible = getSitePermissionsPhoneFeatureAutoplayAction(PhoneFeature.AUTOPLAY_INAUDIBLE),
-            persistentStorage = getSitePermissionsPhoneFeatureAction(PhoneFeature.PERSISTENT_STORAGE)
+            persistentStorage = getSitePermissionsPhoneFeatureAction(PhoneFeature.PERSISTENT_STORAGE),
+            mediaKeySystemAccess = getSitePermissionsPhoneFeatureAction(PhoneFeature.MEDIA_KEY_SYSTEM_ACCESS)
         )
     }
 
@@ -767,7 +768,9 @@ class Settings(private val appContext: Context) : PreferencesHolder {
             PhoneFeature.LOCATION,
             PhoneFeature.CAMERA,
             PhoneFeature.AUTOPLAY_AUDIBLE,
-            PhoneFeature.AUTOPLAY_INAUDIBLE
+            PhoneFeature.AUTOPLAY_INAUDIBLE,
+            PhoneFeature.PERSISTENT_STORAGE,
+            PhoneFeature.MEDIA_KEY_SYSTEM_ACCESS
         ).map { it.getPreferenceKey(appContext) }
 
         preferences.registerOnSharedPreferenceChangeListener(lifecycleOwner) { _, key ->
@@ -921,6 +924,16 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     val customAddonsCollection by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_addons_custom_collection),
         BuildConfig.AMO_COLLECTION
+    )
+
+    var mobileBookmarksSize by intPreference(
+        appContext.getPreferenceKey(R.string.pref_key_mobile_bookmarks_size),
+        0
+    )
+
+    var desktopBookmarksSize by intPreference(
+        appContext.getPreferenceKey(R.string.pref_key_desktop_bookmarks_size),
+        0
     )
 
     private var savedLoginsSortingStrategyString by stringPreference(

@@ -5,6 +5,9 @@
 package org.mozilla.fenix.components.metrics
 
 import android.content.Context
+import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.feature.search.ext.legacy
+import mozilla.components.feature.search.ext.waitForSelectedOrDefaultSearchEngine
 import mozilla.components.service.fxa.manager.SyncEnginesStorage
 import mozilla.components.service.glean.Glean
 import mozilla.components.service.glean.private.NoExtraKeys
@@ -22,6 +25,8 @@ import org.mozilla.fenix.GleanMetrics.ContextualHintTrackingProtection
 import org.mozilla.fenix.GleanMetrics.CrashReporter
 import org.mozilla.fenix.GleanMetrics.CustomTab
 import org.mozilla.fenix.GleanMetrics.DownloadNotification
+import org.mozilla.fenix.GleanMetrics.DownloadsMisc
+import org.mozilla.fenix.GleanMetrics.DownloadsManagement
 import org.mozilla.fenix.GleanMetrics.ErrorPage
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.FindInPage
@@ -399,6 +404,12 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.MediaStopState -> EventWrapper<NoExtraKeys>(
             { MediaState.stop.record(it) }
         )
+        is Event.MediaFullscreenState -> EventWrapper<NoExtraKeys>(
+            { MediaState.fullscreen.record(it) }
+        )
+        is Event.MediaPictureInPictureState -> EventWrapper<NoExtraKeys>(
+            { MediaState.pictureInPicture.record(it) }
+        )
         is Event.InAppNotificationDownloadOpen -> EventWrapper<NoExtraKeys>(
             { DownloadNotification.inAppOpen.record(it) }
         )
@@ -419,6 +430,18 @@ private val Event.wrapper: EventWrapper<*>?
         )
         is Event.NotificationDownloadTryAgain -> EventWrapper<NoExtraKeys>(
             { DownloadNotification.tryAgain.record(it) }
+        )
+        is Event.DownloadAdded -> EventWrapper<NoExtraKeys>(
+            { DownloadsMisc.downloadAdded.record(it) }
+        )
+        is Event.DownloadsScreenOpened -> EventWrapper<NoExtraKeys>(
+            { DownloadsManagement.downloadsScreenOpened.record(it) }
+        )
+        is Event.DownloadsItemOpened -> EventWrapper<NoExtraKeys>(
+            { DownloadsManagement.itemOpened.record(it) }
+        )
+        is Event.DownloadsItemDeleted -> EventWrapper<NoExtraKeys>(
+            { DownloadsManagement.itemDeleted.record(it) }
         )
         is Event.NotificationMediaPlay -> EventWrapper<NoExtraKeys>(
             { MediaNotification.play.record(it) }
@@ -656,6 +679,17 @@ private val Event.wrapper: EventWrapper<*>?
             { ProgressiveWebApp.background.record(it) },
             { ProgressiveWebApp.backgroundKeys.valueOf(it) }
         )
+        is Event.CopyUrlUsed -> EventWrapper<NoExtraKeys>(
+            { Events.copyUrlTapped.record(it) }
+        )
+
+        is Event.SyncedTabOpened -> EventWrapper<NoExtraKeys>(
+            { Events.syncedTabOpened.record(it) }
+        )
+
+        is Event.RecentlyClosedTabsOpened -> EventWrapper<NoExtraKeys>(
+            { Events.recentlyClosedTabsOpened.record(it) }
+        )
 
         Event.MasterPasswordMigrationDisplayed -> EventWrapper<NoExtraKeys>(
             { MasterPassword.displayed.record(it) }
@@ -683,6 +717,7 @@ private val Event.wrapper: EventWrapper<*>?
 
 class GleanMetricsService(
     private val context: Context,
+    private val store: Lazy<BrowserStore>,
     private val browsersCache: BrowsersCache = BrowsersCache,
     private val mozillaProductDetector: MozillaProductDetector = MozillaProductDetector
 ) : MetricsService {
@@ -754,6 +789,18 @@ class GleanMetricsService(
                 topSitesCount.add(topSitesSize)
             }
 
+            val desktopBookmarksSize = context.settings().desktopBookmarksSize
+            hasDesktopBookmarks.set(desktopBookmarksSize > 0)
+            if (desktopBookmarksSize > 0) {
+                desktopBookmarksCount.add(desktopBookmarksSize)
+            }
+
+            val mobileBookmarksSize = context.settings().mobileBookmarksSize
+            hasMobileBookmarks.set(mobileBookmarksSize > 0)
+            if (mobileBookmarksSize > 0) {
+                mobileBookmarksCount.add(mobileBookmarksSize)
+            }
+
             toolbarPosition.set(
                 when (context.settings().toolbarPosition) {
                     ToolbarPosition.BOTTOM -> Event.ToolbarPositionChanged.Position.BOTTOM.name
@@ -765,20 +812,18 @@ class GleanMetricsService(
             closeTabSetting.set(context.settings().getTabTimeoutPingString())
         }
 
-        SearchDefaultEngine.apply {
-            val defaultEngine = context
-                .components
-                .search
-                .searchEngineManager
-                .defaultSearchEngine ?: return@apply
+        store.value.waitForSelectedOrDefaultSearchEngine { searchEngine ->
+            if (searchEngine != null) {
+                SearchDefaultEngine.apply {
+                    code.set(searchEngine.id)
+                    name.set(searchEngine.name)
+                    submissionUrl.set(searchEngine.legacy().buildSearchUrl(""))
+                }
+            }
 
-            code.set(defaultEngine.identifier)
-            name.set(defaultEngine.name)
-            submissionUrl.set(defaultEngine.buildSearchUrl(""))
+            activationPing.checkAndSend()
+            installationPing.checkAndSend()
         }
-
-        activationPing.checkAndSend()
-        installationPing.checkAndSend()
     }
 
     private fun setPreferenceMetrics() {
