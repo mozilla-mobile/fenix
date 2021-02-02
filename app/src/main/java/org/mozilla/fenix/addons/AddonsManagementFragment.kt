@@ -176,14 +176,14 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
         val allowCache = args.installAddonId == null || installExternalAddonComplete
         lifecycleScope.launch(IO) {
             try {
-                addons = requireContext().components.addonManager.getAddons(allowCache = allowCache)
+                val addons = requireContext().components.addonManager.getAddons(allowCache = allowCache)
                 lifecycleScope.launch(Dispatchers.Main) {
                     runIfFragmentIsAttached {
                         if (!shouldRefresh) {
                             adapter = PagedAddonsManagerAdapter(
                                 requireContext().components.addonCollectionProvider,
                                 managementView,
-                                addons!!,
+                                addons,
                                 style = createAddonStyle(requireContext())
                             )
                         }
@@ -193,7 +193,7 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
 
                         recyclerView.adapter = adapter
                         if (shouldRefresh) {
-                            adapter?.updateAddons(addons!!)
+                            adapter?.updateAddons(addons)
                         }
 
                         args.installAddonId?.let { addonIn ->
@@ -244,7 +244,7 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
     }
 
     private fun createAddonStyle(context: Context): PagedAddonsManagerAdapter.Style {
-        return AddonsManagerAdapter.Style(
+        return PagedAddonsManagerAdapter.Style(
             sectionsTextColor = ThemeManager.resolveAttribute(R.attr.primaryText, context),
             addonNameTextColor = ThemeManager.resolveAttribute(R.attr.primaryText, context),
             addonSummaryTextColor = ThemeManager.resolveAttribute(R.attr.secondaryText, context),
