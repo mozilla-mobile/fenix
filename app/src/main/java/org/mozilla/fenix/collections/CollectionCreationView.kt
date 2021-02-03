@@ -168,6 +168,8 @@ class CollectionCreationView(
             text = context.getString(R.string.create_collection_name_collection)
             setOnClickListener {
                 name_collection_edittext.hideKeyboard()
+                // This will be addressed on https://github.com/mozilla-mobile/fenix/issues/17803
+                @Suppress("DEPRECATION")
                 val handler = Handler()
                 handler.postDelayed({
                     interactor.onBackPressed(SaveCollectionStep.NameCollection)
@@ -214,6 +216,8 @@ class CollectionCreationView(
             text = context.getString(R.string.collection_rename)
             setOnClickListener {
                 name_collection_edittext.hideKeyboard()
+                // Will be addressed on https://github.com/mozilla-mobile/fenix/issues/17803
+                @Suppress("DEPRECATION")
                 val handler = Handler()
                 handler.postDelayed({
                     interactor.onBackPressed(SaveCollectionStep.RenameCollection)

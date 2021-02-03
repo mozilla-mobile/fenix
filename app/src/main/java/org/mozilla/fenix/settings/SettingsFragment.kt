@@ -335,6 +335,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
                             Toast.LENGTH_LONG
                         ).show()
 
+                        // This will be addressed on https://github.com/mozilla-mobile/fenix/issues/17806
+                        @Suppress("DEPRECATION")
                         Handler().postDelayed({
                             exitProcess(0)
                         }, AMO_COLLECTION_OVERRIDE_EXIT_DELAY)
@@ -406,6 +408,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
                         getString(R.string.toast_override_fxa_sync_server_done),
                         Toast.LENGTH_LONG
                     ).show()
+                    // This will be addressed on https://github.com/mozilla-mobile/fenix/issues/17806
+                    @Suppress("DEPRECATION")
                     Handler().postDelayed({
                         exitProcess(0)
                     }, FXA_SYNC_OVERRIDE_EXIT_DELAY)
