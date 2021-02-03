@@ -86,10 +86,6 @@ class AwesomeBarView(
     }
 
     private val selectTabUseCase = object : TabsUseCases.SelectTabUseCase {
-        override fun invoke(session: Session) {
-            interactor.onExistingSessionSelected(session.id)
-        }
-
         override fun invoke(tabId: String) {
             interactor.onExistingSessionSelected(tabId)
         }

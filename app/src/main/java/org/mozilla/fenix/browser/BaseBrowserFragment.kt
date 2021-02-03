@@ -1055,7 +1055,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
         getSessionById()?.let { session ->
             return if (session.source == SessionState.Source.ACTION_VIEW) {
                 activity?.finish()
-                requireComponents.useCases.tabsUseCases.removeTab(session)
+                requireComponents.useCases.tabsUseCases.removeTab(session.id)
                 true
             } else {
                 if (session.hasParentSession) {
