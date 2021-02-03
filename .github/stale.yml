@@ -13,6 +13,7 @@ onlyLabels: []
 # Issues or Pull Requests with these labels will never be considered stale. Set to `[]` to disable
 exemptLabels:
   - pin
+  - "feature request 🌟"
 
 # Set to true to ignore issues in a project (defaults to false)
 exemptProjects: false
@@ -45,7 +46,7 @@ markComment: >
 limitPerRun: 30
 
 # Limit to only `issues` or `pulls`
- only: issues
+only: issues
 
 # Optionally, specify configuration settings that are specific to just 'issues' or 'pulls':
 # pulls:
@@ -55,6 +56,7 @@ limitPerRun: 30
 #     recent activity. It will be closed if no further activity occurs. Thank you
 #     for your contributions.
 
-# issues:
-#   exemptLabels:
-#     - confirmed
+issues:
+   exemptLabels:
+     - pin
+     - "feature request 🌟"
