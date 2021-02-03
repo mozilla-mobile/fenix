@@ -243,12 +243,16 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), UserInteractionHandler 
         }
 
         view.tabLayout.setOnApplyWindowInsetsListener { v, insets ->
+            // This will be addressed on https://github.com/mozilla-mobile/fenix/issues/17807
+            @Suppress("DEPRECATION")
             v.updatePadding(
                 left = insets.systemWindowInsetLeft,
                 right = insets.systemWindowInsetRight,
                 bottom = insets.systemWindowInsetBottom
             )
 
+            // This will be addressed on https://github.com/mozilla-mobile/fenix/issues/17807
+            @Suppress("DEPRECATION")
             tabTrayView.view.tab_wrapper.updatePadding(
                 bottom = insets.systemWindowInsetBottom
             )
