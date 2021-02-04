@@ -5,8 +5,8 @@
 package org.mozilla.fenix.settings.advanced
 
 import android.app.Activity
-import android.content.Context
 import mozilla.components.support.locale.LocaleManager
+import org.mozilla.fenix.LocaleUpdater
 import java.util.Locale
 
 interface LocaleSettingsController {
@@ -20,6 +20,8 @@ class DefaultLocaleSettingsController(
     private val localeSettingsStore: LocaleSettingsStore
 ) : LocaleSettingsController {
 
+    private val localeUpdater = LocaleUpdater(activity)
+
     override fun handleLocaleSelected(locale: Locale) {
         if (localeSettingsStore.state.selectedLocale == locale &&
             !LocaleManager.isDefaultLocaleSelected(activity)) {
@@ -27,7 +29,7 @@ class DefaultLocaleSettingsController(
         }
         localeSettingsStore.dispatch(LocaleSettingsAction.Select(locale))
         LocaleManager.setNewLocale(activity, locale.toLanguageTag())
-        LocaleManager.updateBaseConfiguration(activity, locale)
+        localeUpdater.updateBaseConfiguration(activity, locale)
         activity.recreate()
     }
 
@@ -37,23 +39,11 @@ class DefaultLocaleSettingsController(
         }
         localeSettingsStore.dispatch(LocaleSettingsAction.Select(localeSettingsStore.state.localeList[0]))
         LocaleManager.resetToSystemDefault(activity)
-        LocaleManager.updateBaseConfiguration(activity, localeSettingsStore.state.localeList[0])
+        localeUpdater.updateBaseConfiguration(activity, localeSettingsStore.state.localeList[0])
         activity.recreate()
     }
 
     override fun handleSearchQueryTyped(query: String) {
         localeSettingsStore.dispatch(LocaleSettingsAction.Search(query))
-    }
-
-    /**
-     * Update the locale for the configuration of the app context's resources
-     */
-    @Suppress("Deprecation")
-    fun LocaleManager.updateBaseConfiguration(context: Context, locale: Locale) {
-        val resources = context.applicationContext.resources
-        val config = resources.configuration
-        config.setLocale(locale)
-        config.setLayoutDirection(locale)
-        resources.updateConfiguration(config, resources.displayMetrics)
     }
 }
