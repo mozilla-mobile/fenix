@@ -5,6 +5,7 @@
 package org.mozilla.fenix.ui
 
 import android.content.Context
+import android.view.View
 import androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu
 import androidx.test.espresso.IdlingRegistry
 import kotlinx.coroutines.runBlocking
@@ -20,6 +21,7 @@ import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.RecyclerViewIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper.longTapSelectItem
+import org.mozilla.fenix.helpers.ViewVisibilityIdlingResource
 import org.mozilla.fenix.ui.robots.historyMenu
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.mDevice
@@ -215,7 +217,14 @@ class HistoryTest {
             verifyDeleteConfirmationMessage()
             confirmDeleteAllHistory()
             verifyDeleteSnackbarText("Browsing data deleted")
+            val emptyHistoryView = ViewVisibilityIdlingResource(
+                activityTestRule.activity.findViewById(R.id.history_empty_view),
+                View.VISIBLE
+            )
+
+            IdlingRegistry.getInstance().register(emptyHistoryView)
             verifyEmptyHistoryView()
+            IdlingRegistry.getInstance().unregister(emptyHistoryView)
         }
     }
 
