@@ -87,6 +87,7 @@ class DefaultToolbarMenu(
     }
 
     override val menuToolbar by lazy {
+
         val back = BrowserMenuItemToolbar.TwoStateButton(
             primaryImageResource = mozilla.components.ui.icons.R.drawable.mozac_ic_back,
             primaryContentDescription = context.getString(R.string.browser_menu_back),
@@ -146,24 +147,28 @@ class DefaultToolbarMenu(
 
         registerForIsBookmarkedUpdates()
 
-        val bookmark = BrowserMenuItemToolbar.TwoStateButton(
-            primaryImageResource = R.drawable.ic_bookmark_filled,
-            primaryContentDescription = context.getString(R.string.browser_menu_edit_bookmark),
-            primaryImageTintResource = primaryTextColor(),
-            // TwoStateButton.isInPrimaryState must be synchronous, and checking bookmark state is
-            // relatively slow. The best we can do here is periodically compute and cache a new "is
-            // bookmarked" state, and use that whenever the menu has been opened.
-            isInPrimaryState = { currentUrlIsBookmarked },
-            secondaryImageResource = R.drawable.ic_bookmark_outline,
-            secondaryContentDescription = context.getString(R.string.browser_menu_bookmark),
-            secondaryImageTintResource = primaryTextColor(),
-            disableInSecondaryState = false
-        ) {
-            if (!currentUrlIsBookmarked) currentUrlIsBookmarked = true
-            onItemTapped.invoke(ToolbarMenu.Item.Bookmark)
-        }
+        if (FeatureFlags.toolbarMenuFeature) {
+            BrowserMenuItemToolbar(listOf(back, forward, share, refresh))
+        } else {
+            val bookmark = BrowserMenuItemToolbar.TwoStateButton(
+                primaryImageResource = R.drawable.ic_bookmark_filled,
+                primaryContentDescription = context.getString(R.string.browser_menu_edit_bookmark),
+                primaryImageTintResource = primaryTextColor(),
+                // TwoStateButton.isInPrimaryState must be synchronous, and checking bookmark state is
+                // relatively slow. The best we can do here is periodically compute and cache a new "is
+                // bookmarked" state, and use that whenever the menu has been opened.
+                isInPrimaryState = { currentUrlIsBookmarked },
+                secondaryImageResource = R.drawable.ic_bookmark_outline,
+                secondaryContentDescription = context.getString(R.string.browser_menu_bookmark),
+                secondaryImageTintResource = primaryTextColor(),
+                disableInSecondaryState = false
+            ) {
+                if (!currentUrlIsBookmarked) currentUrlIsBookmarked = true
+                onItemTapped.invoke(ToolbarMenu.Item.Bookmark)
+            }
 
-        BrowserMenuItemToolbar(listOf(back, forward, bookmark, share, refresh))
+            BrowserMenuItemToolbar(listOf(back, forward, bookmark, share, refresh))
+        }
     }
 
     // Predicates that need to be repeatedly called as the session changes
