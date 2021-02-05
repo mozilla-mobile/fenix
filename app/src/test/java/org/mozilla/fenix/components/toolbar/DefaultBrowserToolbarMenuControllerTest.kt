@@ -124,6 +124,95 @@ class DefaultBrowserToolbarMenuControllerTest {
         unmockkObject(FenixSnackbar.Companion)
     }
 
+    // TODO: These can be removed for https://github.com/mozilla-mobile/fenix/issues/17870
+    // todo === Start ===
+    @Test
+    fun handleToolbarBookmarkPressWithReaderModeInactive() = runBlockingTest {
+        val item = ToolbarMenu.Item.Bookmark
+        val title = "Mozilla"
+        val readerUrl = "moz-extension://1234"
+        val readerTab = createTab(
+            url = readerUrl,
+            readerState = ReaderState(active = false, activeUrl = "https://1234.org"),
+            title = title
+        )
+        browserStore =
+            BrowserStore(BrowserState(tabs = listOf(readerTab), selectedTabId = readerTab.id))
+        every { currentSession.id } returns readerTab.id
+        every { currentSession.title } returns title
+        every { currentSession.url } returns "https://mozilla.org"
+
+        val controller = createController(scope = this)
+        controller.handleToolbarItemInteraction(item)
+
+        verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.BOOKMARK)) }
+        verify { bookmarkTapped("https://mozilla.org", title) }
+    }
+
+    @Test
+    fun handleToolbarBookmarkPressWithReaderModeActive() = runBlockingTest {
+        val item = ToolbarMenu.Item.Bookmark
+        val title = "Mozilla"
+        val readerUrl = "moz-extension://1234"
+        val readerTab = createTab(
+            url = readerUrl,
+            readerState = ReaderState(active = true, activeUrl = "https://mozilla.org"),
+            title = title
+        )
+        browserStore = BrowserStore(BrowserState(tabs = listOf(readerTab), selectedTabId = readerTab.id))
+        every { currentSession.id } returns readerTab.id
+        every { currentSession.title } returns title
+        every { currentSession.url } returns readerUrl
+
+        val controller = createController(scope = this)
+        controller.handleToolbarItemInteraction(item)
+
+        verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.BOOKMARK)) }
+        verify { bookmarkTapped("https://mozilla.org", title) }
+    }
+
+    @Test
+    fun handleToolbarOpenInFenixPress() = runBlockingTest {
+        val controller = createController(scope = this, customTabSession = currentSession)
+
+        val item = ToolbarMenu.Item.OpenInFenix
+
+        every { currentSession.customTabConfig } returns mockk()
+        every { activity.startActivity(any()) } just Runs
+
+        controller.handleToolbarItemInteraction(item)
+
+        verify { sessionFeature.release() }
+        verify { currentSession.customTabConfig = null }
+        verify { sessionManager.select(currentSession) }
+        verify { activity.startActivity(openInFenixIntent) }
+        verify { activity.finishAndRemoveTask() }
+    }
+
+    @Test
+    fun handleToolbarQuitPress() = runBlockingTest {
+        val item = ToolbarMenu.Item.Quit
+        val testScope = this
+
+        val controller = createController(scope = testScope)
+
+        controller.handleToolbarItemInteraction(item)
+
+        verify { deleteAndQuit(activity, testScope, null) }
+    }
+
+    @Test
+    fun handleToolbarOpenInAppPress() = runBlockingTest {
+        val item = ToolbarMenu.Item.OpenInApp
+
+        val controller = createController(scope = this)
+
+        controller.handleToolbarItemInteraction(item)
+
+        verify { settings.openInAppOpened = true }
+    }
+    // todo === End ===
+
     @Test
     fun handleToolbarBackPress() = runBlockingTest {
         val item = ToolbarMenu.Item.Back(false)
@@ -221,51 +310,6 @@ class DefaultBrowserToolbarMenuControllerTest {
 
         verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.SETTINGS)) }
         verify { navController.navigate(directions, null) }
-    }
-
-    @Test
-    fun handleToolbarBookmarkPressWithReaderModeInactive() = runBlockingTest {
-        val item = ToolbarMenu.Item.Bookmark
-        val title = "Mozilla"
-        val readerUrl = "moz-extension://1234"
-        val readerTab = createTab(
-            url = readerUrl,
-            readerState = ReaderState(active = false, activeUrl = "https://1234.org"),
-            title = title
-        )
-        browserStore =
-            BrowserStore(BrowserState(tabs = listOf(readerTab), selectedTabId = readerTab.id))
-        every { currentSession.id } returns readerTab.id
-        every { currentSession.title } returns title
-        every { currentSession.url } returns "https://mozilla.org"
-
-        val controller = createController(scope = this)
-        controller.handleToolbarItemInteraction(item)
-
-        verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.BOOKMARK)) }
-        verify { bookmarkTapped("https://mozilla.org", title) }
-    }
-
-    @Test
-    fun handleToolbarBookmarkPressWithReaderModeActive() = runBlockingTest {
-        val item = ToolbarMenu.Item.Bookmark
-        val title = "Mozilla"
-        val readerUrl = "moz-extension://1234"
-        val readerTab = createTab(
-            url = readerUrl,
-            readerState = ReaderState(active = true, activeUrl = "https://mozilla.org"),
-            title = title
-        )
-        browserStore = BrowserStore(BrowserState(tabs = listOf(readerTab), selectedTabId = readerTab.id))
-        every { currentSession.id } returns readerTab.id
-        every { currentSession.title } returns title
-        every { currentSession.url } returns readerUrl
-
-        val controller = createController(scope = this)
-        controller.handleToolbarItemInteraction(item)
-
-        verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.BOOKMARK)) }
-        verify { bookmarkTapped("https://mozilla.org", title) }
     }
 
     @Test
@@ -499,36 +543,6 @@ class DefaultBrowserToolbarMenuControllerTest {
     }
 
     @Test
-    fun handleToolbarOpenInFenixPress() = runBlockingTest {
-        val controller = createController(scope = this, customTabSession = currentSession)
-
-        val item = ToolbarMenu.Item.OpenInFenix
-
-        every { currentSession.customTabConfig } returns mockk()
-        every { activity.startActivity(any()) } just Runs
-
-        controller.handleToolbarItemInteraction(item)
-
-        verify { sessionFeature.release() }
-        verify { currentSession.customTabConfig = null }
-        verify { sessionManager.select(currentSession) }
-        verify { activity.startActivity(openInFenixIntent) }
-        verify { activity.finishAndRemoveTask() }
-    }
-
-    @Test
-    fun handleToolbarQuitPress() = runBlockingTest {
-        val item = ToolbarMenu.Item.Quit
-        val testScope = this
-
-        val controller = createController(scope = testScope)
-
-        controller.handleToolbarItemInteraction(item)
-
-        verify { deleteAndQuit(activity, testScope, null) }
-    }
-
-    @Test
     fun handleToolbarReaderModeAppearancePress() = runBlockingTest {
         val item = ToolbarMenu.Item.ReaderModeAppearance
 
@@ -541,14 +555,22 @@ class DefaultBrowserToolbarMenuControllerTest {
     }
 
     @Test
-    fun handleToolbarOpenInAppPress() = runBlockingTest {
-        val item = ToolbarMenu.Item.OpenInApp
+    fun handleToolbarMenuNewTabPress() = runBlockingTest {
+        val item = ToolbarMenu.Item.NewTab
 
         val controller = createController(scope = this)
 
         controller.handleToolbarItemInteraction(item)
 
-        verify { settings.openInAppOpened = true }
+        verify {
+            navController.navigate(
+                directionsEq(
+                    NavGraphDirections.actionGlobalHome(
+                        focusOnAddressBar = true
+                    )
+                )
+            )
+        }
     }
 
     private fun createController(
