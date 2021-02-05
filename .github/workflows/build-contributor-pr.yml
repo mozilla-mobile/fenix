@@ -19,7 +19,7 @@ jobs:
           configuration-cache-enabled: true
           arguments: clean app:assembleDebug
 
-  run-testDebugUnitTests:
+  run-testDebugUnitTest:
     runs-on: ubuntu-20.04
     #if: github.repository != 'mozilla-mobile/fenix'
     steps:
@@ -35,7 +35,7 @@ jobs:
           wrapper-cache-enabled: true
           dependencies-cache-enabled: true
           configuration-cache-enabled: true
-          arguments: testDebugUnitTests
+          arguments: testDebugUnitTest
 
   run-detekt:
     runs-on: ubuntu-20.04
