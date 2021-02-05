@@ -70,11 +70,12 @@ class DefaultToolbarMenu(
 
     override val menuBuilder by lazy {
         WebExtensionBrowserMenuBuilder(
-            if (FeatureFlags.toolbarMenuFeature) {
-                newCoreMenuItems
-            } else {
-                oldCoreMenuItems
-            },
+            items =
+                if (FeatureFlags.toolbarMenuFeature) {
+                    newCoreMenuItems
+                } else {
+                    oldCoreMenuItems
+                },
             endOfMenuAlwaysVisible = !shouldReverseItems,
             store = store,
             webExtIconTintColorResource = primaryTextColor(),
@@ -503,7 +504,7 @@ class DefaultToolbarMenu(
 
     @ColorRes
     @VisibleForTesting
-    internal fun disabledTextColor() = ThemeManager.resolveAttribute(R.attr.disabled, context)
+    internal fun disabledTextColor() = R.color.toolbar_menu_transparent
 
     @VisibleForTesting
     internal fun registerForIsBookmarkedUpdates() {
