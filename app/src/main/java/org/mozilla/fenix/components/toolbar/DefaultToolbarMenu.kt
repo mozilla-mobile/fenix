@@ -65,7 +65,7 @@ class DefaultToolbarMenu(
 
     private var currentUrlIsBookmarked = false
     private var isBookmarkedJob: Job? = null
-
+    private val topToolbarSelected = shouldReverseItems
     private val selectedSession: TabSessionState? get() = store.state.selectedTab
 
     override val menuBuilder by lazy {
@@ -474,26 +474,50 @@ class DefaultToolbarMenu(
             onItemTapped.invoke(ToolbarMenu.Item.Settings)
         }
 
-        val menuItems = listOfNotNull(
-            newTabItem,
-            BrowserMenuDivider(),
-            bookmarksItem,
-            historyItem,
-            downloadsItem,
-            extensionsItem,
-            syncedTabsItem,
-            BrowserMenuDivider(),
-            findInPageItem,
-            desktopSiteItem,
-            BrowserMenuDivider(),
-            addToHomeScreenItem.apply { visible = ::canAddToHomescreen },
-            addToTopSitesItem,
-            saveToCollectionItem,
-            BrowserMenuDivider(),
-            settingsItem,
-            BrowserMenuDivider(),
-            menuToolbar
-        )
+        val syncedTabsInTabsTray = context.components.settings.syncedTabsInTabsTray
+
+        val menuItems = if (topToolbarSelected) {
+            listOfNotNull(
+                menuToolbar,
+                newTabItem,
+                BrowserMenuDivider(),
+                bookmarksItem,
+                historyItem,
+                downloadsItem,
+                extensionsItem,
+                if (syncedTabsInTabsTray) null else syncedTabsItem,
+                BrowserMenuDivider(),
+                findInPageItem,
+                desktopSiteItem,
+                BrowserMenuDivider(),
+                addToHomeScreenItem.apply { visible = ::canAddToHomescreen },
+                addToTopSitesItem,
+                saveToCollectionItem,
+                BrowserMenuDivider(),
+                settingsItem
+            )
+        } else {
+            listOfNotNull(
+                newTabItem,
+                BrowserMenuDivider(),
+                bookmarksItem,
+                historyItem,
+                downloadsItem,
+                extensionsItem,
+                if (syncedTabsInTabsTray) null else syncedTabsItem,
+                BrowserMenuDivider(),
+                findInPageItem,
+                desktopSiteItem,
+                BrowserMenuDivider(),
+                addToHomeScreenItem.apply { visible = ::canAddToHomescreen },
+                addToTopSitesItem,
+                saveToCollectionItem,
+                BrowserMenuDivider(),
+                settingsItem,
+                BrowserMenuDivider(),
+                menuToolbar
+            )
+        }
 
         menuItems
     }
