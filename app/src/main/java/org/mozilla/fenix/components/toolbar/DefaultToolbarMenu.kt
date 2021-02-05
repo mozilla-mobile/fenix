@@ -16,9 +16,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 import mozilla.components.browser.menu.BrowserMenuHighlight
-import mozilla.components.browser.menu.BrowserMenuItem
 import mozilla.components.browser.menu.WebExtensionBrowserMenuBuilder
-import mozilla.components.browser.menu.ext.getHighlight
 import mozilla.components.browser.menu.item.BrowserMenuDivider
 import mozilla.components.browser.menu.item.BrowserMenuHighlightableItem
 import mozilla.components.browser.menu.item.BrowserMenuImageSwitch
@@ -38,13 +36,9 @@ import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
-import org.mozilla.fenix.experiments.ExperimentBranch
-import org.mozilla.fenix.experiments.Experiments
 import org.mozilla.fenix.ext.asActivity
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.ext.withExperiment
-import org.mozilla.fenix.home.HomeMenu
 import org.mozilla.fenix.theme.ThemeManager
 
 /**
