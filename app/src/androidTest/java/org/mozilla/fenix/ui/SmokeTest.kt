@@ -14,7 +14,6 @@ import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.R
@@ -51,8 +50,8 @@ class SmokeTest {
     private var readerViewNotification: ViewVisibilityIdlingResource? = null
     private val downloadFileName = "Globe.svg"
     private val searchEngine = object {
-        var title = "Ecosia"
-        var url = "https://www.ecosia.org/search?q=%s"
+        var title = "Imdb"
+        var url = "https://m.imdb.com/find?q=%s"
     }
     val collectionName = "First Collection"
     private var bookmarksListIdlingResource: RecyclerViewIdlingResource? = null
@@ -522,7 +521,6 @@ class SmokeTest {
         }
     }
 
-    @Ignore("Failing, see: https://github.com/mozilla-mobile/fenix/issues/17847")
     @Test
     // Verifies setting as default a customized search engine name and URL
     fun editCustomSearchEngineTest() {
@@ -534,7 +532,7 @@ class SmokeTest {
             selectAddCustomSearchEngine()
             typeCustomEngineDetails(searchEngine.title, searchEngine.url)
             saveNewSearchEngine()
-            openEngineOverflowMenu("Ecosia")
+            openEngineOverflowMenu("Imdb")
             clickEdit()
             typeCustomEngineDetails("Test", searchEngine.url)
             saveEditSearchEngine()

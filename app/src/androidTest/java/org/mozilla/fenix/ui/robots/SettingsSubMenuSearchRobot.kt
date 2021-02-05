@@ -17,16 +17,18 @@ import androidx.test.espresso.matcher.ViewMatchers.Visibility
 import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withChild
+import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.espresso.matcher.ViewMatchers.withText
-import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.espresso.matcher.ViewMatchers.withParent
+import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.allOf
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.click
@@ -54,6 +56,8 @@ class SettingsSubMenuSearchRobot {
     fun verifyAddSearchEngineList() = assertAddSearchEngineList()
 
     fun verifyEngineListContains(searchEngineName: String) = assertEngineListContains(searchEngineName)
+
+    fun verifyErrorMessageIsNotDisplayed() = assertErrorMessageIsNotDisplayed()
 
     fun saveNewSearchEngine() {
         addSearchEngineSaveButton().click()
@@ -228,3 +232,17 @@ private fun threeDotMenu(searchEngineName: String) =
             withParent(withChild(withText(searchEngineName)))
         )
     )
+
+private fun assertErrorMessageIsNotDisplayed() {
+    try {
+        assertFalse((mDevice.findObject(UiSelector()
+            .textContains("Error connecting to “Ecosia”"))
+            .waitForExists(waitingTime)))
+
+    } catch (e: AssertionError){
+        assertTrue((mDevice.findObject(UiSelector()
+            .textContains("Error connecting to “Ecosia”"))
+            .waitUntilGone(waitingTime)))
+    }
+
+}
