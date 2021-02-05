@@ -19,7 +19,7 @@ jobs:
           configuration-cache-enabled: true
           arguments: clean app:assembleDebug
 
-  run-testDebug:
+  run-testDebugUnitTests:
     runs-on: ubuntu-20.04
     #if: github.repository != 'mozilla-mobile/fenix'
     steps:
@@ -29,13 +29,13 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
-      - name: "Test Debug"
+      - name: "Test Debug Unit Tests"
         uses: eskatos/gradle-command-action@v1
         with:
           wrapper-cache-enabled: true
           dependencies-cache-enabled: true
           configuration-cache-enabled: true
-          arguments: testDebug
+          arguments: testDebugUnitTests
 
   run-detekt:
     runs-on: ubuntu-20.04
