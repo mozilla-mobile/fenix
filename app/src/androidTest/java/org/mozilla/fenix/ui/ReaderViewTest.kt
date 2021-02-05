@@ -12,6 +12,8 @@ import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.ui.robots.navigationToolbar
 import androidx.test.espresso.IdlingRegistry
+import org.mozilla.fenix.Config
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.ViewVisibilityIdlingResource
@@ -103,39 +105,42 @@ class ReaderViewTest {
 
     @Test
     fun verifyReaderViewToggle() {
-        val readerViewPage =
-            TestAssetHelper.getLoremIpsumAsset(mockWebServer)
+        // New three-dot menu design does not have readerview
+        if (!FeatureFlags.toolbarMenuFeature) {
+            val readerViewPage =
+                TestAssetHelper.getLoremIpsumAsset(mockWebServer)
 
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(readerViewPage.url) {
-            mDevice.waitForIdle()
+            navigationToolbar {
+            }.enterURLAndEnterToBrowser(readerViewPage.url) {
+                mDevice.waitForIdle()
+            }
+
+            readerViewNotification = ViewVisibilityIdlingResource(
+                activityIntentTestRule.activity.findViewById(R.id.mozac_browser_toolbar_page_actions),
+                View.VISIBLE
+            )
+
+            IdlingRegistry.getInstance().register(readerViewNotification)
+
+            navigationToolbar {
+                verifyReaderViewDetected(true)
+                toggleReaderView()
+                mDevice.waitForIdle()
+            }
+
+            browserScreen {
+                verifyPageContent(estimatedReadingTime)
+            }.openThreeDotMenu {
+                verifyReaderViewAppearance(true)
+            }.closeBrowserMenuToBrowser { }
+
+            navigationToolbar {
+                toggleReaderView()
+                mDevice.waitForIdle()
+            }.openThreeDotMenu {
+                verifyReaderViewAppearance(false)
+            }.close { }
         }
-
-        readerViewNotification = ViewVisibilityIdlingResource(
-            activityIntentTestRule.activity.findViewById(R.id.mozac_browser_toolbar_page_actions),
-            View.VISIBLE
-        )
-
-        IdlingRegistry.getInstance().register(readerViewNotification)
-
-        navigationToolbar {
-            verifyReaderViewDetected(true)
-            toggleReaderView()
-            mDevice.waitForIdle()
-        }
-
-        browserScreen {
-            verifyPageContent(estimatedReadingTime)
-        }.openThreeDotMenu {
-            verifyReaderViewAppearance(true)
-        }.closeBrowserMenuToBrowser { }
-
-        navigationToolbar {
-            toggleReaderView()
-            mDevice.waitForIdle()
-        }.openThreeDotMenu {
-            verifyReaderViewAppearance(false)
-        }.close { }
     }
 
     @Test
