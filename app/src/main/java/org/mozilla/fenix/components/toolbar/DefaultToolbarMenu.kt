@@ -16,9 +16,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 import mozilla.components.browser.menu.BrowserMenuHighlight
-import mozilla.components.browser.menu.BrowserMenuItem
 import mozilla.components.browser.menu.WebExtensionBrowserMenuBuilder
-import mozilla.components.browser.menu.ext.getHighlight
 import mozilla.components.browser.menu.item.BrowserMenuDivider
 import mozilla.components.browser.menu.item.BrowserMenuHighlightableItem
 import mozilla.components.browser.menu.item.BrowserMenuImageSwitch
@@ -38,13 +36,9 @@ import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
-import org.mozilla.fenix.experiments.ExperimentBranch
-import org.mozilla.fenix.experiments.Experiments
 import org.mozilla.fenix.ext.asActivity
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.ext.withExperiment
-import org.mozilla.fenix.home.HomeMenu
 import org.mozilla.fenix.theme.ThemeManager
 
 /**
@@ -76,7 +70,11 @@ class DefaultToolbarMenu(
 
     override val menuBuilder by lazy {
         WebExtensionBrowserMenuBuilder(
-            if (FeatureFlags.toolbarMenuFeature) { newCoreMenuItems } else { oldCoreMenuItems },
+            if (FeatureFlags.toolbarMenuFeature) {
+                newCoreMenuItems
+            } else {
+                oldCoreMenuItems
+            },
             endOfMenuAlwaysVisible = !shouldReverseItems,
             store = store,
             webExtIconTintColorResource = primaryTextColor(),
@@ -365,11 +363,10 @@ class DefaultToolbarMenu(
     }
 
     private val newCoreMenuItems by lazy {
-
         val newTabItem = BrowserMenuImageText(
             context.getString(R.string.library_new_tab),
             R.drawable.ic_bookmark_filled,
-            primaryTextColor()
+            disabledTextColor()
         ) {
             onItemTapped.invoke(ToolbarMenu.Item.NewTab)
         }
@@ -377,7 +374,7 @@ class DefaultToolbarMenu(
         val bookmarksItem = BrowserMenuImageText(
             context.getString(R.string.library_bookmarks),
             R.drawable.ic_bookmark_filled,
-            primaryTextColor()
+            disabledTextColor()
         ) {
             onItemTapped.invoke(ToolbarMenu.Item.Bookmarks)
         }
@@ -385,7 +382,7 @@ class DefaultToolbarMenu(
         val historyItem = BrowserMenuImageText(
             context.getString(R.string.library_history),
             R.drawable.ic_history,
-            primaryTextColor()
+            disabledTextColor()
         ) {
             onItemTapped.invoke(ToolbarMenu.Item.History)
         }
@@ -393,7 +390,7 @@ class DefaultToolbarMenu(
         val downloadsItem = BrowserMenuImageText(
             context.getString(R.string.library_downloads),
             R.drawable.ic_download,
-            primaryTextColor()
+            disabledTextColor()
         ) {
             onItemTapped.invoke(ToolbarMenu.Item.Downloads)
         }
@@ -401,7 +398,7 @@ class DefaultToolbarMenu(
         val extensionsItem = BrowserMenuImageText(
             context.getString(R.string.browser_menu_extensions),
             R.drawable.ic_addons_extensions,
-            primaryTextColor()
+            disabledTextColor()
         ) {
             onItemTapped.invoke(ToolbarMenu.Item.AddonsManager)
         }
@@ -409,7 +406,7 @@ class DefaultToolbarMenu(
         val syncedTabsItem = BrowserMenuImageText(
             context.getString(R.string.library_synced_tabs),
             R.drawable.ic_synced_tabs,
-            primaryTextColor()
+            disabledTextColor()
         ) {
             onItemTapped.invoke(ToolbarMenu.Item.SyncedTabs)
         }
@@ -417,7 +414,7 @@ class DefaultToolbarMenu(
         val findInPageItem = BrowserMenuImageText(
             label = context.getString(R.string.browser_menu_find_in_page),
             imageResource = R.drawable.mozac_ic_search,
-            iconTintColorResource = primaryTextColor()
+            iconTintColorResource = disabledTextColor()
         ) {
             onItemTapped.invoke(ToolbarMenu.Item.FindInPage)
         }
@@ -435,7 +432,7 @@ class DefaultToolbarMenu(
         val addToHomeScreenItem = BrowserMenuImageText(
             label = context.getString(R.string.browser_menu_add_to_homescreen),
             imageResource = R.drawable.ic_add_to_homescreen,
-            iconTintColorResource = primaryTextColor()
+            iconTintColorResource = disabledTextColor()
         ) {
             onItemTapped.invoke(ToolbarMenu.Item.AddToHomeScreen)
         }
@@ -443,7 +440,7 @@ class DefaultToolbarMenu(
         val addToTopSitesItem = BrowserMenuImageText(
             label = context.getString(R.string.browser_menu_add_to_top_sites),
             imageResource = R.drawable.ic_top_sites,
-            iconTintColorResource = primaryTextColor()
+            iconTintColorResource = disabledTextColor()
         ) {
             onItemTapped.invoke(ToolbarMenu.Item.AddToTopSites)
         }
@@ -451,7 +448,7 @@ class DefaultToolbarMenu(
         val saveToCollectionItem = BrowserMenuImageText(
             label = context.getString(R.string.browser_menu_save_to_collection_2),
             imageResource = R.drawable.ic_tab_collection,
-            iconTintColorResource = primaryTextColor()
+            iconTintColorResource = disabledTextColor()
         ) {
             onItemTapped.invoke(ToolbarMenu.Item.SaveToCollection)
         }
@@ -459,9 +456,7 @@ class DefaultToolbarMenu(
         val settingsItem = BrowserMenuHighlightableItem(
             label = context.getString(R.string.browser_menu_settings),
             startImageResource = R.drawable.ic_settings,
-            iconTintColorResource = if (hasAccountProblem)
-                ThemeManager.resolveAttribute(R.attr.syncDisconnected, context) else
-                primaryTextColor(),
+            iconTintColorResource = disabledTextColor(),
             textColorResource = if (hasAccountProblem)
                 ThemeManager.resolveAttribute(R.attr.primaryText, context) else
                 primaryTextColor(),
@@ -473,14 +468,8 @@ class DefaultToolbarMenu(
             isHighlighted = { hasAccountProblem }
         ) {
             onItemTapped.invoke(ToolbarMenu.Item.Settings)
-
         }
 
-        // Predicates that are called once, during screen init
-        val shouldShowSaveToCollection = (context.asActivity() as? HomeActivity)
-            ?.browsingModeManager?.mode == BrowsingMode.Normal
-        val shouldDeleteDataOnQuit = context.components.settings
-            .shouldDeleteBrowsingDataOnQuit
         val syncedTabsInTabsTray = context.components.settings
             .syncedTabsInTabsTray
 
@@ -511,6 +500,10 @@ class DefaultToolbarMenu(
     @ColorRes
     @VisibleForTesting
     internal fun primaryTextColor() = ThemeManager.resolveAttribute(R.attr.primaryText, context)
+
+    @ColorRes
+    @VisibleForTesting
+    internal fun disabledTextColor() = ThemeManager.resolveAttribute(R.attr.disabled, context)
 
     @VisibleForTesting
     internal fun registerForIsBookmarkedUpdates() {
