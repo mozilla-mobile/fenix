@@ -17,19 +17,23 @@ import androidx.test.espresso.matcher.ViewMatchers.Visibility
 import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withChild
+import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.espresso.matcher.ViewMatchers.withText
-import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.espresso.matcher.ViewMatchers.withParent
+import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
+import androidx.test.uiautomator.Until
 import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.allOf
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
+import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.click
+import org.mozilla.fenix.helpers.ext.waitNotNull
 
 /**
  * Implementation of Robot Pattern for the settings search sub menu.
@@ -79,9 +83,12 @@ class SettingsSubMenuSearchRobot {
     }
 
     fun openEngineOverflowMenu(searchEngineName: String) {
-        mDevice.findObject(
-            UiSelector().resourceId("org.mozilla.fenix.debug:id/overflow_menu")
-        ).waitForExists(waitingTime)
+        mDevice.findObject(UiSelector().resourceId("$packageName:id/navigationToolbar")
+            .textContains("Search"))
+            .waitForExists(waitingTime)
+
+        mDevice.waitNotNull(Until.findObject(By.text(searchEngineName)), waitingTime)
+
         threeDotMenu(searchEngineName).click()
     }
 
