@@ -420,7 +420,7 @@ class DefaultToolbarMenu(
             onItemTapped.invoke(ToolbarMenu.Item.FindInPage)
         }
 
-        val desktopSiteItem =  BrowserMenuImageSwitch(
+        val desktopSiteItem = BrowserMenuImageSwitch(
             imageResource = R.drawable.ic_desktop,
             label = context.getString(R.string.browser_menu_desktop_site),
             initialState = {

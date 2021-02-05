@@ -64,6 +64,7 @@ import org.mozilla.fenix.utils.Settings
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(FenixRobolectricTestRunner::class)
+@Suppress("ForbiddenComment")
 class DefaultBrowserToolbarMenuControllerTest {
 
     @get:Rule
