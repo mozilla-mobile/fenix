@@ -13,6 +13,8 @@ import mozilla.components.lib.crash.service.CrashReporterService
 import mozilla.components.lib.crash.service.GleanCrashReporterService
 import mozilla.components.lib.crash.service.MozillaSocorroService
 import mozilla.components.lib.crash.service.SentryService
+import mozilla.components.service.nimbus.NimbusApi
+import mozilla.components.service.nimbus.NimbusDisabled
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.HomeActivity
@@ -22,6 +24,7 @@ import org.mozilla.fenix.components.metrics.AdjustMetricsService
 import org.mozilla.fenix.components.metrics.GleanMetricsService
 import org.mozilla.fenix.components.metrics.LeanplumMetricsService
 import org.mozilla.fenix.components.metrics.MetricController
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.perf.lazyMonitored
 import org.mozilla.fenix.utils.Mockable
@@ -90,13 +93,18 @@ class Analytics(
     val metrics: MetricController by lazyMonitored {
         MetricController.create(
             listOf(
-                GleanMetricsService(context),
+                GleanMetricsService(context, lazy { context.components.core.store }),
                 leanplumMetricsService,
                 AdjustMetricsService(context as Application)
             ),
             isDataTelemetryEnabled = { context.settings().isTelemetryEnabled },
             isMarketingDataTelemetryEnabled = { context.settings().isMarketingTelemetryEnabled }
         )
+    }
+
+    val experiments: NimbusApi by lazyMonitored {
+        // No experiments for Iceraven
+        NimbusDisabled()
     }
 }
 

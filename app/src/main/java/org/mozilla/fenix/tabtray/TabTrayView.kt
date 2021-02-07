@@ -7,6 +7,8 @@ package org.mozilla.fenix.tabtray
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.accessibility.AccessibilityEvent
 import androidx.annotation.IdRes
@@ -42,17 +44,18 @@ import mozilla.components.browser.tabstray.TabViewHolder
 import mozilla.components.feature.syncedtabs.SyncedTabsFeature
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.ktx.android.util.dpToPx
+import mozilla.components.ui.tabcounter.TabCounter.Companion.INFINITE_CHAR_PADDING_BOTTOM
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.InfoBanner
 import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.components.toolbar.TabCounter.Companion.INFINITE_CHAR_PADDING_BOTTOM
-import org.mozilla.fenix.components.toolbar.TabCounter.Companion.MAX_VISIBLE_TABS
-import org.mozilla.fenix.components.toolbar.TabCounter.Companion.SO_MANY_TABS_OPEN
+import mozilla.components.ui.tabcounter.TabCounter.Companion.MAX_VISIBLE_TABS
+import mozilla.components.ui.tabcounter.TabCounter.Companion.SO_MANY_TABS_OPEN
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.updateAccessibilityCollectionInfo
 import org.mozilla.fenix.tabtray.SaveToCollectionsButtonAdapter.MultiselectModeChange
 import org.mozilla.fenix.tabtray.TabTrayDialogFragmentState.Mode
+import org.mozilla.fenix.utils.Settings
 import java.text.NumberFormat
 import kotlin.math.max
 import kotlin.math.roundToInt
@@ -61,7 +64,7 @@ import mozilla.components.browser.storage.sync.Tab as SyncTab
 /**
  * View that contains and configures the BrowserAwesomeBar
  */
-@Suppress("LongParameterList", "TooManyFunctions", "LargeClass")
+@Suppress("LongParameterList", "TooManyFunctions", "LargeClass", "ForbiddenComment")
 class TabTrayView(
     private val container: ViewGroup,
     private val tabsAdapter: FenixTabsAdapter,
@@ -94,9 +97,10 @@ class TabTrayView(
 
     private var tabsTouchHelper: TabsTouchHelper
     private val collectionsButtonAdapter = SaveToCollectionsButtonAdapter(interactor, isPrivate)
+    private val metrics = container.context.components.analytics.metrics
 
     private val syncedTabsController =
-        SyncedTabsController(lifecycleOwner, view, store, concatAdapter)
+        SyncedTabsController(lifecycleOwner, view, store, concatAdapter, metrics = metrics)
     private val syncedTabsFeature = ViewBoundFeatureWrapper<SyncedTabsFeature>()
 
     private var hasLoaded = false
@@ -124,12 +128,12 @@ class TabTrayView(
         }
         behavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                if (interactor.onModeRequested() is Mode.Normal && !hasAccessibilityEnabled) {
-                    if (slideOffset >= SLIDE_OFFSET) {
-                        fabView.new_tab_button.show()
-                    } else {
-                        fabView.new_tab_button.hide()
-                    }
+                if (
+                    interactor.onModeRequested() is Mode.Normal &&
+                    !hasAccessibilityEnabled &&
+                    slideOffset >= SLIDE_OFFSET
+                ) {
+                    fabView.new_tab_button.show()
                 }
             }
 
@@ -266,10 +270,15 @@ class TabTrayView(
 
         adjustNewTabButtonsForNormalMode()
 
+        displayInfoBannerIfNeccessary(tabs, view.context.settings())
+    }
+
+    private fun displayInfoBannerIfNeccessary(tabs: List<TabSessionState>, settings: Settings) {
         @Suppress("ComplexCondition")
-        if (
-            view.context.settings().shouldShowGridViewBanner &&
-            view.context.settings().canShowCfr &&
+        val infoBanner = if (
+            settings.shouldShowGridViewBanner &&
+            settings.canShowCfr &&
+            settings.listTabView &&
             tabs.size >= TAB_COUNT_SHOW_CFR
         ) {
             InfoBanner(
@@ -279,17 +288,14 @@ class TabTrayView(
                 actionText = view.context.getString(R.string.tab_tray_grid_view_banner_positive_button_text),
                 container = view.infoBanner,
                 dismissByHiding = true,
-                dismissAction = { view.context.settings().shouldShowGridViewBanner = false }
+                dismissAction = { settings.shouldShowGridViewBanner = false }
             ) {
                 interactor.onGoToTabsSettings()
-                view.context.settings().shouldShowGridViewBanner = false
-            }.apply {
-                view.infoBanner.visibility = View.VISIBLE
-                showBanner()
+                settings.shouldShowGridViewBanner = false
             }
         } else if (
-            view.context.settings().shouldShowAutoCloseTabsBanner &&
-            view.context.settings().canShowCfr &&
+            settings.shouldShowAutoCloseTabsBanner &&
+            settings.canShowCfr &&
             tabs.size >= TAB_COUNT_SHOW_CFR
         ) {
             InfoBanner(
@@ -299,14 +305,18 @@ class TabTrayView(
                 actionText = view.context.getString(R.string.tab_tray_close_tabs_banner_positive_button_text),
                 container = view.infoBanner,
                 dismissByHiding = true,
-                dismissAction = { view.context.settings().shouldShowAutoCloseTabsBanner = false }
+                dismissAction = { settings.shouldShowAutoCloseTabsBanner = false }
             ) {
                 interactor.onGoToTabsSettings()
-                view.context.settings().shouldShowAutoCloseTabsBanner = false
-            }.apply {
-                view.infoBanner.visibility = View.VISIBLE
-                showBanner()
+                settings.shouldShowAutoCloseTabsBanner = false
             }
+        } else {
+            null
+        }
+
+        infoBanner?.apply {
+            view.infoBanner.visibility = VISIBLE
+            showBanner()
         }
     }
 
@@ -572,9 +582,9 @@ class TabTrayView(
         }
 
         view.tabsTray.visibility = if (hasNoTabs) {
-            View.INVISIBLE
+            INVISIBLE
         } else {
-            View.VISIBLE
+            VISIBLE
         }
 
         counter_text.text = updateTabCounter(browserState.normalTabs.size)
@@ -690,7 +700,7 @@ class TabTrayView(
             view.resources.getDimensionPixelSize(R.dimen.tab_tray_top_offset)
         }
 
-        behavior.setExpandedOffset(topOffset)
+        behavior.expandedOffset = topOffset
     }
 
     fun dismissMenu() {

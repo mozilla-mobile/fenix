@@ -111,6 +111,7 @@
     <string name="pref_key_browser_feature_autoplay_audible" translatable="false">pref_key_browser_feature_autoplay</string>
     <string name="pref_key_browser_feature_autoplay_inaudible" translatable="false">pref_key_browser_feature_autoplay_inaudible</string>
     <string name="pref_key_browser_feature_persistent_storage" translatable="false">pref_key_browser_feature_persistent_storage</string>
+    <string name="pref_key_browser_feature_media_key_system_access" translatable="false">pref_key_browser_feature_media_key_system_access</string>
     <string name="pref_key_phone_feature_camera" translatable="false">pref_key_phone_feature_camera</string>
     <string name="pref_key_phone_feature_location" translatable="false">pref_key_phone_feature_location</string>
     <string name="pref_key_phone_feature_microphone" translatable="false">pref_key_phone_feature_microphone</string>
@@ -223,6 +224,9 @@
 
     <string name="pref_key_search_count" translatable="false">pref_key_search_count</string>
 
+    <string name="pref_key_mobile_bookmarks_size" translatable="false">pref_key_mobile_bookmarks_size</string>
+    <string name="pref_key_desktop_bookmarks_size" translatable="false">pref_key_desktop_bookmarks_size</string>
+
     <string name="pref_key_default_browser" translatable="false">pref_key_default_browser</string>
 
     <string name="pref_key_login_exceptions" translatable="false">pref_key_login_exceptions</string>
@@ -241,4 +245,11 @@
     <string name="pref_key_camera_permissions_needed" translatable="false">pref_key_camera_permissions_needed</string>
 
     <string name="pref_key_return_to_browser" translatable="false">pref_key_return_to_browser</string>
+  
+    <!-- Secret Info Setting Keys -->
+    <string name="pref_key_secret_debug_info" translatable="false">pref_key_secret_debug_info</string>
+    <string name="pref_key_leanplum_user_id" translatable="false">pref_key_leanplum_user_id</string>
+    <string name="pref_key_leanplum_device_id" translatable="false">pref_key_leanplum_device_id</string>
+    <string name="pref_key_search_region_home" translatable="false">pref_key_search_region_home</string>
+    <string name="pref_key_search_region_current" translatable="false">pref_key_search_region_current</string>
 </resources>

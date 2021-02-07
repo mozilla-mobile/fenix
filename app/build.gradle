@@ -19,6 +19,13 @@ import static org.gradle.api.tasks.testing.TestResult.ResultType
 
 android {
     compileSdkVersion Config.compileSdkVersion
+
+    if (project.hasProperty("testBuildType")) {
+        // Allowing to configure the test build type via command line flag (./gradlew -PtestBuildType=beta ..)
+        // in order to run UI tests against other build variants than debug in automation.
+        testBuildType project.property("testBuildType")
+    }
+
     defaultConfig {
         applicationId "io.github.forkmaintainers"
         minSdkVersion Config.minSdkVersion
@@ -47,8 +54,10 @@ android {
     }
 
     def releaseTemplate = {
-        shrinkResources true
-        minifyEnabled true
+        // We allow disabling optimization by passing `-PdisableOptimization` to gradle. This is used
+        // in automation for UI testing non-debug builds.
+        shrinkResources !project.hasProperty("disableOptimization")
+        minifyEnabled !project.hasProperty("disableOptimization")
         proguardFiles 'proguard-android-optimize-3.5.0-modified.txt', 'proguard-rules.pro'
         matchingFallbacks = ['release'] // Use on the "release" build type in dependencies (AARs)
 
@@ -361,6 +370,30 @@ android.applicationVariants.all { variant ->
         buildConfigField 'String', 'MLS_TOKEN', '""'
         println("X_X")
     }
+
+// -------------------------------------------------------------------------------------------------
+// Nimbus: Read endpoint from local.properties of a local file if it exists
+// -------------------------------------------------------------------------------------------------
+
+    print("Nimbus endpoint: ")
+
+    if (!isDebug) {
+        try {
+            def url = new File("${rootDir}/.nimbus").text.trim()
+            buildConfigField 'String', 'NIMBUS_ENDPOINT', '"' + url + '"'
+            println "(Added from .nimbus file)"
+        } catch (FileNotFoundException ignored) {
+            buildConfigField 'String', 'NIMBUS_ENDPOINT', 'null'
+            println("X_X")
+        }
+    } else if (gradle.hasProperty("localProperties.nimbus.remote-settings.url")) {
+        def url=gradle.getProperty("localProperties.nimbus.remote-settings.url")
+        buildConfigField 'String', 'NIMBUS_ENDPOINT', '"' + url + '"'
+        println "(Added from local.properties file)"
+    } else {
+        buildConfigField 'String', 'NIMBUS_ENDPOINT', 'null'
+        println("--")
+    }
 }
 
 androidExtensions {
@@ -474,11 +507,11 @@ dependencies {
     implementation Deps.mozilla_feature_webcompat_reporter
 
     implementation Deps.mozilla_service_digitalassetlinks
-    implementation Deps.mozilla_service_experiments
     implementation Deps.mozilla_service_sync_logins
     implementation Deps.mozilla_service_firefox_accounts
     implementation Deps.mozilla_service_glean
     implementation Deps.mozilla_service_location
+    implementation Deps.mozilla_service_nimbus
 
     implementation Deps.mozilla_support_base
     implementation Deps.mozilla_support_images
@@ -493,6 +526,7 @@ dependencies {
     implementation Deps.mozilla_ui_icons
     implementation Deps.mozilla_lib_publicsuffixlist
     implementation Deps.mozilla_ui_widgets
+    implementation Deps.mozilla_ui_tabcounter
 
     implementation Deps.mozilla_lib_crash
     implementation Deps.mozilla_lib_dataprotect
@@ -549,6 +583,7 @@ dependencies {
     androidTestImplementation Deps.androidx_work_testing
     androidTestImplementation Deps.mockwebserver
     testImplementation Deps.mozilla_support_test
+    testImplementation Deps.mozilla_support_test_libstate
     testImplementation Deps.androidx_junit
     testImplementation Deps.androidx_work_testing
     testImplementation (Deps.robolectric) {

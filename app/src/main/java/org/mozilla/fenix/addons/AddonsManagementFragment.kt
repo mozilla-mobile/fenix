@@ -15,11 +15,13 @@ import android.view.ViewGroup
 import android.view.accessibility.AccessibilityEvent
 import android.view.inputmethod.EditorInfo
 import androidx.appcompat.widget.SearchView
+import androidx.annotation.VisibleForTesting
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_add_ons_management.addonProgressOverlay
 import kotlinx.android.synthetic.main.fragment_add_ons_management.view.add_ons_empty_message
@@ -37,6 +39,7 @@ import mozilla.components.feature.addons.ui.translateName
 import io.github.forkmaintainers.iceraven.components.PagedAddonInstallationDialogFragment
 import io.github.forkmaintainers.iceraven.components.PagedAddonsManagerAdapter
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getRootView
@@ -54,6 +57,8 @@ import java.util.concurrent.CancellationException
 @Suppress("TooManyFunctions", "LargeClass")
 class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) {
 
+    private val args by navArgs<AddonsManagementFragmentArgs>()
+
     /**
      * Whether or not an add-on installation is in progress.
      */
@@ -69,6 +74,14 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
         setHasOptionsMenu(true)
         return super.onCreateView(inflater, container, savedInstanceState)
     }
+
+    private var installExternalAddonComplete: Boolean
+        set(value) {
+            arguments?.putBoolean(BUNDLE_KEY_INSTALL_EXTERNAL_ADDON_COMPLETE, value)
+        }
+        get() {
+            return arguments?.getBoolean(BUNDLE_KEY_INSTALL_EXTERNAL_ADDON_COMPLETE, false) ?: false
+        }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -156,16 +169,20 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
         val recyclerView = view.add_ons_list
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         val shouldRefresh = adapter != null
+
+        // If the fragment was launched to install an "external" add-on from AMO, we deactivate
+        // the cache to get the most up-to-date list of add-ons to match against.
+        val allowCache = args.installAddonId == null || installExternalAddonComplete
         lifecycleScope.launch(IO) {
             try {
-                addons = requireContext().components.addonManager.getAddons()
+                val addons = requireContext().components.addonManager.getAddons(allowCache = allowCache)
                 lifecycleScope.launch(Dispatchers.Main) {
                     runIfFragmentIsAttached {
                         if (!shouldRefresh) {
                             adapter = PagedAddonsManagerAdapter(
                                 requireContext().components.addonCollectionProvider,
                                 managementView,
-                                addons!!,
+                                addons,
                                 style = createAddonStyle(requireContext())
                             )
                         }
@@ -175,7 +192,13 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
 
                         recyclerView.adapter = adapter
                         if (shouldRefresh) {
-                            adapter?.updateAddons(addons!!)
+                            adapter?.updateAddons(addons)
+                        }
+
+                        args.installAddonId?.let { addonIn ->
+                            if (!installExternalAddonComplete) {
+                                installExternalAddon(addons, addonIn)
+                            }
                         }
                     }
                 }
@@ -191,6 +214,30 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
                         view.add_ons_empty_message.isVisible = true
                     }
                 }
+            }
+        }
+    }
+
+    @VisibleForTesting
+    internal fun installExternalAddon(supportedAddons: List<Addon>, installAddonId: String) {
+        val addonToInstall = supportedAddons.find { it.downloadId == installAddonId }
+        if (addonToInstall == null) {
+            showErrorSnackBar(getString(R.string.addon_not_supported_error))
+        } else {
+            if (addonToInstall.isInstalled()) {
+                showErrorSnackBar(getString(R.string.addon_already_installed))
+            } else {
+                showPermissionDialog(addonToInstall)
+            }
+        }
+        installExternalAddonComplete = true
+    }
+
+    @VisibleForTesting
+    internal fun showErrorSnackBar(text: String) {
+        runIfFragmentIsAttached {
+            view?.let {
+                showSnackBar(it, text, FenixSnackbar.LENGTH_LONG)
             }
         }
     }
@@ -218,7 +265,8 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
                 as? PagedAddonInstallationDialogFragment != null
     }
 
-    private fun showPermissionDialog(addon: Addon) {
+    @VisibleForTesting
+    internal fun showPermissionDialog(addon: Addon) {
         if (!isInstallationInProgress && !hasExistingPermissionDialogFragment()) {
             val dialog = PermissionsDialogFragment.newInstance(
                 addon = addon,
@@ -352,5 +400,6 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
     companion object {
         private const val PERMISSIONS_DIALOG_FRAGMENT_TAG = "ADDONS_PERMISSIONS_DIALOG_FRAGMENT"
         private const val INSTALLATION_DIALOG_FRAGMENT_TAG = "ADDONS_INSTALLATION_DIALOG_FRAGMENT"
+        private const val BUNDLE_KEY_INSTALL_EXTERNAL_ADDON_COMPLETE = "INSTALL_EXTERNAL_ADDON_COMPLETE"
     }
 }

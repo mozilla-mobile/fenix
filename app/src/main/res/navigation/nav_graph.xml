@@ -25,7 +25,9 @@
 
     <action
         android:id="@+id/action_global_search_dialog"
-        app:destination="@id/searchDialogFragment" />
+        app:destination="@id/searchDialogFragment"
+        app:popUpTo="@id/searchDialogFragment"
+        app:popUpToInclusive="true"/>
 
     <action
         android:id="@+id/action_global_recently_closed"
@@ -85,7 +87,13 @@
         app:destination="@id/bookmarkEditFragment" />
     <action
         android:id="@+id/action_global_addonsManagementFragment"
-        app:destination="@id/addons_management_graph" />
+        app:destination="@id/addons_management_graph">
+        <argument
+            android:name="installAddonId"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+    </action>
     <action
         android:id="@+id/action_global_trackingProtectionFragment"
         app:destination="@id/trackingProtectionFragment" />
@@ -103,7 +111,9 @@
         app:destination="@id/quickSettingsSheetDialogFragment" />
     <action
         android:id="@+id/action_global_tabTrayDialogFragment"
-        app:destination="@id/tabTrayDialogFragment" />
+        app:destination="@id/tabTrayDialogFragment"
+        app:popUpTo="@id/tabTrayDialogFragment"
+        app:popUpToInclusive="true"/>
     <action
         android:id="@+id/action_global_savedLoginsAuthFragment"
         app:destination="@id/savedLoginsAuthFragment" />
@@ -132,6 +142,10 @@
             android:name="focusOnAddressBar"
             android:defaultValue="false"
             app:argType="boolean" />
+        <argument
+            android:name="focusOnCollection"
+            android:defaultValue="-1L"
+            app:argType="long" />
     </fragment>
 
     <dialog
@@ -194,9 +208,6 @@
         <action
             android:id="@+id/action_browserFragment_to_trackingProtectionPanelDialogFragment"
             app:destination="@id/trackingProtectionPanelDialogFragment" />
-        <action
-            android:id="@+id/action_browserFragment_to_tabsTrayFragment"
-            app:destination="@+id/tabTrayFragment" />
     </fragment>
 
     <fragment
@@ -457,6 +468,13 @@
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
         <action
+            android:id="@+id/action_settingsFragment_to_secretInfoSettingsFragment"
+            app:destination="@id/secretInfoSettingsFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
             android:id="@+id/action_settingsFragment_to_customizationFragment"
             app:destination="@id/customizationFragment"
             app:enterAnim="@anim/slide_in_right"
@@ -599,6 +617,10 @@
         android:id="@+id/secretSettingsPreference"
         android:name="org.mozilla.fenix.settings.SecretSettingsFragment"
         android:label="@string/preferences_debug_settings" />
+    <fragment
+        android:id="@+id/secretInfoSettingsFragment"
+        android:name="org.mozilla.fenix.settings.SecretDebugSettingsFragment"
+        android:label="@string/preferences_debug_info" />
     <fragment
         android:id="@+id/crashReporterFragment"
         android:name="org.mozilla.fenix.crashes.CrashReporterFragment"
@@ -866,6 +888,11 @@
             <action
                 android:id="@+id/action_addonsManagementFragment_to_notYetSupportedAddonFragment"
                 app:destination="@id/notYetSupportedAddonFragment" />
+            <argument
+                android:name="installAddonId"
+                android:defaultValue="@null"
+                app:argType="string"
+                app:nullable="true" />
         </fragment>
         <fragment
             android:id="@+id/installedAddonDetailsFragment"
@@ -943,9 +970,6 @@
             <argument
                 android:name="searchEngineIdentifier"
                 app:argType="string" />
-            <argument
-                android:name="isDefaultSearchEngine"
-                app:argType="boolean" />
         </fragment>
     </navigation>
 </navigation>
