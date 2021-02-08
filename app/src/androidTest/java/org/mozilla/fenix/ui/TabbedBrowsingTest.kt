@@ -257,7 +257,6 @@ class TabbedBrowsingTest {
 
     @Test
     fun verifyTabTrayNotShowingStateHalfExpanded() {
-        homeScreen { }.dismissOnboarding()
 
         navigationToolbar {
         }.openTabTray {
