@@ -25,6 +25,7 @@ import org.junit.Before
 import org.junit.Test
 import org.mozilla.fenix.R
 import org.mozilla.fenix.settings.SyncPreferenceView
+import org.mozilla.fenix.ext.loadNavGraphBeforeNavigate
 import org.mozilla.fenix.settings.logins.fragment.SavedLoginsAuthFragmentDirections
 
 class LoginsSyncPreferenceViewTest {
@@ -72,7 +73,7 @@ class LoginsSyncPreferenceViewTest {
         assertTrue(clickListener.captured.onPreferenceClick(syncLoginsPreference))
 
         verify {
-            navController.navigate(
+            navController.loadNavGraphBeforeNavigate(
                 SavedLoginsAuthFragmentDirections.actionGlobalAccountProblemFragment()
             )
         }
@@ -97,7 +98,7 @@ class LoginsSyncPreferenceViewTest {
         assertTrue(clickListener.captured.onPreferenceClick(syncLoginsPreference))
 
         verify {
-            navController.navigate(
+            navController.loadNavGraphBeforeNavigate(
                 SavedLoginsAuthFragmentDirections.actionSavedLoginsAuthFragmentToTurnOnSyncFragment()
             )
         }
@@ -113,7 +114,7 @@ class LoginsSyncPreferenceViewTest {
         assertTrue(clickListener.captured.onPreferenceClick(syncLoginsPreference))
 
         verify {
-            navController.navigate(
+            navController.loadNavGraphBeforeNavigate(
                 SavedLoginsAuthFragmentDirections.actionGlobalAccountSettingsFragment()
             )
         }
@@ -132,7 +133,7 @@ class LoginsSyncPreferenceViewTest {
         assertTrue(clickListener.captured.onPreferenceClick(syncLoginsPreference))
 
         verify {
-            navController.navigate(
+            navController.loadNavGraphBeforeNavigate(
                 SavedLoginsAuthFragmentDirections.actionGlobalAccountSettingsFragment()
             )
         }

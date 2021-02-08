@@ -16,6 +16,7 @@ import org.junit.Test
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.ext.loadNavGraphBeforeNavigate
 import org.mozilla.fenix.utils.Settings
 
 class CrashReporterControllerTest {
@@ -65,7 +66,7 @@ class CrashReporterControllerTest {
         verify { components.useCases.tabsUseCases.removeTab(sessionId) }
         verify { components.useCases.sessionUseCases.crashRecovery.invoke() }
         verify {
-            navContoller.navigate(CrashReporterFragmentDirections.actionGlobalHome(), null)
+            navContoller.loadNavGraphBeforeNavigate(CrashReporterFragmentDirections.actionGlobalHome(), null)
         }
     }
 

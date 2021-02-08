@@ -12,6 +12,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.addUnderline
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.loadNavGraphBeforeNavigate
 import org.mozilla.fenix.home.HomeFragmentDirections
 import org.mozilla.fenix.onboarding.OnboardingController
 import org.mozilla.fenix.onboarding.OnboardingInteractor
@@ -27,7 +28,7 @@ class OnboardingManualSignInViewHolder(view: View) : RecyclerView.ViewHolder(vie
             it.context.components.analytics.metrics.track(Event.OnboardingManualSignIn)
 
             val directions = HomeFragmentDirections.actionGlobalTurnOnSync()
-            Navigation.findNavController(view).navigate(directions)
+            Navigation.findNavController(view).loadNavGraphBeforeNavigate(directions)
         }
 
         view.learn_more.addUnderline()

@@ -27,6 +27,21 @@ fun NavController.nav(@IdRes id: Int?, directions: NavDirections, navOptions: Na
     }
 }
 
+fun NavController.loadNavGraphBeforeNavigate(resId: Int) {
+    waitForNavGraphInflation(this)
+    this.navigate(resId)
+}
+
+fun NavController.loadNavGraphBeforeNavigate(directions: NavDirections) {
+    waitForNavGraphInflation(this)
+    this.navigate(directions)
+}
+
+fun NavController.loadNavGraphBeforeNavigate(directions: NavDirections, navOptions: NavOptions?) {
+    waitForNavGraphInflation(this)
+    this.navigate(directions, navOptions)
+}
+
 fun NavController.alreadyOnDestination(@IdRes destId: Int?): Boolean {
     return destId?.let { currentDestination?.id == it || popBackStack(it, false) } ?: false
 }
@@ -42,6 +57,6 @@ fun NavController.navigateSafe(
     directions: NavDirections
 ) {
     if (currentDestination?.id == resId) {
-        this.navigate(directions)
+        this.loadNavGraphBeforeNavigate(directions)
     }
 }

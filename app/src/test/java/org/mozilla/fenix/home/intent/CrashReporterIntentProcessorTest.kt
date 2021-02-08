@@ -13,6 +13,7 @@ import io.mockk.verify
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.NavGraphDirections
+import org.mozilla.fenix.ext.loadNavGraphBeforeNavigate
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 
 @RunWith(FenixRobolectricTestRunner::class)
@@ -37,7 +38,7 @@ class CrashReporterIntentProcessorTest {
         }
         CrashReporterIntentProcessor().process(intent, navController, out)
 
-        verify { navController.navigate(NavGraphDirections.actionGlobalCrashReporter(intent)) }
+        verify { navController.loadNavGraphBeforeNavigate(NavGraphDirections.actionGlobalCrashReporter(intent)) }
         verify { out wasNot Called }
     }
 }

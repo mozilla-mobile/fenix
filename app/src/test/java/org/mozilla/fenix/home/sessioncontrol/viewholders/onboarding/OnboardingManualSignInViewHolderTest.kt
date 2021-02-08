@@ -23,6 +23,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mozilla.fenix.ext.loadNavGraphBeforeNavigate
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.home.HomeFragmentDirections
 import org.mozilla.fenix.onboarding.OnboardingInteractor
@@ -69,6 +70,6 @@ class OnboardingManualSignInViewHolderTest {
         OnboardingManualSignInViewHolder(view)
         view.fxa_sign_in_button.performClick()
 
-        verify { navController.navigate(HomeFragmentDirections.actionGlobalTurnOnSync()) }
+        verify { navController.loadNavGraphBeforeNavigate(HomeFragmentDirections.actionGlobalTurnOnSync()) }
     }
 }

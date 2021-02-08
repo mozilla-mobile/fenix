@@ -62,6 +62,7 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.directionsEq
+import org.mozilla.fenix.ext.loadNavGraphBeforeNavigate
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.settings.deletebrowsingdata.deleteAndQuit
 import org.mozilla.fenix.utils.Settings
@@ -269,7 +270,7 @@ class DefaultBrowserToolbarMenuControllerTest {
         val directions = BrowserFragmentDirections.actionGlobalTabHistoryDialogFragment(null)
 
         verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.BACK)) }
-        verify { navController.navigate(directions) }
+        verify { navController.loadNavGraphBeforeNavigate(directions) }
     }
 
     @Test
@@ -293,7 +294,7 @@ class DefaultBrowserToolbarMenuControllerTest {
         val directions = BrowserFragmentDirections.actionGlobalTabHistoryDialogFragment(null)
 
         verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.FORWARD)) }
-        verify { navController.navigate(directions) }
+        verify { navController.loadNavGraphBeforeNavigate(directions) }
     }
 
     @Test
@@ -344,7 +345,7 @@ class DefaultBrowserToolbarMenuControllerTest {
         val directions = BrowserFragmentDirections.actionBrowserFragmentToSettingsFragment()
 
         verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.SETTINGS)) }
-        verify { navController.navigate(directions, null) }
+        verify { navController.loadNavGraphBeforeNavigate(directions, null) }
     }
 
     @Test
@@ -357,7 +358,7 @@ class DefaultBrowserToolbarMenuControllerTest {
         val directions = BrowserFragmentDirections.actionGlobalBookmarkFragment(BookmarkRoot.Mobile.id)
 
         verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.BOOKMARKS)) }
-        verify { navController.navigate(directions, null) }
+        verify { navController.loadNavGraphBeforeNavigate(directions, null) }
     }
 
     @Test
@@ -370,7 +371,7 @@ class DefaultBrowserToolbarMenuControllerTest {
         val directions = BrowserFragmentDirections.actionGlobalHistoryFragment()
 
         verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.HISTORY)) }
-        verify { navController.navigate(directions, null) }
+        verify { navController.loadNavGraphBeforeNavigate(directions, null) }
     }
 
     @Test
@@ -467,7 +468,7 @@ class DefaultBrowserToolbarMenuControllerTest {
 
         verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.SHARE)) }
         verify {
-            navController.navigate(
+            navController.loadNavGraphBeforeNavigate(
                 directionsEq(
                     NavGraphDirections.actionGlobalShareFragment(
                         data = arrayOf(ShareData(url = "https://mozilla.org", title = "Mozilla")),
@@ -494,7 +495,7 @@ class DefaultBrowserToolbarMenuControllerTest {
 
         verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.SHARE)) }
         verify {
-            navController.navigate(
+            navController.loadNavGraphBeforeNavigate(
                 directionsEq(
                     NavGraphDirections.actionGlobalShareFragment(
                         data = arrayOf(ShareData(url = "https://mozilla.org", title = "Mozilla")),
@@ -541,7 +542,7 @@ class DefaultBrowserToolbarMenuControllerTest {
             tabIds = arrayOf(selectedTab.id),
             selectedTabIds = arrayOf(selectedTab.id)
         )
-        verify { navController.navigate(directionsEq(directions), null) }
+        verify { navController.loadNavGraphBeforeNavigate(directionsEq(directions), null) }
     }
 
     @Test
@@ -566,7 +567,7 @@ class DefaultBrowserToolbarMenuControllerTest {
             tabIds = arrayOf(selectedTab.id),
             selectedTabIds = arrayOf(selectedTab.id)
         )
-        verify { navController.navigate(directionsEq(directions), null) }
+        verify { navController.loadNavGraphBeforeNavigate(directionsEq(directions), null) }
     }
 
     @Test

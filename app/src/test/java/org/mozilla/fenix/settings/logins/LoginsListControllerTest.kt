@@ -14,6 +14,7 @@ import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.loadNavGraphBeforeNavigate
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.settings.logins.controller.LoginsListController
@@ -61,7 +62,7 @@ class LoginsListControllerTest {
         verifyAll {
             store.dispatch(LoginsAction.LoginSelected(login))
             metrics.track(Event.OpenOneLogin)
-            navController.navigate(
+            navController.loadNavGraphBeforeNavigate(
                 SavedLoginsFragmentDirections.actionSavedLoginsFragmentToLoginDetailFragment(login.guid)
             )
         }

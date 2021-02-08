@@ -39,6 +39,7 @@ import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
+import org.mozilla.fenix.ext.loadNavGraphBeforeNavigate
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class DefaultTabTrayControllerTest {
@@ -79,7 +80,7 @@ class DefaultTabTrayControllerTest {
         )
 
         every { tabCollectionStorage.cachedTabCollections } returns cachedTabCollections
-        every { navController.navigate(any<NavDirections>()) } just Runs
+        every { navController.loadNavGraphBeforeNavigate(any<NavDirections>()) } just Runs
         every { navController.currentDestination } returns currentDestination
         every { currentDestination.id } returns R.id.browserFragment
         every { tabCollection.title } returns "Collection title"
@@ -112,7 +113,7 @@ class DefaultTabTrayControllerTest {
         controller.handleTabSettingsClicked()
 
         verify {
-            navController.navigate(
+            navController.loadNavGraphBeforeNavigate(
                 TabTrayDialogFragmentDirections.actionGlobalTabSettingsFragment()
             )
         }
@@ -124,7 +125,7 @@ class DefaultTabTrayControllerTest {
 
         verifyOrder {
             browsingModeManager.mode = BrowsingMode.fromBoolean(false)
-            navController.navigate(
+            navController.loadNavGraphBeforeNavigate(
                 TabTrayDialogFragmentDirections.actionGlobalHome(
                     focusOnAddressBar = true
                 )
@@ -136,7 +137,7 @@ class DefaultTabTrayControllerTest {
 
         verifyOrder {
             browsingModeManager.mode = BrowsingMode.fromBoolean(true)
-            navController.navigate(
+            navController.loadNavGraphBeforeNavigate(
                 TabTrayDialogFragmentDirections.actionGlobalHome(
                     focusOnAddressBar = true
                 )
@@ -157,12 +158,12 @@ class DefaultTabTrayControllerTest {
     @Test
     fun onShareTabsClicked() {
         val navDirectionsSlot = slot<NavDirections>()
-        every { navController.navigate(capture(navDirectionsSlot)) } just Runs
+        every { navController.loadNavGraphBeforeNavigate(capture(navDirectionsSlot)) } just Runs
 
         controller.handleShareTabsOfTypeClicked(private = false)
 
         verify {
-            navController.navigate(capture(navDirectionsSlot))
+            navController.loadNavGraphBeforeNavigate(capture(navDirectionsSlot))
         }
 
         assertTrue(navDirectionsSlot.isCaptured)
@@ -253,12 +254,12 @@ class DefaultTabTrayControllerTest {
     fun handleShareSelectedTabs() {
         val tab = Tab("1234", "mozilla.org")
         val navDirectionsSlot = slot<NavDirections>()
-        every { navController.navigate(capture(navDirectionsSlot)) } just Runs
+        every { navController.loadNavGraphBeforeNavigate(capture(navDirectionsSlot)) } just Runs
 
         controller.handleShareSelectedTabsClicked(setOf(tab))
 
         verify {
-            navController.navigate(capture(navDirectionsSlot))
+            navController.loadNavGraphBeforeNavigate(capture(navDirectionsSlot))
         }
 
         assertTrue(navDirectionsSlot.isCaptured)
@@ -295,7 +296,7 @@ class DefaultTabTrayControllerTest {
         val directions = TabTrayDialogFragmentDirections.actionGlobalRecentlyClosed()
 
         verifyAll {
-            navController.navigate(directions)
+            navController.loadNavGraphBeforeNavigate(directions)
             metrics.track(Event.RecentlyClosedTabsOpened)
         }
     }
@@ -306,7 +307,7 @@ class DefaultTabTrayControllerTest {
         val directions = TabTrayDialogFragmentDirections.actionGlobalTabSettingsFragment()
 
         verifyAll {
-            navController.navigate(directions)
+            navController.loadNavGraphBeforeNavigate(directions)
             metrics.track(Event.TabsTrayCfrTapped)
         }
     }

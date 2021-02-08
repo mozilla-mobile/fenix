@@ -46,6 +46,7 @@ import org.mozilla.fenix.browser.readermode.ReaderModeController
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.loadNavGraphBeforeNavigate
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.home.HomeScreenViewModel
@@ -136,7 +137,7 @@ class DefaultBrowserToolbarControllerTest {
             pastedText = pastedText
         )
 
-        verify { navController.navigate(directions, any<NavOptions>()) }
+        verify { navController.loadNavGraphBeforeNavigate(directions, any<NavOptions>()) }
     }
 
     @Test
@@ -150,7 +151,7 @@ class DefaultBrowserToolbarControllerTest {
             pastedText = pastedText
         )
 
-        verify { navController.navigate(directions, any<NavOptions>()) }
+        verify { navController.loadNavGraphBeforeNavigate(directions, any<NavOptions>()) }
     }
 
     @Test
@@ -225,7 +226,7 @@ class DefaultBrowserToolbarControllerTest {
         )
 
         verify { metrics.track(Event.SearchBarTapped(Event.SearchBarTapped.Source.BROWSER)) }
-        verify { navController.navigate(expected, any<NavOptions>()) }
+        verify { navController.loadNavGraphBeforeNavigate(expected, any<NavOptions>()) }
     }
 
     @Test
@@ -238,7 +239,7 @@ class DefaultBrowserToolbarControllerTest {
         )
 
         verify { metrics.track(Event.SearchBarTapped(Event.SearchBarTapped.Source.BROWSER)) }
-        verify { navController.navigate(expected, any<NavOptions>()) }
+        verify { navController.loadNavGraphBeforeNavigate(expected, any<NavOptions>()) }
     }
 
     @Test
@@ -249,7 +250,7 @@ class DefaultBrowserToolbarControllerTest {
         controller.handleTabCounterItemInteraction(item)
         verify {
             homeViewModel.sessionToDelete = "1"
-            navController.navigate(BrowserFragmentDirections.actionGlobalHome())
+            navController.loadNavGraphBeforeNavigate(BrowserFragmentDirections.actionGlobalHome())
         }
     }
 
@@ -272,12 +273,12 @@ class DefaultBrowserToolbarControllerTest {
         val item = TabCounterMenu.Item.NewTab
 
         every { activity.browsingModeManager } returns browsingModeManager
-        every { navController.navigate(BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = true)) } just Runs
+        every { navController.loadNavGraphBeforeNavigate(BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = true)) } just Runs
 
         val controller = createController()
         controller.handleTabCounterItemInteraction(item)
         assertEquals(BrowsingMode.Normal, browsingModeManager.mode)
-        verify { navController.navigate(BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = true)) }
+        verify { navController.loadNavGraphBeforeNavigate(BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = true)) }
     }
 
     @Test
@@ -286,12 +287,12 @@ class DefaultBrowserToolbarControllerTest {
         val item = TabCounterMenu.Item.NewPrivateTab
 
         every { activity.browsingModeManager } returns browsingModeManager
-        every { navController.navigate(BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = true)) } just Runs
+        every { navController.loadNavGraphBeforeNavigate(BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = true)) } just Runs
 
         val controller = createController()
         controller.handleTabCounterItemInteraction(item)
         assertEquals(BrowsingMode.Private, browsingModeManager.mode)
-        verify { navController.navigate(BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = true)) }
+        verify { navController.loadNavGraphBeforeNavigate(BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = true)) }
     }
 
     @Test

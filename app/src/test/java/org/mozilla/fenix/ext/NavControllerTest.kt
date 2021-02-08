@@ -44,14 +44,14 @@ class NavControllerTest {
     fun `Nav with id and directions args`() {
         navController.nav(currentDestId, navDirections)
         verify { navController.currentDestination }
-        verify { navController.navigate(navDirections, null) }
+        verify { navController.loadNavGraphBeforeNavigate(navDirections, null) }
     }
 
     @Test
     fun `Nav with id, directions, and options args`() {
         navController.nav(currentDestId, navDirections, mockOptions)
         verify { navController.currentDestination }
-        verify { navController.navigate(navDirections, mockOptions) }
+        verify { navController.loadNavGraphBeforeNavigate(navDirections, mockOptions) }
     }
 
     @Test

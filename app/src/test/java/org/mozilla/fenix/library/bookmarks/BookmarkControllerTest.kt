@@ -39,6 +39,7 @@ import org.mozilla.fenix.components.Services
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.bookmarkStorage
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.loadNavGraphBeforeNavigate
 
 @Suppress("TooManyFunctions", "LargeClass")
 @ExperimentalCoroutinesApi
@@ -191,7 +192,7 @@ class BookmarkControllerTest {
 
         verify {
             invokePendingDeletion.invoke()
-            navController.navigate(
+            navController.loadNavGraphBeforeNavigate(
                 BookmarkFragmentDirections.actionBookmarkFragmentToBookmarkEditFragment(
                     item.guid
                 ),
@@ -253,12 +254,12 @@ class BookmarkControllerTest {
     @Test
     fun `handleBookmarkSharing should navigate to the 'Share' fragment`() {
         val navDirectionsSlot = slot<NavDirections>()
-        every { navController.navigate(capture(navDirectionsSlot), null) } just Runs
+        every { navController.loadNavGraphBeforeNavigate(capture(navDirectionsSlot), null) } just Runs
 
         controller.handleBookmarkSharing(item)
 
         verify {
-            navController.navigate(navDirectionsSlot.captured, null)
+            navController.loadNavGraphBeforeNavigate(navDirectionsSlot.captured, null)
         }
     }
 

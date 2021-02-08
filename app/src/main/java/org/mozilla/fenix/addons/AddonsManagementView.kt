@@ -8,6 +8,7 @@ import androidx.navigation.NavController
 import mozilla.components.feature.addons.Addon
 import mozilla.components.feature.addons.ui.AddonsManagerAdapterDelegate
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ext.loadNavGraphBeforeNavigate
 import org.mozilla.fenix.ext.navigateSafe
 
 /**
@@ -55,6 +56,6 @@ class AddonsManagementView(
             AddonsManagementFragmentDirections.actionAddonsManagementFragmentToNotYetSupportedAddonFragment(
                 unsupportedAddons.toTypedArray()
             )
-        navController.navigate(directions)
+        navController.loadNavGraphBeforeNavigate(directions)
     }
 }
