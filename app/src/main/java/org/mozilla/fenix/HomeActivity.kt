@@ -27,16 +27,20 @@ import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDirections
+import androidx.navigation.NavGraph
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import kotlinx.android.synthetic.main.activity_home.*
-import kotlinx.coroutines.*
-import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.Dispatchers.IO
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.browser.state.search.SearchEngine
 import mozilla.components.browser.state.selector.getNormalOrPrivateTabs
@@ -90,11 +94,12 @@ import org.mozilla.fenix.library.bookmarks.BookmarkFragmentDirections
 import org.mozilla.fenix.library.bookmarks.DesktopFolders
 import org.mozilla.fenix.library.history.HistoryFragmentDirections
 import org.mozilla.fenix.library.recentlyclosed.RecentlyClosedFragmentDirections
+import org.mozilla.fenix.perf.addNavToMap
 import org.mozilla.fenix.perf.Performance
 import org.mozilla.fenix.perf.PerformanceInflater
 import org.mozilla.fenix.perf.ProfilerMarkers
 import org.mozilla.fenix.perf.StartupTimeline
-import org.mozilla.fenix.perf.runBlockingIncrement
+import org.mozilla.fenix.perf.waitForNavGraphInflation
 import org.mozilla.fenix.search.SearchDialogFragmentDirections
 import org.mozilla.fenix.session.PrivateNotificationService
 import org.mozilla.fenix.settings.SettingsFragmentDirections
@@ -145,10 +150,11 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
     private var inflater: LayoutInflater? = null
 
-    private lateinit var navGraphJob : Deferred<Unit>
+    private lateinit var navGraphJob: Deferred<NavGraph>
+
+    private var navGraph: NavGraph? = null
 
     private val navHost by lazy {
-        loadNavFragment()
         supportFragmentManager.findFragmentById(R.id.container) as NavHostFragment
     }
 
@@ -192,7 +198,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         setupThemeAndBrowsingMode(getModeFromIntentOrLastKnown(intent))
         setContentView(R.layout.activity_home)
 
-        navGraphJob = createNavGraphAsync()
+        addNavToMap(navHost.navController, createNavGraphAsync())
 
         // Must be after we set the content view
         if (isVisuallyComplete) {
@@ -259,16 +265,18 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
         components.core.requestInterceptor.setNavigationController(navHost.navController)
 
-        loadNavFragment()
+        waitForNavGraphInflation(navHost.navController)
 
         StartupTimeline.onActivityCreateEndHome(this) // DO NOT MOVE ANYTHING BELOW HERE.
     }
 
-    private fun createNavGraphAsync() = MainScope().async(Dispatchers.Default) {
+    /**
+     * This job inflates the NavGraph and attaches it to our NavController.
+     */
+    private fun createNavGraphAsync() = MainScope().launch(Dispatchers.Default) {
         val navHostFragment = container as NavHostFragment
         val inflater = navHostFragment.navController.navInflater
-        val graph = inflater.inflate(R.navigation.nav_graph)
-        navHostFragment.navController.graph = graph
+        navHostFragment.navController.graph = inflater.inflate(R.navigation.nav_graph)
     }
 
     protected open fun startupTelemetryOnCreateCalled(
@@ -291,12 +299,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
     private fun startupTelemetryOnRestartCalled() {
         components.appStartupTelemetry.onHomeActivityOnRestart(rootContainer)
-    }
-
-    private fun loadNavFragment() {
-        if(!navGraphJob.isCompleted){
-            runBlockingIncrement { navGraphJob.await() }
-        }
     }
 
     @CallSuper
