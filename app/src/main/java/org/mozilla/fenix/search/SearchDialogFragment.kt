@@ -63,6 +63,7 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.requireComponents
+import org.mozilla.fenix.ext.secure
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.search.awesomebar.AwesomeBarView
 import org.mozilla.fenix.search.toolbar.ToolbarView
@@ -433,7 +434,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                             dialog.dismiss()
                         }
                         create()
-                    }.show()
+                    }.show().secure(activity)
                 }
             }
         )
