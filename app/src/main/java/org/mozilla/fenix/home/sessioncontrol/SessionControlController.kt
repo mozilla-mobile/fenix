@@ -12,6 +12,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import mozilla.components.browser.state.selector.getNormalOrPrivateTabs
+import mozilla.components.browser.state.state.searchEngines
 import mozilla.components.browser.state.state.selectedOrDefaultSearchEngine
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.Engine
@@ -23,6 +24,7 @@ import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.support.ktx.android.view.showKeyboard
 import mozilla.components.support.ktx.kotlin.isUrl
+import mozilla.components.support.ktx.kotlin.tryGetHostFromUrl
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
@@ -376,6 +378,27 @@ class DefaultSessionControlController(
 
         if (url == SupportUtils.POCKET_TRENDING_URL) {
             metrics.track(Event.PocketTopSiteClicked)
+        }
+
+        val baseURL = url.tryGetHostFromUrl()
+        if (SupportUtils.GOOGLE_URL.contains(baseURL)) {
+            val availableEngines = activity
+                .components
+                .core
+                .store
+                .state
+                .search
+                .searchEngines
+
+            val searchAccessPoint = Event.PerformedSearch.SearchAccessPoint.TOPSITE
+            val event =
+                availableEngines.firstOrNull { engine -> engine.suggestUrl?.contains(baseURL) == true }
+                    ?.let { searchEngine ->
+                        searchAccessPoint.let { sap ->
+                            MetricsUtils.createSearchEvent(searchEngine, store, sap)
+                        }
+                    }
+            event?.let { activity.metrics.track(it) }
         }
 
         addTabUseCase.invoke(
