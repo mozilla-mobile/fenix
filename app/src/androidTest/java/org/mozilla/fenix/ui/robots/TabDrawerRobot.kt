@@ -258,22 +258,29 @@ class TabDrawerRobot {
 
         fun waitForTabTrayBehaviorToIdle(interact: TabDrawerRobot.() -> Unit): Transition {
             var behavior: BottomSheetBehavior<*>? = null
-            onView(withId(R.id.tab_wrapper)).perform(object : ViewAction {
-                override fun getDescription(): String {
-                    return "Postpone actions to after the BottomSheetBehavior has settled"
-                }
+            val tabsTrayExists = mDevice.findObject(UiSelector()
+                .resourceId("$packageName:id/tab_wrapper"))
+                .exists()
 
-                override fun getConstraints(): Matcher<View> {
-                    return ViewMatchers.isAssignableFrom(View::class.java)
-                }
+            if(tabsTrayExists){
+               onView(withId(R.id.tab_wrapper)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE))).perform(object : ViewAction {
+                    override fun getDescription(): String {
+                        return "Postpone actions to after the BottomSheetBehavior has settled"
+                    }
 
-                override fun perform(uiController: UiController?, view: View?) {
-                    behavior = BottomSheetBehavior.from(view!!)
+                    override fun getConstraints(): Matcher<View> {
+                        return ViewMatchers.isAssignableFrom(View::class.java)
+                    }
+
+                    override fun perform(uiController: UiController?, view: View?) {
+                        behavior = BottomSheetBehavior.from(view!!)
+                    }
+                })
+                runWithIdleRes(BottomSheetBehaviorStateIdlingResource(behavior!!)) {
+                    TabDrawerRobot().interact()
                 }
-            })
-            runWithIdleRes(BottomSheetBehaviorStateIdlingResource(behavior!!)) {
-                TabDrawerRobot().interact()
             }
+
             return Transition()
         }
 
