@@ -24,7 +24,6 @@ import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.support.ktx.android.view.showKeyboard
 import mozilla.components.support.ktx.kotlin.isUrl
-import mozilla.components.support.ktx.kotlin.tryGetHostFromUrl
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
@@ -380,8 +379,7 @@ class DefaultSessionControlController(
             metrics.track(Event.PocketTopSiteClicked)
         }
 
-        val baseURL = url.tryGetHostFromUrl()
-        if (SupportUtils.GOOGLE_URL.contains(baseURL)) {
+        if (SupportUtils.GOOGLE_URL.equals(url, true)) {
             val availableEngines = activity
                 .components
                 .core
@@ -392,7 +390,7 @@ class DefaultSessionControlController(
 
             val searchAccessPoint = Event.PerformedSearch.SearchAccessPoint.TOPSITE
             val event =
-                availableEngines.firstOrNull { engine -> engine.suggestUrl?.contains(baseURL) == true }
+                availableEngines.firstOrNull { engine -> engine.suggestUrl?.contains(url) == true }
                     ?.let { searchEngine ->
                         searchAccessPoint.let { sap ->
                             MetricsUtils.createSearchEvent(searchEngine, store, sap)
