@@ -6,11 +6,11 @@ package org.mozilla.fenix.customtabs
 
 import android.app.Activity
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
-import mozilla.components.browser.session.SessionManager
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.browser.toolbar.display.DisplayToolbar
 import mozilla.components.feature.customtabs.CustomTabsToolbarFeature
+import mozilla.components.feature.tabs.CustomTabsUseCases
 import mozilla.components.support.base.feature.LifecycleAwareFeature
 import mozilla.components.support.base.feature.UserInteractionHandler
 import org.mozilla.fenix.R
@@ -18,8 +18,8 @@ import org.mozilla.fenix.components.toolbar.ToolbarMenu
 import org.mozilla.fenix.ext.settings
 
 class CustomTabsIntegration(
-    sessionManager: SessionManager,
     store: BrowserStore,
+    useCases: CustomTabsUseCases,
     toolbar: BrowserToolbar,
     sessionId: String,
     activity: Activity,
@@ -59,16 +59,6 @@ class CustomTabsIntegration(
         // If in private mode, override toolbar background to use private color
         // See #5334
         if (isPrivate) {
-            sessionManager.findSessionById(sessionId)?.apply {
-                val config = customTabConfig
-                customTabConfig = config?.copy(
-                    // Don't set toolbar background automatically
-                    toolbarColor = null,
-                    // Force tinting the action button
-                    actionButtonConfig = config.actionButtonConfig?.copy(tint = true)
-                )
-            }
-
             toolbar.background = getDrawable(activity, R.drawable.toolbar_background)
         }
     }
@@ -84,14 +74,17 @@ class CustomTabsIntegration(
     }
 
     private val feature = CustomTabsToolbarFeature(
-        sessionManager,
+        store,
         toolbar,
         sessionId,
+        useCases,
         menuBuilder = customTabToolbarMenu.menuBuilder,
         menuItemIndex = START_OF_MENU_ITEMS_INDEX,
         window = activity.window,
         shareListener = { onItemTapped.invoke(ToolbarMenu.Item.Share) },
-        closeListener = { activity.finishAndRemoveTask() }
+        closeListener = { activity.finishAndRemoveTask() },
+        updateToolbarBackground = !isPrivate,
+        forceActionButtonTinting = isPrivate
     )
 
     override fun start() = feature.start()

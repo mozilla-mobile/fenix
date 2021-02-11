@@ -46,6 +46,8 @@ class SettingsSubMenuPrivateBrowsingRobot {
 
     fun verifyPrivateBrowsingShortcutIcon() = assertPrivateBrowsingShortcutIcon()
 
+    fun clickPrivateModeScreenshotsSwitch() = screenshotsInPrivateModeSwitch().click()
+
     fun clickOpenLinksInPrivateTabSwitch() = openLinksInPrivateTabSwitch().click()
 
     fun addPrivateShortcutToHomescreen() {
@@ -92,6 +94,9 @@ private fun assertNavigationToolBarHeader() {
 private fun openLinksInPrivateTabSwitch() =
     onView(withText("Open links in a private tab"))
 
+private fun screenshotsInPrivateModeSwitch() =
+    onView(withText("Allow screenshots in private browsing"))
+
 private fun addPrivateBrowsingShortcutButton() = onView(withText("Add private browsing shortcut"))
 
 private fun goBackButton() = onView(withContentDescription("Navigate up"))
@@ -125,9 +130,6 @@ private fun assertOpenLinksInPrivateTabOff() {
 }
 
 private fun assertPrivateBrowsingShortcutIcon() {
-    mDevice.wait(
-        Until.findObject(text("Private Firefox Preview")),
-        waitingTime
-    )
+    mDevice.wait(Until.findObject(text("Private Firefox Preview")), waitingTime)
     assertTrue(mDevice.hasObject(text("Private Firefox Preview")))
 }

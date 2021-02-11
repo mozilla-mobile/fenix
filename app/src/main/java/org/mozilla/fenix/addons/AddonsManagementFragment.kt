@@ -29,6 +29,7 @@ import mozilla.components.feature.addons.ui.AddonInstallationDialogFragment
 import mozilla.components.feature.addons.ui.AddonsManagerAdapter
 import mozilla.components.feature.addons.ui.PermissionsDialogFragment
 import mozilla.components.feature.addons.ui.translateName
+import org.mozilla.fenix.GleanMetrics.Addons
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.metrics.Event
@@ -37,6 +38,7 @@ import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.theme.ThemeManager
 import java.lang.ref.WeakReference
 import java.util.concurrent.CancellationException
@@ -281,6 +283,7 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
                     adapter?.updateAddon(it)
                     addonProgressOverlay?.visibility = View.GONE
                     showInstallationDialog(it)
+                    Addons.hasInstalledAddons.set(true)
                 }
             },
             onError = { _, e ->

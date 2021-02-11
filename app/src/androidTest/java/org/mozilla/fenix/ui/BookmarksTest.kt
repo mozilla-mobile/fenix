@@ -395,7 +395,7 @@ class BookmarksTest {
         }
 
         bookmarksMenu {
-            verifyEmptyBookmarksList()
+            verifyDeleteMultipleBookmarksSnackBar()
         }
     }
 
@@ -466,20 +466,12 @@ class BookmarksTest {
             bookmarksListIdlingResource =
                 RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.bookmark_list), 2)
             IdlingRegistry.getInstance().register(bookmarksListIdlingResource!!)
-        }.openThreeDotMenu(defaultWebPage.url) {
-            IdlingRegistry.getInstance().unregister(bookmarksListIdlingResource!!)
-        }.clickEdit {
-            verifyEditBookmarksView()
-            changeBookmarkTitle(testBookmark.title)
-            saveEditBookmark()
-
-            IdlingRegistry.getInstance().register(bookmarksListIdlingResource!!)
 
             createFolder(bookmarksFolderName)
 
             IdlingRegistry.getInstance().unregister(bookmarksListIdlingResource!!)
 
-        }.openThreeDotMenu(testBookmark.title) {
+        }.openThreeDotMenu(defaultWebPage.title) {
         }.clickEdit {
             clickParentFolderSelector()
             selectFolder(bookmarksFolderName)
@@ -502,12 +494,16 @@ class BookmarksTest {
         }.openBookmarks {
             createFolder("1")
             getInstrumentation().waitForIdleSync()
+            waitForBookmarksFolderContentToExist("Bookmarks", "1")
             selectFolder("1")
+            verifyCurrentFolderTitle("1")
             createFolder("2")
             getInstrumentation().waitForIdleSync()
+            waitForBookmarksFolderContentToExist("1", "2")
             selectFolder("2")
             verifyCurrentFolderTitle("2")
             navigateUp()
+            waitForBookmarksFolderContentToExist("1", "2")
             verifyCurrentFolderTitle("1")
             mDevice.pressBack()
             verifyBookmarksMenuView()

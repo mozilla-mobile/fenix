@@ -80,7 +80,7 @@
     <!-- Text for the positive button -->
     <string name="cfr_pos_button_text">바로가기 추가</string>
     <!-- Text for the negative button -->
-    <string name="cfr_neg_button_text">아니오</string>
+    <string name="cfr_neg_button_text">아니요</string>
 
     <!-- Open in App "contextual feature recommendation" (CFR) -->
     <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
@@ -741,10 +741,12 @@
     <string name="download_delete_all">다운로드 삭제</string>
     <!-- Text for the dialog to confirm clearing all downloads -->
     <string name="download_delete_all_dialog">다운로드를 삭제하시겠습니까?</string>
-    <!-- Text for the snackbar to confirm that multiple downloads items have been deleted -->
-    <string name="download_delete_multiple_items_snackbar">다운로드 삭제됨</string>
+    <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
+    <string name="download_delete_multiple_items_snackbar_1">다운로드 삭제됨</string>
+    <!-- Text for the snackbar to confirm that a single download item has been removed. The first parameter is the name of the download item. -->
+    <string name="download_delete_single_item_snackbar">%1$s 삭제됨</string>
     <!-- Text shown when no download exists -->
-    <string name="download_empty_message">다운로드 없음</string>
+    <string name="download_empty_message_1">다운로드한 파일 없음</string>
     <!-- History multi select title in app bar
     The first parameter is the number of downloads selected -->
     <string name="download_multi_select_title">%1$d개 선택됨</string>
@@ -752,8 +754,10 @@
 
     <!-- History overflow menu open in new tab button -->
     <string name="download_menu_open">열기</string>
-    <!-- Text for the button to delete a single history item -->
-    <string name="download_delete_item">삭제</string>
+
+
+    <!-- Text for the button to remove a single download item -->
+    <string name="download_delete_item_1">삭제</string>
 
 
     <!-- Crashes -->
@@ -884,6 +888,8 @@
     <string name="preference_phone_feature_notification">알림</string>
     <!-- Preference for altering the persistent storage access for all websites -->
     <string name="preference_phone_feature_persistent_storage">영구 저장소</string>
+    <!-- Preference for altering the EME access for all websites -->
+    <string name="preference_phone_feature_media_key_system_access">DRM 제어 콘텐츠</string>
     <!-- Label that indicates that a permission must be asked always -->
     <string name="preference_option_phone_feature_ask_to_allow">항상 확인</string>
     <!-- Label that indicates that a permission must be blocked -->
@@ -1126,6 +1132,8 @@
     <string name="preferences_delete_browsing_data_cached_files_subtitle">저장 공간 확보</string>
     <!-- Title for the site permissions item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_site_permissions">사이트 권한</string>
+    <!-- Title for the downloads item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_downloads">다운로드</string>
     <!-- Text for the button to delete browsing data -->
     <string name="preferences_delete_browsing_data_button">탐색 데이터 삭제</string>
 
@@ -1250,10 +1258,7 @@
     <string name="onboarding_privacy_notice_header">개인 정보 보호</string>
     <!-- text for the privacy notice onboarding card description
     The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_privacy_notice_description">우리는 %s가 무엇을 온라인에서 공유하고 우리와 공유할지 
-         사용자가 제어할 수 있게 만들었습니다.
-    
-    </string>
+    <string name="onboarding_privacy_notice_description2">우리는 %s가 무엇을 온라인에서 공유하고 우리와 공유할지 사용자가 제어할 수 있게 만들었습니다.</string>
     <!-- Text for the button to read the privacy notice -->
     <string name="onboarding_privacy_notice_read_button">개인정보처리방침 읽기</string>
 

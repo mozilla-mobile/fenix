@@ -11,7 +11,9 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import androidx.navigation.NavController
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.runs
 import io.mockk.spyk
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -23,10 +25,12 @@ import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.feature.app.links.AppLinksUseCases
 import mozilla.components.support.test.ext.joinBlocking
 import mozilla.components.support.test.rule.MainCoroutineRule
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.utils.Settings
 
@@ -75,6 +79,11 @@ class OpenInAppOnboardingObserverTest {
             container = container
         ))
         every { openInAppOnboardingObserver.createInfoBanner() } returns infoBanner
+    }
+
+    @After
+    fun teardown() {
+        openInAppOnboardingObserver.stop()
     }
 
     @Test
@@ -132,6 +141,7 @@ class OpenInAppOnboardingObserverTest {
         every { settings.openLinksInExternalApp } returns false
         every { settings.shouldShowOpenInAppCfr } returns true
         every { appLinksUseCases.appLinkRedirect.invoke(any()).hasExternalApp() } returns true
+        every { context.components.analytics.metrics.track(any()) } just runs
         store.dispatch(ContentAction.UpdateLoadingStateAction("1", true)).joinBlocking()
 
         openInAppOnboardingObserver.start()

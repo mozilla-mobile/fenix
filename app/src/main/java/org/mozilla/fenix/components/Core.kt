@@ -11,10 +11,6 @@ import android.os.Build
 import android.os.StrictMode
 import androidx.core.content.ContextCompat
 import io.sentry.Sentry
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import mozilla.components.browser.engine.gecko.GeckoEngine
 import mozilla.components.browser.engine.gecko.fetch.GeckoViewFetchClient
 import mozilla.components.browser.icons.BrowserIcons
@@ -22,8 +18,6 @@ import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.browser.session.engine.EngineMiddleware
 import mozilla.components.browser.session.storage.SessionStorage
-import mozilla.components.browser.session.undo.UndoMiddleware
-import mozilla.components.browser.state.action.RestoreCompleteAction
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.browser.storage.sync.PlacesBookmarksStorage
@@ -39,6 +33,7 @@ import mozilla.components.concept.fetch.Client
 import mozilla.components.feature.customtabs.store.CustomTabsServiceStore
 import mozilla.components.feature.downloads.DownloadMiddleware
 import mozilla.components.feature.logins.exceptions.LoginExceptionStorage
+import mozilla.components.feature.media.MediaSessionFeature
 import mozilla.components.feature.media.middleware.RecordingDevicesMiddleware
 import mozilla.components.feature.pwa.ManifestStorage
 import mozilla.components.feature.pwa.WebAppShortcutManager
@@ -47,6 +42,8 @@ import mozilla.components.feature.recentlyclosed.RecentlyClosedMiddleware
 import mozilla.components.feature.search.middleware.SearchMiddleware
 import mozilla.components.feature.search.region.RegionMiddleware
 import mozilla.components.feature.session.HistoryDelegate
+import mozilla.components.feature.session.middleware.LastAccessMiddleware
+import mozilla.components.feature.session.middleware.undo.UndoMiddleware
 import mozilla.components.feature.top.sites.DefaultTopSitesStorage
 import mozilla.components.feature.top.sites.PinnedSiteStorage
 import mozilla.components.feature.webcompat.WebCompatFeature
@@ -66,12 +63,13 @@ import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
-import org.mozilla.fenix.perf.StrictModeManager
 import org.mozilla.fenix.TelemetryMiddleware
 import org.mozilla.fenix.components.search.SearchMigration
 import org.mozilla.fenix.downloads.DownloadService
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.media.MediaSessionService
+import org.mozilla.fenix.perf.StrictModeManager
 import org.mozilla.fenix.perf.lazyMonitored
 import org.mozilla.fenix.search.telemetry.ads.AdsTelemetry
 import org.mozilla.fenix.search.telemetry.incontent.InContentTelemetry
@@ -79,12 +77,6 @@ import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.settings.advanced.getSelectedLocale
 import org.mozilla.fenix.utils.Mockable
 import org.mozilla.fenix.utils.getUndoDelay
-import java.util.concurrent.TimeUnit
-import mozilla.components.feature.media.MediaSessionFeature
-import mozilla.components.feature.media.middleware.MediaMiddleware
-import org.mozilla.fenix.FeatureFlags.newMediaSessionApi
-import org.mozilla.fenix.media.MediaService
-import org.mozilla.fenix.media.MediaSessionService
 
 /**
  * Component group for all core browser functionality.
@@ -166,7 +158,7 @@ class Core(
         )
     }
 
-    private val sessionStorage: SessionStorage by lazyMonitored {
+    val sessionStorage: SessionStorage by lazyMonitored {
         SessionStorage(context, engine = engine)
     }
 
@@ -184,6 +176,7 @@ class Core(
     val store by lazyMonitored {
         val middlewareList =
             mutableListOf(
+                LastAccessMiddleware(),
                 RecentlyClosedMiddleware(context, RECENTLY_CLOSED_MAX, engine),
                 DownloadMiddleware(context, DownloadService::class.java),
                 ReaderViewMiddleware(),
@@ -202,10 +195,6 @@ class Core(
                 ),
                 RecordingDevicesMiddleware(context)
             )
-
-        if (!newMediaSessionApi) {
-            middlewareList.add(MediaMiddleware(context, MediaService::class.java))
-        }
 
         BrowserStore(
             middleware = middlewareList + EngineMiddleware.create(engine, ::findSessionById)
@@ -239,7 +228,7 @@ class Core(
      * case all sessions/tabs are closed.
      */
     val sessionManager by lazyMonitored {
-        SessionManager(engine, store).also { sessionManager ->
+        SessionManager(engine, store).also {
             // Install the "icons" WebExtension to automatically load icons for every visited website.
             icons.install(engine, store)
 
@@ -249,48 +238,12 @@ class Core(
             // Install the "cookies" WebExtension and tracks user interaction with SERPs.
             searchTelemetry.install(engine, store)
 
-            // Restore the previous state.
-            GlobalScope.launch(Dispatchers.Main) {
-                withContext(Dispatchers.IO) {
-                    sessionStorage.restore()
-                }?.let { snapshot ->
-                    sessionManager.restore(
-                        snapshot,
-                        updateSelection = (sessionManager.selectedSession == null)
-                    )
-                }
-
-                // Now that we have restored our previous state (if there's one) let's setup auto saving the state while
-                // the app is used.
-                sessionStorage.autoSave(store)
-                    .periodicallyInForeground(interval = 30, unit = TimeUnit.SECONDS)
-                    .whenGoingToBackground()
-                    .whenSessionsChange()
-
-                // Now that we have restored our previous state (if there's one) let's remove timed out tabs
-                if (!context.settings().manuallyCloseTabs) {
-                    store.state.tabs.filter {
-                        (System.currentTimeMillis() - it.lastAccess) > context.settings()
-                            .getTabTimeout()
-                    }.forEach {
-                        val session = sessionManager.findSessionById(it.id)
-                        if (session != null) {
-                            sessionManager.remove(session)
-                        }
-                    }
-                }
-
-                store.dispatch(RestoreCompleteAction)
-            }
-
             WebNotificationFeature(
                 context, engine, icons, R.drawable.ic_status_logo,
                 permissionStorage.permissionsStorage, HomeActivity::class.java
             )
 
-            if (newMediaSessionApi) {
-                MediaSessionFeature(context, MediaSessionService::class.java, store).start()
-            }
+            MediaSessionFeature(context, MediaSessionService::class.java, store).start()
         }
     }
 

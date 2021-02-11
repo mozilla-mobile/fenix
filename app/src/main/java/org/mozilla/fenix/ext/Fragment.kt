@@ -13,6 +13,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.navigation.fragment.findNavController
 import mozilla.components.concept.base.crash.Breadcrumb
+import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.NavHostActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.Components
@@ -39,6 +40,17 @@ fun Fragment.showToolbar(title: String) {
 }
 
 /**
+ * Run the [block] only if the [Fragment] is attached.
+ *
+ * @param block A callback to be executed if the container [Fragment] is attached.
+ */
+internal inline fun Fragment.runIfFragmentIsAttached(block: () -> Unit) {
+    context?.let {
+        block()
+    }
+}
+
+/**
  * Hides the activity toolbar.
  * Throws if the fragment is not attached to an [AppCompatActivity].
  */
@@ -54,6 +66,7 @@ fun Fragment.hideToolbar() {
  *
  */
 fun Fragment.redirectToReAuth(destinations: List<Int>, currentDestination: Int?) {
+    (activity as? HomeActivity)?.updateSecureWindowFlags()
     if (currentDestination !in destinations) {
         findNavController().popBackStack(R.id.savedLoginsAuthFragment, false)
     }

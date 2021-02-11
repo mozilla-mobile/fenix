@@ -11,28 +11,35 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.IdlingResource
+import androidx.test.espresso.ViewInteraction
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.pressImeActionButton
 import androidx.test.espresso.action.ViewActions.replaceText
 import androidx.test.espresso.action.ViewActions.typeText
+import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
+import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withParent
+import androidx.test.espresso.matcher.ViewMatchers.withResourceName
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
+import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
-import kotlinx.android.synthetic.main.fragment_search_dialog.view.*
+import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.anyOf
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.CoreMatchers.not
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.SessionLoadedIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
+import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.assertions.AwesomeBarAssertion.Companion.suggestionsAreEqualTo
 import org.mozilla.fenix.helpers.assertions.AwesomeBarAssertion.Companion.suggestionsAreGreaterThan
 import org.mozilla.fenix.helpers.click
@@ -53,7 +60,12 @@ class NavigationToolbarRobot {
 
     fun verifyTabButtonShortcutMenuItems() = assertTabButtonShortcutMenuItems()
 
+    fun verifyReaderViewDetected(visible: Boolean = false): ViewInteraction =
+        assertReaderViewDetected(visible)
+
     fun typeSearchTerm(searchTerm: String) = awesomeBar().perform(typeText(searchTerm))
+
+    fun toggleReaderView() = readerViewToggle().click()
 
     class Transition {
 
@@ -62,12 +74,12 @@ class NavigationToolbarRobot {
 
         fun goBackToWebsite(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
             mDevice.waitNotNull(
-                Until.findObject(By.res("org.mozilla.fenix.debug:id/toolbar")),
+                Until.findObject(By.res("$packageName:id/toolbar")),
                 waitingTime
             )
             urlBar().click()
             mDevice.waitNotNull(
-                Until.findObject(By.res("org.mozilla.fenix.debug:id/mozac_browser_toolbar_edit_url_view")),
+                Until.findObject(By.res("$packageName:id/mozac_browser_toolbar_edit_url_view")),
                 waitingTime
             )
             clearAddressBar().click()
@@ -84,13 +96,12 @@ class NavigationToolbarRobot {
         ): BrowserRobot.Transition {
             sessionLoadedIdlingResource = SessionLoadedIdlingResource()
 
-            mDevice.waitNotNull(
-                Until.findObject(By.res("org.mozilla.fenix.debug:id/toolbar")),
-                waitingTime
+            mDevice.waitNotNull(Until.findObject(By.res("$packageName:id/toolbar")),
+            waitingTime
             )
             urlBar().click()
             mDevice.waitNotNull(
-                Until.findObject(By.res("org.mozilla.fenix.debug:id/mozac_browser_toolbar_edit_url_view")),
+                Until.findObject(By.res("$packageName:id/mozac_browser_toolbar_edit_url_view")),
                 waitingTime
             )
 
@@ -99,8 +110,9 @@ class NavigationToolbarRobot {
             runWithIdleRes(sessionLoadedIdlingResource) {
                 onView(
                     anyOf(
-                        ViewMatchers.withResourceName("browserLayout"),
-                        ViewMatchers.withResourceName("onboarding_message") // Req ETP dialog
+                        withResourceName("browserLayout"),
+                        withResourceName("onboarding_message"), // Req ETP dialog
+                        withResourceName("download_button")
                     )
                 )
                     .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
@@ -110,11 +122,32 @@ class NavigationToolbarRobot {
             return BrowserRobot.Transition()
         }
 
-        fun openThreeDotMenu(interact: ThreeDotMenuMainRobot.() -> Unit): ThreeDotMenuMainRobot.Transition {
-            mDevice.waitNotNull(
-                Until.findObject(By.res("org.mozilla.fenix.debug:id/mozac_browser_toolbar_menu")),
+        fun openTabCrashReporter(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
+            val crashUrl = "about:crashcontent"
+
+            sessionLoadedIdlingResource = SessionLoadedIdlingResource()
+
+            mDevice.waitNotNull(Until.findObject(By.res("$packageName:id/toolbar")),
                 waitingTime
             )
+            urlBar().click()
+            mDevice.waitNotNull(
+                Until.findObject(By.res("$packageName:id/mozac_browser_toolbar_edit_url_view")),
+                waitingTime
+            )
+
+            awesomeBar().perform(replaceText(crashUrl), pressImeActionButton())
+
+            runWithIdleRes(sessionLoadedIdlingResource) {
+                mDevice.findObject(UiSelector().resourceId("$packageName:id/crash_tab_image"))
+            }
+
+            BrowserRobot().interact()
+            return BrowserRobot.Transition()
+        }
+
+        fun openThreeDotMenu(interact: ThreeDotMenuMainRobot.() -> Unit): ThreeDotMenuMainRobot.Transition {
+            mDevice.waitNotNull(Until.findObject(By.res("$packageName:id/mozac_browser_toolbar_menu")), waitingTime)
             threeDotButton().click()
 
             ThreeDotMenuMainRobot().interact()
@@ -136,11 +169,7 @@ class NavigationToolbarRobot {
             interact: BrowserRobot.() -> Unit
         ): BrowserRobot.Transition {
             sessionLoadedIdlingResource = SessionLoadedIdlingResource()
-            mDevice.waitNotNull(
-                Until.findObject(By.res("org.mozilla.fenix.debug:id/toolbar")),
-                waitingTime
-            )
-
+            mDevice.waitNotNull(Until.findObject(By.res("$packageName:id/toolbar")), waitingTime)
             urlBar().click()
             awesomeBar().perform(replaceText(url.toString()), pressImeActionButton())
 
@@ -280,6 +309,20 @@ private fun tabTrayButton() = onView(withId(R.id.tab_button))
 private fun fillLinkButton() = onView(withId(R.id.fill_link_from_clipboard))
 private fun clearAddressBar() = onView(withId(R.id.mozac_browser_toolbar_clear_view))
 private fun goBackButton() = mDevice.pressBack()
+private fun readerViewToggle() =
+    onView(withParent(withId(R.id.mozac_browser_toolbar_page_actions)))
+
+private fun assertReaderViewDetected(visible: Boolean) =
+    onView(
+        allOf(
+            withParent(withId(R.id.mozac_browser_toolbar_page_actions)),
+            withContentDescription("Reader view")
+        )
+    ).check(
+        if (visible) matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE))
+        else ViewAssertions.doesNotExist()
+    )
+
 inline fun runWithIdleRes(ir: IdlingResource?, pendingCheck: () -> Unit) {
     try {
         IdlingRegistry.getInstance().register(ir)

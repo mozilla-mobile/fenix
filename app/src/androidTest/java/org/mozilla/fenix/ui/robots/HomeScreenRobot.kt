@@ -14,7 +14,6 @@ import androidx.test.espresso.NoMatchingViewException
 import androidx.test.espresso.ViewInteraction
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.action.ViewActions.longClick
 import androidx.test.espresso.action.ViewActions.swipeLeft
 import androidx.test.espresso.action.ViewActions.swipeRight
 import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
@@ -38,8 +37,8 @@ import androidx.test.uiautomator.UiScrollable
 import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
 import androidx.test.uiautomator.Until.findObject
-import mozilla.components.support.ktx.android.content.appName
 import mozilla.components.browser.state.state.searchEngines
+import mozilla.components.support.ktx.android.content.appName
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.CoreMatchers.instanceOf
@@ -48,8 +47,8 @@ import org.hamcrest.Matchers
 import org.junit.Assert
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
+import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.TestHelper.scrollToElementByText
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
@@ -73,7 +72,6 @@ class HomeScreenRobot {
     fun verifyHomeMenu() = assertHomeMenu()
     fun verifyTabButton() = assertTabButton()
     fun verifyCollectionsHeader() = assertCollectionsHeader()
-    fun verifyNoCollectionsHeader() = assertNoCollectionsHeader()
     fun verifyNoCollectionsText() = assertNoCollectionsText()
     fun verifyHomeWordmark() = assertHomeWordmark()
     fun verifyHomeToolbar() = assertHomeToolbar()
@@ -151,25 +149,18 @@ class HomeScreenRobot {
 
     fun confirmDeleteCollection() {
         onView(allOf(withText("DELETE"))).click()
-        mDevice.waitNotNull(findObject(By.res("org.mozilla.fenix.debug:id/collections_header")), waitingTime)
+        mDevice.waitNotNull(
+            findObject(By.res("org.mozilla.fenix.debug:id/no_collections_header")),
+            waitingTime
+        )
     }
-
-    fun typeCollectionName(name: String) {
-        mDevice.wait(findObject(By.res("org.mozilla.fenix.debug:id/name_collection_edittext")), waitingTime)
-        collectionNameTextField().perform(ViewActions.replaceText(name))
-        collectionNameTextField().perform(ViewActions.pressImeActionButton())
-        mDevice.waitNotNull(Until.gone(text("Name collection")))
-    }
-
-    fun saveTabsSelectedForCollection() = onView(withId(R.id.save_button)).click()
 
     fun verifyCollectionIsDisplayed(title: String) {
-        mDevice.wait(findObject(text(title)), waitingTime)
+        mDevice.findObject(UiSelector().text(title)).waitForExists(waitingTime)
         collectionTitle(title).check(matches(isDisplayed()))
     }
 
-    fun verifyCollectionIcon() =
-        onView(withId(R.id.collection_icon)).check(matches(isDisplayed()))
+    fun verifyCollectionIcon() = onView(withId(R.id.collection_icon)).check(matches(isDisplayed()))
 
     fun expandCollection(title: String) {
         try {
@@ -189,9 +180,7 @@ class HomeScreenRobot {
         }
     }
 
-    fun clickSaveCollectionButton() = saveCollectionButton().click()
-
-    fun verifyItemInCollectionExists(title: String, visible: Boolean = true) {
+    fun verifyTabSavedInCollection(title: String, visible: Boolean = true) {
         try {
             collectionItem(title)
                 .check(
@@ -202,11 +191,11 @@ class HomeScreenRobot {
         }
     }
 
-    fun verifyCollectionItemLogo() =
-        onView(withId(R.id.list_item_favicon)).check(matches(isDisplayed()))
+    fun verifyCollectionTabLogo() =
+        onView(withId(R.id.favicon)).check(matches(isDisplayed()))
 
-    fun verifyCollectionItemUrl() =
-        onView(withId(R.id.list_item_url)).check(matches(isDisplayed()))
+    fun verifyCollectionTabUrl() =
+        onView(withId(R.id.caption)).check(matches(isDisplayed()))
 
     fun verifyShareCollectionButtonIsVisible(visible: Boolean) {
         shareCollectionButton()
@@ -232,54 +221,6 @@ class HomeScreenRobot {
             )
     }
 
-    fun verifySelectTabsView(vararg tabTitles: String) {
-        onView(allOf(withId(R.id.back_button), withText("Select Tabs")))
-            .check(matches(isDisplayed()))
-
-        for (title in tabTitles)
-            onView(withId(R.id.tab_list)).check(matches(hasItem(withText(title))))
-    }
-
-    fun verifyTabsSelectedCounterText(tabsSelected: Int) {
-        when (tabsSelected) {
-            0 -> onView(withId(R.id.bottom_bar_text)).check(matches(withText("Select tabs to save")))
-            1 -> onView(withId(R.id.bottom_bar_text)).check(matches(withText("1 tab selected")))
-            else -> onView(withId(R.id.bottom_bar_text)).check(matches(withText("$tabsSelected tabs selected")))
-        }
-    }
-
-    fun selectAllTabsForCollection() {
-        onView(withId(R.id.select_all_button))
-            .check(matches(withText("Select All")))
-            .click()
-    }
-
-    fun deselectAllTabsForCollection() {
-        onView(withId(R.id.select_all_button))
-            .check(matches(withText("Deselect All")))
-            .click()
-    }
-
-    fun selectTabForCollection(title: String) {
-        tab(title).click()
-    }
-
-    fun clickAddNewCollection() =
-        onView(allOf(withText("Add new collection"))).click()
-
-    fun verifyNameCollectionView() {
-        onView(allOf(withId(R.id.back_button), withText("Name collection")))
-            .check(matches(isDisplayed()))
-    }
-
-    fun verifyDefaultCollectionName(name: String) =
-        onView(withId(R.id.name_collection_edittext)).check(matches(withText(name)))
-
-    fun verifySelectCollectionView() {
-        onView(allOf(withId(R.id.back_button), withText("Select collection")))
-            .check(matches(isDisplayed()))
-    }
-
     fun verifyShareTabsOverlay() = assertShareTabsOverlay()
 
     fun clickShareCollectionButton() = onView(withId(R.id.collection_share_button)).click()
@@ -302,20 +243,10 @@ class HomeScreenRobot {
         }
     }
 
-    fun longTapSelectTab(title: String) {
-        tab(title).perform(longClick())
-    }
-
-    fun goBackCollectionFlow() = collectionFlowBackButton().click()
-
     fun scrollToElementByText(text: String): UiScrollable {
         val appView = UiScrollable(UiSelector().scrollable(true))
         appView.scrollTextIntoView(text)
         return appView
-    }
-
-    fun closeTab() {
-        closeTabButton().click()
     }
 
     fun togglePrivateBrowsingModeOnOff() {
@@ -336,7 +267,7 @@ class HomeScreenRobot {
 
     fun verifySnackBarText(expectedText: String) {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        mDevice.waitNotNull(findObject(By.text(expectedText)), TestAssetHelper.waitingTime)
+        mDevice.waitNotNull(findObject(By.text(expectedText)), waitingTime)
     }
 
     fun snackBarButtonClick(expectedText: String) {
@@ -369,7 +300,7 @@ class HomeScreenRobot {
             tabsCounter().click()
 
             mDevice.waitNotNull(
-                Until.findObject(By.res("org.mozilla.fenix.debug:id/tab_layout")),
+                Until.findObject(By.res("$packageName:id/tab_layout")),
                 waitingTime
             )
 
@@ -378,6 +309,7 @@ class HomeScreenRobot {
         }
 
         fun openThreeDotMenu(interact: ThreeDotMenuMainRobot.() -> Unit): ThreeDotMenuMainRobot.Transition {
+            mDevice.waitNotNull(Until.findObject(By.res("$packageName:id/menuButton")), waitingTime)
             threeDotButton().perform(click())
 
             ThreeDotMenuMainRobot().interact()
@@ -406,6 +338,22 @@ class HomeScreenRobot {
         fun togglePrivateBrowsingMode() {
             onView(ViewMatchers.withResourceName("privateBrowsingButton"))
                 .perform(click())
+        }
+
+        fun triggerPrivateBrowsingShortcutPrompt(interact: AddToHomeScreenRobot.() -> Unit): AddToHomeScreenRobot.Transition {
+        // Loop to press the PB icon for 5 times to display the Add the Private Browsing Shortcut CFR
+            for (i in 1..5) {
+                mDevice.findObject(UiSelector().resourceId("$packageName:id/privateBrowsingButton"))
+                    .waitForExists(
+                            waitingTime
+                    )
+
+                onView(ViewMatchers.withResourceName("privateBrowsingButton"))
+                    .perform(click())
+            }
+
+            AddToHomeScreenRobot().interact()
+            return AddToHomeScreenRobot.Transition()
         }
 
         fun pressBack() {
@@ -500,12 +448,11 @@ class HomeScreenRobot {
             return BrowserRobot.Transition()
         }
 
-        fun openTab(title: String, interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
-            mDevice.waitNotNull(findObject(text(title)))
-            tab(title).click()
+        fun clickSaveTabsToCollectionButton(interact: TabDrawerRobot.() -> Unit): TabDrawerRobot.Transition {
+            saveTabsToCollectionButton().click()
 
-            BrowserRobot().interact()
-            return BrowserRobot.Transition()
+            TabDrawerRobot().interact()
+            return TabDrawerRobot.Transition()
         }
     }
 }
@@ -539,8 +486,11 @@ private fun assertFocusedNavigationToolbar() =
     onView(allOf(withHint("Search or enter address")))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
-private fun assertHomeScreen() = onView(ViewMatchers.withResourceName("homeLayout"))
+private fun assertHomeScreen() {
+    mDevice.findObject(UiSelector().resourceId("$packageName:id/homeLayout")).waitForExists(waitingTime)
+    onView(ViewMatchers.withResourceName("homeLayout"))
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
 
 private fun assertHomeMenu() = onView(ViewMatchers.withResourceName("menuButton"))
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
@@ -563,17 +513,14 @@ private fun assertCollectionsHeader() =
     onView(allOf(withText("Collections")))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
-private fun assertNoCollectionsHeader() =
-    onView(allOf(withText("Collect the things that matter to you")))
-        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-
 private fun assertNoCollectionsText() =
     onView(
-        allOf(
-            withText("Group together similar searches, sites, and tabs for quick access later.")
+        withText(
+            containsString("Collect the things that matter to you.\n" +
+                    "Group together similar searches, sites, and tabs for quick access later."
+            )
         )
-    )
-        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+    ).check(matches(isDisplayed()))
 
 private fun assertHomeComponent() =
     onView(ViewMatchers.withResourceName("sessionControlRecyclerView"))
@@ -751,9 +698,6 @@ private fun assertPrivateSessionMessage() =
 private fun collectionThreeDotButton() =
     onView(allOf(withId(R.id.collection_overflow_button)))
 
-private fun collectionNameTextField() =
-    onView(allOf(ViewMatchers.withResourceName("name_collection_edittext")))
-
 private fun collectionTitle(title: String) =
     onView(allOf(withId(R.id.collection_title), withText(title)))
 
@@ -763,7 +707,7 @@ private fun assertExistingTopSitesList() =
 
 private fun assertExistingTopSitesTabs(title: String) =
     onView(allOf(withId(R.id.top_sites_list)))
-        .check(matches(hasItem(hasDescendant(withText(title)))))
+        .check(matches(hasDescendant(withText(title))))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 private fun assertNotExistingTopSitesList(title: String) =
@@ -793,21 +737,20 @@ private fun assertShareTabsOverlay() {
 private fun tabMediaControlButton() = onView(withId(R.id.play_pause_button))
 
 private fun collectionItem(title: String) =
-    onView(allOf(withId(R.id.list_element_title), withText(title)))
+    onView(allOf(withId(R.id.label), withText(title)))
 
-private fun saveCollectionButton() = onView(withId(R.id.save_tab_group_button))
+private fun saveTabsToCollectionButton() = onView(withId(R.id.add_tabs_to_collections_button))
 
 private fun shareCollectionButton() = onView(withId(R.id.collection_share_button))
 
 private fun removeTabFromCollectionButton(title: String) =
     onView(
         allOf(
-            withId(R.id.list_item_action_button),
+            withId(R.id.secondary_button),
             hasSibling(withText(title))
         )
     )
 
-private fun collectionFlowBackButton() = onView(withId(R.id.back_button))
 private fun tabsCounter() = onView(withId(R.id.tab_button))
 
 private fun tab(title: String) =

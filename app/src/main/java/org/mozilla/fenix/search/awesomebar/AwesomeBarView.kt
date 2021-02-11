@@ -10,7 +10,6 @@ import androidx.core.graphics.BlendModeCompat.SRC_IN
 import androidx.core.graphics.drawable.toBitmap
 import mozilla.components.browser.awesomebar.BrowserAwesomeBar
 import mozilla.components.browser.search.DefaultSearchEngineProvider
-import mozilla.components.browser.session.Session
 import mozilla.components.browser.state.search.SearchEngine
 import mozilla.components.concept.awesomebar.AwesomeBar
 import mozilla.components.concept.engine.EngineSession
@@ -42,7 +41,8 @@ import mozilla.components.browser.search.SearchEngine as LegacySearchEngine
 class AwesomeBarView(
     private val activity: HomeActivity,
     val interactor: AwesomeBarInteractor,
-    val view: BrowserAwesomeBar
+    val view: BrowserAwesomeBar,
+    private val fromHomeFragment: Boolean
 ) {
     private val sessionProvider: SessionSuggestionProvider
     private val historyStorageProvider: HistoryStorageSuggestionProvider
@@ -85,10 +85,6 @@ class AwesomeBarView(
     }
 
     private val selectTabUseCase = object : TabsUseCases.SelectTabUseCase {
-        override fun invoke(session: Session) {
-            interactor.onExistingSessionSelected(session)
-        }
-
         override fun invoke(tabId: String) {
             interactor.onExistingSessionSelected(tabId)
         }
@@ -111,7 +107,7 @@ class AwesomeBarView(
                 selectTabUseCase,
                 components.core.icons,
                 getDrawable(activity, R.drawable.ic_search_results_tab),
-                excludeSelectedSession = true
+                excludeSelectedSession = !fromHomeFragment
             )
 
         historyStorageProvider =

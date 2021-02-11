@@ -15,17 +15,22 @@ import androidx.test.espresso.matcher.RootMatchers.isDialog
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
+import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
 import org.hamcrest.CoreMatchers
+import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
 import org.mozilla.fenix.helpers.Constants.PackageName.GOOGLE_APPS_PHOTOS
+import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
+import org.mozilla.fenix.helpers.TestHelper.packageName
 
 /**
  * Implementation of Robot Pattern for download UI handling.
@@ -39,8 +44,24 @@ class DownloadRobot {
 
     fun verifyPhotosAppOpens() = assertPhotosOpens()
 
-    class Transition {
+    fun verifyDownloadedFileName(fileName: String) {
+        mDevice.findObject(UiSelector().text(fileName)).waitForExists(waitingTime)
+        downloadedFile(fileName).check(matches(isDisplayed()))
+    }
 
+    fun verifyDownloadedFileIcon() = assertDownloadedFileIcon()
+
+    fun verifyEmptyDownloadsList() {
+        mDevice.findObject(UiSelector().resourceId("org.mozilla.fenix.debug:id/download_empty_view"))
+            .waitForExists(waitingTime)
+        onView(withText("No downloaded files")).check(matches(isDisplayed()))
+    }
+
+    fun waitForDownloadsListToExist() =
+        assertTrue(mDevice.findObject(UiSelector().resourceId("org.mozilla.fenix.debug:id/download_list"))
+            .waitForExists(waitingTime))
+
+    class Transition {
         fun clickDownload(interact: DownloadRobot.() -> Unit): Transition {
             clickDownloadButton().click()
 
@@ -84,6 +105,13 @@ class DownloadRobot {
             DownloadRobot().interact()
             return Transition()
         }
+
+        fun exitDownloadsManagerToBrowser(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
+            onView(withContentDescription("Navigate up")).click()
+
+            BrowserRobot().interact()
+            return BrowserRobot.Transition()
+        }
     }
 }
 
@@ -93,7 +121,7 @@ fun downloadRobot(interact: DownloadRobot.() -> Unit): DownloadRobot.Transition 
 }
 
 private fun assertDownloadPrompt() {
-    mDevice.waitNotNull(Until.findObjects(By.res("org.mozilla.fenix.debug:id/download_button")))
+    mDevice.waitNotNull(Until.findObjects(By.res("$packageName:id/download_button")))
 }
 
 private fun assertDownloadNotificationPopup() {
@@ -125,3 +153,7 @@ private fun assertPhotosOpens() {
         )
     }
 }
+
+private fun downloadedFile(fileName: String) = onView(withText(fileName))
+
+private fun assertDownloadedFileIcon() = onView(withId(R.id.favicon)).check(matches(isDisplayed()))

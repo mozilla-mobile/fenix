@@ -32,6 +32,7 @@ import androidx.test.uiautomator.By.text
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
+import mozilla.components.browser.state.selector.selectedTab
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.Matchers.not
@@ -41,6 +42,7 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.Constants.LONG_CLICK_DURATION
 import org.mozilla.fenix.helpers.SessionLoadedIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
+import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
 
@@ -48,21 +50,22 @@ class BrowserRobot {
     private lateinit var sessionLoadedIdlingResource: SessionLoadedIdlingResource
 
     fun verifyCurrentPrivateSession(context: Context) {
-        val session = context.components.core.sessionManager.selectedSession
-        assertTrue("Current session is private", session?.private!!)
+        val selectedTab = context.components.core.store.state.selectedTab
+        assertTrue("Current session is private", selectedTab?.content?.private ?: false)
     }
 
     fun verifyUrl(url: String) {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         sessionLoadedIdlingResource = SessionLoadedIdlingResource()
 
-        mDevice.waitNotNull(
-            Until.findObject(By.res("org.mozilla.fenix.debug:id/mozac_browser_toolbar_url_view")),
-            waitingTime
-        )
         runWithIdleRes(sessionLoadedIdlingResource) {
-            onView(withId(R.id.mozac_browser_toolbar_url_view))
-                .check(matches(withText(containsString(url.replace("http://", "")))))
+            assertTrue(
+                mDevice.findObject(
+                    UiSelector()
+                        .resourceId("$packageName:id/mozac_browser_toolbar_url_view")
+                        .textContains(url.replace("http://", ""))
+                ).waitForExists(waitingTime)
+            )
         }
     }
 
@@ -87,7 +90,7 @@ class BrowserRobot {
         sessionLoadedIdlingResource = SessionLoadedIdlingResource()
 
         mDevice.waitNotNull(
-            Until.findObject(By.res("org.mozilla.fenix.debug:id/engineView")),
+            Until.findObject(By.res("$packageName:id/engineView")),
             waitingTime
         )
 
@@ -150,6 +153,8 @@ class BrowserRobot {
 
     fun verifyNavURLBar() = assertNavURLBar()
 
+    fun verifyNavURLBarHidden() = assertNavURLBarHidden()
+
     fun verifySecureConnectionLockIcon() = assertSecureConnectionLockIcon()
 
     fun verifyEnhancedTrackingProtectionSwitch() = assertEnhancedTrackingProtectionSwitch()
@@ -187,6 +192,13 @@ class BrowserRobot {
         mDevice.waitNotNull(Until.findObject(text("Save image")), waitingTime)
         mDevice.waitNotNull(
             Until.findObject(text("Copy image location")), waitingTime
+        )
+    }
+
+    fun verifyNotificationDotOnMainMenu() {
+        assertTrue(
+            mDevice.findObject(UiSelector().resourceId("$packageName:id/notification_dot"))
+                .waitForExists(waitingTime)
         )
     }
 
@@ -295,6 +307,8 @@ class BrowserRobot {
     fun createBookmark(url: Uri) {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(url) {
+            // needs to wait for the right url to load before saving a bookmark
+            verifyUrl(url.toString())
         }.openThreeDotMenu {
             clickAddBookmarkButton()
         }
@@ -419,11 +433,8 @@ class BrowserRobot {
         fun openTabDrawer(interact: TabDrawerRobot.() -> Unit): TabDrawerRobot.Transition {
             mDevice.waitForIdle(waitingTime)
             tabsCounter().click()
-
-            mDevice.waitNotNull(
-                Until.findObject(By.res("org.mozilla.fenix.debug:id/tab_layout")),
-                waitingTime
-            )
+            mDevice.waitNotNull(Until.findObject(By.res("$packageName:id/tab_layout")),
+                waitingTime)
 
             TabDrawerRobot().interact()
             return TabDrawerRobot.Transition()
@@ -446,6 +457,29 @@ class BrowserRobot {
             NotificationRobot().interact()
             return NotificationRobot.Transition()
         }
+
+        fun goToHomescreen(interact: HomeScreenRobot.() -> Unit): HomeScreenRobot.Transition {
+            openTabDrawer {
+            }.openNewTab {
+            }.dismissSearchBar {}
+
+            HomeScreenRobot().interact()
+            return HomeScreenRobot.Transition()
+        }
+
+        fun clickTabCrashedCloseButton(interact: HomeScreenRobot.() -> Unit): HomeScreenRobot.Transition {
+
+            assertTrue(
+                mDevice.findObject(UiSelector().resourceId("$packageName:id/closeTabButton"))
+                    .waitForExists(waitingTime)
+            )
+
+            val tabCrashedCloseButton = mDevice.findObject(text("Close tab"))
+            tabCrashedCloseButton.click()
+
+            HomeScreenRobot().interact()
+            return HomeScreenRobot.Transition()
+        }
     }
 }
 
@@ -461,10 +495,13 @@ fun dismissTrackingOnboarding() {
     dismissOnboardingButton().click()
 }
 
-fun navURLBar() = onView(withId(R.id.mozac_browser_toolbar_url_view))
+fun navURLBar() = onView(withId(R.id.toolbar))
 
 private fun assertNavURLBar() = navURLBar()
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+
+private fun assertNavURLBarHidden() = navURLBar()
+    .check(matches(not(isDisplayed())))
 
 fun enhancedTrackingProtectionIndicator() =
     onView(withId(R.id.mozac_browser_toolbar_tracking_protection_indicator))
@@ -503,3 +540,14 @@ private fun mediaPlayerPlayButton() =
             .className("android.widget.Button")
             .text("Play")
     )
+
+fun clickTabCrashedRestoreButton() {
+
+    assertTrue(
+        mDevice.findObject(UiSelector().resourceId("$packageName:id/restoreTabButton"))
+            .waitForExists(waitingTime)
+    )
+
+    val tabCrashRestoreButton = mDevice.findObject(UiSelector().resourceIdMatches("$packageName:id/restoreTabButton"))
+    tabCrashRestoreButton.click()
+}

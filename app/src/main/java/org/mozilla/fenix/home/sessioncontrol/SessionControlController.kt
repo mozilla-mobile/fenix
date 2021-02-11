@@ -6,12 +6,14 @@ package org.mozilla.fenix.home.sessioncontrol
 
 import android.view.LayoutInflater
 import android.widget.EditText
+import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AlertDialog
 import androidx.navigation.NavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import mozilla.components.browser.session.SessionManager
+import mozilla.components.browser.state.selector.getNormalOrPrivateTabs
+import mozilla.components.browser.state.state.searchEngines
 import mozilla.components.browser.state.state.selectedOrDefaultSearchEngine
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.Engine
@@ -36,7 +38,6 @@ import org.mozilla.fenix.components.tips.Tip
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
-import org.mozilla.fenix.ext.sessionsOfType
 import org.mozilla.fenix.home.HomeFragment
 import org.mozilla.fenix.home.HomeFragmentAction
 import org.mozilla.fenix.home.HomeFragmentDirections
@@ -173,12 +174,12 @@ class DefaultSessionControlController(
     private val settings: Settings,
     private val engine: Engine,
     private val metrics: MetricController,
-    private val sessionManager: SessionManager,
     private val store: BrowserStore,
     private val tabCollectionStorage: TabCollectionStorage,
     private val addTabUseCase: TabsUseCases.AddNewTabUseCase,
     private val restoreUseCase: TabsUseCases.RestoreUseCase,
     private val reloadUrlUseCase: SessionUseCases.ReloadUrlUseCase,
+    private val selectTabUseCase: TabsUseCases.SelectTabUseCase,
     private val fragmentStore: HomeFragmentStore,
     private val navController: NavController,
     private val viewLifecycleScope: CoroutineScope,
@@ -216,7 +217,8 @@ class DefaultSessionControlController(
             tab,
             onTabRestored = {
                 activity.openToBrowser(BrowserDirection.FromHome)
-                reloadUrlUseCase.invoke(sessionManager.selectedSession)
+                selectTabUseCase.invoke(it)
+                reloadUrlUseCase.invoke(it)
             },
             onFailure = {
                 activity.openToBrowserAndLoad(
@@ -321,12 +323,9 @@ class DefaultSessionControlController(
                 setTitle(R.string.rename_top_site)
                 setView(customLayout)
                 setPositiveButton(R.string.top_sites_rename_dialog_ok) { dialog, _ ->
-                    val newTitle = topSiteLabelEditText.text.toString()
-                    if (newTitle.isNotBlank()) {
-                        viewLifecycleScope.launch(Dispatchers.IO) {
-                            with(activity.components.useCases.topSitesUseCase) {
-                                renameTopSites(topSite, newTitle)
-                            }
+                    viewLifecycleScope.launch(Dispatchers.IO) {
+                        with(activity.components.useCases.topSitesUseCase) {
+                            renameTopSites(topSite, topSiteLabelEditText.text.toString())
                         }
                     }
                     dialog.dismiss()
@@ -364,22 +363,69 @@ class DefaultSessionControlController(
 
     override fun handleSelectTopSite(url: String, type: TopSite.Type) {
         dismissSearchDialogIfDisplayed()
+
         metrics.track(Event.TopSiteOpenInNewTab)
+
         when (type) {
             TopSite.Type.DEFAULT -> metrics.track(Event.TopSiteOpenDefault)
             TopSite.Type.FRECENT -> metrics.track(Event.TopSiteOpenFrecent)
             TopSite.Type.PINNED -> metrics.track(Event.TopSiteOpenPinned)
         }
 
+        if (url == SupportUtils.GOOGLE_URL) {
+            metrics.track(Event.TopSiteOpenGoogle)
+        }
+
         if (url == SupportUtils.POCKET_TRENDING_URL) {
             metrics.track(Event.PocketTopSiteClicked)
         }
+
+        if (SupportUtils.GOOGLE_URL.equals(url, true)) {
+            val availableEngines = getAvailableSearchEngines()
+
+            val searchAccessPoint = Event.PerformedSearch.SearchAccessPoint.TOPSITE
+            val event =
+                availableEngines.firstOrNull { engine -> engine.suggestUrl?.contains(url) == true }
+                    ?.let { searchEngine ->
+                        searchAccessPoint.let { sap ->
+                            MetricsUtils.createSearchEvent(searchEngine, store, sap)
+                        }
+                    }
+            event?.let { activity.metrics.track(it) }
+        }
+
         addTabUseCase.invoke(
-            url = url,
+            url = appendSearchAttributionToUrlIfNeeded(url),
             selectTab = true,
             startLoading = true
         )
         activity.openToBrowser(BrowserDirection.FromHome)
+    }
+
+    @VisibleForTesting
+    internal fun getAvailableSearchEngines() = activity
+        .components
+        .core
+        .store
+        .state
+        .search
+        .searchEngines
+
+    /**
+     * Append a search attribution query to any provided search engine URL based on the
+     * user's current region.
+     */
+    private fun appendSearchAttributionToUrlIfNeeded(url: String): String {
+        if (url == SupportUtils.GOOGLE_URL) {
+            store.state.search.region?.let { region ->
+                return when (region.current) {
+                    "US" -> SupportUtils.GOOGLE_US_URL
+                    else -> SupportUtils.GOOGLE_XX_URL
+                }
+            }
+        }
+
+        return url
     }
 
     private fun dismissSearchDialogIfDisplayed() {
@@ -438,8 +484,8 @@ class DefaultSessionControlController(
         // Only register the observer right before moving to collection creation
         registerCollectionStorageObserver()
 
-        val tabIds = sessionManager
-            .sessionsOfType(private = activity.browsingModeManager.mode.isPrivate)
+        val tabIds = store.state
+            .getNormalOrPrivateTabs(private = activity.browsingModeManager.mode.isPrivate)
             .map { session -> session.id }
             .toList()
             .toTypedArray()

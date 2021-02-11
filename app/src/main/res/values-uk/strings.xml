@@ -473,7 +473,7 @@
     <!-- Header of the Turn on Sync preference view -->
     <string name="preferences_sync">Увімкнути синхронізацію</string>
     <!-- Preference for pairing -->
-    <string name="preferences_sync_pair">Скануйте код в Firefox на комп’ютері</string>
+    <string name="preferences_sync_pair">Скануйте код у Firefox на комп’ютері</string>
     <!-- Preference for account login -->
     <string name="preferences_sync_sign_in">Увійти</string>
     <!-- Preference for reconnecting to FxA sync -->
@@ -565,11 +565,11 @@
     <!-- Title of preference for tabs management -->
     <string name="preferences_tabs">Вкладки</string>
     <!-- Title of preference that allows a user to specify the tab view -->
-    <string name="preferences_tab_view">Подання вкладки</string>
+    <string name="preferences_tab_view">Подання вкладок</string>
     <!-- Option for a list tab view -->
-    <string name="tab_view_list">Перелік</string>
+    <string name="tab_view_list">Списком</string>
     <!-- Option for a grid tab view -->
-    <string name="tab_view_grid">Сітка</string>
+    <string name="tab_view_grid">Сіткою</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
     <string name="preferences_close_tabs">Закрити вкладки</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
@@ -731,18 +731,22 @@
     <string name="download_delete_all">Видалити завантаження</string>
     <!-- Text for the dialog to confirm clearing all downloads -->
     <string name="download_delete_all_dialog">Ви впевнені, що хочете очистити завантаження?</string>
-    <!-- Text for the snackbar to confirm that multiple downloads items have been deleted -->
-    <string name="download_delete_multiple_items_snackbar">Завантаження видалено</string>
+    <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
+    <string name="download_delete_multiple_items_snackbar_1">Завантаження вилучено</string>
+    <!-- Text for the snackbar to confirm that a single download item has been removed. The first parameter is the name of the download item. -->
+    <string name="download_delete_single_item_snackbar">Вилучено %1$s</string>
     <!-- Text shown when no download exists -->
-    <string name="download_empty_message">Завантажень немає</string>
+    <string name="download_empty_message_1">Завантажених файлів немає</string>
     <!-- History multi select title in app bar
     The first parameter is the number of downloads selected -->
     <string name="download_multi_select_title">Вибрано %1$d</string>
 
     <!-- History overflow menu open in new tab button -->
     <string name="download_menu_open">Відкрити</string>
-    <!-- Text for the button to delete a single history item -->
-    <string name="download_delete_item">Видалити</string>
+
+
+    <!-- Text for the button to remove a single download item -->
+    <string name="download_delete_item_1">Вилучити</string>
 
 
     <!-- Crashes -->
@@ -867,6 +871,8 @@
     <string name="preference_phone_feature_notification">Сповіщення</string>
     <!-- Preference for altering the persistent storage access for all websites -->
     <string name="preference_phone_feature_persistent_storage">Постійне сховище</string>
+    <!-- Preference for altering the EME access for all websites -->
+    <string name="preference_phone_feature_media_key_system_access">Вміст, контрольований DRM</string>
     <!-- Label that indicates that a permission must be asked always -->
     <string name="preference_option_phone_feature_ask_to_allow">Запитувати дозвіл</string>
     <!-- Label that indicates that a permission must be blocked -->
@@ -1091,6 +1097,8 @@
     <string name="preferences_delete_browsing_data_cached_files_subtitle">Звільняє місце для зберігання</string>
     <!-- Title for the site permissions item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_site_permissions">Дозволи сайтів</string>
+    <!-- Title for the downloads item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_downloads">Завантаження</string>
     <!-- Text for the button to delete browsing data -->
     <string name="preferences_delete_browsing_data_button">Видалити дані перегляду</string>
     <!-- Title for the Delete browsing data on quit preference -->
@@ -1160,7 +1168,7 @@
     <string name="onboarding_whats_new_description_linktext">Отримайте відповіді тут</string>
 
     <!-- text for the Firefox account onboarding sign in card header -->
-    <string name="onboarding_account_sign_in_header">Почніть синхронізувати закладки, паролі та інші дані з Обліковим записом Firefox.</string>
+    <string name="onboarding_account_sign_in_header">Почніть синхронізувати закладки, паролі та інші дані з обліковим записом Firefox.</string>
     <!-- Text for the button to learn more about signing in to your Firefox account -->
     <string name="onboarding_manual_sign_in_learn_more">Докладніше</string>
     <!-- text for the firefox account onboarding card header when we detect you're already signed in to
@@ -1216,8 +1224,7 @@
 
     <!-- text for the privacy notice onboarding card description
     The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_privacy_notice_description">Ми створили %s, щоб надати вам контроль над тим, чим ви ділитесь
-        в Інтернеті та з нами.</string>
+    <string name="onboarding_privacy_notice_description2">Ми створили %s, щоб надати вам контроль над тим, чим ви ділитесь в Інтернеті та з нами.</string>
     <!-- Text for the button to read the privacy notice -->
     <string name="onboarding_privacy_notice_read_button">Повідомлення про приватність</string>
 
@@ -1524,7 +1531,7 @@
     <string name="preference_accessibility_force_enable_zoom_summary">Увімкніть, щоб дозволити масштабування, навіть на вебсайтах, які це не дозволяють.</string>
 
     <!-- Saved logins sorting strategy menu item -by name- (if selected, it will sort saved logins alphabetically) -->
-    <string name="saved_logins_sort_strategy_alphabetically">Назва (A-Z)</string>
+    <string name="saved_logins_sort_strategy_alphabetically">Назва (А-Я)</string>
     <!-- Saved logins sorting strategy menu item -by last used- (if selected, it will sort saved logins by last used) -->
     <string name="saved_logins_sort_strategy_last_used">Востаннє використано</string>
 

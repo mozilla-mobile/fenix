@@ -37,11 +37,17 @@ android {
         testInstrumentationRunnerArguments clearPackageData: 'true'
         resValue "bool", "IS_DEBUG", "false"
         buildConfigField "boolean", "USE_RELEASE_VERSIONING", "false"
-        buildConfigField "String", "AMO_COLLECTION", "\"7dfae8669acc4312a65e8ba5553036\""
+        // This should be the "public" base URL of AMO.
+        buildConfigField "String", "AMO_BASE_URL", "\"https://addons.mozilla.org\""
+        buildConfigField "String", "AMO_COLLECTION_NAME", "\"7dfae8669acc4312a65e8ba5553036\""
+        buildConfigField "String", "AMO_COLLECTION_USER", "\"mozilla\""
+        // This should be the base URL used to call the AMO API.
+        buildConfigField "String", "AMO_SERVER_URL", "\"https://services.addons.mozilla.org\""
         def deepLinkSchemeValue = "fenix-dev"
         buildConfigField "String", "DEEP_LINK_SCHEME", "\"$deepLinkSchemeValue\""
         manifestPlaceholders = [
-                "deepLinkScheme": deepLinkSchemeValue
+                "deepLinkScheme": deepLinkSchemeValue,
+                "requestLegacyExternalStorage": true
         ]
 
         // Build flag for "Mozilla Online" variants. See `Config.isMozillaOnline`.
@@ -76,13 +82,19 @@ android {
             applicationIdSuffix ".fenix.debug"
             resValue "bool", "IS_DEBUG", "true"
             pseudoLocalesEnabled true
+            def deepLinkSchemeValue = "fenix-dev"
+            buildConfigField "String", "DEEP_LINK_SCHEME", "\"$deepLinkSchemeValue\""
+            manifestPlaceholders = [
+                    "deepLinkScheme": deepLinkSchemeValue,
+                    "requestLegacyExternalStorage": false
+            ]
         }
         nightly releaseTemplate >> {
             applicationIdSuffix ".fenix"
             buildConfigField "boolean", "USE_RELEASE_VERSIONING", "true"
             def deepLinkSchemeValue = "fenix-nightly"
             buildConfigField "String", "DEEP_LINK_SCHEME", "\"$deepLinkSchemeValue\""
-            manifestPlaceholders = ["deepLinkScheme": deepLinkSchemeValue]
+            manifestPlaceholders = ["deepLinkScheme": deepLinkSchemeValue, "requestLegacyExternalStorage": false]
         }
         beta releaseTemplate >> {
             buildConfigField "boolean", "USE_RELEASE_VERSIONING", "true"
@@ -98,7 +110,8 @@ android {
                     //  - https://issuetracker.google.com/issues/36924841
                     //  - https://issuetracker.google.com/issues/36905922
                     "sharedUserId": "org.mozilla.firefox.sharedID",
-                    "deepLinkScheme": deepLinkSchemeValue
+                    "deepLinkScheme": deepLinkSchemeValue,
+                    "requestLegacyExternalStorage": true
             ]
         }
         release releaseTemplate >> {
@@ -115,7 +128,8 @@ android {
                     //  - https://issuetracker.google.com/issues/36924841
                     //  - https://issuetracker.google.com/issues/36905922
                     "sharedUserId": "org.mozilla.firefox.sharedID",
-                    "deepLinkScheme": deepLinkSchemeValue
+                    "deepLinkScheme": deepLinkSchemeValue,
+                    "requestLegacyExternalStorage": true
             ]
         }
     }
@@ -355,6 +369,16 @@ android.applicationVariants.all { variant ->
         buildConfigField 'String', 'NIMBUS_ENDPOINT', 'null'
         println("--")
     }
+
+// -------------------------------------------------------------------------------------------------
+// BuildConfig: Set flag for official builds; similar to MOZILLA_OFFICIAL in mozilla-central.
+// -------------------------------------------------------------------------------------------------
+
+    if (project.hasProperty("official") || gradle.hasProperty("localProperties.official")) {
+        buildConfigField 'Boolean', 'MOZILLA_OFFICIAL', 'true'
+    } else {
+        buildConfigField 'Boolean', 'MOZILLA_OFFICIAL', 'false'
+    }
 }
 
 androidExtensions {
@@ -427,6 +451,7 @@ dependencies {
     implementation Deps.mozilla_browser_menu2
     implementation Deps.mozilla_browser_search
     implementation Deps.mozilla_browser_session
+    implementation Deps.mozilla_browser_session_storage
     implementation Deps.mozilla_browser_state
     implementation Deps.mozilla_browser_storage_sync
     implementation Deps.mozilla_browser_tabstray
@@ -463,6 +488,7 @@ dependencies {
     implementation Deps.mozilla_feature_top_sites
     implementation Deps.mozilla_feature_share
     implementation Deps.mozilla_feature_accounts_push
+    implementation Deps.mozilla_feature_webauthn
     implementation Deps.mozilla_feature_webcompat
     implementation Deps.mozilla_feature_webnotifications
     implementation Deps.mozilla_feature_webcompat_reporter
@@ -550,7 +576,6 @@ dependencies {
     androidTestImplementation Deps.androidx_junit
     androidTestImplementation Deps.androidx_work_testing
     androidTestImplementation Deps.mockwebserver
-
     testImplementation Deps.mozilla_support_test
     testImplementation Deps.mozilla_support_test_libstate
     testImplementation Deps.androidx_junit

@@ -5,7 +5,7 @@
 package org.mozilla.fenix.trackingprotection
 
 import androidx.annotation.StringRes
-import mozilla.components.browser.session.Session
+import mozilla.components.browser.state.state.SessionState
 import mozilla.components.concept.engine.content.blocking.TrackerLog
 import mozilla.components.lib.state.Action
 import mozilla.components.lib.state.State
@@ -55,7 +55,7 @@ sealed class TrackingProtectionAction : Action {
  *           accessibly focus after returning from details_moode
  */
 data class TrackingProtectionState(
-    val session: Session?,
+    val tab: SessionState?,
     val url: String,
     val isTrackingProtectionEnabled: Boolean,
     val listTrackers: List<TrackerLog>,
@@ -90,8 +90,18 @@ enum class TrackingProtectionCategory(
         R.string.etp_cryptominers_title,
         R.string.etp_cryptominers_description
     ),
-    FINGERPRINTERS(R.string.etp_fingerprinters_title, R.string.etp_fingerprinters_description),
-    TRACKING_CONTENT(R.string.etp_tracking_content_title, R.string.etp_tracking_content_description)
+    FINGERPRINTERS(
+        R.string.etp_fingerprinters_title,
+        R.string.etp_fingerprinters_description
+    ),
+    TRACKING_CONTENT(
+        R.string.etp_tracking_content_title,
+        R.string.etp_tracking_content_description
+    ),
+    REDIRECT_TRACKERS(
+        R.string.etp_redirect_trackers_title,
+        R.string.etp_redirect_trackers_description
+    )
 }
 
 /**

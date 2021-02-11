@@ -15,11 +15,10 @@ import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.slot
 import io.mockk.verify
+import io.mockk.verifyAll
 import io.mockk.verifyOrder
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineScope
-import mozilla.components.browser.session.Session
-import mozilla.components.browser.session.SessionManager
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.state.state.createTab
@@ -41,14 +40,12 @@ import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
-import org.mozilla.fenix.ext.sessionsOfType
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class DefaultTabTrayControllerTest {
     private val activity: HomeActivity = mockk(relaxed = true)
     private val profiler: Profiler? = mockk(relaxed = true)
     private val navController: NavController = mockk()
-    private val sessionManager: SessionManager = mockk(relaxed = true)
     private val browsingModeManager: BrowsingModeManager = mockk(relaxed = true)
     private val dismissTabTray: (() -> Unit) = mockk(relaxed = true)
     private val dismissTabTrayAndNavigateHome: ((String) -> Unit) = mockk(relaxed = true)
@@ -72,16 +69,6 @@ class DefaultTabTrayControllerTest {
     private val tab1 = createTab(url = "http://firefox.com", id = "5678")
     private val tab2 = createTab(url = "http://mozilla.org", id = "1234")
 
-    private val session = Session(
-        "mozilla.org",
-        true
-    )
-
-    private val nonPrivateSession = Session(
-        "mozilla.org",
-        false
-    )
-
     @Before
     fun setUp() {
         mockkStatic("org.mozilla.fenix.ext.SessionManagerKt")
@@ -92,15 +79,7 @@ class DefaultTabTrayControllerTest {
             )
         )
 
-        every { sessionManager.sessionsOfType(private = true) } returns listOf(session).asSequence()
-        every { sessionManager.sessionsOfType(private = false) } returns listOf(nonPrivateSession).asSequence()
-        every { sessionManager.createSessionSnapshot(any()) } returns SessionManager.Snapshot.Item(
-            session
-        )
-        every { sessionManager.findSessionById("1234") } returns session
-        every { sessionManager.remove(any()) } just Runs
         every { tabCollectionStorage.cachedTabCollections } returns cachedTabCollections
-        every { sessionManager.selectedSession } returns nonPrivateSession
         every { navController.navigate(any<NavDirections>()) } just Runs
         every { navController.currentDestination } returns currentDestination
         every { currentDestination.id } returns R.id.browserFragment
@@ -109,7 +88,6 @@ class DefaultTabTrayControllerTest {
         controller = DefaultTabTrayController(
             activity = activity,
             profiler = profiler,
-            sessionManager = sessionManager,
             browserStore = store,
             browsingModeManager = browsingModeManager,
             tabCollectionStorage = tabCollectionStorage,
@@ -274,7 +252,7 @@ class DefaultTabTrayControllerTest {
 
         controller.handleSaveToCollectionClicked(setOf(tab))
 
-        verify {
+        verifyAll {
             metrics.track(Event.TabsTraySaveToCollectionPressed)
             registerCollectionStorageObserver()
             showChooseCollectionDialog(listOf(tab2))
@@ -302,7 +280,7 @@ class DefaultTabTrayControllerTest {
         val tab = Tab("1234", "mozilla.org")
 
         controller.handleDeleteSelectedTabs(setOf(tab))
-        verify {
+        verifyAll {
             tabsUseCases.removeTabs(listOf(tab.id))
             tabTrayFragmentStore.dispatch(TabTrayDialogFragmentAction.ExitMultiSelectMode)
             showUndoSnackbarForTabs()
@@ -315,19 +293,31 @@ class DefaultTabTrayControllerTest {
         coEvery { bookmarksStorage.getBookmarksWithUrl("mozilla.org") } returns listOf()
 
         controller.handleBookmarkSelectedTabs(setOf(tab))
-        verify {
+        verifyAll {
             tabTrayFragmentStore.dispatch(TabTrayDialogFragmentAction.ExitMultiSelectMode)
             showBookmarksSavedSnackbar()
         }
     }
 
     @Test
-    fun handleSetUpAutoCloseTabsClicked() {
+    fun handleRecentlyClosedClicked() {
+        controller.handleRecentlyClosedClicked()
+        val directions = TabTrayDialogFragmentDirections.actionGlobalRecentlyClosed()
+
+        verifyAll {
+            navController.navigate(directions)
+            metrics.track(Event.RecentlyClosedTabsOpened)
+        }
+    }
+
+    @Test
+    fun handleGoToTabsSettingClicked() {
         controller.handleGoToTabsSettingClicked()
         val directions = TabTrayDialogFragmentDirections.actionGlobalTabSettingsFragment()
 
-        verify {
+        verifyAll {
             navController.navigate(directions)
+            metrics.track(Event.TabsTrayCfrTapped)
         }
     }
 }

@@ -16,7 +16,6 @@ import org.junit.Test
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
-import org.mozilla.fenix.helpers.TestHelper.sendSingleTapToScreen
 import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
@@ -72,8 +71,6 @@ class TabbedBrowsingTest {
 
     @Test
     fun openNewTabTest() {
-        homeScreen { }.dismissOnboarding()
-
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         navigationToolbar {
@@ -81,11 +78,18 @@ class TabbedBrowsingTest {
             mDevice.waitForIdle()
             verifyTabCounter("1")
         }.openTabDrawer {
-            verifyExistingTabList()
-        }.openTabsListThreeDotMenu {
-            verifyCloseAllTabsButton()
-            verifyShareTabButton()
-            verifySelectTabs()
+            verifyNormalModeSelected()
+            verifyExistingOpenTabs("Test_Page_1")
+            closeTab()
+        }.openTabDrawer {
+            verifyNoTabsOpened()
+        }.openNewTab {
+        }.submitQuery(defaultWebPage.url.toString()) {
+            mDevice.waitForIdle()
+            verifyTabCounter("1")
+        }.openTabDrawer {
+            verifyNormalModeSelected()
+            verifyExistingOpenTabs("Test_Page_1")
         }
     }
 
@@ -249,15 +253,12 @@ class TabbedBrowsingTest {
         notificationShade {
             verifyPrivateTabsNotification()
         }.clickClosePrivateTabsNotification {
-            // Tap an empty spot on the app homescreen to make sure it's into focus
-            sendSingleTapToScreen(20, 20)
             verifyHomeScreen()
         }
     }
 
     @Test
     fun verifyTabTrayNotShowingStateHalfExpanded() {
-        homeScreen { }.dismissOnboarding()
 
         navigationToolbar {
         }.openTabTray {

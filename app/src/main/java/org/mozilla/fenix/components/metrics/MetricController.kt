@@ -22,6 +22,7 @@ import mozilla.components.feature.findinpage.facts.FindInPageFacts
 import mozilla.components.feature.media.facts.MediaFacts
 import mozilla.components.feature.prompts.dialog.LoginDialogFacts
 import mozilla.components.feature.pwa.ProgressiveWebAppFacts
+import mozilla.components.feature.top.sites.facts.TopSitesFacts
 import mozilla.components.support.base.Component
 import mozilla.components.support.base.facts.Action
 import mozilla.components.support.base.facts.Fact
@@ -134,6 +135,13 @@ internal class ReleaseMetricController(
             }
     }
 
+    @VisibleForTesting
+    internal fun factToEvent(
+        fact: Fact
+    ): Event? {
+        return fact.toEvent()
+    }
+
     private fun isInitialized(type: MetricServiceType): Boolean = initialized.contains(type)
 
     private fun isTelemetryEnabled(type: MetricServiceType): Boolean = when (type) {
@@ -152,6 +160,15 @@ internal class ReleaseMetricController(
         Component.FEATURE_FINDINPAGE to FindInPageFacts.Items.INPUT -> Event.FindInPageSearchCommitted
         Component.FEATURE_CONTEXTMENU to ContextMenuFacts.Items.ITEM -> {
             metadata?.get("item")?.let { Event.ContextMenuItemTapped.create(it.toString()) }
+        }
+        Component.FEATURE_CONTEXTMENU to ContextMenuFacts.Items.TEXT_SELECTION_OPTION -> {
+            when (metadata?.get("textSelectionOption")?.toString()) {
+                CONTEXT_MENU_COPY -> Event.ContextMenuCopyTapped
+                CONTEXT_MENU_SEARCH, CONTEXT_MENU_SEARCH_PRIVATELY -> Event.ContextMenuSearchTapped
+                CONTEXT_MENU_SELECT_ALL -> Event.ContextMenuSelectAllTapped
+                CONTEXT_MENU_SHARE -> Event.ContextMenuShareTapped
+                else -> null
+            }
         }
 
         Component.BROWSER_TOOLBAR to ToolbarFacts.Items.MENU -> {
@@ -233,6 +250,34 @@ internal class ReleaseMetricController(
         Component.FEATURE_PWA to ProgressiveWebAppFacts.Items.INSTALL_SHORTCUT -> {
             Event.ProgressiveWebAppInstallAsShortcut
         }
+        Component.FEATURE_TOP_SITES to TopSitesFacts.Items.COUNT -> {
+            value?.let {
+                var count = 0
+                try {
+                    count = it.toInt()
+                } catch (e: NumberFormatException) {
+                    // Do nothing
+                }
+
+                return if (count > 0) {
+                    Event.HaveTopSites
+                } else {
+                    Event.HaveNoTopSites
+                }
+            }
+            null
+        }
         else -> null
+    }
+
+    companion object {
+        /**
+         * Text selection long press context items to be tracked.
+         */
+        const val CONTEXT_MENU_COPY = "org.mozilla.geckoview.COPY"
+        const val CONTEXT_MENU_SEARCH = "CUSTOM_CONTEXT_MENU_SEARCH"
+        const val CONTEXT_MENU_SEARCH_PRIVATELY = "CUSTOM_CONTEXT_MENU_SEARCH_PRIVATELY"
+        const val CONTEXT_MENU_SELECT_ALL = "org.mozilla.geckoview.SELECT_ALL"
+        const val CONTEXT_MENU_SHARE = "CUSTOM_CONTEXT_MENU_SHARE"
     }
 }
