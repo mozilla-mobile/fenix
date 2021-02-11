@@ -6,10 +6,12 @@ package org.mozilla.fenix.addons
 
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
+import androidx.navigation.NavDirections
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import io.mockk.verify
 import mozilla.components.feature.addons.Addon
 import mozilla.components.feature.addons.ui.AddonsManagerAdapterDelegate
@@ -34,6 +36,9 @@ class AddonsManagementViewTest {
     fun setup() {
         MockKAnnotations.init(this)
         managementView = AddonsManagementView(navController, showPermissionDialog)
+
+        mockkStatic("org.mozilla.fenix.ext.NavControllerKt")
+        every { navController.loadNavGraphBeforeNavigate(any() as NavDirections) } returns Unit
     }
 
     @Test

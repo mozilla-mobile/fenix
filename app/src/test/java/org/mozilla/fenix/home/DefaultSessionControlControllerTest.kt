@@ -50,6 +50,7 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.loadNavGraphBeforeNavigate
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.sessioncontrol.DefaultSessionControlController
+import org.mozilla.fenix.perf.waitForNavGraphInflation
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.utils.Settings
 import mozilla.components.feature.tab.collections.Tab as ComponentTab
@@ -107,6 +108,10 @@ class DefaultSessionControlControllerTest {
 
     @Before
     fun setup() {
+
+        mockkStatic("org.mozilla.fenix.perf.PerfNavControllerKt")
+        every { waitForNavGraphInflation(any()) } returns Unit
+
         store = BrowserStore(
             BrowserState(
                 search = SearchState(

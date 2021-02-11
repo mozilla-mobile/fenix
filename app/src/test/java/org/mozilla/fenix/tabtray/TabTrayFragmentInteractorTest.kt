@@ -4,10 +4,13 @@
 
 package org.mozilla.fenix.tabtray
 
+import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import io.mockk.verify
 import mozilla.components.concept.tabstray.Tab
 import org.junit.Test
+import org.mozilla.fenix.perf.waitForNavGraphInflation
 
 class TabTrayFragmentInteractorTest {
     private val controller = mockk<TabTrayController>(relaxed = true)
@@ -33,6 +36,8 @@ class TabTrayFragmentInteractorTest {
 
     @Test
     fun onDeleteSelectedTabs() {
+        mockkStatic("org.mozilla.fenix.perf.PerfNavControllerKt")
+        every { waitForNavGraphInflation(any()) } returns Unit
         val tab = Tab("1234", "mozilla.org")
         val tab2 = Tab("5678", "pocket.com")
         val selectedTabs = setOf(tab, tab2)

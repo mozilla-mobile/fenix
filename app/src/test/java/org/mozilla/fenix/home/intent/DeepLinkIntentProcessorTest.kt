@@ -8,10 +8,12 @@ import android.content.Intent
 import android.net.Uri
 import androidx.core.net.toUri
 import androidx.navigation.NavController
+import androidx.navigation.NavDirections
 import io.mockk.Called
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
+import io.mockk.mockkStatic
 import io.mockk.verify
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.concept.engine.EngineSession
@@ -41,6 +43,10 @@ class DeepLinkIntentProcessorTest {
     fun setup() {
         activity = mockk(relaxed = true)
         navController = mockk(relaxed = true)
+
+        mockkStatic("org.mozilla.fenix.ext.NavControllerKt")
+        every { navController.loadNavGraphBeforeNavigate(any() as NavDirections) } returns Unit
+
         out = mockk()
         processor = DeepLinkIntentProcessor(activity, object : DeepLinkIntentProcessor.DeepLinkVerifier {
             override fun verifyDeepLink(deepLink: Uri): Boolean {

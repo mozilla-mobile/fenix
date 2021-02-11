@@ -5,6 +5,7 @@
 package org.mozilla.fenix.components.toolbar
 
 import androidx.navigation.NavController
+import androidx.navigation.NavDirections
 import androidx.navigation.NavOptions
 import io.mockk.MockKAnnotations
 import io.mockk.Runs
@@ -13,6 +14,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.just
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import io.mockk.slot
 import io.mockk.verify
 import mozilla.components.browser.state.action.BrowserAction
@@ -50,6 +52,7 @@ import org.mozilla.fenix.ext.loadNavGraphBeforeNavigate
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.home.HomeScreenViewModel
+import org.mozilla.fenix.perf.waitForNavGraphInflation
 
 @RunWith(FenixRobolectricTestRunner::class)
 class DefaultBrowserToolbarControllerTest {
@@ -100,6 +103,11 @@ class DefaultBrowserToolbarControllerTest {
     fun setUp() {
         MockKAnnotations.init(this)
 
+        mockkStatic("org.mozilla.fenix.perf.PerfNavControllerKt")
+        every { waitForNavGraphInflation(any()) } returns Unit
+        mockkStatic("org.mozilla.fenix.ext.NavControllerKt")
+        every { navController.loadNavGraphBeforeNavigate(any() as NavDirections) } returns Unit
+
         every { activity.components.useCases.sessionUseCases } returns sessionUseCases
         every { activity.components.useCases.searchUseCases } returns searchUseCases
         every { activity.components.useCases.topSitesUseCase } returns topSitesUseCase
@@ -137,7 +145,7 @@ class DefaultBrowserToolbarControllerTest {
             pastedText = pastedText
         )
 
-        verify { navController.loadNavGraphBeforeNavigate(directions, any<NavOptions>()) }
+        verify { navController.navigate(directions, any<NavOptions>()) }
     }
 
     @Test
@@ -151,7 +159,7 @@ class DefaultBrowserToolbarControllerTest {
             pastedText = pastedText
         )
 
-        verify { navController.loadNavGraphBeforeNavigate(directions, any<NavOptions>()) }
+        verify { navController.navigate(directions, any<NavOptions>()) }
     }
 
     @Test
@@ -226,7 +234,7 @@ class DefaultBrowserToolbarControllerTest {
         )
 
         verify { metrics.track(Event.SearchBarTapped(Event.SearchBarTapped.Source.BROWSER)) }
-        verify { navController.loadNavGraphBeforeNavigate(expected, any<NavOptions>()) }
+        verify { navController.navigate(expected, any<NavOptions>()) }
     }
 
     @Test
@@ -239,7 +247,7 @@ class DefaultBrowserToolbarControllerTest {
         )
 
         verify { metrics.track(Event.SearchBarTapped(Event.SearchBarTapped.Source.BROWSER)) }
-        verify { navController.loadNavGraphBeforeNavigate(expected, any<NavOptions>()) }
+        verify { navController.navigate(expected, any<NavOptions>()) }
     }
 
     @Test

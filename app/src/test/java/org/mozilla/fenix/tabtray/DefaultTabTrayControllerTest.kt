@@ -7,6 +7,7 @@ package org.mozilla.fenix.tabtray
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDirections
+import androidx.navigation.NavOptions
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.every
@@ -40,6 +41,7 @@ import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.loadNavGraphBeforeNavigate
+import org.mozilla.fenix.perf.waitForNavGraphInflation
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class DefaultTabTrayControllerTest {
@@ -71,6 +73,10 @@ class DefaultTabTrayControllerTest {
 
     @Before
     fun setUp() {
+        mockkStatic("org.mozilla.fenix.perf.PerfNavControllerKt")
+        every { waitForNavGraphInflation(any()) } returns Unit
+        mockkStatic("org.mozilla.fenix.ext.NavControllerKt")
+        every { navController.loadNavGraphBeforeNavigate(any() as NavDirections, any<NavOptions>()) } returns Unit
         mockkStatic("org.mozilla.fenix.ext.SessionManagerKt")
 
         val store = BrowserStore(

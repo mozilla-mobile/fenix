@@ -24,6 +24,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
+import org.mozilla.fenix.perf.waitForNavGraphInflation
 
 @RunWith(FenixRobolectricTestRunner::class)
 class FragmentTest {
@@ -38,6 +39,9 @@ class FragmentTest {
 
     @Before
     fun setup() {
+        mockkStatic("org.mozilla.fenix.perf.PerfNavControllerKt")
+        every { waitForNavGraphInflation(any()) } returns Unit
+
         mockkStatic(NavHostFragment::class)
         every { (NavHostFragment.findNavController(mockFragment)) } returns navController
         every { (NavHostFragment.findNavController(mockFragment).currentDestination) } returns mockDestination

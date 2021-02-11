@@ -7,6 +7,7 @@ package org.mozilla.fenix
 import android.net.ConnectivityManager
 import androidx.core.content.getSystemService
 import androidx.navigation.NavController
+import androidx.navigation.NavDirections
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
@@ -43,6 +44,9 @@ class AppRequestInterceptorTest {
         interceptor = AppRequestInterceptor(testContext).also {
             it.setNavigationController(navigationController)
         }
+
+        mockkStatic("org.mozilla.fenix.ext.NavControllerKt")
+        every { navigationController.loadNavGraphBeforeNavigate(any() as NavDirections) } returns Unit
     }
 
     @Test

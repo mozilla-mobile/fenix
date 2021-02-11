@@ -6,6 +6,7 @@ package org.mozilla.fenix.components.toolbar
 
 import android.content.Intent
 import androidx.navigation.NavController
+import androidx.navigation.NavDirections
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import io.mockk.MockKAnnotations
 import io.mockk.Runs
@@ -64,6 +65,7 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.directionsEq
 import org.mozilla.fenix.ext.loadNavGraphBeforeNavigate
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
+import org.mozilla.fenix.perf.waitForNavGraphInflation
 import org.mozilla.fenix.settings.deletebrowsingdata.deleteAndQuit
 import org.mozilla.fenix.utils.Settings
 
@@ -101,6 +103,12 @@ class DefaultBrowserToolbarMenuControllerTest {
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
+
+        mockkStatic("org.mozilla.fenix.ext.NavControllerKt")
+        every { navController.loadNavGraphBeforeNavigate(any() as NavDirections) } returns Unit
+
+        mockkStatic("org.mozilla.fenix.perf.PerfNavControllerKt")
+        every { waitForNavGraphInflation(any()) } returns Unit
 
         mockkStatic(
             "org.mozilla.fenix.settings.deletebrowsingdata.DeleteAndQuitKt"
@@ -345,7 +353,7 @@ class DefaultBrowserToolbarMenuControllerTest {
         val directions = BrowserFragmentDirections.actionBrowserFragmentToSettingsFragment()
 
         verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.SETTINGS)) }
-        verify { navController.loadNavGraphBeforeNavigate(directions, null) }
+        verify { navController.navigate(directions, null) }
     }
 
     @Test
@@ -358,7 +366,7 @@ class DefaultBrowserToolbarMenuControllerTest {
         val directions = BrowserFragmentDirections.actionGlobalBookmarkFragment(BookmarkRoot.Mobile.id)
 
         verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.BOOKMARKS)) }
-        verify { navController.loadNavGraphBeforeNavigate(directions, null) }
+        verify { navController.navigate(directions, null) }
     }
 
     @Test
@@ -371,7 +379,7 @@ class DefaultBrowserToolbarMenuControllerTest {
         val directions = BrowserFragmentDirections.actionGlobalHistoryFragment()
 
         verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.HISTORY)) }
-        verify { navController.loadNavGraphBeforeNavigate(directions, null) }
+        verify { navController.navigate(directions, null) }
     }
 
     @Test
@@ -542,7 +550,7 @@ class DefaultBrowserToolbarMenuControllerTest {
             tabIds = arrayOf(selectedTab.id),
             selectedTabIds = arrayOf(selectedTab.id)
         )
-        verify { navController.loadNavGraphBeforeNavigate(directionsEq(directions), null) }
+        verify { navController.navigate(directionsEq(directions), null) }
     }
 
     @Test
@@ -567,7 +575,7 @@ class DefaultBrowserToolbarMenuControllerTest {
             tabIds = arrayOf(selectedTab.id),
             selectedTabIds = arrayOf(selectedTab.id)
         )
-        verify { navController.loadNavGraphBeforeNavigate(directionsEq(directions), null) }
+        verify { navController.navigate(directionsEq(directions), null) }
     }
 
     @Test

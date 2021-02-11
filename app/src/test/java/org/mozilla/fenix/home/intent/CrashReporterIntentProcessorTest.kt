@@ -8,20 +8,33 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.navigation.NavController
 import io.mockk.Called
+import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import io.mockk.verify
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.ext.loadNavGraphBeforeNavigate
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
+import org.mozilla.fenix.perf.waitForNavGraphInflation
 
 @RunWith(FenixRobolectricTestRunner::class)
 class CrashReporterIntentProcessorTest {
 
+    private lateinit var navController: NavController
+
+    @Before
+    fun setup() {
+        navController = mockk(relaxed = true)
+
+        mockkStatic("org.mozilla.fenix.perf.PerfNavControllerKt")
+        every { waitForNavGraphInflation(any()) } returns Unit
+    }
+
     @Test
     fun `do not process blank intents`() {
-        val navController: NavController = mockk()
         val out: Intent = mockk()
         CrashReporterIntentProcessor().process(Intent(), navController, out)
 
@@ -31,7 +44,6 @@ class CrashReporterIntentProcessorTest {
 
     @Test
     fun `process crash intents`() {
-        val navController: NavController = mockk(relaxed = true)
         val out: Intent = mockk()
         val intent = Intent().apply {
             putExtra("mozilla.components.lib.crash.CRASH", mockk<Bundle>())

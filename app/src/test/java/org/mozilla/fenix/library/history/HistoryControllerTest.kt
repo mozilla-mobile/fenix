@@ -11,6 +11,7 @@ import androidx.navigation.NavController
 import io.mockk.coVerifyOrder
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import io.mockk.slot
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -29,6 +30,7 @@ import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.directionsEq
 import org.mozilla.fenix.ext.loadNavGraphBeforeNavigate
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
+import org.mozilla.fenix.perf.waitForNavGraphInflation
 
 // Robolectric needed for `onShareItem()`
 @ExperimentalCoroutinesApi
@@ -197,6 +199,9 @@ class HistoryControllerTest {
     @Test
     @Suppress("UNCHECKED_CAST")
     fun onShareItem() {
+        mockkStatic("org.mozilla.fenix.perf.PerfNavControllerKt")
+        every { waitForNavGraphInflation(any()) } returns Unit
+
         controller.handleShare(historyItem)
 
         verify {

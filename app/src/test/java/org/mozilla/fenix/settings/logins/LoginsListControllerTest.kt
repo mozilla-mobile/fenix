@@ -5,7 +5,10 @@
 package org.mozilla.fenix.settings.logins
 
 import androidx.navigation.NavController
+import androidx.navigation.NavDirections
+import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import io.mockk.verifyAll
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Test
@@ -56,6 +59,9 @@ class LoginsListControllerTest {
     @Test
     fun `GIVEN a SavedLogin, WHEN handleItemClicked is called for it, THEN LoginsAction$LoginSelected should be emitted`() {
         val login: SavedLogin = mockk(relaxed = true)
+
+        mockkStatic("org.mozilla.fenix.ext.NavControllerKt")
+        every { navController.loadNavGraphBeforeNavigate(any() as NavDirections) } returns Unit
 
         controller.handleItemClicked(login)
 

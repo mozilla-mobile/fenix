@@ -14,6 +14,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkObject
+import io.mockk.mockkStatic
 import io.mockk.spyk
 import io.mockk.unmockkObject
 import io.mockk.verify
@@ -34,6 +35,7 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.components.metrics.MetricsUtils
 import org.mozilla.fenix.ext.loadNavGraphBeforeNavigate
+import org.mozilla.fenix.perf.waitForNavGraphInflation
 import org.mozilla.fenix.search.SearchDialogFragmentDirections.Companion.actionGlobalAddonsManagementFragment
 import org.mozilla.fenix.search.SearchDialogFragmentDirections.Companion.actionGlobalSearchEngineFragment
 import org.mozilla.fenix.settings.SupportUtils
@@ -60,6 +62,9 @@ class SearchDialogControllerTest {
     fun setUp() {
         MockKAnnotations.init(this)
         mockkObject(MetricsUtils)
+
+        mockkStatic("org.mozilla.fenix.perf.PerfNavControllerKt")
+        every { waitForNavGraphInflation(any()) } returns Unit
 
         val browserStore = BrowserStore()
 
