@@ -38,6 +38,7 @@ import mozilla.components.support.rusthttp.RustHttpConfig
 import mozilla.components.support.rustlog.RustLog
 import mozilla.components.support.utils.logElapsedTime
 import mozilla.components.support.webextensions.WebExtensionSupport
+import org.mozilla.fenix.GleanMetrics.PerfStartup
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.components.metrics.MetricServiceType
 import org.mozilla.fenix.ext.settings
@@ -69,6 +70,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         private set
 
     override fun onCreate() {
+        val methodDurationTimerId = PerfStartup.applicationOnCreate.start() // DO NOT MOVE ANYTHING ABOVE HERE.
         super.onCreate()
 
         setupInAllProcesses()
@@ -90,6 +92,9 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         }
 
         setupInMainProcessOnly()
+
+        // We use start/stop instead of measure so we don't measure outside the main process.
+        PerfStartup.applicationOnCreate.stopAndAccumulate(methodDurationTimerId) // DO NOT MOVE ANYTHING BELOW HERE.
     }
 
     protected open fun initializeGlean() {
