@@ -58,14 +58,9 @@ class ThreeDotMenuMainTest {
         if (FeatureFlags.toolbarMenuFeature) {
             homeScreen {
             }.openThreeDotMenu {
-                verifySettingsButton()
-                verifyBookmarksButton()
-                verifyHistoryButton()
-            }.openSettings {
-                verifySettingsView()
-            }.goBack {
-            }.openThreeDotMenu {
-            }.goBack {}
+            }.openHistory {
+                verifyHistoryMenuView()
+            }.goBackToBrowser {}
 
             homeScreen {
             }.openThreeDotMenu {
@@ -75,9 +70,14 @@ class ThreeDotMenuMainTest {
 
             homeScreen {
             }.openThreeDotMenu {
-            }.openHistory {
-                verifyHistoryMenuView()
-            }
+                verifySettingsButton()
+                verifyBookmarksButton()
+                verifyHistoryButton()
+            }.openSettings {
+                verifySettingsView()
+            }.goBack {
+            }.openThreeDotMenu {
+            }.goBack {}
         } else {
             homeScreen {
             }.openThreeDotMenu {

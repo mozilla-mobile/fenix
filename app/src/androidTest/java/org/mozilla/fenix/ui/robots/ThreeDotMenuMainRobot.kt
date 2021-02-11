@@ -125,21 +125,33 @@ class ThreeDotMenuMainRobot {
     fun verifyShareTabsOverlay() = assertShareTabsOverlay()
 
     fun verifyThreeDotMainMenuItems() {
-        verifyAddOnsButton()
-        verifyDownloadsButton()
-        verifyHistoryButton()
-        verifyBookmarksButton()
-        verifySyncedTabsButton()
-        verifySettingsButton()
-        verifyFindInPageButton()
-        verifyAddFirefoxHome()
-        verifyAddToMobileHome()
-        verifyDesktopSite()
-        verifySaveCollection()
-        verifyAddBookmarkButton()
-        verifyShareButton()
-        verifyForwardButton()
-        verifyRefreshButton()
+        if (FeatureFlags.toolbarMenuFeature) {
+            verifyDownloadsButton()
+            verifyHistoryButton()
+            verifyBookmarksButton()
+            verifySettingsButton()
+            verifyDesktopSite()
+            verifySaveCollection()
+            verifyShareButton()
+            verifyForwardButton()
+            verifyRefreshButton()
+        } else {
+            verifyAddOnsButton()
+            verifyDownloadsButton()
+            verifyHistoryButton()
+            verifyBookmarksButton()
+            verifySyncedTabsButton()
+            verifySettingsButton()
+            verifyFindInPageButton()
+            verifyAddFirefoxHome()
+            verifyAddToMobileHome()
+            verifyDesktopSite()
+            verifySaveCollection()
+            verifyAddBookmarkButton()
+            verifyShareButton()
+            verifyForwardButton()
+            verifyRefreshButton()
+        }
     }
 
     private fun assertShareTabsOverlay() {

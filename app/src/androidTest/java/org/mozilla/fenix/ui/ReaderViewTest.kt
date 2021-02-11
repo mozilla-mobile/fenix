@@ -12,6 +12,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.ui.robots.navigationToolbar
 import androidx.test.espresso.IdlingRegistry
+import org.junit.Ignore
 import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
@@ -30,7 +31,7 @@ import org.mozilla.fenix.ui.robots.mDevice
  *
  */
 
-// @Ignore("Temp disable - reader view page detection issues: https://github.com/mozilla-mobile/fenix/issues/9688 ")
+@Ignore("Temp disable - reader view page detection issues: https://github.com/mozilla-mobile/fenix/issues/9688 ")
 class ReaderViewTest {
     private lateinit var mockWebServer: MockWebServer
     private var readerViewNotification: ViewVisibilityIdlingResource? = null
