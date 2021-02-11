@@ -6,6 +6,7 @@ package org.mozilla.fenix.home.sessioncontrol
 
 import android.view.LayoutInflater
 import android.widget.EditText
+import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AlertDialog
 import androidx.navigation.NavController
 import kotlinx.coroutines.CoroutineScope
@@ -380,13 +381,7 @@ class DefaultSessionControlController(
         }
 
         if (SupportUtils.GOOGLE_URL.equals(url, true)) {
-            val availableEngines = activity
-                .components
-                .core
-                .store
-                .state
-                .search
-                .searchEngines
+            val availableEngines = getAvailableSearchEngines()
 
             val searchAccessPoint = Event.PerformedSearch.SearchAccessPoint.TOPSITE
             val event =
@@ -406,6 +401,15 @@ class DefaultSessionControlController(
         )
         activity.openToBrowser(BrowserDirection.FromHome)
     }
+
+    @VisibleForTesting
+    internal fun getAvailableSearchEngines() = activity
+        .components
+        .core
+        .store
+        .state
+        .search
+        .searchEngines
 
     /**
      * Append a search attribution query to any provided search engine URL based on the
