@@ -12,7 +12,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.ui.robots.navigationToolbar
 import androidx.test.espresso.IdlingRegistry
-import org.mozilla.fenix.Config
 import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
