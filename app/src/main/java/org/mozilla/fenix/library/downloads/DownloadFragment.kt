@@ -261,7 +261,7 @@ class DownloadFragment : LibraryPageFragment<DownloadItem>(), UserInteractionHan
 
     /**
      * Launches the coroutine to delete the provided [items].
-     * */
+     */
     private fun getDeleteDownloadItemsOperation(
         downloadUseCases: DownloadsUseCases,
         items: Set<DownloadItem>
