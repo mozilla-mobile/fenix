@@ -154,7 +154,7 @@ class DownloadFragment : LibraryPageFragment<DownloadItem>(), UserInteractionHan
     /**
      * Schedules [items] for deletion.
      * Note: When tapping on a download item's "trash" button
-     *  (itemView.overflow_menu) this [items].size() will be 1.
+     * (itemView.overflow_menu) this [items].size() will be 1.
      */
     private fun deleteDownloadItems(items: Set<DownloadItem>) {
         metrics.track(Event.DownloadsItemDeleted)
