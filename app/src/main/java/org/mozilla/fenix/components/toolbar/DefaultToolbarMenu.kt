@@ -87,7 +87,6 @@ class DefaultToolbarMenu(
     }
 
     override val menuToolbar by lazy {
-
         val back = BrowserMenuItemToolbar.TwoStateButton(
             primaryImageResource = mozilla.components.ui.icons.R.drawable.mozac_ic_back,
             primaryContentDescription = context.getString(R.string.browser_menu_back),
@@ -476,28 +475,9 @@ class DefaultToolbarMenu(
 
         val syncedTabsInTabsTray = context.components.settings.syncedTabsInTabsTray
 
-        val menuItems = if (topToolbarSelected) {
+        val menuItems =
             listOfNotNull(
-                menuToolbar,
-                newTabItem,
-                BrowserMenuDivider(),
-                bookmarksItem,
-                historyItem,
-                downloadsItem,
-                extensionsItem,
-                if (syncedTabsInTabsTray) null else syncedTabsItem,
-                BrowserMenuDivider(),
-                findInPageItem,
-                desktopSiteItem,
-                BrowserMenuDivider(),
-                addToHomeScreenItem.apply { visible = ::canAddToHomescreen },
-                addToTopSitesItem,
-                saveToCollectionItem,
-                BrowserMenuDivider(),
-                settingsItem
-            )
-        } else {
-            listOfNotNull(
+                if (topToolbarSelected) menuToolbar else null,
                 newTabItem,
                 BrowserMenuDivider(),
                 bookmarksItem,
@@ -514,10 +494,9 @@ class DefaultToolbarMenu(
                 saveToCollectionItem,
                 BrowserMenuDivider(),
                 settingsItem,
-                BrowserMenuDivider(),
-                menuToolbar
+                if (topToolbarSelected) null else BrowserMenuDivider(),
+                if (topToolbarSelected) null else menuToolbar
             )
-        }
 
         menuItems
     }
