@@ -90,7 +90,7 @@ class DownloadFragment : LibraryPageFragment<DownloadItem>(), UserInteractionHan
 
     /**
      * Returns a list of available downloads to be displayed to the user.
-     *  Downloads must be COMPLETED and existent on disk.
+     * Downloads must be COMPLETED and existent on disk.
      */
     @VisibleForTesting
     internal fun provideDownloads(state: BrowserState): List<DownloadItem> {
