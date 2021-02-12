@@ -222,7 +222,7 @@ class DownloadFragment : LibraryPageFragment<DownloadItem>(), UserInteractionHan
 
     /**
      * Provides a message to the Undo snackbar.
-     * */
+     */
     private fun getMultiSelectSnackBarMessage(downloadItems: Set<DownloadItem>): String {
         return if (downloadItems.size > 1) {
             getString(R.string.download_delete_multiple_items_snackbar_1)
