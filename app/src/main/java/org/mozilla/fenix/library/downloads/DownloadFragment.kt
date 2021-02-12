@@ -282,7 +282,7 @@ class DownloadFragment : LibraryPageFragment<DownloadItem>(), UserInteractionHan
      * Queues the [getDeleteDownloadItemsOperation] job in [pendingDownloadDeletionJob] in case
      *  the user exits the fragment and we need to quickly execute the queued deletion.
      * And adds the [items] to be deleted to the list of [DownloadFragmentStore.pendingDeletionIds],
-     *  which is used to determine what items to show and what items to hide from the user.
+     * which is used to determine what items to show and what items to hide from the user.
      */
     private fun updatePendingDownloadToDelete(items: Set<DownloadItem>) {
         pendingDownloadDeletionJob = getDeleteDownloadItemsOperation(downloadsUseCases, items)
