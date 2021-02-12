@@ -298,7 +298,7 @@ class DownloadFragment : LibraryPageFragment<DownloadItem>(), UserInteractionHan
 
     /**
      * Executes pending job(s) when leaving [DownloadFragment].
-     * */
+     */
     private fun invokePendingDeletion() {
         pendingDownloadDeletionJob?.let {
             viewLifecycleOwner.lifecycleScope.launch {
