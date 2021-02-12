@@ -63,10 +63,11 @@ class DefaultToolbarMenu(
     val isPinningSupported: Boolean
 ) : ToolbarMenu {
 
-    private var currentUrlIsBookmarked = false
+    private var isCurrentUrlBookmarked = false
     private var isBookmarkedJob: Job? = null
-    private val topToolbarSelected = shouldReverseItems
-    private val selectedSession: TabSessionState? get() = store.state.selectedTab
+    private val isTopToolbarSelected = shouldReverseItems
+    private val selectedSession: TabSessionState?
+        get() = store.state.selectedTab
 
     override val menuBuilder by lazy {
         WebExtensionBrowserMenuBuilder(
@@ -156,13 +157,13 @@ class DefaultToolbarMenu(
                 // TwoStateButton.isInPrimaryState must be synchronous, and checking bookmark state is
                 // relatively slow. The best we can do here is periodically compute and cache a new "is
                 // bookmarked" state, and use that whenever the menu has been opened.
-                isInPrimaryState = { currentUrlIsBookmarked },
+                isInPrimaryState = { isCurrentUrlBookmarked },
                 secondaryImageResource = R.drawable.ic_bookmark_outline,
                 secondaryContentDescription = context.getString(R.string.browser_menu_bookmark),
                 secondaryImageTintResource = primaryTextColor(),
                 disableInSecondaryState = false
             ) {
-                if (!currentUrlIsBookmarked) currentUrlIsBookmarked = true
+                if (!isCurrentUrlBookmarked) isCurrentUrlBookmarked = true
                 onItemTapped.invoke(ToolbarMenu.Item.Bookmark)
             }
 
@@ -473,18 +474,16 @@ class DefaultToolbarMenu(
             onItemTapped.invoke(ToolbarMenu.Item.Settings)
         }
 
-        val syncedTabsInTabsTray = context.components.settings.syncedTabsInTabsTray
-
         val menuItems =
             listOfNotNull(
-                if (topToolbarSelected) menuToolbar else null,
+                if (isTopToolbarSelected) menuToolbar else null,
                 newTabItem,
                 BrowserMenuDivider(),
                 bookmarksItem,
                 historyItem,
                 downloadsItem,
                 extensionsItem,
-                if (syncedTabsInTabsTray) null else syncedTabsItem,
+                syncedTabsItem,
                 BrowserMenuDivider(),
                 findInPageItem,
                 desktopSiteItem,
@@ -494,8 +493,8 @@ class DefaultToolbarMenu(
                 saveToCollectionItem,
                 BrowserMenuDivider(),
                 settingsItem,
-                if (topToolbarSelected) null else BrowserMenuDivider(),
-                if (topToolbarSelected) null else menuToolbar
+                if (isTopToolbarSelected) null else BrowserMenuDivider(),
+                if (isTopToolbarSelected) null else menuToolbar
             )
 
         menuItems
@@ -520,7 +519,7 @@ class DefaultToolbarMenu(
                     )
                 }
                 .collect {
-                    currentUrlIsBookmarked = false
+                    isCurrentUrlBookmarked = false
                     updateCurrentUrlIsBookmarked(it.content.url)
                 }
         }
@@ -530,7 +529,7 @@ class DefaultToolbarMenu(
     internal fun updateCurrentUrlIsBookmarked(newUrl: String) {
         isBookmarkedJob?.cancel()
         isBookmarkedJob = lifecycleOwner.lifecycleScope.launch {
-            currentUrlIsBookmarked = bookmarksStorage
+            isCurrentUrlBookmarked = bookmarksStorage
                 .getBookmarksWithUrl(newUrl)
                 .any { it.url == newUrl }
         }
