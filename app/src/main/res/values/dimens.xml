@@ -51,6 +51,7 @@
     <dimen name="cfr_triangle_height">16dp</dimen>
     <dimen name="cfr_triangle_width">16dp</dimen>
     <dimen name="cfr_triangle_margin_edge">16dp</dimen>
+    <dimen name="cfr_pos_button_height">48dp</dimen>
 
     <dimen name="tab_counter_box_width_height">24dp</dimen>
 
