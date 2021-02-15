@@ -135,7 +135,7 @@ class DownloadFragment : LibraryPageFragment<DownloadItem>(), UserInteractionHan
                 setPositiveButton(R.string.delete_browsing_data_prompt_allow) { dialog: DialogInterface, _ ->
                     // Use fragment's lifecycle; the view may be gone by the time dialog is interacted with.
                     lifecycleScope.launch(IO) {
-                            downloadsUseCases.removeAllDownloads()
+                        downloadsUseCases.removeAllDownloads()
                         updatePendingDownloadToDelete(downloadStore.state.items.toSet())
                         launch(Dispatchers.Main) {
                             showSnackBar(
