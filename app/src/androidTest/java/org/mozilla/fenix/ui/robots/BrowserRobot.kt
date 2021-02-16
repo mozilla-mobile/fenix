@@ -39,7 +39,6 @@ import org.hamcrest.Matchers.not
 import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.helpers.Constants.LONG_CLICK_DURATION
 import org.mozilla.fenix.helpers.SessionLoadedIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestHelper.packageName
@@ -202,6 +201,8 @@ class BrowserRobot {
         )
     }
 
+    fun verifyGenericPageFourItems() = assertGenericPageFourItems()
+
     fun dismissContentContextMenu(containsURL: Uri) {
         onView(withText(containsURL.toString()))
             .inRoot(isDialog())
@@ -323,11 +324,13 @@ class BrowserRobot {
     }
 
     fun longClickMatchingText(expectedText: String) {
-        val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        mDevice.waitNotNull(Until.findObject(text(expectedText)), waitingTime)
+        mDevice.findObject(UiSelector().text(expectedText)).waitForExists(waitingTime)
 
-        val element = mDevice.findObject(text(expectedText))
-        element.click(LONG_CLICK_DURATION)
+        val element = mDevice.findObject(UiSelector().textContains(expectedText))
+
+        element.waitForExists(waitingTime)
+
+        element.longClick()
     }
 
     fun snackBarButtonClick(expectedText: String) {
@@ -530,6 +533,17 @@ private fun menuButton() = onView(withId(R.id.icon))
 private fun assertMenuButton() {
     menuButton()
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
+
+private fun assertGenericPageFourItems() {
+    mDevice.waitNotNull(Until.findObject(text("Test_Page_4")), waitingTime)
+
+    mDevice.findObject(UiSelector().text("Page content: 4")).waitForExists(waitingTime)
+    mDevice.findObject(UiSelector().text("Link 1")).waitForExists(waitingTime)
+    mDevice.findObject(UiSelector().text("Link 2")).waitForExists(waitingTime)
+    mDevice.findObject(UiSelector().text("Link 3")).waitForExists(waitingTime)
+    mDevice.findObject(UiSelector().text("test_link_image")).waitForExists(waitingTime)
+    mDevice.findObject(UiSelector().text("test_no_link_image")).waitForExists(waitingTime)
 }
 
 private fun tabsCounter() = onView(withId(R.id.counter_box))

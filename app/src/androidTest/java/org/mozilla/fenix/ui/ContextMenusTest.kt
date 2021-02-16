@@ -5,6 +5,7 @@
 package org.mozilla.fenix.ui
 
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
@@ -134,7 +135,6 @@ class ContextMenusTest {
         }
     }
 
-    @Ignore("Intermittent: https://github.com/mozilla-mobile/fenix/issues/12367")
     @Test
     fun verifyContextOpenImageNewTab() {
         val pageLinks =
@@ -145,6 +145,8 @@ class ContextMenusTest {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(pageLinks.url) {
             mDevice.waitForIdle()
+            verifyGenericPageFourItems()
+            getInstrumentation().waitForIdleSync()
             longClickMatchingText("test_link_image")
             verifyLinkImageContextMenuItems(imageResource.url)
             clickContextOpenImageNewTab()
