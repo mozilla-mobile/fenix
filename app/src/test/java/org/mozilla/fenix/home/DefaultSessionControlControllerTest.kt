@@ -128,8 +128,6 @@ class DefaultSessionControlControllerTest {
         every { activity.components.analytics } returns analytics
         every { analytics.metrics } returns metrics
 
-        val restoreUseCase: TabsUseCases.RestoreUseCase = mockk(relaxed = true)
-
         controller = spyk(DefaultSessionControlController(
             activity = activity,
             store = store,
