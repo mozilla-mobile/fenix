@@ -128,13 +128,9 @@ class DefaultSessionControlControllerTest {
         every { activity.components.analytics } returns analytics
         every { analytics.metrics } returns metrics
 
-<<<<<<< HEAD
-        controller = DefaultSessionControlController(
-=======
         val restoreUseCase: TabsUseCases.RestoreUseCase = mockk(relaxed = true)
 
         controller = spyk(DefaultSessionControlController(
->>>>>>> d56b4a2b9... For #17418 - Added telemetry for Google Default Top Site (#17637)
             activity = activity,
             store = store,
             settings = settings,
