@@ -9,7 +9,6 @@ import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
@@ -97,7 +96,6 @@ class ContextMenusTest {
         }
     }
 
-    @Ignore("Test failures: https://github.com/mozilla-mobile/fenix/issues/12473")
     @Test
     fun verifyContextCopyLink() {
         val pageLinks =
@@ -134,7 +132,6 @@ class ContextMenusTest {
         }
     }
 
-    @Ignore("Intermittent: https://github.com/mozilla-mobile/fenix/issues/12367")
     @Test
     fun verifyContextOpenImageNewTab() {
         val pageLinks =
@@ -155,7 +152,6 @@ class ContextMenusTest {
     }
 
     @Test
-    @Ignore("Disabled – Google Keyboard Clipboard overlay blocks the address bar: https://github.com/mozilla-mobile/fenix/issues/10586")
     fun verifyContextCopyImageLocation() {
         val pageLinks =
             TestAssetHelper.getGenericAsset(mockWebServer, 4)
@@ -176,7 +172,6 @@ class ContextMenusTest {
     }
 
     @Test
-    @Ignore("Intermittent: https://github.com/mozilla-mobile/fenix/issues/12309")
     fun verifyContextSaveImage() {
         val pageLinks =
             TestAssetHelper.getGenericAsset(mockWebServer, 4)
@@ -201,7 +196,6 @@ class ContextMenusTest {
     }
 
     @Test
-    @Ignore("Intermittent: https://github.com/mozilla-mobile/fenix/issues/12309")
     fun verifyContextMixedVariations() {
         val pageLinks =
             TestAssetHelper.getGenericAsset(mockWebServer, 4)
