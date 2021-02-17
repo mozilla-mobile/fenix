@@ -30,7 +30,7 @@
     <string name="open_tab_tray_plural">%1$s öppna flikar. Tryck för att växla mellan flikar.</string>
 
     <!-- Tab tray multi select title in app bar. The first parameter is the number of tabs selected -->
-    <string name="tab_tray_multi_select_title">%1$d markerad</string>
+    <string name="tab_tray_multi_select_title">%1$d markerade</string>
     <!-- Label of button in create collection dialog for creating a new collection  -->
     <string name="tab_tray_add_new_collection">Lägg till ny samling</string>
     <!-- Label of editable text in create collection dialog for naming a new collection  -->
@@ -132,6 +132,8 @@
     <string name="browser_menu_edit_bookmark">Redigera bokmärke</string>
     <!-- Browser menu button that opens the addon manager -->
     <string name="browser_menu_add_ons">Tillägg</string>
+    <!-- Browser menu button that opens the addon extensions manager -->
+    <string name="browser_menu_extensions">Tillägg</string>
     <!-- Text displayed when there are no add-ons to be shown -->
     <string name="no_add_ons">Inga tillägg här</string>
     <!-- Browser menu button that sends a user to help articles -->
@@ -537,6 +539,10 @@
     <string name="library_desktop_bookmarks_unfiled">Andra bokmärken</string>
     <!-- Option in Library to open History page -->
     <string name="library_history">Historik</string>
+    <!-- Option in Library to open a new tab -->
+    <string name="library_new_tab">Ny flik</string>
+    <!-- Option in Library to find text in page -->
+    <string name="library_find_in_page">Hitta på sidan</string>
     <!-- Option in Library to open Synced Tabs page -->
     <string name="library_synced_tabs">Synkade flikar</string>
     <!-- Option in Library to open Reading List -->
@@ -743,7 +749,7 @@
     <string name="download_empty_message_1">Inga nedladdade filer</string>
     <!-- History multi select title in app bar
     The first parameter is the number of downloads selected -->
-    <string name="download_multi_select_title">%1$d markerad</string>
+    <string name="download_multi_select_title">%1$d markerade</string>
 
     <!-- History overflow menu open in new tab button -->
     <string name="download_menu_open">Öppen</string>

@@ -130,6 +130,8 @@
     <string name="browser_menu_edit_bookmark">Modifica segnalibro</string>
     <!-- Browser menu button that opens the addon manager -->
     <string name="browser_menu_add_ons">Componenti aggiuntivi</string>
+    <!-- Browser menu button that opens the addon extensions manager -->
+    <string name="browser_menu_extensions">Estensioni</string>
     <!-- Text displayed when there are no add-ons to be shown -->
     <string name="no_add_ons">Nessun componente aggiuntivo</string>
     <!-- Browser menu button that sends a user to help articles -->
@@ -205,7 +207,7 @@
     <!-- Header displayed when selecting a shortcut search engine -->
     <string name="search_engines_search_with">Adesso cerca con:</string>
     <!-- Button in the search view that lets a user navigate to the site in their clipboard -->
-    <string name="awesomebar_clipboard_title">Copia il link dagli appunti</string>
+    <string name="awesomebar_clipboard_title">Incolla il link dagli appunti</string>
 
     <!-- Button in the search suggestions onboarding that allows search suggestions in private sessions -->
     <string name="search_suggestions_onboarding_allow_button">Consenti</string>
@@ -540,6 +542,10 @@
     <string name="library_desktop_bookmarks_unfiled">Altri segnalibri</string>
     <!-- Option in Library to open History page -->
     <string name="library_history">Cronologia</string>
+    <!-- Option in Library to open a new tab -->
+    <string name="library_new_tab">Nuova scheda</string>
+    <!-- Option in Library to find text in page -->
+    <string name="library_find_in_page">Trova nella pagina</string>
     <!-- Option in Library to open Synced Tabs page -->
     <string name="library_synced_tabs">Schede sincronizzate</string>
     <!-- Option in Library to open Reading List -->
