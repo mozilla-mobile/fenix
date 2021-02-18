@@ -1,5 +1,5 @@
 name: Android build PR
-on: [pull_request]
+on: [pull_request_target]
 jobs:
   run-build:
     runs-on: ubuntu-20.04
