@@ -38,13 +38,15 @@ import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import mozilla.appservices.places.BookmarkRoot
-import mozilla.components.browser.session.Session
 import mozilla.components.browser.state.action.ContentAction
+import mozilla.components.browser.state.selector.findCustomTab
 import mozilla.components.browser.state.selector.findCustomTabOrSelectedTab
 import mozilla.components.browser.state.selector.findTab
+import mozilla.components.browser.state.selector.findTabOrCustomTab
 import mozilla.components.browser.state.selector.findTabOrCustomTabOrSelectedTab
 import mozilla.components.browser.state.selector.getNormalOrPrivateTabs
 import mozilla.components.browser.state.selector.selectedTab
+import mozilla.components.browser.state.state.CustomTabSessionState
 import mozilla.components.browser.state.state.SessionState
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.state.state.content.DownloadState
@@ -254,7 +256,6 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
     @CallSuper
     internal open fun initializeUI(view: View, tab: SessionState) {
         val context = requireContext()
-        val sessionManager = context.components.core.sessionManager
         val store = context.components.core.store
         val activity = requireActivity() as HomeActivity
 
@@ -318,17 +319,17 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
             }
         )
         val browserToolbarMenuController = DefaultBrowserToolbarMenuController(
+            store = store,
             activity = activity,
             navController = findNavController(),
             metrics = requireComponents.analytics.metrics,
             settings = context.settings(),
             readerModeController = readerMenuController,
-            sessionManager = requireComponents.core.sessionManager,
             sessionFeature = sessionFeature,
             findInPageLauncher = { findInPageIntegration.withFeature { it.launch() } },
             swipeRefresh = swipeRefresh,
             browserAnimator = browserAnimator,
-            customTabSession = customTabSessionId?.let { sessionManager.findSessionById(it) },
+            customTabSessionId = customTabSessionId,
             openInFenixIntent = openInFenixIntent,
             bookmarkTapped = { url: String, title: String ->
                 viewLifecycleOwner.lifecycleScope.launch {
@@ -350,7 +351,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
             container = view.browserLayout,
             toolbarPosition = context.settings().toolbarPosition,
             interactor = browserInteractor,
-            customTabSession = customTabSessionId?.let { sessionManager.findSessionById(it) },
+            customTabSession = customTabSessionId?.let { store.state.findCustomTab(it) },
             lifecycleOwner = viewLifecycleOwner
         )
 
@@ -458,9 +459,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
 
         downloadFeature.onDownloadStopped = { downloadState, _, downloadJobStatus ->
             // If the download is just paused, don't show any in-app notification
-            if (downloadJobStatus == DownloadState.Status.COMPLETED ||
-                downloadJobStatus == DownloadState.Status.FAILED
-            ) {
+            if (shouldShowCompletedDownloadDialog(downloadState, downloadJobStatus)) {
 
                 saveDownloadDialogState(
                     downloadState.sessionId,
@@ -488,16 +487,13 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
                     onDismiss = { sharedViewModel.downloadDialogState.remove(downloadState.sessionId) }
                 )
 
-                // Don't show the dialog if we aren't in the tab that started the download
-                if (downloadState.sessionId == sessionManager.selectedSession?.id) {
-                    dynamicDownloadDialog.show()
-                    browserToolbarView.expand()
-                }
+                dynamicDownloadDialog.show()
+                browserToolbarView.expand()
             }
         }
 
         resumeDownloadDialogState(
-            sessionManager.selectedSession?.id,
+            getCurrentTab()?.id,
             store, view, context, toolbarHeight
         )
 
@@ -556,7 +552,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
                         val directions = NavGraphDirections.actionGlobalShareFragment(
                             data = arrayOf(shareData),
                             showPage = true,
-                            sessionId = getSessionById()?.id
+                            sessionId = getCurrentTab()?.id
                         )
                         findNavController().navigate(directions)
                     }
@@ -590,14 +586,14 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
 
         searchFeature.set(
             feature = SearchFeature(store, customTabSessionId) { request, tabId ->
-                val parentSession = sessionManager.findSessionById(tabId)
+                val parentSession = store.state.findTabOrCustomTab(tabId)
                 val useCase = if (request.isPrivate) {
                     requireComponents.useCases.searchUseCases.newPrivateTabSearch
                 } else {
                     requireComponents.useCases.searchUseCases.newTabSearch
                 }
 
-                if (parentSession?.isCustomTabSession() == true) {
+                if (parentSession is CustomTabSessionState) {
                     useCase.invoke(request.query)
                     requireActivity().startActivity(openInFenixIntent)
                 } else {
@@ -1021,7 +1017,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
     final override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
         savedInstanceState?.getString(KEY_CUSTOM_TAB_SESSION_ID)?.let {
-            if (requireComponents.core.sessionManager.findSessionById(it)?.customTabConfig != null) {
+            if (requireComponents.core.store.state.findCustomTab(it) != null) {
                 customTabSessionId = it
             }
         }
@@ -1059,22 +1055,18 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
      * or if it has a parent session and no more history
      */
     protected open fun removeSessionIfNeeded(): Boolean {
-        getSessionById()?.let { session ->
+        getCurrentTab()?.let { session ->
             return if (session.source == SessionState.Source.ACTION_VIEW) {
                 activity?.finish()
                 requireComponents.useCases.tabsUseCases.removeTab(session.id)
                 true
             } else {
-                if (session.hasParentSession) {
-                    // The removeTab use case does not currently select a parent session, so
-                    // we are using sessionManager.remove
-                    requireComponents.core.sessionManager.remove(
-                        session,
-                        selectParentIfExists = true
-                    )
+                val hasParentSession = session is TabSessionState && session.parentId != null
+                if (hasParentSession) {
+                    requireComponents.useCases.tabsUseCases.removeTab(session.id, selectParentIfExists = true)
                 }
                 // We want to return to home if this session didn't have a parent session to select.
-                val goToOverview = !session.hasParentSession
+                val goToOverview = !hasParentSession
                 !goToOverview
             }
         }
@@ -1139,20 +1131,8 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
         (activity as HomeActivity).browsingModeManager.mode = sessionMode
     }
 
-    /**
-     * Returns the current session.
-     */
-    protected fun getSessionById(): Session? {
-        val sessionManager = requireComponents.core.sessionManager
-        val localCustomTabId = customTabSessionId
-        return if (localCustomTabId != null) {
-            sessionManager.findSessionById(localCustomTabId)
-        } else {
-            sessionManager.selectedSession
-        }
-    }
-
-    private fun getCurrentTab(): SessionState? {
+    @VisibleForTesting
+    internal fun getCurrentTab(): SessionState? {
         return requireComponents.core.store.state.findCustomTabOrSelectedTab(customTabSessionId)
     }
 
@@ -1358,4 +1338,16 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
      */
     @VisibleForTesting
     internal fun getSwipeRefreshLayout() = swipeRefresh
+
+    @VisibleForTesting
+    internal fun shouldShowCompletedDownloadDialog(
+        downloadState: DownloadState,
+        status: DownloadState.Status
+    ): Boolean {
+
+        val isValidStatus = status in listOf(DownloadState.Status.COMPLETED, DownloadState.Status.FAILED)
+        val isSameTab = downloadState.sessionId == getCurrentTab()?.id ?: false
+
+        return isValidStatus && isSameTab
+    }
 }
