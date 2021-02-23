@@ -13,9 +13,11 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.GleanMetrics.PerfStartup
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
+import org.robolectric.TestLifecycleApplication
+import java.lang.reflect.Method
 
 @RunWith(FenixRobolectricTestRunner::class)
-class FenixApplicationTest {
+class FenixApplicationTest : TestLifecycleApplication {
 
     @get:Rule val gleanTestRule = GleanTestRule(ApplicationProvider.getApplicationContext())
 
@@ -31,5 +33,17 @@ class FenixApplicationTest {
         // application.onCreate is called before the test as part of test set up:
         // https://robolectric.blogspot.com/2013/04/the-test-lifecycle-in-20.html
         assertTrue(PerfStartup.applicationOnCreate.testHasValue())
+    }
+
+    override fun beforeTest(method: Method?) {
+        // no before test needed
+    }
+
+    override fun prepareTest(test: Any?) {
+        // no prepare test needed
+    }
+
+    override fun afterTest(method: Method?) {
+        // no after test needed
     }
 }
