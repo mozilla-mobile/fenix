@@ -7,15 +7,19 @@ package org.mozilla.fenix.session
 import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.feature.privatemode.notification.AbstractPrivateNotificationService
+import mozilla.components.support.base.ids.notify
+import mozilla.components.support.ktx.android.notification.ChannelData
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.metrics
+import java.util.Locale
 
 /**
  * Manages notifications for private tabs.
@@ -33,9 +37,48 @@ class PrivateNotificationService : AbstractPrivateNotificationService() {
 
     override fun NotificationCompat.Builder.buildNotification() {
         setSmallIcon(R.drawable.ic_private_browsing)
-        setContentTitle(applicationContext.getString(R.string.app_name_private_4, getString(R.string.app_name)))
-        setContentText(applicationContext.getString(R.string.notification_pbm_delete_text_2))
-        color = ContextCompat.getColor(this@PrivateNotificationService, R.color.pbm_notification_color)
+        setContentTitle(
+            applicationContext.getString(
+                R.string.app_name_private_4,
+                getString(R.string.app_name)
+            )
+        )
+        setContentText(
+            applicationContext.getString(
+                R.string.notification_pbm_delete_text_2
+            )
+        )
+        color = ContextCompat.getColor(
+            this@PrivateNotificationService,
+            R.color.pbm_notification_color
+        )
+    }
+
+    override fun notifyLocaleChanged(notificationTag: String, channelId: String) {
+        // how do we get the notification itself?
+
+        val notification = super.createNotification(channelId)
+
+        NotificationManagerCompat.from(applicationContext)
+            .notify(applicationContext, notificationTag, notification)
+    }
+
+    companion object {
+        private const val NOTIFICATION_TAG =
+            "mozilla.components.feature.privatemode.notification.AbstractPrivateNotificationService"
+        const val ACTION_ERASE = "mozilla.components.feature.privatemode.action.ERASE"
+
+        val NOTIFICATION_CHANNEL = ChannelData(
+            id = "browsing-session",
+            name = R.string.mozac_feature_privatemode_notification_channel_name,
+            importance = NotificationManagerCompat.IMPORTANCE_LOW
+        )
+
+        // List of Intent actions that will get ignored when they are in the root intent that gets
+        // passed to onTaskRemoved().
+        private val ignoreTaskActions = listOf(
+            "mozilla.components.feature.pwa.VIEW_PWA"
+        )
     }
 
     @SuppressLint("MissingSuperCall")
