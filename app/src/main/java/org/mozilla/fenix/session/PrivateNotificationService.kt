@@ -13,7 +13,6 @@ import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.feature.privatemode.notification.AbstractPrivateNotificationService
 import mozilla.components.support.base.ids.notify
-import mozilla.components.support.ktx.android.notification.ChannelData
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
@@ -54,31 +53,19 @@ class PrivateNotificationService : AbstractPrivateNotificationService() {
         )
     }
 
+    /**
+     * Update the existing notification when the [Locale] has been changed.
+     *
+     * @param notificationTag the identifying tag of the notification that is used by the
+     * [NotificationCompat.Builder]
+     * @param channelId the id of the notification channel that is used by the
+     * [NotificationCompat.Builder]
+     */
     override fun notifyLocaleChanged(notificationTag: String, channelId: String) {
-        // how do we get the notification itself?
-
         val notification = super.createNotification(channelId)
 
         NotificationManagerCompat.from(applicationContext)
             .notify(applicationContext, notificationTag, notification)
-    }
-
-    companion object {
-        private const val NOTIFICATION_TAG =
-            "mozilla.components.feature.privatemode.notification.AbstractPrivateNotificationService"
-        const val ACTION_ERASE = "mozilla.components.feature.privatemode.action.ERASE"
-
-        val NOTIFICATION_CHANNEL = ChannelData(
-            id = "browsing-session",
-            name = R.string.mozac_feature_privatemode_notification_channel_name,
-            importance = NotificationManagerCompat.IMPORTANCE_LOW
-        )
-
-        // List of Intent actions that will get ignored when they are in the root intent that gets
-        // passed to onTaskRemoved().
-        private val ignoreTaskActions = listOf(
-            "mozilla.components.feature.pwa.VIEW_PWA"
-        )
     }
 
     @SuppressLint("MissingSuperCall")
