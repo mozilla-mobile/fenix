@@ -365,6 +365,7 @@ class TabTrayView(
     }
 
     private fun toggleSaveToCollectionButton(isPrivate: Boolean) {
+        collectionsButtonAdapter.updatePrivateModeState(isPrivate)
         collectionsButtonAdapter.notifyItemChanged(
             0,
             if (isPrivate) TabChange.PRIVATE else TabChange.NORMAL
