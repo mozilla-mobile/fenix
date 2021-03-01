@@ -1073,9 +1073,9 @@ class SmokeTest {
         }.openTabDrawer {
         }.toggleToPrivateTabs {
         }.openNewTab {
-        }.dismissSearchBar {  }
+        }.dismissSearchBar { }
 
-        homeScreen {  }
+        homeScreen { }
             .openTabDrawer {
             }.toggleToNormalTabs {
                 verifySelectTabsButton()
