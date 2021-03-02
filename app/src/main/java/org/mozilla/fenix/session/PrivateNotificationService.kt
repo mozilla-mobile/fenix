@@ -12,7 +12,6 @@ import androidx.core.content.ContextCompat
 import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.feature.privatemode.notification.AbstractPrivateNotificationService
-import mozilla.components.support.base.ids.notify
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
@@ -56,16 +55,12 @@ class PrivateNotificationService : AbstractPrivateNotificationService() {
     /**
      * Update the existing notification when the [Locale] has been changed.
      *
-     * @param notificationTag the identifying tag of the notification that is used by the
-     * [NotificationCompat.Builder]
-     * @param channelId the id of the notification channel that is used by the
-     * [NotificationCompat.Builder]
+     * @param notificationId the id of the notification to be updated.
+     * @param channelId the id of the notification channel to be updated.
      */
-    override fun notifyLocaleChanged(notificationTag: String, channelId: String) {
+    override fun notifyLocaleChanged(notificationId: Int, channelId: String) {
         val notification = super.createNotification(channelId)
-
-        NotificationManagerCompat.from(applicationContext)
-            .notify(applicationContext, notificationTag, notification)
+        NotificationManagerCompat.from(applicationContext).notify(notificationId, notification)
     }
 
     @SuppressLint("MissingSuperCall")

@@ -7,7 +7,7 @@ package org.mozilla.fenix.settings.advanced
 import android.app.Activity
 import android.content.Context
 import mozilla.components.support.locale.LocaleManager
-import mozilla.components.support.locale.LocalesUseCases
+import mozilla.components.support.locale.LocaleUseCases
 import java.util.Locale
 
 interface LocaleSettingsController {
@@ -19,7 +19,7 @@ interface LocaleSettingsController {
 class DefaultLocaleSettingsController(
     private val activity: Activity,
     private val localeSettingsStore: LocaleSettingsStore,
-    private val localeUseCase: LocalesUseCases
+    private val localeUseCase: LocaleUseCases
 ) : LocaleSettingsController {
 
     override fun handleLocaleSelected(locale: Locale) {
