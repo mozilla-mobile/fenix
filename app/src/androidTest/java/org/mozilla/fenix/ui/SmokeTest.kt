@@ -1075,11 +1075,11 @@ class SmokeTest {
         }.openNewTab {
         }.dismissSearchBar { }
 
-        homeScreen { }
-            .openTabDrawer {
-            }.toggleToNormalTabs {
-                verifySelectTabsButton()
-            }
+        homeScreen {
+        }.openTabDrawer {
+        }.toggleToNormalTabs {
+            verifySelectTabsButton()
+        }
     }
 
     @Test

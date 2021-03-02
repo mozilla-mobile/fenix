@@ -92,7 +92,8 @@ class TabTrayView(
     private var multiselectMenu: BrowserMenu? = null
 
     private var tabsTouchHelper: TabsTouchHelper
-    private val collectionsButtonAdapter = SaveToCollectionsButtonAdapter(interactor, isPrivate)
+    private val collectionsButtonAdapter =
+        SaveToCollectionsButtonAdapter(interactor) { isPrivateModeSelected }
 
     private var hasLoaded = false
 
@@ -365,7 +366,6 @@ class TabTrayView(
     }
 
     private fun toggleSaveToCollectionButton(isPrivate: Boolean) {
-        collectionsButtonAdapter.updatePrivateModeState(isPrivate)
         collectionsButtonAdapter.notifyItemChanged(
             0,
             if (isPrivate) TabChange.PRIVATE else TabChange.NORMAL
