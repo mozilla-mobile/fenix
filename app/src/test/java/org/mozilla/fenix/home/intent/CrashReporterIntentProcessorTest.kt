@@ -8,17 +8,14 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.navigation.NavController
 import io.mockk.Called
-import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkStatic
 import io.mockk.verify
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.NavGraphDirections
-import org.mozilla.fenix.ext.loadNavGraphBeforeNavigate
+import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
-import org.mozilla.fenix.perf.waitForNavGraphInflation
 
 @RunWith(FenixRobolectricTestRunner::class)
 class CrashReporterIntentProcessorTest {
@@ -28,9 +25,6 @@ class CrashReporterIntentProcessorTest {
     @Before
     fun setup() {
         navController = mockk(relaxed = true)
-
-        mockkStatic("org.mozilla.fenix.perf.PerfNavControllerKt")
-        every { waitForNavGraphInflation(any()) } returns Unit
     }
 
     @Test
@@ -50,7 +44,7 @@ class CrashReporterIntentProcessorTest {
         }
         CrashReporterIntentProcessor().process(intent, navController, out)
 
-        verify { navController.loadNavGraphBeforeNavigate(NavGraphDirections.actionGlobalCrashReporter(intent)) }
+        verify { navController.navigateBlockingForAsyncNavGraph(NavGraphDirections.actionGlobalCrashReporter(intent)) }
         verify { out wasNot Called }
     }
 }

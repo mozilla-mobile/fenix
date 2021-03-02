@@ -10,7 +10,7 @@ import androidx.navigation.NavDirections
 import androidx.navigation.NavOptions
 import io.sentry.Sentry
 import org.mozilla.fenix.components.isSentryEnabled
-import org.mozilla.fenix.perf.waitForNavGraphInflation
+import org.mozilla.fenix.perf.NavGraphProvider
 
 /**
  * Navigate from the fragment with [id] using the given [directions].
@@ -18,7 +18,7 @@ import org.mozilla.fenix.perf.waitForNavGraphInflation
  */
 fun NavController.nav(@IdRes id: Int?, directions: NavDirections, navOptions: NavOptions? = null) {
 
-    waitForNavGraphInflation(this)
+    NavGraphProvider.blockForNavGraphInflation(this)
 
     if (id == null || this.currentDestination?.id == id) {
         this.navigate(directions, navOptions)
@@ -27,18 +27,18 @@ fun NavController.nav(@IdRes id: Int?, directions: NavDirections, navOptions: Na
     }
 }
 
-fun NavController.loadNavGraphBeforeNavigate(resId: Int) {
-    waitForNavGraphInflation(this)
+fun NavController.navigateBlockingForAsyncNavGraph(resId: Int) {
+    NavGraphProvider.blockForNavGraphInflation(this)
     this.navigate(resId)
 }
 
-fun NavController.loadNavGraphBeforeNavigate(directions: NavDirections) {
-    waitForNavGraphInflation(this)
+fun NavController.navigateBlockingForAsyncNavGraph(directions: NavDirections) {
+    NavGraphProvider.blockForNavGraphInflation(this)
     this.navigate(directions)
 }
 
-fun NavController.loadNavGraphBeforeNavigate(directions: NavDirections, navOptions: NavOptions?) {
-    waitForNavGraphInflation(this)
+fun NavController.navigateBlockingForAsyncNavGraph(directions: NavDirections, navOptions: NavOptions?) {
+    NavGraphProvider.blockForNavGraphInflation(this)
     this.navigate(directions, navOptions)
 }
 
@@ -57,6 +57,6 @@ fun NavController.navigateSafe(
     directions: NavDirections
 ) {
     if (currentDestination?.id == resId) {
-        this.loadNavGraphBeforeNavigate(directions)
+        this.navigateBlockingForAsyncNavGraph(directions)
     }
 }

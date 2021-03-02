@@ -20,7 +20,7 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.SearchWidgetCreator
 import org.mozilla.fenix.ext.alreadyOnDestination
-import org.mozilla.fenix.ext.loadNavGraphBeforeNavigate
+import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 
 /**
  * Deep links in the form of `fenix://host` open different parts of the app.
@@ -74,7 +74,7 @@ class DeepLinkIntentProcessor(
         }
 
         if (!navController.alreadyOnDestination(globalDirections.destinationId)) {
-            navController.loadNavGraphBeforeNavigate(globalDirections.navDirections)
+            navController.navigateBlockingForAsyncNavGraph(globalDirections.navDirections)
         }
     }
 

@@ -13,7 +13,6 @@ import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
-import io.mockk.mockkStatic
 import io.mockk.slot
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -33,10 +32,9 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.ext.directionsEq
-import org.mozilla.fenix.ext.loadNavGraphBeforeNavigate
+import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.ext.optionsEq
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
-import org.mozilla.fenix.perf.waitForNavGraphInflation
 
 // Robolectric needed for `onShareItem()`
 @ExperimentalCoroutinesApi
@@ -66,8 +64,6 @@ class DefaultRecentlyClosedControllerTest {
 
     @Before
     fun setUp() {
-        mockkStatic("org.mozilla.fenix.perf.PerfNavControllerKt")
-        every { waitForNavGraphInflation(any()) } returns Unit
         every { tabsUseCases.restore.invoke(any(), true) } just Runs
     }
 
@@ -109,7 +105,7 @@ class DefaultRecentlyClosedControllerTest {
         controller.handleNavigateToHistory()
 
         verify {
-            navController.loadNavGraphBeforeNavigate(
+            navController.navigateBlockingForAsyncNavGraph(
                 directionsEq(
                     RecentlyClosedFragmentDirections.actionGlobalHistoryFragment()
                 ),
@@ -144,7 +140,7 @@ class DefaultRecentlyClosedControllerTest {
         controller.handleShare(item)
 
         verify {
-            navController.loadNavGraphBeforeNavigate(
+            navController.navigateBlockingForAsyncNavGraph(
                 directionsEq(
                     RecentlyClosedFragmentDirections.actionGlobalShareFragment(
                         data = arrayOf(ShareData(url = item.url, title = item.title))

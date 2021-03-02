@@ -27,19 +27,16 @@ import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDirections
-import androidx.navigation.NavGraph
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.Dispatchers.IO
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.browser.state.search.SearchEngine
@@ -80,7 +77,7 @@ import org.mozilla.fenix.exceptions.trackingprotection.TrackingProtectionExcepti
 import org.mozilla.fenix.ext.alreadyOnDestination
 import org.mozilla.fenix.ext.breadcrumb
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.loadNavGraphBeforeNavigate
+import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.settings
@@ -95,12 +92,11 @@ import org.mozilla.fenix.library.bookmarks.BookmarkFragmentDirections
 import org.mozilla.fenix.library.bookmarks.DesktopFolders
 import org.mozilla.fenix.library.history.HistoryFragmentDirections
 import org.mozilla.fenix.library.recentlyclosed.RecentlyClosedFragmentDirections
-import org.mozilla.fenix.perf.addNavToMap
+import org.mozilla.fenix.perf.NavGraphProvider
 import org.mozilla.fenix.perf.Performance
 import org.mozilla.fenix.perf.PerformanceInflater
 import org.mozilla.fenix.perf.ProfilerMarkers
 import org.mozilla.fenix.perf.StartupTimeline
-import org.mozilla.fenix.perf.waitForNavGraphInflation
 import org.mozilla.fenix.search.SearchDialogFragmentDirections
 import org.mozilla.fenix.session.PrivateNotificationService
 import org.mozilla.fenix.settings.SettingsFragmentDirections
@@ -151,11 +147,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
     private var inflater: LayoutInflater? = null
 
-    private lateinit var navGraphJob: Deferred<NavGraph>
-
-    private var navGraph: NavGraph? = null
-
-    private val navHost by lazy {
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    val navHost by lazy {
         supportFragmentManager.findFragmentById(R.id.container) as NavHostFragment
     }
 
@@ -197,9 +190,16 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         components.publicSuffixList.prefetch()
 
         setupThemeAndBrowsingMode(getModeFromIntentOrLastKnown(intent))
-        setContentView(R.layout.activity_home)
-
-        addNavToMap(navHost.navController, createNavGraphAsync())
+        setContentView(R.layout.activity_home).run {
+            //The NavGraph is being asynchronously inflated for performance gain.
+            //However, it has to be called immediately after the setContentView since it requires
+            //a NavHostFragment instance that has gone through it's `onCreate` method since
+            //it is where the NavHostFragment.navController is instantiated. The navController
+            //is the variable we need in order to inflate the navGraph. Therefore, for best performance
+            //improvement, it is best to call the asynchronous inflation right after setContentView
+            //has been called
+            NavGraphProvider.inflateNavGraphAsync(navHost)
+        }
 
         // Must be after we set the content view
         if (isVisuallyComplete) {
@@ -266,18 +266,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
         components.core.requestInterceptor.setNavigationController(navHost.navController)
 
-        waitForNavGraphInflation(navHost.navController)
-
         StartupTimeline.onActivityCreateEndHome(this) // DO NOT MOVE ANYTHING BELOW HERE.
-    }
-
-    /**
-     * This job inflates the NavGraph and attaches it to our NavController.
-     */
-    private fun createNavGraphAsync() = MainScope().launch(Dispatchers.Default) {
-        val navHostFragment = container as NavHostFragment
-        val inflater = navHostFragment.navController.navInflater
-        navHostFragment.navController.graph = inflater.inflate(R.navigation.nav_graph)
     }
 
     protected open fun startupTelemetryOnCreateCalled(
@@ -440,6 +429,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
     override fun onDestroy() {
         super.onDestroy()
+
+        NavGraphProvider.onActivityDestroyRemoveJobs()
 
         // Diagnostic breadcrumb for "Display already aquired" crash:
         // https://github.com/mozilla-mobile/android-components/issues/7960
@@ -911,7 +902,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             webExtensionId = webExtensionState.id,
             webExtensionTitle = webExtensionState.name
         )
-        navHost.navController.loadNavGraphBeforeNavigate(action)
+        navHost.navController.navigateBlockingForAsyncNavGraph(action)
     }
 
     /**

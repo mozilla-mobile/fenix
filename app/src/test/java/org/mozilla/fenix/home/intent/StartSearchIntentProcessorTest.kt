@@ -8,9 +8,7 @@ import android.content.Intent
 import androidx.navigation.NavController
 import androidx.navigation.navOptions
 import io.mockk.Called
-import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkStatic
 import io.mockk.verify
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -21,7 +19,6 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
-import org.mozilla.fenix.perf.waitForNavGraphInflation
 
 @RunWith(FenixRobolectricTestRunner::class)
 class StartSearchIntentProcessorTest {
@@ -53,10 +50,6 @@ class StartSearchIntentProcessorTest {
 
     @Test
     fun `process search intents`() {
-
-        mockkStatic("org.mozilla.fenix.perf.PerfNavControllerKt")
-        every { waitForNavGraphInflation(any()) } returns Unit
-
         val intent = Intent().apply {
             putExtra(HomeActivity.OPEN_TO_SEARCH, StartSearchIntentProcessor.SEARCH_WIDGET)
         }

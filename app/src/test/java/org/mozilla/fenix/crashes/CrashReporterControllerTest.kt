@@ -8,7 +8,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkStatic
 import io.mockk.verify
 import mozilla.components.lib.crash.Crash
 import mozilla.components.support.test.ext.joinBlocking
@@ -17,7 +16,7 @@ import org.junit.Test
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.perf.waitForNavGraphInflation
+
 import org.mozilla.fenix.utils.Settings
 
 class CrashReporterControllerTest {
@@ -39,9 +38,6 @@ class CrashReporterControllerTest {
         val currentDest: NavDestination = mockk()
         every { navController.currentDestination } returns currentDest
         every { currentDest.id } returns R.id.crashReporterFragment
-
-        mockkStatic("org.mozilla.fenix.perf.PerfNavControllerKt")
-        every { waitForNavGraphInflation(any()) } returns Unit
     }
 
     @Test

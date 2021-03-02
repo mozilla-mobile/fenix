@@ -24,7 +24,7 @@ import org.junit.runner.RunWith
 import org.mozilla.fenix.AppRequestInterceptor.Companion.HIGH_RISK_ERROR_PAGES
 import org.mozilla.fenix.AppRequestInterceptor.Companion.LOW_AND_MEDIUM_RISK_ERROR_PAGES
 import org.mozilla.fenix.ext.isOnline
-import org.mozilla.fenix.ext.loadNavGraphBeforeNavigate
+import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 
 @RunWith(FenixRobolectricTestRunner::class)
@@ -46,7 +46,7 @@ class AppRequestInterceptorTest {
         }
 
         mockkStatic("org.mozilla.fenix.ext.NavControllerKt")
-        every { navigationController.loadNavGraphBeforeNavigate(any() as NavDirections) } returns Unit
+        every { navigationController.navigateBlockingForAsyncNavGraph(any() as NavDirections) } returns Unit
     }
 
     @Test
@@ -63,7 +63,7 @@ class AppRequestInterceptorTest {
             isSubframeRequest = false
         )
 
-        verify { navigationController.loadNavGraphBeforeNavigate(NavGraphDirections.actionGlobalAddonsManagementFragment(addonId)) }
+        verify { navigationController.navigateBlockingForAsyncNavGraph(NavGraphDirections.actionGlobalAddonsManagementFragment(addonId)) }
         assertEquals(RequestInterceptor.InterceptionResponse.Deny, result)
     }
 
@@ -80,7 +80,7 @@ class AppRequestInterceptorTest {
             isSubframeRequest = false
         )
 
-        verify(exactly = 0) { navigationController.loadNavGraphBeforeNavigate(NavGraphDirections.actionGlobalAddonsManagementFragment()) }
+        verify(exactly = 0) { navigationController.navigateBlockingForAsyncNavGraph(NavGraphDirections.actionGlobalAddonsManagementFragment()) }
         assertNull(result)
     }
 
@@ -97,7 +97,7 @@ class AppRequestInterceptorTest {
             isSubframeRequest = false
         )
 
-        verify(exactly = 0) { navigationController.loadNavGraphBeforeNavigate(NavGraphDirections.actionGlobalAddonsManagementFragment()) }
+        verify(exactly = 0) { navigationController.navigateBlockingForAsyncNavGraph(NavGraphDirections.actionGlobalAddonsManagementFragment()) }
         assertNull(result)
     }
 
@@ -114,7 +114,7 @@ class AppRequestInterceptorTest {
             isSubframeRequest = false
         )
 
-        verify(exactly = 0) { navigationController.loadNavGraphBeforeNavigate(NavGraphDirections.actionGlobalAddonsManagementFragment()) }
+        verify(exactly = 0) { navigationController.navigateBlockingForAsyncNavGraph(NavGraphDirections.actionGlobalAddonsManagementFragment()) }
         assertNull(result)
     }
 
@@ -131,7 +131,7 @@ class AppRequestInterceptorTest {
             isSubframeRequest = false
         )
 
-        verify(exactly = 0) { navigationController.loadNavGraphBeforeNavigate(NavGraphDirections.actionGlobalAddonsManagementFragment()) }
+        verify(exactly = 0) { navigationController.navigateBlockingForAsyncNavGraph(NavGraphDirections.actionGlobalAddonsManagementFragment()) }
         assertNull(result)
     }
 

@@ -48,11 +48,10 @@ import org.mozilla.fenix.browser.readermode.ReaderModeController
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.loadNavGraphBeforeNavigate
+import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.home.HomeScreenViewModel
-import org.mozilla.fenix.perf.waitForNavGraphInflation
 
 @RunWith(FenixRobolectricTestRunner::class)
 class DefaultBrowserToolbarControllerTest {
@@ -103,10 +102,8 @@ class DefaultBrowserToolbarControllerTest {
     fun setUp() {
         MockKAnnotations.init(this)
 
-        mockkStatic("org.mozilla.fenix.perf.PerfNavControllerKt")
-        every { waitForNavGraphInflation(any()) } returns Unit
         mockkStatic("org.mozilla.fenix.ext.NavControllerKt")
-        every { navController.loadNavGraphBeforeNavigate(any() as NavDirections) } returns Unit
+        every { navController.navigateBlockingForAsyncNavGraph(any() as NavDirections) } returns Unit
 
         every { activity.components.useCases.sessionUseCases } returns sessionUseCases
         every { activity.components.useCases.searchUseCases } returns searchUseCases
@@ -258,7 +255,7 @@ class DefaultBrowserToolbarControllerTest {
         controller.handleTabCounterItemInteraction(item)
         verify {
             homeViewModel.sessionToDelete = "1"
-            navController.loadNavGraphBeforeNavigate(BrowserFragmentDirections.actionGlobalHome())
+            navController.navigateBlockingForAsyncNavGraph(BrowserFragmentDirections.actionGlobalHome())
         }
     }
 
@@ -281,12 +278,12 @@ class DefaultBrowserToolbarControllerTest {
         val item = TabCounterMenu.Item.NewTab
 
         every { activity.browsingModeManager } returns browsingModeManager
-        every { navController.loadNavGraphBeforeNavigate(BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = true)) } just Runs
+        every { navController.navigateBlockingForAsyncNavGraph(BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = true)) } just Runs
 
         val controller = createController()
         controller.handleTabCounterItemInteraction(item)
         assertEquals(BrowsingMode.Normal, browsingModeManager.mode)
-        verify { navController.loadNavGraphBeforeNavigate(BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = true)) }
+        verify { navController.navigateBlockingForAsyncNavGraph(BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = true)) }
     }
 
     @Test
@@ -295,12 +292,12 @@ class DefaultBrowserToolbarControllerTest {
         val item = TabCounterMenu.Item.NewPrivateTab
 
         every { activity.browsingModeManager } returns browsingModeManager
-        every { navController.loadNavGraphBeforeNavigate(BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = true)) } just Runs
+        every { navController.navigateBlockingForAsyncNavGraph(BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = true)) } just Runs
 
         val controller = createController()
         controller.handleTabCounterItemInteraction(item)
         assertEquals(BrowsingMode.Private, browsingModeManager.mode)
-        verify { navController.loadNavGraphBeforeNavigate(BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = true)) }
+        verify { navController.navigateBlockingForAsyncNavGraph(BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = true)) }
     }
 
     @Test

@@ -63,9 +63,8 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.directionsEq
-import org.mozilla.fenix.ext.loadNavGraphBeforeNavigate
+import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
-import org.mozilla.fenix.perf.waitForNavGraphInflation
 import org.mozilla.fenix.settings.deletebrowsingdata.deleteAndQuit
 import org.mozilla.fenix.utils.Settings
 
@@ -105,10 +104,7 @@ class DefaultBrowserToolbarMenuControllerTest {
         MockKAnnotations.init(this)
 
         mockkStatic("org.mozilla.fenix.ext.NavControllerKt")
-        every { navController.loadNavGraphBeforeNavigate(any() as NavDirections) } returns Unit
-
-        mockkStatic("org.mozilla.fenix.perf.PerfNavControllerKt")
-        every { waitForNavGraphInflation(any()) } returns Unit
+        every { navController.navigateBlockingForAsyncNavGraph(any() as NavDirections) } returns Unit
 
         mockkStatic(
             "org.mozilla.fenix.settings.deletebrowsingdata.DeleteAndQuitKt"
@@ -278,7 +274,7 @@ class DefaultBrowserToolbarMenuControllerTest {
         val directions = BrowserFragmentDirections.actionGlobalTabHistoryDialogFragment(null)
 
         verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.BACK)) }
-        verify { navController.loadNavGraphBeforeNavigate(directions) }
+        verify { navController.navigateBlockingForAsyncNavGraph(directions) }
     }
 
     @Test
@@ -302,7 +298,7 @@ class DefaultBrowserToolbarMenuControllerTest {
         val directions = BrowserFragmentDirections.actionGlobalTabHistoryDialogFragment(null)
 
         verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.FORWARD)) }
-        verify { navController.loadNavGraphBeforeNavigate(directions) }
+        verify { navController.navigateBlockingForAsyncNavGraph(directions) }
     }
 
     @Test
@@ -476,7 +472,7 @@ class DefaultBrowserToolbarMenuControllerTest {
 
         verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.SHARE)) }
         verify {
-            navController.loadNavGraphBeforeNavigate(
+            navController.navigateBlockingForAsyncNavGraph(
                 directionsEq(
                     NavGraphDirections.actionGlobalShareFragment(
                         data = arrayOf(ShareData(url = "https://mozilla.org", title = "Mozilla")),
@@ -503,7 +499,7 @@ class DefaultBrowserToolbarMenuControllerTest {
 
         verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.SHARE)) }
         verify {
-            navController.loadNavGraphBeforeNavigate(
+            navController.navigateBlockingForAsyncNavGraph(
                 directionsEq(
                     NavGraphDirections.actionGlobalShareFragment(
                         data = arrayOf(ShareData(url = "https://mozilla.org", title = "Mozilla")),

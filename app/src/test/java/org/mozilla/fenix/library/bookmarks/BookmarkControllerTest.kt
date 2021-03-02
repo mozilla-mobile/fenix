@@ -18,6 +18,7 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
+import io.mockk.mockkObject
 import io.mockk.mockkStatic
 import io.mockk.runs
 import io.mockk.slot
@@ -41,8 +42,8 @@ import org.mozilla.fenix.components.Services
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.bookmarkStorage
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.loadNavGraphBeforeNavigate
-import org.mozilla.fenix.perf.waitForNavGraphInflation
+import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
+import org.mozilla.fenix.perf.NavGraphProvider
 
 @Suppress("TooManyFunctions", "LargeClass")
 @ExperimentalCoroutinesApi
@@ -94,10 +95,11 @@ class BookmarkControllerTest {
     @Before
     fun setup() {
 
-        mockkStatic("org.mozilla.fenix.perf.PerfNavControllerKt")
-        every { waitForNavGraphInflation(any()) } returns Unit
         mockkStatic("org.mozilla.fenix.ext.NavControllerKt")
-        every { navController.loadNavGraphBeforeNavigate(any() as NavDirections, any<NavOptions>()) } returns Unit
+        every { navController.navigateBlockingForAsyncNavGraph(any() as NavDirections, any<NavOptions>()) } returns Unit
+
+        mockkObject(NavGraphProvider)
+        every { NavGraphProvider.blockForNavGraphInflation(any()) } returns Unit
 
         every { homeActivity.components.services } returns services
         every { navController.currentDestination } returns NavDestination("").apply {

@@ -24,7 +24,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mozilla.fenix.ext.loadNavGraphBeforeNavigate
+import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.home.HomeFragmentDirections
 import org.mozilla.fenix.onboarding.OnboardingInteractor
@@ -69,11 +69,11 @@ class OnboardingManualSignInViewHolderTest {
     @Test
     fun `navigate on click`() {
         mockkStatic("org.mozilla.fenix.ext.NavControllerKt")
-        every { navController.loadNavGraphBeforeNavigate(any() as NavDirections) } returns Unit
+        every { navController.navigateBlockingForAsyncNavGraph(any() as NavDirections) } returns Unit
 
         OnboardingManualSignInViewHolder(view)
         view.fxa_sign_in_button.performClick()
 
-        verify { navController.loadNavGraphBeforeNavigate(HomeFragmentDirections.actionGlobalTurnOnSync()) }
+        verify { navController.navigateBlockingForAsyncNavGraph(HomeFragmentDirections.actionGlobalTurnOnSync()) }
     }
 }

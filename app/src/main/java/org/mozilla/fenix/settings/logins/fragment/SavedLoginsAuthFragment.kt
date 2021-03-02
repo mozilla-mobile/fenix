@@ -27,7 +27,7 @@ import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.loadNavGraphBeforeNavigate
+import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.secure
@@ -214,19 +214,19 @@ class SavedLoginsAuthFragment : PreferenceFragmentCompat() {
         context?.components?.analytics?.metrics?.track(Event.OpenLogins)
         val directions =
             SavedLoginsAuthFragmentDirections.actionSavedLoginsAuthFragmentToLoginsListFragment()
-        findNavController().loadNavGraphBeforeNavigate(directions)
+        findNavController().navigateBlockingForAsyncNavGraph(directions)
     }
 
     private fun navigateToSaveLoginSettingFragment() {
         val directions =
             SavedLoginsAuthFragmentDirections.actionSavedLoginsAuthFragmentToSavedLoginsSettingFragment()
-        findNavController().loadNavGraphBeforeNavigate(directions)
+        findNavController().navigateBlockingForAsyncNavGraph(directions)
     }
 
     private fun navigateToLoginExceptionFragment() {
         val directions =
             SavedLoginsAuthFragmentDirections.actionSavedLoginsAuthFragmentToLoginExceptionsFragment()
-        findNavController().loadNavGraphBeforeNavigate(directions)
+        findNavController().navigateBlockingForAsyncNavGraph(directions)
     }
 
     companion object {

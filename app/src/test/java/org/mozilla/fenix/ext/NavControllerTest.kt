@@ -19,9 +19,11 @@ import io.mockk.verify
 import io.sentry.Sentry
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.mozilla.fenix.components.isSentryEnabled
-import org.mozilla.fenix.perf.waitForNavGraphInflation
+import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 
+@RunWith(FenixRobolectricTestRunner::class)
 class NavControllerTest {
 
     private val currentDestId = 4
@@ -34,9 +36,6 @@ class NavControllerTest {
     fun setUp() {
         MockKAnnotations.init(this)
         mockkStatic("io.sentry.Sentry", "org.mozilla.fenix.components.AnalyticsKt")
-
-        mockkStatic("org.mozilla.fenix.perf.PerfNavControllerKt")
-        every { waitForNavGraphInflation(any()) } returns Unit
 
         every { navController.currentDestination } returns mockDestination
         every { mockDestination.id } returns currentDestId

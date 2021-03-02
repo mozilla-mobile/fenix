@@ -33,7 +33,7 @@ import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.loadNavGraphBeforeNavigate
+import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.navigateSafe
 import org.mozilla.fenix.ext.requireComponents
@@ -265,7 +265,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                 )
                     .setText(view.context.getString(messageStringRes))
                     .setAction(requireContext().getString(R.string.create_collection_view)) {
-                        findNavController().loadNavGraphBeforeNavigate(
+                        findNavController().navigateBlockingForAsyncNavGraph(
                             BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = false)
                         )
                     }

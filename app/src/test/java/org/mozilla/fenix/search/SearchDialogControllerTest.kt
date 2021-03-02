@@ -14,7 +14,6 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkObject
-import io.mockk.mockkStatic
 import io.mockk.spyk
 import io.mockk.unmockkObject
 import io.mockk.verify
@@ -34,8 +33,9 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.components.metrics.MetricsUtils
-import org.mozilla.fenix.ext.loadNavGraphBeforeNavigate
-import org.mozilla.fenix.perf.waitForNavGraphInflation
+import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
+import org.mozilla.fenix.perf.NavGraphProvider
+
 import org.mozilla.fenix.search.SearchDialogFragmentDirections.Companion.actionGlobalAddonsManagementFragment
 import org.mozilla.fenix.search.SearchDialogFragmentDirections.Companion.actionGlobalSearchEngineFragment
 import org.mozilla.fenix.settings.SupportUtils
@@ -62,11 +62,10 @@ class SearchDialogControllerTest {
     fun setUp() {
         MockKAnnotations.init(this)
         mockkObject(MetricsUtils)
-
-        mockkStatic("org.mozilla.fenix.perf.PerfNavControllerKt")
-        every { waitForNavGraphInflation(any()) } returns Unit
-
         val browserStore = BrowserStore()
+
+        mockkObject(NavGraphProvider)
+        every { NavGraphProvider.blockForNavGraphInflation(any()) } returns Unit
 
         every { store.state.tabId } returns "test-tab-id"
         every { store.state.searchEngineSource.searchEngine } returns searchEngine
@@ -161,7 +160,7 @@ class SearchDialogControllerTest {
 
         controller.handleUrlCommitted(url)
 
-        verify { navController.loadNavGraphBeforeNavigate(directions) }
+        verify { navController.navigateBlockingForAsyncNavGraph(directions) }
     }
 
     @Test
@@ -310,7 +309,7 @@ class SearchDialogControllerTest {
 
         controller.handleClickSearchEngineSettings()
 
-        verify { navController.loadNavGraphBeforeNavigate(directions) }
+        verify { navController.navigateBlockingForAsyncNavGraph(directions) }
     }
 
     @Test

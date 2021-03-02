@@ -22,7 +22,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.addons.AddonsManagementFragmentDirections.Companion.actionAddonsManagementFragmentToAddonDetailsFragment
 import org.mozilla.fenix.addons.AddonsManagementFragmentDirections.Companion.actionAddonsManagementFragmentToInstalledAddonDetails
 import org.mozilla.fenix.ext.directionsEq
-import org.mozilla.fenix.ext.loadNavGraphBeforeNavigate
+import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 
 @RunWith(FenixRobolectricTestRunner::class)
@@ -38,7 +38,7 @@ class AddonsManagementViewTest {
         managementView = AddonsManagementView(navController, showPermissionDialog)
 
         mockkStatic("org.mozilla.fenix.ext.NavControllerKt")
-        every { navController.loadNavGraphBeforeNavigate(any() as NavDirections) } returns Unit
+        every { navController.navigateBlockingForAsyncNavGraph(any() as NavDirections) } returns Unit
     }
 
     @Test
@@ -55,7 +55,7 @@ class AddonsManagementViewTest {
 
         val expected = actionAddonsManagementFragmentToInstalledAddonDetails(addon)
         verify {
-            navController.loadNavGraphBeforeNavigate(directionsEq(expected))
+            navController.navigateBlockingForAsyncNavGraph(directionsEq(expected))
         }
     }
 
@@ -73,7 +73,7 @@ class AddonsManagementViewTest {
 
         val expected = actionAddonsManagementFragmentToAddonDetailsFragment(addon)
         verify {
-            navController.loadNavGraphBeforeNavigate(directionsEq(expected))
+            navController.navigateBlockingForAsyncNavGraph(directionsEq(expected))
         }
     }
 
@@ -91,7 +91,7 @@ class AddonsManagementViewTest {
 
         val expected = actionAddonsManagementFragmentToAddonDetailsFragment(addon)
         verify(exactly = 0) {
-            navController.loadNavGraphBeforeNavigate(directionsEq(expected))
+            navController.navigateBlockingForAsyncNavGraph(directionsEq(expected))
         }
     }
 
@@ -109,7 +109,7 @@ class AddonsManagementViewTest {
 
         val expected = actionAddonsManagementFragmentToAddonDetailsFragment(addon)
         verify(exactly = 0) {
-            navController.loadNavGraphBeforeNavigate(directionsEq(expected))
+            navController.navigateBlockingForAsyncNavGraph(directionsEq(expected))
         }
     }
 
@@ -129,7 +129,7 @@ class AddonsManagementViewTest {
             addons.toTypedArray()
         )
         verify {
-            navController.loadNavGraphBeforeNavigate(directionsEq(expected))
+            navController.navigateBlockingForAsyncNavGraph(directionsEq(expected))
         }
     }
 }

@@ -8,6 +8,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkObject
 import io.mockk.mockkStatic
 import io.mockk.spyk
 import io.mockk.unmockkStatic
@@ -37,6 +38,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
@@ -47,10 +49,11 @@ import org.mozilla.fenix.components.metrics.Event.PerformedSearch.EngineSource
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.components.tips.Tip
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.loadNavGraphBeforeNavigate
+import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.sessioncontrol.DefaultSessionControlController
-import org.mozilla.fenix.perf.waitForNavGraphInflation
+import org.mozilla.fenix.perf.NavGraphProvider
+
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.utils.Settings
 import mozilla.components.feature.tab.collections.Tab as ComponentTab
@@ -109,9 +112,8 @@ class DefaultSessionControlControllerTest {
     @Before
     fun setup() {
 
-        mockkStatic("org.mozilla.fenix.perf.PerfNavControllerKt")
-        every { waitForNavGraphInflation(any()) } returns Unit
-
+        mockkObject(NavGraphProvider)
+        every { NavGraphProvider.blockForNavGraphInflation(any()) } returns Unit
         store = BrowserStore(
             BrowserState(
                 search = SearchState(
@@ -175,7 +177,7 @@ class DefaultSessionControlControllerTest {
 
         verify { metrics.track(Event.CollectionAddTabPressed) }
         verify {
-            navController.loadNavGraphBeforeNavigate(
+            navController.navigateBlockingForAsyncNavGraph(
                 match<NavDirections> {
                     it.actionId == R.id.action_global_collectionCreationFragment
                 },
@@ -320,7 +322,7 @@ class DefaultSessionControlControllerTest {
 
         verify { metrics.track(Event.CollectionShared) }
         verify {
-            navController.loadNavGraphBeforeNavigate(
+            navController.navigateBlockingForAsyncNavGraph(
                 match<NavDirections> { it.actionId == R.id.action_global_shareFragment },
                 null
             )
@@ -370,7 +372,7 @@ class DefaultSessionControlControllerTest {
 
         verify { metrics.track(Event.CollectionRenamePressed) }
         verify {
-            navController.loadNavGraphBeforeNavigate(
+            navController.navigateBlockingForAsyncNavGraph(
                 match<NavDirections> { it.actionId == R.id.action_global_collectionCreationFragment },
                 null
             )
@@ -572,7 +574,7 @@ class DefaultSessionControlControllerTest {
     fun handleOpenSettingsClicked() {
         controller.handleOpenSettingsClicked()
         verify {
-            navController.loadNavGraphBeforeNavigate(
+            navController.navigateBlockingForAsyncNavGraph(
                 match<NavDirections> { it.actionId == R.id.action_global_privateBrowsingFragment },
                 null
             )
@@ -623,7 +625,7 @@ class DefaultSessionControlControllerTest {
         controller.handleCreateCollection()
 
         verify {
-            navController.loadNavGraphBeforeNavigate(
+            navController.navigateBlockingForAsyncNavGraph(
                 match<NavDirections> { it.actionId == R.id.action_global_tabTrayDialogFragment },
                 null
             )
@@ -661,7 +663,7 @@ class DefaultSessionControlControllerTest {
         controller.handlePaste("text")
 
         verify {
-            navController.loadNavGraphBeforeNavigate(
+            navController.navigateBlockingForAsyncNavGraph(
                 match<NavDirections> { it.actionId == R.id.action_global_search_dialog },
                 null
             )

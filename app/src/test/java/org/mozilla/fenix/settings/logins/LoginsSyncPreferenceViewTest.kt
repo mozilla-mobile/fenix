@@ -26,8 +26,8 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.settings.SyncPreferenceView
-import org.mozilla.fenix.ext.loadNavGraphBeforeNavigate
 import org.mozilla.fenix.settings.logins.fragment.SavedLoginsAuthFragmentDirections
 
 class LoginsSyncPreferenceViewTest {
@@ -45,7 +45,7 @@ class LoginsSyncPreferenceViewTest {
         mockkConstructor(SyncEnginesStorage::class)
 
         mockkStatic("org.mozilla.fenix.ext.NavControllerKt")
-        every { navController.loadNavGraphBeforeNavigate(any() as NavDirections) } returns Unit
+        every { navController.navigateBlockingForAsyncNavGraph(any() as NavDirections) } returns Unit
 
         accountObserver = slot()
         clickListener = slot()
@@ -78,7 +78,7 @@ class LoginsSyncPreferenceViewTest {
         assertTrue(clickListener.captured.onPreferenceClick(syncLoginsPreference))
 
         verify {
-            navController.loadNavGraphBeforeNavigate(
+            navController.navigateBlockingForAsyncNavGraph(
                 SavedLoginsAuthFragmentDirections.actionGlobalAccountProblemFragment()
             )
         }
@@ -103,7 +103,7 @@ class LoginsSyncPreferenceViewTest {
         assertTrue(clickListener.captured.onPreferenceClick(syncLoginsPreference))
 
         verify {
-            navController.loadNavGraphBeforeNavigate(
+            navController.navigateBlockingForAsyncNavGraph(
                 SavedLoginsAuthFragmentDirections.actionSavedLoginsAuthFragmentToTurnOnSyncFragment()
             )
         }
@@ -119,7 +119,7 @@ class LoginsSyncPreferenceViewTest {
         assertTrue(clickListener.captured.onPreferenceClick(syncLoginsPreference))
 
         verify {
-            navController.loadNavGraphBeforeNavigate(
+            navController.navigateBlockingForAsyncNavGraph(
                 SavedLoginsAuthFragmentDirections.actionGlobalAccountSettingsFragment()
             )
         }
@@ -138,7 +138,7 @@ class LoginsSyncPreferenceViewTest {
         assertTrue(clickListener.captured.onPreferenceClick(syncLoginsPreference))
 
         verify {
-            navController.loadNavGraphBeforeNavigate(
+            navController.navigateBlockingForAsyncNavGraph(
                 SavedLoginsAuthFragmentDirections.actionGlobalAccountSettingsFragment()
             )
         }

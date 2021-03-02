@@ -28,7 +28,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.directionsEq
-import org.mozilla.fenix.ext.loadNavGraphBeforeNavigate
+import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.settings.logins.controller.SavedLoginsStorageController
 import org.mozilla.fenix.settings.logins.fragment.EditLoginFragmentDirections
@@ -125,7 +125,7 @@ class SavedLoginsStorageControllerTest {
         coEvery { passwordsStorage.update(any()) } just Runs
 
         mockkStatic("org.mozilla.fenix.ext.NavControllerKt")
-        every { navController.loadNavGraphBeforeNavigate(any() as NavDirections) } returns Unit
+        every { navController.navigateBlockingForAsyncNavGraph(any() as NavDirections) } returns Unit
 
         controller.save(oldLogin.guid!!, "newUsername", "newPassword")
 
@@ -153,7 +153,7 @@ class SavedLoginsStorageControllerTest {
                     expectedNewList
                 )
             )
-            navController.loadNavGraphBeforeNavigate(directionsEq(directions))
+            navController.navigateBlockingForAsyncNavGraph(directionsEq(directions))
         }
     }
 

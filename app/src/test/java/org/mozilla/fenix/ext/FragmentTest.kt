@@ -24,7 +24,6 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
-import org.mozilla.fenix.perf.waitForNavGraphInflation
 
 @RunWith(FenixRobolectricTestRunner::class)
 class FragmentTest {
@@ -39,9 +38,6 @@ class FragmentTest {
 
     @Before
     fun setup() {
-        mockkStatic("org.mozilla.fenix.perf.PerfNavControllerKt")
-        every { waitForNavGraphInflation(any()) } returns Unit
-
         mockkStatic(NavHostFragment::class)
         every { (NavHostFragment.findNavController(mockFragment)) } returns navController
         every { (NavHostFragment.findNavController(mockFragment).currentDestination) } returns mockDestination
@@ -52,21 +48,21 @@ class FragmentTest {
 
     @Test
     fun `Test nav fun with ID and directions`() {
-        every { (NavHostFragment.findNavController(mockFragment).loadNavGraphBeforeNavigate(navDirections, null)) } just Runs
+        every { (NavHostFragment.findNavController(mockFragment).navigateBlockingForAsyncNavGraph(navDirections, null)) } just Runs
 
         mockFragment.nav(mockId, navDirections)
         verify { (NavHostFragment.findNavController(mockFragment).currentDestination) }
-        verify { (NavHostFragment.findNavController(mockFragment).loadNavGraphBeforeNavigate(navDirections, null)) }
+        verify { (NavHostFragment.findNavController(mockFragment).navigateBlockingForAsyncNavGraph(navDirections, null)) }
         confirmVerified(mockFragment)
     }
 
     @Test
     fun `Test nav fun with ID, directions, and options`() {
-        every { (NavHostFragment.findNavController(mockFragment).loadNavGraphBeforeNavigate(navDirections, mockOptions)) } just Runs
+        every { (NavHostFragment.findNavController(mockFragment).navigateBlockingForAsyncNavGraph(navDirections, mockOptions)) } just Runs
 
         mockFragment.nav(mockId, navDirections, mockOptions)
         verify { (NavHostFragment.findNavController(mockFragment).currentDestination) }
-        verify { (NavHostFragment.findNavController(mockFragment).loadNavGraphBeforeNavigate(navDirections, mockOptions)) }
+        verify { (NavHostFragment.findNavController(mockFragment).navigateBlockingForAsyncNavGraph(navDirections, mockOptions)) }
         confirmVerified(mockFragment)
     }
 }

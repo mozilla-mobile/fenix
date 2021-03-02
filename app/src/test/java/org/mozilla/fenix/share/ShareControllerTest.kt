@@ -46,7 +46,7 @@ import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
-import org.mozilla.fenix.perf.waitForNavGraphInflation
+
 import org.mozilla.fenix.share.listadapters.AppShareOption
 
 @RunWith(FenixRobolectricTestRunner::class)
@@ -257,8 +257,7 @@ class ShareControllerTest {
 
     @Test
     fun `handleSignIn should navigate to the Sync Fragment and dismiss this one`() {
-        mockkStatic("org.mozilla.fenix.perf.PerfNavControllerKt")
-        every { waitForNavGraphInflation(any()) } returns Unit
+
 
         controller.handleSignIn()
 

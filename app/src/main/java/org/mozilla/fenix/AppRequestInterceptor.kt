@@ -15,7 +15,7 @@ import mozilla.components.concept.engine.request.RequestInterceptor
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.isOnline
-import org.mozilla.fenix.ext.loadNavGraphBeforeNavigate
+import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import java.lang.ref.WeakReference
 
 class AppRequestInterceptor(
@@ -98,7 +98,7 @@ class AppRequestInterceptor(
 
                 // Navigate and trigger add-on installation.
                 matchResult.groupValues.getOrNull(1)?.let { addonId ->
-                    navController?.get()?.loadNavGraphBeforeNavigate(
+                    navController?.get()?.navigateBlockingForAsyncNavGraph(
                         NavGraphDirections.actionGlobalAddonsManagementFragment(addonId)
                     )
 
