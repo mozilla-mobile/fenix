@@ -130,7 +130,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     // components requires context to access.
     protected val homeActivityInitTimeStampNanoSeconds = SystemClock.elapsedRealtimeNanos()
 
-    private var webExtScope: CoroutineScope? = null
     lateinit var themeManager: ThemeManager
     lateinit var browsingModeManager: BrowsingModeManager
 
@@ -198,7 +197,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             //is the variable we need in order to inflate the navGraph. Therefore, for best performance
             //improvement, it is best to call the asynchronous inflation right after setContentView
             //has been called
-            NavGraphProvider.inflateNavGraphAsync(navHost.navController)
+            NavGraphProvider.inflateNavGraphAsync(navHost.navController, lifecycleScope)
         }
 
         // Must be after we set the content view
@@ -429,8 +428,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
     override fun onDestroy() {
         super.onDestroy()
-
-        NavGraphProvider.onActivityDestroyRemoveJobs()
 
         // Diagnostic breadcrumb for "Display already aquired" crash:
         // https://github.com/mozilla-mobile/android-components/issues/7960

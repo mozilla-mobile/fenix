@@ -4,31 +4,29 @@
 
 package org.mozilla.fenix.perf
 
-import androidx.annotation.VisibleForTesting
+import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
-import kotlinx.coroutines.CoroutineScope
+import java.util.WeakHashMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import org.mozilla.fenix.R
-import java.util.WeakHashMap
 
 /**
- * This class asynchronously loads the Navigation xml. It also keeps track of the NavController
- * to which the inflated NavGraph belongs too.
+ * This class asynchronously loads the Navigation xml.
+ *
+ * This class is defined as an Object since it needs to be called by the NavController extension
+ * function.
+ *
+ * To use this class properly, NavGraphProvider.inflateNavGraphAsync must be called first before
+ * blockForNavGraphInflation using the same navController.
  */
 object NavGraphProvider {
 
     val map = WeakHashMap<NavController, Job>()
 
-    /**
-     * Asynchronously inflate the NavGraph on the IO dispatcher and insert the new job in the map
-     * with the navcontroller as its key.
-     */
-    fun inflateNavGraphAsync(navController: NavController) {
-        val inflationJob = CoroutineScope(Dispatchers.IO).launch {
+    fun inflateNavGraphAsync(navController: NavController, lifecycleScope: LifecycleCoroutineScope) {
+        val inflationJob = lifecycleScope.launch(Dispatchers.IO) {
             val inflater = navController.navInflater
             navController.graph = inflater.inflate(R.navigation.nav_graph)
         }
@@ -39,16 +37,14 @@ object NavGraphProvider {
     /**
      * The job should block the main thread if it isn't completed so that the NavGraph can be loaded
      * before any navigation is done.
+     *
+     * InflateNavGraphAsync must be called before this method.
      */
     fun blockForNavGraphInflation(navController: NavController) {
-        val inflationJob = map[navController] ?: throw NoSuchElementException("The NavController " +
-                "is missing in the map. This might be caused the async job not being started ")
+        val inflationJob = map[navController] ?: throw IllegalStateException("Expected `NavGraphProvider.inflateNavGraphAsync` " +
+                "to be called before this method with the same `navController`. If it was, this may" +
+                " be a bug in the implementation.")
         runBlockingIncrement { inflationJob.join() }
-    }
-
-
-    fun onActivityDestroyRemoveJobs(){
-        map.values.forEach { it.cancel() }
     }
 }
 
