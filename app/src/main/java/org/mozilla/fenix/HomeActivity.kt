@@ -198,7 +198,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             //is the variable we need in order to inflate the navGraph. Therefore, for best performance
             //improvement, it is best to call the asynchronous inflation right after setContentView
             //has been called
-            NavGraphProvider.inflateNavGraphAsync(navHost)
+            NavGraphProvider.inflateNavGraphAsync(navHost.navController)
         }
 
         // Must be after we set the content view

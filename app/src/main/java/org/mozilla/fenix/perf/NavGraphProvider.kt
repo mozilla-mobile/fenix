@@ -21,20 +21,19 @@ import java.util.WeakHashMap
  */
 object NavGraphProvider {
 
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    var map = WeakHashMap<NavController, Job>()
+    val map = WeakHashMap<NavController, Job>()
 
     /**
      * Asynchronously inflate the NavGraph on the IO dispatcher and insert the new job in the map
      * with the navcontroller as its key.
      */
-    fun inflateNavGraphAsync(navHostFragment: NavHostFragment, job: Job? = null) {
-        val inflationJob = job ?: CoroutineScope(Dispatchers.IO).launch {
-            val inflater = navHostFragment.navController.navInflater
-            navHostFragment.navController.graph = inflater.inflate(R.navigation.nav_graph)
+    fun inflateNavGraphAsync(navController: NavController) {
+        val inflationJob = CoroutineScope(Dispatchers.IO).launch {
+            val inflater = navController.navInflater
+            navController.graph = inflater.inflate(R.navigation.nav_graph)
         }
 
-        map[navHostFragment.navController] = inflationJob
+        map[navController] = inflationJob
     }
 
     /**
