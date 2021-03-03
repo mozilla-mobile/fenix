@@ -12,25 +12,24 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.RootMatchers.isDialog
-import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
+import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
 import org.hamcrest.CoreMatchers
-import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
+import org.mozilla.fenix.helpers.Constants.PackageName.GOOGLE_APPS_PHOTOS
 import org.mozilla.fenix.helpers.TestAssetHelper
+import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestHelper
+import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
-import org.mozilla.fenix.helpers.Constants.PackageName.GOOGLE_APPS_PHOTOS
-import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
-import org.mozilla.fenix.helpers.TestHelper.packageName
 
 /**
  * Implementation of Robot Pattern for download UI handling.
@@ -57,9 +56,27 @@ class DownloadRobot {
         onView(withText("No downloaded files")).check(matches(isDisplayed()))
     }
 
-    fun waitForDownloadsListToExist() =
-        assertTrue(mDevice.findObject(UiSelector().resourceId("org.mozilla.fenix.debug:id/download_list"))
-            .waitForExists(waitingTime))
+    fun waitForDownloadsListToExist() {
+        mDevice.waitNotNull(Until.findObject(
+            By.res("$packageName:id/rootContainer")), waitingTime)
+
+        mDevice.findObject(UiSelector()
+            .resourceId("$packageName:id/navigationToolbar")
+            .textContains("Downloads"))
+            .waitForExists(waitingTime)
+
+        mDevice.findObject(UiSelector()
+            .resourceId("$packageName:id/close_history")
+            .descriptionContains("Close"))
+            .waitForExists(waitingTime)
+
+        mDevice.waitNotNull(Until.findObject(
+            By.res("$packageName:id/download_layout")), waitingTime)
+
+        mDevice.findObject(UiSelector()
+            .resourceId("$packageName:id/download_list"))
+            .waitForExists(waitingTime)
+    }
 
     class Transition {
         fun clickDownload(interact: DownloadRobot.() -> Unit): Transition {
