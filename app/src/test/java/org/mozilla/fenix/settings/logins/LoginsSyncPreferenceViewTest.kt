@@ -44,8 +44,7 @@ class LoginsSyncPreferenceViewTest {
         MockKAnnotations.init(this)
         mockkConstructor(SyncEnginesStorage::class)
 
-        mockkStatic("org.mozilla.fenix.ext.NavControllerKt")
-        every { navController.navigateBlockingForAsyncNavGraph(any() as NavDirections) } returns Unit
+
 
         accountObserver = slot()
         clickListener = slot()

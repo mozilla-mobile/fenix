@@ -89,8 +89,7 @@ class DefaultQuickSettingsControllerTest {
     fun setUp() {
         MockKAnnotations.init(this)
 
-        mockkStatic("org.mozilla.fenix.ext.NavControllerKt")
-        every { navController.navigateBlockingForAsyncNavGraph(any() as NavDirections) } returns Unit
+
 
         tab = createTab("https://mozilla.org")
         browserStore = BrowserStore(BrowserState(tabs = listOf(tab)))

@@ -102,8 +102,7 @@ class DefaultBrowserToolbarControllerTest {
     fun setUp() {
         MockKAnnotations.init(this)
 
-        mockkStatic("org.mozilla.fenix.ext.NavControllerKt")
-        every { navController.navigateBlockingForAsyncNavGraph(any() as NavDirections) } returns Unit
+
 
         every { activity.components.useCases.sessionUseCases } returns sessionUseCases
         every { activity.components.useCases.searchUseCases } returns searchUseCases

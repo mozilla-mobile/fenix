@@ -44,8 +44,7 @@ class DeepLinkIntentProcessorTest {
         activity = mockk(relaxed = true)
         navController = mockk(relaxed = true)
 
-        mockkStatic("org.mozilla.fenix.ext.NavControllerKt")
-        every { navController.navigateBlockingForAsyncNavGraph(any() as NavDirections) } returns Unit
+
 
         out = mockk()
         processor = DeepLinkIntentProcessor(activity, object : DeepLinkIntentProcessor.DeepLinkVerifier {

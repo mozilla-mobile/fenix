@@ -68,8 +68,7 @@ class OnboardingManualSignInViewHolderTest {
 
     @Test
     fun `navigate on click`() {
-        mockkStatic("org.mozilla.fenix.ext.NavControllerKt")
-        every { navController.navigateBlockingForAsyncNavGraph(any() as NavDirections) } returns Unit
+
 
         OnboardingManualSignInViewHolder(view)
         view.fxa_sign_in_button.performClick()

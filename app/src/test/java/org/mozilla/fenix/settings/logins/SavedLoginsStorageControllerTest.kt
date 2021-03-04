@@ -124,8 +124,7 @@ class SavedLoginsStorageControllerTest {
         coEvery { passwordsStorage.get(any()) } returns oldLogin
         coEvery { passwordsStorage.update(any()) } just Runs
 
-        mockkStatic("org.mozilla.fenix.ext.NavControllerKt")
-        every { navController.navigateBlockingForAsyncNavGraph(any() as NavDirections) } returns Unit
+
 
         controller.save(oldLogin.guid!!, "newUsername", "newPassword")
 

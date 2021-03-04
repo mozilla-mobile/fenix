@@ -146,8 +146,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
     private var inflater: LayoutInflater? = null
 
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    val navHost by lazy {
+    private val navHost by lazy {
         supportFragmentManager.findFragmentById(R.id.container) as NavHostFragment
     }
 
@@ -190,13 +189,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
         setupThemeAndBrowsingMode(getModeFromIntentOrLastKnown(intent))
         setContentView(R.layout.activity_home).run {
-            //The NavGraph is being asynchronously inflated for performance gain.
-            //However, it has to be called immediately after the setContentView since it requires
-            //a NavHostFragment instance that has gone through it's `onCreate` method since
-            //it is where the NavHostFragment.navController is instantiated. The navController
-            //is the variable we need in order to inflate the navGraph. Therefore, for best performance
-            //improvement, it is best to call the asynchronous inflation right after setContentView
-            //has been called
+            // Do not call anything between setContentView and inflateNavGraphAsync.
+            // It needs to start its job as early as possible.
             NavGraphProvider.inflateNavGraphAsync(navHost.navController, lifecycleScope)
         }
 

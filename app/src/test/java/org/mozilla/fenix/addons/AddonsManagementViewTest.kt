@@ -37,8 +37,7 @@ class AddonsManagementViewTest {
         MockKAnnotations.init(this)
         managementView = AddonsManagementView(navController, showPermissionDialog)
 
-        mockkStatic("org.mozilla.fenix.ext.NavControllerKt")
-        every { navController.navigateBlockingForAsyncNavGraph(any() as NavDirections) } returns Unit
+
     }
 
     @Test

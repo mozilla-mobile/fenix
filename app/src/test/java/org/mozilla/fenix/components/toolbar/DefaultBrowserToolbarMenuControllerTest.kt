@@ -103,8 +103,7 @@ class DefaultBrowserToolbarMenuControllerTest {
     fun setUp() {
         MockKAnnotations.init(this)
 
-        mockkStatic("org.mozilla.fenix.ext.NavControllerKt")
-        every { navController.navigateBlockingForAsyncNavGraph(any() as NavDirections) } returns Unit
+
 
         mockkStatic(
             "org.mozilla.fenix.settings.deletebrowsingdata.DeleteAndQuitKt"

@@ -60,8 +60,7 @@ class LoginsListControllerTest {
     fun `GIVEN a SavedLogin, WHEN handleItemClicked is called for it, THEN LoginsAction$LoginSelected should be emitted`() {
         val login: SavedLogin = mockk(relaxed = true)
 
-        mockkStatic("org.mozilla.fenix.ext.NavControllerKt")
-        every { navController.navigateBlockingForAsyncNavGraph(any() as NavDirections) } returns Unit
+
 
         controller.handleItemClicked(login)
 

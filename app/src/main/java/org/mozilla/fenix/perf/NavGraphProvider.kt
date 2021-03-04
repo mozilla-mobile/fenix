@@ -23,7 +23,7 @@ import org.mozilla.fenix.R
  */
 object NavGraphProvider {
 
-    val map = WeakHashMap<NavController, Job>()
+    private val map = WeakHashMap<NavController, Job>()
 
     fun inflateNavGraphAsync(navController: NavController, lifecycleScope: LifecycleCoroutineScope) {
         val inflationJob = lifecycleScope.launch(Dispatchers.IO) {
@@ -47,4 +47,3 @@ object NavGraphProvider {
         runBlockingIncrement { inflationJob.join() }
     }
 }
-
