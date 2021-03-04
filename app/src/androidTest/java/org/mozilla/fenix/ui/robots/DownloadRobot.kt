@@ -12,10 +12,10 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.RootMatchers.isDialog
-import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
+import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
@@ -24,13 +24,13 @@ import androidx.test.uiautomator.Until
 import org.hamcrest.CoreMatchers
 import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
+import org.mozilla.fenix.helpers.Constants.PackageName.GOOGLE_APPS_PHOTOS
 import org.mozilla.fenix.helpers.TestAssetHelper
+import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestHelper
+import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
-import org.mozilla.fenix.helpers.Constants.PackageName.GOOGLE_APPS_PHOTOS
-import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
-import org.mozilla.fenix.helpers.TestHelper.packageName
 
 /**
  * Implementation of Robot Pattern for download UI handling.
@@ -61,6 +61,19 @@ class DownloadRobot {
         assertTrue(mDevice.findObject(UiSelector().resourceId("org.mozilla.fenix.debug:id/download_list"))
             .waitForExists(waitingTime))
 
+    fun verifyDownloadListIsNotEmpty() {
+        try {
+            waitForDownloadsListToExist()
+        } catch (e: AssertionError) {
+            mDevice.pressBack()
+            navigationToolbar {
+            }.openThreeDotMenu {
+            }.openDownloadsManager {
+            waitForDownloadsListToExist()
+            }
+        }
+    }
+
     class Transition {
         fun clickDownload(interact: DownloadRobot.() -> Unit): Transition {
             clickDownloadButton().click()
@@ -71,6 +84,13 @@ class DownloadRobot {
 
         fun closePrompt(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
             closePromptButton().click()
+
+            BrowserRobot().interact()
+            return BrowserRobot.Transition()
+        }
+
+        fun closeDownloadCompletedPrompt(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
+            closeDownloadCompletedPromptButton().click()
 
             BrowserRobot().interact()
             return BrowserRobot.Transition()
@@ -133,6 +153,9 @@ private fun assertDownloadNotificationPopup() {
 
 private fun closePromptButton() =
     onView(withId(R.id.close_button)).inRoot(isDialog()).check(matches(isDisplayed()))
+
+private fun closeDownloadCompletedPromptButton() =
+    onView(withId(R.id.download_dialog_close_button)).check(matches(isDisplayed()))
 
 private fun clickDownloadButton() =
     onView(withText("Download")).inRoot(isDialog()).check(matches(isDisplayed()))

@@ -27,6 +27,7 @@ import androidx.test.uiautomator.Until
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.allOf
+import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.ext.waitNotNull
 import org.mozilla.fenix.helpers.idlingresource.NetworkConnectionIdlingResource
@@ -120,6 +121,16 @@ object TestHelper {
                 downloadedFile.delete()
             }
         }
+    }
+
+    @Suppress("Deprecation")
+    fun verifyDownloadFromStorage(fileName: String) {
+
+            val downloadedFile = File(
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+                fileName
+            )
+            assertTrue(downloadedFile.exists())
     }
 
     fun setNetworkEnabled(enabled: Boolean) {

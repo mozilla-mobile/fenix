@@ -25,6 +25,7 @@ import org.mozilla.fenix.helpers.RecyclerViewIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.helpers.TestHelper.deleteDownloadFromStorage
+import org.mozilla.fenix.helpers.TestHelper.verifyDownloadFromStorage
 import org.mozilla.fenix.helpers.ViewVisibilityIdlingResource
 import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.clickTabCrashedRestoreButton
@@ -848,12 +849,12 @@ class SmokeTest {
         }.clickDownload {
             mDevice.waitForIdle()
             verifyDownloadNotificationPopup()
-        }
-
-        browserScreen {
+            verifyDownloadFromStorage(downloadFileName)
+        }.closeDownloadCompletedPrompt {
+            mDevice.waitForIdle()
         }.openThreeDotMenu {
         }.openDownloadsManager {
-            waitForDownloadsListToExist()
+            verifyDownloadListIsNotEmpty()
             verifyDownloadedFileName(downloadFileName)
             verifyDownloadedFileIcon()
             deleteDownloadFromStorage(downloadFileName)
