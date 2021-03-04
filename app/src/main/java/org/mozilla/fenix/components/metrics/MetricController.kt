@@ -23,6 +23,7 @@ import mozilla.components.feature.media.facts.MediaFacts
 import mozilla.components.feature.prompts.dialog.LoginDialogFacts
 import mozilla.components.feature.pwa.ProgressiveWebAppFacts
 import mozilla.components.feature.top.sites.facts.TopSitesFacts
+import mozilla.components.lib.dataprotect.SecurePrefsReliabilityExperiment
 import mozilla.components.support.base.Component
 import mozilla.components.support.base.facts.Action
 import mozilla.components.support.base.facts.Fact
@@ -76,6 +77,7 @@ internal class DebugMetricController(
 }
 
 @VisibleForTesting
+@Suppress("LargeClass")
 internal class ReleaseMetricController(
     private val services: List<MetricsService>,
     private val isDataTelemetryEnabled: () -> Boolean,
@@ -266,6 +268,26 @@ internal class ReleaseMetricController(
                 }
             }
             null
+        }
+        Component.LIB_DATAPROTECT to SecurePrefsReliabilityExperiment.Companion.Actions.EXPERIMENT -> {
+            Event.SecurePrefsExperimentFailure(metadata?.get("javaClass") as String? ?: "null")
+        }
+        Component.LIB_DATAPROTECT to SecurePrefsReliabilityExperiment.Companion.Actions.GET -> {
+            if (SecurePrefsReliabilityExperiment.Companion.Values.FAIL.v == value?.toInt()) {
+                Event.SecurePrefsGetFailure(metadata?.get("javaClass") as String? ?: "null")
+            } else {
+                Event.SecurePrefsGetSuccess(value ?: "")
+            }
+        }
+        Component.LIB_DATAPROTECT to SecurePrefsReliabilityExperiment.Companion.Actions.WRITE -> {
+            if (SecurePrefsReliabilityExperiment.Companion.Values.FAIL.v == value?.toInt()) {
+                Event.SecurePrefsWriteFailure(metadata?.get("javaClass") as String? ?: "null")
+            } else {
+                Event.SecurePrefsWriteSuccess
+            }
+        }
+        Component.LIB_DATAPROTECT to SecurePrefsReliabilityExperiment.Companion.Actions.RESET -> {
+            Event.SecurePrefsReset
         }
         else -> null
     }
