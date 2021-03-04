@@ -23,6 +23,7 @@ import mozilla.components.feature.media.facts.MediaFacts
 import mozilla.components.feature.prompts.dialog.LoginDialogFacts
 import mozilla.components.feature.pwa.ProgressiveWebAppFacts
 import mozilla.components.feature.top.sites.facts.TopSitesFacts
+import mozilla.components.lib.dataprotect.SecurePrefsReliabilityExperiment
 import mozilla.components.support.base.Component
 import mozilla.components.support.base.facts.Action
 import mozilla.components.support.base.facts.Fact
@@ -76,6 +77,7 @@ internal class DebugMetricController(
 }
 
 @VisibleForTesting
+@Suppress("LargeClass")
 internal class ReleaseMetricController(
     private val services: List<MetricsService>,
     private val isDataTelemetryEnabled: () -> Boolean,
@@ -267,6 +269,52 @@ internal class ReleaseMetricController(
             }
             null
         }
+<<<<<<< HEAD
+=======
+        Component.FEATURE_SYNCEDTABS to SyncedTabsFacts.Items.SYNCED_TABS_SUGGESTION_CLICKED -> {
+            Event.SyncedTabSuggestionClicked
+        }
+        Component.FEATURE_AWESOMEBAR to AwesomeBarFacts.Items.BOOKMARK_SUGGESTION_CLICKED -> {
+            Event.BookmarkSuggestionClicked
+        }
+        Component.FEATURE_AWESOMEBAR to AwesomeBarFacts.Items.CLIPBOARD_SUGGESTION_CLICKED -> {
+            Event.ClipboardSuggestionClicked
+        }
+        Component.FEATURE_AWESOMEBAR to AwesomeBarFacts.Items.HISTORY_SUGGESTION_CLICKED -> {
+            Event.HistorySuggestionClicked
+        }
+        Component.FEATURE_AWESOMEBAR to AwesomeBarFacts.Items.SEARCH_ACTION_CLICKED -> {
+            Event.SearchActionClicked
+        }
+        Component.FEATURE_AWESOMEBAR to AwesomeBarFacts.Items.SEARCH_SUGGESTION_CLICKED -> {
+            Event.SearchSuggestionClicked
+        }
+        Component.FEATURE_AWESOMEBAR to AwesomeBarFacts.Items.OPENED_TAB_SUGGESTION_CLICKED -> {
+            Event.OpenedTabSuggestionClicked
+        }
+
+        Component.LIB_DATAPROTECT to SecurePrefsReliabilityExperiment.Companion.Actions.EXPERIMENT -> {
+            Event.SecurePrefsExperimentFailure(metadata?.get("javaClass") as String? ?: "null")
+        }
+        Component.LIB_DATAPROTECT to SecurePrefsReliabilityExperiment.Companion.Actions.GET -> {
+            if (SecurePrefsReliabilityExperiment.Companion.Values.FAIL.v == value?.toInt()) {
+                Event.SecurePrefsGetFailure(metadata?.get("javaClass") as String? ?: "null")
+            } else {
+                Event.SecurePrefsGetSuccess(value ?: "")
+            }
+        }
+        Component.LIB_DATAPROTECT to SecurePrefsReliabilityExperiment.Companion.Actions.WRITE -> {
+            if (SecurePrefsReliabilityExperiment.Companion.Values.FAIL.v == value?.toInt()) {
+                Event.SecurePrefsWriteFailure(metadata?.get("javaClass") as String? ?: "null")
+            } else {
+                Event.SecurePrefsWriteSuccess
+            }
+        }
+        Component.LIB_DATAPROTECT to SecurePrefsReliabilityExperiment.Companion.Actions.RESET -> {
+            Event.SecurePrefsReset
+        }
+
+>>>>>>> 1e30744c6... For #17869 - New AndroidKeystoreExperiment telemetry
         else -> null
     }
 
