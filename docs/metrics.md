@@ -28,8 +28,8 @@ an hashed version of the Google Advertising ID.
 
 **Bugs related to this ping:**
 
-- <https://bugzilla.mozilla.com/1538011/>
-- <https://bugzilla.mozilla.com/1501822/>
+- 1538011
+- 1501822
 
 The following metrics are added to the ping:
 

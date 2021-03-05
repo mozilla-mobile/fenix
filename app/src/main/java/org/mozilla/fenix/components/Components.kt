@@ -17,6 +17,7 @@ import mozilla.components.feature.sitepermissions.SitePermissionsStorage
 import mozilla.components.lib.publicsuffixlist.PublicSuffixList
 import mozilla.components.support.migration.state.MigrationStore
 import io.github.forkmaintainers.iceraven.components.PagedAddonCollectionProvider
+import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.perf.StrictModeManager

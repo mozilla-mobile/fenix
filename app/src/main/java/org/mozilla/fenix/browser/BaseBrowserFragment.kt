@@ -105,7 +105,6 @@ import org.mozilla.fenix.components.toolbar.ToolbarIntegration
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.downloads.DownloadService
 import org.mozilla.fenix.downloads.DynamicDownloadDialog
-import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.accessibilityManager
 import org.mozilla.fenix.ext.breadcrumb
 import org.mozilla.fenix.ext.components
@@ -1312,19 +1311,6 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler,
     override fun onAccessibilityStateChanged(enabled: Boolean) {
         if (_browserToolbarView != null) {
             browserToolbarView.setScrollFlags(enabled)
-        }
-    }
-
-    // This method is called in response to native web extension messages from
-    // content scripts (e.g the reader view extension). By the time these
-    // messages are processed the fragment/view may no longer be attached.
-    internal fun safeInvalidateBrowserToolbarView() {
-        runIfFragmentIsAttached {
-            val toolbarView = _browserToolbarView
-            if (toolbarView != null) {
-                toolbarView.view.invalidateActions()
-                toolbarView.toolbarIntegration.invalidateMenu()
-            }
         }
     }
 
