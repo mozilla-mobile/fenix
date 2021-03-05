@@ -27,5 +27,5 @@ object FeatureFlags {
     /**
      * Shows new three-dot toolbar menu design.
      */
-    const val toolbarMenuFeature = true
+    val toolbarMenuFeature = Config.channel.isDebug
 }
