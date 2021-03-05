@@ -174,7 +174,7 @@ class TopSheetBehavior<V : View?>
         return SavedState(
             super.onSaveInstanceState(
                 parent,
-                child
+                child!!
             ), mState
         )
     }
@@ -186,7 +186,7 @@ class TopSheetBehavior<V : View?>
     ) {
         val ss =
             state as SavedState
-        super.onRestoreInstanceState(parent, child, ss.superState)
+        super.onRestoreInstanceState(parent, child!!, ss.superState)
         // Intermediate states are restored as collapsed state
         mState = if (ss.state == STATE_DRAGGING || ss.state == STATE_SETTLING) {
             STATE_COLLAPSED
@@ -451,7 +451,7 @@ class TopSheetBehavior<V : View?>
         return target === mNestedScrollingChildRef!!.get() &&
                 (mState != STATE_EXPANDED ||
                         super.onNestedPreFling(
-                            coordinatorLayout, child, target,
+                            coordinatorLayout, child!!, target,
                             velocityX, velocityY
                         ))
     }
