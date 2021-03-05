@@ -65,6 +65,8 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
      */
     private var isInstallationInProgress = false
     private var adapter: PagedAddonsManagerAdapter? = null
+    // We must save the add-on list in the class, or we won't have it
+    // downloaded for the non-suspending search function
     private var addons: List<Addon>? = null
 
     override fun onCreateView(
@@ -176,14 +178,14 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
         val allowCache = args.installAddonId == null || installExternalAddonComplete
         lifecycleScope.launch(IO) {
             try {
-                val addons = requireContext().components.addonManager.getAddons(allowCache = allowCache)
+                addons = requireContext().components.addonManager.getAddons(allowCache = allowCache)
                 lifecycleScope.launch(Dispatchers.Main) {
                     runIfFragmentIsAttached {
                         if (!shouldRefresh) {
                             adapter = PagedAddonsManagerAdapter(
                                 requireContext().components.addonCollectionProvider,
                                 managementView,
-                                addons,
+                                addons!!,
                                 style = createAddonStyle(requireContext())
                             )
                         }
@@ -193,12 +195,12 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
 
                         recyclerView.adapter = adapter
                         if (shouldRefresh) {
-                            adapter?.updateAddons(addons)
+                            adapter?.updateAddons(addons!!)
                         }
 
                         args.installAddonId?.let { addonIn ->
                             if (!installExternalAddonComplete) {
-                                installExternalAddon(addons, addonIn)
+                                installExternalAddon(addons!!, addonIn)
                             }
                         }
                     }
