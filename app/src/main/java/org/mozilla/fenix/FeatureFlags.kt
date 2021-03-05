@@ -17,15 +17,15 @@ object FeatureFlags {
     /**
      * Enables the Nimbus experiments library.
      */
-    val nimbusExperiments = Config.channel.isNightlyOrDebug
+    const val nimbusExperiments = false
 
     /**
      * Enables WebAuthn support.
      */
-    val webAuthFeature = Config.channel.isNightlyOrDebug
+    const val webAuthFeature = true
 
     /**
      * Shows new three-dot toolbar menu design.
      */
-    val toolbarMenuFeature = Config.channel.isDebug
+    const val toolbarMenuFeature = true
 }
