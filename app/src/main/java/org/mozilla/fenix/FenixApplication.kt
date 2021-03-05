@@ -22,6 +22,7 @@ import kotlinx.coroutines.launch
 import mozilla.appservices.Megazord
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.state.action.SystemAction
+import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.concept.base.crash.Breadcrumb
 import mozilla.components.concept.push.PushProcessor
 import mozilla.components.feature.addons.update.GlobalAddonDependencyProvider
@@ -41,14 +42,15 @@ import mozilla.components.support.webextensions.WebExtensionSupport
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.components.metrics.MetricServiceType
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.perf.StorageStatsMetrics
 import org.mozilla.fenix.perf.StartupTimeline
+import org.mozilla.fenix.perf.StorageStatsMetrics
 import org.mozilla.fenix.perf.runBlockingIncrement
 import org.mozilla.fenix.push.PushFxaIntegration
 import org.mozilla.fenix.push.WebPushEngineIntegration
 import org.mozilla.fenix.session.PerformanceActivityLifecycleCallbacks
 import org.mozilla.fenix.session.VisibilityLifecycleCallback
 import org.mozilla.fenix.utils.BrowsersCache
+import java.util.concurrent.TimeUnit
 
 /**
  *The main application class for Fenix. Records data to measure initialization performance.
@@ -130,7 +132,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                 components.core.engine.warmUp()
             }
             initializeWebExtensionSupport()
-
+            restoreBrowserState()
             restoreDownloads()
 
             // Just to make sure it is impossible for any application-services pieces
@@ -157,6 +159,20 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         initVisualCompletenessQueueAndQueueTasks()
 
         components.appStartupTelemetry.onFenixApplicationOnCreate()
+    }
+
+    private fun restoreBrowserState() = GlobalScope.launch(Dispatchers.Main) {
+        val store = components.core.store
+        val sessionStorage = components.core.sessionStorage
+
+        components.useCases.tabsUseCases.restore(sessionStorage, settings().getTabTimeout())
+
+        // Now that we have restored our previous state (if there's one) let's setup auto saving the state while
+        // the app is used.
+        sessionStorage.autoSave(store)
+            .periodicallyInForeground(interval = 30, unit = TimeUnit.SECONDS)
+            .whenGoingToBackground()
+            .whenSessionsChange()
     }
 
     private fun restoreDownloads() {
@@ -398,7 +414,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                 onNewTabOverride = {
                     _, engineSession, url ->
                         val shouldCreatePrivateSession =
-                            components.core.sessionManager.selectedSession?.private
+                            components.core.store.state.selectedTab?.content?.private
                                 ?: components.settings.openLinksInAPrivateTab
 
                         val session = Session(url, shouldCreatePrivateSession)
@@ -409,9 +425,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                     _, sessionId -> components.useCases.tabsUseCases.removeTab(sessionId)
                 },
                 onSelectTabOverride = {
-                    _, sessionId ->
-                        val selected = components.core.sessionManager.findSessionById(sessionId)
-                        selected?.let { components.useCases.tabsUseCases.selectTab(it) }
+                    _, sessionId -> components.useCases.tabsUseCases.selectTab(sessionId)
                 },
                 onExtensionsLoaded = { extensions ->
                     components.addonUpdater.registerForFutureUpdates(extensions)

@@ -507,6 +507,8 @@
     <!-- Option in Library to open History page -->
     <string name="library_history">చరిత్ర</string>
 
+    <!-- Option in Library to open a new tab -->
+    <string name="library_new_tab">కొత్త ట్యాబు</string>
     <!-- Option in Library to open Synced Tabs page -->
     <string name="library_synced_tabs">సింకైన ట్యాబులు</string>
     <!-- Option in Library to open Reading List -->
@@ -537,6 +539,8 @@
     <!-- Tab Management -->
     <!-- Title of preference for tabs management -->
     <string name="preferences_tabs">ట్యాబులు</string>
+    <!-- Title of preference that allows a user to specify the tab view -->
+    <string name="preferences_tab_view">ట్యాబు వీక్షణ</string>
     <!-- Option for a list tab view -->
     <string name="tab_view_list">జాబితా</string>
     <!-- Option for a grid tab view -->
@@ -1072,6 +1076,8 @@
     <!-- Title for the site permissions item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_site_permissions">సైటు అనుమతులు</string>
 
+    <!-- Title for the downloads item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_downloads">దింపుకోళ్ళు</string>
     <!-- Text for the button to delete browsing data -->
     <string name="preferences_delete_browsing_data_button">విహరణ డేటా తొలగించు</string>
     <!-- Title for the Delete browsing data on quit preference -->
@@ -1188,10 +1194,6 @@
     <string name="onboarding_private_browsing_button">అమరికలను తెరువు</string>
     <!-- text for the privacy notice onboarding card header -->
     <string name="onboarding_privacy_notice_header">మీ అంతరంగికత</string>
-    <!-- text for the privacy notice onboarding card description
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_privacy_notice_description">మీరు ఆన్‌లైనులోనూ, మాతోనూ ఏమేం పంచుకుంటారన్నదానిపై
-        మీకు నియంత్రణ ఇవ్వడానికి మేము %s‌ని రూపొందించాము.</string>
     <!-- Text for the button to read the privacy notice -->
     <string name="onboarding_privacy_notice_read_button">మా గోప్యతా నోటీసును చదవండి</string>
     <!-- Content description (not visible, for screen readers etc.): Close onboarding screen -->
@@ -1349,6 +1351,9 @@
 
     <!-- Category of trackers (redirect trackers) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_redirect_trackers_title">దారిమళ్ళింపు ట్రాకర్లు</string>
+
+    <!-- Description of redirect tracker cookies that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_description">తెలిసిన ట్రాకింగు వెబ్‌సైట్లు దారిమార్పుల ద్వారా అమర్చే కుకీలను తుడిచివేస్తుంది.</string>
 
     <!-- About page link text to open support link -->
     <string name="about_support">తోడ్పాటు</string>

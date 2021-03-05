@@ -21,6 +21,7 @@ import android.view.accessibility.AccessibilityEvent
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.PopupWindow
+import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -63,13 +64,13 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.browser.menu.view.MenuButton
-import mozilla.components.browser.session.SessionManager
 import mozilla.components.browser.state.selector.findTab
 import mozilla.components.browser.state.selector.normalTabs
 import mozilla.components.browser.state.selector.privateTabs
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.selectedOrDefaultSearchEngine
 import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.concept.storage.FrecencyThresholdOption
 import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.OAuthAccount
@@ -103,6 +104,7 @@ import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.home.sessioncontrol.DefaultSessionControlController
 import org.mozilla.fenix.home.sessioncontrol.SessionControlInteractor
 import org.mozilla.fenix.home.sessioncontrol.SessionControlView
@@ -144,8 +146,6 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private val sessionManager: SessionManager
-        get() = requireComponents.core.sessionManager
     private val store: BrowserStore
         get() = requireComponents.core.store
 
@@ -234,10 +234,11 @@ class HomeFragment : Fragment() {
                 engine = components.core.engine,
                 metrics = components.analytics.metrics,
                 store = store,
-                sessionManager = sessionManager,
                 tabCollectionStorage = components.core.tabCollectionStorage,
                 addTabUseCase = components.useCases.tabsUseCases.addTab,
+                restoreUseCase = components.useCases.tabsUseCases.restore,
                 reloadUrlUseCase = components.useCases.sessionUseCases.reload,
+                selectTabUseCase = components.useCases.tabsUseCases.selectTab,
                 fragmentStore = homeFragmentStore,
                 navController = findNavController(),
                 viewLifecycleScope = viewLifecycleOwner.lifecycleScope,
@@ -273,9 +274,13 @@ class HomeFragment : Fragment() {
      * Returns a [TopSitesConfig] which specifies how many top sites to display and whether or
      * not frequently visited sites should be displayed.
      */
-    private fun getTopSitesConfig(): TopSitesConfig {
+    @VisibleForTesting
+    internal fun getTopSitesConfig(): TopSitesConfig {
         val settings = requireContext().settings()
-        return TopSitesConfig(settings.topSitesMaxLimit, settings.showTopFrecentSites)
+        return TopSitesConfig(
+            settings.topSitesMaxLimit,
+            if (settings.showTopFrecentSites) FrecencyThresholdOption.SKIP_ONE_TIME_PAGES else null
+        )
     }
 
     /**
@@ -425,7 +430,8 @@ class HomeFragment : Fragment() {
                     if (searchEngine != null) {
                         val iconSize =
                             requireContext().resources.getDimensionPixelSize(R.dimen.preference_icon_drawable_size)
-                        val searchIcon = BitmapDrawable(requireContext().resources, searchEngine.icon)
+                        val searchIcon =
+                            BitmapDrawable(requireContext().resources, searchEngine.icon)
                         searchIcon.setBounds(0, 0, iconSize, iconSize)
                         search_engine_icon?.setImageDrawable(searchIcon)
                     } else {
@@ -471,9 +477,9 @@ class HomeFragment : Fragment() {
 
     private fun removeAllTabsAndShowSnackbar(sessionCode: String) {
         if (sessionCode == ALL_PRIVATE_TABS) {
-            sessionManager.removePrivateSessions()
+            requireComponents.useCases.tabsUseCases.removePrivateTabs()
         } else {
-            sessionManager.removeNormalSessions()
+            requireComponents.useCases.tabsUseCases.removeNormalTabs()
         }
 
         val snackbarMessage = if (sessionCode == ALL_PRIVATE_TABS) {
@@ -587,7 +593,9 @@ class HomeFragment : Fragment() {
         }
 
         if (browsingModeManager.mode.isPrivate &&
-            context.settings().showPrivateModeCfr
+            // We will be showing the search dialog and don't want to show the CFR while the dialog shows
+            !bundleArgs.getBoolean(FOCUS_ON_ADDRESS_BAR) &&
+            context.settings().shouldShowPrivateModeCfr
         ) {
             recommendPrivateBrowsingShortcut()
         }
@@ -693,10 +701,13 @@ class HomeFragment : Fragment() {
             // We want to show the popup only after privateBrowsingButton is available.
             // Otherwise, we will encounter an activity token error.
             privateBrowsingButton.post {
-                context.settings().lastCfrShownTimeInMillis = System.currentTimeMillis()
-                privateBrowsingRecommend.showAsDropDown(
-                    privateBrowsingButton, 0, CFR_Y_OFFSET, Gravity.TOP or Gravity.END
-                )
+                runIfFragmentIsAttached {
+                    context.settings().showedPrivateModeContextualFeatureRecommender = true
+                    context.settings().lastCfrShownTimeInMillis = System.currentTimeMillis()
+                    privateBrowsingRecommend.showAsDropDown(
+                        privateBrowsingButton, 0, CFR_Y_OFFSET, Gravity.TOP or Gravity.END
+                    )
+                }
             }
         }
     }
@@ -1002,7 +1013,6 @@ class HomeFragment : Fragment() {
     // https://github.com/mozilla-mobile/fenix/issues/16792
     private fun updateTabCounter(browserState: BrowserState) {
         val tabCount = if (browsingModeManager.mode.isPrivate) {
-            view?.tab_button?.setColor(ContextCompat.getColor(requireContext(), R.color.primary_text_private_theme))
             browserState.privateTabs.size
         } else {
             browserState.normalTabs.size
@@ -1022,7 +1032,6 @@ class HomeFragment : Fragment() {
 
         private const val FOCUS_ON_ADDRESS_BAR = "focusOnAddressBar"
         private const val FOCUS_ON_COLLECTION = "focusOnCollection"
-        private const val ANIMATION_DELAY = 100L
 
         /**
          * Represents the number of items in [sessionControlView] that are NOT part of

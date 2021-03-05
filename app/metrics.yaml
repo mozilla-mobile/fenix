@@ -910,7 +910,7 @@ metrics:
       https://github.com/mozilla-mobile/fenix/issues/1607) the value will be
       `custom`.
 
-      `source` will be: `action`, `suggestion`, `widget` or `shortcut`
+      `source` will be: `action`, `suggestion`, `widget`, `shortcut`, `topsite`
       (depending on the source from which the search started). Also added the
       `other` option for the source but it should never enter on this case.
     send_in_pings:
@@ -2206,6 +2206,36 @@ reader_mode:
       - fenix-core@mozilla.com
     expires: "2021-08-01"
 
+tabs_tray.cfr:
+  dismiss:
+    type: event
+    description: |
+      A user dismisses the tabs tray CFR.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/16485
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/17442
+      - https://github.com/mozilla-mobile/fenix/issues/16485#issuecomment-759641324
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2021-08-01"
+  go_to_settings:
+    type: event
+    description: |
+      A user selects the CFR option to navigate to settings.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/16485
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/17442
+      - https://github.com/mozilla-mobile/fenix/issues/16485#issuecomment-759641324
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2021-08-01"
+
 tabs_tray:
   opened:
     type: event
@@ -3385,6 +3415,19 @@ top_sites:
     notification_emails:
       - fenix-core@mozilla.com
     expires: "2021-08-01"
+  open_google_search_attribution:
+    type: event
+    description: |
+      A user opened the google top site
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/17418
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/17637
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2021-08-01"
   open_frecency:
     type: event
     description: |
@@ -4075,6 +4118,7 @@ storage.stats:
       - https://github.com/mozilla-mobile/fenix/issues/12802
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/12876#issuecomment-666770732
+      - https://github.com/mozilla-mobile/fenix/pull/17704#issue-564299127
     data_sensitivity:
       - technical
       - interaction
@@ -4082,7 +4126,7 @@ storage.stats:
       - fenix-core@mozilla.com
       - perf-android-fe@mozilla.com
       - mcomella@mozilla.com
-    expires: "2021-02-01"
+    expires: "2021-08-01"
   app_bytes:
     send_in_pings:
       - metrics
@@ -4099,6 +4143,7 @@ storage.stats:
       - https://github.com/mozilla-mobile/fenix/issues/12802
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/12876#issuecomment-666770732
+      - https://github.com/mozilla-mobile/fenix/pull/17704#issue-564299127
     data_sensitivity:
       - technical
       - interaction
@@ -4106,7 +4151,7 @@ storage.stats:
       - fenix-core@mozilla.com
       - perf-android-fe@mozilla.com
       - mcomella@mozilla.com
-    expires: "2021-02-01"
+    expires: "2021-08-01"
   cache_bytes:
     send_in_pings:
       - metrics
@@ -4120,6 +4165,7 @@ storage.stats:
       - https://github.com/mozilla-mobile/fenix/issues/12802
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/12876#issuecomment-666770732
+      - https://github.com/mozilla-mobile/fenix/pull/17704#issue-564299127
     data_sensitivity:
       - technical
       - interaction
@@ -4127,7 +4173,7 @@ storage.stats:
       - fenix-core@mozilla.com
       - perf-android-fe@mozilla.com
       - mcomella@mozilla.com
-    expires: "2021-02-01"
+    expires: "2021-08-01"
   data_dir_bytes:
     send_in_pings:
       - metrics
@@ -4143,6 +4189,7 @@ storage.stats:
       - https://github.com/mozilla-mobile/fenix/issues/12802
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/12876#issuecomment-666770732
+      - https://github.com/mozilla-mobile/fenix/pull/17704#issue-564299127
     data_sensitivity:
       - technical
       - interaction
@@ -4150,7 +4197,7 @@ storage.stats:
       - fenix-core@mozilla.com
       - perf-android-fe@mozilla.com
       - mcomella@mozilla.com
-    expires: "2021-02-01"
+    expires: "2021-08-01"
 
 progressive_web_app:
   homescreen_tap:
@@ -4260,3 +4307,57 @@ tabs:
     notification_emails:
       - fenix-core@mozilla.com
     expires: "2021-08-01"
+
+contextual_menu:
+  copy_tapped:
+    type: event
+    description: |
+      The context menu's 'copy' option was used.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/11580
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/16968
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2021-06-01"
+  search_tapped:
+    type: event
+    description: |
+      The context menu's 'search' option was used.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/11580
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/16968
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2021-06-01"
+  select_all_tapped:
+    type: event
+    description: |
+      The context menu's 'select all' option was used.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/11580
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/16968
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2021-06-01"
+  share_tapped:
+    type: event
+    description: |
+      The context menu's 'share' option was used.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/11580
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/16968
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2021-06-01"

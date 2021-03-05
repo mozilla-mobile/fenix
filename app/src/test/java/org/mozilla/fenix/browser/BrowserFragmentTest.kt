@@ -87,13 +87,13 @@ class BrowserFragmentTest {
         every { browserFragment.onboarding } returns onboarding
 
         every { browserFragment.requireContext() } returns context
-        every { browserFragment.initializeUI(any()) } returns mockk()
+        every { browserFragment.initializeUI(any(), any()) } returns mockk()
         every { browserFragment.fullScreenChanged(any()) } returns Unit
         every { browserFragment.resumeDownloadDialogState(any(), any(), any(), any(), any()) } returns Unit
 
+        testTab = createTab(url = "https://mozilla.org")
         store = BrowserStore()
         every { context.components.core.store } returns store
-        testTab = createTab(url = "https://mozilla.org")
     }
 
     @After
@@ -122,10 +122,10 @@ class BrowserFragmentTest {
     @Test
     fun `GIVEN browser UI is not initialized WHEN selected tab changes THEN browser UI is initialized`() {
         browserFragment.observeTabSelection(store)
-        verify(exactly = 0) { browserFragment.initializeUI(view) }
+        verify(exactly = 0) { browserFragment.initializeUI(view, testTab) }
 
         addAndSelectTab(testTab)
-        verify(exactly = 1) { browserFragment.initializeUI(view) }
+        verify(exactly = 1) { browserFragment.initializeUI(view, testTab) }
     }
 
     @Test
@@ -291,22 +291,59 @@ class BrowserFragmentTest {
 
     @Test
     fun `WHEN isPullToRefreshEnabledInBrowser is disabled THEN pull down refresh is disabled`() {
-        every { homeActivity.isImmersive } returns false
         every { context.settings().isPullToRefreshEnabledInBrowser } returns true
-        assert(browserFragment.shouldPullToRefreshBeEnabled())
+        assert(browserFragment.shouldPullToRefreshBeEnabled(false))
 
         every { context.settings().isPullToRefreshEnabledInBrowser } returns false
-        assert(!browserFragment.shouldPullToRefreshBeEnabled())
+        assert(!browserFragment.shouldPullToRefreshBeEnabled(false))
     }
 
     @Test
-    fun `WHEN in immersive mode THEN pull down refresh is disabled`() {
-        every { homeActivity.isImmersive } returns false
+    fun `WHEN in fullscreen THEN pull down refresh is disabled`() {
         every { context.settings().isPullToRefreshEnabledInBrowser } returns true
-        assert(browserFragment.shouldPullToRefreshBeEnabled())
+        assert(browserFragment.shouldPullToRefreshBeEnabled(false))
+        assert(!browserFragment.shouldPullToRefreshBeEnabled(true))
+    }
 
-        every { homeActivity.isImmersive } returns true
-        assert(!browserFragment.shouldPullToRefreshBeEnabled())
+    @Test
+    fun `WHEN fragment is not attached THEN toolbar invalidation does nothing`() {
+        val browserToolbarView: BrowserToolbarView = mockk(relaxed = true)
+        val browserToolbar: BrowserToolbar = mockk(relaxed = true)
+        val toolbarIntegration: ToolbarIntegration = mockk(relaxed = true)
+        every { browserToolbarView.view } returns browserToolbar
+        every { browserToolbarView.toolbarIntegration } returns toolbarIntegration
+        every { browserFragment.context } returns null
+        browserFragment._browserToolbarView = browserToolbarView
+        browserFragment.safeInvalidateBrowserToolbarView()
+
+        verify(exactly = 0) { browserToolbar.invalidateActions() }
+        verify(exactly = 0) { toolbarIntegration.invalidateMenu() }
+    }
+
+    @Test
+    @Suppress("TooGenericExceptionCaught")
+    fun `WHEN fragment is attached and toolbar view is null THEN toolbar invalidation is safe`() {
+        every { browserFragment.context } returns mockk(relaxed = true)
+        try {
+            browserFragment.safeInvalidateBrowserToolbarView()
+        } catch (e: Exception) {
+            fail("Exception thrown when invalidating toolbar")
+        }
+    }
+
+    @Test
+    fun `WHEN fragment and view are attached THEN toolbar invalidation is triggered`() {
+        val browserToolbarView: BrowserToolbarView = mockk(relaxed = true)
+        val browserToolbar: BrowserToolbar = mockk(relaxed = true)
+        val toolbarIntegration: ToolbarIntegration = mockk(relaxed = true)
+        every { browserToolbarView.view } returns browserToolbar
+        every { browserToolbarView.toolbarIntegration } returns toolbarIntegration
+        every { browserFragment.context } returns mockk(relaxed = true)
+        browserFragment._browserToolbarView = browserToolbarView
+        browserFragment.safeInvalidateBrowserToolbarView()
+
+        verify(exactly = 1) { browserToolbar.invalidateActions() }
+        verify(exactly = 1) { toolbarIntegration.invalidateMenu() }
     }
 
     @Test

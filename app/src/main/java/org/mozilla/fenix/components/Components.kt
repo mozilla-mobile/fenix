@@ -13,6 +13,7 @@ import mozilla.components.feature.addons.migration.DefaultSupportedAddonsChecker
 import mozilla.components.feature.addons.migration.SupportedAddonsChecker
 import mozilla.components.feature.addons.update.AddonUpdater
 import mozilla.components.feature.addons.update.DefaultAddonUpdater
+import mozilla.components.feature.sitepermissions.SitePermissionsStorage
 import mozilla.components.lib.publicsuffixlist.PublicSuffixList
 import mozilla.components.support.migration.state.MigrationStore
 import io.github.forkmaintainers.iceraven.components.PagedAddonCollectionProvider
@@ -20,6 +21,7 @@ import org.mozilla.fenix.Config
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.perf.StrictModeManager
 import org.mozilla.fenix.components.metrics.AppStartupTelemetry
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.perf.lazyMonitored
 import org.mozilla.fenix.utils.ClipboardHandler
@@ -28,7 +30,7 @@ import org.mozilla.fenix.utils.Settings
 import org.mozilla.fenix.wifi.WifiConnectionMonitor
 import java.util.concurrent.TimeUnit
 
-private const val DAY_IN_MINUTES = 24 * 60L
+private const val AMO_COLLECTION_MAX_CACHE_AGE = 2 * 24 * 60L // Two days in minutes
 
 /**
  * Provides access to all components. This class is an implementation of the Service Locator
@@ -70,6 +72,7 @@ class Components(private val context: Context) {
             core.store,
             useCases.sessionUseCases,
             useCases.tabsUseCases,
+            useCases.customTabsUseCases,
             useCases.searchUseCases,
             core.relationChecker,
             core.customTabsStore,
@@ -93,9 +96,10 @@ class Components(private val context: Context) {
             PagedAddonCollectionProvider(
                 context,
                 core.client,
+                serverURL = BuildConfig.AMO_SERVER_URL,
                 collectionAccount = context.settings().customAddonsAccount,
                 collectionName = context.settings().customAddonsCollection,
-                maxCacheAgeInMinutes = DAY_IN_MINUTES
+                maxCacheAgeInMinutes = AMO_COLLECTION_MAX_CACHE_AGE
             )
         }
     }
@@ -113,7 +117,7 @@ class Components(private val context: Context) {
             onNotificationClickIntent = Intent(context, HomeActivity::class.java).apply {
                 action = Intent.ACTION_VIEW
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                data = "fenix://settings_addon_manager".toUri()
+                data = "${BuildConfig.DEEP_LINK_SCHEME}://settings_addon_manager".toUri()
             }
         )
     }
@@ -129,6 +133,10 @@ class Components(private val context: Context) {
         val addonsCollection = context.settings().customAddonsCollection
         addonCollectionProvider.setCollectionAccount(addonsAccount)
         addonCollectionProvider.setCollectionName(addonsCollection)
+    }
+
+    val sitePermissionsStorage by lazyMonitored {
+        SitePermissionsStorage(context, context.components.core.engine)
     }
 
     val analytics by lazyMonitored { Analytics(context) }

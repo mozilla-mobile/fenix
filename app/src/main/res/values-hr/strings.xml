@@ -129,6 +129,8 @@
     <string name="browser_menu_edit_bookmark">Uredi zabilješku</string>
     <!-- Browser menu button that opens the addon manager -->
     <string name="browser_menu_add_ons">Dodaci</string>
+    <!-- Browser menu button that opens the addon extensions manager -->
+    <string name="browser_menu_extensions">Proširenja</string>
     <!-- Text displayed when there are no add-ons to be shown -->
     <string name="no_add_ons">Ovdje nema dodataka</string>
     <!-- Browser menu button that sends a user to help articles -->
@@ -290,7 +292,7 @@
     <!-- Preference for changing where the toolbar is positioned -->
     <string name="preferences_toolbar">Alatna traka</string>
     <!-- Preference for changing default theme to dark or light mode -->
-    <string name="preferences_theme">Motiv</string>
+    <string name="preferences_theme">Tema</string>
     <!-- Preference for customizing the home screen -->
     <string name="preferences_home">Početna</string>
     <!-- Preference for gestures based actions -->
@@ -499,7 +501,7 @@
     <string name="preference_auto_battery_theme">Postavljeno u postavkama za štednju baterije</string>
 
     <!-- Preference for using following device theme -->
-    <string name="preference_follow_device_theme">Slijedi motiv uređaja</string>
+    <string name="preference_follow_device_theme">Slijedi temu uređaja</string>
 
     <!-- Gestures Preferences-->
     <!-- Preferences for using pull to refresh in a webpage -->
@@ -530,6 +532,10 @@
     <string name="library_desktop_bookmarks_unfiled">Druge zabilješke</string>
     <!-- Option in Library to open History page -->
     <string name="library_history">Povijest</string>
+    <!-- Option in Library to open a new tab -->
+    <string name="library_new_tab">Nova kartica</string>
+    <!-- Option in Library to find text in page -->
+    <string name="library_find_in_page">Pronađi na stranici</string>
     <!-- Option in Library to open Synced Tabs page -->
     <string name="library_synced_tabs">Sinkronizirane kartice</string>
     <!-- Option in Library to open Reading List -->
@@ -889,13 +895,13 @@
     <!-- Label that indicates that all video and audio autoplay is allowed -->
     <string name="preference_option_autoplay_allowed2">Dopusti zvuk i video</string>
     <!-- Label that indicates that video and audio autoplay is only allowed over Wi-Fi -->
-    <string name="preference_option_autoplay_allowed_wifi_only2">Blokiraj audio i video samo na mobilnoj vezi</string>
+    <string name="preference_option_autoplay_allowed_wifi_only2">Blokiraj zvuk i video samo na mobilnoj vezi</string>
     <!-- Subtext that explains 'autoplay on Wi-Fi only' option -->
-    <string name="preference_option_autoplay_allowed_wifi_subtext">Audio i video će se reproducirati na Wi-Fi</string>
+    <string name="preference_option_autoplay_allowed_wifi_subtext">Zvuk i video reproducirat će se na Wi-Fi-ju</string>
     <!-- Label that indicates that video autoplay is allowed, but audio autoplay is blocked -->
-    <string name="preference_option_autoplay_block_audio2">Blokiraj samo audio</string>
+    <string name="preference_option_autoplay_block_audio2">Blokiraj samo zvuk</string>
     <!-- Label that indicates that all video and audio autoplay is blocked -->
-    <string name="preference_option_autoplay_blocked3">Blokiraj audio i video</string>
+    <string name="preference_option_autoplay_blocked3">Blokiraj zvuk i video</string>
     <!-- Summary of delete browsing data on quit preference if it is set to on -->
     <string name="delete_browsing_data_quit_on">Uključeno</string>
     <!-- Summary of delete browsing data on quit preference if it is set to off -->
@@ -1094,6 +1100,8 @@
     <string name="preferences_delete_browsing_data_cached_files_subtitle">Prazni memoriju</string>
     <!-- Title for the site permissions item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_site_permissions">Dozvole web-stranice</string>
+    <!-- Title for the downloads item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_downloads">Preuzimanja</string>
     <!-- Text for the button to delete browsing data -->
     <string name="preferences_delete_browsing_data_button">Izbriši podatke pregledavanja</string>
     <!-- Title for the Delete browsing data on quit preference -->
@@ -1217,8 +1225,7 @@
 
     <!-- text for the privacy notice onboarding card description
     The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_privacy_notice_description">Dizajnirali smo %s tako, da ti vladaš onime što dijeliš
-        na internetu i što dijeliš s nama.</string>
+    <string name="onboarding_privacy_notice_description2">%s smo stvorili za jednostavno upravljanje podacima koje dijeliš na mreži i koje dijeliš s nama.</string>
     <!-- Text for the button to read the privacy notice -->
     <string name="onboarding_privacy_notice_read_button">Pročitaj naša pravila privatnosti</string>
 
@@ -1232,16 +1239,16 @@
     <!-- text for the theme picker onboarding card header -->
     <string name="onboarding_theme_picker_header">Odaberi modus</string>
     <!-- text for the theme picker onboarding card description -->
-    <string name="onboarding_theme_picker_description1">Štedi energiju i zaštiti oči pomoću tamnog motiva.</string>
+    <string name="onboarding_theme_picker_description1">Štedi energiju i zaštiti oči pomoću tamne teme.</string>
 
     <!-- Automatic theme setting (will follow device setting) -->
     <string name="onboarding_theme_automatic_title">Automatski</string>
     <!-- Summary of automatic theme setting (will follow device setting) -->
     <string name="onboarding_theme_automatic_summary">Prilagođava se postavkama uređaja</string>
     <!-- Theme setting for dark mode -->
-    <string name="onboarding_theme_dark_title">Tamni motiv</string>
+    <string name="onboarding_theme_dark_title">Tamna tema</string>
     <!-- Theme setting for light mode -->
-    <string name="onboarding_theme_light_title">Svijetli motiv</string>
+    <string name="onboarding_theme_light_title">Svijetla tema</string>
 
     <!-- Text shown in snackbar when multiple tabs have been sent to device -->
     <string name="sync_sent_tabs_snackbar">Kartice su poslane!</string>

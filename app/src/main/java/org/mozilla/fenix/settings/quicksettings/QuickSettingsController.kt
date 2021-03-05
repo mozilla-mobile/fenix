@@ -6,10 +6,13 @@ package org.mozilla.fenix.settings.quicksettings
 
 import android.content.Context
 import androidx.annotation.VisibleForTesting
+import androidx.core.net.toUri
 import androidx.navigation.NavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import mozilla.components.browser.session.Session
+import mozilla.components.browser.state.selector.findTabOrCustomTab
+import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.feature.session.SessionUseCases.ReloadUrlUseCase
 import mozilla.components.feature.sitepermissions.SitePermissions
 import mozilla.components.feature.tabs.TabsUseCases.AddNewTabUseCase
@@ -38,6 +41,13 @@ interface QuickSettingsController {
      * @param permission [WebsitePermission] needing to be toggled.
      */
     fun handlePermissionToggled(permission: WebsitePermission)
+
+    /**
+     * Handles change a [WebsitePermission.Autoplay].
+     *
+     * @param autoplayValue [AutoplayValue] needing to be changed.
+     */
+    fun handleAutoplayChanged(autoplayValue: AutoplayValue)
 
     /**
      * Handles a certain set of Android permissions being explicitly granted by the user.
@@ -70,10 +80,13 @@ interface QuickSettingsController {
 class DefaultQuickSettingsController(
     private val context: Context,
     private val quickSettingsStore: QuickSettingsFragmentStore,
+    private val browserStore: BrowserStore,
     private val ioScope: CoroutineScope,
     private val navController: NavController,
-    private val session: Session?,
-    private var sitePermissions: SitePermissions?,
+    @VisibleForTesting
+    internal val sessionId: String,
+    @VisibleForTesting
+    internal var sitePermissions: SitePermissions?,
     private val settings: Settings,
     private val permissionStorage: PermissionStorage,
     private val reload: ReloadUrlUseCase,
@@ -122,6 +135,28 @@ class DefaultQuickSettingsController(
         )
     }
 
+    override fun handleAutoplayChanged(autoplayValue: AutoplayValue) {
+        val permissions = sitePermissions
+
+        sitePermissions = if (permissions == null) {
+            val tab = browserStore.state.findTabOrCustomTab(sessionId)
+            val origin = requireNotNull(tab?.content?.url?.toUri()?.host) {
+                "An origin is required to change a autoplay settings from the door hanger"
+            }
+            val sitePermissions =
+                autoplayValue.createSitePermissionsFromCustomRules(origin, settings)
+            handleAutoplayAdd(sitePermissions)
+            sitePermissions
+        } else {
+            val newPermission = autoplayValue.updateSitePermissions(permissions)
+            handlePermissionsChange(autoplayValue.updateSitePermissions(newPermission))
+            newPermission
+        }
+        quickSettingsStore.dispatch(
+            WebsitePermissionAction.ChangeAutoplay(autoplayValue)
+        )
+    }
+
     /**
      * Request a certain set of runtime Android permissions.
      *
@@ -144,7 +179,15 @@ class DefaultQuickSettingsController(
     fun handlePermissionsChange(updatedPermissions: SitePermissions) {
         ioScope.launch {
             permissionStorage.updateSitePermissions(updatedPermissions)
-            reload(session)
+            reload(sessionId)
+        }
+    }
+
+    @VisibleForTesting
+    internal fun handleAutoplayAdd(sitePermissions: SitePermissions) {
+        ioScope.launch {
+            permissionStorage.add(sitePermissions)
+            reload(sessionId)
         }
     }
 

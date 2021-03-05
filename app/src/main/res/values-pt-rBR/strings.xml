@@ -130,6 +130,8 @@
     <string name="browser_menu_edit_bookmark">Editar favorito</string>
     <!-- Browser menu button that opens the addon manager -->
     <string name="browser_menu_add_ons">Extensões</string>
+    <!-- Browser menu button that opens the addon extensions manager -->
+    <string name="browser_menu_extensions">Extensões</string>
     <!-- Text displayed when there are no add-ons to be shown -->
     <string name="no_add_ons">Nenhuma extensão aqui</string>
     <!-- Browser menu button that sends a user to help articles -->
@@ -528,6 +530,10 @@
     <string name="library_desktop_bookmarks_unfiled">Outros favoritos</string>
     <!-- Option in Library to open History page -->
     <string name="library_history">Histórico</string>
+    <!-- Option in Library to open a new tab -->
+    <string name="library_new_tab">Nova aba</string>
+    <!-- Option in Library to find text in page -->
+    <string name="library_find_in_page">Procurar na página</string>
     <!-- Option in Library to open Synced Tabs page -->
     <string name="library_synced_tabs">Abas sincronizadas</string>
     <!-- Option in Library to open Reading List -->
@@ -1089,6 +1095,8 @@
     <string name="preferences_delete_browsing_data_cached_files_subtitle">Libera espaço de armazenamento</string>
     <!-- Title for the site permissions item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_site_permissions">Permissões de sites</string>
+    <!-- Title for the downloads item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_downloads">Downloads</string>
     <!-- Text for the button to delete browsing data -->
     <string name="preferences_delete_browsing_data_button">Limpar dados de navegação</string>
     <!-- Title for the Delete browsing data on quit preference -->
@@ -1209,7 +1217,7 @@
     <string name="onboarding_privacy_notice_header">Sua privacidade</string>
     <!-- text for the privacy notice onboarding card description
     The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_privacy_notice_description">Projetamos o %s para lhe dar o controle sobre o que você compartilha online e o que compartilha conosco.</string>
+    <string name="onboarding_privacy_notice_description2">Projetamos o %s para te dar controle sobre o que você compartilha online e o que você compartilha conosco.</string>
     <!-- Text for the button to read the privacy notice -->
     <string name="onboarding_privacy_notice_read_button">Leia nosso aviso de privacidade</string>
 

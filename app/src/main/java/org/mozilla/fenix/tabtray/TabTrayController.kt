@@ -9,11 +9,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import mozilla.appservices.places.BookmarkRoot
-import mozilla.components.browser.session.Session
-import mozilla.components.browser.session.SessionManager
+import mozilla.components.browser.state.selector.findTab
 import mozilla.components.browser.state.selector.getNormalOrPrivateTabs
 import mozilla.components.browser.state.selector.normalTabs
 import mozilla.components.browser.state.state.BrowserState
+import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.base.profiler.Profiler
 import mozilla.components.concept.engine.prompt.ShareData
@@ -62,7 +62,6 @@ interface TabTrayController {
  *
  * @param activity [Activity] the current activity.
  * @param profiler [Profiler] used for profiling.
- * @param sessionManager [HomeActivity] used for retrieving a list of sessions.
  * @param browserStore [BrowserStore] holds the global [BrowserState].
  * @param browsingModeManager [HomeActivity] used for registering browsing mode.
  * @param tabCollectionStorage [TabCollectionStorage] storage for saving collections.
@@ -86,7 +85,6 @@ interface TabTrayController {
 class DefaultTabTrayController(
     private val activity: HomeActivity,
     private val profiler: Profiler?,
-    private val sessionManager: SessionManager,
     private val browserStore: BrowserStore,
     private val browsingModeManager: BrowsingModeManager,
     private val tabCollectionStorage: TabCollectionStorage,
@@ -100,8 +98,8 @@ class DefaultTabTrayController(
     private val registerCollectionStorageObserver: () -> Unit,
     private val tabTrayDialogFragmentStore: TabTrayDialogFragmentStore,
     private val selectTabUseCase: TabsUseCases.SelectTabUseCase,
-    private val showChooseCollectionDialog: (List<Session>) -> Unit,
-    private val showAddNewCollectionDialog: (List<Session>) -> Unit,
+    private val showChooseCollectionDialog: (List<TabSessionState>) -> Unit,
+    private val showAddNewCollectionDialog: (List<TabSessionState>) -> Unit,
     private val showUndoSnackbarForTabs: () -> Unit,
     private val showBookmarksSnackbar: () -> Unit
 ) : TabTrayController {
@@ -129,7 +127,7 @@ class DefaultTabTrayController(
         metrics.track(Event.TabsTraySaveToCollectionPressed)
 
         val sessionList = selectedTabs.map {
-            sessionManager.findSessionById(it.id) ?: return
+            browserStore.state.findTab(it.id) ?: return
         }
 
         // Only register the observer right before moving to collection creation
@@ -256,5 +254,6 @@ class DefaultTabTrayController(
     override fun handleGoToTabsSettingClicked() {
         val directions = TabTrayDialogFragmentDirections.actionGlobalTabSettingsFragment()
         navController.navigate(directions)
+        metrics.track(Event.TabsTrayCfrTapped)
     }
 }

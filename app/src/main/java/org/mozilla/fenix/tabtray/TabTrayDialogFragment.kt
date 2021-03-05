@@ -34,6 +34,8 @@ import kotlinx.coroutines.plus
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.state.selector.findTab
+import mozilla.components.browser.state.selector.getNormalOrPrivateTabs
+import mozilla.components.browser.state.selector.normalTabs
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.thumbnails.loader.ThumbnailLoader
 import mozilla.components.feature.tab.collections.TabCollection
@@ -53,7 +55,6 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getDefaultCollectionNumber
 import org.mozilla.fenix.ext.metrics
-import org.mozilla.fenix.ext.normalSessionSize
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.HomeScreenViewModel
@@ -86,11 +87,11 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), UserInteractionHandler 
             else null
 
     private val collectionStorageObserver = object : TabCollectionStorage.Observer {
-        override fun onCollectionCreated(title: String, sessions: List<Session>, id: Long?) {
+        override fun onCollectionCreated(title: String, sessions: List<TabSessionState>, id: Long?) {
             showCollectionSnackbar(sessions.size, true, collectionToSelect = id)
         }
 
-        override fun onTabsAdded(tabCollection: TabCollection, sessions: List<Session>) {
+        override fun onTabsAdded(tabCollection: TabCollection, sessions: List<TabSessionState>) {
             showCollectionSnackbar(
                 sessions.size,
                 collectionToSelect = tabCollection.id
@@ -137,11 +138,12 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), UserInteractionHandler 
     private fun removeIfNotLastTab(sessionId: String) {
         // We only want to *immediately* remove a tab if there are more than one in the tab tray
         // If there is only one, the HomeFragment handles deleting the tab (to better support snackbars)
-        val sessionManager = view?.context?.components?.core?.sessionManager
-        val sessionToRemove = sessionManager?.findSessionById(sessionId)
-
-        if (sessionManager?.sessions?.filter { sessionToRemove?.private == it.private }?.size != 1) {
-            requireComponents.useCases.tabsUseCases.removeTab(sessionId)
+        val browserStore = requireComponents.core.store
+        val sessionToRemove = browserStore.state.findTab(sessionId)
+        sessionToRemove?.let {
+            if (browserStore.state.getNormalOrPrivateTabs(it.content.private).size != 1) {
+                requireComponents.useCases.tabsUseCases.removeTab(sessionId)
+            }
         }
     }
 
@@ -204,7 +206,6 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), UserInteractionHandler 
                 DefaultTabTrayController(
                     activity = activity,
                     profiler = activity.components.core.engine.profiler,
-                    sessionManager = activity.components.core.sessionManager,
                     browserStore = activity.components.core.store,
                     tabsUseCases = activity.components.useCases.tabsUseCases,
                     ioScope = lifecycleScope + Dispatchers.IO,
@@ -424,7 +425,7 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), UserInteractionHandler 
         return true
     }
 
-    private fun showChooseCollectionDialog(sessionList: List<Session>) {
+    private fun showChooseCollectionDialog(sessionList: List<TabSessionState>) {
         context?.let {
             val tabCollectionStorage = it.components.core.tabCollectionStorage
             val collections =
@@ -444,7 +445,7 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), UserInteractionHandler 
                         tabCollectionStorage.addTabsToCollection(collection, sessionList)
                         it.metrics.track(
                             Event.CollectionTabsAdded(
-                                it.components.core.sessionManager.normalSessionSize(),
+                                it.components.core.store.state.normalTabs.size,
                                 sessionList.size
                             )
                         )
@@ -467,7 +468,7 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), UserInteractionHandler 
         }
     }
 
-    private fun showAddNewCollectionDialog(sessionList: List<Session>) {
+    private fun showAddNewCollectionDialog(sessionList: List<TabSessionState>) {
         context?.let {
             val tabCollectionStorage = it.components.core.tabCollectionStorage
             val customLayout =
@@ -490,7 +491,7 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), UserInteractionHandler 
                         )
                         it.metrics.track(
                             Event.CollectionSaved(
-                                it.components.core.sessionManager.normalSessionSize(),
+                                it.components.core.store.state.normalTabs.size,
                                 sessionList.size
                             )
                         )

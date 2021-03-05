@@ -128,6 +128,8 @@
     <string name="browser_menu_edit_bookmark">Modifitgar il segnapagina</string>
     <!-- Browser menu button that opens the addon manager -->
     <string name="browser_menu_add_ons">Supplements</string>
+    <!-- Browser menu button that opens the addon extensions manager -->
+    <string name="browser_menu_extensions">Extensiuns</string>
     <!-- Text displayed when there are no add-ons to be shown -->
     <string name="no_add_ons">Nagins supplements qua</string>
     <!-- Browser menu button that sends a user to help articles -->
@@ -523,6 +525,10 @@
     <string name="library_desktop_bookmarks_unfiled">Auters segnapaginas</string>
     <!-- Option in Library to open History page -->
     <string name="library_history">Cronologia</string>
+    <!-- Option in Library to open a new tab -->
+    <string name="library_new_tab">Nov tab</string>
+    <!-- Option in Library to find text in page -->
+    <string name="library_find_in_page">Tschertgar en la pagina</string>
     <!-- Option in Library to open Synced Tabs page -->
     <string name="library_synced_tabs">Tabs sincronisads</string>
     <!-- Option in Library to open Reading List -->
@@ -1085,6 +1091,8 @@
     <!-- Title for the site permissions item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_site_permissions">Permissiuns per websites</string>
 
+    <!-- Title for the downloads item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_downloads">Telechargiadas</string>
     <!-- Text for the button to delete browsing data -->
     <string name="preferences_delete_browsing_data_button">Stizzar las datas da navigaziun</string>
     <!-- Title for the Delete browsing data on quit preference -->
@@ -1206,8 +1214,7 @@
     <string name="onboarding_privacy_notice_header">Tia sfera privata</string>
     <!-- text for the privacy notice onboarding card description
     The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_privacy_notice_description">Nus avain creà %s per che ti possias controllar tge che ti cundividas
-        cun l\'internet e tge che ti cundividas cun nus.</string>
+    <string name="onboarding_privacy_notice_description2">Nus avain creà %s per che ti possias controllar tge che ti cundividas en l\'internet e tge che ti cundividas cun nus.</string>
     <!-- Text for the button to read the privacy notice -->
     <string name="onboarding_privacy_notice_read_button">Legia nossas directivas per la protecziun da datas</string>
 
