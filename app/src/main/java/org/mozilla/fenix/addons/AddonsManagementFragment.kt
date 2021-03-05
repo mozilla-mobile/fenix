@@ -196,7 +196,8 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
                                 requireContext().components.addonCollectionProvider,
                                 managementView,
                                 addons!!,
-                                style = createAddonStyle(requireContext())
+                                style = createAddonStyle(requireContext()),
+                                excludedAddonIDs
                             )
                         }
                         isInstallationInProgress = false
