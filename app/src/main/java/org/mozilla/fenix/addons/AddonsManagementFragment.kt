@@ -38,6 +38,9 @@ import mozilla.components.feature.addons.ui.PermissionsDialogFragment
 import mozilla.components.feature.addons.ui.translateName
 import io.github.forkmaintainers.iceraven.components.PagedAddonInstallationDialogFragment
 import io.github.forkmaintainers.iceraven.components.PagedAddonsManagerAdapter
+import org.mozilla.fenix.BuildConfig
+import org.mozilla.fenix.Config
+import org.mozilla.fenix.GleanMetrics.Addons
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.metrics.Event
@@ -179,6 +182,13 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
         lifecycleScope.launch(IO) {
             try {
                 addons = requireContext().components.addonManager.getAddons(allowCache = allowCache)
+                // Add-ons that should be excluded in Mozilla Online builds
+                val excludedAddonIDs = if (Config.channel.isMozillaOnline &&
+                    !BuildConfig.MOZILLA_ONLINE_ADDON_EXCLUSIONS.isNullOrEmpty()) {
+                        BuildConfig.MOZILLA_ONLINE_ADDON_EXCLUSIONS.toList()
+                } else {
+                    emptyList<String>()
+                }
                 lifecycleScope.launch(Dispatchers.Main) {
                     runIfFragmentIsAttached {
                         if (!shouldRefresh) {
@@ -357,6 +367,7 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
                     adapter?.updateAddon(it)
                     addonProgressOverlay?.visibility = View.GONE
                     showInstallationDialog(it)
+                    Addons.hasInstalledAddons.set(true)
                 }
             },
             onError = { _, e ->

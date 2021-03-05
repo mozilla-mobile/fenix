@@ -127,6 +127,8 @@
     <string name="browser_menu_edit_bookmark">სანიშნის ჩასწორება</string>
     <!-- Browser menu button that opens the addon manager -->
     <string name="browser_menu_add_ons">დამატებები</string>
+    <!-- Browser menu button that opens the addon extensions manager -->
+    <string name="browser_menu_extensions">გაფართოებები</string>
     <!-- Text displayed when there are no add-ons to be shown -->
     <string name="no_add_ons">დამატებები არ არის</string>
     <!-- Browser menu button that sends a user to help articles -->
@@ -210,6 +212,11 @@
     <string name="search_suggestions_onboarding_text">%s გაუზიარებს საძიებო სისტემას, მისამართების ველში აკრეფილ ტექსტს.</string>
     <!-- Search suggestion onboarding hint Learn more link text -->
     <string name="search_suggestions_onboarding_learn_more_link">ვრცლად</string>
+
+    <!-- Search engine suggestion title text. The first parameter is the name of teh suggested engine-->
+    <string name="search_engine_suggestions_title">საძიებოდ %s</string>
+    <!-- Search engine suggestion description text -->
+    <string name="search_engine_suggestions_description">მოიძიეთ პირდაპირ მისამართების ველიდან</string>
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
@@ -526,6 +533,10 @@
     <string name="library_desktop_bookmarks_unfiled">სხვა სანიშნები</string>
     <!-- Option in Library to open History page -->
     <string name="library_history">ისტორია</string>
+    <!-- Option in Library to open a new tab -->
+    <string name="library_new_tab">ახალი ჩანართი</string>
+    <!-- Option in Library to find text in page -->
+    <string name="library_find_in_page">პოვნა გვერდზე</string>
     <!-- Option in Library to open Synced Tabs page -->
     <string name="library_synced_tabs">დასინქრონებული ჩანართები</string>
     <!-- Option in Library to open Reading List -->
@@ -879,16 +890,22 @@
     <string name="tracking_protection_on">ჩართ.</string>
     <!-- Summary of tracking protection preference if tracking protection is set to off -->
     <string name="tracking_protection_off">გამორთ.</string>
-    <!-- Label that indicates that all video and audio autoplay is allowed -->
+    <!-- Label for global setting that indicates that all video and audio autoplay is allowed -->
     <string name="preference_option_autoplay_allowed2">ხმისა და ვიდეოს დაშვება</string>
+    <!-- Label for site specific setting that indicates that all video and audio autoplay is allowed -->
+    <string name="quick_setting_option_autoplay_allowed">ხმისა და ვიდეოს დაშვება</string>
     <!-- Label that indicates that video and audio autoplay is only allowed over Wi-Fi -->
     <string name="preference_option_autoplay_allowed_wifi_only2">ხმისა და ვიდეოს შეზღუდვა, მხოლოდ ფიჭურ ინტერნეტზე</string>
     <!-- Subtext that explains 'autoplay on Wi-Fi only' option -->
     <string name="preference_option_autoplay_allowed_wifi_subtext">ხმისა და ვიდეოს დაშვება Wi-Fi-ზე</string>
-    <!-- Label that indicates that video autoplay is allowed, but audio autoplay is blocked -->
+    <!-- Label for global setting that indicates that video autoplay is allowed, but audio autoplay is blocked -->
     <string name="preference_option_autoplay_block_audio2">მხოლოდ ხმის შეზღუდვა</string>
-    <!-- Label that indicates that all video and audio autoplay is blocked -->
+    <!-- Label for site specific setting that indicates that video autoplay is allowed, but audio autoplay is blocked -->
+    <string name="quick_setting_option_autoplay_block_audio">მხოლოდ ხმის შეზღუდვა</string>
+    <!-- Label for global setting that indicates that all video and audio autoplay is blocked -->
     <string name="preference_option_autoplay_blocked3">ხმისა და ვიდეოს შეზღუდვა</string>
+    <!-- Label for site specific setting that indicates that all video and audio autoplay is blocked -->
+    <string name="quick_setting_option_autoplay_blocked">ხმისა და ვიდეოს შეზღუდვა</string>
     <!-- Summary of delete browsing data on quit preference if it is set to on -->
     <string name="delete_browsing_data_quit_on">ჩართ.</string>
     <!-- Summary of delete browsing data on quit preference if it is set to off -->
@@ -955,7 +972,7 @@
     <!-- Sub-header in the dialog to share a link to an app from the most-recent sorted list -->
     <string name="share_link_recent_apps_subheader">ბოლოს გამოყენებული</string>
     <!-- An option from the share dialog to sign into sync -->
-    <string name="sync_sign_in">Sync შესვლა</string>
+    <string name="sync_sign_in">დასინქრონებაში შესვლა</string>
     <!-- An option from the share dialog to send link to all other sync devices -->
     <string name="sync_send_to_all">ყველა მოწყობილობაზე გაგზავნა</string>
     <!-- An option from the share dialog to reconnect to sync -->

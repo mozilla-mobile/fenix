@@ -41,12 +41,25 @@ android {
         buildConfigField "String", "AMO_BASE_URL", "\"https://addons.mozilla.org\""
         buildConfigField "String", "AMO_COLLECTION_NAME", "\"7dfae8669acc4312a65e8ba5553036\""
         buildConfigField "String", "AMO_COLLECTION_USER", "\"mozilla\""
+        // These add-ons should be excluded for Mozilla Online builds.
+        buildConfigField "String[]", "MOZILLA_ONLINE_ADDON_EXCLUSIONS",
+                "{" +
+                        "\"uBlock0@raymondhill.net\"," +
+                        "\"firefox@ghostery.com\"," +
+                        "\"jid1-MnnxcxisBPnSXQ@jetpack\"," +
+                        "\"adguardadblocker@adguard.com\"," +
+                        "\"foxyproxy@eric.h.jung\"," +
+                        "\"{73a6fe31-595d-460b-a920-fcc0f8843232}\"," +
+                        "\"jid1-BoFifL9Vbdl2zQ@jetpack\"," +
+                        "\"woop-NoopscooPsnSXQ@jetpack\"" +
+                "}"
         // This should be the base URL used to call the AMO API.
         buildConfigField "String", "AMO_SERVER_URL", "\"https://services.addons.mozilla.org\""
         def deepLinkSchemeValue = "fenix-dev"
         buildConfigField "String", "DEEP_LINK_SCHEME", "\"$deepLinkSchemeValue\""
         manifestPlaceholders = [
-                "deepLinkScheme": deepLinkSchemeValue
+                "deepLinkScheme": deepLinkSchemeValue,
+                "requestLegacyExternalStorage": true
         ]
 
         // Build flag for "Mozilla Online" variants. See `Config.isMozillaOnline`.
@@ -81,13 +94,19 @@ android {
             applicationIdSuffix ".fenix.debug"
             resValue "bool", "IS_DEBUG", "true"
             pseudoLocalesEnabled true
+            def deepLinkSchemeValue = "fenix-dev"
+            buildConfigField "String", "DEEP_LINK_SCHEME", "\"$deepLinkSchemeValue\""
+            manifestPlaceholders = [
+                    "deepLinkScheme": deepLinkSchemeValue,
+                    "requestLegacyExternalStorage": false
+            ]
         }
         nightly releaseTemplate >> {
             applicationIdSuffix ".fenix"
             buildConfigField "boolean", "USE_RELEASE_VERSIONING", "true"
             def deepLinkSchemeValue = "fenix-nightly"
             buildConfigField "String", "DEEP_LINK_SCHEME", "\"$deepLinkSchemeValue\""
-            manifestPlaceholders = ["deepLinkScheme": deepLinkSchemeValue]
+            manifestPlaceholders = ["deepLinkScheme": deepLinkSchemeValue, "requestLegacyExternalStorage": false]
         }
         beta releaseTemplate >> {
             buildConfigField "boolean", "USE_RELEASE_VERSIONING", "true"
@@ -103,7 +122,8 @@ android {
                     //  - https://issuetracker.google.com/issues/36924841
                     //  - https://issuetracker.google.com/issues/36905922
                     "sharedUserId": "org.mozilla.firefox.sharedID",
-                    "deepLinkScheme": deepLinkSchemeValue
+                    "deepLinkScheme": deepLinkSchemeValue,
+                    "requestLegacyExternalStorage": true
             ]
         }
         release releaseTemplate >> {
@@ -120,7 +140,8 @@ android {
                     //  - https://issuetracker.google.com/issues/36924841
                     //  - https://issuetracker.google.com/issues/36905922
                     "sharedUserId": "org.mozilla.firefox.sharedID",
-                    "deepLinkScheme": deepLinkSchemeValue
+                    "deepLinkScheme": deepLinkSchemeValue,
+                    "requestLegacyExternalStorage": true
             ]
         }
         forkDebug {
@@ -398,6 +419,16 @@ android.applicationVariants.all { variant ->
         buildConfigField 'String', 'NIMBUS_ENDPOINT', 'null'
         println("--")
     }
+
+// -------------------------------------------------------------------------------------------------
+// BuildConfig: Set flag for official builds; similar to MOZILLA_OFFICIAL in mozilla-central.
+// -------------------------------------------------------------------------------------------------
+
+    if (project.hasProperty("official") || gradle.hasProperty("localProperties.official")) {
+        buildConfigField 'Boolean', 'MOZILLA_OFFICIAL', 'true'
+    } else {
+        buildConfigField 'Boolean', 'MOZILLA_OFFICIAL', 'false'
+    }
 }
 
 androidExtensions {
@@ -507,6 +538,7 @@ dependencies {
     implementation Deps.mozilla_feature_top_sites
     implementation Deps.mozilla_feature_share
     implementation Deps.mozilla_feature_accounts_push
+    implementation Deps.mozilla_feature_webauthn
     implementation Deps.mozilla_feature_webcompat
     implementation Deps.mozilla_feature_webnotifications
     implementation Deps.mozilla_feature_webcompat_reporter

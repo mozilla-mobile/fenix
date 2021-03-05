@@ -220,6 +220,11 @@
     <!-- Search suggestion onboarding hint Learn more link text -->
     <string name="search_suggestions_onboarding_learn_more_link">Ulteriori informazioni</string>
 
+    <!-- Search engine suggestion title text. The first parameter is the name of teh suggested engine-->
+    <string name="search_engine_suggestions_title">Cerca in %s</string>
+    <!-- Search engine suggestion description text -->
+    <string name="search_engine_suggestions_description">Cerca direttamente dalla barra degli indirizzi</string>
+
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
     <string name="search_widget_content_description">Apri una nuova scheda in Firefox</string>
@@ -903,16 +908,22 @@
     <!-- Summary of tracking protection preference if tracking protection is set to off -->
     <string name="tracking_protection_off">Disattivata</string>
 
-    <!-- Label that indicates that all video and audio autoplay is allowed -->
+    <!-- Label for global setting that indicates that all video and audio autoplay is allowed -->
     <string name="preference_option_autoplay_allowed2">Consenti audio e video</string>
+    <!-- Label for site specific setting that indicates that all video and audio autoplay is allowed -->
+    <string name="quick_setting_option_autoplay_allowed">Consenti audio e video</string>
     <!-- Label that indicates that video and audio autoplay is only allowed over Wi-Fi -->
     <string name="preference_option_autoplay_allowed_wifi_only2">Blocca audio e video solo con connessione dati</string>
     <!-- Subtext that explains 'autoplay on Wi-Fi only' option -->
     <string name="preference_option_autoplay_allowed_wifi_subtext">Audio e video saranno riprodotti con una connessione Wi-Fi</string>
-    <!-- Label that indicates that video autoplay is allowed, but audio autoplay is blocked -->
+    <!-- Label for global setting that indicates that video autoplay is allowed, but audio autoplay is blocked -->
     <string name="preference_option_autoplay_block_audio2">Blocca solo l’audio</string>
-    <!-- Label that indicates that all video and audio autoplay is blocked -->
+    <!-- Label for site specific setting that indicates that video autoplay is allowed, but audio autoplay is blocked -->
+    <string name="quick_setting_option_autoplay_block_audio">Blocca solo l’audio</string>
+    <!-- Label for global setting that indicates that all video and audio autoplay is blocked -->
     <string name="preference_option_autoplay_blocked3">Blocca audio e video</string>
+    <!-- Label for site specific setting that indicates that all video and audio autoplay is blocked -->
+    <string name="quick_setting_option_autoplay_blocked">Blocca audio e video</string>
     <!-- Summary of delete browsing data on quit preference if it is set to on -->
     <string name="delete_browsing_data_quit_on">Attivato</string>
     <!-- Summary of delete browsing data on quit preference if it is set to off -->

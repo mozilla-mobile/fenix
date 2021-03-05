@@ -17,6 +17,7 @@ import org.mozilla.fenix.GleanMetrics.AboutPage
 import org.mozilla.fenix.GleanMetrics.Addons
 import org.mozilla.fenix.GleanMetrics.AppTheme
 import org.mozilla.fenix.GleanMetrics.Autoplay
+import org.mozilla.fenix.GleanMetrics.BannerOpenInApp
 import org.mozilla.fenix.GleanMetrics.BookmarksManagement
 import org.mozilla.fenix.GleanMetrics.BrowserSearch
 import org.mozilla.fenix.GleanMetrics.Collections
@@ -235,6 +236,9 @@ private val Event.wrapper: EventWrapper<*>?
         )
         is Event.UriOpened -> EventWrapper<NoExtraKeys>(
             { Events.totalUriCount.add(1) }
+        )
+        is Event.NormalAndPrivateUriOpened -> EventWrapper<NoExtraKeys>(
+            { Events.normalAndPrivateUriCount.add(1) }
         )
         is Event.ErrorPageVisited -> EventWrapper(
             { ErrorPage.visitedError.record(it) },
@@ -722,6 +726,28 @@ private val Event.wrapper: EventWrapper<*>?
         )
         is Event.ContextMenuShareTapped -> EventWrapper<NoExtraKeys>(
             { ContextualMenu.shareTapped.record(it) }
+        )
+        Event.HaveOpenTabs -> EventWrapper<NoExtraKeys>(
+            { Metrics.hasOpenTabs.set(true) }
+        )
+        Event.HaveNoOpenTabs -> EventWrapper<NoExtraKeys>(
+            { Metrics.hasOpenTabs.set(false) }
+        )
+        Event.HaveTopSites -> EventWrapper<NoExtraKeys>(
+            { Metrics.hasTopSites.set(true) }
+        )
+        Event.HaveNoTopSites -> EventWrapper<NoExtraKeys>(
+            { Metrics.hasTopSites.set(false) }
+        )
+
+        is Event.BannerOpenInAppDisplayed -> EventWrapper<NoExtraKeys>(
+            { BannerOpenInApp.displayed.record(it) }
+        )
+        is Event.BannerOpenInAppDismissed -> EventWrapper<NoExtraKeys>(
+            { BannerOpenInApp.dismissed.record(it) }
+        )
+        is Event.BannerOpenInAppGoToSettings -> EventWrapper<NoExtraKeys>(
+            { BannerOpenInApp.goToSettings.record(it) }
         )
 
         // Don't record other events in Glean:

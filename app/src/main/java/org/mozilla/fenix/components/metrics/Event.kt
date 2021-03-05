@@ -52,6 +52,7 @@ sealed class Event {
     object CustomTabsActionTapped : Event()
     object CustomTabsMenuOpened : Event()
     object UriOpened : Event()
+    object NormalAndPrivateUriOpened : Event()
     object SyncAuthOpened : Event()
     object SyncAuthClosed : Event()
     object SyncAuthSignUp : Event()
@@ -198,11 +199,20 @@ sealed class Event {
     object SyncedTabOpened : Event()
 
     object RecentlyClosedTabsOpened : Event()
+    object HaveOpenTabs : Event()
+    object HaveNoOpenTabs : Event()
+
+    object BannerOpenInAppDisplayed : Event()
+    object BannerOpenInAppDismissed : Event()
+    object BannerOpenInAppGoToSettings : Event()
 
     object ContextMenuCopyTapped : Event()
     object ContextMenuSearchTapped : Event()
     object ContextMenuSelectAllTapped : Event()
     object ContextMenuShareTapped : Event()
+
+    object HaveTopSites : Event()
+    object HaveNoTopSites : Event()
 
     // Interaction events with extras
 

@@ -69,7 +69,7 @@
 
     <!-- Private mode shortcut "contextual feature recommendation" (CFR) -->
     <!-- Text for the main message -->
-    <string name="cfr_message">Додайте ярлик для відкриття приватних вкладок з головного екрану.</string>
+    <string name="cfr_message">Додайте ярлик для відкриття приватних вкладок з головного екрана.</string>
     <!-- Text for the positive button -->
     <string name="cfr_pos_button_text">Додати ярлик</string>
     <!-- Text for the negative button -->
@@ -218,6 +218,11 @@
     <string name="search_suggestions_onboarding_text">%s відправлятиме все, що ви вводите в адресному рядку, вашому типовому провайдеру пошуку.</string>
     <!-- Search suggestion onboarding hint Learn more link text -->
     <string name="search_suggestions_onboarding_learn_more_link">Докладніше</string>
+
+    <!-- Search engine suggestion title text. The first parameter is the name of teh suggested engine-->
+    <string name="search_engine_suggestions_title">Пошук в %s</string>
+    <!-- Search engine suggestion description text -->
+    <string name="search_engine_suggestions_description">Пошук безпосередньо з панелі адреси</string>
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
@@ -522,7 +527,7 @@
     <!-- Option in Library to open Sessions page -->
     <string name="library_sessions">Сеанси</string>
     <!-- Option in Library to open Screenshots page -->
-    <string name="library_screenshots">Знімки екрану</string>
+    <string name="library_screenshots">Знімки екрана</string>
     <!-- Option in Library to open Downloads page -->
     <string name="library_downloads">Завантаження</string>
     <!-- Option in library to open Bookmarks page -->
@@ -893,16 +898,22 @@
     <string name="tracking_protection_on">Увімкнено</string>
     <!-- Summary of tracking protection preference if tracking protection is set to off -->
     <string name="tracking_protection_off">Вимкнено</string>
-    <!-- Label that indicates that all video and audio autoplay is allowed -->
+    <!-- Label for global setting that indicates that all video and audio autoplay is allowed -->
     <string name="preference_option_autoplay_allowed2">Дозволити аудіо та відео</string>
+    <!-- Label for site specific setting that indicates that all video and audio autoplay is allowed -->
+    <string name="quick_setting_option_autoplay_allowed">Дозволити аудіо та відео</string>
     <!-- Label that indicates that video and audio autoplay is only allowed over Wi-Fi -->
     <string name="preference_option_autoplay_allowed_wifi_only2">Блокувати аудіо та відео лише для стільникових даних</string>
     <!-- Subtext that explains 'autoplay on Wi-Fi only' option -->
     <string name="preference_option_autoplay_allowed_wifi_subtext">Аудіо та відео відтворюватимуться через Wi-Fi</string>
-    <!-- Label that indicates that video autoplay is allowed, but audio autoplay is blocked -->
+    <!-- Label for global setting that indicates that video autoplay is allowed, but audio autoplay is blocked -->
     <string name="preference_option_autoplay_block_audio2">Блокувати лише аудіо</string>
-    <!-- Label that indicates that all video and audio autoplay is blocked -->
+    <!-- Label for site specific setting that indicates that video autoplay is allowed, but audio autoplay is blocked -->
+    <string name="quick_setting_option_autoplay_block_audio">Блокувати лише аудіо</string>
+    <!-- Label for global setting that indicates that all video and audio autoplay is blocked -->
     <string name="preference_option_autoplay_blocked3">Блокувати аудіо та відео</string>
+    <!-- Label for site specific setting that indicates that all video and audio autoplay is blocked -->
+    <string name="quick_setting_option_autoplay_blocked">Блокувати аудіо та відео</string>
     <!-- Summary of delete browsing data on quit preference if it is set to on -->
     <string name="delete_browsing_data_quit_on">Увімкнено</string>
     <!-- Summary of delete browsing data on quit preference if it is set to off -->
