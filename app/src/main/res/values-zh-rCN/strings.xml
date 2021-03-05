@@ -58,7 +58,7 @@
     <string name="tab_tray_multiselect_selected_content_description">已选择</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
-    <string name="about_content">%1$s 由 @fork-maintainers 倾力打造。</string>
+    <string name="about_content">%1$s 由 Mozilla 倾力打造。</string>
 
     <!-- Private Browsing -->
     <!-- Title for private session option -->
@@ -134,6 +134,8 @@
     <string name="browser_menu_edit_bookmark">编辑书签</string>
     <!-- Browser menu button that opens the addon manager -->
     <string name="browser_menu_add_ons">附加组件</string>
+    <!-- Browser menu button that opens the addon extensions manager -->
+    <string name="browser_menu_extensions">扩展</string>
     <!-- Text displayed when there are no add-ons to be shown -->
     <string name="no_add_ons">这里没有附加组件</string>
     <!-- Browser menu button that sends a user to help articles -->
@@ -374,7 +376,7 @@
 
     <!-- Add-on Installation from AMO-->
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
-    <string name="addon_not_supported_error">附加组件不支持</string>
+    <string name="addon_not_supported_error">不支持的附加组件</string>
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is already installed -->
     <string name="addon_already_installed">附加组件已安装</string>
 
@@ -531,7 +533,7 @@
     <!-- Option in Library to open Screenshots page -->
     <string name="library_screenshots">屏幕截图</string>
     <!-- Option in Library to open Downloads page -->
-    <string name="library_downloads">下载项</string>
+    <string name="library_downloads">下载</string>
     <!-- Option in library to open Bookmarks page -->
     <string name="library_bookmarks">书签</string>
     <!-- Option in library to open Desktop Bookmarks root page -->
@@ -544,6 +546,10 @@
     <string name="library_desktop_bookmarks_unfiled">其他书签</string>
     <!-- Option in Library to open History page -->
     <string name="library_history">历史</string>
+    <!-- Option in Library to open a new tab -->
+    <string name="library_new_tab">新建标签页</string>
+    <!-- Option in Library to find text in page -->
+    <string name="library_find_in_page">在页面中查找</string>
     <!-- Option in Library to open Synced Tabs page -->
     <string name="library_synced_tabs">受同步的标签页</string>
     <!-- Option in Library to open Reading List -->
@@ -738,11 +744,11 @@
 
     <!-- Downloads -->
     <!-- Text for the button to clear all downloads -->
-    <string name="download_delete_all">删除下载项</string>
+    <string name="download_delete_all">清除下载记录</string>
     <!-- Text for the dialog to confirm clearing all downloads -->
-    <string name="download_delete_all_dialog">您确定要清除下载项吗？</string>
+    <string name="download_delete_all_dialog">您确定要清除下载记录吗？</string>
     <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
-    <string name="download_delete_multiple_items_snackbar_1">下载项已移除</string>
+    <string name="download_delete_multiple_items_snackbar_1">下载记录已清除</string>
     <!-- Text for the snackbar to confirm that a single download item has been removed. The first parameter is the name of the download item. -->
     <string name="download_delete_single_item_snackbar">已移除 %1$s</string>
     <!-- Text shown when no download exists -->
@@ -1128,6 +1134,8 @@
     <string name="preferences_delete_browsing_data_cached_files_subtitle">释放存储空间</string>
     <!-- Title for the site permissions item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_site_permissions">站点权限</string>
+    <!-- Title for the downloads item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_downloads">下载项</string>
     <!-- Text for the button to delete browsing data -->
     <string name="preferences_delete_browsing_data_button">删除浏览数据</string>
 
@@ -1251,7 +1259,7 @@
     <string name="onboarding_privacy_notice_header">您的隐私权</string>
     <!-- text for the privacy notice onboarding card description
     The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_privacy_notice_description">%s 的设计目标是让您可以控制要在网上披露哪些内容，以及告诉我们哪些信息。</string>
+    <string name="onboarding_privacy_notice_description2">%s 的设计旨在让您可以控制要在网上披露哪些内容，以及告诉我们哪些信息。</string>
     <!-- Text for the button to read the privacy notice -->
     <string name="onboarding_privacy_notice_read_button">阅读我们的隐私声明</string>
 
@@ -1411,7 +1419,7 @@
     <!-- About page link text to open support link -->
     <string name="about_support">用户支持</string>
     <!-- About page link text to list of past crashes (like about:crashes on desktop) -->
-    <string name="about_crashes">崩溃</string>
+    <string name="about_crashes">崩溃信息</string>
     <!-- About page link text to open privacy notice link -->
     <string name="about_privacy_notice">隐私声明</string>
     <!-- About page link text to open know your rights link -->

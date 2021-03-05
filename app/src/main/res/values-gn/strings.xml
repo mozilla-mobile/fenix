@@ -132,6 +132,8 @@
     <string name="browser_menu_edit_bookmark">Techaukaha mbosako’i</string>
     <!-- Browser menu button that opens the addon manager -->
     <string name="browser_menu_add_ons">Moĩmbaha</string>
+    <!-- Browser menu button that opens the addon extensions manager -->
+    <string name="browser_menu_extensions">Jepysokue</string>
     <!-- Text displayed when there are no add-ons to be shown -->
     <string name="no_add_ons">Ndaipóri moĩmbaha ápe</string>
     <!-- Browser menu button that sends a user to help articles -->
@@ -534,6 +536,10 @@
     <string name="library_desktop_bookmarks_unfiled">Ambue techaukahakuéra</string>
     <!-- Option in Library to open History page -->
     <string name="library_history">Tembiasakue</string>
+    <!-- Option in Library to open a new tab -->
+    <string name="library_new_tab">Tendayke pyahu</string>
+    <!-- Option in Library to find text in page -->
+    <string name="library_find_in_page">Eheka kuatiaroguépe</string>
     <!-- Option in Library to open Synced Tabs page -->
     <string name="library_synced_tabs">Tendayke mbojuehepyre</string>
     <!-- Option in Library to open Reading List -->
@@ -1107,6 +1113,8 @@
     <string name="preferences_delete_browsing_data_cached_files_subtitle">Emopotĩ pa’ũ ñembyatyha</string>
     <!-- Title for the site permissions item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_site_permissions">Tenda ñemoneĩ</string>
+    <!-- Title for the downloads item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_downloads">Ñemboguejy</string>
     <!-- Text for the button to delete browsing data -->
     <string name="preferences_delete_browsing_data_button">Emboguete kundahára mba’ekuaarã</string>
     <!-- Title for the Delete browsing data on quit preference -->
@@ -1230,8 +1238,7 @@
 
     <!-- text for the privacy notice onboarding card description
     The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_privacy_notice_description">Romoha’ãngáma %s eñangareko hag̃ua umi emoherakuãva rehe
-        ñandutípe ha emoherakuã orendive.</string>
+    <string name="onboarding_privacy_notice_description2">Rojapo %s eñangareko hag̃ua emoherakuãva ñandutípe rehe ha emoherakuãva orendive avei.</string>
     <!-- Text for the button to read the privacy notice -->
     <string name="onboarding_privacy_notice_read_button">Emoñe’ẽ ore marandu’i ñemigua</string>
 

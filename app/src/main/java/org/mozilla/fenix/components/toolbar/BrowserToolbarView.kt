@@ -24,6 +24,7 @@ import kotlinx.android.synthetic.main.component_browser_top_toolbar.view.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import mozilla.components.browser.domains.autocomplete.ShippedDomainsProvider
 import mozilla.components.browser.session.Session
+import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.browser.state.state.ExternalAppType
 import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.browser.toolbar.behavior.BrowserToolbarBottomBehavior
@@ -98,7 +99,6 @@ class BrowserToolbarView(
         }
 
         with(container.context) {
-            val sessionManager = components.core.sessionManager
             val isPinningSupported = components.useCases.webAppUseCases.isPinningSupported()
 
             if (toolbarPosition == ToolbarPosition.TOP) {
@@ -157,7 +157,10 @@ class BrowserToolbarView(
                     hint = secondaryTextColor,
                     separator = separatorColor,
                     trackingProtection = primaryTextColor,
-                    permissionHighlights = primaryTextColor
+                    highlight = ContextCompat.getColor(
+                        context,
+                        R.color.whats_new_notification_color
+                    )
                 )
 
                 display.hint = context.getString(R.string.search_hint)
@@ -211,7 +214,7 @@ class BrowserToolbarView(
                     components.core.historyStorage,
                     lifecycleOwner,
                     sessionId = null,
-                    isPrivate = sessionManager.selectedSession?.private ?: false,
+                    isPrivate = components.core.store.state.selectedTab?.content?.private ?: false,
                     interactor = interactor,
                     engine = components.core.engine
                 )

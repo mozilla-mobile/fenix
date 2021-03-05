@@ -131,6 +131,8 @@
     <string name="browser_menu_edit_bookmark">Upraviť záložku</string>
     <!-- Browser menu button that opens the addon manager -->
     <string name="browser_menu_add_ons">Doplnky</string>
+    <!-- Browser menu button that opens the addon extensions manager -->
+    <string name="browser_menu_extensions">Rozšírenia</string>
     <!-- Text displayed when there are no add-ons to be shown -->
     <string name="no_add_ons">Nemáte žiadne doplnky</string>
     <!-- Browser menu button that sends a user to help articles -->
@@ -535,6 +537,10 @@
     <string name="library_desktop_bookmarks_unfiled">Ostatné záložky</string>
     <!-- Option in Library to open History page -->
     <string name="library_history">História</string>
+    <!-- Option in Library to open a new tab -->
+    <string name="library_new_tab">Nová karta</string>
+    <!-- Option in Library to find text in page -->
+    <string name="library_find_in_page">Hľadať na stránke</string>
     <!-- Option in Library to open Synced Tabs page -->
     <string name="library_synced_tabs">Synchronizované karty</string>
     <!-- Option in Library to open Reading List -->
@@ -1097,6 +1103,8 @@
     <string name="preferences_delete_browsing_data_cached_files_subtitle">Uvolní priestor v zariadení</string>
     <!-- Title for the site permissions item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_site_permissions">Povolenia stránok</string>
+    <!-- Title for the downloads item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_downloads">Prevzaté súbory</string>
     <!-- Text for the button to delete browsing data -->
     <string name="preferences_delete_browsing_data_button">Odstrániť údaje o prehliadaní</string>
 
@@ -1219,9 +1227,7 @@
     <string name="onboarding_privacy_notice_header">Vaše súkromie</string>
     <!-- text for the privacy notice onboarding card description
     The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_privacy_notice_description">%s vám dáva kontrolu nad tým, čo zdieľate
-        na internete a čo zdieľate s nami.
-    </string>
+    <string name="onboarding_privacy_notice_description2">%s vám dáva kontrolu nad tým, čo zdieľate na internete a čo zdieľate s nami.</string>
     <!-- Text for the button to read the privacy notice -->
     <string name="onboarding_privacy_notice_read_button">Prečítajte si naše zásady ochrany súkromia</string>
 

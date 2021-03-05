@@ -37,8 +37,12 @@ android {
         testInstrumentationRunnerArguments clearPackageData: 'true'
         resValue "bool", "IS_DEBUG", "false"
         buildConfigField "boolean", "USE_RELEASE_VERSIONING", "false"
-        buildConfigField "String", "AMO_ACCOUNT", "\"mozilla\""
-        buildConfigField "String", "AMO_COLLECTION", "\"7dfae8669acc4312a65e8ba5553036\""
+        // This should be the "public" base URL of AMO.
+        buildConfigField "String", "AMO_BASE_URL", "\"https://addons.mozilla.org\""
+        buildConfigField "String", "AMO_COLLECTION_NAME", "\"7dfae8669acc4312a65e8ba5553036\""
+        buildConfigField "String", "AMO_COLLECTION_USER", "\"mozilla\""
+        // This should be the base URL used to call the AMO API.
+        buildConfigField "String", "AMO_SERVER_URL", "\"https://services.addons.mozilla.org\""
         def deepLinkSchemeValue = "fenix-dev"
         buildConfigField "String", "DEEP_LINK_SCHEME", "\"$deepLinkSchemeValue\""
         manifestPlaceholders = [
@@ -131,8 +135,8 @@ android {
             def deepLinkSchemeValue = "iceraven-debug"
             buildConfigField "String", "DEEP_LINK_SCHEME", "\"$deepLinkSchemeValue\""
             // Use custom default allowed addon list
-            buildConfigField "String", "AMO_ACCOUNT", "\"16201230\""
-            buildConfigField "String", "AMO_COLLECTION", "\"What-I-want-on-Fenix\""
+            buildConfigField "String", "AMO_COLLECTION_USER", "\"16201230\""
+            buildConfigField "String", "AMO_COLLECTION_NAME", "\"What-I-want-on-Fenix\""
         }
         forkRelease releaseTemplate >> {
             buildConfigField "boolean", "USE_RELEASE_VERSIONING", "true"
@@ -143,8 +147,8 @@ android {
                     "deepLinkScheme": deepLinkSchemeValue
             ]
             // Use custom default allowed addon list
-            buildConfigField "String", "AMO_ACCOUNT", "\"16201230\""
-            buildConfigField "String", "AMO_COLLECTION", "\"What-I-want-on-Fenix\""
+            buildConfigField "String", "AMO_COLLECTION_USER", "\"16201230\""
+            buildConfigField "String", "AMO_COLLECTION_NAME", "\"What-I-want-on-Fenix\""
         }
         
     }
@@ -466,6 +470,7 @@ dependencies {
     implementation Deps.mozilla_browser_menu2
     implementation Deps.mozilla_browser_search
     implementation Deps.mozilla_browser_session
+    implementation Deps.mozilla_browser_session_storage
     implementation Deps.mozilla_browser_state
     implementation Deps.mozilla_browser_storage_sync
     implementation Deps.mozilla_browser_tabstray

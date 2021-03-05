@@ -13,10 +13,12 @@ import kotlinx.coroutines.GlobalScope.coroutineContext
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.runBlockingTest
 import mozilla.components.browser.icons.BrowserIcons
+import mozilla.components.browser.state.action.EngineAction
 import mozilla.components.browser.state.action.RecentlyClosedAction
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.Engine
 import mozilla.components.concept.storage.HistoryStorage
+import mozilla.components.feature.downloads.DownloadsUseCases
 import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.support.test.rule.MainCoroutineRule
 import org.junit.After
@@ -34,6 +36,7 @@ class DefaultDeleteBrowsingDataControllerTest {
     val coroutinesTestRule = MainCoroutineRule(testDispatcher)
 
     private var removeAllTabs: TabsUseCases.RemoveAllTabsUseCase = mockk(relaxed = true)
+    private var removeAllDownloads: DownloadsUseCases.RemoveAllDownloadsUseCase = mockk(relaxed = true)
     private var historyStorage: HistoryStorage = mockk(relaxed = true)
     private var permissionStorage: PermissionStorage = mockk(relaxed = true)
     private var store: BrowserStore = mockk(relaxed = true)
@@ -45,6 +48,7 @@ class DefaultDeleteBrowsingDataControllerTest {
     fun setup() {
         controller = DefaultDeleteBrowsingDataController(
             removeAllTabs = removeAllTabs,
+            removeAllDownloads = removeAllDownloads,
             historyStorage = historyStorage,
             store = store,
             permissionStorage = permissionStorage,
@@ -77,6 +81,7 @@ class DefaultDeleteBrowsingDataControllerTest {
         coVerify {
             engine.clearData(Engine.BrowsingData.select(Engine.BrowsingData.DOM_STORAGES))
             historyStorage.deleteEverything()
+            store.dispatch(EngineAction.PurgeHistoryAction)
             store.dispatch(RecentlyClosedAction.RemoveAllClosedTabAction)
             iconsStorage.clear()
         }
@@ -113,6 +118,16 @@ class DefaultDeleteBrowsingDataControllerTest {
         coVerify {
             engine.clearData(Engine.BrowsingData.select(Engine.BrowsingData.ALL_SITE_SETTINGS))
             permissionStorage.deleteAllSitePermissions()
+        }
+    }
+
+    @Test
+    fun deleteDownloads() = runBlockingTest {
+
+        controller.deleteDownloads()
+
+        verify {
+            removeAllDownloads.invoke()
         }
     }
 }

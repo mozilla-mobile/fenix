@@ -63,7 +63,6 @@ class QuickSettingsSheetDialogFragment : AppCompatDialogFragment() {
         val context = requireContext()
         val components = context.components
         val rootView = inflateRootView(container)
-
         quickSettingsStore = QuickSettingsFragmentStore.createStore(
             context = context,
             websiteUrl = args.url,
@@ -71,15 +70,17 @@ class QuickSettingsSheetDialogFragment : AppCompatDialogFragment() {
             isSecured = args.isSecured,
             permissions = args.sitePermissions,
             settings = components.settings,
-            certificateName = args.certificateName
+            certificateName = args.certificateName,
+            permissionHighlights = args.permissionHighlights
         )
 
         quickSettingsController = DefaultQuickSettingsController(
             context = context,
             quickSettingsStore = quickSettingsStore,
+            browserStore = components.core.store,
             ioScope = viewLifecycleOwner.lifecycleScope + Dispatchers.IO,
             navController = findNavController(),
-            session = components.core.sessionManager.findSessionById(args.sessionId),
+            sessionId = args.sessionId,
             sitePermissions = args.sitePermissions,
             settings = components.settings,
             permissionStorage = components.core.permissionStorage,

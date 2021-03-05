@@ -326,7 +326,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         closeTabsAfterOneDay -> ONE_DAY_MS
         closeTabsAfterOneWeek -> ONE_WEEK_MS
         closeTabsAfterOneMonth -> ONE_MONTH_MS
-        else -> System.currentTimeMillis()
+        else -> Long.MAX_VALUE
     }
 
     enum class TabView {
@@ -466,6 +466,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         true
     )
 
+    val blockRedirectTrackersInCustomTrackingProtection by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_tracking_protection_redirect_trackers),
+        true
+    )
+
     val shouldUseFixedTopToolbar: Boolean
         get() {
             return touchExplorationIsEnabled || switchServiceIsEnabled
@@ -524,6 +529,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
 
     var deleteSitePermissions by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_delete_permissions_now),
+        default = true
+    )
+
+    var deleteDownloads by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_delete_downloads_now),
         default = true
     )
 
@@ -842,7 +852,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
 
     fun incrementNumTimesPrivateModeOpened() = numTimesPrivateModeOpened.increment()
 
-    private var showedPrivateModeContextualFeatureRecommender by booleanPreference(
+    var showedPrivateModeContextualFeatureRecommender by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_showed_private_mode_cfr),
         default = false
     )
@@ -851,7 +861,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         appContext.getPreferenceKey(R.string.pref_key_private_mode_opened)
     )
 
-    val showPrivateModeCfr: Boolean
+    val shouldShowPrivateModeCfr: Boolean
         get() {
             if (!canShowCfr) return false
             val focusInstalled = MozillaProductDetector
@@ -859,13 +869,12 @@ class Settings(private val appContext: Context) : PreferencesHolder {
                 .contains(MozillaProductDetector.MozillaProducts.FOCUS.productName)
 
             val showCondition = if (focusInstalled) {
-                numTimesPrivateModeOpened.value == CFR_COUNT_CONDITION_FOCUS_INSTALLED
+                numTimesPrivateModeOpened.value >= CFR_COUNT_CONDITION_FOCUS_INSTALLED
             } else {
-                numTimesPrivateModeOpened.value == CFR_COUNT_CONDITION_FOCUS_NOT_INSTALLED
+                numTimesPrivateModeOpened.value >= CFR_COUNT_CONDITION_FOCUS_NOT_INSTALLED
             }
 
             if (showCondition && !showedPrivateModeContextualFeatureRecommender) {
-                showedPrivateModeContextualFeatureRecommender = true
                 return true
             }
 
@@ -918,12 +927,12 @@ class Settings(private val appContext: Context) : PreferencesHolder {
 
     val customAddonsAccount by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_addons_custom_account),
-        BuildConfig.AMO_ACCOUNT
+        BuildConfig.AMO_COLLECTION_USER
     )
 
     val customAddonsCollection by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_addons_custom_collection),
-        BuildConfig.AMO_COLLECTION
+        BuildConfig.AMO_COLLECTION_NAME
     )
 
     var mobileBookmarksSize by intPreference(

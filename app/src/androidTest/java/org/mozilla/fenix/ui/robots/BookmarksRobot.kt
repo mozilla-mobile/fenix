@@ -23,12 +23,12 @@ import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withParent
 import androidx.test.espresso.matcher.ViewMatchers.withText
-import androidx.test.uiautomator.By
-import androidx.test.uiautomator.Until
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.uiautomator.By
 import androidx.test.uiautomator.By.res
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
+import androidx.test.uiautomator.Until
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.containsString
 import org.junit.Assert.assertEquals
@@ -52,7 +52,7 @@ class BookmarksRobot {
         assertBookmarksView()
     }
 
-    fun verifyEmptyBookmarksList() = assertEmptyBookmarksList()
+    fun verifyDeleteMultipleBookmarksSnackBar() = assertSnackBarText("Bookmarks deleted")
 
     fun verifyBookmarkFavicon(forUrl: Uri) = assertBookmarkFavicon(forUrl)
 
@@ -119,6 +119,13 @@ class BookmarksRobot {
 
     fun verifyDeleteFolderConfirmationMessage() = assertDeleteFolderConfirmationMessage()
 
+    fun cancelFolderDeletion() {
+        onView(withText("CANCEL"))
+            .inRoot(RootMatchers.isDialog())
+            .check(matches(isDisplayed()))
+            .click()
+    }
+
     fun createFolder(name: String) {
         clickAddFolderButton()
         addNewFolderName(name)
@@ -132,8 +139,6 @@ class BookmarksRobot {
         )
         addFolderButton().click()
     }
-
-    fun clickdeleteBookmarkButton() = deleteBookmarkButton().click()
 
     fun addNewFolderName(name: String) {
         addFolderTitleField()
@@ -167,7 +172,7 @@ class BookmarksRobot {
 
     fun saveEditBookmark() {
         saveBookmarkButton().click()
-        mDevice.findObject(UiSelector().resourceId("R.id.bookmark_list")).waitForExists(waitingTime)
+        mDevice.findObject(UiSelector().resourceId("org.mozilla.fenix.debug:id/bookmark_list")).waitForExists(waitingTime)
     }
 
     fun clickParentFolderSelector() = bookmarkFolderSelector().click()
@@ -189,31 +194,6 @@ class BookmarksRobot {
 
             HomeScreenRobot().interact()
             return Transition()
-        }
-
-        fun goBackToBrowser(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
-            closeButton().click()
-
-            BrowserRobot().interact()
-            return BrowserRobot.Transition()
-        }
-
-        fun confirmBookmarkFolderDeletionAndGoBackToBrowser(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
-            onView(withText(R.string.delete_browsing_data_prompt_allow))
-                .inRoot(RootMatchers.isDialog())
-                .check(matches(isDisplayed()))
-                .click()
-
-            BrowserRobot().interact()
-            return BrowserRobot.Transition()
-        }
-
-        fun openThreeDotMenu(interact: ThreeDotMenuBookmarksRobot.() -> Unit): ThreeDotMenuBookmarksRobot.Transition {
-            mDevice.waitNotNull(Until.findObject(res("org.mozilla.fenix.debug:id/overflow_menu")))
-            threeDotMenu().click()
-
-            ThreeDotMenuBookmarksRobot().interact()
-            return ThreeDotMenuBookmarksRobot.Transition()
         }
 
         fun openThreeDotMenu(bookmarkTitle: String, interact: ThreeDotMenuBookmarksRobot.() -> Unit): ThreeDotMenuBookmarksRobot.Transition {
@@ -260,15 +240,13 @@ private fun bookmarkFavicon(url: String) = onView(
     )
 )
 
-private fun bookmarkURL(url: String) = onView(allOf(withId(R.id.url), withText(url)))
+private fun bookmarkURL(url: String) = onView(allOf(withId(R.id.url), withText(containsString(url))))
 
 private fun addFolderButton() = onView(withId(R.id.add_bookmark_folder))
 
 private fun addFolderTitleField() = onView(withId(R.id.bookmarkNameEdit))
 
 private fun saveFolderButton() = onView(withId(R.id.confirm_add_folder_button))
-
-private fun deleteBookmarkButton() = onView(withId(R.id.delete_bookmark_button))
 
 private fun threeDotMenu(bookmarkUrl: Uri) = onView(
     allOf(
@@ -283,8 +261,6 @@ private fun threeDotMenu(bookmarkTitle: String) = onView(
         withParent(withChild(allOf(withId(R.id.title), withText(bookmarkTitle))))
     )
 )
-
-private fun threeDotMenu() = onView(withId(R.id.overflow_menu)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
 
 private fun snackBarText() = onView(withId(R.id.snackbar_text))
 
@@ -307,7 +283,7 @@ private fun assertBookmarksView() {
             withParent(withId(R.id.navigationToolbar))
         )
     )
-        .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+        .check(matches(isDisplayed()))
 }
 
 private fun assertEmptyBookmarksList() =
@@ -322,7 +298,7 @@ private fun assertBookmarkFavicon(forUrl: Uri) = bookmarkFavicon(forUrl.toString
 )
 
 private fun assertBookmarkURL(expectedURL: String) =
-    mDevice.findObject(UiSelector().text(expectedURL))
+    bookmarkURL(expectedURL).check(matches(isDisplayed()))
 
 private fun assertFolderTitle(expectedTitle: String) =
     onView(withText(expectedTitle)).check(matches(isDisplayed()))
@@ -360,13 +336,13 @@ private fun assertKeyboardVisibility(isExpectedToBeVisible: Boolean) =
     )
 
 private fun assertShareOverlay() =
-    onView(withId(R.id.shareWrapper)).check(matches(ViewMatchers.isDisplayed()))
+    onView(withId(R.id.shareWrapper)).check(matches(isDisplayed()))
 
 private fun assertShareBookmarkTitle() =
-    onView(withId(R.id.share_tab_title)).check(matches(ViewMatchers.isDisplayed()))
+    onView(withId(R.id.share_tab_title)).check(matches(isDisplayed()))
 
 private fun assertShareBookmarkFavicon() =
-    onView(withId(R.id.share_tab_favicon)).check(matches(ViewMatchers.isDisplayed()))
+    onView(withId(R.id.share_tab_favicon)).check(matches(isDisplayed()))
 
 private fun assertShareBookmarkUrl() =
     onView(withId(R.id.share_tab_url)).check(matches(isDisplayed()))

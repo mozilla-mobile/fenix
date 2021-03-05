@@ -128,6 +128,8 @@
     <string name="browser_menu_edit_bookmark">Уреди забелешку</string>
     <!-- Browser menu button that opens the addon manager -->
     <string name="browser_menu_add_ons">Додаци</string>
+    <!-- Browser menu button that opens the addon extensions manager -->
+    <string name="browser_menu_extensions">Проширења</string>
     <!-- Text displayed when there are no add-ons to be shown -->
     <string name="no_add_ons">Овде нема додатака</string>
     <!-- Browser menu button that sends a user to help articles -->
@@ -529,6 +531,10 @@
     <string name="library_desktop_bookmarks_unfiled">Остале забелешке</string>
     <!-- Option in Library to open History page -->
     <string name="library_history">Историјат</string>
+    <!-- Option in Library to open a new tab -->
+    <string name="library_new_tab">Нови језичак</string>
+    <!-- Option in Library to find text in page -->
+    <string name="library_find_in_page">Пронађи на страници</string>
     <!-- Option in Library to open Synced Tabs page -->
     <string name="library_synced_tabs">Синхронизовани језичци</string>
     <!-- Option in Library to open Reading List -->
@@ -1088,6 +1094,8 @@
     <string name="preferences_delete_browsing_data_cached_files_subtitle">Ослобађа простор у складишту</string>
     <!-- Title for the site permissions item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_site_permissions">Дозволе на страници</string>
+    <!-- Title for the downloads item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_downloads">Преузимања</string>
     <!-- Text for the button to delete browsing data -->
     <string name="preferences_delete_browsing_data_button">Обриши податке прегледања</string>
     <!-- Title for the Delete browsing data on quit preference -->
@@ -1212,8 +1220,7 @@
     <string name="onboarding_privacy_notice_header">Ваша приватност</string>
     <!-- text for the privacy notice onboarding card description
     The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_privacy_notice_description">Дизајнирали смо %s тако да имате пуну контролу над оним што делите
-        на мрежи и што делите са нама.</string>
+    <string name="onboarding_privacy_notice_description2">Дизајнирали смо %s тако да имате пуну контролу над оним што делите на мрежи и са нама.</string>
     <!-- Text for the button to read the privacy notice -->
     <string name="onboarding_privacy_notice_read_button">Прочитајте наше обавештење о приватности</string>
 

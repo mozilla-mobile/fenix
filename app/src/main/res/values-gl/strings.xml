@@ -161,6 +161,12 @@
     <!-- Browser menu button shown in custom tabs that opens the current tab in Fenix
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
     <string name="browser_menu_open_in_fenix">Aberto en %1$s</string>
+    <!-- Browser menu text shown in custom tabs to indicate this is a Fenix tab
+        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
+    <string name="browser_menu_powered_by">CREADO POR %1$s</string>
+    <!-- Browser menu text shown in custom tabs to indicate this is a Fenix tab
+        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
+    <string name="browser_menu_powered_by2">Creado por %1$s</string>
     <!-- Browser menu button to put the current page in reader mode -->
     <string name="browser_menu_read">Modo de lectura</string>
     <!-- Browser menu button content description to close reader mode and return the user to the regular browser -->
@@ -971,6 +977,8 @@
     <string name="notification_pbm_action_open">Abrir</string>
     <!-- Notification action to delete all current private browsing sessions AND switch to Fenix (bring it to the foreground) -->
     <string name="notification_pbm_action_delete_and_open">Eliminar e abrir</string>
+    <!-- Name of the "Powered by Fenix" notification channel. Displayed in the "App notifications" system settings for the app -->
+    <string name="notification_powered_by_channel_name">Creado por</string>
     <!-- Text shown in snackbar when user deletes a collection -->
     <string name="snackbar_collection_deleted">Colección eliminada</string>
     <!-- Text shown in snackbar when user renames a collection -->
@@ -1066,6 +1074,8 @@
     <string name="preferences_delete_browsing_data_cached_files_subtitle">Libera espazo de almacenamento</string>
     <!-- Title for the site permissions item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_site_permissions">Permisos do sitio</string>
+    <!-- Title for the downloads item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_downloads">Descargas</string>
     <!-- Text for the button to delete browsing data -->
     <string name="preferences_delete_browsing_data_button">Eliminar datos de navegación</string>
     <!-- Title for the Delete browsing data on quit preference -->
@@ -1188,6 +1198,11 @@
     <!-- text for the privacy notice onboarding card header -->
     <string name="onboarding_privacy_notice_header">A súa privacidade</string>
 
+    <!-- text for the privacy notice onboarding card description
+    The first parameter is the name of the app (e.g. Firefox Preview) -->
+    <string name="onboarding_privacy_notice_description2">Deseñamos %s para darlle o control sobre o que comparte en liña e o que comparte con nós.</string>
+    <!-- Text for the button to read the privacy notice -->
+    <string name="onboarding_privacy_notice_read_button">Lea a nosa política de privacidade</string>
     <!-- Content description (not visible, for screen readers etc.): Close onboarding screen -->
     <string name="onboarding_close">Pechar</string>
 
@@ -1479,6 +1494,10 @@
     <string name="logins_warning_dialog_set_up_now">Configurar agora</string>
     <!-- Title of PIN verification dialog to direct users to re-enter their device credentials to access their logins -->
     <string name="logins_biometric_prompt_message_pin">Desbloquear o dispositivo</string>
+    <!-- Title for Accessibility Force Enable Zoom Preference -->
+    <string name="preference_accessibility_force_enable_zoom">Zoom sobre todos os sitios</string>
+    <!-- Summary for Accessibility Force Enable Zoom Preference -->
+    <string name="preference_accessibility_force_enable_zoom_summary">Activa o permiso para toque e aumento, incluso en sitios web que bloquean este xesto.</string>
     <!-- Saved logins sorting strategy menu item -by name- (if selected, it will sort saved logins alphabetically) -->
     <string name="saved_logins_sort_strategy_alphabetically">Nome (A-Z)</string>
     <!-- Saved logins sorting strategy menu item -by last used- (if selected, it will sort saved logins by last used) -->
@@ -1513,4 +1532,151 @@
     <!-- Accessibility description for the form in which details about the custom search engine are entered -->
     <string name="search_add_custom_engine_form_description">Detalles do motor de busca personalizado</string>
 
-    </resources>
+    <!-- Accessibility description for the 'Learn more' link -->
+    <string name="search_add_custom_engine_learn_more_description">Ligazón a Obter máis información…</string>
+
+    <!-- Text shown when a user leaves the name field empty -->
+    <string name="search_add_custom_engine_error_empty_name">Introduza o nome do buscador</string>
+    <!-- Text shown when a user tries to add a search engine that already exists -->
+    <string name="search_add_custom_engine_error_existing_name">Xa existe un motor de busca co nome «%s».</string>
+    <!-- Text shown when a user leaves the search string field empty -->
+    <string name="search_add_custom_engine_error_empty_search_string">Introduza unha cadea de busca</string>
+    <!-- Text shown when a user leaves out the required template string -->
+    <string name="search_add_custom_engine_error_missing_template">Comprobe que a cadea de busca coincida co formato do exemplo</string>
+    <!-- Text shown when we aren't able to validate the custom search query. The first parameter is the url of the custom search engine -->
+    <string name="search_add_custom_engine_error_cannot_reach">Erro ao conectar con «%s»</string>
+    <!-- Text shown when a user creates a new search engine -->
+    <string name="search_add_custom_engine_success_message">Creouse %s</string>
+    <!-- Text shown when a user successfully edits a custom search engine -->
+    <string name="search_edit_custom_engine_success_message">Gardouse %s</string>
+    <!-- Text shown when a user successfully deletes a custom search engine -->
+    <string name="search_delete_search_engine_success_message">Eliminouse %s</string>
+
+    <!-- Title text shown for the migration screen to the new browser. Placeholder replaced with app name -->
+    <string name="migration_title">Benvida a un %s completamente novo</string>
+    <!-- Description text followed by a list of things migrating (e.g. Bookmarks, History). Placeholder replaced with app name-->
+    <string name="migration_description">Agarda un navegador completamente redeseñado, cun mellor rendemento e funcións para axudar a facer máis en liña.\\n Agarde mentres actualizamos %s con isto:</string>
+    <!-- Text on the disabled button while in progress. Placeholder replaced with app name -->
+    <string name="migration_updating_app_button_text">Actualizando %s…</string>
+    <!-- Text on the enabled button. Placeholder replaced with app name-->
+    <string name="migration_update_app_button">Iniciar %s</string>
+    <!-- Accessibility description text for a completed migration item -->
+    <string name="migration_icon_description">Migración completada</string>
+    <!--Text on list of migrated items (e.g. Settings, History, etc.)-->
+    <string name="migration_text_passwords">Contrasinais</string>
+
+    <!-- Heading for the instructions to allow a permission -->
+    <string name="phone_feature_blocked_intro">Para o permitir:</string>
+
+    <!-- First step for the allowing a permission -->
+    <string name="phone_feature_blocked_step_settings">1. Vaia a Configuración de Android</string>
+    <!-- Second step for the allowing a permission -->
+    <string name="phone_feature_blocked_step_permissions"><![CDATA[2. Toque <b>Permisos</b>]]></string>
+    <!-- Third step for the allowing a permission (Fore example: Camera) -->
+    <string name="phone_feature_blocked_step_feature"><![CDATA[3. Cambie <b>%1$s</b> a ACTIVADO]]></string>
+
+    <!-- Label that indicates a site is using a secure connection -->
+    <string name="quick_settings_sheet_secure_connection">Conexión segura</string>
+    <!-- Label that indicates a site is using a insecure connection -->
+    <string name="quick_settings_sheet_insecure_connection">Conexión insegura</string>
+    <!-- Confirmation message for a dialog confirming if the user wants to delete all the permissions for all sites-->
+    <string name="confirm_clear_permissions_on_all_sites">Confirma que desexa limpar todos os permisos de todos os sitios?</string>
+    <!-- Confirmation message for a dialog confirming if the user wants to delete all the permissions for a site-->
+    <string name="confirm_clear_permissions_site">Confirma que desexa limpar todos os permisos deste sitio?</string>
+    <!-- Confirmation message for a dialog confirming if the user wants to set default value a permission for a site-->
+    <string name="confirm_clear_permission_site">Confirma que desexa limpar este permiso deste sitio?</string>
+    <!-- label shown when there are not site exceptions to show in the site exception settings -->
+    <string name="no_site_exceptions">Non hai excepcións no sitio</string>
+    <!-- Label for the Pocket default top site -->
+    <string name="pocket_top_articles">Artigos principais</string>
+    <!-- Bookmark deletion confirmation -->
+    <string name="bookmark_deletion_confirmation">Confirma que quere eliminar este marcador?</string>
+    <!-- Browser menu button that adds a top site to the home fragment -->
+    <string name="browser_menu_add_to_top_sites">Engadido aos sitios principais</string>
+    <!-- text shown before the issuer name to indicate who its verified by, parameter is the name of
+     the certificate authority that verified the ticket-->
+    <string name="certificate_info_verified_by">Comprobado por: %1$s</string>
+    <!-- Login overflow menu delete button -->
+    <string name="login_menu_delete_button">Eliminar</string>
+    <!-- Login overflow menu edit button -->
+    <string name="login_menu_edit_button">Editar</string>
+    <!-- Message in delete confirmation dialog for logins -->
+    <string name="login_deletion_confirmation">Confirma que desexa eliminar este inicio de sesión?</string>
+    <!-- Positive action of a dialog asking to delete  -->
+    <string name="dialog_delete_positive">Eliminar</string>
+    <!--  The saved login options menu description. -->
+    <string name="login_options_menu">Opcións de inicio de sesión</string>
+    <!--  The editable text field for a login's web address. -->
+    <string name="saved_login_hostname_description">O campo de texto editábel para o enderezo web do inicio de sesión.</string>
+    <!--  The editable text field for a login's username. -->
+    <string name="saved_login_username_description">O campo de texto editábel para o nome de usuario do inicio de sesión.</string>
+    <!--  The editable text field for a login's password. -->
+    <string name="saved_login_password_description">O campo de texto editábel para o contrasinal do inicio de sesión.</string>
+    <!--  The button description to save changes to an edited login. -->
+    <string name="save_changes_to_login">Gardar os cambios para iniciar sesión.</string>
+    <!--  The button description to discard changes to an edited login. -->
+    <string name="discard_changes">Descartar cambios</string>
+    <!--  The page title for editing a saved login. -->
+    <string name="edit">Editar</string>
+    <!--  The error message in edit login view when password field is blank. -->
+    <string name="saved_login_password_required">Contrasinal obrigatorio</string>
+    <!-- Voice search button content description  -->
+    <string name="voice_search_content_description">Busca por voz</string>
+    <!-- Voice search prompt description displayed after the user presses the voice search button -->
+    <string name="voice_search_explainer">Fale agora</string>
+    <!--  The error message in edit login view when a duplicate username exists. -->
+    <string name="saved_login_duplicate">Xa existe un inicio de sesión con ese nome</string>
+
+    <!-- Synced Tabs -->
+    <!-- Text displayed to ask user to connect another device as no devices found with account -->
+    <string name="synced_tabs_connect_another_device">Conectar outro dispositivo.</string>
+    <!-- Text displayed asking user to re-authenticate -->
+    <string name="synced_tabs_reauth">Autentíquese de novo.</string>
+    <!-- Text displayed when user has disabled tab syncing in Firefox Sync Account -->
+    <string name="synced_tabs_enable_tab_syncing">Active a sincronización de lapelas.</string>
+    <!-- Text displayed when user has no tabs that have been synced -->
+    <string name="synced_tabs_no_tabs">Non ten ningunha lapela aberta en Firefox nos outros dispositivos.</string>
+    <!-- Text displayed in the synced tabs screen when a user is not signed in to Firefox Sync describing Synced Tabs -->
+    <string name="synced_tabs_sign_in_message">Ver unha lista das lapelas dos outros dispositivos.</string>
+    <!-- Text displayed on a button in the synced tabs screen to link users to sign in when a user is not signed in to Firefox Sync -->
+    <string name="synced_tabs_sign_in_button">Inicie sesión para sincronizar</string>
+    <!-- The text displayed when a synced device has no tabs to show in the list of Synced Tabs. -->
+    <string name="synced_tabs_no_open_tabs">Non hai lapelas abertas</string>
+
+    <!-- Top Sites -->
+    <!-- Title text displayed in the dialog when top sites limit is reached. -->
+    <string name="top_sites_max_limit_title">Acadouse o límite superior do sitio</string>
+    <!-- Content description text displayed in the dialog when top sites limit is reached. -->
+    <string name="top_sites_max_limit_content_2">Para engadir un novo sitio primario, retire outro. Toque e manteña a presión sobre o sitio e seleccione retiralo.</string>
+    <!-- Confirmation dialog button text when top sites limit is reached. -->
+    <string name="top_sites_max_limit_confirmation_button">De acordo, entendín</string>
+    <!-- Label for the show most visited sites preference -->
+    <string name="top_sites_toggle_top_frecent_sites">Amosar os sitios máis visitados</string>
+	<!-- Title text displayed in the rename top site dialog. -->
+	<string name="top_sites_rename_dialog_title">Nome</string>
+	<!-- Hint for renaming title of a top site -->
+	<string name="top_site_name_hint">Nome do sitio primario</string>
+	<!-- Button caption to confirm the renaming of the top site. -->
+	<string name="top_sites_rename_dialog_ok">De acordo</string>
+	<!-- Dialog button text for canceling the rename top site prompt. -->
+	<string name="top_sites_rename_dialog_cancel">Cancelar</string>
+
+    <!-- Content description for close button in collection placeholder. -->
+    <string name="remove_home_collection_placeholder_content_description">Retirar</string>
+
+    <!-- Deprecated: text for the firefox account onboarding card header
+    The first parameter is the name of the app (e.g. Firefox Preview) -->
+    <string name="onboarding_firefox_account_header">Obter o máximo de %s.</string>
+
+    <!-- Content description radio buttons with a link to more information -->
+    <string name="radio_preference_info_content_description">Premer para obter máis detalles</string>
+
+    <!-- Deprecated: No Open Tabs Message Header -->
+    <string name="no_collections_header1">Colla as cousas que lle importan</string>
+    <!-- Deprecated: Label to describe what collections are to a new user without any collections -->
+    <string name="no_collections_description1">Agrupar xuntas as buscar semellantes, sitios e lapelas para ter un acceso rápido despois.</string>
+    <!-- Deprecated: text for the firefox account onboarding card header when we detect you're already signed in to -->
+    <string name="onboarding_firefox_account_auto_signin_header_2">Iniciou sesión como %s noutro navegador Firefox neste móbil. Confirma que quere iniciar sesión con esta conta?</string>
+    <!-- Deprecated: Describes the add to homescreen functionality -->
+    <string name="add_to_homescreen_description">Pode engadir doadamente este sitio web á pantalla principal do seu móbil para ter acceso instantáneo e navegar máis rápido cunha experiencia de tipo app.</string>
+</resources>
