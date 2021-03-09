@@ -97,7 +97,6 @@ class ContextMenusTest {
         }
     }
 
-    @Ignore("Test failures: https://github.com/mozilla-mobile/fenix/issues/12473")
     @Test
     fun verifyContextCopyLink() {
         val pageLinks =
@@ -112,9 +111,15 @@ class ContextMenusTest {
             verifyLinkContextMenuItems(genericURL.url)
             clickContextCopyLink()
             verifySnackBarText("Link copied to clipboard")
+            mDevice.pressBack()
         }.openNavigationToolbar {
         }.visitLinkFromClipboard {
-            verifyUrl(genericURL.url.toString())
+            mDevice.waitForIdle()
+            verifyPagContent("Page content: 3")
+        }.openTabDrawer {
+            verifyNormalModeSelected()
+            verifyExistingOpenTabs("Test_Page_4")
+            verifyExistingOpenTabs("Test_Page_3")
         }
     }
 

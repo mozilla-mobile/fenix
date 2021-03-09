@@ -69,6 +69,13 @@ class BrowserRobot {
         }
     }
 
+    fun verifyPagContent(pageContentTitle: String) {
+        mDevice.findObject(UiSelector().text("org.mozilla.fenix.debug:id/engineView"))
+            .waitForExists(waitingTime)
+        assertTrue(mDevice.findObject(UiSelector().text(pageContentTitle))
+            .waitForExists(waitingTime))
+    }
+
     fun verifyHelpUrl() {
         verifyUrl("support.mozilla.org/")
     }

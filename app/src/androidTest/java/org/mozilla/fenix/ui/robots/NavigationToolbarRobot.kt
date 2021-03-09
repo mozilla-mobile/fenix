@@ -196,21 +196,21 @@ class NavigationToolbarRobot {
         }
 
         fun visitLinkFromClipboard(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
-            mDevice.waitNotNull(
-                Until.findObject(By.res("org.mozilla.fenix.debug:id/mozac_browser_toolbar_clear_view")),
-                waitingTime
-            )
-            clearAddressBar().click()
+            mDevice.findObject(UiSelector().resourceId("$packageName:id/search_wrapper"))
+                .waitForExists(waitingTime)
+            mDevice.findObject(UiSelector().resourceId("$packageName:id/fill_link_divider"))
+                .waitForExists(waitingTime)
+            mDevice.findObject(UiSelector().resourceId("$packageName:id/fill_link_from_clipboard"))
+                .waitForExists(waitingTime)
+            mDevice.findObject(UiSelector().resourceId("$packageName:id/link_icon"))
+                .waitForExists(waitingTime)
+            mDevice.findObject(UiSelector().resourceId("$packageName:id/clipboard_title"))
+                .waitForExists(waitingTime)
+            mDevice.findObject(UiSelector().resourceId("$packageName:id/clipboard_url"))
+                .waitForExists(waitingTime)
+            mDevice.findObject(UiSelector().resourceId("$packageName:id/pill_wrapper"))
+                .waitForExists(waitingTime)
 
-            mDevice.waitNotNull(
-                Until.findObject(By.res("org.mozilla.fenix.debug:id/clipboard_title")),
-                waitingTime
-            )
-
-            mDevice.waitNotNull(
-                Until.findObject(By.res("org.mozilla.fenix.debug:id/clipboard_url")),
-                waitingTime
-            )
             fillLinkButton().click()
 
             BrowserRobot().interact()
@@ -314,7 +314,7 @@ private fun urlBar() = onView(withId(R.id.toolbar))
 private fun awesomeBar() = onView(withId(R.id.mozac_browser_toolbar_edit_url_view))
 private fun threeDotButton() = onView(withId(R.id.mozac_browser_toolbar_menu))
 private fun tabTrayButton() = onView(withId(R.id.tab_button))
-private fun fillLinkButton() = onView(withId(R.id.fill_link_from_clipboard))
+private fun fillLinkButton() = onView(withId(R.id.clipboard_title))
 private fun clearAddressBar() = onView(withId(R.id.mozac_browser_toolbar_clear_view))
 private fun goBackButton() = mDevice.pressBack()
 private fun readerViewToggle() =
