@@ -155,7 +155,6 @@ class ContextMenusTest {
     }
 
     @Test
-    @Ignore("Disabled – Google Keyboard Clipboard overlay blocks the address bar: https://github.com/mozilla-mobile/fenix/issues/10586")
     fun verifyContextCopyImageLocation() {
         val pageLinks =
             TestAssetHelper.getGenericAsset(mockWebServer, 4)
