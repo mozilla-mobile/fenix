@@ -324,10 +324,20 @@ class BrowserRobot {
 
     fun longClickMatchingText(expectedText: String) {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        mDevice.waitNotNull(Until.findObject(text(expectedText)), waitingTime)
+        mDevice.findObject(UiSelector().text("Test_Page_4")).waitForExists(waitingTime)
+        assertTrue(mDevice.findObject(UiSelector().text("Link 1"))
+            .waitForExists(waitingTime))
+        assertTrue(mDevice.findObject(UiSelector().text("Link 2"))
+            .waitForExists(waitingTime))
+        assertTrue(mDevice.findObject(UiSelector().text("Link 3"))
+            .waitForExists(waitingTime))
+        assertTrue(mDevice.findObject(UiSelector().text("test_link_image"))
+            .waitForExists(waitingTime))
+        assertTrue(mDevice.findObject(UiSelector().text("test_no_link_image"))
+            .waitForExists(waitingTime))
 
-        val element = mDevice.findObject(text(expectedText))
-        element.click(LONG_CLICK_DURATION)
+        val element = mDevice.findObject(UiSelector().text(expectedText))
+        element.longClick()
     }
 
     fun snackBarButtonClick(expectedText: String) {

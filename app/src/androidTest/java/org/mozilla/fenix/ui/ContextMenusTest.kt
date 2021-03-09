@@ -134,7 +134,6 @@ class ContextMenusTest {
         }
     }
 
-    @Ignore("Intermittent: https://github.com/mozilla-mobile/fenix/issues/12367")
     @Test
     fun verifyContextOpenImageNewTab() {
         val pageLinks =
@@ -176,7 +175,6 @@ class ContextMenusTest {
     }
 
     @Test
-    @Ignore("Intermittent: https://github.com/mozilla-mobile/fenix/issues/12309")
     fun verifyContextSaveImage() {
         val pageLinks =
             TestAssetHelper.getGenericAsset(mockWebServer, 4)
@@ -201,7 +199,6 @@ class ContextMenusTest {
     }
 
     @Test
-    @Ignore("Intermittent: https://github.com/mozilla-mobile/fenix/issues/12309")
     fun verifyContextMixedVariations() {
         val pageLinks =
             TestAssetHelper.getGenericAsset(mockWebServer, 4)
