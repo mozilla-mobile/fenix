@@ -5,7 +5,6 @@
 package org.mozilla.fenix.components.toolbar
 
 import androidx.navigation.NavController
-import androidx.navigation.NavDirections
 import androidx.navigation.NavOptions
 import io.mockk.MockKAnnotations
 import io.mockk.Runs
@@ -14,7 +13,6 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.just
 import io.mockk.mockk
-import io.mockk.mockkStatic
 import io.mockk.slot
 import io.mockk.verify
 import mozilla.components.browser.state.action.BrowserAction
@@ -101,9 +99,6 @@ class DefaultBrowserToolbarControllerTest {
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
-
-
-
         every { activity.components.useCases.sessionUseCases } returns sessionUseCases
         every { activity.components.useCases.searchUseCases } returns searchUseCases
         every { activity.components.useCases.topSitesUseCase } returns topSitesUseCase

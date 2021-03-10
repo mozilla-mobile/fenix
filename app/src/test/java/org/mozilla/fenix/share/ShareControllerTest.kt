@@ -14,7 +14,6 @@ import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
-import io.mockk.mockkStatic
 import io.mockk.slot
 import io.mockk.spyk
 import io.mockk.verify
@@ -257,8 +256,6 @@ class ShareControllerTest {
 
     @Test
     fun `handleSignIn should navigate to the Sync Fragment and dismiss this one`() {
-
-
         controller.handleSignIn()
 
         verifyOrder {

@@ -44,13 +44,13 @@ class FenixRobolectricTestApplication : FenixApplication(), TestLifecycleApplica
         setTheme(R.style.NormalTheme)
     }
 
-    //Beforetest runs before the test class is initialized
+    // Beforetest runs before the test class is initialized
     override fun beforeTest(method: Method?) {}
 
-    //Prepare test runs once the test class  and all its member variables (mock and
-    //non mocks) are initialized. Setting up our mocks here makes more sense since
-    //everything is available to us.
-    //This method runs after application.onCreate
+    // Prepare test runs once the test class  and all its member variables (mock and
+    // non mocks) are initialized. Setting up our mocks here makes more sense since
+    // everything is available to us.
+    // This method runs after application.onCreate
     override fun prepareTest(test: Any?) {
         mockkObject(NavGraphProvider)
         every { NavGraphProvider.blockForNavGraphInflation(any()) } returns Unit

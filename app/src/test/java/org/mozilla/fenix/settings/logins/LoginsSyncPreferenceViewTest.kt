@@ -3,7 +3,6 @@ package org.mozilla.fenix.settings.logins
 import android.content.Context
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
-import androidx.navigation.NavDirections
 import androidx.preference.Preference
 import io.mockk.CapturingSlot
 import io.mockk.MockKAnnotations
@@ -13,7 +12,6 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkConstructor
-import io.mockk.mockkStatic
 import io.mockk.slot
 import io.mockk.unmockkConstructor
 import io.mockk.verify
@@ -43,9 +41,6 @@ class LoginsSyncPreferenceViewTest {
     fun setup() {
         MockKAnnotations.init(this)
         mockkConstructor(SyncEnginesStorage::class)
-
-
-
         accountObserver = slot()
         clickListener = slot()
         val context = mockk<Context> {

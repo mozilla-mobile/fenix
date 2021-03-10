@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.NavController
-import androidx.navigation.NavDirections
 import androidx.navigation.Navigation
 import io.mockk.Runs
 import io.mockk.every
@@ -68,8 +67,6 @@ class OnboardingManualSignInViewHolderTest {
 
     @Test
     fun `navigate on click`() {
-
-
         OnboardingManualSignInViewHolder(view)
         view.fxa_sign_in_button.performClick()
 

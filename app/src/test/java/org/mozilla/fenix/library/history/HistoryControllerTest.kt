@@ -197,8 +197,6 @@ class HistoryControllerTest {
     @Test
     @Suppress("UNCHECKED_CAST")
     fun onShareItem() {
-
-
         controller.handleShare(historyItem)
 
         verify {

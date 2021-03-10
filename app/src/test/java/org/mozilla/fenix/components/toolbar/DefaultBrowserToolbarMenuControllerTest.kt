@@ -6,7 +6,6 @@ package org.mozilla.fenix.components.toolbar
 
 import android.content.Intent
 import androidx.navigation.NavController
-import androidx.navigation.NavDirections
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import io.mockk.MockKAnnotations
 import io.mockk.Runs
@@ -102,9 +101,6 @@ class DefaultBrowserToolbarMenuControllerTest {
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
-
-
-
         mockkStatic(
             "org.mozilla.fenix.settings.deletebrowsingdata.DeleteAndQuitKt"
         )

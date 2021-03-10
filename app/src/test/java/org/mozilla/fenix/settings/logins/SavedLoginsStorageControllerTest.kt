@@ -6,14 +6,12 @@ package org.mozilla.fenix.settings.logins
 
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
-import androidx.navigation.NavDirections
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
-import io.mockk.mockkStatic
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.TestCoroutineScope
@@ -123,9 +121,6 @@ class SavedLoginsStorageControllerTest {
 
         coEvery { passwordsStorage.get(any()) } returns oldLogin
         coEvery { passwordsStorage.update(any()) } just Runs
-
-
-
         controller.save(oldLogin.guid!!, "newUsername", "newPassword")
 
         val directions =

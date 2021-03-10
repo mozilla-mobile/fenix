@@ -15,7 +15,6 @@ import io.mockk.spyk
 import io.mockk.verify
 import io.mockk.MockKAnnotations
 import io.mockk.impl.annotations.MockK
-import io.mockk.mockkStatic
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
@@ -88,9 +87,6 @@ class DefaultQuickSettingsControllerTest {
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
-
-
-
         tab = createTab("https://mozilla.org")
         browserStore = BrowserStore(BrowserState(tabs = listOf(tab)))
         sitePermissions = SitePermissions(origin = "", savedAt = 123)

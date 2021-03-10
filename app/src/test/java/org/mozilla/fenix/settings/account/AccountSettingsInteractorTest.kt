@@ -10,7 +10,6 @@ import io.mockk.Called
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
-import io.mockk.mockkStatic
 import io.mockk.verify
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -23,7 +22,7 @@ import org.mozilla.fenix.perf.NavGraphProvider
 class AccountSettingsInteractorTest {
 
     @Before
-    fun setup(){
+    fun setup() {
         mockkObject(NavGraphProvider)
         every { NavGraphProvider.blockForNavGraphInflation(any()) } returns Unit
     }
@@ -84,9 +83,6 @@ class AccountSettingsInteractorTest {
     fun onSignOut() {
         val navController: NavController = mockk(relaxed = true)
         every { navController.currentDestination } returns NavDestination("").apply { id = R.id.accountSettingsFragment }
-
-
-
         val interactor = AccountSettingsInteractor(
             navController,
             mockk(),
