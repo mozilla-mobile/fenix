@@ -69,7 +69,6 @@ class DefaultToolbarMenuTest {
             context = context,
             store = store,
             hasAccountProblem = false,
-            shouldReverseItems = false,
             onItemTapped = { },
             lifecycleOwner = lifecycleOwner,
             bookmarksStorage = bookmarksStorage,

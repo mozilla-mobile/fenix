@@ -57,7 +57,6 @@ class DefaultToolbarMenu(
     private val context: Context,
     private val store: BrowserStore,
     hasAccountProblem: Boolean = false,
-    shouldReverseItems: Boolean,
     private val onItemTapped: (ToolbarMenu.Item) -> Unit = {},
     private val lifecycleOwner: LifecycleOwner,
     private val bookmarksStorage: BookmarksStorage,
@@ -66,9 +65,14 @@ class DefaultToolbarMenu(
 
     private var isCurrentUrlBookmarked = false
     private var isBookmarkedJob: Job? = null
-    private val isTopToolbarSelected = shouldReverseItems
+
+    private val shouldUseBottomToolbar = context.settings().shouldUseBottomToolbar
+
     private val selectedSession: TabSessionState?
         get() = store.state.selectedTab
+
+    private val primaryTextColor =
+        ThemeManager.resolveAttribute(R.attr.primaryText, context)
 
     override val menuBuilder by lazy {
         WebExtensionBrowserMenuBuilder(
@@ -78,13 +82,13 @@ class DefaultToolbarMenu(
                 } else {
                     oldCoreMenuItems
                 },
-            endOfMenuAlwaysVisible = !shouldReverseItems,
+            endOfMenuAlwaysVisible = !shouldUseBottomToolbar,
             store = store,
-            webExtIconTintColorResource = primaryTextColor(),
+            webExtIconTintColorResource = primaryTextColor,
             onAddonsManagerTapped = {
                 onItemTapped.invoke(ToolbarMenu.Item.AddonsManager)
             },
-            appendExtensionSubMenuAtStart = !shouldReverseItems
+            appendExtensionSubMenuAtStart = !shouldUseBottomToolbar
         )
     }
 
@@ -92,7 +96,7 @@ class DefaultToolbarMenu(
         val back = BrowserMenuItemToolbar.TwoStateButton(
             primaryImageResource = mozilla.components.ui.icons.R.drawable.mozac_ic_back,
             primaryContentDescription = context.getString(R.string.browser_menu_back),
-            primaryImageTintResource = primaryTextColor(),
+            primaryImageTintResource = primaryTextColor,
             isInPrimaryState = {
                 selectedSession?.content?.canGoBack ?: true
             },
@@ -106,7 +110,7 @@ class DefaultToolbarMenu(
         val forward = BrowserMenuItemToolbar.TwoStateButton(
             primaryImageResource = mozilla.components.ui.icons.R.drawable.mozac_ic_forward,
             primaryContentDescription = context.getString(R.string.browser_menu_forward),
-            primaryImageTintResource = primaryTextColor(),
+            primaryImageTintResource = primaryTextColor,
             isInPrimaryState = {
                 selectedSession?.content?.canGoForward ?: true
             },
@@ -120,13 +124,13 @@ class DefaultToolbarMenu(
         val refresh = BrowserMenuItemToolbar.TwoStateButton(
             primaryImageResource = mozilla.components.ui.icons.R.drawable.mozac_ic_refresh,
             primaryContentDescription = context.getString(R.string.browser_menu_refresh),
-            primaryImageTintResource = primaryTextColor(),
+            primaryImageTintResource = primaryTextColor,
             isInPrimaryState = {
                 selectedSession?.content?.loading == false
             },
             secondaryImageResource = mozilla.components.ui.icons.R.drawable.mozac_ic_stop,
             secondaryContentDescription = context.getString(R.string.browser_menu_stop),
-            secondaryImageTintResource = primaryTextColor(),
+            secondaryImageTintResource = primaryTextColor,
             disableInSecondaryState = false,
             longClickListener = { onItemTapped.invoke(ToolbarMenu.Item.Reload(bypassCache = true)) }
         ) {
@@ -140,7 +144,7 @@ class DefaultToolbarMenu(
         val share = BrowserMenuItemToolbar.Button(
             imageResource = R.drawable.ic_share_filled,
             contentDescription = context.getString(R.string.browser_menu_share),
-            iconTintColorResource = primaryTextColor(),
+            iconTintColorResource = primaryTextColor,
             listener = {
                 onItemTapped.invoke(ToolbarMenu.Item.Share)
             }
@@ -154,14 +158,14 @@ class DefaultToolbarMenu(
             val bookmark = BrowserMenuItemToolbar.TwoStateButton(
                 primaryImageResource = R.drawable.ic_bookmark_filled,
                 primaryContentDescription = context.getString(R.string.browser_menu_edit_bookmark),
-                primaryImageTintResource = primaryTextColor(),
+                primaryImageTintResource = primaryTextColor,
                 // TwoStateButton.isInPrimaryState must be synchronous, and checking bookmark state is
                 // relatively slow. The best we can do here is periodically compute and cache a new "is
                 // bookmarked" state, and use that whenever the menu has been opened.
                 isInPrimaryState = { isCurrentUrlBookmarked },
                 secondaryImageResource = R.drawable.ic_bookmark_outline,
                 secondaryContentDescription = context.getString(R.string.browser_menu_bookmark),
-                secondaryImageTintResource = primaryTextColor(),
+                secondaryImageTintResource = primaryTextColor,
                 disableInSecondaryState = false
             ) {
                 handleBookmarkItemTapped()
@@ -196,10 +200,10 @@ class DefaultToolbarMenu(
             startImageResource = R.drawable.ic_settings,
             iconTintColorResource = if (hasAccountProblem)
                 ThemeManager.resolveAttribute(R.attr.syncDisconnected, context) else
-                primaryTextColor(),
+                primaryTextColor,
             textColorResource = if (hasAccountProblem)
                 ThemeManager.resolveAttribute(R.attr.primaryText, context) else
-                primaryTextColor(),
+                primaryTextColor,
             highlight = BrowserMenuHighlight.HighPriority(
                 endImageResource = R.drawable.ic_sync_disconnected,
                 backgroundTint = context.getColorFromAttr(R.attr.syncDisconnectedBackground),
@@ -223,7 +227,7 @@ class DefaultToolbarMenu(
         val addToTopSites = BrowserMenuImageText(
             label = context.getString(R.string.browser_menu_add_to_top_sites),
             imageResource = R.drawable.ic_top_sites,
-            iconTintColorResource = primaryTextColor()
+            iconTintColorResource = primaryTextColor
         ) {
             onItemTapped.invoke(ToolbarMenu.Item.AddToTopSites)
         }
@@ -231,7 +235,7 @@ class DefaultToolbarMenu(
         val addToHomescreen = BrowserMenuImageText(
             label = context.getString(R.string.browser_menu_add_to_homescreen),
             imageResource = R.drawable.ic_add_to_homescreen,
-            iconTintColorResource = primaryTextColor()
+            iconTintColorResource = primaryTextColor
         ) {
             onItemTapped.invoke(ToolbarMenu.Item.AddToHomeScreen)
         }
@@ -239,7 +243,7 @@ class DefaultToolbarMenu(
         val syncedTabs = BrowserMenuImageText(
             label = context.getString(R.string.synced_tabs),
             imageResource = R.drawable.ic_synced_tabs,
-            iconTintColorResource = primaryTextColor()
+            iconTintColorResource = primaryTextColor
         ) {
             onItemTapped.invoke(ToolbarMenu.Item.SyncedTabs)
         }
@@ -247,7 +251,7 @@ class DefaultToolbarMenu(
         val installToHomescreen = BrowserMenuHighlightableItem(
             label = context.getString(R.string.browser_menu_install_on_homescreen),
             startImageResource = R.drawable.ic_add_to_homescreen,
-            iconTintColorResource = primaryTextColor(),
+            iconTintColorResource = primaryTextColor,
             highlight = BrowserMenuHighlight.LowPriority(
                 label = context.getString(R.string.browser_menu_install_on_homescreen),
                 notificationTint = getColor(context, R.color.whats_new_notification_color)
@@ -262,7 +266,7 @@ class DefaultToolbarMenu(
         val findInPage = BrowserMenuImageText(
             label = context.getString(R.string.browser_menu_find_in_page),
             imageResource = R.drawable.mozac_ic_search,
-            iconTintColorResource = primaryTextColor()
+            iconTintColorResource = primaryTextColor
         ) {
             onItemTapped.invoke(ToolbarMenu.Item.FindInPage)
         }
@@ -274,7 +278,7 @@ class DefaultToolbarMenu(
         val saveToCollection = BrowserMenuImageText(
             label = context.getString(R.string.browser_menu_save_to_collection_2),
             imageResource = R.drawable.ic_tab_collection,
-            iconTintColorResource = primaryTextColor()
+            iconTintColorResource = primaryTextColor
         ) {
             onItemTapped.invoke(ToolbarMenu.Item.SaveToCollection)
         }
@@ -282,7 +286,7 @@ class DefaultToolbarMenu(
         val deleteDataOnQuit = BrowserMenuImageText(
             label = context.getString(R.string.delete_browsing_data_on_quit_action),
             imageResource = R.drawable.ic_exit,
-            iconTintColorResource = primaryTextColor()
+            iconTintColorResource = primaryTextColor
         ) {
             onItemTapped.invoke(ToolbarMenu.Item.Quit)
         }
@@ -290,7 +294,7 @@ class DefaultToolbarMenu(
         val readerAppearance = BrowserMenuImageText(
             label = context.getString(R.string.browser_menu_read_appearance),
             imageResource = R.drawable.ic_readermode_appearance,
-            iconTintColorResource = primaryTextColor()
+            iconTintColorResource = primaryTextColor
         ) {
             onItemTapped.invoke(ToolbarMenu.Item.CustomizeReaderView)
         }
@@ -298,7 +302,7 @@ class DefaultToolbarMenu(
         val openInApp = BrowserMenuHighlightableItem(
             label = context.getString(R.string.browser_menu_open_app_link),
             startImageResource = R.drawable.ic_open_in_app,
-            iconTintColorResource = primaryTextColor(),
+            iconTintColorResource = primaryTextColor,
             highlight = BrowserMenuHighlight.LowPriority(
                 label = context.getString(R.string.browser_menu_open_app_link),
                 notificationTint = getColor(context, R.color.whats_new_notification_color)
@@ -311,7 +315,7 @@ class DefaultToolbarMenu(
         val historyItem = BrowserMenuImageText(
             context.getString(R.string.library_history),
             R.drawable.ic_history,
-            primaryTextColor()
+            primaryTextColor
         ) {
             onItemTapped.invoke(ToolbarMenu.Item.History)
         }
@@ -319,7 +323,7 @@ class DefaultToolbarMenu(
         val bookmarksItem = BrowserMenuImageText(
             context.getString(R.string.library_bookmarks),
             R.drawable.ic_bookmark_filled,
-            primaryTextColor()
+            primaryTextColor
         ) {
             onItemTapped.invoke(ToolbarMenu.Item.Bookmarks)
         }
@@ -327,7 +331,7 @@ class DefaultToolbarMenu(
         val downloadsItem = BrowserMenuImageText(
             context.getString(R.string.library_downloads),
             R.drawable.ic_download,
-            primaryTextColor()
+            primaryTextColor
         ) {
             onItemTapped.invoke(ToolbarMenu.Item.Downloads)
         }
@@ -359,10 +363,10 @@ class DefaultToolbarMenu(
             menuToolbar
         )
 
-        if (shouldReverseItems) {
-            menuItems.reversed()
-        } else {
+        if (shouldUseBottomToolbar) {
             menuItems
+        } else {
+            menuItems.reversed()
         }
     }
 
@@ -476,7 +480,7 @@ class DefaultToolbarMenu(
             iconTintColorResource = primaryTextColor(),
             textColorResource = if (hasAccountProblem)
                 ThemeManager.resolveAttribute(R.attr.primaryText, context) else
-                primaryTextColor(),
+                primaryTextColor,
             highlight = BrowserMenuHighlight.HighPriority(
                 endImageResource = R.drawable.ic_sync_disconnected,
                 backgroundTint = context.getColorFromAttr(R.attr.syncDisconnectedBackground),
@@ -506,7 +510,7 @@ class DefaultToolbarMenu(
 
         val menuItems =
             listOfNotNull(
-                if (isTopToolbarSelected) menuToolbar else null,
+                if (shouldUseBottomToolbar) null else menuToolbar,
                 newTabItem,
                 BrowserMenuDivider(),
                 bookmarksItem,
@@ -526,8 +530,8 @@ class DefaultToolbarMenu(
                 saveToCollectionItem,
                 BrowserMenuDivider(),
                 settingsItem,
-                if (isTopToolbarSelected) null else BrowserMenuDivider(),
-                if (isTopToolbarSelected) null else menuToolbar
+                if (shouldUseBottomToolbar) BrowserMenuDivider() else null,
+                if (shouldUseBottomToolbar) menuToolbar else null
             )
 
         menuItems

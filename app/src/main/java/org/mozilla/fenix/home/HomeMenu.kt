@@ -13,15 +13,18 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import mozilla.components.browser.menu.BrowserMenuBuilder
 import mozilla.components.browser.menu.BrowserMenuHighlight
+import mozilla.components.browser.menu.BrowserMenuItem
 import mozilla.components.browser.menu.ext.getHighlight
 import mozilla.components.browser.menu.item.BrowserMenuDivider
 import mozilla.components.browser.menu.item.BrowserMenuHighlightableItem
 import mozilla.components.browser.menu.item.BrowserMenuImageSwitch
 import mozilla.components.browser.menu.item.BrowserMenuImageText
+import mozilla.components.browser.menu.item.BrowserMenuItemToolbar
 import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.support.ktx.android.content.getColorFromAttr
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.experiments.ExperimentBranch
 import org.mozilla.fenix.experiments.Experiments
@@ -39,6 +42,9 @@ class HomeMenu(
     private val onHighlightPresent: (BrowserMenuHighlight) -> Unit = {}
 ) {
     sealed class Item {
+        data class Back(val viewHistory: Boolean) : Item()
+        data class Forward(val viewHistory: Boolean) : Item()
+
         object Bookmarks : Item()
         object History : Item()
         object Downloads : Item()
@@ -90,6 +96,34 @@ class HomeMenu(
         ) {
             onItemTapped.invoke(Item.Quit)
         }
+    }
+
+    val menuToolbar by lazy {
+        val back = BrowserMenuItemToolbar.TwoStateButton(
+            primaryImageResource = mozilla.components.ui.icons.R.drawable.mozac_ic_back,
+            primaryContentDescription = context.getString(R.string.browser_menu_back),
+            primaryImageTintResource = primaryTextColor,
+            isInPrimaryState = { true },
+            secondaryImageTintResource = ThemeManager.resolveAttribute(R.attr.disabled, context),
+            disableInSecondaryState = true,
+            longClickListener = { onItemTapped.invoke(Item.Back(viewHistory = true)) }
+        ) {
+            onItemTapped.invoke(Item.Back(viewHistory = false))
+        }
+
+        val forward = BrowserMenuItemToolbar.TwoStateButton(
+            primaryImageResource = mozilla.components.ui.icons.R.drawable.mozac_ic_forward,
+            primaryContentDescription = context.getString(R.string.browser_menu_forward),
+            primaryImageTintResource = primaryTextColor,
+            isInPrimaryState = { true },
+            secondaryImageTintResource = ThemeManager.resolveAttribute(R.attr.disabled, context),
+            disableInSecondaryState = true,
+            longClickListener = { onItemTapped.invoke(Item.Forward(viewHistory = true)) }
+        ) {
+            onItemTapped.invoke(Item.Forward(viewHistory = false))
+        }
+
+        BrowserMenuItemToolbar(listOf(back, forward))
     }
 
     private val oldCoreMenuItems by lazy {
@@ -230,7 +264,7 @@ class HomeMenu(
         }
     }
 
-    private val newCoreMenuItems by lazy {
+    private fun newCoreMenuItems(): List<BrowserMenuItem> {
         val experiments = context.components.analytics.experiments
         val settings = context.components.settings
 
@@ -341,35 +375,45 @@ class HomeMenu(
             }
 
         val menuItems = listOfNotNull(
+            if (shouldUseBottomToolbar) null else menuToolbar,
             if (settings.shouldDeleteBrowsingDataOnQuit) quitItem else null,
-            accountAuthItem,
             bookmarksItem,
             historyItem,
             downloadsItem,
             extensionsItem,
             syncSignInItem,
+            accountAuthItem,
             BrowserMenuDivider(),
             requestDesktopSiteItem,
             BrowserMenuDivider(),
             whatsNewItem,
             helpItem,
-            settingsItem
+            settingsItem,
+            if (shouldUseBottomToolbar) BrowserMenuDivider() else null,
+            if (shouldUseBottomToolbar) menuToolbar else null
         ).also { items ->
             items.getHighlight()?.let { onHighlightPresent(it) }
         }
 
-        if (shouldUseBottomToolbar) {
-            // nav on top
-        } else {
-            // nav on bottom
-        }
-
-        menuItems
+        return menuItems
     }
 
     init {
+        val menuItems = if (FeatureFlags.toolbarMenuFeature) {
+            newCoreMenuItems()
+        } else {
+            oldCoreMenuItems
+        }
+        
         // Report initial state.
-        onMenuBuilderChanged(BrowserMenuBuilder(oldCoreMenuItems))
+        onMenuBuilderChanged(BrowserMenuBuilder(menuItems))
+
+        val menuItemsWithReconnectItem = if (FeatureFlags.toolbarMenuFeature) {
+            menuItems
+        } else {
+            // reconnect item is manually added to the beginning of the list
+            listOf(reconnectToSyncItem) + menuItems
+        }
 
         // Observe account state changes, and update menu item builder with a new set of items.
         context.components.backgroundServices.accountManagerAvailableQueue.runIfReadyOrQueue {
@@ -380,9 +424,11 @@ class HomeMenu(
             context.components.backgroundServices.accountManager.register(object : AccountObserver {
                 override fun onAuthenticationProblems() {
                     lifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
-                        onMenuBuilderChanged(BrowserMenuBuilder(
-                            listOf(reconnectToSyncItem) + oldCoreMenuItems
-                        ))
+                        onMenuBuilderChanged(
+                            BrowserMenuBuilder(
+                                menuItemsWithReconnectItem
+                            )
+                        )
                     }
                 }
 
@@ -390,7 +436,7 @@ class HomeMenu(
                     lifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
                         onMenuBuilderChanged(
                             BrowserMenuBuilder(
-                                oldCoreMenuItems
+                                menuItems
                             )
                         )
                     }
@@ -400,7 +446,7 @@ class HomeMenu(
                     lifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
                         onMenuBuilderChanged(
                             BrowserMenuBuilder(
-                                oldCoreMenuItems
+                                menuItems
                             )
                         )
                     }
