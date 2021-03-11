@@ -33,7 +33,6 @@ class TabTrayFragmentInteractorTest {
 
     @Test
     fun onDeleteSelectedTabs() {
-
         val tab = Tab("1234", "mozilla.org")
         val tab2 = Tab("5678", "pocket.com")
         val selectedTabs = setOf(tab, tab2)
