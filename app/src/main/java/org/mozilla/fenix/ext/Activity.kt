@@ -55,7 +55,7 @@ fun Activity.breadcrumb(
  * [Window.setDecorFitsSystemWindows] false tells the system that the app will handle all insets.
  * When a keyboard is opened [WindowInsets.getInsets] of [Type.ime] updates accordingly.
  *
- * See #17805.
+ * See https://github.com/mozilla-mobile/fenix/issues/17805.
  * */
 fun Activity.enableSystemInsetsHandling() {
     if (VERSION.SDK_INT >= VERSION_CODES.R) {
