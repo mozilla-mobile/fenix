@@ -7,7 +7,6 @@ package org.mozilla.fenix.session
 import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.browser.state.store.BrowserStore
@@ -54,13 +53,9 @@ class PrivateNotificationService : AbstractPrivateNotificationService() {
 
     /**
      * Update the existing notification when the [Locale] has been changed.
-     *
-     * @param notificationId the id of the notification to be updated.
-     * @param channelId the id of the notification channel to be updated.
      */
-    override fun notifyLocaleChanged(notificationId: Int, channelId: String) {
-        val notification = super.createNotification(channelId)
-        NotificationManagerCompat.from(applicationContext).notify(notificationId, notification)
+    override fun notifyLocaleChanged() {
+        super.refreshNotification()
     }
 
     @SuppressLint("MissingSuperCall")
