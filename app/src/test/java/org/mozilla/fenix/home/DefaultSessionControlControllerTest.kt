@@ -8,7 +8,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkObject
 import io.mockk.mockkStatic
 import io.mockk.spyk
 import io.mockk.unmockkStatic
@@ -40,6 +39,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.NavGraphTestRule
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.Analytics
 import org.mozilla.fenix.components.TabCollectionStorage
@@ -51,8 +51,6 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.sessioncontrol.DefaultSessionControlController
-import org.mozilla.fenix.perf.NavGraphProvider
-
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.utils.Settings
 import mozilla.components.feature.tab.collections.Tab as ComponentTab
@@ -108,11 +106,11 @@ class DefaultSessionControlControllerTest {
     private lateinit var store: BrowserStore
     private lateinit var controller: DefaultSessionControlController
 
+    @get:Rule
+    val navGraphTestRule = NavGraphTestRule()
+
     @Before
     fun setup() {
-
-        mockkObject(NavGraphProvider)
-        every { NavGraphProvider.blockForNavGraphInflation(any()) } returns Unit
         store = BrowserStore(
             BrowserState(
                 search = SearchState(

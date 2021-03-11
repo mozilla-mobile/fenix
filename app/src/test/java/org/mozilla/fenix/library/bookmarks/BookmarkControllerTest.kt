@@ -90,7 +90,7 @@ class BookmarkControllerTest {
     )
 
     @get:Rule
-    val navGraphTestRule = NavGraphTestRule(navController)
+    val navGraphTestRule = NavGraphTestRule()
 
     @Before
     fun setup() {

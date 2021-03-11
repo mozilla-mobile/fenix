@@ -9,23 +9,19 @@ import androidx.navigation.NavDestination
 import io.mockk.Called
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkObject
 import io.mockk.verify
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
-import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+import org.mozilla.fenix.NavGraphTestRule
 import org.mozilla.fenix.R
-import org.mozilla.fenix.perf.NavGraphProvider
 
 class AccountSettingsInteractorTest {
 
-    @Before
-    fun setup() {
-        mockkObject(NavGraphProvider)
-        every { NavGraphProvider.blockForNavGraphInflation(any()) } returns Unit
-    }
+    @get:Rule
+    val navGraphTestRule = NavGraphTestRule()
 
     @Test
     fun onSyncNow() {

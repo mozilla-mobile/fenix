@@ -72,7 +72,7 @@ class DefaultTabTrayControllerTest {
     private val tab2 = createTab(url = "http://mozilla.org", id = "1234")
 
     @get:Rule
-    val navGraphTestRule = NavGraphTestRule(navController)
+    val navGraphTestRule = NavGraphTestRule()
 
     @Before
     fun setUp() {
