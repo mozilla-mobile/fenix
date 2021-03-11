@@ -41,9 +41,9 @@ object NavGraphProvider {
      * InflateNavGraphAsync must be called before this method.
      */
     fun blockForNavGraphInflation(navController: NavController) {
-        val inflationJob = map[navController] ?: throw IllegalStateException("Expected `NavGraphProvider.inflateNavGraphAsync` " +
-                "to be called before this method with the same `navController`. If it was, this may" +
-                " be a bug in the implementation.")
+        val inflationJob = map[navController] ?: throw IllegalStateException("Expected " +
+                "`NavGraphProvider.inflateNavGraphAsync` to be called before this method with the" +
+                " same `navController`. If it was, this may be a bug in the implementation.")
         runBlockingIncrement { inflationJob.join() }
     }
 }

@@ -10,7 +10,6 @@ import android.content.Context
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDirections
-import androidx.navigation.NavOptions
 import io.mockk.Runs
 import io.mockk.called
 import io.mockk.coEvery
@@ -18,8 +17,6 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
-import io.mockk.mockkObject
-import io.mockk.mockkStatic
 import io.mockk.runs
 import io.mockk.slot
 import io.mockk.spyk
@@ -44,8 +41,6 @@ import org.mozilla.fenix.components.Services
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.bookmarkStorage
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
-import org.mozilla.fenix.perf.NavGraphProvider
 
 @Suppress("TooManyFunctions", "LargeClass")
 @ExperimentalCoroutinesApi
@@ -94,9 +89,8 @@ class BookmarkControllerTest {
         BookmarkNodeType.FOLDER, BookmarkRoot.Root.id, null, 0, BookmarkRoot.Root.name, null, null
     )
 
-
     @get:Rule
-    val navGraphRule : NavGraphTestRule = NavGraphTestRule(navController)
+    val navGraphTestRule = NavGraphTestRule(navController)
 
     @Before
     fun setup() {

@@ -7,7 +7,6 @@ package org.mozilla.fenix.tabtray
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDirections
-import androidx.navigation.NavOptions
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.every

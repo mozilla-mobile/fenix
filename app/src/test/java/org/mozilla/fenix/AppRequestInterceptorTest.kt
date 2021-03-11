@@ -7,7 +7,6 @@ package org.mozilla.fenix
 import android.net.ConnectivityManager
 import androidx.core.content.getSystemService
 import androidx.navigation.NavController
-import androidx.navigation.NavDirections
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
