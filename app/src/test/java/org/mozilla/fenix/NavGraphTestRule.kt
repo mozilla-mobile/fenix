@@ -6,6 +6,7 @@ package org.mozilla.fenix
 
 import io.mockk.every
 import io.mockk.mockkObject
+import io.mockk.unmockkObject
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 import org.mozilla.fenix.perf.NavGraphProvider
@@ -15,5 +16,9 @@ class NavGraphTestRule : TestWatcher() {
     override fun starting(description: Description?) {
         mockkObject(NavGraphProvider)
         every { NavGraphProvider.blockForNavGraphInflation(any()) } returns Unit
+    }
+
+    override fun finished(description: Description?) {
+        unmockkObject(NavGraphProvider)
     }
 }
