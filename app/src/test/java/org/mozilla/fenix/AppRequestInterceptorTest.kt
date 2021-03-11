@@ -19,6 +19,7 @@ import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.AppRequestInterceptor.Companion.HIGH_RISK_ERROR_PAGES
@@ -31,7 +32,10 @@ import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 class AppRequestInterceptorTest {
 
     private lateinit var interceptor: RequestInterceptor
-    private lateinit var navigationController: NavController
+    private val navigationController: NavController = mockk(relaxed = true)
+
+    @get:Rule
+    val navGraphTestRule = NavGraphTestRule(navigationController)
 
     @Before
     fun setUp() {
@@ -39,14 +43,9 @@ class AppRequestInterceptorTest {
         mockkStatic("org.mozilla.fenix.ext.ConnectivityManagerKt")
 
         every { testContext.getSystemService<ConnectivityManager>()!!.isOnline() } returns true
-
-        navigationController = mockk(relaxed = true)
         interceptor = AppRequestInterceptor(testContext).also {
             it.setNavigationController(navigationController)
         }
-
-        mockkStatic("org.mozilla.fenix.ext.NavControllerKt")
-        every { navigationController.navigateBlockingForAsyncNavGraph(any() as NavDirections) } returns Unit
     }
 
     @Test

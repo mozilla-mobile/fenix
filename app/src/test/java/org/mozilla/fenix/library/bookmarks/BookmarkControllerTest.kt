@@ -33,9 +33,11 @@ import mozilla.components.concept.storage.BookmarkNodeType
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.NavGraphTestRule
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.Services
@@ -92,15 +94,12 @@ class BookmarkControllerTest {
         BookmarkNodeType.FOLDER, BookmarkRoot.Root.id, null, 0, BookmarkRoot.Root.name, null, null
     )
 
+
+    @get:Rule
+    val navGraphRule : NavGraphTestRule = NavGraphTestRule(navController)
+
     @Before
     fun setup() {
-
-        mockkStatic("org.mozilla.fenix.ext.NavControllerKt")
-        every { navController.navigateBlockingForAsyncNavGraph(any() as NavDirections, any<NavOptions>()) } returns Unit
-
-        mockkObject(NavGraphProvider)
-        every { NavGraphProvider.blockForNavGraphInflation(any()) } returns Unit
-
         every { homeActivity.components.services } returns services
         every { navController.currentDestination } returns NavDestination("").apply {
             id = R.id.bookmarkFragment

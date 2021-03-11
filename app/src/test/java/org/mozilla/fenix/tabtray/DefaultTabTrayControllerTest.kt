@@ -32,8 +32,10 @@ import mozilla.components.feature.tabs.TabsUseCases
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.NavGraphTestRule
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
@@ -70,10 +72,11 @@ class DefaultTabTrayControllerTest {
     private val tab1 = createTab(url = "http://firefox.com", id = "5678")
     private val tab2 = createTab(url = "http://mozilla.org", id = "1234")
 
+    @get:Rule
+    val navGraphTestRule = NavGraphTestRule(navController)
+
     @Before
     fun setUp() {
-        mockkStatic("org.mozilla.fenix.ext.NavControllerKt")
-        every { navController.navigateBlockingForAsyncNavGraph(any() as NavDirections, any<NavOptions>()) } returns Unit
         mockkStatic("org.mozilla.fenix.ext.SessionManagerKt")
 
         val store = BrowserStore(
