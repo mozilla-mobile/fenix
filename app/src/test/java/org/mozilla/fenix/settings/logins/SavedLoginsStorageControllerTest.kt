@@ -26,7 +26,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.directionsEq
-import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.settings.logins.controller.SavedLoginsStorageController
 import org.mozilla.fenix.settings.logins.fragment.EditLoginFragmentDirections
@@ -121,6 +120,7 @@ class SavedLoginsStorageControllerTest {
 
         coEvery { passwordsStorage.get(any()) } returns oldLogin
         coEvery { passwordsStorage.update(any()) } just Runs
+
         controller.save(oldLogin.guid!!, "newUsername", "newPassword")
 
         val directions =
@@ -147,7 +147,7 @@ class SavedLoginsStorageControllerTest {
                     expectedNewList
                 )
             )
-            navController.navigateBlockingForAsyncNavGraph(directionsEq(directions))
+            navController.navigate(directionsEq(directions))
         }
     }
 

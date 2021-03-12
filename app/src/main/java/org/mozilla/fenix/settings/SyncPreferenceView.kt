@@ -15,8 +15,6 @@ import mozilla.components.service.fxa.SyncEngine
 import mozilla.components.service.fxa.manager.FxaAccountManager
 import mozilla.components.service.fxa.manager.SyncEnginesStorage
 import org.mozilla.fenix.R
-import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
-import org.mozilla.fenix.settings.logins.fragment.SavedLoginsAuthFragmentDirections
 
 /**
  * A view to help manage the sync preference in the "Logins and passwords" and "Credit cards"

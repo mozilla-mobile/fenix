@@ -4,13 +4,9 @@
 
 package org.mozilla.fenix.helpers
 
-import io.mockk.every
-import io.mockk.mockkObject
-import io.mockk.unmockkObject
 import org.mozilla.fenix.FenixApplication
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.TestComponents
-import org.mozilla.fenix.perf.NavGraphProvider
 import org.robolectric.TestLifecycleApplication
 import java.lang.reflect.Method
 
@@ -20,6 +16,10 @@ import java.lang.reflect.Method
  * "Crash handler service must run in a separate process".
  */
 class FenixRobolectricTestApplication : FenixApplication(), TestLifecycleApplication {
+
+    // Though JUnit 4 discourages global rules, we can apply global rules in robolectric so we do
+    // to prevent confusion from devs.
+    private val disableNavGraphProviderAssertionRule = DisableNavGraphProviderAssertionRule()
 
     override fun onCreate() {
         super.onCreate()
@@ -44,19 +44,18 @@ class FenixRobolectricTestApplication : FenixApplication(), TestLifecycleApplica
         setTheme(R.style.NormalTheme)
     }
 
-    // Beforetest runs before the test class is initialized
+    // Before test runs before the test class is initialized
     override fun beforeTest(method: Method?) {}
 
-    // Prepare test runs once the test class  and all its member variables (mock and
-    // non mocks) are initialized. Setting up our mocks here makes more sense since
-    // everything is available to us.
-    // This method runs after application.onCreate
+    // Prepare test runs once the test class and all its member variables (mock and
+    // non mocks) are initialized. This method runs after application.onCreate
     override fun prepareTest(test: Any?) {
-        mockkObject(NavGraphProvider)
-        every { NavGraphProvider.blockForNavGraphInflation(any()) } returns Unit
+        // We call this in prepareTest rather than beforeTest because member vars
+        // are initialized so it feels more correct to call it here.
+        disableNavGraphProviderAssertionRule.setUp()
     }
 
     override fun afterTest(method: Method?) {
-        unmockkObject(NavGraphProvider)
+        disableNavGraphProviderAssertionRule.tearDown()
     }
 }

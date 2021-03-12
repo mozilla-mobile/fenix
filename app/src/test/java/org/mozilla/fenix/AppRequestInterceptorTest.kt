@@ -18,23 +18,18 @@ import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.AppRequestInterceptor.Companion.HIGH_RISK_ERROR_PAGES
 import org.mozilla.fenix.AppRequestInterceptor.Companion.LOW_AND_MEDIUM_RISK_ERROR_PAGES
 import org.mozilla.fenix.ext.isOnline
-import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 
 @RunWith(FenixRobolectricTestRunner::class)
 class AppRequestInterceptorTest {
 
     private lateinit var interceptor: RequestInterceptor
-    private val navigationController: NavController = mockk(relaxed = true)
-
-    @get:Rule
-    val navGraphTestRule = NavGraphTestRule()
+    private lateinit var navigationController: NavController
 
     @Before
     fun setUp() {
@@ -42,6 +37,8 @@ class AppRequestInterceptorTest {
         mockkStatic("org.mozilla.fenix.ext.ConnectivityManagerKt")
 
         every { testContext.getSystemService<ConnectivityManager>()!!.isOnline() } returns true
+
+        navigationController = mockk(relaxed = true)
         interceptor = AppRequestInterceptor(testContext).also {
             it.setNavigationController(navigationController)
         }
@@ -61,7 +58,7 @@ class AppRequestInterceptorTest {
             isSubframeRequest = false
         )
 
-        verify { navigationController.navigateBlockingForAsyncNavGraph(NavGraphDirections.actionGlobalAddonsManagementFragment(addonId)) }
+        verify { navigationController.navigate(NavGraphDirections.actionGlobalAddonsManagementFragment(addonId)) }
         assertEquals(RequestInterceptor.InterceptionResponse.Deny, result)
     }
 
@@ -78,7 +75,7 @@ class AppRequestInterceptorTest {
             isSubframeRequest = false
         )
 
-        verify(exactly = 0) { navigationController.navigateBlockingForAsyncNavGraph(NavGraphDirections.actionGlobalAddonsManagementFragment()) }
+        verify(exactly = 0) { navigationController.navigate(NavGraphDirections.actionGlobalAddonsManagementFragment()) }
         assertNull(result)
     }
 
@@ -95,7 +92,7 @@ class AppRequestInterceptorTest {
             isSubframeRequest = false
         )
 
-        verify(exactly = 0) { navigationController.navigateBlockingForAsyncNavGraph(NavGraphDirections.actionGlobalAddonsManagementFragment()) }
+        verify(exactly = 0) { navigationController.navigate(NavGraphDirections.actionGlobalAddonsManagementFragment()) }
         assertNull(result)
     }
 
@@ -112,7 +109,7 @@ class AppRequestInterceptorTest {
             isSubframeRequest = false
         )
 
-        verify(exactly = 0) { navigationController.navigateBlockingForAsyncNavGraph(NavGraphDirections.actionGlobalAddonsManagementFragment()) }
+        verify(exactly = 0) { navigationController.navigate(NavGraphDirections.actionGlobalAddonsManagementFragment()) }
         assertNull(result)
     }
 
@@ -129,7 +126,7 @@ class AppRequestInterceptorTest {
             isSubframeRequest = false
         )
 
-        verify(exactly = 0) { navigationController.navigateBlockingForAsyncNavGraph(NavGraphDirections.actionGlobalAddonsManagementFragment()) }
+        verify(exactly = 0) { navigationController.navigate(NavGraphDirections.actionGlobalAddonsManagementFragment()) }
         assertNull(result)
     }
 

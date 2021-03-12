@@ -17,7 +17,6 @@ import org.mozilla.fenix.perf.NavGraphProvider
  * If the id doesn't match the current destination, an error is recorded.
  */
 fun NavController.nav(@IdRes id: Int?, directions: NavDirections, navOptions: NavOptions? = null) {
-
     NavGraphProvider.blockForNavGraphInflation(this)
 
     if (id == null || this.currentDestination?.id == id) {

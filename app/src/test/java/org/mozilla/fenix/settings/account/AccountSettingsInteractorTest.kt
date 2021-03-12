@@ -15,13 +15,13 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
-import org.mozilla.fenix.NavGraphTestRule
+import org.mozilla.fenix.helpers.DisableNavGraphProviderAssertionRule
 import org.mozilla.fenix.R
 
 class AccountSettingsInteractorTest {
 
     @get:Rule
-    val navGraphTestRule = NavGraphTestRule()
+    val disableNavGraphProviderAssertionRule = DisableNavGraphProviderAssertionRule()
 
     @Test
     fun onSyncNow() {
@@ -79,6 +79,7 @@ class AccountSettingsInteractorTest {
     fun onSignOut() {
         val navController: NavController = mockk(relaxed = true)
         every { navController.currentDestination } returns NavDestination("").apply { id = R.id.accountSettingsFragment }
+
         val interactor = AccountSettingsInteractor(
             navController,
             mockk(),

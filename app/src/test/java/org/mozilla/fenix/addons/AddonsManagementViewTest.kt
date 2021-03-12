@@ -20,7 +20,6 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.addons.AddonsManagementFragmentDirections.Companion.actionAddonsManagementFragmentToAddonDetailsFragment
 import org.mozilla.fenix.addons.AddonsManagementFragmentDirections.Companion.actionAddonsManagementFragmentToInstalledAddonDetails
 import org.mozilla.fenix.ext.directionsEq
-import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 
 @RunWith(FenixRobolectricTestRunner::class)
@@ -50,7 +49,7 @@ class AddonsManagementViewTest {
 
         val expected = actionAddonsManagementFragmentToInstalledAddonDetails(addon)
         verify {
-            navController.navigateBlockingForAsyncNavGraph(directionsEq(expected))
+            navController.navigate(directionsEq(expected))
         }
     }
 
@@ -68,7 +67,7 @@ class AddonsManagementViewTest {
 
         val expected = actionAddonsManagementFragmentToAddonDetailsFragment(addon)
         verify {
-            navController.navigateBlockingForAsyncNavGraph(directionsEq(expected))
+            navController.navigate(directionsEq(expected))
         }
     }
 
@@ -86,7 +85,7 @@ class AddonsManagementViewTest {
 
         val expected = actionAddonsManagementFragmentToAddonDetailsFragment(addon)
         verify(exactly = 0) {
-            navController.navigateBlockingForAsyncNavGraph(directionsEq(expected))
+            navController.navigate(directionsEq(expected))
         }
     }
 
@@ -104,7 +103,7 @@ class AddonsManagementViewTest {
 
         val expected = actionAddonsManagementFragmentToAddonDetailsFragment(addon)
         verify(exactly = 0) {
-            navController.navigateBlockingForAsyncNavGraph(directionsEq(expected))
+            navController.navigate(directionsEq(expected))
         }
     }
 
@@ -124,7 +123,7 @@ class AddonsManagementViewTest {
             addons.toTypedArray()
         )
         verify {
-            navController.navigateBlockingForAsyncNavGraph(directionsEq(expected))
+            navController.navigate(directionsEq(expected))
         }
     }
 }

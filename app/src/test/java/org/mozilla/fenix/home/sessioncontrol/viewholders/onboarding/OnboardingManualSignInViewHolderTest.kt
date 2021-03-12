@@ -65,6 +65,6 @@ class OnboardingManualSignInViewHolderTest {
         OnboardingManualSignInViewHolder(view)
         view.fxa_sign_in_button.performClick()
 
-        verify { navController.navigateBlockingForAsyncNavGraph(HomeFragmentDirections.actionGlobalTurnOnSync()) }
+        verify { navController.navigate(HomeFragmentDirections.actionGlobalTurnOnSync()) }
     }
 }

@@ -14,7 +14,6 @@ import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.settings.logins.controller.LoginsListController
@@ -56,11 +55,13 @@ class LoginsListControllerTest {
     @Test
     fun `GIVEN a SavedLogin, WHEN handleItemClicked is called for it, THEN LoginsAction$LoginSelected should be emitted`() {
         val login: SavedLogin = mockk(relaxed = true)
+
         controller.handleItemClicked(login)
+
         verifyAll {
             store.dispatch(LoginsAction.LoginSelected(login))
             metrics.track(Event.OpenOneLogin)
-            navController.navigateBlockingForAsyncNavGraph(
+            navController.navigate(
                 SavedLoginsFragmentDirections.actionSavedLoginsFragmentToLoginDetailFragment(login.guid)
             )
         }

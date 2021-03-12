@@ -34,14 +34,13 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.HomeActivity
-import org.mozilla.fenix.NavGraphTestRule
+import org.mozilla.fenix.helpers.DisableNavGraphProviderAssertionRule
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
-import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class DefaultTabTrayControllerTest {
@@ -72,7 +71,7 @@ class DefaultTabTrayControllerTest {
     private val tab2 = createTab(url = "http://mozilla.org", id = "1234")
 
     @get:Rule
-    val navGraphTestRule = NavGraphTestRule()
+    val disableNavGraphProviderAssertionRule = DisableNavGraphProviderAssertionRule()
 
     @Before
     fun setUp() {
@@ -85,7 +84,7 @@ class DefaultTabTrayControllerTest {
         )
 
         every { tabCollectionStorage.cachedTabCollections } returns cachedTabCollections
-        every { navController.navigateBlockingForAsyncNavGraph(any<NavDirections>()) } just Runs
+        every { navController.navigate(any<NavDirections>()) } just Runs
         every { navController.currentDestination } returns currentDestination
         every { currentDestination.id } returns R.id.browserFragment
         every { tabCollection.title } returns "Collection title"
@@ -118,7 +117,7 @@ class DefaultTabTrayControllerTest {
         controller.handleTabSettingsClicked()
 
         verify {
-            navController.navigateBlockingForAsyncNavGraph(
+            navController.navigate(
                 TabTrayDialogFragmentDirections.actionGlobalTabSettingsFragment()
             )
         }
@@ -130,7 +129,7 @@ class DefaultTabTrayControllerTest {
 
         verifyOrder {
             browsingModeManager.mode = BrowsingMode.fromBoolean(false)
-            navController.navigateBlockingForAsyncNavGraph(
+            navController.navigate(
                 TabTrayDialogFragmentDirections.actionGlobalHome(
                     focusOnAddressBar = true
                 )
@@ -142,7 +141,7 @@ class DefaultTabTrayControllerTest {
 
         verifyOrder {
             browsingModeManager.mode = BrowsingMode.fromBoolean(true)
-            navController.navigateBlockingForAsyncNavGraph(
+            navController.navigate(
                 TabTrayDialogFragmentDirections.actionGlobalHome(
                     focusOnAddressBar = true
                 )
@@ -163,12 +162,12 @@ class DefaultTabTrayControllerTest {
     @Test
     fun onShareTabsClicked() {
         val navDirectionsSlot = slot<NavDirections>()
-        every { navController.navigateBlockingForAsyncNavGraph(capture(navDirectionsSlot)) } just Runs
+        every { navController.navigate(capture(navDirectionsSlot)) } just Runs
 
         controller.handleShareTabsOfTypeClicked(private = false)
 
         verify {
-            navController.navigateBlockingForAsyncNavGraph(capture(navDirectionsSlot))
+            navController.navigate(capture(navDirectionsSlot))
         }
 
         assertTrue(navDirectionsSlot.isCaptured)
@@ -259,12 +258,12 @@ class DefaultTabTrayControllerTest {
     fun handleShareSelectedTabs() {
         val tab = Tab("1234", "mozilla.org")
         val navDirectionsSlot = slot<NavDirections>()
-        every { navController.navigateBlockingForAsyncNavGraph(capture(navDirectionsSlot)) } just Runs
+        every { navController.navigate(capture(navDirectionsSlot)) } just Runs
 
         controller.handleShareSelectedTabsClicked(setOf(tab))
 
         verify {
-            navController.navigateBlockingForAsyncNavGraph(capture(navDirectionsSlot))
+            navController.navigate(capture(navDirectionsSlot))
         }
 
         assertTrue(navDirectionsSlot.isCaptured)
@@ -301,7 +300,7 @@ class DefaultTabTrayControllerTest {
         val directions = TabTrayDialogFragmentDirections.actionGlobalRecentlyClosed()
 
         verifyAll {
-            navController.navigateBlockingForAsyncNavGraph(directions)
+            navController.navigate(directions)
             metrics.track(Event.RecentlyClosedTabsOpened)
         }
     }
@@ -312,7 +311,7 @@ class DefaultTabTrayControllerTest {
         val directions = TabTrayDialogFragmentDirections.actionGlobalTabSettingsFragment()
 
         verifyAll {
-            navController.navigateBlockingForAsyncNavGraph(directions)
+            navController.navigate(directions)
             metrics.track(Event.TabsTrayCfrTapped)
         }
     }

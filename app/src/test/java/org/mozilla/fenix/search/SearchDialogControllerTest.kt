@@ -30,12 +30,11 @@ import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
-import org.mozilla.fenix.NavGraphTestRule
+import org.mozilla.fenix.helpers.DisableNavGraphProviderAssertionRule
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.components.metrics.MetricsUtils
-import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 
 import org.mozilla.fenix.search.SearchDialogFragmentDirections.Companion.actionGlobalAddonsManagementFragment
 import org.mozilla.fenix.search.SearchDialogFragmentDirections.Companion.actionGlobalSearchEngineFragment
@@ -60,7 +59,7 @@ class SearchDialogControllerTest {
     private lateinit var controller: SearchDialogController
 
     @get:Rule
-    val navGraphTestRule = NavGraphTestRule()
+    val disableNavGraphProviderAssertionRule = DisableNavGraphProviderAssertionRule()
 
     @Before
     fun setUp() {
@@ -160,7 +159,7 @@ class SearchDialogControllerTest {
 
         controller.handleUrlCommitted(url)
 
-        verify { navController.navigateBlockingForAsyncNavGraph(directions) }
+        verify { navController.navigate(directions) }
     }
 
     @Test
@@ -309,7 +308,7 @@ class SearchDialogControllerTest {
 
         controller.handleClickSearchEngineSettings()
 
-        verify { navController.navigateBlockingForAsyncNavGraph(directions) }
+        verify { navController.navigate(directions) }
     }
 
     @Test
