@@ -34,6 +34,7 @@ import org.mozilla.fenix.ext.withExperiment
 import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.whatsnew.WhatsNew
 
+@Suppress("LargeClass", "LongMethod")
 class HomeMenu(
     private val lifecycleOwner: LifecycleOwner,
     private val context: Context,
@@ -53,12 +54,8 @@ class HomeMenu(
         object WhatsNew : Item()
         object Help : Item()
         object Settings : Item()
-        object SyncedTabs : Item()
-        object History : Item()
-        object Bookmarks : Item()
-        object Downloads : Item()
         object Quit : Item()
-        object Sync : Item()
+        object ReconnectSync : Item()
         data class DesktopMode(val checked: Boolean) : Item()
     }
 
@@ -103,7 +100,7 @@ class HomeMenu(
             primaryImageResource = mozilla.components.ui.icons.R.drawable.mozac_ic_back,
             primaryContentDescription = context.getString(R.string.browser_menu_back),
             primaryImageTintResource = primaryTextColor,
-            isInPrimaryState = { true },
+            isInPrimaryState = { false },
             secondaryImageTintResource = ThemeManager.resolveAttribute(R.attr.disabled, context),
             disableInSecondaryState = true,
             longClickListener = { onItemTapped.invoke(Item.Back(viewHistory = true)) }
@@ -115,7 +112,7 @@ class HomeMenu(
             primaryImageResource = mozilla.components.ui.icons.R.drawable.mozac_ic_forward,
             primaryContentDescription = context.getString(R.string.browser_menu_forward),
             primaryImageTintResource = primaryTextColor,
-            isInPrimaryState = { true },
+            isInPrimaryState = { false },
             secondaryImageTintResource = ThemeManager.resolveAttribute(R.attr.disabled, context),
             disableInSecondaryState = true,
             longClickListener = { onItemTapped.invoke(Item.Forward(viewHistory = true)) }
@@ -216,19 +213,11 @@ class HomeMenu(
             onItemTapped.invoke(Item.Downloads)
         }
 
-        val desktopItem = BrowserMenuImageSwitch(
-            imageResource = R.drawable.ic_desktop,
-            label = context.getString(R.string.browser_menu_desktop_site),
-            initialState = { context.settings().openNextTabInDesktopMode }
-        ) { checked ->
-            onItemTapped.invoke(Item.DesktopMode(checked))
-        }
-
         // Only query account manager if it has been initialized.
         // We don't want to cause its initialization just for this check.
         val accountAuthItem =
-            if (context.components.backgroundServices.accountManagerAvailableQueue.isReady()
-                && context.components.backgroundServices.accountManager.accountNeedsReauth()) {
+            if (context.components.backgroundServices.accountManagerAvailableQueue.isReady() &&
+                context.components.backgroundServices.accountManager.accountNeedsReauth()) {
                     reconnectToSyncItem
             } else {
                 null
@@ -243,9 +232,6 @@ class HomeMenu(
             syncedTabsItem,
             bookmarksItem,
             historyItem,
-            BrowserMenuDivider(),
-            desktopItem,
-            BrowserMenuDivider(),
             downloadsItem,
             BrowserMenuDivider(),
             addons,
@@ -262,6 +248,14 @@ class HomeMenu(
         } else {
             menuItems
         }
+    }
+
+    val desktopItem = BrowserMenuImageSwitch(
+        imageResource = R.drawable.ic_desktop,
+        label = context.getString(R.string.browser_menu_desktop_site),
+        initialState = { context.settings().openNextTabInDesktopMode }
+    ) { checked ->
+        onItemTapped.invoke(Item.DesktopMode(checked))
     }
 
     private fun newCoreMenuItems(): List<BrowserMenuItem> {
@@ -328,14 +322,6 @@ class HomeMenu(
             onItemTapped.invoke(Item.SyncTabs)
         }
 
-        val requestDesktopSiteItem = BrowserMenuImageSwitch(
-            imageResource = R.drawable.ic_desktop,
-            label = context.getString(R.string.browser_menu_desktop_site),
-            initialState = { false }
-        ) { checked ->
-            onItemTapped.invoke(Item.RequestDesktopSite(checked))
-        }
-
         val whatsNewItem = BrowserMenuHighlightableItem(
             context.getString(R.string.browser_menu_whats_new),
             R.drawable.ic_whats_new,
@@ -367,8 +353,8 @@ class HomeMenu(
         // Only query account manager if it has been initialized.
         // We don't want to cause its initialization just for this check.
         val accountAuthItem =
-            if (context.components.backgroundServices.accountManagerAvailableQueue.isReady()
-                && context.components.backgroundServices.accountManager.accountNeedsReauth()) {
+            if (context.components.backgroundServices.accountManagerAvailableQueue.isReady() &&
+                context.components.backgroundServices.accountManager.accountNeedsReauth()) {
                 reconnectToSyncItem
             } else {
                 null
@@ -376,7 +362,6 @@ class HomeMenu(
 
         val menuItems = listOfNotNull(
             if (shouldUseBottomToolbar) null else menuToolbar,
-            if (settings.shouldDeleteBrowsingDataOnQuit) quitItem else null,
             bookmarksItem,
             historyItem,
             downloadsItem,
@@ -384,11 +369,12 @@ class HomeMenu(
             syncSignInItem,
             accountAuthItem,
             BrowserMenuDivider(),
-            requestDesktopSiteItem,
+            desktopItem,
             BrowserMenuDivider(),
             whatsNewItem,
             helpItem,
             settingsItem,
+            if (settings.shouldDeleteBrowsingDataOnQuit) quitItem else null,
             if (shouldUseBottomToolbar) BrowserMenuDivider() else null,
             if (shouldUseBottomToolbar) menuToolbar else null
         ).also { items ->
@@ -404,7 +390,7 @@ class HomeMenu(
         } else {
             oldCoreMenuItems
         }
-        
+
         // Report initial state.
         onMenuBuilderChanged(BrowserMenuBuilder(menuItems))
 
