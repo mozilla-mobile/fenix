@@ -22,12 +22,22 @@ import org.mozilla.fenix.perf.NavGraphProvider
  */
 class DisableNavGraphProviderAssertionRule : TestWatcher() {
 
-    override fun starting(description: Description?) {
+    // public for code reuse.
+    fun setUp() {
         mockkObject(NavGraphProvider)
         every { NavGraphProvider.blockForNavGraphInflation(any()) } returns Unit
     }
 
-    override fun finished(description: Description?) {
+    // public for code reuse.
+    fun tearDown() { //
         unmockkObject(NavGraphProvider)
+    }
+
+    override fun starting(description: Description?) {
+        setUp()
+    }
+
+    override fun finished(description: Description?) {
+        tearDown()
     }
 }
