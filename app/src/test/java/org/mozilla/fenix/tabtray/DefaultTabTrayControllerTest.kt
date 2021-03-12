@@ -34,7 +34,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.HomeActivity
-import org.mozilla.fenix.NavGraphTestRule
+import org.mozilla.fenix.DisableNavGraphProviderAssertionRule
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
@@ -72,7 +72,7 @@ class DefaultTabTrayControllerTest {
     private val tab2 = createTab(url = "http://mozilla.org", id = "1234")
 
     @get:Rule
-    val navGraphTestRule = NavGraphTestRule()
+    val disableNavGraphProviderAssertionRule = DisableNavGraphProviderAssertionRule()
 
     @Before
     fun setUp() {

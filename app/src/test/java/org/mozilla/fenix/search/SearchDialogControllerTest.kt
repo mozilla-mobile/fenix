@@ -30,7 +30,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
-import org.mozilla.fenix.NavGraphTestRule
+import org.mozilla.fenix.DisableNavGraphProviderAssertionRule
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
@@ -60,7 +60,7 @@ class SearchDialogControllerTest {
     private lateinit var controller: SearchDialogController
 
     @get:Rule
-    val navGraphTestRule = NavGraphTestRule()
+    val disableNavGraphProviderAssertionRule = DisableNavGraphProviderAssertionRule()
 
     @Before
     fun setUp() {

@@ -34,7 +34,7 @@ class AppRequestInterceptorTest {
     private val navigationController: NavController = mockk(relaxed = true)
 
     @get:Rule
-    val navGraphTestRule = NavGraphTestRule()
+    val navGraphTestRule = DisableNavGraphProviderAssertionRule()
 
     @Before
     fun setUp() {
