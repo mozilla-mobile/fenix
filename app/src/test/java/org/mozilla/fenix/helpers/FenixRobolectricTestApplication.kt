@@ -4,14 +4,9 @@
 
 package org.mozilla.fenix.helpers
 
-import io.mockk.every
-import io.mockk.mockkObject
-import io.mockk.unmockkObject
-import org.mozilla.fenix.helpers.DisableNavGraphProviderAssertionRule
 import org.mozilla.fenix.FenixApplication
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.TestComponents
-import org.mozilla.fenix.perf.NavGraphProvider
 import org.robolectric.TestLifecycleApplication
 import java.lang.reflect.Method
 
