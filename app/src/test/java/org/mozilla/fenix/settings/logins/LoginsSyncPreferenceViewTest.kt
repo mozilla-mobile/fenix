@@ -24,7 +24,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.mozilla.fenix.R
-import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.settings.SyncPreferenceView
 import org.mozilla.fenix.settings.logins.fragment.SavedLoginsAuthFragmentDirections
 
@@ -72,7 +71,7 @@ class LoginsSyncPreferenceViewTest {
         assertTrue(clickListener.captured.onPreferenceClick(syncLoginsPreference))
 
         verify {
-            navController.navigateBlockingForAsyncNavGraph(
+            navController.navigate(
                 SavedLoginsAuthFragmentDirections.actionGlobalAccountProblemFragment()
             )
         }
@@ -97,7 +96,7 @@ class LoginsSyncPreferenceViewTest {
         assertTrue(clickListener.captured.onPreferenceClick(syncLoginsPreference))
 
         verify {
-            navController.navigateBlockingForAsyncNavGraph(
+            navController.navigate(
                 SavedLoginsAuthFragmentDirections.actionSavedLoginsAuthFragmentToTurnOnSyncFragment()
             )
         }
@@ -113,7 +112,7 @@ class LoginsSyncPreferenceViewTest {
         assertTrue(clickListener.captured.onPreferenceClick(syncLoginsPreference))
 
         verify {
-            navController.navigateBlockingForAsyncNavGraph(
+            navController.navigate(
                 SavedLoginsAuthFragmentDirections.actionGlobalAccountSettingsFragment()
             )
         }
@@ -132,7 +131,7 @@ class LoginsSyncPreferenceViewTest {
         assertTrue(clickListener.captured.onPreferenceClick(syncLoginsPreference))
 
         verify {
-            navController.navigateBlockingForAsyncNavGraph(
+            navController.navigate(
                 SavedLoginsAuthFragmentDirections.actionGlobalAccountSettingsFragment()
             )
         }

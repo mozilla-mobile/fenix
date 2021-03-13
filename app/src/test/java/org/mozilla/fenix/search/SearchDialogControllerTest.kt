@@ -35,7 +35,6 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.components.metrics.MetricsUtils
-import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 
 import org.mozilla.fenix.search.SearchDialogFragmentDirections.Companion.actionGlobalAddonsManagementFragment
 import org.mozilla.fenix.search.SearchDialogFragmentDirections.Companion.actionGlobalSearchEngineFragment
@@ -160,7 +159,7 @@ class SearchDialogControllerTest {
 
         controller.handleUrlCommitted(url)
 
-        verify { navController.navigateBlockingForAsyncNavGraph(directions) }
+        verify { navController.navigate(directions) }
     }
 
     @Test
@@ -309,7 +308,7 @@ class SearchDialogControllerTest {
 
         controller.handleClickSearchEngineSettings()
 
-        verify { navController.navigateBlockingForAsyncNavGraph(directions) }
+        verify { navController.navigate(directions) }
     }
 
     @Test

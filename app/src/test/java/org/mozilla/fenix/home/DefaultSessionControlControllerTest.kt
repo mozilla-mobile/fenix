@@ -48,7 +48,6 @@ import org.mozilla.fenix.components.metrics.Event.PerformedSearch.EngineSource
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.components.tips.Tip
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.sessioncontrol.DefaultSessionControlController
 import org.mozilla.fenix.settings.SupportUtils
@@ -174,7 +173,7 @@ class DefaultSessionControlControllerTest {
 
         verify { metrics.track(Event.CollectionAddTabPressed) }
         verify {
-            navController.navigateBlockingForAsyncNavGraph(
+            navController.navigate(
                 match<NavDirections> {
                     it.actionId == R.id.action_global_collectionCreationFragment
                 },
@@ -319,7 +318,7 @@ class DefaultSessionControlControllerTest {
 
         verify { metrics.track(Event.CollectionShared) }
         verify {
-            navController.navigateBlockingForAsyncNavGraph(
+            navController.navigate(
                 match<NavDirections> { it.actionId == R.id.action_global_shareFragment },
                 null
             )
@@ -369,7 +368,7 @@ class DefaultSessionControlControllerTest {
 
         verify { metrics.track(Event.CollectionRenamePressed) }
         verify {
-            navController.navigateBlockingForAsyncNavGraph(
+            navController.navigate(
                 match<NavDirections> { it.actionId == R.id.action_global_collectionCreationFragment },
                 null
             )
@@ -571,7 +570,7 @@ class DefaultSessionControlControllerTest {
     fun handleOpenSettingsClicked() {
         controller.handleOpenSettingsClicked()
         verify {
-            navController.navigateBlockingForAsyncNavGraph(
+            navController.navigate(
                 match<NavDirections> { it.actionId == R.id.action_global_privateBrowsingFragment },
                 null
             )
@@ -622,7 +621,7 @@ class DefaultSessionControlControllerTest {
         controller.handleCreateCollection()
 
         verify {
-            navController.navigateBlockingForAsyncNavGraph(
+            navController.navigate(
                 match<NavDirections> { it.actionId == R.id.action_global_tabTrayDialogFragment },
                 null
             )
@@ -660,7 +659,7 @@ class DefaultSessionControlControllerTest {
         controller.handlePaste("text")
 
         verify {
-            navController.navigateBlockingForAsyncNavGraph(
+            navController.navigate(
                 match<NavDirections> { it.actionId == R.id.action_global_search_dialog },
                 null
             )
