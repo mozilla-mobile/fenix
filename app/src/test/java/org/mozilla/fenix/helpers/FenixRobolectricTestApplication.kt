@@ -17,6 +17,8 @@ import java.lang.reflect.Method
  */
 class FenixRobolectricTestApplication : FenixApplication(), TestLifecycleApplication {
 
+    // Though JUnit 4 discourages global rules, we can apply global rules in robolectric so we do
+    // to prevent confusion from devs.
     private val disableNavGraphProviderAssertionRule = DisableNavGraphProviderAssertionRule()
 
     override fun onCreate() {
