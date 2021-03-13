@@ -18,13 +18,11 @@ import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.AppRequestInterceptor.Companion.HIGH_RISK_ERROR_PAGES
 import org.mozilla.fenix.AppRequestInterceptor.Companion.LOW_AND_MEDIUM_RISK_ERROR_PAGES
 import org.mozilla.fenix.ext.isOnline
-import org.mozilla.fenix.helpers.DisableNavGraphProviderAssertionRule
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 
 @RunWith(FenixRobolectricTestRunner::class)
@@ -32,9 +30,6 @@ class AppRequestInterceptorTest {
 
     private lateinit var interceptor: RequestInterceptor
     private lateinit var navigationController: NavController
-
-    @get:Rule
-    val navGraphTestRule = DisableNavGraphProviderAssertionRule()
 
     @Before
     fun setUp() {
