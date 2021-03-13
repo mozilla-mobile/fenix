@@ -7,7 +7,7 @@ package org.mozilla.fenix.helpers
 import io.mockk.every
 import io.mockk.mockkObject
 import io.mockk.unmockkObject
-import org.mozilla.fenix.DisableNavGraphProviderAssertionRule
+import org.mozilla.fenix.helpers.DisableNavGraphProviderAssertionRule
 import org.mozilla.fenix.FenixApplication
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.TestComponents
