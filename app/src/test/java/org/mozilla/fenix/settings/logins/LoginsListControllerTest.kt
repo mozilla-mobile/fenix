@@ -55,7 +55,9 @@ class LoginsListControllerTest {
     @Test
     fun `GIVEN a SavedLogin, WHEN handleItemClicked is called for it, THEN LoginsAction$LoginSelected should be emitted`() {
         val login: SavedLogin = mockk(relaxed = true)
+
         controller.handleItemClicked(login)
+
         verifyAll {
             store.dispatch(LoginsAction.LoginSelected(login))
             metrics.track(Event.OpenOneLogin)

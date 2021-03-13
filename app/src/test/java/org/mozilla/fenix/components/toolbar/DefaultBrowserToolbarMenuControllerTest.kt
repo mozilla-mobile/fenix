@@ -100,6 +100,7 @@ class DefaultBrowserToolbarMenuControllerTest {
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
+
         mockkStatic(
             "org.mozilla.fenix.settings.deletebrowsingdata.DeleteAndQuitKt"
         )

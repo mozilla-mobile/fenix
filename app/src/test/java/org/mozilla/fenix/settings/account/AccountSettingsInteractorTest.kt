@@ -79,6 +79,7 @@ class AccountSettingsInteractorTest {
     fun onSignOut() {
         val navController: NavController = mockk(relaxed = true)
         every { navController.currentDestination } returns NavDestination("").apply { id = R.id.accountSettingsFragment }
+
         val interactor = AccountSettingsInteractor(
             navController,
             mockk(),

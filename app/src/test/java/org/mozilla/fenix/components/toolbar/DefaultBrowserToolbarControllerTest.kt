@@ -98,6 +98,7 @@ class DefaultBrowserToolbarControllerTest {
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
+
         every { activity.components.useCases.sessionUseCases } returns sessionUseCases
         every { activity.components.useCases.searchUseCases } returns searchUseCases
         every { activity.components.useCases.topSitesUseCase } returns topSitesUseCase

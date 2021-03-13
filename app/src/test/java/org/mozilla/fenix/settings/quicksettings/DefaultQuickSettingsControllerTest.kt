@@ -86,6 +86,7 @@ class DefaultQuickSettingsControllerTest {
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
+
         tab = createTab("https://mozilla.org")
         browserStore = BrowserStore(BrowserState(tabs = listOf(tab)))
         sitePermissions = SitePermissions(origin = "", savedAt = 123)

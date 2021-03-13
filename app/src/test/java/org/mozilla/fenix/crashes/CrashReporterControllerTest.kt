@@ -29,7 +29,7 @@ class CrashReporterControllerTest {
     private lateinit var components: Components
     private lateinit var crash: Crash
     private lateinit var sessionId: String
-    private lateinit var navController: NavController
+    private lateinit var navContoller: NavController
     private lateinit var settings: Settings
 
     @Before
@@ -37,41 +37,41 @@ class CrashReporterControllerTest {
         components = mockk(relaxed = true)
         crash = mockk()
         sessionId = "testId"
-        navController = mockk(relaxed = true)
+        navContoller = mockk(relaxed = true)
         settings = mockk()
 
         val currentDest: NavDestination = mockk()
-        every { navController.currentDestination } returns currentDest
+        every { navContoller.currentDestination } returns currentDest
         every { currentDest.id } returns R.id.crashReporterFragment
     }
 
     @Test
     fun `reports crash reporter opened`() {
-        CrashReporterController(crash, sessionId, navController, components, settings)
+        CrashReporterController(crash, sessionId, navContoller, components, settings)
 
         verify { components.analytics.metrics.track(Event.CrashReporterOpened) }
     }
 
     @Test
     fun `handle close and restore tab`() {
-        val controller = CrashReporterController(crash, sessionId, navController, components, settings)
+        val controller = CrashReporterController(crash, sessionId, navContoller, components, settings)
         controller.handleCloseAndRestore(sendCrash = false)?.joinBlocking()
 
         verify { components.analytics.metrics.track(Event.CrashReporterClosed(false)) }
         verify { components.useCases.sessionUseCases.crashRecovery.invoke() }
-        verify { navController.popBackStack() }
+        verify { navContoller.popBackStack() }
     }
 
     @Test
     fun `handle close and remove tab`() {
-        val controller = CrashReporterController(crash, sessionId, navController, components, settings)
+        val controller = CrashReporterController(crash, sessionId, navContoller, components, settings)
         controller.handleCloseAndRemove(sendCrash = false)?.joinBlocking()
 
         verify { components.analytics.metrics.track(Event.CrashReporterClosed(false)) }
         verify { components.useCases.tabsUseCases.removeTab(sessionId) }
         verify { components.useCases.sessionUseCases.crashRecovery.invoke() }
         verify {
-            navController.navigate(CrashReporterFragmentDirections.actionGlobalHome(), null)
+            navContoller.navigate(CrashReporterFragmentDirections.actionGlobalHome(), null)
         }
     }
 
@@ -79,7 +79,7 @@ class CrashReporterControllerTest {
     fun `don't submit report if setting is turned off`() {
         every { settings.isCrashReportingEnabled } returns false
 
-        val controller = CrashReporterController(crash, sessionId, navController, components, settings)
+        val controller = CrashReporterController(crash, sessionId, navContoller, components, settings)
         controller.handleCloseAndRestore(sendCrash = true)?.joinBlocking()
 
         verify { components.analytics.metrics.track(Event.CrashReporterClosed(false)) }
@@ -89,7 +89,7 @@ class CrashReporterControllerTest {
     fun `submit report if setting is turned on`() {
         every { settings.isCrashReportingEnabled } returns true
 
-        val controller = CrashReporterController(crash, sessionId, navController, components, settings)
+        val controller = CrashReporterController(crash, sessionId, navContoller, components, settings)
         controller.handleCloseAndRestore(sendCrash = true)?.joinBlocking()
 
         verify { components.analytics.crashReporter.submitReport(crash) }

@@ -30,7 +30,7 @@ import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 class AppRequestInterceptorTest {
 
     private lateinit var interceptor: RequestInterceptor
-    private val navigationController: NavController = mockk(relaxed = true)
+    private lateinit var navigationController: NavController
 
     @get:Rule
     val navGraphTestRule = DisableNavGraphProviderAssertionRule()
@@ -41,6 +41,8 @@ class AppRequestInterceptorTest {
         mockkStatic("org.mozilla.fenix.ext.ConnectivityManagerKt")
 
         every { testContext.getSystemService<ConnectivityManager>()!!.isOnline() } returns true
+
+        navigationController = mockk(relaxed = true)
         interceptor = AppRequestInterceptor(testContext).also {
             it.setNavigationController(navigationController)
         }

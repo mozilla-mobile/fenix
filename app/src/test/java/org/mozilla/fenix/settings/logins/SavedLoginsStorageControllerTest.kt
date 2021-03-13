@@ -120,6 +120,7 @@ class SavedLoginsStorageControllerTest {
 
         coEvery { passwordsStorage.get(any()) } returns oldLogin
         coEvery { passwordsStorage.update(any()) } just Runs
+
         controller.save(oldLogin.guid!!, "newUsername", "newPassword")
 
         val directions =

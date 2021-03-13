@@ -40,6 +40,7 @@ class LoginsSyncPreferenceViewTest {
     fun setup() {
         MockKAnnotations.init(this)
         mockkConstructor(SyncEnginesStorage::class)
+
         accountObserver = slot()
         clickListener = slot()
         val context = mockk<Context> {
