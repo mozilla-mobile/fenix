@@ -41,6 +41,7 @@
     <dimen name="component_tp_exceptions_icon_size">48dp</dimen>
     <dimen name="preference_seek_bar_padding">16dp</dimen>
     <dimen name="custom_checkbox_alignment_margin">68dp</dimen>
+    <dimen name="custom_checkbox_alignment_margin_new_Look">8dp</dimen>
     <!--The assumed minimum height of the keyboard on Lollipop.-->
     <dimen name="minimum_keyboard_height">100dp</dimen>
 

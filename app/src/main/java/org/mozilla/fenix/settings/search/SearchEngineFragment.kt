@@ -11,6 +11,7 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
 import mozilla.components.support.ktx.android.view.hideKeyboard
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.settings
@@ -21,7 +22,12 @@ import org.mozilla.fenix.settings.requirePreference
 class SearchEngineFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        setPreferencesFromResource(R.xml.search_preferences, rootKey)
+        val preferencesId = if (FeatureFlags.newIconSet) {
+            R.xml.search_preferences_new_look
+        } else {
+            R.xml.search_preferences
+        }
+        setPreferencesFromResource(preferencesId, rootKey)
         view?.hideKeyboard()
     }
 

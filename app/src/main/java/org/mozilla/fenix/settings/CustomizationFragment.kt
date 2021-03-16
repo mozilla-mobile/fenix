@@ -33,7 +33,12 @@ class CustomizationFragment : PreferenceFragmentCompat() {
     private lateinit var radioFollowDeviceTheme: RadioButtonPreference
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        setPreferencesFromResource(R.xml.customization_preferences, rootKey)
+        val preferencesId = if (FeatureFlags.newIconSet) {
+            R.xml.customization_preferences_new_look
+        } else {
+            R.xml.customization_preferences
+        }
+        setPreferencesFromResource(preferencesId, rootKey)
 
         setupPreferences()
     }

@@ -7,6 +7,7 @@ package org.mozilla.fenix.settings
 import android.os.Bundle
 import android.view.View
 import androidx.preference.PreferenceFragmentCompat
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
@@ -25,7 +26,12 @@ class TabsSettingsFragment : PreferenceFragmentCompat() {
     private lateinit var radioOneMonth: RadioButtonPreference
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        setPreferencesFromResource(R.xml.tabs_preferences, rootKey)
+        val preferencesId = if (FeatureFlags.newIconSet) {
+            R.xml.tabs_preferences_new_look
+        } else {
+            R.xml.tabs_preferences
+        }
+        setPreferencesFromResource(preferencesId, rootKey)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
