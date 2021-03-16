@@ -17,6 +17,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mozilla.fenix.GleanMetrics.Addons
 import org.mozilla.fenix.GleanMetrics.Awesomebar
 import org.mozilla.fenix.GleanMetrics.BookmarksManagement
 import org.mozilla.fenix.GleanMetrics.Events
@@ -125,7 +126,7 @@ class GleanMetricsServiceTest {
     }
 
     @Test
-    fun `bookmark events is correctly recorded`() {
+    fun `bookmark events are correctly recorded`() {
         assertFalse(BookmarksManagement.open.testHasValue())
         gleanService.track(Event.OpenedBookmark)
         assertTrue(BookmarksManagement.open.testHasValue())
@@ -180,7 +181,7 @@ class GleanMetricsServiceTest {
     }
 
     @Test
-    fun `History events is correctly recorded`() {
+    fun `History events are correctly recorded`() {
         assertFalse(History.openedItemInNewTab.testHasValue())
         gleanService.track(Event.HistoryOpenedInNewTab)
         assertTrue(History.openedItemInNewTab.testHasValue())
@@ -196,5 +197,32 @@ class GleanMetricsServiceTest {
         assertFalse(History.openedItemsInPrivateTabs.testHasValue())
         gleanService.track(Event.HistoryOpenedInPrivateTabs)
         assertTrue(History.openedItemsInPrivateTabs.testHasValue())
+    }
+
+    @Test
+    fun `Addon events are correctly recorded`() {
+        assertFalse(Addons.openAddonsInSettings.testHasValue())
+        gleanService.track(Event.AddonsOpenInSettings)
+        assertTrue(Addons.openAddonsInSettings.testHasValue())
+
+        assertFalse(Addons.openAddonInToolbarMenu.testHasValue())
+        gleanService.track(Event.AddonsOpenInToolbarMenu("123"))
+        assertTrue(Addons.openAddonInToolbarMenu.testHasValue())
+        var events = Addons.openAddonInToolbarMenu.testGetValue()
+        assertEquals(1, events.size)
+        assertEquals("addons", events[0].category)
+        assertEquals("open_addon_in_toolbar_menu", events[0].name)
+        assertEquals(1, events[0].extra!!.size)
+        assertEquals("123", events[0].extra!!["addon_id"])
+
+        assertFalse(Addons.openAddonSetting.testHasValue())
+        gleanService.track(Event.AddonOpenSetting("123"))
+        assertTrue(Addons.openAddonSetting.testHasValue())
+        events = Addons.openAddonSetting.testGetValue()
+        assertEquals(1, events.size)
+        assertEquals("addons", events[0].category)
+        assertEquals("open_addon_setting", events[0].name)
+        assertEquals(1, events[0].extra!!.size)
+        assertEquals("123", events[0].extra!!["addon_id"])
     }
 }
