@@ -17,7 +17,7 @@ object FeatureFlags {
     /**
      * Enables the Nimbus experiments library.
      */
-    val nimbusExperiments = true
+    const val nimbusExperiments = true
 
     /**
      * Enables the Addresses autofill feature.
