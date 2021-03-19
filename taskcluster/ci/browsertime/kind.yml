@@ -137,7 +137,6 @@ jobs:
             - allrecipes
 
     youtube-playback-av1-sfr:
-        run-on-tasks-for: [github-pull-request]
         description: "Raptor YouTube Playback AV1 SFR on Fenix"
         test-name: youtube-playback-av1-sfr
         run-visual-metrics: False
