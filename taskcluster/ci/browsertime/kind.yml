@@ -37,7 +37,7 @@ job-defaults:
                     subject: '[{product_name}] Raptor-Browsertime job "{task_name}" failed'
                     to-addresses: [perftest-alerts@mozilla.com]
             default: {}
-    run-on-tasks-for: [github-pull-request]
+    run-on-tasks-for: []
     treeherder:
         kind: test
         tier: 2
@@ -63,6 +63,7 @@ job-defaults:
             NO_FAIL_ON_TEST_ERRORS: "1"
             XPCOM_DEBUG_BREAK: "warn"
             PYTHON: "python3"
+            LANG: "en_US.UTF-8"
         artifacts:
             - name: public/logs/
               path: workspace/logs
@@ -136,6 +137,7 @@ jobs:
             - allrecipes
 
     youtube-playback-av1-sfr:
+        run-on-tasks-for: [github-pull-request]
         description: "Raptor YouTube Playback AV1 SFR on Fenix"
         test-name: youtube-playback-av1-sfr
         run-visual-metrics: False
