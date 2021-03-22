@@ -76,8 +76,7 @@ abstract class ThemeManager {
         private fun updateLightSystemBars(window: Window, context: Context) {
             if (SDK_INT >= Build.VERSION_CODES.M) {
                 window.statusBarColor = context.getColorFromAttr(android.R.attr.statusBarColor)
-                // This will be addressed on https://github.com/mozilla-mobile/fenix/issues/17808
-                @Suppress("DEPRECATION")
+
                 window.decorView.systemUiVisibility =
                     window.decorView.systemUiVisibility or SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
             } else {
@@ -86,8 +85,6 @@ abstract class ThemeManager {
 
             if (SDK_INT >= Build.VERSION_CODES.O) {
                 // API level can display handle light navigation bar color
-                // This will be addressed on https://github.com/mozilla-mobile/fenix/issues/17808
-                @Suppress("DEPRECATION")
                 window.decorView.systemUiVisibility =
                     window.decorView.systemUiVisibility or SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
                 updateNavigationBar(window, context)
@@ -96,16 +93,12 @@ abstract class ThemeManager {
 
         private fun clearLightSystemBars(window: Window) {
             if (SDK_INT >= Build.VERSION_CODES.M) {
-                // This will be addressed on https://github.com/mozilla-mobile/fenix/issues/17808
-                @Suppress("DEPRECATION")
                 window.decorView.systemUiVisibility = window.decorView.systemUiVisibility and
                     SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
             }
 
             if (SDK_INT >= Build.VERSION_CODES.O) {
                 // API level can display handle light navigation bar color
-                // This will be addressed on https://github.com/mozilla-mobile/fenix/issues/17808
-                @Suppress("DEPRECATION")
                 window.decorView.systemUiVisibility = window.decorView.systemUiVisibility and
                     SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR.inv()
             }
