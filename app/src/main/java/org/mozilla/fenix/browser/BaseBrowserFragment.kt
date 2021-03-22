@@ -110,6 +110,7 @@ import org.mozilla.fenix.downloads.DynamicDownloadDialog
 import org.mozilla.fenix.ext.accessibilityManager
 import org.mozilla.fenix.ext.breadcrumb
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.enterToImmersiveMode
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.hideToolbar
 import org.mozilla.fenix.ext.metrics
@@ -128,7 +129,6 @@ import java.lang.ref.WeakReference
 import mozilla.components.feature.session.behavior.EngineViewBrowserToolbarBehavior
 import mozilla.components.feature.webauthn.WebAuthnFeature
 import mozilla.components.support.base.feature.ActivityResultHandler
-import mozilla.components.support.ktx.android.view.enterToImmersiveMode
 import org.mozilla.fenix.GleanMetrics.PerfStartup
 import org.mozilla.fenix.ext.measureNoInline
 import mozilla.components.feature.session.behavior.ToolbarPosition as MozacToolbarPosition
