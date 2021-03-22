@@ -167,6 +167,9 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
     private lateinit var navigationToolbar: Toolbar
 
+    // Tracker for contextual menu (Copy|Search|Select all|etc...)
+    private var actionMode: ActionMode? = null
+
     final override fun onCreate(savedInstanceState: Bundle?): Unit = PerfStartup.homeActivityOnCreate.measureNoInline {
         // DO NOT MOVE ANYTHING ABOVE THIS addMarker CALL.
         components.core.engine.profiler?.addMarker("Activity.onCreate", "HomeActivity")
@@ -522,8 +525,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         }.asView()
         else -> super.onCreateView(parent, name, context, attrs)
     }
-
-    private var actionMode: ActionMode? = null
 
     override fun onActionModeStarted(mode: ActionMode?) {
         actionMode = mode

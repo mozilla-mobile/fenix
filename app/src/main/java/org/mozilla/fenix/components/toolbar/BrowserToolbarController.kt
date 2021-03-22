@@ -99,7 +99,6 @@ class DefaultBrowserToolbarController(
     }
 
     override fun handleReaderModePressed(enabled: Boolean) {
-        activity.finishActionMode()
         if (enabled) {
             readerModeController.showReaderView()
             metrics.track(Event.ReaderModeOpened)
