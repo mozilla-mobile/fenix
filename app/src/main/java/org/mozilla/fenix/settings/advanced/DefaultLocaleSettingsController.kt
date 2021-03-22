@@ -28,7 +28,7 @@ class DefaultLocaleSettingsController(
             return
         }
         localeSettingsStore.dispatch(LocaleSettingsAction.Select(locale))
-        LocaleManager.setNewLocale(activity, localeUseCase, locale.toLanguageTag())
+        LocaleManager.setNewLocale(activity, localeUseCase, locale)
         LocaleManager.updateBaseConfiguration(activity, locale)
         activity.recreate()
     }
