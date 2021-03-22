@@ -206,19 +206,6 @@ class DefaultBrowserToolbarMenuControllerTest {
             verify { activity.finishAndRemoveTask() }
         }
     }
-
-    @Test
-    fun handleToolbarOpenInAppPress() = runBlockingTest {
-        if (!FeatureFlags.toolbarMenuFeature) {
-            val item = ToolbarMenu.Item.OpenInApp
-
-            val controller = createController(scope = this, store = browserStore)
-
-            controller.handleToolbarItemInteraction(item)
-
-            verify { settings.openInAppOpened = true }
-        }
-    }
     // todo === End ===
 
     @Test
