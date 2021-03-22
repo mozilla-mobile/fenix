@@ -21,6 +21,8 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.SearchWidgetCreator
 import org.mozilla.fenix.ext.alreadyOnDestination
+import org.mozilla.fenix.home.intent.DeepLinkIntentProcessor.DeepLinkVerifier
+import org.mozilla.fenix.settings.SupportUtils
 
 /**
  * Deep links in the form of `fenix://host` open different parts of the app.
@@ -34,7 +36,8 @@ class DeepLinkIntentProcessor(
     private val logger = Logger("DeepLinkIntentProcessor")
 
     override fun process(intent: Intent, navController: NavController, out: Intent): Boolean {
-        val scheme = intent.scheme?.equals(BuildConfig.DEEP_LINK_SCHEME, ignoreCase = true) ?: return false
+        val scheme =
+            intent.scheme?.equals(BuildConfig.DEEP_LINK_SCHEME, ignoreCase = true) ?: return false
         return if (scheme) {
             intent.data?.let { handleDeepLink(it, navController) }
             true
@@ -93,6 +96,16 @@ class DeepLinkIntentProcessor(
                     settingsIntent.putExtra(SETTINGS_SHOW_FRAGMENT_ARGS,
                         bundleOf(SETTINGS_SELECT_OPTION_KEY to DEFAULT_BROWSER_APP_OPTION))
                     activity.startActivity(settingsIntent)
+                } else {
+                    activity.openToBrowserAndLoad(
+                        searchTermOrURL = SupportUtils.getSumoURLForTopic(
+                            activity,
+                            SupportUtils.SumoTopic.SET_AS_DEFAULT_BROWSER
+                        ),
+                        newTab = true,
+                        from = BrowserDirection.FromGlobal,
+                        flags = EngineSession.LoadUrlFlags.external()
+                    )
                 }
             }
             "open" -> {
