@@ -258,6 +258,7 @@ class HomeMenu(
         onItemTapped.invoke(Item.DesktopMode(checked))
     }
 
+    @Suppress("ComplexMethod")
     private fun newCoreMenuItems(): List<BrowserMenuItem> {
         val experiments = context.components.analytics.experiments
         val settings = context.components.settings

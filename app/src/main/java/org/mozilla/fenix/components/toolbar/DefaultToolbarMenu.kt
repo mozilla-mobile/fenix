@@ -494,22 +494,22 @@ open class DefaultToolbarMenu(
         onItemTapped.invoke(ToolbarMenu.Item.Settings)
     }
 
-        val bookmarksItem = BrowserMenuImageTextCheckboxButton(
-            imageResource = R.drawable.ic_bookmarks_menu,
-            iconTintColorResource = primaryTextColor(),
-            label = context.getString(R.string.library_bookmarks),
-            labelListener = {
-                onItemTapped.invoke(ToolbarMenu.Item.Bookmarks)
-            },
-            primaryStateIconResource = R.drawable.ic_bookmark_outline,
-            secondaryStateIconResource = R.drawable.ic_bookmark_filled,
-            tintColorResource = accentBrightTextColor(),
-            primaryLabel = context.getString(R.string.add_label),
-            secondaryLabel = context.getString(R.string.edit_label),
-            isInPrimaryState = { !isCurrentUrlBookmarked }
-        ) {
-            handleBookmarkItemTapped()
-        }
+    val bookmarksItem = BrowserMenuImageTextCheckboxButton(
+        imageResource = R.drawable.ic_bookmarks_menu,
+        iconTintColorResource = primaryTextColor(),
+        label = context.getString(R.string.library_bookmarks),
+        labelListener = {
+            onItemTapped.invoke(ToolbarMenu.Item.Bookmarks)
+        },
+        primaryStateIconResource = R.drawable.ic_bookmark_outline,
+        secondaryStateIconResource = R.drawable.ic_bookmark_filled,
+        tintColorResource = accentBrightTextColor(),
+        primaryLabel = context.getString(R.string.add_label),
+        secondaryLabel = context.getString(R.string.edit_label),
+        isInPrimaryState = { !isCurrentUrlBookmarked }
+    ) {
+        handleBookmarkItemTapped()
+    }
 
     @VisibleForTesting(otherwise = PRIVATE)
     val newCoreMenuItems by lazy {
