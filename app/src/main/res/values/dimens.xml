@@ -58,6 +58,7 @@
     <dimen name="checkbox_preference_padding_vertical">12dp</dimen>
     <dimen name="radiobutton_preference_margin_start">8dp</dimen>
     <dimen name="top_bar_alignment_margin_start">72dp</dimen>
+    <dimen name="top_bar_no_icon_alignment_margin_start">16dp</dimen>
     <dimen name="section_header_height">48dp</dimen>
 
     <!--Quick Settings-->
@@ -211,6 +212,15 @@
     <dimen name="top_sites_item_margin_top">8dp</dimen>
     <dimen name="top_sites_item_margin_bottom">12dp</dimen>
     <dimen name="top_sites_text_margin_top">8dp</dimen>
+
+    <!-- Credit Cards Fragment -->
+    <!-- The height of the "Add credit card" button in the Credit Cards fragment.
+         This should be the same value as search_engine_radio_button_height. -->
+    <dimen name="credit_cards_add_credit_card_button_height">48dp</dimen>
+    <!-- The horizontal margin for the "Add credit card" text.
+         This should be the same value as radio_button_padding_horizontal. -->
+    <dimen name="credit_cards_add_credit_card_text_horizontal_margin">16dp</dimen>
+    <dimen name="credit_cards_add_credit_card_text_size">16sp</dimen>
 
     <!-- a11y -->
     <dimen name="accessibility_min_height">48dp</dimen>

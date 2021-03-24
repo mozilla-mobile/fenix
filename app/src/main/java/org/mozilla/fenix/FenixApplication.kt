@@ -10,6 +10,7 @@ import android.os.Build.VERSION.SDK_INT
 import android.os.StrictMode
 import android.util.Log.INFO
 import androidx.annotation.CallSuper
+import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.getSystemService
 import androidx.work.Configuration.Builder
@@ -20,16 +21,19 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import mozilla.appservices.Megazord
-import mozilla.components.browser.session.Session
 import mozilla.components.browser.state.action.SystemAction
 import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.concept.base.crash.Breadcrumb
+import mozilla.components.concept.engine.webextension.WebExtension
+import mozilla.components.concept.engine.webextension.isUnsupported
 import mozilla.components.concept.push.PushProcessor
+import mozilla.components.feature.addons.migration.DefaultSupportedAddonsChecker
 import mozilla.components.feature.addons.update.GlobalAddonDependencyProvider
 import mozilla.components.lib.crash.CrashReporter
 import mozilla.components.service.glean.Glean
 import mozilla.components.service.glean.config.Configuration
 import mozilla.components.service.glean.net.ConceptFetchHttpUploader
+import mozilla.components.support.base.facts.register
 import mozilla.components.support.base.log.Log
 import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.ktx.android.content.isMainProcess
@@ -39,9 +43,15 @@ import mozilla.components.support.rusthttp.RustHttpConfig
 import mozilla.components.support.rustlog.RustLog
 import mozilla.components.support.utils.logElapsedTime
 import mozilla.components.support.webextensions.WebExtensionSupport
+import org.mozilla.fenix.GleanMetrics.GleanBuildInfo
+import org.mozilla.fenix.GleanMetrics.Metrics
+import org.mozilla.fenix.GleanMetrics.PerfStartup
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.components.metrics.MetricServiceType
+import org.mozilla.fenix.components.metrics.SecurePrefsTelemetry
+import org.mozilla.fenix.ext.measureNoInline
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.perf.ProfilerMarkerFactProcessor
 import org.mozilla.fenix.perf.StartupTimeline
 import org.mozilla.fenix.perf.StorageStatsMetrics
 import org.mozilla.fenix.perf.runBlockingIncrement
@@ -70,6 +80,10 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         private set
 
     override fun onCreate() {
+        // We use start/stop instead of measure so we don't measure outside the main process.
+        val completeMethodDurationTimerId = PerfStartup.applicationOnCreate.start() // DO NOT MOVE ANYTHING ABOVE HERE.
+        val subsectionThroughGleanTimerId = PerfStartup.appOnCreateToGleanInit.start()
+
         super.onCreate()
 
         setupInAllProcesses()
@@ -90,7 +104,12 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             initializeGlean()
         }
 
+        PerfStartup.appOnCreateToGleanInit.stopAndAccumulate(subsectionThroughGleanTimerId)
+
         setupInMainProcessOnly()
+
+        // DO NOT MOVE ANYTHING BELOW THIS stop CALL.
+        PerfStartup.applicationOnCreate.stopAndAccumulate(completeMethodDurationTimerId)
     }
 
     protected open fun initializeGlean() {
@@ -105,7 +124,16 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                 httpClient = ConceptFetchHttpUploader(
                     lazy(LazyThreadSafetyMode.NONE) { components.core.client }
                 )),
-            uploadEnabled = telemetryEnabled
+            uploadEnabled = telemetryEnabled,
+            buildInfo = GleanBuildInfo.buildInfo
+        )
+
+        // Set this early to guarantee it's in every ping from here on.
+        Metrics.distributionId.set(
+            when (Config.channel.isMozillaOnline) {
+                true -> "MozillaOnline"
+                false -> "Mozilla"
+            }
         )
     }
 
@@ -119,46 +147,53 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
 
     @CallSuper
     open fun setupInMainProcessOnly() {
-        run {
-            // Attention: Do not invoke any code from a-s in this scope.
-            val megazordSetup = setupMegazord()
+        PerfStartup.appOnCreateToMegazordInit.measureNoInline {
+            ProfilerMarkerFactProcessor.create { components.core.engine.profiler }.register()
 
-            setDayNightTheme()
-            components.strictMode.enableStrictMode(true)
-            warmBrowsersCache()
+            run {
+                // Attention: Do not invoke any code from a-s in this scope.
+                val megazordSetup = setupMegazord()
 
-            // Make sure the engine is initialized and ready to use.
-            components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
-                components.core.engine.warmUp()
-            }
-            initializeWebExtensionSupport()
-            restoreBrowserState()
-            restoreDownloads()
+                setDayNightTheme()
+                components.strictMode.enableStrictMode(true)
+                warmBrowsersCache()
 
-            // Just to make sure it is impossible for any application-services pieces
-            // to invoke parts of itself that require complete megazord initialization
-            // before that process completes, we wait here, if necessary.
-            if (!megazordSetup.isCompleted) {
-                runBlockingIncrement { megazordSetup.await() }
+                // Make sure the engine is initialized and ready to use.
+                components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
+                    components.core.engine.warmUp()
+                }
+                initializeWebExtensionSupport()
+                restoreBrowserState()
+                restoreDownloads()
+                restoreLocale()
+
+                // Just to make sure it is impossible for any application-services pieces
+                // to invoke parts of itself that require complete megazord initialization
+                // before that process completes, we wait here, if necessary.
+                if (!megazordSetup.isCompleted) {
+                    runBlockingIncrement { megazordSetup.await() }
+                }
             }
         }
 
-        setupLeakCanary()
-        startMetricsIfEnabled()
-        setupPush()
+        PerfStartup.appOnCreateToSetupInMain.measureNoInline {
+            setupLeakCanary()
+            startMetricsIfEnabled()
+            setupPush()
 
-        visibilityLifecycleCallback = VisibilityLifecycleCallback(getSystemService())
-        registerActivityLifecycleCallbacks(visibilityLifecycleCallback)
+            visibilityLifecycleCallback = VisibilityLifecycleCallback(getSystemService())
+            registerActivityLifecycleCallbacks(visibilityLifecycleCallback)
 
-        // Storage maintenance disabled, for now, as it was interfering with background migrations.
-        // See https://github.com/mozilla-mobile/fenix/issues/7227 for context.
-        // if ((System.currentTimeMillis() - settings().lastPlacesStorageMaintenance) > ONE_DAY_MILLIS) {
-        //    runStorageMaintenance()
-        // }
+            // Storage maintenance disabled, for now, as it was interfering with background migrations.
+            // See https://github.com/mozilla-mobile/fenix/issues/7227 for context.
+            // if ((System.currentTimeMillis() - settings().lastPlacesStorageMaintenance) > ONE_DAY_MILLIS) {
+            //    runStorageMaintenance()
+            // }
 
-        initVisualCompletenessQueueAndQueueTasks()
+            initVisualCompletenessQueueAndQueueTasks()
 
-        components.appStartupTelemetry.onFenixApplicationOnCreate()
+            components.appStartupTelemetry.onFenixApplicationOnCreate()
+        }
     }
 
     private fun restoreBrowserState() = GlobalScope.launch(Dispatchers.Main) {
@@ -179,6 +214,10 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         components.useCases.downloadUseCases.restoreDownloads()
     }
 
+    private fun restoreLocale() {
+        components.useCases.localeUseCases.restore()
+    }
+
     private fun initVisualCompletenessQueueAndQueueTasks() {
         val queue = components.performance.visualCompletenessQueue.queue
 
@@ -195,6 +234,8 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                         components.core.bookmarksStorage.warmUp()
                         components.core.passwordsStorage.warmUp()
                     }
+
+                    SecurePrefsTelemetry(this@FenixApplication, components.analytics.experiments).startTests()
                 }
                 // Account manager initialization needs to happen on the main thread.
                 GlobalScope.launch(Dispatchers.Main) {
@@ -307,6 +348,10 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             // ... but RustHttpConfig.setClient() and RustLog.enable() can be called later.
             RustHttpConfig.setClient(lazy { components.core.client })
             RustLog.enable(components.analytics.crashReporter)
+            // We want to ensure Nimbus is initialized as early as possible so we can
+            // experiment on features close to startup.
+            // But we need viaduct (the RustHttp client) to be ready before we do.
+            components.analytics.experiments.initialize()
         }
     }
 
@@ -402,9 +447,19 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                             components.core.store.state.selectedTab?.content?.private
                                 ?: components.settings.openLinksInAPrivateTab
 
-                        val session = Session(url, shouldCreatePrivateSession)
-                        components.core.sessionManager.add(session, true, engineSession)
-                        session.id
+                        if (shouldCreatePrivateSession) {
+                            components.useCases.tabsUseCases.addPrivateTab(
+                                url = url,
+                                selectTab = true,
+                                engineSession = engineSession
+                            )
+                        } else {
+                            components.useCases.tabsUseCases.addTab(
+                                url = url,
+                                selectTab = true,
+                                engineSession = engineSession
+                            )
+                        }
                 },
                 onCloseTabOverride = {
                     _, sessionId -> components.useCases.tabsUseCases.removeTab(sessionId)
@@ -414,12 +469,27 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                 },
                 onExtensionsLoaded = { extensions ->
                     components.addonUpdater.registerForFutureUpdates(extensions)
-                    components.supportedAddonsChecker.registerForChecks()
+                    subscribeForNewAddonsIfNeeded(components.supportedAddonsChecker, extensions)
                 },
                 onUpdatePermissionRequest = components.addonUpdater::onUpdatePermissionRequest
             )
         } catch (e: UnsupportedOperationException) {
             Logger.error("Failed to initialize web extension support", e)
+        }
+    }
+
+    @VisibleForTesting
+    internal fun subscribeForNewAddonsIfNeeded(
+        checker: DefaultSupportedAddonsChecker,
+        installedExtensions: List<WebExtension>
+    ) {
+        val hasUnsupportedAddons = installedExtensions.any { it.isUnsupported() }
+        if (hasUnsupportedAddons) {
+            checker.registerForChecks()
+        } else {
+            // As checks are a persistent subscriptions, we have to make sure
+            // we remove any previous subscriptions.
+            checker.unregisterForChecks()
         }
     }
 

@@ -135,6 +135,8 @@
     <string name="browser_menu_edit_bookmark">ਬੁੱਕਮਾਰਕ ਸੋਧੋ</string>
     <!-- Browser menu button that opens the addon manager -->
     <string name="browser_menu_add_ons">ਐਡ-ਆਨ</string>
+    <!-- Browser menu button that opens the addon extensions manager -->
+    <string name="browser_menu_extensions">ਇਕਸਟੈਨਸ਼ਨਾਂ</string>
     <!-- Text displayed when there are no add-ons to be shown -->
     <string name="no_add_ons">ਕੋਈ ਐਡ-ਆਨ ਨਹੀਂ ਹੈ</string>
     <!-- Browser menu button that sends a user to help articles -->
@@ -185,6 +187,8 @@
     <!-- Browser menu button to configure reader mode appearance e.g. the used font type and size -->
     <string name="browser_menu_read_appearance">ਦਿੱਖ</string>
 
+    <!-- Browser menu button to show reader view appearance controls e.g. the used font type and size -->
+    <string name="browser_menu_customize_reader_view">ਪੜ੍ਹਨ ਝਲਕ ਨੂੰ ਕਸਟਮਾਈਜ਼ ਕਰੋ</string>
     <!-- Error message to show when the user tries to access a scheme not
         handled by the app (Ex: blob, tel etc) -->
     <string name="unknown_scheme_error_message">ਕਨੈਕਟ ਕਰਨ ਲਈ ਅਸਮਰੱਥ। ਬੇਪਛਾਣ URL ਸਕੀਮ।</string>
@@ -221,6 +225,11 @@
     <string name="search_suggestions_onboarding_text">%s ਤੁਹਾਡੇ ਵਲੋਂ ਸਿਰਨਾਵਾਂ ਪੱਟੀ ਵਿੱਚ ਲਿਖੀ ਹਰ ਚੀਜ਼ ਨੂੰ ਤੁਹਾਡੇ ਮੂਲ ਖੋਜ ਇੰਜਣ ਨਾਲ ਸਾਂਝਾ ਕਰੇਗਾ।</string>
     <!-- Search suggestion onboarding hint Learn more link text -->
     <string name="search_suggestions_onboarding_learn_more_link">ਹੋਰ ਜਾਣੋ</string>
+
+    <!-- Search engine suggestion title text. The first parameter is the name of teh suggested engine-->
+    <string name="search_engine_suggestions_title">%s ਖੋਜ</string>
+    <!-- Search engine suggestion description text -->
+    <string name="search_engine_suggestions_description">ਸਿਰਨਾਵਾਂ ਪੱਟੀ ਵਿੱਚੋਂ ਸਿ਼ੱਧਾ ਖੋਜੋ</string>
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
@@ -542,6 +551,10 @@
     <string name="library_desktop_bookmarks_unfiled">ਹੋਰ ਬੁੱਕਮਾਰਕ</string>
     <!-- Option in Library to open History page -->
     <string name="library_history">ਅਤੀਤ</string>
+    <!-- Option in Library to open a new tab -->
+    <string name="library_new_tab">ਨਵੀਂ ਟੈਬ</string>
+    <!-- Option in Library to find text in page -->
+    <string name="library_find_in_page">ਸਫ਼ੇ ‘ਚ ਲੱਭੋ</string>
     <!-- Option in Library to open Synced Tabs page -->
     <string name="library_synced_tabs">ਸਿੰਕ ਕੀਤੀਆਂ ਟੈਬਾਂ</string>
     <!-- Option in Library to open Reading List -->
@@ -896,16 +909,22 @@
     <!-- Summary of tracking protection preference if tracking protection is set to off -->
     <string name="tracking_protection_off">ਬੰਦ</string>
 
-    <!-- Label that indicates that all video and audio autoplay is allowed -->
+    <!-- Label for global setting that indicates that all video and audio autoplay is allowed -->
     <string name="preference_option_autoplay_allowed2">ਆਡੀਓ ਅਤੇ ਵੀਡਿਓ ਦੀ ਇਜਾਜ਼ਤ ਦਿਓ</string>
+    <!-- Label for site specific setting that indicates that all video and audio autoplay is allowed -->
+    <string name="quick_setting_option_autoplay_allowed">ਆਡੀਓ ਤੇ ਵੀਡੀਓ ਦੀ ਮਨਜ਼ੂਰੀ ਦਿਓ</string>
     <!-- Label that indicates that video and audio autoplay is only allowed over Wi-Fi -->
     <string name="preference_option_autoplay_allowed_wifi_only2">ਸਿਰਫ਼ ਸੈਲੂਲਰ ਡਾਟਾ ਤੋਂ ਆਡੀਓ ਅਤੇ ਵੀਡੀਓ ਉੱਤੇ ਰੋਕ ਲਾਓ</string>
     <!-- Subtext that explains 'autoplay on Wi-Fi only' option -->
     <string name="preference_option_autoplay_allowed_wifi_subtext">Wi-Fi ਉੱਤੇ ਆਡੀਓ ਤੇ ਵੀਡੀਓ ਚਲਾਏ ਜਾਣਗੇ</string>
-    <!-- Label that indicates that video autoplay is allowed, but audio autoplay is blocked -->
+    <!-- Label for global setting that indicates that video autoplay is allowed, but audio autoplay is blocked -->
     <string name="preference_option_autoplay_block_audio2">ਸਿਰਫ਼ ਆਡੀਓ ਉੱਤੇ ਪਾਬੰਦੀ ਲਾਓ</string>
-    <!-- Label that indicates that all video and audio autoplay is blocked -->
+    <!-- Label for site specific setting that indicates that video autoplay is allowed, but audio autoplay is blocked -->
+    <string name="quick_setting_option_autoplay_block_audio">ਸਿਰਫ਼ ਆਡੀਓ ਉੱਤੇ ਪਾਬੰਦੀ ਲਾਓ</string>
+    <!-- Label for global setting that indicates that all video and audio autoplay is blocked -->
     <string name="preference_option_autoplay_blocked3">ਆਡੀਓ ਅਤੇ ਵੀਡਿਓ ਤੇ ਪਾਬੰਦੀ ਲਾਓ</string>
+    <!-- Label for site specific setting that indicates that all video and audio autoplay is blocked -->
+    <string name="quick_setting_option_autoplay_blocked">ਆਡੀਓ ਅਤੇ ਵੀਡਿਓ \'ਤੇ ਪਾਬੰਦੀ ਲਾਓ</string>
     <!-- Summary of delete browsing data on quit preference if it is set to on -->
     <string name="delete_browsing_data_quit_on">ਚਾਲੂ</string>
     <!-- Summary of delete browsing data on quit preference if it is set to off -->

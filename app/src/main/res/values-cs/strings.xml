@@ -131,6 +131,8 @@
     <string name="browser_menu_edit_bookmark">Upravit záložku</string>
     <!-- Browser menu button that opens the addon manager -->
     <string name="browser_menu_add_ons">Doplňky</string>
+    <!-- Browser menu button that opens the addon extensions manager -->
+    <string name="browser_menu_extensions">Rozšíření</string>
     <!-- Text displayed when there are no add-ons to be shown -->
     <string name="no_add_ons">Žádné doplňky</string>
     <!-- Browser menu button that sends a user to help articles -->
@@ -182,6 +184,8 @@
     <!-- Browser menu button to configure reader mode appearance e.g. the used font type and size -->
     <string name="browser_menu_read_appearance">Vzhled</string>
 
+    <!-- Browser menu button to show reader view appearance controls e.g. the used font type and size -->
+    <string name="browser_menu_customize_reader_view">Přizpůsobit zobrazení čtečky</string>
     <!-- Error message to show when the user tries to access a scheme not
         handled by the app (Ex: blob, tel etc) -->
     <string name="unknown_scheme_error_message">Nelze se připojit. Schéma URL nebylo rozpoznáno.</string>
@@ -214,11 +218,16 @@
     <string name="search_suggestions_onboarding_do_not_allow_button">Nepovolit</string>
 
     <!-- Search suggestion onboarding hint title text -->
-    <string name="search_suggestions_onboarding_title">Chcete našeptávat vyhledávání také v anonymním prohlížení?</string>
+    <string name="search_suggestions_onboarding_title">Chcete našeptávat dotazy pro vyhledávač také v anonymním prohlížení?</string>
     <!-- Search suggestion onboarding hint description text, first parameter is the name of the app defined in app_name (for example: Fenix)-->
     <string name="search_suggestions_onboarding_text">%s bude sdílet text zadávaný do adresního řádku s vaším výchozím vyhledávačem.</string>
     <!-- Search suggestion onboarding hint Learn more link text -->
     <string name="search_suggestions_onboarding_learn_more_link">Zjistit více</string>
+
+    <!-- Search engine suggestion title text. The first parameter is the name of teh suggested engine-->
+    <string name="search_engine_suggestions_title">Hledat na %s</string>
+    <!-- Search engine suggestion description text -->
+    <string name="search_engine_suggestions_description">Vyhledat na webu přímo z adresního řádku</string>
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
@@ -324,7 +333,7 @@
     <!-- Preference title for switch preference to show search engines -->
     <string name="preferences_show_search_engines">Zobrazovat vyhledávače</string>
     <!-- Preference title for switch preference to show search suggestions -->
-    <string name="preferences_show_search_suggestions">Našeptávat vyhledávání</string>
+    <string name="preferences_show_search_suggestions">Našeptávat dotazy pro vyhledávač</string>
     <!-- Preference title for switch preference to show voice search button -->
     <string name="preferences_show_voice_search">Zobrazit hlasové vyhledávání</string>
     <!-- Preference title for switch preference to show search suggestions also in private mode -->
@@ -537,6 +546,10 @@
     <string name="library_desktop_bookmarks_unfiled">Ostatní záložky</string>
     <!-- Option in Library to open History page -->
     <string name="library_history">Historie</string>
+    <!-- Option in Library to open a new tab -->
+    <string name="library_new_tab">Nový panel</string>
+    <!-- Option in Library to find text in page -->
+    <string name="library_find_in_page">Najít na stránce</string>
     <!-- Option in Library to open Synced Tabs page -->
     <string name="library_synced_tabs">Synchronizované panely</string>
     <!-- Option in Library to open Reading List -->
@@ -899,16 +912,22 @@
     <!-- Summary of tracking protection preference if tracking protection is set to off -->
     <string name="tracking_protection_off">Vypnuta</string>
 
-    <!-- Label that indicates that all video and audio autoplay is allowed -->
+    <!-- Label for global setting that indicates that all video and audio autoplay is allowed -->
     <string name="preference_option_autoplay_allowed2">Povolit zvuk i video</string>
+    <!-- Label for site specific setting that indicates that all video and audio autoplay is allowed -->
+    <string name="quick_setting_option_autoplay_allowed">Povolit zvuk i video</string>
     <!-- Label that indicates that video and audio autoplay is only allowed over Wi-Fi -->
     <string name="preference_option_autoplay_allowed_wifi_only2">Blokovat automatické přehrávání zvuků i videí při připojení přes mobilní data</string>
     <!-- Subtext that explains 'autoplay on Wi-Fi only' option -->
     <string name="preference_option_autoplay_allowed_wifi_subtext">Na Wi-Fi připojení se zvuky i videa automaticky přehrávat budou</string>
-    <!-- Label that indicates that video autoplay is allowed, but audio autoplay is blocked -->
+    <!-- Label for global setting that indicates that video autoplay is allowed, but audio autoplay is blocked -->
     <string name="preference_option_autoplay_block_audio2">Blokovat automatické přehrávání zvuků</string>
-    <!-- Label that indicates that all video and audio autoplay is blocked -->
+    <!-- Label for site specific setting that indicates that video autoplay is allowed, but audio autoplay is blocked -->
+    <string name="quick_setting_option_autoplay_block_audio">Blokovat automatické přehrávání zvuků</string>
+    <!-- Label for global setting that indicates that all video and audio autoplay is blocked -->
     <string name="preference_option_autoplay_blocked3">Blokovat automatické přehrávání zvuků i videí</string>
+    <!-- Label for site specific setting that indicates that all video and audio autoplay is blocked -->
+    <string name="quick_setting_option_autoplay_blocked">Blokovat automatické přehrávání zvuků i videí</string>
     <!-- Summary of delete browsing data on quit preference if it is set to on -->
     <string name="delete_browsing_data_quit_on">Zapnuto</string>
     <!-- Summary of delete browsing data on quit preference if it is set to off -->
@@ -1108,6 +1127,8 @@
     <string name="preferences_delete_browsing_data_cached_files_subtitle">Uvolní využitý prostor na zařízení</string>
     <!-- Title for the site permissions item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_site_permissions">Oprávnění serverů</string>
+    <!-- Title for the downloads item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_downloads">Stažené soubory</string>
     <!-- Text for the button to delete browsing data -->
     <string name="preferences_delete_browsing_data_button">Smazat soukromá data</string>
 

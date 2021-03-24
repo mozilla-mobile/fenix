@@ -8,17 +8,23 @@ import androidx.annotation.VisibleForTesting
 import mozilla.components.browser.state.action.BrowserAction
 import mozilla.components.browser.state.action.ContentAction
 import mozilla.components.browser.state.action.DownloadAction
+import mozilla.components.browser.state.action.EngineAction
 import mozilla.components.browser.state.action.TabListAction
 import mozilla.components.browser.state.selector.findTab
+import mozilla.components.browser.state.selector.findTabOrCustomTab
 import mozilla.components.browser.state.selector.normalTabs
 import mozilla.components.browser.state.state.BrowserState
+import mozilla.components.browser.state.state.EngineState
+import mozilla.components.browser.state.state.SessionState
 import mozilla.components.lib.state.Middleware
 import mozilla.components.lib.state.MiddlewareContext
+import mozilla.components.support.base.android.Clock
 import mozilla.components.support.base.log.logger.Logger
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.search.telemetry.ads.AdsTelemetry
 import org.mozilla.fenix.utils.Settings
+import org.mozilla.fenix.GleanMetrics.EngineTab as EngineMetrics
 
 /**
  * [Middleware] to record telemetry in response to [BrowserAction]s.
@@ -49,7 +55,7 @@ class TelemetryMiddleware(
         }
     }
 
-    @Suppress("TooGenericExceptionCaught", "ComplexMethod")
+    @Suppress("TooGenericExceptionCaught", "ComplexMethod", "NestedBlockDepth")
     override fun invoke(
         context: MiddlewareContext<BrowserState, BrowserAction>,
         next: (BrowserAction) -> Unit,
@@ -60,8 +66,12 @@ class TelemetryMiddleware(
             is ContentAction.UpdateLoadingStateAction -> {
                 context.state.findTab(action.sessionId)?.let { tab ->
                     // Record UriOpened event when a non-private page finishes loading
-                    if (tab.content.loading && !action.loading && !tab.content.private) {
-                        metrics.track(Event.UriOpened)
+                    if (tab.content.loading && !action.loading) {
+                        if (!tab.content.private) {
+                            metrics.track(Event.UriOpened)
+                        }
+
+                        metrics.track(Event.NormalAndPrivateUriOpened)
                     }
                 }
             }
@@ -90,6 +100,10 @@ class TelemetryMiddleware(
             is DownloadAction.AddDownloadAction -> {
                 metrics.track(Event.DownloadAdded)
             }
+            is EngineAction.KillEngineSessionAction -> {
+                val tab = context.state.findTabOrCustomTab(action.sessionId)
+                onEngineSessionKilled(context.state, tab)
+            }
         }
 
         next(action)
@@ -112,4 +126,36 @@ class TelemetryMiddleware(
             }
         }
     }
+
+    /**
+     * Collecting some engine-specific (GeckoView) telemetry.
+     * https://github.com/mozilla-mobile/android-components/issues/9366
+     */
+    private fun onEngineSessionKilled(state: BrowserState, tab: SessionState?) {
+        if (tab == null) {
+            logger.debug("Could not find tab for killed engine session")
+            return
+        }
+
+        val isSelected = tab.id == state.selectedTabId
+        val age = tab.engineState.age()
+
+        // Increment the counter of killed foreground/background tabs
+        val tabKillLabel = if (isSelected) { "foreground" } else { "background" }
+        EngineMetrics.kills[tabKillLabel].add()
+
+        // Record the age of the engine session of the killed foreground/background tab.
+        if (isSelected && age != null) {
+            EngineMetrics.killForegroundAge.accumulateSamples(listOf(age).toLongArray())
+        } else if (age != null) {
+            EngineMetrics.killBackgroundAge.accumulateSamples(listOf(age).toLongArray())
+        }
+    }
+}
+
+@Suppress("MagicNumber")
+private fun EngineState.age(): Long? {
+    val timestamp = (timestamp ?: return null)
+    val now = Clock.elapsedRealtime()
+    return (now - timestamp)
 }

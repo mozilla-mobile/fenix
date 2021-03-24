@@ -123,12 +123,6 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     val canShowCfr: Boolean
         get() = (System.currentTimeMillis() - lastCfrShownTimeInMillis) > THREE_DAYS_MS
 
-    var syncedTabsInTabsTray by featureFlagPreference(
-        appContext.getPreferenceKey(R.string.pref_key_synced_tabs_tabs_tray),
-        default = false,
-        featureFlag = FeatureFlags.syncedTabsInTabsTray
-    )
-
     var forceEnableZoom by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_accessibility_force_enable_zoom),
         default = false
@@ -327,6 +321,12 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = false
     )
 
+    var tabsTrayRewrite by featureFlagPreference(
+        appContext.getPreferenceKey(R.string.pref_key_new_tabs_tray),
+        default = false,
+        featureFlag = FeatureFlags.tabsTrayRewrite
+    )
+
     fun getTabTimeout(): Long = when {
         closeTabsAfterOneDay -> ONE_DAY_MS
         closeTabsAfterOneWeek -> ONE_WEEK_MS
@@ -476,6 +476,13 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         true
     )
 
+    /**
+     * Prefer to use a fixed top toolbar when:
+     * - a talkback service is enabled or
+     * - switch access is enabled.
+     *
+     * This is automatically inferred based on the current system status. Not a setting in our app.
+     */
     val shouldUseFixedTopToolbar: Boolean
         get() {
             return touchExplorationIsEnabled || switchServiceIsEnabled
@@ -930,6 +937,38 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         0
     )
 
+    /**
+     * Storing number of installed add-ons for telemetry purposes
+     */
+    var installedAddonsCount by intPreference(
+        appContext.getPreferenceKey(R.string.pref_key_installed_addons_count),
+        0
+    )
+
+    /**
+     * Storing the list of installed add-ons for telemetry purposes
+     */
+    var installedAddonsList by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_installed_addons_list),
+        default = ""
+    )
+
+    /**
+     * Storing number of enabled add-ons for telemetry purposes
+     */
+    var enabledAddonsCount by intPreference(
+        appContext.getPreferenceKey(R.string.pref_key_enabled_addons_count),
+        0
+    )
+
+    /**
+     * Storing the list of enabled add-ons for telemetry purposes
+     */
+    var enabledAddonsList by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_enabled_addons_list),
+        default = ""
+    )
+
     private var savedLoginsSortingStrategyString by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_saved_logins_sorting_strategy),
         default = SavedLoginsSortingStrategyMenu.Item.AlphabeticallySort.strategyString
@@ -968,5 +1007,17 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var isSwipeToolbarToSwitchTabsEnabled by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_swipe_toolbar_switch_tabs),
         default = true
+    )
+
+    var creditCardsFeature by featureFlagPreference(
+        appContext.getPreferenceKey(R.string.pref_key_show_credit_cards_feature),
+        default = false,
+        featureFlag = FeatureFlags.creditCardsFeature
+    )
+
+    var addressFeature by featureFlagPreference(
+        appContext.getPreferenceKey(R.string.pref_key_show_address_feature),
+        default = false,
+        featureFlag = FeatureFlags.addressesFeature
     )
 }

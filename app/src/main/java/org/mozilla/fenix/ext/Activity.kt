@@ -15,8 +15,17 @@ import mozilla.components.concept.base.crash.Breadcrumb
  * We don't use the equivalent function from Android Components because the stable flag messes
  * with the toolbar. See #1998 and #3272.
  */
+@Deprecated(
+    message = "Use the Android Component implementation instead.",
+    replaceWith = ReplaceWith(
+        "enterToImmersiveMode()",
+        "mozilla.components.support.ktx.android.view.enterToImmersiveMode"
+    )
+)
 fun Activity.enterToImmersiveMode() {
     window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+    // This will be addressed on https://github.com/mozilla-mobile/fenix/issues/17804
+    @Suppress("DEPRECATION")
     window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
             or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
             or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION

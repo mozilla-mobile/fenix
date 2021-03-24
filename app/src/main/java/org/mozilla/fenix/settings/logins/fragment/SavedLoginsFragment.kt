@@ -64,11 +64,6 @@ class SavedLoginsFragment : Fragment() {
         initToolbar()
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -150,6 +145,8 @@ class SavedLoginsFragment : Fragment() {
         toolbarChildContainer.visibility = View.GONE
         (activity as HomeActivity).getSupportActionBarAndInflateIfNecessary().setDisplayShowTitleEnabled(true)
         sortingStrategyMenu.menuController.dismiss()
+        sortLoginsMenuRoot.setOnClickListener(null)
+        setHasOptionsMenu(false)
 
         redirectToReAuth(listOf(R.id.loginDetailFragment), findNavController().currentDestination?.id)
         super.onPause()
@@ -162,6 +159,7 @@ class SavedLoginsFragment : Fragment() {
     ) = (activity as HomeActivity).openToBrowserAndLoad(searchTermOrURL, newTab, from)
 
     private fun initToolbar() {
+        setHasOptionsMenu(true)
         showToolbar(getString(R.string.preferences_passwords_saved_logins))
         (activity as HomeActivity).getSupportActionBarAndInflateIfNecessary()
             .setDisplayShowTitleEnabled(false)

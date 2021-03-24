@@ -9,6 +9,7 @@ import mozilla.components.browser.errorpages.ErrorType
 import mozilla.components.browser.state.search.SearchEngine
 import mozilla.components.feature.top.sites.TopSite
 import org.mozilla.fenix.GleanMetrics.Addons
+import org.mozilla.fenix.GleanMetrics.AndroidKeystoreExperiment
 import org.mozilla.fenix.GleanMetrics.AppTheme
 import org.mozilla.fenix.GleanMetrics.Autoplay
 import org.mozilla.fenix.GleanMetrics.Collections
@@ -52,6 +53,7 @@ sealed class Event {
     object CustomTabsActionTapped : Event()
     object CustomTabsMenuOpened : Event()
     object UriOpened : Event()
+    object NormalAndPrivateUriOpened : Event()
     object SyncAuthOpened : Event()
     object SyncAuthClosed : Event()
     object SyncAuthSignUp : Event()
@@ -72,6 +74,10 @@ sealed class Event {
     object HistoryOpened : Event()
     object HistoryItemShared : Event()
     object HistoryItemOpened : Event()
+    object HistoryOpenedInNewTab : Event()
+    object HistoryOpenedInNewTabs : Event()
+    object HistoryOpenedInPrivateTab : Event()
+    object HistoryOpenedInPrivateTabs : Event()
     object HistoryItemRemoved : Event()
     object HistoryAllItemsRemoved : Event()
     object ReaderModeAvailable : Event()
@@ -122,6 +128,7 @@ sealed class Event {
     object NotificationMediaPlay : Event()
     object NotificationMediaPause : Event()
     object TopSiteOpenDefault : Event()
+    object TopSiteOpenGoogle : Event()
     object TopSiteOpenFrecent : Event()
     object TopSiteOpenPinned : Event()
     object TopSiteOpenInNewTab : Event()
@@ -209,8 +216,13 @@ sealed class Event {
     object ContextMenuSelectAllTapped : Event()
     object ContextMenuShareTapped : Event()
 
-    object HaveTopSites : Event()
-    object HaveNoTopSites : Event()
+    object SyncedTabSuggestionClicked : Event()
+    object BookmarkSuggestionClicked : Event()
+    object ClipboardSuggestionClicked : Event()
+    object HistorySuggestionClicked : Event()
+    object SearchActionClicked : Event()
+    object SearchSuggestionClicked : Event()
+    object OpenedTabSuggestionClicked : Event()
 
     // Interaction events with extras
 
@@ -218,6 +230,25 @@ sealed class Event {
         override val extras: Map<TopSites.swipeCarouselKeys, String>?
             get() = hashMapOf(TopSites.swipeCarouselKeys.page to page.toString())
     }
+
+    data class SecurePrefsExperimentFailure(val failureException: String) : Event() {
+        override val extras =
+            mapOf(AndroidKeystoreExperiment.experimentFailureKeys.failureException to failureException)
+    }
+    data class SecurePrefsGetFailure(val failureException: String) : Event() {
+        override val extras =
+            mapOf(AndroidKeystoreExperiment.getFailureKeys.failureException to failureException)
+    }
+    data class SecurePrefsGetSuccess(val successCode: String) : Event() {
+        override val extras =
+            mapOf(AndroidKeystoreExperiment.getResultKeys.result to successCode)
+    }
+    data class SecurePrefsWriteFailure(val failureException: String) : Event() {
+        override val extras =
+            mapOf(AndroidKeystoreExperiment.writeFailureKeys.failureException to failureException)
+    }
+    object SecurePrefsWriteSuccess : Event()
+    object SecurePrefsReset : Event()
 
     data class TopSiteLongPress(val type: TopSite.Type) : Event() {
         override val extras: Map<TopSites.longPressKeys, String>?
@@ -455,6 +486,7 @@ sealed class Event {
             data class Action(override val engineSource: EngineSource) : EventSource(engineSource)
             data class Widget(override val engineSource: EngineSource) : EventSource(engineSource)
             data class Shortcut(override val engineSource: EngineSource) : EventSource(engineSource)
+            data class TopSite(override val engineSource: EngineSource) : EventSource(engineSource)
             data class Other(override val engineSource: EngineSource) : EventSource(engineSource)
 
             private val label: String
@@ -463,6 +495,7 @@ sealed class Event {
                     is Action -> "action"
                     is Widget -> "widget"
                     is Shortcut -> "shortcut"
+                    is TopSite -> "topsite"
                     is Other -> "other"
                 }
 
@@ -474,7 +507,7 @@ sealed class Event {
         }
 
         enum class SearchAccessPoint {
-            SUGGESTION, ACTION, WIDGET, SHORTCUT, NONE
+            SUGGESTION, ACTION, WIDGET, SHORTCUT, TOPSITE, NONE
         }
 
         override val extras: Map<Events.performedSearchKeys, String>?
@@ -499,9 +532,9 @@ sealed class Event {
             get() = providerName
     }
 
-    data class SearchAdClicked(val providerName: String) : Event() {
+    data class SearchAdClicked(val keyName: String) : Event() {
         val label: String
-            get() = providerName
+            get() = keyName
     }
 
     data class SearchInContent(val keyName: String) : Event() {

@@ -8,6 +8,9 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.spyk
+import io.mockk.unmockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineDispatcher
@@ -21,6 +24,7 @@ import mozilla.components.browser.state.state.ReaderState
 import mozilla.components.browser.state.state.SearchState
 import mozilla.components.browser.state.state.createTab
 import mozilla.components.browser.state.state.recover.RecoverableTab
+import mozilla.components.browser.state.state.selectedOrDefaultSearchEngine
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.Engine
 import mozilla.components.feature.session.SessionUseCases
@@ -39,6 +43,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.components.Analytics
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.components.metrics.Event.PerformedSearch.EngineSource
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.components.tips.Tip
 import org.mozilla.fenix.ext.components
@@ -86,6 +91,25 @@ class DefaultSessionControlControllerTest {
         type = SearchEngine.Type.BUNDLED,
         resultUrls = listOf("https://example.org/?q={searchTerms}")
     )
+
+    private val googleSearchEngine = SearchEngine(
+        id = "googleTest",
+        name = "Google Test Engine",
+        icon = mockk(relaxed = true),
+        type = SearchEngine.Type.BUNDLED,
+        resultUrls = listOf("https://www.google.com/?q={searchTerms}"),
+        suggestUrl = "https://www.google.com/"
+    )
+
+    private val duckDuckGoSearchEngine = SearchEngine(
+        id = "ddgTest",
+        name = "DuckDuckGo Test Engine",
+        icon = mockk(relaxed = true),
+        type = SearchEngine.Type.BUNDLED,
+        resultUrls = listOf("https://duckduckgo.com/?q=%7BsearchTerms%7D&t=fpas"),
+        suggestUrl = "https://ac.duckduckgo.com/ac/?q=%7BsearchTerms%7D&type=list"
+    )
+
     private lateinit var store: BrowserStore
     private lateinit var controller: DefaultSessionControlController
 
@@ -117,7 +141,7 @@ class DefaultSessionControlControllerTest {
 
         val restoreUseCase: TabsUseCases.RestoreUseCase = mockk(relaxed = true)
 
-        controller = DefaultSessionControlController(
+        controller = spyk(DefaultSessionControlController(
             activity = activity,
             store = store,
             settings = settings,
@@ -136,7 +160,7 @@ class DefaultSessionControlControllerTest {
             showDeleteCollectionPrompt = showDeleteCollectionPrompt,
             showTabTray = showTabTray,
             handleSwipedItemDeletionCancel = handleSwipedItemDeletionCancel
-        )
+        ))
     }
 
     @After
@@ -182,8 +206,8 @@ class DefaultSessionControlControllerTest {
     }
 
     @Test
-    fun `handleCollectionOpenTabClicked onTabRestored`() {
-        val restoredTab = RecoverableTab(
+    fun `handleCollectionOpenTabClicked with existing selected tab`() {
+        val recoverableTab = RecoverableTab(
             id = "test",
             parentId = null,
             url = "https://www.mozilla.org",
@@ -196,13 +220,42 @@ class DefaultSessionControlControllerTest {
         )
 
         val tab = mockk<ComponentTab> {
-            every { restore(activity, engine, restoreSessionId = false) } returns restoredTab
+            every { restore(activity, engine, restoreSessionId = false) } returns recoverableTab
         }
 
-        store.dispatch(TabListAction.AddTabAction(
-            createTab(id = restoredTab.id, url = restoredTab.url))
-        ).joinBlocking()
-        store.dispatch(TabListAction.SelectTabAction(restoredTab.id)).joinBlocking()
+        val restoredTab = createTab(id = recoverableTab.id, url = recoverableTab.url)
+        val otherTab = createTab(id = "otherTab", url = "https://mozilla.org")
+        store.dispatch(TabListAction.AddTabAction(otherTab)).joinBlocking()
+        store.dispatch(TabListAction.SelectTabAction(otherTab.id)).joinBlocking()
+        store.dispatch(TabListAction.AddTabAction(restoredTab)).joinBlocking()
+
+        controller.handleCollectionOpenTabClicked(tab)
+        verify { metrics.track(Event.CollectionTabRestored) }
+        verify { activity.openToBrowser(BrowserDirection.FromHome) }
+        verify { selectTabUseCase.selectTab.invoke(restoredTab.id) }
+        verify { reloadUrlUseCase.reload.invoke(restoredTab.id) }
+    }
+
+    @Test
+    fun `handleCollectionOpenTabClicked without existing selected tab`() {
+        val recoverableTab = RecoverableTab(
+            id = "test",
+            parentId = null,
+            url = "https://www.mozilla.org",
+            title = "Mozilla",
+            state = null,
+            contextId = null,
+            readerState = ReaderState(),
+            lastAccess = 0,
+            private = false
+        )
+
+        val tab = mockk<ComponentTab> {
+            every { restore(activity, engine, restoreSessionId = false) } returns recoverableTab
+        }
+
+        val restoredTab = createTab(id = recoverableTab.id, url = recoverableTab.url)
+        store.dispatch(TabListAction.AddTabAction(restoredTab)).joinBlocking()
 
         controller.handleCollectionOpenTabClicked(tab)
         verify { metrics.track(Event.CollectionTabRestored) }
@@ -330,6 +383,7 @@ class DefaultSessionControlControllerTest {
     @Test
     fun handleSelectDefaultTopSite() {
         val topSiteUrl = "mozilla.org"
+        every { controller.getAvailableSearchEngines() } returns listOf(searchEngine)
 
         controller.handleSelectTopSite(topSiteUrl, TopSite.Type.DEFAULT)
         verify { metrics.track(Event.TopSiteOpenInNewTab) }
@@ -347,6 +401,7 @@ class DefaultSessionControlControllerTest {
     @Test
     fun handleSelectNonDefaultTopSite() {
         val topSiteUrl = "mozilla.org"
+        every { controller.getAvailableSearchEngines() } returns listOf(searchEngine)
 
         controller.handleSelectTopSite(topSiteUrl, TopSite.Type.FRECENT)
         verify { metrics.track(Event.TopSiteOpenInNewTab) }
@@ -363,12 +418,14 @@ class DefaultSessionControlControllerTest {
     @Test
     fun handleSelectGoogleDefaultTopSiteUS() {
         val topSiteUrl = SupportUtils.GOOGLE_URL
+        every { controller.getAvailableSearchEngines() } returns listOf(searchEngine)
 
         store.dispatch(SearchAction.SetRegionAction(RegionState("US", "US"))).joinBlocking()
 
         controller.handleSelectTopSite(topSiteUrl, TopSite.Type.DEFAULT)
         verify { metrics.track(Event.TopSiteOpenInNewTab) }
         verify { metrics.track(Event.TopSiteOpenDefault) }
+        verify { metrics.track(Event.TopSiteOpenGoogle) }
         verify {
             tabsUseCases.addTab.invoke(
                 url = SupportUtils.GOOGLE_US_URL,
@@ -382,12 +439,14 @@ class DefaultSessionControlControllerTest {
     @Test
     fun handleSelectGoogleDefaultTopSiteXX() {
         val topSiteUrl = SupportUtils.GOOGLE_URL
+        every { controller.getAvailableSearchEngines() } returns listOf(searchEngine)
 
         store.dispatch(SearchAction.SetRegionAction(RegionState("DE", "FR"))).joinBlocking()
 
         controller.handleSelectTopSite(topSiteUrl, TopSite.Type.DEFAULT)
         verify { metrics.track(Event.TopSiteOpenInNewTab) }
         verify { metrics.track(Event.TopSiteOpenDefault) }
+        verify { metrics.track(Event.TopSiteOpenGoogle) }
         verify {
             tabsUseCases.addTab.invoke(
                 SupportUtils.GOOGLE_XX_URL,
@@ -399,14 +458,72 @@ class DefaultSessionControlControllerTest {
     }
 
     @Test
+    fun handleSelectGoogleDefaultTopSite_EventPerformedSearchTopSite() {
+        val topSiteUrl = SupportUtils.GOOGLE_URL
+        val engineSource = EngineSource.Default(googleSearchEngine, false)
+        every { controller.getAvailableSearchEngines() } returns listOf(googleSearchEngine)
+        try {
+            mockkStatic("mozilla.components.browser.state.state.SearchStateKt")
+
+            every { any<SearchState>().selectedOrDefaultSearchEngine } returns googleSearchEngine
+
+            controller.handleSelectTopSite(topSiteUrl, TopSite.Type.DEFAULT)
+
+            verify {
+                metrics.track(
+                    Event.PerformedSearch(
+                        Event.PerformedSearch.EventSource.TopSite(
+                            engineSource
+                        )
+                    )
+                )
+                metrics.track(Event.TopSiteOpenGoogle)
+                metrics.track(Event.TopSiteOpenDefault)
+            }
+        } finally {
+            unmockkStatic("mozilla.components.browser.state.state.SearchStateKt")
+        }
+    }
+
+    @Test
+    fun handleSelectDuckDuckGoTopSite_EventPerformedSearchTopSite() {
+        val topSiteUrl = "https://duckduckgo.com"
+        val engineSource = EngineSource.Shortcut(duckDuckGoSearchEngine, false)
+        every { controller.getAvailableSearchEngines() } returns listOf(googleSearchEngine, duckDuckGoSearchEngine)
+        try {
+            mockkStatic("mozilla.components.browser.state.state.SearchStateKt")
+
+            every { any<SearchState>().selectedOrDefaultSearchEngine } returns googleSearchEngine
+
+            controller.handleSelectTopSite(topSiteUrl, TopSite.Type.PINNED)
+
+            verify {
+                metrics.track(
+                    Event.PerformedSearch(
+                        Event.PerformedSearch.EventSource.TopSite(
+                            engineSource
+                        )
+                    )
+                )
+
+                metrics.track(Event.TopSiteOpenPinned)
+            }
+        } finally {
+            unmockkStatic("mozilla.components.browser.state.state.SearchStateKt")
+        }
+    }
+
+    @Test
     fun handleSelectGooglePinnedTopSiteUS() {
         val topSiteUrl = SupportUtils.GOOGLE_URL
+        every { controller.getAvailableSearchEngines() } returns listOf(searchEngine)
 
         store.dispatch(SearchAction.SetRegionAction(RegionState("US", "US"))).joinBlocking()
 
         controller.handleSelectTopSite(topSiteUrl, TopSite.Type.PINNED)
         verify { metrics.track(Event.TopSiteOpenInNewTab) }
         verify { metrics.track(Event.TopSiteOpenPinned) }
+        verify { metrics.track(Event.TopSiteOpenGoogle) }
         verify {
             tabsUseCases.addTab.invoke(
                 SupportUtils.GOOGLE_US_URL,
@@ -420,12 +537,14 @@ class DefaultSessionControlControllerTest {
     @Test
     fun handleSelectGooglePinnedTopSiteXX() {
         val topSiteUrl = SupportUtils.GOOGLE_URL
+        every { controller.getAvailableSearchEngines() } returns listOf(searchEngine)
 
         store.dispatch(SearchAction.SetRegionAction(RegionState("DE", "FR"))).joinBlocking()
 
         controller.handleSelectTopSite(topSiteUrl, TopSite.Type.PINNED)
         verify { metrics.track(Event.TopSiteOpenInNewTab) }
         verify { metrics.track(Event.TopSiteOpenPinned) }
+        verify { metrics.track(Event.TopSiteOpenGoogle) }
         verify {
             tabsUseCases.addTab.invoke(
                 SupportUtils.GOOGLE_XX_URL,
@@ -439,12 +558,14 @@ class DefaultSessionControlControllerTest {
     @Test
     fun handleSelectGoogleFrecentTopSiteUS() {
         val topSiteUrl = SupportUtils.GOOGLE_URL
+        every { controller.getAvailableSearchEngines() } returns listOf(searchEngine)
 
         store.dispatch(SearchAction.SetRegionAction(RegionState("US", "US"))).joinBlocking()
 
         controller.handleSelectTopSite(topSiteUrl, TopSite.Type.FRECENT)
         verify { metrics.track(Event.TopSiteOpenInNewTab) }
         verify { metrics.track(Event.TopSiteOpenFrecent) }
+        verify { metrics.track(Event.TopSiteOpenGoogle) }
         verify {
             tabsUseCases.addTab.invoke(
                 SupportUtils.GOOGLE_US_URL,
@@ -458,12 +579,14 @@ class DefaultSessionControlControllerTest {
     @Test
     fun handleSelectGoogleFrecentTopSiteXX() {
         val topSiteUrl = SupportUtils.GOOGLE_URL
+        every { controller.getAvailableSearchEngines() } returns listOf(searchEngine)
 
         store.dispatch(SearchAction.SetRegionAction(RegionState("DE", "FR"))).joinBlocking()
 
         controller.handleSelectTopSite(topSiteUrl, TopSite.Type.FRECENT)
         verify { metrics.track(Event.TopSiteOpenInNewTab) }
         verify { metrics.track(Event.TopSiteOpenFrecent) }
+        verify { metrics.track(Event.TopSiteOpenGoogle) }
         verify {
             tabsUseCases.addTab.invoke(
                 SupportUtils.GOOGLE_XX_URL,

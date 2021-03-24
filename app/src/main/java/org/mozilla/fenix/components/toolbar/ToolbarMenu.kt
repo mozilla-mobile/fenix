@@ -27,10 +27,11 @@ interface ToolbarMenu {
         object Quit : Item()
         object OpenInApp : Item()
         object Bookmark : Item()
-        object ReaderModeAppearance : Item()
+        object CustomizeReaderView : Item()
         object Bookmarks : Item()
         object History : Item()
         object Downloads : Item()
+        object NewTab : Item()
     }
 
     val menuBuilder: BrowserMenuBuilder

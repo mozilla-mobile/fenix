@@ -12,7 +12,6 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.StrictMode
-import android.view.Display.FLAG_SECURE
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -85,6 +84,8 @@ import mozilla.components.support.ktx.android.content.res.resolveAttribute
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import mozilla.components.ui.tabcounter.TabCounterMenu
 import org.mozilla.fenix.BrowserDirection
+import org.mozilla.fenix.Config
+import org.mozilla.fenix.GleanMetrics.PerfStartup
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BrowserAnimator.Companion.getToolbarNavOptions
@@ -101,11 +102,13 @@ import org.mozilla.fenix.components.toolbar.FenixTabCounterMenu
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.hideToolbar
+import org.mozilla.fenix.ext.measureNoInline
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
-import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
+import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.home.mozonline.showPrivacyPopWindow
 import org.mozilla.fenix.home.sessioncontrol.DefaultSessionControlController
 import org.mozilla.fenix.home.sessioncontrol.SessionControlInteractor
 import org.mozilla.fenix.home.sessioncontrol.SessionControlView
@@ -121,8 +124,6 @@ import org.mozilla.fenix.utils.allowUndo
 import org.mozilla.fenix.whatsnew.WhatsNew
 import java.lang.ref.WeakReference
 import kotlin.math.min
-import org.mozilla.fenix.Config
-import org.mozilla.fenix.home.mozonline.showPrivacyPopWindow
 
 @ExperimentalCoroutinesApi
 @Suppress("TooManyFunctions", "LargeClass")
@@ -194,7 +195,7 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View? = PerfStartup.homeFragmentOnCreateView.measureNoInline {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
         val activity = activity as HomeActivity
         val components = requireComponents
@@ -235,7 +236,7 @@ class HomeFragment : Fragment() {
                 storage = components.core.topSitesStorage,
                 config = ::getTopSitesConfig
             ),
-            owner = this,
+            owner = viewLifecycleOwner,
             view = view
         )
 
@@ -275,7 +276,7 @@ class HomeFragment : Fragment() {
         appBarLayout = view.homeAppBar
 
         activity.themeManager.applyStatusBarTheme(activity)
-        return view
+        view
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -357,7 +358,8 @@ class HomeFragment : Fragment() {
     }
 
     @Suppress("LongMethod", "ComplexMethod")
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) =
+            PerfStartup.homeFragmentOnViewCreated.measureNoInline { // weird indent so we don't have to break blame.
         super.onViewCreated(view, savedInstanceState)
 
         observeSearchEngineChanges()
@@ -405,12 +407,6 @@ class HomeFragment : Fragment() {
                     HomeFragmentAction.ModeChange(Mode.fromBrowsingMode(newMode))
                 )
             }
-        }
-
-        if (browsingModeManager.mode.isPrivate) {
-            requireActivity().window.addFlags(FLAG_SECURE)
-        } else {
-            requireActivity().window.clearFlags(FLAG_SECURE)
         }
 
         consumeFrom(requireComponents.core.store) {
@@ -551,7 +547,6 @@ class HomeFragment : Fragment() {
         sessionControlView = null
         appBarLayout = null
         bundleArgs.clear()
-        requireActivity().window.clearFlags(FLAG_SECURE)
     }
 
     override fun onStart() {
@@ -1021,9 +1016,14 @@ class HomeFragment : Fragment() {
     }
 
     private fun openTabTray() {
+        val direction = if (requireContext().settings().tabsTrayRewrite) {
+            HomeFragmentDirections.actionGlobalTabsTrayFragment()
+        } else {
+            HomeFragmentDirections.actionGlobalTabTrayDialogFragment()
+        }
         findNavController().nav(
             R.id.homeFragment,
-            HomeFragmentDirections.actionGlobalTabTrayDialogFragment()
+            direction
         )
     }
 

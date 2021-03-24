@@ -22,9 +22,21 @@ class SecretSettingsFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.secret_settings_preferences, rootKey)
 
-        requirePreference<SwitchPreference>(R.string.pref_key_synced_tabs_tabs_tray).apply {
-            isVisible = FeatureFlags.syncedTabsInTabsTray
-            isChecked = context.settings().syncedTabsInTabsTray
+        requirePreference<SwitchPreference>(R.string.pref_key_show_address_feature).apply {
+            isVisible = FeatureFlags.addressesFeature
+            isChecked = context.settings().addressFeature
+            onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
+
+        requirePreference<SwitchPreference>(R.string.pref_key_show_credit_cards_feature).apply {
+            isVisible = FeatureFlags.creditCardsFeature
+            isChecked = context.settings().creditCardsFeature
+            onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
+
+        requirePreference<SwitchPreference>(R.string.pref_key_new_tabs_tray).apply {
+            isVisible = FeatureFlags.tabsTrayRewrite
+            isChecked = context.settings().tabsTrayRewrite
             onPreferenceChangeListener = SharedPreferenceUpdater()
         }
     }

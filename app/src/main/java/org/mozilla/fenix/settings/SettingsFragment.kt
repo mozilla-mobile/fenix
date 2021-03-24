@@ -14,6 +14,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.annotation.VisibleForTesting
@@ -39,6 +40,7 @@ import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.application
 import org.mozilla.fenix.ext.components
@@ -131,7 +133,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        setPreferencesFromResource(R.xml.preferences, rootKey)
+        val preferencesId = if (FeatureFlags.newIconSet) {
+            R.xml.preferences_without_icons
+        } else {
+            R.xml.preferences
+        }
+        setPreferencesFromResource(preferencesId, rootKey)
         updateMakeDefaultBrowserPreference()
     }
 
@@ -269,6 +276,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
             resources.getString(R.string.pref_key_passwords) -> {
                 SettingsFragmentDirections.actionSettingsFragmentToSavedLoginsAuthFragment()
             }
+            resources.getString(R.string.pref_key_credit_cards) -> {
+                SettingsFragmentDirections.actionSettingsFragmentToCreditCardsSettingFragment()
+            }
             resources.getString(R.string.pref_key_about) -> {
                 SettingsFragmentDirections.actionSettingsFragmentToAboutFragment()
             }
@@ -335,7 +345,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                             Toast.LENGTH_LONG
                         ).show()
 
-                        Handler().postDelayed({
+                        Handler(Looper.getMainLooper()).postDelayed({
                             exitProcess(0)
                         }, AMO_COLLECTION_OVERRIDE_EXIT_DELAY)
                     }
@@ -367,8 +377,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val preferenceOpenLinksInExternalApp =
             findPreference<Preference>(getPreferenceKey(R.string.pref_key_open_links_in_external_app))
 
-        preferencePrivateBrowsing.icon.mutate().apply {
-            setTint(requireContext().getColorFromAttr(R.attr.primaryText))
+        if (!FeatureFlags.newIconSet) {
+            preferencePrivateBrowsing.icon.mutate().apply {
+                setTint(requireContext().getColorFromAttr(R.attr.primaryText))
+            }
         }
 
         if (!Config.channel.isReleased) {
@@ -406,7 +418,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                         getString(R.string.toast_override_fxa_sync_server_done),
                         Toast.LENGTH_LONG
                     ).show()
-                    Handler().postDelayed({
+                    Handler(Looper.getMainLooper()).postDelayed({
                         exitProcess(0)
                     }, FXA_SYNC_OVERRIDE_EXIT_DELAY)
                 }
@@ -414,12 +426,18 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
         preferenceFxAOverride?.onPreferenceChangeListener = syncFxAOverrideUpdater
         preferenceSyncOverride?.onPreferenceChangeListener = syncFxAOverrideUpdater
-        findPreference<Preference>(
-            getPreferenceKey(R.string.pref_key_debug_settings)
-        )?.isVisible = requireContext().settings().showSecretDebugMenuThisSession
-        findPreference<Preference>(
-            getPreferenceKey(R.string.pref_key_secret_debug_info)
-        )?.isVisible = requireContext().settings().showSecretDebugMenuThisSession
+
+        with(requireContext().settings()) {
+            findPreference<Preference>(
+                getPreferenceKey(R.string.pref_key_credit_cards)
+            )?.isVisible = creditCardsFeature
+            findPreference<Preference>(
+                getPreferenceKey(R.string.pref_key_debug_settings)
+            )?.isVisible = showSecretDebugMenuThisSession
+            findPreference<Preference>(
+                getPreferenceKey(R.string.pref_key_secret_debug_info)
+            )?.isVisible = showSecretDebugMenuThisSession
+        }
 
         setupAmoCollectionOverridePreference(requireContext().settings())
     }
@@ -434,8 +452,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
                 Preference.OnPreferenceClickListener {
                     requireContext().getSystemService(RoleManager::class.java).also {
-                        if (!it.isRoleHeld(RoleManager.ROLE_BROWSER)) {
-                            startActivityForResult(it.createRequestRoleIntent(RoleManager.ROLE_BROWSER), 0)
+                        if (it.isRoleAvailable(RoleManager.ROLE_BROWSER) && !it.isRoleHeld(
+                                RoleManager.ROLE_BROWSER
+                            )
+                        ) {
+                            startActivityForResult(
+                                it.createRequestRoleIntent(RoleManager.ROLE_BROWSER),
+                                REQUEST_CODE_BROWSER_ROLE
+                            )
                         } else {
                             navigateUserToDefaultAppsSettings()
                         }
@@ -452,12 +476,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
             else -> {
                 Preference.OnPreferenceClickListener {
                     (activity as HomeActivity).openToBrowserAndLoad(
-                            searchTermOrURL = SupportUtils.getSumoURLForTopic(
-                                    requireContext(),
-                                    SupportUtils.SumoTopic.SET_AS_DEFAULT_BROWSER
-                            ),
-                            newTab = true,
-                            from = BrowserDirection.FromSettings
+                        searchTermOrURL = SupportUtils.getSumoURLForTopic(
+                            requireContext(),
+                            SupportUtils.SumoTopic.SET_AS_DEFAULT_BROWSER
+                        ),
+                        newTab = true,
+                        from = BrowserDirection.FromSettings
                     )
                     true
                 }
@@ -468,12 +492,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        /*
-        If role manager doesn't show in-app browser changing dialog for a reason, navigate user to
-        Default Apps Settings.
-         */
-        if (resultCode == Activity.RESULT_CANCELED && requestCode == 0) {
-            navigateUserToDefaultAppsSettings()
+        // If the user made us the default browser, update the switch
+        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE_BROWSER_ROLE) {
+            updateMakeDefaultBrowserPreference()
         }
     }
 
@@ -547,6 +568,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     companion object {
+        private const val REQUEST_CODE_BROWSER_ROLE = 1
         private const val SCROLL_INDICATOR_DELAY = 10L
         private const val FXA_SYNC_OVERRIDE_EXIT_DELAY = 2000L
         private const val AMO_COLLECTION_OVERRIDE_EXIT_DELAY = 3000L

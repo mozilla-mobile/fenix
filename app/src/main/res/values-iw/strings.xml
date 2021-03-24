@@ -130,6 +130,8 @@
     <string name="browser_menu_edit_bookmark">עריכת סימנייה</string>
     <!-- Browser menu button that opens the addon manager -->
     <string name="browser_menu_add_ons">תוספות</string>
+    <!-- Browser menu button that opens the addon extensions manager -->
+    <string name="browser_menu_extensions">הרחבות</string>
     <!-- Text displayed when there are no add-ons to be shown -->
     <string name="no_add_ons">אין תוספות כאן</string>
     <!-- Browser menu button that sends a user to help articles -->
@@ -178,6 +180,8 @@
     <!-- Browser menu button to configure reader mode appearance e.g. the used font type and size -->
     <string name="browser_menu_read_appearance">תצוגה</string>
 
+    <!-- Browser menu button to show reader view appearance controls e.g. the used font type and size -->
+    <string name="browser_menu_customize_reader_view">התאמה אישית של תצוגת קריאה</string>
     <!-- Error message to show when the user tries to access a scheme not
         handled by the app (Ex: blob, tel etc) -->
     <string name="unknown_scheme_error_message">לא ניתן להתחבר. מבנה הכתובת אינו ברור.</string>
@@ -213,6 +217,11 @@
     <string name="search_suggestions_onboarding_text">‏%s ישתף את מה שיוקלד בשורת הכתובת עם מנוע החיפוש ברירת המחדל שלך.</string>
     <!-- Search suggestion onboarding hint Learn more link text -->
     <string name="search_suggestions_onboarding_learn_more_link">מידע נוסף</string>
+
+    <!-- Search engine suggestion title text. The first parameter is the name of teh suggested engine-->
+    <string name="search_engine_suggestions_title">חיפוש ב־%s</string>
+    <!-- Search engine suggestion description text -->
+    <string name="search_engine_suggestions_description">חיפוש ישירות משורת הכתובת</string>
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
@@ -493,6 +502,8 @@
     <string name="preference_light_theme">בהיר</string>
     <!-- Preference for using dark theme -->
     <string name="preference_dark_theme">כהה</string>
+    <!-- Preference for using using dark or light theme automatically set by battery -->
+    <string name="preference_auto_battery_theme">הוגדר על־ידי מצב חיסכון בסוללה</string>
     <!-- Preference for using following device theme -->
     <string name="preference_follow_device_theme">שימוש בערכת הנושא של המכשיר</string>
 
@@ -525,6 +536,10 @@
     <string name="library_desktop_bookmarks_unfiled">סימניות אחרות</string>
     <!-- Option in Library to open History page -->
     <string name="library_history">היסטוריה</string>
+    <!-- Option in Library to open a new tab -->
+    <string name="library_new_tab">לשונית חדשה</string>
+    <!-- Option in Library to find text in page -->
+    <string name="library_find_in_page">חיפוש בדף</string>
     <!-- Option in Library to open Synced Tabs page -->
     <string name="library_synced_tabs">לשוניות מסונכרנות</string>
     <!-- Option in Library to open Reading List -->
@@ -610,6 +625,8 @@
     <string name="tab_tray_menu_item_close">סגירת כל הלשוניות</string>
     <!-- Shortcut action to open new tab -->
     <string name="tab_tray_menu_open_new_tab">לשונית חדשה</string>
+    <!-- Shortcut action to open the home screen -->
+    <string name="tab_tray_menu_home">הביתה</string>
     <!-- Shortcut action to toggle private mode -->
     <string name="tab_tray_menu_toggle">החלפת מצב לשונית</string>
     <!-- Text shown in the multiselect menu for bookmarking selected tabs. -->
@@ -877,16 +894,22 @@
     <!-- Summary of tracking protection preference if tracking protection is set to off -->
     <string name="tracking_protection_off">כבויה</string>
 
-    <!-- Label that indicates that all video and audio autoplay is allowed -->
+    <!-- Label for global setting that indicates that all video and audio autoplay is allowed -->
     <string name="preference_option_autoplay_allowed2">לאפשר שמע ווידאו</string>
+    <!-- Label for site specific setting that indicates that all video and audio autoplay is allowed -->
+    <string name="quick_setting_option_autoplay_allowed">לאפשר שמע ווידאו</string>
     <!-- Label that indicates that video and audio autoplay is only allowed over Wi-Fi -->
     <string name="preference_option_autoplay_allowed_wifi_only2">לחסום שמע ווידאו בחיבור סלולרי בלבד</string>
     <!-- Subtext that explains 'autoplay on Wi-Fi only' option -->
     <string name="preference_option_autoplay_allowed_wifi_subtext">שמע ווידאו יופעלו על גבי Wi-Fi</string>
-    <!-- Label that indicates that video autoplay is allowed, but audio autoplay is blocked -->
+    <!-- Label for global setting that indicates that video autoplay is allowed, but audio autoplay is blocked -->
     <string name="preference_option_autoplay_block_audio2">לחסום שמע בלבד</string>
-    <!-- Label that indicates that all video and audio autoplay is blocked -->
+    <!-- Label for site specific setting that indicates that video autoplay is allowed, but audio autoplay is blocked -->
+    <string name="quick_setting_option_autoplay_block_audio">לחסום שמע בלבד</string>
+    <!-- Label for global setting that indicates that all video and audio autoplay is blocked -->
     <string name="preference_option_autoplay_blocked3">לחסום שמע ווידאו</string>
+    <!-- Label for site specific setting that indicates that all video and audio autoplay is blocked -->
+    <string name="quick_setting_option_autoplay_blocked">לחסום שמע ווידאו</string>
     <!-- Summary of delete browsing data on quit preference if it is set to on -->
     <string name="delete_browsing_data_quit_on">פעיל</string>
     <!-- Summary of delete browsing data on quit preference if it is set to off -->
@@ -1461,6 +1484,8 @@
     <string name="preferences_passwords_saved_logins_username">שם משתמש</string>
     <!-- The header for the password for a login -->
     <string name="preferences_passwords_saved_logins_password">ססמה</string>
+    <!-- Message displayed in security prompt to reenter a secret pin to access saved logins -->
+    <string name="preferences_passwords_saved_logins_enter_pin">להכניס את הקוד שלך מחדש</string>
     <!-- Message displayed in security prompt to access saved logins -->
     <string name="preferences_passwords_saved_logins_enter_pin_description">יש לבטל את הנעילה כדי להציג את הכניסות השמורות שלך</string>
     <!-- Message displayed when a connection is insecure and we detect the user is entering a password -->
@@ -1499,12 +1524,18 @@
     <string name="logins_biometric_prompt_message">יש לבטל את הנעילה כדי להציג את הכניסות השמורות שלך</string>
     <!-- Title of warning dialog if users have no device authentication set up -->
     <string name="logins_warning_dialog_title">שמירה מאובטחת של הכניסות והססמאות שלך</string>
+    <!-- Message of warning dialog if users have no device authentication set up -->
+    <string name="logins_warning_dialog_message">ניתן להגדיר תבנית נעילת מכשיר, קוד או ססמה כדי להגן על פרטי הגישה והססמאות שלך מפני גורמים בלתי מהימנים שמחזיקים במכשיר שלך.</string>
     <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
     <string name="logins_warning_dialog_later">מאוחר יותר</string>
 
+    <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->
+    <string name="logins_warning_dialog_set_up_now">להגדיר כעת</string>
     <!-- Title of PIN verification dialog to direct users to re-enter their device credentials to access their logins -->
     <string name="logins_biometric_prompt_message_pin">שחרור נעילת המכשיר שלך</string>
 
+    <!-- Title for Accessibility Force Enable Zoom Preference -->
+    <string name="preference_accessibility_force_enable_zoom">התמקדות על כל האתרים</string>
     <!-- Summary for Accessibility Force Enable Zoom Preference -->
     <string name="preference_accessibility_force_enable_zoom_summary">יש להפעיל כדי לאפשר צביטה והתקרבות, אפילו באתרים שמונעים את תנועות האצבעות האלו.</string>
     <!-- Saved logins sorting strategy menu item -by name- (if selected, it will sort saved logins alphabetically) -->

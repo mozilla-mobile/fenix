@@ -15,25 +15,37 @@ object FeatureFlags {
     val pullToRefreshEnabled = Config.channel.isNightlyOrDebug
 
     /**
-     * Shows Synced Tabs in the tabs tray.
-     *
-     * Tracking issue: https://github.com/mozilla-mobile/fenix/issues/13892
-     */
-    val syncedTabsInTabsTray = Config.channel.isNightlyOrDebug
-
-    /**
      * Enables the Nimbus experiments library.
      */
-    val nimbusExperiments = Config.channel.isNightlyOrDebug
+    const val nimbusExperiments = true
 
     /**
-     * Enables the new MediaSession API.
+     * Enables the Addresses autofill feature.
      */
-    @Suppress("MayBeConst")
-    val newMediaSessionApi = true
+    val addressesFeature = Config.channel.isNightlyOrDebug
+
+    /**
+     * Enables the Credit Cards autofill feature.
+     */
+    val creditCardsFeature = Config.channel.isNightlyOrDebug
 
     /**
      * Enables WebAuthn support.
      */
     val webAuthFeature = Config.channel.isNightlyOrDebug
+
+    /**
+     * Shows new three-dot toolbar menu design.
+     */
+    val toolbarMenuFeature = Config.channel.isDebug
+
+    /**
+     * Enables the tabs tray re-write with Synced Tabs.
+     */
+    val tabsTrayRewrite = Config.channel.isDebug
+
+    /**
+     * Enables the updated icon set look and feel.
+     */
+    val newIconSet = Config.channel.isNightlyOrDebug
 }

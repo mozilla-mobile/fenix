@@ -6,12 +6,15 @@ package org.mozilla.fenix.home.sessioncontrol
 
 import android.view.LayoutInflater
 import android.widget.EditText
+import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AlertDialog
 import androidx.navigation.NavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import mozilla.components.browser.state.selector.getNormalOrPrivateTabs
+import mozilla.components.browser.state.state.availableSearchEngines
+import mozilla.components.browser.state.state.searchEngines
 import mozilla.components.browser.state.state.selectedOrDefaultSearchEngine
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.Engine
@@ -215,10 +218,8 @@ class DefaultSessionControlController(
             tab,
             onTabRestored = {
                 activity.openToBrowser(BrowserDirection.FromHome)
-                store.state.selectedTabId?.let {
-                    selectTabUseCase.invoke(it)
-                    reloadUrlUseCase.invoke(it)
-                }
+                selectTabUseCase.invoke(it)
+                reloadUrlUseCase.invoke(it)
             },
             onFailure = {
                 activity.openToBrowserAndLoad(
@@ -325,7 +326,11 @@ class DefaultSessionControlController(
                 setPositiveButton(R.string.top_sites_rename_dialog_ok) { dialog, _ ->
                     viewLifecycleScope.launch(Dispatchers.IO) {
                         with(activity.components.useCases.topSitesUseCase) {
-                            renameTopSites(topSite, topSiteLabelEditText.text.toString())
+                            updateTopSites(
+                                topSite,
+                                topSiteLabelEditText.text.toString(),
+                                topSite.url
+                            )
                         }
                     }
                     dialog.dismiss()
@@ -372,9 +377,26 @@ class DefaultSessionControlController(
             TopSite.Type.PINNED -> metrics.track(Event.TopSiteOpenPinned)
         }
 
+        if (url == SupportUtils.GOOGLE_URL) {
+            metrics.track(Event.TopSiteOpenGoogle)
+        }
+
         if (url == SupportUtils.POCKET_TRENDING_URL) {
             metrics.track(Event.PocketTopSiteClicked)
         }
+
+        val availableEngines = getAvailableSearchEngines()
+
+        val searchAccessPoint = Event.PerformedSearch.SearchAccessPoint.TOPSITE
+        val event =
+            availableEngines.firstOrNull {
+                    engine -> engine.resultUrls.firstOrNull { it.contains(url) } != null
+            }?.let {
+                    searchEngine -> searchAccessPoint.let { sap ->
+                    MetricsUtils.createSearchEvent(searchEngine, store, sap)
+                }
+            }
+        event?.let { activity.metrics.track(it) }
 
         addTabUseCase.invoke(
             url = appendSearchAttributionToUrlIfNeeded(url),
@@ -383,6 +405,11 @@ class DefaultSessionControlController(
         )
         activity.openToBrowser(BrowserDirection.FromHome)
     }
+
+    @VisibleForTesting
+    internal fun getAvailableSearchEngines() =
+        activity.components.core.store.state.search.searchEngines +
+                activity.components.core.store.state.search.availableSearchEngines
 
     /**
      * Append a search attribution query to any provided search engine URL based on the

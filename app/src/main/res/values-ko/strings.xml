@@ -137,6 +137,8 @@
     <string name="browser_menu_edit_bookmark">북마크 편집</string>
     <!-- Browser menu button that opens the addon manager -->
     <string name="browser_menu_add_ons">부가 기능</string>
+    <!-- Browser menu button that opens the addon extensions manager -->
+    <string name="browser_menu_extensions">확장 기능</string>
     <!-- Text displayed when there are no add-ons to be shown -->
     <string name="no_add_ons">부가 기능 없음</string>
     <!-- Browser menu button that sends a user to help articles -->
@@ -188,6 +190,8 @@
     <!-- Browser menu button to configure reader mode appearance e.g. the used font type and size -->
     <string name="browser_menu_read_appearance">모양</string>
 
+    <!-- Browser menu button to show reader view appearance controls e.g. the used font type and size -->
+    <string name="browser_menu_customize_reader_view">리더뷰 사용자 지정</string>
     <!-- Error message to show when the user tries to access a scheme not
         handled by the app (Ex: blob, tel etc) -->
     <string name="unknown_scheme_error_message">연결할 수 없음. 인식할 수 없는 URL 구성표.</string>
@@ -224,6 +228,11 @@
     <string name="search_suggestions_onboarding_text">%s는 주소 표시줄에 입력한 모든 것을 기본 검색 엔진과 공유합니다.</string>
     <!-- Search suggestion onboarding hint Learn more link text -->
     <string name="search_suggestions_onboarding_learn_more_link">더 알아보기</string>
+
+    <!-- Search engine suggestion title text. The first parameter is the name of teh suggested engine-->
+    <string name="search_engine_suggestions_title">%s 검색</string>
+    <!-- Search engine suggestion description text -->
+    <string name="search_engine_suggestions_description">주소 표시줄에서 직접 검색</string>
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
@@ -294,7 +303,7 @@
     <!-- Preference to override the Sync token server -->
     <string name="preferences_override_sync_tokenserver">사용자 지정 동기화 서버</string>
     <!-- Toast shown after updating the FxA/Sync server override preferences -->
-    <string name="toast_override_fxa_sync_server_done">Firefox 계정/동기화 서버가 변경되었습니다. 변경 사항을 적용하기 위해 응용 프로그램을 종료하는 중…</string>
+    <string name="toast_override_fxa_sync_server_done">Firefox 계정/동기화 서버가 변경되었습니다. 변경 사항을 적용하기 위해 애플리케이션을 종료하는 중…</string>
     <!-- Preference category for account information -->
     <string name="preferences_category_account">계정</string>
     <!-- Preference shown on banner to sign into account -->
@@ -371,7 +380,7 @@
     <!-- Hint displayed on input field for custom collection user ID-->
     <string name="customize_addon_collection_user_hint">모음집 소유자 (사용자 ID)</string>
     <!-- Toast shown after confirming the custom add-on collection configuration -->
-    <string name="toast_customize_addon_collection_done">부가 기능 모음집이 변경되었습니다. 변경 사항을 적용하기 위해 응용 프로그램을 종료하는 중…</string>
+    <string name="toast_customize_addon_collection_done">부가 기능 모음집이 변경되었습니다. 변경 사항을 적용하기 위해 애플리케이션을 종료하는 중…</string>
 
     <!-- Add-on Installation from AMO-->
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
@@ -539,9 +548,13 @@
     <!-- Option in library to open Desktop Bookmarks "toolbar" page -->
     <string name="library_desktop_bookmarks_toolbar">북마크 도구모음</string>
     <!-- Option in library to open Desktop Bookmarks "unfiled" page -->
-    <string name="library_desktop_bookmarks_unfiled">다른 북마크</string>
+    <string name="library_desktop_bookmarks_unfiled">기타 북마크</string>
     <!-- Option in Library to open History page -->
     <string name="library_history">기록</string>
+    <!-- Option in Library to open a new tab -->
+    <string name="library_new_tab">새 탭</string>
+    <!-- Option in Library to find text in page -->
+    <string name="library_find_in_page">페이지에서 찾기</string>
     <!-- Option in Library to open Synced Tabs page -->
     <string name="library_synced_tabs">동기화된 탭</string>
     <!-- Option in Library to open Reading List -->
@@ -905,16 +918,22 @@
     <!-- Summary of tracking protection preference if tracking protection is set to off -->
     <string name="tracking_protection_off">꺼짐</string>
 
-    <!-- Label that indicates that all video and audio autoplay is allowed -->
+    <!-- Label for global setting that indicates that all video and audio autoplay is allowed -->
     <string name="preference_option_autoplay_allowed2">오디오 및 비디오 허용</string>
+    <!-- Label for site specific setting that indicates that all video and audio autoplay is allowed -->
+    <string name="quick_setting_option_autoplay_allowed">오디오 및 비디오 허용</string>
     <!-- Label that indicates that video and audio autoplay is only allowed over Wi-Fi -->
     <string name="preference_option_autoplay_allowed_wifi_only2">셀룰러 데이터에서만 오디오 및 비디오 차단</string>
     <!-- Subtext that explains 'autoplay on Wi-Fi only' option -->
     <string name="preference_option_autoplay_allowed_wifi_subtext">오디오 및 비디오가 Wi-Fi에서 재생됩니다</string>
-    <!-- Label that indicates that video autoplay is allowed, but audio autoplay is blocked -->
+    <!-- Label for global setting that indicates that video autoplay is allowed, but audio autoplay is blocked -->
     <string name="preference_option_autoplay_block_audio2">오디오만 차단</string>
-    <!-- Label that indicates that all video and audio autoplay is blocked -->
+    <!-- Label for site specific setting that indicates that video autoplay is allowed, but audio autoplay is blocked -->
+    <string name="quick_setting_option_autoplay_block_audio">오디오만 차단</string>
+    <!-- Label for global setting that indicates that all video and audio autoplay is blocked -->
     <string name="preference_option_autoplay_blocked3">오디오 및 비디오 차단</string>
+    <!-- Label for site specific setting that indicates that all video and audio autoplay is blocked -->
+    <string name="quick_setting_option_autoplay_blocked">오디오 및 비디오 차단</string>
     <!-- Summary of delete browsing data on quit preference if it is set to on -->
     <string name="delete_browsing_data_quit_on">켜짐</string>
     <!-- Summary of delete browsing data on quit preference if it is set to off -->
@@ -1474,7 +1493,7 @@
     <!-- Preference option for never saving passwords in Fenix -->
     <string name="preferences_passwords_save_logins_never_save">저장 안 함</string>
     <!-- Preference for autofilling saved logins in Fenix -->
-    <string name="preferences_passwords_autofill">자동완성</string>
+    <string name="preferences_passwords_autofill">자동 채우기</string>
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">Sync 로그인</string>
     <!-- Syncing saved logins in Fenix is on -->

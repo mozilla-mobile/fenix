@@ -15,9 +15,10 @@ import mozilla.components.support.base.Component
 import mozilla.components.support.base.facts.Action
 import mozilla.components.support.base.facts.Fact
 import mozilla.components.support.base.log.logger.Logger
-import org.junit.Assert.assertEquals
+import mozilla.components.support.webextensions.facts.WebExtensionFacts
 import org.junit.Before
 import org.junit.Test
+import org.mozilla.fenix.utils.Settings
 
 class MetricControllerTest {
 
@@ -57,7 +58,8 @@ class MetricControllerTest {
         val controller = ReleaseMetricController(
             services = listOf(dataService1, marketingService1, dataService2, marketingService2),
             isDataTelemetryEnabled = { enabled },
-            isMarketingDataTelemetryEnabled = { enabled }
+            isMarketingDataTelemetryEnabled = { enabled },
+            mockk()
         )
 
         controller.start(MetricServiceType.Data)
@@ -83,7 +85,8 @@ class MetricControllerTest {
         val controller = ReleaseMetricController(
             services = listOf(dataService1),
             isDataTelemetryEnabled = { false },
-            isMarketingDataTelemetryEnabled = { true }
+            isMarketingDataTelemetryEnabled = { true },
+            mockk()
         )
 
         controller.start(MetricServiceType.Data)
@@ -99,7 +102,8 @@ class MetricControllerTest {
         val controller = ReleaseMetricController(
             services = listOf(dataService1),
             isDataTelemetryEnabled = { enabled },
-            isMarketingDataTelemetryEnabled = { true }
+            isMarketingDataTelemetryEnabled = { true },
+            mockk()
         )
 
         controller.start(MetricServiceType.Data)
@@ -119,7 +123,8 @@ class MetricControllerTest {
         val controller = ReleaseMetricController(
             services = listOf(dataService1, marketingService1, dataService2, marketingService2),
             isDataTelemetryEnabled = { enabled },
-            isMarketingDataTelemetryEnabled = { enabled }
+            isMarketingDataTelemetryEnabled = { enabled },
+            mockk()
         )
 
         controller.start(MetricServiceType.Marketing)
@@ -145,7 +150,8 @@ class MetricControllerTest {
         val controller = ReleaseMetricController(
             listOf(dataService1, marketingService1),
             isDataTelemetryEnabled = { true },
-            isMarketingDataTelemetryEnabled = { true }
+            isMarketingDataTelemetryEnabled = { true },
+            mockk()
         )
         every { dataService1.shouldTrack(Event.TabMediaPause) } returns false
         every { marketingService1.shouldTrack(Event.TabMediaPause) } returns true
@@ -161,7 +167,8 @@ class MetricControllerTest {
         val controller = ReleaseMetricController(
             listOf(dataService1, marketingService1),
             isDataTelemetryEnabled = { enabled },
-            isMarketingDataTelemetryEnabled = { true }
+            isMarketingDataTelemetryEnabled = { true },
+            mockk()
         )
         every { dataService1.shouldTrack(Event.TabMediaPause) } returns true
         every { marketingService1.shouldTrack(Event.TabMediaPause) } returns true
@@ -174,57 +181,188 @@ class MetricControllerTest {
     }
 
     @Test
-    fun `topsites fact should convert to the right events`() {
-        var enabled = true
+    fun `topsites fact should set value in SharedPreference`() {
+        val enabled = true
+        val settings: Settings = mockk(relaxed = true)
         val controller = ReleaseMetricController(
             services = listOf(dataService1),
             isDataTelemetryEnabled = { enabled },
-            isMarketingDataTelemetryEnabled = { enabled }
+            isMarketingDataTelemetryEnabled = { enabled },
+            settings
         )
 
-        var fact = Fact(
+        val fact = Fact(
             Component.FEATURE_TOP_SITES,
             Action.INTERACTION,
             TopSitesFacts.Items.COUNT,
             "1"
         )
 
-        assertEquals(controller.factToEvent(fact), Event.HaveTopSites)
+        verify(exactly = 0) { settings.topSitesSize = any() }
+        controller.factToEvent(fact)
+        verify(exactly = 1) { settings.topSitesSize = any() }
+    }
 
-        fact = Fact(
-            Component.FEATURE_TOP_SITES,
+    @Test
+    fun `tracking synced tab event should be sent to enabled service`() {
+        val controller = ReleaseMetricController(
+            listOf(marketingService1),
+            isDataTelemetryEnabled = { true },
+            isMarketingDataTelemetryEnabled = { true },
+            mockk()
+        )
+        every { marketingService1.shouldTrack(Event.SyncedTabSuggestionClicked) } returns true
+        controller.start(MetricServiceType.Marketing)
+
+        controller.track(Event.SyncedTabSuggestionClicked)
+        verify { marketingService1.track(Event.SyncedTabSuggestionClicked) }
+    }
+
+    @Test
+    fun `tracking awesomebar events should be sent to enabled service`() {
+        val controller = ReleaseMetricController(
+            listOf(marketingService1),
+            isDataTelemetryEnabled = { true },
+            isMarketingDataTelemetryEnabled = { true },
+            mockk()
+        )
+        every { marketingService1.shouldTrack(Event.BookmarkSuggestionClicked) } returns true
+        every { marketingService1.shouldTrack(Event.ClipboardSuggestionClicked) } returns true
+        every { marketingService1.shouldTrack(Event.HistorySuggestionClicked) } returns true
+        every { marketingService1.shouldTrack(Event.SearchActionClicked) } returns true
+        every { marketingService1.shouldTrack(Event.SearchSuggestionClicked) } returns true
+        every { marketingService1.shouldTrack(Event.OpenedTabSuggestionClicked) } returns true
+        controller.start(MetricServiceType.Marketing)
+
+        controller.track(Event.BookmarkSuggestionClicked)
+        verify { marketingService1.track(Event.BookmarkSuggestionClicked) }
+
+        controller.track(Event.ClipboardSuggestionClicked)
+        verify { marketingService1.track(Event.ClipboardSuggestionClicked) }
+
+        controller.track(Event.HistorySuggestionClicked)
+        verify { marketingService1.track(Event.HistorySuggestionClicked) }
+
+        controller.track(Event.SearchActionClicked)
+        verify { marketingService1.track(Event.SearchActionClicked) }
+
+        controller.track(Event.SearchSuggestionClicked)
+        verify { marketingService1.track(Event.SearchSuggestionClicked) }
+
+        controller.track(Event.OpenedTabSuggestionClicked)
+        verify { marketingService1.track(Event.OpenedTabSuggestionClicked) }
+    }
+
+    @Test
+    fun `tracking bookmark events should be sent to enabled service`() {
+        val controller = ReleaseMetricController(
+            listOf(marketingService1),
+            isDataTelemetryEnabled = { true },
+            isMarketingDataTelemetryEnabled = { true },
+            mockk()
+        )
+        every { marketingService1.shouldTrack(Event.AddBookmark) } returns true
+        every { marketingService1.shouldTrack(Event.RemoveBookmark) } returns true
+        every { marketingService1.shouldTrack(Event.OpenedBookmark) } returns true
+        every { marketingService1.shouldTrack(Event.OpenedBookmarkInNewTab) } returns true
+        every { marketingService1.shouldTrack(Event.OpenedBookmarksInNewTabs) } returns true
+        every { marketingService1.shouldTrack(Event.OpenedBookmarkInPrivateTab) } returns true
+        every { marketingService1.shouldTrack(Event.OpenedBookmarksInPrivateTabs) } returns true
+        every { marketingService1.shouldTrack(Event.EditedBookmark) } returns true
+        every { marketingService1.shouldTrack(Event.MovedBookmark) } returns true
+        every { marketingService1.shouldTrack(Event.ShareBookmark) } returns true
+        every { marketingService1.shouldTrack(Event.CopyBookmark) } returns true
+        every { marketingService1.shouldTrack(Event.AddBookmarkFolder) } returns true
+        every { marketingService1.shouldTrack(Event.RemoveBookmarkFolder) } returns true
+        every { marketingService1.shouldTrack(Event.RemoveBookmarks) } returns true
+
+        controller.start(MetricServiceType.Marketing)
+
+        controller.track(Event.AddBookmark)
+        controller.track(Event.RemoveBookmark)
+        controller.track(Event.OpenedBookmark)
+        controller.track(Event.OpenedBookmarkInNewTab)
+        controller.track(Event.OpenedBookmarksInNewTabs)
+        controller.track(Event.OpenedBookmarkInPrivateTab)
+        controller.track(Event.OpenedBookmarksInPrivateTabs)
+        controller.track(Event.EditedBookmark)
+        controller.track(Event.MovedBookmark)
+        controller.track(Event.ShareBookmark)
+        controller.track(Event.CopyBookmark)
+        controller.track(Event.AddBookmarkFolder)
+        controller.track(Event.RemoveBookmarkFolder)
+        controller.track(Event.RemoveBookmarks)
+
+        verify { marketingService1.track(Event.AddBookmark) }
+        verify { marketingService1.track(Event.RemoveBookmark) }
+        verify { marketingService1.track(Event.OpenedBookmark) }
+        verify { marketingService1.track(Event.OpenedBookmarkInNewTab) }
+        verify { marketingService1.track(Event.OpenedBookmarksInNewTabs) }
+        verify { marketingService1.track(Event.OpenedBookmarkInPrivateTab) }
+        verify { marketingService1.track(Event.OpenedBookmarksInPrivateTabs) }
+        verify { marketingService1.track(Event.EditedBookmark) }
+        verify { marketingService1.track(Event.MovedBookmark) }
+        verify { marketingService1.track(Event.ShareBookmark) }
+        verify { marketingService1.track(Event.CopyBookmark) }
+        verify { marketingService1.track(Event.AddBookmarkFolder) }
+        verify { marketingService1.track(Event.RemoveBookmarkFolder) }
+        verify { marketingService1.track(Event.RemoveBookmarks) }
+    }
+
+    @Test
+    fun `history events should be sent to enabled service`() {
+        val controller = ReleaseMetricController(
+            listOf(marketingService1),
+            isDataTelemetryEnabled = { true },
+            isMarketingDataTelemetryEnabled = { true },
+            mockk()
+        )
+        every { marketingService1.shouldTrack(Event.HistoryOpenedInNewTab) } returns true
+        every { marketingService1.shouldTrack(Event.HistoryOpenedInNewTabs) } returns true
+        every { marketingService1.shouldTrack(Event.HistoryOpenedInPrivateTab) } returns true
+        every { marketingService1.shouldTrack(Event.HistoryOpenedInPrivateTabs) } returns true
+
+        controller.start(MetricServiceType.Marketing)
+
+        controller.track(Event.HistoryOpenedInNewTab)
+        controller.track(Event.HistoryOpenedInNewTabs)
+        controller.track(Event.HistoryOpenedInPrivateTab)
+        controller.track(Event.HistoryOpenedInPrivateTabs)
+
+        verify { marketingService1.track(Event.HistoryOpenedInNewTab) }
+        verify { marketingService1.track(Event.HistoryOpenedInNewTabs) }
+        verify { marketingService1.track(Event.HistoryOpenedInPrivateTab) }
+        verify { marketingService1.track(Event.HistoryOpenedInPrivateTabs) }
+    }
+
+    @Test
+    fun `web extension fact should set value in SharedPreference`() {
+        val enabled = true
+        val settings: Settings = mockk(relaxed = true)
+        val controller = ReleaseMetricController(
+            services = listOf(dataService1),
+            isDataTelemetryEnabled = { enabled },
+            isMarketingDataTelemetryEnabled = { enabled },
+            settings
+        )
+        val fact = Fact(
+            Component.SUPPORT_WEBEXTENSIONS,
             Action.INTERACTION,
-            TopSitesFacts.Items.COUNT,
-            "0"
+            WebExtensionFacts.Items.WEB_EXTENSIONS_INITIALIZED,
+            metadata = mapOf(
+                "installed" to listOf("test1"),
+                "enabled" to listOf("test2")
+            )
         )
 
-        assertEquals(controller.factToEvent(fact), Event.HaveNoTopSites)
-
-        fact = Fact(
-            Component.FEATURE_TOP_SITES,
-            Action.INTERACTION,
-            TopSitesFacts.Items.COUNT,
-            "10"
-        )
-
-        assertEquals(controller.factToEvent(fact), Event.HaveTopSites)
-
-        fact = Fact(
-            Component.FEATURE_TOP_SITES,
-            Action.INTERACTION,
-            TopSitesFacts.Items.COUNT,
-            "-4"
-        )
-
-        assertEquals(controller.factToEvent(fact), Event.HaveNoTopSites)
-
-        fact = Fact(
-            Component.FEATURE_TOP_SITES,
-            Action.INTERACTION,
-            TopSitesFacts.Items.COUNT,
-            "test"
-        )
-
-        assertEquals(controller.factToEvent(fact), Event.HaveNoTopSites)
+        verify(exactly = 0) { settings.installedAddonsCount = any() }
+        verify(exactly = 0) { settings.installedAddonsList = any() }
+        verify(exactly = 0) { settings.enabledAddonsCount = any() }
+        verify(exactly = 0) { settings.enabledAddonsList = any() }
+        controller.factToEvent(fact)
+        verify(exactly = 1) { settings.installedAddonsCount = any() }
+        verify(exactly = 1) { settings.installedAddonsList = any() }
+        verify(exactly = 1) { settings.enabledAddonsCount = any() }
+        verify(exactly = 1) { settings.enabledAddonsList = any() }
     }
 }

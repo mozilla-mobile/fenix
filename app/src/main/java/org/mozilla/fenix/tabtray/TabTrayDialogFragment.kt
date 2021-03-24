@@ -32,7 +32,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import mozilla.appservices.places.BookmarkRoot
-import mozilla.components.browser.session.Session
 import mozilla.components.browser.state.selector.findTab
 import mozilla.components.browser.state.selector.getNormalOrPrivateTabs
 import mozilla.components.browser.state.selector.normalTabs
@@ -45,6 +44,9 @@ import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.ktx.android.view.showKeyboard
+import mozilla.components.support.utils.ext.bottom
+import mozilla.components.support.utils.ext.left
+import mozilla.components.support.utils.ext.right
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
@@ -105,12 +107,6 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), UserInteractionHandler 
             requireComponents.useCases.tabsUseCases.selectTab(tabId)
             navigateToBrowser()
         }
-
-        override fun invoke(session: Session) {
-            requireContext().components.analytics.metrics.track(Event.OpenedExistingTab)
-            requireComponents.useCases.tabsUseCases.selectTab(session)
-            navigateToBrowser()
-        }
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -126,12 +122,6 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), UserInteractionHandler 
             requireContext().components.analytics.metrics.track(Event.ClosedExistingTab)
             showUndoSnackbarForTab(sessionId)
             removeIfNotLastTab(sessionId)
-        }
-
-        override fun invoke(session: Session) {
-            requireContext().components.analytics.metrics.track(Event.ClosedExistingTab)
-            showUndoSnackbarForTab(session.id)
-            removeIfNotLastTab(session.id)
         }
     }
 
@@ -225,7 +215,6 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), UserInteractionHandler 
                     showBookmarksSnackbar = ::showBookmarksSnackbar
                 )
             ),
-            store = tabTrayDialogStore,
             isPrivate = isPrivate,
             isInLandscape = ::isInLandscape,
             lifecycleOwner = viewLifecycleOwner
@@ -256,14 +245,18 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), UserInteractionHandler 
         }
 
         view.tabLayout.setOnApplyWindowInsetsListener { v, insets ->
+            // This will be addressed on https://github.com/mozilla-mobile/fenix/issues/17807
+            @Suppress("DEPRECATION")
             v.updatePadding(
-                left = insets.systemWindowInsetLeft,
-                right = insets.systemWindowInsetRight,
-                bottom = insets.systemWindowInsetBottom
+                left = insets.left(),
+                right = insets.right(),
+                bottom = insets.bottom()
             )
 
+            // This will be addressed on https://github.com/mozilla-mobile/fenix/issues/17807
+            @Suppress("DEPRECATION")
             tabTrayView.view.tab_wrapper.updatePadding(
-                bottom = insets.systemWindowInsetBottom
+                bottom = insets.bottom()
             )
 
             insets
@@ -281,7 +274,7 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), UserInteractionHandler 
     private fun setSecureFlagsIfNeeded(private: Boolean) {
         if (private && context?.settings()?.allowScreenshotsInPrivateMode == false) {
             dialog?.window?.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
-        } else if (!(activity as HomeActivity).browsingModeManager.mode.isPrivate) {
+        } else {
             dialog?.window?.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
         }
     }

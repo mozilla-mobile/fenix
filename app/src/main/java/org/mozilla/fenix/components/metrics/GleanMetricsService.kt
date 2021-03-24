@@ -12,11 +12,12 @@ import mozilla.components.service.fxa.manager.SyncEnginesStorage
 import mozilla.components.service.glean.Glean
 import mozilla.components.service.glean.private.NoExtraKeys
 import mozilla.components.support.base.log.logger.Logger
-import org.mozilla.fenix.Config
 import org.mozilla.fenix.GleanMetrics.AboutPage
 import org.mozilla.fenix.GleanMetrics.Addons
+import org.mozilla.fenix.GleanMetrics.AndroidKeystoreExperiment
 import org.mozilla.fenix.GleanMetrics.AppTheme
 import org.mozilla.fenix.GleanMetrics.Autoplay
+import org.mozilla.fenix.GleanMetrics.Awesomebar
 import org.mozilla.fenix.GleanMetrics.BannerOpenInApp
 import org.mozilla.fenix.GleanMetrics.BookmarksManagement
 import org.mozilla.fenix.GleanMetrics.BrowserSearch
@@ -53,6 +54,7 @@ import org.mozilla.fenix.GleanMetrics.SearchSuggestions
 import org.mozilla.fenix.GleanMetrics.SearchWidget
 import org.mozilla.fenix.GleanMetrics.SyncAccount
 import org.mozilla.fenix.GleanMetrics.SyncAuth
+import org.mozilla.fenix.GleanMetrics.SyncedTabs
 import org.mozilla.fenix.GleanMetrics.Tab
 import org.mozilla.fenix.GleanMetrics.Tabs
 import org.mozilla.fenix.GleanMetrics.TabsTray
@@ -67,6 +69,7 @@ import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.utils.BrowsersCache
+import org.mozilla.fenix.utils.Settings
 
 private class EventWrapper<T : Enum<T>>(
     private val recorder: ((Map<T, String>?) -> Unit),
@@ -189,6 +192,9 @@ private val Event.wrapper: EventWrapper<*>?
             { Events.browserMenuAction.record(it) },
             { Events.browserMenuActionKeys.valueOf(it) }
         )
+        is Event.OpenedBookmark -> EventWrapper<NoExtraKeys>(
+            { BookmarksManagement.open.record(it) }
+        )
         is Event.OpenedBookmarkInNewTab -> EventWrapper<NoExtraKeys>(
             { BookmarksManagement.openInNewTab.record(it) }
         )
@@ -236,6 +242,9 @@ private val Event.wrapper: EventWrapper<*>?
         )
         is Event.UriOpened -> EventWrapper<NoExtraKeys>(
             { Events.totalUriCount.add(1) }
+        )
+        is Event.NormalAndPrivateUriOpened -> EventWrapper<NoExtraKeys>(
+            { Events.normalAndPrivateUriCount.add(1) }
         )
         is Event.ErrorPageVisited -> EventWrapper(
             { ErrorPage.visitedError.record(it) },
@@ -298,6 +307,18 @@ private val Event.wrapper: EventWrapper<*>?
         )
         is Event.HistoryItemOpened -> EventWrapper<NoExtraKeys>(
             { History.openedItem.record(it) }
+        )
+        is Event.HistoryOpenedInNewTab -> EventWrapper<NoExtraKeys>(
+            { History.openedItemInNewTab.record(it) }
+        )
+        is Event.HistoryOpenedInNewTabs -> EventWrapper<NoExtraKeys>(
+            { History.openedItemsInNewTabs.record(it) }
+        )
+        is Event.HistoryOpenedInPrivateTab -> EventWrapper<NoExtraKeys>(
+            { History.openedItemInPrivateTab.record(it) }
+        )
+        is Event.HistoryOpenedInPrivateTabs -> EventWrapper<NoExtraKeys>(
+            { History.openedItemsInPrivateTabs.record(it) }
         )
         is Event.HistoryItemRemoved -> EventWrapper<NoExtraKeys>(
             { History.removed.record(it) }
@@ -516,6 +537,9 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.TopSiteOpenDefault -> EventWrapper<NoExtraKeys>(
             { TopSites.openDefault.record(it) }
         )
+        is Event.TopSiteOpenGoogle -> EventWrapper<NoExtraKeys>(
+            { TopSites.openGoogleSearchAttribution.record(it) }
+        )
         is Event.TopSiteOpenFrecent -> EventWrapper<NoExtraKeys>(
             { TopSites.openFrecency.record(it) }
         )
@@ -727,13 +751,6 @@ private val Event.wrapper: EventWrapper<*>?
         Event.HaveNoOpenTabs -> EventWrapper<NoExtraKeys>(
             { Metrics.hasOpenTabs.set(false) }
         )
-        Event.HaveTopSites -> EventWrapper<NoExtraKeys>(
-            { Metrics.hasTopSites.set(true) }
-        )
-        Event.HaveNoTopSites -> EventWrapper<NoExtraKeys>(
-            { Metrics.hasTopSites.set(false) }
-        )
-
         is Event.BannerOpenInAppDisplayed -> EventWrapper<NoExtraKeys>(
             { BannerOpenInApp.displayed.record(it) }
         )
@@ -743,10 +760,54 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.BannerOpenInAppGoToSettings -> EventWrapper<NoExtraKeys>(
             { BannerOpenInApp.goToSettings.record(it) }
         )
+        is Event.SyncedTabSuggestionClicked -> EventWrapper<NoExtraKeys>(
+            { SyncedTabs.syncedTabsSuggestionClicked.record(it) }
+        )
+
+        is Event.BookmarkSuggestionClicked -> EventWrapper<NoExtraKeys>(
+            { Awesomebar.bookmarkSuggestionClicked.record(it) }
+        )
+        is Event.ClipboardSuggestionClicked -> EventWrapper<NoExtraKeys>(
+            { Awesomebar.clipboardSuggestionClicked.record(it) }
+        )
+        is Event.HistorySuggestionClicked -> EventWrapper<NoExtraKeys>(
+            { Awesomebar.historySuggestionClicked.record(it) }
+        )
+        is Event.SearchActionClicked -> EventWrapper<NoExtraKeys>(
+            { Awesomebar.searchActionClicked.record(it) }
+        )
+        is Event.SearchSuggestionClicked -> EventWrapper<NoExtraKeys>(
+            { Awesomebar.searchSuggestionClicked.record(it) }
+        )
+        is Event.OpenedTabSuggestionClicked -> EventWrapper<NoExtraKeys>(
+            { Awesomebar.openedTabSuggestionClicked.record(it) }
+        )
+
+        is Event.SecurePrefsExperimentFailure -> EventWrapper(
+            { AndroidKeystoreExperiment.experimentFailure.record(it) },
+            { AndroidKeystoreExperiment.experimentFailureKeys.valueOf(it) }
+        )
+        is Event.SecurePrefsGetFailure -> EventWrapper(
+            { AndroidKeystoreExperiment.getFailure.record(it) },
+            { AndroidKeystoreExperiment.getFailureKeys.valueOf(it) }
+        )
+        is Event.SecurePrefsGetSuccess -> EventWrapper(
+            { AndroidKeystoreExperiment.getResult.record(it) },
+            { AndroidKeystoreExperiment.getResultKeys.valueOf(it) }
+        )
+        is Event.SecurePrefsWriteFailure -> EventWrapper(
+            { AndroidKeystoreExperiment.writeFailure.record(it) },
+            { AndroidKeystoreExperiment.writeFailureKeys.valueOf(it) }
+        )
+        is Event.SecurePrefsWriteSuccess -> EventWrapper<NoExtraKeys>(
+            { AndroidKeystoreExperiment.writeSuccess.record(it) }
+        )
+        is Event.SecurePrefsReset -> EventWrapper<NoExtraKeys>(
+            { AndroidKeystoreExperiment.reset.record(it) }
+        )
 
         // Don't record other events in Glean:
         is Event.AddBookmark -> null
-        is Event.OpenedBookmark -> null
         is Event.OpenedAppFirstRun -> null
         is Event.InteractWithSearchURLArea -> null
         is Event.ClearedPrivateData -> null
@@ -792,11 +853,20 @@ class GleanMetricsService(
 
             // setStartupMetrics is not a fast function. It does not need to be done before we can consider
             // ourselves initialized. So, let's do it, well, later.
-            setStartupMetrics()
+            setStartupMetrics(context.settings())
         }
     }
 
-    internal fun setStartupMetrics() {
+    /**
+     * This function is called before the metrics ping is sent.  Part of this function depends on
+     * shared preferences to be updated so the correct value is sent with the metrics ping.
+     *
+     * The reason we're using shared preferences to track some of these values is due to the
+     * limitations of the metrics ping.  Events are only sent in a metrics ping if the user have made
+     * changes between each ping.  However, in some cases we want current values to be sent even if
+     * the user have not changed anything between pings.
+     */
+    internal fun setStartupMetrics(settings: Settings) {
         setPreferenceMetrics()
         with(Metrics) {
             defaultBrowser.set(browsersCache.all(context).isDefaultBrowser)
@@ -804,55 +874,60 @@ class GleanMetricsService(
                 defaultMozBrowser.set(it)
             }
 
-            distributionId.set(
-                when (Config.channel.isMozillaOnline) {
-                    true -> "MozillaOnline"
-                    false -> "Mozilla"
-                }
-            )
-
             mozillaProducts.set(mozillaProductDetector.getInstalledMozillaProducts(context))
 
-            adjustCampaign.set(context.settings().adjustCampaignId)
-            adjustAdGroup.set(context.settings().adjustAdGroup)
-            adjustCreative.set(context.settings().adjustCreative)
-            adjustNetwork.set(context.settings().adjustNetwork)
+            adjustCampaign.set(settings.adjustCampaignId)
+            adjustAdGroup.set(settings.adjustAdGroup)
+            adjustCreative.set(settings.adjustCreative)
+            adjustNetwork.set(settings.adjustNetwork)
 
-            searchWidgetInstalled.set(context.settings().searchWidgetInstalled)
+            searchWidgetInstalled.set(settings.searchWidgetInstalled)
 
-            val openTabsCount = context.settings().openTabsCount
+            val openTabsCount = settings.openTabsCount
             hasOpenTabs.set(openTabsCount > 0)
             if (openTabsCount > 0) {
                 tabsOpenCount.add(openTabsCount)
             }
 
-            val topSitesSize = context.settings().topSitesSize
+            val topSitesSize = settings.topSitesSize
             hasTopSites.set(topSitesSize > 0)
             if (topSitesSize > 0) {
                 topSitesCount.add(topSitesSize)
             }
 
-            val desktopBookmarksSize = context.settings().desktopBookmarksSize
+            val installedAddonSize = settings.installedAddonsCount
+            Addons.hasInstalledAddons.set(installedAddonSize > 0)
+            if (installedAddonSize > 0) {
+                Addons.installedAddons.set(settings.installedAddonsList.split(','))
+            }
+
+            val enabledAddonSize = settings.enabledAddonsCount
+            Addons.hasEnabledAddons.set(enabledAddonSize > 0)
+            if (enabledAddonSize > 0) {
+                Addons.enabledAddons.set(settings.enabledAddonsList.split(','))
+            }
+
+            val desktopBookmarksSize = settings.desktopBookmarksSize
             hasDesktopBookmarks.set(desktopBookmarksSize > 0)
             if (desktopBookmarksSize > 0) {
                 desktopBookmarksCount.add(desktopBookmarksSize)
             }
 
-            val mobileBookmarksSize = context.settings().mobileBookmarksSize
+            val mobileBookmarksSize = settings.mobileBookmarksSize
             hasMobileBookmarks.set(mobileBookmarksSize > 0)
             if (mobileBookmarksSize > 0) {
                 mobileBookmarksCount.add(mobileBookmarksSize)
             }
 
             toolbarPosition.set(
-                when (context.settings().toolbarPosition) {
+                when (settings.toolbarPosition) {
                     ToolbarPosition.BOTTOM -> Event.ToolbarPositionChanged.Position.BOTTOM.name
                     ToolbarPosition.TOP -> Event.ToolbarPositionChanged.Position.TOP.name
                 }
             )
 
-            tabViewSetting.set(context.settings().getTabViewPingString())
-            closeTabSetting.set(context.settings().getTabTimeoutPingString())
+            tabViewSetting.set(settings.getTabViewPingString())
+            closeTabSetting.set(settings.getTabTimeoutPingString())
         }
 
         store.value.waitForSelectedOrDefaultSearchEngine { searchEngine ->

@@ -129,6 +129,8 @@
     <string name="browser_menu_edit_bookmark">Modificar lo marcapagina</string>
     <!-- Browser menu button that opens the addon manager -->
     <string name="browser_menu_add_ons">Moduls</string>
+    <!-- Browser menu button that opens the addon extensions manager -->
+    <string name="browser_menu_extensions">Extensions</string>
     <!-- Text displayed when there are no add-ons to be shown -->
     <string name="no_add_ons">Cap d’extension aquí</string>
     <!-- Browser menu button that sends a user to help articles -->
@@ -178,6 +180,8 @@
     <!-- Browser menu button to configure reader mode appearance e.g. the used font type and size -->
     <string name="browser_menu_read_appearance">Aparéncia</string>
 
+    <!-- Browser menu button to show reader view appearance controls e.g. the used font type and size -->
+    <string name="browser_menu_customize_reader_view">Personalizar la vista lectura</string>
     <!-- Error message to show when the user tries to access a scheme not
         handled by the app (Ex: blob, tel etc) -->
     <string name="unknown_scheme_error_message">Connexion impossibla. Esquèma d’URL desconegut.</string>
@@ -213,6 +217,11 @@
     <string name="search_suggestions_onboarding_text">%s enviarà tot çò que picatz dins la barra d’adreça al motor de recèrca</string>
     <!-- Search suggestion onboarding hint Learn more link text -->
     <string name="search_suggestions_onboarding_learn_more_link">Ne saber mai</string>
+
+    <!-- Search engine suggestion title text. The first parameter is the name of teh suggested engine-->
+    <string name="search_engine_suggestions_title">Cercar %s</string>
+    <!-- Search engine suggestion description text -->
+    <string name="search_engine_suggestions_description">Recèrcas dirèctament dins la barra d’adreça</string>
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
@@ -532,6 +541,10 @@
     <string name="library_desktop_bookmarks_unfiled">Autres marcapaginas</string>
     <!-- Option in Library to open History page -->
     <string name="library_history">Istoric</string>
+    <!-- Option in Library to open a new tab -->
+    <string name="library_new_tab">Onglet novèl</string>
+    <!-- Option in Library to find text in page -->
+    <string name="library_find_in_page">Recercar dins la pagina</string>
     <!-- Option in Library to open Synced Tabs page -->
     <string name="library_synced_tabs">Onglets sincronizats</string>
     <!-- Option in Library to open Reading List -->
@@ -873,6 +886,8 @@
 
     <!-- Preference for altering the persistent storage access for all websites -->
     <string name="preference_phone_feature_persistent_storage">Emmagazinatge persistent</string>
+    <!-- Preference for altering the EME access for all websites -->
+    <string name="preference_phone_feature_media_key_system_access">Contengut contrarotlat per DRM</string>
     <!-- Label that indicates that a permission must be asked always -->
     <string name="preference_option_phone_feature_ask_to_allow">Demandar per autorizar</string>
     <!-- Label that indicates that a permission must be blocked -->
@@ -888,17 +903,23 @@
     <string name="tracking_protection_on">Activada</string>
     <!-- Summary of tracking protection preference if tracking protection is set to off -->
     <string name="tracking_protection_off">Desactivada</string>
-    <!-- Label that indicates that all video and audio autoplay is allowed -->
+    <!-- Label for global setting that indicates that all video and audio autoplay is allowed -->
     <string name="preference_option_autoplay_allowed2">Autorizar l’àudio e la vidèo</string>
 
+    <!-- Label for site specific setting that indicates that all video and audio autoplay is allowed -->
+    <string name="quick_setting_option_autoplay_allowed">Autorizar l’àudio e la vidèo</string>
     <!-- Label that indicates that video and audio autoplay is only allowed over Wi-Fi -->
     <string name="preference_option_autoplay_allowed_wifi_only2">Blocar solament l’àudio e la vidèo amb una connexion mobil</string>
     <!-- Subtext that explains 'autoplay on Wi-Fi only' option -->
     <string name="preference_option_autoplay_allowed_wifi_subtext">L’àudio e la vidèo seràn legits amb una connexion Wi-Fi</string>
-    <!-- Label that indicates that video autoplay is allowed, but audio autoplay is blocked -->
+    <!-- Label for global setting that indicates that video autoplay is allowed, but audio autoplay is blocked -->
     <string name="preference_option_autoplay_block_audio2">Blocar sonque l’àudio</string>
-    <!-- Label that indicates that all video and audio autoplay is blocked -->
+    <!-- Label for site specific setting that indicates that video autoplay is allowed, but audio autoplay is blocked -->
+    <string name="quick_setting_option_autoplay_block_audio">Blocar sonque l’àudio</string>
+    <!-- Label for global setting that indicates that all video and audio autoplay is blocked -->
     <string name="preference_option_autoplay_blocked3">Blocar l’àudio e la vidèo</string>
+    <!-- Label for site specific setting that indicates that all video and audio autoplay is blocked -->
+    <string name="quick_setting_option_autoplay_blocked">Blocar l’àudio e la vidèo</string>
     <!-- Summary of delete browsing data on quit preference if it is set to on -->
     <string name="delete_browsing_data_quit_on">Activat</string>
     <!-- Summary of delete browsing data on quit preference if it is set to off -->
@@ -1156,10 +1177,19 @@
     <string name="onboarding_feature_section_header">Descobrissètz %s</string>
     <!-- text for the "What's New" onboarding card header -->
     <string name="onboarding_whats_new_header1">Descobrissètz las novetats</string>
+    <!-- text for the "what's new" onboarding card description
+    The first parameter is the short name of the app (e.g. Firefox) -->
+    <string name="onboarding_whats_new_description">Avètz de question tocant lo nòu %s ? Volètz saber çò que cambièt ?</string>
     <!-- text for underlined clickable link that is part of "what's new" onboarding card description that links to an FAQ -->
     <string name="onboarding_whats_new_description_linktext">Trobatz de responsas aquí</string>
+    <!-- text for the Firefox account onboarding sign in card header -->
+    <string name="onboarding_account_sign_in_header">Començatz de sincronizar los marcapaginas, senhals e mai amb vòstre compte Firefox</string>
     <!-- Text for the button to learn more about signing in to your Firefox account -->
     <string name="onboarding_manual_sign_in_learn_more">Ne saber mai</string>
+    <!-- text for the firefox account onboarding card header when we detect you're already signed in to
+        another Firefox browser. (The word `Firefox` should not be translated)
+        The first parameter is the email of the detected user's account -->
+    <string name="onboarding_firefox_account_auto_signin_header_3">Sètz connectat coma %s sus un autre navegador Firefox amb aqueste periferic. Volètz vos connectar amb aqueste compte ?</string>
     <!-- text for the button to confirm automatic sign-in -->
     <string name="onboarding_firefox_account_auto_signin_confirm">Òc, connectatz-me</string>
     <!-- text for the automatic sign-in button while signing in is in process -->
@@ -1191,15 +1221,22 @@
         In English this is an idiom for "choose a side as in an argument or fight"
         but it is ok to make this more literally about "choosing a position in a physical space -->
     <string name="onboarding_toolbar_position_header">Prenètz posicion</string>
+    <!-- text for the toolbar position card description -->
+    <string name="onboarding_toolbar_position_description">Ensajatz la navegacion amb la man amb la barra d’aisinas inferiora o deplaçatz-la ennaut.</string>
     <!-- text for the private browsing onboarding card header -->
     <string name="onboarding_private_browsing_header">Navegatz d’un biais privat</string>
     <!-- text for the private browsing onboarding card description
     The first parameter is an icon that represents private browsing -->
     <string name="onboarding_private_browsing_description1">Dobrir un sol onglet privat : tocatz l’icòna %s.</string>
+    <!-- text for the private browsing onboarding card description, explaining how to always using private browsing -->
+    <string name="onboarding_private_browsing_always_description">Dobrir d’onglets privats cada còp : definissètz vòstres paramètres de navigacion privada.</string>
     <!-- text for the private browsing onbording card button, that launches settings -->
     <string name="onboarding_private_browsing_button">Dobrir los paramètres</string>
     <!-- text for the privacy notice onboarding card header -->
     <string name="onboarding_privacy_notice_header">Vòstra vida privada</string>
+    <!-- text for the privacy notice onboarding card description
+    The first parameter is the name of the app (e.g. Firefox Preview) -->
+    <string name="onboarding_privacy_notice_description2">Concebèrem %s per vos donar lo contraròtle de çò que partejatz en linha e çò que partejatz amb nosautres.</string>
     <!-- Text for the button to read the privacy notice -->
     <string name="onboarding_privacy_notice_read_button">Legissètz nòstra politica de confidencialitat</string>
     <!-- Content description (not visible, for screen readers etc.): Close onboarding screen -->
@@ -1316,13 +1353,21 @@
     <string name="etp_social_media_trackers_description">Limita la capacitat dels malhums socials de seguir vòstra activitat en linha.</string>
     <!-- Category of trackers (cross-site tracking cookies) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_cookies_title">Cookies de seguiment entre sites</string>
+    <!-- Description of cross-site tracking cookies that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_cookies_description">Bloca los cookies que los malhums publicitaris e las societats d’analisi de donadas utilizan per compilar vòstras donadas de navegacion sus mantun site.</string>
     <!-- Category of trackers (cryptominers) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_cryptominers_title">Minaires de criptomonedas</string>
+    <!-- Description of cryptominers that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_cryptominers_description">Empacha los scripts malvolents d’accedir a vòstre periferic per minar de moneda numerica.</string>
     <!-- Category of trackers (fingerprinters) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_fingerprinters_title">Generadors d’emprentas numericas</string>
+    <!-- Description of fingerprinters that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_fingerprinters_description">Empacha la culhida de donadas unicas identificables quant a vòstre periferic que pòdon èsser utilizadas pel seguiment.</string>
     <!-- Category of trackers (tracking content) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_tracking_content_title">Contengut utilizat pel seguiment</string>
 
+    <!-- Description of tracking content that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_tracking_content_description">Empacha lo cargament de publicitats, vidèos e autre contengut que contenon de còdi de seguiment. Pòt afectar d’unas foncionalitats de sites web.</string>
     <!-- Enhanced Tracking Protection Onboarding Message shown in a dialog above the toolbar. The first parameter is the name of the application (For example: Fenix) -->
     <string name="etp_onboarding_cfr_message">Quand l’escut es violet, %s a blocat de traçadors sus aqueste site. Tocatz aquí per ne saber mai.</string>
     <!-- Enhanced Tracking Protection message that protection is currently on for this site -->
@@ -1366,6 +1411,9 @@
     <!-- About page link text to open a screen with libraries that are used -->
     <string name="about_other_open_source_libraries">Bibliotècas qu’utilizam</string>
 
+    <!-- Toast shown to the user when they are activating the secret dev menu
+        The first parameter is number of long clicks left to enable the menu -->
+    <string name="about_debug_menu_toast_progress">Menú de desbugatge : %1$d clic(s) restant(s) per l’activar</string>
     <string name="about_debug_menu_toast_done">Menú de desbugatge activat</string>
 
     <!-- Content description of the tab counter toolbar button when one tab is open -->
@@ -1395,6 +1443,9 @@
 
     <!-- Placeholder text for the TextView in the Add to Homescreen dialog -->
     <string name="add_to_homescreen_text_placeholder">Nom de l’acorchi</string>
+
+    <!-- Describes the add to homescreen functionality -->
+    <string name="add_to_homescreen_description_2">Podètz facilament apondre aqueste site a l’ecran d’acuèlh de vòstre periferic per i accedir dirèctament e i navegar coma se foguèsse una aplicacion.</string>
 
     <!-- Preference for managing the settings for logins and passwords in Fenix -->
     <string name="preferences_passwords_logins_and_passwords">Identificants e senhals</string>
@@ -1483,6 +1534,8 @@
     <string name="logins_biometric_prompt_message">Desblocatz per veire los identificants enregistrats</string>
     <!-- Title of warning dialog if users have no device authentication set up -->
     <string name="logins_warning_dialog_title">Protegissètz vòstres identificants e senhals</string>
+    <!-- Message of warning dialog if users have no device authentication set up -->
+    <string name="logins_warning_dialog_message">Configuratz un esquèma de verrolhatge, un còdi PIN o un senhal per protegir vòstres identificants de connexion e senhals enregistrats se per cas qualqu’un accedisca a vòstre periferic.</string>
     <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
     <string name="logins_warning_dialog_later">Mai tard</string>
     <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->
@@ -1491,6 +1544,8 @@
     <string name="logins_biometric_prompt_message_pin">Desverrolhatz lo periferic</string>
     <!-- Title for Accessibility Force Enable Zoom Preference -->
     <string name="preference_accessibility_force_enable_zoom">Zoom per totes los sites</string>
+    <!-- Summary for Accessibility Force Enable Zoom Preference -->
+    <string name="preference_accessibility_force_enable_zoom_summary">Activar per permetre de zoomar amb dos dets encara que lo site empache aquò.</string>
     <!-- Saved logins sorting strategy menu item -by name- (if selected, it will sort saved logins alphabetically) -->
     <string name="saved_logins_sort_strategy_alphabetically">Nom (A-Z)</string>
     <!-- Saved logins sorting strategy menu item -by last used- (if selected, it will sort saved logins by last used) -->
@@ -1675,4 +1730,6 @@
     <string name="no_collections_description1">Agropatz de recèrcas, de sites e d’onglets similaris per i accedir rapidament mai tard.</string>
     <!-- Deprecated: text for the firefox account onboarding card header when we detect you're already signed in to -->
     <string name="onboarding_firefox_account_auto_signin_header_2">Sètz connectat coma %s sus un autre navegador Firefox sus aqueste telefòn. Volètz vos connectar amb aqueste compte ?</string>
-    </resources>
+    <!-- Deprecated: Describes the add to homescreen functionality -->
+    <string name="add_to_homescreen_description">Podètz facilament apondre aqueste site a vòstre ecran d’acuèlh de telefòn per i accedir e navigar mai rapidament coma se foguèssetz dins l’aplicacion.</string>
+</resources>

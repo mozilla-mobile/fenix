@@ -102,7 +102,11 @@
         app:destination="@id/trackingProtectionExceptionsFragment" />
     <action
         android:id="@+id/action_global_accountSettingsFragment"
-        app:destination="@id/accountSettingsFragment" />
+        app:destination="@id/accountSettingsFragment"
+        app:enterAnim="@anim/slide_in_right"
+        app:exitAnim="@anim/slide_out_left"
+        app:popEnterAnim="@anim/slide_in_left"
+        app:popExitAnim="@anim/slide_out_right" />
     <action
         android:id="@+id/action_global_trackingProtectionPanelDialogFragment"
         app:destination="@id/trackingProtectionPanelDialogFragment" />
@@ -115,6 +119,11 @@
         app:popUpTo="@id/tabTrayDialogFragment"
         app:popUpToInclusive="true"/>
     <action
+        android:id="@+id/action_global_tabsTrayFragment"
+        app:destination="@id/tabsTrayFragment"
+        app:popUpTo="@id/tabsTrayFragment"
+        app:popUpToInclusive="true" />
+    <action
         android:id="@+id/action_global_savedLoginsAuthFragment"
         app:destination="@id/savedLoginsAuthFragment" />
     <action
@@ -123,6 +132,15 @@
     <action
         android:id="@+id/action_global_tabSettingsFragment"
         app:destination="@id/tabsSettingsFragment" />
+
+    <dialog
+        android:id="@+id/tabsTrayFragment"
+        android:name="org.mozilla.fenix.tabstray.TabsTrayFragment">
+        <argument
+            android:name="enterMultiselect"
+            android:defaultValue="false"
+            app:argType="boolean" />
+    </dialog>
 
     <dialog
         android:id="@+id/tabTrayDialogFragment"
@@ -421,6 +439,13 @@
         <action
             android:id="@+id/action_settingsFragment_to_savedLoginsAuthFragment"
             app:destination="@id/savedLoginsAuthFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_settingsFragment_to_creditCardsSettingFragment"
+            app:destination="@id/credit_cards_graph"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
@@ -973,6 +998,23 @@
             <argument
                 android:name="searchEngineIdentifier"
                 app:argType="string" />
+        </fragment>
+    </navigation>
+
+    <navigation
+        android:id="@+id/credit_cards_graph"
+        app:startDestination="@id/creditCardsSettingFragment">
+        <fragment
+            android:id="@+id/creditCardsSettingFragment"
+            android:name="org.mozilla.fenix.settings.creditcards.CreditCardsSettingFragment"
+            android:label="@string/preferences_credit_cards">
+            <action
+                android:id="@+id/action_creditCardsSettingFragment_to_turnOnSyncFragment"
+                app:destination="@id/turnOnSyncFragment"
+                app:enterAnim="@anim/slide_in_right"
+                app:exitAnim="@anim/slide_out_left"
+                app:popEnterAnim="@anim/slide_in_left"
+                app:popExitAnim="@anim/slide_out_right" />
         </fragment>
     </navigation>
 </navigation>

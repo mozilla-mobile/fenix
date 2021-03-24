@@ -16,8 +16,9 @@ import android.util.AttributeSet
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ActionMode
 import android.view.ViewConfiguration
-import android.view.WindowManager
+import android.view.WindowManager.LayoutParams.FLAG_SECURE
 import androidx.annotation.CallSuper
 import androidx.annotation.IdRes
 import androidx.annotation.VisibleForTesting
@@ -65,6 +66,7 @@ import mozilla.components.support.utils.SafeIntent
 import mozilla.components.support.utils.toSafeIntent
 import mozilla.components.support.webextensions.WebExtensionPopupFeature
 import org.mozilla.fenix.GleanMetrics.Metrics
+import org.mozilla.fenix.GleanMetrics.PerfStartup
 import org.mozilla.fenix.addons.AddonDetailsFragmentDirections
 import org.mozilla.fenix.addons.AddonPermissionsDetailsFragmentDirections
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
@@ -76,6 +78,7 @@ import org.mozilla.fenix.exceptions.trackingprotection.TrackingProtectionExcepti
 import org.mozilla.fenix.ext.alreadyOnDestination
 import org.mozilla.fenix.ext.breadcrumb
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.measureNoInline
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.settings
@@ -92,6 +95,7 @@ import org.mozilla.fenix.library.history.HistoryFragmentDirections
 import org.mozilla.fenix.library.recentlyclosed.RecentlyClosedFragmentDirections
 import org.mozilla.fenix.perf.Performance
 import org.mozilla.fenix.perf.PerformanceInflater
+import org.mozilla.fenix.perf.ProfilerMarkers
 import org.mozilla.fenix.perf.StartupTimeline
 import org.mozilla.fenix.search.SearchDialogFragmentDirections
 import org.mozilla.fenix.session.PrivateNotificationService
@@ -162,7 +166,13 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
     private lateinit var navigationToolbar: Toolbar
 
-    final override fun onCreate(savedInstanceState: Bundle?) {
+    // Tracker for contextual menu (Copy|Search|Select all|etc...)
+    private var actionMode: ActionMode? = null
+
+    final override fun onCreate(savedInstanceState: Bundle?): Unit = PerfStartup.homeActivityOnCreate.measureNoInline {
+        // DO NOT MOVE ANYTHING ABOVE THIS addMarker CALL.
+        components.core.engine.profiler?.addMarker("Activity.onCreate", "HomeActivity")
+
         components.strictMode.attachListenerToDisablePenaltyDeath(supportFragmentManager)
         // There is disk read violations on some devices such as samsung and pixel for android 9/10
         components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
@@ -278,6 +288,11 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     override fun onResume() {
         super.onResume()
 
+        // Even if screenshots are allowed, we hide private content in the recents screen in onPause
+        // so onResume we should go back to setting these flags with the user screenshot setting
+        // See https://github.com/mozilla-mobile/fenix/issues/11153
+        updateSecureWindowFlags(settings().lastKnownMode)
+
         // Diagnostic breadcrumb for "Display already aquired" crash:
         // https://github.com/mozilla-mobile/android-components/issues/7960
         breadcrumb(
@@ -311,7 +326,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         }
     }
 
-    override fun onStart() {
+    override fun onStart() = PerfStartup.homeActivityOnStart.measureNoInline {
         super.onStart()
 
         // Diagnostic breadcrumb for "Display already aquired" crash:
@@ -319,6 +334,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         breadcrumb(
             message = "onStart()"
         )
+
+        ProfilerMarkers.homeActivityOnStart(rootContainer, components.core.engine.profiler)
     }
 
     override fun onStop() {
@@ -341,13 +358,11 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         settings().shouldReturnToBrowser =
             components.core.store.state.getNormalOrPrivateTabs(private = false).isNotEmpty()
 
+        // Even if screenshots are allowed, we want to hide private content in the recents screen
+        // See https://github.com/mozilla-mobile/fenix/issues/11153
         if (settings().lastKnownMode.isPrivate) {
-            window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+            window.addFlags(FLAG_SECURE)
         }
-
-        // We will remove this when AC code lands to emit a fact on getTopSites in DefaultTopSitesStorage
-        // https://github.com/mozilla-mobile/android-components/issues/8679
-        settings().topSitesSize = components.core.topSitesStorage.cachedTopSites.size
 
         lifecycleScope.launch(IO) {
             components.core.bookmarksStorage.getTree(BookmarkRoot.Root.id, true)?.let {
@@ -506,6 +521,20 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             )
         }.asView()
         else -> super.onCreateView(parent, name, context, attrs)
+    }
+
+    override fun onActionModeStarted(mode: ActionMode?) {
+        actionMode = mode
+        super.onActionModeStarted(mode)
+    }
+
+    override fun onActionModeFinished(mode: ActionMode?) {
+        actionMode = null
+        super.onActionModeFinished(mode)
+    }
+
+    fun finishActionMode() {
+        actionMode?.finish().also { actionMode = null }
     }
 
     @Suppress("MagicNumber")
@@ -850,7 +879,18 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
     protected open fun createBrowsingModeManager(initialMode: BrowsingMode): BrowsingModeManager {
         return DefaultBrowsingModeManager(initialMode, components.settings) { newMode ->
+            updateSecureWindowFlags(newMode)
             themeManager.currentTheme = newMode
+        }.also {
+            updateSecureWindowFlags(initialMode)
+        }
+    }
+
+    fun updateSecureWindowFlags(mode: BrowsingMode = browsingModeManager.mode) {
+        if (mode == BrowsingMode.Private && !settings().allowScreenshotsInPrivateMode) {
+            window.addFlags(FLAG_SECURE)
+        } else {
+            window.clearFlags(FLAG_SECURE)
         }
     }
 

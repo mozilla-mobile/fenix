@@ -10,13 +10,11 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
-import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
-import org.mozilla.fenix.helpers.TestHelper.sendSingleTapToScreen
 import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
@@ -55,16 +53,6 @@ class TabbedBrowsingTest {
         }
     }
 
-    // changing the device preference for Touch and Hold delay, to avoid long-clicks instead of a single-click
-    companion object {
-        @BeforeClass
-        @JvmStatic
-        fun setDevicePreference() {
-            val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-            mDevice.executeShellCommand("settings put secure long_press_timeout 3000")
-        }
-    }
-
     @After
     fun tearDown() {
         mockWebServer.shutdown()
@@ -72,8 +60,6 @@ class TabbedBrowsingTest {
 
     @Test
     fun openNewTabTest() {
-        homeScreen { }.dismissOnboarding()
-
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         navigationToolbar {
@@ -81,26 +67,26 @@ class TabbedBrowsingTest {
             mDevice.waitForIdle()
             verifyTabCounter("1")
         }.openTabDrawer {
-            verifyExistingTabList()
-        }.openTabsListThreeDotMenu {
-            verifyCloseAllTabsButton()
-            verifyShareTabButton()
-            verifySelectTabs()
+            verifyNormalModeSelected()
+            verifyExistingOpenTabs("Test_Page_1")
+            closeTab()
+        }.openTabDrawer {
+            verifyNoTabsOpened()
+        }.openNewTab {
+        }.submitQuery(defaultWebPage.url.toString()) {
+            mDevice.waitForIdle()
+            verifyTabCounter("1")
+        }.openTabDrawer {
+            verifyNormalModeSelected()
+            verifyExistingOpenTabs("Test_Page_1")
         }
     }
 
     @Test
     fun openNewPrivateTabTest() {
-        homeScreen { }.dismissOnboarding()
-
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
-        homeScreen { }.togglePrivateBrowsingMode()
-
-        homeScreen {
-            verifyPrivateSessionMessage()
-            verifyTabButton()
-        }
+        homeScreen {}.togglePrivateBrowsingMode()
 
         navigationToolbar {
         }.openNewTabAndEnterToBrowser(defaultWebPage.url) {
@@ -108,7 +94,7 @@ class TabbedBrowsingTest {
             verifyTabCounter("1")
         }.openTabDrawer {
             verifyExistingTabList()
-            verifyCloseTabsButton("Test_Page_1")
+            verifyPrivateModeSelected()
         }.toggleToNormalTabs {
             verifyNoTabsOpened()
         }.toggleToPrivateTabs {
@@ -156,7 +142,6 @@ class TabbedBrowsingTest {
         }.openNewTabAndEnterToBrowser(genericURL.url) {
         }.openTabDrawer {
             verifyExistingOpenTabs("Test_Page_1")
-            verifyCloseTabsButton("Test_Page_1")
             closeTabViaXButton("Test_Page_1")
             verifySnackBarText("Tab closed")
             snackBarButtonClick("UNDO")
@@ -187,8 +172,7 @@ class TabbedBrowsingTest {
         browserScreen {
         }.openTabDrawer {
             verifyExistingOpenTabs("Test_Page_1")
-        }.openNewTab {
-        }.dismissSearchBar { }
+        }.closeTabDrawer { }
     }
 
     @Test
@@ -249,15 +233,12 @@ class TabbedBrowsingTest {
         notificationShade {
             verifyPrivateTabsNotification()
         }.clickClosePrivateTabsNotification {
-            // Tap an empty spot on the app homescreen to make sure it's into focus
-            sendSingleTapToScreen(20, 20)
             verifyHomeScreen()
         }
     }
 
     @Test
     fun verifyTabTrayNotShowingStateHalfExpanded() {
-        homeScreen { }.dismissOnboarding()
 
         navigationToolbar {
         }.openTabTray {
@@ -282,8 +263,6 @@ class TabbedBrowsingTest {
 
     @Test
     fun verifyEmptyTabTray() {
-        homeScreen { }.dismissOnboarding()
-
         navigationToolbar {
         }.openTabTray {
             verifyNoTabsOpened()
@@ -298,8 +277,6 @@ class TabbedBrowsingTest {
 
     @Test
     fun verifyOpenTabDetails() {
-        homeScreen { }.dismissOnboarding()
-
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         navigationToolbar {
@@ -317,8 +294,6 @@ class TabbedBrowsingTest {
 
     @Test
     fun verifyContextMenuShortcuts() {
-        homeScreen { }.dismissOnboarding()
-
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         navigationToolbar {

@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.IdlingResource
-import androidx.test.espresso.ViewInteraction
+import androidx.test.espresso.IdlingResourceTimeoutException
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.pressImeActionButton
 import androidx.test.espresso.action.ViewActions.replaceText
@@ -21,6 +21,7 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
+import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
@@ -60,12 +61,21 @@ class NavigationToolbarRobot {
 
     fun verifyTabButtonShortcutMenuItems() = assertTabButtonShortcutMenuItems()
 
-    fun verifyReaderViewDetected(visible: Boolean = false): ViewInteraction =
+    fun verifyReaderViewDetected(visible: Boolean = false) =
         assertReaderViewDetected(visible)
+
+    fun verifyCloseReaderViewDetected(visible: Boolean = false) =
+        assertCloseReaderViewDetected(visible)
 
     fun typeSearchTerm(searchTerm: String) = awesomeBar().perform(typeText(searchTerm))
 
-    fun toggleReaderView() = readerViewToggle().click()
+    fun toggleReaderView() {
+        mDevice.findObject(UiSelector()
+            .resourceId("$packageName:id/mozac_browser_toolbar_page_actions"))
+            .waitForExists(waitingTime)
+
+        readerViewToggle().click()
+    }
 
     class Transition {
 
@@ -73,15 +83,7 @@ class NavigationToolbarRobot {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
         fun goBackToWebsite(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
-            mDevice.waitNotNull(
-                Until.findObject(By.res("$packageName:id/toolbar")),
-                waitingTime
-            )
-            urlBar().click()
-            mDevice.waitNotNull(
-                Until.findObject(By.res("$packageName:id/mozac_browser_toolbar_edit_url_view")),
-                waitingTime
-            )
+            openEditURLView()
             clearAddressBar().click()
             awesomeBar().check((matches(withText(containsString("")))))
             goBackButton()
@@ -96,14 +98,7 @@ class NavigationToolbarRobot {
         ): BrowserRobot.Transition {
             sessionLoadedIdlingResource = SessionLoadedIdlingResource()
 
-            mDevice.waitNotNull(Until.findObject(By.res("$packageName:id/toolbar")),
-            waitingTime
-            )
-            urlBar().click()
-            mDevice.waitNotNull(
-                Until.findObject(By.res("$packageName:id/mozac_browser_toolbar_edit_url_view")),
-                waitingTime
-            )
+            openEditURLView()
 
             awesomeBar().perform(replaceText(url.toString()), pressImeActionButton())
 
@@ -122,19 +117,55 @@ class NavigationToolbarRobot {
             return BrowserRobot.Transition()
         }
 
+        fun openTrackingProtectionTestPage(url: Uri, etpEnabled: Boolean, interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
+            sessionLoadedIdlingResource = SessionLoadedIdlingResource()
+
+            openEditURLView()
+
+            awesomeBar().perform(replaceText(url.toString()), pressImeActionButton())
+
+            runWithIdleRes(sessionLoadedIdlingResource) {
+                when (etpEnabled) {
+                    true ->
+                        try {
+                            onView(withId(R.id.onboarding_message))
+                                .check(matches(isDisplayed()))
+                        } catch (e: IdlingResourceTimeoutException) {
+                            openThreeDotMenu {
+                            }.stopPageLoad {
+                                val onboardingDisplayed =
+                                    mDevice.findObject(UiSelector().resourceId("$packageName:id/onboarding_message"))
+                                        .waitForExists(waitingTime)
+
+                                if (!onboardingDisplayed) {
+                                    openThreeDotMenu {
+                                    }.refreshPage {}
+                                }
+                            }
+                        }
+
+                    false ->
+                        try {
+                            onView(withResourceName("browserLayout")).check(matches(isDisplayed()))
+                        } catch (e: IdlingResourceTimeoutException) {
+                            openThreeDotMenu {
+                            }.stopPageLoad {
+                            }.openThreeDotMenu {
+                            }.refreshPage {}
+                        }
+                }
+            }
+
+            BrowserRobot().interact()
+            return BrowserRobot.Transition()
+        }
+
         fun openTabCrashReporter(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
             val crashUrl = "about:crashcontent"
 
             sessionLoadedIdlingResource = SessionLoadedIdlingResource()
 
-            mDevice.waitNotNull(Until.findObject(By.res("$packageName:id/toolbar")),
-                waitingTime
-            )
-            urlBar().click()
-            mDevice.waitNotNull(
-                Until.findObject(By.res("$packageName:id/mozac_browser_toolbar_edit_url_view")),
-                waitingTime
-            )
+            openEditURLView()
 
             awesomeBar().perform(replaceText(crashUrl), pressImeActionButton())
 
@@ -277,6 +308,18 @@ fun clickUrlbar(interact: SearchRobot.() -> Unit): SearchRobot.Transition {
     return SearchRobot.Transition()
 }
 
+fun openEditURLView() {
+    mDevice.waitNotNull(
+        Until.findObject(By.res("$packageName:id/toolbar")),
+        waitingTime
+    )
+    urlBar().click()
+    mDevice.waitNotNull(
+        Until.findObject(By.res("$packageName:id/mozac_browser_toolbar_edit_url_view")),
+        waitingTime
+    )
+}
+
 private fun assertSuggestionsAreEqualTo(suggestionSize: Int) {
     mDevice.waitForIdle()
     onView(withId(R.id.awesome_bar)).check(suggestionsAreEqualTo(suggestionSize))
@@ -312,7 +355,11 @@ private fun goBackButton() = mDevice.pressBack()
 private fun readerViewToggle() =
     onView(withParent(withId(R.id.mozac_browser_toolbar_page_actions)))
 
-private fun assertReaderViewDetected(visible: Boolean) =
+private fun assertReaderViewDetected(visible: Boolean) {
+    mDevice.findObject(UiSelector()
+        .description("Reader view"))
+        .waitForExists(waitingTime)
+
     onView(
         allOf(
             withParent(withId(R.id.mozac_browser_toolbar_page_actions)),
@@ -322,6 +369,23 @@ private fun assertReaderViewDetected(visible: Boolean) =
         if (visible) matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE))
         else ViewAssertions.doesNotExist()
     )
+}
+
+private fun assertCloseReaderViewDetected(visible: Boolean) {
+    mDevice.findObject(UiSelector()
+        .description("Close reader view"))
+        .waitForExists(waitingTime)
+
+    onView(
+        allOf(
+            withParent(withId(R.id.mozac_browser_toolbar_page_actions)),
+            withContentDescription("Close reader view")
+        )
+    ).check(
+        if (visible) matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE))
+        else ViewAssertions.doesNotExist()
+    )
+}
 
 inline fun runWithIdleRes(ir: IdlingResource?, pendingCheck: () -> Unit) {
     try {

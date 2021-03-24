@@ -135,6 +135,8 @@
     <string name="browser_menu_edit_bookmark">Bladwijzer bewerken</string>
     <!-- Browser menu button that opens the addon manager -->
     <string name="browser_menu_add_ons">Add-ons</string>
+    <!-- Browser menu button that opens the addon extensions manager -->
+    <string name="browser_menu_extensions">Extensies</string>
     <!-- Text displayed when there are no add-ons to be shown -->
     <string name="no_add_ons">Geen add-ons hier</string>
     <!-- Browser menu button that sends a user to help articles -->
@@ -185,6 +187,8 @@
     <!-- Browser menu button to configure reader mode appearance e.g. the used font type and size -->
     <string name="browser_menu_read_appearance">Vormgeving</string>
 
+    <!-- Browser menu button to show reader view appearance controls e.g. the used font type and size -->
+    <string name="browser_menu_customize_reader_view">Lezerweergave aanpassen</string>
     <!-- Error message to show when the user tries to access a scheme not
         handled by the app (Ex: blob, tel etc) -->
     <string name="unknown_scheme_error_message">Kan niet verbinden. Onherkenbaar URL-schema.</string>
@@ -221,6 +225,11 @@
     <string name="search_suggestions_onboarding_text">%s zal alles wat u in de adresbalk intypt met uw standaardzoekmachine delen.</string>
     <!-- Search suggestion onboarding hint Learn more link text -->
     <string name="search_suggestions_onboarding_learn_more_link">Meer info</string>
+
+    <!-- Search engine suggestion title text. The first parameter is the name of teh suggested engine-->
+    <string name="search_engine_suggestions_title">%s doorzoeken</string>
+    <!-- Search engine suggestion description text -->
+    <string name="search_engine_suggestions_description">Rechtstreeks vanuit de adresbalk zoeken</string>
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
@@ -533,6 +542,10 @@
     <string name="library_desktop_bookmarks_unfiled">Andere bladwijzers</string>
     <!-- Option in Library to open History page -->
     <string name="library_history">Geschiedenis</string>
+    <!-- Option in Library to open a new tab -->
+    <string name="library_new_tab">Nieuw tabblad</string>
+    <!-- Option in Library to find text in page -->
+    <string name="library_find_in_page">Zoeken op pagina</string>
     <!-- Option in Library to open Synced Tabs page -->
     <string name="library_synced_tabs">Gesynchroniseerde tabbladen</string>
     <!-- Option in Library to open Reading List -->
@@ -888,16 +901,22 @@
     <!-- Summary of tracking protection preference if tracking protection is set to off -->
     <string name="tracking_protection_off">Uit</string>
 
-    <!-- Label that indicates that all video and audio autoplay is allowed -->
+    <!-- Label for global setting that indicates that all video and audio autoplay is allowed -->
     <string name="preference_option_autoplay_allowed2">Audio en video toestaan</string>
+    <!-- Label for site specific setting that indicates that all video and audio autoplay is allowed -->
+    <string name="quick_setting_option_autoplay_allowed">Audio en video toestaan</string>
     <!-- Label that indicates that video and audio autoplay is only allowed over Wi-Fi -->
     <string name="preference_option_autoplay_allowed_wifi_only2">Audio en video alleen op mobiele data blokkeren</string>
     <!-- Subtext that explains 'autoplay on Wi-Fi only' option -->
     <string name="preference_option_autoplay_allowed_wifi_subtext">Audio en video worden via wifi afgespeeld</string>
-    <!-- Label that indicates that video autoplay is allowed, but audio autoplay is blocked -->
+    <!-- Label for global setting that indicates that video autoplay is allowed, but audio autoplay is blocked -->
     <string name="preference_option_autoplay_block_audio2">Alleen audio blokkeren</string>
-    <!-- Label that indicates that all video and audio autoplay is blocked -->
+    <!-- Label for site specific setting that indicates that video autoplay is allowed, but audio autoplay is blocked -->
+    <string name="quick_setting_option_autoplay_block_audio">Alleen audio blokkeren</string>
+    <!-- Label for global setting that indicates that all video and audio autoplay is blocked -->
     <string name="preference_option_autoplay_blocked3">Audio en video blokkeren</string>
+    <!-- Label for site specific setting that indicates that all video and audio autoplay is blocked -->
+    <string name="quick_setting_option_autoplay_blocked">Audio en video blokkeren</string>
     <!-- Summary of delete browsing data on quit preference if it is set to on -->
     <string name="delete_browsing_data_quit_on">Aan</string>
     <!-- Summary of delete browsing data on quit preference if it is set to off -->
@@ -1129,8 +1148,9 @@
     <!-- text for firefox preview moving tip header "Firefox Preview" and "Firefox Nightly" are intentionally hardcoded -->
     <string name="tip_firefox_preview_moved_header">Firefox Preview is nu Firefox Nightly</string>
     <!-- text for firefox preview moving tip description -->
-    <string name="tip_firefox_preview_moved_description">Firefox Nightly wordt elke nacht bijgewerkt en heeft experimentele nieuwe functies.
-        Het is echter mogelijk minder stabiel. Download onze bètabrowser voor een meer stabiele ervaring.</string>
+    <string name="tip_firefox_preview_moved_description">
+        Firefox Nightly wordt elke nacht bijgewerkt en heeft experimentele nieuwe functies.
+        Het is echter mogelijk minder stabiel. Download onze betabrowser voor een meer stabiele ervaring.</string>
 
     <!-- text for firefox preview moving tip button. "Firefox for Android Beta" is intentionally hardcoded -->
     <string name="tip_firefox_preview_moved_button_2">Download Firefox voor Android Beta</string>

@@ -69,7 +69,7 @@
 
     <!-- Private mode shortcut "contextual feature recommendation" (CFR) -->
     <!-- Text for the main message -->
-    <string name="cfr_message">Додайте ярлик для відкриття приватних вкладок з головного екрану.</string>
+    <string name="cfr_message">Додайте ярлик для відкриття приватних вкладок з головного екрана.</string>
     <!-- Text for the positive button -->
     <string name="cfr_pos_button_text">Додати ярлик</string>
     <!-- Text for the negative button -->
@@ -88,14 +88,14 @@
     <!-- Text for the positive action button to go to Android Settings to grant permissions. -->
     <string name="camera_permissions_needed_positive_button_text">Перейти до налаштувань</string>
     <!-- Text for the negative action button to dismiss the dialog. -->
-    <string name="camera_permissions_needed_negative_button_text">Закрити</string>
+    <string name="camera_permissions_needed_negative_button_text">Відхилити</string>
 
     <!-- Text for the banner message to tell users about our auto close feature. -->
     <string name="tab_tray_close_tabs_banner_message">Налаштуйте автоматичне закривання відкритих вкладок, які не переглядалися попереднього дня, тижня чи місяця.</string>
     <!-- Text for the positive action button to go to Settings for auto close tabs. -->
     <string name="tab_tray_close_tabs_banner_positive_button_text">Перейти до параметрів</string>
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
-    <string name="tab_tray_close_tabs_banner_negative_button_text">Закрити</string>
+    <string name="tab_tray_close_tabs_banner_negative_button_text">Відхилити</string>
 
     <!-- Text for the banner message to tell users about our grid view feature. -->
     <string name="tab_tray_grid_view_banner_message">Змініть вигляд відкритих вкладок. Перейдіть до налаштувань і виберіть подання вкладок сіткою.</string>
@@ -130,6 +130,8 @@
     <string name="browser_menu_edit_bookmark">Змінити закладку</string>
     <!-- Browser menu button that opens the addon manager -->
     <string name="browser_menu_add_ons">Додатки</string>
+    <!-- Browser menu button that opens the addon extensions manager -->
+    <string name="browser_menu_extensions">Розширення</string>
     <!-- Text displayed when there are no add-ons to be shown -->
     <string name="no_add_ons">Немає додатків</string>
     <!-- Browser menu button that sends a user to help articles -->
@@ -180,6 +182,8 @@
     <!-- Browser menu button to configure reader mode appearance e.g. the used font type and size -->
     <string name="browser_menu_read_appearance">Вигляд</string>
 
+    <!-- Browser menu button to show reader view appearance controls e.g. the used font type and size -->
+    <string name="browser_menu_customize_reader_view">Налаштувати режим читача</string>
     <!-- Error message to show when the user tries to access a scheme not
         handled by the app (Ex: blob, tel etc) -->
     <string name="unknown_scheme_error_message">Неможливо з’єднатися. Невідома схема URL-адреси.</string>
@@ -216,6 +220,11 @@
     <string name="search_suggestions_onboarding_text">%s відправлятиме все, що ви вводите в адресному рядку, вашому типовому провайдеру пошуку.</string>
     <!-- Search suggestion onboarding hint Learn more link text -->
     <string name="search_suggestions_onboarding_learn_more_link">Докладніше</string>
+
+    <!-- Search engine suggestion title text. The first parameter is the name of teh suggested engine-->
+    <string name="search_engine_suggestions_title">Пошук в %s</string>
+    <!-- Search engine suggestion description text -->
+    <string name="search_engine_suggestions_description">Пошук безпосередньо з панелі адреси</string>
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
@@ -520,7 +529,7 @@
     <!-- Option in Library to open Sessions page -->
     <string name="library_sessions">Сеанси</string>
     <!-- Option in Library to open Screenshots page -->
-    <string name="library_screenshots">Знімки екрану</string>
+    <string name="library_screenshots">Знімки екрана</string>
     <!-- Option in Library to open Downloads page -->
     <string name="library_downloads">Завантаження</string>
     <!-- Option in library to open Bookmarks page -->
@@ -535,6 +544,10 @@
     <string name="library_desktop_bookmarks_unfiled">Інші закладки</string>
     <!-- Option in Library to open History page -->
     <string name="library_history">Історія</string>
+    <!-- Option in Library to open a new tab -->
+    <string name="library_new_tab">Нова вкладка</string>
+    <!-- Option in Library to find text in page -->
+    <string name="library_find_in_page">Знайти на сторінці</string>
     <!-- Option in Library to open Synced Tabs page -->
     <string name="library_synced_tabs">Синхронізовані вкладки</string>
     <!-- Option in Library to open Reading List -->
@@ -554,7 +567,7 @@
     <string name="recently_closed_show_full_history">Показати всю історію</string>
     <!-- Text to show users they have multiple tabs saved in the Recently Closed Tabs section of history.
     %d is a placeholder for the number of tabs selected. -->
-    <string name="recently_closed_tabs">%d вкладок</string>
+    <string name="recently_closed_tabs">Вкладок: %d</string>
     <!-- Text to show users they have one tab saved in the Recently Closed Tabs section of history.
     %d is a placeholder for the number of tabs selected. -->
     <string name="recently_closed_tab">%d вкладка</string>
@@ -887,16 +900,22 @@
     <string name="tracking_protection_on">Увімкнено</string>
     <!-- Summary of tracking protection preference if tracking protection is set to off -->
     <string name="tracking_protection_off">Вимкнено</string>
-    <!-- Label that indicates that all video and audio autoplay is allowed -->
+    <!-- Label for global setting that indicates that all video and audio autoplay is allowed -->
     <string name="preference_option_autoplay_allowed2">Дозволити аудіо та відео</string>
+    <!-- Label for site specific setting that indicates that all video and audio autoplay is allowed -->
+    <string name="quick_setting_option_autoplay_allowed">Дозволити аудіо та відео</string>
     <!-- Label that indicates that video and audio autoplay is only allowed over Wi-Fi -->
     <string name="preference_option_autoplay_allowed_wifi_only2">Блокувати аудіо та відео лише для стільникових даних</string>
     <!-- Subtext that explains 'autoplay on Wi-Fi only' option -->
     <string name="preference_option_autoplay_allowed_wifi_subtext">Аудіо та відео відтворюватимуться через Wi-Fi</string>
-    <!-- Label that indicates that video autoplay is allowed, but audio autoplay is blocked -->
+    <!-- Label for global setting that indicates that video autoplay is allowed, but audio autoplay is blocked -->
     <string name="preference_option_autoplay_block_audio2">Блокувати лише аудіо</string>
-    <!-- Label that indicates that all video and audio autoplay is blocked -->
+    <!-- Label for site specific setting that indicates that video autoplay is allowed, but audio autoplay is blocked -->
+    <string name="quick_setting_option_autoplay_block_audio">Блокувати лише аудіо</string>
+    <!-- Label for global setting that indicates that all video and audio autoplay is blocked -->
     <string name="preference_option_autoplay_blocked3">Блокувати аудіо та відео</string>
+    <!-- Label for site specific setting that indicates that all video and audio autoplay is blocked -->
+    <string name="quick_setting_option_autoplay_blocked">Блокувати аудіо та відео</string>
     <!-- Summary of delete browsing data on quit preference if it is set to on -->
     <string name="delete_browsing_data_quit_on">Увімкнено</string>
     <!-- Summary of delete browsing data on quit preference if it is set to off -->
@@ -1073,7 +1092,7 @@
     <!-- Title for the Delete browsing data preference -->
     <string name="preferences_delete_browsing_data">Видалити дані перегляду</string>
     <!-- Title for the tabs item in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_tabs_title_2">Відкрити вкладки</string>
+    <string name="preferences_delete_browsing_data_tabs_title_2">Відкриті вкладки</string>
     <!-- Subtitle for the tabs item in Delete browsing data, parameter will be replaced with the number of open tabs -->
     <string name="preferences_delete_browsing_data_tabs_subtitle">Вкладок: %d</string>
     <!-- Title for the data and history items in Delete browsing data -->
@@ -1403,7 +1422,7 @@
     <!-- Content description of the tab counter toolbar button when one tab is open -->
     <string name="tab_counter_content_description_one_tab">1 вкладка</string>
     <!-- Content description of the tab counter toolbar button when multiple tabs are open. First parameter will be replaced with the number of tabs (always more than one) -->
-    <string name="tab_counter_content_description_multi_tab">%d вкладок</string>
+    <string name="tab_counter_content_description_multi_tab">Вкладок: %d</string>
 
     <!-- Browser long press popup menu -->
     <!-- Copy the current url -->

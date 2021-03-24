@@ -38,13 +38,15 @@ import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import mozilla.appservices.places.BookmarkRoot
-import mozilla.components.browser.session.Session
 import mozilla.components.browser.state.action.ContentAction
+import mozilla.components.browser.state.selector.findCustomTab
 import mozilla.components.browser.state.selector.findCustomTabOrSelectedTab
 import mozilla.components.browser.state.selector.findTab
+import mozilla.components.browser.state.selector.findTabOrCustomTab
 import mozilla.components.browser.state.selector.findTabOrCustomTabOrSelectedTab
 import mozilla.components.browser.state.selector.getNormalOrPrivateTabs
 import mozilla.components.browser.state.selector.selectedTab
+import mozilla.components.browser.state.state.CustomTabSessionState
 import mozilla.components.browser.state.state.SessionState
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.state.state.content.DownloadState
@@ -70,7 +72,6 @@ import mozilla.components.feature.session.FullScreenFeature
 import mozilla.components.feature.session.PictureInPictureFeature
 import mozilla.components.feature.session.SessionFeature
 import mozilla.components.feature.session.SwipeRefreshFeature
-import mozilla.components.feature.session.behavior.EngineViewBottomBehavior
 import mozilla.components.feature.sitepermissions.SitePermissions
 import mozilla.components.feature.sitepermissions.SitePermissionsFeature
 import mozilla.components.lib.state.ext.consumeFlow
@@ -103,15 +104,12 @@ import org.mozilla.fenix.components.toolbar.BrowserToolbarView
 import org.mozilla.fenix.components.toolbar.BrowserToolbarViewInteractor
 import org.mozilla.fenix.components.toolbar.DefaultBrowserToolbarController
 import org.mozilla.fenix.components.toolbar.DefaultBrowserToolbarMenuController
-import org.mozilla.fenix.components.toolbar.SwipeRefreshScrollingViewBehavior
 import org.mozilla.fenix.components.toolbar.ToolbarIntegration
-import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.downloads.DownloadService
 import org.mozilla.fenix.downloads.DynamicDownloadDialog
 import org.mozilla.fenix.ext.accessibilityManager
 import org.mozilla.fenix.ext.breadcrumb
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.enterToImmersiveMode
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.hideToolbar
 import org.mozilla.fenix.ext.metrics
@@ -127,10 +125,13 @@ import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.utils.allowUndo
 import org.mozilla.fenix.wifi.SitePermissionsWifiIntegration
 import java.lang.ref.WeakReference
-import mozilla.components.feature.media.fullscreen.MediaFullscreenOrientationFeature
+import mozilla.components.feature.session.behavior.EngineViewBrowserToolbarBehavior
 import mozilla.components.feature.webauthn.WebAuthnFeature
 import mozilla.components.support.base.feature.ActivityResultHandler
-import org.mozilla.fenix.FeatureFlags.newMediaSessionApi
+import mozilla.components.support.ktx.android.view.enterToImmersiveMode
+import org.mozilla.fenix.GleanMetrics.PerfStartup
+import org.mozilla.fenix.ext.measureNoInline
+import mozilla.components.feature.session.behavior.ToolbarPosition as MozacToolbarPosition
 
 /**
  * Base fragment extended by [BrowserFragment].
@@ -174,8 +175,6 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
     private val sitePermissionWifiIntegration =
         ViewBoundFeatureWrapper<SitePermissionsWifiIntegration>()
     private val secureWindowFeature = ViewBoundFeatureWrapper<SecureWindowFeature>()
-    private var fullScreenMediaFeature =
-        ViewBoundFeatureWrapper<MediaFullscreenOrientationFeature>()
     private var fullScreenMediaSessionFeature =
         ViewBoundFeatureWrapper<MediaSessionFullscreenFeature>()
     private val searchFeature = ViewBoundFeatureWrapper<SearchFeature>()
@@ -200,7 +199,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View = PerfStartup.baseBfragmentOnCreateView.measureNoInline {
         customTabSessionId = requireArguments().getString(EXTRA_SESSION_ID)
 
         // Diagnostic breadcrumb for "Display already aquired" crash:
@@ -223,10 +222,11 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
             )
         }
 
-        return view
+        view
     }
 
-    final override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    final override fun onViewCreated(view: View, savedInstanceState: Bundle?) =
+            PerfStartup.baseBfragmentOnViewCreated.measureNoInline { // weird indentation to avoid breaking blame.
         initializeUI(view)
 
         if (customTabSessionId == null) {
@@ -243,6 +243,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
         }
 
         requireContext().accessibilityManager.addAccessibilityStateChangeListener(this)
+        Unit
     }
 
     private fun initializeUI(view: View) {
@@ -259,7 +260,6 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
     @CallSuper
     internal open fun initializeUI(view: View, tab: SessionState) {
         val context = requireContext()
-        val sessionManager = context.components.core.sessionManager
         val store = context.components.core.store
         val activity = requireActivity() as HomeActivity
 
@@ -282,23 +282,24 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
         val readerMenuController = DefaultReaderModeController(
             readerViewFeature,
             view.readerViewControlsBar,
-            isPrivate = activity.browsingModeManager.mode.isPrivate
+            isPrivate = activity.browsingModeManager.mode.isPrivate,
+            onReaderModeChanged = { activity.finishActionMode() }
         )
         val browserToolbarController = DefaultBrowserToolbarController(
             store = store,
+            tabsUseCases = requireComponents.useCases.tabsUseCases,
             activity = activity,
             navController = findNavController(),
             metrics = requireComponents.analytics.metrics,
             readerModeController = readerMenuController,
-            sessionManager = requireComponents.core.sessionManager,
             engineView = engineView,
             homeViewModel = homeViewModel,
-            customTabSession = customTabSessionId?.let { sessionManager.findSessionById(it) },
+            customTabSessionId = customTabSessionId,
             onTabCounterClicked = {
                 thumbnailsFeature.get()?.requestScreenshot()
                 findNavController().nav(
                     R.id.browserFragment,
-                    BrowserFragmentDirections.actionGlobalTabTrayDialogFragment()
+                    getTrayDirection(context)
                 )
             },
             onCloseTab = { closedSession ->
@@ -323,17 +324,17 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
             }
         )
         val browserToolbarMenuController = DefaultBrowserToolbarMenuController(
+            store = store,
             activity = activity,
             navController = findNavController(),
             metrics = requireComponents.analytics.metrics,
             settings = context.settings(),
             readerModeController = readerMenuController,
-            sessionManager = requireComponents.core.sessionManager,
             sessionFeature = sessionFeature,
             findInPageLauncher = { findInPageIntegration.withFeature { it.launch() } },
             swipeRefresh = swipeRefresh,
             browserAnimator = browserAnimator,
-            customTabSession = customTabSessionId?.let { sessionManager.findSessionById(it) },
+            customTabSessionId = customTabSessionId,
             openInFenixIntent = openInFenixIntent,
             bookmarkTapped = { url: String, title: String ->
                 viewLifecycleOwner.lifecycleScope.launch {
@@ -355,7 +356,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
             container = view.browserLayout,
             toolbarPosition = context.settings().toolbarPosition,
             interactor = browserInteractor,
-            customTabSession = customTabSessionId?.let { sessionManager.findSessionById(it) },
+            customTabSession = customTabSessionId?.let { store.state.findCustomTab(it) },
             lifecycleOwner = viewLifecycleOwner
         )
 
@@ -411,25 +412,14 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
             view = view
         )
 
-        if (newMediaSessionApi) {
-            fullScreenMediaSessionFeature.set(
-                feature = MediaSessionFullscreenFeature(
-                    requireActivity(),
-                    context.components.core.store
-                ),
-                owner = this,
-                view = view
-            )
-        } else {
-            fullScreenMediaFeature.set(
-                feature = MediaFullscreenOrientationFeature(
-                    requireActivity(),
-                    context.components.core.store
-                ),
-                owner = this,
-                view = view
-            )
-        }
+        fullScreenMediaSessionFeature.set(
+            feature = MediaSessionFullscreenFeature(
+                requireActivity(),
+                context.components.core.store
+            ),
+            owner = this,
+            view = view
+        )
 
         val shareDownloadFeature = ShareDownloadFeature(
             context = context.applicationContext,
@@ -474,9 +464,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
 
         downloadFeature.onDownloadStopped = { downloadState, _, downloadJobStatus ->
             // If the download is just paused, don't show any in-app notification
-            if (downloadJobStatus == DownloadState.Status.COMPLETED ||
-                downloadJobStatus == DownloadState.Status.FAILED
-            ) {
+            if (shouldShowCompletedDownloadDialog(downloadState, downloadJobStatus)) {
 
                 saveDownloadDialogState(
                     downloadState.sessionId,
@@ -491,29 +479,20 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
                     didFail = downloadJobStatus == DownloadState.Status.FAILED,
                     tryAgain = downloadFeature::tryAgain,
                     onCannotOpenFile = {
-                        FenixSnackbar.make(
-                            view = view.browserLayout,
-                            duration = Snackbar.LENGTH_SHORT,
-                            isDisplayedWithBrowserToolbar = true
-                        )
-                            .setText(context.getString(R.string.mozac_feature_downloads_could_not_open_file))
-                            .show()
+                        showCannotOpenFileError(view.browserLayout, context, it)
                     },
                     view = view.viewDynamicDownloadDialog,
                     toolbarHeight = toolbarHeight,
                     onDismiss = { sharedViewModel.downloadDialogState.remove(downloadState.sessionId) }
                 )
 
-                // Don't show the dialog if we aren't in the tab that started the download
-                if (downloadState.sessionId == sessionManager.selectedSession?.id) {
-                    dynamicDownloadDialog.show()
-                    browserToolbarView.expand()
-                }
+                dynamicDownloadDialog.show()
+                browserToolbarView.expand()
             }
         }
 
         resumeDownloadDialogState(
-            sessionManager.selectedSession?.id,
+            getCurrentTab()?.id,
             store, view, context, toolbarHeight
         )
 
@@ -551,7 +530,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
 
         promptsFeature.set(
             feature = PromptFeature(
-                fragment = this,
+                activity = activity,
                 store = store,
                 customTabId = customTabSessionId,
                 fragmentManager = parentFragmentManager,
@@ -572,7 +551,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
                         val directions = NavGraphDirections.actionGlobalShareFragment(
                             data = arrayOf(shareData),
                             showPage = true,
-                            sessionId = getSessionById()?.id
+                            sessionId = getCurrentTab()?.id
                         )
                         findNavController().navigate(directions)
                     }
@@ -606,14 +585,14 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
 
         searchFeature.set(
             feature = SearchFeature(store, customTabSessionId) { request, tabId ->
-                val parentSession = sessionManager.findSessionById(tabId)
+                val parentSession = store.state.findTabOrCustomTab(tabId)
                 val useCase = if (request.isPrivate) {
                     requireComponents.useCases.searchUseCases.newPrivateTabSearch
                 } else {
                     requireComponents.useCases.searchUseCases.newTabSearch
                 }
 
-                if (parentSession?.isCustomTabSession() == true) {
+                if (parentSession is CustomTabSessionState) {
                     useCase.invoke(request.query)
                     requireActivity().startActivity(openInFenixIntent)
                 } else {
@@ -803,16 +782,6 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
             }
         }
 
-        val onCannotOpenFile = {
-            FenixSnackbar.make(
-                view = view.browserLayout,
-                duration = Snackbar.LENGTH_SHORT,
-                isDisplayedWithBrowserToolbar = true
-            )
-                .setText(context.getString(R.string.mozac_feature_downloads_could_not_open_file))
-                .show()
-        }
-
         val onDismiss: () -> Unit =
             { sharedViewModel.downloadDialogState.remove(sessionId) }
 
@@ -822,7 +791,9 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
             metrics = requireComponents.analytics.metrics,
             didFail = savedDownloadState.second,
             tryAgain = onTryAgain,
-            onCannotOpenFile = onCannotOpenFile,
+            onCannotOpenFile = {
+                showCannotOpenFileError(view.browserLayout, context, it)
+            },
             view = view.viewDynamicDownloadDialog,
             toolbarHeight = toolbarHeight,
             onDismiss = onDismiss
@@ -838,34 +809,37 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
                 !inFullScreen
     }
 
-    private fun initializeEngineView(toolbarHeight: Int) {
+    @VisibleForTesting
+    internal fun initializeEngineView(toolbarHeight: Int) {
         val context = requireContext()
 
-        if (context.settings().isDynamicToolbarEnabled) {
-            engineView.setDynamicToolbarMaxHeight(toolbarHeight)
+        if (!context.settings().shouldUseFixedTopToolbar && context.settings().isDynamicToolbarEnabled) {
+            getEngineView().setDynamicToolbarMaxHeight(toolbarHeight)
 
-            val behavior = when (context.settings().toolbarPosition) {
-                // Set engineView dynamic vertical clipping depending on the toolbar position.
-                ToolbarPosition.BOTTOM -> EngineViewBottomBehavior(context, null)
-                // Set scroll flags depending on if if the browser or the website is doing the scroll.
-                ToolbarPosition.TOP -> SwipeRefreshScrollingViewBehavior(
+            val toolbarPosition = if (context.settings().shouldUseBottomToolbar) {
+                MozacToolbarPosition.BOTTOM
+            } else {
+                MozacToolbarPosition.TOP
+            }
+            (getSwipeRefreshLayout().layoutParams as CoordinatorLayout.LayoutParams).behavior =
+                EngineViewBrowserToolbarBehavior(
                     context,
                     null,
-                    engineView,
-                    browserToolbarView
+                    getSwipeRefreshLayout(),
+                    toolbarHeight,
+                    toolbarPosition
                 )
-            }
-
-            (swipeRefresh.layoutParams as CoordinatorLayout.LayoutParams).behavior = behavior
         } else {
             // Ensure webpage's bottom elements are aligned to the very bottom of the engineView.
-            engineView.setDynamicToolbarMaxHeight(0)
+            getEngineView().setDynamicToolbarMaxHeight(0)
 
-            // Effectively place the engineView on top of the toolbar if that is not dynamic.
+            // Effectively place the engineView on top/below of the toolbar if that is not dynamic.
+            val swipeRefreshParams =
+                getSwipeRefreshLayout().layoutParams as CoordinatorLayout.LayoutParams
             if (context.settings().shouldUseBottomToolbar) {
-                val browserEngine = swipeRefresh.layoutParams as CoordinatorLayout.LayoutParams
-                browserEngine.bottomMargin =
-                    requireContext().resources.getDimensionPixelSize(R.dimen.browser_toolbar_height)
+                swipeRefreshParams.bottomMargin = toolbarHeight
+            } else {
+                swipeRefreshParams.topMargin = toolbarHeight
             }
         }
     }
@@ -1029,7 +1003,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
     final override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
         savedInstanceState?.getString(KEY_CUSTOM_TAB_SESSION_ID)?.let {
-            if (requireComponents.core.sessionManager.findSessionById(it)?.customTabConfig != null) {
+            if (requireComponents.core.store.state.findCustomTab(it) != null) {
                 customTabSessionId = it
             }
         }
@@ -1067,22 +1041,18 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
      * or if it has a parent session and no more history
      */
     protected open fun removeSessionIfNeeded(): Boolean {
-        getSessionById()?.let { session ->
+        getCurrentTab()?.let { session ->
             return if (session.source == SessionState.Source.ACTION_VIEW) {
                 activity?.finish()
-                requireComponents.useCases.tabsUseCases.removeTab(session)
+                requireComponents.useCases.tabsUseCases.removeTab(session.id)
                 true
             } else {
-                if (session.hasParentSession) {
-                    // The removeTab use case does not currently select a parent session, so
-                    // we are using sessionManager.remove
-                    requireComponents.core.sessionManager.remove(
-                        session,
-                        selectParentIfExists = true
-                    )
+                val hasParentSession = session is TabSessionState && session.parentId != null
+                if (hasParentSession) {
+                    requireComponents.useCases.tabsUseCases.removeTab(session.id, selectParentIfExists = true)
                 }
                 // We want to return to home if this session didn't have a parent session to select.
-                val goToOverview = !session.hasParentSession
+                val goToOverview = !hasParentSession
                 !goToOverview
             }
         }
@@ -1147,20 +1117,8 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
         (activity as HomeActivity).browsingModeManager.mode = sessionMode
     }
 
-    /**
-     * Returns the current session.
-     */
-    protected fun getSessionById(): Session? {
-        val sessionManager = requireComponents.core.sessionManager
-        val localCustomTabId = customTabSessionId
-        return if (localCustomTabId != null) {
-            sessionManager.findSessionById(localCustomTabId)
-        } else {
-            sessionManager.selectedSession
-        }
-    }
-
-    private fun getCurrentTab(): SessionState? {
+    @VisibleForTesting
+    internal fun getCurrentTab(): SessionState? {
         return requireComponents.core.store.state.findCustomTabOrSelectedTab(customTabSessionId)
     }
 
@@ -1248,12 +1206,14 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
                 .setText(getString(R.string.full_screen_notification))
                 .show()
             activity?.enterToImmersiveMode()
+            browserToolbarView.collapse()
             browserToolbarView.view.isVisible = false
             val browserEngine = swipeRefresh.layoutParams as CoordinatorLayout.LayoutParams
             browserEngine.bottomMargin = 0
+            browserEngine.topMargin = 0
+            swipeRefresh.translationY = 0f
 
             engineView.setDynamicToolbarMaxHeight(0)
-            browserToolbarView.expand()
             // Without this, fullscreen has a margin at the top.
             engineView.setVerticalClipping(0)
 
@@ -1267,6 +1227,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
                 browserToolbarView.view.isVisible = true
                 val toolbarHeight = resources.getDimensionPixelSize(R.dimen.browser_toolbar_height)
                 initializeEngineView(toolbarHeight)
+                browserToolbarView.expand()
             }
         }
 
@@ -1310,6 +1271,30 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
         )
     }
 
+    private fun showCannotOpenFileError(
+        view: View,
+        context: Context,
+        downloadState: DownloadState
+    ) {
+        FenixSnackbar.make(
+            view = view,
+            duration = Snackbar.LENGTH_SHORT,
+            isDisplayedWithBrowserToolbar = true
+        ).setText(DynamicDownloadDialog.getCannotOpenFileErrorMessage(context, downloadState))
+            .show()
+    }
+
+    /**
+     * Retrieves the correct tray direction while using a feature flag.
+     *
+     * Remove this when [FeatureFlags.tabsTrayRewrite] is removed.
+     */
+    private fun getTrayDirection(context: Context) = if (context.settings().tabsTrayRewrite) {
+        BrowserFragmentDirections.actionGlobalTabsTrayFragment()
+    } else {
+        BrowserFragmentDirections.actionGlobalTabTrayDialogFragment()
+    }
+
     companion object {
         private const val KEY_CUSTOM_TAB_SESSION_ID = "custom_tab_session_id"
         private const val REQUEST_CODE_DOWNLOAD_PERMISSIONS = 1
@@ -1330,7 +1315,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
 
     override fun onAccessibilityStateChanged(enabled: Boolean) {
         if (_browserToolbarView != null) {
-            browserToolbarView.setScrollFlags(enabled)
+            browserToolbarView.setToolbarBehavior(enabled)
         }
     }
 
@@ -1351,5 +1336,29 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
                 toolbarView.toolbarIntegration.invalidateMenu()
             }
         }
+    }
+
+    /**
+     * Convenience method for replacing EngineView (id/engineView) in unit tests.
+     */
+    @VisibleForTesting
+    internal fun getEngineView() = engineView
+
+    /**
+     * Convenience method for replacing SwipeRefreshLayout (id/swipeRefresh) in unit tests.
+     */
+    @VisibleForTesting
+    internal fun getSwipeRefreshLayout() = swipeRefresh
+
+    @VisibleForTesting
+    internal fun shouldShowCompletedDownloadDialog(
+        downloadState: DownloadState,
+        status: DownloadState.Status
+    ): Boolean {
+
+        val isValidStatus = status in listOf(DownloadState.Status.COMPLETED, DownloadState.Status.FAILED)
+        val isSameTab = downloadState.sessionId == getCurrentTab()?.id ?: false
+
+        return isValidStatus && isSameTab
     }
 }

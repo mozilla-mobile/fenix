@@ -128,6 +128,8 @@
     <string name="browser_menu_edit_bookmark">Përpunoni faqerojtësin</string>
     <!-- Browser menu button that opens the addon manager -->
     <string name="browser_menu_add_ons">Shtesa</string>
+    <!-- Browser menu button that opens the addon extensions manager -->
+    <string name="browser_menu_extensions">Zgjerime</string>
     <!-- Text displayed when there are no add-ons to be shown -->
     <string name="no_add_ons">S’ka shtesa këtu</string>
     <!-- Browser menu button that sends a user to help articles -->
@@ -177,6 +179,8 @@
     <!-- Browser menu button to configure reader mode appearance e.g. the used font type and size -->
     <string name="browser_menu_read_appearance">Dukje</string>
 
+    <!-- Browser menu button to show reader view appearance controls e.g. the used font type and size -->
+    <string name="browser_menu_customize_reader_view">Përshtatni pamjen e Lexuesit</string>
     <!-- Error message to show when the user tries to access a scheme not
         handled by the app (Ex: blob, tel etc) -->
     <string name="unknown_scheme_error_message">S’arrihet të lidhet. Skemë URL jo e pranuar.</string>
@@ -212,6 +216,11 @@
     <string name="search_suggestions_onboarding_text">%s do të ndajë gjithçka shtypni te shtylla e adresave me motorin tuaj parazgjedhje të kërkimeve.</string>
     <!-- Search suggestion onboarding hint Learn more link text -->
     <string name="search_suggestions_onboarding_learn_more_link">Mësoni më tepër</string>
+
+    <!-- Search engine suggestion title text. The first parameter is the name of teh suggested engine-->
+    <string name="search_engine_suggestions_title">Kërko me %s</string>
+    <!-- Search engine suggestion description text -->
+    <string name="search_engine_suggestions_description">Kërkoni drejt e nga shtylla e adresave</string>
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
@@ -525,6 +534,10 @@
     <string name="library_desktop_bookmarks_unfiled">Faqerojtës të Tjerë</string>
     <!-- Option in Library to open History page -->
     <string name="library_history">Historik</string>
+    <!-- Option in Library to open a new tab -->
+    <string name="library_new_tab">Skedë e re</string>
+    <!-- Option in Library to find text in page -->
+    <string name="library_find_in_page">Gjej në faqe</string>
     <!-- Option in Library to open Synced Tabs page -->
     <string name="library_synced_tabs">Skeda të njëkohësuara</string>
     <!-- Option in Library to open Reading List -->
@@ -877,16 +890,22 @@
     <string name="tracking_protection_on">On</string>
     <!-- Summary of tracking protection preference if tracking protection is set to off -->
     <string name="tracking_protection_off">Off</string>
-    <!-- Label that indicates that all video and audio autoplay is allowed -->
+    <!-- Label for global setting that indicates that all video and audio autoplay is allowed -->
     <string name="preference_option_autoplay_allowed2">Lejo audio dhe video</string>
+    <!-- Label for site specific setting that indicates that all video and audio autoplay is allowed -->
+    <string name="quick_setting_option_autoplay_allowed">Lejo audio dhe video</string>
     <!-- Label that indicates that video and audio autoplay is only allowed over Wi-Fi -->
     <string name="preference_option_autoplay_allowed_wifi_only2">Blloko audio dhe video vetëm nga të dhëna rrjeti celular</string>
     <!-- Subtext that explains 'autoplay on Wi-Fi only' option -->
     <string name="preference_option_autoplay_allowed_wifi_subtext">Audio dhe video do të luhen nën Wi-Fi</string>
-    <!-- Label that indicates that video autoplay is allowed, but audio autoplay is blocked -->
+    <!-- Label for global setting that indicates that video autoplay is allowed, but audio autoplay is blocked -->
     <string name="preference_option_autoplay_block_audio2">Blloko vetëm audio</string>
-    <!-- Label that indicates that all video and audio autoplay is blocked -->
+    <!-- Label for site specific setting that indicates that video autoplay is allowed, but audio autoplay is blocked -->
+    <string name="quick_setting_option_autoplay_block_audio">Blloko vetëm audio</string>
+    <!-- Label for global setting that indicates that all video and audio autoplay is blocked -->
     <string name="preference_option_autoplay_blocked3">Blloko audio dhe video</string>
+    <!-- Label for site specific setting that indicates that all video and audio autoplay is blocked -->
+    <string name="quick_setting_option_autoplay_blocked">Blloko audio dhe video</string>
     <!-- Summary of delete browsing data on quit preference if it is set to on -->
     <string name="delete_browsing_data_quit_on">On</string>
     <!-- Summary of delete browsing data on quit preference if it is set to off -->
@@ -1084,6 +1103,8 @@
     <string name="preferences_delete_browsing_data_cached_files_subtitle">Liron hapësirë depozitimi</string>
     <!-- Title for the site permissions item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_site_permissions">Leje sajti</string>
+    <!-- Title for the downloads item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_downloads">Shkarkime</string>
     <!-- Text for the button to delete browsing data -->
     <string name="preferences_delete_browsing_data_button">Fshi të dhëna shfletimi</string>
 
@@ -1207,9 +1228,7 @@
     <string name="onboarding_privacy_notice_header">Privatësia juaj</string>
     <!-- text for the privacy notice onboarding card description
     The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_privacy_notice_description">E kemi hartuar %s për t’ju dhënë kontroll mbi ç’ndani me
-        të tjerë në internet dhe ç’ndani me ne.
-    </string>
+    <string name="onboarding_privacy_notice_description2">E kemi hartuar %s për t’ju dhënë kontroll mbi ç’ndani me të tjerë në internet dhe ç’ndani me ne.</string>
     <!-- Text for the button to read the privacy notice -->
     <string name="onboarding_privacy_notice_read_button">Lexoni shënimin tonë mbi privatësinë</string>
 

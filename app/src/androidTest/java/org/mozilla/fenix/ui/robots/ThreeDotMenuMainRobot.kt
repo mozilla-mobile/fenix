@@ -38,6 +38,7 @@ import androidx.test.uiautomator.Until
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
 import org.junit.Assert.assertTrue
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.click
@@ -124,21 +125,33 @@ class ThreeDotMenuMainRobot {
     fun verifyShareTabsOverlay() = assertShareTabsOverlay()
 
     fun verifyThreeDotMainMenuItems() {
-        verifyAddOnsButton()
-        verifyDownloadsButton()
-        verifyHistoryButton()
-        verifyBookmarksButton()
-        verifySyncedTabsButton()
-        verifySettingsButton()
-        verifyFindInPageButton()
-        verifyAddFirefoxHome()
-        verifyAddToMobileHome()
-        verifyDesktopSite()
-        verifySaveCollection()
-        verifyAddBookmarkButton()
-        verifyShareButton()
-        verifyForwardButton()
-        verifyRefreshButton()
+        if (FeatureFlags.toolbarMenuFeature) {
+            verifyDownloadsButton()
+            verifyHistoryButton()
+            verifyBookmarksButton()
+            verifySettingsButton()
+            verifyDesktopSite()
+            verifySaveCollection()
+            verifyShareButton()
+            verifyForwardButton()
+            verifyRefreshButton()
+        } else {
+            verifyAddOnsButton()
+            verifyDownloadsButton()
+            verifyHistoryButton()
+            verifyBookmarksButton()
+            verifySyncedTabsButton()
+            verifySettingsButton()
+            verifyFindInPageButton()
+            verifyAddFirefoxHome()
+            verifyAddToMobileHome()
+            verifyDesktopSite()
+            verifySaveCollection()
+            verifyAddBookmarkButton()
+            verifyShareButton()
+            verifyForwardButton()
+            verifyRefreshButton()
+        }
     }
 
     private fun assertShareTabsOverlay() {
@@ -262,6 +275,14 @@ class ThreeDotMenuMainRobot {
         fun refreshPage(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
             mDevice.waitNotNull(Until.findObject(By.desc("Refresh")), waitingTime)
             refreshButton().click()
+
+            BrowserRobot().interact()
+            return BrowserRobot.Transition()
+        }
+
+        fun stopPageLoad(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
+            mDevice.waitNotNull(Until.findObject(By.desc("Stop")), waitingTime)
+            stopLoadingButton().click()
 
             BrowserRobot().interact()
             return BrowserRobot.Transition()
@@ -429,6 +450,8 @@ private fun assertEditBookmarkButton() = editBookmarkButton()
 private fun refreshButton() = onView(ViewMatchers.withContentDescription("Refresh"))
 private fun assertRefreshButton() = refreshButton()
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+
+private fun stopLoadingButton() = onView(ViewMatchers.withContentDescription("Stop"))
 
 private fun closeAllTabsButton() = onView(allOf(withText("Close all tabs"))).inRoot(RootMatchers.isPlatformPopup())
 private fun assertCloseAllTabsButton() = closeAllTabsButton()

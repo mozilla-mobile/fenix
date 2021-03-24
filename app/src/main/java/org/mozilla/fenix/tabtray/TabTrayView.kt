@@ -41,15 +41,13 @@ import mozilla.components.browser.state.selector.privateTabs
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.tabstray.TabViewHolder
-import mozilla.components.feature.syncedtabs.SyncedTabsFeature
-import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.ktx.android.util.dpToPx
 import mozilla.components.ui.tabcounter.TabCounter.Companion.INFINITE_CHAR_PADDING_BOTTOM
 import org.mozilla.fenix.R
-import org.mozilla.fenix.browser.InfoBanner
 import org.mozilla.fenix.components.metrics.Event
 import mozilla.components.ui.tabcounter.TabCounter.Companion.MAX_VISIBLE_TABS
 import mozilla.components.ui.tabcounter.TabCounter.Companion.SO_MANY_TABS_OPEN
+import org.mozilla.fenix.browser.infobanner.InfoBanner
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.updateAccessibilityCollectionInfo
@@ -59,7 +57,6 @@ import org.mozilla.fenix.utils.Settings
 import java.text.NumberFormat
 import kotlin.math.max
 import kotlin.math.roundToInt
-import mozilla.components.browser.storage.sync.Tab as SyncTab
 
 /**
  * View that contains and configures the BrowserAwesomeBar
@@ -69,7 +66,6 @@ class TabTrayView(
     private val container: ViewGroup,
     private val tabsAdapter: FenixTabsAdapter,
     private val interactor: TabTrayInteractor,
-    store: TabTrayDialogFragmentStore,
     isPrivate: Boolean,
     private val isInLandscape: () -> Boolean,
     lifecycleOwner: LifecycleOwner,
@@ -96,12 +92,8 @@ class TabTrayView(
     private var multiselectMenu: BrowserMenu? = null
 
     private var tabsTouchHelper: TabsTouchHelper
-    private val collectionsButtonAdapter = SaveToCollectionsButtonAdapter(interactor, isPrivate)
-    private val metrics = container.context.components.analytics.metrics
-
-    private val syncedTabsController =
-        SyncedTabsController(lifecycleOwner, view, store, concatAdapter, metrics = metrics)
-    private val syncedTabsFeature = ViewBoundFeatureWrapper<SyncedTabsFeature>()
+    private val collectionsButtonAdapter =
+        SaveToCollectionsButtonAdapter(interactor) { isPrivateModeSelected }
 
     private var hasLoaded = false
 
@@ -167,21 +159,6 @@ class TabTrayView(
 
         setTopOffset(isInLandscape())
 
-        if (view.context.settings().syncedTabsInTabsTray) {
-            syncedTabsFeature.set(
-                feature = SyncedTabsFeature(
-                    context = container.context,
-                    storage = components.backgroundServices.syncedTabsStorage,
-                    accountManager = components.backgroundServices.accountManager,
-                    view = syncedTabsController,
-                    lifecycleOwner = lifecycleOwner,
-                    onTabClicked = ::handleTabClicked
-                ),
-                owner = lifecycleOwner,
-                view = view
-            )
-        }
-
         updateTabsTrayLayout()
 
         view.tabsTray.apply {
@@ -197,7 +174,6 @@ class TabTrayView(
             tabsAdapter.tabTrayInteractor = interactor
             tabsAdapter.onTabsUpdated = {
                 concatAdapter.addAdapter(collectionsButtonAdapter)
-                concatAdapter.addAdapter(syncedTabsController.adapter)
 
                 if (hasAccessibilityEnabled) {
                     tabsAdapter.notifyItemRangeChanged(0, tabs.size)
@@ -342,10 +318,6 @@ class TabTrayView(
         } else {
             EXPAND_AT_LIST_SIZE
         }
-    }
-
-    private fun handleTabClicked(tab: SyncTab) {
-        interactor.onSyncedTabClicked(tab)
     }
 
     private fun adjustNewTabButtonsForNormalMode() {
@@ -729,7 +701,6 @@ class TabTrayView(
     fun scrollToSelectedBrowserTab(selectedTabId: String? = null) {
         view.tabsTray.apply {
             val recyclerViewIndex = getSelectedBrowserTabViewIndex(selectedTabId)
-
             layoutManager?.scrollToPosition(recyclerViewIndex)
             smoothScrollBy(
                 0,
