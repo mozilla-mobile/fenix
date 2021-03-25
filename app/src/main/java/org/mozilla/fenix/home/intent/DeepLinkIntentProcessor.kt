@@ -36,8 +36,7 @@ class DeepLinkIntentProcessor(
     private val logger = Logger("DeepLinkIntentProcessor")
 
     override fun process(intent: Intent, navController: NavController, out: Intent): Boolean {
-        val scheme =
-            intent.scheme?.equals(BuildConfig.DEEP_LINK_SCHEME, ignoreCase = true) ?: return false
+        val scheme = intent.scheme?.equals(BuildConfig.DEEP_LINK_SCHEME, ignoreCase = true) ?: return false
         return if (scheme) {
             intent.data?.let { handleDeepLink(it, navController) }
             true
