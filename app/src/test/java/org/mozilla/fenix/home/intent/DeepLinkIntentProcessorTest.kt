@@ -248,7 +248,7 @@ class DeepLinkIntentProcessorTest {
     }
 
     @Test
-    @Config(minSdk = N)
+    @Config(minSdk = N, maxSdk = P)
     fun `process make_default_browser deep link for above API 23`() {
         assertTrue(processor.process(testIntent("make_default_browser"), navController, out))
 
