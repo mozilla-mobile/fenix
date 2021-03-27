@@ -53,5 +53,6 @@
         app:layout_constraintStart_toEndOf="@+id/favicon_image"
         app:layout_constraintTop_toBottomOf="@id/webAddressView"
         app:layout_constraintVertical_chainStyle="packed"
+        android:contentDescription="@string/text_field_for_displaying_username"
         tools:text="mozilla.org" />
 </androidx.constraintlayout.widget.ConstraintLayout>
