@@ -164,7 +164,6 @@ class SmokeTest {
         }
     }
 
-    @Ignore("Temporary disabled. See https://github.com/mozilla-mobile/fenix/issues/18644")
     @Test
     /* Verifies the nav bar:
      - opening a web page
@@ -387,6 +386,7 @@ class SmokeTest {
         }
     }
 
+    @Ignore("Failing, see https://github.com/mozilla-mobile/fenix/issues/18647")
     @Test
     fun customTrackingProtectionSettingsTest() {
         val trackingPage = TestAssetHelper.getEnhancedTrackingProtectionAsset(mockWebServer)
@@ -888,7 +888,6 @@ class SmokeTest {
         }
     }
 
-    @Ignore("Temporary disabled. See https://github.com/mozilla-mobile/fenix/issues/18644")
     @Test
     fun verifyExpandedCollectionItemsTest() {
         val webPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)

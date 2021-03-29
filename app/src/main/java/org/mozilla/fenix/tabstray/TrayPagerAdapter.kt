@@ -9,31 +9,38 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import org.mozilla.fenix.tabstray.BrowserTabViewHolder.Companion.LAYOUT_ID_NORMAL_TAB
-import org.mozilla.fenix.tabstray.BrowserTabViewHolder.Companion.LAYOUT_ID_PRIVATE_TAB
 import org.mozilla.fenix.tabstray.browser.BrowserTabsAdapter
 import org.mozilla.fenix.tabstray.browser.BrowserTrayInteractor
+import org.mozilla.fenix.tabstray.viewholders.AbstractTrayViewHolder
+import org.mozilla.fenix.tabstray.viewholders.NormalBrowserTabViewHolder
+import org.mozilla.fenix.tabstray.viewholders.PrivateBrowserTabViewHolder
 
 class TrayPagerAdapter(
     val context: Context,
     val interactor: TabsTrayInteractor,
     val browserInteractor: BrowserTrayInteractor
-) : RecyclerView.Adapter<TrayViewHolder>() {
+) : RecyclerView.Adapter<AbstractTrayViewHolder>() {
 
     private val normalAdapter by lazy { BrowserTabsAdapter(context, browserInteractor) }
     private val privateAdapter by lazy { BrowserTabsAdapter(context, browserInteractor) }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrayViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AbstractTrayViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
 
         return when (viewType) {
-            LAYOUT_ID_NORMAL_TAB -> BrowserTabViewHolder(itemView, interactor)
-            LAYOUT_ID_PRIVATE_TAB -> BrowserTabViewHolder(itemView, interactor)
+            NormalBrowserTabViewHolder.LAYOUT_ID -> NormalBrowserTabViewHolder(
+                itemView,
+                interactor
+            )
+            PrivateBrowserTabViewHolder.LAYOUT_ID -> PrivateBrowserTabViewHolder(
+                itemView,
+                interactor
+            )
             else -> throw IllegalStateException("Unknown viewType.")
         }
     }
 
-    override fun onBindViewHolder(viewHolder: TrayViewHolder, position: Int) {
+    override fun onBindViewHolder(viewHolder: AbstractTrayViewHolder, position: Int) {
         val adapter = when (position) {
             POSITION_NORMAL_TABS -> normalAdapter
             POSITION_PRIVATE_TABS -> privateAdapter
@@ -45,8 +52,8 @@ class TrayPagerAdapter(
 
     override fun getItemViewType(position: Int): Int {
         return when (position) {
-            POSITION_NORMAL_TABS -> LAYOUT_ID_NORMAL_TAB
-            POSITION_PRIVATE_TABS -> LAYOUT_ID_PRIVATE_TAB
+            POSITION_NORMAL_TABS -> NormalBrowserTabViewHolder.LAYOUT_ID
+            POSITION_PRIVATE_TABS -> PrivateBrowserTabViewHolder.LAYOUT_ID
             else -> throw IllegalStateException("Unknown position.")
         }
     }

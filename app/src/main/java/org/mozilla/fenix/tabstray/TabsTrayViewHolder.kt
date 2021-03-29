@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.fenix.tabtray
+package org.mozilla.fenix.tabstray
 
 import android.view.MotionEvent
 import android.view.View
@@ -12,13 +12,9 @@ import android.widget.TextView
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.AppCompatImageButton
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.selection.ItemDetailsLookup
 import kotlinx.android.synthetic.main.checkbox_item.view.*
-import kotlinx.android.synthetic.main.tab_tray_grid_item.view.*
-import kotlinx.android.synthetic.main.tab_tray_grid_item.view.mozac_browser_tabstray_close
-import kotlinx.android.synthetic.main.tab_tray_item.view.*
 import mozilla.components.browser.state.selector.findTabOrCustomTab
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.browser.tabstray.TabViewHolder
@@ -38,21 +34,20 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.ext.removeAndDisable
 import org.mozilla.fenix.ext.removeTouchDelegate
-import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showAndEnable
 import org.mozilla.fenix.ext.toShortUrl
 import org.mozilla.fenix.tabstray.browser.BrowserTrayInteractor
-import kotlin.math.max
 
 /**
  * A RecyclerView ViewHolder implementation for "tab" items.
  */
-class TabTrayViewHolder(
+abstract class TabsTrayViewHolder(
     itemView: View,
     private val imageLoader: ImageLoader,
+    private val thumbnailSize: Int,
+    private val browserTrayInteractor: BrowserTrayInteractor?,
     private val store: BrowserStore = itemView.context.components.core.store,
-    private val metrics: MetricController = itemView.context.components.analytics.metrics,
-    private val browserTrayInteractor: BrowserTrayInteractor? = null
+    private val metrics: MetricController = itemView.context.components.analytics.metrics
 ) : TabViewHolder(itemView) {
 
     private val faviconView: ImageView? =
@@ -66,7 +61,6 @@ class TabTrayViewHolder(
     @VisibleForTesting
     internal val urlView: TextView? = itemView.findViewById(R.id.mozac_browser_tabstray_url)
     private val playPauseButtonView: ImageButton = itemView.findViewById(R.id.play_pause_button)
-    private val closeButton: AppCompatImageButton = itemView.findViewById(R.id.mozac_browser_tabstray_close)
 
     override var tab: Tab? = null
 
@@ -92,10 +86,6 @@ class TabTrayViewHolder(
             thumbnailView.setImageBitmap(tab.thumbnail)
         } else {
             loadIntoThumbnailView(thumbnailView, tab.id)
-        }
-
-        if (itemView.context.settings().gridTabView) {
-            closeButton.increaseTapArea(GRID_ITEM_CLOSE_BUTTON_EXTRA_DPS)
         }
 
         // Media state
@@ -152,6 +142,21 @@ class TabTrayViewHolder(
         }
     }
 
+    fun getItemDetails() = object : ItemDetailsLookup.ItemDetails<Long>() {
+        override fun getPosition(): Int = bindingAdapterPosition
+        override fun getSelectionKey(): Long = itemId
+        override fun inSelectionHotspot(e: MotionEvent): Boolean {
+            return browserTrayInteractor?.isMultiSelectMode() == true
+        }
+    }
+
+    fun showTabIsMultiSelectEnabled(isSelected: Boolean) {
+        itemView.selected_mask.isVisible = isSelected
+        // TODO Enable this with https://github.com/mozilla-mobile/fenix/issues/18656
+        // itemView.mozac_browser_tabstray_close.isVisible =
+        //    browserTrayInteractor?.isMultiSelectMode() == false
+    }
+
     private fun updateFavicon(tab: Tab) {
         if (tab.icon != null) {
             faviconView?.visibility = View.VISIBLE
@@ -181,65 +186,17 @@ class TabTrayViewHolder(
             .take(MAX_URI_LENGTH)
     }
 
-    override fun updateSelectedTabIndicator(showAsSelected: Boolean) {
-        if (itemView.context.settings().gridTabView) {
-            itemView.tab_tray_grid_item.background = if (showAsSelected) {
-                AppCompatResources.getDrawable(itemView.context, R.drawable.tab_tray_grid_item_selected_border)
-            } else {
-                null
-            }
-            return
-        }
-
-        val color = if (showAsSelected) {
-            R.color.tab_tray_item_selected_background_normal_theme
-        } else {
-            R.color.tab_tray_item_background_normal_theme
-        }
-        itemView.setBackgroundColor(
-            ContextCompat.getColor(
-                itemView.context,
-                color
-            )
-        )
-    }
-
-    fun getItemDetails() = object : ItemDetailsLookup.ItemDetails<Long>() {
-        override fun getPosition(): Int = bindingAdapterPosition
-        override fun getSelectionKey(): Long = itemId
-        override fun inSelectionHotspot(e: MotionEvent): Boolean {
-            return browserTrayInteractor?.isMultiSelectMode() == true
-        }
-    }
-
-    fun showTabIsMultiSelectEnabled(isSelected: Boolean) {
-        itemView.selected_mask.isVisible = isSelected
-        itemView.mozac_browser_tabstray_close.isVisible =
-            browserTrayInteractor?.isMultiSelectMode() == false
-    }
-
     private fun updateCloseButtonDescription(title: String) {
         closeView.contentDescription =
             closeView.context.getString(R.string.close_tab_title, title)
     }
 
     private fun loadIntoThumbnailView(thumbnailView: ImageView, id: String) {
-        val thumbnailSize = if (itemView.context.settings().gridTabView) {
-            max(
-                itemView.resources.getDimensionPixelSize(R.dimen.tab_tray_grid_item_thumbnail_height),
-                itemView.resources.getDimensionPixelSize(R.dimen.tab_tray_grid_item_thumbnail_width)
-            )
-        } else {
-            max(
-                itemView.resources.getDimensionPixelSize(R.dimen.tab_tray_list_item_thumbnail_height),
-                itemView.resources.getDimensionPixelSize(R.dimen.tab_tray_list_item_thumbnail_width)
-            )
-        }
         imageLoader.loadIntoView(thumbnailView, ImageLoadRequest(id, thumbnailSize))
     }
 
     companion object {
-        private const val PLAY_PAUSE_BUTTON_EXTRA_DPS = 24
-        private const val GRID_ITEM_CLOSE_BUTTON_EXTRA_DPS = 24
+        internal const val PLAY_PAUSE_BUTTON_EXTRA_DPS = 24
+        internal const val GRID_ITEM_CLOSE_BUTTON_EXTRA_DPS = 24
     }
 }
