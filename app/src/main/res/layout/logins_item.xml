@@ -28,6 +28,7 @@
         android:layout_marginStart="@dimen/saved_logins_item_margin_start"
         android:layout_marginEnd="@dimen/saved_logins_item_margin_end"
         android:ellipsize="middle"
+        android:contentDescription="@string/text_field_for_displaying_web_address"
         android:singleLine="true"
         android:textAppearance="?android:attr/textAppearanceListItem"
         android:textColor="?primaryText"
@@ -36,7 +37,6 @@
         app:layout_constraintStart_toEndOf="@+id/favicon_image"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
-        android:contentDescription="@string/text_field_for_displaying_web_address"
         tools:text="mozilla.org" />
 
     <TextView
@@ -46,6 +46,7 @@
         android:layout_marginStart="@dimen/saved_logins_item_margin_start"
         android:layout_marginEnd="@dimen/saved_logins_item_margin_end"
         android:ellipsize="middle"
+        android:contentDescription="@string/text_field_for_displaying_username"
         android:singleLine="true"
         android:textColor="?secondaryText"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -53,6 +54,5 @@
         app:layout_constraintStart_toEndOf="@+id/favicon_image"
         app:layout_constraintTop_toBottomOf="@id/webAddressView"
         app:layout_constraintVertical_chainStyle="packed"
-        android:contentDescription="@string/text_field_for_displaying_username"
         tools:text="mozilla.org" />
 </androidx.constraintlayout.widget.ConstraintLayout>

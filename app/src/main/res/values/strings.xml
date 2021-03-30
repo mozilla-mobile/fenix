@@ -1501,6 +1501,10 @@
     <string name="saved_logins_sort_strategy_last_used">Last used</string>
     <!-- Content description (not visible, for screen readers etc.): Sort saved logins dropdown menu chevron icon -->
     <string name="saved_logins_menu_dropdown_chevron_icon_content_description">Sort logins menu</string>
+    <!-- Content Description for a login's web address text field -->
+    <string name="text_field_for_displaying_web_address">Text field for displaying web address</string>
+    <!-- Content Description for a login's username text field -->
+    <string name="text_field_for_displaying_username">Text field for displaying username</string>
 
     <!-- Credit Cards Autofill -->
     <!-- Preference and title for managing the settings for credit cards -->
@@ -1685,8 +1689,4 @@
     <string name="onboarding_firefox_account_auto_signin_header_2">You are signed in as %s on another Firefox browser on this phone. Would you like to sign in with this account?</string>
     <!-- Deprecated: Describes the add to homescreen functionality -->
     <string name="add_to_homescreen_description">You can easily add this website to your phone’s Home screen to have instant access and browse faster with an app-like experience.</string>
-    <!--Content Description for webAddressView -->
-    <string name="text_field_for_displaying_web_address">Text field for displaying web address</string>
-    <!--Content Description for usernameView -->
-    <string name="text_field_for_displaying_username">Text field for displaying username</string>
 </resources>
