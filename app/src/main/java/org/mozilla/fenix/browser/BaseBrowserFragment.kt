@@ -80,7 +80,6 @@ import mozilla.components.service.sync.logins.DefaultLoginValidationDelegate
 import mozilla.components.support.base.feature.PermissionsFeature
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
-import mozilla.components.support.ktx.android.view.exitImmersiveModeIfNeeded
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifAnyChanged
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
@@ -110,7 +109,6 @@ import org.mozilla.fenix.downloads.DynamicDownloadDialog
 import org.mozilla.fenix.ext.accessibilityManager
 import org.mozilla.fenix.ext.breadcrumb
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.enterToImmersiveMode
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.hideToolbar
 import org.mozilla.fenix.ext.metrics
@@ -130,6 +128,8 @@ import mozilla.components.feature.session.behavior.EngineViewBrowserToolbarBehav
 import mozilla.components.feature.webauthn.WebAuthnFeature
 import mozilla.components.support.base.feature.ActivityResultHandler
 import org.mozilla.fenix.GleanMetrics.PerfStartup
+import org.mozilla.fenix.ext.enterToImmersiveMode
+import org.mozilla.fenix.ext.exitImmersiveModeIfNeeded
 import org.mozilla.fenix.ext.measureNoInline
 import mozilla.components.feature.session.behavior.ToolbarPosition as MozacToolbarPosition
 
