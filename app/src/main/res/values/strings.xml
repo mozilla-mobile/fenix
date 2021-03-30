@@ -1703,4 +1703,8 @@
     <string name="onboarding_firefox_account_auto_signin_header_2">You are signed in as %s on another Firefox browser on this phone. Would you like to sign in with this account?</string>
     <!-- Deprecated: Describes the add to homescreen functionality -->
     <string name="add_to_homescreen_description">You can easily add this website to your phone’s Home screen to have instant access and browse faster with an app-like experience.</string>
+    <!-- Content Description for a history's title text field -->
+    <string name="text_field_for_displaying_title">Text field for displaying the title</string>
+    <!-- Content Description for history's url text field-->
+    <string name="text_field_for_displaying_url">Text field for displaying the url</string>
 </resources>
