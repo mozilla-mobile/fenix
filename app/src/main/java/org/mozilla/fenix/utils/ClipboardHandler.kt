@@ -38,7 +38,7 @@ class ClipboardHandler(val context: Context) {
     val url: String?
         get() {
             return text?.let {
-               if(URLStringUtils.isURLLike(it)) it else null
+                if(URLStringUtils.isURLLike(it)) it else null
             }
         }
 
