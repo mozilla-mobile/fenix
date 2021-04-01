@@ -10,7 +10,7 @@ import android.content.Context
 import androidx.annotation.VisibleForTesting
 import androidx.core.content.getSystemService
 import mozilla.components.support.utils.SafeUrl
-import mozilla.components.support.utils.WebURLFinder
+import mozilla.components.support.utils.URLStringUtils
 
 private const val MIME_TYPE_TEXT_PLAIN = "text/plain"
 private const val MIME_TYPE_TEXT_HTML = "text/html"
@@ -38,8 +38,7 @@ class ClipboardHandler(val context: Context) {
     val url: String?
         get() {
             return text?.let {
-                val finder = WebURLFinder(it)
-                finder.bestWebURL()
+               if(URLStringUtils.isURLLike(it)) it else null
             }
         }
 
