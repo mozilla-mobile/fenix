@@ -188,7 +188,7 @@ private fun assertKnowYourRights() {
 
     TestHelper.verifyUrl(
         SupportUtils.SumoTopic.YOUR_RIGHTS.topicStr,
-        "org.mozilla.fenix.debug:id/Fmozac_browser_toolbar_url_view",
+        "org.mozilla.fenix.debug:id/mozac_browser_toolbar_url_view",
         R.id.mozac_browser_toolbar_url_view
     )
 
