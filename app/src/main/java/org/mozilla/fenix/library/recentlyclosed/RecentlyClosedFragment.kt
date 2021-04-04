@@ -7,6 +7,7 @@ package org.mozilla.fenix.library.recentlyclosed
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
+import android.text.SpannableString
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -30,6 +31,7 @@ import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.ext.requireComponents
+import org.mozilla.fenix.ext.setTextColor
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.library.LibraryPageFragment
 
@@ -48,7 +50,15 @@ class RecentlyClosedFragment : LibraryPageFragment<RecoverableTab>() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.library_menu, menu)
+        if (recentlyClosedFragmentStore.state.selectedTabs.isNotEmpty()) {
+            inflater.inflate(R.menu.history_select_multi, menu)
+            menu.findItem(R.id.delete_history_multi_select)?.title =
+                SpannableString(getString(R.string.bookmark_menu_delete_button)).apply {
+                    setTextColor(requireContext(), R.attr.destructive)
+                }
+        } else {
+            inflater.inflate(R.menu.library_menu, menu)
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
@@ -118,7 +128,12 @@ class RecentlyClosedFragment : LibraryPageFragment<RecoverableTab>() {
 
     @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        consumeFrom(recentlyClosedFragmentStore) { state -> recentlyClosedFragmentView.update(state) }
+        consumeFrom(recentlyClosedFragmentStore) { state ->
+            recentlyClosedFragmentView.update(state)
+            if (state.selectedTabs.isNotEmpty()) {
+                activity?.invalidateOptionsMenu()
+            }
+        }
 
         requireComponents.core.store.flowScoped(viewLifecycleOwner) { flow ->
             flow.map { state -> state.closedTabs }

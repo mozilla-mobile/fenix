@@ -5,15 +5,15 @@
 package org.mozilla.fenix.library.recentlyclosed
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.component_recently_closed.*
 import mozilla.components.browser.state.state.recover.RecoverableTab
 import org.mozilla.fenix.R
+import org.mozilla.fenix.library.LibraryPageView
 import org.mozilla.fenix.library.SelectionInteractor
 
 interface RecentlyClosedInteractor : SelectionInteractor<RecoverableTab> {
@@ -71,11 +71,10 @@ interface RecentlyClosedInteractor : SelectionInteractor<RecoverableTab> {
 class RecentlyClosedFragmentView(
     container: ViewGroup,
     private val interactor: RecentlyClosedFragmentInteractor
-) : LayoutContainer {
+) : LibraryPageView(container) {
 
-    override val containerView: ConstraintLayout = LayoutInflater.from(container.context)
+    val view: View = LayoutInflater.from(container.context)
         .inflate(R.layout.component_recently_closed, container, true)
-        .findViewById(R.id.recently_closed_wrapper)
 
     private val recentlyClosedAdapter: RecentlyClosedAdapter = RecentlyClosedAdapter(interactor)
 
@@ -107,7 +106,16 @@ class RecentlyClosedFragmentView(
         state.apply {
             recently_closed_empty_view.isVisible = items.isEmpty()
             recently_closed_list.isVisible = items.isNotEmpty()
+
             recentlyClosedAdapter.updateData(items, selectedTabs)
+
+            if (selectedTabs.isEmpty()) {
+                setUiForNormalMode(context.getString(R.string.library_recently_closed_tabs))
+            } else {
+                setUiForSelectingMode(
+                    context.getString(R.string.history_multi_select_title, selectedTabs.size)
+                )
+            }
         }
     }
 }
