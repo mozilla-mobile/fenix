@@ -14,8 +14,9 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.component_recently_closed.*
 import mozilla.components.browser.state.state.recover.RecoverableTab
 import org.mozilla.fenix.R
+import org.mozilla.fenix.library.SelectionInteractor
 
-interface RecentlyClosedInteractor {
+interface RecentlyClosedInteractor : SelectionInteractor<RecoverableTab> {
     /**
      * Called when an item is tapped to restore it.
      *
@@ -102,9 +103,11 @@ class RecentlyClosedFragmentView(
         }
     }
 
-    fun update(items: List<RecoverableTab>) {
-        recently_closed_empty_view.isVisible = items.isEmpty()
-        recently_closed_list.isVisible = items.isNotEmpty()
-        recentlyClosedAdapter.submitList(items)
+    fun update(state: RecentlyClosedFragmentState) {
+        state.apply {
+            recently_closed_empty_view.isVisible = items.isEmpty()
+            recently_closed_list.isVisible = items.isNotEmpty()
+            recentlyClosedAdapter.updateData(items, selectedTabs)
+        }
     }
 }

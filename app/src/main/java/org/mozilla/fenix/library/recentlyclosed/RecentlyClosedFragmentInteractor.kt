@@ -41,4 +41,16 @@ class RecentlyClosedFragmentInteractor(
     override fun onNavigateToHistory() {
         recentlyClosedController.handleNavigateToHistory()
     }
+
+    override fun open(item: RecoverableTab) {
+        recentlyClosedController.handleOpen(item)
+    }
+
+    override fun select(item: RecoverableTab) {
+        recentlyClosedController.handleSelect(item)
+    }
+
+    override fun deselect(item: RecoverableTab) {
+        recentlyClosedController.handleDeselect(item)
+    }
 }

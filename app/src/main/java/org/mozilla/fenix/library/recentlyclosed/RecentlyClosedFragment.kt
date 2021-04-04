@@ -73,14 +73,16 @@ class RecentlyClosedFragment : LibraryPageFragment<RecoverableTab>() {
         recentlyClosedFragmentStore = StoreProvider.get(this) {
             RecentlyClosedFragmentStore(
                 RecentlyClosedFragmentState(
-                    items = listOf()
+                    items = listOf(),
+                    selectedTabs = emptySet()
                 )
             )
         }
         recentlyClosedInteractor = RecentlyClosedFragmentInteractor(
             recentlyClosedController = DefaultRecentlyClosedController(
                 navController = findNavController(),
-                store = requireComponents.core.store,
+                browserStore = requireComponents.core.store,
+                recentlyClosedStore = recentlyClosedFragmentStore,
                 activity = activity as HomeActivity,
                 tabsUseCases = requireComponents.useCases.tabsUseCases,
                 resources = requireContext().resources,
@@ -116,9 +118,7 @@ class RecentlyClosedFragment : LibraryPageFragment<RecoverableTab>() {
 
     @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        consumeFrom(recentlyClosedFragmentStore) {
-            recentlyClosedFragmentView.update(it.items)
-        }
+        consumeFrom(recentlyClosedFragmentStore) { state -> recentlyClosedFragmentView.update(state) }
 
         requireComponents.core.store.flowScoped(viewLifecycleOwner) { flow ->
             flow.map { state -> state.closedTabs }

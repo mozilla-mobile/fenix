@@ -9,17 +9,22 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import mozilla.components.browser.state.state.recover.RecoverableTab
+import org.mozilla.fenix.library.SelectionHolder
 
 class RecentlyClosedAdapter(
     private val interactor: RecentlyClosedFragmentInteractor
-) : ListAdapter<RecoverableTab, RecentlyClosedItemViewHolder>(DiffCallback) {
+) : ListAdapter<RecoverableTab, RecentlyClosedItemViewHolder>(DiffCallback),
+    SelectionHolder<RecoverableTab> {
+
+    private var selectedTabs: Set<RecoverableTab> = emptySet()
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): RecentlyClosedItemViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(RecentlyClosedItemViewHolder.LAYOUT_ID, parent, false)
-        return RecentlyClosedItemViewHolder(view, interactor)
+        return RecentlyClosedItemViewHolder(view, interactor, this)
     }
 
     override fun onBindViewHolder(holder: RecentlyClosedItemViewHolder, position: Int) {
@@ -32,5 +37,24 @@ class RecentlyClosedAdapter(
 
         override fun areContentsTheSame(oldItem: RecoverableTab, newItem: RecoverableTab) =
             oldItem.id == newItem.id
+    }
+
+    fun updateData(tabs: List<RecoverableTab>, selectedTabs: Set<RecoverableTab>) {
+        val currentlySelectedTabs = this.selectedTabs
+        this.selectedTabs = selectedTabs
+        currentlySelectedTabs.symmetricDifference(selectedTabs).forEach { tab ->
+            notifyItemChanged(tabs.indexOf(tab))
+        }
+
+        submitList(tabs)
+    }
+
+    override val selectedItems: Set<RecoverableTab>
+        get() = selectedTabs
+
+    private infix fun <T> Set<T>.symmetricDifference(other: Set<T>): Set<T> {
+        val diff = this subtract other
+        val otherDiff = other subtract this
+        return diff union otherDiff
     }
 }

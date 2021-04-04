@@ -27,11 +27,14 @@ interface RecentlyClosedController {
     fun handleShare(item: RecoverableTab)
     fun handleNavigateToHistory()
     fun handleRestore(item: RecoverableTab)
+    fun handleSelect(tab: RecoverableTab)
+    fun handleDeselect(tab: RecoverableTab)
 }
 
 class DefaultRecentlyClosedController(
     private val navController: NavController,
-    private val store: BrowserStore,
+    private val browserStore: BrowserStore,
+    private val recentlyClosedStore: RecentlyClosedFragmentStore,
     private val tabsUseCases: TabsUseCases,
     private val resources: Resources,
     private val snackbar: FenixSnackbar,
@@ -43,8 +46,18 @@ class DefaultRecentlyClosedController(
         openToBrowser(item, mode)
     }
 
+    override fun handleSelect(tab: RecoverableTab) {
+        val selectedTabs = recentlyClosedStore.state.selectedTabs + tab
+        recentlyClosedStore.dispatch(RecentlyClosedFragmentAction.ChangeSelection(selectedTabs))
+    }
+
+    override fun handleDeselect(tab: RecoverableTab) {
+        val selectedTabs = recentlyClosedStore.state.selectedTabs - tab
+        recentlyClosedStore.dispatch(RecentlyClosedFragmentAction.ChangeSelection(selectedTabs))
+    }
+
     override fun handleDeleteOne(tab: RecoverableTab) {
-        store.dispatch(RecentlyClosedAction.RemoveClosedTabAction(tab))
+        browserStore.dispatch(RecentlyClosedAction.RemoveClosedTabAction(tab))
     }
 
     override fun handleNavigateToHistory() {
@@ -74,7 +87,7 @@ class DefaultRecentlyClosedController(
     override fun handleRestore(item: RecoverableTab) {
         tabsUseCases.restore(item)
 
-        store.dispatch(
+        browserStore.dispatch(
             RecentlyClosedAction.RemoveClosedTabAction(item)
         )
 

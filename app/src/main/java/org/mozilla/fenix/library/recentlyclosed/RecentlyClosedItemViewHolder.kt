@@ -9,12 +9,14 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.history_list_item.view.*
 import mozilla.components.browser.state.state.recover.RecoverableTab
 import org.mozilla.fenix.R
+import org.mozilla.fenix.library.SelectionHolder
 import org.mozilla.fenix.library.history.HistoryItemMenu
 import org.mozilla.fenix.utils.Do
 
 class RecentlyClosedItemViewHolder(
     view: View,
-    private val recentlyClosedFragmentInteractor: RecentlyClosedFragmentInteractor
+    private val recentlyClosedFragmentInteractor: RecentlyClosedFragmentInteractor,
+    private val selectionHolder: SelectionHolder<RecoverableTab>
 ) : RecyclerView.ViewHolder(view) {
 
     private var item: RecoverableTab? = null
@@ -29,6 +31,9 @@ class RecentlyClosedItemViewHolder(
         itemView.history_layout.titleView.text =
             if (item.title.isNotEmpty()) item.title else item.url
         itemView.history_layout.urlView.text = item.url
+
+        itemView.history_layout.setSelectionInteractor(item, selectionHolder, recentlyClosedFragmentInteractor)
+        itemView.history_layout.changeSelected(item in selectionHolder.selectedItems)
 
         if (this.item?.url != item.url) {
             itemView.history_layout.loadFavicon(item.url)
