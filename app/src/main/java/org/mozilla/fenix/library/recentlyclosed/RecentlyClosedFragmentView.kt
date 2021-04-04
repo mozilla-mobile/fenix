@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.SimpleItemAnimator
 import kotlinx.android.synthetic.main.component_recently_closed.*
 import mozilla.components.browser.state.state.recover.RecoverableTab
 import org.mozilla.fenix.R
@@ -82,6 +83,7 @@ class RecentlyClosedFragmentView(
         recently_closed_list.apply {
             layoutManager = LinearLayoutManager(containerView.context)
             adapter = recentlyClosedAdapter
+            (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
         }
 
         view_more_history.apply {

@@ -42,8 +42,14 @@ class RecentlyClosedAdapter(
     fun updateData(tabs: List<RecoverableTab>, selectedTabs: Set<RecoverableTab>) {
         val currentlySelectedTabs = this.selectedTabs
         this.selectedTabs = selectedTabs
-        currentlySelectedTabs.symmetricDifference(selectedTabs).forEach { tab ->
-            notifyItemChanged(tabs.indexOf(tab))
+
+        if (toggledMultiSelectMode(currentlySelectedTabs, selectedTabs)) {
+            // Update all items to hide or show the more (Kebab) menu.
+            notifyItemRangeChanged(0, tabs.size)
+        } else {
+            currentlySelectedTabs.symmetricDifference(selectedTabs).forEach { tab ->
+                notifyItemChanged(tabs.indexOf(tab))
+            }
         }
 
         submitList(tabs)
@@ -51,6 +57,13 @@ class RecentlyClosedAdapter(
 
     override val selectedItems: Set<RecoverableTab>
         get() = selectedTabs
+
+    private fun toggledMultiSelectMode(
+        currentlySelectedTabs: Set<RecoverableTab>,
+        selectedTabs: Set<RecoverableTab>
+    ) =
+        currentlySelectedTabs.isEmpty() && selectedTabs.isNotEmpty()
+                || currentlySelectedTabs.isNotEmpty() && selectedTabs.isEmpty()
 
     private infix fun <T> Set<T>.symmetricDifference(other: Set<T>): Set<T> {
         val diff = this subtract other

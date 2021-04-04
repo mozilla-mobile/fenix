@@ -7,8 +7,11 @@ package org.mozilla.fenix.library.recentlyclosed
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.history_list_item.view.*
+import kotlinx.android.synthetic.main.library_site_item.view.*
 import mozilla.components.browser.state.state.recover.RecoverableTab
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ext.hideAndDisable
+import org.mozilla.fenix.ext.showAndEnable
 import org.mozilla.fenix.library.SelectionHolder
 import org.mozilla.fenix.library.history.HistoryItemMenu
 import org.mozilla.fenix.utils.Do
@@ -41,6 +44,12 @@ class RecentlyClosedItemViewHolder(
 
         itemView.setOnClickListener {
             recentlyClosedFragmentInteractor.restore(item)
+        }
+
+        if (selectionHolder.selectedItems.isEmpty()) {
+            itemView.overflow_menu.showAndEnable()
+        } else {
+            itemView.overflow_menu.hideAndDisable()
         }
 
         this.item = item
