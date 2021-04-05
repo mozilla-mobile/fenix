@@ -48,7 +48,7 @@ fun createNimbus(context: Context, url: String?): NimbusApi =
         val appInfo = NimbusAppInfo(
             appName = "fenix",
             // Note: Using BuildConfig.BUILD_TYPE is important here so that it matches the value
-            // passed into Glean.  `Config.channel.toString()` turned out to be non-deterministic
+            // passed into Glean. `Config.channel.toString()` turned out to be non-deterministic
             // and would mostly produce the value `Beta` and rarely would produce `beta`.
             channel = BuildConfig.BUILD_TYPE
         )
