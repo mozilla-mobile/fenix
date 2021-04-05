@@ -36,7 +36,7 @@ class RecentlyClosedAdapter(
             oldItem.id == newItem.id
 
         override fun areContentsTheSame(oldItem: RecoverableTab, newItem: RecoverableTab) =
-            oldItem.id == newItem.id
+            oldItem == newItem
     }
 
     fun updateData(tabs: List<RecoverableTab>, selectedTabs: Set<RecoverableTab>) {
