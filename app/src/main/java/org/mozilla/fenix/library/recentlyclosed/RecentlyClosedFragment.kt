@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.map
 import mozilla.components.browser.state.state.recover.RecoverableTab
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.lib.state.ext.flowScoped
+import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
@@ -36,7 +37,7 @@ import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.library.LibraryPageFragment
 
 @Suppress("TooManyFunctions")
-class RecentlyClosedFragment : LibraryPageFragment<RecoverableTab>() {
+class RecentlyClosedFragment : LibraryPageFragment<RecoverableTab>(), UserInteractionHandler {
     private lateinit var recentlyClosedFragmentStore: RecentlyClosedFragmentStore
     private var _recentlyClosedFragmentView: RecentlyClosedFragmentView? = null
     protected val recentlyClosedFragmentView: RecentlyClosedFragmentView
@@ -150,9 +151,7 @@ class RecentlyClosedFragment : LibraryPageFragment<RecoverableTab>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         consumeFrom(recentlyClosedFragmentStore) { state ->
             recentlyClosedFragmentView.update(state)
-            if (state.selectedTabs.isNotEmpty()) {
-                activity?.invalidateOptionsMenu()
-            }
+            activity?.invalidateOptionsMenu()
         }
 
         requireComponents.core.store.flowScoped(viewLifecycleOwner) { flow ->
@@ -167,4 +166,8 @@ class RecentlyClosedFragment : LibraryPageFragment<RecoverableTab>() {
     }
 
     override val selectedItems: Set<RecoverableTab> = setOf()
+
+    override fun onBackPressed(): Boolean {
+        return recentlyClosedController.handleBackPressed()
+    }
 }

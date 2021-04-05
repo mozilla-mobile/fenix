@@ -32,6 +32,7 @@ interface RecentlyClosedController {
     fun handleRestore(item: RecoverableTab)
     fun handleSelect(tab: RecoverableTab)
     fun handleDeselect(tab: RecoverableTab)
+    fun handleBackPressed(): Boolean
 }
 
 class DefaultRecentlyClosedController(
@@ -45,10 +46,11 @@ class DefaultRecentlyClosedController(
     private val activity: HomeActivity,
     private val openToBrowser: (item: RecoverableTab, mode: BrowsingMode?) -> Unit
 ) : RecentlyClosedController {
-    override fun handleOpen(tab: RecoverableTab, mode: BrowsingMode?) = handleOpen(setOf(tab), mode)
+    override fun handleOpen(tab: RecoverableTab, mode: BrowsingMode?) = openToBrowser(tab, mode)
 
     override fun handleOpen(tabs: Set<RecoverableTab>, mode: BrowsingMode?) {
-        tabs.forEach { tab -> openToBrowser(tab, mode) }
+        recentlyClosedStore.dispatch(RecentlyClosedFragmentAction.ChangeSelection(emptySet()))
+        tabs.forEach { tab -> handleOpen(tab, mode) }
     }
 
     override fun handleSelect(tab: RecoverableTab) {
@@ -61,12 +63,13 @@ class DefaultRecentlyClosedController(
         recentlyClosedStore.dispatch(RecentlyClosedFragmentAction.ChangeSelection(selectedTabs))
     }
 
-    override fun handleDelete(tab: RecoverableTab) = handleDelete(setOf(tab))
+    override fun handleDelete(tab: RecoverableTab) {
+        browserStore.dispatch(RecentlyClosedAction.RemoveClosedTabAction(tab))
+    }
 
     override fun handleDelete(tabs: Set<RecoverableTab>) {
-        tabs.forEach { tab ->
-            browserStore.dispatch(RecentlyClosedAction.RemoveClosedTabAction(tab))
-        }
+        recentlyClosedStore.dispatch(RecentlyClosedFragmentAction.ChangeSelection(emptySet()))
+        tabs.forEach { tab -> handleDelete(tab) }
     }
 
     override fun handleNavigateToHistory() {
@@ -106,5 +109,14 @@ class DefaultRecentlyClosedController(
         activity.openToBrowser(
             from = BrowserDirection.FromRecentlyClosed
         )
+    }
+
+    override fun handleBackPressed(): Boolean {
+        return if (recentlyClosedStore.state.selectedTabs.isNotEmpty()) {
+            recentlyClosedStore.dispatch(RecentlyClosedFragmentAction.ChangeSelection(emptySet()))
+            true
+        } else {
+            false
+        }
     }
 }
