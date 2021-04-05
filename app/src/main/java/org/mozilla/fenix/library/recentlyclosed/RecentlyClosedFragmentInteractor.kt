@@ -34,8 +34,8 @@ class RecentlyClosedFragmentInteractor(
         recentlyClosedController.handleOpen(item, BrowsingMode.Private)
     }
 
-    override fun onDeleteOne(tab: RecoverableTab) {
-        recentlyClosedController.handleDeleteOne(tab)
+    override fun onDelete(tab: RecoverableTab) {
+        recentlyClosedController.handleDelete(tab)
     }
 
     override fun onNavigateToHistory() {

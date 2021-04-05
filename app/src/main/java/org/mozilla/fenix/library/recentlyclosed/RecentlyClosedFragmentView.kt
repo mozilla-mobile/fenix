@@ -59,11 +59,11 @@ interface RecentlyClosedInteractor : SelectionInteractor<RecoverableTab> {
     fun onOpenInPrivateTab(item: RecoverableTab)
 
     /**
-     * Deletes one recently closed tab item.
+     * Called when recently closed tab is selected for deletion.
      *
-     * @param tab the recently closed tab item to delete.
+     * @param tab the recently closed tab to delete.
      */
-    fun onDeleteOne(tab: RecoverableTab)
+    fun onDelete(tab: RecoverableTab)
 }
 
 /**

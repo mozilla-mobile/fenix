@@ -21,10 +21,13 @@ import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.FenixSnackbar
 
 interface RecentlyClosedController {
-    fun handleOpen(item: RecoverableTab, mode: BrowsingMode? = null)
-    fun handleDeleteOne(tab: RecoverableTab)
+    fun handleOpen(tab: RecoverableTab, mode: BrowsingMode? = null)
+    fun handleOpen(tabs: Set<RecoverableTab>, mode: BrowsingMode? = null)
+    fun handleDelete(tab: RecoverableTab)
+    fun handleDelete(tabs: Set<RecoverableTab>)
     fun handleCopyUrl(item: RecoverableTab)
-    fun handleShare(item: RecoverableTab)
+    fun handleShare(tab: RecoverableTab)
+    fun handleShare(tabs: Set<RecoverableTab>)
     fun handleNavigateToHistory()
     fun handleRestore(item: RecoverableTab)
     fun handleSelect(tab: RecoverableTab)
@@ -42,8 +45,10 @@ class DefaultRecentlyClosedController(
     private val activity: HomeActivity,
     private val openToBrowser: (item: RecoverableTab, mode: BrowsingMode?) -> Unit
 ) : RecentlyClosedController {
-    override fun handleOpen(item: RecoverableTab, mode: BrowsingMode?) {
-        openToBrowser(item, mode)
+    override fun handleOpen(tab: RecoverableTab, mode: BrowsingMode?) = handleOpen(setOf(tab), mode)
+
+    override fun handleOpen(tabs: Set<RecoverableTab>, mode: BrowsingMode?) {
+        tabs.forEach { tab -> openToBrowser(tab, mode) }
     }
 
     override fun handleSelect(tab: RecoverableTab) {
@@ -56,8 +61,12 @@ class DefaultRecentlyClosedController(
         recentlyClosedStore.dispatch(RecentlyClosedFragmentAction.ChangeSelection(selectedTabs))
     }
 
-    override fun handleDeleteOne(tab: RecoverableTab) {
-        browserStore.dispatch(RecentlyClosedAction.RemoveClosedTabAction(tab))
+    override fun handleDelete(tab: RecoverableTab) = handleDelete(setOf(tab))
+
+    override fun handleDelete(tabs: Set<RecoverableTab>) {
+        tabs.forEach { tab ->
+            browserStore.dispatch(RecentlyClosedAction.RemoveClosedTabAction(tab))
+        }
     }
 
     override fun handleNavigateToHistory() {
@@ -76,10 +85,13 @@ class DefaultRecentlyClosedController(
         }
     }
 
-    override fun handleShare(item: RecoverableTab) {
+    override fun handleShare(tab: RecoverableTab) = handleShare(setOf(tab))
+
+    override fun handleShare(tabs: Set<RecoverableTab>) {
+        val shareData = tabs.map { ShareData(url = it.url, title = it.title) }
         navController.navigate(
             RecentlyClosedFragmentDirections.actionGlobalShareFragment(
-                data = arrayOf(ShareData(url = item.url, title = item.title))
+                data = shareData.toTypedArray()
             )
         )
     }

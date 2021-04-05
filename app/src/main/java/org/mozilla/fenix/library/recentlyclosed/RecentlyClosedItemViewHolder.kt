@@ -67,9 +67,7 @@ class RecentlyClosedItemViewHolder(
                 HistoryItemMenu.Item.OpenInPrivateTab -> recentlyClosedFragmentInteractor.onOpenInPrivateTab(
                     item
                 )
-                HistoryItemMenu.Item.Delete -> recentlyClosedFragmentInteractor.onDeleteOne(
-                    item
-                )
+                HistoryItemMenu.Item.Delete -> recentlyClosedFragmentInteractor.onDelete(item)
             }
         }
 

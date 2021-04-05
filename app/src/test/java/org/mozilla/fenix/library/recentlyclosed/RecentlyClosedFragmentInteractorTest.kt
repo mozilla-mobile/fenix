@@ -81,7 +81,7 @@ class RecentlyClosedFragmentInteractorTest {
         interactor.onDeleteOne(tab)
 
         verify {
-            defaultRecentlyClosedController.handleDeleteOne(tab)
+            defaultRecentlyClosedController.handleDelete(tab)
         }
     }
 

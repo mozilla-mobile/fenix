@@ -43,6 +43,7 @@ class RecentlyClosedFragment : LibraryPageFragment<RecoverableTab>() {
         get() = _recentlyClosedFragmentView!!
 
     private lateinit var recentlyClosedInteractor: RecentlyClosedFragmentInteractor
+    private lateinit var recentlyClosedController: RecentlyClosedController
 
     override fun onResume() {
         super.onResume()
@@ -61,12 +62,32 @@ class RecentlyClosedFragment : LibraryPageFragment<RecoverableTab>() {
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
-        R.id.close_history -> {
-            close()
-            true
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val selectedTabs = recentlyClosedFragmentStore.state.selectedTabs
+
+        return when (item.itemId) {
+            R.id.close_history -> {
+                close()
+                true
+            }
+            R.id.share_history_multi_select -> {
+                recentlyClosedController.handleShare(selectedTabs)
+                true
+            }
+            R.id.delete_history_multi_select -> {
+                recentlyClosedController.handleDelete(selectedTabs)
+                true
+            }
+            R.id.open_history_in_new_tabs_multi_select -> {
+                recentlyClosedController.handleOpen(selectedTabs, BrowsingMode.Normal)
+                true
+            }
+            R.id.open_history_in_private_tabs_multi_select -> {
+                recentlyClosedController.handleOpen(selectedTabs, BrowsingMode.Private)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
-        else -> super.onOptionsItemSelected(item)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -88,22 +109,21 @@ class RecentlyClosedFragment : LibraryPageFragment<RecoverableTab>() {
                 )
             )
         }
-        recentlyClosedInteractor = RecentlyClosedFragmentInteractor(
-            recentlyClosedController = DefaultRecentlyClosedController(
-                navController = findNavController(),
-                browserStore = requireComponents.core.store,
-                recentlyClosedStore = recentlyClosedFragmentStore,
-                activity = activity as HomeActivity,
-                tabsUseCases = requireComponents.useCases.tabsUseCases,
-                resources = requireContext().resources,
-                snackbar = FenixSnackbar.make(
-                    view = requireActivity().getRootView()!!,
-                    isDisplayedWithBrowserToolbar = true
-                ),
-                clipboardManager = activity?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager,
-                openToBrowser = ::openItem
-            )
+        recentlyClosedController = DefaultRecentlyClosedController(
+            navController = findNavController(),
+            browserStore = requireComponents.core.store,
+            recentlyClosedStore = recentlyClosedFragmentStore,
+            activity = activity as HomeActivity,
+            tabsUseCases = requireComponents.useCases.tabsUseCases,
+            resources = requireContext().resources,
+            snackbar = FenixSnackbar.make(
+                view = requireActivity().getRootView()!!,
+                isDisplayedWithBrowserToolbar = true
+            ),
+            clipboardManager = activity?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager,
+            openToBrowser = ::openItem
         )
+        recentlyClosedInteractor = RecentlyClosedFragmentInteractor(recentlyClosedController)
         _recentlyClosedFragmentView = RecentlyClosedFragmentView(
             view.recentlyClosedLayout,
             recentlyClosedInteractor

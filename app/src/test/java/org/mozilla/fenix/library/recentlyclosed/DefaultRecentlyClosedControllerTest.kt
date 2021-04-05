@@ -92,7 +92,7 @@ class DefaultRecentlyClosedControllerTest {
     fun handleDeleteOne() {
         val item: RecoverableTab = mockk(relaxed = true)
 
-        controller.handleDeleteOne(item)
+        controller.handleDelete(item)
 
         verify {
             store.dispatch(RecentlyClosedAction.RemoveClosedTabAction(item))
