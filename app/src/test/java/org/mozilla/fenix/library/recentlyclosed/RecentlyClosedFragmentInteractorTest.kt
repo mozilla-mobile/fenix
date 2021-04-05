@@ -76,9 +76,9 @@ class RecentlyClosedFragmentInteractorTest {
     }
 
     @Test
-    fun onDeleteOne() {
+    fun onDelete() {
         val tab = RecoverableTab(id = "tab-id", title = "Mozilla", url = "mozilla.org", lastAccess = 1L)
-        interactor.onDeleteOne(tab)
+        interactor.onDelete(tab)
 
         verify {
             defaultRecentlyClosedController.handleDelete(tab)

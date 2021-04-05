@@ -46,13 +46,15 @@ class DefaultRecentlyClosedControllerTest {
     private val clipboardManager: ClipboardManager = mockk(relaxed = true)
     private val openToBrowser: (RecoverableTab, BrowsingMode?) -> Unit = mockk(relaxed = true)
     private val activity: HomeActivity = mockk(relaxed = true)
-    private val store: BrowserStore = mockk(relaxed = true)
+    private val browserStore: BrowserStore = mockk(relaxed = true)
+    private val recentlyClosedStore: RecentlyClosedFragmentStore = mockk(relaxed = true)
     private val tabsUseCases: TabsUseCases = mockk(relaxed = true)
     val mockedTab: RecoverableTab = mockk(relaxed = true)
 
     private val controller = DefaultRecentlyClosedController(
         navController,
-        store,
+        browserStore,
+        recentlyClosedStore,
         tabsUseCases,
         resources,
         snackbar,
@@ -89,13 +91,44 @@ class DefaultRecentlyClosedControllerTest {
     }
 
     @Test
-    fun handleDeleteOne() {
+    fun `open multiple tabs`() {
+        val tabs = createFakeTabList(2)
+
+        controller.handleOpen(tabs.toSet(), BrowsingMode.Normal)
+
+        verify {
+            openToBrowser(tabs[0], BrowsingMode.Normal)
+            openToBrowser(tabs[1], BrowsingMode.Normal)
+        }
+
+        controller.handleOpen(tabs.toSet(), BrowsingMode.Private)
+
+        verify {
+            openToBrowser(tabs[0], BrowsingMode.Private)
+            openToBrowser(tabs[1], BrowsingMode.Private)
+        }
+    }
+
+    @Test
+    fun handleDelete() {
         val item: RecoverableTab = mockk(relaxed = true)
 
         controller.handleDelete(item)
 
         verify {
-            store.dispatch(RecentlyClosedAction.RemoveClosedTabAction(item))
+            browserStore.dispatch(RecentlyClosedAction.RemoveClosedTabAction(item))
+        }
+    }
+
+    @Test
+    fun `delete multiple tabs`() {
+        val tabs = createFakeTabList(2)
+
+        controller.handleDelete(tabs.toSet())
+
+        verify {
+            browserStore.dispatch(RecentlyClosedAction.RemoveClosedTabAction(tabs[0]))
+            browserStore.dispatch(RecentlyClosedAction.RemoveClosedTabAction(tabs[1]))
         }
     }
 
@@ -150,11 +183,54 @@ class DefaultRecentlyClosedControllerTest {
     }
 
     @Test
+    fun `share multiple tabs`() {
+        val tabs = createFakeTabList(2)
+
+        controller.handleShare(tabs.toSet())
+
+        verify {
+            navController.navigate(
+                directionsEq(
+                    RecentlyClosedFragmentDirections.actionGlobalShareFragment(
+                        arrayOf(
+                            ShareData(title = tabs[0].title, url = tabs[0].url),
+                            ShareData(title = tabs[1].title, url = tabs[1].url)
+                        )
+                    )
+                )
+            )
+        }
+    }
+
+    @Test
     fun handleRestore() {
         controller.handleRestore(mockedTab)
 
         dispatcher.advanceUntilIdle()
 
         verify { tabsUseCases.restore.invoke(mockedTab, true) }
+    }
+
+    @Test
+    fun `exist multi-select mode when back pressed`() {
+        every { recentlyClosedStore.state.selectedTabs } returns createFakeTabList(3).toSet()
+
+        controller.handleBackPressed()
+
+        verify {
+            recentlyClosedStore.dispatch(RecentlyClosedFragmentAction.ChangeSelection(emptySet()))
+        }
+    }
+
+    private fun createFakeTab(id: String = "FakeId", url: String = "www.fake.com"): RecoverableTab =
+        RecoverableTab(id, url)
+
+    private fun createFakeTabList(size: Int): List<RecoverableTab> {
+        val fakeTabs = mutableListOf<RecoverableTab>()
+        for (i in 0 until size) {
+            fakeTabs.add(createFakeTab(id = "FakeId$i"))
+        }
+
+        return fakeTabs
     }
 }
