@@ -42,10 +42,6 @@ class RecentlyClosedItemViewHolder(
             itemView.history_layout.loadFavicon(item.url)
         }
 
-        itemView.setOnClickListener {
-            recentlyClosedFragmentInteractor.restore(item)
-        }
-
         if (selectionHolder.selectedItems.isEmpty()) {
             itemView.overflow_menu.showAndEnable()
         } else {

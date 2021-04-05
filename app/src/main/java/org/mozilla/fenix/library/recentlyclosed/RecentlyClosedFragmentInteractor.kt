@@ -43,7 +43,7 @@ class RecentlyClosedFragmentInteractor(
     }
 
     override fun open(item: RecoverableTab) {
-        recentlyClosedController.handleOpen(item)
+        recentlyClosedController.handleRestore(item)
     }
 
     override fun select(item: RecoverableTab) {
