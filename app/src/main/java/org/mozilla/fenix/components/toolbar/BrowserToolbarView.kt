@@ -159,7 +159,10 @@ class BrowserToolbarView(
                     },
                     lifecycleOwner = lifecycleOwner,
                     bookmarksStorage = bookmarkStorage,
-                    isPinningSupported = isPinningSupported
+                    isPinningSupported = isPinningSupported,
+                    onMenuBuilderChanged = {
+                        view.display.menuBuilder = it
+                    }
                 )
                 view.display.setMenuDismissAction {
                     view.invalidateActions()
