@@ -6,7 +6,9 @@ package org.mozilla.fenix.toolbar
 
 import android.content.Context
 import android.net.Uri
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
@@ -33,7 +35,7 @@ import org.mozilla.fenix.ext.settings
 class DefaultToolbarMenuTest {
 
     private lateinit var store: BrowserStore
-    private lateinit var lifecycleOwner: LifecycleOwner
+    private lateinit var lifecycleOwner: MockedLifecycleOwner
     private lateinit var toolbarMenu: DefaultToolbarMenu
     private lateinit var context: Context
     private lateinit var bookmarksStorage: BookmarksStorage
@@ -48,7 +50,7 @@ class DefaultToolbarMenuTest {
         mockkStatic(Uri::class)
         every { Uri.parse(any()) } returns mockk(relaxed = true)
 
-        lifecycleOwner = mockk(relaxed = true)
+        lifecycleOwner = MockedLifecycleOwner(Lifecycle.State.STARTED)
         context = mockk(relaxed = true)
 
         every { context.theme } returns mockk(relaxed = true)
@@ -148,5 +150,12 @@ class DefaultToolbarMenuTest {
 
             assertEquals(settingsItem, lastItem)
         }
+    }
+
+    internal class MockedLifecycleOwner(initialState: Lifecycle.State) : LifecycleOwner {
+        private val lifecycleRegistry = LifecycleRegistry(this).apply {
+            currentState = initialState
+        }
+        override fun getLifecycle(): Lifecycle = lifecycleRegistry
     }
 }
