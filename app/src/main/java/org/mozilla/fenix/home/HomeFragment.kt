@@ -739,6 +739,7 @@ class HomeFragment : Fragment() {
 
     private fun hideOnboardingAndOpenSearch() {
         hideOnboardingIfNeeded()
+        appBarLayout?.setExpanded(true, true)
         navigateToSearch()
     }
 
