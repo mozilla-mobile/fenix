@@ -32,6 +32,7 @@
         android:supportsRtl="true"
         android:theme="@style/NormalTheme"
         android:usesCleartextTraffic="true"
+        android:hardwareAccelerated="false"
         tools:ignore="UnusedAttribute">
 
         <!--
