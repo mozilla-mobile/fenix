@@ -60,7 +60,7 @@ class DefaultBrowserToolbarMenuController(
     private val activity: HomeActivity,
     private val navController: NavController,
     private val metrics: MetricController,
-    private val settings: Settings,
+    private val settings: Settings, 
     private val readerModeController: ReaderModeController,
     private val sessionFeature: ViewBoundFeatureWrapper<SessionFeature>,
     private val findInPageLauncher: () -> Unit,
