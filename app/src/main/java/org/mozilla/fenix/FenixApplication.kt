@@ -192,6 +192,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
 
             components.appStartReasonProvider.registerInAppOnCreate(this)
             components.startupActivityStateProvider.registerInAppOnCreate(this)
+            components.startupActivityLog.registerInAppOnCreate(this)
             initVisualCompletenessQueueAndQueueTasks()
 
             components.appStartupTelemetry.onFenixApplicationOnCreate()
