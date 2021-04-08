@@ -213,7 +213,7 @@ class DefaultBrowserToolbarMenuController(
                     ),
                     showPage = true
                 )
-                navController.navigate(directions)
+                navController.navigateBlockingForAsyncNavGraph(directions)
             }
             is ToolbarMenu.Item.Settings -> browserAnimator.captureEngineViewAndDrawStatically {
                 val directions = BrowserFragmentDirections.actionBrowserFragmentToSettingsFragment()
@@ -342,7 +342,7 @@ class DefaultBrowserToolbarMenuController(
                 )
             }
             is ToolbarMenu.Item.NewTab -> {
-                navController.navigate(
+                navController.navigateBlockingForAsyncNavGraph(
                     BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = true)
                 )
             }

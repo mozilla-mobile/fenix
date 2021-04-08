@@ -12,11 +12,11 @@ import io.gitlab.arturbosch.detekt.api.Issue
 import io.gitlab.arturbosch.detekt.api.Rule
 import io.gitlab.arturbosch.detekt.api.Severity
 import org.jetbrains.kotlin.psi.KtCallExpression
-import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
-import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 
-private const val VIOLATION_MSG = "Please use `org.mozilla.fenix.ext.NavController.navigateBlockingForAsyncNavGraph` " +
-        "instead because using `navigate` directly in the code can lead to the NavGraph not being loaded" +
+private const val VIOLATION_MSG = "If you named a method `navigate`, please rename it to something a bit" +
+        "more specific such as `navigateTo...`. However, if you are trying to invoke the Android NavController.navigate" +
+        "please use `org.mozilla.fenix.ext.NavController.navigateBlockingForAsyncNavGraph`" +
+        "instead. Because using `navigate` directly in the code can lead to the NavGraph not being loaded" +
         "since it relies on a blocking call done in `navigateBlockingForAsyncNavGraph`."
 
 /**
@@ -43,13 +43,8 @@ class MozillaNavigateCheck(config: Config = Config.empty) : Rule(config) {
 
         //We check for the navigate method and we have to ignore our extension function file, since
         //we call navigate there
-        if (calledMethod == "navigate" && expression.containingFile.name != "NavController.kt") {
-            val call = expression.getCall(bindingContext)
-            //If we have a local function called navigate, the callElement will be null and we ust
-            //ignore it since it is only a local function
-            if(call?.callElement?.firstChild != null) {
-                report(CodeSmell(issue, Entity.from(expression), VIOLATION_MSG))
-            }
+        if (calledMethod == "navigate" ) {
+            report(CodeSmell(issue, Entity.from(expression), VIOLATION_MSG))
         }
     }
 }

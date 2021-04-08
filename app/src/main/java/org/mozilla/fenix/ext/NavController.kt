@@ -2,6 +2,9 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+// We suppress the calls to `navigate` since we invoke the Android `NavController.navigate` through
+// this file. Detekt checks for the `navigate()` function calls, which should be ignored in this file.
+@file:Suppress("MozillaNavigateCheck")
 package org.mozilla.fenix.ext
 
 import androidx.annotation.IdRes

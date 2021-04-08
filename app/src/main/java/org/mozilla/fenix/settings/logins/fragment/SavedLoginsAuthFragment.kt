@@ -131,17 +131,17 @@ class SavedLoginsAuthFragment : PreferenceFragmentCompat() {
             onSignInToSyncClicked = {
                 val directions =
                     SavedLoginsAuthFragmentDirections.actionSavedLoginsAuthFragmentToTurnOnSyncFragment()
-                findNavController().navigate(directions)
+                findNavController().navigateBlockingForAsyncNavGraph(directions)
             },
             onSyncStatusClicked = {
                 val directions =
                     SavedLoginsAuthFragmentDirections.actionGlobalAccountSettingsFragment()
-                findNavController().navigate(directions)
+                findNavController().navigateBlockingForAsyncNavGraph(directions)
             },
             onReconnectClicked = {
                 val directions =
                     SavedLoginsAuthFragmentDirections.actionGlobalAccountProblemFragment()
-                findNavController().navigate(directions)
+                findNavController().navigateBlockingForAsyncNavGraph(directions)
             }
         )
 
