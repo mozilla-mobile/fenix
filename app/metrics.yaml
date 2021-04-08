@@ -2,7 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 ---
-$schema: moz://mozilla.org/schemas/glean/metrics/1-0-0
+$schema: moz://mozilla.org/schemas/glean/metrics/2-0-0
 
 no_lint:
   - CATEGORY_GENERIC
@@ -11,6 +11,12 @@ events:
   app_opened_all_startup:
     type: event
     description: |
+      **This probe has a known flaw:** for COLD start up, it doesn't take into
+      account if the process is already running when the app starts, possibly
+      inflating results (e.g. a Service started the process 20min ago and only
+      now is HomeActivity launching). See the `cold_*_app_to_first_frame` probes
+      for a replacement.
+      <br><br>
       A user opened the app to the HomeActivity. The HomeActivity
       encompasses the home screen, browser screen, settings screen,
       collections and other screens in the nav_graph.
@@ -1187,6 +1193,57 @@ metrics:
     notification_emails:
       - fenix-core@mozilla.com
     expires: "2021-08-01"
+  start_reason_process_error:
+    type: boolean
+    description: |
+      The `AppStartReasonProvider.ProcessLifecycleObserver.onCreate` was
+      unexpectedly called twice. We can use this metric to validate our
+      assumptions about how these APIs are called. This probe can be removed
+      once we validate these assumptions.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/18426
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/18632#issue-600193452
+    data_sensitivity:
+      - technical
+    notification_emails:
+      - perf-android-fe@mozilla.com
+      - mcomella@mozilla.com
+    expires: "2021-08-11"
+  start_reason_activity_error:
+    type: boolean
+    description: |
+      The `AppStartReasonProvider.ActivityLifecycleCallbacks.onActivityCreated`
+      was unexpectedly called twice. We can use this metric to validate our
+      assumptions about how these APIs are called. This probe can be removed
+      once we validate these assumptions.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/18426
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/18632#issue-600193452
+    data_sensitivity:
+      - technical
+    notification_emails:
+      - perf-android-fe@mozilla.com
+      - mcomella@mozilla.com
+    expires: "2021-08-11"
+  activity_state_provider_error:
+    type: boolean
+    description: |
+      The `StartupActivityStateProvider...onActivityStarted` was unexpectedly
+      called twice. We can use this metric to validate our assumptions about
+      how these APIs are called. This probe can be removed once we validate
+      these assumptions.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/18426
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/18632#issue-600193452
+    data_sensitivity:
+      - technical
+    notification_emails:
+      - perf-android-fe@mozilla.com
+      - mcomella@mozilla.com
+    expires: "2021-08-11"
 
 preferences:
   show_search_suggestions:
@@ -4143,6 +4200,86 @@ startup.timeline:
     expires: "2021-08-01"
 
 perf.startup:
+  cold_main_app_to_first_frame:
+    type: timing_distribution
+    time_unit: millisecond
+    description: |
+      The duration from `*Application`'s initializer to the first Android frame
+      being drawn in a [COLD MAIN start
+      up](https://wiki.mozilla.org/index.php?title=Performance/Fenix/Glossary).
+      Notably, this duration omits the time from process start to the
+      initializer (which includes a lengthy dex operation) and the time from
+      the first frame to visual completeness. This probe doesn't measure Custom
+      Tabs or other uses of `ExternalAppBrowserActivity` to simplify result
+      analysis. The methodology for determining this measurement is imperfect
+      to simplify implementation. Issues may include:
+      <br>- Not measuring Beta and Release channels (due to
+      `MigrationDecisionActivity` interrupting the logic).
+      <br>- Not distinguishing between MAIN to homescreen, onboarding, session
+      restore, others?
+      <br>- Not choosing to record a MAIN based on what the user would see and
+      thus the core code path (i.e. the thing we want to measure) but rather on
+      the initial `Intent` state.
+      <br><br>
+      The hope is that these cases will not have a significant impact on the end
+      results but, if they appear to, we can replace it with a more complex
+      implementation.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/18426
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/18632#issue-600193452
+    data_sensitivity:
+      - technical
+    notification_emails:
+      - perf-android-fe@mozilla.com
+      - mcomella@mozilla.com
+    expires: "2021-08-11"
+  cold_view_app_to_first_frame:
+    type: timing_distribution
+    time_unit: millisecond
+    description: |
+      The duration from `*Application`'s initializer to the first Android frame
+      being drawn in a [COLD VIEW start
+      up](https://wiki.mozilla.org/index.php?title=Performance/Fenix/Glossary).
+      The methodology for determining this measurement is imperfect to simplify
+      implementation. Issues may include:
+      <br>-Including VIEW intents that aren't valid so take code paths similar
+      to MAIN (this is speculative)
+      <br><br>
+      See the `cold_main_app_to_first_frame` probe docs for other possible
+      known issues and more details.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/18426
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/18632#issue-600193452
+    data_sensitivity:
+      - technical
+    notification_emails:
+      - perf-android-fe@mozilla.com
+      - mcomella@mozilla.com
+    expires: "2021-08-11"
+  cold_unknwn_app_to_first_frame:
+    type: timing_distribution
+    time_unit: millisecond
+    description: |
+      The duration from `*Application`'s initializer to the first Android frame
+      being drawn in a [COLD start
+      up](https://wiki.mozilla.org/index.php?title=Performance/Fenix/Glossary)
+      where we can't say it was a MAIN or VIEW start up. The methodology for
+      determining this measurement is imperfect to simplify implementation.
+      <br><br>
+      See the `cold_main_app_to_first_frame` probe docs for known issues and
+      more details.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/18426
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/18632#issue-600193452
+    data_sensitivity:
+      - technical
+    notification_emails:
+      - perf-android-fe@mozilla.com
+      - mcomella@mozilla.com
+    expires: "2021-08-11"
   application_on_create:
     type: timing_distribution
     time_unit: millisecond
@@ -4329,7 +4466,7 @@ perf.awesomebar:
     notification_emails:
       - fenix-core@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2020-11-15"
+    expires: "2021-11-15"
   bookmark_suggestions:
     send_in_pings:
       - metrics
@@ -4347,7 +4484,7 @@ perf.awesomebar:
     notification_emails:
       - fenix-core@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2020-11-15"
+    expires: "2021-11-15"
   search_engine_suggestions:
     send_in_pings:
       - metrics
@@ -4365,7 +4502,7 @@ perf.awesomebar:
     notification_emails:
       - fenix-core@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2020-11-15"
+    expires: "2021-11-15"
   session_suggestions:
     send_in_pings:
       - metrics
@@ -4383,7 +4520,7 @@ perf.awesomebar:
     notification_emails:
       - fenix-core@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2020-11-15"
+    expires: "2021-11-15"
   synced_tabs_suggestions:
     send_in_pings:
       - metrics
@@ -4401,7 +4538,7 @@ perf.awesomebar:
     notification_emails:
       - fenix-core@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2020-11-15"
+    expires: "2021-11-15"
   clipboard_suggestions:
     send_in_pings:
       - metrics
@@ -4419,7 +4556,7 @@ perf.awesomebar:
     notification_emails:
       - fenix-core@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2020-11-15"
+    expires: "2021-11-15"
   shortcuts_suggestions:
     send_in_pings:
       - metrics
@@ -4437,7 +4574,7 @@ perf.awesomebar:
     notification_emails:
       - fenix-core@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2020-11-15"
+    expires: "2021-11-15"
 
 autoplay:
   visited_setting:

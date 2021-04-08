@@ -9,6 +9,7 @@ import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
@@ -44,6 +45,7 @@ class ShareButtonTest {
     }
 
     @Test
+    @Ignore("To be re-implemented with the three dot menu changes https://github.com/mozilla-mobile/fenix/issues/17979")
     fun ShareButtonAppearanceTest() {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 

@@ -2,11 +2,9 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.fenix.tabstray
+package org.mozilla.fenix.tabstray.browser
 
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.AppCompatImageButton
 import mozilla.components.browser.tabstray.TabsTrayStyling
@@ -18,25 +16,28 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.increaseTapArea
 import kotlin.math.max
 import kotlinx.android.synthetic.main.tab_tray_grid_item.view.tab_tray_grid_item
-import org.mozilla.fenix.tabstray.browser.BrowserTrayInteractor
+import org.mozilla.fenix.tabstray.TabsTrayViewHolder
+import org.mozilla.fenix.selection.SelectionHolder
+import org.mozilla.fenix.tabstray.TabsTrayStore
 
 /**
  * A RecyclerView ViewHolder implementation for "tab" items with grid layout.
  */
 class TabsTrayGridViewHolder(
-    parent: ViewGroup,
     imageLoader: ImageLoader,
-    browserTrayInteractor: BrowserTrayInteractor? = null,
-    itemView: View =
-        LayoutInflater.from(parent.context).inflate(R.layout.tab_tray_grid_item, parent, false),
-    thumbnailSize: Int =
-        max(
+    override val browserTrayInteractor: BrowserTrayInteractor,
+    store: TabsTrayStore,
+    selectionHolder: SelectionHolder<Tab>? = null,
+    itemView: View
+) : TabsTrayViewHolder(itemView, imageLoader, store, selectionHolder) {
+
+    private val closeButton: AppCompatImageButton = itemView.findViewById(R.id.mozac_browser_tabstray_close)
+
+    override val thumbnailSize: Int
+        get() = max(
             itemView.resources.getDimensionPixelSize(R.dimen.tab_tray_grid_item_thumbnail_height),
             itemView.resources.getDimensionPixelSize(R.dimen.tab_tray_grid_item_thumbnail_width)
         )
-) : TabsTrayViewHolder(itemView, imageLoader, thumbnailSize, browserTrayInteractor) {
-
-    private val closeButton: AppCompatImageButton = itemView.findViewById(R.id.mozac_browser_tabstray_close)
 
     override fun updateSelectedTabIndicator(showAsSelected: Boolean) {
         itemView.tab_tray_grid_item.background = if (showAsSelected) {

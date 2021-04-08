@@ -190,6 +190,8 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             //    runStorageMaintenance()
             // }
 
+            components.appStartReasonProvider.registerInAppOnCreate(this)
+            components.startupActivityStateProvider.registerInAppOnCreate(this)
             initVisualCompletenessQueueAndQueueTasks()
 
             components.appStartupTelemetry.onFenixApplicationOnCreate()
