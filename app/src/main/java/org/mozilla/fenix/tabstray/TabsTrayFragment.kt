@@ -15,10 +15,15 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import kotlinx.android.synthetic.main.component_tabstray.view.*
 import kotlinx.android.synthetic.main.component_tabstray2.*
 import kotlinx.android.synthetic.main.component_tabstray2.view.*
+import kotlinx.android.synthetic.main.component_tabstray2.view.tab_tray_overflow
+import kotlinx.android.synthetic.main.component_tabstray2.view.tab_wrapper
 import kotlinx.android.synthetic.main.component_tabstray_fab.*
 import kotlinx.android.synthetic.main.tabs_tray_tab_counter2.*
+import kotlinx.android.synthetic.main.tabstray_multiselect_items.*
+import kotlinx.android.synthetic.main.tabstray_multiselect_items.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.plus
 import mozilla.components.concept.tabstray.Tab
@@ -32,6 +37,8 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.home.HomeScreenViewModel
 import org.mozilla.fenix.tabstray.browser.BrowserTrayInteractor
 import org.mozilla.fenix.tabstray.browser.DefaultBrowserTrayInteractor
+import org.mozilla.fenix.tabstray.browser.SelectionBannerBinding
+import org.mozilla.fenix.tabstray.browser.SelectionBannerBinding.VisibilityModifier
 import org.mozilla.fenix.tabstray.ext.showWithTheme
 import org.mozilla.fenix.tabstray.syncedtabs.SyncedTabsInteractor
 
@@ -47,6 +54,7 @@ class TabsTrayFragment : AppCompatDialogFragment(), TabsTrayInteractor {
     private val tabLayoutMediator = ViewBoundFeatureWrapper<TabLayoutMediator>()
     private val tabCounterBinding = ViewBoundFeatureWrapper<TabCounterBinding>()
     private val floatingActionButtonBinding = ViewBoundFeatureWrapper<FloatingActionButtonBinding>()
+    private val selectionBannerBinding = ViewBoundFeatureWrapper<SelectionBannerBinding>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -152,6 +160,31 @@ class TabsTrayFragment : AppCompatDialogFragment(), TabsTrayInteractor {
                 actionButton = new_tab_button,
                 browserTrayInteractor = browserTrayInteractor,
                 syncedTabsInteractor = syncedTabsTrayInteractor
+            ),
+            owner = this,
+            view = view
+        )
+
+        selectionBannerBinding.set(
+            feature = SelectionBannerBinding(
+                context = requireContext(),
+                store = tabsTrayStore,
+                navInteractor = navigationInteractor,
+                tabsTrayInteractor = this,
+                containerView = view,
+                backgroundView = topBar,
+                showOnSelectViews = VisibilityModifier(
+                    collect_multi_select,
+                    share_multi_select,
+                    menu_multi_select,
+                    multiselect_title,
+                    exit_multi_select
+                ),
+                showOnNormalViews = VisibilityModifier(
+                    tab_layout,
+                    tab_tray_overflow,
+                    new_tab_button
+                )
             ),
             owner = this,
             view = view
