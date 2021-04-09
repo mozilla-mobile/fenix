@@ -34,6 +34,7 @@ import org.mozilla.fenix.FeatureFlags.tabsTrayRewrite
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
+import org.mozilla.fenix.components.toolbar.ToolbarMenu.DefaultItem as Item
 import org.mozilla.fenix.experiments.ExperimentBranch
 import org.mozilla.fenix.experiments.Experiments
 import org.mozilla.fenix.ext.asActivity
@@ -59,7 +60,7 @@ open class DefaultToolbarMenu(
     private val context: Context,
     private val store: BrowserStore,
     hasAccountProblem: Boolean = false,
-    private val onItemTapped: (ToolbarMenu.Item) -> Unit = {},
+    private val onItemTapped: (Item) -> Unit = {},
     private val lifecycleOwner: LifecycleOwner,
     private val bookmarksStorage: BookmarksStorage,
     val isPinningSupported: Boolean
@@ -105,7 +106,7 @@ open class DefaultToolbarMenu(
             store = store,
             webExtIconTintColorResource = primaryTextColor(),
             onAddonsManagerTapped = {
-                onItemTapped.invoke(ToolbarMenu.Item.AddonsManager)
+                onItemTapped.invoke(Item.AddonsManager)
             },
             appendExtensionSubMenuAtStart = shouldUseBottomToolbar
         )
@@ -138,7 +139,7 @@ open class DefaultToolbarMenu(
                 if (!isCurrentUrlBookmarked) {
                     isCurrentUrlBookmarked = true
                 }
-                onItemTapped.invoke(ToolbarMenu.Item.Bookmark)
+                onItemTapped.invoke(Item.Bookmark)
             }
 
             BrowserMenuItemToolbar(listOf(back, forward, bookmark, share, refresh))
@@ -195,7 +196,7 @@ open class DefaultToolbarMenu(
         iconTintColorResource = primaryTextColor,
         label = context.getString(R.string.library_bookmarks),
         labelListener = {
-            onItemTapped.invoke(ToolbarMenu.Item.Bookmarks)
+            onItemTapped.invoke(Item.Bookmarks)
         },
         primaryStateIconResource = R.drawable.ic_bookmark_outline,
         secondaryStateIconResource = R.drawable.ic_bookmark_filled,
@@ -207,7 +208,7 @@ open class DefaultToolbarMenu(
         if (!isCurrentUrlBookmarked) {
             isCurrentUrlBookmarked = true
         }
-        onItemTapped.invoke(ToolbarMenu.Item.Bookmark)
+        onItemTapped.invoke(Item.Bookmark)
     }
 
     private val oldCoreMenuItems by lazy {
@@ -219,7 +220,7 @@ open class DefaultToolbarMenu(
             R.drawable.ic_bookmark_filled,
             primaryTextColor()
         ) {
-            onItemTapped.invoke(ToolbarMenu.Item.Bookmarks)
+            onItemTapped.invoke(Item.Bookmarks)
         }
 
         // Predicates that are called once, during screen init
@@ -362,7 +363,7 @@ open class DefaultToolbarMenu(
                     label = context.getString(R.string.preferences_set_as_default_browser),
                     imageResource = R.mipmap.ic_launcher
                 ) {
-                    onItemTapped.invoke(ToolbarMenu.Item.SetDefaultBrowser)
+                    onItemTapped.invoke(Item.SetDefaultBrowser)
                 }
             } else {
                 null

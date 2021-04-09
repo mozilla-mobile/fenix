@@ -11,12 +11,12 @@ import mozilla.components.browser.menu.BrowserMenuHighlight
 import mozilla.components.browser.menu.item.BrowserMenuHighlightableItem
 import mozilla.components.browser.menu.item.BrowserMenuImageSwitch
 import mozilla.components.browser.menu.item.BrowserMenuImageText
-import mozilla.components.browser.menu.item.BrowserMenuImageTextCheckboxButton
 import mozilla.components.browser.menu.item.BrowserMenuItemToolbar
 import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.support.ktx.android.content.getColorFromAttr
+import org.mozilla.fenix.FeatureFlags.tabsTrayRewrite
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
@@ -36,7 +36,7 @@ open class ToolbarMenuItems(
     private val context: Context,
     private val store: BrowserStore,
     hasAccountProblem: Boolean = false,
-    private val onItemTapped: (ToolbarMenu.Item) -> Unit = {},
+    private val onItemTapped: (ToolbarMenu.DefaultItem) -> Unit = {},
     @ColorRes val primaryTextColor: Int,
     @ColorRes val accentBrightTextColor: Int
 ) {
@@ -52,9 +52,9 @@ open class ToolbarMenuItems(
         },
         secondaryImageTintResource = ThemeManager.resolveAttribute(R.attr.disabled, context),
         disableInSecondaryState = true,
-        longClickListener = { onItemTapped.invoke(ToolbarMenu.Item.Back(viewHistory = true)) }
+        longClickListener = { onItemTapped.invoke(ToolbarMenu.DefaultItem.Back(viewHistory = true)) }
     ) {
-        onItemTapped.invoke(ToolbarMenu.Item.Back(viewHistory = false))
+        onItemTapped.invoke(ToolbarMenu.DefaultItem.Back(viewHistory = false))
     }
 
     val forwardNavButton = BrowserMenuItemToolbar.TwoStateButton(
@@ -67,10 +67,10 @@ open class ToolbarMenuItems(
         secondaryImageTintResource = ThemeManager.resolveAttribute(R.attr.disabled, context),
         disableInSecondaryState = true,
         longClickListener = {
-            onItemTapped.invoke(ToolbarMenu.Item.Forward(viewHistory = true))
+            onItemTapped.invoke(ToolbarMenu.DefaultItem.Forward(viewHistory = true))
         }
     ) {
-        onItemTapped.invoke(ToolbarMenu.Item.Forward(viewHistory = false))
+        onItemTapped.invoke(ToolbarMenu.DefaultItem.Forward(viewHistory = false))
     }
 
     val refreshNavButton = BrowserMenuItemToolbar.TwoStateButton(
@@ -84,12 +84,12 @@ open class ToolbarMenuItems(
         secondaryContentDescription = context.getString(R.string.browser_menu_stop),
         secondaryImageTintResource = primaryTextColor,
         disableInSecondaryState = false,
-        longClickListener = { onItemTapped.invoke(ToolbarMenu.Item.Reload(bypassCache = true)) }
+        longClickListener = { onItemTapped.invoke(ToolbarMenu.DefaultItem.Reload(bypassCache = true)) }
     ) {
         if (selectedSession?.content?.loading == true) {
-            onItemTapped.invoke(ToolbarMenu.Item.Stop)
+            onItemTapped.invoke(ToolbarMenu.DefaultItem.Stop)
         } else {
-            onItemTapped.invoke(ToolbarMenu.Item.Reload(bypassCache = false))
+            onItemTapped.invoke(ToolbarMenu.DefaultItem.Reload(bypassCache = false))
         }
     }
 
@@ -98,7 +98,7 @@ open class ToolbarMenuItems(
         contentDescription = context.getString(R.string.browser_menu_share),
         iconTintColorResource = primaryTextColor,
         listener = {
-            onItemTapped.invoke(ToolbarMenu.Item.Share)
+            onItemTapped.invoke(ToolbarMenu.DefaultItem.Share)
         }
     )
 
@@ -120,7 +120,7 @@ open class ToolbarMenuItems(
         R.drawable.ic_new,
         primaryTextColor
     ) {
-        onItemTapped.invoke(ToolbarMenu.Item.NewTab)
+        onItemTapped.invoke(ToolbarMenu.DefaultItem.NewTab)
     }
 
     val historyItem = BrowserMenuImageText(
@@ -128,7 +128,7 @@ open class ToolbarMenuItems(
         R.drawable.ic_history,
         primaryTextColor
     ) {
-        onItemTapped.invoke(ToolbarMenu.Item.History)
+        onItemTapped.invoke(ToolbarMenu.DefaultItem.History)
     }
 
     val downloadsItem = BrowserMenuImageText(
@@ -136,7 +136,7 @@ open class ToolbarMenuItems(
         R.drawable.ic_download,
         primaryTextColor
     ) {
-        onItemTapped.invoke(ToolbarMenu.Item.Downloads)
+        onItemTapped.invoke(ToolbarMenu.DefaultItem.Downloads)
     }
 
     val accountManager = context.components.backgroundServices.accountManager
@@ -147,12 +147,24 @@ open class ToolbarMenuItems(
         context.getString(R.string.sync_menu_sign_in)
     }
 
-    val syncedTabsOrSignInItem = BrowserMenuImageText(
-        label = syncItemTitle,
-        imageResource = R.drawable.ic_synced_tabs,
-        iconTintColorResource = primaryTextColor
-    ) {
-        onItemTapped.invoke(ToolbarMenu.Item.SyncedTabs)
+    val syncedTabsOrSignInItem = if (tabsTrayRewrite) {
+        // if synced tabs are being shown in tabs tray, show sync sign in here.
+        BrowserMenuImageText(
+            syncItemTitle,
+            R.drawable.ic_synced_tabs,
+            primaryTextColor
+        ) {
+            onItemTapped.invoke(ToolbarMenu.DefaultItem.SyncAccount)
+        }
+    } else {
+        // if synced tabs are not shown in tabs tray, they should be shown here.
+        BrowserMenuImageText(
+            context.getString(R.string.synced_tabs),
+            R.drawable.ic_synced_tabs,
+            primaryTextColor
+        ) {
+            onItemTapped.invoke(ToolbarMenu.DefaultItem.SyncedTabs)
+        }
     }
 
     val oldSyncedTabsItem = BrowserMenuImageText(
@@ -160,7 +172,7 @@ open class ToolbarMenuItems(
         imageResource = R.drawable.ic_synced_tabs,
         iconTintColorResource = primaryTextColor
     ) {
-        onItemTapped.invoke(ToolbarMenu.Item.SyncedTabs)
+        onItemTapped.invoke(ToolbarMenu.DefaultItem.SyncedTabs)
     }
 
     val findInPageItem = BrowserMenuImageText(
@@ -168,7 +180,7 @@ open class ToolbarMenuItems(
         imageResource = R.drawable.mozac_ic_search,
         iconTintColorResource = primaryTextColor
     ) {
-        onItemTapped.invoke(ToolbarMenu.Item.FindInPage)
+        onItemTapped.invoke(ToolbarMenu.DefaultItem.FindInPage)
     }
 
     val requestDesktopSiteItem = BrowserMenuImageSwitch(
@@ -178,7 +190,7 @@ open class ToolbarMenuItems(
             selectedSession?.content?.desktopMode ?: false
         }
     ) { checked ->
-        onItemTapped.invoke(ToolbarMenu.Item.RequestDesktop(checked))
+        onItemTapped.invoke(ToolbarMenu.DefaultItem.RequestDesktop(checked))
     }
 
     var customizeReaderView = BrowserMenuImageText(
@@ -186,7 +198,7 @@ open class ToolbarMenuItems(
         imageResource = R.drawable.ic_readermode_appearance,
         iconTintColorResource = primaryTextColor
     ) {
-        onItemTapped.invoke(ToolbarMenu.Item.CustomizeReaderView)
+        onItemTapped.invoke(ToolbarMenu.DefaultItem.CustomizeReaderView)
     }
 
     val openInAppItem = BrowserMenuHighlightableItem(
@@ -199,7 +211,7 @@ open class ToolbarMenuItems(
         ),
         isHighlighted = { !context.settings().openInAppOpened }
     ) {
-        onItemTapped.invoke(ToolbarMenu.Item.OpenInApp)
+        onItemTapped.invoke(ToolbarMenu.DefaultItem.OpenInApp)
     }
 
     val addToHomeScreenItem = BrowserMenuImageText(
@@ -208,7 +220,7 @@ open class ToolbarMenuItems(
         iconTintColorResource = primaryTextColor,
         isCollapsingMenuLimit = true
     ) {
-        onItemTapped.invoke(ToolbarMenu.Item.AddToHomeScreen)
+        onItemTapped.invoke(ToolbarMenu.DefaultItem.AddToHomeScreen)
     }
 
     val saveToCollectionItem = BrowserMenuImageText(
@@ -216,7 +228,7 @@ open class ToolbarMenuItems(
         imageResource = R.drawable.ic_tab_collection,
         iconTintColorResource = primaryTextColor
     ) {
-        onItemTapped.invoke(ToolbarMenu.Item.SaveToCollection)
+        onItemTapped.invoke(ToolbarMenu.DefaultItem.SaveToCollection)
     }
 
     val settingsItem = BrowserMenuHighlightableItem(
@@ -235,7 +247,7 @@ open class ToolbarMenuItems(
         ),
         isHighlighted = { hasAccountProblem }
     ) {
-        onItemTapped.invoke(ToolbarMenu.Item.Settings)
+        onItemTapped.invoke(ToolbarMenu.DefaultItem.Settings)
     }
 
     val addToTopSitesItem = BrowserMenuImageText(
@@ -243,7 +255,7 @@ open class ToolbarMenuItems(
         imageResource = R.drawable.ic_top_sites,
         iconTintColorResource = primaryTextColor
     ) {
-        onItemTapped.invoke(ToolbarMenu.Item.AddToTopSites)
+        onItemTapped.invoke(ToolbarMenu.DefaultItem.AddToTopSites)
     }
 
     val deleteDataOnQuitItem = BrowserMenuImageText(
@@ -251,7 +263,7 @@ open class ToolbarMenuItems(
         imageResource = R.drawable.ic_exit,
         iconTintColorResource = primaryTextColor
     ) {
-        onItemTapped.invoke(ToolbarMenu.Item.Quit)
+        onItemTapped.invoke(ToolbarMenu.DefaultItem.Quit)
     }
 
     val oldAddToHomescreenItem = BrowserMenuImageText(
@@ -259,7 +271,7 @@ open class ToolbarMenuItems(
         imageResource = R.drawable.ic_add_to_homescreen,
         iconTintColorResource = primaryTextColor
     ) {
-        onItemTapped.invoke(ToolbarMenu.Item.AddToHomeScreen)
+        onItemTapped.invoke(ToolbarMenu.DefaultItem.AddToHomeScreen)
     }
 
     val oldReaderViewAppearanceItem = BrowserMenuImageText(
@@ -267,6 +279,6 @@ open class ToolbarMenuItems(
         imageResource = R.drawable.ic_readermode_appearance,
         iconTintColorResource = primaryTextColor
     ) {
-        onItemTapped.invoke(ToolbarMenu.Item.CustomizeReaderView)
+        onItemTapped.invoke(ToolbarMenu.DefaultItem.CustomizeReaderView)
     }
 }

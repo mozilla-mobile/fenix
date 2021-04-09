@@ -39,7 +39,7 @@ interface BrowserToolbarViewInteractor {
     fun onBrowserToolbarPaste(text: String)
     fun onBrowserToolbarPasteAndGo(text: String)
     fun onBrowserToolbarClicked()
-    fun onBrowserToolbarMenuItemTapped(item: ToolbarMenu.Item)
+    fun onBrowserToolbarMenuItemTapped(item: ToolbarMenu.DefaultItem)
     fun onTabCounterClicked()
     fun onTabCounterMenuItemTapped(item: TabCounterMenu.Item)
     fun onScrolled(offset: Int)
@@ -279,10 +279,10 @@ class BrowserToolbarView(
     }
 
     @Suppress("ComplexCondition")
-    private fun ToolbarMenu.Item.performHapticIfNeeded(view: View) {
-        if (this is ToolbarMenu.Item.Reload && this.bypassCache ||
-            this is ToolbarMenu.Item.Back && this.viewHistory ||
-            this is ToolbarMenu.Item.Forward && this.viewHistory
+    private fun ToolbarMenu.DefaultItem.performHapticIfNeeded(view: View) {
+        if (this is ToolbarMenu.DefaultItem.Reload && this.bypassCache ||
+            this is ToolbarMenu.DefaultItem.Back && this.viewHistory ||
+            this is ToolbarMenu.DefaultItem.Forward && this.viewHistory
         ) {
             view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
         }

@@ -142,7 +142,7 @@ class DefaultBrowserToolbarMenuControllerTest {
     @Test
     fun handleToolbarBookmarkPressWithReaderModeInactive() = runBlockingTest {
         if (!FeatureFlags.toolbarMenuFeature) {
-            val item = ToolbarMenu.Item.Bookmark
+            val item = ToolbarMenu.DefaultItem.Bookmark
 
             val title = "Mozilla"
             val url = "https://mozilla.org"
@@ -165,7 +165,7 @@ class DefaultBrowserToolbarMenuControllerTest {
     @Test
     fun `IF reader mode is active WHEN bookmark menu item is pressed THEN menu item is handled`() = runBlockingTest {
         if (!FeatureFlags.toolbarMenuFeature) {
-            val item = ToolbarMenu.Item.Bookmark
+            val item = ToolbarMenu.DefaultItem.Bookmark
             val title = "Mozilla"
             val readerUrl = "moz-extension://1234"
             val readerTab = createTab(
@@ -195,7 +195,7 @@ class DefaultBrowserToolbarMenuControllerTest {
                 customTabSessionId = customTab.id
             )
 
-            val item = ToolbarMenu.Item.OpenInFenix
+            val item = ToolbarMenu.DefaultItem.OpenInFenix
 
             every { activity.startActivity(any()) } just Runs
             controller.handleToolbarItemInteraction(item)
@@ -210,7 +210,7 @@ class DefaultBrowserToolbarMenuControllerTest {
 
     @Test
     fun `WHEN reader mode menu item is pressed THEN handle appearance change`() = runBlockingTest {
-        val item = ToolbarMenu.Item.CustomizeReaderView
+        val item = ToolbarMenu.DefaultItem.CustomizeReaderView
 
         val controller = createController(scope = this, store = browserStore)
 
@@ -222,7 +222,7 @@ class DefaultBrowserToolbarMenuControllerTest {
 
     @Test
     fun `WHEN quit menu item is pressed THEN menu item is handled correctly`() = runBlockingTest {
-        val item = ToolbarMenu.Item.Quit
+        val item = ToolbarMenu.DefaultItem.Quit
         val testScope = this
 
         val controller = createController(scope = this, store = browserStore)
@@ -234,7 +234,7 @@ class DefaultBrowserToolbarMenuControllerTest {
 
     @Test
     fun `WHEN backwards nav menu item is pressed THEN the session navigates back with active session`() = runBlockingTest {
-        val item = ToolbarMenu.Item.Back(false)
+        val item = ToolbarMenu.DefaultItem.Back(false)
 
         val controller = createController(scope = this, store = browserStore)
         controller.handleToolbarItemInteraction(item)
@@ -245,7 +245,7 @@ class DefaultBrowserToolbarMenuControllerTest {
 
     @Test
     fun `WHEN backwards nav menu item is long pressed THEN the session navigates back with no active session`() = runBlockingTest {
-        val item = ToolbarMenu.Item.Back(true)
+        val item = ToolbarMenu.DefaultItem.Back(true)
 
         val controller = createController(scope = this, store = browserStore)
         controller.handleToolbarItemInteraction(item)
@@ -258,7 +258,7 @@ class DefaultBrowserToolbarMenuControllerTest {
 
     @Test
     fun `WHEN forward nav menu item is pressed THEN the session navigates forward to active session`() = runBlockingTest {
-        val item = ToolbarMenu.Item.Forward(false)
+        val item = ToolbarMenu.DefaultItem.Forward(false)
 
         val controller = createController(scope = this, store = browserStore)
         controller.handleToolbarItemInteraction(item)
@@ -269,7 +269,7 @@ class DefaultBrowserToolbarMenuControllerTest {
 
     @Test
     fun `WHEN forward nav menu item is long pressed THEN the browser navigates forward with no active session`() = runBlockingTest {
-        val item = ToolbarMenu.Item.Forward(true)
+        val item = ToolbarMenu.DefaultItem.Forward(true)
 
         val controller = createController(scope = this, store = browserStore)
         controller.handleToolbarItemInteraction(item)
@@ -282,7 +282,7 @@ class DefaultBrowserToolbarMenuControllerTest {
 
     @Test
     fun `WHEN reload nav menu item is pressed THEN the session reloads from cache`() = runBlockingTest {
-        val item = ToolbarMenu.Item.Reload(false)
+        val item = ToolbarMenu.DefaultItem.Reload(false)
 
         val controller = createController(scope = this, store = browserStore)
         controller.handleToolbarItemInteraction(item)
@@ -293,7 +293,7 @@ class DefaultBrowserToolbarMenuControllerTest {
 
     @Test
     fun `WHEN reload nav menu item is long pressed THEN the session reloads with no cache`() = runBlockingTest {
-        val item = ToolbarMenu.Item.Reload(true)
+        val item = ToolbarMenu.DefaultItem.Reload(true)
 
         val controller = createController(scope = this, store = browserStore)
         controller.handleToolbarItemInteraction(item)
@@ -309,7 +309,7 @@ class DefaultBrowserToolbarMenuControllerTest {
 
     @Test
     fun `WHEN stop nav menu item is pressed THEN the session stops loading`() = runBlockingTest {
-        val item = ToolbarMenu.Item.Stop
+        val item = ToolbarMenu.DefaultItem.Stop
 
         val controller = createController(scope = this, store = browserStore)
         controller.handleToolbarItemInteraction(item)
@@ -320,7 +320,7 @@ class DefaultBrowserToolbarMenuControllerTest {
 
     @Test
     fun `WHEN settings menu item is pressed THEN menu item is handled`() = runBlockingTest {
-        val item = ToolbarMenu.Item.Settings
+        val item = ToolbarMenu.DefaultItem.Settings
 
         val controller = createController(scope = this, store = browserStore)
         controller.handleToolbarItemInteraction(item)
@@ -333,7 +333,7 @@ class DefaultBrowserToolbarMenuControllerTest {
 
     @Test
     fun `WHEN bookmark menu item is pressed THEN navigate to bookmarks page`() = runBlockingTest {
-        val item = ToolbarMenu.Item.Bookmarks
+        val item = ToolbarMenu.DefaultItem.Bookmarks
 
         val controller = createController(scope = this, store = browserStore)
         controller.handleToolbarItemInteraction(item)
@@ -346,7 +346,7 @@ class DefaultBrowserToolbarMenuControllerTest {
 
     @Test
     fun `WHEN history menu item is pressed THEN navigate to history page`() = runBlockingTest {
-        val item = ToolbarMenu.Item.History
+        val item = ToolbarMenu.DefaultItem.History
 
         val controller = createController(scope = this, store = browserStore)
         controller.handleToolbarItemInteraction(item)
@@ -361,7 +361,7 @@ class DefaultBrowserToolbarMenuControllerTest {
     fun `WHEN request desktop menu item is toggled On THEN desktop site is requested for the session`() = runBlockingTest {
         val requestDesktopSiteUseCase: SessionUseCases.RequestDesktopSiteUseCase =
             mockk(relaxed = true)
-        val item = ToolbarMenu.Item.RequestDesktop(true)
+        val item = ToolbarMenu.DefaultItem.RequestDesktop(true)
 
         every { sessionUseCases.requestDesktopSite } returns requestDesktopSiteUseCase
 
@@ -381,7 +381,7 @@ class DefaultBrowserToolbarMenuControllerTest {
     fun `WHEN request desktop menu item is toggled Off THEN mobile site is requested for the session`() = runBlockingTest {
         val requestDesktopSiteUseCase: SessionUseCases.RequestDesktopSiteUseCase =
             mockk(relaxed = true)
-        val item = ToolbarMenu.Item.RequestDesktop(false)
+        val item = ToolbarMenu.DefaultItem.RequestDesktop(false)
 
         every { sessionUseCases.requestDesktopSite } returns requestDesktopSiteUseCase
 
@@ -399,7 +399,7 @@ class DefaultBrowserToolbarMenuControllerTest {
 
     @Test
     fun `WHEN Add To Top Sites menu item is pressed THEN add site AND show snackbar`() = runBlockingTest {
-        val item = ToolbarMenu.Item.AddToTopSites
+        val item = ToolbarMenu.DefaultItem.AddToTopSites
         val addPinnedSiteUseCase: TopSitesUseCases.AddPinnedSiteUseCase = mockk(relaxed = true)
 
         every { topSitesUseCase.addPinnedSites } returns addPinnedSiteUseCase
@@ -417,7 +417,7 @@ class DefaultBrowserToolbarMenuControllerTest {
 
     @Test
     fun `WHEN addon extensions menu item is pressed THEN navigate to addons manager`() = runBlockingTest {
-        val item = ToolbarMenu.Item.AddonsManager
+        val item = ToolbarMenu.DefaultItem.AddonsManager
 
         val controller = createController(scope = this, store = browserStore)
         controller.handleToolbarItemInteraction(item)
@@ -427,7 +427,7 @@ class DefaultBrowserToolbarMenuControllerTest {
 
     @Test
     fun `WHEN Add To Home Screen menu item is pressed THEN add site`() = runBlockingTest {
-        val item = ToolbarMenu.Item.AddToHomeScreen
+        val item = ToolbarMenu.DefaultItem.AddToHomeScreen
 
         val controller = createController(scope = this, store = browserStore)
         controller.handleToolbarItemInteraction(item)
@@ -437,7 +437,7 @@ class DefaultBrowserToolbarMenuControllerTest {
 
     @Test
     fun `IF reader mode is inactive WHEN share menu item is pressed THEN navigate to share screen`() = runBlockingTest {
-        val item = ToolbarMenu.Item.Share
+        val item = ToolbarMenu.DefaultItem.Share
         val title = "Mozilla"
         val url = "https://mozilla.org"
         val regularTab = createTab(
@@ -464,7 +464,7 @@ class DefaultBrowserToolbarMenuControllerTest {
 
     @Test
     fun `IF reader mode is active WHEN share menu item is pressed THEN navigate to share screen`() = runBlockingTest {
-        val item = ToolbarMenu.Item.Share
+        val item = ToolbarMenu.DefaultItem.Share
         val title = "Mozilla"
         val readerUrl = "moz-extension://1234"
         val readerTab = createTab(
@@ -491,7 +491,7 @@ class DefaultBrowserToolbarMenuControllerTest {
 
     @Test
     fun `WHEN Find In Page menu item is pressed THEN launch finder`() = runBlockingTest {
-        val item = ToolbarMenu.Item.FindInPage
+        val item = ToolbarMenu.DefaultItem.FindInPage
 
         val controller = createController(scope = this, store = browserStore)
         controller.handleToolbarItemInteraction(item)
@@ -502,7 +502,7 @@ class DefaultBrowserToolbarMenuControllerTest {
 
     @Test
     fun `IF one or more collection exists WHEN Save To Collection menu item is pressed THEN navigate to save collection page`() = runBlockingTest {
-        val item = ToolbarMenu.Item.SaveToCollection
+        val item = ToolbarMenu.DefaultItem.SaveToCollection
         val cachedTabCollections: List<TabCollection> = mockk(relaxed = true)
         every { tabCollectionStorage.cachedTabCollections } returns cachedTabCollections
 
@@ -530,7 +530,7 @@ class DefaultBrowserToolbarMenuControllerTest {
 
     @Test
     fun `IF no collection exists WHEN Save To Collection menu item is pressed THEN navigate to create collection page`() = runBlockingTest {
-        val item = ToolbarMenu.Item.SaveToCollection
+        val item = ToolbarMenu.DefaultItem.SaveToCollection
         val cachedTabCollectionsEmpty: List<TabCollection> = emptyList()
         every { tabCollectionStorage.cachedTabCollections } returns cachedTabCollectionsEmpty
 
@@ -555,7 +555,7 @@ class DefaultBrowserToolbarMenuControllerTest {
 
     @Test
     fun `WHEN New Tab menu item is pressed THEN navigate to a new tab home`() = runBlockingTest {
-        val item = ToolbarMenu.Item.NewTab
+        val item = ToolbarMenu.DefaultItem.NewTab
 
         val controller = createController(scope = this, store = browserStore)
 

@@ -31,7 +31,7 @@ open class BrowserInteractor(
         browserToolbarController.handleToolbarClick()
     }
 
-    override fun onBrowserToolbarMenuItemTapped(item: ToolbarMenu.Item) {
+    override fun onBrowserToolbarMenuItemTapped(item: ToolbarMenu.DefaultItem) {
         menuController.handleToolbarItemInteraction(item)
     }
 
