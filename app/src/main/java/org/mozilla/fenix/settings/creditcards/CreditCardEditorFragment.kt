@@ -5,7 +5,11 @@
 package org.mozilla.fenix.settings.creditcards
 
 import android.os.Bundle
-import android.view.*
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.View
+import android.view.WindowManager
+import android.view.MenuItem
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
