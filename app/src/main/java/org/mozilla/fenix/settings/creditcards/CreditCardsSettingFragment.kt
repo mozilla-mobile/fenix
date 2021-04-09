@@ -5,6 +5,7 @@
 package org.mozilla.fenix.settings.creditcards
 
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -22,12 +23,23 @@ import org.mozilla.fenix.settings.requirePreference
  */
 class CreditCardsSettingFragment : PreferenceFragmentCompat() {
 
+    //bool flag to decide whether to allow screen shots or not
+    private var isNextDestinationCreditCardEditor : Boolean = false
+
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.credit_cards_preferences, rootKey)
+
     }
 
     override fun onResume() {
         super.onResume()
+
+        isNextDestinationCreditCardEditor = false
+        //Prevents screenshot and screen capture on this screen
+        requireActivity().window.setFlags(
+            WindowManager.LayoutParams.FLAG_SECURE,
+            WindowManager.LayoutParams.FLAG_SECURE
+        )
 
         showToolbar(getString(R.string.preferences_credit_cards))
 
@@ -57,6 +69,7 @@ class CreditCardsSettingFragment : PreferenceFragmentCompat() {
     override fun onPreferenceTreeClick(preference: Preference): Boolean {
         when (preference.key) {
             getPreferenceKey(R.string.pref_key_credit_cards_add_credit_card) -> {
+                isNextDestinationCreditCardEditor = true
                 val directions =
                     CreditCardsSettingFragmentDirections.actionCreditCardsSettingFragmentToCreditCardEditorFragment()
                 findNavController().navigate(directions)
@@ -64,5 +77,20 @@ class CreditCardsSettingFragment : PreferenceFragmentCompat() {
         }
 
         return super.onPreferenceTreeClick(preference)
+    }
+
+    override fun onStop() {
+        removeFlagSecure()
+        super.onStop()
+    }
+
+    /**
+     * Checks var isNextDestinationCreditCardEditor to decide whether to remove or keep
+     * WindowManager.LayoutParams.FLAG_SECURE
+     */
+    private fun removeFlagSecure() {
+        if(!isNextDestinationCreditCardEditor) {
+            requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
+        }
     }
 }
