@@ -52,7 +52,7 @@ class CreditCardEditorFragment : Fragment(R.layout.fragment_credit_card_editor) 
     }
 
     override fun onResume() {
-        requireActivity().window.setFlags(
+        activity?.window?.setFlags(
             WindowManager.LayoutParams.FLAG_SECURE,
             WindowManager.LayoutParams.FLAG_SECURE)
         super.onResume()

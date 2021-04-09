@@ -35,7 +35,7 @@ class CreditCardsSettingFragment : PreferenceFragmentCompat() {
 
         isNextDestinationCreditCardEditor = false
         // Prevents screenshot and screen capture on this screen
-        requireActivity().window.setFlags(
+        activity?.window?.setFlags(
             WindowManager.LayoutParams.FLAG_SECURE,
             WindowManager.LayoutParams.FLAG_SECURE
         )
@@ -89,7 +89,7 @@ class CreditCardsSettingFragment : PreferenceFragmentCompat() {
      */
     private fun removeFlagSecure() {
         if (!isNextDestinationCreditCardEditor) {
-            requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
+            activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
         }
     }
 }
