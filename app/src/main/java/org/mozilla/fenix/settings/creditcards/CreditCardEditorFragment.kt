@@ -47,6 +47,13 @@ class CreditCardEditorFragment : Fragment(R.layout.fragment_credit_card_editor) 
         )
     }
 
+    override fun onResume() {
+        requireActivity().window.setFlags(
+            WindowManager.LayoutParams.FLAG_SECURE,
+            WindowManager.LayoutParams.FLAG_SECURE)
+        super.onResume()
+    }
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.credit_card_editor, menu)
     }
