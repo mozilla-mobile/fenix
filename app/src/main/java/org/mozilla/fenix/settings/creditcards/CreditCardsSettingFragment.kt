@@ -23,19 +23,18 @@ import org.mozilla.fenix.settings.requirePreference
  */
 class CreditCardsSettingFragment : PreferenceFragmentCompat() {
 
-    //bool flag to decide whether to allow screen shots or not
-    private var isNextDestinationCreditCardEditor : Boolean = false
+    // bool flag to decide whether to allow screen shots or not
+    private var isNextDestinationCreditCardEditor: Boolean = false
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.credit_cards_preferences, rootKey)
-
     }
 
     override fun onResume() {
         super.onResume()
 
         isNextDestinationCreditCardEditor = false
-        //Prevents screenshot and screen capture on this screen
+        // Prevents screenshot and screen capture on this screen
         requireActivity().window.setFlags(
             WindowManager.LayoutParams.FLAG_SECURE,
             WindowManager.LayoutParams.FLAG_SECURE
@@ -89,7 +88,7 @@ class CreditCardsSettingFragment : PreferenceFragmentCompat() {
      * WindowManager.LayoutParams.FLAG_SECURE
      */
     private fun removeFlagSecure() {
-        if(!isNextDestinationCreditCardEditor) {
+        if (!isNextDestinationCreditCardEditor) {
             requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
         }
     }
