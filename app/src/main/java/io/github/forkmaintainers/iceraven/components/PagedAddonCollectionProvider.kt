@@ -92,7 +92,7 @@ class PagedAddonCollectionProvider(
      * a connectivity problem or a timeout.
      */
     @Throws(IOException::class)
-    override suspend fun getAvailableAddons(allowCache: Boolean, readTimeoutInSeconds: Long?): List<Addon> {
+    override suspend fun getAvailableAddons(allowCache: Boolean, readTimeoutInSeconds: Long?, language: String?): List<Addon> {
         val cachedAddons = if (allowCache && !cacheExpired(context)) {
             readFromDiskCache()
         } else {
