@@ -61,7 +61,6 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
 
         customTabsIntegration.set(
             feature = CustomTabsIntegration(
-                sessionManager = requireComponents.core.sessionManager,
                 store = requireComponents.core.store,
                 useCases = requireComponents.useCases.customTabsUseCases,
                 toolbar = toolbar,
@@ -139,7 +138,7 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
                     customTabSessionId,
                     manifest,
                     WebAppSiteControlsBuilder(
-                        requireComponents.core.sessionManager,
+                        requireComponents.core.store,
                         requireComponents.useCases.sessionUseCases.reload,
                         customTabSessionId,
                         manifest

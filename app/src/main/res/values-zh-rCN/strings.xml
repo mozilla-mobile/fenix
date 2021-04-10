@@ -188,6 +188,8 @@
     <!-- Browser menu button to configure reader mode appearance e.g. the used font type and size -->
     <string name="browser_menu_read_appearance">字型调控</string>
 
+    <!-- Browser menu button to show reader view appearance controls e.g. the used font type and size -->
+    <string name="browser_menu_customize_reader_view">定制阅读器视图</string>
     <!-- Error message to show when the user tries to access a scheme not
         handled by the app (Ex: blob, tel etc) -->
     <string name="unknown_scheme_error_message">未知的 URL 规范，无法连接。</string>
@@ -225,6 +227,12 @@
     <string name="search_suggestions_onboarding_text">%s 会把您在地址栏中输入的任何内容告知默认搜索引擎。</string>
     <!-- Search suggestion onboarding hint Learn more link text -->
     <string name="search_suggestions_onboarding_learn_more_link">详细了解</string>
+
+    <!-- Search engine suggestion title text. The first parameter is the name of teh suggested engine-->
+    <string name="search_engine_suggestions_title">%s 上搜索</string>
+
+    <!-- Search engine suggestion description text -->
+    <string name="search_engine_suggestions_description">直接从地址栏搜索</string>
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
@@ -898,7 +906,7 @@
     <!-- Label that indicates that a permission must be blocked -->
     <string name="preference_option_phone_feature_blocked">阻止</string>
     <!-- Label that indicates that a permission must be allowed -->
-    <string name="preference_option_phone_feature_allowed">已允许</string>
+    <string name="preference_option_phone_feature_allowed">允许</string>
     <!--Label that indicates a permission is by the Android OS-->
     <string name="phone_feature_blocked_by_android">被 Android 阻止</string>
     <!-- Preference for showing a list of websites that the default configurations won't apply to them -->
@@ -908,16 +916,22 @@
     <!-- Summary of tracking protection preference if tracking protection is set to off -->
     <string name="tracking_protection_off">关闭</string>
 
-    <!-- Label that indicates that all video and audio autoplay is allowed -->
+    <!-- Label for global setting that indicates that all video and audio autoplay is allowed -->
     <string name="preference_option_autoplay_allowed2">允许音频和视频</string>
+    <!-- Label for site specific setting that indicates that all video and audio autoplay is allowed -->
+    <string name="quick_setting_option_autoplay_allowed">允许音频和视频</string>
     <!-- Label that indicates that video and audio autoplay is only allowed over Wi-Fi -->
     <string name="preference_option_autoplay_allowed_wifi_only2">在蜂窝数据下阻止音频和视频</string>
     <!-- Subtext that explains 'autoplay on Wi-Fi only' option -->
     <string name="preference_option_autoplay_allowed_wifi_subtext">将在 Wi-Fi 下播放音频和视频</string>
-    <!-- Label that indicates that video autoplay is allowed, but audio autoplay is blocked -->
+    <!-- Label for global setting that indicates that video autoplay is allowed, but audio autoplay is blocked -->
     <string name="preference_option_autoplay_block_audio2">仅阻止音频</string>
-    <!-- Label that indicates that all video and audio autoplay is blocked -->
+    <!-- Label for site specific setting that indicates that video autoplay is allowed, but audio autoplay is blocked -->
+    <string name="quick_setting_option_autoplay_block_audio">仅阻止音频</string>
+    <!-- Label for global setting that indicates that all video and audio autoplay is blocked -->
     <string name="preference_option_autoplay_blocked3">阻止音频和视频</string>
+    <!-- Label for site specific setting that indicates that all video and audio autoplay is blocked -->
+    <string name="quick_setting_option_autoplay_blocked">阻止音频和视频</string>
     <!-- Summary of delete browsing data on quit preference if it is set to on -->
     <string name="delete_browsing_data_quit_on">开启</string>
     <!-- Summary of delete browsing data on quit preference if it is set to off -->

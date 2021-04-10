@@ -309,6 +309,7 @@ class HomeScreenRobot {
         }
 
         fun openThreeDotMenu(interact: ThreeDotMenuMainRobot.() -> Unit): ThreeDotMenuMainRobot.Transition {
+            mDevice.waitNotNull(Until.findObject(By.res("$packageName:id/menuButton")), waitingTime)
             threeDotButton().perform(click())
 
             ThreeDotMenuMainRobot().interact()
@@ -485,8 +486,11 @@ private fun assertFocusedNavigationToolbar() =
     onView(allOf(withHint("Search or enter address")))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
-private fun assertHomeScreen() = onView(ViewMatchers.withResourceName("homeLayout"))
+private fun assertHomeScreen() {
+    mDevice.findObject(UiSelector().resourceId("$packageName:id/homeLayout")).waitForExists(waitingTime)
+    onView(ViewMatchers.withResourceName("homeLayout"))
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
 
 private fun assertHomeMenu() = onView(ViewMatchers.withResourceName("menuButton"))
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))

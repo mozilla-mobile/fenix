@@ -15,33 +15,17 @@ object FeatureFlags {
     const val pullToRefreshEnabled = true
 
     /**
-     * Shows Synced Tabs in the tabs tray.
-     *
-     * Tracking issue: https://github.com/mozilla-mobile/fenix/issues/13892
+     * Enables the Nimbus experiments library.
      */
-    val syncedTabsInTabsTray = Config.channel.isNightlyOrDebug
+    val nimbusExperiments = Config.channel.isNightlyOrDebug
 
     /**
-     * Enables the Nimbus experiments library, especially the settings toggle to opt-out of
-     * all experiments.
-     */
-    // IMPORTANT: Only turn this back on once the following issues are resolved:
-    // - https://github.com/mozilla-mobile/fenix/issues/17086: Calls to
-    // getExperimentBranch seem to block on updateExperiments causing a
-    // large performance regression loading the home screen.
-    // - https://github.com/mozilla-mobile/fenix/issues/17143: Despite
-    // having wrapped getExperimentBranch/withExperiments in a catch-all
-    // users are still experiencing crashes.
-    const val nimbusExperiments = false
-
-    /**
-     * Enables the new MediaSession API.
-     */
-    @Suppress("MayBeConst")
-    val newMediaSessionApi = true
-
-    /**
-     * Enables experimental WebAuthn support. This implementation should never reach release!
+     * Enables WebAuthn support.
      */
     val webAuthFeature = Config.channel.isNightlyOrDebug
+
+    /**
+     * Shows new three-dot toolbar menu design.
+     */
+    val toolbarMenuFeature = Config.channel.isDebug
 }

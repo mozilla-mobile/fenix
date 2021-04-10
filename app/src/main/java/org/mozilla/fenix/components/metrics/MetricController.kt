@@ -22,6 +22,8 @@ import mozilla.components.feature.findinpage.facts.FindInPageFacts
 import mozilla.components.feature.media.facts.MediaFacts
 import mozilla.components.feature.prompts.dialog.LoginDialogFacts
 import mozilla.components.feature.pwa.ProgressiveWebAppFacts
+import mozilla.components.feature.top.sites.facts.TopSitesFacts
+import mozilla.components.lib.dataprotect.SecurePrefsReliabilityExperiment
 import mozilla.components.support.base.Component
 import mozilla.components.support.base.facts.Action
 import mozilla.components.support.base.facts.Fact
@@ -75,6 +77,7 @@ internal class DebugMetricController(
 }
 
 @VisibleForTesting
+@Suppress("LargeClass")
 internal class ReleaseMetricController(
     private val services: List<MetricsService>,
     private val isDataTelemetryEnabled: () -> Boolean,
@@ -132,6 +135,13 @@ internal class ReleaseMetricController(
 
                 it.track(event)
             }
+    }
+
+    @VisibleForTesting
+    internal fun factToEvent(
+        fact: Fact
+    ): Event? {
+        return fact.toEvent()
     }
 
     private fun isInitialized(type: MetricServiceType): Boolean = initialized.contains(type)
@@ -241,6 +251,43 @@ internal class ReleaseMetricController(
         }
         Component.FEATURE_PWA to ProgressiveWebAppFacts.Items.INSTALL_SHORTCUT -> {
             Event.ProgressiveWebAppInstallAsShortcut
+        }
+        Component.FEATURE_TOP_SITES to TopSitesFacts.Items.COUNT -> {
+            value?.let {
+                var count = 0
+                try {
+                    count = it.toInt()
+                } catch (e: NumberFormatException) {
+                    // Do nothing
+                }
+
+                return if (count > 0) {
+                    Event.HaveTopSites
+                } else {
+                    Event.HaveNoTopSites
+                }
+            }
+            null
+        }
+        Component.LIB_DATAPROTECT to SecurePrefsReliabilityExperiment.Companion.Actions.EXPERIMENT -> {
+            Event.SecurePrefsExperimentFailure(metadata?.get("javaClass") as String? ?: "null")
+        }
+        Component.LIB_DATAPROTECT to SecurePrefsReliabilityExperiment.Companion.Actions.GET -> {
+            if (SecurePrefsReliabilityExperiment.Companion.Values.FAIL.v == value?.toInt()) {
+                Event.SecurePrefsGetFailure(metadata?.get("javaClass") as String? ?: "null")
+            } else {
+                Event.SecurePrefsGetSuccess(value ?: "")
+            }
+        }
+        Component.LIB_DATAPROTECT to SecurePrefsReliabilityExperiment.Companion.Actions.WRITE -> {
+            if (SecurePrefsReliabilityExperiment.Companion.Values.FAIL.v == value?.toInt()) {
+                Event.SecurePrefsWriteFailure(metadata?.get("javaClass") as String? ?: "null")
+            } else {
+                Event.SecurePrefsWriteSuccess
+            }
+        }
+        Component.LIB_DATAPROTECT to SecurePrefsReliabilityExperiment.Companion.Actions.RESET -> {
+            Event.SecurePrefsReset
         }
         else -> null
     }
