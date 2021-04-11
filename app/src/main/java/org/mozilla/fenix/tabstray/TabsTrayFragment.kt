@@ -37,6 +37,7 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.home.HomeScreenViewModel
 import org.mozilla.fenix.tabstray.browser.BrowserTrayInteractor
 import org.mozilla.fenix.tabstray.browser.DefaultBrowserTrayInteractor
+import org.mozilla.fenix.tabstray.browser.SelectionHandleBinding
 import org.mozilla.fenix.tabstray.browser.SelectionBannerBinding
 import org.mozilla.fenix.tabstray.browser.SelectionBannerBinding.VisibilityModifier
 import org.mozilla.fenix.tabstray.ext.showWithTheme
@@ -55,6 +56,7 @@ class TabsTrayFragment : AppCompatDialogFragment(), TabsTrayInteractor {
     private val tabCounterBinding = ViewBoundFeatureWrapper<TabCounterBinding>()
     private val floatingActionButtonBinding = ViewBoundFeatureWrapper<FloatingActionButtonBinding>()
     private val selectionBannerBinding = ViewBoundFeatureWrapper<SelectionBannerBinding>()
+    private val selectionHandleBinding = ViewBoundFeatureWrapper<SelectionHandleBinding>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -185,6 +187,16 @@ class TabsTrayFragment : AppCompatDialogFragment(), TabsTrayInteractor {
                     tab_tray_overflow,
                     new_tab_button
                 )
+            ),
+            owner = this,
+            view = view
+        )
+
+        selectionHandleBinding.set(
+            feature = SelectionHandleBinding(
+                store = tabsTrayStore,
+                handle = handle,
+                containerLayout = tab_wrapper
             ),
             owner = this,
             view = view
