@@ -22,6 +22,7 @@ import kotlinx.android.synthetic.main.tabs_tray_tab_counter2.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.plus
+import mozilla.components.concept.tabstray.Tab
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.NavGraphDirections
@@ -172,13 +173,19 @@ class TabsTrayFragment : AppCompatDialogFragment(), TabsTrayInteractor {
         }
     }
 
-    override fun tabRemoved(tabId: String) {
+    override fun onDeleteTab(tabId: String) {
         // TODO re-implement these methods
         // showUndoSnackbarForTab(sessionId)
         // removeIfNotLastTab(sessionId)
 
         // Temporary
         requireComponents.useCases.tabsUseCases.removeTab(tabId)
+    }
+
+    override fun onDeleteTabs(tabs: Collection<Tab>) {
+        tabs.forEach {
+            onDeleteTab(it.id)
+        }
     }
 
     private fun setupPager(
