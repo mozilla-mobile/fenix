@@ -20,7 +20,6 @@ import kotlinx.android.synthetic.main.component_tabstray2.view.*
 import kotlinx.android.synthetic.main.component_tabstray_fab.*
 import kotlinx.android.synthetic.main.tabs_tray_tab_counter2.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.plus
 import mozilla.components.concept.tabstray.Tab
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
@@ -35,6 +34,7 @@ import org.mozilla.fenix.tabstray.browser.BrowserTrayInteractor
 import org.mozilla.fenix.tabstray.browser.DefaultBrowserTrayInteractor
 import org.mozilla.fenix.tabstray.syncedtabs.SyncedTabsInteractor
 
+@Suppress("TooManyFunctions")
 class TabsTrayFragment : AppCompatDialogFragment(), TabsTrayInteractor {
 
     private var fabView: View? = null
@@ -74,7 +74,7 @@ class TabsTrayFragment : AppCompatDialogFragment(), TabsTrayInteractor {
         return containerView
     }
 
-    @ExperimentalCoroutinesApi
+    @Suppress("LongMethod")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val activity = activity as HomeActivity
@@ -101,11 +101,13 @@ class TabsTrayFragment : AppCompatDialogFragment(), TabsTrayInteractor {
 
         val navigationInteractor =
             DefaultNavigationInteractor(
+                tabsTrayStore = tabsTrayStore,
                 browserStore = requireComponents.core.store,
                 navController = findNavController(),
                 metrics = requireComponents.analytics.metrics,
                 dismissTabTray = ::dismissAllowingStateLoss,
-                dismissTabTrayAndNavigateHome = ::dismissTabTrayAndNavigateHome
+                dismissTabTrayAndNavigateHome = ::dismissTabTrayAndNavigateHome,
+                bookmarksUseCase = requireComponents.useCases.bookmarksUseCases
             )
 
         val syncedTabsTrayInteractor = SyncedTabsInteractor(
