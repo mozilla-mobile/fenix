@@ -32,6 +32,7 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.home.HomeScreenViewModel
 import org.mozilla.fenix.tabstray.browser.BrowserTrayInteractor
 import org.mozilla.fenix.tabstray.browser.DefaultBrowserTrayInteractor
+import org.mozilla.fenix.tabstray.ext.showWithTheme
 import org.mozilla.fenix.tabstray.syncedtabs.SyncedTabsInteractor
 
 @Suppress("TooManyFunctions")
