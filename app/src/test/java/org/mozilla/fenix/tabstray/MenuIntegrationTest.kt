@@ -21,7 +21,6 @@ class MenuIntegrationTest {
     @get:Rule
     val coroutinesTestRule = MainCoroutineRule(TestCoroutineDispatcher())
 
-
     private val captureMiddleware = CaptureActionsMiddleware<TabsTrayState, TabsTrayAction>()
     private val tabsTrayStore = TabsTrayStore(middlewares = listOf(captureMiddleware))
     private val interactor = mockk<NavigationInteractor>(relaxed = true)
