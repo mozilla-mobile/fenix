@@ -420,7 +420,7 @@ open class DefaultToolbarMenu(
 
     val syncTabsOrSignInItem =
         if (tabsTrayRewrite) {
-            // if synced tabs are being shown in tabs tray, show sync sign in here.
+            // If synced tabs are being shown in tabs tray, show sync sign in here.
             BrowserMenuImageText(
                 syncItemTitle,
                 R.drawable.ic_synced_tabs,
@@ -429,7 +429,7 @@ open class DefaultToolbarMenu(
                 onItemTapped.invoke(ToolbarMenu.Item.SyncAccount)
             }
         } else {
-            // if synced tabs are not shown in tabs tray, they should be shown here.
+            // If synced tabs are not shown in tabs tray, they should be shown here.
             BrowserMenuImageText(
                 context.getString(R.string.synced_tabs),
                 R.drawable.ic_synced_tabs,
