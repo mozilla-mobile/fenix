@@ -42,9 +42,6 @@ class HomeMenu(
     private val onHighlightPresent: (BrowserMenuHighlight) -> Unit = {}
 ) {
     sealed class Item {
-        data class Back(val viewHistory: Boolean) : Item()
-        data class Forward(val viewHistory: Boolean) : Item()
-
         object Bookmarks : Item()
         object History : Item()
         object Downloads : Item()
@@ -351,8 +348,7 @@ class HomeMenu(
             whatsNewItem,
             helpItem,
             settingsItem,
-            if (settings.shouldDeleteBrowsingDataOnQuit) quitItem else null,
-            if (shouldUseBottomToolbar) BrowserMenuDivider() else null,
+            if (settings.shouldDeleteBrowsingDataOnQuit) quitItem else null
         ).also { items ->
             items.getHighlight()?.let { onHighlightPresent(it) }
         }
