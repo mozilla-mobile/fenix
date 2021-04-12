@@ -19,7 +19,6 @@ import mozilla.components.browser.menu.item.BrowserMenuDivider
 import mozilla.components.browser.menu.item.BrowserMenuHighlightableItem
 import mozilla.components.browser.menu.item.BrowserMenuImageSwitch
 import mozilla.components.browser.menu.item.BrowserMenuImageText
-import mozilla.components.browser.menu.item.BrowserMenuItemToolbar
 import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.OAuthAccount
@@ -93,34 +92,6 @@ class HomeMenu(
         ) {
             onItemTapped.invoke(Item.Quit)
         }
-    }
-
-    val menuToolbar by lazy {
-        val back = BrowserMenuItemToolbar.TwoStateButton(
-            primaryImageResource = mozilla.components.ui.icons.R.drawable.mozac_ic_back,
-            primaryContentDescription = context.getString(R.string.browser_menu_back),
-            primaryImageTintResource = primaryTextColor,
-            isInPrimaryState = { false },
-            secondaryImageTintResource = ThemeManager.resolveAttribute(R.attr.disabled, context),
-            disableInSecondaryState = true,
-            longClickListener = { onItemTapped.invoke(Item.Back(viewHistory = true)) }
-        ) {
-            onItemTapped.invoke(Item.Back(viewHistory = false))
-        }
-
-        val forward = BrowserMenuItemToolbar.TwoStateButton(
-            primaryImageResource = mozilla.components.ui.icons.R.drawable.mozac_ic_forward,
-            primaryContentDescription = context.getString(R.string.browser_menu_forward),
-            primaryImageTintResource = primaryTextColor,
-            isInPrimaryState = { false },
-            secondaryImageTintResource = ThemeManager.resolveAttribute(R.attr.disabled, context),
-            disableInSecondaryState = true,
-            longClickListener = { onItemTapped.invoke(Item.Forward(viewHistory = true)) }
-        ) {
-            onItemTapped.invoke(Item.Forward(viewHistory = false))
-        }
-
-        BrowserMenuItemToolbar(listOf(back, forward))
     }
 
     private val oldCoreMenuItems by lazy {
@@ -368,7 +339,6 @@ class HomeMenu(
             }
 
         val menuItems = listOfNotNull(
-            if (shouldUseBottomToolbar) null else menuToolbar,
             bookmarksItem,
             historyItem,
             downloadsItem,
@@ -383,7 +353,6 @@ class HomeMenu(
             settingsItem,
             if (settings.shouldDeleteBrowsingDataOnQuit) quitItem else null,
             if (shouldUseBottomToolbar) BrowserMenuDivider() else null,
-            if (shouldUseBottomToolbar) menuToolbar else null
         ).also { items ->
             items.getHighlight()?.let { onHighlightPresent(it) }
         }
