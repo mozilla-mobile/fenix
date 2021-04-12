@@ -371,8 +371,12 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
                 store = store,
                 sessionId = customTabSessionId,
                 stub = view.stubFindInPage,
-                engineView = view.engineView,
-                toolbar = browserToolbarView.view
+                engineView = engineView,
+                toolbarInfo = FindInPageIntegration.ToolbarInfo(
+                    browserToolbarView.view,
+                    !context.settings().shouldUseFixedTopToolbar && context.settings().isDynamicToolbarEnabled,
+                    !context.settings().shouldUseBottomToolbar
+                )
             ),
             owner = this,
             view = view
@@ -851,12 +855,6 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
         context: Context,
         view: View
     ): List<ContextMenuCandidate>
-
-    @CallSuper
-    override fun onStart() {
-        super.onStart()
-        sitePermissionWifiIntegration.get()?.maybeAddWifiConnectedListener()
-    }
 
     @VisibleForTesting
     internal fun observeRestoreComplete(store: BrowserStore, navController: NavController) {

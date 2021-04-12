@@ -28,6 +28,8 @@ import org.mozilla.fenix.perf.StrictModeManager
 import org.mozilla.fenix.components.metrics.AppStartupTelemetry
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.perf.AppStartReasonProvider
+import org.mozilla.fenix.perf.StartupActivityStateProvider
 import org.mozilla.fenix.perf.lazyMonitored
 import org.mozilla.fenix.utils.ClipboardHandler
 import org.mozilla.fenix.utils.Mockable
@@ -68,7 +70,8 @@ class Components(private val context: Context) {
             core.sessionManager,
             core.store,
             core.webAppShortcutManager,
-            core.topSitesStorage
+            core.topSitesStorage,
+            core.bookmarksStorage
         )
     }
 
@@ -170,4 +173,7 @@ class Components(private val context: Context) {
             httpClient = core.client
         )
     }
+
+    val appStartReasonProvider by lazyMonitored { AppStartReasonProvider() }
+    val startupActivityStateProvider by lazyMonitored { StartupActivityStateProvider() }
 }

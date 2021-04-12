@@ -6,7 +6,6 @@ package org.mozilla.fenix.settings
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.role.RoleManager
 import android.content.ActivityNotFoundException
 import android.content.DialogInterface
 import android.content.Intent
@@ -25,6 +24,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.SwitchPreference
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.amo_collection_override_dialog.view.*
 import kotlinx.coroutines.CoroutineScope
@@ -49,6 +49,8 @@ import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.navigateToNotificationsSettings
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.ext.REQUEST_CODE_BROWSER_ROLE
+import org.mozilla.fenix.ext.openSetDefaultBrowserOption
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.settings.account.AccountUiView
 import org.mozilla.fenix.utils.Settings
@@ -91,7 +93,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
             scope = lifecycleScope,
             accountManager = requireComponents.backgroundServices.accountManager,
             httpClient = requireComponents.core.client,
-            updateFxASyncOverrideMenu = ::updateFxASyncOverrideMenu
+            updateFxASyncOverrideMenu = ::updateFxASyncOverrideMenu,
+            updateFxAAllowDomesticChinaServerMenu = :: updateFxAAllowDomesticChinaServerMenu
         )
 
         // Observe account changes to keep the UI up-to-date.
@@ -324,6 +327,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
             resources.getString(R.string.pref_key_secret_debug_info) -> {
                 SettingsFragmentDirections.actionSettingsFragmentToSecretInfoSettingsFragment()
             }
+            resources.getString(R.string.pref_key_nimbus_experiments) -> {
+                SettingsFragmentDirections.actionSettingsFragmentToNimbusExperimentsFragment()
+            }
             resources.getString(R.string.pref_key_override_amo_collection) -> {
                 val context = requireContext()
                 val dialogView = LayoutInflater.from(context).inflate(R.layout.amo_collection_override_dialog, null)
@@ -432,6 +438,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 getPreferenceKey(R.string.pref_key_credit_cards)
             )?.isVisible = creditCardsFeature
             findPreference<Preference>(
+                getPreferenceKey(R.string.pref_key_nimbus_experiments)
+            )?.isVisible = showSecretDebugMenuThisSession
+            findPreference<Preference>(
                 getPreferenceKey(R.string.pref_key_debug_settings)
             )?.isVisible = showSecretDebugMenuThisSession
             findPreference<Preference>(
@@ -440,6 +449,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
 
         setupAmoCollectionOverridePreference(requireContext().settings())
+        setupAllowDomesticChinaFxaServerPreference()
     }
 
     /**
@@ -448,44 +458,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
      * For <N -> Open sumo page to show user how to change default app.
      */
     private fun getClickListenerForMakeDefaultBrowser(): Preference.OnPreferenceClickListener {
-        return when {
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
-                Preference.OnPreferenceClickListener {
-                    requireContext().getSystemService(RoleManager::class.java).also {
-                        if (it.isRoleAvailable(RoleManager.ROLE_BROWSER) && !it.isRoleHeld(
-                                RoleManager.ROLE_BROWSER
-                            )
-                        ) {
-                            startActivityForResult(
-                                it.createRequestRoleIntent(RoleManager.ROLE_BROWSER),
-                                REQUEST_CODE_BROWSER_ROLE
-                            )
-                        } else {
-                            navigateUserToDefaultAppsSettings()
-                        }
-                    }
-                    true
-                }
-            }
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.N -> {
-                Preference.OnPreferenceClickListener {
-                    navigateUserToDefaultAppsSettings()
-                    true
-                }
-            }
-            else -> {
-                Preference.OnPreferenceClickListener {
-                    (activity as HomeActivity).openToBrowserAndLoad(
-                        searchTermOrURL = SupportUtils.getSumoURLForTopic(
-                            requireContext(),
-                            SupportUtils.SumoTopic.SET_AS_DEFAULT_BROWSER
-                        ),
-                        newTab = true,
-                        from = BrowserDirection.FromSettings
-                    )
-                    true
-                }
-            }
+        return Preference.OnPreferenceClickListener {
+            activity?.openSetDefaultBrowserOption()
+            true
         }
     }
 
@@ -495,13 +470,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
         // If the user made us the default browser, update the switch
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE_BROWSER_ROLE) {
             updateMakeDefaultBrowserPreference()
-        }
-    }
-
-    private fun navigateUserToDefaultAppsSettings() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            val intent = Intent(android.provider.Settings.ACTION_MANAGE_DEFAULT_APPS_SETTINGS)
-            startActivity(intent)
         }
     }
 
@@ -526,6 +494,22 @@ class SettingsFragment : PreferenceFragmentCompat() {
             scrollBarSize = 0
             delay(SCROLL_INDICATOR_DELAY)
             scrollBarSize = originalSize
+        }
+    }
+
+    private fun updateFxAAllowDomesticChinaServerMenu() {
+        val settings = requireContext().settings()
+        val preferenceAllowDomesticChinaServer =
+            findPreference<SwitchPreference>(getPreferenceKey(R.string.pref_key_allow_domestic_china_fxa_server))
+        // Only enable changes to these prefs when the user isn't connected to an account.
+        val enabled =
+            requireComponents.backgroundServices.accountManager.authenticatedAccount() == null
+        val checked = settings.allowDomesticChinaFxaServer
+        val visible = Config.channel.isMozillaOnline
+        preferenceAllowDomesticChinaServer?.apply {
+            isEnabled = enabled
+            isChecked = checked
+            isVisible = visible
         }
     }
 
@@ -567,8 +551,34 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
+    private fun setupAllowDomesticChinaFxaServerPreference() {
+        val allowDomesticChinaFxAServer = getPreferenceKey(R.string.pref_key_allow_domestic_china_fxa_server)
+        val preferenceAllowDomesticChinaFxAServer = findPreference<SwitchPreference>(allowDomesticChinaFxAServer)
+        val visible = Config.channel.isMozillaOnline
+
+        preferenceAllowDomesticChinaFxAServer?.apply {
+            isVisible = visible
+        }
+
+        if (visible) {
+            preferenceAllowDomesticChinaFxAServer?.onPreferenceChangeListener =
+                Preference.OnPreferenceChangeListener { preference, newValue ->
+                    preference.context.settings().preferences.edit()
+                        .putBoolean(preference.key, newValue as Boolean).apply()
+                    updateFxAAllowDomesticChinaServerMenu()
+                    Toast.makeText(
+                        context,
+                        getString(R.string.toast_override_fxa_sync_server_done),
+                        Toast.LENGTH_LONG
+                    ).show()
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        exitProcess(0)
+                    }, FXA_SYNC_OVERRIDE_EXIT_DELAY)
+                }
+        }
+    }
+
     companion object {
-        private const val REQUEST_CODE_BROWSER_ROLE = 1
         private const val SCROLL_INDICATOR_DELAY = 10L
         private const val FXA_SYNC_OVERRIDE_EXIT_DELAY = 2000L
         private const val AMO_COLLECTION_OVERRIDE_EXIT_DELAY = 3000L

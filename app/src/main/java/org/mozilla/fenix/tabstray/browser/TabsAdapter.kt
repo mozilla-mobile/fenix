@@ -13,19 +13,23 @@ import mozilla.components.concept.tabstray.TabsTray
 import mozilla.components.support.base.observer.Observable
 import mozilla.components.support.base.observer.ObserverRegistry
 
-// The previous tabs adapter was very restrictive and required Fenix to jump through
-// may hoops to access and update certain methods. An abstract adapter is easier to manage
-// for Android UI APIs.
-//
-// TODO Let's upstream this to AC with tests.
-abstract class TabsAdapter(
+/**
+ * RecyclerView adapter implementation to display a list/grid of tabs.
+ *
+ * The previous tabs adapter was very restrictive and required Fenix to jump through
+ * may hoops to access and update certain methods. An abstract adapter is easier to manage
+ * for Android UI APIs.
+ *
+ * TODO Let's upstream this to AC with tests.
+ *
+ * @param delegate TabsTray.Observer registry to allow `TabsAdapter` to conform to `Observable<TabsTray.Observer>`.
+ */
+abstract class TabsAdapter<T : TabViewHolder>(
     delegate: Observable<TabsTray.Observer> = ObserverRegistry()
-) : RecyclerView.Adapter<TabViewHolder>(), TabsTray, Observable<TabsTray.Observer> by delegate {
-    private var tabs: Tabs? = null
+) : RecyclerView.Adapter<T>(), TabsTray, Observable<TabsTray.Observer> by delegate {
 
-    var styling: TabsTrayStyling = TabsTrayStyling()
-
-    override fun getItemCount(): Int = tabs?.list?.size ?: 0
+    protected var tabs: Tabs? = null
+    protected var styling: TabsTrayStyling = TabsTrayStyling()
 
     @CallSuper
     override fun updateTabs(tabs: Tabs) {
@@ -35,11 +39,13 @@ abstract class TabsAdapter(
     }
 
     @CallSuper
-    override fun onBindViewHolder(holder: TabViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: T, position: Int) {
         val tabs = tabs ?: return
 
         holder.bind(tabs.list[position], isTabSelected(tabs, position), styling, this)
     }
+
+    override fun getItemCount(): Int = tabs?.list?.size ?: 0
 
     final override fun isTabSelected(tabs: Tabs, position: Int): Boolean =
         tabs.selectedIndex == position

@@ -88,28 +88,8 @@ class NavigationToolbarTest {
         navigationToolbar {
         }.openThreeDotMenu {
             verifyThreeDotMenuExists()
-            verifyForwardButton()
         }.goForward {
             verifyUrl(nextWebPage.url.toString())
-        }
-    }
-
-    @Test
-    fun refreshPageTest() {
-        val refreshWebPage = TestAssetHelper.getRefreshAsset(mockWebServer)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(refreshWebPage.url) {
-            mDevice.waitForIdle()
-        }
-
-        // Use refresh from the three-dot menu
-        navigationToolbar {
-        }.openThreeDotMenu {
-            verifyThreeDotMenuExists()
-            verifyRefreshButton()
-        }.refreshPage {
-            verifyPageContent("REFRESHED")
         }
     }
 

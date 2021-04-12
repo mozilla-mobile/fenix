@@ -19,10 +19,6 @@
     <string name="no_open_tabs_description">Your open tabs will be shown here.</string>
     <!-- No Private Tabs Message Description -->
     <string name="no_private_tabs_description">Your private tabs will be shown here.</string>
-    <!-- Default title for pinned Baidu top site that links to Baidu home page  -->
-    <string name="default_top_site_baidu">Baidu</string>
-    <!-- Default title for pinned JD top site that links to JD home page  -->
-    <string name="default_top_site_jd">JD</string>
     <!-- Message announced to the user when tab tray is selected with 1 tab -->
     <string name="open_tab_tray_single">1 open tab. Tap to switch tabs.</string>
     <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
@@ -179,6 +175,11 @@
     <string name="browser_menu_read_appearance">Appearance</string>
     <!-- Browser menu button to show reader view appearance controls e.g. the used font type and size -->
     <string name="browser_menu_customize_reader_view">Customize reader view</string>
+    <!-- Browser menu label for adding a bookmark -->
+    <string name="browser_menu_add">Add</string>
+    <!-- Browser menu label for editing a bookmark -->
+    <string name="browser_menu_edit">Edit</string>
+
     <!-- Error message to show when the user tries to access a scheme not
         handled by the app (Ex: blob, tel etc) -->
     <string name="unknown_scheme_error_message">Unable to connect. Unrecognizable URL scheme.</string>
@@ -591,12 +592,16 @@
     <string name="tabs_header_private_title">Private session</string>
     <!-- Title for the list of tabs in the current private session -->
     <string name="tabs_header_private_tabs_title">Private tabs</string>
+    <!-- Title for the list of tabs in the synced tabs -->
+    <string name="tabs_header_synced_tabs_title">Synced tabs</string>
     <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
     <string name="add_tab">Add tab</string>
     <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
     <string name="add_private_tab">Add private tab</string>
     <!-- Text for the new tab button to indicate adding a new private tab in the tab -->
     <string name="tab_drawer_fab_content">Private</string>
+    <!-- Text for the new tab button to indicate syncing command on the synced tabs page -->
+    <string name="tab_drawer_fab_sync">Sync</string>
     <!-- Text shown as the title of the open tab tray -->
     <string name="tab_tray_title">Open Tabs</string>
     <!-- Text shown in the menu for saving tabs to a collection -->
@@ -953,6 +958,10 @@
     <string name="share_link_all_apps_subheader">All actions</string>
     <!-- Sub-header in the dialog to share a link to an app from the most-recent sorted list -->
     <string name="share_link_recent_apps_subheader">Recently used</string>
+    <!-- An string shown when an account is signed in where %1$s is a placeholder for the email-->
+    <string name="sync_signed_as">Signed in as %1$s</string>
+    <!-- An option from the three dot menu to into sync -->
+    <string name="sync_menu_sign_in">Sign in to sync</string>
     <!-- An option from the share dialog to sign into sync -->
     <string name="sync_sign_in">Sign in to Sync</string>
     <!-- An option from the share dialog to send link to all other sync devices -->
@@ -1151,7 +1160,7 @@
     <string name="onboarding_whats_new_description">Have questions about the redesigned %s? Want to know what’s changed?</string>
     <!-- text for underlined clickable link that is part of "what's new" onboarding card description that links to an FAQ -->
     <string name="onboarding_whats_new_description_linktext">Get answers here</string>
-    <!-- text for the Firefox account onboarding sign in card header -->
+    <!-- text for the Firefox account onboarding sign in card header. The word "Firefox" should not be translated -->
     <string name="onboarding_account_sign_in_header_1">Sync Firefox between devices</string>
     <!-- Text for the button to learn more about signing in to your Firefox account -->
     <string name="onboarding_manual_sign_in_description">Bring bookmarks, history, and passwords to Firefox on this device.</string>
@@ -1184,7 +1193,7 @@
     <!-- text for tracking protection radio button option for strict level of blocking -->
     <string name="onboarding_tracking_protection_strict_option">Strict</string>
     <!-- text for strict blocking option button description -->
-    <string name="onboarding_tracking_protection_strict_button_description_3">Blocks more trackers so pages load faster, but some on-page functionally may break.</string>
+    <string name="onboarding_tracking_protection_strict_button_description_3">Blocks more trackers so pages load faster, but some on-page functionality may break.</string>
     <!-- text for the toolbar position card header  -->
     <string name="onboarding_toolbar_placement_header_1">Pick your toolbar placement</string>
     <!-- text for the toolbar position card description -->
@@ -1276,7 +1285,7 @@
     <!-- Preference for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict">Strict</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_description_3">Blocks more trackers so pages load faster, but some on-page functionally may break.</string>
+    <string name="preference_enhanced_tracking_protection_strict_description_3">Blocks more trackers so pages load faster, but some on-page functionality may break.</string>
     <!--  Accessibility text for the Strict protection information icon  -->
     <string name="preference_enhanced_tracking_protection_strict_info_button">What’s blocked by strict tracking protection</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
@@ -1517,6 +1526,28 @@
     <string name="preferences_credit_cards_sync_cards_across_devices">Sync cards across devices</string>
     <!-- Preference option for adding a credit card -->
     <string name="preferences_credit_cards_add_credit_card">Add credit card</string>
+    <!-- Preference option for managing saved credit cards -->
+    <string name="preferences_credit_cards_manage_saved_cards">Manage saved cards</string>
+    <!-- Title of the "Add card" screen -->
+    <string name="credit_cards_add_card">Add card</string>
+    <!-- The header for the card number of a credit card -->
+    <string name="credit_cards_card_number">Card Number</string>
+    <!-- The header for the expiration date of a credit card -->
+    <string name="credit_cards_expiration_date">Expiration Date</string>
+    <!-- The header for the name on the credit card -->
+    <string name="credit_cards_name_on_card">Name on Card</string>
+    <!-- The header for the nickname for a credit card -->
+    <string name="credit_cards_card_nickname">Card Nickname</string>
+    <!-- The text for the "Delete card" button for deleting a credit card -->
+    <string name="credit_cards_delete_card_button">Delete card</string>
+    <!-- The title for the "Save" menu item for saving a credit card -->
+    <string name="credit_cards_menu_save">Save</string>
+    <!-- The text for the "Save" button for saving a credit card -->
+    <string name="credit_cards_save_button">Save</string>
+    <!-- The text for the "Cancel" button for cancelling adding or updating a credit card -->
+    <string name="credit_cards_cancel_button">Cancel</string>
+    <!-- Title of the "Saved cards" screen -->
+    <string name="credit_cards_saved_cards">Saved cards</string>
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Add search engine</string>

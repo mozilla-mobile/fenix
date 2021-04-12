@@ -47,6 +47,8 @@
     <string name="pref_key_account" translatable="false">pref_key_account</string>
     <string name="pref_key_sign_in" translatable="false">pref_key_sign_in</string>
     <string name="pref_key_account_auth_error" translatable="false">pref_key_account_auth_error</string>
+    <string name="pref_key_allow_domestic_china_fxa_server" translatable="false">pref_key_allow_domestic_china_fxa_server</string>
+    <string name="pref_key_have_read_fxa_account_json" translatable="false">pref_key_have_read_fxa_account_json</string>
     <string name="pref_key_override_fxa_server" translatable="false">pref_key_override_fxa_server</string>
     <string name="pref_key_override_sync_tokenserver" translatable="false">pref_key_override_sync_tokenserver</string>
     <string name="pref_key_private_mode" translatable="false">pref_key_private_mode</string>
@@ -177,6 +179,8 @@
     <string name="pref_key_credit_cards_sync_cards_across_devices" translatable="false">pref_key_credit_cards_sync_cards_across_devices</string>
     <!-- Key for the "Add credit card" preference in the "Credit cards" fragment -->
     <string name="pref_key_credit_cards_add_credit_card" translatable="false">pref_key_credit_cards_add_credit_card</string>
+    <!-- Key for the "Manage saved cards" preference in the "Credit cards" fragment -->
+    <string name="pref_key_credit_cards_manage_saved_cards" translatable="false">pref_key_credit_cards_manage_saved_cards</string>
 
     <!-- Privacy Settings -->
     <string name="pref_key_open_links_in_a_private_tab" translatable="false">pref_key_open_links_in_a_private_tab</string>
@@ -257,6 +261,8 @@
 
     <string name="pref_key_return_to_browser" translatable="false">pref_key_return_to_browser</string>
 
+    <string name="pref_key_open_next_tab_desktop_mode" translatable="false">pref_key_open_next_tab_desktop_mode</string>
+
     <!-- Secret Info Setting Keys -->
     <string name="pref_key_secret_debug_info" translatable="false">pref_key_secret_debug_info</string>
     <string name="pref_key_leanplum_user_id" translatable="false">pref_key_leanplum_user_id</string>
@@ -267,4 +273,5 @@
     <!-- Secret Settings -->
     <string name="pref_key_show_credit_cards_feature" translatable="false">pref_key_show_credit_cards_feature</string>
     <string name="pref_key_show_address_feature" translatable="false">pref_key_show_address_feature</string>
+    <string name="pref_key_nimbus_experiments" translatable="false">pref_key_nimbus_experiments</string>
 </resources>

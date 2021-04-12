@@ -41,6 +41,7 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.navigateSafe
+import org.mozilla.fenix.ext.openSetDefaultBrowserOption
 import org.mozilla.fenix.settings.deletebrowsingdata.deleteAndQuit
 import org.mozilla.fenix.utils.Do
 import org.mozilla.fenix.utils.Settings
@@ -128,6 +129,18 @@ class DefaultBrowserToolbarMenuController(
                     activity.finishAndRemoveTask()
                 }
             }
+            // todo === End ===
+            is ToolbarMenu.Item.OpenInApp -> {
+                settings.openInAppOpened = true
+
+                val appLinksUseCases = activity.components.useCases.appLinksUseCases
+                val getRedirect = appLinksUseCases.appLinkRedirect
+                currentSession?.let {
+                    val redirect = getRedirect.invoke(it.content.url)
+                    redirect.appIntent?.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    appLinksUseCases.openAppLink.invoke(redirect.appIntent)
+                }
+            }
             is ToolbarMenu.Item.Quit -> {
                 // We need to show the snackbar while the browsing data is deleting (if "Delete
                 // browsing data on quit" is activated). After the deletion is over, the snackbar
@@ -147,19 +160,6 @@ class DefaultBrowserToolbarMenuController(
                 readerModeController.showControls()
                 metrics.track(Event.ReaderModeAppearanceOpened)
             }
-            is ToolbarMenu.Item.OpenInApp -> {
-                settings.openInAppOpened = true
-
-                val appLinksUseCases = activity.components.useCases.appLinksUseCases
-                val getRedirect = appLinksUseCases.appLinkRedirect
-                currentSession?.let {
-                    val redirect = getRedirect.invoke(it.content.url)
-                    redirect.appIntent?.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                    appLinksUseCases.openAppLink.invoke(redirect.appIntent)
-                }
-            }
-            // todo === End ===
-
             is ToolbarMenu.Item.Back -> {
                 if (item.viewHistory) {
                     navController.navigate(
@@ -339,6 +339,9 @@ class DefaultBrowserToolbarMenuController(
                     BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = true)
                 )
             }
+            is ToolbarMenu.Item.SetDefaultBrowser -> {
+                activity.openSetDefaultBrowserOption()
+            }
         }
     }
 
@@ -388,6 +391,7 @@ class DefaultBrowserToolbarMenuController(
             is ToolbarMenu.Item.History -> Event.BrowserMenuItemTapped.Item.HISTORY
             is ToolbarMenu.Item.Downloads -> Event.BrowserMenuItemTapped.Item.DOWNLOADS
             is ToolbarMenu.Item.NewTab -> Event.BrowserMenuItemTapped.Item.NEW_TAB
+            is ToolbarMenu.Item.SetDefaultBrowser -> Event.BrowserMenuItemTapped.Item.SET_DEFAULT_BROWSER
         }
 
         metrics.track(Event.BrowserMenuItemTapped(eventItem))

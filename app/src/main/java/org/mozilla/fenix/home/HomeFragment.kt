@@ -252,6 +252,7 @@ class HomeFragment : Fragment() {
                 restoreUseCase = components.useCases.tabsUseCases.restore,
                 reloadUrlUseCase = components.useCases.sessionUseCases.reload,
                 selectTabUseCase = components.useCases.tabsUseCases.selectTab,
+                requestDesktopSiteUseCase = components.useCases.sessionUseCases.requestDesktopSite,
                 fragmentStore = homeFragmentStore,
                 navController = findNavController(),
                 viewLifecycleScope = viewLifecycleOwner.lifecycleScope,
@@ -778,7 +779,7 @@ class HomeFragment : Fragment() {
                             HomeFragmentDirections.actionGlobalSettingsFragment()
                         )
                     }
-                    HomeMenu.Item.SyncedTabs -> {
+                    HomeMenu.Item.SyncTabs -> {
                         hideOnboardingIfNeeded()
                         nav(
                             R.id.homeFragment,
@@ -841,18 +842,21 @@ class HomeFragment : Fragment() {
                             }
                         )
                     }
-                    HomeMenu.Item.Sync -> {
+                    HomeMenu.Item.ReconnectSync -> {
                         hideOnboardingIfNeeded()
                         nav(
                             R.id.homeFragment,
                             HomeFragmentDirections.actionGlobalAccountProblemFragment()
                         )
                     }
-                    HomeMenu.Item.AddonsManager -> {
+                    HomeMenu.Item.Extensions -> {
                         nav(
                             R.id.homeFragment,
                             HomeFragmentDirections.actionGlobalAddonsManagementFragment()
                         )
+                    }
+                    is HomeMenu.Item.DesktopMode -> {
+                        context.settings().openNextTabInDesktopMode = it.checked
                     }
                 }
             },

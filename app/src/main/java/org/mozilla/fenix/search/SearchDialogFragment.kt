@@ -168,20 +168,22 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             )
         )
 
+        val fromHomeFragment =
+            findNavController().previousBackStackEntry?.destination?.id == R.id.homeFragment
+
         toolbarView = ToolbarView(
             requireContext(),
             interactor,
             historyStorageProvider(),
             isPrivate,
             view.toolbar,
-            requireComponents.core.engine
+            requireComponents.core.engine,
+            fromHomeFragment
         )
 
         val awesomeBar = view.awesome_bar
         awesomeBar.customizeForBottomToolbar = requireContext().settings().shouldUseBottomToolbar
 
-        val fromHomeFragment =
-            findNavController().previousBackStackEntry?.destination?.id == R.id.homeFragment
         awesomeBarView = AwesomeBarView(
             activity,
             interactor,
@@ -270,6 +272,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         }
 
         fill_link_from_clipboard.setOnClickListener {
+            requireComponents.analytics.metrics.track(Event.ClipboardSuggestionClicked)
             view.hideKeyboard()
             toolbarView.view.clearFocus()
             (activity as HomeActivity)
