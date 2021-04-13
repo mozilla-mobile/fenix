@@ -25,7 +25,7 @@
         app:layout_constraintWidth_percent="0.1" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/infoBanner"
+        android:id="@+id/info_banner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/foundation_normal_theme"
@@ -47,7 +47,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/infoBanner" />
+        app:layout_constraintTop_toBottomOf="@id/info_banner" />
 
     <View
         android:id="@+id/topBar"
@@ -162,7 +162,7 @@
         android:background="@color/tab_tray_item_divider_normal_theme"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/infoBanner" />
+        app:layout_constraintTop_toBottomOf="@+id/info_banner" />
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/tabsTray"

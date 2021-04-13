@@ -43,7 +43,7 @@ import org.mozilla.fenix.tabstray.browser.SelectionBannerBinding.VisibilityModif
 import org.mozilla.fenix.tabstray.ext.showWithTheme
 import org.mozilla.fenix.tabstray.syncedtabs.SyncedTabsInteractor
 
-@Suppress("TooManyFunctions")
+@Suppress("TooManyFunctions", "LargeClass")
 class TabsTrayFragment : AppCompatDialogFragment(), TabsTrayInteractor {
 
     private var fabView: View? = null
@@ -57,6 +57,7 @@ class TabsTrayFragment : AppCompatDialogFragment(), TabsTrayInteractor {
     private val floatingActionButtonBinding = ViewBoundFeatureWrapper<FloatingActionButtonBinding>()
     private val selectionBannerBinding = ViewBoundFeatureWrapper<SelectionBannerBinding>()
     private val selectionHandleBinding = ViewBoundFeatureWrapper<SelectionHandleBinding>()
+    private val tabsTrayCtaBinding = ViewBoundFeatureWrapper<TabsTrayInfoBannerBinding>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,11 +91,22 @@ class TabsTrayFragment : AppCompatDialogFragment(), TabsTrayInteractor {
         super.onViewCreated(view, savedInstanceState)
         val activity = activity as HomeActivity
 
+        val navigationInteractor =
+            DefaultNavigationInteractor(
+                tabsTrayStore = tabsTrayStore,
+                browserStore = requireComponents.core.store,
+                navController = findNavController(),
+                metrics = requireComponents.analytics.metrics,
+                dismissTabTray = ::dismissAllowingStateLoss,
+                dismissTabTrayAndNavigateHome = ::dismissTabTrayAndNavigateHome,
+                bookmarksUseCase = requireComponents.useCases.bookmarksUseCases
+            )
+
         tabsTrayController = DefaultTabsTrayController(
             store = tabsTrayStore,
             browsingModeManager = activity.browsingModeManager,
             navController = findNavController(),
-            dismissTabTray = ::dismissAllowingStateLoss,
+            navigationInteractor = navigationInteractor,
             profiler = requireComponents.core.engine.profiler,
             accountManager = requireComponents.backgroundServices.accountManager,
             metrics = requireComponents.analytics.metrics,
@@ -110,17 +122,6 @@ class TabsTrayFragment : AppCompatDialogFragment(), TabsTrayInteractor {
             requireComponents.analytics.metrics
         )
 
-        val navigationInteractor =
-            DefaultNavigationInteractor(
-                tabsTrayStore = tabsTrayStore,
-                browserStore = requireComponents.core.store,
-                navController = findNavController(),
-                metrics = requireComponents.analytics.metrics,
-                dismissTabTray = ::dismissAllowingStateLoss,
-                dismissTabTrayAndNavigateHome = ::dismissTabTrayAndNavigateHome,
-                bookmarksUseCase = requireComponents.useCases.bookmarksUseCases
-            )
-
         val syncedTabsTrayInteractor = SyncedTabsInteractor(
             requireComponents.analytics.metrics,
             requireActivity() as HomeActivity,
@@ -135,6 +136,27 @@ class TabsTrayFragment : AppCompatDialogFragment(), TabsTrayInteractor {
             this,
             browserTrayInteractor,
             syncedTabsTrayInteractor
+        )
+
+        behavior.addBottomSheetCallback(
+            TraySheetBehaviorCallback(
+                behavior,
+                navigationInteractor,
+                requireComponents.analytics.metrics
+            )
+        )
+
+        tabsTrayCtaBinding.set(
+            feature = TabsTrayInfoBannerBinding(
+                context = view.context,
+                store = requireComponents.core.store,
+                infoBannerView = view.info_banner,
+                settings = requireComponents.settings,
+                navigationInteractor = navigationInteractor,
+                metrics = requireComponents.analytics.metrics
+            ),
+            owner = this,
+            view = view
         )
 
         tabLayoutMediator.set(
