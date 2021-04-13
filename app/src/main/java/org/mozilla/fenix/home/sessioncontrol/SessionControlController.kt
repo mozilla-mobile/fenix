@@ -53,120 +53,122 @@ import mozilla.components.feature.tab.collections.Tab as ComponentTab
  */
 @Suppress("TooManyFunctions")
 interface SessionControlController {
-    /**
-     * @see [CollectionInteractor.onCollectionAddTabTapped]
-     */
+
     fun handleCollectionAddTabTapped(collection: TabCollection)
 
     /**
-     * @see [CollectionInteractor.onCollectionOpenTabClicked]
+     * @see [CollectionInteractor.onCollectionAddTabTapped]
      */
     fun handleCollectionOpenTabClicked(tab: ComponentTab)
 
     /**
-     * @see [CollectionInteractor.onCollectionOpenTabsTapped]
+     * @see [CollectionInteractor.onCollectionOpenTabClicked]
      */
     fun handleCollectionOpenTabsTapped(collection: TabCollection)
 
     /**
-     * @see [CollectionInteractor.onCollectionRemoveTab]
+     * @see [CollectionInteractor.onCollectionOpenTabsTapped]
      */
     fun handleCollectionRemoveTab(collection: TabCollection, tab: ComponentTab, wasSwiped: Boolean)
 
     /**
-     * @see [CollectionInteractor.onCollectionShareTabsClicked]
+     * @see [CollectionInteractor.onCollectionRemoveTab]
      */
     fun handleCollectionShareTabsClicked(collection: TabCollection)
 
     /**
-     * @see [CollectionInteractor.onDeleteCollectionTapped]
+     * @see [CollectionInteractor.onCollectionShareTabsClicked]
      */
     fun handleDeleteCollectionTapped(collection: TabCollection)
 
     /**
-     * @see [TopSiteInteractor.onOpenInPrivateTabClicked]
+     * @see [CollectionInteractor.onDeleteCollectionTapped]
      */
     fun handleOpenInPrivateTabClicked(topSite: TopSite)
 
     /**
-     * @see [TabSessionInteractor.onPrivateBrowsingLearnMoreClicked]
+     * @see [TopSiteInteractor.onOpenInPrivateTabClicked]
      */
     fun handlePrivateBrowsingLearnMoreClicked()
 
     /**
-     * @see [TopSiteInteractor.onRenameTopSiteClicked]
+     * @see [TabSessionInteractor.onPrivateBrowsingLearnMoreClicked]
      */
     fun handleRenameTopSiteClicked(topSite: TopSite)
 
     /**
-     * @see [TopSiteInteractor.onRemoveTopSiteClicked]
+     * @see [TopSiteInteractor.onRenameTopSiteClicked]
      */
     fun handleRemoveTopSiteClicked(topSite: TopSite)
 
     /**
-     * @see [CollectionInteractor.onRenameCollectionTapped]
+     * @see [TopSiteInteractor.onRemoveTopSiteClicked]
      */
     fun handleRenameCollectionTapped(collection: TabCollection)
 
     /**
-     * @see [TopSiteInteractor.onSelectTopSite]
+     * @see [CollectionInteractor.onRenameCollectionTapped]
      */
     fun handleSelectTopSite(url: String, type: TopSite.Type)
 
     /**
-     * @see [OnboardingInteractor.onStartBrowsingClicked]
+     * @see [TopSiteInteractor.onSelectTopSite]
      */
     fun handleStartBrowsingClicked()
 
     /**
-     * @see [OnboardingInteractor.onOpenSettingsClicked]
+     * @see [OnboardingInteractor.onStartBrowsingClicked]
      */
     fun handleOpenSettingsClicked()
 
     /**
-     * @see [OnboardingInteractor.onWhatsNewGetAnswersClicked]
+     * @see [OnboardingInteractor.onOpenSettingsClicked]
      */
     fun handleWhatsNewGetAnswersClicked()
 
     /**
-     * @see [OnboardingInteractor.onReadPrivacyNoticeClicked]
+     * @see [OnboardingInteractor.onWhatsNewGetAnswersClicked]
      */
     fun handleReadPrivacyNoticeClicked()
 
     /**
-     * @see [CollectionInteractor.onToggleCollectionExpanded]
+     * @see [OnboardingInteractor.onReadPrivacyNoticeClicked]
      */
     fun handleToggleCollectionExpanded(collection: TabCollection, expand: Boolean)
 
     /**
-     * @see [TipInteractor.onCloseTip]
+     * @see [CollectionInteractor.onToggleCollectionExpanded]
      */
     fun handleCloseTip(tip: Tip)
 
     /**
-     * @see [ToolbarInteractor.onPasteAndGo]
+     * @see [TipInteractor.onCloseTip]
      */
     fun handlePasteAndGo(clipboardText: String)
 
     /**
-     * @see [ToolbarInteractor.onPaste]
+     * @see [ToolbarInteractor.onPasteAndGo]
      */
     fun handlePaste(clipboardText: String)
 
     /**
-     * @see [CollectionInteractor.onAddTabsToCollectionTapped]
+     * @see [ToolbarInteractor.onPaste]
      */
     fun handleCreateCollection()
 
     /**
-     * @see [CollectionInteractor.onRemoveCollectionsPlaceholder]
+     * @see [CollectionInteractor.onAddTabsToCollectionTapped]
      */
     fun handleRemoveCollectionsPlaceholder()
 
     /**
-     * @see [CollectionInteractor.onCollectionMenuOpened] and [TopSiteInteractor.onTopSiteMenuOpened]
+     * @see [CollectionInteractor.onRemoveCollectionsPlaceholder]
      */
     fun handleMenuOpened()
+
+    /**
+     * @see [CollectionInteractor.onCollectionMenuOpened] and [TopSiteInteractor.onTopSiteMenuOpened]
+     */
 }
 
 @Suppress("TooManyFunctions", "LargeClass")
