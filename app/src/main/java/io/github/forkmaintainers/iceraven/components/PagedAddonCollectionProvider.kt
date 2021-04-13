@@ -88,11 +88,16 @@ class PagedAddonCollectionProvider(
      * @param readTimeoutInSeconds optional timeout in seconds to use when fetching
      * available add-ons from a remote endpoint. If not specified [DEFAULT_READ_TIMEOUT_IN_SECONDS]
      * will be used.
+     * @param language optional language that will be ignored.
      * @throws IOException if the request failed, or could not be executed due to cancellation,
      * a connectivity problem or a timeout.
      */
     @Throws(IOException::class)
-    override suspend fun getAvailableAddons(allowCache: Boolean, readTimeoutInSeconds: Long?, language: String?): List<Addon> {
+    override suspend fun getAvailableAddons(
+        allowCache: Boolean,
+        readTimeoutInSeconds: Long?,
+        language: String?
+    ): List<Addon> {
         val cachedAddons = if (allowCache && !cacheExpired(context)) {
             readFromDiskCache()
         } else {
