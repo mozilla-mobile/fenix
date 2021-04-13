@@ -612,12 +612,16 @@
     <string name="tabs_header_private_title">Privésessie</string>
     <!-- Title for the list of tabs in the current private session -->
     <string name="tabs_header_private_tabs_title">Privétabbladen</string>
+    <!-- Title for the list of tabs in the synced tabs -->
+    <string name="tabs_header_synced_tabs_title">Gesynchroniseerde tabbladen</string>
     <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
     <string name="add_tab">Tabblad toevoegen</string>
     <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
     <string name="add_private_tab">Privétabblad toevoegen</string>
     <!-- Text for the new tab button to indicate adding a new private tab in the tab -->
     <string name="tab_drawer_fab_content">Privé</string>
+    <!-- Text for the new tab button to indicate syncing command on the synced tabs page -->
+    <string name="tab_drawer_fab_sync">Synchroniseren</string>
     <!-- Text shown as the title of the open tab tray -->
     <string name="tab_tray_title">Open tabbladen</string>
     <!-- Text shown in the menu for saving tabs to a collection -->
@@ -1563,6 +1567,8 @@
     <!-- Preference option for adding a credit card -->
     <string name="preferences_credit_cards_add_credit_card">Creditcard toevoegen</string>
 
+    <!-- Preference option for managing saved credit cards -->
+    <string name="preferences_credit_cards_manage_saved_cards">Opgeslagen kaarten beheren</string>
     <!-- Title of the "Add card" screen -->
     <string name="credit_cards_add_card">Kaart toevoegen</string>
     <!-- The header for the card number of a credit card -->
@@ -1581,6 +1587,9 @@
     <string name="credit_cards_save_button">Opslaan</string>
     <!-- The text for the "Cancel" button for cancelling adding or updating a credit card -->
     <string name="credit_cards_cancel_button">Annuleren</string>
+
+    <!-- Title of the "Saved cards" screen -->
+    <string name="credit_cards_saved_cards">Opgeslagen kaarten</string>
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Zoekmachine toevoegen</string>

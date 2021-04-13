@@ -608,6 +608,8 @@
     <string name="add_private_tab">Thêm thẻ riêng tư</string>
     <!-- Text for the new tab button to indicate adding a new private tab in the tab -->
     <string name="tab_drawer_fab_content">Riêng tư</string>
+    <!-- Text for the new tab button to indicate syncing command on the synced tabs page -->
+    <string name="tab_drawer_fab_sync">Đồng bộ hóa</string>
     <!-- Text shown as the title of the open tab tray -->
     <string name="tab_tray_title">Các thẻ đang mở</string>
     <!-- Text shown in the menu for saving tabs to a collection -->
@@ -972,6 +974,10 @@
     <string name="share_link_all_apps_subheader">Mọi hành động</string>
     <!-- Sub-header in the dialog to share a link to an app from the most-recent sorted list -->
     <string name="share_link_recent_apps_subheader">Được sử dụng gần đây</string>
+    <!-- An string shown when an account is signed in where %1$s is a placeholder for the email-->
+    <string name="sync_signed_as">Đã đăng nhập bằng tài khoản %1$s</string>
+    <!-- An option from the three dot menu to into sync -->
+    <string name="sync_menu_sign_in">Đăng nhập vào đồng bộ hóa</string>
     <!-- An option from the share dialog to sign into sync -->
     <string name="sync_sign_in">Đăng nhập vào đồng bộ hóa</string>
     <!-- An option from the share dialog to send link to all other sync devices -->
@@ -1541,6 +1547,8 @@
     <!-- Preference option for adding a credit card -->
     <string name="preferences_credit_cards_add_credit_card">Thêm thẻ tín dụng</string>
 
+    <!-- Preference option for managing saved credit cards -->
+    <string name="preferences_credit_cards_manage_saved_cards">Quản lý thẻ tín dụng đã lưu</string>
     <!-- Title of the "Add card" screen -->
     <string name="credit_cards_add_card">Thêm thẻ</string>
     <!-- The header for the card number of a credit card -->
@@ -1559,6 +1567,9 @@
     <string name="credit_cards_save_button">Lưu</string>
     <!-- The text for the "Cancel" button for cancelling adding or updating a credit card -->
     <string name="credit_cards_cancel_button">Hủy bỏ</string>
+
+    <!-- Title of the "Saved cards" screen -->
+    <string name="credit_cards_saved_cards">Thẻ tín dụng đã lưu</string>
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Thêm công cụ tìm kiếm</string>
