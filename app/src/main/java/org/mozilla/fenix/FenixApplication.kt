@@ -20,7 +20,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import mozilla.appservices.Megazord
-import mozilla.components.browser.session.Session
 import mozilla.components.browser.state.action.SystemAction
 import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.concept.base.crash.Breadcrumb
@@ -30,6 +29,7 @@ import mozilla.components.lib.crash.CrashReporter
 import mozilla.components.service.glean.Glean
 import mozilla.components.service.glean.config.Configuration
 import mozilla.components.service.glean.net.ConceptFetchHttpUploader
+import mozilla.components.support.base.facts.register
 import mozilla.components.support.base.log.Log
 import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.ktx.android.content.isMainProcess
@@ -39,9 +39,12 @@ import mozilla.components.support.rusthttp.RustHttpConfig
 import mozilla.components.support.rustlog.RustLog
 import mozilla.components.support.utils.logElapsedTime
 import mozilla.components.support.webextensions.WebExtensionSupport
+import org.mozilla.fenix.GleanMetrics.PerfStartup
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.components.metrics.MetricServiceType
+import org.mozilla.fenix.components.metrics.SecurePrefsTelemetry
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.perf.ProfilerMarkerFactProcessor
 import org.mozilla.fenix.perf.StartupTimeline
 import org.mozilla.fenix.perf.StorageStatsMetrics
 import org.mozilla.fenix.perf.runBlockingIncrement
@@ -70,6 +73,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         private set
 
     override fun onCreate() {
+        val methodDurationTimerId = PerfStartup.applicationOnCreate.start() // DO NOT MOVE ANYTHING ABOVE HERE.
         super.onCreate()
 
         setupInAllProcesses()
@@ -91,6 +95,9 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         }
 
         setupInMainProcessOnly()
+
+        // We use start/stop instead of measure so we don't measure outside the main process.
+        PerfStartup.applicationOnCreate.stopAndAccumulate(methodDurationTimerId) // DO NOT MOVE ANYTHING BELOW HERE.
     }
 
     protected open fun initializeGlean() {
@@ -119,6 +126,8 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
 
     @CallSuper
     open fun setupInMainProcessOnly() {
+        ProfilerMarkerFactProcessor.create { components.core.engine.profiler }.register()
+
         run {
             // Attention: Do not invoke any code from a-s in this scope.
             val megazordSetup = setupMegazord()
@@ -195,6 +204,8 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                         components.core.bookmarksStorage.warmUp()
                         components.core.passwordsStorage.warmUp()
                     }
+
+                    SecurePrefsTelemetry(this@FenixApplication, components.analytics.experiments).startTests()
                 }
                 // Account manager initialization needs to happen on the main thread.
                 GlobalScope.launch(Dispatchers.Main) {
@@ -307,6 +318,10 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             // ... but RustHttpConfig.setClient() and RustLog.enable() can be called later.
             RustHttpConfig.setClient(lazy { components.core.client })
             RustLog.enable(components.analytics.crashReporter)
+            // We want to ensure Nimbus is initialized as early as possible so we can
+            // experiment on features close to startup.
+            // But we need viaduct (the RustHttp client) to be ready before we do.
+            components.analytics.experiments.initialize()
         }
     }
 
@@ -417,9 +432,19 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                             components.core.store.state.selectedTab?.content?.private
                                 ?: components.settings.openLinksInAPrivateTab
 
-                        val session = Session(url, shouldCreatePrivateSession)
-                        components.core.sessionManager.add(session, true, engineSession)
-                        session.id
+                        if (shouldCreatePrivateSession) {
+                            components.useCases.tabsUseCases.addPrivateTab(
+                                url = url,
+                                selectTab = true,
+                                engineSession = engineSession
+                            )
+                        } else {
+                            components.useCases.tabsUseCases.addTab(
+                                url = url,
+                                selectTab = true,
+                                engineSession = engineSession
+                            )
+                        }
                 },
                 onCloseTabOverride = {
                     _, sessionId -> components.useCases.tabsUseCases.removeTab(sessionId)

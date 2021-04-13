@@ -18,7 +18,6 @@ import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.browser.session.engine.EngineMiddleware
 import mozilla.components.browser.session.storage.SessionStorage
-import mozilla.components.browser.session.undo.UndoMiddleware
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.browser.storage.sync.PlacesBookmarksStorage
@@ -35,7 +34,6 @@ import mozilla.components.feature.customtabs.store.CustomTabsServiceStore
 import mozilla.components.feature.downloads.DownloadMiddleware
 import mozilla.components.feature.logins.exceptions.LoginExceptionStorage
 import mozilla.components.feature.media.MediaSessionFeature
-import mozilla.components.feature.media.middleware.MediaMiddleware
 import mozilla.components.feature.media.middleware.RecordingDevicesMiddleware
 import mozilla.components.feature.pwa.ManifestStorage
 import mozilla.components.feature.pwa.WebAppShortcutManager
@@ -44,6 +42,8 @@ import mozilla.components.feature.recentlyclosed.RecentlyClosedMiddleware
 import mozilla.components.feature.search.middleware.SearchMiddleware
 import mozilla.components.feature.search.region.RegionMiddleware
 import mozilla.components.feature.session.HistoryDelegate
+import mozilla.components.feature.session.middleware.LastAccessMiddleware
+import mozilla.components.feature.session.middleware.undo.UndoMiddleware
 import mozilla.components.feature.top.sites.DefaultTopSitesStorage
 import mozilla.components.feature.top.sites.PinnedSiteStorage
 import mozilla.components.feature.webcompat.WebCompatFeature
@@ -61,7 +61,6 @@ import mozilla.components.support.locale.LocaleManager
 import org.mozilla.fenix.AppRequestInterceptor
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
-import org.mozilla.fenix.FeatureFlags.newMediaSessionApi
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.TelemetryMiddleware
@@ -69,7 +68,6 @@ import org.mozilla.fenix.components.search.SearchMigration
 import org.mozilla.fenix.downloads.DownloadService
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.media.MediaService
 import org.mozilla.fenix.media.MediaSessionService
 import org.mozilla.fenix.perf.StrictModeManager
 import org.mozilla.fenix.perf.lazyMonitored
@@ -178,6 +176,7 @@ class Core(
     val store by lazyMonitored {
         val middlewareList =
             mutableListOf(
+                LastAccessMiddleware(),
                 RecentlyClosedMiddleware(context, RECENTLY_CLOSED_MAX, engine),
                 DownloadMiddleware(context, DownloadService::class.java),
                 ReaderViewMiddleware(),
@@ -197,19 +196,17 @@ class Core(
                 RecordingDevicesMiddleware(context)
             )
 
-        if (!newMediaSessionApi) {
-            middlewareList.add(MediaMiddleware(context, MediaService::class.java))
-        }
-
         BrowserStore(
             middleware = middlewareList + EngineMiddleware.create(engine, ::findSessionById)
         )
     }
 
+    @Suppress("Deprecation")
     private fun lookupSessionManager(): SessionManager {
         return sessionManager
     }
 
+    @Suppress("Deprecation")
     private fun findSessionById(tabId: String): Session? {
         return sessionManager.findSessionById(tabId)
     }
@@ -232,6 +229,7 @@ class Core(
      * sessions from the [SessionStorage], and with a default session (about:blank) in
      * case all sessions/tabs are closed.
      */
+    @Deprecated("Use browser store (for reading) and use cases (for writing) instead")
     val sessionManager by lazyMonitored {
         SessionManager(engine, store).also {
             // Install the "icons" WebExtension to automatically load icons for every visited website.
@@ -248,9 +246,7 @@ class Core(
                 permissionStorage.permissionsStorage, HomeActivity::class.java
             )
 
-            if (newMediaSessionApi) {
-                MediaSessionFeature(context, MediaSessionService::class.java, store).start()
-            }
+            MediaSessionFeature(context, MediaSessionService::class.java, store).start()
         }
     }
 

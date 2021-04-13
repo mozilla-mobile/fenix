@@ -27,7 +27,9 @@ import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.helpers.TestHelper.deleteDownloadFromStorage
 import org.mozilla.fenix.helpers.ViewVisibilityIdlingResource
 import org.mozilla.fenix.ui.robots.browserScreen
+import org.mozilla.fenix.ui.robots.clickTabCrashedRestoreButton
 import org.mozilla.fenix.ui.robots.clickUrlbar
+import org.mozilla.fenix.ui.robots.dismissTrackingOnboarding
 import org.mozilla.fenix.ui.robots.downloadRobot
 import org.mozilla.fenix.ui.robots.enhancedTrackingProtection
 import org.mozilla.fenix.ui.robots.homeScreen
@@ -48,10 +50,6 @@ class SmokeTest {
     private var recentlyClosedTabsListIdlingResource: RecyclerViewIdlingResource? = null
     private var readerViewNotification: ViewVisibilityIdlingResource? = null
     private val downloadFileName = "Globe.svg"
-    private val searchEngine = object {
-        var title = "Ecosia"
-        var url = "https://www.ecosia.org/search?q=%s"
-    }
     val collectionName = "First Collection"
     private var bookmarksListIdlingResource: RecyclerViewIdlingResource? = null
 
@@ -201,6 +199,7 @@ class SmokeTest {
 
     @Test
     // Verifies the list of items in a tab's 3 dot menu
+    @Ignore("To be re-implemented with the three dot menu changes https://github.com/mozilla-mobile/fenix/issues/17870")
     fun verifyPageMainMenuItemsTest() {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
@@ -365,6 +364,7 @@ class SmokeTest {
 
     @Test
     // Turns ETP toggle off from Settings and verifies the ETP shield is not displayed in the nav bar
+    @Ignore("To be re-implemented with the three dot menu changes https://github.com/mozilla-mobile/fenix/issues/17870")
     fun verifyETPShieldNotDisplayedIfOFFGlobally() {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
@@ -372,7 +372,7 @@ class SmokeTest {
         }.openThreeDotMenu {
         }.openSettings {
         }.openEnhancedTrackingProtectionSubMenu {
-            clickEnhancedTrackingProtectionDefaults()
+            switchEnhancedTrackingProtectionToggle()
             verifyEnhancedTrackingProtectionOptionsGrayedOut()
         }.goBackToHomeScreen {
             navigationToolbar {
@@ -381,13 +381,39 @@ class SmokeTest {
             }.openThreeDotMenu {
             }.openSettings {
             }.openEnhancedTrackingProtectionSubMenu {
-                clickEnhancedTrackingProtectionDefaults()
+                switchEnhancedTrackingProtectionToggle()
             }.goBack {
             }.goBackToBrowser {
                 clickEnhancedTrackingProtectionPanel()
                 verifyEnhancedTrackingProtectionSwitch()
                 clickEnhancedTrackingProtectionSwitchOffOn()
             }
+        }
+    }
+
+    @Test
+    fun customTrackingProtectionSettingsTest() {
+        val trackingPage = TestAssetHelper.getEnhancedTrackingProtectionAsset(mockWebServer)
+
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openEnhancedTrackingProtectionSubMenu {
+            verifyEnhancedTrackingProtectionOptions()
+            selectTrackingProtectionOption("Custom")
+            verifyCustomTrackingProtectionSettings()
+        }.goBackToHomeScreen {}
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(trackingPage.url) {}
+
+        enhancedTrackingProtection {
+            dismissTrackingOnboarding()
+        }.openEnhancedTrackingProtectionSheet {
+            verifyTrackingCookiesBlocked()
+            verifyCryptominersBlocked()
+            verifyFingerprintersBlocked()
+            verifyBasicLevelTrackingContentBlocked()
         }
     }
 
@@ -496,31 +522,6 @@ class SmokeTest {
 
     @Ignore("Failing, see: https://github.com/mozilla-mobile/fenix/issues/17847")
     @Test
-    // Verifies setting as default a customized search engine name and URL
-    fun editCustomSearchEngineTest() {
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openSearchSubMenu {
-            openAddSearchEngineMenu()
-            selectAddCustomSearchEngine()
-            typeCustomEngineDetails(searchEngine.title, searchEngine.url)
-            saveNewSearchEngine()
-            openEngineOverflowMenu("Ecosia")
-            clickEdit()
-            typeCustomEngineDetails("Test", searchEngine.url)
-            saveEditSearchEngine()
-            changeDefaultSearchEngine("Test")
-        }.goBack {
-        }.goBack {
-        }.openSearch {
-            verifyDefaultSearchEngine("Test")
-            clickSearchEngineShortcutButton()
-            verifyEnginesListShortcutContains("Test")
-        }
-    }
-
-    @Test
     // Swipes the nav bar left/right to switch between tabs
     fun swipeToSwitchTabTest() {
         val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -532,14 +533,15 @@ class SmokeTest {
         }.openNewTab {
         }.submitQuery(secondWebPage.url.toString()) {
             swipeNavBarRight(secondWebPage.url.toString())
-            verifyPageContent(firstWebPage.content)
+            verifyUrl(firstWebPage.url.toString())
             swipeNavBarLeft(firstWebPage.url.toString())
-            verifyPageContent(secondWebPage.content)
+            verifyUrl(secondWebPage.url.toString())
         }
     }
 
     @Test
     // Saves a login, then changes it and verifies the update
+    @Ignore("To be re-implemented with the three dot menu changes https://github.com/mozilla-mobile/fenix/issues/17870")
     fun updateSavedLoginTest() {
         val saveLoginTest =
             TestAssetHelper.getSaveLoginAsset(mockWebServer)
@@ -603,6 +605,7 @@ class SmokeTest {
     }
 
     @Test
+    @Ignore("To be re-implemented in https://github.com/mozilla-mobile/fenix/issues/17799")
     // Installs uBlock add-on and checks that the app doesn't crash while loading pages with trackers
     fun noCrashWithAddonInstalledTest() {
         // setting ETP to Strict mode to test it works with add-ons
@@ -1110,6 +1113,7 @@ class SmokeTest {
     }
 
     @Test
+    @Ignore("To be re-implemented in https://github.com/mozilla-mobile/fenix/issues/17799")
     fun mainMenuInstallPWATest() {
         val pwaPage = "https://rpappalax.github.io/testapp/"
 
@@ -1126,10 +1130,12 @@ class SmokeTest {
     }
 
     @Test
+    @Ignore("To be re-implemented in https://github.com/mozilla-mobile/fenix/issues/17971")
     // Verifies that reader mode is detected and the custom appearance controls are displayed
     fun verifyReaderViewAppearanceUI() {
         val readerViewPage =
             TestAssetHelper.getLoremIpsumAsset(mockWebServer)
+        val estimatedReadingTime = "1 - 2 minutes"
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(readerViewPage.url) {
@@ -1146,6 +1152,11 @@ class SmokeTest {
         navigationToolbar {
             verifyReaderViewDetected(true)
             toggleReaderView()
+            mDevice.waitForIdle()
+        }
+
+        browserScreen {
+            verifyPageContent(estimatedReadingTime)
         }.openThreeDotMenu {
             verifyReaderViewAppearance(true)
         }.openReaderViewAppearance {
@@ -1158,6 +1169,33 @@ class SmokeTest {
             verifyAppearanceColorDark(true)
             verifyAppearanceColorLight(true)
             verifyAppearanceColorSepia(true)
+        }
+    }
+
+    @Test
+    fun closeTabCrashedReporterTest() {
+
+        homeScreen {
+        }.openNavigationToolbar {
+        }.openTabCrashReporter {
+        }.clickTabCrashedCloseButton {
+        }.openTabDrawer {
+            verifyNoTabsOpened()
+        }
+    }
+
+    @Test
+    fun restoreTabCrashedReporterTest() {
+        val website = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        homeScreen {
+        }.openNavigationToolbar {
+        }.enterURLAndEnterToBrowser(website.url) {}
+
+        navigationToolbar {
+        }.openTabCrashReporter {
+            clickTabCrashedRestoreButton()
+            verifyPageContent(website.content)
         }
     }
 }

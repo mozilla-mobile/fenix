@@ -23,7 +23,7 @@
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:requestLegacyExternalStorage="true"
+        android:requestLegacyExternalStorage="${requestLegacyExternalStorage}"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/NormalTheme"
@@ -118,6 +118,9 @@
                     android:host="urls_history"/>
             </intent-filter>
         </activity>
+
+        <activity android:name=".home.mozonline.PrivacyContentDisplayActivity"
+                android:exported="false"/>
 
         <activity
             android:name=".customtabs.ExternalAppBrowserActivity"
@@ -227,9 +230,6 @@
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
 
         <activity android:name=".settings.account.AuthIntentReceiverActivity"
-            android:exported="false" />
-
-        <service android:name=".media.MediaService"
             android:exported="false" />
 
         <service android:name=".media.MediaSessionService"

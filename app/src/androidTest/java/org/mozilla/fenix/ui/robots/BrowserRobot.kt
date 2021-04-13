@@ -32,6 +32,7 @@ import androidx.test.uiautomator.By.text
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
+import mozilla.components.browser.state.selector.selectedTab
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.Matchers.not
@@ -49,8 +50,8 @@ class BrowserRobot {
     private lateinit var sessionLoadedIdlingResource: SessionLoadedIdlingResource
 
     fun verifyCurrentPrivateSession(context: Context) {
-        val session = context.components.core.sessionManager.selectedSession
-        assertTrue("Current session is private", session?.private!!)
+        val selectedTab = context.components.core.store.state.selectedTab
+        assertTrue("Current session is private", selectedTab?.content?.private ?: false)
     }
 
     fun verifyUrl(url: String) {
@@ -465,6 +466,20 @@ class BrowserRobot {
             HomeScreenRobot().interact()
             return HomeScreenRobot.Transition()
         }
+
+        fun clickTabCrashedCloseButton(interact: HomeScreenRobot.() -> Unit): HomeScreenRobot.Transition {
+
+            assertTrue(
+                mDevice.findObject(UiSelector().resourceId("$packageName:id/closeTabButton"))
+                    .waitForExists(waitingTime)
+            )
+
+            val tabCrashedCloseButton = mDevice.findObject(text("Close tab"))
+            tabCrashedCloseButton.click()
+
+            HomeScreenRobot().interact()
+            return HomeScreenRobot.Transition()
+        }
     }
 }
 
@@ -525,3 +540,14 @@ private fun mediaPlayerPlayButton() =
             .className("android.widget.Button")
             .text("Play")
     )
+
+fun clickTabCrashedRestoreButton() {
+
+    assertTrue(
+        mDevice.findObject(UiSelector().resourceId("$packageName:id/restoreTabButton"))
+            .waitForExists(waitingTime)
+    )
+
+    val tabCrashRestoreButton = mDevice.findObject(UiSelector().resourceIdMatches("$packageName:id/restoreTabButton"))
+    tabCrashRestoreButton.click()
+}

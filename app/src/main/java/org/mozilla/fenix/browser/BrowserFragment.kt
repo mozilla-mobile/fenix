@@ -69,7 +69,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                     tabPreview = tabPreview,
                     toolbarLayout = browserToolbarView.view,
                     store = components.core.store,
-                    sessionManager = components.core.sessionManager
+                    selectTabUseCase = components.useCases.tabsUseCases.selectTab
                 )
             )
         }
@@ -84,7 +84,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                 visible = {
                     readerModeAvailable
                 },
-                selected = getSessionById()?.let {
+                selected = getCurrentTab()?.let {
                         activity?.components?.core?.store?.state?.findTab(it.id)?.readerState?.active
                     } ?: false,
                 listener = browserInteractor::onReaderModePressed
@@ -137,7 +137,8 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                     navController = findNavController(),
                     settings = context.settings(),
                     appLinksUseCases = context.components.useCases.appLinksUseCases,
-                    container = browserLayout as ViewGroup
+                    container = browserLayout as ViewGroup,
+                    shouldScrollWithTopToolbar = !context.settings().shouldUseBottomToolbar
                 ),
                 owner = this,
                 view = view

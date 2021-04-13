@@ -14,7 +14,7 @@
     <!-- Placeholder text shown in the search bar before a user enters text -->
     <string name="search_hint">Pesquise ou digite um endereço</string>
     <!-- No Open Tabs Message Description -->
-    <string name="no_open_tabs_description">Suas abas abertas serão mostradas aqui.</string>
+    <string name="no_open_tabs_description">Suas abas abertas são mostradas aqui.</string>
 
     <!-- No Private Tabs Message Description -->
     <string name="no_private_tabs_description">Suas abas privativas são mostradas aqui.</string>
@@ -181,6 +181,8 @@
     <!-- Browser menu button to configure reader mode appearance e.g. the used font type and size -->
     <string name="browser_menu_read_appearance">Aparência</string>
 
+    <!-- Browser menu button to show reader view appearance controls e.g. the used font type and size -->
+    <string name="browser_menu_customize_reader_view">Personalizar leitor</string>
     <!-- Error message to show when the user tries to access a scheme not
         handled by the app (Ex: blob, tel etc) -->
     <string name="unknown_scheme_error_message">Não foi possível conectar. Esquema de URL não reconhecível.</string>
@@ -217,6 +219,11 @@
     <string name="search_suggestions_onboarding_text">O %s compartilha o que você digita na barra de endereços com seu mecanismo de pesquisa padrão.</string>
     <!-- Search suggestion onboarding hint Learn more link text -->
     <string name="search_suggestions_onboarding_learn_more_link">Saiba mais</string>
+
+    <!-- Search engine suggestion title text. The first parameter is the name of teh suggested engine-->
+    <string name="search_engine_suggestions_title">Pesquisar com %s</string>
+    <!-- Search engine suggestion description text -->
+    <string name="search_engine_suggestions_description">Pesquisar diretamente na barra de endereços</string>
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
@@ -885,16 +892,22 @@
     <string name="tracking_protection_on">Ativada</string>
     <!-- Summary of tracking protection preference if tracking protection is set to off -->
     <string name="tracking_protection_off">Desativada</string>
-    <!-- Label that indicates that all video and audio autoplay is allowed -->
+    <!-- Label for global setting that indicates that all video and audio autoplay is allowed -->
     <string name="preference_option_autoplay_allowed2">Permitir áudio e vídeo</string>
+    <!-- Label for site specific setting that indicates that all video and audio autoplay is allowed -->
+    <string name="quick_setting_option_autoplay_allowed">Permitir áudio e vídeo</string>
     <!-- Label that indicates that video and audio autoplay is only allowed over Wi-Fi -->
     <string name="preference_option_autoplay_allowed_wifi_only2">Bloquear áudio e vídeo apenas em rede móvel</string>
     <!-- Subtext that explains 'autoplay on Wi-Fi only' option -->
     <string name="preference_option_autoplay_allowed_wifi_subtext">Áudio e vídeo só são reproduzidos automaticamente se o dispositivo estiver conectado a uma rede Wi-Fi</string>
-    <!-- Label that indicates that video autoplay is allowed, but audio autoplay is blocked -->
+    <!-- Label for global setting that indicates that video autoplay is allowed, but audio autoplay is blocked -->
     <string name="preference_option_autoplay_block_audio2">Bloquear apenas áudio</string>
-    <!-- Label that indicates that all video and audio autoplay is blocked -->
+    <!-- Label for site specific setting that indicates that video autoplay is allowed, but audio autoplay is blocked -->
+    <string name="quick_setting_option_autoplay_block_audio">Bloquear apenas áudio</string>
+    <!-- Label for global setting that indicates that all video and audio autoplay is blocked -->
     <string name="preference_option_autoplay_blocked3">Bloquear áudio e vídeo</string>
+    <!-- Label for site specific setting that indicates that all video and audio autoplay is blocked -->
+    <string name="quick_setting_option_autoplay_blocked">Bloquear áudio e vídeo</string>
     <!-- Summary of delete browsing data on quit preference if it is set to on -->
     <string name="delete_browsing_data_quit_on">Ativado</string>
     <!-- Summary of delete browsing data on quit preference if it is set to off -->
@@ -1043,7 +1056,7 @@
     <!-- Tab collection deletion prompt dialog message. Placeholder will be replaced with the collection name -->
     <string name="tab_collection_dialog_message">Tem certeza que quer excluir %1$s?</string>
     <!-- Collection and tab deletion prompt dialog message. This will show when the last tab from a collection is deleted -->
-    <string name="delete_tab_and_collection_dialog_message">Excluir esta aba também excluirá toda a coleção. Você pode criar novas coleções quando quiser.</string>
+    <string name="delete_tab_and_collection_dialog_message">Excluir esta aba também exclui toda a coleção. Você pode criar novas coleções quando quiser.</string>
     <!-- Collection and tab deletion prompt dialog title. Placeholder will be replaced with the collection name. This will show when the last tab from a collection is deleted -->
     <string name="delete_tab_and_collection_dialog_title">Excluir %1$s?</string>
     <!-- Tab collection deletion prompt dialog option to delete the collection -->
@@ -1189,7 +1202,7 @@
     The first parameter is the name of the app (e.g. Firefox Preview) -->
     <string name="onboarding_tracking_protection_description_2">As configurações de privacidade e segurança bloqueiam rastreadores, código malicioso (malware) e empresas que seguem você.</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
-    <string name="onboarding_tracking_protection_standard_button_2">Padrão (predefinido)</string>
+    <string name="onboarding_tracking_protection_standard_button_2">Normal (padrão)</string>
     <!-- text for standard blocking option button description -->
     <string name="onboarding_tracking_protection_standard_button_description_2">Bloqueia menos rastreadores. As páginas são carregadas normalmente.</string>
     <!-- text for tracking protection radio button option for strict level of blocking -->
@@ -1289,11 +1302,11 @@
     <string name="preference_enhanced_tracking_protection_explanation_learn_more">Saiba mais</string>
 
     <!-- Preference for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_default_1">Padrão (predefinido)</string>
+    <string name="preference_enhanced_tracking_protection_standard_default_1">Normal (padrão)</string>
     <!-- Preference description for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_standard_description_3">Bloqueia menos rastreadores. As páginas são carregadas normalmente.</string>
     <!--  Accessibility text for the Standard protection information icon  -->
-    <string name="preference_enhanced_tracking_protection_standard_info_button">O que é bloqueado pela proteção padrão contra rastreamento</string>
+    <string name="preference_enhanced_tracking_protection_standard_info_button">O que é bloqueado pela proteção normal contra rastreamento</string>
     <!-- Preference for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict">Rigoroso</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->

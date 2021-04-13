@@ -3,8 +3,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 object Versions {
-    const val kotlin = "1.4.10"
-    const val coroutines = "1.3.9"
+    const val kotlin = "1.4.30"
+    const val coroutines = "1.4.2"
 
     // These versions are linked: lint should be X+23.Y.Z of gradle_plugin version, according to:
     // https://github.com/alexjlockwood/android-lint-checks-demo/blob/0245fc027463137b1b4afb97c5295d60dce998b6/dependencies.gradle#L3
@@ -19,7 +19,7 @@ object Versions {
     const val jna = "5.6.0"
 
     const val androidx_appcompat = "1.2.0"
-    const val androidx_biometric = "1.1.0-rc01"
+    const val androidx_biometric = "1.1.0"
     const val androidx_coordinator_layout = "1.1.0"
     const val androidx_constraint_layout = "2.0.4"
     const val androidx_preference = "1.1.1"
@@ -27,12 +27,12 @@ object Versions {
     const val androidx_annotation = "1.1.0"
     const val androidx_lifecycle = "2.2.0"
     const val androidx_fragment = "1.2.5"
-    const val androidx_navigation = "2.3.1"
-    const val androidx_recyclerview = "1.2.0-alpha06"
+    const val androidx_navigation = "2.3.3"
+    const val androidx_recyclerview = "1.2.0-beta01"
     const val androidx_core = "1.3.2"
-    const val androidx_paging = "2.1.0"
-    const val androidx_transition = "1.3.0"
-    const val androidx_work = "2.4.0"
+    const val androidx_paging = "2.1.2"
+    const val androidx_transition = "1.4.0"
+    const val androidx_work = "2.5.0"
     const val google_material = "1.2.1"
 
     const val mozilla_android_components = AndroidComponents.VERSION
@@ -119,6 +119,7 @@ object Deps {
     const val mozilla_feature_accounts_push = "org.mozilla.components:feature-accounts-push:${Versions.mozilla_android_components}"
     const val mozilla_feature_top_sites = "org.mozilla.components:feature-top-sites:${Versions.mozilla_android_components}"
     const val mozilla_feature_share = "org.mozilla.components:feature-share:${Versions.mozilla_android_components}"
+    const val mozilla_feature_webauthn = "org.mozilla.components:feature-webauthn:${Versions.mozilla_android_components}"
     const val mozilla_feature_webcompat = "org.mozilla.components:feature-webcompat:${Versions.mozilla_android_components}"
     const val mozilla_feature_webnotifications = "org.mozilla.components:feature-webnotifications:${Versions.mozilla_android_components}"
     const val mozilla_feature_webcompat_reporter = "org.mozilla.components:feature-webcompat-reporter:${Versions.mozilla_android_components}"

@@ -116,6 +116,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         }
     }
 
+    @SuppressWarnings("LongMethod")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -172,10 +173,13 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         val awesomeBar = view.awesome_bar
         awesomeBar.customizeForBottomToolbar = requireContext().settings().shouldUseBottomToolbar
 
+        val fromHomeFragment =
+            findNavController().previousBackStackEntry?.destination?.id == R.id.homeFragment
         awesomeBarView = AwesomeBarView(
             activity,
             interactor,
-            awesomeBar
+            awesomeBar,
+            fromHomeFragment
         )
 
         view.awesome_bar.setOnTouchListener { _, _ ->
@@ -191,7 +195,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
 
         requireComponents.core.engine.speculativeCreateSession(isPrivate)
 
-        if (findNavController().previousBackStackEntry?.destination?.id == R.id.homeFragment) {
+        if (fromHomeFragment) {
             // When displayed above home, dispatches the touch events to scrim area to the HomeFragment
             view.search_wrapper.background = ColorDrawable(Color.TRANSPARENT)
             dialog?.window?.decorView?.setOnTouchListener { _, event ->
@@ -467,8 +471,15 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                 clear(pill_wrapper.id, BOTTOM)
                 connect(pill_wrapper.id, BOTTOM, toolbar.id, TOP)
 
+                clear(awesome_bar.id, TOP)
+                clear(awesome_bar.id, BOTTOM)
+                connect(awesome_bar.id, TOP, search_suggestions_hint.id, BOTTOM)
+                connect(awesome_bar.id, BOTTOM, pill_wrapper.id, TOP)
+
                 clear(search_suggestions_hint.id, TOP)
+                clear(search_suggestions_hint.id, BOTTOM)
                 connect(search_suggestions_hint.id, TOP, PARENT_ID, TOP)
+                connect(search_suggestions_hint.id, BOTTOM, search_hint_bottom_barrier.id, TOP)
 
                 clear(fill_link_from_clipboard.id, TOP)
                 connect(fill_link_from_clipboard.id, BOTTOM, pill_wrapper.id, TOP)
@@ -483,7 +494,10 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
 
     private fun updateSearchSuggestionsHintVisibility(state: SearchFragmentState) {
         view?.apply {
-            val showHint = state.showSearchSuggestionsHint && !state.showSearchShortcuts
+            val showHint = state.showSearchSuggestionsHint &&
+                    !state.showSearchShortcuts &&
+                    state.url != state.query
+
             findViewById<View>(R.id.search_suggestions_hint)?.isVisible = showHint
             search_suggestions_hint_divider?.isVisible = showHint
         }
