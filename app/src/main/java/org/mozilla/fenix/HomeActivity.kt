@@ -77,6 +77,7 @@ import org.mozilla.fenix.exceptions.trackingprotection.TrackingProtectionExcepti
 import org.mozilla.fenix.ext.alreadyOnDestination
 import org.mozilla.fenix.ext.breadcrumb
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.measureNoInline
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.settings
@@ -164,7 +165,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
     private lateinit var navigationToolbar: Toolbar
 
-    final override fun onCreate(savedInstanceState: Bundle?): Unit = PerfStartup.homeActivityOnCreate.measure {
+    final override fun onCreate(savedInstanceState: Bundle?): Unit = PerfStartup.homeActivityOnCreate.measureNoInline {
         // DO NOT MOVE ANYTHING ABOVE THIS addMarker CALL.
         components.core.engine.profiler?.addMarker("Activity.onCreate", "HomeActivity")
 
@@ -321,7 +322,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         }
     }
 
-    override fun onStart() {
+    override fun onStart() = PerfStartup.homeActivityOnStart.measureNoInline {
         super.onStart()
 
         // Diagnostic breadcrumb for "Display already aquired" crash:
@@ -358,10 +359,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         if (settings().lastKnownMode.isPrivate) {
             window.addFlags(FLAG_SECURE)
         }
-
-        // We will remove this when AC code lands to emit a fact on getTopSites in DefaultTopSitesStorage
-        // https://github.com/mozilla-mobile/android-components/issues/8679
-        settings().topSitesSize = components.core.topSitesStorage.cachedTopSites.size
 
         lifecycleScope.launch(IO) {
             components.core.bookmarksStorage.getTree(BookmarkRoot.Root.id, true)?.let {

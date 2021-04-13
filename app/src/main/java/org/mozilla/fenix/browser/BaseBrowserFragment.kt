@@ -80,7 +80,6 @@ import mozilla.components.service.sync.logins.DefaultLoginValidationDelegate
 import mozilla.components.support.base.feature.PermissionsFeature
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
-import mozilla.components.support.ktx.android.view.exitImmersiveModeIfNeeded
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifAnyChanged
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
@@ -110,7 +109,6 @@ import org.mozilla.fenix.downloads.DynamicDownloadDialog
 import org.mozilla.fenix.ext.accessibilityManager
 import org.mozilla.fenix.ext.breadcrumb
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.enterToImmersiveMode
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.hideToolbar
 import org.mozilla.fenix.ext.metrics
@@ -129,6 +127,10 @@ import java.lang.ref.WeakReference
 import mozilla.components.feature.session.behavior.EngineViewBrowserToolbarBehavior
 import mozilla.components.feature.webauthn.WebAuthnFeature
 import mozilla.components.support.base.feature.ActivityResultHandler
+import org.mozilla.fenix.GleanMetrics.PerfStartup
+import org.mozilla.fenix.ext.enterToImmersiveMode
+import org.mozilla.fenix.ext.exitImmersiveModeIfNeeded
+import org.mozilla.fenix.ext.measureNoInline
 import mozilla.components.feature.session.behavior.ToolbarPosition as MozacToolbarPosition
 
 /**
@@ -197,7 +199,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View = PerfStartup.baseBfragmentOnCreateView.measureNoInline {
         customTabSessionId = requireArguments().getString(EXTRA_SESSION_ID)
 
         // Diagnostic breadcrumb for "Display already aquired" crash:
@@ -220,10 +222,11 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
             )
         }
 
-        return view
+        view
     }
 
-    final override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    final override fun onViewCreated(view: View, savedInstanceState: Bundle?) =
+            PerfStartup.baseBfragmentOnViewCreated.measureNoInline { // weird indentation to avoid breaking blame.
         initializeUI(view)
 
         if (customTabSessionId == null) {
@@ -240,6 +243,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
         }
 
         requireContext().accessibilityManager.addAccessibilityStateChangeListener(this)
+        Unit
     }
 
     private fun initializeUI(view: View) {
@@ -294,7 +298,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
                 thumbnailsFeature.get()?.requestScreenshot()
                 findNavController().nav(
                     R.id.browserFragment,
-                    BrowserFragmentDirections.actionGlobalTabTrayDialogFragment()
+                    getTrayDirection(context)
                 )
             },
             onCloseTab = { closedSession ->
@@ -474,13 +478,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
                     didFail = downloadJobStatus == DownloadState.Status.FAILED,
                     tryAgain = downloadFeature::tryAgain,
                     onCannotOpenFile = {
-                        FenixSnackbar.make(
-                            view = view.browserLayout,
-                            duration = Snackbar.LENGTH_SHORT,
-                            isDisplayedWithBrowserToolbar = true
-                        )
-                            .setText(context.getString(R.string.mozac_feature_downloads_could_not_open_file))
-                            .show()
+                        showCannotOpenFileError(view.browserLayout, context, it)
                     },
                     view = view.viewDynamicDownloadDialog,
                     toolbarHeight = toolbarHeight,
@@ -783,16 +781,6 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
             }
         }
 
-        val onCannotOpenFile = {
-            FenixSnackbar.make(
-                view = view.browserLayout,
-                duration = Snackbar.LENGTH_SHORT,
-                isDisplayedWithBrowserToolbar = true
-            )
-                .setText(context.getString(R.string.mozac_feature_downloads_could_not_open_file))
-                .show()
-        }
-
         val onDismiss: () -> Unit =
             { sharedViewModel.downloadDialogState.remove(sessionId) }
 
@@ -802,7 +790,9 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
             metrics = requireComponents.analytics.metrics,
             didFail = savedDownloadState.second,
             tryAgain = onTryAgain,
-            onCannotOpenFile = onCannotOpenFile,
+            onCannotOpenFile = {
+                showCannotOpenFileError(view.browserLayout, context, it)
+            },
             view = view.viewDynamicDownloadDialog,
             toolbarHeight = toolbarHeight,
             onDismiss = onDismiss
@@ -1278,6 +1268,30 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
         breadcrumb(
             message = "onDetach()"
         )
+    }
+
+    private fun showCannotOpenFileError(
+        view: View,
+        context: Context,
+        downloadState: DownloadState
+    ) {
+        FenixSnackbar.make(
+            view = view,
+            duration = Snackbar.LENGTH_SHORT,
+            isDisplayedWithBrowserToolbar = true
+        ).setText(DynamicDownloadDialog.getCannotOpenFileErrorMessage(context, downloadState))
+            .show()
+    }
+
+    /**
+     * Retrieves the correct tray direction while using a feature flag.
+     *
+     * Remove this when [FeatureFlags.tabsTrayRewrite] is removed.
+     */
+    private fun getTrayDirection(context: Context) = if (context.settings().tabsTrayRewrite) {
+        BrowserFragmentDirections.actionGlobalTabsTrayFragment()
+    } else {
+        BrowserFragmentDirections.actionGlobalTabTrayDialogFragment()
     }
 
     companion object {

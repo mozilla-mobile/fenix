@@ -92,7 +92,8 @@ class TabTrayView(
     private var multiselectMenu: BrowserMenu? = null
 
     private var tabsTouchHelper: TabsTouchHelper
-    private val collectionsButtonAdapter = SaveToCollectionsButtonAdapter(interactor, isPrivate)
+    private val collectionsButtonAdapter =
+        SaveToCollectionsButtonAdapter(interactor) { isPrivateModeSelected }
 
     private var hasLoaded = false
 
@@ -700,7 +701,6 @@ class TabTrayView(
     fun scrollToSelectedBrowserTab(selectedTabId: String? = null) {
         view.tabsTray.apply {
             val recyclerViewIndex = getSelectedBrowserTabViewIndex(selectedTabId)
-
             layoutManager?.scrollToPosition(recyclerViewIndex)
             smoothScrollBy(
                 0,

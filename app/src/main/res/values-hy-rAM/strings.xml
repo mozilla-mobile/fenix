@@ -20,10 +20,6 @@
     <!-- No Private Tabs Message Description -->
     <string name="no_private_tabs_description">Ձեր գաղտնի ներդիրները կցուցադրվեն այստեղ:</string>
 
-    <!-- Default title for pinned Baidu top site that links to Baidu home page  -->
-    <string name="default_top_site_baidu">Baidu</string>
-    <!-- Default title for pinned JD top site that links to JD home page  -->
-    <string name="default_top_site_jd">JD</string>
     <!-- Message announced to the user when tab tray is selected with 1 tab -->
     <string name="open_tab_tray_single">1 բաց ներդիր: Հպեք՝ փոխարկելու համար:</string>
     <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
@@ -97,7 +93,7 @@
     <string name="tab_tray_close_tabs_banner_negative_button_text">Բաց թողնել</string>
 
     <!-- Text for the banner message to tell users about our grid view feature. -->
-    <string name="tab_tray_grid_view_banner_message">Փոխել բաց ներդիրների դասավորությունը: Գնացեք կարգավորումներ և ընտրեք ցանցը՝ ներդիրի տեսքի ներքո:</string>
+    <string name="tab_tray_grid_view_banner_message">Փոխեք բացված ներդիրների դասավորությունը: Գնացեք կարգավորումներ և ընտրեք Ցանց՝ ներդիրի տեսքի ներքո:</string>
     <!-- Text for the positive action button to go to Settings for auto close tabs. -->
     <string name="tab_tray_grid_view_banner_positive_button_text">Անցնել Կարգավորումներին</string>
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
@@ -130,6 +126,8 @@
     <string name="browser_menu_edit_bookmark">Խմբագրել Էջանիշը</string>
     <!-- Browser menu button that opens the addon manager -->
     <string name="browser_menu_add_ons">Հավելումներ</string>
+    <!-- Browser menu button that opens the addon extensions manager -->
+    <string name="browser_menu_extensions">Ընդլայնումներ</string>
     <!-- Text displayed when there are no add-ons to be shown -->
     <string name="no_add_ons">Հավելումներ չկան</string>
     <!-- Browser menu button that sends a user to help articles -->
@@ -179,6 +177,13 @@
     <!-- Browser menu button to configure reader mode appearance e.g. the used font type and size -->
     <string name="browser_menu_read_appearance">Տեսք</string>
 
+    <!-- Browser menu button to show reader view appearance controls e.g. the used font type and size -->
+    <string name="browser_menu_customize_reader_view">Հարմարեցնել ընթերցման դիտումը</string>
+    <!-- Browser menu label for adding a bookmark -->
+    <string name="browser_menu_add">Ավելացնել</string>
+    <!-- Browser menu label for editing a bookmark -->
+    <string name="browser_menu_edit">Խմբագրել</string>
+
     <!-- Error message to show when the user tries to access a scheme not
         handled by the app (Ex: blob, tel etc) -->
     <string name="unknown_scheme_error_message">Հնարավոր չէ կապակցվել: Անճանաչելի URL ուրվակազմ:</string>
@@ -214,6 +219,11 @@
     <string name="search_suggestions_onboarding_text">%s-ը համօգտագործելու է այն ամենը, ինչ մուտքագրում եք հասցեի տողում ձեր սկզբնական որոնիչի հետ:</string>
     <!-- Search suggestion onboarding hint Learn more link text -->
     <string name="search_suggestions_onboarding_learn_more_link">Իմանալ ավելին</string>
+
+    <!-- Search engine suggestion title text. The first parameter is the name of teh suggested engine-->
+    <string name="search_engine_suggestions_title">Որոնել %s</string>
+    <!-- Search engine suggestion description text -->
+    <string name="search_engine_suggestions_description">Որոնել ուղղակիրոեն հասցեագոտուց</string>
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
@@ -527,6 +537,10 @@
     <string name="library_desktop_bookmarks_unfiled">Այլ էջանիշեր</string>
     <!-- Option in Library to open History page -->
     <string name="library_history">Պատմություն</string>
+    <!-- Option in Library to open a new tab -->
+    <string name="library_new_tab">Նոր ներդիր</string>
+    <!-- Option in Library to find text in page -->
+    <string name="library_find_in_page">Գտնել էջում</string>
     <!-- Option in Library to open Synced Tabs page -->
     <string name="library_synced_tabs">Համաժամեցված ներդիրներ</string>
     <!-- Option in Library to open Reading List -->
@@ -879,16 +893,22 @@
 
     <!-- Summary of tracking protection preference if tracking protection is set to off -->
     <string name="tracking_protection_off">Անջ.</string>
-    <!-- Label that indicates that all video and audio autoplay is allowed -->
+    <!-- Label for global setting that indicates that all video and audio autoplay is allowed -->
     <string name="preference_option_autoplay_allowed2">Թույլատրել ձայնանյութը և տեսանյութը</string>
+    <!-- Label for site specific setting that indicates that all video and audio autoplay is allowed -->
+    <string name="quick_setting_option_autoplay_allowed">Թույլատրել ձայնանյութը և տեսանյութը</string>
     <!-- Label that indicates that video and audio autoplay is only allowed over Wi-Fi -->
     <string name="preference_option_autoplay_allowed_wifi_only2">Արգելափակել ձայնանյութը և տեսանյութը միայն բջջային տվյալներում</string>
     <!-- Subtext that explains 'autoplay on Wi-Fi only' option -->
     <string name="preference_option_autoplay_allowed_wifi_subtext">Ձայնանյութը և տեսանյութը կնվագարկվեն միայն Wi-Fi-ով</string>
-    <!-- Label that indicates that video autoplay is allowed, but audio autoplay is blocked -->
+    <!-- Label for global setting that indicates that video autoplay is allowed, but audio autoplay is blocked -->
     <string name="preference_option_autoplay_block_audio2">Արգելափակել միայն ձայնանյութը</string>
-    <!-- Label that indicates that all video and audio autoplay is blocked -->
+    <!-- Label for site specific setting that indicates that video autoplay is allowed, but audio autoplay is blocked -->
+    <string name="quick_setting_option_autoplay_block_audio">Արգելափակել միայն ձայնանյութը</string>
+    <!-- Label for global setting that indicates that all video and audio autoplay is blocked -->
     <string name="preference_option_autoplay_blocked3">Արգելափակել ձայնանյութը և տեսանյութը</string>
+    <!-- Label for site specific setting that indicates that all video and audio autoplay is blocked -->
+    <string name="quick_setting_option_autoplay_blocked">Արգելափակել ձայնանյութը և տեսանյութը</string>
     <!-- Summary of delete browsing data on quit preference if it is set to on -->
     <string name="delete_browsing_data_quit_on">Միաց.</string>
     <!-- Summary of delete browsing data on quit preference if it is set to off -->
@@ -1146,9 +1166,6 @@
     <string name="onboarding_header">Բարի գալուստ %s:</string>
     <!-- text for the Firefox Accounts section header -->
     <string name="onboarding_fxa_section_header">Արդեն ունե՞ք հաշիվ</string>
-    <!-- text for the Firefox Preview feature section header
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_feature_section_header">Ծանոթացեք %s-ին</string>
     <!-- text for the "What's New" onboarding card header -->
     <string name="onboarding_whats_new_header1">Տեսեք, թե ինչն է նոր</string>
     <!-- text for the "what's new" onboarding card description
@@ -1157,10 +1174,10 @@
 
     <!-- text for underlined clickable link that is part of "what's new" onboarding card description that links to an FAQ -->
     <string name="onboarding_whats_new_description_linktext">Ստացեք պատասխանները այստեղ</string>
-    <!-- text for the Firefox account onboarding sign in card header -->
-    <string name="onboarding_account_sign_in_header">Համաժամեցրեք էջանիշերը, գաղտնաբառերը և ավելին՝ ձեր Firefox հաշվով:</string>
+    <!-- text for the Firefox account onboarding sign in card header. The word "Firefox" should not be translated -->
+    <string name="onboarding_account_sign_in_header_1">Համաժամեցնել Firefox-ը</string>
     <!-- Text for the button to learn more about signing in to your Firefox account -->
-    <string name="onboarding_manual_sign_in_learn_more">Իմանալ ավելին</string>
+    <string name="onboarding_manual_sign_in_description">Բերեք էջանիշերը, պատմությունը և գաղտնաբառերը Firefox՝ այս սարքում:</string>
     <!-- text for the firefox account onboarding card header when we detect you're already signed in to
         another Firefox browser. (The word `Firefox` should not be translated)
         The first parameter is the email of the detected user's account -->
@@ -1169,8 +1186,8 @@
     <string name="onboarding_firefox_account_auto_signin_confirm">Այո, գրանցեք ինձ</string>
     <!-- text for the automatic sign-in button while signing in is in process -->
     <string name="onboarding_firefox_account_signing_in">Մուտք է գործում...</string>
-    <!-- text for the button to manually sign into Firefox account. The word "Firefox" should not be translated -->
-    <string name="onboarding_firefox_account_sign_in">Մուտք գործեք Firefox</string>
+    <!-- text for the button to manually sign into Firefox account. -->
+    <string name="onboarding_firefox_account_sign_in_1">Գրանցվել</string>
     <!-- text for the button to stay signed out when presented with an option to automatically sign-in. -->
     <string name="onboarding_firefox_account_stay_signed_out">Մնացեք դուրս գրված</string>
     <!-- text to display in the snackbar once account is signed-in -->
@@ -1178,26 +1195,23 @@
     <!-- text to display in the snackbar if automatic sign-in fails. user may try again -->
     <string name="onboarding_firefox_account_automatic_signin_failed">Չհաջողվեց մուտք գործել</string>
     <!-- text for the tracking protection onboarding card header -->
-    <string name="onboarding_tracking_protection_header_2">Ինքնաշխատ գաղտնիություն</string>
-    <!-- text for the tracking protection card description
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_tracking_protection_description_2">Գաղտնիության և անվտանգության կարգավորումները արգելափակում են հետագծումները, վնասագրերը և Ձեզ հետևող ընկերություններին:</string>
+    <string name="onboarding_tracking_protection_header_3">Միշտ գաղտնիություն</string>
+    <!-- text for the tracking protection card description. 'Firefox' intentionally hardcoded here -->
+    <string name="onboarding_tracking_protection_description_3">Firefox-ը ինքնաշխատ կանգնեցնում է ընկերությունների՝ հետևելու Ձեզ առցանց:</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
     <string name="onboarding_tracking_protection_standard_button_2">Ստանդարտ (սկզբնադիր)</string>
     <!-- text for standard blocking option button description -->
-    <string name="onboarding_tracking_protection_standard_button_description_2">Արգելափակում է ավելի քիչ հետագծիչներ: Էջերը նորմալ կբեռնվեն:</string>
+    <string name="onboarding_tracking_protection_standard_button_description_3">Հավասարակշռված է գաղտնիության և արտադրողականության միջև: Էջերը նորմալ են բեռնվում:</string>
     <!-- text for tracking protection radio button option for strict level of blocking -->
     <string name="onboarding_tracking_protection_strict_button">Խիստ (հանձնարարելի)</string>
     <!-- text for tracking protection radio button option for strict level of blocking -->
     <string name="onboarding_tracking_protection_strict_option">Խիստ</string>
     <!-- text for strict blocking option button description -->
-    <string name="onboarding_tracking_protection_strict_button_description_2">Արգելափակում է ավելի շատ հետագծիչներ, գովազդ և թռուցիկներ: Էջերը բեռնում են ավելի արագ, բայց որոշ գործառույթներ կարող են չաշխատել:</string>
-    <!-- text for the toolbar position card header
-        In English this is an idiom for "choose a side as in an argument or fight"
-        but it is ok to make this more literally about "choosing a position in a physical space -->
-    <string name="onboarding_toolbar_position_header">Դիրքորոշել</string>
+    <string name="onboarding_tracking_protection_strict_button_description_3">Արգելափակում է ավելի շատ հետագծիչներ, որ էջերը արագ բեռնվեն, բայց էջի որոշ գործույթներ կարող են ընդհատվեն:</string>
+    <!-- text for the toolbar position card header  -->
+    <string name="onboarding_toolbar_placement_header_1">Ընտրեք գործիքագոտու տեղը</string>
     <!-- text for the toolbar position card description -->
-    <string name="onboarding_toolbar_position_description">Փորձեք մի ձեռքով դիտարկումը գործիքագոտու ներքևում կամ այն տեղափոխեք վերև:</string>
+    <string name="onboarding_toolbar_placement_description_1">Գործիքագոտին դրեք հեշտ հասանելի տեղ: Պահեք այն ներքևում կամ տեղափոխեք վերև:</string>
     <!-- text for the private browsing onboarding card header -->
     <string name="onboarding_private_browsing_header">Դիտարկել գաղտնի</string>
     <!-- text for the private browsing onboarding card description
@@ -1211,7 +1225,7 @@
     <string name="onboarding_privacy_notice_header">Ձեր գաղտնիությունը</string>
 
     <!-- text for the privacy notice onboarding card description
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
+    The first parameter is the name of the app (e.g. Firefox Preview) Substitute %s for long browser name. -->
     <string name="onboarding_privacy_notice_description2">Մենք պատրաստել ենք %s-ը, որպեսզի դուք կառավարեք այն, ինչ համօգտագործում եք առցանց և թե ինչով եք կիսվում մեզ հետ:</string>
     <!-- Text for the button to read the privacy notice -->
     <string name="onboarding_privacy_notice_read_button">Կարդացեք մեր գաղտնիության ծանուցումը</string>
@@ -1226,7 +1240,7 @@
     <!-- text for the theme picker onboarding card header -->
     <string name="onboarding_theme_picker_header">Ընտրեք ձեր ոճը</string>
     <!-- text for the theme picker onboarding card description -->
-    <string name="onboarding_theme_picker_description1">Խնայեք մարտկոցի լիցքը  և ձեր տեսողությունը`միացնելով մուգ կերպը:</string>
+    <string name="onboarding_theme_picker_description_2">Խնայեք մարտկոցը և ձեր տեսողությունը մուգ կերպում:</string>
     <!-- Automatic theme setting (will follow device setting) -->
     <string name="onboarding_theme_automatic_title">Ինքնաշխատ</string>
     <!-- Summary of automatic theme setting (will follow device setting) -->
@@ -1281,14 +1295,14 @@
     <!-- Preference for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_standard_default_1">Ստանդարտ (սկզբնադիր)</string>
     <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description_3">Արգելափակում է ավելի քիչ հետագծիչներ: Էջերը նորմալ կբեռնվեն:</string>
+    <string name="preference_enhanced_tracking_protection_standard_description_4">Հավասարակշռված է գաղտնիության և արտադրողականության միջև: Էջերը նորմալ են բեռնվում:</string>
     <!--  Accessibility text for the Standard protection information icon  -->
     <string name="preference_enhanced_tracking_protection_standard_info_button">Ինչն է արգելափակված հետագծման ստանդարտ պաշտպանությամբ</string>
     <!-- Preference for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict">Խիստ</string>
 
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_description_2">Արգելափակում է ավելի շատ հետագծիչներ, գովազդ և թռուցիկներ: Էջերը բեռնում են ավելի արագ, բայց որոշ գործառույթներ կարող են չաշխատել:</string>
+    <string name="preference_enhanced_tracking_protection_strict_description_3">Արգելափակում է ավելի շատ հետագծիչներ, որ էջերը արագ բեռնվեն, բայց էջի որոշ գործույթներ կարող են ընդհատվեն:</string>
     <!--  Accessibility text for the Strict protection information icon  -->
     <string name="preference_enhanced_tracking_protection_strict_info_button">Ինչն է արգելափակված խիստ հետագծման պաշտպանությամբ</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
@@ -1524,6 +1538,36 @@
     <string name="saved_logins_sort_strategy_last_used">Վերջին օգտագործվածը</string>
     <!-- Content description (not visible, for screen readers etc.): Sort saved logins dropdown menu chevron icon -->
     <string name="saved_logins_menu_dropdown_chevron_icon_content_description">Տեսակավորել մուտագրումների ցանկը</string>
+
+    <!-- Credit Cards Autofill -->
+    <!-- Preference and title for managing the settings for credit cards -->
+    <string name="preferences_credit_cards">Բանկային քարտեր</string>
+    <!-- Preference for saving and autofilling credit cards -->
+    <string name="preferences_credit_cards_save_and_autofill_cards">Պահել և ինքնալրացնել քարտերը</string>
+    <!-- Preference summary for saving and autofilling credit card data -->
+    <string name="preferences_credit_cards_save_and_autofill_cards_summary">Տվյալները գաղտնագրված են</string>
+    <!-- Preference option for syncing credit cards across devices. This is displayed when the user is not signed into sync -->
+    <string name="preferences_credit_cards_sync_cards_across_devices">Համաժամեցնել քարտերը սարքերի միջև</string>
+    <!-- Preference option for adding a credit card -->
+    <string name="preferences_credit_cards_add_credit_card">Ավելացնել բանկային քարտ</string>
+    <!-- Title of the "Add card" screen -->
+    <string name="credit_cards_add_card">Ավելացնել քարտ</string>
+    <!-- The header for the card number of a credit card -->
+    <string name="credit_cards_card_number">Քարտի համարը</string>
+    <!-- The header for the expiration date of a credit card -->
+    <string name="credit_cards_expiration_date">Քարտի ժամկետը</string>
+    <!-- The header for the name on the credit card -->
+    <string name="credit_cards_name_on_card">Քարտի վրա ձեր անունը</string>
+    <!-- The header for the nickname for a credit card -->
+    <string name="credit_cards_card_nickname">Քարտի անունը</string>
+    <!-- The text for the "Delete card" button for deleting a credit card -->
+    <string name="credit_cards_delete_card_button">Ջնջել քարտը</string>
+    <!-- The title for the "Save" menu item for saving a credit card -->
+    <string name="credit_cards_menu_save">Պահպանել</string>
+    <!-- The text for the "Save" button for saving a credit card -->
+    <string name="credit_cards_save_button">Պահպանել </string>
+    <!-- The text for the "Cancel" button for cancelling adding or updating a credit card -->
+    <string name="credit_cards_cancel_button">Չեղարկել</string>
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Ավելացնել որոնիչ</string>

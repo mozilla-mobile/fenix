@@ -100,6 +100,8 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         super.onStop()
         // https://github.com/mozilla-mobile/fenix/issues/14279
         // Let's reset back to the default behavior after we're done searching
+        // This will be addressed on https://github.com/mozilla-mobile/fenix/issues/17805
+        @Suppress("DEPRECATION")
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
     }
 
@@ -157,7 +159,12 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                     toolbarView.view.hideKeyboard()
                     toolbarView.view.clearFocus()
                 },
-                focusToolbar = { toolbarView.view.edit.focus() }
+                focusToolbar = { toolbarView.view.edit.focus() },
+                clearToolbar = {
+                    toolbarView.view
+                        .findViewById<InlineAutocompleteEditText>(R.id.mozac_browser_toolbar_edit_url_view)
+                        ?.setText("")
+                }
             )
         )
 

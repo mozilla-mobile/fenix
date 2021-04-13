@@ -227,6 +227,12 @@
 
     <string name="pref_key_open_tabs_count" translatable="false">pref_key_open_tabs_count</string>
 
+    <!-- Add-on Metrics Values -->
+    <string name="pref_key_installed_addons_count" translatable="false">pref_key_installed_addons_count</string>
+    <string name="pref_key_installed_addons_list" translatable="false">pref_key_installed_addons_list</string>
+    <string name="pref_key_enabled_addons_count" translatable="false">pref_key_enabled_addons_count</string>
+    <string name="pref_key_enabled_addons_list" translatable="false">pref_key_enabled_addons_list</string>
+
     <string name="pref_key_search_count" translatable="false">pref_key_search_count</string>
 
     <string name="pref_key_mobile_bookmarks_size" translatable="false">pref_key_mobile_bookmarks_size</string>
@@ -246,15 +252,20 @@
     <string name="pref_key_close_tabs_after_one_day" translatable="false">pref_key_close_tabs_after_one_day</string>
     <string name="pref_key_close_tabs_after_one_week" translatable="false">pref_key_close_tabs_after_one_week</string>
     <string name="pref_key_close_tabs_after_one_month" translatable="false">pref_key_close_tabs_after_one_month</string>
+    <string name="pref_key_new_tabs_tray" translatable="false">pref_key_new_tabs_tray</string>
 
     <string name="pref_key_camera_permissions_needed" translatable="false">pref_key_camera_permissions_needed</string>
 
     <string name="pref_key_return_to_browser" translatable="false">pref_key_return_to_browser</string>
-  
+
     <!-- Secret Info Setting Keys -->
     <string name="pref_key_secret_debug_info" translatable="false">pref_key_secret_debug_info</string>
     <string name="pref_key_leanplum_user_id" translatable="false">pref_key_leanplum_user_id</string>
     <string name="pref_key_leanplum_device_id" translatable="false">pref_key_leanplum_device_id</string>
     <string name="pref_key_search_region_home" translatable="false">pref_key_search_region_home</string>
     <string name="pref_key_search_region_current" translatable="false">pref_key_search_region_current</string>
+
+    <!-- Secret Settings -->
+    <string name="pref_key_show_credit_cards_feature" translatable="false">pref_key_show_credit_cards_feature</string>
+    <string name="pref_key_show_address_feature" translatable="false">pref_key_show_address_feature</string>
 </resources>

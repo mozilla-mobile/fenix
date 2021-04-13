@@ -6,7 +6,10 @@ package org.mozilla.fenix.settings
 
 import android.os.Bundle
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.SwitchPreference
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 
 class SecretSettingsFragment : PreferenceFragmentCompat() {
@@ -18,5 +21,23 @@ class SecretSettingsFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.secret_settings_preferences, rootKey)
+
+        requirePreference<SwitchPreference>(R.string.pref_key_show_address_feature).apply {
+            isVisible = FeatureFlags.addressesFeature
+            isChecked = context.settings().addressFeature
+            onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
+
+        requirePreference<SwitchPreference>(R.string.pref_key_show_credit_cards_feature).apply {
+            isVisible = FeatureFlags.creditCardsFeature
+            isChecked = context.settings().creditCardsFeature
+            onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
+
+        requirePreference<SwitchPreference>(R.string.pref_key_new_tabs_tray).apply {
+            isVisible = FeatureFlags.tabsTrayRewrite
+            isChecked = context.settings().tabsTrayRewrite
+            onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
     }
 }

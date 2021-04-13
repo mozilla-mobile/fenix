@@ -513,6 +513,7 @@ dependencies {
 
     implementation Deps.mozilla_feature_accounts
     implementation Deps.mozilla_feature_app_links
+    implementation Deps.mozilla_feature_autofill
     implementation Deps.mozilla_feature_awesomebar
     implementation Deps.mozilla_feature_contextmenu
     implementation Deps.mozilla_feature_customtabs
@@ -544,6 +545,7 @@ dependencies {
     implementation Deps.mozilla_feature_webcompat_reporter
 
     implementation Deps.mozilla_service_digitalassetlinks
+    implementation Deps.mozilla_service_sync_autofill
     implementation Deps.mozilla_service_sync_logins
     implementation Deps.mozilla_service_firefox_accounts
     implementation Deps.mozilla_service_glean

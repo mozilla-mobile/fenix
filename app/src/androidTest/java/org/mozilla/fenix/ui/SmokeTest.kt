@@ -322,6 +322,7 @@ class SmokeTest {
 
     @Test
     // Verifies the Bookmark button in a tab's 3 dot menu
+    @Ignore("To be re-implemented in https://github.com/mozilla-mobile/fenix/issues/17979")
     fun mainMenuBookmarkButtonTest() {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
@@ -405,7 +406,7 @@ class SmokeTest {
         }.goBackToHomeScreen {}
 
         navigationToolbar {
-        }.enterURLAndEnterToBrowser(trackingPage.url) {}
+        }.openTrackingProtectionTestPage(trackingPage.url, true) {}
 
         enhancedTrackingProtection {
             dismissTrackingOnboarding()
@@ -630,7 +631,7 @@ class SmokeTest {
             IdlingRegistry.getInstance().unregister(addonsListIdlingResource!!)
         }.goBack {
         }.openNavigationToolbar {
-        }.enterURLAndEnterToBrowser(trackingProtectionPage.url) {}
+        }.openTrackingProtectionTestPage(trackingProtectionPage.url, true) {}
         enhancedTrackingProtection {
             verifyEnhancedTrackingProtectionNotice()
         }.closeNotificationPopup {}
@@ -980,6 +981,7 @@ class SmokeTest {
 
     @Test
     // Verifies that deleting a Bookmarks folder also removes the item from inside it.
+    @Ignore("To be re-implemented in https://github.com/mozilla-mobile/fenix/issues/17799")
     fun deleteNonEmptyBookmarkFolderTest() {
         val website = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
@@ -1053,6 +1055,33 @@ class SmokeTest {
         }.openTabsListThreeDotMenu {
             verifyTabSettingsButton()
             verifyRecentlyClosedTabsButton()
+        }
+    }
+
+    @Test
+    fun selectTabsButtonVisibilityTest() {
+        homeScreen {
+        }.dismissOnboarding()
+
+        val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+        val secondWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 2)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(firstWebPage.url) {
+            mDevice.waitForIdle()
+        }.openTabDrawer {
+        }.openNewTab {
+        }.submitQuery(secondWebPage.url.toString()) {
+            mDevice.waitForIdle()
+        }.openTabDrawer {
+        }.toggleToPrivateTabs {
+        }.openNewTab {
+        }.dismissSearchBar { }
+
+        homeScreen {
+        }.openTabDrawer {
+        }.toggleToNormalTabs {
+            verifySelectTabsButton()
         }
     }
 

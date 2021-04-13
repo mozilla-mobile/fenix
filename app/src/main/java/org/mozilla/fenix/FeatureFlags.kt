@@ -20,6 +20,16 @@ object FeatureFlags {
     const val nimbusExperiments = false
 
     /**
+     * Enables the Addresses autofill feature.
+     */
+    val addressesFeature = true
+
+    /**
+     * Enables the Credit Cards autofill feature.
+     */
+    val creditCardsFeature = true
+
+    /**
      * Enables WebAuthn support.
      */
     const val webAuthFeature = true
@@ -28,4 +38,14 @@ object FeatureFlags {
      * Shows new three-dot toolbar menu design.
      */
     val toolbarMenuFeature = Config.channel.isDebug
+
+    /**
+     * Enables the tabs tray re-write with Synced Tabs.
+     */
+    val tabsTrayRewrite = Config.channel.isDebug
+
+    /**
+     * Enables the updated icon set look and feel.
+     */
+    val newIconSet = Config.channel.isNightlyOrDebug
 }

@@ -74,6 +74,10 @@ sealed class Event {
     object HistoryOpened : Event()
     object HistoryItemShared : Event()
     object HistoryItemOpened : Event()
+    object HistoryOpenedInNewTab : Event()
+    object HistoryOpenedInNewTabs : Event()
+    object HistoryOpenedInPrivateTab : Event()
+    object HistoryOpenedInPrivateTabs : Event()
     object HistoryItemRemoved : Event()
     object HistoryAllItemsRemoved : Event()
     object ReaderModeAvailable : Event()
@@ -212,8 +216,13 @@ sealed class Event {
     object ContextMenuSelectAllTapped : Event()
     object ContextMenuShareTapped : Event()
 
-    object HaveTopSites : Event()
-    object HaveNoTopSites : Event()
+    object SyncedTabSuggestionClicked : Event()
+    object BookmarkSuggestionClicked : Event()
+    object ClipboardSuggestionClicked : Event()
+    object HistorySuggestionClicked : Event()
+    object SearchActionClicked : Event()
+    object SearchSuggestionClicked : Event()
+    object OpenedTabSuggestionClicked : Event()
 
     // Interaction events with extras
 
@@ -523,9 +532,9 @@ sealed class Event {
             get() = providerName
     }
 
-    data class SearchAdClicked(val providerName: String) : Event() {
+    data class SearchAdClicked(val keyName: String) : Event() {
         val label: String
-            get() = providerName
+            get() = keyName
     }
 
     data class SearchInContent(val keyName: String) : Event() {

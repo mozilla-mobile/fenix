@@ -7,6 +7,7 @@ package org.mozilla.fenix.components.metrics
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.mockk
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.service.glean.testing.GleanTestRule
 import mozilla.components.support.test.robolectric.testContext
@@ -17,11 +18,18 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mozilla.fenix.GleanMetrics.Addons
+import org.mozilla.fenix.GleanMetrics.Awesomebar
+import org.mozilla.fenix.GleanMetrics.BookmarksManagement
 import org.mozilla.fenix.GleanMetrics.Events
+import org.mozilla.fenix.GleanMetrics.History
 import org.mozilla.fenix.GleanMetrics.Metrics
 import org.mozilla.fenix.GleanMetrics.SearchDefaultEngine
+import org.mozilla.fenix.GleanMetrics.SyncedTabs
+import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.utils.BrowsersCache
+import org.mozilla.fenix.utils.Settings
 
 @RunWith(FenixRobolectricTestRunner::class)
 class GleanMetricsServiceTest {
@@ -44,16 +52,46 @@ class GleanMetricsServiceTest {
     @Test
     fun `setStartupMetrics sets some base metrics`() {
         val expectedAppName = "org.mozilla.fenix"
+        val settings: Settings = mockk()
         every { browsersCache.all(any()).isDefaultBrowser } returns true
         every { mozillaProductDetector.getMozillaBrowserDefault(any()) } returns expectedAppName
         every { mozillaProductDetector.getInstalledMozillaProducts(any()) } returns listOf(expectedAppName)
+        every { settings.adjustCampaignId } returns "ID"
+        every { settings.adjustAdGroup } returns "group"
+        every { settings.adjustCreative } returns "creative"
+        every { settings.adjustNetwork } returns "network"
+        every { settings.searchWidgetInstalled } returns true
+        every { settings.openTabsCount } returns 1
+        every { settings.topSitesSize } returns 2
+        every { settings.installedAddonsCount } returns 3
+        every { settings.installedAddonsList } returns "test1,test2,test3"
+        every { settings.enabledAddonsCount } returns 2
+        every { settings.enabledAddonsList } returns "test1,test2"
+        every { settings.desktopBookmarksSize } returns 4
+        every { settings.mobileBookmarksSize } returns 5
+        every { settings.toolbarPosition } returns ToolbarPosition.BOTTOM
+        every { settings.getTabViewPingString() } returns "test"
+        every { settings.getTabTimeoutPingString() } returns "test"
 
-        gleanService.setStartupMetrics()
+        gleanService.setStartupMetrics(settings)
 
         // Verify that browser defaults metrics are set.
         assertEquals(true, Metrics.defaultBrowser.testGetValue())
         assertEquals(expectedAppName, Metrics.defaultMozBrowser.testGetValue())
         assertEquals(listOf(expectedAppName), Metrics.mozillaProducts.testGetValue())
+        assertEquals("ID", Metrics.adjustCampaign.testGetValue())
+        assertEquals("group", Metrics.adjustAdGroup.testGetValue())
+        assertEquals("creative", Metrics.adjustCreative.testGetValue())
+        assertEquals("network", Metrics.adjustNetwork.testGetValue())
+        assertEquals(true, Metrics.searchWidgetInstalled.testGetValue())
+        assertEquals(true, Metrics.hasOpenTabs.testGetValue())
+        assertEquals(1, Metrics.tabsOpenCount.testGetValue())
+        assertEquals(true, Metrics.hasTopSites.testGetValue())
+        assertEquals(2, Metrics.topSitesCount.testGetValue())
+        assertEquals(true, Addons.hasInstalledAddons.testGetValue())
+        assertEquals(listOf("test1", "test2", "test3"), Addons.installedAddons.testGetValue())
+        assertEquals(true, Addons.hasEnabledAddons.testGetValue())
+        assertEquals(listOf("test1", "test2"), Addons.enabledAddons.testGetValue())
 
         // Verify that search engine defaults are NOT set. This test does
         // not mock most of the objects telemetry is collected from.
@@ -84,5 +122,113 @@ class GleanMetricsServiceTest {
         // We only expect 1 extra key.
         assertEquals(1, events[0].extra!!.size)
         assertEquals("APP_ICON", events[0].extra!!["source"])
+    }
+
+    @Test
+    fun `synced tab event is correctly recorded`() {
+        assertFalse(SyncedTabs.syncedTabsSuggestionClicked.testHasValue())
+        gleanService.track(Event.SyncedTabSuggestionClicked)
+        assertTrue(SyncedTabs.syncedTabsSuggestionClicked.testHasValue())
+    }
+
+    @Test
+    fun `awesomebar events are correctly recorded`() {
+        assertFalse(Awesomebar.bookmarkSuggestionClicked.testHasValue())
+        gleanService.track(Event.BookmarkSuggestionClicked)
+        assertTrue(Awesomebar.bookmarkSuggestionClicked.testHasValue())
+
+        assertFalse(Awesomebar.clipboardSuggestionClicked.testHasValue())
+        gleanService.track(Event.ClipboardSuggestionClicked)
+        assertTrue(Awesomebar.clipboardSuggestionClicked.testHasValue())
+
+        assertFalse(Awesomebar.historySuggestionClicked.testHasValue())
+        gleanService.track(Event.HistorySuggestionClicked)
+        assertTrue(Awesomebar.historySuggestionClicked.testHasValue())
+
+        assertFalse(Awesomebar.searchActionClicked.testHasValue())
+        gleanService.track(Event.SearchActionClicked)
+        assertTrue(Awesomebar.searchActionClicked.testHasValue())
+
+        assertFalse(Awesomebar.searchSuggestionClicked.testHasValue())
+        gleanService.track(Event.SearchSuggestionClicked)
+        assertTrue(Awesomebar.searchSuggestionClicked.testHasValue())
+
+        assertFalse(Awesomebar.openedTabSuggestionClicked.testHasValue())
+        gleanService.track(Event.OpenedTabSuggestionClicked)
+        assertTrue(Awesomebar.openedTabSuggestionClicked.testHasValue())
+    }
+
+    @Test
+    fun `bookmark events is correctly recorded`() {
+        assertFalse(BookmarksManagement.open.testHasValue())
+        gleanService.track(Event.OpenedBookmark)
+        assertTrue(BookmarksManagement.open.testHasValue())
+
+        assertFalse(BookmarksManagement.openInNewTab.testHasValue())
+        gleanService.track(Event.OpenedBookmarkInNewTab)
+        assertTrue(BookmarksManagement.openInNewTab.testHasValue())
+
+        assertFalse(BookmarksManagement.openInNewTabs.testHasValue())
+        gleanService.track(Event.OpenedBookmarksInNewTabs)
+        assertTrue(BookmarksManagement.openInNewTabs.testHasValue())
+
+        assertFalse(BookmarksManagement.openInPrivateTab.testHasValue())
+        gleanService.track(Event.OpenedBookmarkInPrivateTab)
+        assertTrue(BookmarksManagement.openInPrivateTab.testHasValue())
+
+        assertFalse(BookmarksManagement.openInPrivateTabs.testHasValue())
+        gleanService.track(Event.OpenedBookmarksInPrivateTabs)
+        assertTrue(BookmarksManagement.openInPrivateTabs.testHasValue())
+
+        assertFalse(BookmarksManagement.edited.testHasValue())
+        gleanService.track(Event.EditedBookmark)
+        assertTrue(BookmarksManagement.edited.testHasValue())
+
+        assertFalse(BookmarksManagement.moved.testHasValue())
+        gleanService.track(Event.MovedBookmark)
+        assertTrue(BookmarksManagement.moved.testHasValue())
+
+        assertFalse(BookmarksManagement.removed.testHasValue())
+        gleanService.track(Event.RemoveBookmark)
+        assertTrue(BookmarksManagement.removed.testHasValue())
+
+        assertFalse(BookmarksManagement.multiRemoved.testHasValue())
+        gleanService.track(Event.RemoveBookmarks)
+        assertTrue(BookmarksManagement.multiRemoved.testHasValue())
+
+        assertFalse(BookmarksManagement.shared.testHasValue())
+        gleanService.track(Event.ShareBookmark)
+        assertTrue(BookmarksManagement.shared.testHasValue())
+
+        assertFalse(BookmarksManagement.copied.testHasValue())
+        gleanService.track(Event.CopyBookmark)
+        assertTrue(BookmarksManagement.copied.testHasValue())
+
+        assertFalse(BookmarksManagement.folderAdd.testHasValue())
+        gleanService.track(Event.AddBookmarkFolder)
+        assertTrue(BookmarksManagement.folderAdd.testHasValue())
+
+        assertFalse(BookmarksManagement.folderRemove.testHasValue())
+        gleanService.track(Event.RemoveBookmarkFolder)
+        assertTrue(BookmarksManagement.folderRemove.testHasValue())
+    }
+
+    @Test
+    fun `History events is correctly recorded`() {
+        assertFalse(History.openedItemInNewTab.testHasValue())
+        gleanService.track(Event.HistoryOpenedInNewTab)
+        assertTrue(History.openedItemInNewTab.testHasValue())
+
+        assertFalse(History.openedItemsInNewTabs.testHasValue())
+        gleanService.track(Event.HistoryOpenedInNewTabs)
+        assertTrue(History.openedItemsInNewTabs.testHasValue())
+
+        assertFalse(History.openedItemInPrivateTab.testHasValue())
+        gleanService.track(Event.HistoryOpenedInPrivateTab)
+        assertTrue(History.openedItemInPrivateTab.testHasValue())
+
+        assertFalse(History.openedItemsInPrivateTabs.testHasValue())
+        gleanService.track(Event.HistoryOpenedInPrivateTabs)
+        assertTrue(History.openedItemsInPrivateTabs.testHasValue())
     }
 }

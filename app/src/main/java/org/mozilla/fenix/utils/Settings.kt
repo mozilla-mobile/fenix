@@ -26,10 +26,12 @@ import mozilla.components.support.ktx.android.content.longPreference
 import mozilla.components.support.ktx.android.content.stringPreference
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.metrics.MozillaProductDetector
 import org.mozilla.fenix.components.settings.counterPreference
+import org.mozilla.fenix.components.settings.featureFlagPreference
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getPreferenceKey
@@ -317,6 +319,12 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var closeTabsAfterOneMonth by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_close_tabs_after_one_month),
         default = false
+    )
+
+    var tabsTrayRewrite by featureFlagPreference(
+        appContext.getPreferenceKey(R.string.pref_key_new_tabs_tray),
+        default = false,
+        featureFlag = FeatureFlags.tabsTrayRewrite
     )
 
     fun getTabTimeout(): Long = when {
@@ -949,6 +957,38 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         0
     )
 
+    /**
+     * Storing number of installed add-ons for telemetry purposes
+     */
+    var installedAddonsCount by intPreference(
+        appContext.getPreferenceKey(R.string.pref_key_installed_addons_count),
+        0
+    )
+
+    /**
+     * Storing the list of installed add-ons for telemetry purposes
+     */
+    var installedAddonsList by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_installed_addons_list),
+        default = ""
+    )
+
+    /**
+     * Storing number of enabled add-ons for telemetry purposes
+     */
+    var enabledAddonsCount by intPreference(
+        appContext.getPreferenceKey(R.string.pref_key_enabled_addons_count),
+        0
+    )
+
+    /**
+     * Storing the list of enabled add-ons for telemetry purposes
+     */
+    var enabledAddonsList by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_enabled_addons_list),
+        default = ""
+    )
+
     private var savedLoginsSortingStrategyString by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_saved_logins_sorting_strategy),
         default = SavedLoginsSortingStrategyMenu.Item.AlphabeticallySort.strategyString
@@ -987,5 +1027,17 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var isSwipeToolbarToSwitchTabsEnabled by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_swipe_toolbar_switch_tabs),
         default = true
+    )
+
+    var creditCardsFeature by featureFlagPreference(
+        appContext.getPreferenceKey(R.string.pref_key_show_credit_cards_feature),
+        default = false,
+        featureFlag = FeatureFlags.creditCardsFeature
+    )
+
+    var addressFeature by featureFlagPreference(
+        appContext.getPreferenceKey(R.string.pref_key_show_address_feature),
+        default = false,
+        featureFlag = FeatureFlags.addressesFeature
     )
 }

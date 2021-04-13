@@ -5,8 +5,10 @@
 package org.mozilla.fenix.components
 
 import android.app.Activity
-import android.content.Context
 import androidx.annotation.VisibleForTesting
+import com.google.android.play.core.review.ReviewManager
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.withContext
 import org.mozilla.fenix.utils.Settings
 
 /**
@@ -38,10 +40,19 @@ class FenixReviewSettings(
  * Controls the Review Prompt behavior.
  */
 class ReviewPromptController(
-    private val context: Context,
+    private val manager: ReviewManager,
     private val reviewSettings: ReviewSettings,
     private val timeNowInMillis: () -> Long = { System.currentTimeMillis() },
-    private val tryPromptReview: suspend (Activity) -> Unit = { _ ->
+    private val tryPromptReview: suspend (Activity) -> Unit = { activity ->
+        val flow = manager.requestReviewFlow()
+
+        withContext(Main) {
+            flow.addOnCompleteListener {
+                if (it.isSuccessful) {
+                    manager.launchReviewFlow(activity, it.result)
+                }
+            }
+        }
     }
 ) {
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
