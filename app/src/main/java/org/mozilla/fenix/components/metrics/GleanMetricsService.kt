@@ -806,29 +806,6 @@ private val Event.wrapper: EventWrapper<*>?
             { AndroidKeystoreExperiment.reset.record(it) }
         )
 
-        is Event.SecurePrefsExperimentFailure -> EventWrapper(
-            { AndroidKeystoreExperiment.experimentFailure.record(it) },
-            { AndroidKeystoreExperiment.experimentFailureKeys.valueOf(it) }
-        )
-        is Event.SecurePrefsGetFailure -> EventWrapper(
-            { AndroidKeystoreExperiment.getFailure.record(it) },
-            { AndroidKeystoreExperiment.getFailureKeys.valueOf(it) }
-        )
-        is Event.SecurePrefsGetSuccess -> EventWrapper(
-            { AndroidKeystoreExperiment.getResult.record(it) },
-            { AndroidKeystoreExperiment.getResultKeys.valueOf(it) }
-        )
-        is Event.SecurePrefsWriteFailure -> EventWrapper(
-            { AndroidKeystoreExperiment.writeFailure.record(it) },
-            { AndroidKeystoreExperiment.writeFailureKeys.valueOf(it) }
-        )
-        is Event.SecurePrefsWriteSuccess -> EventWrapper<NoExtraKeys>(
-            { AndroidKeystoreExperiment.writeSuccess.record(it) }
-        )
-        is Event.SecurePrefsReset -> EventWrapper<NoExtraKeys>(
-            { AndroidKeystoreExperiment.reset.record(it) }
-        )
-
         // Don't record other events in Glean:
         is Event.AddBookmark -> null
         is Event.OpenedAppFirstRun -> null

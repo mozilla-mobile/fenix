@@ -22,12 +22,12 @@ object FeatureFlags {
     /**
      * Enables the Addresses autofill feature.
      */
-    val addressesFeature = true
+    const val addressesFeature = true
 
     /**
      * Enables the Credit Cards autofill feature.
      */
-    val creditCardsFeature = true
+    const val creditCardsFeature = true
 
     /**
      * Enables WebAuthn support.
