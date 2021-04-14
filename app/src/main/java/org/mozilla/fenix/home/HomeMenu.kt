@@ -48,6 +48,7 @@ class HomeMenu(
         object Downloads : Item()
         object Extensions : Item()
         object SyncTabs : Item()
+        object SyncAccount : Item()
         object WhatsNew : Item()
         object Help : Item()
         object Settings : Item()
@@ -313,12 +314,12 @@ class HomeMenu(
                 context.getString(R.string.sync_menu_sign_in)
             }
 
-        val syncMenuItem = BrowserMenuImageText(
+        val syncSignInMenuItem = BrowserMenuImageText(
             syncItemTitle,
             R.drawable.ic_synced_tabs,
             primaryTextColor
         ) {
-            onItemTapped.invoke(Item.SyncTabs)
+            onItemTapped.invoke(Item.SyncAccount)
         }
 
         val whatsNewItem = BrowserMenuHighlightableItem(
@@ -364,7 +365,7 @@ class HomeMenu(
             historyItem,
             downloadsItem,
             extensionsItem,
-            if (tabsTrayRewrite) syncMenuItem else syncedTabsItem,
+            if (tabsTrayRewrite) syncSignInMenuItem else syncedTabsItem,
             accountAuthItem,
             BrowserMenuDivider(),
             desktopItem,
