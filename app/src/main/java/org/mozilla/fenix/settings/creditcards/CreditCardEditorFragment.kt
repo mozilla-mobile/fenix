@@ -31,7 +31,6 @@ import java.util.Locale
 class CreditCardEditorFragment : Fragment(R.layout.fragment_credit_card_editor) {
 
     private lateinit var controller: CreditCardEditorController
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 

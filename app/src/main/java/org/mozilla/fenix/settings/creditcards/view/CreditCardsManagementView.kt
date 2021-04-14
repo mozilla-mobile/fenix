@@ -23,6 +23,8 @@ class CreditCardsManagementView(
 ) : LayoutContainer {
 
     private val creditCardsAdapter = CreditCardsAdapter(interactor)
+    //todo initialize addCreditCardButton adapter
+    private val addCreditCardButtonAdapter = ""
 
     init {
         LayoutInflater.from(containerView.context).inflate(LAYOUT_ID, containerView, true)
