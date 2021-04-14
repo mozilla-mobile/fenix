@@ -621,12 +621,16 @@
     <string name="tabs_header_private_title">隐私浏览阶段</string>
     <!-- Title for the list of tabs in the current private session -->
     <string name="tabs_header_private_tabs_title">隐私标签页</string>
+    <!-- Title for the list of tabs in the synced tabs -->
+    <string name="tabs_header_synced_tabs_title">受同步的标签页</string>
     <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
     <string name="add_tab">添加标签页</string>
     <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
     <string name="add_private_tab">新建隐私标签页</string>
     <!-- Text for the new tab button to indicate adding a new private tab in the tab -->
     <string name="tab_drawer_fab_content">隐私标签页</string>
+    <!-- Text for the new tab button to indicate syncing command on the synced tabs page -->
+    <string name="tab_drawer_fab_sync">同步</string>
     <!-- Text shown as the title of the open tab tray -->
     <string name="tab_tray_title">打开的标签页</string>
     <!-- Text shown in the menu for saving tabs to a collection -->
@@ -1010,6 +1014,10 @@
     <string name="share_link_all_apps_subheader">所有动作</string>
     <!-- Sub-header in the dialog to share a link to an app from the most-recent sorted list -->
     <string name="share_link_recent_apps_subheader">最近使用</string>
+    <!-- An string shown when an account is signed in where %1$s is a placeholder for the email-->
+    <string name="sync_signed_as">已登录为 %1$s</string>
+    <!-- An option from the three dot menu to into sync -->
+    <string name="sync_menu_sign_in">登录同步服务</string>
     <!-- An option from the share dialog to sign into sync -->
     <string name="sync_sign_in">登录同步服务</string>
     <!-- An option from the share dialog to send link to all other sync devices -->
@@ -1591,6 +1599,8 @@
     <!-- Preference option for adding a credit card -->
     <string name="preferences_credit_cards_add_credit_card">添加信用卡</string>
 
+    <!-- Preference option for managing saved credit cards -->
+    <string name="preferences_credit_cards_manage_saved_cards">管理存放的信用卡</string>
     <!-- Title of the "Add card" screen -->
     <string name="credit_cards_add_card">添加信用卡</string>
     <!-- The header for the card number of a credit card -->
@@ -1609,6 +1619,9 @@
     <string name="credit_cards_save_button">保存</string>
     <!-- The text for the "Cancel" button for cancelling adding or updating a credit card -->
     <string name="credit_cards_cancel_button">取消</string>
+
+    <!-- Title of the "Saved cards" screen -->
+    <string name="credit_cards_saved_cards">存放的信用卡</string>
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">添加搜索引擎</string>
@@ -1767,6 +1780,9 @@
 	<string name="top_sites_rename_dialog_ok">确定</string>
 	<!-- Dialog button text for canceling the rename top site prompt. -->
 	<string name="top_sites_rename_dialog_cancel">取消</string>
+
+    <!-- Default browser experiment -->
+    <string name="default_browser_experiment_card_text">将网站、电子邮件及聊天工具中的链接设为在 Firefox 中自动打开。</string>
 
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">移除</string>

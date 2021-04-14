@@ -33,12 +33,12 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers.IO
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.browser.state.action.ContentAction
 import mozilla.components.browser.state.search.SearchEngine
@@ -79,6 +79,7 @@ import org.mozilla.fenix.exceptions.trackingprotection.TrackingProtectionExcepti
 import org.mozilla.fenix.ext.alreadyOnDestination
 import org.mozilla.fenix.ext.breadcrumb
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.ext.measureNoInline
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
@@ -94,6 +95,7 @@ import org.mozilla.fenix.library.bookmarks.BookmarkFragmentDirections
 import org.mozilla.fenix.library.bookmarks.DesktopFolders
 import org.mozilla.fenix.library.history.HistoryFragmentDirections
 import org.mozilla.fenix.library.recentlyclosed.RecentlyClosedFragmentDirections
+import org.mozilla.fenix.perf.NavGraphProvider
 import org.mozilla.fenix.perf.Performance
 import org.mozilla.fenix.perf.PerformanceInflater
 import org.mozilla.fenix.perf.ProfilerMarkers
@@ -131,7 +133,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     // components requires context to access.
     protected val homeActivityInitTimeStampNanoSeconds = SystemClock.elapsedRealtimeNanos()
 
-    private var webExtScope: CoroutineScope? = null
     lateinit var themeManager: ThemeManager
     lateinit var browsingModeManager: BrowsingModeManager
 
@@ -193,7 +194,11 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         components.publicSuffixList.prefetch()
 
         setupThemeAndBrowsingMode(getModeFromIntentOrLastKnown(intent))
-        setContentView(R.layout.activity_home)
+        setContentView(R.layout.activity_home).run {
+            // Do not call anything between setContentView and inflateNavGraphAsync.
+            // It needs to start its job as early as possible.
+            NavGraphProvider.inflateNavGraphAsync(navHost.navController, lifecycleScope)
+        }
 
         // Must be after we set the content view
         if (isVisuallyComplete) {
@@ -275,8 +280,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
         components.performance.coldStartupDurationTelemetry.onHomeActivityOnCreate(
             components.performance.visualCompletenessQueue,
-            components.appStartReasonProvider,
-            components.startupActivityStateProvider,
+            components.startupStateProvider,
             safeIntent,
             rootContainer
         )
@@ -896,7 +900,11 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     }
 
     override fun getSystemService(name: String): Any? {
-        if (LAYOUT_INFLATER_SERVICE == name) {
+        // Issue #17759 had a crash with the PerformanceInflater.kt on Android 5.0 and 5.1
+        // when using the TimePicker. Since the inflater was created for performance monitoring
+        // purposes and that we test on new android versions, this means that any difference in
+        // inflation will be caught on those devices.
+        if (LAYOUT_INFLATER_SERVICE == name && Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
             if (inflater == null) {
                 inflater = PerformanceInflater(LayoutInflater.from(baseContext), this)
             }
@@ -931,7 +939,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             webExtensionId = webExtensionState.id,
             webExtensionTitle = webExtensionState.name
         )
-        navHost.navController.navigate(action)
+        navHost.navController.navigateBlockingForAsyncNavGraph(action)
     }
 
     /**

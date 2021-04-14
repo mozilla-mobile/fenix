@@ -613,12 +613,16 @@
     <string name="tabs_header_private_title">隱私瀏覽階段</string>
     <!-- Title for the list of tabs in the current private session -->
     <string name="tabs_header_private_tabs_title">隱私分頁</string>
+    <!-- Title for the list of tabs in the synced tabs -->
+    <string name="tabs_header_synced_tabs_title">同步的分頁</string>
     <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
     <string name="add_tab">新增分頁</string>
     <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
     <string name="add_private_tab">開新隱私瀏覽分頁</string>
     <!-- Text for the new tab button to indicate adding a new private tab in the tab -->
     <string name="tab_drawer_fab_content">隱私分頁</string>
+    <!-- Text for the new tab button to indicate syncing command on the synced tabs page -->
+    <string name="tab_drawer_fab_sync">同步</string>
     <!-- Text shown as the title of the open tab tray -->
     <string name="tab_tray_title">開啟分頁</string>
     <!-- Text shown in the menu for saving tabs to a collection -->
@@ -999,6 +1003,10 @@
     <string name="share_link_all_apps_subheader">所有動作</string>
     <!-- Sub-header in the dialog to share a link to an app from the most-recent sorted list -->
     <string name="share_link_recent_apps_subheader">最近使用</string>
+    <!-- An string shown when an account is signed in where %1$s is a placeholder for the email-->
+    <string name="sync_signed_as">已登入為 %1$s</string>
+    <!-- An option from the three dot menu to into sync -->
+    <string name="sync_menu_sign_in">登入進行同步</string>
     <!-- An option from the share dialog to sign into sync -->
     <string name="sync_sign_in">登入 Sync</string>
     <!-- An option from the share dialog to send link to all other sync devices -->
@@ -1579,6 +1587,8 @@
     <!-- Preference option for adding a credit card -->
     <string name="preferences_credit_cards_add_credit_card">新增信用卡</string>
 
+    <!-- Preference option for managing saved credit cards -->
+    <string name="preferences_credit_cards_manage_saved_cards">管理已儲存的卡片</string>
     <!-- Title of the "Add card" screen -->
     <string name="credit_cards_add_card">新增付款卡片</string>
     <!-- The header for the card number of a credit card -->
@@ -1597,6 +1607,9 @@
     <string name="credit_cards_save_button">儲存</string>
     <!-- The text for the "Cancel" button for cancelling adding or updating a credit card -->
     <string name="credit_cards_cancel_button">取消</string>
+
+    <!-- Title of the "Saved cards" screen -->
+    <string name="credit_cards_saved_cards">已儲存的卡片</string>
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">新增搜尋引擎</string>

@@ -8,6 +8,7 @@ import androidx.annotation.VisibleForTesting
 import com.google.android.material.tabs.TabLayout
 import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.support.base.feature.LifecycleAwareFeature
 import org.mozilla.fenix.tabstray.TrayPagerAdapter.Companion.POSITION_NORMAL_TABS
 import org.mozilla.fenix.tabstray.TrayPagerAdapter.Companion.POSITION_PRIVATE_TABS
 
@@ -17,22 +18,29 @@ import org.mozilla.fenix.tabstray.TrayPagerAdapter.Companion.POSITION_PRIVATE_TA
  */
 class TabLayoutMediator(
     private val tabLayout: TabLayout,
-    private val interactor: TabsTrayInteractor,
-    private val store: BrowserStore
-) {
+    interactor: TabsTrayInteractor,
+    private val browserStore: BrowserStore,
+    trayStore: TabsTrayStore
+) : LifecycleAwareFeature {
+
+    private val observer = TabLayoutObserver(interactor, trayStore)
 
     /**
      * Start observing the [TabLayout] and select the current tab for initial state.
      */
-    fun attach() {
-        tabLayout.addOnTabSelectedListener(TabLayoutObserver(interactor))
+    override fun start() {
+        tabLayout.addOnTabSelectedListener(observer)
 
         selectActivePage()
     }
 
+    override fun stop() {
+        tabLayout.removeOnTabSelectedListener(observer)
+    }
+
     @VisibleForTesting
     internal fun selectActivePage() {
-        val selectedTab = store.state.selectedTab ?: return
+        val selectedTab = browserStore.state.selectedTab ?: return
 
         val selectedPagerPosition = if (selectedTab.content.private) {
             POSITION_PRIVATE_TABS
@@ -48,12 +56,32 @@ class TabLayoutMediator(
  * An observer for the [TabLayout] used for the Tabs Tray.
  */
 internal class TabLayoutObserver(
-    private val interactor: TabsTrayInteractor
+    private val interactor: TabsTrayInteractor,
+    private val trayStore: TabsTrayStore
 ) : TabLayout.OnTabSelectedListener {
+
+    private var initialScroll = true
+
     override fun onTabSelected(tab: TabLayout.Tab) {
-        interactor.setCurrentTrayPosition(tab.position)
+        // Do not animate the initial scroll when opening the tabs tray.
+        val animate = if (initialScroll) {
+            initialScroll = false
+            false
+        } else {
+            true
+        }
+
+        interactor.setCurrentTrayPosition(tab.position, animate)
+
+        trayStore.dispatch(TabsTrayAction.PageSelected(tab.toPage()))
     }
 
     override fun onTabUnselected(tab: TabLayout.Tab) = Unit
     override fun onTabReselected(tab: TabLayout.Tab) = Unit
+}
+
+fun TabLayout.Tab.toPage() = when (this.position) {
+    0 -> Page.NormalTabs
+    1 -> Page.PrivateTabs
+    else -> Page.SyncedTabs
 }

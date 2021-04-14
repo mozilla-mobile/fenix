@@ -12,6 +12,7 @@ import androidx.preference.PreferenceFragmentCompat
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.getPreferenceKey
+import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
@@ -42,7 +43,7 @@ class SitePermissionsFragment : PreferenceFragmentCompat() {
 
         exceptionsCategory.onPreferenceClickListener = OnPreferenceClickListener {
             val directions = SitePermissionsFragmentDirections.actionSitePermissionsToExceptions()
-            Navigation.findNavController(requireView()).navigate(directions)
+            Navigation.findNavController(requireView()).navigateBlockingForAsyncNavGraph(directions)
             true
         }
     }
@@ -59,17 +60,8 @@ class SitePermissionsFragment : PreferenceFragmentCompat() {
         val context = requireContext()
         val settings = context.settings()
 
-        val summary = phoneFeature.getActionLabel(context, settings = settings)
-        // Remove autoplaySummary after https://bugzilla.mozilla.org/show_bug.cgi?id=1621825 is fixed
-        val autoplaySummary =
-            if (summary == context.getString(R.string.preference_option_autoplay_allowed2)) {
-                context.getString(R.string.preference_option_autoplay_allowed_wifi_only2)
-            } else {
-                null
-            }
-
         val cameraPhoneFeatures = requirePreference<Preference>(phoneFeature.getPreferenceId())
-        cameraPhoneFeatures.summary = autoplaySummary ?: summary
+        cameraPhoneFeatures.summary = phoneFeature.getActionLabel(context, settings = settings)
 
         cameraPhoneFeatures.onPreferenceClickListener = OnPreferenceClickListener {
             navigateToPhoneFeature(phoneFeature)
@@ -85,6 +77,6 @@ class SitePermissionsFragment : PreferenceFragmentCompat() {
             requireComponents.analytics.metrics.track(Event.AutoPlaySettingVisited)
         }
 
-        Navigation.findNavController(requireView()).navigate(directions)
+        Navigation.findNavController(requireView()).navigateBlockingForAsyncNavGraph(directions)
     }
 }

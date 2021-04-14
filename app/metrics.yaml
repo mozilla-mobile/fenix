@@ -1227,23 +1227,6 @@ metrics:
       - perf-android-fe@mozilla.com
       - mcomella@mozilla.com
     expires: "2021-08-11"
-  activity_state_provider_error:
-    type: boolean
-    description: |
-      The `StartupActivityStateProvider...onActivityStarted` was unexpectedly
-      called twice. We can use this metric to validate our assumptions about
-      how these APIs are called. This probe can be removed once we validate
-      these assumptions.
-    bugs:
-      - https://github.com/mozilla-mobile/fenix/issues/18426
-    data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/18632#issue-600193452
-    data_sensitivity:
-      - technical
-    notification_emails:
-      - perf-android-fe@mozilla.com
-      - mcomella@mozilla.com
-    expires: "2021-08-11"
 
 preferences:
   show_search_suggestions:
@@ -4224,6 +4207,9 @@ perf.startup:
       The hope is that these cases will not have a significant impact on the end
       results but, if they appear to, we can replace it with a more complex
       implementation.
+      <br><br>
+      Around April 8, 2021 the implementation was refactored. Functionally, it
+      should be the same but it's noted just in case there are bugs.
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/18426
     data_reviews:
@@ -4248,6 +4234,9 @@ perf.startup:
       <br><br>
       See the `cold_main_app_to_first_frame` probe docs for other possible
       known issues and more details.
+      <br><br>
+      Around April 8, 2021 the implementation was refactored. Functionally, it
+      should be the same but it's noted just in case there are bugs.
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/18426
     data_reviews:
@@ -4270,6 +4259,9 @@ perf.startup:
       <br><br>
       See the `cold_main_app_to_first_frame` probe docs for known issues and
       more details.
+      <br><br>
+      Around April 8, 2021 the implementation was refactored. Functionally, it
+      should be the same but it's noted just in case there are bugs.
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/18426
     data_reviews:
@@ -4466,7 +4458,7 @@ perf.awesomebar:
     notification_emails:
       - fenix-core@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2020-11-15"
+    expires: "2021-11-15"
   bookmark_suggestions:
     send_in_pings:
       - metrics
@@ -4484,7 +4476,7 @@ perf.awesomebar:
     notification_emails:
       - fenix-core@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2020-11-15"
+    expires: "2021-11-15"
   search_engine_suggestions:
     send_in_pings:
       - metrics
@@ -4502,7 +4494,7 @@ perf.awesomebar:
     notification_emails:
       - fenix-core@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2020-11-15"
+    expires: "2021-11-15"
   session_suggestions:
     send_in_pings:
       - metrics
@@ -4520,7 +4512,7 @@ perf.awesomebar:
     notification_emails:
       - fenix-core@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2020-11-15"
+    expires: "2021-11-15"
   synced_tabs_suggestions:
     send_in_pings:
       - metrics
@@ -4538,7 +4530,7 @@ perf.awesomebar:
     notification_emails:
       - fenix-core@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2020-11-15"
+    expires: "2021-11-15"
   clipboard_suggestions:
     send_in_pings:
       - metrics
@@ -4556,7 +4548,7 @@ perf.awesomebar:
     notification_emails:
       - fenix-core@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2020-11-15"
+    expires: "2021-11-15"
   shortcuts_suggestions:
     send_in_pings:
       - metrics
@@ -4574,7 +4566,7 @@ perf.awesomebar:
     notification_emails:
       - fenix-core@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2020-11-15"
+    expires: "2021-11-15"
 
 autoplay:
   visited_setting:
@@ -4965,6 +4957,46 @@ engine_tab:
       - fenix-core@mozilla.com
       - skaspari@mozilla.com
     expires: "2021-12-31"
+  foreground_metrics:
+    type: event
+    description: |
+      Event collecting data about the state of tabs when the app comes back to
+      the foreground.
+    bugs:
+      - https://github.com/mozilla-mobile/android-components/issues/9997
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/18747#issuecomment-815731764
+    data_sensitivity:
+      - technical
+    notification_emails:
+      - fenix-core@mozilla.com
+      - skaspari@mozilla.com
+    expires: "2021-12-31"
+    extra_keys:
+      background_active_tabs:
+        description: |
+          Number of active tabs (with an engine session assigned) when the app
+          went to the background.
+      background_crashed_tabs:
+        description: |
+          Number of tabs marked as crashed when the app went to the background.
+      background_total_tabs:
+        description: |
+          Number of total tabs when the app went to the background.
+      foreground_active_tabs:
+        description: |
+          Number of active tabs (with an engine session assigned) when the
+          app came back to the foreground.
+      foreground_crashed_tabs:
+        description: |
+          Number of tabs marked as crashed when the app came back to the
+          foreground.
+      foreground_total_tabs:
+        description: |
+          Number of total tabs when the app came back to the foreground.
+      time_in_background:
+        description: |
+          Time (in milliseconds) the app was in the background.
 
 synced_tabs:
   synced_tabs_suggestion_clicked:

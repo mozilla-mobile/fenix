@@ -7,7 +7,6 @@ package org.mozilla.fenix.tabstray
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.mozilla.fenix.tabstray.browser.BrowserTabsAdapter
 import org.mozilla.fenix.tabstray.browser.BrowserTrayInteractor
@@ -19,14 +18,15 @@ import org.mozilla.fenix.sync.SyncedTabsAdapter
 import org.mozilla.fenix.tabstray.viewholders.SyncedTabViewHolder
 
 class TrayPagerAdapter(
-    val context: Context,
-    val interactor: TabsTrayInteractor,
-    val browserInteractor: BrowserTrayInteractor,
-    val syncedTabsInteractor: SyncedTabsView.Listener
+    private val context: Context,
+    private val store: TabsTrayStore,
+    private val browserInteractor: BrowserTrayInteractor,
+    private val syncedTabsInteractor: SyncedTabsView.Listener,
+    private val interactor: TabsTrayInteractor
 ) : RecyclerView.Adapter<AbstractTrayViewHolder>() {
 
-    private val normalAdapter by lazy { BrowserTabsAdapter(context, browserInteractor) }
-    private val privateAdapter by lazy { BrowserTabsAdapter(context, browserInteractor) }
+    private val normalAdapter by lazy { BrowserTabsAdapter(context, browserInteractor, store) }
+    private val privateAdapter by lazy { BrowserTabsAdapter(context, browserInteractor, store) }
     private val syncedTabsAdapter by lazy { SyncedTabsAdapter(syncedTabsInteractor) }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AbstractTrayViewHolder {
@@ -35,10 +35,12 @@ class TrayPagerAdapter(
         return when (viewType) {
             NormalBrowserTabViewHolder.LAYOUT_ID -> NormalBrowserTabViewHolder(
                 itemView,
+                store,
                 interactor
             )
             PrivateBrowserTabViewHolder.LAYOUT_ID -> PrivateBrowserTabViewHolder(
                 itemView,
+                store,
                 interactor
             )
             SyncedTabViewHolder.LAYOUT_ID -> SyncedTabViewHolder(
@@ -57,7 +59,7 @@ class TrayPagerAdapter(
             else -> throw IllegalStateException("View type does not exist.")
         }
 
-        viewHolder.bind(adapter, GridLayoutManager(context, 1))
+        viewHolder.bind(adapter, browserInteractor.getLayoutManagerForPosition(context, position))
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -74,8 +76,8 @@ class TrayPagerAdapter(
     companion object {
         const val TRAY_TABS_COUNT = 3
 
-        const val POSITION_NORMAL_TABS = 0
-        const val POSITION_PRIVATE_TABS = 1
-        const val POSITION_SYNCED_TABS = 2
+        val POSITION_NORMAL_TABS = Page.NormalTabs.ordinal
+        val POSITION_PRIVATE_TABS = Page.PrivateTabs.ordinal
+        val POSITION_SYNCED_TABS = Page.SyncedTabs.ordinal
     }
 }

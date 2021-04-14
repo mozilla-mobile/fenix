@@ -35,13 +35,18 @@ import mozilla.components.lib.state.ext.flowScoped
 import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifAnyChanged
 import org.mozilla.fenix.FeatureFlags
+import org.mozilla.fenix.FeatureFlags.tabsTrayRewrite
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
+import org.mozilla.fenix.experiments.ExperimentBranch
+import org.mozilla.fenix.experiments.Experiments
 import org.mozilla.fenix.ext.asActivity
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.ext.withExperiment
 import org.mozilla.fenix.theme.ThemeManager
+import org.mozilla.fenix.utils.BrowsersCache
 
 /**
  * Builds the toolbar object used with the 3-dot menu in the browser fragment.
@@ -67,6 +72,7 @@ open class DefaultToolbarMenu(
     private var isCurrentUrlBookmarked = false
     private var isBookmarkedJob: Job? = null
 
+    private val shouldDeleteDataOnQuit = context.settings().shouldDeleteBrowsingDataOnQuit
     private val shouldUseBottomToolbar = context.settings().shouldUseBottomToolbar
 
     private val selectedSession: TabSessionState?
@@ -83,13 +89,13 @@ open class DefaultToolbarMenu(
                 } else {
                     oldCoreMenuItems
                 },
-            endOfMenuAlwaysVisible = !shouldUseBottomToolbar,
+            endOfMenuAlwaysVisible = shouldUseBottomToolbar,
             store = store,
             webExtIconTintColorResource = primaryTextColor,
             onAddonsManagerTapped = {
                 onItemTapped.invoke(ToolbarMenu.Item.AddonsManager)
             },
-            appendExtensionSubMenuAtStart = !shouldUseBottomToolbar
+            appendExtensionSubMenuAtStart = shouldUseBottomToolbar
         )
     }
 
@@ -199,6 +205,21 @@ open class DefaultToolbarMenu(
     } ?: false
     // End of predicates //
 
+    val installToHomescreen = BrowserMenuHighlightableItem(
+        label = context.getString(R.string.browser_menu_install_on_homescreen),
+        startImageResource = R.drawable.ic_add_to_homescreen,
+        iconTintColorResource = primaryTextColor,
+        highlight = BrowserMenuHighlight.LowPriority(
+            label = context.getString(R.string.browser_menu_install_on_homescreen),
+            notificationTint = getColor(context, R.color.whats_new_notification_color)
+        ),
+        isHighlighted = {
+            !context.settings().installPwaOpened
+        }
+    ) {
+        onItemTapped.invoke(ToolbarMenu.Item.InstallPwaToHomeScreen)
+    }
+
     private val oldCoreMenuItems by lazy {
         val settings = BrowserMenuHighlightableItem(
             label = context.getString(R.string.browser_menu_settings),
@@ -251,21 +272,6 @@ open class DefaultToolbarMenu(
             iconTintColorResource = primaryTextColor
         ) {
             onItemTapped.invoke(ToolbarMenu.Item.SyncedTabs)
-        }
-
-        val installToHomescreen = BrowserMenuHighlightableItem(
-            label = context.getString(R.string.browser_menu_install_on_homescreen),
-            startImageResource = R.drawable.ic_add_to_homescreen,
-            iconTintColorResource = primaryTextColor,
-            highlight = BrowserMenuHighlight.LowPriority(
-                label = context.getString(R.string.browser_menu_install_on_homescreen),
-                notificationTint = getColor(context, R.color.whats_new_notification_color)
-            ),
-            isHighlighted = {
-                !context.settings().installPwaOpened
-            }
-        ) {
-            onItemTapped.invoke(ToolbarMenu.Item.InstallToHomeScreen)
         }
 
         val findInPage = BrowserMenuImageText(
@@ -357,6 +363,7 @@ open class DefaultToolbarMenu(
             BrowserMenuDivider(),
             reportSiteIssuePlaceholder,
             findInPage,
+            getSetDefaultBrowserItem(),
             addToTopSites,
             addToHomescreen.apply { visible = ::canAddToHomescreen },
             installToHomescreen.apply { visible = ::canInstall },
@@ -374,6 +381,7 @@ open class DefaultToolbarMenu(
             menuItems.reversed()
         }
     }
+
     val newTabItem = BrowserMenuImageText(
         context.getString(R.string.library_new_tab),
         R.drawable.ic_new,
@@ -402,13 +410,34 @@ open class DefaultToolbarMenu(
         id = WebExtensionPlaceholderMenuItem.MAIN_EXTENSIONS_MENU_ID
     )
 
-    val syncedTabs = BrowserMenuImageText(
-        label = context.getString(R.string.synced_tabs),
-        imageResource = R.drawable.ic_synced_tabs,
-        iconTintColorResource = primaryTextColor()
-    ) {
-        onItemTapped.invoke(ToolbarMenu.Item.SyncedTabs)
+    val accountManager = context.components.backgroundServices.accountManager
+    val account = accountManager.authenticatedAccount()
+    val syncItemTitle = if (account != null && accountManager.accountProfile()?.email != null) {
+        context.getString(R.string.sync_signed_as, accountManager.accountProfile()?.email)
+    } else {
+        context.getString(R.string.sync_menu_sign_in)
     }
+
+    val syncTabsOrSignInItem =
+        if (tabsTrayRewrite) {
+            // If synced tabs are being shown in tabs tray, show sync sign in here.
+            BrowserMenuImageText(
+                syncItemTitle,
+                R.drawable.ic_synced_tabs,
+                primaryTextColor()
+            ) {
+                onItemTapped.invoke(ToolbarMenu.Item.SyncAccount)
+            }
+        } else {
+            // If synced tabs are not shown in tabs tray, they should be shown here.
+            BrowserMenuImageText(
+                context.getString(R.string.synced_tabs),
+                R.drawable.ic_synced_tabs,
+                primaryTextColor()
+            ) {
+                onItemTapped.invoke(ToolbarMenu.Item.SyncedTabs)
+            }
+        }
 
     val findInPageItem = BrowserMenuImageText(
         label = context.getString(R.string.browser_menu_find_in_page),
@@ -481,7 +510,9 @@ open class DefaultToolbarMenu(
     val settingsItem = BrowserMenuHighlightableItem(
         label = context.getString(R.string.browser_menu_settings),
         startImageResource = R.drawable.ic_settings,
-        iconTintColorResource = primaryTextColor(),
+        iconTintColorResource = if (hasAccountProblem)
+            ThemeManager.resolveAttribute(R.attr.syncDisconnected, context) else
+            primaryTextColor,
         textColorResource = if (hasAccountProblem)
             ThemeManager.resolveAttribute(R.attr.primaryText, context) else
             primaryTextColor,
@@ -504,12 +535,20 @@ open class DefaultToolbarMenu(
         },
         primaryStateIconResource = R.drawable.ic_bookmark_outline,
         secondaryStateIconResource = R.drawable.ic_bookmark_filled,
-        tintColorResource = accentBrightTextColor(),
+        tintColorResource = menuItemButtonTintColor(),
         primaryLabel = context.getString(R.string.browser_menu_add),
         secondaryLabel = context.getString(R.string.browser_menu_edit),
         isInPrimaryState = { !isCurrentUrlBookmarked }
     ) {
         handleBookmarkItemTapped()
+    }
+
+    val deleteDataOnQuit = BrowserMenuImageText(
+        label = context.getString(R.string.delete_browsing_data_on_quit_action),
+        imageResource = R.drawable.ic_exit,
+        iconTintColorResource = primaryTextColor
+    ) {
+        onItemTapped.invoke(ToolbarMenu.Item.Quit)
     }
 
     @VisibleForTesting(otherwise = PRIVATE)
@@ -523,7 +562,7 @@ open class DefaultToolbarMenu(
                 historyItem,
                 downloadsItem,
                 extensionsItem,
-                syncedTabs,
+                syncTabsOrSignInItem,
                 BrowserMenuDivider(),
                 findInPageItem,
                 desktopSiteItem,
@@ -532,10 +571,12 @@ open class DefaultToolbarMenu(
                 reportSiteIssuePlaceholder,
                 BrowserMenuDivider(),
                 addToHomeScreenItem.apply { visible = ::canAddToHomescreen },
+                installToHomescreen.apply { visible = ::canInstall },
                 addToTopSitesItem,
                 saveToCollectionItem,
                 BrowserMenuDivider(),
                 settingsItem,
+                if (shouldDeleteDataOnQuit) deleteDataOnQuit else null,
                 if (shouldUseBottomToolbar) BrowserMenuDivider() else null,
                 if (shouldUseBottomToolbar) menuToolbar else null
             )
@@ -554,7 +595,7 @@ open class DefaultToolbarMenu(
 
     @ColorRes
     @VisibleForTesting
-    internal fun accentBrightTextColor() = ThemeManager.resolveAttribute(R.attr.accentBright, context)
+    internal fun menuItemButtonTintColor() = ThemeManager.resolveAttribute(R.attr.menuItemButtonTintColor, context)
 
     @VisibleForTesting
     internal fun registerForIsBookmarkedUpdates() {
@@ -580,6 +621,25 @@ open class DefaultToolbarMenu(
             isCurrentUrlBookmarked = bookmarksStorage
                 .getBookmarksWithUrl(newUrl)
                 .any { it.url == newUrl }
+        }
+    }
+    private fun getSetDefaultBrowserItem(): BrowserMenuImageText? {
+        val experiments = context.components.analytics.experiments
+        val browsers = BrowsersCache.all(context)
+
+        return experiments.withExperiment(Experiments.DEFAULT_BROWSER) { experimentBranch ->
+            if (experimentBranch == ExperimentBranch.DEFAULT_BROWSER_TOOLBAR_MENU &&
+                !browsers.isFirefoxDefaultBrowser
+            ) {
+                return@withExperiment BrowserMenuImageText(
+                    label = context.getString(R.string.preferences_set_as_default_browser),
+                    imageResource = R.mipmap.ic_launcher
+                ) {
+                    onItemTapped.invoke(ToolbarMenu.Item.SetDefaultBrowser)
+                }
+            } else {
+                null
+            }
         }
     }
 }
