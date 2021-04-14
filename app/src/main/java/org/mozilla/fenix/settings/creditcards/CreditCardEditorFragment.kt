@@ -7,8 +7,9 @@ package org.mozilla.fenix.settings.creditcards
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
+import android.view.WindowManager
+import android.view.MenuItem
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -48,6 +49,13 @@ class CreditCardEditorFragment : Fragment(R.layout.fragment_credit_card_editor) 
             lifecycleScope = lifecycleScope,
             navController = findNavController()
         )
+    }
+
+    override fun onResume() {
+        activity?.window?.setFlags(
+            WindowManager.LayoutParams.FLAG_SECURE,
+            WindowManager.LayoutParams.FLAG_SECURE)
+        super.onResume()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
