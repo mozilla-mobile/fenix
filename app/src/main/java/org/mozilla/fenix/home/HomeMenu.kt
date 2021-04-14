@@ -24,6 +24,7 @@ import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.support.ktx.android.content.getColorFromAttr
 import org.mozilla.fenix.FeatureFlags
+import org.mozilla.fenix.FeatureFlags.tabsTrayRewrite
 import org.mozilla.fenix.R
 import org.mozilla.fenix.experiments.ExperimentBranch
 import org.mozilla.fenix.experiments.Experiments
@@ -63,6 +64,9 @@ class HomeMenu(
         context.getColorFromAttr(R.attr.syncDisconnectedBackground)
 
     private val shouldUseBottomToolbar = context.settings().shouldUseBottomToolbar
+    private val accountManager = context.components.backgroundServices.accountManager
+
+    private var signedInToFxA = false
     private val accountManager = context.components.backgroundServices.accountManager
 
     // 'Reconnect' and 'Quit' items aren't needed most of the time, so we'll only create the if necessary.
@@ -293,8 +297,24 @@ class HomeMenu(
             onItemTapped.invoke(Item.Extensions)
         }
 
-        val syncSignInItem = BrowserMenuImageText(
-            context.getString(R.string.library_synced_tabs),
+        val syncedTabsItem = BrowserMenuImageText(
+            context.getString(R.string.synced_tabs),
+            R.drawable.ic_synced_tabs,
+            primaryTextColor
+        ) {
+            onItemTapped.invoke(Item.SyncTabs)
+        }
+
+        val syncItemTitle =
+            if (accountManager.accountProfile()?.email != null) {
+                signedInToFxA = true
+                accountManager.accountProfile()?.email!!
+            } else {
+                context.getString(R.string.sync_menu_sign_in)
+            }
+
+        val syncMenuItem = BrowserMenuImageText(
+            syncItemTitle,
             R.drawable.ic_synced_tabs,
             primaryTextColor
         ) {
@@ -344,7 +364,7 @@ class HomeMenu(
             historyItem,
             downloadsItem,
             extensionsItem,
-            syncSignInItem,
+            if (tabsTrayRewrite) syncMenuItem else syncedTabsItem,
             accountAuthItem,
             BrowserMenuDivider(),
             desktopItem,
