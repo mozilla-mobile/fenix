@@ -1,5 +1,6 @@
 package org.mozilla.fenix.settings.creditcards.view
 
+import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
@@ -8,15 +9,17 @@ import androidx.recyclerview.widget.RecyclerView
  */
 class AddCreditCardButtonAdapter : RecyclerView.Adapter<AddCreditCardButtonViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AddCreditCardButtonViewHolder {
-        TODO("Not yet implemented")
+        val view = LayoutInflater.from(parent.context)
+                .inflate(CreditCardItemViewHolder.LAYOUT_ID, parent, false)
+        return AddCreditCardButtonViewHolder(view)
     }
 
-    override fun onBindViewHolder(holderCreditCard: AddCreditCardButtonViewHolder, position: Int) {
-        TODO("Not yet implemented")
+    override fun onBindViewHolder(holder: AddCreditCardButtonViewHolder, position: Int) {
+        holder.bind(position)
     }
 
     override fun getItemCount(): Int {
-        TODO("Not yet implemented")
+        return 1
     }
 
 }
