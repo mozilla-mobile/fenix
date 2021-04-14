@@ -410,13 +410,14 @@ open class DefaultToolbarMenu(
         id = WebExtensionPlaceholderMenuItem.MAIN_EXTENSIONS_MENU_ID
     )
 
-    val accountManager = context.components.backgroundServices.accountManager
-    val account = accountManager.authenticatedAccount()
-    val syncItemTitle = if (account != null && accountManager.accountProfile()?.email != null) {
-        context.getString(R.string.sync_signed_as, accountManager.accountProfile()?.email)
-    } else {
-        context.getString(R.string.sync_menu_sign_in)
-    }
+    private val accountManager = context.components.backgroundServices.accountManager
+    private val account = accountManager.authenticatedAccount()
+    private val syncItemTitle =
+        if (account != null && accountManager.accountProfile()?.email != null) {
+            accountManager.accountProfile()?.email!!
+        } else {
+            context.getString(R.string.sync_menu_sign_in)
+        }
 
     val syncTabsOrSignInItem =
         if (tabsTrayRewrite) {
