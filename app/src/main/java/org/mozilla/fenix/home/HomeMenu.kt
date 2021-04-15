@@ -57,17 +57,13 @@ class HomeMenu(
         data class DesktopMode(val checked: Boolean) : Item()
     }
 
-    private val primaryTextColor =
-        ThemeManager.resolveAttribute(R.attr.primaryText, context)
+    private val primaryTextColor = ThemeManager.resolveAttribute(R.attr.primaryText, context)
     private val syncDisconnectedColor =
         ThemeManager.resolveAttribute(R.attr.syncDisconnected, context)
     private val syncDisconnectedBackgroundColor =
         context.getColorFromAttr(R.attr.syncDisconnectedBackground)
 
     private val shouldUseBottomToolbar = context.settings().shouldUseBottomToolbar
-    private val accountManager = context.components.backgroundServices.accountManager
-
-    private var signedInToFxA = false
     private val accountManager = context.components.backgroundServices.accountManager
 
     // 'Reconnect' and 'Quit' items aren't needed most of the time, so we'll only create the if necessary.
@@ -94,17 +90,6 @@ class HomeMenu(
             primaryTextColor
         ) {
             onItemTapped.invoke(Item.Quit)
-        }
-    }
-
-    private fun getSyncItemTitle(): String {
-        val authenticatedAccount = accountManager.authenticatedAccount() != null
-        val email = accountManager.accountProfile()?.email
-
-        return if (authenticatedAccount && email != null) {
-            email
-        } else {
-            context.getString(R.string.sync_menu_sign_in)
         }
     }
 
@@ -241,6 +226,17 @@ class HomeMenu(
         onItemTapped.invoke(Item.DesktopMode(checked))
     }
 
+    private fun getSyncItemTitle(): String {
+        val authenticatedAccount = accountManager.authenticatedAccount() != null
+        val email = accountManager.accountProfile()?.email
+
+        return if (authenticatedAccount && email != null) {
+            email
+        } else {
+            context.getString(R.string.sync_menu_sign_in)
+        }
+    }
+
     @Suppress("ComplexMethod")
     private fun newCoreMenuItems(): List<BrowserMenuItem> {
         val experiments = context.components.analytics.experiments
@@ -306,16 +302,8 @@ class HomeMenu(
             onItemTapped.invoke(Item.SyncTabs)
         }
 
-        val syncItemTitle =
-            if (accountManager.accountProfile()?.email != null) {
-                signedInToFxA = true
-                accountManager.accountProfile()?.email!!
-            } else {
-                context.getString(R.string.sync_menu_sign_in)
-            }
-
         val syncSignInMenuItem = BrowserMenuImageText(
-            syncItemTitle,
+            getSyncItemTitle(),
             R.drawable.ic_synced_tabs,
             primaryTextColor
         ) {
