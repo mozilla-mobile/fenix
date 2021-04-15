@@ -57,7 +57,7 @@ import org.mozilla.fenix.utils.BrowsersCache
  * @param lifecycleOwner View lifecycle owner used to determine when to cancel UI jobs.
  * @param bookmarksStorage Used to check if a page is bookmarked.
  */
-@Suppress("LargeClass", "LongParameterList")
+@Suppress("LargeClass", "LongParameterList", "TooManyFunctions")
 @ExperimentalCoroutinesApi
 open class DefaultToolbarMenu(
     private val context: Context,
@@ -78,7 +78,6 @@ open class DefaultToolbarMenu(
     private val selectedSession: TabSessionState?
         get() = store.state.selectedTab
 
-    private var signedInToFxA = false
     private val accountManager = context.components.backgroundServices.accountManager
 
     override val menuBuilder by lazy {
@@ -530,16 +529,19 @@ open class DefaultToolbarMenu(
         onItemTapped.invoke(ToolbarMenu.Item.SyncedTabs)
     }
 
-    val syncItemTitle =
-        if (accountManager.accountProfile()?.email != null) {
-            signedInToFxA = true
-            accountManager.accountProfile()?.email!!
+    private fun getSyncItemTitle(): String {
+        val authenticatedAccount = accountManager.authenticatedAccount() != null
+        val email = accountManager.accountProfile()?.email
+
+        return if (authenticatedAccount && email != null) {
+            email
         } else {
             context.getString(R.string.sync_menu_sign_in)
         }
+    }
 
     val syncMenuItem = BrowserMenuImageText(
-        syncItemTitle,
+        getSyncItemTitle(),
         R.drawable.ic_synced_tabs,
         primaryTextColor()
     ) {
