@@ -109,7 +109,6 @@ import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.home.HomeMenu.Item
 import org.mozilla.fenix.home.mozonline.showPrivacyPopWindow
 import org.mozilla.fenix.home.sessioncontrol.DefaultSessionControlController
 import org.mozilla.fenix.home.sessioncontrol.SessionControlInteractor
@@ -773,12 +772,12 @@ class HomeFragment : Fragment() {
 
     @SuppressWarnings("ComplexMethod", "LongMethod")
     private fun createHomeMenu(context: Context, menuButtonView: WeakReference<MenuButton>) =
-        HomeToolbarMenu(
+        HomeMenu(
             this.viewLifecycleOwner,
             context,
             onItemTapped = {
                 when (it) {
-                    is Item.Settings -> {
+                    HomeMenu.Item.Settings -> {
                         hideOnboardingIfNeeded()
                         nav(
                             R.id.homeFragment,
@@ -786,28 +785,28 @@ class HomeFragment : Fragment() {
                         )
                         requireComponents.analytics.metrics.track(Event.HomeMenuSettingsItemClicked)
                     }
-                    is Item.SyncedTabs -> {
+                    HomeMenu.Item.SyncTabs -> {
                         hideOnboardingIfNeeded()
                         nav(
                             R.id.homeFragment,
                             HomeFragmentDirections.actionGlobalSyncedTabsFragment()
                         )
                     }
-                    is Item.SyncAccount -> {
+                    HomeMenu.Item.SyncAccount -> {
                         hideOnboardingIfNeeded()
                         nav(
                             R.id.homeFragment,
-                            HomeFragmentDirections.actionGlobalTurnOnSync()
+                            HomeFragmentDirections.actionGlobalAccountSettingsFragment()
                         )
                     }
-                    is Item.Bookmarks -> {
+                    HomeMenu.Item.Bookmarks -> {
                         hideOnboardingIfNeeded()
                         nav(
                             R.id.homeFragment,
                             HomeFragmentDirections.actionGlobalBookmarkFragment(BookmarkRoot.Mobile.id)
                         )
                     }
-                    is Item.History -> {
+                    HomeMenu.Item.History -> {
                         hideOnboardingIfNeeded()
                         nav(
                             R.id.homeFragment,
@@ -815,7 +814,7 @@ class HomeFragment : Fragment() {
                         )
                     }
 
-                    is Item.Downloads -> {
+                    HomeMenu.Item.Downloads -> {
                         hideOnboardingIfNeeded()
                         nav(
                             R.id.homeFragment,
@@ -823,7 +822,7 @@ class HomeFragment : Fragment() {
                         )
                     }
 
-                    is Item.Help -> {
+                    HomeMenu.Item.Help -> {
                         hideOnboardingIfNeeded()
                         (activity as HomeActivity).openToBrowserAndLoad(
                             searchTermOrURL = SupportUtils.getSumoURLForTopic(context, HELP),
@@ -831,7 +830,7 @@ class HomeFragment : Fragment() {
                             from = BrowserDirection.FromHome
                         )
                     }
-                    is Item.WhatsNew -> {
+                    HomeMenu.Item.WhatsNew -> {
                         hideOnboardingIfNeeded()
                         WhatsNew.userViewedWhatsNew(context)
                         context.metrics.track(Event.WhatsNewTapped)
@@ -844,7 +843,7 @@ class HomeFragment : Fragment() {
                     // We need to show the snackbar while the browsing data is deleting(if "Delete
                     // browsing data on quit" is activated). After the deletion is over, the snackbar
                     // is dismissed.
-                    is Item.Quit -> activity?.let { activity ->
+                    HomeMenu.Item.Quit -> activity?.let { activity ->
                         deleteAndQuit(
                             activity,
                             viewLifecycleOwner.lifecycleScope,
@@ -856,20 +855,20 @@ class HomeFragment : Fragment() {
                             }
                         )
                     }
-                    is Item.ReconnectSync -> {
+                    HomeMenu.Item.ReconnectSync -> {
                         hideOnboardingIfNeeded()
                         nav(
                             R.id.homeFragment,
                             HomeFragmentDirections.actionGlobalAccountProblemFragment()
                         )
                     }
-                    is Item.Extensions -> {
+                    HomeMenu.Item.Extensions -> {
                         nav(
                             R.id.homeFragment,
                             HomeFragmentDirections.actionGlobalAddonsManagementFragment()
                         )
                     }
-                    is Item.DesktopMode -> {
+                    is HomeMenu.Item.DesktopMode -> {
                         context.settings().openNextTabInDesktopMode = it.checked
                     }
                 }
