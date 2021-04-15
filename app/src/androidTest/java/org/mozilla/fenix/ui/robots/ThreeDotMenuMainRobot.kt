@@ -51,6 +51,7 @@ class ThreeDotMenuMainRobot {
     fun verifyHistoryButton() = assertHistoryButton()
     fun verifyBookmarksButton() = assertBookmarksButton()
     fun verifySyncedTabsButton() = assertSyncedTabsButton()
+    fun verifySyncSignInButton() = assertSyncSignInButton()
     fun verifyHelpButton() = assertHelpButton()
     fun verifyThreeDotMenuExists() = threeDotMenuRecyclerViewExists()
     fun verifyForwardButton() = assertForwardButton()
@@ -393,221 +394,226 @@ class ThreeDotMenuMainRobot {
         }
     }
 }
-private fun threeDotMenuRecyclerView() =
-    onView(withId(R.id.mozac_browser_menu_recyclerView))
 
-private fun threeDotMenuRecyclerViewExists() {
-    threeDotMenuRecyclerView().check(matches(isDisplayed()))
-}
+    private fun threeDotMenuRecyclerView() =
+        onView(withId(R.id.mozac_browser_menu_recyclerView))
 
-private fun settingsButton() = mDevice.findObject(UiSelector().text("Settings"))
-private fun assertSettingsButton() = assertTrue(settingsButton().waitForExists(waitingTime))
-
-private fun addOnsButton() = onView(allOf(withText("Add-ons")))
-private fun assertAddOnsButton() {
-    onView(withId(R.id.mozac_browser_menu_menuView)).perform(swipeDown())
-    addOnsButton().check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-}
-
-private fun historyButton() = onView(allOf(withText(R.string.library_history)))
-private fun assertHistoryButton() = historyButton()
-    .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-
-private fun bookmarksButton() = onView(allOf(withText(R.string.library_bookmarks)))
-private fun assertBookmarksButton() = bookmarksButton()
-    .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-
-private fun syncedTabsButton() = onView(allOf(withText(R.string.library_synced_tabs)))
-private fun assertSyncedTabsButton() = syncedTabsButton()
-    .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-
-private fun signInToSyncButton() = onView(withText("Sign in to sync"))
-private fun assertSignInToSyncButton() = signInToSyncButton().check(matches(isDisplayed()))
-
-private fun helpButton() = onView(allOf(withText(R.string.browser_menu_help)))
-private fun assertHelpButton() = helpButton()
-    .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-
-private fun forwardButton() = mDevice.findObject(UiSelector().description("Forward"))
-private fun assertForwardButton() = assertTrue(forwardButton().waitForExists(waitingTime))
-
-private fun addBookmarkButton() = onView(allOf(withId(R.id.checkbox), withText("Add")))
-private fun assertAddBookmarkButton() {
-    onView(withId(R.id.mozac_browser_menu_menuView)).perform(swipeUp())
-    addBookmarkButton().check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-}
-
-private fun editBookmarkButton() = onView(withText("Edit"))
-private fun assertEditBookmarkButton() = editBookmarkButton()
-    .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-
-private fun refreshButton() = mDevice.findObject(UiSelector().description("Refresh"))
-private fun assertRefreshButton() = assertTrue(refreshButton().waitForExists(waitingTime))
-
-private fun stopLoadingButton() = onView(ViewMatchers.withContentDescription("Stop"))
-
-private fun closeAllTabsButton() = onView(allOf(withText("Close all tabs"))).inRoot(RootMatchers.isPlatformPopup())
-private fun assertCloseAllTabsButton() = closeAllTabsButton()
-    .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-
-private fun shareTabButton() = onView(allOf(withText("Share all tabs"))).inRoot(RootMatchers.isPlatformPopup())
-private fun assertShareTabButton() = shareTabButton()
-    .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-
-private fun shareButton() = mDevice.findObject(UiSelector().description("Share"))
-private fun assertShareButton() = assertTrue(shareButton().waitForExists(waitingTime))
-
-private fun browserViewSaveCollectionButton() = onView(
-    allOf(
-        withText("Save to collection"),
-        withEffectiveVisibility(Visibility.VISIBLE)
-    )
-)
-
-private fun saveCollectionButton() = onView(allOf(withText("Save to collection"))).inRoot(RootMatchers.isPlatformPopup())
-private fun assertSaveCollectionButton() = saveCollectionButton()
-    .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-
-private fun selectTabsButton() = onView(allOf(withText("Select tabs"))).inRoot(RootMatchers.isPlatformPopup())
-private fun assertSelectTabsButton() = selectTabsButton()
-    .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-
-private fun addNewCollectionButton() = onView(allOf(withText("Add new collection")))
-private fun assertaddNewCollectionButton() = addNewCollectionButton()
-    .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-
-private fun collectionNameTextField() =
-    onView(allOf(withResourceName("name_collection_edittext")))
-
-private fun assertCollectionNameTextField() = collectionNameTextField()
-    .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-
-private fun reportSiteIssueButton() = onView(withText("Report Site Issue…"))
-private fun assertReportSiteIssueButton() = reportSiteIssueButton().check(matches(isDisplayed()))
-
-private fun findInPageButton() = onView(allOf(withText("Find in page")))
-
-private fun assertFindInPageButton() = findInPageButton()
-
-private fun shareScrim() = onView(withResourceName("closeSharingScrim"))
-
-private fun assertShareScrim() =
-    shareScrim().check(matches(ViewMatchers.withAlpha(ShareFragment.SHOW_PAGE_ALPHA)))
-
-private fun SendToDeviceTitle() =
-    onView(allOf(withText("SEND TO DEVICE"), withResourceName("accountHeaderText")))
-
-private fun assertSendToDeviceTitle() = SendToDeviceTitle()
-    .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-
-private fun shareALinkTitle() =
-    onView(allOf(withText("ALL ACTIONS"), withResourceName("apps_link_header")))
-
-private fun assertShareALinkTitle() = shareALinkTitle()
-
-private fun whatsNewButton() = onView(
-    allOf(
-        withText("What’s New"),
-        withEffectiveVisibility(Visibility.VISIBLE)
-    )
-)
-
-private fun assertWhatsNewButton() = whatsNewButton()
-    .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-
-private fun addToHomeScreenButton() = onView(withText("Add to Home screen"))
-
-private fun readerViewAppearanceToggle() =
-    mDevice.findObject(UiSelector().text("Customize reader view"))
-
-private fun assertReaderViewAppearanceButton(visible: Boolean) {
-    var maxSwipes = 3
-    if (visible) {
-        while (!readerViewAppearanceToggle().exists() && maxSwipes != 0) {
-            threeDotMenuRecyclerView().perform(swipeUp())
-            maxSwipes--
-        }
-        assertTrue(readerViewAppearanceToggle().exists())
-    } else {
-        while (!readerViewAppearanceToggle().exists() && maxSwipes != 0) {
-            threeDotMenuRecyclerView().perform(swipeUp())
-            maxSwipes--
-        }
-        assertFalse(readerViewAppearanceToggle().exists())
+    private fun threeDotMenuRecyclerViewExists() {
+        threeDotMenuRecyclerView().check(matches(isDisplayed()))
     }
-}
 
-private fun addToTopSitesButton() =
-    onView(allOf(withText(R.string.browser_menu_add_to_top_sites)))
+    private fun settingsButton() = mDevice.findObject(UiSelector().text("Settings"))
+    private fun assertSettingsButton() = assertTrue(settingsButton().waitForExists(waitingTime))
 
-private fun assertAddToTopSitesButton() {
-    onView(withId(R.id.mozac_browser_menu_recyclerView))
-        .perform(
-            RecyclerViewActions.scrollTo<RecyclerView.ViewHolder>(
-                hasDescendant(withText(R.string.browser_menu_add_to_top_sites))
-            )
-        ).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-}
+    private fun addOnsButton() = onView(allOf(withText("Add-ons")))
+    private fun assertAddOnsButton() {
+        onView(withId(R.id.mozac_browser_menu_menuView)).perform(swipeDown())
+        addOnsButton().check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+    }
 
-private fun addToMobileHomeButton() =
-    onView(allOf(withText(R.string.browser_menu_add_to_homescreen)))
+    private fun historyButton() = onView(allOf(withText(R.string.library_history)))
+    private fun assertHistoryButton() = historyButton()
+        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
-private fun assertAddToMobileHome() {
-    onView(withId(R.id.mozac_browser_menu_recyclerView))
-        .perform(
-            RecyclerViewActions.scrollTo<RecyclerView.ViewHolder>(
-                hasDescendant(withText(R.string.browser_menu_add_to_homescreen))
-            )
-        ).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-}
+    private fun bookmarksButton() = onView(allOf(withText(R.string.library_bookmarks)))
+    private fun assertBookmarksButton() = bookmarksButton()
+        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
-private fun installPWAButton() = mDevice.findObject(UiSelector().text("Install"))
+    private fun syncedTabsButton() = onView(allOf(withText(R.string.library_synced_tabs)))
+    private fun assertSyncedTabsButton() = syncedTabsButton()
+        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
-private fun desktopSiteButton() =
-    onView(allOf(withText(R.string.browser_menu_desktop_site)))
-private fun assertDesktopSite() {
-    onView(withId(R.id.mozac_browser_menu_menuView)).perform(swipeUp())
-    desktopSiteButton().check(matches(isDisplayed()))
-}
+    private fun syncSignInButton() = onView(allOf(withText(R.string.sync_menu_sign_in)))
+    private fun assertSyncSignInButton() = syncSignInButton()
+        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
-private fun downloadsButton() = onView(withText(R.string.library_downloads))
-private fun assertDownloadsButton() {
-    onView(withId(R.id.mozac_browser_menu_menuView)).perform(swipeDown())
-    downloadsButton().check(matches(isDisplayed()))
-}
+    private fun signInToSyncButton() = onView(withText("Sign in to sync"))
+    private fun assertSignInToSyncButton() = signInToSyncButton().check(matches(isDisplayed()))
 
-private fun clickAddonsManagerButton() {
-    onView(withId(R.id.mozac_browser_menu_menuView)).perform(swipeDown())
-    addOnsButton().check(matches(isCompletelyDisplayed())).click()
-}
+    private fun helpButton() = onView(allOf(withText(R.string.browser_menu_help)))
+    private fun assertHelpButton() = helpButton()
+        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
-private fun exitSaveCollectionButton() = onView(withId(R.id.back_button)).check(matches(isDisplayed()))
+    private fun forwardButton() = mDevice.findObject(UiSelector().description("Forward"))
+    private fun assertForwardButton() = assertTrue(forwardButton().waitForExists(waitingTime))
 
-private fun tabSettingsButton() =
-    onView(allOf(withText("Tab settings"))).inRoot(RootMatchers.isPlatformPopup())
+    private fun addBookmarkButton() = onView(allOf(withId(R.id.checkbox), withText("Add")))
+    private fun assertAddBookmarkButton() {
+        onView(withId(R.id.mozac_browser_menu_menuView)).perform(swipeUp())
+        addBookmarkButton().check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+    }
 
-private fun assertTabSettingsButton() {
-    tabSettingsButton()
-        .check(
-            matches(isDisplayed()))
-}
+    private fun editBookmarkButton() = onView(withText("Edit"))
+    private fun assertEditBookmarkButton() = editBookmarkButton()
+        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
-private fun recentlyClosedTabsButton() =
-    onView(allOf(withText("Recently closed tabs"))).inRoot(RootMatchers.isPlatformPopup())
+    private fun refreshButton() = mDevice.findObject(UiSelector().description("Refresh"))
+    private fun assertRefreshButton() = assertTrue(refreshButton().waitForExists(waitingTime))
 
-private fun assertRecentlyClosedTabsButton() {
-    recentlyClosedTabsButton()
-        .check(
-            matches(isDisplayed()))
-}
+    private fun stopLoadingButton() = onView(ViewMatchers.withContentDescription("Stop"))
 
-private fun shareAllTabsButton() =
-    onView(allOf(withText("Share all tabs"))).inRoot(RootMatchers.isPlatformPopup())
+    private fun closeAllTabsButton() = onView(allOf(withText("Close all tabs"))).inRoot(RootMatchers.isPlatformPopup())
+    private fun assertCloseAllTabsButton() = closeAllTabsButton()
+        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
-private fun assertShareAllTabsButton() {
-    shareAllTabsButton()
-        .check(
-            matches(isDisplayed()))
-}
+    private fun shareTabButton() = onView(allOf(withText("Share all tabs"))).inRoot(RootMatchers.isPlatformPopup())
+    private fun assertShareTabButton() = shareTabButton()
+        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
-private fun assertNewTabButton() = onView(withText("New tab")).check(matches(isDisplayed()))
+    private fun shareButton() = mDevice.findObject(UiSelector().description("Share"))
+    private fun assertShareButton() = assertTrue(shareButton().waitForExists(waitingTime))
+
+    private fun browserViewSaveCollectionButton() = onView(
+        allOf(
+            withText("Save to collection"),
+            withEffectiveVisibility(Visibility.VISIBLE)
+        )
+    )
+
+    private fun saveCollectionButton() = onView(allOf(withText("Save to collection"))).inRoot(RootMatchers.isPlatformPopup())
+    private fun assertSaveCollectionButton() = saveCollectionButton()
+        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+
+    private fun selectTabsButton() = onView(allOf(withText("Select tabs"))).inRoot(RootMatchers.isPlatformPopup())
+    private fun assertSelectTabsButton() = selectTabsButton()
+        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+
+    private fun addNewCollectionButton() = onView(allOf(withText("Add new collection")))
+    private fun assertaddNewCollectionButton() = addNewCollectionButton()
+        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+
+    private fun collectionNameTextField() =
+        onView(allOf(withResourceName("name_collection_edittext")))
+
+    private fun assertCollectionNameTextField() = collectionNameTextField()
+        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+
+    private fun reportSiteIssueButton() = onView(withText("Report Site Issue…"))
+    private fun assertReportSiteIssueButton() = reportSiteIssueButton().check(matches(isDisplayed()))
+
+    private fun findInPageButton() = onView(allOf(withText("Find in page")))
+
+    private fun assertFindInPageButton() = findInPageButton()
+
+    private fun shareScrim() = onView(withResourceName("closeSharingScrim"))
+
+    private fun assertShareScrim() =
+        shareScrim().check(matches(ViewMatchers.withAlpha(ShareFragment.SHOW_PAGE_ALPHA)))
+
+    private fun SendToDeviceTitle() =
+        onView(allOf(withText("SEND TO DEVICE"), withResourceName("accountHeaderText")))
+
+    private fun assertSendToDeviceTitle() = SendToDeviceTitle()
+        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+
+    private fun shareALinkTitle() =
+        onView(allOf(withText("ALL ACTIONS"), withResourceName("apps_link_header")))
+
+    private fun assertShareALinkTitle() = shareALinkTitle()
+
+    private fun whatsNewButton() = onView(
+        allOf(
+            withText("What’s New"),
+            withEffectiveVisibility(Visibility.VISIBLE)
+        )
+    )
+
+    private fun assertWhatsNewButton() = whatsNewButton()
+        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+
+    private fun addToHomeScreenButton() = onView(withText("Add to Home screen"))
+
+    private fun readerViewAppearanceToggle() =
+        mDevice.findObject(UiSelector().text("Customize reader view"))
+
+    private fun assertReaderViewAppearanceButton(visible: Boolean) {
+        var maxSwipes = 3
+        if (visible) {
+            while (!readerViewAppearanceToggle().exists() && maxSwipes != 0) {
+                threeDotMenuRecyclerView().perform(swipeUp())
+                maxSwipes--
+            }
+            assertTrue(readerViewAppearanceToggle().exists())
+        } else {
+            while (!readerViewAppearanceToggle().exists() && maxSwipes != 0) {
+                threeDotMenuRecyclerView().perform(swipeUp())
+                maxSwipes--
+            }
+            assertFalse(readerViewAppearanceToggle().exists())
+        }
+    }
+
+    private fun addToTopSitesButton() =
+        onView(allOf(withText(R.string.browser_menu_add_to_top_sites)))
+
+    private fun assertAddToTopSitesButton() {
+        onView(withId(R.id.mozac_browser_menu_recyclerView))
+            .perform(
+                RecyclerViewActions.scrollTo<RecyclerView.ViewHolder>(
+                    hasDescendant(withText(R.string.browser_menu_add_to_top_sites))
+                )
+            ).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+    }
+
+    private fun addToMobileHomeButton() =
+        onView(allOf(withText(R.string.browser_menu_add_to_homescreen)))
+
+    private fun assertAddToMobileHome() {
+        onView(withId(R.id.mozac_browser_menu_recyclerView))
+            .perform(
+                RecyclerViewActions.scrollTo<RecyclerView.ViewHolder>(
+                    hasDescendant(withText(R.string.browser_menu_add_to_homescreen))
+                )
+            ).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+    }
+
+    private fun installPWAButton() = mDevice.findObject(UiSelector().text("Install"))
+
+    private fun desktopSiteButton() =
+        onView(allOf(withText(R.string.browser_menu_desktop_site)))
+    private fun assertDesktopSite() {
+        onView(withId(R.id.mozac_browser_menu_menuView)).perform(swipeUp())
+        desktopSiteButton().check(matches(isDisplayed()))
+    }
+
+    private fun downloadsButton() = onView(withText(R.string.library_downloads))
+    private fun assertDownloadsButton() {
+        onView(withId(R.id.mozac_browser_menu_menuView)).perform(swipeDown())
+        downloadsButton().check(matches(isDisplayed()))
+    }
+
+    private fun clickAddonsManagerButton() {
+        onView(withId(R.id.mozac_browser_menu_menuView)).perform(swipeDown())
+        addOnsButton().check(matches(isCompletelyDisplayed())).click()
+    }
+
+    private fun exitSaveCollectionButton() = onView(withId(R.id.back_button)).check(matches(isDisplayed()))
+
+    private fun tabSettingsButton() =
+        onView(allOf(withText("Tab settings"))).inRoot(RootMatchers.isPlatformPopup())
+
+    private fun assertTabSettingsButton() {
+        tabSettingsButton()
+            .check(
+                matches(isDisplayed()))
+    }
+
+    private fun recentlyClosedTabsButton() =
+        onView(allOf(withText("Recently closed tabs"))).inRoot(RootMatchers.isPlatformPopup())
+
+    private fun assertRecentlyClosedTabsButton() {
+        recentlyClosedTabsButton()
+            .check(
+                matches(isDisplayed()))
+    }
+
+    private fun shareAllTabsButton() =
+        onView(allOf(withText("Share all tabs"))).inRoot(RootMatchers.isPlatformPopup())
+
+    private fun assertShareAllTabsButton() {
+        shareAllTabsButton()
+            .check(
+                matches(isDisplayed()))
+    }
+
+    private fun assertNewTabButton() = onView(withText("New tab")).check(matches(isDisplayed()))
