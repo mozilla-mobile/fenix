@@ -1727,6 +1727,4 @@
     <string name="onboarding_firefox_account_auto_signin_header_2">You are signed in as %s on another Firefox browser on this phone. Would you like to sign in with this account?</string>
     <!-- Deprecated: Describes the add to homescreen functionality -->
     <string name="add_to_homescreen_description">You can easily add this website to your phone’s Home screen to have instant access and browse faster with an app-like experience.</string>
-    <!-- Deprecated: An string shown when an account is signed in where %1$s is a placeholder for the email-->
-    <string name="sync_signed_as">Signed in as %1$s</string>
 </resources>
