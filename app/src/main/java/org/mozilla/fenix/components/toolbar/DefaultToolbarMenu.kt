@@ -135,10 +135,7 @@ open class DefaultToolbarMenu(
                 secondaryImageTintResource = primaryTextColor,
                 disableInSecondaryState = false
             ) {
-                if (!isCurrentUrlBookmarked) {
-                    isCurrentUrlBookmarked = true
-                }
-                onItemTapped.invoke(Item.Bookmark)
+                handleBookmarkItemTapped()
             }
 
             BrowserMenuItemToolbar(listOf(back, forward, bookmark, share, refresh))
@@ -206,16 +203,14 @@ open class DefaultToolbarMenu(
         secondaryLabel = context.getString(R.string.browser_menu_edit),
         isInPrimaryState = { !isCurrentUrlBookmarked }
     ) {
-        if (!isCurrentUrlBookmarked) {
-            isCurrentUrlBookmarked = true
-        }
-        onItemTapped.invoke(Item.Bookmark)
+        handleBookmarkItemTapped()
     }
 
     private val oldCoreMenuItems by lazy {
         val syncedTabs = toolbarMenuItems.oldSyncedTabsItem
         val addToHomescreen = toolbarMenuItems.oldAddToHomescreenItem
         val readerAppearance = toolbarMenuItems.oldReaderViewAppearanceItem
+
         val bookmarksItem = BrowserMenuImageText(
             context.getString(R.string.library_bookmarks),
             R.drawable.ic_bookmark_filled,
@@ -259,8 +254,6 @@ open class DefaultToolbarMenu(
         }
     }
 
-
-
     @VisibleForTesting(otherwise = PRIVATE)
     val newCoreMenuItems by lazy {
         // Predicates that are called once, during screen init
@@ -298,6 +291,11 @@ open class DefaultToolbarMenu(
             )
 
         menuItems
+    }
+
+    private fun handleBookmarkItemTapped() {
+        if (!isCurrentUrlBookmarked) isCurrentUrlBookmarked = true
+        onItemTapped.invoke(Item.Bookmark)
     }
 
     @VisibleForTesting

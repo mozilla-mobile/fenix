@@ -225,12 +225,6 @@ class DefaultBrowserToolbarMenuController(
                     BrowserFragmentDirections.actionBrowserFragmentToSyncedTabsFragment()
                 )
             }
-            is ToolbarMenu.Item.SyncAccount -> browserAnimator.captureEngineViewAndDrawStatically {
-                navController.nav(
-                    R.id.browserFragment,
-                    BrowserFragmentDirections.actionBrowserFragmentToSyncedTabsFragment()
-                )
-            }
             is ToolbarMenu.Item.SyncAccount -> {
                 browserAnimator.captureEngineViewAndDrawStatically {
                     navController.nav(
