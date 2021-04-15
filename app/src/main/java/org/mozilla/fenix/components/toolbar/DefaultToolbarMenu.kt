@@ -15,6 +15,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
+import mozilla.components.browser.menu.BrowserMenuBuilder
 import mozilla.components.browser.menu.WebExtensionBrowserMenuBuilder
 import mozilla.components.browser.menu.item.BrowserMenuDivider
 import mozilla.components.browser.menu.item.BrowserMenuImageText
@@ -63,7 +64,8 @@ open class DefaultToolbarMenu(
     private val onItemTapped: (Item) -> Unit = {},
     private val lifecycleOwner: LifecycleOwner,
     private val bookmarksStorage: BookmarksStorage,
-    val isPinningSupported: Boolean
+    val isPinningSupported: Boolean,
+    onMenuBuilderChanged: (BrowserMenuBuilder) -> Unit = {},
 ) : ToolbarMenu {
 
     private var isCurrentUrlBookmarked = false
@@ -291,6 +293,23 @@ open class DefaultToolbarMenu(
             )
 
         menuItems
+    }
+
+    init {
+        val menuItems = if (FeatureFlags.toolbarMenuFeature) {
+            newCoreMenuItems
+        } else {
+            oldCoreMenuItems
+        }
+
+        // Report initial state.
+        onMenuBuilderChanged(BrowserMenuBuilder(menuItems))
+
+        // Observe account state changes, and update menu item builder with a new set of items.
+        accountManager.observeAccountState(
+            menuItems = menuItems,
+            onMenuBuilderChanged = onMenuBuilderChanged
+        )
     }
 
     private fun handleBookmarkItemTapped() {
