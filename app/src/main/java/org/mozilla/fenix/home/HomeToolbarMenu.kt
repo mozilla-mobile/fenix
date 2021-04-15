@@ -6,11 +6,7 @@ package org.mozilla.fenix.home
 
 import android.content.Context
 import androidx.annotation.ColorRes
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import mozilla.components.browser.menu.BrowserMenuBuilder
 import mozilla.components.browser.menu.BrowserMenuHighlight
 import mozilla.components.browser.menu.BrowserMenuItem
@@ -18,9 +14,6 @@ import mozilla.components.browser.menu.ext.getHighlight
 import mozilla.components.browser.menu.item.BrowserMenuDivider
 import mozilla.components.browser.menu.item.BrowserMenuHighlightableItem
 import mozilla.components.browser.menu.item.BrowserMenuImageText
-import mozilla.components.concept.sync.AccountObserver
-import mozilla.components.concept.sync.AuthType
-import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.support.ktx.android.content.getColorFromAttr
 import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
@@ -30,6 +23,7 @@ import org.mozilla.fenix.experiments.Experiments
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.withExperiment
+import org.mozilla.fenix.home.HomeMenu.Item
 import org.mozilla.fenix.theme.ThemeManager
 
 @Suppress("LongMethod")
@@ -39,7 +33,7 @@ class HomeToolbarMenu(
     private val onItemTapped: (Item) -> Unit = {},
     private val onMenuBuilderChanged: (BrowserMenuBuilder) -> Unit = {},
     private val onHighlightPresent: (BrowserMenuHighlight) -> Unit = {}
-) {
+): HomeMenu {
 
     @ColorRes
     private val primaryTextColor =
@@ -55,10 +49,12 @@ class HomeToolbarMenu(
     private val shouldUseBottomToolbar = context.settings().shouldUseBottomToolbar
     private val shouldDeleteOnQuit = context.settings().shouldDeleteBrowsingDataOnQuit
     private val experiments = context.components.analytics.experiments
+    private val accountManager = FenixAccountManager(context, lifecycleOwner)
 
     private val toolbarMenuItems = HomeToolbarMenuItems(
         context,
         onItemTapped,
+        accountManager,
         primaryTextColor
     )
 
@@ -96,14 +92,14 @@ class HomeToolbarMenu(
     // user isn't targeted, then we get still get the same treatment.
     // The `let` block is degenerate here, but left here so as to document the form of how experiments
     // are implemented here.
-    val historyIcon = experiments.withExperiment(Experiments.A_A_NIMBUS_VALIDATION) {
+    private val historyIcon = experiments.withExperiment(Experiments.A_A_NIMBUS_VALIDATION) {
         when (it) {
             ExperimentBranch.A1 -> R.drawable.ic_history
             ExperimentBranch.A2 -> R.drawable.ic_history
             else -> R.drawable.ic_history
         }
     }
-    val historyItem = BrowserMenuImageText(
+    private val historyItem = BrowserMenuImageText(
         context.getString(R.string.library_history),
         historyIcon,
         primaryTextColor
@@ -120,7 +116,8 @@ class HomeToolbarMenu(
     }
 
     val settingsItem = toolbarMenuItems.settingsItem
-    val syncedTabsItem = toolbarMenuItems.syncedTabsItem
+    val syncedTabsItem = toolbarMenuItems.oldSyncedTabsItem
+    val syncSignInItem = toolbarMenuItems.syncSignInItem
     val helpItem = toolbarMenuItems.helpItem
     val downloadsItem = toolbarMenuItems.downloadsItem
     val requestDesktopModeItem = toolbarMenuItems.requestDesktopSiteItem
@@ -129,6 +126,7 @@ class HomeToolbarMenu(
 
     // Only query account manager if it has been initialized.
     // We don't want to cause its initialization just for this check.
+    // TODO: we should not be using accountManager.accountNeedsReauth(), observe the account instead
     val accountAuthItem =
         if (context.components.backgroundServices.accountManagerAvailableQueue.isReady()) {
             if (context.components.backgroundServices.accountManager.accountNeedsReauth()) {
@@ -197,54 +195,6 @@ class HomeToolbarMenu(
             onItemTapped.invoke(Item.Bookmarks)
         }
 
-        // We want to validate that the Nimbus experiments library is working, from the android UI
-        // all the way back to the data science backend. We're not testing the user's preference
-        // or response, we're end-to-end testing the experiments platform.
-        // So here, we're running multiple identical branches with the same treatment, and if the
-        // user isn't targeted, then we get still get the same treatment.
-        // The `let` block is degenerate here, but left here so as to document the form of how experiments
-        // are implemented here.
-        val historyIcon = experiments.withExperiment(Experiments.A_A_NIMBUS_VALIDATION) {
-            when (it) {
-                ExperimentBranch.A1 -> R.drawable.ic_history
-                ExperimentBranch.A2 -> R.drawable.ic_history
-                else -> R.drawable.ic_history
-            }
-        }
-        val historyItem = BrowserMenuImageText(
-            context.getString(R.string.library_history),
-            historyIcon,
-            primaryTextColor
-        ) {
-            onItemTapped.invoke(Item.History)
-        }
-
-        val syncSignInItem = BrowserMenuImageText(
-            context.getString(R.string.library_synced_tabs),
-            R.drawable.ic_synced_tabs,
-            primaryTextColor
-        ) {
-            onItemTapped.invoke(Item.SyncedTabs)
-        }
-
-        val settingsItem = BrowserMenuImageText(
-            context.getString(R.string.browser_menu_settings),
-            R.drawable.ic_settings,
-            primaryTextColor
-        ) {
-            onItemTapped.invoke(Item.Settings)
-        }
-
-        // Only query account manager if it has been initialized.
-        // We don't want to cause its initialization just for this check.
-        val accountAuthItem =
-            if (context.components.backgroundServices.accountManagerAvailableQueue.isReady() &&
-                context.components.backgroundServices.accountManager.accountNeedsReauth()) {
-                reconnectToSyncItem
-            } else {
-                null
-            }
-
         val menuItems = listOfNotNull(
             bookmarksItem,
             historyItem,
@@ -267,8 +217,6 @@ class HomeToolbarMenu(
     }
 
     init {
-        val accountManager = FenixAccountManager(context, lifecycleOwner)
-
         val menuItems = if (FeatureFlags.toolbarMenuFeature) {
             newCoreMenuItems()
         } else {
@@ -292,19 +240,4 @@ class HomeToolbarMenu(
             onMenuBuilderChanged
         )
     }
-}
-
-sealed class Item {
-    object Bookmarks : Item()
-    object History : Item()
-    object Downloads : Item()
-    object Extensions : Item()
-    object SyncedTabs : Item()
-    object SyncAccount : Item()
-    object WhatsNew : Item()
-    object Help : Item()
-    object Settings : Item()
-    object Quit : Item()
-    object ReconnectSync : Item()
-    data class DesktopMode(val checked: Boolean) : Item()
 }

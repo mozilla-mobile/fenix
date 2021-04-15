@@ -7,6 +7,7 @@ package org.mozilla.fenix.components.toolbar
 import android.content.Context
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat.getColor
+import androidx.lifecycle.LifecycleOwner
 import mozilla.components.browser.menu.BrowserMenuHighlight
 import mozilla.components.browser.menu.item.BrowserMenuHighlightableItem
 import mozilla.components.browser.menu.item.BrowserMenuImageSwitch
@@ -34,6 +35,7 @@ import org.mozilla.fenix.theme.ThemeManager
 open class ToolbarMenuItems(
     private val context: Context,
     private val store: BrowserStore,
+    private val accountManager: FenixAccountManager,
     hasAccountProblem: Boolean = false,
     private val onItemTapped: (ToolbarMenu.Item) -> Unit = {},
     @ColorRes val primaryTextColor: Int,
@@ -41,8 +43,6 @@ open class ToolbarMenuItems(
 ) {
     private val selectedSession: TabSessionState?
         get() = store.state.selectedTab
-
-    val accountManager = FenixAccountManager(context)
 
     val backNavButton = BrowserMenuItemToolbar.TwoStateButton(
         primaryImageResource = mozilla.components.ui.icons.R.drawable.mozac_ic_back,

@@ -33,6 +33,7 @@ import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
+import org.mozilla.fenix.components.accounts.FenixAccountManager
 import org.mozilla.fenix.components.toolbar.ToolbarMenu.Item as Item
 import org.mozilla.fenix.experiments.ExperimentBranch
 import org.mozilla.fenix.experiments.Experiments
@@ -69,6 +70,7 @@ open class DefaultToolbarMenu(
     private var isBookmarkedJob: Job? = null
 
     private val shouldUseBottomToolbar = context.settings().shouldUseBottomToolbar
+    private val accountManager = FenixAccountManager(context, lifecycleOwner)
 
     private val selectedSession: TabSessionState?
         get() = store.state.selectedTab
@@ -84,6 +86,7 @@ open class DefaultToolbarMenu(
     private val toolbarMenuItems = ToolbarMenuItems(
         context,
         store,
+        accountManager,
         hasAccountProblem,
         onItemTapped,
         primaryTextColor,

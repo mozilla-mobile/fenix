@@ -25,13 +25,13 @@ open class FenixAccountManager(
     private val context: Context,
     private val lifecycleOwner: LifecycleOwner
 ) {
-
     val accountManager = context.components.backgroundServices.accountManager
     val authenticatedAccount = accountManager.authenticatedAccount() != null
     val accountProfile = accountManager.accountProfile()
 
     /**
-     * TODO
+     * Get the email address associated with the authenticated account profile. Returns null if
+     * the account is not authenticated or the email address is null.
      */
     fun getAuthAccountEmail(): String? {
         val email = accountProfile?.email

@@ -11,43 +11,31 @@ import mozilla.components.browser.menu.BrowserMenuHighlight
 import mozilla.components.browser.menu.item.BrowserMenuHighlightableItem
 import mozilla.components.browser.menu.item.BrowserMenuImageSwitch
 import mozilla.components.browser.menu.item.BrowserMenuImageText
-import mozilla.components.browser.state.store.BrowserStore
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.accounts.FenixAccountManager
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.home.HomeMenu.Item
 import org.mozilla.fenix.whatsnew.WhatsNew
 
 /**
- * Defines commonly used items for use in the main toolbar menu.
+ * Defines commonly used items for use in the homescreen toolbar menu.
  * @param context The [Context].
- * @param store Reference to the application's [BrowserStore].
- * @param hasAccountProblem If true, there was a problem signing into the Firefox account.
  * @param onItemTapped Called when a menu item is tapped.
+ * @param accountManager Used to manage sync account state.
  * @param primaryTextColor The text color used for the items.
- * @param accentBrightTextColor The accent color used for the items.
  */
-@Suppress("LargeClass", "LongParameterList")
 open class HomeToolbarMenuItems(
     private val context: Context,
     private val onItemTapped: (Item) -> Unit = {},
     private val accountManager: FenixAccountManager,
     @ColorRes val primaryTextColor: Int
 ) {
-
     val downloadsItem = BrowserMenuImageText(
         context.getString(R.string.library_downloads),
         R.drawable.ic_download,
         primaryTextColor
     ) {
         onItemTapped.invoke(Item.Downloads)
-    }
-
-    val syncedTabsItem = BrowserMenuImageText(
-        context.getString(R.string.synced_tabs),
-        R.drawable.ic_synced_tabs,
-        primaryTextColor
-    ) {
-        onItemTapped.invoke(Item.SyncedTabs)
     }
 
     private fun getSyncItemTitle(): String {
