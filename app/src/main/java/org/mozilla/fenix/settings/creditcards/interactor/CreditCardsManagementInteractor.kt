@@ -16,6 +16,8 @@ interface CreditCardsManagementInteractor {
      * taps on a credit card item.
      */
     fun onSelectCreditCard()
+
+    fun onAddCreditCard()
 }
 
 /**
@@ -27,5 +29,9 @@ class DefaultCreditCardsManagementInteractor(
 
     override fun onSelectCreditCard() {
         controller.handleCreditCardClicked()
+    }
+
+    override fun onAddCreditCard() {
+        controller.handleAddCreditCardButtonClicked()
     }
 }

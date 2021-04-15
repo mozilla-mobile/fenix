@@ -7,23 +7,24 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import org.mozilla.fenix.R
+import kotlinx.android.synthetic.main.saved_cards_add_button.*
 import org.mozilla.fenix.settings.creditcards.interactor.CreditCardsManagementInteractor
 
 /**
  * Viewholder for Add Credit Card Button
  */
 class AddCreditCardButtonViewHolder(
-        private val view: View) : RecyclerView.ViewHolder(view) {
+        private val view: View,
+        private val interactor: CreditCardsManagementInteractor) : RecyclerView.ViewHolder(view) {
 
-    fun bind(position : Int) {
-        view.findViewById<ConstraintLayout>(R.id.saved_cards_layout).setOnClickListener {
-            Log.e("Add Credit Card Viewhol","clicked")
+    fun bind() {
+        Log.e("VIEWHOLDER VIEW",view.tag.toString())
+        view.setOnClickListener {
+            interactor.onAddCreditCard()
         }
     }
-
 
     companion object {
         const val LAYOUT_ID = R.layout.saved_cards_add_button
     }
-
 }
