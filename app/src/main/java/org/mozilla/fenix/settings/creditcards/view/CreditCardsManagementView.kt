@@ -7,6 +7,7 @@ package org.mozilla.fenix.settings.creditcards.view
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.component_credit_cards.*
@@ -23,14 +24,14 @@ class CreditCardsManagementView(
 ) : LayoutContainer {
 
     private val creditCardsAdapter = CreditCardsAdapter(interactor)
-    //todo initialize addCreditCardButton adapter
-    private val addCreditCardButtonAdapter = ""
+    private val addCreditCardButtonAdapter = AddCreditCardButtonAdapter(interactor)
+    private val concatAdapter = ConcatAdapter(creditCardsAdapter,addCreditCardButtonAdapter)
 
     init {
         LayoutInflater.from(containerView.context).inflate(LAYOUT_ID, containerView, true)
 
         credit_cards_list.apply {
-            adapter = creditCardsAdapter
+            adapter = concatAdapter
             layoutManager = LinearLayoutManager(containerView.context)
         }
     }
