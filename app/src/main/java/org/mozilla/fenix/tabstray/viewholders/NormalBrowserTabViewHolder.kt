@@ -20,14 +20,12 @@ class NormalBrowserTabViewHolder(
     containerView: View,
     private val store: TabsTrayStore,
     interactor: TabsTrayInteractor,
-    currentTabIndexNormal: Int,
-    currentTabIndexPrivate: Int
+    currentTabIndex: Int
 ) : BaseBrowserTabViewHolder(
     containerView,
     store,
     interactor,
-    currentTabIndexNormal,
-    currentTabIndexPrivate
+    currentTabIndex
 ), SelectionHolder<Tab> {
 
     /**

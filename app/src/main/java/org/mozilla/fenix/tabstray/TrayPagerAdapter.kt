@@ -30,18 +30,9 @@ class TrayPagerAdapter(
     private val browserStore: BrowserStore
 ) : RecyclerView.Adapter<AbstractTrayViewHolder>() {
 
-    private val normalAdapter by lazy {
-        BrowserTabsAdapter(context, browserInteractor, store)
-    }
-    private val privateAdapter by lazy {
-        BrowserTabsAdapter(
-            context,
-            browserInteractor,
-            store
-        )
-    }
+    private val normalAdapter by lazy { BrowserTabsAdapter(context, browserInteractor, store) }
+    private val privateAdapter by lazy { BrowserTabsAdapter(context, browserInteractor, store) }
     private val syncedTabsAdapter by lazy { SyncedTabsAdapter(syncedTabsInteractor) }
-    private lateinit var viewHolder: AbstractTrayViewHolder
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AbstractTrayViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
@@ -50,31 +41,26 @@ class TrayPagerAdapter(
 
         return when (viewType) {
             NormalBrowserTabViewHolder.LAYOUT_ID -> {
-                viewHolder = NormalBrowserTabViewHolder(
+                NormalBrowserTabViewHolder(
                     itemView,
                     store,
                     interactor,
-                    browserStore.state.normalTabs.indexOf(selectedTab),
-                    browserStore.state.privateTabs.indexOf(selectedTab)
+                    browserStore.state.normalTabs.indexOf(selectedTab)
                 )
-                viewHolder
             }
             PrivateBrowserTabViewHolder.LAYOUT_ID -> {
-                viewHolder = PrivateBrowserTabViewHolder(
+                PrivateBrowserTabViewHolder(
                     itemView,
                     store,
                     interactor,
-                    browserStore.state.normalTabs.indexOf(selectedTab),
                     browserStore.state.privateTabs.indexOf(selectedTab)
                 )
-                viewHolder
             }
             SyncedTabViewHolder.LAYOUT_ID -> {
-                viewHolder = SyncedTabViewHolder(
+                SyncedTabViewHolder(
                     itemView,
                     syncedTabsInteractor
                 )
-                viewHolder
             }
             else -> throw IllegalStateException("Unknown viewType.")
         }

@@ -11,7 +11,6 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.tabstray.TabsTrayInteractor
 import org.mozilla.fenix.tabstray.TabsTrayStore
 import org.mozilla.fenix.tabstray.browser.BaseBrowserTrayList
-import org.mozilla.fenix.tabstray.browser.NormalBrowserTrayList
 
 /**
  * A shared view holder for browser tabs tray list.
@@ -20,8 +19,7 @@ abstract class BaseBrowserTabViewHolder(
     containerView: View,
     tabsTrayStore: TabsTrayStore,
     interactor: TabsTrayInteractor,
-    private val currentTabIndexNormal: Int,
-    private val currentTabIndexPrivate: Int
+    private val currentTabIndex: Int
 ) : AbstractTrayViewHolder(containerView) {
 
     private val trayList: BaseBrowserTrayList = itemView.findViewById(R.id.tray_list_item)
@@ -37,9 +35,7 @@ abstract class BaseBrowserTabViewHolder(
         layoutManager: RecyclerView.LayoutManager
     ) {
         adapter.registerAdapterDataObserver(OneTimeAdapterObserver(adapter) {
-            trayList.scrollToPosition(
-                if (trayList is NormalBrowserTrayList) currentTabIndexNormal else currentTabIndexPrivate
-            )
+            trayList.scrollToPosition(currentTabIndex)
         })
 
         trayList.layoutManager = layoutManager

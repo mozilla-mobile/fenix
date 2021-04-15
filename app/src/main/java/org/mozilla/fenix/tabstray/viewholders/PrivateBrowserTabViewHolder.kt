@@ -16,14 +16,12 @@ class PrivateBrowserTabViewHolder(
     containerView: View,
     store: TabsTrayStore,
     interactor: TabsTrayInteractor,
-    currentTabIndexNormal: Int,
-    currentTabIndexPrivate: Int
+    currentTabIndex: Int
 ) : BaseBrowserTabViewHolder(
     containerView,
     store,
     interactor,
-    currentTabIndexNormal,
-    currentTabIndexPrivate
+    currentTabIndex
 ) {
     companion object {
         const val LAYOUT_ID = R.layout.private_browser_tray_list
