@@ -30,9 +30,9 @@ import org.mozilla.fenix.whatsnew.WhatsNew
 open class HomeToolbarMenuItems(
     private val context: Context,
     private val onItemTapped: (Item) -> Unit = {},
+    private val accountManager: FenixAccountManager,
     @ColorRes val primaryTextColor: Int
 ) {
-    val accountManager = FenixAccountManager(context)
 
     val downloadsItem = BrowserMenuImageText(
         context.getString(R.string.library_downloads),
