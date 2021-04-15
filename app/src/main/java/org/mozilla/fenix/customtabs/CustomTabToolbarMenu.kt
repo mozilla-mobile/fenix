@@ -51,7 +51,7 @@ class CustomTabToolbarMenu(
     internal val session: CustomTabSessionState? get() = sessionId?.let { store.state.findCustomTab(it) }
     private val appName = context.getString(R.string.app_name)
 
-    override val menuToolbarNavigation by lazy {
+    override val menuToolbar by lazy {
         val back = BrowserMenuItemToolbar.TwoStateButton(
             primaryImageResource = mozilla.components.ui.icons.R.drawable.mozac_ic_back,
             primaryContentDescription = context.getString(R.string.browser_menu_back),
@@ -123,7 +123,7 @@ class CustomTabToolbarMenu(
             openInApp.apply { visible = ::shouldShowOpenInApp },
             openInFenix,
             BrowserMenuDivider(),
-            menuToolbarNavigation
+            menuToolbar
         )
         if (shouldReverseItems) {
             menuItems.reversed()

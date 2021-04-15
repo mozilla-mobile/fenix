@@ -28,10 +28,10 @@ import org.mozilla.fenix.theme.ThemeManager
 
 @Suppress("LongMethod")
 class HomeToolbarMenu(
-    private val lifecycleOwner: LifecycleOwner,
+    lifecycleOwner: LifecycleOwner,
     private val context: Context,
     private val onItemTapped: (Item) -> Unit = {},
-    private val onMenuBuilderChanged: (BrowserMenuBuilder) -> Unit = {},
+    onMenuBuilderChanged: (BrowserMenuBuilder) -> Unit = {},
     private val onHighlightPresent: (BrowserMenuHighlight) -> Unit = {}
 ): HomeMenu {
 
@@ -99,20 +99,13 @@ class HomeToolbarMenu(
             else -> R.drawable.ic_history
         }
     }
+
     private val historyItem = BrowserMenuImageText(
         context.getString(R.string.library_history),
         historyIcon,
         primaryTextColor
     ) {
         onItemTapped.invoke(Item.History)
-    }
-
-    val addons = BrowserMenuImageText(
-        context.getString(R.string.browser_menu_add_ons),
-        R.drawable.ic_addons_extensions,
-        primaryTextColor
-    ) {
-        onItemTapped.invoke(Item.Extensions)
     }
 
     val settingsItem = toolbarMenuItems.settingsItem
@@ -153,7 +146,6 @@ class HomeToolbarMenu(
             onItemTapped.invoke(Item.Bookmarks)
         }
 
-
         val menuItems = listOfNotNull(
             if (shouldDeleteOnQuit) quitItem else null,
             settingsItem,
@@ -163,7 +155,7 @@ class HomeToolbarMenu(
             historyItem,
             downloadsItem,
             BrowserMenuDivider(),
-            addons,
+            extensionsItem,
             BrowserMenuDivider(),
             whatsNewItem,
             helpItem,

@@ -43,7 +43,7 @@ open class FenixAccountManager(
      * Observes account state and updates menus
      */
     fun observeAccountState(
-        menuItemsWithReconnectItem: List<BrowserMenuItem>,
+        menuItemsWithReconnectItem: List<BrowserMenuItem> = listOf(),
         menuItems: List<BrowserMenuItem>,
         onMenuBuilderChanged: (BrowserMenuBuilder) -> Unit = {}
     ) {
@@ -57,7 +57,11 @@ open class FenixAccountManager(
                     lifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
                         onMenuBuilderChanged(
                             BrowserMenuBuilder(
-                                menuItemsWithReconnectItem
+                                if (menuItemsWithReconnectItem.isEmpty()) {
+                                    menuItems
+                                } else {
+                                    menuItemsWithReconnectItem
+                                }
                             )
                         )
                     }
