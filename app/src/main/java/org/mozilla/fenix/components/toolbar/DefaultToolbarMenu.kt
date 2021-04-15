@@ -91,7 +91,8 @@ open class DefaultToolbarMenu(
             endOfMenuAlwaysVisible = shouldUseBottomToolbar,
             store = store,
             style = WebExtensionBrowserMenuBuilder.Style(
-                webExtIconTintColorResource = primaryTextColor()
+                webExtIconTintColorResource = primaryTextColor(),
+                addonsManagerMenuItemDrawableRes = R.drawable.ic_addons_extensions
             ),
             onAddonsManagerTapped = {
                 onItemTapped.invoke(ToolbarMenu.Item.AddonsManager)
@@ -150,7 +151,7 @@ open class DefaultToolbarMenu(
         }
 
         val share = BrowserMenuItemToolbar.Button(
-            imageResource = R.drawable.ic_share_filled,
+            imageResource = R.drawable.ic_share,
             contentDescription = context.getString(R.string.browser_menu_share),
             iconTintColorResource = primaryTextColor(),
             listener = {
@@ -546,7 +547,7 @@ open class DefaultToolbarMenu(
 
     val syncMenuItem = BrowserMenuImageText(
         getSyncItemTitle(),
-        R.drawable.ic_synced_tabs,
+        R.drawable.ic_signed_out,
         primaryTextColor()
     ) {
         onItemTapped.invoke(ToolbarMenu.Item.SyncAccount(accountManager.signedInToFxa()))
