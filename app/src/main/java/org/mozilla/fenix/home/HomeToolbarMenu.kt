@@ -5,7 +5,7 @@
 package org.mozilla.fenix.home
 
 import android.content.Context
-import androidx.core.content.ContextCompat.getColor
+import androidx.annotation.ColorRes
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
@@ -17,7 +17,6 @@ import mozilla.components.browser.menu.BrowserMenuItem
 import mozilla.components.browser.menu.ext.getHighlight
 import mozilla.components.browser.menu.item.BrowserMenuDivider
 import mozilla.components.browser.menu.item.BrowserMenuHighlightableItem
-import mozilla.components.browser.menu.item.BrowserMenuImageSwitch
 import mozilla.components.browser.menu.item.BrowserMenuImageText
 import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.AuthType
@@ -31,9 +30,8 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.withExperiment
 import org.mozilla.fenix.theme.ThemeManager
-import org.mozilla.fenix.whatsnew.WhatsNew
 
-@Suppress("LargeClass", "LongMethod")
+@Suppress("LongMethod")
 class HomeToolbarMenu(
     private val lifecycleOwner: LifecycleOwner,
     private val context: Context,
@@ -42,17 +40,20 @@ class HomeToolbarMenu(
     private val onHighlightPresent: (BrowserMenuHighlight) -> Unit = {}
 ) {
 
+    @ColorRes
     private val primaryTextColor =
         ThemeManager.resolveAttribute(R.attr.primaryText, context)
+
+    @ColorRes
     private val syncDisconnectedColor =
         ThemeManager.resolveAttribute(R.attr.syncDisconnected, context)
+
     private val syncDisconnectedBackgroundColor =
         context.getColorFromAttr(R.attr.syncDisconnectedBackground)
 
     private val shouldUseBottomToolbar = context.settings().shouldUseBottomToolbar
     private val shouldDeleteOnQuit = context.settings().shouldDeleteBrowsingDataOnQuit
     private val experiments = context.components.analytics.experiments
-    private val accountManager = context.components.backgroundServices.accountManager
 
     private val toolbarMenuItems = HomeToolbarMenuItems(
         context,
@@ -84,17 +85,6 @@ class HomeToolbarMenu(
             primaryTextColor
         ) {
             onItemTapped.invoke(Item.Quit)
-        }
-    }
-
-    private fun getSyncItemTitle(): String {
-        val authenticatedAccount = accountManager.authenticatedAccount() != null
-        val email = accountManager.accountProfile()?.email
-
-        return if (authenticatedAccount && email != null) {
-            email
-        } else {
-            context.getString(R.string.sync_menu_sign_in)
         }
     }
 
@@ -233,7 +223,7 @@ class HomeToolbarMenu(
             R.drawable.ic_synced_tabs,
             primaryTextColor
         ) {
-            onItemTapped.invoke(Item.SyncTabs)
+            onItemTapped.invoke(Item.SyncedTabs)
         }
 
         val settingsItem = BrowserMenuImageText(
@@ -334,14 +324,12 @@ class HomeToolbarMenu(
 }
 
 sealed class Item {
-    data class Back(val viewHistory: Boolean) : Item()
-    data class Forward(val viewHistory: Boolean) : Item()
-
     object Bookmarks : Item()
     object History : Item()
     object Downloads : Item()
     object Extensions : Item()
-    object SyncTabs : Item()
+    object SyncedTabs : Item()
+    object SyncAccount : Item()
     object WhatsNew : Item()
     object Help : Item()
     object Settings : Item()

@@ -777,7 +777,7 @@ class HomeFragment : Fragment() {
             context,
             onItemTapped = {
                 when (it) {
-                    HomeToolbarMenu.Item.Settings -> {
+                    is Item.Settings -> {
                         hideOnboardingIfNeeded()
                         nav(
                             R.id.homeFragment,
@@ -785,21 +785,28 @@ class HomeFragment : Fragment() {
                         )
                         requireComponents.analytics.metrics.track(Event.HomeMenuSettingsItemClicked)
                     }
-                    HomeToolbarMenu.Item.SyncTabs -> {
+                    is Item.SyncedTabs -> {
                         hideOnboardingIfNeeded()
                         nav(
                             R.id.homeFragment,
                             HomeFragmentDirections.actionGlobalSyncedTabsFragment()
                         )
                     }
-                    HomeToolbarMenu.Item.Bookmarks -> {
+                    is Item.SyncAccount -> {
+                        hideOnboardingIfNeeded()
+                        nav(
+                            R.id.homeFragment,
+                            HomeFragmentDirections.actionGlobalTurnOnSync()
+                        )
+                    }
+                    is Item.Bookmarks -> {
                         hideOnboardingIfNeeded()
                         nav(
                             R.id.homeFragment,
                             HomeFragmentDirections.actionGlobalBookmarkFragment(BookmarkRoot.Mobile.id)
                         )
                     }
-                    HomeToolbarMenu.Item.History -> {
+                    is Item.History -> {
                         hideOnboardingIfNeeded()
                         nav(
                             R.id.homeFragment,
@@ -807,7 +814,7 @@ class HomeFragment : Fragment() {
                         )
                     }
 
-                    HomeToolbarMenu.Item.Downloads -> {
+                    is Item.Downloads -> {
                         hideOnboardingIfNeeded()
                         nav(
                             R.id.homeFragment,
@@ -815,7 +822,7 @@ class HomeFragment : Fragment() {
                         )
                     }
 
-                    HomeToolbarMenu.Item.Help -> {
+                    is Item.Help -> {
                         hideOnboardingIfNeeded()
                         (activity as HomeActivity).openToBrowserAndLoad(
                             searchTermOrURL = SupportUtils.getSumoURLForTopic(context, HELP),
@@ -823,7 +830,7 @@ class HomeFragment : Fragment() {
                             from = BrowserDirection.FromHome
                         )
                     }
-                    HomeToolbarMenu.Item.WhatsNew -> {
+                    is Item.WhatsNew -> {
                         hideOnboardingIfNeeded()
                         WhatsNew.userViewedWhatsNew(context)
                         context.metrics.track(Event.WhatsNewTapped)
@@ -836,7 +843,7 @@ class HomeFragment : Fragment() {
                     // We need to show the snackbar while the browsing data is deleting(if "Delete
                     // browsing data on quit" is activated). After the deletion is over, the snackbar
                     // is dismissed.
-                    HomeToolbarMenu.Item.Quit -> activity?.let { activity ->
+                    is Item.Quit -> activity?.let { activity ->
                         deleteAndQuit(
                             activity,
                             viewLifecycleOwner.lifecycleScope,
@@ -848,20 +855,20 @@ class HomeFragment : Fragment() {
                             }
                         )
                     }
-                    HomeToolbarMenu.Item.ReconnectSync -> {
+                    is Item.ReconnectSync -> {
                         hideOnboardingIfNeeded()
                         nav(
                             R.id.homeFragment,
                             HomeFragmentDirections.actionGlobalAccountProblemFragment()
                         )
                     }
-                    HomeToolbarMenu.Item.Extensions -> {
+                    is Item.Extensions -> {
                         nav(
                             R.id.homeFragment,
                             HomeFragmentDirections.actionGlobalAddonsManagementFragment()
                         )
                     }
-                    is HomeToolbarMenu.Item.DesktopMode -> {
+                    is Item.DesktopMode -> {
                         context.settings().openNextTabInDesktopMode = it.checked
                     }
                 }

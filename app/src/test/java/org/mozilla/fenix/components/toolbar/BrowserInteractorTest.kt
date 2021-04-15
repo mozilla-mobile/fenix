@@ -61,7 +61,7 @@ class BrowserInteractorTest {
 
     @Test
     fun onBrowserToolbarMenuItemTapped() {
-        val item: ToolbarMenu.DefaultItem = mockk()
+        val item: ToolbarMenu.Item = mockk()
 
         interactor.onBrowserToolbarMenuItemTapped(item)
 

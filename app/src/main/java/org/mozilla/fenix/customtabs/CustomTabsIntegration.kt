@@ -23,7 +23,7 @@ class CustomTabsIntegration(
     toolbar: BrowserToolbar,
     sessionId: String,
     activity: Activity,
-    onItemTapped: (ToolbarMenu.DefaultItem) -> Unit = {},
+    onItemTapped: (ToolbarMenu.Item) -> Unit = {},
     shouldReverseItems: Boolean,
     isPrivate: Boolean
 ) : LifecycleAwareFeature, UserInteractionHandler {
@@ -81,7 +81,7 @@ class CustomTabsIntegration(
         menuBuilder = customTabToolbarMenu.menuBuilder,
         menuItemIndex = START_OF_MENU_ITEMS_INDEX,
         window = activity.window,
-        shareListener = { onItemTapped.invoke(ToolbarMenu.DefaultItem.Share) },
+        shareListener = { onItemTapped.invoke(ToolbarMenu.Item.Share) },
         closeListener = { activity.finishAndRemoveTask() },
         updateToolbarBackground = !isPrivate,
         forceActionButtonTinting = isPrivate

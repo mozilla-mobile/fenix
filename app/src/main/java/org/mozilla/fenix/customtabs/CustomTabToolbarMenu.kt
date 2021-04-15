@@ -41,7 +41,7 @@ class CustomTabToolbarMenu(
     private val store: BrowserStore,
     private val sessionId: String?,
     private val shouldReverseItems: Boolean,
-    private val onItemTapped: (ToolbarMenu.DefaultItem) -> Unit = {}
+    private val onItemTapped: (ToolbarMenu.Item) -> Unit = {}
 ) : ToolbarMenu {
 
     override val menuBuilder by lazy { BrowserMenuBuilder(menuItems) }
@@ -64,9 +64,9 @@ class CustomTabToolbarMenu(
                 context
             ),
             disableInSecondaryState = true,
-            longClickListener = { onItemTapped.invoke(ToolbarMenu.DefaultItem.Back(viewHistory = true)) }
+            longClickListener = { onItemTapped.invoke(ToolbarMenu.Item.Back(viewHistory = true)) }
         ) {
-            onItemTapped.invoke(ToolbarMenu.DefaultItem.Back(viewHistory = false))
+            onItemTapped.invoke(ToolbarMenu.Item.Back(viewHistory = false))
         }
 
         val forward = BrowserMenuItemToolbar.TwoStateButton(
@@ -81,9 +81,9 @@ class CustomTabToolbarMenu(
                 context
             ),
             disableInSecondaryState = true,
-            longClickListener = { onItemTapped.invoke(ToolbarMenu.DefaultItem.Forward(viewHistory = true)) }
+            longClickListener = { onItemTapped.invoke(ToolbarMenu.Item.Forward(viewHistory = true)) }
         ) {
-            onItemTapped.invoke(ToolbarMenu.DefaultItem.Forward(viewHistory = false))
+            onItemTapped.invoke(ToolbarMenu.Item.Forward(viewHistory = false))
         }
 
         val refresh = BrowserMenuItemToolbar.TwoStateButton(
@@ -97,12 +97,12 @@ class CustomTabToolbarMenu(
             secondaryContentDescription = context.getString(R.string.browser_menu_stop),
             secondaryImageTintResource = primaryTextColor(),
             disableInSecondaryState = false,
-            longClickListener = { onItemTapped.invoke(ToolbarMenu.DefaultItem.Reload(bypassCache = true)) }
+            longClickListener = { onItemTapped.invoke(ToolbarMenu.Item.Reload(bypassCache = true)) }
         ) {
             if (session?.content?.loading == true) {
-                onItemTapped.invoke(ToolbarMenu.DefaultItem.Stop)
+                onItemTapped.invoke(ToolbarMenu.Item.Stop)
             } else {
-                onItemTapped.invoke(ToolbarMenu.DefaultItem.Reload(bypassCache = false))
+                onItemTapped.invoke(ToolbarMenu.Item.Reload(bypassCache = false))
             }
         }
 
@@ -137,7 +137,7 @@ class CustomTabToolbarMenu(
         label = context.getString(R.string.browser_menu_desktop_site),
         initialState = { session?.content?.desktopMode ?: false }
     ) { checked ->
-        onItemTapped.invoke(ToolbarMenu.DefaultItem.RequestDesktop(checked))
+        onItemTapped.invoke(ToolbarMenu.Item.RequestDesktop(checked))
     }
 
     private val findInPage = BrowserMenuImageText(
@@ -145,7 +145,7 @@ class CustomTabToolbarMenu(
         imageResource = R.drawable.mozac_ic_search,
         iconTintColorResource = primaryTextColor()
     ) {
-        onItemTapped.invoke(ToolbarMenu.DefaultItem.FindInPage)
+        onItemTapped.invoke(ToolbarMenu.Item.FindInPage)
     }
 
     private val openInApp = BrowserMenuHighlightableItem(
@@ -158,14 +158,14 @@ class CustomTabToolbarMenu(
         ),
         isHighlighted = { !context.settings().openInAppOpened }
     ) {
-        onItemTapped.invoke(ToolbarMenu.DefaultItem.OpenInApp)
+        onItemTapped.invoke(ToolbarMenu.Item.OpenInApp)
     }
 
     private val openInFenix = SimpleBrowserMenuItem(
         label = context.getString(R.string.browser_menu_open_in_fenix, appName),
         textColorResource = primaryTextColor()
     ) {
-        onItemTapped.invoke(ToolbarMenu.DefaultItem.OpenInFenix)
+        onItemTapped.invoke(ToolbarMenu.Item.OpenInFenix)
     }
 
     private val poweredBy = BrowserMenuCategory(

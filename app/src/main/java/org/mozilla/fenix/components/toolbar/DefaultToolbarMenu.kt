@@ -30,11 +30,10 @@ import mozilla.components.feature.webcompat.reporter.WebCompatReporterFeature
 import mozilla.components.lib.state.ext.flowScoped
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifAnyChanged
 import org.mozilla.fenix.FeatureFlags
-import org.mozilla.fenix.FeatureFlags.tabsTrayRewrite
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
-import org.mozilla.fenix.components.toolbar.ToolbarMenu.DefaultItem as Item
+import org.mozilla.fenix.components.toolbar.ToolbarMenu.Item as Item
 import org.mozilla.fenix.experiments.ExperimentBranch
 import org.mozilla.fenix.experiments.Experiments
 import org.mozilla.fenix.ext.asActivity
@@ -69,13 +68,10 @@ open class DefaultToolbarMenu(
     private var isCurrentUrlBookmarked = false
     private var isBookmarkedJob: Job? = null
 
-    private val shouldDeleteDataOnQuit = context.settings().shouldDeleteBrowsingDataOnQuit
     private val shouldUseBottomToolbar = context.settings().shouldUseBottomToolbar
 
     private val selectedSession: TabSessionState?
         get() = store.state.selectedTab
-
-    private val accountManager = context.components.backgroundServices.accountManager
 
     @ColorRes
     @VisibleForTesting
@@ -104,7 +100,7 @@ open class DefaultToolbarMenu(
                 },
             endOfMenuAlwaysVisible = shouldUseBottomToolbar,
             store = store,
-            webExtIconTintColorResource = primaryTextColor(),
+            webExtIconTintColorResource = primaryTextColor,
             onAddonsManagerTapped = {
                 onItemTapped.invoke(Item.AddonsManager)
             },
@@ -126,14 +122,14 @@ open class DefaultToolbarMenu(
             val bookmark = BrowserMenuItemToolbar.TwoStateButton(
                 primaryImageResource = R.drawable.ic_bookmark_filled,
                 primaryContentDescription = context.getString(R.string.browser_menu_edit_bookmark),
-                primaryImageTintResource = primaryTextColor(),
+                primaryImageTintResource = primaryTextColor,
                 // TwoStateButton.isInPrimaryState must be synchronous, and checking bookmark state is
                 // relatively slow. The best we can do here is periodically compute and cache a new "is
                 // bookmarked" state, and use that whenever the menu has been opened.
                 isInPrimaryState = { isCurrentUrlBookmarked },
                 secondaryImageResource = R.drawable.ic_bookmark_outline,
                 secondaryContentDescription = context.getString(R.string.browser_menu_bookmark),
-                secondaryImageTintResource = primaryTextColor(),
+                secondaryImageTintResource = primaryTextColor,
                 disableInSecondaryState = false
             ) {
                 if (!isCurrentUrlBookmarked) {
@@ -182,6 +178,8 @@ open class DefaultToolbarMenu(
     private var saveToCollectionItem = toolbarMenuItems.saveToCollectionItem
     private var settingsItem = toolbarMenuItems.settingsItem
     private var deleteDataOnQuit = toolbarMenuItems.deleteDataOnQuitItem
+    private var syncedTabsItem = toolbarMenuItems.oldSyncedTabsItem
+    private var syncSignInItem = toolbarMenuItems.syncSignInItem
 
     private val extensionsItem = WebExtensionPlaceholderMenuItem(
         id = WebExtensionPlaceholderMenuItem.MAIN_EXTENSIONS_MENU_ID
@@ -218,7 +216,7 @@ open class DefaultToolbarMenu(
         val bookmarksItem = BrowserMenuImageText(
             context.getString(R.string.library_bookmarks),
             R.drawable.ic_bookmark_filled,
-            primaryTextColor()
+            primaryTextColor
         ) {
             onItemTapped.invoke(Item.Bookmarks)
         }
@@ -258,32 +256,7 @@ open class DefaultToolbarMenu(
         }
     }
 
-    val syncedTabsItem = BrowserMenuImageText(
-        context.getString(R.string.synced_tabs),
-        R.drawable.ic_synced_tabs,
-        primaryTextColor()
-    ) {
-        onItemTapped.invoke(ToolbarMenu.Item.SyncedTabs)
-    }
 
-    private fun getSyncItemTitle(): String {
-        val authenticatedAccount = accountManager.authenticatedAccount() != null
-        val email = accountManager.accountProfile()?.email
-
-        return if (authenticatedAccount && email != null) {
-            email
-        } else {
-            context.getString(R.string.sync_menu_sign_in)
-        }
-    }
-
-    val syncMenuItem = BrowserMenuImageText(
-        getSyncItemTitle(),
-        R.drawable.ic_synced_tabs,
-        primaryTextColor()
-    ) {
-        onItemTapped.invoke(ToolbarMenu.Item.SyncAccount)
-    }
 
     @VisibleForTesting(otherwise = PRIVATE)
     val newCoreMenuItems by lazy {
@@ -302,7 +275,7 @@ open class DefaultToolbarMenu(
                 historyItem,
                 downloadsItem,
                 extensionsItem,
-                if (tabsTrayRewrite) syncMenuItem else syncedTabsItem,
+                if (FeatureFlags.tabsTrayRewrite) syncSignInItem else syncedTabsItem,
                 BrowserMenuDivider(),
                 findInPageItem,
                 desktopSiteItem,

@@ -11,13 +11,10 @@ import mozilla.components.browser.menu.BrowserMenuHighlight
 import mozilla.components.browser.menu.item.BrowserMenuHighlightableItem
 import mozilla.components.browser.menu.item.BrowserMenuImageSwitch
 import mozilla.components.browser.menu.item.BrowserMenuImageText
-import mozilla.components.browser.menu.item.BrowserMenuItemToolbar
 import mozilla.components.browser.state.store.BrowserStore
 import org.mozilla.fenix.R
-import org.mozilla.fenix.components.toolbar.ToolbarMenu
-import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.components.accounts.FenixAccountManager
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.whatsnew.WhatsNew
 
 /**
@@ -35,33 +32,7 @@ open class HomeToolbarMenuItems(
     private val onItemTapped: (Item) -> Unit = {},
     @ColorRes val primaryTextColor: Int
 ) {
-    val backNavButton = BrowserMenuItemToolbar.TwoStateButton(
-        primaryImageResource = mozilla.components.ui.icons.R.drawable.mozac_ic_back,
-        primaryContentDescription = context.getString(R.string.browser_menu_back),
-        primaryImageTintResource = primaryTextColor,
-        isInPrimaryState = { false },
-        secondaryImageTintResource = ThemeManager.resolveAttribute(R.attr.disabled, context),
-        disableInSecondaryState = true,
-        longClickListener = {
-            onItemTapped.invoke(Item.Back(viewHistory = true))
-        }
-    ) {
-        onItemTapped.invoke(Item.Back(viewHistory = false))
-    }
-
-    val forwardNavButton = BrowserMenuItemToolbar.TwoStateButton(
-        primaryImageResource = mozilla.components.ui.icons.R.drawable.mozac_ic_forward,
-        primaryContentDescription = context.getString(R.string.browser_menu_forward),
-        primaryImageTintResource = primaryTextColor,
-        isInPrimaryState = { false },
-        secondaryImageTintResource = ThemeManager.resolveAttribute(R.attr.disabled, context),
-        disableInSecondaryState = true,
-        longClickListener = {
-            onItemTapped.invoke(Item.Forward(viewHistory = true))
-        }
-    ) {
-        onItemTapped.invoke(Item.Forward(viewHistory = false))
-    }
+    val accountManager = FenixAccountManager(context)
 
     val downloadsItem = BrowserMenuImageText(
         context.getString(R.string.library_downloads),
@@ -71,20 +42,32 @@ open class HomeToolbarMenuItems(
         onItemTapped.invoke(Item.Downloads)
     }
 
-    val accountManager = context.components.backgroundServices.accountManager
-    val account = accountManager.authenticatedAccount()
-    val syncItemTitle = if (account != null && accountManager.accountProfile()?.email != null) {
-        context.getString(R.string.sync_signed_as, accountManager.accountProfile()?.email)
-    } else {
-        context.getString(R.string.sync_menu_sign_in)
-    }
-
     val syncedTabsItem = BrowserMenuImageText(
         context.getString(R.string.synced_tabs),
         R.drawable.ic_synced_tabs,
         primaryTextColor
     ) {
-        onItemTapped.invoke(Item.SyncTabs)
+        onItemTapped.invoke(Item.SyncedTabs)
+    }
+
+    private fun getSyncItemTitle(): String {
+        return accountManager.getAuthAccountEmail() ?: context.getString(R.string.sync_menu_sign_in)
+    }
+
+    val syncSignInItem = BrowserMenuImageText(
+        getSyncItemTitle(),
+        R.drawable.ic_synced_tabs,
+        primaryTextColor
+    ) {
+        onItemTapped.invoke(Item.SyncAccount)
+    }
+
+    val oldSyncedTabsItem = BrowserMenuImageText(
+        label = context.getString(R.string.synced_tabs),
+        imageResource = R.drawable.ic_synced_tabs,
+        iconTintColorResource = primaryTextColor
+    ) {
+        onItemTapped.invoke(Item.SyncedTabs)
     }
 
     val helpItem = BrowserMenuImageText(
