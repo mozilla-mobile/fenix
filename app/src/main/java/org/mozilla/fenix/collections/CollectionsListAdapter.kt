@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.fenix.tabtray
+package org.mozilla.fenix.collections
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -14,10 +14,14 @@ import androidx.recyclerview.widget.RecyclerView
 import mozilla.components.support.ktx.android.view.putCompoundDrawablesRelativeWithIntrinsicBounds
 import org.mozilla.fenix.R
 
-internal class CollectionsAdapter(
+/**
+ * An adapter for displaying an option to create a new collection and the list of existing
+ * collections.
+ */
+class CollectionsListAdapter(
     private val collections: Array<String>,
     private val onNewCollectionClicked: () -> Unit
-) : RecyclerView.Adapter<CollectionsAdapter.CollectionItemViewHolder>() {
+) : RecyclerView.Adapter<CollectionsListAdapter.CollectionItemViewHolder>() {
 
     @VisibleForTesting
     internal var checkedPosition = 1

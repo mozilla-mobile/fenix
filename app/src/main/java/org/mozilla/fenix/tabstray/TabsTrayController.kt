@@ -14,6 +14,7 @@ import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
+import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.tabtray.TabTrayDialogFragmentDirections
 
 interface TabsTrayController {
@@ -34,7 +35,7 @@ class DefaultTabsTrayController(
     private val browsingModeManager: BrowsingModeManager,
     private val navController: NavController,
     private val profiler: Profiler?,
-    private val dismissTabTray: () -> Unit,
+    private val navigationInteractor: NavigationInteractor,
     private val metrics: MetricController,
     private val ioScope: CoroutineScope,
     private val accountManager: FxaAccountManager
@@ -43,12 +44,14 @@ class DefaultTabsTrayController(
     override fun onNewTabTapped(isPrivate: Boolean) {
         val startTime = profiler?.getProfilerTime()
         browsingModeManager.mode = BrowsingMode.fromBoolean(isPrivate)
-        navController.navigate(TabTrayDialogFragmentDirections.actionGlobalHome(focusOnAddressBar = true))
-        dismissTabTray()
+        navController.navigateBlockingForAsyncNavGraph(
+            TabTrayDialogFragmentDirections.actionGlobalHome(focusOnAddressBar = true))
+        navigationInteractor.onTabTrayDismissed()
         profiler?.addMarker(
             "DefaultTabTrayController.onNewTabTapped",
             startTime
         )
+        sendNewTabEvent(isPrivate)
     }
 
     override fun onSyncStarted() {
@@ -65,5 +68,15 @@ class DefaultTabsTrayController(
         }.invokeOnCompletion {
             store.dispatch(TabsTrayAction.SyncCompleted)
         }
+    }
+
+    private fun sendNewTabEvent(isPrivateModeSelected: Boolean) {
+        val eventToSend = if (isPrivateModeSelected) {
+            Event.NewPrivateTabTapped
+        } else {
+            Event.NewTabTapped
+        }
+
+        metrics.track(eventToSend)
     }
 }

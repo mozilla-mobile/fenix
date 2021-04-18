@@ -608,6 +608,8 @@
     <string name="tabs_header_private_title">Sessão privada</string>
     <!-- Title for the list of tabs in the current private session -->
     <string name="tabs_header_private_tabs_title">Separadores privados</string>
+    <!-- Title for the list of tabs in the synced tabs -->
+    <string name="tabs_header_synced_tabs_title">Separadores sincronizados</string>
     <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
     <string name="add_tab">Adicionar separador</string>
     <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
@@ -626,6 +628,8 @@
     <string name="tab_tray_menu_item_share">Partilhar todos os separadores</string>
     <!-- Text shown in the menu to view recently closed tabs -->
     <string name="tab_tray_menu_recently_closed">Separadores fechados recentemente</string>
+    <!-- Text shown in the menu to view account settings -->
+    <string name="tab_tray_menu_account_settings">Definições da conta</string>
     <!-- Text shown in the menu to view tab settings -->
     <string name="tab_tray_menu_tab_settings">Definições dos separadores</string>
     <!-- Text shown in the menu for closing all tabs -->
@@ -980,8 +984,6 @@
     <string name="share_link_all_apps_subheader">Todas as ações</string>
     <!-- Sub-header in the dialog to share a link to an app from the most-recent sorted list -->
     <string name="share_link_recent_apps_subheader">Recentemente utilizadas</string>
-    <!-- An string shown when an account is signed in where %1$s is a placeholder for the email-->
-    <string name="sync_signed_as">Autenticado como %1$s</string>
     <!-- An option from the three dot menu to into sync -->
     <string name="sync_menu_sign_in">Iniciar sessão para sincronizar</string>
     <!-- An option from the share dialog to sign into sync -->
@@ -1567,6 +1569,8 @@
     <string name="preferences_credit_cards_manage_saved_cards">Gerir cartões guardados</string>
     <!-- Title of the "Add card" screen -->
     <string name="credit_cards_add_card">Adicionar cartão</string>
+    <!-- Title of the "Edit card" screen -->
+    <string name="credit_cards_edit_card">Editar cartão</string>
     <!-- The header for the card number of a credit card -->
     <string name="credit_cards_card_number">Número do cartão</string>
     <!-- The header for the expiration date of a credit card -->
@@ -1575,6 +1579,8 @@
     <string name="credit_cards_name_on_card">Nome no cartão</string>
     <!-- The header for the nickname for a credit card -->
     <string name="credit_cards_card_nickname">Nome alternativo do cartão</string>
+    <!-- The text for the "Delete card" menu item for deleting a credit card -->
+    <string name="credit_cards_menu_delete_card">Eliminar cartão</string>
     <!-- The text for the "Delete card" button for deleting a credit card -->
     <string name="credit_cards_delete_card_button">Eliminar cartão</string>
     <!-- The title for the "Save" menu item for saving a credit card -->
@@ -1745,6 +1751,9 @@
 	<string name="top_sites_rename_dialog_ok">OK</string>
 	<!-- Dialog button text for canceling the rename top site prompt. -->
 	<string name="top_sites_rename_dialog_cancel">Cancelar</string>
+
+    <!-- Default browser experiment -->
+    <string name="default_browser_experiment_card_text">Definir para que as ligações de sites, e-mails e mensagens sejam abertas automaticamente no Firefox.</string>
 
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">Remover</string>

@@ -4,11 +4,17 @@
 
 package org.mozilla.fenix.tabstray
 
+import android.content.Context
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runBlockingTest
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.state.state.createTab as createStateTab
@@ -16,7 +22,12 @@ import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.tabstray.Tab
 import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+import org.mozilla.fenix.collections.CollectionsDialog
+import org.mozilla.fenix.collections.show
+import org.mozilla.fenix.components.TabCollectionStorage
+import org.mozilla.fenix.helpers.DisableNavGraphProviderAssertionRule
 import org.mozilla.fenix.components.bookmarks.BookmarksUseCase
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
@@ -32,25 +43,33 @@ class NavigationInteractorTest {
     private val dismissTabTray: () -> Unit = mockk(relaxed = true)
     private val dismissTabTrayAndNavigateHome: (String) -> Unit = mockk(relaxed = true)
     private val bookmarksUseCase: BookmarksUseCase = mockk(relaxed = true)
+    private val context: Context = mockk(relaxed = true)
+    private val collectionStorage: TabCollectionStorage = mockk(relaxed = true)
+
+    @get:Rule
+    val disableNavGraphProviderAssertionRule = DisableNavGraphProviderAssertionRule()
 
     @Before
     fun setup() {
         store = BrowserStore(initialState = BrowserState(tabs = listOf(testTab)))
         tabsTrayStore = TabsTrayStore()
         navigationInteractor = DefaultNavigationInteractor(
-            tabsTrayStore,
+            context,
             store,
             navController,
             metrics,
             dismissTabTray,
             dismissTabTrayAndNavigateHome,
-            bookmarksUseCase
+            bookmarksUseCase,
+            tabsTrayStore,
+            collectionStorage
         )
     }
 
     @Test
     fun `navigation interactor calls the overridden functions`() {
         var tabTrayDismissed = false
+        var accountSettingsClicked = false
         var tabSettingsClicked = false
         var openRecentlyClosedClicked = false
         var shareTabsOfTypeClicked = false
@@ -67,6 +86,10 @@ class NavigationInteractorTest {
 
             override fun onShareTabs(tabs: Collection<Tab>) {
                 onShareTabs = true
+            }
+
+            override fun onAccountSettingsClicked() {
+                accountSettingsClicked = true
             }
 
             override fun onTabSettingsClicked() {
@@ -97,6 +120,8 @@ class NavigationInteractorTest {
         val navigationInteractor: NavigationInteractor = TestNavigationInteractor()
         navigationInteractor.onTabTrayDismissed()
         assertTrue(tabTrayDismissed)
+        navigationInteractor.onAccountSettingsClicked()
+        assertTrue(accountSettingsClicked)
         navigationInteractor.onTabSettingsClicked()
         assertTrue(tabSettingsClicked)
         navigationInteractor.onOpenRecentlyClosedClicked()
@@ -117,6 +142,12 @@ class NavigationInteractorTest {
     fun `onTabTrayDismissed calls dismissTabTray on DefaultNavigationInteractor`() {
         navigationInteractor.onTabTrayDismissed()
         verify(exactly = 1) { dismissTabTray() }
+    }
+
+    @Test
+    fun `onAccountSettingsClicked calls navigation on DefaultNavigationInteractor`() {
+        navigationInteractor.onAccountSettingsClicked()
+        verify(exactly = 1) { navController.navigate(TabsTrayFragmentDirections.actionGlobalAccountSettingsFragment()) }
     }
 
     @Test
@@ -151,12 +182,18 @@ class NavigationInteractorTest {
 
     @Test
     fun `onSaveToCollections calls navigation on DefaultNavigationInteractor`() {
+        mockkStatic("org.mozilla.fenix.collections.CollectionsDialogKt")
+
+        every { any<CollectionsDialog>().show(any()) } answers { }
         navigationInteractor.onSaveToCollections(emptyList())
         verify(exactly = 1) { metrics.track(Event.TabsTraySaveToCollectionPressed) }
+
+        unmockkStatic("org.mozilla.fenix.collections.CollectionsDialogKt")
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun `onBookmarkTabs calls navigation on DefaultNavigationInteractor`() {
+    fun `onBookmarkTabs calls navigation on DefaultNavigationInteractor`() = runBlockingTest {
         navigationInteractor.onSaveToBookmarks(listOf(createTrayTab()))
         coVerify(exactly = 1) { bookmarksUseCase.addBookmark(any(), any(), any()) }
     }

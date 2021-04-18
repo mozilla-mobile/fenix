@@ -4,19 +4,26 @@
 
 package org.mozilla.fenix.tabstray
 
+import android.content.Context
 import androidx.navigation.NavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import mozilla.components.browser.state.selector.getNormalOrPrivateTabs
+import mozilla.components.browser.state.selector.normalTabs
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.concept.tabstray.Tab
+import org.mozilla.fenix.collections.CollectionsDialog
+import org.mozilla.fenix.collections.show
+import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.bookmarks.BookmarksUseCase
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
+import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.home.HomeFragment
+import org.mozilla.fenix.tabstray.ext.getTabSessionState
 
 /**
  * An interactor that helps with navigating to different parts of the app from the tabs tray.
@@ -27,6 +34,11 @@ interface NavigationInteractor {
      * Called when tab tray should be dismissed.
      */
     fun onTabTrayDismissed()
+
+    /**
+     * Called when clicking the account settings button.
+     */
+    fun onAccountSettingsClicked()
 
     /**
      * Called when sharing a list of [Tab]s.
@@ -69,25 +81,34 @@ interface NavigationInteractor {
  */
 @Suppress("LongParameterList")
 class DefaultNavigationInteractor(
-    private val tabsTrayStore: TabsTrayStore,
+    private val context: Context,
     private val browserStore: BrowserStore,
     private val navController: NavController,
     private val metrics: MetricController,
     private val dismissTabTray: () -> Unit,
     private val dismissTabTrayAndNavigateHome: (String) -> Unit,
-    private val bookmarksUseCase: BookmarksUseCase
+    private val bookmarksUseCase: BookmarksUseCase,
+    private val tabsTrayStore: TabsTrayStore,
+    private val collectionStorage: TabCollectionStorage
 ) : NavigationInteractor {
 
     override fun onTabTrayDismissed() {
         dismissTabTray()
     }
 
+    override fun onAccountSettingsClicked() {
+        navController.navigateBlockingForAsyncNavGraph(
+            TabsTrayFragmentDirections.actionGlobalAccountSettingsFragment())
+    }
+
     override fun onTabSettingsClicked() {
-        navController.navigate(TabsTrayFragmentDirections.actionGlobalTabSettingsFragment())
+        navController.navigateBlockingForAsyncNavGraph(
+            TabsTrayFragmentDirections.actionGlobalTabSettingsFragment())
     }
 
     override fun onOpenRecentlyClosedClicked() {
-        navController.navigate(TabsTrayFragmentDirections.actionGlobalRecentlyClosed())
+        navController.navigateBlockingForAsyncNavGraph(
+            TabsTrayFragmentDirections.actionGlobalRecentlyClosed())
         metrics.track(Event.RecentlyClosedTabsOpened)
     }
 
@@ -98,7 +119,7 @@ class DefaultNavigationInteractor(
         val directions = TabsTrayFragmentDirections.actionGlobalShareFragment(
             data = data.toTypedArray()
         )
-        navController.navigate(directions)
+        navController.navigateBlockingForAsyncNavGraph(directions)
     }
 
     override fun onShareTabsOfTypeClicked(private: Boolean) {
@@ -109,7 +130,7 @@ class DefaultNavigationInteractor(
         val directions = TabsTrayFragmentDirections.actionGlobalShareFragment(
             data = data.toTypedArray()
         )
-        navController.navigate(directions)
+        navController.navigateBlockingForAsyncNavGraph(directions)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -126,7 +147,25 @@ class DefaultNavigationInteractor(
     override fun onSaveToCollections(tabs: Collection<Tab>) {
         metrics.track(Event.TabsTraySaveToCollectionPressed)
 
-        // TODO add this is a separate PR; it's quite a large change.
+        CollectionsDialog(
+            storage = collectionStorage,
+            onPositiveButtonClick = { existingCollection ->
+                tabsTrayStore.dispatch(TabsTrayAction.ExitSelectMode)
+
+                // If collection is null, a new one was created.
+                val event = if (existingCollection == null) {
+                    Event.CollectionSaved(browserStore.state.normalTabs.size, tabs.size)
+                } else {
+                    Event.CollectionTabsAdded(browserStore.state.normalTabs.size, tabs.size)
+                }
+                metrics.track(event)
+
+                browserStore.getTabSessionState(tabs)
+            },
+            onNegativeButtonClick = {
+                tabsTrayStore.dispatch(TabsTrayAction.ExitSelectMode)
+            }
+        ).show(context)
     }
 
     override fun onSaveToBookmarks(tabs: Collection<Tab>) {

@@ -19,8 +19,14 @@ import org.mozilla.fenix.tabstray.browser.BrowserTabsAdapter
 class NormalBrowserTabViewHolder(
     containerView: View,
     private val store: TabsTrayStore,
-    interactor: TabsTrayInteractor
-) : BaseBrowserTabViewHolder(containerView, interactor, store), SelectionHolder<Tab> {
+    interactor: TabsTrayInteractor,
+    currentTabIndex: Int
+) : BaseBrowserTabViewHolder(
+    containerView,
+    store,
+    interactor,
+    currentTabIndex
+), SelectionHolder<Tab> {
 
     /**
      * Holds the list of selected tabs.
@@ -30,6 +36,9 @@ class NormalBrowserTabViewHolder(
      */
     override val selectedItems: Set<Tab>
         get() = store.state.mode.selectedTabs
+
+    override val emptyStringText: String
+        get() = itemView.resources.getString(R.string.no_open_tabs_description)
 
     override fun bind(
         adapter: RecyclerView.Adapter<out RecyclerView.ViewHolder>,
