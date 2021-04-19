@@ -513,12 +513,15 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
             view = view
         )
 
-        pipFeature = PictureInPictureFeature(
-            store = store,
-            activity = requireActivity(),
-            crashReporting = context.components.analytics.crashReporter,
-            tabId = customTabSessionId
-        )
+        // Avoid entering PIP on a Samsung device if TalkBalk is enabled
+        if (!(Build.MANUFACTURER == "Samsung" && context.settings().touchExplorationIsEnabled)) {
+            pipFeature = PictureInPictureFeature(
+                store = store,
+                activity = requireActivity(),
+                crashReporting = context.components.analytics.crashReporter,
+                tabId = customTabSessionId
+            )
+        }
 
         appLinksFeature.set(
             feature = AppLinksFeature(
