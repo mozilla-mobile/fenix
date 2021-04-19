@@ -24,5 +24,4 @@ class AddCreditCardButtonAdapter(
     override fun getItemCount(): Int {
         return 1
     }
-
 }
