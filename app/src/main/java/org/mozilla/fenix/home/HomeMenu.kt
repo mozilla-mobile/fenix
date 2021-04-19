@@ -6,7 +6,11 @@ package org.mozilla.fenix.home
 
 import android.content.Context
 import androidx.core.content.ContextCompat.getColor
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import mozilla.components.browser.menu.BrowserMenuBuilder
 import mozilla.components.browser.menu.BrowserMenuHighlight
 import mozilla.components.browser.menu.BrowserMenuItem
@@ -15,11 +19,13 @@ import mozilla.components.browser.menu.item.BrowserMenuDivider
 import mozilla.components.browser.menu.item.BrowserMenuHighlightableItem
 import mozilla.components.browser.menu.item.BrowserMenuImageSwitch
 import mozilla.components.browser.menu.item.BrowserMenuImageText
+import mozilla.components.concept.sync.AccountObserver
+import mozilla.components.concept.sync.AuthType
+import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.support.ktx.android.content.getColorFromAttr
 import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.FeatureFlags.tabsTrayRewrite
 import org.mozilla.fenix.R
-import org.mozilla.fenix.components.accounts.FenixAccountManager
 import org.mozilla.fenix.experiments.ExperimentBranch
 import org.mozilla.fenix.experiments.Experiments
 import org.mozilla.fenix.ext.components
@@ -30,10 +36,10 @@ import org.mozilla.fenix.whatsnew.WhatsNew
 
 @Suppress("LargeClass", "LongMethod")
 class HomeMenu(
-    lifecycleOwner: LifecycleOwner,
+    private val lifecycleOwner: LifecycleOwner,
     private val context: Context,
     private val onItemTapped: (Item) -> Unit = {},
-    onMenuBuilderChanged: (BrowserMenuBuilder) -> Unit = {},
+    private val onMenuBuilderChanged: (BrowserMenuBuilder) -> Unit = {},
     private val onHighlightPresent: (BrowserMenuHighlight) -> Unit = {}
 ) {
     sealed class Item {
@@ -58,7 +64,7 @@ class HomeMenu(
         context.getColorFromAttr(R.attr.syncDisconnectedBackground)
 
     private val shouldUseBottomToolbar = context.settings().shouldUseBottomToolbar
-    private val accountManager = FenixAccountManager(context, lifecycleOwner)
+    val accountManager = context.components.backgroundServices.accountManager
 
     // 'Reconnect' and 'Quit' items aren't needed most of the time, so we'll only create the if necessary.
     private val reconnectToSyncItem by lazy {
@@ -97,8 +103,8 @@ class HomeMenu(
 
     private var signedInToFxa = false
     private fun getSyncItemTitle(): String {
-        val authenticatedAccount = accountManager.authenticatedAccount
-        val email = accountManager.getAuthAccountEmail()
+        val authenticatedAccount = accountManager.authenticatedAccount() != null
+        val email = accountManager.accountProfile()?.email
 
         return if (authenticatedAccount && email != null) {
             signedInToFxa = true
@@ -375,11 +381,42 @@ class HomeMenu(
         }
 
         // Observe account state changes, and update menu item builder with a new set of items.
-        // Observe account state changes, and update menu item builder with a new set of items.
-        accountManager.observeAccountState(
-            menuItemsWithReconnectItem,
-            menuItems,
-            onMenuBuilderChanged
-        )
+        context.components.backgroundServices.accountManagerAvailableQueue.runIfReadyOrQueue {
+            // This task isn't relevant if our parent fragment isn't around anymore.
+            if (lifecycleOwner.lifecycle.currentState == Lifecycle.State.DESTROYED) {
+                return@runIfReadyOrQueue
+            }
+            context.components.backgroundServices.accountManager.register(object : AccountObserver {
+                override fun onAuthenticationProblems() {
+                    lifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+                        onMenuBuilderChanged(
+                            BrowserMenuBuilder(
+                                menuItemsWithReconnectItem
+                            )
+                        )
+                    }
+                }
+
+                override fun onAuthenticated(account: OAuthAccount, authType: AuthType) {
+                    lifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+                        onMenuBuilderChanged(
+                            BrowserMenuBuilder(
+                                menuItems
+                            )
+                        )
+                    }
+                }
+
+                override fun onLoggedOut() {
+                    lifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+                        onMenuBuilderChanged(
+                            BrowserMenuBuilder(
+                                menuItems
+                            )
+                        )
+                    }
+                }
+            }, lifecycleOwner)
+        }
     }
 }

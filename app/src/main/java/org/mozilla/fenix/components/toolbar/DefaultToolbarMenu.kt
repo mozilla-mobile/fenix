@@ -39,7 +39,6 @@ import org.mozilla.fenix.FeatureFlags.tabsTrayRewrite
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
-import org.mozilla.fenix.components.accounts.FenixAccountManager
 import org.mozilla.fenix.components.toolbar.ToolbarMenu.Item as Item
 import org.mozilla.fenix.experiments.ExperimentBranch
 import org.mozilla.fenix.experiments.Experiments
@@ -76,7 +75,7 @@ open class DefaultToolbarMenu(
 
     private val shouldDeleteDataOnQuit = context.settings().shouldDeleteBrowsingDataOnQuit
     private val shouldUseBottomToolbar = context.settings().shouldUseBottomToolbar
-    private val accountManager = FenixAccountManager(context, lifecycleOwner)
+    val accountManager = context.components.backgroundServices.accountManager
 
     private val selectedSession: TabSessionState?
         get() = store.state.selectedTab
@@ -544,8 +543,8 @@ open class DefaultToolbarMenu(
 
     private var signedInToFxa = false
     private fun getSyncItemTitle(): String {
-        val authenticatedAccount = accountManager.authenticatedAccount
-        val email = accountManager.getAuthAccountEmail()
+        val authenticatedAccount = accountManager.authenticatedAccount() != null
+        val email = accountManager.accountProfile()?.email
 
         return if (authenticatedAccount && email != null) {
             signedInToFxa = true
@@ -565,11 +564,6 @@ open class DefaultToolbarMenu(
 
     @VisibleForTesting(otherwise = PRIVATE)
     val newCoreMenuItems by lazy {
-
-        // Predicates that are called once, during screen init
-        val shouldShowSaveToCollection = (context.asActivity() as? HomeActivity)
-            ?.browsingModeManager?.mode == BrowsingMode.Normal
-
         val menuItems =
             listOfNotNull(
                 if (shouldUseBottomToolbar) null else menuToolbar,
@@ -592,7 +586,7 @@ open class DefaultToolbarMenu(
                 addToHomeScreenItem.apply { visible = ::canAddToHomescreen },
                 installToHomescreen.apply { visible = ::canInstall },
                 addToTopSitesItem,
-                if (shouldShowSaveToCollection) saveToCollectionItem else null,
+                saveToCollectionItem,
                 BrowserMenuDivider(),
                 settingsItem,
                 if (shouldDeleteDataOnQuit) deleteDataOnQuit else null,
