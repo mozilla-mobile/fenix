@@ -17,9 +17,11 @@ import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifAnyChanged
 import org.mozilla.fenix.R
 import org.mozilla.fenix.tabstray.browser.BrowserTrayInteractor
 import org.mozilla.fenix.tabstray.syncedtabs.SyncedTabsInteractor
+import org.mozilla.fenix.utils.Settings
 
 class FloatingActionButtonBinding(
     private val store: TabsTrayStore,
+    private val settings: Settings,
     private val actionButton: ExtendedFloatingActionButton,
     private val browserTrayInteractor: BrowserTrayInteractor,
     private val syncedTabsInteractor: SyncedTabsInteractor
@@ -29,7 +31,6 @@ class FloatingActionButtonBinding(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun start() {
-        setFab(store.state.selectedPage, store.state.syncing)
         scope = store.flowScoped { flow ->
             flow.map { it }
                 .ifAnyChanged { state ->
@@ -49,6 +50,12 @@ class FloatingActionButtonBinding(
     }
 
     private fun setFab(selectedPage: Page, syncing: Boolean) {
+        /* Do not show fab when accessibility service is enabled */
+        if (settings.accessibilityServicesEnabled) {
+            actionButton.hide()
+            return
+        }
+
         when (selectedPage) {
             Page.NormalTabs -> {
                 actionButton.apply {
