@@ -75,7 +75,7 @@ open class DefaultToolbarMenu(
 
     private val shouldDeleteDataOnQuit = context.settings().shouldDeleteBrowsingDataOnQuit
     private val shouldUseBottomToolbar = context.settings().shouldUseBottomToolbar
-    val accountManager = context.components.backgroundServices.accountManager
+    private val accountManager = context.components.backgroundServices.accountManager
 
     private val selectedSession: TabSessionState?
         get() = store.state.selectedTab
