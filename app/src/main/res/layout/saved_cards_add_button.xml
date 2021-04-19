@@ -12,7 +12,8 @@
     android:background="?android:selectableItemBackground"
     android:clickable="true"
     android:focusable="true"
-    android:paddingStart="@dimen/top_bar_alignment_margin_start"
+    android:layout_marginStart="@dimen/saved_logins_item_margin_start"
+    android:layout_marginEnd="@dimen/saved_logins_item_margin_end"
     tools:ignore="RtlSymmetry">
 
     <ImageView
