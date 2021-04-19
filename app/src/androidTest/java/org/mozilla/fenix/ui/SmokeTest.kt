@@ -886,6 +886,7 @@ class SmokeTest {
         }
     }
 
+    @Ignore("Disabling until re-implemented by #19090")
     @Test
     fun verifyExpandedCollectionItemsTest() {
         val webPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -935,6 +936,7 @@ class SmokeTest {
         }
     }
 
+    @Ignore("Disabling until re-implemented by #19090")
     @Test
     fun shareCollectionTest() {
         val webPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -952,6 +954,7 @@ class SmokeTest {
         }
     }
 
+    @Ignore("Disabling until re-implemented by #19090")
     @Test
     fun deleteCollectionTest() {
         val webPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -1049,6 +1052,7 @@ class SmokeTest {
         }
     }
 
+    @Ignore("Feature is temporarily removed; disabling test. See https://github.com/mozilla-mobile/fenix/issues/18656")
     @Test
     fun selectTabsButtonVisibilityTest() {
         homeScreen {
