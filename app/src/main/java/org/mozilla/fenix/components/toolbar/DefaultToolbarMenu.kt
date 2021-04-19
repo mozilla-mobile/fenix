@@ -65,7 +65,7 @@ open class DefaultToolbarMenu(
     private val context: Context,
     private val store: BrowserStore,
     hasAccountProblem: Boolean = false,
-    private val onItemTapped: (ToolbarMenu.Item) -> Unit = {},
+    private val onItemTapped: (Item) -> Unit = {},
     private val lifecycleOwner: LifecycleOwner,
     private val bookmarksStorage: BookmarksStorage,
     val isPinningSupported: Boolean
@@ -103,7 +103,7 @@ open class DefaultToolbarMenu(
                 webExtIconTintColorResource = primaryTextColor()
             ),
             onAddonsManagerTapped = {
-                onItemTapped.invoke(ToolbarMenu.Item.AddonsManager)
+                onItemTapped.invoke(Item.AddonsManager)
             },
             appendExtensionSubMenuAtStart = shouldUseBottomToolbar
         )
@@ -605,7 +605,7 @@ open class DefaultToolbarMenu(
 
     private fun handleBookmarkItemTapped() {
         if (!isCurrentUrlBookmarked) isCurrentUrlBookmarked = true
-        onItemTapped.invoke(ToolbarMenu.Item.Bookmark)
+        onItemTapped.invoke(Item.Bookmark)
     }
 
     @VisibleForTesting
@@ -647,7 +647,7 @@ open class DefaultToolbarMenu(
                     label = context.getString(R.string.preferences_set_as_default_browser),
                     imageResource = R.mipmap.ic_launcher
                 ) {
-                    onItemTapped.invoke(ToolbarMenu.Item.SetDefaultBrowser)
+                    onItemTapped.invoke(Item.SetDefaultBrowser)
                 }
             } else {
                 null
