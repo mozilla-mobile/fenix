@@ -39,6 +39,7 @@ import org.mozilla.fenix.FeatureFlags.tabsTrayRewrite
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
+import org.mozilla.fenix.components.accounts.FenixAccountManager
 import org.mozilla.fenix.components.toolbar.ToolbarMenu.Item as Item
 import org.mozilla.fenix.experiments.ExperimentBranch
 import org.mozilla.fenix.experiments.Experiments
@@ -75,7 +76,7 @@ open class DefaultToolbarMenu(
 
     private val shouldDeleteDataOnQuit = context.settings().shouldDeleteBrowsingDataOnQuit
     private val shouldUseBottomToolbar = context.settings().shouldUseBottomToolbar
-    private val accountManager = context.components.backgroundServices.accountManager
+    private val accountManager = FenixAccountManager(context)
 
     private val selectedSession: TabSessionState?
         get() = store.state.selectedTab
@@ -541,13 +542,11 @@ open class DefaultToolbarMenu(
         onItemTapped.invoke(Item.SyncedTabs)
     }
 
-    private var signedInToFxa = false
     private fun getSyncItemTitle(): String {
-        val authenticatedAccount = accountManager.authenticatedAccount() != null
-        val email = accountManager.accountProfile()?.email
+        val authenticatedAccount = accountManager.authenticatedAccount
+        val email = accountManager.getAuthAccountEmail()
 
         return if (authenticatedAccount && email != null) {
-            signedInToFxa = true
             email
         } else {
             context.getString(R.string.sync_menu_sign_in)
@@ -559,7 +558,7 @@ open class DefaultToolbarMenu(
         R.drawable.ic_synced_tabs,
         primaryTextColor()
     ) {
-        onItemTapped.invoke(Item.SyncAccount(signedInToFxa))
+        onItemTapped.invoke(Item.SyncAccount(accountManager.signedInToFxa()))
     }
 
     @VisibleForTesting(otherwise = PRIVATE)

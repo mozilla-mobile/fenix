@@ -26,6 +26,7 @@ import mozilla.components.support.ktx.android.content.getColorFromAttr
 import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.FeatureFlags.tabsTrayRewrite
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.accounts.FenixAccountManager
 import org.mozilla.fenix.experiments.ExperimentBranch
 import org.mozilla.fenix.experiments.Experiments
 import org.mozilla.fenix.ext.components
@@ -64,7 +65,7 @@ class HomeMenu(
         context.getColorFromAttr(R.attr.syncDisconnectedBackground)
 
     private val shouldUseBottomToolbar = context.settings().shouldUseBottomToolbar
-    private val accountManager = context.components.backgroundServices.accountManager
+    private val accountManager = FenixAccountManager(context)
 
     // 'Reconnect' and 'Quit' items aren't needed most of the time, so we'll only create the if necessary.
     private val reconnectToSyncItem by lazy {
@@ -101,13 +102,11 @@ class HomeMenu(
         onItemTapped.invoke(Item.SyncedTabs)
     }
 
-    private var signedInToFxa = false
     private fun getSyncItemTitle(): String {
-        val authenticatedAccount = accountManager.authenticatedAccount() != null
-        val email = accountManager.accountProfile()?.email
+        val authenticatedAccount = accountManager.authenticatedAccount
+        val email = accountManager.getAuthAccountEmail()
 
         return if (authenticatedAccount && email != null) {
-            signedInToFxa = true
             email
         } else {
             context.getString(R.string.sync_menu_sign_in)
@@ -119,7 +118,7 @@ class HomeMenu(
         R.drawable.ic_synced_tabs,
         primaryTextColor
     ) {
-        onItemTapped.invoke(Item.SyncAccount(signedInToFxa))
+        onItemTapped.invoke(Item.SyncAccount(accountManager.signedInToFxa()))
     }
 
     private val oldCoreMenuItems by lazy {
