@@ -89,6 +89,7 @@ import org.mozilla.fenix.GleanMetrics.PerfStartup
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BrowserAnimator.Companion.getToolbarNavOptions
+import org.mozilla.fenix.browser.BrowserFragmentDirections
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.PrivateShortcutCreateManager
@@ -109,6 +110,7 @@ import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.home.HomeMenu.Item
 import org.mozilla.fenix.home.mozonline.showPrivacyPopWindow
 import org.mozilla.fenix.home.sessioncontrol.DefaultSessionControlController
 import org.mozilla.fenix.home.sessioncontrol.SessionControlInteractor
@@ -777,7 +779,7 @@ class HomeFragment : Fragment() {
             context,
             onItemTapped = {
                 when (it) {
-                    HomeMenu.Item.Settings -> {
+                    is Item.Settings -> {
                         hideOnboardingIfNeeded()
                         nav(
                             R.id.homeFragment,
@@ -785,28 +787,33 @@ class HomeFragment : Fragment() {
                         )
                         requireComponents.analytics.metrics.track(Event.HomeMenuSettingsItemClicked)
                     }
-                    HomeMenu.Item.SyncTabs -> {
+                    is Item.SyncedTabs -> {
                         hideOnboardingIfNeeded()
                         nav(
                             R.id.homeFragment,
                             HomeFragmentDirections.actionGlobalSyncedTabsFragment()
                         )
                     }
-                    HomeMenu.Item.SyncAccount -> {
+                    is Item.SyncAccount -> {
                         hideOnboardingIfNeeded()
+                        val directions = if (it.signedIn) {
+                            BrowserFragmentDirections.actionGlobalAccountSettingsFragment()
+                        } else {
+                            BrowserFragmentDirections.actionGlobalTurnOnSync()
+                        }
                         nav(
                             R.id.homeFragment,
-                            HomeFragmentDirections.actionGlobalAccountSettingsFragment()
+                            directions
                         )
                     }
-                    HomeMenu.Item.Bookmarks -> {
+                    is Item.Bookmarks -> {
                         hideOnboardingIfNeeded()
                         nav(
                             R.id.homeFragment,
                             HomeFragmentDirections.actionGlobalBookmarkFragment(BookmarkRoot.Mobile.id)
                         )
                     }
-                    HomeMenu.Item.History -> {
+                    is Item.History -> {
                         hideOnboardingIfNeeded()
                         nav(
                             R.id.homeFragment,
@@ -814,7 +821,7 @@ class HomeFragment : Fragment() {
                         )
                     }
 
-                    HomeMenu.Item.Downloads -> {
+                    is Item.Downloads -> {
                         hideOnboardingIfNeeded()
                         nav(
                             R.id.homeFragment,
@@ -822,7 +829,7 @@ class HomeFragment : Fragment() {
                         )
                     }
 
-                    HomeMenu.Item.Help -> {
+                    is Item.Help -> {
                         hideOnboardingIfNeeded()
                         (activity as HomeActivity).openToBrowserAndLoad(
                             searchTermOrURL = SupportUtils.getSumoURLForTopic(context, HELP),
@@ -830,7 +837,7 @@ class HomeFragment : Fragment() {
                             from = BrowserDirection.FromHome
                         )
                     }
-                    HomeMenu.Item.WhatsNew -> {
+                    is Item.WhatsNew -> {
                         hideOnboardingIfNeeded()
                         WhatsNew.userViewedWhatsNew(context)
                         context.metrics.track(Event.WhatsNewTapped)
@@ -843,7 +850,7 @@ class HomeFragment : Fragment() {
                     // We need to show the snackbar while the browsing data is deleting(if "Delete
                     // browsing data on quit" is activated). After the deletion is over, the snackbar
                     // is dismissed.
-                    HomeMenu.Item.Quit -> activity?.let { activity ->
+                    is Item.Quit -> activity?.let { activity ->
                         deleteAndQuit(
                             activity,
                             viewLifecycleOwner.lifecycleScope,
@@ -855,20 +862,20 @@ class HomeFragment : Fragment() {
                             }
                         )
                     }
-                    HomeMenu.Item.ReconnectSync -> {
+                    is Item.ReconnectSync -> {
                         hideOnboardingIfNeeded()
                         nav(
                             R.id.homeFragment,
                             HomeFragmentDirections.actionGlobalAccountProblemFragment()
                         )
                     }
-                    HomeMenu.Item.Extensions -> {
+                    is Item.Extensions -> {
                         nav(
                             R.id.homeFragment,
                             HomeFragmentDirections.actionGlobalAddonsManagementFragment()
                         )
                     }
-                    is HomeMenu.Item.DesktopMode -> {
+                    is Item.DesktopMode -> {
                         context.settings().openNextTabInDesktopMode = it.checked
                     }
                 }

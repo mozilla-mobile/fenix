@@ -6,11 +6,7 @@ package org.mozilla.fenix.home
 
 import android.content.Context
 import androidx.core.content.ContextCompat.getColor
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import mozilla.components.browser.menu.BrowserMenuBuilder
 import mozilla.components.browser.menu.BrowserMenuHighlight
 import mozilla.components.browser.menu.BrowserMenuItem
@@ -19,13 +15,11 @@ import mozilla.components.browser.menu.item.BrowserMenuDivider
 import mozilla.components.browser.menu.item.BrowserMenuHighlightableItem
 import mozilla.components.browser.menu.item.BrowserMenuImageSwitch
 import mozilla.components.browser.menu.item.BrowserMenuImageText
-import mozilla.components.concept.sync.AccountObserver
-import mozilla.components.concept.sync.AuthType
-import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.support.ktx.android.content.getColorFromAttr
 import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.FeatureFlags.tabsTrayRewrite
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.accounts.FenixAccountManager
 import org.mozilla.fenix.experiments.ExperimentBranch
 import org.mozilla.fenix.experiments.Experiments
 import org.mozilla.fenix.ext.components
@@ -36,10 +30,10 @@ import org.mozilla.fenix.whatsnew.WhatsNew
 
 @Suppress("LargeClass", "LongMethod")
 class HomeMenu(
-    private val lifecycleOwner: LifecycleOwner,
+    lifecycleOwner: LifecycleOwner,
     private val context: Context,
     private val onItemTapped: (Item) -> Unit = {},
-    private val onMenuBuilderChanged: (BrowserMenuBuilder) -> Unit = {},
+    onMenuBuilderChanged: (BrowserMenuBuilder) -> Unit = {},
     private val onHighlightPresent: (BrowserMenuHighlight) -> Unit = {}
 ) {
     sealed class Item {
@@ -47,8 +41,8 @@ class HomeMenu(
         object History : Item()
         object Downloads : Item()
         object Extensions : Item()
-        object SyncTabs : Item()
-        object SyncAccount : Item()
+        object SyncedTabs : Item()
+        data class SyncAccount(val signedIn: Boolean) : Item()
         object WhatsNew : Item()
         object Help : Item()
         object Settings : Item()
@@ -64,7 +58,7 @@ class HomeMenu(
         context.getColorFromAttr(R.attr.syncDisconnectedBackground)
 
     private val shouldUseBottomToolbar = context.settings().shouldUseBottomToolbar
-    private val accountManager = context.components.backgroundServices.accountManager
+    private val accountManager = FenixAccountManager(context, lifecycleOwner)
 
     // 'Reconnect' and 'Quit' items aren't needed most of the time, so we'll only create the if necessary.
     private val reconnectToSyncItem by lazy {
@@ -91,6 +85,35 @@ class HomeMenu(
         ) {
             onItemTapped.invoke(Item.Quit)
         }
+    }
+
+    val syncedTabsItem = BrowserMenuImageText(
+        context.getString(R.string.synced_tabs),
+        R.drawable.ic_synced_tabs,
+        primaryTextColor
+    ) {
+        onItemTapped.invoke(Item.SyncedTabs)
+    }
+
+    private var signedInToFxa = false
+    private fun getSyncItemTitle(): String {
+        val authenticatedAccount = accountManager.authenticatedAccount
+        val email = accountManager.getAuthAccountEmail()
+
+        return if (authenticatedAccount && email != null) {
+            signedInToFxa = true
+            email
+        } else {
+            context.getString(R.string.sync_menu_sign_in)
+        }
+    }
+
+    val syncSignInMenuItem = BrowserMenuImageText(
+        getSyncItemTitle(),
+        R.drawable.ic_synced_tabs,
+        primaryTextColor
+    ) {
+        onItemTapped.invoke(Item.SyncAccount(signedInToFxa))
     }
 
     private val oldCoreMenuItems by lazy {
@@ -159,14 +182,6 @@ class HomeMenu(
             onItemTapped.invoke(Item.Settings)
         }
 
-        val syncedTabsItem = BrowserMenuImageText(
-            getSyncItemTitle(),
-            R.drawable.ic_synced_tabs,
-            primaryTextColor
-        ) {
-            onItemTapped.invoke(Item.SyncTabs)
-        }
-
         val helpItem = BrowserMenuImageText(
             context.getString(R.string.browser_menu_help),
             R.drawable.ic_help,
@@ -226,17 +241,6 @@ class HomeMenu(
         onItemTapped.invoke(Item.DesktopMode(checked))
     }
 
-    private fun getSyncItemTitle(): String {
-        val authenticatedAccount = accountManager.authenticatedAccount() != null
-        val email = accountManager.accountProfile()?.email
-
-        return if (authenticatedAccount && email != null) {
-            email
-        } else {
-            context.getString(R.string.sync_menu_sign_in)
-        }
-    }
-
     @Suppress("ComplexMethod")
     private fun newCoreMenuItems(): List<BrowserMenuItem> {
         val experiments = context.components.analytics.experiments
@@ -292,22 +296,6 @@ class HomeMenu(
             primaryTextColor
         ) {
             onItemTapped.invoke(Item.Extensions)
-        }
-
-        val syncedTabsItem = BrowserMenuImageText(
-            context.getString(R.string.synced_tabs),
-            R.drawable.ic_synced_tabs,
-            primaryTextColor
-        ) {
-            onItemTapped.invoke(Item.SyncTabs)
-        }
-
-        val syncSignInMenuItem = BrowserMenuImageText(
-            getSyncItemTitle(),
-            R.drawable.ic_synced_tabs,
-            primaryTextColor
-        ) {
-            onItemTapped.invoke(Item.SyncAccount)
         }
 
         val whatsNewItem = BrowserMenuHighlightableItem(
@@ -387,42 +375,11 @@ class HomeMenu(
         }
 
         // Observe account state changes, and update menu item builder with a new set of items.
-        context.components.backgroundServices.accountManagerAvailableQueue.runIfReadyOrQueue {
-            // This task isn't relevant if our parent fragment isn't around anymore.
-            if (lifecycleOwner.lifecycle.currentState == Lifecycle.State.DESTROYED) {
-                return@runIfReadyOrQueue
-            }
-            context.components.backgroundServices.accountManager.register(object : AccountObserver {
-                override fun onAuthenticationProblems() {
-                    lifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
-                        onMenuBuilderChanged(
-                            BrowserMenuBuilder(
-                                menuItemsWithReconnectItem
-                            )
-                        )
-                    }
-                }
-
-                override fun onAuthenticated(account: OAuthAccount, authType: AuthType) {
-                    lifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
-                        onMenuBuilderChanged(
-                            BrowserMenuBuilder(
-                                menuItems
-                            )
-                        )
-                    }
-                }
-
-                override fun onLoggedOut() {
-                    lifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
-                        onMenuBuilderChanged(
-                            BrowserMenuBuilder(
-                                menuItems
-                            )
-                        )
-                    }
-                }
-            }, lifecycleOwner)
-        }
+        // Observe account state changes, and update menu item builder with a new set of items.
+        accountManager.observeAccountState(
+            menuItemsWithReconnectItem,
+            menuItems,
+            onMenuBuilderChanged
+        )
     }
 }

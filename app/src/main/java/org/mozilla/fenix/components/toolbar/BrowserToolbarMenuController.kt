@@ -91,8 +91,6 @@ class DefaultBrowserToolbarMenuController(
         trackToolbarItemInteraction(item)
 
         Do exhaustive when (item) {
-            // TODO: These can be removed for https://github.com/mozilla-mobile/fenix/issues/17870
-            // todo === Start ===
             is ToolbarMenu.Item.InstallPwaToHomeScreen -> {
                 settings.installPwaOpened = true
                 MainScope().launch {
@@ -130,7 +128,6 @@ class DefaultBrowserToolbarMenuController(
                     activity.finishAndRemoveTask()
                 }
             }
-            // todo === End ===
             is ToolbarMenu.Item.OpenInApp -> {
                 settings.openInAppOpened = true
 
@@ -226,10 +223,15 @@ class DefaultBrowserToolbarMenuController(
                 )
             }
             is ToolbarMenu.Item.SyncAccount -> {
+                val directions = if (item.signedIn) {
+                    BrowserFragmentDirections.actionGlobalAccountSettingsFragment()
+                } else {
+                    BrowserFragmentDirections.actionGlobalTurnOnSync()
+                }
                 browserAnimator.captureEngineViewAndDrawStatically {
                     navController.nav(
                         R.id.browserFragment,
-                        BrowserFragmentDirections.actionGlobalAccountSettingsFragment()
+                        directions
                     )
                 }
             }
