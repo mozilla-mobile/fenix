@@ -7,20 +7,9 @@ package org.mozilla.fenix.components.accounts
 import android.content.Context
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.spyk
-import mozilla.components.concept.sync.AccessTokenInfo
-import mozilla.components.concept.sync.AuthFlowUrl
-import mozilla.components.concept.sync.DeviceConstellation
-import mozilla.components.concept.sync.InFlightMigrationState
-import mozilla.components.concept.sync.MigratingAccountInfo
 import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.concept.sync.Profile
-import mozilla.components.concept.sync.StatePersistenceCallback
 import mozilla.components.service.fxa.manager.FxaAccountManager
-import mozilla.components.support.test.mock
-import mozilla.components.support.test.robolectric.testContext
-import mozilla.components.support.test.whenever
-import org.json.JSONObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -79,20 +68,36 @@ class FenixAccountManagerTest {
 
     @Test
     fun `GIVEN an account is signed in and authenticated THEN check returns true`() {
+        every { accountManagerComponent.authenticatedAccount() } returns account
+        every { accountManagerComponent.accountNeedsReauth() } returns false
+        every { context.components.backgroundServices.accountManager } returns accountManagerComponent
+
+        fenixFxaManager = FenixAccountManager(context)
+
         val signedIn = fenixFxaManager.signedInToFxa()
         assertTrue(signedIn)
     }
 
     @Test
     fun `GIVEN an account is signed in and NOT authenticated THEN check returns false`() {
-        every { fenixFxaManager.authenticatedAccount } returns mockk()
+        every { accountManagerComponent.authenticatedAccount() } returns account
         every { accountManagerComponent.accountNeedsReauth() } returns true
+        every { context.components.backgroundServices.accountManager } returns accountManagerComponent
+
+        fenixFxaManager = FenixAccountManager(context)
+
         val signedIn = fenixFxaManager.signedInToFxa()
         assertFalse(signedIn)
     }
 
     @Test
     fun `GIVEN an account is not signed in THEN check returns false`() {
+        every { accountManagerComponent.authenticatedAccount() } returns null
+        every { accountManagerComponent.accountNeedsReauth() } returns true
+        every { context.components.backgroundServices.accountManager } returns accountManagerComponent
+
+        fenixFxaManager = FenixAccountManager(context)
+
         val signedIn = fenixFxaManager.signedInToFxa()
         assertFalse(signedIn)
     }
