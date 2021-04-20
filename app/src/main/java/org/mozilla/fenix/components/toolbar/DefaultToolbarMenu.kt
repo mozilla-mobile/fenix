@@ -303,10 +303,10 @@ open class DefaultToolbarMenu(
         onMenuBuilderChanged(BrowserMenuBuilder(menuItems))
 
         // Observe account state changes, and update menu item builder with a new set of items.
-//        accountManager.observeAccountState(
-//            menuItems = menuItems,
-//            onMenuBuilderChanged = onMenuBuilderChanged
-//        )
+        accountManager.observeAccountState(
+            menuItems = menuItems,
+            onMenuBuilderChanged = onMenuBuilderChanged
+        )
     }
 
     private fun handleBookmarkItemTapped() {
