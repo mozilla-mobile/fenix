@@ -2,9 +2,10 @@
 <!-- This Source Code Form is subject to the terms of the Mozilla Public
    - License, v. 2.0. If a copy of the MPL was not distributed with this
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="16dp"
@@ -14,17 +15,21 @@
     <TextView
         android:id="@+id/card_number_title"
         android:layout_width="wrap_content"
-        android:layout_height="16dp"
-        android:gravity="center_vertical"
+        android:layout_height="wrap_content"
+        android:letterSpacing="0.05"
         android:paddingStart="3dp"
         android:paddingEnd="0dp"
         android:text="@string/credit_cards_card_number"
         android:textColor="?primaryText"
         android:textSize="12sp"
-        android:letterSpacing="0.05"
-        app:fontFamily="@font/metropolis_semibold" />
+        app:fontFamily="@font/metropolis_semibold"
+        app:layout_constraintTop_toBottomOf="@+id/navigationToolbar"
+        app:layout_constraintHorizontal_bias="0.3"
+        app:layout_constraintLeft_toLeftOf="parent" />
 
     <com.google.android.material.textfield.TextInputLayout
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/card_number_title"
         android:id="@+id/card_number_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -36,17 +41,17 @@
             android:id="@+id/card_number_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:fontFamily="sans-serif"
-            android:textColor="?primaryText"
-            android:letterSpacing="0.01"
-            android:lineSpacingExtra="8sp"
+            android:digits="0123456789- "
             android:ellipsize="end"
-            android:maxLines="1"
-            android:singleLine="true"
+            android:fontFamily="sans-serif"
             android:imeOptions="flagNoExtractUi"
             android:inputType="phone"
-            android:digits="0123456789- " />
+            android:letterSpacing="0.01"
+            android:lineSpacingExtra="8sp"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textColor="?primaryText"
+            android:textSize="16sp" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -55,15 +60,15 @@
         android:id="@+id/name_on_card_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
+        android:letterSpacing="0.05"
         android:paddingStart="3dp"
         android:paddingEnd="0dp"
         android:text="@string/credit_cards_name_on_card"
         android:textColor="?primaryText"
         android:textSize="12sp"
-        android:layout_marginTop="10dp"
-        android:letterSpacing="0.05"
-        app:fontFamily="@font/metropolis_semibold" />
+        app:fontFamily="@font/metropolis_semibold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/card_number_layout"/>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/name_on_card_layout"
@@ -71,7 +76,9 @@
         android:layout_height="wrap_content"
         android:paddingBottom="11dp"
         android:textColor="?primaryText"
-        app:hintEnabled="false">
+        app:hintEnabled="false"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf= "@+id/name_on_card_title">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/name_on_card_input"
@@ -94,71 +101,47 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
+        android:letterSpacing="0.05"
         android:paddingStart="3dp"
         android:paddingEnd="0dp"
         android:text="@string/credit_cards_expiration_date"
         android:textColor="?primaryText"
         android:textSize="12sp"
-        android:layout_marginTop="10dp"
-        android:letterSpacing="0.05"
-        app:fontFamily="@font/metropolis_semibold" />
+        app:fontFamily="@font/metropolis_semibold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/name_on_card_layout" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
+
+    <androidx.appcompat.widget.AppCompatSpinner
+        android:id="@+id/expiry_month_drop_down"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:baselineAligned="false">
+        tools:listitem="@android:layout/simple_list_item_1"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/expiration_date_title" />
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginEnd="24dp"
-            android:orientation="vertical">
+    <androidx.appcompat.widget.AppCompatSpinner
+        android:id="@+id/expiry_year_drop_down"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:listitem="@android:layout/simple_list_item_1"
+        app:layout_constraintLeft_toRightOf="@id/expiry_month_drop_down"
+        app:layout_constraintTop_toBottomOf="@id/expiration_date_title" />
 
-            <androidx.appcompat.widget.AppCompatSpinner
-                android:id="@+id/expiry_month_drop_down"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:listitem="@android:layout/simple_list_item_1" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="?primaryText" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <androidx.appcompat.widget.AppCompatSpinner
-                android:id="@+id/expiry_year_drop_down"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:listitem="@android:layout/simple_list_item_1" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="?primaryText" />
-
-        </LinearLayout>
-    </LinearLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
+        android:id="@+id/constraintLayout3"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingTop="16dp">
+        android:paddingTop="16dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/expiry_year_drop_down">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/delete_button"
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:letterSpacing="0"
             android:padding="10dp"
             android:text="@string/credit_cards_delete_card_button"
@@ -166,14 +149,14 @@
             android:textColor="@color/destructive_button_text_color"
             android:visibility="gone"
             app:fontFamily="@font/metropolis_semibold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/cancel_button"
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:letterSpacing="0"
             android:padding="10dp"
             android:text="@string/credit_cards_cancel_button"
@@ -188,6 +171,7 @@
             android:id="@+id/save_button"
             style="@style/NeutralButton"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:paddingStart="12dp"
             android:paddingEnd="12dp"
             android:text="@string/credit_cards_save_button"
@@ -196,4 +180,4 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
