@@ -19,7 +19,6 @@ import mozilla.components.browser.menu.item.BrowserMenuDivider
 import mozilla.components.browser.menu.item.BrowserMenuHighlightableItem
 import mozilla.components.browser.menu.item.BrowserMenuImageSwitch
 import mozilla.components.browser.menu.item.BrowserMenuImageText
-import mozilla.components.browser.menu.item.BrowserMenuItemToolbar
 import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.OAuthAccount
@@ -43,9 +42,6 @@ class HomeMenu(
     private val onHighlightPresent: (BrowserMenuHighlight) -> Unit = {}
 ) {
     sealed class Item {
-        data class Back(val viewHistory: Boolean) : Item()
-        data class Forward(val viewHistory: Boolean) : Item()
-
         object Bookmarks : Item()
         object History : Item()
         object Downloads : Item()
@@ -67,6 +63,7 @@ class HomeMenu(
         context.getColorFromAttr(R.attr.syncDisconnectedBackground)
 
     private val shouldUseBottomToolbar = context.settings().shouldUseBottomToolbar
+    private val accountManager = context.components.backgroundServices.accountManager
 
     // 'Reconnect' and 'Quit' items aren't needed most of the time, so we'll only create the if necessary.
     private val reconnectToSyncItem by lazy {
@@ -95,32 +92,15 @@ class HomeMenu(
         }
     }
 
-    val menuToolbar by lazy {
-        val back = BrowserMenuItemToolbar.TwoStateButton(
-            primaryImageResource = mozilla.components.ui.icons.R.drawable.mozac_ic_back,
-            primaryContentDescription = context.getString(R.string.browser_menu_back),
-            primaryImageTintResource = primaryTextColor,
-            isInPrimaryState = { false },
-            secondaryImageTintResource = ThemeManager.resolveAttribute(R.attr.disabled, context),
-            disableInSecondaryState = true,
-            longClickListener = { onItemTapped.invoke(Item.Back(viewHistory = true)) }
-        ) {
-            onItemTapped.invoke(Item.Back(viewHistory = false))
-        }
+    private fun getSyncItemTitle(): String {
+        val authenticatedAccount = accountManager.authenticatedAccount() != null
+        val email = accountManager.accountProfile()?.email
 
-        val forward = BrowserMenuItemToolbar.TwoStateButton(
-            primaryImageResource = mozilla.components.ui.icons.R.drawable.mozac_ic_forward,
-            primaryContentDescription = context.getString(R.string.browser_menu_forward),
-            primaryImageTintResource = primaryTextColor,
-            isInPrimaryState = { false },
-            secondaryImageTintResource = ThemeManager.resolveAttribute(R.attr.disabled, context),
-            disableInSecondaryState = true,
-            longClickListener = { onItemTapped.invoke(Item.Forward(viewHistory = true)) }
-        ) {
-            onItemTapped.invoke(Item.Forward(viewHistory = false))
+        return if (authenticatedAccount && email != null) {
+            email
+        } else {
+            context.getString(R.string.sync_menu_sign_in)
         }
-
-        BrowserMenuItemToolbar(listOf(back, forward))
     }
 
     private val oldCoreMenuItems by lazy {
@@ -189,16 +169,8 @@ class HomeMenu(
             onItemTapped.invoke(Item.Settings)
         }
 
-        val accountManager = context.components.backgroundServices.accountManager
-        val account = accountManager.authenticatedAccount()
-        val syncItemTitle = if (account != null && accountManager.accountProfile()?.email != null) {
-            context.getString(R.string.sync_signed_as, accountManager.accountProfile()?.email)
-        } else {
-            context.getString(R.string.sync_menu_sign_in)
-        }
-
         val syncedTabsItem = BrowserMenuImageText(
-            syncItemTitle,
+            getSyncItemTitle(),
             R.drawable.ic_synced_tabs,
             primaryTextColor
         ) {
@@ -368,7 +340,6 @@ class HomeMenu(
             }
 
         val menuItems = listOfNotNull(
-            if (shouldUseBottomToolbar) null else menuToolbar,
             bookmarksItem,
             historyItem,
             downloadsItem,
@@ -381,9 +352,7 @@ class HomeMenu(
             whatsNewItem,
             helpItem,
             settingsItem,
-            if (settings.shouldDeleteBrowsingDataOnQuit) quitItem else null,
-            if (shouldUseBottomToolbar) BrowserMenuDivider() else null,
-            if (shouldUseBottomToolbar) menuToolbar else null
+            if (settings.shouldDeleteBrowsingDataOnQuit) quitItem else null
         ).also { items ->
             items.getHighlight()?.let { onHighlightPresent(it) }
         }

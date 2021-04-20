@@ -11,6 +11,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import mozilla.components.concept.storage.UpdatableCreditCardFields
 import mozilla.components.service.sync.autofill.AutofillCreditCardsAddressesStorage
+import org.mozilla.fenix.settings.creditcards.CreditCardEditorFragment
+import org.mozilla.fenix.settings.creditcards.interactor.CreditCardEditorInteractor
 
 /**
  * [CreditCardEditorFragment] controller. An interface that handles the view manipulation of the
@@ -19,12 +21,24 @@ import mozilla.components.service.sync.autofill.AutofillCreditCardsAddressesStor
 interface CreditCardEditorController {
 
     /**
-     * Saves the provided credit card field into the credit card storage. Called when a user
-     * taps on the save menu item or "Save" button.
-     *
-     * @param creditCardFields A [UpdatableCreditCardFields] record to add.
+     * @see [CreditCardEditorInteractor.onCancelButtonClicked]
+     */
+    fun handleCancelButtonClicked()
+
+    /**
+     * @see [CreditCardEditorInteractor.onDeleteCardButtonClicked]
+     */
+    fun handleDeleteCreditCard(guid: String)
+
+    /**
+     * @see [CreditCardEditorInteractor.onSaveCreditCard]
      */
     fun handleSaveCreditCard(creditCardFields: UpdatableCreditCardFields)
+
+    /**
+     * @see [CreditCardEditorInteractor.onUpdateCreditCard]
+     */
+    fun handleUpdateCreditCard(guid: String, creditCardFields: UpdatableCreditCardFields)
 }
 
 /**
@@ -43,9 +57,33 @@ class DefaultCreditCardEditorController(
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : CreditCardEditorController {
 
+    override fun handleCancelButtonClicked() {
+        navController.popBackStack()
+    }
+
+    override fun handleDeleteCreditCard(guid: String) {
+        lifecycleScope.launch(ioDispatcher) {
+            storage.deleteCreditCard(guid)
+
+            lifecycleScope.launch(Dispatchers.Main) {
+                navController.popBackStack()
+            }
+        }
+    }
+
     override fun handleSaveCreditCard(creditCardFields: UpdatableCreditCardFields) {
         lifecycleScope.launch(ioDispatcher) {
             storage.addCreditCard(creditCardFields)
+
+            lifecycleScope.launch(Dispatchers.Main) {
+                navController.popBackStack()
+            }
+        }
+    }
+
+    override fun handleUpdateCreditCard(guid: String, creditCardFields: UpdatableCreditCardFields) {
+        lifecycleScope.launch(ioDispatcher) {
+            storage.updateCreditCard(guid, creditCardFields)
 
             lifecycleScope.launch(Dispatchers.Main) {
                 navController.popBackStack()

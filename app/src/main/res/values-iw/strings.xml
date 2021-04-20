@@ -95,6 +95,8 @@
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">סגירה</string>
 
+    <!-- Text for the banner message to tell users about our grid view feature. -->
+    <string name="tab_tray_grid_view_banner_message">ניתן לשנות את הפריסה של הלשוניות הפתוחות. יש לעבור להגדרות ולבחור ברשת תחת תצוגת לשוניות.</string>
     <!-- Text for the positive action button to go to Settings for auto close tabs. -->
     <string name="tab_tray_grid_view_banner_positive_button_text">מעבר להגדרות</string>
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
@@ -604,12 +606,16 @@
     <string name="tabs_header_private_title">הפעלה פרטית</string>
     <!-- Title for the list of tabs in the current private session -->
     <string name="tabs_header_private_tabs_title">לשוניות פרטיות</string>
+    <!-- Title for the list of tabs in the synced tabs -->
+    <string name="tabs_header_synced_tabs_title">לשוניות מסונכרנות</string>
     <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
     <string name="add_tab">הוספת לשונית</string>
     <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
     <string name="add_private_tab">הוספת לשונית פרטית</string>
     <!-- Text for the new tab button to indicate adding a new private tab in the tab -->
     <string name="tab_drawer_fab_content">פרטית</string>
+    <!-- Text for the new tab button to indicate syncing command on the synced tabs page -->
+    <string name="tab_drawer_fab_sync">סנכרון</string>
     <!-- Text shown as the title of the open tab tray -->
     <string name="tab_tray_title">לשוניות פתוחות</string>
     <!-- Text shown in the menu for saving tabs to a collection -->
@@ -620,6 +626,8 @@
     <string name="tab_tray_menu_item_share">שיתוף כל הלשוניות</string>
     <!-- Text shown in the menu to view recently closed tabs -->
     <string name="tab_tray_menu_recently_closed">לשוניות שנסגרו לאחרונה</string>
+    <!-- Text shown in the menu to view account settings -->
+    <string name="tab_tray_menu_account_settings">הגדרות חשבון</string>
     <!-- Text shown in the menu to view tab settings -->
     <string name="tab_tray_menu_tab_settings">הגדרות לשוניות</string>
     <!-- Text shown in the menu for closing all tabs -->
@@ -976,8 +984,6 @@
     <string name="share_link_all_apps_subheader">כל הפעולות</string>
     <!-- Sub-header in the dialog to share a link to an app from the most-recent sorted list -->
     <string name="share_link_recent_apps_subheader">בשימוש לאחרונה</string>
-    <!-- An string shown when an account is signed in where %1$s is a placeholder for the email-->
-    <string name="sync_signed_as">מחובר בתור %1$s</string>
     <!-- An option from the three dot menu to into sync -->
     <string name="sync_menu_sign_in">כניסה כדי לסנכרן</string>
     <!-- An option from the share dialog to sign into sync -->
@@ -1556,8 +1562,12 @@
     <!-- Preference option for adding a credit card -->
     <string name="preferences_credit_cards_add_credit_card">הוספת כרטיס אשראי</string>
 
+    <!-- Preference option for managing saved credit cards -->
+    <string name="preferences_credit_cards_manage_saved_cards">ניהול כרטיסים שמורים</string>
     <!-- Title of the "Add card" screen -->
     <string name="credit_cards_add_card">הוספת כרטיס</string>
+    <!-- Title of the "Edit card" screen -->
+    <string name="credit_cards_edit_card">עריכת כרטיס</string>
     <!-- The header for the card number of a credit card -->
     <string name="credit_cards_card_number">מספר כרטיס</string>
     <!-- The header for the expiration date of a credit card -->
@@ -1566,6 +1576,8 @@
     <string name="credit_cards_name_on_card">שם שעל הכרטיס</string>
     <!-- The header for the nickname for a credit card -->
     <string name="credit_cards_card_nickname">כינוי עבור הכרטיס</string>
+    <!-- The text for the "Delete card" menu item for deleting a credit card -->
+    <string name="credit_cards_menu_delete_card">מחיקת כרטיס</string>
     <!-- The text for the "Delete card" button for deleting a credit card -->
     <string name="credit_cards_delete_card_button">מחיקת כרטיס</string>
     <!-- The title for the "Save" menu item for saving a credit card -->
@@ -1574,6 +1586,9 @@
     <string name="credit_cards_save_button">שמירה</string>
     <!-- The text for the "Cancel" button for cancelling adding or updating a credit card -->
     <string name="credit_cards_cancel_button">ביטול</string>
+
+    <!-- Title of the "Saved cards" screen -->
+    <string name="credit_cards_saved_cards">כרטיסים שמורים</string>
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">הוספת מנוע חיפוש</string>
@@ -1733,6 +1748,9 @@
 	<string name="top_sites_rename_dialog_ok">אישור</string>
 	<!-- Dialog button text for canceling the rename top site prompt. -->
 	<string name="top_sites_rename_dialog_cancel">ביטול</string>
+
+    <!-- Default browser experiment -->
+    <string name="default_browser_experiment_card_text">הגדרת קישורים מאתרים, מהודעות דוא״ל ומהודעות לפתיחה אוטומטית ב־Firefox.</string>
 
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">הסרה</string>

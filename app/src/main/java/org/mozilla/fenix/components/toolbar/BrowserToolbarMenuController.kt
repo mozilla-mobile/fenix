@@ -39,8 +39,10 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getRootView
+import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.navigateSafe
+import org.mozilla.fenix.ext.openSetDefaultBrowserOption
 import org.mozilla.fenix.settings.deletebrowsingdata.deleteAndQuit
 import org.mozilla.fenix.utils.Do
 import org.mozilla.fenix.utils.Settings
@@ -91,7 +93,7 @@ class DefaultBrowserToolbarMenuController(
         Do exhaustive when (item) {
             // TODO: These can be removed for https://github.com/mozilla-mobile/fenix/issues/17870
             // todo === Start ===
-            is ToolbarMenu.Item.InstallToHomeScreen -> {
+            is ToolbarMenu.Item.InstallPwaToHomeScreen -> {
                 settings.installPwaOpened = true
                 MainScope().launch {
                     with(activity.components.useCases.webAppUseCases) {
@@ -161,7 +163,7 @@ class DefaultBrowserToolbarMenuController(
             }
             is ToolbarMenu.Item.Back -> {
                 if (item.viewHistory) {
-                    navController.navigate(
+                    navController.navigateBlockingForAsyncNavGraph(
                         BrowserFragmentDirections.actionGlobalTabHistoryDialogFragment(
                             activeSessionId = customTabSessionId
                         )
@@ -174,7 +176,7 @@ class DefaultBrowserToolbarMenuController(
             }
             is ToolbarMenu.Item.Forward -> {
                 if (item.viewHistory) {
-                    navController.navigate(
+                    navController.navigateBlockingForAsyncNavGraph(
                         BrowserFragmentDirections.actionGlobalTabHistoryDialogFragment(
                             activeSessionId = customTabSessionId
                         )
@@ -211,7 +213,7 @@ class DefaultBrowserToolbarMenuController(
                     ),
                     showPage = true
                 )
-                navController.navigate(directions)
+                navController.navigateBlockingForAsyncNavGraph(directions)
             }
             is ToolbarMenu.Item.Settings -> browserAnimator.captureEngineViewAndDrawStatically {
                 val directions = BrowserFragmentDirections.actionBrowserFragmentToSettingsFragment()
@@ -222,6 +224,14 @@ class DefaultBrowserToolbarMenuController(
                     R.id.browserFragment,
                     BrowserFragmentDirections.actionBrowserFragmentToSyncedTabsFragment()
                 )
+            }
+            is ToolbarMenu.Item.SyncAccount -> {
+                browserAnimator.captureEngineViewAndDrawStatically {
+                    navController.nav(
+                        R.id.browserFragment,
+                        BrowserFragmentDirections.actionGlobalAccountSettingsFragment()
+                    )
+                }
             }
             is ToolbarMenu.Item.RequestDesktop -> {
                 currentSession?.let {
@@ -334,9 +344,13 @@ class DefaultBrowserToolbarMenuController(
                 )
             }
             is ToolbarMenu.Item.NewTab -> {
-                navController.navigate(
+                navController.navigateBlockingForAsyncNavGraph(
                     BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = true)
                 )
+            }
+            is ToolbarMenu.Item.SetDefaultBrowser -> {
+                metrics.track(Event.SetDefaultBrowserToolbarMenuClicked)
+                activity.openSetDefaultBrowserOption()
             }
         }
     }
@@ -355,15 +369,12 @@ class DefaultBrowserToolbarMenuController(
     @Suppress("ComplexMethod")
     private fun trackToolbarItemInteraction(item: ToolbarMenu.Item) {
         val eventItem = when (item) {
-            // TODO: These can be removed for https://github.com/mozilla-mobile/fenix/issues/17870
-            // todo === Start ===
             is ToolbarMenu.Item.OpenInFenix -> Event.BrowserMenuItemTapped.Item.OPEN_IN_FENIX
-            is ToolbarMenu.Item.InstallToHomeScreen -> Event.BrowserMenuItemTapped.Item.ADD_TO_HOMESCREEN
+            is ToolbarMenu.Item.InstallPwaToHomeScreen -> Event.BrowserMenuItemTapped.Item.ADD_TO_HOMESCREEN
             is ToolbarMenu.Item.Quit -> Event.BrowserMenuItemTapped.Item.QUIT
+            is ToolbarMenu.Item.OpenInApp -> Event.BrowserMenuItemTapped.Item.OPEN_IN_APP
             is ToolbarMenu.Item.CustomizeReaderView ->
                 Event.BrowserMenuItemTapped.Item.READER_MODE_APPEARANCE
-            is ToolbarMenu.Item.OpenInApp -> Event.BrowserMenuItemTapped.Item.OPEN_IN_APP
-            // todo === End ===
             is ToolbarMenu.Item.Back -> Event.BrowserMenuItemTapped.Item.BACK
             is ToolbarMenu.Item.Forward -> Event.BrowserMenuItemTapped.Item.FORWARD
             is ToolbarMenu.Item.Reload -> Event.BrowserMenuItemTapped.Item.RELOAD
@@ -381,12 +392,14 @@ class DefaultBrowserToolbarMenuController(
             is ToolbarMenu.Item.AddToTopSites -> Event.BrowserMenuItemTapped.Item.ADD_TO_TOP_SITES
             is ToolbarMenu.Item.AddToHomeScreen -> Event.BrowserMenuItemTapped.Item.ADD_TO_HOMESCREEN
             is ToolbarMenu.Item.SyncedTabs -> Event.BrowserMenuItemTapped.Item.SYNC_TABS
+            is ToolbarMenu.Item.SyncAccount -> Event.BrowserMenuItemTapped.Item.SYNC_ACCOUNT
             is ToolbarMenu.Item.Bookmark -> Event.BrowserMenuItemTapped.Item.BOOKMARK
             is ToolbarMenu.Item.AddonsManager -> Event.BrowserMenuItemTapped.Item.ADDONS_MANAGER
             is ToolbarMenu.Item.Bookmarks -> Event.BrowserMenuItemTapped.Item.BOOKMARKS
             is ToolbarMenu.Item.History -> Event.BrowserMenuItemTapped.Item.HISTORY
             is ToolbarMenu.Item.Downloads -> Event.BrowserMenuItemTapped.Item.DOWNLOADS
             is ToolbarMenu.Item.NewTab -> Event.BrowserMenuItemTapped.Item.NEW_TAB
+            is ToolbarMenu.Item.SetDefaultBrowser -> Event.BrowserMenuItemTapped.Item.SET_DEFAULT_BROWSER
         }
 
         metrics.track(Event.BrowserMenuItemTapped(eventItem))

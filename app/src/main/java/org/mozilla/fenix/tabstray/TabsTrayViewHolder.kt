@@ -38,6 +38,7 @@ import org.mozilla.fenix.ext.toShortUrl
 import org.mozilla.fenix.selection.SelectionHolder
 import org.mozilla.fenix.selection.SelectionInteractor
 import org.mozilla.fenix.tabstray.browser.BrowserTrayInteractor
+import org.mozilla.fenix.tabstray.ext.isSelect
 
 /**
  * A RecyclerView ViewHolder implementation for "tab" items.
@@ -87,8 +88,10 @@ abstract class TabsTrayViewHolder(
         updateSelectedTabIndicator(isSelected)
         updateMediaState(tab)
 
-        selectionHolder?.let {
-            setSelectionInteractor(tab, it, browserTrayInteractor)
+        if (selectionHolder != null) {
+            setSelectionInteractor(tab, selectionHolder, browserTrayInteractor)
+        } else {
+            itemView.setOnClickListener { browserTrayInteractor.open(tab) }
         }
 
         if (tab.thumbnail != null) {
@@ -204,7 +207,7 @@ abstract class TabsTrayViewHolder(
         itemView.setOnClickListener {
             val selected = holder.selectedItems
             when {
-                selected.isEmpty() -> interactor.open(item)
+                selected.isEmpty() && trayStore.state.mode.isSelect().not() -> interactor.open(item)
                 item in selected -> interactor.deselect(item)
                 else -> interactor.select(item)
             }
@@ -212,6 +215,7 @@ abstract class TabsTrayViewHolder(
 
         itemView.setOnLongClickListener {
             if (holder.selectedItems.isEmpty()) {
+                metrics.track(Event.CollectionTabLongPressed)
                 interactor.select(item)
                 true
             } else {

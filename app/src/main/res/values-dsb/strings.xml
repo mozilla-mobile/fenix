@@ -603,12 +603,16 @@
     <string name="tabs_header_private_title">Priwatne pósejźenje</string>
     <!-- Title for the list of tabs in the current private session -->
     <string name="tabs_header_private_tabs_title">Priwatne rejtariki</string>
+    <!-- Title for the list of tabs in the synced tabs -->
+    <string name="tabs_header_synced_tabs_title">Synchronizěrowane rejtarki</string>
     <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
     <string name="add_tab">Rejtarik pśidaś</string>
     <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
     <string name="add_private_tab">Priwatny rejtarik pśidaś</string>
     <!-- Text for the new tab button to indicate adding a new private tab in the tab -->
     <string name="tab_drawer_fab_content">Priwatny</string>
+    <!-- Text for the new tab button to indicate syncing command on the synced tabs page -->
+    <string name="tab_drawer_fab_sync">Snychronizěrowaś</string>
     <!-- Text shown as the title of the open tab tray -->
     <string name="tab_tray_title">Wócynjone rejtariki</string>
     <!-- Text shown in the menu for saving tabs to a collection -->
@@ -619,6 +623,8 @@
     <string name="tab_tray_menu_item_share">Wšykne rejtariki źěliś</string>
     <!-- Text shown in the menu to view recently closed tabs -->
     <string name="tab_tray_menu_recently_closed">Rowno zacynjone rejtariki</string>
+    <!-- Text shown in the menu to view account settings -->
+    <string name="tab_tray_menu_account_settings">Kontowe nastajenja</string>
     <!-- Text shown in the menu to view tab settings -->
     <string name="tab_tray_menu_tab_settings">Nastajenja rejtarikow</string>
     <!-- Text shown in the menu for closing all tabs -->
@@ -975,8 +981,6 @@
     <string name="share_link_all_apps_subheader">Wšykne akcije</string>
     <!-- Sub-header in the dialog to share a link to an app from the most-recent sorted list -->
     <string name="share_link_recent_apps_subheader">Njedawno wužyte</string>
-    <!-- An string shown when an account is signed in where %1$s is a placeholder for the email-->
-    <string name="sync_signed_as">Pśizjawjony ako %1$s</string>
     <!-- An option from the three dot menu to into sync -->
     <string name="sync_menu_sign_in">Pla Sync pśizjawiś</string>
     <!-- An option from the share dialog to sign into sync -->
@@ -1555,8 +1559,12 @@
     <!-- Preference option for adding a credit card -->
     <string name="preferences_credit_cards_add_credit_card">Kreditowu kórtu pśidaś</string>
 
+    <!-- Preference option for managing saved credit cards -->
+    <string name="preferences_credit_cards_manage_saved_cards">Skłaźone kórty zastojaś</string>
     <!-- Title of the "Add card" screen -->
     <string name="credit_cards_add_card">Kórtu pśidaś</string>
+    <!-- Title of the "Edit card" screen -->
+    <string name="credit_cards_edit_card">Kórtu wobźěłaś</string>
     <!-- The header for the card number of a credit card -->
     <string name="credit_cards_card_number">Kórtowy numer</string>
     <!-- The header for the expiration date of a credit card -->
@@ -1565,6 +1573,8 @@
     <string name="credit_cards_name_on_card">Mě na kórśe</string>
     <!-- The header for the nickname for a credit card -->
     <string name="credit_cards_card_nickname">Kórtowe pśimě</string>
+    <!-- The text for the "Delete card" menu item for deleting a credit card -->
+    <string name="credit_cards_menu_delete_card">Kórtu wulašowaś</string>
     <!-- The text for the "Delete card" button for deleting a credit card -->
     <string name="credit_cards_delete_card_button">Kórtu wulašowaś</string>
     <!-- The title for the "Save" menu item for saving a credit card -->
@@ -1573,6 +1583,9 @@
     <string name="credit_cards_save_button">Składowaś</string>
     <!-- The text for the "Cancel" button for cancelling adding or updating a credit card -->
     <string name="credit_cards_cancel_button">Pśetergnuś</string>
+
+    <!-- Title of the "Saved cards" screen -->
+    <string name="credit_cards_saved_cards">Skłaźone kórty</string>
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Pytnicu pśidaś</string>
@@ -1732,6 +1745,9 @@
 	<string name="top_sites_rename_dialog_ok">W pórěźe</string>
 	<!-- Dialog button text for canceling the rename top site prompt. -->
 	<string name="top_sites_rename_dialog_cancel">Pśetergnuś</string>
+
+    <!-- Default browser experiment -->
+    <string name="default_browser_experiment_card_text">Nastajśo wótkaze z websedłow, mejlkow a powěsćow, aby se awtomatiski we Firefox wócynili.</string>
 
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">Wótwónoźeś</string>

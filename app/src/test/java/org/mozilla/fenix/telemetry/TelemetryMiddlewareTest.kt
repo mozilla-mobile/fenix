@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.fenix
+package org.mozilla.fenix.telemetry
 
 import androidx.test.core.app.ApplicationProvider
 import io.mockk.mockk
@@ -391,7 +391,7 @@ class TelemetryMiddlewareTest {
     }
 }
 
-private class FakeClock : Clock.Delegate {
+internal class FakeClock : Clock.Delegate {
     var elapsedTime: Long = 0
     override fun elapsedRealtime(): Long = elapsedTime
 }

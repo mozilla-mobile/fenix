@@ -7,14 +7,25 @@ package org.mozilla.fenix.tabstray.viewholders
 import android.view.View
 import org.mozilla.fenix.R
 import org.mozilla.fenix.tabstray.TabsTrayInteractor
+import org.mozilla.fenix.tabstray.TabsTrayStore
 
 /**
  * View holder for the private tabs tray list.
  */
 class PrivateBrowserTabViewHolder(
     containerView: View,
-    interactor: TabsTrayInteractor
-) : BaseBrowserTabViewHolder(containerView, interactor) {
+    store: TabsTrayStore,
+    interactor: TabsTrayInteractor,
+    currentTabIndex: Int
+) : BaseBrowserTabViewHolder(
+    containerView,
+    store,
+    interactor,
+    currentTabIndex
+) {
+    override val emptyStringText: String
+        get() = itemView.resources.getString(R.string.no_private_tabs_description)
+
     companion object {
         const val LAYOUT_ID = R.layout.private_browser_tray_list
     }
