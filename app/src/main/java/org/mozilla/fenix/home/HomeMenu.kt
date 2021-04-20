@@ -48,7 +48,7 @@ class HomeMenu(
         object History : Item()
         object Downloads : Item()
         object Extensions : Item()
-        object SyncedTabs : Item()
+        object SyncTabs : Item()
         data class SyncAccount(val signedIn: Boolean) : Item()
         object WhatsNew : Item()
         object Help : Item()
@@ -99,7 +99,7 @@ class HomeMenu(
         R.drawable.ic_synced_tabs,
         primaryTextColor
     ) {
-        onItemTapped.invoke(Item.SyncedTabs)
+        onItemTapped.invoke(Item.SyncTabs)
     }
 
     private fun getSyncItemTitle(): String {
