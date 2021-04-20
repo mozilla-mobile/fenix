@@ -15,15 +15,14 @@ import org.mozilla.fenix.ext.components
 open class FenixAccountManager(context: Context) {
     val accountManager = context.components.backgroundServices.accountManager
     val authenticatedAccount = accountManager.authenticatedAccount() != null
-    val accountProfile = accountManager.accountProfile()
 
     /**
      * Get the email address associated with the authenticated account profile. Returns null if
      * the account is not authenticated or the email address is null.
      */
     fun getAuthAccountEmail(): String? {
-        val email = accountProfile?.email
-        return if (authenticatedAccount && email != null) email else null
+        val email = accountManager.accountProfile()?.email
+        return if (authenticatedAccount && !email.isNullOrEmpty()) email else null
     }
 
     /**

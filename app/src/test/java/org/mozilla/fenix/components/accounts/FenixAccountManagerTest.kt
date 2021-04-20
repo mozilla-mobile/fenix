@@ -17,6 +17,7 @@ import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.concept.sync.Profile
 import mozilla.components.concept.sync.StatePersistenceCallback
 import mozilla.components.service.fxa.manager.FxaAccountManager
+import mozilla.components.support.test.mock
 import mozilla.components.support.test.robolectric.testContext
 import mozilla.components.support.test.whenever
 import org.json.JSONObject
@@ -35,44 +36,43 @@ class FenixAccountManagerTest {
     private lateinit var fenixFxaManager: FenixAccountManager
     private lateinit var accountManagerComponent: FxaAccountManager
     private lateinit var context: Context
+    private lateinit var account: OAuthAccount
+    private lateinit var profile: Profile
 
     @Before
     fun setUp() {
-        context = testContext
+        context = mockk(relaxed = true)
+        account = mockk(relaxed = true)
+        profile = mockk(relaxed = true)
         accountManagerComponent = mockk(relaxed = true)
     }
 
     @Test
     fun `GIVEN an account exists THEN fetch the associated email address`() {
-        val emailAddress = "firefoxIsFun@test.com"
-
-//        val profile = Profile(
-//            uid = "000",
-//            email = emailAddress,
-//            avatar = null,
-//            displayName = "name"
-//        )
-//        every { fenixFxaManager.accountProfile } returns profile
-
-        fenixFxaManager = spyk(FenixAccountManager(context))
-
-        every { fenixFxaManager.accountManager } returns accountManagerComponent
+        every { accountManagerComponent.authenticatedAccount() } returns account
+        every { accountManagerComponent.accountProfile() } returns profile
         every { context.components.backgroundServices.accountManager } returns accountManagerComponent
 
-        every { accountManagerComponent.accountProfile()?.email } returns emailAddress
-        every { fenixFxaManager.accountProfile?.email } returns emailAddress
+        fenixFxaManager = FenixAccountManager(context)
 
-        every { accountManagerComponent.authenticatedAccount() != null } returns true
-        every { accountManagerComponent.authenticatedAccount() } returns mockk(relaxed = true)
-        every { fenixFxaManager.authenticatedAccount } returns true
+        val emailAddress = "firefoxIsFun@test.com"
+        every { accountManagerComponent.accountProfile()?.email } returns emailAddress
 
         val result = fenixFxaManager.getAuthAccountEmail()
-        // accountProfile?.email is always "". I wonder if the way we are fetching it needs to be async
         assertEquals(emailAddress, result)
     }
 
     @Test
     fun `GIVEN an account does not exist THEN return null when fetching the associated email address`() {
+        every { accountManagerComponent.authenticatedAccount() } returns null
+        every { accountManagerComponent.accountProfile() } returns null
+        every { context.components.backgroundServices.accountManager } returns accountManagerComponent
+
+        fenixFxaManager = FenixAccountManager(context)
+
+        val emailAddress = "firefoxIsFun@test.com"
+        every { accountManagerComponent.accountProfile()?.email } returns emailAddress
+
         val result = fenixFxaManager.getAuthAccountEmail()
         assertEquals(null, result)
     }
