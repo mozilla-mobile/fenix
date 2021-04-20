@@ -78,14 +78,12 @@ open class DefaultToolbarMenu(
         get() = store.state.selectedTab
 
     @ColorRes
-    @VisibleForTesting
-    private val primaryTextColor = ThemeManager.resolveAttribute(R.attr.primaryText, context)
+    internal val primaryTextColor = ThemeManager.resolveAttribute(R.attr.primaryText, context)
 
     @ColorRes
-    @VisibleForTesting
-    private val accentBrightTextColor = ThemeManager.resolveAttribute(R.attr.accentBright, context)
+    internal val accentBrightTextColor = ThemeManager.resolveAttribute(R.attr.accentBright, context)
 
-    private val toolbarMenuItems = ToolbarMenuItems(
+    internal val toolbarMenuItems = ToolbarMenuItems(
         context,
         store,
         accountManager,
@@ -167,31 +165,31 @@ open class DefaultToolbarMenu(
     } ?: false
     // End of predicates //
 
-    private val installPwaToHomescreen = toolbarMenuItems.installPwaToHomescreen
-    private val newTabItem = toolbarMenuItems.newTabItem
-    private val historyItem = toolbarMenuItems.historyItem
-    private val downloadsItem = toolbarMenuItems.downloadsItem
-    private var findInPageItem = toolbarMenuItems.findInPageItem
-    private var desktopSiteItem = toolbarMenuItems.requestDesktopSiteItem
-    private var customizeReaderView = toolbarMenuItems.customizeReaderView
-    private var openInApp = toolbarMenuItems.openInAppItem
-    private var addToHomeScreenItem = toolbarMenuItems.addToHomeScreenItem
-    private var addToTopSitesItem = toolbarMenuItems.addToTopSitesItem
-    private var saveToCollectionItem = toolbarMenuItems.saveToCollectionItem
-    private var settingsItem = toolbarMenuItems.settingsItem
-    private var deleteDataOnQuit = toolbarMenuItems.deleteDataOnQuitItem
-    private var syncedTabsItem = toolbarMenuItems.oldSyncedTabsItem
-    private var syncSignInItem = toolbarMenuItems.syncSignInItem
+    internal val installPwaToHomescreen = toolbarMenuItems.installPwaToHomescreen
+    internal val newTabItem = toolbarMenuItems.newTabItem
+    internal val historyItem = toolbarMenuItems.historyItem
+    internal val downloadsItem = toolbarMenuItems.downloadsItem
+    internal var findInPageItem = toolbarMenuItems.findInPageItem
+    internal var desktopSiteItem = toolbarMenuItems.requestDesktopSiteItem
+    internal var customizeReaderView = toolbarMenuItems.customizeReaderView
+    internal var openInApp = toolbarMenuItems.openInAppItem
+    internal var addToHomeScreenItem = toolbarMenuItems.addToHomeScreenItem
+    internal var addToTopSitesItem = toolbarMenuItems.addToTopSitesItem
+    internal var saveToCollectionItem = toolbarMenuItems.saveToCollectionItem
+    internal var settingsItem = toolbarMenuItems.settingsItem
+    internal var deleteDataOnQuit = toolbarMenuItems.deleteDataOnQuitItem
+    internal var syncedTabsItem = toolbarMenuItems.oldSyncedTabsItem
+    internal var syncSignInItem = toolbarMenuItems.syncSignInItem
 
-    private val extensionsItem = WebExtensionPlaceholderMenuItem(
+    internal val extensionsItem = WebExtensionPlaceholderMenuItem(
         id = WebExtensionPlaceholderMenuItem.MAIN_EXTENSIONS_MENU_ID
     )
 
-    private val reportSiteIssuePlaceholder = WebExtensionPlaceholderMenuItem(
+    internal val reportSiteIssuePlaceholder = WebExtensionPlaceholderMenuItem(
         id = WebCompatReporterFeature.WEBCOMPAT_REPORTER_EXTENSION_ID
     )
 
-    private var addEditBookmarksItem = BrowserMenuImageTextCheckboxButton(
+    internal var addEditBookmarksItem = BrowserMenuImageTextCheckboxButton(
         imageResource = R.drawable.ic_bookmarks_menu,
         iconTintColorResource = primaryTextColor,
         label = context.getString(R.string.library_bookmarks),
@@ -208,7 +206,7 @@ open class DefaultToolbarMenu(
         handleBookmarkItemTapped()
     }
 
-    private val oldCoreMenuItems by lazy {
+    internal val oldCoreMenuItems by lazy {
         val syncedTabs = toolbarMenuItems.oldSyncedTabsItem
         val addToHomescreen = toolbarMenuItems.oldAddToHomescreenItem
         val readerAppearance = toolbarMenuItems.oldReaderViewAppearanceItem
@@ -256,8 +254,7 @@ open class DefaultToolbarMenu(
         }
     }
 
-    @VisibleForTesting(otherwise = PRIVATE)
-    val newCoreMenuItems by lazy {
+    internal val newCoreMenuItems by lazy {
         // Predicates that are called once, during screen init
         val shouldShowSaveToCollection = (context.asActivity() as? HomeActivity)
             ?.browsingModeManager?.mode == BrowsingMode.Normal
@@ -306,10 +303,10 @@ open class DefaultToolbarMenu(
         onMenuBuilderChanged(BrowserMenuBuilder(menuItems))
 
         // Observe account state changes, and update menu item builder with a new set of items.
-        accountManager.observeAccountState(
-            menuItems = menuItems,
-            onMenuBuilderChanged = onMenuBuilderChanged
-        )
+//        accountManager.observeAccountState(
+//            menuItems = menuItems,
+//            onMenuBuilderChanged = onMenuBuilderChanged
+//        )
     }
 
     private fun handleBookmarkItemTapped() {

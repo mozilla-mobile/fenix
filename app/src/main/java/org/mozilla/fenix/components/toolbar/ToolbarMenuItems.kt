@@ -24,6 +24,7 @@ import org.mozilla.fenix.theme.ThemeManager
 
 /**
  * Defines commonly used items for use in the main toolbar menu.
+ * 
  * @param context The [Context].
  * @param store Reference to the application's [BrowserStore].
  * @param hasAccountProblem If true, there was a problem signing into the Firefox account.
