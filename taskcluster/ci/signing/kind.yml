@@ -18,7 +18,6 @@ group-by: build-type
 
 job-template:
     description: Sign Fenix
-    worker: {}
     signing-format: autograph_apk
     index:
         by-tasks-for:
