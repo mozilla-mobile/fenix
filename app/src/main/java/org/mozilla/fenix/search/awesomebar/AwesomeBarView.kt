@@ -159,7 +159,11 @@ class AwesomeBarView(
                 icon = searchBitmap,
                 showDescription = false,
                 engine = engineForSpeculativeConnects,
-                filterExactMatch = true
+                filterExactMatch = true,
+                private = when (activity.browsingModeManager.mode) {
+                    BrowsingMode.Normal -> false
+                    BrowsingMode.Private -> true
+                }
             )
 
         defaultSearchActionProvider =
@@ -343,7 +347,11 @@ class AwesomeBarView(
                     mode = SearchSuggestionProvider.Mode.MULTIPLE_SUGGESTIONS,
                     icon = searchBitmap,
                     engine = engineForSpeculativeConnects,
-                    filterExactMatch = true
+                    filterExactMatch = true,
+                    private = when (activity.browsingModeManager.mode) {
+                        BrowsingMode.Normal -> false
+                        BrowsingMode.Private -> true
+                    }
                 )
             )
         }
