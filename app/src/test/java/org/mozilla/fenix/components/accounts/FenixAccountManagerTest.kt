@@ -47,7 +47,7 @@ class FenixAccountManagerTest {
         val emailAddress = "firefoxIsFun@test.com"
         every { accountManagerComponent.accountProfile()?.email } returns emailAddress
 
-        val result = fenixFxaManager.getAuthAccountEmail()
+        val result = fenixFxaManager.accountProfileEmail
         assertEquals(emailAddress, result)
     }
 
@@ -59,10 +59,7 @@ class FenixAccountManagerTest {
 
         fenixFxaManager = FenixAccountManager(context)
 
-        val emailAddress = "firefoxIsFun@test.com"
-        every { accountManagerComponent.accountProfile()?.email } returns emailAddress
-
-        val result = fenixFxaManager.getAuthAccountEmail()
+        val result = fenixFxaManager.accountProfileEmail
         assertEquals(null, result)
     }
 

@@ -535,9 +535,9 @@ open class DefaultToolbarMenu(
 
     private fun getSyncItemTitle(): String {
         val authenticatedAccount = accountManager.authenticatedAccount
-        val email = accountManager.getAuthAccountEmail()
+        val email = accountManager.accountProfileEmail
 
-        return if (authenticatedAccount && email != null) {
+        return if (authenticatedAccount && !email.isNullOrEmpty()) {
             email
         } else {
             context.getString(R.string.sync_menu_sign_in)
