@@ -113,7 +113,7 @@ class DefaultToolbarMenuTest {
             assertNotNull(menuItems)
 
             val firstItem = menuItems[0]
-            val navToolbar = toolbarMenu.menuToolbar
+            val navToolbar = toolbarMenu.menuToolbarNavigation
 
             assertEquals(navToolbar, firstItem)
         }
@@ -131,7 +131,7 @@ class DefaultToolbarMenuTest {
             assertNotNull(menuItems)
 
             val lastItem = menuItems[menuItems.size - 1]
-            val navToolbar = toolbarMenu.menuToolbar
+            val navToolbar = toolbarMenu.menuToolbarNavigation
 
             assertEquals(navToolbar, lastItem)
         }

@@ -37,5 +37,5 @@ interface ToolbarMenu {
     }
 
     val menuBuilder: BrowserMenuBuilder
-    val menuToolbar: BrowserMenuItemToolbar
+    val menuToolbarNavigation: BrowserMenuItemToolbar
 }
