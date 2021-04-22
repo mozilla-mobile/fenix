@@ -6,7 +6,7 @@ package org.mozilla.fenix.components.metrics
 
 import android.content.Context
 import mozilla.components.browser.state.store.BrowserStore
-import mozilla.components.feature.search.ext.legacy
+import mozilla.components.feature.search.ext.buildSearchUrl
 import mozilla.components.feature.search.ext.waitForSelectedOrDefaultSearchEngine
 import mozilla.components.service.fxa.manager.SyncEnginesStorage
 import mozilla.components.service.glean.Glean
@@ -56,6 +56,7 @@ import org.mozilla.fenix.GleanMetrics.SearchShortcuts
 import org.mozilla.fenix.GleanMetrics.SearchSuggestions
 import org.mozilla.fenix.GleanMetrics.SearchWidget
 import org.mozilla.fenix.GleanMetrics.SetDefaultNewtabExperiment
+import org.mozilla.fenix.GleanMetrics.SetDefaultSettingExperiment
 import org.mozilla.fenix.GleanMetrics.SyncAccount
 import org.mozilla.fenix.GleanMetrics.SyncAuth
 import org.mozilla.fenix.GleanMetrics.SyncedTabs
@@ -832,8 +833,11 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.CloseExperimentCardClicked -> EventWrapper<NoExtraKeys>(
             { SetDefaultNewtabExperiment.closeExperimentCardClicked.record(it) }
         )
-        is Event.SetDefaultBrowserClicked -> EventWrapper<NoExtraKeys>(
+        is Event.SetDefaultBrowserNewTabClicked -> EventWrapper<NoExtraKeys>(
             { SetDefaultNewtabExperiment.setDefaultBrowserClicked.record(it) }
+        )
+        is Event.SetDefaultBrowserSettingsScreenClicked -> EventWrapper<NoExtraKeys>(
+            { SetDefaultSettingExperiment.setDefaultBrowserClicked.record(it) }
         )
         is Event.HomeScreenDisplayed -> EventWrapper<NoExtraKeys>(
             { HomeScreen.homeScreenDisplayed.record(it) }
@@ -967,7 +971,7 @@ class GleanMetricsService(
                 SearchDefaultEngine.apply {
                     code.set(searchEngine.id)
                     name.set(searchEngine.name)
-                    submissionUrl.set(searchEngine.legacy().buildSearchUrl(""))
+                    submissionUrl.set(searchEngine.buildSearchUrl(""))
                 }
             }
 

@@ -17,6 +17,7 @@ import org.junit.Before
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
@@ -226,12 +227,21 @@ class SmokeTest {
     }
 
     @Test
-    // Verifies the Synced tabs menu opens from a tab's 3 dot menu
-    fun openMainMenuSyncedTabsItemTest() {
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSyncedTabs {
-            verifySyncedTabsMenuHeader()
+    // Verifies the Synced tabs menu or Sync Sign In menu opens from a tab's 3 dot menu.
+    // The test is assuming we are NOT signed in.
+    fun openMainMenuSyncItemTest() {
+        if (FeatureFlags.tabsTrayRewrite) {
+            homeScreen {
+            }.openThreeDotMenu {
+            }.openSyncSignIn {
+                verifySyncSignInMenuHeader()
+            }
+        } else {
+            homeScreen {
+            }.openThreeDotMenu {
+            }.openSyncedTabs {
+                verifySyncedTabsMenuHeader()
+            }
         }
     }
 
@@ -311,7 +321,6 @@ class SmokeTest {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
         }.openThreeDotMenu {
-            expandMenu()
         }.openSaveToCollection {
             verifyCollectionNameTextField()
         }

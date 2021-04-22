@@ -51,6 +51,7 @@ class ThreeDotMenuMainRobot {
     fun verifyHistoryButton() = assertHistoryButton()
     fun verifyBookmarksButton() = assertBookmarksButton()
     fun verifySyncedTabsButton() = assertSyncedTabsButton()
+    fun verifySyncSignInButton() = assertSignInToSyncButton()
     fun verifyHelpButton() = assertHelpButton()
     fun verifyThreeDotMenuExists() = threeDotMenuRecyclerViewExists()
     fun verifyForwardButton() = assertForwardButton()
@@ -164,6 +165,15 @@ class ThreeDotMenuMainRobot {
             return SyncedTabsRobot.Transition()
         }
 
+        fun openSyncSignIn(interact: SyncSignInRobot.() -> Unit): SyncSignInRobot.Transition {
+            onView(withId(R.id.mozac_browser_menu_recyclerView)).perform(swipeDown())
+            mDevice.waitNotNull(Until.findObject(By.text("Sign in to sync")), waitingTime)
+            signInToSyncButton().click()
+
+            SyncSignInRobot().interact()
+            return SyncSignInRobot.Transition()
+        }
+
         fun openBookmarks(interact: BookmarksRobot.() -> Unit): BookmarksRobot.Transition {
             onView(withId(R.id.mozac_browser_menu_recyclerView)).perform(swipeDown())
             mDevice.waitNotNull(Until.findObject(By.text("Bookmarks")), waitingTime)
@@ -193,11 +203,6 @@ class ThreeDotMenuMainRobot {
         }
 
         fun sharePage(interact: LibrarySubMenusMultipleSelectionToolbarRobot.() -> Unit): LibrarySubMenusMultipleSelectionToolbarRobot.Transition {
-            var maxSwipes = 3
-            while (!shareButton().exists() && maxSwipes != 0) {
-                threeDotMenuRecyclerView().perform(swipeUp())
-                maxSwipes--
-            }
             shareButton().click()
             LibrarySubMenusMultipleSelectionToolbarRobot().interact()
             return LibrarySubMenusMultipleSelectionToolbarRobot.Transition()
@@ -212,11 +217,6 @@ class ThreeDotMenuMainRobot {
         }
 
         fun goForward(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
-            var maxSwipes = 3
-            while (!forwardButton().exists() && maxSwipes != 0) {
-                threeDotMenuRecyclerView().perform(swipeUp())
-                maxSwipes--
-            }
             forwardButton().click()
 
             BrowserRobot().interact()
@@ -250,11 +250,6 @@ class ThreeDotMenuMainRobot {
         }
 
         fun refreshPage(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
-            var maxSwipes = 3
-            while (!refreshButton().exists() && maxSwipes != 0) {
-                threeDotMenuRecyclerView().perform(swipeUp())
-                maxSwipes--
-            }
             assertRefreshButton()
             refreshButton().click()
 
@@ -369,6 +364,11 @@ class ThreeDotMenuMainRobot {
         }
 
         fun openSaveToCollection(interact: ThreeDotMenuMainRobot.() -> Unit): ThreeDotMenuMainRobot.Transition {
+            // Ensure the menu is expanded and fully scrolled to the bottom.
+            for (i in 0..3) {
+                threeDotMenuRecyclerView().perform(swipeUp())
+            }
+
             mDevice.waitNotNull(Until.findObject(By.text("Save to collection")), waitingTime)
             saveCollectionButton().click()
             ThreeDotMenuMainRobot().interact()

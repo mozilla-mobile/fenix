@@ -89,6 +89,7 @@ import org.mozilla.fenix.GleanMetrics.PerfStartup
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BrowserAnimator.Companion.getToolbarNavOptions
+import org.mozilla.fenix.browser.BrowserFragmentDirections
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.PrivateShortcutCreateManager
@@ -790,6 +791,18 @@ class HomeFragment : Fragment() {
                         nav(
                             R.id.homeFragment,
                             HomeFragmentDirections.actionGlobalSyncedTabsFragment()
+                        )
+                    }
+                    is HomeMenu.Item.SyncAccount -> {
+                        hideOnboardingIfNeeded()
+                        val directions = if (it.signedIn) {
+                            BrowserFragmentDirections.actionGlobalAccountSettingsFragment()
+                        } else {
+                            BrowserFragmentDirections.actionGlobalTurnOnSync()
+                        }
+                        nav(
+                            R.id.homeFragment,
+                            directions
                         )
                     }
                     HomeMenu.Item.Bookmarks -> {
