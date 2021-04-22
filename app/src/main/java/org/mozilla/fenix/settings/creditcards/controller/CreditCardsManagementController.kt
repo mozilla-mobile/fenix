@@ -5,11 +5,7 @@
 package org.mozilla.fenix.settings.creditcards.controller
 
 import androidx.navigation.NavController
-import mozilla.components.concept.storage.CreditCard
-import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
-import org.mozilla.fenix.settings.creditcards.CreditCardsManagementFragment
 import org.mozilla.fenix.settings.creditcards.CreditCardsManagementFragmentDirections
-import org.mozilla.fenix.settings.creditcards.interactor.CreditCardsManagementInteractor
 
 /**
  * [CreditCardsManagementFragment] controller. An interface that handles the view manipulation of
@@ -20,7 +16,7 @@ interface CreditCardsManagementController {
     /**
      * @see [CreditCardsManagementInteractor.onSelectCreditCard]
      */
-    fun handleCreditCardClicked(creditCard: CreditCard)
+    fun handleCreditCardClicked()
 
     fun handleAddCreditCardButtonClicked()
 }
@@ -32,22 +28,20 @@ class DefaultCreditCardsManagementController(
     private val navController: NavController
 ) : CreditCardsManagementController {
 
-    override fun handleCreditCardClicked(creditCard: CreditCard) {
-        navController.navigateBlockingForAsyncNavGraph(
+    override fun handleCreditCardClicked() {
+        navController.navigate(
             CreditCardsManagementFragmentDirections
-                .actionCreditCardsManagementFragmentToCreditCardEditorFragment(
-                    creditCard = creditCard
-                )
+                .actionCreditCardsManagementFragmentToCreditCardEditorFragment()
         )
     }
 
     /**
-     * Sends user to empty CreditCardEditorFragment.
+     * Duplicate handleCreditCardClicked to separate functionality if any changes in the future
      */
     override fun handleAddCreditCardButtonClicked() {
         navController.navigate(
-            CreditCardsManagementFragmentDirections
-                .actionCreditCardsManagementFragmentToCreditCardEditorFragment()
+                CreditCardsManagementFragmentDirections
+                        .actionCreditCardsManagementFragmentToCreditCardEditorFragment()
         )
     }
 }

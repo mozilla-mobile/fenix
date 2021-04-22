@@ -28,7 +28,7 @@ class CreditCardItemViewHolder(
         bindCreditCardExpiryDate(creditCard)
 
         itemView.setOnClickListener {
-            interactor.onSelectCreditCard(creditCard)
+            interactor.onSelectCreditCard()
         }
     }
 
