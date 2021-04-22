@@ -126,7 +126,6 @@ jobs:
 
     tp6m-hv:
         web-render-only: False
-        run-on-tasks-for: [github-pull-request]
         page-load-tests:
             - google
             - [amazon-search, amazon-s]
