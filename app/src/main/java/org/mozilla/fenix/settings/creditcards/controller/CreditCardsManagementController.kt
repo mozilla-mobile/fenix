@@ -42,12 +42,12 @@ class DefaultCreditCardsManagementController(
     }
 
     /**
-     * Duplicate handleCreditCardClicked to separate functionality if any changes in the future
+     * Sends user to empty CreditCardEditorFragment.
      */
     override fun handleAddCreditCardButtonClicked() {
         navController.navigate(
-                CreditCardsManagementFragmentDirections
-                        .actionCreditCardsManagementFragmentToCreditCardEditorFragment()
+            CreditCardsManagementFragmentDirections
+                .actionCreditCardsManagementFragmentToCreditCardEditorFragment()
         )
     }
 }
