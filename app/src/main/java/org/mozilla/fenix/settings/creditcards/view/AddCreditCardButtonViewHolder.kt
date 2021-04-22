@@ -14,7 +14,7 @@ class AddCreditCardButtonViewHolder(
 
     fun bind() {
         view.setOnClickListener {
-            interactor.onAddCreditCard()
+            interactor
         }
     }
 

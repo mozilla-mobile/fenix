@@ -19,6 +19,8 @@ interface CreditCardsManagementInteractor {
      * @param creditCard The selected [CreditCard] to edit.
      */
     fun onSelectCreditCard(creditCard: CreditCard)
+
+    fun onAddCreditCard()
 }
 
 /**
@@ -33,5 +35,9 @@ class DefaultCreditCardsManagementInteractor(
 
     override fun onSelectCreditCard(creditCard: CreditCard) {
         controller.handleCreditCardClicked(creditCard)
+    }
+
+    override fun onAddCreditCard() {
+        controller.handleAddCreditCardButtonClicked()
     }
 }

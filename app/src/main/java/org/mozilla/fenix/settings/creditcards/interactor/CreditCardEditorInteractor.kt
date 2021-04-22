@@ -42,6 +42,10 @@ interface CreditCardEditorInteractor {
      * @param creditCardFields The credit card fields to update.
      */
     fun onUpdateCreditCard(guid: String, creditCardFields: UpdatableCreditCardFields)
+
+    /**
+     *
+     */
 }
 
 /**
