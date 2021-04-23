@@ -86,11 +86,6 @@ class CreditCardsSettingFragment : PreferenceFragmentCompat() {
                     CreditCardsSettingFragmentDirections.actionCreditCardsSettingFragmentToTurnOnSyncFragment()
                 findNavController().navigateBlockingForAsyncNavGraph(directions)
             },
-            onSyncStatusClicked = {
-                val directions =
-                    CreditCardsSettingFragmentDirections.actionGlobalAccountSettingsFragment()
-                findNavController().navigateBlockingForAsyncNavGraph(directions)
-            },
             onReconnectClicked = {
                 val directions =
                     CreditCardsSettingFragmentDirections.actionGlobalAccountProblemFragment()

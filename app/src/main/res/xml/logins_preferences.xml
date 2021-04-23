@@ -2,7 +2,7 @@
 <!-- This Source Code Form is subject to the terms of the Mozilla Public
    - License, v. 2.0. If a copy of the MPL was not distributed with this
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <Preference
         android:key="@string/pref_key_save_logins_settings"
@@ -12,9 +12,9 @@
         android:defaultValue="true"
         android:key="@string/pref_key_autofill_logins"
         android:title="@string/preferences_passwords_autofill" />
-    <Preference
-        android:key="@string/pref_key_password_sync_logins"
-        android:summary="@string/preferences_passwords_sync_logins_off"
+    <org.mozilla.fenix.settings.SyncPreference
+        android:defaultValue="true"
+        android:key="@string/pref_key_sync_logins"
         android:title="@string/preferences_passwords_sync_logins" />
     <Preference
         android:key="@string/pref_key_saved_logins"
@@ -23,5 +23,5 @@
         android:key="@string/pref_key_login_exceptions"
         android:title="@string/preferences_passwords_exceptions"
         app:icon="@drawable/ic_internet" />
-</PreferenceScreen>
+</androidx.preference.PreferenceScreen>
 
