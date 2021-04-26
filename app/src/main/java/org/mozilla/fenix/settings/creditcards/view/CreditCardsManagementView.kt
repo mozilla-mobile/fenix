@@ -25,7 +25,7 @@ class CreditCardsManagementView(
 
     private val creditCardsAdapter = CreditCardsAdapter(interactor)
     private val addCreditCardButtonAdapter = AddCreditCardButtonAdapter(interactor)
-    private val concatAdapter = ConcatAdapter(creditCardsAdapter,addCreditCardButtonAdapter)
+    private val concatAdapter = ConcatAdapter(creditCardsAdapter, addCreditCardButtonAdapter)
 
     init {
         LayoutInflater.from(containerView.context).inflate(LAYOUT_ID, containerView, true)

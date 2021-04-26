@@ -45,7 +45,7 @@ class DefaultCreditCardsManagementController(
      * Sends user to Empty Credit Card Editor
      */
     override fun handleAddCreditCardButtonClicked() {
-        navController.navigate(
+        navController.navigateBlockingForAsyncNavGraph(
             CreditCardsManagementFragmentDirections
                 .actionCreditCardsManagementFragmentToCreditCardEditorFragment()
         )

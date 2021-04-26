@@ -10,11 +10,12 @@ import org.mozilla.fenix.settings.creditcards.interactor.CreditCardsManagementIn
 
 class AddCreditCardButtonViewHolder(
     private val view: View,
-    private val interactor: CreditCardsManagementInteractor) : RecyclerView.ViewHolder(view) {
+    private val interactor: CreditCardsManagementInteractor
+) : RecyclerView.ViewHolder(view) {
 
     fun bind() {
         view.setOnClickListener {
-            //Add clicking code from interactor
+            // Add clicking code from interactor
             interactor.onAddCreditCard()
         }
     }
