@@ -219,7 +219,7 @@
 
     <!-- Add Credit Card Button Dimensions -->
     <dimen name="credit_cards_add_credit_card_button_height">48dp</dimen>
-    <dimen name="add_credit_card_button_layout_margin_start">32dp</dimen>
+    <dimen name="add_credit_card_button_layout_margin_start">16dp</dimen>
     <dimen name="credit_cards_add_credit_card_text_size">16sp</dimen>
     <dimen name="credit_cards_add_credit_card_text_horizontal_margin">16dp</dimen>
     <dimen name="credit_cards_add_credit_card_text_vertical_margin">16dp</dimen>
