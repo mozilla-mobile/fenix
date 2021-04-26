@@ -42,7 +42,7 @@ class DefaultCreditCardsManagementController(
     }
 
     /**
-     * Duplicate handleCreditCardClicked to separate functionality if any changes in the future
+     * Sends user to Empty Credit Card Editor
      */
     override fun handleAddCreditCardButtonClicked() {
         navController.navigate(
