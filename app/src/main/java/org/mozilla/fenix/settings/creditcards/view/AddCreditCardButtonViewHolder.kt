@@ -13,7 +13,7 @@ class AddCreditCardButtonViewHolder(
 
     @SuppressLint("ResourceType")
     fun bind() {
-        view.findViewById<ConstraintLayout>(LAYOUT_ID).setOnClickListener {
+        view.setOnClickListener {
             //Add clicking code from interactor
             interactor.onAddCreditCard()
         }
