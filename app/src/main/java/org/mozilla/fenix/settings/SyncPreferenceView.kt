@@ -13,7 +13,6 @@ import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.service.fxa.SyncEngine
 import mozilla.components.service.fxa.manager.FxaAccountManager
 import mozilla.components.service.fxa.manager.SyncEnginesStorage
-import org.mozilla.fenix.R
 
 /**
  * A view to help manage the sync preference in the "Logins and passwords" and "Credit cards"
@@ -25,6 +24,8 @@ import org.mozilla.fenix.R
  * @param lifecycleOwner View lifecycle owner used to determine when to cancel UI jobs.
  * @param accountManager An instance of [FxaAccountManager].
  * @param syncEngine The sync engine that will be used for the sync status lookup.
+ * @param notLoggedInTitle Text to label the setting with when user is not logged in.
+ * @param loggedInTitle Text to label the setting with when user is logged in.
  * @param onSignInToSyncClicked A callback executed when the [syncPreference] is clicked with a
  * preference status of "Sign in to Sync".
  * @param onReconnectClicked A callback executed when the [syncPreference] is clicked with a
@@ -36,6 +37,8 @@ class SyncPreferenceView(
     lifecycleOwner: LifecycleOwner,
     accountManager: FxaAccountManager,
     private val syncEngine: SyncEngine,
+    private val notLoggedInTitle: String,
+    private val loggedInTitle: String,
     private val onSignInToSyncClicked: () -> Unit = {},
     private val onReconnectClicked: () -> Unit = {}
 ) {
@@ -70,27 +73,17 @@ class SyncPreferenceView(
      */
     private fun updateSyncPreferenceStatus() {
         syncPreference.apply {
-            widgetVisible = true
+            isSwitchWidgetVisible = true
 
-            when (key) {
-                // Credit Cards
-                context.getString(R.string.pref_key_credit_cards_sync_cards_across_devices) -> {
-                    title = context.getString(R.string.preferences_credit_cards_sync_cards)
+            val syncEnginesStatus = SyncEnginesStorage(context).getStatus()
+            val syncStatus = syncEnginesStatus.getOrElse(syncEngine) { false }
 
-                    // Sync cards setOnPreferenceChangeListener should go here
-                }
+            title = loggedInTitle
+            isChecked = syncStatus
 
-                // Logins
-                context.getString(R.string.pref_key_sync_logins) -> {
-                    title = context.getString(R.string.preferences_passwords_sync_logins)
-                    val syncEnginesStatus = SyncEnginesStorage(context).getStatus()
-                    val loginsSyncStatus = syncEnginesStatus.getOrElse(syncEngine) { false }
-                    isChecked = loginsSyncStatus
-                    setOnPreferenceChangeListener { _, newValue ->
-                        SyncEnginesStorage(context).setStatus(syncEngine, newValue as Boolean)
-                        true
-                    }
-                }
+            setOnPreferenceChangeListener { _, newValue ->
+                SyncEnginesStorage(context).setStatus(syncEngine, newValue as Boolean)
+                true
             }
         }
     }
@@ -100,17 +93,9 @@ class SyncPreferenceView(
      */
     private fun updateSyncPreferenceNeedsLogin() {
         syncPreference.apply {
-            widgetVisible = false
+            isSwitchWidgetVisible = false
 
-            when (key) {
-                context.getString(R.string.pref_key_credit_cards_sync_cards_across_devices) -> {
-                    title =
-                        context.getString(R.string.preferences_credit_cards_sync_cards_across_devices)
-                }
-                context.getString(R.string.pref_key_sync_logins) -> {
-                    title = context.getString(R.string.preferences_passwords_sync_logins_across_devices)
-                }
-            }
+            title = notLoggedInTitle
 
             setOnPreferenceChangeListener { _, _ ->
                 onSignInToSyncClicked()
@@ -124,17 +109,9 @@ class SyncPreferenceView(
      */
     private fun updateSyncPreferenceNeedsReauth() {
         syncPreference.apply {
-            widgetVisible = false
+            isSwitchWidgetVisible = false
 
-            when (key) {
-                context.getString(R.string.pref_key_credit_cards_sync_cards_across_devices) -> {
-                    title =
-                        context.getString(R.string.preferences_credit_cards_sync_cards_across_devices)
-                }
-                context.getString(R.string.pref_key_sync_logins) -> {
-                    title = context.getString(R.string.preferences_passwords_sync_logins_across_devices)
-                }
-            }
+            title = notLoggedInTitle
 
             setOnPreferenceChangeListener { _, _ ->
                 onReconnectClicked()

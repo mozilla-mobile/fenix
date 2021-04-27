@@ -22,7 +22,11 @@ class SyncPreference @JvmOverloads constructor(
 ) : SwitchPreferenceCompat(context, attrs) {
 
     private var switchView: SwitchCompat? = null
-    var widgetVisible: Boolean = false
+
+    /**
+     * Controls the visibility of the switch's toggle widget.
+     * */
+    var isSwitchWidgetVisible: Boolean = false
 
     init {
         widgetLayoutResource = R.layout.preference_sync
@@ -30,12 +34,10 @@ class SyncPreference @JvmOverloads constructor(
 
     override fun onBindViewHolder(holder: PreferenceViewHolder) {
         super.onBindViewHolder(holder)
-        switchView = holder.findViewById(R.id.switch_widget) as SwitchCompat
-        updateSwitch()
-        switchView?.visibility = if (widgetVisible) View.VISIBLE else View.INVISIBLE
-    }
 
-    private fun updateSwitch() {
+        switchView = holder.findViewById(R.id.switch_widget) as SwitchCompat
+
         switchView?.isChecked = isChecked
+        switchView?.visibility = if (isSwitchWidgetVisible) View.VISIBLE else View.INVISIBLE
     }
 }

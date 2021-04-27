@@ -128,6 +128,10 @@ class SavedLoginsAuthFragment : PreferenceFragmentCompat() {
             lifecycleOwner = viewLifecycleOwner,
             accountManager = requireComponents.backgroundServices.accountManager,
             syncEngine = SyncEngine.Passwords,
+            notLoggedInTitle = requireContext()
+                .getString(R.string.preferences_passwords_sync_logins_across_devices),
+            loggedInTitle = requireContext()
+                .getString(R.string.preferences_passwords_sync_logins),
             onSignInToSyncClicked = {
                 val directions =
                     SavedLoginsAuthFragmentDirections.actionSavedLoginsAuthFragmentToTurnOnSyncFragment()
