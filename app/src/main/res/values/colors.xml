@@ -82,7 +82,7 @@
     <color name="contrast_text_dark_theme">@color/primary_text_dark_theme</color>
     <color name="caption_text_dark_theme">@color/photonLightGrey70</color>
     <color name="foundation_dark_theme">#1C1B22</color>
-    <color name="inset_dark_theme">@color/photonDarkGrey10</color>
+    <color name="inset_dark_theme">#32313C</color>
     <color name="above_dark_theme">#32313C</color>
     <color name="accent_dark_theme">#9059FF</color>
     <color name="accent_bright_dark_theme">#592ACB</color>
@@ -123,6 +123,7 @@
     <color name="search_suggestion_indicator_icon_color_dark_theme">#2ac3a2</color>
     <color name="search_suggestion_indicator_icon_bookmark_color_dark_theme">#0090ed</color>
     <color name="preference_section_header_dark_theme">@color/accent_high_contrast_dark_theme</color>
+    <color name="recently_used_share_menu_dark_theme">@color/photonDarkGrey10</color>
 
     <color name="mozac_widget_favicon_background_dark_theme">@color/photonDarkGrey50</color>
     <color name="mozac_widget_favicon_border_dark_theme">@color/photonDarkGrey10</color>
@@ -251,6 +252,7 @@
     <color name="mozac_widget_favicon_border_normal_theme">@color/mozac_widget_favicon_border_light_theme</color>
     <color name="notification_accent_color_normal_theme">@color/accent_bright_light_theme</color>
     <color name="menu_item_button_normal_theme">@color/menu_item_button_light_theme</color>
+    <color name="recently_used_share_theme">@color/inset_light_theme</color>
 
     <!-- Tab tray -->
     <color name="tab_tray_item_text_normal_theme">@color/tab_tray_item_text_light_theme</color>
