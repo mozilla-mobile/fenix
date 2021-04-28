@@ -1420,7 +1420,7 @@
     <string name="preferences_passwords_autofill">Autofill</string>
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">Sync logins</string>
-    <!--Preference for syncing saved logins in Fenix, when not signed in-->
+    <!-- Preference for syncing saved logins in Fenix, when not signed in-->
     <string name="preferences_passwords_sync_logins_across_devices">Sync logins across devices</string>
     <!-- Syncing saved logins in Fenix needs reconnect to sync -->
     <string name="preferences_passwords_sync_logins_reconnect">Reconnect</string>

@@ -24,7 +24,7 @@ class SyncPreference @JvmOverloads constructor(
     private var switchView: SwitchCompat? = null
 
     /**
-     * Controls the visibility of the switch's toggle widget.
+     * Whether or not switch's toggle widget is visible.
      * */
     var isSwitchWidgetVisible: Boolean = false
 
@@ -35,7 +35,7 @@ class SyncPreference @JvmOverloads constructor(
     override fun onBindViewHolder(holder: PreferenceViewHolder) {
         super.onBindViewHolder(holder)
 
-        switchView = holder.findViewById(R.id.switch_widget) as SwitchCompat
+        switchView = holder.findViewById(R.id.switch_widget) as SwitchCompat?
 
         switchView?.isChecked = isChecked
         switchView?.visibility = if (isSwitchWidgetVisible) View.VISIBLE else View.INVISIBLE

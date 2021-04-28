@@ -13,7 +13,6 @@
         android:key="@string/pref_key_autofill_logins"
         android:title="@string/preferences_passwords_autofill" />
     <org.mozilla.fenix.settings.SyncPreference
-        android:defaultValue="true"
         android:key="@string/pref_key_sync_logins"
         android:title="@string/preferences_passwords_sync_logins" />
     <Preference

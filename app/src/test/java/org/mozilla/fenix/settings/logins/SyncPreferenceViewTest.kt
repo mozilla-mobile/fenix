@@ -63,6 +63,7 @@ class SyncPreferenceViewTest {
             every { isSwitchWidgetVisible = any() } just Runs
             every { key } returns "pref_key_sync_logins"
             every { isChecked = any() } just Runs
+            every { title = any() } just Runs
         }
 
         every { syncPreference.title = any() } just Runs
@@ -84,6 +85,7 @@ class SyncPreferenceViewTest {
         createView()
 
         verify { syncPreference.isSwitchWidgetVisible = false }
+        verify { syncPreference.title = notLoggedInTitle }
         assertFalse(preferenceChangeListener.captured.onPreferenceChange(syncPreference, any()))
 
         verify {
@@ -100,6 +102,7 @@ class SyncPreferenceViewTest {
         createView()
 
         verify { syncPreference.isSwitchWidgetVisible = false }
+        verify { syncPreference.title = notLoggedInTitle }
         assertFalse(preferenceChangeListener.captured.onPreferenceChange(syncPreference, any()))
 
         verify {
@@ -116,6 +119,7 @@ class SyncPreferenceViewTest {
         createView()
 
         verify { syncPreference.isSwitchWidgetVisible = false }
+        verify { syncPreference.title = notLoggedInTitle }
         assertFalse(preferenceChangeListener.captured.onPreferenceChange(syncPreference, any()))
 
         verify {
@@ -127,7 +131,6 @@ class SyncPreferenceViewTest {
 
     @Test
     fun `GIVEN LoginScreen and syncLogins true WHEN updateSyncPreferenceStatus THEN setStatus false`() {
-        // Given
         every { accountManager.authenticatedAccount() } returns mockk()
         every { accountManager.accountNeedsReauth() } returns false
         every { anyConstructed<SyncEnginesStorage>().getStatus() } returns mapOf(
@@ -135,19 +138,17 @@ class SyncPreferenceViewTest {
         )
         every { anyConstructed<SyncEnginesStorage>().setStatus(any(), any()) } just Runs
 
-        // When
         createView()
 
-        // Then
         verify { syncPreference.isSwitchWidgetVisible = true }
         verify { syncPreference.isChecked = true }
+        verify { syncPreference.title = loggedInTitle }
         assertTrue(preferenceChangeListener.captured.onPreferenceChange(syncPreference, false))
         verify { anyConstructed<SyncEnginesStorage>().setStatus(any(), false) }
     }
 
     @Test
     fun `GIVEN LoginScreen and syncLogins false WHEN updateSyncPreferenceStatus THEN setStatus true`() {
-        // Given
         every { accountManager.authenticatedAccount() } returns mockk()
         every { accountManager.accountNeedsReauth() } returns false
         every { anyConstructed<SyncEnginesStorage>().getStatus() } returns mapOf(
@@ -155,12 +156,11 @@ class SyncPreferenceViewTest {
         )
         every { anyConstructed<SyncEnginesStorage>().setStatus(any(), any()) } just Runs
 
-        // When
         createView()
 
-        // Then
         verify { syncPreference.isSwitchWidgetVisible = true }
         verify { syncPreference.isChecked = false }
+        verify { syncPreference.title = loggedInTitle }
         assertTrue(preferenceChangeListener.captured.onPreferenceChange(syncPreference, true))
         verify { anyConstructed<SyncEnginesStorage>().setStatus(any(), true) }
     }
@@ -170,8 +170,8 @@ class SyncPreferenceViewTest {
         lifecycleOwner = lifecycleOwner,
         accountManager = accountManager,
         syncEngine = SyncEngine.Passwords,
-        notLoggedInTitle = "Sync logins across devices",
-        loggedInTitle = "Sync logins",
+        notLoggedInTitle = notLoggedInTitle,
+        loggedInTitle = loggedInTitle,
         onSignInToSyncClicked = {
             val directions =
                 SavedLoginsAuthFragmentDirections.actionSavedLoginsAuthFragmentToTurnOnSyncFragment()
@@ -183,4 +183,9 @@ class SyncPreferenceViewTest {
             navController.navigate(directions)
         }
     )
+
+    companion object {
+        const val notLoggedInTitle: String = "Sync logins across devices"
+        const val loggedInTitle: String = "Sync logins"
+    }
 }

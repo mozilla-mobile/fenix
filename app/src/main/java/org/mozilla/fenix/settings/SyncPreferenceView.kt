@@ -17,15 +17,15 @@ import mozilla.components.service.fxa.manager.SyncEnginesStorage
 /**
  * A view to help manage the sync preference in the "Logins and passwords" and "Credit cards"
  * settings. The provided [syncPreference] is used to navigate to the different fragments
- * that manages the sync account authentication. A toggle  will be also added
+ * that manages the sync account authentication. A toggle will be also added
  * depending on the sync account status.
  *
  * @param syncPreference The sync [SyncPreference] to update and handle navigation.
  * @param lifecycleOwner View lifecycle owner used to determine when to cancel UI jobs.
  * @param accountManager An instance of [FxaAccountManager].
  * @param syncEngine The sync engine that will be used for the sync status lookup.
- * @param notLoggedInTitle Text to label the setting with when user is not logged in.
- * @param loggedInTitle Text to label the setting with when user is logged in.
+ * @param notLoggedInTitle Text label for the setting when user is not logged in.
+ * @param loggedInTitle Text label for the setting when user is logged in.
  * @param onSignInToSyncClicked A callback executed when the [syncPreference] is clicked with a
  * preference status of "Sign in to Sync".
  * @param onReconnectClicked A callback executed when the [syncPreference] is clicked with a
@@ -89,7 +89,7 @@ class SyncPreferenceView(
     }
 
     /**
-     * Display that the user can "Sign in to Sync" when the user is logged off.
+     * Display that the user can sync across devices when the user is logged off.
      */
     private fun updateSyncPreferenceNeedsLogin() {
         syncPreference.apply {
