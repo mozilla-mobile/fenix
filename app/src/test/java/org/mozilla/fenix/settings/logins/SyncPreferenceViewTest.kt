@@ -82,12 +82,12 @@ class SyncPreferenceViewTest {
     fun `needs reauth ui on init`() {
         every { accountManager.authenticatedAccount() } returns mockk()
         every { accountManager.accountNeedsReauth() } returns true
+
         createView()
 
         verify { syncPreference.isSwitchWidgetVisible = false }
         verify { syncPreference.title = notLoggedInTitle }
         assertFalse(preferenceChangeListener.captured.onPreferenceChange(syncPreference, any()))
-
         verify {
             navController.navigate(
                 SavedLoginsAuthFragmentDirections.actionGlobalAccountProblemFragment()
@@ -99,12 +99,12 @@ class SyncPreferenceViewTest {
     fun `needs reauth ui on init even if null account`() {
         every { accountManager.authenticatedAccount() } returns null
         every { accountManager.accountNeedsReauth() } returns true
+
         createView()
 
         verify { syncPreference.isSwitchWidgetVisible = false }
         verify { syncPreference.title = notLoggedInTitle }
         assertFalse(preferenceChangeListener.captured.onPreferenceChange(syncPreference, any()))
-
         verify {
             navController.navigate(
                 SavedLoginsAuthFragmentDirections.actionGlobalAccountProblemFragment()
@@ -116,12 +116,12 @@ class SyncPreferenceViewTest {
     fun `needs login if account does not exist`() {
         every { accountManager.authenticatedAccount() } returns null
         every { accountManager.accountNeedsReauth() } returns false
+
         createView()
 
         verify { syncPreference.isSwitchWidgetVisible = false }
         verify { syncPreference.title = notLoggedInTitle }
         assertFalse(preferenceChangeListener.captured.onPreferenceChange(syncPreference, any()))
-
         verify {
             navController.navigate(
                 SavedLoginsAuthFragmentDirections.actionSavedLoginsAuthFragmentToTurnOnSyncFragment()
