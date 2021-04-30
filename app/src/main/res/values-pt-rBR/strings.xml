@@ -444,9 +444,6 @@
     <!-- Text displayed when there are no exceptions, with learn more link that brings users to a tracking protection SUMO page -->
     <string name="exceptions_empty_message_learn_more_link">Saiba mais</string>
 
-    <!-- Description in Quick Settings that tells user tracking protection is off globally for all sites, and links to Settings to turn it on -->
-    <string name="preferences_tracking_protection_turned_off_globally">Desativada globalmente, vá em Configurações para ativar.</string>
-
     <!-- Preference switch for Telemetry -->
     <string name="preferences_telemetry">Telemetria</string>
     <!-- Preference switch for usage and technical data collection -->
@@ -457,6 +454,8 @@
     <string name="preferences_marketing_data">Dados de marketing</string>
     <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
     <string name="preferences_marketing_data_description">Compartilhar dados sobre que recursos você usa no %1$s com o Leanplum, nosso fornecedor de marketing para celular.</string>
+    <!-- Preference description for marketing data collection -->
+    <string name="preferences_marketing_data_description2">Compartilha dados básicos de uso com a Adjust, nossa fornecedora de marketing em dispositivos móveis</string>
     <!-- Title for studies preferences -->
     <string name="preference_experiments_2">Estudos</string>
     <!-- Summary for studies preferences -->
@@ -475,7 +474,7 @@
 
     <!-- Turn On Sync Preferences -->
     <!-- Header of the Turn on Sync preference view -->
-    <string name="preferences_sync">Ativar o Sync</string>
+    <string name="preferences_sync">Ativar a sincronização</string>
     <!-- Preference for pairing -->
     <string name="preferences_sync_pair">Digitalizar código de pareamento no Firefox de computador</string>
     <!-- Preference for account login -->
@@ -794,8 +793,6 @@
     <string name="bookmark_delete_folder_snackbar">%1$s excluída</string>
     <!-- Screen title for adding a bookmarks folder -->
     <string name="bookmark_add_folder">Adicionar pasta</string>
-    <!-- deprecated: Snackbar title shown after a bookmark has been created. -->
-    <string name="bookmark_created_snackbar">Favorito criado.</string>
     <!-- Snackbar title shown after a bookmark has been created. -->
     <string name="bookmark_saved_snackbar">Favorito salvo!</string>
     <!-- Snackbar edit button shown after a bookmark has been created. -->
@@ -1195,7 +1192,7 @@
     <!-- text for the automatic sign-in button while signing in is in process -->
     <string name="onboarding_firefox_account_signing_in">Entrando…</string>
     <!-- text for the button to manually sign into Firefox account. -->
-    <string name="onboarding_firefox_account_sign_in_1">Criar uma conta</string>
+    <string name="onboarding_firefox_account_sign_in_1">Conectar Conta Firefox</string>
     <!-- text for the button to stay signed out when presented with an option to automatically sign-in. -->
     <string name="onboarding_firefox_account_stay_signed_out">Permanecer desconectado</string>
     <!-- text to display in the snackbar once account is signed-in -->
@@ -1274,11 +1271,11 @@
     <!-- Text shown for sign in pairing when ready -->
     <string name="sign_in_ready_for_scan">Pronto para digitalizar</string>
     <!-- Text shown for settings option for sign with pairing -->
-    <string name="sign_in_with_camera">Entre com sua câmera</string>
+    <string name="sign_in_with_camera">Conecte usando sua câmera</string>
     <!-- Text shown for settings option for sign with email -->
     <string name="sign_in_with_email">Usar email</string>
     <!-- Text shown for settings option for create new account text.'Firefox' intentionally hardcoded here.-->
-    <string name="sign_in_create_account_text"><![CDATA[Não tem conta? <u>Crie uma</u> para sincronizar o Firefox entre dispositivos.]]></string>
+    <string name="sign_in_create_account_text"><![CDATA[Ainda não tem conta? <u>Crie uma</u> para sincronizar o Firefox entre dispositivos.]]></string>
     <!-- Text shown in confirmation dialog to sign out of account -->
     <string name="sign_out_confirmation_message">O Firefox deixará de sincronizar com sua conta, mas não excluirá seus dados de navegação neste dispositivo.</string>
     <!-- Text shown in confirmation dialog to sign out of account. The first parameter is the name of the app (e.g. Firefox Preview) -->
@@ -1300,7 +1297,7 @@
     <string name="preference_enhanced_tracking_protection_explanation_title">Navegue sem ser seguido</string>
 
     <!-- Description of enhanced tracking protection. The first parameter is the name of the application (For example: Fenix) -->
-    <string name="preference_enhanced_tracking_protection_explanation">Mantenha seus dados consigo. O %s lhe protege de muitos dos rastreadores mais comuns que seguem o que você faz online.</string>
+    <string name="preference_enhanced_tracking_protection_explanation">Mantenha seus dados com você. O %s te protege de muitos dos rastreadores mais comuns que tentam seguir o que você faz online.</string>
     <!-- Text displayed that links to website about enhanced tracking protection -->
     <string name="preference_enhanced_tracking_protection_explanation_learn_more">Saiba mais</string>
 
@@ -1347,7 +1344,7 @@
     <string name="preference_enhanced_tracking_protection_custom_fingerprinters">Fingerprinters</string>
     <string name="enhanced_tracking_protection_blocked">Bloqueado:</string>
     <!-- Header for categories that are being not being blocked by current Enhanced Tracking Protection settings -->
-    <string name="enhanced_tracking_protection_allowed">Permitido</string>
+    <string name="enhanced_tracking_protection_allowed">Permitido:</string>
     <!-- Category of trackers (social media trackers) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_social_media_trackers_title">Rastreadores de mídias sociais</string>
     <!-- Description of social media trackers that can be blocked by Enhanced Tracking Protection -->
@@ -1754,20 +1751,7 @@
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">Remover</string>
 
-    <!-- Deprecated: text for the firefox account onboarding card header
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_firefox_account_header">Aproveite ao máximo o %s.</string>
-
     <!-- Content description radio buttons with a link to more information -->
     <string name="radio_preference_info_content_description">Clique para ver mais detalhes</string>
-
-    <!-- Deprecated: No Open Tabs Message Header -->
-    <string name="no_collections_header1">Reúna o que é importante para você</string>
-    <!-- Deprecated: Label to describe what collections are to a new user without any collections -->
-    <string name="no_collections_description1">Agrupe pesquisas, sites e abas semelhantes para acesso rápido mais tarde.</string>
-    <!-- Deprecated: text for the firefox account onboarding card header when we detect you're already signed in to -->
-    <string name="onboarding_firefox_account_auto_signin_header_2">Você está conectado como %s em outro navegador Firefox neste celular. Quer entrar com esta conta?</string>
-    <!-- Deprecated: Describes the add to homescreen functionality -->
-    <string name="add_to_homescreen_description">Você pode facilmente adicionar este site à tela inicial do celular para ter acesso imediato e navegar mais rápido com uma experiência semelhante a um aplicativo.</string>
 
     </resources>
