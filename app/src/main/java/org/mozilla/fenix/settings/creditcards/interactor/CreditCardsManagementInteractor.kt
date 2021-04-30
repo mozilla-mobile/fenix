@@ -20,6 +20,9 @@ interface CreditCardsManagementInteractor {
      */
     fun onSelectCreditCard(creditCard: CreditCard)
 
+    /**
+     * Sends user to Empty Credit Card Editor. Called when user clicks on the add credit card button
+     */
     fun onAddCreditCard()
 }
 

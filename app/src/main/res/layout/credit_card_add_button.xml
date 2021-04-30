@@ -12,7 +12,7 @@
     android:background="?android:selectableItemBackground"
     android:clickable="true"
     android:focusable="true"
-    android:paddingStart="@dimen/add_credit_card_button_layout_margin_start"
+    android:paddingStart="@dimen/credit_cards_add_credit_card_button_layout_margin_start"
     tools:ignore="RtlSymmetry">
 
     <ImageView

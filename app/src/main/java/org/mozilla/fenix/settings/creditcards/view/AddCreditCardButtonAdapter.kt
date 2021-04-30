@@ -8,6 +8,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import org.mozilla.fenix.settings.creditcards.interactor.CreditCardsManagementInteractor
 
+/**
+ * Adapter for add credit card button to be displayed
+ *
+ * @param interactor The [interactor] that will navigate to credit card editor
+ */
 class AddCreditCardButtonAdapter(
     private val interactor: CreditCardsManagementInteractor
 ) : RecyclerView.Adapter<AddCreditCardButtonViewHolder>() {

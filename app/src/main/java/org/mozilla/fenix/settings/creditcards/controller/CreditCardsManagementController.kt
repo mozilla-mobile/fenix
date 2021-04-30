@@ -22,6 +22,9 @@ interface CreditCardsManagementController {
      */
     fun handleCreditCardClicked(creditCard: CreditCard)
 
+    /**
+     * @see [CreditCardsManagementInteractor.onAddCreditCard]
+     */
     fun handleAddCreditCardButtonClicked()
 }
 
@@ -40,10 +43,7 @@ class DefaultCreditCardsManagementController(
                 )
         )
     }
-
-    /**
-     * Sends user to Empty Credit Card Editor
-     */
+    
     override fun handleAddCreditCardButtonClicked() {
         navController.navigateBlockingForAsyncNavGraph(
             CreditCardsManagementFragmentDirections

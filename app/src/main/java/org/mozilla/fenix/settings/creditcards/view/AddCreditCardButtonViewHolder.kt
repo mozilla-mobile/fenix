@@ -8,6 +8,12 @@ import androidx.recyclerview.widget.RecyclerView
 import org.mozilla.fenix.R
 import org.mozilla.fenix.settings.creditcards.interactor.CreditCardsManagementInteractor
 
+/**
+ * View holer for add credit card button
+ *
+ * @param view view to set onClickListener can navigate to credit card editor
+ * @param interactor interactor to call onAddCreditCard
+ */
 class AddCreditCardButtonViewHolder(
     private val view: View,
     private val interactor: CreditCardsManagementInteractor
@@ -15,7 +21,6 @@ class AddCreditCardButtonViewHolder(
 
     fun bind() {
         view.setOnClickListener {
-            // Add clicking code from interactor
             interactor.onAddCreditCard()
         }
     }
