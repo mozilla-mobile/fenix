@@ -44,7 +44,6 @@ class DefaultCreditCardsManagementController(
         )
     }
 
-
     override fun handleAddCreditCardButtonClicked() {
         navController.navigateBlockingForAsyncNavGraph(
             CreditCardsManagementFragmentDirections
