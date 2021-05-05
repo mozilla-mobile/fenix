@@ -128,7 +128,7 @@ class SavedLoginsAuthFragment : PreferenceFragmentCompat() {
             lifecycleOwner = viewLifecycleOwner,
             accountManager = requireComponents.backgroundServices.accountManager,
             syncEngine = SyncEngine.Passwords,
-            notLoggedInTitle = requireContext()
+            loggedOffTitle = requireContext()
                 .getString(R.string.preferences_passwords_sync_logins_across_devices),
             loggedInTitle = requireContext()
                 .getString(R.string.preferences_passwords_sync_logins),

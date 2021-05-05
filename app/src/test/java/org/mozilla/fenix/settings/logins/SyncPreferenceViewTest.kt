@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
 import androidx.preference.Preference
-import com.google.common.base.CharMatcher.any
 import io.mockk.CapturingSlot
 import io.mockk.MockKAnnotations
 import io.mockk.Runs
@@ -16,13 +15,14 @@ import io.mockk.mockkConstructor
 import io.mockk.slot
 import io.mockk.unmockkConstructor
 import io.mockk.verify
-import junit.framework.TestCase.assertTrue
 import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.service.fxa.SyncEngine
 import mozilla.components.service.fxa.manager.FxaAccountManager
 import mozilla.components.service.fxa.manager.SyncEnginesStorage
+import mozilla.components.support.test.any
 import org.junit.After
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.mozilla.fenix.R
@@ -170,7 +170,7 @@ class SyncPreferenceViewTest {
         lifecycleOwner = lifecycleOwner,
         accountManager = accountManager,
         syncEngine = SyncEngine.Passwords,
-        notLoggedInTitle = notLoggedInTitle,
+        loggedOffTitle = notLoggedInTitle,
         loggedInTitle = loggedInTitle,
         onSignInToSyncClicked = {
             val directions =

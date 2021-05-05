@@ -24,7 +24,7 @@ import mozilla.components.service.fxa.manager.SyncEnginesStorage
  * @param lifecycleOwner View lifecycle owner used to determine when to cancel UI jobs.
  * @param accountManager An instance of [FxaAccountManager].
  * @param syncEngine The sync engine that will be used for the sync status lookup.
- * @param notLoggedInTitle Text label for the setting when user is not logged in.
+ * @param loggedOffTitle Text label for the setting when user is not logged in.
  * @param loggedInTitle Text label for the setting when user is logged in.
  * @param onSignInToSyncClicked A callback executed when the [syncPreference] is clicked with a
  * preference status of "Sign in to Sync".
@@ -37,7 +37,7 @@ class SyncPreferenceView(
     lifecycleOwner: LifecycleOwner,
     accountManager: FxaAccountManager,
     private val syncEngine: SyncEngine,
-    private val notLoggedInTitle: String,
+    private val loggedOffTitle: String,
     private val loggedInTitle: String,
     private val onSignInToSyncClicked: () -> Unit = {},
     private val onReconnectClicked: () -> Unit = {}
@@ -69,7 +69,7 @@ class SyncPreferenceView(
     }
 
     /**
-     * Shows the current status of the sync preference ("On"/"Off") for the logged in user.
+     * Shows a switch toggle for the sync preference when the user is logged in.
      */
     private fun updateSyncPreferenceStatus() {
         syncPreference.apply {
@@ -95,7 +95,7 @@ class SyncPreferenceView(
         syncPreference.apply {
             isSwitchWidgetVisible = false
 
-            title = notLoggedInTitle
+            title = loggedOffTitle
 
             setOnPreferenceChangeListener { _, _ ->
                 onSignInToSyncClicked()
@@ -105,13 +105,13 @@ class SyncPreferenceView(
     }
 
     /**
-     * Displays that the user needs to "Reconnect" to fix their account problems with sync.
+     * Displays the logged off title to prompt the user to to re-authenticate their sync account.
      */
     private fun updateSyncPreferenceNeedsReauth() {
         syncPreference.apply {
             isSwitchWidgetVisible = false
 
-            title = notLoggedInTitle
+            title = loggedOffTitle
 
             setOnPreferenceChangeListener { _, _ ->
                 onReconnectClicked()
