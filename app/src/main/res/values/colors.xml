@@ -8,7 +8,7 @@
     <color name="secondary_text_light_theme">@color/photonGrey50</color>
     <color name="contrast_text_light_theme">@color/primary_text_dark_theme</color>
     <color name="caption_text_light_theme">@color/photonLightGrey90</color>
-    <color name="foundation_light_theme">#F9F9FB</color>
+    <color name="foundation_light_theme">@color/photonLightGrey10</color>
     <color name="inset_light_theme">#E0E0E6</color>
     <color name="above_light_theme">#FFF</color>
     <color name="accent_light_theme">#312A65</color>
@@ -368,7 +368,7 @@
     <color name="onboarding_padded_background_color">#1F000000</color>
     <color name="onboarding_card_background_dark">@color/photonInk80</color>
     <color name="onboarding_card_primary_text_dark">#FFFFFF</color>
-    <color name="onboarding_card_button_background_dark">#F9F9FB</color>
+    <color name="onboarding_card_button_background_dark">@color/photonLightGrey10</color>
     <color name="onboarding_card_button_text_dark">#312A65</color>
 
     <!-- Share UI -->
