@@ -64,7 +64,7 @@
     <color name="tab_tray_item_selected_background_light_theme">#E5DFF4</color>
     <color name="tab_tray_toolbar_background_light_theme">@color/photonLightGrey10</color>
     <color name="tab_tray_item_divider_light_theme">@color/photonLightGrey30</color>
-    <color name="tab_tray_item_media_stroke">#ffffff</color>
+    <color name="tab_tray_item_media_stroke">@color/photonWhite</color>
     <color name="tab_tray_item_media_background_light_theme">@color/photonInk20</color>
     <color name="tab_tray_heading_icon_light_theme">@color/photonInk20</color>
     <color name="tab_tray_heading_icon_inactive_light_theme">@color/photonInk20A48</color>
