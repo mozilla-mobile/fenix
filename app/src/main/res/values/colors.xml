@@ -12,8 +12,8 @@
     <color name="inset_light_theme">@color/photonLightGrey30</color>
     <color name="above_light_theme">#FFF</color>
     <color name="accent_light_theme">#312A65</color>
-    <color name="accent_bright_light_theme">#592ACB</color>
-    <color name="about_link_normal_theme">#592ACB</color>
+    <color name="accent_bright_light_theme">@color/photonViolet70</color>
+    <color name="about_link_normal_theme">@color/photonViolet70</color>
     <color name="accent_high_contrast_light_theme">@color/accent_light_theme</color>
     <color name="tab_ring_light_theme">@color/accent_light_theme</color>
     <color name="neutral_light_theme">@color/photonGrey30</color>
@@ -85,7 +85,7 @@
     <color name="inset_dark_theme">#32313C</color>
     <color name="above_dark_theme">#32313C</color>
     <color name="accent_dark_theme">#9059FF</color>
-    <color name="accent_bright_dark_theme">#592ACB</color>
+    <color name="accent_bright_dark_theme">@color/photonViolet70</color>
     <color name="about_link_dark_theme">#AB71FF</color>
     <color name="accent_high_contrast_dark_theme">#AB71FF</color>
     <color name="tab_ring_dark_theme">@color/accent_dark_theme</color>
@@ -154,7 +154,7 @@
     <color name="inset_private_theme">@color/photonInk50</color>
     <color name="above_private_theme">@color/photonInk50</color>
     <color name="accent_private_theme">#9059FF</color>
-    <color name="accent_bright_private_theme">#592ACB</color>
+    <color name="accent_bright_private_theme">@color/photonViolet70</color>
     <color name="about_link_private_theme">#AB71FF</color>
     <color name="accent_high_contrast_private_theme">#AA71FF</color>
     <color name="tab_ring_private_theme">#F565FF</color>
@@ -394,7 +394,7 @@
     <color name="search_widget_text">#737373</color>
 
     <!-- Private Browsing Mode Persistent Notification -->
-    <color name="pbm_notification_color">#592ACB</color>
+    <color name="pbm_notification_color">@color/photonViolet70</color>
 
     <!-- Notification Color -->
     <color name="whats_new_notification_color">#00B3F4</color>
