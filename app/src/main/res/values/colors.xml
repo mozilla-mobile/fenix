@@ -4,7 +4,7 @@
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Light theme color palette -->
-    <color name="primary_text_light_theme">#20123A</color>
+    <color name="primary_text_light_theme">@color/photonInk80</color>
     <color name="secondary_text_light_theme">@color/photonGrey50</color>
     <color name="contrast_text_light_theme">@color/primary_text_dark_theme</color>
     <color name="caption_text_light_theme">@color/photonLightGrey90</color>
@@ -308,7 +308,7 @@
     <color name="library_downloads_icon">#2E2060</color>
 
     <color name="library_app_links_icon_background">#E0E0E6</color>
-    <color name="library_app_links_icon">#20123A</color>
+    <color name="library_app_links_icon">@color/photonInk80</color>
 
     <color name="bookmarks_icon_background_filled">#C60084</color>
     <color name="bookmarks_icon_filled">#FFB4DB</color>
@@ -366,7 +366,7 @@
 
     <!-- Onboarding colors -->
     <color name="onboarding_padded_background_color">#1F000000</color>
-    <color name="onboarding_card_background_dark">#20123A</color>
+    <color name="onboarding_card_background_dark">@color/photonInk80</color>
     <color name="onboarding_card_primary_text_dark">#FFFFFF</color>
     <color name="onboarding_card_button_background_dark">#F9F9FB</color>
     <color name="onboarding_card_button_text_dark">#312A65</color>
@@ -375,7 +375,7 @@
     <color name="default_share_background">#E3E2E3</color>
     <color name="device_type_desktop_background">#F091C3</color>
     <color name="device_type_mobile_background">#D4C1FA</color>
-    <color name="device_foreground">#20123A</color>
+    <color name="device_foreground">@color/photonInk80</color>
 
     <!-- Launcher Icon colors -->
     <color name="default_launcher_background">#FDFDFD</color>
