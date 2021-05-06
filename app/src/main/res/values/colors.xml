@@ -11,7 +11,7 @@
     <color name="foundation_light_theme">@color/photonLightGrey10</color>
     <color name="inset_light_theme">@color/photonLightGrey30</color>
     <color name="above_light_theme">#FFF</color>
-    <color name="accent_light_theme">#312A65</color>
+    <color name="accent_light_theme">@color/photonInk20</color>
     <color name="accent_bright_light_theme">@color/photonViolet70</color>
     <color name="about_link_normal_theme">@color/photonViolet70</color>
     <color name="accent_high_contrast_light_theme">@color/accent_light_theme</color>
@@ -65,7 +65,7 @@
     <color name="tab_tray_toolbar_background_light_theme">@color/photonLightGrey10</color>
     <color name="tab_tray_item_divider_light_theme">@color/photonLightGrey30</color>
     <color name="tab_tray_item_media_stroke">#ffffff</color>
-    <color name="tab_tray_item_media_background_light_theme">#312A65</color>
+    <color name="tab_tray_item_media_background_light_theme">@color/photonInk20</color>
     <color name="tab_tray_heading_icon_light_theme">@color/photonInk20</color>
     <color name="tab_tray_heading_icon_inactive_light_theme">@color/photonInk20A48</color>
     <color name="tab_tray_heading_icon_menu_light_theme">@color/accent_normal_theme</color>
@@ -369,7 +369,7 @@
     <color name="onboarding_card_background_dark">@color/photonInk80</color>
     <color name="onboarding_card_primary_text_dark">#FFFFFF</color>
     <color name="onboarding_card_button_background_dark">@color/photonLightGrey10</color>
-    <color name="onboarding_card_button_text_dark">#312A65</color>
+    <color name="onboarding_card_button_text_dark">@color/photonInk20</color>
 
     <!-- Share UI -->
     <color name="default_share_background">#E3E2E3</color>
@@ -380,13 +380,13 @@
     <!-- Launcher Icon colors -->
     <color name="default_launcher_background">#FDFDFD</color>
     <color name="nightly_launcher_background">#220033</color>
-    <color name="debug_launcher_background">#312A65</color>
+    <color name="debug_launcher_background">@color/photonInk20</color>
     <color name="ic_launcher_background">@color/default_launcher_background</color>
 
     <!-- Button Colors -->
     <color name="grey_button_color">@color/photonLightGrey30</color>
     <color name="destructive_button_text_color">#C50042</color>
-    <color name="button_text_color">#312A65</color>
+    <color name="button_text_color">@color/photonInk20</color>
 
     <!-- Search Widget -->
     <color name="search_widget_background">@color/white_color</color>
