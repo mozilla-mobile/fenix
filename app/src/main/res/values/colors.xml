@@ -9,7 +9,7 @@
     <color name="contrast_text_light_theme">@color/primary_text_dark_theme</color>
     <color name="caption_text_light_theme">@color/photonLightGrey90</color>
     <color name="foundation_light_theme">@color/photonLightGrey10</color>
-    <color name="inset_light_theme">#E0E0E6</color>
+    <color name="inset_light_theme">@color/photonLightGrey30</color>
     <color name="above_light_theme">#FFF</color>
     <color name="accent_light_theme">#312A65</color>
     <color name="accent_bright_light_theme">#592ACB</color>
@@ -39,7 +39,7 @@
     <color name="fill_link_from_clipboard_light_theme">@color/accent_light_theme</color>
     <color name="sync_disconnected_icon_fill_light_theme">#C45A27</color>
     <color name="sync_disconnected_background_light_theme">#FFFDE2</color>
-    <color name="swipe_delete_background_light_theme">#E0E0E6</color>
+    <color name="swipe_delete_background_light_theme">@color/photonLightGrey30</color>
     <color name="onboarding_card_button_light_theme">#F0F0F4</color>
     <color name="onboarding_card_finish_button_light_theme">@color/accent_light_theme</color>
     <color name="onboarding_illustration_selected_light_theme">@color/accent_bright_light_theme</color>
@@ -307,7 +307,7 @@
     <color name="library_downloads_icon_background">#D4C1FA</color>
     <color name="library_downloads_icon">#2E2060</color>
 
-    <color name="library_app_links_icon_background">#E0E0E6</color>
+    <color name="library_app_links_icon_background">@color/photonLightGrey30</color>
     <color name="library_app_links_icon">@color/photonInk80</color>
 
     <color name="bookmarks_icon_background_filled">#C60084</color>
@@ -384,7 +384,7 @@
     <color name="ic_launcher_background">@color/default_launcher_background</color>
 
     <!-- Button Colors -->
-    <color name="grey_button_color">#E0E0E6</color>
+    <color name="grey_button_color">@color/photonLightGrey30</color>
     <color name="destructive_button_text_color">#C50042</color>
     <color name="button_text_color">#312A65</color>
 
