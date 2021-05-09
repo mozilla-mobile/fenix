@@ -19,6 +19,11 @@ interface CreditCardsManagementInteractor {
      * @param creditCard The selected [CreditCard] to edit.
      */
     fun onSelectCreditCard(creditCard: CreditCard)
+
+    /**
+     * Sends user to Empty Credit Card Editor. Called when user clicks on the add credit card button
+     */
+    fun onAddCreditCard()
 }
 
 /**
@@ -33,5 +38,9 @@ class DefaultCreditCardsManagementInteractor(
 
     override fun onSelectCreditCard(creditCard: CreditCard) {
         controller.handleCreditCardClicked(creditCard)
+    }
+
+    override fun onAddCreditCard() {
+        controller.handleAddCreditCardButtonClicked()
     }
 }
