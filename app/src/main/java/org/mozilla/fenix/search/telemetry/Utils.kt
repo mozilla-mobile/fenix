@@ -22,6 +22,12 @@ internal fun getTrackKey(
 
     if (provider.codeParam.isNotEmpty()) {
         code = uri.getQueryParameter(provider.codeParam)
+        if (code.isNullOrEmpty() &&
+            provider.name == "baidu" &&
+            uri.toString().contains("from=")) {
+            code = uri.toString().substringAfter("from=", "")
+                    .substringBefore("/", "")
+        }
 
         // Try cookies first because Bing has followOnCookies and valid code, but no
         // followOnParams => would tracks organic instead of sap-follow-on
