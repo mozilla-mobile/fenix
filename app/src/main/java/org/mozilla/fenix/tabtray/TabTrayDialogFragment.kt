@@ -120,10 +120,10 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), UserInteractionHandler 
     }
 
     private val removeTabUseCase = object : TabsUseCases.RemoveTabUseCase {
-        override fun invoke(sessionId: String) {
+        override fun invoke(tabId: String) {
             requireContext().components.analytics.metrics.track(Event.ClosedExistingTab)
-            showUndoSnackbarForTab(sessionId)
-            removeIfNotLastTab(sessionId)
+            showUndoSnackbarForTab(tabId)
+            removeIfNotLastTab(tabId)
         }
     }
 
