@@ -5,7 +5,6 @@
 package org.mozilla.fenix.settings.sitepermissions
 
 import android.content.Intent
-import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS
@@ -26,6 +25,7 @@ import mozilla.components.feature.sitepermissions.SitePermissionsRules
 import mozilla.components.feature.sitepermissions.SitePermissionsRules.Action.ALLOWED
 import mozilla.components.feature.sitepermissions.SitePermissionsRules.Action.ASK_TO_ALLOW
 import mozilla.components.feature.sitepermissions.SitePermissionsRules.Action.BLOCKED
+import mozilla.components.support.ktx.android.content.getColorFromAttr
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
@@ -241,9 +241,11 @@ class SitePermissionsManagePhoneFeatureFragment : Fragment() {
         val subTextSize =
             resources.getDimensionPixelSize(R.dimen.phone_feature_label_recommended_text_size)
         val recommendedSpannable = SpannableString(subText)
+        val context = requireContext()
+        val subTextColor = context.getColorFromAttr(R.attr.secondaryText)
 
         recommendedSpannable.setSpan(
-            ForegroundColorSpan(Color.GRAY),
+            ForegroundColorSpan(subTextColor),
             0,
             recommendedSpannable.length,
             SPAN_EXCLUSIVE_INCLUSIVE
