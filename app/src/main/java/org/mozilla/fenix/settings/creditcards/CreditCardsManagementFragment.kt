@@ -61,6 +61,11 @@ class CreditCardsManagementFragment : Fragment() {
     @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         consumeFrom(creditCardsStore) { state ->
+            if (!state.isLoading && state.creditCards.isEmpty()) {
+                findNavController().popBackStack()
+                return@consumeFrom
+            }
+
             creditCardsView.update(state)
         }
     }
