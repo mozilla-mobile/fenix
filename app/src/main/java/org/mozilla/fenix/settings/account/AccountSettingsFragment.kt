@@ -278,6 +278,7 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
             isChecked = syncEnginesStatus.getOrElse(SyncEngine.Bookmarks) { true }
         }
         requirePreference<CheckBoxPreference>(R.string.pref_key_sync_credit_cards).apply {
+            isVisible = FeatureFlags.creditCardsFeature
             isEnabled = syncEnginesStatus.containsKey(SyncEngine.CreditCards)
             isChecked = syncEnginesStatus.getOrElse(SyncEngine.CreditCards) { true }
         }
@@ -293,11 +294,10 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
             isEnabled = syncEnginesStatus.containsKey(SyncEngine.Tabs)
             isChecked = syncEnginesStatus.getOrElse(SyncEngine.Tabs) { true }
         }
-        if (FeatureFlags.addressesFeature) {
-            requirePreference<CheckBoxPreference>(R.string.pref_key_sync_address).apply {
-                isEnabled = syncEnginesStatus.containsKey(SyncEngine.Addresses)
-                isChecked = syncEnginesStatus.getOrElse(SyncEngine.Addresses) { true }
-            }
+        requirePreference<CheckBoxPreference>(R.string.pref_key_sync_address).apply {
+            isVisible = FeatureFlags.addressesFeature
+            isEnabled = syncEnginesStatus.containsKey(SyncEngine.Addresses)
+            isChecked = syncEnginesStatus.getOrElse(SyncEngine.Addresses) { true }
         }
     }
 
@@ -443,6 +443,5 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
 
     companion object {
         private const val DEVICE_NAME_MAX_LENGTH = 128
-        private const val DEVICE_NAME_EDIT_TEXT_MIN_HEIGHT_DP = 48
     }
 }
