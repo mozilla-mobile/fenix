@@ -16,20 +16,19 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.increaseTapArea
 import kotlin.math.max
 import kotlinx.android.synthetic.main.tab_tray_grid_item.view.tab_tray_grid_item
-import org.mozilla.fenix.tabstray.TabsTrayViewHolder
 import org.mozilla.fenix.selection.SelectionHolder
 import org.mozilla.fenix.tabstray.TabsTrayStore
 
 /**
  * A RecyclerView ViewHolder implementation for "tab" items with grid layout.
  */
-class TabsTrayGridViewHolder(
+class BrowserTabGridViewHolder(
     imageLoader: ImageLoader,
     override val browserTrayInteractor: BrowserTrayInteractor,
     store: TabsTrayStore,
     selectionHolder: SelectionHolder<Tab>? = null,
     itemView: View
-) : TabsTrayViewHolder(itemView, imageLoader, store, selectionHolder) {
+) : AbstractBrowserTabViewHolder(itemView, imageLoader, store, selectionHolder) {
 
     private val closeButton: AppCompatImageButton = itemView.findViewById(R.id.mozac_browser_tabstray_close)
 
