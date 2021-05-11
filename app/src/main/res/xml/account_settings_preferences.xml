@@ -31,6 +31,12 @@
 
         <CheckBoxPreference
             android:defaultValue="true"
+            android:key="@string/pref_key_sync_credit_cards"
+            android:layout="@layout/checkbox_left_preference"
+            android:title="@string/preferences_sync_credit_cards" />
+
+        <CheckBoxPreference
+            android:defaultValue="true"
             android:key="@string/pref_key_sync_history"
             android:layout="@layout/checkbox_left_preference"
             android:title="@string/preferences_sync_history" />
@@ -47,5 +53,10 @@
             android:layout="@layout/checkbox_left_preference"
             android:title="@string/preferences_sync_tabs_2"/>
 
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/pref_key_sync_address"
+            android:layout="@layout/checkbox_left_preference"
+            android:title="@string/preferences_sync_address" />
     </PreferenceCategory>
 </PreferenceScreen>

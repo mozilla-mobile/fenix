@@ -402,6 +402,10 @@
         The first parameter is the application name, the second is the device manufacturer name
         and the third is the device model. -->
     <string name="default_device_name_2">%1$s on %2$s %3$s</string>
+    <!-- Preference for syncing credit cards -->
+    <string name="preferences_sync_credit_cards">Credit cards</string>
+    <!-- Preference for syncing addresses -->
+    <string name="preferences_sync_address">Addresses</string>
 
     <!-- Send Tab -->
     <!-- Name of the "receive tabs" notification channel. Displayed in the "App notifications" system settings for the app -->
@@ -1551,6 +1555,7 @@
     <string name="credit_cards_saved_cards">Saved cards</string>
     <!-- Error message for credit card number validation -->
     <string name="credit_cards_number_validation_error_message">Please enter a valid credit card number</string>
+
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Add search engine</string>

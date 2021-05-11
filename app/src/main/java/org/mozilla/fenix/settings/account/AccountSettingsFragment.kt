@@ -35,6 +35,7 @@ import mozilla.components.service.fxa.sync.SyncReason
 import mozilla.components.service.fxa.sync.SyncStatusObserver
 import mozilla.components.service.fxa.sync.getLastSynced
 import mozilla.components.support.ktx.android.content.getColorFromAttr
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.StoreProvider
@@ -176,10 +177,17 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
             SyncEngine.Bookmarks -> R.string.pref_key_sync_bookmarks
             SyncEngine.Passwords -> R.string.pref_key_sync_logins
             SyncEngine.Tabs -> R.string.pref_key_sync_tabs
+            SyncEngine.CreditCards -> R.string.pref_key_sync_credit_cards
+            SyncEngine.Addresses -> R.string.pref_key_sync_address
             else -> throw IllegalStateException("Accessing internal sync engines")
         }
 
-        listOf(SyncEngine.History, SyncEngine.Bookmarks, SyncEngine.Tabs).forEach {
+        listOf(
+            SyncEngine.History,
+            SyncEngine.Bookmarks,
+            SyncEngine.Tabs,
+            SyncEngine.Addresses
+        ).forEach {
             requirePreference<CheckBoxPreference>(it.prefId()).apply {
                 setOnPreferenceChangeListener { _, newValue ->
                     updateSyncEngineState(context, it, newValue as Boolean)
@@ -188,7 +196,7 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
             }
         }
 
-        // 'Passwords' listener is special, since we also display a pin protection warning.
+        // 'Passwords' and 'Credit card' listeners are special, since we also display a pin protection warning.
         requirePreference<CheckBoxPreference>(SyncEngine.Passwords.prefId()).apply {
             setOnPreferenceChangeListener { _, newValue ->
                 val manager =
@@ -199,7 +207,23 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
                 ) {
                     updateSyncEngineState(context, SyncEngine.Passwords, newValue as Boolean)
                 } else {
-                    showPinDialogWarning(newValue as Boolean)
+                    showPinDialogWarning(SyncEngine.Passwords, newValue as Boolean)
+                }
+                true
+            }
+        }
+
+        requirePreference<CheckBoxPreference>(SyncEngine.CreditCards.prefId()).apply {
+            setOnPreferenceChangeListener { _, newValue ->
+                val manager =
+                    activity?.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
+                if (manager.isKeyguardSecure ||
+                    newValue == false ||
+                    !context.settings().shouldShowSecurityPinWarningSync
+                ) {
+                    updateSyncEngineState(context, SyncEngine.CreditCards, newValue as Boolean)
+                } else {
+                    showPinDialogWarning(SyncEngine.CreditCards, newValue as Boolean)
                 }
                 true
             }
@@ -218,7 +242,7 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
         )
     }
 
-    private fun showPinDialogWarning(newValue: Boolean) {
+    private fun showPinDialogWarning(syncEngine: SyncEngine, newValue: Boolean) {
         context?.let {
             AlertDialog.Builder(it).apply {
                 setTitle(getString(R.string.logins_warning_dialog_title))
@@ -227,7 +251,7 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
                 )
 
                 setNegativeButton(getString(R.string.logins_warning_dialog_later)) { _: DialogInterface, _ ->
-                    SyncEnginesStorage(context).setStatus(SyncEngine.Passwords, newValue)
+                    SyncEnginesStorage(context).setStatus(syncEngine, newValue)
                     // Use fragment's lifecycle; the view may be gone by the time dialog is interacted with.
                     lifecycleScope.launch {
                         context.components.backgroundServices.accountManager.syncNow(SyncReason.EngineChange)
@@ -253,6 +277,10 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
             isEnabled = syncEnginesStatus.containsKey(SyncEngine.Bookmarks)
             isChecked = syncEnginesStatus.getOrElse(SyncEngine.Bookmarks) { true }
         }
+        requirePreference<CheckBoxPreference>(R.string.pref_key_sync_credit_cards).apply {
+            isEnabled = syncEnginesStatus.containsKey(SyncEngine.CreditCards)
+            isChecked = syncEnginesStatus.getOrElse(SyncEngine.CreditCards) { true }
+        }
         requirePreference<CheckBoxPreference>(R.string.pref_key_sync_history).apply {
             isEnabled = syncEnginesStatus.containsKey(SyncEngine.History)
             isChecked = syncEnginesStatus.getOrElse(SyncEngine.History) { true }
@@ -264,6 +292,12 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
         requirePreference<CheckBoxPreference>(R.string.pref_key_sync_tabs).apply {
             isEnabled = syncEnginesStatus.containsKey(SyncEngine.Tabs)
             isChecked = syncEnginesStatus.getOrElse(SyncEngine.Tabs) { true }
+        }
+        if (FeatureFlags.addressesFeature) {
+            requirePreference<CheckBoxPreference>(R.string.pref_key_sync_address).apply {
+                isEnabled = syncEnginesStatus.containsKey(SyncEngine.Addresses)
+                isChecked = syncEnginesStatus.getOrElse(SyncEngine.Addresses) { true }
+            }
         }
     }
 
