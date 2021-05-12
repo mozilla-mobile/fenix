@@ -1718,5 +1718,5 @@
     <string name="action_bar_up_description">Navigate up</string>
 
     <!-- Content description for privacy content close button -->
-    <string name="privacy_content_close_button_content_description">close</string>
+    <string name="privacy_content_close_button_content_description">Close</string>
 </resources>
