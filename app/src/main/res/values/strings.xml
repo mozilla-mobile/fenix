@@ -1696,14 +1696,14 @@
     <string name="top_sites_max_limit_confirmation_button">OK, Got It</string>
     <!-- Label for the show most visited sites preference -->
     <string name="top_sites_toggle_top_frecent_sites">Show most visited sites</string>
-    <!-- Title text displayed in the rename top site dialog. -->
-    <string name="top_sites_rename_dialog_title">Name</string>
-    <!-- Hint for renaming title of a top site -->
-    <string name="top_site_name_hint">Top site name</string>
-    <!-- Button caption to confirm the renaming of the top site. -->
-    <string name="top_sites_rename_dialog_ok">OK</string>
-    <!-- Dialog button text for canceling the rename top site prompt. -->
-    <string name="top_sites_rename_dialog_cancel">Cancel</string>
+	<!-- Title text displayed in the rename top site dialog. -->
+	<string name="top_sites_rename_dialog_title">Name</string>
+	<!-- Hint for renaming title of a top site -->
+	<string name="top_site_name_hint">Top site name</string>
+	<!-- Button caption to confirm the renaming of the top site. -->
+	<string name="top_sites_rename_dialog_ok">OK</string>
+	<!-- Dialog button text for canceling the rename top site prompt. -->
+	<string name="top_sites_rename_dialog_cancel">Cancel</string>
 
     <!-- Default browser experiment -->
     <string name="default_browser_experiment_card_text">Set links from websites, emails, and messages to open automatically in Firefox.</string>
@@ -1714,9 +1714,7 @@
     <!-- Content description radio buttons with a link to more information -->
     <string name="radio_preference_info_content_description">Click for more details</string>
 
-    <!-- Content description for the action bar "up" button -->
-    <string name="action_bar_up_description">Navigate up</string>
-
     <!-- Content description for privacy content close button -->
-    <string name="privacy_content_close_button_content_description">Close</string>
+    <string name="privacy_content_close_button_content_description">close</string>
+
 </resources>
