@@ -8,6 +8,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import android.widget.FrameLayout
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.fragment_saved_cards.view.*
@@ -15,10 +19,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import mozilla.components.lib.state.ext.consumeFrom
+import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.SecureFragment
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.redirectToReAuth
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.settings.creditcards.controller.DefaultCreditCardsManagementController
 import org.mozilla.fenix.settings.creditcards.interactor.CreditCardsManagementInteractor
@@ -33,6 +39,7 @@ class CreditCardsManagementFragment : SecureFragment() {
     private lateinit var creditCardsStore: CreditCardsFragmentStore
     private lateinit var interactor: CreditCardsManagementInteractor
     private lateinit var creditCardsView: CreditCardsManagementView
+    private lateinit var toolbarChildContainer: FrameLayout
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -52,7 +59,7 @@ class CreditCardsManagementFragment : SecureFragment() {
         )
 
         creditCardsView = CreditCardsManagementView(view.saved_cards_layout, interactor)
-
+        toolbarChildContainer = initChildContainerFromToolbar()
         loadCreditCards()
 
         return view
@@ -72,8 +79,31 @@ class CreditCardsManagementFragment : SecureFragment() {
 
     override fun onResume() {
         super.onResume()
+        activity?.window?.setFlags(
+            WindowManager.LayoutParams.FLAG_SECURE,
+            WindowManager.LayoutParams.FLAG_SECURE
+        )
         showToolbar(getString(R.string.credit_cards_saved_cards))
     }
+
+    /**
+     * If we pause this fragment, we want to pop users back to reauthenticate.
+     */
+    override fun onPause() {
+        toolbarChildContainer.removeAllViews()
+        toolbarChildContainer.visibility = View.GONE
+
+        (activity as HomeActivity).getSupportActionBarAndInflateIfNecessary().setDisplayShowTitleEnabled(true)
+        setHasOptionsMenu(false)
+
+        redirectToReAuth(
+            listOf(R.id.creditCardsManagementFragment),
+            findNavController().currentDestination?.id
+        )
+
+        super.onPause()
+    }
+
 
     /**
      * Fetches all the credit cards from the autofill storage and updates the
@@ -86,6 +116,18 @@ class CreditCardsManagementFragment : SecureFragment() {
             lifecycleScope.launch(Dispatchers.Main) {
                 creditCardsStore.dispatch(CreditCardsAction.UpdateCreditCards(creditCards))
             }
+        }
+    }
+
+    /**
+     * Initialize toolbar container and set visibility for authentication.
+     */
+    private fun initChildContainerFromToolbar(): FrameLayout {
+        val activity = activity as? AppCompatActivity
+        val toolbar = (activity as HomeActivity).findViewById<Toolbar>(R.id.navigationToolbar)
+
+        return (toolbar.findViewById(R.id.toolbar_child_container) as FrameLayout).apply {
+            visibility = View.VISIBLE
         }
     }
 }
