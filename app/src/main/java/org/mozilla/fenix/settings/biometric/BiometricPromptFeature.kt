@@ -28,7 +28,7 @@ import org.mozilla.fenix.settings.biometric.ext.isHardwareAvailable
  * @param onAuthFailure A failure callback if authentication failed.
  */
 class BiometricPromptFeature(
-    private val context: Context,
+    private val context: Context?,
     private val fragment: Fragment,
     private val onAuthFailure: () -> Unit,
     private val onAuthSuccess: () -> Unit

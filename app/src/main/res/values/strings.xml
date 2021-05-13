@@ -1493,6 +1493,8 @@
     <string name="saved_login_hide_password">Hide password</string>
     <!-- Message displayed in biometric prompt displayed for authentication before allowing users to view their logins -->
     <string name="logins_biometric_prompt_message">Unlock to view your saved logins</string>
+    <!-- Message displayed in biometric prompt displayed for authentication before allowing users to view their saved data -->
+    <string name="generic_biometric_prompt_message">Unlock to view your saved data</string>
     <!-- Title of warning dialog if users have no device authentication set up -->
     <string name="logins_warning_dialog_title">Secure your logins and passwords</string>
     <!-- Message of warning dialog if users have no device authentication set up -->
