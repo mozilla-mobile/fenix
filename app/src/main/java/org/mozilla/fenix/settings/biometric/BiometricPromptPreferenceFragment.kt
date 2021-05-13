@@ -17,12 +17,12 @@ import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.settings.requirePreference
 
 /**
- * Helper class for creating and implementing the [BiometricPromptFeature]. Currently used
+ * Helper for creating and implementing the [BiometricPromptFeature]. Currently used
  * for logins and credit cards.
  */
-abstract class BiometricPromptHelper : PreferenceFragmentCompat() {
+abstract class BiometricPromptPreferenceFragment : PreferenceFragmentCompat() {
 
-    private val biometricPromptFeature = ViewBoundFeatureWrapper<BiometricPromptFeature>()
+    internal val biometricPromptFeature = ViewBoundFeatureWrapper<BiometricPromptFeature>()
 
     /**
      * Gets the string to be used for [BiometricPromptFeature.requestAuthentication] prompting to
@@ -42,14 +42,12 @@ abstract class BiometricPromptHelper : PreferenceFragmentCompat() {
     abstract fun showPinDialogWarning(context: Context)
 
     /**
-     * There is a bug where while the biometric prompt is showing, you were able to quickly navigate
-     * so we are disabling the settings that navigate while authenticating.
-     * https://github.com/mozilla-mobile/fenix/issues/12312
+     * Toggle preferences to enable or disable navigation during authentication flows.
      *
      * @param prefList a list of [Preference]s to toggle.
      * @param enabled whether or not the preferences should be enabled.
      */
-    fun togglePrefsEnabledWhileAuthenticating(prefList: List<Int>, enabled: Boolean) {
+    fun togglePrefsEnabled(prefList: List<Int>, enabled: Boolean) {
         for (preference in prefList) {
             requirePreference<Preference>(preference).isEnabled = enabled
         }
@@ -71,10 +69,10 @@ abstract class BiometricPromptHelper : PreferenceFragmentCompat() {
     fun setBiometricPrompt(view: View, prefList: List<Int>) {
         biometricPromptFeature.set(
             feature = BiometricPromptFeature(
-                context = context,
+                context = requireContext(),
                 fragment = this,
                 onAuthFailure = {
-                    togglePrefsEnabledWhileAuthenticating(prefList, true)
+                    togglePrefsEnabled(prefList, true)
                 },
                 onAuthSuccess = ::navigateOnSuccess
             ),
@@ -91,7 +89,7 @@ abstract class BiometricPromptHelper : PreferenceFragmentCompat() {
     fun verifyCredentialsOrShowSetupWarning(context: Context, prefList: List<Int>) {
         // Use the BiometricPrompt if available
         if (BiometricPromptFeature.canUseFeature(context)) {
-            togglePrefsEnabledWhileAuthenticating(prefList, false)
+            togglePrefsEnabled(prefList, false)
             // use generic message or define which string to use?
             biometricPromptFeature.get()?.requestAuthentication(unlockMessage())
             return

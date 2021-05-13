@@ -1044,13 +1044,6 @@
             android:name="org.mozilla.fenix.settings.creditcards.CreditCardsSettingFragment"
             android:label="@string/preferences_credit_cards">
             <action
-                android:id="@+id/action_creditCardsSettingFragment_to_turnOnSyncFragment"
-                app:destination="@id/turnOnSyncFragment"
-                app:enterAnim="@anim/slide_in_right"
-                app:exitAnim="@anim/slide_out_left"
-                app:popEnterAnim="@anim/slide_in_left"
-                app:popExitAnim="@anim/slide_out_right" />
-            <action
                 android:id="@+id/action_creditCardsSettingFragment_to_creditCardEditorFragment"
                 app:destination="@id/creditCardEditorFragment"
                 app:enterAnim="@anim/slide_in_right"
@@ -1081,32 +1074,6 @@
             android:label="@string/credit_cards_saved_cards">
             <action
                 android:id="@+id/action_creditCardsManagementFragment_to_creditCardEditorFragment"
-                app:destination="@id/creditCardEditorFragment"
-                app:enterAnim="@anim/slide_in_right"
-                app:exitAnim="@anim/slide_out_left"
-                app:popEnterAnim="@anim/slide_in_left"
-                app:popExitAnim="@anim/slide_out_right" />
-        </fragment>
-        <fragment
-            android:id="@+id/creditCardAuthFragment"
-            android:name="org.mozilla.fenix.settings.creditcards.CreditCardsAuthFragment"
-            android:label="@string/preferences_credit_cards">
-            <action
-                android:id="@+id/action_creditCardAuthFragment_to_creditCardManagementFragment"
-                app:destination="@id/creditCardsManagementFragment"
-                app:enterAnim="@anim/slide_in_right"
-                app:exitAnim="@anim/slide_out_left"
-                app:popEnterAnim="@anim/slide_in_left"
-                app:popExitAnim="@anim/slide_out_right" />
-            <action
-                android:id="@+id/action_creditCardAuthFragment_to_turnOnSyncFragment"
-                app:destination="@id/turnOnSyncFragment"
-                app:enterAnim="@anim/slide_in_right"
-                app:exitAnim="@anim/slide_out_left"
-                app:popEnterAnim="@anim/slide_in_left"
-                app:popExitAnim="@anim/slide_out_right" />
-            <action
-                android:id="@+id/action_creditCardAuthFragment_to_creditCardEditorFragment"
                 app:destination="@id/creditCardEditorFragment"
                 app:enterAnim="@anim/slide_in_right"
                 app:exitAnim="@anim/slide_out_left"

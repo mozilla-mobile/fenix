@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -79,31 +78,29 @@ class CreditCardsManagementFragment : SecureFragment() {
 
     override fun onResume() {
         super.onResume()
-        activity?.window?.setFlags(
-            WindowManager.LayoutParams.FLAG_SECURE,
-            WindowManager.LayoutParams.FLAG_SECURE
-        )
         showToolbar(getString(R.string.credit_cards_saved_cards))
     }
 
     /**
-     * If we pause this fragment, we want to pop users back to reauthenticate.
+     * If we pause this fragment, we want to pop users back to the settings page to reauthenticate.
      */
     override fun onPause() {
         toolbarChildContainer.removeAllViews()
         toolbarChildContainer.visibility = View.GONE
 
-        (activity as HomeActivity).getSupportActionBarAndInflateIfNecessary().setDisplayShowTitleEnabled(true)
+        (activity as HomeActivity).getSupportActionBarAndInflateIfNecessary()
+            .setDisplayShowTitleEnabled(true)
         setHasOptionsMenu(false)
 
+        // don't redirect if the user is navigating to the editor fragment
         redirectToReAuth(
-            listOf(R.id.creditCardsManagementFragment),
-            findNavController().currentDestination?.id
+            listOf(R.id.creditCardEditorFragment),
+            findNavController().currentDestination?.id,
+            R.id.creditCardsManagementFragment
         )
 
         super.onPause()
     }
-
 
     /**
      * Fetches all the credit cards from the autofill storage and updates the

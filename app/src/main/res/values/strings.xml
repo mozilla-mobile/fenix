@@ -1567,6 +1567,7 @@
     <string name="credit_cards_warning_dialog_later">Later</string>
     <!-- Title of PIN verification dialog to direct users to re-enter their device credentials to access their credit cards -->
     <string name="credit_cards_biometric_prompt_message_pin">Unlock your device</string>
+
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Add search engine</string>
     <!-- Title of the Edit search engine screen -->
