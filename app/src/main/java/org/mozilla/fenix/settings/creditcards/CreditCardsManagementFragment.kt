@@ -14,7 +14,6 @@ import kotlinx.android.synthetic.main.fragment_saved_cards.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
-import mozilla.components.concept.storage.CreditCard
 import mozilla.components.lib.state.ext.consumeFrom
 import org.mozilla.fenix.R
 import org.mozilla.fenix.SecureFragment
@@ -82,36 +81,11 @@ class CreditCardsManagementFragment : SecureFragment() {
      */
     private fun loadCreditCards() {
         lifecycleScope.launch(Dispatchers.IO) {
-            val creditCards =
-                addEllipses(requireContext().components.core.autofillStorage.getAllCreditCards())
+            val creditCards = requireContext().components.core.autofillStorage.getAllCreditCards()
 
             lifecycleScope.launch(Dispatchers.Main) {
                 creditCardsStore.dispatch(CreditCardsAction.UpdateCreditCards(creditCards))
             }
         }
-    }
-
-    private fun addEllipses(creditCards: List<CreditCard>): List<CreditCard> {
-        val result: MutableList<CreditCard> = mutableListOf()
-        creditCards.forEach {
-            result.add(
-                it.copy(
-                    cardNumberLast4 =
-                    CC_ELLIPSES + CC_ELLIPSIS + CC_ELLIPSIS + CC_ELLIPSIS + CC_ELLIPSIS +
-                            it.cardNumberLast4 + CC_ELLIPSES_END
-                )
-            )
-        }
-        return result
-    }
-
-    companion object {
-
-        // Left-To-Right Embedding (LTE) mark
-        const val CC_ELLIPSES: String = "\u202A"
-        // Dot ellipsis
-        const val CC_ELLIPSIS: String = "\u2022\u2060\u2006\u2060"
-        // Pop Directional Formatting (PDF) mark
-        const val CC_ELLIPSES_END: String = "\u202C"
     }
 }
