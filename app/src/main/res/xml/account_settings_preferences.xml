@@ -30,7 +30,7 @@
             android:title="@string/preferences_sync_bookmarks" />
 
         <CheckBoxPreference
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:key="@string/pref_key_sync_credit_cards"
             android:layout="@layout/checkbox_left_preference"
             android:title="@string/preferences_sync_credit_cards" />

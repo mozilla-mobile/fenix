@@ -165,13 +165,6 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
         updateSyncEngineStates()
         setDisabledWhileSyncing(accountManager.isSyncActive())
 
-        fun updateSyncEngineState(context: Context, engine: SyncEngine, newState: Boolean) {
-            SyncEnginesStorage(context).setStatus(engine, newState)
-            viewLifecycleOwner.lifecycleScope.launch {
-                context.components.backgroundServices.accountManager.syncNow(SyncReason.EngineChange)
-            }
-        }
-
         fun SyncEngine.prefId(): Int = when (this) {
             SyncEngine.History -> R.string.pref_key_sync_history
             SyncEngine.Bookmarks -> R.string.pref_key_sync_bookmarks
@@ -199,32 +192,14 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
         // 'Passwords' and 'Credit card' listeners are special, since we also display a pin protection warning.
         requirePreference<CheckBoxPreference>(SyncEngine.Passwords.prefId()).apply {
             setOnPreferenceChangeListener { _, newValue ->
-                val manager =
-                    activity?.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
-                if (manager.isKeyguardSecure ||
-                    newValue == false ||
-                    !context.settings().shouldShowSecurityPinWarningSync
-                ) {
-                    updateSyncEngineState(context, SyncEngine.Passwords, newValue as Boolean)
-                } else {
-                    showPinDialogWarning(SyncEngine.Passwords, newValue as Boolean)
-                }
+                updateSyncEngineStateWithPinWarning(newValue as Boolean)
                 true
             }
         }
 
         requirePreference<CheckBoxPreference>(SyncEngine.CreditCards.prefId()).apply {
             setOnPreferenceChangeListener { _, newValue ->
-                val manager =
-                    activity?.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
-                if (manager.isKeyguardSecure ||
-                    newValue == false ||
-                    !context.settings().shouldShowSecurityPinWarningSync
-                ) {
-                    updateSyncEngineState(context, SyncEngine.CreditCards, newValue as Boolean)
-                } else {
-                    showPinDialogWarning(SyncEngine.CreditCards, newValue as Boolean)
-                }
+                updateSyncEngineStateWithPinWarning(newValue as Boolean)
                 true
             }
         }
@@ -240,6 +215,26 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
         requireComponents.backgroundServices.accountManager.registerForSyncEvents(
             syncStatusObserver, owner = this, autoPause = true
         )
+    }
+
+    private fun CheckBoxPreference.updateSyncEngineStateWithPinWarning(newValue: Boolean) {
+        val manager =
+            activity?.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
+        if (manager.isKeyguardSecure ||
+            !newValue ||
+            !requireContext().settings().shouldShowSecurityPinWarningSync
+        ) {
+            updateSyncEngineState(context, SyncEngine.CreditCards, newValue)
+        } else {
+            showPinDialogWarning(SyncEngine.CreditCards, newValue)
+        }
+    }
+
+    private fun updateSyncEngineState(context: Context, engine: SyncEngine, newState: Boolean) {
+        SyncEnginesStorage(context).setStatus(engine, newState)
+        viewLifecycleOwner.lifecycleScope.launch {
+            context.components.backgroundServices.accountManager.syncNow(SyncReason.EngineChange)
+        }
     }
 
     private fun showPinDialogWarning(syncEngine: SyncEngine, newValue: Boolean) {
