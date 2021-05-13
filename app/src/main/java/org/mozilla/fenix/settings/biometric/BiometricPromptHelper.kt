@@ -19,9 +19,8 @@ import org.mozilla.fenix.settings.requirePreference
 /**
  * Helper class for creating and implementing the [BiometricPromptFeature]. Currently used
  * for logins and credit cards.
- *
  */
-abstract class BiometricPromptHelper() : PreferenceFragmentCompat() {
+abstract class BiometricPromptHelper : PreferenceFragmentCompat() {
 
     private val biometricPromptFeature = ViewBoundFeatureWrapper<BiometricPromptFeature>()
 
@@ -89,7 +88,7 @@ abstract class BiometricPromptHelper() : PreferenceFragmentCompat() {
      *
      * @param prefList a list of [Preference]s to disable while authentication is happening.
      */
-    private fun verifyCredentialsOrShowSetupWarning(context: Context, prefList: List<Int>) {
+    fun verifyCredentialsOrShowSetupWarning(context: Context, prefList: List<Int>) {
         // Use the BiometricPrompt if available
         if (BiometricPromptFeature.canUseFeature(context)) {
             togglePrefsEnabledWhileAuthenticating(prefList, false)
