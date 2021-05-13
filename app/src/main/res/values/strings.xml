@@ -1555,7 +1555,8 @@
     <string name="credit_cards_saved_cards">Saved cards</string>
     <!-- Error message for credit card number validation -->
     <string name="credit_cards_number_validation_error_message">Please enter a valid credit card number</string>
-
+    <!-- Error message for credit card number duplication -->
+    <string name="credit_cards_number_duplication_error_message">This card number has already been added</string>
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Add search engine</string>
     <!-- Title of the Edit search engine screen -->

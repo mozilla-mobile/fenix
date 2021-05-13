@@ -12,12 +12,11 @@ import io.mockk.verify
 import kotlinx.android.synthetic.main.fragment_credit_card_editor.view.*
 import mozilla.components.concept.storage.CreditCard
 import mozilla.components.concept.storage.CreditCardNumber
+import mozilla.components.concept.storage.CreditCardsAddressesStorage
 import mozilla.components.concept.storage.NewCreditCardFields
 import mozilla.components.concept.storage.UpdatableCreditCardFields
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -36,6 +35,8 @@ class CreditCardEditorViewTest {
     private lateinit var view: View
     private lateinit var interactor: CreditCardEditorInteractor
     private lateinit var creditCardEditorView: CreditCardEditorView
+    private lateinit var creditCardValidator: CreditCardValidator
+    private lateinit var storage: CreditCardsAddressesStorage
 
     private val creditCard = CreditCard(
         guid = "id",
@@ -55,8 +56,10 @@ class CreditCardEditorViewTest {
     fun setup() {
         view = LayoutInflater.from(testContext).inflate(R.layout.fragment_credit_card_editor, null)
         interactor = mockk(relaxed = true)
+        storage = mockk(relaxed = true)
 
-        creditCardEditorView = spyk(CreditCardEditorView(view, interactor))
+        creditCardValidator = spyk(CreditCardValidator(emptyList(), storage))
+        creditCardEditorView = spyk(CreditCardEditorView(view, interactor, creditCardValidator))
     }
 
     @Test
@@ -144,10 +147,8 @@ class CreditCardEditorViewTest {
         view.save_button.performClick()
 
         verify {
-            creditCardEditorView.validateCreditCard()
+            creditCardValidator.validateCreditCard(cardNumber, "")
         }
-
-        assertFalse(creditCardEditorView.validateCreditCard())
 
         verify(exactly = 0) {
             interactor.onSaveCreditCard(
@@ -181,10 +182,8 @@ class CreditCardEditorViewTest {
         view.save_button.performClick()
 
         verify {
-            creditCardEditorView.validateCreditCard()
+            creditCardValidator.validateCreditCard(cardNumber, "")
         }
-
-        assertTrue(creditCardEditorView.validateCreditCard())
 
         verify {
             interactor.onSaveCreditCard(

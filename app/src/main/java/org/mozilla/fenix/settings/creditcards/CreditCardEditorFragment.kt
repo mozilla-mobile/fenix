@@ -12,6 +12,8 @@ import android.view.View
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.mozilla.fenix.R
 import org.mozilla.fenix.SecureFragment
 import org.mozilla.fenix.ext.components
@@ -26,6 +28,7 @@ import org.mozilla.fenix.settings.creditcards.view.CreditCardEditorView
  */
 class CreditCardEditorFragment : SecureFragment(R.layout.fragment_credit_card_editor) {
 
+    private lateinit var creditCardValidator: CreditCardValidator
     private lateinit var creditCardEditorState: CreditCardEditorState
     private lateinit var creditCardEditorView: CreditCardEditorView
     private val args by navArgs<CreditCardEditorFragmentArgs>()
@@ -59,8 +62,18 @@ class CreditCardEditorFragment : SecureFragment(R.layout.fragment_credit_card_ed
 
         creditCardEditorState =
             args.creditCard?.toCreditCardEditorState() ?: getInitialCreditCardEditorState()
-        creditCardEditorView = CreditCardEditorView(view, interactor)
+
+        creditCardEditorView = CreditCardEditorView(view, interactor, creditCardValidator)
         creditCardEditorView.bind(creditCardEditorState)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val storage = requireContext().components.core.autofillStorage
+        lifecycleScope.launch(Dispatchers.IO) {
+            val list = storage.getAllCreditCards()
+            creditCardValidator = CreditCardValidator(list, storage)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
