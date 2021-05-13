@@ -192,14 +192,14 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
         // 'Passwords' and 'Credit card' listeners are special, since we also display a pin protection warning.
         requirePreference<CheckBoxPreference>(SyncEngine.Passwords.prefId()).apply {
             setOnPreferenceChangeListener { _, newValue ->
-                updateSyncEngineStateWithPinWarning(newValue as Boolean)
+                updateSyncEngineStateWithPinWarning(SyncEngine.Passwords, newValue as Boolean)
                 true
             }
         }
 
         requirePreference<CheckBoxPreference>(SyncEngine.CreditCards.prefId()).apply {
             setOnPreferenceChangeListener { _, newValue ->
-                updateSyncEngineStateWithPinWarning(newValue as Boolean)
+                updateSyncEngineStateWithPinWarning(SyncEngine.CreditCards, newValue as Boolean)
                 true
             }
         }
@@ -223,18 +223,22 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
      *
      * Currently used for logins and credit cards.
      *
+     * @param engine the sync engine whose preference has changed.
      * @param newValue the value denoting whether or not to sync the specified preference.
      */
-    private fun CheckBoxPreference.updateSyncEngineStateWithPinWarning(newValue: Boolean) {
-        val manager =
-            activity?.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
+    private fun CheckBoxPreference.updateSyncEngineStateWithPinWarning(
+        syncEngine: SyncEngine,
+        newValue: Boolean
+    ) {
+        val manager = activity?.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
+
         if (manager.isKeyguardSecure ||
             !newValue ||
             !requireContext().settings().shouldShowSecurityPinWarningSync
         ) {
-            updateSyncEngineState(context, SyncEngine.CreditCards, newValue)
+            updateSyncEngineState(context, syncEngine, newValue)
         } else {
-            showPinDialogWarning(SyncEngine.CreditCards, newValue)
+            showPinDialogWarning(syncEngine, newValue)
         }
     }
 
