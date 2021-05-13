@@ -217,6 +217,14 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
         )
     }
 
+    /**
+     * Prompts the user if they do not have a password/pin set up to secure their device, and
+     * updates the state of the sync engine with the new checkbox value.
+     *
+     * Currently used for logins and credit cards.
+     *
+     * @param newValue the value denoting whether or not to sync the specified preference.
+     */
     private fun CheckBoxPreference.updateSyncEngineStateWithPinWarning(newValue: Boolean) {
         val manager =
             activity?.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
@@ -230,13 +238,31 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
-    private fun updateSyncEngineState(context: Context, engine: SyncEngine, newState: Boolean) {
-        SyncEnginesStorage(context).setStatus(engine, newState)
+    /**
+     * Updates the sync engine status with the new state of the preference and triggers a sync
+     * event.
+     *
+     * @param engine the sync engine whose preference has changed.
+     * @param newValue the new value of the sync preference, where true indicates sync for that
+     * preference and false indicates not synced.
+     */
+    private fun updateSyncEngineState(context: Context, engine: SyncEngine, newValue: Boolean) {
+        SyncEnginesStorage(context).setStatus(engine, newValue)
         viewLifecycleOwner.lifecycleScope.launch {
             context.components.backgroundServices.accountManager.syncNow(SyncReason.EngineChange)
         }
     }
 
+    /**
+     * Creates and shows a warning dialog that prompts the user to create a pin/password to
+     * secure their device when none is detected. The user has the option to continue with
+     * updating their sync preferences (updates the [SyncEngine] state) or navigating to
+     * device security settings to create a pin/password.
+     *
+     * @param syncEngine the sync engine whose preference has changed.
+     * @param newValue the new value of the sync preference, where true indicates sync for that
+     * preference and false indicates not synced.
+     */
     private fun showPinDialogWarning(syncEngine: SyncEngine, newValue: Boolean) {
         context?.let {
             AlertDialog.Builder(it).apply {
@@ -246,11 +272,7 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
                 )
 
                 setNegativeButton(getString(R.string.logins_warning_dialog_later)) { _: DialogInterface, _ ->
-                    SyncEnginesStorage(context).setStatus(syncEngine, newValue)
-                    // Use fragment's lifecycle; the view may be gone by the time dialog is interacted with.
-                    lifecycleScope.launch {
-                        context.components.backgroundServices.accountManager.syncNow(SyncReason.EngineChange)
-                    }
+                    updateSyncEngineState(context, syncEngine, newValue)
                 }
 
                 setPositiveButton(getString(R.string.logins_warning_dialog_set_up_now)) { it: DialogInterface, _ ->
@@ -266,6 +288,9 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
+    /**
+     * Updates the status of all [SyncEngine] states.
+     */
     private fun updateSyncEngineStates() {
         val syncEnginesStatus = SyncEnginesStorage(requireContext()).getStatus()
         requirePreference<CheckBoxPreference>(R.string.pref_key_sync_bookmarks).apply {
@@ -296,6 +321,10 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
+    /**
+     * Manual sync triggered by the user. This also checks account authentication and refreshes the
+     * device list.
+     */
     private fun syncNow() {
         viewLifecycleOwner.lifecycleScope.launch {
             requireComponents.analytics.metrics.track(Event.SyncAccountSyncNow)
@@ -310,8 +339,13 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
-    private fun syncDeviceName(newValue: String): Boolean {
-        if (newValue.trim().isEmpty()) {
+    /**
+     * Takes a non-empty value and sets the device name. May fail due to authentication.
+     *
+     * @param newDeviceName the new name of the device. Cannot be an empty string.
+     */
+    private fun syncDeviceName(newDeviceName: String): Boolean {
+        if (newDeviceName.trim().isEmpty()) {
             return false
         }
         // This may fail, and we'll have a disparity in the UI until `updateDeviceName` is called.
@@ -319,7 +353,7 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
             context?.let {
                 accountManager.authenticatedAccount()
                     ?.deviceConstellation()
-                    ?.setDeviceName(newValue, it)
+                    ?.setDeviceName(newDeviceName, it)
             }
         }
         return true
