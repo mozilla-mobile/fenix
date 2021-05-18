@@ -236,6 +236,11 @@ sealed class Event {
     object HomeMenuSettingsItemClicked : Event()
     object HomeScreenDisplayed : Event()
 
+    // Credit cards
+    object CreditCardSave : Event()
+    object CreditCardDelete : Event()
+    object CreditCardAutofill : Event()
+
     // Interaction events with extras
 
     data class TopSiteSwipeCarousel(val page: Int) : Event() {
