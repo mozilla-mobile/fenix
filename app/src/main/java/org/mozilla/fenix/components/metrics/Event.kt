@@ -237,7 +237,7 @@ sealed class Event {
     object HomeScreenDisplayed : Event()
 
     // Credit cards
-    object CreditCardSave : Event()
+    object CreditCardManualSave : Event()
     object CreditCardDelete : Event()
     object CreditCardAutofill : Event()
 

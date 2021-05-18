@@ -835,8 +835,8 @@ private val Event.wrapper: EventWrapper<*>?
         )
 
         // Credit cards
-        is Event.CreditCardSave -> EventWrapper<NoExtraKeys>(
-            { CreditCards.saveCard.add(1) }
+        is Event.CreditCardManualSave -> EventWrapper<NoExtraKeys>(
+            { CreditCards.manualSave.add(1) }
         )
         is Event.CreditCardDelete -> EventWrapper<NoExtraKeys>(
             { CreditCards.deleteCard.add(1) }

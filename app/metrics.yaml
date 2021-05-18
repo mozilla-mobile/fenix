@@ -5396,17 +5396,17 @@ set_default_setting_experiment:
     expires: "2021-10-01"
 
 credit_cards:
-  save_card:
+  manual_save:
     type: counter
     description: |
       A counter of the number of credit cards that have been saved
-      by the user.
+      manually by the user.
     send_in_pings:
       - metrics
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/18711
     data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/#TBD
+      - https://github.com/mozilla-mobile/fenix/pull/19548
     data_sensitivity:
       - interaction
     notification_emails:
@@ -5422,7 +5422,7 @@ credit_cards:
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/18711
     data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/#TBD
+      - https://github.com/mozilla-mobile/fenix/pull/19548
     data_sensitivity:
       - interaction
     notification_emails:
@@ -5438,7 +5438,7 @@ credit_cards:
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/18711
     data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/#TBD
+      - https://github.com/mozilla-mobile/fenix/pull/19548
     data_sensitivity:
       - interaction
     notification_emails:
