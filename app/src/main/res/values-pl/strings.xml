@@ -419,6 +419,11 @@
         and the third is the device model. -->
     <string name="default_device_name_2">%1$s na urządzeniu %2$s %3$s</string>
 
+    <!-- Preference for syncing credit cards -->
+    <string name="preferences_sync_credit_cards">Karty płatnicze</string>
+    <!-- Preference for syncing addresses -->
+    <string name="preferences_sync_address">Adresy</string>
+
     <!-- Send Tab -->
     <!-- Name of the "receive tabs" notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="fxa_received_tab_channel_name">Odebrane karty</string>
@@ -449,9 +454,6 @@
     <!-- Text displayed when there are no exceptions, with learn more link that brings users to a tracking protection SUMO page -->
     <string name="exceptions_empty_message_learn_more_link">Więcej informacji</string>
 
-    <!-- Description in Quick Settings that tells user tracking protection is off globally for all sites, and links to Settings to turn it on -->
-    <string name="preferences_tracking_protection_turned_off_globally">Całkowicie wyłączona, otwórz ustawienia, aby ją włączyć.</string>
-
     <!-- Preference switch for Telemetry -->
     <string name="preferences_telemetry">Telemetria</string>
     <!-- Preference switch for usage and technical data collection -->
@@ -462,6 +464,8 @@
     <string name="preferences_marketing_data">Dane marketingowe</string>
     <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
     <string name="preferences_marketing_data_description">Udostępnia dane o funkcjach przeglądarki %1$s używanych przez użytkownika firmie Leanplum, naszemu dostawcy marketingu mobilnego.</string>
+    <!-- Preference description for marketing data collection -->
+    <string name="preferences_marketing_data_description2">Udostępnia podstawowe dane o użyciu firmie Adjust, naszemu dostawcy marketingu mobilnego.</string>
     <!-- Title for studies preferences -->
     <string name="preference_experiments_2">Badania</string>
     <!-- Summary for studies preferences -->
@@ -801,8 +805,6 @@
     <string name="bookmark_delete_folder_snackbar">Usunięto folder „%1$s”</string>
     <!-- Screen title for adding a bookmarks folder -->
     <string name="bookmark_add_folder">Dodaj folder</string>
-    <!-- deprecated: Snackbar title shown after a bookmark has been created. -->
-    <string name="bookmark_created_snackbar">Utworzono zakładkę</string>
     <!-- Snackbar title shown after a bookmark has been created. -->
     <string name="bookmark_saved_snackbar">Dodano zakładkę</string>
     <!-- Snackbar edit button shown after a bookmark has been created. -->
@@ -1459,10 +1461,8 @@
     <string name="preferences_passwords_autofill">Automatyczne wypełnianie</string>
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">Synchronizowanie danych logowania</string>
-    <!-- Syncing saved logins in Fenix is on -->
-    <string name="preferences_passwords_sync_logins_on">Włączone</string>
-    <!-- Syncing saved logins in Fenix is off -->
-    <string name="preferences_passwords_sync_logins_off">Wyłączone</string>
+    <!-- Preference for syncing saved logins in Fenix, when not signed in-->
+    <string name="preferences_passwords_sync_logins_across_devices">Synchronizuj karty między urządzeniami</string>
     <!-- Syncing saved logins in Fenix needs reconnect to sync -->
     <string name="preferences_passwords_sync_logins_reconnect">Połącz ponownie</string>
     <!-- Syncing saved logins in Fenix needs login -->
@@ -1563,6 +1563,8 @@
     <string name="preferences_credit_cards_save_and_autofill_cards_summary">Dane są zaszyfrowane</string>
     <!-- Preference option for syncing credit cards across devices. This is displayed when the user is not signed into sync -->
     <string name="preferences_credit_cards_sync_cards_across_devices">Synchronizuj karty między urządzeniami</string>
+    <!-- Preference option for syncing credit cards across devices. This is displayed when the user is signed into sync -->
+    <string name="preferences_credit_cards_sync_cards">Synchronizuj karty</string>
     <!-- Preference option for adding a credit card -->
     <string name="preferences_credit_cards_add_credit_card">Dodaj kartę płatniczą</string>
 
@@ -1592,6 +1594,9 @@
     <string name="credit_cards_cancel_button">Anuluj</string>
     <!-- Title of the "Saved cards" screen -->
     <string name="credit_cards_saved_cards">Zachowane karty</string>
+
+    <!-- Error message for credit card number validation -->
+    <string name="credit_cards_number_validation_error_message">Wprowadź prawidłowy numer karty płatniczej</string>
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Dodaj wyszukiwarkę</string>
@@ -1720,9 +1725,9 @@
     <!-- Text displayed to ask user to connect another device as no devices found with account -->
     <string name="synced_tabs_connect_another_device">Połącz inne urządzenie.</string>
     <!-- Text displayed asking user to re-authenticate -->
-    <string name="synced_tabs_reauth">Proszę uwierzytelnić się ponownie.</string>
+    <string name="synced_tabs_reauth">Uwierzytelnij się ponownie.</string>
     <!-- Text displayed when user has disabled tab syncing in Firefox Sync Account -->
-    <string name="synced_tabs_enable_tab_syncing">Proszę włączyć synchronizację kart.</string>
+    <string name="synced_tabs_enable_tab_syncing">Włącz synchronizację kart.</string>
 
     <!-- Text displayed when user has no tabs that have been synced -->
     <string name="synced_tabs_no_tabs">Brak otwartych kart w Firefoksach na innych urządzeniach.</string>
@@ -1760,20 +1765,13 @@
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">Usuń</string>
 
-    <!-- Deprecated: text for the firefox account onboarding card header
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_firefox_account_header">Zacznij synchronizować zakładki, hasła i nie tylko za pomocą konta Firefoksa.</string>
-
     <!-- Content description radio buttons with a link to more information -->
     <string name="radio_preference_info_content_description">Kliknij, aby wyświetlić więcej informacji</string>
 
-    <!-- Deprecated: No Open Tabs Message Header -->
-    <string name="no_collections_header1">Zbierz rzeczy, które są dla Ciebie ważne</string>
-    <!-- Deprecated: Label to describe what collections are to a new user without any collections -->
-    <string name="no_collections_description1">Połącz ze sobą podobne wyszukiwania, witryny i karty, aby szybciej do nich wracać.</string>
-    <!-- Deprecated: text for the firefox account onboarding card header when we detect you're already signed in to -->
-    <string name="onboarding_firefox_account_auto_signin_header_2">Zalogowano jako %s w innej przeglądarce Firefox na tym telefonie. Czy chcesz się zalogować na tym koncie?</string>
-    <!-- Deprecated: Describes the add to homescreen functionality -->
-    <string name="add_to_homescreen_description">Można łatwo dodać tę stronę do ekranu głównego telefonu, aby mieć do niej bezpośredni dostęp i używać jej jak aplikację.</string>
+    <!-- Content description for the action bar "up" button -->
+    <string name="action_bar_up_description">Przejdź w górę</string>
 
-    </resources>
+    <!-- Content description for privacy content close button -->
+    <string name="privacy_content_close_button_content_description">Zamknij</string>
+
+</resources>
