@@ -23,7 +23,7 @@ class CreditCardItemViewHolder(
 ) : ViewHolder(view) {
 
     fun bind(creditCard: CreditCard) {
-        credit_card_number.text = creditCard.ellipsizedNumber
+        credit_card_number.text = creditCard.obfuscatedCardNumber
 
         bindCreditCardExpiryDate(creditCard)
 
