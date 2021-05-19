@@ -447,9 +447,6 @@
     <!-- Text displayed when there are no exceptions, with learn more link that brings users to a tracking protection SUMO page -->
     <string name="exceptions_empty_message_learn_more_link">Les mer</string>
 
-    <!-- Description in Quick Settings that tells user tracking protection is off globally for all sites, and links to Settings to turn it on -->
-    <string name="preferences_tracking_protection_turned_off_globally">Slått av globalt, gå til Innstillinger for å slå den på.</string>
-
     <!-- Preference switch for Telemetry -->
     <string name="preferences_telemetry">Telemetri</string>
 
@@ -461,6 +458,8 @@
     <string name="preferences_marketing_data">Markedsføringsdata</string>
     <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
     <string name="preferences_marketing_data_description">Deler data om hvilke funksjoner du bruker i %1$s med Leanplum, vår mobile markedsføringsleverandør.</string>
+    <!-- Preference description for marketing data collection -->
+    <string name="preferences_marketing_data_description2">Deler grunnleggende bruksdata med Adjust, vår mobile markedsføringsleverandør</string>
     <!-- Title for studies preferences -->
     <string name="preference_experiments_2">Undersøkelse</string>
     <!-- Summary for studies preferences -->
@@ -802,8 +801,6 @@
     <string name="bookmark_delete_folder_snackbar">Slettet %1$s</string>
     <!-- Screen title for adding a bookmarks folder -->
     <string name="bookmark_add_folder">Legg til mappe</string>
-    <!-- deprecated: Snackbar title shown after a bookmark has been created. -->
-    <string name="bookmark_created_snackbar">Bokmerke opprettet.</string>
     <!-- Snackbar title shown after a bookmark has been created. -->
     <string name="bookmark_saved_snackbar">Bokmerke lagret!</string>
     <!-- Snackbar edit button shown after a bookmark has been created. -->
@@ -1470,10 +1467,8 @@
     <string name="preferences_passwords_autofill">Autofyll</string>
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">Synkroniser innlogginger</string>
-    <!-- Syncing saved logins in Fenix is on -->
-    <string name="preferences_passwords_sync_logins_on">På</string>
-    <!-- Syncing saved logins in Fenix is off -->
-    <string name="preferences_passwords_sync_logins_off">Av</string>
+    <!-- Preference for syncing saved logins in Fenix, when not signed in-->
+    <string name="preferences_passwords_sync_logins_across_devices">Synkroniser innlogginger på tvers av enheter</string>
     <!-- Syncing saved logins in Fenix needs reconnect to sync -->
     <string name="preferences_passwords_sync_logins_reconnect">Koble til på nytt</string>
 
@@ -1578,6 +1573,8 @@
     <string name="preferences_credit_cards_save_and_autofill_cards_summary">Data er kryptert</string>
     <!-- Preference option for syncing credit cards across devices. This is displayed when the user is not signed into sync -->
     <string name="preferences_credit_cards_sync_cards_across_devices">Synkroniser kort på tvers av enheter</string>
+    <!-- Preference option for syncing credit cards across devices. This is displayed when the user is signed into sync -->
+    <string name="preferences_credit_cards_sync_cards">Synkroniser kort</string>
     <!-- Preference option for adding a credit card -->
     <string name="preferences_credit_cards_add_credit_card">Legg til betalingskort</string>
 
@@ -1607,6 +1604,9 @@
     <string name="credit_cards_cancel_button">Avbryt</string>
     <!-- Title of the "Saved cards" screen -->
     <string name="credit_cards_saved_cards">Lagrede kort</string>
+
+    <!-- Error message for credit card number validation -->
+    <string name="credit_cards_number_validation_error_message">Oppgi et gyldig betalingskortnummer</string>
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Legg til søkemotor</string>
@@ -1774,20 +1774,7 @@
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">Fjern</string>
 
-    <!-- Deprecated: text for the firefox account onboarding card header
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_firefox_account_header">Få mest mulig ut av %s.</string>
-
     <!-- Content description radio buttons with a link to more information -->
     <string name="radio_preference_info_content_description">Trykk her for mer informasjon</string>
-
-    <!-- Deprecated: No Open Tabs Message Header -->
-    <string name="no_collections_header1">Samle tingene som betyr noe for deg</string>
-    <!-- Deprecated: Label to describe what collections are to a new user without any collections -->
-    <string name="no_collections_description1">Grupper sammen lignende søk, nettsteder og faner for rask tilgang senere.</string>
-    <!-- Deprecated: text for the firefox account onboarding card header when we detect you're already signed in to -->
-    <string name="onboarding_firefox_account_auto_signin_header_2">Du er logget inn som %s på en annen Firefox-nettleser på denne telefonen. Vil du logge inn med denne kontoen?</string>
-    <!-- Deprecated: Describes the add to homescreen functionality -->
-    <string name="add_to_homescreen_description">Du kan enkelt legge til dette nettstedet på telefonens startskjerm for å få øyeblikkelig tilgang og surfe raskere med en app-lignende opplevelse.</string>
 
     </resources>
