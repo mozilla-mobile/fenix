@@ -392,6 +392,10 @@ class DefaultSessionControlController(
             metrics.track(Event.TopSiteOpenGoogle)
         }
 
+        if (url == SupportUtils.BAIDU_URL) {
+            metrics.track(Event.TopSiteOpenBaidu)
+        }
+
         if (url == SupportUtils.POCKET_TRENDING_URL) {
             metrics.track(Event.PocketTopSiteClicked)
         }
