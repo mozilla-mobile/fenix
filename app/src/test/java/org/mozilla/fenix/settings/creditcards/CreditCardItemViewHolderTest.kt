@@ -11,7 +11,6 @@ import io.mockk.verify
 import kotlinx.android.synthetic.main.credit_card_list_item.view.*
 import mozilla.components.concept.storage.CreditCard
 import mozilla.components.concept.storage.CreditCardNumber
-import mozilla.components.support.ktx.kotlin.addEllipsesToCreditCardNumber
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -51,7 +50,7 @@ class CreditCardItemViewHolderTest {
     fun `GIVEN a new credit card item on bind THEN set the card number and expiry date text`() {
         CreditCardItemViewHolder(view, interactor).bind(creditCard)
 
-        assertEquals(creditCard.cardNumberLast4.addEllipsesToCreditCardNumber(), view.credit_card_number.text)
+        assertEquals(creditCard.obfuscatedCardNumber, view.credit_card_number.text)
         assertEquals("0${creditCard.expiryMonth}/${creditCard.expiryYear}", view.expiry_date.text)
     }
 
