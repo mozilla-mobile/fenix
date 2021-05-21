@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.settings
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import androidx.browser.customtabs.CustomTabColorSchemeParams
@@ -18,6 +19,8 @@ import org.mozilla.fenix.settings.account.AuthIntentReceiverActivity
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
 import java.util.Locale
+import java.text.SimpleDateFormat
+import java.util.Date
 
 object SupportUtils {
     const val RATE_APP_URL = "market://details?id=" + BuildConfig.APPLICATION_ID
@@ -36,6 +39,33 @@ object SupportUtils {
             "cpsSign=CM_210309_13289095_194240604_8bcfd56d5db3c43d983014d2658ec26e&duoduo_type=2"
     const val GOOGLE_US_URL = "https://www.google.com/webhp?client=firefox-b-1-m&channel=ts"
     const val GOOGLE_XX_URL = "https://www.google.com/webhp?client=firefox-b-m&channel=ts"
+
+    data class ShoppingFes(
+        val website: String,
+        val shoppingFesName: String = "",
+        val icon: Int,
+        val url: String = "",
+        val startDate: String = "", // Format in "dd/MM/yyyy".
+        val endDate: String = "" // Format in "dd/MM/yyyy".
+    )
+
+    // Initialize these two value with fresh params for every shopping fes.
+    val shoppingFesJD = ShoppingFes("JD", icon = R.drawable.ic_jd)
+    val shoppingFesPDD = ShoppingFes("PDD", icon = R.drawable.ic_pdd)
+
+    @SuppressLint("SimpleDateFormat")
+    val sdf = SimpleDateFormat("dd/MM/yyyy")
+    val currentDate: String = sdf.format(Date())
+    val isShoppingFesForJD = currentDate.isNotEmpty() &&
+            shoppingFesJD.endDate.isNotEmpty() &&
+            shoppingFesJD.startDate.isNotEmpty() &&
+            sdf.parse(currentDate)!!.before(sdf.parse(shoppingFesJD.endDate)) &&
+            sdf.parse(currentDate)!!.after(sdf.parse(shoppingFesJD.startDate))
+    val isShoppingFesForPDD = currentDate.isNotEmpty() &&
+            shoppingFesPDD.endDate.isNotEmpty() &&
+            shoppingFesPDD.startDate.isNotEmpty() &&
+            sdf.parse(currentDate)!!.before(sdf.parse(shoppingFesPDD.endDate)) &&
+            sdf.parse(currentDate)!!.after(sdf.parse(shoppingFesPDD.startDate))
 
     enum class SumoTopic(internal val topicStr: String) {
         FENIX_MOVING("sync-delist"),

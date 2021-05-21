@@ -377,6 +377,7 @@ class DefaultSessionControlController(
         metrics.track(Event.CollectionRenamePressed)
     }
 
+    @Suppress("ComplexMethod")
     override fun handleSelectTopSite(url: String, type: TopSite.Type) {
         dismissSearchDialogIfDisplayed()
 
@@ -409,8 +410,18 @@ class DefaultSessionControlController(
             }
         event?.let { activity.metrics.track(it) }
 
+        var specialUrl = url
+        if (SupportUtils.isShoppingFesForJD && url == SupportUtils.JD_URL &&
+            SupportUtils.shoppingFesJD.url.isNotEmpty()) {
+            specialUrl = SupportUtils.shoppingFesJD.url
+        }
+        if (SupportUtils.isShoppingFesForPDD && url == SupportUtils.PDD_URL &&
+            SupportUtils.shoppingFesPDD.url.isNotEmpty()) {
+            specialUrl = SupportUtils.shoppingFesPDD.url
+        }
+
         val tabId = addTabUseCase.invoke(
-            url = appendSearchAttributionToUrlIfNeeded(url),
+            url = appendSearchAttributionToUrlIfNeeded(specialUrl),
             selectTab = true,
             startLoading = true
         )
