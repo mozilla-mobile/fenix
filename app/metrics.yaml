@@ -205,11 +205,13 @@ events:
         description: |
           A string containing the name of the item the user tapped. These items
           include:
-
-            Settings, Help, Desktop Site toggle on/off, Find in Page,
-            New Tab, Private Tab, Share, Report Site Issue, Back/Forward button,
-            Reload Button, Quit, Reader Mode On, Reader Mode Off, Open In app,
-            Add To Top Sites, Add-ons Manager, Bookmarks, History
+          add_to_homescreen, add_to_top_sites, addons_manager, back, bookmark,
+          bookmarks, desktop_view_off, desktop_view_on, downloads,
+          find_in_page, forward, help, history, library, new_private_tab,
+          new_tab, open_in_app, open_in_fenix, quit, reader_mode_appearance,
+          reader_mode_off, reader_mode_on, reload, save_to_collection,
+          set_default_browser, settings, share, stop, sync_account, and
+          sync_tabs.
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/1024
     data_reviews:
@@ -223,6 +225,32 @@ events:
     notification_emails:
       - fenix-core@mozilla.com
     expires: "2021-07-01"
+  default_browser_changed:
+    type: event
+    description: |
+      Indicates the default browser was changed
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/18857
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/18895
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2021-10-01"
+  toolbar_menu_visible:
+    type: event
+    description: |
+      The browser menu was displayed from toolbar menu
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/18855
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/18895
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2021-10-01"
   total_uri_count:
     type: counter
     description: |
@@ -561,6 +589,20 @@ search_shortcuts:
       - fenix-core@mozilla.com
     expires: "2021-08-01"
 
+experiments_default_browser:
+  toolbar_menu_clicked:
+    type: event
+    description: |
+      Set default browser was clicked from toolbar menu
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/18851
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/18895
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2021-10-01"
 toolbar_settings:
   changed_position:
     type: event
@@ -1227,27 +1269,10 @@ metrics:
       - perf-android-fe@mozilla.com
       - mcomella@mozilla.com
     expires: "2021-08-11"
-  activity_state_provider_error:
-    type: boolean
-    description: |
-      The `StartupActivityStateProvider...onActivityStarted` was unexpectedly
-      called twice. We can use this metric to validate our assumptions about
-      how these APIs are called. This probe can be removed once we validate
-      these assumptions.
-    bugs:
-      - https://github.com/mozilla-mobile/fenix/issues/18426
-    data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/18632#issue-600193452
-    data_sensitivity:
-      - technical
-    notification_emails:
-      - perf-android-fe@mozilla.com
-      - mcomella@mozilla.com
-    expires: "2021-08-11"
 
 preferences:
-  show_search_suggestions:
-    type: string_list
+  search_suggestions_enabled:
+    type: boolean
     description: >
       Whether or not the user has search suggestions enabled
       default: true
@@ -1263,8 +1288,8 @@ preferences:
     notification_emails:
       - fenix-core@mozilla.com
     expires: "2021-08-01"
-  remote_debugging:
-    type: string_list
+  remote_debugging_enabled:
+    type: boolean
     description: >
       Whether or not the user has remote debugging enabled
       default: false
@@ -1280,8 +1305,8 @@ preferences:
     notification_emails:
       - fenix-core@mozilla.com
     expires: "2021-08-01"
-  telemetry:
-    type: string_list
+  telemetry_enabled:
+    type: boolean
     description: >
       Whether or not the user has telemetry enabled. Note we should
       never receive a "false" value for this since telemetry would
@@ -1299,8 +1324,8 @@ preferences:
     notification_emails:
       - fenix-core@mozilla.com
     expires: "2021-08-01"
-  tracking_protection:
-    type: string_list
+  enhanced_tracking_protection:
+    type: string
     description: >
       What type of enhanced tracking protection the user has enabled.
       "standard," "strict," "custom," or "" (if disabled)
@@ -1317,8 +1342,8 @@ preferences:
     notification_emails:
       - fenix-core@mozilla.com
     expires: "2021-08-01"
-  search_bookmarks:
-    type: string_list
+  bookmarks_suggestion:
+    type: boolean
     description: >
       Whether or not the user has enabled bookmark search suggestions
       default: true
@@ -1334,8 +1359,8 @@ preferences:
     notification_emails:
       - fenix-core@mozilla.com
     expires: "2021-08-01"
-  search_browsing_history:
-    type: string_list
+  browsing_history_suggestion:
+    type: boolean
     description: >
       Whether or not the user has enabled browsing history suggestions.
       default: true
@@ -1351,8 +1376,8 @@ preferences:
     notification_emails:
       - fenix-core@mozilla.com
     expires: "2021-08-01"
-  show_clipboard_suggestions:
-    type: string_list
+  clipboard_suggestions_enabled:
+    type: boolean
     description: >
       Whether or not the user has enabled clipboard search suggestions.
       default: true
@@ -1368,8 +1393,8 @@ preferences:
     notification_emails:
       - fenix-core@mozilla.com
     expires: "2021-08-01"
-  show_search_shortcuts:
-    type: string_list
+  search_shortcuts_enabled:
+    type: boolean
     description: >
       Whether or not the user has enabled search shortcuts.
       default: true
@@ -1385,8 +1410,8 @@ preferences:
     notification_emails:
       - fenix-core@mozilla.com
     expires: "2021-08-01"
-  open_links_in_a_private_tab:
-    type: string_list
+  open_links_in_private:
+    type: boolean
     description: >
       Whether or not the user has enabled open links in a private tab.
       default: false
@@ -1402,8 +1427,8 @@ preferences:
     notification_emails:
       - fenix-core@mozilla.com
     expires: "2021-08-01"
-  sync:
-    type: string_list
+  signed_in_sync:
+    type: boolean
     description: >
       Whether or not the user is signed into FxA
       default: false
@@ -1438,8 +1463,8 @@ preferences:
     notification_emails:
       - fenix-core@mozilla.com
     expires: "2021-08-01"
-  show_voice_search:
-    type: string_list
+  voice_search_enabled:
+    type: boolean
     description: >
       Whether or not the user has enabled the voice search button.
       default: true
@@ -1455,8 +1480,8 @@ preferences:
     notification_emails:
       - fenix-core@mozilla.com
     expires: "2021-08-01"
-  search_suggestions_private:
-    type: string_list
+  private_search_suggestions:
+    type: boolean
     description: >
       Whether or not the user has enabled showing search suggestions
       in private mode.
@@ -1473,8 +1498,8 @@ preferences:
     notification_emails:
       - fenix-core@mozilla.com
     expires: "2021-08-01"
-  toolbar_position:
-    type: string_list
+  toolbar_position_setting:
+    type: string
     description: >
       The position of the toolbar
       default: bottom (defaults to top if the user has accessibility services)
@@ -1508,8 +1533,8 @@ preferences:
     notification_emails:
       - fenix-core@mozilla.com
     expires: "2021-08-01"
-  open_links_in_app:
-    type: string_list
+  open_links_in_app_enabled:
+    type: boolean
     description: >
       Whether or not the user has the open links in apps feature enabled.
       default: false
@@ -1525,8 +1550,8 @@ preferences:
     notification_emails:
       - fenix-core@mozilla.com
     expires: "2021-08-01"
-  theme:
-    type: string_list
+  user_theme:
+    type: string
     description: >
       The theme the user has enabled. "light," "dark," "system," or "battery"
       default: "system" for API 28+, else "light"
@@ -2490,6 +2515,19 @@ tabs_tray:
     notification_emails:
       - fenix-core@mozilla.com
     expires: "2021-08-01"
+  synced_mode_tapped:
+    type: event
+    description: |
+      A user switched to synced mode
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/18948
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/19004
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2022-08-01"
   new_tab_tapped:
     type: event
     description: |
@@ -3913,7 +3951,7 @@ browser.search:
     type: labeled_counter
     description: |
       Records counts of SERP pages with adverts displayed.
-      The key format is ‘<provider-name>’.
+      The key format is `<provider-name>`.
     send_in_pings:
       - metrics
     bugs:
@@ -3930,7 +3968,7 @@ browser.search:
     type: labeled_counter
     description: |
       Records clicks of adverts on SERP pages.
-      The key format is ‘<provider-name>’.
+      The key format is `<provider-name>`.
     send_in_pings:
       - metrics
     bugs:
@@ -4224,6 +4262,9 @@ perf.startup:
       The hope is that these cases will not have a significant impact on the end
       results but, if they appear to, we can replace it with a more complex
       implementation.
+      <br><br>
+      Around April 8, 2021 the implementation was refactored. Functionally, it
+      should be the same but it's noted just in case there are bugs.
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/18426
     data_reviews:
@@ -4248,6 +4289,9 @@ perf.startup:
       <br><br>
       See the `cold_main_app_to_first_frame` probe docs for other possible
       known issues and more details.
+      <br><br>
+      Around April 8, 2021 the implementation was refactored. Functionally, it
+      should be the same but it's noted just in case there are bugs.
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/18426
     data_reviews:
@@ -4270,6 +4314,9 @@ perf.startup:
       <br><br>
       See the `cold_main_app_to_first_frame` probe docs for known issues and
       more details.
+      <br><br>
+      Around April 8, 2021 the implementation was refactored. Functionally, it
+      should be the same but it's noted just in case there are bugs.
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/18426
     data_reviews:
@@ -4447,6 +4494,81 @@ perf.startup:
       - perf-android-fe@mozilla.com
       - mcomella@mozilla.com
     expires: "2021-08-11"
+  startup_type:
+    type: labeled_counter
+    description: |
+      Indicates how the browser was started. The label is divided into two
+      variables. `state` is how cached the browser is when started. `path` is
+      what code path we are expected to take. Together, they create a combined
+      label: `state_path`. For brevity, the specific states are documented in
+      the [Fenix perf
+      glossary](https://wiki.mozilla.org/index.php?title=Performance/Fenix/Glossary).
+      <br><br>
+      This implementation is intended to be simple, not comprehensive. We list
+      the implications below.
+
+      <br><br>
+      These ways of opening the app undesirably adds events to our primary
+      buckets (non-`unknown` cases):
+      <br>- App switcher cold/warm: `cold/warm_` + duplicates path from
+      previous launch
+      <br>- Home screen shortcuts: `*_view`
+      <br>- An Intent is sent internally that's uses `ACTION_MAIN` or
+      `ACTION_VIEW` could be: `*_main/view` (unknown if this ever happens)
+      <br>- A command-line launch uses `ACTION_MAIN` or `ACTION_VIEW` could be:
+      `*_main/view`
+
+      <br><br>
+      These ways of opening the app undesirably do not add their events to our
+      primary buckets:
+      <br>- Close and reopen the app very quickly: no event is recorded.
+
+      <br><br>
+      These ways of opening the app don't affect our primary buckets:
+      <br>- App switcher hot: `hot_unknown`
+      <br>- PWA (all states): `unknown_unknown`
+      <br>- Custom tab: `unknown_view`
+      <br>- Cold start where a service or other non-activity starts the process
+      (not manually tested) - this seems to happen if you have the homescreen
+      widget: `unknown_*`
+      <br>- Another activity is drawn before HomeActivity (e.g. widget voice
+      search): `unknown_*`
+      <br>- Widget text search: `*_unknown`
+
+      <br><br>
+      In addition to the events above, the `unknown` state may be chosen when we
+      were unable to determine a cause due to implementation details or the API
+      was used incorrectly. We may be able to record the events listed above
+      into different buckets but we kept the implementation simple for now.
+      <br><br>
+      N.B.: for implementation simplicity, we duplicate the logic in app that
+      determines `path` so it's not perfectly accurate. In one way, we record we
+      is intended to happen rather than what actually happened (e.g. the user
+      may click a link so we record VIEW but the app does a MAIN by going to the
+      homescreen because the link was invalid).
+    labels:
+      - cold_main
+      - cold_view
+      - cold_unknown
+      - warm_main
+      - warm_view
+      - warm_unknown
+      - hot_main
+      - hot_view
+      - hot_unknown
+      - unknown_main
+      - unknown_view
+      - unknown_unknown
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/18836
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/19028
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - perf-android-fe@mozilla.com
+      - mcomella@mozilla.com
+    expires: "2021-10-09"
 
 perf.awesomebar:
   history_suggestions:
@@ -4466,7 +4588,7 @@ perf.awesomebar:
     notification_emails:
       - fenix-core@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2020-11-15"
+    expires: "2021-11-15"
   bookmark_suggestions:
     send_in_pings:
       - metrics
@@ -4484,7 +4606,7 @@ perf.awesomebar:
     notification_emails:
       - fenix-core@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2020-11-15"
+    expires: "2021-11-15"
   search_engine_suggestions:
     send_in_pings:
       - metrics
@@ -4502,7 +4624,7 @@ perf.awesomebar:
     notification_emails:
       - fenix-core@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2020-11-15"
+    expires: "2021-11-15"
   session_suggestions:
     send_in_pings:
       - metrics
@@ -4520,7 +4642,7 @@ perf.awesomebar:
     notification_emails:
       - fenix-core@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2020-11-15"
+    expires: "2021-11-15"
   synced_tabs_suggestions:
     send_in_pings:
       - metrics
@@ -4538,7 +4660,7 @@ perf.awesomebar:
     notification_emails:
       - fenix-core@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2020-11-15"
+    expires: "2021-11-15"
   clipboard_suggestions:
     send_in_pings:
       - metrics
@@ -4556,7 +4678,7 @@ perf.awesomebar:
     notification_emails:
       - fenix-core@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2020-11-15"
+    expires: "2021-11-15"
   shortcuts_suggestions:
     send_in_pings:
       - metrics
@@ -4574,7 +4696,7 @@ perf.awesomebar:
     notification_emails:
       - fenix-core@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2020-11-15"
+    expires: "2021-11-15"
 
 autoplay:
   visited_setting:
@@ -4965,6 +5087,46 @@ engine_tab:
       - fenix-core@mozilla.com
       - skaspari@mozilla.com
     expires: "2021-12-31"
+  foreground_metrics:
+    type: event
+    description: |
+      Event collecting data about the state of tabs when the app comes back to
+      the foreground.
+    bugs:
+      - https://github.com/mozilla-mobile/android-components/issues/9997
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/18747#issuecomment-815731764
+    data_sensitivity:
+      - technical
+    notification_emails:
+      - fenix-core@mozilla.com
+      - skaspari@mozilla.com
+    expires: "2021-12-31"
+    extra_keys:
+      background_active_tabs:
+        description: |
+          Number of active tabs (with an engine session assigned) when the app
+          went to the background.
+      background_crashed_tabs:
+        description: |
+          Number of tabs marked as crashed when the app went to the background.
+      background_total_tabs:
+        description: |
+          Number of total tabs when the app went to the background.
+      foreground_active_tabs:
+        description: |
+          Number of active tabs (with an engine session assigned) when the
+          app came back to the foreground.
+      foreground_crashed_tabs:
+        description: |
+          Number of tabs marked as crashed when the app came back to the
+          foreground.
+      foreground_total_tabs:
+        description: |
+          Number of total tabs when the app came back to the foreground.
+      time_in_background:
+        description: |
+          Time (in milliseconds) the app was in the background.
 
 synced_tabs:
   synced_tabs_suggestion_clicked:
@@ -5060,6 +5222,34 @@ awesomebar:
     notification_emails:
       - fenix-core@mozilla.com
     expires: "2021-08-01"
+
+home_menu:
+  settings_item_clicked:
+    type: event
+    description: The user clicked the settings option in home menu.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/18856
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/18987
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2021-10-01"
+
+home_screen:
+  home_screen_displayed:
+    type: event
+    description: The user clicked the settings option in home menu.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/18856
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/19025
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2021-10-01"
 
 android_keystore_experiment:
   experiment_failure:
@@ -5161,3 +5351,46 @@ android_keystore_experiment:
     notification_emails:
       - fenix-core@mozilla.com
     expires: "2021-09-01"
+
+set_default_newtab_experiment:
+  set_default_browser_clicked:
+    type: event
+    description: |
+      Set default browser was clicked from new tab screen.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/18853
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/18895
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2021-10-01"
+  close_experiment_card_clicked:
+    type: event
+    description: |
+      Close experiment card was clicked from new tab screen.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/18853
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/18895
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2021-10-01"
+
+set_default_setting_experiment:
+  set_default_browser_clicked:
+    type: event
+    description: |
+      Set default browser was clicked from settings screen.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/18852
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/19047
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2021-10-01"

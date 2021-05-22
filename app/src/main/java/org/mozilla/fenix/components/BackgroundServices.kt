@@ -95,8 +95,8 @@ class BackgroundServices(
     private val syncConfig = SyncConfig(supportedEngines, PeriodicSyncConfig(periodMinutes = 240)) // four hours
 
     init {
-        /* Make the "history", "bookmark", "passwords", and "tabs" stores accessible to workers
-           spawned by the sync manager. */
+        // Make the "history", "bookmark", "passwords", "tabs" stores
+        // accessible to workers spawned by the sync manager.
         GlobalSyncableStoreProvider.configureStore(SyncEngine.History to historyStorage)
         GlobalSyncableStoreProvider.configureStore(SyncEngine.Bookmarks to bookmarkStorage)
         GlobalSyncableStoreProvider.configureStore(SyncEngine.Passwords to passwordsStorage)
@@ -188,6 +188,7 @@ internal class TelemetryAccountObserver(
     private val metricController: MetricController
 ) : AccountObserver {
     override fun onAuthenticated(account: OAuthAccount, authType: AuthType) {
+        settings.signedInFxaAccount = true
         when (authType) {
             // User signed-in into an existing FxA account.
             AuthType.Signin -> Event.SyncAuthSignIn
@@ -216,14 +217,10 @@ internal class TelemetryAccountObserver(
         }?.let {
             metricController.track(it)
         }
-
-        // Used by Leanplum as a context variable.
-        settings.fxaSignedIn = true
     }
 
     override fun onLoggedOut() {
         metricController.track(Event.SyncAuthSignOut)
-        // Used by Leanplum as a context variable.
-        settings.fxaSignedIn = false
+        settings.signedInFxaAccount = false
     }
 }

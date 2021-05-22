@@ -80,6 +80,7 @@ class TabDrawerRobot {
     fun verifySelectTabsButton() = assertSelectTabsButton()
     fun verifyTabTrayOverflowMenu(visibility: Boolean) = assertTabTrayOverflowButton(visibility)
 
+    fun verifyTabTrayIsOpened() = assertTabTrayDoesExist()
     fun verifyTabTrayIsClosed() = assertTabTrayDoesNotExist()
     fun verifyHalfExpandedRatio() = assertMinisculeHalfExpandedRatio()
     fun verifyBehaviorState(expectedState: Int) = assertBehaviorState(expectedState)
@@ -160,11 +161,29 @@ class TabDrawerRobot {
 
     fun clickTabMediaControlButton() = tabMediaControlButton().click()
 
-    fun clickSelectTabs() = onView(withText("Select tabs")).click()
+    fun clickSelectTabs() {
+        threeDotMenu().click()
+
+        mDevice.waitNotNull(
+            Until.findObject(text("Select tabs")),
+            waitingTime
+        )
+
+        val selectTabsButton = mDevice.findObject(text("Select tabs"))
+        selectTabsButton.click()
+    }
 
     fun clickAddNewCollection() = addNewCollectionButton().click()
 
-    fun selectTab(title: String) = tab(title).click()
+    fun selectTab(title: String) {
+        mDevice.waitNotNull(
+            findObject(text(title)),
+            waitingTime
+        )
+
+        val tab = mDevice.findObject(text(title))
+        tab.click()
+    }
 
     fun clickSaveCollection() = saveTabsToCollectionButton().click()
 
@@ -198,15 +217,10 @@ class TabDrawerRobot {
         }
 
         fun openTabDrawer(interact: TabDrawerRobot.() -> Unit): TabDrawerRobot.Transition {
-            mDevice.findObject(UiSelector().resourceId("org.mozilla.fenix.debug:id/tab_button"))
-                .waitForExists(waitingTime)
-
+            mDevice.waitForIdle(waitingTime)
             tabsCounter().click()
-
-            org.mozilla.fenix.ui.robots.mDevice.waitNotNull(
-                Until.findObject(By.res("org.mozilla.fenix.debug:id/tab_layout")),
-                waitingTime
-            )
+            mDevice.waitNotNull(Until.findObject(By.res("$packageName:id/tab_layout")),
+                waitingTime)
 
             TabDrawerRobot().interact()
             return TabDrawerRobot.Transition()
@@ -407,6 +421,11 @@ private fun assertPrivateModeSelected() =
 private fun assertTabTrayOverflowButton(visible: Boolean) =
     onView(withId(R.id.tab_tray_overflow))
         .check(matches(withEffectiveVisibility(visibleOrGone(visible))))
+
+private fun assertTabTrayDoesExist() {
+    onView(withId(R.id.tab_wrapper))
+        .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+}
 
 private fun assertTabTrayDoesNotExist() {
     onView(withId(R.id.tab_wrapper))

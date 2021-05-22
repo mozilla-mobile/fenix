@@ -17,6 +17,7 @@ import org.junit.Before
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
@@ -41,7 +42,7 @@ import org.mozilla.fenix.ui.util.STRING_ONBOARDING_TRACKING_PROTECTION_HEADER
  * Test Suite that contains tests defined as part of the Smoke and Sanity check defined in Test rail.
  * These tests will verify different functionalities of the app as a way to quickly detect regressions in main areas
  */
-
+@Suppress("ForbiddenComment")
 class SmokeTest {
     private val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
     private lateinit var mockWebServer: MockWebServer
@@ -193,14 +194,13 @@ class SmokeTest {
 
     @Test
     // Verifies the list of items in a tab's 3 dot menu
-    @Ignore("To be re-implemented with the three dot menu changes https://github.com/mozilla-mobile/fenix/issues/17870")
     fun verifyPageMainMenuItemsTest() {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
         }.openThreeDotMenu {
-            verifyThreeDotMainMenuItems()
+            verifyPageThreeDotMainMenuItems()
         }
     }
 
@@ -227,12 +227,21 @@ class SmokeTest {
     }
 
     @Test
-    // Verifies the Synced tabs menu opens from a tab's 3 dot menu
-    fun openMainMenuSyncedTabsItemTest() {
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSyncedTabs {
-            verifySyncedTabsMenuHeader()
+    // Verifies the Synced tabs menu or Sync Sign In menu opens from a tab's 3 dot menu.
+    // The test is assuming we are NOT signed in.
+    fun openMainMenuSyncItemTest() {
+        if (FeatureFlags.tabsTrayRewrite) {
+            homeScreen {
+            }.openThreeDotMenu {
+            }.openSyncSignIn {
+                verifySyncSignInMenuHeader()
+            }
+        } else {
+            homeScreen {
+            }.openThreeDotMenu {
+            }.openSyncedTabs {
+                verifySyncedTabsMenuHeader()
+            }
         }
     }
 
@@ -268,6 +277,7 @@ class SmokeTest {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
         }.openThreeDotMenu {
+            expandMenu()
         }.addToFirefoxHome {
             verifySnackBarText("Added to top sites!")
         }.openTabDrawer {
@@ -286,12 +296,14 @@ class SmokeTest {
         }.openNavigationToolbar {
         }.enterURLAndEnterToBrowser(website.url) {
         }.openThreeDotMenu {
+            expandMenu()
         }.openAddToHomeScreen {
             clickCancelShortcutButton()
         }
 
         browserScreen {
         }.openThreeDotMenu {
+            expandMenu()
         }.openAddToHomeScreen {
             verifyShortcutNameField("Test_Page_1")
             addShortcutName("Test Page")
@@ -316,7 +328,6 @@ class SmokeTest {
 
     @Test
     // Verifies the Bookmark button in a tab's 3 dot menu
-    @Ignore("To be re-implemented in https://github.com/mozilla-mobile/fenix/issues/17979")
     fun mainMenuBookmarkButtonTest() {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
@@ -351,7 +362,6 @@ class SmokeTest {
             mDevice.waitForIdle()
         }.openThreeDotMenu {
             verifyThreeDotMenuExists()
-            verifyRefreshButton()
         }.refreshPage {
             verifyPageContent("REFRESHED")
         }
@@ -359,7 +369,6 @@ class SmokeTest {
 
     @Test
     // Turns ETP toggle off from Settings and verifies the ETP shield is not displayed in the nav bar
-    @Ignore("To be re-implemented with the three dot menu changes https://github.com/mozilla-mobile/fenix/issues/17870")
     fun verifyETPShieldNotDisplayedIfOFFGlobally() {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
@@ -536,7 +545,6 @@ class SmokeTest {
 
     @Test
     // Saves a login, then changes it and verifies the update
-    @Ignore("To be re-implemented with the three dot menu changes https://github.com/mozilla-mobile/fenix/issues/17870")
     fun updateSavedLoginTest() {
         val saveLoginTest =
             TestAssetHelper.getSaveLoginAsset(mockWebServer)
@@ -600,7 +608,6 @@ class SmokeTest {
     }
 
     @Test
-    @Ignore("To be re-implemented in https://github.com/mozilla-mobile/fenix/issues/17799")
     // Installs uBlock add-on and checks that the app doesn't crash while loading pages with trackers
     fun noCrashWithAddonInstalledTest() {
         // setting ETP to Strict mode to test it works with add-ons
@@ -888,6 +895,7 @@ class SmokeTest {
         }
     }
 
+    @Ignore("Disabling until re-implemented by #19090")
     @Test
     fun verifyExpandedCollectionItemsTest() {
         val webPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -937,6 +945,7 @@ class SmokeTest {
         }
     }
 
+    @Ignore("Disabling until re-implemented by #19090")
     @Test
     fun shareCollectionTest() {
         val webPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -954,6 +963,7 @@ class SmokeTest {
         }
     }
 
+    @Ignore("Disabling until re-implemented by #19090")
     @Test
     fun deleteCollectionTest() {
         val webPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -975,7 +985,6 @@ class SmokeTest {
 
     @Test
     // Verifies that deleting a Bookmarks folder also removes the item from inside it.
-    @Ignore("To be re-implemented in https://github.com/mozilla-mobile/fenix/issues/17799")
     fun deleteNonEmptyBookmarkFolderTest() {
         val website = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
@@ -1052,6 +1061,7 @@ class SmokeTest {
         }
     }
 
+    @Ignore("Feature is temporarily removed; disabling test. See https://github.com/mozilla-mobile/fenix/issues/18656")
     @Test
     fun selectTabsButtonVisibilityTest() {
         homeScreen {
@@ -1136,7 +1146,6 @@ class SmokeTest {
     }
 
     @Test
-    @Ignore("To be re-implemented in https://github.com/mozilla-mobile/fenix/issues/17799")
     fun mainMenuInstallPWATest() {
         val pwaPage = "https://rpappalax.github.io/testapp/"
 
@@ -1153,7 +1162,6 @@ class SmokeTest {
     }
 
     @Test
-    @Ignore("To be re-implemented in https://github.com/mozilla-mobile/fenix/issues/17971")
     // Verifies that reader mode is detected and the custom appearance controls are displayed
     fun verifyReaderViewAppearanceUI() {
         val readerViewPage =

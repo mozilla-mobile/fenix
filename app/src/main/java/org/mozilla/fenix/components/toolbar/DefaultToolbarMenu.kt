@@ -7,6 +7,7 @@ package org.mozilla.fenix.components.toolbar
 import android.content.Context
 import androidx.annotation.ColorRes
 import androidx.annotation.VisibleForTesting
+import androidx.annotation.VisibleForTesting.PRIVATE
 import androidx.core.content.ContextCompat.getColor
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
@@ -21,6 +22,7 @@ import mozilla.components.browser.menu.item.BrowserMenuDivider
 import mozilla.components.browser.menu.item.BrowserMenuHighlightableItem
 import mozilla.components.browser.menu.item.BrowserMenuImageSwitch
 import mozilla.components.browser.menu.item.BrowserMenuImageText
+import mozilla.components.browser.menu.item.BrowserMenuImageTextCheckboxButton
 import mozilla.components.browser.menu.item.BrowserMenuItemToolbar
 import mozilla.components.browser.menu.item.WebExtensionPlaceholderMenuItem
 import mozilla.components.browser.state.selector.findTab
@@ -33,13 +35,19 @@ import mozilla.components.lib.state.ext.flowScoped
 import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifAnyChanged
 import org.mozilla.fenix.FeatureFlags
+import org.mozilla.fenix.FeatureFlags.tabsTrayRewrite
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
+import org.mozilla.fenix.components.accounts.FenixAccountManager
+import org.mozilla.fenix.experiments.ExperimentBranch
+import org.mozilla.fenix.experiments.Experiments
 import org.mozilla.fenix.ext.asActivity
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.ext.withExperiment
 import org.mozilla.fenix.theme.ThemeManager
+import org.mozilla.fenix.utils.BrowsersCache
 
 /**
  * Builds the toolbar object used with the 3-dot menu in the browser fragment.
@@ -50,13 +58,12 @@ import org.mozilla.fenix.theme.ThemeManager
  * @param lifecycleOwner View lifecycle owner used to determine when to cancel UI jobs.
  * @param bookmarksStorage Used to check if a page is bookmarked.
  */
-@Suppress("LargeClass", "LongParameterList")
+@Suppress("LargeClass", "LongParameterList", "TooManyFunctions")
 @ExperimentalCoroutinesApi
-class DefaultToolbarMenu(
+open class DefaultToolbarMenu(
     private val context: Context,
     private val store: BrowserStore,
     hasAccountProblem: Boolean = false,
-    shouldReverseItems: Boolean,
     private val onItemTapped: (ToolbarMenu.Item) -> Unit = {},
     private val lifecycleOwner: LifecycleOwner,
     private val bookmarksStorage: BookmarksStorage,
@@ -65,7 +72,11 @@ class DefaultToolbarMenu(
 
     private var isCurrentUrlBookmarked = false
     private var isBookmarkedJob: Job? = null
-    private val isTopToolbarSelected = shouldReverseItems
+
+    private val shouldDeleteDataOnQuit = context.settings().shouldDeleteBrowsingDataOnQuit
+    private val shouldUseBottomToolbar = context.settings().shouldUseBottomToolbar
+    private val accountManager = FenixAccountManager(context)
+
     private val selectedSession: TabSessionState?
         get() = store.state.selectedTab
 
@@ -77,13 +88,16 @@ class DefaultToolbarMenu(
                 } else {
                     oldCoreMenuItems
                 },
-            endOfMenuAlwaysVisible = !shouldReverseItems,
+            endOfMenuAlwaysVisible = shouldUseBottomToolbar,
             store = store,
-            webExtIconTintColorResource = primaryTextColor(),
+            style = WebExtensionBrowserMenuBuilder.Style(
+                webExtIconTintColorResource = primaryTextColor(),
+                addonsManagerMenuItemDrawableRes = R.drawable.ic_addons_extensions
+            ),
             onAddonsManagerTapped = {
                 onItemTapped.invoke(ToolbarMenu.Item.AddonsManager)
             },
-            appendExtensionSubMenuAtStart = !shouldReverseItems
+            appendExtensionSubMenuAtStart = shouldUseBottomToolbar
         )
     }
 
@@ -137,7 +151,7 @@ class DefaultToolbarMenu(
         }
 
         val share = BrowserMenuItemToolbar.Button(
-            imageResource = R.drawable.ic_share_filled,
+            imageResource = R.drawable.ic_share,
             contentDescription = context.getString(R.string.browser_menu_share),
             iconTintColorResource = primaryTextColor(),
             listener = {
@@ -148,7 +162,7 @@ class DefaultToolbarMenu(
         registerForIsBookmarkedUpdates()
 
         if (FeatureFlags.toolbarMenuFeature) {
-            BrowserMenuItemToolbar(listOf(back, forward, share, refresh))
+            BrowserMenuItemToolbar(listOf(back, forward, share, refresh), isSticky = true)
         } else {
             val bookmark = BrowserMenuItemToolbar.TwoStateButton(
                 primaryImageResource = R.drawable.ic_bookmark_filled,
@@ -163,8 +177,7 @@ class DefaultToolbarMenu(
                 secondaryImageTintResource = primaryTextColor(),
                 disableInSecondaryState = false
             ) {
-                if (!isCurrentUrlBookmarked) isCurrentUrlBookmarked = true
-                onItemTapped.invoke(ToolbarMenu.Item.Bookmark)
+                handleBookmarkItemTapped()
             }
 
             BrowserMenuItemToolbar(listOf(back, forward, bookmark, share, refresh))
@@ -172,23 +185,42 @@ class DefaultToolbarMenu(
     }
 
     // Predicates that need to be repeatedly called as the session changes
-    private fun canAddToHomescreen(): Boolean =
+    @VisibleForTesting(otherwise = PRIVATE)
+    fun canAddToHomescreen(): Boolean =
         selectedSession != null && isPinningSupported &&
                 !context.components.useCases.webAppUseCases.isInstallable()
 
-    private fun canInstall(): Boolean =
+    @VisibleForTesting(otherwise = PRIVATE)
+    fun canInstall(): Boolean =
         selectedSession != null && isPinningSupported &&
                 context.components.useCases.webAppUseCases.isInstallable()
 
-    private fun shouldShowOpenInApp(): Boolean = selectedSession?.let { session ->
+    @VisibleForTesting(otherwise = PRIVATE)
+    fun shouldShowOpenInApp(): Boolean = selectedSession?.let { session ->
         val appLink = context.components.useCases.appLinksUseCases.appLinkRedirect
         appLink(session.content.url).hasExternalApp()
     } ?: false
 
-    private fun shouldShowReaderViewCustomization(): Boolean = selectedSession?.let {
+    @VisibleForTesting(otherwise = PRIVATE)
+    fun shouldShowReaderViewCustomization(): Boolean = selectedSession?.let {
         store.state.findTab(it.id)?.readerState?.active
     } ?: false
     // End of predicates //
+
+    val installToHomescreen = BrowserMenuHighlightableItem(
+        label = context.getString(R.string.browser_menu_install_on_homescreen),
+        startImageResource = R.drawable.ic_add_to_homescreen,
+        iconTintColorResource = primaryTextColor(),
+        highlight = BrowserMenuHighlight.LowPriority(
+            label = context.getString(R.string.browser_menu_install_on_homescreen),
+            notificationTint = getColor(context, R.color.whats_new_notification_color)
+        ),
+        isHighlighted = {
+            !context.settings().installPwaOpened
+        }
+    ) {
+        onItemTapped.invoke(ToolbarMenu.Item.InstallPwaToHomeScreen)
+    }
 
     private val oldCoreMenuItems by lazy {
         val settings = BrowserMenuHighlightableItem(
@@ -242,21 +274,6 @@ class DefaultToolbarMenu(
             iconTintColorResource = primaryTextColor()
         ) {
             onItemTapped.invoke(ToolbarMenu.Item.SyncedTabs)
-        }
-
-        val installToHomescreen = BrowserMenuHighlightableItem(
-            label = context.getString(R.string.browser_menu_install_on_homescreen),
-            startImageResource = R.drawable.ic_add_to_homescreen,
-            iconTintColorResource = primaryTextColor(),
-            highlight = BrowserMenuHighlight.LowPriority(
-                label = context.getString(R.string.browser_menu_install_on_homescreen),
-                notificationTint = getColor(context, R.color.whats_new_notification_color)
-            ),
-            isHighlighted = {
-                !context.settings().installPwaOpened
-            }
-        ) {
-            onItemTapped.invoke(ToolbarMenu.Item.InstallToHomeScreen)
         }
 
         val findInPage = BrowserMenuImageText(
@@ -348,6 +365,9 @@ class DefaultToolbarMenu(
             BrowserMenuDivider(),
             reportSiteIssuePlaceholder,
             findInPage,
+            getSetDefaultBrowserItem()?.let { BrowserMenuDivider() },
+            getSetDefaultBrowserItem(),
+            getSetDefaultBrowserItem()?.let { BrowserMenuDivider() },
             addToTopSites,
             addToHomescreen.apply { visible = ::canAddToHomescreen },
             installToHomescreen.apply { visible = ::canInstall },
@@ -359,153 +379,195 @@ class DefaultToolbarMenu(
             menuToolbar
         )
 
-        if (shouldReverseItems) {
-            menuItems.reversed()
-        } else {
+        if (shouldUseBottomToolbar) {
             menuItems
+        } else {
+            menuItems.reversed()
         }
     }
 
-    private val newCoreMenuItems by lazy {
-        val newTabItem = BrowserMenuImageText(
-            context.getString(R.string.library_new_tab),
-            R.drawable.ic_new,
-            primaryTextColor()
-        ) {
-            onItemTapped.invoke(ToolbarMenu.Item.NewTab)
+    val newTabItem = BrowserMenuImageText(
+        context.getString(R.string.library_new_tab),
+        R.drawable.ic_new,
+        primaryTextColor()
+    ) {
+        onItemTapped.invoke(ToolbarMenu.Item.NewTab)
+    }
+
+    val historyItem = BrowserMenuImageText(
+        context.getString(R.string.library_history),
+        R.drawable.ic_history,
+        primaryTextColor()
+    ) {
+        onItemTapped.invoke(ToolbarMenu.Item.History)
+    }
+
+    val downloadsItem = BrowserMenuImageText(
+        context.getString(R.string.library_downloads),
+        R.drawable.ic_download,
+        primaryTextColor()
+    ) {
+        onItemTapped.invoke(ToolbarMenu.Item.Downloads)
+    }
+
+    val extensionsItem = WebExtensionPlaceholderMenuItem(
+        id = WebExtensionPlaceholderMenuItem.MAIN_EXTENSIONS_MENU_ID
+    )
+
+    val findInPageItem = BrowserMenuImageText(
+        label = context.getString(R.string.browser_menu_find_in_page),
+        imageResource = R.drawable.mozac_ic_search,
+        iconTintColorResource = primaryTextColor()
+    ) {
+        onItemTapped.invoke(ToolbarMenu.Item.FindInPage)
+    }
+
+    val desktopSiteItem = BrowserMenuImageSwitch(
+        imageResource = R.drawable.ic_desktop,
+        label = context.getString(R.string.browser_menu_desktop_site),
+        initialState = {
+            selectedSession?.content?.desktopMode ?: false
         }
+    ) { checked ->
+        onItemTapped.invoke(ToolbarMenu.Item.RequestDesktop(checked))
+    }
 
-        val bookmarksItem = BrowserMenuImageText(
-            context.getString(R.string.library_bookmarks),
-            R.drawable.ic_bookmark_filled,
-            primaryTextColor()
-        ) {
-            onItemTapped.invoke(ToolbarMenu.Item.Bookmarks)
-        }
+    val customizeReaderView = BrowserMenuImageText(
+        label = context.getString(R.string.browser_menu_customize_reader_view),
+        imageResource = R.drawable.ic_readermode_appearance,
+        iconTintColorResource = primaryTextColor()
+    ) {
+        onItemTapped.invoke(ToolbarMenu.Item.CustomizeReaderView)
+    }
 
-        val historyItem = BrowserMenuImageText(
-            context.getString(R.string.library_history),
-            R.drawable.ic_history,
-            primaryTextColor()
-        ) {
-            onItemTapped.invoke(ToolbarMenu.Item.History)
-        }
-
-        val downloadsItem = BrowserMenuImageText(
-            context.getString(R.string.library_downloads),
-            R.drawable.ic_download,
-            primaryTextColor()
-        ) {
-            onItemTapped.invoke(ToolbarMenu.Item.Downloads)
-        }
-
-        val extensionsItem = WebExtensionPlaceholderMenuItem(
-            id = WebExtensionPlaceholderMenuItem.MAIN_EXTENSIONS_MENU_ID
-        )
-
-        val syncedTabs = BrowserMenuImageText(
-            label = context.getString(R.string.synced_tabs),
-            imageResource = R.drawable.ic_synced_tabs,
-            iconTintColorResource = primaryTextColor()
-        ) {
-            onItemTapped.invoke(ToolbarMenu.Item.SyncedTabs)
-        }
-
-        val findInPageItem = BrowserMenuImageText(
-            label = context.getString(R.string.browser_menu_find_in_page),
-            imageResource = R.drawable.mozac_ic_search,
-            iconTintColorResource = primaryTextColor()
-        ) {
-            onItemTapped.invoke(ToolbarMenu.Item.FindInPage)
-        }
-
-        val desktopSiteItem = BrowserMenuImageSwitch(
-            imageResource = R.drawable.ic_desktop,
-            label = context.getString(R.string.browser_menu_desktop_site),
-            initialState = {
-                selectedSession?.content?.desktopMode ?: false
-            }
-        ) { checked ->
-            onItemTapped.invoke(ToolbarMenu.Item.RequestDesktop(checked))
-        }
-
-        val customizeReaderView = BrowserMenuImageText(
-            label = context.getString(R.string.browser_menu_customize_reader_view),
-            imageResource = R.drawable.ic_readermode_appearance,
-            iconTintColorResource = primaryTextColor()
-        ) {
-            onItemTapped.invoke(ToolbarMenu.Item.CustomizeReaderView)
-        }
-
-        val openInApp = BrowserMenuHighlightableItem(
+    val openInApp = BrowserMenuHighlightableItem(
+        label = context.getString(R.string.browser_menu_open_app_link),
+        startImageResource = R.drawable.ic_open_in_app,
+        iconTintColorResource = primaryTextColor(),
+        highlight = BrowserMenuHighlight.LowPriority(
             label = context.getString(R.string.browser_menu_open_app_link),
-            startImageResource = R.drawable.ic_open_in_app,
-            iconTintColorResource = primaryTextColor(),
-            highlight = BrowserMenuHighlight.LowPriority(
-                label = context.getString(R.string.browser_menu_open_app_link),
-                notificationTint = getColor(context, R.color.whats_new_notification_color)
-            ),
-            isHighlighted = { !context.settings().openInAppOpened }
-        ) {
-            onItemTapped.invoke(ToolbarMenu.Item.OpenInApp)
+            notificationTint = getColor(context, R.color.whats_new_notification_color)
+        ),
+        isHighlighted = { !context.settings().openInAppOpened }
+    ) {
+        onItemTapped.invoke(ToolbarMenu.Item.OpenInApp)
+    }
+
+    val reportSiteIssuePlaceholder = WebExtensionPlaceholderMenuItem(
+        id = WebCompatReporterFeature.WEBCOMPAT_REPORTER_EXTENSION_ID
+    )
+
+    val addToHomeScreenItem = BrowserMenuImageText(
+        label = context.getString(R.string.browser_menu_add_to_homescreen),
+        imageResource = R.drawable.ic_add_to_homescreen,
+        iconTintColorResource = primaryTextColor(),
+        isCollapsingMenuLimit = true
+    ) {
+        onItemTapped.invoke(ToolbarMenu.Item.AddToHomeScreen)
+    }
+
+    val addToTopSitesItem = BrowserMenuImageText(
+        label = context.getString(R.string.browser_menu_add_to_top_sites),
+        imageResource = R.drawable.ic_top_sites,
+        iconTintColorResource = primaryTextColor()
+    ) {
+        onItemTapped.invoke(ToolbarMenu.Item.AddToTopSites)
+    }
+
+    val saveToCollectionItem = BrowserMenuImageText(
+        label = context.getString(R.string.browser_menu_save_to_collection_2),
+        imageResource = R.drawable.ic_tab_collection,
+        iconTintColorResource = primaryTextColor()
+    ) {
+        onItemTapped.invoke(ToolbarMenu.Item.SaveToCollection)
+    }
+
+    val settingsItem = BrowserMenuHighlightableItem(
+        label = context.getString(R.string.browser_menu_settings),
+        startImageResource = R.drawable.ic_settings,
+        iconTintColorResource = if (hasAccountProblem)
+            ThemeManager.resolveAttribute(R.attr.syncDisconnected, context) else
+            primaryTextColor(),
+        textColorResource = if (hasAccountProblem)
+            ThemeManager.resolveAttribute(R.attr.primaryText, context) else
+            primaryTextColor(),
+        highlight = BrowserMenuHighlight.HighPriority(
+            endImageResource = R.drawable.ic_sync_disconnected,
+            backgroundTint = context.getColorFromAttr(R.attr.syncDisconnectedBackground),
+            canPropagate = false
+        ),
+        isHighlighted = { hasAccountProblem }
+    ) {
+        onItemTapped.invoke(ToolbarMenu.Item.Settings)
+    }
+
+    val bookmarksItem = BrowserMenuImageTextCheckboxButton(
+        imageResource = R.drawable.ic_bookmarks_menu,
+        iconTintColorResource = primaryTextColor(),
+        label = context.getString(R.string.library_bookmarks),
+        labelListener = {
+            onItemTapped.invoke(ToolbarMenu.Item.Bookmarks)
+        },
+        primaryStateIconResource = R.drawable.ic_bookmark_outline,
+        secondaryStateIconResource = R.drawable.ic_bookmark_filled,
+        tintColorResource = menuItemButtonTintColor(),
+        primaryLabel = context.getString(R.string.browser_menu_add),
+        secondaryLabel = context.getString(R.string.browser_menu_edit),
+        isInPrimaryState = { !isCurrentUrlBookmarked }
+    ) {
+        handleBookmarkItemTapped()
+    }
+
+    val deleteDataOnQuit = BrowserMenuImageText(
+        label = context.getString(R.string.delete_browsing_data_on_quit_action),
+        imageResource = R.drawable.ic_exit,
+        iconTintColorResource = primaryTextColor()
+    ) {
+        onItemTapped.invoke(ToolbarMenu.Item.Quit)
+    }
+
+    val syncedTabsItem = BrowserMenuImageText(
+        context.getString(R.string.synced_tabs),
+        R.drawable.ic_synced_tabs,
+        primaryTextColor()
+    ) {
+        onItemTapped.invoke(ToolbarMenu.Item.SyncedTabs)
+    }
+
+    private fun getSyncItemTitle(): String {
+        val authenticatedAccount = accountManager.authenticatedAccount
+        val email = accountManager.accountProfileEmail
+
+        return if (authenticatedAccount && !email.isNullOrEmpty()) {
+            email
+        } else {
+            context.getString(R.string.sync_menu_sign_in)
         }
+    }
 
-        val reportSiteIssuePlaceholder = WebExtensionPlaceholderMenuItem(
-            id = WebCompatReporterFeature.WEBCOMPAT_REPORTER_EXTENSION_ID
-        )
+    val syncMenuItem = BrowserMenuImageText(
+        getSyncItemTitle(),
+        R.drawable.ic_signed_out,
+        primaryTextColor()
+    ) {
+        onItemTapped.invoke(ToolbarMenu.Item.SyncAccount(accountManager.signedInToFxa()))
+    }
 
-        val addToHomeScreenItem = BrowserMenuImageText(
-            label = context.getString(R.string.browser_menu_add_to_homescreen),
-            imageResource = R.drawable.ic_add_to_homescreen,
-            iconTintColorResource = primaryTextColor()
-        ) {
-            onItemTapped.invoke(ToolbarMenu.Item.AddToHomeScreen)
-        }
-
-        val addToTopSitesItem = BrowserMenuImageText(
-            label = context.getString(R.string.browser_menu_add_to_top_sites),
-            imageResource = R.drawable.ic_top_sites,
-            iconTintColorResource = primaryTextColor()
-        ) {
-            onItemTapped.invoke(ToolbarMenu.Item.AddToTopSites)
-        }
-
-        val saveToCollectionItem = BrowserMenuImageText(
-            label = context.getString(R.string.browser_menu_save_to_collection_2),
-            imageResource = R.drawable.ic_tab_collection,
-            iconTintColorResource = primaryTextColor()
-        ) {
-            onItemTapped.invoke(ToolbarMenu.Item.SaveToCollection)
-        }
-
-        val settingsItem = BrowserMenuHighlightableItem(
-            label = context.getString(R.string.browser_menu_settings),
-            startImageResource = R.drawable.ic_settings,
-            iconTintColorResource = primaryTextColor(),
-            textColorResource = if (hasAccountProblem)
-                ThemeManager.resolveAttribute(R.attr.primaryText, context) else
-                primaryTextColor(),
-            highlight = BrowserMenuHighlight.HighPriority(
-                endImageResource = R.drawable.ic_sync_disconnected,
-                backgroundTint = context.getColorFromAttr(R.attr.syncDisconnectedBackground),
-                canPropagate = false
-            ),
-            isHighlighted = { hasAccountProblem }
-        ) {
-            onItemTapped.invoke(ToolbarMenu.Item.Settings)
-        }
-
+    @VisibleForTesting(otherwise = PRIVATE)
+    val newCoreMenuItems by lazy {
         val menuItems =
             listOfNotNull(
-                if (isTopToolbarSelected) menuToolbar else null,
+                if (shouldUseBottomToolbar) null else menuToolbar,
                 newTabItem,
                 BrowserMenuDivider(),
                 bookmarksItem,
                 historyItem,
                 downloadsItem,
                 extensionsItem,
-                syncedTabs,
+                if (tabsTrayRewrite) syncMenuItem else syncedTabsItem,
                 BrowserMenuDivider(),
+                getSetDefaultBrowserItem(),
+                getSetDefaultBrowserItem()?.let { BrowserMenuDivider() },
                 findInPageItem,
                 desktopSiteItem,
                 customizeReaderView.apply { visible = ::shouldShowReaderViewCustomization },
@@ -513,20 +575,31 @@ class DefaultToolbarMenu(
                 reportSiteIssuePlaceholder,
                 BrowserMenuDivider(),
                 addToHomeScreenItem.apply { visible = ::canAddToHomescreen },
+                installToHomescreen.apply { visible = ::canInstall },
                 addToTopSitesItem,
                 saveToCollectionItem,
                 BrowserMenuDivider(),
                 settingsItem,
-                if (isTopToolbarSelected) null else BrowserMenuDivider(),
-                if (isTopToolbarSelected) null else menuToolbar
+                if (shouldDeleteDataOnQuit) deleteDataOnQuit else null,
+                if (shouldUseBottomToolbar) BrowserMenuDivider() else null,
+                if (shouldUseBottomToolbar) menuToolbar else null
             )
 
         menuItems
     }
 
+    private fun handleBookmarkItemTapped() {
+        if (!isCurrentUrlBookmarked) isCurrentUrlBookmarked = true
+        onItemTapped.invoke(ToolbarMenu.Item.Bookmark)
+    }
+
     @ColorRes
     @VisibleForTesting
     internal fun primaryTextColor() = ThemeManager.resolveAttribute(R.attr.primaryText, context)
+
+    @ColorRes
+    @VisibleForTesting
+    internal fun menuItemButtonTintColor() = ThemeManager.resolveAttribute(R.attr.menuItemButtonTintColor, context)
 
     @VisibleForTesting
     internal fun registerForIsBookmarkedUpdates() {
@@ -552,6 +625,26 @@ class DefaultToolbarMenu(
             isCurrentUrlBookmarked = bookmarksStorage
                 .getBookmarksWithUrl(newUrl)
                 .any { it.url == newUrl }
+        }
+    }
+
+    private fun getSetDefaultBrowserItem(): BrowserMenuImageText? {
+        val experiments = context.components.analytics.experiments
+        val browsers = BrowsersCache.all(context)
+
+        return experiments.withExperiment(Experiments.DEFAULT_BROWSER) { experimentBranch ->
+            if (experimentBranch == ExperimentBranch.DEFAULT_BROWSER_TOOLBAR_MENU &&
+                !browsers.isFirefoxDefaultBrowser
+            ) {
+                return@withExperiment BrowserMenuImageText(
+                    label = context.getString(R.string.preferences_set_as_default_browser),
+                    imageResource = R.mipmap.ic_launcher
+                ) {
+                    onItemTapped.invoke(ToolbarMenu.Item.SetDefaultBrowser)
+                }
+            } else {
+                null
+            }
         }
     }
 }

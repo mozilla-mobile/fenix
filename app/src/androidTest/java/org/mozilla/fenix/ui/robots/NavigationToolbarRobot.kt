@@ -109,8 +109,7 @@ class NavigationToolbarRobot {
                         withResourceName("onboarding_message"), // Req ETP dialog
                         withResourceName("download_button")
                     )
-                )
-                    .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+                ).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
             }
 
             BrowserRobot().interact()
@@ -186,10 +185,10 @@ class NavigationToolbarRobot {
         }
 
         fun openTabTray(interact: TabDrawerRobot.() -> Unit): TabDrawerRobot.Transition {
-            onView(withId(R.id.tab_button))
-                .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
-
+            mDevice.waitForIdle(waitingTime)
             tabTrayButton().click()
+            mDevice.waitNotNull(Until.findObject(By.res("$packageName:id/tab_layout")),
+                waitingTime)
 
             TabDrawerRobot().interact()
             return TabDrawerRobot.Transition()

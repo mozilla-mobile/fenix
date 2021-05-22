@@ -33,13 +33,17 @@ import org.mozilla.fenix.components.metrics.MozillaProductDetector
 import org.mozilla.fenix.components.settings.counterPreference
 import org.mozilla.fenix.components.settings.featureFlagPreference
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
+import org.mozilla.fenix.experiments.ExperimentBranch
+import org.mozilla.fenix.experiments.Experiments
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getPreferenceKey
+import org.mozilla.fenix.ext.withExperiment
 import org.mozilla.fenix.settings.PhoneFeature
 import org.mozilla.fenix.settings.deletebrowsingdata.DeleteBrowsingDataOnQuitType
 import org.mozilla.fenix.settings.logins.SavedLoginsSortingStrategyMenu
 import org.mozilla.fenix.settings.logins.SortingStrategy
 import org.mozilla.fenix.settings.registerOnSharedPreferenceChangeListener
+import org.mozilla.fenix.settings.sitepermissions.AUTOPLAY_BLOCK_ALL
 import java.security.InvalidParameterException
 
 private const val AUTOPLAY_USER_SETTING = "AUTOPLAY_USER_SETTING"
@@ -60,6 +64,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         private const val ALLOWED_INT = 2
         private const val CFR_COUNT_CONDITION_FOCUS_INSTALLED = 1
         private const val CFR_COUNT_CONDITION_FOCUS_NOT_INSTALLED = 3
+        private const val APP_LAUNCHES_TO_SHOW_DEFAULT_BROWSER_CARD = 3
 
         const val ONE_DAY_MS = 60 * 60 * 24 * 1000L
         const val THREE_DAYS_MS = 3 * ONE_DAY_MS
@@ -291,6 +296,31 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = false
     )
 
+    /**
+     * Shows if the user has chosen to close the set default browser experiment card
+     * on home screen or has clicked the set as default browser button.
+     */
+    var userDismissedExperimentCard by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_experiment_card_home),
+        default = false
+    )
+
+    /**
+     * Shows if the set default browser experiment card should be shown on home screen.
+     */
+    fun shouldShowSetAsDefaultBrowserCard(): Boolean {
+        val browsers = BrowsersCache.all(appContext)
+        val experiments = appContext.components.analytics.experiments
+        val isExperimentBranch =
+            experiments.withExperiment(Experiments.DEFAULT_BROWSER) { experimentBranch ->
+                (experimentBranch == ExperimentBranch.DEFAULT_BROWSER_NEW_TAB_BANNER)
+            }
+        return isExperimentBranch &&
+                !userDismissedExperimentCard &&
+                !browsers.isFirefoxDefaultBrowser &&
+                numberOfAppLaunches > APP_LAUNCHES_TO_SHOW_DEFAULT_BROWSER_CARD
+    }
+
     var listTabView by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_tab_view_list),
         default = true
@@ -323,8 +353,13 @@ class Settings(private val appContext: Context) : PreferencesHolder {
 
     var tabsTrayRewrite by featureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_new_tabs_tray),
-        default = false,
+        default = true,
         featureFlag = FeatureFlags.tabsTrayRewrite
+    )
+
+    var allowThirdPartyRootCerts by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_allow_third_party_root_certs),
+        default = false
     )
 
     fun getTabTimeout(): Long = when {
@@ -744,9 +779,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
      * either [AUTOPLAY_ALLOW_ALL] or [AUTOPLAY_BLOCK_ALL]. Because of this, we are forced to save
      * the user selected setting as well.
      */
-    fun getAutoplayUserSetting(
-        default: Int
-    ) = preferences.getInt(AUTOPLAY_USER_SETTING, default)
+    fun getAutoplayUserSetting() = preferences.getInt(AUTOPLAY_USER_SETTING, AUTOPLAY_BLOCK_ALL)
 
     private fun getSitePermissionsPhoneFeatureAutoplayAction(
         feature: PhoneFeature,
@@ -823,11 +856,6 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = true
     )
 
-    var fxaSignedIn by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_fxa_signed_in),
-        default = false
-    )
-
     var fxaHasSyncedItems by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_fxa_has_synced_items),
         default = false
@@ -886,6 +914,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var openLinksInExternalApp by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_open_links_in_external_app),
         default = false
+    )
+
+    var allowDomesticChinaFxaServer by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_allow_domestic_china_fxa_server),
+        default = true
     )
 
     var overrideFxAServer by stringPreference(
@@ -1009,12 +1042,6 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = true
     )
 
-    var creditCardsFeature by featureFlagPreference(
-        appContext.getPreferenceKey(R.string.pref_key_show_credit_cards_feature),
-        default = false,
-        featureFlag = FeatureFlags.creditCardsFeature
-    )
-
     var addressFeature by featureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_show_address_feature),
         default = false,
@@ -1027,6 +1054,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
      */
     var openNextTabInDesktopMode by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_open_next_tab_desktop_mode),
+        default = false
+    )
+
+    var signedInFxaAccount by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_fxa_signed_in),
         default = false
     )
 }

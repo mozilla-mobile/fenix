@@ -19,10 +19,6 @@
     <!-- No Private Tabs Message Description -->
     <string name="no_private_tabs_description">Tabs privats averts vegnan mussads qua.</string>
 
-    <!-- Default title for pinned Baidu top site that links to Baidu home page  -->
-    <string name="default_top_site_baidu">Baidu</string>
-    <!-- Default title for pinned JD top site that links to JD home page  -->
-    <string name="default_top_site_jd">JD</string>
     <!-- Message announced to the user when tab tray is selected with 1 tab -->
     <string name="open_tab_tray_single">1 tab avert. Tutgar per midar tab.</string>
     <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
@@ -180,6 +176,11 @@
 
     <!-- Browser menu button to show reader view appearance controls e.g. the used font type and size -->
     <string name="browser_menu_customize_reader_view">Persunalisar la vista da lectura</string>
+    <!-- Browser menu label for adding a bookmark -->
+    <string name="browser_menu_add">Agiuntar</string>
+    <!-- Browser menu label for editing a bookmark -->
+    <string name="browser_menu_edit">Modifitgar</string>
+
     <!-- Error message to show when the user tries to access a scheme not
         handled by the app (Ex: blob, tel etc) -->
     <string name="unknown_scheme_error_message">Impussibel da connectar. Schema dad URL nunenconuschent.</string>
@@ -408,6 +409,11 @@
         and the third is the device model. -->
     <string name="default_device_name_2">%1$s sin %2$s %3$s</string>
 
+    <!-- Preference for syncing credit cards -->
+    <string name="preferences_sync_credit_cards">Cartas da credit</string>
+    <!-- Preference for syncing addresses -->
+    <string name="preferences_sync_address">Adressas</string>
+
     <!-- Send Tab -->
     <!-- Name of the "receive tabs" notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="fxa_received_tab_channel_name">Tabs retschavids</string>
@@ -439,9 +445,6 @@
     <!-- Text displayed when there are no exceptions, with learn more link that brings users to a tracking protection SUMO page -->
     <string name="exceptions_empty_message_learn_more_link">Ulteriuras infurmaziuns</string>
 
-    <!-- Description in Quick Settings that tells user tracking protection is off globally for all sites, and links to Settings to turn it on -->
-    <string name="preferences_tracking_protection_turned_off_globally">Deactivà globalmain, acceda als parameters per activar.</string>
-
     <!-- Preference switch for Telemetry -->
     <string name="preferences_telemetry">Telemetria</string>
     <!-- Preference switch for usage and technical data collection -->
@@ -452,6 +455,8 @@
     <string name="preferences_marketing_data">Datas da marketing</string>
     <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
     <string name="preferences_marketing_data_description">Transmetta datas davart las funcziunalitads che ti dovras en %1$s a Leanplum, noss partenari per il marketing sin apparats mobils.</string>
+    <!-- Preference description for marketing data collection -->
+    <string name="preferences_marketing_data_description2">Cundivida datas d\'utilisaziun da basa cun Adjust, noss purschider da marketing mobil</string>
     <!-- Title for studies preferences -->
     <string name="preference_experiments_2">Studis</string>
     <!-- Summary for studies preferences -->
@@ -598,12 +603,16 @@
     <string name="tabs_header_private_title">Sesida privata</string>
     <!-- Title for the list of tabs in the current private session -->
     <string name="tabs_header_private_tabs_title">Tabs privats</string>
+    <!-- Title for the list of tabs in the synced tabs -->
+    <string name="tabs_header_synced_tabs_title">Tabs sincronisads</string>
     <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
     <string name="add_tab">Agiuntar in tab</string>
     <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
     <string name="add_private_tab">Agiuntar in tab privat</string>
     <!-- Text for the new tab button to indicate adding a new private tab in the tab -->
     <string name="tab_drawer_fab_content">Privat</string>
+    <!-- Text for the new tab button to indicate syncing command on the synced tabs page -->
+    <string name="tab_drawer_fab_sync">Sincronisar</string>
     <!-- Text shown as the title of the open tab tray -->
     <string name="tab_tray_title">Tabs averts</string>
     <!-- Text shown in the menu for saving tabs to a collection -->
@@ -614,6 +623,8 @@
     <string name="tab_tray_menu_item_share">Cundivider tut ils tabs</string>
     <!-- Text shown in the menu to view recently closed tabs -->
     <string name="tab_tray_menu_recently_closed">Tabs serrads dacurt</string>
+    <!-- Text shown in the menu to view account settings -->
+    <string name="tab_tray_menu_account_settings">Parameters dal conto</string>
     <!-- Text shown in the menu to view tab settings -->
     <string name="tab_tray_menu_tab_settings">Parameters da tabs</string>
     <!-- Text shown in the menu for closing all tabs -->
@@ -782,8 +793,6 @@
     <string name="bookmark_delete_folder_snackbar">Stizzà %1$s</string>
     <!-- Screen title for adding a bookmarks folder -->
     <string name="bookmark_add_folder">Agiuntar in ordinatur</string>
-    <!-- deprecated: Snackbar title shown after a bookmark has been created. -->
-    <string name="bookmark_created_snackbar">Creà il segnapagina.</string>
     <!-- Snackbar title shown after a bookmark has been created. -->
     <string name="bookmark_saved_snackbar">Memorisà il segnapagina!</string>
     <!-- Snackbar edit button shown after a bookmark has been created. -->
@@ -967,6 +976,8 @@
     <string name="share_link_all_apps_subheader">Tuttas acziuns</string>
     <!-- Sub-header in the dialog to share a link to an app from the most-recent sorted list -->
     <string name="share_link_recent_apps_subheader">Utilisà dacurt</string>
+    <!-- An option from the three dot menu to into sync -->
+    <string name="sync_menu_sign_in">S\'annunziar per sincronisar</string>
     <!-- An option from the share dialog to sign into sync -->
     <string name="sync_sign_in">S\'annunziar tar Sync</string>
     <!-- An option from the share dialog to send link to all other sync devices -->
@@ -1161,9 +1172,6 @@
     <string name="onboarding_header">Bainvegni en %s!</string>
     <!-- text for the Firefox Accounts section header -->
     <string name="onboarding_fxa_section_header">Ti has gia in conto?</string>
-    <!-- text for the Firefox Preview feature section header
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_feature_section_header">Scuvrir %s</string>
     <!-- text for the "What's New" onboarding card header -->
     <string name="onboarding_whats_new_header1">Qua las novaziuns</string>
     <!-- text for the "what's new" onboarding card description
@@ -1171,10 +1179,10 @@
     <string name="onboarding_whats_new_description">Has ti dumondas areguard il nov %s? Vuls savair tge ch\'è sa midà?</string>
     <!-- text for underlined clickable link that is part of "what's new" onboarding card description that links to an FAQ -->
     <string name="onboarding_whats_new_description_linktext">Qua datti respostas</string>
-    <!-- text for the Firefox account onboarding sign in card header -->
-    <string name="onboarding_account_sign_in_header">Cumenza a sincronisar segnapaginas, pleds-clav ed autra rauba cun tes conto da Firefox.</string>
+    <!-- text for the Firefox account onboarding sign in card header. The word "Firefox" should not be translated -->
+    <string name="onboarding_account_sign_in_header_1">Sincronisescha Firefox sin differents apparats</string>
     <!-- Text for the button to learn more about signing in to your Firefox account -->
-    <string name="onboarding_manual_sign_in_learn_more">Ulteriuras infurmaziuns</string>
+    <string name="onboarding_manual_sign_in_description">Importescha segnapaginas, la cronologia e pleds-clav en Firefox sin quest apparat.</string>
     <!-- text for the firefox account onboarding card header when we detect you're already signed in to
         another Firefox browser. (The word `Firefox` should not be translated)
         The first parameter is the email of the detected user's account -->
@@ -1183,8 +1191,8 @@
     <string name="onboarding_firefox_account_auto_signin_confirm">Gea, m\'annunziar</string>
     <!-- text for the automatic sign-in button while signing in is in process -->
     <string name="onboarding_firefox_account_signing_in">Annunziar…</string>
-    <!-- text for the button to manually sign into Firefox account. The word "Firefox" should not be translated -->
-    <string name="onboarding_firefox_account_sign_in">S\'annunziar en Firefox</string>
+    <!-- text for the button to manually sign into Firefox account. -->
+    <string name="onboarding_firefox_account_sign_in_1">Sa registrar</string>
     <!-- text for the button to stay signed out when presented with an option to automatically sign-in. -->
     <string name="onboarding_firefox_account_stay_signed_out">Restar senza annunzia</string>
     <!-- text to display in the snackbar once account is signed-in -->
@@ -1193,27 +1201,24 @@
     <string name="onboarding_firefox_account_automatic_signin_failed">Annunzia betg reussida</string>
 
     <!-- text for the tracking protection onboarding card header -->
-    <string name="onboarding_tracking_protection_header_2">Protecziun da datas automatica</string>
-    <!-- text for the tracking protection card description
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_tracking_protection_description_2">Ils parameters per la protecziun da datas e segirezza blocheschan fastizaders, malware e firmas che ta persequiteschan online.</string>
+    <string name="onboarding_tracking_protection_header_3">Protecziun da datas franco fabrica</string>
+    <!-- text for the tracking protection card description. 'Firefox' intentionally hardcoded here -->
+    <string name="onboarding_tracking_protection_description_3">Firefox impedescha automaticamain che interpresas ta persequiteschian a la zuppada en il web.</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
     <string name="onboarding_tracking_protection_standard_button_2">Standard (predefinì)</string>
     <!-- text for standard blocking option button description -->
-    <string name="onboarding_tracking_protection_standard_button_description_2">Blochescha main fastizaders. Paginas vegnan chargiadas normal.</string>
+    <string name="onboarding_tracking_protection_standard_button_description_3">Equiliber tranter protecziun da datas e prestaziun. Paginas chargian normal.</string>
     <!-- text for tracking protection radio button option for strict level of blocking -->
     <string name="onboarding_tracking_protection_strict_button">Restrictiv (recumandà)</string>
     <!-- text for tracking protection radio button option for strict level of blocking -->
     <string name="onboarding_tracking_protection_strict_option">Restrictiv</string>
-    <!-- text for strict blocking option button description -->
-    <string name="onboarding_tracking_protection_strict_button_description_2">Blochescha dapli fastizaders, reclamas e pop-ups. Paginas vegnan chargiadas pli spert, i po dentant capitar che tschertas paginas na funcziunan betg correctamain.</string>
-    <!-- text for the toolbar position card header
-        In English this is an idiom for "choose a side as in an argument or fight"
-        but it is ok to make this more literally about "choosing a position in a physical space -->
-    <string name="onboarding_toolbar_position_header">Prenda posiziun</string>
 
+    <!-- text for strict blocking option button description -->
+    <string name="onboarding_tracking_protection_strict_button_description_3">Blochescha ulteriurs fastizaders, uschia che paginas chargian pli svelt, ma tschertas paginas na funcziunan eventualmain betg pli endretg.</string>
+    <!-- text for the toolbar position card header  -->
+    <string name="onboarding_toolbar_placement_header_1">Tscherna la posiziun da la trav d\'utensils</string>
     <!-- text for the toolbar position card description -->
-    <string name="onboarding_toolbar_position_description">Emprova da navigar cun in maun cun la trav d\'utensils giusut u la sposta ensi</string>
+    <string name="onboarding_toolbar_placement_description_1">Plazzescha la trav d\'utensils uschia ch\'ella è cuntanschibla a moda optimala. La mantegna giusut u la plazzescha sisum.</string>
     <!-- text for the private browsing onboarding card header -->
     <string name="onboarding_private_browsing_header">Navighescha en il modus privat</string>
     <!-- text for the private browsing onboarding card description
@@ -1226,7 +1231,7 @@
     <!-- text for the privacy notice onboarding card header -->
     <string name="onboarding_privacy_notice_header">Tia sfera privata</string>
     <!-- text for the privacy notice onboarding card description
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
+    The first parameter is the name of the app (e.g. Firefox Preview) Substitute %s for long browser name. -->
     <string name="onboarding_privacy_notice_description2">Nus avain creà %s per che ti possias controllar tge che ti cundividas en l\'internet e tge che ti cundividas cun nus.</string>
     <!-- Text for the button to read the privacy notice -->
     <string name="onboarding_privacy_notice_read_button">Legia nossas directivas per la protecziun da datas</string>
@@ -1241,7 +1246,7 @@
     <!-- text for the theme picker onboarding card header -->
     <string name="onboarding_theme_picker_header">Tscherna tes design</string>
     <!-- text for the theme picker onboarding card description -->
-    <string name="onboarding_theme_picker_description1">Spargna energia e protegia tes egls cun activar il modus stgir.</string>
+    <string name="onboarding_theme_picker_description_2">Spargna energia e protegia tes egls cun il modus stgir.</string>
     <!-- Automatic theme setting (will follow device setting) -->
     <string name="onboarding_theme_automatic_title">Automatic</string>
     <!-- Summary of automatic theme setting (will follow device setting) -->
@@ -1298,13 +1303,13 @@
     <!-- Preference for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_standard_default_1">Standard (predefinì)</string>
     <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description_3">Blocchescha main fastizaders. Paginas vegnan chargiar sco normal.</string>
+    <string name="preference_enhanced_tracking_protection_standard_description_4">Equiliber tranter protecziun da datas e prestaziun. Paginas chargian normal.</string>
     <!--  Accessibility text for the Standard protection information icon  -->
     <string name="preference_enhanced_tracking_protection_standard_info_button">Quai che vegn bloccà da la protecziun normala cunter il fastizar</string>
     <!-- Preference for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict">Restrictiv</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_description_2">Blochescha dapli fastizaders, reclamas e pop-ups. Paginas vegnan chargiadas pli spert, i po dentant capitar che tschertas paginas na funcziunan betg correctamain.</string>
+    <string name="preference_enhanced_tracking_protection_strict_description_3">Blochescha ulteriurs fastizaders, uschia che paginas chargian pli svelt, ma tschertas paginas na funcziunan eventualmain betg pli endretg.</string>
     <!--  Accessibility text for the Strict protection information icon  -->
     <string name="preference_enhanced_tracking_protection_strict_info_button">Quai che vegn bloccà da la protecziun restrictiva cunter il fastizar</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
@@ -1450,10 +1455,8 @@
     <string name="preferences_passwords_autofill">Endataziun automatica</string>
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">Sincronisar las infurmaziuns d\'annunzia</string>
-    <!-- Syncing saved logins in Fenix is on -->
-    <string name="preferences_passwords_sync_logins_on">Activà</string>
-    <!-- Syncing saved logins in Fenix is off -->
-    <string name="preferences_passwords_sync_logins_off">Deactivà</string>
+    <!-- Preference for syncing saved logins in Fenix, when not signed in-->
+    <string name="preferences_passwords_sync_logins_across_devices">Sincronisar las datas d\'annunzia tranter tes apparats</string>
     <!-- Syncing saved logins in Fenix needs reconnect to sync -->
     <string name="preferences_passwords_sync_logins_reconnect">Reconnectar</string>
     <!-- Syncing saved logins in Fenix needs login -->
@@ -1546,6 +1549,50 @@
     <string name="saved_logins_sort_strategy_last_used">Ultima utilisaziun</string>
     <!-- Content description (not visible, for screen readers etc.): Sort saved logins dropdown menu chevron icon -->
     <string name="saved_logins_menu_dropdown_chevron_icon_content_description">Zavrar il menu da las datas d\'annunzia</string>
+
+    <!-- Credit Cards Autofill -->
+    <!-- Preference and title for managing the settings for credit cards -->
+    <string name="preferences_credit_cards">Cartas da credit</string>
+    <!-- Preference for saving and autofilling credit cards -->
+    <string name="preferences_credit_cards_save_and_autofill_cards">Emplenir automaticamain las datas da la carta da credit</string>
+    <!-- Preference summary for saving and autofilling credit card data -->
+    <string name="preferences_credit_cards_save_and_autofill_cards_summary">Las datas èn criptadas</string>
+    <!-- Preference option for syncing credit cards across devices. This is displayed when the user is not signed into sync -->
+    <string name="preferences_credit_cards_sync_cards_across_devices">Sincronisar las cartas tranter ils apparats</string>
+    <!-- Preference option for syncing credit cards across devices. This is displayed when the user is signed into sync -->
+    <string name="preferences_credit_cards_sync_cards">Sincronisar las cartas</string>
+    <!-- Preference option for adding a credit card -->
+    <string name="preferences_credit_cards_add_credit_card">Agiuntar ina carta da credit</string>
+
+    <!-- Preference option for managing saved credit cards -->
+    <string name="preferences_credit_cards_manage_saved_cards">Administrar las cartas memorisadas</string>
+    <!-- Title of the "Add card" screen -->
+    <string name="credit_cards_add_card">Agiuntar ina carta</string>
+    <!-- Title of the "Edit card" screen -->
+    <string name="credit_cards_edit_card">Modifitgar la carta</string>
+    <!-- The header for the card number of a credit card -->
+    <string name="credit_cards_card_number">Numer da carta</string>
+    <!-- The header for the expiration date of a credit card -->
+    <string name="credit_cards_expiration_date">Data da scadenza</string>
+    <!-- The header for the name on the credit card -->
+    <string name="credit_cards_name_on_card">Num sin la carta</string>
+    <!-- The header for the nickname for a credit card -->
+    <string name="credit_cards_card_nickname">Tes num per la carta</string>
+    <!-- The text for the "Delete card" menu item for deleting a credit card -->
+    <string name="credit_cards_menu_delete_card">Stizzar la carta</string>
+    <!-- The text for the "Delete card" button for deleting a credit card -->
+    <string name="credit_cards_delete_card_button">Stizzar la carta</string>
+    <!-- The title for the "Save" menu item for saving a credit card -->
+    <string name="credit_cards_menu_save">Memorisar</string>
+    <!-- The text for the "Save" button for saving a credit card -->
+    <string name="credit_cards_save_button">Memorisar</string>
+    <!-- The text for the "Cancel" button for cancelling adding or updating a credit card -->
+    <string name="credit_cards_cancel_button">Interrumper</string>
+    <!-- Title of the "Saved cards" screen -->
+    <string name="credit_cards_saved_cards">Cartas memorisadas</string>
+
+    <!-- Error message for credit card number validation -->
+    <string name="credit_cards_number_validation_error_message">Endatescha per plaschair in numer da carta da credit valid</string>
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Agiuntar ina maschina da tschertgar</string>
@@ -1707,23 +1754,19 @@
 	<!-- Dialog button text for canceling the rename top site prompt. -->
 	<string name="top_sites_rename_dialog_cancel">Interrumper</string>
 
+    <!-- Default browser experiment -->
+    <string name="default_browser_experiment_card_text">Definescha che colliaziuns da websites, e-mails e messadis vegnan averts automaticamain en Firefox.</string>
+
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">Allontanar</string>
-
-    <!-- Deprecated: text for the firefox account onboarding card header
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_firefox_account_header">Rabla ora il maximum da %s.</string>
 
     <!-- Content description radio buttons with a link to more information -->
     <string name="radio_preference_info_content_description">Cliccar per ulteriurs detagls</string>
 
-    <!-- Deprecated: No Open Tabs Message Header -->
-    <string name="no_collections_header1">Rimna las chaussas che t\'èn impurtantas</string>
-    <!-- Deprecated: Label to describe what collections are to a new user without any collections -->
-    <string name="no_collections_description1">Gruppescha retschertgas, paginas e tabs sumegliants per pli tard pudair acceder pli svelt.</string>
-    <!-- Deprecated: text for the firefox account onboarding card header when we detect you're already signed in to -->
-    <string name="onboarding_firefox_account_auto_signin_header_2">Ti es annunzià sco %s en in auter navigatur da Firefox sin quest telefonin. Vuls ti t\'annunziar cun quest conto?</string>
-    <!-- Deprecated: Describes the add to homescreen functionality -->
-    <string name="add_to_homescreen_description">Ti pos agiuntar a moda simpla questa website al visur da partenza da tes telefonin per avair access direct e navigar pli svelt, sco sch\'i fiss ina app.</string>
+    <!-- Content description for the action bar "up" button -->
+    <string name="action_bar_up_description">Navigar ensi</string>
 
-    </resources>
+    <!-- Content description for privacy content close button -->
+    <string name="privacy_content_close_button_content_description">Serrar</string>
+
+</resources>

@@ -11,6 +11,7 @@ import android.view.View
 import android.widget.PopupWindow
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import kotlinx.android.synthetic.main.top_site_item.*
+import kotlinx.android.synthetic.main.top_site_item.view.*
 import mozilla.components.browser.menu.BrowserMenuBuilder
 import mozilla.components.browser.menu.item.SimpleBrowserMenuItem
 import mozilla.components.feature.top.sites.TopSite
@@ -64,10 +65,11 @@ class TopSiteItemViewHolder(
     fun bind(topSite: TopSite) {
         top_site_title.text = topSite.title
 
-        pin_indicator.visibility = if (topSite.type == PINNED || topSite.type == DEFAULT) {
-            View.VISIBLE
+        if (topSite.type == PINNED || topSite.type == DEFAULT) {
+            val pinIndicator = getDrawable(itemView.context, R.drawable.ic_new_pin)
+            top_site_title.setCompoundDrawablesWithIntrinsicBounds(pinIndicator, null, null, null)
         } else {
-            View.GONE
+            top_site_title.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null)
         }
 
         when (topSite.url) {
@@ -89,6 +91,11 @@ class TopSiteItemViewHolder(
         }
 
         this.topSite = topSite
+    }
+
+    fun bind(topSitePayload: TopSitesAdapter.TopSitePayload) {
+        itemView.top_site_title.text = topSitePayload.newTitle
+        topSite = topSite.copy(title = topSitePayload.newTitle)
     }
 
     private fun onTouchEvent(

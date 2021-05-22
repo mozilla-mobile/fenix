@@ -20,10 +20,6 @@
     <!-- No Private Tabs Message Description -->
     <string name="no_private_tabs_description">Accaren-ik n tbaḍnit ad d-ttwaseknen dagi.</string>
 
-    <!-- Default title for pinned Baidu top site that links to Baidu home page  -->
-    <string name="default_top_site_baidu">Baidu</string>
-    <!-- Default title for pinned JD top site that links to JD home page  -->
-    <string name="default_top_site_jd">JD</string>
     <!-- Message announced to the user when tab tray is selected with 1 tab -->
     <string name="open_tab_tray_single">1 yiccer i yeldin. Sit akken ad tbeddleḍ iccer.</string>
     <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
@@ -185,6 +181,12 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
 
     <!-- Browser menu button to show reader view appearance controls e.g. the used font type and size -->
     <string name="browser_menu_customize_reader_view">Sagen timeẓri n tɣuri</string>
+    <!-- Browser menu label for adding a bookmark -->
+    <string name="browser_menu_add">Rnu</string>
+
+    <!-- Browser menu label for editing a bookmark -->
+    <string name="browser_menu_edit">Ẓreg</string>
+
     <!-- Error message to show when the user tries to access a scheme not
         handled by the app (Ex: blob, tel etc) -->
     <string name="unknown_scheme_error_message">Ur izmir ara ad yeqqen. Azenziɣ n tensa URL ur yettwassen ara.</string>
@@ -417,6 +419,11 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
         and the third is the device model. -->
     <string name="default_device_name_2">%1$s deg %2$s %3$s</string>
 
+    <!-- Preference for syncing credit cards -->
+    <string name="preferences_sync_credit_cards">Tikarḍiwin n usmad</string>
+    <!-- Preference for syncing addresses -->
+    <string name="preferences_sync_address">Tansiwin</string>
+
     <!-- Send Tab -->
     <!-- Name of the "receive tabs" notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="fxa_received_tab_channel_name">Accaren yettwaremsen</string>
@@ -448,9 +455,6 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <!-- Text displayed when there are no exceptions, with learn more link that brings users to a tracking protection SUMO page -->
     <string name="exceptions_empty_message_learn_more_link">Issin ugar</string>
 
-    <!-- Description in Quick Settings that tells user tracking protection is off globally for all sites, and links to Settings to turn it on -->
-    <string name="preferences_tracking_protection_turned_off_globally">Yensa s wudem amatu, ddu ɣer yiɣewwaren akken ad yermed.</string>
-
     <!-- Preference switch for Telemetry -->
     <string name="preferences_telemetry">Tilisɣelt</string>
     <!-- Preference switch for usage and technical data collection -->
@@ -461,6 +465,8 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <string name="preferences_marketing_data">Isefka n uzenzi</string>
     <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
     <string name="preferences_marketing_data_description">Bḍu isefka ɣef timahilin i tseqdaceḍ deg %1$s s Leanplum, Imzenzi-nneɣ n izirazen.</string>
+    <!-- Preference description for marketing data collection -->
+    <string name="preferences_marketing_data_description2">Ibeṭṭu isefka n useqdec azadur akked Adjust, amsenzi-nneɣ n ssuq  n uziraz</string>
     <!-- Title for studies preferences -->
     <string name="preference_experiments_2">Studies</string>
     <!-- Summary for studies preferences -->
@@ -612,12 +618,16 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <string name="tabs_header_private_title">Tiɣimit tusligt</string>
     <!-- Title for the list of tabs in the current private session -->
     <string name="tabs_header_private_tabs_title">Iccaren usligen</string>
+    <!-- Title for the list of tabs in the synced tabs -->
+    <string name="tabs_header_synced_tabs_title">Iccaren yemtawin</string>
     <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
     <string name="add_tab">Rnu iccer</string>
     <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
     <string name="add_private_tab">Rnu iccer uslig</string>
     <!-- Text for the new tab button to indicate adding a new private tab in the tab -->
     <string name="tab_drawer_fab_content">Uslig</string>
+    <!-- Text for the new tab button to indicate syncing command on the synced tabs page -->
+    <string name="tab_drawer_fab_sync">Sync</string>
     <!-- Text shown as the title of the open tab tray -->
     <string name="tab_tray_title">Ldi acarren</string>
     <!-- Text shown in the menu for saving tabs to a collection -->
@@ -628,6 +638,8 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <string name="tab_tray_menu_item_share">Bḍu akk accaren</string>
     <!-- Text shown in the menu to view recently closed tabs -->
     <string name="tab_tray_menu_recently_closed">Iccaren imedlen melmi kan</string>
+    <!-- Text shown in the menu to view account settings -->
+    <string name="tab_tray_menu_account_settings">Iɣewwaṛen n umiḍan</string>
     <!-- Text shown in the menu to view tab settings -->
     <string name="tab_tray_menu_tab_settings">Iɣewwaren n yiccer</string>
     <!-- Text shown in the menu for closing all tabs -->
@@ -798,8 +810,6 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <string name="bookmark_delete_folder_snackbar">%1$s4 yettwakkes</string>
     <!-- Screen title for adding a bookmarks folder -->
     <string name="bookmark_add_folder">Rnu akaram</string>
-    <!-- deprecated: Snackbar title shown after a bookmark has been created. -->
-    <string name="bookmark_created_snackbar">Tacreṭ n usebter tettwarna.</string>
     <!-- Snackbar title shown after a bookmark has been created. -->
     <string name="bookmark_saved_snackbar">Tacreṭ n usebter tettwasekles!</string>
     <!-- Snackbar edit button shown after a bookmark has been created. -->
@@ -986,6 +996,8 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <string name="share_link_all_apps_subheader">Tigawin meṛṛa</string>
     <!-- Sub-header in the dialog to share a link to an app from the most-recent sorted list -->
     <string name="share_link_recent_apps_subheader">Ttwasqedcen melmi kan</string>
+    <!-- An option from the three dot menu to into sync -->
+    <string name="sync_menu_sign_in">Kcem akken ad tsemtawiḍ</string>
     <!-- An option from the share dialog to sign into sync -->
     <string name="sync_sign_in">Qqen ɣer Sync</string>
     <!-- An option from the share dialog to send link to all other sync devices -->
@@ -1179,9 +1191,6 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <string name="onboarding_header">Ansuf ɣer %s!</string>
     <!-- text for the Firefox Accounts section header -->
     <string name="onboarding_fxa_section_header">Tesεiḍ yakan amiḍan?</string>
-    <!-- text for the Firefox Preview feature section header
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_feature_section_header">Wali %s</string>
     <!-- text for the "What's New" onboarding card header -->
     <string name="onboarding_whats_new_header1">Wali amaynut</string>
     <!-- text for the "what's new" onboarding card description
@@ -1189,10 +1198,10 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <string name="onboarding_whats_new_description">Tesεiḍ asteqsi ɣef %s ittwasinflen? Tebɣiḍ ad tezreḍ acu ibeddlen?</string>
     <!-- text for underlined clickable link that is part of "what's new" onboarding card description that links to an FAQ -->
     <string name="onboarding_whats_new_description_linktext">Awi-d tiririyen da</string>
-    <!-- text for the Firefox account onboarding sign in card header -->
-    <string name="onboarding_account_sign_in_header">Bdu amtawi n ticraḍ, awalen uffiren, akked waṭas-nniḍen s umiḍan n Firefox.</string>
+    <!-- text for the Firefox account onboarding sign in card header. The word "Firefox" should not be translated -->
+    <string name="onboarding_account_sign_in_header_1">Mtawi Firefox gar yibenkan</string>
     <!-- Text for the button to learn more about signing in to your Firefox account -->
-    <string name="onboarding_manual_sign_in_learn_more">Issin ugar</string>
+    <string name="onboarding_manual_sign_in_description">Awi-d ticraḍ n yisebtar, amazray, d wawalen uffiren ɣer Firefox deg yibenk-a.</string>
     <!-- text for the firefox account onboarding card header when we detect you're already signed in to
         another Firefox browser. (The word `Firefox` should not be translated)
         The first parameter is the email of the detected user's account -->
@@ -1201,8 +1210,8 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <string name="onboarding_firefox_account_auto_signin_confirm">Ih, qqen-iyi</string>
     <!-- text for the automatic sign-in button while signing in is in process -->
     <string name="onboarding_firefox_account_signing_in">Tuqqna tetteddu…</string>
-    <!-- text for the button to manually sign into Firefox account. The word "Firefox" should not be translated -->
-    <string name="onboarding_firefox_account_sign_in">Kcem ɣer Firefox</string>
+    <!-- text for the button to manually sign into Firefox account. -->
+    <string name="onboarding_firefox_account_sign_in_1">Jerred</string>
     <!-- text for the button to stay signed out when presented with an option to automatically sign-in. -->
     <string name="onboarding_firefox_account_stay_signed_out">Qqim beṛṛa n tuqqna</string>
     <!-- text to display in the snackbar once account is signed-in -->
@@ -1210,26 +1219,23 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <!-- text to display in the snackbar if automatic sign-in fails. user may try again -->
     <string name="onboarding_firefox_account_automatic_signin_failed">Tuccḍa n tuqqna</string>
     <!-- text for the tracking protection onboarding card header -->
-    <string name="onboarding_tracking_protection_header_2">Tabaḍnit tawurmant</string>
-    <!-- text for the tracking protection card description
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_tracking_protection_description_2">Iɣewwaren n tbaḍnit d tɣellist sewḥalen imekaren, yir azeɣzan d tkebbaniyin ara ak-yeṭṭaferen.</string>
+    <string name="onboarding_tracking_protection_header_3">Tabaḍnit tezga tettwaḍmen</string>
+    <!-- text for the tracking protection card description. 'Firefox' intentionally hardcoded here -->
+    <string name="onboarding_tracking_protection_description_3">Firefox yessewḥal s wudem awurman tikebbaniyin ara ak-iḍefren deg web.</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
     <string name="onboarding_tracking_protection_standard_button_2">Alugan (amezwer)</string>
     <!-- text for standard blocking option button description -->
-    <string name="onboarding_tracking_protection_standard_button_description_2">Drus n yimakaren i isewḥal. Isebtar ad d-alin s wudem amagnu.</string>
+    <string name="onboarding_tracking_protection_standard_button_description_3">Yerked gar tbaḍnit akked temlellit. ISebtar ad d-alin s wudem amagnu.</string>
     <!-- text for tracking protection radio button option for strict level of blocking -->
     <string name="onboarding_tracking_protection_strict_button">Uḥriṣ (yelha)</string>
     <!-- text for tracking protection radio button option for strict level of blocking -->
     <string name="onboarding_tracking_protection_strict_option">Uḥris</string>
     <!-- text for strict blocking option button description -->
-    <string name="onboarding_tracking_protection_strict_button_description_2">Ad isewḥel ugar n yineḍfaren, n udellel d yisfuyla udhimen. Isebtar ad d-ttalin s zzreb, maca kra n tmahilin zemrent ur teddunt ara.</string>
-    <!-- text for the toolbar position card header
-        In English this is an idiom for "choose a side as in an argument or fight"
-        but it is ok to make this more literally about "choosing a position in a physical space -->
-    <string name="onboarding_toolbar_position_header">Ddem ṛṛay</string>
+    <string name="onboarding_tracking_protection_strict_button_description_3">Isewḥal ugar n ineḍfaren akken isebtar ad d-allin s wudem aurad, maca kra n tmahilin n usebter zemrent ad rẓent.</string>
+    <!-- text for the toolbar position card header  -->
+    <string name="onboarding_toolbar_placement_header_1">Fren adig n ufeggag-ik·im n yifecka</string>
     <!-- text for the toolbar position card description -->
-    <string name="onboarding_toolbar_position_description">Ɛreḍ tunigin s yiwen ufus s useqdec n ufeggag n ddaw neɣ err-it d asawen.</string>
+    <string name="onboarding_toolbar_placement_description_1">Eǧǧ afeggag n yifecka ɣef wafus. Eǧǧ-it ddaw neɣ err-it d asawen.</string>
     <!-- text for the private browsing onboarding card header -->
     <string name="onboarding_private_browsing_header">Tunigin tusligin</string>
     <!-- text for the private browsing onboarding card description
@@ -1243,7 +1249,7 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <string name="onboarding_privacy_notice_header">Tabaḍnit inek/m</string>
 
     <!-- text for the privacy notice onboarding card description
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
+    The first parameter is the name of the app (e.g. Firefox Preview) Substitute %s for long browser name. -->
     <string name="onboarding_privacy_notice_description2">Nfeṣṣel %si w akken ad nerr gar ifassen-ik·im ayen i tbeṭṭuḍ srid aked wayen tbeṭṭuḍ yid-neɣ.</string>
     <!-- Text for the button to read the privacy notice -->
     <string name="onboarding_privacy_notice_read_button">Ɣer tasertit-nneɣ n tbaḍnit</string>
@@ -1258,7 +1264,7 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <!-- text for the theme picker onboarding card header -->
     <string name="onboarding_theme_picker_header">Fren asentel</string>
     <!-- text for the theme picker onboarding card description -->
-    <string name="onboarding_theme_picker_description1">Ḥreze tabatrit d wallen-ik s usermed n usentel aberkan.</string>
+    <string name="onboarding_theme_picker_description_2">Ḥreze tabatrit d wallen-ik s uskar aberkan.</string>
     <!-- Automatic theme setting (will follow device setting) -->
     <string name="onboarding_theme_automatic_title">Awurman</string>
     <!-- Summary of automatic theme setting (will follow device setting) -->
@@ -1314,13 +1320,13 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <!-- Preference for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_standard_default_1">Alugan (amezwer)</string>
     <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description_3">gDrus n yimakaren i isewḥal. Isebtar ad d-alin s wudem amahnu.</string>
+    <string name="preference_enhanced_tracking_protection_standard_description_4">Yerked gar tbaḍnit akked temlellit. ISebtar ad d-alin s wudem amagnu.</string>
     <!--  Accessibility text for the Standard protection information icon  -->
     <string name="preference_enhanced_tracking_protection_standard_info_button">Ayen iweḥlen s ummeten n tizeɣt mgal aḍfaṛ</string>
     <!-- Preference for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict">Uḥriṣ</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_description_2">Ad isewḥel ugar n yineḍfaren, n udellel d yisfuyla udhimen. Isebtar ad d-ttalin s zzreb, maca kra n tmahilin zemrent ur teddunt ara.</string>
+    <string name="preference_enhanced_tracking_protection_strict_description_3">Isewḥal ugar n ineḍfaren akken isebtar ad d-allin s wudem aurad, maca kra n tmahilin n usebter zemrent ad rẓent.</string>
     <!--  Accessibility text for the Strict protection information icon  -->
     <string name="preference_enhanced_tracking_protection_strict_info_button">Ayen iweḥlen s ummeten n uḥriṣ mgal aḍfaṛ</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
@@ -1463,10 +1469,8 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <string name="preferences_passwords_autofill">Taččart tawurmant</string>
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">Mtawi inekcam</string>
-    <!-- Syncing saved logins in Fenix is on -->
-    <string name="preferences_passwords_sync_logins_on">Yermed</string>
-    <!-- Syncing saved logins in Fenix is off -->
-    <string name="preferences_passwords_sync_logins_off">Yensa</string>
+    <!-- Preference for syncing saved logins in Fenix, when not signed in-->
+    <string name="preferences_passwords_sync_logins_across_devices">Mtawi inekcam gqr yibenkan</string>
     <!-- Syncing saved logins in Fenix needs reconnect to sync -->
     <string name="preferences_passwords_sync_logins_reconnect">Ales tuqqna</string>
     <!-- Syncing saved logins in Fenix needs login -->
@@ -1558,6 +1562,49 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
 
     <!-- Content description (not visible, for screen readers etc.): Sort saved logins dropdown menu chevron icon -->
     <string name="saved_logins_menu_dropdown_chevron_icon_content_description">Umuɣ n usemyizwer n yinekcam</string>
+
+    <!-- Credit Cards Autofill -->
+    <!-- Preference and title for managing the settings for credit cards -->
+    <string name="preferences_credit_cards">Tikarḍiwin n usmad</string>
+    <!-- Preference for saving and autofilling credit cards -->
+    <string name="preferences_credit_cards_save_and_autofill_cards">Asekles d taččart tawurmant n tkarḍiwin</string>
+    <!-- Preference summary for saving and autofilling credit card data -->
+    <string name="preferences_credit_cards_save_and_autofill_cards_summary">Isefka ttwawgelhen</string>
+    <!-- Preference option for syncing credit cards across devices. This is displayed when the user is not signed into sync -->
+    <string name="preferences_credit_cards_sync_cards_across_devices">Mtawi tikarḍiwin gar yibenkan</string>
+    <!-- Preference option for syncing credit cards across devices. This is displayed when the user is signed into sync -->
+    <string name="preferences_credit_cards_sync_cards">Mtawi tikarḍiwin</string>
+    <!-- Preference option for adding a credit card -->
+    <string name="preferences_credit_cards_add_credit_card">Rnu takarḍa n usmad</string>
+    <!-- Preference option for managing saved credit cards -->
+    <string name="preferences_credit_cards_manage_saved_cards">Sefrek tikerḍiwin yettwaskelsen</string>
+    <!-- Title of the "Add card" screen -->
+    <string name="credit_cards_add_card">Rnu takarḍa</string>
+    <!-- Title of the "Edit card" screen -->
+    <string name="credit_cards_edit_card">Ẓreg takarḍa</string>
+    <!-- The header for the card number of a credit card -->
+    <string name="credit_cards_card_number">Uṭṭun n tkarḍa</string>
+    <!-- The header for the expiration date of a credit card -->
+    <string name="credit_cards_expiration_date">Azemz n taggara</string>
+    <!-- The header for the name on the credit card -->
+    <string name="credit_cards_name_on_card">Isem ɣef tkarḍa</string>
+    <!-- The header for the nickname for a credit card -->
+    <string name="credit_cards_card_nickname">Mefferisemn tkarḍa</string>
+    <!-- The text for the "Delete card" menu item for deleting a credit card -->
+    <string name="credit_cards_menu_delete_card">Kkes takarḍa</string>
+    <!-- The text for the "Delete card" button for deleting a credit card -->
+    <string name="credit_cards_delete_card_button">Kkes takarḍa</string>
+    <!-- The title for the "Save" menu item for saving a credit card -->
+    <string name="credit_cards_menu_save">Sekles</string>
+    <!-- The text for the "Save" button for saving a credit card -->
+    <string name="credit_cards_save_button">Sekles</string>
+    <!-- The text for the "Cancel" button for cancelling adding or updating a credit card -->
+    <string name="credit_cards_cancel_button">Sefsex</string>
+    <!-- Title of the "Saved cards" screen -->
+    <string name="credit_cards_saved_cards">Tikerḍiwin yettwasekles</string>
+
+    <!-- Error message for credit card number validation -->
+    <string name="credit_cards_number_validation_error_message">Ma ulac aɣilif sekcem uṭṭun ameɣtu n tkarḍa n usmad</string>
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Rnu amsedday n unadi</string>
@@ -1720,23 +1767,19 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
 	<!-- Dialog button text for canceling the rename top site prompt. -->
 	<string name="top_sites_rename_dialog_cancel">Sefsex</string>
 
+    <!-- Default browser experiment -->
+    <string name="default_browser_experiment_card_text">Sbadu iseɣwan seg yismal web, seg yimaylen d yiznan i twaledyawt s wudem awurman deg Firefox.</string>
+
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">Kkes</string>
-
-    <!-- Deprecated: text for the firefox account onboarding card header
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_firefox_account_header">Awi %s amaynut akk.</string>
 
     <!-- Content description radio buttons with a link to more information -->
     <string name="radio_preference_info_content_description">Sit i wugar n telqayt</string>
 
-    <!-- Deprecated: No Open Tabs Message Header -->
-    <string name="no_collections_header1">Lqeḍ tiɣawsiwin i tḥemmleḍ</string>
-    <!-- Deprecated: Label to describe what collections are to a new user without any collections -->
-    <string name="no_collections_description1">Segrew akk akken inadiyen, ismal d waccaren yemṣadan akken ad yishil unekcum ɣer-sen mbeεd.</string>
-    <!-- Deprecated: text for the firefox account onboarding card header when we detect you're already signed in to -->
-    <string name="onboarding_firefox_account_auto_signin_header_2">Aql-ak teqqneḍ s %s ɣef yiminig-nniḍen Firefox s wugur-a. Tenɣiḍ ad teqqneḍ s umiḍan-a?</string>
-    <!-- Deprecated: Describes the add to homescreen functionality -->
-    <string name="add_to_homescreen_description">Adtizmireḍ s tifses ad ternuḍ asmel-a web ɣer ugdil agejdan n tiliɣri-ik akken ad tesɛuḍ anekcum askudan daɣen ad tinigeḍ s zreb s termit icuban asnas.</string>
+    <!-- Content description for the action bar "up" button -->
+    <string name="action_bar_up_description">Inig d asawen</string>
 
-    </resources>
+    <!-- Content description for privacy content close button -->
+    <string name="privacy_content_close_button_content_description">Mdel</string>
+
+</resources>

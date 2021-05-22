@@ -314,6 +314,8 @@ class HomeScreenRobot {
         }
 
         fun openSearch(interact: SearchRobot.() -> Unit): SearchRobot.Transition {
+            mDevice.findObject(UiSelector().resourceId("$packageName:id/toolbar"))
+                .waitForExists(waitingTime)
             navigationToolbar().perform(click())
 
             SearchRobot().interact()
@@ -374,8 +376,10 @@ class HomeScreenRobot {
         }
 
         fun openNavigationToolbar(interact: NavigationToolbarRobot.() -> Unit): NavigationToolbarRobot.Transition {
+            mDevice.findObject(UiSelector().resourceId("$packageName:id/toolbar"))
+                .waitForExists(waitingTime)
+            navigationToolbar().perform(click())
 
-            assertNavigationToolbar().perform(click())
             NavigationToolbarRobot().interact()
             return NavigationToolbarRobot.Transition()
         }
@@ -470,14 +474,12 @@ private fun assertKeyboardVisibility(isExpectedToBeVisible: Boolean) =
             .contains("mInputShown=true")
     )
 
-private fun navigationToolbar() =
-    onView(allOf(withText("Search or enter address")))
+private fun navigationToolbar() = onView(withId(R.id.toolbar))
 
 private fun closeTabButton() = onView(withId(R.id.close_tab_button))
 
 private fun assertNavigationToolbar() =
-    onView(allOf(withText("Search or enter address")))
-        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+    navigationToolbar().check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 private fun assertFocusedNavigationToolbar() =
     onView(allOf(withHint("Search or enter address")))
@@ -645,7 +647,7 @@ private fun assertPrivacyNoticeButton() {
 
 private fun assertStartBrowsingButton() {
     scrollToElementByText("Start browsing")
-    onView(allOf(withText("Start browsing")))
+    onView(withId(R.id.finish_button))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 

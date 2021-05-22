@@ -21,10 +21,12 @@ import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.support.ktx.android.content.hasCamera
 import mozilla.components.support.ktx.android.content.isPermissionGranted
 import mozilla.components.support.ktx.android.view.hideKeyboard
+import org.mozilla.fenix.Config
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
@@ -58,7 +60,7 @@ class TurnOnSyncFragment : Fragment(), AccountObserver {
 
     private fun navigateToPairFragment() {
         val directions = TurnOnSyncFragmentDirections.actionTurnOnSyncFragmentToPairFragment()
-        requireView().findNavController().navigate(directions)
+        requireView().findNavController().navigateBlockingForAsyncNavGraph(directions)
         requireComponents.analytics.metrics.track(Event.SyncAuthScanPairing)
     }
 
@@ -114,7 +116,9 @@ class TurnOnSyncFragment : Fragment(), AccountObserver {
         view.signInScanButton.setOnClickListener(paringClickListener)
         view.signInEmailButton.setOnClickListener(signInClickListener)
         view.signInInstructions.text = HtmlCompat.fromHtml(
-            getString(R.string.sign_in_instructions),
+            if (requireContext().settings().allowDomesticChinaFxaServer && Config.channel.isMozillaOnline)
+                getString(R.string.sign_in_instructions_cn)
+            else getString(R.string.sign_in_instructions),
             HtmlCompat.FROM_HTML_MODE_LEGACY
         )
 

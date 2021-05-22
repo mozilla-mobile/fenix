@@ -272,6 +272,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         }
 
         fill_link_from_clipboard.setOnClickListener {
+            requireComponents.analytics.metrics.track(Event.ClipboardSuggestionClicked)
             view.hideKeyboard()
             toolbarView.view.clearFocus()
             (activity as HomeActivity)
@@ -433,12 +434,11 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                             dialog.cancel()
                         }
                         setPositiveButton(R.string.qr_scanner_dialog_positive) { dialog: DialogInterface, _ ->
-                            (activity as HomeActivity)
-                                .openToBrowserAndLoad(
-                                    searchTermOrURL = result,
-                                    newTab = store.state.tabId == null,
-                                    from = BrowserDirection.FromSearchDialog
-                                )
+                            (activity as? HomeActivity)?.openToBrowserAndLoad(
+                                searchTermOrURL = result,
+                                newTab = store.state.tabId == null,
+                                from = BrowserDirection.FromSearchDialog
+                            )
                             dialog.dismiss()
                         }
                         create()
@@ -554,7 +554,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
     private fun updateClipboardSuggestion(searchState: SearchFragmentState, clipboardUrl: String?) {
         val shouldShowView = searchState.showClipboardSuggestions &&
                 searchState.query.isEmpty() &&
-                !clipboardUrl.isNullOrEmpty()
+                !clipboardUrl.isNullOrEmpty() && !searchState.showSearchShortcuts
 
         fill_link_from_clipboard.isVisible = shouldShowView
         fill_link_divider.isVisible = shouldShowView

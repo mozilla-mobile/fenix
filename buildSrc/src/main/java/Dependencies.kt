@@ -13,7 +13,6 @@ object Versions {
 
     const val sentry = "1.7.10"
     const val leakcanary = "2.4"
-    const val leanplum = "5.4.0"
     const val osslicenses_plugin = "0.9.5"
     const val detekt = "1.9.1"
     const val jna = "5.6.0"
@@ -29,7 +28,6 @@ object Versions {
     const val androidx_fragment = "1.2.5"
     const val androidx_navigation = "2.3.3"
     const val androidx_recyclerview = "1.2.0-beta01"
-    const val androidx_recyclerview_selection = "1.0.0"
     const val androidx_core = "1.3.2"
     const val androidx_paging = "2.1.2"
     const val androidx_transition = "1.4.0"
@@ -77,12 +75,9 @@ object Deps {
     const val mozilla_concept_sync = "org.mozilla.components:concept-sync:${Versions.mozilla_android_components}"
 
     const val mozilla_browser_awesomebar = "org.mozilla.components:browser-awesomebar:${Versions.mozilla_android_components}"
-    const val mozilla_browser_engine_gecko_nightly = "org.mozilla.components:browser-engine-gecko-nightly:${Versions.mozilla_android_components}"
-    const val mozilla_browser_engine_gecko_beta = "org.mozilla.components:browser-engine-gecko-beta:${Versions.mozilla_android_components}"
-    const val mozilla_browser_engine_gecko_release = "org.mozilla.components:browser-engine-gecko:${Versions.mozilla_android_components}"
+    const val mozilla_browser_engine_gecko = "org.mozilla.components:browser-engine-gecko:${Versions.mozilla_android_components}"
     const val mozilla_browser_domains = "org.mozilla.components:browser-domains:${Versions.mozilla_android_components}"
     const val mozilla_browser_icons = "org.mozilla.components:browser-icons:${Versions.mozilla_android_components}"
-    const val mozilla_browser_search = "org.mozilla.components:browser-search:${Versions.mozilla_android_components}"
     const val mozilla_browser_session = "org.mozilla.components:browser-session:${Versions.mozilla_android_components}"
     const val mozilla_browser_session_storage = "org.mozilla.components:browser-session-storage:${Versions.mozilla_android_components}"
     const val mozilla_browser_state = "org.mozilla.components:browser-state:${Versions.mozilla_android_components}"
@@ -150,6 +145,7 @@ object Deps {
     const val mozilla_lib_crash = "org.mozilla.components:lib-crash:${Versions.mozilla_android_components}"
     const val mozilla_lib_push_firebase = "org.mozilla.components:lib-push-firebase:${Versions.mozilla_android_components}"
     const val mozilla_lib_dataprotect = "org.mozilla.components:lib-dataprotect:${Versions.mozilla_android_components}"
+    const val mozilla_lib_state = "org.mozilla.components:lib-state:${Versions.mozilla_android_components}"
 
     const val mozilla_lib_publicsuffixlist = "org.mozilla.components:lib-publicsuffixlist:${Versions.mozilla_android_components}"
 
@@ -167,9 +163,6 @@ object Deps {
     const val sentry = "io.sentry:sentry-android:${Versions.sentry}"
     const val leakcanary = "com.squareup.leakcanary:leakcanary-android:${Versions.leakcanary}"
 
-    const val leanplum_core = "com.leanplum:leanplum-core:${Versions.leanplum}"
-    const val leanplum_fcm = "com.leanplum:leanplum-fcm:${Versions.leanplum}"
-
     const val androidx_annotation = "androidx.annotation:annotation:${Versions.androidx_annotation}"
     const val androidx_biometric = "androidx.biometric:biometric:${Versions.androidx_biometric}"
     const val androidx_fragment = "androidx.fragment:fragment-ktx:${Versions.androidx_fragment}"
@@ -186,7 +179,6 @@ object Deps {
     const val androidx_navigation_fragment = "androidx.navigation:navigation-fragment-ktx:${Versions.androidx_navigation}"
     const val androidx_navigation_ui = "androidx.navigation:navigation-ui:${Versions.androidx_navigation}"
     const val androidx_recyclerview = "androidx.recyclerview:recyclerview:${Versions.androidx_recyclerview}"
-    const val androidx_recyclerview_selection = "androidx.recyclerview:recyclerview-selection:${Versions.androidx_recyclerview_selection}"
     const val androidx_core = "androidx.core:core:${Versions.androidx_core}"
     const val androidx_core_ktx = "androidx.core:core-ktx:${Versions.androidx_core}"
     const val androidx_transition = "androidx.transition:transition:${Versions.androidx_transition}"

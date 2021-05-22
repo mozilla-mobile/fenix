@@ -47,6 +47,8 @@
     <string name="pref_key_account" translatable="false">pref_key_account</string>
     <string name="pref_key_sign_in" translatable="false">pref_key_sign_in</string>
     <string name="pref_key_account_auth_error" translatable="false">pref_key_account_auth_error</string>
+    <string name="pref_key_allow_domestic_china_fxa_server" translatable="false">pref_key_allow_domestic_china_fxa_server</string>
+    <string name="pref_key_have_read_fxa_account_json" translatable="false">pref_key_have_read_fxa_account_json</string>
     <string name="pref_key_override_fxa_server" translatable="false">pref_key_override_fxa_server</string>
     <string name="pref_key_override_sync_tokenserver" translatable="false">pref_key_override_sync_tokenserver</string>
     <string name="pref_key_private_mode" translatable="false">pref_key_private_mode</string>
@@ -86,10 +88,13 @@
     <string name="pref_key_sync_sign_in" translatable="false">pref_key_sync_sign_in</string>
     <string name="pref_key_sync_problem" translatable="false">pref_key_sync_problem</string>
     <string name="pref_key_push_project_id" translatable="false">project_id</string>
-    <string name="pref_key_fxa_signed_in" translatable="false">pref_key_fxa_signed_in</string>
     <string name="pref_key_fxa_has_synced_items" translatable="false">pref_key_fxa_has_synced_items</string>
     <string name="pref_key_search_widget_installed" translatable="false">pref_key_search_widget_installed</string>
     <string name="pref_key_saved_logins_sorting_strategy" translatable="false">pref_key_saved_logins_sorting_strategy</string>
+    <!-- Key for credit cards sync preference in the account settings fragment -->
+    <string name="pref_key_sync_credit_cards" translatable="false">pref_key_sync_credit_cards</string>
+    <!-- Key for Address sync preference in the account settings fragment -->
+    <string name="pref_key_sync_address" translatable="false">pref_key_sync_address</string>
 
     <!-- Search Settings -->
     <string name="pref_key_search_engine_list" translatable="false">pref_key_search_engine_list</string>
@@ -177,6 +182,8 @@
     <string name="pref_key_credit_cards_sync_cards_across_devices" translatable="false">pref_key_credit_cards_sync_cards_across_devices</string>
     <!-- Key for the "Add credit card" preference in the "Credit cards" fragment -->
     <string name="pref_key_credit_cards_add_credit_card" translatable="false">pref_key_credit_cards_add_credit_card</string>
+    <!-- Key for the "Manage saved cards" preference in the "Credit cards" fragment -->
+    <string name="pref_key_credit_cards_manage_saved_cards" translatable="false">pref_key_credit_cards_manage_saved_cards</string>
 
     <!-- Privacy Settings -->
     <string name="pref_key_open_links_in_a_private_tab" translatable="false">pref_key_open_links_in_a_private_tab</string>
@@ -239,6 +246,8 @@
 
     <string name="pref_key_default_browser" translatable="false">pref_key_default_browser</string>
 
+    <string name="pref_key_fxa_signed_in" translatable="false">pref_key_fxa_signed_in</string>
+
     <string name="pref_key_login_exceptions" translatable="false">pref_key_login_exceptions</string>
 
     <string name="pref_key_show_collections_placeholder_home" translatable="false">pref_key_show_collections_home</string>
@@ -252,6 +261,7 @@
     <string name="pref_key_close_tabs_after_one_week" translatable="false">pref_key_close_tabs_after_one_week</string>
     <string name="pref_key_close_tabs_after_one_month" translatable="false">pref_key_close_tabs_after_one_month</string>
     <string name="pref_key_new_tabs_tray" translatable="false">pref_key_new_tabs_tray</string>
+    <string name="pref_key_allow_third_party_root_certs" translatable="false">pref_key_allow_third_party_cert_roots</string>
 
     <string name="pref_key_camera_permissions_needed" translatable="false">pref_key_camera_permissions_needed</string>
 
@@ -259,15 +269,15 @@
 
     <string name="pref_key_open_next_tab_desktop_mode" translatable="false">pref_key_open_next_tab_desktop_mode</string>
 
+    <!-- Set default browser experiment card-->
+    <string name="pref_key_experiment_card_home" translatable="false">pref_key_experiment_card_home</string>
+
     <!-- Secret Info Setting Keys -->
     <string name="pref_key_secret_debug_info" translatable="false">pref_key_secret_debug_info</string>
-    <string name="pref_key_leanplum_user_id" translatable="false">pref_key_leanplum_user_id</string>
-    <string name="pref_key_leanplum_device_id" translatable="false">pref_key_leanplum_device_id</string>
     <string name="pref_key_search_region_home" translatable="false">pref_key_search_region_home</string>
     <string name="pref_key_search_region_current" translatable="false">pref_key_search_region_current</string>
 
     <!-- Secret Settings -->
-    <string name="pref_key_show_credit_cards_feature" translatable="false">pref_key_show_credit_cards_feature</string>
     <string name="pref_key_show_address_feature" translatable="false">pref_key_show_address_feature</string>
     <string name="pref_key_nimbus_experiments" translatable="false">pref_key_nimbus_experiments</string>
 </resources>

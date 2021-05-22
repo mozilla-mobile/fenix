@@ -5,83 +5,89 @@
 package org.mozilla.fenix.settings.creditcards
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
-import android.widget.ArrayAdapter
-import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import kotlinx.android.synthetic.main.fragment_credit_card_editor.view.*
+import androidx.navigation.fragment.navArgs
 import org.mozilla.fenix.R
+import org.mozilla.fenix.SecureFragment
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.showToolbar
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
+import org.mozilla.fenix.settings.creditcards.controller.DefaultCreditCardEditorController
+import org.mozilla.fenix.settings.creditcards.interactor.CreditCardEditorInteractor
+import org.mozilla.fenix.settings.creditcards.interactor.DefaultCreditCardEditorInteractor
+import org.mozilla.fenix.settings.creditcards.view.CreditCardEditorView
 
 /**
  * Display a credit card editor for adding and editing a credit card.
  */
-class CreditCardEditorFragment : Fragment(R.layout.fragment_credit_card_editor) {
+class CreditCardEditorFragment : SecureFragment(R.layout.fragment_credit_card_editor) {
+
+    private lateinit var creditCardEditorState: CreditCardEditorState
+    private lateinit var creditCardEditorView: CreditCardEditorView
+    private val args by navArgs<CreditCardEditorFragmentArgs>()
+
+    /**
+     * Returns true if a credit card is being edited, and false otherwise.
+     */
+    private val isEditing: Boolean
+        get() = args.creditCard != null
+
+    private lateinit var interactor: CreditCardEditorInteractor
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        showToolbar(getString(R.string.credit_cards_add_card))
+        setHasOptionsMenu(true)
 
-        setupButtonClickListeners(view)
-        setupExpiryMonthDropDown(view)
-        setupExpiryYearDropDown(view)
-    }
-
-    /**
-     * Setup the all button click listeners in the credit card editor.
-     */
-    private fun setupButtonClickListeners(view: View) {
-        view.cancel_button.setOnClickListener {
-            findNavController().popBackStack()
-        }
-    }
-
-    /**
-     * Setup the expiry month dropdown by formatting and populating it with the months in a calendar
-     * year.
-     */
-    private fun setupExpiryMonthDropDown(view: View) {
-        val adapter =
-            ArrayAdapter<String>(view.context, android.R.layout.simple_spinner_dropdown_item)
-        val dateFormat = SimpleDateFormat("MMMM (MM)", Locale.getDefault())
-
-        val calendar = Calendar.getInstance()
-        calendar.set(Calendar.DAY_OF_MONTH, 1)
-
-        for (month in 0..NUMBER_OF_MONTHS) {
-            calendar.set(Calendar.MONTH, month)
-            adapter.add(dateFormat.format(calendar.time))
+        if (!isEditing) {
+            showToolbar(getString(R.string.credit_cards_add_card))
+        } else {
+            showToolbar(getString(R.string.credit_cards_edit_card))
         }
 
-        view.expiry_month_drop_down.adapter = adapter
+        interactor = DefaultCreditCardEditorInteractor(
+            controller = DefaultCreditCardEditorController(
+                storage = requireContext().components.core.autofillStorage,
+                lifecycleScope = lifecycleScope,
+                navController = findNavController()
+            )
+        )
+
+        creditCardEditorState =
+            args.creditCard?.toCreditCardEditorState() ?: getInitialCreditCardEditorState()
+        creditCardEditorView = CreditCardEditorView(view, interactor)
+        creditCardEditorView.bind(creditCardEditorState)
     }
 
-    /**
-     * Setup the expiry year dropdown with the latest 10 years.
-     */
-    private fun setupExpiryYearDropDown(view: View) {
-        val adapter =
-            ArrayAdapter<String>(view.context, android.R.layout.simple_spinner_dropdown_item)
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.credit_card_editor, menu)
 
-        val calendar = Calendar.getInstance()
-        val currentYear = calendar.get(Calendar.YEAR)
+        menu.findItem(R.id.delete_credit_card_button).isVisible = isEditing
+    }
 
-        for (year in currentYear until currentYear + NUMBER_OF_YEARS_TO_SHOW) {
-            adapter.add(year.toString())
+    @Suppress("MagicNumber")
+    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
+        R.id.delete_credit_card_button -> {
+            args.creditCard?.let { interactor.onDeleteCardButtonClicked(it.guid) }
+            true
         }
-
-        view.expiry_year_drop_down.adapter = adapter
+        R.id.save_credit_card_button -> {
+            creditCardEditorView.saveCreditCard(creditCardEditorState)
+            true
+        }
+        else -> false
     }
 
     companion object {
-        // Number of months in a year (0-indexed).
-        private const val NUMBER_OF_MONTHS = 11
-
         // Number of years to show in the expiry year dropdown.
-        private const val NUMBER_OF_YEARS_TO_SHOW = 10
+        const val NUMBER_OF_YEARS_TO_SHOW = 10
+
+        // Placeholder for the card type. This will be replaced when we can identify the card type.
+        // This is dependent on https://github.com/mozilla-mobile/android-components/issues/9813.
+        const val CARD_TYPE_PLACEHOLDER = ""
     }
 }
