@@ -68,11 +68,6 @@ class DefaultCreditCardEditorController(
         navController.popBackStack()
     }
 
-    /**
-     * Deletes an existing credit card.
-     *
-     * @param guid the id of the credit card to delete.
-     */
     override fun handleDeleteCreditCard(guid: String) {
         lifecycleScope.launch(ioDispatcher) {
             storage.deleteCreditCard(guid)
@@ -84,11 +79,6 @@ class DefaultCreditCardEditorController(
         }
     }
 
-    /**
-     * Saves a new credit card.
-     *
-     * @param creditCardFields the field values for the new credit card.
-     */
     override fun handleSaveCreditCard(creditCardFields: NewCreditCardFields) {
         lifecycleScope.launch(ioDispatcher) {
             storage.addCreditCard(creditCardFields)
@@ -100,12 +90,6 @@ class DefaultCreditCardEditorController(
         }
     }
 
-    /**
-     * Updates an existing credit card.
-     *
-     * @param guid the id of the credit card to update.
-     * @param creditCardFields the updated values for the card.
-     */
     override fun handleUpdateCreditCard(guid: String, creditCardFields: UpdatableCreditCardFields) {
         lifecycleScope.launch(ioDispatcher) {
             storage.updateCreditCard(guid, creditCardFields)
