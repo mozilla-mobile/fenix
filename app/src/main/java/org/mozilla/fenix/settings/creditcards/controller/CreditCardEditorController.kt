@@ -71,7 +71,7 @@ class DefaultCreditCardEditorController(
     /**
      * Deletes an existing credit card.
      *
-     * @param [guid] the id of the credit card to delete.
+     * @param guid the id of the credit card to delete.
      */
     override fun handleDeleteCreditCard(guid: String) {
         lifecycleScope.launch(ioDispatcher) {
@@ -87,7 +87,7 @@ class DefaultCreditCardEditorController(
     /**
      * Saves a new credit card.
      *
-     * @param [creditCardFields] the field values for the new credit card.
+     * @param creditCardFields the field values for the new credit card.
      */
     override fun handleSaveCreditCard(creditCardFields: NewCreditCardFields) {
         lifecycleScope.launch(ioDispatcher) {
@@ -103,8 +103,8 @@ class DefaultCreditCardEditorController(
     /**
      * Updates an existing credit card.
      *
-     * @param [guid] the id of the credit card to update.
-     * @param [creditCardFields] the updated values for the card.
+     * @param guid the id of the credit card to update.
+     * @param creditCardFields the updated values for the card.
      */
     override fun handleUpdateCreditCard(guid: String, creditCardFields: UpdatableCreditCardFields) {
         lifecycleScope.launch(ioDispatcher) {

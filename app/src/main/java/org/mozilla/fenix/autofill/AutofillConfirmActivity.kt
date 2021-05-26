@@ -8,7 +8,6 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import mozilla.components.feature.autofill.AutofillConfiguration
 import mozilla.components.feature.autofill.ui.AbstractAutofillConfirmActivity
-import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 
 /**
@@ -17,9 +16,4 @@ import org.mozilla.fenix.ext.components
 @RequiresApi(Build.VERSION_CODES.O)
 class AutofillConfirmActivity : AbstractAutofillConfirmActivity() {
     override val configuration: AutofillConfiguration by lazy { components.autofillConfiguration }
-
-    override fun finish() {
-        super.finish()
-        components.analytics.metrics.track(Event.CreditCardAutofill)
-    }
 }
