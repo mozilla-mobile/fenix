@@ -5406,7 +5406,7 @@ credit_cards:
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/18711
     data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/19548
+      - https://github.com/mozilla-mobile/fenix/pull/19548#issuecomment-848811030
     data_sensitivity:
       - interaction
     notification_emails:
@@ -5422,7 +5422,7 @@ credit_cards:
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/18711
     data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/19548
+      - https://github.com/mozilla-mobile/fenix/pull/19548#issuecomment-848811030
     data_sensitivity:
       - interaction
     notification_emails:
@@ -5438,7 +5438,7 @@ credit_cards:
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/18711
     data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/19548
+      - https://github.com/mozilla-mobile/fenix/pull/19548#issuecomment-848811030
     data_sensitivity:
       - interaction
     notification_emails:
