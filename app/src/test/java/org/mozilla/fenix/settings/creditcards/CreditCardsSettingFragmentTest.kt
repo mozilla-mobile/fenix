@@ -63,8 +63,7 @@ class CreditCardsSettingFragmentTest {
         val creditCardsStore = CreditCardsFragmentStore(creditCardsState)
 
         creditCardsSettingFragment.updateCardManagementPreference(
-            creditCardsStore.state.creditCards.isNotEmpty(),
-            navController
+            creditCardsStore.state.creditCards.isNotEmpty()
         )
 
         assertNull(manageCardsPreference?.icon)
@@ -91,8 +90,7 @@ class CreditCardsSettingFragmentTest {
         val creditCardsStore = CreditCardsFragmentStore(creditCardsState)
 
         creditCardsSettingFragment.updateCardManagementPreference(
-            creditCardsStore.state.creditCards.isNotEmpty(),
-            navController
+            creditCardsStore.state.creditCards.isNotEmpty()
         )
 
         assertNotNull(manageCardsPreference?.icon)

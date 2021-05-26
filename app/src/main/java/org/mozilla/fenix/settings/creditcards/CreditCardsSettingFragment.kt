@@ -16,7 +16,6 @@ import android.view.ViewGroup
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import androidx.preference.SwitchPreference
@@ -49,6 +48,7 @@ import org.mozilla.fenix.settings.requirePreference
 class CreditCardsSettingFragment : BiometricPromptPreferenceFragment() {
 
     private lateinit var creditCardsStore: CreditCardsFragmentStore
+    private var hasCreditCards: Boolean = false
     private var isCreditCardsListLoaded: Boolean = false
 
     /**
@@ -103,7 +103,8 @@ class CreditCardsSettingFragment : BiometricPromptPreferenceFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         consumeFrom(creditCardsStore) { state ->
-            updateCardManagementPreference(state.creditCards.isNotEmpty(), findNavController())
+            hasCreditCards = state.creditCards.isNotEmpty()
+            updateCardManagementPreference(state.creditCards.isNotEmpty())
         }
 
         setBiometricPrompt(view, creditCardPreferences)
@@ -148,19 +149,10 @@ class CreditCardsSettingFragment : BiometricPromptPreferenceFragment() {
      */
     @VisibleForTesting
     internal fun updateCardManagementPreference(
-        hasCreditCards: Boolean,
-        navController: NavController
+        hasCreditCards: Boolean
     ) {
         val manageSavedCardsPreference =
             requirePreference<Preference>(R.string.pref_key_credit_cards_manage_cards)
-
-        val directions = if (hasCreditCards) {
-            CreditCardsSettingFragmentDirections
-                .actionCreditCardsSettingFragmentToCreditCardsManagementFragment()
-        } else {
-            CreditCardsSettingFragmentDirections
-                .actionCreditCardsSettingFragmentToCreditCardEditorFragment()
-        }
 
         if (hasCreditCards) {
             manageSavedCardsPreference.icon = null
@@ -173,7 +165,14 @@ class CreditCardsSettingFragment : BiometricPromptPreferenceFragment() {
         }
 
         manageSavedCardsPreference.setOnPreferenceClickListener {
-            navController.navigateBlockingForAsyncNavGraph(directions)
+            if (hasCreditCards) {
+                verifyCredentialsOrShowSetupWarning(requireContext(), creditCardPreferences)
+            } else {
+                findNavController().navigateBlockingForAsyncNavGraph(
+                    CreditCardsSettingFragmentDirections
+                        .actionCreditCardsSettingFragmentToCreditCardEditorFragment()
+                )
+            }
             super.onPreferenceTreeClick(it)
         }
     }
