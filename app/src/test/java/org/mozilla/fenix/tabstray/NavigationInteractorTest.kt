@@ -13,6 +13,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
+import io.mockk.verifyOrder
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import mozilla.components.browser.state.state.BrowserState
@@ -249,8 +250,10 @@ class NavigationInteractorTest {
 
         navigationInteractor.onSyncedTabClicked(tab)
 
-        verify { metrics.track(Event.SyncedTabOpened) }
-        verify {
+        verifyOrder {
+            metrics.track(Event.SyncedTabOpened)
+
+            dismissTabTray()
             activity.openToBrowserAndLoad(
                 searchTermOrURL = "https://mozilla.org",
                 newTab = true,
