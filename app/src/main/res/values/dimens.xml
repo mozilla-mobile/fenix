@@ -222,6 +222,7 @@
 
     <!-- Credit Cards Fragment -->
     <dimen name="credit_cards_saved_cards_item_margin_start">16dp</dimen>
+    <dimen name="credit_cards_saved_cards_network_margin_end">4dp</dimen>
     <dimen name="credit_cards_saved_cards_item_margin_end">48dp</dimen>
 
     <!-- a11y -->

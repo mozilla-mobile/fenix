@@ -20,6 +20,7 @@ import org.junit.runner.RunWith
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.settings.creditcards.interactor.CreditCardsManagementInteractor
 import org.mozilla.fenix.settings.creditcards.view.CreditCardItemViewHolder
+import java.util.Locale
 
 @RunWith(FenixRobolectricTestRunner::class)
 class CreditCardItemViewHolderTest {
@@ -51,6 +52,7 @@ class CreditCardItemViewHolderTest {
     fun `GIVEN a new credit card item on bind THEN set the card number and expiry date text`() {
         CreditCardItemViewHolder(view, interactor).bind(creditCard)
 
+        assertEquals(creditCard.cardType.capitalize(Locale.getDefault()), view.credit_card_network.text)
         assertEquals(creditCard.obfuscatedCardNumber, view.credit_card_number.text)
         assertEquals("0${creditCard.expiryMonth}/${creditCard.expiryYear}", view.expiry_date.text)
     }

@@ -22,10 +22,26 @@
         app:layout_constraintBottom_toBottomOf="parent" />
 
     <TextView
+        android:id="@+id/credit_card_network"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/credit_cards_saved_cards_item_margin_start"
+        android:layout_marginEnd="@dimen/credit_cards_saved_cards_network_margin_end"
+        android:ellipsize="middle"
+        android:singleLine="true"
+        android:textAppearance="?android:attr/textAppearanceListItem"
+        android:textColor="?primaryText"
+        app:layout_constraintBottom_toTopOf="@+id/expiry_date"
+        app:layout_constraintEnd_toStartOf="@+id/credit_card_number"
+        app:layout_constraintStart_toEndOf="@+id/credit_card_logo"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        tools:text="CC_NETWORK" />
+
+    <TextView
         android:id="@+id/credit_card_number"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/credit_cards_saved_cards_item_margin_start"
         android:layout_marginEnd="@dimen/credit_cards_saved_cards_item_margin_end"
         android:ellipsize="middle"
         android:singleLine="true"
@@ -33,7 +49,7 @@
         android:textColor="?primaryText"
         app:layout_constraintBottom_toTopOf="@id/expiry_date"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/credit_card_logo"
+        app:layout_constraintStart_toEndOf="@+id/credit_card_network"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
         tools:text="mozilla.org" />

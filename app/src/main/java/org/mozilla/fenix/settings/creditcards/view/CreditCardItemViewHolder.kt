@@ -26,6 +26,9 @@ class CreditCardItemViewHolder(
     fun bind(creditCard: CreditCard) {
         credit_card_logo.setImageResource(creditCard.cardType.creditCardIssuerNetwork().icon)
 
+        credit_card_network.text = creditCard.cardType.creditCardIssuerNetwork().name
+            .capitalize(Locale.getDefault())
+
         credit_card_number.text = creditCard.obfuscatedCardNumber
 
         bindCreditCardExpiryDate(creditCard)
