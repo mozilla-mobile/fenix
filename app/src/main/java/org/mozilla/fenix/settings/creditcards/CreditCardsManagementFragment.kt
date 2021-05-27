@@ -58,7 +58,9 @@ class CreditCardsManagementFragment : SecureFragment() {
         )
 
         creditCardsView = CreditCardsManagementView(view.saved_cards_layout, interactor)
-        toolbarChildContainer = initChildContainerFromToolbar()
+
+        toolbarChildContainer = getToolbarChildContainer()
+
         loadCreditCards()
 
         return view
@@ -82,7 +84,8 @@ class CreditCardsManagementFragment : SecureFragment() {
     }
 
     /**
-     * If we pause this fragment, we want to pop users back to the settings page to reauthenticate.
+     * When the fragment is paused, hide the view and navigate back to the settings page to
+     * reauthenticate.
      */
     override fun onPause() {
         toolbarChildContainer.removeAllViews()
@@ -92,7 +95,7 @@ class CreditCardsManagementFragment : SecureFragment() {
             .setDisplayShowTitleEnabled(true)
         setHasOptionsMenu(false)
 
-        // don't redirect if the user is navigating to the editor fragment
+        // Don't redirect if the user is navigating to the editor fragment
         redirectToReAuth(
             listOf(R.id.creditCardEditorFragment),
             findNavController().currentDestination?.id,
@@ -117,9 +120,10 @@ class CreditCardsManagementFragment : SecureFragment() {
     }
 
     /**
-     * Initialize toolbar container and set visibility for authentication.
+     * Returns the toolbar child container and sets its to be visible after the view is created
+     * after being authenticated.
      */
-    private fun initChildContainerFromToolbar(): FrameLayout {
+    private fun getToolbarChildContainer(): FrameLayout {
         val activity = activity as? AppCompatActivity
         val toolbar = (activity as HomeActivity).findViewById<Toolbar>(R.id.navigationToolbar)
 

@@ -22,7 +22,7 @@ import org.mozilla.fenix.settings.requirePreference
  */
 abstract class BiometricPromptPreferenceFragment : PreferenceFragmentCompat() {
 
-    internal val biometricPromptFeature = ViewBoundFeatureWrapper<BiometricPromptFeature>()
+    private val biometricPromptFeature = ViewBoundFeatureWrapper<BiometricPromptFeature>()
 
     /**
      * Gets the string to be used for [BiometricPromptFeature.requestAuthentication] prompting to
@@ -36,8 +36,8 @@ abstract class BiometricPromptPreferenceFragment : PreferenceFragmentCompat() {
     abstract fun navigateOnSuccess()
 
     /**
-     * Show a warning to set up a pin/password when the device is not secured. This is only used
-     * when BiometricPrompt is unavailable on the device.
+     * Shows a dialog warning to set up a pin/password when the device is not secured. This is
+     * only used when BiometricPrompt is unavailable on the device.
      */
     abstract fun showPinDialogWarning(context: Context)
 
@@ -54,7 +54,7 @@ abstract class BiometricPromptPreferenceFragment : PreferenceFragmentCompat() {
     }
 
     /**
-     * Create a prompt to confirm the device's pin/password and start activity based on the result.
+     * Creates a prompt to verify the device's pin/password and start activity based on the result.
      * This is only used when BiometricPrompt is unavailable on the device.
      */
     @Suppress("Deprecation")
@@ -90,7 +90,6 @@ abstract class BiometricPromptPreferenceFragment : PreferenceFragmentCompat() {
         // Use the BiometricPrompt if available
         if (BiometricPromptFeature.canUseFeature(context)) {
             togglePrefsEnabled(prefList, false)
-            // use generic message or define which string to use?
             biometricPromptFeature.get()?.requestAuthentication(unlockMessage())
             return
         }

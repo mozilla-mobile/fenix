@@ -37,6 +37,7 @@ import org.mozilla.fenix.ext.secure
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.settings.SharedPreferenceUpdater
 import org.mozilla.fenix.settings.SyncPreferenceView
+import org.mozilla.fenix.settings.biometric.BiometricPromptFeature
 import org.mozilla.fenix.settings.biometric.BiometricPromptPreferenceFragment
 import org.mozilla.fenix.settings.requirePreference
 
@@ -197,8 +198,8 @@ class CreditCardsSettingFragment : BiometricPromptPreferenceFragment() {
     }
 
     /**
-     * Show a warning to set up a pin/password when the device is not secured. This is only used
-     * when BiometricPrompt is unavailable on the device.
+     * Shows a dialog warning to set up a pin/password when the device is not secured. This is
+     * only used when BiometricPrompt is unavailable on the device.
      */
     override fun showPinDialogWarning(context: Context) {
         AlertDialog.Builder(context).apply {
@@ -221,7 +222,7 @@ class CreditCardsSettingFragment : BiometricPromptPreferenceFragment() {
     }
 
     /**
-     * Create a prompt to confirm the device's pin/password and start activity based on the result.
+     * Shows a prompt to verify the device's pin/password and start activity based on the result.
      * This is only used when BiometricPrompt is unavailable on the device.
      *
      * @param manager The device [KeyguardManager]
