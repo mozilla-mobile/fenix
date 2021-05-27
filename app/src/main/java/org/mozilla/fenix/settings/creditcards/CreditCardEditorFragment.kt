@@ -29,8 +29,9 @@ class CreditCardEditorFragment : SecureFragment(R.layout.fragment_credit_card_ed
 
     private lateinit var creditCardEditorState: CreditCardEditorState
     private lateinit var creditCardEditorView: CreditCardEditorView
-    private val args by navArgs<CreditCardEditorFragmentArgs>()
     private lateinit var menu: Menu
+
+    private val args by navArgs<CreditCardEditorFragmentArgs>()
 
     /**
      * Returns true if a credit card is being edited, and false otherwise.
@@ -77,6 +78,7 @@ class CreditCardEditorFragment : SecureFragment(R.layout.fragment_credit_card_ed
             findNavController().currentDestination?.id,
             R.id.creditCardEditorFragment
         )
+
         super.onPause()
     }
 

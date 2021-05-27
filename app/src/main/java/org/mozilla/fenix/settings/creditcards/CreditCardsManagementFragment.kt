@@ -38,7 +38,6 @@ class CreditCardsManagementFragment : SecureFragment() {
     private lateinit var creditCardsStore: CreditCardsFragmentStore
     private lateinit var interactor: CreditCardsManagementInteractor
     private lateinit var creditCardsView: CreditCardsManagementView
-    private lateinit var toolbarChildContainer: FrameLayout
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -58,8 +57,6 @@ class CreditCardsManagementFragment : SecureFragment() {
         )
 
         creditCardsView = CreditCardsManagementView(view.saved_cards_layout, interactor)
-
-        toolbarChildContainer = getToolbarChildContainer()
 
         loadCreditCards()
 
@@ -84,18 +81,10 @@ class CreditCardsManagementFragment : SecureFragment() {
     }
 
     /**
-     * When the fragment is paused, hide the view and navigate back to the settings page to
-     * reauthenticate.
+     * When the fragment is paused, navigate back to the settings page to reauthenticate.
      */
     override fun onPause() {
-        toolbarChildContainer.removeAllViews()
-        toolbarChildContainer.visibility = View.GONE
-
-        (activity as HomeActivity).getSupportActionBarAndInflateIfNecessary()
-            .setDisplayShowTitleEnabled(true)
-        setHasOptionsMenu(false)
-
-        // Don't redirect if the user is navigating to the editor fragment
+        // Don't redirect if the user is navigating to the credit card editor fragment.
         redirectToReAuth(
             listOf(R.id.creditCardEditorFragment),
             findNavController().currentDestination?.id,
@@ -116,19 +105,6 @@ class CreditCardsManagementFragment : SecureFragment() {
             lifecycleScope.launch(Dispatchers.Main) {
                 creditCardsStore.dispatch(CreditCardsAction.UpdateCreditCards(creditCards))
             }
-        }
-    }
-
-    /**
-     * Returns the toolbar child container and sets its to be visible after the view is created
-     * after being authenticated.
-     */
-    private fun getToolbarChildContainer(): FrameLayout {
-        val activity = activity as? AppCompatActivity
-        val toolbar = (activity as HomeActivity).findViewById<Toolbar>(R.id.navigationToolbar)
-
-        return (toolbar.findViewById(R.id.toolbar_child_container) as FrameLayout).apply {
-            visibility = View.VISIBLE
         }
     }
 }
