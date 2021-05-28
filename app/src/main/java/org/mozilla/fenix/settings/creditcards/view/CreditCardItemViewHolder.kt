@@ -7,8 +7,18 @@ package org.mozilla.fenix.settings.creditcards.view
 import android.view.View
 import kotlinx.android.synthetic.main.credit_card_list_item.*
 import mozilla.components.concept.storage.CreditCard
+import mozilla.components.support.utils.CreditCardNetworkType.AMEX
+import mozilla.components.support.utils.CreditCardNetworkType.CARTEBANCAIRE
+import mozilla.components.support.utils.CreditCardNetworkType.DINERS
+import mozilla.components.support.utils.CreditCardNetworkType.DISCOVER
+import mozilla.components.support.utils.CreditCardNetworkType.JCB
+import mozilla.components.support.utils.CreditCardNetworkType.MASTERCARD
+import mozilla.components.support.utils.CreditCardNetworkType.MIR
+import mozilla.components.support.utils.CreditCardNetworkType.UNIONPAY
+import mozilla.components.support.utils.CreditCardNetworkType.VISA
 import mozilla.components.support.utils.creditCardIssuerNetwork
 import org.mozilla.fenix.R
+import org.mozilla.fenix.R.string
 import org.mozilla.fenix.settings.creditcards.interactor.CreditCardsManagementInteractor
 import org.mozilla.fenix.utils.view.ViewHolder
 import java.text.SimpleDateFormat
@@ -26,8 +36,7 @@ class CreditCardItemViewHolder(
     fun bind(creditCard: CreditCard) {
         credit_card_logo.setImageResource(creditCard.cardType.creditCardIssuerNetwork().icon)
 
-        credit_card_network.text = creditCard.cardType.creditCardIssuerNetwork().name
-            .capitalize(Locale.getDefault())
+        credit_card_network.text = getCreditCardNetworkName(creditCard.cardType)
 
         credit_card_number.text = creditCard.obfuscatedCardNumber
 
@@ -35,6 +44,30 @@ class CreditCardItemViewHolder(
 
         itemView.setOnClickListener {
             interactor.onSelectCreditCard(creditCard)
+        }
+    }
+
+    private fun getCreditCardNetworkName(cardType: String): String {
+        return when (cardType) {
+            AMEX.cardName ->
+                containerView.context.getString(string.credit_card_network_amex)
+            CARTEBANCAIRE.cardName ->
+                containerView.context.getString(string.credit_card_network_cartebancaire)
+            DINERS.cardName ->
+                containerView.context.getString(string.credit_card_network_diners)
+            DISCOVER.cardName ->
+                containerView.context.getString(string.credit_card_network_discover)
+            JCB.cardName ->
+                containerView.context.getString(string.credit_card_network_jcb)
+            MASTERCARD.cardName ->
+                containerView.context.getString(string.credit_card_network_mastercard)
+            MIR.cardName ->
+                containerView.context.getString(string.credit_card_network_mir)
+            UNIONPAY.cardName ->
+                containerView.context.getString(string.credit_card_network_unionpay)
+            VISA.cardName ->
+                containerView.context.getString(string.credit_card_network_visa)
+            else -> ""
         }
     }
 
