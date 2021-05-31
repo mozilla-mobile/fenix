@@ -36,7 +36,6 @@ import mozilla.components.service.sync.autofill.AutofillCreditCardsAddressesStor
 import mozilla.components.service.sync.logins.SyncableLoginsStorage
 import mozilla.components.support.utils.RunWhenReadyQueue
 import org.mozilla.fenix.Config
-import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.perf.StrictModeManager
 import org.mozilla.fenix.components.metrics.Event
@@ -94,13 +93,12 @@ class BackgroundServices(
 
     @VisibleForTesting
     val supportedEngines =
-        setOfNotNull(
+        setOf(
             SyncEngine.History,
             SyncEngine.Bookmarks,
             SyncEngine.Passwords,
             SyncEngine.Tabs,
-            SyncEngine.CreditCards,
-            if (FeatureFlags.addressesFeature) SyncEngine.Addresses else null
+            SyncEngine.CreditCards
         )
     private val syncConfig =
         SyncConfig(supportedEngines, PeriodicSyncConfig(periodMinutes = 240)) // four hours
@@ -118,9 +116,6 @@ class BackgroundServices(
             storePair = SyncEngine.CreditCards to creditCardsStorage,
             keyProvider = lazy { creditCardKeyProvider }
         )
-        if (FeatureFlags.addressesFeature) {
-            GlobalSyncableStoreProvider.configureStore(SyncEngine.Addresses to creditCardsStorage)
-        }
     }
 
     private val telemetryAccountObserver = TelemetryAccountObserver(
