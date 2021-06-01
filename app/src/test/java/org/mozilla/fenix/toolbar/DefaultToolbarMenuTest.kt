@@ -92,7 +92,7 @@ class DefaultToolbarMenuTest {
             every { context.settings().shouldUseBottomToolbar } returns true
             createMenu()
 
-            val menuItems = toolbarMenu.newCoreMenuItems
+            val menuItems = toolbarMenu.coreMenuItems
             assertNotNull(menuItems)
 
             val firstItem = menuItems[0]
@@ -109,7 +109,7 @@ class DefaultToolbarMenuTest {
             every { context.settings().shouldUseBottomToolbar } returns false
             createMenu()
 
-            val menuItems = toolbarMenu.newCoreMenuItems
+            val menuItems = toolbarMenu.coreMenuItems
             assertNotNull(menuItems)
 
             val firstItem = menuItems[0]
@@ -127,7 +127,7 @@ class DefaultToolbarMenuTest {
 
             createMenu()
 
-            val menuItems = toolbarMenu.newCoreMenuItems
+            val menuItems = toolbarMenu.coreMenuItems
             assertNotNull(menuItems)
 
             val lastItem = menuItems[menuItems.size - 1]
@@ -145,7 +145,7 @@ class DefaultToolbarMenuTest {
 
             createMenu()
 
-            val menuItems = toolbarMenu.newCoreMenuItems
+            val menuItems = toolbarMenu.coreMenuItems
             assertNotNull(menuItems)
 
             val lastItem = menuItems[menuItems.size - 1]
