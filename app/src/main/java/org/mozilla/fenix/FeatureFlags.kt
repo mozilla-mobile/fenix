@@ -33,9 +33,4 @@ object FeatureFlags {
      * Enables WebAuthn support.
      */
     val webAuthFeature = Config.channel.isNightlyOrDebug
-
-    /**
-     * Enables the tabs tray re-write with Synced Tabs.
-     */
-    const val tabsTrayRewrite = true
 }
