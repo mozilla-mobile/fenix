@@ -38,7 +38,6 @@ import mozilla.components.feature.addons.ui.PermissionsDialogFragment
 import mozilla.components.feature.addons.ui.translateName
 import io.github.forkmaintainers.iceraven.components.PagedAddonInstallationDialogFragment
 import io.github.forkmaintainers.iceraven.components.PagedAddonsManagerAdapter
-import org.mozilla.fenix.GleanMetrics.Addons
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.metrics.Event
