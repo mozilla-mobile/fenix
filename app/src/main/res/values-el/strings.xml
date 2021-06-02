@@ -333,7 +333,7 @@
     <!-- Preference category for developer tools -->
     <string name="developer_tools_category">Εργαλεία προγραμματιστή</string>
     <!-- Preference for developers -->
-    <string name="preferences_remote_debugging">Απομακρυσμένος εντοπισμός σφαλμάτων μέσω USB</string>
+    <string name="preferences_remote_debugging">Απομακρυσμένος έλεγχος σφαλμάτων μέσω USB</string>
     <!-- Preference title for switch preference to show search engines -->
     <string name="preferences_show_search_engines">Εμφάνιση μηχανών αναζήτησης</string>
     <!-- Preference title for switch preference to show search suggestions -->
@@ -420,6 +420,11 @@
         and the third is the device model. -->
     <string name="default_device_name_2">%1$s στο %2$s %3$s</string>
 
+    <!-- Preference for syncing credit cards -->
+    <string name="preferences_sync_credit_cards">Πιστωτικές κάρτες</string>
+    <!-- Preference for syncing addresses -->
+    <string name="preferences_sync_address">Διευθύνσεις</string>
+
     <!-- Send Tab -->
     <!-- Name of the "receive tabs" notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="fxa_received_tab_channel_name">Ληφθείσες καρτέλες</string>
@@ -450,9 +455,6 @@
     <!-- Text displayed when there are no exceptions, with learn more link that brings users to a tracking protection SUMO page -->
     <string name="exceptions_empty_message_learn_more_link">Μάθετε περισσότερα</string>
 
-    <!-- Description in Quick Settings that tells user tracking protection is off globally for all sites, and links to Settings to turn it on -->
-    <string name="preferences_tracking_protection_turned_off_globally">Γενικά ανενεργή, μεταβείτε στις Ρυθμίσεις για ενεργοποίηση.</string>
-
     <!-- Preference switch for Telemetry -->
     <string name="preferences_telemetry">Τηλεμετρία</string>
 
@@ -464,6 +466,8 @@
     <string name="preferences_marketing_data">Δεδομένα μάρκετινγκ</string>
     <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
     <string name="preferences_marketing_data_description">Αποστέλλει δεδομένα σχετικά με τις λειτουργίες που χρησιμοποιείτε στο %1$s με το Leanplum, την εταιρεία μάρκετινγκ για κινητές συσκευές.</string>
+    <!-- Preference description for marketing data collection -->
+    <string name="preferences_marketing_data_description2">Κοινή χρήση βασικών δεδομένων χρήσης με το Adjust, την υπηρεσία μας για μάρκετινγκ κινητών</string>
     <!-- Title for studies preferences -->
     <string name="preference_experiments_2">Μελέτες</string>
     <!-- Summary for studies preferences -->
@@ -614,6 +618,8 @@
     <string name="tabs_header_private_title">Ιδιωτική συνεδρία</string>
     <!-- Title for the list of tabs in the current private session -->
     <string name="tabs_header_private_tabs_title">Ιδιωτικές καρτέλες</string>
+    <!-- Title for the list of tabs in the synced tabs -->
+    <string name="tabs_header_synced_tabs_title">Συγχρονισμένες καρτέλες</string>
     <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
     <string name="add_tab">Προσθήκη καρτέλας</string>
     <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
@@ -632,6 +638,8 @@
     <string name="tab_tray_menu_item_share">Κοινή χρήση όλων των καρτελών</string>
     <!-- Text shown in the menu to view recently closed tabs -->
     <string name="tab_tray_menu_recently_closed">Πρόσφατα κλεισμένες καρτέλες</string>
+    <!-- Text shown in the menu to view account settings -->
+    <string name="tab_tray_menu_account_settings">Ρυθμίσεις λογαριασμού</string>
     <!-- Text shown in the menu to view tab settings -->
     <string name="tab_tray_menu_tab_settings">Ρυθμίσεις καρτελών</string>
     <!-- Text shown in the menu for closing all tabs -->
@@ -802,8 +810,6 @@
     <string name="bookmark_delete_folder_snackbar">Ο φάκελος &quot;%1$s&quot; διαγράφηκε</string>
     <!-- Screen title for adding a bookmarks folder -->
     <string name="bookmark_add_folder">Προσθήκη φακέλου</string>
-    <!-- deprecated: Snackbar title shown after a bookmark has been created. -->
-    <string name="bookmark_created_snackbar">Ο σελιδοδείκτης δημιουργήθηκε.</string>
     <!-- Snackbar title shown after a bookmark has been created. -->
     <string name="bookmark_saved_snackbar">Ο σελιδοδείκτης αποθηκεύτηκε!</string>
     <!-- Snackbar edit button shown after a bookmark has been created. -->
@@ -987,8 +993,6 @@
     <string name="share_link_all_apps_subheader">Όλες οι ενέργειες</string>
     <!-- Sub-header in the dialog to share a link to an app from the most-recent sorted list -->
     <string name="share_link_recent_apps_subheader">Πρόσφατη χρήση</string>
-    <!-- An string shown when an account is signed in where %1$s is a placeholder for the email-->
-    <string name="sync_signed_as">Έγινε σύνδεση ως %1$s</string>
     <!-- An option from the three dot menu to into sync -->
     <string name="sync_menu_sign_in">Σύνδεση για συγχρονισμό</string>
     <!-- An option from the share dialog to sign into sync -->
@@ -1469,10 +1473,8 @@
     <string name="preferences_passwords_autofill">Αυτόματη συμπλήρωση</string>
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">Συγχρονισμός συνδέσεων</string>
-    <!-- Syncing saved logins in Fenix is on -->
-    <string name="preferences_passwords_sync_logins_on">Ενεργό</string>
-    <!-- Syncing saved logins in Fenix is off -->
-    <string name="preferences_passwords_sync_logins_off">Ανενεργό</string>
+    <!-- Preference for syncing saved logins in Fenix, when not signed in-->
+    <string name="preferences_passwords_sync_logins_across_devices">Συγχρονισμός συνδέσεων με άλλες συσκευές</string>
     <!-- Syncing saved logins in Fenix needs reconnect to sync -->
     <string name="preferences_passwords_sync_logins_reconnect">Επανασύνδεση</string>
     <!-- Syncing saved logins in Fenix needs login -->
@@ -1572,6 +1574,8 @@
     <string name="preferences_credit_cards_save_and_autofill_cards_summary">Τα δεδομένα είναι κρυπτογραφημένα</string>
     <!-- Preference option for syncing credit cards across devices. This is displayed when the user is not signed into sync -->
     <string name="preferences_credit_cards_sync_cards_across_devices">Συγχρονισμός καρτών μεταξύ των συσκευών</string>
+    <!-- Preference option for syncing credit cards across devices. This is displayed when the user is signed into sync -->
+    <string name="preferences_credit_cards_sync_cards">Συγχρονισμός καρτών</string>
     <!-- Preference option for adding a credit card -->
     <string name="preferences_credit_cards_add_credit_card">Προσθήκη πιστωτικής κάρτας</string>
 
@@ -1579,6 +1583,8 @@
     <string name="preferences_credit_cards_manage_saved_cards">Διαχείριση αποθηκευμένων καρτών</string>
     <!-- Title of the "Add card" screen -->
     <string name="credit_cards_add_card">Προσθήκη κάρτας</string>
+    <!-- Title of the "Edit card" screen -->
+    <string name="credit_cards_edit_card">Επεξεργασία κάρτας</string>
     <!-- The header for the card number of a credit card -->
     <string name="credit_cards_card_number">Αριθμός κάρτας</string>
     <!-- The header for the expiration date of a credit card -->
@@ -1587,6 +1593,8 @@
     <string name="credit_cards_name_on_card">Όνομα στην κάρτα</string>
     <!-- The header for the nickname for a credit card -->
     <string name="credit_cards_card_nickname">Ψευδώνυμο κάρτας</string>
+    <!-- The text for the "Delete card" menu item for deleting a credit card -->
+    <string name="credit_cards_menu_delete_card">Διαγραφή κάρτας</string>
     <!-- The text for the "Delete card" button for deleting a credit card -->
     <string name="credit_cards_delete_card_button">Διαγραφή κάρτας</string>
     <!-- The title for the "Save" menu item for saving a credit card -->
@@ -1598,6 +1606,9 @@
 
     <!-- Title of the "Saved cards" screen -->
     <string name="credit_cards_saved_cards">Αποθηκευμένες κάρτες</string>
+
+    <!-- Error message for credit card number validation -->
+    <string name="credit_cards_number_validation_error_message">Παρακαλώ εισαγάγετε έναν έγκυρο αριθμό πιστωτικής κάρτας</string>
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Προσθήκη μηχανής αναζήτησης</string>
@@ -1761,23 +1772,19 @@
 	<!-- Dialog button text for canceling the rename top site prompt. -->
 	<string name="top_sites_rename_dialog_cancel">Ακύρωση</string>
 
+    <!-- Default browser experiment -->
+    <string name="default_browser_experiment_card_text">Ρύθμιση συνδέσμων ιστοσελίδων, emails και μηνυμάτων ώστε να ανοίγουν στο Firefox.</string>
+
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">Αφαίρεση</string>
-
-    <!-- Deprecated: text for the firefox account onboarding card header
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_firefox_account_header">Αξιοποιήστε στο έπακρο το %s.</string>
 
     <!-- Content description radio buttons with a link to more information -->
     <string name="radio_preference_info_content_description">Πατήστε για περισσότερες λεπτομέρειες</string>
 
-    <!-- Deprecated: No Open Tabs Message Header -->
-    <string name="no_collections_header1">Συλλέξτε όλα όσα έχουν σημασία για εσάς</string>
-    <!-- Deprecated: Label to describe what collections are to a new user without any collections -->
-    <string name="no_collections_description1">Ομαδοποιήστε παρόμοιες αναζητήσεις, σελίδες και καρτέλες για γρήγορη πρόσβαση αργότερα.</string>
-    <!-- Deprecated: text for the firefox account onboarding card header when we detect you're already signed in to -->
-    <string name="onboarding_firefox_account_auto_signin_header_2">Έχετε συνδεθεί ως %s σε άλλο πρόγραμμα περιήγησης Firefox σε αυτό το τηλέφωνο. Θέλετε να συνδεθείτε με αυτό τον λογαριασμό;</string>
-    <!-- Deprecated: Describes the add to homescreen functionality -->
-    <string name="add_to_homescreen_description">Μπορείτε εύκολα να προσθέσετε αυτή την ιστοσελίδα στην αρχική οθόνη για άμεση πρόσβαση και ταχύτερη περιήγηση, σαν να ήταν εφαρμογή.</string>
+    <!-- Content description for the action bar "up" button -->
+    <string name="action_bar_up_description">Πλοήγηση προς τα πάνω</string>
 
-    </resources>
+    <!-- Content description for privacy content close button -->
+    <string name="privacy_content_close_button_content_description">Κλείσιμο</string>
+
+</resources>

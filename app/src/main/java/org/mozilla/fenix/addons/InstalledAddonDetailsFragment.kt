@@ -21,10 +21,11 @@ import kotlinx.coroutines.launch
 import mozilla.components.feature.addons.Addon
 import mozilla.components.feature.addons.AddonManagerException
 import mozilla.components.feature.addons.ui.translateName
-import org.mozilla.fenix.GleanMetrics.Addons
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
 
@@ -128,7 +129,6 @@ class InstalledAddonDetailsFragment : Fragment() {
                                     )
                                 )
                             }
-                            Addons.hasEnabledAddons.set(true)
                         }
                     },
                     onError = {
@@ -196,6 +196,9 @@ class InstalledAddonDetailsFragment : Fragment() {
         view.settings.apply {
             isVisible = shouldSettingsBeVisible()
             setOnClickListener {
+                requireContext().components.analytics.metrics.track(
+                    Event.AddonOpenSetting(addon.id)
+                )
                 val settingUrl = addon.installedState?.optionsPageUrl ?: return@setOnClickListener
                 val directions = if (addon.installedState?.openOptionsPageInTab == true) {
                     val components = it.context.components
@@ -213,7 +216,7 @@ class InstalledAddonDetailsFragment : Fragment() {
                     InstalledAddonDetailsFragmentDirections
                         .actionInstalledAddonFragmentToAddonInternalSettingsFragment(addon)
                 }
-                Navigation.findNavController(this).navigate(directions)
+                Navigation.findNavController(this).navigateBlockingForAsyncNavGraph(directions)
             }
         }
     }
@@ -224,7 +227,7 @@ class InstalledAddonDetailsFragment : Fragment() {
                 InstalledAddonDetailsFragmentDirections.actionInstalledAddonFragmentToAddonDetailsFragment(
                     addon
                 )
-            Navigation.findNavController(view).navigate(directions)
+            Navigation.findNavController(view).navigateBlockingForAsyncNavGraph(directions)
         }
     }
 
@@ -234,7 +237,7 @@ class InstalledAddonDetailsFragment : Fragment() {
                 InstalledAddonDetailsFragmentDirections.actionInstalledAddonFragmentToAddonPermissionsDetailsFragment(
                     addon
                 )
-            Navigation.findNavController(view).navigate(directions)
+            Navigation.findNavController(view).navigateBlockingForAsyncNavGraph(directions)
         }
     }
 

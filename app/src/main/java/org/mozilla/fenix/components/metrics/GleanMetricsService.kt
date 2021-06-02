@@ -32,8 +32,11 @@ import org.mozilla.fenix.GleanMetrics.DownloadsMisc
 import org.mozilla.fenix.GleanMetrics.DownloadsManagement
 import org.mozilla.fenix.GleanMetrics.ErrorPage
 import org.mozilla.fenix.GleanMetrics.Events
+import org.mozilla.fenix.GleanMetrics.ExperimentsDefaultBrowser
 import org.mozilla.fenix.GleanMetrics.FindInPage
 import org.mozilla.fenix.GleanMetrics.History
+import org.mozilla.fenix.GleanMetrics.HomeMenu
+import org.mozilla.fenix.GleanMetrics.HomeScreen
 import org.mozilla.fenix.GleanMetrics.LoginDialog
 import org.mozilla.fenix.GleanMetrics.Logins
 import org.mozilla.fenix.GleanMetrics.MasterPassword
@@ -52,6 +55,8 @@ import org.mozilla.fenix.GleanMetrics.SearchDefaultEngine
 import org.mozilla.fenix.GleanMetrics.SearchShortcuts
 import org.mozilla.fenix.GleanMetrics.SearchSuggestions
 import org.mozilla.fenix.GleanMetrics.SearchWidget
+import org.mozilla.fenix.GleanMetrics.SetDefaultNewtabExperiment
+import org.mozilla.fenix.GleanMetrics.SetDefaultSettingExperiment
 import org.mozilla.fenix.GleanMetrics.SyncAccount
 import org.mozilla.fenix.GleanMetrics.SyncAuth
 import org.mozilla.fenix.GleanMetrics.SyncedTabs
@@ -191,6 +196,15 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.BrowserMenuItemTapped -> EventWrapper(
             { Events.browserMenuAction.record(it) },
             { Events.browserMenuActionKeys.valueOf(it) }
+        )
+        is Event.SetDefaultBrowserToolbarMenuClicked -> EventWrapper<NoExtraKeys>(
+            { ExperimentsDefaultBrowser.toolbarMenuClicked.record(it) }
+        )
+        is Event.ToolbarMenuShown -> EventWrapper<NoExtraKeys>(
+            { Events.toolbarMenuVisible.record(it) }
+        )
+        is Event.ChangedToDefaultBrowser -> EventWrapper<NoExtraKeys>(
+            { Events.defaultBrowserChanged.record(it) }
         )
         is Event.OpenedBookmark -> EventWrapper<NoExtraKeys>(
             { BookmarksManagement.open.record(it) }
@@ -586,6 +600,10 @@ private val Event.wrapper: EventWrapper<*>?
             { Addons.openAddonInToolbarMenu.record(it) },
             { Addons.openAddonInToolbarMenuKeys.valueOf(it) }
         )
+        is Event.AddonOpenSetting -> EventWrapper(
+            { Addons.openAddonSetting.record(it) },
+            { Addons.openAddonSettingKeys.valueOf(it) }
+        )
         is Event.TipDisplayed -> EventWrapper(
             { Tip.displayed.record(it) },
             { Tip.displayedKeys.valueOf(it) }
@@ -666,6 +684,9 @@ private val Event.wrapper: EventWrapper<*>?
         )
         is Event.TabsTrayNormalModeTapped -> EventWrapper<NoExtraKeys>(
             { TabsTray.normalModeTapped.record(it) }
+        )
+        is Event.TabsTraySyncedModeTapped -> EventWrapper<NoExtraKeys>(
+            { TabsTray.syncedModeTapped.record(it) }
         )
         is Event.NewTabTapped -> EventWrapper<NoExtraKeys>(
             { TabsTray.newTabTapped.record(it) }
@@ -805,6 +826,22 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.SecurePrefsReset -> EventWrapper<NoExtraKeys>(
             { AndroidKeystoreExperiment.reset.record(it) }
         )
+        is Event.HomeMenuSettingsItemClicked -> EventWrapper<NoExtraKeys>(
+            { HomeMenu.settingsItemClicked.record(it) }
+        )
+
+        is Event.CloseExperimentCardClicked -> EventWrapper<NoExtraKeys>(
+            { SetDefaultNewtabExperiment.closeExperimentCardClicked.record(it) }
+        )
+        is Event.SetDefaultBrowserNewTabClicked -> EventWrapper<NoExtraKeys>(
+            { SetDefaultNewtabExperiment.setDefaultBrowserClicked.record(it) }
+        )
+        is Event.SetDefaultBrowserSettingsScreenClicked -> EventWrapper<NoExtraKeys>(
+            { SetDefaultSettingExperiment.setDefaultBrowserClicked.record(it) }
+        )
+        is Event.HomeScreenDisplayed -> EventWrapper<NoExtraKeys>(
+            { HomeScreen.homeScreenDisplayed.record(it) }
+        )
 
         // Don't record other events in Glean:
         is Event.AddBookmark -> null
@@ -815,7 +852,6 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.FennecToFenixMigrated -> null
         is Event.AddonInstalled -> null
         is Event.SearchWidgetInstalled -> null
-        is Event.ChangedToDefaultBrowser -> null
         is Event.SyncAuthFromSharedReuse, Event.SyncAuthFromSharedCopy -> null
     }
 

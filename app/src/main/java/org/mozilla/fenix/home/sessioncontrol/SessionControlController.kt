@@ -39,6 +39,7 @@ import org.mozilla.fenix.components.tips.Tip
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
+import org.mozilla.fenix.ext.openSetDefaultBrowserOption
 import org.mozilla.fenix.home.HomeFragment
 import org.mozilla.fenix.home.HomeFragmentAction
 import org.mozilla.fenix.home.HomeFragmentDirections
@@ -167,6 +168,16 @@ interface SessionControlController {
      * @see [CollectionInteractor.onCollectionMenuOpened] and [TopSiteInteractor.onTopSiteMenuOpened]
      */
     fun handleMenuOpened()
+
+    /**
+     * @see [ExperimentCardInteractor.onSetDefaultBrowserClicked]
+     */
+    fun handleSetDefaultBrowser()
+
+    /**
+     * @see [ExperimentCardInteractor.onCloseExperimentCardClicked]
+     */
+    fun handleCloseExperimentCard()
 }
 
 @Suppress("TooManyFunctions", "LargeClass")
@@ -181,6 +192,7 @@ class DefaultSessionControlController(
     private val restoreUseCase: TabsUseCases.RestoreUseCase,
     private val reloadUrlUseCase: SessionUseCases.ReloadUrlUseCase,
     private val selectTabUseCase: TabsUseCases.SelectTabUseCase,
+    private val requestDesktopSiteUseCase: SessionUseCases.RequestDesktopSiteUseCase,
     private val fragmentStore: HomeFragmentStore,
     private val navController: NavController,
     private val viewLifecycleScope: CoroutineScope,
@@ -403,6 +415,10 @@ class DefaultSessionControlController(
             selectTab = true,
             startLoading = true
         )
+
+        if (settings.openNextTabInDesktopMode) {
+            activity.handleRequestDesktopMode()
+        }
         activity.openToBrowser(BrowserDirection.FromHome)
     }
 
@@ -547,5 +563,17 @@ class DefaultSessionControlController(
             pastedText = clipboardText
         )
         navController.nav(R.id.homeFragment, directions)
+    }
+
+    override fun handleSetDefaultBrowser() {
+        settings.userDismissedExperimentCard = true
+        metrics.track(Event.SetDefaultBrowserNewTabClicked)
+        activity.openSetDefaultBrowserOption()
+    }
+
+    override fun handleCloseExperimentCard() {
+        settings.userDismissedExperimentCard = true
+        metrics.track(Event.CloseExperimentCardClicked)
+        fragmentStore.dispatch(HomeFragmentAction.RemoveSetDefaultBrowserCard)
     }
 }

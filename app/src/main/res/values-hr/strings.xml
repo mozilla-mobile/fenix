@@ -413,6 +413,11 @@
         and the third is the device model. -->
     <string name="default_device_name_2">%1$s na %2$s %3$s</string>
 
+    <!-- Preference for syncing credit cards -->
+    <string name="preferences_sync_credit_cards">Kreditne kartice</string>
+    <!-- Preference for syncing addresses -->
+    <string name="preferences_sync_address">Adrese</string>
+
     <!-- Send Tab -->
     <!-- Name of the "receive tabs" notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="fxa_received_tab_channel_name">Primljene kartice</string>
@@ -443,9 +448,6 @@
     <!-- Text displayed when there are no exceptions, with learn more link that brings users to a tracking protection SUMO page -->
     <string name="exceptions_empty_message_learn_more_link">Saznaj više</string>
 
-    <!-- Description in Quick Settings that tells user tracking protection is off globally for all sites, and links to Settings to turn it on -->
-    <string name="preferences_tracking_protection_turned_off_globally">Isključeno je globalno, za uključivanje, idi na postavke.</string>
-
     <!-- Preference switch for Telemetry -->
     <string name="preferences_telemetry">Telemetrija</string>
     <!-- Preference switch for usage and technical data collection -->
@@ -456,6 +458,8 @@
     <string name="preferences_marketing_data">Marketinški podaci</string>
     <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
     <string name="preferences_marketing_data_description">Dijeli podatke o funkcijama koje upotrebljavaš u %1$s s Leanplumom, našim pružateljem usluga mobilnog marketinga.</string>
+    <!-- Preference description for marketing data collection -->
+    <string name="preferences_marketing_data_description2">Dijeli osnovne podatke o korištenju s Adjustom, našim pružateljem mobilnog marketinga</string>
     <!-- Title for studies preferences -->
     <string name="preference_experiments_2">Istraživanja</string>
     <!-- Summary for studies preferences -->
@@ -606,12 +610,16 @@
     <string name="tabs_header_private_title">Privatna sesija</string>
     <!-- Title for the list of tabs in the current private session -->
     <string name="tabs_header_private_tabs_title">Privatne kartice</string>
+    <!-- Title for the list of tabs in the synced tabs -->
+    <string name="tabs_header_synced_tabs_title">Sinkronizirane kartice</string>
     <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
     <string name="add_tab">Dodaj karticu</string>
     <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
     <string name="add_private_tab">Dodaj privatnu karticu</string>
     <!-- Text for the new tab button to indicate adding a new private tab in the tab -->
     <string name="tab_drawer_fab_content">Privatno</string>
+    <!-- Text for the new tab button to indicate syncing command on the synced tabs page -->
+    <string name="tab_drawer_fab_sync">Sinkroniziraj</string>
     <!-- Text shown as the title of the open tab tray -->
     <string name="tab_tray_title">Otvorene kartice</string>
     <!-- Text shown in the menu for saving tabs to a collection -->
@@ -622,6 +630,8 @@
     <string name="tab_tray_menu_item_share">Podijeli sve kartice</string>
     <!-- Text shown in the menu to view recently closed tabs -->
     <string name="tab_tray_menu_recently_closed">Nedavno zatvorene kartice</string>
+    <!-- Text shown in the menu to view account settings -->
+    <string name="tab_tray_menu_account_settings">Postavke računa</string>
     <!-- Text shown in the menu to view tab settings -->
     <string name="tab_tray_menu_tab_settings">Postavke kartica</string>
     <!-- Text shown in the menu for closing all tabs -->
@@ -794,8 +804,6 @@
     <string name="bookmark_delete_folder_snackbar">Izbrisano: %1$s</string>
     <!-- Screen title for adding a bookmarks folder -->
     <string name="bookmark_add_folder">Dodaj mapu</string>
-    <!-- deprecated: Snackbar title shown after a bookmark has been created. -->
-    <string name="bookmark_created_snackbar">Zabilješka stvorena.</string>
     <!-- Snackbar title shown after a bookmark has been created. -->
     <string name="bookmark_saved_snackbar">Zabilješka spremljena!</string>
     <!-- Snackbar edit button shown after a bookmark has been created. -->
@@ -982,8 +990,6 @@
     <string name="share_link_all_apps_subheader">Sve radnje</string>
     <!-- Sub-header in the dialog to share a link to an app from the most-recent sorted list -->
     <string name="share_link_recent_apps_subheader">Nedavno korišteni</string>
-    <!-- An string shown when an account is signed in where %1$s is a placeholder for the email-->
-    <string name="sync_signed_as">Prijavljeni kao %1$s</string>
     <!-- An option from the three dot menu to into sync -->
     <string name="sync_menu_sign_in">Prijavi se za sinkronizaciju</string>
     <!-- An option from the share dialog to sign into sync -->
@@ -1456,10 +1462,8 @@
     <string name="preferences_passwords_autofill">Automatsko ispunjavanje</string>
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">Sinkroniziraj prijave</string>
-    <!-- Syncing saved logins in Fenix is on -->
-    <string name="preferences_passwords_sync_logins_on">Uključeno</string>
-    <!-- Syncing saved logins in Fenix is off -->
-    <string name="preferences_passwords_sync_logins_off">Isključeno</string>
+    <!-- Preference for syncing saved logins in Fenix, when not signed in-->
+    <string name="preferences_passwords_sync_logins_across_devices">Sinkroniziraj prijave na svim uređajima</string>
     <!-- Syncing saved logins in Fenix needs reconnect to sync -->
     <string name="preferences_passwords_sync_logins_reconnect">Ponovo poveži</string>
     <!-- Syncing saved logins in Fenix needs login -->
@@ -1562,11 +1566,17 @@
     <string name="preferences_credit_cards_save_and_autofill_cards_summary">Podaci su šifrirani</string>
     <!-- Preference option for syncing credit cards across devices. This is displayed when the user is not signed into sync -->
     <string name="preferences_credit_cards_sync_cards_across_devices">Sinkroniziraj kartice na uređajima</string>
+    <!-- Preference option for syncing credit cards across devices. This is displayed when the user is signed into sync -->
+    <string name="preferences_credit_cards_sync_cards">Sinkroniziraj kartice</string>
     <!-- Preference option for adding a credit card -->
     <string name="preferences_credit_cards_add_credit_card">Dodaj kreditnu karticu</string>
 
+    <!-- Preference option for managing saved credit cards -->
+    <string name="preferences_credit_cards_manage_saved_cards">Upravljaj spremljenim karticama</string>
     <!-- Title of the "Add card" screen -->
     <string name="credit_cards_add_card">Dodaj karticu</string>
+    <!-- Title of the "Edit card" screen -->
+    <string name="credit_cards_edit_card">Uredi karticu</string>
     <!-- The header for the card number of a credit card -->
     <string name="credit_cards_card_number">Broj kartice</string>
     <!-- The header for the expiration date of a credit card -->
@@ -1575,6 +1585,8 @@
     <string name="credit_cards_name_on_card">Ime na kartici</string>
     <!-- The header for the nickname for a credit card -->
     <string name="credit_cards_card_nickname">Naziv kartice</string>
+    <!-- The text for the "Delete card" menu item for deleting a credit card -->
+    <string name="credit_cards_menu_delete_card">Izbriši karticu</string>
     <!-- The text for the "Delete card" button for deleting a credit card -->
     <string name="credit_cards_delete_card_button">Izbriši karticu</string>
     <!-- The title for the "Save" menu item for saving a credit card -->
@@ -1583,6 +1595,12 @@
     <string name="credit_cards_save_button">Spremi</string>
     <!-- The text for the "Cancel" button for cancelling adding or updating a credit card -->
     <string name="credit_cards_cancel_button">Odustani</string>
+
+    <!-- Title of the "Saved cards" screen -->
+    <string name="credit_cards_saved_cards">Spremljene kartice</string>
+
+    <!-- Error message for credit card number validation -->
+    <string name="credit_cards_number_validation_error_message">Unesi važeći broj kreditne kartice</string>
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Dodaj tražilicu</string>
@@ -1746,23 +1764,19 @@
 	<!-- Dialog button text for canceling the rename top site prompt. -->
 	<string name="top_sites_rename_dialog_cancel">Odustani</string>
 
+    <!-- Default browser experiment -->
+    <string name="default_browser_experiment_card_text">Postavi automatsko otvaranje poveznica web stranica, e-pošte i poruka u Firefoxu.</string>
+
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">Ukloni</string>
-
-    <!-- Deprecated: text for the firefox account onboarding card header
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_firefox_account_header">Iskoristi sve prednosti aplikacije %s.</string>
 
     <!-- Content description radio buttons with a link to more information -->
     <string name="radio_preference_info_content_description">Klikni za više informacija</string>
 
-    <!-- Deprecated: No Open Tabs Message Header -->
-    <string name="no_collections_header1">Skupi stvari koje su ti bitne</string>
-    <!-- Deprecated: Label to describe what collections are to a new user without any collections -->
-    <string name="no_collections_description1">Grupiraj slične pretrage, stranice i kartice za brži pristup kasnije.</string>
-    <!-- Deprecated: text for the firefox account onboarding card header when we detect you're already signed in to -->
-    <string name="onboarding_firefox_account_auto_signin_header_2">Prijavljen/a si kao %s na jednom drugom Firefox pregledniku na ovom telefonu. Želiš li se prijaviti s ovim računom?</string>
-    <!-- Deprecated: Describes the add to homescreen functionality -->
-    <string name="add_to_homescreen_description">Možete jednostavno dodati ovu web stranicu na početni zaslon uređaja kako biste imali brz pristup i pretraživali brže, kao da ste u aplikaciji.</string>
+    <!-- Content description for the action bar "up" button -->
+    <string name="action_bar_up_description">Navigiraj gore</string>
 
-    </resources>
+    <!-- Content description for privacy content close button -->
+    <string name="privacy_content_close_button_content_description">Zatvori</string>
+
+</resources>

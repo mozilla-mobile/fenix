@@ -449,9 +449,6 @@
     <!-- Text displayed when there are no exceptions, with learn more link that brings users to a tracking protection SUMO page -->
     <string name="exceptions_empty_message_learn_more_link">Kuaave</string>
 
-    <!-- Description in Quick Settings that tells user tracking protection is off globally for all sites, and links to Settings to turn it on -->
-    <string name="preferences_tracking_protection_turned_off_globally">Ojepe’apáma, tereho Pytyvõhápe emyandyjey hag̃ua.</string>
-
     <!-- Preference switch for Telemetry -->
     <string name="preferences_telemetry">Telemetry</string>
 
@@ -463,6 +460,8 @@
     <string name="preferences_marketing_data">Mba’ekuaarã jehepyme’ẽrã</string>
     <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
     <string name="preferences_marketing_data_description">Emoherakuã mba’ekuaarã umi tembiapoite eipurúva %1$s rehegua Leanplum ndive, ore me’ẽhára pumbyry popeguáva.</string>
+    <!-- Preference description for marketing data collection -->
+    <string name="preferences_marketing_data_description2">Emoherakuã mba’ekuaarã ojepurúva Adjust ndive, ore marketing me’ẽhára</string>
     <!-- Title for studies preferences -->
     <string name="preference_experiments_2">Ñembokatupyry</string>
     <!-- Summary for studies preferences -->
@@ -614,6 +613,8 @@
     <!-- Title for the list of tabs in the current private session -->
     <string name="tabs_header_private_tabs_title">Tendayke ñemiguáva</string>
 
+    <!-- Title for the list of tabs in the synced tabs -->
+    <string name="tabs_header_synced_tabs_title">Tendayke mbojuehepyre</string>
     <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
     <string name="add_tab">Embojuaju tendayke</string>
     <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
@@ -632,6 +633,8 @@
     <string name="tab_tray_menu_item_share">Emoherakuã opaite tendayke</string>
     <!-- Text shown in the menu to view recently closed tabs -->
     <string name="tab_tray_menu_recently_closed">Tendayke oñemboty ramóva</string>
+    <!-- Text shown in the menu to view account settings -->
+    <string name="tab_tray_menu_account_settings">Mba’ete ñemboheko</string>
     <!-- Text shown in the menu to view tab settings -->
     <string name="tab_tray_menu_tab_settings">Tendayke ñemboheko</string>
     <!-- Text shown in the menu for closing all tabs -->
@@ -804,8 +807,6 @@
     <string name="bookmark_delete_folder_snackbar">Mboguepyre %1$s</string>
     <!-- Screen title for adding a bookmarks folder -->
     <string name="bookmark_add_folder">Embojuaju ñongatuha</string>
-    <!-- deprecated: Snackbar title shown after a bookmark has been created. -->
-    <string name="bookmark_created_snackbar">Oñemoheñói techaukaha.</string>
     <!-- Snackbar title shown after a bookmark has been created. -->
     <string name="bookmark_saved_snackbar">¡Techaukaha ñongatupyre!</string>
     <!-- Snackbar edit button shown after a bookmark has been created. -->
@@ -995,8 +996,6 @@
     <string name="share_link_all_apps_subheader">Opaite tembiaporã</string>
     <!-- Sub-header in the dialog to share a link to an app from the most-recent sorted list -->
     <string name="share_link_recent_apps_subheader">Ojepururamovéva</string>
-    <!-- An string shown when an account is signed in where %1$s is a placeholder for the email-->
-    <string name="sync_signed_as">Eike %1$s-ramo</string>
     <!-- An option from the three dot menu to into sync -->
     <string name="sync_menu_sign_in">Eike embojuehe hag̃ua</string>
     <!-- An option from the share dialog to sign into sync -->
@@ -1477,10 +1476,8 @@
     <string name="preferences_passwords_autofill">Myanyhẽ jehegui</string>
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">Embojuehe tembiapo ñepyrũ</string>
-    <!-- Syncing saved logins in Fenix is on -->
-    <string name="preferences_passwords_sync_logins_on">Hendypyre</string>
-    <!-- Syncing saved logins in Fenix is off -->
-    <string name="preferences_passwords_sync_logins_off">Mboguepyre</string>
+    <!-- Preference for syncing saved logins in Fenix, when not signed in-->
+    <string name="preferences_passwords_sync_logins_across_devices">Embojuehe tembiapo ñepyrũ mba’e’oka pa’ũme</string>
     <!-- Syncing saved logins in Fenix needs reconnect to sync -->
     <string name="preferences_passwords_sync_logins_reconnect">Eikejey</string>
     <!-- Syncing saved logins in Fenix needs login -->
@@ -1583,6 +1580,8 @@
     <string name="preferences_credit_cards_save_and_autofill_cards_summary">Mba’ekuaarã ipapapypa</string>
     <!-- Preference option for syncing credit cards across devices. This is displayed when the user is not signed into sync -->
     <string name="preferences_credit_cards_sync_cards_across_devices">Embojuehe kuatia’atã mba’e’oka pa’ũme</string>
+    <!-- Preference option for syncing credit cards across devices. This is displayed when the user is signed into sync -->
+    <string name="preferences_credit_cards_sync_cards">Embojuehe kuatia’atã</string>
     <!-- Preference option for adding a credit card -->
     <string name="preferences_credit_cards_add_credit_card">Embojuaju kuatia’atã ñemurã</string>
 
@@ -1590,6 +1589,8 @@
     <string name="preferences_credit_cards_manage_saved_cards">Eñangareko kuatia’atã ñongatupyrére</string>
     <!-- Title of the "Add card" screen -->
     <string name="credit_cards_add_card">Embojuaju kuatia’atã</string>
+    <!-- Title of the "Edit card" screen -->
+    <string name="credit_cards_edit_card">Embosako’i kuatia’atã</string>
     <!-- The header for the card number of a credit card -->
     <string name="credit_cards_card_number">Kuatia’atã papy</string>
     <!-- The header for the expiration date of a credit card -->
@@ -1598,6 +1599,8 @@
     <string name="credit_cards_name_on_card">Kuatia’atã réra</string>
     <!-- The header for the nickname for a credit card -->
     <string name="credit_cards_card_nickname">Kuatia’atã je’erã</string>
+    <!-- The text for the "Delete card" menu item for deleting a credit card -->
+    <string name="credit_cards_menu_delete_card">Emboguete kuatia’atã</string>
     <!-- The text for the "Delete card" button for deleting a credit card -->
     <string name="credit_cards_delete_card_button">Emboguete kuatia’atã</string>
     <!-- The title for the "Save" menu item for saving a credit card -->
@@ -1609,6 +1612,9 @@
 
     <!-- Title of the "Saved cards" screen -->
     <string name="credit_cards_saved_cards">Kuatia’atã ñongatupyre</string>
+
+    <!-- Error message for credit card number validation -->
+    <string name="credit_cards_number_validation_error_message">Ikatúpiko ehai kuatia’atã ñemurã papapy oikóva</string>
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Embojuaju hekaha</string>
@@ -1771,23 +1777,13 @@
 	<!-- Dialog button text for canceling the rename top site prompt. -->
 	<string name="top_sites_rename_dialog_cancel">Heja</string>
 
+    <!-- Default browser experiment -->
+    <string name="default_browser_experiment_card_text">Emboheko ñanduti renda juajuha, ñanduti veve ha ñe’ẽmondo ijuruja hag̃ua ijehegui Firefox-pe.</string>
+
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">Mboguete</string>
 
-    <!-- Deprecated: text for the firefox account onboarding card header
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_firefox_account_header">Eguenohẽ %s-gui eikotevẽva.</string>
-
     <!-- Content description radio buttons with a link to more information -->
     <string name="radio_preference_info_content_description">Eikutu ápe eikuaave hag̃ua</string>
-
-    <!-- Deprecated: No Open Tabs Message Header -->
-    <string name="no_collections_header1">Embyaty umi mba’ekuéra ehayhu añetéva</string>
-    <!-- Deprecated: Label to describe what collections are to a new user without any collections -->
-    <string name="no_collections_description1">Emboaty hekaha, tenda ha tendayke ojueheguáva eike pya’eve hag̃ua ag̃ave.</string>
-    <!-- Deprecated: text for the firefox account onboarding card header when we detect you're already signed in to -->
-    <string name="onboarding_firefox_account_auto_signin_header_2">Eñepyrũ tembiapo %s ramo ambue Firefox kundahára ko pumbyry pegua. ¿Eñepyrũse tembiapo ko mba’ete ndive?</string>
-    <!-- Deprecated: Describes the add to homescreen functionality -->
-    <string name="add_to_homescreen_description">Ikatu embojuaju ko ñanduti renda ne mba’erechaha ñepyrũgua rehe eike hag̃ua ha eikundaha pya’eve rekávo tembipuru’ícharamo.</string>
 
     </resources>

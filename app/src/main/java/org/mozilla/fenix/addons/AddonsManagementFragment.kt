@@ -358,7 +358,6 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
                     adapter?.updateAddon(it)
                     addonProgressOverlay?.visibility = View.GONE
                     showInstallationDialog(it)
-                    Addons.hasInstalledAddons.set(true)
                 }
             },
             onError = { _, e ->

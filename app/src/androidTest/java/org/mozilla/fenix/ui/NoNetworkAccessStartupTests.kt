@@ -78,7 +78,7 @@ class NoNetworkAccessStartupTests {
 
         browserScreen {
         }.openThreeDotMenu {
-        }.refreshPage {}
+        }.refreshPage { }
     }
 
     @Test

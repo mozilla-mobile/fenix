@@ -4,12 +4,9 @@
 
 package org.mozilla.fenix.ui
 
-import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
-import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.FeatureFlags
@@ -38,85 +35,58 @@ class ThreeDotMenuMainTest {
         }
     }
 
-    // changing the device preference for Touch and Hold delay, to avoid long-clicks instead of a single-click
-    companion object {
-        @BeforeClass
-        @JvmStatic
-        fun setDevicePreference() {
-            val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-            mDevice.executeShellCommand("settings put secure long_press_timeout 3000")
-        }
-    }
-
     @After
     fun tearDown() {
         mockWebServer.shutdown()
     }
 
+    // Verifies the list of items in the homescreen's 3 dot main menu
     @Test
-    fun threeDotMenuItemsTest() {
-        if (FeatureFlags.toolbarMenuFeature) {
-            homeScreen {
-            }.openThreeDotMenu {
-            }.openHistory {
-                verifyHistoryMenuView()
-            }.goBackToBrowser {}
-
-            homeScreen {
-            }.openThreeDotMenu {
-            }.openBookmarks {
-                verifyBookmarksMenuView()
-            }.closeMenu {}
-
-            homeScreen {
-            }.openThreeDotMenu {
-                verifySettingsButton()
-                verifyBookmarksButton()
-                verifyHistoryButton()
-            }.openSettings {
-                verifySettingsView()
-            }.goBack {
-            }.openThreeDotMenu {
-            }.goBack {}
-        } else {
-            homeScreen {
-            }.openThreeDotMenu {
-                verifySettingsButton()
-                verifyBookmarksButton()
-                verifyHistoryButton()
-                verifyHelpButton()
-                verifyWhatsNewButton()
-            }.openSettings {
-                verifySettingsView()
-            }.goBack {
-            }.openThreeDotMenu {
-            }.openHelp {
-                verifyHelpUrl()
-            }.openTabDrawer {
-                closeTab()
+    fun homeThreeDotMenuItemsTest() {
+        homeScreen {
+        }.openThreeDotMenu {
+            verifyBookmarksButton()
+            verifyHistoryButton()
+            verifyDownloadsButton()
+            verifyAddOnsButton()
+            if (FeatureFlags.tabsTrayRewrite) {
+                verifySyncSignInButton()
+            } else {
+                verifySyncedTabsButton()
             }
-
-            homeScreen {
-            }.openThreeDotMenu {
-            }.openWhatsNew {
-                verifyWhatsNewURL()
-            }.openTabDrawer {
-                closeTab()
-            }
-
-            homeScreen {
-            }.openThreeDotMenu {
-            }.openBookmarks {
-                verifyBookmarksMenuView()
-            }.closeMenu {
-            }
-
-            homeScreen {
-            }.openThreeDotMenu {
-            }.openHistory {
-                verifyHistoryMenuView()
-            }
+            verifyDesktopSite()
+            verifyWhatsNewButton()
+            verifyHelpButton()
+            verifySettingsButton()
+        }.openSettings {
+            verifySettingsView()
+        }.goBack {
+        }.openThreeDotMenu {
+        }.openHelp {
+            verifyHelpUrl()
+        }.openTabDrawer {
+            closeTab()
         }
 
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openWhatsNew {
+            verifyWhatsNewURL()
+        }.openTabDrawer {
+            closeTab()
+        }
+
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openBookmarks {
+            verifyBookmarksMenuView()
+        }.closeMenu {
+        }
+
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openHistory {
+            verifyHistoryMenuView()
+        }
     }
 }

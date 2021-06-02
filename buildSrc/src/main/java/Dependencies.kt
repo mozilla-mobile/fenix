@@ -13,7 +13,6 @@ object Versions {
 
     const val sentry = "1.7.10"
     const val leakcanary = "2.4"
-
     const val osslicenses_plugin = "0.9.5"
     const val detekt = "1.9.1"
     const val jna = "5.6.0"
@@ -37,6 +36,8 @@ object Versions {
 
     const val mozilla_android_components = AndroidComponents.VERSION
 
+    const val adjust = "4.18.3"
+    const val installreferrer = "1.0"
 
     const val junit = "5.5.2"
     const val mockk = "1.10.0"
@@ -45,6 +46,9 @@ object Versions {
     const val uiautomator = "2.2.0"
     const val robolectric = "4.3.1"
 
+    const val google_ads_id_version = "16.0.0"
+
+    const val google_play_store_version = "1.8.0"
 }
 
 @Suppress("unused")
@@ -142,6 +146,7 @@ object Deps {
     const val mozilla_ui_tabcounter = "org.mozilla.components:ui-tabcounter:${Versions.mozilla_android_components}"
 
     const val mozilla_lib_crash = "org.mozilla.components:lib-crash:${Versions.mozilla_android_components}"
+    const val mozilla_lib_push_firebase = "org.mozilla.components:lib-push-firebase:${Versions.mozilla_android_components}"
     const val mozilla_lib_dataprotect = "org.mozilla.components:lib-dataprotect:${Versions.mozilla_android_components}"
 
     const val mozilla_lib_publicsuffixlist = "org.mozilla.components:lib-publicsuffixlist:${Versions.mozilla_android_components}"
@@ -183,6 +188,9 @@ object Deps {
     const val androidx_work_testing = "androidx.work:work-testing:${Versions.androidx_work}"
     const val google_material = "com.google.android.material:material:${Versions.google_material}"
 
+    const val adjust = "com.adjust.sdk:adjust-android:${Versions.adjust}"
+    const val installreferrer = "com.android.installreferrer:installreferrer:${Versions.installreferrer}"
+
     const val jna = "net.java.dev.jna:jna:${Versions.jna}@jar"
 
     const val junit = "junit:junit:${Versions.junit}"
@@ -214,6 +222,10 @@ object Deps {
     const val uiautomator = "androidx.test.uiautomator:uiautomator:${Versions.uiautomator}"
     const val robolectric = "org.robolectric:robolectric:${Versions.robolectric}"
 
+    const val google_ads_id = "com.google.android.gms:play-services-ads-identifier:${Versions.google_ads_id_version}"
+
+    // Required for in-app reviews
+    const val google_play_store = "com.google.android.play:core:${Versions.google_play_store_version}"
 
     const val detektApi = "io.gitlab.arturbosch.detekt:detekt-api:${Versions.detekt}"
     const val detektTest = "io.gitlab.arturbosch.detekt:detekt-test:${Versions.detekt}"

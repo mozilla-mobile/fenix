@@ -414,6 +414,11 @@
         and the third is the device model. -->
     <string name="default_device_name_2">%1$s wot %2$s %3$s</string>
 
+    <!-- Preference for syncing credit cards -->
+    <string name="preferences_sync_credit_cards">Kreditne karty</string>
+    <!-- Preference for syncing addresses -->
+    <string name="preferences_sync_address">Adresy</string>
+
     <!-- Send Tab -->
     <!-- Name of the "receive tabs" notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="fxa_received_tab_channel_name">Přijate rajtarki</string>
@@ -445,9 +450,6 @@
     <!-- Text displayed when there are no exceptions, with learn more link that brings users to a tracking protection SUMO page -->
     <string name="exceptions_empty_message_learn_more_link">Dalše informacije</string>
 
-    <!-- Description in Quick Settings that tells user tracking protection is off globally for all sites, and links to Settings to turn it on -->
-    <string name="preferences_tracking_protection_turned_off_globally">Globalnje znjemóžnjeny, dźiće do nastajenjow, zo by jón zmóžnił.</string>
-
     <!-- Preference switch for Telemetry -->
     <string name="preferences_telemetry">Telemetrija</string>
     <!-- Preference switch for usage and technical data collection -->
@@ -458,6 +460,8 @@
     <string name="preferences_marketing_data">Marketingowe daty</string>
     <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
     <string name="preferences_marketing_data_description">Dźěli daty wo tym, kotre funkcije w %1$s wužiwaće, z Leanplum, našim poskićowarjom za mobilny marketing.</string>
+    <!-- Preference description for marketing data collection -->
+    <string name="preferences_marketing_data_description2">Dźěli zakładne wužiwanske daty z Adjust, našim mobilnym marketingowym poskićowarjom</string>
     <!-- Title for studies preferences -->
     <string name="preference_experiments_2">Studije</string>
     <!-- Summary for studies preferences -->
@@ -627,6 +631,8 @@
     <string name="tab_tray_menu_item_share">Wšě rajtarki dźělić</string>
     <!-- Text shown in the menu to view recently closed tabs -->
     <string name="tab_tray_menu_recently_closed">Runje začinjene rajtarki</string>
+    <!-- Text shown in the menu to view account settings -->
+    <string name="tab_tray_menu_account_settings">Kontowe nastajenja</string>
     <!-- Text shown in the menu to view tab settings -->
     <string name="tab_tray_menu_tab_settings">Nastajenja rajtarkow</string>
     <!-- Text shown in the menu for closing all tabs -->
@@ -796,8 +802,6 @@
     <string name="bookmark_delete_folder_snackbar">%1$s je so zhašał</string>
     <!-- Screen title for adding a bookmarks folder -->
     <string name="bookmark_add_folder">Rjadowak přidać</string>
-    <!-- deprecated: Snackbar title shown after a bookmark has been created. -->
-    <string name="bookmark_created_snackbar">Zapołožka je so wutworiła.</string>
     <!-- Snackbar title shown after a bookmark has been created. -->
     <string name="bookmark_saved_snackbar">Zapołožka je so składowała!</string>
     <!-- Snackbar edit button shown after a bookmark has been created. -->
@@ -982,8 +986,6 @@
     <string name="share_link_all_apps_subheader">Wšě akcije</string>
     <!-- Sub-header in the dialog to share a link to an app from the most-recent sorted list -->
     <string name="share_link_recent_apps_subheader">Njedawno wužite</string>
-    <!-- An string shown when an account is signed in where %1$s is a placeholder for the email-->
-    <string name="sync_signed_as">Přizjewjeny jako %1$s</string>
     <!-- An option from the three dot menu to into sync -->
     <string name="sync_menu_sign_in">Pola Sync přizjewić</string>
     <!-- An option from the share dialog to sign into sync -->
@@ -1453,10 +1455,8 @@
     <string name="preferences_passwords_autofill">Awtomatisce wupjelnić</string>
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">Přizjewjenja synchronizować</string>
-    <!-- Syncing saved logins in Fenix is on -->
-    <string name="preferences_passwords_sync_logins_on">Zapinjeny</string>
-    <!-- Syncing saved logins in Fenix is off -->
-    <string name="preferences_passwords_sync_logins_off">Wupinjeny</string>
+    <!-- Preference for syncing saved logins in Fenix, when not signed in-->
+    <string name="preferences_passwords_sync_logins_across_devices">Přizjewjenja mjez gratami synchronizować</string>
     <!-- Syncing saved logins in Fenix needs reconnect to sync -->
     <string name="preferences_passwords_sync_logins_reconnect">Znowa zwjazać</string>
     <!-- Syncing saved logins in Fenix needs login -->
@@ -1558,6 +1558,8 @@
     <string name="preferences_credit_cards_save_and_autofill_cards_summary">Daty su zaklučowane</string>
     <!-- Preference option for syncing credit cards across devices. This is displayed when the user is not signed into sync -->
     <string name="preferences_credit_cards_sync_cards_across_devices">Karty přez graty synchronizować</string>
+    <!-- Preference option for syncing credit cards across devices. This is displayed when the user is signed into sync -->
+    <string name="preferences_credit_cards_sync_cards">Karty synchronizować</string>
     <!-- Preference option for adding a credit card -->
     <string name="preferences_credit_cards_add_credit_card">Kreditnu kartu přidać</string>
 
@@ -1565,6 +1567,8 @@
     <string name="preferences_credit_cards_manage_saved_cards">Składowane karty rjadować</string>
     <!-- Title of the "Add card" screen -->
     <string name="credit_cards_add_card">Kartu přidać</string>
+    <!-- Title of the "Edit card" screen -->
+    <string name="credit_cards_edit_card">Kartu wobdźěłać</string>
     <!-- The header for the card number of a credit card -->
     <string name="credit_cards_card_number">Kartowe čisło</string>
     <!-- The header for the expiration date of a credit card -->
@@ -1573,6 +1577,8 @@
     <string name="credit_cards_name_on_card">Mjeno na karće</string>
     <!-- The header for the nickname for a credit card -->
     <string name="credit_cards_card_nickname">Kartowe přimjeno</string>
+    <!-- The text for the "Delete card" menu item for deleting a credit card -->
+    <string name="credit_cards_menu_delete_card">Kartu zhašeć</string>
     <!-- The text for the "Delete card" button for deleting a credit card -->
     <string name="credit_cards_delete_card_button">Kartu zhašeć</string>
     <!-- The title for the "Save" menu item for saving a credit card -->
@@ -1584,6 +1590,9 @@
 
     <!-- Title of the "Saved cards" screen -->
     <string name="credit_cards_saved_cards">Składowane karty</string>
+
+    <!-- Error message for credit card number validation -->
+    <string name="credit_cards_number_validation_error_message">Prošu zapodajće płaćiwe čisło kreditneje karty</string>
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Pytawu přidać</string>
@@ -1744,23 +1753,19 @@
 	<!-- Dialog button text for canceling the rename top site prompt. -->
 	<string name="top_sites_rename_dialog_cancel">Přetorhnyć</string>
 
+    <!-- Default browser experiment -->
+    <string name="default_browser_experiment_card_text">Nastajće wotkazy z websydłow, mejlkow a powěsćow, zo bychu so awtomatisce we Firefox wočinili.</string>
+
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">Wotstronić</string>
-
-    <!-- Deprecated: text for the firefox account onboarding card header
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_firefox_account_header">Wućehńće najlěpše z %s.</string>
 
     <!-- Content description radio buttons with a link to more information -->
     <string name="radio_preference_info_content_description">Klikńće za dalše podrobnosće</string>
 
-    <!-- Deprecated: No Open Tabs Message Header -->
-    <string name="no_collections_header1">Zběrajće wěcy, kotrež su wam wažne</string>
-    <!-- Deprecated: Label to describe what collections are to a new user without any collections -->
-    <string name="no_collections_description1">Zeskupće podobne pytanja, sydła a rajtarki za pozdźiši spěšny přistup.</string>
-    <!-- Deprecated: text for the firefox account onboarding card header when we detect you're already signed in to -->
-    <string name="onboarding_firefox_account_auto_signin_header_2">Sće so jako %s w druhim wobhladowaku Firefox na tutym telefonje přizjewił. Chceće so z tutym kontom přizjewić?</string>
-    <!-- Deprecated: Describes the add to homescreen functionality -->
-    <string name="add_to_homescreen_description">Móžeće startowej wobrazowce swojeho telefona tute websydło lochko přidać, zo byšće direktny přistup měł a spěšnišo z dožiwjenjom nałoženja přehladował.</string>
+    <!-- Content description for the action bar "up" button -->
+    <string name="action_bar_up_description">Horje</string>
 
-    </resources>
+    <!-- Content description for privacy content close button -->
+    <string name="privacy_content_close_button_content_description">Začinić</string>
+
+</resources>

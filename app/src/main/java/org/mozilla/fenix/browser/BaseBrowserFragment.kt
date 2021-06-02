@@ -80,6 +80,7 @@ import mozilla.components.service.sync.logins.DefaultLoginValidationDelegate
 import mozilla.components.support.base.feature.PermissionsFeature
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
+import mozilla.components.support.ktx.android.view.exitImmersiveModeIfNeeded
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifAnyChanged
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
@@ -127,9 +128,9 @@ import java.lang.ref.WeakReference
 import mozilla.components.feature.session.behavior.EngineViewBrowserToolbarBehavior
 import mozilla.components.feature.webauthn.WebAuthnFeature
 import mozilla.components.support.base.feature.ActivityResultHandler
+import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
+import mozilla.components.support.ktx.android.view.enterToImmersiveMode
 import org.mozilla.fenix.GleanMetrics.PerfStartup
-import org.mozilla.fenix.ext.enterToImmersiveMode
-import org.mozilla.fenix.ext.exitImmersiveModeIfNeeded
 import org.mozilla.fenix.ext.measureNoInline
 import mozilla.components.feature.session.behavior.ToolbarPosition as MozacToolbarPosition
 
@@ -282,7 +283,8 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
         val readerMenuController = DefaultReaderModeController(
             readerViewFeature,
             view.readerViewControlsBar,
-            isPrivate = activity.browsingModeManager.mode.isPrivate
+            isPrivate = activity.browsingModeManager.mode.isPrivate,
+            onReaderModeChanged = { activity.finishActionMode() }
         )
         val browserToolbarController = DefaultBrowserToolbarController(
             store = store,
@@ -370,8 +372,12 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
                 store = store,
                 sessionId = customTabSessionId,
                 stub = view.stubFindInPage,
-                engineView = view.engineView,
-                toolbar = browserToolbarView.view
+                engineView = engineView,
+                toolbarInfo = FindInPageIntegration.ToolbarInfo(
+                    browserToolbarView.view,
+                    !context.settings().shouldUseFixedTopToolbar && context.settings().isDynamicToolbarEnabled,
+                    !context.settings().shouldUseBottomToolbar
+                )
             ),
             owner = this,
             view = view
@@ -552,7 +558,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
                             showPage = true,
                             sessionId = getCurrentTab()?.id
                         )
-                        findNavController().navigate(directions)
+                        findNavController().navigateBlockingForAsyncNavGraph(directions)
                     }
                 },
                 onNeedToRequestPermissions = { permissions ->
@@ -563,7 +569,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
                     browserAnimator.captureEngineViewAndDrawStatically {
                         val directions =
                             NavGraphDirections.actionGlobalSavedLoginsAuthFragment()
-                        findNavController().navigate(directions)
+                        findNavController().navigateBlockingForAsyncNavGraph(directions)
                     }
                 }
             ),
@@ -851,12 +857,6 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
         view: View
     ): List<ContextMenuCandidate>
 
-    @CallSuper
-    override fun onStart() {
-        super.onStart()
-        sitePermissionWifiIntegration.get()?.maybeAddWifiConnectedListener()
-    }
-
     @VisibleForTesting
     internal fun observeRestoreComplete(store: BrowserStore, navController: NavController) {
         val activity = activity as HomeActivity
@@ -980,7 +980,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
     }
 
     override fun onBackLongPressed(): Boolean {
-        findNavController().navigate(
+        findNavController().navigateBlockingForAsyncNavGraph(
             NavGraphDirections.actionGlobalTabHistoryDialogFragment(
                 activeSessionId = customTabSessionId
             )

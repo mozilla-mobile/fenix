@@ -209,6 +209,9 @@
     <!-- Search suggestion onboarding hint Learn more link text -->
     <string name="search_suggestions_onboarding_learn_more_link">ఇంకా తెలుసుకోండి</string>
 
+    <!-- Search engine suggestion title text. The first parameter is the name of teh suggested engine-->
+    <string name="search_engine_suggestions_title">%s‌లో వెతకండి</string>
+
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
     <string name="search_widget_content_description">ఒక కొత్త Firefox ట్యాబును తెరువండి</string>
@@ -340,6 +343,9 @@
     <!-- Preference for notifications -->
     <string name="preferences_notifications">గమనింపులు</string>
 
+    <!-- Add-on Preferences -->
+    <!-- Preference to customize the configured AMO (addons.mozilla.org) collection -->
+    <string name="preferences_customize_amo_collection">అభిమత పొడగింతల సేకరణ</string>
     <!-- Button caption to confirm the add-on collection configuration -->
     <string name="customize_addon_collection_ok">సరే</string>
     <!-- Button caption to abort the add-on collection configuration -->
@@ -349,6 +355,9 @@
     <!-- Hint displayed on input field for custom collection user ID-->
     <string name="customize_addon_collection_user_hint">సేకరణ యజమాని (వాడుకరి ID)</string>
 
+    <!-- Add-on Installation from AMO-->
+    <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
+    <string name="addon_not_supported_error">పొడగింతకు తోడ్పాటు లేదు</string>
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is already installed -->
     <string name="addon_already_installed">పొడగింత ఇప్పటికే స్థాపితమైవుంది</string>
 
@@ -387,6 +396,11 @@
         and the third is the device model. -->
     <string name="default_device_name_2">%2$s %3$sలో %1$s</string>
 
+    <!-- Preference for syncing credit cards -->
+    <string name="preferences_sync_credit_cards">క్రెడిట్ కార్డులు</string>
+    <!-- Preference for syncing addresses -->
+    <string name="preferences_sync_address">చిరునామాలు</string>
+
     <!-- Send Tab -->
     <!-- Name of the "receive tabs" notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="fxa_received_tab_channel_name">అందుకన్న ట్యాబులు</string>
@@ -417,9 +431,6 @@
     <string name="exceptions_empty_message_description">మినహాయింపులు మీరు ఎంచుకున్న సైట్లకు ట్రాకింగ్ సంరక్షణను అచేతనం చేసుకోనిస్తాయి.</string>
     <!-- Text displayed when there are no exceptions, with learn more link that brings users to a tracking protection SUMO page -->
     <string name="exceptions_empty_message_learn_more_link">ఇంకా తెలుసుకోండి</string>
-
-    <!-- Description in Quick Settings that tells user tracking protection is off globally for all sites, and links to Settings to turn it on -->
-    <string name="preferences_tracking_protection_turned_off_globally">సర్వత్రా అచేనంగా ఉంది, దీన్ని చేతనించుకోడానికి అమరికలకు వెళ్ళండి.</string>
 
     <!-- Preference switch for Telemetry -->
     <string name="preferences_telemetry">టెలీమెట్రీ</string>
@@ -578,6 +589,8 @@
     <string name="tabs_header_private_title">అంతరంగిక సెషను</string>
     <!-- Title for the list of tabs in the current private session -->
     <string name="tabs_header_private_tabs_title">అంతరంగిక ట్యాబులు</string>
+    <!-- Title for the list of tabs in the synced tabs -->
+    <string name="tabs_header_synced_tabs_title">సింకైన ట్యాబులు</string>
     <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
     <string name="add_tab">ట్యాబును చేర్చు</string>
     <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
@@ -594,6 +607,8 @@
     <string name="tab_tray_menu_item_share">అన్ని ట్యాబులను పంచుకో</string>
     <!-- Text shown in the menu to view recently closed tabs -->
     <string name="tab_tray_menu_recently_closed">ఇటీవల మూసిన ట్యాబులు</string>
+    <!-- Text shown in the menu to view account settings -->
+    <string name="tab_tray_menu_account_settings">ఖాతా అమరికలు</string>
     <!-- Text shown in the menu to view tab settings -->
     <string name="tab_tray_menu_tab_settings">ట్యాబు అమరికలు</string>
     <!-- Text shown in the menu for closing all tabs -->
@@ -767,8 +782,6 @@
     <string name="bookmark_delete_folder_snackbar">%1$s తొలగించబడింది</string>
     <!-- Screen title for adding a bookmarks folder -->
     <string name="bookmark_add_folder">సంచయం చేర్చు</string>
-    <!-- deprecated: Snackbar title shown after a bookmark has been created. -->
-    <string name="bookmark_created_snackbar">ఇష్టాంశం సృష్టించబడింది.</string>
     <!-- Snackbar title shown after a bookmark has been created. -->
     <string name="bookmark_saved_snackbar">ఇష్టాంశం భద్రమయింది!</string>
     <!-- Snackbar edit button shown after a bookmark has been created. -->
@@ -857,6 +870,8 @@
     <string name="preference_phone_feature_location">స్థానం</string>
     <!-- Preference for altering the notification access for all websites -->
     <string name="preference_phone_feature_notification">గమనింపులు</string>
+    <!-- Preference for altering the persistent storage access for all websites -->
+    <string name="preference_phone_feature_persistent_storage">నిరంతర నిల్వ</string>
     <!-- Label that indicates that a permission must be asked always -->
     <string name="preference_option_phone_feature_ask_to_allow">అనుమతిని అడుగు</string>
     <!-- Label that indicates that a permission must be blocked -->
@@ -874,15 +889,21 @@
     <string name="tracking_protection_off">అచేతనం</string>
     <!-- Label for global setting that indicates that all video and audio autoplay is allowed -->
     <string name="preference_option_autoplay_allowed2">ఆడియో, వీడియోలను అనుమతించు</string>
+    <!-- Label for site specific setting that indicates that all video and audio autoplay is allowed -->
+    <string name="quick_setting_option_autoplay_allowed">ఆడియో, వీడియోలను అనుమతించు</string>
     <!-- Label that indicates that video and audio autoplay is only allowed over Wi-Fi -->
     <string name="preference_option_autoplay_allowed_wifi_only2">ఆడియో, వీడియోలను సెల్యులార్ డేటాని వాడుతున్నప్పుడు మాత్రమే నిరోధించు</string>
     <!-- Subtext that explains 'autoplay on Wi-Fi only' option -->
     <string name="preference_option_autoplay_allowed_wifi_subtext">ఆడియో, వీడియోలు వై-ఫైలో ఉన్నప్పుడు మాత్రమే ఆడతాయి</string>
     <!-- Label for global setting that indicates that video autoplay is allowed, but audio autoplay is blocked -->
     <string name="preference_option_autoplay_block_audio2">ఆడియోను మాత్రమే నిరోధించు</string>
+    <!-- Label for site specific setting that indicates that video autoplay is allowed, but audio autoplay is blocked -->
+    <string name="quick_setting_option_autoplay_block_audio">ఆడియోను మాత్రమే నిరోధించు</string>
     <!-- Label for global setting that indicates that all video and audio autoplay is blocked -->
     <string name="preference_option_autoplay_blocked3">ఆడియో, వీడియోలను నిరోధించు</string>
 
+    <!-- Label for site specific setting that indicates that all video and audio autoplay is blocked -->
+    <string name="quick_setting_option_autoplay_blocked">ఆడియో, వీడియోలను నిరోధించు</string>
     <!-- Summary of delete browsing data on quit preference if it is set to on -->
     <string name="delete_browsing_data_quit_on">చేతనం</string>
     <!-- Summary of delete browsing data on quit preference if it is set to off -->
@@ -1155,6 +1176,8 @@
     <string name="onboarding_firefox_account_auto_signin_confirm">అవును, నన్ను ప్రవేశింపజేయి</string>
     <!-- text for the automatic sign-in button while signing in is in process -->
     <string name="onboarding_firefox_account_signing_in">ప్రవేశింపజేస్తూంది…</string>
+    <!-- text for the button to manually sign into Firefox account. -->
+    <string name="onboarding_firefox_account_sign_in_1">నమోదవ్వండి</string>
     <!-- text for the button to stay signed out when presented with an option to automatically sign-in. -->
     <string name="onboarding_firefox_account_stay_signed_out">నిష్క్రమించే ఉండు</string>
     <!-- text to display in the snackbar once account is signed-in -->
@@ -1167,6 +1190,8 @@
     <string name="onboarding_tracking_protection_strict_button">కఠినం (సిఫార్సు చేయబడింది)</string>
     <!-- text for tracking protection radio button option for strict level of blocking -->
     <string name="onboarding_tracking_protection_strict_option">కఠినం</string>
+    <!-- text for the toolbar position card header  -->
+    <string name="onboarding_toolbar_placement_header_1">పనిముట్లపట్టీ ఎక్కడ ఉండాలో ఎంచుకోండి</string>
     <!-- text for the private browsing onboarding card header -->
     <string name="onboarding_private_browsing_header">అంతరంగికంగా విహరించండి</string>
     <!-- text for the private browsing onboarding card description
@@ -1190,6 +1215,8 @@
     <!-- text for the theme picker onboarding card header -->
     <string name="onboarding_theme_picker_header">మీ అలంకారాన్ని ఎంచుకోండి</string>
 
+    <!-- text for the theme picker onboarding card description -->
+    <string name="onboarding_theme_picker_description_2">చీకటి రీతితో కొంచెం బ్యాటరీని, మీ కంటిచూపుని ఆదాచేసుకోండి.</string>
     <!-- Automatic theme setting (will follow device setting) -->
     <string name="onboarding_theme_automatic_title">ఆటోమెటిక్</string>
     <!-- Summary of automatic theme setting (will follow device setting) -->
@@ -1393,10 +1420,6 @@
     <string name="preferences_passwords_autofill">స్వయంపూరణ</string>
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">ప్రవేశాలను సింక్ చేయి</string>
-    <!-- Syncing saved logins in Fenix is on -->
-    <string name="preferences_passwords_sync_logins_on">చేతనం</string>
-    <!-- Syncing saved logins in Fenix is off -->
-    <string name="preferences_passwords_sync_logins_off">అచేతనం</string>
     <!-- Syncing saved logins in Fenix needs reconnect to sync -->
     <string name="preferences_passwords_sync_logins_reconnect">మళ్లీ అనుసంధానించు</string>
     <!-- Syncing saved logins in Fenix needs login -->
@@ -1491,10 +1514,21 @@
     <!-- Credit Cards Autofill -->
     <!-- Preference and title for managing the settings for credit cards -->
     <string name="preferences_credit_cards">క్రెడిట్ కార్డులు</string>
+    <!-- Preference for saving and autofilling credit cards -->
+    <string name="preferences_credit_cards_save_and_autofill_cards">కార్డులను భద్రపరుచు, స్వయంచాలకంగా పూరించు</string>
+    <!-- Preference summary for saving and autofilling credit card data -->
+    <string name="preferences_credit_cards_save_and_autofill_cards_summary">డేటా గుప్తీకరించబడుతుంది
+</string>
+    <!-- Preference option for syncing credit cards across devices. This is displayed when the user is not signed into sync -->
+    <string name="preferences_credit_cards_sync_cards_across_devices">కార్డులను పరికరాల మధ్య సింక్రనించు</string>
     <!-- Preference option for adding a credit card -->
     <string name="preferences_credit_cards_add_credit_card">క్రెడిట్ కార్డును చేర్చు</string>
+    <!-- Preference option for managing saved credit cards -->
+    <string name="preferences_credit_cards_manage_saved_cards">భద్రపరచిన కార్డుల నిర్వహణ</string>
     <!-- Title of the "Add card" screen -->
     <string name="credit_cards_add_card">కార్డును చేర్చు</string>
+    <!-- Title of the "Edit card" screen -->
+    <string name="credit_cards_edit_card">కార్డును మార్చు</string>
     <!-- The header for the card number of a credit card -->
     <string name="credit_cards_card_number">కార్డు నెంబరు</string>
     <!-- The header for the expiration date of a credit card -->
@@ -1503,6 +1537,8 @@
     <string name="credit_cards_name_on_card">కార్డు మీద పేరు</string>
     <!-- The header for the nickname for a credit card -->
     <string name="credit_cards_card_nickname">కార్డు మారుపేరు</string>
+    <!-- The text for the "Delete card" menu item for deleting a credit card -->
+    <string name="credit_cards_menu_delete_card">కార్డును తొలగించు</string>
     <!-- The text for the "Delete card" button for deleting a credit card -->
     <string name="credit_cards_delete_card_button">కార్డును తొలగించు</string>
     <!-- The title for the "Save" menu item for saving a credit card -->
@@ -1674,18 +1710,10 @@
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">తొలగించు</string>
 
-    <!-- Deprecated: text for the firefox account onboarding card header
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_firefox_account_header">%s నుండి ఎక్కువగా పొందండి.</string>
-
     <!-- Content description radio buttons with a link to more information -->
     <string name="radio_preference_info_content_description">మరిన్ని వివరాలకు నొక్కండి</string>
 
-    <!-- Deprecated: No Open Tabs Message Header -->
-    <string name="no_collections_header1">మీకు ముఖ్యమైన విషయాలను సేకరించండి</string>
-    <!-- Deprecated: text for the firefox account onboarding card header when we detect you're already signed in to -->
-    <string name="onboarding_firefox_account_auto_signin_header_2">ఈ ఫోను లోని మరో Firefox విహారిణిలో మీరు %s‌గా ప్రవేశించారు. మీరు అదే ఖాతాతో ప్రవేశించాలనుకుంటున్నారా?</string>
-    <!-- Deprecated: Describes the add to homescreen functionality -->
-    <string name="add_to_homescreen_description">తక్షణం చేరుకొని, అనువర్తనం-వంటి అనుభూతితో వేగంగా విహరించడానికి, ఈ వెబ్‌సైటును మీ చరవాణి ముంగిలి తెరకు తేలికగా చేర్చుకోవచ్చు.</string>
+    <!-- Content description for privacy content close button -->
+    <string name="privacy_content_close_button_content_description">మూసివేయి</string>
 
-    </resources>
+</resources>

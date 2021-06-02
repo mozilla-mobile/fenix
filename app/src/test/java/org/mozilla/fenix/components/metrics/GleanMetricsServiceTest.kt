@@ -26,6 +26,8 @@ import org.mozilla.fenix.GleanMetrics.History
 import org.mozilla.fenix.GleanMetrics.Metrics
 import org.mozilla.fenix.GleanMetrics.SearchDefaultEngine
 import org.mozilla.fenix.GleanMetrics.SyncedTabs
+import org.mozilla.fenix.GleanMetrics.TabsTray
+import org.mozilla.fenix.GleanMetrics.TabsTrayCfr
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.utils.BrowsersCache
@@ -159,7 +161,7 @@ class GleanMetricsServiceTest {
     }
 
     @Test
-    fun `bookmark events is correctly recorded`() {
+    fun `bookmark events are correctly recorded`() {
         assertFalse(BookmarksManagement.open.testHasValue())
         gleanService.track(Event.OpenedBookmark)
         assertTrue(BookmarksManagement.open.testHasValue())
@@ -214,7 +216,7 @@ class GleanMetricsServiceTest {
     }
 
     @Test
-    fun `History events is correctly recorded`() {
+    fun `History events are correctly recorded`() {
         assertFalse(History.openedItemInNewTab.testHasValue())
         gleanService.track(Event.HistoryOpenedInNewTab)
         assertTrue(History.openedItemInNewTab.testHasValue())
@@ -230,5 +232,95 @@ class GleanMetricsServiceTest {
         assertFalse(History.openedItemsInPrivateTabs.testHasValue())
         gleanService.track(Event.HistoryOpenedInPrivateTabs)
         assertTrue(History.openedItemsInPrivateTabs.testHasValue())
+    }
+
+    @Test
+    fun `Addon events are correctly recorded`() {
+        assertFalse(Addons.openAddonsInSettings.testHasValue())
+        gleanService.track(Event.AddonsOpenInSettings)
+        assertTrue(Addons.openAddonsInSettings.testHasValue())
+
+        assertFalse(Addons.openAddonInToolbarMenu.testHasValue())
+        gleanService.track(Event.AddonsOpenInToolbarMenu("123"))
+        assertTrue(Addons.openAddonInToolbarMenu.testHasValue())
+        var events = Addons.openAddonInToolbarMenu.testGetValue()
+        assertEquals(1, events.size)
+        assertEquals("addons", events[0].category)
+        assertEquals("open_addon_in_toolbar_menu", events[0].name)
+        assertEquals(1, events[0].extra!!.size)
+        assertEquals("123", events[0].extra!!["addon_id"])
+
+        assertFalse(Addons.openAddonSetting.testHasValue())
+        gleanService.track(Event.AddonOpenSetting("123"))
+        assertTrue(Addons.openAddonSetting.testHasValue())
+        events = Addons.openAddonSetting.testGetValue()
+        assertEquals(1, events.size)
+        assertEquals("addons", events[0].category)
+        assertEquals("open_addon_setting", events[0].name)
+        assertEquals(1, events[0].extra!!.size)
+        assertEquals("123", events[0].extra!!["addon_id"])
+    }
+
+    @Test
+    fun `TabsTray events are correctly recorded`() {
+        assertFalse(TabsTray.opened.testHasValue())
+        gleanService.track(Event.TabsTrayOpened)
+        assertTrue(TabsTray.opened.testHasValue())
+
+        assertFalse(TabsTray.closed.testHasValue())
+        gleanService.track(Event.TabsTrayClosed)
+        assertTrue(TabsTray.closed.testHasValue())
+
+        assertFalse(TabsTray.openedExistingTab.testHasValue())
+        gleanService.track(Event.OpenedExistingTab)
+        assertTrue(TabsTray.openedExistingTab.testHasValue())
+
+        assertFalse(TabsTray.closedExistingTab.testHasValue())
+        gleanService.track(Event.ClosedExistingTab)
+        assertTrue(TabsTray.closedExistingTab.testHasValue())
+
+        assertFalse(TabsTray.privateModeTapped.testHasValue())
+        gleanService.track(Event.TabsTrayPrivateModeTapped)
+        assertTrue(TabsTray.privateModeTapped.testHasValue())
+
+        assertFalse(TabsTray.normalModeTapped.testHasValue())
+        gleanService.track(Event.TabsTrayNormalModeTapped)
+        assertTrue(TabsTray.normalModeTapped.testHasValue())
+
+        assertFalse(TabsTray.syncedModeTapped.testHasValue())
+        gleanService.track(Event.TabsTraySyncedModeTapped)
+        assertTrue(TabsTray.syncedModeTapped.testHasValue())
+
+        assertFalse(TabsTray.newTabTapped.testHasValue())
+        gleanService.track(Event.NewTabTapped)
+        assertTrue(TabsTray.newTabTapped.testHasValue())
+
+        assertFalse(TabsTray.newPrivateTabTapped.testHasValue())
+        gleanService.track(Event.NewPrivateTabTapped)
+        assertTrue(TabsTray.newPrivateTabTapped.testHasValue())
+
+        assertFalse(TabsTray.menuOpened.testHasValue())
+        gleanService.track(Event.TabsTrayMenuOpened)
+        assertTrue(TabsTray.menuOpened.testHasValue())
+
+        assertFalse(TabsTray.saveToCollection.testHasValue())
+        gleanService.track(Event.TabsTraySaveToCollectionPressed)
+        assertTrue(TabsTray.saveToCollection.testHasValue())
+
+        assertFalse(TabsTray.shareAllTabs.testHasValue())
+        gleanService.track(Event.TabsTrayShareAllTabsPressed)
+        assertTrue(TabsTray.shareAllTabs.testHasValue())
+
+        assertFalse(TabsTray.closeAllTabs.testHasValue())
+        gleanService.track(Event.TabsTrayCloseAllTabsPressed)
+        assertTrue(TabsTray.closeAllTabs.testHasValue())
+
+        assertFalse(TabsTrayCfr.dismiss.testHasValue())
+        gleanService.track(Event.TabsTrayCfrDismissed)
+        assertTrue(TabsTrayCfr.dismiss.testHasValue())
+
+        assertFalse(TabsTrayCfr.goToSettings.testHasValue())
+        gleanService.track(Event.TabsTrayCfrTapped)
+        assertTrue(TabsTrayCfr.goToSettings.testHasValue())
     }
 }

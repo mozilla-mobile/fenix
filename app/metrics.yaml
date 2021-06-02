@@ -2,7 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 ---
-$schema: moz://mozilla.org/schemas/glean/metrics/1-0-0
+$schema: moz://mozilla.org/schemas/glean/metrics/2-0-0
 
 no_lint:
   - CATEGORY_GENERIC
@@ -11,6 +11,12 @@ events:
   app_opened_all_startup:
     type: event
     description: |
+      **This probe has a known flaw:** for COLD start up, it doesn't take into
+      account if the process is already running when the app starts, possibly
+      inflating results (e.g. a Service started the process 20min ago and only
+      now is HomeActivity launching). See the `cold_*_app_to_first_frame` probes
+      for a replacement.
+      <br><br>
       A user opened the app to the HomeActivity. The HomeActivity
       encompasses the home screen, browser screen, settings screen,
       collections and other screens in the nav_graph.
@@ -217,6 +223,32 @@ events:
     notification_emails:
       - fenix-core@mozilla.com
     expires: "2021-07-01"
+  default_browser_changed:
+    type: event
+    description: |
+      Indicates the default browser was changed
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/18857
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/18895
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2021-10-01"
+  toolbar_menu_visible:
+    type: event
+    description: |
+      The browser menu was displayed from toolbar menu
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/18855
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/18895
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2021-10-01"
   total_uri_count:
     type: counter
     description: |
@@ -555,6 +587,20 @@ search_shortcuts:
       - fenix-core@mozilla.com
     expires: "2021-08-01"
 
+experiments_default_browser:
+  toolbar_menu_clicked:
+    type: event
+    description: |
+      Set default browser was clicked from toolbar menu
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/18851
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/18895
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2021-10-01"
 toolbar_settings:
   changed_position:
     type: event
@@ -1187,6 +1233,40 @@ metrics:
     notification_emails:
       - fenix-core@mozilla.com
     expires: "2021-08-01"
+  start_reason_process_error:
+    type: boolean
+    description: |
+      The `AppStartReasonProvider.ProcessLifecycleObserver.onCreate` was
+      unexpectedly called twice. We can use this metric to validate our
+      assumptions about how these APIs are called. This probe can be removed
+      once we validate these assumptions.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/18426
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/18632#issue-600193452
+    data_sensitivity:
+      - technical
+    notification_emails:
+      - perf-android-fe@mozilla.com
+      - mcomella@mozilla.com
+    expires: "2021-08-11"
+  start_reason_activity_error:
+    type: boolean
+    description: |
+      The `AppStartReasonProvider.ActivityLifecycleCallbacks.onActivityCreated`
+      was unexpectedly called twice. We can use this metric to validate our
+      assumptions about how these APIs are called. This probe can be removed
+      once we validate these assumptions.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/18426
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/18632#issue-600193452
+    data_sensitivity:
+      - technical
+    notification_emails:
+      - perf-android-fe@mozilla.com
+      - mcomella@mozilla.com
+    expires: "2021-08-11"
 
 preferences:
   show_search_suggestions:
@@ -2433,6 +2513,19 @@ tabs_tray:
     notification_emails:
       - fenix-core@mozilla.com
     expires: "2021-08-01"
+  synced_mode_tapped:
+    type: event
+    description: |
+      A user switched to synced mode
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/18948
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/19004
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2022-08-01"
   new_tab_tapped:
     type: event
     description: |
@@ -3938,6 +4031,23 @@ addons:
     notification_emails:
       - fenix-core@mozilla.com
     expires: "2021-07-01"
+  open_addon_setting:
+    type: event
+    description: |
+      A user opened an add-on's setting
+    extra_keys:
+      addon_id:
+        description: |
+          The id of the add-on that was interacted with
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/17644
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/18504
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2022-08-01"
   has_installed_addons:
     type: boolean
     description: |
@@ -4126,6 +4236,95 @@ startup.timeline:
     expires: "2021-08-01"
 
 perf.startup:
+  cold_main_app_to_first_frame:
+    type: timing_distribution
+    time_unit: millisecond
+    description: |
+      The duration from `*Application`'s initializer to the first Android frame
+      being drawn in a [COLD MAIN start
+      up](https://wiki.mozilla.org/index.php?title=Performance/Fenix/Glossary).
+      Notably, this duration omits the time from process start to the
+      initializer (which includes a lengthy dex operation) and the time from
+      the first frame to visual completeness. This probe doesn't measure Custom
+      Tabs or other uses of `ExternalAppBrowserActivity` to simplify result
+      analysis. The methodology for determining this measurement is imperfect
+      to simplify implementation. Issues may include:
+      <br>- Not measuring Beta and Release channels (due to
+      `MigrationDecisionActivity` interrupting the logic).
+      <br>- Not distinguishing between MAIN to homescreen, onboarding, session
+      restore, others?
+      <br>- Not choosing to record a MAIN based on what the user would see and
+      thus the core code path (i.e. the thing we want to measure) but rather on
+      the initial `Intent` state.
+      <br><br>
+      The hope is that these cases will not have a significant impact on the end
+      results but, if they appear to, we can replace it with a more complex
+      implementation.
+      <br><br>
+      Around April 8, 2021 the implementation was refactored. Functionally, it
+      should be the same but it's noted just in case there are bugs.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/18426
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/18632#issue-600193452
+    data_sensitivity:
+      - technical
+    notification_emails:
+      - perf-android-fe@mozilla.com
+      - mcomella@mozilla.com
+    expires: "2021-08-11"
+  cold_view_app_to_first_frame:
+    type: timing_distribution
+    time_unit: millisecond
+    description: |
+      The duration from `*Application`'s initializer to the first Android frame
+      being drawn in a [COLD VIEW start
+      up](https://wiki.mozilla.org/index.php?title=Performance/Fenix/Glossary).
+      The methodology for determining this measurement is imperfect to simplify
+      implementation. Issues may include:
+      <br>-Including VIEW intents that aren't valid so take code paths similar
+      to MAIN (this is speculative)
+      <br><br>
+      See the `cold_main_app_to_first_frame` probe docs for other possible
+      known issues and more details.
+      <br><br>
+      Around April 8, 2021 the implementation was refactored. Functionally, it
+      should be the same but it's noted just in case there are bugs.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/18426
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/18632#issue-600193452
+    data_sensitivity:
+      - technical
+    notification_emails:
+      - perf-android-fe@mozilla.com
+      - mcomella@mozilla.com
+    expires: "2021-08-11"
+  cold_unknwn_app_to_first_frame:
+    type: timing_distribution
+    time_unit: millisecond
+    description: |
+      The duration from `*Application`'s initializer to the first Android frame
+      being drawn in a [COLD start
+      up](https://wiki.mozilla.org/index.php?title=Performance/Fenix/Glossary)
+      where we can't say it was a MAIN or VIEW start up. The methodology for
+      determining this measurement is imperfect to simplify implementation.
+      <br><br>
+      See the `cold_main_app_to_first_frame` probe docs for known issues and
+      more details.
+      <br><br>
+      Around April 8, 2021 the implementation was refactored. Functionally, it
+      should be the same but it's noted just in case there are bugs.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/18426
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/18632#issue-600193452
+    data_sensitivity:
+      - technical
+    notification_emails:
+      - perf-android-fe@mozilla.com
+      - mcomella@mozilla.com
+    expires: "2021-08-11"
   application_on_create:
     type: timing_distribution
     time_unit: millisecond
@@ -4293,6 +4492,81 @@ perf.startup:
       - perf-android-fe@mozilla.com
       - mcomella@mozilla.com
     expires: "2021-08-11"
+  startup_type:
+    type: labeled_counter
+    description: |
+      Indicates how the browser was started. The label is divided into two
+      variables. `state` is how cached the browser is when started. `path` is
+      what code path we are expected to take. Together, they create a combined
+      label: `state_path`. For brevity, the specific states are documented in
+      the [Fenix perf
+      glossary](https://wiki.mozilla.org/index.php?title=Performance/Fenix/Glossary).
+      <br><br>
+      This implementation is intended to be simple, not comprehensive. We list
+      the implications below.
+
+      <br><br>
+      These ways of opening the app undesirably adds events to our primary
+      buckets (non-`unknown` cases):
+      <br>- App switcher cold/warm: `cold/warm_` + duplicates path from
+      previous launch
+      <br>- Home screen shortcuts: `*_view`
+      <br>- An Intent is sent internally that's uses `ACTION_MAIN` or
+      `ACTION_VIEW` could be: `*_main/view` (unknown if this ever happens)
+      <br>- A command-line launch uses `ACTION_MAIN` or `ACTION_VIEW` could be:
+      `*_main/view`
+
+      <br><br>
+      These ways of opening the app undesirably do not add their events to our
+      primary buckets:
+      <br>- Close and reopen the app very quickly: no event is recorded.
+
+      <br><br>
+      These ways of opening the app don't affect our primary buckets:
+      <br>- App switcher hot: `hot_unknown`
+      <br>- PWA (all states): `unknown_unknown`
+      <br>- Custom tab: `unknown_view`
+      <br>- Cold start where a service or other non-activity starts the process
+      (not manually tested) - this seems to happen if you have the homescreen
+      widget: `unknown_*`
+      <br>- Another activity is drawn before HomeActivity (e.g. widget voice
+      search): `unknown_*`
+      <br>- Widget text search: `*_unknown`
+
+      <br><br>
+      In addition to the events above, the `unknown` state may be chosen when we
+      were unable to determine a cause due to implementation details or the API
+      was used incorrectly. We may be able to record the events listed above
+      into different buckets but we kept the implementation simple for now.
+      <br><br>
+      N.B.: for implementation simplicity, we duplicate the logic in app that
+      determines `path` so it's not perfectly accurate. In one way, we record we
+      is intended to happen rather than what actually happened (e.g. the user
+      may click a link so we record VIEW but the app does a MAIN by going to the
+      homescreen because the link was invalid).
+    labels:
+      - cold_main
+      - cold_view
+      - cold_unknown
+      - warm_main
+      - warm_view
+      - warm_unknown
+      - hot_main
+      - hot_view
+      - hot_unknown
+      - unknown_main
+      - unknown_view
+      - unknown_unknown
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/18836
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/19028
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - perf-android-fe@mozilla.com
+      - mcomella@mozilla.com
+    expires: "2021-10-09"
 
 perf.awesomebar:
   history_suggestions:
@@ -4312,7 +4586,7 @@ perf.awesomebar:
     notification_emails:
       - fenix-core@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2020-11-15"
+    expires: "2021-11-15"
   bookmark_suggestions:
     send_in_pings:
       - metrics
@@ -4330,7 +4604,7 @@ perf.awesomebar:
     notification_emails:
       - fenix-core@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2020-11-15"
+    expires: "2021-11-15"
   search_engine_suggestions:
     send_in_pings:
       - metrics
@@ -4348,7 +4622,7 @@ perf.awesomebar:
     notification_emails:
       - fenix-core@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2020-11-15"
+    expires: "2021-11-15"
   session_suggestions:
     send_in_pings:
       - metrics
@@ -4366,7 +4640,7 @@ perf.awesomebar:
     notification_emails:
       - fenix-core@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2020-11-15"
+    expires: "2021-11-15"
   synced_tabs_suggestions:
     send_in_pings:
       - metrics
@@ -4384,7 +4658,7 @@ perf.awesomebar:
     notification_emails:
       - fenix-core@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2020-11-15"
+    expires: "2021-11-15"
   clipboard_suggestions:
     send_in_pings:
       - metrics
@@ -4402,7 +4676,7 @@ perf.awesomebar:
     notification_emails:
       - fenix-core@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2020-11-15"
+    expires: "2021-11-15"
   shortcuts_suggestions:
     send_in_pings:
       - metrics
@@ -4420,7 +4694,7 @@ perf.awesomebar:
     notification_emails:
       - fenix-core@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2020-11-15"
+    expires: "2021-11-15"
 
 autoplay:
   visited_setting:
@@ -4811,6 +5085,46 @@ engine_tab:
       - fenix-core@mozilla.com
       - skaspari@mozilla.com
     expires: "2021-12-31"
+  foreground_metrics:
+    type: event
+    description: |
+      Event collecting data about the state of tabs when the app comes back to
+      the foreground.
+    bugs:
+      - https://github.com/mozilla-mobile/android-components/issues/9997
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/18747#issuecomment-815731764
+    data_sensitivity:
+      - technical
+    notification_emails:
+      - fenix-core@mozilla.com
+      - skaspari@mozilla.com
+    expires: "2021-12-31"
+    extra_keys:
+      background_active_tabs:
+        description: |
+          Number of active tabs (with an engine session assigned) when the app
+          went to the background.
+      background_crashed_tabs:
+        description: |
+          Number of tabs marked as crashed when the app went to the background.
+      background_total_tabs:
+        description: |
+          Number of total tabs when the app went to the background.
+      foreground_active_tabs:
+        description: |
+          Number of active tabs (with an engine session assigned) when the
+          app came back to the foreground.
+      foreground_crashed_tabs:
+        description: |
+          Number of tabs marked as crashed when the app came back to the
+          foreground.
+      foreground_total_tabs:
+        description: |
+          Number of total tabs when the app came back to the foreground.
+      time_in_background:
+        description: |
+          Time (in milliseconds) the app was in the background.
 
 synced_tabs:
   synced_tabs_suggestion_clicked:
@@ -4906,6 +5220,34 @@ awesomebar:
     notification_emails:
       - fenix-core@mozilla.com
     expires: "2021-08-01"
+
+home_menu:
+  settings_item_clicked:
+    type: event
+    description: The user clicked the settings option in home menu.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/18856
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/18987
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2021-10-01"
+
+home_screen:
+  home_screen_displayed:
+    type: event
+    description: The user clicked the settings option in home menu.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/18856
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/19025
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2021-10-01"
 
 android_keystore_experiment:
   experiment_failure:
@@ -5007,3 +5349,46 @@ android_keystore_experiment:
     notification_emails:
       - fenix-core@mozilla.com
     expires: "2021-09-01"
+
+set_default_newtab_experiment:
+  set_default_browser_clicked:
+    type: event
+    description: |
+      Set default browser was clicked from new tab screen.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/18853
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/18895
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2021-10-01"
+  close_experiment_card_clicked:
+    type: event
+    description: |
+      Close experiment card was clicked from new tab screen.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/18853
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/18895
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2021-10-01"
+
+set_default_setting_experiment:
+  set_default_browser_clicked:
+    type: event
+    description: |
+      Set default browser was clicked from settings screen.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/18852
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/19047
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2021-10-01"

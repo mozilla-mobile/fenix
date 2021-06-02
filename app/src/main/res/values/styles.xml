@@ -82,6 +82,8 @@
         <item name="awesomeBarIndicatorBookmarkColor">@color/search_suggestion_indicator_icon_bookmark_color_normal_theme</item>
         <item name="selectLoginHeaderTextColor">@color/select_login_header_normal_theme</item>
         <item name="preferenceSectionHeader">@color/preference_section_header_normal_theme</item>
+        <item name="menuItemButtonTintColor">@color/menu_item_button_normal_theme</item>
+
         <!-- Shared widget colors -->
         <item name="mozac_primary_text_color">@color/primary_text_normal_theme</item>
         <item name="mozac_caption_text_color">@color/caption_text_normal_theme</item>
@@ -232,6 +234,7 @@
         <item name="awesomeBarIndicatorBookmarkColor">@color/search_suggestion_indicator_icon_bookmark_color_dark_theme</item>
         <item name="selectLoginHeaderTextColor">@color/accent_high_contrast_private_theme</item>
         <item name="preferenceSectionHeader">@color/preference_section_header_dark_theme</item>
+        <item name="menuItemButtonTintColor">@color/accent_high_contrast_private_theme</item>
 
         <!-- Shared widget colors -->
         <item name="mozac_primary_text_color">@color/primary_text_private_theme</item>
@@ -602,7 +605,8 @@
         <item name="android:layout_height">@dimen/top_sites_favicon_size</item>
         <item name="android:scaleType">fitCenter</item>
         <item name="android:padding">@dimen/top_sites_favicon_padding</item>
-        <item name="android:background">@drawable/mozac_widget_favicon_background</item>
+        <item name="android:background">@drawable/top_sites_background</item>
+        <item name="android:elevation">6dp</item>
     </style>
 
     <style name="TabTrayFab" parent="Widget.MaterialComponents.ExtendedFloatingActionButton">
