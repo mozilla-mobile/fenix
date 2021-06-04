@@ -174,6 +174,8 @@ class HomeFragment : Fragment() {
     private var appBarLayout: AppBarLayout? = null
     private lateinit var currentMode: CurrentMode
 
+    private val bookmarksStorage = requireComponents.core.bookmarksStorage
+
     private val topSitesFeature = ViewBoundFeatureWrapper<TopSitesFeature>()
     private val recentTabsListFeature = ViewBoundFeatureWrapper<RecentTabsListFeature>()
 

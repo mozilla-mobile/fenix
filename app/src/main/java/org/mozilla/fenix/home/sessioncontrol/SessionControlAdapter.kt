@@ -23,6 +23,7 @@ import org.mozilla.fenix.home.sessioncontrol.viewholders.CollectionHeaderViewHol
 import org.mozilla.fenix.home.sessioncontrol.viewholders.CollectionViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.NoCollectionsMessageViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.PrivateBrowsingDescriptionViewHolder
+import org.mozilla.fenix.home.sessioncontrol.viewholders.RecentBookmarksHeaderViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.TabInCollectionViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.TopSitePagerViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.ExperimentDefaultBrowserCardViewHolder
@@ -150,6 +151,9 @@ sealed class AdapterItem(@LayoutRes val viewType: Int) {
                     tab.content.icon == otherItem.tab.content.icon
         }
     }
+
+    object RecentBookmarksHeader : AdapterItem(CollectionHeaderViewHolder.LAYOUT_ID)
+    object RecentBookmarkItem : AdapterItem(CollectionViewHolder.LAYOUT_ID)
 
     /**
      * True if this item represents the same value as other. Used by [AdapterItemDiffCallback].
@@ -287,6 +291,7 @@ class SessionControlAdapter(
             is RecentTabViewHolder -> {
                 holder.bindTab((item as AdapterItem.RecentTabItem).tab)
             }
+            is RecentBookmarksHeaderViewHolder -> holder.bind()
         }
     }
 }
