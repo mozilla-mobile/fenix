@@ -4,7 +4,7 @@
 
 package org.mozilla.fenix.components
 
-import GeckoProvider
+import org.mozilla.fenix.gecko.GeckoProvider
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Build
@@ -35,6 +35,7 @@ import mozilla.components.feature.downloads.DownloadMiddleware
 import mozilla.components.feature.logins.exceptions.LoginExceptionStorage
 import mozilla.components.feature.media.MediaSessionFeature
 import mozilla.components.feature.media.middleware.RecordingDevicesMiddleware
+import mozilla.components.feature.prompts.PromptMiddleware
 import mozilla.components.feature.pwa.ManifestStorage
 import mozilla.components.feature.pwa.WebAppShortcutManager
 import mozilla.components.feature.readerview.ReaderViewMiddleware
@@ -64,7 +65,6 @@ import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
-import org.mozilla.fenix.TelemetryMiddleware
 import org.mozilla.fenix.components.search.SearchMigration
 import org.mozilla.fenix.downloads.DownloadService
 import org.mozilla.fenix.ext.components
@@ -76,6 +76,7 @@ import org.mozilla.fenix.search.telemetry.ads.AdsTelemetry
 import org.mozilla.fenix.search.telemetry.incontent.InContentTelemetry
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.settings.advanced.getSelectedLocale
+import org.mozilla.fenix.telemetry.TelemetryMiddleware
 import org.mozilla.fenix.utils.Mockable
 import org.mozilla.fenix.utils.getUndoDelay
 
@@ -107,6 +108,7 @@ class Core(
             suspendMediaWhenInactive = false,
             forceUserScalableContent = context.settings().forceEnableZoom,
             loginAutofillEnabled = context.settings().shouldAutofillLogins,
+            enterpriseRootsEnabled = context.settings().allowThirdPartyRootCerts,
             clearColor = ContextCompat.getColor(
                 context,
                 R.color.foundation_normal_theme
@@ -118,6 +120,7 @@ class Core(
             defaultSettings,
             GeckoProvider.getOrCreateRuntime(
                 context,
+                lazyAutofillStorage,
                 lazyPasswordsStorage,
                 trackingProtectionPolicyFactory.createTrackingProtectionPolicy()
             )
@@ -153,6 +156,7 @@ class Core(
             context,
             GeckoProvider.getOrCreateRuntime(
                 context,
+                lazyAutofillStorage,
                 lazyPasswordsStorage,
                 trackingProtectionPolicyFactory.createTrackingProtectionPolicy()
             )
@@ -194,7 +198,8 @@ class Core(
                     additionalBundledSearchEngineIds = listOf("reddit", "youtube"),
                     migration = SearchMigration(context)
                 ),
-                RecordingDevicesMiddleware(context)
+                RecordingDevicesMiddleware(context),
+                PromptMiddleware()
             )
 
         BrowserStore(
@@ -289,7 +294,7 @@ class Core(
     val lazyHistoryStorage = lazyMonitored { PlacesHistoryStorage(context, crashReporter) }
     val lazyBookmarksStorage = lazyMonitored { PlacesBookmarksStorage(context) }
     val lazyPasswordsStorage = lazyMonitored { SyncableLoginsStorage(context, passwordsEncryptionKey) }
-    val lazyAutofillStorage = lazyMonitored { AutofillCreditCardsAddressesStorage(context) }
+    val lazyAutofillStorage = lazyMonitored { AutofillCreditCardsAddressesStorage(context, lazySecurePrefs) }
 
     /**
      * The storage component to sync and persist tabs in a Firefox Sync account.
@@ -388,6 +393,7 @@ class Core(
      * Shared Preferences that encrypt/decrypt using Android KeyStore and lib-dataprotect for 23+
      * only on Nightly/Debug for now, otherwise simply stored.
      * See https://github.com/mozilla-mobile/fenix/issues/8324
+     * Also, this needs revision. See https://github.com/mozilla-mobile/fenix/issues/19155
      */
     private fun getSecureAbove22Preferences() =
         SecureAbove22Preferences(
@@ -395,6 +401,9 @@ class Core(
             name = KEY_STORAGE_NAME,
             forceInsecure = !Config.channel.isNightlyOrDebug
         )
+
+    // Temporary. See https://github.com/mozilla-mobile/fenix/issues/19155
+    private val lazySecurePrefs = lazyMonitored { getSecureAbove22Preferences() }
 
     private val passwordsEncryptionKey by lazyMonitored {
         getSecureAbove22Preferences().getString(PASSWORDS_KEY)

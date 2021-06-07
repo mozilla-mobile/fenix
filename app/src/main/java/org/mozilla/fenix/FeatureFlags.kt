@@ -15,11 +15,6 @@ object FeatureFlags {
     val pullToRefreshEnabled = Config.channel.isNightlyOrDebug
 
     /**
-     * Enables the Nimbus experiments library.
-     */
-    const val nimbusExperiments = true
-
-    /**
      * Enables the Addresses autofill feature.
      */
     val addressesFeature = Config.channel.isNightlyOrDebug
@@ -27,25 +22,10 @@ object FeatureFlags {
     /**
      * Enables the Credit Cards autofill feature.
      */
-    val creditCardsFeature = Config.channel.isNightlyOrDebug
+    const val creditCardsFeature = true
 
     /**
      * Enables WebAuthn support.
      */
     val webAuthFeature = Config.channel.isNightlyOrDebug
-
-    /**
-     * Shows new three-dot toolbar menu design.
-     */
-    val toolbarMenuFeature = Config.channel.isDebug
-
-    /**
-     * Enables the tabs tray re-write with Synced Tabs.
-     */
-    val tabsTrayRewrite = Config.channel.isDebug
-
-    /**
-     * Enables the updated icon set look and feel.
-     */
-    val newIconSet = Config.channel.isNightlyOrDebug
 }

@@ -182,6 +182,7 @@ sealed class Event {
     object ClosedExistingTab : Event()
     object TabsTrayPrivateModeTapped : Event()
     object TabsTrayNormalModeTapped : Event()
+    object TabsTraySyncedModeTapped : Event()
     object NewTabTapped : Event()
     object NewPrivateTabTapped : Event()
     object TabsTrayMenuOpened : Event()
@@ -223,6 +224,17 @@ sealed class Event {
     object SearchActionClicked : Event()
     object SearchSuggestionClicked : Event()
     object OpenedTabSuggestionClicked : Event()
+
+    // Set default browser experiment metrics
+    object SetDefaultBrowserNewTabClicked : Event()
+    object CloseExperimentCardClicked : Event()
+    object ToolbarMenuShown : Event()
+    object SetDefaultBrowserToolbarMenuClicked : Event()
+    object SetDefaultBrowserSettingsScreenClicked : Event()
+
+    // Home menu interaction
+    object HomeMenuSettingsItemClicked : Event()
+    object HomeScreenDisplayed : Event()
 
     // Interaction events with extras
 
@@ -582,7 +594,7 @@ sealed class Event {
             NEW_PRIVATE_TAB, SHARE, BACK, FORWARD, RELOAD, STOP, OPEN_IN_FENIX,
             SAVE_TO_COLLECTION, ADD_TO_TOP_SITES, ADD_TO_HOMESCREEN, QUIT, READER_MODE_ON,
             READER_MODE_OFF, OPEN_IN_APP, BOOKMARK, READER_MODE_APPEARANCE, ADDONS_MANAGER,
-            BOOKMARKS, HISTORY, SYNC_TABS, DOWNLOADS
+            BOOKMARKS, HISTORY, SYNC_TABS, DOWNLOADS, SET_DEFAULT_BROWSER, SYNC_ACCOUNT
         }
 
         override val extras: Map<Events.browserMenuActionKeys, String>?
@@ -602,7 +614,7 @@ sealed class Event {
 
     data class AutoPlaySettingChanged(val setting: AutoplaySetting) : Event() {
         enum class AutoplaySetting {
-            BLOCK_CELLULAR, BLOCK_AUDIO, BLOCK_ALL
+            BLOCK_CELLULAR, BLOCK_AUDIO, BLOCK_ALL, ALLOW_ALL
         }
 
         override val extras: Map<Autoplay.settingChangedKeys, String>?

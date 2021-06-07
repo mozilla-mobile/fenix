@@ -20,8 +20,6 @@
     <!-- No Private Tabs Message Description -->
     <string name="no_private_tabs_description">आपके निजी टैब यहाँ दिखाए जाएंगे।</string>
 
-    <!-- Default title for pinned JD top site that links to JD home page  -->
-    <string name="default_top_site_jd">JD</string>
     <!-- Message announced to the user when tab tray is selected with 1 tab -->
     <string name="open_tab_tray_single">1 खुला टैब। टैब स्विच करने के लिए टैप करें।</string>
     <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
@@ -75,11 +73,25 @@
     <!-- Text for the positive action button -->
     <string name="open_in_app_cfr_positive_button_text">सेटिंग पर जाएं</string>
 
+    <!-- Text for the negative action button -->
+    <string name="open_in_app_cfr_negative_button_text">खारिज</string>
+
     <!-- Text for the positive action button to go to Android Settings to grant permissions. -->
     <string name="camera_permissions_needed_positive_button_text">सेटिंग पर जाएं</string>
 
+    <!-- Text for the negative action button to dismiss the dialog. -->
+    <string name="camera_permissions_needed_negative_button_text">खारिज</string>
+
+    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
+    <string name="tab_tray_close_tabs_banner_positive_button_text">विकल्प देखें</string>
+    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
+    <string name="tab_tray_close_tabs_banner_negative_button_text">खारिज</string>
+
     <!-- Text for the positive action button to go to Settings for auto close tabs. -->
     <string name="tab_tray_grid_view_banner_positive_button_text">सेटिंग पर जाएं</string>
+
+    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
+    <string name="tab_tray_grid_view_banner_negative_button_text">खारिज</string>
 
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
@@ -107,6 +119,8 @@
     <string name="browser_menu_edit_bookmark">बुकमार्क संपादित करें</string>
     <!-- Browser menu button that opens the addon manager -->
     <string name="browser_menu_add_ons">ऐड-ऑन्स</string>
+    <!-- Browser menu button that opens the addon extensions manager -->
+    <string name="browser_menu_extensions">विस्तार</string>
     <!-- Text displayed when there are no add-ons to be shown -->
     <string name="no_add_ons">यहां कोई ऐड-ऑन नहीं है</string>
     <!-- Browser menu button that sends a user to help articles -->
@@ -155,6 +169,9 @@
     <string name="browser_menu_open_app_link">ऐप में खोलें</string>
     <!-- Browser menu button to configure reader mode appearance e.g. the used font type and size -->
     <string name="browser_menu_read_appearance">उपस्थिति</string>
+
+    <!-- Browser menu label for adding a bookmark -->
+    <string name="browser_menu_add">जोड़ें</string>
 
     <!-- Error message to show when the user tries to access a scheme not
         handled by the app (Ex: blob, tel etc) -->
@@ -511,6 +528,13 @@
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">एक महीने बाद</string>
 
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
+    <string name="close_tabs_after_one_day_summary">एक दिन के बाद बंद करें</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one week-->
+    <string name="close_tabs_after_one_week_summary">एक हफ्ते के बाद बंद करें</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one month-->
+    <string name="close_tabs_after_one_month_summary">एक महीने के बाद बंद करें</string>
+
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
     <string name="tab_header_label">खुले टैब</string>
@@ -532,6 +556,8 @@
     <string name="tab_tray_menu_item_share">सभी टैब साझा करें</string>
     <!-- Text shown in the menu to view recently closed tabs -->
     <string name="tab_tray_menu_recently_closed">हाल ही में बंद किए गए टैब</string>
+    <!-- Text shown in the menu to view account settings -->
+    <string name="tab_tray_menu_account_settings">खाता सेटिंग</string>
     <!-- Text shown in the menu to view tab settings -->
     <string name="tab_tray_menu_tab_settings">टैब सेटिंग</string>
     <!-- Text shown in the menu for closing all tabs -->
@@ -546,8 +572,12 @@
     <string name="tab_tray_multiselect_menu_item_bookmark">बुकमार्क</string>
     <!-- Text shown in the multiselect menu for closing selected tabs. -->
     <string name="tab_tray_multiselect_menu_item_close">बंद करें</string>
+    <!-- Content description for tabs tray multiselect share button -->
+    <string name="tab_tray_multiselect_share_content_description">चयनित टैब साझा करें</string>
     <!-- Content description (not visible, for screen readers etc.): Removes tab from collection button. Removes the selected tab from collection when pressed -->
     <string name="remove_tab_from_collection">संग्रहण से टैब हटायें</string>
+    <!-- Text for button to enter multiselect mode in tabs tray -->
+    <string name="tabs_tray_select_tabs">टैब चुनें</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab button. Closes the current session when pressed -->
     <string name="close_tab">टैब बंद करें</string>
 
@@ -619,6 +649,8 @@
     <!-- Text for the button to clear selected history items. The first parameter
         is a digit showing the number of items you have selected -->
     <string name="history_delete_some">%1$d चीज़ों को मिटाएं</string>
+    <!-- Text for the header that groups the history for today -->
+    <string name="history_today">आज</string>
     <!-- Text for the header that groups the history for last 24 hours -->
     <string name="history_24_hours">पिछले 24 घंटे</string>
     <!-- Text for the header that groups the history the past 7 days -->
@@ -772,15 +804,15 @@
     <!-- Summary of tracking protection preference if tracking protection is set to off -->
     <string name="tracking_protection_off">बंद करें</string>
 
-    <!-- Label that indicates that all video and audio autoplay is allowed -->
+    <!-- Label for global setting that indicates that all video and audio autoplay is allowed -->
     <string name="preference_option_autoplay_allowed2">ऑडियो और वीडियो की अनुमति दें</string>
     <!-- Label that indicates that video and audio autoplay is only allowed over Wi-Fi -->
     <string name="preference_option_autoplay_allowed_wifi_only2">केवल सेल्युलर डेटा पर ही ऑडियो एवं वीडियो को अवरुद्ध करें</string>
     <!-- Subtext that explains 'autoplay on Wi-Fi only' option -->
     <string name="preference_option_autoplay_allowed_wifi_subtext">ऑडियो और वीडियो वाई-फाई पर चलेंगे</string>
-    <!-- Label that indicates that video autoplay is allowed, but audio autoplay is blocked -->
+    <!-- Label for global setting that indicates that video autoplay is allowed, but audio autoplay is blocked -->
     <string name="preference_option_autoplay_block_audio2">सिर्फ ऑडियो को ब्लॉक करें</string>
-    <!-- Label that indicates that all video and audio autoplay is blocked -->
+    <!-- Label for global setting that indicates that all video and audio autoplay is blocked -->
     <string name="preference_option_autoplay_blocked3">ऑडियो और वीडियो ब्लॉक करें</string>
     <!-- Summary of delete browsing data on quit preference if it is set to on -->
     <string name="delete_browsing_data_quit_on">चालू करें</string>
@@ -845,6 +877,8 @@
     <string name="share_link_all_apps_subheader">सभी क्रियाएं</string>
     <!-- Sub-header in the dialog to share a link to an app from the most-recent sorted list -->
     <string name="share_link_recent_apps_subheader">हाल ही में उपयोग किया गया</string>
+    <!-- An option from the three dot menu to into sync -->
+    <string name="sync_menu_sign_in">सिंक करने के लिए साइन इन करें</string>
     <!-- An option from the share dialog to sign into sync -->
     <string name="sync_sign_in">सिंक करने के लिए साइन इन करें</string>
     <!-- An option from the share dialog to send link to all other sync devices -->
@@ -1036,9 +1070,6 @@
     <string name="onboarding_header">%s में आपका स्वागत हैं!</string>
     <!-- text for the Firefox Accounts section header -->
     <string name="onboarding_fxa_section_header">पहले से ही एक खाता है?</string>
-    <!-- text for the Firefox Preview feature section header
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_feature_section_header">%s को जाने</string>
     <!-- text for the "What's New" onboarding card header -->
     <string name="onboarding_whats_new_header1">नया क्या है, देखें</string>
     <!-- text for the "what's new" onboarding card description
@@ -1046,41 +1077,24 @@
     <string name="onboarding_whats_new_description">%s पुनर्निर्देशित के बारे में प्रश्न हैं? जानना चाहते हैं कि क्या बदला है?</string>
     <!-- text for underlined clickable link that is part of "what's new" onboarding card description that links to an FAQ -->
     <string name="onboarding_whats_new_description_linktext">यहां उत्तर पाएं</string>
-    <!-- Text for the button to learn more about signing in to your Firefox account -->
-    <string name="onboarding_manual_sign_in_learn_more">अधिक जानें</string>
     <!-- text for the button to confirm automatic sign-in -->
     <string name="onboarding_firefox_account_auto_signin_confirm">हां, मुझे साइन इन करें</string>
     <!-- text for the automatic sign-in button while signing in is in process -->
     <string name="onboarding_firefox_account_signing_in">साइन इन हो रहा है…</string>
-    <!-- text for the button to manually sign into Firefox account. The word "Firefox" should not be translated -->
-    <string name="onboarding_firefox_account_sign_in">Firefox में साइन इन करें</string>
+    <!-- text for the button to manually sign into Firefox account. -->
+    <string name="onboarding_firefox_account_sign_in_1">साइन अप</string>
     <!-- text for the button to stay signed out when presented with an option to automatically sign-in. -->
     <string name="onboarding_firefox_account_stay_signed_out">साइन आउट रहें</string>
     <!-- text to display in the snackbar once account is signed-in -->
     <string name="onboarding_firefox_account_sync_is_on">सिंक चालू है</string>
     <!-- text to display in the snackbar if automatic sign-in fails. user may try again -->
     <string name="onboarding_firefox_account_automatic_signin_failed">लॉगिन करने में असफल</string>
-    <!-- text for the tracking protection onboarding card header -->
-    <string name="onboarding_tracking_protection_header_2">स्वचालित गोपनीयता</string>
-    <!-- text for the tracking protection card description
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_tracking_protection_description_2">गोपनीयता और सुरक्षा सेटिंग ट्रैकर्स, मैलवेयर और कंपनियों को रोकती हैं जो आपके द्वारा अनुसरण करती हैं।</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
     <string name="onboarding_tracking_protection_standard_button_2">मानक (तयशुदा)</string>
-    <!-- text for standard blocking option button description -->
-    <string name="onboarding_tracking_protection_standard_button_description_2">कुछ ट्रैकर्स को ब्लॉक करता है। पेज सामान्य रूप से लोड होंगे।</string>
     <!-- text for tracking protection radio button option for strict level of blocking -->
     <string name="onboarding_tracking_protection_strict_button">सख़्त (अनुशंसित)</string>
     <!-- text for tracking protection radio button option for strict level of blocking -->
     <string name="onboarding_tracking_protection_strict_option">सख़्त</string>
-    <!-- text for strict blocking option button description -->
-    <string name="onboarding_tracking_protection_strict_button_description_2">अधिक ट्रैकर, विज्ञापन और पॉपअप ब्लॉक करता है। पेज तेज़ी से लोड होते हैं, लेकिन कुछ कार्यक्षमता काम नहीं कर सकती है।</string>
-    <!-- text for the toolbar position card header
-        In English this is an idiom for "choose a side as in an argument or fight"
-        but it is ok to make this more literally about "choosing a position in a physical space -->
-    <string name="onboarding_toolbar_position_header">कोई पक्ष लें</string>
-    <!-- text for the toolbar position card description -->
-    <string name="onboarding_toolbar_position_description">नीचे टूलबार के साथ ब्राउज़िंग की कोशिश करें या इसे शीर्ष पर ले जाएं।</string>
     <!-- text for the private browsing onboarding card header -->
     <string name="onboarding_private_browsing_header">निजी तौर पर ब्राउज़ करें</string>
     <!-- text for the private browsing onboarding card description
@@ -1104,8 +1118,6 @@
     <!-- Onboarding theme -->
     <!-- text for the theme picker onboarding card header -->
     <string name="onboarding_theme_picker_header">अपनी थीम चुनें</string>
-    <!-- text for the theme picker onboarding card description -->
-    <string name="onboarding_theme_picker_description1">डार्क मोड सक्षम करके कुछ बैटरी और आंखों की रोशनी बचाएं।</string>
     <!-- Automatic theme setting (will follow device setting) -->
     <string name="onboarding_theme_automatic_title">स्वचालित</string>
 
@@ -1160,14 +1172,10 @@
     <string name="preference_enhanced_tracking_protection_explanation_learn_more">अधिक जानें</string>
     <!-- Preference for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_standard_default_1">मानक (तयशुदा)</string>
-    <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description_3">कुछ ट्रैकर्स को ब्लॉक करें। पेज सामान्य रूप से लोड होंगे।</string>
     <!--  Accessibility text for the Standard protection information icon  -->
     <string name="preference_enhanced_tracking_protection_standard_info_button">मानक ट्रैकिंग सुरक्षा द्वारा क्या ब्लॉक किया गया</string>
     <!-- Preference for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict">सख़्त</string>
-    <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_description_2">अधिक ट्रैकर, विज्ञापन और पॉपअप ब्लॉक करें। पेज तेज़ी से लोड होंगे, लेकिन कुछ कार्यक्षमता काम नहीं कर सकती है।</string>
     <!--  Accessibility text for the Strict protection information icon  -->
     <string name="preference_enhanced_tracking_protection_strict_info_button">सख्त ट्रैकिंग सुरक्षा द्वारा क्या ब्लॉक किया गया</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
@@ -1399,6 +1407,32 @@
 
     <!-- Content description (not visible, for screen readers etc.): Sort saved logins dropdown menu chevron icon -->
     <string name="saved_logins_menu_dropdown_chevron_icon_content_description">लॉगिन मेन्यू को क्रमबद्ध करें</string>
+
+    <!-- Credit Cards Autofill -->
+    <!-- Preference and title for managing the settings for credit cards -->
+    <string name="preferences_credit_cards">क्रेडिट कार्ड</string>
+    <!-- Preference option for adding a credit card -->
+    <string name="preferences_credit_cards_add_credit_card">क्रेडिट कार्ड जोड़ें</string>
+    <!-- Title of the "Add card" screen -->
+    <string name="credit_cards_add_card">कार्ड जोड़ें</string>
+    <!-- Title of the "Edit card" screen -->
+    <string name="credit_cards_edit_card">कार्ड संपादित करें</string>
+    <!-- The header for the card number of a credit card -->
+    <string name="credit_cards_card_number">कार्ड नंबर</string>
+    <!-- The header for the name on the credit card -->
+    <string name="credit_cards_name_on_card">कार्ड पर नाम</string>
+    <!-- The text for the "Delete card" menu item for deleting a credit card -->
+    <string name="credit_cards_menu_delete_card">कार्ड हटाएं</string>
+    <!-- The text for the "Delete card" button for deleting a credit card -->
+    <string name="credit_cards_delete_card_button">कार्ड हटाएं</string>
+    <!-- The title for the "Save" menu item for saving a credit card -->
+    <string name="credit_cards_menu_save">सहेजें</string>
+    <!-- The text for the "Save" button for saving a credit card -->
+    <string name="credit_cards_save_button">सहेजें</string>
+    <!-- The text for the "Cancel" button for cancelling adding or updating a credit card -->
+    <string name="credit_cards_cancel_button">रद्द करें</string>
+    <!-- Title of the "Saved cards" screen -->
+    <string name="credit_cards_saved_cards">सहेजे गए कार्ड</string>
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">खोज ईंजन जोड़ें</string>

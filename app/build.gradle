@@ -161,18 +161,12 @@ android {
         androidTest {
             resources.srcDirs += ['src/androidTest/resources']
         }
-        debug {
-            java.srcDirs = ['src/geckoNightly/java']
-        }
-        nightly {
-            java.srcDirs = ['src/geckoNightly/java']
-        }
         beta {
-            java.srcDirs = ['src/migration/java', 'src/geckoBeta/java']
+            java.srcDirs = ['src/migration/java']
             manifest.srcFile "src/migration/AndroidManifest.xml"
         }
         release {
-            java.srcDirs = ['src/migration/java', 'src/geckoRelease/java']
+            java.srcDirs = ['src/migration/java']
             manifest.srcFile "src/migration/AndroidManifest.xml"
         }
     }
@@ -211,7 +205,7 @@ android {
             // instead. :)
             maxParallelForks = 2
             forkEvery = 80
-            maxHeapSize = "2048m"
+            maxHeapSize = "3072m"
             minHeapSize = "1024m"
         }
     }
@@ -237,7 +231,7 @@ android.applicationVariants.all { variant ->
 
     def isDebug = variant.buildType.resValues['IS_DEBUG']?.value ?: false
     def useReleaseVersioning = variant.buildType.buildConfigFields['USE_RELEASE_VERSIONING']?.value ?: false
-    def versionName = Config.releaseVersionName(project)
+    def versionName = variant.buildType.name == 'nightly' ? Config.nightlyVersionName() : Config.releaseVersionName(project)
 
     println("----------------------------------------------")
     println("Variant name:      " + variant.name)
@@ -250,6 +244,8 @@ android.applicationVariants.all { variant ->
         // The Google Play Store does not allow multiple APKs for the same app that all have the
         // same version code. Therefore we need to have different version codes for our ARM and x86
         // builds.
+
+        println("versionName override: $versionName")
 
         variant.outputs.each { output ->
             def abi = output.getFilter(OutputFile.ABI)
@@ -316,25 +312,6 @@ android.applicationVariants.all { variant ->
     }
 
 // -------------------------------------------------------------------------------------------------
-// Leanplum: Read token from local file if it exists
-// -------------------------------------------------------------------------------------------------
-
-    print("Leanplum token: ")
-
-    try {
-        def parts = new File("${rootDir}/.leanplum_token").text.trim().split(":")
-        def id = parts[0]
-        def key = parts[1]
-        buildConfigField 'String', 'LEANPLUM_ID', '"' + id + '"'
-        buildConfigField 'String', 'LEANPLUM_TOKEN', '"' + key + '"'
-        println "(Added from .leanplum_token file)"
-    } catch (FileNotFoundException ignored) {
-        buildConfigField 'String', 'LEANPLUM_ID', 'null'
-        buildConfigField 'String', 'LEANPLUM_TOKEN', 'null'
-        println("X_X")
-    }
-
-// -------------------------------------------------------------------------------------------------
 // MLS: Read token from local file if it exists
 // -------------------------------------------------------------------------------------------------
 
@@ -388,9 +365,7 @@ androidExtensions {
     experimental = true
 }
 
-// Generate Kotlin code and markdown docs for the Fenix Glean metrics.
-ext.gleanGenerateMarkdownDocs = true
-ext.gleanDocsDirectory = "$rootDir/docs"
+// Generate Kotlin code for the Fenix Glean metrics.
 apply plugin: "org.mozilla.telemetry.glean-gradle-plugin"
 
 configurations {
@@ -418,11 +393,7 @@ dependencies {
     jnaForTest Deps.jna
     testImplementation files(configurations.jnaForTest.copyRecursive().files)
 
-    debugImplementation Deps.mozilla_browser_engine_gecko_nightly
-
-    nightlyImplementation Deps.mozilla_browser_engine_gecko_nightly
-    betaImplementation Deps.mozilla_browser_engine_gecko_beta
-    releaseImplementation Deps.mozilla_browser_engine_gecko_release
+    implementation  Deps.mozilla_browser_engine_gecko
 
     implementation Deps.kotlin_stdlib
     implementation Deps.kotlin_coroutines
@@ -433,9 +404,6 @@ dependencies {
     implementation Deps.androidx_coordinatorlayout
 
     implementation Deps.sentry
-
-    implementation Deps.leanplum_core
-    implementation Deps.leanplum_fcm
 
     implementation Deps.mozilla_concept_base
     implementation Deps.mozilla_concept_engine
@@ -452,7 +420,6 @@ dependencies {
     implementation Deps.mozilla_browser_icons
     implementation Deps.mozilla_browser_menu
     implementation Deps.mozilla_browser_menu2
-    implementation Deps.mozilla_browser_search
     implementation Deps.mozilla_browser_session
     implementation Deps.mozilla_browser_session_storage
     implementation Deps.mozilla_browser_state
@@ -522,6 +489,7 @@ dependencies {
 
     implementation Deps.mozilla_lib_crash
     implementation Deps.mozilla_lib_push_firebase
+    implementation Deps.mozilla_lib_state
     implementation Deps.mozilla_lib_dataprotect
     debugImplementation Deps.leakcanary
 
@@ -533,7 +501,6 @@ dependencies {
     implementation Deps.androidx_navigation_fragment
     implementation Deps.androidx_navigation_ui
     implementation Deps.androidx_recyclerview
-    implementation Deps.androidx_recyclerview_selection
     implementation Deps.androidx_lifecycle_livedata
     implementation Deps.androidx_lifecycle_runtime
     implementation Deps.androidx_lifecycle_viewmodel
@@ -553,6 +520,8 @@ dependencies {
     androidTestImplementation Deps.uiautomator
 // Removed pending AndroidX fixes
     androidTestImplementation "tools.fastlane:screengrab:2.0.0"
+    // This Falcon version is added to maven central now required for Screengrab
+    implementation 'com.jraska:falcon:2.2.0'
 //    androidTestImplementation "br.com.concretesolutions:kappuccino:1.2.1"
 
     androidTestImplementation Deps.espresso_core, {
