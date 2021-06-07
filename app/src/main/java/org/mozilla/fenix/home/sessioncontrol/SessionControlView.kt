@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
+import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
@@ -28,6 +29,7 @@ private fun normalModeAdapterItems(
     collections: List<TabCollection>,
     expandedCollections: Set<Long>,
     tip: Tip?,
+    recentBookmarks: List<BookmarkNode>?,
     showCollectionsPlaceholder: Boolean,
     showSetAsDefaultBrowserCard: Boolean,
     recentTabs: List<TabSessionState>
@@ -54,6 +56,10 @@ private fun normalModeAdapterItems(
         }
     } else {
         showCollections(collections, expandedCollections, items)
+    }
+
+    if (!recentBookmarks.isNullOrEmpty()) {
+        items.addAll(recentBookmarksAdapterItems(recentBookmarks))
     }
 
     return items
@@ -125,12 +131,30 @@ private fun onboardingAdapterItems(onboardingState: OnboardingState): List<Adapt
     return items
 }
 
+/**
+ * Adds the header and body sections for recently saved bookmarks. See [RecentBookmarksAdapter] for
+ * the addition of individual bookmarks into this section.
+ *
+ * @param recentBookmarks The list of recently saved bookmarks.
+ * @return A list of adapter items with the section header and body for recently saved bookmarks.
+ */
+private fun recentBookmarksAdapterItems(
+    recentBookmarks: List<BookmarkNode>
+): List<AdapterItem> {
+
+    val items: MutableList<AdapterItem> = mutableListOf(AdapterItem.RecentBookmarksHeader)
+    items.add(AdapterItem.RecentBookmarks(recentBookmarks))
+
+    return items
+}
+
 private fun HomeFragmentState.toAdapterList(): List<AdapterItem> = when (mode) {
     is Mode.Normal -> normalModeAdapterItems(
         topSites,
         collections,
         expandedCollections,
         tip,
+        recentBookmarks,
         showCollectionPlaceholder,
         showSetAsDefaultBrowserCard,
         recentTabs
@@ -174,7 +198,6 @@ class SessionControlView(
     }
 
     fun update(state: HomeFragmentState) {
-
         val stateAdapterList = state.toAdapterList()
         if (homeScreenViewModel.shouldScrollToTopSites) {
             sessionControlAdapter.submitList(stateAdapterList) {

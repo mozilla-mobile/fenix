@@ -12,6 +12,7 @@ import androidx.navigation.NavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.browser.state.selector.getNormalOrPrivateTabs
 import mozilla.components.browser.state.state.availableSearchEngines
 import mozilla.components.browser.state.state.searchEngines
@@ -19,6 +20,7 @@ import mozilla.components.browser.state.state.selectedOrDefaultSearchEngine
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.Engine
 import mozilla.components.concept.engine.prompt.ShareData
+import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.tab.collections.ext.invoke
@@ -178,6 +180,16 @@ interface SessionControlController {
      * @see [ExperimentCardInteractor.onCloseExperimentCardClicked]
      */
     fun handleCloseExperimentCard()
+
+    /**
+     * @see [RecentBookmarksInteractor.onRecentBookmarkClicked]
+     */
+    fun handleBookmarkClicked(bookmark: BookmarkNode)
+
+    /**
+     * @see [RecentBookmarksInteractor.onShowAllBookmarksClicked]
+     */
+    fun handleShowAllBookmarksClicked()
 }
 
 @Suppress("TooManyFunctions", "LargeClass")
@@ -574,5 +586,21 @@ class DefaultSessionControlController(
         settings.userDismissedExperimentCard = true
         metrics.track(Event.CloseExperimentCardClicked)
         fragmentStore.dispatch(HomeFragmentAction.RemoveSetDefaultBrowserCard)
+    }
+
+    override fun handleBookmarkClicked(bookmark: BookmarkNode) {
+        with(activity) {
+            browsingModeManager.mode = browsingModeManager.mode
+            openToBrowserAndLoad(
+                searchTermOrURL = bookmark.url!!,
+                newTab = true,
+                from = BrowserDirection.FromHome
+            )
+        }
+    }
+
+    override fun handleShowAllBookmarksClicked() {
+        val directions = HomeFragmentDirections.actionGlobalBookmarkFragment(BookmarkRoot.Mobile.id)
+        navController.nav(R.id.homeFragment, directions)
     }
 }

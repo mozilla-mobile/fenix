@@ -25,8 +25,6 @@
     <color name="scrimEnd_light_theme">#F542414D</color>
     <color name="dark_grey_90_gradient_start">#FF15141A</color>
     <color name="dark_grey_90_gradient_end">#0015141A</color>
-    <color name="dark_grey_90">#15141A</color>
-    <color name="dark_grey_05">#5B5B66</color>
     <color name="synced_tabs_separator_light_theme">@color/photonLightGrey30</color>
     <color name="top_site_title_text_light_theme">@color/photonDarkGrey90</color>
     <color name="collection_icon_color_violet_light_theme">#7542E5</color>

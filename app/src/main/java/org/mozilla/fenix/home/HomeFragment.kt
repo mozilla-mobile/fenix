@@ -70,6 +70,7 @@ import mozilla.components.browser.state.selector.privateTabs
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.selectedOrDefaultSearchEngine
 import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.concept.storage.FrecencyThresholdOption
 import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.AuthType
@@ -174,7 +175,8 @@ class HomeFragment : Fragment() {
     private var appBarLayout: AppBarLayout? = null
     private lateinit var currentMode: CurrentMode
 
-    private val bookmarksStorage = requireComponents.core.bookmarksStorage
+    private val bookmarkUseCases = requireComponents.useCases.bookmarksUseCases
+    private lateinit var recentBookmarksList: List<BookmarkNode>
 
     private val topSitesFeature = ViewBoundFeatureWrapper<TopSitesFeature>()
     private val recentTabsListFeature = ViewBoundFeatureWrapper<RecentTabsListFeature>()
@@ -209,6 +211,8 @@ class HomeFragment : Fragment() {
         val activity = activity as HomeActivity
         val components = requireComponents
 
+        retrieveRecentBookmarks()
+
         currentMode = CurrentMode(
             view.context,
             onboarding,
@@ -234,6 +238,7 @@ class HomeFragment : Fragment() {
                             )
                         ).getTip()
                     },
+                    recentBookmarks = recentBookmarksList,
                     showCollectionPlaceholder = components.settings.showCollectionsPlaceholderOnHome,
                     showSetAsDefaultBrowserCard = components.settings.shouldShowSetAsDefaultBrowserCard(),
                     recentTabs = components.core.store.state.asRecentTabs()
@@ -326,6 +331,15 @@ class HomeFragment : Fragment() {
             settings.topSitesMaxLimit,
             if (settings.showTopFrecentSites) FrecencyThresholdOption.SKIP_ONE_TIME_PAGES else null
         )
+    }
+
+    /**
+     * Retrieves a list of [BookmarkNode]s that have been recently added.
+     */
+    private fun retrieveRecentBookmarks() {
+        lifecycleScope.launch(IO) {
+            recentBookmarksList = bookmarkUseCases.retrieveRecentBookmarks()
+        }
     }
 
     /**
