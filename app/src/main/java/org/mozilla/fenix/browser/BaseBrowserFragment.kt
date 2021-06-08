@@ -116,7 +116,6 @@ import org.mozilla.fenix.ext.breadcrumb
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.hideToolbar
-import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
@@ -394,11 +393,6 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
 
         browserToolbarView.view.display.setOnSiteSecurityClickedListener {
             showQuickSettingsDialog()
-        }
-
-        browserToolbarView.view.display.setOnTrackingProtectionClickedListener {
-            context.metrics.track(Event.TrackingProtectionIconPressed)
-            showTrackingProtectionPanel()
         }
 
         contextMenuFeature.set(
@@ -1159,8 +1153,6 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
         sitePermissions: SitePermissions?
     )
 
-    protected abstract fun navToTrackingProtectionPanel(tab: SessionState)
-
     /**
      * Returns the layout [android.view.Gravity] for the quick settings and ETP dialog.
      */
@@ -1193,13 +1185,6 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
             view?.let {
                 navToQuickSettingsSheet(tab, sitePermissions)
             }
-        }
-    }
-
-    private fun showTrackingProtectionPanel() {
-        val tab = getCurrentTab() ?: return
-        view?.let {
-            navToTrackingProtectionPanel(tab)
         }
     }
 
