@@ -191,21 +191,6 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
         nav(R.id.externalAppBrowserFragment, directions)
     }
 
-    override fun navToTrackingProtectionPanel(tab: SessionState) {
-        requireComponents.useCases.trackingProtectionUseCases.containsException(tab.id) { contains ->
-            val isEnabled = tab.trackingProtection.enabled && !contains
-            val directions =
-                ExternalAppBrowserFragmentDirections
-                    .actionGlobalTrackingProtectionPanelDialogFragment(
-                        sessionId = tab.id,
-                        url = tab.content.url,
-                        trackingProtectionEnabled = isEnabled,
-                        gravity = getAppropriateLayoutGravity()
-                    )
-            nav(R.id.externalAppBrowserFragment, directions)
-        }
-    }
-
     override fun getContextMenuCandidates(
         context: Context,
         view: View
