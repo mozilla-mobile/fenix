@@ -80,7 +80,7 @@ events:
     notification_emails:
       - esmyth@mozilla.com
       - perf-android-fe@mozilla.com
-    expires: "2021-06-01"
+    expires: "2021-12-01"
   app_received_intent:
     type: event
     description: |
@@ -107,7 +107,7 @@ events:
     notification_emails:
       - esmyth@mozilla.com
       - perf-android-fe@mozilla.com
-    expires: "2021-06-01"
+    expires: "2021-12-01"
   app_opened:
     type: event
     description: |
@@ -129,7 +129,7 @@ events:
     notification_emails:
       - telemetry-client-dev@mozilla.com
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   search_bar_tapped:
     type: event
     description: |
@@ -149,7 +149,7 @@ events:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   entered_url:
     type: event
     description: |
@@ -169,7 +169,7 @@ events:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   performed_search:
     type: event
     description: |
@@ -195,7 +195,7 @@ events:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   browser_menu_action:
     type: event
     description: |
@@ -224,7 +224,7 @@ events:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   default_browser_changed:
     type: event
     description: |
@@ -333,7 +333,7 @@ events:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-06-01"
+    expires: "2021-12-01"
   whats_new_tapped:
     type: event
     description: |
@@ -348,7 +348,7 @@ events:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   opened_link:
     type: event
     description: |
@@ -369,7 +369,7 @@ events:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   tab_counter_menu_action:
     type: event
     description:
@@ -391,7 +391,7 @@ events:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   synced_tab_opened:
     type: event
     description: >
@@ -404,7 +404,7 @@ events:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-05-10"
+    expires: "2021-12-10"
   recently_closed_tabs_opened:
     type: event
     description: |
@@ -418,7 +418,7 @@ events:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-05-10"
+    expires: "2021-12-10"
   copy_url_tapped:
     type: event
     description: |
@@ -432,7 +432,7 @@ events:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-05-10"
+    expires: "2021-12-10"
   browser_toolbar_home_tapped:
     type: event
     description: |
@@ -652,7 +652,7 @@ crash_reporter:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   closed:
     type: event
     description: |
@@ -672,7 +672,7 @@ crash_reporter:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
 
 context_menu:
   item_tapped:
@@ -700,7 +700,7 @@ context_menu:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
 
 login_dialog:
   displayed:
@@ -1730,7 +1730,7 @@ bookmarks_management:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   open_in_new_tabs:
     type: event
     description: |
@@ -1745,7 +1745,7 @@ bookmarks_management:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   open_in_private_tab:
     type: event
     description: |
@@ -1760,7 +1760,7 @@ bookmarks_management:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   open_in_private_tabs:
     type: event
     description: |
@@ -1775,7 +1775,7 @@ bookmarks_management:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   edited:
     type: event
     description: |
@@ -1790,7 +1790,7 @@ bookmarks_management:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   moved:
     type: event
     description: |
@@ -1805,7 +1805,7 @@ bookmarks_management:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   removed:
     type: event
     description: |
@@ -1820,7 +1820,7 @@ bookmarks_management:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   multi_removed:
     type: event
     description: |
@@ -1835,7 +1835,7 @@ bookmarks_management:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   shared:
     type: event
     description: |
@@ -1850,7 +1850,7 @@ bookmarks_management:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   copied:
     type: event
     description: |
@@ -1865,7 +1865,7 @@ bookmarks_management:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   folder_add:
     type: event
     description: |
@@ -1880,7 +1880,7 @@ bookmarks_management:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   folder_remove:
     type: event
     description: |
@@ -1895,7 +1895,7 @@ bookmarks_management:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
 
 custom_tab:
   closed:
@@ -1912,7 +1912,7 @@ custom_tab:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   action_button:
     type: event
     description: |
@@ -1927,7 +1927,7 @@ custom_tab:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   menu:
     type: event
     description: |
@@ -1942,7 +1942,7 @@ custom_tab:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
 
 activation:
   identifier:
@@ -1964,7 +1964,7 @@ activation:
       - highly_sensitive
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   activation_id:
     type: uuid
     lifetime: user
@@ -1983,7 +1983,7 @@ activation:
       - highly_sensitive
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
     no_lint:
       - USER_LIFETIME_EXPIRATION
 
@@ -2005,7 +2005,7 @@ error_page:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
 
 sync_auth:
   opened:
@@ -2696,7 +2696,7 @@ collections:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   tab_restored:
     type: event
     description: |
@@ -2712,7 +2712,7 @@ collections:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   all_tabs_restored:
     type: event
     description: |
@@ -2728,7 +2728,7 @@ collections:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   tab_removed:
     type: event
     description: |
@@ -2744,7 +2744,7 @@ collections:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   shared:
     type: event
     description: |
@@ -2760,7 +2760,7 @@ collections:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   removed:
     type: event
     description: |
@@ -2776,7 +2776,7 @@ collections:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   saved:
     type: event
     description: |
@@ -2797,7 +2797,7 @@ collections:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   tabs_added:
     type: event
     description: |
@@ -2818,7 +2818,7 @@ collections:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   tab_select_opened:
     type: event
     description: |
@@ -2835,7 +2835,7 @@ collections:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   add_tab_button:
     type: event
     description: |
@@ -2850,7 +2850,7 @@ collections:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   long_press:
     type: event
     description: |
@@ -2865,7 +2865,7 @@ collections:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   save_button:
     type: event
     description: |
@@ -2882,7 +2882,7 @@ collections:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
     extra_keys:
       from_screen:
         description: |
@@ -2902,7 +2902,7 @@ collections:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
 
 search_widget:
   new_tab_button:
@@ -2982,7 +2982,7 @@ contextual_hint.tracking_protection:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   dismiss:
     type: event
     description: |
@@ -2999,7 +2999,7 @@ contextual_hint.tracking_protection:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   outside_tap:
     type: event
     description: |
@@ -3015,7 +3015,7 @@ contextual_hint.tracking_protection:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   inside_tap:
     type: event
     description: |
@@ -3031,7 +3031,7 @@ contextual_hint.tracking_protection:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
 
 tracking_protection:
   exception_added:
@@ -3484,7 +3484,7 @@ download_notification:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   pause:
     type: event
     description: |
@@ -3499,7 +3499,7 @@ download_notification:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   cancel:
     type: event
     description: |
@@ -3514,7 +3514,7 @@ download_notification:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   try_again:
     type: event
     description: |
@@ -3530,7 +3530,7 @@ download_notification:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   open:
     type: event
     description: |
@@ -3545,7 +3545,7 @@ download_notification:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   in_app_open:
     type: event
     description: |
@@ -3560,7 +3560,7 @@ download_notification:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   in_app_try_again:
     type: event
     description: |
@@ -3576,7 +3576,7 @@ download_notification:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
 
 downloads_misc:
   download_added:
@@ -3590,7 +3590,7 @@ downloads_misc:
       - https://github.com/mozilla-mobile/fenix/pull/18143
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
 
 downloads_management:
   downloads_screen_opened:
@@ -3605,7 +3605,7 @@ downloads_management:
       - https://github.com/mozilla-mobile/fenix/pull/18143
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
 
   item_opened:
     type: event
@@ -3619,7 +3619,7 @@ downloads_management:
       - https://github.com/mozilla-mobile/fenix/pull/18143
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
 
   item_deleted:
     type: event
@@ -3632,7 +3632,7 @@ downloads_management:
       - https://github.com/mozilla-mobile/fenix/pull/18143
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
 
 user_specified_search_engines:
   custom_engine_added:
@@ -3850,7 +3850,7 @@ about_page:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   privacy_notice_tapped:
     type: event
     description: |
@@ -3865,7 +3865,7 @@ about_page:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
 
 app_theme:
   dark_theme_selected:
@@ -3887,7 +3887,7 @@ app_theme:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
 
 pocket:
   pocket_top_site_clicked:
@@ -4078,7 +4078,7 @@ addons:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   open_addon_in_toolbar_menu:
     type: event
     description: |
@@ -4097,7 +4097,7 @@ addons:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   open_addon_setting:
     type: event
     description: |
@@ -4131,7 +4131,7 @@ addons:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   has_enabled_addons:
     type: boolean
     description: |
@@ -4148,7 +4148,7 @@ addons:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   installed_addons:
     type: string_list
     description: |
@@ -4165,7 +4165,7 @@ addons:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
   enabled_addons:
     type: string_list
     description: |
@@ -4182,7 +4182,7 @@ addons:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-07-01"
+    expires: "2021-12-01"
 
 startup.timeline:
   framework_primary:
@@ -5060,7 +5060,7 @@ contextual_menu:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-06-01"
+    expires: "2021-12-01"
   search_tapped:
     type: event
     description: |
@@ -5073,7 +5073,7 @@ contextual_menu:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-06-01"
+    expires: "2021-12-01"
   select_all_tapped:
     type: event
     description: |
@@ -5086,7 +5086,7 @@ contextual_menu:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-06-01"
+    expires: "2021-12-01"
   share_tapped:
     type: event
     description: |
@@ -5099,7 +5099,7 @@ contextual_menu:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2021-06-01"
+    expires: "2021-12-01"
 
 engine_tab:
   kills:
