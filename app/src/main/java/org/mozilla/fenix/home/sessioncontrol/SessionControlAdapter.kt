@@ -20,11 +20,11 @@ import mozilla.components.ui.widgets.WidgetSiteItemView
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.components.tips.Tip
 import org.mozilla.fenix.home.OnboardingState
+import org.mozilla.fenix.home.recentbookmarks.RecentBookmarkItemViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.CollectionHeaderViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.CollectionViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.NoCollectionsMessageViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.PrivateBrowsingDescriptionViewHolder
-import org.mozilla.fenix.home.sessioncontrol.viewholders.recentbookmarks.RecentBookmarksHeaderViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.TabInCollectionViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.TopSitePagerViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.ExperimentDefaultBrowserCardViewHolder
@@ -39,10 +39,10 @@ import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingTh
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingToolbarPositionPickerViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingTrackingProtectionViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingWhatsNewViewHolder
-import org.mozilla.fenix.home.sessioncontrol.viewholders.recentbookmarks.RecentBookmarkItemViewHolder
 import org.mozilla.fenix.home.recenttabs.view.RecentTabViewHolder
 import org.mozilla.fenix.home.recenttabs.view.RecentTabsHeaderViewHolder
-import org.mozilla.fenix.home.sessioncontrol.viewholders.recentbookmarks.RecentBookmarksViewHolder
+import org.mozilla.fenix.home.recentbookmarks.RecentBookmarksViewHolder
+import org.mozilla.fenix.home.recentbookmarks.interactor.DefaultRecentBookmarksInteractor
 import org.mozilla.fenix.home.tips.ButtonTipViewHolder
 import mozilla.components.feature.tab.collections.Tab as ComponentTab
 
@@ -155,8 +155,6 @@ sealed class AdapterItem(@LayoutRes val viewType: Int) {
         }
     }
 
-    object RecentBookmarksHeader : AdapterItem(RecentBookmarksHeaderViewHolder.LAYOUT_ID)
-
     data class RecentBookmarks(val recentBookmarks: List<BookmarkNode>) :
         AdapterItem(RecentBookmarksViewHolder.LAYOUT_ID) {
             override fun sameAs(other: AdapterItem): Boolean {
@@ -176,19 +174,6 @@ sealed class AdapterItem(@LayoutRes val viewType: Int) {
                 return newBookmarksSequence.zip(oldBookmarksList).all {
                         (new, old) -> new == old
                 }
-            }
-
-            override fun getChangePayload(newItem: AdapterItem): Any? {
-                val newBookmarks = (newItem as? RecentBookmarks) ?: return null
-                val oldBookmarksList = (this as? RecentBookmarks) ?: return null
-
-                val changed = mutableSetOf<Pair<Int, BookmarkNode>>()
-                for ((index, item) in newBookmarks.recentBookmarks.withIndex()) {
-                    if (oldBookmarksList.recentBookmarks.getOrNull(index) != item) {
-                        changed.add(Pair(index, item))
-                    }
-                }
-                return if (changed.isNotEmpty()) RecentBookmarksPayload(changed) else null
             }
         }
 
@@ -224,6 +209,7 @@ class AdapterItemDiffCallback : DiffUtil.ItemCallback<AdapterItem>() {
 
 class SessionControlAdapter(
     private val interactor: SessionControlInteractor,
+    private val recentBookmarksInteractor: DefaultRecentBookmarksInteractor,
     private val viewLifecycleOwner: LifecycleOwner,
     private val components: Components
 ) : ListAdapter<AdapterItem, RecyclerView.ViewHolder>(AdapterItemDiffCallback()) {
@@ -278,10 +264,9 @@ class SessionControlAdapter(
             ExperimentDefaultBrowserCardViewHolder.LAYOUT_ID -> ExperimentDefaultBrowserCardViewHolder(view, interactor)
             RecentTabsHeaderViewHolder.LAYOUT_ID -> RecentTabsHeaderViewHolder(view, interactor)
             RecentTabViewHolder.LAYOUT_ID -> RecentTabViewHolder(view, interactor)
-            RecentBookmarksHeaderViewHolder.LAYOUT_ID -> {
-                RecentBookmarksHeaderViewHolder(view, interactor)
+            RecentBookmarksViewHolder.LAYOUT_ID -> {
+                RecentBookmarksViewHolder(view, recentBookmarksInteractor)
             }
-            RecentBookmarksViewHolder.LAYOUT_ID -> RecentBookmarksViewHolder(view, interactor)
 
             else -> throw IllegalStateException()
         }
@@ -342,7 +327,6 @@ class SessionControlAdapter(
                     (item as AdapterItem.RecentBookmarks).recentBookmarks
                 )
             }
-            is RecentBookmarksHeaderViewHolder -> holder.bind()
         }
     }
 }

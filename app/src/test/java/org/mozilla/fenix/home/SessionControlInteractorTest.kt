@@ -23,7 +23,10 @@ class SessionControlInteractorTest {
 
     @Before
     fun setup() {
-        interactor = SessionControlInteractor(controller, recentTabController)
+        interactor = SessionControlInteractor(
+            controller,
+            recentTabController
+        )
     }
 
     @Test

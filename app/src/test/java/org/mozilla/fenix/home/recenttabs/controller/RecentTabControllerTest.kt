@@ -36,7 +36,7 @@ class RecentTabControllerTest {
     private val selectTabUseCase: TabsUseCases = mockk(relaxed = true)
 
     private lateinit var store: BrowserStore
-    private lateinit var controller: RecentTabController
+    private lateinit var controller: RecentBookmarksController
 
     @Before
     fun setup() {

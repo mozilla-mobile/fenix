@@ -55,9 +55,12 @@ import kotlinx.android.synthetic.main.fragment_home.view.toolbar
 import kotlinx.android.synthetic.main.fragment_home.view.toolbarLayout
 import kotlinx.android.synthetic.main.fragment_home.view.toolbar_wrapper
 import kotlinx.android.synthetic.main.no_collections_message.view.add_tabs_to_collections_button
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
@@ -98,6 +101,7 @@ import org.mozilla.fenix.components.PrivateShortcutCreateManager
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.accounts.AccountState
+import org.mozilla.fenix.components.bookmarks.BookmarksUseCase
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.tips.FenixTipManager
 import org.mozilla.fenix.components.tips.Tip
@@ -107,6 +111,7 @@ import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.ext.asRecentTabs
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.hideToolbar
+import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.ext.measureNoInline
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
@@ -114,6 +119,8 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.mozonline.showPrivacyPopWindow
+import org.mozilla.fenix.home.recentbookmarks.controller.DefaultRecentBookmarksController
+import org.mozilla.fenix.home.recentbookmarks.interactor.DefaultRecentBookmarksInteractor
 import org.mozilla.fenix.home.recenttabs.controller.DefaultRecentTabsController
 import org.mozilla.fenix.home.sessioncontrol.DefaultSessionControlController
 import org.mozilla.fenix.home.recenttabs.RecentTabsListFeature
@@ -174,9 +181,7 @@ class HomeFragment : Fragment() {
     private var sessionControlView: SessionControlView? = null
     private var appBarLayout: AppBarLayout? = null
     private lateinit var currentMode: CurrentMode
-
-    private val bookmarkUseCases = requireComponents.useCases.bookmarksUseCases
-    private lateinit var recentBookmarksList: List<BookmarkNode>
+    private var recentlySavedBookmarks: List<BookmarkNode>? = null
 
     private val topSitesFeature = ViewBoundFeatureWrapper<TopSitesFeature>()
     private val recentTabsListFeature = ViewBoundFeatureWrapper<RecentTabsListFeature>()
@@ -186,6 +191,8 @@ class HomeFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        retrieveRecentBookmarks(requireContext().components.useCases.bookmarksUseCases)
 
         bundleArgs = args.toBundle()
         lifecycleScope.launch(IO) {
@@ -210,8 +217,6 @@ class HomeFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
         val activity = activity as HomeActivity
         val components = requireComponents
-
-        retrieveRecentBookmarks()
 
         currentMode = CurrentMode(
             view.context,
@@ -238,7 +243,7 @@ class HomeFragment : Fragment() {
                             )
                         ).getTip()
                     },
-                    recentBookmarks = recentBookmarksList,
+                    recentBookmarks = recentlySavedBookmarks,
                     showCollectionPlaceholder = components.settings.showCollectionsPlaceholderOnHome,
                     showSetAsDefaultBrowserCard = components.settings.shouldShowSetAsDefaultBrowserCard(),
                     recentTabs = components.core.store.state.asRecentTabs()
@@ -294,11 +299,19 @@ class HomeFragment : Fragment() {
             )
         )
 
+        val recentBookmarksInteractor = DefaultRecentBookmarksInteractor(
+            DefaultRecentBookmarksController(
+                activity = activity,
+                navController = findNavController()
+            )
+        )
+
         updateLayout(view)
         sessionControlView = SessionControlView(
             view.sessionControlRecyclerView,
             viewLifecycleOwner,
             sessionControlInteractor,
+            recentBookmarksInteractor,
             homeViewModel
         )
 
@@ -336,9 +349,19 @@ class HomeFragment : Fragment() {
     /**
      * Retrieves a list of [BookmarkNode]s that have been recently added.
      */
-    private fun retrieveRecentBookmarks() {
-        lifecycleScope.launch(IO) {
-            recentBookmarksList = bookmarkUseCases.retrieveRecentBookmarks()
+    private fun retrieveRecentBookmarks(bookmarkUseCases: BookmarksUseCase) {
+        var deferredList: Deferred<List<BookmarkNode>>?
+
+        val retrieveBookmarksJob = lifecycleScope.launch(IO) {
+            deferredList = async {
+                bookmarkUseCases.retrieveRecentBookmarks()
+            }
+            recentlySavedBookmarks = deferredList?.await()
+        }
+        retrieveBookmarksJob.invokeOnCompletion {
+            if (it is CancellationException) {
+                retrieveBookmarksJob.cancel()
+            }
         }
     }
 

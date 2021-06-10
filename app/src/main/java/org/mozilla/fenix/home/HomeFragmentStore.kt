@@ -54,7 +54,7 @@ data class HomeFragmentState(
     val mode: Mode = Mode.Normal,
     val topSites: List<TopSite> = emptyList(),
     val tip: Tip? = null,
-    val recentBookmarks: List<BookmarkNode>?,
+    val recentBookmarks: List<BookmarkNode>? = null,
     val showCollectionPlaceholder: Boolean = false,
     val showSetAsDefaultBrowserCard: Boolean = false,
     val recentTabs: List<TabSessionState> = emptyList()

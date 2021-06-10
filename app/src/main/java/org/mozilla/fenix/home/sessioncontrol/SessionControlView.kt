@@ -14,12 +14,14 @@ import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.components.tips.Tip
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.home.HomeFragmentState
 import org.mozilla.fenix.home.HomeScreenViewModel
 import org.mozilla.fenix.home.Mode
 import org.mozilla.fenix.home.OnboardingState
+import org.mozilla.fenix.home.recentbookmarks.interactor.DefaultRecentBookmarksInteractor
 
 // This method got a little complex with the addition of the tab tray feature flag
 // When we remove the tabs from the home screen this will get much simpler again.
@@ -58,8 +60,8 @@ private fun normalModeAdapterItems(
         showCollections(collections, expandedCollections, items)
     }
 
-    if (!recentBookmarks.isNullOrEmpty()) {
-        items.addAll(recentBookmarksAdapterItems(recentBookmarks))
+    if (FeatureFlags.showRecentlySavedBookmarksFeature && !recentBookmarks.isNullOrEmpty()) {
+        items.add(AdapterItem.RecentBookmarks(recentBookmarks))
     }
 
     return items
@@ -131,23 +133,6 @@ private fun onboardingAdapterItems(onboardingState: OnboardingState): List<Adapt
     return items
 }
 
-/**
- * Adds the header and body sections for recently saved bookmarks. See [RecentBookmarksAdapter] for
- * the addition of individual bookmarks into this section.
- *
- * @param recentBookmarks The list of recently saved bookmarks.
- * @return A list of adapter items with the section header and body for recently saved bookmarks.
- */
-private fun recentBookmarksAdapterItems(
-    recentBookmarks: List<BookmarkNode>
-): List<AdapterItem> {
-
-    val items: MutableList<AdapterItem> = mutableListOf(AdapterItem.RecentBookmarksHeader)
-    items.add(AdapterItem.RecentBookmarks(recentBookmarks))
-
-    return items
-}
-
 private fun HomeFragmentState.toAdapterList(): List<AdapterItem> = when (mode) {
     is Mode.Normal -> normalModeAdapterItems(
         topSites,
@@ -172,6 +157,7 @@ class SessionControlView(
     override val containerView: View,
     viewLifecycleOwner: LifecycleOwner,
     interactor: SessionControlInteractor,
+    recentBookmarksInteractor: DefaultRecentBookmarksInteractor,
     private var homeScreenViewModel: HomeScreenViewModel
 ) : LayoutContainer {
 
@@ -179,6 +165,7 @@ class SessionControlView(
 
     private val sessionControlAdapter = SessionControlAdapter(
         interactor,
+        recentBookmarksInteractor,
         viewLifecycleOwner,
         containerView.context.components
     )

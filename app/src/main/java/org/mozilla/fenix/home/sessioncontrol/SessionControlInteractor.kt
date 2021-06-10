@@ -4,7 +4,6 @@
 
 package org.mozilla.fenix.home.sessioncontrol
 
-import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.feature.tab.collections.Tab
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
@@ -206,25 +205,6 @@ interface ExperimentCardInteractor {
 }
 
 /**
- * Interface for recently saved bookmark related actions in the [SessionControlInteractor].
- */
-interface RecentBookmarksInteractor {
-    /**
-     * Opens the given bookmark in a new tab. Called when an user clicks on a recently saved
-     * bookmark on the home screen.
-     *
-     * @param bookmark The bookmark that will be opened.
-     */
-    fun onRecentBookmarkClicked(bookmark: BookmarkNode)
-
-    /**
-     * Navigates to bookmark list. Called when an user clicks on the "Show all" button for
-     * recently saved bookmarks on the home screen.
-     */
-    fun onShowAllBookmarksClicked()
-}
-
-/**
  * Interactor for the Home screen.
  * Provides implementations for the CollectionInteractor, OnboardingInteractor, TopSiteInteractor,
  * TipInteractor, TabSessionInteractor, ToolbarInteractor, ExperimentCardInteractor, and
@@ -235,8 +215,7 @@ class SessionControlInteractor(
     private val controller: SessionControlController,
     private val recentTabController: RecentTabController
 ) : CollectionInteractor, OnboardingInteractor, TopSiteInteractor, TipInteractor,
-    TabSessionInteractor, ToolbarInteractor, ExperimentCardInteractor, RecentTabInteractor,
-    RecentBookmarksInteractor {
+    TabSessionInteractor, ToolbarInteractor, ExperimentCardInteractor, RecentTabInteractor {
     override fun onCollectionAddTabTapped(collection: TabCollection) {
         controller.handleCollectionAddTabTapped(collection)
     }
@@ -347,13 +326,5 @@ class SessionControlInteractor(
 
     override fun onRecentTabShowAllClicked() {
         recentTabController.handleRecentTabShowAllClicked()
-    }
-
-    override fun onRecentBookmarkClicked(bookmark: BookmarkNode) {
-        controller.handleBookmarkClicked(bookmark)
-    }
-
-    override fun onShowAllBookmarksClicked() {
-        controller.handleShowAllBookmarksClicked()
     }
 }

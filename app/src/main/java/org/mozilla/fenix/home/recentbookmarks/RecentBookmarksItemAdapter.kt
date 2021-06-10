@@ -2,21 +2,23 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.fenix.home.sessioncontrol
+package org.mozilla.fenix.home.recentbookmarks
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import mozilla.components.concept.storage.BookmarkNode
-import org.mozilla.fenix.home.sessioncontrol.viewholders.recentbookmarks.RecentBookmarkItemViewHolder
+import org.mozilla.fenix.home.recentbookmarks.interactor.DefaultRecentBookmarksInteractor
 
 /**
  * Adapter for the individual bookmark items that will be used in [RecentBookmarksAdapter].
+ *
+ * TODO: reword this later.
  */
 class RecentBookmarksItemAdapter(
-    private val interactor: SessionControlInteractor
-) : ListAdapter<BookmarkNode, RecentBookmarkItemViewHolder>(RecentBookmarksDiffCallback) {
+    private val interactor: DefaultRecentBookmarksInteractor
+) : ListAdapter<BookmarkNode, RecentBookmarkItemViewHolder>(RecentBookmarkItemDiffCallback) {
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -31,35 +33,11 @@ class RecentBookmarksItemAdapter(
         holder.bind(getItem(position))
     }
 
-    override fun onBindViewHolder(
-        holder: RecentBookmarkItemViewHolder,
-        position: Int,
-        payloads: MutableList<Any>
-    ) {
-        if (payloads.isNullOrEmpty()) {
-            onBindViewHolder(holder, position)
-        } else {
-            when (payloads[0]) {
-                is BookmarkNode -> {
-                    holder.bind((payloads[0] as BookmarkNode))
-                }
-            }
-        }
-    }
-
-    data class RecentBookmarkItemPayload(
-        val newInstance: BookmarkNode
-    )
-
-    internal object RecentBookmarksDiffCallback : DiffUtil.ItemCallback<BookmarkNode>() {
+    internal object RecentBookmarkItemDiffCallback : DiffUtil.ItemCallback<BookmarkNode>() {
         override fun areItemsTheSame(oldItem: BookmarkNode, newItem: BookmarkNode) =
             oldItem.guid == newItem.guid
 
         override fun areContentsTheSame(oldItem: BookmarkNode, newItem: BookmarkNode) =
-            oldItem.guid == newItem.guid &&
-                    oldItem.parentGuid == newItem.parentGuid &&
-                    oldItem.title == newItem.title &&
-                    oldItem.url == newItem.url &&
-                    oldItem.type == newItem.type
+            oldItem == newItem
     }
 }
