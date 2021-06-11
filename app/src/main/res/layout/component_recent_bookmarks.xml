@@ -11,6 +11,8 @@
     android:isScrollContainer="true"
     android:gravity="start">
 
+    <include layout="@layout/recent_bookmarks_header" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recent_bookmarks_list"
         android:layout_width="wrap_content"
