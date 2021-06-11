@@ -404,13 +404,13 @@
     </style>
 
     <style name="Body12TextStyle" parent="TextAppearance.MaterialComponents.Body1">
-        <item name="android:textColor">@color/photonDarkGrey05</item>
+        <item name="android:textColor">@color/primary_state_title_text_color</item>
         <item name="android:textSize">12sp</item>
         <item name="android:textAllCaps">false</item>
     </style>
 
     <style name="Button12TextStyle" parent="TextAppearance.MaterialComponents.Button">
-        <item name="android:textColor">@color/photonDarkGrey05</item>
+        <item name="android:textColor">@color/primary_state_button_text_color</item>
         <item name="android:textSize">12sp</item>
         <item name="fontFamily">@font/metropolis</item>
         <item name="android:textAllCaps">false</item>
