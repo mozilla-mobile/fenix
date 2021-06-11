@@ -102,6 +102,8 @@
     <dimen name="home_recently_saved_padding_end">16dp</dimen>
     <dimen name="home_show_all_padding_top">16dp</dimen>
     <dimen name="home_show_all_padding_bottom">16dp</dimen>
+
+    <!-- Home - Recently saved bookmarks -->
     <dimen name="recent_bookmark_item_height">128dp</dimen>
     <dimen name="recent_bookmark_item_width">152dp</dimen>
     <dimen name="recent_bookmark_item_padding">16dp</dimen>
