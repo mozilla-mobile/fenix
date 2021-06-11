@@ -681,7 +681,7 @@
         <item name="android:gravity">start</item>
         <item name="android:textAlignment">gravity</item>
         <item name="android:singleLine">true</item>
-        <item name="android:textColor">@color/photonDarkGrey90</item>
+        <item name="android:textColor">@color/recent_bookmark_item_text_color</item>
         <item name="android:ellipsize">end</item>
         <item name="android:maxLines">1</item>
     </style>
