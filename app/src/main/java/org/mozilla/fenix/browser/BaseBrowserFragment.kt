@@ -78,7 +78,7 @@ import mozilla.components.feature.session.FullScreenFeature
 import mozilla.components.feature.session.PictureInPictureFeature
 import mozilla.components.feature.session.SessionFeature
 import mozilla.components.feature.session.SwipeRefreshFeature
-import mozilla.components.feature.sitepermissions.SitePermissions
+import mozilla.components.concept.engine.permission.SitePermissions
 import mozilla.components.feature.sitepermissions.SitePermissionsFeature
 import mozilla.components.lib.state.ext.consumeFlow
 import mozilla.components.lib.state.ext.flowScoped
@@ -105,9 +105,7 @@ import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.toolbar.BrowserFragmentState
 import org.mozilla.fenix.components.toolbar.BrowserFragmentStore
-import org.mozilla.fenix.components.toolbar.BrowserInteractor
 import org.mozilla.fenix.components.toolbar.BrowserToolbarView
-import org.mozilla.fenix.components.toolbar.BrowserToolbarViewInteractor
 import org.mozilla.fenix.components.toolbar.DefaultBrowserToolbarController
 import org.mozilla.fenix.components.toolbar.DefaultBrowserToolbarMenuController
 import org.mozilla.fenix.components.toolbar.ToolbarIntegration
@@ -137,6 +135,8 @@ import mozilla.components.support.base.feature.ActivityResultHandler
 import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import mozilla.components.support.ktx.android.view.enterToImmersiveMode
 import org.mozilla.fenix.GleanMetrics.PerfStartup
+import org.mozilla.fenix.components.toolbar.interactor.BrowserToolbarInteractor
+import org.mozilla.fenix.components.toolbar.interactor.DefaultBrowserToolbarInteractor
 import org.mozilla.fenix.ext.measureNoInline
 import org.mozilla.fenix.ext.secure
 import org.mozilla.fenix.settings.biometric.BiometricPromptFeature
@@ -155,9 +155,9 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
     private lateinit var browserFragmentStore: BrowserFragmentStore
     private lateinit var browserAnimator: BrowserAnimator
 
-    private var _browserInteractor: BrowserToolbarViewInteractor? = null
-    protected val browserInteractor: BrowserToolbarViewInteractor
-        get() = _browserInteractor!!
+    private var _browserToolbarInteractor: BrowserToolbarInteractor? = null
+    protected val browserToolbarInteractor: BrowserToolbarInteractor
+        get() = _browserToolbarInteractor!!
 
     @VisibleForTesting
     @Suppress("VariableNaming")
@@ -357,7 +357,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
             browserStore = store
         )
 
-        _browserInteractor = BrowserInteractor(
+        _browserToolbarInteractor = DefaultBrowserToolbarInteractor(
             browserToolbarController,
             browserToolbarMenuController
         )
@@ -365,7 +365,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
         _browserToolbarView = BrowserToolbarView(
             container = view.browserLayout,
             toolbarPosition = context.settings().toolbarPosition,
-            interactor = browserInteractor,
+            interactor = browserToolbarInteractor,
             customTabSession = customTabSessionId?.let { store.state.findCustomTab(it) },
             lifecycleOwner = viewLifecycleOwner
         )
@@ -650,7 +650,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
         sitePermissionsFeature.set(
             feature = SitePermissionsFeature(
                 context = context,
-                storage = context.components.core.permissionStorage.permissionsStorage,
+                storage = context.components.core.geckoSitePermissionsStorage,
                 fragmentManager = parentFragmentManager,
                 promptsStyling = SitePermissionsFeature.PromptsStyling(
                     gravity = getAppropriateLayoutGravity(),
@@ -1343,7 +1343,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
 
         requireContext().accessibilityManager.removeAccessibilityStateChangeListener(this)
         _browserToolbarView = null
-        _browserInteractor = null
+        _browserToolbarInteractor = null
     }
 
     override fun onAttach(context: Context) {
