@@ -2982,7 +2982,7 @@ contextual_hint.tracking_protection:
       - interaction
     notification_emails:
       - firefox-android-team@mozilla.com
-    expires: "2021-12-01"
+    expires: "2021-07-01"
   dismiss:
     type: event
     description: |
@@ -2999,7 +2999,7 @@ contextual_hint.tracking_protection:
       - interaction
     notification_emails:
       - firefox-android-team@mozilla.com
-    expires: "2021-12-01"
+    expires: "2021-07-01"
   outside_tap:
     type: event
     description: |
@@ -3015,7 +3015,7 @@ contextual_hint.tracking_protection:
       - interaction
     notification_emails:
       - firefox-android-team@mozilla.com
-    expires: "2021-12-01"
+    expires: "2021-07-01"
   inside_tap:
     type: event
     description: |
@@ -3031,7 +3031,7 @@ contextual_hint.tracking_protection:
       - interaction
     notification_emails:
       - firefox-android-team@mozilla.com
-    expires: "2021-12-01"
+    expires: "2021-07-01"
 
 tracking_protection:
   exception_added:
@@ -3484,7 +3484,7 @@ download_notification:
       - interaction
     notification_emails:
       - firefox-android-team@mozilla.com
-    expires: "2021-12-01"
+    expires: "2021-07-01"
   pause:
     type: event
     description: |
@@ -3499,7 +3499,7 @@ download_notification:
       - interaction
     notification_emails:
       - firefox-android-team@mozilla.com
-    expires: "2021-12-01"
+    expires: "2021-07-01"
   cancel:
     type: event
     description: |
@@ -3514,7 +3514,7 @@ download_notification:
       - interaction
     notification_emails:
       - firefox-android-team@mozilla.com
-    expires: "2021-12-01"
+    expires: "2021-07-01"
   try_again:
     type: event
     description: |
@@ -3530,7 +3530,7 @@ download_notification:
       - interaction
     notification_emails:
       - firefox-android-team@mozilla.com
-    expires: "2021-12-01"
+    expires: "2021-07-01"
   open:
     type: event
     description: |
@@ -3545,7 +3545,7 @@ download_notification:
       - interaction
     notification_emails:
       - firefox-android-team@mozilla.com
-    expires: "2021-12-01"
+    expires: "2021-07-01"
   in_app_open:
     type: event
     description: |
@@ -3560,7 +3560,7 @@ download_notification:
       - interaction
     notification_emails:
       - firefox-android-team@mozilla.com
-    expires: "2021-12-01"
+    expires: "2021-07-01"
   in_app_try_again:
     type: event
     description: |
@@ -3576,7 +3576,7 @@ download_notification:
       - interaction
     notification_emails:
       - firefox-android-team@mozilla.com
-    expires: "2021-12-01"
+    expires: "2021-07-01"
 
 downloads_misc:
   download_added:
@@ -3590,7 +3590,7 @@ downloads_misc:
       - https://github.com/mozilla-mobile/fenix/pull/18143
     notification_emails:
       - firefox-android-team@mozilla.com
-    expires: "2021-12-01"
+    expires: "2021-07-01"
 
 downloads_management:
   downloads_screen_opened:
@@ -3605,7 +3605,7 @@ downloads_management:
       - https://github.com/mozilla-mobile/fenix/pull/18143
     notification_emails:
       - firefox-android-team@mozilla.com
-    expires: "2021-12-01"
+    expires: "2021-07-01"
 
   item_opened:
     type: event
@@ -3850,7 +3850,7 @@ about_page:
       - interaction
     notification_emails:
       - firefox-android-team@mozilla.com
-    expires: "2021-12-01"
+    expires: "2021-07-01"
   privacy_notice_tapped:
     type: event
     description: |
@@ -3865,7 +3865,7 @@ about_page:
       - interaction
     notification_emails:
       - firefox-android-team@mozilla.com
-    expires: "2021-12-01"
+    expires: "2021-07-01"
 
 app_theme:
   dark_theme_selected:
