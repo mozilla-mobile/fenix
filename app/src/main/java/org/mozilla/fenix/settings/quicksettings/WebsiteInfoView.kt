@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat.getColor
-import androidx.core.view.isVisible
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.quicksettings_website_info.*
 import mozilla.components.support.ktx.android.content.getDrawableWithTint
@@ -35,23 +34,11 @@ class WebsiteInfoView(
      */
     fun update(state: WebsiteInfoState) {
         bindUrl(state.websiteUrl)
-        bindTitle(state.websiteTitle)
         bindSecurityInfo(state.websiteSecurityUiValues)
-        bindCertificateName(state.certificateName)
     }
 
     private fun bindUrl(websiteUrl: String) {
         url.text = websiteUrl
-    }
-
-    private fun bindTitle(websiteTitle: String) {
-        title.text = websiteTitle
-    }
-
-    private fun bindCertificateName(cert: String) {
-        val certificateLabel = containerView.context.getString(R.string.certificate_info_verified_by, cert)
-        certificateInfo.text = certificateLabel
-        certificateInfo.isVisible = cert.isNotEmpty()
     }
 
     private fun bindSecurityInfo(uiValues: WebsiteSecurityUiValues) {
