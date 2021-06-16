@@ -18,7 +18,9 @@ import mozilla.components.feature.tabs.TabsUseCases.AddNewTabUseCase
 import mozilla.components.support.base.feature.OnNeedToRequestPermissions
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.PermissionStorage
+import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.settings.PhoneFeature
@@ -170,7 +172,24 @@ class DefaultQuickSettingsController(
     }
 
     override fun handleTrackingProtectionToggled(isEnabled: Boolean) {
-        TODO("Not yet implemented")
+        val components = context.components
+        val sessionState = components.core.store.state.findTabOrCustomTab(sessionId)
+
+        sessionState?.let { session ->
+            val trackingProtectionUseCases = components.useCases.trackingProtectionUseCases
+            val sessionUseCases = components.useCases.sessionUseCases
+
+            if (isEnabled) {
+                trackingProtectionUseCases.removeException(session.id)
+            } else {
+                context.metrics.track(Event.TrackingProtectionException)
+                trackingProtectionUseCases.addException(session.id)
+            }
+
+            sessionUseCases.reload.invoke(session.id)
+        }
+
+        quickSettingsStore.dispatch(TrackingProtectionAction.ToggleTrackingProtectionEnabled(isEnabled))
     }
 
     override fun handleBlockedItemsClicked() {
