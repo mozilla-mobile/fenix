@@ -16,7 +16,7 @@ class TrackingProtectionPanelInteractorTest {
     fun openDetails() {
         val store: TrackingProtectionStore = mockk(relaxed = true)
         val interactor =
-            TrackingProtectionPanelInteractor(store, mockk(), mockk())
+            TrackingProtectionPanelInteractor(store, mockk())
         interactor.openDetails(TrackingProtectionCategory.FINGERPRINTERS, true)
         verify {
             store.dispatch(
@@ -32,7 +32,7 @@ class TrackingProtectionPanelInteractorTest {
     fun openDetailsForRedirectTrackers() {
         val store: TrackingProtectionStore = mockk(relaxed = true)
         val interactor =
-            TrackingProtectionPanelInteractor(store, mockk(), mockk())
+            TrackingProtectionPanelInteractor(store, mockk())
         interactor.openDetails(TrackingProtectionCategory.REDIRECT_TRACKERS, true)
         verify {
             store.dispatch(
@@ -48,31 +48,17 @@ class TrackingProtectionPanelInteractorTest {
     fun selectTrackingProtectionSettings() {
         var openSettings = false
         val interactor = TrackingProtectionPanelInteractor(
-            mockk(),
-            mockk(),
-            { openSettings = true }
-        )
+            mockk()
+        ) { openSettings = true }
         interactor.selectTrackingProtectionSettings()
         assertEquals(true, openSettings)
-    }
-
-    @Test
-    fun trackingProtectionToggled() {
-        var trackingProtectionNewValue: Boolean? = null
-        val interactor = TrackingProtectionPanelInteractor(
-            mockk(),
-            { trackingProtectionNewValue = it },
-            mockk()
-        )
-        interactor.trackingProtectionToggled(true)
-        assertEquals(true, trackingProtectionNewValue)
     }
 
     @Test
     fun onBackPressed() {
         val store: TrackingProtectionStore = mockk(relaxed = true)
         val interactor =
-            TrackingProtectionPanelInteractor(store, mockk(), mockk())
+            TrackingProtectionPanelInteractor(store, mockk())
         interactor.onBackPressed()
         verify { store.dispatch(TrackingProtectionAction.ExitDetailsMode) }
     }
