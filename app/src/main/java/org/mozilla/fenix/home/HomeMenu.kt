@@ -24,6 +24,7 @@ import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.support.ktx.android.content.getColorFromAttr
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.accounts.AccountState
 import org.mozilla.fenix.components.accounts.FenixAccountManager
 import org.mozilla.fenix.experiments.FeatureId
 import org.mozilla.fenix.ext.components
@@ -45,7 +46,7 @@ class HomeMenu(
         object History : Item()
         object Downloads : Item()
         object Extensions : Item()
-        data class SyncAccount(val signedIn: Boolean) : Item()
+        data class SyncAccount(val accountState: AccountState) : Item()
         object WhatsNew : Item()
         object Help : Item()
         object Settings : Item()
@@ -90,23 +91,15 @@ class HomeMenu(
         }
     }
 
-    private fun getSyncItemTitle(): String {
-        val authenticatedAccount = accountManager.authenticatedAccount
-        val email = accountManager.accountProfileEmail
-
-        return if (authenticatedAccount && !email.isNullOrEmpty()) {
-            email
-        } else {
-            context.getString(R.string.sync_menu_sign_in)
-        }
-    }
+    private fun getSyncItemTitle(): String =
+        accountManager.accountProfileEmail ?: context.getString(R.string.sync_menu_sign_in)
 
     private val syncSignInMenuItem = BrowserMenuImageText(
         getSyncItemTitle(),
         R.drawable.ic_synced_tabs,
         primaryTextColor
     ) {
-        onItemTapped.invoke(Item.SyncAccount(accountManager.signedInToFxa()))
+        onItemTapped.invoke(Item.SyncAccount(accountManager.accountState))
     }
 
     val desktopItem = BrowserMenuImageSwitch(

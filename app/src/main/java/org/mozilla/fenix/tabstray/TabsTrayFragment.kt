@@ -6,6 +6,7 @@ package org.mozilla.fenix.tabstray
 
 import android.content.Context
 import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +17,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.component_tabstray2.*
@@ -86,7 +88,20 @@ class TabsTrayFragment : AppCompatDialogFragment() {
         val containerView = inflater.inflate(R.layout.fragment_tab_tray_dialog, container, false)
         inflater.inflate(R.layout.component_tabstray2, containerView as ViewGroup, true)
 
-        tabsTrayStore = StoreProvider.get(this) { TabsTrayStore() }
+        val args by navArgs<TabsTrayFragmentArgs>()
+        val initialMode = if (args.enterMultiselect) {
+            TabsTrayState.Mode.Select(emptySet())
+        } else {
+            TabsTrayState.Mode.Normal
+        }
+
+        tabsTrayStore = StoreProvider.get(this) {
+            TabsTrayStore(
+                initialState = TabsTrayState(
+                    mode = initialMode
+                )
+            )
+        }
 
         fabView = LayoutInflater.from(containerView.context)
             .inflate(R.layout.component_tabstray_fab, containerView, true)
@@ -99,6 +114,9 @@ class TabsTrayFragment : AppCompatDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         val activity = activity as HomeActivity
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            new_tab_button.accessibilityTraversalAfter = tab_layout.id
+        }
         requireComponents.analytics.metrics.track(Event.TabsTrayOpened)
 
         val navigationInteractor =
@@ -267,6 +285,10 @@ class TabsTrayFragment : AppCompatDialogFragment() {
         super.onConfigurationChanged(newConfig)
 
         trayBehaviorManager.updateDependingOnOrientation(newConfig.orientation)
+
+        if (requireContext().settings().gridTabView) {
+            tabsTray.adapter?.notifyDataSetChanged()
+        }
     }
 
     @VisibleForTesting
@@ -283,9 +305,11 @@ class TabsTrayFragment : AppCompatDialogFragment() {
             getString(R.string.snackbar_deleted_undo),
             {
                 requireComponents.useCases.tabsUseCases.undo.invoke()
-                tabLayoutMediator.withFeature { it.selectTabAtPosition(
-                    if (isPrivate) Page.PrivateTabs.ordinal else Page.NormalTabs.ordinal
-                ) }
+                tabLayoutMediator.withFeature {
+                    it.selectTabAtPosition(
+                        if (isPrivate) Page.PrivateTabs.ordinal else Page.NormalTabs.ordinal
+                    )
+                }
             },
             operation = { },
             elevation = ELEVATION,
