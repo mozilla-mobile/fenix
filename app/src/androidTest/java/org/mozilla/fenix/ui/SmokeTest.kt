@@ -45,6 +45,7 @@ import org.mozilla.fenix.ui.robots.enhancedTrackingProtection
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
 import org.mozilla.fenix.ui.robots.notificationShade
+import org.mozilla.fenix.ui.robots.openEditURLView
 import org.mozilla.fenix.ui.robots.searchScreen
 import org.mozilla.fenix.ui.robots.tabDrawer
 import org.mozilla.fenix.ui.util.STRING_ONBOARDING_TRACKING_PROTECTION_HEADER
@@ -878,6 +879,7 @@ class SmokeTest {
         }
     }
 
+    @Ignore("Disabling until re-implemented by #19090")
     @Test
     fun createFirstCollectionTest() {
         val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -961,6 +963,7 @@ class SmokeTest {
         }
     }
 
+    @Ignore("Disabling until re-implemented by #19090")
     @Test
     fun shareCollectionTest() {
         val webPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -982,6 +985,7 @@ class SmokeTest {
         }
     }
 
+    @Ignore("Disabling until re-implemented by #19090")
     @Test
     fun deleteCollectionTest() {
         val webPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -1334,6 +1338,44 @@ class SmokeTest {
             verifyDefaultBrowserIsDisaled()
             clickDefaultBrowserSwitch()
             verifyAndroidDefaultAppsMenuAppears()
+        }
+    }
+
+    @Test
+    fun copyTextTest() {
+        val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(genericURL.url) {
+            longClickAndCopyText("content")
+        }.openNavigationToolbar {
+            openEditURLView()
+        }
+
+        searchScreen {
+            clickClearButton()
+            longClickToolbar()
+            clickPasteText()
+            verifyPastedToolbarText("content")
+        }
+    }
+
+    @Test
+    fun selectAllAndCopyTextTest() {
+        val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(genericURL.url) {
+            longClickAndCopyText("content", true)
+        }.openNavigationToolbar {
+            openEditURLView()
+        }
+
+        searchScreen {
+            clickClearButton()
+            longClickToolbar()
+            clickPasteText()
+            verifyPastedToolbarText("Page content: 1")
         }
     }
 }

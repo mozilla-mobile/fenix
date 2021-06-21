@@ -51,6 +51,7 @@ import org.mozilla.fenix.GleanMetrics.SearchSuggestions
 import org.mozilla.fenix.GleanMetrics.SearchWidget
 import org.mozilla.fenix.GleanMetrics.SetDefaultNewtabExperiment
 import org.mozilla.fenix.GleanMetrics.SetDefaultSettingExperiment
+import org.mozilla.fenix.GleanMetrics.StartOnHome
 import org.mozilla.fenix.GleanMetrics.SyncAccount
 import org.mozilla.fenix.GleanMetrics.SyncAuth
 import org.mozilla.fenix.GleanMetrics.SyncedTabs
@@ -99,10 +100,14 @@ private class EventWrapper<T : Enum<T>>(
             null
         }
 
+        @Suppress("DEPRECATION")
+        // FIXME(#19967): Migrate to non-deprecated API.
         this.recorder(extras)
     }
 }
 
+@Suppress("DEPRECATION")
+// FIXME(#19967): Migrate to non-deprecated API.
 private val Event.wrapper: EventWrapper<*>?
     get() = when (this) {
         is Event.OpenedApp -> EventWrapper(
@@ -831,6 +836,18 @@ private val Event.wrapper: EventWrapper<*>?
         )
         is Event.HomeScreenDisplayed -> EventWrapper<NoExtraKeys>(
             { HomeScreen.homeScreenDisplayed.record(it) }
+        )
+
+        is Event.BrowserToolbarHomeButtonClicked -> EventWrapper<NoExtraKeys>(
+            { Events.browserToolbarHomeTapped.record(it) }
+        )
+
+        is Event.StartOnHomeEnterHomeScreen -> EventWrapper<NoExtraKeys>(
+            { StartOnHome.enterHomeScreen.record(it) }
+        )
+
+        is Event.StartOnHomeOpenTabsTray -> EventWrapper<NoExtraKeys>(
+            { StartOnHome.openTabsTray.record(it) }
         )
 
         // Don't record other events in Glean:

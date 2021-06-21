@@ -384,7 +384,6 @@ open class DefaultToolbarMenu(
             if (shouldUseBottomToolbar) BrowserMenuDivider() else null,
             if (shouldUseBottomToolbar) menuToolbar else null
         )
-
     }
 
     private fun handleBookmarkItemTapped() {
@@ -446,7 +445,6 @@ open class DefaultToolbarMenu(
             }
         }
     }
-
 
     init {
         // Observe account state changes, and update menu item builder with a new set of items.
