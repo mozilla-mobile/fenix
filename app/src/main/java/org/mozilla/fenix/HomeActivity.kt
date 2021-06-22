@@ -330,7 +330,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             }
         }
 
-        trackDefaultBrowser()
+        isFenixTheDefaultBrowser()
     }
 
     override fun onStart() = PerfStartup.homeActivityOnStart.measureNoInline {
@@ -969,11 +969,11 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         }
     }
 
-    private fun trackDefaultBrowser(){
+    private fun isFenixTheDefaultBrowser() {
         // Launch this on a background thread so as not to affect startup performance
         lifecycleScope.launch(IO) {
             if (
-                settings().checkDefaultBrowserAndSet()
+                settings().checkIfFenixIsDefaultBrowserOnAppResume()
             ) {
                 metrics.track(Event.ChangedToDefaultBrowser)
             }
