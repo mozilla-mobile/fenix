@@ -47,7 +47,6 @@ class BookmarksUseCase(storage: BookmarksStorage) {
          */
         @WorkerThread
         suspend operator fun invoke(): List<BookmarkNode> {
-            // D/StrictMode: StrictMode policy violation: android.os.strictmode.NonSdkApiUsedViolation
             return storage.getRecentBookmarks(MAXIMUM_BOOKMARKS_TO_RETRIEVE)
         }
     }

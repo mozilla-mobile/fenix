@@ -44,9 +44,9 @@ data class Tab(
  * @property tabs The list of opened [Tab] in the [HomeFragment].
  * @property topSites The list of [TopSite] in the [HomeFragment].
  * @property tip The current [Tip] to show on the [HomeFragment].
- * @property recentBookmarks The list of recently saved [BookmarkNode]s to show on the [HomeFragment].
  * @property showCollectionPlaceholder If true, shows a placeholder when there are no collections.
  * @property recentTabs The list of recent [TabSessionState] in the [HomeFragment].
+ * @property recentBookmarks The list of recently saved [BookmarkNode]s to show on the [HomeFragment].
  */
 data class HomeFragmentState(
     val collections: List<TabCollection> = emptyList(),
@@ -54,10 +54,10 @@ data class HomeFragmentState(
     val mode: Mode = Mode.Normal,
     val topSites: List<TopSite> = emptyList(),
     val tip: Tip? = null,
-    val recentBookmarks: List<BookmarkNode> = emptyList(),
     val showCollectionPlaceholder: Boolean = false,
     val showSetAsDefaultBrowserCard: Boolean = false,
-    val recentTabs: List<TabSessionState> = emptyList()
+    val recentTabs: List<TabSessionState> = emptyList(),
+    val recentBookmarks: List<BookmarkNode> = emptyList()
 ) : State
 
 sealed class HomeFragmentAction : Action {

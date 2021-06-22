@@ -9,6 +9,7 @@ import mozilla.components.feature.tabs.TabsUseCases.SelectTabUseCase
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.home.HomeFragmentDirections
+import org.mozilla.fenix.home.recenttabs.interactor.RecentTabInteractor
 
 /**
  * An interface that handles the view manipulation of the recent tabs in the Home screen.
@@ -16,18 +17,18 @@ import org.mozilla.fenix.home.HomeFragmentDirections
 interface RecentTabController {
 
     /**
-     * @see [RecentBookmarksInteractor.onRecentTabClicked]
+     * @see [RecentTabInteractor.onRecentTabClicked]
      */
     fun handleRecentTabClicked(tabId: String)
 
     /**
-     * @see [RecentBookmarksInteractor.onRecentTabShowAllClicked]
+     * @see [RecentTabInteractor.onRecentTabShowAllClicked]
      */
     fun handleRecentTabShowAllClicked()
 }
 
 /**
- * The default implementation of [RecentBookmarksController].
+ * The default implementation of [RecentTabController].
  *
  * @param selectTabUseCase [SelectTabUseCase] used selecting a tab.
  * @param navController [NavController] used for navigation.
