@@ -25,45 +25,45 @@ Please read the [Community Participation Guidelines](https://www.mozilla.org/en-
 * Check out the [project wiki](https://github.com/mozilla-mobile/fenix/wiki) for more information.
   * See [our guide on Writing Custom Lint Rules](https://github.com/mozilla-mobile/shared-docs/blob/master/android/writing_lint_rules.md).
 
-* Localization happens on [Pontoon](https://pontoon.mozilla.org/projects/android-l10n/). Please get in touch with delphine (at) mozilla (dot) com directly for more information.
+* Localization happens on [Pontoon](https://pontoon.mozilla.org/projects/android-l10n/). Please get in touch with delphine (at) Mozilla (dot) com directly for more information.
 
-**Beginners!** - Watch out for [Issues with the "Good First Issue" label](https://github.com/mozilla-mobile/fenix/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22). These are easy bugs that have been left for first timers to have a go, get involved and make a positive contribution to the project!
+**Beginners!** - Watch out for [Issues with the "Good First Issue" label](https://github.com/mozilla-mobile/fenix/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22). These are easy bugs that have been left for first-timers to have a go, get involved, and make a positive contribution to the project!
 
 
 ## I want to open a Pull Request!
 
-We encourage you to participate in this open source project. We love Pull Requests, Bug Reports, ideas, (security) code reviews or any other kind of positive contribution.
+We encourage you to participate in this open-source project. We love Pull Requests, Bug Reports, ideas, (security) code reviews or any other kind of positive contribution.
 
-Since we are a small team, however, **we do not have the bandwidth to review unsolicited PRs**. Please follow our [Pull Request guidelines](https://github.com/mozilla-mobile/shared-docs/blob/master/android/CONTRIBUTING_code.md#creating-a-pull-request), or **we may close the PR**.
+However, since we are a small team, **we do not have the bandwidth to review unsolicited PRs**. Please follow our [Pull Request guidelines](https://github.com/mozilla-mobile/shared-docs/blob/master/android/CONTRIBUTING_code.md#creating-a-pull-request), or **we may close the PR**.
 
 To make it easier to review, we have these PR requirements:
 
 * Every PR must have **exactly** one issue associated with it.
-* Write a clear explanation of what the code is doing when opening the pull request, and optionally add comments to the PR.
+* Write a clear explanation of what the code is doing when opening the pull request and add comments to the PR.
 * Make sure there are tests - or ask for help on how the code should be tested in the Issue!
-* Keep PRs small and to the point. For extra code-health changes, either file a separate issue, or make it a separate PR that can be easily reviewed.
+* Keep PRs small and to the point. For extra code-health changes, either file a separate issue or make it a separate PR that can be easily reviewed.
 * Use micro-commits. This makes it easier and faster to review.
 * Add a screenshot for UX changes (this is part of the PR checklist)
 
-As a small team, we have to prioritize our work, and reviewing PRs takes time. We receive lots of PRs every day, so if you can keep your PRs small, it helps our small team review and merge code faster, minimizing stale code.
+As a small team, we have to prioritize our work, and reviewing PRs takes time. We receive lots of PRs every day, so if you can keep your PRs small, it helps our small team review and merges code faster, minimizing stale code.
 
 
 Keep in mind that the team is very overloaded, so PRs sometimes wait
 for a *very* long time. However this is not for lack of interest, but
 because we find ourselves in a constant need to prioritize
 certain issues/PRs over others. If you think your issue/PR is very important,
-try to popularize it by getting other users to comment and share their point of view.
+try to popularize it by getting other users to comment and share their points of view.
 
 ## I want to file an issue!
 
-Great! We encourage you to participate in this open source project. We love Pull Requests, Bug Reports, ideas, (security) code reviews or any other kind of positive contribution.
+Great! We encourage you to participate in this open-source project. We love Pull Requests, Bug Reports, ideas, (security) code reviews or any other kind of positive contribution.
 
 To make it easier to triage, we have these issue requirements:
 
 * Please do your best to search for duplicate issues before filing a new issue so we can keep our issue board clean.
 * Every issue should have **exactly** one bug/feature request described in it. Please do not file meta feedback list tickets as it is difficult to parse them and address their individual points.
 * Feature Requests are better when they’re open-ended instead of demanding a specific solution -ie  “I want an easier way to do X” instead of “add Y”
-* Issues are not the place to go off topic or debate. If you have questions, please join the [#fenix:mozilla.org channel](https://chat.mozilla.org/#/room/#fenix:mozilla.org).
+* Issues are not the place to go off-topic or debate. If you have questions, please join the [#fenix:mozilla.org channel](https://chat.mozilla.org/#/room/#fenix:mozilla.org).
 * Please always remember our [Community Participation Guidelines](https://www.mozilla.org/en-US/about/governance/policies/participation/)
 * Please do not tag specific team members to try to get your issue looked at faster. We have a triage process that will tag and label issues correctly in due time. If you think an issue is very severe, you can ask about it in Matrix.
 
@@ -73,7 +73,7 @@ Please keep in mind that even though a feature you have in mind may seem like a 
 
 Pre-requisites:
 * Android SDK
-* To run command line tools, you'll need to configure Java: see [our how-to guide](https://github.com/mozilla-mobile/shared-docs/blob/master/android/configure_java.md).
+* To run command-line tools, you'll need to configure Java: see [our how-to guide](https://github.com/mozilla-mobile/shared-docs/blob/master/android/configure_java.md).
 
 1. Clone or Download the repository:
 
@@ -95,7 +95,7 @@ Pre-requisites:
 ### Build Variants
 For general development, we recommend the **debug** build variant. Here's an explanation of each variant:
 
-- **debug**: the default for developers, similar to most other Android apps. It is debuggable, uses a Nightly GeckoView with debug symbols, adds tools like LeakCanary for troublingshooting, and does not strip unused code.
+- **debug**: the default for developers, similar to most other Android apps. It is debuggable, uses a Nightly GeckoView with debug symbols, adds tools like LeakCanary for troubleshooting, and does not strip unused code.
 - **nightly**: what we ship to the Firefox Nightly channel, using GeckoView Nightly.
 - **beta**: what we ship to the Firefox Beta channel, using GeckoView Beta. It is more stable than nightly.
 - **release**: what we ship as Firefox for Android, using GeckoView Release. It is the most stable.
@@ -153,7 +153,7 @@ To push without running the pre-push hook (e.g. doc updates):
 git push <remote> --no-verify
 ```
 
-Note: If while pushing you encounter this error "Could not initialize class org.codehaus.groovy.runtime.InvokerHelper" and are currently on Java14 then downgrading your Java version to Java13 or lower can resolve the issue
+Note: If while pushing you to encounter this error "Could not initialize class org.codehaus.groovy.runtime.InvokerHelper" and are currently on Java14 then downgrading your Java version to Java13 or lower can resolve the issue
 
 Steps to downgrade Java Version on Mac with Brew: 
 1. Install Homebrew (https://brew.sh/)
@@ -177,7 +177,7 @@ autosignReleaseWithDebugKey
 
 With this line, release build variants will automatically be signed with your debug key (like debug builds), allowing them to be built and installed directly through Android Studio or the command line.
 
-This is helpful when you're building release variants frequently, for example to test feature flags and or do performance analyses.
+This is helpful when you're building release variants frequently, such as testing feature flags and performing performance analyses.
 
 ### Building debuggable release variants
 
@@ -189,7 +189,7 @@ debuggable
 
 ### Setting raptor manifest flag
 
-To set the raptor manifest flag in Nightly, Beta and Release variants, add the following to `<proj-root>/local.properties`:
+To set the raptor manifest flag in Nightly, Beta, and Release variants, add the following to `<proj-root>/local.properties`:
 
 ```sh
 raptorEnabled
@@ -209,12 +209,12 @@ See a [demo of auto-publication workflow in action](https://www.youtube.com/watc
 
 In order to build successfully, you need to check out a commit in the dependency repository that has no breaking changes. The two best ways to do this are:
 - Run the `<android-components>/tools/list_compatible_dependency_versions.py` script to output a compatible commit
-- Check out the latest commit from master in this repository and the dependency repository. However, this may fail if there were breaking changes added recently to the dependency.
+- Check out the latest commit from the master in this repository and the dependency repository. However, this may fail if there were breaking changes added recently to the dependency.
 
 ### Using Nimbus servers during local development
 If you're working with the Nimbus experiments platform, by default for local development Fenix configures Nimbus to not use a server.
 
-If you wish to use a Nimbus server during local development, you can add a `https://` or `file://` endpoint to the `local.properties` file.
+If you wish to use a Nimbus server during local development, you can add an `https://` or `file://` endpoint to the `local.properties` file.
 
 - `nimbus.remote-settings.url`
 
@@ -227,7 +227,7 @@ and optional a path to m-c object directory via `dependencySubstitutions.geckovi
 If these are configured, local builds of GeckoView will be used instead of what's configured in Dependencies.kt.
 For more details, see https://firefox-source-docs.mozilla.org/mobile/android/geckoview/contributor/geckoview-quick-start.html#include-geckoview-as-a-dependency
 
-See notes on building successfully in the `android-components` auto-publication section.
+See notes on building success in the `android-components` auto-publication section.
 
 ## License
 
