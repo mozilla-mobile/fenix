@@ -15,6 +15,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.concept.storage.BookmarkNode
+import mozilla.components.concept.storage.BookmarkNodeType
 import mozilla.components.support.test.rule.MainCoroutineRule
 import org.junit.After
 import org.junit.Before
@@ -55,8 +56,8 @@ class DefaultRecentBookmarksControllerTest {
     @Test
     fun `WHEN a recently saved bookmark is clicked THEN the selected bookmark is opened`() {
         val bookmark = BookmarkNode(
-            type = mockk(),
-            guid = mockk(),
+            type = BookmarkNodeType.ITEM,
+            guid = "guid#${Math.random() * 1000}",
             parentGuid = null,
             position = null,
             title = null,
@@ -76,7 +77,7 @@ class DefaultRecentBookmarksControllerTest {
     }
 
     @Test
-    fun handleCollectionAddTabTapped() {
+    fun `WHEN show all recently saved bookmark is clicked THEN the bookmarks root is opened`() {
         controller.handleShowAllBookmarksClicked()
 
         val directions = HomeFragmentDirections.actionGlobalBookmarkFragment(BookmarkRoot.Mobile.id)

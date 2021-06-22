@@ -18,20 +18,20 @@ import org.mozilla.fenix.home.recentbookmarks.interactor.RecentBookmarksInteract
 import org.mozilla.fenix.utils.view.ViewHolder
 
 class RecentBookmarkItemViewHolder(
-    view: View,
+    private val view: View,
     private val interactor: RecentBookmarksInteractor
 ) : ViewHolder(view) {
 
     fun bind(bookmark: BookmarkNode) {
-        bookmark_title.text = bookmark.title
-        bookmark_subtitle.text = bookmark.url?.tryGetHostFromUrl() ?: bookmark.url
+        bookmark_title.text = bookmark.title ?: bookmark.url
+        bookmark_subtitle.text = bookmark.url?.tryGetHostFromUrl() ?: bookmark.title ?: ""
 
         bookmark_item.setOnClickListener {
             interactor.onRecentBookmarkClicked(bookmark)
         }
 
         bookmark.url?.let {
-            itemView.context.components.core.icons.loadIntoView(favicon_image, it)
+            view.context.components.core.icons.loadIntoView(favicon_image, it)
         }
     }
 

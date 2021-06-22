@@ -11,6 +11,7 @@ import org.mozilla.fenix.home.sessioncontrol.SessionControlInteractor
  * Interface for recently saved bookmark related actions in the [SessionControlInteractor].
  */
 interface RecentBookmarksInteractor {
+
     /**
      * Opens the given bookmark in a new tab. Called when an user clicks on a recently saved
      * bookmark on the home screen.

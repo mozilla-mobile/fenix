@@ -7,6 +7,7 @@ package org.mozilla.fenix.home
 import io.mockk.mockk
 import io.mockk.verify
 import mozilla.components.concept.storage.BookmarkNode
+import mozilla.components.concept.storage.BookmarkNodeType
 import mozilla.components.feature.tab.collections.Tab
 import mozilla.components.feature.tab.collections.TabCollection
 import org.junit.Before
@@ -154,8 +155,8 @@ class SessionControlInteractorTest {
     @Test
     fun `WHEN a recently saved bookmark is clicked THEN the selected bookmark is handled`() {
         val bookmark = BookmarkNode(
-            type = mockk(),
-            guid = mockk(),
+            type = BookmarkNodeType.ITEM,
+            guid = "guid#${Math.random() * 1000}",
             parentGuid = null,
             position = null,
             title = null,
