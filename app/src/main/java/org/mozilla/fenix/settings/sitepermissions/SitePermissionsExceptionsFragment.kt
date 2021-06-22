@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import mozilla.components.feature.sitepermissions.SitePermissions
+import mozilla.components.support.ktx.kotlin.stripDefaultPort
 import org.mozilla.fenix.NavHostActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
@@ -142,9 +143,8 @@ class ExceptionsAdapter(private val clickListener: View.OnClickListener) :
     override fun onBindViewHolder(holder: SitePermissionsViewHolder, position: Int) {
         val sitePermissions = requireNotNull(getItem(position))
         val context = holder.view.context
-
-        context.components.core.icons.loadIntoView(holder.iconView, "https://${sitePermissions.origin}/")
-        holder.siteTextView.text = sitePermissions.origin
+        context.components.core.icons.loadIntoView(holder.iconView, sitePermissions.origin)
+        holder.siteTextView.text = sitePermissions.origin.stripDefaultPort()
         holder.view.tag = sitePermissions
         holder.view.setOnClickListener(clickListener)
     }
