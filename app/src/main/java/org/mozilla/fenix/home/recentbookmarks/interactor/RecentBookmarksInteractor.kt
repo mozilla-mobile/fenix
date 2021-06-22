@@ -5,7 +5,6 @@
 package org.mozilla.fenix.home.recentbookmarks.interactor
 
 import mozilla.components.concept.storage.BookmarkNode
-import org.mozilla.fenix.home.recentbookmarks.controller.RecentBookmarksController
 import org.mozilla.fenix.home.sessioncontrol.SessionControlInteractor
 
 /**
@@ -25,20 +24,4 @@ interface RecentBookmarksInteractor {
      * recently saved bookmarks on the home screen.
      */
     fun onShowAllBookmarksClicked()
-}
-
-/**
- * Interactor for the Home screen implementation of RecentBookmarksInteractor.
- */
-class DefaultRecentBookmarksInteractor(
-    private val recentBookmarksController: RecentBookmarksController
-) : RecentBookmarksInteractor {
-
-    override fun onRecentBookmarkClicked(bookmark: BookmarkNode) {
-        recentBookmarksController.handleBookmarkClicked(bookmark)
-    }
-
-    override fun onShowAllBookmarksClicked() {
-        recentBookmarksController.handleShowAllBookmarksClicked()
-    }
 }

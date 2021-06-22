@@ -9,15 +9,16 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import mozilla.components.concept.storage.BookmarkNode
-import org.mozilla.fenix.home.recentbookmarks.interactor.DefaultRecentBookmarksInteractor
+import org.mozilla.fenix.home.recentbookmarks.interactor.RecentBookmarksInteractor
+import org.mozilla.fenix.home.recentbookmarks.view.RecentBookmarkItemViewHolder
 
 /**
- * Adapter for the individual bookmark items that will be used in [RecentBookmarksAdapter].
+ * Adapter for binding individual bookmark items for the homescreen.
  *
- * TODO: reword this later.
+ * @param interactor The [RecentBookmarksInteractor] to be passed into the view.
  */
 class RecentBookmarksItemAdapter(
-    private val interactor: DefaultRecentBookmarksInteractor
+    private val interactor: RecentBookmarksInteractor
 ) : ListAdapter<BookmarkNode, RecentBookmarkItemViewHolder>(RecentBookmarkItemDiffCallback) {
 
     override fun onCreateViewHolder(

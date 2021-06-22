@@ -54,7 +54,7 @@ data class HomeFragmentState(
     val mode: Mode = Mode.Normal,
     val topSites: List<TopSite> = emptyList(),
     val tip: Tip? = null,
-    val recentBookmarks: List<BookmarkNode>? = null,
+    val recentBookmarks: List<BookmarkNode> = emptyList(),
     val showCollectionPlaceholder: Boolean = false,
     val showSetAsDefaultBrowserCard: Boolean = false,
     val recentTabs: List<TabSessionState> = emptyList()
@@ -67,7 +67,8 @@ sealed class HomeFragmentAction : Action {
         val collections: List<TabCollection>,
         val tip: Tip? = null,
         val showCollectionPlaceholder: Boolean,
-        val recentTabs: List<TabSessionState>
+        val recentTabs: List<TabSessionState>,
+        val recentBookmarks: List<BookmarkNode>
     ) :
         HomeFragmentAction()
 
@@ -79,6 +80,7 @@ sealed class HomeFragmentAction : Action {
     data class TopSitesChange(val topSites: List<TopSite>) : HomeFragmentAction()
     data class RemoveTip(val tip: Tip) : HomeFragmentAction()
     data class RecentTabsChange(val recentTabs: List<TabSessionState>) : HomeFragmentAction()
+    data class RecentBookmarksChange(val recentBookmarks: List<BookmarkNode>) : HomeFragmentAction()
     object RemoveCollectionsPlaceholder : HomeFragmentAction()
     object RemoveSetDefaultBrowserCard : HomeFragmentAction()
 }
@@ -117,5 +119,6 @@ private fun homeFragmentStateReducer(
         }
         is HomeFragmentAction.RemoveSetDefaultBrowserCard -> state.copy(showSetAsDefaultBrowserCard = false)
         is HomeFragmentAction.RecentTabsChange -> state.copy(recentTabs = action.recentTabs)
+        is HomeFragmentAction.RecentBookmarksChange -> state.copy(recentBookmarks = action.recentBookmarks)
     }
 }

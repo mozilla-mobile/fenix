@@ -14,14 +14,12 @@ import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
-import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.components.tips.Tip
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.home.HomeFragmentState
 import org.mozilla.fenix.home.HomeScreenViewModel
 import org.mozilla.fenix.home.Mode
 import org.mozilla.fenix.home.OnboardingState
-import org.mozilla.fenix.home.recentbookmarks.interactor.DefaultRecentBookmarksInteractor
 
 // This method got a little complex with the addition of the tab tray feature flag
 // When we remove the tabs from the home screen this will get much simpler again.
@@ -31,7 +29,7 @@ private fun normalModeAdapterItems(
     collections: List<TabCollection>,
     expandedCollections: Set<Long>,
     tip: Tip?,
-    recentBookmarks: List<BookmarkNode>?,
+    recentBookmarks: List<BookmarkNode>,
     showCollectionsPlaceholder: Boolean,
     showSetAsDefaultBrowserCard: Boolean,
     recentTabs: List<TabSessionState>
@@ -52,16 +50,16 @@ private fun normalModeAdapterItems(
         showRecentTabs(recentTabs, items)
     }
 
+    if (recentBookmarks.isNotEmpty()) {
+        items.add(AdapterItem.RecentBookmarks(recentBookmarks))
+    }
+
     if (collections.isEmpty()) {
         if (showCollectionsPlaceholder) {
             items.add(AdapterItem.NoCollectionsMessage)
         }
     } else {
         showCollections(collections, expandedCollections, items)
-    }
-
-    if (FeatureFlags.showRecentlySavedBookmarksFeature && !recentBookmarks.isNullOrEmpty()) {
-        items.add(AdapterItem.RecentBookmarks(recentBookmarks))
     }
 
     return items
@@ -157,7 +155,6 @@ class SessionControlView(
     override val containerView: View,
     viewLifecycleOwner: LifecycleOwner,
     interactor: SessionControlInteractor,
-    recentBookmarksInteractor: DefaultRecentBookmarksInteractor,
     private var homeScreenViewModel: HomeScreenViewModel
 ) : LayoutContainer {
 
@@ -165,7 +162,6 @@ class SessionControlView(
 
     private val sessionControlAdapter = SessionControlAdapter(
         interactor,
-        recentBookmarksInteractor,
         viewLifecycleOwner,
         containerView.context.components
     )

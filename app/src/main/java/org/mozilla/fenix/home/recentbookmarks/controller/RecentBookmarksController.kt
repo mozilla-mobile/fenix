@@ -12,6 +12,7 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.home.HomeFragmentDirections
+import org.mozilla.fenix.home.recentbookmarks.interactor.RecentBookmarksInteractor
 
 /**
  * An interface that handles the view manipulation of the recently saved bookmarks on the

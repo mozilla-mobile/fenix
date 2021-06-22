@@ -20,7 +20,6 @@ import mozilla.components.ui.widgets.WidgetSiteItemView
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.components.tips.Tip
 import org.mozilla.fenix.home.OnboardingState
-import org.mozilla.fenix.home.recentbookmarks.RecentBookmarkItemViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.CollectionHeaderViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.CollectionViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.NoCollectionsMessageViewHolder
@@ -41,8 +40,7 @@ import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingTr
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingWhatsNewViewHolder
 import org.mozilla.fenix.home.recenttabs.view.RecentTabViewHolder
 import org.mozilla.fenix.home.recenttabs.view.RecentTabsHeaderViewHolder
-import org.mozilla.fenix.home.recentbookmarks.RecentBookmarksViewHolder
-import org.mozilla.fenix.home.recentbookmarks.interactor.DefaultRecentBookmarksInteractor
+import org.mozilla.fenix.home.recentbookmarks.view.RecentBookmarksViewHolder
 import org.mozilla.fenix.home.tips.ButtonTipViewHolder
 import mozilla.components.feature.tab.collections.Tab as ComponentTab
 
@@ -159,14 +157,17 @@ sealed class AdapterItem(@LayoutRes val viewType: Int) {
         AdapterItem(RecentBookmarksViewHolder.LAYOUT_ID) {
             override fun sameAs(other: AdapterItem): Boolean {
                 val newBookmarks = (other as? RecentBookmarks) ?: return false
-                return newBookmarks.recentBookmarks.size == this.recentBookmarks.size
+                if (newBookmarks.recentBookmarks.size != this.recentBookmarks.size) {
+                    return false
+                }
+
+                return recentBookmarks.zip(newBookmarks.recentBookmarks).all { (new, old) ->
+                    new.guid == old.guid
+                }
             }
 
             override fun contentsSameAs(other: AdapterItem): Boolean {
                 val newBookmarks = (other as? RecentBookmarks) ?: return false
-                if (newBookmarks.recentBookmarks.size != this.recentBookmarks.size) {
-                    return false
-                }
 
                 val newBookmarksSequence = newBookmarks.recentBookmarks.asSequence()
                 val oldBookmarksList = this.recentBookmarks.asSequence()
@@ -176,10 +177,6 @@ sealed class AdapterItem(@LayoutRes val viewType: Int) {
                 }
             }
         }
-
-    data class RecentBookmarksPayload(
-        val changed: Set<Pair<Int, BookmarkNode>>
-    )
 
     /**
      * True if this item represents the same value as other. Used by [AdapterItemDiffCallback].
@@ -209,7 +206,6 @@ class AdapterItemDiffCallback : DiffUtil.ItemCallback<AdapterItem>() {
 
 class SessionControlAdapter(
     private val interactor: SessionControlInteractor,
-    private val recentBookmarksInteractor: DefaultRecentBookmarksInteractor,
     private val viewLifecycleOwner: LifecycleOwner,
     private val components: Components
 ) : ListAdapter<AdapterItem, RecyclerView.ViewHolder>(AdapterItemDiffCallback()) {
@@ -265,7 +261,7 @@ class SessionControlAdapter(
             RecentTabsHeaderViewHolder.LAYOUT_ID -> RecentTabsHeaderViewHolder(view, interactor)
             RecentTabViewHolder.LAYOUT_ID -> RecentTabViewHolder(view, interactor)
             RecentBookmarksViewHolder.LAYOUT_ID -> {
-                RecentBookmarksViewHolder(view, recentBookmarksInteractor)
+                RecentBookmarksViewHolder(view, interactor)
             }
 
             else -> throw IllegalStateException()
