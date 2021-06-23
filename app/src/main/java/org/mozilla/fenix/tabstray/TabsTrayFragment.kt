@@ -15,6 +15,7 @@ import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -35,10 +36,10 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
+import org.mozilla.fenix.share.ShareFragment
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.HomeScreenViewModel
@@ -279,6 +280,10 @@ class TabsTrayFragment : AppCompatDialogFragment() {
             owner = this,
             view = view
         )
+
+        setFragmentResultListener(ShareFragment.RESULT_KEY) { _, _ ->
+            dismissTabsTray()
+        }
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -383,7 +388,7 @@ class TabsTrayFragment : AppCompatDialogFragment() {
     internal fun navigateToHomeAndDeleteSession(sessionId: String) {
         homeViewModel.sessionToDelete = sessionId
         val directions = NavGraphDirections.actionGlobalHome()
-        findNavController().navigateBlockingForAsyncNavGraph(directions)
+        findNavController().navigate(directions)
     }
 
     @VisibleForTesting
@@ -415,7 +420,7 @@ class TabsTrayFragment : AppCompatDialogFragment() {
             .make(requireView())
             .message(tabSize, isNewCollection)
             .anchorWithAction(anchor) {
-                findNavController().navigateBlockingForAsyncNavGraph(
+                findNavController().navigate(
                     TabsTrayFragmentDirections.actionGlobalHome(
                         focusOnAddressBar = false,
                         focusOnCollection = collectionToSelect.orDefault()

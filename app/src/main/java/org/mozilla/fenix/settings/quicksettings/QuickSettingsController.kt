@@ -6,7 +6,6 @@ package org.mozilla.fenix.settings.quicksettings
 
 import android.content.Context
 import androidx.annotation.VisibleForTesting
-import androidx.core.net.toUri
 import androidx.navigation.NavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -16,8 +15,8 @@ import mozilla.components.feature.session.SessionUseCases.ReloadUrlUseCase
 import mozilla.components.concept.engine.permission.SitePermissions
 import mozilla.components.feature.tabs.TabsUseCases.AddNewTabUseCase
 import mozilla.components.support.base.feature.OnNeedToRequestPermissions
+import mozilla.components.support.ktx.kotlin.getOrigin
 import org.mozilla.fenix.components.PermissionStorage
-import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.settings.PhoneFeature
 import org.mozilla.fenix.settings.quicksettings.ext.shouldBeEnabled
 import org.mozilla.fenix.settings.toggle
@@ -139,7 +138,7 @@ class DefaultQuickSettingsController(
 
         sitePermissions = if (permissions == null) {
             val tab = browserStore.state.findTabOrCustomTab(sessionId)
-            val origin = requireNotNull(tab?.content?.url?.toUri()?.host) {
+            val origin = requireNotNull(tab?.content?.url?.getOrigin()) {
                 "An origin is required to change a autoplay settings from the door hanger"
             }
             val sitePermissions =
@@ -198,6 +197,6 @@ class DefaultQuickSettingsController(
     private fun navigateToManagePhoneFeature(phoneFeature: PhoneFeature) {
         val directions = QuickSettingsSheetDialogFragmentDirections
             .actionGlobalSitePermissionsManagePhoneFeature(phoneFeature)
-        navController.navigateBlockingForAsyncNavGraph(directions)
+        navController.navigate(directions)
     }
 }

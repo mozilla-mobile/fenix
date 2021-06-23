@@ -9,10 +9,12 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import mozilla.components.browser.state.selector.normalTabs
+import mozilla.components.browser.state.selector.selectedNormalTab
+import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.lib.state.helpers.AbstractBinding
-import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
+import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifAnyChanged
 import org.mozilla.fenix.home.HomeFragmentAction
 import org.mozilla.fenix.home.HomeFragmentStore
 
@@ -27,14 +29,13 @@ class RecentTabsListFeature(
 ) : AbstractBinding<BrowserState>(browserStore) {
 
     override suspend fun onState(flow: Flow<BrowserState>) {
-        flow.map { it.selectedTabId }
-            .ifChanged()
-            .collect { selectedTabId ->
-                // Attempt to get the selected normal tab since here may not be a selected tab or
-                // the selected tab may be a private tab.
-                val selectedTab = browserStore.state.normalTabs.firstOrNull {
-                    it.id == selectedTabId
-                }
+        flow.map { it.selectedTab }
+            .ifAnyChanged { arrayOf(it?.id, it?.content?.title, it?.content?.icon) }
+            .collect { _ ->
+                // Attempt to get the selected normal tab or the last accessed normal tab
+                // if there is no selected tab or the selected tab is a private one.
+                val selectedTab = browserStore.state.selectedNormalTab
+                    ?: browserStore.state.normalTabs.maxByOrNull { it.lastAccess }
                 val recentTabsList = if (selectedTab != null) {
                     listOf(selectedTab)
                 } else {

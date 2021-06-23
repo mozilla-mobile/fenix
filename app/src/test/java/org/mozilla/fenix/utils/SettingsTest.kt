@@ -34,7 +34,7 @@ class SettingsTest {
         microphone = ASK_TO_ALLOW,
         notification = ASK_TO_ALLOW,
         autoplayAudible = AutoplayAction.BLOCKED,
-        autoplayInaudible = AutoplayAction.BLOCKED,
+        autoplayInaudible = AutoplayAction.ALLOWED,
         persistentStorage = ASK_TO_ALLOW,
         mediaKeySystemAccess = ASK_TO_ALLOW
     )
@@ -606,7 +606,7 @@ class SettingsTest {
         )
 
         assertEquals(
-            AutoplayAction.BLOCKED,
+            AutoplayAction.ALLOWED,
             settings.getSitePermissionsCustomSettingsRules().autoplayInaudible
         )
     }

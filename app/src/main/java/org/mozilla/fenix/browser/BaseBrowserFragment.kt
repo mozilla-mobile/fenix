@@ -22,7 +22,6 @@ import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.getSystemService
-import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -132,8 +131,8 @@ import java.lang.ref.WeakReference
 import mozilla.components.feature.session.behavior.EngineViewBrowserToolbarBehavior
 import mozilla.components.feature.webauthn.WebAuthnFeature
 import mozilla.components.support.base.feature.ActivityResultHandler
-import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import mozilla.components.support.ktx.android.view.enterToImmersiveMode
+import mozilla.components.support.ktx.kotlin.getOrigin
 import org.mozilla.fenix.GleanMetrics.PerfStartup
 import org.mozilla.fenix.components.toolbar.interactor.BrowserToolbarInteractor
 import org.mozilla.fenix.components.toolbar.interactor.DefaultBrowserToolbarInteractor
@@ -266,7 +265,8 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
         }
     }
 
-    @Suppress("ComplexMethod", "LongMethod")
+    @Suppress("ComplexMethod", "LongMethod", "DEPRECATION")
+    // https://github.com/mozilla-mobile/fenix/issues/19920
     @CallSuper
     internal open fun initializeUI(view: View, tab: SessionState) {
         val context = requireContext()
@@ -585,7 +585,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
                             showPage = true,
                             sessionId = getCurrentTab()?.id
                         )
-                        findNavController().navigateBlockingForAsyncNavGraph(directions)
+                        findNavController().navigate(directions)
                     }
                 },
                 onNeedToRequestPermissions = { permissions ->
@@ -596,14 +596,14 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
                     browserAnimator.captureEngineViewAndDrawStatically {
                         val directions =
                             NavGraphDirections.actionGlobalSavedLoginsAuthFragment()
-                        findNavController().navigateBlockingForAsyncNavGraph(directions)
+                        findNavController().navigate(directions)
                     }
                 },
                 creditCardPickerView = creditCardSelectBar,
                 onManageCreditCards = {
                     val directions =
                         NavGraphDirections.actionGlobalCreditCardsSettingFragment()
-                    findNavController().navigateBlockingForAsyncNavGraph(directions)
+                    findNavController().navigate(directions)
                 },
                 onSelectCreditCard = {
                     showBiometricPrompt(context)
@@ -1076,7 +1076,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
     }
 
     override fun onBackLongPressed(): Boolean {
-        findNavController().navigateBlockingForAsyncNavGraph(
+        findNavController().navigate(
             NavGraphDirections.actionGlobalTabHistoryDialogFragment(
                 activeSessionId = customTabSessionId
             )
@@ -1185,9 +1185,9 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
     private fun showQuickSettingsDialog() {
         val tab = getCurrentTab() ?: return
         viewLifecycleOwner.lifecycleScope.launch(Main) {
-            val sitePermissions: SitePermissions? = tab.content.url.toUri().host?.let { host ->
+            val sitePermissions: SitePermissions? = tab.content.url.getOrigin()?.let { origin ->
                 val storage = requireComponents.core.permissionStorage
-                storage.findSitePermissionsBy(host)
+                storage.findSitePermissionsBy(origin)
             }
 
             view?.let {
