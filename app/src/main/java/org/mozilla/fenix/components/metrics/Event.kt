@@ -244,6 +244,11 @@ sealed class Event {
     object StartOnHomeEnterHomeScreen : Event()
     object StartOnHomeOpenTabsTray : Event()
 
+    // Credit cards
+    object CreditCardManualSave : Event()
+    object CreditCardDelete : Event()
+    object CreditCardAutofill : Event()
+
     // Recent tabs
     object ShowAllRecentTabs : Event()
     object OpenRecentTab : Event()
