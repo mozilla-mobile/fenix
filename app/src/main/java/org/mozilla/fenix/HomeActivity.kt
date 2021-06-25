@@ -79,6 +79,7 @@ import org.mozilla.fenix.exceptions.trackingprotection.TrackingProtectionExcepti
 import org.mozilla.fenix.ext.alreadyOnDestination
 import org.mozilla.fenix.ext.breadcrumb
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.ext.measureNoInline
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
@@ -96,6 +97,7 @@ import org.mozilla.fenix.library.bookmarks.DesktopFolders
 import org.mozilla.fenix.library.history.HistoryFragmentDirections
 import org.mozilla.fenix.library.recentlyclosed.RecentlyClosedFragmentDirections
 import org.mozilla.fenix.onboarding.DefaultBrowserNotificationWorker
+import org.mozilla.fenix.perf.NavGraphProvider
 import org.mozilla.fenix.perf.Performance
 import org.mozilla.fenix.perf.PerformanceInflater
 import org.mozilla.fenix.perf.ProfilerMarkers
@@ -200,7 +202,11 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
         components.publicSuffixList.prefetch()
 
-        setContentView(R.layout.activity_home)
+        setContentView(R.layout.activity_home).run {
+            // Do not call anything between setContentView and inflateNavGraphAsync.
+            // It needs to start its job as early as possible.
+            NavGraphProvider.inflateNavGraphAsync(navHost.navController, lifecycleScope)
+        }
 
         // Must be after we set the content view
         if (isVisuallyComplete) {
@@ -918,7 +924,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             webExtensionId = webExtensionState.id,
             webExtensionTitle = webExtensionState.name
         )
-        navHost.navController.navigate(action)
+        navHost.navController.navigateBlockingForAsyncNavGraph(action)
     }
 
     /**
