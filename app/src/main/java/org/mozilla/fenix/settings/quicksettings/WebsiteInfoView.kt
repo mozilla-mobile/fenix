@@ -10,8 +10,12 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat.getColor
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.quicksettings_website_info.*
+import mozilla.components.browser.icons.BrowserIcons
 import mozilla.components.support.ktx.android.content.getDrawableWithTint
+import mozilla.components.support.ktx.kotlin.tryGetHostFromUrl
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.loadIntoView
 
 /**
  * MVI View that knows to display a whether the current website uses a secure connection or not.
@@ -19,9 +23,11 @@ import org.mozilla.fenix.R
  * Currently it does not support any user interaction.
  *
  * @param container [ViewGroup] in which this View will inflate itself.
+ * @param icons [BrowserIcons] instance for rendering the sites icon.
  */
 class WebsiteInfoView(
-    container: ViewGroup
+    container: ViewGroup,
+    private val icons: BrowserIcons = container.context.components.core.icons
 ) : LayoutContainer {
 
     override val containerView: View = LayoutInflater.from(container.context)
@@ -33,12 +39,13 @@ class WebsiteInfoView(
      * @param state [WebsiteInfoState] to be rendered.
      */
     fun update(state: WebsiteInfoState) {
+        icons.loadIntoView(favicon_image, state.websiteUrl)
         bindUrl(state.websiteUrl)
         bindSecurityInfo(state.websiteSecurityUiValues)
     }
 
     private fun bindUrl(websiteUrl: String) {
-        url.text = websiteUrl
+        url.text = websiteUrl.tryGetHostFromUrl()
     }
 
     private fun bindSecurityInfo(uiValues: WebsiteSecurityUiValues) {
