@@ -5,8 +5,13 @@
 package org.mozilla.fenix.settings.quicksettings
 
 import android.widget.FrameLayout
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.android.synthetic.main.library_site_item.url
 import kotlinx.android.synthetic.main.quicksettings_website_info.*
+import mozilla.components.browser.icons.BrowserIcons
+import mozilla.components.browser.icons.IconRequest
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -18,22 +23,29 @@ import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 class WebsiteInfoViewTest {
 
     private lateinit var view: WebsiteInfoView
+    private lateinit var icons: BrowserIcons
 
     @Before
     fun setup() {
-        view = WebsiteInfoView(FrameLayout(testContext))
+        icons = mockk(relaxed = true)
+        view = WebsiteInfoView(FrameLayout(testContext), icons)
+        every { icons.loadIntoView(view.favicon_image, any()) } returns mockk()
     }
 
     @Test
     fun bindUrlAndTitle() {
+        val websiteUrl = "https://mozilla.org"
+
         view.update(WebsiteInfoState(
-            websiteUrl = "https://mozilla.org",
+            websiteUrl = websiteUrl,
             websiteTitle = "Mozilla",
             websiteSecurityUiValues = WebsiteSecurityUiValues.SECURE,
             certificateName = ""
         ))
 
-        assertEquals("https://mozilla.org", view.url.text)
+        verify { icons.loadIntoView(view.favicon_image, IconRequest(websiteUrl)) }
+
+        assertEquals("mozilla.org", view.url.text)
         assertEquals("Secure Connection", view.securityInfo.text)
     }
 
