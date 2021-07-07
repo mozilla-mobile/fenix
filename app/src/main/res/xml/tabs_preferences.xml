@@ -10,12 +10,12 @@
         app:allowDividerAbove="false"
         app:iconSpaceReserved="false">
         <org.mozilla.fenix.settings.RadioButtonPreference
-            android:defaultValue="true"
-            android:key="@string/pref_key_tab_view_list"
+            android:defaultValue="false"
+            android:key="@string/pref_key_tab_view_list_do_not_use"
             android:title="@string/tab_view_list" />
 
         <org.mozilla.fenix.settings.RadioButtonPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="@string/pref_key_tab_view_grid"
             android:title="@string/tab_view_grid" />
     </androidx.preference.PreferenceCategory>
@@ -44,5 +44,27 @@
             android:defaultValue="false"
             android:key="@string/pref_key_close_tabs_after_one_month"
             android:title="@string/close_tabs_after_one_month" />
+    </androidx.preference.PreferenceCategory>
+
+    <androidx.preference.PreferenceCategory
+        android:layout="@layout/preference_cat_style"
+        android:title="@string/preferences_start_on_home"
+        app:allowDividerAbove="true"
+        app:iconSpaceReserved="false">
+
+        <org.mozilla.fenix.settings.RadioButtonPreference
+            android:defaultValue="true"
+            android:key="@string/pref_key_start_on_home_after_four_hours"
+            android:title="@string/start_on_home_after_four_hours" />
+
+        <org.mozilla.fenix.settings.RadioButtonPreference
+            android:defaultValue="false"
+            android:key="@string/pref_key_start_on_home_always"
+            android:title="@string/start_on_home_always" />
+
+        <org.mozilla.fenix.settings.RadioButtonPreference
+            android:defaultValue="false"
+            android:key="@string/pref_key_start_on_home_never"
+            android:title="@string/start_on_home_never" />
     </androidx.preference.PreferenceCategory>
 </androidx.preference.PreferenceScreen>

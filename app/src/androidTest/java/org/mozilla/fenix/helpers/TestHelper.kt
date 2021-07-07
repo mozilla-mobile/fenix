@@ -4,12 +4,17 @@
 
 package org.mozilla.fenix.helpers
 
+import android.app.PendingIntent
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.preference.PreferenceManager
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
@@ -25,6 +30,7 @@ import androidx.test.uiautomator.UiScrollable
 import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
 import kotlinx.coroutines.runBlocking
+import mozilla.components.support.ktx.android.content.appName
 import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.allOf
 import org.mozilla.fenix.R
@@ -36,10 +42,13 @@ import java.io.File
 
 object TestHelper {
 
-    val packageName = InstrumentationRegistry.getInstrumentation().targetContext.packageName
+    val appContext: Context = InstrumentationRegistry.getInstrumentation().targetContext
+    val packageName: String = appContext.packageName
+    val appName = appContext.appName
 
     fun scrollToElementByText(text: String): UiScrollable {
         val appView = UiScrollable(UiSelector().scrollable(true))
+        appView.waitForExists(waitingTime)
         appView.scrollTextIntoView(text)
         return appView
     }
@@ -152,5 +161,33 @@ object TestHelper {
                 }
             }
         }
+    }
+
+    fun createCustomTabIntent(
+        pageUrl: String,
+        customMenuItemLabel: String = "",
+        customActionButtonDescription: String = ""
+    ): Intent {
+        val appContext = InstrumentationRegistry.getInstrumentation()
+            .targetContext
+            .applicationContext
+        val pendingIntent = PendingIntent.getActivity(appContext, 0, Intent(), 0)
+        val customTabsIntent = CustomTabsIntent.Builder()
+            .addMenuItem(customMenuItemLabel, pendingIntent)
+            .setShareState(CustomTabsIntent.SHARE_STATE_ON)
+            .setActionButton(
+                createTestBitmap(),
+                customActionButtonDescription, pendingIntent, true
+            )
+            .build()
+        customTabsIntent.intent.data = Uri.parse(pageUrl)
+        return customTabsIntent.intent
+    }
+
+    private fun createTestBitmap(): Bitmap {
+        val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        canvas.drawColor(Color.GREEN)
+        return bitmap
     }
 }

@@ -16,18 +16,21 @@ import mozilla.components.feature.addons.migration.SupportedAddonsChecker
 import mozilla.components.feature.addons.update.AddonUpdater
 import mozilla.components.feature.addons.update.DefaultAddonUpdater
 import mozilla.components.feature.autofill.AutofillConfiguration
-import mozilla.components.feature.sitepermissions.SitePermissionsStorage
 import mozilla.components.lib.publicsuffixlist.PublicSuffixList
 import mozilla.components.support.migration.state.MigrationStore
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.autofill.AutofillConfirmActivity
+import org.mozilla.fenix.autofill.AutofillSearchActivity
 import org.mozilla.fenix.autofill.AutofillUnlockActivity
-import org.mozilla.fenix.perf.StrictModeManager
 import org.mozilla.fenix.components.metrics.AppStartupTelemetry
-import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.perf.AppStartReasonProvider
+import org.mozilla.fenix.perf.StartupActivityLog
+import org.mozilla.fenix.perf.StartupStateProvider
+import org.mozilla.fenix.perf.StrictModeManager
 import org.mozilla.fenix.perf.lazyMonitored
 import org.mozilla.fenix.utils.ClipboardHandler
 import org.mozilla.fenix.utils.Mockable
@@ -55,6 +58,7 @@ class Components(private val context: Context) {
             core.lazyBookmarksStorage,
             core.lazyPasswordsStorage,
             core.lazyRemoteTabsStorage,
+            core.lazyAutofillStorage,
             strictMode
         )
     }
@@ -65,10 +69,10 @@ class Components(private val context: Context) {
         UseCases(
             context,
             core.engine,
-            core.sessionManager,
             core.store,
             core.webAppShortcutManager,
-            core.topSitesStorage
+            core.topSitesStorage,
+            core.bookmarksStorage
         )
     }
 
@@ -138,10 +142,6 @@ class Components(private val context: Context) {
         AddonManager(core.store, core.engine, addonCollectionProvider, addonUpdater)
     }
 
-    val sitePermissionsStorage by lazyMonitored {
-        SitePermissionsStorage(context, context.components.core.engine)
-    }
-
     val analytics by lazyMonitored { Analytics(context) }
     val publicSuffixList by lazyMonitored { PublicSuffixList(context) }
     val clipboardHandler by lazyMonitored { ClipboardHandler(context) }
@@ -165,9 +165,14 @@ class Components(private val context: Context) {
             storage = core.passwordsStorage,
             publicSuffixList = publicSuffixList,
             unlockActivity = AutofillUnlockActivity::class.java,
-            confirmActivity = AutofillConfiguration::class.java,
+            confirmActivity = AutofillConfirmActivity::class.java,
+            searchActivity = AutofillSearchActivity::class.java,
             applicationName = context.getString(R.string.app_name),
             httpClient = core.client
         )
     }
+
+    val appStartReasonProvider by lazyMonitored { AppStartReasonProvider() }
+    val startupActivityLog by lazyMonitored { StartupActivityLog() }
+    val startupStateProvider by lazyMonitored { StartupStateProvider(startupActivityLog, appStartReasonProvider) }
 }

@@ -4,7 +4,7 @@
 
 package org.mozilla.fenix.components
 
-import GeckoProvider
+import org.mozilla.fenix.gecko.GeckoProvider
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Build
@@ -13,10 +13,9 @@ import androidx.core.content.ContextCompat
 import io.sentry.Sentry
 import mozilla.components.browser.engine.gecko.GeckoEngine
 import mozilla.components.browser.engine.gecko.fetch.GeckoViewFetchClient
+import mozilla.components.browser.engine.gecko.permission.GeckoSitePermissionsStorage
 import mozilla.components.browser.icons.BrowserIcons
-import mozilla.components.browser.session.Session
-import mozilla.components.browser.session.SessionManager
-import mozilla.components.browser.session.engine.EngineMiddleware
+import mozilla.components.browser.state.engine.EngineMiddleware
 import mozilla.components.browser.session.storage.SessionStorage
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.store.BrowserStore
@@ -35,6 +34,7 @@ import mozilla.components.feature.downloads.DownloadMiddleware
 import mozilla.components.feature.logins.exceptions.LoginExceptionStorage
 import mozilla.components.feature.media.MediaSessionFeature
 import mozilla.components.feature.media.middleware.RecordingDevicesMiddleware
+import mozilla.components.feature.prompts.PromptMiddleware
 import mozilla.components.feature.pwa.ManifestStorage
 import mozilla.components.feature.pwa.WebAppShortcutManager
 import mozilla.components.feature.readerview.ReaderViewMiddleware
@@ -44,6 +44,7 @@ import mozilla.components.feature.search.region.RegionMiddleware
 import mozilla.components.feature.session.HistoryDelegate
 import mozilla.components.feature.session.middleware.LastAccessMiddleware
 import mozilla.components.feature.session.middleware.undo.UndoMiddleware
+import mozilla.components.feature.sitepermissions.OnDiskSitePermissionsStorage
 import mozilla.components.feature.top.sites.DefaultTopSitesStorage
 import mozilla.components.feature.top.sites.PinnedSiteStorage
 import mozilla.components.feature.webcompat.WebCompatFeature
@@ -62,13 +63,16 @@ import mozilla.components.support.locale.LocaleManager
 import org.mozilla.fenix.AppRequestInterceptor
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
-import org.mozilla.fenix.TelemetryMiddleware
 import org.mozilla.fenix.components.search.SearchMigration
 import org.mozilla.fenix.downloads.DownloadService
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.historymetadata.DefaultHistoryMetadataService
+import org.mozilla.fenix.historymetadata.HistoryMetadataMiddleware
+import org.mozilla.fenix.historymetadata.HistoryMetadataService
 import org.mozilla.fenix.media.MediaSessionService
 import org.mozilla.fenix.perf.StrictModeManager
 import org.mozilla.fenix.perf.lazyMonitored
@@ -76,8 +80,10 @@ import org.mozilla.fenix.search.telemetry.ads.AdsTelemetry
 import org.mozilla.fenix.search.telemetry.incontent.InContentTelemetry
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.settings.advanced.getSelectedLocale
+import org.mozilla.fenix.telemetry.TelemetryMiddleware
 import org.mozilla.fenix.utils.Mockable
 import org.mozilla.fenix.utils.getUndoDelay
+import org.mozilla.geckoview.GeckoRuntime
 
 /**
  * Component group for all core browser functionality.
@@ -107,6 +113,7 @@ class Core(
             suspendMediaWhenInactive = false,
             forceUserScalableContent = context.settings().forceEnableZoom,
             loginAutofillEnabled = context.settings().shouldAutofillLogins,
+            enterpriseRootsEnabled = context.settings().allowThirdPartyRootCerts,
             clearColor = ContextCompat.getColor(
                 context,
                 R.color.foundation_normal_theme
@@ -116,11 +123,7 @@ class Core(
         GeckoEngine(
             context,
             defaultSettings,
-            GeckoProvider.getOrCreateRuntime(
-                context,
-                lazyPasswordsStorage,
-                trackingProtectionPolicyFactory.createTrackingProtectionPolicy()
-            )
+            geckoRuntime
         ).also {
             WebCompatFeature.install(it)
 
@@ -151,12 +154,21 @@ class Core(
     val client: Client by lazyMonitored {
         GeckoViewFetchClient(
             context,
-            GeckoProvider.getOrCreateRuntime(
-                context,
-                lazyPasswordsStorage,
-                trackingProtectionPolicyFactory.createTrackingProtectionPolicy()
-            )
+            geckoRuntime
         )
+    }
+
+    val geckoRuntime: GeckoRuntime by lazyMonitored {
+        GeckoProvider.getOrCreateRuntime(
+            context,
+            lazyAutofillStorage,
+            lazyPasswordsStorage,
+            trackingProtectionPolicyFactory.createTrackingProtectionPolicy()
+        )
+    }
+
+    val geckoSitePermissionsStorage by lazyMonitored {
+        GeckoSitePermissionsStorage(geckoRuntime, OnDiskSitePermissionsStorage(context))
     }
 
     val sessionStorage: SessionStorage by lazyMonitored {
@@ -187,29 +199,40 @@ class Core(
                     metrics
                 ),
                 ThumbnailsMiddleware(thumbnailStorage),
-                UndoMiddleware(::lookupSessionManager, context.getUndoDelay()),
+                UndoMiddleware(context.getUndoDelay()),
                 RegionMiddleware(context, locationService),
                 SearchMiddleware(
                     context,
                     additionalBundledSearchEngineIds = listOf("reddit", "youtube"),
                     migration = SearchMigration(context)
                 ),
-                RecordingDevicesMiddleware(context)
+                RecordingDevicesMiddleware(context),
+                PromptMiddleware()
             )
 
+        if (FeatureFlags.historyMetadataFeature) {
+            middlewareList += HistoryMetadataMiddleware(historyMetadataService)
+        }
+
         BrowserStore(
-            middleware = middlewareList + EngineMiddleware.create(engine, ::findSessionById)
-        )
-    }
+            middleware = middlewareList + EngineMiddleware.create(engine)
+        ).apply {
+            // Install the "icons" WebExtension to automatically load icons for every visited website.
+            icons.install(engine, this)
 
-    @Suppress("Deprecation")
-    private fun lookupSessionManager(): SessionManager {
-        return sessionManager
-    }
+            // Install the "ads" WebExtension to get the links in an partner page.
+            adsTelemetry.install(engine, this)
 
-    @Suppress("Deprecation")
-    private fun findSessionById(tabId: String): Session? {
-        return sessionManager.findSessionById(tabId)
+            // Install the "cookies" WebExtension and tracks user interaction with SERPs.
+            searchTelemetry.install(engine, this)
+
+            WebNotificationFeature(
+                context, engine, icons, R.drawable.ic_status_logo,
+                permissionStorage.permissionsStorage, HomeActivity::class.java
+            )
+
+            MediaSessionFeature(context, MediaSessionService::class.java, this).start()
+        }
     }
 
     /**
@@ -225,29 +248,11 @@ class Core(
     }
 
     /**
-     * The session manager component provides access to a centralized registry of
-     * all browser sessions (i.e. tabs). It is initialized here to persist and restore
-     * sessions from the [SessionStorage], and with a default session (about:blank) in
-     * case all sessions/tabs are closed.
+     * The [HistoryMetadataService] is used to record history metadata.
      */
-    @Deprecated("Use browser store (for reading) and use cases (for writing) instead")
-    val sessionManager by lazyMonitored {
-        SessionManager(engine, store).also {
-            // Install the "icons" WebExtension to automatically load icons for every visited website.
-            icons.install(engine, store)
-
-            // Install the "ads" WebExtension to get the links in an partner page.
-            adsTelemetry.install(engine, store)
-
-            // Install the "cookies" WebExtension and tracks user interaction with SERPs.
-            searchTelemetry.install(engine, store)
-
-            WebNotificationFeature(
-                context, engine, icons, R.drawable.ic_status_logo,
-                permissionStorage.permissionsStorage, HomeActivity::class.java
-            )
-
-            MediaSessionFeature(context, MediaSessionService::class.java, store).start()
+    val historyMetadataService: HistoryMetadataService by lazyMonitored {
+        DefaultHistoryMetadataService(storage = historyStorage).apply {
+            cleanup(System.currentTimeMillis() - HISTORY_METADATA_MAX_AGE_IN_MS)
         }
     }
 
@@ -289,7 +294,7 @@ class Core(
     val lazyHistoryStorage = lazyMonitored { PlacesHistoryStorage(context, crashReporter) }
     val lazyBookmarksStorage = lazyMonitored { PlacesBookmarksStorage(context) }
     val lazyPasswordsStorage = lazyMonitored { SyncableLoginsStorage(context, passwordsEncryptionKey) }
-    val lazyAutofillStorage = lazyMonitored { AutofillCreditCardsAddressesStorage(context) }
+    val lazyAutofillStorage = lazyMonitored { AutofillCreditCardsAddressesStorage(context, lazySecurePrefs) }
 
     /**
      * The storage component to sync and persist tabs in a Firefox Sync account.
@@ -333,6 +338,13 @@ class Core(
                         Pair(
                             context.getString(R.string.default_top_site_jd),
                             SupportUtils.JD_URL
+                        )
+                    )
+
+                    defaultTopSites.add(
+                        Pair(
+                            context.getString(R.string.default_top_site_pdd),
+                            SupportUtils.PDD_URL
                         )
                     )
                 } else {
@@ -381,6 +393,7 @@ class Core(
      * Shared Preferences that encrypt/decrypt using Android KeyStore and lib-dataprotect for 23+
      * only on Nightly/Debug for now, otherwise simply stored.
      * See https://github.com/mozilla-mobile/fenix/issues/8324
+     * Also, this needs revision. See https://github.com/mozilla-mobile/fenix/issues/19155
      */
     private fun getSecureAbove22Preferences() =
         SecureAbove22Preferences(
@@ -388,6 +401,9 @@ class Core(
             name = KEY_STORAGE_NAME,
             forceInsecure = !Config.channel.isNightlyOrDebug
         )
+
+    // Temporary. See https://github.com/mozilla-mobile/fenix/issues/19155
+    private val lazySecurePrefs = lazyMonitored { getSecureAbove22Preferences() }
 
     private val passwordsEncryptionKey by lazyMonitored {
         getSecureAbove22Preferences().getString(PASSWORDS_KEY)
@@ -425,5 +441,6 @@ class Core(
         private const val KEY_STORAGE_NAME = "core_prefs"
         private const val PASSWORDS_KEY = "passwords"
         private const val RECENTLY_CLOSED_MAX = 10
+        private const val HISTORY_METADATA_MAX_AGE_IN_MS = 7 * 24 * 60 * 60 * 1000 // 7 days
     }
 }

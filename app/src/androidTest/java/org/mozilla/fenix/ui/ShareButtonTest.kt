@@ -56,7 +56,6 @@ class ShareButtonTest {
         // From the 3-dot menu next to the Select share menu
         navigationToolbar {
         }.openThreeDotMenu {
-            verifyShareButton()
             clickShareButton()
             verifyShareScrim()
             verifySendToDeviceTitle()

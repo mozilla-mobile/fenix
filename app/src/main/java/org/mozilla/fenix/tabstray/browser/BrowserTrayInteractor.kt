@@ -4,59 +4,134 @@
 
 package org.mozilla.fenix.tabstray.browser
 
+import android.content.Context
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import mozilla.components.concept.tabstray.Tab
 import mozilla.components.feature.tabs.TabsUseCases
+import mozilla.components.support.base.feature.UserInteractionHandler
+import org.mozilla.fenix.selection.SelectionInteractor
+import org.mozilla.fenix.tabstray.TabsTrayAction
+import org.mozilla.fenix.components.metrics.MetricController
+import org.mozilla.fenix.tabstray.TabsTrayController
 import org.mozilla.fenix.tabstray.TabsTrayInteractor
+import org.mozilla.fenix.tabstray.TrayPagerAdapter
+import org.mozilla.fenix.tabstray.ext.numberOfGridColumns
+import org.mozilla.fenix.utils.Settings
+import org.mozilla.fenix.tabstray.TabsTrayState.Mode
+import org.mozilla.fenix.tabstray.TabsTrayStore
 
 /**
- * For interacting with UI that extends from [BaseBrowserTrayList] and other browser tab tray views.
+ * For interacting with UI that is specifically for [BrowserTrayList] and other browser
+ * tab tray views.
  */
-interface BrowserTrayInteractor {
-
-    /**
-     * Select the tab.
-     */
-    fun onOpenTab(tab: Tab)
+interface BrowserTrayInteractor : SelectionInteractor<Tab>, UserInteractionHandler {
 
     /**
      * Close the tab.
      */
-    fun onCloseTab(tab: Tab)
+    fun close(tab: Tab)
 
     /**
-     * Enable or disable multi-select mode.
+     * Returns the appropriate [RecyclerView.LayoutManager] to be used at [position].
      */
-    fun onMultiSelect(enabled: Boolean)
+    fun getLayoutManagerForPosition(context: Context, position: Int): RecyclerView.LayoutManager
+
+    /**
+     * TabTray's Floating Action Button clicked.
+     */
+    fun onFabClicked(isPrivate: Boolean)
 }
 
 /**
  * A default implementation of [BrowserTrayInteractor].
  */
 class DefaultBrowserTrayInteractor(
+    private val store: TabsTrayStore,
     private val trayInteractor: TabsTrayInteractor,
-    private val selectTabUseCase: TabsUseCases.SelectTabUseCase,
-    private val removeUseCases: TabsUseCases.RemoveTabUseCase
+    private val controller: TabsTrayController,
+    private val selectTab: TabsUseCases.SelectTabUseCase,
+    private val settings: Settings,
+    private val metrics: MetricController
 ) : BrowserTrayInteractor {
 
-    /**
-     * See [BrowserTrayInteractor.onOpenTab].
-     */
-    override fun onOpenTab(tab: Tab) {
-        selectTabUseCase.invoke(tab.id)
-        trayInteractor.navigateToBrowser()
+    private val selectTabWrapper by lazy {
+        SelectTabUseCaseWrapper(metrics, selectTab) {
+            trayInteractor.onBrowserTabSelected()
+        }
+    }
+
+    private val removeTabWrapper by lazy {
+        RemoveTabUseCaseWrapper(metrics) {
+            // Handle removal from the interactor where we can also handle "undo" visuals.
+            trayInteractor.onDeleteTab(it)
+        }
     }
 
     /**
-     * See [BrowserTrayInteractor.onCloseTab].
+     * See [SelectionInteractor.open]
      */
-    override fun onCloseTab(tab: Tab) {
-        removeUseCases.invoke(tab.id)
+    override fun open(item: Tab) {
+        selectTabWrapper.invoke(item.id)
     }
 
     /**
-     * See [BrowserTrayInteractor.onMultiSelect].
+     * See [BrowserTrayInteractor.close].
      */
-    override fun onMultiSelect(enabled: Boolean) {
-        // TODO https://github.com/mozilla-mobile/fenix/issues/18443
+    override fun close(tab: Tab) {
+        removeTabWrapper.invoke(tab.id)
+    }
+
+    /**
+     * See [SelectionInteractor.select]
+     */
+    override fun select(item: Tab) {
+        store.dispatch(TabsTrayAction.AddSelectTab(item))
+    }
+
+    /**
+     * See [SelectionInteractor.deselect]
+     */
+    override fun deselect(item: Tab) {
+        store.dispatch(TabsTrayAction.RemoveSelectTab(item))
+    }
+
+    /**
+     * See [UserInteractionHandler.onBackPressed]
+     *
+     * TODO move this to the navigation interactor when it lands.
+     */
+    override fun onBackPressed(): Boolean {
+        if (store.state.mode is Mode.Select) {
+            store.dispatch(TabsTrayAction.ExitSelectMode)
+            return true
+        }
+        return false
+    }
+
+    override fun getLayoutManagerForPosition(
+        context: Context,
+        position: Int
+    ): RecyclerView.LayoutManager {
+        if (position == TrayPagerAdapter.POSITION_SYNCED_TABS) {
+            // Lists are just Grids with one column :)
+            return GridLayoutManager(context, 1)
+        }
+
+        // Normal/Private tabs
+        val numberOfColumns = if (settings.gridTabView) {
+            context.numberOfGridColumns
+        } else {
+            1
+        }
+
+        return GridLayoutManager(context, numberOfColumns)
+    }
+
+    /**
+     * See [BrowserTrayInteractor.onFabClicked]
+     */
+    override fun onFabClicked(isPrivate: Boolean) {
+        controller.handleOpeningNewTab(isPrivate)
     }
 }

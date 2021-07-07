@@ -168,20 +168,22 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             )
         )
 
+        val fromHomeFragment =
+            findNavController().previousBackStackEntry?.destination?.id == R.id.homeFragment
+
         toolbarView = ToolbarView(
             requireContext(),
             interactor,
             historyStorageProvider(),
             isPrivate,
             view.toolbar,
-            requireComponents.core.engine
+            requireComponents.core.engine,
+            fromHomeFragment
         )
 
         val awesomeBar = view.awesome_bar
         awesomeBar.customizeForBottomToolbar = requireContext().settings().shouldUseBottomToolbar
 
-        val fromHomeFragment =
-            findNavController().previousBackStackEntry?.destination?.id == R.id.homeFragment
         awesomeBarView = AwesomeBarView(
             activity,
             interactor,
@@ -270,6 +272,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         }
 
         fill_link_from_clipboard.setOnClickListener {
+            requireComponents.analytics.metrics.track(Event.ClipboardSuggestionClicked)
             view.hideKeyboard()
             toolbarView.view.clearFocus()
             (activity as HomeActivity)
@@ -410,6 +413,8 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         } else null
     }
 
+    @Suppress("DEPRECATION")
+    // https://github.com/mozilla-mobile/fenix/issues/19920
     private fun createQrFeature(): QrFeature {
         return QrFeature(
             requireContext(),
@@ -431,12 +436,11 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                             dialog.cancel()
                         }
                         setPositiveButton(R.string.qr_scanner_dialog_positive) { dialog: DialogInterface, _ ->
-                            (activity as HomeActivity)
-                                .openToBrowserAndLoad(
-                                    searchTermOrURL = result,
-                                    newTab = store.state.tabId == null,
-                                    from = BrowserDirection.FromSearchDialog
-                                )
+                            (activity as? HomeActivity)?.openToBrowserAndLoad(
+                                searchTermOrURL = result,
+                                newTab = store.state.tabId == null,
+                                from = BrowserDirection.FromSearchDialog
+                            )
                             dialog.dismiss()
                         }
                         create()
@@ -446,6 +450,8 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         )
     }
 
+    @Suppress("DEPRECATION")
+    // https://github.com/mozilla-mobile/fenix/issues/19920
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
@@ -532,6 +538,8 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         }
     }
 
+    @Suppress("DEPRECATION")
+    // https://github.com/mozilla-mobile/fenix/issues/19919
     private fun launchVoiceSearch() {
         // Note if a user disables speech while the app is on the search fragment
         // the voice button will still be available and *will* cause a crash if tapped,
@@ -552,7 +560,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
     private fun updateClipboardSuggestion(searchState: SearchFragmentState, clipboardUrl: String?) {
         val shouldShowView = searchState.showClipboardSuggestions &&
                 searchState.query.isEmpty() &&
-                !clipboardUrl.isNullOrEmpty()
+                !clipboardUrl.isNullOrEmpty() && !searchState.showSearchShortcuts
 
         fill_link_from_clipboard.isVisible = shouldShowView
         fill_link_divider.isVisible = shouldShowView

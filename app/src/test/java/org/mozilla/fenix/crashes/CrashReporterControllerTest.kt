@@ -16,6 +16,7 @@ import org.junit.Test
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.components.metrics.Event
+
 import org.mozilla.fenix.utils.Settings
 
 class CrashReporterControllerTest {

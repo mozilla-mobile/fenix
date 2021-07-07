@@ -130,7 +130,8 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
         menu.close()
         redirectToReAuth(
             listOf(R.id.editLoginFragment, R.id.savedLoginsFragment),
-            findNavController().currentDestination?.id
+            findNavController().currentDestination?.id,
+            R.id.loginDetailFragment
         )
         super.onPause()
     }

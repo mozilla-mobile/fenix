@@ -5,7 +5,6 @@
 package org.mozilla.fenix.components.metrics
 
 import androidx.annotation.VisibleForTesting
-import com.leanplum.Leanplum
 import mozilla.components.browser.awesomebar.facts.BrowserAwesomeBarFacts
 import mozilla.components.browser.menu.facts.BrowserMenuFacts
 import mozilla.components.browser.toolbar.facts.ToolbarFacts
@@ -21,7 +20,8 @@ import mozilla.components.feature.customtabs.CustomTabsFacts
 import mozilla.components.feature.downloads.facts.DownloadsFacts
 import mozilla.components.feature.findinpage.facts.FindInPageFacts
 import mozilla.components.feature.media.facts.MediaFacts
-import mozilla.components.feature.prompts.dialog.LoginDialogFacts
+import mozilla.components.feature.prompts.facts.LoginDialogFacts
+import mozilla.components.feature.prompts.facts.CreditCardAutofillDialogFacts
 import mozilla.components.feature.pwa.ProgressiveWebAppFacts
 import mozilla.components.feature.syncedtabs.facts.SyncedTabsFacts
 import mozilla.components.feature.top.sites.facts.TopSitesFacts
@@ -162,6 +162,10 @@ internal class ReleaseMetricController(
         Component.FEATURE_PROMPTS to LoginDialogFacts.Items.CANCEL -> Event.LoginDialogPromptCancelled
         Component.FEATURE_PROMPTS to LoginDialogFacts.Items.NEVER_SAVE -> Event.LoginDialogPromptNeverSave
         Component.FEATURE_PROMPTS to LoginDialogFacts.Items.SAVE -> Event.LoginDialogPromptSave
+        Component.FEATURE_PROMPTS to CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_SUCCESS -> {
+            settings.creditCardsAutofilledCount += 1
+            null
+        }
 
         Component.FEATURE_FINDINPAGE to FindInPageFacts.Items.CLOSE -> Event.FindInPageClosed
         Component.FEATURE_FINDINPAGE to FindInPageFacts.Items.INPUT -> Event.FindInPageSearchCommitted
@@ -179,7 +183,7 @@ internal class ReleaseMetricController(
         }
 
         Component.BROWSER_TOOLBAR to ToolbarFacts.Items.MENU -> {
-            metadata?.get("customTab")?.let { Event.CustomTabsMenuOpened }
+            metadata?.get("customTab")?.let { Event.CustomTabsMenuOpened } ?: Event.ToolbarMenuShown
         }
         Component.BROWSER_MENU to BrowserMenuFacts.Items.WEB_EXTENSION_MENU_ITEM -> {
             metadata?.get("id")?.let { Event.AddonsOpenInToolbarMenu(it.toString()) }
@@ -218,15 +222,13 @@ internal class ReleaseMetricController(
                 if (installedAddons is List<*>) {
                     settings.installedAddonsCount = installedAddons.size
                     settings.installedAddonsList = installedAddons.joinToString(",")
-                    Leanplum.setUserAttributes(mapOf("installed_addons" to installedAddons.size))
                 }
             }
 
             metadata?.get("enabled")?.let { enabledAddons ->
                 if (enabledAddons is List<*>) {
                     settings.enabledAddonsCount = enabledAddons.size
-                    settings.enabledAddonsList = enabledAddons.joinToString()
-                    Leanplum.setUserAttributes(mapOf("enabled_addons" to enabledAddons.size))
+                    settings.enabledAddonsList = enabledAddons.joinToString(",")
                 }
             }
 

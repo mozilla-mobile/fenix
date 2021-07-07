@@ -20,10 +20,8 @@ set -v
 pushd $WORKSPACE
 mkdir -p android-gradle-dependencies /builds/worker/artifacts
 
-cp -R ${NEXUS_WORK}/storage/jcenter android-gradle-dependencies
 cp -R ${NEXUS_WORK}/storage/google android-gradle-dependencies
 cp -R ${NEXUS_WORK}/storage/central android-gradle-dependencies
-cp -R ${NEXUS_WORK}/storage/leanplum android-gradle-dependencies
 
 tar cf - android-gradle-dependencies | xz > /builds/worker/artifacts/android-gradle-dependencies.tar.xz
 

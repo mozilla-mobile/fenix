@@ -10,9 +10,9 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
+import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
-import org.mozilla.fenix.R
 import org.mozilla.fenix.components.tips.Tip
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.home.HomeFragmentState
@@ -22,20 +22,30 @@ import org.mozilla.fenix.home.OnboardingState
 
 // This method got a little complex with the addition of the tab tray feature flag
 // When we remove the tabs from the home screen this will get much simpler again.
-@Suppress("ComplexMethod")
+@Suppress("ComplexMethod", "LongParameterList")
 private fun normalModeAdapterItems(
     topSites: List<TopSite>,
     collections: List<TabCollection>,
     expandedCollections: Set<Long>,
     tip: Tip?,
-    showCollectionsPlaceholder: Boolean
+    showCollectionsPlaceholder: Boolean,
+    showSetAsDefaultBrowserCard: Boolean,
+    recentTabs: List<TabSessionState>
 ): List<AdapterItem> {
     val items = mutableListOf<AdapterItem>()
 
     tip?.let { items.add(AdapterItem.TipItem(it)) }
 
+    if (showSetAsDefaultBrowserCard) {
+        items.add(AdapterItem.ExperimentDefaultBrowserCard)
+    }
+
     if (topSites.isNotEmpty()) {
         items.add(AdapterItem.TopSitePager(topSites))
+    }
+
+    if (recentTabs.isNotEmpty()) {
+        showRecentTabs(recentTabs, items)
     }
 
     if (collections.isEmpty()) {
@@ -47,6 +57,16 @@ private fun normalModeAdapterItems(
     }
 
     return items
+}
+
+private fun showRecentTabs(
+    recentTabs: List<TabSessionState>,
+    items: MutableList<AdapterItem>
+) {
+    items.add(AdapterItem.RecentTabsHeader)
+    recentTabs.forEach {
+        items.add(AdapterItem.RecentTabItem(it))
+    }
 }
 
 private fun showCollections(
@@ -71,6 +91,13 @@ private fun privateModeAdapterItems() = listOf(AdapterItem.PrivateBrowsingDescri
 private fun onboardingAdapterItems(onboardingState: OnboardingState): List<AdapterItem> {
     val items: MutableList<AdapterItem> = mutableListOf(AdapterItem.OnboardingHeader)
 
+    items.addAll(
+        listOf(
+            AdapterItem.OnboardingThemePicker,
+            AdapterItem.OnboardingToolbarPositionPicker,
+            AdapterItem.OnboardingTrackingProtection
+        )
+    )
     // Customize FxA items based on where we are with the account state:
     items.addAll(
         when (onboardingState) {
@@ -90,14 +117,6 @@ private fun onboardingAdapterItems(onboardingState: OnboardingState): List<Adapt
 
     items.addAll(
         listOf(
-            AdapterItem.OnboardingSectionHeader {
-                val appName = it.getString(R.string.app_name)
-                it.getString(R.string.onboarding_feature_section_header, appName)
-            },
-            AdapterItem.OnboardingTrackingProtection,
-            AdapterItem.OnboardingThemePicker,
-            AdapterItem.OnboardingPrivateBrowsing,
-            AdapterItem.OnboardingToolbarPositionPicker,
             AdapterItem.OnboardingPrivacyNotice,
             AdapterItem.OnboardingFinish
         )
@@ -112,7 +131,9 @@ private fun HomeFragmentState.toAdapterList(): List<AdapterItem> = when (mode) {
         collections,
         expandedCollections,
         tip,
-        showCollectionPlaceholder
+        showCollectionPlaceholder,
+        showSetAsDefaultBrowserCard,
+        recentTabs
     )
     is Mode.Private -> privateModeAdapterItems()
     is Mode.Onboarding -> onboardingAdapterItems(mode.state)

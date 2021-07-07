@@ -24,6 +24,7 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.crashes.CrashListActivity
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.settings.about.AboutItemType.LICENSING_INFO
 import org.mozilla.fenix.settings.about.AboutItemType.PRIVACY_NOTICE
@@ -52,7 +53,7 @@ class AboutFragment : Fragment(), AboutPageListener {
         appName = getString(R.string.app_name)
         headerAppName =
             if (Config.channel.isRelease) getString(R.string.daylight_app_name) else appName
-        activity?.title = getString(R.string.preferences_about, appName)
+        showToolbar(getString(R.string.preferences_about, appName))
 
         return rootView
     }

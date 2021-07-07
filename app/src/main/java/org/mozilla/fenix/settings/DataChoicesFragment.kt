@@ -7,7 +7,6 @@ package org.mozilla.fenix.settings
 import android.os.Bundle
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
-import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.MetricServiceType
 import org.mozilla.fenix.ext.components
@@ -67,19 +66,11 @@ class DataChoicesFragment : PreferenceFragmentCompat() {
 
         requirePreference<SwitchPreference>(R.string.pref_key_marketing_telemetry).apply {
             isChecked = context.settings().isMarketingTelemetryEnabled
-
-            val appName = context.getString(R.string.app_name)
-            summary = String.format(
-                context.getString(R.string.preferences_marketing_data_description),
-                appName
-            )
-
             onPreferenceChangeListener = SharedPreferenceUpdater()
         }
 
         requirePreference<SwitchPreference>(R.string.pref_key_experimentation).apply {
             isChecked = context.settings().isExperimentationEnabled
-            isVisible = FeatureFlags.nimbusExperiments
             onPreferenceChangeListener = SharedPreferenceUpdater()
         }
     }

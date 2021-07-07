@@ -85,21 +85,25 @@ import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import mozilla.components.ui.tabcounter.TabCounterMenu
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.Config
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.GleanMetrics.PerfStartup
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BrowserAnimator.Companion.getToolbarNavOptions
+import org.mozilla.fenix.browser.BrowserFragmentDirections
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.PrivateShortcutCreateManager
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.TabCollectionStorage
+import org.mozilla.fenix.components.accounts.AccountState
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.tips.FenixTipManager
 import org.mozilla.fenix.components.tips.Tip
 import org.mozilla.fenix.components.tips.providers.MasterPasswordTipProvider
 import org.mozilla.fenix.components.toolbar.FenixTabCounterMenu
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
+import org.mozilla.fenix.ext.asRecentTabs
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.hideToolbar
 import org.mozilla.fenix.ext.measureNoInline
@@ -109,7 +113,9 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.mozonline.showPrivacyPopWindow
+import org.mozilla.fenix.home.recenttabs.controller.DefaultRecentTabsController
 import org.mozilla.fenix.home.sessioncontrol.DefaultSessionControlController
+import org.mozilla.fenix.home.recenttabs.RecentTabsListFeature
 import org.mozilla.fenix.home.sessioncontrol.SessionControlInteractor
 import org.mozilla.fenix.home.sessioncontrol.SessionControlView
 import org.mozilla.fenix.home.sessioncontrol.viewholders.CollectionViewHolder
@@ -169,6 +175,7 @@ class HomeFragment : Fragment() {
     private lateinit var currentMode: CurrentMode
 
     private val topSitesFeature = ViewBoundFeatureWrapper<TopSitesFeature>()
+    private val recentTabsListFeature = ViewBoundFeatureWrapper<RecentTabsListFeature>()
 
     @VisibleForTesting
     internal var getMenuButton: () -> MenuButton? = { menuButton }
@@ -225,7 +232,9 @@ class HomeFragment : Fragment() {
                             )
                         ).getTip()
                     },
-                    showCollectionPlaceholder = components.settings.showCollectionsPlaceholderOnHome
+                    showCollectionPlaceholder = components.settings.showCollectionsPlaceholderOnHome,
+                    showSetAsDefaultBrowserCard = components.settings.shouldShowSetAsDefaultBrowserCard(),
+                    recentTabs = components.core.store.state.asRecentTabs()
                 )
             )
         }
@@ -240,8 +249,19 @@ class HomeFragment : Fragment() {
             view = view
         )
 
+        if (FeatureFlags.showRecentTabsFeature) {
+            recentTabsListFeature.set(
+                feature = RecentTabsListFeature(
+                    browserStore = components.core.store,
+                    homeStore = homeFragmentStore
+                ),
+                owner = viewLifecycleOwner,
+                view = view
+            )
+        }
+
         _sessionControlInteractor = SessionControlInteractor(
-            DefaultSessionControlController(
+            controller = DefaultSessionControlController(
                 activity = activity,
                 settings = components.settings,
                 engine = components.core.engine,
@@ -258,8 +278,12 @@ class HomeFragment : Fragment() {
                 hideOnboarding = ::hideOnboardingAndOpenSearch,
                 registerCollectionStorageObserver = ::registerCollectionStorageObserver,
                 showDeleteCollectionPrompt = ::showDeleteCollectionPrompt,
-                showTabTray = ::openTabTray,
+                showTabTray = ::openTabsTray,
                 handleSwipedItemDeletionCancel = ::handleSwipedItemDeletionCancel
+            ),
+            recentTabController = DefaultRecentTabsController(
+                selectTabUseCase = components.useCases.tabsUseCases.selectTab,
+                navController = findNavController()
             )
         )
 
@@ -359,82 +383,84 @@ class HomeFragment : Fragment() {
 
     @Suppress("LongMethod", "ComplexMethod")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) =
-            PerfStartup.homeFragmentOnViewCreated.measureNoInline { // weird indent so we don't have to break blame.
-        super.onViewCreated(view, savedInstanceState)
+        PerfStartup.homeFragmentOnViewCreated.measureNoInline {
+            super.onViewCreated(view, savedInstanceState)
+            context?.metrics?.track(Event.HomeScreenDisplayed)
 
-        observeSearchEngineChanges()
-        createHomeMenu(requireContext(), WeakReference(view.menuButton))
-        createTabCounterMenu(view)
+            observeSearchEngineChanges()
+            createHomeMenu(requireContext(), WeakReference(view.menuButton))
+            createTabCounterMenu(view)
 
-        view.menuButton.setColorFilter(
-            ContextCompat.getColor(
-                requireContext(),
-                ThemeManager.resolveAttribute(R.attr.primaryText, requireContext())
-            )
-        )
-
-        view.toolbar.compoundDrawablePadding =
-            view.resources.getDimensionPixelSize(R.dimen.search_bar_search_engine_icon_padding)
-        view.toolbar_wrapper.setOnClickListener {
-            navigateToSearch()
-            requireComponents.analytics.metrics.track(Event.SearchBarTapped(Event.SearchBarTapped.Source.HOME))
-        }
-
-        view.toolbar_wrapper.setOnLongClickListener {
-            ToolbarPopupWindow.show(
-                WeakReference(it),
-                handlePasteAndGo = sessionControlInteractor::onPasteAndGo,
-                handlePaste = sessionControlInteractor::onPaste,
-                copyVisible = false
-            )
-            true
-        }
-
-        view.tab_button.setOnClickListener {
-            openTabTray()
-        }
-
-        PrivateBrowsingButtonView(
-            privateBrowsingButton,
-            browsingModeManager
-        ) { newMode ->
-            if (newMode == BrowsingMode.Private) {
-                requireContext().settings().incrementNumTimesPrivateModeOpened()
-            }
-
-            if (onboarding.userHasBeenOnboarded()) {
-                homeFragmentStore.dispatch(
-                    HomeFragmentAction.ModeChange(Mode.fromBrowsingMode(newMode))
+            view.menuButton.setColorFilter(
+                ContextCompat.getColor(
+                    requireContext(),
+                    ThemeManager.resolveAttribute(R.attr.primaryText, requireContext())
                 )
+            )
+
+            view.toolbar.compoundDrawablePadding =
+                view.resources.getDimensionPixelSize(R.dimen.search_bar_search_engine_icon_padding)
+            view.toolbar_wrapper.setOnClickListener {
+                navigateToSearch()
+                requireComponents.analytics.metrics.track(Event.SearchBarTapped(Event.SearchBarTapped.Source.HOME))
+            }
+
+            view.toolbar_wrapper.setOnLongClickListener {
+                ToolbarPopupWindow.show(
+                    WeakReference(it),
+                    handlePasteAndGo = sessionControlInteractor::onPasteAndGo,
+                    handlePaste = sessionControlInteractor::onPaste,
+                    copyVisible = false
+                )
+                true
+            }
+
+            view.tab_button.setOnClickListener {
+                requireComponents.analytics.metrics.track(Event.StartOnHomeOpenTabsTray)
+                openTabsTray()
+            }
+
+            PrivateBrowsingButtonView(
+                privateBrowsingButton,
+                browsingModeManager
+            ) { newMode ->
+                if (newMode == BrowsingMode.Private) {
+                    requireContext().settings().incrementNumTimesPrivateModeOpened()
+                }
+
+                if (onboarding.userHasBeenOnboarded()) {
+                    homeFragmentStore.dispatch(
+                        HomeFragmentAction.ModeChange(Mode.fromBrowsingMode(newMode))
+                    )
+                }
+            }
+
+            consumeFrom(requireComponents.core.store) {
+                updateTabCounter(it)
+            }
+
+            homeViewModel.sessionToDelete?.also {
+                if (it == ALL_NORMAL_TABS || it == ALL_PRIVATE_TABS) {
+                    removeAllTabsAndShowSnackbar(it)
+                } else {
+                    removeTabAndShowSnackbar(it)
+                }
+            }
+
+            homeViewModel.sessionToDelete = null
+
+            updateTabCounter(requireComponents.core.store.state)
+
+            if (bundleArgs.getBoolean(FOCUS_ON_ADDRESS_BAR)) {
+                navigateToSearch()
+            } else if (bundleArgs.getLong(FOCUS_ON_COLLECTION, -1) >= 0) {
+                // No need to scroll to async'd loaded TopSites if we want to scroll to collections.
+                homeViewModel.shouldScrollToTopSites = false
+                /* Triggered when the user has added a tab to a collection and has tapped
+                * the View action on the [TabsTrayDialogFragment] snackbar.*/
+                scrollAndAnimateCollection(bundleArgs.getLong(FOCUS_ON_COLLECTION, -1))
             }
         }
-
-        consumeFrom(requireComponents.core.store) {
-            updateTabCounter(it)
-        }
-
-        homeViewModel.sessionToDelete?.also {
-            if (it == ALL_NORMAL_TABS || it == ALL_PRIVATE_TABS) {
-                removeAllTabsAndShowSnackbar(it)
-            } else {
-                removeTabAndShowSnackbar(it)
-            }
-        }
-
-        homeViewModel.sessionToDelete = null
-
-        updateTabCounter(requireComponents.core.store.state)
-
-        if (bundleArgs.getBoolean(FOCUS_ON_ADDRESS_BAR)) {
-            navigateToSearch()
-        } else if (bundleArgs.getLong(FOCUS_ON_COLLECTION, -1) >= 0) {
-            // No need to scroll to async'd loaded TopSites if we want to scroll to collections.
-            homeViewModel.shouldScrollToTopSites = false
-            /* Triggered when the user has added a tab to a collection and has tapped
-            * the View action on the [TabsTrayDialogFragment] snackbar.*/
-            scrollAndAnimateCollection(bundleArgs.getLong(FOCUS_ON_COLLECTION, -1))
-        }
-    }
 
     private fun observeSearchEngineChanges() {
         consumeFlow(store) { flow ->
@@ -573,7 +599,8 @@ class HomeFragment : Fragment() {
                         )
                     ).getTip()
                 },
-                showCollectionPlaceholder = components.settings.showCollectionsPlaceholderOnHome
+                showCollectionPlaceholder = components.settings.showCollectionsPlaceholderOnHome,
+                recentTabs = components.core.store.state.asRecentTabs()
             )
         )
 
@@ -622,7 +649,8 @@ class HomeFragment : Fragment() {
     }
 
     private fun navToSavedLogins() {
-        findNavController().navigate(HomeFragmentDirections.actionGlobalSavedLoginsAuthFragment())
+        findNavController().navigate(
+            HomeFragmentDirections.actionGlobalSavedLoginsAuthFragment())
     }
 
     private fun dispatchModeChanges(mode: Mode) {
@@ -738,6 +766,7 @@ class HomeFragment : Fragment() {
 
     private fun hideOnboardingAndOpenSearch() {
         hideOnboardingIfNeeded()
+        appBarLayout?.setExpanded(true, true)
         navigateToSearch()
     }
 
@@ -777,12 +806,21 @@ class HomeFragment : Fragment() {
                             R.id.homeFragment,
                             HomeFragmentDirections.actionGlobalSettingsFragment()
                         )
+                        requireComponents.analytics.metrics.track(Event.HomeMenuSettingsItemClicked)
                     }
-                    HomeMenu.Item.SyncedTabs -> {
+                    is HomeMenu.Item.SyncAccount -> {
                         hideOnboardingIfNeeded()
+                        val directions = when (it.accountState) {
+                            AccountState.AUTHENTICATED ->
+                                BrowserFragmentDirections.actionGlobalAccountSettingsFragment()
+                            AccountState.NEEDS_REAUTHENTICATION ->
+                                BrowserFragmentDirections.actionGlobalAccountProblemFragment()
+                            AccountState.NO_ACCOUNT ->
+                                BrowserFragmentDirections.actionGlobalTurnOnSync()
+                        }
                         nav(
                             R.id.homeFragment,
-                            HomeFragmentDirections.actionGlobalSyncedTabsFragment()
+                            directions
                         )
                     }
                     HomeMenu.Item.Bookmarks -> {
@@ -841,18 +879,21 @@ class HomeFragment : Fragment() {
                             }
                         )
                     }
-                    HomeMenu.Item.Sync -> {
+                    HomeMenu.Item.ReconnectSync -> {
                         hideOnboardingIfNeeded()
                         nav(
                             R.id.homeFragment,
                             HomeFragmentDirections.actionGlobalAccountProblemFragment()
                         )
                     }
-                    HomeMenu.Item.AddonsManager -> {
+                    HomeMenu.Item.Extensions -> {
                         nav(
                             R.id.homeFragment,
                             HomeFragmentDirections.actionGlobalAddonsManagementFragment()
                         )
+                    }
+                    is HomeMenu.Item.DesktopMode -> {
+                        context.settings().openNextTabInDesktopMode = it.checked
                     }
                 }
             },
@@ -1015,15 +1056,10 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun openTabTray() {
-        val direction = if (requireContext().settings().tabsTrayRewrite) {
-            HomeFragmentDirections.actionGlobalTabsTrayFragment()
-        } else {
-            HomeFragmentDirections.actionGlobalTabTrayDialogFragment()
-        }
+    private fun openTabsTray() {
         findNavController().nav(
             R.id.homeFragment,
-            direction
+            HomeFragmentDirections.actionGlobalTabsTrayFragment()
         )
     }
 

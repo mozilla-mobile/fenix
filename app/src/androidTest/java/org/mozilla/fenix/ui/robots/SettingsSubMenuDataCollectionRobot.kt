@@ -16,6 +16,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import org.hamcrest.CoreMatchers.allOf
 import org.mozilla.fenix.R
+import org.mozilla.fenix.helpers.TestHelper.appName
 import org.mozilla.fenix.helpers.assertIsEnabled
 import org.mozilla.fenix.helpers.click
 
@@ -68,7 +69,7 @@ private fun assertDataCollectionOptions() {
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
     val usageAndTechnicalDataText =
-        "Shares performance, usage, hardware and customization data about your browser with Mozilla to help us make Firefox Preview better"
+        "Shares performance, usage, hardware and customization data about your browser with Mozilla to help us make $appName better"
 
     onView(withText(usageAndTechnicalDataText))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
@@ -77,7 +78,7 @@ private fun assertDataCollectionOptions() {
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
     val marketingDataText =
-        "Shares data about what features you use in Firefox Preview with Leanplum, our mobile marketing vendor."
+        "Shares basic usage data with Adjust, our mobile marketing vendor"
 
     onView(withText(marketingDataText))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))

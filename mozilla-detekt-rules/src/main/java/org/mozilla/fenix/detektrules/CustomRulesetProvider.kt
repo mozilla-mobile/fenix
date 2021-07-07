@@ -22,7 +22,7 @@ class CustomRulesetProvider : RuleSetProvider {
             MozillaStrictModeSuppression(config),
             MozillaCorrectUnitTestRunner(config),
             MozillaRunBlockingCheck(config),
-            MozillaUseLazyMonitored(config)
+            MozillaUseLazyMonitored(config),
         )
     )
 }

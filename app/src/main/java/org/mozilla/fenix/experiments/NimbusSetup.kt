@@ -7,25 +7,35 @@ package org.mozilla.fenix.experiments
 import android.content.Context
 import android.net.Uri
 import android.os.StrictMode
-import io.sentry.Sentry
 import mozilla.components.service.nimbus.NimbusApi
 import mozilla.components.service.nimbus.Nimbus
 import mozilla.components.service.nimbus.NimbusAppInfo
 import mozilla.components.service.nimbus.NimbusDisabled
 import mozilla.components.service.nimbus.NimbusServerSettings
 import mozilla.components.support.base.log.logger.Logger
-import org.mozilla.fenix.Config
+import org.mozilla.fenix.BuildConfig
+import org.mozilla.fenix.R
 import org.mozilla.fenix.components.isSentryEnabled
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 
 @Suppress("TooGenericExceptionCaught")
-fun createNimbus(context: Context, url: String?): NimbusApi =
-    try {
+fun createNimbus(context: Context, url: String?): NimbusApi {
+    val errorReporter: ((String, Throwable) -> Unit) = { message, e ->
+        Logger.error("Nimbus error: $message", e)
+        if (isSentryEnabled()) {
+            context.components.analytics.crashReporter.submitCaughtException(e)
+        }
+    }
+    return try {
         // Eventually we'll want to use `NimbusDisabled` when we have no NIMBUS_ENDPOINT.
         // but we keep this here to not mix feature flags and how we configure Nimbus.
         val serverSettings = if (!url.isNullOrBlank()) {
-            NimbusServerSettings(url = Uri.parse(url))
+            if (context.settings().nimbusUsePreview) {
+                NimbusServerSettings(url = Uri.parse(url), collection = "nimbus-preview")
+            } else {
+                NimbusServerSettings(url = Uri.parse(url))
+            }
         } else {
             null
         }
@@ -47,9 +57,12 @@ fun createNimbus(context: Context, url: String?): NimbusApi =
         // https://github.com/mozilla/probe-scraper/blob/master/repositories.yaml
         val appInfo = NimbusAppInfo(
             appName = "fenix",
-            channel = Config.channel.toString()
+            // Note: Using BuildConfig.BUILD_TYPE is important here so that it matches the value
+            // passed into Glean. `Config.channel.toString()` turned out to be non-deterministic
+            // and would mostly produce the value `Beta` and rarely would produce `beta`.
+            channel = BuildConfig.BUILD_TYPE
         )
-        Nimbus(context, appInfo, serverSettings).apply {
+        Nimbus(context, appInfo, serverSettings, errorReporter).apply {
             // This performs the minimal amount of work required to load branch and enrolment data
             // into memory. If `getExperimentBranch` is called from another thread between here
             // and the next nimbus disk write (setting `globalUserParticipation` or
@@ -61,6 +74,10 @@ fun createNimbus(context: Context, url: String?): NimbusApi =
                 // This opts out of nimbus experiments. It involves writing to disk, so does its
                 // work on the db thread.
                 globalUserParticipation = enabled
+            }
+
+            if (url.isNullOrBlank()) {
+                setExperimentsLocally(R.raw.initial_experiments)
             }
 
             // We may have downloaded experiments on a previous run, so let's start using them
@@ -75,10 +92,7 @@ fun createNimbus(context: Context, url: String?): NimbusApi =
     } catch (e: Throwable) {
         // Something went wrong. We'd like not to, but stability of the app is more important than
         // failing fast here.
-        if (isSentryEnabled()) {
-            Sentry.capture(e)
-        } else {
-            Logger.error("Failed to initialize Nimbus", e)
-        }
+        errorReporter("Failed to initialize Nimbus", e)
         NimbusDisabled()
     }
+}

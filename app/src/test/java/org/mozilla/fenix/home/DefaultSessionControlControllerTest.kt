@@ -128,7 +128,9 @@ class DefaultSessionControlControllerTest {
             expandedCollections = emptySet(),
             mode = Mode.Normal,
             topSites = emptyList(),
-            showCollectionPlaceholder = true
+            showCollectionPlaceholder = true,
+            showSetAsDefaultBrowserCard = true,
+            recentTabs = emptyList()
         )
 
         every { navController.currentDestination } returns mockk {
@@ -659,7 +661,7 @@ class DefaultSessionControlControllerTest {
 
         verify {
             navController.navigate(
-                match<NavDirections> { it.actionId == R.id.action_global_tabTrayDialogFragment },
+                match<NavDirections> { it.actionId == R.id.action_global_tabsTrayFragment },
                 null
             )
         }

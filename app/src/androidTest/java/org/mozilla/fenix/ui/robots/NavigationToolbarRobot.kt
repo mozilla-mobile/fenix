@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.IdlingResource
-import androidx.test.espresso.IdlingResourceTimeoutException
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.pressImeActionButton
 import androidx.test.espresso.action.ViewActions.replaceText
@@ -33,6 +32,7 @@ import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
+import junit.framework.TestCase.assertTrue
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.anyOf
 import org.hamcrest.CoreMatchers.containsString
@@ -109,51 +109,47 @@ class NavigationToolbarRobot {
                         withResourceName("onboarding_message"), // Req ETP dialog
                         withResourceName("download_button")
                     )
-                )
-                    .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+                ).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
             }
 
             BrowserRobot().interact()
             return BrowserRobot.Transition()
         }
 
-        fun openTrackingProtectionTestPage(url: Uri, etpEnabled: Boolean, interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
-            sessionLoadedIdlingResource = SessionLoadedIdlingResource()
-
+        fun openTrackingProtectionTestPage(
+            url: Uri,
+            etpEnabled: Boolean,
+            interact: BrowserRobot.() -> Unit
+        ): BrowserRobot.Transition {
             openEditURLView()
 
             awesomeBar().perform(replaceText(url.toString()), pressImeActionButton())
 
-            runWithIdleRes(sessionLoadedIdlingResource) {
-                when (etpEnabled) {
-                    true ->
-                        try {
-                            onView(withId(R.id.onboarding_message))
-                                .check(matches(isDisplayed()))
-                        } catch (e: IdlingResourceTimeoutException) {
-                            openThreeDotMenu {
-                            }.stopPageLoad {
-                                val onboardingDisplayed =
-                                    mDevice.findObject(UiSelector().resourceId("$packageName:id/onboarding_message"))
-                                        .waitForExists(waitingTime)
+            val onboardingMessage =
+                mDevice.findObject(UiSelector().resourceId("$packageName:id/onboarding_message"))
 
-                                if (!onboardingDisplayed) {
-                                    openThreeDotMenu {
-                                    }.refreshPage {}
+            val onboardingDisplayed = onboardingMessage.waitForExists(waitingTime)
+
+            when (etpEnabled) {
+                true ->
+                    try {
+                        assertTrue("Onboarding message not displayed",
+                            onboardingDisplayed
+                        )
+                    } catch (e: AssertionError) {
+                        openThreeDotMenu {
+                        }.stopPageLoad {
+                            if (!onboardingDisplayed) {
+                                openThreeDotMenu {
+                                }.refreshPage {
+                                    assertTrue(onboardingDisplayed)
                                 }
                             }
                         }
+                    }
 
-                    false ->
-                        try {
-                            onView(withResourceName("browserLayout")).check(matches(isDisplayed()))
-                        } catch (e: IdlingResourceTimeoutException) {
-                            openThreeDotMenu {
-                            }.stopPageLoad {
-                            }.openThreeDotMenu {
-                            }.refreshPage {}
-                        }
-                }
+                false ->
+                    onView(withResourceName("browserLayout")).check(matches(isDisplayed()))
             }
 
             BrowserRobot().interact()
@@ -186,10 +182,10 @@ class NavigationToolbarRobot {
         }
 
         fun openTabTray(interact: TabDrawerRobot.() -> Unit): TabDrawerRobot.Transition {
-            onView(withId(R.id.tab_button))
-                .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
-
+            mDevice.waitForIdle(waitingTime)
             tabTrayButton().click()
+            mDevice.waitNotNull(Until.findObject(By.res("$packageName:id/tab_layout")),
+                waitingTime)
 
             TabDrawerRobot().interact()
             return TabDrawerRobot.Transition()

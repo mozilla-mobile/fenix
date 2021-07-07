@@ -18,7 +18,6 @@ enum class BrowserDirection(@IdRes val fragmentId: Int) {
     FromHome(R.id.homeFragment),
     FromSearchDialog(R.id.searchDialogFragment),
     FromSettings(R.id.settingsFragment),
-    FromSyncedTabs(R.id.syncedTabsFragment),
     FromBookmarks(R.id.bookmarkFragment),
     FromHistory(R.id.historyFragment),
     FromTrackingProtectionExceptions(R.id.trackingProtectionExceptionsFragment),
@@ -31,6 +30,6 @@ enum class BrowserDirection(@IdRes val fragmentId: Int) {
     FromAddonDetailsFragment(R.id.addonDetailsFragment),
     FromAddonPermissionsDetailsFragment(R.id.addonPermissionsDetailFragment),
     FromLoginDetailFragment(R.id.loginDetailFragment),
-    FromTabTray(R.id.tabTrayDialogFragment),
+    FromTabsTray(R.id.tabsTrayFragment),
     FromRecentlyClosed(R.id.recentlyClosedFragment)
 }

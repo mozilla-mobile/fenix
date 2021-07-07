@@ -10,16 +10,22 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.verify
 import io.mockk.verifyAll
+import mozilla.components.feature.prompts.facts.CreditCardAutofillDialogFacts
 import mozilla.components.feature.top.sites.facts.TopSitesFacts
 import mozilla.components.support.base.Component
 import mozilla.components.support.base.facts.Action
 import mozilla.components.support.base.facts.Fact
 import mozilla.components.support.base.log.logger.Logger
+import mozilla.components.support.test.robolectric.testContext
 import mozilla.components.support.webextensions.facts.WebExtensionFacts
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.utils.Settings
 
+@RunWith(FenixRobolectricTestRunner::class)
 class MetricControllerTest {
 
     @MockK(relaxUnitFun = true) private lateinit var dataService1: MetricsService
@@ -338,7 +344,7 @@ class MetricControllerTest {
     @Test
     fun `web extension fact should set value in SharedPreference`() {
         val enabled = true
-        val settings: Settings = mockk(relaxed = true)
+        val settings = Settings(testContext)
         val controller = ReleaseMetricController(
             services = listOf(dataService1),
             isDataTelemetryEnabled = { enabled },
@@ -350,19 +356,48 @@ class MetricControllerTest {
             Action.INTERACTION,
             WebExtensionFacts.Items.WEB_EXTENSIONS_INITIALIZED,
             metadata = mapOf(
-                "installed" to listOf("test1"),
-                "enabled" to listOf("test2")
+                "installed" to listOf("test1", "test2", "test3", "test4"),
+                "enabled" to listOf("test2", "test4")
             )
         )
 
-        verify(exactly = 0) { settings.installedAddonsCount = any() }
-        verify(exactly = 0) { settings.installedAddonsList = any() }
-        verify(exactly = 0) { settings.enabledAddonsCount = any() }
-        verify(exactly = 0) { settings.enabledAddonsList = any() }
+        assertEquals(settings.installedAddonsCount, 0)
+        assertEquals(settings.installedAddonsList, "")
+        assertEquals(settings.enabledAddonsCount, 0)
+        assertEquals(settings.enabledAddonsList, "")
+
         controller.factToEvent(fact)
-        verify(exactly = 1) { settings.installedAddonsCount = any() }
-        verify(exactly = 1) { settings.installedAddonsList = any() }
-        verify(exactly = 1) { settings.enabledAddonsCount = any() }
-        verify(exactly = 1) { settings.enabledAddonsList = any() }
+
+        assertEquals(settings.installedAddonsCount, 4)
+        assertEquals(settings.installedAddonsList, "test1,test2,test3,test4")
+        assertEquals(settings.enabledAddonsCount, 2)
+        assertEquals(settings.enabledAddonsList, "test2,test4")
+    }
+
+    @Test
+    fun `credit card autofill fact shold set value in SharedPreference`() {
+        val enabled = true
+        val settings = Settings(testContext)
+        val controller = ReleaseMetricController(
+            services = listOf(dataService1),
+            isDataTelemetryEnabled = { enabled },
+            isMarketingDataTelemetryEnabled = { enabled },
+            settings
+        )
+        val fact = Fact(
+            component = Component.FEATURE_PROMPTS,
+            action = Action.INTERACTION,
+            item = CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_SUCCESS
+        )
+
+        assertEquals(0, settings.creditCardsAutofilledCount)
+
+        controller.factToEvent(fact)
+
+        assertEquals(1, settings.creditCardsAutofilledCount)
+
+        controller.factToEvent(fact)
+
+        assertEquals(2, settings.creditCardsAutofilledCount)
     }
 }

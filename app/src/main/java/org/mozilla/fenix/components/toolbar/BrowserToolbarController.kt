@@ -23,6 +23,7 @@ import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.readermode.ReaderModeController
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
+import org.mozilla.fenix.components.toolbar.interactor.BrowserToolbarInteractor
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.settings
@@ -39,6 +40,11 @@ interface BrowserToolbarController {
     fun handleTabCounterClick()
     fun handleTabCounterItemInteraction(item: TabCounterMenu.Item)
     fun handleReaderModePressed(enabled: Boolean)
+
+    /**
+     * @see [BrowserToolbarInteractor.onHomeButtonClicked]
+     */
+    fun handleHomeButtonClick()
 }
 
 class DefaultBrowserToolbarController(
@@ -154,6 +160,14 @@ class DefaultBrowserToolbarController(
         if (activity.settings().isDynamicToolbarEnabled) {
             engineView.setVerticalClipping(offset)
         }
+    }
+
+    override fun handleHomeButtonClick() {
+        metrics.track(Event.BrowserToolbarHomeButtonClicked)
+
+        navController.navigate(
+            BrowserFragmentDirections.actionGlobalHome()
+        )
     }
 
     companion object {

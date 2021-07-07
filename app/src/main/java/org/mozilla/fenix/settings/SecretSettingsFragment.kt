@@ -5,10 +5,12 @@
 package org.mozilla.fenix.settings
 
 import android.os.Bundle
+import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
 import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 
@@ -28,15 +30,21 @@ class SecretSettingsFragment : PreferenceFragmentCompat() {
             onPreferenceChangeListener = SharedPreferenceUpdater()
         }
 
-        requirePreference<SwitchPreference>(R.string.pref_key_show_credit_cards_feature).apply {
-            isVisible = FeatureFlags.creditCardsFeature
-            isChecked = context.settings().creditCardsFeature
-            onPreferenceChangeListener = SharedPreferenceUpdater()
+        requirePreference<SwitchPreference>(R.string.pref_key_allow_third_party_root_certs).apply {
+            isVisible = true
+            isChecked = context.settings().allowThirdPartyRootCerts
+            onPreferenceChangeListener = object : SharedPreferenceUpdater() {
+                override fun onPreferenceChange(preference: Preference, newValue: Any?): Boolean {
+                    context.components.core.engine.settings.enterpriseRootsEnabled =
+                        newValue as Boolean
+                    return super.onPreferenceChange(preference, newValue)
+                }
+            }
         }
 
-        requirePreference<SwitchPreference>(R.string.pref_key_new_tabs_tray).apply {
-            isVisible = FeatureFlags.tabsTrayRewrite
-            isChecked = context.settings().tabsTrayRewrite
+        requirePreference<SwitchPreference>(R.string.pref_key_nimbus_use_preview).apply {
+            isVisible = true
+            isChecked = context.settings().nimbusUsePreview
             onPreferenceChangeListener = SharedPreferenceUpdater()
         }
     }

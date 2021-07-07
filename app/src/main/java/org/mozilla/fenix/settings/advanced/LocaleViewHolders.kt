@@ -23,14 +23,32 @@ class LocaleViewHolder(
         if (locale.toString().equals("vec", ignoreCase = true)) {
             locale.toString()
         }
-        // Capitalisation is done using the rules of the appropriate locale (endonym and exonym).
-        locale_title_text.text = getDisplayName(locale)
-        // Show the given locale using the device locale for the subtitle.
-        locale_subtitle_text.text = locale.getProperDisplayName()
+        if (locale.language == "zh") {
+            bindChineseLocale(locale)
+        } else {
+            // Capitalisation is done using the rules of the appropriate locale (endonym and exonym).
+            locale_title_text.text = getDisplayName(locale)
+            // Show the given locale using the device locale for the subtitle.
+            locale_subtitle_text.text = locale.getProperDisplayName()
+        }
         locale_selected_icon.isVisible = isCurrentLocaleSelected(locale, isDefault = false)
 
         itemView.setOnClickListener {
             interactor.onLocaleSelected(locale)
+        }
+    }
+
+    private fun bindChineseLocale(locale: Locale) {
+        if (locale.country == "CN") {
+            locale_title_text.text =
+                Locale.forLanguageTag("zh-Hans").getDisplayName(locale).capitalize(locale)
+            locale_subtitle_text.text =
+                Locale.forLanguageTag("zh-Hans").displayName.capitalize(Locale.getDefault())
+        } else if (locale.country == "TW") {
+            locale_title_text.text =
+                Locale.forLanguageTag("zh-Hant").getDisplayName(locale).capitalize(locale)
+            locale_subtitle_text.text =
+                Locale.forLanguageTag("zh-Hant").displayName.capitalize(Locale.getDefault())
         }
     }
 
@@ -59,7 +77,7 @@ class LocaleViewHolder(
             "ca" to "Català",
             "cak" to "Kaqchikel",
             "ceb" to "Cebuano",
-            "co" to "Corsu, ",
+            "co" to "Corsu",
             "cs" to "čeština",
             "cy" to "Cymraeg",
             "da" to "dansk",
@@ -81,7 +99,7 @@ class LocaleViewHolder(
             "gn" to "Avañe'ẽ",
             "gu-IN" to "ગુજરાતી",
             "he" to "עברית",
-            "hi-IN" to "हिन्दी ",
+            "hi-IN" to "हिन्दी",
             "hil" to "Ilonggo",
             "hr" to "hrvatski jezik",
             "hsb" to "Hornjoserbsce",
@@ -198,7 +216,7 @@ class LocaleViewHolder(
             "it" to "Italian",
             "ja" to "Japanese",
             "ka" to "Georgian",
-            "kab" to "Kabyle ",
+            "kab" to "Kabyle",
             "kk" to "Kazakh",
             "kmr" to "Kurmanji Kurdish",
             "kn" to "Kannada",
@@ -212,7 +230,7 @@ class LocaleViewHolder(
             "ms" to "Malay",
             "my" to "Burmese",
             "nb-NO" to "Norwegian Bokmål",
-            "ne-NP" to "Nepali ",
+            "ne-NP" to "Nepali",
             "nl" to "Dutch, Flemish",
             "nn-NO" to "Norwegian Nynorsk",
             "nv" to "Navajo, Navaho",
@@ -255,8 +273,16 @@ class SystemLocaleViewHolder(
 
     override fun bind(locale: Locale) {
         locale_title_text.text = itemView.context.getString(R.string.default_locale_text)
-        // Use the device locale for the system locale subtitle.
-        locale_subtitle_text.text = locale.getDisplayName(locale).capitalize(locale)
+        if (locale.script == "Hant") {
+            locale_subtitle_text.text =
+                Locale.forLanguageTag("zh-Hant").displayName.capitalize(Locale.getDefault())
+        } else if (locale.script == "Hans") {
+            locale_subtitle_text.text =
+                Locale.forLanguageTag("zh-Hans").displayName.capitalize(Locale.getDefault())
+        } else {
+            // Use the device locale for the system locale subtitle.
+            locale_subtitle_text.text = locale.getDisplayName(locale).capitalize(locale)
+        }
         locale_selected_icon.isVisible = isCurrentLocaleSelected(locale, isDefault = true)
         itemView.setOnClickListener {
             interactor.onDefaultLocaleSelected()

@@ -23,6 +23,9 @@ class TabsSettingsFragment : PreferenceFragmentCompat() {
     private lateinit var radioOneDay: RadioButtonPreference
     private lateinit var radioOneWeek: RadioButtonPreference
     private lateinit var radioOneMonth: RadioButtonPreference
+    private lateinit var startOnHomeRadioFourHours: RadioButtonPreference
+    private lateinit var startOnHomeRadioAlways: RadioButtonPreference
+    private lateinit var startOnHomeRadioNever: RadioButtonPreference
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.tabs_preferences, rootKey)
@@ -40,13 +43,22 @@ class TabsSettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun setupPreferences() {
-        listRadioButton = requirePreference(R.string.pref_key_tab_view_list)
+        // This should be the only use case for pref_key_tab_view_list_do_not_use.
+        // In the Fenix impl of RadioGroups, we need to always have an individual pref value
+        // for it to work. This is weird for a radio group that should hold a value from that group.
+        // For the tabs tray, we only need a boolean value, so let's rely on only the
+        // pref_key_tab_view_grid and look into using the native RadioGroup in the future.
+        listRadioButton = requirePreference(R.string.pref_key_tab_view_list_do_not_use)
         gridRadioButton = requirePreference(R.string.pref_key_tab_view_grid)
 
         radioManual = requirePreference(R.string.pref_key_close_tabs_manually)
         radioOneDay = requirePreference(R.string.pref_key_close_tabs_after_one_day)
         radioOneWeek = requirePreference(R.string.pref_key_close_tabs_after_one_week)
         radioOneMonth = requirePreference(R.string.pref_key_close_tabs_after_one_month)
+
+        startOnHomeRadioFourHours = requirePreference(R.string.pref_key_start_on_home_after_four_hours)
+        startOnHomeRadioAlways = requirePreference(R.string.pref_key_start_on_home_always)
+        startOnHomeRadioNever = requirePreference(R.string.pref_key_start_on_home_never)
 
         setupRadioGroups()
     }
@@ -62,6 +74,12 @@ class TabsSettingsFragment : PreferenceFragmentCompat() {
             radioOneDay,
             radioOneMonth,
             radioOneWeek
+        )
+
+        addToRadioGroup(
+            startOnHomeRadioFourHours,
+            startOnHomeRadioAlways,
+            startOnHomeRadioNever
         )
     }
 }

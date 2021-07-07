@@ -7,46 +7,81 @@ package org.mozilla.fenix.tabstray
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.annotation.VisibleForTesting
 import androidx.recyclerview.widget.RecyclerView
-import org.mozilla.fenix.tabstray.BrowserTabViewHolder.Companion.LAYOUT_ID_NORMAL_TAB
-import org.mozilla.fenix.tabstray.BrowserTabViewHolder.Companion.LAYOUT_ID_PRIVATE_TAB
+import mozilla.components.browser.state.selector.normalTabs
+import mozilla.components.browser.state.selector.privateTabs
+import mozilla.components.browser.state.selector.selectedTab
+import mozilla.components.browser.state.store.BrowserStore
+import org.mozilla.fenix.sync.SyncedTabsAdapter
 import org.mozilla.fenix.tabstray.browser.BrowserTabsAdapter
 import org.mozilla.fenix.tabstray.browser.BrowserTrayInteractor
+import org.mozilla.fenix.tabstray.syncedtabs.TabClickDelegate
+import org.mozilla.fenix.tabstray.viewholders.AbstractPageViewHolder
+import org.mozilla.fenix.tabstray.viewholders.NormalBrowserPageViewHolder
+import org.mozilla.fenix.tabstray.viewholders.PrivateBrowserPageViewHolder
+import org.mozilla.fenix.tabstray.viewholders.SyncedTabsPageViewHolder
 
 class TrayPagerAdapter(
-    val context: Context,
-    val interactor: TabsTrayInteractor,
-    val browserInteractor: BrowserTrayInteractor
-) : RecyclerView.Adapter<TrayViewHolder>() {
+    @VisibleForTesting internal val context: Context,
+    @VisibleForTesting internal val store: TabsTrayStore,
+    @VisibleForTesting internal val browserInteractor: BrowserTrayInteractor,
+    @VisibleForTesting internal val navInteractor: NavigationInteractor,
+    @VisibleForTesting internal val interactor: TabsTrayInteractor,
+    @VisibleForTesting internal val browserStore: BrowserStore
+) : RecyclerView.Adapter<AbstractPageViewHolder>() {
 
-    private val normalAdapter by lazy { BrowserTabsAdapter(context, browserInteractor) }
-    private val privateAdapter by lazy { BrowserTabsAdapter(context, browserInteractor) }
+    private val normalAdapter by lazy { BrowserTabsAdapter(context, browserInteractor, store) }
+    private val privateAdapter by lazy { BrowserTabsAdapter(context, browserInteractor, store) }
+    private val syncedTabsAdapter by lazy { SyncedTabsAdapter(TabClickDelegate(navInteractor)) }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrayViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AbstractPageViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
 
+        val selectedTab = browserStore.state.selectedTab
+
         return when (viewType) {
-            LAYOUT_ID_NORMAL_TAB -> BrowserTabViewHolder(itemView, interactor)
-            LAYOUT_ID_PRIVATE_TAB -> BrowserTabViewHolder(itemView, interactor)
+            NormalBrowserPageViewHolder.LAYOUT_ID -> {
+                NormalBrowserPageViewHolder(
+                    itemView,
+                    store,
+                    interactor,
+                    browserStore.state.normalTabs.indexOf(selectedTab)
+                )
+            }
+            PrivateBrowserPageViewHolder.LAYOUT_ID -> {
+                PrivateBrowserPageViewHolder(
+                    itemView,
+                    store,
+                    interactor,
+                    browserStore.state.privateTabs.indexOf(selectedTab)
+                )
+            }
+            SyncedTabsPageViewHolder.LAYOUT_ID -> {
+                SyncedTabsPageViewHolder(
+                    itemView,
+                    store
+                )
+            }
             else -> throw IllegalStateException("Unknown viewType.")
         }
     }
 
-    override fun onBindViewHolder(viewHolder: TrayViewHolder, position: Int) {
+    override fun onBindViewHolder(viewHolder: AbstractPageViewHolder, position: Int) {
         val adapter = when (position) {
             POSITION_NORMAL_TABS -> normalAdapter
             POSITION_PRIVATE_TABS -> privateAdapter
+            POSITION_SYNCED_TABS -> syncedTabsAdapter
             else -> throw IllegalStateException("View type does not exist.")
         }
-
-        viewHolder.bind(adapter, GridLayoutManager(context, 1))
+        viewHolder.bind(adapter, browserInteractor.getLayoutManagerForPosition(context, position))
     }
 
     override fun getItemViewType(position: Int): Int {
         return when (position) {
-            POSITION_NORMAL_TABS -> LAYOUT_ID_NORMAL_TAB
-            POSITION_PRIVATE_TABS -> LAYOUT_ID_PRIVATE_TAB
+            POSITION_NORMAL_TABS -> NormalBrowserPageViewHolder.LAYOUT_ID
+            POSITION_PRIVATE_TABS -> PrivateBrowserPageViewHolder.LAYOUT_ID
+            POSITION_SYNCED_TABS -> SyncedTabsPageViewHolder.LAYOUT_ID
             else -> throw IllegalStateException("Unknown position.")
         }
     }
@@ -54,9 +89,10 @@ class TrayPagerAdapter(
     override fun getItemCount(): Int = TRAY_TABS_COUNT
 
     companion object {
-        const val TRAY_TABS_COUNT = 2
+        const val TRAY_TABS_COUNT = 3
 
-        const val POSITION_NORMAL_TABS = 0
-        const val POSITION_PRIVATE_TABS = 1
+        val POSITION_NORMAL_TABS = Page.NormalTabs.ordinal
+        val POSITION_PRIVATE_TABS = Page.PrivateTabs.ordinal
+        val POSITION_SYNCED_TABS = Page.SyncedTabs.ordinal
     }
 }
