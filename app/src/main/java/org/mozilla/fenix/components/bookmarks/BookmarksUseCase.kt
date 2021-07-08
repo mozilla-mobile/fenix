@@ -43,11 +43,11 @@ class BookmarksUseCase(storage: BookmarksStorage) {
         private val storage: BookmarksStorage
     ) {
         /**
-         * Retrieves a list of recently added bookmarks, if any, up to a maximum of four.
+         * Retrieves a list of recently added bookmarks, if any, up to maximum.
          */
         @WorkerThread
-        suspend operator fun invoke(): List<BookmarkNode> {
-            return storage.getRecentBookmarks(MAXIMUM_BOOKMARKS_TO_RETRIEVE)
+        suspend operator fun invoke(count: Int = DEFAULT_BOOKMARKS_TO_RETRIEVE): List<BookmarkNode> {
+            return storage.getRecentBookmarks(count)
         }
     }
 
@@ -55,6 +55,6 @@ class BookmarksUseCase(storage: BookmarksStorage) {
     val retrieveRecentBookmarks by lazy { RetrieveRecentBookmarksUseCase(storage) }
 
     companion object {
-        const val MAXIMUM_BOOKMARKS_TO_RETRIEVE = 4
+        const val DEFAULT_BOOKMARKS_TO_RETRIEVE = 4
     }
 }

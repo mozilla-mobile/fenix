@@ -56,8 +56,6 @@
     <string name="recently_saved_show_all">Show all</string>
     <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
     <string name="recently_saved_show_all_content_description">Show all saved bookmarks button</string>
-    <!-- Content description for an individual item in the list of recently saved bookmarks on the home screen. -->
-    <string name="recently_saved_bookmark_item_content_description">Recently saved bookmark</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
     <string name="about_content">%1$s is produced by Mozilla.</string>

@@ -47,5 +47,5 @@ object FeatureFlags {
     /**
      * Enables the recently saved bookmarks feature in the home screen.
      */
-    val showRecentlySavedBookmarksFeature = Config.channel.isNightlyOrDebug
+    val recentBookmarksFeature = Config.channel.isNightlyOrDebug
 }

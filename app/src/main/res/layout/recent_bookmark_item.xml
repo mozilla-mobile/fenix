@@ -12,7 +12,7 @@
     android:layout_marginBottom="16dp"
     android:scrollbars="none"
     android:nestedScrollingEnabled="false"
-    android:contentDescription="@string/recently_saved_bookmark_item_content_description"
+    android:importantForAccessibility="no"
     style="@style/RecentBookmarks.FaviconCard">
 
     <com.google.android.material.imageview.ShapeableImageView

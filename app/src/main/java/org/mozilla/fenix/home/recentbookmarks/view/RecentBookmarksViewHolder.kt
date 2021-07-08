@@ -29,13 +29,14 @@ class RecentBookmarksViewHolder(
             adapter = recentBookmarksAdapter
             layoutManager = linearLayoutManager
         }
+
+        showAllBookmarksButton.setOnClickListener {
+            interactor.onShowAllBookmarksClicked()
+        }
     }
 
     fun bind(bookmarks: List<BookmarkNode>) {
         recentBookmarksAdapter.submitList(bookmarks)
-        showAllBookmarksButton.setOnClickListener {
-            interactor.onShowAllBookmarksClicked()
-        }
     }
 
     companion object {

@@ -70,7 +70,6 @@ import mozilla.components.browser.state.selector.privateTabs
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.selectedOrDefaultSearchEngine
 import mozilla.components.browser.state.store.BrowserStore
-import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.concept.storage.FrecencyThresholdOption
 import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.AuthType
@@ -176,7 +175,6 @@ class HomeFragment : Fragment() {
     private var sessionControlView: SessionControlView? = null
     private var appBarLayout: AppBarLayout? = null
     private lateinit var currentMode: CurrentMode
-    private var recentlySavedBookmarks: List<BookmarkNode>? = null
 
     private val topSitesFeature = ViewBoundFeatureWrapper<TopSitesFeature>()
     private val recentTabsListFeature = ViewBoundFeatureWrapper<RecentTabsListFeature>()
@@ -266,7 +264,7 @@ class HomeFragment : Fragment() {
             )
         }
 
-        if (FeatureFlags.showRecentlySavedBookmarksFeature) {
+        if (FeatureFlags.recentBookmarksFeature) {
             recentBookmarksFeature.set(
                 feature = RecentBookmarksFeature(
                     homeStore = homeFragmentStore,

@@ -39,9 +39,6 @@ class DefaultRecentBookmarksController(
     private val navController: NavController
 ) : RecentBookmarksController {
 
-    /**
-     * @see [RecentBookmarksController.handleBookmarkClicked]
-     */
     override fun handleBookmarkClicked(bookmark: BookmarkNode) {
         with(activity) {
             browsingModeManager.mode = browsingModeManager.mode
@@ -53,9 +50,6 @@ class DefaultRecentBookmarksController(
         }
     }
 
-    /**
-     * @see [RecentBookmarksController.handleShowAllBookmarksClicked]
-     */
     override fun handleShowAllBookmarksClicked() {
         val directions = HomeFragmentDirections.actionGlobalBookmarkFragment(BookmarkRoot.Mobile.id)
         navController.nav(R.id.homeFragment, directions)
