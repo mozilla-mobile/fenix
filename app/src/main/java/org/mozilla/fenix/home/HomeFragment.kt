@@ -268,8 +268,8 @@ class HomeFragment : Fragment() {
             recentBookmarksFeature.set(
                 feature = RecentBookmarksFeature(
                     homeStore = homeFragmentStore,
-                    recentBookmarksUseCase = run {
-                        requireContext().components.useCases.bookmarksUseCases.retrieveRecentBookmarks
+                    bookmarksUseCase = run {
+                        requireContext().components.useCases.bookmarksUseCases
                     },
                     scope = viewLifecycleOwner.lifecycleScope
                 ),

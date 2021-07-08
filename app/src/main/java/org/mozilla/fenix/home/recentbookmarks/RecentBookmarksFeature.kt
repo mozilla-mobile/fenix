@@ -19,20 +19,20 @@ import org.mozilla.fenix.home.HomeFragmentStore
  *  updates to the [HomeFragmentStore].
  *
  *  @param homeStore the [HomeFragmentStore]
- *  @param recentBookmarksUseCase the [BookmarksUseCase] for retrieving the list of recently saved
+ *  @param bookmarksUseCase the [BookmarksUseCase] for retrieving the list of recently saved
  *          bookmarks from storage.
  *  @param scope the [CoroutineScope] used to fetch the bookmarks list
  */
 class RecentBookmarksFeature(
     private val homeStore: HomeFragmentStore,
-    private val recentBookmarksUseCase: BookmarksUseCase.RetrieveRecentBookmarksUseCase,
+    private val bookmarksUseCase: BookmarksUseCase,
     private val scope: CoroutineScope
 ) : LifecycleAwareFeature {
-    private var job: Job? = null
+    internal var job: Job? = null
 
     override fun start() {
         job = scope.launch(Dispatchers.IO) {
-            val bookmarks = recentBookmarksUseCase.invoke()
+            val bookmarks = bookmarksUseCase.retrieveRecentBookmarks()
 
             homeStore.dispatch(HomeFragmentAction.RecentBookmarksChange(bookmarks))
         }

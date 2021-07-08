@@ -61,7 +61,7 @@ class BookmarksUseCaseTest {
 
         assertEquals(listOf(bookmarkNode), result)
 
-        coVerify { storage.getRecentBookmarks(BookmarksUseCase.MAXIMUM_BOOKMARKS_TO_RETRIEVE) }
+        coVerify { storage.getRecentBookmarks(BookmarksUseCase.DEFAULT_BOOKMARKS_TO_RETRIEVE) }
     }
 
     @Test
@@ -75,6 +75,6 @@ class BookmarksUseCaseTest {
 
         assertEquals(listOf<BookmarkNode>(), result)
 
-        coVerify { storage.getRecentBookmarks(BookmarksUseCase.MAXIMUM_BOOKMARKS_TO_RETRIEVE) }
+        coVerify { storage.getRecentBookmarks(BookmarksUseCase.DEFAULT_BOOKMARKS_TO_RETRIEVE) }
     }
 }
