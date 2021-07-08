@@ -5,6 +5,7 @@
 package org.mozilla.fenix.home.recentbookmarks
 
 import androidx.navigation.NavController
+import androidx.navigation.NavOptions
 import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
@@ -23,6 +24,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.R
 import org.mozilla.fenix.home.HomeFragmentDirections
 import org.mozilla.fenix.home.recentbookmarks.controller.DefaultRecentBookmarksController
 
@@ -35,12 +37,15 @@ class DefaultRecentBookmarksControllerTest {
     val coroutinesTestRule = MainCoroutineRule(testDispatcher)
 
     private val activity: HomeActivity = mockk(relaxed = true)
-    private val navController: NavController = mockk(relaxed = true)
+    private val navController: NavController = mockk(relaxUnitFun = true)
     private lateinit var controller: DefaultRecentBookmarksController
 
     @Before
     fun setup() {
         every { activity.openToBrowserAndLoad(any(), any(), any()) } just Runs
+        every { navController.currentDestination } returns mockk {
+            every { id } returns R.id.homeFragment
+        }
 
         controller = spyk(DefaultRecentBookmarksController(
             activity = activity,
@@ -81,6 +86,6 @@ class DefaultRecentBookmarksControllerTest {
         controller.handleShowAllBookmarksClicked()
 
         val directions = HomeFragmentDirections.actionGlobalBookmarkFragment(BookmarkRoot.Mobile.id)
-        verify { navController.navigate(directions) }
+        verify { navController.navigate(directions, any<NavOptions>()) }
     }
 }
