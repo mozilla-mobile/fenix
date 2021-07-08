@@ -8,8 +8,10 @@
     android:id="@+id/bookmark_item"
     android:layout_width="@dimen/recent_bookmark_item_width"
     android:layout_height="@dimen/recent_bookmark_item_height"
-    android:layout_marginEnd="16dp"
+    android:layout_marginEnd="8dp"
     android:layout_marginBottom="16dp"
+    android:scrollbars="none"
+    android:nestedScrollingEnabled="false"
     android:contentDescription="@string/recently_saved_bookmark_item_content_description"
     style="@style/RecentBookmarks.FaviconCard">
 
@@ -21,6 +23,14 @@
         android:layout_marginTop="24dp"
         android:layout_gravity="center_horizontal" />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/tab_tray_item_divider_normal_theme"
+        android:importantForAccessibility="no"
+        android:layout_marginTop="72dp"
+        android:clickable="false"/>
+
     <TextView
         android:id="@+id/bookmark_title"
         android:layout_width="match_parent"
@@ -30,6 +40,8 @@
         android:paddingStart="16dp"
         android:paddingTop="7dp"
         android:paddingEnd="16dp"
+        android:scrollbars="none"
+        android:nestedScrollingEnabled="false"
         android:importantForAccessibility="yes"
         android:textAppearance="@style/recentBookmarkItemTitleText"
         tools:text="Recently Saved bookmark item" />
@@ -41,6 +53,9 @@
         android:layout_marginTop="105dp"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
+        android:scrollbars="none"
+        android:nestedScrollingEnabled="false"
         android:textAppearance="@style/recentBookmarkItemSubTitleText"
-        tools:text="Subtitle text" />
+        tools:text="Subtitle text"
+        android:textColor="@color/home_recent_bookmarks_item_url" />
 </com.google.android.material.card.MaterialCardView>
