@@ -261,6 +261,10 @@ sealed class Event {
     object AndroidAutofillRequestWithLogins : Event()
     object AndroidAutofillRequestWithoutLogins : Event()
 
+    // Recent bookmarks on Home
+    object RecentBookmarkClicked : Event()
+    object RecentBookmarkShowAll : Event()
+
     // Interaction events with extras
 
     data class TopSiteSwipeCarousel(val page: Int) : Event() {
