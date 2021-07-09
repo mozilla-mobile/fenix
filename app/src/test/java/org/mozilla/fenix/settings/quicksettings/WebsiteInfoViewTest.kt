@@ -7,6 +7,7 @@ package org.mozilla.fenix.settings.quicksettings
 import android.widget.FrameLayout
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.spyk
 import io.mockk.verify
 import kotlinx.android.synthetic.main.library_site_item.url
 import kotlinx.android.synthetic.main.quicksettings_website_info.*
@@ -17,6 +18,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 
 @RunWith(FenixRobolectricTestRunner::class)
@@ -24,11 +26,13 @@ class WebsiteInfoViewTest {
 
     private lateinit var view: WebsiteInfoView
     private lateinit var icons: BrowserIcons
+    private lateinit var interactor: WebSiteInfoInteractor
 
     @Before
     fun setup() {
         icons = mockk(relaxed = true)
-        view = WebsiteInfoView(FrameLayout(testContext), icons)
+        interactor = mockk(relaxed = true)
+        view = WebsiteInfoView(FrameLayout(testContext), icons, interactor)
         every { icons.loadIntoView(view.favicon_image, any()) } returns mockk()
     }
 
@@ -59,5 +63,56 @@ class WebsiteInfoViewTest {
         ))
 
         assertEquals("Insecure Connection", view.securityInfo.text)
+    }
+
+    @Test
+    fun `WHEN updating on detailed mode THEN bind the certificate, title and back button listener`() {
+        val view = spyk(WebsiteInfoView(FrameLayout(testContext), icons, interactor, isDetailsMode = true))
+
+        view.update(WebsiteInfoState(
+            websiteUrl = "https://mozilla.org",
+            websiteTitle = "Mozilla",
+            websiteSecurityUiValues = WebsiteSecurityUiValues.INSECURE,
+            certificateName = "Certificate"
+        ))
+
+        verify {
+            view.bindCertificateName("Certificate")
+            view.bindTitle("Mozilla")
+            view.bindBackButtonListener()
+        }
+    }
+
+    @Test
+    fun `WHEN updating on not detailed mode THEN only connection details listener should be binded`() {
+        val view = WebsiteInfoView(FrameLayout(testContext), icons, interactor, isDetailsMode = false)
+
+        view.update(WebsiteInfoState(
+            websiteUrl = "https://mozilla.org",
+            websiteTitle = "Mozilla",
+            websiteSecurityUiValues = WebsiteSecurityUiValues.INSECURE,
+            certificateName = "Certificate"
+        ))
+
+        verify(exactly = 0) {
+            view.bindCertificateName("Certificate")
+            view.bindTitle("Mozilla")
+            view.bindBackButtonListener()
+        }
+
+        verify {
+            view.bindConnectionDetailsListener()
+        }
+    }
+
+    @Test
+    fun `WHEN rendering THEN use the correct layout`() {
+        val normalView = WebsiteInfoView(FrameLayout(testContext), icons, interactor, isDetailsMode = false)
+
+        assertEquals(R.layout.quicksettings_website_info, normalView.layoutId)
+
+        val detailedView = WebsiteInfoView(FrameLayout(testContext), icons, interactor, isDetailsMode = true)
+
+        assertEquals(R.layout.connection_details_website_info, detailedView.layoutId)
     }
 }
