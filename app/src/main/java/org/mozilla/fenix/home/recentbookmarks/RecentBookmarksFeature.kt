@@ -20,7 +20,7 @@ import org.mozilla.fenix.home.HomeFragmentStore
  *
  *  @param homeStore the [HomeFragmentStore]
  *  @param bookmarksUseCase the [BookmarksUseCase] for retrieving the list of recently saved
- *          bookmarks from storage.
+*   bookmarks from storage.
  *  @param scope the [CoroutineScope] used to fetch the bookmarks list
  */
 class RecentBookmarksFeature(

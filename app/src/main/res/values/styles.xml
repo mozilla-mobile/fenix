@@ -658,7 +658,7 @@
         <item name="android:padding">16dp</item>
         <item name="cardBackgroundColor">?mozac_widget_favicon_background_color</item>
         <item name="cardCornerRadius">8dp</item>
-        <item name="cardElevation">@dimen/home_collection_elevation</item>
+        <item name="cardElevation">@dimen/home_item_elevation</item>
     </style>
 
     <style name="recentBookmarkFavicon">

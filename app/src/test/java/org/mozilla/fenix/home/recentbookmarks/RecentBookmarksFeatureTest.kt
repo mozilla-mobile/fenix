@@ -13,30 +13,47 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
+import mozilla.components.concept.storage.BookmarkNode
+import mozilla.components.concept.storage.BookmarkNodeType
+import mozilla.components.support.test.libstate.ext.waitUntilIdle
+import mozilla.components.support.test.middleware.CaptureActionsMiddleware
 import mozilla.components.support.test.rule.MainCoroutineRule
 import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.components.bookmarks.BookmarksUseCase
+import org.mozilla.fenix.home.HomeFragmentAction
+import org.mozilla.fenix.home.HomeFragmentState
 import org.mozilla.fenix.home.HomeFragmentStore
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class RecentBookmarksFeatureTest {
 
-    private val homeStore: HomeFragmentStore = mockk(relaxed = true)
+    private val middleware = CaptureActionsMiddleware<HomeFragmentState, HomeFragmentAction>()
+    private val homeStore = HomeFragmentStore(middlewares = listOf(middleware))
     private val bookmarksUseCases: BookmarksUseCase = mockk(relaxed = true)
     private val scope = TestCoroutineScope()
     private val testDispatcher = TestCoroutineDispatcher()
+    private val bookmark = BookmarkNode(
+        type = BookmarkNodeType.ITEM,
+        guid = "guid#${Math.random() * 1000}",
+        parentGuid = null,
+        position = null,
+        title = null,
+        url = "https://www.example.com",
+        children = null
+    )
 
     @get:Rule
     val coroutinesTestRule = MainCoroutineRule(testDispatcher)
 
     @Before
     fun setup() {
-        coEvery { bookmarksUseCases.retrieveRecentBookmarks() }.coAnswers { listOf() }
+        coEvery { bookmarksUseCases.retrieveRecentBookmarks() }.coAnswers { listOf(bookmark) }
     }
 
     @After
@@ -46,22 +63,29 @@ class RecentBookmarksFeatureTest {
     }
 
     @Test
-    fun `GIVEN no recently saved bookmarks WHEN the feature starts THEN fetch list of bookmarks AND notify the store`() = testDispatcher.runBlockingTest {
-        val feature = spyk(RecentBookmarksFeature(
-            homeStore,
-            bookmarksUseCases,
-            scope
-        ))
+    fun `GIVEN no recent bookmarks WHEN feature starts THEN fetch bookmarks and notify store`() =
+        testDispatcher.runBlockingTest {
+            val feature = RecentBookmarksFeature(
+                homeStore,
+                bookmarksUseCases,
+                scope
+            )
 
-        feature.start()
+            feature.start()
 
-        testDispatcher.advanceUntilIdle()
+            assertEquals(emptyList<BookmarkNode>(), homeStore.state.recentBookmarks)
 
-        coVerify {
-            bookmarksUseCases.retrieveRecentBookmarks()
-            homeStore.dispatch(any())
+            testDispatcher.advanceUntilIdle()
+            homeStore.waitUntilIdle()
+
+            coVerify {
+                bookmarksUseCases.retrieveRecentBookmarks()
+            }
+
+            middleware.assertLastAction(HomeFragmentAction.RecentBookmarksChange::class) {
+                assertEquals(listOf(bookmark), it.recentBookmarks)
+            }
         }
-    }
 
     @Test
     fun `WHEN the feature is destroyed THEN the job is cancelled`() {

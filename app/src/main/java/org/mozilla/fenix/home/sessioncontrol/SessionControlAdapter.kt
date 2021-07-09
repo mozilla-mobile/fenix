@@ -172,8 +172,8 @@ sealed class AdapterItem(@LayoutRes val viewType: Int) {
                 val newBookmarksSequence = newBookmarks.recentBookmarks.asSequence()
                 val oldBookmarksList = this.recentBookmarks.asSequence()
 
-                return newBookmarksSequence.zip(oldBookmarksList).all {
-                        (new, old) -> new == old
+                return newBookmarksSequence.zip(oldBookmarksList).all { (new, old) ->
+                    new == old
                 }
             }
         }

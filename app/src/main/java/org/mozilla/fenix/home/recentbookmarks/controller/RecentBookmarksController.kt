@@ -40,14 +40,11 @@ class DefaultRecentBookmarksController(
 ) : RecentBookmarksController {
 
     override fun handleBookmarkClicked(bookmark: BookmarkNode) {
-        with(activity) {
-            browsingModeManager.mode = browsingModeManager.mode
-            openToBrowserAndLoad(
-                searchTermOrURL = bookmark.url!!,
-                newTab = true,
-                from = BrowserDirection.FromHome
-            )
-        }
+        activity.openToBrowserAndLoad(
+            searchTermOrURL = bookmark.url!!,
+            newTab = true,
+            from = BrowserDirection.FromHome
+        )
     }
 
     override fun handleShowAllBookmarksClicked() {
