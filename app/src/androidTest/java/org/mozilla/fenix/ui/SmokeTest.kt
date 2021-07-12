@@ -48,6 +48,9 @@ import org.mozilla.fenix.ui.robots.notificationShade
 import org.mozilla.fenix.ui.robots.openEditURLView
 import org.mozilla.fenix.ui.robots.searchScreen
 import org.mozilla.fenix.ui.robots.tabDrawer
+import org.mozilla.fenix.ui.util.FRENCH_LANGUAGE_HEADER
+import org.mozilla.fenix.ui.util.FRENCH_SYSTEM_LOCALE_OPTION
+import org.mozilla.fenix.ui.util.ROMANIAN_LANGUAGE_HEADER
 import org.mozilla.fenix.ui.util.STRING_ONBOARDING_TRACKING_PROTECTION_HEADER
 
 /**
@@ -66,6 +69,7 @@ class SmokeTest {
     private val downloadFileName = "Globe.svg"
     private val collectionName = "First Collection"
     private var bookmarksListIdlingResource: RecyclerViewIdlingResource? = null
+    private var localeListIdlingResource: RecyclerViewIdlingResource? = null
     private val customMenuItem = "TestMenuItem"
 
     // This finds the dialog fragment child of the homeFragment, otherwise the awesomeBar would return null
@@ -132,6 +136,10 @@ class SmokeTest {
 
         if (readerViewNotification != null) {
             IdlingRegistry.getInstance().unregister(readerViewNotification)
+        }
+
+        if (localeListIdlingResource != null) {
+            IdlingRegistry.getInstance().unregister(localeListIdlingResource)
         }
     }
 
@@ -879,7 +887,6 @@ class SmokeTest {
         }
     }
 
-    @Ignore("Disabling until re-implemented by #19090")
     @Test
     fun createFirstCollectionTest() {
         val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -895,7 +902,7 @@ class SmokeTest {
         }.goToHomescreen {
         }.clickSaveTabsToCollectionButton {
             longClickTab(firstWebPage.title)
-            longClickTab(secondWebPage.title)
+            selectTab(secondWebPage.title)
         }.clickSaveCollection {
             typeCollectionNameAndSave(collectionName)
         }
@@ -963,7 +970,6 @@ class SmokeTest {
         }
     }
 
-    @Ignore("Disabling until re-implemented by #19090")
     @Test
     fun shareCollectionTest() {
         val webPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -985,7 +991,6 @@ class SmokeTest {
         }
     }
 
-    @Ignore("Disabling until re-implemented by #19090")
     @Test
     fun deleteCollectionTest() {
         val webPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -1376,6 +1381,28 @@ class SmokeTest {
             longClickToolbar()
             clickPasteText()
             verifyPastedToolbarText("Page content: 1")
+        }
+    }
+
+    @Test
+    fun switchLanguageTest() {
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openLanguageSubMenu {
+            localeListIdlingResource =
+                RecyclerViewIdlingResource(
+                    activityTestRule.activity.findViewById(R.id.locale_list),
+                    2
+                )
+            IdlingRegistry.getInstance().register(localeListIdlingResource)
+            selectLanguage("Romanian")
+            verifyLanguageHeaderIsTranslated(ROMANIAN_LANGUAGE_HEADER)
+            selectLanguage("Français")
+            verifyLanguageHeaderIsTranslated(FRENCH_LANGUAGE_HEADER)
+            selectLanguage(FRENCH_SYSTEM_LOCALE_OPTION)
+            verifyLanguageHeaderIsTranslated("Language")
+            IdlingRegistry.getInstance().unregister(localeListIdlingResource)
         }
     }
 }

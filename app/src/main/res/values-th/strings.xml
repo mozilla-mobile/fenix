@@ -51,8 +51,13 @@
     <!-- Home - Recently saved bookmarks -->
     <!-- Title for the home screen section with recently saved bookmarks. -->
     <string name="recently_saved_bookmarks">บันทึกไว้ล่าสุด</string>
+    <!-- Content description for the recently saved bookmarks section on the home screen. -->
+    <string name="recently_saved_bookmarks_content_description">ที่คั่นหน้าที่บันทึกไว้ล่าสุด</string>
     <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
     <string name="recently_saved_show_all">แสดงหมด</string>
+
+    <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
+    <string name="recently_saved_show_all_content_description">แสดงปุ่มที่คั่นหน้าทั้งหมดที่บันทึกไว้</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
     <string name="about_content">%1$s ผลิตขึ้นโดย Mozilla</string>
@@ -1038,6 +1043,16 @@
     <string name="notification_pbm_action_delete_and_open">ลบและเปิด</string>
     <!-- Name of the "Powered by Fenix" notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="notification_powered_by_channel_name">ขับเคลื่อนโดย</string>
+    <!-- Name of the marketing notification channel. Displayed in the "App notifications" system settings for the app -->
+    <string name="notification_marketing_channel_name">การตลาด</string>
+    <!-- Title shown in the notification that pops up to remind the user to set fenix as default browser.
+    %1$s is a placeholder that will be replaced by the app name (Fenix). -->
+    <string name="notification_default_browser_title">%1$s รวดเร็วและเป็นส่วนตัว</string>
+    <!-- Text shown in the notification that pops up to remind the user to set fenix as default browser.
+    %1$s is a placeholder that will be replaced by the app name (Fenix). -->
+    <string name="notification_default_browser_text">ทำให้ %1$s เป็นเบราว์เซอร์เริ่มต้นของคุณ</string>
+
+    <!-- Snackbar -->
     <!-- Text shown in snackbar when user deletes a collection -->
     <string name="snackbar_collection_deleted">ลบชุดสะสมแล้ว</string>
     <!-- Text shown in snackbar when user renames a collection -->
