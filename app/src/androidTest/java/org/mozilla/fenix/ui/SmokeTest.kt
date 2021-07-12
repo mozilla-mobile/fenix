@@ -652,7 +652,7 @@ class SmokeTest {
         }.openNavigationToolbar {
         }.openTrackingProtectionTestPage(trackingProtectionPage.url, true) {}
         enhancedTrackingProtection {
-            verifyEnhancedTrackingProtectionNotice()
+            verifyEnhancedTrackingProtectionShield()
         }.closeNotificationPopup {}
     }
 
