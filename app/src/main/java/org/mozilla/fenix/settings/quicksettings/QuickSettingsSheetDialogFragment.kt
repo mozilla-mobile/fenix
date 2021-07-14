@@ -75,7 +75,7 @@ class QuickSettingsSheetDialogFragment : FenixDialogFragment() {
             quickSettingsStore = quickSettingsStore,
             browserStore = components.core.store,
             ioScope = viewLifecycleOwner.lifecycleScope + Dispatchers.IO,
-            navController = findNavController(),
+            navController = { findNavController() },
             sessionId = args.sessionId,
             sitePermissions = args.sitePermissions,
             settings = components.settings,
