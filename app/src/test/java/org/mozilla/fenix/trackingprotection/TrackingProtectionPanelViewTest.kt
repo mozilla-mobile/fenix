@@ -85,8 +85,14 @@ class TrackingProtectionPanelViewTest {
     }
 
     @Test
-    fun testDetailsBack() {
+    fun testExistDetailModed() {
         view.details_back.performClick()
+        verify { interactor.onExitDetailMode() }
+    }
+
+    @Test
+    fun testDetailsBack() {
+        view.navigate_back.performClick()
         verify { interactor.onBackPressed() }
     }
 

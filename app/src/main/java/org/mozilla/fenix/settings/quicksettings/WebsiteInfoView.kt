@@ -12,7 +12,6 @@ import androidx.core.content.ContextCompat.getColor
 import androidx.core.view.isVisible
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.connection_details_website_info.*
-import kotlinx.android.synthetic.main.quicksettings_website_info.*
 import kotlinx.android.synthetic.main.quicksettings_website_info.favicon_image
 import kotlinx.android.synthetic.main.quicksettings_website_info.securityInfo
 import kotlinx.android.synthetic.main.quicksettings_website_info.securityInfoIcon
