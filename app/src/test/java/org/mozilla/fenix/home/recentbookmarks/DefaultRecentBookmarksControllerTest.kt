@@ -46,6 +46,7 @@ class DefaultRecentBookmarksControllerTest {
         every { navController.currentDestination } returns mockk {
             every { id } returns R.id.homeFragment
         }
+        every { navController.navInflater } returns mockk(relaxed = true)
 
         controller = spyk(DefaultRecentBookmarksController(
             activity = activity,
