@@ -471,15 +471,24 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     /**
-     * Caches the last known "is default browser" state when the app was paused.
-     * For an up to do date state use `isDefaultBrowser` instead.
+     * Declared as a function for performance purposes. This could be declared as a variable using
+     * booleanPreference like other members of this class. However, doing so will make it so it will
+     * be initialized once Settings.kt is first called, which in turn will call `isDefaultBrowserBlocking()`.
+     * This will lead to a performance regression since that function can be expensive to call.
      */
-    var wasDefaultBrowserOnLastResume by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_default_browser),
-        default = isDefaultBrowser()
-    )
+    fun checkIfFenixIsDefaultBrowserOnAppResume(): Boolean {
+        val prefKey = appContext.getPreferenceKey(R.string.pref_key_default_browser)
+        val isDefaultBrowserNow = isDefaultBrowserBlocking()
+        val wasDefaultBrowserOnLastResume = this.preferences.getBoolean(prefKey, isDefaultBrowserNow)
+        this.preferences.edit().putBoolean(prefKey, isDefaultBrowserNow).apply()
+        return isDefaultBrowserNow && !wasDefaultBrowserOnLastResume
+    }
 
-    fun isDefaultBrowser(): Boolean {
+    /**
+     * This function is "blocking" since calling this can take approx. 30-40ms (timing taken on a
+     * G5+).
+     */
+    fun isDefaultBrowserBlocking(): Boolean {
         val browsers = BrowsersCache.all(appContext)
         return browsers.isDefaultBrowser
     }
@@ -490,7 +499,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     fun shouldShowDefaultBrowserNotification(): Boolean {
-        return !defaultBrowserNotificationDisplayed && !isDefaultBrowser()
+        return !defaultBrowserNotificationDisplayed && !isDefaultBrowserBlocking()
     }
 
     val shouldUseAutoBatteryTheme by booleanPreference(
