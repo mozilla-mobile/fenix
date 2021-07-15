@@ -437,7 +437,7 @@ class TabsTrayFragment : AppCompatDialogFragment() {
             .make(requireView())
             .bookmarkMessage(tabSize)
             .anchorWithAction(getSnackbarAnchor()) {
-                findNavController().navigate(
+                findNavController().navigateBlockingForAsyncNavGraph(
                     TabsTrayFragmentDirections.actionGlobalBookmarkFragment(BookmarkRoot.Mobile.id)
                 )
                 dismissTabsTray()
