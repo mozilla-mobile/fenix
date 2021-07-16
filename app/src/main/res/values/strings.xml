@@ -1452,6 +1452,11 @@
     <string name="preferences_passwords_save_logins_never_save">Never save</string>
     <!-- Preference for autofilling saved logins in Fenix -->
     <string name="preferences_passwords_autofill">Autofill</string>
+    <!-- Preference for autofilling saved logins in Fenix (in web content) -->
+    <string name="preferences_passwords_autofill2">Autofill websites</string>
+    <!-- Preference for autofilling logins from Fenix in other apps (e.g. autofilling the Twitter app) -->
+    <string name="preferences_android_autofill">Autofill other apps</string>
+
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">Sync logins</string>
     <!-- Preference for syncing saved logins in Fenix, when not signed in-->

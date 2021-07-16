@@ -11,7 +11,10 @@
     <SwitchPreference
         android:defaultValue="true"
         android:key="@string/pref_key_autofill_logins"
-        android:title="@string/preferences_passwords_autofill" />
+        android:title="@string/preferences_passwords_autofill2" />
+    <mozilla.components.feature.autofill.preference.AutofillPreference
+        android:key="@string/pref_key_android_autofill"
+        android:title="@string/preferences_android_autofill" />
     <org.mozilla.fenix.settings.SyncPreference
         android:key="@string/pref_key_sync_logins"
         android:title="@string/preferences_passwords_sync_logins" />
