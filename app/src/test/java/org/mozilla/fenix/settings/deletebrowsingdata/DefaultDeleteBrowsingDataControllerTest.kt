@@ -69,7 +69,7 @@ class DefaultDeleteBrowsingDataControllerTest {
         controller.deleteTabs()
 
         verify {
-            removeAllTabs.invoke()
+            removeAllTabs.invoke(false)
         }
     }
 
