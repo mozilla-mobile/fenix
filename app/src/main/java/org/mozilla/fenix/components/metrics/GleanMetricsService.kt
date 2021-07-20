@@ -83,7 +83,7 @@ private class EventWrapper<T : Enum<T>>(
             if (index == 0) {
                 builder.append(part)
             } else {
-                builder.append(part[0].toUpperCase())
+                builder.append(part[0].uppercase())
                 builder.append(part.substring(1))
             }
         }
@@ -117,10 +117,6 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.AppReceivedIntent -> EventWrapper(
             { Events.appReceivedIntent.record(it) },
             { Events.appReceivedIntentKeys.valueOf(it) }
-        )
-        is Event.AppAllStartup -> EventWrapper(
-            { Events.appOpenedAllStartup.record(it) },
-            { Events.appOpenedAllStartupKeys.valueOf(it) }
         )
         is Event.SearchBarTapped -> EventWrapper(
             { Events.searchBarTapped.record(it) },
@@ -200,6 +196,9 @@ private val Event.wrapper: EventWrapper<*>?
         )
         is Event.ChangedToDefaultBrowser -> EventWrapper<NoExtraKeys>(
             { Events.defaultBrowserChanged.record(it) }
+        )
+        is Event.DefaultBrowserNotifTapped -> EventWrapper<NoExtraKeys>(
+            { Events.defaultBrowserNotifTapped.record(it) }
         )
         is Event.OpenedBookmark -> EventWrapper<NoExtraKeys>(
             { BookmarksManagement.open.record(it) }

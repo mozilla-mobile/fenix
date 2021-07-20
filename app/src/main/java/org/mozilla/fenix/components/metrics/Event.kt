@@ -164,6 +164,7 @@ sealed class Event {
     object OnboardingPrivateBrowsing : Event()
     object OnboardingFinish : Event()
     object ChangedToDefaultBrowser : Event()
+    object DefaultBrowserNotifTapped : Event()
 
     object LoginDialogPromptDisplayed : Event()
     object LoginDialogPromptCancelled : Event()
@@ -403,37 +404,8 @@ sealed class Event {
 
         enum class Source { APP_ICON, LINK, CUSTOM_TAB, UNKNOWN }
 
-        override val extras: Map<Events.appOpenedAllStartupKeys, String>?
-            get() = hashMapOf(Events.appOpenedAllStartupKeys.source to source.name)
-    }
-
-    data class AppAllStartup(
-        val source: Source,
-        val type: Type,
-        val hasSavedInstanceState: Boolean? = null,
-        var launchTime: Long? = null
-    ) : Event() {
-        enum class Source { APP_ICON, LINK, CUSTOM_TAB, UNKNOWN }
-        enum class Type { COLD, WARM, HOT, ERROR }
-
-        override val extras: Map<Events.appOpenedAllStartupKeys, String>?
-            get() {
-                val extrasMap = hashMapOf(
-                    Events.appOpenedAllStartupKeys.source to source.toString(),
-                    Events.appOpenedAllStartupKeys.type to type.toString()
-                )
-                // we are only sending hasSavedInstanceState whenever we get data from
-                // activity's oncreate() method.
-                if (hasSavedInstanceState != null) {
-                    extrasMap[Events.appOpenedAllStartupKeys.hasSavedInstanceState] =
-                        hasSavedInstanceState.toString()
-                }
-                if (launchTime != null) {
-                    extrasMap[Events.appOpenedAllStartupKeys.firstFramePreDrawNanos] =
-                        launchTime.toString()
-                }
-                return extrasMap
-            }
+        override val extras: Map<Events.appReceivedIntentKeys, String>?
+            get() = hashMapOf(Events.appReceivedIntentKeys.source to source.name)
     }
 
     data class CollectionSaveButtonPressed(val fromScreen: String) : Event() {
@@ -524,7 +496,7 @@ sealed class Event {
                 }
 
             val countLabel: String
-                get() = "${engineSource.identifier.toLowerCase(Locale.getDefault())}.$label"
+                get() = "${engineSource.identifier.lowercase(Locale.getDefault())}.$label"
 
             val sourceLabel: String
                 get() = "${engineSource.descriptor}.$label"
@@ -605,7 +577,7 @@ sealed class Event {
         }
 
         override val extras: Map<Events.browserMenuActionKeys, String>?
-            get() = mapOf(Events.browserMenuActionKeys.item to item.toString().toLowerCase(Locale.ROOT))
+            get() = mapOf(Events.browserMenuActionKeys.item to item.toString().lowercase(Locale.ROOT))
     }
 
     data class TabCounterMenuItemTapped(val item: Item) : Event() {
@@ -614,7 +586,7 @@ sealed class Event {
         }
 
         override val extras: Map<Events.tabCounterMenuActionKeys, String>?
-            get() = mapOf(Events.tabCounterMenuActionKeys.item to item.toString().toLowerCase(Locale.ROOT))
+            get() = mapOf(Events.tabCounterMenuActionKeys.item to item.toString().lowercase(Locale.ROOT))
     }
 
     object AutoPlaySettingVisited : Event()
@@ -625,7 +597,7 @@ sealed class Event {
         }
 
         override val extras: Map<Autoplay.settingChangedKeys, String>?
-            get() = mapOf(Autoplay.settingChangedKeys.autoplaySetting to setting.toString().toLowerCase(Locale.ROOT))
+            get() = mapOf(Autoplay.settingChangedKeys.autoplaySetting to setting.toString().lowercase(Locale.ROOT))
     }
 
     sealed class Search

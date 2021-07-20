@@ -745,4 +745,24 @@ class SettingsTest {
 
         assertFalse(localSetting.shouldStartOnHome())
     }
+
+    @Test
+    fun `GIVEN shownDefaultBrowserNotification and isDefaultBrowser WHEN calling shouldShowDefaultBrowserNotification THEN return correct value`() {
+        val localSetting = spyk(settings)
+        every { localSetting.isDefaultBrowserBlocking() } returns false
+
+        localSetting.defaultBrowserNotificationDisplayed = false
+        assert(localSetting.shouldShowDefaultBrowserNotification())
+
+        localSetting.defaultBrowserNotificationDisplayed = true
+        assertFalse(localSetting.shouldShowDefaultBrowserNotification())
+
+        every { localSetting.isDefaultBrowserBlocking() } returns true
+
+        localSetting.defaultBrowserNotificationDisplayed = false
+        assertFalse(localSetting.shouldShowDefaultBrowserNotification())
+
+        localSetting.defaultBrowserNotificationDisplayed = true
+        assertFalse(localSetting.shouldShowDefaultBrowserNotification())
+    }
 }

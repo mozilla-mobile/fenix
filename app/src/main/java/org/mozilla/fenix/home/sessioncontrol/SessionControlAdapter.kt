@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import mozilla.components.browser.state.state.TabSessionState
+import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.feature.top.sites.TopSite.Type.FRECENT
@@ -20,6 +21,7 @@ import mozilla.components.ui.widgets.WidgetSiteItemView
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.components.tips.Tip
 import org.mozilla.fenix.home.OnboardingState
+import org.mozilla.fenix.home.recenttabs.view.RecentTabViewDecorator
 import org.mozilla.fenix.home.sessioncontrol.viewholders.CollectionHeaderViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.CollectionViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.NoCollectionsMessageViewHolder
@@ -40,6 +42,8 @@ import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingTr
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingWhatsNewViewHolder
 import org.mozilla.fenix.home.recenttabs.view.RecentTabViewHolder
 import org.mozilla.fenix.home.recenttabs.view.RecentTabsHeaderViewHolder
+import org.mozilla.fenix.home.recentbookmarks.view.RecentBookmarksViewHolder
+import org.mozilla.fenix.home.recenttabs.view.RecentTabsItemPosition
 import org.mozilla.fenix.home.tips.ButtonTipViewHolder
 import mozilla.components.feature.tab.collections.Tab as ComponentTab
 
@@ -149,8 +153,12 @@ sealed class AdapterItem(@LayoutRes val viewType: Int) {
     object OnboardingWhatsNew : AdapterItem(OnboardingWhatsNewViewHolder.LAYOUT_ID)
 
     object RecentTabsHeader : AdapterItem(RecentTabsHeaderViewHolder.LAYOUT_ID)
-    data class RecentTabItem(val tab: TabSessionState) : AdapterItem(RecentTabViewHolder.LAYOUT_ID) {
-        override fun sameAs(other: AdapterItem) = other is RecentTabItem && tab.id == other.tab.id
+    data class RecentTabItem(
+        val tab: TabSessionState,
+        val position: RecentTabsItemPosition
+    ) : AdapterItem(RecentTabViewHolder.LAYOUT_ID) {
+        override fun sameAs(other: AdapterItem) = other is RecentTabItem && tab.id == other.tab.id &&
+            position == other.position
 
         override fun contentsSameAs(other: AdapterItem): Boolean {
             val otherItem = other as RecentTabItem
@@ -160,6 +168,31 @@ sealed class AdapterItem(@LayoutRes val viewType: Int) {
                     tab.content.icon == otherItem.tab.content.icon
         }
     }
+
+    data class RecentBookmarks(val recentBookmarks: List<BookmarkNode>) :
+        AdapterItem(RecentBookmarksViewHolder.LAYOUT_ID) {
+            override fun sameAs(other: AdapterItem): Boolean {
+                val newBookmarks = (other as? RecentBookmarks) ?: return false
+                if (newBookmarks.recentBookmarks.size != this.recentBookmarks.size) {
+                    return false
+                }
+
+                return recentBookmarks.zip(newBookmarks.recentBookmarks).all { (new, old) ->
+                    new.guid == old.guid
+                }
+            }
+
+            override fun contentsSameAs(other: AdapterItem): Boolean {
+                val newBookmarks = (other as? RecentBookmarks) ?: return false
+
+                val newBookmarksSequence = newBookmarks.recentBookmarks.asSequence()
+                val oldBookmarksList = this.recentBookmarks.asSequence()
+
+                return newBookmarksSequence.zip(oldBookmarksList).all { (new, old) ->
+                    new == old
+                }
+            }
+        }
 
     /**
      * True if this item represents the same value as other. Used by [AdapterItemDiffCallback].
@@ -243,6 +276,10 @@ class SessionControlAdapter(
             ExperimentDefaultBrowserCardViewHolder.LAYOUT_ID -> ExperimentDefaultBrowserCardViewHolder(view, interactor)
             RecentTabsHeaderViewHolder.LAYOUT_ID -> RecentTabsHeaderViewHolder(view, interactor)
             RecentTabViewHolder.LAYOUT_ID -> RecentTabViewHolder(view, interactor)
+            RecentBookmarksViewHolder.LAYOUT_ID -> {
+                RecentBookmarksViewHolder(view, interactor)
+            }
+
             else -> throw IllegalStateException()
         }
     }
@@ -295,7 +332,15 @@ class SessionControlAdapter(
                 (item as AdapterItem.OnboardingAutomaticSignIn).state.withAccount
             )
             is RecentTabViewHolder -> {
-                holder.bindTab((item as AdapterItem.RecentTabItem).tab)
+                val (tab, tabPosition) = item as AdapterItem.RecentTabItem
+                holder.bindTab(tab).apply {
+                    RecentTabViewDecorator.forPosition(tabPosition).invoke(this)
+                }
+            }
+            is RecentBookmarksViewHolder -> {
+                holder.bind(
+                    (item as AdapterItem.RecentBookmarks).recentBookmarks
+                )
             }
         }
     }
