@@ -18,6 +18,7 @@ object Versions {
     const val jna = "5.6.0"
 
     const val androidx_appcompat = "1.3.0"
+    const val androidx_appsearch = "1.0.0-alpha02"
     const val androidx_biometric = "1.1.0"
     const val androidx_coordinator_layout = "1.1.0"
     const val androidx_constraint_layout = "2.0.4"
@@ -163,6 +164,9 @@ object Deps {
     const val leakcanary = "com.squareup.leakcanary:leakcanary-android:${Versions.leakcanary}"
 
     const val androidx_annotation = "androidx.annotation:annotation:${Versions.androidx_annotation}"
+    const val androidx_appsearch = "androidx.appsearch:appsearch:${Versions.androidx_appsearch}"
+    const val androidx_appsearch_compiler = "androidx.appsearch:appsearch-compiler:${Versions.androidx_appsearch}"
+    const val androidx_appsearch_localstorage = "androidx.appsearch:appsearch-local-storage:${Versions.androidx_appsearch}"
     const val androidx_biometric = "androidx.biometric:biometric:${Versions.androidx_biometric}"
     const val androidx_fragment = "androidx.fragment:fragment-ktx:${Versions.androidx_fragment}"
     const val androidx_appcompat = "androidx.appcompat:appcompat:${Versions.androidx_appcompat}"

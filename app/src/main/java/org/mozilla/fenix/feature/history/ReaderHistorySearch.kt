@@ -113,7 +113,13 @@ class HistorySearchFeature(
             if (message is JSONObject) {
                 if(message.has("textContent")){
                     val pageContent = message.optString("textContent")
-                    storageDelegate?.onStore(pageContent)
+                    val pageUrl = message.optString("url")
+                    if (pageContent.isNullOrEmpty()) {
+                        return
+                    }
+
+                    storageDelegate.store(pageUrl, pageContent)
+                    println("pageUrl: $pageUrl")
                     println(pageContent)
                 }
             }
@@ -170,5 +176,5 @@ class HistorySearchFeature(
 }
 
 interface HistorySearchStorageDelegate {
-    fun onStore(content: String?)
+    fun store(url: String, content: String)
 }

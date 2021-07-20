@@ -129,11 +129,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                 context,
                 components.core.engine,
                 components.core.store,
-                object : HistorySearchStorageDelegate {
-                    override fun onStore(content: String?) {
-
-                    }
-                }
+                components.historyPageStorage
             ),
             owner = this,
             view = view

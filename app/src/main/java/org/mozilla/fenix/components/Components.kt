@@ -7,8 +7,10 @@ package org.mozilla.fenix.components
 import android.app.Application
 import android.content.Context
 import android.content.Intent
+import androidx.appsearch.localstorage.LocalStorage
 import androidx.core.net.toUri
 import com.google.android.play.core.review.ReviewManagerFactory
+import kotlinx.coroutines.guava.asDeferred
 import mozilla.components.feature.addons.AddonManager
 import mozilla.components.feature.addons.amo.AddonCollectionProvider
 import mozilla.components.feature.addons.migration.DefaultSupportedAddonsChecker
@@ -26,6 +28,7 @@ import org.mozilla.fenix.autofill.AutofillConfirmActivity
 import org.mozilla.fenix.autofill.AutofillSearchActivity
 import org.mozilla.fenix.autofill.AutofillUnlockActivity
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.feature.history.HistorySearchStorage
 import org.mozilla.fenix.perf.AppStartReasonProvider
 import org.mozilla.fenix.perf.StartupActivityLog
 import org.mozilla.fenix.perf.StartupStateProvider
@@ -171,5 +174,19 @@ class Components(private val context: Context) {
 
     val appStartReasonProvider by lazyMonitored { AppStartReasonProvider() }
     val startupActivityLog by lazyMonitored { StartupActivityLog() }
-    val startupStateProvider by lazyMonitored { StartupStateProvider(startupActivityLog, appStartReasonProvider) }
+    val startupStateProvider by lazyMonitored {
+        StartupStateProvider(
+            startupActivityLog,
+            appStartReasonProvider
+        )
+    }
+
+    val historyPageStorage by lazyMonitored {
+        val session = LocalStorage.createSearchSession(
+            LocalStorage.SearchContext.Builder(context, "history_page_data")
+                .build()
+        ).asDeferred()
+
+        HistorySearchStorage(session)
+    }
 }

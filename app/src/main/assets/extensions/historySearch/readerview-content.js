@@ -84,7 +84,7 @@ window.addEventListener("pageshow", (event) => {
   var documentCopy = document.cloneNode(true);
   let result = new Readability(documentCopy, {classesToPreserve: preservedClasses}).parse();
   //alert("textContent \n "+result.textContent +" \n excerpt "+ result.excerpt+"  \n byline  " +result.byline)
-   port.postMessage({textContent: result.textContent});
+   port.postMessage({textContent: result.textContent, url: document.URL});
 });
 
 window.addEventListener("pagehide", (event) => {
