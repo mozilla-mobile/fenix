@@ -113,7 +113,7 @@ class HomeMenu(
             R.drawable.ic_synced_tabs,
             primaryTextColor
         ) {
-        onItemTapped.invoke(Item.SyncAccount(accountManager.accountState))
+            onItemTapped.invoke(Item.SyncAccount(accountManager.accountState))
         }
 
         val bookmarksItem = BrowserMenuImageText(
