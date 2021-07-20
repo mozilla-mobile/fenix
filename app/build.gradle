@@ -741,3 +741,27 @@ ext.updateExtensionVersion = { task, extDir ->
         expand(values)
     }
 }
+
+
+// Define a reusable task for updating the version in manifest.json for modules that package
+// a web extension. We automate this to make sure we never forget to update the version, either
+// in local development or for releases. In both cases, we want to make sure the latest version
+// of all extensions (including their latest changes) are installed on first start-up.
+ext.updateExtensionVersion = { task, extDir ->
+    configure(task) {
+        from extDir
+        include 'manifest.template.json'
+        rename { 'manifest.json' }
+        into extDir
+
+        def values = ['version': "0.0.1-" + new Date().format('MMddHHmmss')]
+        inputs.properties(values)
+        expand(values)
+    }
+}
+
+tasks.register("updateBuiltInExtensionVersion", org.gradle.api.tasks.Copy) { task ->
+    updateExtensionVersion(task, 'src/main/assets/extensions/historySearch')
+}
+
+preBuild.dependsOn updateBuiltInExtensionVersion

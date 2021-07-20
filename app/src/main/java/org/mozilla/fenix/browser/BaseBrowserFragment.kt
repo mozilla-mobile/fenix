@@ -138,6 +138,7 @@ import org.mozilla.fenix.components.toolbar.interactor.BrowserToolbarInteractor
 import org.mozilla.fenix.components.toolbar.interactor.DefaultBrowserToolbarInteractor
 import org.mozilla.fenix.ext.measureNoInline
 import org.mozilla.fenix.ext.secure
+import org.mozilla.fenix.feature.history.HistorySearchFeature
 import org.mozilla.fenix.settings.biometric.BiometricPromptFeature
 import mozilla.components.feature.session.behavior.ToolbarPosition as MozacToolbarPosition
 
@@ -166,6 +167,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
         get() = _browserToolbarView!!
 
     protected val readerViewFeature = ViewBoundFeatureWrapper<ReaderViewFeature>()
+    protected val historySearchFeature = ViewBoundFeatureWrapper<HistorySearchFeature>()
     protected val thumbnailsFeature = ViewBoundFeatureWrapper<BrowserThumbnails>()
 
     private val sessionFeature = ViewBoundFeatureWrapper<SessionFeature>()

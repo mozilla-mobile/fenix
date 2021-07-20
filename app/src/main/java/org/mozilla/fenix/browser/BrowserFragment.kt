@@ -39,6 +39,8 @@ import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.navigateSafe
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.feature.history.HistorySearchFeature
+import org.mozilla.fenix.feature.history.HistorySearchStorageDelegate
 import org.mozilla.fenix.shortcut.PwaOnboardingObserver
 import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.trackingprotection.TrackingProtectionOverlay
@@ -118,6 +120,21 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
 
         thumbnailsFeature.set(
             feature = BrowserThumbnails(context, view.engineView, components.core.store),
+            owner = this,
+            view = view
+        )
+
+        historySearchFeature.set(
+            feature = HistorySearchFeature(
+                context,
+                components.core.engine,
+                components.core.store,
+                object : HistorySearchStorageDelegate {
+                    override fun onStore(content: String?) {
+
+                    }
+                }
+            ),
             owner = this,
             view = view
         )
