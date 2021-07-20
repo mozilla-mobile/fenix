@@ -64,6 +64,7 @@ import org.mozilla.fenix.telemetry.TelemetryLifecycleObserver
 import org.mozilla.fenix.utils.BrowsersCache
 import java.util.concurrent.TimeUnit
 import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.feature.autofill.AutofillUseCases
 import mozilla.components.feature.search.ext.buildSearchUrl
 import mozilla.components.feature.search.ext.waitForSelectedOrDefaultSearchEngine
 import mozilla.components.service.fxa.manager.SyncEnginesStorage
@@ -601,6 +602,10 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
 
             tabViewSetting.set(settings.getTabViewPingString())
             closeTabSetting.set(settings.getTabTimeoutPingString())
+
+            val autofillUseCases = AutofillUseCases()
+            androidAutofillSupported.set(autofillUseCases.isSupported(applicationContext))
+            androidAutofillEnabled.set(autofillUseCases.isEnabled(applicationContext))
         }
 
         browserStore.waitForSelectedOrDefaultSearchEngine { searchEngine ->
