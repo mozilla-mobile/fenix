@@ -19,7 +19,9 @@ job-defaults:
             signing-android-test: signing-android-test-debug
     include-pull-request-number: true
     routes:
-        - notify.slack-channel.C028QK733QR.on-running
+        - notify.slack-channel.C028QK733QR.on-completed
+    scopes:
+        - queue:route:notify.slack-channel.C028QK733QR.on-completed
     extra:
         notify:
             slackText: 'Things worked in ${status.taskId}'
