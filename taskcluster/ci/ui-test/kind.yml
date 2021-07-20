@@ -18,6 +18,8 @@ job-defaults:
             signing: signing-debug
             signing-android-test: signing-android-test-debug
     include-pull-request-number: true
+    route:
+        - notify.slack-channel.C028QK733QR.on-completed
     run:
         commands:
             - [wget, {artifact-reference: '<signing/public/build/x86/target.apk>'}, '-O', app.apk]
