@@ -144,6 +144,9 @@
     <!-- Browser menu label for adding a bookmark -->
     <string name="browser_menu_add">Adaugă</string>
 
+    <!-- Browser menu label for editing a bookmark -->
+    <string name="browser_menu_edit">Editează</string>
+
     <!-- Error message to show when the user tries to access a scheme not
         handled by the app (Ex: blob, tel etc) -->
     <string name="unknown_scheme_error_message">Imposibil de conectat. Schemă URL nerecunoscută.</string>
@@ -1110,7 +1113,7 @@
     <!-- Header for categories that are being not being blocked by current Enhanced Tracking Protection settings -->
     <string name="enhanced_tracking_protection_allowed">Permise</string>
     <!-- Category of trackers (social media trackers) that can be blocked by Enhanced Tracking Protection -->
-    <string name="etp_social_media_trackers_title">Elemente de urmărire de pe rețele de socializare</string>
+    <string name="etp_social_media_trackers_title">Elemente de urmărire ale rețelelor sociale</string>
     <!-- Description of social media trackers that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_social_media_trackers_description">Limitează capacitatea rețelelor de socializare de a-ți urmări activitatea de navigare pe web.</string>
     <!-- Category of trackers (cross-site tracking cookies) that can be blocked by Enhanced Tracking Protection -->
@@ -1207,6 +1210,8 @@
     <string name="preferences_passwords_autofill">Completare automată</string>
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">Sincronizează datele de autentificare</string>
+    <!-- Preference for syncing saved logins in Fenix, when not signed in-->
+    <string name="preferences_passwords_sync_logins_across_devices">Sincronizează datele de autentificare între dispozitive</string>
     <!-- Syncing saved logins in Fenix needs reconnect to sync -->
     <string name="preferences_passwords_sync_logins_reconnect">Reconectare</string>
     <!-- Syncing saved logins in Fenix needs login -->
