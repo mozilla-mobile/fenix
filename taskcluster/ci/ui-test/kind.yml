@@ -20,6 +20,9 @@ job-defaults:
     include-pull-request-number: true
     routes:
         - notify.slack-channel.C028QK733QR.on-completed
+    extra:
+        notify:
+            slackText: 'Things worked in ${status.taskId}'
     run:
         commands:
             - [wget, {artifact-reference: '<signing/public/build/x86/target.apk>'}, '-O', app.apk]
