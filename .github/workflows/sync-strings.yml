@@ -23,7 +23,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           path: main
-          ref: master
+          ref: main
       - name: "Checkout Beta Branch"
         uses: actions/checkout@v2
         with:
