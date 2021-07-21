@@ -1,7 +1,7 @@
 pipeline {
     agent any
     triggers {
-        cron(env.BRANCH_NAME == 'master' ? 'H 0 * * *' : '')
+        cron(env.BRANCH_NAME == 'main' ? 'H 0 * * *' : '')
     }
     options {
         timestamps()
