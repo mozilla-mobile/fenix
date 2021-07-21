@@ -4,6 +4,7 @@ import androidx.appsearch.app.AppSearchSession
 import androidx.appsearch.app.PutDocumentsRequest
 import androidx.appsearch.app.SearchResult
 import androidx.appsearch.app.SearchSpec
+import androidx.appsearch.app.SearchSpec.RANKING_STRATEGY_USAGE_COUNT
 import androidx.appsearch.app.SetSchemaRequest
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -35,11 +36,12 @@ class HistorySearchStorage(
     suspend fun search(term: String): List<SearchResult> = withContext(scope.coroutineContext) {
         val searchSpec = SearchSpec.Builder()
             .addFilterNamespaces(HISTORY_DOCUMENT_NAMESPACE)
-            .setRankingStrategy(SearchSpec.RANKING_STRATEGY_RELEVANCE_SCORE)
+            .setRankingStrategy(SearchSpec.RANKING_STRATEGY_RELEVANCE_SCORE.and(RANKING_STRATEGY_USAGE_COUNT))
             .build();
 
         val result =session.await().search(term, searchSpec).nextPage.await()
-        val first = result.first()
+        val first = result.firstOrNull() ?: return@withContext emptyList()
+        println("this is the result title: ${first.getDocument(HistoryDocument::class.java).title}")
         println("this is the result: ${first.getDocument(HistoryDocument::class.java).text}")
         println("this is the result id: ${first.genericDocument.id}")
         println("this is the result score: ${first.genericDocument.score}")
@@ -48,9 +50,10 @@ class HistorySearchStorage(
         result
     }
 
-    override fun store(url: String, content: String, imageUrl: String?) {
+    override fun store(title: String?, url: String, content: String, imageUrl: String?) {
         val note = HistoryDocument(
             id = url,
+            title = title,
             text = content.take(20_000),
             score = 1001,
             imageUrl = imageUrl

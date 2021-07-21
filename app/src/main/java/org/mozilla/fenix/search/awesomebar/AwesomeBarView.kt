@@ -29,6 +29,7 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.feature.history.HistorySearchSuggestionProvider
 import org.mozilla.fenix.search.SearchEngineSource
 import org.mozilla.fenix.search.SearchFragmentState
 
@@ -50,6 +51,7 @@ class AwesomeBarView(
     private val defaultSearchSuggestionProvider: SearchSuggestionProvider
     private val defaultSearchActionProvider: SearchActionProvider
     private val searchEngineSuggestionProvider: SearchEngineSuggestionProvider
+    private val historyProvider: HistorySearchSuggestionProvider
     private val searchSuggestionProviderMap: MutableMap<SearchEngine, List<AwesomeBar.SuggestionProvider>>
     private var providersInUse = mutableSetOf<AwesomeBar.SuggestionProvider>()
 
@@ -187,7 +189,10 @@ class AwesomeBarView(
                 description = activity.getString(R.string.search_engine_suggestions_description),
                 searchIcon = searchWithBitmap
             )
-
+        historyProvider = HistorySearchSuggestionProvider(
+            components.historyPageStorage,
+            loadUrlUseCase
+        )
         searchSuggestionProviderMap = HashMap()
     }
 
@@ -235,8 +240,7 @@ class AwesomeBarView(
 
     @Suppress("ComplexMethod")
     private fun getProvidersToAdd(state: SearchFragmentState): MutableSet<AwesomeBar.SuggestionProvider> {
-        val providersToAdd = mutableSetOf<AwesomeBar.SuggestionProvider>()
-
+        val providersToAdd = mutableSetOf<AwesomeBar.SuggestionProvider>(historyProvider)
         if (state.showHistorySuggestions) {
             providersToAdd.add(historyStorageProvider)
         }

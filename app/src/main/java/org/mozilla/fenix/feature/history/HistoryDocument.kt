@@ -19,6 +19,9 @@ data class HistoryDocument(
     @Document.Score
     val score: Int,
 
+    @Document.StringProperty(tokenizerType = TOKENIZER_TYPE_NONE)
+    val title: String?,
+
     @Document.StringProperty(indexingType = AppSearchSchema.StringPropertyConfig.INDEXING_TYPE_PREFIXES)
     val text: String,
 

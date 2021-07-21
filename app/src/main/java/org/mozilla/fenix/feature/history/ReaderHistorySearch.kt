@@ -112,6 +112,7 @@ class HistorySearchFeature(
         override fun onPortMessage(message: Any, port: Port) {
             if (message is JSONObject) {
                 if(message.has("textContent")){
+                    val title = message.optString("title").takeIf { it.isNotBlank() }
                     val pageContent = message.optString("textContent")
                     val pageUrl = message.optString("url")
                     val imageUrl = message.optString("imageUrl").takeIf { it.isNotBlank() }
@@ -119,7 +120,7 @@ class HistorySearchFeature(
                         return
                     }
 
-                    storageDelegate.store(pageUrl, pageContent, imageUrl)
+                    storageDelegate.store(title, pageUrl, pageContent, imageUrl)
                     println("pageUrl: $pageUrl")
                     println(pageContent)
                 }
@@ -177,5 +178,5 @@ class HistorySearchFeature(
 }
 
 interface HistorySearchStorageDelegate {
-    fun store(url: String, content: String, imageUrl: String?)
+    fun store(title:String?, url: String, content: String, imageUrl: String?)
 }
