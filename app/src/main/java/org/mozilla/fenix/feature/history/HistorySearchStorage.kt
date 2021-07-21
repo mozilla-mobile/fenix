@@ -56,7 +56,7 @@ class HistorySearchStorage(
             title = title,
             text = content.take(20_000),
             score = 1001,
-            imageUrl = imageUrl
+            imageUrl = imageUrl?.sanitizeIconUrl()
         )
 
         val putRequest = PutDocumentsRequest.Builder().addDocuments(note).build()
@@ -72,3 +72,9 @@ class HistorySearchStorage(
         }
     }
 }
+
+/**
+ * For reasons beyond me, the icon URL comes back from javascript as a null string. So let's
+ * remove this for now.
+ */
+fun String.sanitizeIconUrl(): String? = if (this == "null") null else this
