@@ -136,7 +136,7 @@ allprojects {
 
     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
         kotlinOptions.jvmTarget = "1.8"
-        kotlinOptions.allWarningsAsErrors = true
+//        kotlinOptions.allWarningsAsErrors = true
         kotlinOptions.freeCompilerArgs += [
             "-Xuse-experimental=kotlin.Experimental"
         ]

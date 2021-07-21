@@ -119,8 +119,12 @@ class HistorySearchFeature(
                     if (pageContent.isNullOrEmpty()) {
                         return
                     }
+                    println("JAVASSCRIPT-> this is the result imageUrl:$title")
+                    println("JAVASSCRIPT-> this is the result pageContent: $pageContent")
+                    println("JAVASSCRIPT-> this is the result: pageUrl $pageUrl")
+                    println("JAVASSCRIPT-> this is the result imageUrl: $imageUrl")
 
-                    storageDelegate.store(title, pageUrl, pageContent, imageUrl)
+                    storageDelegate.store(title, pageUrl, pageContent.trim(), imageUrl)
                     println("pageUrl: $pageUrl")
                     println(pageContent)
                 }

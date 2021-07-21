@@ -191,7 +191,8 @@ class AwesomeBarView(
             )
         historyProvider = HistorySearchSuggestionProvider(
             components.historyPageStorage,
-            loadUrlUseCase
+            loadUrlUseCase,
+            components.core.client
         )
         searchSuggestionProviderMap = HashMap()
     }

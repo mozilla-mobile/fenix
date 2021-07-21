@@ -41,10 +41,10 @@ class HistorySearchStorage(
 
         val result =session.await().search(term, searchSpec).nextPage.await()
         val first = result.firstOrNull() ?: return@withContext emptyList()
+        println("this is the result imageUrl: ${first.getDocument(HistoryDocument::class.java).imageUrl}")
         println("this is the result title: ${first.getDocument(HistoryDocument::class.java).title}")
         println("this is the result: ${first.getDocument(HistoryDocument::class.java).text}")
         println("this is the result id: ${first.genericDocument.id}")
-        println("this is the result score: ${first.genericDocument.score}")
         println("this is the result rankingSignal: ${first.rankingSignal}")
         println("this is the result creationTimestampMillis: ${first.genericDocument.creationTimestampMillis}")
         result
