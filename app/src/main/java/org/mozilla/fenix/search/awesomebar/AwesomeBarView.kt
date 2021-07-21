@@ -4,11 +4,15 @@
 
 package org.mozilla.fenix.search.awesomebar
 
+import android.view.View
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.core.graphics.BlendModeColorFilterCompat.createBlendModeColorFilterCompat
 import androidx.core.graphics.BlendModeCompat.SRC_IN
 import androidx.core.graphics.drawable.toBitmap
 import mozilla.components.browser.awesomebar.BrowserAwesomeBar
+import mozilla.components.browser.awesomebar.layout.DefaultSuggestionLayout
+import mozilla.components.browser.awesomebar.layout.SuggestionLayout
+import mozilla.components.browser.awesomebar.layout.SuggestionViewHolder
 import mozilla.components.browser.state.search.SearchEngine
 import mozilla.components.browser.state.state.searchEngines
 import mozilla.components.concept.awesomebar.AwesomeBar
@@ -29,6 +33,7 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.feature.history.HistorySearchSuggestionLayout
 import org.mozilla.fenix.feature.history.HistorySearchSuggestionProvider
 import org.mozilla.fenix.search.SearchEngineSource
 import org.mozilla.fenix.search.SearchFragmentState
@@ -194,6 +199,7 @@ class AwesomeBarView(
             loadUrlUseCase,
             components.core.client
         )
+        view.layout = HistorySearchSuggestionLayout
         searchSuggestionProviderMap = HashMap()
     }
 

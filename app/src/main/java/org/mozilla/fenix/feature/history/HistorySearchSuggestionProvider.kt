@@ -38,6 +38,7 @@ class HistorySearchSuggestionProvider(
             icon = icon,
             title = result.title,
             description = result.text.take(100),
+            editSuggestion = result.id,
             onSuggestionClicked = {
                 loadUrlUseCase.invoke(result.id)
             }
@@ -46,9 +47,10 @@ class HistorySearchSuggestionProvider(
     }
 
 
-    suspend fun getIconBitmap(iconUrl: String?): Bitmap? {
+    private fun getIconBitmap(iconUrl: String?): Bitmap? {
         var bitmap: Bitmap? = null
-        if (!iconUrl.isNullOrBlank()) {
+        if (!iconUrl.isNullOrEmpty()) {
+            println("iconUrl that may fail: $iconUrl")
             client.fetch(
                 Request(url = iconUrl.sanitizeURL())
             ).use { response ->
