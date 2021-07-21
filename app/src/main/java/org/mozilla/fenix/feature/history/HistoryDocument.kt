@@ -2,6 +2,7 @@ package org.mozilla.fenix.feature.history
 
 import androidx.appsearch.annotation.Document
 import androidx.appsearch.app.AppSearchSchema
+import androidx.appsearch.app.AppSearchSchema.StringPropertyConfig.TOKENIZER_TYPE_NONE
 import org.mozilla.fenix.BuildConfig
 
 const val HISTORY_DOCUMENT_NAMESPACE = BuildConfig.APPLICATION_ID + ".history_page"
@@ -19,5 +20,8 @@ data class HistoryDocument(
     val score: Int,
 
     @Document.StringProperty(indexingType = AppSearchSchema.StringPropertyConfig.INDEXING_TYPE_PREFIXES)
-    val text: String
+    val text: String,
+
+    @Document.StringProperty(tokenizerType = TOKENIZER_TYPE_NONE)
+    val imageUrl: String? = null
 )

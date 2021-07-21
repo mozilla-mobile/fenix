@@ -1428,10 +1428,10 @@ Readability.prototype = {
     var metaElements = this._doc.getElementsByTagName("meta");
 
     // property is a space-separated list of values
-    var propertyPattern = /\s*(dc|dcterm|og|twitter)\s*:\s*(author|creator|description|title|site_name)\s*/gi;
+    var propertyPattern = /\s*(dc|dcterm|og|twitter|thumbnail)\s*:\s*(author|creator|description|title|site_name|image|image:url|image:secure_url)\s*/gi;
 
     // name is a single value
-    var namePattern = /^\s*(?:(dc|dcterm|og|twitter|weibo:(article|webpage))\s*[\.:]\s*)?(author|creator|description|title|site_name)\s*$/i;
+    var namePattern = /^\s*(?:(dc|dcterm|og|twitter|weibo:(article|webpage))\s*[\.:]\s*)?(author|creator|description|title|site_name|image|image:url|image:secure_url)\s*$/i;
 
     // Find description tags.
     this._forEachNode(metaElements, function(element) {
@@ -1498,6 +1498,13 @@ Readability.prototype = {
     // get site name
     metadata.siteName = jsonld.siteName ||
                         values["og:site_name"];
+
+    // get banner image
+    metadata.image = values["thumbnail"] ||
+                     values["twitter:image"] ||
+                     values["og:image"] ||
+                     values["og:image:url"] ||
+                     values["og:image:secure_url"]
 
     // in many sites the meta value is escaped with HTML entities,
     // so here we need to unescape it
@@ -2207,7 +2214,8 @@ Readability.prototype = {
       textContent: textContent,
       length: textContent.length,
       excerpt: metadata.excerpt,
-      siteName: metadata.siteName || this._articleSiteName
+      siteName: metadata.siteName || this._articleSiteName,
+      image: metadata.image
     };
   }
 };

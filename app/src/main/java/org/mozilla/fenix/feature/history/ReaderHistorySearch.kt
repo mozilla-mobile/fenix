@@ -114,11 +114,12 @@ class HistorySearchFeature(
                 if(message.has("textContent")){
                     val pageContent = message.optString("textContent")
                     val pageUrl = message.optString("url")
+                    val imageUrl = message.optString("imageUrl").takeIf { it.isNotBlank() }
                     if (pageContent.isNullOrEmpty()) {
                         return
                     }
 
-                    storageDelegate.store(pageUrl, pageContent)
+                    storageDelegate.store(pageUrl, pageContent, imageUrl)
                     println("pageUrl: $pageUrl")
                     println(pageContent)
                 }
@@ -176,5 +177,5 @@ class HistorySearchFeature(
 }
 
 interface HistorySearchStorageDelegate {
-    fun store(url: String, content: String)
+    fun store(url: String, content: String, imageUrl: String?)
 }

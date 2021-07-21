@@ -48,11 +48,12 @@ class HistorySearchStorage(
         result
     }
 
-    override fun store(url: String, content: String) {
+    override fun store(url: String, content: String, imageUrl: String?) {
         val note = HistoryDocument(
             id = url,
             text = content.take(20_000),
-            score = 1001
+            score = 1001,
+            imageUrl = imageUrl
         )
 
         val putRequest = PutDocumentsRequest.Builder().addDocuments(note).build()
