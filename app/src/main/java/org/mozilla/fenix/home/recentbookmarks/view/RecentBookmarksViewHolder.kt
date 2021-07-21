@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL
 import kotlinx.android.synthetic.main.component_recent_bookmarks.view.*
 import kotlinx.android.synthetic.main.recent_bookmarks_header.*
 import mozilla.components.concept.storage.BookmarkNode
+import mozilla.components.support.ktx.android.view.hideKeyboard
 import org.mozilla.fenix.R
 import org.mozilla.fenix.home.recentbookmarks.RecentBookmarksItemAdapter
 import org.mozilla.fenix.home.recentbookmarks.interactor.RecentBookmarksInteractor
@@ -31,6 +32,7 @@ class RecentBookmarksViewHolder(
         }
 
         showAllBookmarksButton.setOnClickListener {
+            it.hideKeyboard()
             interactor.onShowAllBookmarksClicked()
         }
     }
