@@ -36,7 +36,7 @@ class HistorySearchStorage(
     suspend fun search(term: String): List<SearchResult> = withContext(scope.coroutineContext) {
         val searchSpec = SearchSpec.Builder()
             .addFilterNamespaces(HISTORY_DOCUMENT_NAMESPACE)
-            .setRankingStrategy(SearchSpec.RANKING_STRATEGY_RELEVANCE_SCORE.and(RANKING_STRATEGY_USAGE_COUNT))
+            .setRankingStrategy(SearchSpec.RANKING_STRATEGY_RELEVANCE_SCORE)
             .build();
 
         val result =session.await().search(term, searchSpec).nextPage.await()

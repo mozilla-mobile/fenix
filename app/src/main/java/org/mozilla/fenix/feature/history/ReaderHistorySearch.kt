@@ -8,7 +8,10 @@ import android.content.Context
 import androidx.annotation.VisibleForTesting
 import java.lang.ref.WeakReference
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.mapNotNull
 import mozilla.components.browser.state.action.ReaderAction
 import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.browser.state.state.TabSessionState
@@ -16,8 +19,10 @@ import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.Engine
 import mozilla.components.concept.engine.webextension.MessageHandler
 import mozilla.components.concept.engine.webextension.Port
+import mozilla.components.lib.state.ext.flowScoped
 import mozilla.components.support.base.feature.LifecycleAwareFeature
 import mozilla.components.support.base.log.logger.Logger
+import mozilla.components.support.ktx.kotlinx.coroutines.flow.filterChanged
 import mozilla.components.support.webextensions.WebExtensionController
 import org.json.JSONObject
 
@@ -55,30 +60,26 @@ class HistorySearchFeature(
     )
 
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun start() {
         ensureExtensionInstalled()
+
+        scope = store.flowScoped { flow ->
+            flow.mapNotNull { state -> state.tabs }
+                .filterChanged {
+                    it.readerState
+                }
+                .collect { tab ->
+                    if (tab.readerState.connectRequired) {
+                        connectReaderViewContentScript(tab)
+                    }
+                }
+        }
     }
 
     override fun stop() {
         scope?.cancel()
     }
-
-
-    @VisibleForTesting
-    internal fun checkReaderState(session: TabSessionState? = store.state.selectedTab) {
-        session?.engineState?.engineSession?.let { engineSession ->
-            val message = createCheckReaderStateMessage()
-            if (extensionController.portConnected(engineSession, READER_VIEW_CONTENT_PORT)) {
-                extensionController.sendContentMessage(message, engineSession, READER_VIEW_CONTENT_PORT)
-            }
-            if (extensionController.portConnected(engineSession, READER_VIEW_ACTIVE_CONTENT_PORT)) {
-                extensionController.sendContentMessage(message, engineSession, READER_VIEW_ACTIVE_CONTENT_PORT)
-            }
-            store.dispatch(ReaderAction.UpdateReaderableCheckRequiredAction(session.id, false))
-        }
-    }
-
-
 
     private fun ensureExtensionInstalled() {
         val feature = WeakReference(this)
@@ -99,6 +100,7 @@ class HistorySearchFeature(
             store.dispatch(ReaderAction.UpdateReaderConnectRequiredAction(session.id, false))
         }
     }
+
     /**
      * Handles content messages from regular pages.
      */
