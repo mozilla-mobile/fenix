@@ -311,7 +311,7 @@ android.applicationVariants.all { variant ->
 
     buildConfigField 'String', 'SENTRY_TOKEN', 'null'
     if (!isDebug) {
-        buildConfigField 'boolean', 'CRASH_REPORTING', 'true'
+        buildConfigField 'boolean', 'CRASH_REPORTING', 'false'
         // Reading sentry token from local file (if it exists). In a release task on taskcluster it will be available.
         try {
             def token = new File("${rootDir}/.sentry_token").text.trim()
@@ -322,7 +322,7 @@ android.applicationVariants.all { variant ->
     }
 
     if (!isDebug) {
-        buildConfigField 'boolean', 'TELEMETRY', 'true'
+        buildConfigField 'boolean', 'TELEMETRY', 'false'
     } else {
         buildConfigField 'boolean', 'TELEMETRY', 'false'
     }
