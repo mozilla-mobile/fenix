@@ -41,7 +41,8 @@ class HistorySearchSuggestionProvider(
             editSuggestion = result.id,
             onSuggestionClicked = {
                 loadUrlUseCase.invoke(result.id)
-            }
+            },
+            score = Integer.MAX_VALUE - 1
         )
         return listOf(item)
     }
