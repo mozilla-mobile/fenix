@@ -7,8 +7,11 @@ import mozilla.components.browser.awesomebar.BrowserAwesomeBar
 import mozilla.components.browser.awesomebar.layout.DefaultSuggestionLayout
 import mozilla.components.browser.awesomebar.layout.SuggestionLayout
 import mozilla.components.browser.awesomebar.layout.SuggestionViewHolder
+import mozilla.components.browser.toolbar.MAX_URI_LENGTH
 import mozilla.components.concept.awesomebar.AwesomeBar
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.toShortUrl
 
 object HistorySearchSuggestionLayout : SuggestionLayout {
     private val defaultLayout = DefaultSuggestionLayout()

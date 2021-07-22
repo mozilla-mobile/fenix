@@ -6,33 +6,46 @@
     android:layout_height="wrap_content"
     android:clickable="true"
     android:focusable="true"
+    android:paddingStart="16dp"
     android:paddingTop="8dp"
+    android:paddingEnd="16dp"
     android:paddingBottom="8dp">
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/history_search_icon"
         style="@style/topSiteFavicon"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:adjustViewBounds="true"
         android:importantForAccessibility="no"
         android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/history_icon_barrier"
+        app:layout_constraintHeight_max="50dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_max="50dp"
+        tools:src="@drawable/mozac_ic_globe" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/history_icon_barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="end"
+        app:constraint_referenced_ids="history_search_icon" />
 
     <TextView
         android:id="@+id/history_search_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:maxLines="1"
         android:orientation="horizontal"
         android:textAppearance="@style/HeaderTextStyle"
         android:textSize="16sp"
         app:fontFamily="@font/metropolis_semibold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/history_search_icon"
+        app:layout_constraintStart_toStartOf="@+id/history_search_description"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Google News" />
 
@@ -40,13 +53,11 @@
         android:id="@+id/history_search_description"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:maxLines="2"
         android:textAlignment="viewStart"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/history_search_icon"
+        app:layout_constraintStart_toEndOf="@id/history_icon_barrier"
         app:layout_constraintTop_toBottomOf="@+id/history_search_title"
         tools:text="Comprehensive news source up-to-date coverage, aggregated from various parts of the earth." />
 
@@ -54,12 +65,11 @@
         android:id="@+id/history_search_url"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:maxLines="1"
         android:textAlignment="viewStart"
         android:textSize="11sp"
         app:layout_constraintEnd_toEndOf="@+id/history_search_description"
-        app:layout_constraintStart_toEndOf="@+id/history_search_icon"
+        app:layout_constraintStart_toStartOf="@+id/history_search_description"
         app:layout_constraintTop_toBottomOf="@+id/history_search_description"
         tools:text="news.google.com/topsites" />
 
