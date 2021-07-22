@@ -26,8 +26,6 @@ import mozilla.components.support.ktx.kotlinx.coroutines.flow.filterChanged
 import mozilla.components.support.webextensions.WebExtensionController
 import org.json.JSONObject
 
-typealias onReaderViewStatusChange = (available: Boolean, active: Boolean) -> Unit
-
 /**
  * Feature implementation that provides a reader view for the selected
  * session, based on a web extension.
@@ -35,12 +33,6 @@ typealias onReaderViewStatusChange = (available: Boolean, active: Boolean) -> Un
  * @property context a reference to the context.
  * @property engine a reference to the application's browser engine.
  * @property store a reference to the application's [BrowserStore].
- * @param controlsView the view to use to display reader mode controls.
- * @property onReaderViewStatusChange a callback invoked to indicate whether
- * or not reader view is available and active for the page loaded by the
- * currently selected session. The callback will be invoked when a page is
- * loaded or refreshed, on any navigation (back or forward), and when the
- * selected session changes.
  */
 class HistorySearchFeature(
     private val context: Context,
@@ -83,7 +75,7 @@ class HistorySearchFeature(
 
     private fun ensureExtensionInstalled() {
         val feature = WeakReference(this)
-        extensionController.install(engine,onSuccess = {
+        extensionController.install(engine, onSuccess = {
             feature.get()?.connectReaderViewContentScript()
         })
     }
@@ -112,24 +104,22 @@ class HistorySearchFeature(
         }
 
         override fun onPortMessage(message: Any, port: Port) {
-            if (message is JSONObject) {
-                if(message.has("textContent")){
-                    val title = message.optString("title").takeIf { it.isNotBlank() }
-                    val pageContent = message.optString("textContent")
-                    val pageUrl = message.optString("url")
-                    val imageUrl = message.optString("imageUrl").takeIf { it.isNotBlank() }
-                    if (pageContent.isNullOrEmpty()) {
-                        return
-                    }
-                    println("JAVASSCRIPT-> this is the result imageUrl:$title")
-                    println("JAVASSCRIPT-> this is the result pageContent: $pageContent")
-                    println("JAVASSCRIPT-> this is the result: pageUrl $pageUrl")
-                    println("JAVASSCRIPT-> this is the result imageUrl: $imageUrl")
-
-                    storageDelegate.store(title, pageUrl, pageContent.trim(), imageUrl)
-                    println("pageUrl: $pageUrl")
-                    println(pageContent)
+            if (message is JSONObject && message.has("textContent")) {
+                val title = message.optString("title").takeIf { it.isNotBlank() }
+                val pageContent = message.optString("textContent")
+                val pageUrl = message.optString("url")
+                val imageUrl = message.optString("imageUrl").takeIf { it.isNotBlank() }
+                if (pageContent.isNullOrEmpty()) {
+                    return
                 }
+                println("JAVASSCRIPT-> this is the result imageUrl:$title")
+                println("JAVASSCRIPT-> this is the result pageContent: $pageContent")
+                println("JAVASSCRIPT-> this is the result: pageUrl $pageUrl")
+                println("JAVASSCRIPT-> this is the result imageUrl: $imageUrl")
+
+                storageDelegate.store(title, pageUrl, pageContent.trim(), imageUrl)
+                println("pageUrl: $pageUrl")
+                println(pageContent)
             }
         }
     }
@@ -175,14 +165,9 @@ class HistorySearchFeature(
         internal fun createCheckReaderStateMessage(): JSONObject {
             return JSONObject().put(ACTION_MESSAGE_KEY, ACTION_CHECK_READER_STATE)
         }
-
-
-        internal fun createHideReaderMessage(): JSONObject {
-            return JSONObject().put(ACTION_MESSAGE_KEY, ACTION_HIDE)
-        }
     }
 }
 
 interface HistorySearchStorageDelegate {
-    fun store(title:String?, url: String, content: String, imageUrl: String?)
+    fun store(title: String?, url: String, content: String, imageUrl: String?)
 }

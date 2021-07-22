@@ -4,7 +4,6 @@ import androidx.appsearch.app.AppSearchSession
 import androidx.appsearch.app.PutDocumentsRequest
 import androidx.appsearch.app.SearchResult
 import androidx.appsearch.app.SearchSpec
-import androidx.appsearch.app.SearchSpec.RANKING_STRATEGY_USAGE_COUNT
 import androidx.appsearch.app.SetSchemaRequest
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
