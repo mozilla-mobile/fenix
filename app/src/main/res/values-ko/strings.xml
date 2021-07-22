@@ -65,7 +65,7 @@
     <string name="recently_saved_show_all_content_description">저장된 북마크 모두 표시 버튼</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
-    <string name="about_content">%1$s는 Mozilla에서 제작했습니다.</string>
+    <string name="about_content">%1$s는 @fork-maintainers에서 제작했습니다.</string>
 
     <!-- Private Browsing -->
     <!-- Title for private session option -->

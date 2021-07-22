@@ -60,7 +60,7 @@
     <string name="recently_saved_show_all_content_description">Az összes mentett könyvjelző megjelenítése gomb</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
-    <string name="about_content">A %1$s a Mozilla terméke.</string>
+    <string name="about_content">A %1$s a @fork-maintainers terméke.</string>
 
     <!-- Private Browsing -->
     <!-- Title for private session option -->

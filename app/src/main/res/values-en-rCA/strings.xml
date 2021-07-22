@@ -60,7 +60,7 @@
     <string name="recently_saved_show_all_content_description">Show all saved bookmarks button</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
-    <string name="about_content">%1$s is produced by Mozilla.</string>
+    <string name="about_content">%1$s is produced by @fork-maintainers.</string>
 
     <!-- Private Browsing -->
     <!-- Title for private session option -->

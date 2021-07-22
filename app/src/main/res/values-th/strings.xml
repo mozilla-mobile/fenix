@@ -55,7 +55,7 @@
     <string name="recently_saved_show_all">แสดงหมด</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
-    <string name="about_content">%1$s ผลิตขึ้นโดย Mozilla</string>
+    <string name="about_content">%1$s ผลิตขึ้นโดย @fork-maintainers</string>
 
     <!-- Private Browsing -->
     <!-- Title for private session option -->

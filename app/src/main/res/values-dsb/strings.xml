@@ -59,7 +59,7 @@
     <string name="recently_saved_show_all_content_description">Tłocašk „Wšykne skłaźone cytańske znamjenja pokazaś“</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
-    <string name="about_content">%1$s se pśez Mozilla zgótujo.</string>
+    <string name="about_content">%1$s se pśez @fork-maintainers zgótujo.</string>
 
     <!-- Private Browsing -->
     <!-- Title for private session option -->

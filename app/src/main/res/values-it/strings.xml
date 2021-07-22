@@ -62,7 +62,7 @@
     <string name="recently_saved_show_all_content_description">Pulsante per visualizzare tutti i segnalibri salvati</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
-    <string name="about_content">%1$s è sviluppato da Mozilla.</string>
+    <string name="about_content">%1$s è sviluppato da @fork-maintainers.</string>
 
     <!-- Private Browsing -->
     <!-- Title for private session option -->

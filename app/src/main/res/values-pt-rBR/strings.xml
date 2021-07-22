@@ -59,7 +59,7 @@
     <string name="recently_saved_show_all_content_description">Botão de mostrar todos os favoritos salvos</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
-    <string name="about_content">O %1$s é produzido pela Mozilla.</string>
+    <string name="about_content">O %1$s é produzido pela @fork-maintainers.</string>
 
     <!-- Private Browsing -->
     <!-- Title for private session option -->

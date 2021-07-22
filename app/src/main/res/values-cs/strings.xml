@@ -61,7 +61,7 @@
     <string name="recently_saved_show_all_content_description">Tlačítko pro zobrazení všech uložených záložek</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
-    <string name="about_content">Autorem aplikace %1$s je Mozilla.</string>
+    <string name="about_content">Autorem aplikace %1$s je @fork-maintainers.</string>
 
     <!-- Private Browsing -->
     <!-- Title for private session option -->

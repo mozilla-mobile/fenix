@@ -53,7 +53,7 @@
     <string name="tab_tray_multiselect_selected_content_description">Na esbilla</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
-    <string name="about_content">%1$s ta producíu por Mozilla.</string>
+    <string name="about_content">%1$s ta producíu por @fork-maintainers.</string>
 
     <!-- Private Browsing -->
     <!-- Title for private session option -->

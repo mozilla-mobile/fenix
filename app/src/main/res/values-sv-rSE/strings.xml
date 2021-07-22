@@ -60,7 +60,7 @@
     <string name="recently_saved_show_all_content_description">Visa knappen alla sparade bokmärken</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
-    <string name="about_content">%1$s produceras av Mozilla.</string>
+    <string name="about_content">%1$s produceras av @fork-maintainers.</string>
 
     <!-- Private Browsing -->
     <!-- Title for private session option -->

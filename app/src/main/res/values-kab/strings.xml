@@ -63,7 +63,7 @@
     <string name="recently_saved_show_all_content_description">Taqeffalt teskanay-d meṛṛa ticraḍ n yisebtar yettwaskelsen</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
-    <string name="about_content">%1$s d afares n Mozilla.</string>
+    <string name="about_content">%1$s d afares n @fork-maintainers.</string>
 
     <!-- Private Browsing -->
     <!-- Title for private session option -->

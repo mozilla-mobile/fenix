@@ -63,7 +63,7 @@
     <string name="recently_saved_show_all_content_description">Schaltfläche: Alle gespeicherten Lesezeichen anzeigen</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
-    <string name="about_content">%1$s wird von Mozilla hergestellt.</string>
+    <string name="about_content">%1$s wird von @fork-maintainers hergestellt.</string>
 
     <!-- Private Browsing -->
     <!-- Title for private session option -->

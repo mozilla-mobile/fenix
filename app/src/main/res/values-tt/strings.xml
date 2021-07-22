@@ -48,7 +48,7 @@
     <string name="tab_tray_multiselect_selected_content_description">Сайланган</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
-    <string name="about_content">%1$s Mozilla тарафыннан җитештерелә.</string>
+    <string name="about_content">%1$s @fork-maintainers тарафыннан җитештерелә.</string>
 
     <!-- Private Browsing -->
     <!-- Title for private session option -->

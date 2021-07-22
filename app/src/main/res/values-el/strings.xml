@@ -67,7 +67,7 @@
     <string name="recently_saved_show_all_content_description">Κουμπί εμφάνισης όλων των αποθηκευμένων σελιδοδεικτών</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
-    <string name="about_content">Το %1$s αναπτύσσεται από τη Mozilla.</string>
+    <string name="about_content">Το %1$s αναπτύσσεται από τη @fork-maintainers.</string>
 
     <!-- Private Browsing -->
     <!-- Title for private session option -->

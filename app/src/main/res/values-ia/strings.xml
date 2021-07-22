@@ -60,7 +60,7 @@
     <string name="recently_saved_show_all_content_description">Monstrar tote le button marcapaginas salvate</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
-    <string name="about_content">%1$s es producite per Mozilla.</string>
+    <string name="about_content">%1$s es producite per @fork-maintainers.</string>
 
     <!-- Private Browsing -->
     <!-- Title for private session option -->

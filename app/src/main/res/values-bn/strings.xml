@@ -41,7 +41,7 @@
     <string name="tab_tray_multiselect_selected_content_description">নির্বাচিত</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
-    <string name="about_content">%1$s হচ্ছে Mozilla দ্বারা তৈরি।</string>
+    <string name="about_content">%1$s হচ্ছে @fork-maintainers দ্বারা তৈরি।</string>
 
     <!-- Private Browsing -->
     <!-- Title for private session option -->

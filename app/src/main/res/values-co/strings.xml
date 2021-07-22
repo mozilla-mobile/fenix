@@ -61,7 +61,7 @@
     <string name="recently_saved_show_all_content_description">Buttone Affissà tutte l’indette arregistrate</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
-    <string name="about_content">%1$s hè sviluppatu da Mozilla.</string>
+    <string name="about_content">%1$s hè sviluppatu da @fork-maintainers.</string>
 
     <!-- Private Browsing -->
     <!-- Title for private session option -->

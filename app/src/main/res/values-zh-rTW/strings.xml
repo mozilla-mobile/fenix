@@ -63,7 +63,7 @@
     <string name="recently_saved_show_all_content_description">顯示所有儲存書籤按鈕</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
-    <string name="about_content">%1$s 是由 Mozilla 所打造。</string>
+    <string name="about_content">%1$s 是由 @fork-maintainers 所打造。</string>
 
     <!-- Private Browsing -->
     <!-- Title for private session option -->

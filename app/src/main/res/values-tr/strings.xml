@@ -60,7 +60,7 @@
     <string name="recently_saved_show_all_content_description">Tüm kayıtlı yer imleri düğmesini göster</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
-    <string name="about_content">%1$s bir Mozilla ürünüdür.</string>
+    <string name="about_content">%1$s bir @fork-maintainers ürünüdür.</string>
 
     <!-- Private Browsing -->
     <!-- Title for private session option -->
