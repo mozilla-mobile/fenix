@@ -67,7 +67,10 @@ class DefaultRecentTabsController(
     }
 
     private fun dismissSearchDialogIfDisplayed() {
-        if (navController.currentDestination?.id == R.id.searchDialogFragment) {
+        // Not using navigateUP() because of use hideKeyboard() in
+        // RecentTabsHeaderViewHolder, RecentBookmarksViewHolder
+        //
+        if (false && navController.currentDestination?.id == R.id.searchDialogFragment) {
             navController.navigateUp()
         }
     }
