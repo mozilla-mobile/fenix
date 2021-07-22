@@ -28,6 +28,7 @@
         <item name="mozacInputLayoutErrorIconColor"
             tools:ignore="UnusedResources">@color/destructive_normal_theme</item>
         <item name="mozacLoginSelectHeaderTextStyle" tools:ignore="UnusedResources">@style/SelectLoginHeaderTextStyle</item>
+        <item name="mozacSelectCreditCardHeaderTextStyle" tools:ignore="UnusedResources">@style/SelectCreditCardHeaderTextStyle</item>
 
         <!-- Active thumb color & Active track color (30% transparency) -->
         <item name="colorControlActivated">@color/accent_high_contrast_normal_theme</item>
@@ -81,8 +82,10 @@
         <item name="awesomeBarIndicatorColor">@color/search_suggestion_indicator_icon_color_normal_theme</item>
         <item name="awesomeBarIndicatorBookmarkColor">@color/search_suggestion_indicator_icon_bookmark_color_normal_theme</item>
         <item name="selectLoginHeaderTextColor">@color/select_login_header_normal_theme</item>
+        <item name="selectCreditCardHeaderTextColor">@color/select_credit_card_header_normal_theme</item>
         <item name="preferenceSectionHeader">@color/preference_section_header_normal_theme</item>
         <item name="menuItemButtonTintColor">@color/menu_item_button_normal_theme</item>
+        <item name="recentlyUsedShareMenu">@color/recently_used_share_theme</item>
 
         <!-- Shared widget colors -->
         <item name="mozac_primary_text_color">@color/primary_text_normal_theme</item>
@@ -136,6 +139,11 @@
         <item name="drawableTint">?accentHighContrast</item>
     </style>
 
+    <style name="SelectCreditCardHeaderTextStyle" parent="Header16TextStyle">
+        <item name="android:textColor">?selectCreditCardHeaderTextColor</item>
+        <item name="drawableTint">?accentHighContrast</item>
+    </style>
+
     <style name="Checkable.Colored" parent="Theme.AppCompat">
         <item name="colorControlActivated">?attr/onboardingSelected</item>
         <item name="colorControlNormal">?attr/onboardingDeselected</item>
@@ -185,6 +193,7 @@
         <item name="mozacInputLayoutErrorIconColor"
             tools:ignore="UnusedResources">@color/destructive_private_theme</item>
         <item name="mozacLoginSelectHeaderTextStyle" tools:ignore="UnusedResources">@style/SelectLoginHeaderTextStyle</item>
+        <item name="mozacSelectCreditCardHeaderTextStyle" tools:ignore="UnusedResources">@style/SelectCreditCardHeaderTextStyle</item>
 
         <!-- Inactive thumb color -->
         <item name="colorSwitchThumbNormal">@color/toggle_off_knob_dark_theme</item>
@@ -233,6 +242,7 @@
         <item name="awesomeBarIndicatorColor">@color/search_suggestion_indicator_icon_color_dark_theme</item>
         <item name="awesomeBarIndicatorBookmarkColor">@color/search_suggestion_indicator_icon_bookmark_color_dark_theme</item>
         <item name="selectLoginHeaderTextColor">@color/accent_high_contrast_private_theme</item>
+        <item name="selectCreditCardHeaderTextColor">@color/accent_high_contrast_private_theme</item>
         <item name="preferenceSectionHeader">@color/preference_section_header_dark_theme</item>
         <item name="menuItemButtonTintColor">@color/accent_high_contrast_private_theme</item>
 
@@ -600,13 +610,29 @@
         <item name="behavior_halfExpandedRatio">0.001</item>
     </style>
 
-    <style name="TopSite.Favicon" parent="Mozac.Widgets.Favicon">
+    <style name="TopSite.FaviconCard" parent="Mozac.Widgets.Favicon">
+        <item name="android:layout_width">@dimen/top_sites_card_size</item>
+        <item name="android:layout_height">@dimen/top_sites_card_size</item>
+        <item name="android:padding">@dimen/top_sites_card_padding</item>
+        <item name="cardBackgroundColor">?mozac_widget_favicon_background_color</item>
+        <item name="cardCornerRadius">@dimen/top_sites_card_radius</item>
+        <item name="cardElevation">@dimen/top_sites_card_elevation</item>
+        <item name="strokeColor">@color/top_sites_border_color</item>
+        <item name="strokeWidth">@dimen/top_sites_card_stroke_width</item>
+    </style>
+
+    <style name="topSiteFavicon">
         <item name="android:layout_width">@dimen/top_sites_favicon_size</item>
         <item name="android:layout_height">@dimen/top_sites_favicon_size</item>
         <item name="android:scaleType">fitCenter</item>
-        <item name="android:padding">@dimen/top_sites_favicon_padding</item>
-        <item name="android:background">@drawable/top_sites_background</item>
-        <item name="android:elevation">6dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="shapeAppearanceOverlay">@style/topSiteFaviconShape</item>
+    </style>
+
+    <style name="topSiteFaviconShape">
+        <item name="cornerFamily">rounded</item>
+        <item name="elevation">@dimen/top_sites_favicon_elevation</item>
+        <item name="cornerSize">@dimen/top_sites_favicon_corner_size</item>
     </style>
 
     <style name="TabTrayFab" parent="Widget.MaterialComponents.ExtendedFloatingActionButton">

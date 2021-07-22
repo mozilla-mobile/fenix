@@ -147,6 +147,12 @@ class SettingsPrivacyTest {
             verifyDeleteBrowsingDataOnQuitSubMenuItems()
         }.goBack {
 
+            // NOTIFICATIONS
+            verifyNotificationsButton()
+        }.openSettingsSubMenuNotifications {
+            verifySystemNotificationsView()
+        }.goBack {
+
             // DATA COLLECTION
             verifyDataCollectionButton()
         }.openSettingsSubMenuDataCollection {
@@ -170,7 +176,6 @@ class SettingsPrivacyTest {
             TestHelper.scrollToElementByText("Logins and passwords")
         }.openLoginsAndPasswordSubMenu {
             verifyDefaultView()
-            verifyDefaultValueSyncLogins()
             verifyDefaultValueAutofillLogins()
             verifyDefaultValueExceptions()
         }.openSavedLogins {
@@ -203,7 +208,6 @@ class SettingsPrivacyTest {
             TestHelper.scrollToElementByText("Logins and passwords")
         }.openLoginsAndPasswordSubMenu {
             verifyDefaultView()
-            verifyDefaultValueSyncLogins()
         }.openSavedLogins {
             verifySecurityPromptForLogins()
             tapSetupLater()
@@ -228,7 +232,6 @@ class SettingsPrivacyTest {
         }.openSettings {
         }.openLoginsAndPasswordSubMenu {
             verifyDefaultView()
-            verifyDefaultValueSyncLogins()
         }.openSavedLogins {
             verifySecurityPromptForLogins()
             tapSetupLater()

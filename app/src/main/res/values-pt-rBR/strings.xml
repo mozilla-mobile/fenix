@@ -4,6 +4,7 @@
     <string name="app_name_private_5">%s privativo</string>
     <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
     <string name="app_name_private_4">%s (privativo)</string>
+
     <!-- Home Fragment -->
     <!-- Content description (not visible, for screen readers etc.): "Three dot" menu button. -->
     <string name="content_description_menu">Mais opções</string>
@@ -46,6 +47,16 @@
     <string name="tab_tray_enter_multiselect_content_description">Entrou no modo de seleção múltipla, selecione abas para salvar em uma coleção</string>
     <!-- Content description on checkmark while tab is selected in multiselect mode in tab tray -->
     <string name="tab_tray_multiselect_selected_content_description">Selecionada</string>
+
+    <!-- Home - Recently saved bookmarks -->
+    <!-- Title for the home screen section with recently saved bookmarks. -->
+    <string name="recently_saved_bookmarks">Salvos recentemente</string>
+    <!-- Content description for the recently saved bookmarks section on the home screen. -->
+    <string name="recently_saved_bookmarks_content_description">Favoritos salvos recentemente</string>
+    <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
+    <string name="recently_saved_show_all">Mostrar todos</string>
+    <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
+    <string name="recently_saved_show_all_content_description">Botão de mostrar todos os favoritos salvos</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
     <string name="about_content">O %1$s é produzido pela Mozilla.</string>
@@ -93,13 +104,6 @@
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">Descartar</string>
 
-    <!-- Text for the banner message to tell users about our grid view feature. -->
-    <string name="tab_tray_grid_view_banner_message">Altere o layout de abas abertas. Vá em configurações e selecione grade na visão de abas.</string>
-    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
-    <string name="tab_tray_grid_view_banner_positive_button_text">Ir para configurações</string>
-    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
-    <string name="tab_tray_grid_view_banner_negative_button_text">Descartar</string>
-
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
     <string name="home_screen_shortcut_open_new_tab_2">Nova aba</string>
@@ -108,6 +112,12 @@
 
     <!-- Heading for the Top Sites block -->
     <string name="home_screen_top_sites_heading">Sites preferidos</string>
+
+    <!-- Recent Tabs -->
+    <!-- Header text for jumping back into the recent tab in the home screen -->
+    <string name="recent_tabs_header">Retornar</string>
+    <!-- Button text for showing all the tabs in the tabs tray -->
+    <string name="recent_tabs_show_all">Mostrar tudo</string>
 
     <!-- Browser Fragment -->
     <!-- Content description (not visible, for screen readers etc.): Navigate to open tabs -->
@@ -183,6 +193,10 @@
     <string name="browser_menu_add">Adicionar</string>
     <!-- Browser menu label for editing a bookmark -->
     <string name="browser_menu_edit">Editar</string>
+
+    <!-- Browser Toolbar -->
+    <!-- Content description for the Home screen button on the browser toolbar -->
+    <string name="browser_toolbar_home">Tela inicial</string>
 
     <!-- Error message to show when the user tries to access a scheme not
         handled by the app (Ex: blob, tel etc) -->
@@ -546,8 +560,6 @@
     <string name="library_new_tab">Nova aba</string>
     <!-- Option in Library to find text in page -->
     <string name="library_find_in_page">Procurar na página</string>
-    <!-- Option in Library to open Synced Tabs page -->
-    <string name="library_synced_tabs">Abas sincronizadas</string>
     <!-- Option in Library to open Reading List -->
     <string name="library_reading_list">Lista de leitura</string>
     <!-- Menu Item Label for Search in Library -->
@@ -592,6 +604,15 @@
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">Após um mês sem uso</string>
 
+    <!-- Start on Home -->
+    <!-- Title of a preference that allows a user to indicate after a specified amount of time when the app should start on the home screen -->
+    <string name="preferences_start_on_home">Iniciar na tela inicial</string>
+    <!-- Option for starting on the home screen after after four hours or inactivity -->
+    <string name="start_on_home_after_four_hours">Após quatro horas</string>
+    <!-- Option for always starting on the home screen -->
+    <string name="start_on_home_always">Sempre</string>
+    <!-- Option for never starting on the home screen -->
+    <string name="start_on_home_never">Nunca</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
     <string name="close_tabs_manually_summary">Fechar manualmente</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
@@ -1530,7 +1551,7 @@
     <string name="logins_warning_dialog_title">Proteja suas contas e senhas</string>
 
     <!-- Message of warning dialog if users have no device authentication set up -->
-    <string name="logins_warning_dialog_message">Configure um desenho de bloqueio, código PIN ou senha para proteger o acesso a suas contas e senhas salvas, caso outras pessoas usem seu dispositivo.</string>
+    <string name="logins_warning_dialog_message">Configure um método de bloqueio do dispositivo (desenho, código PIN ou senha) para proteger o acesso a suas contas e senhas salvas, caso outras pessoas usem seu dispositivo.</string>
     <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
     <string name="logins_warning_dialog_later">Mais tarde</string>
     <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->
@@ -1573,6 +1594,10 @@
     <string name="credit_cards_card_number">Número do cartão</string>
     <!-- The header for the expiration date of a credit card -->
     <string name="credit_cards_expiration_date">Data de validade</string>
+    <!-- The label for the expiration date month of a credit card -->
+    <string name="credit_cards_expiration_date_month">Mês da data de validade</string>
+    <!-- The label for the expiration date year of a credit card -->
+    <string name="credit_cards_expiration_date_year">Ano da data de validade</string>
     <!-- The header for the name on the credit card -->
     <string name="credit_cards_name_on_card">Nome no cartão</string>
     <!-- The header for the nickname for a credit card -->
@@ -1593,6 +1618,24 @@
 
     <!-- Error message for credit card number validation -->
     <string name="credit_cards_number_validation_error_message">Digite um número de cartão de crédito válido</string>
+
+    <!-- Error message for credit card name on card validation -->
+    <string name="credit_cards_name_on_card_validation_error_message">Preencha este campo</string>
+    <!-- Message displayed in biometric prompt displayed for authentication before allowing users to view their saved credit cards -->
+    <string name="credit_cards_biometric_prompt_message">Desbloqueie para ver seus cartões salvos</string>
+    <!-- Title of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_title">Proteja seus cartões de crédito</string>
+    <!-- Message of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_message">Configure um método de bloqueio do dispositivo (desenho, código PIN ou senha) para proteger o acesso a seus cartões de crédito salvos, caso outras pessoas usem seu dispositivo.</string>
+    <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_set_up_now">Configurar agora</string>
+    <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_later">Mais tarde</string>
+    <!-- Title of PIN verification dialog to direct users to re-enter their device credentials to access their credit cards -->
+    <string name="credit_cards_biometric_prompt_message_pin">Desbloqueie seu dispositivo</string>
+
+    <!-- Message displayed in biometric prompt for authentication, before allowing users to use their stored credit card information -->
+    <string name="credit_cards_biometric_prompt_unlock_message">Desbloqueie para usar informações armazenadas de cartões de crédito</string>
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Adicionar mecanismo de pesquisa</string>

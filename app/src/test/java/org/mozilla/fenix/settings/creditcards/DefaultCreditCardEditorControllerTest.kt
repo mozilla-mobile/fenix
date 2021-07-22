@@ -13,17 +13,25 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
-import mozilla.components.concept.storage.CreditCard
+import mozilla.components.concept.storage.CreditCardNumber
+import mozilla.components.concept.storage.NewCreditCardFields
 import mozilla.components.concept.storage.UpdatableCreditCardFields
 import mozilla.components.service.sync.autofill.AutofillCreditCardsAddressesStorage
+import mozilla.components.support.test.robolectric.testContext
 import mozilla.components.support.test.rule.MainCoroutineRule
+import mozilla.components.support.utils.CreditCardNetworkType
 import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.settings.creditcards.controller.DefaultCreditCardEditorController
+import org.mozilla.fenix.utils.Settings
 
 @ExperimentalCoroutinesApi
+@RunWith(FenixRobolectricTestRunner::class)
 class DefaultCreditCardEditorControllerTest {
 
     private val storage: AutofillCreditCardsAddressesStorage = mockk(relaxed = true)
@@ -33,17 +41,20 @@ class DefaultCreditCardEditorControllerTest {
     private val testDispatcher = TestCoroutineDispatcher()
 
     private lateinit var controller: DefaultCreditCardEditorController
+    private lateinit var settings: Settings
 
     @get:Rule
     val coroutinesTestRule = MainCoroutineRule(testDispatcher)
 
     @Before
     fun setup() {
+        settings = Settings(testContext)
         controller = spyk(
             DefaultCreditCardEditorController(
                 storage = storage,
                 lifecycleScope = testCoroutineScope,
                 navController = navController,
+                settings = settings,
                 ioDispatcher = testDispatcher
             )
         )
@@ -66,38 +77,36 @@ class DefaultCreditCardEditorControllerTest {
 
     @Test
     fun handleDeleteCreditCard() = testCoroutineScope.runBlockingTest {
-        val creditCard = CreditCard(
-            guid = "id",
-            billingName = "Banana Apple",
-            cardNumber = "4111111111111110",
-            expiryMonth = 1,
-            expiryYear = 2030,
-            cardType = "amex",
-            timeCreated = 1L,
-            timeLastUsed = 1L,
-            timeLastModified = 1L,
-            timesUsed = 1L
-        )
+        assertEquals(0, settings.creditCardsDeletedCount)
 
-        controller.handleDeleteCreditCard(creditCard.guid)
+        val creditCardId = "id"
+
+        controller.handleDeleteCreditCard(creditCardId)
+
+        assertEquals(1, settings.creditCardsDeletedCount)
 
         coVerify {
-            storage.deleteCreditCard(creditCard.guid)
+            storage.deleteCreditCard(creditCardId)
             navController.popBackStack()
         }
     }
 
     @Test
     fun handleSaveCreditCard() = testCoroutineScope.runBlockingTest {
-        val creditCardFields = UpdatableCreditCardFields(
+        assertEquals(0, settings.creditCardsSavedCount)
+
+        val creditCardFields = NewCreditCardFields(
             billingName = "Banana Apple",
-            cardNumber = "4111111111111112",
+            plaintextCardNumber = CreditCardNumber.Plaintext("4111111111111112"),
+            cardNumberLast4 = "1112",
             expiryMonth = 1,
             expiryYear = 2030,
-            cardType = "discover"
+            cardType = CreditCardNetworkType.DISCOVER.cardName
         )
 
         controller.handleSaveCreditCard(creditCardFields)
+
+        assertEquals(1, settings.creditCardsSavedCount)
 
         coVerify {
             storage.addCreditCard(creditCardFields)
@@ -107,30 +116,20 @@ class DefaultCreditCardEditorControllerTest {
 
     @Test
     fun handleUpdateCreditCard() = testCoroutineScope.runBlockingTest {
-        val creditCard = CreditCard(
-            guid = "id",
-            billingName = "Banana Apple",
-            cardNumber = "4111111111111110",
-            expiryMonth = 1,
-            expiryYear = 2030,
-            cardType = "amex",
-            timeCreated = 1L,
-            timeLastUsed = 1L,
-            timeLastModified = 1L,
-            timesUsed = 1L
-        )
+        val creditCardId = "id"
         val creditCardFields = UpdatableCreditCardFields(
             billingName = "Banana Apple",
-            cardNumber = "4111111111111112",
+            cardNumber = CreditCardNumber.Plaintext("4111111111111112"),
+            cardNumberLast4 = "1112",
             expiryMonth = 1,
             expiryYear = 2034,
-            cardType = "discover"
+            cardType = CreditCardNetworkType.DISCOVER.cardName
         )
 
-        controller.handleUpdateCreditCard(creditCard.guid, creditCardFields)
+        controller.handleUpdateCreditCard(creditCardId, creditCardFields)
 
         coVerify {
-            storage.updateCreditCard(creditCard.guid, creditCardFields)
+            storage.updateCreditCard(creditCardId, creditCardFields)
             navController.popBackStack()
         }
     }

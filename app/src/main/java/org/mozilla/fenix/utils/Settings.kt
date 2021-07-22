@@ -34,7 +34,7 @@ import org.mozilla.fenix.components.settings.counterPreference
 import org.mozilla.fenix.components.settings.featureFlagPreference
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.experiments.ExperimentBranch
-import org.mozilla.fenix.experiments.Experiments
+import org.mozilla.fenix.experiments.FeatureId
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.withExperiment
@@ -249,7 +249,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         get() = loginsSecureWarningSyncCount.underMaxCount()
 
     val shouldShowSecurityPinWarning: Boolean
-        get() = loginsSecureWarningCount.underMaxCount()
+        get() = secureWarningCount.underMaxCount()
 
     var shouldShowPrivacyPopWindow by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_privacy_pop_window),
@@ -312,10 +312,10 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         val browsers = BrowsersCache.all(appContext)
         val experiments = appContext.components.analytics.experiments
         val isExperimentBranch =
-            experiments.withExperiment(Experiments.DEFAULT_BROWSER) { experimentBranch ->
+            experiments.withExperiment(FeatureId.DEFAULT_BROWSER) { experimentBranch ->
                 (experimentBranch == ExperimentBranch.DEFAULT_BROWSER_NEW_TAB_BANNER)
             }
-        return isExperimentBranch &&
+        return isExperimentBranch == true &&
                 !userDismissedExperimentCard &&
                 !browsers.isFirefoxDefaultBrowser &&
                 numberOfAppLaunches > APP_LAUNCHES_TO_SHOW_DEFAULT_BROWSER_CARD
@@ -355,6 +355,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         appContext.getPreferenceKey(R.string.pref_key_new_tabs_tray),
         default = true,
         featureFlag = FeatureFlags.tabsTrayRewrite
+    )
+
+    var allowThirdPartyRootCerts by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_allow_third_party_root_certs),
+        default = false
     )
 
     fun getTabTimeout(): Long = when {
@@ -657,12 +662,12 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     @VisibleForTesting(otherwise = PRIVATE)
-    internal val loginsSecureWarningCount = counterPreference(
-        appContext.getPreferenceKey(R.string.pref_key_logins_secure_warning),
+    internal val secureWarningCount = counterPreference(
+        appContext.getPreferenceKey(R.string.pref_key_secure_warning),
         maxCount = 1
     )
 
-    fun incrementShowLoginsSecureWarningCount() = loginsSecureWarningCount.increment()
+    fun incrementSecureWarningCount() = secureWarningCount.increment()
 
     fun incrementShowLoginsSecureWarningSyncCount() = loginsSecureWarningSyncCount.increment()
 
@@ -986,7 +991,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     /**
-     * Storing number of installed add-ons for telemetry purposes
+     * Stores the number of installed add-ons for telemetry purposes
      */
     var installedAddonsCount by intPreference(
         appContext.getPreferenceKey(R.string.pref_key_installed_addons_count),
@@ -994,7 +999,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     /**
-     * Storing the list of installed add-ons for telemetry purposes
+     * Stores the list of installed add-ons for telemetry purposes
      */
     var installedAddonsList by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_installed_addons_list),
@@ -1002,7 +1007,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     /**
-     * Storing number of enabled add-ons for telemetry purposes
+     * Stores the number of enabled add-ons for telemetry purposes
      */
     var enabledAddonsCount by intPreference(
         appContext.getPreferenceKey(R.string.pref_key_enabled_addons_count),
@@ -1010,11 +1015,35 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     /**
-     * Storing the list of enabled add-ons for telemetry purposes
+     * Stores the list of enabled add-ons for telemetry purposes
      */
     var enabledAddonsList by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_enabled_addons_list),
         default = ""
+    )
+
+    /**
+     * Stores the number of credit cards that have been saved manually by the user.
+     */
+    var creditCardsSavedCount by intPreference(
+        appContext.getPreferenceKey(R.string.pref_key_credit_cards_saved_count),
+        0
+    )
+
+    /**
+     * Stores the number of credit cards that have been deleted by the user.
+     */
+    var creditCardsDeletedCount by intPreference(
+        appContext.getPreferenceKey(R.string.pref_key_credit_cards_deleted_count),
+        0
+    )
+
+    /**
+     * Stores the number of times that user has autofilled a credit card.
+     */
+    var creditCardsAutofilledCount by intPreference(
+        appContext.getPreferenceKey(R.string.pref_key_credit_cards_autofilled_count),
+        0
     )
 
     private var savedLoginsSortingStrategyString by stringPreference(
@@ -1057,12 +1086,6 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = true
     )
 
-    var creditCardsFeature by featureFlagPreference(
-        appContext.getPreferenceKey(R.string.pref_key_show_credit_cards_feature),
-        default = false,
-        featureFlag = FeatureFlags.creditCardsFeature
-    )
-
     var addressFeature by featureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_show_address_feature),
         default = false,
@@ -1076,5 +1099,21 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var openNextTabInDesktopMode by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_open_next_tab_desktop_mode),
         default = false
+    )
+
+    var signedInFxaAccount by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_fxa_signed_in),
+        default = false
+    )
+
+    /**
+     * Storing the user choice from the "Credit cards" settings for whether save and autofill cards
+     * should be enabled or not.
+     * If set to `true` when the user focuses on credit card fields in the webpage an Android prompt letting her
+     * select the card details to be automatically filled will appear.
+     */
+    var shouldAutofillCreditCardDetails by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_credit_cards_save_and_autofill_cards),
+        default = true
     )
 }

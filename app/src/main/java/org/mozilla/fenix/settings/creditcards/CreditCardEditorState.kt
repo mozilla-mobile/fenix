@@ -5,6 +5,7 @@
 package org.mozilla.fenix.settings.creditcards
 
 import mozilla.components.concept.storage.CreditCard
+import mozilla.components.service.sync.autofill.AutofillCreditCardsAddressesStorage
 import org.mozilla.fenix.settings.creditcards.CreditCardEditorFragment.Companion.NUMBER_OF_YEARS_TO_SHOW
 import java.util.Calendar
 
@@ -30,7 +31,10 @@ data class CreditCardEditorState(
 /**
  * Returns a [CreditCardEditorState] from the given [CreditCard].
  */
-fun CreditCard.toCreditCardEditorState(): CreditCardEditorState {
+fun CreditCard.toCreditCardEditorState(storage: AutofillCreditCardsAddressesStorage): CreditCardEditorState {
+    val crypto = storage.getCreditCardCrypto()
+    val key = crypto.key()
+    val cardNumber = crypto.decrypt(key, encryptedCardNumber)?.number ?: ""
     val startYear = expiryYear.toInt()
     val endYear = startYear + NUMBER_OF_YEARS_TO_SHOW
 

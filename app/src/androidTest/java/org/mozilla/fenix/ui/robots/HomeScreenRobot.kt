@@ -11,7 +11,6 @@ import android.widget.EditText
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.NoMatchingViewException
-import androidx.test.espresso.ViewInteraction
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.swipeLeft
@@ -24,7 +23,6 @@ import androidx.test.espresso.matcher.ViewMatchers.Visibility
 import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
 import androidx.test.espresso.matcher.ViewMatchers.hasSibling
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
-import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withHint
 import androidx.test.espresso.matcher.ViewMatchers.withId
@@ -33,10 +31,12 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.By.text
 import androidx.test.uiautomator.UiDevice
+import androidx.test.uiautomator.UiObject
 import androidx.test.uiautomator.UiScrollable
 import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
 import androidx.test.uiautomator.Until.findObject
+import junit.framework.TestCase.assertTrue
 import mozilla.components.browser.state.state.searchEngines
 import mozilla.components.support.ktx.android.content.appName
 import org.hamcrest.CoreMatchers.allOf
@@ -240,12 +240,6 @@ class HomeScreenRobot {
         }
     }
 
-    fun scrollToElementByText(text: String): UiScrollable {
-        val appView = UiScrollable(UiSelector().scrollable(true))
-        appView.scrollTextIntoView(text)
-        return appView
-    }
-
     fun togglePrivateBrowsingModeOnOff() {
         onView(ViewMatchers.withResourceName("privateBrowsingButton"))
             .perform(click())
@@ -255,12 +249,6 @@ class HomeScreenRobot {
 
     fun swipeToTop() =
         onView(withId(R.id.sessionControlRecyclerView)).perform(ViewActions.swipeDown())
-
-    fun swipeTabRight(title: String) =
-        tab(title).perform(ViewActions.swipeRight())
-
-    fun swipeTabLeft(title: String) =
-        tab(title).perform(ViewActions.swipeLeft())
 
     fun verifySnackBarText(expectedText: String) {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
@@ -272,21 +260,6 @@ class HomeScreenRobot {
             matches(withEffectiveVisibility(Visibility.VISIBLE))
         ).perform(click())
     }
-
-    fun verifyTabMediaControlButtonState(action: String) {
-        mDevice.waitNotNull(
-            findObject(
-                By
-                    .res("org.mozilla.fenix.debug:id/play_pause_button")
-                    .desc(action)
-            ),
-            waitingTime
-        )
-
-        tabMediaControlButton().check(matches(withContentDescription(action)))
-    }
-
-    fun clickTabMediaControlButton() = tabMediaControlButton().click()
 
     class Transition {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
@@ -314,6 +287,8 @@ class HomeScreenRobot {
         }
 
         fun openSearch(interact: SearchRobot.() -> Unit): SearchRobot.Transition {
+            mDevice.findObject(UiSelector().resourceId("$packageName:id/toolbar"))
+                .waitForExists(waitingTime)
             navigationToolbar().perform(click())
 
             SearchRobot().interact()
@@ -325,7 +300,6 @@ class HomeScreenRobot {
         }
 
         fun clickStartBrowsingButton(interact: SearchRobot.() -> Unit): SearchRobot.Transition {
-            scrollToElementByText("Start browsing")
             startBrowsingButton().click()
 
             SearchRobot().interact()
@@ -333,7 +307,11 @@ class HomeScreenRobot {
         }
 
         fun togglePrivateBrowsingMode() {
-            onView(ViewMatchers.withResourceName("privateBrowsingButton"))
+            mDevice.findObject(UiSelector().resourceId("$packageName:id/privateBrowsingButton"))
+                .waitForExists(
+                    waitingTime
+                )
+            privateBrowsingButton()
                 .perform(click())
         }
 
@@ -342,10 +320,10 @@ class HomeScreenRobot {
             for (i in 1..5) {
                 mDevice.findObject(UiSelector().resourceId("$packageName:id/privateBrowsingButton"))
                     .waitForExists(
-                            waitingTime
+                        waitingTime
                     )
 
-                onView(ViewMatchers.withResourceName("privateBrowsingButton"))
+                privateBrowsingButton()
                     .perform(click())
             }
 
@@ -357,25 +335,11 @@ class HomeScreenRobot {
             onView(ViewMatchers.isRoot()).perform(ViewActions.pressBack())
         }
 
-        fun openTabsListThreeDotMenu(interact: ThreeDotMenuMainRobot.() -> Unit): ThreeDotMenuMainRobot.Transition {
-//            tabsListThreeDotButton().perform(click())
-
-            ThreeDotMenuMainRobot().interact()
-            return ThreeDotMenuMainRobot.Transition()
-        }
-
-        fun closeAllPrivateTabs(interact: HomeScreenRobot.() -> Unit): Transition {
-            onView(withId(R.id.close_tabs_button))
-                .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-                .perform(click())
-
-            HomeScreenRobot().interact()
-            return Transition()
-        }
-
         fun openNavigationToolbar(interact: NavigationToolbarRobot.() -> Unit): NavigationToolbarRobot.Transition {
+            mDevice.findObject(UiSelector().resourceId("$packageName:id/toolbar"))
+                .waitForExists(waitingTime)
+            navigationToolbar().perform(click())
 
-            assertNavigationToolbar().perform(click())
             NavigationToolbarRobot().interact()
             return NavigationToolbarRobot.Transition()
         }
@@ -462,6 +426,13 @@ fun homeScreen(interact: HomeScreenRobot.() -> Unit): HomeScreenRobot.Transition
 val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 val appContext = InstrumentationRegistry.getInstrumentation().targetContext
 
+private fun homeScreenList() =
+    UiScrollable(
+        UiSelector()
+            .resourceId("$packageName:id/sessionControlRecyclerView")
+            .scrollable(true)
+    ).setAsVerticalList()
+
 private fun assertKeyboardVisibility(isExpectedToBeVisible: Boolean) =
     Assert.assertEquals(
         isExpectedToBeVisible,
@@ -470,14 +441,10 @@ private fun assertKeyboardVisibility(isExpectedToBeVisible: Boolean) =
             .contains("mInputShown=true")
     )
 
-private fun navigationToolbar() =
-    onView(allOf(withText("Search or enter address")))
-
-private fun closeTabButton() = onView(withId(R.id.close_tab_button))
+private fun navigationToolbar() = onView(withId(R.id.toolbar))
 
 private fun assertNavigationToolbar() =
-    onView(allOf(withText("Search or enter address")))
-        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+    navigationToolbar().check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 private fun assertFocusedNavigationToolbar() =
     onView(allOf(withHint("Search or enter address")))
@@ -493,8 +460,8 @@ private fun assertHomeMenu() = onView(ViewMatchers.withResourceName("menuButton"
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 private fun assertHomePrivateBrowsingButton() =
-    onView(ViewMatchers.withResourceName("privateBrowsingButton"))
-        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+    privateBrowsingButton()
+        .check(matches(isDisplayed()))
 
 private fun assertHomeWordmark() = onView(ViewMatchers.withResourceName("wordmark"))
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
@@ -644,9 +611,7 @@ private fun assertPrivacyNoticeButton() {
 }
 
 private fun assertStartBrowsingButton() {
-    scrollToElementByText("Start browsing")
-    onView(withId(R.id.finish_button))
-        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+    assertTrue(startBrowsingButton().waitForExists(waitingTime))
 }
 
 // Pick your toolbar placement
@@ -711,7 +676,7 @@ private fun assertShareTabsOverlay() {
     onView(withId(R.id.share_tab_url)).check(matches(isDisplayed()))
 }
 
-private fun tabMediaControlButton() = onView(withId(R.id.play_pause_button))
+private fun privateBrowsingButton() = onView(withId(R.id.privateBrowsingButton))
 
 private fun collectionItem(title: String) =
     onView(allOf(withId(R.id.label), withText(title)))
@@ -730,15 +695,11 @@ private fun removeTabFromCollectionButton(title: String) =
 
 private fun tabsCounter() = onView(withId(R.id.tab_button))
 
-private fun tab(title: String) =
-    onView(
-        allOf(
-            withId(R.id.tab_title),
-            withText(title)
-        )
-    )
-
-private fun startBrowsingButton(): ViewInteraction {
-    scrollToElementByText("Start browsing")
-    return onView(allOf(withText("Start browsing")))
+private fun startBrowsingButton(): UiObject {
+    val startBrowsingButton = mDevice.findObject(UiSelector().resourceId("$packageName:id/finish_button"))
+    homeScreenList()
+        .scrollIntoView(startBrowsingButton)
+    homeScreenList()
+        .ensureFullyVisible(startBrowsingButton)
+    return startBrowsingButton
 }

@@ -52,7 +52,6 @@ import mozilla.components.concept.storage.BookmarkNodeType
 import mozilla.components.feature.contextmenu.DefaultSelectionActionDelegate
 import mozilla.components.feature.privatemode.notification.PrivateNotificationFeature
 import mozilla.components.feature.search.BrowserStoreSearchAdapter
-import mozilla.components.feature.search.ext.legacy
 import mozilla.components.service.fxa.sync.SyncReason
 import mozilla.components.support.base.feature.ActivityResultHandler
 import mozilla.components.support.base.feature.UserInteractionHandler
@@ -83,6 +82,7 @@ import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.ext.measureNoInline
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
+import org.mozilla.fenix.ext.setNavigationIcon
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.HomeFragmentDirections
 import org.mozilla.fenix.home.intent.CrashReporterIntentProcessor
@@ -303,9 +303,12 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         super.onResume()
 
         // Even if screenshots are allowed, we hide private content in the recents screen in onPause
-        // so onResume we should go back to setting these flags with the user screenshot setting
+        // only when we are in private mode, so in onResume we should go back to setting these flags
+        // with the user screenshot setting only when we are in private mode.
         // See https://github.com/mozilla-mobile/fenix/issues/11153
-        updateSecureWindowFlags(settings().lastKnownMode)
+        if (settings().lastKnownMode == BrowsingMode.Private) {
+            updateSecureWindowFlags(settings().lastKnownMode)
+        }
 
         // Diagnostic breadcrumb for "Display already aquired" crash:
         // https://github.com/mozilla-mobile/android-components/issues/7960
@@ -373,6 +376,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             components.core.store.state.getNormalOrPrivateTabs(private = false).isNotEmpty()
 
         // Even if screenshots are allowed, we want to hide private content in the recents screen
+        // only when we are in private mode
         // See https://github.com/mozilla-mobile/fenix/issues/11153
         if (settings().lastKnownMode.isPrivate) {
             window.addFlags(FLAG_SECURE)
@@ -719,6 +723,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             setSupportActionBar(navigationToolbar)
             // Add ids to this that we don't want to have a toolbar back button
             setupNavigationToolbar()
+            setNavigationIcon(R.drawable.ic_back_button)
 
             isToolbarInflated = true
         }
@@ -856,10 +861,10 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
                         SessionState.Source.USER_ENTERED,
                         true,
                         mode.isPrivate,
-                        searchEngine = engine.legacy()
+                        searchEngine = engine
                     )
             } else {
-                components.useCases.searchUseCases.defaultSearch.invoke(searchTermOrURL, engine.legacy())
+                components.useCases.searchUseCases.defaultSearch.invoke(searchTermOrURL, engine)
             }
         }
 

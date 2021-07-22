@@ -198,18 +198,12 @@ android {
         androidTest {
             resources.srcDirs += ['src/androidTest/resources']
         }
-        debug {
-            java.srcDirs = ['src/geckoNightly/java']
-        }
-        nightly {
-            java.srcDirs = ['src/geckoNightly/java']
-        }
         beta {
-            java.srcDirs = ['src/migration/java', 'src/geckoBeta/java']
+            java.srcDirs = ['src/migration/java']
             manifest.srcFile "src/migration/AndroidManifest.xml"
         }
         release {
-            java.srcDirs = ['src/migration/java', 'src/geckoRelease/java']
+            java.srcDirs = ['src/migration/java']
             manifest.srcFile "src/migration/AndroidManifest.xml"
         }
         forkDebug {
@@ -281,7 +275,7 @@ android.applicationVariants.all { variant ->
 
     def isDebug = variant.buildType.resValues['IS_DEBUG']?.value ?: false
     def useReleaseVersioning = variant.buildType.buildConfigFields['USE_RELEASE_VERSIONING']?.value ?: false
-    def versionName = Config.releaseVersionName(project) == "" ? Config.generateDebugVersionName() : Config.releaseVersionName(project)
+    def versionName = variant.buildType.name == 'nightly' ? Config.nightlyVersionName() : Config.releaseVersionName(project)
 
     println("----------------------------------------------")
     println("Variant name:      " + variant.name)
@@ -295,9 +289,9 @@ android.applicationVariants.all { variant ->
         // The Google Play Store does not allow multiple APKs for the same app that all have the
         // same version code. Therefore we need to have different version codes for our ARM and x86
         // builds.
-        
-        println("Version Name:      " + versionName)
-        
+
+        println("versionName override: $versionName")
+
         variant.outputs.each { output ->
             def abi = output.getFilter(OutputFile.ABI)
             // We use the same version code generator, that we inherited from Fennec, across all channels - even on
@@ -416,9 +410,7 @@ androidExtensions {
     experimental = true
 }
 
-// Generate Kotlin code and markdown docs for the Fenix Glean metrics.
-ext.gleanGenerateMarkdownDocs = true
-ext.gleanDocsDirectory = "$rootDir/docs"
+// Generate Kotlin code for the Fenix Glean metrics.
 apply plugin: "org.mozilla.telemetry.glean-gradle-plugin"
 
 configurations {
@@ -446,13 +438,7 @@ dependencies {
     jnaForTest Deps.jna
     testImplementation files(configurations.jnaForTest.copyRecursive().files)
 
-    debugImplementation Deps.mozilla_browser_engine_gecko_nightly
-    forkDebugImplementation Deps.mozilla_browser_engine_gecko_nightly
-
-    nightlyImplementation Deps.mozilla_browser_engine_gecko_nightly
-    betaImplementation Deps.mozilla_browser_engine_gecko_beta
-    releaseImplementation Deps.mozilla_browser_engine_gecko_release
-    forkReleaseImplementation Deps.mozilla_browser_engine_gecko_release
+    implementation  Deps.mozilla_browser_engine_gecko
 
     implementation Deps.kotlin_stdlib
     implementation Deps.kotlin_coroutines
@@ -479,7 +465,6 @@ dependencies {
     implementation Deps.mozilla_browser_icons
     implementation Deps.mozilla_browser_menu
     implementation Deps.mozilla_browser_menu2
-    implementation Deps.mozilla_browser_search
     implementation Deps.mozilla_browser_session
     implementation Deps.mozilla_browser_session_storage
     implementation Deps.mozilla_browser_state
@@ -548,6 +533,7 @@ dependencies {
     implementation Deps.mozilla_ui_tabcounter
 
     implementation Deps.mozilla_lib_crash
+    implementation Deps.mozilla_lib_state
     implementation Deps.mozilla_lib_dataprotect
     debugImplementation Deps.leakcanary
     forkDebugImplementation Deps.leakcanary
@@ -572,6 +558,8 @@ dependencies {
     androidTestImplementation Deps.uiautomator
 // Removed pending AndroidX fixes
     androidTestImplementation "tools.fastlane:screengrab:2.0.0"
+    // This Falcon version is added to maven central now required for Screengrab
+    implementation 'com.jraska:falcon:2.2.0'
 //    androidTestImplementation "br.com.concretesolutions:kappuccino:1.2.1"
 
     androidTestImplementation Deps.espresso_core, {

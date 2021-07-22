@@ -5,6 +5,7 @@
     <string name="app_name_private_5">%s privado</string>
     <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
     <string name="app_name_private_4">%s (Privado)</string>
+
     <!-- Home Fragment -->
     <!-- Content description (not visible, for screen readers etc.): "Three dot" menu button. -->
     <string name="content_description_menu">Más opciones</string>
@@ -47,6 +48,16 @@
     <string name="tab_tray_enter_multiselect_content_description">Ingresaste al modo de selección múltiple, seleccioná pestañas para guardar en una colección</string>
     <!-- Content description on checkmark while tab is selected in multiselect mode in tab tray -->
     <string name="tab_tray_multiselect_selected_content_description">Seleccionadas</string>
+
+    <!-- Home - Recently saved bookmarks -->
+    <!-- Title for the home screen section with recently saved bookmarks. -->
+    <string name="recently_saved_bookmarks">Guardados recientemente</string>
+    <!-- Content description for the recently saved bookmarks section on the home screen. -->
+    <string name="recently_saved_bookmarks_content_description">Marcadores guardados recientemente</string>
+    <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
+    <string name="recently_saved_show_all">Mostrar todos</string>
+    <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
+    <string name="recently_saved_show_all_content_description">Mostrar todos los marcadores guardados</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
     <string name="about_content">%1$s es producido por Mozilla.</string>
@@ -94,13 +105,6 @@
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">Descartar</string>
 
-    <!-- Text for the banner message to tell users about our grid view feature. -->
-    <string name="tab_tray_grid_view_banner_message">Cambiar el diseño de las pestañas abiertas. Ir a Ajustes y seleccionar cuadrícula bajo la sección de vista de pestañas.</string>
-    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
-    <string name="tab_tray_grid_view_banner_positive_button_text">Ir a Ajustes</string>
-    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
-    <string name="tab_tray_grid_view_banner_negative_button_text">Descartar</string>
-
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
     <string name="home_screen_shortcut_open_new_tab_2">Nueva pestaña</string>
@@ -109,6 +113,12 @@
 
     <!-- Heading for the Top Sites block -->
     <string name="home_screen_top_sites_heading">Sitios importantes</string>
+
+    <!-- Recent Tabs -->
+    <!-- Header text for jumping back into the recent tab in the home screen -->
+    <string name="recent_tabs_header">Volver a ver</string>
+    <!-- Button text for showing all the tabs in the tabs tray -->
+    <string name="recent_tabs_show_all">Mostrar todas</string>
 
     <!-- Browser Fragment -->
     <!-- Content description (not visible, for screen readers etc.): Navigate to open tabs -->
@@ -185,6 +195,10 @@
     <string name="browser_menu_add">Agregar</string>
     <!-- Browser menu label for editing a bookmark -->
     <string name="browser_menu_edit">Editar</string>
+
+    <!-- Browser Toolbar -->
+    <!-- Content description for the Home screen button on the browser toolbar -->
+    <string name="browser_toolbar_home">Pantalla de inicio</string>
 
     <!-- Error message to show when the user tries to access a scheme not
         handled by the app (Ex: blob, tel etc) -->
@@ -558,8 +572,6 @@
     <string name="library_new_tab">Nueva pestaña</string>
     <!-- Option in Library to find text in page -->
     <string name="library_find_in_page">Buscar en la página</string>
-    <!-- Option in Library to open Synced Tabs page -->
-    <string name="library_synced_tabs">Pestañas sincronizadas</string>
     <!-- Option in Library to open Reading List -->
     <string name="library_reading_list">Lista de lectura</string>
     <!-- Menu Item Label for Search in Library -->
@@ -605,6 +617,15 @@
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">Después de un mes</string>
 
+    <!-- Start on Home -->
+    <!-- Title of a preference that allows a user to indicate after a specified amount of time when the app should start on the home screen -->
+    <string name="preferences_start_on_home">Arrancar en inicio</string>
+    <!-- Option for starting on the home screen after after four hours or inactivity -->
+    <string name="start_on_home_after_four_hours">Después de cuatro horas</string>
+    <!-- Option for always starting on the home screen -->
+    <string name="start_on_home_always">Siempre</string>
+    <!-- Option for never starting on the home screen -->
+    <string name="start_on_home_never">Nunca</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
     <string name="close_tabs_manually_summary">Cerrar manualmente</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
@@ -1589,6 +1610,10 @@
     <string name="credit_cards_card_number">Número de tarjeta</string>
     <!-- The header for the expiration date of a credit card -->
     <string name="credit_cards_expiration_date">Fecha de vencimiento</string>
+    <!-- The label for the expiration date month of a credit card -->
+    <string name="credit_cards_expiration_date_month">Mes de fecha de vencimiento</string>
+    <!-- The label for the expiration date year of a credit card -->
+    <string name="credit_cards_expiration_date_year">Año de fecha de vencimiento</string>
     <!-- The header for the name on the credit card -->
     <string name="credit_cards_name_on_card">Nombre en la tarjeta</string>
     <!-- The header for the nickname for a credit card -->
@@ -1609,6 +1634,25 @@
 
     <!-- Error message for credit card number validation -->
     <string name="credit_cards_number_validation_error_message">Ingresá un número de tarjeta de crédito válido</string>
+
+    <!-- Error message for credit card name on card validation -->
+    <string name="credit_cards_name_on_card_validation_error_message">Se debe completar este campo</string>
+    <!-- Message displayed in biometric prompt displayed for authentication before allowing users to view their saved credit cards -->
+    <string name="credit_cards_biometric_prompt_message">Desbloqueá para ver los inicios de sesión guardados</string>
+    <!-- Title of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_title">Asegurá tus tarjetas de crédito</string>
+
+    <!-- Message of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_message">Configurá un patrón de bloqueo del dispositivo, PIN o contraseña para proteger el acceso a tus tarjetas de crédito guardadas si alguien más tiene tu dispositivo.</string>
+    <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_set_up_now">Configurar ahora</string>
+    <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_later">Más tarde</string>
+    <!-- Title of PIN verification dialog to direct users to re-enter their device credentials to access their credit cards -->
+    <string name="credit_cards_biometric_prompt_message_pin">Desbloqueá tu dispositivo</string>
+
+    <!-- Message displayed in biometric prompt for authentication, before allowing users to use their stored credit card information -->
+    <string name="credit_cards_biometric_prompt_unlock_message">Desbloquear para usar la información almacenada de la tarjeta de crédito</string>
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Agregar buscador</string>

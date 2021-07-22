@@ -7,7 +7,10 @@ package org.mozilla.fenix.settings.creditcards
 import io.mockk.mockk
 import io.mockk.verify
 import mozilla.components.concept.storage.CreditCard
+import mozilla.components.concept.storage.CreditCardNumber
+import mozilla.components.concept.storage.NewCreditCardFields
 import mozilla.components.concept.storage.UpdatableCreditCardFields
+import mozilla.components.support.utils.CreditCardNetworkType
 import org.junit.Before
 import org.junit.Test
 import org.mozilla.fenix.settings.creditcards.controller.CreditCardEditorController
@@ -35,10 +38,11 @@ class DefaultCreditCardEditorInteractorTest {
         val creditCard = CreditCard(
             guid = "id",
             billingName = "Banana Apple",
-            cardNumber = "4111111111111110",
+            encryptedCardNumber = CreditCardNumber.Encrypted("4111111111111110"),
+            cardNumberLast4 = "1110",
             expiryMonth = 1,
             expiryYear = 2030,
-            cardType = "amex",
+            cardType = CreditCardNetworkType.AMEX.cardName,
             timeCreated = 1L,
             timeLastUsed = 1L,
             timeLastModified = 1L,
@@ -50,12 +54,13 @@ class DefaultCreditCardEditorInteractorTest {
 
     @Test
     fun onSaveButtonClicked() {
-        val creditCardFields = UpdatableCreditCardFields(
+        val creditCardFields = NewCreditCardFields(
             billingName = "Banana Apple",
-            cardNumber = "4111111111111112",
+            plaintextCardNumber = CreditCardNumber.Plaintext("4111111111111112"),
+            cardNumberLast4 = "1112",
             expiryMonth = 1,
             expiryYear = 2030,
-            cardType = "discover"
+            cardType = CreditCardNetworkType.DISCOVER.cardName
         )
         interactor.onSaveCreditCard(creditCardFields)
         verify { controller.handleSaveCreditCard(creditCardFields) }
@@ -66,10 +71,11 @@ class DefaultCreditCardEditorInteractorTest {
         val guid = "id"
         val creditCardFields = UpdatableCreditCardFields(
             billingName = "Banana Apple",
-            cardNumber = "4111111111111112",
+            cardNumber = CreditCardNumber.Encrypted("4111111111111112"),
+            cardNumberLast4 = "1112",
             expiryMonth = 1,
             expiryYear = 2034,
-            cardType = "discover"
+            cardType = CreditCardNetworkType.DISCOVER.cardName
         )
         interactor.onUpdateCreditCard(guid, creditCardFields)
         verify { controller.handleUpdateCreditCard(guid, creditCardFields) }

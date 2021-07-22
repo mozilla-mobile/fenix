@@ -17,12 +17,14 @@ import mozilla.components.service.nimbus.NimbusApi
 import mozilla.components.service.nimbus.NimbusDisabled
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ReleaseChannel
 import org.mozilla.fenix.components.metrics.AdjustMetricsService
 import org.mozilla.fenix.components.metrics.GleanMetricsService
 import org.mozilla.fenix.components.metrics.MetricController
+import org.mozilla.fenix.experiments.createNimbus
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.perf.lazyMonitored
@@ -90,7 +92,7 @@ class Analytics(
     val metrics: MetricController by lazyMonitored {
         MetricController.create(
             listOf(
-                GleanMetricsService(context, lazy { context.components.core.store }),
+                GleanMetricsService(context),
                 AdjustMetricsService(context as Application)
             ),
             isDataTelemetryEnabled = { context.settings().isTelemetryEnabled },
@@ -100,8 +102,11 @@ class Analytics(
     }
 
     val experiments: NimbusApi by lazyMonitored {
-        // No experiments for Iceraven
-        NimbusDisabled()
+        if (FeatureFlags.nimbusExperiments) {
+            createNimbus(context, BuildConfig.NIMBUS_ENDPOINT)
+        } else {
+            NimbusDisabled()
+        }
     }
 }
 
