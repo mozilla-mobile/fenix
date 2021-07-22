@@ -141,6 +141,10 @@ android {
         }
     }
 
+    buildFeatures {
+        viewBinding true
+    }
+
     aaptOptions {
         // All JavaScript code used internally by GeckoView is packaged in a
         // file called omni.ja. If this file is compressed in the APK,
@@ -580,6 +584,10 @@ if (project.hasProperty("coverage")) {
         jacoco.includeNoLocationClasses = true
     }
 
+    jacoco {
+        toolVersion = "0.8.7"
+    }
+
     android.applicationVariants.all { variant ->
         tasks.register("jacoco${variant.name.capitalize()}TestReport", JacocoReport) {
             dependsOn "test${variant.name.capitalize()}UnitTest"
@@ -742,14 +750,3 @@ ext.updateExtensionVersion = { task, extDir ->
         expand(values)
     }
 }
-
-tasks.register("updateAdsExtensionVersion", Copy) { task ->
-    updateExtensionVersion(task, 'src/main/assets/extensions/ads')
-}
-
-tasks.register("updateCookiesExtensionVersion", Copy) { task ->
-    updateExtensionVersion(task, 'src/main/assets/extensions/cookies')
-}
-
-preBuild.dependsOn "updateAdsExtensionVersion"
-preBuild.dependsOn "updateCookiesExtensionVersion"

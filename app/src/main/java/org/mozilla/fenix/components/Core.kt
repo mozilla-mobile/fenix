@@ -10,7 +10,6 @@ import android.content.res.Configuration
 import android.os.Build
 import android.os.StrictMode
 import androidx.core.content.ContextCompat
-import io.sentry.Sentry
 import mozilla.components.browser.engine.gecko.GeckoEngine
 import mozilla.components.browser.engine.gecko.fetch.GeckoViewFetchClient
 import mozilla.components.browser.engine.gecko.permission.GeckoSitePermissionsStorage
@@ -39,8 +38,11 @@ import mozilla.components.feature.pwa.ManifestStorage
 import mozilla.components.feature.pwa.WebAppShortcutManager
 import mozilla.components.feature.readerview.ReaderViewMiddleware
 import mozilla.components.feature.recentlyclosed.RecentlyClosedMiddleware
+import mozilla.components.feature.search.middleware.AdsTelemetryMiddleware
 import mozilla.components.feature.search.middleware.SearchMiddleware
 import mozilla.components.feature.search.region.RegionMiddleware
+import mozilla.components.feature.search.telemetry.ads.AdsTelemetry
+import mozilla.components.feature.search.telemetry.incontent.InContentTelemetry
 import mozilla.components.feature.session.HistoryDelegate
 import mozilla.components.feature.session.middleware.LastAccessMiddleware
 import mozilla.components.feature.session.middleware.undo.UndoMiddleware
@@ -76,14 +78,13 @@ import org.mozilla.fenix.historymetadata.HistoryMetadataService
 import org.mozilla.fenix.media.MediaSessionService
 import org.mozilla.fenix.perf.StrictModeManager
 import org.mozilla.fenix.perf.lazyMonitored
-import org.mozilla.fenix.search.telemetry.ads.AdsTelemetry
-import org.mozilla.fenix.search.telemetry.incontent.InContentTelemetry
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.settings.advanced.getSelectedLocale
 import org.mozilla.fenix.telemetry.TelemetryMiddleware
 import org.mozilla.fenix.utils.Mockable
 import org.mozilla.fenix.utils.getUndoDelay
 import org.mozilla.geckoview.GeckoRuntime
+import java.lang.IllegalStateException
 
 /**
  * Component group for all core browser functionality.
@@ -195,7 +196,6 @@ class Core(
                 ReaderViewMiddleware(),
                 TelemetryMiddleware(
                     context.settings(),
-                    adsTelemetry,
                     metrics
                 ),
                 ThumbnailsMiddleware(thumbnailStorage),
@@ -207,7 +207,9 @@ class Core(
                     migration = SearchMigration(context)
                 ),
                 RecordingDevicesMiddleware(context),
-                PromptMiddleware()
+                PromptMiddleware(),
+                AdsTelemetryMiddleware(adsTelemetry)
+//                LastMediaAccessMiddleware() // disabled to avoid a nightly crash in #20402
             )
 
         if (FeatureFlags.historyMetadataFeature) {
@@ -268,11 +270,11 @@ class Core(
     }
 
     val adsTelemetry by lazyMonitored {
-        AdsTelemetry(metrics)
+        AdsTelemetry()
     }
 
     val searchTelemetry by lazyMonitored {
-        InContentTelemetry(metrics)
+        InContentTelemetry()
     }
 
     /**
@@ -408,11 +410,13 @@ class Core(
     private val passwordsEncryptionKey by lazyMonitored {
         getSecureAbove22Preferences().getString(PASSWORDS_KEY)
             ?: generateEncryptionKey(KEY_STRENGTH).also {
-                if (context.settings().passwordsEncryptionKeyGenerated &&
-                    isSentryEnabled()
-                ) {
+                if (context.settings().passwordsEncryptionKeyGenerated) {
                     // We already had previously generated an encryption key, but we have lost it
-                    Sentry.capture("Passwords encryption key for passwords storage was lost and we generated a new one")
+                    crashReporter.submitCaughtException(
+                        IllegalStateException(
+                            "Passwords encryption key for passwords storage was lost and we generated a new one"
+                        )
+                    )
                 }
                 context.settings().recordPasswordsEncryptionKeyGenerated()
                 getSecureAbove22Preferences().putString(PASSWORDS_KEY, it)

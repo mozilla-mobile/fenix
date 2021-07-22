@@ -67,6 +67,7 @@
     <string name="pref_key_last_review_prompt_shown_time" translatable="false">pref_key_last_review_prompt_shown_time</string>
     <string name="pref_key_last_browse_activity_time" translatable="false">pref_key_last_browse_activity_time</string>
     <string name="pref_key_last_cfr_shown_time" translatable="false">pref_key_last_cfr_shown_time</string>
+    <string name="pref_key_should_show_default_browser_notification" translatable="false">pref_key_should_show_default_browser_notification</string>
 
     <!-- Data Choices -->
     <string name="pref_key_telemetry" translatable="false">pref_key_telemetry</string>
@@ -115,9 +116,9 @@
     <string name="pref_key_show_site_exceptions" translatable="false">pref_key_show_site_exceptions</string>
     <string name="pref_key_recommended_settings" translatable="false">pref_key_recommended_settings</string>
     <string name="pref_key_custom_settings" translatable="false">pref_key_custom_settings</string>
-    <string name="pref_key_browser_feature_autoplay_v1" translatable="false">pref_key_browser_feature_autoplay_v1</string>
-    <string name="pref_key_browser_feature_autoplay_audible_v1" translatable="false">pref_key_browser_feature_autoplay_v1</string>
-    <string name="pref_key_browser_feature_autoplay_inaudible_v1" translatable="false">pref_key_browser_feature_autoplay_inaudible_v1</string>
+    <string name="pref_key_browser_feature_autoplay_v2" translatable="false">pref_key_browser_feature_autoplay_v2</string>
+    <string name="pref_key_browser_feature_autoplay_audible_v2" translatable="false">pref_key_browser_feature_autoplay_v2</string>
+    <string name="pref_key_browser_feature_autoplay_inaudible_v2" translatable="false">pref_key_browser_feature_autoplay_inaudible_v2</string>
     <string name="pref_key_browser_feature_persistent_storage" translatable="false">pref_key_browser_feature_persistent_storage</string>
     <string name="pref_key_browser_feature_media_key_system_access" translatable="false">pref_key_browser_feature_media_key_system_access</string>
     <string name="pref_key_phone_feature_camera" translatable="false">pref_key_phone_feature_camera</string>
@@ -284,4 +285,5 @@
     <!-- Secret Settings -->
     <string name="pref_key_show_address_feature" translatable="false">pref_key_show_address_feature</string>
     <string name="pref_key_nimbus_experiments" translatable="false">pref_key_nimbus_experiments</string>
+    <string name="pref_key_nimbus_use_preview" translatable="false">pref_key_nimbus_use_preview</string>
 </resources>

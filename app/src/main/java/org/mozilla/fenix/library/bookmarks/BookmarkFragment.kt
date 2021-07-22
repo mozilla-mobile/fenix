@@ -258,6 +258,7 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
 
     override fun onBackPressed(): Boolean {
         invokePendingDeletion()
+        sharedViewModel.selectedFolder = null
         return bookmarkView.onBackPressed()
     }
 
@@ -294,7 +295,7 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
     }
 
     private fun deleteMulti(selected: Set<BookmarkNode>, eventType: Event = Event.RemoveBookmarks) {
-        selected.forEach { if (it.type == BookmarkNodeType.FOLDER) {
+        selected.iterator().forEach { if (it.type == BookmarkNodeType.FOLDER) {
             showRemoveFolderDialog(selected)
             return
         } }

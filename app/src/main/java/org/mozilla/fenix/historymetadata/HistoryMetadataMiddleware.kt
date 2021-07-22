@@ -18,6 +18,7 @@ import mozilla.components.feature.search.ext.parseSearchTerms
 import mozilla.components.lib.state.Middleware
 import mozilla.components.lib.state.MiddlewareContext
 import mozilla.components.lib.state.Store
+import mozilla.components.support.base.log.logger.Logger
 
 /**
  * This [Middleware] reacts to various browsing events and records history metadata as needed.
@@ -25,6 +26,8 @@ import mozilla.components.lib.state.Store
 class HistoryMetadataMiddleware(
     private val historyMetadataService: HistoryMetadataService
 ) : Middleware<BrowserState, BrowserAction> {
+
+    private val logger = Logger("HistoryMetadataMiddleware")
 
     @Suppress("ComplexMethod")
     override fun invoke(
@@ -113,13 +116,26 @@ class HistoryMetadataMiddleware(
         // Obtain search terms and referrer url either from tab parent, or from the history stack.
         val (searchTerm, referrerUrl) = when {
             tabParent != null -> {
-                tabParent.content.searchTerms.takeUnless { it.isEmpty() } to tabParent.content.url
+                val searchTerms = tabParent.content.searchTerms.takeUnless { it.isEmpty() }
+                    ?: context.state.search.parseSearchTerms(tabParent.content.url)
+                searchTerms to tabParent.content.url
             }
             previousUrlIndex >= 0 -> {
                 val previousUrl = tab.content.history.items[previousUrlIndex].uri
-                context.state.search.parseSearchTerms(previousUrl) to previousUrl
+                val searchTerms = context.state.search.parseSearchTerms(previousUrl)
+                if (searchTerms != null) {
+                    searchTerms to previousUrl
+                } else {
+                    null to null
+                }
             }
             else -> null to null
+        }
+
+        // Sanity check to make sure we don't record a metadata record referring to itself.
+        if (tab.content.url == referrerUrl) {
+            logger.debug("Current url same as referrer. Skipping metadata recording.")
+            return
         }
 
         val key = historyMetadataService.createMetadata(tab, searchTerm, referrerUrl)

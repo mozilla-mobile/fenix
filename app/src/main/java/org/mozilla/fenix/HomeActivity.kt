@@ -86,6 +86,7 @@ import org.mozilla.fenix.ext.setNavigationIcon
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.HomeFragmentDirections
 import org.mozilla.fenix.home.intent.CrashReporterIntentProcessor
+import org.mozilla.fenix.home.intent.DefaultBrowserIntentProcessor
 import org.mozilla.fenix.home.intent.OpenBrowserIntentProcessor
 import org.mozilla.fenix.home.intent.OpenSpecificTabIntentProcessor
 import org.mozilla.fenix.home.intent.SpeechProcessingIntentProcessor
@@ -94,6 +95,7 @@ import org.mozilla.fenix.library.bookmarks.BookmarkFragmentDirections
 import org.mozilla.fenix.library.bookmarks.DesktopFolders
 import org.mozilla.fenix.library.history.HistoryFragmentDirections
 import org.mozilla.fenix.library.recentlyclosed.RecentlyClosedFragmentDirections
+import org.mozilla.fenix.onboarding.DefaultBrowserNotificationWorker
 import org.mozilla.fenix.perf.Performance
 import org.mozilla.fenix.perf.PerformanceInflater
 import org.mozilla.fenix.perf.ProfilerMarkers
@@ -158,7 +160,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             SpeechProcessingIntentProcessor(this, components.core.store, components.analytics.metrics),
             StartSearchIntentProcessor(components.analytics.metrics),
             OpenBrowserIntentProcessor(this, ::getIntentSessionId),
-            OpenSpecificTabIntentProcessor(this)
+            OpenSpecificTabIntentProcessor(this),
+            DefaultBrowserIntentProcessor(this, components.analytics.metrics)
         )
     }
 
@@ -254,7 +257,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
         captureSnapshotTelemetryMetrics()
 
-        startupTelemetryOnCreateCalled(intent.toSafeIntent(), savedInstanceState != null)
+        startupTelemetryOnCreateCalled(intent.toSafeIntent())
         startupPathProvider.attachOnActivityOnCreate(lifecycle, intent)
         startupTypeTelemetry = StartupTypeTelemetry(components.startupStateProvider, startupPathProvider).apply {
             attachOnHomeActivityOnCreate(lifecycle)
@@ -265,34 +268,15 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         StartupTimeline.onActivityCreateEndHome(this) // DO NOT MOVE ANYTHING BELOW HERE.
     }
 
-    protected open fun startupTelemetryOnCreateCalled(
-        safeIntent: SafeIntent,
-        hasSavedInstanceState: Boolean
-    ) {
-        // This function gets overridden by subclasses.
-        components.appStartupTelemetry.onHomeActivityOnCreate(
-            safeIntent,
-            hasSavedInstanceState,
-            homeActivityInitTimeStampNanoSeconds, rootContainer
-        )
-
+    private fun startupTelemetryOnCreateCalled(safeIntent: SafeIntent) {
+        // We intentionally only record this in HomeActivity and not ExternalBrowserActivity (e.g.
+        // PWAs) so we don't include more unpredictable code paths in the results.
         components.performance.coldStartupDurationTelemetry.onHomeActivityOnCreate(
             components.performance.visualCompletenessQueue,
             components.startupStateProvider,
             safeIntent,
             rootContainer
         )
-    }
-
-    override fun onRestart() {
-        // DO NOT MOVE ANYTHING ABOVE THIS..
-        // we are measuring startup time for hot startup type
-        startupTelemetryOnRestartCalled()
-        super.onRestart()
-    }
-
-    private fun startupTelemetryOnRestartCalled() {
-        components.appStartupTelemetry.onHomeActivityOnRestart(rootContainer)
     }
 
     @CallSuper
@@ -327,17 +311,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             }
         }
 
-        // Launch this on a background thread so as not to affect startup performance
-        lifecycleScope.launch(IO) {
-            if (
-                settings().isDefaultBrowser() &&
-                settings().wasDefaultBrowserOnLastResume != settings().isDefaultBrowser()
-            ) {
-                metrics.track(Event.ChangedToDefaultBrowser)
-            }
-
-            settings().wasDefaultBrowserOnLastResume = settings().isDefaultBrowser()
-        }
+        isFenixTheDefaultBrowser()
     }
 
     override fun onStart() = PerfStartup.homeActivityOnStart.measureNoInline {
@@ -363,8 +337,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
                 "finishing" to isFinishing.toString()
             )
         )
-
-        components.appStartupTelemetry.onStop()
     }
 
     final override fun onPause() {
@@ -510,8 +482,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             .toSafeIntent()
             .let(::getIntentAllSource)
             ?.also { components.analytics.metrics.track(Event.AppReceivedIntent(it)) }
-
-        components.appStartupTelemetry.onHomeActivityOnNewIntent(intent.toSafeIntent())
     }
 
     /**
@@ -973,6 +943,19 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             // it's important that this metric is only set once per application's lifetime.
             // Otherwise, we're going to over-count.
             Metrics.recentlyUsedPwaCount.add(recentlyUsedPwaCount)
+        }
+    }
+
+    private fun isFenixTheDefaultBrowser() {
+        // Launch this on a background thread so as not to affect startup performance
+        lifecycleScope.launch(IO) {
+            if (
+                settings().checkIfFenixIsDefaultBrowserOnAppResume()
+            ) {
+                metrics.track(Event.ChangedToDefaultBrowser)
+            }
+
+            DefaultBrowserNotificationWorker.setDefaultBrowserNotificationIfNeeded(applicationContext)
         }
     }
 
