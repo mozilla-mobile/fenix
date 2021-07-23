@@ -10,7 +10,6 @@ import android.content.res.Configuration
 import android.os.Build
 import android.os.StrictMode
 import androidx.core.content.ContextCompat
-import io.sentry.Sentry
 import mozilla.components.browser.engine.gecko.GeckoEngine
 import mozilla.components.browser.engine.gecko.fetch.GeckoViewFetchClient
 import mozilla.components.browser.engine.gecko.permission.GeckoSitePermissionsStorage
@@ -33,6 +32,7 @@ import mozilla.components.feature.customtabs.store.CustomTabsServiceStore
 import mozilla.components.feature.downloads.DownloadMiddleware
 import mozilla.components.feature.logins.exceptions.LoginExceptionStorage
 import mozilla.components.feature.media.MediaSessionFeature
+import mozilla.components.feature.media.middleware.LastMediaAccessMiddleware
 import mozilla.components.feature.media.middleware.RecordingDevicesMiddleware
 import mozilla.components.feature.prompts.PromptMiddleware
 import mozilla.components.feature.pwa.ManifestStorage
@@ -85,6 +85,7 @@ import org.mozilla.fenix.telemetry.TelemetryMiddleware
 import org.mozilla.fenix.utils.Mockable
 import org.mozilla.fenix.utils.getUndoDelay
 import org.mozilla.geckoview.GeckoRuntime
+import java.lang.IllegalStateException
 
 /**
  * Component group for all core browser functionality.
@@ -208,8 +209,8 @@ class Core(
                 ),
                 RecordingDevicesMiddleware(context),
                 PromptMiddleware(),
-                AdsTelemetryMiddleware(adsTelemetry)
-//                LastMediaAccessMiddleware() // disabled to avoid a nightly crash in #20402
+                AdsTelemetryMiddleware(adsTelemetry),
+                LastMediaAccessMiddleware()
             )
 
         if (FeatureFlags.historyMetadataFeature) {
@@ -410,11 +411,13 @@ class Core(
     private val passwordsEncryptionKey by lazyMonitored {
         getSecureAbove22Preferences().getString(PASSWORDS_KEY)
             ?: generateEncryptionKey(KEY_STRENGTH).also {
-                if (context.settings().passwordsEncryptionKeyGenerated &&
-                    isSentryEnabled()
-                ) {
+                if (context.settings().passwordsEncryptionKeyGenerated) {
                     // We already had previously generated an encryption key, but we have lost it
-                    Sentry.capture("Passwords encryption key for passwords storage was lost and we generated a new one")
+                    crashReporter.submitCaughtException(
+                        IllegalStateException(
+                            "Passwords encryption key for passwords storage was lost and we generated a new one"
+                        )
+                    )
                 }
                 context.settings().recordPasswordsEncryptionKeyGenerated()
                 getSecureAbove22Preferences().putString(PASSWORDS_KEY, it)
