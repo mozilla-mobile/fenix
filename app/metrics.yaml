@@ -5750,31 +5750,41 @@ recent_tabs:
     notification_emails:
       - android-probes@mozilla.com
     expires: "2022-06-23"
+
 recent_bookmarks:
   bookmark_clicked:
-    type: event
+    type: counter
+    lifetime: application
     description: |
-      A recently saved bookmark was clicked on the home screen.
+      A counter that indicates the number of times that a user
+      has clicked on a recently saved bookmark from the home
+      screen.
+    send_in_pings:
+      - metrics
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/19931
     data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/TBD...
+      - https://github.com/mozilla-mobile/fenix/pull/20316#issuecomment-888291843
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-01-31"
-  show_all_clicked:
-    type: event
+    expires: "2022-02-01"
+  show_all_bookmarks:
+    type: counter
+    lifetime: application
     description: |
-      The show all button was clicked on the recently saved
-      bookmarks section of the home screen.
+      A counter that indicates the number of times that a user
+      has clicked the show all button for recently saved bookmarks
+      on the home screen.
+    send_in_pings:
+      - metrics
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/19931
     data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/TBD...
+      - https://github.com/mozilla-mobile/fenix/pull/20316#issuecomment-888291843
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-01-31"
+    expires: "2022-02-01"

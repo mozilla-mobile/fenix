@@ -251,6 +251,10 @@ sealed class Event {
     object OpenRecentTab : Event()
     object OpenInProgressMediaTab : Event()
 
+    // Recent bookmarks
+    object BookmarkClicked : Event()
+    object ShowAllBookmarks : Event()
+
     // Android Autofill
     object AndroidAutofillUnlockSuccessful : Event()
     object AndroidAutofillUnlockCanceled : Event()
@@ -260,10 +264,6 @@ sealed class Event {
     object AndroidAutofillConfirmationCanceled : Event()
     object AndroidAutofillRequestWithLogins : Event()
     object AndroidAutofillRequestWithoutLogins : Event()
-
-    // Recent bookmarks on Home
-    object RecentBookmarkClicked : Event()
-    object RecentBookmarkShowAll : Event()
 
     // Interaction events with extras
 

@@ -854,6 +854,14 @@ private val Event.wrapper: EventWrapper<*>?
             { RecentTabs.showAllClicked.record(it) }
         )
 
+        is Event.BookmarkClicked -> EventWrapper<NoExtraKeys>(
+            { RecentBookmarks.bookmarkClicked.add() }
+        )
+
+        is Event.ShowAllBookmarks -> EventWrapper<NoExtraKeys>(
+            { RecentBookmarks.showAllBookmarks.add() }
+        )
+
         is Event.AndroidAutofillRequestWithLogins -> EventWrapper<NoExtraKeys>(
             { AndroidAutofill.requestMatchingLogins.record(it) }
         )
@@ -877,14 +885,6 @@ private val Event.wrapper: EventWrapper<*>?
         )
         is Event.AndroidAutofillConfirmationSuccessful -> EventWrapper<NoExtraKeys>(
             { AndroidAutofill.confirmSuccessful.record(it) }
-        )
-
-        is Event.RecentBookmarkClicked -> EventWrapper<NoExtraKeys>(
-            { RecentBookmarks.bookmarkClicked.record(it) }
-        )
-
-        is Event.RecentBookmarkShowAll -> EventWrapper<NoExtraKeys>(
-            { RecentBookmarks.showAllClicked.record(it) }
         )
 
         // Don't record other events in Glean:
