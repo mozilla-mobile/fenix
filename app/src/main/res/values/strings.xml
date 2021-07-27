@@ -1492,6 +1492,8 @@
     <string name="preferences_android_autofill">Autofill in other apps</string>
     <!-- Description for the preference for autofilling logins from Fenix in other apps (e.g. autofilling the Twitter app) -->
     <string name="preferences_android_autofill_description">Fill usernames and passwords in other apps on your device.</string>
+    <!-- Preference option for adding a login -->
+    <string name="preferences_logins_add_login">Add login</string>
 
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">Sync logins</string>
@@ -1758,6 +1760,8 @@
     <string name="discard_changes">Discard changes</string>
     <!--  The page title for editing a saved login. -->
     <string name="edit">Edit</string>
+    <!--  The page title for adding new login. -->
+    <string name="add_login">Add new login</string>
     <!--  The error message in edit login view when password field is blank. -->
     <string name="saved_login_password_required">Password required</string>
     <!-- Voice search button content description  -->
