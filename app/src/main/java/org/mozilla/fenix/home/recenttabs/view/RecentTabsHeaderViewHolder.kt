@@ -5,7 +5,6 @@
 package org.mozilla.fenix.home.recenttabs.view
 
 import android.view.View
-import androidx.navigation.findNavController
 import kotlinx.android.synthetic.main.recent_tabs_header.*
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import org.mozilla.fenix.R
@@ -28,14 +27,8 @@ class RecentTabsHeaderViewHolder(
         val binding = RecentTabsHeaderBinding.bind(view)
         binding.showAllButton.setOnClickListener {
         show_all_button.setOnClickListener {
-            dismissSearchDialogIfDisplayed()
-            interactor.onRecentTabShowAllClicked()
-        }
-    }
-
-    private fun dismissSearchDialogIfDisplayed() {
-        if (view.findNavController().currentDestination?.id == R.id.searchDialogFragment) {
             view.hideKeyboard()
+            interactor.onRecentTabShowAllClicked()
         }
     }
 
