@@ -23,6 +23,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.settings.logins.LoginsAction
 import org.mozilla.fenix.settings.logins.LoginsFragmentStore
 import org.mozilla.fenix.settings.logins.fragment.EditLoginFragmentDirections
+import org.mozilla.fenix.settings.logins.fragment.AddNewLoginFragmentDirections
 import org.mozilla.fenix.settings.logins.mapToSavedLogin
 
 /**
@@ -54,6 +55,48 @@ open class SavedLoginsStorageController(
                 deleteLoginJob?.cancel()
             }
         }
+    }
+
+    fun add(hostnameText: String, usernameText: String, passwordText: String) {
+        var saveLoginJob: Deferred<Unit>? = null
+        lifecycleScope.launch(ioDispatcher) {
+            saveLoginJob = async {
+                val loginToSave = Login(
+                    guid = null,
+                    origin = hostnameText,
+                    username = usernameText,
+                    password = passwordText,
+                    httpRealm = hostnameText
+                )
+                val newLoginId = add(loginToSave)
+                val newLogin = passwordsStorage.get(newLoginId)
+                syncAndUpdateList(newLogin!!)
+            }
+            saveLoginJob?.await()
+            withContext(Dispatchers.Main) {
+                val directions =
+                    AddNewLoginFragmentDirections.actionAddNewLoginFragmentToSavedLoginsFragment()
+                navController.navigate(directions)
+            }
+        }
+        saveLoginJob?.invokeOnCompletion {
+            if (it is CancellationException) {
+                saveLoginJob?.cancel()
+            }
+        }
+    }
+
+    private suspend fun add(loginToSave: Login): String {
+        var newLoginId = ""
+        try {
+            newLoginId = passwordsStorage.add(loginToSave)
+        } catch (loginException: LoginsStorageException) {
+            Log.e(
+                "Add new login",
+                "Failed to add new login.", loginException
+            )
+        }
+        return newLoginId
     }
 
     fun save(loginId: String, usernameText: String, passwordText: String) {

@@ -11,6 +11,7 @@ import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.extensions.LayoutContainer
+import kotlinx.android.synthetic.main.component_saved_logins.add_login_button
 import kotlinx.android.synthetic.main.component_saved_logins.view.*
 import org.mozilla.fenix.R
 import org.mozilla.fenix.settings.logins.LoginsListState
@@ -53,6 +54,8 @@ class SavedLoginsListView(
                 appName
             )
         }
+
+        add_login_button.setOnClickListener { interactor.onAddLoginClick() }
     }
 
     fun update(state: LoginsListState) {
