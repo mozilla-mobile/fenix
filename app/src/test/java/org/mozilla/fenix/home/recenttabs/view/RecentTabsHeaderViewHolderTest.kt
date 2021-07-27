@@ -29,7 +29,7 @@ class RecentTabsHeaderViewHolderTest {
     }
 
     @Test
-    fun `WHEN show all button is clicked THEN interactor iis called`() {
+    fun `WHEN show all button is clicked THEN interactor is called`() {
         RecentTabsHeaderViewHolder(view, interactor)
 
         view.show_all_button.performClick()
