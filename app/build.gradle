@@ -217,6 +217,14 @@ android {
             minHeapSize = "1024m"
         }
     }
+
+    buildFeatures {
+        compose true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = Versions.androidx_compose
+    }
 }
 
 android.applicationVariants.all { variant ->
@@ -391,10 +399,6 @@ configurations {
     // correct runtime classpath when invoked with Android Studio's built-in JUnit test runner.
     // Success!
     jnaForTest
-    // Robolectric, through `com.google.android.apps.common.testing.accessibility.framework`
-    // depends on an old version of protobuf that conflict with the Application Services one.
-    // See: https://github.com/mozilla/application-services/issues/2952
-    all*.exclude group: 'com.google.protobuf', module: 'protobuf-java'
 }
 
 dependencies {
@@ -500,6 +504,10 @@ dependencies {
     implementation Deps.mozilla_lib_dataprotect
     debugImplementation Deps.leakcanary
 
+    implementation Deps.androidx_compose_ui
+    implementation Deps.androidx_compose_ui_tooling
+    implementation Deps.androidx_compose_foundation
+    implementation Deps.androidx_compose_material
     implementation Deps.androidx_legacy
     implementation Deps.androidx_biometric
     implementation Deps.androidx_paging
@@ -582,6 +590,7 @@ dependencies {
 if (project.hasProperty("coverage")) {
     tasks.withType(Test).configureEach {
         jacoco.includeNoLocationClasses = true
+        jacoco.excludes = ['jdk.internal.*']
     }
 
     jacoco {

@@ -10,17 +10,19 @@ import androidx.lifecycle.LifecycleRegistry
 import androidx.navigation.NavController
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.spyk
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.TestCoroutineDispatcher
 import mozilla.components.browser.state.action.ContentAction
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.createTab
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.feature.pwa.WebAppUseCases
 import mozilla.components.support.test.ext.joinBlocking
+import mozilla.components.support.test.rule.MainCoroutineRule
 import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
@@ -37,6 +39,11 @@ class PwaOnboardingObserverTest {
     private lateinit var settings: Settings
     private lateinit var webAppUseCases: WebAppUseCases
 
+    private val testDispatcher = TestCoroutineDispatcher()
+
+    @get:Rule
+    val coroutinesTestRule = MainCoroutineRule(testDispatcher)
+
     @Before
     fun setUp() {
         store = BrowserStore(
@@ -52,13 +59,13 @@ class PwaOnboardingObserverTest {
         settings = mockk(relaxed = true)
         webAppUseCases = mockk(relaxed = true)
 
-        pwaOnboardingObserver = spyk(PwaOnboardingObserver(
+        pwaOnboardingObserver = PwaOnboardingObserver(
             store = store,
             lifecycleOwner = lifecycleOwner,
             navController = navigationController,
             settings = settings,
             webAppUseCases = webAppUseCases
-        ))
+        )
         every { pwaOnboardingObserver.navigateToPwaOnboarding() } returns Unit
     }
 
