@@ -23,7 +23,14 @@ we try to keep this simple and avoid implementing all the things they do.
 
 DEFAULT_ITER_COUNT = 25
 
-CHANNEL_TO_PKG = {
+FOCUS_CHANNEL_TO_PKG = {
+    'nightly': 'org.mozilla.focus',  # it seems problematic that this is the same as release.
+    'beta': 'org.mozilla.focus.beta',  # only present since post-fenix update.
+    'release': 'org.mozilla.focus',
+    'debug': 'org.mozilla.focus.debug'
+}
+
+FENIX_CHANNEL_TO_PKG = {
     'nightly': 'org.mozilla.fenix',
     'beta': 'org.mozilla.firefox.beta',
     'release': 'org.mozilla.firefox',
@@ -36,11 +43,19 @@ TEST_COLD_VIEW_FF = 'cold_view_first_frame'
 TEST_COLD_VIEW_NAV_START = 'cold_view_nav_start'
 TESTS = [TEST_COLD_MAIN_FF, TEST_COLD_MAIN_RESTORE, TEST_COLD_VIEW_FF, TEST_COLD_VIEW_NAV_START]
 
+TEST_URI = 'https://example.com'
+
+PROD_FENIX = 'fenix'
+PROD_FOCUS = 'focus'
+PRODUCTS = [PROD_FENIX, PROD_FOCUS]
+
 
 def parse_args():
     parser = argparse.ArgumentParser(description=DESC, formatter_class=argparse.RawTextHelpFormatter)
+
+    assert FENIX_CHANNEL_TO_PKG.keys() == FOCUS_CHANNEL_TO_PKG.keys(), 'should be equal to use one for choices= below'
     parser.add_argument(
-        "release_channel", choices=CHANNEL_TO_PKG.keys(), help="the release channel to measure"
+        "release_channel", choices=FENIX_CHANNEL_TO_PKG.keys(), help="the release channel to measure"
     )
     parser.add_argument(
         "test_name", choices=TESTS, help="""the measurement methodology to use. Options:
@@ -53,14 +68,21 @@ Measurements to first frame are a reimplementation of
 https://medium.com/androiddevelopers/testing-app-startup-performance-36169c27ee55
 
 See https://wiki.mozilla.org/Performance/Fenix#Terminology for descriptions of cold/warm/hot and main/view""".format(
-    cold_main_ff=TEST_COLD_MAIN_FF, cold_main_restore=TEST_COLD_MAIN_RESTORE,
-    cold_view_ff=TEST_COLD_VIEW_FF, cold_view_nav_start=TEST_COLD_VIEW_NAV_START,
-))
+            cold_main_ff=TEST_COLD_MAIN_FF, cold_main_restore=TEST_COLD_MAIN_RESTORE,
+            cold_view_ff=TEST_COLD_VIEW_FF, cold_view_nav_start=TEST_COLD_VIEW_NAV_START,
+        ))
     parser.add_argument("path", help="the path to save the measurement results; will abort if file exists")
+
+    # We ordinarily wouldn't specify a default because it may cause the user to get results
+    # from a product they didn't intend but this script lives in the fenix repo so having fenix
+    # as a default would be less confusing for users.
+    parser.add_argument("-p", "--product", default=PROD_FENIX, choices=PRODUCTS,
+                        help="which product to get measurements from")
 
     parser.add_argument("-c", "--iter-count", default=DEFAULT_ITER_COUNT, type=int,
                         help="the number of iterations to run. defaults to {}".format(DEFAULT_ITER_COUNT))
-    parser.add_argument("-f", "--force", action="store_true", help="overwrite the given path rather than stopping on file existence")
+    parser.add_argument("-f", "--force", action="store_true",
+                        help="overwrite the given path rather than stopping on file existence")
 
     return parser.parse_args()
 
@@ -72,8 +94,20 @@ def validate_args(args):
             raise Exception("Given `path` unexpectedly exists: pick a new path or use --force to overwrite.")
 
 
+def product_channel_to_pkg_id(product, channel):
+    if product == PROD_FENIX:
+        pkg_to_channel_map = FENIX_CHANNEL_TO_PKG
+    elif product == PROD_FOCUS:
+        pkg_to_channel_map = FOCUS_CHANNEL_TO_PKG
+    return pkg_to_channel_map[channel]
+
+
+def get_adb_shell_args():
+    return ['adb', 'shell']
+
+
 def get_activity_manager_args():
-    return ['adb', 'shell', 'am']
+    return get_adb_shell_args() + ['am']
 
 
 def force_stop(pkg_id):
@@ -89,22 +123,42 @@ def disable_startup_profiling():
     subprocess.run(args, check=True)
 
 
+def get_component_name_for_intent(pkg_id, intent):
+    resolve_component_args = (get_adb_shell_args()
+                              + ['cmd', 'package', 'resolve-activity', '--brief']
+                              + intent + [pkg_id])
+    proc = subprocess.run(resolve_component_args, capture_output=True)
+    stdout = proc.stdout.splitlines()
+    assert len(stdout) == 2, 'expected 2 lines. Got: {}'.format(stdout)
+    return stdout[1]
+
+
 def get_start_cmd(test_name, pkg_id):
-    args_prefix = get_activity_manager_args() + ['start-activity', '-W', '-n']
+    intent_action_prefix = 'android.intent.action.{}'
     if test_name in [TEST_COLD_MAIN_FF, TEST_COLD_MAIN_RESTORE]:
-        cmd = args_prefix + ['{}/.App'.format(pkg_id)]
-    elif test_name in [TEST_COLD_VIEW_FF, TEST_COLD_VIEW_NAV_START]:
-        pkg_activity = '{}/org.mozilla.fenix.IntentReceiverActivity'.format(pkg_id)
-        cmd = args_prefix + [
-            pkg_activity,
-            '-d', 'https://example.com',
-            '-a', 'android.intent.action.VIEW'
+        intent = [
+            '-a', intent_action_prefix.format('MAIN'),
+            '-c', 'android.intent.category.LAUNCHER',
         ]
-    else: raise NotImplementedError('method unexpectedly undefined for test_name {}'.format(test_name))
+    elif test_name in [TEST_COLD_VIEW_FF, TEST_COLD_VIEW_NAV_START]:
+        intent = [
+            '-a', intent_action_prefix.format('VIEW'),
+            '-d', TEST_URI
+        ]
+
+    # You can't launch an app without an pkg_id/activity pair. Instead of
+    # hard-coding the activity, which could break on app updates, we ask the
+    # system to resolve it for us.
+    component_name = get_component_name_for_intent(pkg_id, intent)
+    cmd = get_activity_manager_args() + [
+        'start-activity',  # this would change to `start` on older API levels like GS5.
+        '-W',  # wait for app launch to complete before returning
+        '-n', component_name
+        ] + intent
     return cmd
 
 
-def measure(test_name, pkg_id, start_cmd_args, iter_count):
+def measure(test_name, product, pkg_id, start_cmd_args, iter_count):
     # Startup profiling may accidentally be left enabled and throw off the results.
     # To prevent this, we disable it.
     disable_startup_profiling()
@@ -112,7 +166,7 @@ def measure(test_name, pkg_id, start_cmd_args, iter_count):
     # After an (re)installation, we've observed the app starts up more slowly than subsequent runs.
     # As such, we start it once beforehand to let it settle.
     force_stop(pkg_id)
-    subprocess.run(start_cmd_args, check=True, capture_output=True)  # capture_output so it doesn't print to the console.
+    subprocess.run(start_cmd_args, check=True, capture_output=True)  # capture_output so no print to stdout.
     time.sleep(5)  # To hopefully reach visual completeness.
 
     measurements = []
@@ -125,19 +179,18 @@ def measure(test_name, pkg_id, start_cmd_args, iter_count):
         subprocess.run(['adb', 'logcat', '-c'], check=True)
 
         proc = subprocess.run(start_cmd_args, check=True, capture_output=True)  # expected to wait for app to start.
-        measurements.append(get_measurement(test_name, pkg_id, proc.stdout))
+        measurements.append(get_measurement(test_name, product, pkg_id, proc.stdout))
 
     return measurements
 
 
-def get_measurement(test_name, pkg_id, stdout):
+def get_measurement(test_name, product, pkg_id, stdout):
     if test_name in [TEST_COLD_MAIN_FF, TEST_COLD_VIEW_FF]:
         measurement = get_measurement_from_am_start_log(stdout)
     elif test_name in [TEST_COLD_VIEW_NAV_START, TEST_COLD_MAIN_RESTORE]:
         time.sleep(4)  # We must sleep until the navigation start event occurs.
         proc = subprocess.run(['adb', 'logcat', '-d'], check=True, capture_output=True)
-        measurement = get_measurement_from_nav_start_logcat(pkg_id, proc.stdout)
-    else: raise NotImplementedError('method unexpectedly undefined for test_name {}'.format(test_name))
+        measurement = get_measurement_from_nav_start_logcat(product, pkg_id, proc.stdout)
     return measurement
 
 
@@ -160,10 +213,10 @@ def get_measurement_from_am_start_log(stdout):
     return duration
 
 
-def get_measurement_from_nav_start_logcat(pkg_id, logcat_bytes):
+def get_measurement_from_nav_start_logcat(product, pkg_id, logcat_bytes):
     # Relevant lines:
-    # 05-18 14:32:47.366  1759  6003 I ActivityManager: START u0 {act=android.intent.action.VIEW dat=https://example.com/... typ=text/html flg=0x10000000 cmp=org.mozilla.fenix/.IntentReceiverActivity} from uid 2000
-    # 05-18 14:32:47.402  1759  6003 I ActivityManager: Start proc 9007:org.mozilla.fenix/u0a170 for activity org.mozilla.fenix/.IntentReceiverActivity
+    # 05-18 14:32:47.366  1759  6003 I ActivityManager: START u0 {act=android.intent.action.VIEW dat=https://example.com/... typ=text/html flg=0x10000000 cmp=org.mozilla.fenix/.IntentReceiverActivity} from uid 2000  # noqa
+    # 05-18 14:32:47.402  1759  6003 I ActivityManager: Start proc 9007:org.mozilla.fenix/u0a170 for activity org.mozilla.fenix/.IntentReceiverActivity  # noqa
     # 05-18 14:32:50.809  9007  9007 I GeckoSession: handleMessage GeckoView:PageStart uri=
     # 05-18 14:32:50.821  9007  9007 I GeckoSession: handleMessage GeckoView:PageStop uri=null
     def line_to_datetime(line):
@@ -175,7 +228,7 @@ def get_measurement_from_nav_start_logcat(pkg_id, logcat_bytes):
     def get_proc_start_datetime():
         # This regex may not work on older versions of Android: we don't care
         # yet because supporting older versions isn't in our requirements.
-        proc_start_re = re.compile('ActivityManager: Start proc \d+:{}/'.format(pkg_id))
+        proc_start_re = re.compile(r'ActivityManager: Start proc \d+:{}/'.format(pkg_id))
         proc_start_lines = [line for line in lines if proc_start_re.search(line)]
         assert len(proc_start_lines) == 1
         return line_to_datetime(proc_start_lines[0])
@@ -183,7 +236,18 @@ def get_measurement_from_nav_start_logcat(pkg_id, logcat_bytes):
     def get_page_start_datetime():
         page_start_re = re.compile('GeckoSession: handleMessage GeckoView:PageStart uri=')
         page_start_lines = [line for line in lines if page_start_re.search(line)]
-        assert len(page_start_lines) == 2, 'found len=' + str(len(page_start_lines))  # One for about:blank & one for target URL.
+        page_start_line_count = len(page_start_lines)
+        page_start_assert_msg = 'found len=' + str(page_start_line_count)
+
+        # In focus versions <= v8.8.2, it logs 3 PageStart lines and these include actual uris.
+        # We need to handle our assertion differently due to the different line count.
+        #
+        # In focus versions >= v8.8.3, this measurement is broken because the logcat were removed.
+        is_old_version_of_focus = 'about:blank' in page_start_lines[0] and product == PROD_FOCUS
+        if is_old_version_of_focus:
+            assert page_start_line_count == 3, page_start_assert_msg  # Lines: about:blank, target URL, target URL.
+        else:
+            assert page_start_line_count == 2, page_start_assert_msg  # Lines: about:blank, target URL.
         return line_to_datetime(page_start_lines[1])  # 2nd PageStart is for target URL.
 
     logcat = logcat_bytes.decode('UTF-8')  # Easier to work with and must for strptime.
@@ -194,7 +258,9 @@ def get_measurement_from_nav_start_logcat(pkg_id, logcat_bytes):
     # before our process starts. If we wanted to put in more time, we could
     # double-check this assumption by seeing what values `am start -W` returns
     # compared to the time stamps.
-    elapsed_seconds = (get_page_start_datetime() - get_proc_start_datetime()).total_seconds()  # values < 1s are expressed in decimal.
+    #
+    # For total_seconds(), values < 1s are expressed in decimal (e.g. .001 is 1ms).
+    elapsed_seconds = (get_page_start_datetime() - get_proc_start_datetime()).total_seconds()
     elapsed_millis = round(elapsed_seconds * 1000)
     return elapsed_millis
 
@@ -221,10 +287,10 @@ def main():
     args = parse_args()
     validate_args(args)
 
-    pkg_id = CHANNEL_TO_PKG[args.release_channel]
+    pkg_id = product_channel_to_pkg_id(args.product, args.release_channel)
     start_cmd = get_start_cmd(args.test_name, pkg_id)
     print_preface_text(args.test_name)
-    measurements = measure(args.test_name, pkg_id, start_cmd, args.iter_count)
+    measurements = measure(args.test_name, args.product, pkg_id, start_cmd, args.iter_count)
     save_measurements(args.path, measurements)
 
 
