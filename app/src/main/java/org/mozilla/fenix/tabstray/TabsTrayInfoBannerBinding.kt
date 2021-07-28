@@ -70,12 +70,10 @@ class TabsTrayInfoBannerBinding(
                 container = infoBannerView,
                 dismissByHiding = true,
                 dismissAction = {
-                    metrics?.track(Event.TabsTrayCfrDismissed)
                     settings.shouldShowAutoCloseTabsBanner = false
                 }
             ) {
                 navigationInteractor.onTabSettingsClicked()
-                metrics?.track(Event.TabsTrayCfrTapped)
                 settings.shouldShowAutoCloseTabsBanner = false
             }
         } else {
