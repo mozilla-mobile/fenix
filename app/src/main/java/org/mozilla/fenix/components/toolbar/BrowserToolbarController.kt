@@ -91,8 +91,10 @@ class DefaultBrowserToolbarController(
 
     override fun handleToolbarClick() {
         metrics.track(Event.SearchBarTapped(Event.SearchBarTapped.Source.BROWSER))
-        navController.nav(
-            R.id.browserFragment,
+        navController.navigate(
+            BrowserFragmentDirections.actionGlobalHome()
+        )
+        navController.navigate(
             BrowserFragmentDirections.actionGlobalSearchDialog(
                 currentSession?.id
             ),

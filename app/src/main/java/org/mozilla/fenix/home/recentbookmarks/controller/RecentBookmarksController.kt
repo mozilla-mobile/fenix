@@ -9,8 +9,6 @@ import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.concept.storage.BookmarkNode
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
-import org.mozilla.fenix.R
-import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.home.HomeFragmentDirections
 import org.mozilla.fenix.home.recentbookmarks.interactor.RecentBookmarksInteractor
 
@@ -48,7 +46,8 @@ class DefaultRecentBookmarksController(
     }
 
     override fun handleShowAllBookmarksClicked() {
-        val directions = HomeFragmentDirections.actionGlobalBookmarkFragment(BookmarkRoot.Mobile.id)
-        navController.nav(R.id.homeFragment, directions)
+        navController.navigate(
+            HomeFragmentDirections.actionGlobalBookmarkFragment(BookmarkRoot.Mobile.id)
+        )
     }
 }

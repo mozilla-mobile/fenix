@@ -58,9 +58,6 @@ class DefaultRecentTabsController(
 
     override fun handleRecentTabShowAllClicked() {
         metrics.track(Event.ShowAllRecentTabs)
-        navController.nav(
-            R.id.homeFragment,
-            HomeFragmentDirections.actionGlobalTabsTrayFragment()
-        )
+        navController.navigate(HomeFragmentDirections.actionGlobalTabsTrayFragment())
     }
 }

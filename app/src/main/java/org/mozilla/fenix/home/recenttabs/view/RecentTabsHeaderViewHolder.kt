@@ -4,7 +4,10 @@
 
 package org.mozilla.fenix.home.recenttabs.view
 
+import android.content.Context
 import android.view.View
+import android.view.inputmethod.InputMethodManager
+import androidx.navigation.Navigation.findNavController
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.RecentTabsHeaderBinding
 import org.mozilla.fenix.home.recenttabs.interactor.RecentTabInteractor
@@ -21,10 +24,22 @@ class RecentTabsHeaderViewHolder(
 ) : ViewHolder(view) {
 
     init {
-
         val binding = RecentTabsHeaderBinding.bind(view)
         binding.showAllButton.setOnClickListener {
+            hideKeyboard(view)
             interactor.onRecentTabShowAllClicked()
+        }
+    }
+
+    /**
+     * Hide the keyboard if we are viewing the home screen from behind the search dialog.
+     */
+    private fun hideKeyboard(view: View) {
+        if (findNavController(view).currentDestination?.id == R.id.searchDialogFragment) {
+            val imm =
+                view.context
+                    .getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
         }
     }
 

@@ -400,6 +400,13 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                 true
             }
             else -> {
+                val args by navArgs<SearchDialogFragmentArgs>()
+                args.sessionId?.let {
+                    findNavController().navigate(
+                        SearchDialogFragmentDirections.actionGlobalBrowser(null)
+                    )
+                }
+
                 view?.hideKeyboard()
                 dismissAllowingStateLoss()
                 true

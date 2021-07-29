@@ -4,7 +4,10 @@
 
 package org.mozilla.fenix.home.recentbookmarks.view
 
+import android.content.Context
 import android.view.View
+import android.view.inputmethod.InputMethodManager
+import androidx.navigation.Navigation
 import kotlinx.android.synthetic.main.recent_bookmark_item.bookmark_title
 import kotlinx.android.synthetic.main.recent_bookmark_item.bookmark_subtitle
 import kotlinx.android.synthetic.main.recent_bookmark_item.bookmark_item
@@ -27,11 +30,24 @@ class RecentBookmarkItemViewHolder(
         bookmark_subtitle.text = bookmark.url?.tryGetHostFromUrl() ?: bookmark.title ?: ""
 
         bookmark_item.setOnClickListener {
+            hideKeyboard(view)
             interactor.onRecentBookmarkClicked(bookmark)
         }
 
         bookmark.url?.let {
             view.context.components.core.icons.loadIntoView(favicon_image, it)
+        }
+    }
+
+    /**
+     * Hide the keyboard if we are viewing the home screen from behind the search dialog.
+     */
+    private fun hideKeyboard(view: View) {
+        if (Navigation.findNavController(view).currentDestination?.id == R.id.searchDialogFragment) {
+            val imm =
+                view.context
+                    .getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
         }
     }
 
