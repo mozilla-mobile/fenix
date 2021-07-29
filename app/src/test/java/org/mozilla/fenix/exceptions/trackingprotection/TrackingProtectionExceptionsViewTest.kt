@@ -38,6 +38,8 @@ class TrackingProtectionExceptionsViewTest {
     @Before
     fun setup() {
         mockkConstructor(TrackingProtectionExceptionsAdapter::class)
+        every { anyConstructed<TrackingProtectionExceptionsAdapter>().updateData(any()) } just Runs
+
         container = FrameLayout(testContext)
         interactor = mockk()
 
@@ -45,7 +47,6 @@ class TrackingProtectionExceptionsViewTest {
             container,
             interactor
         )
-        every { anyConstructed<TrackingProtectionExceptionsAdapter>().updateData(any()) } just Runs
     }
 
     @After
@@ -70,6 +71,7 @@ class TrackingProtectionExceptionsViewTest {
 
         assertTrue(exceptionsView.exceptions_empty_view.isVisible)
         assertFalse(exceptionsView.exceptions_list.isVisible)
+
         verify { anyConstructed<TrackingProtectionExceptionsAdapter>().updateData(emptyList()) }
     }
 
