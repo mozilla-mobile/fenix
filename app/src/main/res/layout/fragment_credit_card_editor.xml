@@ -169,7 +169,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="18dp">
+            android:paddingTop="16dp">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/delete_button"
