@@ -105,7 +105,7 @@ class Core(
         val defaultSettings = DefaultSettings(
             requestInterceptor = requestInterceptor,
             remoteDebuggingEnabled = context.settings().isRemoteDebuggingEnabled &&
-                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.M,
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.M,
             testingModeEnabled = false,
             trackingProtectionPolicy = trackingProtectionPolicyFactory.createTrackingProtectionPolicy(),
             historyTrackingDelegate = HistoryDelegate(lazyHistoryStorage),
@@ -432,7 +432,7 @@ class Core(
     fun getPreferredColorScheme(): PreferredColorScheme {
         val inDark =
             (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
-                    Configuration.UI_MODE_NIGHT_YES
+                Configuration.UI_MODE_NIGHT_YES
         return when {
             context.settings().shouldUseDarkTheme -> PreferredColorScheme.Dark
             context.settings().shouldUseLightTheme -> PreferredColorScheme.Light
@@ -446,6 +446,6 @@ class Core(
         private const val KEY_STORAGE_NAME = "core_prefs"
         private const val PASSWORDS_KEY = "passwords"
         private const val RECENTLY_CLOSED_MAX = 10
-        private const val HISTORY_METADATA_MAX_AGE_IN_MS = 7 * 24 * 60 * 60 * 1000 // 7 days
+        private const val HISTORY_METADATA_MAX_AGE_IN_MS = 14 * 24 * 60 * 60 * 1000 // 14 days
     }
 }

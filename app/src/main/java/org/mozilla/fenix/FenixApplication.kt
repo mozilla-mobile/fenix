@@ -65,10 +65,12 @@ import org.mozilla.fenix.telemetry.TelemetryLifecycleObserver
 import org.mozilla.fenix.utils.BrowsersCache
 import java.util.concurrent.TimeUnit
 import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.feature.autofill.AutofillUseCases
 import mozilla.components.feature.search.ext.buildSearchUrl
 import mozilla.components.feature.search.ext.waitForSelectedOrDefaultSearchEngine
 import mozilla.components.service.fxa.manager.SyncEnginesStorage
 import org.mozilla.fenix.GleanMetrics.Addons
+import org.mozilla.fenix.GleanMetrics.AndroidAutofill
 import org.mozilla.fenix.GleanMetrics.Preferences
 import org.mozilla.fenix.GleanMetrics.SearchDefaultEngine
 import org.mozilla.fenix.components.metrics.Event
@@ -138,7 +140,8 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                 channel = BuildConfig.BUILD_TYPE,
                 httpClient = ConceptFetchHttpUploader(
                     lazy(LazyThreadSafetyMode.NONE) { components.core.client }
-                )),
+                )
+            ),
             uploadEnabled = telemetryEnabled,
             buildInfo = GleanBuildInfo.buildInfo
         )
@@ -390,15 +393,17 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
 
         logger.info("onTrimMemory(), level=$level, main=${isMainProcess()}")
 
-        components.analytics.crashReporter.recordCrashBreadcrumb(Breadcrumb(
-            category = "Memory",
-            message = "onTrimMemory()",
-            data = mapOf(
-                "level" to level.toString(),
-                "main" to isMainProcess().toString()
-            ),
-            level = Breadcrumb.Level.INFO
-        ))
+        components.analytics.crashReporter.recordCrashBreadcrumb(
+            Breadcrumb(
+                category = "Memory",
+                message = "onTrimMemory()",
+                data = mapOf(
+                    "level" to level.toString(),
+                    "main" to isMainProcess().toString()
+                ),
+                level = Breadcrumb.Level.INFO
+            )
+        )
 
         runOnlyInMainProcess {
             components.core.icons.onTrimMemory(level)
@@ -471,22 +476,24 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                 components.core.store,
                 onNewTabOverride = {
                     _, engineSession, url ->
-                        val shouldCreatePrivateSession =
-                            components.core.store.state.selectedTab?.content?.private
-                                ?: components.settings.openLinksInAPrivateTab
+                    val shouldCreatePrivateSession =
+                        components.core.store.state.selectedTab?.content?.private
+                            ?: components.settings.openLinksInAPrivateTab
 
-                        components.useCases.tabsUseCases.addTab(
-                            url = url,
-                            selectTab = true,
-                            engineSession = engineSession,
-                            private = shouldCreatePrivateSession
-                        )
+                    components.useCases.tabsUseCases.addTab(
+                        url = url,
+                        selectTab = true,
+                        engineSession = engineSession,
+                        private = shouldCreatePrivateSession
+                    )
                 },
                 onCloseTabOverride = {
-                    _, sessionId -> components.useCases.tabsUseCases.removeTab(sessionId)
+                    _, sessionId ->
+                    components.useCases.tabsUseCases.removeTab(sessionId)
                 },
                 onSelectTabOverride = {
-                    _, sessionId -> components.useCases.tabsUseCases.selectTab(sessionId)
+                    _, sessionId ->
+                    components.useCases.tabsUseCases.selectTab(sessionId)
                 },
                 onExtensionsLoaded = { extensions ->
                     components.addonUpdater.registerForFutureUpdates(extensions)
@@ -611,6 +618,12 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
 
             tabViewSetting.set(settings.getTabViewPingString())
             closeTabSetting.set(settings.getTabTimeoutPingString())
+        }
+
+        with(AndroidAutofill) {
+            val autofillUseCases = AutofillUseCases()
+            supported.set(autofillUseCases.isSupported(applicationContext))
+            enabled.set(autofillUseCases.isEnabled(applicationContext))
         }
 
         browserStore.waitForSelectedOrDefaultSearchEngine { searchEngine ->
