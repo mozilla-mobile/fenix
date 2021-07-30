@@ -103,7 +103,6 @@ import org.mozilla.fenix.components.tips.Tip
 import org.mozilla.fenix.components.tips.providers.MasterPasswordTipProvider
 import org.mozilla.fenix.components.toolbar.FenixTabCounterMenu
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
-import org.mozilla.fenix.ext.asRecentTabs
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.hideToolbar
 import org.mozilla.fenix.ext.measureNoInline
@@ -242,7 +241,7 @@ class HomeFragment : Fragment() {
                     recentBookmarks = emptyList(),
                     showCollectionPlaceholder = components.settings.showCollectionsPlaceholderOnHome,
                     showSetAsDefaultBrowserCard = components.settings.shouldShowSetAsDefaultBrowserCard(),
-                    recentTabs = components.core.store.state.asRecentTabs(),
+                    recentTabs = emptyList(),
                     historyMetadata = emptyList()
                 )
             )
@@ -650,7 +649,7 @@ class HomeFragment : Fragment() {
                     ).getTip()
                 },
                 showCollectionPlaceholder = components.settings.showCollectionsPlaceholderOnHome,
-                recentTabs = components.core.store.state.asRecentTabs(),
+                recentTabs = emptyList(),
                 recentBookmarks = emptyList(),
                 historyMetadata = emptyList()
             )
