@@ -12,7 +12,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        tools:ignore="UselessParent">
 
         <!-- Card Number -->
         <TextView
@@ -60,7 +61,6 @@
             android:id="@+id/name_on_card_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
             android:gravity="center_vertical"
             android:letterSpacing="0.05"
             android:paddingStart="3dp"
@@ -75,7 +75,6 @@
             android:id="@+id/name_on_card_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="11dp"
             android:textColor="?primaryText"
             app:hintEnabled="false">
 
@@ -100,7 +99,6 @@
             android:id="@+id/expiration_date_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
             android:gravity="center_vertical"
             android:letterSpacing="0.05"
             android:paddingStart="3dp"
@@ -171,7 +169,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="16dp">
+            android:paddingTop="18dp">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/delete_button"
@@ -179,7 +177,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:letterSpacing="0"
-                android:padding="10dp"
                 android:text="@string/credit_cards_delete_card_button"
                 android:textAllCaps="false"
                 android:textColor="@color/destructive_button_text_color"
@@ -194,7 +191,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:letterSpacing="0"
-                android:padding="10dp"
                 android:text="@string/credit_cards_cancel_button"
                 android:textAllCaps="false"
                 android:textColor="?primaryText"
