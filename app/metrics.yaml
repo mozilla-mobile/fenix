@@ -1373,7 +1373,7 @@ metrics:
     notification_emails:
       - perf-android-fe@mozilla.com
       - mcomella@mozilla.com
-    expires: "2021-08-11"
+    expires: "2022-02-01"
   start_reason_activity_error:
     type: boolean
     description: |
@@ -1390,7 +1390,7 @@ metrics:
     notification_emails:
       - perf-android-fe@mozilla.com
       - mcomella@mozilla.com
-    expires: "2021-08-11"
+    expires: "2022-02-01"
 
 preferences:
   search_suggestions_enabled:
@@ -4684,7 +4684,7 @@ perf.startup:
     notification_emails:
       - perf-android-fe@mozilla.com
       - mcomella@mozilla.com
-    expires: "2021-08-11"
+    expires: "2022-02-01"
   cold_view_app_to_first_frame:
     type: timing_distribution
     time_unit: millisecond
@@ -4711,7 +4711,7 @@ perf.startup:
     notification_emails:
       - perf-android-fe@mozilla.com
       - mcomella@mozilla.com
-    expires: "2021-08-11"
+    expires: "2022-02-01"
   cold_unknwn_app_to_first_frame:
     type: timing_distribution
     time_unit: millisecond
@@ -4736,7 +4736,7 @@ perf.startup:
     notification_emails:
       - perf-android-fe@mozilla.com
       - mcomella@mozilla.com
-    expires: "2021-08-11"
+    expires: "2022-02-01"
   application_on_create:
     type: timing_distribution
     time_unit: millisecond
@@ -4753,7 +4753,7 @@ perf.startup:
     notification_emails:
       - perf-android-fe@mozilla.com
       - mcomella@mozilla.com
-    expires: "2021-08-11"
+    expires: "2022-02-01"
   app_on_create_to_glean_init:
     disabled: true
     type: timing_distribution
@@ -5184,7 +5184,7 @@ storage.stats:
       - android-probes@mozilla.com
       - perf-android-fe@mozilla.com
       - mcomella@mozilla.com
-    expires: "2021-08-01"
+    expires: "2022-02-01"
   app_bytes:
     send_in_pings:
       - metrics
@@ -5210,7 +5210,7 @@ storage.stats:
       - android-probes@mozilla.com
       - perf-android-fe@mozilla.com
       - mcomella@mozilla.com
-    expires: "2021-08-01"
+    expires: "2022-02-01"
   cache_bytes:
     send_in_pings:
       - metrics
@@ -5233,7 +5233,7 @@ storage.stats:
       - android-probes@mozilla.com
       - perf-android-fe@mozilla.com
       - mcomella@mozilla.com
-    expires: "2021-08-01"
+    expires: "2022-02-01"
   data_dir_bytes:
     send_in_pings:
       - metrics
@@ -5258,7 +5258,7 @@ storage.stats:
       - android-probes@mozilla.com
       - perf-android-fe@mozilla.com
       - mcomella@mozilla.com
-    expires: "2021-08-01"
+    expires: "2022-02-01"
 
 progressive_web_app:
   homescreen_tap:
