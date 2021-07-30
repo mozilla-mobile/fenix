@@ -33,7 +33,6 @@ import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.increaseTapArea
-import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.ext.redirectToReAuth
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
@@ -131,7 +130,8 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
         menu.close()
         redirectToReAuth(
             listOf(R.id.editLoginFragment, R.id.savedLoginsFragment),
-            findNavController().currentDestination?.id
+            findNavController().currentDestination?.id,
+            R.id.loginDetailFragment
         )
         super.onPause()
     }
@@ -200,7 +200,7 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
             LoginDetailFragmentDirections.actionLoginDetailFragmentToEditLoginFragment(
                 login!!
             )
-        findNavController().navigateBlockingForAsyncNavGraph(directions)
+        findNavController().navigate(directions)
     }
 
     private fun displayDeleteLoginDialog() {

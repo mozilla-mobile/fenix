@@ -22,6 +22,7 @@ import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
 import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withSubstring
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
@@ -35,6 +36,7 @@ import org.hamcrest.CoreMatchers.startsWith
 import org.hamcrest.Matchers
 import org.junit.Assert.assertEquals
 import org.mozilla.fenix.R
+import org.mozilla.fenix.helpers.Constants.LONG_CLICK_DURATION
 import org.mozilla.fenix.helpers.SessionLoadedIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
@@ -49,6 +51,7 @@ class SearchRobot {
     fun verifySearchView() = assertSearchView()
     fun verifyBrowserToolbar() = assertBrowserToolbarEditView()
     fun verifyScanButton() = assertScanButton()
+    fun verifySearchEngineButton() = assertSearchEngineButton()
     fun verifySearchWithText() = assertSearchWithText()
     fun verifySearchEngineResults(searchEngineName: String) =
         assertSearchEngineResults(searchEngineName)
@@ -124,6 +127,24 @@ class SearchRobot {
     fun clickClearButton() {
         clearButton().perform(click())
     }
+
+    fun longClickToolbar() {
+        mDevice.waitForWindowUpdate(packageName, waitingTime)
+        mDevice.findObject(UiSelector().resourceId("$packageName:id/awesomeBar"))
+            .waitForExists(waitingTime)
+        mDevice.findObject(UiSelector().resourceId("$packageName:id/toolbar"))
+            .waitForExists(waitingTime)
+        val toolbar = mDevice.findObject(By.res("$packageName:id/toolbar"))
+        toolbar.click(LONG_CLICK_DURATION)
+    }
+
+    fun clickPasteText() {
+        mDevice.findObject(UiSelector().textContains("Paste")).waitForExists(waitingTime)
+        val pasteText = mDevice.findObject(By.textContains("Paste"))
+        pasteText.click()
+    }
+
+    fun verifyPastedToolbarText(expectedText: String) = assertPastedToolbarText(expectedText)
 
     class Transition {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
@@ -201,10 +222,10 @@ private fun searchWrapper() = onView(withId(R.id.search_wrapper))
 
 private fun assertSearchEngineURL(searchEngineName: String) {
     mDevice.waitNotNull(
-        Until.findObject(By.textContains("${searchEngineName.toLowerCase()}.com/?q=mozilla")),
+        Until.findObject(By.textContains("${searchEngineName.lowercase()}.com/?q=mozilla")),
         TestAssetHelper.waitingTime
     )
-    onView(allOf(withText(startsWith("${searchEngineName.toLowerCase()}.com"))))
+    onView(allOf(withText(startsWith("${searchEngineName.lowercase()}.com"))))
         .check(matches(ViewMatchers.withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
 }
 
@@ -215,7 +236,7 @@ private fun assertSearchEngineResults(searchEngineName: String) {
 }
 
 private fun assertSearchView() {
-    onView(allOf(withId(R.id.search_layout)))
+    onView(withId(R.id.search_wrapper)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
 private fun assertBrowserToolbarEditView() =
@@ -225,6 +246,10 @@ private fun assertBrowserToolbarEditView() =
 private fun assertScanButton() =
     onView(allOf(withText("Scan")))
         .check(matches(ViewMatchers.withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+
+private fun assertSearchEngineButton() =
+    onView(withId(R.id.search_engines_shortcut_button))
+        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 private fun assertSearchWithText() =
     onView(allOf(withText("THIS TIME, SEARCH WITH:")))
@@ -288,6 +313,19 @@ private fun selectDefaultSearchEngine(searchEngine: String) {
 private fun assertDefaultSearchEngine(expectedText: String) {
     onView(allOf(withId(R.id.mozac_browser_toolbar_edit_icon), withContentDescription(expectedText)))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
+
+private fun assertPastedToolbarText(expectedText: String) {
+    mDevice.findObject(UiSelector().resourceId("$packageName:id/toolbar"))
+        .waitForExists(waitingTime)
+    mDevice.findObject(UiSelector().resourceId("$packageName:id/mozac_browser_toolbar_url_view"))
+        .waitForExists(waitingTime)
+    onView(
+        allOf(
+            withSubstring(expectedText),
+            withId(R.id.mozac_browser_toolbar_edit_url_view)
+        )
+    ).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
 }
 
 private fun goBackButton() = onView(allOf(withContentDescription("Navigate up")))

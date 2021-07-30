@@ -5,6 +5,7 @@
     <string name="app_name_private_5">Privat %s</string>
     <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
     <string name="app_name_private_4">%s (Privat)</string>
+
     <!-- Home Fragment -->
     <!-- Content description (not visible, for screen readers etc.): "Three dot" menu button. -->
     <string name="content_description_menu">Fler alternativ</string>
@@ -47,6 +48,16 @@
     <string name="tab_tray_enter_multiselect_content_description">Öppnade flervalsläge och välj flikar för att spara i en samling</string>
     <!-- Content description on checkmark while tab is selected in multiselect mode in tab tray -->
     <string name="tab_tray_multiselect_selected_content_description">Markerad</string>
+
+    <!-- Home - Recently saved bookmarks -->
+    <!-- Title for the home screen section with recently saved bookmarks. -->
+    <string name="recently_saved_bookmarks">Nyligen sparade</string>
+    <!-- Content description for the recently saved bookmarks section on the home screen. -->
+    <string name="recently_saved_bookmarks_content_description">Nyligen sparade bokmärken</string>
+    <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
+    <string name="recently_saved_show_all">Visa alla</string>
+    <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
+    <string name="recently_saved_show_all_content_description">Visa knappen alla sparade bokmärken</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
     <string name="about_content">%1$s produceras av Mozilla.</string>
@@ -95,13 +106,6 @@
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">Ignorera</string>
 
-    <!-- Text for the banner message to tell users about our grid view feature. -->
-    <string name="tab_tray_grid_view_banner_message">Ändra layouten för öppna flikar. Gå till inställningar och välj rutnät under flikvy.</string>
-    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
-    <string name="tab_tray_grid_view_banner_positive_button_text">Gå till Inställningar</string>
-    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
-    <string name="tab_tray_grid_view_banner_negative_button_text">Ignorera</string>
-
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
     <string name="home_screen_shortcut_open_new_tab_2">Ny flik</string>
@@ -110,6 +114,12 @@
 
     <!-- Heading for the Top Sites block -->
     <string name="home_screen_top_sites_heading">Mest besökta</string>
+
+    <!-- Recent Tabs -->
+    <!-- Header text for jumping back into the recent tab in the home screen -->
+    <string name="recent_tabs_header">Gå tillbaka till</string>
+    <!-- Button text for showing all the tabs in the tabs tray -->
+    <string name="recent_tabs_show_all">Visa alla</string>
 
     <!-- Browser Fragment -->
     <!-- Content description (not visible, for screen readers etc.): Navigate to open tabs -->
@@ -187,6 +197,10 @@
     <string name="browser_menu_add">Lägg till</string>
     <!-- Browser menu label for editing a bookmark -->
     <string name="browser_menu_edit">Redigera</string>
+
+    <!-- Browser Toolbar -->
+    <!-- Content description for the Home screen button on the browser toolbar -->
+    <string name="browser_toolbar_home">Startsidan</string>
 
     <!-- Error message to show when the user tries to access a scheme not
         handled by the app (Ex: blob, tel etc) -->
@@ -420,6 +434,11 @@
         and the third is the device model. -->
     <string name="default_device_name_2">%1$s på %2$s %3$s</string>
 
+    <!-- Preference for syncing credit cards -->
+    <string name="preferences_sync_credit_cards">Kreditkort</string>
+    <!-- Preference for syncing addresses -->
+    <string name="preferences_sync_address">Adresser</string>
+
     <!-- Send Tab -->
     <!-- Name of the "receive tabs" notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="fxa_received_tab_channel_name">Mottagna flikar</string>
@@ -451,9 +470,6 @@
     <!-- Text displayed when there are no exceptions, with learn more link that brings users to a tracking protection SUMO page -->
     <string name="exceptions_empty_message_learn_more_link">Läs mer</string>
 
-    <!-- Description in Quick Settings that tells user tracking protection is off globally for all sites, and links to Settings to turn it on -->
-    <string name="preferences_tracking_protection_turned_off_globally">Stängt av globalt, gå till Inställningar för att slå på den.</string>
-
     <!-- Preference switch for Telemetry -->
     <string name="preferences_telemetry">Telemetri</string>
 
@@ -465,6 +481,8 @@
     <string name="preferences_marketing_data">Marknadsföringsdata</string>
     <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
     <string name="preferences_marketing_data_description">Delar data om vilka funktioner du använder i %1$s med Leanplum, vår mobila marknadsföringsleverantör.</string>
+    <!-- Preference description for marketing data collection -->
+    <string name="preferences_marketing_data_description2">Delar grundläggande användningsdata med Adjust, vår leverantör av mobil marknadsföring</string>
     <!-- Title for studies preferences -->
     <string name="preference_experiments_2">Undersökningar</string>
     <!-- Summary for studies preferences -->
@@ -551,8 +569,6 @@
     <string name="library_new_tab">Ny flik</string>
     <!-- Option in Library to find text in page -->
     <string name="library_find_in_page">Hitta på sidan</string>
-    <!-- Option in Library to open Synced Tabs page -->
-    <string name="library_synced_tabs">Synkade flikar</string>
     <!-- Option in Library to open Reading List -->
     <string name="library_reading_list">Läslista</string>
     <!-- Menu Item Label for Search in Library -->
@@ -598,6 +614,15 @@
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">Efter en månad</string>
 
+    <!-- Start on Home -->
+    <!-- Title of a preference that allows a user to indicate after a specified amount of time when the app should start on the home screen -->
+    <string name="preferences_start_on_home">Börja på startsidan</string>
+    <!-- Option for starting on the home screen after after four hours or inactivity -->
+    <string name="start_on_home_after_four_hours">Efter fyra timmar</string>
+    <!-- Option for always starting on the home screen -->
+    <string name="start_on_home_always">Alltid</string>
+    <!-- Option for never starting on the home screen -->
+    <string name="start_on_home_never">Aldrig</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
     <string name="close_tabs_manually_summary">Stäng manuellt</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
@@ -806,8 +831,6 @@
     <string name="bookmark_delete_folder_snackbar">Tog bort %1$s</string>
     <!-- Screen title for adding a bookmarks folder -->
     <string name="bookmark_add_folder">Lägg till mapp</string>
-    <!-- deprecated: Snackbar title shown after a bookmark has been created. -->
-    <string name="bookmark_created_snackbar">Bokmärke skapat.</string>
     <!-- Snackbar title shown after a bookmark has been created. -->
     <string name="bookmark_saved_snackbar">Bokmärke sparat!</string>
     <!-- Snackbar edit button shown after a bookmark has been created. -->
@@ -1036,6 +1059,16 @@
     <string name="notification_pbm_action_delete_and_open">Ta bort och öppna</string>
     <!-- Name of the "Powered by Fenix" notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="notification_powered_by_channel_name">Tillhandahålls av</string>
+    <!-- Name of the marketing notification channel. Displayed in the "App notifications" system settings for the app -->
+    <string name="notification_marketing_channel_name">Marknadsföring</string>
+    <!-- Title shown in the notification that pops up to remind the user to set fenix as default browser.
+    %1$s is a placeholder that will be replaced by the app name (Fenix). -->
+    <string name="notification_default_browser_title">%1$s är snabb och privat</string>
+    <!-- Text shown in the notification that pops up to remind the user to set fenix as default browser.
+    %1$s is a placeholder that will be replaced by the app name (Fenix). -->
+    <string name="notification_default_browser_text">Gör %1$s till din standardwebbläsare</string>
+
+    <!-- Snackbar -->
     <!-- Text shown in snackbar when user deletes a collection -->
     <string name="snackbar_collection_deleted">Samling borttagen</string>
     <!-- Text shown in snackbar when user renames a collection -->
@@ -1469,10 +1502,8 @@
     <string name="preferences_passwords_autofill">Autofyll</string>
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">Synkronisera inloggningar</string>
-    <!-- Syncing saved logins in Fenix is on -->
-    <string name="preferences_passwords_sync_logins_on">På</string>
-    <!-- Syncing saved logins in Fenix is off -->
-    <string name="preferences_passwords_sync_logins_off">Av</string>
+    <!-- Preference for syncing saved logins in Fenix, when not signed in-->
+    <string name="preferences_passwords_sync_logins_across_devices">Synkronisera inloggningar mellan enheter</string>
     <!-- Syncing saved logins in Fenix needs reconnect to sync -->
     <string name="preferences_passwords_sync_logins_reconnect">Återanslut</string>
     <!-- Syncing saved logins in Fenix needs login -->
@@ -1572,6 +1603,8 @@
     <string name="preferences_credit_cards_save_and_autofill_cards_summary">Data är krypterad</string>
     <!-- Preference option for syncing credit cards across devices. This is displayed when the user is not signed into sync -->
     <string name="preferences_credit_cards_sync_cards_across_devices">Synkronisera kort mellan enheter</string>
+    <!-- Preference option for syncing credit cards across devices. This is displayed when the user is signed into sync -->
+    <string name="preferences_credit_cards_sync_cards">Synkronisera kort</string>
     <!-- Preference option for adding a credit card -->
     <string name="preferences_credit_cards_add_credit_card">Lägg till kreditkort</string>
 
@@ -1585,6 +1618,10 @@
     <string name="credit_cards_card_number">Kortnummer</string>
     <!-- The header for the expiration date of a credit card -->
     <string name="credit_cards_expiration_date">Utgångsdatum</string>
+    <!-- The label for the expiration date month of a credit card to be used by a11y services-->
+    <string name="credit_cards_expiration_date_month">Utgångsdatum månad</string>
+    <!-- The label for the expiration date year of a credit card to be used by a11y services-->
+    <string name="credit_cards_expiration_date_year">Utgångsdatum år</string>
     <!-- The header for the name on the credit card -->
     <string name="credit_cards_name_on_card">Namn på kort</string>
     <!-- The header for the nickname for a credit card -->
@@ -1602,6 +1639,27 @@
 
     <!-- Title of the "Saved cards" screen -->
     <string name="credit_cards_saved_cards">Sparade kreditkort</string>
+
+    <!-- Error message for credit card number validation -->
+    <string name="credit_cards_number_validation_error_message">Ange ett giltigt kreditkortsnummer</string>
+
+    <!-- Error message for credit card name on card validation -->
+    <string name="credit_cards_name_on_card_validation_error_message">Fyll i det här fältet</string>
+    <!-- Message displayed in biometric prompt displayed for authentication before allowing users to view their saved credit cards -->
+    <string name="credit_cards_biometric_prompt_message">Lås upp för att se dina sparade kreditkort</string>
+    <!-- Title of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_title">Säkra dina kreditkort</string>
+    <!-- Message of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_message">Konfigurera enhetens låsmönster, PIN eller lösenord för att skydda dina sparade kreditkort från åtkomst om någon annan har din enhet.</string>
+    <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_set_up_now">Konfigurera nu</string>
+    <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_later">Senare</string>
+    <!-- Title of PIN verification dialog to direct users to re-enter their device credentials to access their credit cards -->
+    <string name="credit_cards_biometric_prompt_message_pin">Lås upp din enhet</string>
+
+    <!-- Message displayed in biometric prompt for authentication, before allowing users to use their stored credit card information -->
+    <string name="credit_cards_biometric_prompt_unlock_message">Lås upp för att använda lagrad kreditkortsinformation</string>
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Lägg till sökmotor</string>
@@ -1768,20 +1826,13 @@
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">Ta bort</string>
 
-    <!-- Deprecated: text for the firefox account onboarding card header
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_firefox_account_header">Få ut det mesta av %s.</string>
-
     <!-- Content description radio buttons with a link to more information -->
     <string name="radio_preference_info_content_description">Klicka för mer information</string>
 
-    <!-- Deprecated: No Open Tabs Message Header -->
-    <string name="no_collections_header1">Samla de saker som är viktiga för dig</string>
-    <!-- Deprecated: Label to describe what collections are to a new user without any collections -->
-    <string name="no_collections_description1">Gruppera liknande sökningar, webbplatser och flikar för snabb åtkomst senare.</string>
-    <!-- Deprecated: text for the firefox account onboarding card header when we detect you're already signed in to -->
-    <string name="onboarding_firefox_account_auto_signin_header_2">Du är inloggad som %s på en annan Firefox-webbläsare på den här telefonen. Vill du logga in med det här kontot?</string>
-    <!-- Deprecated: Describes the add to homescreen functionality -->
-    <string name="add_to_homescreen_description">Du kan enkelt lägga till den här webbplatsen på telefonens startsida för att få direktåtkomst och surfa snabbare med en appliknande upplevelse.</string>
+    <!-- Content description for the action bar "up" button -->
+    <string name="action_bar_up_description">Navigera uppåt</string>
 
-    </resources>
+    <!-- Content description for privacy content close button -->
+    <string name="privacy_content_close_button_content_description">Stäng</string>
+
+</resources>

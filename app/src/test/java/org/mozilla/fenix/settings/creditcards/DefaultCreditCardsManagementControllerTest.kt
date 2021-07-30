@@ -9,20 +9,17 @@ import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
 import mozilla.components.concept.storage.CreditCard
+import mozilla.components.concept.storage.CreditCardNumber
+import mozilla.components.support.utils.CreditCardNetworkType
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.settings.creditcards.controller.DefaultCreditCardsManagementController
-import org.mozilla.fenix.helpers.DisableNavGraphProviderAssertionRule
 
 class DefaultCreditCardsManagementControllerTest {
 
     private val navController: NavController = mockk(relaxed = true)
 
     private lateinit var controller: DefaultCreditCardsManagementController
-
-    @get:Rule
-    val disableNavGraphProviderAssertionRule = DisableNavGraphProviderAssertionRule()
 
     @Before
     fun setup() {
@@ -38,10 +35,11 @@ class DefaultCreditCardsManagementControllerTest {
         val creditCard = CreditCard(
             guid = "id",
             billingName = "Banana Apple",
-            cardNumber = "4111111111111110",
             expiryMonth = 1,
+            encryptedCardNumber = CreditCardNumber.Encrypted("4111111111111110"),
+            cardNumberLast4 = "1110",
             expiryYear = 2030,
-            cardType = "amex",
+            cardType = CreditCardNetworkType.AMEX.cardName,
             timeCreated = 1L,
             timeLastUsed = 1L,
             timeLastModified = 1L,
@@ -56,6 +54,17 @@ class DefaultCreditCardsManagementControllerTest {
                     .actionCreditCardsManagementFragmentToCreditCardEditorFragment(
                         creditCard = creditCard
                     )
+            )
+        }
+    }
+
+    @Test
+    fun handleAddCreditCardClicked() {
+        controller.handleAddCreditCardClicked()
+
+        verify {
+            navController.navigate(
+                CreditCardsManagementFragmentDirections.actionCreditCardsManagementFragmentToCreditCardEditorFragment()
             )
         }
     }

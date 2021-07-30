@@ -4,6 +4,7 @@
     <string name="app_name_private_5">Private %s</string>
     <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
     <string name="app_name_private_4">%s (Private)</string>
+
     <!-- Home Fragment -->
     <!-- Content description (not visible, for screen readers etc.): "Three dot" menu button. -->
     <string name="content_description_menu">More options</string>
@@ -47,6 +48,16 @@
     <string name="tab_tray_enter_multiselect_content_description">Entered multiselect mode, select tabs to save to a collection</string>
     <!-- Content description on checkmark while tab is selected in multiselect mode in tab tray -->
     <string name="tab_tray_multiselect_selected_content_description">Selected</string>
+
+    <!-- Home - Recently saved bookmarks -->
+    <!-- Title for the home screen section with recently saved bookmarks. -->
+    <string name="recently_saved_bookmarks">Recently saved</string>
+    <!-- Content description for the recently saved bookmarks section on the home screen. -->
+    <string name="recently_saved_bookmarks_content_description">Recently saved bookmarks</string>
+    <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
+    <string name="recently_saved_show_all">Show all</string>
+    <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
+    <string name="recently_saved_show_all_content_description">Show all saved bookmarks button</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
     <string name="about_content">%1$s is produced by Mozilla.</string>
@@ -93,13 +104,6 @@
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">Dismiss</string>
 
-    <!-- Text for the banner message to tell users about our grid view feature. -->
-    <string name="tab_tray_grid_view_banner_message">Change the layout of open tabs. Go to settings and select grid under tab view.</string>
-    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
-    <string name="tab_tray_grid_view_banner_positive_button_text">Go to settings</string>
-    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
-    <string name="tab_tray_grid_view_banner_negative_button_text">Dismiss</string>
-
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
     <string name="home_screen_shortcut_open_new_tab_2">New tab</string>
@@ -108,6 +112,12 @@
 
     <!-- Heading for the Top Sites block -->
     <string name="home_screen_top_sites_heading">Top sites</string>
+
+    <!-- Recent Tabs -->
+    <!-- Header text for jumping back into the recent tab in the home screen -->
+    <string name="recent_tabs_header">Jump back in</string>
+    <!-- Button text for showing all the tabs in the tabs tray -->
+    <string name="recent_tabs_show_all">Show all</string>
 
     <!-- Browser Fragment -->
     <!-- Content description (not visible, for screen readers etc.): Navigate to open tabs -->
@@ -182,6 +192,10 @@
     <string name="browser_menu_add">Add</string>
     <!-- Browser menu label for editing a bookmark -->
     <string name="browser_menu_edit">Edit</string>
+
+    <!-- Browser Toolbar -->
+    <!-- Content description for the Home screen button on the browser toolbar -->
+    <string name="browser_toolbar_home">Home screen</string>
 
     <!-- Error message to show when the user tries to access a scheme not
         handled by the app (Ex: blob, tel etc) -->
@@ -411,6 +425,11 @@
         and the third is the device model. -->
     <string name="default_device_name_2">%1$s on %2$s %3$s</string>
 
+    <!-- Preference for syncing credit cards -->
+    <string name="preferences_sync_credit_cards">Credit cards</string>
+    <!-- Preference for syncing addresses -->
+    <string name="preferences_sync_address">Addresses</string>
+
     <!-- Send Tab -->
     <!-- Name of the "receive tabs" notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="fxa_received_tab_channel_name">Received tabs</string>
@@ -441,9 +460,6 @@
     <!-- Text displayed when there are no exceptions, with learn more link that brings users to a tracking protection SUMO page -->
     <string name="exceptions_empty_message_learn_more_link">Learn more</string>
 
-    <!-- Description in Quick Settings that tells user tracking protection is off globally for all sites, and links to Settings to turn it on -->
-    <string name="preferences_tracking_protection_turned_off_globally">Turned off globally, go to Settings to turn it on.</string>
-
     <!-- Preference switch for Telemetry -->
     <string name="preferences_telemetry">Telemetry</string>
     <!-- Preference switch for usage and technical data collection -->
@@ -454,6 +470,8 @@
     <string name="preferences_marketing_data">Marketing data</string>
     <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
     <string name="preferences_marketing_data_description">Shares data about what features you use in %1$s with Leanplum, our mobile marketing vendor.</string>
+    <!-- Preference description for marketing data collection -->
+    <string name="preferences_marketing_data_description2">Shares basic usage data with Adjust, our mobile marketing vendor</string>
     <!-- Title for studies preferences -->
     <string name="preference_experiments_2">Studies</string>
     <!-- Summary for studies preferences -->
@@ -538,8 +556,6 @@
     <string name="library_new_tab">New tab</string>
     <!-- Option in Library to find text in page -->
     <string name="library_find_in_page">Find in page</string>
-    <!-- Option in Library to open Synced Tabs page -->
-    <string name="library_synced_tabs">Synced tabs</string>
     <!-- Option in Library to open Reading List -->
     <string name="library_reading_list">Reading List</string>
     <!-- Menu Item Label for Search in Library -->
@@ -584,6 +600,15 @@
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">After one month</string>
 
+    <!-- Start on Home -->
+    <!-- Title of a preference that allows a user to indicate after a specified amount of time when the app should start on the home screen -->
+    <string name="preferences_start_on_home">Start on home</string>
+    <!-- Option for starting on the home screen after after four hours or inactivity -->
+    <string name="start_on_home_after_four_hours">After four hours</string>
+    <!-- Option for always starting on the home screen -->
+    <string name="start_on_home_always">Always</string>
+    <!-- Option for never starting on the home screen -->
+    <string name="start_on_home_never">Never</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
     <string name="close_tabs_manually_summary">Close manually</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
@@ -789,8 +814,6 @@
     <string name="bookmark_delete_folder_snackbar">Deleted %1$s</string>
     <!-- Screen title for adding a bookmarks folder -->
     <string name="bookmark_add_folder">Add folder</string>
-    <!-- deprecated: Snackbar title shown after a bookmark has been created. -->
-    <string name="bookmark_created_snackbar">Bookmark created.</string>
     <!-- Snackbar title shown after a bookmark has been created. -->
     <string name="bookmark_saved_snackbar">Bookmark saved!</string>
     <!-- Snackbar edit button shown after a bookmark has been created. -->
@@ -1014,6 +1037,16 @@
     <string name="notification_pbm_action_delete_and_open">Delete and Open</string>
     <!-- Name of the "Powered by Fenix" notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="notification_powered_by_channel_name">Powered By</string>
+    <!-- Name of the marketing notification channel. Displayed in the "App notifications" system settings for the app -->
+    <string name="notification_marketing_channel_name">Marketing</string>
+    <!-- Title shown in the notification that pops up to remind the user to set fenix as default browser.
+    %1$s is a placeholder that will be replaced by the app name (Fenix). -->
+    <string name="notification_default_browser_title">%1$s is fast and private</string>
+    <!-- Text shown in the notification that pops up to remind the user to set fenix as default browser.
+    %1$s is a placeholder that will be replaced by the app name (Fenix). -->
+    <string name="notification_default_browser_text">Make %1$s your default browser</string>
+
+    <!-- Snackbar -->
     <!-- Text shown in snackbar when user deletes a collection -->
     <string name="snackbar_collection_deleted">Collection deleted</string>
     <!-- Text shown in snackbar when user renames a collection -->
@@ -1439,10 +1472,8 @@
     <string name="preferences_passwords_autofill">Autofill</string>
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">Sync logins</string>
-    <!-- Syncing saved logins in Fenix is on -->
-    <string name="preferences_passwords_sync_logins_on">On</string>
-    <!-- Syncing saved logins in Fenix is off -->
-    <string name="preferences_passwords_sync_logins_off">Off</string>
+    <!-- Preference for syncing saved logins in Fenix, when not signed in-->
+    <string name="preferences_passwords_sync_logins_across_devices">Sync logins across devices</string>
     <!-- Syncing saved logins in Fenix needs reconnect to sync -->
     <string name="preferences_passwords_sync_logins_reconnect">Reconnect</string>
     <!-- Syncing saved logins in Fenix needs login -->
@@ -1542,6 +1573,8 @@
     <string name="preferences_credit_cards_save_and_autofill_cards_summary">Data is encrypted</string>
     <!-- Preference option for syncing credit cards across devices. This is displayed when the user is not signed into sync -->
     <string name="preferences_credit_cards_sync_cards_across_devices">Sync cards across devices</string>
+    <!-- Preference option for syncing credit cards across devices. This is displayed when the user is signed into sync -->
+    <string name="preferences_credit_cards_sync_cards">Sync cards</string>
     <!-- Preference option for adding a credit card -->
     <string name="preferences_credit_cards_add_credit_card">Add credit card</string>
 
@@ -1555,6 +1588,10 @@
     <string name="credit_cards_card_number">Card Number</string>
     <!-- The header for the expiration date of a credit card -->
     <string name="credit_cards_expiration_date">Expiration Date</string>
+    <!-- The label for the expiration date month of a credit card to be used by a11y services-->
+    <string name="credit_cards_expiration_date_month">Expiration Date Month</string>
+    <!-- The label for the expiration date year of a credit card to be used by a11y services-->
+    <string name="credit_cards_expiration_date_year">Expiration Date Year</string>
     <!-- The header for the name on the credit card -->
     <string name="credit_cards_name_on_card">Name on Card</string>
     <!-- The header for the nickname for a credit card -->
@@ -1572,6 +1609,26 @@
 
     <!-- Title of the "Saved cards" screen -->
     <string name="credit_cards_saved_cards">Saved cards</string>
+
+    <!-- Error message for credit card number validation -->
+    <string name="credit_cards_number_validation_error_message">Please enter a valid credit card number</string>
+
+    <!-- Error message for credit card name on card validation -->
+    <string name="credit_cards_name_on_card_validation_error_message">Please fill out this field</string>
+    <!-- Message displayed in biometric prompt displayed for authentication before allowing users to view their saved credit cards -->
+    <string name="credit_cards_biometric_prompt_message">Unlock to view your saved cards</string>
+    <!-- Title of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_title">Secure your credit cards</string>
+    <!-- Message of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_message">Set up a device lock pattern, PIN, or password to protect your saved credit cards from being accessed if someone else has your device.</string>
+    <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_set_up_now">Set up now</string>
+    <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_later">Later</string>
+    <!-- Title of PIN verification dialog to direct users to re-enter their device credentials to access their credit cards -->
+    <string name="credit_cards_biometric_prompt_message_pin">Unlock your device</string>
+    <!-- Message displayed in biometric prompt for authentication, before allowing users to use their stored credit card information -->
+    <string name="credit_cards_biometric_prompt_unlock_message">Unlock to use stored credit card information</string>
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Add search engine</string>
@@ -1737,20 +1794,13 @@
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">Remove</string>
 
-    <!-- Deprecated: text for the firefox account onboarding card header
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_firefox_account_header">Get the most out of %s.</string>
-
     <!-- Content description radio buttons with a link to more information -->
     <string name="radio_preference_info_content_description">Click for more details</string>
 
-    <!-- Deprecated: No Open Tabs Message Header -->
-    <string name="no_collections_header1">Collect the things that matter to you</string>
-    <!-- Deprecated: Label to describe what collections are to a new user without any collections -->
-    <string name="no_collections_description1">Group together similar searches, sites, and tabs for quick access later.</string>
-    <!-- Deprecated: text for the firefox account onboarding card header when we detect you're already signed in to -->
-    <string name="onboarding_firefox_account_auto_signin_header_2">You are signed in as %s on another Firefox browser on this phone. Would you like to sign in with this account?</string>
-    <!-- Deprecated: Describes the add to homescreen functionality -->
-    <string name="add_to_homescreen_description">You can easily add this website to your phone’s Home screen to have instant access and browse faster with an app-like experience.</string>
+    <!-- Content description for the action bar "up" button -->
+    <string name="action_bar_up_description">Navigate up</string>
 
-    </resources>
+    <!-- Content description for privacy content close button -->
+    <string name="privacy_content_close_button_content_description">Close</string>
+
+</resources>

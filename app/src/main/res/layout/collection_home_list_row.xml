@@ -8,10 +8,10 @@
     android:layout_width="match_parent"
     android:layout_height="48dp"
     android:layout_marginTop="12dp"
-    android:background="@drawable/collection_home_list_row_background"
+    android:background="@drawable/home_list_row_background"
     android:clickable="true"
     android:clipToPadding="false"
-    android:elevation="@dimen/home_collection_elevation"
+    android:elevation="@dimen/home_item_elevation"
     android:focusable="true"
     android:foreground="?android:attr/selectableItemBackground">
 
@@ -48,10 +48,10 @@
         tools:text="@tools:sample/lorem/random" />
     <ImageView
         android:id="@+id/chevron"
-        android:layout_width="10dp"
-        android:layout_height="6dp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         android:layout_marginEnd="16dp"
-        android:background="@drawable/ic_chevron"
+        app:srcCompat="@drawable/ic_chevron"
         android:contentDescription="@string/tab_menu"
         app:layout_constraintBottom_toBottomOf="@id/collection_icon"
         app:layout_constraintEnd_toStartOf="@+id/collection_share_button"
@@ -68,7 +68,7 @@
         app:layout_constraintBottom_toBottomOf="@id/collection_icon"
         app:layout_constraintEnd_toStartOf="@id/collection_overflow_button"
         app:layout_constraintTop_toTopOf="@id/collection_icon"
-        app:srcCompat="@drawable/ic_share_filled"
+        app:srcCompat="@drawable/ic_share"
         tools:visibility="visible" />
 
     <ImageButton

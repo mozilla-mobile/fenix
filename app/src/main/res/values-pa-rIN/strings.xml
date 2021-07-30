@@ -5,6 +5,7 @@
     <string name="app_name_private_5">ਪ੍ਰਾਈਵੇਟ %s</string>
     <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
     <string name="app_name_private_4">%s (ਪ੍ਰਾਈਵੇਟ)</string>
+
     <!-- Home Fragment -->
     <!-- Content description (not visible, for screen readers etc.): "Three dot" menu button. -->
     <string name="content_description_menu">ਹੋਰ ਚੋਣਾਂ</string>
@@ -48,6 +49,16 @@
     <string name="tab_tray_enter_multiselect_content_description">ਬਹੁ-ਚੋਣ ਢੰਗ ਵਿੱਚ ਹੋ, ਚੁਣੀਆਂ ਟੈਬਾਂ ਨੂੰ ਭੰਡਾਰ ਵਿੱਚ ਸੰਭਾਲਿਆ ਜਾਵੇਗਾ।</string>
     <!-- Content description on checkmark while tab is selected in multiselect mode in tab tray -->
     <string name="tab_tray_multiselect_selected_content_description">ਚੁਣੇ ਹੋਏ</string>
+
+    <!-- Home - Recently saved bookmarks -->
+    <!-- Title for the home screen section with recently saved bookmarks. -->
+    <string name="recently_saved_bookmarks">ਤਾਜ਼ਾ ਸੰਭਾਲੇ</string>
+    <!-- Content description for the recently saved bookmarks section on the home screen. -->
+    <string name="recently_saved_bookmarks_content_description">ਤਾਜ਼ਾ ਸੰਭਾਲੇ ਬੁੱਕਮਾਰਕ</string>
+    <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
+    <string name="recently_saved_show_all"></string>
+    <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
+    <string name="recently_saved_show_all_content_description">ਸਾਰੇ ਸੰਭਾਲੇ ਹੋਏ ਬੁੱਕਮਾਰਕ ਵੇਖਾਉਣ ਬਟਨ</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
     <string name="about_content">%1$s ਮੌਜ਼ੀਲਾ ਵਲੋਂ ਤਿਆਰ ਕੀਤਾ</string>
@@ -98,13 +109,6 @@
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">ਖ਼ਾਰਜ ਕਰੋ</string>
 
-    <!-- Text for the banner message to tell users about our grid view feature. -->
-    <string name="tab_tray_grid_view_banner_message">ਖੁੱਲ੍ਹੀਆਂ ਟੈਬਾਂ ਦੇ ਖਾਤੇ ਨੂੰ ਬਦਲੋ। ਸੈਟਿੰਗਾਂ ਉੱਤੇ ਜਾਓ ਅਤੇ ਟੈਬ ਵੇਖਣ ਲਈ ਗਿੱਡ ਚੁਣੋ।</string>
-    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
-    <string name="tab_tray_grid_view_banner_positive_button_text">ਸੈਟਿੰਗਾਂ ਉੱਤੇ ਜਾਓ</string>
-    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
-    <string name="tab_tray_grid_view_banner_negative_button_text">ਖ਼ਾਰਜ ਕਰੋ</string>
-
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
     <string name="home_screen_shortcut_open_new_tab_2">ਨਵੀਂ ਟੈਬ</string>
@@ -113,6 +117,12 @@
 
     <!-- Heading for the Top Sites block -->
     <string name="home_screen_top_sites_heading">ਸਿਖਰਲੀਆਂ ਸਾਈਟਾਂ</string>
+
+    <!-- Recent Tabs -->
+    <!-- Header text for jumping back into the recent tab in the home screen -->
+    <string name="recent_tabs_header">ਵਾਪਸ ਜਾਓ</string>
+    <!-- Button text for showing all the tabs in the tabs tray -->
+    <string name="recent_tabs_show_all">ਸਭ ਵੇਖੋ</string>
 
     <!-- Browser Fragment -->
     <!-- Content description (not visible, for screen readers etc.): Navigate to open tabs -->
@@ -189,6 +199,10 @@
     <string name="browser_menu_add">ਜੋੜੋ</string>
     <!-- Browser menu label for editing a bookmark -->
     <string name="browser_menu_edit">ਸੋਧੋ</string>
+
+    <!-- Browser Toolbar -->
+    <!-- Content description for the Home screen button on the browser toolbar -->
+    <string name="browser_toolbar_home">ਮੁੱਖ ਸਕਰੀਨ</string>
 
     <!-- Error message to show when the user tries to access a scheme not
         handled by the app (Ex: blob, tel etc) -->
@@ -423,6 +437,11 @@
         and the third is the device model. -->
     <string name="default_device_name_2">%2$s %3$s ਉੱਤੇ %1$s</string>
 
+    <!-- Preference for syncing credit cards -->
+    <string name="preferences_sync_credit_cards">ਕਰੈਡਿਟ ਕਾਰਡ</string>
+    <!-- Preference for syncing addresses -->
+    <string name="preferences_sync_address">ਸਿਰਨਾਵੇਂ</string>
+
     <!-- Send Tab -->
     <!-- Name of the "receive tabs" notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="fxa_received_tab_channel_name">ਮਿਲੀਆਂ ਟੈਬਾਂ</string>
@@ -455,9 +474,6 @@
     <!-- Text displayed when there are no exceptions, with learn more link that brings users to a tracking protection SUMO page -->
     <string name="exceptions_empty_message_learn_more_link">ਹੋਰ ਸਿੱਖੋ</string>
 
-    <!-- Description in Quick Settings that tells user tracking protection is off globally for all sites, and links to Settings to turn it on -->
-    <string name="preferences_tracking_protection_turned_off_globally">ਪੂਰੇ ਤੌਰ ‘ਤੇ ਬੰਦ ਹੈ, ਇਸ ਨੂੰ ਚਾਲੂ ਕਰਨ ਲਈ ਸੈਟਿੰਗਾਂ ‘ਤੇ ਜਾਓ।</string>
-
     <!-- Preference switch for Telemetry -->
     <string name="preferences_telemetry">ਟੈਲੀਮੈਟਰੀ</string>
     <!-- Preference switch for usage and technical data collection -->
@@ -468,6 +484,8 @@
     <string name="preferences_marketing_data">ਮਾਰਕੀਟਿੰਗ ਡਾਟਾ</string>
     <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
     <string name="preferences_marketing_data_description">%1$s ਵਿੱਚ ਕਿਹੜੇ ਫੀਚਰ ਤੁਸੀਂ ਵਰਤਦੇ ਹੋ, ਬਾਰੇ ਡਾਟੇ ਨੂੰ Leanplum, ਸਾਡੇ ਮਾਰਕੀਟਿੰਗ ਵੇਂਡਰ ਨਾਲ ਸਾਂਝਾ ਕਰਦਾ ਹੈ।</string>
+    <!-- Preference description for marketing data collection -->
+    <string name="preferences_marketing_data_description2">ਕੁਝ ਅਨੁਕੂਲ ਬਣਾ ਕੇ ਮੁੱਢਲਾ ਵਰਤੋਂ ਡਾਟਾ ਸਾਡੇ ਮੋਬਾਈਲ ਮਾਰਕੀਟਿੰਗ ਵੇਂਡਰ ਨਾਲ ਸਾਂਝਾ ਕਰਦਾ ਹੈ</string>
     <!-- Title for studies preferences -->
     <string name="preference_experiments_2">ਅਧਿਐਨ</string>
     <!-- Summary for studies preferences -->
@@ -556,8 +574,6 @@
     <string name="library_new_tab">ਨਵੀਂ ਟੈਬ</string>
     <!-- Option in Library to find text in page -->
     <string name="library_find_in_page">ਸਫ਼ੇ ‘ਚ ਲੱਭੋ</string>
-    <!-- Option in Library to open Synced Tabs page -->
-    <string name="library_synced_tabs">ਸਿੰਕ ਕੀਤੀਆਂ ਟੈਬਾਂ</string>
     <!-- Option in Library to open Reading List -->
     <string name="library_reading_list">ਪੜ੍ਹਨ ਸੂਚੀ</string>
     <!-- Menu Item Label for Search in Library -->
@@ -603,6 +619,15 @@
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">ਇੱਕ ਮਹੀਨੇ ਬਾਅਦ</string>
 
+    <!-- Start on Home -->
+    <!-- Title of a preference that allows a user to indicate after a specified amount of time when the app should start on the home screen -->
+    <string name="preferences_start_on_home">ਮੁੱਖ ਸਕਰੀਨ ਤੋਂ ਸ਼ੁਰੂ ਕਰੋ</string>
+    <!-- Option for starting on the home screen after after four hours or inactivity -->
+    <string name="start_on_home_after_four_hours">ਕੁਝ ਘੰਟਿਆਂ ਬਾਦ</string>
+    <!-- Option for always starting on the home screen -->
+    <string name="start_on_home_always">ਹਮੇਸ਼ਾਂ</string>
+    <!-- Option for never starting on the home screen -->
+    <string name="start_on_home_never">ਕਦੇ ਨਹੀਂ</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
     <string name="close_tabs_manually_summary">ਖੁਦ ਬੰਦ ਕਰੋ</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
@@ -811,8 +836,6 @@
     <string name="bookmark_delete_folder_snackbar">%1$s ਨੂੰ ਹਟਾਇਆ</string>
     <!-- Screen title for adding a bookmarks folder -->
     <string name="bookmark_add_folder">ਫੋਲਡਰ ਜੋੜੋ</string>
-    <!-- deprecated: Snackbar title shown after a bookmark has been created. -->
-    <string name="bookmark_created_snackbar">ਬੁੱਕਮਾਰਕ ਬਣਾਇਆ।</string>
     <!-- Snackbar title shown after a bookmark has been created. -->
     <string name="bookmark_saved_snackbar">ਬੁੱਕਮਾਰਕ ਸੰਭਾਲਿਆ!</string>
     <!-- Snackbar edit button shown after a bookmark has been created. -->
@@ -1039,6 +1062,16 @@
     <string name="notification_pbm_action_delete_and_open">ਹਟਾਓ ਤੇ ਖੋਲ੍ਹੋ</string>
     <!-- Name of the "Powered by Fenix" notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="notification_powered_by_channel_name">ਇਖ਼ਤਿਆਰ</string>
+    <!-- Name of the marketing notification channel. Displayed in the "App notifications" system settings for the app -->
+    <string name="notification_marketing_channel_name">ਮਾਰਕੀਟਿੰਗ</string>
+    <!-- Title shown in the notification that pops up to remind the user to set fenix as default browser.
+    %1$s is a placeholder that will be replaced by the app name (Fenix). -->
+    <string name="notification_default_browser_title">%1$s ਤੇਜ਼ ਤੇ ਪ੍ਰਾਈਵੇਟ ਹੈ</string>
+    <!-- Text shown in the notification that pops up to remind the user to set fenix as default browser.
+    %1$s is a placeholder that will be replaced by the app name (Fenix). -->
+    <string name="notification_default_browser_text">%1$s ਨੂੰ ਆਪਣਾ ਮੂਲ ਬਰਾਊਜ਼ਰ ਬਣਾਓ</string>
+
+    <!-- Snackbar -->
     <!-- Text shown in snackbar when user deletes a collection -->
     <string name="snackbar_collection_deleted">ਭੰਡਾਰ ਹਟਾਇਆ</string>
     <!-- Text shown in snackbar when user renames a collection -->
@@ -1473,10 +1506,8 @@
     <string name="preferences_passwords_autofill">ਆਪੇ-ਭਰੋ</string>
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">ਲਾਗਇਨ ਸਿੰਕ ਕਰੋ</string>
-    <!-- Syncing saved logins in Fenix is on -->
-    <string name="preferences_passwords_sync_logins_on">ਚਾਲੂ</string>
-    <!-- Syncing saved logins in Fenix is off -->
-    <string name="preferences_passwords_sync_logins_off">ਬੰਦ</string>
+    <!-- Preference for syncing saved logins in Fenix, when not signed in-->
+    <string name="preferences_passwords_sync_logins_across_devices">ਡਿਵਾਈਸਾਂ ਵਿਚਾਲੇ ਲਾਗਇਨਾਂ ਨੂੰ ਸਿੰਕ ਕਰੋ</string>
     <!-- Syncing saved logins in Fenix needs reconnect to sync -->
     <string name="preferences_passwords_sync_logins_reconnect">ਮੁੜ-ਕਨੈਕਟ ਕਰੋ</string>
     <!-- Syncing saved logins in Fenix needs login -->
@@ -1577,6 +1608,8 @@
     <string name="preferences_credit_cards_save_and_autofill_cards_summary">ਡਾਟਾ ਇੰਕ੍ਰਿਪਟ ਕੀਤਾ ਹੈ</string>
     <!-- Preference option for syncing credit cards across devices. This is displayed when the user is not signed into sync -->
     <string name="preferences_credit_cards_sync_cards_across_devices">ਡਿਵਾਈਸਾਂ ਵਿਚਾਲੇ ਕਾਰਡਾਂ ਨੂੰ ਸਿੰਕ ਕਰੋ</string>
+    <!-- Preference option for syncing credit cards across devices. This is displayed when the user is signed into sync -->
+    <string name="preferences_credit_cards_sync_cards">ਕਾਰਡ ਸਿੰਕ ਕਰੋ</string>
     <!-- Preference option for adding a credit card -->
     <string name="preferences_credit_cards_add_credit_card">ਕਰੈਡਿਟ ਕਾਰਡ ਜੋੜੋ</string>
     <!-- Preference option for managing saved credit cards -->
@@ -1589,6 +1622,10 @@
     <string name="credit_cards_card_number">ਕਾਰਡ ਦਾ ਨੰਬਰ</string>
     <!-- The header for the expiration date of a credit card -->
     <string name="credit_cards_expiration_date">ਮਿਆਦ</string>
+    <!-- The label for the expiration date month of a credit card to be used by a11y services-->
+    <string name="credit_cards_expiration_date_month">ਮਿਆਦ ਪੁੱਗਣ ਤਾਰੀਖ ਮਹੀਨਾ</string>
+    <!-- The label for the expiration date year of a credit card to be used by a11y services-->
+    <string name="credit_cards_expiration_date_year">ਮਿਆਦ ਪੁੱਗਣ ਤਾਰੀਖ ਸਾਲ</string>
     <!-- The header for the name on the credit card -->
     <string name="credit_cards_name_on_card">ਕਾਰਡ ਉੱਤੇ ਨਾਂ</string>
     <!-- The header for the nickname for a credit card -->
@@ -1606,6 +1643,26 @@
 
     <!-- Title of the "Saved cards" screen -->
     <string name="credit_cards_saved_cards">ਸੰਭਾਲੇ ਹੋਏ ਕਾਰਡ</string>
+
+    <!-- Error message for credit card number validation -->
+    <string name="credit_cards_number_validation_error_message">ਵਾਜਬ ਕਰੈਡਿਟ ਕਾਰਡ ਨੰਬਰ ਦਿਓ ਜੀ</string>
+
+    <!-- Error message for credit card name on card validation -->
+    <string name="credit_cards_name_on_card_validation_error_message">ਇਹ ਖੇਤਰ ਭਰੋ</string>
+    <!-- Message displayed in biometric prompt displayed for authentication before allowing users to view their saved credit cards -->
+    <string name="credit_cards_biometric_prompt_message">ਆਪਣੇ ਸੰਭਾਲੇ ਹੋਏ ਕਾਰਡ ਵੇਖਣ ਲਈ ਅਣ-ਲਾਕ ਕਰੋ</string>
+    <!-- Title of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_title">ਆਪਣੇ ਕਰੈਡਿਟ ਕਾਰਡ ਸੁਰੱਖਿਅਤ ਕਰੋ</string>
+    <!-- Message of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_message">ਆਪਣੀ ਡਿਵਾਇਸ ਲਈ ਲਾਕ ਪੈਟਰਨ, ਪਿੰਨ, ਜਾਂ ਪਾਸਵਰਡ ਸੈੱਟ ਕਰੋ ਤਾਂ ਜੋ ਕਿਸੇ ਹੋਰ ਹੱਥ ਤੁਹਾਡਾ ਡਿਵਾਇਸ ਹੋਣ ਉੱਤੇ ਤੁਹਾਡੇ ਸੰਭਾਲੇ ਪਾਸਵਰਡ ਸੁਰੱਖਿਅਤ ਰਹਿਣ।</string>
+    <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_set_up_now">ਹੁਣੇ ਸੈਟ ਅੱਪ ਕਰੋ</string>
+    <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_later">ਬਾਦ \'ਚ</string>
+    <!-- Title of PIN verification dialog to direct users to re-enter their device credentials to access their credit cards -->
+    <string name="credit_cards_biometric_prompt_message_pin">ਆਪਣਾ ਡਿਵਾਇਸ ਅਣ-ਲਾਕ ਕਰੋ</string>
+    <!-- Message displayed in biometric prompt for authentication, before allowing users to use their stored credit card information -->
+    <string name="credit_cards_biometric_prompt_unlock_message">ਸੰਭਾਲੀ ਕਰੈਡਿਟ ਕਾਰਡ ਜਾਣਕਾਰੀ ਵਰਤਣ ਲਈ ਅਣ-ਲਾਕ ਕਰੋ</string>
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">ਖੋਜ ਇੰਜਣ ਜੋੜੋ</string>
@@ -1771,20 +1828,13 @@
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">ਹਟਾਓ</string>
 
-    <!-- Deprecated: text for the firefox account onboarding card header
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_firefox_account_header">%s ਤੋਂ ਪੂਰਾ ਪੂਰਾ ਫਾਇਦਾ ਲਵੋ।</string>
-
     <!-- Content description radio buttons with a link to more information -->
     <string name="radio_preference_info_content_description">ਹੋਰ ਵੇਰਵਿਆਂ ਲਈ ਕਲਿੱਕ ਕਰੋ</string>
 
-    <!-- Deprecated: No Open Tabs Message Header -->
-    <string name="no_collections_header1">ਚੀਜ਼ਾਂ ਇਕੱਤਰ ਕਰੋ, ਜੋ ਤੁਹਾਡੇ ਲਈ ਜ਼ਰੂਰੀ ਹਨ</string>
-    <!-- Deprecated: Label to describe what collections are to a new user without any collections -->
-    <string name="no_collections_description1">ਬਾਅਦ ਵਿੱਚ ਫ਼ੌਰੀ ਵਰਤਣ ਲਈ ਰਲਦੀਆਂ ਖੋਜਾਂ, ਸਾਈਤਾਂ ਤੇ ਟੈਬਾਂ ਨੂੰ ਗਰੁੱਪ ਵਿੱਚ ਇਕੱਠੀਆਂ ਕਰੋ।</string>
-    <!-- Deprecated: text for the firefox account onboarding card header when we detect you're already signed in to -->
-    <string name="onboarding_firefox_account_auto_signin_header_2">ਤੁਸੀਂ ਇਸ ਫ਼ੋਨ ‘ਤੇ ਹੋਰ ਫਾਇਰਫਾਕਸ ਬਰਾਊਜ਼ਰ ਉੱਤੇ %s ਵਜੋਂ ਸਾਈਨ ਇਨ ਹੋ। ਕੀ ਤੁਸੀਂ ਇਸ ਖਾਤੇ ਨਾਲ ਸਾਈਨ ਇਨ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ?</string>
-    <!-- Deprecated: Describes the add to homescreen functionality -->
-    <string name="add_to_homescreen_description">ਤੁਸੀਂ ਇਸ ਵੈੱਬਸਾਈਟ ਨੂੰ ਸੌਖੀ ਤਰ੍ਹਾਂ ਆਪਣੀ ਫ਼ੋਨ ਦੀ ਮੁੱਖ ਸਕਰੀਨ ‘ਤੇ ਜੋੜ ਸਕਦੇ ਹੋ ਤਾਂ ਕਿ ਐਪ ਵਰਗੇ ਤਜਰਬੇ ਵਾਸਤੇ ਤੁਰੰਤ ਪਹੁੰਚ ਅਤੇ ਤੇਜ਼ੀ ਨਾਲ ਬਰਾਊਜ਼ ਕਰਨ ਲਈ ਵਰਤਿਆ ਜਾ ਸਕੇ।</string>
+    <!-- Content description for the action bar "up" button -->
+    <string name="action_bar_up_description">ਉੱਤੇ ਜਾਓ</string>
 
-    </resources>
+    <!-- Content description for privacy content close button -->
+    <string name="privacy_content_close_button_content_description">ਬੰਦ ਕਰੋ</string>
+
+</resources>

@@ -44,7 +44,6 @@ def add_shippable_secrets(config, tasks):
             } for key, target_file in (
                 ('adjust', '.adjust_token'),
                 ('firebase', 'app/src/{}/res/values/firebase.xml'.format(gradle_build_type)),
-                ('leanplum', '.leanplum_token'),
                 ('sentry_dsn', '.sentry_token'),
                 ('mls', '.mls_token'),
                 ('nimbus_url', '.nimbus'),
@@ -55,7 +54,6 @@ def add_shippable_secrets(config, tasks):
                 "path": target_file,
             } for fake_value, target_file in (
                 ("faketoken", ".adjust_token"),
-                ("fake:token", ".leanplum_token"),  # : is used by leanplum
                 ("faketoken", ".mls_token"),
                 ("https://fake@sentry.prod.mozaws.net/368", ".sentry_token"),
             )])
@@ -73,6 +71,14 @@ def build_gradle_command(config, tasks):
             "clean",
             "assemble{}".format(variant_config["name"].capitalize()),
         ]
+
+        yield task
+
+@transforms.add
+def extra_gradle_options(config, tasks):
+    for task in tasks:
+        for extra in task["run"].pop("gradle-extra-options", []):
+            task["run"]["gradlew"].append(extra)
 
         yield task
 
@@ -97,14 +103,11 @@ def add_disable_optimization(config, tasks):
 
 @transforms.add
 def add_nightly_version(config, tasks):
-    push_date_string = config.params["moz_build_date"]
-    push_date_time = datetime.datetime.strptime(push_date_string, "%Y%m%d%H%M%S")
-    formated_date_time = 'Nightly {}'.format(push_date_time.strftime('%y%m%d %H:%M'))
-
     for task in tasks:
         if task.pop("include-nightly-version", False):
             task["run"]["gradlew"].extend([
-                '-PversionName={}'.format(formated_date_time),
+                # We only set the `official` flag here. The actual version name will be determined
+                # by Gradle (depending on the Gecko/A-C version being used)
                 '-Pofficial'
             ])
         yield task

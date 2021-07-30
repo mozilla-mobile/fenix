@@ -95,7 +95,14 @@
 
     <!-- Home Fragment -->
     <dimen name="home_fragment_top_toolbar_header_margin">60dp</dimen>
-    <dimen name="home_collection_elevation">5dp</dimen>
+    <dimen name="home_item_elevation">5dp</dimen>
+
+    <!-- Home - Recently saved bookmarks -->
+    <dimen name="recent_bookmark_item_height">128dp</dimen>
+    <dimen name="recent_bookmark_item_width">152dp</dimen>
+    <dimen name="recent_bookmark_item_favicon_height">72dp</dimen>
+    <dimen name="recent_bookmark_item_favicon_elevation">0dp</dimen>
+    <dimen name="recent_bookmark_item_favicon_corner_size">4dp</dimen>
 
     <!-- Browser Fragment -->
     <!--The size of the gap between the tab preview and content layout.-->
@@ -189,10 +196,12 @@
     <dimen name="tab_tray_multiselect_handle_top_margin">0dp</dimen>
     <dimen name="tab_tray_new_collection_padding_start">24dp</dimen>
     <dimen name="tab_tray_new_collection_drawable_padding">28dp</dimen>
+    <!--  Keeps FAB from covering last item in list. Fab 64dp, top & bottom margins 16dp each.  -->
+    <dimen name="tab_tray_list_bottom_padding">96dp</dimen>
 
     <!-- Saved Logins Fragment -->
-    <dimen name="saved_logins_sort_menu_dropdown_chevron_icon_margin_start">10dp</dimen>
-    <dimen name="saved_logins_sort_menu_dropdown_chevron_icon_size">12dp</dimen>
+    <dimen name="saved_logins_sort_menu_dropdown_chevron_icon_margin_start">24dp</dimen>
+    <dimen name="saved_logins_sort_menu_dropdown_chevron_icon_size">24dp</dimen>
     <dimen name="saved_logins_detail_menu_vertical_padding">5dp</dimen>
     <dimen name="saved_logins_end_icon_drawable_padding">16dp</dimen>
     <dimen name="saved_logins_item_padding">4dp</dimen>
@@ -206,12 +215,23 @@
     <dimen name="account_settings_device_name_min_height">48dp</dimen>
 
     <!-- Top sites  -->
-    <dimen name="top_sites_favicon_size">60dp</dimen>
-    <dimen name="top_sites_favicon_padding">12dp</dimen>
     <dimen name="top_sites_item_size">84dp</dimen>
     <dimen name="top_sites_item_margin_top">8dp</dimen>
     <dimen name="top_sites_item_margin_bottom">12dp</dimen>
     <dimen name="top_sites_text_margin_top">8dp</dimen>
+    <dimen name="top_sites_favicon_size">36dp</dimen>
+    <dimen name="top_sites_favicon_elevation">0dp</dimen>
+    <dimen name="top_sites_favicon_corner_size">4dp</dimen>
+
+    <dimen name="top_sites_card_size">60dp</dimen>
+    <dimen name="top_sites_card_padding">12dp</dimen>
+    <dimen name="top_sites_card_elevation">6dp</dimen>
+    <dimen name="top_sites_card_radius">8dp</dimen>
+    <dimen name="top_sites_card_stroke_width">1dp</dimen>
+
+    <!-- Recent tabs -->
+    <dimen name="recent_tabs_icon_elevation">0dp</dimen>
+    <dimen name="recent_tabs_icon_corner_size">4dp</dimen>
 
     <!-- Credit Cards Fragment -->
     <dimen name="credit_cards_saved_cards_item_margin_start">16dp</dimen>

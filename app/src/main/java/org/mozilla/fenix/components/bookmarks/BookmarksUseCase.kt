@@ -6,10 +6,12 @@ package org.mozilla.fenix.components.bookmarks
 
 import androidx.annotation.WorkerThread
 import mozilla.appservices.places.BookmarkRoot
+import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.concept.storage.BookmarksStorage
+import java.util.concurrent.TimeUnit
 
 /**
- * Use cases that allow for modifying bookmarks.
+ * Use cases that allow for modifying and retrieving bookmarks.
  */
 class BookmarksUseCase(storage: BookmarksStorage) {
 
@@ -38,5 +40,26 @@ class BookmarksUseCase(storage: BookmarksStorage) {
         }
     }
 
+    class RetrieveRecentBookmarksUseCase internal constructor(
+        private val storage: BookmarksStorage
+    ) {
+        /**
+         * Retrieves a list of recently added bookmarks, if any, up to maximum.
+         */
+        @WorkerThread
+        suspend operator fun invoke(count: Int = DEFAULT_BOOKMARKS_TO_RETRIEVE): List<BookmarkNode> {
+            return storage.getRecentBookmarks(
+                count,
+                TimeUnit.DAYS.toMillis(DEFAULT_BOOKMARKS_DAYS_AGE_TO_RETRIEVE)
+            )
+        }
+    }
+
     val addBookmark by lazy { AddBookmarksUseCase(storage) }
+    val retrieveRecentBookmarks by lazy { RetrieveRecentBookmarksUseCase(storage) }
+
+    companion object {
+        const val DEFAULT_BOOKMARKS_TO_RETRIEVE = 4
+        const val DEFAULT_BOOKMARKS_DAYS_AGE_TO_RETRIEVE = 10L
+    }
 }

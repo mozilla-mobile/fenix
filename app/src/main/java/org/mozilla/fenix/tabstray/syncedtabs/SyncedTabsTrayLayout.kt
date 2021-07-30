@@ -22,21 +22,24 @@ import mozilla.components.support.base.observer.Observable
 import mozilla.components.support.base.observer.ObserverRegistry
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.sync.SyncedTabsAdapter
+import org.mozilla.fenix.sync.SyncedTabsTitleDecoration
 import org.mozilla.fenix.sync.ext.toAdapterItem
 import org.mozilla.fenix.sync.ext.toStringRes
+import org.mozilla.fenix.tabstray.TabsTrayAction
 import org.mozilla.fenix.tabstray.TabsTrayFragment
-import org.mozilla.fenix.tabstray.TrayItem
+import org.mozilla.fenix.tabstray.TabsTrayStore
 import org.mozilla.fenix.utils.view.LifecycleViewProvider
 
 class SyncedTabsTrayLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : ConstraintLayout(context, attrs, defStyleAttr), SyncedTabsView, TrayItem,
+) : ConstraintLayout(context, attrs, defStyleAttr), SyncedTabsView,
     Observable<SyncedTabsView.Listener> by ObserverRegistry() {
 
     private val lifecycleProvider = LifecycleViewProvider(this)
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
+
     private val syncedTabsFeature by lazy {
         SyncedTabsFeature(
             context = context,
@@ -52,7 +55,21 @@ class SyncedTabsTrayLayout @JvmOverloads constructor(
         )
     }
 
+    private val syncButtonBinding by lazy {
+        SyncButtonBinding(tabsTrayStore) {
+            listener?.onRefresh()
+        }
+    }
+
+    lateinit var tabsTrayStore: TabsTrayStore
+
     override var listener: SyncedTabsView.Listener? = null
+
+    override fun onFinishInflate() {
+        synced_tabs_list.addItemDecoration(SyncedTabsTitleDecoration(context))
+
+        super.onFinishInflate()
+    }
 
     override fun displaySyncedTabs(syncedTabs: List<SyncedDeviceTabs>) {
         coroutineScope.launch {
@@ -79,33 +96,28 @@ class SyncedTabsTrayLayout @JvmOverloads constructor(
         }
     }
 
-    override fun startLoading() {
-        // TODO implement with https://github.com/mozilla-mobile/fenix/issues/18515
-        // start animating FAB
-        // interactor.syncingTabs(loading = true)
-    }
-
-    override fun stopLoading() {
-        // TODO implement with https://github.com/mozilla-mobile/fenix/issues/18515
-        // stop animating FAB
-        // interactor.syncingTabs(loading = false)
-    }
-
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
 
         syncedTabsFeature.start()
+        syncButtonBinding.start()
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
 
         syncedTabsFeature.stop()
+        syncButtonBinding.stop()
+
         coroutineScope.cancel()
     }
 
-    fun onRefresh() {
-        // TODO implement with https://github.com/mozilla-mobile/fenix/issues/18515
-        // syncedTabsFeature.interactor.onRefresh()
+    override fun stopLoading() {
+        tabsTrayStore.dispatch(TabsTrayAction.SyncCompleted)
     }
+
+    /**
+     * Do nothing; the UI is handled with FloatingActionButtonBinding.
+     */
+    override fun startLoading() = Unit
 }

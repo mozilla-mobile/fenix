@@ -12,13 +12,13 @@ import androidx.core.view.isVisible
 import kotlinx.android.synthetic.main.component_tabstray2.view.exit_multi_select
 import kotlinx.android.synthetic.main.component_tabstray2.view.multiselect_title
 import kotlinx.android.synthetic.main.tabstray_multiselect_items.view.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.map
+import mozilla.components.lib.state.helpers.AbstractBinding
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import org.mozilla.fenix.R
-import org.mozilla.fenix.components.AbstractBinding
 import org.mozilla.fenix.tabstray.NavigationInteractor
 import org.mozilla.fenix.tabstray.TabsTrayInteractor
 import org.mozilla.fenix.tabstray.TabsTrayState
@@ -41,6 +41,7 @@ import org.mozilla.fenix.tabstray.ext.showWithTheme
  * @property showOnSelectViews A variable list of views that will be made visible when in select mode.
  * @property showOnNormalViews A variable list of views that will be made visible when in normal mode.
  */
+@OptIn(ExperimentalCoroutinesApi::class)
 @Suppress("LongParameterList")
 class SelectionBannerBinding(
     private val context: Context,
@@ -68,8 +69,6 @@ class SelectionBannerBinding(
 
     override suspend fun onState(flow: Flow<TabsTrayState>) {
         flow.map { it.mode }
-            // ignore initial mode update; we never start in select mode.
-            .drop(1)
             .ifChanged()
             .collect { mode ->
                 val isSelectMode = mode is Select
@@ -136,6 +135,8 @@ class SelectionBannerBinding(
         if (selectedMode) {
             containerView.multiselect_title.text =
                 context.getString(R.string.tab_tray_multi_select_title, tabCount)
+            containerView.multiselect_title.importantForAccessibility =
+                View.IMPORTANT_FOR_ACCESSIBILITY_YES
         }
     }
 }

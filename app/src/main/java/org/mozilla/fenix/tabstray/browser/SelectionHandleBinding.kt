@@ -10,13 +10,13 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.core.view.updateLayoutParams
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.map
+import mozilla.components.lib.state.helpers.AbstractBinding
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import org.mozilla.fenix.R
-import org.mozilla.fenix.components.AbstractBinding
 import org.mozilla.fenix.tabstray.TabsTrayState
 import org.mozilla.fenix.tabstray.TabsTrayState.Mode
 import org.mozilla.fenix.tabstray.TabsTrayStore
@@ -31,6 +31,7 @@ private const val NORMAL_HANDLE_PERCENT_WIDTH = 0.1F
  * @property handle The "handle" of the Tabs Tray that is used to drag the tray open/close.
  * @property containerLayout The [ConstraintLayout] that contains the "handle".
  */
+@OptIn(ExperimentalCoroutinesApi::class)
 class SelectionHandleBinding(
     store: TabsTrayStore,
     private val handle: View,
@@ -41,8 +42,6 @@ class SelectionHandleBinding(
 
     override suspend fun onState(flow: Flow<TabsTrayState>) {
         flow.map { it.mode }
-            // ignore initial mode update; we never start in select mode.
-            .drop(1)
             .ifChanged()
             .collect { mode ->
                 val isSelectMode = mode is Mode.Select

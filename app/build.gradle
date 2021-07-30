@@ -8,6 +8,7 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'jacoco'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
 apply plugin: 'com.google.android.gms.oss-licenses-plugin'
+apply plugin: 'androidx.benchmark'
 
 
 import com.android.build.OutputFile
@@ -17,9 +18,12 @@ import org.gradle.internal.logging.text.StyledTextOutputFactory
 
 import static org.gradle.api.tasks.testing.TestResult.ResultType
 
+apply from: 'benchmark.gradle'
+
 android {
     compileSdkVersion Config.compileSdkVersion
 
+    project.maybeConfigForJetpackBenchmark(it)
     if (project.hasProperty("testBuildType")) {
         // Allowing to configure the test build type via command line flag (./gradlew -PtestBuildType=beta ..)
         // in order to run UI tests against other build variants than debug in automation.
@@ -137,6 +141,10 @@ android {
         }
     }
 
+    buildFeatures {
+        viewBinding true
+    }
+
     aaptOptions {
         // All JavaScript code used internally by GeckoView is packaged in a
         // file called omni.ja. If this file is compressed in the APK,
@@ -205,9 +213,17 @@ android {
             // instead. :)
             maxParallelForks = 2
             forkEvery = 80
-            maxHeapSize = "2048m"
+            maxHeapSize = "3072m"
             minHeapSize = "1024m"
         }
+    }
+
+    buildFeatures {
+        compose true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = Versions.androidx_compose
     }
 }
 
@@ -231,7 +247,7 @@ android.applicationVariants.all { variant ->
 
     def isDebug = variant.buildType.resValues['IS_DEBUG']?.value ?: false
     def useReleaseVersioning = variant.buildType.buildConfigFields['USE_RELEASE_VERSIONING']?.value ?: false
-    def versionName = Config.releaseVersionName(project)
+    def versionName = variant.buildType.name == 'nightly' ? Config.nightlyVersionName() : Config.releaseVersionName(project)
 
     println("----------------------------------------------")
     println("Variant name:      " + variant.name)
@@ -244,6 +260,8 @@ android.applicationVariants.all { variant ->
         // The Google Play Store does not allow multiple APKs for the same app that all have the
         // same version code. Therefore we need to have different version codes for our ARM and x86
         // builds.
+
+        println("versionName override: $versionName")
 
         variant.outputs.each { output ->
             def abi = output.getFilter(OutputFile.ABI)
@@ -310,25 +328,6 @@ android.applicationVariants.all { variant ->
     }
 
 // -------------------------------------------------------------------------------------------------
-// Leanplum: Read token from local file if it exists
-// -------------------------------------------------------------------------------------------------
-
-    print("Leanplum token: ")
-
-    try {
-        def parts = new File("${rootDir}/.leanplum_token").text.trim().split(":")
-        def id = parts[0]
-        def key = parts[1]
-        buildConfigField 'String', 'LEANPLUM_ID', '"' + id + '"'
-        buildConfigField 'String', 'LEANPLUM_TOKEN', '"' + key + '"'
-        println "(Added from .leanplum_token file)"
-    } catch (FileNotFoundException ignored) {
-        buildConfigField 'String', 'LEANPLUM_ID', 'null'
-        buildConfigField 'String', 'LEANPLUM_TOKEN', 'null'
-        println("X_X")
-    }
-
-// -------------------------------------------------------------------------------------------------
 // MLS: Read token from local file if it exists
 // -------------------------------------------------------------------------------------------------
 
@@ -382,9 +381,7 @@ androidExtensions {
     experimental = true
 }
 
-// Generate Kotlin code and markdown docs for the Fenix Glean metrics.
-ext.gleanGenerateMarkdownDocs = true
-ext.gleanDocsDirectory = "$rootDir/docs"
+// Generate Kotlin code for the Fenix Glean metrics.
 apply plugin: "org.mozilla.telemetry.glean-gradle-plugin"
 
 configurations {
@@ -402,10 +399,6 @@ configurations {
     // correct runtime classpath when invoked with Android Studio's built-in JUnit test runner.
     // Success!
     jnaForTest
-    // Robolectric, through `com.google.android.apps.common.testing.accessibility.framework`
-    // depends on an old version of protobuf that conflict with the Application Services one.
-    // See: https://github.com/mozilla/application-services/issues/2952
-    all*.exclude group: 'com.google.protobuf', module: 'protobuf-java'
 }
 
 dependencies {
@@ -424,9 +417,6 @@ dependencies {
 
     implementation Deps.sentry
 
-    implementation Deps.leanplum_core
-    implementation Deps.leanplum_fcm
-
     implementation Deps.mozilla_concept_base
     implementation Deps.mozilla_concept_engine
     implementation Deps.mozilla_concept_menu
@@ -442,7 +432,6 @@ dependencies {
     implementation Deps.mozilla_browser_icons
     implementation Deps.mozilla_browser_menu
     implementation Deps.mozilla_browser_menu2
-    implementation Deps.mozilla_browser_session
     implementation Deps.mozilla_browser_session_storage
     implementation Deps.mozilla_browser_state
     implementation Deps.mozilla_browser_storage_sync
@@ -511,9 +500,14 @@ dependencies {
 
     implementation Deps.mozilla_lib_crash
     implementation Deps.mozilla_lib_push_firebase
+    implementation Deps.mozilla_lib_state
     implementation Deps.mozilla_lib_dataprotect
     debugImplementation Deps.leakcanary
 
+    implementation Deps.androidx_compose_ui
+    implementation Deps.androidx_compose_ui_tooling
+    implementation Deps.androidx_compose_foundation
+    implementation Deps.androidx_compose_material
     implementation Deps.androidx_legacy
     implementation Deps.androidx_biometric
     implementation Deps.androidx_paging
@@ -541,6 +535,8 @@ dependencies {
     androidTestImplementation Deps.uiautomator
 // Removed pending AndroidX fixes
     androidTestImplementation "tools.fastlane:screengrab:2.0.0"
+    // This Falcon version is added to maven central now required for Screengrab
+    implementation 'com.jraska:falcon:2.2.0'
 //    androidTestImplementation "br.com.concretesolutions:kappuccino:1.2.1"
 
     androidTestImplementation Deps.espresso_core, {
@@ -569,6 +565,7 @@ dependencies {
 
     androidTestImplementation Deps.androidx_junit
     androidTestImplementation Deps.androidx_work_testing
+    androidTestImplementation Deps.androidx_benchmark_junit4
     androidTestImplementation Deps.mockwebserver
     testImplementation Deps.mozilla_support_test
     testImplementation Deps.mozilla_support_test_libstate
@@ -593,6 +590,11 @@ dependencies {
 if (project.hasProperty("coverage")) {
     tasks.withType(Test).configureEach {
         jacoco.includeNoLocationClasses = true
+        jacoco.excludes = ['jdk.internal.*']
+    }
+
+    jacoco {
+        toolVersion = "0.8.7"
     }
 
     android.applicationVariants.all { variant ->
@@ -757,14 +759,3 @@ ext.updateExtensionVersion = { task, extDir ->
         expand(values)
     }
 }
-
-tasks.register("updateAdsExtensionVersion", Copy) { task ->
-    updateExtensionVersion(task, 'src/main/assets/extensions/ads')
-}
-
-tasks.register("updateCookiesExtensionVersion", Copy) { task ->
-    updateExtensionVersion(task, 'src/main/assets/extensions/cookies')
-}
-
-preBuild.dependsOn "updateAdsExtensionVersion"
-preBuild.dependsOn "updateCookiesExtensionVersion"

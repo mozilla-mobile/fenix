@@ -5,6 +5,7 @@
     <string name="app_name_private_5">%s en reĝimo de privata retumo</string>
     <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
     <string name="app_name_private_4">%s (Private)</string>
+
     <!-- Home Fragment -->
     <!-- Content description (not visible, for screen readers etc.): "Three dot" menu button. -->
     <string name="content_description_menu">Pli da elektebloj</string>
@@ -46,6 +47,16 @@
     <string name="tab_tray_enter_multiselect_content_description">Komenco de reĝimo de plurelekto. Elektu langetojn por konservi en kolekto.</string>
     <!-- Content description on checkmark while tab is selected in multiselect mode in tab tray -->
     <string name="tab_tray_multiselect_selected_content_description">Elektita</string>
+
+    <!-- Home - Recently saved bookmarks -->
+    <!-- Title for the home screen section with recently saved bookmarks. -->
+    <string name="recently_saved_bookmarks">Ĵuse konservitaj</string>
+    <!-- Content description for the recently saved bookmarks section on the home screen. -->
+    <string name="recently_saved_bookmarks_content_description">Ĵuse konservitaj legosignoj</string>
+    <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
+    <string name="recently_saved_show_all">Montri ĉiujn</string>
+    <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
+    <string name="recently_saved_show_all_content_description">Butono por montri ĉiujn konservitajn legosignojn</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
     <string name="about_content">%1$s estas kreita de Mozilla.</string>
@@ -90,13 +101,6 @@
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">Ignori</string>
 
-    <!-- Text for the banner message to tell users about our grid view feature. -->
-    <string name="tab_tray_grid_view_banner_message">Por ŝanĝi la aranĝon de malfermitaj langetoj iru al agordoj kaj elektu kradon en la vido de langetoj.</string>
-    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
-    <string name="tab_tray_grid_view_banner_positive_button_text">Iri al agordoj</string>
-    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
-    <string name="tab_tray_grid_view_banner_negative_button_text">Ignori</string>
-
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
     <string name="home_screen_shortcut_open_new_tab_2">Nova langeto</string>
@@ -105,6 +109,12 @@
 
     <!-- Heading for the Top Sites block -->
     <string name="home_screen_top_sites_heading">Plej vizititaj</string>
+
+    <!-- Recent Tabs -->
+    <!-- Header text for jumping back into the recent tab in the home screen -->
+    <string name="recent_tabs_header">Reiri</string>
+    <!-- Button text for showing all the tabs in the tabs tray -->
+    <string name="recent_tabs_show_all">Montri ĉiujn</string>
 
     <!-- Browser Fragment -->
     <!-- Content description (not visible, for screen readers etc.): Navigate to open tabs -->
@@ -181,6 +191,10 @@
     <string name="browser_menu_add">Aldoni</string>
     <!-- Browser menu label for editing a bookmark -->
     <string name="browser_menu_edit">Modifi</string>
+
+    <!-- Browser Toolbar -->
+    <!-- Content description for the Home screen button on the browser toolbar -->
+    <string name="browser_toolbar_home">Hejmekrano</string>
 
     <!-- Error message to show when the user tries to access a scheme not
         handled by the app (Ex: blob, tel etc) -->
@@ -411,6 +425,11 @@
         and the third is the device model. -->
     <string name="default_device_name_2">%1$s en %2$s %3$s</string>
 
+    <!-- Preference for syncing credit cards -->
+    <string name="preferences_sync_credit_cards">Kreditkartoj</string>
+    <!-- Preference for syncing addresses -->
+    <string name="preferences_sync_address">Adresoj</string>
+
     <!-- Send Tab -->
     <!-- Name of the "receive tabs" notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="fxa_received_tab_channel_name">Ricevitaj langetoj</string>
@@ -442,9 +461,6 @@
     <!-- Text displayed when there are no exceptions, with learn more link that brings users to a tracking protection SUMO page -->
     <string name="exceptions_empty_message_learn_more_link">Pli da informo</string>
 
-    <!-- Description in Quick Settings that tells user tracking protection is off globally for all sites, and links to Settings to turn it on -->
-    <string name="preferences_tracking_protection_turned_off_globally">Malŝaltita ĝenerale, iru al Agordoj por ŝalti ĝin.</string>
-
     <!-- Preference switch for Telemetry -->
     <string name="preferences_telemetry">Telemezuro</string>
     <!-- Preference switch for usage and technical data collection -->
@@ -455,6 +471,8 @@
     <string name="preferences_marketing_data">Merkatikaj datumoj</string>
     <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
     <string name="preferences_marketing_data_description">Divido de datumoj pri la trajtoj, kiujn vi uzas en %1$s kun Leanplum, nia poŝaparata merkatika provizanto.</string>
+    <!-- Preference description for marketing data collection -->
+    <string name="preferences_marketing_data_description2">Divido de informoj kun Adjust, nia provizanto de marketiko poŝaparata</string>
     <!-- Title for studies preferences -->
     <string name="preference_experiments_2">Studoj</string>
     <!-- Summary for studies preferences -->
@@ -541,8 +559,6 @@
     <string name="library_new_tab">Nova langeto</string>
     <!-- Option in Library to find text in page -->
     <string name="library_find_in_page">Serĉi en la paĝo</string>
-    <!-- Option in Library to open Synced Tabs page -->
-    <string name="library_synced_tabs">Spegulitaj langetoj</string>
     <!-- Option in Library to open Reading List -->
     <string name="library_reading_list">Legolisto</string>
     <!-- Menu Item Label for Search in Library -->
@@ -588,6 +604,15 @@
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">Post monato</string>
 
+    <!-- Start on Home -->
+    <!-- Title of a preference that allows a user to indicate after a specified amount of time when the app should start on the home screen -->
+    <string name="preferences_start_on_home">Komenco en hejmekrano</string>
+    <!-- Option for starting on the home screen after after four hours or inactivity -->
+    <string name="start_on_home_after_four_hours">Post kvar horoj</string>
+    <!-- Option for always starting on the home screen -->
+    <string name="start_on_home_always">Ĉiam</string>
+    <!-- Option for never starting on the home screen -->
+    <string name="start_on_home_never">Neniam</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
     <string name="close_tabs_manually_summary">Fermi mane</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
@@ -798,8 +823,6 @@
     <string name="bookmark_delete_folder_snackbar">%1$s forigita</string>
     <!-- Screen title for adding a bookmarks folder -->
     <string name="bookmark_add_folder">Aldoni dosierujon</string>
-    <!-- deprecated: Snackbar title shown after a bookmark has been created. -->
-    <string name="bookmark_created_snackbar">Legosigno kreita.</string>
     <!-- Snackbar title shown after a bookmark has been created. -->
     <string name="bookmark_saved_snackbar">Legosigno konservita!</string>
     <!-- Snackbar edit button shown after a bookmark has been created. -->
@@ -1460,10 +1483,8 @@
     <string name="preferences_passwords_autofill">Aŭtomata plenigo</string>
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">Speguli legitimilojn</string>
-    <!-- Syncing saved logins in Fenix is on -->
-    <string name="preferences_passwords_sync_logins_on">Ŝaltita</string>
-    <!-- Syncing saved logins in Fenix is off -->
-    <string name="preferences_passwords_sync_logins_off">Malŝaltita</string>
+    <!-- Preference for syncing saved logins in Fenix, when not signed in-->
+    <string name="preferences_passwords_sync_logins_across_devices">Speguli legitimilojn inter aparatoj</string>
     <!-- Syncing saved logins in Fenix needs reconnect to sync -->
     <string name="preferences_passwords_sync_logins_reconnect">Rekonekti</string>
     <!-- Syncing saved logins in Fenix needs login -->
@@ -1565,6 +1586,8 @@
     <string name="preferences_credit_cards_save_and_autofill_cards_summary">La datumoj estas ĉifritaj</string>
     <!-- Preference option for syncing credit cards across devices. This is displayed when the user is not signed into sync -->
     <string name="preferences_credit_cards_sync_cards_across_devices">Speguli kreditkartojn inter aparatoj</string>
+    <!-- Preference option for syncing credit cards across devices. This is displayed when the user is signed into sync -->
+    <string name="preferences_credit_cards_sync_cards">Speguli kreditkartojn</string>
     <!-- Preference option for adding a credit card -->
     <string name="preferences_credit_cards_add_credit_card">Aldoni kreditkarton</string>
     <!-- Preference option for managing saved credit cards -->
@@ -1578,6 +1601,10 @@
     <string name="credit_cards_card_number">Numero de kreditkarto</string>
     <!-- The header for the expiration date of a credit card -->
     <string name="credit_cards_expiration_date">Dato de senvalidiĝo</string>
+    <!-- The label for the expiration date month of a credit card to be used by a11y services-->
+    <string name="credit_cards_expiration_date_month">Monato de senvalidiĝo</string>
+    <!-- The label for the expiration date year of a credit card to be used by a11y services-->
+    <string name="credit_cards_expiration_date_year">Jaro de senvalidiĝo</string>
     <!-- The header for the name on the credit card -->
     <string name="credit_cards_name_on_card">Nomo sur kreditkarto</string>
     <!-- The header for the nickname for a credit card -->
@@ -1594,6 +1621,26 @@
     <string name="credit_cards_cancel_button">Nuligi</string>
     <!-- Title of the "Saved cards" screen -->
     <string name="credit_cards_saved_cards">Konservitaj kreditkartoj</string>
+
+    <!-- Error message for credit card number validation -->
+    <string name="credit_cards_number_validation_error_message">Bonvolu tajpi validan kreditkaran numeron</string>
+
+    <!-- Error message for credit card name on card validation -->
+    <string name="credit_cards_name_on_card_validation_error_message">Bonvolu plenigi tiun ĉi kampon</string>
+    <!-- Message displayed in biometric prompt displayed for authentication before allowing users to view their saved credit cards -->
+    <string name="credit_cards_biometric_prompt_message">Malŝlosu por vidi viajn konservitajn kreditkartojn</string>
+    <!-- Title of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_title">Sekurigu viajn kreditkartojn</string>
+    <!-- Message of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_message">Difinu blokan desegnon, PIN aŭ pasvorton por protekti viajn konservitajn kreditkartojn se iu alia havas vian aparaton.</string>
+    <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_set_up_now">Agordi nun</string>
+    <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_later">Poste</string>
+    <!-- Title of PIN verification dialog to direct users to re-enter their device credentials to access their credit cards -->
+    <string name="credit_cards_biometric_prompt_message_pin">Malbloki vian aparaton</string>
+    <!-- Message displayed in biometric prompt for authentication, before allowing users to use their stored credit card information -->
+    <string name="credit_cards_biometric_prompt_unlock_message">Malŝlosu por uzi la konservitan informon pri kreditkartojn</string>
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Aldoni serĉilon</string>
@@ -1761,20 +1808,13 @@
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">Forigi</string>
 
-    <!-- Deprecated: text for the firefox account onboarding card header
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_firefox_account_header">Eltiru la maksimumon el %s.</string>
-
     <!-- Content description radio buttons with a link to more information -->
     <string name="radio_preference_info_content_description">Alklaku por havi pli da informo</string>
 
-    <!-- Deprecated: No Open Tabs Message Header -->
-    <string name="no_collections_header1">Kolekti la aferojn kiu gravas por vi</string>
-    <!-- Deprecated: Label to describe what collections are to a new user without any collections -->
-    <string name="no_collections_description1">Grupigi similajn serĉojn, retejojn kaj langetojn por pli rapida posta aliro.</string>
-    <!-- Deprecated: text for the firefox account onboarding card header when we detect you're already signed in to -->
-    <string name="onboarding_firefox_account_auto_signin_header_2">Vi komencis seancon kiel %s en alia retumilo Firefox en tiu ĉi poŝaparato. Ĉu vi ŝatus komenci seancon per tiu konto?</string>
-    <!-- Deprecated: Describes the add to homescreen functionality -->
-    <string name="add_to_homescreen_description">Vi povas facile aldoni tiun ĉi retejon al la hejmpaĝo de via telefono, por havi tujan aliron kaj retumi pli rapide per kvazaŭprograma sperto.</string>
+    <!-- Content description for the action bar "up" button -->
+    <string name="action_bar_up_description">Iri supren</string>
 
-    </resources>
+    <!-- Content description for privacy content close button -->
+    <string name="privacy_content_close_button_content_description">Fermi</string>
+
+</resources>

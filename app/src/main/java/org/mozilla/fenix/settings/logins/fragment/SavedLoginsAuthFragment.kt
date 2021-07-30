@@ -27,7 +27,6 @@ import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.secure
@@ -53,7 +52,7 @@ class SavedLoginsAuthFragment : PreferenceFragmentCompat() {
      * https://github.com/mozilla-mobile/fenix/issues/12312
      */
     private fun togglePrefsEnabledWhileAuthenticating(enabled: Boolean) {
-        requirePreference<Preference>(R.string.pref_key_password_sync_logins).isEnabled = enabled
+        requirePreference<Preference>(R.string.pref_key_sync_logins).isEnabled = enabled
         requirePreference<Preference>(R.string.pref_key_save_logins_settings).isEnabled = enabled
         requirePreference<Preference>(R.string.pref_key_saved_logins).isEnabled = enabled
     }
@@ -124,24 +123,23 @@ class SavedLoginsAuthFragment : PreferenceFragmentCompat() {
         }
 
         SyncPreferenceView(
-            syncPreference = requirePreference(R.string.pref_key_password_sync_logins),
+            syncPreference = requirePreference(R.string.pref_key_sync_logins),
             lifecycleOwner = viewLifecycleOwner,
             accountManager = requireComponents.backgroundServices.accountManager,
             syncEngine = SyncEngine.Passwords,
+            loggedOffTitle = requireContext()
+                .getString(R.string.preferences_passwords_sync_logins_across_devices),
+            loggedInTitle = requireContext()
+                .getString(R.string.preferences_passwords_sync_logins),
             onSignInToSyncClicked = {
                 val directions =
                     SavedLoginsAuthFragmentDirections.actionSavedLoginsAuthFragmentToTurnOnSyncFragment()
-                findNavController().navigateBlockingForAsyncNavGraph(directions)
-            },
-            onSyncStatusClicked = {
-                val directions =
-                    SavedLoginsAuthFragmentDirections.actionGlobalAccountSettingsFragment()
-                findNavController().navigateBlockingForAsyncNavGraph(directions)
+                findNavController().navigate(directions)
             },
             onReconnectClicked = {
                 val directions =
                     SavedLoginsAuthFragmentDirections.actionGlobalAccountProblemFragment()
-                findNavController().navigateBlockingForAsyncNavGraph(directions)
+                findNavController().navigate(directions)
             }
         )
 
@@ -189,7 +187,7 @@ class SavedLoginsAuthFragment : PreferenceFragmentCompat() {
             }
             create()
         }.show().secure(activity)
-        context.settings().incrementShowLoginsSecureWarningCount()
+        context.settings().incrementSecureWarningCount()
     }
 
     @Suppress("Deprecation") // This is only used when BiometricPrompt is unavailable
@@ -214,19 +212,19 @@ class SavedLoginsAuthFragment : PreferenceFragmentCompat() {
         context?.components?.analytics?.metrics?.track(Event.OpenLogins)
         val directions =
             SavedLoginsAuthFragmentDirections.actionSavedLoginsAuthFragmentToLoginsListFragment()
-        findNavController().navigateBlockingForAsyncNavGraph(directions)
+        findNavController().navigate(directions)
     }
 
     private fun navigateToSaveLoginSettingFragment() {
         val directions =
             SavedLoginsAuthFragmentDirections.actionSavedLoginsAuthFragmentToSavedLoginsSettingFragment()
-        findNavController().navigateBlockingForAsyncNavGraph(directions)
+        findNavController().navigate(directions)
     }
 
     private fun navigateToLoginExceptionFragment() {
         val directions =
             SavedLoginsAuthFragmentDirections.actionSavedLoginsAuthFragmentToLoginExceptionsFragment()
-        findNavController().navigateBlockingForAsyncNavGraph(directions)
+        findNavController().navigate(directions)
     }
 
     companion object {

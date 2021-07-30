@@ -4,6 +4,7 @@
     <string name="app_name_private_5">%s במצב פרטיות</string>
     <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
     <string name="app_name_private_4">‏%s (פרטי)</string>
+
     <!-- Home Fragment -->
     <!-- Content description (not visible, for screen readers etc.): "Three dot" menu button. -->
     <string name="content_description_menu">אפשרויות נוספות</string>
@@ -48,6 +49,16 @@
 
     <!-- Content description on checkmark while tab is selected in multiselect mode in tab tray -->
     <string name="tab_tray_multiselect_selected_content_description">נבחר</string>
+
+    <!-- Home - Recently saved bookmarks -->
+    <!-- Title for the home screen section with recently saved bookmarks. -->
+    <string name="recently_saved_bookmarks">נשמרו לאחרונה</string>
+    <!-- Content description for the recently saved bookmarks section on the home screen. -->
+    <string name="recently_saved_bookmarks_content_description">סימניות שנשמרו לאחרונה</string>
+    <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
+    <string name="recently_saved_show_all">הצגת הכול</string>
+    <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
+    <string name="recently_saved_show_all_content_description">כפתור להצגת כול הסימניות השמורות</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
     <string name="about_content">‏%1$s נוצר על־ידי Mozilla.</string>
@@ -95,13 +106,6 @@
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">סגירה</string>
 
-    <!-- Text for the banner message to tell users about our grid view feature. -->
-    <string name="tab_tray_grid_view_banner_message">ניתן לשנות את הפריסה של הלשוניות הפתוחות. יש לעבור להגדרות ולבחור ברשת תחת תצוגת לשוניות.</string>
-    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
-    <string name="tab_tray_grid_view_banner_positive_button_text">מעבר להגדרות</string>
-    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
-    <string name="tab_tray_grid_view_banner_negative_button_text">התעלמות</string>
-
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
     <string name="home_screen_shortcut_open_new_tab_2">לשונית חדשה</string>
@@ -110,6 +114,9 @@
 
     <!-- Heading for the Top Sites block -->
     <string name="home_screen_top_sites_heading">אתרים מובילים</string>
+
+    <!-- Button text for showing all the tabs in the tabs tray -->
+    <string name="recent_tabs_show_all">הצגת הכול</string>
 
     <!-- Browser Fragment -->
     <!-- Content description (not visible, for screen readers etc.): Navigate to open tabs -->
@@ -184,6 +191,10 @@
     <string name="browser_menu_add">הוספה</string>
     <!-- Browser menu label for editing a bookmark -->
     <string name="browser_menu_edit">עריכה</string>
+
+    <!-- Browser Toolbar -->
+    <!-- Content description for the Home screen button on the browser toolbar -->
+    <string name="browser_toolbar_home">מסך הבית</string>
 
     <!-- Error message to show when the user tries to access a scheme not
         handled by the app (Ex: blob, tel etc) -->
@@ -415,6 +426,11 @@
         and the third is the device model. -->
     <string name="default_device_name_2">‏%1$s על %2$s %3$s</string>
 
+    <!-- Preference for syncing credit cards -->
+    <string name="preferences_sync_credit_cards">כרטיסי אשראי</string>
+    <!-- Preference for syncing addresses -->
+    <string name="preferences_sync_address">כתובות</string>
+
     <!-- Send Tab -->
     <!-- Name of the "receive tabs" notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="fxa_received_tab_channel_name">לשוניות שהתקבלו</string>
@@ -445,9 +461,6 @@
     <!-- Text displayed when there are no exceptions, with learn more link that brings users to a tracking protection SUMO page -->
     <string name="exceptions_empty_message_learn_more_link">מידע נוסף</string>
 
-    <!-- Description in Quick Settings that tells user tracking protection is off globally for all sites, and links to Settings to turn it on -->
-    <string name="preferences_tracking_protection_turned_off_globally">כבויה באופן גלובלי, יש לעבור להגדרות כדי להפעיל אותה.</string>
-
     <!-- Preference switch for Telemetry -->
     <string name="preferences_telemetry">Telemetry</string>
     <!-- Preference switch for usage and technical data collection -->
@@ -459,6 +472,8 @@
     <string name="preferences_marketing_data">נתוני שיווק</string>
     <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
     <string name="preferences_marketing_data_description">שיתוף מידע על התכונות שהכי משמשות אותך ב־%1$s עם Leanplum, ספק השיווק שלנו למכשירים ניידים.</string>
+    <!-- Preference description for marketing data collection -->
+    <string name="preferences_marketing_data_description2">משתף נתוני שימוש בסיסיים עם Adjust, ספק השיווק שלנו בסלולר</string>
     <!-- Title for studies preferences -->
     <string name="preference_experiments_2">מחקרים</string>
     <!-- Summary for studies preferences -->
@@ -543,8 +558,6 @@
     <string name="library_new_tab">לשונית חדשה</string>
     <!-- Option in Library to find text in page -->
     <string name="library_find_in_page">חיפוש בדף</string>
-    <!-- Option in Library to open Synced Tabs page -->
-    <string name="library_synced_tabs">לשוניות מסונכרנות</string>
     <!-- Option in Library to open Reading List -->
     <string name="library_reading_list">רשימת קריאה</string>
     <!-- Menu Item Label for Search in Library -->
@@ -590,6 +603,15 @@
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">אחרי חודש אחד</string>
 
+    <!-- Start on Home -->
+    <!-- Title of a preference that allows a user to indicate after a specified amount of time when the app should start on the home screen -->
+    <string name="preferences_start_on_home">להתחיל ממסך הבית</string>
+    <!-- Option for starting on the home screen after after four hours or inactivity -->
+    <string name="start_on_home_after_four_hours">לאחר 4 שעות</string>
+    <!-- Option for always starting on the home screen -->
+    <string name="start_on_home_always">תמיד</string>
+    <!-- Option for never starting on the home screen -->
+    <string name="start_on_home_never">לעולם לא</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
     <string name="close_tabs_manually_summary">סגירה באופן ידני</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
@@ -796,8 +818,6 @@
     <string name="bookmark_delete_folder_snackbar">נמחק %1$s</string>
     <!-- Screen title for adding a bookmarks folder -->
     <string name="bookmark_add_folder">הוספת תיקייה</string>
-    <!-- deprecated: Snackbar title shown after a bookmark has been created. -->
-    <string name="bookmark_created_snackbar">סימנייה נוצרה.</string>
     <!-- Snackbar title shown after a bookmark has been created. -->
     <string name="bookmark_saved_snackbar">הסימנייה נשמרה!</string>
     <!-- Snackbar edit button shown after a bookmark has been created. -->
@@ -1025,6 +1045,16 @@
     <!-- Name of the "Powered by Fenix" notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="notification_powered_by_channel_name">מופעל באמצעות</string>
 
+    <!-- Name of the marketing notification channel. Displayed in the "App notifications" system settings for the app -->
+    <string name="notification_marketing_channel_name">שיווק</string>
+    <!-- Title shown in the notification that pops up to remind the user to set fenix as default browser.
+    %1$s is a placeholder that will be replaced by the app name (Fenix). -->
+    <string name="notification_default_browser_title">‏%1$s הוא מהיר ופרטי</string>
+    <!-- Text shown in the notification that pops up to remind the user to set fenix as default browser.
+    %1$s is a placeholder that will be replaced by the app name (Fenix). -->
+    <string name="notification_default_browser_text">הגדרת %1$s כדפדפן ברירת המחדל שלך</string>
+
+    <!-- Snackbar -->
     <!-- Text shown in snackbar when user deletes a collection -->
     <string name="snackbar_collection_deleted">האוסף נמחק</string>
     <!-- Text shown in snackbar when user renames a collection -->
@@ -1455,10 +1485,8 @@
     <string name="preferences_passwords_autofill">מילוי אוטומטי</string>
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">סנכרון כניסות</string>
-    <!-- Syncing saved logins in Fenix is on -->
-    <string name="preferences_passwords_sync_logins_on">פעיל</string>
-    <!-- Syncing saved logins in Fenix is off -->
-    <string name="preferences_passwords_sync_logins_off">כבוי</string>
+    <!-- Preference for syncing saved logins in Fenix, when not signed in-->
+    <string name="preferences_passwords_sync_logins_across_devices">סנכרון כניסות בין מכשירים</string>
     <!-- Syncing saved logins in Fenix needs reconnect to sync -->
     <string name="preferences_passwords_sync_logins_reconnect">חיבור מחדש</string>
     <!-- Syncing saved logins in Fenix needs login -->
@@ -1530,7 +1558,7 @@
     <!-- Title of warning dialog if users have no device authentication set up -->
     <string name="logins_warning_dialog_title">שמירה מאובטחת של הכניסות והססמאות שלך</string>
     <!-- Message of warning dialog if users have no device authentication set up -->
-    <string name="logins_warning_dialog_message">ניתן להגדיר תבנית נעילת מכשיר, קוד או ססמה כדי להגן על פרטי הגישה והססמאות שלך מפני גורמים בלתי מהימנים שמחזיקים במכשיר שלך.</string>
+    <string name="logins_warning_dialog_message">ניתן להגדיר תבנית נעילת מכשיר, קוד או ססמה כדי להגן על פרטי הגישה והססמאות השמורות שלך מפני גורמים בלתי מהימנים שמחזיקים במכשיר שלך.</string>
     <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
     <string name="logins_warning_dialog_later">מאוחר יותר</string>
 
@@ -1559,6 +1587,8 @@
     <string name="preferences_credit_cards_save_and_autofill_cards_summary">הנתונים מוצפנים</string>
     <!-- Preference option for syncing credit cards across devices. This is displayed when the user is not signed into sync -->
     <string name="preferences_credit_cards_sync_cards_across_devices">סנכרון כרטיסים בין מכשירים</string>
+    <!-- Preference option for syncing credit cards across devices. This is displayed when the user is signed into sync -->
+    <string name="preferences_credit_cards_sync_cards">סנכרון כרטיסים</string>
     <!-- Preference option for adding a credit card -->
     <string name="preferences_credit_cards_add_credit_card">הוספת כרטיס אשראי</string>
 
@@ -1572,6 +1602,10 @@
     <string name="credit_cards_card_number">מספר כרטיס</string>
     <!-- The header for the expiration date of a credit card -->
     <string name="credit_cards_expiration_date">תאריך תפוגה</string>
+    <!-- The label for the expiration date month of a credit card to be used by a11y services-->
+    <string name="credit_cards_expiration_date_month">החודש של תאריך התפוגה</string>
+    <!-- The label for the expiration date year of a credit card to be used by a11y services-->
+    <string name="credit_cards_expiration_date_year">השנה של תאריך התפוגה</string>
     <!-- The header for the name on the credit card -->
     <string name="credit_cards_name_on_card">שם שעל הכרטיס</string>
     <!-- The header for the nickname for a credit card -->
@@ -1589,6 +1623,27 @@
 
     <!-- Title of the "Saved cards" screen -->
     <string name="credit_cards_saved_cards">כרטיסים שמורים</string>
+
+    <!-- Error message for credit card number validation -->
+    <string name="credit_cards_number_validation_error_message">נא להכניס מספר כרטיס אשראי תקין</string>
+
+    <!-- Error message for credit card name on card validation -->
+    <string name="credit_cards_name_on_card_validation_error_message">נא למלא שדה זה</string>
+    <!-- Message displayed in biometric prompt displayed for authentication before allowing users to view their saved credit cards -->
+    <string name="credit_cards_biometric_prompt_message">יש לבטל את הנעילה כדי להציג את הכרטיסים השמורים שלך</string>
+    <!-- Title of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_title">אבטחת כרטיסי האשראי שלך</string>
+    <!-- Message of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_message">ניתן להגדיר תבנית נעילת מכשיר, קוד או ססמה כדי להגן על כרטיסי האשראי השמורים שלך מפני גורמים בלתי מהימנים שמחזיקים במכשיר שלך.</string>
+    <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_set_up_now">להגדיר כעת</string>
+    <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_later">מאוחר יותר</string>
+    <!-- Title of PIN verification dialog to direct users to re-enter their device credentials to access their credit cards -->
+    <string name="credit_cards_biometric_prompt_message_pin">שחרור נעילת המכשיר שלך</string>
+
+    <!-- Message displayed in biometric prompt for authentication, before allowing users to use their stored credit card information -->
+    <string name="credit_cards_biometric_prompt_unlock_message">יש לבטל את הנעילה כדי להשתמש בפרטי כרטיס האשראי השמור</string>
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">הוספת מנוע חיפוש</string>
@@ -1755,20 +1810,13 @@
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">הסרה</string>
 
-    <!-- Deprecated: text for the firefox account onboarding card header
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_firefox_account_header">להוציא את המיטב מ־%s.</string>
-
     <!-- Content description radio buttons with a link to more information -->
     <string name="radio_preference_info_content_description">יש ללחוץ לפרטים נוספים</string>
 
-    <!-- Deprecated: No Open Tabs Message Header -->
-    <string name="no_collections_header1">לאסוף את הדברים החשובים לך</string>
-    <!-- Deprecated: Label to describe what collections are to a new user without any collections -->
-    <string name="no_collections_description1">ניתן לקבץ חיפושים, אתרים ולשוניות דומים יחד כדי לגשת אליהם מהר יותר בהמשך.</string>
-    <!-- Deprecated: text for the firefox account onboarding card header when we detect you're already signed in to -->
-    <string name="onboarding_firefox_account_auto_signin_header_2">דפדפן Firefox נוסף בטלפון זה מחובר כ־%s. האם ברצונך להתחבר עם חשבון זה?</string>
-    <!-- Deprecated: Describes the add to homescreen functionality -->
-    <string name="add_to_homescreen_description">באפשרותך להוסיף בקלות אתר זה למסך הבית של הטלפון שלך כדי לקבל גישה מיידית ולגלוש מהר יותר עם חוויה שמדמה שימוש ביישומון.</string>
+    <!-- Content description for the action bar "up" button -->
+    <string name="action_bar_up_description">ניווט למעלה</string>
 
-    </resources>
+    <!-- Content description for privacy content close button -->
+    <string name="privacy_content_close_button_content_description">סגירה</string>
+
+</resources>

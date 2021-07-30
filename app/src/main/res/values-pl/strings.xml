@@ -5,6 +5,7 @@
     <string name="app_name_private_5">%s (tryb prywatny)</string>
     <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
     <string name="app_name_private_4">%s (tryb prywatny)</string>
+
     <!-- Home Fragment -->
     <!-- Content description (not visible, for screen readers etc.): "Three dot" menu button. -->
     <string name="content_description_menu">Więcej opcji</string>
@@ -48,6 +49,16 @@
     <string name="tab_tray_enter_multiselect_content_description">Otwarto tryb wielokrotnego wyboru, zaznacz karty do zachowania w kolekcji</string>
     <!-- Content description on checkmark while tab is selected in multiselect mode in tab tray -->
     <string name="tab_tray_multiselect_selected_content_description">Zaznaczone</string>
+
+    <!-- Home - Recently saved bookmarks -->
+    <!-- Title for the home screen section with recently saved bookmarks. -->
+    <string name="recently_saved_bookmarks">Ostatnio zachowane</string>
+    <!-- Content description for the recently saved bookmarks section on the home screen. -->
+    <string name="recently_saved_bookmarks_content_description">Ostatnio dodane zakładki</string>
+    <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
+    <string name="recently_saved_show_all">Wyświetl wszystkie</string>
+    <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
+    <string name="recently_saved_show_all_content_description">Przycisk wyświetlenia wszystkich dodanych zakładek</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
     <string name="about_content">%1$s jest tworzony przez Mozillę.</string>
@@ -94,13 +105,6 @@
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">Zamknij</string>
 
-    <!-- Text for the banner message to tell users about our grid view feature. -->
-    <string name="tab_tray_grid_view_banner_message">Zmień układ otwartych kart. Otwórz ustawienia i wybierz siatkę w sekcji wyglądu kart.</string>
-    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
-    <string name="tab_tray_grid_view_banner_positive_button_text">Otwórz ustawienia</string>
-    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
-    <string name="tab_tray_grid_view_banner_negative_button_text">Zamknij</string>
-
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
     <string name="home_screen_shortcut_open_new_tab_2">Nowa karta</string>
@@ -109,6 +113,12 @@
 
     <!-- Heading for the Top Sites block -->
     <string name="home_screen_top_sites_heading">Popularne</string>
+
+    <!-- Recent Tabs -->
+    <!-- Header text for jumping back into the recent tab in the home screen -->
+    <string name="recent_tabs_header">Wskocz z powrotem</string>
+    <!-- Button text for showing all the tabs in the tabs tray -->
+    <string name="recent_tabs_show_all">Wyświetl wszystkie</string>
 
     <!-- Browser Fragment -->
     <!-- Content description (not visible, for screen readers etc.): Navigate to open tabs -->
@@ -185,6 +195,10 @@
     <string name="browser_menu_add">Dodaj</string>
     <!-- Browser menu label for editing a bookmark -->
     <string name="browser_menu_edit">Edytuj</string>
+
+    <!-- Browser Toolbar -->
+    <!-- Content description for the Home screen button on the browser toolbar -->
+    <string name="browser_toolbar_home">Strona startowa</string>
 
     <!-- Error message to show when the user tries to access a scheme not
         handled by the app (Ex: blob, tel etc) -->
@@ -419,6 +433,11 @@
         and the third is the device model. -->
     <string name="default_device_name_2">%1$s na urządzeniu %2$s %3$s</string>
 
+    <!-- Preference for syncing credit cards -->
+    <string name="preferences_sync_credit_cards">Karty płatnicze</string>
+    <!-- Preference for syncing addresses -->
+    <string name="preferences_sync_address">Adresy</string>
+
     <!-- Send Tab -->
     <!-- Name of the "receive tabs" notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="fxa_received_tab_channel_name">Odebrane karty</string>
@@ -449,9 +468,6 @@
     <!-- Text displayed when there are no exceptions, with learn more link that brings users to a tracking protection SUMO page -->
     <string name="exceptions_empty_message_learn_more_link">Więcej informacji</string>
 
-    <!-- Description in Quick Settings that tells user tracking protection is off globally for all sites, and links to Settings to turn it on -->
-    <string name="preferences_tracking_protection_turned_off_globally">Całkowicie wyłączona, otwórz ustawienia, aby ją włączyć.</string>
-
     <!-- Preference switch for Telemetry -->
     <string name="preferences_telemetry">Telemetria</string>
     <!-- Preference switch for usage and technical data collection -->
@@ -462,6 +478,8 @@
     <string name="preferences_marketing_data">Dane marketingowe</string>
     <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
     <string name="preferences_marketing_data_description">Udostępnia dane o funkcjach przeglądarki %1$s używanych przez użytkownika firmie Leanplum, naszemu dostawcy marketingu mobilnego.</string>
+    <!-- Preference description for marketing data collection -->
+    <string name="preferences_marketing_data_description2">Udostępnia podstawowe dane o użyciu firmie Adjust, naszemu dostawcy marketingu mobilnego.</string>
     <!-- Title for studies preferences -->
     <string name="preference_experiments_2">Badania</string>
     <!-- Summary for studies preferences -->
@@ -546,8 +564,6 @@
     <string name="library_new_tab">Nowa karta</string>
     <!-- Option in Library to find text in page -->
     <string name="library_find_in_page">Znajdź na stronie</string>
-    <!-- Option in Library to open Synced Tabs page -->
-    <string name="library_synced_tabs">Karty z innych urządzeń</string>
     <!-- Option in Library to open Reading List -->
     <string name="library_reading_list">Do przeczytania</string>
     <!-- Menu Item Label for Search in Library -->
@@ -583,9 +599,9 @@
     <!-- Option for a grid tab view -->
     <string name="tab_view_grid">Siatka</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
-    <string name="preferences_close_tabs">Zamykanie kart</string>
+    <string name="preferences_close_tabs">Zamykaj karty</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
-    <string name="close_tabs_manually">Ręczne</string>
+    <string name="close_tabs_manually">Ręcznie</string>
     <!-- Option for auto closing tabs that will auto close tabs after one day -->
     <string name="close_tabs_after_one_day">Po jednym dniu</string>
     <!-- Option for auto closing tabs that will auto close tabs after one week -->
@@ -593,6 +609,15 @@
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">Po miesiącu</string>
 
+    <!-- Start on Home -->
+    <!-- Title of a preference that allows a user to indicate after a specified amount of time when the app should start on the home screen -->
+    <string name="preferences_start_on_home">Zaczynaj na stronie startowej</string>
+    <!-- Option for starting on the home screen after after four hours or inactivity -->
+    <string name="start_on_home_after_four_hours">Po czterech godzinach</string>
+    <!-- Option for always starting on the home screen -->
+    <string name="start_on_home_always">Zawsze</string>
+    <!-- Option for never starting on the home screen -->
+    <string name="start_on_home_never">Nigdy</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
     <string name="close_tabs_manually_summary">Zamykane ręcznie</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
@@ -801,8 +826,6 @@
     <string name="bookmark_delete_folder_snackbar">Usunięto folder „%1$s”</string>
     <!-- Screen title for adding a bookmarks folder -->
     <string name="bookmark_add_folder">Dodaj folder</string>
-    <!-- deprecated: Snackbar title shown after a bookmark has been created. -->
-    <string name="bookmark_created_snackbar">Utworzono zakładkę</string>
     <!-- Snackbar title shown after a bookmark has been created. -->
     <string name="bookmark_saved_snackbar">Dodano zakładkę</string>
     <!-- Snackbar edit button shown after a bookmark has been created. -->
@@ -1029,6 +1052,16 @@
     <string name="notification_pbm_action_delete_and_open">Usuń i otwórz</string>
     <!-- Name of the "Powered by Fenix" notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="notification_powered_by_channel_name">Funkcja przeglądarki</string>
+    <!-- Name of the marketing notification channel. Displayed in the "App notifications" system settings for the app -->
+    <string name="notification_marketing_channel_name">Marketing</string>
+    <!-- Title shown in the notification that pops up to remind the user to set fenix as default browser.
+    %1$s is a placeholder that will be replaced by the app name (Fenix). -->
+    <string name="notification_default_browser_title">%1$s jest szybki i prywatny</string>
+    <!-- Text shown in the notification that pops up to remind the user to set fenix as default browser.
+    %1$s is a placeholder that will be replaced by the app name (Fenix). -->
+    <string name="notification_default_browser_text">Ustaw przeglądarkę %1$s jako domyślną</string>
+
+    <!-- Snackbar -->
     <!-- Text shown in snackbar when user deletes a collection -->
     <string name="snackbar_collection_deleted">Usunięto kolekcję</string>
     <!-- Text shown in snackbar when user renames a collection -->
@@ -1459,10 +1492,8 @@
     <string name="preferences_passwords_autofill">Automatyczne wypełnianie</string>
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">Synchronizowanie danych logowania</string>
-    <!-- Syncing saved logins in Fenix is on -->
-    <string name="preferences_passwords_sync_logins_on">Włączone</string>
-    <!-- Syncing saved logins in Fenix is off -->
-    <string name="preferences_passwords_sync_logins_off">Wyłączone</string>
+    <!-- Preference for syncing saved logins in Fenix, when not signed in-->
+    <string name="preferences_passwords_sync_logins_across_devices">Synchronizuj karty między urządzeniami</string>
     <!-- Syncing saved logins in Fenix needs reconnect to sync -->
     <string name="preferences_passwords_sync_logins_reconnect">Połącz ponownie</string>
     <!-- Syncing saved logins in Fenix needs login -->
@@ -1563,6 +1594,8 @@
     <string name="preferences_credit_cards_save_and_autofill_cards_summary">Dane są zaszyfrowane</string>
     <!-- Preference option for syncing credit cards across devices. This is displayed when the user is not signed into sync -->
     <string name="preferences_credit_cards_sync_cards_across_devices">Synchronizuj karty między urządzeniami</string>
+    <!-- Preference option for syncing credit cards across devices. This is displayed when the user is signed into sync -->
+    <string name="preferences_credit_cards_sync_cards">Synchronizuj karty</string>
     <!-- Preference option for adding a credit card -->
     <string name="preferences_credit_cards_add_credit_card">Dodaj kartę płatniczą</string>
 
@@ -1576,6 +1609,10 @@
     <string name="credit_cards_card_number">Numer karty</string>
     <!-- The header for the expiration date of a credit card -->
     <string name="credit_cards_expiration_date">Data ważności</string>
+    <!-- The label for the expiration date month of a credit card to be used by a11y services-->
+    <string name="credit_cards_expiration_date_month">Miesiąc daty ważności</string>
+    <!-- The label for the expiration date year of a credit card to be used by a11y services-->
+    <string name="credit_cards_expiration_date_year">Rok daty ważności</string>
     <!-- The header for the name on the credit card -->
     <string name="credit_cards_name_on_card">Imię i nazwisko</string>
     <!-- The header for the nickname for a credit card -->
@@ -1592,6 +1629,27 @@
     <string name="credit_cards_cancel_button">Anuluj</string>
     <!-- Title of the "Saved cards" screen -->
     <string name="credit_cards_saved_cards">Zachowane karty</string>
+
+    <!-- Error message for credit card number validation -->
+    <string name="credit_cards_number_validation_error_message">Wprowadź prawidłowy numer karty płatniczej</string>
+
+    <!-- Error message for credit card name on card validation -->
+    <string name="credit_cards_name_on_card_validation_error_message">Wypełnij to pole</string>
+    <!-- Message displayed in biometric prompt displayed for authentication before allowing users to view their saved credit cards -->
+    <string name="credit_cards_biometric_prompt_message">Odblokuj, aby wyświetlić zachowane karty</string>
+    <!-- Title of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_title">Zabezpiecz karty płatnicze</string>
+    <!-- Message of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_message">Skonfiguruj wzór blokady, kod PIN lub hasło, aby ochronić zachowane karty płatnicze w przypadku, gdy ktoś inny uzyska dostęp do urządzenia.</string>
+    <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_set_up_now">Skonfiguruj teraz</string>
+    <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_later">Później</string>
+    <!-- Title of PIN verification dialog to direct users to re-enter their device credentials to access their credit cards -->
+    <string name="credit_cards_biometric_prompt_message_pin">Odblokuj urządzenie</string>
+
+    <!-- Message displayed in biometric prompt for authentication, before allowing users to use their stored credit card information -->
+    <string name="credit_cards_biometric_prompt_unlock_message">Odblokuj, aby użyć przechowywanych informacji o kartach płatniczych</string>
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Dodaj wyszukiwarkę</string>
@@ -1720,9 +1778,9 @@
     <!-- Text displayed to ask user to connect another device as no devices found with account -->
     <string name="synced_tabs_connect_another_device">Połącz inne urządzenie.</string>
     <!-- Text displayed asking user to re-authenticate -->
-    <string name="synced_tabs_reauth">Proszę uwierzytelnić się ponownie.</string>
+    <string name="synced_tabs_reauth">Uwierzytelnij się ponownie.</string>
     <!-- Text displayed when user has disabled tab syncing in Firefox Sync Account -->
-    <string name="synced_tabs_enable_tab_syncing">Proszę włączyć synchronizację kart.</string>
+    <string name="synced_tabs_enable_tab_syncing">Włącz synchronizację kart.</string>
 
     <!-- Text displayed when user has no tabs that have been synced -->
     <string name="synced_tabs_no_tabs">Brak otwartych kart w Firefoksach na innych urządzeniach.</string>
@@ -1760,20 +1818,13 @@
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">Usuń</string>
 
-    <!-- Deprecated: text for the firefox account onboarding card header
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_firefox_account_header">Zacznij synchronizować zakładki, hasła i nie tylko za pomocą konta Firefoksa.</string>
-
     <!-- Content description radio buttons with a link to more information -->
     <string name="radio_preference_info_content_description">Kliknij, aby wyświetlić więcej informacji</string>
 
-    <!-- Deprecated: No Open Tabs Message Header -->
-    <string name="no_collections_header1">Zbierz rzeczy, które są dla Ciebie ważne</string>
-    <!-- Deprecated: Label to describe what collections are to a new user without any collections -->
-    <string name="no_collections_description1">Połącz ze sobą podobne wyszukiwania, witryny i karty, aby szybciej do nich wracać.</string>
-    <!-- Deprecated: text for the firefox account onboarding card header when we detect you're already signed in to -->
-    <string name="onboarding_firefox_account_auto_signin_header_2">Zalogowano jako %s w innej przeglądarce Firefox na tym telefonie. Czy chcesz się zalogować na tym koncie?</string>
-    <!-- Deprecated: Describes the add to homescreen functionality -->
-    <string name="add_to_homescreen_description">Można łatwo dodać tę stronę do ekranu głównego telefonu, aby mieć do niej bezpośredni dostęp i używać jej jak aplikację.</string>
+    <!-- Content description for the action bar "up" button -->
+    <string name="action_bar_up_description">Przejdź w górę</string>
 
-    </resources>
+    <!-- Content description for privacy content close button -->
+    <string name="privacy_content_close_button_content_description">Zamknij</string>
+
+</resources>

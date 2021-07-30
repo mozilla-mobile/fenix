@@ -11,28 +11,21 @@
 # You can use it by running this command from the project root:
 # `ln -s ../../config/pre-push-recommended.sh .git/hooks/pre-push`
 
-# Descriptions for each gradle task below can be found in the
-# output of `./gradlew tasks`.
+set -e
 
-# Prevent push if generated glean docs are not committed.
-# A better implementation would make sure these doc updates
-# only came from this commit.
-./gradlew -q \
-        gleanGenerateMetricsDocsForDebug \
-        gleanGenerateMetricsSourceForDebug
-if git status --porcelain=v1 | grep -q "docs/metrics.md"; then
-  echo "
-FAIL pre-push hook: generated glean file, docs/metrics.md, has uncommitted changes.
-Please commit these files and try again.
-
-This check tries to prevent these generated files from being uncommitted on master.
-However, it may fail unintuitively if we're in that state. If this happens often
-and is disruptive to your workflow, please notify mcomella so we can improve this
-check." >&2
-  exit 1
+# Run linter in tools/ if it's installed.
+if `which pycodestyle > /dev/null`; then
+    pycodestyle tools
 fi
 
-# Run core checks.
+# Run core checks. Descriptions for each gradle task
+# below can be found in the output of `./gradlew tasks`.
+#
+# Tasks omitted because they take a long time to run:
+# - assembling all variants
+# - unit test on all variants
+# - UI tests
+# - android lint (takes a long time to run)
 ./gradlew -q \
         ktlint \
         detekt \
@@ -41,9 +34,3 @@ fi
         mozilla-detekt-rules:test \
         mozilla-lint-rules:test \
         testDebug
-
-# Tasks omitted because they take a long time to run:
-# - assembling all variants
-# - unit test on all variants
-# - UI tests
-# - android lint (takes a long time to run)

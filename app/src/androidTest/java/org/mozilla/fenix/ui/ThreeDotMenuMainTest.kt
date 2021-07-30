@@ -9,7 +9,6 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.ui.robots.homeScreen
@@ -49,11 +48,7 @@ class ThreeDotMenuMainTest {
             verifyHistoryButton()
             verifyDownloadsButton()
             verifyAddOnsButton()
-            if (FeatureFlags.tabsTrayRewrite) {
-                verifySyncSignInButton()
-            } else {
-                verifySyncedTabsButton()
-            }
+            verifySyncSignInButton()
             verifyDesktopSite()
             verifyWhatsNewButton()
             verifyHelpButton()

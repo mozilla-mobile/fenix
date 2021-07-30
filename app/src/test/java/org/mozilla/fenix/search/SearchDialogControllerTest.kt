@@ -8,10 +8,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import io.mockk.MockKAnnotations
-import io.mockk.Runs
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.spyk
@@ -19,18 +17,20 @@ import io.mockk.unmockkObject
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
-import mozilla.components.browser.session.Session
-import mozilla.components.browser.session.SessionManager
+import mozilla.components.browser.state.action.BrowserAction
+import mozilla.components.browser.state.action.TabListAction
 import mozilla.components.browser.state.search.SearchEngine
+import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.feature.tabs.TabsUseCases
+import mozilla.components.support.test.libstate.ext.waitUntilIdle
+import mozilla.components.support.test.middleware.CaptureActionsMiddleware
 import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
-import org.mozilla.fenix.helpers.DisableNavGraphProviderAssertionRule
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
@@ -50,31 +50,31 @@ class SearchDialogControllerTest {
     @MockK private lateinit var searchEngine: SearchEngine
     @MockK(relaxed = true) private lateinit var metrics: MetricController
     @MockK(relaxed = true) private lateinit var settings: Settings
-    @MockK private lateinit var sessionManager: SessionManager
     @MockK(relaxed = true) private lateinit var clearToolbarFocus: () -> Unit
     @MockK(relaxed = true) private lateinit var focusToolbar: () -> Unit
     @MockK(relaxed = true) private lateinit var clearToolbar: () -> Unit
     @MockK(relaxed = true) private lateinit var dismissDialog: () -> Unit
 
     private lateinit var controller: SearchDialogController
-
-    @get:Rule
-    val disableNavGraphProviderAssertionRule = DisableNavGraphProviderAssertionRule()
+    private lateinit var middleware: CaptureActionsMiddleware<BrowserState, BrowserAction>
+    private lateinit var browserStore: BrowserStore
 
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
         mockkObject(MetricsUtils)
-        val browserStore = BrowserStore()
+        middleware = CaptureActionsMiddleware()
+        browserStore = BrowserStore(
+            middleware = listOf(middleware)
+        )
         every { store.state.tabId } returns "test-tab-id"
         every { store.state.searchEngineSource.searchEngine } returns searchEngine
-        every { sessionManager.select(any()) } just Runs
         every { navController.currentDestination } returns mockk {
             every { id } returns R.id.searchDialogFragment
         }
         every { MetricsUtils.createSearchEvent(searchEngine, browserStore, any()) } returns null
 
-        val tabsUseCases = TabsUseCases(browserStore, sessionManager)
+        val tabsUseCases = TabsUseCases(browserStore)
 
         controller = SearchDialogController(
             activity = activity,
@@ -331,34 +331,26 @@ class SearchDialogControllerTest {
 
     @Test
     fun handleExistingSessionSelected() {
-        val session = mockk<Session>()
-
-        every { sessionManager.findSessionById("selected") } returns session
-
         controller.handleExistingSessionSelected("selected")
 
-        verify { sessionManager.select(session) }
-        verify { activity.openToBrowser(from = BrowserDirection.FromSearchDialog) }
-    }
+        browserStore.waitUntilIdle()
 
-    @Test
-    fun handleExistingSessionSelected_tabId_nullSession() {
-        every { sessionManager.findSessionById("tab-id") } returns null
+        middleware.assertFirstAction(TabListAction.SelectTabAction::class) { action ->
+            assertEquals("selected", action.tabId)
+        }
 
-        controller.handleExistingSessionSelected("tab-id")
-
-        verify(inverse = true) { sessionManager.select(any()) }
         verify { activity.openToBrowser(from = BrowserDirection.FromSearchDialog) }
     }
 
     @Test
     fun handleExistingSessionSelected_tabId() {
-        val session = mockk<Session>()
-        every { sessionManager.findSessionById("tab-id") } returns session
-
         controller.handleExistingSessionSelected("tab-id")
 
-        verify { sessionManager.select(any()) }
+        browserStore.waitUntilIdle()
+
+        middleware.assertFirstAction(TabListAction.SelectTabAction::class) { action ->
+            assertEquals("tab-id", action.tabId)
+        }
         verify { activity.openToBrowser(from = BrowserDirection.FromSearchDialog) }
     }
 

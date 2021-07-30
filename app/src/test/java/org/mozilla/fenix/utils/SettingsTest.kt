@@ -4,6 +4,8 @@
 
 package org.mozilla.fenix.utils
 
+import io.mockk.every
+import io.mockk.spyk
 import mozilla.components.feature.sitepermissions.SitePermissionsRules
 import mozilla.components.feature.sitepermissions.SitePermissionsRules.Action.ALLOWED
 import mozilla.components.feature.sitepermissions.SitePermissionsRules.Action.ASK_TO_ALLOW
@@ -19,6 +21,7 @@ import org.junit.runner.RunWith
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.settings.PhoneFeature
 import org.mozilla.fenix.settings.deletebrowsingdata.DeleteBrowsingDataOnQuitType
+import java.util.Calendar
 
 @RunWith(FenixRobolectricTestRunner::class)
 class SettingsTest {
@@ -31,7 +34,7 @@ class SettingsTest {
         microphone = ASK_TO_ALLOW,
         notification = ASK_TO_ALLOW,
         autoplayAudible = AutoplayAction.BLOCKED,
-        autoplayInaudible = AutoplayAction.BLOCKED,
+        autoplayInaudible = AutoplayAction.ALLOWED,
         persistentStorage = ASK_TO_ALLOW,
         mediaKeySystemAccess = ASK_TO_ALLOW
     )
@@ -183,13 +186,13 @@ class SettingsTest {
     fun showLoginsDialogWarning() {
         // When just created
         // Then
-        assertEquals(0, settings.loginsSecureWarningCount.value)
+        assertEquals(0, settings.secureWarningCount.value)
 
         // When
-        settings.incrementShowLoginsSecureWarningCount()
+        settings.incrementSecureWarningCount()
 
         // Then
-        assertEquals(1, settings.loginsSecureWarningCount.value)
+        assertEquals(1, settings.secureWarningCount.value)
     }
 
     @Test
@@ -199,7 +202,7 @@ class SettingsTest {
         assertTrue(settings.shouldShowSecurityPinWarning)
 
         // When
-        settings.incrementShowLoginsSecureWarningCount()
+        settings.incrementSecureWarningCount()
 
         // Then
         assertFalse(settings.shouldShowSecurityPinWarning)
@@ -603,7 +606,7 @@ class SettingsTest {
         )
 
         assertEquals(
-            AutoplayAction.BLOCKED,
+            AutoplayAction.ALLOWED,
             settings.getSitePermissionsCustomSettingsRules().autoplayInaudible
         )
     }
@@ -670,5 +673,96 @@ class SettingsTest {
         // Then
         assertEquals("testAmoUser", settings.overrideAmoUser)
         assertTrue(settings.amoCollectionOverrideConfigured())
+    }
+
+    @Test
+    fun creditCardsSavedCount() {
+        // When just created
+        // Then
+        assertEquals(0, settings.creditCardsSavedCount)
+
+        // When
+        settings.creditCardsSavedCount += 1
+
+        // Then
+        assertEquals(1, settings.creditCardsSavedCount)
+
+        // When
+        settings.creditCardsSavedCount += 1
+
+        // Then
+        assertEquals(2, settings.creditCardsSavedCount)
+    }
+
+    @Test
+    fun `GIVEN startOnHomeAlways is selected WHEN calling shouldStartOnHome THEN return true`() {
+        settings.startOnHomeAlways = true
+        settings.startOnHomeNever = false
+        settings.startOnHomeAfterFourHours = false
+
+        assertTrue(settings.shouldStartOnHome())
+    }
+
+    @Test
+    fun `GIVEN startOnHomeNever is selected WHEN calling shouldStartOnHome THEN return be false`() {
+        settings.startOnHomeNever = true
+        settings.startOnHomeAlways = false
+        settings.startOnHomeAfterFourHours = false
+
+        assertFalse(settings.shouldStartOnHome())
+    }
+
+    @Test
+    fun `GIVEN startOnHomeAfterFourHours is selected after four hours of inactivity WHEN calling shouldStartOnHome THEN return true`() {
+        val localSetting = spyk(settings)
+        val now = Calendar.getInstance()
+
+        localSetting.startOnHomeAfterFourHours = true
+        localSetting.startOnHomeNever = false
+        localSetting.startOnHomeAlways = false
+
+        now.timeInMillis = System.currentTimeMillis()
+        localSetting.lastBrowseActivity = now.timeInMillis
+        now.add(Calendar.HOUR, 4)
+
+        every { localSetting.timeNowInMillis() } returns now.timeInMillis
+
+        assertTrue(localSetting.shouldStartOnHome())
+    }
+
+    @Test
+    fun `GIVEN startOnHomeAfterFourHours is selected and with recent activity WHEN calling shouldStartOnHome THEN return false`() {
+        val localSetting = spyk(settings)
+        val now = System.currentTimeMillis()
+
+        localSetting.startOnHomeAfterFourHours = true
+        localSetting.startOnHomeNever = false
+        localSetting.startOnHomeAlways = false
+
+        localSetting.lastBrowseActivity = now
+
+        every { localSetting.timeNowInMillis() } returns now
+
+        assertFalse(localSetting.shouldStartOnHome())
+    }
+
+    @Test
+    fun `GIVEN shownDefaultBrowserNotification and isDefaultBrowser WHEN calling shouldShowDefaultBrowserNotification THEN return correct value`() {
+        val localSetting = spyk(settings)
+        every { localSetting.isDefaultBrowserBlocking() } returns false
+
+        localSetting.defaultBrowserNotificationDisplayed = false
+        assert(localSetting.shouldShowDefaultBrowserNotification())
+
+        localSetting.defaultBrowserNotificationDisplayed = true
+        assertFalse(localSetting.shouldShowDefaultBrowserNotification())
+
+        every { localSetting.isDefaultBrowserBlocking() } returns true
+
+        localSetting.defaultBrowserNotificationDisplayed = false
+        assertFalse(localSetting.shouldShowDefaultBrowserNotification())
+
+        localSetting.defaultBrowserNotificationDisplayed = true
+        assertFalse(localSetting.shouldShowDefaultBrowserNotification())
     }
 }

@@ -4,6 +4,7 @@
     <string name="app_name_private_5">Priwatny %s</string>
     <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
     <string name="app_name_private_4">%s (priwatny)</string>
+
     <!-- Home Fragment -->
     <!-- Content description (not visible, for screen readers etc.): "Three dot" menu button. -->
     <string name="content_description_menu">Dalšne nastajenja</string>
@@ -46,6 +47,16 @@
     <string name="tab_tray_enter_multiselect_content_description">Wěcejwuběrański modus jo se zmóžnił, wubjeŕśo rejtariki, aby je do zběrki składował</string>
     <!-- Content description on checkmark while tab is selected in multiselect mode in tab tray -->
     <string name="tab_tray_multiselect_selected_content_description">Wubrany</string>
+
+    <!-- Home - Recently saved bookmarks -->
+    <!-- Title for the home screen section with recently saved bookmarks. -->
+    <string name="recently_saved_bookmarks">Njedawno skłaźone</string>
+    <!-- Content description for the recently saved bookmarks section on the home screen. -->
+    <string name="recently_saved_bookmarks_content_description">Njedawno skłaźone cytańske znamjenja</string>
+    <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
+    <string name="recently_saved_show_all">Wšykne pokazaś</string>
+    <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
+    <string name="recently_saved_show_all_content_description">Tłocašk „Wšykne skłaźone cytańske znamjenja pokazaś“</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
     <string name="about_content">%1$s se pśez Mozilla zgótujo.</string>
@@ -93,13 +104,6 @@
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">Zachyśiś</string>
 
-    <!-- Text for the banner message to tell users about our grid view feature. -->
-    <string name="tab_tray_grid_view_banner_message">Wubjeŕśo wugótowanje za wócynjone rejtariki. Pśejźćo k nastajenjam a wubjeŕśo kśidno pód rejtarikowym naglědom.</string>
-    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
-    <string name="tab_tray_grid_view_banner_positive_button_text">K nastajenjam</string>
-    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
-    <string name="tab_tray_grid_view_banner_negative_button_text">Zachyśiś</string>
-
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
     <string name="home_screen_shortcut_open_new_tab_2">Nowy rejtarik</string>
@@ -108,6 +112,12 @@
 
     <!-- Heading for the Top Sites block -->
     <string name="home_screen_top_sites_heading">Nejcesćej woglědane sedła</string>
+
+    <!-- Recent Tabs -->
+    <!-- Header text for jumping back into the recent tab in the home screen -->
+    <string name="recent_tabs_header">Slědk skócyś</string>
+    <!-- Button text for showing all the tabs in the tabs tray -->
+    <string name="recent_tabs_show_all">Wšykne pokazaś</string>
 
     <!-- Browser Fragment -->
     <!-- Content description (not visible, for screen readers etc.): Navigate to open tabs -->
@@ -182,6 +192,10 @@
     <string name="browser_menu_add">Pśidaś</string>
     <!-- Browser menu label for editing a bookmark -->
     <string name="browser_menu_edit">Wobźěłaś</string>
+
+    <!-- Browser Toolbar -->
+    <!-- Content description for the Home screen button on the browser toolbar -->
+    <string name="browser_toolbar_home">Startowa wobrazowka</string>
 
     <!-- Error message to show when the user tries to access a scheme not
         handled by the app (Ex: blob, tel etc) -->
@@ -412,6 +426,11 @@
         and the third is the device model. -->
     <string name="default_device_name_2">%1$s wót %2$s %3$s</string>
 
+    <!-- Preference for syncing credit cards -->
+    <string name="preferences_sync_credit_cards">Kreditowe kórty</string>
+    <!-- Preference for syncing addresses -->
+    <string name="preferences_sync_address">Adrese</string>
+
     <!-- Send Tab -->
     <!-- Name of the "receive tabs" notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="fxa_received_tab_channel_name">Dostane rejtariki</string>
@@ -442,9 +461,6 @@
     <!-- Text displayed when there are no exceptions, with learn more link that brings users to a tracking protection SUMO page -->
     <string name="exceptions_empty_message_learn_more_link">Dalšne informacije</string>
 
-    <!-- Description in Quick Settings that tells user tracking protection is off globally for all sites, and links to Settings to turn it on -->
-    <string name="preferences_tracking_protection_turned_off_globally">Globalnje znjemóžnjony, źiśo do nastajenjow, aby jen zmóžnił.</string>
-
     <!-- Preference switch for Telemetry -->
     <string name="preferences_telemetry">Telemetrija</string>
     <!-- Preference switch for usage and technical data collection -->
@@ -455,6 +471,8 @@
     <string name="preferences_marketing_data">Marketingowe daty</string>
     <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
     <string name="preferences_marketing_data_description">Źěli daty wó tom, kótare funkcije w %1$s wužywaśo, z Leanplum, našym póbitowarjom za mobilny marketing.</string>
+    <!-- Preference description for marketing data collection -->
+    <string name="preferences_marketing_data_description2">Źěli zakładne wužywańske daty z Adjust, našym mobilnym marketingowym póbitowarjom</string>
     <!-- Title for studies preferences -->
     <string name="preference_experiments_2">Studije</string>
     <!-- Summary for studies preferences -->
@@ -541,8 +559,6 @@
     <string name="library_new_tab">Nowy rejtarik</string>
     <!-- Option in Library to find text in page -->
     <string name="library_find_in_page">Na boku pytaś</string>
-    <!-- Option in Library to open Synced Tabs page -->
-    <string name="library_synced_tabs">Synchronizěrowane rejtariki</string>
     <!-- Option in Library to open Reading List -->
     <string name="library_reading_list">Cytańska lisćina</string>
     <!-- Menu Item Label for Search in Library -->
@@ -587,6 +603,15 @@
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">Pó jadnom mjasecu</string>
 
+    <!-- Start on Home -->
+    <!-- Title of a preference that allows a user to indicate after a specified amount of time when the app should start on the home screen -->
+    <string name="preferences_start_on_home">Na startowej wobrazowce zachopiś</string>
+    <!-- Option for starting on the home screen after after four hours or inactivity -->
+    <string name="start_on_home_after_four_hours">Pó styrich góźinach</string>
+    <!-- Option for always starting on the home screen -->
+    <string name="start_on_home_always">Pśecej</string>
+    <!-- Option for never starting on the home screen -->
+    <string name="start_on_home_never">Nigda</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
     <string name="close_tabs_manually_summary">Manuelnje zacyniś</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
@@ -795,8 +820,6 @@
     <string name="bookmark_delete_folder_snackbar">%1$s jo se wulašował</string>
     <!-- Screen title for adding a bookmarks folder -->
     <string name="bookmark_add_folder">Zarědnik pśidaś</string>
-    <!-- deprecated: Snackbar title shown after a bookmark has been created. -->
-    <string name="bookmark_created_snackbar">Cytańske znamje jo se napórało.</string>
     <!-- Snackbar title shown after a bookmark has been created. -->
     <string name="bookmark_saved_snackbar">Cytańske znamje jo se składło!</string>
     <!-- Snackbar edit button shown after a bookmark has been created. -->
@@ -1021,6 +1044,16 @@
     <string name="notification_pbm_action_delete_and_open">Lašowaś a wócyniś</string>
     <!-- Name of the "Powered by Fenix" notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="notification_powered_by_channel_name">Spěchowany wót</string>
+    <!-- Name of the marketing notification channel. Displayed in the "App notifications" system settings for the app -->
+    <string name="notification_marketing_channel_name">Marketing</string>
+    <!-- Title shown in the notification that pops up to remind the user to set fenix as default browser.
+    %1$s is a placeholder that will be replaced by the app name (Fenix). -->
+    <string name="notification_default_browser_title">%1$s jo malsny a priwatny</string>
+    <!-- Text shown in the notification that pops up to remind the user to set fenix as default browser.
+    %1$s is a placeholder that will be replaced by the app name (Fenix). -->
+    <string name="notification_default_browser_text">%1$s k wašomu standardnemu wobglědowakoju cyniś</string>
+
+    <!-- Snackbar -->
     <!-- Text shown in snackbar when user deletes a collection -->
     <string name="snackbar_collection_deleted">Zběrka jo se wulašowała</string>
     <!-- Text shown in snackbar when user renames a collection -->
@@ -1451,10 +1484,8 @@
     <string name="preferences_passwords_autofill">Awtomatiski wupołniś</string>
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">Pśizjawjenja synchronizěrowaś</string>
-    <!-- Syncing saved logins in Fenix is on -->
-    <string name="preferences_passwords_sync_logins_on">Zašaltowany</string>
-    <!-- Syncing saved logins in Fenix is off -->
-    <string name="preferences_passwords_sync_logins_off">Wušaltowany</string>
+    <!-- Preference for syncing saved logins in Fenix, when not signed in-->
+    <string name="preferences_passwords_sync_logins_across_devices">Pśizjawjenja mjazy rědami synchronizěrowaś</string>
     <!-- Syncing saved logins in Fenix needs reconnect to sync -->
     <string name="preferences_passwords_sync_logins_reconnect">Znowego zwězaś</string>
     <!-- Syncing saved logins in Fenix needs login -->
@@ -1556,6 +1587,8 @@
     <string name="preferences_credit_cards_save_and_autofill_cards_summary">Daty su skoděrowane</string>
     <!-- Preference option for syncing credit cards across devices. This is displayed when the user is not signed into sync -->
     <string name="preferences_credit_cards_sync_cards_across_devices">Kórty pśez rědy synchronizěrowaś</string>
+    <!-- Preference option for syncing credit cards across devices. This is displayed when the user is signed into sync -->
+    <string name="preferences_credit_cards_sync_cards">Kórty synchronizěrowaś</string>
     <!-- Preference option for adding a credit card -->
     <string name="preferences_credit_cards_add_credit_card">Kreditowu kórtu pśidaś</string>
 
@@ -1569,6 +1602,10 @@
     <string name="credit_cards_card_number">Kórtowy numer</string>
     <!-- The header for the expiration date of a credit card -->
     <string name="credit_cards_expiration_date">Datum płaśiwosći</string>
+    <!-- The label for the expiration date month of a credit card to be used by a11y services-->
+    <string name="credit_cards_expiration_date_month">Datum płaśiwosći (mjasec)</string>
+    <!-- The label for the expiration date year of a credit card to be used by a11y services-->
+    <string name="credit_cards_expiration_date_year">Datum płaśiwosći (lěto)</string>
     <!-- The header for the name on the credit card -->
     <string name="credit_cards_name_on_card">Mě na kórśe</string>
     <!-- The header for the nickname for a credit card -->
@@ -1586,6 +1623,27 @@
 
     <!-- Title of the "Saved cards" screen -->
     <string name="credit_cards_saved_cards">Skłaźone kórty</string>
+
+    <!-- Error message for credit card number validation -->
+    <string name="credit_cards_number_validation_error_message">Pšosym zapódajśo płaśiwy numer kreditoweje kórty</string>
+
+    <!-- Error message for credit card name on card validation -->
+    <string name="credit_cards_name_on_card_validation_error_message">Pšosym wupołńśo toś to pólo</string>
+    <!-- Message displayed in biometric prompt displayed for authentication before allowing users to view their saved credit cards -->
+    <string name="credit_cards_biometric_prompt_message">Za zwobraznjowanje wašych skłaźonych kreditowych kórtow wótwóriś</string>
+    <!-- Title of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_title">Kreditowe kórty zawěsćiś</string>
+    <!-- Message of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_message">Nastajśo rědowy zastajeński muster, PIN abo gronidło, aby pśistupoju k swójim skłaźonym kreditowym kórtam zajźował, jolic něchten drugi ma waš rěd.</string>
+    <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_set_up_now">Něnto konfigurěrowaś</string>
+    <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_later">Pózdźej</string>
+    <!-- Title of PIN verification dialog to direct users to re-enter their device credentials to access their credit cards -->
+    <string name="credit_cards_biometric_prompt_message_pin">Wótwóŕśo swój rěd</string>
+
+    <!-- Message displayed in biometric prompt for authentication, before allowing users to use their stored credit card information -->
+    <string name="credit_cards_biometric_prompt_unlock_message">Blokěrowanje wótpóraś, aby se skłaźone informacije kreditoweje kórty wužywali</string>
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Pytnicu pśidaś</string>
@@ -1752,20 +1810,13 @@
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">Wótwónoźeś</string>
 
-    <!-- Deprecated: text for the firefox account onboarding card header
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_firefox_account_header">Wuwónoźćo nejlěpše z %s.</string>
-
     <!-- Content description radio buttons with a link to more information -->
     <string name="radio_preference_info_content_description">Klikniśo za dalšne drobnostki</string>
 
-    <!-- Deprecated: No Open Tabs Message Header -->
-    <string name="no_collections_header1">Gromaźćo wěcy, kótarež su wam wažne</string>
-    <!-- Deprecated: Label to describe what collections are to a new user without any collections -->
-    <string name="no_collections_description1">Zrědujśo pódobne pytanja, sedła a rejtariki za póznjejšy malsny pśistup.</string>
-    <!-- Deprecated: text for the firefox account onboarding card header when we detect you're already signed in to -->
-    <string name="onboarding_firefox_account_auto_signin_header_2">Sćo se pśizjawił ako %s w drugem wobglědowaku Firefox na toś tom telefonje. Cośo se z toś tym kontom pśizjawiś?</string>
-    <!-- Deprecated: Describes the add to homescreen functionality -->
-    <string name="add_to_homescreen_description">Móžośo startowej wobrazowce swójogo telefona toś to websedło lažko pśidaś, aby direktny pśistup měł a malsnjej z dožywjenim nałoženja pśeglědował.</string>
+    <!-- Content description for the action bar "up" button -->
+    <string name="action_bar_up_description">Górjej</string>
 
-    </resources>
+    <!-- Content description for privacy content close button -->
+    <string name="privacy_content_close_button_content_description">Zacyniś</string>
+
+</resources>

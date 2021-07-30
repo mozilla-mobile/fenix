@@ -2,13 +2,14 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-@file:Suppress("TooManyFunctions")
+@file:Suppress("TooManyFunctions", "TooGenericExceptionCaught")
 
 package org.mozilla.fenix.ui.robots
 
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.SystemClock
 import android.widget.EditText
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
@@ -22,6 +23,7 @@ import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.Visibility
 import androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withResourceName
@@ -33,10 +35,13 @@ import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
 import mozilla.components.browser.state.selector.selectedTab
+import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.concept.engine.mediasession.MediaSession
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.Matchers.not
 import org.junit.Assert.assertTrue
+import org.junit.Assert.fail
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.Constants.LONG_CLICK_DURATION
@@ -329,6 +334,59 @@ class BrowserRobot {
         element.click(LONG_CLICK_DURATION)
     }
 
+    fun longClickAndCopyText(expectedText: String, selectAll: Boolean = false) {
+        try {
+            // Long click desired text
+            mDevice.waitForWindowUpdate(packageName, waitingTime)
+            mDevice.findObject(UiSelector().resourceId("$packageName:id/engineView"))
+                .waitForExists(waitingTime)
+            mDevice.findObject(UiSelector().textContains(expectedText)).waitForExists(waitingTime)
+            val link = mDevice.findObject(By.textContains(expectedText))
+            link.click(LONG_CLICK_DURATION)
+
+            // Click Select all from the text selection toolbar
+            if (selectAll) {
+                mDevice.findObject(UiSelector().textContains("Select all")).waitForExists(waitingTime)
+                val selectAllText = mDevice.findObject(By.textContains("Select all"))
+                selectAllText.click()
+            }
+
+            // Click Copy from the text selection toolbar
+            mDevice.findObject(UiSelector().textContains("Copy")).waitForExists(waitingTime)
+            val copyText = mDevice.findObject(By.textContains("Copy"))
+            copyText.click()
+        } catch (e: NullPointerException) {
+            println("Failed to long click desired text: ${e.localizedMessage}")
+
+            // Refresh the page in case the first long click didn't succeed
+            navigationToolbar {
+            }.openThreeDotMenu {
+            }.refreshPage {
+                mDevice.waitForIdle()
+            }
+
+            // Long click again the desired text
+            mDevice.waitForWindowUpdate(packageName, waitingTime)
+            mDevice.findObject(UiSelector().resourceId("$packageName:id/engineView"))
+                .waitForExists(waitingTime)
+            mDevice.findObject(UiSelector().textContains(expectedText)).waitForExists(waitingTime)
+            val link = mDevice.findObject(By.textContains(expectedText))
+            link.click(LONG_CLICK_DURATION)
+
+            // Click again Select all from the text selection toolbar
+            if (selectAll) {
+                mDevice.findObject(UiSelector().textContains("Select all")).waitForExists(waitingTime)
+                val selectAllText = mDevice.findObject(By.textContains("Select all"))
+                selectAllText.click()
+            }
+
+            // Click again Copy from the text selection toolbar
+            mDevice.findObject(UiSelector().textContains("Copy")).waitForExists(waitingTime)
+            val copyText = mDevice.findObject(By.textContains("Copy"))
+            copyText.click()
+        }
+    }
+
     fun snackBarButtonClick(expectedText: String) {
         onView(allOf(withId(R.id.snackbar_btn), withText(expectedText))).check(
             matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE))
@@ -371,14 +429,33 @@ class BrowserRobot {
         mediaPlayerPlayButton().click()
     }
 
-    fun waitForPlaybackToStart() {
-        val playStateMessage = mDevice.findObject(UiSelector().text("Media file is playing"))
-        assertTrue(playStateMessage.waitForExists(waitingTime))
+    /**
+     * Get the current playback state of the currently selected tab.
+     * The result may be null if there if the currently playing media tab cannot be found in [store]
+     *
+     * @param store [BrowserStore] from which to get data about the current tab's state.
+     * @return nullable [MediaSession.PlaybackState] indicating the media playback state for the current tab.
+     */
+    private fun getCurrentPlaybackState(store: BrowserStore): MediaSession.PlaybackState? {
+        return store.state.selectedTab?.mediaSessionState?.playbackState
     }
 
-    fun verifyMediaIsPaused() {
-        val pausedStateMessage = mDevice.findObject(UiSelector().text("Media file is paused"))
-        assertTrue(pausedStateMessage.waitForExists(waitingTime))
+    /**
+     * Asserts that in [waitingTime] the playback state of the current tab will be [expectedState].
+     *
+     * @param store [BrowserStore] from which to get data about the current tab's state.
+     * @param expectedState [MediaSession.PlaybackState] the playback state that will be asserted
+     * @param waitingTime maximum time the test will wait for the playback state to become [expectedState]
+     * before failing the assertion.
+     */
+    fun assertPlaybackState(store: BrowserStore, expectedState: MediaSession.PlaybackState) {
+        val startMills = SystemClock.uptimeMillis()
+        var currentMills: Long = 0
+        while (currentMills <= waitingTime) {
+            if (expectedState == getCurrentPlaybackState(store)) return
+            currentMills = SystemClock.uptimeMillis() - startMills
+        }
+        fail("Playback did not moved to state: $expectedState")
     }
 
     fun swipeNavBarRight(tabUrl: String) {
@@ -458,9 +535,9 @@ class BrowserRobot {
         }
 
         fun goToHomescreen(interact: HomeScreenRobot.() -> Unit): HomeScreenRobot.Transition {
-            openTabDrawer {
-            }.openNewTab {
-            }.dismissSearchBar {}
+            onView(withContentDescription("Home screen"))
+                .check(matches(isDisplayed()))
+                .click()
 
             HomeScreenRobot().interact()
             return HomeScreenRobot.Transition()

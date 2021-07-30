@@ -8,6 +8,11 @@ import android.content.Context
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
+import mozilla.components.browser.state.state.TabSessionState
+import mozilla.components.concept.storage.BookmarkNode
+import mozilla.components.concept.storage.DocumentType
+import mozilla.components.concept.storage.HistoryMetadata
+import mozilla.components.concept.storage.HistoryMetadataKey
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.service.fxa.manager.FxaAccountManager
@@ -19,6 +24,7 @@ import org.junit.Test
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.historymetadata.HistoryMetadataGroup
 import org.mozilla.fenix.onboarding.FenixOnboarding
 
 class HomeFragmentStoreTest {
@@ -56,7 +62,8 @@ class HomeFragmentStoreTest {
             mode = currentMode.getCurrentMode(),
             topSites = emptyList(),
             showCollectionPlaceholder = true,
-            showSetAsDefaultBrowserCard = true
+            showSetAsDefaultBrowserCard = true,
+            recentTabs = emptyList()
         )
 
         homeFragmentStore = HomeFragmentStore(homeFragmentState)
@@ -99,6 +106,53 @@ class HomeFragmentStoreTest {
     }
 
     @Test
+    fun `Test changing the recent tabs in HomeFragmentStore`() = runBlocking {
+        assertEquals(0, homeFragmentStore.state.recentTabs.size)
+
+        // Add 2 TabSessionState to the HomeFragmentStore.
+        val recentTabs: List<TabSessionState> = listOf(mockk(), mockk())
+        homeFragmentStore.dispatch(HomeFragmentAction.RecentTabsChange(recentTabs)).join()
+
+        assertEquals(recentTabs, homeFragmentStore.state.recentTabs)
+    }
+
+    @Test
+    fun `Test changing the history metadata in HomeFragmentStore`() = runBlocking {
+        assertEquals(0, homeFragmentStore.state.historyMetadata.size)
+
+        val historyMetadata: List<HistoryMetadataGroup> = listOf(mockk(), mockk())
+        homeFragmentStore.dispatch(HomeFragmentAction.HistoryMetadataChange(historyMetadata)).join()
+
+        assertEquals(historyMetadata, homeFragmentStore.state.historyMetadata)
+    }
+
+    @Test
+    fun `Test changing the expanded history metadata in HomeFragmentStore`() = runBlocking {
+        val historyEntry = HistoryMetadata(
+            key = HistoryMetadataKey("http://www.mozilla.com", "mozilla", null),
+            title = "mozilla",
+            createdAt = System.currentTimeMillis(),
+            updatedAt = System.currentTimeMillis(),
+            totalViewTime = 10,
+            documentType = DocumentType.Regular
+        )
+        val historyGroup = HistoryMetadataGroup(
+            title = "mozilla",
+            historyMetadata = listOf(historyEntry),
+            expanded = false
+        )
+
+        val historyMetadata = listOf(historyGroup)
+        homeFragmentStore.dispatch(HomeFragmentAction.HistoryMetadataChange(historyMetadata)).join()
+
+        assertEquals(historyMetadata, homeFragmentStore.state.historyMetadata)
+
+        homeFragmentStore.dispatch(HomeFragmentAction.HistoryMetadataExpanded(historyGroup)).join()
+
+        assertTrue(homeFragmentStore.state.historyMetadata.find { it.title == historyEntry.key.searchTerm }!!.expanded)
+    }
+
+    @Test
     fun `Test changing hiding collections placeholder`() = runBlocking {
         assertTrue(homeFragmentStore.state.showCollectionPlaceholder)
 
@@ -122,27 +176,39 @@ class HomeFragmentStoreTest {
     }
 
     @Test
-    fun `Test changing the collections, mode and top sites in the HomeFragmentStore`() =
+    fun `Test changing the collections, mode, recent tabs and bookmarks, history metadata and top sites in the HomeFragmentStore`() =
         runBlocking {
             // Verify that the default state of the HomeFragment is correct.
             assertEquals(0, homeFragmentStore.state.collections.size)
             assertEquals(0, homeFragmentStore.state.topSites.size)
+            assertEquals(0, homeFragmentStore.state.recentTabs.size)
+            assertEquals(0, homeFragmentStore.state.recentBookmarks.size)
+            assertEquals(0, homeFragmentStore.state.historyMetadata.size)
             assertEquals(Mode.Normal, homeFragmentStore.state.mode)
 
             val collections: List<TabCollection> = listOf(mockk())
             val topSites: List<TopSite> = listOf(mockk(), mockk())
+            val recentTabs: List<TabSessionState> = listOf(mockk(), mockk())
+            val recentBookmarks: List<BookmarkNode> = listOf(mockk(), mockk())
+            val historyMetadata: List<HistoryMetadataGroup> = listOf(mockk(), mockk())
 
             homeFragmentStore.dispatch(
                 HomeFragmentAction.Change(
                     collections = collections,
                     mode = Mode.Private,
                     topSites = topSites,
-                    showCollectionPlaceholder = true
+                    showCollectionPlaceholder = true,
+                    recentTabs = recentTabs,
+                    recentBookmarks = recentBookmarks,
+                    historyMetadata = historyMetadata
                 )
             ).join()
 
             assertEquals(1, homeFragmentStore.state.collections.size)
-            assertEquals(Mode.Private, homeFragmentStore.state.mode)
             assertEquals(2, homeFragmentStore.state.topSites.size)
+            assertEquals(2, homeFragmentStore.state.recentTabs.size)
+            assertEquals(2, homeFragmentStore.state.recentBookmarks.size)
+            assertEquals(2, homeFragmentStore.state.historyMetadata.size)
+            assertEquals(Mode.Private, homeFragmentStore.state.mode)
         }
 }

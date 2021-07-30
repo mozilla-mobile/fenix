@@ -4,10 +4,19 @@
 
 package org.mozilla.fenix.home.sessioncontrol
 
+import mozilla.components.concept.storage.BookmarkNode
+import mozilla.components.concept.storage.HistoryMetadataKey
 import mozilla.components.feature.tab.collections.Tab
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
 import org.mozilla.fenix.components.tips.Tip
+import org.mozilla.fenix.historymetadata.HistoryMetadataGroup
+import org.mozilla.fenix.historymetadata.controller.HistoryMetadataController
+import org.mozilla.fenix.historymetadata.interactor.HistoryMetadataInteractor
+import org.mozilla.fenix.home.recentbookmarks.controller.RecentBookmarksController
+import org.mozilla.fenix.home.recentbookmarks.interactor.RecentBookmarksInteractor
+import org.mozilla.fenix.home.recenttabs.controller.RecentTabController
+import org.mozilla.fenix.home.recenttabs.interactor.RecentTabInteractor
 
 /**
  * Interface for tab related actions in the [SessionControlInteractor].
@@ -203,15 +212,20 @@ interface ExperimentCardInteractor {
 }
 
 /**
- * Interactor for the Home screen.
- * Provides implementations for the CollectionInteractor, OnboardingInteractor,
- * TabSessionInteractor and TopSiteInteractor.
+ * Interactor for the Home screen. Provides implementations for the CollectionInteractor,
+ * OnboardingInteractor, TopSiteInteractor, TipInteractor, TabSessionInteractor,
+ * ToolbarInteractor, ExperimentCardInteractor, RecentTabInteractor, and RecentBookmarksInteractor.
  */
 @SuppressWarnings("TooManyFunctions")
 class SessionControlInteractor(
-    private val controller: SessionControlController
+    private val controller: SessionControlController,
+    private val recentTabController: RecentTabController,
+    private val recentBookmarksController: RecentBookmarksController,
+    private val historyMetadataController: HistoryMetadataController
 ) : CollectionInteractor, OnboardingInteractor, TopSiteInteractor, TipInteractor,
-    TabSessionInteractor, ToolbarInteractor, ExperimentCardInteractor {
+    TabSessionInteractor, ToolbarInteractor, ExperimentCardInteractor, RecentTabInteractor,
+    RecentBookmarksInteractor, HistoryMetadataInteractor {
+
     override fun onCollectionAddTabTapped(collection: TabCollection) {
         controller.handleCollectionAddTabTapped(collection)
     }
@@ -314,5 +328,35 @@ class SessionControlInteractor(
 
     override fun onCloseExperimentCardClicked() {
         controller.handleCloseExperimentCard()
+    }
+
+    override fun onRecentTabClicked(tabId: String) {
+        recentTabController.handleRecentTabClicked(tabId)
+    }
+
+    override fun onRecentTabShowAllClicked() {
+        recentTabController.handleRecentTabShowAllClicked()
+    }
+
+    override fun onRecentBookmarkClicked(bookmark: BookmarkNode) {
+        recentBookmarksController.handleBookmarkClicked(bookmark)
+    }
+
+    override fun onShowAllBookmarksClicked() {
+        recentBookmarksController.handleShowAllBookmarksClicked()
+    }
+
+    override fun onHistoryMetadataItemClicked(url: String, historyMetadata: HistoryMetadataKey) {
+        historyMetadataController.handleHistoryMetadataItemClicked(url, historyMetadata)
+    }
+
+    override fun onHistoryMetadataShowAllClicked() {
+        historyMetadataController.handleHistoryShowAllClicked()
+    }
+
+    override fun onToggleHistoryMetadataGroupExpanded(historyMetadataGroup: HistoryMetadataGroup) {
+        historyMetadataController.handleToggleHistoryMetadataGroupExpanded(
+            historyMetadataGroup
+        )
     }
 }

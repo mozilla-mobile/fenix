@@ -18,7 +18,7 @@ transforms = TransformSequence()
 @transforms.add
 def resolve_keys(config, tasks):
     for task in tasks:
-        for key in ("run-on-tasks-for",):
+        for key in ("run-on-tasks-for", "signing-format", "notify"):
             resolve_keyed_by(
                 task,
                 key,
@@ -38,7 +38,7 @@ def set_worker_type(config, tasks):
         if (
             str(config.params["level"]) == "3"
             and task["attributes"]["build-type"]
-            in ("nightly", "beta", "release", "android-test-nightly")
+            in ("nightly", "beta", "release", "android-test-nightly", "beta-mozillaonline", "release-mozillaonline")
             and config.params["tasks_for"] in ("cron", "github-release", "action")
         ):
             worker_type = "signing"
@@ -56,7 +56,7 @@ def set_signing_type(config, tasks):
         ):
             if task["attributes"]["build-type"] in ("beta", "release"):
                 signing_type = "fennec-production-signing"
-            elif task["attributes"]["build-type"] in ("nightly", "android-test-nightly"):
+            elif task["attributes"]["build-type"] in ("nightly", "android-test-nightly", "beta-mozillaonline", "release-mozillaonline"):
                 signing_type = "production-signing"
         task.setdefault("worker", {})["signing-type"] = signing_type
         yield task
@@ -89,4 +89,18 @@ def set_signing_format(config, tasks):
         signing_format = task.pop("signing-format")
         for upstream_artifact in task["worker"]["upstream-artifacts"]:
             upstream_artifact["formats"] = [signing_format]
+        yield task
+
+
+@transforms.add
+def format_email(config, tasks):
+    version = config.params["version"]
+
+    for task in tasks:
+        if "notify" in task:
+            email = task["notify"].get("email")
+            if email:
+                email["subject"] = email["subject"].format(version=version)
+                email["content"] = email["content"].format(version=version)
+
         yield task

@@ -5,19 +5,24 @@
 package org.mozilla.fenix.home.sessioncontrol
 
 import android.view.View
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
+import mozilla.components.concept.storage.BookmarkNode
+import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
 import org.mozilla.fenix.components.tips.Tip
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.historymetadata.HistoryMetadataGroup
 import org.mozilla.fenix.home.HomeFragmentState
 import org.mozilla.fenix.home.HomeScreenViewModel
 import org.mozilla.fenix.home.Mode
 import org.mozilla.fenix.home.OnboardingState
+import org.mozilla.fenix.home.recenttabs.view.RecentTabsItemPosition
 
 // This method got a little complex with the addition of the tab tray feature flag
 // When we remove the tabs from the home screen this will get much simpler again.
@@ -27,8 +32,11 @@ private fun normalModeAdapterItems(
     collections: List<TabCollection>,
     expandedCollections: Set<Long>,
     tip: Tip?,
+    recentBookmarks: List<BookmarkNode>,
     showCollectionsPlaceholder: Boolean,
-    showSetAsDefaultBrowserCard: Boolean
+    showSetAsDefaultBrowserCard: Boolean,
+    recentTabs: List<TabSessionState>,
+    historyMetadata: List<HistoryMetadataGroup>
 ): List<AdapterItem> {
     val items = mutableListOf<AdapterItem>()
 
@@ -42,6 +50,18 @@ private fun normalModeAdapterItems(
         items.add(AdapterItem.TopSitePager(topSites))
     }
 
+    if (recentTabs.isNotEmpty()) {
+        showRecentTabs(recentTabs, items)
+    }
+
+    if (recentBookmarks.isNotEmpty()) {
+        items.add(AdapterItem.RecentBookmarks(recentBookmarks))
+    }
+
+    if (historyMetadata.isNotEmpty()) {
+        showHistoryMetadata(historyMetadata, items)
+    }
+
     if (collections.isEmpty()) {
         if (showCollectionsPlaceholder) {
             items.add(AdapterItem.NoCollectionsMessage)
@@ -51,6 +71,62 @@ private fun normalModeAdapterItems(
     }
 
     return items
+}
+
+/**
+ * Constructs the list of items to be shown in the recent tabs section.
+ *
+ * This section's structure is:
+ * - section header
+ * - one or more normal tabs
+ * - zero or one media tab (if there is a tab opened on which media started playing.
+ * This may be a duplicate of one of the normal tabs shown above).
+ */
+@VisibleForTesting
+internal fun showRecentTabs(
+    recentTabs: List<TabSessionState>,
+    items: MutableList<AdapterItem>
+) {
+    items.add(AdapterItem.RecentTabsHeader)
+
+    recentTabs.forEachIndexed { index, recentTab ->
+        // If this is the first tab to be shown but more will follow.
+        if (index == 0 && recentTabs.size > 1) {
+            items.add(AdapterItem.RecentTabItem(recentTab, RecentTabsItemPosition.TOP))
+        }
+
+        // if this is the only tab to be shown.
+        else if (index == 0 && recentTabs.size == 1) {
+            items.add(AdapterItem.RecentTabItem(recentTab, RecentTabsItemPosition.SINGLE))
+        }
+
+        // If there are items above and below.
+        else if (index < recentTabs.size - 1) {
+            items.add(AdapterItem.RecentTabItem(recentTab, RecentTabsItemPosition.MIDDLE))
+        }
+
+        // If this is the last recent tab to be shown.
+        else if (index < recentTabs.size) {
+            items.add(AdapterItem.RecentTabItem(recentTab, RecentTabsItemPosition.BOTTOM))
+        }
+    }
+}
+
+private fun showHistoryMetadata(
+    historyMetadata: List<HistoryMetadataGroup>,
+    items: MutableList<AdapterItem>
+) {
+    items.add(AdapterItem.HistoryMetadataHeader)
+
+    historyMetadata.forEach { container ->
+        items.add(AdapterItem.HistoryMetadataGroup(historyMetadataGroup = container))
+
+        if (container.expanded) {
+            container.historyMetadata.forEach {
+                items.add(AdapterItem.HistoryMetadataItem(it))
+            }
+        }
+    }
 }
 
 private fun showCollections(
@@ -115,8 +191,11 @@ private fun HomeFragmentState.toAdapterList(): List<AdapterItem> = when (mode) {
         collections,
         expandedCollections,
         tip,
+        recentBookmarks,
         showCollectionPlaceholder,
-        showSetAsDefaultBrowserCard
+        showSetAsDefaultBrowserCard,
+        recentTabs,
+        historyMetadata
     )
     is Mode.Private -> privateModeAdapterItems()
     is Mode.Onboarding -> onboardingAdapterItems(mode.state)
@@ -157,7 +236,6 @@ class SessionControlView(
     }
 
     fun update(state: HomeFragmentState) {
-
         val stateAdapterList = state.toAdapterList()
         if (homeScreenViewModel.shouldScrollToTopSites) {
             sessionControlAdapter.submitList(stateAdapterList) {

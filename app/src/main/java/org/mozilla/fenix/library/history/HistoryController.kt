@@ -17,11 +17,11 @@ import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
-import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 
 @Suppress("TooManyFunctions")
 interface HistoryController {
-    fun handleOpen(item: HistoryItem, mode: BrowsingMode? = null)
+    fun handleOpen(item: HistoryItem)
+    fun handleOpenInNewTab(item: HistoryItem, mode: BrowsingMode)
     fun handleSelect(item: HistoryItem)
     fun handleDeselect(item: HistoryItem)
     fun handleBackPressed(): Boolean
@@ -42,15 +42,20 @@ class DefaultHistoryController(
     private val snackbar: FenixSnackbar,
     private val clipboardManager: ClipboardManager,
     private val scope: CoroutineScope,
-    private val openToBrowser: (item: HistoryItem, mode: BrowsingMode?) -> Unit,
+    private val openToBrowser: (item: HistoryItem) -> Unit,
+    private val openInNewTab: (item: HistoryItem, mode: BrowsingMode) -> Unit,
     private val displayDeleteAll: () -> Unit,
     private val invalidateOptionsMenu: () -> Unit,
     private val deleteHistoryItems: (Set<HistoryItem>) -> Unit,
     private val syncHistory: suspend () -> Unit,
     private val metrics: MetricController
 ) : HistoryController {
-    override fun handleOpen(item: HistoryItem, mode: BrowsingMode?) {
-        openToBrowser(item, mode)
+    override fun handleOpen(item: HistoryItem) {
+        openToBrowser(item)
+    }
+
+    override fun handleOpenInNewTab(item: HistoryItem, mode: BrowsingMode) {
+        openInNewTab(item, mode)
     }
 
     override fun handleSelect(item: HistoryItem) {
@@ -95,7 +100,7 @@ class DefaultHistoryController(
     }
 
     override fun handleShare(item: HistoryItem) {
-        navController.navigateBlockingForAsyncNavGraph(
+        navController.navigate(
             HistoryFragmentDirections.actionGlobalShareFragment(
                 data = arrayOf(ShareData(url = item.url, title = item.title))
             )
@@ -111,7 +116,7 @@ class DefaultHistoryController(
     }
 
     override fun handleEnterRecentlyClosed() {
-        navController.navigateBlockingForAsyncNavGraph(
+        navController.navigate(
             HistoryFragmentDirections.actionGlobalRecentlyClosed(),
             NavOptions.Builder().setPopUpTo(R.id.recentlyClosedFragment, true).build()
         )

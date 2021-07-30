@@ -15,11 +15,6 @@ object FeatureFlags {
     val pullToRefreshEnabled = Config.channel.isNightlyOrDebug
 
     /**
-     * Enables the Nimbus experiments library.
-     */
-    const val nimbusExperiments = true
-
-    /**
      * Enables the Addresses autofill feature.
      */
     val addressesFeature = Config.channel.isNightlyOrDebug
@@ -27,25 +22,35 @@ object FeatureFlags {
     /**
      * Enables the Credit Cards autofill feature.
      */
-    val creditCardsFeature = Config.channel.isNightlyOrDebug
+    const val creditCardsFeature = true
 
     /**
      * Enables WebAuthn support.
      */
-    val webAuthFeature = Config.channel.isNightlyOrDebug
+    const val webAuthFeature = true
 
     /**
-     * Shows new three-dot toolbar menu design.
+     * Enables the Home button in the browser toolbar to navigate back to the home screen.
      */
-    val toolbarMenuFeature = Config.channel.isNightlyOrDebug
+    val showHomeButtonFeature = Config.channel.isNightlyOrDebug
 
     /**
-     * Enables the tabs tray re-write with Synced Tabs.
+     * Enables the Start On Home feature in the settings page.
      */
-    const val tabsTrayRewrite = true
+    val showStartOnHomeSettings = Config.channel.isNightlyOrDebug
 
     /**
-     * Enables the updated icon set look and feel.
+     * Enables the "recent" tabs feature in the home screen.
      */
-    val newIconSet = Config.channel.isNightlyOrDebug
+    val showRecentTabsFeature = Config.channel.isNightlyOrDebug
+
+    /**
+     * Enables recording of history metadata.
+     */
+    val historyMetadataFeature = Config.channel.isDebug
+
+    /**
+     * Enables the recently saved bookmarks feature in the home screen.
+     */
+    val recentBookmarksFeature = Config.channel.isNightlyOrDebug
 }

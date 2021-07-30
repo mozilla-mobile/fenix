@@ -62,6 +62,7 @@
         android:focusableInTouchMode="true"
         android:textColor="@color/contrast_text_normal_theme"
         android:textSize="20sp"
+        android:importantForAccessibility="no"
         app:fontFamily="@font/metropolis_semibold"
         app:layout_constraintBottom_toBottomOf="@id/topBar"
         app:layout_constraintEnd_toStartOf="@id/collect_multi_select"
@@ -112,19 +113,6 @@
     </com.google.android.material.tabs.TabLayout>
 
     <ImageButton
-        android:id="@+id/tab_tray_new_tab"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:background="?android:attr/selectableItemBackgroundBorderless"
-        android:contentDescription="@string/add_tab"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/tab_layout"
-        app:layout_constraintEnd_toStartOf="@id/tab_tray_overflow"
-        app:layout_constraintTop_toTopOf="@id/tab_layout"
-        app:srcCompat="@drawable/ic_new"
-        app:tint="@color/primary_text_normal_theme" />
-
-    <ImageButton
         android:id="@+id/tab_tray_overflow"
         android:layout_width="48dp"
         android:layout_height="48dp"
@@ -151,8 +139,6 @@
         android:id="@+id/tabsTray"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:clipToPadding="false"
-        android:paddingBottom="140dp"
         android:scrollbarStyle="outsideOverlay"
         android:scrollbars="vertical"
         android:orientation="horizontal"

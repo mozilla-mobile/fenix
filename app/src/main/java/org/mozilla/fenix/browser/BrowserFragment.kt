@@ -8,6 +8,7 @@ import android.content.Context
 import android.os.StrictMode
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.VisibleForTesting
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -16,29 +17,30 @@ import kotlinx.android.synthetic.main.fragment_browser.*
 import kotlinx.android.synthetic.main.fragment_browser.view.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import mozilla.components.browser.state.selector.findTab
-import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.state.state.SessionState
+import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.thumbnails.BrowserThumbnails
 import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.feature.app.links.AppLinksUseCases
 import mozilla.components.feature.contextmenu.ContextMenuCandidate
 import mozilla.components.feature.readerview.ReaderViewFeature
-import mozilla.components.feature.sitepermissions.SitePermissions
+import mozilla.components.concept.engine.permission.SitePermissions
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.tabs.WindowFeature
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.navigateSafe
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.shortcut.PwaOnboardingObserver
+import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.trackingprotection.TrackingProtectionOverlay
 
 /**
@@ -50,7 +52,8 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
 
     private val windowFeature = ViewBoundFeatureWrapper<WindowFeature>()
     private val openInAppOnboardingObserver = ViewBoundFeatureWrapper<OpenInAppOnboardingObserver>()
-    private val trackingProtectionOverlayObserver = ViewBoundFeatureWrapper<TrackingProtectionOverlay>()
+    private val trackingProtectionOverlayObserver =
+        ViewBoundFeatureWrapper<TrackingProtectionOverlay>()
 
     private var readerModeAvailable = false
     private var pwaOnboardingObserver: PwaOnboardingObserver? = null
@@ -75,20 +78,40 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
             )
         }
 
+        if (FeatureFlags.showHomeButtonFeature) {
+            val homeAction = BrowserToolbar.Button(
+                imageDrawable = AppCompatResources.getDrawable(
+                    requireContext(),
+                    R.drawable.mozac_ic_home
+                )!!,
+                contentDescription = requireContext().getString(R.string.browser_toolbar_home),
+                iconTintColorResource = ThemeManager.resolveAttribute(R.attr.primaryText, context),
+                listener = browserToolbarInteractor::onHomeButtonClicked
+            )
+
+            browserToolbarView.view.addNavigationAction(homeAction)
+        }
+
         val readerModeAction =
             BrowserToolbar.ToggleButton(
-                image = AppCompatResources.getDrawable(requireContext(), R.drawable.ic_readermode)!!,
+                image = AppCompatResources.getDrawable(
+                    requireContext(),
+                    R.drawable.ic_readermode
+                )!!,
                 imageSelected =
-                    AppCompatResources.getDrawable(requireContext(), R.drawable.ic_readermode_selected)!!,
+                AppCompatResources.getDrawable(
+                    requireContext(),
+                    R.drawable.ic_readermode_selected
+                )!!,
                 contentDescription = requireContext().getString(R.string.browser_menu_read),
                 contentDescriptionSelected = requireContext().getString(R.string.browser_menu_read_close),
                 visible = {
                     readerModeAvailable
                 },
                 selected = getCurrentTab()?.let {
-                        activity?.components?.core?.store?.state?.findTab(it.id)?.readerState?.active
-                    } ?: false,
-                listener = browserInteractor::onReaderModePressed
+                    activity?.components?.core?.store?.state?.findTab(it.id)?.readerState?.active
+                } ?: false,
+                listener = browserToolbarInteractor::onReaderModePressed
             )
 
         browserToolbarView.view.addPageAction(readerModeAction)
@@ -183,8 +206,19 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
 
     override fun onStop() {
         super.onStop()
-
+        updateLastBrowseActivity()
+        if (FeatureFlags.historyMetadataFeature) {
+            updateHistoryMetadata()
+        }
         pwaOnboardingObserver?.stop()
+    }
+
+    private fun updateHistoryMetadata() {
+        getCurrentTab()?.let { tab ->
+            (tab as? TabSessionState)?.historyMetadata?.let {
+                requireComponents.core.historyMetadataService.updateMetadata(it, tab)
+            }
+        }
     }
 
     private fun subscribeToTabCollections() {
@@ -237,7 +271,11 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
     }
 
     private val collectionStorageObserver = object : TabCollectionStorage.Observer {
-        override fun onCollectionCreated(title: String, sessions: List<TabSessionState>, id: Long?) {
+        override fun onCollectionCreated(
+            title: String,
+            sessions: List<TabSessionState>,
+            id: Long?
+        ) {
             showTabSavedToCollectionSnackbar(sessions.size, true)
         }
 
@@ -245,7 +283,10 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
             showTabSavedToCollectionSnackbar(sessions.size)
         }
 
-        private fun showTabSavedToCollectionSnackbar(tabSize: Int, isNewCollection: Boolean = false) {
+        private fun showTabSavedToCollectionSnackbar(
+            tabSize: Int,
+            isNewCollection: Boolean = false
+        ) {
             view?.let { view ->
                 val messageStringRes = when {
                     isNewCollection -> {
@@ -265,7 +306,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                 )
                     .setText(view.context.getString(messageStringRes))
                     .setAction(requireContext().getString(R.string.create_collection_view)) {
-                        findNavController().navigateBlockingForAsyncNavGraph(
+                        findNavController().navigate(
                             BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = false)
                         )
                     }
@@ -289,7 +330,19 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
             context.components.useCases.contextMenuUseCases,
             view,
             FenixSnackbarDelegate(view)
-        ) + ContextMenuCandidate.createOpenInExternalAppCandidate(requireContext(),
-            contextMenuCandidateAppLinksUseCases)
+        ) + ContextMenuCandidate.createOpenInExternalAppCandidate(
+            requireContext(),
+            contextMenuCandidateAppLinksUseCases
+        )
+    }
+
+    /**
+     * Updates the last time the user was active on the [BrowserFragment].
+     * This is useful to determine if the user has to start on the [HomeFragment]
+     * or it should go directly to the [BrowserFragment].
+     */
+    @VisibleForTesting
+    internal fun updateLastBrowseActivity() {
+        requireContext().settings().lastBrowseActivity = System.currentTimeMillis()
     }
 }

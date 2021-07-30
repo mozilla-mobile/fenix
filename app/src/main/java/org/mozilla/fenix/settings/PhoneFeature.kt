@@ -11,7 +11,7 @@ import android.content.Context
 import android.os.Parcelable
 import androidx.annotation.StringRes
 import kotlinx.android.parcel.Parcelize
-import mozilla.components.feature.sitepermissions.SitePermissions
+import mozilla.components.concept.engine.permission.SitePermissions
 import mozilla.components.feature.sitepermissions.SitePermissionsRules
 import mozilla.components.support.ktx.android.content.isPermissionGranted
 import org.mozilla.fenix.R
@@ -99,9 +99,9 @@ enum class PhoneFeature(val androidPermissionsList: Array<String>) : Parcelable 
             LOCATION -> R.string.pref_key_phone_feature_location
             MICROPHONE -> R.string.pref_key_phone_feature_microphone
             NOTIFICATION -> R.string.pref_key_phone_feature_notification
-            AUTOPLAY -> R.string.pref_key_browser_feature_autoplay_audible
-            AUTOPLAY_AUDIBLE -> R.string.pref_key_browser_feature_autoplay_audible
-            AUTOPLAY_INAUDIBLE -> R.string.pref_key_browser_feature_autoplay_inaudible
+            AUTOPLAY -> R.string.pref_key_browser_feature_autoplay_v2
+            AUTOPLAY_AUDIBLE -> R.string.pref_key_browser_feature_autoplay_audible_v2
+            AUTOPLAY_INAUDIBLE -> R.string.pref_key_browser_feature_autoplay_inaudible_v2
             PERSISTENT_STORAGE -> R.string.pref_key_browser_feature_persistent_storage
             MEDIA_KEY_SYSTEM_ACCESS -> R.string.pref_key_browser_feature_media_key_system_access
         }

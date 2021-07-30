@@ -413,6 +413,8 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         } else null
     }
 
+    @Suppress("DEPRECATION")
+    // https://github.com/mozilla-mobile/fenix/issues/19920
     private fun createQrFeature(): QrFeature {
         return QrFeature(
             requireContext(),
@@ -448,6 +450,8 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         )
     }
 
+    @Suppress("DEPRECATION")
+    // https://github.com/mozilla-mobile/fenix/issues/19920
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
@@ -534,6 +538,8 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         }
     }
 
+    @Suppress("DEPRECATION")
+    // https://github.com/mozilla-mobile/fenix/issues/19919
     private fun launchVoiceSearch() {
         // Note if a user disables speech while the app is on the search fragment
         // the voice button will still be available and *will* cause a crash if tapped,
@@ -554,7 +560,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
     private fun updateClipboardSuggestion(searchState: SearchFragmentState, clipboardUrl: String?) {
         val shouldShowView = searchState.showClipboardSuggestions &&
                 searchState.query.isEmpty() &&
-                !clipboardUrl.isNullOrEmpty()
+                !clipboardUrl.isNullOrEmpty() && !searchState.showSearchShortcuts
 
         fill_link_from_clipboard.isVisible = shouldShowView
         fill_link_divider.isVisible = shouldShowView

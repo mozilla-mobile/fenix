@@ -35,11 +35,11 @@ import org.mozilla.fenix.browser.readermode.ReaderModeController
 import org.mozilla.fenix.collections.SaveCollectionStep
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.TabCollectionStorage
+import org.mozilla.fenix.components.accounts.AccountState
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getRootView
-import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.navigateSafe
 import org.mozilla.fenix.ext.openSetDefaultBrowserOption
@@ -163,7 +163,7 @@ class DefaultBrowserToolbarMenuController(
             }
             is ToolbarMenu.Item.Back -> {
                 if (item.viewHistory) {
-                    navController.navigateBlockingForAsyncNavGraph(
+                    navController.navigate(
                         BrowserFragmentDirections.actionGlobalTabHistoryDialogFragment(
                             activeSessionId = customTabSessionId
                         )
@@ -176,7 +176,7 @@ class DefaultBrowserToolbarMenuController(
             }
             is ToolbarMenu.Item.Forward -> {
                 if (item.viewHistory) {
-                    navController.navigateBlockingForAsyncNavGraph(
+                    navController.navigate(
                         BrowserFragmentDirections.actionGlobalTabHistoryDialogFragment(
                             activeSessionId = customTabSessionId
                         )
@@ -213,23 +213,20 @@ class DefaultBrowserToolbarMenuController(
                     ),
                     showPage = true
                 )
-                navController.navigateBlockingForAsyncNavGraph(directions)
+                navController.navigate(directions)
             }
             is ToolbarMenu.Item.Settings -> browserAnimator.captureEngineViewAndDrawStatically {
                 val directions = BrowserFragmentDirections.actionBrowserFragmentToSettingsFragment()
                 navController.nav(R.id.browserFragment, directions)
             }
-            is ToolbarMenu.Item.SyncedTabs -> browserAnimator.captureEngineViewAndDrawStatically {
-                navController.nav(
-                    R.id.browserFragment,
-                    BrowserFragmentDirections.actionBrowserFragmentToSyncedTabsFragment()
-                )
-            }
             is ToolbarMenu.Item.SyncAccount -> {
-                val directions = if (item.signedIn) {
-                    BrowserFragmentDirections.actionGlobalAccountSettingsFragment()
-                } else {
-                    BrowserFragmentDirections.actionGlobalTurnOnSync()
+                val directions = when (item.accountState) {
+                    AccountState.AUTHENTICATED ->
+                        BrowserFragmentDirections.actionGlobalAccountSettingsFragment()
+                    AccountState.NEEDS_REAUTHENTICATION ->
+                        BrowserFragmentDirections.actionGlobalAccountProblemFragment()
+                    AccountState.NO_ACCOUNT ->
+                        BrowserFragmentDirections.actionGlobalTurnOnSync()
                 }
                 browserAnimator.captureEngineViewAndDrawStatically {
                     navController.nav(
@@ -349,7 +346,7 @@ class DefaultBrowserToolbarMenuController(
                 )
             }
             is ToolbarMenu.Item.NewTab -> {
-                navController.navigateBlockingForAsyncNavGraph(
+                navController.navigate(
                     BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = true)
                 )
             }
@@ -396,7 +393,6 @@ class DefaultBrowserToolbarMenuController(
             is ToolbarMenu.Item.SaveToCollection -> Event.BrowserMenuItemTapped.Item.SAVE_TO_COLLECTION
             is ToolbarMenu.Item.AddToTopSites -> Event.BrowserMenuItemTapped.Item.ADD_TO_TOP_SITES
             is ToolbarMenu.Item.AddToHomeScreen -> Event.BrowserMenuItemTapped.Item.ADD_TO_HOMESCREEN
-            is ToolbarMenu.Item.SyncedTabs -> Event.BrowserMenuItemTapped.Item.SYNC_TABS
             is ToolbarMenu.Item.SyncAccount -> Event.BrowserMenuItemTapped.Item.SYNC_ACCOUNT
             is ToolbarMenu.Item.Bookmark -> Event.BrowserMenuItemTapped.Item.BOOKMARK
             is ToolbarMenu.Item.AddonsManager -> Event.BrowserMenuItemTapped.Item.ADDONS_MANAGER

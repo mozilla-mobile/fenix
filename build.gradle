@@ -26,6 +26,7 @@ buildscript {
         if (project.hasProperty("googleRepo")) {
             maven {
                 name "Google"
+                allowInsecureProtocol true // Local Nexus in CI uses HTTP
                 url project.property("googleRepo")
             }
         } else {
@@ -35,6 +36,7 @@ buildscript {
                     includeGroupByRegex RepoMatching.androidx
                     includeGroupByRegex RepoMatching.comGoogleAndroid
                     includeGroupByRegex RepoMatching.comGoogleFirebase
+                    includeGroupByRegex RepoMatching.comGoogleTesting
                     includeGroupByRegex RepoMatching.comAndroid
                 }
             }
@@ -44,6 +46,7 @@ buildscript {
             maven {
                 name "MavenCentral"
                 url project.property("centralRepo")
+                allowInsecureProtocol true // Local Nexus in CI uses HTTP
             }
         } else {
             mavenCentral() {
@@ -62,6 +65,7 @@ buildscript {
     dependencies {
         classpath Deps.tools_androidgradle
         classpath Deps.tools_kotlingradle
+        classpath Deps.tools_benchmarkgradle
         classpath Deps.androidx_safeargs
         classpath Deps.allopen
         classpath Deps.osslicenses_plugin
@@ -74,7 +78,7 @@ buildscript {
 }
 
 plugins {
-    id("io.gitlab.arturbosch.detekt").version("1.9.1")
+    id("io.gitlab.arturbosch.detekt").version("1.17.1")
 }
 
 allprojects {
@@ -102,6 +106,7 @@ allprojects {
             maven {
                 name "Google"
                 url project.property("googleRepo")
+                allowInsecureProtocol true // Local Nexus in CI uses HTTP
             }
         } else {
             google() {
@@ -119,6 +124,7 @@ allprojects {
             maven {
                 name "MavenCentral"
                 url project.property("centralRepo")
+                allowInsecureProtocol true // Local Nexus in CI uses HTTP
             }
         } else {
             mavenCentral() {
@@ -132,54 +138,14 @@ allprojects {
                 }
             }
         }
-
-        if (project.hasProperty("jcenterRepo")) {
-            maven {
-                name "BintrayJCenter"
-                url project.property("jcenterRepo")
-            }
-        } else {
-            jcenter() {
-                content {
-                    ////////////////////////////////////////////////////////////////////////////////
-                    // JCenter is going away. Please do not add any new dependencies here.
-                    // https://jfrog.com/blog/into-the-sunset-bintray-jcenter-gocenter-and-chartcenter/
-                    ////////////////////////////////////////////////////////////////////////////////
-
-                    // Used by detekt
-                    // Issue for publishing to maven central: https://github.com/Kotlin/kotlinx.html/issues/173
-                    // Related detekt issue: https://github.com/detekt/detekt/issues/3461
-                    includeVersion("org.jetbrains.kotlinx", "kotlinx-html-jvm", "0.7.1")
-                    includeVersion("org.jetbrains.kotlinx", "kotlinx-html-common", "0.7.1")
-
-                    // Fastlane
-                    // Doesn't seem to be available on Maven Central yet, and I couldn't find an issue for it
-                    // https://github.com/fastlane/fastlane/issues/18174
-                    includeVersion("tools.fastlane", "screengrab", "2.0.0")
-                    // https://github.com/jraska/Falcon/issues/52
-                    includeVersion("com.jraska", "falcon", "2.1.1")
-                }
-            }
-        }
-
-        maven {
-            name "LeanplumRepo"
-            if (project.hasProperty("leanplumRepo")) {
-                url project.property("leanplumRepo")
-            } else {
-                url "https://repo.leanplum.com"
-            }
-            content {
-                includeGroup("com.leanplum")
-            }
-        }
     }
 
     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
         kotlinOptions.jvmTarget = "1.8"
         kotlinOptions.allWarningsAsErrors = true
         kotlinOptions.freeCompilerArgs += [
-            "-Xuse-experimental=kotlin.Experimental"
+            "-Xuse-experimental=kotlin.Experimental",
+            "-Xopt-in=kotlin.RequiresOptIn"
         ]
     }
 }
@@ -190,7 +156,7 @@ tasks.register('clean', Delete) {
 
 detekt {
     // The version number is duplicated, please refer to plugins block for more details
-    version = "1.9.1"
+    version = "1.17.1"
     input = files("$projectDir/app/src")
     config = files("$projectDir/config/detekt.yml")
 

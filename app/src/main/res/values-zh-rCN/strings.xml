@@ -6,6 +6,7 @@
     <string name="app_name_private_5">私密 %s</string>
     <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
     <string name="app_name_private_4">%s (隐私模式)</string>
+
     <!-- Home Fragment -->
     <!-- Content description (not visible, for screen readers etc.): "Three dot" menu button. -->
     <string name="content_description_menu">更多选项</string>
@@ -53,6 +54,16 @@
     <!-- Content description on checkmark while tab is selected in multiselect mode in tab tray -->
     <string name="tab_tray_multiselect_selected_content_description">已选择</string>
 
+    <!-- Home - Recently saved bookmarks -->
+    <!-- Title for the home screen section with recently saved bookmarks. -->
+    <string name="recently_saved_bookmarks">最近保存</string>
+    <!-- Content description for the recently saved bookmarks section on the home screen. -->
+    <string name="recently_saved_bookmarks_content_description">最近保存的书签</string>
+    <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
+    <string name="recently_saved_show_all">显示全部</string>
+    <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
+    <string name="recently_saved_show_all_content_description">显示所有保存书签按钮</string>
+
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
     <string name="about_content">%1$s 由 Mozilla 倾力打造。</string>
 
@@ -97,13 +108,6 @@
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">知道了</string>
 
-    <!-- Text for the banner message to tell users about our grid view feature. -->
-    <string name="tab_tray_grid_view_banner_message">要更改打开的标签页布局。请转至设置，在“标签页视图”下选择“网格”。</string>
-    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
-    <string name="tab_tray_grid_view_banner_positive_button_text">前往设置</string>
-    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
-    <string name="tab_tray_grid_view_banner_negative_button_text">关闭</string>
-
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
     <string name="home_screen_shortcut_open_new_tab_2">新建标签页</string>
@@ -112,6 +116,12 @@
 
     <!-- Heading for the Top Sites block -->
     <string name="home_screen_top_sites_heading">常用网站</string>
+
+    <!-- Recent Tabs -->
+    <!-- Header text for jumping back into the recent tab in the home screen -->
+    <string name="recent_tabs_header">回到先前页面</string>
+    <!-- Button text for showing all the tabs in the tabs tray -->
+    <string name="recent_tabs_show_all">显示全部</string>
 
     <!-- Browser Fragment -->
     <!-- Content description (not visible, for screen readers etc.): Navigate to open tabs -->
@@ -190,6 +200,10 @@
     <string name="browser_menu_add">添加</string>
     <!-- Browser menu label for editing a bookmark -->
     <string name="browser_menu_edit">编辑</string>
+
+    <!-- Browser Toolbar -->
+    <!-- Content description for the Home screen button on the browser toolbar -->
+    <string name="browser_toolbar_home">主屏幕</string>
 
     <!-- Error message to show when the user tries to access a scheme not
         handled by the app (Ex: blob, tel etc) -->
@@ -424,6 +438,12 @@
         and the third is the device model. -->
     <string name="default_device_name_2">%2$s %3$s 上的 %1$s</string>
 
+    <!-- Preference for syncing credit cards -->
+    <string name="preferences_sync_credit_cards">信用卡</string>
+
+    <!-- Preference for syncing addresses -->
+    <string name="preferences_sync_address">邮政地址</string>
+
     <!-- Send Tab -->
     <!-- Name of the "receive tabs" notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="fxa_received_tab_channel_name">收到标签页</string>
@@ -458,9 +478,6 @@
     <!-- Text displayed when there are no exceptions, with learn more link that brings users to a tracking protection SUMO page -->
     <string name="exceptions_empty_message_learn_more_link">详细了解</string>
 
-    <!-- Description in Quick Settings that tells user tracking protection is off globally for all sites, and links to Settings to turn it on -->
-    <string name="preferences_tracking_protection_turned_off_globally">已全局关闭，请前往“设置”开启。</string>
-
     <!-- Preference switch for Telemetry -->
     <string name="preferences_telemetry">遥测技术</string>
     <!-- Preference switch for usage and technical data collection -->
@@ -471,6 +488,8 @@
     <string name="preferences_marketing_data">营销数据</string>
     <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
     <string name="preferences_marketing_data_description">与我们的移动营销供应商 Leanplum 分享您使用 %1$s 的哪些功能。</string>
+    <!-- Preference description for marketing data collection -->
+    <string name="preferences_marketing_data_description2">与我们的移动营销服务商 Adjust 分享基本使用数据</string>
     <!-- Title for studies preferences -->
     <string name="preference_experiments_2">研究</string>
     <!-- Summary for studies preferences -->
@@ -559,8 +578,6 @@
     <string name="library_new_tab">新建标签页</string>
     <!-- Option in Library to find text in page -->
     <string name="library_find_in_page">在页面中查找</string>
-    <!-- Option in Library to open Synced Tabs page -->
-    <string name="library_synced_tabs">受同步的标签页</string>
     <!-- Option in Library to open Reading List -->
     <string name="library_reading_list">阅读列表</string>
     <!-- Menu Item Label for Search in Library -->
@@ -605,6 +622,15 @@
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">1 个月后</string>
 
+    <!-- Start on Home -->
+    <!-- Title of a preference that allows a user to indicate after a specified amount of time when the app should start on the home screen -->
+    <string name="preferences_start_on_home">启动后进入主屏幕</string>
+    <!-- Option for starting on the home screen after after four hours or inactivity -->
+    <string name="start_on_home_after_four_hours">4 小时后</string>
+    <!-- Option for always starting on the home screen -->
+    <string name="start_on_home_always">总是</string>
+    <!-- Option for never starting on the home screen -->
+    <string name="start_on_home_never">永不</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
     <string name="close_tabs_manually_summary">手动关闭</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
@@ -759,9 +785,9 @@
 
     <!-- Downloads -->
     <!-- Text for the button to clear all downloads -->
-    <string name="download_delete_all">清除下载记录</string>
+    <string name="download_delete_all">清空下载记录</string>
     <!-- Text for the dialog to confirm clearing all downloads -->
-    <string name="download_delete_all_dialog">您确定要清除下载记录吗？</string>
+    <string name="download_delete_all_dialog">您确定要清空下载记录吗？</string>
     <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
     <string name="download_delete_multiple_items_snackbar_1">下载记录已清除</string>
     <!-- Text for the snackbar to confirm that a single download item has been removed. The first parameter is the name of the download item. -->
@@ -814,8 +840,6 @@
     <string name="bookmark_delete_folder_snackbar">已删除 %1$s</string>
     <!-- Screen title for adding a bookmarks folder -->
     <string name="bookmark_add_folder">新建文件夹</string>
-    <!-- deprecated: Snackbar title shown after a bookmark has been created. -->
-    <string name="bookmark_created_snackbar">书签已创建。</string>
     <!-- Snackbar title shown after a bookmark has been created. -->
     <string name="bookmark_saved_snackbar">书签已保存！</string>
     <!-- Snackbar edit button shown after a bookmark has been created. -->
@@ -1058,6 +1082,16 @@
     <string name="notification_pbm_action_delete_and_open">删除并打开</string>
     <!-- Name of the "Powered by Fenix" notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="notification_powered_by_channel_name">源自</string>
+    <!-- Name of the marketing notification channel. Displayed in the "App notifications" system settings for the app -->
+    <string name="notification_marketing_channel_name">市场营销</string>
+    <!-- Title shown in the notification that pops up to remind the user to set fenix as default browser.
+    %1$s is a placeholder that will be replaced by the app name (Fenix). -->
+    <string name="notification_default_browser_title">%1$s 又快、又有隐私</string>
+    <!-- Text shown in the notification that pops up to remind the user to set fenix as default browser.
+    %1$s is a placeholder that will be replaced by the app name (Fenix). -->
+    <string name="notification_default_browser_text">将 %1$s 设为默认浏览器</string>
+
+    <!-- Snackbar -->
     <!-- Text shown in snackbar when user deletes a collection -->
     <string name="snackbar_collection_deleted">收藏集已删除</string>
 
@@ -1482,7 +1516,7 @@
     <string name="add_to_homescreen_description_2">您可以轻松将此网站添加到设备主屏幕，以便迅捷访问并以类似应用的体验畅享浏览。</string>
 
     <!-- Preference for managing the settings for logins and passwords in Fenix -->
-    <string name="preferences_passwords_logins_and_passwords">我的密码</string>
+    <string name="preferences_passwords_logins_and_passwords">密码</string>
     <!-- Preference for managing the saving of logins and passwords in Fenix -->
     <string name="preferences_passwords_save_logins">保存登录名和密码</string>
     <!-- Preference option for asking to save passwords in Fenix -->
@@ -1493,16 +1527,14 @@
     <string name="preferences_passwords_autofill">自动填写</string>
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">同步登录信息</string>
-    <!-- Syncing saved logins in Fenix is on -->
-    <string name="preferences_passwords_sync_logins_on">开启</string>
-    <!-- Syncing saved logins in Fenix is off -->
-    <string name="preferences_passwords_sync_logins_off">关闭</string>
+    <!-- Preference for syncing saved logins in Fenix, when not signed in-->
+    <string name="preferences_passwords_sync_logins_across_devices">跨设备同步登录信息</string>
     <!-- Syncing saved logins in Fenix needs reconnect to sync -->
     <string name="preferences_passwords_sync_logins_reconnect">重新连接</string>
     <!-- Syncing saved logins in Fenix needs login -->
     <string name="preferences_passwords_sync_logins_sign_in">登录同步服务</string>
     <!-- Preference to access list of saved logins -->
-    <string name="preferences_passwords_saved_logins">存放的登录信息</string>
+    <string name="preferences_passwords_saved_logins">保存的登录信息</string>
     <!-- Description of empty list of saved passwords. Placeholder is replaced with app name.  -->
     <string name="preferences_passwords_saved_logins_description_empty_text">您保存或同步到 %s 的登录信息将显示于此处。</string>
     <!-- Preference to access list of saved logins -->
@@ -1530,7 +1562,7 @@
     <!-- Message displayed in security prompt to reenter a secret pin to access saved logins -->
     <string name="preferences_passwords_saved_logins_enter_pin">重新输入您的 PIN 码</string>
     <!-- Message displayed in security prompt to access saved logins -->
-    <string name="preferences_passwords_saved_logins_enter_pin_description">解锁以查看您存放的登录信息</string>
+    <string name="preferences_passwords_saved_logins_enter_pin_description">解锁以查看您保存的登录信息</string>
     <!-- Message displayed when a connection is insecure and we detect the user is entering a password -->
     <string name="logins_insecure_connection_warning">此连接不安全。输入的登录信息可能被窃取。</string>
     <!-- Learn more link that will link to a page with more information displayed when a connection is insecure and we detect the user is entering a password -->
@@ -1564,11 +1596,11 @@
     <!-- Content Description (for screenreaders etc) read for the button to hide a password in logins -->
     <string name="saved_login_hide_password">隐藏密码</string>
     <!-- Message displayed in biometric prompt displayed for authentication before allowing users to view their logins -->
-    <string name="logins_biometric_prompt_message">解锁以查看您存放的登录信息</string>
+    <string name="logins_biometric_prompt_message">解锁以查看您保存的登录信息</string>
     <!-- Title of warning dialog if users have no device authentication set up -->
     <string name="logins_warning_dialog_title">保护您的登录名和密码</string>
     <!-- Message of warning dialog if users have no device authentication set up -->
-    <string name="logins_warning_dialog_message">设置锁定方式、PIN 码或密码以保护您存放的登录名与密码，避免他人盗用。</string>
+    <string name="logins_warning_dialog_message">设置锁定方式、PIN 码或密码以保护您保存的登录名与密码，避免他人盗用。</string>
     <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
     <string name="logins_warning_dialog_later">稍后</string>
     <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->
@@ -1591,32 +1623,38 @@
     <!-- Preference and title for managing the settings for credit cards -->
     <string name="preferences_credit_cards">信用卡</string>
     <!-- Preference for saving and autofilling credit cards -->
-    <string name="preferences_credit_cards_save_and_autofill_cards">保存并自动填充信用卡信息</string>
+    <string name="preferences_credit_cards_save_and_autofill_cards">保存并自动填充卡片信息</string>
     <!-- Preference summary for saving and autofilling credit card data -->
     <string name="preferences_credit_cards_save_and_autofill_cards_summary">数据已加密</string>
     <!-- Preference option for syncing credit cards across devices. This is displayed when the user is not signed into sync -->
-    <string name="preferences_credit_cards_sync_cards_across_devices">跨设备同步信用卡信息</string>
+    <string name="preferences_credit_cards_sync_cards_across_devices">跨设备同步卡片信息</string>
+    <!-- Preference option for syncing credit cards across devices. This is displayed when the user is signed into sync -->
+    <string name="preferences_credit_cards_sync_cards">同步卡片信息</string>
     <!-- Preference option for adding a credit card -->
     <string name="preferences_credit_cards_add_credit_card">添加信用卡</string>
 
     <!-- Preference option for managing saved credit cards -->
-    <string name="preferences_credit_cards_manage_saved_cards">管理存放的信用卡</string>
+    <string name="preferences_credit_cards_manage_saved_cards">管理保存的卡片</string>
     <!-- Title of the "Add card" screen -->
     <string name="credit_cards_add_card">添加信用卡</string>
     <!-- Title of the "Edit card" screen -->
-    <string name="credit_cards_edit_card">编辑此卡</string>
+    <string name="credit_cards_edit_card">编辑卡片</string>
     <!-- The header for the card number of a credit card -->
     <string name="credit_cards_card_number">卡号</string>
     <!-- The header for the expiration date of a credit card -->
     <string name="credit_cards_expiration_date">失效日期</string>
+    <!-- The label for the expiration date month of a credit card to be used by a11y services-->
+    <string name="credit_cards_expiration_date_month">到期月份</string>
+    <!-- The label for the expiration date year of a credit card to be used by a11y services-->
+    <string name="credit_cards_expiration_date_year">到期年份</string>
     <!-- The header for the name on the credit card -->
     <string name="credit_cards_name_on_card">卡上姓名</string>
     <!-- The header for the nickname for a credit card -->
     <string name="credit_cards_card_nickname">卡的昵称</string>
     <!-- The text for the "Delete card" menu item for deleting a credit card -->
-    <string name="credit_cards_menu_delete_card">删除此卡</string>
+    <string name="credit_cards_menu_delete_card">删除卡片</string>
     <!-- The text for the "Delete card" button for deleting a credit card -->
-    <string name="credit_cards_delete_card_button">删除此卡</string>
+    <string name="credit_cards_delete_card_button">删除卡片</string>
     <!-- The title for the "Save" menu item for saving a credit card -->
     <string name="credit_cards_menu_save">保存</string>
     <!-- The text for the "Save" button for saving a credit card -->
@@ -1625,7 +1663,29 @@
     <string name="credit_cards_cancel_button">取消</string>
 
     <!-- Title of the "Saved cards" screen -->
-    <string name="credit_cards_saved_cards">存放的信用卡</string>
+    <string name="credit_cards_saved_cards">保存的卡片</string>
+
+    <!-- Error message for credit card number validation -->
+    <string name="credit_cards_number_validation_error_message">请输入有效的信用卡卡号</string>
+
+    <!-- Error message for credit card name on card validation -->
+    <string name="credit_cards_name_on_card_validation_error_message">请填写此栏</string>
+    <!-- Message displayed in biometric prompt displayed for authentication before allowing users to view their saved credit cards -->
+    <string name="credit_cards_biometric_prompt_message">解锁后即可查看保存的卡片信息</string>
+    <!-- Title of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_title">保护您的卡片信息</string>
+
+    <!-- Message of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_message">设置锁定方式、PIN 码或密码以保护您保存的卡片信息，避免他人盗用。</string>
+    <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_set_up_now">立即设置</string>
+    <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_later">以后再说</string>
+    <!-- Title of PIN verification dialog to direct users to re-enter their device credentials to access their credit cards -->
+    <string name="credit_cards_biometric_prompt_message_pin">解锁设备</string>
+
+    <!-- Message displayed in biometric prompt for authentication, before allowing users to use their stored credit card information -->
+    <string name="credit_cards_biometric_prompt_unlock_message">解锁以使用存储的卡片信息</string>
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">添加搜索引擎</string>
@@ -1791,20 +1851,13 @@
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">移除</string>
 
-    <!-- Deprecated: text for the firefox account onboarding card header
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_firefox_account_header">全面体验 %s。</string>
-
     <!-- Content description radio buttons with a link to more information -->
     <string name="radio_preference_info_content_description">点击了解更多信息</string>
 
-    <!-- Deprecated: No Open Tabs Message Header -->
-    <string name="no_collections_header1">有用的东西收藏在这</string>
-    <!-- Deprecated: Label to describe what collections are to a new user without any collections -->
-    <string name="no_collections_description1">将相似的搜索查询、网站和标签页归入一组，方便以后快速访问。</string>
-    <!-- Deprecated: text for the firefox account onboarding card header when we detect you're already signed in to -->
-    <string name="onboarding_firefox_account_auto_signin_header_2">您已在此手机上的其他 Firefox 浏览器上以 %s 身份登录。也要使用此账号登录吗？</string>
-    <!-- Deprecated: Describes the add to homescreen functionality -->
-    <string name="add_to_homescreen_description">您可以轻松将此网站添加到手机主屏幕，以便迅捷访问并以类似应用的体验畅享浏览。</string>
+    <!-- Content description for the action bar "up" button -->
+    <string name="action_bar_up_description">向上导航</string>
 
-    </resources>
+    <!-- Content description for privacy content close button -->
+    <string name="privacy_content_close_button_content_description">关闭</string>
+
+</resources>

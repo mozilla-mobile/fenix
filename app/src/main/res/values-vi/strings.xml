@@ -5,6 +5,7 @@
     <string name="app_name_private_5">%s riêng tư</string>
     <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
     <string name="app_name_private_4">%s (Riêng tư)</string>
+
     <!-- Home Fragment -->
     <!-- Content description (not visible, for screen readers etc.): "Three dot" menu button. -->
     <string name="content_description_menu">Tùy chọn khác</string>
@@ -47,6 +48,16 @@
     <string name="tab_tray_enter_multiselect_content_description">Đã vào chế độ nhiều lựa chọn, chọn các thẻ để lưu vào bộ sưu tập</string>
     <!-- Content description on checkmark while tab is selected in multiselect mode in tab tray -->
     <string name="tab_tray_multiselect_selected_content_description">Đã chọn</string>
+
+    <!-- Home - Recently saved bookmarks -->
+    <!-- Title for the home screen section with recently saved bookmarks. -->
+    <string name="recently_saved_bookmarks">Đã lưu gần đây</string>
+    <!-- Content description for the recently saved bookmarks section on the home screen. -->
+    <string name="recently_saved_bookmarks_content_description">Dấu trang đã lưu gần đây</string>
+    <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
+    <string name="recently_saved_show_all">Hiển thị tất cả</string>
+    <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
+    <string name="recently_saved_show_all_content_description">Hiển thị nút tất cả dấu trang đã lưu</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
     <string name="about_content">%1$s được sản xuất bởi Mozilla.</string>
@@ -93,13 +104,6 @@
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">Bỏ qua</string>
 
-    <!-- Text for the banner message to tell users about our grid view feature. -->
-    <string name="tab_tray_grid_view_banner_message">Thay đổi bố cục của các thẻ đang mở. Đi tới cài đặt và chọn lưới trong chế độ xem thẻ.</string>
-    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
-    <string name="tab_tray_grid_view_banner_positive_button_text">Đi tới cài đặt</string>
-    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
-    <string name="tab_tray_grid_view_banner_negative_button_text">Bỏ qua</string>
-
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
     <string name="home_screen_shortcut_open_new_tab_2">Thẻ mới</string>
@@ -108,6 +112,12 @@
 
     <!-- Heading for the Top Sites block -->
     <string name="home_screen_top_sites_heading">Trang web hàng đầu</string>
+
+    <!-- Recent Tabs -->
+    <!-- Header text for jumping back into the recent tab in the home screen -->
+    <string name="recent_tabs_header">Quay lại trang trước</string>
+    <!-- Button text for showing all the tabs in the tabs tray -->
+    <string name="recent_tabs_show_all">Hiển thị tất cả</string>
 
     <!-- Browser Fragment -->
     <!-- Content description (not visible, for screen readers etc.): Navigate to open tabs -->
@@ -183,6 +193,10 @@
     <string name="browser_menu_add">Thêm</string>
     <!-- Browser menu label for editing a bookmark -->
     <string name="browser_menu_edit">Chỉnh sửa</string>
+
+    <!-- Browser Toolbar -->
+    <!-- Content description for the Home screen button on the browser toolbar -->
+    <string name="browser_toolbar_home">Màn hình chính</string>
 
     <!-- Error message to show when the user tries to access a scheme not
         handled by the app (Ex: blob, tel etc) -->
@@ -412,6 +426,11 @@
         and the third is the device model. -->
     <string name="default_device_name_2">%1$s trên %2$s %3$s</string>
 
+    <!-- Preference for syncing credit cards -->
+    <string name="preferences_sync_credit_cards">Thẻ tín dụng</string>
+    <!-- Preference for syncing addresses -->
+    <string name="preferences_sync_address">Địa chỉ</string>
+
     <!-- Send Tab -->
     <!-- Name of the "receive tabs" notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="fxa_received_tab_channel_name">Các thẻ đã nhận</string>
@@ -443,9 +462,6 @@
     <!-- Text displayed when there are no exceptions, with learn more link that brings users to a tracking protection SUMO page -->
     <string name="exceptions_empty_message_learn_more_link">Tìm hiểu thêm</string>
 
-    <!-- Description in Quick Settings that tells user tracking protection is off globally for all sites, and links to Settings to turn it on -->
-    <string name="preferences_tracking_protection_turned_off_globally">Đã tắt toàn bộ, đi tới cài đặt để bật nó.</string>
-
     <!-- Preference switch for Telemetry -->
     <string name="preferences_telemetry">Telemetry</string>
     <!-- Preference switch for usage and technical data collection -->
@@ -456,6 +472,8 @@
     <string name="preferences_marketing_data">Dữ liệu tiếp thị</string>
     <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
     <string name="preferences_marketing_data_description">Chia sẻ dữ liệu về những tính năng bạn sử dụng trong %1$s với Leanplum, nhà cung cấp tiếp thị di động của chúng tôi.</string>
+    <!-- Preference description for marketing data collection -->
+    <string name="preferences_marketing_data_description2">Chia sẻ dữ liệu sử dụng cơ bản với Adjust, nhà cung cấp tiếp thị di động của chúng tôi</string>
     <!-- Title for studies preferences -->
     <string name="preference_experiments_2">Nghiên cứu</string>
     <!-- Summary for studies preferences -->
@@ -540,8 +558,6 @@
     <string name="library_new_tab">Thẻ mới</string>
     <!-- Option in Library to find text in page -->
     <string name="library_find_in_page">Tìm trong trang</string>
-    <!-- Option in Library to open Synced Tabs page -->
-    <string name="library_synced_tabs">Các thẻ đã đồng bộ</string>
     <!-- Option in Library to open Reading List -->
     <string name="library_reading_list">Danh sách đọc</string>
     <!-- Menu Item Label for Search in Library -->
@@ -586,6 +602,15 @@
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">Sau một tháng</string>
 
+    <!-- Start on Home -->
+    <!-- Title of a preference that allows a user to indicate after a specified amount of time when the app should start on the home screen -->
+    <string name="preferences_start_on_home">Bắt đầu tại màn hình chính</string>
+    <!-- Option for starting on the home screen after after four hours or inactivity -->
+    <string name="start_on_home_after_four_hours">Sau bốn giờ</string>
+    <!-- Option for always starting on the home screen -->
+    <string name="start_on_home_always">Luôn luôn</string>
+    <!-- Option for never starting on the home screen -->
+    <string name="start_on_home_never">Không bao giờ</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
     <string name="close_tabs_manually_summary">Đóng thủ công</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
@@ -792,8 +817,6 @@
     <string name="bookmark_delete_folder_snackbar">Đã xóa %1$s</string>
     <!-- Screen title for adding a bookmarks folder -->
     <string name="bookmark_add_folder">Thêm thư mục</string>
-    <!-- deprecated: Snackbar title shown after a bookmark has been created. -->
-    <string name="bookmark_created_snackbar">Đã tạo dấu trang.</string>
     <!-- Snackbar title shown after a bookmark has been created. -->
     <string name="bookmark_saved_snackbar">Đã lưu dấu trang!</string>
     <!-- Snackbar edit button shown after a bookmark has been created. -->
@@ -1018,6 +1041,16 @@
     <string name="notification_pbm_action_delete_and_open">Xóa và mở</string>
     <!-- Name of the "Powered by Fenix" notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="notification_powered_by_channel_name">Được hỗ trợ bởi</string>
+    <!-- Name of the marketing notification channel. Displayed in the "App notifications" system settings for the app -->
+    <string name="notification_marketing_channel_name">Tiếp thị</string>
+    <!-- Title shown in the notification that pops up to remind the user to set fenix as default browser.
+    %1$s is a placeholder that will be replaced by the app name (Fenix). -->
+    <string name="notification_default_browser_title">%1$s nhanh và riêng tư</string>
+    <!-- Text shown in the notification that pops up to remind the user to set fenix as default browser.
+    %1$s is a placeholder that will be replaced by the app name (Fenix). -->
+    <string name="notification_default_browser_text">Đặt %1$s làm trình duyệt mặc định của bạn</string>
+
+    <!-- Snackbar -->
     <!-- Text shown in snackbar when user deletes a collection -->
     <string name="snackbar_collection_deleted">Đã xóa bộ sưu tập</string>
     <!-- Text shown in snackbar when user renames a collection -->
@@ -1443,10 +1476,8 @@
     <string name="preferences_passwords_autofill">Tự động điền</string>
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">Đồng bộ hóa thông tin đăng nhập</string>
-    <!-- Syncing saved logins in Fenix is on -->
-    <string name="preferences_passwords_sync_logins_on">Bật</string>
-    <!-- Syncing saved logins in Fenix is off -->
-    <string name="preferences_passwords_sync_logins_off">Tắt</string>
+    <!-- Preference for syncing saved logins in Fenix, when not signed in-->
+    <string name="preferences_passwords_sync_logins_across_devices">Đồng bộ hóa thông tin đăng nhập trên các thiết bị</string>
     <!-- Syncing saved logins in Fenix needs reconnect to sync -->
     <string name="preferences_passwords_sync_logins_reconnect">Kết nối lại</string>
     <!-- Syncing saved logins in Fenix needs login -->
@@ -1546,6 +1577,8 @@
     <string name="preferences_credit_cards_save_and_autofill_cards_summary">Dữ liệu được mã hóa</string>
     <!-- Preference option for syncing credit cards across devices. This is displayed when the user is not signed into sync -->
     <string name="preferences_credit_cards_sync_cards_across_devices">Đồng bộ thông tin thẻ tín dụng trên các thiết bị</string>
+    <!-- Preference option for syncing credit cards across devices. This is displayed when the user is signed into sync -->
+    <string name="preferences_credit_cards_sync_cards">Đồng bộ hóa thẻ tín dụng</string>
     <!-- Preference option for adding a credit card -->
     <string name="preferences_credit_cards_add_credit_card">Thêm thẻ tín dụng</string>
 
@@ -1559,6 +1592,10 @@
     <string name="credit_cards_card_number">Số thẻ</string>
     <!-- The header for the expiration date of a credit card -->
     <string name="credit_cards_expiration_date">Ngày hết hạn</string>
+    <!-- The label for the expiration date month of a credit card to be used by a11y services-->
+    <string name="credit_cards_expiration_date_month">Tháng hết hạn</string>
+    <!-- The label for the expiration date year of a credit card to be used by a11y services-->
+    <string name="credit_cards_expiration_date_year">Năm hết hạn</string>
     <!-- The header for the name on the credit card -->
     <string name="credit_cards_name_on_card">Tên trên thẻ</string>
     <!-- The header for the nickname for a credit card -->
@@ -1576,6 +1613,26 @@
 
     <!-- Title of the "Saved cards" screen -->
     <string name="credit_cards_saved_cards">Thẻ tín dụng đã lưu</string>
+
+    <!-- Error message for credit card number validation -->
+    <string name="credit_cards_number_validation_error_message">Vui lòng nhập số thẻ tín dụng hợp lệ</string>
+
+    <!-- Error message for credit card name on card validation -->
+    <string name="credit_cards_name_on_card_validation_error_message">Vui lòng điền vào trường này</string>
+    <!-- Message displayed in biometric prompt displayed for authentication before allowing users to view their saved credit cards -->
+    <string name="credit_cards_biometric_prompt_message">Mở khóa để xem các thẻ tín dụng đã lưu của bạn</string>
+    <!-- Title of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_title">Bảo mật thẻ tín dụng của bạn</string>
+    <!-- Message of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_message">Thiết lập màn hình khóa thiết bị với mẫu hình, mã PIN hoặc mật khẩu để bảo vệ thẻ tín dụng đã lưu của bạn không bị truy cập nếu người khác có thiết bị của bạn.</string>
+    <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_set_up_now">Thiết lập ngay</string>
+    <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_later">Để sau</string>
+    <!-- Title of PIN verification dialog to direct users to re-enter their device credentials to access their credit cards -->
+    <string name="credit_cards_biometric_prompt_message_pin">Mở khóa thiết bị của bạn</string>
+    <!-- Message displayed in biometric prompt for authentication, before allowing users to use their stored credit card information -->
+    <string name="credit_cards_biometric_prompt_unlock_message">Mở khóa để sử dụng thông tin thẻ tín dụng được lưu trữ</string>
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Thêm công cụ tìm kiếm</string>
@@ -1741,20 +1798,13 @@
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">Xóa</string>
 
-    <!-- Deprecated: text for the firefox account onboarding card header
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_firefox_account_header">Tận dụng tối đa %s.</string>
-
     <!-- Content description radio buttons with a link to more information -->
     <string name="radio_preference_info_content_description">Chạm để biết thêm chi tiết</string>
 
-    <!-- Deprecated: No Open Tabs Message Header -->
-    <string name="no_collections_header1">Thu thập những thứ quan trọng với bạn</string>
-    <!-- Deprecated: Label to describe what collections are to a new user without any collections -->
-    <string name="no_collections_description1">Nhóm các tìm kiếm, trang web và thẻ tương tự để truy cập nhanh sau này.</string>
-    <!-- Deprecated: text for the firefox account onboarding card header when we detect you're already signed in to -->
-    <string name="onboarding_firefox_account_auto_signin_header_2">Bạn đã đăng nhập dưới dạng %s trên một trình duyệt Firefox khác trên điện thoại này. Bạn có muốn đăng nhập bằng tài khoản này không?</string>
-    <!-- Deprecated: Describes the add to homescreen functionality -->
-    <string name="add_to_homescreen_description">Bạn có thể dễ dàng thêm trang web vào màn hình chính của điện thoại của bạn để có thể truy cập và duyệt web nhanh hơn với trải nghiệm giống như trên ứng dụng.</string>
+    <!-- Content description for the action bar "up" button -->
+    <string name="action_bar_up_description">Điều hướng lên</string>
 
-    </resources>
+    <!-- Content description for privacy content close button -->
+    <string name="privacy_content_close_button_content_description">Đóng</string>
+
+</resources>

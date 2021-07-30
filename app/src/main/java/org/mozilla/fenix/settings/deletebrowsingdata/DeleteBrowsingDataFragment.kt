@@ -28,7 +28,6 @@ import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
@@ -56,14 +55,14 @@ class DeleteBrowsingDataFragment : Fragment(R.layout.fragment_delete_browsing_da
         )
         settings = requireContext().settings()
 
-        getCheckboxes().forEach {
+        getCheckboxes().iterator().forEach {
             it.onCheckListener = { _ ->
                 updateDeleteButton()
                 updatePreference(it)
             }
         }
 
-        getCheckboxes().forEach {
+        getCheckboxes().iterator().forEach {
             it.isChecked = when (it.id) {
                 R.id.open_tabs_item -> settings.deleteOpenTabs
                 R.id.browsing_data_item -> settings.deleteBrowsingHistory
@@ -200,7 +199,7 @@ class DeleteBrowsingDataFragment : Fragment(R.layout.fragment_delete_browsing_da
                 // If the user deletes all open tabs we need to make sure we remove
                 // the BrowserFragment from the backstack.
                 popBackStack(R.id.homeFragment, false)
-                navigateBlockingForAsyncNavGraph(DeleteBrowsingDataFragmentDirections.actionGlobalSettingsFragment())
+                navigate(DeleteBrowsingDataFragmentDirections.actionGlobalSettingsFragment())
             }
         }
     }

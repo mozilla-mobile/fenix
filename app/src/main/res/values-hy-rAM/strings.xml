@@ -4,6 +4,7 @@
     <string name="app_name_private_5">Մասնավոր %s</string>
     <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
     <string name="app_name_private_4">%s (մասնավոր)</string>
+
     <!-- Home Fragment -->
     <!-- Content description (not visible, for screen readers etc.): "Three dot" menu button. -->
     <string name="content_description_menu">Լր. ընտրանքներ</string>
@@ -13,7 +14,7 @@
     <!-- Content description (not visible, for screen readers etc.): "Private Browsing" menu button. -->
     <string name="content_description_disable_private_browsing_button">Անջատել գաղտնի դիտարկումը</string>
     <!-- Placeholder text shown in the search bar before a user enters text -->
-    <string name="search_hint">Մուտքագրեք որոնում կամ կայքի հասցե</string>
+    <string name="search_hint">Մուտքագրեք որոնում կամ կայք</string>
     <!-- No Open Tabs Message Description -->
     <string name="no_open_tabs_description">Ձեր բաց ներդիրները կցուցադրվեն այստեղ:</string>
 
@@ -48,6 +49,16 @@
     <!-- Content description on checkmark while tab is selected in multiselect mode in tab tray -->
     <string name="tab_tray_multiselect_selected_content_description">Ընտրված</string>
 
+    <!-- Home - Recently saved bookmarks -->
+    <!-- Title for the home screen section with recently saved bookmarks. -->
+    <string name="recently_saved_bookmarks">Վերջերս պահպանված</string>
+    <!-- Content description for the recently saved bookmarks section on the home screen. -->
+    <string name="recently_saved_bookmarks_content_description">Վերջերս պահպանված էջանիշները</string>
+    <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
+    <string name="recently_saved_show_all">Ցուցադրել բոլորը</string>
+    <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
+    <string name="recently_saved_show_all_content_description">Ցուցադրել բոլոր պահպանված էջանիշների կոճակը</string>
+
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
     <string name="about_content">%1$s-ը մշակված է Mozilla-ի կողմից:</string>
 
@@ -57,7 +68,7 @@
 
     <!-- Explanation for private browsing displayed to users on home view when they first enable private mode
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="private_browsing_placeholder_description_2">%1$s-ին մաքրում է որոնման և զննարկման պատմությունը, երբ փակում եք ներդիրը կամ դուրս եք գալիս հավելվածից: Չնայած դա ձեզ անանուն չի դարձնում կայքերի կամ ձեր համացանցի ծառայություններ մատուցողի համար, այն ավելի հեշտ է դարձնում ձեր առցանց ակտիվության գաղտնիությունը այն դեպքում, եթե մեկ ուրիշը ևս օգտագործում է տվյալ սարքը:</string>
+    <string name="private_browsing_placeholder_description_2">%1$s-ը մաքրում է որոնման և զննարկման պատմությունը, երբ փակում եք ներդիրը կամ դուրս եք գալիս հավելվածից: Չնայած դա ձեզ անանուն չի դարձնում կայքերի կամ ձեր համացանցի ծառայություններ մատուցողի համար, այն ավելի հեշտ է դարձնում ձեր առցանց ակտիվության գաղտնիությունը այն դեպքում, եթե մեկ ուրիշը ևս օգտագործում է տվյալ սարքը:</string>
     <string name="private_browsing_common_myths">Տարածված առասպելներ գաղտնի դիտարկման վերաբերյալ</string>
     <!-- Delete session button to erase your history in a private session -->
     <string name="private_browsing_delete_session">Ջնջել աշխատաշրջանը</string>
@@ -92,13 +103,6 @@
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">Բաց թողնել</string>
 
-    <!-- Text for the banner message to tell users about our grid view feature. -->
-    <string name="tab_tray_grid_view_banner_message">Փոխեք բացված ներդիրների դասավորությունը: Գնացեք կարգավորումներ և ընտրեք Ցանց՝ ներդիրի տեսքի ներքո:</string>
-    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
-    <string name="tab_tray_grid_view_banner_positive_button_text">Անցնել Կարգավորումներին</string>
-    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
-    <string name="tab_tray_grid_view_banner_negative_button_text">Բաց թողնել</string>
-
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
     <string name="home_screen_shortcut_open_new_tab_2">Նոր ներդիր</string>
@@ -108,6 +112,12 @@
 
     <!-- Heading for the Top Sites block -->
     <string name="home_screen_top_sites_heading">Լավագույն կայքեր</string>
+
+    <!-- Recent Tabs -->
+    <!-- Header text for jumping back into the recent tab in the home screen -->
+    <string name="recent_tabs_header">Վերադառնալ</string>
+    <!-- Button text for showing all the tabs in the tabs tray -->
+    <string name="recent_tabs_show_all">Ցուցադրել բոլորը</string>
 
     <!-- Browser Fragment -->
     <!-- Content description (not visible, for screen readers etc.): Navigate to open tabs -->
@@ -183,6 +193,10 @@
     <string name="browser_menu_add">Ավելացնել</string>
     <!-- Browser menu label for editing a bookmark -->
     <string name="browser_menu_edit">Խմբագրել</string>
+
+    <!-- Browser Toolbar -->
+    <!-- Content description for the Home screen button on the browser toolbar -->
+    <string name="browser_toolbar_home">Հիմնական էկրան</string>
 
     <!-- Error message to show when the user tries to access a scheme not
         handled by the app (Ex: blob, tel etc) -->
@@ -413,6 +427,11 @@
         and the third is the device model. -->
     <string name="default_device_name_2">%1$s-ը %2$s %3$s-ում</string>
 
+    <!-- Preference for syncing credit cards -->
+    <string name="preferences_sync_credit_cards">Բանկային քարտեր</string>
+    <!-- Preference for syncing addresses -->
+    <string name="preferences_sync_address">Հասցեներ</string>
+
     <!-- Send Tab -->
     <!-- Name of the "receive tabs" notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="fxa_received_tab_channel_name">Ստացված ներդիրներ</string>
@@ -443,9 +462,6 @@
     <!-- Text displayed when there are no exceptions, with learn more link that brings users to a tracking protection SUMO page -->
     <string name="exceptions_empty_message_learn_more_link">Իմանալ ավելին</string>
 
-    <!-- Description in Quick Settings that tells user tracking protection is off globally for all sites, and links to Settings to turn it on -->
-    <string name="preferences_tracking_protection_turned_off_globally">Անջատված է գլոբալ առումով, անցեք Կարգավորումներ՝ միացնելու համար:</string>
-
     <!-- Preference switch for Telemetry -->
     <string name="preferences_telemetry">Telemetry</string>
     <!-- Preference switch for usage and technical data collection -->
@@ -456,6 +472,8 @@
     <string name="preferences_marketing_data">Շուկայավարման տվյալներ</string>
     <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
     <string name="preferences_marketing_data_description">Համօգտագործում է տվյալներն այն գործառույթների վերաբերյալ, որոնք դուք օգտագործում եք %1$s-ում Leanplum-ի հետ, բջջային մարկետինգի մեր մատակարարի:</string>
+    <!-- Preference description for marketing data collection -->
+    <string name="preferences_marketing_data_description2">Օգտագործման հիմնական տվյալները կիսում է Adjust- ի՝ մեր բջջային շուկայավարման մատակարարի հետ</string>
     <!-- Title for studies preferences -->
     <string name="preference_experiments_2">Ուսումնասիրություններ</string>
     <!-- Summary for studies preferences -->
@@ -541,8 +559,6 @@
     <string name="library_new_tab">Նոր ներդիր</string>
     <!-- Option in Library to find text in page -->
     <string name="library_find_in_page">Գտնել էջում</string>
-    <!-- Option in Library to open Synced Tabs page -->
-    <string name="library_synced_tabs">Համաժամեցված ներդիրներ</string>
     <!-- Option in Library to open Reading List -->
     <string name="library_reading_list">Ընթերցացուցակ</string>
     <!-- Menu Item Label for Search in Library -->
@@ -587,6 +603,15 @@
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">Մեկ ամիս անց</string>
 
+    <!-- Start on Home -->
+    <!-- Title of a preference that allows a user to indicate after a specified amount of time when the app should start on the home screen -->
+    <string name="preferences_start_on_home">Սկսել տնից</string>
+    <!-- Option for starting on the home screen after after four hours or inactivity -->
+    <string name="start_on_home_after_four_hours">Չորս ժամ անց</string>
+    <!-- Option for always starting on the home screen -->
+    <string name="start_on_home_always">Միշտ</string>
+    <!-- Option for never starting on the home screen -->
+    <string name="start_on_home_never">Երբեք</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
     <string name="close_tabs_manually_summary">Ձեռքով փակեք</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
@@ -792,8 +817,6 @@
     <string name="bookmark_delete_folder_snackbar">%1$s-ը ջնջվել է</string>
     <!-- Screen title for adding a bookmarks folder -->
     <string name="bookmark_add_folder">Ավելացնել պանակ</string>
-    <!-- deprecated: Snackbar title shown after a bookmark has been created. -->
-    <string name="bookmark_created_snackbar">Էջանիշը ստեղծվեց:</string>
     <!-- Snackbar title shown after a bookmark has been created. -->
     <string name="bookmark_saved_snackbar">Էջանիշը պահպանվեց:</string>
     <!-- Snackbar edit button shown after a bookmark has been created. -->
@@ -926,7 +949,7 @@
     <!-- Content description (not visible, for screen readers etc.): Opens the collection menu when pressed -->
     <string name="collection_menu_button_content_description">Հավաքածուի ցանկ</string>
     <!-- Label to describe what collections are to a new user without any collections -->
-    <string name="no_collections_description2">Հավաքեք ձեզ համար կարևոր բաները:\nԽմբավորեք համանման որոնումները, կայքերը և ներդիրները՝ ավելի ուշ արագ մատչելու համար:</string>
+    <string name="no_collections_description2">Հավաքեք ձեզ համար կարևոր բաները:\nԽմբավորեք համանման որոնումները, կայքերը և ներդիրները՝ հետո ավելի արագ մատչելու համար:</string>
     <!-- Title for the "select tabs" step of the collection creator -->
     <string name="create_collection_select_tabs">Ընտրեք ներդիրները</string>
     <!-- Title for the "select collection" step of the collection creator -->
@@ -1022,6 +1045,16 @@
     <string name="notification_pbm_action_delete_and_open">Ջնջել և բացել</string>
     <!-- Name of the "Powered by Fenix" notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="notification_powered_by_channel_name">Օժանդակող`</string>
+    <!-- Name of the marketing notification channel. Displayed in the "App notifications" system settings for the app -->
+    <string name="notification_marketing_channel_name">Մարկեթինգ</string>
+    <!-- Title shown in the notification that pops up to remind the user to set fenix as default browser.
+    %1$s is a placeholder that will be replaced by the app name (Fenix). -->
+    <string name="notification_default_browser_title">%1$s-ը արագ է և մասնավոր</string>
+    <!-- Text shown in the notification that pops up to remind the user to set fenix as default browser.
+    %1$s is a placeholder that will be replaced by the app name (Fenix). -->
+    <string name="notification_default_browser_text">Դարձրեք %1$s-ը ձեր սկզբնադիր զննիչը</string>
+
+    <!-- Snackbar -->
     <!-- Text shown in snackbar when user deletes a collection -->
     <string name="snackbar_collection_deleted">Հավաքածուն ջնջվեց</string>
     <!-- Text shown in snackbar when user renames a collection -->
@@ -1451,10 +1484,8 @@
     <string name="preferences_passwords_autofill">Ինքնալցնում</string>
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">Համաժամեցնել մուտքանունները</string>
-    <!-- Syncing saved logins in Fenix is on -->
-    <string name="preferences_passwords_sync_logins_on">Միաց.</string>
-    <!-- Syncing saved logins in Fenix is off -->
-    <string name="preferences_passwords_sync_logins_off">Անջ.</string>
+    <!-- Preference for syncing saved logins in Fenix, when not signed in-->
+    <string name="preferences_passwords_sync_logins_across_devices">Համաժամեցնել մուտքագրումները սարքերի միջև</string>
     <!-- Syncing saved logins in Fenix needs reconnect to sync -->
     <string name="preferences_passwords_sync_logins_reconnect">Վերակապակցել</string>
     <!-- Syncing saved logins in Fenix needs login -->
@@ -1529,7 +1560,7 @@
     <!-- Message of warning dialog if users have no device authentication set up -->
     <string name="logins_warning_dialog_message">Ստեղծեք սարքի կողպեքի նմուշ, PIN կամ գաղտնաբառ՝ ձեր պահպանված մուտքանունները և գաղտնաբառերը մուտք գործելուց պաշտպանելու համար, եթե ձեր սարքը ուրիշի ձեռքն ընկնի:</string>
     <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
-    <string name="logins_warning_dialog_later">Ավելի ուշ</string>
+    <string name="logins_warning_dialog_later">Հետո</string>
     <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->
     <string name="logins_warning_dialog_set_up_now">Տեղակայել հիմա</string>
     <!-- Title of PIN verification dialog to direct users to re-enter their device credentials to access their logins -->
@@ -1556,6 +1587,8 @@
     <string name="preferences_credit_cards_save_and_autofill_cards_summary">Տվյալները գաղտնագրված են</string>
     <!-- Preference option for syncing credit cards across devices. This is displayed when the user is not signed into sync -->
     <string name="preferences_credit_cards_sync_cards_across_devices">Համաժամեցնել քարտերը սարքերի միջև</string>
+    <!-- Preference option for syncing credit cards across devices. This is displayed when the user is signed into sync -->
+    <string name="preferences_credit_cards_sync_cards">Համաժամեցնել քարտերը</string>
     <!-- Preference option for adding a credit card -->
     <string name="preferences_credit_cards_add_credit_card">Ավելացնել բանկային քարտ</string>
     <!-- Preference option for managing saved credit cards -->
@@ -1568,6 +1601,10 @@
     <string name="credit_cards_card_number">Քարտի համարը</string>
     <!-- The header for the expiration date of a credit card -->
     <string name="credit_cards_expiration_date">Քարտի ժամկետը</string>
+    <!-- The label for the expiration date month of a credit card to be used by a11y services-->
+    <string name="credit_cards_expiration_date_month">Ժամկետի ամսաթվի ամիսը</string>
+    <!-- The label for the expiration date year of a credit card to be used by a11y services-->
+    <string name="credit_cards_expiration_date_year">Ժամկետի ամսաթվի տարին</string>
     <!-- The header for the name on the credit card -->
     <string name="credit_cards_name_on_card">Քարտի վրա ձեր անունը</string>
     <!-- The header for the nickname for a credit card -->
@@ -1585,6 +1622,26 @@
 
     <!-- Title of the "Saved cards" screen -->
     <string name="credit_cards_saved_cards">Պահպանված քարտեր</string>
+
+    <!-- Error message for credit card number validation -->
+    <string name="credit_cards_number_validation_error_message">Մուտքագրեք բանկային վավեր քարտի համար</string>
+
+    <!-- Error message for credit card name on card validation -->
+    <string name="credit_cards_name_on_card_validation_error_message">Լրացրեք այս դաշտը</string>
+    <!-- Message displayed in biometric prompt displayed for authentication before allowing users to view their saved credit cards -->
+    <string name="credit_cards_biometric_prompt_message">Ապակողպեք՝ դիտելու համար պահպանված քարտերը</string>
+    <!-- Title of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_title">Անվտանգ դարձրեք ձեր բանկային քարտերը</string>
+    <!-- Message of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_message">Տեղակայեք սարքի կողպման նախշ, PIN կամ գաղտնաբառ՝ պաշտպանելու պահված բանկային քարտերը այն դեպքում, եթե որևէ մեկը ևս մուտք ունի Ձեր սարքին:</string>
+    <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_set_up_now">Տեղակայել հիմա</string>
+    <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_later">Ավելի ուշ</string>
+    <!-- Title of PIN verification dialog to direct users to re-enter their device credentials to access their credit cards -->
+    <string name="credit_cards_biometric_prompt_message_pin">Ապակողպեք ձեր սարքը</string>
+    <!-- Message displayed in biometric prompt for authentication, before allowing users to use their stored credit card information -->
+    <string name="credit_cards_biometric_prompt_unlock_message">Ապակողպեք՝ օգտագործելու համար բանկային քարտերի պահված տեղեկությունները</string>
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Ավելացնել որոնիչ</string>
@@ -1751,20 +1808,13 @@
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">Հեռացնել</string>
 
-    <!-- Deprecated: text for the firefox account onboarding card header
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_firefox_account_header">Ստացեք առավելագույնը %s-ից:</string>
-
     <!-- Content description radio buttons with a link to more information -->
     <string name="radio_preference_info_content_description">Սեղմեք` մանրամասների համար</string>
 
-    <!-- Deprecated: No Open Tabs Message Header -->
-    <string name="no_collections_header1">Հավաքեք ձեզ համար կարևոր բաները</string>
-    <!-- Deprecated: Label to describe what collections are to a new user without any collections -->
-    <string name="no_collections_description1">Խմբավորեք համանման որոնումները, կայքերը և ներդիրները՝ հետո արագ մատչելու համար:</string>
-    <!-- Deprecated: text for the firefox account onboarding card header when we detect you're already signed in to -->
-    <string name="onboarding_firefox_account_auto_signin_header_2">Դուք մուտք եք գործել որպես %s այլ Firefox դիտարկիչում: Ցանկանո՞ւմ եք մուտք գործել այս հաշիվ:</string>
-    <!-- Deprecated: Describes the add to homescreen functionality -->
-    <string name="add_to_homescreen_description">Հեշտությամբ կարող եք ավելացնել այս կայքը ձեր հեռախոսի Տնային էկրանին՝ ակնթարթորեն մատչելու և արագ դիտարկելու համար:</string>
+    <!-- Content description for the action bar "up" button -->
+    <string name="action_bar_up_description">Նավարկել վերև</string>
 
-    </resources>
+    <!-- Content description for privacy content close button -->
+    <string name="privacy_content_close_button_content_description">Փակել</string>
+
+</resources>

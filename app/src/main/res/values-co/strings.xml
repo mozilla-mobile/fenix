@@ -5,6 +5,7 @@
     <string name="app_name_private_5">%s privatu</string>
     <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
     <string name="app_name_private_4">%s (nav. privata)</string>
+
     <!-- Home Fragment -->
     <!-- Content description (not visible, for screen readers etc.): "Three dot" menu button. -->
     <string name="content_description_menu">Ozzioni addiziunale</string>
@@ -48,6 +49,16 @@
     <string name="tab_tray_enter_multiselect_content_description">Modu di selezzione multiple attivatu, selezziunate l’unghjette à arregistrà in una cullezzione</string>
     <!-- Content description on checkmark while tab is selected in multiselect mode in tab tray -->
     <string name="tab_tray_multiselect_selected_content_description">Selezziunatu</string>
+
+    <!-- Home - Recently saved bookmarks -->
+    <!-- Title for the home screen section with recently saved bookmarks. -->
+    <string name="recently_saved_bookmarks">Arregistrate pocu fà</string>
+    <!-- Content description for the recently saved bookmarks section on the home screen. -->
+    <string name="recently_saved_bookmarks_content_description">Indette arregistrate pocu fà</string>
+    <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
+    <string name="recently_saved_show_all">Tuttu affissà</string>
+    <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
+    <string name="recently_saved_show_all_content_description">Buttone Affissà tutte l’indette arregistrate</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
     <string name="about_content">%1$s hè sviluppatu da Mozilla.</string>
@@ -96,14 +107,6 @@
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">Ricusà</string>
 
-    <!-- Text for the banner message to tell users about our grid view feature. -->
-    <string name="tab_tray_grid_view_banner_message">Mudificà l’accunciamentu di l’unghjette aperte. Andate in e preferenze è selezziunate « Quadrittere » sottu « Vista di l’unghjette ».</string>
-
-    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
-    <string name="tab_tray_grid_view_banner_positive_button_text">Andà à e preferenze</string>
-    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
-    <string name="tab_tray_grid_view_banner_negative_button_text">Ignurà</string>
-
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
     <string name="home_screen_shortcut_open_new_tab_2">Nova unghjetta</string>
@@ -113,6 +116,12 @@
 
     <!-- Heading for the Top Sites block -->
     <string name="home_screen_top_sites_heading">Siti principale</string>
+
+    <!-- Recent Tabs -->
+    <!-- Header text for jumping back into the recent tab in the home screen -->
+    <string name="recent_tabs_header">Rivene in st’unghjetta</string>
+    <!-- Button text for showing all the tabs in the tabs tray -->
+    <string name="recent_tabs_show_all">Tuttu affissà</string>
 
     <!-- Browser Fragment -->
     <!-- Content description (not visible, for screen readers etc.): Navigate to open tabs -->
@@ -188,9 +197,13 @@
     <!-- Browser menu label for editing a bookmark -->
     <string name="browser_menu_edit">Mudificà</string>
 
+    <!-- Browser Toolbar -->
+    <!-- Content description for the Home screen button on the browser toolbar -->
+    <string name="browser_toolbar_home">Screnu d’accolta</string>
+
     <!-- Error message to show when the user tries to access a scheme not
         handled by the app (Ex: blob, tel etc) -->
-    <string name="unknown_scheme_error_message">Impussibule di cunnettassi. Schema d’URL scunnisciutu.</string>
+    <string name="unknown_scheme_error_message">Impussibule di cunnettesi. Schema d’URL scunnisciutu.</string>
 
     <!-- Locale Settings Fragment -->
     <!-- Content description for tick mark on selected language -->
@@ -302,7 +315,7 @@
     <!-- Preference category for account information -->
     <string name="preferences_category_account">Contu</string>
     <!-- Preference shown on banner to sign into account -->
-    <string name="preferences_sign_in">Cunnettassi</string>
+    <string name="preferences_sign_in">Cunnettesi</string>
     <!-- Preference for changing where the toolbar is positioned -->
     <string name="preferences_toolbar">Barra d’attrezzi</string>
     <!-- Preference for changing default theme to dark or light mode -->
@@ -318,7 +331,7 @@
     <!-- Preference shown instead of account display name while account profile information isn't available yet. -->
     <string name="preferences_account_default_name">Contu Firefox</string>
     <!-- Preference text for account title when there was an error syncing FxA -->
-    <string name="preferences_account_sync_error">Ricunnettatevi per cuntinuà a sincrunizazione</string>
+    <string name="preferences_account_sync_error">Ricunnittetevi per cuntinuà a sincrunizazione</string>
     <!-- Preference for language -->
     <string name="preferences_language">Lingua</string>
     <!-- Preference for data choices -->
@@ -399,7 +412,7 @@
     <!-- Preference for syncing tabs -->
     <string name="preferences_sync_tabs_2">Apre l’unghjette</string>
     <!-- Preference for signing out -->
-    <string name="preferences_sign_out">Scunnettassi</string>
+    <string name="preferences_sign_out">Scunnettesi</string>
     <!-- Preference displays and allows changing current FxA device name -->
     <string name="preferences_sync_device_name">Nome di l’apparechju</string>
     <!-- Text shown when user enters empty device name -->
@@ -419,6 +432,12 @@
         The first parameter is the application name, the second is the device manufacturer name
         and the third is the device model. -->
     <string name="default_device_name_2">%1$s nant’à %2$s %3$s</string>
+
+    <!-- Preference for syncing credit cards -->
+    <string name="preferences_sync_credit_cards">Carte bancarie</string>
+
+    <!-- Preference for syncing addresses -->
+    <string name="preferences_sync_address">Indirizzi</string>
 
     <!-- Send Tab -->
     <!-- Name of the "receive tabs" notification channel. Displayed in the "App notifications" system settings for the app -->
@@ -450,9 +469,6 @@
     <!-- Text displayed when there are no exceptions, with learn more link that brings users to a tracking protection SUMO page -->
     <string name="exceptions_empty_message_learn_more_link">Sapene di più</string>
 
-    <!-- Description in Quick Settings that tells user tracking protection is off globally for all sites, and links to Settings to turn it on -->
-    <string name="preferences_tracking_protection_turned_off_globally">Disattivata di manera glubale, andate in e Preferenze per attivalla.</string>
-
     <!-- Preference switch for Telemetry -->
     <string name="preferences_telemetry">Telemetria</string>
     <!-- Preference switch for usage and technical data collection -->
@@ -460,9 +476,11 @@
     <!-- Preference description for usage and technical data collection -->
     <string name="preferences_usage_data_description">Sparte cù Mozilla i dati d’andamentu, d’impiegu, di materiale è di persunalizazione di u vostru navigatore per aiutacci à amendà %1$s</string>
     <!-- Preference switch for marketing data collection -->
-    <string name="preferences_marketing_data">Dati di cummercializazione</string>
+    <string name="preferences_marketing_data">Dati cummerciali</string>
     <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
-    <string name="preferences_marketing_data_description">Scumparte i dati nant’à e funzioni di %1$s chì voi impiegate cù Leanplum, u nostru furnidore di cummercializazione mubile.</string>
+    <string name="preferences_marketing_data_description">Scumparte i dati nant’à e funzioni di %1$s chì voi impiegate cù Leanplum, u nostru venditore di dati cummerciali d’apparechji mubili.</string>
+    <!-- Preference description for marketing data collection -->
+    <string name="preferences_marketing_data_description2">Spartera di i dati d’adopru basichi cù Adjust, u nostru venditore di dati cummerciali d’apparechji mubili</string>
     <!-- Title for studies preferences -->
     <string name="preference_experiments_2">Studii</string>
     <!-- Summary for studies preferences -->
@@ -484,9 +502,9 @@
     <!-- Preference for pairing -->
     <string name="preferences_sync_pair">Numerizà u codice d’associu nant’à Firefox per l’urdinatore</string>
     <!-- Preference for account login -->
-    <string name="preferences_sync_sign_in">Cunnettassi</string>
+    <string name="preferences_sync_sign_in">Cunnettesi</string>
     <!-- Preference for reconnecting to FxA sync -->
-    <string name="preferences_sync_sign_in_to_reconnect">Autenticassi per ricunnettassi</string>
+    <string name="preferences_sync_sign_in_to_reconnect">Autenticassi per ricunnettesi</string>
     <!-- Preference for removing FxA account -->
     <string name="preferences_sync_remove_account">Caccià u contu</string>
 
@@ -548,8 +566,6 @@
     <string name="library_new_tab">Nova unghjetta</string>
     <!-- Option in Library to find text in page -->
     <string name="library_find_in_page">Circà in a pagina</string>
-    <!-- Option in Library to open Synced Tabs page -->
-    <string name="library_synced_tabs">Unghjette sincrunizate</string>
     <!-- Option in Library to open Reading List -->
     <string name="library_reading_list">Lista di lettura</string>
     <!-- Menu Item Label for Search in Library -->
@@ -596,6 +612,15 @@
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">Dopu un mese</string>
 
+    <!-- Start on Home -->
+    <!-- Title of a preference that allows a user to indicate after a specified amount of time when the app should start on the home screen -->
+    <string name="preferences_start_on_home">Principià da u screnu d’accolta</string>
+    <!-- Option for starting on the home screen after after four hours or inactivity -->
+    <string name="start_on_home_after_four_hours">Dopu quattru ore</string>
+    <!-- Option for always starting on the home screen -->
+    <string name="start_on_home_always">Sempre</string>
+    <!-- Option for never starting on the home screen -->
+    <string name="start_on_home_never">Mai</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
     <string name="close_tabs_manually_summary">Chjusura manuale</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
@@ -803,8 +828,6 @@
     <string name="bookmark_delete_folder_snackbar">%1$s squassatu</string>
     <!-- Screen title for adding a bookmarks folder -->
     <string name="bookmark_add_folder">Aghjunghje un cartulare</string>
-    <!-- deprecated: Snackbar title shown after a bookmark has been created. -->
-    <string name="bookmark_created_snackbar">Indetta aghjunta.</string>
     <!-- Snackbar title shown after a bookmark has been created. -->
     <string name="bookmark_saved_snackbar">Indetta arregistrata</string>
     <!-- Snackbar edit button shown after a bookmark has been created. -->
@@ -833,7 +856,7 @@
     <!-- Bookmark folder editing screen title -->
     <string name="edit_bookmark_folder_fragment_title">Mudificà u cartulare</string>
     <!-- Bookmark sign in button message -->
-    <string name="bookmark_sign_in_button">Cunnettatevi per fighjà l’indette sincrunizate</string>
+    <string name="bookmark_sign_in_button">Cunnittetevi per fighjà l’indette sincrunizate</string>
     <!-- Bookmark URL editing field label -->
     <string name="bookmark_url_label">URL</string>
     <!-- Bookmark FOLDER editing field label -->
@@ -993,19 +1016,19 @@
     <!-- Sub-header in the dialog to share a link to an app from the most-recent sorted list -->
     <string name="share_link_recent_apps_subheader">Impiegate pocu fà</string>
     <!-- An option from the three dot menu to into sync -->
-    <string name="sync_menu_sign_in">Cunnettassi per sincrunizà</string>
+    <string name="sync_menu_sign_in">Cunnettesi per sincrunizà</string>
     <!-- An option from the share dialog to sign into sync -->
-    <string name="sync_sign_in">Cunnettassi à Sync</string>
+    <string name="sync_sign_in">Cunnettesi à Sync</string>
     <!-- An option from the share dialog to send link to all other sync devices -->
     <string name="sync_send_to_all">Mandà à tutti l’apparechji</string>
     <!-- An option from the share dialog to reconnect to sync -->
-    <string name="sync_reconnect">Ricunnettassi à Sync</string>
+    <string name="sync_reconnect">Ricunnettesi à Sync</string>
     <!-- Text displayed when sync is offline and cannot be accessed -->
     <string name="sync_offline">Fora di cunnessione</string>
     <!-- An option to connect additional devices -->
-    <string name="sync_connect_device">Cunnettà un altru apparechju</string>
+    <string name="sync_connect_device">Cunnette un altru apparechju</string>
     <!-- The dialog text shown when additional devices are not available -->
-    <string name="sync_connect_device_dialog">Per mandà un’unghjetta, cunnettatevi à u vostru contu Firefox nant’à omancu un altru apparechju.</string>
+    <string name="sync_connect_device_dialog">Per mandà un’unghjetta, cunnittetevi à u vostru contu Firefox nant’à omancu un altru apparechju.</string>
     <!-- Confirmation dialog button -->
     <string name="sync_confirmation_button">Ahju capitu</string>
     <!-- Share error message -->
@@ -1013,11 +1036,11 @@
     <!-- Add new device screen title -->
     <string name="sync_add_new_device_title">Mandà à un apparechju</string>
     <!-- Text for the warning message on the Add new device screen -->
-    <string name="sync_add_new_device_message">Alcunu apparechju cunnettu</string>
+    <string name="sync_add_new_device_message">Alcunu apparechju cunnessu</string>
     <!-- Text for the button to learn about sending tabs -->
     <string name="sync_add_new_device_learn_button">Sapene di più nant’à u mandà d’unghjette…</string>
     <!-- Text for the button to connect another device -->
-    <string name="sync_add_new_device_connect_button">Cunnettà un altru apparechju…</string>
+    <string name="sync_add_new_device_connect_button">Cunnette un altru apparechju…</string>
 
     <!-- Notifications -->
     <!-- The user visible name of the "notification channel" (Android 8+ feature) for the ongoing notification shown while a browsing session is active. -->
@@ -1032,6 +1055,16 @@
     <string name="notification_pbm_action_delete_and_open">Squassà è apre</string>
     <!-- Name of the "Powered by Fenix" notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="notification_powered_by_channel_name">Funziuneghja grazia à</string>
+    <!-- Name of the marketing notification channel. Displayed in the "App notifications" system settings for the app -->
+    <string name="notification_marketing_channel_name">Marketing</string>
+    <!-- Title shown in the notification that pops up to remind the user to set fenix as default browser.
+    %1$s is a placeholder that will be replaced by the app name (Fenix). -->
+    <string name="notification_default_browser_title">%1$s hè rapidu è privatu</string>
+    <!-- Text shown in the notification that pops up to remind the user to set fenix as default browser.
+    %1$s is a placeholder that will be replaced by the app name (Fenix). -->
+    <string name="notification_default_browser_text">Impiegate %1$s cum’è navigatore predefinitu</string>
+
+    <!-- Snackbar -->
     <!-- Text shown in snackbar when user deletes a collection -->
     <string name="snackbar_collection_deleted">Cullezzione squassata</string>
     <!-- Text shown in snackbar when user renames a collection -->
@@ -1202,9 +1235,9 @@
     <!-- text for the firefox account onboarding card header when we detect you're already signed in to
         another Firefox browser. (The word `Firefox` should not be translated)
         The first parameter is the email of the detected user's account -->
-    <string name="onboarding_firefox_account_auto_signin_header_3">Site cunnettu cum’è %s nant’à un altru navigatore Firefox cù st’apparechju. Vulete cunnettavvi cù stu contu ?</string>
+    <string name="onboarding_firefox_account_auto_signin_header_3">Site cunnessi cum’è %s nant’à un altru navigatore Firefox cù st’apparechju. Vulete cunnettevi cù stu contu ?</string>
     <!-- text for the button to confirm automatic sign-in -->
-    <string name="onboarding_firefox_account_auto_signin_confirm">Iè, cunnettatemi</string>
+    <string name="onboarding_firefox_account_auto_signin_confirm">Iè, cunnittetemi</string>
     <!-- text for the automatic sign-in button while signing in is in process -->
     <string name="onboarding_firefox_account_signing_in">Cunnessione…</string>
     <!-- text for the button to manually sign into Firefox account. -->
@@ -1286,7 +1319,7 @@
     <!-- Text shown for sign in pairing when ready -->
     <string name="sign_in_ready_for_scan">Prontu à numerizà</string>
     <!-- Text shown for settings option for sign with pairing -->
-    <string name="sign_in_with_camera">Cunnettatevi cù u vostru apparechju-fotò</string>
+    <string name="sign_in_with_camera">Cunnittetevi cù u vostru apparechju-fotò</string>
     <!-- Text shown for settings option for sign with email -->
     <string name="sign_in_with_email">Impiegà piuttostu un messaghju elettronicu</string>
     <!-- Text shown for settings option for create new account text.'Firefox' intentionally hardcoded here.-->
@@ -1463,14 +1496,12 @@
     <string name="preferences_passwords_autofill">Riempiimentu autumaticu</string>
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">Sincrunizà l’identificazioni</string>
-    <!-- Syncing saved logins in Fenix is on -->
-    <string name="preferences_passwords_sync_logins_on">Attivatu</string>
-    <!-- Syncing saved logins in Fenix is off -->
-    <string name="preferences_passwords_sync_logins_off">Disattivatu</string>
+    <!-- Preference for syncing saved logins in Fenix, when not signed in-->
+    <string name="preferences_passwords_sync_logins_across_devices">Sincrunizà l’identificazioni di cunnessione trà tutti l’apparechji</string>
     <!-- Syncing saved logins in Fenix needs reconnect to sync -->
-    <string name="preferences_passwords_sync_logins_reconnect">Ricunnettassi</string>
+    <string name="preferences_passwords_sync_logins_reconnect">Ricunnettesi</string>
     <!-- Syncing saved logins in Fenix needs login -->
-    <string name="preferences_passwords_sync_logins_sign_in">Cunnettassi à Sync</string>
+    <string name="preferences_passwords_sync_logins_sign_in">Cunnettesi à Sync</string>
     <!-- Preference to access list of saved logins -->
     <string name="preferences_passwords_saved_logins">Identificazioni di cunnessione arregistrate</string>
     <!-- Description of empty list of saved passwords. Placeholder is replaced with app name.  -->
@@ -1501,7 +1532,7 @@
     <!-- Message displayed in security prompt to reenter a secret pin to access saved logins -->
     <string name="preferences_passwords_saved_logins_enter_pin">Scrivite torna u vostru codice PIN</string>
     <!-- Message displayed in security prompt to access saved logins -->
-    <string name="preferences_passwords_saved_logins_enter_pin_description">Ci vole à spalancà per affissà l’identificazioni di cunnessione arregistrate</string>
+    <string name="preferences_passwords_saved_logins_enter_pin_description">Spalancate per affissà l’identificazioni di cunnessione arregistrate</string>
 
     <!-- Message displayed when a connection is insecure and we detect the user is entering a password -->
     <string name="logins_insecure_connection_warning">Sta cunnessione ùn hè micca assicurata. L’identificazioni di cunnessione scritti quì puderianu esse ingannati.</string>
@@ -1569,6 +1600,8 @@
     <string name="preferences_credit_cards_save_and_autofill_cards_summary">I dati sò cifrati</string>
     <!-- Preference option for syncing credit cards across devices. This is displayed when the user is not signed into sync -->
     <string name="preferences_credit_cards_sync_cards_across_devices">Sincrunizate e carte trà i vostri apparechji</string>
+    <!-- Preference option for syncing credit cards across devices. This is displayed when the user is signed into sync -->
+    <string name="preferences_credit_cards_sync_cards">Sincrunizà e carte</string>
     <!-- Preference option for adding a credit card -->
     <string name="preferences_credit_cards_add_credit_card">Aghjunghje una carta bancaria</string>
     <!-- Preference option for managing saved credit cards -->
@@ -1582,6 +1615,10 @@
 
     <!-- The header for the expiration date of a credit card -->
     <string name="credit_cards_expiration_date">Data di scadenza</string>
+    <!-- The label for the expiration date month of a credit card to be used by a11y services-->
+    <string name="credit_cards_expiration_date_month">Mese di a data di scadenza</string>
+    <!-- The label for the expiration date year of a credit card to be used by a11y services-->
+    <string name="credit_cards_expiration_date_year">Annu di a data di scadenza</string>
     <!-- The header for the name on the credit card -->
     <string name="credit_cards_name_on_card">Nome di u titulare</string>
     <!-- The header for the nickname for a credit card -->
@@ -1598,6 +1635,27 @@
     <string name="credit_cards_cancel_button">Abbandunà</string>
     <!-- Title of the "Saved cards" screen -->
     <string name="credit_cards_saved_cards">Carte arregistrate</string>
+
+    <!-- Error message for credit card number validation -->
+    <string name="credit_cards_number_validation_error_message">Ci vole à scrive un numeru accettevule di carta bancaria</string>
+
+    <!-- Error message for credit card name on card validation -->
+    <string name="credit_cards_name_on_card_validation_error_message">Ci vole à riempie stu campu</string>
+    <!-- Message displayed in biometric prompt displayed for authentication before allowing users to view their saved credit cards -->
+    <string name="credit_cards_biometric_prompt_message">Spalancate per affissà e vostre carte arregistrate</string>
+
+    <!-- Title of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_title">Prutege e vostre carte bancarie</string>
+    <!-- Message of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_message">Definite un dissegnu di chjusura, un codice PIN o una parolla d’entrata per prutege e vostre carte arregistrate s’ellu ci era qualchissia chì accidissi à u vostru apparechju.</string>
+    <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_set_up_now">Cunfigurà subitu</string>
+    <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_later">Dopu</string>
+    <!-- Title of PIN verification dialog to direct users to re-enter their device credentials to access their credit cards -->
+    <string name="credit_cards_biometric_prompt_message_pin">Spalancate u vostru apparechju</string>
+    <!-- Message displayed in biometric prompt for authentication, before allowing users to use their stored credit card information -->
+    <string name="credit_cards_biometric_prompt_unlock_message">Spalancate per impiegà l’infurmazione di e carte bancarie arregistrate</string>
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Aghjunghje un mutore di ricerca</string>
@@ -1724,7 +1782,7 @@
 
     <!-- Synced Tabs -->
     <!-- Text displayed to ask user to connect another device as no devices found with account -->
-    <string name="synced_tabs_connect_another_device">Cunnettate un altru apparechju.</string>
+    <string name="synced_tabs_connect_another_device">Cunnittete un altru apparechju.</string>
     <!-- Text displayed asking user to re-authenticate -->
     <string name="synced_tabs_reauth">Ci vole à autenticassi torna.</string>
     <!-- Text displayed when user has disabled tab syncing in Firefox Sync Account -->
@@ -1736,7 +1794,7 @@
     <!-- Text displayed in the synced tabs screen when a user is not signed in to Firefox Sync describing Synced Tabs -->
     <string name="synced_tabs_sign_in_message">Affissate a lista di l’unghjette di i vostri altri apparechji.</string>
     <!-- Text displayed on a button in the synced tabs screen to link users to sign in when a user is not signed in to Firefox Sync -->
-    <string name="synced_tabs_sign_in_button">Cunnettassi à Sync</string>
+    <string name="synced_tabs_sign_in_button">Cunnettesi per sincrunizà</string>
 
     <!-- The text displayed when a synced device has no tabs to show in the list of Synced Tabs. -->
     <string name="synced_tabs_no_open_tabs">Alcuna unghjetta aperta</string>
@@ -1767,20 +1825,13 @@
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">Caccià</string>
 
-    <!-- Deprecated: text for the firefox account onboarding card header
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_firefox_account_header">Ottene u più bellu da %s.</string>
-
     <!-- Content description radio buttons with a link to more information -->
     <string name="radio_preference_info_content_description">Cliccu per sapene di più</string>
 
-    <!-- Deprecated: No Open Tabs Message Header -->
-    <string name="no_collections_header1">Racuglite ciò chì conta per voi</string>
-    <!-- Deprecated: Label to describe what collections are to a new user without any collections -->
-    <string name="no_collections_description1">Gruppate inseme ricerche simile, i siti è l’unghjette per un accessu future più prestu.</string>
-    <!-- Deprecated: text for the firefox account onboarding card header when we detect you're already signed in to -->
-    <string name="onboarding_firefox_account_auto_signin_header_2">Site cunnettu cum’è %s nant’à un altru navigatore Firefox cù stu telefonu. Vulete cunnettavvi cù stu contu ?</string>
-    <!-- Deprecated: Describes the add to homescreen functionality -->
-    <string name="add_to_homescreen_description">Hè faciule d’aghjunghje stu situ nant’à u screnu d’accolta di u vostru telefonu per accedeci direttamente è navigà più prestu cum’è s’ella fussi un’appiecazione.</string>
+    <!-- Content description for the action bar "up" button -->
+    <string name="action_bar_up_description">Navigà insù</string>
 
-    </resources>
+    <!-- Content description for privacy content close button -->
+    <string name="privacy_content_close_button_content_description">Chjode</string>
+
+</resources>

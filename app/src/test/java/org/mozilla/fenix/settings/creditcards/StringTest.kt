@@ -25,6 +25,16 @@ class StringTest {
     }
 
     @Test
+    fun `last4Digits returns a string with only last 4 digits `() {
+        assertEquals("8431", "371449635398431".last4Digits())
+        assertEquals("2345", "12345".last4Digits())
+        assertEquals("1234", "1234".last4Digits())
+        assertEquals("123", "123".last4Digits())
+        assertEquals("1", "1".last4Digits())
+        assertEquals("", "".last4Digits())
+    }
+
+    @Test
     fun `validateCreditCardNumber returns true for valid credit card numbers `() {
         val americanExpressCard = "371449635398431"
         val dinnersClubCard = "30569309025904"
@@ -32,7 +42,6 @@ class StringTest {
         val jcbCard = "3530111333300000"
         val masterCardCard = "5555555555554444"
         val visaCard = "4111111111111111"
-        val voyagerCard = "869941728035895"
 
         assertTrue(americanExpressCard.validateCreditCardNumber())
         assertTrue(dinnersClubCard.validateCreditCardNumber())
@@ -40,7 +49,6 @@ class StringTest {
         assertTrue(jcbCard.validateCreditCardNumber())
         assertTrue(masterCardCard.validateCreditCardNumber())
         assertTrue(visaCard.validateCreditCardNumber())
-        assertTrue(voyagerCard.validateCreditCardNumber())
     }
 
     @Test

@@ -23,7 +23,7 @@ import mozilla.components.feature.pwa.feature.ManifestUpdateFeature
 import mozilla.components.feature.pwa.feature.WebAppActivityFeature
 import mozilla.components.feature.pwa.feature.WebAppHideToolbarFeature
 import mozilla.components.feature.pwa.feature.WebAppSiteControlsFeature
-import mozilla.components.feature.sitepermissions.SitePermissions
+import mozilla.components.concept.engine.permission.SitePermissions
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.ktx.android.arch.lifecycle.addObservers
@@ -66,7 +66,7 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
                 toolbar = toolbar,
                 sessionId = customTabSessionId,
                 activity = activity,
-                onItemTapped = { browserInteractor.onBrowserToolbarMenuItemTapped(it) },
+                onItemTapped = { browserToolbarInteractor.onBrowserToolbarMenuItemTapped(it) },
                 isPrivate = tab.content.private,
                 shouldReverseItems = !activity.settings().shouldUseBottomToolbar
             ),

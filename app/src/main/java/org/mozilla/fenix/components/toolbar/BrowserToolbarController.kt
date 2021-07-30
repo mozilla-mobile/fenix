@@ -23,8 +23,8 @@ import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.readermode.ReaderModeController
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
+import org.mozilla.fenix.components.toolbar.interactor.BrowserToolbarInteractor
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.HomeScreenViewModel
@@ -40,6 +40,11 @@ interface BrowserToolbarController {
     fun handleTabCounterClick()
     fun handleTabCounterItemInteraction(item: TabCounterMenu.Item)
     fun handleReaderModePressed(enabled: Boolean)
+
+    /**
+     * @see [BrowserToolbarInteractor.onHomeButtonClicked]
+     */
+    fun handleHomeButtonClick()
 }
 
 class DefaultBrowserToolbarController(
@@ -119,7 +124,7 @@ class DefaultBrowserToolbarController(
                     // When closing the last tab we must show the undo snackbar in the home fragment
                     if (store.state.getNormalOrPrivateTabs(it.content.private).count() == 1) {
                         homeViewModel.sessionToDelete = it.id
-                        navController.navigateBlockingForAsyncNavGraph(
+                        navController.navigate(
                             BrowserFragmentDirections.actionGlobalHome()
                         )
                     } else {
@@ -133,7 +138,7 @@ class DefaultBrowserToolbarController(
                     Event.TabCounterMenuItemTapped(Event.TabCounterMenuItemTapped.Item.NEW_TAB)
                 )
                 activity.browsingModeManager.mode = BrowsingMode.Normal
-                navController.navigateBlockingForAsyncNavGraph(
+                navController.navigate(
                     BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = true)
                 )
             }
@@ -144,7 +149,7 @@ class DefaultBrowserToolbarController(
                     )
                 )
                 activity.browsingModeManager.mode = BrowsingMode.Private
-                navController.navigateBlockingForAsyncNavGraph(
+                navController.navigate(
                     BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = true)
                 )
             }
@@ -155,6 +160,14 @@ class DefaultBrowserToolbarController(
         if (activity.settings().isDynamicToolbarEnabled) {
             engineView.setVerticalClipping(offset)
         }
+    }
+
+    override fun handleHomeButtonClick() {
+        metrics.track(Event.BrowserToolbarHomeButtonClicked)
+
+        navController.navigate(
+            BrowserFragmentDirections.actionGlobalHome()
+        )
     }
 
     companion object {

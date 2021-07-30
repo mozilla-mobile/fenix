@@ -74,6 +74,8 @@ class HistoryTest {
     }
 
     @Test
+    // Test running on beta/release builds in CI:
+    // caution when making changes to it, so they don't block the builds
     fun visitedUrlHistoryTest() {
         val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
@@ -149,8 +151,7 @@ class HistoryTest {
             IdlingRegistry.getInstance().register(historyListIdlingResource!!)
         }.openThreeDotMenu {
         }.clickOpenInNormalTab {
-            verifyUrl(firstWebPage.url.toString())
-        }.openTabDrawer {
+            verifyTabTrayIsOpened()
             verifyNormalModeSelected()
         }
     }
@@ -170,8 +171,7 @@ class HistoryTest {
             IdlingRegistry.getInstance().register(historyListIdlingResource!!)
         }.openThreeDotMenu {
         }.clickOpenInPrivateTab {
-            verifyUrl(firstWebPage.url.toString())
-        }.openTabDrawer {
+            verifyTabTrayIsOpened()
             verifyPrivateModeSelected()
         }
     }

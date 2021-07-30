@@ -192,7 +192,6 @@ class DefaultSessionControlController(
     private val restoreUseCase: TabsUseCases.RestoreUseCase,
     private val reloadUrlUseCase: SessionUseCases.ReloadUrlUseCase,
     private val selectTabUseCase: TabsUseCases.SelectTabUseCase,
-    private val requestDesktopSiteUseCase: SessionUseCases.RequestDesktopSiteUseCase,
     private val fragmentStore: HomeFragmentStore,
     private val navController: NavController,
     private val viewLifecycleScope: CoroutineScope,
@@ -410,14 +409,14 @@ class DefaultSessionControlController(
             }
         event?.let { activity.metrics.track(it) }
 
-        addTabUseCase.invoke(
+        val tabId = addTabUseCase.invoke(
             url = appendSearchAttributionToUrlIfNeeded(url),
             selectTab = true,
             startLoading = true
         )
 
         if (settings.openNextTabInDesktopMode) {
-            activity.handleRequestDesktopMode()
+            activity.handleRequestDesktopMode(tabId)
         }
         activity.openToBrowser(BrowserDirection.FromHome)
     }
@@ -484,7 +483,7 @@ class DefaultSessionControlController(
     }
 
     private fun showTabTrayCollectionCreation() {
-        val directions = HomeFragmentDirections.actionGlobalTabTrayDialogFragment(
+        val directions = HomeFragmentDirections.actionGlobalTabsTrayFragment(
             enterMultiselect = true
         )
         navController.nav(R.id.homeFragment, directions)

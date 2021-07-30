@@ -58,9 +58,6 @@
         android:id="@+id/action_global_settingsFragment"
         app:destination="@id/settingsFragment" />
     <action
-        android:id="@+id/action_global_syncedTabsFragment"
-        app:destination="@id/syncedTabsFragment" />
-    <action
         android:id="@+id/action_global_privateBrowsingFragment"
         app:destination="@id/privateBrowsingFragment" />
     <action
@@ -114,11 +111,6 @@
         android:id="@+id/action_global_quickSettingsSheetDialogFragment"
         app:destination="@id/quickSettingsSheetDialogFragment" />
     <action
-        android:id="@+id/action_global_tabTrayDialogFragment"
-        app:destination="@id/tabTrayDialogFragment"
-        app:popUpTo="@id/tabTrayDialogFragment"
-        app:popUpToInclusive="true" />
-    <action
         android:id="@+id/action_global_tabsTrayFragment"
         app:destination="@id/tabsTrayFragment"
         app:popUpTo="@id/tabsTrayFragment"
@@ -126,6 +118,9 @@
     <action
         android:id="@+id/action_global_savedLoginsAuthFragment"
         app:destination="@id/savedLoginsAuthFragment" />
+    <action
+        android:id="@+id/action_global_creditCardsSettingFragment"
+        app:destination="@id/credit_cards_graph" />
     <action
         android:id="@+id/action_global_tabHistoryDialogFragment"
         app:destination="@id/tabHistoryDialogFragment" />
@@ -136,16 +131,6 @@
     <dialog
         android:id="@+id/tabsTrayFragment"
         android:name="org.mozilla.fenix.tabstray.TabsTrayFragment">
-        <argument
-            android:name="enterMultiselect"
-            android:defaultValue="false"
-            app:argType="boolean" />
-    </dialog>
-
-    <dialog
-        android:id="@+id/tabTrayDialogFragment"
-        android:name="org.mozilla.fenix.tabtray.TabTrayDialogFragment"
-        tools:layout="@layout/fragment_tab_tray_dialog">
         <argument
             android:name="enterMultiselect"
             android:defaultValue="false"
@@ -208,9 +193,6 @@
             android:name="activeSessionId"
             app:argType="string"
             app:nullable="true" />
-        <action
-            android:id="@+id/action_browserFragment_to_syncedTabsFragment"
-            app:destination="@id/syncedTabsFragment" />
         <action
             android:id="@+id/action_browserFragment_to_settingsFragment"
             app:destination="@id/settingsFragment" />
@@ -368,12 +350,6 @@
             app:popUpTo="@id/settingsFragment"
             app:popUpToInclusive="true" />
     </fragment>
-
-    <fragment
-        android:id="@+id/syncedTabsFragment"
-        android:name="org.mozilla.fenix.sync.SyncedTabsFragment"
-        android:label="@string/synced_tabs"
-        tools:layout="@layout/fragment_synced_tabs" />
 
     <fragment
         android:id="@+id/loginExceptionsFragment"
@@ -778,7 +754,7 @@
             app:argType="boolean" />
         <argument
             android:name="sitePermissions"
-            app:argType="mozilla.components.feature.sitepermissions.SitePermissions"
+            app:argType="mozilla.components.concept.engine.permission.SitePermissions"
             app:nullable="true" />
         <argument
             android:name="gravity"
@@ -891,7 +867,7 @@
                 app:argType="org.mozilla.fenix.settings.PhoneFeature" />
             <argument
                 android:name="sitePermissions"
-                app:argType="mozilla.components.feature.sitepermissions.SitePermissions" />
+                app:argType="mozilla.components.concept.engine.permission.SitePermissions" />
         </fragment>
 
         <fragment
@@ -903,7 +879,7 @@
                 app:popUpTo="@+id/sitePermissionsDetailsExceptionsFragment" />
             <argument
                 android:name="sitePermissions"
-                app:argType="mozilla.components.feature.sitepermissions.SitePermissions" />
+                app:argType="mozilla.components.concept.engine.permission.SitePermissions" />
         </fragment>
     </navigation>
 
@@ -1017,15 +993,18 @@
             android:label="@string/preferences_nimbus_experiments"
             tools:layout="@layout/mozac_service_nimbus_experiments">
             <action
-                android:id="@+id/action_nimbusExperimentsFragment_to_nimbusDetailsFragment"
-                app:destination="@+id/nimbusDetailsFragment" />
+                android:id="@+id/action_nimbusExperimentsFragment_to_nimbusBranchesFragment"
+                app:destination="@+id/nimbusBranchesFragment" />
         </fragment>
         <fragment
-            android:id="@+id/nimbusDetailsFragment"
-            android:name="org.mozilla.fenix.nimbus.NimbusDetailsFragment"
+            android:id="@+id/nimbusBranchesFragment"
+            android:name="org.mozilla.fenix.nimbus.NimbusBranchesFragment"
             tools:layout="@layout/mozac_service_nimbus_experiment_details">
             <argument
-                android:name="experiment"
+                android:name="experimentId"
+                app:argType="string" />
+            <argument
+                android:name="experimentName"
                 app:argType="string" />
         </fragment>
     </navigation>
@@ -1037,13 +1016,6 @@
             android:id="@+id/creditCardsSettingFragment"
             android:name="org.mozilla.fenix.settings.creditcards.CreditCardsSettingFragment"
             android:label="@string/preferences_credit_cards">
-            <action
-                android:id="@+id/action_creditCardsSettingFragment_to_turnOnSyncFragment"
-                app:destination="@id/turnOnSyncFragment"
-                app:enterAnim="@anim/slide_in_right"
-                app:exitAnim="@anim/slide_out_left"
-                app:popEnterAnim="@anim/slide_in_left"
-                app:popExitAnim="@anim/slide_out_right" />
             <action
                 android:id="@+id/action_creditCardsSettingFragment_to_creditCardEditorFragment"
                 app:destination="@id/creditCardEditorFragment"

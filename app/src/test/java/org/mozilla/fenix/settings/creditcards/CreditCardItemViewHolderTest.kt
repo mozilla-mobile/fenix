@@ -10,7 +10,9 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.android.synthetic.main.credit_card_list_item.view.*
 import mozilla.components.concept.storage.CreditCard
+import mozilla.components.concept.storage.CreditCardNumber
 import mozilla.components.support.test.robolectric.testContext
+import mozilla.components.support.utils.CreditCardNetworkType
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -28,10 +30,11 @@ class CreditCardItemViewHolderTest {
     private val creditCard = CreditCard(
         guid = "id",
         billingName = "Banana Apple",
-        cardNumber = "4111111111111110",
+        encryptedCardNumber = CreditCardNumber.Encrypted("4111111111111110"),
+        cardNumberLast4 = "1110",
         expiryMonth = 1,
         expiryYear = 2030,
-        cardType = "amex",
+        cardType = CreditCardNetworkType.AMEX.cardName,
         timeCreated = 1L,
         timeLastUsed = 1L,
         timeLastModified = 1L,
@@ -48,7 +51,7 @@ class CreditCardItemViewHolderTest {
     fun `GIVEN a new credit card item on bind THEN set the card number and expiry date text`() {
         CreditCardItemViewHolder(view, interactor).bind(creditCard)
 
-        assertEquals(creditCard.cardNumber, view.credit_card_number.text)
+        assertEquals(creditCard.obfuscatedCardNumber, view.credit_card_number.text)
         assertEquals("0${creditCard.expiryMonth}/${creditCard.expiryYear}", view.expiry_date.text)
     }
 
