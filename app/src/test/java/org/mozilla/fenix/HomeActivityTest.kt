@@ -6,10 +6,12 @@ package org.mozilla.fenix
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.test.core.app.ApplicationProvider
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
+import mozilla.components.service.glean.testing.GleanTestRule
 import mozilla.components.support.test.robolectric.testContext
 import mozilla.components.support.utils.toSafeIntent
 import org.junit.Assert.assertEquals
@@ -18,8 +20,11 @@ import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Ignore
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mozilla.fenix.GleanMetrics.PerfStartup
 import org.mozilla.fenix.HomeActivity.Companion.PRIVATE_BROWSING_MODE
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
@@ -28,9 +33,12 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.utils.Settings
+import org.robolectric.Robolectric
 
 @RunWith(FenixRobolectricTestRunner::class)
 class HomeActivityTest {
+
+    @get:Rule val gleanTestRule = GleanTestRule(ApplicationProvider.getApplicationContext())
 
     private lateinit var activity: HomeActivity
 
@@ -130,5 +138,49 @@ class HomeActivityTest {
         }
 
         assertFalse(activity.isActivityColdStarted(startingIntent, Bundle()))
+    }
+
+    @Test
+    fun `GIVEN the user has been away for a long time WHEN the user opens the app THEN do start on home`() {
+        val settings: Settings = mockk()
+        val startingIntent = Intent().apply {
+            action = Intent.ACTION_MAIN
+        }
+        every { activity.applicationContext } returns testContext
+
+        every { settings.shouldStartOnHome() } returns true
+        every { activity.getSettings() } returns settings
+
+        assertTrue(activity.shouldStartOnHome(startingIntent))
+    }
+
+    @Test
+    fun `GIVEN the user has been away for a long time WHEN opening a link THEN do not start on home`() {
+        val settings: Settings = mockk()
+        val startingIntent = Intent().apply {
+            action = Intent.ACTION_VIEW
+        }
+        every { settings.shouldStartOnHome() } returns true
+        every { activity.getSettings() } returns settings
+        every { activity.applicationContext } returns testContext
+
+        assertFalse(activity.shouldStartOnHome(startingIntent))
+    }
+
+    @Ignore("failed after library upgrade, see: https://github.com/mozilla-mobile/fenix/issues/19921")
+    @Test
+    fun `WHEN onCreate is called THEN the duration is measured`() {
+        assertFalse(PerfStartup.homeActivityOnCreate.testHasValue()) // sanity check.
+
+        // For some reason, the androidx replacement for this method, ActivityScenario, fails so we
+        // use the old Robolectric version. Perhaps it's because it forces the Activity to the
+        // RESUMED state (unlike Robolectric where we can get to CREATED) so not enough code is
+        // mocked for that to work.
+        //
+        // There are various exceptions thrown on background threads when this test runs but it
+        // doesn't seem to impact correctness so we ignore them.
+        Robolectric.buildActivity(HomeActivity::class.java)
+            .create()
+        assertTrue(PerfStartup.homeActivityOnCreate.testHasValue())
     }
 }

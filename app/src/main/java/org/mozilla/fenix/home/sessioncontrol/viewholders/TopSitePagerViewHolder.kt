@@ -8,10 +8,10 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
-import kotlinx.android.synthetic.main.component_top_sites_pager.view.*
 import mozilla.components.feature.top.sites.TopSite
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.databinding.ComponentTopSitesPagerBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.home.sessioncontrol.AdapterItem
 import org.mozilla.fenix.home.sessioncontrol.TopSiteInteractor
@@ -22,8 +22,9 @@ class TopSitePagerViewHolder(
     interactor: TopSiteInteractor
 ) : RecyclerView.ViewHolder(view) {
 
+    private val binding = ComponentTopSitesPagerBinding.bind(view)
     private val topSitesPagerAdapter = TopSitesPagerAdapter(interactor)
-    private val pageIndicator = view.page_indicator
+    private val pageIndicator = binding.pageIndicator
     private var currentPage = 0
 
     private val topSitesPageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
@@ -42,16 +43,20 @@ class TopSitePagerViewHolder(
     }
 
     init {
-        view.top_sites_pager.apply {
+        binding.topSitesPager.apply {
             adapter = topSitesPagerAdapter
             registerOnPageChangeCallback(topSitesPageChangeCallback)
+            // Retain one more TopSites pages to ensure a new layout request will measure the first page also.
+            // Otherwise the second page with 3 TopSites will have the entire ViewPager only show
+            // the first row of TopSites, hiding half of those shown on the first page.
+            offscreenPageLimit = 1
         }
     }
 
     fun update(payload: AdapterItem.TopSitePagerPayload) {
-        for (item in payload.changed) {
-            topSitesPagerAdapter.notifyItemChanged(currentPage, payload)
-        }
+        // Due to offscreenPageLimit = 1 we need to update both pages manually here
+        topSitesPagerAdapter.notifyItemChanged(0, payload)
+        topSitesPagerAdapter.notifyItemChanged(1, payload)
     }
 
     fun bind(topSites: List<TopSite>) {

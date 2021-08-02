@@ -29,6 +29,8 @@ import mozilla.components.feature.addons.ui.AddonInstallationDialogFragment
 import mozilla.components.feature.addons.ui.AddonsManagerAdapter
 import mozilla.components.feature.addons.ui.PermissionsDialogFragment
 import mozilla.components.feature.addons.ui.translateName
+import org.mozilla.fenix.BuildConfig
+import org.mozilla.fenix.Config
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.metrics.Event
@@ -104,6 +106,14 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
         lifecycleScope.launch(IO) {
             try {
                 val addons = requireContext().components.addonManager.getAddons(allowCache = allowCache)
+                // Add-ons that should be excluded in Mozilla Online builds
+                val excludedAddonIDs = if (Config.channel.isMozillaOnline &&
+                    !BuildConfig.MOZILLA_ONLINE_ADDON_EXCLUSIONS.isNullOrEmpty()
+                ) {
+                    BuildConfig.MOZILLA_ONLINE_ADDON_EXCLUSIONS.toList()
+                } else {
+                    emptyList<String>()
+                }
                 lifecycleScope.launch(Dispatchers.Main) {
                     runIfFragmentIsAttached {
                         if (!shouldRefresh) {
@@ -111,7 +121,8 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
                                 requireContext().components.addonCollectionProvider,
                                 managementView,
                                 addons,
-                                style = createAddonStyle(requireContext())
+                                style = createAddonStyle(requireContext()),
+                                excludedAddonIDs
                             )
                         }
                         isInstallationInProgress = false
@@ -190,7 +201,7 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
 
     private fun hasExistingAddonInstallationDialogFragment(): Boolean {
         return parentFragmentManager.findFragmentByTag(INSTALLATION_DIALOG_FRAGMENT_TAG)
-                as? AddonInstallationDialogFragment != null
+            as? AddonInstallationDialogFragment != null
     }
 
     @VisibleForTesting

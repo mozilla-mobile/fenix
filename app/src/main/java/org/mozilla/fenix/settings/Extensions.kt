@@ -9,7 +9,7 @@ import androidx.annotation.StringRes
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import mozilla.components.feature.sitepermissions.SitePermissions
+import mozilla.components.concept.engine.permission.SitePermissions
 import mozilla.components.support.ktx.android.content.res.resolveAttribute
 import mozilla.components.support.ktx.android.view.putCompoundDrawablesRelative
 import org.mozilla.fenix.ext.getPreferenceKey
@@ -20,8 +20,10 @@ fun SitePermissions.toggle(featurePhone: PhoneFeature): SitePermissions {
 
 fun SitePermissions.get(field: PhoneFeature) = when (field) {
     PhoneFeature.AUTOPLAY ->
-        throw IllegalAccessException("AUTOPLAY can't be accessed via get try " +
-                "using AUTOPLAY_AUDIBLE and AUTOPLAY_INAUDIBLE")
+        throw IllegalAccessException(
+            "AUTOPLAY can't be accessed via get try " +
+                "using AUTOPLAY_AUDIBLE and AUTOPLAY_INAUDIBLE"
+        )
     PhoneFeature.CAMERA -> camera
     PhoneFeature.LOCATION -> location
     PhoneFeature.MICROPHONE -> microphone
@@ -33,8 +35,10 @@ fun SitePermissions.get(field: PhoneFeature) = when (field) {
 }
 
 fun SitePermissions.update(field: PhoneFeature, value: SitePermissions.Status) = when (field) {
-    PhoneFeature.AUTOPLAY -> throw IllegalAccessException("AUTOPLAY can't be accessed via update " +
-            "try using AUTOPLAY_AUDIBLE and AUTOPLAY_INAUDIBLE")
+    PhoneFeature.AUTOPLAY -> throw IllegalAccessException(
+        "AUTOPLAY can't be accessed via update " +
+            "try using AUTOPLAY_AUDIBLE and AUTOPLAY_INAUDIBLE"
+    )
     PhoneFeature.CAMERA -> copy(camera = value)
     PhoneFeature.LOCATION -> copy(location = value)
     PhoneFeature.MICROPHONE -> copy(microphone = value)

@@ -6,11 +6,12 @@ package org.mozilla.fenix.home.sessioncontrol.viewholders
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.component_top_sites.view.*
 import mozilla.components.feature.top.sites.TopSite
 import org.mozilla.fenix.R
+import org.mozilla.fenix.databinding.ComponentTopSitesBinding
 import org.mozilla.fenix.home.sessioncontrol.TopSiteInteractor
 import org.mozilla.fenix.home.sessioncontrol.viewholders.topsites.TopSitesAdapter
+import org.mozilla.fenix.utils.AccessibilityGridLayoutManager
 
 class TopSiteViewHolder(
     view: View,
@@ -18,10 +19,15 @@ class TopSiteViewHolder(
 ) : RecyclerView.ViewHolder(view) {
 
     private val topSitesAdapter = TopSitesAdapter(interactor)
+    val binding = ComponentTopSitesBinding.bind(view)
 
     init {
-        view.top_sites_list.apply {
+        val gridLayoutManager =
+            AccessibilityGridLayoutManager(view.context, SPAN_COUNT)
+
+        binding.topSitesList.apply {
             adapter = topSitesAdapter
+            layoutManager = gridLayoutManager
         }
     }
 
@@ -31,5 +37,6 @@ class TopSiteViewHolder(
 
     companion object {
         const val LAYOUT_ID = R.layout.component_top_sites
+        const val SPAN_COUNT = 4
     }
 }

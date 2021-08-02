@@ -7,11 +7,11 @@ package org.mozilla.fenix.home
 import android.animation.Animator
 import android.content.Context
 import android.content.DialogInterface
+import android.content.res.Configuration
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.StrictMode
-import android.view.Display.FLAG_SECURE
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -21,6 +21,7 @@ import android.view.accessibility.AccessibilityEvent
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.PopupWindow
+import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -44,16 +45,8 @@ import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_home.*
-import kotlinx.android.synthetic.main.fragment_home.view.bottomBarShadow
-import kotlinx.android.synthetic.main.fragment_home.view.bottom_bar
-import kotlinx.android.synthetic.main.fragment_home.view.homeAppBar
-import kotlinx.android.synthetic.main.fragment_home.view.menuButton
-import kotlinx.android.synthetic.main.fragment_home.view.sessionControlRecyclerView
-import kotlinx.android.synthetic.main.fragment_home.view.tab_button
-import kotlinx.android.synthetic.main.fragment_home.view.toolbar
-import kotlinx.android.synthetic.main.fragment_home.view.toolbarLayout
-import kotlinx.android.synthetic.main.fragment_home.view.toolbar_wrapper
-import kotlinx.android.synthetic.main.no_collections_message.view.add_tabs_to_collections_button
+import kotlinx.android.synthetic.main.fragment_home.view.*
+import kotlinx.android.synthetic.main.no_collections_message.view.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -63,13 +56,13 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.browser.menu.view.MenuButton
-import mozilla.components.browser.session.SessionManager
 import mozilla.components.browser.state.selector.findTab
 import mozilla.components.browser.state.selector.normalTabs
 import mozilla.components.browser.state.selector.privateTabs
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.selectedOrDefaultSearchEngine
 import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.concept.storage.FrecencyThresholdOption
 import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.OAuthAccount
@@ -83,14 +76,19 @@ import mozilla.components.support.ktx.android.content.res.resolveAttribute
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import mozilla.components.ui.tabcounter.TabCounterMenu
 import org.mozilla.fenix.BrowserDirection
+import org.mozilla.fenix.Config
+import org.mozilla.fenix.FeatureFlags
+import org.mozilla.fenix.GleanMetrics.PerfStartup
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BrowserAnimator.Companion.getToolbarNavOptions
+import org.mozilla.fenix.browser.BrowserFragmentDirections
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.PrivateShortcutCreateManager
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.TabCollectionStorage
+import org.mozilla.fenix.components.accounts.AccountState
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.tips.FenixTipManager
 import org.mozilla.fenix.components.tips.Tip
@@ -99,11 +97,19 @@ import org.mozilla.fenix.components.toolbar.FenixTabCounterMenu
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.hideToolbar
+import org.mozilla.fenix.ext.measureNoInline
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
-import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
+import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.historymetadata.HistoryMetadataFeature
+import org.mozilla.fenix.historymetadata.controller.DefaultHistoryMetadataController
+import org.mozilla.fenix.home.mozonline.showPrivacyPopWindow
+import org.mozilla.fenix.home.recentbookmarks.RecentBookmarksFeature
+import org.mozilla.fenix.home.recentbookmarks.controller.DefaultRecentBookmarksController
+import org.mozilla.fenix.home.recenttabs.RecentTabsListFeature
+import org.mozilla.fenix.home.recenttabs.controller.DefaultRecentTabsController
 import org.mozilla.fenix.home.sessioncontrol.DefaultSessionControlController
 import org.mozilla.fenix.home.sessioncontrol.SessionControlInteractor
 import org.mozilla.fenix.home.sessioncontrol.SessionControlView
@@ -145,8 +151,6 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private val sessionManager: SessionManager
-        get() = requireComponents.core.sessionManager
     private val store: BrowserStore
         get() = requireComponents.core.store
 
@@ -166,6 +170,12 @@ class HomeFragment : Fragment() {
     private lateinit var currentMode: CurrentMode
 
     private val topSitesFeature = ViewBoundFeatureWrapper<TopSitesFeature>()
+    private val recentTabsListFeature = ViewBoundFeatureWrapper<RecentTabsListFeature>()
+    private val recentBookmarksFeature = ViewBoundFeatureWrapper<RecentBookmarksFeature>()
+    private val historyMetadataFeature = ViewBoundFeatureWrapper<HistoryMetadataFeature>()
+
+    @VisibleForTesting
+    internal var getMenuButton: () -> MenuButton? = { menuButton }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -176,6 +186,13 @@ class HomeFragment : Fragment() {
                 requireComponents.analytics.metrics.track(Event.OpenedAppFirstRun)
             }
         }
+
+        if (!onboarding.userHasBeenOnboarded() &&
+            requireContext().settings().shouldShowPrivacyPopWindow &&
+            Config.channel.isMozillaOnline
+        ) {
+            showPrivacyPopWindow(requireContext(), requireActivity())
+        }
     }
 
     @Suppress("LongMethod")
@@ -183,7 +200,7 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View? = PerfStartup.homeFragmentOnCreateView.measureNoInline {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
         val activity = activity as HomeActivity
         val components = requireComponents
@@ -213,7 +230,11 @@ class HomeFragment : Fragment() {
                             )
                         ).getTip()
                     },
-                    showCollectionPlaceholder = components.settings.showCollectionsPlaceholderOnHome
+                    recentBookmarks = emptyList(),
+                    showCollectionPlaceholder = components.settings.showCollectionsPlaceholderOnHome,
+                    showSetAsDefaultBrowserCard = components.settings.shouldShowSetAsDefaultBrowserCard(),
+                    recentTabs = emptyList(),
+                    historyMetadata = emptyList()
                 )
             )
         }
@@ -224,18 +245,54 @@ class HomeFragment : Fragment() {
                 storage = components.core.topSitesStorage,
                 config = ::getTopSitesConfig
             ),
-            owner = this,
+            owner = viewLifecycleOwner,
             view = view
         )
 
+        if (FeatureFlags.showRecentTabsFeature) {
+            recentTabsListFeature.set(
+                feature = RecentTabsListFeature(
+                    browserStore = components.core.store,
+                    homeStore = homeFragmentStore
+                ),
+                owner = viewLifecycleOwner,
+                view = view
+            )
+        }
+
+        if (FeatureFlags.recentBookmarksFeature) {
+            recentBookmarksFeature.set(
+                feature = RecentBookmarksFeature(
+                    homeStore = homeFragmentStore,
+                    bookmarksUseCase = run {
+                        requireContext().components.useCases.bookmarksUseCases
+                    },
+                    scope = viewLifecycleOwner.lifecycleScope
+                ),
+                owner = viewLifecycleOwner,
+                view = view
+            )
+        }
+
+        if (requireContext().settings().historyMetadataFeature) {
+            historyMetadataFeature.set(
+                feature = HistoryMetadataFeature(
+                    homeStore = homeFragmentStore,
+                    historyMetadataStorage = components.core.historyStorage,
+                    scope = viewLifecycleOwner.lifecycleScope
+                ),
+                owner = viewLifecycleOwner,
+                view = view
+            )
+        }
+
         _sessionControlInteractor = SessionControlInteractor(
-            DefaultSessionControlController(
+            controller = DefaultSessionControlController(
                 activity = activity,
                 settings = components.settings,
                 engine = components.core.engine,
                 metrics = components.analytics.metrics,
                 store = store,
-                sessionManager = sessionManager,
                 tabCollectionStorage = components.core.tabCollectionStorage,
                 addTabUseCase = components.useCases.tabsUseCases.addTab,
                 restoreUseCase = components.useCases.tabsUseCases.restore,
@@ -247,8 +304,25 @@ class HomeFragment : Fragment() {
                 hideOnboarding = ::hideOnboardingAndOpenSearch,
                 registerCollectionStorageObserver = ::registerCollectionStorageObserver,
                 showDeleteCollectionPrompt = ::showDeleteCollectionPrompt,
-                showTabTray = ::openTabTray,
+                showTabTray = ::openTabsTray,
                 handleSwipedItemDeletionCancel = ::handleSwipedItemDeletionCancel
+            ),
+            recentTabController = DefaultRecentTabsController(
+                selectTabUseCase = components.useCases.tabsUseCases.selectTab,
+                navController = findNavController(),
+                metrics = requireComponents.analytics.metrics,
+                store = components.core.store
+            ),
+            recentBookmarksController = DefaultRecentBookmarksController(
+                activity = activity,
+                navController = findNavController()
+            ),
+            historyMetadataController = DefaultHistoryMetadataController(
+                activity = activity,
+                settings = components.settings,
+                homeFragmentStore = homeFragmentStore,
+                selectOrAddUseCase = components.useCases.tabsUseCases.selectOrAddTab,
+                navController = findNavController()
             )
         )
 
@@ -265,7 +339,13 @@ class HomeFragment : Fragment() {
         appBarLayout = view.homeAppBar
 
         activity.themeManager.applyStatusBarTheme(activity)
-        return view
+        view
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+
+        getMenuButton()?.dismissMenu()
     }
 
     private fun dismissTip(tip: Tip) {
@@ -276,9 +356,13 @@ class HomeFragment : Fragment() {
      * Returns a [TopSitesConfig] which specifies how many top sites to display and whether or
      * not frequently visited sites should be displayed.
      */
-    private fun getTopSitesConfig(): TopSitesConfig {
+    @VisibleForTesting
+    internal fun getTopSitesConfig(): TopSitesConfig {
         val settings = requireContext().settings()
-        return TopSitesConfig(settings.topSitesMaxLimit, settings.showTopFrecentSites)
+        return TopSitesConfig(
+            settings.topSitesMaxLimit,
+            if (settings.showTopFrecentSites) FrecencyThresholdOption.SKIP_ONE_TIME_PAGES else null
+        )
     }
 
     /**
@@ -337,88 +421,87 @@ class HomeFragment : Fragment() {
     }
 
     @Suppress("LongMethod", "ComplexMethod")
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) =
+        PerfStartup.homeFragmentOnViewCreated.measureNoInline {
+            super.onViewCreated(view, savedInstanceState)
+            context?.metrics?.track(Event.HomeScreenDisplayed)
 
-        observeSearchEngineChanges()
-        createHomeMenu(requireContext(), WeakReference(view.menuButton))
-        createTabCounterMenu(view)
+            observeSearchEngineChanges()
+            createHomeMenu(requireContext(), WeakReference(view.menuButton))
+            createTabCounterMenu(view)
 
-        view.menuButton.setColorFilter(
-            ContextCompat.getColor(
-                requireContext(),
-                ThemeManager.resolveAttribute(R.attr.primaryText, requireContext())
-            )
-        )
-
-        view.toolbar.compoundDrawablePadding =
-            view.resources.getDimensionPixelSize(R.dimen.search_bar_search_engine_icon_padding)
-        view.toolbar_wrapper.setOnClickListener {
-            navigateToSearch()
-            requireComponents.analytics.metrics.track(Event.SearchBarTapped(Event.SearchBarTapped.Source.HOME))
-        }
-
-        view.toolbar_wrapper.setOnLongClickListener {
-            ToolbarPopupWindow.show(
-                WeakReference(it),
-                handlePasteAndGo = sessionControlInteractor::onPasteAndGo,
-                handlePaste = sessionControlInteractor::onPaste,
-                copyVisible = false
-            )
-            true
-        }
-
-        view.tab_button.setOnClickListener {
-            openTabTray()
-        }
-
-        PrivateBrowsingButtonView(
-            privateBrowsingButton,
-            browsingModeManager
-        ) { newMode ->
-            if (newMode == BrowsingMode.Private) {
-                requireContext().settings().incrementNumTimesPrivateModeOpened()
-            }
-
-            if (onboarding.userHasBeenOnboarded()) {
-                homeFragmentStore.dispatch(
-                    HomeFragmentAction.ModeChange(Mode.fromBrowsingMode(newMode))
+            view.menuButton.setColorFilter(
+                ContextCompat.getColor(
+                    requireContext(),
+                    ThemeManager.resolveAttribute(R.attr.primaryText, requireContext())
                 )
+            )
+
+            view.toolbar.compoundDrawablePadding =
+                view.resources.getDimensionPixelSize(R.dimen.search_bar_search_engine_icon_padding)
+            view.toolbar_wrapper.setOnClickListener {
+                navigateToSearch()
+                requireComponents.analytics.metrics.track(Event.SearchBarTapped(Event.SearchBarTapped.Source.HOME))
+            }
+
+            view.toolbar_wrapper.setOnLongClickListener {
+                ToolbarPopupWindow.show(
+                    WeakReference(it),
+                    handlePasteAndGo = sessionControlInteractor::onPasteAndGo,
+                    handlePaste = sessionControlInteractor::onPaste,
+                    copyVisible = false
+                )
+                true
+            }
+
+            view.tab_button.setOnClickListener {
+                if (FeatureFlags.showStartOnHomeSettings) {
+                    requireComponents.analytics.metrics.track(Event.StartOnHomeOpenTabsTray)
+                }
+                openTabsTray()
+            }
+
+            PrivateBrowsingButtonView(
+                privateBrowsingButton,
+                browsingModeManager
+            ) { newMode ->
+                if (newMode == BrowsingMode.Private) {
+                    requireContext().settings().incrementNumTimesPrivateModeOpened()
+                }
+
+                if (onboarding.userHasBeenOnboarded()) {
+                    homeFragmentStore.dispatch(
+                        HomeFragmentAction.ModeChange(Mode.fromBrowsingMode(newMode))
+                    )
+                }
+            }
+
+            consumeFrom(requireComponents.core.store) {
+                updateTabCounter(it)
+            }
+
+            homeViewModel.sessionToDelete?.also {
+                if (it == ALL_NORMAL_TABS || it == ALL_PRIVATE_TABS) {
+                    removeAllTabsAndShowSnackbar(it)
+                } else {
+                    removeTabAndShowSnackbar(it)
+                }
+            }
+
+            homeViewModel.sessionToDelete = null
+
+            updateTabCounter(requireComponents.core.store.state)
+
+            if (bundleArgs.getBoolean(FOCUS_ON_ADDRESS_BAR)) {
+                navigateToSearch()
+            } else if (bundleArgs.getLong(FOCUS_ON_COLLECTION, -1) >= 0) {
+                // No need to scroll to async'd loaded TopSites if we want to scroll to collections.
+                homeViewModel.shouldScrollToTopSites = false
+                /* Triggered when the user has added a tab to a collection and has tapped
+                * the View action on the [TabsTrayDialogFragment] snackbar.*/
+                scrollAndAnimateCollection(bundleArgs.getLong(FOCUS_ON_COLLECTION, -1))
             }
         }
-
-        if (browsingModeManager.mode.isPrivate) {
-            requireActivity().window.addFlags(FLAG_SECURE)
-        } else {
-            requireActivity().window.clearFlags(FLAG_SECURE)
-        }
-
-        consumeFrom(requireComponents.core.store) {
-            updateTabCounter(it)
-        }
-
-        homeViewModel.sessionToDelete?.also {
-            if (it == ALL_NORMAL_TABS || it == ALL_PRIVATE_TABS) {
-                removeAllTabsAndShowSnackbar(it)
-            } else {
-                removeTabAndShowSnackbar(it)
-            }
-        }
-
-        homeViewModel.sessionToDelete = null
-
-        updateTabCounter(requireComponents.core.store.state)
-
-        if (bundleArgs.getBoolean(FOCUS_ON_ADDRESS_BAR)) {
-            navigateToSearch()
-        } else if (bundleArgs.getLong(FOCUS_ON_COLLECTION, -1) >= 0) {
-            // No need to scroll to async'd loaded TopSites if we want to scroll to collections.
-            homeViewModel.shouldScrollToTopSites = false
-            /* Triggered when the user has added a tab to a collection and has tapped
-            * the View action on the [TabsTrayDialogFragment] snackbar.*/
-            scrollAndAnimateCollection(bundleArgs.getLong(FOCUS_ON_COLLECTION, -1))
-        }
-    }
 
     private fun observeSearchEngineChanges() {
         consumeFlow(store) { flow ->
@@ -428,7 +511,8 @@ class HomeFragment : Fragment() {
                     if (searchEngine != null) {
                         val iconSize =
                             requireContext().resources.getDimensionPixelSize(R.dimen.preference_icon_drawable_size)
-                        val searchIcon = BitmapDrawable(requireContext().resources, searchEngine.icon)
+                        val searchIcon =
+                            BitmapDrawable(requireContext().resources, searchEngine.icon)
                         searchIcon.setBounds(0, 0, iconSize, iconSize)
                         search_engine_icon?.setImageDrawable(searchIcon)
                     } else {
@@ -474,9 +558,9 @@ class HomeFragment : Fragment() {
 
     private fun removeAllTabsAndShowSnackbar(sessionCode: String) {
         if (sessionCode == ALL_PRIVATE_TABS) {
-            sessionManager.removePrivateSessions()
+            requireComponents.useCases.tabsUseCases.removePrivateTabs()
         } else {
-            sessionManager.removeNormalSessions()
+            requireComponents.useCases.tabsUseCases.removeNormalTabs()
         }
 
         val snackbarMessage = if (sessionCode == ALL_PRIVATE_TABS) {
@@ -530,7 +614,6 @@ class HomeFragment : Fragment() {
         sessionControlView = null
         appBarLayout = null
         bundleArgs.clear()
-        requireActivity().window.clearFlags(FLAG_SECURE)
     }
 
     override fun onStart() {
@@ -557,7 +640,10 @@ class HomeFragment : Fragment() {
                         )
                     ).getTip()
                 },
-                showCollectionPlaceholder = components.settings.showCollectionsPlaceholderOnHome
+                showCollectionPlaceholder = components.settings.showCollectionsPlaceholderOnHome,
+                recentTabs = emptyList(),
+                recentBookmarks = emptyList(),
+                historyMetadata = emptyList()
             )
         )
 
@@ -571,22 +657,25 @@ class HomeFragment : Fragment() {
                 currentMode,
                 owner = this@HomeFragment.viewLifecycleOwner
             )
-            requireComponents.backgroundServices.accountManager.register(object : AccountObserver {
-                override fun onAuthenticated(account: OAuthAccount, authType: AuthType) {
-                    if (authType != AuthType.Existing) {
-                        view?.let {
-                            FenixSnackbar.make(
-                                view = it,
-                                duration = Snackbar.LENGTH_SHORT,
-                                isDisplayedWithBrowserToolbar = false
-                            )
-                                .setText(it.context.getString(R.string.onboarding_firefox_account_sync_is_on))
-                                .setAnchorView(toolbarLayout)
-                                .show()
+            requireComponents.backgroundServices.accountManager.register(
+                object : AccountObserver {
+                    override fun onAuthenticated(account: OAuthAccount, authType: AuthType) {
+                        if (authType != AuthType.Existing) {
+                            view?.let {
+                                FenixSnackbar.make(
+                                    view = it,
+                                    duration = Snackbar.LENGTH_SHORT,
+                                    isDisplayedWithBrowserToolbar = false
+                                )
+                                    .setText(it.context.getString(R.string.onboarding_firefox_account_sync_is_on))
+                                    .setAnchorView(toolbarLayout)
+                                    .show()
+                            }
                         }
                     }
-                }
-            }, owner = this@HomeFragment.viewLifecycleOwner)
+                },
+                owner = this@HomeFragment.viewLifecycleOwner
+            )
         }
 
         if (browsingModeManager.mode.isPrivate &&
@@ -606,7 +695,9 @@ class HomeFragment : Fragment() {
     }
 
     private fun navToSavedLogins() {
-        findNavController().navigate(HomeFragmentDirections.actionGlobalSavedLoginsAuthFragment())
+        findNavController().navigate(
+            HomeFragmentDirections.actionGlobalSavedLoginsAuthFragment()
+        )
     }
 
     private fun dispatchModeChanges(mode: Mode) {
@@ -722,6 +813,7 @@ class HomeFragment : Fragment() {
 
     private fun hideOnboardingAndOpenSearch() {
         hideOnboardingIfNeeded()
+        appBarLayout?.setExpanded(true, true)
         navigateToSearch()
     }
 
@@ -761,12 +853,21 @@ class HomeFragment : Fragment() {
                             R.id.homeFragment,
                             HomeFragmentDirections.actionGlobalSettingsFragment()
                         )
+                        requireComponents.analytics.metrics.track(Event.HomeMenuSettingsItemClicked)
                     }
-                    HomeMenu.Item.SyncedTabs -> {
+                    is HomeMenu.Item.SyncAccount -> {
                         hideOnboardingIfNeeded()
+                        val directions = when (it.accountState) {
+                            AccountState.AUTHENTICATED ->
+                                BrowserFragmentDirections.actionGlobalAccountSettingsFragment()
+                            AccountState.NEEDS_REAUTHENTICATION ->
+                                BrowserFragmentDirections.actionGlobalAccountProblemFragment()
+                            AccountState.NO_ACCOUNT ->
+                                BrowserFragmentDirections.actionGlobalTurnOnSync()
+                        }
                         nav(
                             R.id.homeFragment,
-                            HomeFragmentDirections.actionGlobalSyncedTabsFragment()
+                            directions
                         )
                     }
                     HomeMenu.Item.Bookmarks -> {
@@ -825,18 +926,21 @@ class HomeFragment : Fragment() {
                             }
                         )
                     }
-                    HomeMenu.Item.Sync -> {
+                    HomeMenu.Item.ReconnectSync -> {
                         hideOnboardingIfNeeded()
                         nav(
                             R.id.homeFragment,
                             HomeFragmentDirections.actionGlobalAccountProblemFragment()
                         )
                     }
-                    HomeMenu.Item.AddonsManager -> {
+                    HomeMenu.Item.Extensions -> {
                         nav(
                             R.id.homeFragment,
                             HomeFragmentDirections.actionGlobalAddonsManagementFragment()
                         )
+                    }
+                    is HomeMenu.Item.DesktopMode -> {
+                        context.settings().openNextTabInDesktopMode = it.checked
                     }
                 }
             },
@@ -999,10 +1103,10 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun openTabTray() {
+    private fun openTabsTray() {
         findNavController().nav(
             R.id.homeFragment,
-            HomeFragmentDirections.actionGlobalTabTrayDialogFragment()
+            HomeFragmentDirections.actionGlobalTabsTrayFragment()
         )
     }
 

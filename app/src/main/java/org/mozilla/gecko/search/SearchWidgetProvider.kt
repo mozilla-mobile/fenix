@@ -8,6 +8,7 @@ import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH
 import android.appwidget.AppWidgetProvider
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -90,15 +91,22 @@ class SearchWidgetProvider : AppWidgetProvider() {
             .let { intent ->
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 intent.putExtra(HomeActivity.OPEN_TO_SEARCH, StartSearchIntentProcessor.SEARCH_WIDGET)
-                PendingIntent.getActivity(context,
-                    REQUEST_CODE_NEW_TAB, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                PendingIntent.getActivity(
+                    context,
+                    REQUEST_CODE_NEW_TAB, intent, PendingIntent.FLAG_UPDATE_CURRENT
+                )
             }
     }
 
     /**
      * Builds pending intent that starts a new voice search.
      */
-    private fun createVoiceSearchIntent(context: Context): PendingIntent? {
+    @VisibleForTesting
+    internal fun createVoiceSearchIntent(context: Context): PendingIntent? {
+        if (!context.settings().shouldShowVoiceSearch) {
+            return null
+        }
+
         val voiceIntent = Intent(context, VoiceSearchActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             putExtra(SPEECH_PROCESSING, true)
@@ -107,8 +115,10 @@ class SearchWidgetProvider : AppWidgetProvider() {
         val intentSpeech = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
 
         return intentSpeech.resolveActivity(context.packageManager)?.let {
-            PendingIntent.getActivity(context,
-                REQUEST_CODE_VOICE, voiceIntent, 0)
+            PendingIntent.getActivity(
+                context,
+                REQUEST_CODE_VOICE, voiceIntent, 0
+            )
         }
     }
 
@@ -152,14 +162,16 @@ class SearchWidgetProvider : AppWidgetProvider() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             setImageViewResource(
                 R.id.button_search_widget_new_tab_icon,
-                R.drawable.ic_launcher_foreground)
+                R.drawable.ic_launcher_foreground
+            )
         } else {
             setImageViewBitmap(
                 R.id.button_search_widget_new_tab_icon,
                 AppCompatResources.getDrawable(
                     context,
                     R.drawable.ic_launcher_foreground
-                )?.toBitmap())
+                )?.toBitmap()
+            )
         }
     }
 
@@ -171,6 +183,20 @@ class SearchWidgetProvider : AppWidgetProvider() {
         private const val DP_LARGE = 256
         private const val REQUEST_CODE_NEW_TAB = 0
         private const val REQUEST_CODE_VOICE = 1
+
+        fun updateAllWidgets(context: Context) {
+            val widgetManager = AppWidgetManager.getInstance(context)
+            val widgetIds = widgetManager.getAppWidgetIds(ComponentName(context, SearchWidgetProvider::class.java))
+
+            if (widgetIds.isNotEmpty()) {
+                context.sendBroadcast(
+                    Intent(context, SearchWidgetProvider::class.java).apply {
+                        action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+                        putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, widgetIds)
+                    }
+                )
+            }
+        }
 
         @VisibleForTesting
         internal fun getLayoutSize(@Dimension(unit = DP) dp: Int) = when {

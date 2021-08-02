@@ -6,19 +6,27 @@ package org.mozilla.fenix.settings.sitepermissions
 
 import android.view.View
 import android.widget.TextView
-import androidx.core.net.toUri
 import androidx.core.text.HtmlCompat
+import mozilla.components.support.ktx.kotlin.getOrigin
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.settings.PhoneFeature
 
 /**
- * Try to reload a session if a session with the given [origin] it is found.
- * @param origin The origin the session to be reloaded.
+ * Reloads the last used tab matching the provided origin. For performance
+ * reasons we don't want to reload all matching tabs. Reloading the last used
+ * tab is a good compromise as it's likely the reason for a change in site
+ * permissions.
+ *
+ * @param origin The origin of the tab to reload.
  */
 internal fun Components.tryReloadTabBy(origin: String) {
-    val session = core.sessionManager.all.find { it.url.toUri().host == origin }
-    useCases.sessionUseCases.reload(session)
+    core.store.state.tabs
+        .sortedByDescending { it.lastAccess }
+        .find { it.content.url.getOrigin() == origin }
+        ?.let {
+            useCases.sessionUseCases.reload(it.id)
+        }
 }
 
 internal fun initBlockedByAndroidView(phoneFeature: PhoneFeature, blockedByAndroidView: View) {

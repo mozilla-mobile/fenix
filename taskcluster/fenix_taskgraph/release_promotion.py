@@ -17,6 +17,7 @@ from taskgraph.util.taskgraph import find_decision_task, find_existing_tasks_fro
 
 RELEASE_PROMOTION_PROJECTS = (
     "https://github.com/mozilla-mobile/fenix",
+    "https://github.com/mozilla-releng/staging-fenix",
 )
 
 
@@ -158,6 +159,7 @@ def release_promotion_action(parameters, graph_config, input, task_group_id, tas
     else:
         raise ValueError("Unsupported version type: {}".format(version.version_type))
     parameters['release_type'] = release_type
+    parameters['tasks_for'] = 'action'
 
     parameters['pull_request_number'] = None
 
@@ -169,4 +171,4 @@ def release_promotion_action(parameters, graph_config, input, task_group_id, tas
 
 def read_version_file():
     with open(os.path.join(os.path.dirname(__file__), '..', '..', 'version.txt')) as f:
-        return f.read().strip().decode('utf-8')
+        return f.read().strip()

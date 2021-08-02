@@ -44,6 +44,7 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.onboarding.FenixOnboarding
+import org.mozilla.fenix.utils.Settings
 import java.lang.Exception
 
 @ExperimentalCoroutinesApi
@@ -87,13 +88,13 @@ class BrowserFragmentTest {
         every { browserFragment.onboarding } returns onboarding
 
         every { browserFragment.requireContext() } returns context
-        every { browserFragment.initializeUI(any()) } returns mockk()
+        every { browserFragment.initializeUI(any(), any()) } returns mockk()
         every { browserFragment.fullScreenChanged(any()) } returns Unit
         every { browserFragment.resumeDownloadDialogState(any(), any(), any(), any(), any()) } returns Unit
 
+        testTab = createTab(url = "https://mozilla.org")
         store = BrowserStore()
         every { context.components.core.store } returns store
-        testTab = createTab(url = "https://mozilla.org")
     }
 
     @After
@@ -122,10 +123,10 @@ class BrowserFragmentTest {
     @Test
     fun `GIVEN browser UI is not initialized WHEN selected tab changes THEN browser UI is initialized`() {
         browserFragment.observeTabSelection(store)
-        verify(exactly = 0) { browserFragment.initializeUI(view) }
+        verify(exactly = 0) { browserFragment.initializeUI(view, testTab) }
 
         addAndSelectTab(testTab)
-        verify(exactly = 1) { browserFragment.initializeUI(view) }
+        verify(exactly = 1) { browserFragment.initializeUI(view, testTab) }
     }
 
     @Test
@@ -183,9 +184,11 @@ class BrowserFragmentTest {
         val toolbar: BrowserToolbarView = mockk(relaxed = true)
         every { browserFragment.browserToolbarView } returns toolbar
 
-        store.dispatch(ContentAction.UpdateLoadRequestAction(
-            testTab.id,
-            LoadRequestState("https://firefox.com", false, true))
+        store.dispatch(
+            ContentAction.UpdateLoadRequestAction(
+                testTab.id,
+                LoadRequestState("https://firefox.com", false, true)
+            )
         ).joinBlocking()
         verify(exactly = 1) { toolbar.expand() }
     }
@@ -346,6 +349,17 @@ class BrowserFragmentTest {
         verify(exactly = 1) { toolbarIntegration.invalidateMenu() }
     }
 
+    @Test
+    fun `WHEN fragment configuration changed THEN menu is dismissed`() {
+        val browserToolbarView: BrowserToolbarView = mockk(relaxed = true)
+        every { browserFragment.context } returns null
+        browserFragment._browserToolbarView = browserToolbarView
+
+        browserFragment.onConfigurationChanged(mockk(relaxed = true))
+
+        verify(exactly = 1) { browserToolbarView.dismissMenu() }
+    }
+
     private fun addAndSelectTab(tab: TabSessionState) {
         store.dispatch(TabListAction.AddTabAction(tab)).joinBlocking()
         store.dispatch(TabListAction.SelectTabAction(tab.id)).joinBlocking()
@@ -357,5 +371,17 @@ class BrowserFragmentTest {
         }
 
         override fun getLifecycle(): Lifecycle = lifecycleRegistry
+    }
+
+    @Test
+    fun `WHEN updating the last browse activity THEN update the associated preference`() {
+        val settings: Settings = mockk(relaxed = true)
+
+        every { browserFragment.context } returns context
+        every { context.settings() } returns settings
+
+        browserFragment.updateLastBrowseActivity()
+
+        verify(exactly = 1) { settings.lastBrowseActivity = any() }
     }
 }

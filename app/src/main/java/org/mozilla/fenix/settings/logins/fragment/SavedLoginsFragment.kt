@@ -20,7 +20,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import kotlinx.android.synthetic.main.fragment_saved_logins.view.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import mozilla.components.concept.menu.MenuController
 import mozilla.components.concept.menu.Orientation
@@ -29,6 +28,7 @@ import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.StoreProvider
+import org.mozilla.fenix.databinding.FragmentSavedLoginsBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.redirectToReAuth
 import org.mozilla.fenix.ext.settings
@@ -64,17 +64,14 @@ class SavedLoginsFragment : Fragment() {
         initToolbar()
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_saved_logins, container, false)
+        val binding = FragmentSavedLoginsBinding.bind(view)
+
         savedLoginsStore = StoreProvider.get(this) {
             LoginsFragmentStore(
                 createInitialLoginsListState(requireContext().settings())
@@ -104,7 +101,7 @@ class SavedLoginsFragment : Fragment() {
             )
 
         savedLoginsListView = SavedLoginsListView(
-            view.savedLoginsLayout,
+            binding.savedLoginsLayout,
             savedLoginsInteractor
         )
         savedLoginsInteractor.loadAndMapLogins()
@@ -150,8 +147,14 @@ class SavedLoginsFragment : Fragment() {
         toolbarChildContainer.visibility = View.GONE
         (activity as HomeActivity).getSupportActionBarAndInflateIfNecessary().setDisplayShowTitleEnabled(true)
         sortingStrategyMenu.menuController.dismiss()
+        sortLoginsMenuRoot.setOnClickListener(null)
+        setHasOptionsMenu(false)
 
-        redirectToReAuth(listOf(R.id.loginDetailFragment), findNavController().currentDestination?.id)
+        redirectToReAuth(
+            listOf(R.id.loginDetailFragment),
+            findNavController().currentDestination?.id,
+            R.id.savedLoginsFragment
+        )
         super.onPause()
     }
 
@@ -162,6 +165,7 @@ class SavedLoginsFragment : Fragment() {
     ) = (activity as HomeActivity).openToBrowserAndLoad(searchTermOrURL, newTab, from)
 
     private fun initToolbar() {
+        setHasOptionsMenu(true)
         showToolbar(getString(R.string.preferences_passwords_saved_logins))
         (activity as HomeActivity).getSupportActionBarAndInflateIfNecessary()
             .setDisplayShowTitleEnabled(false)
@@ -194,12 +198,15 @@ class SavedLoginsFragment : Fragment() {
     }
 
     private fun attachMenu() {
-        sortingStrategyMenu.menuController.register(object : MenuController.Observer {
-            override fun onDismiss() {
-                // Deactivate button on dismiss
-                sortLoginsMenuRoot.isActivated = false
-            }
-        }, view = sortLoginsMenuRoot)
+        sortingStrategyMenu.menuController.register(
+            object : MenuController.Observer {
+                override fun onDismiss() {
+                    // Deactivate button on dismiss
+                    sortLoginsMenuRoot.isActivated = false
+                }
+            },
+            view = sortLoginsMenuRoot
+        )
 
         sortLoginsMenuRoot.setOnClickListener {
             // Activate button on show

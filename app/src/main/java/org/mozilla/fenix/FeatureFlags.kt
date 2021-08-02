@@ -15,50 +15,47 @@ object FeatureFlags {
     val pullToRefreshEnabled = Config.channel.isNightlyOrDebug
 
     /**
-     * Shows Synced Tabs in the tabs tray.
-     *
-     * Tracking issue: https://github.com/mozilla-mobile/fenix/issues/13892
+     * Enables the Addresses autofill feature.
      */
-    val syncedTabsInTabsTray = Config.channel.isNightlyOrDebug
+    val addressesFeature = Config.channel.isNightlyOrDebug
 
     /**
-     * Enables downloads with external download managers.
+     * Enables the Credit Cards autofill feature.
      */
-    const val externalDownloadManager = true
+    const val creditCardsFeature = true
 
     /**
-     * Enables the Nimbus experiments library, especially the settings toggle to opt-out of
-     * all experiments.
+     * Enables WebAuthn support.
      */
-    // IMPORTANT: Only turn this back on once the following issues are resolved:
-    // - https://github.com/mozilla-mobile/fenix/issues/17086: Calls to
-    // getExperimentBranch seem to block on updateExperiments causing a
-    // large performance regression loading the home screen.
-    // - https://github.com/mozilla-mobile/fenix/issues/17143: Despite
-    // having wrapped getExperimentBranch/withExperiments in a catch-all
-    // users are still experiencing crashes.
-    const val nimbusExperiments = false
+    const val webAuthFeature = true
 
     /**
-     * Enables an intentional regression to validate perftest alerting. See
-     * https://github.com/mozilla-mobile/fenix/issues/17447 for details. This
-     * is expected to be removed within several days.
+     * Enables the Home button in the browser toolbar to navigate back to the home screen.
      */
-    val intentionalRegressionToValidatePerfTestAlerting = Config.channel.isNightlyOrDebug
+    val showHomeButtonFeature = Config.channel.isNightlyOrDebug
 
     /**
-     * Enables the new MediaSession API.
+     * Enables the Start On Home feature in the settings page.
      */
-    @Suppress("MayBeConst")
-    val newMediaSessionApi = true
+    val showStartOnHomeSettings = Config.channel.isNightlyOrDebug
 
     /**
-     * Enabled showing site permission indicators in the toolbars.
+     * Enables the "recent" tabs feature in the home screen.
      */
-    val permissionIndicatorsToolbar = Config.channel.isNightlyOrDebug
+    val showRecentTabsFeature = Config.channel.isNightlyOrDebug
 
     /**
-     * Enables experimental WebAuthn support. This implementation should never reach release!
+     * Enables recording of history metadata.
      */
-    val webAuthFeature = Config.channel.isNightlyOrDebug
+    val historyMetadataFeature = Config.channel.isDebug
+
+    /**
+     * Enables the recently saved bookmarks feature in the home screen.
+     */
+    val recentBookmarksFeature = Config.channel.isNightlyOrDebug
+
+    /**
+     * Identifies and separates the tabs list with a secondary section containing least used tabs.
+     */
+    val inactiveTabs = Config.channel.isNightlyOrDebug
 }

@@ -4,7 +4,6 @@ treeherder:
     group-names:
         'beta': 'Beta-related tasks with same APK configuration as Fennec'
         'Btime': 'Raptor-Browsertime tests'
-        'Btime-wr': 'Raptor-Browsertime tests with webrender enabled'
         'bump': 'Bump dependencies'
         'debug': 'Builds made for testing'
         'Fetch': 'Fetch and store content'
@@ -17,7 +16,10 @@ treeherder:
         'Rap-P': 'Raptor power tests'
         'TL': 'Toolchain builds for Linux 64-bits'
 
-task-priority: highest
+task-priority:
+    by-project:
+        "fenix": highest
+        "staging-fenix": low
 
 taskgraph:
     register: fenix_taskgraph:register

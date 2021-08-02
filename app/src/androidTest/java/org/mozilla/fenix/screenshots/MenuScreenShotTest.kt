@@ -68,47 +68,38 @@ class MenuScreenShotTest : ScreenshotTest() {
         }.openThreeDotMenu {
         }.openSettings {
             Screengrab.screenshot("SettingsRobot_settings-menu")
-            settingsAccountPreferences()
+        }.openTurnOnSyncMenu {
             Screengrab.screenshot("AccountSettingsRobot_settings-account")
-            mDevice.pressBack()
-
-            settingsSearch()
+        }.goBack {
+        }.openSearchSubMenu {
             Screengrab.screenshot("SettingsSubMenuSearchRobot_settings-search")
-            mDevice.pressBack()
-
-            settingsTheme()
+        }.goBack {
+        }.openCustomizeSubMenu {
             Screengrab.screenshot("SettingsSubMenuThemeRobot_settings-theme")
-            mDevice.pressBack()
-
-            settingsAccessibility()
+        }.goBack {
+        }.openAccessibilitySubMenu {
             Screengrab.screenshot("SettingsSubMenuAccessibilityRobot_settings-accessibility")
-            mDevice.pressBack()
-
-            settingsLanguage()
+        }.goBack {
+        }.openLanguageSubMenu {
             Screengrab.screenshot("SettingsSubMenuAccessibilityRobot_settings-language")
-            mDevice.pressBack()
-
-            settingDefaultBrowser()
+        }.goBack {
+            // From about here we need to scroll up to ensure all settings options are visible.
+        }.openSetDefaultBrowserSubMenu {
             Screengrab.screenshot("SettingsSubMenuDefaultBrowserRobot_settings-default-browser")
-            mDevice.pressBack()
-
+        }.goBack {
             // Disabled for Pixel 2
-            // settingsTP()
-            // Screengrab.screenshot("settings-enhanced-tp")
-            // mDevice.pressBack()
-
-            loginsAndPassword()
+            // }.openEnhancedTrackingProtectionSubMenu {
+            //     Screengrab.screenshot("settings-enhanced-tp")
+            // }.goBack {
+        }.openLoginsAndPasswordSubMenu {
             Screengrab.screenshot("SettingsSubMenuLoginsAndPasswords-settings-logins-passwords")
-            mDevice.pressBack()
-
+        }.goBack {
             swipeToBottom()
             Screengrab.screenshot("SettingsRobot_settings-scroll-to-bottom")
-
-            settingsTelemetry()
+        }.openSettingsSubMenuDataCollection {
             Screengrab.screenshot("settings-telemetry")
-            mDevice.pressBack()
-
-            addOns()
+        }.goBack {
+        }.openAddonsManagerMenu {
             Screengrab.screenshot("settings-addons")
         }
     }
@@ -142,8 +133,8 @@ class MenuScreenShotTest : ScreenshotTest() {
         editBookmarkFolder()
         Screengrab.screenshot("ThreeDotMenuBookmarksRobot_edit-bookmark-folder-menu")
         // It may be needed to wait here to have the screenshot
-        mDevice.pressBack()
         bookmarksMenu {
+            navigateUp()
         }.openThreeDotMenu("test") {
             deleteBookmarkFolder()
             Screengrab.screenshot("ThreeDotMenuBookmarksRobot_delete-bookmark-folder-menu")
@@ -185,7 +176,7 @@ class MenuScreenShotTest : ScreenshotTest() {
     @Test
     fun saveLoginPromptTest() {
         val saveLoginTest =
-                TestAssetHelper.getSaveLoginAsset(mockWebServer)
+            TestAssetHelper.getSaveLoginAsset(mockWebServer)
         navigationToolbar {
         }.enterURLAndEnterToBrowser(saveLoginTest.url) {
             verifySaveLoginPromptIsShownNotSave()

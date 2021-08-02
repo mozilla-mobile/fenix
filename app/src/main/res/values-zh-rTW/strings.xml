@@ -6,6 +6,7 @@
     <string name="app_name_private_5">隱私 %s</string>
     <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
     <string name="app_name_private_4">%s（隱私）</string>
+
     <!-- Home Fragment -->
     <!-- Content description (not visible, for screen readers etc.): "Three dot" menu button. -->
     <string name="content_description_menu">更多選項</string>
@@ -23,10 +24,6 @@
     <!-- No Private Tabs Message Description -->
     <string name="no_private_tabs_description">您開啟的隱私瀏覽分頁將顯示於此處。</string>
 
-    <!-- Default title for pinned Baidu top site that links to Baidu home page  -->
-    <string name="default_top_site_baidu">百度</string>
-    <!-- Default title for pinned JD top site that links to JD home page  -->
-    <string name="default_top_site_jd">京東</string>
     <!-- Message announced to the user when tab tray is selected with 1 tab -->
     <string name="open_tab_tray_single">開啟了 1 個分頁，點擊即可切換分頁。</string>
     <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
@@ -54,6 +51,16 @@
     <string name="tab_tray_enter_multiselect_content_description">已進入多選模式，請選擇要儲存到收藏集的分頁</string>
     <!-- Content description on checkmark while tab is selected in multiselect mode in tab tray -->
     <string name="tab_tray_multiselect_selected_content_description">已選取</string>
+
+    <!-- Home - Recently saved bookmarks -->
+    <!-- Title for the home screen section with recently saved bookmarks. -->
+    <string name="recently_saved_bookmarks">最近儲存</string>
+    <!-- Content description for the recently saved bookmarks section on the home screen. -->
+    <string name="recently_saved_bookmarks_content_description">最近加入的書籤</string>
+    <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
+    <string name="recently_saved_show_all">顯示全部</string>
+    <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
+    <string name="recently_saved_show_all_content_description">顯示所有儲存書籤按鈕</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
     <string name="about_content">%1$s 是由 Mozilla 所打造。</string>
@@ -98,13 +105,6 @@
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">知道了！</string>
 
-    <!-- Text for the banner message to tell users about our grid view feature. -->
-    <string name="tab_tray_grid_view_banner_message">可到設定，於「分頁檢視」下方選擇「格線」來更改開啟分頁的版面。</string>
-    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
-    <string name="tab_tray_grid_view_banner_positive_button_text">開啟設定</string>
-    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
-    <string name="tab_tray_grid_view_banner_negative_button_text">關閉</string>
-
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
     <string name="home_screen_shortcut_open_new_tab_2">開新分頁</string>
@@ -113,6 +113,12 @@
 
     <!-- Heading for the Top Sites block -->
     <string name="home_screen_top_sites_heading">熱門網站</string>
+
+    <!-- Recent Tabs -->
+    <!-- Header text for jumping back into the recent tab in the home screen -->
+    <string name="recent_tabs_header">回到先前開啟頁面</string>
+    <!-- Button text for showing all the tabs in the tabs tray -->
+    <string name="recent_tabs_show_all">顯示全部</string>
 
     <!-- Browser Fragment -->
     <!-- Content description (not visible, for screen readers etc.): Navigate to open tabs -->
@@ -131,6 +137,8 @@
     <string name="browser_menu_edit_bookmark">編輯書籤</string>
     <!-- Browser menu button that opens the addon manager -->
     <string name="browser_menu_add_ons">附加元件</string>
+    <!-- Browser menu button that opens the addon extensions manager -->
+    <string name="browser_menu_extensions">擴充套件</string>
     <!-- Text displayed when there are no add-ons to be shown -->
     <string name="no_add_ons">無附加元件</string>
     <!-- Browser menu button that sends a user to help articles -->
@@ -182,6 +190,17 @@
     <!-- Browser menu button to configure reader mode appearance e.g. the used font type and size -->
     <string name="browser_menu_read_appearance">外觀設定</string>
 
+    <!-- Browser menu button to show reader view appearance controls e.g. the used font type and size -->
+    <string name="browser_menu_customize_reader_view">自訂閱讀模式</string>
+    <!-- Browser menu label for adding a bookmark -->
+    <string name="browser_menu_add">新增</string>
+    <!-- Browser menu label for editing a bookmark -->
+    <string name="browser_menu_edit">編輯</string>
+
+    <!-- Browser Toolbar -->
+    <!-- Content description for the Home screen button on the browser toolbar -->
+    <string name="browser_toolbar_home">主畫面</string>
+
     <!-- Error message to show when the user tries to access a scheme not
         handled by the app (Ex: blob, tel etc) -->
     <string name="unknown_scheme_error_message">不認識的通訊協定，無法連線。</string>
@@ -218,6 +237,11 @@
     <string name="search_suggestions_onboarding_text">%s 將與預設搜尋引擎分享您在網址列輸入的任何內容。</string>
     <!-- Search suggestion onboarding hint Learn more link text -->
     <string name="search_suggestions_onboarding_learn_more_link">了解更多</string>
+
+    <!-- Search engine suggestion title text. The first parameter is the name of teh suggested engine-->
+    <string name="search_engine_suggestions_title">搜尋 %s</string>
+    <!-- Search engine suggestion description text -->
+    <string name="search_engine_suggestions_description">從網址列直接搜尋</string>
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
@@ -409,6 +433,11 @@
         and the third is the device model. -->
     <string name="default_device_name_2">在 %2$s %3$s 上的 %1$s</string>
 
+    <!-- Preference for syncing credit cards -->
+    <string name="preferences_sync_credit_cards">信用卡</string>
+    <!-- Preference for syncing addresses -->
+    <string name="preferences_sync_address">地址</string>
+
     <!-- Send Tab -->
     <!-- Name of the "receive tabs" notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="fxa_received_tab_channel_name">收到分頁</string>
@@ -442,9 +471,6 @@
     <!-- Text displayed when there are no exceptions, with learn more link that brings users to a tracking protection SUMO page -->
     <string name="exceptions_empty_message_learn_more_link">了解更多</string>
 
-    <!-- Description in Quick Settings that tells user tracking protection is off globally for all sites, and links to Settings to turn it on -->
-    <string name="preferences_tracking_protection_turned_off_globally">已全域關閉。請到「設定」頁面開啟。</string>
-
     <!-- Preference switch for Telemetry -->
     <string name="preferences_telemetry">Telemetry</string>
     <!-- Preference switch for usage and technical data collection -->
@@ -455,6 +481,8 @@
     <string name="preferences_marketing_data">行銷資料</string>
     <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
     <string name="preferences_marketing_data_description">與我們的行動行銷服務供應商 Leanplum 分享您在 %1$s 使用了哪些功能。</string>
+    <!-- Preference description for marketing data collection -->
+    <string name="preferences_marketing_data_description2">與我們的行動行銷服務廠商 Adjust 分享基本使用資料</string>
     <!-- Title for studies preferences -->
     <string name="preference_experiments_2">使用者研究</string>
     <!-- Summary for studies preferences -->
@@ -536,8 +564,10 @@
     <string name="library_desktop_bookmarks_unfiled">其他書籤</string>
     <!-- Option in Library to open History page -->
     <string name="library_history">瀏覽紀錄</string>
-    <!-- Option in Library to open Synced Tabs page -->
-    <string name="library_synced_tabs">同步的分頁</string>
+    <!-- Option in Library to open a new tab -->
+    <string name="library_new_tab">開新分頁</string>
+    <!-- Option in Library to find text in page -->
+    <string name="library_find_in_page">在頁面中搜尋</string>
     <!-- Option in Library to open Reading List -->
     <string name="library_reading_list">閱讀清單</string>
     <!-- Menu Item Label for Search in Library -->
@@ -583,6 +613,15 @@
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">1 個月後</string>
 
+    <!-- Start on Home -->
+    <!-- Title of a preference that allows a user to indicate after a specified amount of time when the app should start on the home screen -->
+    <string name="preferences_start_on_home">啟動時，直接進入主畫面</string>
+    <!-- Option for starting on the home screen after after four hours or inactivity -->
+    <string name="start_on_home_after_four_hours">4 小時後</string>
+    <!-- Option for always starting on the home screen -->
+    <string name="start_on_home_always">總是</string>
+    <!-- Option for never starting on the home screen -->
+    <string name="start_on_home_never">永不</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
     <string name="close_tabs_manually_summary">手動關閉</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
@@ -599,12 +638,16 @@
     <string name="tabs_header_private_title">隱私瀏覽階段</string>
     <!-- Title for the list of tabs in the current private session -->
     <string name="tabs_header_private_tabs_title">隱私分頁</string>
+    <!-- Title for the list of tabs in the synced tabs -->
+    <string name="tabs_header_synced_tabs_title">同步的分頁</string>
     <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
     <string name="add_tab">新增分頁</string>
     <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
     <string name="add_private_tab">開新隱私瀏覽分頁</string>
     <!-- Text for the new tab button to indicate adding a new private tab in the tab -->
     <string name="tab_drawer_fab_content">隱私分頁</string>
+    <!-- Text for the new tab button to indicate syncing command on the synced tabs page -->
+    <string name="tab_drawer_fab_sync">同步</string>
     <!-- Text shown as the title of the open tab tray -->
     <string name="tab_tray_title">開啟分頁</string>
     <!-- Text shown in the menu for saving tabs to a collection -->
@@ -615,6 +658,8 @@
     <string name="tab_tray_menu_item_share">分享所有分頁</string>
     <!-- Text shown in the menu to view recently closed tabs -->
     <string name="tab_tray_menu_recently_closed">最近關閉的分頁</string>
+    <!-- Text shown in the menu to view account settings -->
+    <string name="tab_tray_menu_account_settings">帳號設定</string>
     <!-- Text shown in the menu to view tab settings -->
     <string name="tab_tray_menu_tab_settings">分頁選項</string>
     <!-- Text shown in the menu for closing all tabs -->
@@ -786,8 +831,6 @@
     <string name="bookmark_delete_folder_snackbar">已刪除 %1$s</string>
     <!-- Screen title for adding a bookmarks folder -->
     <string name="bookmark_add_folder">新增資料夾</string>
-    <!-- deprecated: Snackbar title shown after a bookmark has been created. -->
-    <string name="bookmark_created_snackbar">已建立書籤。</string>
     <!-- Snackbar title shown after a bookmark has been created. -->
     <string name="bookmark_saved_snackbar">已加入書籤！</string>
     <!-- Snackbar edit button shown after a bookmark has been created. -->
@@ -893,16 +936,22 @@
     <!-- Summary of tracking protection preference if tracking protection is set to off -->
     <string name="tracking_protection_off">關閉</string>
 
-    <!-- Label that indicates that all video and audio autoplay is allowed -->
+    <!-- Label for global setting that indicates that all video and audio autoplay is allowed -->
     <string name="preference_option_autoplay_allowed2">允許自動播放影音內容</string>
+    <!-- Label for site specific setting that indicates that all video and audio autoplay is allowed -->
+    <string name="quick_setting_option_autoplay_allowed">允許自動播放影音內容</string>
     <!-- Label that indicates that video and audio autoplay is only allowed over Wi-Fi -->
     <string name="preference_option_autoplay_allowed_wifi_only2">僅在使用行動網路時封鎖影音內容</string>
     <!-- Subtext that explains 'autoplay on Wi-Fi only' option -->
     <string name="preference_option_autoplay_allowed_wifi_subtext">使用 Wi-Fi 網路時，仍會自動播放影音內容</string>
-    <!-- Label that indicates that video autoplay is allowed, but audio autoplay is blocked -->
+    <!-- Label for global setting that indicates that video autoplay is allowed, but audio autoplay is blocked -->
     <string name="preference_option_autoplay_block_audio2">僅封鎖音訊</string>
-    <!-- Label that indicates that all video and audio autoplay is blocked -->
+    <!-- Label for site specific setting that indicates that video autoplay is allowed, but audio autoplay is blocked -->
+    <string name="quick_setting_option_autoplay_block_audio">僅封鎖音訊</string>
+    <!-- Label for global setting that indicates that all video and audio autoplay is blocked -->
     <string name="preference_option_autoplay_blocked3">封鎖影音內容</string>
+    <!-- Label for site specific setting that indicates that all video and audio autoplay is blocked -->
+    <string name="quick_setting_option_autoplay_blocked">封鎖影音內容</string>
     <!-- Summary of delete browsing data on quit preference if it is set to on -->
     <string name="delete_browsing_data_quit_on">開啟</string>
     <!-- Summary of delete browsing data on quit preference if it is set to off -->
@@ -979,6 +1028,8 @@
     <string name="share_link_all_apps_subheader">所有動作</string>
     <!-- Sub-header in the dialog to share a link to an app from the most-recent sorted list -->
     <string name="share_link_recent_apps_subheader">最近使用</string>
+    <!-- An option from the three dot menu to into sync -->
+    <string name="sync_menu_sign_in">登入進行同步</string>
     <!-- An option from the share dialog to sign into sync -->
     <string name="sync_sign_in">登入 Sync</string>
     <!-- An option from the share dialog to send link to all other sync devices -->
@@ -1019,6 +1070,16 @@
     <string name="notification_pbm_action_delete_and_open">清除後重新開啟</string>
     <!-- Name of the "Powered by Fenix" notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="notification_powered_by_channel_name">Powered By</string>
+    <!-- Name of the marketing notification channel. Displayed in the "App notifications" system settings for the app -->
+    <string name="notification_marketing_channel_name">行銷活動</string>
+    <!-- Title shown in the notification that pops up to remind the user to set fenix as default browser.
+    %1$s is a placeholder that will be replaced by the app name (Fenix). -->
+    <string name="notification_default_browser_title">%1$s 又快、又有隱私</string>
+    <!-- Text shown in the notification that pops up to remind the user to set fenix as default browser.
+    %1$s is a placeholder that will be replaced by the app name (Fenix). -->
+    <string name="notification_default_browser_text">將 %1$s 設為預設瀏覽器</string>
+
+    <!-- Snackbar -->
     <!-- Text shown in snackbar when user deletes a collection -->
     <string name="snackbar_collection_deleted">已刪除收藏集</string>
 
@@ -1177,9 +1238,6 @@
     <string name="onboarding_header">歡迎使用 %s！</string>
     <!-- text for the Firefox Accounts section header -->
     <string name="onboarding_fxa_section_header">已經有帳號了嗎？</string>
-    <!-- text for the Firefox Preview feature section header
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_feature_section_header">了解 %s</string>
     <!-- text for the "What's New" onboarding card header -->
     <string name="onboarding_whats_new_header1">看看有什麼新鮮事</string>
     <!-- text for the "what's new" onboarding card description
@@ -1187,10 +1245,10 @@
     <string name="onboarding_whats_new_description">對重新設計的 %s 有好奇的地方嗎？想知道哪裡變得不一樣了？</string>
     <!-- text for underlined clickable link that is part of "what's new" onboarding card description that links to an FAQ -->
     <string name="onboarding_whats_new_description_linktext">在此尋找答案</string>
-    <!-- text for the Firefox account onboarding sign in card header -->
-    <string name="onboarding_account_sign_in_header">使用您的 Firefox 帳號同步書籤、密碼等資料。</string>
+    <!-- text for the Firefox account onboarding sign in card header. The word "Firefox" should not be translated -->
+    <string name="onboarding_account_sign_in_header_1">在不同裝置間同步 Firefox</string>
     <!-- Text for the button to learn more about signing in to your Firefox account -->
-    <string name="onboarding_manual_sign_in_learn_more">了解更多</string>
+    <string name="onboarding_manual_sign_in_description">將 Firefox 上的書籤、瀏覽紀錄、網站密碼帶到此裝置。</string>
     <!-- text for the firefox account onboarding card header when we detect you're already signed in to
         another Firefox browser. (The word `Firefox` should not be translated)
         The first parameter is the email of the detected user's account -->
@@ -1199,9 +1257,9 @@
     <string name="onboarding_firefox_account_auto_signin_confirm">好，請幫我登入</string>
     <!-- text for the automatic sign-in button while signing in is in process -->
     <string name="onboarding_firefox_account_signing_in">登入中…</string>
-    <!-- text for the button to manually sign into Firefox account. The word "Firefox" should not be translated -->
-    <string name="onboarding_firefox_account_sign_in">登入 Firefox</string>
 
+    <!-- text for the button to manually sign into Firefox account. -->
+    <string name="onboarding_firefox_account_sign_in_1">註冊</string>
     <!-- text for the button to stay signed out when presented with an option to automatically sign-in. -->
     <string name="onboarding_firefox_account_stay_signed_out">不要登入</string>
     <!-- text to display in the snackbar once account is signed-in -->
@@ -1209,26 +1267,23 @@
     <!-- text to display in the snackbar if automatic sign-in fails. user may try again -->
     <string name="onboarding_firefox_account_automatic_signin_failed">登入失敗</string>
     <!-- text for the tracking protection onboarding card header -->
-    <string name="onboarding_tracking_protection_header_2">自動保護隱私</string>
-    <!-- text for the tracking protection card description
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_tracking_protection_description_2">可透過隱私與安全性設定，封鎖追蹤器、惡意軟體與企業在網路上追蹤您的行為。</string>
+    <string name="onboarding_tracking_protection_header_3">隨時都有隱私保護</string>
+    <!-- text for the tracking protection card description. 'Firefox' intentionally hardcoded here -->
+    <string name="onboarding_tracking_protection_description_3">Firefox 會自動封鎖讓大企業在網路上偷偷跟蹤您的程式。</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
     <string name="onboarding_tracking_protection_standard_button_2">標準（預設）</string>
     <!-- text for standard blocking option button description -->
-    <string name="onboarding_tracking_protection_standard_button_description_2">封鎖少一點追蹤器，網頁可正常運作。</string>
+    <string name="onboarding_tracking_protection_standard_button_description_3">隱私權保護與效能兼顧。網站可正常運作。</string>
     <!-- text for tracking protection radio button option for strict level of blocking -->
     <string name="onboarding_tracking_protection_strict_button">嚴格（建議）</string>
     <!-- text for tracking protection radio button option for strict level of blocking -->
     <string name="onboarding_tracking_protection_strict_option">嚴格</string>
     <!-- text for strict blocking option button description -->
-    <string name="onboarding_tracking_protection_strict_button_description_2">封鎖更多追蹤器、廣告與彈出視窗。可更快載入網頁，但頁面中的部分功能可能會不正常。</string>
-    <!-- text for the toolbar position card header
-        In English this is an idiom for "choose a side as in an argument or fight"
-        but it is ok to make this more literally about "choosing a position in a physical space -->
-    <string name="onboarding_toolbar_position_header">表示你的立場</string>
+    <string name="onboarding_tracking_protection_strict_button_description_3">封鎖更多追蹤器，讓網頁可以更快載入，但頁面上的某些功能可能會故障。</string>
+    <!-- text for the toolbar position card header  -->
+    <string name="onboarding_toolbar_placement_header_1">挑選工具列要放置的位置</string>
     <!-- text for the toolbar position card description -->
-    <string name="onboarding_toolbar_position_description">用畫面底部的工具列試試看單手上網，也可以移到畫面頂端。</string>
+    <string name="onboarding_toolbar_placement_description_1">可以將工具列放在畫面底端或頂端，容易操作的地方。</string>
     <!-- text for the private browsing onboarding card header -->
     <string name="onboarding_private_browsing_header">上網變得私密</string>
     <!-- text for the private browsing onboarding card description
@@ -1241,7 +1296,7 @@
     <!-- text for the privacy notice onboarding card header -->
     <string name="onboarding_privacy_notice_header">您的隱私權</string>
     <!-- text for the privacy notice onboarding card description
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
+    The first parameter is the name of the app (e.g. Firefox Preview) Substitute %s for long browser name. -->
     <string name="onboarding_privacy_notice_description2">我們將 %s 設計成讓您可以完整控制要在網路上分享哪些東西、以及與我們分享哪些東西。</string>
     <!-- Text for the button to read the privacy notice -->
     <string name="onboarding_privacy_notice_read_button">閱讀我們的隱私權公告</string>
@@ -1256,7 +1311,7 @@
     <!-- text for the theme picker onboarding card header -->
     <string name="onboarding_theme_picker_header">選擇佈景主題</string>
     <!-- text for the theme picker onboarding card description -->
-    <string name="onboarding_theme_picker_description1">開啟暗色模式，更省電又保護視力。</string>
+    <string name="onboarding_theme_picker_description_2">使用暗色模式，更省電又保護視力。</string>
     <!-- Automatic theme setting (will follow device setting) -->
     <string name="onboarding_theme_automatic_title">自動</string>
     <!-- Summary of automatic theme setting (will follow device setting) -->
@@ -1311,13 +1366,13 @@
     <!-- Preference for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_standard_default_1">標準（預設）</string>
     <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description_3">封鎖少一點追蹤器，網頁可正常運作。</string>
+    <string name="preference_enhanced_tracking_protection_standard_description_4">隱私權保護與效能兼顧。網站可正常運作。</string>
     <!--  Accessibility text for the Standard protection information icon  -->
     <string name="preference_enhanced_tracking_protection_standard_info_button">標準追蹤保護會封鎖哪些內容</string>
     <!-- Preference for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict">嚴格</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_description_2">封鎖更多追蹤器、廣告與彈出視窗。可更快載入網頁，但頁面中的部分功能可能會不正常。</string>
+    <string name="preference_enhanced_tracking_protection_strict_description_3">封鎖更多追蹤器，讓網頁可以更快載入，但頁面上的某些功能可能會故障。</string>
     <!--  Accessibility text for the Strict protection information icon  -->
     <string name="preference_enhanced_tracking_protection_strict_info_button">嚴格追蹤保護會封鎖哪些內容</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
@@ -1458,10 +1513,8 @@
     <string name="preferences_passwords_autofill">自動填寫</string>
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">同步登入資訊</string>
-    <!-- Syncing saved logins in Fenix is on -->
-    <string name="preferences_passwords_sync_logins_on">開啟</string>
-    <!-- Syncing saved logins in Fenix is off -->
-    <string name="preferences_passwords_sync_logins_off">關閉</string>
+    <!-- Preference for syncing saved logins in Fenix, when not signed in-->
+    <string name="preferences_passwords_sync_logins_across_devices">在不同裝置間同步登入資訊</string>
     <!-- Syncing saved logins in Fenix needs reconnect to sync -->
     <string name="preferences_passwords_sync_logins_reconnect">重新連結</string>
     <!-- Syncing saved logins in Fenix needs login -->
@@ -1533,7 +1586,7 @@
     <!-- Title of warning dialog if users have no device authentication set up -->
     <string name="logins_warning_dialog_title">保護您的登入資訊與密碼</string>
     <!-- Message of warning dialog if users have no device authentication set up -->
-    <string name="logins_warning_dialog_message">設定裝備解鎖圖形、PIN 碼或密碼來保護您儲存下來的登入資訊與密碼，避免別人盜用。</string>
+    <string name="logins_warning_dialog_message">設定裝置解鎖圖形、PIN 碼或密碼來保護您儲存下來的登入資訊與密碼，避免別人盜用。</string>
     <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
     <string name="logins_warning_dialog_later">稍後處理</string>
     <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->
@@ -1551,6 +1604,74 @@
     <string name="saved_logins_sort_strategy_last_used">上次使用</string>
     <!-- Content description (not visible, for screen readers etc.): Sort saved logins dropdown menu chevron icon -->
     <string name="saved_logins_menu_dropdown_chevron_icon_content_description">排序登入資訊選單</string>
+
+    <!-- Credit Cards Autofill -->
+    <!-- Preference and title for managing the settings for credit cards -->
+    <string name="preferences_credit_cards">信用卡</string>
+
+    <!-- Preference for saving and autofilling credit cards -->
+    <string name="preferences_credit_cards_save_and_autofill_cards">儲存並自動填寫卡片</string>
+    <!-- Preference summary for saving and autofilling credit card data -->
+    <string name="preferences_credit_cards_save_and_autofill_cards_summary">資料有加密</string>
+    <!-- Preference option for syncing credit cards across devices. This is displayed when the user is not signed into sync -->
+    <string name="preferences_credit_cards_sync_cards_across_devices">在不同裝置間同步卡片資料</string>
+    <!-- Preference option for syncing credit cards across devices. This is displayed when the user is signed into sync -->
+    <string name="preferences_credit_cards_sync_cards">同步信用卡資訊</string>
+    <!-- Preference option for adding a credit card -->
+    <string name="preferences_credit_cards_add_credit_card">新增信用卡</string>
+
+    <!-- Preference option for managing saved credit cards -->
+    <string name="preferences_credit_cards_manage_saved_cards">管理已儲存的卡片</string>
+    <!-- Title of the "Add card" screen -->
+    <string name="credit_cards_add_card">新增付款卡片</string>
+    <!-- Title of the "Edit card" screen -->
+    <string name="credit_cards_edit_card">編輯卡片資訊</string>
+    <!-- The header for the card number of a credit card -->
+    <string name="credit_cards_card_number">卡號</string>
+    <!-- The header for the expiration date of a credit card -->
+    <string name="credit_cards_expiration_date">到期日</string>
+    <!-- The label for the expiration date month of a credit card to be used by a11y services-->
+    <string name="credit_cards_expiration_date_month">到期月份</string>
+    <!-- The label for the expiration date year of a credit card to be used by a11y services-->
+    <string name="credit_cards_expiration_date_year">到期年份</string>
+    <!-- The header for the name on the credit card -->
+    <string name="credit_cards_name_on_card">持卡人姓名</string>
+    <!-- The header for the nickname for a credit card -->
+    <string name="credit_cards_card_nickname">卡片暱稱</string>
+    <!-- The text for the "Delete card" menu item for deleting a credit card -->
+    <string name="credit_cards_menu_delete_card">刪除卡片</string>
+    <!-- The text for the "Delete card" button for deleting a credit card -->
+    <string name="credit_cards_delete_card_button">刪除卡片</string>
+    <!-- The title for the "Save" menu item for saving a credit card -->
+    <string name="credit_cards_menu_save">儲存</string>
+    <!-- The text for the "Save" button for saving a credit card -->
+    <string name="credit_cards_save_button">儲存</string>
+    <!-- The text for the "Cancel" button for cancelling adding or updating a credit card -->
+    <string name="credit_cards_cancel_button">取消</string>
+
+    <!-- Title of the "Saved cards" screen -->
+    <string name="credit_cards_saved_cards">已儲存的卡片</string>
+
+    <!-- Error message for credit card number validation -->
+    <string name="credit_cards_number_validation_error_message">請輸入有效的信用卡號</string>
+
+    <!-- Error message for credit card name on card validation -->
+    <string name="credit_cards_name_on_card_validation_error_message">請填寫此欄位</string>
+    <!-- Message displayed in biometric prompt displayed for authentication before allowing users to view their saved credit cards -->
+    <string name="credit_cards_biometric_prompt_message">解鎖後即可檢視儲存的卡片資訊</string>
+    <!-- Title of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_title">保護您的信用卡資訊</string>
+    <!-- Message of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_message">設定裝置解鎖圖形、PIN 碼或密碼來保護您儲存的信用卡資訊，避免別人盜用。</string>
+    <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_set_up_now">立即設定</string>
+    <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_later">稍後再設</string>
+    <!-- Title of PIN verification dialog to direct users to re-enter their device credentials to access their credit cards -->
+    <string name="credit_cards_biometric_prompt_message_pin">裝置解鎖</string>
+
+    <!-- Message displayed in biometric prompt for authentication, before allowing users to use their stored credit card information -->
+    <string name="credit_cards_biometric_prompt_unlock_message">解鎖後，即可使用儲存的信用卡資訊</string>
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">新增搜尋引擎</string>
@@ -1710,23 +1831,19 @@
 	<!-- Dialog button text for canceling the rename top site prompt. -->
 	<string name="top_sites_rename_dialog_cancel">取消</string>
 
+    <!-- Default browser experiment -->
+    <string name="default_browser_experiment_card_text">設定使用 Firefox 自動開啟網站、郵件、簡訊當中的鏈結。</string>
+
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">移除</string>
-
-    <!-- Deprecated: text for the firefox account onboarding card header
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_firefox_account_header">發揮 %s 的最大威力。</string>
 
     <!-- Content description radio buttons with a link to more information -->
     <string name="radio_preference_info_content_description">點這裡取得詳細資訊</string>
 
-    <!-- Deprecated: No Open Tabs Message Header -->
-    <string name="no_collections_header1">收集對您而言重要的東西</string>
-    <!-- Deprecated: Label to describe what collections are to a new user without any collections -->
-    <string name="no_collections_description1">將類似的搜尋、網站、分頁放在一起，方便之後快速使用。</string>
-    <!-- Deprecated: text for the firefox account onboarding card header when we detect you're already signed in to -->
-    <string name="onboarding_firefox_account_auto_signin_header_2">您已經在這支手機的其他 Firefox 瀏覽器以 %s 登入。也要使用此帳號登入嗎？</string>
-    <!-- Deprecated: Describes the add to homescreen functionality -->
-    <string name="add_to_homescreen_description">您可將此網站加到手機主畫面，方便快速開啟，或是以類似 App 的方式使用。</string>
+    <!-- Content description for the action bar "up" button -->
+    <string name="action_bar_up_description">向上導航</string>
 
-    </resources>
+    <!-- Content description for privacy content close button -->
+    <string name="privacy_content_close_button_content_description">關閉</string>
+
+</resources>

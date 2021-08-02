@@ -23,6 +23,7 @@ import mozilla.components.feature.addons.AddonManagerException
 import mozilla.components.feature.addons.ui.translateName
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
@@ -194,17 +195,16 @@ class InstalledAddonDetailsFragment : Fragment() {
         view.settings.apply {
             isVisible = shouldSettingsBeVisible()
             setOnClickListener {
+                requireContext().components.analytics.metrics.track(
+                    Event.AddonOpenSetting(addon.id)
+                )
                 val settingUrl = addon.installedState?.optionsPageUrl ?: return@setOnClickListener
                 val directions = if (addon.installedState?.openOptionsPageInTab == true) {
                     val components = it.context.components
                     val shouldCreatePrivateSession =
                         (activity as HomeActivity).browsingModeManager.mode.isPrivate
 
-                    if (shouldCreatePrivateSession) {
-                        components.useCases.tabsUseCases.addPrivateTab(settingUrl)
-                    } else {
-                        components.useCases.tabsUseCases.addTab(settingUrl)
-                    }
+                    components.useCases.tabsUseCases.addTab(settingUrl, private = shouldCreatePrivateSession)
 
                     InstalledAddonDetailsFragmentDirections.actionGlobalBrowser(null)
                 } else {

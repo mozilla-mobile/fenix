@@ -9,6 +9,7 @@ import mozilla.components.browser.errorpages.ErrorType
 import mozilla.components.browser.state.search.SearchEngine
 import mozilla.components.feature.top.sites.TopSite
 import org.mozilla.fenix.GleanMetrics.Addons
+import org.mozilla.fenix.GleanMetrics.AndroidKeystoreExperiment
 import org.mozilla.fenix.GleanMetrics.AppTheme
 import org.mozilla.fenix.GleanMetrics.Autoplay
 import org.mozilla.fenix.GleanMetrics.Collections
@@ -52,6 +53,7 @@ sealed class Event {
     object CustomTabsActionTapped : Event()
     object CustomTabsMenuOpened : Event()
     object UriOpened : Event()
+    object NormalAndPrivateUriOpened : Event()
     object SyncAuthOpened : Event()
     object SyncAuthClosed : Event()
     object SyncAuthSignUp : Event()
@@ -72,6 +74,10 @@ sealed class Event {
     object HistoryOpened : Event()
     object HistoryItemShared : Event()
     object HistoryItemOpened : Event()
+    object HistoryOpenedInNewTab : Event()
+    object HistoryOpenedInNewTabs : Event()
+    object HistoryOpenedInPrivateTab : Event()
+    object HistoryOpenedInPrivateTabs : Event()
     object HistoryItemRemoved : Event()
     object HistoryAllItemsRemoved : Event()
     object ReaderModeAvailable : Event()
@@ -122,6 +128,7 @@ sealed class Event {
     object NotificationMediaPlay : Event()
     object NotificationMediaPause : Event()
     object TopSiteOpenDefault : Event()
+    object TopSiteOpenGoogle : Event()
     object TopSiteOpenFrecent : Event()
     object TopSiteOpenPinned : Event()
     object TopSiteOpenInNewTab : Event()
@@ -157,6 +164,7 @@ sealed class Event {
     object OnboardingPrivateBrowsing : Event()
     object OnboardingFinish : Event()
     object ChangedToDefaultBrowser : Event()
+    object DefaultBrowserNotifTapped : Event()
 
     object LoginDialogPromptDisplayed : Event()
     object LoginDialogPromptCancelled : Event()
@@ -168,18 +176,22 @@ sealed class Event {
     object ContextualHintETPOutsideTap : Event()
     object ContextualHintETPInsideTap : Event()
 
+    // Tab tray
     object TabsTrayOpened : Event()
     object TabsTrayClosed : Event()
     object OpenedExistingTab : Event()
     object ClosedExistingTab : Event()
     object TabsTrayPrivateModeTapped : Event()
     object TabsTrayNormalModeTapped : Event()
+    object TabsTraySyncedModeTapped : Event()
     object NewTabTapped : Event()
     object NewPrivateTabTapped : Event()
     object TabsTrayMenuOpened : Event()
     object TabsTraySaveToCollectionPressed : Event()
     object TabsTrayShareAllTabsPressed : Event()
     object TabsTrayCloseAllTabsPressed : Event()
+    object TabsTrayCfrDismissed : Event()
+    object TabsTrayCfrTapped : Event()
 
     object ProgressiveWebAppOpenFromHomescreenTap : Event()
     object ProgressiveWebAppInstallAsShortcut : Event()
@@ -194,11 +206,58 @@ sealed class Event {
     object SyncedTabOpened : Event()
 
     object RecentlyClosedTabsOpened : Event()
+    object HaveOpenTabs : Event()
+    object HaveNoOpenTabs : Event()
+
+    object BannerOpenInAppDisplayed : Event()
+    object BannerOpenInAppDismissed : Event()
+    object BannerOpenInAppGoToSettings : Event()
 
     object ContextMenuCopyTapped : Event()
     object ContextMenuSearchTapped : Event()
     object ContextMenuSelectAllTapped : Event()
     object ContextMenuShareTapped : Event()
+
+    object SyncedTabSuggestionClicked : Event()
+    object BookmarkSuggestionClicked : Event()
+    object ClipboardSuggestionClicked : Event()
+    object HistorySuggestionClicked : Event()
+    object SearchActionClicked : Event()
+    object SearchSuggestionClicked : Event()
+    object OpenedTabSuggestionClicked : Event()
+
+    // Set default browser experiment metrics
+    object SetDefaultBrowserNewTabClicked : Event()
+    object CloseExperimentCardClicked : Event()
+    object ToolbarMenuShown : Event()
+    object SetDefaultBrowserToolbarMenuClicked : Event()
+    object SetDefaultBrowserSettingsScreenClicked : Event()
+
+    // Home menu interaction
+    object HomeMenuSettingsItemClicked : Event()
+    object HomeScreenDisplayed : Event()
+
+    // Browser Toolbar
+    object BrowserToolbarHomeButtonClicked : Event()
+
+    // Start on Home
+    object StartOnHomeEnterHomeScreen : Event()
+    object StartOnHomeOpenTabsTray : Event()
+
+    // Recent tabs
+    object ShowAllRecentTabs : Event()
+    object OpenRecentTab : Event()
+    object OpenInProgressMediaTab : Event()
+
+    // Android Autofill
+    object AndroidAutofillUnlockSuccessful : Event()
+    object AndroidAutofillUnlockCanceled : Event()
+    object AndroidAutofillSearchDisplayed : Event()
+    object AndroidAutofillSearchItemSelected : Event()
+    object AndroidAutofillConfirmationSuccessful : Event()
+    object AndroidAutofillConfirmationCanceled : Event()
+    object AndroidAutofillRequestWithLogins : Event()
+    object AndroidAutofillRequestWithoutLogins : Event()
 
     // Interaction events with extras
 
@@ -206,6 +265,25 @@ sealed class Event {
         override val extras: Map<TopSites.swipeCarouselKeys, String>?
             get() = hashMapOf(TopSites.swipeCarouselKeys.page to page.toString())
     }
+
+    data class SecurePrefsExperimentFailure(val failureException: String) : Event() {
+        override val extras =
+            mapOf(AndroidKeystoreExperiment.experimentFailureKeys.failureException to failureException)
+    }
+    data class SecurePrefsGetFailure(val failureException: String) : Event() {
+        override val extras =
+            mapOf(AndroidKeystoreExperiment.getFailureKeys.failureException to failureException)
+    }
+    data class SecurePrefsGetSuccess(val successCode: String) : Event() {
+        override val extras =
+            mapOf(AndroidKeystoreExperiment.getResultKeys.result to successCode)
+    }
+    data class SecurePrefsWriteFailure(val failureException: String) : Event() {
+        override val extras =
+            mapOf(AndroidKeystoreExperiment.writeFailureKeys.failureException to failureException)
+    }
+    object SecurePrefsWriteSuccess : Event()
+    object SecurePrefsReset : Event()
 
     data class TopSiteLongPress(val type: TopSite.Type) : Event() {
         override val extras: Map<TopSites.longPressKeys, String>?
@@ -282,6 +360,11 @@ sealed class Event {
             get() = hashMapOf(Addons.openAddonInToolbarMenuKeys.addonId to addonId)
     }
 
+    data class AddonOpenSetting(val addonId: String) : Event() {
+        override val extras: Map<Addons.openAddonSettingKeys, String>?
+            get() = hashMapOf(Addons.openAddonSettingKeys.addonId to addonId)
+    }
+
     data class TipDisplayed(val identifier: String) : Event() {
         override val extras: Map<Tip.displayedKeys, String>?
             get() = hashMapOf(Tip.displayedKeys.identifier to identifier)
@@ -336,37 +419,8 @@ sealed class Event {
 
         enum class Source { APP_ICON, LINK, CUSTOM_TAB, UNKNOWN }
 
-        override val extras: Map<Events.appOpenedAllStartupKeys, String>?
-            get() = hashMapOf(Events.appOpenedAllStartupKeys.source to source.name)
-    }
-
-    data class AppAllStartup(
-        val source: Source,
-        val type: Type,
-        val hasSavedInstanceState: Boolean? = null,
-        var launchTime: Long? = null
-    ) : Event() {
-        enum class Source { APP_ICON, LINK, CUSTOM_TAB, UNKNOWN }
-        enum class Type { COLD, WARM, HOT, ERROR }
-
-        override val extras: Map<Events.appOpenedAllStartupKeys, String>?
-            get() {
-                val extrasMap = hashMapOf(
-                    Events.appOpenedAllStartupKeys.source to source.toString(),
-                    Events.appOpenedAllStartupKeys.type to type.toString()
-                )
-                // we are only sending hasSavedInstanceState whenever we get data from
-                // activity's oncreate() method.
-                if (hasSavedInstanceState != null) {
-                    extrasMap[Events.appOpenedAllStartupKeys.hasSavedInstanceState] =
-                        hasSavedInstanceState.toString()
-                }
-                if (launchTime != null) {
-                    extrasMap[Events.appOpenedAllStartupKeys.firstFramePreDrawNanos] =
-                        launchTime.toString()
-                }
-                return extrasMap
-            }
+        override val extras: Map<Events.appReceivedIntentKeys, String>?
+            get() = hashMapOf(Events.appReceivedIntentKeys.source to source.name)
     }
 
     data class CollectionSaveButtonPressed(val fromScreen: String) : Event() {
@@ -443,6 +497,7 @@ sealed class Event {
             data class Action(override val engineSource: EngineSource) : EventSource(engineSource)
             data class Widget(override val engineSource: EngineSource) : EventSource(engineSource)
             data class Shortcut(override val engineSource: EngineSource) : EventSource(engineSource)
+            data class TopSite(override val engineSource: EngineSource) : EventSource(engineSource)
             data class Other(override val engineSource: EngineSource) : EventSource(engineSource)
 
             private val label: String
@@ -451,18 +506,19 @@ sealed class Event {
                     is Action -> "action"
                     is Widget -> "widget"
                     is Shortcut -> "shortcut"
+                    is TopSite -> "topsite"
                     is Other -> "other"
                 }
 
             val countLabel: String
-                get() = "${engineSource.identifier.toLowerCase(Locale.getDefault())}.$label"
+                get() = "${engineSource.identifier.lowercase(Locale.getDefault())}.$label"
 
             val sourceLabel: String
                 get() = "${engineSource.descriptor}.$label"
         }
 
         enum class SearchAccessPoint {
-            SUGGESTION, ACTION, WIDGET, SHORTCUT, NONE
+            SUGGESTION, ACTION, WIDGET, SHORTCUT, TOPSITE, NONE
         }
 
         override val extras: Map<Events.performedSearchKeys, String>?
@@ -487,9 +543,9 @@ sealed class Event {
             get() = providerName
     }
 
-    data class SearchAdClicked(val providerName: String) : Event() {
+    data class SearchAdClicked(val keyName: String) : Event() {
         val label: String
-            get() = providerName
+            get() = keyName
     }
 
     data class SearchInContent(val keyName: String) : Event() {
@@ -532,11 +588,11 @@ sealed class Event {
             NEW_PRIVATE_TAB, SHARE, BACK, FORWARD, RELOAD, STOP, OPEN_IN_FENIX,
             SAVE_TO_COLLECTION, ADD_TO_TOP_SITES, ADD_TO_HOMESCREEN, QUIT, READER_MODE_ON,
             READER_MODE_OFF, OPEN_IN_APP, BOOKMARK, READER_MODE_APPEARANCE, ADDONS_MANAGER,
-            BOOKMARKS, HISTORY, SYNC_TABS, DOWNLOADS
+            BOOKMARKS, HISTORY, SYNC_TABS, DOWNLOADS, SET_DEFAULT_BROWSER, SYNC_ACCOUNT
         }
 
         override val extras: Map<Events.browserMenuActionKeys, String>?
-            get() = mapOf(Events.browserMenuActionKeys.item to item.toString().toLowerCase(Locale.ROOT))
+            get() = mapOf(Events.browserMenuActionKeys.item to item.toString().lowercase(Locale.ROOT))
     }
 
     data class TabCounterMenuItemTapped(val item: Item) : Event() {
@@ -545,18 +601,18 @@ sealed class Event {
         }
 
         override val extras: Map<Events.tabCounterMenuActionKeys, String>?
-            get() = mapOf(Events.tabCounterMenuActionKeys.item to item.toString().toLowerCase(Locale.ROOT))
+            get() = mapOf(Events.tabCounterMenuActionKeys.item to item.toString().lowercase(Locale.ROOT))
     }
 
     object AutoPlaySettingVisited : Event()
 
     data class AutoPlaySettingChanged(val setting: AutoplaySetting) : Event() {
         enum class AutoplaySetting {
-            BLOCK_CELLULAR, BLOCK_AUDIO, BLOCK_ALL
+            BLOCK_CELLULAR, BLOCK_AUDIO, BLOCK_ALL, ALLOW_ALL
         }
 
         override val extras: Map<Autoplay.settingChangedKeys, String>?
-            get() = mapOf(Autoplay.settingChangedKeys.autoplaySetting to setting.toString().toLowerCase(Locale.ROOT))
+            get() = mapOf(Autoplay.settingChangedKeys.autoplaySetting to setting.toString().lowercase(Locale.ROOT))
     }
 
     sealed class Search

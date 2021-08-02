@@ -15,7 +15,6 @@ import androidx.annotation.VisibleForTesting
 import androidx.core.view.isVisible
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.browser_toolbar_popup_window.view.*
-import mozilla.components.browser.session.Session
 import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.browser.state.store.BrowserStore
 import org.mozilla.fenix.R
@@ -23,11 +22,12 @@ import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import java.lang.ref.WeakReference
+import mozilla.components.browser.state.selector.findCustomTab
 
 object ToolbarPopupWindow {
     fun show(
         view: WeakReference<View>,
-        customTabSession: Session? = null,
+        customTabId: String? = null,
         handlePasteAndGo: (String) -> Unit,
         handlePaste: (String) -> Unit,
         copyVisible: Boolean = true
@@ -36,7 +36,7 @@ object ToolbarPopupWindow {
         val clipboard = context.components.clipboardHandler
         if (!copyVisible && clipboard.text.isNullOrEmpty()) return
 
-        val isCustomTabSession = customTabSession != null
+        val isCustomTabSession = customTabId != null
 
         val customView = LayoutInflater.from(context)
             .inflate(R.layout.browser_toolbar_popup_window, null)
@@ -63,7 +63,7 @@ object ToolbarPopupWindow {
             popupWindow.dismiss()
             clipboard.text = getUrlForClipboard(
                 it.context.components.core.store,
-                customTabSession
+                customTabId
             )
 
             view.get()?.let {
@@ -101,10 +101,11 @@ object ToolbarPopupWindow {
     @VisibleForTesting
     internal fun getUrlForClipboard(
         store: BrowserStore,
-        customTabSession: Session? = null
+        customTabId: String? = null
     ): String? {
-        return if (customTabSession != null) {
-            customTabSession.url
+        return if (customTabId != null) {
+            val customTab = store.state.findCustomTab(customTabId)
+            customTab?.content?.url
         } else {
             val selectedTab = store.state.selectedTab
             selectedTab?.readerState?.activeUrl ?: selectedTab?.content?.url

@@ -35,6 +35,7 @@ import mozilla.components.service.fxa.sync.SyncReason
 import mozilla.components.support.base.feature.UserInteractionHandler
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.NavHostActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.addons.showSnackBar
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
@@ -46,7 +47,6 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.setTextColor
-import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.ext.toShortUrl
 import org.mozilla.fenix.library.LibraryPageFragment
 import org.mozilla.fenix.utils.allowUndo
@@ -80,22 +80,23 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
             )
         }
         val historyController: HistoryController = DefaultHistoryController(
-            historyStore,
-            findNavController(),
-            resources,
-            FenixSnackbar.make(
+            store = historyStore,
+            navController = findNavController(),
+            resources = resources,
+            snackbar = FenixSnackbar.make(
                 view = view,
                 duration = FenixSnackbar.LENGTH_LONG,
                 isDisplayedWithBrowserToolbar = false
             ),
-            activity?.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager,
-            lifecycleScope,
-            ::openItem,
-            ::displayDeleteAllDialog,
-            ::invalidateOptionsMenu,
-            ::deleteHistoryItems,
-            ::syncHistory,
-            requireComponents.analytics.metrics
+            clipboardManager = activity?.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager,
+            scope = lifecycleScope,
+            openToBrowser = ::openItem,
+            openInNewTab = ::openItemAndShowTray,
+            displayDeleteAll = ::displayDeleteAllDialog,
+            invalidateOptionsMenu = ::invalidateOptionsMenu,
+            deleteHistoryItems = ::deleteHistoryItems,
+            syncHistory = ::syncHistory,
+            metrics = requireComponents.analytics.metrics
         )
         historyInteractor = HistoryInteractor(
             historyController
@@ -121,9 +122,12 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
             requireComponents.core.historyStorage.createSynchronousPagedHistoryProvider()
         )
 
-        viewModel.userHasHistory.observe(this, Observer {
-            historyView.updateEmptyState(it)
-        })
+        viewModel.userHasHistory.observe(
+            this,
+            Observer {
+                historyView.updateEmptyState(it)
+            }
+        )
 
         requireComponents.analytics.metrics.track(Event.HistoryOpened)
 
@@ -153,14 +157,18 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
             historyView.update(it)
         }
 
-        viewModel.history.observe(viewLifecycleOwner, Observer {
-            historyView.historyAdapter.submitList(it)
-        })
+        viewModel.history.observe(
+            viewLifecycleOwner,
+            Observer {
+                historyView.historyAdapter.submitList(it)
+            }
+        )
     }
 
     override fun onResume() {
         super.onResume()
-        showToolbar(getString(R.string.library_history))
+
+        (activity as NavHostActivity).getSupportActionBarAndInflateIfNecessary().show()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -188,7 +196,7 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
         }
         R.id.open_history_in_new_tabs_multi_select -> {
             openItemsInNewTab { selectedItem ->
-                requireComponents.analytics.metrics.track(Event.HistoryItemOpened)
+                requireComponents.analytics.metrics.track(Event.HistoryOpenedInNewTabs)
                 selectedItem.url
             }
 
@@ -197,7 +205,7 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
         }
         R.id.open_history_in_private_tabs_multi_select -> {
             openItemsInNewTab(private = true) { selectedItem ->
-                requireComponents.analytics.metrics.track(Event.HistoryItemOpened)
+                requireComponents.analytics.metrics.track(Event.HistoryOpenedInPrivateTabs)
                 selectedItem.url
             }
 
@@ -216,7 +224,7 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
         invokePendingDeletion()
         findNavController().nav(
             R.id.historyFragment,
-            HistoryFragmentDirections.actionGlobalTabTrayDialogFragment()
+            HistoryFragmentDirections.actionGlobalTabsTrayFragment()
         )
     }
 
@@ -227,7 +235,8 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
             String.format(
                 requireContext().getString(
                     R.string.history_delete_single_item_snackbar
-                ), historyItems.first().url.toShortUrl(requireComponents.publicSuffixList)
+                ),
+                historyItems.first().url.toShortUrl(requireComponents.publicSuffixList)
             )
         }
     }
@@ -247,16 +256,29 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
         _historyView = null
     }
 
-    private fun openItem(item: HistoryItem, mode: BrowsingMode? = null) {
+    private fun openItem(item: HistoryItem) {
         requireComponents.analytics.metrics.track(Event.HistoryItemOpened)
-
-        mode?.let { (activity as HomeActivity).browsingModeManager.mode = it }
 
         (activity as HomeActivity).openToBrowserAndLoad(
             searchTermOrURL = item.url,
             newTab = true,
             from = BrowserDirection.FromHistory
         )
+    }
+
+    private fun openItemAndShowTray(item: HistoryItem, mode: BrowsingMode) {
+        when (mode.isPrivate) {
+            true -> requireComponents.analytics.metrics.track(Event.HistoryOpenedInPrivateTab)
+            false -> requireComponents.analytics.metrics.track(Event.HistoryOpenedInNewTab)
+        }
+
+        val homeActivity = activity as HomeActivity
+        homeActivity.browsingModeManager.mode = mode
+        homeActivity.components.useCases.tabsUseCases.addTab.invoke(
+            item.url, private = (mode == BrowsingMode.Private)
+        )
+
+        showTabTray()
     }
 
     private fun displayDeleteAllDialog() {
@@ -300,10 +322,10 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
         val directions = HistoryFragmentDirections.actionGlobalShareFragment(
             data = data.toTypedArray()
         )
-        navigate(directions)
+        navigateToHistoryFragment(directions)
     }
 
-    private fun navigate(directions: NavDirections) {
+    private fun navigateToHistoryFragment(directions: NavDirections) {
         invokePendingDeletion()
         findNavController().nav(
             R.id.historyFragment,

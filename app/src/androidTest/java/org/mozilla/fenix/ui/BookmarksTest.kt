@@ -94,10 +94,7 @@ class BookmarksTest {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
         }.openThreeDotMenu {
-            verifyAddBookmarkButton()
-            clickAddBookmarkButton()
-        }
-        browserScreen {
+        }.bookmarkPage {
         }.openThreeDotMenu {
             verifyEditBookmarkButton()
         }
@@ -226,8 +223,7 @@ class BookmarksTest {
             IdlingRegistry.getInstance().register(bookmarksListIdlingResource!!)
         }.openThreeDotMenu(defaultWebPage.url) {
         }.clickOpenInNewTab {
-            verifyUrl(defaultWebPage.url.toString())
-        }.openTabDrawer {
+            verifyTabTrayIsOpened()
             verifyNormalModeSelected()
         }
     }
@@ -245,8 +241,7 @@ class BookmarksTest {
             IdlingRegistry.getInstance().register(bookmarksListIdlingResource!!)
         }.openThreeDotMenu(defaultWebPage.url) {
         }.clickOpenInPrivateTab {
-            verifyUrl(defaultWebPage.url.toString())
-        }.openTabDrawer {
+            verifyTabTrayIsOpened()
             verifyPrivateModeSelected()
         }
     }
@@ -494,12 +489,16 @@ class BookmarksTest {
         }.openBookmarks {
             createFolder("1")
             getInstrumentation().waitForIdleSync()
+            waitForBookmarksFolderContentToExist("Bookmarks", "1")
             selectFolder("1")
+            verifyCurrentFolderTitle("1")
             createFolder("2")
             getInstrumentation().waitForIdleSync()
+            waitForBookmarksFolderContentToExist("1", "2")
             selectFolder("2")
             verifyCurrentFolderTitle("2")
             navigateUp()
+            waitForBookmarksFolderContentToExist("1", "2")
             verifyCurrentFolderTitle("1")
             mDevice.pressBack()
             verifyBookmarksMenuView()

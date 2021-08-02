@@ -5,6 +5,7 @@
 package org.mozilla.fenix.collections
 
 import android.os.Handler
+import android.os.Looper
 import android.text.InputFilter
 import android.view.KeyEvent
 import android.view.LayoutInflater
@@ -19,7 +20,6 @@ import androidx.transition.Transition
 import androidx.transition.TransitionManager
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.component_collection_creation.*
-import mozilla.components.browser.state.state.MediaState
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import mozilla.components.support.ktx.android.view.showKeyboard
@@ -169,10 +169,13 @@ class CollectionCreationView(
             text = context.getString(R.string.create_collection_name_collection)
             setOnClickListener {
                 name_collection_edittext.hideKeyboard()
-                val handler = Handler()
-                handler.postDelayed({
-                    interactor.onBackPressed(SaveCollectionStep.NameCollection)
-                }, TRANSITION_DURATION)
+                val handler = Handler(Looper.getMainLooper())
+                handler.postDelayed(
+                    {
+                        interactor.onBackPressed(SaveCollectionStep.NameCollection)
+                    },
+                    TRANSITION_DURATION
+                )
             }
         }
 
@@ -197,8 +200,7 @@ class CollectionCreationView(
                     sessionId = tab.id.toString(),
                     url = tab.url,
                     hostname = tab.url.toShortUrl(publicSuffixList),
-                    title = tab.title,
-                    mediaState = MediaState.State.NONE
+                    title = tab.title
                 )
             }.let { tabs ->
                 collectionCreationTabListAdapter.updateData(tabs, tabs.toSet(), true)
@@ -216,10 +218,13 @@ class CollectionCreationView(
             text = context.getString(R.string.collection_rename)
             setOnClickListener {
                 name_collection_edittext.hideKeyboard()
-                val handler = Handler()
-                handler.postDelayed({
-                    interactor.onBackPressed(SaveCollectionStep.RenameCollection)
-                }, TRANSITION_DURATION)
+                val handler = Handler(Looper.getMainLooper())
+                handler.postDelayed(
+                    {
+                        interactor.onBackPressed(SaveCollectionStep.RenameCollection)
+                    },
+                    TRANSITION_DURATION
+                )
             }
         }
         transition.addListener(object : Transition.TransitionListener {

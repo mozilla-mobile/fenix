@@ -1,0 +1,73 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+package org.mozilla.fenix.browser.infobanner
+
+import android.annotation.SuppressLint
+import android.content.Context
+import android.view.LayoutInflater
+import android.view.View.GONE
+import android.view.ViewGroup
+import androidx.annotation.VisibleForTesting
+import kotlinx.android.synthetic.main.info_banner.view.*
+import org.mozilla.fenix.R
+import org.mozilla.fenix.ext.settings
+
+/**
+ * Displays an Info Banner in the specified container with a message and an optional action.
+ * The container can be a placeholder layout inserted in the original screen, or an existing layout.
+ *
+ * @param context - A [Context] for accessing system resources.
+ * @param container - The layout where the banner will be shown
+ * @param message - The message displayed in the banner
+ * @param dismissText - The text on the dismiss button
+ * @param actionText - The text on the action to perform button
+ * @param actionToPerform - The action to be performed on action button press
+ */
+@SuppressWarnings("LongParameterList")
+open class InfoBanner(
+    private val context: Context,
+    private val container: ViewGroup,
+    private val message: String,
+    private val dismissText: String,
+    private val actionText: String? = null,
+    private val dismissByHiding: Boolean = false,
+    @VisibleForTesting
+    internal val dismissAction: (() -> Unit)? = null,
+    @VisibleForTesting
+    internal val actionToPerform: (() -> Unit)? = null
+) {
+    @SuppressLint("InflateParams")
+    @VisibleForTesting
+    internal val bannerLayout = LayoutInflater.from(context)
+        .inflate(R.layout.info_banner, null)
+
+    internal open fun showBanner() {
+        bannerLayout.banner_info_message.text = message
+        bannerLayout.dismiss.text = dismissText
+
+        if (actionText.isNullOrEmpty()) {
+            bannerLayout.action.visibility = GONE
+        } else {
+            bannerLayout.action.text = actionText
+        }
+
+        container.addView(bannerLayout)
+
+        bannerLayout.dismiss.setOnClickListener {
+            dismissAction?.invoke()
+            if (dismissByHiding) { bannerLayout.visibility = GONE } else { dismiss() }
+        }
+
+        bannerLayout.action.setOnClickListener {
+            actionToPerform?.invoke()
+        }
+
+        context.settings().lastCfrShownTimeInMillis = System.currentTimeMillis()
+    }
+
+    internal fun dismiss() {
+        container.removeView(bannerLayout)
+    }
+}

@@ -5,7 +5,6 @@
 package org.mozilla.fenix.components
 
 import android.content.Context
-import mozilla.components.browser.session.SessionManager
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.feature.customtabs.CustomTabIntentProcessor
 import mozilla.components.feature.customtabs.store.CustomTabsServiceStore
@@ -32,7 +31,6 @@ import org.mozilla.fenix.utils.Mockable
 @Suppress("LongParameterList")
 class IntentProcessors(
     private val context: Context,
-    private val sessionManager: SessionManager,
     private val store: BrowserStore,
     private val sessionUseCases: SessionUseCases,
     private val tabsUseCases: TabsUseCases,
@@ -68,18 +66,18 @@ class IntentProcessors(
     val externalAppIntentProcessors by lazyMonitored {
         listOf(
             TrustedWebActivityIntentProcessor(
-                addNewTabUseCase = tabsUseCases.addTab,
+                addNewTabUseCase = customTabsUseCases.add,
                 packageManager = context.packageManager,
                 relationChecker = relationChecker,
                 store = customTabsStore
             ),
-            WebAppIntentProcessor(store, tabsUseCases.addTab, sessionUseCases.loadUrl, manifestStorage),
-            FennecWebAppIntentProcessor(context, sessionManager, sessionUseCases.loadUrl, manifestStorage)
+            WebAppIntentProcessor(store, customTabsUseCases.addWebApp, sessionUseCases.loadUrl, manifestStorage),
+            FennecWebAppIntentProcessor(context, customTabsUseCases, manifestStorage)
         )
     }
 
     val fennecPageShortcutIntentProcessor by lazyMonitored {
-        FennecBookmarkShortcutsIntentProcessor(sessionManager, sessionUseCases.loadUrl)
+        FennecBookmarkShortcutsIntentProcessor(tabsUseCases.addTab)
     }
 
     val migrationIntentProcessor by lazyMonitored {

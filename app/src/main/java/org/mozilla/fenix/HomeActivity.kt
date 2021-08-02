@@ -6,6 +6,7 @@ package org.mozilla.fenix
 
 import android.content.Context
 import android.content.Intent
+import android.content.Intent.ACTION_MAIN
 import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
@@ -16,8 +17,9 @@ import android.util.AttributeSet
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ActionMode
 import android.view.ViewConfiguration
-import android.view.WindowManager
+import android.view.WindowManager.LayoutParams.FLAG_SECURE
 import androidx.annotation.CallSuper
 import androidx.annotation.IdRes
 import androidx.annotation.VisibleForTesting
@@ -32,13 +34,14 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers.IO
 import mozilla.appservices.places.BookmarkRoot
+import mozilla.components.browser.state.action.ContentAction
 import mozilla.components.browser.state.search.SearchEngine
 import mozilla.components.browser.state.selector.getNormalOrPrivateTabs
 import mozilla.components.browser.state.state.SessionState
@@ -50,8 +53,8 @@ import mozilla.components.concept.storage.BookmarkNodeType
 import mozilla.components.feature.contextmenu.DefaultSelectionActionDelegate
 import mozilla.components.feature.privatemode.notification.PrivateNotificationFeature
 import mozilla.components.feature.search.BrowserStoreSearchAdapter
-import mozilla.components.feature.search.ext.legacy
 import mozilla.components.service.fxa.sync.SyncReason
+import mozilla.components.support.base.feature.ActivityResultHandler
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.ktx.android.arch.lifecycle.addObservers
 import mozilla.components.support.ktx.android.content.call
@@ -64,6 +67,7 @@ import mozilla.components.support.utils.SafeIntent
 import mozilla.components.support.utils.toSafeIntent
 import mozilla.components.support.webextensions.WebExtensionPopupFeature
 import org.mozilla.fenix.GleanMetrics.Metrics
+import org.mozilla.fenix.GleanMetrics.PerfStartup
 import org.mozilla.fenix.addons.AddonDetailsFragmentDirections
 import org.mozilla.fenix.addons.AddonPermissionsDetailsFragmentDirections
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
@@ -75,12 +79,14 @@ import org.mozilla.fenix.exceptions.trackingprotection.TrackingProtectionExcepti
 import org.mozilla.fenix.ext.alreadyOnDestination
 import org.mozilla.fenix.ext.breadcrumb
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.measureNoInline
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
+import org.mozilla.fenix.ext.setNavigationIcon
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.HomeFragmentDirections
 import org.mozilla.fenix.home.intent.CrashReporterIntentProcessor
-import org.mozilla.fenix.home.intent.DeepLinkIntentProcessor
+import org.mozilla.fenix.home.intent.DefaultBrowserIntentProcessor
 import org.mozilla.fenix.home.intent.OpenBrowserIntentProcessor
 import org.mozilla.fenix.home.intent.OpenSpecificTabIntentProcessor
 import org.mozilla.fenix.home.intent.SpeechProcessingIntentProcessor
@@ -89,9 +95,13 @@ import org.mozilla.fenix.library.bookmarks.BookmarkFragmentDirections
 import org.mozilla.fenix.library.bookmarks.DesktopFolders
 import org.mozilla.fenix.library.history.HistoryFragmentDirections
 import org.mozilla.fenix.library.recentlyclosed.RecentlyClosedFragmentDirections
+import org.mozilla.fenix.onboarding.DefaultBrowserNotificationWorker
 import org.mozilla.fenix.perf.Performance
 import org.mozilla.fenix.perf.PerformanceInflater
+import org.mozilla.fenix.perf.ProfilerMarkers
+import org.mozilla.fenix.perf.StartupPathProvider
 import org.mozilla.fenix.perf.StartupTimeline
+import org.mozilla.fenix.perf.StartupTypeTelemetry
 import org.mozilla.fenix.search.SearchDialogFragmentDirections
 import org.mozilla.fenix.session.PrivateNotificationService
 import org.mozilla.fenix.settings.SettingsFragmentDirections
@@ -102,12 +112,12 @@ import org.mozilla.fenix.settings.logins.fragment.SavedLoginsAuthFragmentDirecti
 import org.mozilla.fenix.settings.search.AddSearchEngineFragmentDirections
 import org.mozilla.fenix.settings.search.EditCustomSearchEngineFragmentDirections
 import org.mozilla.fenix.share.AddNewDeviceFragmentDirections
-import org.mozilla.fenix.sync.SyncedTabsFragmentDirections
-import org.mozilla.fenix.tabtray.TabTrayDialogFragment
-import org.mozilla.fenix.tabtray.TabTrayDialogFragmentDirections
+import org.mozilla.fenix.tabstray.TabsTrayFragment
+import org.mozilla.fenix.tabstray.TabsTrayFragmentDirections
 import org.mozilla.fenix.theme.DefaultThemeManager
 import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.utils.BrowsersCache
+import org.mozilla.fenix.utils.Settings
 import java.lang.ref.WeakReference
 
 /**
@@ -117,7 +127,7 @@ import java.lang.ref.WeakReference
  * - browser screen
  */
 @OptIn(ExperimentalCoroutinesApi::class)
-@SuppressWarnings("TooManyFunctions", "LargeClass")
+@SuppressWarnings("TooManyFunctions", "LargeClass", "LongParameterList")
 open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     // DO NOT MOVE ANYTHING ABOVE THIS, GETTING INIT TIME IS CRITICAL
     // we need to store startup timestamp for warm startup. we cant directly store
@@ -125,7 +135,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     // components requires context to access.
     protected val homeActivityInitTimeStampNanoSeconds = SystemClock.elapsedRealtimeNanos()
 
-    private var webExtScope: CoroutineScope? = null
     lateinit var themeManager: ThemeManager
     lateinit var browsingModeManager: BrowsingModeManager
 
@@ -150,9 +159,9 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         listOf(
             SpeechProcessingIntentProcessor(this, components.core.store, components.analytics.metrics),
             StartSearchIntentProcessor(components.analytics.metrics),
-            DeepLinkIntentProcessor(this, components.analytics.leanplumMetricsService),
             OpenBrowserIntentProcessor(this, ::getIntentSessionId),
-            OpenSpecificTabIntentProcessor(this)
+            OpenSpecificTabIntentProcessor(this),
+            DefaultBrowserIntentProcessor(this, components.analytics.metrics)
         )
     }
 
@@ -161,10 +170,21 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
     private lateinit var navigationToolbar: Toolbar
 
-    final override fun onCreate(savedInstanceState: Bundle?) {
+    // Tracker for contextual menu (Copy|Search|Select all|etc...)
+    private var actionMode: ActionMode? = null
+
+    private val startupPathProvider = StartupPathProvider()
+    private lateinit var startupTypeTelemetry: StartupTypeTelemetry
+
+    final override fun onCreate(savedInstanceState: Bundle?): Unit = PerfStartup.homeActivityOnCreate.measureNoInline {
+        // DO NOT MOVE ANYTHING ABOVE THIS addMarker CALL.
+        components.core.engine.profiler?.addMarker("Activity.onCreate", "HomeActivity")
+
         components.strictMode.attachListenerToDisablePenaltyDeath(supportFragmentManager)
         // There is disk read violations on some devices such as samsung and pixel for android 9/10
         components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
+            // Theme setup should always be called before super.onCreate
+            setupThemeAndBrowsingMode(getModeFromIntentOrLastKnown(intent))
             super.onCreate(savedInstanceState)
         }
 
@@ -180,7 +200,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
         components.publicSuffixList.prefetch()
 
-        setupThemeAndBrowsingMode(getModeFromIntentOrLastKnown(intent))
         setContentView(R.layout.activity_home)
 
         // Must be after we set the content view
@@ -197,18 +216,12 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             it.start()
         }
 
-        if (isActivityColdStarted(
-                intent,
-                savedInstanceState
-            ) && !externalSourceIntentProcessors.any {
-                it.process(
-                    intent,
-                    navHost.navController,
-                    this.intent
-                )
-            }
+        if (!shouldStartOnHome() &&
+            shouldNavigateBrowserFragmentOnCouldStart(savedInstanceState)
         ) {
             navigateToBrowserOnColdStart()
+        } else if (FeatureFlags.showStartOnHomeSettings) {
+            components.analytics.metrics.track(Event.StartOnHomeEnterHomeScreen)
         }
 
         Performance.processIntentIfPerformanceTest(intent, this)
@@ -244,38 +257,39 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
         captureSnapshotTelemetryMetrics()
 
-        startupTelemetryOnCreateCalled(intent.toSafeIntent(), savedInstanceState != null)
+        startupTelemetryOnCreateCalled(intent.toSafeIntent())
+        startupPathProvider.attachOnActivityOnCreate(lifecycle, intent)
+        startupTypeTelemetry = StartupTypeTelemetry(components.startupStateProvider, startupPathProvider).apply {
+            attachOnHomeActivityOnCreate(lifecycle)
+        }
 
         components.core.requestInterceptor.setNavigationController(navHost.navController)
 
         StartupTimeline.onActivityCreateEndHome(this) // DO NOT MOVE ANYTHING BELOW HERE.
     }
 
-    protected open fun startupTelemetryOnCreateCalled(
-        safeIntent: SafeIntent,
-        hasSavedInstanceState: Boolean
-    ) {
-        components.appStartupTelemetry.onHomeActivityOnCreate(
+    private fun startupTelemetryOnCreateCalled(safeIntent: SafeIntent) {
+        // We intentionally only record this in HomeActivity and not ExternalBrowserActivity (e.g.
+        // PWAs) so we don't include more unpredictable code paths in the results.
+        components.performance.coldStartupDurationTelemetry.onHomeActivityOnCreate(
+            components.performance.visualCompletenessQueue,
+            components.startupStateProvider,
             safeIntent,
-            hasSavedInstanceState,
-            homeActivityInitTimeStampNanoSeconds, rootContainer
+            rootContainer
         )
-    }
-
-    override fun onRestart() {
-        // DO NOT MOVE ANYTHING ABOVE THIS..
-        // we are measuring startup time for hot startup type
-        startupTelemetryOnRestartCalled()
-        super.onRestart()
-    }
-
-    private fun startupTelemetryOnRestartCalled() {
-        components.appStartupTelemetry.onHomeActivityOnRestart(rootContainer)
     }
 
     @CallSuper
     override fun onResume() {
         super.onResume()
+
+        // Even if screenshots are allowed, we hide private content in the recents screen in onPause
+        // only when we are in private mode, so in onResume we should go back to setting these flags
+        // with the user screenshot setting only when we are in private mode.
+        // See https://github.com/mozilla-mobile/fenix/issues/11153
+        if (settings().lastKnownMode == BrowsingMode.Private) {
+            updateSecureWindowFlags(settings().lastKnownMode)
+        }
 
         // Diagnostic breadcrumb for "Display already aquired" crash:
         // https://github.com/mozilla-mobile/android-components/issues/7960
@@ -297,20 +311,10 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             }
         }
 
-        // Launch this on a background thread so as not to affect startup performance
-        lifecycleScope.launch(IO) {
-            if (
-                settings().isDefaultBrowser() &&
-                settings().wasDefaultBrowserOnLastResume != settings().isDefaultBrowser()
-            ) {
-                metrics.track(Event.ChangedToDefaultBrowser)
-            }
-
-            settings().wasDefaultBrowserOnLastResume = settings().isDefaultBrowser()
-        }
+        isFenixTheDefaultBrowser()
     }
 
-    override fun onStart() {
+    override fun onStart() = PerfStartup.homeActivityOnStart.measureNoInline {
         super.onStart()
 
         // Diagnostic breadcrumb for "Display already aquired" crash:
@@ -318,6 +322,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         breadcrumb(
             message = "onStart()"
         )
+
+        ProfilerMarkers.homeActivityOnStart(rootContainer, components.core.engine.profiler)
     }
 
     override fun onStop() {
@@ -331,8 +337,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
                 "finishing" to isFinishing.toString()
             )
         )
-
-        components.appStartupTelemetry.onStop()
     }
 
     final override fun onPause() {
@@ -340,13 +344,12 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         settings().shouldReturnToBrowser =
             components.core.store.state.getNormalOrPrivateTabs(private = false).isNotEmpty()
 
+        // Even if screenshots are allowed, we want to hide private content in the recents screen
+        // only when we are in private mode
+        // See https://github.com/mozilla-mobile/fenix/issues/11153
         if (settings().lastKnownMode.isPrivate) {
-            window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+            window.addFlags(FLAG_SECURE)
         }
-
-        // We will remove this when AC code lands to emit a fact on getTopSites in DefaultTopSitesStorage
-        // https://github.com/mozilla-mobile/android-components/issues/8679
-        settings().topSitesSize = components.core.topSitesStorage.cachedTopSites.size
 
         lifecycleScope.launch(IO) {
             components.core.bookmarksStorage.getTree(BookmarkRoot.Root.id, true)?.let {
@@ -443,6 +446,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         intent?.let {
             handleNewIntent(it)
         }
+        startupPathProvider.onIntentReceived(intent)
     }
 
     open fun handleNewIntent(intent: Intent) {
@@ -467,7 +471,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
                 ?.childFragmentManager
                 ?.fragments
                 ?.lastOrNull()
-                ?.let { it as? TabTrayDialogFragment }
+                ?.let { it as? TabsTrayFragment }
                 ?.also { it.dismissAllowingStateLoss() }
         }
 
@@ -478,8 +482,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             .toSafeIntent()
             .let(::getIntentAllSource)
             ?.also { components.analytics.metrics.track(Event.AppReceivedIntent(it)) }
-
-        components.appStartupTelemetry.onHomeActivityOnNewIntent(intent.toSafeIntent())
     }
 
     /**
@@ -505,6 +507,20 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             )
         }.asView()
         else -> super.onCreateView(parent, name, context, attrs)
+    }
+
+    override fun onActionModeStarted(mode: ActionMode?) {
+        actionMode = mode
+        super.onActionModeStarted(mode)
+    }
+
+    override fun onActionModeFinished(mode: ActionMode?) {
+        actionMode = null
+        super.onActionModeFinished(mode)
+    }
+
+    fun finishActionMode() {
+        actionMode?.finish().also { actionMode = null }
     }
 
     @Suppress("MagicNumber")
@@ -534,6 +550,17 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             }
         }
         super.onBackPressed()
+    }
+
+    @Suppress("DEPRECATION")
+    // https://github.com/mozilla-mobile/fenix/issues/19919
+    final override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        supportFragmentManager.primaryNavigationFragment?.childFragmentManager?.fragments?.forEach {
+            if (it is ActivityResultHandler && it.onActivityResult(requestCode, data, resultCode)) {
+                return
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data)
     }
 
     private fun shouldUseCustomBackLongPress(): Boolean {
@@ -665,6 +692,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             setSupportActionBar(navigationToolbar)
             // Add ids to this that we don't want to have a toolbar back button
             setupNavigationToolbar()
+            setNavigationIcon(R.drawable.ic_back_button)
 
             isToolbarInflated = true
         }
@@ -700,10 +728,11 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         customTabSessionId: String? = null,
         engine: SearchEngine? = null,
         forceSearch: Boolean = false,
-        flags: EngineSession.LoadUrlFlags = EngineSession.LoadUrlFlags.none()
+        flags: EngineSession.LoadUrlFlags = EngineSession.LoadUrlFlags.none(),
+        requestDesktopMode: Boolean = false
     ) {
         openToBrowser(from, customTabSessionId)
-        load(searchTermOrURL, newTab, engine, forceSearch, flags)
+        load(searchTermOrURL, newTab, engine, forceSearch, flags, requestDesktopMode)
     }
 
     fun openToBrowser(from: BrowserDirection, customTabSessionId: String? = null) {
@@ -727,8 +756,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             SearchDialogFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromSettings ->
             SettingsFragmentDirections.actionGlobalBrowser(customTabSessionId)
-        BrowserDirection.FromSyncedTabs ->
-            SyncedTabsFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromBookmarks ->
             BookmarkFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromHistory ->
@@ -753,8 +780,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             AddonPermissionsDetailsFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromLoginDetailFragment ->
             LoginDetailFragmentDirections.actionGlobalBrowser(customTabSessionId)
-        BrowserDirection.FromTabTray ->
-            TabTrayDialogFragmentDirections.actionGlobalBrowser(customTabSessionId)
+        BrowserDirection.FromTabsTray ->
+            TabsTrayFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromRecentlyClosed ->
             RecentlyClosedFragmentDirections.actionGlobalBrowser(customTabSessionId)
     }
@@ -769,23 +796,38 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         newTab: Boolean,
         engine: SearchEngine?,
         forceSearch: Boolean,
-        flags: EngineSession.LoadUrlFlags = EngineSession.LoadUrlFlags.none()
+        flags: EngineSession.LoadUrlFlags = EngineSession.LoadUrlFlags.none(),
+        requestDesktopMode: Boolean = false
     ) {
         val startTime = components.core.engine.profiler?.getProfilerTime()
         val mode = browsingModeManager.mode
 
-        val loadUrlUseCase = if (newTab) {
-            when (mode) {
-                BrowsingMode.Private -> components.useCases.tabsUseCases.addPrivateTab
-                BrowsingMode.Normal -> components.useCases.tabsUseCases.addTab
-            }
-        } else components.useCases.sessionUseCases.loadUrl
+        val private = when (mode) {
+            BrowsingMode.Private -> true
+            BrowsingMode.Normal -> false
+        }
 
         // In situations where we want to perform a search but have no search engine (e.g. the user
         // has removed all of them, or we couldn't load any) we will pass searchTermOrURL to Gecko
         // and let it try to load whatever was entered.
         if ((!forceSearch && searchTermOrURL.isUrl()) || engine == null) {
-            loadUrlUseCase.invoke(searchTermOrURL.toNormalizedUrl(), flags)
+            val tabId = if (newTab) {
+                components.useCases.tabsUseCases.addTab(
+                    url = searchTermOrURL.toNormalizedUrl(),
+                    flags = flags,
+                    private = private
+                )
+            } else {
+                components.useCases.sessionUseCases.loadUrl(
+                    url = searchTermOrURL.toNormalizedUrl(),
+                    flags = flags
+                )
+                components.core.store.state.selectedTabId
+            }
+
+            if (requestDesktopMode && tabId != null) {
+                handleRequestDesktopMode(tabId)
+            }
         } else {
             if (newTab) {
                 components.useCases.searchUseCases.newTabSearch
@@ -794,10 +836,10 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
                         SessionState.Source.USER_ENTERED,
                         true,
                         mode.isPrivate,
-                        searchEngine = engine.legacy()
+                        searchEngine = engine
                     )
             } else {
-                components.useCases.searchUseCases.defaultSearch.invoke(searchTermOrURL, engine.legacy())
+                components.useCases.searchUseCases.defaultSearch.invoke(searchTermOrURL, engine)
             }
         }
 
@@ -810,6 +852,14 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
                 "newTab: $newTab"
             )
         }
+    }
+
+    internal fun handleRequestDesktopMode(tabId: String) {
+        components.useCases.sessionUseCases.requestDesktopSite(true, tabId)
+        components.core.store.dispatch(ContentAction.UpdateDesktopModeAction(tabId, true))
+
+        // Reset preference value after opening the tab in desktop mode
+        settings().openNextTabInDesktopMode = false
     }
 
     open fun navigateToBrowserOnColdStart() {
@@ -829,7 +879,11 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     }
 
     override fun getSystemService(name: String): Any? {
-        if (LAYOUT_INFLATER_SERVICE == name) {
+        // Issue #17759 had a crash with the PerformanceInflater.kt on Android 5.0 and 5.1
+        // when using the TimePicker. Since the inflater was created for performance monitoring
+        // purposes and that we test on new android versions, this means that any difference in
+        // inflation will be caught on those devices.
+        if (LAYOUT_INFLATER_SERVICE == name && Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
             if (inflater == null) {
                 inflater = PerformanceInflater(LayoutInflater.from(baseContext), this)
             }
@@ -840,7 +894,18 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
     protected open fun createBrowsingModeManager(initialMode: BrowsingMode): BrowsingModeManager {
         return DefaultBrowsingModeManager(initialMode, components.settings) { newMode ->
+            updateSecureWindowFlags(newMode)
             themeManager.currentTheme = newMode
+        }.also {
+            updateSecureWindowFlags(initialMode)
+        }
+    }
+
+    fun updateSecureWindowFlags(mode: BrowsingMode = browsingModeManager.mode) {
+        if (mode == BrowsingMode.Private && !settings().allowScreenshotsInPrivateMode) {
+            window.addFlags(FLAG_SECURE)
+        } else {
+            window.clearFlags(FLAG_SECURE)
         }
     }
 
@@ -881,14 +946,56 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         }
     }
 
+    private fun isFenixTheDefaultBrowser() {
+        // Launch this on a background thread so as not to affect startup performance
+        lifecycleScope.launch(IO) {
+            if (
+                settings().checkIfFenixIsDefaultBrowserOnAppResume()
+            ) {
+                metrics.track(Event.ChangedToDefaultBrowser)
+            }
+
+            DefaultBrowserNotificationWorker.setDefaultBrowserNotificationIfNeeded(applicationContext)
+        }
+    }
+
     @VisibleForTesting
     internal fun isActivityColdStarted(startingIntent: Intent, activityIcicle: Bundle?): Boolean {
         // First time opening this activity in the task.
         // Cold start / start from Recents after back press.
         return activityIcicle == null &&
-                // Activity was restarted from Recents after it was destroyed by Android while in background
-                // in cases of memory pressure / "Don't keep activities".
-                startingIntent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY == 0
+            // Activity was restarted from Recents after it was destroyed by Android while in background
+            // in cases of memory pressure / "Don't keep activities".
+            startingIntent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY == 0
+    }
+
+    /**
+     *  Indicates if the user should be redirected to the [BrowserFragment] or to the [HomeFragment],
+     *  links from an external apps should always opened in the [BrowserFragment].
+     */
+    fun shouldStartOnHome(intent: Intent? = this.intent): Boolean {
+        if (!FeatureFlags.showStartOnHomeSettings) {
+            return false
+        }
+        return components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
+            // We only want to open on home when users tap the app,
+            // we want to ignore other cases when the app gets open by users clicking on links.
+            getSettings().shouldStartOnHome() && intent?.action == ACTION_MAIN
+        }
+    }
+
+    @VisibleForTesting
+    internal fun getSettings(): Settings = settings()
+
+    private fun shouldNavigateBrowserFragmentOnCouldStart(savedInstanceState: Bundle?): Boolean {
+        return isActivityColdStarted(intent, savedInstanceState) &&
+            !externalSourceIntentProcessors.any {
+                it.process(
+                    intent,
+                    navHost.navController,
+                    this.intent
+                )
+            }
     }
 
     companion object {

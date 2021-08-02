@@ -17,8 +17,8 @@ class SearchDialogInteractor(
     private val searchController: SearchDialogController
 ) : AwesomeBarInteractor, ToolbarInteractor {
 
-    override fun onUrlCommitted(url: String) {
-        searchController.handleUrlCommitted(url)
+    override fun onUrlCommitted(url: String, fromHomeScreen: Boolean) {
+        searchController.handleUrlCommitted(url, fromHomeScreen)
     }
 
     override fun onEditingCanceled() {
@@ -35,6 +35,10 @@ class SearchDialogInteractor(
 
     override fun onSearchTermsTapped(searchTerms: String) {
         searchController.handleSearchTermsTapped(searchTerms)
+    }
+
+    override fun onSearchEngineSuggestionSelected(searchEngine: SearchEngine) {
+        searchController.handleSearchEngineSuggestionClicked(searchEngine)
     }
 
     override fun onSearchShortcutEngineSelected(searchEngine: SearchEngine) {

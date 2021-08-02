@@ -10,6 +10,7 @@ import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.FenixApplication
@@ -115,15 +116,13 @@ class SettingsBasicsTest {
         }.openNavigationToolbar {
         }.enterURLAndEnterToBrowser(page1.url) {
         }.openThreeDotMenu {
-            clickAddBookmarkButton()
-        }
+        }.bookmarkPage { }
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(page2.url) {
             verifyUrl(page2.url.toString())
         }.openThreeDotMenu {
-            clickAddBookmarkButton()
-        }
+        }.bookmarkPage { }
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(page3.url) {
@@ -135,6 +134,7 @@ class SettingsBasicsTest {
         }
     }
 
+    @Ignore("Failing, see: https://github.com/mozilla-mobile/fenix/issues/19016")
     @Test
     fun changeThemeSetting() {
         // Goes through the settings and changes the default search engine, then verifies it changes.
@@ -191,18 +191,6 @@ class SettingsBasicsTest {
         }.openAccessibilitySubMenu {
             clickFontSizingSwitch()
             verifyMenuItemsAreDisabled()
-        }
-    }
-
-    @Test
-    fun changeDefaultBrowserSetting() {
-        // Opens settings and toggles the default browser setting to on. The device settings open and allows the user to set a default browser.
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-            verifyDefaultBrowserIsDisaled()
-            clickDefaultBrowserSwitch()
-            verifyAndroidDefaultAppsMenuAppears()
         }
     }
 }

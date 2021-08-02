@@ -5,12 +5,11 @@
 package org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding
 
 import android.view.View
-import androidx.appcompat.widget.SwitchCompat
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.onboarding_tracking_protection.view.*
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.Event.OnboardingTrackingProtection.Setting
+import org.mozilla.fenix.databinding.OnboardingTrackingProtectionBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.onboarding.OnboardingRadioButton
@@ -20,29 +19,21 @@ class OnboardingTrackingProtectionViewHolder(view: View) : RecyclerView.ViewHold
 
     private var standardTrackingProtection: OnboardingRadioButton
     private var strictTrackingProtection: OnboardingRadioButton
-    private var trackingProtectionToggle: SwitchCompat
 
     init {
-        view.header_text.setOnboardingIcon(R.drawable.ic_onboarding_tracking_protection)
+        val binding = OnboardingTrackingProtectionBinding.bind(view)
+        binding.headerText.setOnboardingIcon(R.drawable.ic_onboarding_tracking_protection)
 
-        trackingProtectionToggle = view.tracking_protection_toggle
-        standardTrackingProtection = view.tracking_protection_standard_option
-        strictTrackingProtection = view.tracking_protection_strict_default
+        standardTrackingProtection = binding.trackingProtectionStandardOption
+        strictTrackingProtection = binding.trackingProtectionStrictDefault
 
-        view.description_text.text = view.context.getString(
-            R.string.onboarding_tracking_protection_description_2
+        binding.descriptionText.text = view.context.getString(
+            R.string.onboarding_tracking_protection_description_3
         )
 
-        trackingProtectionToggle.apply {
-            isChecked = view.context.settings().shouldUseTrackingProtection
-            setOnCheckedChangeListener { _, isChecked ->
-                updateTrackingProtectionSetting(isChecked)
-                updateRadioGroupState(isChecked)
-            }
-        }
-
-        setupRadioGroup(trackingProtectionToggle.isChecked)
-        updateRadioGroupState(trackingProtectionToggle.isChecked)
+        val isTrackingProtectionEnabled = view.context.settings().shouldUseTrackingProtection
+        setupRadioGroup(isTrackingProtectionEnabled)
+        updateRadioGroupState(isTrackingProtectionEnabled)
     }
 
     private fun setupRadioGroup(isChecked: Boolean) {
@@ -72,15 +63,6 @@ class OnboardingTrackingProtectionViewHolder(view: View) : RecyclerView.ViewHold
     private fun updateRadioGroupState(isChecked: Boolean) {
         standardTrackingProtection.isEnabled = isChecked
         strictTrackingProtection.isEnabled = isChecked
-    }
-
-    private fun updateTrackingProtectionSetting(enabled: Boolean) {
-        itemView.context.settings().shouldUseTrackingProtection = enabled
-        with(itemView.context.components) {
-            val policy = core.trackingProtectionPolicyFactory.createTrackingProtectionPolicy()
-            useCases.settingsUseCases.updateTrackingProtection.invoke(policy)
-            useCases.sessionUseCases.reload.invoke()
-        }
     }
 
     private fun updateTrackingProtectionPolicy() {

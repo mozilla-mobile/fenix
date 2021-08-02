@@ -36,23 +36,23 @@ class SettingsTurnOnSyncRobot {
     class Transition {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
-        fun goBack(interact: SettingsSubMenuLoginsAndPasswordRobot.() -> Unit): SettingsSubMenuLoginsAndPasswordRobot.Transition {
+        fun goBack(interact: SettingsSubMenuLoginsAndPasswordRobot.() -> Unit): SettingsRobot.Transition {
             goBackButton().perform(ViewActions.click())
 
             SettingsSubMenuLoginsAndPasswordRobot().interact()
-            return SettingsSubMenuLoginsAndPasswordRobot.Transition()
+            return SettingsRobot.Transition()
         }
     }
 }
 
 private fun goBackButton() =
-        Espresso.onView(CoreMatchers.allOf(ViewMatchers.withContentDescription("Navigate up")))
+    Espresso.onView(CoreMatchers.allOf(ViewMatchers.withContentDescription("Navigate up")))
 
 private fun assertUseEmailField() = Espresso.onView(ViewMatchers.withText("Use email instead"))
-        .check(ViewAssertions.matches(ViewMatchers.withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+    .check(ViewAssertions.matches(ViewMatchers.withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
 
 private fun assertReadyToScan() = Espresso.onView(ViewMatchers.withText("Ready to scan"))
-        .check(ViewAssertions.matches(ViewMatchers.withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+    .check(ViewAssertions.matches(ViewMatchers.withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
 
 private fun useEmailButton() = Espresso.onView(ViewMatchers.withText("Use email instead"))
 

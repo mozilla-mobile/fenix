@@ -14,7 +14,7 @@ import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import mozilla.components.browser.state.state.content.PermissionHighlightsState
-import mozilla.components.feature.sitepermissions.SitePermissions
+import mozilla.components.concept.engine.permission.SitePermissions
 import mozilla.components.feature.sitepermissions.SitePermissionsRules
 import mozilla.components.feature.sitepermissions.SitePermissionsRules.AutoplayAction
 import mozilla.components.feature.sitepermissions.SitePermissionsRules.Action
@@ -125,7 +125,7 @@ class QuickSettingsFragmentStoreTest {
         every { permissions.mediaKeySystemAccess } returns SitePermissions.Status.NO_DECISION
         every { permissions.autoplayAudible } returns SitePermissions.AutoplayStatus.ALLOWED
         every { permissions.autoplayInaudible } returns SitePermissions.AutoplayStatus.BLOCKED
-        every { appSettings.getAutoplayUserSetting(any()) } returns AUTOPLAY_BLOCK_ALL
+        every { appSettings.getAutoplayUserSetting() } returns AUTOPLAY_BLOCK_ALL
 
         val state = QuickSettingsFragmentStore.createWebsitePermissionState(
             context, permissions, permissionHighlights, appSettings

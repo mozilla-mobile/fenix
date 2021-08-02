@@ -22,18 +22,19 @@ import androidx.preference.SwitchPreference
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import mozilla.components.service.fxa.SyncEngine
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.requireComponents
+import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.secure
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
-import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.settings.SharedPreferenceUpdater
-import org.mozilla.fenix.settings.logins.biometric.BiometricPromptFeature
-import org.mozilla.fenix.settings.logins.SyncLoginsPreferenceView
+import org.mozilla.fenix.settings.SyncPreferenceView
+import org.mozilla.fenix.settings.biometric.BiometricPromptFeature
 import org.mozilla.fenix.settings.requirePreference
 
 @Suppress("TooManyFunctions")
@@ -51,7 +52,7 @@ class SavedLoginsAuthFragment : PreferenceFragmentCompat() {
      * https://github.com/mozilla-mobile/fenix/issues/12312
      */
     private fun togglePrefsEnabledWhileAuthenticating(enabled: Boolean) {
-        requirePreference<Preference>(R.string.pref_key_password_sync_logins).isEnabled = enabled
+        requirePreference<Preference>(R.string.pref_key_sync_logins).isEnabled = enabled
         requirePreference<Preference>(R.string.pref_key_save_logins_settings).isEnabled = enabled
         requirePreference<Preference>(R.string.pref_key_saved_logins).isEnabled = enabled
     }
@@ -121,11 +122,25 @@ class SavedLoginsAuthFragment : PreferenceFragmentCompat() {
             true
         }
 
-        SyncLoginsPreferenceView(
-            requirePreference(R.string.pref_key_password_sync_logins),
+        SyncPreferenceView(
+            syncPreference = requirePreference(R.string.pref_key_sync_logins),
             lifecycleOwner = viewLifecycleOwner,
             accountManager = requireComponents.backgroundServices.accountManager,
-            navController = findNavController()
+            syncEngine = SyncEngine.Passwords,
+            loggedOffTitle = requireContext()
+                .getString(R.string.preferences_passwords_sync_logins_across_devices),
+            loggedInTitle = requireContext()
+                .getString(R.string.preferences_passwords_sync_logins),
+            onSignInToSyncClicked = {
+                val directions =
+                    SavedLoginsAuthFragmentDirections.actionSavedLoginsAuthFragmentToTurnOnSyncFragment()
+                findNavController().navigate(directions)
+            },
+            onReconnectClicked = {
+                val directions =
+                    SavedLoginsAuthFragmentDirections.actionGlobalAccountProblemFragment()
+                findNavController().navigate(directions)
+            }
         )
 
         togglePrefsEnabledWhileAuthenticating(true)
@@ -172,7 +187,7 @@ class SavedLoginsAuthFragment : PreferenceFragmentCompat() {
             }
             create()
         }.show().secure(activity)
-        context.settings().incrementShowLoginsSecureWarningCount()
+        context.settings().incrementSecureWarningCount()
     }
 
     @Suppress("Deprecation") // This is only used when BiometricPrompt is unavailable

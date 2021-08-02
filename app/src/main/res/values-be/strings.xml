@@ -5,6 +5,7 @@
     <string name="app_name_private_5">Прыватны %s</string>
     <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
     <string name="app_name_private_4">%s (прыватна)</string>
+
     <!-- Home Fragment -->
     <!-- Content description (not visible, for screen readers etc.): "Three dot" menu button. -->
     <string name="content_description_menu">Дадаткова</string>
@@ -20,10 +21,6 @@
     <!-- No Private Tabs Message Description -->
     <string name="no_private_tabs_description">Тут будуць паказаны вашы прыватныя карткі.</string>
 
-    <!-- Default title for pinned Baidu top site that links to Baidu home page  -->
-    <string name="default_top_site_baidu">Baidu</string>
-    <!-- Default title for pinned JD top site that links to JD home page  -->
-    <string name="default_top_site_jd">JD</string>
     <!-- Message announced to the user when tab tray is selected with 1 tab -->
     <string name="open_tab_tray_single">1 адкрытая картка. Націсніце, каб пераключыць карткі.</string>
     <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
@@ -51,6 +48,16 @@
     <string name="tab_tray_enter_multiselect_content_description">Распачаты рэжым мультывыбару, абярыце карткі, каб дадаць іх у калекцыю</string>
     <!-- Content description on checkmark while tab is selected in multiselect mode in tab tray -->
     <string name="tab_tray_multiselect_selected_content_description">Вылучана</string>
+
+    <!-- Home - Recently saved bookmarks -->
+    <!-- Title for the home screen section with recently saved bookmarks. -->
+    <string name="recently_saved_bookmarks">Нядаўна захаваныя</string>
+    <!-- Content description for the recently saved bookmarks section on the home screen. -->
+    <string name="recently_saved_bookmarks_content_description">Нядаўна захаваныя закладкі</string>
+    <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
+    <string name="recently_saved_show_all">Паказаць усе</string>
+    <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
+    <string name="recently_saved_show_all_content_description">Паказаць усе захаваныя закладкі</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
     <string name="about_content">%1$s распрацаваны Mozilla.</string>
@@ -95,14 +102,6 @@
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">Адхіліць</string>
 
-    <!-- Text for the banner message to tell users about our grid view feature. -->
-    <string name="tab_tray_grid_view_banner_message">Змяніце выклад адкрытых картак. Перайдзіце ў налады і абярыце сетку ў раздзеле выгляду картак.</string>
-    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
-    <string name="tab_tray_grid_view_banner_positive_button_text">Перайсці ў налады</string>
-
-    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
-    <string name="tab_tray_grid_view_banner_negative_button_text">Закрыць</string>
-
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
     <string name="home_screen_shortcut_open_new_tab_2">Новая картка</string>
@@ -110,6 +109,12 @@
     <string name="home_screen_shortcut_open_new_private_tab_2">Прыватная картка</string>
     <!-- Heading for the Top Sites block -->
     <string name="home_screen_top_sites_heading">Папулярныя сайты</string>
+
+    <!-- Recent Tabs -->
+    <!-- Header text for jumping back into the recent tab in the home screen -->
+    <string name="recent_tabs_header">Назад да</string>
+    <!-- Button text for showing all the tabs in the tabs tray -->
+    <string name="recent_tabs_show_all">Паказаць усе</string>
 
     <!-- Browser Fragment -->
     <!-- Content description (not visible, for screen readers etc.): Navigate to open tabs -->
@@ -128,6 +133,8 @@
     <string name="browser_menu_edit_bookmark">Рэдагаваць закладку</string>
     <!-- Browser menu button that opens the addon manager -->
     <string name="browser_menu_add_ons">Дадаткі</string>
+    <!-- Browser menu button that opens the addon extensions manager -->
+    <string name="browser_menu_extensions">Пашырэнні</string>
     <!-- Text displayed when there are no add-ons to be shown -->
     <string name="no_add_ons">Няма дадаткаў</string>
     <!-- Browser menu button that sends a user to help articles -->
@@ -178,6 +185,18 @@
     <!-- Browser menu button to configure reader mode appearance e.g. the used font type and size -->
     <string name="browser_menu_read_appearance">Выгляд</string>
 
+    <!-- Browser menu button to show reader view appearance controls e.g. the used font type and size -->
+    <string name="browser_menu_customize_reader_view">Уладкаваць рэжым чытання</string>
+    <!-- Browser menu label for adding a bookmark -->
+    <string name="browser_menu_add">Дадаць</string>
+
+    <!-- Browser menu label for editing a bookmark -->
+    <string name="browser_menu_edit">Змяніць</string>
+
+    <!-- Browser Toolbar -->
+    <!-- Content description for the Home screen button on the browser toolbar -->
+    <string name="browser_toolbar_home">Хатні экран</string>
+
     <!-- Error message to show when the user tries to access a scheme not
         handled by the app (Ex: blob, tel etc) -->
     <string name="unknown_scheme_error_message">Немагчыма злучыцца. Невядомая схема URL.</string>
@@ -213,6 +232,11 @@
     <string name="search_suggestions_onboarding_text">%s будзе дасылаць у прадвызначаны пашукавік усё, што Вы набіраеце ў адрасны радок.</string>
     <!-- Search suggestion onboarding hint Learn more link text -->
     <string name="search_suggestions_onboarding_learn_more_link">Даведацца больш</string>
+
+    <!-- Search engine suggestion title text. The first parameter is the name of teh suggested engine-->
+    <string name="search_engine_suggestions_title">Пошук у %s</string>
+    <!-- Search engine suggestion description text -->
+    <string name="search_engine_suggestions_description">Пошук наўпрост з адраснага радка</string>
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
@@ -401,6 +425,11 @@
         and the third is the device model. -->
     <string name="default_device_name_2">%1$s на %2$s %3$s</string>
 
+    <!-- Preference for syncing credit cards -->
+    <string name="preferences_sync_credit_cards">Крэдытныя карты</string>
+    <!-- Preference for syncing addresses -->
+    <string name="preferences_sync_address">Адрасы</string>
+
     <!-- Send Tab -->
     <!-- Name of the "receive tabs" notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="fxa_received_tab_channel_name">Атрыманыя карткі</string>
@@ -431,9 +460,6 @@
     <!-- Text displayed when there are no exceptions, with learn more link that brings users to a tracking protection SUMO page -->
     <string name="exceptions_empty_message_learn_more_link">Даведацца больш</string>
 
-    <!-- Description in Quick Settings that tells user tracking protection is off globally for all sites, and links to Settings to turn it on -->
-    <string name="preferences_tracking_protection_turned_off_globally">Выключана паўсюль. Перайдзіце ў Налады, каб уключыць.</string>
-
     <!-- Preference switch for Telemetry -->
     <string name="preferences_telemetry">Тэлеметрыя</string>
     <!-- Preference switch for usage and technical data collection -->
@@ -444,6 +470,8 @@
     <string name="preferences_marketing_data">Маркетынгавыя дадзеныя</string>
     <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
     <string name="preferences_marketing_data_description">Дзяліцца звесткамі пра магчымасці, якімі вы карыстаецеся ў %1$s, з нашым пастаўшчыком мабільнага маркетынгу Leanplum.</string>
+    <!-- Preference description for marketing data collection -->
+    <string name="preferences_marketing_data_description2">Дзеліцца асноўнымі звесткамі аб выкарыстанні з Adjust, нашым пастаўшчыком мабільнага маркетынгу</string>
     <!-- Title for studies preferences -->
     <string name="preference_experiments_2">Даследаванні</string>
     <!-- Summary for studies preferences -->
@@ -531,8 +559,10 @@
     <string name="library_desktop_bookmarks_unfiled">Іншыя закладкі</string>
     <!-- Option in Library to open History page -->
     <string name="library_history">Гісторыя</string>
-    <!-- Option in Library to open Synced Tabs page -->
-    <string name="library_synced_tabs">Сінхранізаваныя карткі</string>
+    <!-- Option in Library to open a new tab -->
+    <string name="library_new_tab">Новая картка</string>
+    <!-- Option in Library to find text in page -->
+    <string name="library_find_in_page">Знайсці на старонцы</string>
     <!-- Option in Library to open Reading List -->
     <string name="library_reading_list">Спіс для чытання</string>
     <!-- Menu Item Label for Search in Library -->
@@ -577,6 +607,15 @@
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">Праз месяц</string>
 
+    <!-- Start on Home -->
+    <!-- Title of a preference that allows a user to indicate after a specified amount of time when the app should start on the home screen -->
+    <string name="preferences_start_on_home">Запускаць на хатнім экране</string>
+    <!-- Option for starting on the home screen after after four hours or inactivity -->
+    <string name="start_on_home_after_four_hours">Праз чатыры гадзіны</string>
+    <!-- Option for always starting on the home screen -->
+    <string name="start_on_home_always">Заўжды</string>
+    <!-- Option for never starting on the home screen -->
+    <string name="start_on_home_never">Ніколі</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
     <string name="close_tabs_manually_summary">Закрываць уручную</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
@@ -594,12 +633,16 @@
     <!-- Title for the list of tabs in the current private session -->
     <string name="tabs_header_private_tabs_title">Прыватныя карткі</string>
 
+    <!-- Title for the list of tabs in the synced tabs -->
+    <string name="tabs_header_synced_tabs_title">Сінхранізаваныя карткі</string>
     <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
     <string name="add_tab">Дадаць картку</string>
     <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
     <string name="add_private_tab">Дадаць прыватную картку</string>
     <!-- Text for the new tab button to indicate adding a new private tab in the tab -->
     <string name="tab_drawer_fab_content">Прыватная</string>
+    <!-- Text for the new tab button to indicate syncing command on the synced tabs page -->
+    <string name="tab_drawer_fab_sync">Сінхранізацыя</string>
     <!-- Text shown as the title of the open tab tray -->
     <string name="tab_tray_title">Адкрытыя карткі</string>
     <!-- Text shown in the menu for saving tabs to a collection -->
@@ -610,6 +653,8 @@
     <string name="tab_tray_menu_item_share">Падзяліцца ўсімі карткамі</string>
     <!-- Text shown in the menu to view recently closed tabs -->
     <string name="tab_tray_menu_recently_closed">Нядаўна закрытыя карткі</string>
+    <!-- Text shown in the menu to view account settings -->
+    <string name="tab_tray_menu_account_settings">Налады ўліковага запісу</string>
     <!-- Text shown in the menu to view tab settings -->
     <string name="tab_tray_menu_tab_settings">Налады картак</string>
     <!-- Text shown in the menu for closing all tabs -->
@@ -780,8 +825,6 @@
     <string name="bookmark_delete_folder_snackbar">%1$s выдалена</string>
     <!-- Screen title for adding a bookmarks folder -->
     <string name="bookmark_add_folder">Дадаць папку</string>
-    <!-- deprecated: Snackbar title shown after a bookmark has been created. -->
-    <string name="bookmark_created_snackbar">Закладка створана.</string>
     <!-- Snackbar title shown after a bookmark has been created. -->
     <string name="bookmark_saved_snackbar">Закладка захавана!</string>
     <!-- Snackbar edit button shown after a bookmark has been created. -->
@@ -888,16 +931,22 @@
     <string name="tracking_protection_on">Уключана</string>
     <!-- Summary of tracking protection preference if tracking protection is set to off -->
     <string name="tracking_protection_off">Выключана</string>
-    <!-- Label that indicates that all video and audio autoplay is allowed -->
+    <!-- Label for global setting that indicates that all video and audio autoplay is allowed -->
     <string name="preference_option_autoplay_allowed2">Дазволіць гук і відэа</string>
+    <!-- Label for site specific setting that indicates that all video and audio autoplay is allowed -->
+    <string name="quick_setting_option_autoplay_allowed">Дазволіць гук і відэа</string>
     <!-- Label that indicates that video and audio autoplay is only allowed over Wi-Fi -->
     <string name="preference_option_autoplay_allowed_wifi_only2">Блакаваць аўдыё і відэа толькі на мабільных дадзеных</string>
     <!-- Subtext that explains 'autoplay on Wi-Fi only' option -->
     <string name="preference_option_autoplay_allowed_wifi_subtext">Аўдыё і відэа будуць прайгравацца праз Wi-Fi</string>
-    <!-- Label that indicates that video autoplay is allowed, but audio autoplay is blocked -->
+    <!-- Label for global setting that indicates that video autoplay is allowed, but audio autoplay is blocked -->
     <string name="preference_option_autoplay_block_audio2">Блакаваць толькі гук</string>
-    <!-- Label that indicates that all video and audio autoplay is blocked -->
+    <!-- Label for site specific setting that indicates that video autoplay is allowed, but audio autoplay is blocked -->
+    <string name="quick_setting_option_autoplay_block_audio">Блакаваць толькі гук</string>
+    <!-- Label for global setting that indicates that all video and audio autoplay is blocked -->
     <string name="preference_option_autoplay_blocked3">Блакаваць гук і відэа</string>
+    <!-- Label for site specific setting that indicates that all video and audio autoplay is blocked -->
+    <string name="quick_setting_option_autoplay_blocked">Блакаваць гук і відэа</string>
     <!-- Summary of delete browsing data on quit preference if it is set to on -->
     <string name="delete_browsing_data_quit_on">Уключана</string>
     <!-- Summary of delete browsing data on quit preference if it is set to off -->
@@ -963,6 +1012,8 @@
     <string name="share_link_all_apps_subheader">Усе дзеянні</string>
     <!-- Sub-header in the dialog to share a link to an app from the most-recent sorted list -->
     <string name="share_link_recent_apps_subheader">Нядаўна выкарыстаныя</string>
+    <!-- An option from the three dot menu to into sync -->
+    <string name="sync_menu_sign_in">Увайсці ў сінхранізацыю</string>
     <!-- An option from the share dialog to sign into sync -->
     <string name="sync_sign_in">Увайсці ў сінхранізацыю</string>
     <!-- An option from the share dialog to send link to all other sync devices -->
@@ -1004,6 +1055,16 @@
     <string name="notification_pbm_action_delete_and_open">Выдаліць і адкрыць</string>
     <!-- Name of the "Powered by Fenix" notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="notification_powered_by_channel_name">Працуе на</string>
+    <!-- Name of the marketing notification channel. Displayed in the "App notifications" system settings for the app -->
+    <string name="notification_marketing_channel_name">Маркетынг</string>
+    <!-- Title shown in the notification that pops up to remind the user to set fenix as default browser.
+    %1$s is a placeholder that will be replaced by the app name (Fenix). -->
+    <string name="notification_default_browser_title">%1$s хуткі і прыватны</string>
+    <!-- Text shown in the notification that pops up to remind the user to set fenix as default browser.
+    %1$s is a placeholder that will be replaced by the app name (Fenix). -->
+    <string name="notification_default_browser_text">Зрабіце %1$s сваім прадвызначаным браўзерам</string>
+
+    <!-- Snackbar -->
     <!-- Text shown in snackbar when user deletes a collection -->
     <string name="snackbar_collection_deleted">Калекцыя выдалена</string>
     <!-- Text shown in snackbar when user renames a collection -->
@@ -1101,6 +1162,8 @@
     <string name="preferences_delete_browsing_data_cached_files_subtitle">Вызваліць месца</string>
     <!-- Title for the site permissions item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_site_permissions">Дазволы для сайтаў</string>
+    <!-- Title for the downloads item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_downloads">Сцягванні</string>
     <!-- Text for the button to delete browsing data -->
     <string name="preferences_delete_browsing_data_button">Выдаліць звесткі аглядання</string>
     <!-- Title for the Delete browsing data on quit preference -->
@@ -1159,9 +1222,6 @@
     <string name="onboarding_header">Вітаем у %s!</string>
     <!-- text for the Firefox Accounts section header -->
     <string name="onboarding_fxa_section_header">Ужо маеце ўліковы запіс?</string>
-    <!-- text for the Firefox Preview feature section header
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_feature_section_header">Пазнаёмцеся з %s</string>
     <!-- text for the "What's New" onboarding card header -->
     <string name="onboarding_whats_new_header1">Паглядзіце, што новага</string>
     <!-- text for the "what's new" onboarding card description
@@ -1169,10 +1229,10 @@
     <string name="onboarding_whats_new_description">Маеце пытанні па абноўленым выглядзе %s? Хочаце ведаць, што змянілася?</string>
     <!-- text for underlined clickable link that is part of "what's new" onboarding card description that links to an FAQ -->
     <string name="onboarding_whats_new_description_linktext">Адказы тут</string>
-    <!-- text for the Firefox account onboarding sign in card header -->
-    <string name="onboarding_account_sign_in_header">Пачніце сінхранізаваць закладкі, паролі і шмат іншага праз свой уліковы запіс Firefox.</string>
+    <!-- text for the Firefox account onboarding sign in card header. The word "Firefox" should not be translated -->
+    <string name="onboarding_account_sign_in_header_1">Сінхранізуйце Firefox паміж прыладамі</string>
     <!-- Text for the button to learn more about signing in to your Firefox account -->
-    <string name="onboarding_manual_sign_in_learn_more">Падрабязней</string>
+    <string name="onboarding_manual_sign_in_description">Перанясіце закладкі, гісторыю і паролі ў Firefox на гэтай прыладзе.</string>
     <!-- text for the firefox account onboarding card header when we detect you're already signed in to
         another Firefox browser. (The word `Firefox` should not be translated)
         The first parameter is the email of the detected user's account -->
@@ -1181,8 +1241,8 @@
     <string name="onboarding_firefox_account_auto_signin_confirm">Так, увайсці</string>
     <!-- text for the automatic sign-in button while signing in is in process -->
     <string name="onboarding_firefox_account_signing_in">Уваход…</string>
-    <!-- text for the button to manually sign into Firefox account. The word "Firefox" should not be translated -->
-    <string name="onboarding_firefox_account_sign_in">Увайсці ў Firefox</string>
+    <!-- text for the button to manually sign into Firefox account. -->
+    <string name="onboarding_firefox_account_sign_in_1">Зарэгістравацца</string>
     <!-- text for the button to stay signed out when presented with an option to automatically sign-in. -->
     <string name="onboarding_firefox_account_stay_signed_out">Не ўваходзіць</string>
     <!-- text to display in the snackbar once account is signed-in -->
@@ -1190,26 +1250,23 @@
     <!-- text to display in the snackbar if automatic sign-in fails. user may try again -->
     <string name="onboarding_firefox_account_automatic_signin_failed">Няўдача ўваходу</string>
     <!-- text for the tracking protection onboarding card header -->
-    <string name="onboarding_tracking_protection_header_2">Аўтаматычная прыватнасць</string>
-    <!-- text for the tracking protection card description
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_tracking_protection_description_2">Налады прыватнасці і бяспекі блакуюць трэкеры, шкоднасныя праграмы і кампаніі, што ідуць за вамі.</string>
+    <string name="onboarding_tracking_protection_header_3">Прыватнасць заўжды ўключана</string>
+    <!-- text for the tracking protection card description. 'Firefox' intentionally hardcoded here -->
+    <string name="onboarding_tracking_protection_description_3">Firefox аўтаматычна спыняе таемнае сачэнне кампаній за вамі ў Інтэрнэце.</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
     <string name="onboarding_tracking_protection_standard_button_2">Стандартная (прадвызначана)</string>
     <!-- text for standard blocking option button description -->
-    <string name="onboarding_tracking_protection_standard_button_description_2">Блакуе менш трэкераў. Старонкі загружаюцца нармальна.</string>
+    <string name="onboarding_tracking_protection_standard_button_description_3">Збалансаваная прыватнасць і прадукцыйнасць. Старонкі загружаюцца нармальна.</string>
     <!-- text for tracking protection radio button option for strict level of blocking -->
     <string name="onboarding_tracking_protection_strict_button">Строгая (рэкамендуецца)</string>
     <!-- text for tracking protection radio button option for strict level of blocking -->
     <string name="onboarding_tracking_protection_strict_option">Строгая</string>
     <!-- text for strict blocking option button description -->
-    <string name="onboarding_tracking_protection_strict_button_description_2">Блакуе больш трэкераў, рэкламы і выплыўных вокнаў. Старонкі загружаюцца хутчэй, але некаторыя функцыі могуць не працаваць.</string>
-    <!-- text for the toolbar position card header
-        In English this is an idiom for "choose a side as in an argument or fight"
-        but it is ok to make this more literally about "choosing a position in a physical space -->
-    <string name="onboarding_toolbar_position_header">Выберыце становішча</string>
+    <string name="onboarding_tracking_protection_strict_button_description_3">Блакуе больш трэкераў, так што старонкі атрымліваюцца хутчэй, але частка іх функцый можа парушыцца.</string>
+    <!-- text for the toolbar position card header  -->
+    <string name="onboarding_toolbar_placement_header_1">Выберыце размяшчэнне панэлі інструментаў</string>
     <!-- text for the toolbar position card description -->
-    <string name="onboarding_toolbar_position_description">Паспрабуйце навігацыю адной рукой на паліцы прылад унізе або перамясціце яе ўверх.</string>
+    <string name="onboarding_toolbar_placement_description_1">Майце панэль інструментаў пад рукой. Пакіньце яе ўнізе або перамясціце ўверх.</string>
     <!-- text for the private browsing onboarding card header -->
     <string name="onboarding_private_browsing_header">Аглядайце прыватна</string>
     <!-- text for the private browsing onboarding card description
@@ -1222,9 +1279,8 @@
     <!-- text for the privacy notice onboarding card header -->
     <string name="onboarding_privacy_notice_header">Ваша прыватнасць</string>
     <!-- text for the privacy notice onboarding card description
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_privacy_notice_description">Мы распрацавалі %s, каб даць вам кантроль над тым, чым дзяліцца
-        ў Інтэрнэце і тым, чым вы падзеліцеся з намі.</string>
+    The first parameter is the name of the app (e.g. Firefox Preview) Substitute %s for long browser name. -->
+    <string name="onboarding_privacy_notice_description2">Мы распрацавалі %s, каб даць вам кантроль над тым, чым дзяліцца ў Інтэрнэце, і тым, чым вы падзеліцеся з намі.</string>
     <!-- Text for the button to read the privacy notice -->
     <string name="onboarding_privacy_notice_read_button">Паведамленне аб прыватнасці</string>
     <!-- Content description (not visible, for screen readers etc.): Close onboarding screen -->
@@ -1237,7 +1293,7 @@
     <!-- text for the theme picker onboarding card header -->
     <string name="onboarding_theme_picker_header">Выберыце тэму</string>
     <!-- text for the theme picker onboarding card description -->
-    <string name="onboarding_theme_picker_description1">Зберажыце зарад батарэі і зрок, уключыўшы цёмны рэжым.</string>
+    <string name="onboarding_theme_picker_description_2">Зберажыце зарад батарэі і свой зрок з цёмным рэжымам.</string>
     <!-- Automatic theme setting (will follow device setting) -->
     <string name="onboarding_theme_automatic_title">Аўтаматычна</string>
 
@@ -1294,13 +1350,13 @@
     <!-- Preference for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_standard_default_1">Стандартная (прадвызначана)</string>
     <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description_3">Блакуе менш трэкераў. Старонкі загружаюцца нармальна.</string>
+    <string name="preference_enhanced_tracking_protection_standard_description_4">Збалансаваная прыватнасць і прадукцыйнасць. Старонкі загружаюцца нармальна.</string>
     <!--  Accessibility text for the Standard protection information icon  -->
     <string name="preference_enhanced_tracking_protection_standard_info_button">Што блакуецца стандартнай аховай ад сачэння</string>
     <!-- Preference for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict">Строгая</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_description_2">Блакуе больш трэкераў, рэкламы і выплыўных вокнаў. Старонкі загружаюцца хутчэй, але некаторыя функцыі могуць не працаваць.</string>
+    <string name="preference_enhanced_tracking_protection_strict_description_3">Блакуе больш трэкераў, так што старонкі атрымліваюцца хутчэй, але частка іх функцый можа парушыцца.</string>
     <!--  Accessibility text for the Strict protection information icon  -->
     <string name="preference_enhanced_tracking_protection_strict_info_button">Што блакуецца строгай аховай ад сачэння</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
@@ -1447,10 +1503,8 @@
     <string name="preferences_passwords_autofill">Аўтазапаўненне</string>
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">Сінхранізацыя лагінаў</string>
-    <!-- Syncing saved logins in Fenix is on -->
-    <string name="preferences_passwords_sync_logins_on">Уключана</string>
-    <!-- Syncing saved logins in Fenix is off -->
-    <string name="preferences_passwords_sync_logins_off">Выключана</string>
+    <!-- Preference for syncing saved logins in Fenix, when not signed in-->
+    <string name="preferences_passwords_sync_logins_across_devices">Сінхранізаваць лагіны паміж прыладамі</string>
     <!-- Syncing saved logins in Fenix needs reconnect to sync -->
     <string name="preferences_passwords_sync_logins_reconnect">Перападлучыцца</string>
     <!-- Syncing saved logins in Fenix needs login -->
@@ -1543,6 +1597,74 @@
 
     <!-- Content description (not visible, for screen readers etc.): Sort saved logins dropdown menu chevron icon -->
     <string name="saved_logins_menu_dropdown_chevron_icon_content_description">Меню сартавання лагінаў</string>
+
+    <!-- Credit Cards Autofill -->
+    <!-- Preference and title for managing the settings for credit cards -->
+    <string name="preferences_credit_cards">Крэдытныя карты</string>
+
+    <!-- Preference for saving and autofilling credit cards -->
+    <string name="preferences_credit_cards_save_and_autofill_cards">Захоўваць і аўтаматычна запаўняць карты</string>
+    <!-- Preference summary for saving and autofilling credit card data -->
+    <string name="preferences_credit_cards_save_and_autofill_cards_summary">Дадзеныя зашыфраваны</string>
+    <!-- Preference option for syncing credit cards across devices. This is displayed when the user is not signed into sync -->
+    <string name="preferences_credit_cards_sync_cards_across_devices">Сінхранізаваць карты паміж прыладамі</string>
+    <!-- Preference option for syncing credit cards across devices. This is displayed when the user is signed into sync -->
+    <string name="preferences_credit_cards_sync_cards">Сінхранізаваць карты</string>
+    <!-- Preference option for adding a credit card -->
+    <string name="preferences_credit_cards_add_credit_card">Дадаць крэдытную карту</string>
+    <!-- Preference option for managing saved credit cards -->
+    <string name="preferences_credit_cards_manage_saved_cards">Кіраванне захаванымі картамі</string>
+
+    <!-- Title of the "Add card" screen -->
+    <string name="credit_cards_add_card">Дадаць карту</string>
+    <!-- Title of the "Edit card" screen -->
+    <string name="credit_cards_edit_card">Змяніць карту</string>
+
+    <!-- The header for the card number of a credit card -->
+    <string name="credit_cards_card_number">Нумар карты</string>
+    <!-- The header for the expiration date of a credit card -->
+    <string name="credit_cards_expiration_date">Тэрмін дзеяння</string>
+    <!-- The label for the expiration date month of a credit card to be used by a11y services-->
+    <string name="credit_cards_expiration_date_month">Месяц заканчэння тэрміну дзеяння</string>
+    <!-- The label for the expiration date year of a credit card to be used by a11y services-->
+    <string name="credit_cards_expiration_date_year">Год заканчэння тэрміну дзеяння</string>
+    <!-- The header for the name on the credit card -->
+    <string name="credit_cards_name_on_card">Імя на карце</string>
+    <!-- The header for the nickname for a credit card -->
+    <string name="credit_cards_card_nickname">Псеўданім карты</string>
+    <!-- The text for the "Delete card" menu item for deleting a credit card -->
+    <string name="credit_cards_menu_delete_card">Выдаліць карту</string>
+    <!-- The text for the "Delete card" button for deleting a credit card -->
+    <string name="credit_cards_delete_card_button">Выдаліць карту</string>
+    <!-- The title for the "Save" menu item for saving a credit card -->
+    <string name="credit_cards_menu_save">Захаваць</string>
+    <!-- The text for the "Save" button for saving a credit card -->
+    <string name="credit_cards_save_button">Захаваць</string>
+    <!-- The text for the "Cancel" button for cancelling adding or updating a credit card -->
+    <string name="credit_cards_cancel_button">Адмена</string>
+    <!-- Title of the "Saved cards" screen -->
+    <string name="credit_cards_saved_cards">Захаваныя карты</string>
+
+    <!-- Error message for credit card number validation -->
+    <string name="credit_cards_number_validation_error_message">Калі ласка, увядзіце сапраўдны нумар крэдытнай карты</string>
+
+    <!-- Error message for credit card name on card validation -->
+    <string name="credit_cards_name_on_card_validation_error_message">Калі ласка, запоўніце гэтае поле</string>
+    <!-- Message displayed in biometric prompt displayed for authentication before allowing users to view their saved credit cards -->
+    <string name="credit_cards_biometric_prompt_message">Разблакуйце, каб пабачыць захаваныя карты</string>
+    <!-- Title of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_title">Абараніце свае крэдытныя карты</string>
+    <!-- Message of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_message">Наладзьце графічны ключ, пін або пароль для блакавання прылады, каб абараніць захаваныя крэдытныя карты, калі хтось іншы атрымае доступ да вашай прылады.</string>
+    <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_set_up_now">Наладзіць зараз</string>
+    <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_later">Пазней</string>
+
+    <!-- Title of PIN verification dialog to direct users to re-enter their device credentials to access their credit cards -->
+    <string name="credit_cards_biometric_prompt_message_pin">Разблакуйце сваю прыладу</string>
+    <!-- Message displayed in biometric prompt for authentication, before allowing users to use their stored credit card information -->
+    <string name="credit_cards_biometric_prompt_unlock_message">Разблакуйце, каб выкарыстаць захаваную інфармацыю крэдытнай карты</string>
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Дадаць пашукавік</string>
@@ -1709,22 +1831,19 @@
 	<!-- Dialog button text for canceling the rename top site prompt. -->
 	<string name="top_sites_rename_dialog_cancel">Адмена</string>
 
+    <!-- Default browser experiment -->
+    <string name="default_browser_experiment_card_text">Наладзьце аўтаматычна адкрываць спасылкі з сайтаў, пошты і паведамленняў у Firefox.</string>
+
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">Выдаліць</string>
-
-    <!-- Deprecated: text for the firefox account onboarding card header
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_firefox_account_header">Атрымайце максімум ад %s.</string>
 
     <!-- Content description radio buttons with a link to more information -->
     <string name="radio_preference_info_content_description">Пстрыкніце, каб атрымаць падрабязнасці</string>
 
-    <!-- Deprecated: No Open Tabs Message Header -->
-    <string name="no_collections_header1">Збірайце важныя для вас рэчы</string>
-    <!-- Deprecated: Label to describe what collections are to a new user without any collections -->
-    <string name="no_collections_description1">Групуйце падобныя пошукі, сайты і карткі для хуткага доступу.</string>
-    <!-- Deprecated: text for the firefox account onboarding card header when we detect you're already signed in to -->
-    <string name="onboarding_firefox_account_auto_signin_header_2">Вы ўвайшлі як %s у іншым браўзеры Firefox на гэтым тэлефоне. Ці хочаце аўтарызавацца з дапамогай гэтага ўліковага запісу?</string>
-    <!-- Deprecated: Describes the add to homescreen functionality -->
-    <string name="add_to_homescreen_description">Вы можаце лёгка дадаць гэты вэб-сайт на хатні экран свайго тэлефона, каб мець да яго імгненны доступ і аглядаць хутчэй, нібыта гэта асобная праграма.</string>
+    <!-- Content description for the action bar "up" button -->
+    <string name="action_bar_up_description">Перайсці ўверх</string>
+
+    <!-- Content description for privacy content close button -->
+    <string name="privacy_content_close_button_content_description">Закрыць</string>
+
 </resources>

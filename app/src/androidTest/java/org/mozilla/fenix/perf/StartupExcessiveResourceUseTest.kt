@@ -21,7 +21,7 @@ import org.mozilla.fenix.helpers.HomeActivityTestRule
 
 // BEFORE INCREASING THESE VALUES, PLEASE CONSULT WITH THE PERF TEAM.
 private const val EXPECTED_SUPPRESSION_COUNT = 11
-private const val EXPECTED_RUNBLOCKING_COUNT = 2
+private const val EXPECTED_RUNBLOCKING_COUNT = 3
 private const val EXPECTED_COMPONENT_INIT_COUNT = 42
 private const val EXPECTED_VIEW_HIERARCHY_DEPTH = 12
 private const val EXPECTED_RECYCLER_VIEW_CONSTRAINT_LAYOUT_CHILDREN = 4
@@ -58,7 +58,7 @@ private val failureMsgRecyclerViewConstraintLayoutChildren = getErrorMessage(
 private val failureMsgNumberOfInflation = getErrorMessage(
     shortName = "Number of inflation on start up doesn't match expected count",
     implications = "The number of inflation can negatively impact start up time. Having more inflations" +
-            "will most likely mean we're adding extra work on the UI thread."
+        "will most likely mean we're adding extra work on the UI thread."
 )
 /**
  * A performance test to limit the number of StrictMode suppressions and number of runBlocking used
@@ -134,7 +134,7 @@ private fun countRecyclerViewConstraintLayoutChildren(view: View, parent: View?)
     return if (view !is ViewGroup) {
         viewValue
     } else {
-        viewValue + view.children.sumBy { countRecyclerViewConstraintLayoutChildren(it, view) }
+        viewValue + view.children.sumOf { countRecyclerViewConstraintLayoutChildren(it, view) }
     }
 }
 

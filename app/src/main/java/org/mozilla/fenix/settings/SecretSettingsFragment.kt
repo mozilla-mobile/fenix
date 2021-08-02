@@ -5,12 +5,18 @@
 package org.mozilla.fenix.settings
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.widget.Toast
+import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
 import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
+import kotlin.system.exitProcess
 
 class SecretSettingsFragment : PreferenceFragmentCompat() {
 
@@ -22,10 +28,57 @@ class SecretSettingsFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.secret_settings_preferences, rootKey)
 
-        requirePreference<SwitchPreference>(R.string.pref_key_synced_tabs_tabs_tray).apply {
-            isVisible = FeatureFlags.syncedTabsInTabsTray
-            isChecked = context.settings().syncedTabsInTabsTray
+        requirePreference<SwitchPreference>(R.string.pref_key_show_address_feature).apply {
+            isVisible = FeatureFlags.addressesFeature
+            isChecked = context.settings().addressFeature
             onPreferenceChangeListener = SharedPreferenceUpdater()
         }
+
+        requirePreference<SwitchPreference>(R.string.pref_key_history_metadata_feature).apply {
+            isVisible = true
+            isChecked = context.settings().historyMetadataFeature
+            onPreferenceChangeListener = object : SharedPreferenceUpdater() {
+                override fun onPreferenceChange(preference: Preference, newValue: Any?): Boolean {
+                    val result = super.onPreferenceChange(preference, newValue)
+
+                    Toast.makeText(
+                        context,
+                        getString(R.string.toast_history_metadata_feature_done),
+                        Toast.LENGTH_LONG
+                    ).show()
+
+                    Handler(Looper.getMainLooper()).postDelayed(
+                        {
+                            exitProcess(0)
+                        },
+                        EXIT_DELAY
+                    )
+
+                    return result
+                }
+            }
+        }
+
+        requirePreference<SwitchPreference>(R.string.pref_key_allow_third_party_root_certs).apply {
+            isVisible = true
+            isChecked = context.settings().allowThirdPartyRootCerts
+            onPreferenceChangeListener = object : SharedPreferenceUpdater() {
+                override fun onPreferenceChange(preference: Preference, newValue: Any?): Boolean {
+                    context.components.core.engine.settings.enterpriseRootsEnabled =
+                        newValue as Boolean
+                    return super.onPreferenceChange(preference, newValue)
+                }
+            }
+        }
+
+        requirePreference<SwitchPreference>(R.string.pref_key_nimbus_use_preview).apply {
+            isVisible = true
+            isChecked = context.settings().nimbusUsePreview
+            onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
+    }
+
+    companion object {
+        private const val EXIT_DELAY = 3000L
     }
 }

@@ -7,8 +7,8 @@ package org.mozilla.fenix.components
 import android.content.Context
 import io.mockk.every
 import io.mockk.mockk
-import mozilla.components.browser.session.SessionManager
 import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.browser.storage.sync.PlacesBookmarksStorage
 import mozilla.components.browser.thumbnails.storage.ThumbnailStorage
 import mozilla.components.concept.base.crash.CrashReporting
 import mozilla.components.concept.engine.Engine
@@ -26,10 +26,10 @@ class TestCore(context: Context, crashReporter: CrashReporting) : Core(
     override val engine = mockk<Engine>(relaxed = true) {
         every { this@mockk getProperty "settings" } returns mockk<Settings>(relaxed = true)
     }
-    override val sessionManager = SessionManager(engine)
     override val store = mockk<BrowserStore>()
     override val client = mockk<Client>()
     override val webAppShortcutManager = mockk<WebAppShortcutManager>()
     override val thumbnailStorage = mockk<ThumbnailStorage>()
     override val topSitesStorage = mockk<DefaultTopSitesStorage>()
+    override val bookmarksStorage = mockk<PlacesBookmarksStorage>()
 }

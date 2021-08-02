@@ -70,7 +70,7 @@ class StrictEnhancedTrackingProtectionTest {
         }.openEnhancedTrackingProtectionSubMenu {
             verifyEnhancedTrackingProtectionHeader()
             verifyEnhancedTrackingProtectionOptions()
-            verifyEnhancedTrackingProtectionDefaults()
+            verifyTrackingProtectionSwitchEnabled()
         }.openExceptions {
             verifyDefault()
         }
@@ -82,7 +82,7 @@ class StrictEnhancedTrackingProtectionTest {
             TestAssetHelper.getEnhancedTrackingProtectionAsset(mockWebServer)
 
         navigationToolbar {
-        }.enterURLAndEnterToBrowser(trackingProtectionTest.url) {}
+        }.openTrackingProtectionTestPage(trackingProtectionTest.url, true) {}
 
         enhancedTrackingProtection {
             verifyEnhancedTrackingProtectionNotice()
@@ -95,7 +95,7 @@ class StrictEnhancedTrackingProtectionTest {
             TestAssetHelper.getEnhancedTrackingProtectionAsset(mockWebServer)
 
         navigationToolbar {
-        }.enterURLAndEnterToBrowser(trackingProtectionTest.url) {}
+        }.openTrackingProtectionTestPage(trackingProtectionTest.url, true) {}
 
         enhancedTrackingProtection {
             verifyEnhancedTrackingProtectionNotice()
@@ -112,7 +112,7 @@ class StrictEnhancedTrackingProtectionTest {
             TestAssetHelper.getEnhancedTrackingProtectionAsset(mockWebServer)
 
         navigationToolbar {
-        }.enterURLAndEnterToBrowser(trackingProtectionTest.url) {}
+        }.openTrackingProtectionTestPage(trackingProtectionTest.url, true) {}
 
         enhancedTrackingProtection {
             verifyEnhancedTrackingProtectionNotice()
@@ -131,7 +131,7 @@ class StrictEnhancedTrackingProtectionTest {
             TestAssetHelper.getEnhancedTrackingProtectionAsset(mockWebServer)
 
         navigationToolbar {
-        }.enterURLAndEnterToBrowser(trackingProtectionTest.url) {}
+        }.openTrackingProtectionTestPage(trackingProtectionTest.url, true) {}
 
         enhancedTrackingProtection {
             verifyEnhancedTrackingProtectionNotice()
@@ -149,7 +149,6 @@ class StrictEnhancedTrackingProtectionTest {
         navigationToolbar {
         }.openThreeDotMenu {
             verifyThreeDotMenuExists()
-            verifySettingsButton()
         }.openSettings {
             verifyEnhancedTrackingProtectionButton()
             verifyEnhancedTrackingProtectionValue("On")
@@ -162,7 +161,7 @@ class StrictEnhancedTrackingProtectionTest {
             TestAssetHelper.getEnhancedTrackingProtectionAsset(mockWebServer)
 
         navigationToolbar {
-        }.enterURLAndEnterToBrowser(trackingProtectionTest.url) {}
+        }.openTrackingProtectionTestPage(trackingProtectionTest.url, true) {}
 
         enhancedTrackingProtection {
             verifyEnhancedTrackingProtectionNotice()
@@ -177,7 +176,7 @@ class StrictEnhancedTrackingProtectionTest {
         }.openProtectionSettings {
             verifyEnhancedTrackingProtectionHeader()
             verifyEnhancedTrackingProtectionOptions()
-            verifyEnhancedTrackingProtectionDefaults()
+            verifyTrackingProtectionSwitchEnabled()
         }
 
         settingsSubMenuEnhancedTrackingProtection {
@@ -194,7 +193,7 @@ class StrictEnhancedTrackingProtectionTest {
             TestAssetHelper.getEnhancedTrackingProtectionAsset(mockWebServer)
 
         navigationToolbar {
-        }.enterURLAndEnterToBrowser(trackingProtectionTest.url) {}
+        }.openTrackingProtectionTestPage(trackingProtectionTest.url, true) {}
 
         enhancedTrackingProtection {
             verifyEnhancedTrackingProtectionNotice()

@@ -4,13 +4,15 @@
 
 package org.mozilla.fenix.helpers
 
+import android.view.ViewConfiguration.getLongPressTimeout
 import androidx.test.espresso.intent.rule.IntentsTestRule
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ActivityTestRule
 import androidx.test.uiautomator.UiDevice
+import androidx.test.uiautomator.UiSelector
 import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.helpers.TestHelper.appContext
 import org.mozilla.fenix.onboarding.FenixOnboarding
-import org.mozilla.fenix.ui.robots.appContext
 
 /**
  * A [org.junit.Rule] to handle shared test set up for tests on [HomeActivity].
@@ -25,10 +27,18 @@ class HomeActivityTestRule(
     private val skipOnboarding: Boolean = false
 ) :
     ActivityTestRule<HomeActivity>(HomeActivity::class.java, initialTouchMode, launchActivity) {
+    private val longTapUserPreference = getLongPressTimeout()
+
     override fun beforeActivityLaunched() {
         super.beforeActivityLaunched()
-        setLongTapTimeout()
+        setLongTapTimeout(3000)
         if (skipOnboarding) { skipOnboardingBeforeLaunch() }
+    }
+
+    override fun afterActivityFinished() {
+        super.afterActivityFinished()
+        setLongTapTimeout(longTapUserPreference)
+        closeNotificationShade()
     }
 }
 
@@ -46,21 +56,39 @@ class HomeActivityIntentTestRule(
     private val skipOnboarding: Boolean = false
 ) :
     IntentsTestRule<HomeActivity>(HomeActivity::class.java, initialTouchMode, launchActivity) {
+    private val longTapUserPreference = getLongPressTimeout()
+
     override fun beforeActivityLaunched() {
         super.beforeActivityLaunched()
-        setLongTapTimeout()
+        setLongTapTimeout(3000)
         if (skipOnboarding) { skipOnboardingBeforeLaunch() }
+    }
+
+    override fun afterActivityFinished() {
+        super.afterActivityFinished()
+        setLongTapTimeout(longTapUserPreference)
+        closeNotificationShade()
     }
 }
 
 // changing the device preference for Touch and Hold delay, to avoid long-clicks instead of a single-click
-fun setLongTapTimeout() {
+fun setLongTapTimeout(delay: Int) {
     val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-    mDevice.executeShellCommand("settings put secure long_press_timeout 3000")
+    mDevice.executeShellCommand("settings put secure long_press_timeout $delay")
 }
 
 private fun skipOnboardingBeforeLaunch() {
     // The production code isn't aware that we're using
     // this API so it can be fragile.
     FenixOnboarding(appContext).finish()
+}
+
+private fun closeNotificationShade() {
+    val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+    if (mDevice.findObject(
+            UiSelector().resourceId("com.android.systemui:id/notification_stack_scroller")
+        ).exists()
+    ) {
+        mDevice.pressHome()
+    }
 }

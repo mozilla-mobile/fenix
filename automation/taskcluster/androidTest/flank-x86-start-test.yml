@@ -35,6 +35,12 @@ gcloud:
 
   test-targets:
    - class org.mozilla.fenix.ui.NavigationToolbarTest#visitURLTest
+   - class org.mozilla.fenix.ui.HistoryTest#visitedUrlHistoryTest
+   - class org.mozilla.fenix.ui.SmokeTest#openMainMenuSettingsItemTest
+   - class org.mozilla.fenix.ui.SmokeTest#toggleSearchSuggestions
+   - class org.mozilla.fenix.ui.SmokeTest#deleteCollectionTest
+   - class org.mozilla.fenix.ui.SmokeTest#noHistoryInPrivateBrowsingTest
+   - class org.mozilla.fenix.ui.NoNetworkAccessStartupTests#noNetworkConnectionStartupTest
 
   device:
    - model: Pixel2
@@ -42,6 +48,9 @@ gcloud:
 
 flank:
   project: GOOGLE_PROJECT
+  # test shards - the amount of groups to split the test suite into
+  # set to -1 to use one shard per test.
+  max-test-shards: 1
   # num-test-runs: the amount of times to run the tests.
   # 1 runs the tests once. 10 runs all the tests 10x
   num-test-runs: 1

@@ -23,14 +23,16 @@ import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.state.state.createTab
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.feature.session.SessionUseCases
-import mozilla.components.feature.sitepermissions.SitePermissions
-import mozilla.components.feature.sitepermissions.SitePermissions.Status.NO_DECISION
+import mozilla.components.concept.engine.permission.SitePermissions
+import mozilla.components.concept.engine.permission.SitePermissions.Status.NO_DECISION
 import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.support.test.mock
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.After
+import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertSame
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -72,15 +74,6 @@ class DefaultQuickSettingsControllerTest {
     @MockK(relaxed = true)
     private lateinit var addNewTab: TabsUseCases.AddNewTabUseCase
 
-    @MockK(relaxed = true)
-    private lateinit var requestPermissions: (Array<String>) -> Unit
-
-    @MockK(relaxed = true)
-    private lateinit var displayPermissions: () -> Unit
-
-    @MockK(relaxed = true)
-    private lateinit var dismiss: () -> Unit
-
     private lateinit var controller: DefaultQuickSettingsController
 
     @Before
@@ -90,25 +83,7 @@ class DefaultQuickSettingsControllerTest {
         tab = createTab("https://mozilla.org")
         browserStore = BrowserStore(BrowserState(tabs = listOf(tab)))
         sitePermissions = SitePermissions(origin = "", savedAt = 123)
-
-        controller = spyk(
-            DefaultQuickSettingsController(
-                context = context,
-                quickSettingsStore = store,
-                browserStore = browserStore,
-                sessionId = tab.id,
-                ioScope = coroutinesScope,
-                navController = navController,
-                sitePermissions = sitePermissions,
-                settings = appSettings,
-                permissionStorage = permissionStorage,
-                reload = reload,
-                addNewTab = addNewTab,
-                requestRuntimePermissions = requestPermissions,
-                displayPermissions = displayPermissions,
-                dismiss = dismiss
-            )
-        )
+        controller = spyk(createController())
     }
 
     @After
@@ -118,11 +93,14 @@ class DefaultQuickSettingsControllerTest {
 
     @Test
     fun `handlePermissionsShown should delegate to an injected parameter`() {
-        controller.handlePermissionsShown()
+        var displayPermissionsInvoked = false
+        createController(
+            displayPermissions = {
+                displayPermissionsInvoked = true
+            }
+        ).handlePermissionsShown()
 
-        verify {
-            displayPermissions()
-        }
+        assertTrue(displayPermissionsInvoked)
     }
 
     @Test
@@ -155,9 +133,11 @@ class DefaultQuickSettingsControllerTest {
         }
         // We should also modify View's state. Not necessarily as the last operation.
         verify {
-            store.dispatch(match { action ->
-                PhoneFeature.CAMERA == (action as WebsitePermissionAction.TogglePermission).updatedFeature
-            })
+            store.dispatch(
+                match { action ->
+                    PhoneFeature.CAMERA == (action as WebsitePermissionAction.TogglePermission).updatedFeature
+                }
+            )
         }
     }
 
@@ -176,9 +156,8 @@ class DefaultQuickSettingsControllerTest {
             permissionStorage = permissionStorage,
             reload = reload,
             addNewTab = addNewTab,
-            requestRuntimePermissions = requestPermissions,
-            displayPermissions = displayPermissions,
-            dismiss = dismiss
+            displayPermissions = {},
+            dismiss = {}
         )
 
         every { websitePermission.phoneFeature } returns PhoneFeature.CAMERA
@@ -188,9 +167,11 @@ class DefaultQuickSettingsControllerTest {
         invalidSitePermissionsController.handlePermissionToggled(websitePermission)
 
         verify {
-            navController.navigate(directionsEq(
-                QuickSettingsSheetDialogFragmentDirections.actionGlobalSitePermissionsManagePhoneFeature(PhoneFeature.CAMERA)
-            ))
+            navController.navigate(
+                directionsEq(
+                    QuickSettingsSheetDialogFragmentDirections.actionGlobalSitePermissionsManagePhoneFeature(PhoneFeature.CAMERA)
+                )
+            )
         }
     }
 
@@ -237,12 +218,14 @@ class DefaultQuickSettingsControllerTest {
         controller.handleAndroidPermissionGranted(featureGranted)
 
         verify {
-            store.dispatch(withArg { action ->
-                action as WebsitePermissionAction.TogglePermission
-                assertEquals(featureGranted, action.updatedFeature)
-                assertEquals(permissionStatus, action.updatedStatus)
-                assertEquals(permissionEnabled, action.updatedEnabledStatus)
-            })
+            store.dispatch(
+                withArg { action ->
+                    action as WebsitePermissionAction.TogglePermission
+                    assertEquals(featureGranted, action.updatedFeature)
+                    assertEquals(permissionStatus, action.updatedStatus)
+                    assertEquals(permissionEnabled, action.updatedEnabledStatus)
+                }
+            )
         }
     }
 
@@ -250,9 +233,15 @@ class DefaultQuickSettingsControllerTest {
     fun `handleAndroidPermissionRequest should request from the injected callback`() {
         val testPermissions = arrayOf("TestPermission")
 
-        controller.handleAndroidPermissionRequest(testPermissions)
+        var requestRuntimePermissionsInvoked = false
+        createController(
+            requestPermissions = {
+                assertArrayEquals(testPermissions, it)
+                requestRuntimePermissionsInvoked = true
+            }
+        ).handleAndroidPermissionRequest(testPermissions)
 
-        verify { requestPermissions(testPermissions) }
+        assertTrue(requestRuntimePermissionsInvoked)
     }
 
     @Test
@@ -279,5 +268,28 @@ class DefaultQuickSettingsControllerTest {
             permissionStorage.add(testPermissions)
             reload(tab.id)
         }
+    }
+
+    private fun createController(
+        requestPermissions: (Array<String>) -> Unit = { _ -> },
+        displayPermissions: () -> Unit = { },
+        dismiss: () -> Unit = { }
+    ): DefaultQuickSettingsController {
+        return DefaultQuickSettingsController(
+            context = context,
+            quickSettingsStore = store,
+            browserStore = browserStore,
+            sessionId = tab.id,
+            ioScope = coroutinesScope,
+            navController = navController,
+            sitePermissions = sitePermissions,
+            settings = appSettings,
+            permissionStorage = permissionStorage,
+            reload = reload,
+            addNewTab = addNewTab,
+            requestRuntimePermissions = requestPermissions,
+            displayPermissions = displayPermissions,
+            dismiss = dismiss
+        )
     }
 }

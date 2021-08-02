@@ -16,14 +16,15 @@ class TestComponents(private val context: Context) : Components(context) {
     }
     override val services by lazy { Services(context, backgroundServices.accountManager) }
     override val core by lazy { TestCore(context, analytics.crashReporter) }
+    @Suppress("Deprecation")
     override val useCases by lazy {
         UseCases(
             context,
             core.engine,
-            core.sessionManager,
             core.store,
             core.webAppShortcutManager,
-            core.topSitesStorage
+            core.topSitesStorage,
+            core.bookmarksStorage
         )
     }
     override val intentProcessors by lazy { mockk<IntentProcessors>(relaxed = true) }

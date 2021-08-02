@@ -8,8 +8,8 @@ import android.content.Context
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import mozilla.components.feature.sitepermissions.SitePermissions
-import mozilla.components.feature.sitepermissions.SitePermissions.AutoplayStatus
+import mozilla.components.concept.engine.permission.SitePermissions
+import mozilla.components.concept.engine.permission.SitePermissions.AutoplayStatus
 import mozilla.components.feature.sitepermissions.SitePermissionsRules
 import mozilla.components.feature.sitepermissions.SitePermissionsRules.AutoplayAction
 import mozilla.components.lib.state.State
@@ -234,17 +234,17 @@ sealed class AutoplayValue(
             val rules = settings.getSitePermissionsCustomSettingsRules()
             return listOf(
                 AllowAll(
-                    context.getString(R.string.preference_option_autoplay_allowed2),
+                    context.getString(R.string.quick_setting_option_autoplay_allowed),
                     rules,
                     sitePermission
                 ),
                 BlockAll(
-                    context.getString(R.string.preference_option_autoplay_blocked3),
+                    context.getString(R.string.quick_setting_option_autoplay_blocked),
                     rules,
                     sitePermission
                 ),
                 BlockAudible(
-                    context.getString(R.string.preference_option_autoplay_block_audio2),
+                    context.getString(R.string.quick_setting_option_autoplay_block_audio),
                     rules,
                     sitePermission
                 )

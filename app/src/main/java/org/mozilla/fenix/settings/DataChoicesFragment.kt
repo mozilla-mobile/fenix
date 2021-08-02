@@ -7,7 +7,6 @@ package org.mozilla.fenix.settings
 import android.os.Bundle
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
-import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.MetricServiceType
 import org.mozilla.fenix.ext.components
@@ -31,6 +30,10 @@ class DataChoicesFragment : PreferenceFragmentCompat() {
                 } else {
                     context.components.analytics.metrics.stop(MetricServiceType.Data)
                 }
+                // Reset experiment identifiers on both opt-in and opt-out; it's likely
+                // that in future we will need to pass in the new telemetry client_id
+                // to this method when the user opts back in.
+                context.components.analytics.experiments.resetTelemetryIdentifiers()
             } else if (key == getPreferenceKey(R.string.pref_key_marketing_telemetry)) {
                 if (context.settings().isMarketingTelemetryEnabled) {
                     context.components.analytics.metrics.start(MetricServiceType.Marketing)
@@ -63,19 +66,11 @@ class DataChoicesFragment : PreferenceFragmentCompat() {
 
         requirePreference<SwitchPreference>(R.string.pref_key_marketing_telemetry).apply {
             isChecked = context.settings().isMarketingTelemetryEnabled
-
-            val appName = context.getString(R.string.app_name)
-            summary = String.format(
-                context.getString(R.string.preferences_marketing_data_description),
-                appName
-            )
-
             onPreferenceChangeListener = SharedPreferenceUpdater()
         }
 
         requirePreference<SwitchPreference>(R.string.pref_key_experimentation).apply {
             isChecked = context.settings().isExperimentationEnabled
-            isVisible = FeatureFlags.nimbusExperiments
             onPreferenceChangeListener = SharedPreferenceUpdater()
         }
     }

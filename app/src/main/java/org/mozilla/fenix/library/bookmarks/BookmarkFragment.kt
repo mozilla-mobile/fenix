@@ -92,11 +92,13 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
                 scope = viewLifecycleOwner.lifecycleScope,
                 store = bookmarkStore,
                 sharedViewModel = sharedViewModel,
+                tabsUseCases = activity?.components?.useCases?.tabsUseCases,
                 loadBookmarkNode = ::loadBookmarkNode,
                 showSnackbar = ::showSnackBarWithText,
                 deleteBookmarkNodes = ::deleteMulti,
                 deleteBookmarkFolder = ::showRemoveFolderDialog,
-                invokePendingDeletion = ::invokePendingDeletion
+                invokePendingDeletion = ::invokePendingDeletion,
+                showTabTray = ::showTabTray
             ),
             metrics = metrics!!
         )
@@ -202,7 +204,7 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
                 true
             }
             R.id.add_bookmark_folder -> {
-                navigate(
+                navigateToBookmarkFragment(
                     BookmarkFragmentDirections
                         .actionBookmarkFragmentToBookmarkAddFolderFragment()
                 )
@@ -226,7 +228,7 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
                 val shareTabs = bookmarkStore.state.mode.selectedItems.map {
                     ShareData(url = it.url, title = it.title)
                 }
-                navigate(
+                navigateToBookmarkFragment(
                     BookmarkFragmentDirections.actionGlobalShareFragment(
                         data = shareTabs.toTypedArray()
                     )
@@ -243,10 +245,10 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
 
     private fun showTabTray() {
         invokePendingDeletion()
-        navigate(BookmarkFragmentDirections.actionGlobalTabTrayDialogFragment())
+        navigateToBookmarkFragment(BookmarkFragmentDirections.actionGlobalTabsTrayFragment())
     }
 
-    private fun navigate(directions: NavDirections) {
+    private fun navigateToBookmarkFragment(directions: NavDirections) {
         invokePendingDeletion()
         findNavController().nav(
             R.id.bookmarkFragment,
@@ -256,6 +258,7 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
 
     override fun onBackPressed(): Boolean {
         invokePendingDeletion()
+        sharedViewModel.selectedFolder = null
         return bookmarkView.onBackPressed()
     }
 
@@ -292,10 +295,12 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
     }
 
     private fun deleteMulti(selected: Set<BookmarkNode>, eventType: Event = Event.RemoveBookmarks) {
-        selected.forEach { if (it.type == BookmarkNodeType.FOLDER) {
-            showRemoveFolderDialog(selected)
-            return
-        } }
+        selected.iterator().forEach {
+            if (it.type == BookmarkNodeType.FOLDER) {
+                showRemoveFolderDialog(selected)
+                return
+            }
+        }
         updatePendingBookmarksToDelete(selected)
 
         pendingBookmarkDeletionJob = getDeleteOperation(eventType)
@@ -317,9 +322,11 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
 
         viewLifecycleOwner.lifecycleScope.allowUndo(
             requireView(), message,
-            getString(R.string.bookmark_undo_deletion), {
+            getString(R.string.bookmark_undo_deletion),
+            {
                 undoPendingDeletion(selected)
-            }, operation = getDeleteOperation(eventType)
+            },
+            operation = getDeleteOperation(eventType)
         )
     }
 

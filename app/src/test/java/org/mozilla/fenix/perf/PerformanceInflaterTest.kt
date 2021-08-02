@@ -26,7 +26,8 @@ class PerformanceInflaterTest {
 
     private val layoutsNotToTest = setOf(
         "fragment_browser",
-        "fragment_add_on_internal_settings"
+        "fragment_add_on_internal_settings",
+        "activity_privacy_content_display"
     )
 
     @Before
@@ -49,10 +50,10 @@ class PerformanceInflaterTest {
         for (file in fileList!!) {
             val layoutName = file.name.split(".")[0]
             val layoutId = testContext.resources.getIdentifier(
-                    layoutName,
-                    "layout",
-                    testContext.packageName
-                )
+                layoutName,
+                "layout",
+                testContext.packageName
+            )
 
             assertNotEquals(-1, layoutId)
             if (!layoutsNotToTest.contains(layoutName)) {

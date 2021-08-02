@@ -13,19 +13,26 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
-import kotlinx.android.synthetic.main.fragment_locale_settings.view.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.support.ktx.android.view.hideKeyboard
+import mozilla.components.support.locale.LocaleUseCases
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.StoreProvider
+import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.databinding.FragmentLocaleSettingsBinding
+import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.showToolbar
 
 class LocaleSettingsFragment : Fragment() {
 
-    private lateinit var store: LocaleSettingsStore
+    private lateinit var localeSettingsStore: LocaleSettingsStore
     private lateinit var interactor: LocaleSettingsInteractor
     private lateinit var localeView: LocaleSettingsView
+
+    private var _binding: FragmentLocaleSettingsBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,10 +43,14 @@ class LocaleSettingsFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_locale_settings, container, false)
+    ): View {
+        _binding = FragmentLocaleSettingsBinding.inflate(inflater, container, false)
+        val view = binding.root
 
-        store = StoreProvider.get(this) {
+        val browserStore = requireContext().components.core.store
+        val localeUseCase = LocaleUseCases(browserStore)
+
+        localeSettingsStore = StoreProvider.get(this) {
             LocaleSettingsStore(
                 createInitialLocaleSettingsState(requireContext())
             )
@@ -47,10 +58,11 @@ class LocaleSettingsFragment : Fragment() {
         interactor = LocaleSettingsInteractor(
             controller = DefaultLocaleSettingsController(
                 activity = requireActivity(),
-                localeSettingsStore = store
+                localeSettingsStore = localeSettingsStore,
+                localeUseCase = localeUseCase
             )
         )
-        localeView = LocaleSettingsView(view.locale_container, interactor)
+        localeView = LocaleSettingsView(binding.root, interactor)
         return view
     }
 
@@ -87,8 +99,14 @@ class LocaleSettingsFragment : Fragment() {
     @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        consumeFrom(store) {
+        consumeFrom(localeSettingsStore) {
             localeView.update(it)
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        requireComponents.analytics.metrics.track(Event.SyncAuthClosed)
+        _binding = null
     }
 }

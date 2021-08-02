@@ -11,6 +11,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ActivityTestRule
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -27,6 +28,7 @@ import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mozilla.fenix.GleanMetrics.GleanBuildInfo
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.HomeActivityTestRule
@@ -75,19 +77,23 @@ class BaselinePingTest {
     companion object {
         @BeforeClass
         @JvmStatic
+        @OptIn(DelicateCoroutinesApi::class) // GlobalScope usage
         fun setupOnce() {
-            val httpClient = ConceptFetchHttpUploader(lazy {
-                GeckoViewFetchClient(ApplicationProvider.getApplicationContext())
-            })
+            val httpClient = ConceptFetchHttpUploader(
+                lazy {
+                    GeckoViewFetchClient(ApplicationProvider.getApplicationContext())
+                }
+            )
 
             // Fenix does not initialize the Glean SDK in tests/debug builds, but this test
             // requires Glean to be initialized so we need to do it manually. Additionally,
             // we need to do this on the main thread, as the Glean SDK requires it.
             GlobalScope.launch(Dispatchers.Main.immediate) {
                 Glean.initialize(
-                    ApplicationProvider.getApplicationContext(),
-                    true,
-                    Configuration(httpClient = httpClient)
+                    applicationContext = ApplicationProvider.getApplicationContext(),
+                    uploadEnabled = true,
+                    configuration = Configuration(httpClient = httpClient),
+                    buildInfo = GleanBuildInfo.buildInfo
                 )
             }
         }
@@ -147,12 +153,15 @@ class BaselinePingTest {
         // sending the ping that was submitted on background. This can go away once bug 1634375
         // is fixed.
         device.pressRecentApps()
-        device.findObject(UiSelector().descriptionContains(
-            ApplicationProvider.getApplicationContext<Context>().getString(R.string.app_name)))
+        device.findObject(
+            UiSelector().descriptionContains(
+                ApplicationProvider.getApplicationContext<Context>().getString(R.string.app_name)
+            )
+        )
             .click()
 
         // Validate the received data.
-        val baselinePing = waitForPingContent("baseline", "background")!!
+        val baselinePing = waitForPingContent("baseline", "inactive")!!
 
         val metrics = baselinePing.getJSONObject("metrics")
 
