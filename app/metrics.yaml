@@ -4523,6 +4523,7 @@ addons:
 
 startup.timeline:
   framework_primary:
+    disabled: true
     send_in_pings:
       - startup-timeline
     type: timespan
@@ -4559,6 +4560,7 @@ startup.timeline:
       - mcomella@mozilla.com
     expires: "2021-08-01"
   framework_secondary:
+    disabled: true
     send_in_pings:
       - startup-timeline
     type: timespan
@@ -4579,6 +4581,7 @@ startup.timeline:
       - mcomella@mozilla.com
     expires: "2021-08-01"
   framework_start_error:
+    disabled: true
     send_in_pings:
       - startup-timeline
     type: boolean
@@ -4598,6 +4601,7 @@ startup.timeline:
       - mcomella@mozilla.com
     expires: "2021-08-01"
   framework_start_read_error:
+    disabled: true
     send_in_pings:
       - startup-timeline
     type: boolean
@@ -4617,6 +4621,7 @@ startup.timeline:
       - mcomella@mozilla.com
     expires: "2021-08-01"
   clock_ticks_per_second_v2:
+    disabled: true
     send_in_pings:
       - startup-timeline
     type: quantity
@@ -4747,6 +4752,7 @@ perf.startup:
       - mcomella@mozilla.com
     expires: "2021-08-11"
   app_on_create_to_glean_init:
+    disabled: true
     type: timing_distribution
     time_unit: millisecond
     description: |
@@ -4766,6 +4772,7 @@ perf.startup:
       - mcomella@mozilla.com
     expires: "2021-08-11"
   app_on_create_to_megazord_init:
+    disabled: true
     type: timing_distribution
     time_unit: millisecond
     description: |
@@ -4783,6 +4790,7 @@ perf.startup:
       - mcomella@mozilla.com
     expires: "2021-08-11"
   app_on_create_to_setup_in_main:
+    disabled: true
     type: timing_distribution
     time_unit: millisecond
     description: |
@@ -4802,6 +4810,7 @@ perf.startup:
       - mcomella@mozilla.com
     expires: "2021-08-11"
   home_activity_on_create:
+    disabled: true
     type: timing_distribution
     time_unit: millisecond
     description: |
@@ -4817,6 +4826,7 @@ perf.startup:
       - mcomella@mozilla.com
     expires: "2021-08-11"
   home_activity_on_start:
+    disabled: true
     type: timing_distribution
     time_unit: millisecond
     description: |
@@ -4837,6 +4847,7 @@ perf.startup:
       - mcomella@mozilla.com
     expires: "2021-08-11"
   home_fragment_on_create_view:
+    disabled: true
     type: timing_distribution
     time_unit: millisecond
     description: |
@@ -4852,6 +4863,7 @@ perf.startup:
       - mcomella@mozilla.com
     expires: "2021-08-11"
   home_fragment_on_view_created:
+    disabled: true
     type: timing_distribution
     time_unit: millisecond
     description: |
@@ -4867,6 +4879,7 @@ perf.startup:
       - mcomella@mozilla.com
     expires: "2021-08-11"
   base_bfragment_on_create_view:
+    disabled: true
     type: timing_distribution
     time_unit: millisecond
     description: |
@@ -4882,6 +4895,7 @@ perf.startup:
       - mcomella@mozilla.com
     expires: "2021-08-11"
   base_bfragment_on_view_created:
+    disabled: true
     type: timing_distribution
     time_unit: millisecond
     description: |
