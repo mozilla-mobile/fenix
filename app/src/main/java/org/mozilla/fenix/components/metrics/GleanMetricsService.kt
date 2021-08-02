@@ -10,6 +10,7 @@ import mozilla.components.service.glean.private.NoExtraKeys
 import mozilla.components.support.base.log.logger.Logger
 import org.mozilla.fenix.GleanMetrics.AboutPage
 import org.mozilla.fenix.GleanMetrics.Addons
+import org.mozilla.fenix.GleanMetrics.AndroidAutofill
 import org.mozilla.fenix.GleanMetrics.AndroidKeystoreExperiment
 import org.mozilla.fenix.GleanMetrics.AppTheme
 import org.mozilla.fenix.GleanMetrics.Autoplay
@@ -46,6 +47,7 @@ import org.mozilla.fenix.GleanMetrics.PrivateBrowsingMode
 import org.mozilla.fenix.GleanMetrics.PrivateBrowsingShortcut
 import org.mozilla.fenix.GleanMetrics.ProgressiveWebApp
 import org.mozilla.fenix.GleanMetrics.ReaderMode
+import org.mozilla.fenix.GleanMetrics.RecentTabs
 import org.mozilla.fenix.GleanMetrics.SearchShortcuts
 import org.mozilla.fenix.GleanMetrics.SearchSuggestions
 import org.mozilla.fenix.GleanMetrics.SearchWidget
@@ -847,6 +849,43 @@ private val Event.wrapper: EventWrapper<*>?
 
         is Event.StartOnHomeOpenTabsTray -> EventWrapper<NoExtraKeys>(
             { StartOnHome.openTabsTray.record(it) }
+        )
+
+        is Event.OpenRecentTab -> EventWrapper<NoExtraKeys>(
+            { RecentTabs.recentTabOpened.record(it) }
+        )
+
+        is Event.OpenInProgressMediaTab -> EventWrapper<NoExtraKeys>(
+            { RecentTabs.inProgressMediaTabOpened.record(it) }
+        )
+
+        is Event.ShowAllRecentTabs -> EventWrapper<NoExtraKeys>(
+            { RecentTabs.showAllClicked.record(it) }
+        )
+
+        is Event.AndroidAutofillRequestWithLogins -> EventWrapper<NoExtraKeys>(
+            { AndroidAutofill.requestMatchingLogins.record(it) }
+        )
+        is Event.AndroidAutofillRequestWithoutLogins -> EventWrapper<NoExtraKeys>(
+            { AndroidAutofill.requestNoMatchingLogins.record(it) }
+        )
+        is Event.AndroidAutofillSearchDisplayed -> EventWrapper<NoExtraKeys>(
+            { AndroidAutofill.searchDisplayed.record(it) }
+        )
+        is Event.AndroidAutofillSearchItemSelected -> EventWrapper<NoExtraKeys>(
+            { AndroidAutofill.searchItemSelected.record(it) }
+        )
+        is Event.AndroidAutofillUnlockCanceled -> EventWrapper<NoExtraKeys>(
+            { AndroidAutofill.unlockCancelled.record(it) }
+        )
+        is Event.AndroidAutofillUnlockSuccessful -> EventWrapper<NoExtraKeys>(
+            { AndroidAutofill.unlockSuccessful.record(it) }
+        )
+        is Event.AndroidAutofillConfirmationCanceled -> EventWrapper<NoExtraKeys>(
+            { AndroidAutofill.confirmCancelled.record(it) }
+        )
+        is Event.AndroidAutofillConfirmationSuccessful -> EventWrapper<NoExtraKeys>(
+            { AndroidAutofill.confirmSuccessful.record(it) }
         )
 
         // Don't record other events in Glean:

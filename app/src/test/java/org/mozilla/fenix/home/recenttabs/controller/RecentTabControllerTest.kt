@@ -23,6 +23,8 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.components.metrics.MetricController
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class RecentTabControllerTest {
@@ -34,6 +36,7 @@ class RecentTabControllerTest {
 
     private val navController: NavController = mockk(relaxed = true)
     private val selectTabUseCase: TabsUseCases = mockk(relaxed = true)
+    private val metrics: MetricController = mockk(relaxed = true)
 
     private lateinit var store: BrowserStore
     private lateinit var controller: RecentTabController
@@ -43,10 +46,14 @@ class RecentTabControllerTest {
         store = BrowserStore(
             BrowserState()
         )
-        controller = spyk(DefaultRecentTabsController(
-            selectTabUseCase = selectTabUseCase.selectTab,
-            navController = navController
-        ))
+        controller = spyk(
+            DefaultRecentTabsController(
+                selectTabUseCase = selectTabUseCase.selectTab,
+                navController = navController,
+                metrics = metrics,
+                store = store
+            )
+        )
 
         every { navController.currentDestination } returns mockk {
             every { id } returns R.id.homeFragment
@@ -67,6 +74,7 @@ class RecentTabControllerTest {
         verify {
             selectTabUseCase.selectTab.invoke(tab.id)
             navController.navigate(R.id.browserFragment)
+            metrics.track(Event.OpenRecentTab)
         }
     }
 
@@ -79,6 +87,7 @@ class RecentTabControllerTest {
                 match<NavDirections> { it.actionId == R.id.action_global_tabsTrayFragment },
                 null
             )
+            metrics.track(Event.ShowAllRecentTabs)
         }
     }
 }

@@ -244,6 +244,21 @@ sealed class Event {
     object StartOnHomeEnterHomeScreen : Event()
     object StartOnHomeOpenTabsTray : Event()
 
+    // Recent tabs
+    object ShowAllRecentTabs : Event()
+    object OpenRecentTab : Event()
+    object OpenInProgressMediaTab : Event()
+
+    // Android Autofill
+    object AndroidAutofillUnlockSuccessful : Event()
+    object AndroidAutofillUnlockCanceled : Event()
+    object AndroidAutofillSearchDisplayed : Event()
+    object AndroidAutofillSearchItemSelected : Event()
+    object AndroidAutofillConfirmationSuccessful : Event()
+    object AndroidAutofillConfirmationCanceled : Event()
+    object AndroidAutofillRequestWithLogins : Event()
+    object AndroidAutofillRequestWithoutLogins : Event()
+
     // Interaction events with extras
 
     data class TopSiteSwipeCarousel(val page: Int) : Event() {

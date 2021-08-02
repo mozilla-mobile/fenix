@@ -268,6 +268,7 @@
     <string name="pref_key_start_on_home_after_four_hours" translatable="false">pref_key_start_on_home_after_four_hours</string>
     <string name="pref_key_start_on_home_always" translatable="false">pref_key_start_on_home_always</string>
     <string name="pref_key_start_on_home_never" translatable="false">pref_key_start_on_home_never</string>
+    <string name="pref_key_start_on_home_category" translatable="false">pref_key_start_on_home_category</string>
     <string name="pref_key_camera_permissions_needed" translatable="false">pref_key_camera_permissions_needed</string>
 
     <string name="pref_key_return_to_browser" translatable="false">pref_key_return_to_browser</string>
@@ -279,11 +280,10 @@
 
     <!-- Secret Info Setting Keys -->
     <string name="pref_key_secret_debug_info" translatable="false">pref_key_secret_debug_info</string>
-    <string name="pref_key_search_region_home" translatable="false">pref_key_search_region_home</string>
-    <string name="pref_key_search_region_current" translatable="false">pref_key_search_region_current</string>
 
     <!-- Secret Settings -->
     <string name="pref_key_show_address_feature" translatable="false">pref_key_show_address_feature</string>
     <string name="pref_key_nimbus_experiments" translatable="false">pref_key_nimbus_experiments</string>
     <string name="pref_key_nimbus_use_preview" translatable="false">pref_key_nimbus_use_preview</string>
+    <string name="pref_key_history_metadata_feature" translatable="false">pref_key_history_metadata_feature</string>
 </resources>

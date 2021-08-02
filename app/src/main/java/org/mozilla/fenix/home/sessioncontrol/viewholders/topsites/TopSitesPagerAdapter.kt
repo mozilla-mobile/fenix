@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import androidx.annotation.VisibleForTesting
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import kotlinx.android.synthetic.main.component_top_sites.view.*
 import mozilla.components.feature.top.sites.TopSite
 import org.mozilla.fenix.home.sessioncontrol.AdapterItem.TopSitePagerPayload
 import org.mozilla.fenix.home.sessioncontrol.TopSiteInteractor
@@ -35,7 +34,7 @@ class TopSitesPagerAdapter(
             onBindViewHolder(holder, position)
         } else {
             if (payloads[0] is TopSitePagerPayload) {
-                val adapter = holder.itemView.top_sites_list.adapter as TopSitesAdapter
+                val adapter = holder.binding.topSitesList.adapter as TopSitesAdapter
                 val payload = payloads[0] as TopSitePagerPayload
 
                 update(payload, position, adapter)
@@ -49,24 +48,23 @@ class TopSitesPagerAdapter(
         position: Int,
         adapter: TopSitesAdapter
     ) {
-        // Only currently selected page items need to be updated.
+        // Only currently selected page items need to be updated
         val currentPageChangedItems = getCurrentPageChanges(payload, position)
 
-        // Build the new list
+        // If no changes have been made to the current page no need to continue
+        if (currentPageChangedItems.isEmpty()) return
+
+        // Build the new list from the old one
         val refreshedItems: MutableList<TopSite> = mutableListOf()
         refreshedItems.addAll(adapter.currentList)
 
-        // Update new list based on changed items. Mark any removed items for deletion
-        val itemsToRemove: MutableList<Int> = mutableListOf()
+        // Update new list with the changed items
         currentPageChangedItems.forEach { item ->
-            if (item.second.id == -1L)
-                itemsToRemove.add(item.first - (position * TOP_SITES_PER_PAGE))
             refreshedItems[item.first - (position * TOP_SITES_PER_PAGE)] = item.second
         }
 
-        // Delete any items marked as such and submit the list, then notify adapter of deletions
-        itemsToRemove.forEach { refreshedItems.removeAt(it) }
-        adapter.submitList(refreshedItems)
+        // Display the updated list without any of the removed items
+        adapter.submitList(refreshedItems.filter { it.id != -1L })
     }
 
     /**
@@ -80,7 +78,7 @@ class TopSitesPagerAdapter(
         }
 
     override fun onBindViewHolder(holder: TopSiteViewHolder, position: Int) {
-        val adapter = holder.itemView.top_sites_list.adapter as TopSitesAdapter
+        val adapter = holder.binding.topSitesList.adapter as TopSitesAdapter
         adapter.submitList(getItem(position))
     }
 

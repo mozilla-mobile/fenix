@@ -162,7 +162,6 @@ class TabsTrayFragment : AppCompatDialogFragment() {
             tabsTrayInteractor,
             tabsTrayController,
             requireComponents.useCases.tabsUseCases.selectTab,
-            requireComponents.settings,
             requireComponents.analytics.metrics
         )
 
@@ -216,7 +215,8 @@ class TabsTrayFragment : AppCompatDialogFragment() {
                 browsingModeManager = activity.browsingModeManager,
                 tabsTrayStore = tabsTrayStore,
                 metrics = requireComponents.analytics.metrics
-            ), owner = this,
+            ),
+            owner = this,
             view = view
         )
 

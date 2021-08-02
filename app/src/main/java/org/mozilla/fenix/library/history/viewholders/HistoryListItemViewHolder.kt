@@ -116,7 +116,8 @@ class HistoryListItemViewHolder(
                 itemView.context.getString(
                     if (numRecentTabs == 1)
                         R.string.recently_closed_tab else R.string.recently_closed_tabs
-                ), numRecentTabs
+                ),
+                numRecentTabs
             )
             itemView.findViewById<ConstraintLayout>(R.id.recently_closed_nav).run {
                 if (isNormalMode) {
@@ -146,7 +147,7 @@ class HistoryListItemViewHolder(
     }
 
     companion object {
-        const val DELETE_BUTTON_DISABLED_ALPHA = 0.4f
+        const val DELETE_BUTTON_DISABLED_ALPHA = 0.7f
         const val LAYOUT_ID = R.layout.history_list_item
     }
 }
