@@ -57,6 +57,7 @@ import mozilla.components.support.ktx.android.view.hideKeyboard
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import mozilla.components.ui.autocomplete.InlineAutocompleteEditText
 import org.mozilla.fenix.BrowserDirection
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
@@ -400,13 +401,14 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                 true
             }
             else -> {
-                val args by navArgs<SearchDialogFragmentArgs>()
-                args.sessionId?.let {
-                    findNavController().navigate(
-                        SearchDialogFragmentDirections.actionGlobalBrowser(null)
-                    )
+                if (FeatureFlags.showHomeBehindSearch) {
+                    val args by navArgs<SearchDialogFragmentArgs>()
+                    args.sessionId?.let {
+                        findNavController().navigate(
+                            SearchDialogFragmentDirections.actionGlobalBrowser(null)
+                        )
+                    }
                 }
-
                 view?.hideKeyboard()
                 dismissAllowingStateLoss()
                 true
