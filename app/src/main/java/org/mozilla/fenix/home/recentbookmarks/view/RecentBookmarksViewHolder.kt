@@ -4,10 +4,7 @@
 
 package org.mozilla.fenix.home.recentbookmarks.view
 
-import android.content.Context
 import android.view.View
-import android.view.inputmethod.InputMethodManager
-import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL
 import kotlinx.android.synthetic.main.component_recent_bookmarks.view.*
@@ -34,25 +31,12 @@ class RecentBookmarksViewHolder(
         }
 
         showAllBookmarksButton.setOnClickListener {
-            hideKeyboard(view)
             interactor.onShowAllBookmarksClicked()
         }
     }
 
     fun bind(bookmarks: List<BookmarkNode>) {
         recentBookmarksAdapter.submitList(bookmarks)
-    }
-
-    /**
-     * Hide the keyboard if we are viewing the home screen from behind the search dialog.
-     */
-    private fun hideKeyboard(view: View) {
-        if (Navigation.findNavController(view).currentDestination?.id == R.id.searchDialogFragment) {
-            val imm =
-                view.context
-                    .getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
-        }
     }
 
     companion object {
