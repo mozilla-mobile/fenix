@@ -1368,12 +1368,13 @@ metrics:
       - https://github.com/mozilla-mobile/fenix/issues/18426
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/18632#issue-600193452
+      - https://github.com/mozilla-mobile/fenix/pull/20623#issue-701630599
     data_sensitivity:
       - technical
     notification_emails:
       - perf-android-fe@mozilla.com
       - mcomella@mozilla.com
-    expires: "2021-08-11"
+    expires: "2022-02-01"
   start_reason_activity_error:
     type: boolean
     description: |
@@ -1385,12 +1386,13 @@ metrics:
       - https://github.com/mozilla-mobile/fenix/issues/18426
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/18632#issue-600193452
+      - https://github.com/mozilla-mobile/fenix/pull/20623#issue-701630599
     data_sensitivity:
       - technical
     notification_emails:
       - perf-android-fe@mozilla.com
       - mcomella@mozilla.com
-    expires: "2021-08-11"
+    expires: "2022-02-01"
 
 preferences:
   search_suggestions_enabled:
@@ -2649,38 +2651,6 @@ reader_mode:
     notification_emails:
       - android-probes@mozilla.com
     expires: "2022-02-01"
-
-tabs_tray.cfr:
-  dismiss:
-    type: event
-    description: |
-      A user dismisses the tabs tray CFR.
-    bugs:
-      - https://github.com/mozilla-mobile/fenix/issues/16485
-    data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/17442
-      - https://github.com/mozilla-mobile/fenix/issues/16485#issuecomment-759641324
-      - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
-    data_sensitivity:
-      - interaction
-    notification_emails:
-      - android-probes@mozilla.com
-    expires: "2021-08-01"
-  go_to_settings:
-    type: event
-    description: |
-      A user selects the CFR option to navigate to settings.
-    bugs:
-      - https://github.com/mozilla-mobile/fenix/issues/16485
-    data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/17442
-      - https://github.com/mozilla-mobile/fenix/issues/16485#issuecomment-759641324
-      - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
-    data_sensitivity:
-      - interaction
-    notification_emails:
-      - android-probes@mozilla.com
-    expires: "2021-08-01"
 
 tabs_tray:
   opened:
@@ -4558,6 +4528,7 @@ addons:
 
 startup.timeline:
   framework_primary:
+    disabled: true
     send_in_pings:
       - startup-timeline
     type: timespan
@@ -4594,6 +4565,7 @@ startup.timeline:
       - mcomella@mozilla.com
     expires: "2021-08-01"
   framework_secondary:
+    disabled: true
     send_in_pings:
       - startup-timeline
     type: timespan
@@ -4614,6 +4586,7 @@ startup.timeline:
       - mcomella@mozilla.com
     expires: "2021-08-01"
   framework_start_error:
+    disabled: true
     send_in_pings:
       - startup-timeline
     type: boolean
@@ -4633,6 +4606,7 @@ startup.timeline:
       - mcomella@mozilla.com
     expires: "2021-08-01"
   framework_start_read_error:
+    disabled: true
     send_in_pings:
       - startup-timeline
     type: boolean
@@ -4652,6 +4626,7 @@ startup.timeline:
       - mcomella@mozilla.com
     expires: "2021-08-01"
   clock_ticks_per_second_v2:
+    disabled: true
     send_in_pings:
       - startup-timeline
     type: quantity
@@ -4706,12 +4681,13 @@ perf.startup:
       - https://github.com/mozilla-mobile/fenix/issues/18426
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/18632#issue-600193452
+      - https://github.com/mozilla-mobile/fenix/pull/20623#issue-701630599
     data_sensitivity:
       - technical
     notification_emails:
       - perf-android-fe@mozilla.com
       - mcomella@mozilla.com
-    expires: "2021-08-11"
+    expires: "2022-02-01"
   cold_view_app_to_first_frame:
     type: timing_distribution
     time_unit: millisecond
@@ -4733,12 +4709,13 @@ perf.startup:
       - https://github.com/mozilla-mobile/fenix/issues/18426
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/18632#issue-600193452
+      - https://github.com/mozilla-mobile/fenix/pull/20623#issue-701630599
     data_sensitivity:
       - technical
     notification_emails:
       - perf-android-fe@mozilla.com
       - mcomella@mozilla.com
-    expires: "2021-08-11"
+    expires: "2022-02-01"
   cold_unknwn_app_to_first_frame:
     type: timing_distribution
     time_unit: millisecond
@@ -4758,12 +4735,13 @@ perf.startup:
       - https://github.com/mozilla-mobile/fenix/issues/18426
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/18632#issue-600193452
+      - https://github.com/mozilla-mobile/fenix/pull/20623#issue-701630599
     data_sensitivity:
       - technical
     notification_emails:
       - perf-android-fe@mozilla.com
       - mcomella@mozilla.com
-    expires: "2021-08-11"
+    expires: "2022-02-01"
   application_on_create:
     type: timing_distribution
     time_unit: millisecond
@@ -4775,13 +4753,15 @@ perf.startup:
       - https://github.com/mozilla-mobile/fenix/issues/17969
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/17973#issue-572183889
+      - https://github.com/mozilla-mobile/fenix/pull/20623#issue-701630599
     data_sensitivity:
       - technical
     notification_emails:
       - perf-android-fe@mozilla.com
       - mcomella@mozilla.com
-    expires: "2021-08-11"
+    expires: "2022-02-01"
   app_on_create_to_glean_init:
+    disabled: true
     type: timing_distribution
     time_unit: millisecond
     description: |
@@ -4801,6 +4781,7 @@ perf.startup:
       - mcomella@mozilla.com
     expires: "2021-08-11"
   app_on_create_to_megazord_init:
+    disabled: true
     type: timing_distribution
     time_unit: millisecond
     description: |
@@ -4818,6 +4799,7 @@ perf.startup:
       - mcomella@mozilla.com
     expires: "2021-08-11"
   app_on_create_to_setup_in_main:
+    disabled: true
     type: timing_distribution
     time_unit: millisecond
     description: |
@@ -4837,6 +4819,7 @@ perf.startup:
       - mcomella@mozilla.com
     expires: "2021-08-11"
   home_activity_on_create:
+    disabled: true
     type: timing_distribution
     time_unit: millisecond
     description: |
@@ -4852,6 +4835,7 @@ perf.startup:
       - mcomella@mozilla.com
     expires: "2021-08-11"
   home_activity_on_start:
+    disabled: true
     type: timing_distribution
     time_unit: millisecond
     description: |
@@ -4872,6 +4856,7 @@ perf.startup:
       - mcomella@mozilla.com
     expires: "2021-08-11"
   home_fragment_on_create_view:
+    disabled: true
     type: timing_distribution
     time_unit: millisecond
     description: |
@@ -4887,6 +4872,7 @@ perf.startup:
       - mcomella@mozilla.com
     expires: "2021-08-11"
   home_fragment_on_view_created:
+    disabled: true
     type: timing_distribution
     time_unit: millisecond
     description: |
@@ -4902,6 +4888,7 @@ perf.startup:
       - mcomella@mozilla.com
     expires: "2021-08-11"
   base_bfragment_on_create_view:
+    disabled: true
     type: timing_distribution
     time_unit: millisecond
     description: |
@@ -4917,6 +4904,7 @@ perf.startup:
       - mcomella@mozilla.com
     expires: "2021-08-11"
   base_bfragment_on_view_created:
+    disabled: true
     type: timing_distribution
     time_unit: millisecond
     description: |
@@ -5195,6 +5183,7 @@ storage.stats:
       - https://github.com/mozilla-mobile/fenix/pull/12876#issuecomment-666770732
       - https://github.com/mozilla-mobile/fenix/pull/17704#issue-564299127
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/20623#issue-701630599
     data_sensitivity:
       - technical
       - interaction
@@ -5202,7 +5191,7 @@ storage.stats:
       - android-probes@mozilla.com
       - perf-android-fe@mozilla.com
       - mcomella@mozilla.com
-    expires: "2021-08-01"
+    expires: "2022-02-01"
   app_bytes:
     send_in_pings:
       - metrics
@@ -5221,6 +5210,7 @@ storage.stats:
       - https://github.com/mozilla-mobile/fenix/pull/12876#issuecomment-666770732
       - https://github.com/mozilla-mobile/fenix/pull/17704#issue-564299127
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/20623#issue-701630599
     data_sensitivity:
       - technical
       - interaction
@@ -5228,7 +5218,7 @@ storage.stats:
       - android-probes@mozilla.com
       - perf-android-fe@mozilla.com
       - mcomella@mozilla.com
-    expires: "2021-08-01"
+    expires: "2022-02-01"
   cache_bytes:
     send_in_pings:
       - metrics
@@ -5244,6 +5234,7 @@ storage.stats:
       - https://github.com/mozilla-mobile/fenix/pull/12876#issuecomment-666770732
       - https://github.com/mozilla-mobile/fenix/pull/17704#issue-564299127
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/20623#issue-701630599
     data_sensitivity:
       - technical
       - interaction
@@ -5251,7 +5242,7 @@ storage.stats:
       - android-probes@mozilla.com
       - perf-android-fe@mozilla.com
       - mcomella@mozilla.com
-    expires: "2021-08-01"
+    expires: "2022-02-01"
   data_dir_bytes:
     send_in_pings:
       - metrics
@@ -5269,6 +5260,7 @@ storage.stats:
       - https://github.com/mozilla-mobile/fenix/pull/12876#issuecomment-666770732
       - https://github.com/mozilla-mobile/fenix/pull/17704#issue-564299127
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/20623#issue-701630599
     data_sensitivity:
       - technical
       - interaction
@@ -5276,7 +5268,7 @@ storage.stats:
       - android-probes@mozilla.com
       - perf-android-fe@mozilla.com
       - mcomella@mozilla.com
-    expires: "2021-08-01"
+    expires: "2022-02-01"
 
 progressive_web_app:
   homescreen_tap:
