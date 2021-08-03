@@ -47,10 +47,12 @@ class DefaultRecentBookmarksControllerTest {
             every { id } returns R.id.homeFragment
         }
 
-        controller = spyk(DefaultRecentBookmarksController(
-            activity = activity,
-            navController = navController
-        ))
+        controller = spyk(
+            DefaultRecentBookmarksController(
+                activity = activity,
+                navController = navController
+            )
+        )
     }
 
     @After
@@ -67,6 +69,7 @@ class DefaultRecentBookmarksControllerTest {
             position = null,
             title = null,
             url = "https://www.example.com",
+            dateAdded = 0,
             children = null
         )
 

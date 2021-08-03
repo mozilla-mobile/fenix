@@ -86,8 +86,15 @@ sealed class AdapterItem(@LayoutRes val viewType: Int) {
          * See https://github.com/mozilla-mobile/fenix/pull/20189#issuecomment-877124730
          */
         override fun getChangePayload(newItem: AdapterItem): Any? {
-            val newTopSites = (newItem as? TopSitePager) ?: return null
-            val oldTopSites = (this as? TopSitePager) ?: return null
+            val newTopSites = (newItem as? TopSitePager)
+            val oldTopSites = (this as? TopSitePager)
+
+            if (newTopSites == null || oldTopSites == null ||
+                (newTopSites.topSites.size > TopSitePagerViewHolder.TOP_SITES_PER_PAGE)
+                != (oldTopSites.topSites.size > TopSitePagerViewHolder.TOP_SITES_PER_PAGE)
+            ) {
+                return null
+            }
 
             val changed = mutableSetOf<Pair<Int, TopSite>>()
 
@@ -190,28 +197,28 @@ sealed class AdapterItem(@LayoutRes val viewType: Int) {
 
     data class RecentBookmarks(val recentBookmarks: List<BookmarkNode>) :
         AdapterItem(RecentBookmarksViewHolder.LAYOUT_ID) {
-            override fun sameAs(other: AdapterItem): Boolean {
-                val newBookmarks = (other as? RecentBookmarks) ?: return false
-                if (newBookmarks.recentBookmarks.size != this.recentBookmarks.size) {
-                    return false
-                }
-
-                return recentBookmarks.zip(newBookmarks.recentBookmarks).all { (new, old) ->
-                    new.guid == old.guid
-                }
+        override fun sameAs(other: AdapterItem): Boolean {
+            val newBookmarks = (other as? RecentBookmarks) ?: return false
+            if (newBookmarks.recentBookmarks.size != this.recentBookmarks.size) {
+                return false
             }
 
-            override fun contentsSameAs(other: AdapterItem): Boolean {
-                val newBookmarks = (other as? RecentBookmarks) ?: return false
-
-                val newBookmarksSequence = newBookmarks.recentBookmarks.asSequence()
-                val oldBookmarksList = this.recentBookmarks.asSequence()
-
-                return newBookmarksSequence.zip(oldBookmarksList).all { (new, old) ->
-                    new == old
-                }
+            return recentBookmarks.zip(newBookmarks.recentBookmarks).all { (new, old) ->
+                new.guid == old.guid
             }
         }
+
+        override fun contentsSameAs(other: AdapterItem): Boolean {
+            val newBookmarks = (other as? RecentBookmarks) ?: return false
+
+            val newBookmarksSequence = newBookmarks.recentBookmarks.asSequence()
+            val oldBookmarksList = this.recentBookmarks.asSequence()
+
+            return newBookmarksSequence.zip(oldBookmarksList).all { (new, old) ->
+                new == old
+            }
+        }
+    }
 
     data class HistoryMetadataItem(val historyMetadata: HistoryMetadata) : AdapterItem(
         HistoryMetadataViewHolder.LAYOUT_ID

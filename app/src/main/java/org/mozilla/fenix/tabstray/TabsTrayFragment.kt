@@ -162,7 +162,6 @@ class TabsTrayFragment : AppCompatDialogFragment() {
             tabsTrayInteractor,
             tabsTrayController,
             requireComponents.useCases.tabsUseCases.selectTab,
-            requireComponents.settings,
             requireComponents.analytics.metrics
         )
 
@@ -202,8 +201,7 @@ class TabsTrayFragment : AppCompatDialogFragment() {
                 store = requireComponents.core.store,
                 infoBannerView = view.info_banner,
                 settings = requireComponents.settings,
-                navigationInteractor = navigationInteractor,
-                metrics = requireComponents.analytics.metrics
+                navigationInteractor = navigationInteractor
             ),
             owner = this,
             view = view
@@ -216,7 +214,8 @@ class TabsTrayFragment : AppCompatDialogFragment() {
                 browsingModeManager = activity.browsingModeManager,
                 tabsTrayStore = tabsTrayStore,
                 metrics = requireComponents.analytics.metrics
-            ), owner = this,
+            ),
+            owner = this,
             view = view
         )
 

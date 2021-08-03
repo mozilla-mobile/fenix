@@ -10,6 +10,7 @@ import mozilla.components.service.glean.private.NoExtraKeys
 import mozilla.components.support.base.log.logger.Logger
 import org.mozilla.fenix.GleanMetrics.AboutPage
 import org.mozilla.fenix.GleanMetrics.Addons
+import org.mozilla.fenix.GleanMetrics.AndroidAutofill
 import org.mozilla.fenix.GleanMetrics.AndroidKeystoreExperiment
 import org.mozilla.fenix.GleanMetrics.AppTheme
 import org.mozilla.fenix.GleanMetrics.Autoplay
@@ -46,6 +47,7 @@ import org.mozilla.fenix.GleanMetrics.PrivateBrowsingMode
 import org.mozilla.fenix.GleanMetrics.PrivateBrowsingShortcut
 import org.mozilla.fenix.GleanMetrics.ProgressiveWebApp
 import org.mozilla.fenix.GleanMetrics.ReaderMode
+import org.mozilla.fenix.GleanMetrics.RecentTabs
 import org.mozilla.fenix.GleanMetrics.SearchShortcuts
 import org.mozilla.fenix.GleanMetrics.SearchSuggestions
 import org.mozilla.fenix.GleanMetrics.SearchWidget
@@ -58,7 +60,6 @@ import org.mozilla.fenix.GleanMetrics.SyncedTabs
 import org.mozilla.fenix.GleanMetrics.Tab
 import org.mozilla.fenix.GleanMetrics.Tabs
 import org.mozilla.fenix.GleanMetrics.TabsTray
-import org.mozilla.fenix.GleanMetrics.TabsTrayCfr
 import org.mozilla.fenix.GleanMetrics.Tip
 import org.mozilla.fenix.GleanMetrics.ToolbarSettings
 import org.mozilla.fenix.GleanMetrics.TopSites
@@ -700,12 +701,6 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.TabsTrayCloseAllTabsPressed -> EventWrapper<NoExtraKeys>(
             { TabsTray.closeAllTabs.record(it) }
         )
-        is Event.TabsTrayCfrDismissed -> EventWrapper<NoExtraKeys>(
-            { TabsTrayCfr.dismiss.record(it) }
-        )
-        is Event.TabsTrayCfrTapped -> EventWrapper<NoExtraKeys>(
-            { TabsTrayCfr.goToSettings.record(it) }
-        )
         is Event.AutoPlaySettingVisited -> EventWrapper<NoExtraKeys>(
             { Autoplay.visitedSetting.record(it) }
         )
@@ -847,6 +842,43 @@ private val Event.wrapper: EventWrapper<*>?
 
         is Event.StartOnHomeOpenTabsTray -> EventWrapper<NoExtraKeys>(
             { StartOnHome.openTabsTray.record(it) }
+        )
+
+        is Event.OpenRecentTab -> EventWrapper<NoExtraKeys>(
+            { RecentTabs.recentTabOpened.record(it) }
+        )
+
+        is Event.OpenInProgressMediaTab -> EventWrapper<NoExtraKeys>(
+            { RecentTabs.inProgressMediaTabOpened.record(it) }
+        )
+
+        is Event.ShowAllRecentTabs -> EventWrapper<NoExtraKeys>(
+            { RecentTabs.showAllClicked.record(it) }
+        )
+
+        is Event.AndroidAutofillRequestWithLogins -> EventWrapper<NoExtraKeys>(
+            { AndroidAutofill.requestMatchingLogins.record(it) }
+        )
+        is Event.AndroidAutofillRequestWithoutLogins -> EventWrapper<NoExtraKeys>(
+            { AndroidAutofill.requestNoMatchingLogins.record(it) }
+        )
+        is Event.AndroidAutofillSearchDisplayed -> EventWrapper<NoExtraKeys>(
+            { AndroidAutofill.searchDisplayed.record(it) }
+        )
+        is Event.AndroidAutofillSearchItemSelected -> EventWrapper<NoExtraKeys>(
+            { AndroidAutofill.searchItemSelected.record(it) }
+        )
+        is Event.AndroidAutofillUnlockCanceled -> EventWrapper<NoExtraKeys>(
+            { AndroidAutofill.unlockCancelled.record(it) }
+        )
+        is Event.AndroidAutofillUnlockSuccessful -> EventWrapper<NoExtraKeys>(
+            { AndroidAutofill.unlockSuccessful.record(it) }
+        )
+        is Event.AndroidAutofillConfirmationCanceled -> EventWrapper<NoExtraKeys>(
+            { AndroidAutofill.confirmCancelled.record(it) }
+        )
+        is Event.AndroidAutofillConfirmationSuccessful -> EventWrapper<NoExtraKeys>(
+            { AndroidAutofill.confirmSuccessful.record(it) }
         )
 
         // Don't record other events in Glean:

@@ -3,20 +3,22 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 object Versions {
-    const val kotlin = "1.5.20"
+    const val kotlin = "1.5.10"
     const val coroutines = "1.5.0"
 
     // These versions are linked: lint should be X+23.Y.Z of gradle_plugin version, according to:
     // https://github.com/alexjlockwood/android-lint-checks-demo/blob/0245fc027463137b1b4afb97c5295d60dce998b6/dependencies.gradle#L3
-    const val android_gradle_plugin = "4.2.2"
-    const val android_lint_api = "27.0.1"
+    const val android_gradle_plugin = "7.0.0"
+    const val android_lint_api = "30.0.0"
 
     const val sentry = "1.7.10"
     const val leakcanary = "2.4"
-    const val osslicenses_plugin = "0.9.5"
+    const val osslicenses_plugin = "0.10.4"
     const val detekt = "1.17.1"
     const val jna = "5.6.0"
 
+    const val androidx_activity_compose = "1.3.0"
+    const val androidx_compose = "1.0.0"
     const val androidx_appcompat = "1.3.0"
     const val androidx_benchmark = "1.0.0"
     const val androidx_biometric = "1.1.0"
@@ -41,11 +43,11 @@ object Versions {
     const val installreferrer = "1.0"
 
     const val junit = "5.5.2"
-    const val mockk = "1.10.0"
+    const val mockk = "1.12.0"
 
     const val mockwebserver = "4.9.0"
     const val uiautomator = "2.2.0"
-    const val robolectric = "4.3.1"
+    const val robolectric = "4.6.1"
 
     const val google_ads_id_version = "16.0.0"
 
@@ -164,6 +166,12 @@ object Deps {
     const val sentry = "io.sentry:sentry-android:${Versions.sentry}"
     const val leakcanary = "com.squareup.leakcanary:leakcanary-android:${Versions.leakcanary}"
 
+    const val androidx_compose_ui = "androidx.compose.ui:ui:${Versions.androidx_compose}"
+    const val androidx_compose_ui_test = "androidx.compose.ui:ui-test-junit4:${Versions.androidx_compose}"
+    const val androidx_compose_ui_test_manifest = "androidx.compose.ui:ui-test-manifest:${Versions.androidx_compose}"
+    const val androidx_compose_ui_tooling = "androidx.compose.ui:ui-tooling:${Versions.androidx_compose}"
+    const val androidx_compose_foundation = "androidx.compose.foundation:foundation:${Versions.androidx_compose}"
+    const val androidx_compose_material = "androidx.compose.material:material:${Versions.androidx_compose}"
     const val androidx_annotation = "androidx.annotation:annotation:${Versions.androidx_annotation}"
     const val androidx_benchmark_junit4 = "androidx.benchmark:benchmark-junit4:${Versions.androidx_benchmark}"
     const val androidx_biometric = "androidx.biometric:biometric:${Versions.androidx_biometric}"

@@ -190,8 +190,6 @@ sealed class Event {
     object TabsTraySaveToCollectionPressed : Event()
     object TabsTrayShareAllTabsPressed : Event()
     object TabsTrayCloseAllTabsPressed : Event()
-    object TabsTrayCfrDismissed : Event()
-    object TabsTrayCfrTapped : Event()
 
     object ProgressiveWebAppOpenFromHomescreenTap : Event()
     object ProgressiveWebAppInstallAsShortcut : Event()
@@ -243,6 +241,21 @@ sealed class Event {
     // Start on Home
     object StartOnHomeEnterHomeScreen : Event()
     object StartOnHomeOpenTabsTray : Event()
+
+    // Recent tabs
+    object ShowAllRecentTabs : Event()
+    object OpenRecentTab : Event()
+    object OpenInProgressMediaTab : Event()
+
+    // Android Autofill
+    object AndroidAutofillUnlockSuccessful : Event()
+    object AndroidAutofillUnlockCanceled : Event()
+    object AndroidAutofillSearchDisplayed : Event()
+    object AndroidAutofillSearchItemSelected : Event()
+    object AndroidAutofillConfirmationSuccessful : Event()
+    object AndroidAutofillConfirmationCanceled : Event()
+    object AndroidAutofillRequestWithLogins : Event()
+    object AndroidAutofillRequestWithoutLogins : Event()
 
     // Interaction events with extras
 
