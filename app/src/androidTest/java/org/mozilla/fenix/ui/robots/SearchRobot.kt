@@ -73,8 +73,10 @@ class SearchRobot {
         selectDefaultSearchEngine(searchEngineName)
 
     fun clickSearchEngineShortcutButton() {
-        val searchEnginesShortcutButton = mDevice.findObject(UiSelector()
-            .resourceId("$packageName:id/search_engines_shortcut_button"))
+        val searchEnginesShortcutButton = mDevice.findObject(
+            UiSelector()
+                .resourceId("$packageName:id/search_engines_shortcut_button")
+        )
         searchEnginesShortcutButton.waitForExists(waitingTime)
         searchEnginesShortcutButton.click()
     }
@@ -222,10 +224,10 @@ private fun searchWrapper() = onView(withId(R.id.search_wrapper))
 
 private fun assertSearchEngineURL(searchEngineName: String) {
     mDevice.waitNotNull(
-        Until.findObject(By.textContains("${searchEngineName.toLowerCase()}.com/?q=mozilla")),
+        Until.findObject(By.textContains("${searchEngineName.lowercase()}.com/?q=mozilla")),
         TestAssetHelper.waitingTime
     )
-    onView(allOf(withText(startsWith("${searchEngineName.toLowerCase()}.com"))))
+    onView(allOf(withText(startsWith("${searchEngineName.lowercase()}.com"))))
         .check(matches(ViewMatchers.withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
 }
 
@@ -270,7 +272,8 @@ private fun assertKeyboardVisibility(isExpectedToBeVisible: Boolean) = {
     mDevice.waitNotNull(
         Until.findObject(
             By.text("Search Engine")
-        ), waitingTime
+        ),
+        waitingTime
     )
     assertEquals(
         isExpectedToBeVisible,

@@ -6,9 +6,9 @@ package org.mozilla.fenix.home.sessioncontrol.viewholders.topsites
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.annotation.VisibleForTesting
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import kotlinx.android.synthetic.main.component_top_sites.view.*
 import mozilla.components.feature.top.sites.TopSite
 import org.mozilla.fenix.home.sessioncontrol.AdapterItem.TopSitePagerPayload
 import org.mozilla.fenix.home.sessioncontrol.TopSiteInteractor
@@ -34,7 +34,7 @@ class TopSitesPagerAdapter(
             onBindViewHolder(holder, position)
         } else {
             if (payloads[0] is TopSitePagerPayload) {
-                val adapter = holder.itemView.top_sites_list.adapter as TopSitesAdapter
+                val adapter = holder.binding.topSitesList.adapter as TopSitesAdapter
                 val payload = payloads[0] as TopSitePagerPayload
 
                 update(payload, position, adapter)
@@ -42,23 +42,43 @@ class TopSitesPagerAdapter(
         }
     }
 
-    private fun update(
+    @VisibleForTesting
+    internal fun update(
         payload: TopSitePagerPayload,
         position: Int,
         adapter: TopSitesAdapter
     ) {
-        // Only currently selected page items need to be updated.
-        for (item in payload.changed) {
-            if (item.first < TOP_SITES_PER_PAGE && position == 0) {
-                adapter.notifyItemChanged(item.first, item.second)
-            } else if (item.first >= TOP_SITES_PER_PAGE && position == 1) {
-                adapter.notifyItemChanged(item.first - TOP_SITES_PER_PAGE, item.second)
-            }
+        // Only currently selected page items need to be updated
+        val currentPageChangedItems = getCurrentPageChanges(payload, position)
+
+        // If no changes have been made to the current page no need to continue
+        if (currentPageChangedItems.isEmpty()) return
+
+        // Build the new list from the old one
+        val refreshedItems: MutableList<TopSite> = mutableListOf()
+        refreshedItems.addAll(adapter.currentList)
+
+        // Update new list with the changed items
+        currentPageChangedItems.forEach { item ->
+            refreshedItems[item.first - (position * TOP_SITES_PER_PAGE)] = item.second
         }
+
+        // Display the updated list without any of the removed items
+        adapter.submitList(refreshedItems.filter { it.id != -1L })
     }
 
+    /**
+     * @returns the changed only items for the currently specified page in [position]
+     */
+    @VisibleForTesting
+    internal fun getCurrentPageChanges(payload: TopSitePagerPayload, position: Int) =
+        payload.changed.filter { changedPair ->
+            if (position == 0) changedPair.first < TOP_SITES_PER_PAGE
+            else changedPair.first >= TOP_SITES_PER_PAGE
+        }
+
     override fun onBindViewHolder(holder: TopSiteViewHolder, position: Int) {
-        val adapter = holder.itemView.top_sites_list.adapter as TopSitesAdapter
+        val adapter = holder.binding.topSitesList.adapter as TopSitesAdapter
         adapter.submitList(getItem(position))
     }
 

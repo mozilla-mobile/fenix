@@ -181,14 +181,14 @@ class Settings(private val appContext: Context) : PreferencesHolder {
             appContext.getString(R.string.pref_key_migrating_from_fenix_nightly_tip),
             true
         ) &&
-                preferences.getBoolean(
-                    appContext.getString(R.string.pref_key_migrating_from_firefox_nightly_tip),
-                    true
-                ) &&
-                preferences.getBoolean(
-                    appContext.getString(R.string.pref_key_migrating_from_fenix_tip),
-                    true
-                )
+            preferences.getBoolean(
+                appContext.getString(R.string.pref_key_migrating_from_firefox_nightly_tip),
+                true
+            ) &&
+            preferences.getBoolean(
+                appContext.getString(R.string.pref_key_migrating_from_fenix_tip),
+                true
+            )
 
     var defaultSearchEngineName by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_search_engine),
@@ -212,10 +212,10 @@ class Settings(private val appContext: Context) : PreferencesHolder {
 
     val isCrashReportingEnabled: Boolean
         get() = isCrashReportEnabledInBuild &&
-                preferences.getBoolean(
-                    appContext.getPreferenceKey(R.string.pref_key_crash_reporter),
-                    true
-                )
+            preferences.getBoolean(
+                appContext.getPreferenceKey(R.string.pref_key_crash_reporter),
+                true
+            )
 
     val isRemoteDebuggingEnabled by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_remote_debugging),
@@ -242,8 +242,10 @@ class Settings(private val appContext: Context) : PreferencesHolder {
 
     val shouldShowTrackingProtectionCfr: Boolean
         get() = !isOverrideTPPopupsForPerformanceTest && canShowCfr &&
-                (trackingProtectionOnboardingCount.underMaxCount() &&
-                        !trackingProtectionOnboardingShownThisSession)
+            (
+                trackingProtectionOnboardingCount.underMaxCount() &&
+                    !trackingProtectionOnboardingShownThisSession
+                )
 
     var showSecretDebugMenuThisSession = false
 
@@ -318,9 +320,9 @@ class Settings(private val appContext: Context) : PreferencesHolder {
                 (experimentBranch == ExperimentBranch.DEFAULT_BROWSER_NEW_TAB_BANNER)
             }
         return isExperimentBranch == true &&
-                !userDismissedExperimentCard &&
-                !browsers.isFirefoxDefaultBrowser &&
-                numberOfAppLaunches > APP_LAUNCHES_TO_SHOW_DEFAULT_BROWSER_CARD
+            !userDismissedExperimentCard &&
+            !browsers.isFirefoxDefaultBrowser &&
+            numberOfAppLaunches > APP_LAUNCHES_TO_SHOW_DEFAULT_BROWSER_CARD
     }
 
     var gridTabView by booleanPreference(
@@ -330,7 +332,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
 
     var manuallyCloseTabs by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_close_tabs_manually),
-        default = true
+        default = FeatureFlags.inactiveTabs.not()
     )
 
     var closeTabsAfterOneDay by booleanPreference(
@@ -345,7 +347,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
 
     var closeTabsAfterOneMonth by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_close_tabs_after_one_month),
-        default = false
+        default = FeatureFlags.inactiveTabs
     )
 
     var allowThirdPartyRootCerts by booleanPreference(
@@ -471,15 +473,24 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     /**
-     * Caches the last known "is default browser" state when the app was paused.
-     * For an up to do date state use `isDefaultBrowser` instead.
+     * Declared as a function for performance purposes. This could be declared as a variable using
+     * booleanPreference like other members of this class. However, doing so will make it so it will
+     * be initialized once Settings.kt is first called, which in turn will call `isDefaultBrowserBlocking()`.
+     * This will lead to a performance regression since that function can be expensive to call.
      */
-    var wasDefaultBrowserOnLastResume by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_default_browser),
-        default = isDefaultBrowser()
-    )
+    fun checkIfFenixIsDefaultBrowserOnAppResume(): Boolean {
+        val prefKey = appContext.getPreferenceKey(R.string.pref_key_default_browser)
+        val isDefaultBrowserNow = isDefaultBrowserBlocking()
+        val wasDefaultBrowserOnLastResume = this.preferences.getBoolean(prefKey, isDefaultBrowserNow)
+        this.preferences.edit().putBoolean(prefKey, isDefaultBrowserNow).apply()
+        return isDefaultBrowserNow && !wasDefaultBrowserOnLastResume
+    }
 
-    fun isDefaultBrowser(): Boolean {
+    /**
+     * This function is "blocking" since calling this can take approx. 30-40ms (timing taken on a
+     * G5+).
+     */
+    fun isDefaultBrowserBlocking(): Boolean {
         val browsers = BrowsersCache.all(appContext)
         return browsers.isDefaultBrowser
     }
@@ -490,7 +501,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     fun shouldShowDefaultBrowserNotification(): Boolean {
-        return !defaultBrowserNotificationDisplayed && !isDefaultBrowser()
+        return !defaultBrowserNotificationDisplayed && !isDefaultBrowserBlocking()
     }
 
     val shouldUseAutoBatteryTheme by booleanPreference(
@@ -1126,6 +1137,17 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         appContext.getPreferenceKey(R.string.pref_key_show_address_feature),
         default = false,
         featureFlag = FeatureFlags.addressesFeature
+    )
+
+    var isHistoryMetadataEnabled by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_history_metadata_feature),
+        default = false
+    )
+
+    var historyMetadataFeature by featureFlagPreference(
+        appContext.getPreferenceKey(R.string.pref_key_history_metadata_feature),
+        default = FeatureFlags.historyMetadataFeature,
+        featureFlag = FeatureFlags.historyMetadataFeature || isHistoryMetadataEnabled
     )
 
     /**

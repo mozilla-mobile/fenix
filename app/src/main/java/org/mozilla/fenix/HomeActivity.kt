@@ -161,7 +161,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             StartSearchIntentProcessor(components.analytics.metrics),
             OpenBrowserIntentProcessor(this, ::getIntentSessionId),
             OpenSpecificTabIntentProcessor(this),
-            DefaultBrowserIntentProcessor(this)
+            DefaultBrowserIntentProcessor(this, components.analytics.metrics)
         )
     }
 
@@ -220,7 +220,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             shouldNavigateBrowserFragmentOnCouldStart(savedInstanceState)
         ) {
             navigateToBrowserOnColdStart()
-        } else {
+        } else if (FeatureFlags.showStartOnHomeSettings) {
             components.analytics.metrics.track(Event.StartOnHomeEnterHomeScreen)
         }
 
@@ -257,7 +257,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
         captureSnapshotTelemetryMetrics()
 
-        startupTelemetryOnCreateCalled(intent.toSafeIntent(), savedInstanceState != null)
+        startupTelemetryOnCreateCalled(intent.toSafeIntent())
         startupPathProvider.attachOnActivityOnCreate(lifecycle, intent)
         startupTypeTelemetry = StartupTypeTelemetry(components.startupStateProvider, startupPathProvider).apply {
             attachOnHomeActivityOnCreate(lifecycle)
@@ -268,34 +268,15 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         StartupTimeline.onActivityCreateEndHome(this) // DO NOT MOVE ANYTHING BELOW HERE.
     }
 
-    protected open fun startupTelemetryOnCreateCalled(
-        safeIntent: SafeIntent,
-        hasSavedInstanceState: Boolean
-    ) {
-        // This function gets overridden by subclasses.
-        components.appStartupTelemetry.onHomeActivityOnCreate(
-            safeIntent,
-            hasSavedInstanceState,
-            homeActivityInitTimeStampNanoSeconds, rootContainer
-        )
-
+    private fun startupTelemetryOnCreateCalled(safeIntent: SafeIntent) {
+        // We intentionally only record this in HomeActivity and not ExternalBrowserActivity (e.g.
+        // PWAs) so we don't include more unpredictable code paths in the results.
         components.performance.coldStartupDurationTelemetry.onHomeActivityOnCreate(
             components.performance.visualCompletenessQueue,
             components.startupStateProvider,
             safeIntent,
             rootContainer
         )
-    }
-
-    override fun onRestart() {
-        // DO NOT MOVE ANYTHING ABOVE THIS..
-        // we are measuring startup time for hot startup type
-        startupTelemetryOnRestartCalled()
-        super.onRestart()
-    }
-
-    private fun startupTelemetryOnRestartCalled() {
-        components.appStartupTelemetry.onHomeActivityOnRestart(rootContainer)
     }
 
     @CallSuper
@@ -330,19 +311,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             }
         }
 
-        // Launch this on a background thread so as not to affect startup performance
-        lifecycleScope.launch(IO) {
-            if (
-                settings().isDefaultBrowser() &&
-                settings().wasDefaultBrowserOnLastResume != settings().isDefaultBrowser()
-            ) {
-                metrics.track(Event.ChangedToDefaultBrowser)
-            }
-
-            settings().wasDefaultBrowserOnLastResume = settings().isDefaultBrowser()
-
-            DefaultBrowserNotificationWorker.setDefaultBrowserNotificationIfNeeded(applicationContext)
-        }
+        isFenixTheDefaultBrowser()
     }
 
     override fun onStart() = PerfStartup.homeActivityOnStart.measureNoInline {
@@ -368,8 +337,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
                 "finishing" to isFinishing.toString()
             )
         )
-
-        components.appStartupTelemetry.onStop()
     }
 
     final override fun onPause() {
@@ -515,8 +482,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             .toSafeIntent()
             .let(::getIntentAllSource)
             ?.also { components.analytics.metrics.track(Event.AppReceivedIntent(it)) }
-
-        components.appStartupTelemetry.onHomeActivityOnNewIntent(intent.toSafeIntent())
     }
 
     /**
@@ -981,14 +946,27 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         }
     }
 
+    private fun isFenixTheDefaultBrowser() {
+        // Launch this on a background thread so as not to affect startup performance
+        lifecycleScope.launch(IO) {
+            if (
+                settings().checkIfFenixIsDefaultBrowserOnAppResume()
+            ) {
+                metrics.track(Event.ChangedToDefaultBrowser)
+            }
+
+            DefaultBrowserNotificationWorker.setDefaultBrowserNotificationIfNeeded(applicationContext)
+        }
+    }
+
     @VisibleForTesting
     internal fun isActivityColdStarted(startingIntent: Intent, activityIcicle: Bundle?): Boolean {
         // First time opening this activity in the task.
         // Cold start / start from Recents after back press.
         return activityIcicle == null &&
-                // Activity was restarted from Recents after it was destroyed by Android while in background
-                // in cases of memory pressure / "Don't keep activities".
-                startingIntent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY == 0
+            // Activity was restarted from Recents after it was destroyed by Android while in background
+            // in cases of memory pressure / "Don't keep activities".
+            startingIntent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY == 0
     }
 
     /**
@@ -996,6 +974,9 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
      *  links from an external apps should always opened in the [BrowserFragment].
      */
     fun shouldStartOnHome(intent: Intent? = this.intent): Boolean {
+        if (!FeatureFlags.showStartOnHomeSettings) {
+            return false
+        }
         return components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
             // We only want to open on home when users tap the app,
             // we want to ignore other cases when the app gets open by users clicking on links.

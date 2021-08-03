@@ -225,21 +225,21 @@ class SettingsTest {
     fun shouldManuallyCloseTabs() {
         // When just created
         // Then
-        assertTrue(settings.manuallyCloseTabs)
+        assertFalse(settings.manuallyCloseTabs)
 
         // When
-        settings.manuallyCloseTabs = false
+        settings.manuallyCloseTabs = true
 
         // Then
-        assertFalse(settings.shouldUseLightTheme)
+        assertTrue(settings.manuallyCloseTabs)
     }
 
     @Test
     fun getTabTimeout() {
         // When just created
         // Then
-        assertTrue(settings.manuallyCloseTabs)
-        assertEquals(Long.MAX_VALUE, settings.getTabTimeout())
+        assertTrue(settings.closeTabsAfterOneMonth)
+        assertEquals(Settings.ONE_MONTH_MS, settings.getTabTimeout())
 
         // When
         settings.manuallyCloseTabs = false
@@ -749,7 +749,7 @@ class SettingsTest {
     @Test
     fun `GIVEN shownDefaultBrowserNotification and isDefaultBrowser WHEN calling shouldShowDefaultBrowserNotification THEN return correct value`() {
         val localSetting = spyk(settings)
-        every { localSetting.isDefaultBrowser() } returns false
+        every { localSetting.isDefaultBrowserBlocking() } returns false
 
         localSetting.defaultBrowserNotificationDisplayed = false
         assert(localSetting.shouldShowDefaultBrowserNotification())
@@ -757,7 +757,7 @@ class SettingsTest {
         localSetting.defaultBrowserNotificationDisplayed = true
         assertFalse(localSetting.shouldShowDefaultBrowserNotification())
 
-        every { localSetting.isDefaultBrowser() } returns true
+        every { localSetting.isDefaultBrowserBlocking() } returns true
 
         localSetting.defaultBrowserNotificationDisplayed = false
         assertFalse(localSetting.shouldShowDefaultBrowserNotification())

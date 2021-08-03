@@ -7,6 +7,8 @@ package org.mozilla.fenix.components
 import android.app.Application
 import android.content.Context
 import android.content.Intent
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.net.toUri
 import com.google.android.play.core.review.ReviewManagerFactory
 import mozilla.components.feature.addons.AddonManager
@@ -25,7 +27,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.autofill.AutofillConfirmActivity
 import org.mozilla.fenix.autofill.AutofillSearchActivity
 import org.mozilla.fenix.autofill.AutofillUnlockActivity
-import org.mozilla.fenix.components.metrics.AppStartupTelemetry
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.perf.AppStartReasonProvider
 import org.mozilla.fenix.perf.StartupActivityLog
@@ -120,8 +122,6 @@ class Components(private val context: Context) {
         }
     }
 
-    val appStartupTelemetry by lazyMonitored { AppStartupTelemetry(analytics.metrics) }
-
     @Suppress("MagicNumber")
     val addonUpdater by lazyMonitored {
         DefaultAddonUpdater(context, AddonUpdater.Frequency(12, TimeUnit.HOURS))
@@ -129,7 +129,8 @@ class Components(private val context: Context) {
 
     @Suppress("MagicNumber")
     val supportedAddonsChecker by lazyMonitored {
-        DefaultSupportedAddonsChecker(context, SupportedAddonsChecker.Frequency(12, TimeUnit.HOURS),
+        DefaultSupportedAddonsChecker(
+            context, SupportedAddonsChecker.Frequency(12, TimeUnit.HOURS),
             onNotificationClickIntent = Intent(context, HomeActivity::class.java).apply {
                 action = Intent.ACTION_VIEW
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -176,3 +177,10 @@ class Components(private val context: Context) {
     val startupActivityLog by lazyMonitored { StartupActivityLog() }
     val startupStateProvider by lazyMonitored { StartupStateProvider(startupActivityLog, appStartReasonProvider) }
 }
+
+/**
+ * Returns the [Components] object from within a [Composable].
+ */
+val components: Components
+    @Composable
+    get() = LocalContext.current.components

@@ -21,10 +21,10 @@ import mozilla.components.browser.state.state.SessionState
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.thumbnails.BrowserThumbnails
 import mozilla.components.browser.toolbar.BrowserToolbar
+import mozilla.components.concept.engine.permission.SitePermissions
 import mozilla.components.feature.app.links.AppLinksUseCases
 import mozilla.components.feature.contextmenu.ContextMenuCandidate
 import mozilla.components.feature.readerview.ReaderViewFeature
-import mozilla.components.concept.engine.permission.SitePermissions
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.tabs.WindowFeature
 import mozilla.components.support.base.feature.UserInteractionHandler
@@ -41,6 +41,7 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.shortcut.PwaOnboardingObserver
+import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.trackingprotection.TrackingProtectionOverlay
 
 /**
@@ -85,6 +86,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                     R.drawable.mozac_ic_home
                 )!!,
                 contentDescription = requireContext().getString(R.string.browser_toolbar_home),
+                iconTintColorResource = ThemeManager.resolveAttribute(R.attr.primaryText, context),
                 listener = browserToolbarInteractor::onHomeButtonClicked
             )
 
@@ -206,7 +208,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
     override fun onStop() {
         super.onStop()
         updateLastBrowseActivity()
-        if (FeatureFlags.historyMetadataFeature) {
+        if (requireContext().settings().historyMetadataFeature) {
             updateHistoryMetadata()
         }
         pwaOnboardingObserver?.stop()
