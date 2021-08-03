@@ -5,8 +5,7 @@
 package org.mozilla.fenix.home.recenttabs.view
 
 import android.view.View
-import kotlinx.android.synthetic.main.recent_tabs_header.*
-import mozilla.components.support.ktx.android.view.hideKeyboard
+import androidx.navigation.findNavController
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.RecentTabsHeaderBinding
 import org.mozilla.fenix.home.recenttabs.interactor.RecentTabInteractor
@@ -18,7 +17,7 @@ import org.mozilla.fenix.utils.view.ViewHolder
  * @param interactor [RecentTabInteractor] which will have delegated to all user interactions.
  */
 class RecentTabsHeaderViewHolder(
-    val view: View,
+    view: View,
     private val interactor: RecentTabInteractor
 ) : ViewHolder(view) {
 
@@ -26,9 +25,15 @@ class RecentTabsHeaderViewHolder(
 
         val binding = RecentTabsHeaderBinding.bind(view)
         binding.showAllButton.setOnClickListener {
-        show_all_button.setOnClickListener {
-            view.hideKeyboard()
+            dismissSearchDialogIfDisplayed()
             interactor.onRecentTabShowAllClicked()
+        }
+    }
+
+    private fun dismissSearchDialogIfDisplayed() {
+        val navController = itemView.findNavController()
+        if (navController.currentDestination?.id == R.id.searchDialogFragment) {
+            navController.navigateUp()
         }
     }
 

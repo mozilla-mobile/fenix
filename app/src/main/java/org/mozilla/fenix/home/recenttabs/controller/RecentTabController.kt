@@ -58,20 +58,9 @@ class DefaultRecentTabsController(
 
     override fun handleRecentTabShowAllClicked() {
         metrics.track(Event.ShowAllRecentTabs)
-        dismissSearchDialogIfDisplayed()
-
         navController.nav(
             R.id.homeFragment,
             HomeFragmentDirections.actionGlobalTabsTrayFragment()
         )
-    }
-
-    private fun dismissSearchDialogIfDisplayed() {
-        // Not using navigateUP() because of use hideKeyboard() in
-        // RecentTabsHeaderViewHolder, RecentBookmarksViewHolder
-        //
-        if (false && navController.currentDestination?.id == R.id.searchDialogFragment) {
-            navController.navigateUp()
-        }
     }
 }
