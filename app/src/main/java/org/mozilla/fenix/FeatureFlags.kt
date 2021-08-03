@@ -53,4 +53,17 @@ object FeatureFlags {
      * Enables the recently saved bookmarks feature in the home screen.
      */
     val recentBookmarksFeature = Config.channel.isNightlyOrDebug
+
+    /**
+     * Identifies and separates the tabs list with a secondary section containing least used tabs.
+     */
+    val inactiveTabs = Config.channel.isNightlyOrDebug
+
+    /**
+     * Enables support for Android Autofill.
+     *
+     * In addition to toggling this flag, matching entries in the Android Manifest of the build
+     * type need to present.
+     */
+    val androidAutofill = Config.channel.isNightlyOrDebug
 }
