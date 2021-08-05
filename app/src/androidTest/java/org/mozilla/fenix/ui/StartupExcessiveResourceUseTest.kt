@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.fenix.perf
+package org.mozilla.fenix.ui
 
 import android.util.Log
 import android.view.View
@@ -18,6 +18,9 @@ import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.HomeActivityTestRule
+import org.mozilla.fenix.perf.ComponentInitCount
+import org.mozilla.fenix.perf.InflationCounter
+import org.mozilla.fenix.perf.RunBlockingCounter
 
 // BEFORE INCREASING THESE VALUES, PLEASE CONSULT WITH THE PERF TEAM.
 private const val EXPECTED_SUPPRESSION_COUNT = 11
