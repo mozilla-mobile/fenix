@@ -14,12 +14,9 @@ import org.junit.After
 import org.junit.Assert.assertFalse
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
-import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 
 @ExperimentalCoroutinesApi
-@RunWith(FenixRobolectricTestRunner::class)
 class DownloadControllerTest {
     private val downloadItem = DownloadItem(
         id = "0",
