@@ -5100,6 +5100,79 @@ perf.awesomebar:
       - android-probes@mozilla.com
       - gkruglov@mozilla.com
     expires: "2021-11-15"
+  combined_history_suggestions:
+    send_in_pings:
+      - metrics
+    type: timing_distribution
+    time_unit: millisecond
+    description: >
+      Duration of a combined history awesomebar suggestion query
+    bugs:
+      - https://github.com/mozilla-mobile/android-components/issues/20668
+    data_reviews:
+      - TBD
+    data_sensitivity:
+      - technical
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+      - gkruglov@mozilla.com
+    expires: "2021-11-15"
+  metadata_history_suggestions:
+    send_in_pings:
+      - metrics
+    type: timing_distribution
+    time_unit: millisecond
+    description: >
+      Duration of a metadata history awesomebar suggestion query
+    bugs:
+      - https://github.com/mozilla-mobile/android-components/issues/20668
+    data_reviews:
+      - TBD
+    data_sensitivity:
+      - technical
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+      - gkruglov@mozilla.com
+    expires: "2021-11-15"
+  search_action_suggestions:
+    send_in_pings:
+      - metrics
+    type: timing_distribution
+    time_unit: millisecond
+    description: >
+      Duration of a search action awesomebar suggestion query
+    bugs:
+      - https://github.com/mozilla-mobile/android-components/issues/20668
+    data_reviews:
+      - TBD
+    data_sensitivity:
+      - technical
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+      - gkruglov@mozilla.com
+    expires: "2021-11-15"
+  search_engine_list_suggestions:
+    send_in_pings:
+      - metrics
+    type: timing_distribution
+    time_unit: millisecond
+    description: >
+      Duration of a search engine name from our predefined list awesomebar
+      suggestion query
+    bugs:
+      - https://github.com/mozilla-mobile/android-components/issues/20668
+    data_reviews:
+      - TBD
+    data_sensitivity:
+      - technical
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+      - gkruglov@mozilla.com
+    expires: "2021-11-15"
 
 autoplay:
   visited_setting:

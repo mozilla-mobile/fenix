@@ -13,7 +13,11 @@ import mozilla.components.feature.autofill.facts.AutofillFacts
 import mozilla.components.feature.awesomebar.facts.AwesomeBarFacts
 import mozilla.components.feature.awesomebar.provider.BookmarksStorageSuggestionProvider
 import mozilla.components.feature.awesomebar.provider.ClipboardSuggestionProvider
+import mozilla.components.feature.awesomebar.provider.CombinedHistorySuggestionProvider
+import mozilla.components.feature.awesomebar.provider.HistoryMetadataSuggestionProvider
 import mozilla.components.feature.awesomebar.provider.HistoryStorageSuggestionProvider
+import mozilla.components.feature.awesomebar.provider.SearchActionProvider
+import mozilla.components.feature.awesomebar.provider.SearchEngineSuggestionProvider
 import mozilla.components.feature.awesomebar.provider.SearchSuggestionProvider
 import mozilla.components.feature.awesomebar.provider.SessionSuggestionProvider
 import mozilla.components.feature.contextmenu.facts.ContextMenuFacts
@@ -26,6 +30,7 @@ import mozilla.components.feature.prompts.facts.CreditCardAutofillDialogFacts
 import mozilla.components.feature.pwa.ProgressiveWebAppFacts
 import mozilla.components.feature.search.telemetry.ads.AdsTelemetry
 import mozilla.components.feature.search.telemetry.incontent.InContentTelemetry
+import mozilla.components.feature.syncedtabs.SyncedTabsStorageSuggestionProvider
 import mozilla.components.feature.syncedtabs.facts.SyncedTabsFacts
 import mozilla.components.feature.top.sites.facts.TopSitesFacts
 import mozilla.components.lib.dataprotect.SecurePrefsReliabilityExperiment
@@ -241,13 +246,17 @@ internal class ReleaseMetricController(
             metadata?.get(BrowserAwesomeBarFacts.MetadataKeys.DURATION_PAIR)?.let { providerTiming ->
                 require(providerTiming is Pair<*, *>) { "Expected providerTiming to be a Pair" }
                 when (val provider = providerTiming.first as AwesomeBar.SuggestionProvider) {
+                    is CombinedHistorySuggestionProvider -> PerfAwesomebar.combinedHistorySuggestions
+                    is HistoryMetadataSuggestionProvider -> PerfAwesomebar.metadataHistorySuggestions
                     is HistoryStorageSuggestionProvider -> PerfAwesomebar.historySuggestions
                     is BookmarksStorageSuggestionProvider -> PerfAwesomebar.bookmarkSuggestions
                     is SessionSuggestionProvider -> PerfAwesomebar.sessionSuggestions
                     is SearchSuggestionProvider -> PerfAwesomebar.searchEngineSuggestions
+                    is SearchEngineSuggestionProvider -> PerfAwesomebar.searchEngineListSuggestions
+                    is SearchActionProvider -> PerfAwesomebar.searchActionSuggestions
                     is ClipboardSuggestionProvider -> PerfAwesomebar.clipboardSuggestions
                     is ShortcutsSuggestionProvider -> PerfAwesomebar.shortcutsSuggestions
-                    // NB: add PerfAwesomebar.syncedTabsSuggestions once we're using SyncedTabsSuggestionProvider
+                    is SyncedTabsStorageSuggestionProvider -> PerfAwesomebar.syncedTabsSuggestions
                     else -> {
                         Logger("Metrics").error("Unknown suggestion provider: $provider")
                         null
