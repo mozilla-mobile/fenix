@@ -21,7 +21,7 @@ import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.home.HomeFragment
-import org.mozilla.fenix.tabstray.browser.DEFAULT_INACTIVE_DAYS
+import org.mozilla.fenix.tabstray.browser.DEFAULT_ACTIVE_DAYS
 import java.util.concurrent.TimeUnit
 
 interface TabsTrayController {
@@ -59,6 +59,11 @@ interface TabsTrayController {
     fun handleMultipleTabsDeletion(tabs: Collection<Tab>)
 
     /**
+     * Navigate from TabsTray to Recently Closed section in the History fragment.
+     */
+    fun handleNavigateToRecentlyClosed()
+
+    /**
      * Set the list of [tabs] into the inactive state.
      *
      * ⚠️ DO NOT USE THIS OUTSIDE OF DEBUGGING/TESTING.
@@ -67,7 +72,7 @@ interface TabsTrayController {
      */
     fun forceTabsAsInactive(
         tabs: Collection<Tab>,
-        numOfDays: Long = DEFAULT_INACTIVE_DAYS + 1
+        numOfDays: Long = DEFAULT_ACTIVE_DAYS + 1
     )
 }
 
@@ -158,6 +163,15 @@ class DefaultTabsTrayController(
             }
         }
         showUndoSnackbarForTab(isPrivate)
+    }
+
+    /**
+     * Dismisses the tabs tray and navigates to the Recently Closed section in the History fragment.
+     */
+    override fun handleNavigateToRecentlyClosed() {
+        dismissTray()
+
+        navController.navigate(R.id.recentlyClosedFragment)
     }
 
     /**
