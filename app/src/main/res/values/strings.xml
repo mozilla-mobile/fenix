@@ -1798,5 +1798,7 @@
 
     <!-- Content description for privacy content close button -->
     <string name="privacy_content_close_button_content_description">Close</string>
+    <string name="dummy">A DUMMY TEXT</string>
+
 
 </resources>

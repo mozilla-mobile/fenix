@@ -403,6 +403,8 @@ configurations {
 dependencies {
     jnaForTest Deps.jna
     testImplementation files(configurations.jnaForTest.copyRecursive().files)
+    implementation 'com.airbnb.android:lottie:3.4.0'
+
 
     implementation  Deps.mozilla_browser_engine_gecko
 
