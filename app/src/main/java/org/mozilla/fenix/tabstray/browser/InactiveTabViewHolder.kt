@@ -11,6 +11,8 @@ import mozilla.components.browser.toolbar.MAX_URI_LENGTH
 import mozilla.components.concept.tabstray.Tab
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.InactiveFooterItemBinding
+import org.mozilla.fenix.databinding.InactiveRecentlyClosedItemBinding
+import org.mozilla.fenix.databinding.InactiveHeaderItemBinding
 import org.mozilla.fenix.databinding.InactiveTabListItemBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.loadIntoView
@@ -21,9 +23,32 @@ import org.mozilla.fenix.tabstray.browser.AutoCloseInterval.OneMonth
 import org.mozilla.fenix.tabstray.browser.AutoCloseInterval.OneWeek
 
 sealed class InactiveTabViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    class HeaderHolder(itemView: View) : InactiveTabViewHolder(itemView) {
+
+    class HeaderHolder(
+        itemView: View,
+        interactor: InactiveTabsInteractor
+    ) : InactiveTabViewHolder(itemView) {
+
+        private val binding = InactiveHeaderItemBinding.bind(itemView)
+
+        init {
+            itemView.apply {
+                isActivated = InactiveTabsState.isExpanded
+
+                setOnClickListener {
+                    val newState = !it.isActivated
+
+                    interactor.onHeaderClicked(newState)
+
+                    it.isActivated = newState
+                    binding.chevron.rotation = ROTATION_DEGREE
+                }
+            }
+        }
+
         companion object {
             const val LAYOUT_ID = R.layout.inactive_header_item
+            private const val ROTATION_DEGREE = 180F
         }
     }
 
@@ -58,6 +83,28 @@ sealed class InactiveTabViewHolder(itemView: View) : RecyclerView.ViewHolder(ite
 
         companion object {
             const val LAYOUT_ID = R.layout.inactive_tab_list_item
+        }
+    }
+
+    class RecentlyClosedHolder(
+        itemView: View,
+        private val browserTrayInteractor: BrowserTrayInteractor,
+    ) : InactiveTabViewHolder(itemView) {
+
+        val binding = InactiveRecentlyClosedItemBinding.bind(itemView)
+
+        fun bind() {
+            val context = itemView.context
+            binding.inactiveRecentlyClosedText.text =
+                context.getString(R.string.tab_tray_inactive_recently_closed)
+
+            binding.inactiveRecentlyClosed.setOnClickListener {
+                browserTrayInteractor.onRecentlyClosedClicked()
+            }
+        }
+
+        companion object {
+            const val LAYOUT_ID = R.layout.inactive_recently_closed_item
         }
     }
 
