@@ -104,17 +104,17 @@ open class ToolbarMenuItems(
     )
 
     val installPwaToHomescreen = BrowserMenuHighlightableItem(
+        label = context.getString(R.string.browser_menu_install_on_homescreen),
+        startImageResource = R.drawable.ic_add_to_homescreen,
+        iconTintColorResource = primaryTextColor,
+        highlight = BrowserMenuHighlight.LowPriority(
             label = context.getString(R.string.browser_menu_install_on_homescreen),
-            startImageResource = R.drawable.ic_add_to_homescreen,
-            iconTintColorResource = primaryTextColor,
-            highlight = BrowserMenuHighlight.LowPriority(
-                label = context.getString(R.string.browser_menu_install_on_homescreen),
-                notificationTint = getColor(context, R.color.whats_new_notification_color)
-            ),
-            isHighlighted = {
-                !context.settings().installPwaOpened
-            }
-        )
+            notificationTint = getColor(context, R.color.whats_new_notification_color)
+        ),
+        isHighlighted = {
+            !context.settings().installPwaOpened
+        }
+    )
 
     val newTabItem = BrowserMenuImageText(
         context.getString(R.string.library_new_tab),
@@ -141,7 +141,7 @@ open class ToolbarMenuItems(
     }
 
     private fun getSyncItemTitle(): String {
-        val authenticatedAccount = accountManager.authenticatedAccount
+        val authenticatedAccount = accountManager.signedInToFxa()
         val email = accountManager.accountProfileEmail
 
         return if (authenticatedAccount && !email.isNullOrEmpty()) {
@@ -156,7 +156,7 @@ open class ToolbarMenuItems(
         R.drawable.ic_signed_out,
         primaryTextColor
     ) {
-        onItemTapped.invoke(ToolbarMenu.Item.SyncAccount(accountManager.signedInToFxa()))
+        onItemTapped.invoke(ToolbarMenu.Item.SyncAccount(accountManager.accountState))
     }
 
     val findInPageItem = BrowserMenuImageText(

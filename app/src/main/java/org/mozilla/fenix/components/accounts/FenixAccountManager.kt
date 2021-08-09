@@ -5,7 +5,6 @@
 package org.mozilla.fenix.components.accounts
 
 import android.content.Context
-import mozilla.components.service.fxa.manager.FxaAccountManager
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
@@ -25,6 +24,7 @@ class FenixAccountManager(
     private val context: Context,
     private val lifecycleOwner: LifecycleOwner
 ) {
+
     private val accountManager = context.components.backgroundServices.accountManager
 
     /**
@@ -51,7 +51,6 @@ class FenixAccountManager(
             }
         }
 
-
     /**
      * Check if the current account is signed in and authenticated.
      */
@@ -73,25 +72,29 @@ class FenixAccountManager(
             if (lifecycleOwner.lifecycle.currentState == Lifecycle.State.DESTROYED) {
                 return@runIfReadyOrQueue
             }
-            context.components.backgroundServices.accountManager.register(object : AccountObserver {
-                override fun onAuthenticationProblems() {
-                    lifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
-                        onMenuBuilderChanged(BrowserMenuBuilder(menuItems))
-                    }
-                }
 
-                override fun onAuthenticated(account: OAuthAccount, authType: AuthType) {
-                    lifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
-                        onMenuBuilderChanged(BrowserMenuBuilder(menuItems))
+            context.components.backgroundServices.accountManager.register(
+                object : AccountObserver {
+                    override fun onAuthenticationProblems() {
+                        lifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+                            onMenuBuilderChanged(BrowserMenuBuilder(menuItems))
+                        }
                     }
-                }
 
-                override fun onLoggedOut() {
-                    lifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
-                        onMenuBuilderChanged(BrowserMenuBuilder(menuItems))
+                    override fun onAuthenticated(account: OAuthAccount, authType: AuthType) {
+                        lifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+                            onMenuBuilderChanged(BrowserMenuBuilder(menuItems))
+                        }
                     }
-                }
-            }, lifecycleOwner)
+
+                    override fun onLoggedOut() {
+                        lifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+                            onMenuBuilderChanged(BrowserMenuBuilder(menuItems))
+                        }
+                    }
+                },
+                lifecycleOwner
+            )
         }
     }
 }

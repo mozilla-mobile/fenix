@@ -40,7 +40,7 @@ class FenixAccountManagerTest {
         every { accountManagerComponent.authenticatedAccount() } returns null
         every { accountManagerComponent.accountProfile() } returns null
         every { context.components.backgroundServices.accountManager } returns accountManagerComponent
-        fenixFxaManager = FenixAccountManager(context)
+        fenixFxaManager = FenixAccountManager(context, lifecycleOwner)
 
         val result = fenixFxaManager.accountProfileEmail
 
@@ -82,7 +82,7 @@ class FenixAccountManagerTest {
     fun `GIVEN no account exists WHEN accountState is called THEN it returns AccountState#NO_ACCOUNT`() {
         every { context.components.backgroundServices.accountManager } returns accountManagerComponent
         every { accountManagerComponent.authenticatedAccount() } returns null
-        fenixFxaManager = FenixAccountManager(context)
+        fenixFxaManager = FenixAccountManager(context, lifecycleOwner)
 
         assertSame(AccountState.NO_ACCOUNT, fenixFxaManager.accountState)
 
@@ -101,7 +101,7 @@ class FenixAccountManagerTest {
         every { accountManagerComponent.authenticatedAccount() } returns mockk()
         every { accountManagerComponent.accountNeedsReauth() } returns true
 
-        fenixFxaManager = FenixAccountManager(context)
+        fenixFxaManager = FenixAccountManager(context, lifecycleOwner)
 
         val result = fenixFxaManager.accountState
 

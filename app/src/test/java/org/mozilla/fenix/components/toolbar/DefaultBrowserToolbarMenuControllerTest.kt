@@ -36,7 +36,7 @@ import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.feature.app.links.AppLinksUseCases
 import mozilla.components.feature.pwa.WebAppUseCases
-import mozilla.components.feature.pwa.WebAppUseCases.*
+import mozilla.components.feature.pwa.WebAppUseCases.AddToHomescreenUseCase
 import mozilla.components.feature.search.SearchUseCases
 import mozilla.components.feature.session.SessionFeature
 import mozilla.components.feature.session.SessionUseCases
@@ -45,9 +45,7 @@ import mozilla.components.feature.tabs.CustomTabsUseCases
 import mozilla.components.feature.top.sites.DefaultTopSitesStorage
 import mozilla.components.feature.top.sites.TopSitesUseCases
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
-import mozilla.components.support.test.any
 import mozilla.components.support.test.ext.joinBlocking
-import mozilla.components.support.test.libstate.ext.waitUntilIdle
 import mozilla.components.support.test.rule.MainCoroutineRule
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -55,7 +53,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
@@ -70,14 +67,11 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.directionsEq
-import org.mozilla.fenix.ext.navigateSafe
 import org.mozilla.fenix.ext.openSetDefaultBrowserOption
-import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.settings.deletebrowsingdata.deleteAndQuit
 import org.mozilla.fenix.utils.Settings
 
 @OptIn(ExperimentalCoroutinesApi::class)
-@RunWith(FenixRobolectricTestRunner::class)
 class DefaultBrowserToolbarMenuControllerTest {
 
     @get:Rule
@@ -664,6 +658,7 @@ class DefaultBrowserToolbarMenuControllerTest {
         }
     }
 
+    @Test
     fun `WHEN open in app menu item is pressed THEN redirect`() = runBlockingTest {
         val item = ToolbarMenu.Item.OpenInApp
         every { appLinksUseCases.appLinkRedirect } returns mockk(relaxed = true)
@@ -673,23 +668,10 @@ class DefaultBrowserToolbarMenuControllerTest {
         coVerify { appLinksUseCases.openAppLink.invoke(any()) }
     }
 
-    fun `WHEN synced tabs are shown in the menu AND the item is pressed THEN redirect`() = runBlockingTest {
-        val item = ToolbarMenu.Item.SyncedTabs
-        val controller = createController(scope = this, store = browserStore)
-        val directions = BrowserFragmentDirections.actionBrowserFragmentToSyncedTabsFragment()
-
-        controller.handleToolbarItemInteraction(item)
-        verify {
-            navController.navigate(
-                directionsEq(
-                    directions
-                )
-            )
-        }
-    }
-
+    @Test
     fun `GIVEN signed in to sync WHEN sync menu item is pressed THEN redirect to account page`() = runBlockingTest {
-        val item = ToolbarMenu.Item.SyncAccount(true)
+        val accountState = AccountState.AUTHENTICATED
+        val item = ToolbarMenu.Item.SyncAccount(accountState)
         val controller = createController(scope = this, store = browserStore)
         val directions = BrowserFragmentDirections.actionGlobalAccountSettingsFragment()
 
@@ -703,8 +685,10 @@ class DefaultBrowserToolbarMenuControllerTest {
         }
     }
 
+    @Test
     fun `GIVEN not signed in to sync WHEN sync menu item is pressed THEN redirect to sync sign in`() = runBlockingTest {
-        val item = ToolbarMenu.Item.SyncAccount(false)
+        val accountState = AccountState.NO_ACCOUNT
+        val item = ToolbarMenu.Item.SyncAccount(accountState)
         val controller = createController(scope = this, store = browserStore)
         val directions = BrowserFragmentDirections.actionGlobalTurnOnSync()
 
@@ -718,6 +702,7 @@ class DefaultBrowserToolbarMenuControllerTest {
         }
     }
 
+    @Test
     fun `WHEN set to default browser menu item is pressed THEN open option`() = runBlockingTest {
         val item = ToolbarMenu.Item.SetDefaultBrowser
 
@@ -728,6 +713,7 @@ class DefaultBrowserToolbarMenuControllerTest {
         verify { activity.openSetDefaultBrowserOption() }
     }
 
+    @Test
     fun `WHEN downloads menu item is pressed THEN redirect`() = runBlockingTest {
         val item = ToolbarMenu.Item.Downloads
 
