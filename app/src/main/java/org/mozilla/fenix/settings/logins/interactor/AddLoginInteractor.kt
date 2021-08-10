@@ -14,9 +14,9 @@ import org.mozilla.fenix.settings.logins.controller.SavedLoginsStorageController
 class AddLoginInteractor(
     private val savedLoginsController: SavedLoginsStorageController
 ) {
-//    fun findPotentialDuplicates(loginId: String) {
-//        savedLoginsController.findPotentialDuplicates(loginId)
-//    }
+    fun findPotentialDuplicates(loginId: String) {
+        savedLoginsController.findPotentialDuplicates(loginId)
+    }
 
     fun onAddNewLogin(hostnameText: String, usernameText: String, passwordText: String) {
         savedLoginsController.add(hostnameText, usernameText, passwordText)
