@@ -69,8 +69,10 @@ open class SavedLoginsStorageController(
                     httpRealm = hostnameText
                 )
                 val newLoginId = add(loginToSave)
-                val newLogin = passwordsStorage.get(newLoginId)
-                syncAndUpdateList(newLogin!!)
+                if (newLoginId.isNotEmpty()) {
+                    val newLogin = passwordsStorage.get(newLoginId)
+                    syncAndUpdateList(newLogin!!)
+                }
             }
             saveLoginJob?.await()
             withContext(Dispatchers.Main) {
