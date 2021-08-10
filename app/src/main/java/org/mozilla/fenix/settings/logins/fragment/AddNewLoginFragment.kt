@@ -23,7 +23,7 @@ import org.mozilla.fenix.ext.toEditable
 import org.mozilla.fenix.settings.logins.LoginsFragmentStore
 import org.mozilla.fenix.settings.logins.controller.SavedLoginsStorageController
 import org.mozilla.fenix.settings.logins.createInitialLoginsListState
-import org.mozilla.fenix.settings.logins.interactor.EditLoginInteractor
+import org.mozilla.fenix.settings.logins.interactor.AddLoginInteractor
 
 /**
  * Displays the editable new login information for a single website
@@ -31,7 +31,7 @@ import org.mozilla.fenix.settings.logins.interactor.EditLoginInteractor
 class AddNewLoginFragment : Fragment(R.layout.fragment_add_new_login) {
 
     private lateinit var loginsFragmentStore: LoginsFragmentStore
-    private lateinit var interactor: EditLoginInteractor
+    private lateinit var interactor: AddLoginInteractor
 
     private var _binding: FragmentAddNewLoginBinding? = null
     private val binding get() = _binding!!
@@ -53,7 +53,7 @@ class AddNewLoginFragment : Fragment(R.layout.fragment_add_new_login) {
             )
         }
 
-        interactor = EditLoginInteractor(
+        interactor = AddLoginInteractor(
             SavedLoginsStorageController(
                 passwordsStorage = requireContext().components.core.passwordsStorage,
                 lifecycleScope = lifecycleScope,
