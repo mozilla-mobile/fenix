@@ -16,7 +16,6 @@ import io.mockk.mockk
 import io.mockk.mockkConstructor
 import io.mockk.unmockkConstructor
 import io.mockk.verify
-import kotlinx.android.synthetic.main.component_exceptions.*
 import mozilla.components.concept.engine.content.blocking.TrackingProtectionException
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.After
@@ -56,12 +55,12 @@ class TrackingProtectionExceptionsViewTest {
 
     @Test
     fun `binds exception text`() {
-        assertTrue(exceptionsView.exceptions_learn_more.movementMethod is LinkMovementMethod)
-        assertTrue(exceptionsView.exceptions_learn_more.text is Spannable)
-        assertEquals("Learn more", exceptionsView.exceptions_learn_more.text.toString())
+        assertTrue(exceptionsView.exceptionsLearnMore.movementMethod is LinkMovementMethod)
+        assertTrue(exceptionsView.exceptionsLearnMore.text is Spannable)
+        assertEquals("Learn more", exceptionsView.exceptionsLearnMore.text.toString())
 
         every { interactor.onLearnMore() } just Runs
-        exceptionsView.exceptions_learn_more.performClick()
+        exceptionsView.exceptionsLearnMore.performClick()
         verify { interactor.onLearnMore() }
     }
 
@@ -69,8 +68,8 @@ class TrackingProtectionExceptionsViewTest {
     fun `binds empty list to adapter`() {
         exceptionsView.update(emptyList())
 
-        assertTrue(exceptionsView.exceptions_empty_view.isVisible)
-        assertFalse(exceptionsView.exceptions_list.isVisible)
+        assertTrue(exceptionsView.exceptionsEmptyView.isVisible)
+        assertFalse(exceptionsView.exceptionsList.isVisible)
 
         verify { anyConstructed<TrackingProtectionExceptionsAdapter>().updateData(emptyList()) }
     }
@@ -80,8 +79,8 @@ class TrackingProtectionExceptionsViewTest {
         val items = listOf<TrackingProtectionException>(mockk(), mockk())
         exceptionsView.update(items)
 
-        assertFalse(exceptionsView.exceptions_empty_view.isVisible)
-        assertTrue(exceptionsView.exceptions_list.isVisible)
+        assertFalse(exceptionsView.exceptionsEmptyView.isVisible)
+        assertTrue(exceptionsView.exceptionsList.isVisible)
         verify { anyConstructed<TrackingProtectionExceptionsAdapter>().updateData(items) }
     }
 }

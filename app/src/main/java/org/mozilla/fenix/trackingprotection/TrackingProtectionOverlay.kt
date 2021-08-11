@@ -12,14 +12,11 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
-import android.widget.ImageView
 import androidx.annotation.VisibleForTesting
 import androidx.core.view.isVisible
 import androidx.core.view.marginTop
 import androidx.lifecycle.LifecycleOwner
 import com.google.android.material.appbar.AppBarLayout
-import kotlinx.android.synthetic.main.tracking_protection_onboarding_popup.*
-import kotlinx.android.synthetic.main.tracking_protection_onboarding_popup.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
@@ -35,6 +32,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
+import org.mozilla.fenix.databinding.TrackingProtectionOnboardingPopupBinding
 import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.utils.Settings
 
@@ -123,21 +121,21 @@ class TrackingProtectionOverlay(
             }
         }
 
-        val layout = LayoutInflater.from(context)
-            .inflate(R.layout.tracking_protection_onboarding_popup, null)
+        val binding = TrackingProtectionOnboardingPopupBinding.inflate(
+            LayoutInflater.from(context)
+        )
 
-        layout.drop_down_triangle.isVisible = toolbarPosition == ToolbarPosition.TOP
-        layout.pop_up_triangle.isVisible = toolbarPosition == ToolbarPosition.BOTTOM
+        binding.dropDownTriangle.isVisible = toolbarPosition == ToolbarPosition.TOP
+        binding.popUpTriangle.isVisible = toolbarPosition == ToolbarPosition.BOTTOM
 
-        layout.onboarding_message.text =
+        binding.onboardingMessage.text =
             context.getString(
                 R.string.etp_onboarding_cfr_message,
                 context.getString(R.string.app_name)
             )
 
-        val closeButton = layout.findViewById<ImageView>(R.id.close_onboarding)
-        closeButton.increaseTapArea(BUTTON_INCREASE_DPS)
-        closeButton.setOnClickListener {
+        binding.closeOnboarding.increaseTapArea(BUTTON_INCREASE_DPS)
+        binding.closeOnboarding.setOnClickListener {
             metrics.track(Event.ContextualHintETPDismissed)
             trackingOnboardingDialog.dismiss()
         }
@@ -155,7 +153,7 @@ class TrackingProtectionOverlay(
         val gravity = Gravity.START or toolbarPosition.androidGravity
 
         trackingOnboardingDialog.apply {
-            setContentView(layout)
+            setContentView(binding.root)
             setCancelable(false)
             // removing title or setting it as an empty string does not prevent a11y services from assigning one
             setTitle(" ")
@@ -174,7 +172,8 @@ class TrackingProtectionOverlay(
 
         val etpShield =
             getToolbar().findViewById<View>(R.id.mozac_browser_toolbar_tracking_protection_indicator)
-        trackingOnboardingDialog.message.setOnClickListener {
+//        trackingOnboardingDialog.message.setOnClickListener {
+        binding.message.setOnClickListener {
             metrics.track(Event.ContextualHintETPInsideTap)
             trackingOnboardingDialog.dismiss()
             etpShield.performClick()

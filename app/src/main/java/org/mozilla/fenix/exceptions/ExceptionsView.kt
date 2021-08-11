@@ -10,8 +10,7 @@ import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.component_exceptions.*
-import org.mozilla.fenix.R
+import org.mozilla.fenix.databinding.ComponentExceptionsBinding
 
 /**
  * View that contains and configures the Exceptions List
@@ -21,21 +20,29 @@ abstract class ExceptionsView<T : Any>(
     protected val interactor: ExceptionsInteractor<T>
 ) : LayoutContainer {
 
-    override val containerView: FrameLayout = LayoutInflater.from(container.context)
-        .inflate(R.layout.component_exceptions, container, true)
-        .findViewById(R.id.exceptions_wrapper)
+    private val binding = ComponentExceptionsBinding.inflate(
+        LayoutInflater.from(container.context),
+        container,
+        true
+    )
+
+    val exceptionsList = binding.exceptionsList
+    val exceptionsLearnMore = binding.exceptionsLearnMore
+    val exceptionsEmptyView = binding.exceptionsEmptyView
+
+    override val containerView: FrameLayout = binding.exceptionsWrapper
 
     protected abstract val exceptionsAdapter: ExceptionsAdapter<T>
 
     init {
-        exceptions_list.apply {
+        exceptionsList.apply {
             layoutManager = LinearLayoutManager(containerView.context)
         }
     }
 
     fun update(items: List<T>) {
-        exceptions_empty_view.isVisible = items.isEmpty()
-        exceptions_list.isVisible = items.isNotEmpty()
+        binding.exceptionsEmptyView.isVisible = items.isEmpty()
+        exceptionsList.isVisible = items.isNotEmpty()
         exceptionsAdapter.updateData(items)
     }
 }
