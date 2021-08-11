@@ -7,14 +7,13 @@ package org.mozilla.fenix.settings.quicksettings
 import mozilla.components.support.test.mock
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
+import org.junit.Ignore
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.settings.PhoneFeature
 
-@RunWith(FenixRobolectricTestRunner::class)
 class QuickSettingsFragmentReducerTest {
 
+    @Ignore("See https://github.com/mozilla-mobile/fenix/issues/20792")
     @Test
     fun `WebsitePermissionAction - TogglePermission`() {
         val toggleablePermission = WebsitePermission.Toggleable(
