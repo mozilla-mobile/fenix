@@ -237,7 +237,6 @@ abstract class BaseBrowserFragment :
     }
 
     final override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        // weird indentation to avoid breaking blame.
         initializeUI(view)
 
         if (customTabSessionId == null) {

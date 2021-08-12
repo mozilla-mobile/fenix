@@ -240,10 +240,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         }
         supportActionBar?.hide()
 
-        lifecycle.addObservers(
-            webExtensionPopupFeature,
-            StartupTimeline.homeActivityLifecycleObserver
-        )
+        lifecycle.addObservers(webExtensionPopupFeature)
 
         if (shouldAddToRecentsScreen(intent)) {
             intent.removeExtra(START_IN_RECENTS_SCREEN)
