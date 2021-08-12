@@ -155,7 +155,8 @@ class BrowserToolbarView(
                     lifecycleOwner = lifecycleOwner,
                     bookmarksStorage = bookmarkStorage,
                     pinnedSiteStorage = components.core.pinnedSiteStorage,
-                    isPinningSupported = isPinningSupported
+                    isPinningSupported = isPinningSupported,
+                    onMenuBuilderChanged = { view.display.menuBuilder = it }
                 )
                 view.display.setMenuDismissAction {
                     view.invalidateActions()
