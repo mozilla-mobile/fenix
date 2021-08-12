@@ -13,7 +13,7 @@ import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
-import org.mozilla.fenix.helpers.HomeActivityTestRule
+import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.helpers.TestHelper.openAppFromExternalLink
@@ -36,7 +36,7 @@ class SettingsPrivacyTest {
     private val pageShortcutName = "TestShortcut"
 
     @get:Rule
-    val activityTestRule = HomeActivityTestRule()
+    val activityTestRule = HomeActivityIntentTestRule()
 
     @Before
     fun setUp() {
@@ -176,7 +176,7 @@ class SettingsPrivacyTest {
             TestHelper.scrollToElementByText("Logins and passwords")
         }.openLoginsAndPasswordSubMenu {
             verifyDefaultView()
-            verifyDefaultValueAutofillLogins()
+            verifyDefaultValueAutofillLogins(InstrumentationRegistry.getInstrumentation().targetContext)
             verifyDefaultValueExceptions()
         }.openSavedLogins {
             verifySecurityPromptForLogins()
@@ -270,22 +270,24 @@ class SettingsPrivacyTest {
     }
 
     @Test
-    @Ignore("See: https://github.com/mozilla-mobile/fenix/issues/10915")
     fun openExternalLinksInPrivateTest() {
-        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+        val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+        val secondWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 2)
 
         setOpenLinksInPrivateOn()
 
-        openAppFromExternalLink(defaultWebPage.url.toString())
+        openAppFromExternalLink(firstWebPage.url.toString())
 
         browserScreen {
         }.openTabDrawer {
             verifyPrivateModeSelected()
-        }.openNewTab { }.dismissSearchBar { }
+        }.closeTabDrawer {
+        }.goToHomescreen { }
 
         setOpenLinksInPrivateOff()
 
-        openAppFromExternalLink(defaultWebPage.url.toString())
+        // We need to open a different link, otherwise it will open the same session
+        openAppFromExternalLink(secondWebPage.url.toString())
 
         browserScreen {
         }.openTabDrawer {
@@ -294,7 +296,6 @@ class SettingsPrivacyTest {
     }
 
     @Test
-    @Ignore("See: https://github.com/mozilla-mobile/fenix/issues/10915")
     fun launchPageShortcutInPrivateModeTest() {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
@@ -307,7 +308,18 @@ class SettingsPrivacyTest {
             addShortcutName(pageShortcutName)
             clickAddShortcutButton()
             clickAddAutomaticallyButton()
-        }.openHomeScreenShortcut(pageShortcutName) {
+        }
+
+        mDevice.waitForIdle()
+        // We need to close the existing tab here, to open a different session
+        restartApp(activityTestRule)
+        browserScreen {
+        }.openTabDrawer {
+            closeTab()
+        }
+
+        addToHomeScreen {
+        }.searchAndOpenHomeScreenShortcut(pageShortcutName) {
         }.openTabDrawer {
             verifyPrivateModeSelected()
         }
@@ -328,8 +340,7 @@ class SettingsPrivacyTest {
             clickAddShortcutButton()
             clickAddAutomaticallyButton()
         }.openHomeScreenShortcut(pageShortcutName) {
-        }.openTabDrawer {
-        }.openNewTab { }.dismissSearchBar { }
+        }.goToHomescreen { }
 
         setOpenLinksInPrivateOff()
         restartApp(activityTestRule)
@@ -339,8 +350,7 @@ class SettingsPrivacyTest {
         }.searchAndOpenHomeScreenShortcut(pageShortcutName) {
         }.openTabDrawer {
             verifyNormalModeSelected()
-        }.openNewTab {
-        }.dismissSearchBar {
+        }.closeTabDrawer {
         }.openThreeDotMenu {
         }.openSettings {
         }.openPrivateBrowsingSubMenu {

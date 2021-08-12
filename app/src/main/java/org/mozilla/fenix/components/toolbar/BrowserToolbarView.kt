@@ -68,7 +68,7 @@ class BrowserToolbarView(
     @VisibleForTesting
     internal val isPwaTabOrTwaTab: Boolean
         get() = customTabSession?.config?.externalAppType == ExternalAppType.PROGRESSIVE_WEB_APP ||
-                customTabSession?.config?.externalAppType == ExternalAppType.TRUSTED_WEB_ACTIVITY
+            customTabSession?.config?.externalAppType == ExternalAppType.TRUSTED_WEB_ACTIVITY
 
     init {
         val isCustomTabSession = customTabSession != null
@@ -90,7 +90,6 @@ class BrowserToolbarView(
                 setToolbarBehavior()
 
                 elevation = resources.getDimension(R.dimen.browser_fragment_toolbar_elevation)
-
                 if (!isCustomTabSession) {
                     display.setUrlBackground(getDrawable(R.drawable.search_url_background))
                 }

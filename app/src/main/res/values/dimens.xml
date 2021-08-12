@@ -95,26 +95,14 @@
 
     <!-- Home Fragment -->
     <dimen name="home_fragment_top_toolbar_header_margin">60dp</dimen>
-    <dimen name="home_collection_elevation">5dp</dimen>
-    <dimen name="home_recently_saved_padding_top">40dp</dimen>
-    <dimen name="home_recently_saved_padding_bottom">16dp</dimen>
-    <dimen name="home_recently_saved_padding_start">16dp</dimen>
-    <dimen name="home_recently_saved_padding_end">16dp</dimen>
-    <dimen name="home_show_all_padding_top">16dp</dimen>
-    <dimen name="home_show_all_padding_bottom">16dp</dimen>
+    <dimen name="home_item_elevation">5dp</dimen>
 
     <!-- Home - Recently saved bookmarks -->
     <dimen name="recent_bookmark_item_height">128dp</dimen>
     <dimen name="recent_bookmark_item_width">152dp</dimen>
-    <dimen name="recent_bookmark_item_padding">16dp</dimen>
-    <dimen name="recent_bookmark_item_card_radius">8dp</dimen>
-    <dimen name="recent_bookmark_item_card_elevation">1dp</dimen>
     <dimen name="recent_bookmark_item_favicon_height">72dp</dimen>
+    <dimen name="recent_bookmark_item_favicon_elevation">0dp</dimen>
     <dimen name="recent_bookmark_item_favicon_corner_size">4dp</dimen>
-    <dimen name="recent_bookmark_item_title_height">30dp</dimen>
-    <dimen name="recent_bookmark_item_title_padding_top">7dp</dimen>
-    <dimen name="recent_bookmark_item_subtitle_height">16dp</dimen>
-    <dimen name="recent_bookmark_item_subtitle_margin_top">105dp</dimen>
 
     <!-- Browser Fragment -->
     <!--The size of the gap between the tab preview and content layout.-->
@@ -240,6 +228,10 @@
     <dimen name="top_sites_card_elevation">6dp</dimen>
     <dimen name="top_sites_card_radius">8dp</dimen>
     <dimen name="top_sites_card_stroke_width">1dp</dimen>
+
+    <!-- Recent tabs -->
+    <dimen name="recent_tabs_icon_elevation">0dp</dimen>
+    <dimen name="recent_tabs_icon_corner_size">4dp</dimen>
 
     <!-- Credit Cards Fragment -->
     <dimen name="credit_cards_saved_cards_item_margin_start">16dp</dimen>

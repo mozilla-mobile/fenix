@@ -9,6 +9,7 @@ import mozilla.components.browser.awesomebar.facts.BrowserAwesomeBarFacts
 import mozilla.components.browser.menu.facts.BrowserMenuFacts
 import mozilla.components.browser.toolbar.facts.ToolbarFacts
 import mozilla.components.concept.awesomebar.AwesomeBar
+import mozilla.components.feature.autofill.facts.AutofillFacts
 import mozilla.components.feature.awesomebar.facts.AwesomeBarFacts
 import mozilla.components.feature.awesomebar.provider.BookmarksStorageSuggestionProvider
 import mozilla.components.feature.awesomebar.provider.ClipboardSuggestionProvider
@@ -21,8 +22,9 @@ import mozilla.components.feature.downloads.facts.DownloadsFacts
 import mozilla.components.feature.findinpage.facts.FindInPageFacts
 import mozilla.components.feature.media.facts.MediaFacts
 import mozilla.components.feature.prompts.facts.LoginDialogFacts
-import mozilla.components.feature.prompts.facts.CreditCardAutofillDialogFacts
 import mozilla.components.feature.pwa.ProgressiveWebAppFacts
+import mozilla.components.feature.search.telemetry.ads.AdsTelemetry
+import mozilla.components.feature.search.telemetry.incontent.InContentTelemetry
 import mozilla.components.feature.syncedtabs.facts.SyncedTabsFacts
 import mozilla.components.feature.top.sites.facts.TopSitesFacts
 import mozilla.components.lib.dataprotect.SecurePrefsReliabilityExperiment
@@ -162,10 +164,6 @@ internal class ReleaseMetricController(
         Component.FEATURE_PROMPTS to LoginDialogFacts.Items.CANCEL -> Event.LoginDialogPromptCancelled
         Component.FEATURE_PROMPTS to LoginDialogFacts.Items.NEVER_SAVE -> Event.LoginDialogPromptNeverSave
         Component.FEATURE_PROMPTS to LoginDialogFacts.Items.SAVE -> Event.LoginDialogPromptSave
-        Component.FEATURE_PROMPTS to CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_SUCCESS -> {
-            settings.creditCardsAutofilledCount += 1
-            null
-        }
 
         Component.FEATURE_FINDINPAGE to FindInPageFacts.Items.CLOSE -> Event.FindInPageClosed
         Component.FEATURE_FINDINPAGE to FindInPageFacts.Items.INPUT -> Event.FindInPageSearchCommitted
@@ -315,6 +313,44 @@ internal class ReleaseMetricController(
             Event.SecurePrefsReset
         }
 
+        Component.FEATURE_SEARCH to AdsTelemetry.SERP_ADD_CLICKED -> {
+            Event.SearchAdClicked(value!!)
+        }
+        Component.FEATURE_SEARCH to AdsTelemetry.SERP_SHOWN_WITH_ADDS -> {
+            Event.SearchWithAds(value!!)
+        }
+        Component.FEATURE_SEARCH to InContentTelemetry.IN_CONTENT_SEARCH -> {
+            Event.SearchInContent(value!!)
+        }
+        Component.FEATURE_AUTOFILL to AutofillFacts.Items.AUTOFILL_REQUEST -> {
+            val hasMatchingLogins = metadata?.get(AutofillFacts.Metadata.HAS_MATCHING_LOGINS) as Boolean?
+            if (hasMatchingLogins == true) {
+                Event.AndroidAutofillRequestWithLogins
+            } else {
+                Event.AndroidAutofillRequestWithoutLogins
+            }
+        }
+        Component.FEATURE_AUTOFILL to AutofillFacts.Items.AUTOFILL_SEARCH -> {
+            if (action == Action.SELECT) {
+                Event.AndroidAutofillSearchItemSelected
+            } else {
+                Event.AndroidAutofillSearchDisplayed
+            }
+        }
+        Component.FEATURE_AUTOFILL to AutofillFacts.Items.AUTOFILL_LOCK -> {
+            if (action == Action.CONFIRM) {
+                Event.AndroidAutofillUnlockSuccessful
+            } else {
+                Event.AndroidAutofillUnlockCanceled
+            }
+        }
+        Component.FEATURE_AUTOFILL to AutofillFacts.Items.AUTOFILL_CONFIRMATION -> {
+            if (action == Action.CONFIRM) {
+                Event.AndroidAutofillConfirmationSuccessful
+            } else {
+                Event.AndroidAutofillConfirmationCanceled
+            }
+        }
         else -> null
     }
 

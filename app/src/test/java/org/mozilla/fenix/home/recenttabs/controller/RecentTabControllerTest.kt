@@ -23,8 +23,8 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.R
-import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
-import org.mozilla.fenix.helpers.DisableNavGraphProviderAssertionRule
+import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.components.metrics.MetricController
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class RecentTabControllerTest {
@@ -34,32 +34,36 @@ class RecentTabControllerTest {
     @get:Rule
     val coroutinesTestRule = MainCoroutineRule(testDispatcher)
 
-    @get:Rule
-    val disableNavGraphProviderAssertionRule = DisableNavGraphProviderAssertionRule()
-
     private val navController: NavController = mockk(relaxed = true)
     private val selectTabUseCase: TabsUseCases = mockk(relaxed = true)
+    private val metrics: MetricController = mockk(relaxed = true)
 
     private lateinit var store: BrowserStore
-    private lateinit var controller: RecentTabController
+
+    private lateinit var controller: DefaultRecentTabsController
 
     @Before
     fun setup() {
         store = BrowserStore(
             BrowserState()
         )
-        controller = spyk(DefaultRecentTabsController(
-            selectTabUseCase = selectTabUseCase.selectTab,
-            navController = navController
-        ))
-
-        every { navController.currentDestination } returns mockk {
-            every { id } returns R.id.homeFragment
-        }
+        controller = spyk(
+            DefaultRecentTabsController(
+                selectTabUseCase = selectTabUseCase.selectTab,
+                navController = navController,
+                metrics = metrics,
+                store = store,
+            )
+        )
+        every { navController.navigateUp() } returns true
     }
 
     @Test
     fun handleRecentTabClicked() {
+        every { navController.currentDestination } returns mockk {
+            every { id } returns R.id.homeFragment
+        }
+
         val tab = createTab(
             url = "https://mozilla.org",
             title = "Mozilla"
@@ -71,19 +75,46 @@ class RecentTabControllerTest {
 
         verify {
             selectTabUseCase.selectTab.invoke(tab.id)
-            navController.navigateBlockingForAsyncNavGraph(R.id.browserFragment)
+            navController.navigate(R.id.browserFragment)
+            metrics.track(Event.OpenRecentTab)
         }
     }
 
     @Test
-    fun handleRecentTabShowAllClicked() {
+    fun handleRecentTabShowAllClickedFromHome() {
+        every { navController.currentDestination } returns mockk {
+            every { id } returns R.id.homeFragment
+        }
+
         controller.handleRecentTabShowAllClicked()
 
         verify {
+            controller.dismissSearchDialogIfDisplayed()
             navController.navigate(
-                match<NavDirections> { it.actionId == R.id.action_global_tabsTrayFragment },
-                null
+                match<NavDirections> { it.actionId == R.id.action_global_tabsTrayFragment }
             )
+            metrics.track(Event.ShowAllRecentTabs)
+        }
+        verify(exactly = 0) {
+            navController.navigateUp()
+        }
+    }
+
+    @Test
+    fun handleRecentTabShowAllClickedFromSearchDialog() {
+        every { navController.currentDestination } returns mockk {
+            every { id } returns R.id.searchDialogFragment
+        }
+
+        controller.handleRecentTabShowAllClicked()
+
+        verify {
+            controller.dismissSearchDialogIfDisplayed()
+            navController.navigateUp()
+            navController.navigate(
+                match<NavDirections> { it.actionId == R.id.action_global_tabsTrayFragment }
+            )
+            metrics.track(Event.ShowAllRecentTabs)
         }
     }
 }

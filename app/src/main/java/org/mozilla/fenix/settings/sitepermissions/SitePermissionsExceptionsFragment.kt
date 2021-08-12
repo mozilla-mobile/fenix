@@ -29,6 +29,7 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import mozilla.components.concept.engine.permission.SitePermissions
+import mozilla.components.support.ktx.kotlin.stripDefaultPort
 import org.mozilla.fenix.NavHostActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
@@ -66,15 +67,18 @@ class SitePermissionsExceptionsFragment :
                 val adapter = ExceptionsAdapter(this@SitePermissionsExceptionsFragment)
                 val liveData = LivePagedListBuilder(sitePermissionsPaged, MAX_ITEMS_PER_PAGE).build()
 
-                liveData.observe(viewLifecycleOwner, Observer<PagedList<SitePermissions>> {
-                    if (it.isEmpty()) {
-                        showEmptyListMessage()
-                    } else {
-                        hideEmptyListMessage()
-                        adapter.submitList(it)
-                        recyclerView.adapter = adapter
+                liveData.observe(
+                    viewLifecycleOwner,
+                    Observer<PagedList<SitePermissions>> {
+                        if (it.isEmpty()) {
+                            showEmptyListMessage()
+                        } else {
+                            hideEmptyListMessage()
+                            adapter.submitList(it)
+                            recyclerView.adapter = adapter
+                        }
                     }
-                })
+                )
             }
         }
     }
@@ -148,9 +152,8 @@ class ExceptionsAdapter(private val clickListener: View.OnClickListener) :
     override fun onBindViewHolder(holder: SitePermissionsViewHolder, position: Int) {
         val sitePermissions = requireNotNull(getItem(position))
         val context = holder.view.context
-
-        context.components.core.icons.loadIntoView(holder.iconView, "https://${sitePermissions.origin}/")
-        holder.siteTextView.text = sitePermissions.origin
+        context.components.core.icons.loadIntoView(holder.iconView, sitePermissions.origin)
+        holder.siteTextView.text = sitePermissions.origin.stripDefaultPort()
         holder.view.tag = sitePermissions
         holder.view.setOnClickListener(clickListener)
     }

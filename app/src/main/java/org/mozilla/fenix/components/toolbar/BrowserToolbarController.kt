@@ -15,6 +15,7 @@ import mozilla.components.concept.engine.EngineView
 import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.support.ktx.kotlin.isUrl
 import mozilla.components.ui.tabcounter.TabCounterMenu
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BrowserAnimator.Companion.getToolbarNavOptions
@@ -25,7 +26,6 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.components.toolbar.interactor.BrowserToolbarInteractor
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.HomeScreenViewModel
@@ -92,8 +92,12 @@ class DefaultBrowserToolbarController(
 
     override fun handleToolbarClick() {
         metrics.track(Event.SearchBarTapped(Event.SearchBarTapped.Source.BROWSER))
-        navController.nav(
-            R.id.browserFragment,
+        if (FeatureFlags.showHomeBehindSearch) {
+            navController.navigate(
+                BrowserFragmentDirections.actionGlobalHome()
+            )
+        }
+        navController.navigate(
             BrowserFragmentDirections.actionGlobalSearchDialog(
                 currentSession?.id
             ),
@@ -125,7 +129,7 @@ class DefaultBrowserToolbarController(
                     // When closing the last tab we must show the undo snackbar in the home fragment
                     if (store.state.getNormalOrPrivateTabs(it.content.private).count() == 1) {
                         homeViewModel.sessionToDelete = it.id
-                        navController.navigateBlockingForAsyncNavGraph(
+                        navController.navigate(
                             BrowserFragmentDirections.actionGlobalHome()
                         )
                     } else {
@@ -139,7 +143,7 @@ class DefaultBrowserToolbarController(
                     Event.TabCounterMenuItemTapped(Event.TabCounterMenuItemTapped.Item.NEW_TAB)
                 )
                 activity.browsingModeManager.mode = BrowsingMode.Normal
-                navController.navigateBlockingForAsyncNavGraph(
+                navController.navigate(
                     BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = true)
                 )
             }
@@ -150,7 +154,7 @@ class DefaultBrowserToolbarController(
                     )
                 )
                 activity.browsingModeManager.mode = BrowsingMode.Private
-                navController.navigateBlockingForAsyncNavGraph(
+                navController.navigate(
                     BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = true)
                 )
             }
@@ -166,7 +170,7 @@ class DefaultBrowserToolbarController(
     override fun handleHomeButtonClick() {
         metrics.track(Event.BrowserToolbarHomeButtonClicked)
 
-        navController.navigateBlockingForAsyncNavGraph(
+        navController.navigate(
             BrowserFragmentDirections.actionGlobalHome()
         )
     }
@@ -181,8 +185,10 @@ private fun BrowserStore.updateSearchTermsOfSelectedSession(
 ) {
     val selectedTabId = state.selectedTabId ?: return
 
-    dispatch(ContentAction.UpdateSearchTermsAction(
-        selectedTabId,
-        searchTerms
-    ))
+    dispatch(
+        ContentAction.UpdateSearchTermsAction(
+            selectedTabId,
+            searchTerms
+        )
+    )
 }

@@ -163,12 +163,12 @@ open class DefaultToolbarMenu(
     @VisibleForTesting(otherwise = PRIVATE)
     fun canAddToHomescreen(): Boolean =
         selectedSession != null && isPinningSupported &&
-                !context.components.useCases.webAppUseCases.isInstallable()
+            !context.components.useCases.webAppUseCases.isInstallable()
 
     @VisibleForTesting(otherwise = PRIVATE)
     fun canInstall(): Boolean =
         selectedSession != null && isPinningSupported &&
-                context.components.useCases.webAppUseCases.isInstallable()
+            context.components.useCases.webAppUseCases.isInstallable()
 
     @VisibleForTesting(otherwise = PRIVATE)
     fun shouldShowOpenInApp(): Boolean = selectedSession?.let { session ->
@@ -265,7 +265,8 @@ open class DefaultToolbarMenu(
     }
 
     val reportSiteIssuePlaceholder = WebExtensionPlaceholderMenuItem(
-        id = WebCompatReporterFeature.WEBCOMPAT_REPORTER_EXTENSION_ID
+        id = WebCompatReporterFeature.WEBCOMPAT_REPORTER_EXTENSION_ID,
+        iconTintColorResource = primaryTextColor()
     )
 
     val addToHomeScreenItem = BrowserMenuImageText(

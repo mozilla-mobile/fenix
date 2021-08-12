@@ -40,7 +40,6 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getRootView
-import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.navigateSafe
 import org.mozilla.fenix.ext.openSetDefaultBrowserOption
@@ -119,13 +118,15 @@ class DefaultBrowserToolbarMenuController(
                     customTabUseCases.migrate(customTabSessionId, select = true)
 
                     // Switch to the actual browser which should now display our new selected session
-                    activity.startActivity(openInFenixIntent.apply {
-                        // We never want to launch the browser in the same task as the external app
-                        // activity. So we force a new task here. IntentReceiverActivity will do the
-                        // right thing and take care of routing to an already existing browser and avoid
-                        // cloning a new one.
-                        flags = flags or Intent.FLAG_ACTIVITY_NEW_TASK
-                    })
+                    activity.startActivity(
+                        openInFenixIntent.apply {
+                            // We never want to launch the browser in the same task as the external app
+                            // activity. So we force a new task here. IntentReceiverActivity will do the
+                            // right thing and take care of routing to an already existing browser and avoid
+                            // cloning a new one.
+                            flags = flags or Intent.FLAG_ACTIVITY_NEW_TASK
+                        }
+                    )
 
                     // Close this activity (and the task) since it is no longer displaying any session
                     activity.finishAndRemoveTask()
@@ -164,7 +165,7 @@ class DefaultBrowserToolbarMenuController(
             }
             is ToolbarMenu.Item.Back -> {
                 if (item.viewHistory) {
-                    navController.navigateBlockingForAsyncNavGraph(
+                    navController.navigate(
                         BrowserFragmentDirections.actionGlobalTabHistoryDialogFragment(
                             activeSessionId = customTabSessionId
                         )
@@ -177,7 +178,7 @@ class DefaultBrowserToolbarMenuController(
             }
             is ToolbarMenu.Item.Forward -> {
                 if (item.viewHistory) {
-                    navController.navigateBlockingForAsyncNavGraph(
+                    navController.navigate(
                         BrowserFragmentDirections.actionGlobalTabHistoryDialogFragment(
                             activeSessionId = customTabSessionId
                         )
@@ -214,7 +215,7 @@ class DefaultBrowserToolbarMenuController(
                     ),
                     showPage = true
                 )
-                navController.navigateBlockingForAsyncNavGraph(directions)
+                navController.navigate(directions)
             }
             is ToolbarMenu.Item.Settings -> browserAnimator.captureEngineViewAndDrawStatically {
                 val directions = BrowserFragmentDirections.actionBrowserFragmentToSettingsFragment()
@@ -347,7 +348,7 @@ class DefaultBrowserToolbarMenuController(
                 )
             }
             is ToolbarMenu.Item.NewTab -> {
-                navController.navigateBlockingForAsyncNavGraph(
+                navController.navigate(
                     BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = true)
                 )
             }

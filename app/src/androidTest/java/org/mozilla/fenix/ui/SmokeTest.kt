@@ -32,6 +32,7 @@ import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.helpers.TestHelper.appName
 import org.mozilla.fenix.helpers.TestHelper.createCustomTabIntent
 import org.mozilla.fenix.helpers.TestHelper.deleteDownloadFromStorage
+import org.mozilla.fenix.helpers.TestHelper.restartApp
 import org.mozilla.fenix.helpers.TestHelper.scrollToElementByText
 import org.mozilla.fenix.helpers.ViewVisibilityIdlingResource
 import org.mozilla.fenix.ui.robots.browserScreen
@@ -48,6 +49,9 @@ import org.mozilla.fenix.ui.robots.notificationShade
 import org.mozilla.fenix.ui.robots.openEditURLView
 import org.mozilla.fenix.ui.robots.searchScreen
 import org.mozilla.fenix.ui.robots.tabDrawer
+import org.mozilla.fenix.ui.util.FRENCH_LANGUAGE_HEADER
+import org.mozilla.fenix.ui.util.FRENCH_SYSTEM_LOCALE_OPTION
+import org.mozilla.fenix.ui.util.ROMANIAN_LANGUAGE_HEADER
 import org.mozilla.fenix.ui.util.STRING_ONBOARDING_TRACKING_PROTECTION_HEADER
 
 /**
@@ -66,6 +70,7 @@ class SmokeTest {
     private val downloadFileName = "Globe.svg"
     private val collectionName = "First Collection"
     private var bookmarksListIdlingResource: RecyclerViewIdlingResource? = null
+    private var localeListIdlingResource: RecyclerViewIdlingResource? = null
     private val customMenuItem = "TestMenuItem"
 
     // This finds the dialog fragment child of the homeFragment, otherwise the awesomeBar would return null
@@ -132,6 +137,10 @@ class SmokeTest {
 
         if (readerViewNotification != null) {
             IdlingRegistry.getInstance().unregister(readerViewNotification)
+        }
+
+        if (localeListIdlingResource != null) {
+            IdlingRegistry.getInstance().unregister(localeListIdlingResource)
         }
     }
 
@@ -259,8 +268,9 @@ class SmokeTest {
         }
     }
 
-    // Could be removed when more smoke tests from the Settings category are added
     @Test
+    // Test running on beta/release builds in CI:
+    // caution when making changes to it, so they don't block the builds
     // Verifies the Settings menu opens from a tab's 3 dot menu
     fun openMainMenuSettingsItemTest() {
         homeScreen {
@@ -510,6 +520,8 @@ class SmokeTest {
     }
 
     @Test
+    // Test running on beta/release builds in CI:
+    // caution when making changes to it, so they don't block the builds
     // Goes through the settings and changes the search suggestion toggle, then verifies it changes.
     fun toggleSearchSuggestions() {
 
@@ -563,6 +575,7 @@ class SmokeTest {
 
     @Test
     // Saves a login, then changes it and verifies the update
+    @Ignore("To be fixed in https://github.com/mozilla-mobile/fenix/issues/20702")
     fun updateSavedLoginTest() {
         val saveLoginTest =
             TestAssetHelper.getSaveLoginAsset(mockWebServer)
@@ -589,7 +602,7 @@ class SmokeTest {
             verifySavedLoginFromPrompt()
             viewSavedLoginDetails()
             revealPassword()
-            verifyPasswordSaved("test")
+            verifyPasswordSaved("test") // failing here locally
         }
     }
 
@@ -879,7 +892,6 @@ class SmokeTest {
         }
     }
 
-    @Ignore("Disabling until re-implemented by #19090")
     @Test
     fun createFirstCollectionTest() {
         val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -895,7 +907,7 @@ class SmokeTest {
         }.goToHomescreen {
         }.clickSaveTabsToCollectionButton {
             longClickTab(firstWebPage.title)
-            longClickTab(secondWebPage.title)
+            selectTab(secondWebPage.title)
         }.clickSaveCollection {
             typeCollectionNameAndSave(collectionName)
         }
@@ -963,7 +975,6 @@ class SmokeTest {
         }
     }
 
-    @Ignore("Disabling until re-implemented by #19090")
     @Test
     fun shareCollectionTest() {
         val webPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -985,8 +996,9 @@ class SmokeTest {
         }
     }
 
-    @Ignore("Disabling until re-implemented by #19090")
     @Test
+    // Test running on beta/release builds in CI:
+    // caution when making changes to it, so they don't block the builds
     fun deleteCollectionTest() {
         val webPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
@@ -1111,6 +1123,8 @@ class SmokeTest {
     }
 
     @Test
+    // Test running on beta/release builds in CI:
+    // caution when making changes to it, so they don't block the builds
     fun noHistoryInPrivateBrowsingTest() {
         val website = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
@@ -1376,6 +1390,125 @@ class SmokeTest {
             longClickToolbar()
             clickPasteText()
             verifyPastedToolbarText("Page content: 1")
+        }
+    }
+
+    @Test
+    fun switchLanguageTest() {
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openLanguageSubMenu {
+            localeListIdlingResource =
+                RecyclerViewIdlingResource(
+                    activityTestRule.activity.findViewById(R.id.locale_list),
+                    2
+                )
+            IdlingRegistry.getInstance().register(localeListIdlingResource)
+            selectLanguage("Romanian")
+            verifyLanguageHeaderIsTranslated(ROMANIAN_LANGUAGE_HEADER)
+            selectLanguage("Français")
+            verifyLanguageHeaderIsTranslated(FRENCH_LANGUAGE_HEADER)
+            selectLanguage(FRENCH_SYSTEM_LOCALE_OPTION)
+            verifyLanguageHeaderIsTranslated("Language")
+            IdlingRegistry.getInstance().unregister(localeListIdlingResource)
+        }
+    }
+
+    @Test
+    fun goToHomeScreenBottomToolbarTest() {
+        val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(genericURL.url) {
+            mDevice.waitForIdle()
+        }.goToHomescreen {
+            verifyHomeScreen()
+        }
+    }
+
+    @Test
+    fun goToHomeScreenTopToolbarTest() {
+        val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openCustomizeSubMenu {
+            clickTopToolbarToggle()
+        }.goBack {
+        }.goBack {
+        }.openNavigationToolbar {
+        }.enterURLAndEnterToBrowser(genericURL.url) {
+            mDevice.waitForIdle()
+        }.goToHomescreen {
+            verifyHomeScreen()
+        }
+    }
+
+    @Test
+    fun goToHomeScreenBottomToolbarPrivateModeTest() {
+        val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        homeScreen {
+            togglePrivateBrowsingModeOnOff()
+        }
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(genericURL.url) {
+            mDevice.waitForIdle()
+        }.goToHomescreen {
+            verifyHomeScreen()
+        }
+    }
+
+    @Test
+    fun goToHomeScreenTopToolbarPrivateModeTest() {
+        val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        homeScreen {
+            togglePrivateBrowsingModeOnOff()
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openCustomizeSubMenu {
+            clickTopToolbarToggle()
+        }.goBack {
+        }.goBack {
+        }.openNavigationToolbar {
+        }.enterURLAndEnterToBrowser(genericURL.url) {
+            mDevice.waitForIdle()
+        }.goToHomescreen {
+            verifyHomeScreen()
+        }
+    }
+
+    @Test
+    fun startOnHomeSettingsMenuItemsTest() {
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openTabsSubMenu {
+            verifyStartOnHomeOptions()
+        }
+    }
+
+    @Test
+    fun alwaysStartOnHomeTest() {
+        val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(genericURL.url) {
+            mDevice.waitForIdle()
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openTabsSubMenu {
+            clickAlwaysStartOnHomeToggle()
+        }
+
+        restartApp(activityTestRule)
+
+        homeScreen {
+            verifyHomeScreen()
         }
     }
 }

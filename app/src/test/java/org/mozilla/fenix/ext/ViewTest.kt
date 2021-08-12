@@ -43,6 +43,7 @@ class ViewTest {
         mockkStatic("mozilla.components.support.ktx.android.util.DisplayMetricsKt")
         mockkStatic("org.mozilla.fenix.ext.ViewKt")
 
+        every { view.context } answers { testContext }
         every { view.resources.getDimensionPixelSize(any()) } answers {
             testContext.resources.getDimensionPixelSize(firstArg())
         }
@@ -111,6 +112,8 @@ class ViewTest {
     }
 
     @Test
+    @Suppress("DEPRECATION")
+    // https://github.com/mozilla-mobile/fenix/issues/19929
     fun `getKeyboardHeight accounts for status bar and navigation bar`() {
         every { view.getWindowVisibleDisplayFrame() } returns Rect(0, 50, 1000, 500)
         every { view.rootView.height } returns 1000

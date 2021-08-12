@@ -214,8 +214,10 @@ class ToolbarGestureHandler(
         val reverseFling =
             abs(velocityX) >= minimumFlingVelocity && !velocityMatchesDirection
 
-        return !reverseFling && (previewWidth / windowWidth >= GESTURE_FINISH_PERCENT ||
-            abs(velocityX) >= minimumFlingVelocity)
+        return !reverseFling && (
+            previewWidth / windowWidth >= GESTURE_FINISH_PERCENT ||
+                abs(velocityX) >= minimumFlingVelocity
+            )
     }
 
     private fun getAnimator(finalContextX: Float, duration: Long): ValueAnimator {
@@ -274,6 +276,8 @@ class ToolbarGestureHandler(
         }.start()
     }
 
+    @Suppress("DEPRECATION")
+    // https://github.com/mozilla-mobile/fenix/issues/19929
     private fun PointF.isInToolbar(): Boolean {
         val toolbarLocation = toolbarLayout.getRectWithScreenLocation()
         // In Android 10, the system gesture touch area overlaps the bottom of the toolbar, so

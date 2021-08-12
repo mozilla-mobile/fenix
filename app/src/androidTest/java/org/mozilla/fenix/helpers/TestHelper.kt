@@ -48,6 +48,7 @@ object TestHelper {
 
     fun scrollToElementByText(text: String): UiScrollable {
         val appView = UiScrollable(UiSelector().scrollable(true))
+        appView.waitForExists(waitingTime)
         appView.scrollTextIntoView(text)
         return appView
     }
@@ -72,7 +73,7 @@ object TestHelper {
         editor.apply()
     }
 
-    fun restartApp(activity: HomeActivityTestRule) {
+    fun restartApp(activity: HomeActivityIntentTestRule) {
         with(activity) {
             finishActivity()
             mDevice.waitForIdle()
@@ -82,7 +83,7 @@ object TestHelper {
 
     fun getPermissionAllowID(): String {
         return when
-            (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
+        (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
             true -> "com.android.permissioncontroller"
             false -> "com.android.packageinstaller"
         }

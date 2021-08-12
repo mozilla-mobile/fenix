@@ -15,8 +15,10 @@ import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.component_tabstray2.*
@@ -26,6 +28,7 @@ import kotlinx.android.synthetic.main.fragment_tab_tray_dialog.*
 import kotlinx.android.synthetic.main.tabs_tray_tab_counter2.*
 import kotlinx.android.synthetic.main.tabstray_multiselect_items.*
 import kotlinx.coroutines.Dispatchers
+import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.browser.state.selector.normalTabs
 import mozilla.components.browser.state.selector.privateTabs
 import mozilla.components.browser.state.store.BrowserStore
@@ -34,10 +37,10 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
+import org.mozilla.fenix.share.ShareFragment
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.HomeScreenViewModel
@@ -47,8 +50,9 @@ import org.mozilla.fenix.tabstray.browser.SelectionBannerBinding
 import org.mozilla.fenix.tabstray.browser.SelectionBannerBinding.VisibilityModifier
 import org.mozilla.fenix.tabstray.browser.SelectionHandleBinding
 import org.mozilla.fenix.tabstray.ext.anchorWithAction
+import org.mozilla.fenix.tabstray.ext.bookmarkMessage
+import org.mozilla.fenix.tabstray.ext.collectionMessage
 import org.mozilla.fenix.tabstray.ext.make
-import org.mozilla.fenix.tabstray.ext.message
 import org.mozilla.fenix.tabstray.ext.orDefault
 import org.mozilla.fenix.tabstray.ext.showWithTheme
 import org.mozilla.fenix.utils.allowUndo
@@ -87,7 +91,20 @@ class TabsTrayFragment : AppCompatDialogFragment() {
         val containerView = inflater.inflate(R.layout.fragment_tab_tray_dialog, container, false)
         inflater.inflate(R.layout.component_tabstray2, containerView as ViewGroup, true)
 
-        tabsTrayStore = StoreProvider.get(this) { TabsTrayStore() }
+        val args by navArgs<TabsTrayFragmentArgs>()
+        val initialMode = if (args.enterMultiselect) {
+            TabsTrayState.Mode.Select(emptySet())
+        } else {
+            TabsTrayState.Mode.Normal
+        }
+
+        tabsTrayStore = StoreProvider.get(this) {
+            TabsTrayStore(
+                initialState = TabsTrayState(
+                    mode = initialMode
+                )
+            )
+        }
 
         fabView = LayoutInflater.from(containerView.context)
             .inflate(R.layout.component_tabstray_fab, containerView, true)
@@ -118,6 +135,7 @@ class TabsTrayFragment : AppCompatDialogFragment() {
                 bookmarksUseCase = requireComponents.useCases.bookmarksUseCases,
                 collectionStorage = requireComponents.core.tabCollectionStorage,
                 showCollectionSnackbar = ::showCollectionSnackbar,
+                showBookmarkSnackbar = ::showBookmarkSnackbar,
                 accountManager = requireComponents.backgroundServices.accountManager,
                 ioDispatcher = Dispatchers.IO
             )
@@ -144,7 +162,6 @@ class TabsTrayFragment : AppCompatDialogFragment() {
             tabsTrayInteractor,
             tabsTrayController,
             requireComponents.useCases.tabsUseCases.selectTab,
-            requireComponents.settings,
             requireComponents.analytics.metrics
         )
 
@@ -184,8 +201,7 @@ class TabsTrayFragment : AppCompatDialogFragment() {
                 store = requireComponents.core.store,
                 infoBannerView = view.info_banner,
                 settings = requireComponents.settings,
-                navigationInteractor = navigationInteractor,
-                metrics = requireComponents.analytics.metrics
+                navigationInteractor = navigationInteractor
             ),
             owner = this,
             view = view
@@ -198,7 +214,8 @@ class TabsTrayFragment : AppCompatDialogFragment() {
                 browsingModeManager = activity.browsingModeManager,
                 tabsTrayStore = tabsTrayStore,
                 metrics = requireComponents.analytics.metrics
-            ), owner = this,
+            ),
+            owner = this,
             view = view
         )
 
@@ -260,11 +277,16 @@ class TabsTrayFragment : AppCompatDialogFragment() {
             feature = SecureTabsTrayBinding(
                 store = tabsTrayStore,
                 settings = requireComponents.settings,
-                fragment = this
+                fragment = this,
+                dialog = dialog as TabsTrayDialog
             ),
             owner = this,
             view = view
         )
+
+        setFragmentResultListener(ShareFragment.RESULT_KEY) { _, _ ->
+            dismissTabsTray()
+        }
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -369,7 +391,7 @@ class TabsTrayFragment : AppCompatDialogFragment() {
     internal fun navigateToHomeAndDeleteSession(sessionId: String) {
         homeViewModel.sessionToDelete = sessionId
         val directions = NavGraphDirections.actionGlobalHome()
-        findNavController().navigateBlockingForAsyncNavGraph(directions)
+        findNavController().navigate(directions)
     }
 
     @VisibleForTesting
@@ -391,17 +413,11 @@ class TabsTrayFragment : AppCompatDialogFragment() {
         isNewCollection: Boolean = false,
         collectionToSelect: Long?
     ) {
-        val anchor = if (requireComponents.settings.accessibilityServicesEnabled) {
-            null
-        } else {
-            new_tab_button
-        }
-
         FenixSnackbar
             .make(requireView())
-            .message(tabSize, isNewCollection)
-            .anchorWithAction(anchor) {
-                findNavController().navigateBlockingForAsyncNavGraph(
+            .collectionMessage(tabSize, isNewCollection)
+            .anchorWithAction(getSnackbarAnchor()) {
+                findNavController().navigate(
                     TabsTrayFragmentDirections.actionGlobalHome(
                         focusOnAddressBar = false,
                         focusOnCollection = collectionToSelect.orDefault()
@@ -409,6 +425,30 @@ class TabsTrayFragment : AppCompatDialogFragment() {
                 )
                 dismissTabsTray()
             }.show()
+    }
+
+    @VisibleForTesting
+    internal fun showBookmarkSnackbar(
+        tabSize: Int
+    ) {
+        FenixSnackbar
+            .make(requireView())
+            .bookmarkMessage(tabSize)
+            .anchorWithAction(getSnackbarAnchor()) {
+                findNavController().navigate(
+                    TabsTrayFragmentDirections.actionGlobalBookmarkFragment(BookmarkRoot.Mobile.id)
+                )
+                dismissTabsTray()
+            }
+            .show()
+    }
+
+    private fun getSnackbarAnchor(): View? {
+        return if (requireComponents.settings.accessibilityServicesEnabled) {
+            null
+        } else {
+            new_tab_button
+        }
     }
 
     companion object {

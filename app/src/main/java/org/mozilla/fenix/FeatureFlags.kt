@@ -27,12 +27,17 @@ object FeatureFlags {
     /**
      * Enables WebAuthn support.
      */
-    val webAuthFeature = Config.channel.isNightlyOrDebug
+    const val webAuthFeature = true
 
     /**
      * Enables the Home button in the browser toolbar to navigate back to the home screen.
      */
     val showHomeButtonFeature = Config.channel.isNightlyOrDebug
+
+    /**
+     * Enables the Start On Home feature in the settings page.
+     */
+    val showStartOnHomeSettings = Config.channel.isNightlyOrDebug
 
     /**
      * Enables the "recent" tabs feature in the home screen.
@@ -43,4 +48,27 @@ object FeatureFlags {
      * Enables recording of history metadata.
      */
     val historyMetadataFeature = Config.channel.isDebug
+
+    /**
+     * Enables the recently saved bookmarks feature in the home screen.
+     */
+    val recentBookmarksFeature = Config.channel.isNightlyOrDebug
+
+    /**
+     * Identifies and separates the tabs list with a secondary section containing least used tabs.
+     */
+    val inactiveTabs = Config.channel.isNightlyOrDebug
+
+    /**
+     * Enables support for Android Autofill.
+     *
+     * In addition to toggling this flag, matching entries in the Android Manifest of the build
+     * type need to present.
+     */
+    val androidAutofill = Config.channel.isNightlyOrDebug || Config.channel.isBeta
+
+    /**
+     * Enables showing the home screen behind the search dialog
+     */
+    val showHomeBehindSearch = Config.channel.isNightlyOrDebug
 }

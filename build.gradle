@@ -26,6 +26,7 @@ buildscript {
         if (project.hasProperty("googleRepo")) {
             maven {
                 name "Google"
+                allowInsecureProtocol true // Local Nexus in CI uses HTTP
                 url project.property("googleRepo")
             }
         } else {
@@ -35,6 +36,7 @@ buildscript {
                     includeGroupByRegex RepoMatching.androidx
                     includeGroupByRegex RepoMatching.comGoogleAndroid
                     includeGroupByRegex RepoMatching.comGoogleFirebase
+                    includeGroupByRegex RepoMatching.comGoogleTesting
                     includeGroupByRegex RepoMatching.comAndroid
                 }
             }
@@ -44,6 +46,7 @@ buildscript {
             maven {
                 name "MavenCentral"
                 url project.property("centralRepo")
+                allowInsecureProtocol true // Local Nexus in CI uses HTTP
             }
         } else {
             mavenCentral() {
@@ -62,6 +65,7 @@ buildscript {
     dependencies {
         classpath Deps.tools_androidgradle
         classpath Deps.tools_kotlingradle
+        classpath Deps.tools_benchmarkgradle
         classpath Deps.androidx_safeargs
         classpath Deps.allopen
         classpath Deps.osslicenses_plugin
@@ -102,6 +106,7 @@ allprojects {
             maven {
                 name "Google"
                 url project.property("googleRepo")
+                allowInsecureProtocol true // Local Nexus in CI uses HTTP
             }
         } else {
             google() {
@@ -119,6 +124,7 @@ allprojects {
             maven {
                 name "MavenCentral"
                 url project.property("centralRepo")
+                allowInsecureProtocol true // Local Nexus in CI uses HTTP
             }
         } else {
             mavenCentral() {
@@ -138,7 +144,8 @@ allprojects {
         kotlinOptions.jvmTarget = "1.8"
         kotlinOptions.allWarningsAsErrors = true
         kotlinOptions.freeCompilerArgs += [
-            "-Xuse-experimental=kotlin.Experimental"
+            "-Xuse-experimental=kotlin.Experimental",
+            "-Xopt-in=kotlin.RequiresOptIn"
         ]
     }
 }
@@ -169,7 +176,12 @@ configurations {
 }
 
 dependencies {
-    ktlint "com.pinterest:ktlint:0.34.2"
+    ktlint("com.pinterest:ktlint:0.41.0") {
+        attributes {
+            attribute(Bundling.BUNDLING_ATTRIBUTE, getObjects().named(Bundling, Bundling.EXTERNAL))
+        }
+    }
+
     detekt project(":mozilla-detekt-rules")
     detekt "io.gitlab.arturbosch.detekt:detekt-cli:${Versions.detekt}"
 }
@@ -179,7 +191,14 @@ tasks.register('ktlint', JavaExec) {
     description = "Check Kotlin code style."
     classpath = configurations.ktlint
     main = "com.pinterest.ktlint.Main"
-    args "app/src/**/*.kt"
+    args "app/src/**/*.kt", "!**/build/**/*.kt"
+}
+
+task ktlintFormat(type: JavaExec, group: "formatting") {
+    description = "Fix Kotlin code style deviations."
+    classpath = configurations.ktlint
+    main = "com.pinterest.ktlint.Main"
+    args "-F", "app/src/**/*.kt", "!**/build/**/*.kt"
 }
 
 tasks.withType(io.gitlab.arturbosch.detekt.Detekt.class).configureEach {

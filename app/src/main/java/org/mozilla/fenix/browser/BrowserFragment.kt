@@ -21,10 +21,10 @@ import mozilla.components.browser.state.state.SessionState
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.thumbnails.BrowserThumbnails
 import mozilla.components.browser.toolbar.BrowserToolbar
+import mozilla.components.concept.engine.permission.SitePermissions
 import mozilla.components.feature.app.links.AppLinksUseCases
 import mozilla.components.feature.contextmenu.ContextMenuCandidate
 import mozilla.components.feature.readerview.ReaderViewFeature
-import mozilla.components.concept.engine.permission.SitePermissions
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.tabs.WindowFeature
 import mozilla.components.support.base.feature.UserInteractionHandler
@@ -36,11 +36,12 @@ import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
-import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.ext.navigateSafe
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.shortcut.PwaOnboardingObserver
+import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.trackingprotection.TrackingProtectionOverlay
 
 /**
@@ -82,9 +83,10 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
             val homeAction = BrowserToolbar.Button(
                 imageDrawable = AppCompatResources.getDrawable(
                     requireContext(),
-                    R.drawable.ic_home
+                    R.drawable.mozac_ic_home
                 )!!,
                 contentDescription = requireContext().getString(R.string.browser_toolbar_home),
+                iconTintColorResource = ThemeManager.resolveAttribute(R.attr.primaryText, context),
                 listener = browserToolbarInteractor::onHomeButtonClicked
             )
 
@@ -206,7 +208,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
     override fun onStop() {
         super.onStop()
         updateLastBrowseActivity()
-        if (FeatureFlags.historyMetadataFeature) {
+        if (requireContext().settings().historyMetadataFeature) {
             updateHistoryMetadata()
         }
         pwaOnboardingObserver?.stop()
@@ -255,17 +257,18 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
 
     override fun navToTrackingProtectionPanel(tab: SessionState) {
         val navController = findNavController()
-
         requireComponents.useCases.trackingProtectionUseCases.containsException(tab.id) { contains ->
-            val isEnabled = tab.trackingProtection.enabled && !contains
-            val directions =
-                BrowserFragmentDirections.actionBrowserFragmentToTrackingProtectionPanelDialogFragment(
-                    sessionId = tab.id,
-                    url = tab.content.url,
-                    trackingProtectionEnabled = isEnabled,
-                    gravity = getAppropriateLayoutGravity()
-                )
-            navController.navigateSafe(R.id.browserFragment, directions)
+            runIfFragmentIsAttached {
+                val isEnabled = tab.trackingProtection.enabled && !contains
+                val directions =
+                    BrowserFragmentDirections.actionBrowserFragmentToTrackingProtectionPanelDialogFragment(
+                        sessionId = tab.id,
+                        url = tab.content.url,
+                        trackingProtectionEnabled = isEnabled,
+                        gravity = getAppropriateLayoutGravity()
+                    )
+                navController.navigateSafe(R.id.browserFragment, directions)
+            }
         }
     }
 
@@ -305,7 +308,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                 )
                     .setText(view.context.getString(messageStringRes))
                     .setAction(requireContext().getString(R.string.create_collection_view)) {
-                        findNavController().navigateBlockingForAsyncNavGraph(
+                        findNavController().navigate(
                             BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = false)
                         )
                     }

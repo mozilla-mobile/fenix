@@ -48,7 +48,6 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.home.HomeScreenViewModel
@@ -88,16 +87,18 @@ class TabsTrayFragmentTest {
 
             fragment.showUndoSnackbarForTab(true)
 
-            verify { lifecycleScope.allowUndo(
-                fragment.view!!,
-                testContext.getString(R.string.snackbar_private_tab_closed),
-                testContext.getString(R.string.snackbar_deleted_undo),
-                any(),
-                any(),
-                newTabButton,
-                TabsTrayFragment.ELEVATION,
-                false
-            ) }
+            verify {
+                lifecycleScope.allowUndo(
+                    fragment.view!!,
+                    testContext.getString(R.string.snackbar_private_tab_closed),
+                    testContext.getString(R.string.snackbar_deleted_undo),
+                    any(),
+                    any(),
+                    newTabButton,
+                    TabsTrayFragment.ELEVATION,
+                    false
+                )
+            }
         } finally {
             unmockkStatic("org.mozilla.fenix.utils.UndoKt")
             unmockkStatic("androidx.lifecycle.LifecycleOwnerKt")
@@ -120,16 +121,18 @@ class TabsTrayFragmentTest {
 
             fragment.showUndoSnackbarForTab(true)
 
-            verify { lifecycleScope.allowUndo(
-                fragment.view!!,
-                testContext.getString(R.string.snackbar_private_tab_closed),
-                testContext.getString(R.string.snackbar_deleted_undo),
-                any(),
-                any(),
-                null,
-                TabsTrayFragment.ELEVATION,
-                false
-            ) }
+            verify {
+                lifecycleScope.allowUndo(
+                    fragment.view!!,
+                    testContext.getString(R.string.snackbar_private_tab_closed),
+                    testContext.getString(R.string.snackbar_deleted_undo),
+                    any(),
+                    any(),
+                    null,
+                    TabsTrayFragment.ELEVATION,
+                    false
+                )
+            }
         } finally {
             unmockkStatic("org.mozilla.fenix.utils.UndoKt")
             unmockkStatic("androidx.lifecycle.LifecycleOwnerKt")
@@ -152,16 +155,18 @@ class TabsTrayFragmentTest {
 
             fragment.showUndoSnackbarForTab(false)
 
-            verify { lifecycleScope.allowUndo(
-                fragment.view!!,
-                testContext.getString(R.string.snackbar_tab_closed),
-                testContext.getString(R.string.snackbar_deleted_undo),
-                any(),
-                any(),
-                newTabButton,
-                TabsTrayFragment.ELEVATION,
-                false
-            ) }
+            verify {
+                lifecycleScope.allowUndo(
+                    fragment.view!!,
+                    testContext.getString(R.string.snackbar_tab_closed),
+                    testContext.getString(R.string.snackbar_deleted_undo),
+                    any(),
+                    any(),
+                    newTabButton,
+                    TabsTrayFragment.ELEVATION,
+                    false
+                )
+            }
         } finally {
             unmockkStatic("org.mozilla.fenix.utils.UndoKt")
             unmockkStatic("androidx.lifecycle.LifecycleOwnerKt")
@@ -184,16 +189,18 @@ class TabsTrayFragmentTest {
 
             fragment.showUndoSnackbarForTab(false)
 
-            verify { lifecycleScope.allowUndo(
-                fragment.view!!,
-                testContext.getString(R.string.snackbar_tab_closed),
-                testContext.getString(R.string.snackbar_deleted_undo),
-                any(),
-                any(),
-                null,
-                TabsTrayFragment.ELEVATION,
-                false
-            ) }
+            verify {
+                lifecycleScope.allowUndo(
+                    fragment.view!!,
+                    testContext.getString(R.string.snackbar_tab_closed),
+                    testContext.getString(R.string.snackbar_deleted_undo),
+                    any(),
+                    any(),
+                    null,
+                    TabsTrayFragment.ELEVATION,
+                    false
+                )
+            }
         } finally {
             unmockkStatic("org.mozilla.fenix.utils.UndoKt")
             unmockkStatic("androidx.lifecycle.LifecycleOwnerKt")
@@ -315,7 +322,7 @@ class TabsTrayFragmentTest {
             fragment.navigateToHomeAndDeleteSession("test")
 
             verify { viewModel.sessionToDelete = "test" }
-            verify { navController.navigateBlockingForAsyncNavGraph(NavGraphDirections.actionGlobalHome()) }
+            verify { navController.navigate(NavGraphDirections.actionGlobalHome()) }
         } finally {
             unmockkStatic("org.mozilla.fenix.ext.NavControllerKt")
             unmockkStatic("androidx.navigation.fragment.FragmentKt")

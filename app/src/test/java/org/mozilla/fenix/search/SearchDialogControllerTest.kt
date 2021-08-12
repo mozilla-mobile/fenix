@@ -27,17 +27,15 @@ import mozilla.components.support.test.libstate.ext.waitUntilIdle
 import mozilla.components.support.test.middleware.CaptureActionsMiddleware
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
-import org.mozilla.fenix.helpers.DisableNavGraphProviderAssertionRule
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.components.metrics.MetricsUtils
-
 import org.mozilla.fenix.search.SearchDialogFragmentDirections.Companion.actionGlobalAddonsManagementFragment
 import org.mozilla.fenix.search.SearchDialogFragmentDirections.Companion.actionGlobalSearchEngineFragment
 import org.mozilla.fenix.settings.SupportUtils
@@ -52,17 +50,9 @@ class SearchDialogControllerTest {
     @MockK private lateinit var searchEngine: SearchEngine
     @MockK(relaxed = true) private lateinit var metrics: MetricController
     @MockK(relaxed = true) private lateinit var settings: Settings
-    @MockK(relaxed = true) private lateinit var clearToolbarFocus: () -> Unit
-    @MockK(relaxed = true) private lateinit var focusToolbar: () -> Unit
-    @MockK(relaxed = true) private lateinit var clearToolbar: () -> Unit
-    @MockK(relaxed = true) private lateinit var dismissDialog: () -> Unit
 
-    private lateinit var controller: SearchDialogController
     private lateinit var middleware: CaptureActionsMiddleware<BrowserState, BrowserAction>
     private lateinit var browserStore: BrowserStore
-
-    @get:Rule
-    val disableNavGraphProviderAssertionRule = DisableNavGraphProviderAssertionRule()
 
     @Before
     fun setUp() {
@@ -78,22 +68,6 @@ class SearchDialogControllerTest {
             every { id } returns R.id.searchDialogFragment
         }
         every { MetricsUtils.createSearchEvent(searchEngine, browserStore, any()) } returns null
-
-        val tabsUseCases = TabsUseCases(browserStore)
-
-        controller = SearchDialogController(
-            activity = activity,
-            store = browserStore,
-            tabsUseCases = tabsUseCases,
-            fragmentStore = store,
-            navController = navController,
-            settings = settings,
-            metrics = metrics,
-            dismissDialog = dismissDialog,
-            clearToolbarFocus = clearToolbarFocus,
-            focusToolbar = focusToolbar,
-            clearToolbar = clearToolbar
-        )
     }
 
     @After
@@ -105,7 +79,7 @@ class SearchDialogControllerTest {
     fun handleUrlCommitted() {
         val url = "https://www.google.com/"
 
-        controller.handleUrlCommitted(url)
+        createController().handleUrlCommitted(url)
 
         verify {
             activity.openToBrowserAndLoad(
@@ -122,18 +96,21 @@ class SearchDialogControllerTest {
     fun handleBlankUrlCommitted() {
         val url = ""
 
-        controller.handleUrlCommitted(url)
+        var dismissDialogInvoked = false
+        createController(
+            dismissDialog = {
+                dismissDialogInvoked = true
+            }
+        ).handleUrlCommitted(url)
 
-        verify {
-            dismissDialog()
-        }
+        assertTrue(dismissDialogInvoked)
     }
 
     @Test
     fun handleSearchCommitted() {
         val searchTerm = "Firefox"
 
-        controller.handleUrlCommitted(searchTerm)
+        createController().handleUrlCommitted(searchTerm)
 
         verify {
             activity.openToBrowserAndLoad(
@@ -150,7 +127,7 @@ class SearchDialogControllerTest {
         val url = "about:crashes"
         every { activity.packageName } returns "org.mozilla.fenix"
 
-        controller.handleUrlCommitted(url)
+        createController().handleUrlCommitted(url)
 
         verify {
             activity.startActivity(any())
@@ -162,7 +139,7 @@ class SearchDialogControllerTest {
         val url = "about:addons"
         val directions = actionGlobalAddonsManagementFragment()
 
-        controller.handleUrlCommitted(url)
+        createController().handleUrlCommitted(url)
 
         verify { navController.navigate(directions) }
     }
@@ -171,7 +148,7 @@ class SearchDialogControllerTest {
     fun handleMozillaUrlCommitted() {
         val url = "moz://a"
 
-        controller.handleUrlCommitted(url)
+        createController().handleUrlCommitted(url)
 
         verify {
             activity.openToBrowserAndLoad(
@@ -186,18 +163,21 @@ class SearchDialogControllerTest {
 
     @Test
     fun handleEditingCancelled() = runBlockingTest {
-        controller.handleEditingCancelled()
+        var clearToolbarFocusInvoked = false
+        createController(
+            clearToolbarFocus = {
+                clearToolbarFocusInvoked = true
+            }
+        ).handleEditingCancelled()
 
-        verify {
-            clearToolbarFocus()
-        }
+        assertTrue(clearToolbarFocusInvoked)
     }
 
     @Test
     fun handleTextChangedNonEmpty() {
         val text = "fenix"
 
-        controller.handleTextChanged(text)
+        createController().handleTextChanged(text)
 
         verify { store.dispatch(SearchFragmentAction.UpdateQuery(text)) }
     }
@@ -206,7 +186,7 @@ class SearchDialogControllerTest {
     fun handleTextChangedEmpty() {
         val text = ""
 
-        controller.handleTextChanged(text)
+        createController().handleTextChanged(text)
 
         verify { store.dispatch(SearchFragmentAction.UpdateQuery(text)) }
     }
@@ -216,7 +196,7 @@ class SearchDialogControllerTest {
         val text = ""
         every { settings.shouldShowSearchShortcuts } returns true
 
-        controller.handleTextChanged(text)
+        createController().handleTextChanged(text)
 
         verify { store.dispatch(SearchFragmentAction.ShowSearchShortcutEnginePicker(true)) }
     }
@@ -227,7 +207,7 @@ class SearchDialogControllerTest {
         every { store.state.url } returns "mozilla.org"
         every { settings.shouldShowSearchShortcuts } returns true
 
-        controller.handleTextChanged(text)
+        createController().handleTextChanged(text)
 
         verify { store.dispatch(SearchFragmentAction.ShowSearchShortcutEnginePicker(true)) }
     }
@@ -236,7 +216,7 @@ class SearchDialogControllerTest {
     fun `do not show search shortcuts when setting enabled AND query non-empty`() {
         val text = "mozilla"
 
-        controller.handleTextChanged(text)
+        createController().handleTextChanged(text)
 
         verify { store.dispatch(SearchFragmentAction.ShowSearchShortcutEnginePicker(false)) }
     }
@@ -247,7 +227,7 @@ class SearchDialogControllerTest {
 
         val text = ""
 
-        controller.handleTextChanged(text)
+        createController().handleTextChanged(text)
 
         verify { store.dispatch(SearchFragmentAction.ShowSearchShortcutEnginePicker(false)) }
     }
@@ -258,7 +238,7 @@ class SearchDialogControllerTest {
 
         val text = "mozilla"
 
-        controller.handleTextChanged(text)
+        createController().handleTextChanged(text)
 
         verify { store.dispatch(SearchFragmentAction.ShowSearchShortcutEnginePicker(false)) }
     }
@@ -267,7 +247,7 @@ class SearchDialogControllerTest {
     fun handleUrlTapped() {
         val url = "https://www.google.com/"
 
-        controller.handleUrlTapped(url)
+        createController().handleUrlTapped(url)
 
         verify {
             activity.openToBrowserAndLoad(
@@ -283,7 +263,7 @@ class SearchDialogControllerTest {
     fun handleSearchTermsTapped() {
         val searchTerms = "fenix"
 
-        controller.handleSearchTermsTapped(searchTerms)
+        createController().handleSearchTermsTapped(searchTerms)
 
         verify {
             activity.openToBrowserAndLoad(
@@ -300,9 +280,14 @@ class SearchDialogControllerTest {
     fun handleSearchShortcutEngineSelected() {
         val searchEngine: SearchEngine = mockk(relaxed = true)
 
-        controller.handleSearchShortcutEngineSelected(searchEngine)
+        var focusToolbarInvoked = false
+        createController(
+            focusToolbar = {
+                focusToolbarInvoked = true
+            }
+        ).handleSearchShortcutEngineSelected(searchEngine)
 
-        verify { focusToolbar() }
+        assertTrue(focusToolbarInvoked)
         verify { store.dispatch(SearchFragmentAction.SearchShortcutEngineSelected(searchEngine)) }
         verify { metrics.track(Event.SearchShortcutSelected(searchEngine, false)) }
     }
@@ -311,7 +296,7 @@ class SearchDialogControllerTest {
     fun handleClickSearchEngineSettings() {
         val directions: NavDirections = actionGlobalSearchEngineFragment()
 
-        controller.handleClickSearchEngineSettings()
+        createController().handleClickSearchEngineSettings()
 
         verify { navController.navigate(directions) }
     }
@@ -320,7 +305,7 @@ class SearchDialogControllerTest {
     fun handleSearchShortcutsButtonClicked_alreadyOpen() {
         every { store.state.showSearchShortcuts } returns true
 
-        controller.handleSearchShortcutsButtonClicked()
+        createController().handleSearchShortcutsButtonClicked()
 
         verify { store.dispatch(SearchFragmentAction.ShowSearchShortcutEnginePicker(false)) }
     }
@@ -329,14 +314,14 @@ class SearchDialogControllerTest {
     fun handleSearchShortcutsButtonClicked_notYetOpen() {
         every { store.state.showSearchShortcuts } returns false
 
-        controller.handleSearchShortcutsButtonClicked()
+        createController().handleSearchShortcutsButtonClicked()
 
         verify { store.dispatch(SearchFragmentAction.ShowSearchShortcutEnginePicker(true)) }
     }
 
     @Test
     fun handleExistingSessionSelected() {
-        controller.handleExistingSessionSelected("selected")
+        createController().handleExistingSessionSelected("selected")
 
         browserStore.waitUntilIdle()
 
@@ -349,7 +334,7 @@ class SearchDialogControllerTest {
 
     @Test
     fun handleExistingSessionSelected_tabId() {
-        controller.handleExistingSessionSelected("tab-id")
+        createController().handleExistingSessionSelected("tab-id")
 
         browserStore.waitUntilIdle()
 
@@ -363,11 +348,32 @@ class SearchDialogControllerTest {
     fun `show camera permissions needed dialog`() {
         val dialogBuilder: AlertDialog.Builder = mockk(relaxed = true)
 
-        val spyController = spyk(controller)
+        val spyController = spyk(createController())
         every { spyController.buildDialog() } returns dialogBuilder
 
         spyController.handleCameraPermissionsNeeded()
 
         verify { dialogBuilder.show() }
+    }
+
+    private fun createController(
+        clearToolbarFocus: () -> Unit = { },
+        focusToolbar: () -> Unit = { },
+        clearToolbar: () -> Unit = { },
+        dismissDialog: () -> Unit = { }
+    ): SearchDialogController {
+        return SearchDialogController(
+            activity = activity,
+            store = browserStore,
+            tabsUseCases = TabsUseCases(browserStore),
+            fragmentStore = store,
+            navController = navController,
+            settings = settings,
+            metrics = metrics,
+            dismissDialog = dismissDialog,
+            clearToolbarFocus = clearToolbarFocus,
+            focusToolbar = focusToolbar,
+            clearToolbar = clearToolbar
+        )
     }
 }

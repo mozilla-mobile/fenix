@@ -8,6 +8,7 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'jacoco'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
 apply plugin: 'com.google.android.gms.oss-licenses-plugin'
+apply plugin: 'androidx.benchmark'
 
 
 import com.android.build.OutputFile
@@ -17,9 +18,12 @@ import org.gradle.internal.logging.text.StyledTextOutputFactory
 
 import static org.gradle.api.tasks.testing.TestResult.ResultType
 
+apply from: 'benchmark.gradle'
+
 android {
     compileSdkVersion Config.compileSdkVersion
 
+    project.maybeConfigForJetpackBenchmark(it)
     if (project.hasProperty("testBuildType")) {
         // Allowing to configure the test build type via command line flag (./gradlew -PtestBuildType=beta ..)
         // in order to run UI tests against other build variants than debug in automation.
@@ -74,7 +78,7 @@ android {
         // in automation for UI testing non-debug builds.
         shrinkResources !project.hasProperty("disableOptimization")
         minifyEnabled !project.hasProperty("disableOptimization")
-        proguardFiles 'proguard-android-optimize-3.5.0-modified.txt', 'proguard-rules.pro'
+        proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         matchingFallbacks = ['release'] // Use on the "release" build type in dependencies (AARs)
 
         if (gradle.hasProperty("localProperties.autosignReleaseWithDebugKey")) {
@@ -137,6 +141,10 @@ android {
         }
     }
 
+    buildFeatures {
+        viewBinding true
+    }
+
     aaptOptions {
         // All JavaScript code used internally by GeckoView is packaged in a
         // file called omni.ja. If this file is compressed in the APK,
@@ -163,7 +171,6 @@ android {
         }
         beta {
             java.srcDirs = ['src/migration/java']
-            manifest.srcFile "src/migration/AndroidManifest.xml"
         }
         release {
             java.srcDirs = ['src/migration/java']
@@ -208,6 +215,14 @@ android {
             maxHeapSize = "3072m"
             minHeapSize = "1024m"
         }
+    }
+
+    buildFeatures {
+        compose true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = Versions.androidx_compose
     }
 }
 
@@ -383,10 +398,6 @@ configurations {
     // correct runtime classpath when invoked with Android Studio's built-in JUnit test runner.
     // Success!
     jnaForTest
-    // Robolectric, through `com.google.android.apps.common.testing.accessibility.framework`
-    // depends on an old version of protobuf that conflict with the Application Services one.
-    // See: https://github.com/mozilla/application-services/issues/2952
-    all*.exclude group: 'com.google.protobuf', module: 'protobuf-java'
 }
 
 dependencies {
@@ -492,6 +503,10 @@ dependencies {
     implementation Deps.mozilla_lib_dataprotect
     debugImplementation Deps.leakcanary
 
+    implementation Deps.androidx_compose_ui
+    implementation Deps.androidx_compose_ui_tooling
+    implementation Deps.androidx_compose_foundation
+    implementation Deps.androidx_compose_material
     implementation Deps.androidx_legacy
     implementation Deps.androidx_biometric
     implementation Deps.androidx_paging
@@ -549,6 +564,7 @@ dependencies {
 
     androidTestImplementation Deps.androidx_junit
     androidTestImplementation Deps.androidx_work_testing
+    androidTestImplementation Deps.androidx_benchmark_junit4
     androidTestImplementation Deps.mockwebserver
     testImplementation Deps.mozilla_support_test
     testImplementation Deps.mozilla_support_test_libstate
@@ -573,6 +589,11 @@ dependencies {
 if (project.hasProperty("coverage")) {
     tasks.withType(Test).configureEach {
         jacoco.includeNoLocationClasses = true
+        jacoco.excludes = ['jdk.internal.*']
+    }
+
+    jacoco {
+        toolVersion = "0.8.7"
     }
 
     android.applicationVariants.all { variant ->
@@ -737,14 +758,3 @@ ext.updateExtensionVersion = { task, extDir ->
         expand(values)
     }
 }
-
-tasks.register("updateAdsExtensionVersion", Copy) { task ->
-    updateExtensionVersion(task, 'src/main/assets/extensions/ads')
-}
-
-tasks.register("updateCookiesExtensionVersion", Copy) { task ->
-    updateExtensionVersion(task, 'src/main/assets/extensions/cookies')
-}
-
-preBuild.dependsOn "updateAdsExtensionVersion"
-preBuild.dependsOn "updateCookiesExtensionVersion"

@@ -8,12 +8,9 @@ import android.content.Context
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.graphics.drawable.toBitmap
 import io.mockk.MockKAnnotations
-import io.mockk.Runs
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import io.mockk.just
 import io.mockk.mockk
-import io.mockk.slot
 import io.mockk.spyk
 import io.mockk.verify
 import mozilla.components.browser.toolbar.BrowserToolbar
@@ -23,6 +20,7 @@ import mozilla.components.concept.toolbar.Toolbar
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -44,10 +42,12 @@ class ToolbarViewTest {
         url = "",
         searchTerms = "",
         query = "",
-        searchEngineSource = SearchEngineSource.Default(mockk {
-            every { name } returns "Search Engine"
-            every { icon } returns testContext.getDrawable(R.drawable.ic_search)!!.toBitmap()
-        }),
+        searchEngineSource = SearchEngineSource.Default(
+            mockk {
+                every { name } returns "Search Engine"
+                every { icon } returns testContext.getDrawable(R.drawable.ic_search)!!.toBitmap()
+            }
+        ),
         defaultEngine = null,
         showSearchShortcutsSetting = false,
         showSearchSuggestionsHint = false,
@@ -70,20 +70,25 @@ class ToolbarViewTest {
 
     @Test
     fun `sets up interactor listeners`() {
-        val urlCommitListener = slot<(String) -> Boolean>()
-        val editListener = slot<Toolbar.OnEditListener>()
-        every { toolbar.setOnUrlCommitListener(capture(urlCommitListener)) } just Runs
-        every { toolbar.setOnEditListener(capture(editListener)) } just Runs
+        lateinit var urlCommitListener: ((String) -> Boolean)
+        var editListener: Toolbar.OnEditListener? = null
+        every { toolbar.setOnUrlCommitListener(any()) } answers {
+            urlCommitListener = firstArg()
+        }
+        every { toolbar.setOnEditListener(any()) } answers {
+            editListener = firstArg()
+        }
 
         buildToolbarView(isPrivate = false)
 
-        assertFalse(urlCommitListener.captured("test"))
+        assertFalse(urlCommitListener("test"))
         verify { interactor.onUrlCommitted("test") }
 
-        assertFalse(editListener.captured.onCancelEditing())
+        assertNotNull(editListener)
+        assertFalse(editListener!!.onCancelEditing())
         verify { interactor.onEditingCanceled() }
 
-        editListener.captured.onTextChanged("https://example.com")
+        editListener!!.onTextChanged("https://example.com")
         verify { interactor.onTextChanged("https://example.com") }
     }
 

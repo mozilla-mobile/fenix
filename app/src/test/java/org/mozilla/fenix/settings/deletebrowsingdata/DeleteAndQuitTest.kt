@@ -23,16 +23,13 @@ import org.junit.Before
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.PermissionStorage
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.utils.Settings
 
 @OptIn(ExperimentalCoroutinesApi::class)
-@RunWith(FenixRobolectricTestRunner::class)
 class DeleteAndQuitTest {
 
     val testDispatcher = TestCoroutineDispatcher()
@@ -75,7 +72,7 @@ class DeleteAndQuitTest {
 
         verifyOrder {
             snackbar.show()
-            removeAllTabsUseCases.invoke()
+            removeAllTabsUseCases.invoke(false)
             activity.finishAndRemoveTask()
         }
 

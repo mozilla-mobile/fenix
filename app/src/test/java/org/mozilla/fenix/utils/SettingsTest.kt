@@ -34,7 +34,7 @@ class SettingsTest {
         microphone = ASK_TO_ALLOW,
         notification = ASK_TO_ALLOW,
         autoplayAudible = AutoplayAction.BLOCKED,
-        autoplayInaudible = AutoplayAction.BLOCKED,
+        autoplayInaudible = AutoplayAction.ALLOWED,
         persistentStorage = ASK_TO_ALLOW,
         mediaKeySystemAccess = ASK_TO_ALLOW
     )
@@ -231,7 +231,7 @@ class SettingsTest {
         settings.manuallyCloseTabs = false
 
         // Then
-        assertFalse(settings.shouldUseLightTheme)
+        assertFalse(settings.manuallyCloseTabs)
     }
 
     @Test
@@ -606,7 +606,7 @@ class SettingsTest {
         )
 
         assertEquals(
-            AutoplayAction.BLOCKED,
+            AutoplayAction.ALLOWED,
             settings.getSitePermissionsCustomSettingsRules().autoplayInaudible
         )
     }
@@ -676,25 +676,6 @@ class SettingsTest {
     }
 
     @Test
-    fun creditCardsSavedCount() {
-        // When just created
-        // Then
-        assertEquals(0, settings.creditCardsSavedCount)
-
-        // When
-        settings.creditCardsSavedCount += 1
-
-        // Then
-        assertEquals(1, settings.creditCardsSavedCount)
-
-        // When
-        settings.creditCardsSavedCount += 1
-
-        // Then
-        assertEquals(2, settings.creditCardsSavedCount)
-    }
-
-    @Test
     fun `GIVEN startOnHomeAlways is selected WHEN calling shouldStartOnHome THEN return true`() {
         settings.startOnHomeAlways = true
         settings.startOnHomeNever = false
@@ -744,5 +725,25 @@ class SettingsTest {
         every { localSetting.timeNowInMillis() } returns now
 
         assertFalse(localSetting.shouldStartOnHome())
+    }
+
+    @Test
+    fun `GIVEN shownDefaultBrowserNotification and isDefaultBrowser WHEN calling shouldShowDefaultBrowserNotification THEN return correct value`() {
+        val localSetting = spyk(settings)
+        every { localSetting.isDefaultBrowserBlocking() } returns false
+
+        localSetting.defaultBrowserNotificationDisplayed = false
+        assert(localSetting.shouldShowDefaultBrowserNotification())
+
+        localSetting.defaultBrowserNotificationDisplayed = true
+        assertFalse(localSetting.shouldShowDefaultBrowserNotification())
+
+        every { localSetting.isDefaultBrowserBlocking() } returns true
+
+        localSetting.defaultBrowserNotificationDisplayed = false
+        assertFalse(localSetting.shouldShowDefaultBrowserNotification())
+
+        localSetting.defaultBrowserNotificationDisplayed = true
+        assertFalse(localSetting.shouldShowDefaultBrowserNotification())
     }
 }

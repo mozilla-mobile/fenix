@@ -20,7 +20,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
-import kotlinx.android.synthetic.main.fragment_history.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -35,6 +34,7 @@ import mozilla.components.service.fxa.sync.SyncReason
 import mozilla.components.support.base.feature.UserInteractionHandler
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.NavHostActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.addons.showSnackBar
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
@@ -42,11 +42,11 @@ import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.history.createSynchronousPagedHistoryProvider
 import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.databinding.FragmentHistoryBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.setTextColor
-import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.ext.toShortUrl
 import org.mozilla.fenix.library.LibraryPageFragment
 import org.mozilla.fenix.utils.allowUndo
@@ -62,13 +62,16 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
     private var _historyView: HistoryView? = null
     protected val historyView: HistoryView
         get() = _historyView!!
+    private var _binding: FragmentHistoryBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_history, container, false)
+    ): View {
+        _binding = FragmentHistoryBinding.inflate(inflater, container, false)
+        val view = binding.root
         historyStore = StoreProvider.get(this) {
             HistoryFragmentStore(
                 HistoryFragmentState(
@@ -102,10 +105,9 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
             historyController
         )
         _historyView = HistoryView(
-            view.historyLayout,
+            binding.historyLayout,
             historyInteractor
         )
-        showToolbar(getString(R.string.library_history))
 
         return view
     }
@@ -123,9 +125,12 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
             requireComponents.core.historyStorage.createSynchronousPagedHistoryProvider()
         )
 
-        viewModel.userHasHistory.observe(this, Observer {
-            historyView.updateEmptyState(it)
-        })
+        viewModel.userHasHistory.observe(
+            this,
+            Observer {
+                historyView.updateEmptyState(it)
+            }
+        )
 
         requireComponents.analytics.metrics.track(Event.HistoryOpened)
 
@@ -155,13 +160,18 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
             historyView.update(it)
         }
 
-        viewModel.history.observe(viewLifecycleOwner, Observer {
-            historyView.historyAdapter.submitList(it)
-        })
+        viewModel.history.observe(
+            viewLifecycleOwner,
+            Observer {
+                historyView.historyAdapter.submitList(it)
+            }
+        )
     }
 
     override fun onResume() {
         super.onResume()
+
+        (activity as NavHostActivity).getSupportActionBarAndInflateIfNecessary().show()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -228,7 +238,8 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
             String.format(
                 requireContext().getString(
                     R.string.history_delete_single_item_snackbar
-                ), historyItems.first().url.toShortUrl(requireComponents.publicSuffixList)
+                ),
+                historyItems.first().url.toShortUrl(requireComponents.publicSuffixList)
             )
         }
     }
@@ -246,6 +257,7 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
     override fun onDestroyView() {
         super.onDestroyView()
         _historyView = null
+        _binding = null
     }
 
     private fun openItem(item: HistoryItem) {

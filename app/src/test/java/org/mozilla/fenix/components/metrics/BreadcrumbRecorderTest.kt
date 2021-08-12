@@ -18,7 +18,10 @@ import mozilla.components.lib.crash.CrashReporter
 import mozilla.components.lib.crash.service.CrashReporterService
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 
+@RunWith(FenixRobolectricTestRunner::class)
 class BreadcrumbRecorderTest {
 
     @Test
@@ -64,11 +67,13 @@ class BreadcrumbRecorderTest {
         breadCrumbRecorder.onDestinationChanged(navController, navDestination, null)
 
         verify {
-            reporter.recordCrashBreadcrumb(withArg {
-                assertEquals("test", it.message)
-                assertEquals("DestinationChanged", it.category)
-                assertEquals(Breadcrumb.Level.INFO, it.level)
-            })
+            reporter.recordCrashBreadcrumb(
+                withArg {
+                    assertEquals("test", it.message)
+                    assertEquals("DestinationChanged", it.category)
+                    assertEquals(Breadcrumb.Level.INFO, it.level)
+                }
+            )
         }
     }
 }

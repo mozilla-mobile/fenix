@@ -73,9 +73,16 @@ class HistoryMetadataMiddlewareTest {
         // Now, test that we'll record metadata for the same tab after url is changed.
         store.dispatch(ContentAction.UpdateUrlAction(tab.id, "https://firefox.com")).joinBlocking()
         store.dispatch(ContentAction.UpdateHistoryStateAction(tab.id, emptyList(), currentIndex = 0)).joinBlocking()
-        verify(exactly = 2) { service.createMetadata(capture(capturedTab)) }
 
-        assertEquals(tab.id, capturedTab.captured.id)
+        val capturedTabs = mutableListOf<TabSessionState>()
+        verify(exactly = 2) { service.createMetadata(capture(capturedTabs)) }
+
+        assertEquals(2, capturedTabs.size)
+
+        capturedTabs[0].apply() {
+            assertEquals(tab.id, id)
+        }
+
         assertEquals(expectedKey, store.state.findTab(tab.id)?.historyMetadata)
     }
 
@@ -93,28 +100,36 @@ class HistoryMetadataMiddlewareTest {
     }
 
     @Test
+    fun `GIVEN normal tab has search results parent without search terms WHEN history metadata is recorded THEN search terms and referrer url are provided`() {
+        setupGoogleSearchEngine()
+
+        val parentTab = createTab("https://google.com?q=mozilla+website")
+        val tab = createTab("https://mozilla.org", parent = parentTab)
+        store.dispatch(TabListAction.AddTabAction(parentTab)).joinBlocking()
+        store.dispatch(TabListAction.AddTabAction(tab)).joinBlocking()
+
+        store.dispatch(ContentAction.UpdateHistoryStateAction(tab.id, emptyList(), currentIndex = 0)).joinBlocking()
+        verify {
+            service.createMetadata(any(), eq("mozilla website"), eq("https://google.com?q=mozilla+website"))
+        }
+    }
+
+    @Test
+    fun `GIVEN normal tab has parent WHEN url is the same THEN nothing happens`() {
+        val parentTab = createTab("https://mozilla.org", searchTerms = "mozilla website")
+        val tab = createTab("https://mozilla.org", parent = parentTab)
+        store.dispatch(TabListAction.AddTabAction(parentTab)).joinBlocking()
+        store.dispatch(TabListAction.AddTabAction(tab)).joinBlocking()
+
+        store.dispatch(ContentAction.UpdateHistoryStateAction(tab.id, emptyList(), currentIndex = 0)).joinBlocking()
+        verify { service wasNot Called }
+    }
+
+    @Test
     fun `GIVEN normal tab has no parent WHEN history metadata is recorded THEN search terms and referrer url are provided`() {
         val tab = createTab("https://mozilla.org")
         store.dispatch(TabListAction.AddTabAction(tab)).joinBlocking()
-        store.dispatch(SearchAction.SetSearchEnginesAction(
-            regionSearchEngines = listOf(
-                SearchEngine(
-                    id = "google",
-                    name = "Google",
-                    icon = mock(),
-                    type = SearchEngine.Type.BUNDLED,
-                    resultUrls = listOf("https://google.com?q={searchTerms}")
-                )
-            ),
-            userSelectedSearchEngineId = null,
-            userSelectedSearchEngineName = null,
-            regionDefaultSearchEngineId = "google",
-            customSearchEngines = emptyList(),
-            hiddenSearchEngines = emptyList(),
-            additionalAvailableSearchEngines = emptyList(),
-            additionalSearchEngines = emptyList(),
-            regionSearchEnginesOrder = listOf("google")
-        )).joinBlocking()
+        setupGoogleSearchEngine()
 
         val historyState = listOf(
             HistoryItem("firefox", "https://google.com?q=mozilla+website"),
@@ -124,6 +139,23 @@ class HistoryMetadataMiddlewareTest {
 
         verify {
             service.createMetadata(any(), eq("mozilla website"), eq("https://google.com?q=mozilla+website"))
+        }
+    }
+
+    @Test
+    fun `GIVEN normal tab has no parent WHEN history metadata is recorded without search terms THEN no referrer is provided`() {
+        val tab = createTab("https://mozilla.org")
+        store.dispatch(TabListAction.AddTabAction(tab)).joinBlocking()
+        setupGoogleSearchEngine()
+
+        val historyState = listOf(
+            HistoryItem("firefox", "https://mozilla.org"),
+            HistoryItem("mozilla", "https://firefox.com")
+        )
+        store.dispatch(ContentAction.UpdateHistoryStateAction(tab.id, historyState, currentIndex = 1)).joinBlocking()
+
+        verify {
+            service.createMetadata(any(), null, null)
         }
     }
 
@@ -363,5 +395,29 @@ class HistoryMetadataMiddlewareTest {
 
         store.dispatch(TabListAction.RemoveTabsAction(listOf(otherTab.id, yetAnotherTab.id))).joinBlocking()
         verify { service wasNot Called }
+    }
+
+    private fun setupGoogleSearchEngine() {
+        store.dispatch(
+            SearchAction.SetSearchEnginesAction(
+                regionSearchEngines = listOf(
+                    SearchEngine(
+                        id = "google",
+                        name = "Google",
+                        icon = mock(),
+                        type = SearchEngine.Type.BUNDLED,
+                        resultUrls = listOf("https://google.com?q={searchTerms}")
+                    )
+                ),
+                userSelectedSearchEngineId = null,
+                userSelectedSearchEngineName = null,
+                regionDefaultSearchEngineId = "google",
+                customSearchEngines = emptyList(),
+                hiddenSearchEngines = emptyList(),
+                additionalAvailableSearchEngines = emptyList(),
+                additionalSearchEngines = emptyList(),
+                regionSearchEnginesOrder = listOf("google")
+            )
+        ).joinBlocking()
     }
 }

@@ -1059,7 +1059,7 @@
     <!-- Add new device screen title -->
     <string name="sync_add_new_device_title">Inviar a un apparato</string>
     <!-- Text for the warning message on the Add new device screen -->
-    <string name="sync_add_new_device_message">Nulle apparatos connexe</string>
+    <string name="sync_add_new_device_message">Nulle apparato connectite</string>
 
     <!-- Text for the button to learn about sending tabs -->
     <string name="sync_add_new_device_learn_button">Saper plus sur le invio de schedas…</string>
@@ -1080,6 +1080,16 @@
 
     <!-- Name of the "Powered by Fenix" notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="notification_powered_by_channel_name">Potentiate per</string>
+    <!-- Name of the marketing notification channel. Displayed in the "App notifications" system settings for the app -->
+    <string name="notification_marketing_channel_name">Marketing</string>
+    <!-- Title shown in the notification that pops up to remind the user to set fenix as default browser.
+    %1$s is a placeholder that will be replaced by the app name (Fenix). -->
+    <string name="notification_default_browser_title">%1$s es veloce e private</string>
+    <!-- Text shown in the notification that pops up to remind the user to set fenix as default browser.
+    %1$s is a placeholder that will be replaced by the app name (Fenix). -->
+    <string name="notification_default_browser_text">Rende %1$s tu navigator predefinite</string>
+
+    <!-- Snackbar -->
     <!-- Text shown in snackbar when user deletes a collection -->
     <string name="snackbar_collection_deleted">Collection delite</string>
     <!-- Text shown in snackbar when user renames a collection -->
@@ -1169,7 +1179,7 @@
     <!-- Title for the cookies item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_cookies">Cookies</string>
     <!-- Subtitle for the cookies item in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_cookies_subtitle">Tu essera disconnexe del major parte del sitos</string>
+    <string name="preferences_delete_browsing_data_cookies_subtitle">Tu session essera claudite in le major parte del sitos</string>
     <!-- Title for the cached images and files item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_cached_files">Imagines e files in cache</string>
     <!-- Subtitle for the cached images and files item in Delete browsing data -->
@@ -1262,7 +1272,7 @@
     <!-- text for the button to manually sign into Firefox account. -->
     <string name="onboarding_firefox_account_sign_in_1">Inscribe te</string>
     <!-- text for the button to stay signed out when presented with an option to automatically sign-in. -->
-    <string name="onboarding_firefox_account_stay_signed_out">Restar disconnexe</string>
+    <string name="onboarding_firefox_account_stay_signed_out">Mantener session claudite</string>
     <!-- text to display in the snackbar once account is signed-in -->
     <string name="onboarding_firefox_account_sync_is_on">Sync es activate</string>
     <!-- text to display in the snackbar if automatic sign-in fails. user may try again -->
