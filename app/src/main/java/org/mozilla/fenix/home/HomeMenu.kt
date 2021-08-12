@@ -232,6 +232,16 @@ class HomeMenu(
                         }
                     }
 
+                    override fun onProfileUpdated(profile: Profile) {
+                        lifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+                            onMenuBuilderChanged(
+                                BrowserMenuBuilder(
+                                    coreMenuItems()
+                                )
+                            )
+                        }
+                    }
+
                     override fun onAuthenticated(account: OAuthAccount, authType: AuthType) {
                         lifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
                             onMenuBuilderChanged(

@@ -454,19 +454,26 @@ open class DefaultToolbarMenu(
             if (lifecycleOwner.lifecycle.currentState == Lifecycle.State.DESTROYED) {
                 return@runIfReadyOrQueue
             }
-            context.components.backgroundServices.accountManager.register(object : AccountObserver {
-                private fun updateMenu() {
-                    lifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
-                        coreMenuItems = coreMenuItems()
-                        menuBuilder = buildMenu()
-                        onMenuBuilderChanged(menuBuilder)
+            context.components.backgroundServices.accountManager.register(
+                object : AccountObserver {
+                    private fun updateMenu() {
+                        lifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+                            coreMenuItems = coreMenuItems()
+                            menuBuilder = buildMenu()
+                            onMenuBuilderChanged(menuBuilder)
+                        }
                     }
-                }
 
-                override fun onLoggedOut() { updateMenu() }
+                    override fun onLoggedOut() {
+                        updateMenu()
+                    }
 
-                override fun onProfileUpdated(profile: Profile) { updateMenu() }
-            }, lifecycleOwner)
+                    override fun onProfileUpdated(profile: Profile) {
+                        updateMenu()
+                    }
+                },
+                lifecycleOwner
+            )
         }
     }
 }
