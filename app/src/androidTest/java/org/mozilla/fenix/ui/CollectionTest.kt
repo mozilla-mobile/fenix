@@ -166,7 +166,7 @@ class CollectionTest {
     }
 
     @Test
-    @Ignore("Failing on https://github.com/mozilla-mobile/fenix/pull/20573")
+    @Ignore("To be fixed in https://github.com/mozilla-mobile/fenix/issues/20702")
     fun swipeToRemoveTabFromCollectionTest() {
         val firstWebPage = getGenericAsset(mockWebServer, 1)
         val secondWebPage = getGenericAsset(mockWebServer, 2)

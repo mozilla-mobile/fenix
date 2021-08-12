@@ -19,8 +19,8 @@ import mozilla.components.browser.state.state.SearchState
 import mozilla.components.browser.state.store.BrowserStore
 import org.junit.After
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 import org.mozilla.fenix.R
 
@@ -42,12 +42,6 @@ class ShortcutsSuggestionProviderTest {
     @After
     fun teardown() {
         unmockkStatic(AppCompatResources::class)
-    }
-
-    @Test
-    fun `should clear is always false`() {
-        val provider = ShortcutsSuggestionProvider(mockk(), mockk(), mockk(), mockk())
-        assertFalse(provider.shouldClearSuggestions)
     }
 
     @Test
@@ -89,6 +83,7 @@ class ShortcutsSuggestionProviderTest {
         assertEquals("Search engine settings", suggestions[2].title)
     }
 
+    @Ignore("See https://github.com/mozilla-mobile/fenix/issues/20797")
     @Test
     fun `callbacks are triggered when suggestions are clicked`() = runBlockingTest {
         val engineOne = mockk<SearchEngine>(relaxed = true)
