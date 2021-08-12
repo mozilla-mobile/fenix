@@ -22,7 +22,7 @@ class EditLoginInteractor(
         savedLoginsController.save(loginId, usernameText, passwordText)
     }
 
-    fun onAddNewLogin(hostnameText: String, usernameText: String, passwordText: String) {
+    fun onAddLogin(hostnameText: String, usernameText: String, passwordText: String) {
         savedLoginsController.add(hostnameText, usernameText, passwordText)
     }
 }
