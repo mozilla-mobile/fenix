@@ -47,7 +47,7 @@ class LoginsListController(
 
     fun handleAddLoginClicked() {
         navController.navigate(
-            SavedLoginsFragmentDirections.actionSavedLoginsFragmentToAddNewLoginFragment()
+            SavedLoginsFragmentDirections.actionSavedLoginsFragmentToAddLoginFragment()
         )
     }
 

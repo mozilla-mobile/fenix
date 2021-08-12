@@ -23,18 +23,24 @@ import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.StoreProvider
-import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.databinding.FragmentAddNewLoginBinding
-import org.mozilla.fenix.ext.*
-import org.mozilla.fenix.settings.logins.*
+import org.mozilla.fenix.databinding.FragmentAddLoginBinding
+import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.redirectToReAuth
+import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.ext.toEditable
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.settings.logins.controller.SavedLoginsStorageController
 import org.mozilla.fenix.settings.logins.interactor.AddLoginInteractor
+import org.mozilla.fenix.settings.logins.LoginsFragmentStore
+import org.mozilla.fenix.settings.logins.SavedLogin
+import org.mozilla.fenix.settings.logins.createInitialLoginsListState
 
 /**
  * Displays the editable new login information for a single website
  */
 @ExperimentalCoroutinesApi
-class AddNewLoginFragment : Fragment(R.layout.fragment_add_new_login) {
+@Suppress("TooManyFunctions", "NestedBlockDepth", "ForbiddenComment")
+class AddLoginFragment : Fragment(R.layout.fragment_add_login) {
 
     private lateinit var loginsFragmentStore: LoginsFragmentStore
     private lateinit var interactor: AddLoginInteractor
@@ -44,19 +50,14 @@ class AddNewLoginFragment : Fragment(R.layout.fragment_add_new_login) {
     private var validPassword = true
     private var validUsername = true
 
-    private var _binding: FragmentAddNewLoginBinding? = null
+    private var _binding: FragmentAddLoginBinding? = null
     private val binding get() = _binding!!
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
 
-        _binding = FragmentAddNewLoginBinding.bind(view)
-
-        // initialize editable values
-        binding.hostnameText.text = "".toEditable()
-        binding.usernameText.text = "".toEditable()
-        binding.passwordText.text = "".toEditable()
+        _binding = FragmentAddLoginBinding.bind(view)
 
         loginsFragmentStore = StoreProvider.get(this) {
             LoginsFragmentStore(
@@ -72,6 +73,18 @@ class AddNewLoginFragment : Fragment(R.layout.fragment_add_new_login) {
                 loginsFragmentStore = loginsFragmentStore
             )
         )
+
+        // loginsFragmentStore.dispatch(LoginsAction.UpdateCurrentLogin(args.savedLoginItem))
+        interactor.findPotentialDuplicates(
+            binding.hostnameText.text.toString(),
+            binding.usernameText.text.toString(),
+            binding.passwordText.text.toString()
+        )
+
+        // initialize editable values
+        binding.hostnameText.text = "".toEditable()
+        binding.usernameText.text = "".toEditable()
+        binding.passwordText.text = "".toEditable()
 
         formatEditableValues()
         setUpClickListeners()
@@ -108,13 +121,13 @@ class AddNewLoginFragment : Fragment(R.layout.fragment_add_new_login) {
     }
 
     private fun setUpTextListeners() {
-        val frag = view?.findViewById<View>(R.id.addNewLoginFragment)
+        val frag = view?.findViewById<View>(R.id.addLoginFragment)
         frag?.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
                 view?.hideKeyboard()
             }
         }
-        binding.addNewLoginLayout.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
+        binding.addLoginLayout.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
                 view?.hideKeyboard()
             }
@@ -232,7 +245,7 @@ class AddNewLoginFragment : Fragment(R.layout.fragment_add_new_login) {
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.save_login_button -> {
             view?.hideKeyboard()
-            interactor.onAddNewLogin(
+            interactor.onAddLogin(
                 binding.hostnameText.text.toString(),
                 binding.usernameText.text.toString(),
                 binding.passwordText.text.toString()
@@ -247,5 +260,4 @@ class AddNewLoginFragment : Fragment(R.layout.fragment_add_new_login) {
         super.onDestroyView()
         _binding = null
     }
-
 }

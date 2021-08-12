@@ -151,7 +151,7 @@ class SavedLoginsFragment : Fragment() {
         setHasOptionsMenu(false)
 
         redirectToReAuth(
-            listOf(R.id.loginDetailFragment, R.id.addNewLoginFragment),
+            listOf(R.id.loginDetailFragment, R.id.addLoginFragment),
             findNavController().currentDestination?.id,
             R.id.savedLoginsFragment
         )

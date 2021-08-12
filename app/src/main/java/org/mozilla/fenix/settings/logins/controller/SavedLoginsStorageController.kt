@@ -23,12 +23,13 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.settings.logins.LoginsAction
 import org.mozilla.fenix.settings.logins.LoginsFragmentStore
 import org.mozilla.fenix.settings.logins.fragment.EditLoginFragmentDirections
-import org.mozilla.fenix.settings.logins.fragment.AddNewLoginFragmentDirections
+import org.mozilla.fenix.settings.logins.fragment.AddLoginFragmentDirections
 import org.mozilla.fenix.settings.logins.mapToSavedLogin
 
 /**
  * Controller for all saved logins interactions with the password storage component
  */
+@Suppress("TooManyFunctions", "LargeClass")
 open class SavedLoginsStorageController(
     private val passwordsStorage: SyncableLoginsStorage,
     private val lifecycleScope: CoroutineScope,
@@ -77,7 +78,7 @@ open class SavedLoginsStorageController(
             saveLoginJob?.await()
             withContext(Dispatchers.Main) {
                 val directions =
-                    AddNewLoginFragmentDirections.actionAddNewLoginFragmentToSavedLoginsFragment()
+                    AddLoginFragmentDirections.actionAddLoginFragmentToSavedLoginsFragment()
                 navController.navigate(directions)
             }
         }
@@ -173,6 +174,38 @@ open class SavedLoginsStorageController(
             deferredLogin = async {
                 val login = getLogin(loginId)
                 passwordsStorage.getPotentialDupesIgnoringUsername(login!!)
+            }
+            val fetchedDuplicatesList = deferredLogin?.await()
+            fetchedDuplicatesList?.let { list ->
+                withContext(Dispatchers.Main) {
+                    val savedLoginList = list.map { it.mapToSavedLogin() }
+                    loginsFragmentStore.dispatch(
+                        LoginsAction.ListOfDupes(
+                            savedLoginList
+                        )
+                    )
+                }
+            }
+        }
+        fetchLoginJob.invokeOnCompletion {
+            if (it is CancellationException) {
+                deferredLogin?.cancel()
+            }
+        }
+    }
+
+    fun findPotentialDuplicates(hostnameText: String, usernameText: String, passwordText: String) {
+        var deferredLogin: Deferred<List<Login>>? = null
+        val fetchLoginJob = lifecycleScope.launch(ioDispatcher) {
+            deferredLogin = async {
+                val login = Login(
+                    guid = null,
+                    origin = hostnameText,
+                    username = usernameText,
+                    password = passwordText,
+                    httpRealm = hostnameText
+                )
+                passwordsStorage.getPotentialDupesIgnoringUsername(login)
             }
             val fetchedDuplicatesList = deferredLogin?.await()
             fetchedDuplicatesList?.let { list ->
