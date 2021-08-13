@@ -75,16 +75,14 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login) {
         )
 
         // loginsFragmentStore.dispatch(LoginsAction.UpdateCurrentLogin(args.savedLoginItem))
-        interactor.findPotentialDuplicates(
-            binding.hostnameText.text.toString(),
-            binding.usernameText.text.toString(),
-            binding.passwordText.text.toString()
-        )
 
         // initialize editable values
         binding.hostnameText.text = "".toEditable()
         binding.usernameText.text = "".toEditable()
         binding.passwordText.text = "".toEditable()
+
+        setUsernameError()
+        setPasswordError()
 
         formatEditableValues()
         setUpClickListeners()
@@ -133,10 +131,36 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login) {
             }
         }
 
+        binding.hostnameText.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(h: Editable?) {
+                interactor.findPotentialDuplicates(
+                    hostnameText = h.toString(),
+                    binding.usernameText.text.toString(),
+                    binding.passwordText.text.toString()
+                )
+                setDupeError() // won't work because findPotentialDuplicates is async
+            }
+
+            override fun beforeTextChanged(u: CharSequence?, start: Int, count: Int, after: Int) {
+                // NOOP
+            }
+
+            override fun onTextChanged(u: CharSequence?, start: Int, before: Int, count: Int) {
+                // NOOP
+            }
+        })
+
         binding.usernameText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(u: Editable?) {
-                setDupeError()
-
+                when {
+                    u.toString().isEmpty() -> {
+                        binding.clearUsernameTextButton.isVisible = false
+                        setUsernameError()
+                    }
+                    else -> {
+                        setDupeError()
+                    }
+                }
                 binding.clearUsernameTextButton.isEnabled = u.toString().isNotEmpty()
                 setSaveButtonState()
             }
@@ -205,6 +229,19 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login) {
         binding.inputLayoutPassword.let { layout ->
             validPassword = false
             layout.error = context?.getString(R.string.saved_login_password_required)
+            layout.setErrorIconDrawable(R.drawable.mozac_ic_warning_with_bottom_padding)
+            layout.setErrorIconTintList(
+                ColorStateList.valueOf(
+                    ContextCompat.getColor(requireContext(), R.color.design_error)
+                )
+            )
+        }
+    }
+
+    private fun setUsernameError() {
+        binding.inputLayoutUsername.let { layout ->
+            validUsername = false
+            layout.error = context?.getString(R.string.saved_login_username_required)
             layout.setErrorIconDrawable(R.drawable.mozac_ic_warning_with_bottom_padding)
             layout.setErrorIconTintList(
                 ColorStateList.valueOf(
