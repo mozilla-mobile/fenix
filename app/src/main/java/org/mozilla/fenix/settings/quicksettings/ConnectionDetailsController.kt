@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.fenix.trackingprotection
+package org.mozilla.fenix.settings.quicksettings
 
 import android.content.Context
 import androidx.fragment.app.Fragment
@@ -14,30 +14,31 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
 
 /**
- * Interactor for the tracking protection panel
- * Provides implementations for the TrackingProtectionPanelViewInteractor
+ * [ConnectionDetailsController] controller.
+ *
+ * Delegated by View Interactors, handles container business logic and operates changes on it,
+ * complex Android interactions or communication with other features.
  */
-@Suppress("LongParameterList")
-class TrackingProtectionPanelInteractor(
+interface ConnectionDetailsController {
+    /**
+     * @see [WebSiteInfoInteractor.onBackPressed]
+     */
+    fun handleBackPressed()
+}
+
+/**
+ * Default behavior of [ConnectionDetailsController].
+ */
+class DefaultConnectionDetailsController(
     private val context: Context,
     private val fragment: Fragment,
-    private val store: TrackingProtectionStore,
     private val navController: () -> NavController,
-    private val openTrackingProtectionSettings: () -> Unit,
     internal var sitePermissions: SitePermissions?,
     private val gravity: Int,
     private val getCurrentTab: () -> SessionState?
-) : TrackingProtectionPanelViewInteractor {
+) : ConnectionDetailsController {
 
-    override fun openDetails(category: TrackingProtectionCategory, categoryBlocked: Boolean) {
-        store.dispatch(TrackingProtectionAction.EnterDetailsMode(category, categoryBlocked))
-    }
-
-    override fun selectTrackingProtectionSettings() {
-        openTrackingProtectionSettings.invoke()
-    }
-
-    override fun onBackPressed() {
+    override fun handleBackPressed() {
         getCurrentTab()?.let { tab ->
             context.components.useCases.trackingProtectionUseCases.containsException(tab.id) { contains ->
                 fragment.runIfFragmentIsAttached {
@@ -59,9 +60,5 @@ class TrackingProtectionPanelInteractor(
                 }
             }
         }
-    }
-
-    override fun onExitDetailMode() {
-        store.dispatch(TrackingProtectionAction.ExitDetailsMode)
     }
 }
