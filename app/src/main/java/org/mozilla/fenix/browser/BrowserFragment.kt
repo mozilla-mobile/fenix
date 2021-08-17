@@ -33,16 +33,15 @@ import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.TabCollectionStorage
+import org.mozilla.fenix.components.toolbar.ToolbarMenu
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
-import org.mozilla.fenix.ext.navigateSafe
 import org.mozilla.fenix.ext.requireComponents
-import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.shortcut.PwaOnboardingObserver
 import org.mozilla.fenix.theme.ThemeManager
-import org.mozilla.fenix.trackingprotection.TrackingProtectionOverlay
 
 /**
  * Fragment used for browsing the web within the main app.
@@ -53,8 +52,6 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
 
     private val windowFeature = ViewBoundFeatureWrapper<WindowFeature>()
     private val openInAppOnboardingObserver = ViewBoundFeatureWrapper<OpenInAppOnboardingObserver>()
-    private val trackingProtectionOverlayObserver =
-        ViewBoundFeatureWrapper<TrackingProtectionOverlay>()
 
     private var readerModeAvailable = false
     private var pwaOnboardingObserver: PwaOnboardingObserver? = null
@@ -82,10 +79,10 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
         if (FeatureFlags.showHomeButtonFeature) {
             val homeAction = BrowserToolbar.Button(
                 imageDrawable = AppCompatResources.getDrawable(
-                    requireContext(),
+                    context,
                     R.drawable.mozac_ic_home
                 )!!,
-                contentDescription = requireContext().getString(R.string.browser_toolbar_home),
+                contentDescription = context.getString(R.string.browser_toolbar_home),
                 iconTintColorResource = ThemeManager.resolveAttribute(R.attr.primaryText, context),
                 listener = browserToolbarInteractor::onHomeButtonClicked
             )
@@ -93,19 +90,100 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
             browserToolbarView.view.addNavigationAction(homeAction)
         }
 
+        if (resources.getBoolean(R.bool.tablet)) {
+            val enableTint = ThemeManager.resolveAttribute(R.attr.primaryText, context)
+            val disableTint = ThemeManager.resolveAttribute(R.attr.disabled, context)
+            val backAction = BrowserToolbar.TwoStateButton(
+                primaryImage = AppCompatResources.getDrawable(
+                    context,
+                    R.drawable.mozac_ic_back
+                )!!,
+                primaryContentDescription = context.getString(R.string.browser_menu_back),
+                primaryImageTintResource = enableTint,
+                isInPrimaryState = { getCurrentTab()?.content?.canGoBack ?: false },
+                secondaryImageTintResource = disableTint,
+                disableInSecondaryState = true,
+                longClickListener = {
+                    browserToolbarInteractor.onBrowserToolbarMenuItemTapped(
+                        ToolbarMenu.Item.Back(viewHistory = true)
+                    )
+                },
+                listener = {
+                    browserToolbarInteractor.onBrowserToolbarMenuItemTapped(
+                        ToolbarMenu.Item.Back(viewHistory = false)
+                    )
+                }
+            )
+            browserToolbarView.view.addNavigationAction(backAction)
+            val forwardAction = BrowserToolbar.TwoStateButton(
+                primaryImage = AppCompatResources.getDrawable(
+                    context,
+                    R.drawable.mozac_ic_forward
+                )!!,
+                primaryContentDescription = context.getString(R.string.browser_menu_forward),
+                primaryImageTintResource = enableTint,
+                isInPrimaryState = { getCurrentTab()?.content?.canGoForward ?: false },
+                secondaryImageTintResource = disableTint,
+                disableInSecondaryState = true,
+                longClickListener = {
+                    browserToolbarInteractor.onBrowserToolbarMenuItemTapped(
+                        ToolbarMenu.Item.Forward(viewHistory = true)
+                    )
+                },
+                listener = {
+                    browserToolbarInteractor.onBrowserToolbarMenuItemTapped(
+                        ToolbarMenu.Item.Forward(viewHistory = false)
+                    )
+                }
+            )
+            browserToolbarView.view.addNavigationAction(forwardAction)
+            val refreshAction = BrowserToolbar.TwoStateButton(
+                primaryImage = AppCompatResources.getDrawable(
+                    context,
+                    R.drawable.mozac_ic_refresh
+                )!!,
+                primaryContentDescription = context.getString(R.string.browser_menu_refresh),
+                primaryImageTintResource = enableTint,
+                isInPrimaryState = {
+                    getCurrentTab()?.content?.loading == false
+                },
+                secondaryImage = AppCompatResources.getDrawable(
+                    context,
+                    R.drawable.mozac_ic_stop
+                )!!,
+                secondaryContentDescription = context.getString(R.string.browser_menu_stop),
+                disableInSecondaryState = false,
+                longClickListener = {
+                    browserToolbarInteractor.onBrowserToolbarMenuItemTapped(
+                        ToolbarMenu.Item.Reload(bypassCache = true)
+                    )
+                },
+                listener = {
+                    if (getCurrentTab()?.content?.loading == true) {
+                        browserToolbarInteractor.onBrowserToolbarMenuItemTapped(ToolbarMenu.Item.Stop)
+                    } else {
+                        browserToolbarInteractor.onBrowserToolbarMenuItemTapped(
+                            ToolbarMenu.Item.Reload(bypassCache = false)
+                        )
+                    }
+                }
+            )
+            browserToolbarView.view.addNavigationAction(refreshAction)
+        }
+
         val readerModeAction =
             BrowserToolbar.ToggleButton(
                 image = AppCompatResources.getDrawable(
-                    requireContext(),
+                    context,
                     R.drawable.ic_readermode
                 )!!,
                 imageSelected =
                 AppCompatResources.getDrawable(
-                    requireContext(),
+                    context,
                     R.drawable.ic_readermode_selected
                 )!!,
-                contentDescription = requireContext().getString(R.string.browser_menu_read),
-                contentDescriptionSelected = requireContext().getString(R.string.browser_menu_read_close),
+                contentDescription = context.getString(R.string.browser_menu_read),
+                contentDescriptionSelected = context.getString(R.string.browser_menu_read_close),
                 visible = {
                     readerModeAvailable
                 },
@@ -169,20 +247,6 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                 view = view
             )
         }
-        if (context.settings().shouldShowTrackingProtectionCfr) {
-            trackingProtectionOverlayObserver.set(
-                feature = TrackingProtectionOverlay(
-                    context = context,
-                    store = context.components.core.store,
-                    lifecycleOwner = viewLifecycleOwner,
-                    settings = context.settings(),
-                    metrics = context.components.analytics.metrics,
-                    getToolbar = { browserToolbarView.view }
-                ),
-                owner = this,
-                view = view
-            )
-        }
     }
 
     override fun onStart() {
@@ -241,33 +305,22 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
     }
 
     override fun navToQuickSettingsSheet(tab: SessionState, sitePermissions: SitePermissions?) {
-        val directions =
-            BrowserFragmentDirections.actionBrowserFragmentToQuickSettingsSheetDialogFragment(
-                sessionId = tab.id,
-                url = tab.content.url,
-                title = tab.content.title,
-                isSecured = tab.content.securityInfo.secure,
-                sitePermissions = sitePermissions,
-                gravity = getAppropriateLayoutGravity(),
-                certificateName = tab.content.securityInfo.issuer,
-                permissionHighlights = tab.content.permissionHighlights
-            )
-        nav(R.id.browserFragment, directions)
-    }
-
-    override fun navToTrackingProtectionPanel(tab: SessionState) {
-        val navController = findNavController()
         requireComponents.useCases.trackingProtectionUseCases.containsException(tab.id) { contains ->
             runIfFragmentIsAttached {
-                val isEnabled = tab.trackingProtection.enabled && !contains
+                val isTrackingProtectionEnabled = tab.trackingProtection.enabled && !contains
                 val directions =
-                    BrowserFragmentDirections.actionBrowserFragmentToTrackingProtectionPanelDialogFragment(
+                    BrowserFragmentDirections.actionBrowserFragmentToQuickSettingsSheetDialogFragment(
                         sessionId = tab.id,
                         url = tab.content.url,
-                        trackingProtectionEnabled = isEnabled,
-                        gravity = getAppropriateLayoutGravity()
+                        title = tab.content.title,
+                        isSecured = tab.content.securityInfo.secure,
+                        sitePermissions = sitePermissions,
+                        gravity = getAppropriateLayoutGravity(),
+                        certificateName = tab.content.securityInfo.issuer,
+                        permissionHighlights = tab.content.permissionHighlights,
+                        isTrackingProtectionEnabled = isTrackingProtectionEnabled
                     )
-                navController.navigateSafe(R.id.browserFragment, directions)
+                nav(R.id.browserFragment, directions)
             }
         }
     }
