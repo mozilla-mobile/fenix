@@ -5,14 +5,11 @@
 package org.mozilla.fenix.settings.quicksettings
 
 import android.widget.FrameLayout
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.spyk
-import io.mockk.verify
-import mozilla.components.browser.icons.BrowserIcons
-import mozilla.components.browser.icons.IconRequest
+import androidx.core.view.isVisible
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -23,40 +20,33 @@ import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 class WebsiteInfoViewTest {
 
     private lateinit var view: WebsiteInfoView
-    private lateinit var icons: BrowserIcons
     private lateinit var binding: QuicksettingsWebsiteInfoBinding
-    private lateinit var interactor: WebSiteInfoInteractor
 
     @Before
     fun setup() {
-        icons = mockk(relaxed = true)
-        interactor = mockk(relaxed = true)
-        view = spyk(WebsiteInfoView(FrameLayout(testContext), icons, interactor))
+        view = WebsiteInfoView(FrameLayout(testContext))
         binding = view.binding
-        every { icons.loadIntoView(any(), any()) } returns mockk()
     }
 
     @Test
-    fun `WHEN updating THEN bind url`() {
-        val websiteUrl = "https://mozilla.org"
-
+    fun bindUrlAndTitle() {
         view.update(
             WebsiteInfoState(
-                websiteUrl = websiteUrl,
+                websiteUrl = "https://mozilla.org",
                 websiteTitle = "Mozilla",
                 websiteSecurityUiValues = WebsiteSecurityUiValues.SECURE,
                 certificateName = ""
             )
         )
 
-        verify { icons.loadIntoView(binding.faviconImage, IconRequest(websiteUrl)) }
-
-        assertEquals("mozilla.org", binding.url.text)
+        assertEquals("https://mozilla.org", binding.url.text)
+        assertEquals("Mozilla", binding.title.text)
         assertEquals("Secure Connection", binding.securityInfo.text)
+        assertFalse(binding.certificateInfo.isVisible)
     }
 
     @Test
-    fun `WHEN updating THEN bind certificate`() {
+    fun bindCert() {
         view.update(
             WebsiteInfoState(
                 websiteUrl = "https://mozilla.org",
@@ -66,8 +56,8 @@ class WebsiteInfoViewTest {
             )
         )
 
-        verify { view.bindConnectionDetailsListener() }
-
         assertEquals("Insecure Connection", binding.securityInfo.text)
+        assertEquals("Verified By: Certificate", binding.certificateInfo.text)
+        assertTrue(binding.certificateInfo.isVisible)
     }
 }

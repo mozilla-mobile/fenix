@@ -32,6 +32,7 @@ import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
+import junit.framework.TestCase.assertTrue
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.anyOf
 import org.hamcrest.CoreMatchers.containsString
@@ -107,6 +108,7 @@ class NavigationToolbarRobot {
                 onView(
                     anyOf(
                         withResourceName("browserLayout"),
+                        withResourceName("onboarding_message"), // Req ETP dialog
                         withResourceName("download_button")
                     )
                 ).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
@@ -125,8 +127,32 @@ class NavigationToolbarRobot {
 
             awesomeBar().perform(replaceText(url.toString()), pressImeActionButton())
 
-            if (!etpEnabled) {
-                onView(withResourceName("browserLayout")).check(matches(isDisplayed()))
+            val onboardingMessage =
+                mDevice.findObject(UiSelector().resourceId("$packageName:id/onboarding_message"))
+
+            val onboardingDisplayed = onboardingMessage.waitForExists(waitingTime)
+
+            when (etpEnabled) {
+                true ->
+                    try {
+                        assertTrue(
+                            "Onboarding message not displayed",
+                            onboardingDisplayed
+                        )
+                    } catch (e: AssertionError) {
+                        openThreeDotMenu {
+                        }.stopPageLoad {
+                            if (!onboardingDisplayed) {
+                                openThreeDotMenu {
+                                }.refreshPage {
+                                    assertTrue(onboardingDisplayed)
+                                }
+                            }
+                        }
+                    }
+
+                false ->
+                    onView(withResourceName("browserLayout")).check(matches(isDisplayed()))
             }
 
             BrowserRobot().interact()
@@ -180,7 +206,12 @@ class NavigationToolbarRobot {
             awesomeBar().perform(replaceText(url.toString()), pressImeActionButton())
 
             runWithIdleRes(sessionLoadedIdlingResource) {
-                onView(ViewMatchers.withResourceName("browserLayout"))
+                onView(
+                    anyOf(
+                        ViewMatchers.withResourceName("browserLayout"),
+                        ViewMatchers.withResourceName("onboarding_message") // Req for ETP dialog
+                    )
+                )
                     .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
             }
 
@@ -317,6 +348,7 @@ private fun assertTabButtonShortcutMenuItems() {
         .check(matches(hasDescendant(withText("New tab"))))
 }
 
+private fun dismissOnboardingButton() = onView(withId(R.id.close_onboarding))
 private fun urlBar() = onView(withId(R.id.toolbar))
 private fun awesomeBar() = onView(withId(R.id.mozac_browser_toolbar_edit_url_view))
 private fun threeDotButton() = onView(withId(R.id.mozac_browser_toolbar_menu))

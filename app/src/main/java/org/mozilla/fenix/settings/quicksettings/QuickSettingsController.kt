@@ -11,16 +11,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import mozilla.components.browser.state.selector.findTabOrCustomTab
 import mozilla.components.browser.state.store.BrowserStore
-import mozilla.components.concept.engine.permission.SitePermissions
 import mozilla.components.feature.session.SessionUseCases.ReloadUrlUseCase
+import mozilla.components.concept.engine.permission.SitePermissions
 import mozilla.components.feature.tabs.TabsUseCases.AddNewTabUseCase
 import mozilla.components.support.base.feature.OnNeedToRequestPermissions
 import mozilla.components.support.ktx.kotlin.getOrigin
-import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.components.PermissionStorage
-import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.settings.PhoneFeature
 import org.mozilla.fenix.settings.quicksettings.ext.shouldBeEnabled
 import org.mozilla.fenix.settings.toggle
@@ -58,22 +54,6 @@ interface QuickSettingsController {
      * feature [PhoneFeature] which the user granted Android permission(s) for.
      */
     fun handleAndroidPermissionGranted(feature: PhoneFeature)
-
-    /**
-     * @see [TrackingProtectionInteractor.onTrackingProtectionToggled]
-     */
-    fun handleTrackingProtectionToggled(isEnabled: Boolean)
-
-    /**
-     * @see [TrackingProtectionInteractor.onDetailsClicked]
-     */
-    fun handleDetailsClicked()
-
-    /**
-     * Navigates to the connection details. Called when a user clicks on the
-     * "Secured or Insecure Connection" section.
-     */
-    fun handleConnectionDetailsClicked()
 }
 
 /**
@@ -100,7 +80,7 @@ class DefaultQuickSettingsController(
     private val quickSettingsStore: QuickSettingsFragmentStore,
     private val browserStore: BrowserStore,
     private val ioScope: CoroutineScope,
-    private val navController: () -> NavController,
+    private val navController: NavController,
     @VisibleForTesting
     internal val sessionId: String,
     @VisibleForTesting
@@ -175,59 +155,6 @@ class DefaultQuickSettingsController(
         )
     }
 
-    override fun handleTrackingProtectionToggled(isEnabled: Boolean) {
-        val components = context.components
-        val sessionState = components.core.store.state.findTabOrCustomTab(sessionId)
-
-        sessionState?.let { session ->
-            val trackingProtectionUseCases = components.useCases.trackingProtectionUseCases
-            val sessionUseCases = components.useCases.sessionUseCases
-
-            if (isEnabled) {
-                trackingProtectionUseCases.removeException(session.id)
-            } else {
-                context.metrics.track(Event.TrackingProtectionException)
-                trackingProtectionUseCases.addException(session.id)
-            }
-
-            sessionUseCases.reload.invoke(session.id)
-        }
-
-        quickSettingsStore.dispatch(TrackingProtectionAction.ToggleTrackingProtectionEnabled(isEnabled))
-    }
-
-    override fun handleDetailsClicked() {
-        navController().popBackStack()
-
-        val state = quickSettingsStore.state.trackingProtectionState
-        val directions = NavGraphDirections
-            .actionGlobalTrackingProtectionPanelDialogFragment(
-                sessionId = sessionId,
-                url = state.url,
-                trackingProtectionEnabled = state.isTrackingProtectionEnabled,
-                gravity = context.components.settings.toolbarPosition.androidGravity,
-                sitePermissions = sitePermissions
-            )
-        navController().navigate(directions)
-    }
-
-    override fun handleConnectionDetailsClicked() {
-        navController().popBackStack()
-
-        val state = quickSettingsStore.state.webInfoState
-        val directions = ConnectionPanelDialogFragmentDirections
-            .actionGlobalConnectionDetailsDialogFragment(
-                sessionId = sessionId,
-                title = state.websiteTitle,
-                url = state.websiteUrl,
-                isSecured = state.websiteSecurityUiValues == WebsiteSecurityUiValues.SECURE,
-                certificateName = state.certificateName,
-                gravity = context.components.settings.toolbarPosition.androidGravity,
-                sitePermissions = sitePermissions
-            )
-        navController().navigate(directions)
-    }
-
     /**
      * Request a certain set of runtime Android permissions.
      *
@@ -270,6 +197,6 @@ class DefaultQuickSettingsController(
     private fun navigateToManagePhoneFeature(phoneFeature: PhoneFeature) {
         val directions = QuickSettingsSheetDialogFragmentDirections
             .actionGlobalSitePermissionsManagePhoneFeature(phoneFeature)
-        navController().navigate(directions)
+        navController.navigate(directions)
     }
 }

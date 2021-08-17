@@ -26,6 +26,7 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withResourceName
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
@@ -163,9 +164,15 @@ class BrowserRobot {
 
     fun verifyEnhancedTrackingProtectionSwitch() = assertEnhancedTrackingProtectionSwitch()
 
+    fun clickEnhancedTrackingProtectionSwitchOffOn() =
+        onView(withResourceName("switch_widget")).click()
+
+    fun verifyProtectionSettingsButton() = assertProtectionSettingsButton()
+
     fun verifyEnhancedTrackingOptions() {
-        onView(withId(R.id.mozac_browser_toolbar_security_indicator)).click()
+        clickEnhancedTrackingProtectionPanel()
         verifyEnhancedTrackingProtectionSwitch()
+        verifyProtectionSettingsButton()
     }
 
     fun verifyMenuButton() = assertMenuButton()
@@ -206,6 +213,11 @@ class BrowserRobot {
             .check(matches(isDisplayed()))
             .perform(ViewActions.pressBack())
     }
+
+    fun clickEnhancedTrackingProtectionPanel() = enhancedTrackingProtectionIndicator().click()
+
+    fun verifyEnhancedTrackingProtectionPanelNotVisible() =
+        assertEnhancedTrackingProtectionIndicatorNotVisible()
 
     fun clickContextOpenLinkInNewTab() {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
@@ -554,6 +566,13 @@ fun browserScreen(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
     return BrowserRobot.Transition()
 }
 
+private fun dismissOnboardingButton() = onView(withId(R.id.close_onboarding))
+
+fun dismissTrackingOnboarding() {
+    mDevice.wait(Until.findObject(By.res("close_onboarding")), waitingTime)
+    dismissOnboardingButton().click()
+}
+
 fun navURLBar() = onView(withId(R.id.toolbar))
 
 private fun assertNavURLBar() = navURLBar()
@@ -561,6 +580,13 @@ private fun assertNavURLBar() = navURLBar()
 
 private fun assertNavURLBarHidden() = navURLBar()
     .check(matches(not(isDisplayed())))
+
+fun enhancedTrackingProtectionIndicator() =
+    onView(withId(R.id.mozac_browser_toolbar_tracking_protection_indicator))
+
+private fun assertEnhancedTrackingProtectionIndicatorNotVisible() {
+    enhancedTrackingProtectionIndicator().check(matches(not(isDisplayed())))
+}
 
 private fun assertEnhancedTrackingProtectionSwitch() {
     withText(R.id.trackingProtectionSwitch)

@@ -210,4 +210,8 @@ private class TestBaseBrowserFragment : BaseBrowserFragment() {
     override fun navToQuickSettingsSheet(tab: SessionState, sitePermissions: SitePermissions?) {
         // no-op
     }
+
+    override fun navToTrackingProtectionPanel(tab: SessionState) {
+        // no-op
+    }
 }

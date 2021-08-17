@@ -15,30 +15,25 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:minHeight="@dimen/tracking_protection_item_height"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp">
+        android:orientation="vertical"
+        android:minHeight="@dimen/tracking_protection_item_height">
 
-        <ImageView
-            android:id="@+id/faviconImage"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:importantForAccessibility="no"
-            android:scaleType="fitCenter"
-            android:layout_marginStart="16dp"
-            android:layout_gravity="center_vertical"
-            tools:drawableStartCompat="@drawable/ic_internet" />
+        <TextView
+            android:id="@+id/title"
+            style="@style/QuickSettingsText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:textStyle="bold"
+            tools:text="Wikipedia" />
 
         <TextView
             android:id="@+id/url"
             style="@style/QuickSettingsText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="8dp"
             android:paddingTop="8dp"
-            tools:text="https://wikipedia.org"
-            tools:ignore="RtlSymmetry" />
+            tools:text="https://wikipedia.org" />
     </LinearLayout>
 
     <LinearLayout
@@ -46,13 +41,16 @@
         android:layout_height="wrap_content"
         android:minHeight="@dimen/tracking_protection_item_height"
         android:orientation="horizontal"
-        style="@style/QuickSettingsText">
+        style="@style/QuickSettingsText"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp">
         <ImageView
             android:id="@+id/securityInfoIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:importantForAccessibility="no"
-            app:srcCompat="@drawable/mozac_ic_lock"/>
+            app:srcCompat="@drawable/mozac_ic_lock"
+            android:paddingEnd="8dp"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -60,13 +58,22 @@
             <TextView
                 android:id="@+id/securityInfo"
                 style="@style/QuickSettingsLargeText"
-                android:minHeight="@dimen/quicksettings_item_height"
                 android:layout_width="match_parent"
-                android:paddingStart="8dp"
+                android:paddingStart="0dp"
                 android:layout_height="wrap_content"
-                app:drawableEndCompat="@drawable/ic_arrowhead_right"
-                android:paddingEnd="0dp"
-                tools:text="Connection is secure" />
+                tools:text="Secure connection" />
+
+            <TextView
+                android:id="@+id/certificateInfo"
+                style="@style/QuickSettingsSmallText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:paddingTop="0dp"
+                android:paddingBottom="2dp"
+                tools:text="Verified By: E-Corp" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

@@ -37,11 +37,13 @@ import org.mozilla.fenix.components.toolbar.ToolbarMenu
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
+import org.mozilla.fenix.ext.navigateSafe
 import org.mozilla.fenix.ext.requireComponents
-import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.shortcut.PwaOnboardingObserver
 import org.mozilla.fenix.theme.ThemeManager
+import org.mozilla.fenix.trackingprotection.TrackingProtectionOverlay
 
 /**
  * Fragment used for browsing the web within the main app.
@@ -52,6 +54,8 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
 
     private val windowFeature = ViewBoundFeatureWrapper<WindowFeature>()
     private val openInAppOnboardingObserver = ViewBoundFeatureWrapper<OpenInAppOnboardingObserver>()
+    private val trackingProtectionOverlayObserver =
+        ViewBoundFeatureWrapper<TrackingProtectionOverlay>()
 
     private var readerModeAvailable = false
     private var pwaOnboardingObserver: PwaOnboardingObserver? = null
@@ -247,6 +251,20 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                 view = view
             )
         }
+        if (context.settings().shouldShowTrackingProtectionCfr) {
+            trackingProtectionOverlayObserver.set(
+                feature = TrackingProtectionOverlay(
+                    context = context,
+                    store = context.components.core.store,
+                    lifecycleOwner = viewLifecycleOwner,
+                    settings = context.settings(),
+                    metrics = context.components.analytics.metrics,
+                    getToolbar = { browserToolbarView.view }
+                ),
+                owner = this,
+                view = view
+            )
+        }
     }
 
     override fun onStart() {
@@ -305,22 +323,33 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
     }
 
     override fun navToQuickSettingsSheet(tab: SessionState, sitePermissions: SitePermissions?) {
+        val directions =
+            BrowserFragmentDirections.actionBrowserFragmentToQuickSettingsSheetDialogFragment(
+                sessionId = tab.id,
+                url = tab.content.url,
+                title = tab.content.title,
+                isSecured = tab.content.securityInfo.secure,
+                sitePermissions = sitePermissions,
+                gravity = getAppropriateLayoutGravity(),
+                certificateName = tab.content.securityInfo.issuer,
+                permissionHighlights = tab.content.permissionHighlights
+            )
+        nav(R.id.browserFragment, directions)
+    }
+
+    override fun navToTrackingProtectionPanel(tab: SessionState) {
+        val navController = findNavController()
         requireComponents.useCases.trackingProtectionUseCases.containsException(tab.id) { contains ->
             runIfFragmentIsAttached {
-                val isTrackingProtectionEnabled = tab.trackingProtection.enabled && !contains
+                val isEnabled = tab.trackingProtection.enabled && !contains
                 val directions =
-                    BrowserFragmentDirections.actionBrowserFragmentToQuickSettingsSheetDialogFragment(
+                    BrowserFragmentDirections.actionBrowserFragmentToTrackingProtectionPanelDialogFragment(
                         sessionId = tab.id,
                         url = tab.content.url,
-                        title = tab.content.title,
-                        isSecured = tab.content.securityInfo.secure,
-                        sitePermissions = sitePermissions,
-                        gravity = getAppropriateLayoutGravity(),
-                        certificateName = tab.content.securityInfo.issuer,
-                        permissionHighlights = tab.content.permissionHighlights,
-                        isTrackingProtectionEnabled = isTrackingProtectionEnabled
+                        trackingProtectionEnabled = isEnabled,
+                        gravity = getAppropriateLayoutGravity()
                     )
-                nav(R.id.browserFragment, directions)
+                navController.navigateSafe(R.id.browserFragment, directions)
             }
         }
     }

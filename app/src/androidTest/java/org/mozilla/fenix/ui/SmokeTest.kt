@@ -40,6 +40,7 @@ import org.mozilla.fenix.ui.robots.clickTabCrashedRestoreButton
 import org.mozilla.fenix.ui.robots.clickUrlbar
 import org.mozilla.fenix.ui.robots.collectionRobot
 import org.mozilla.fenix.ui.robots.customTabScreen
+import org.mozilla.fenix.ui.robots.dismissTrackingOnboarding
 import org.mozilla.fenix.ui.robots.downloadRobot
 import org.mozilla.fenix.ui.robots.enhancedTrackingProtection
 import org.mozilla.fenix.ui.robots.homeScreen
@@ -391,7 +392,34 @@ class SmokeTest {
     }
 
     @Test
-    @Ignore("https://github.com/mozilla-mobile/fenix/issues/20868")
+    // Turns ETP toggle off from Settings and verifies the ETP shield is not displayed in the nav bar
+    fun verifyETPShieldNotDisplayedIfOFFGlobally() {
+        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openEnhancedTrackingProtectionSubMenu {
+            switchEnhancedTrackingProtectionToggle()
+            verifyEnhancedTrackingProtectionOptionsGrayedOut()
+        }.goBackToHomeScreen {
+            navigationToolbar {
+            }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+                verifyEnhancedTrackingProtectionPanelNotVisible()
+            }.openThreeDotMenu {
+            }.openSettings {
+            }.openEnhancedTrackingProtectionSubMenu {
+                switchEnhancedTrackingProtectionToggle()
+            }.goBack {
+            }.goBackToBrowser {
+                clickEnhancedTrackingProtectionPanel()
+                verifyEnhancedTrackingProtectionSwitch()
+                clickEnhancedTrackingProtectionSwitchOffOn()
+            }
+        }
+    }
+
+    @Test
     fun customTrackingProtectionSettingsTest() {
         val genericWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
         val trackingPage = TestAssetHelper.getEnhancedTrackingProtectionAsset(mockWebServer)
@@ -409,11 +437,12 @@ class SmokeTest {
             // browsing a basic page to allow GV to load on a fresh run
         }.enterURLAndEnterToBrowser(genericWebPage.url) {
         }.openNavigationToolbar {
-        }.openTrackingProtectionTestPage(trackingPage.url, true) {}
+        }.openTrackingProtectionTestPage(trackingPage.url, true) {
+            dismissTrackingOnboarding()
+        }
 
         enhancedTrackingProtection {
         }.openEnhancedTrackingProtectionSheet {
-        }.openDetails {
             verifyTrackingCookiesBlocked()
             verifyCryptominersBlocked()
             verifyFingerprintersBlocked()
@@ -635,6 +664,9 @@ class SmokeTest {
         }.goBack {
         }.openNavigationToolbar {
         }.openTrackingProtectionTestPage(trackingProtectionPage.url, true) {}
+        enhancedTrackingProtection {
+            verifyEnhancedTrackingProtectionNotice()
+        }.closeNotificationPopup {}
     }
 
     @Test
