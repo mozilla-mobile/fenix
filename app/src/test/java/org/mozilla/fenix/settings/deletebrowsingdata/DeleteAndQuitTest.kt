@@ -9,7 +9,7 @@ package org.mozilla.fenix.settings.deletebrowsingdata
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.verifyOrder
+import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.runBlockingTest
@@ -70,7 +70,7 @@ class DeleteAndQuitTest {
 
         deleteAndQuit(activity, this, snackbar)
 
-        verifyOrder {
+        verify {
             snackbar.show()
             removeAllTabsUseCases.invoke(false)
             activity.finishAndRemoveTask()
