@@ -77,36 +77,6 @@ class StrictEnhancedTrackingProtectionTest {
     }
 
     @Test
-    fun testStrictVisitContentNotification() {
-        val trackingProtectionTest =
-            TestAssetHelper.getEnhancedTrackingProtectionAsset(mockWebServer)
-
-        navigationToolbar {
-        }.openTrackingProtectionTestPage(trackingProtectionTest.url, true) {}
-
-        enhancedTrackingProtection {
-            verifyEnhancedTrackingProtectionNotice()
-        }.closeNotificationPopup {}
-    }
-
-    @Test
-    fun testStrictVisitContentShield() {
-        val trackingProtectionTest =
-            TestAssetHelper.getEnhancedTrackingProtectionAsset(mockWebServer)
-
-        navigationToolbar {
-        }.openTrackingProtectionTestPage(trackingProtectionTest.url, true) {}
-
-        enhancedTrackingProtection {
-            verifyEnhancedTrackingProtectionNotice()
-        }.closeNotificationPopup {}
-
-        enhancedTrackingProtection {
-            verifyEnhancedTrackingProtectionShield()
-        }
-    }
-
-    @Test
     fun testStrictVisitProtectionSheet() {
         val trackingProtectionTest =
             TestAssetHelper.getEnhancedTrackingProtectionAsset(mockWebServer)
@@ -114,13 +84,7 @@ class StrictEnhancedTrackingProtectionTest {
         navigationToolbar {
         }.openTrackingProtectionTestPage(trackingProtectionTest.url, true) {}
 
-        enhancedTrackingProtection {
-            verifyEnhancedTrackingProtectionNotice()
-        }.closeNotificationPopup {}
-
-        enhancedTrackingProtection {
-            verifyEnhancedTrackingProtectionShield()
-        }.openEnhancedTrackingProtectionSheet {
+        enhancedTrackingProtection {}.openEnhancedTrackingProtectionSheet {
             verifyEnhancedTrackingProtectionSheetStatus("ON", true)
         }
     }
@@ -134,11 +98,6 @@ class StrictEnhancedTrackingProtectionTest {
         }.openTrackingProtectionTestPage(trackingProtectionTest.url, true) {}
 
         enhancedTrackingProtection {
-            verifyEnhancedTrackingProtectionNotice()
-        }.closeNotificationPopup {}
-
-        enhancedTrackingProtection {
-            verifyEnhancedTrackingProtectionShield()
         }.openEnhancedTrackingProtectionSheet {
             verifyEnhancedTrackingProtectionSheetStatus("ON", true)
         }.disableEnhancedTrackingProtectionFromSheet {
@@ -164,11 +123,6 @@ class StrictEnhancedTrackingProtectionTest {
         }.openTrackingProtectionTestPage(trackingProtectionTest.url, true) {}
 
         enhancedTrackingProtection {
-            verifyEnhancedTrackingProtectionNotice()
-        }.closeNotificationPopup {}
-
-        enhancedTrackingProtection {
-            verifyEnhancedTrackingProtectionShield()
         }.openEnhancedTrackingProtectionSheet {
             verifyEnhancedTrackingProtectionSheetStatus("ON", true)
         }.disableEnhancedTrackingProtectionFromSheet {
@@ -196,11 +150,6 @@ class StrictEnhancedTrackingProtectionTest {
         }.openTrackingProtectionTestPage(trackingProtectionTest.url, true) {}
 
         enhancedTrackingProtection {
-            verifyEnhancedTrackingProtectionNotice()
-        }.closeNotificationPopup {}
-
-        enhancedTrackingProtection {
-            verifyEnhancedTrackingProtectionShield()
         }.openEnhancedTrackingProtectionSheet {
             verifyEnhancedTrackingProtectionSheetStatus("ON", true)
         }.openDetails {
