@@ -6,15 +6,15 @@ package org.mozilla.fenix.settings.quicksettings
 
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
+import io.mockk.MockKAnnotations
 import io.mockk.Runs
 import io.mockk.coVerifyOrder
 import io.mockk.every
+import io.mockk.impl.annotations.MockK
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
-import io.mockk.MockKAnnotations
-import io.mockk.impl.annotations.MockK
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
@@ -22,9 +22,10 @@ import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.state.state.createTab
 import mozilla.components.browser.state.store.BrowserStore
-import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.concept.engine.permission.SitePermissions
 import mozilla.components.concept.engine.permission.SitePermissions.Status.NO_DECISION
+import mozilla.components.feature.session.SessionUseCases
+import mozilla.components.feature.session.TrackingProtectionUseCases
 import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.support.test.mock
 import mozilla.components.support.test.robolectric.testContext
@@ -37,7 +38,11 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.components.PermissionStorage
+import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.components.metrics.MetricController
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.directionsEq
+import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.settings.PhoneFeature
 import org.mozilla.fenix.settings.quicksettings.ext.shouldBeEnabled
@@ -47,7 +52,7 @@ import org.mozilla.fenix.utils.Settings
 @ExperimentalCoroutinesApi
 @RunWith(FenixRobolectricTestRunner::class)
 class DefaultQuickSettingsControllerTest {
-    private val context = testContext
+    private val context = spyk(testContext)
 
     private lateinit var browserStore: BrowserStore
     private lateinit var tab: TabSessionState
@@ -74,6 +79,9 @@ class DefaultQuickSettingsControllerTest {
     @MockK(relaxed = true)
     private lateinit var addNewTab: TabsUseCases.AddNewTabUseCase
 
+    @MockK(relaxed = true)
+    private lateinit var requestPermissions: (Array<String>) -> Unit
+
     private lateinit var controller: DefaultQuickSettingsController
 
     @Before
@@ -83,7 +91,25 @@ class DefaultQuickSettingsControllerTest {
         tab = createTab("https://mozilla.org")
         browserStore = BrowserStore(BrowserState(tabs = listOf(tab)))
         sitePermissions = SitePermissions(origin = "", savedAt = 123)
-        controller = spyk(createController())
+
+        controller = spyk(
+            DefaultQuickSettingsController(
+                context = context,
+                quickSettingsStore = store,
+                browserStore = browserStore,
+                sessionId = tab.id,
+                ioScope = coroutinesScope,
+                navController = { navController },
+                sitePermissions = sitePermissions,
+                settings = appSettings,
+                permissionStorage = permissionStorage,
+                reload = reload,
+                addNewTab = addNewTab,
+                requestRuntimePermissions = requestPermissions,
+                displayPermissions = {},
+                dismiss = {}
+            )
+        )
     }
 
     @After
@@ -149,13 +175,14 @@ class DefaultQuickSettingsControllerTest {
             quickSettingsStore = store,
             browserStore = BrowserStore(),
             ioScope = coroutinesScope,
-            navController = navController,
+            navController = { navController },
             sessionId = "123",
             sitePermissions = null,
             settings = appSettings,
             permissionStorage = permissionStorage,
             reload = reload,
             addNewTab = addNewTab,
+            requestRuntimePermissions = requestPermissions,
             displayPermissions = {},
             dismiss = {}
         )
@@ -169,7 +196,9 @@ class DefaultQuickSettingsControllerTest {
         verify {
             navController.navigate(
                 directionsEq(
-                    QuickSettingsSheetDialogFragmentDirections.actionGlobalSitePermissionsManagePhoneFeature(PhoneFeature.CAMERA)
+                    QuickSettingsSheetDialogFragmentDirections.actionGlobalSitePermissionsManagePhoneFeature(
+                        PhoneFeature.CAMERA
+                    )
                 )
             )
         }
@@ -208,11 +237,13 @@ class DefaultQuickSettingsControllerTest {
             store.dispatch(any())
         }
     }
+
     @Test
     fun `handleAndroidPermissionGranted should update the View's state`() {
         val featureGranted = PhoneFeature.CAMERA
         val permissionStatus = featureGranted.getActionLabel(context, sitePermissions, appSettings)
-        val permissionEnabled = featureGranted.shouldBeEnabled(context, sitePermissions, appSettings)
+        val permissionEnabled =
+            featureGranted.shouldBeEnabled(context, sitePermissions, appSettings)
         every { store.dispatch(any()) } returns mockk()
 
         controller.handleAndroidPermissionGranted(featureGranted)
@@ -245,28 +276,113 @@ class DefaultQuickSettingsControllerTest {
     }
 
     @Test
-    fun `handlePermissionsChange should store the updated permission and reload webpage`() = coroutinesScope.runBlockingTest {
-        val testPermissions = mockk<SitePermissions>()
+    fun `handlePermissionsChange should store the updated permission and reload webpage`() =
+        coroutinesScope.runBlockingTest {
+            val testPermissions = mockk<SitePermissions>()
 
-        controller.handlePermissionsChange(testPermissions)
-        advanceUntilIdle()
+            controller.handlePermissionsChange(testPermissions)
+            advanceUntilIdle()
 
-        coVerifyOrder {
-            permissionStorage.updateSitePermissions(testPermissions)
-            reload(tab.id)
+            coVerifyOrder {
+                permissionStorage.updateSitePermissions(testPermissions)
+                reload(tab.id)
+            }
+        }
+
+    @Test
+    fun `handleAutoplayAdd should store the updated permission and reload webpage`() =
+        coroutinesScope.runBlockingTest {
+            val testPermissions = mockk<SitePermissions>()
+
+            controller.handleAutoplayAdd(testPermissions)
+            advanceUntilIdle()
+
+            coVerifyOrder {
+                permissionStorage.add(testPermissions)
+                reload(tab.id)
+            }
+        }
+
+    @Test
+    fun `handleTrackingProtectionToggled should call the right use cases`() {
+        val trackingProtectionUseCases: TrackingProtectionUseCases = mockk(relaxed = true)
+        val sessionUseCases: SessionUseCases = mockk(relaxed = true)
+        val metrics: MetricController = mockk(relaxed = true)
+
+        every { context.components.core.store } returns browserStore
+        every { context.components.useCases.trackingProtectionUseCases } returns trackingProtectionUseCases
+        every { context.components.useCases.sessionUseCases } returns sessionUseCases
+        every { context.metrics } returns metrics
+        every { store.dispatch(any()) } returns mockk()
+
+        var isEnabled = true
+
+        controller.handleTrackingProtectionToggled(isEnabled)
+
+        verify {
+            trackingProtectionUseCases.removeException(tab.id)
+            sessionUseCases.reload.invoke(tab.id)
+            store.dispatch(TrackingProtectionAction.ToggleTrackingProtectionEnabled(isEnabled))
+        }
+
+        isEnabled = false
+
+        controller.handleTrackingProtectionToggled(isEnabled)
+
+        verify {
+            metrics.track(Event.TrackingProtectionException)
+            trackingProtectionUseCases.addException(tab.id)
+            sessionUseCases.reload.invoke(tab.id)
+            store.dispatch(TrackingProtectionAction.ToggleTrackingProtectionEnabled(isEnabled))
         }
     }
 
     @Test
-    fun `handleAutoplayAdd should store the updated permission and reload webpage`() = coroutinesScope.runBlockingTest {
-        val testPermissions = mockk<SitePermissions>()
+    fun `handleBlockedItemsClicked should call popBackStack and navigate to the tracking protection panel dialog`() {
+        every { context.components.core.store } returns browserStore
+        every { context.components.settings } returns appSettings
+        every { context.components.settings.toolbarPosition.androidGravity } returns mockk(relaxed = true)
 
-        controller.handleAutoplayAdd(testPermissions)
-        advanceUntilIdle()
+        val isTrackingProtectionEnabled = true
+        val state = QuickSettingsFragmentStore.createTrackingProtectionState(
+            context = context,
+            websiteUrl = tab.content.url,
+            sessionId = tab.id,
+            isTrackingProtectionEnabled = isTrackingProtectionEnabled
+        )
 
-        coVerifyOrder {
-            permissionStorage.add(testPermissions)
-            reload(tab.id)
+        every { store.state.trackingProtectionState } returns state
+
+        controller.handleDetailsClicked()
+
+        verify {
+            navController.popBackStack()
+
+            navController.navigate(any<NavDirections>())
+        }
+    }
+
+    @Test
+    fun `WHEN handleConnectionDetailsClicked THEN call popBackStack and navigate to the connection details dialog`() {
+        every { context.components.core.store } returns browserStore
+        every { context.components.settings } returns appSettings
+        every { context.components.settings.toolbarPosition.androidGravity } returns mockk(relaxed = true)
+
+        val state = WebsiteInfoState.createWebsiteInfoState(
+            websiteUrl = tab.content.url,
+            websiteTitle = tab.content.title,
+            isSecured = true,
+            certificateName = "certificateName"
+        )
+
+        every { store.state.webInfoState } returns state
+
+        controller.handleConnectionDetailsClicked()
+
+        verify {
+            navController.popBackStack()
+
+            navController.navigate(any<NavDirections>())
         }
     }
 
@@ -275,21 +391,23 @@ class DefaultQuickSettingsControllerTest {
         displayPermissions: () -> Unit = { },
         dismiss: () -> Unit = { }
     ): DefaultQuickSettingsController {
-        return DefaultQuickSettingsController(
-            context = context,
-            quickSettingsStore = store,
-            browserStore = browserStore,
-            sessionId = tab.id,
-            ioScope = coroutinesScope,
-            navController = navController,
-            sitePermissions = sitePermissions,
-            settings = appSettings,
-            permissionStorage = permissionStorage,
-            reload = reload,
-            addNewTab = addNewTab,
-            requestRuntimePermissions = requestPermissions,
-            displayPermissions = displayPermissions,
-            dismiss = dismiss
+        return spyk(
+            DefaultQuickSettingsController(
+                context = context,
+                quickSettingsStore = store,
+                browserStore = browserStore,
+                sessionId = tab.id,
+                ioScope = coroutinesScope,
+                navController = { navController },
+                sitePermissions = sitePermissions,
+                settings = appSettings,
+                permissionStorage = permissionStorage,
+                reload = reload,
+                addNewTab = addNewTab,
+                requestRuntimePermissions = requestPermissions,
+                displayPermissions = displayPermissions,
+                dismiss = dismiss
+            )
         )
     }
 }
