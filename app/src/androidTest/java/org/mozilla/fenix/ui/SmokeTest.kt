@@ -981,10 +981,10 @@ class SmokeTest {
         }.expandCollection(collectionName) {
             clickCollectionThreeDotButton()
             selectDeleteCollection()
-            confirmDeleteCollection()
         }
 
         homeScreen {
+            verifySnackBarText("Collection deleted")
             verifyNoCollectionsText()
         }
     }
@@ -1129,6 +1129,7 @@ class SmokeTest {
     }
 
     @Test
+    @Ignore("To be re-enabled later. See https://github.com/mozilla-mobile/fenix/issues/20716")
     fun mainMenuInstallPWATest() {
         val pwaPage = "https://mozilla-mobile.github.io/testapp/"
 
