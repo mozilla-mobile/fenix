@@ -32,7 +32,6 @@ import androidx.navigation.NavDirections
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
-import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.Dispatchers
@@ -74,6 +73,7 @@ import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
 import org.mozilla.fenix.components.metrics.BreadcrumbsRecorder
 import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.databinding.ActivityHomeBinding
 import org.mozilla.fenix.exceptions.trackingprotection.TrackingProtectionExceptionsFragmentDirections
 import org.mozilla.fenix.ext.alreadyOnDestination
 import org.mozilla.fenix.ext.breadcrumb
@@ -134,6 +134,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     // components requires context to access.
     protected val homeActivityInitTimeStampNanoSeconds = SystemClock.elapsedRealtimeNanos()
 
+    private lateinit var binding: ActivityHomeBinding
     lateinit var themeManager: ThemeManager
     lateinit var browsingModeManager: BrowsingModeManager
 
@@ -203,8 +204,9 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
         // Must be after we set the content view
         if (isVisuallyComplete) {
+            binding = ActivityHomeBinding.bind(window.decorView.findViewById(R.id.rootContainer))
             components.performance.visualCompletenessQueue
-                .attachViewToRunVisualCompletenessQueueLater(WeakReference(rootContainer))
+                .attachViewToRunVisualCompletenessQueueLater(WeakReference(binding.rootContainer))
         }
 
         privateNotificationObserver = PrivateNotificationFeature(
@@ -270,21 +272,13 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             components.performance.visualCompletenessQueue,
             components.startupStateProvider,
             safeIntent,
-            rootContainer
+            binding.rootContainer
         )
     }
 
     @CallSuper
     override fun onResume() {
         super.onResume()
-
-        // Even if screenshots are allowed, we hide private content in the recents screen in onPause
-        // only when we are in private mode, so in onResume we should go back to setting these flags
-        // with the user screenshot setting only when we are in private mode.
-        // See https://github.com/mozilla-mobile/fenix/issues/11153
-        if (settings().lastKnownMode == BrowsingMode.Private) {
-            updateSecureWindowFlags(settings().lastKnownMode)
-        }
 
         // Diagnostic breadcrumb for "Display already aquired" crash:
         // https://github.com/mozilla-mobile/android-components/issues/7960
@@ -318,7 +312,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             message = "onStart()"
         )
 
-        ProfilerMarkers.homeActivityOnStart(rootContainer, components.core.engine.profiler)
+        ProfilerMarkers.homeActivityOnStart(binding.rootContainer, components.core.engine.profiler)
     }
 
     override fun onStop() {
@@ -338,13 +332,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         // We should return to the browser if there were normal tabs when we left the app
         settings().shouldReturnToBrowser =
             components.core.store.state.getNormalOrPrivateTabs(private = false).isNotEmpty()
-
-        // Even if screenshots are allowed, we want to hide private content in the recents screen
-        // only when we are in private mode
-        // See https://github.com/mozilla-mobile/fenix/issues/11153
-        if (settings().lastKnownMode.isPrivate) {
-            window.addFlags(FLAG_SECURE)
-        }
 
         lifecycleScope.launch(IO) {
             components.core.bookmarksStorage.getTree(BookmarkRoot.Root.id, true)?.let {
@@ -666,7 +653,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
      */
     override fun getSupportActionBarAndInflateIfNecessary(): ActionBar {
         if (!isToolbarInflated) {
-            navigationToolbar = navigationToolbarStub.inflate() as Toolbar
+            navigationToolbar = binding.navigationToolbarStub.inflate() as Toolbar
 
             setSupportActionBar(navigationToolbar)
             // Add ids to this that we don't want to have a toolbar back button
