@@ -270,9 +270,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
     override fun onStop() {
         super.onStop()
         updateLastBrowseActivity()
-        if (requireContext().settings().historyMetadataFeature) {
-            updateHistoryMetadata()
-        }
+        updateHistoryMetadata()
         pwaOnboardingObserver?.stop()
     }
 
