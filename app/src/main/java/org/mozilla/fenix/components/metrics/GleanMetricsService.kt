@@ -20,7 +20,6 @@ import org.mozilla.fenix.GleanMetrics.BookmarksManagement
 import org.mozilla.fenix.GleanMetrics.BrowserSearch
 import org.mozilla.fenix.GleanMetrics.Collections
 import org.mozilla.fenix.GleanMetrics.ContextMenu
-import org.mozilla.fenix.GleanMetrics.ContextualHintTrackingProtection
 import org.mozilla.fenix.GleanMetrics.ContextualMenu
 import org.mozilla.fenix.GleanMetrics.CrashReporter
 import org.mozilla.fenix.GleanMetrics.CustomTab
@@ -645,22 +644,6 @@ private val Event.wrapper: EventWrapper<*>?
             { Onboarding.prefToggledToolbarPositionKeys.valueOf(it) }
         )
 
-        is Event.ContextualHintETPDisplayed -> EventWrapper<NoExtraKeys>(
-            { ContextualHintTrackingProtection.display.record(it) }
-        )
-
-        is Event.ContextualHintETPDismissed -> EventWrapper<NoExtraKeys>(
-            { ContextualHintTrackingProtection.dismiss.record(it) }
-        )
-
-        is Event.ContextualHintETPInsideTap -> EventWrapper<NoExtraKeys>(
-            { ContextualHintTrackingProtection.insideTap.record(it) }
-        )
-
-        is Event.ContextualHintETPOutsideTap -> EventWrapper<NoExtraKeys>(
-            { ContextualHintTrackingProtection.outsideTap.record(it) }
-        )
-
         is Event.TabsTrayOpened -> EventWrapper<NoExtraKeys>(
             { TabsTray.opened.record(it) }
         )
@@ -829,6 +812,10 @@ private val Event.wrapper: EventWrapper<*>?
         )
         is Event.HomeScreenDisplayed -> EventWrapper<NoExtraKeys>(
             { HomeScreen.homeScreenDisplayed.record(it) }
+        )
+        is Event.TabViewSettingChanged -> EventWrapper(
+            { Events.tabViewChanged.record(it) },
+            { Events.tabViewChangedKeys.valueOf(it) }
         )
 
         is Event.BrowserToolbarHomeButtonClicked -> EventWrapper<NoExtraKeys>(

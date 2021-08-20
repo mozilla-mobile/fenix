@@ -6,7 +6,6 @@ package org.mozilla.fenix.home
 
 import android.animation.Animator
 import android.content.Context
-import android.content.DialogInterface
 import android.content.res.Configuration
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
@@ -22,7 +21,6 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import androidx.annotation.VisibleForTesting
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
@@ -78,7 +76,6 @@ import mozilla.components.ui.tabcounter.TabCounterMenu
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.FeatureFlags
-import org.mozilla.fenix.GleanMetrics.PerfStartup
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BrowserAnimator.Companion.getToolbarNavOptions
@@ -97,7 +94,6 @@ import org.mozilla.fenix.components.toolbar.FenixTabCounterMenu
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.hideToolbar
-import org.mozilla.fenix.ext.measureNoInline
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
@@ -200,7 +196,7 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? = PerfStartup.homeFragmentOnCreateView.measureNoInline {
+    ): View? {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
         val activity = activity as HomeActivity
         val components = requireComponents
@@ -274,7 +270,7 @@ class HomeFragment : Fragment() {
             )
         }
 
-        if (requireContext().settings().historyMetadataFeature) {
+        if (requireContext().settings().historyMetadataUIFeature) {
             historyMetadataFeature.set(
                 feature = HistoryMetadataFeature(
                     homeStore = homeFragmentStore,
@@ -303,7 +299,7 @@ class HomeFragment : Fragment() {
                 viewLifecycleScope = viewLifecycleOwner.lifecycleScope,
                 hideOnboarding = ::hideOnboardingAndOpenSearch,
                 registerCollectionStorageObserver = ::registerCollectionStorageObserver,
-                showDeleteCollectionPrompt = ::showDeleteCollectionPrompt,
+                removeCollectionWithUndo = ::removeCollectionWithUndo,
                 showTabTray = ::openTabsTray,
                 handleSwipedItemDeletionCancel = ::handleSwipedItemDeletionCancel
             ),
@@ -339,7 +335,7 @@ class HomeFragment : Fragment() {
         appBarLayout = view.homeAppBar
 
         activity.themeManager.applyStatusBarTheme(activity)
-        view
+        return view
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -421,87 +417,86 @@ class HomeFragment : Fragment() {
     }
 
     @Suppress("LongMethod", "ComplexMethod")
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) =
-        PerfStartup.homeFragmentOnViewCreated.measureNoInline {
-            super.onViewCreated(view, savedInstanceState)
-            context?.metrics?.track(Event.HomeScreenDisplayed)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        context?.metrics?.track(Event.HomeScreenDisplayed)
 
-            observeSearchEngineChanges()
-            createHomeMenu(requireContext(), WeakReference(view.menuButton))
-            createTabCounterMenu(view)
+        observeSearchEngineChanges()
+        createHomeMenu(requireContext(), WeakReference(view.menuButton))
+        createTabCounterMenu(view)
 
-            view.menuButton.setColorFilter(
-                ContextCompat.getColor(
-                    requireContext(),
-                    ThemeManager.resolveAttribute(R.attr.primaryText, requireContext())
-                )
+        view.menuButton.setColorFilter(
+            ContextCompat.getColor(
+                requireContext(),
+                ThemeManager.resolveAttribute(R.attr.primaryText, requireContext())
             )
+        )
 
-            view.toolbar.compoundDrawablePadding =
-                view.resources.getDimensionPixelSize(R.dimen.search_bar_search_engine_icon_padding)
-            view.toolbar_wrapper.setOnClickListener {
-                navigateToSearch()
-                requireComponents.analytics.metrics.track(Event.SearchBarTapped(Event.SearchBarTapped.Source.HOME))
+        view.toolbar.compoundDrawablePadding =
+            view.resources.getDimensionPixelSize(R.dimen.search_bar_search_engine_icon_padding)
+        view.toolbar_wrapper.setOnClickListener {
+            navigateToSearch()
+            requireComponents.analytics.metrics.track(Event.SearchBarTapped(Event.SearchBarTapped.Source.HOME))
+        }
+
+        view.toolbar_wrapper.setOnLongClickListener {
+            ToolbarPopupWindow.show(
+                WeakReference(it),
+                handlePasteAndGo = sessionControlInteractor::onPasteAndGo,
+                handlePaste = sessionControlInteractor::onPaste,
+                copyVisible = false
+            )
+            true
+        }
+
+        view.tab_button.setOnClickListener {
+            if (FeatureFlags.showStartOnHomeSettings) {
+                requireComponents.analytics.metrics.track(Event.StartOnHomeOpenTabsTray)
+            }
+            openTabsTray()
+        }
+
+        PrivateBrowsingButtonView(
+            privateBrowsingButton,
+            browsingModeManager
+        ) { newMode ->
+            if (newMode == BrowsingMode.Private) {
+                requireContext().settings().incrementNumTimesPrivateModeOpened()
             }
 
-            view.toolbar_wrapper.setOnLongClickListener {
-                ToolbarPopupWindow.show(
-                    WeakReference(it),
-                    handlePasteAndGo = sessionControlInteractor::onPasteAndGo,
-                    handlePaste = sessionControlInteractor::onPaste,
-                    copyVisible = false
+            if (onboarding.userHasBeenOnboarded()) {
+                homeFragmentStore.dispatch(
+                    HomeFragmentAction.ModeChange(Mode.fromBrowsingMode(newMode))
                 )
-                true
-            }
-
-            view.tab_button.setOnClickListener {
-                if (FeatureFlags.showStartOnHomeSettings) {
-                    requireComponents.analytics.metrics.track(Event.StartOnHomeOpenTabsTray)
-                }
-                openTabsTray()
-            }
-
-            PrivateBrowsingButtonView(
-                privateBrowsingButton,
-                browsingModeManager
-            ) { newMode ->
-                if (newMode == BrowsingMode.Private) {
-                    requireContext().settings().incrementNumTimesPrivateModeOpened()
-                }
-
-                if (onboarding.userHasBeenOnboarded()) {
-                    homeFragmentStore.dispatch(
-                        HomeFragmentAction.ModeChange(Mode.fromBrowsingMode(newMode))
-                    )
-                }
-            }
-
-            consumeFrom(requireComponents.core.store) {
-                updateTabCounter(it)
-            }
-
-            homeViewModel.sessionToDelete?.also {
-                if (it == ALL_NORMAL_TABS || it == ALL_PRIVATE_TABS) {
-                    removeAllTabsAndShowSnackbar(it)
-                } else {
-                    removeTabAndShowSnackbar(it)
-                }
-            }
-
-            homeViewModel.sessionToDelete = null
-
-            updateTabCounter(requireComponents.core.store.state)
-
-            if (bundleArgs.getBoolean(FOCUS_ON_ADDRESS_BAR)) {
-                navigateToSearch()
-            } else if (bundleArgs.getLong(FOCUS_ON_COLLECTION, -1) >= 0) {
-                // No need to scroll to async'd loaded TopSites if we want to scroll to collections.
-                homeViewModel.shouldScrollToTopSites = false
-                /* Triggered when the user has added a tab to a collection and has tapped
-                * the View action on the [TabsTrayDialogFragment] snackbar.*/
-                scrollAndAnimateCollection(bundleArgs.getLong(FOCUS_ON_COLLECTION, -1))
             }
         }
+
+        consumeFrom(requireComponents.core.store) {
+            updateTabCounter(it)
+        }
+
+        homeViewModel.sessionToDelete?.also {
+            if (it == ALL_NORMAL_TABS || it == ALL_PRIVATE_TABS) {
+                removeAllTabsAndShowSnackbar(it)
+            } else {
+                removeTabAndShowSnackbar(it)
+            }
+        }
+
+        homeViewModel.sessionToDelete = null
+
+        updateTabCounter(requireComponents.core.store.state)
+
+        if (bundleArgs.getBoolean(FOCUS_ON_ADDRESS_BAR)) {
+            navigateToSearch()
+        } else if (bundleArgs.getLong(FOCUS_ON_COLLECTION, -1) >= 0) {
+            // No need to scroll to async'd loaded TopSites if we want to scroll to collections.
+            homeViewModel.shouldScrollToTopSites = false
+            /* Triggered when the user has added a tab to a collection and has tapped
+            * the View action on the [TabsTrayDialogFragment] snackbar.*/
+            scrollAndAnimateCollection(bundleArgs.getLong(FOCUS_ON_COLLECTION, -1))
+        }
+    }
 
     private fun observeSearchEngineChanges() {
         consumeFlow(store) { flow ->
@@ -706,34 +701,25 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun showDeleteCollectionPrompt(
-        tabCollection: TabCollection,
-        title: String?,
-        message: String,
-        wasSwiped: Boolean,
-        handleSwipedItemDeletionCancel: () -> Unit
-    ) {
-        val context = context ?: return
-        AlertDialog.Builder(context).apply {
-            setTitle(title)
-            setMessage(message)
-            setNegativeButton(R.string.tab_collection_dialog_negative) { dialog: DialogInterface, _ ->
-                if (wasSwiped) {
-                    handleSwipedItemDeletionCancel()
-                }
-                dialog.cancel()
-            }
-            setPositiveButton(R.string.tab_collection_dialog_positive) { dialog: DialogInterface, _ ->
-                // Use fragment's lifecycle; the view may be gone by the time dialog is interacted with.
-                lifecycleScope.launch(IO) {
-                    context.components.core.tabCollectionStorage.removeCollection(tabCollection)
-                    context.components.analytics.metrics.track(Event.CollectionRemoved)
-                }.invokeOnCompletion {
-                    dialog.dismiss()
-                }
-            }
-            create()
-        }.show()
+    @VisibleForTesting
+    internal fun removeCollectionWithUndo(tabCollection: TabCollection) {
+        val snackbarMessage = getString(R.string.snackbar_collection_deleted)
+
+        lifecycleScope.allowUndo(
+            requireView(),
+            snackbarMessage,
+            getString(R.string.snackbar_deleted_undo),
+            {
+                requireComponents.core.tabCollectionStorage.createCollection(tabCollection)
+            },
+            operation = { },
+            elevation = TOAST_ELEVATION,
+            anchorView = null
+        )
+
+        lifecycleScope.launch(IO) {
+            requireComponents.core.tabCollectionStorage.removeCollection(tabCollection)
+        }
     }
 
     override fun onResume() {
@@ -1145,5 +1131,8 @@ class HomeFragment : Fragment() {
         private const val FADE_ANIM_DURATION = 150L
         private const val CFR_WIDTH_DIVIDER = 1.7
         private const val CFR_Y_OFFSET = -20
+
+        // Elevation for undo toasts
+        internal const val TOAST_ELEVATION = 80f
     }
 }

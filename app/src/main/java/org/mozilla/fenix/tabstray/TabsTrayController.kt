@@ -7,6 +7,7 @@ package org.mozilla.fenix.tabstray
 import androidx.annotation.VisibleForTesting
 import androidx.navigation.NavController
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import mozilla.components.browser.state.action.DebugAction
 import mozilla.components.browser.state.action.LastAccessAction
 import mozilla.components.browser.state.selector.findTab
 import mozilla.components.browser.state.selector.getNormalOrPrivateTabs
@@ -15,6 +16,7 @@ import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.base.profiler.Profiler
 import mozilla.components.concept.tabstray.Tab
 import mozilla.components.feature.tabs.TabsUseCases
+import mozilla.components.lib.state.DelicateAction
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
@@ -57,6 +59,11 @@ interface TabsTrayController {
      * @param tabs List of [Tab]s (sessions) to be removed.
      */
     fun handleMultipleTabsDeletion(tabs: Collection<Tab>)
+
+    /**
+     * Navigate from TabsTray to Recently Closed section in the History fragment.
+     */
+    fun handleNavigateToRecentlyClosed()
 
     /**
      * Set the list of [tabs] into the inactive state.
@@ -161,15 +168,28 @@ class DefaultTabsTrayController(
     }
 
     /**
+     * Dismisses the tabs tray and navigates to the Recently Closed section in the History fragment.
+     */
+    override fun handleNavigateToRecentlyClosed() {
+        dismissTray()
+
+        navController.navigate(R.id.recentlyClosedFragment)
+    }
+
+    /**
      * Marks all the [tabs] with the [TabSessionState.lastAccess] to 5 days; enough time to
      * have a tab considered as inactive.
      *
      * ⚠️ DO NOT USE THIS OUTSIDE OF DEBUGGING/TESTING.
      */
+    @OptIn(DelicateAction::class)
     override fun forceTabsAsInactive(tabs: Collection<Tab>, numOfDays: Long) {
         tabs.forEach { tab ->
             val daysSince = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(numOfDays)
-            browserStore.dispatch(LastAccessAction.UpdateLastAccessAction(tab.id, daysSince))
+            browserStore.apply {
+                dispatch(LastAccessAction.UpdateLastAccessAction(tab.id, daysSince))
+                dispatch(DebugAction.UpdateCreatedAtAction(tab.id, daysSince))
+            }
         }
     }
 

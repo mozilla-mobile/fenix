@@ -17,21 +17,15 @@ import mozilla.components.concept.storage.CreditCardNumber
 import mozilla.components.concept.storage.NewCreditCardFields
 import mozilla.components.concept.storage.UpdatableCreditCardFields
 import mozilla.components.service.sync.autofill.AutofillCreditCardsAddressesStorage
-import mozilla.components.support.test.robolectric.testContext
 import mozilla.components.support.test.rule.MainCoroutineRule
 import mozilla.components.support.utils.CreditCardNetworkType
 import org.junit.After
-import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.settings.creditcards.controller.DefaultCreditCardEditorController
-import org.mozilla.fenix.utils.Settings
 
 @ExperimentalCoroutinesApi
-@RunWith(FenixRobolectricTestRunner::class)
 class DefaultCreditCardEditorControllerTest {
 
     private val storage: AutofillCreditCardsAddressesStorage = mockk(relaxed = true)
@@ -41,20 +35,17 @@ class DefaultCreditCardEditorControllerTest {
     private val testDispatcher = TestCoroutineDispatcher()
 
     private lateinit var controller: DefaultCreditCardEditorController
-    private lateinit var settings: Settings
 
     @get:Rule
     val coroutinesTestRule = MainCoroutineRule(testDispatcher)
 
     @Before
     fun setup() {
-        settings = Settings(testContext)
         controller = spyk(
             DefaultCreditCardEditorController(
                 storage = storage,
                 lifecycleScope = testCoroutineScope,
                 navController = navController,
-                settings = settings,
                 ioDispatcher = testDispatcher
             )
         )
@@ -77,13 +68,9 @@ class DefaultCreditCardEditorControllerTest {
 
     @Test
     fun handleDeleteCreditCard() = testCoroutineScope.runBlockingTest {
-        assertEquals(0, settings.creditCardsDeletedCount)
-
         val creditCardId = "id"
 
         controller.handleDeleteCreditCard(creditCardId)
-
-        assertEquals(1, settings.creditCardsDeletedCount)
 
         coVerify {
             storage.deleteCreditCard(creditCardId)
@@ -93,8 +80,6 @@ class DefaultCreditCardEditorControllerTest {
 
     @Test
     fun handleSaveCreditCard() = testCoroutineScope.runBlockingTest {
-        assertEquals(0, settings.creditCardsSavedCount)
-
         val creditCardFields = NewCreditCardFields(
             billingName = "Banana Apple",
             plaintextCardNumber = CreditCardNumber.Plaintext("4111111111111112"),
@@ -105,8 +90,6 @@ class DefaultCreditCardEditorControllerTest {
         )
 
         controller.handleSaveCreditCard(creditCardFields)
-
-        assertEquals(1, settings.creditCardsSavedCount)
 
         coVerify {
             storage.addCreditCard(creditCardFields)

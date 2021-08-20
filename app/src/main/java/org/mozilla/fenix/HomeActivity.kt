@@ -67,7 +67,6 @@ import mozilla.components.support.utils.SafeIntent
 import mozilla.components.support.utils.toSafeIntent
 import mozilla.components.support.webextensions.WebExtensionPopupFeature
 import org.mozilla.fenix.GleanMetrics.Metrics
-import org.mozilla.fenix.GleanMetrics.PerfStartup
 import org.mozilla.fenix.addons.AddonDetailsFragmentDirections
 import org.mozilla.fenix.addons.AddonPermissionsDetailsFragmentDirections
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
@@ -79,7 +78,6 @@ import org.mozilla.fenix.exceptions.trackingprotection.TrackingProtectionExcepti
 import org.mozilla.fenix.ext.alreadyOnDestination
 import org.mozilla.fenix.ext.breadcrumb
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.measureNoInline
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.setNavigationIcon
@@ -111,6 +109,7 @@ import org.mozilla.fenix.settings.logins.fragment.LoginDetailFragmentDirections
 import org.mozilla.fenix.settings.logins.fragment.SavedLoginsAuthFragmentDirections
 import org.mozilla.fenix.settings.search.AddSearchEngineFragmentDirections
 import org.mozilla.fenix.settings.search.EditCustomSearchEngineFragmentDirections
+import org.mozilla.fenix.settings.studies.StudiesFragmentDirections
 import org.mozilla.fenix.share.AddNewDeviceFragmentDirections
 import org.mozilla.fenix.tabstray.TabsTrayFragment
 import org.mozilla.fenix.tabstray.TabsTrayFragmentDirections
@@ -176,7 +175,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     private val startupPathProvider = StartupPathProvider()
     private lateinit var startupTypeTelemetry: StartupTypeTelemetry
 
-    final override fun onCreate(savedInstanceState: Bundle?): Unit = PerfStartup.homeActivityOnCreate.measureNoInline {
+    final override fun onCreate(savedInstanceState: Bundle?) {
         // DO NOT MOVE ANYTHING ABOVE THIS addMarker CALL.
         components.core.engine.profiler?.addMarker("Activity.onCreate", "HomeActivity")
 
@@ -279,14 +278,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     override fun onResume() {
         super.onResume()
 
-        // Even if screenshots are allowed, we hide private content in the recents screen in onPause
-        // only when we are in private mode, so in onResume we should go back to setting these flags
-        // with the user screenshot setting only when we are in private mode.
-        // See https://github.com/mozilla-mobile/fenix/issues/11153
-        if (settings().lastKnownMode == BrowsingMode.Private) {
-            updateSecureWindowFlags(settings().lastKnownMode)
-        }
-
         // Diagnostic breadcrumb for "Display already aquired" crash:
         // https://github.com/mozilla-mobile/android-components/issues/7960
         breadcrumb(
@@ -310,7 +301,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         isFenixTheDefaultBrowser()
     }
 
-    override fun onStart() = PerfStartup.homeActivityOnStart.measureNoInline {
+    override fun onStart() {
         super.onStart()
 
         // Diagnostic breadcrumb for "Display already aquired" crash:
@@ -339,13 +330,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         // We should return to the browser if there were normal tabs when we left the app
         settings().shouldReturnToBrowser =
             components.core.store.state.getNormalOrPrivateTabs(private = false).isNotEmpty()
-
-        // Even if screenshots are allowed, we want to hide private content in the recents screen
-        // only when we are in private mode
-        // See https://github.com/mozilla-mobile/fenix/issues/11153
-        if (settings().lastKnownMode.isPrivate) {
-            window.addFlags(FLAG_SECURE)
-        }
 
         lifecycleScope.launch(IO) {
             components.core.bookmarksStorage.getTree(BookmarkRoot.Root.id, true)?.let {
@@ -764,6 +748,9 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             TabsTrayFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromRecentlyClosed ->
             RecentlyClosedFragmentDirections.actionGlobalBrowser(customTabSessionId)
+        BrowserDirection.FromStudiesFragment -> StudiesFragmentDirections.actionGlobalBrowser(
+            customTabSessionId
+        )
     }
 
     /**
@@ -813,7 +800,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
                 components.useCases.searchUseCases.newTabSearch
                     .invoke(
                         searchTermOrURL,
-                        SessionState.Source.USER_ENTERED,
+                        SessionState.Source.Internal.UserEntered,
                         true,
                         mode.isPrivate,
                         searchEngine = engine

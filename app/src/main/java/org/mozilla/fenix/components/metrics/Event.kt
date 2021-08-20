@@ -172,11 +172,6 @@ sealed class Event {
     object LoginDialogPromptSave : Event()
     object LoginDialogPromptNeverSave : Event()
 
-    object ContextualHintETPDisplayed : Event()
-    object ContextualHintETPDismissed : Event()
-    object ContextualHintETPOutsideTap : Event()
-    object ContextualHintETPInsideTap : Event()
-
     // Tab tray
     object TabsTrayOpened : Event()
     object TabsTrayClosed : Event()
@@ -604,6 +599,13 @@ sealed class Event {
 
         override val extras: Map<Autoplay.settingChangedKeys, String>?
             get() = mapOf(Autoplay.settingChangedKeys.autoplaySetting to setting.toString().lowercase(Locale.ROOT))
+    }
+
+    data class TabViewSettingChanged(val type: Type) : Event() {
+        enum class Type { LIST, GRID }
+
+        override val extras: Map<Events.tabViewChangedKeys, String>?
+            get() = mapOf(Events.tabViewChangedKeys.type to type.toString().lowercase(Locale.ROOT))
     }
 
     sealed class Search

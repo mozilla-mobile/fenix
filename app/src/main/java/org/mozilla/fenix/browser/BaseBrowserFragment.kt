@@ -115,7 +115,6 @@ import org.mozilla.fenix.ext.breadcrumb
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.hideToolbar
-import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
@@ -133,10 +132,8 @@ import mozilla.components.feature.webauthn.WebAuthnFeature
 import mozilla.components.support.base.feature.ActivityResultHandler
 import mozilla.components.support.ktx.android.view.enterToImmersiveMode
 import mozilla.components.support.ktx.kotlin.getOrigin
-import org.mozilla.fenix.GleanMetrics.PerfStartup
 import org.mozilla.fenix.components.toolbar.interactor.BrowserToolbarInteractor
 import org.mozilla.fenix.components.toolbar.interactor.DefaultBrowserToolbarInteractor
-import org.mozilla.fenix.ext.measureNoInline
 import org.mozilla.fenix.ext.secure
 import org.mozilla.fenix.settings.biometric.BiometricPromptFeature
 import mozilla.components.feature.session.behavior.ToolbarPosition as MozacToolbarPosition
@@ -212,7 +209,7 @@ abstract class BaseBrowserFragment :
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View = PerfStartup.baseBfragmentOnCreateView.measureNoInline {
+    ): View {
         customTabSessionId = requireArguments().getString(EXTRA_SESSION_ID)
 
         // Diagnostic breadcrumb for "Display already aquired" crash:
@@ -235,29 +232,28 @@ abstract class BaseBrowserFragment :
             )
         }
 
-        view
+        return view
     }
 
-    final override fun onViewCreated(view: View, savedInstanceState: Bundle?) =
-        PerfStartup.baseBfragmentOnViewCreated.measureNoInline { // weird indentation to avoid breaking blame.
-            initializeUI(view)
+    final override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        // weird indentation to avoid breaking blame.
+        initializeUI(view)
 
-            if (customTabSessionId == null) {
-                // We currently only need this observer to navigate to home
-                // in case all tabs have been removed on startup. No need to
-                // this if we have a known session to display.
-                observeRestoreComplete(requireComponents.core.store, findNavController())
-            }
-
-            observeTabSelection(requireComponents.core.store)
-
-            if (!onboarding.userHasBeenOnboarded()) {
-                observeTabSource(requireComponents.core.store)
-            }
-
-            requireContext().accessibilityManager.addAccessibilityStateChangeListener(this)
-            Unit
+        if (customTabSessionId == null) {
+            // We currently only need this observer to navigate to home
+            // in case all tabs have been removed on startup. No need to
+            // this if we have a known session to display.
+            observeRestoreComplete(requireComponents.core.store, findNavController())
         }
+
+        observeTabSelection(requireComponents.core.store)
+
+        if (!onboarding.userHasBeenOnboarded()) {
+            observeTabSource(requireComponents.core.store)
+        }
+
+        requireContext().accessibilityManager.addAccessibilityStateChangeListener(this)
+    }
 
     private fun initializeUI(view: View) {
         val tab = getCurrentTab()
@@ -398,11 +394,6 @@ abstract class BaseBrowserFragment :
 
         browserToolbarView.view.display.setOnSiteSecurityClickedListener {
             showQuickSettingsDialog()
-        }
-
-        browserToolbarView.view.display.setOnTrackingProtectionClickedListener {
-            context.metrics.track(Event.TrackingProtectionIconPressed)
-            showTrackingProtectionPanel()
         }
 
         contextMenuFeature.set(
@@ -1006,7 +997,7 @@ abstract class BaseBrowserFragment :
                 .collect {
                     if (!onboarding.userHasBeenOnboarded() &&
                         it.content.loadRequest?.triggeredByRedirect != true &&
-                        it.source !in intentSourcesList &&
+                        it.source !is SessionState.Source.External &&
                         it.content.url !in onboardingLinksList
                     ) {
                         onboarding.finish()
@@ -1144,7 +1135,7 @@ abstract class BaseBrowserFragment :
      */
     protected open fun removeSessionIfNeeded(): Boolean {
         getCurrentTab()?.let { session ->
-            return if (session.source == SessionState.Source.ACTION_VIEW) {
+            return if (session.source is SessionState.Source.External && !session.restored) {
                 activity?.finish()
                 requireComponents.useCases.tabsUseCases.removeTab(session.id)
                 true
@@ -1165,8 +1156,6 @@ abstract class BaseBrowserFragment :
         tab: SessionState,
         sitePermissions: SitePermissions?
     )
-
-    protected abstract fun navToTrackingProtectionPanel(tab: SessionState)
 
     /**
      * Returns the layout [android.view.Gravity] for the quick settings and ETP dialog.
@@ -1200,13 +1189,6 @@ abstract class BaseBrowserFragment :
             view?.let {
                 navToQuickSettingsSheet(tab, sitePermissions)
             }
-        }
-    }
-
-    private fun showTrackingProtectionPanel() {
-        val tab = getCurrentTab() ?: return
-        view?.let {
-            navToTrackingProtectionPanel(tab)
         }
     }
 
@@ -1395,12 +1377,6 @@ abstract class BaseBrowserFragment :
         val onboardingLinksList: List<String> = listOf(
             SupportUtils.getMozillaPageUrl(SupportUtils.MozillaPage.PRIVATE_NOTICE),
             SupportUtils.getFirefoxAccountSumoUrl()
-        )
-
-        val intentSourcesList: List<SessionState.Source> = listOf(
-            SessionState.Source.ACTION_SEARCH,
-            SessionState.Source.ACTION_SEND,
-            SessionState.Source.ACTION_VIEW
         )
     }
 
