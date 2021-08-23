@@ -70,7 +70,8 @@ class EnhancedTrackingProtectionRobot {
         }
 
         fun openProtectionSettings(interact: SettingsSubMenuEnhancedTrackingProtectionRobot.() -> Unit): Transition {
-            onView(withId(R.id.trackingProtectionDetails)).click()
+            openDetails {}
+
             openEnhancedTrackingProtectionSettings().click()
 
             SettingsSubMenuEnhancedTrackingProtectionRobot().interact()
@@ -78,6 +79,9 @@ class EnhancedTrackingProtectionRobot {
         }
 
         fun openDetails(interact: EnhancedTrackingProtectionRobot.() -> Unit): Transition {
+            mDevice.waitForIdle()
+            mDevice.findObject(UiSelector().resourceId("$packageName:id/trackingProtectionDetails"))
+                .waitForExists(waitingTime)
             openEnhancedTrackingProtectionDetails().click()
 
             EnhancedTrackingProtectionRobot().interact()
@@ -98,6 +102,8 @@ private fun assertEnhancedTrackingProtectionShield() {
 }
 
 private fun assertEnhancedTrackingProtectionSheetStatus(status: String, state: Boolean) {
+    mDevice.findObject(UiSelector().resourceId("$packageName:id/quick_action_sheet"))
+        .waitForExists(waitingTime)
     mDevice.waitNotNull(Until.findObjects(By.textContains(status)))
     onView(ViewMatchers.withResourceName("switch_widget")).check(
         ViewAssertions.matches(
