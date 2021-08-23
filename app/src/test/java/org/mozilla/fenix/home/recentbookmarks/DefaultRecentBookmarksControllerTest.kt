@@ -94,8 +94,8 @@ class DefaultRecentBookmarksControllerTest {
                 newTab = true,
                 from = BrowserDirection.FromHome
             )
-            activity.components.core.metrics.track(Event.BookmarkClicked)
         }
+        verify { metrics.track(Event.BookmarkClicked) }
         verify(exactly = 0) {
             navController.navigateUp()
         }
@@ -111,8 +111,8 @@ class DefaultRecentBookmarksControllerTest {
 
         val directions = HomeFragmentDirections.actionGlobalBookmarkFragment(BookmarkRoot.Mobile.id)
         verify {
-            activity.components.core.metrics.track(Event.ShowAllBookmarks)
             navController.navigate(directions)
+            metrics.track(Event.ShowAllBookmarks)
         }
         verify(exactly = 0) {
             navController.navigateUp()
@@ -128,11 +128,12 @@ class DefaultRecentBookmarksControllerTest {
         controller.handleShowAllBookmarksClicked()
 
         val directions = HomeFragmentDirections.actionGlobalBookmarkFragment(BookmarkRoot.Mobile.id)
+
         verify {
-            activity.components.core.metrics.track(Event.ShowAllBookmarks)
             controller.dismissSearchDialogIfDisplayed()
             navController.navigateUp()
             navController.navigate(directions)
+            metrics.track(Event.ShowAllBookmarks)
         }
     }
 }
