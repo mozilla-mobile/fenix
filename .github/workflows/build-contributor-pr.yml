@@ -124,6 +124,7 @@ jobs:
           target: ${{ matrix.target }}
           arch: x86_64
           profile: pixel_3a
+          sdcard-path-or-size: 3072M
           script:
             "JAVA_HOME=$JAVA_HOME_11_X64 && ./gradlew connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=\
             org.mozilla.fenix.ui.NavigationToolbarTest#visitURLTest"
