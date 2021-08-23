@@ -5,8 +5,8 @@
 package org.mozilla.fenix.home
 
 import android.animation.Animator
+import android.annotation.SuppressLint
 import android.content.Context
-import android.content.DialogInterface
 import android.content.res.Configuration
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
@@ -22,7 +22,6 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import androidx.annotation.VisibleForTesting
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
@@ -43,10 +42,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
 import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.fragment_home.*
-import kotlinx.android.synthetic.main.fragment_home.view.*
-import kotlinx.android.synthetic.main.no_collections_message.view.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -94,6 +91,7 @@ import org.mozilla.fenix.components.tips.Tip
 import org.mozilla.fenix.components.tips.providers.MasterPasswordTipProvider
 import org.mozilla.fenix.components.toolbar.FenixTabCounterMenu
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
+import org.mozilla.fenix.databinding.FragmentHomeBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.hideToolbar
 import org.mozilla.fenix.ext.metrics
@@ -130,20 +128,24 @@ class HomeFragment : Fragment() {
     private val args by navArgs<HomeFragmentArgs>()
     private lateinit var bundleArgs: Bundle
 
+    private var _binding: FragmentHomeBinding? = null
+    private val binding get() = _binding!!
+
     private val homeViewModel: HomeScreenViewModel by activityViewModels()
 
     private val snackbarAnchorView: View?
         get() = when (requireContext().settings().toolbarPosition) {
-            ToolbarPosition.BOTTOM -> toolbarLayout
+            ToolbarPosition.BOTTOM -> binding.toolbarLayout
             ToolbarPosition.TOP -> null
         }
 
     private val browsingModeManager get() = (activity as HomeActivity).browsingModeManager
 
     private val collectionStorageObserver = object : TabCollectionStorage.Observer {
+        @SuppressLint("NotifyDataSetChanged")
         override fun onCollectionRenamed(tabCollection: TabCollection, title: String) {
             lifecycleScope.launch(Main) {
-                view?.sessionControlRecyclerView?.adapter?.notifyDataSetChanged()
+                binding.sessionControlRecyclerView.adapter?.notifyDataSetChanged()
             }
             showRenamedSnackbar()
         }
@@ -173,7 +175,7 @@ class HomeFragment : Fragment() {
     private val historyMetadataFeature = ViewBoundFeatureWrapper<HistoryMetadataFeature>()
 
     @VisibleForTesting
-    internal var getMenuButton: () -> MenuButton? = { menuButton }
+    internal var getMenuButton: () -> MenuButton? = { binding.menuButton }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -198,13 +200,13 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_home, container, false)
+    ): View {
+        _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val activity = activity as HomeActivity
         val components = requireComponents
 
         currentMode = CurrentMode(
-            view.context,
+            requireContext(),
             onboarding,
             browsingModeManager,
             ::dispatchModeChanges
@@ -244,7 +246,7 @@ class HomeFragment : Fragment() {
                 config = ::getTopSitesConfig
             ),
             owner = viewLifecycleOwner,
-            view = view
+            view = binding.root
         )
 
         if (FeatureFlags.showRecentTabsFeature) {
@@ -254,7 +256,7 @@ class HomeFragment : Fragment() {
                     homeStore = homeFragmentStore
                 ),
                 owner = viewLifecycleOwner,
-                view = view
+                view = binding.root
             )
         }
 
@@ -268,11 +270,11 @@ class HomeFragment : Fragment() {
                     scope = viewLifecycleOwner.lifecycleScope
                 ),
                 owner = viewLifecycleOwner,
-                view = view
+                view = binding.root
             )
         }
 
-        if (requireContext().settings().historyMetadataFeature) {
+        if (requireContext().settings().historyMetadataUIFeature) {
             historyMetadataFeature.set(
                 feature = HistoryMetadataFeature(
                     homeStore = homeFragmentStore,
@@ -280,7 +282,7 @@ class HomeFragment : Fragment() {
                     scope = viewLifecycleOwner.lifecycleScope
                 ),
                 owner = viewLifecycleOwner,
-                view = view
+                view = binding.root
             )
         }
 
@@ -301,7 +303,7 @@ class HomeFragment : Fragment() {
                 viewLifecycleScope = viewLifecycleOwner.lifecycleScope,
                 hideOnboarding = ::hideOnboardingAndOpenSearch,
                 registerCollectionStorageObserver = ::registerCollectionStorageObserver,
-                showDeleteCollectionPrompt = ::showDeleteCollectionPrompt,
+                removeCollectionWithUndo = ::removeCollectionWithUndo,
                 showTabTray = ::openTabsTray,
                 handleSwipedItemDeletionCancel = ::handleSwipedItemDeletionCancel
             ),
@@ -324,20 +326,20 @@ class HomeFragment : Fragment() {
             )
         )
 
-        updateLayout(view)
+        updateLayout(binding.root)
         sessionControlView = SessionControlView(
-            view.sessionControlRecyclerView,
+            binding.sessionControlRecyclerView,
             viewLifecycleOwner,
             sessionControlInteractor,
             homeViewModel
         )
 
-        updateSessionControlView(view)
+        updateSessionControlView()
 
-        appBarLayout = view.homeAppBar
+        appBarLayout = binding.homeAppBar
 
         activity.themeManager.applyStatusBarTheme(activity)
-        return view
+        return binding.root
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -369,24 +371,24 @@ class HomeFragment : Fragment() {
      * data in our store. The [View.consumeFrom] coroutine dispatch
      * doesn't get run right away which means that we won't draw on the first layout pass.
      */
-    private fun updateSessionControlView(view: View) {
+    private fun updateSessionControlView() {
         if (browsingModeManager.mode == BrowsingMode.Private) {
-            view.consumeFrom(homeFragmentStore, viewLifecycleOwner) {
+            binding.root.consumeFrom(homeFragmentStore, viewLifecycleOwner) {
                 sessionControlView?.update(it)
             }
         } else {
             sessionControlView?.update(homeFragmentStore.state)
 
-            view.consumeFrom(homeFragmentStore, viewLifecycleOwner) {
+            binding.root.consumeFrom(homeFragmentStore, viewLifecycleOwner) {
                 sessionControlView?.update(it)
             }
         }
     }
 
     private fun updateLayout(view: View) {
-        when (view.context.settings().toolbarPosition) {
+        when (requireContext().settings().toolbarPosition) {
             ToolbarPosition.TOP -> {
-                view.toolbarLayout.layoutParams = CoordinatorLayout.LayoutParams(
+                binding.toolbarLayout.layoutParams = CoordinatorLayout.LayoutParams(
                     ConstraintLayout.LayoutParams.MATCH_PARENT,
                     ConstraintLayout.LayoutParams.WRAP_CONTENT
                 ).apply {
@@ -394,21 +396,21 @@ class HomeFragment : Fragment() {
                 }
 
                 ConstraintSet().apply {
-                    clone(view.toolbarLayout)
-                    clear(view.bottom_bar.id, BOTTOM)
-                    clear(view.bottomBarShadow.id, BOTTOM)
-                    connect(view.bottom_bar.id, TOP, PARENT_ID, TOP)
-                    connect(view.bottomBarShadow.id, TOP, view.bottom_bar.id, BOTTOM)
-                    connect(view.bottomBarShadow.id, BOTTOM, PARENT_ID, BOTTOM)
-                    applyTo(view.toolbarLayout)
+                    clone(binding.toolbarLayout)
+                    clear(binding.bottomBar.id, BOTTOM)
+                    clear(binding.bottomBarShadow.id, BOTTOM)
+                    connect(binding.bottomBar.id, TOP, PARENT_ID, TOP)
+                    connect(binding.bottomBarShadow.id, TOP, binding.bottomBar.id, BOTTOM)
+                    connect(binding.bottomBarShadow.id, BOTTOM, PARENT_ID, BOTTOM)
+                    applyTo(binding.toolbarLayout)
                 }
 
-                view.bottom_bar.background = AppCompatResources.getDrawable(
+                binding.bottomBar.background = AppCompatResources.getDrawable(
                     view.context,
                     view.context.theme.resolveAttribute(R.attr.bottomBarBackgroundTop)
                 )
 
-                view.homeAppBar.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                binding.homeAppBar.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                     topMargin =
                         resources.getDimensionPixelSize(R.dimen.home_fragment_top_toolbar_header_margin)
                 }
@@ -424,24 +426,24 @@ class HomeFragment : Fragment() {
         context?.metrics?.track(Event.HomeScreenDisplayed)
 
         observeSearchEngineChanges()
-        createHomeMenu(requireContext(), WeakReference(view.menuButton))
-        createTabCounterMenu(view)
+        createHomeMenu(requireContext(), WeakReference(binding.menuButton))
+        createTabCounterMenu()
 
-        view.menuButton.setColorFilter(
+        binding.menuButton.setColorFilter(
             ContextCompat.getColor(
                 requireContext(),
                 ThemeManager.resolveAttribute(R.attr.primaryText, requireContext())
             )
         )
 
-        view.toolbar.compoundDrawablePadding =
+        binding.toolbar.compoundDrawablePadding =
             view.resources.getDimensionPixelSize(R.dimen.search_bar_search_engine_icon_padding)
-        view.toolbar_wrapper.setOnClickListener {
+        binding.toolbarWrapper.setOnClickListener {
             navigateToSearch()
             requireComponents.analytics.metrics.track(Event.SearchBarTapped(Event.SearchBarTapped.Source.HOME))
         }
 
-        view.toolbar_wrapper.setOnLongClickListener {
+        binding.toolbarWrapper.setOnLongClickListener {
             ToolbarPopupWindow.show(
                 WeakReference(it),
                 handlePasteAndGo = sessionControlInteractor::onPasteAndGo,
@@ -451,7 +453,7 @@ class HomeFragment : Fragment() {
             true
         }
 
-        view.tab_button.setOnClickListener {
+        binding.tabButton.setOnClickListener {
             if (FeatureFlags.showStartOnHomeSettings) {
                 requireComponents.analytics.metrics.track(Event.StartOnHomeOpenTabsTray)
             }
@@ -459,7 +461,7 @@ class HomeFragment : Fragment() {
         }
 
         PrivateBrowsingButtonView(
-            privateBrowsingButton,
+            binding.privateBrowsingButton,
             browsingModeManager
         ) { newMode ->
             if (newMode == BrowsingMode.Private) {
@@ -511,15 +513,15 @@ class HomeFragment : Fragment() {
                         val searchIcon =
                             BitmapDrawable(requireContext().resources, searchEngine.icon)
                         searchIcon.setBounds(0, 0, iconSize, iconSize)
-                        search_engine_icon?.setImageDrawable(searchIcon)
+                        binding.searchEngineIcon.setImageDrawable(searchIcon)
                     } else {
-                        search_engine_icon.setImageDrawable(null)
+                        binding.searchEngineIcon.setImageDrawable(null)
                     }
                 }
         }
     }
 
-    private fun createTabCounterMenu(view: View) {
+    private fun createTabCounterMenu() {
         val browsingModeManager = (activity as HomeActivity).browsingModeManager
         val mode = browsingModeManager.mode
 
@@ -532,7 +534,7 @@ class HomeFragment : Fragment() {
         }
 
         val tabCounterMenu = FenixTabCounterMenu(
-            view.context,
+            requireContext(),
             onItemTapped,
             iconColor = if (mode == BrowsingMode.Private) {
                 ContextCompat.getColor(requireContext(), R.color.primary_text_private_theme)
@@ -547,7 +549,7 @@ class HomeFragment : Fragment() {
         }
 
         tabCounterMenu.updateMenu(showOnly = inverseBrowsingMode)
-        view.tab_button.setOnLongClickListener {
+        binding.tabButton.setOnLongClickListener {
             tabCounterMenu.menuController.show(anchor = it)
             true
         }
@@ -610,6 +612,7 @@ class HomeFragment : Fragment() {
         _sessionControlInteractor = null
         sessionControlView = null
         appBarLayout = null
+        _binding = null
         bundleArgs.clear()
     }
 
@@ -665,7 +668,7 @@ class HomeFragment : Fragment() {
                                     isDisplayedWithBrowserToolbar = false
                                 )
                                     .setText(it.context.getString(R.string.onboarding_firefox_account_sync_is_on))
-                                    .setAnchorView(toolbarLayout)
+                                    .setAnchorView(binding.toolbarLayout)
                                     .show()
                             }
                         }
@@ -703,34 +706,25 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun showDeleteCollectionPrompt(
-        tabCollection: TabCollection,
-        title: String?,
-        message: String,
-        wasSwiped: Boolean,
-        handleSwipedItemDeletionCancel: () -> Unit
-    ) {
-        val context = context ?: return
-        AlertDialog.Builder(context).apply {
-            setTitle(title)
-            setMessage(message)
-            setNegativeButton(R.string.tab_collection_dialog_negative) { dialog: DialogInterface, _ ->
-                if (wasSwiped) {
-                    handleSwipedItemDeletionCancel()
-                }
-                dialog.cancel()
-            }
-            setPositiveButton(R.string.tab_collection_dialog_positive) { dialog: DialogInterface, _ ->
-                // Use fragment's lifecycle; the view may be gone by the time dialog is interacted with.
-                lifecycleScope.launch(IO) {
-                    context.components.core.tabCollectionStorage.removeCollection(tabCollection)
-                    context.components.analytics.metrics.track(Event.CollectionRemoved)
-                }.invokeOnCompletion {
-                    dialog.dismiss()
-                }
-            }
-            create()
-        }.show()
+    @VisibleForTesting
+    internal fun removeCollectionWithUndo(tabCollection: TabCollection) {
+        val snackbarMessage = getString(R.string.snackbar_collection_deleted)
+
+        lifecycleScope.allowUndo(
+            requireView(),
+            snackbarMessage,
+            getString(R.string.snackbar_deleted_undo),
+            {
+                requireComponents.core.tabCollectionStorage.createCollection(tabCollection)
+            },
+            operation = { },
+            elevation = TOAST_ELEVATION,
+            anchorView = null
+        )
+
+        lifecycleScope.launch(IO) {
+            requireComponents.core.tabCollectionStorage.removeCollection(tabCollection)
+        }
     }
 
     override fun onResume() {
@@ -785,12 +779,12 @@ class HomeFragment : Fragment() {
             }
             // We want to show the popup only after privateBrowsingButton is available.
             // Otherwise, we will encounter an activity token error.
-            privateBrowsingButton.post {
+            binding.privateBrowsingButton.post {
                 runIfFragmentIsAttached {
                     context.settings().showedPrivateModeContextualFeatureRecommender = true
                     context.settings().lastCfrShownTimeInMillis = System.currentTimeMillis()
                     privateBrowsingRecommend.showAsDropDown(
-                        privateBrowsingButton, 0, CFR_Y_OFFSET, Gravity.TOP or Gravity.END
+                        binding.privateBrowsingButton, 0, CFR_Y_OFFSET, Gravity.TOP or Gravity.END
                     )
                 }
             }
@@ -1116,12 +1110,15 @@ class HomeFragment : Fragment() {
             browserState.normalTabs.size
         }
 
-        view?.tab_button?.setCountWithAnimation(tabCount)
-        view?.add_tabs_to_collections_button?.isVisible = tabCount > 0
+        binding.tabButton.setCountWithAnimation(tabCount)
+        // The add_tabs_to_collections_button is added at runtime. We need to search for it in the same way.
+        sessionControlView?.view?.findViewById<MaterialButton>(R.id.add_tabs_to_collections_button)
+            ?.isVisible = tabCount > 0
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun handleSwipedItemDeletionCancel() {
-        view?.sessionControlRecyclerView?.adapter?.notifyDataSetChanged()
+        binding.sessionControlRecyclerView.adapter?.notifyDataSetChanged()
     }
 
     companion object {
@@ -1142,5 +1139,8 @@ class HomeFragment : Fragment() {
         private const val FADE_ANIM_DURATION = 150L
         private const val CFR_WIDTH_DIVIDER = 1.7
         private const val CFR_Y_OFFSET = -20
+
+        // Elevation for undo toasts
+        internal const val TOAST_ELEVATION = 80f
     }
 }
