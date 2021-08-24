@@ -5,9 +5,8 @@
 package org.mozilla.fenix.settings
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.core.content.edit
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
 import org.mozilla.fenix.R
@@ -44,20 +43,6 @@ class DataChoicesFragment : PreferenceFragmentCompat() {
                 } else {
                     context.components.analytics.metrics.stop(MetricServiceType.Marketing)
                 }
-            } else if (key == getPreferenceKey(R.string.pref_key_experimentation)) {
-                val enabled = context.settings().isExperimentationEnabled
-                context.components.analytics.experiments.globalUserParticipation = enabled
-                Toast.makeText(
-                    context,
-                    getQuittingAppString(),
-                    Toast.LENGTH_LONG
-                ).show()
-                Handler(Looper.getMainLooper()).postDelayed(
-                    {
-                        exitProcess(0)
-                    },
-                    OVERRIDE_EXIT_DELAY
-                )
             }
         }
     }
@@ -86,7 +71,31 @@ class DataChoicesFragment : PreferenceFragmentCompat() {
 
         requirePreference<SwitchPreference>(R.string.pref_key_experimentation).apply {
             isChecked = context.settings().isExperimentationEnabled
-            onPreferenceChangeListener = SharedPreferenceUpdater()
+
+            setOnPreferenceChangeListener<Boolean> { preference, enabled ->
+                val builder = AlertDialog.Builder(context)
+                    .setPositiveButton(
+                        R.string.top_sites_rename_dialog_ok
+                    ) { dialog, _ ->
+                        context.settings().preferences.edit {
+                            putBoolean(preference.key, enabled).commit()
+                        }
+                        context.components.analytics.experiments.globalUserParticipation = enabled
+                        dialog.dismiss()
+                        exitProcess(0)
+                    }
+                    .setNegativeButton(
+                        R.string.top_sites_rename_dialog_cancel
+                    ) { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    .setTitle(R.string.preference_experiments_2)
+                    .setMessage(getQuittingAppString())
+                    .setCancelable(false)
+                val alertDialog: AlertDialog = builder.create()
+                alertDialog.show()
+                false
+            }
         }
     }
 
