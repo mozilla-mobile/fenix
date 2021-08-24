@@ -198,7 +198,7 @@ events:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-08-01"
+    expires: "2022-02-01"
   normal_and_private_uri_count:
     type: counter
     description: |
@@ -768,7 +768,7 @@ find_in_page:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-08-01"
+    expires: "2022-02-01"
   closed:
     type: event
     description: |
@@ -783,7 +783,7 @@ find_in_page:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-08-01"
+    expires: "2022-02-01"
   searched_page:
     type: event
     description: |
@@ -798,7 +798,7 @@ find_in_page:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-08-01"
+    expires: "2022-02-01"
 
 metrics:
   default_browser:
@@ -1504,7 +1504,7 @@ preferences:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-08-01"
+    expires: "2022-02-01"
   signed_in_sync:
     type: boolean
     description: >
@@ -1582,7 +1582,7 @@ preferences:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-08-01"
+    expires: "2022-02-01"
   toolbar_position_setting:
     type: string
     description: >
@@ -2485,7 +2485,7 @@ tip:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-08-01"
+    expires: "2022-02-01"
   pressed:
     type: event
     description: |
@@ -2503,7 +2503,7 @@ tip:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-08-01"
+    expires: "2022-02-01"
   closed:
     type: event
     description: |
@@ -2521,7 +2521,7 @@ tip:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-08-01"
+    expires: "2022-02-01"
 
 reader_mode:
   available:
@@ -3151,7 +3151,7 @@ private_browsing_mode:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-08-01"
+    expires: "2022-02-01"
   notification_tapped:
     type: event
     description: |
@@ -3166,7 +3166,7 @@ private_browsing_mode:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-08-01"
+    expires: "2022-02-01"
 
 tracking_protection:
   exception_added:
@@ -3289,7 +3289,7 @@ private_browsing_shortcut:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-08-01"
+    expires: "2022-02-01"
   cfr_add_shortcut:
     type: event
     description: |
@@ -3305,7 +3305,7 @@ private_browsing_shortcut:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-08-01"
+    expires: "2022-02-01"
   cfr_cancel:
     type: event
     description: |
@@ -3321,7 +3321,7 @@ private_browsing_shortcut:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-08-01"
+    expires: "2022-02-01"
   pinned_shortcut_priv:
     type: event
     description: |
@@ -3337,7 +3337,7 @@ private_browsing_shortcut:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-08-01"
+    expires: "2022-02-01"
   static_shortcut_tab:
     type: event
     description: |
@@ -3353,7 +3353,7 @@ private_browsing_shortcut:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-08-01"
+    expires: "2022-02-01"
   static_shortcut_priv:
     type: event
     description: |
@@ -3369,7 +3369,7 @@ private_browsing_shortcut:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-08-01"
+    expires: "2022-02-01"
 
 tab:
   media_play:
@@ -3849,7 +3849,7 @@ user_specified_search_engines:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-08-01"
+    expires: "2022-02-01"
     no_lint:
       - COMMON_PREFIX
   custom_engine_deleted:
@@ -3867,7 +3867,7 @@ user_specified_search_engines:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-08-01"
+    expires: "2022-02-01"
 
 search_suggestions:
   enable_in_private:
@@ -3885,7 +3885,7 @@ search_suggestions:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-08-01"
+    expires: "2022-02-01"
 
 voice_search:
   tapped:
@@ -5055,7 +5055,7 @@ banner_open_in_app:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-08-01"
+    expires: "2022-02-01"
   dismissed:
     type: event
     description: |
@@ -5069,7 +5069,7 @@ banner_open_in_app:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-08-01"
+    expires: "2022-02-01"
   go_to_settings:
     type: event
     description: |
@@ -5083,7 +5083,7 @@ banner_open_in_app:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-08-01"
+    expires: "2022-02-01"
 
 contextual_menu:
   copy_tapped:
