@@ -21,6 +21,7 @@ import org.mozilla.fenix.GleanMetrics.Logins
 import org.mozilla.fenix.GleanMetrics.Onboarding
 import org.mozilla.fenix.GleanMetrics.ProgressiveWebApp
 import org.mozilla.fenix.GleanMetrics.SearchShortcuts
+import org.mozilla.fenix.GleanMetrics.TabsTray
 import org.mozilla.fenix.GleanMetrics.Tip
 import org.mozilla.fenix.GleanMetrics.ToolbarSettings
 import org.mozilla.fenix.GleanMetrics.TopSites
@@ -175,8 +176,12 @@ sealed class Event {
     // Tab tray
     object TabsTrayOpened : Event()
     object TabsTrayClosed : Event()
-    object OpenedExistingTab : Event()
-    object ClosedExistingTab : Event()
+    data class OpenedExistingTab(val source: String) : Event() {
+        override val extras = mapOf(TabsTray.openedExistingTabKeys.source to source)
+    }
+    data class ClosedExistingTab(val source: String) : Event() {
+        override val extras = mapOf(TabsTray.closedExistingTabKeys.source to source)
+    }
     object TabsTrayPrivateModeTapped : Event()
     object TabsTrayNormalModeTapped : Event()
     object TabsTraySyncedModeTapped : Event()
@@ -186,6 +191,9 @@ sealed class Event {
     object TabsTraySaveToCollectionPressed : Event()
     object TabsTrayShareAllTabsPressed : Event()
     object TabsTrayCloseAllTabsPressed : Event()
+    object TabsTrayRecentlyClosedPressed : Event()
+    object TabsTrayInactiveTabsExpanded : Event()
+    object TabsTrayInactiveTabsCollapsed : Event()
 
     object ProgressiveWebAppOpenFromHomescreenTap : Event()
     object ProgressiveWebAppInstallAsShortcut : Event()
@@ -242,6 +250,10 @@ sealed class Event {
     object ShowAllRecentTabs : Event()
     object OpenRecentTab : Event()
     object OpenInProgressMediaTab : Event()
+
+    // Recent bookmarks
+    object BookmarkClicked : Event()
+    object ShowAllBookmarks : Event()
 
     // Android Autofill
     object AndroidAutofillUnlockSuccessful : Event()
