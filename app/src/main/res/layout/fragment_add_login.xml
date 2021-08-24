@@ -142,7 +142,7 @@
         app:tint="@color/saved_login_clear_edit_text_tint"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/inputLayoutUsername"
-        app:srcCompat="@drawable/ic_clear" />
+        app:srcCompat="@drawable/mozac_ic_clear" />
 
     <TextView
         android:id="@+id/passwordHeader"
@@ -213,7 +213,7 @@
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/inputLayoutPassword"
-        app:srcCompat="@drawable/ic_clear"
+        app:srcCompat="@drawable/mozac_ic_clear"
         app:tint="@color/saved_login_clear_edit_text_tint" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
