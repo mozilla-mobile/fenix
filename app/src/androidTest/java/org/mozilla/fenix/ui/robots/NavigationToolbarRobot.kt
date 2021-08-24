@@ -20,7 +20,6 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
-import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
@@ -32,7 +31,6 @@ import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
-import junit.framework.TestCase.assertTrue
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.anyOf
 import org.hamcrest.CoreMatchers.containsString
@@ -108,51 +106,9 @@ class NavigationToolbarRobot {
                 onView(
                     anyOf(
                         withResourceName("browserLayout"),
-                        withResourceName("onboarding_message"), // Req ETP dialog
                         withResourceName("download_button")
                     )
                 ).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
-            }
-
-            BrowserRobot().interact()
-            return BrowserRobot.Transition()
-        }
-
-        fun openTrackingProtectionTestPage(
-            url: Uri,
-            etpEnabled: Boolean,
-            interact: BrowserRobot.() -> Unit
-        ): BrowserRobot.Transition {
-            openEditURLView()
-
-            awesomeBar().perform(replaceText(url.toString()), pressImeActionButton())
-
-            val onboardingMessage =
-                mDevice.findObject(UiSelector().resourceId("$packageName:id/onboarding_message"))
-
-            val onboardingDisplayed = onboardingMessage.waitForExists(waitingTime)
-
-            when (etpEnabled) {
-                true ->
-                    try {
-                        assertTrue(
-                            "Onboarding message not displayed",
-                            onboardingDisplayed
-                        )
-                    } catch (e: AssertionError) {
-                        openThreeDotMenu {
-                        }.stopPageLoad {
-                            if (!onboardingDisplayed) {
-                                openThreeDotMenu {
-                                }.refreshPage {
-                                    assertTrue(onboardingDisplayed)
-                                }
-                            }
-                        }
-                    }
-
-                false ->
-                    onView(withResourceName("browserLayout")).check(matches(isDisplayed()))
             }
 
             BrowserRobot().interact()
@@ -206,12 +162,7 @@ class NavigationToolbarRobot {
             awesomeBar().perform(replaceText(url.toString()), pressImeActionButton())
 
             runWithIdleRes(sessionLoadedIdlingResource) {
-                onView(
-                    anyOf(
-                        ViewMatchers.withResourceName("browserLayout"),
-                        ViewMatchers.withResourceName("onboarding_message") // Req for ETP dialog
-                    )
-                )
+                onView(ViewMatchers.withResourceName("browserLayout"))
                     .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
             }
 
@@ -348,7 +299,6 @@ private fun assertTabButtonShortcutMenuItems() {
         .check(matches(hasDescendant(withText("New tab"))))
 }
 
-private fun dismissOnboardingButton() = onView(withId(R.id.close_onboarding))
 private fun urlBar() = onView(withId(R.id.toolbar))
 private fun awesomeBar() = onView(withId(R.id.mozac_browser_toolbar_edit_url_view))
 private fun threeDotButton() = onView(withId(R.id.mozac_browser_toolbar_menu))

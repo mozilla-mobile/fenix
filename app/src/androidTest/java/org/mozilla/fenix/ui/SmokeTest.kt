@@ -40,7 +40,6 @@ import org.mozilla.fenix.ui.robots.clickTabCrashedRestoreButton
 import org.mozilla.fenix.ui.robots.clickUrlbar
 import org.mozilla.fenix.ui.robots.collectionRobot
 import org.mozilla.fenix.ui.robots.customTabScreen
-import org.mozilla.fenix.ui.robots.dismissTrackingOnboarding
 import org.mozilla.fenix.ui.robots.downloadRobot
 import org.mozilla.fenix.ui.robots.enhancedTrackingProtection
 import org.mozilla.fenix.ui.robots.homeScreen
@@ -392,34 +391,6 @@ class SmokeTest {
     }
 
     @Test
-    // Turns ETP toggle off from Settings and verifies the ETP shield is not displayed in the nav bar
-    fun verifyETPShieldNotDisplayedIfOFFGlobally() {
-        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openEnhancedTrackingProtectionSubMenu {
-            switchEnhancedTrackingProtectionToggle()
-            verifyEnhancedTrackingProtectionOptionsGrayedOut()
-        }.goBackToHomeScreen {
-            navigationToolbar {
-            }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-                verifyEnhancedTrackingProtectionPanelNotVisible()
-            }.openThreeDotMenu {
-            }.openSettings {
-            }.openEnhancedTrackingProtectionSubMenu {
-                switchEnhancedTrackingProtectionToggle()
-            }.goBack {
-            }.goBackToBrowser {
-                clickEnhancedTrackingProtectionPanel()
-                verifyEnhancedTrackingProtectionSwitch()
-                clickEnhancedTrackingProtectionSwitchOffOn()
-            }
-        }
-    }
-
-    @Test
     fun customTrackingProtectionSettingsTest() {
         val genericWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
         val trackingPage = TestAssetHelper.getEnhancedTrackingProtectionAsset(mockWebServer)
@@ -437,16 +408,16 @@ class SmokeTest {
             // browsing a basic page to allow GV to load on a fresh run
         }.enterURLAndEnterToBrowser(genericWebPage.url) {
         }.openNavigationToolbar {
-        }.openTrackingProtectionTestPage(trackingPage.url, true) {
-            dismissTrackingOnboarding()
-        }
+        }.enterURLAndEnterToBrowser(trackingPage.url) {}
 
         enhancedTrackingProtection {
         }.openEnhancedTrackingProtectionSheet {
+        }.openDetails {
             verifyTrackingCookiesBlocked()
             verifyCryptominersBlocked()
             verifyFingerprintersBlocked()
-            verifyBasicLevelTrackingContentBlocked()
+            verifyTrackingContentBlocked()
+            viewTrackingContentBlockList()
         }
     }
 
@@ -663,10 +634,9 @@ class SmokeTest {
             IdlingRegistry.getInstance().unregister(addonsListIdlingResource!!)
         }.goBack {
         }.openNavigationToolbar {
-        }.openTrackingProtectionTestPage(trackingProtectionPage.url, true) {}
-        enhancedTrackingProtection {
-            verifyEnhancedTrackingProtectionNotice()
-        }.closeNotificationPopup {}
+        }.enterURLAndEnterToBrowser(trackingProtectionPage.url) {
+            verifyPageContent(trackingProtectionPage.content)
+        }
     }
 
     @Test
@@ -1013,10 +983,10 @@ class SmokeTest {
         }.expandCollection(collectionName) {
             clickCollectionThreeDotButton()
             selectDeleteCollection()
-            confirmDeleteCollection()
         }
 
         homeScreen {
+            verifySnackBarText("Collection deleted")
             verifyNoCollectionsText()
         }
     }
@@ -1162,7 +1132,7 @@ class SmokeTest {
 
     @Test
     fun mainMenuInstallPWATest() {
-        val pwaPage = "https://rpappalax.github.io/testapp/"
+        val pwaPage = "https://mozilla-mobile.github.io/testapp/"
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(pwaPage.toUri()) {

@@ -237,15 +237,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = true
     )
 
-    private var trackingProtectionOnboardingShownThisSession = false
     var isOverrideTPPopupsForPerformanceTest = false
-
-    val shouldShowTrackingProtectionCfr: Boolean
-        get() = !isOverrideTPPopupsForPerformanceTest && canShowCfr &&
-            (
-                trackingProtectionOnboardingCount.underMaxCount() &&
-                    !trackingProtectionOnboardingShownThisSession
-                )
 
     var showSecretDebugMenuThisSession = false
 
@@ -799,17 +791,6 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = true
     )
 
-    @VisibleForTesting(otherwise = PRIVATE)
-    internal val trackingProtectionOnboardingCount = counterPreference(
-        appContext.getPreferenceKey(R.string.pref_key_tracking_protection_onboarding),
-        maxCount = 1
-    )
-
-    fun incrementTrackingProtectionOnboardingCount() {
-        trackingProtectionOnboardingShownThisSession = true
-        trackingProtectionOnboardingCount.increment()
-    }
-
     fun getSitePermissionsPhoneFeatureAction(
         feature: PhoneFeature,
         default: Action = Action.ASK_TO_ALLOW
@@ -1120,10 +1101,10 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = false
     )
 
-    var historyMetadataFeature by featureFlagPreference(
+    var historyMetadataUIFeature by featureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_history_metadata_feature),
-        default = FeatureFlags.historyMetadataFeature,
-        featureFlag = FeatureFlags.historyMetadataFeature || isHistoryMetadataEnabled
+        default = FeatureFlags.historyMetadataUIFeature,
+        featureFlag = FeatureFlags.historyMetadataUIFeature || isHistoryMetadataEnabled
     )
 
     /**
@@ -1149,5 +1130,10 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var shouldAutofillCreditCardDetails by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_credit_cards_save_and_autofill_cards),
         default = true
+    )
+
+    var pocketRecommendations by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_pocket_homescreen_recommendations),
+        default = false
     )
 }

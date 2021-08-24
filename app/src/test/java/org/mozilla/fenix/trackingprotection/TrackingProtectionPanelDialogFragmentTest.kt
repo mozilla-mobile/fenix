@@ -65,7 +65,7 @@ class TrackingProtectionPanelDialogFragmentTest {
         val tab = createTab("mozilla.org")
 
         every { fragment.trackingProtectionStore } returns trackingProtectionStore
-        every { fragment.provideTabId() } returns tab.id
+        every { fragment.provideCurrentTabId() } returns tab.id
 
         fragment.observeUrlChange(store)
         addAndSelectTab(tab)
@@ -87,7 +87,7 @@ class TrackingProtectionPanelDialogFragmentTest {
         val tab = createTab("mozilla.org")
 
         every { fragment.trackingProtectionStore } returns trackingProtectionStore
-        every { fragment.provideTabId() } returns tab.id
+        every { fragment.provideCurrentTabId() } returns tab.id
         every { fragment.updateTrackers(any()) } returns Unit
 
         fragment.observeTrackersChange(store)
@@ -114,7 +114,7 @@ class TrackingProtectionPanelDialogFragmentTest {
         val tab = createTab("mozilla.org")
 
         every { fragment.trackingProtectionStore } returns trackingProtectionStore
-        every { fragment.provideTabId() } returns tab.id
+        every { fragment.provideCurrentTabId() } returns tab.id
         every { fragment.updateTrackers(any()) } returns Unit
 
         fragment.observeTrackersChange(store)

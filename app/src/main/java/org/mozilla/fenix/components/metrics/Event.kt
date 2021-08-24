@@ -129,6 +129,7 @@ sealed class Event {
     object NotificationMediaPause : Event()
     object TopSiteOpenDefault : Event()
     object TopSiteOpenGoogle : Event()
+    object TopSiteOpenBaidu : Event()
     object TopSiteOpenFrecent : Event()
     object TopSiteOpenPinned : Event()
     object TopSiteOpenInNewTab : Event()
@@ -171,11 +172,6 @@ sealed class Event {
     object LoginDialogPromptSave : Event()
     object LoginDialogPromptNeverSave : Event()
 
-    object ContextualHintETPDisplayed : Event()
-    object ContextualHintETPDismissed : Event()
-    object ContextualHintETPOutsideTap : Event()
-    object ContextualHintETPInsideTap : Event()
-
     // Tab tray
     object TabsTrayOpened : Event()
     object TabsTrayClosed : Event()
@@ -190,6 +186,7 @@ sealed class Event {
     object TabsTraySaveToCollectionPressed : Event()
     object TabsTrayShareAllTabsPressed : Event()
     object TabsTrayCloseAllTabsPressed : Event()
+    object TabsTrayRecentlyClosedPressed : Event()
 
     object ProgressiveWebAppOpenFromHomescreenTap : Event()
     object ProgressiveWebAppInstallAsShortcut : Event()

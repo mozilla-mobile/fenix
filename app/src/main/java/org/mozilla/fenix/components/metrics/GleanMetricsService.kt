@@ -20,7 +20,6 @@ import org.mozilla.fenix.GleanMetrics.BookmarksManagement
 import org.mozilla.fenix.GleanMetrics.BrowserSearch
 import org.mozilla.fenix.GleanMetrics.Collections
 import org.mozilla.fenix.GleanMetrics.ContextMenu
-import org.mozilla.fenix.GleanMetrics.ContextualHintTrackingProtection
 import org.mozilla.fenix.GleanMetrics.ContextualMenu
 import org.mozilla.fenix.GleanMetrics.CrashReporter
 import org.mozilla.fenix.GleanMetrics.CustomTab
@@ -545,6 +544,9 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.TopSiteOpenGoogle -> EventWrapper<NoExtraKeys>(
             { TopSites.openGoogleSearchAttribution.record(it) }
         )
+        is Event.TopSiteOpenBaidu -> EventWrapper<NoExtraKeys>(
+            { TopSites.openBaiduSearchAttribution.record(it) }
+        )
         is Event.TopSiteOpenFrecent -> EventWrapper<NoExtraKeys>(
             { TopSites.openFrecency.record(it) }
         )
@@ -642,22 +644,6 @@ private val Event.wrapper: EventWrapper<*>?
             { Onboarding.prefToggledToolbarPositionKeys.valueOf(it) }
         )
 
-        is Event.ContextualHintETPDisplayed -> EventWrapper<NoExtraKeys>(
-            { ContextualHintTrackingProtection.display.record(it) }
-        )
-
-        is Event.ContextualHintETPDismissed -> EventWrapper<NoExtraKeys>(
-            { ContextualHintTrackingProtection.dismiss.record(it) }
-        )
-
-        is Event.ContextualHintETPInsideTap -> EventWrapper<NoExtraKeys>(
-            { ContextualHintTrackingProtection.insideTap.record(it) }
-        )
-
-        is Event.ContextualHintETPOutsideTap -> EventWrapper<NoExtraKeys>(
-            { ContextualHintTrackingProtection.outsideTap.record(it) }
-        )
-
         is Event.TabsTrayOpened -> EventWrapper<NoExtraKeys>(
             { TabsTray.opened.record(it) }
         )
@@ -696,6 +682,9 @@ private val Event.wrapper: EventWrapper<*>?
         )
         is Event.TabsTrayCloseAllTabsPressed -> EventWrapper<NoExtraKeys>(
             { TabsTray.closeAllTabs.record(it) }
+        )
+        is Event.TabsTrayRecentlyClosedPressed -> EventWrapper<NoExtraKeys>(
+            { TabsTray.inactiveTabsRecentlyClosed.record(it) }
         )
         is Event.AutoPlaySettingVisited -> EventWrapper<NoExtraKeys>(
             { Autoplay.visitedSetting.record(it) }
