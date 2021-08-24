@@ -51,7 +51,7 @@ class SavedLoginsListView(
             )
         }
 
-        add_login_button.setOnClickListener { interactor.onAddLoginClick() }
+        binding.addLoginButton.addLoginLayout.setOnClickListener { interactor.onAddLoginClick() }
     }
 
     fun update(state: LoginsListState) {
