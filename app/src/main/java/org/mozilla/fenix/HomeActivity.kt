@@ -32,7 +32,6 @@ import androidx.navigation.NavDirections
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
-import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.Dispatchers
@@ -74,6 +73,7 @@ import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
 import org.mozilla.fenix.components.metrics.BreadcrumbsRecorder
 import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.databinding.ActivityHomeBinding
 import org.mozilla.fenix.exceptions.trackingprotection.TrackingProtectionExceptionsFragmentDirections
 import org.mozilla.fenix.ext.alreadyOnDestination
 import org.mozilla.fenix.ext.breadcrumb
@@ -134,6 +134,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     // components requires context to access.
     protected val homeActivityInitTimeStampNanoSeconds = SystemClock.elapsedRealtimeNanos()
 
+    private lateinit var binding: ActivityHomeBinding
     lateinit var themeManager: ThemeManager
     lateinit var browsingModeManager: BrowsingModeManager
 
@@ -203,8 +204,9 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
         // Must be after we set the content view
         if (isVisuallyComplete) {
+            binding = ActivityHomeBinding.bind(window.decorView.findViewById(R.id.rootContainer))
             components.performance.visualCompletenessQueue
-                .attachViewToRunVisualCompletenessQueueLater(WeakReference(rootContainer))
+                .attachViewToRunVisualCompletenessQueueLater(WeakReference(binding.rootContainer))
         }
 
         privateNotificationObserver = PrivateNotificationFeature(
@@ -240,10 +242,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         }
         supportActionBar?.hide()
 
-        lifecycle.addObservers(
-            webExtensionPopupFeature,
-            StartupTimeline.homeActivityLifecycleObserver
-        )
+        lifecycle.addObservers(webExtensionPopupFeature)
 
         if (shouldAddToRecentsScreen(intent)) {
             intent.removeExtra(START_IN_RECENTS_SCREEN)
@@ -260,6 +259,10 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
         components.core.requestInterceptor.setNavigationController(navHost.navController)
 
+        if (settings().pocketRecommendations) {
+            components.core.pocketStoriesService.startPeriodicStoriesRefresh()
+        }
+
         StartupTimeline.onActivityCreateEndHome(this) // DO NOT MOVE ANYTHING BELOW HERE.
     }
 
@@ -270,7 +273,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             components.performance.visualCompletenessQueue,
             components.startupStateProvider,
             safeIntent,
-            rootContainer
+            binding.rootContainer
         )
     }
 
@@ -310,7 +313,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             message = "onStart()"
         )
 
-        ProfilerMarkers.homeActivityOnStart(rootContainer, components.core.engine.profiler)
+        ProfilerMarkers.homeActivityOnStart(binding.rootContainer, components.core.engine.profiler)
     }
 
     override fun onStop() {
@@ -395,6 +398,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             )
         )
 
+        components.core.pocketStoriesService.stopPeriodicStoriesRefresh()
         privateNotificationObserver?.stop()
     }
 
@@ -651,7 +655,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
      */
     override fun getSupportActionBarAndInflateIfNecessary(): ActionBar {
         if (!isToolbarInflated) {
-            navigationToolbar = navigationToolbarStub.inflate() as Toolbar
+            navigationToolbar = binding.navigationToolbarStub.inflate() as Toolbar
 
             setSupportActionBar(navigationToolbar)
             // Add ids to this that we don't want to have a toolbar back button
