@@ -13,6 +13,7 @@ import mozilla.components.browser.state.search.SearchEngine
 import mozilla.components.browser.state.state.searchEngines
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.awesomebar.AwesomeBar
+import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.ktx.android.content.getColorFromAttr
 import org.mozilla.fenix.R
 import java.util.UUID
@@ -27,6 +28,7 @@ class ShortcutsSuggestionProvider(
     private val selectShortcutEngineSettings: () -> Unit
 ) : AwesomeBar.SuggestionProvider {
     override val id: String = UUID.randomUUID().toString()
+    private val logger = Logger("ShortcutsSuggestionProvider")
 
     private val settingsIcon by lazy {
         AppCompatResources.getDrawable(context, R.drawable.mozac_ic_settings)?.apply {
@@ -38,6 +40,8 @@ class ShortcutsSuggestionProvider(
     }
 
     override suspend fun onInputChanged(text: String): List<AwesomeBar.Suggestion> {
+        logger.debug("onInputChanged(${text.length} characters) called")
+
         val suggestions = mutableListOf<AwesomeBar.Suggestion>()
 
         store.state.search.searchEngines.mapTo(suggestions) {
@@ -63,6 +67,8 @@ class ShortcutsSuggestionProvider(
                 }
             )
         )
-        return suggestions
+        return suggestions.also {
+            logger.debug("\tonInputChanged: ${it.size} suggestions returned")
+        }
     }
 }
