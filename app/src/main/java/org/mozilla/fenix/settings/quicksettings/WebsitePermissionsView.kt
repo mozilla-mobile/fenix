@@ -70,7 +70,7 @@ class WebsitePermissionsView(
     private val context = containerView.context
 
     val binding =
-        QuicksettingsPermissionsBinding.inflate(LayoutInflater.from(context), containerView, false)
+        QuicksettingsPermissionsBinding.inflate(LayoutInflater.from(context), containerView, true)
 
     @VisibleForTesting
     internal var permissionViews: Map<PhoneFeature, PermissionViewHolder> = EnumMap(

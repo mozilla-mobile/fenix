@@ -225,21 +225,21 @@ class SettingsTest {
     fun shouldManuallyCloseTabs() {
         // When just created
         // Then
-        assertFalse(settings.manuallyCloseTabs)
+        assertTrue(settings.manuallyCloseTabs)
 
         // When
-        settings.manuallyCloseTabs = true
+        settings.manuallyCloseTabs = false
 
         // Then
-        assertTrue(settings.manuallyCloseTabs)
+        assertFalse(settings.manuallyCloseTabs)
     }
 
     @Test
     fun getTabTimeout() {
         // When just created
         // Then
-        assertTrue(settings.closeTabsAfterOneMonth)
-        assertEquals(Settings.ONE_MONTH_MS, settings.getTabTimeout())
+        assertTrue(settings.manuallyCloseTabs)
+        assertEquals(Long.MAX_VALUE, settings.getTabTimeout())
 
         // When
         settings.manuallyCloseTabs = false
@@ -673,25 +673,6 @@ class SettingsTest {
         // Then
         assertEquals("testAmoUser", settings.overrideAmoUser)
         assertTrue(settings.amoCollectionOverrideConfigured())
-    }
-
-    @Test
-    fun creditCardsSavedCount() {
-        // When just created
-        // Then
-        assertEquals(0, settings.creditCardsSavedCount)
-
-        // When
-        settings.creditCardsSavedCount += 1
-
-        // Then
-        assertEquals(1, settings.creditCardsSavedCount)
-
-        // When
-        settings.creditCardsSavedCount += 1
-
-        // Then
-        assertEquals(2, settings.creditCardsSavedCount)
     }
 
     @Test

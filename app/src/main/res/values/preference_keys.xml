@@ -57,6 +57,7 @@
     <string name="pref_key_private_browsing" translatable="false">pref_key_private_browsing</string>
     <string name="pref_key_leakcanary" translatable="false">pref_key_leakcanary</string>
     <string name="pref_key_remote_debugging" translatable="false">pref_key_remote_debugging</string>
+    <string name="pref_key_studies_section" translatable="false">pref_key_studies_section</string>
     <string name="pref_key_experimentation" translatable="false">pref_key_experimentation</string>
     <string name="pref_key_showed_private_mode_cfr" translatable="false">pref_key_showed_private_mode_cfr</string>
     <string name="pref_key_private_mode_opened" translatable="false">pref_key_private_mode_opened</string>
@@ -163,8 +164,6 @@
     <string name="pref_key_tracking_protection_custom_fingerprinters" translatable="false">pref_key_tracking_protection_custom_fingerprinters</string>
     <string name="pref_key_tracking_protection_redirect_trackers" translatable="false">pref_key_tracking_protection_redirect_trackers</string>
 
-    <string name="pref_key_tracking_protection_onboarding" translatable="false">pref_key_tracking_protection_onboarding</string>
-
     <!-- Logins Settings -->
     <string name="pref_key_save_logins_settings" translatable="false">pref_key_save_logins_settings</string>
     <string name="pref_key_save_logins" translatable="false">pref_key_save_logins</string>
@@ -185,12 +184,6 @@
     <string name="pref_key_credit_cards_sync_cards_across_devices" translatable="false">pref_key_credit_cards_sync_cards_across_devices</string>
     <!-- Key for the "Manage saved cards" preference in the "Credit cards" fragment -->
     <string name="pref_key_credit_cards_manage_cards" translatable="false">pref_key_credit_cards_manage_cards</string>
-    <!-- Key for the number of credit cards that have been saved manually by the user metric value -->
-    <string name="pref_key_credit_cards_saved_count" translatable="false">pref_key_credit_cards_saved_count</string>
-    <!-- Key for the number of credit cards that have been deleted by the user metric value -->
-    <string name="pref_key_credit_cards_deleted_count" translatable="false">pref_key_credit_cards_deleted_count</string>
-    <!-- Key for the number of times the user has autofilled a credit card metric value -->
-    <string name="pref_key_credit_cards_autofilled_count" translatable="false">pref_key_credit_cards_autofilled_count</string>
 
     <!-- Privacy Settings -->
     <string name="pref_key_open_links_in_a_private_tab" translatable="false">pref_key_open_links_in_a_private_tab</string>
@@ -287,4 +280,5 @@
     <string name="pref_key_nimbus_experiments" translatable="false">pref_key_nimbus_experiments</string>
     <string name="pref_key_nimbus_use_preview" translatable="false">pref_key_nimbus_use_preview</string>
     <string name="pref_key_history_metadata_feature" translatable="false">pref_key_history_metadata_feature</string>
+    <string name="pref_key_pocket_homescreen_recommendations" translatable="false">pref_key_pocket_homescreen_recommendations</string>
 </resources>

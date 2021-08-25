@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
     <string name="app_name_private_5">Pribado %s</string>
     <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
@@ -46,8 +46,16 @@
     <!-- Content description on checkmark while tab is selected in multiselect mode in tab tray -->
     <string name="tab_tray_multiselect_selected_content_description">Napili</string>
 
+    <!-- Home - Recently saved bookmarks -->
+    <!-- Title for the home screen section with recently saved bookmarks. -->
+    <string name="recently_saved_bookmarks">Nai-save kamakailan</string>
+    <!-- Content description for the recently saved bookmarks section on the home screen. -->
+    <string name="recently_saved_bookmarks_content_description">Mga na-bookmark kamakailan</string>
     <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
     <string name="recently_saved_show_all">Ipakita lahat</string>
+
+    <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
+    <string name="recently_saved_show_all_content_description">Button para maipakita lahat ng mga naka-save na bookmark</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
     <string name="about_content">Ang %1$s ay gawa ng Mozilla.</string>
@@ -103,6 +111,9 @@
     <!-- Heading for the Top Sites block -->
     <string name="home_screen_top_sites_heading">Mga pangunahing site</string>
 
+    <!-- Recent Tabs -->
+    <!-- Header text for jumping back into the recent tab in the home screen -->
+    <string name="recent_tabs_header">Balikan ang naiwan</string>
     <!-- Button text for showing all the tabs in the tabs tray -->
     <string name="recent_tabs_show_all">Ipakita lahat</string>
 
@@ -1107,7 +1118,7 @@
     <!-- Tab collection deletion prompt dialog option to delete the collection -->
     <string name="tab_collection_dialog_positive">Burahin</string>
     <!-- Tab collection deletion prompt dialog option to cancel deleting the collection -->
-    <string name="tab_collection_dialog_negative">Kanselahin</string>
+    <string name="tab_collection_dialog_negative" tools:ignore="UnusedResources">Kanselahin</string>
     <!-- Text displayed in a notification when the user enters full screen mode -->
     <string name="full_screen_notification">Pumapasok sa full screen mode</string>
     <!-- Message for copying the URL via long press on the toolbar -->

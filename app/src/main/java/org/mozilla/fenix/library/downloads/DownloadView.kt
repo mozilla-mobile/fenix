@@ -5,17 +5,13 @@
 package org.mozilla.fenix.library.downloads
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
-import kotlinx.android.synthetic.main.component_downloads.*
-import kotlinx.android.synthetic.main.component_downloads.view.*
-import kotlinx.android.synthetic.main.component_history.view.progress_bar
-import kotlinx.android.synthetic.main.component_history.view.swipe_refresh
 import mozilla.components.support.base.feature.UserInteractionHandler
 import org.mozilla.fenix.R
+import org.mozilla.fenix.databinding.ComponentDownloadsBinding
 import org.mozilla.fenix.library.LibraryPageView
 import org.mozilla.fenix.selection.SelectionInteractor
 
@@ -55,8 +51,11 @@ class DownloadView(
     val interactor: DownloadInteractor
 ) : LibraryPageView(container), UserInteractionHandler {
 
-    val view: View = LayoutInflater.from(container.context)
-        .inflate(R.layout.component_downloads, container, true)
+    val binding = ComponentDownloadsBinding.inflate(
+        LayoutInflater.from(container.context),
+        container,
+        true
+    )
 
     var mode: DownloadFragmentState.Mode = DownloadFragmentState.Mode.Normal
         private set
@@ -65,7 +64,7 @@ class DownloadView(
     private val layoutManager = LinearLayoutManager(container.context)
 
     init {
-        view.download_list.apply {
+        binding.downloadList.apply {
             layoutManager = this@DownloadView.layoutManager
             adapter = downloadAdapter
             (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
@@ -75,8 +74,8 @@ class DownloadView(
     fun update(state: DownloadFragmentState) {
         val oldMode = mode
 
-        view.progress_bar.isVisible = state.isDeletingItems
-        view.swipe_refresh.isEnabled = false
+        binding.progressBar.isVisible = state.isDeletingItems
+        binding.swipeRefresh.isEnabled = false
         mode = state.mode
 
         downloadAdapter.updatePendingDeletionIds(state.pendingDeletionIds)
@@ -111,10 +110,10 @@ class DownloadView(
     }
 
     fun updateEmptyState(userHasDownloads: Boolean) {
-        download_list.isVisible = userHasDownloads
-        download_empty_view.isVisible = !userHasDownloads
+        binding.downloadList.isVisible = userHasDownloads
+        binding.downloadEmptyView.isVisible = !userHasDownloads
         if (!userHasDownloads) {
-            download_empty_view.announceForAccessibility(context.getString(R.string.download_empty_message_1))
+            binding.downloadEmptyView.announceForAccessibility(context.getString(R.string.download_empty_message_1))
         }
     }
 

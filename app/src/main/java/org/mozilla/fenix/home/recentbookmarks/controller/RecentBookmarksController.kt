@@ -4,13 +4,16 @@
 
 package org.mozilla.fenix.home.recentbookmarks.controller
 
+import androidx.annotation.VisibleForTesting
+import androidx.annotation.VisibleForTesting.PRIVATE
 import androidx.navigation.NavController
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.concept.storage.BookmarkNode
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
-import org.mozilla.fenix.ext.nav
+import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.home.HomeFragmentDirections
 import org.mozilla.fenix.home.recentbookmarks.interactor.RecentBookmarksInteractor
 
@@ -40,15 +43,27 @@ class DefaultRecentBookmarksController(
 ) : RecentBookmarksController {
 
     override fun handleBookmarkClicked(bookmark: BookmarkNode) {
+        dismissSearchDialogIfDisplayed()
         activity.openToBrowserAndLoad(
             searchTermOrURL = bookmark.url!!,
             newTab = true,
             from = BrowserDirection.FromHome
         )
+        activity.components.core.metrics.track(Event.BookmarkClicked)
     }
 
     override fun handleShowAllBookmarksClicked() {
-        val directions = HomeFragmentDirections.actionGlobalBookmarkFragment(BookmarkRoot.Mobile.id)
-        navController.nav(R.id.homeFragment, directions)
+        activity.components.core.metrics.track(Event.ShowAllBookmarks)
+        dismissSearchDialogIfDisplayed()
+        navController.navigate(
+            HomeFragmentDirections.actionGlobalBookmarkFragment(BookmarkRoot.Mobile.id)
+        )
+    }
+
+    @VisibleForTesting(otherwise = PRIVATE)
+    fun dismissSearchDialogIfDisplayed() {
+        if (navController.currentDestination?.id == R.id.searchDialogFragment) {
+            navController.navigateUp()
+        }
     }
 }

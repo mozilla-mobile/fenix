@@ -11,6 +11,8 @@ import mozilla.components.browser.toolbar.MAX_URI_LENGTH
 import mozilla.components.concept.tabstray.Tab
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.InactiveFooterItemBinding
+import org.mozilla.fenix.databinding.InactiveRecentlyClosedItemBinding
+import org.mozilla.fenix.databinding.InactiveHeaderItemBinding
 import org.mozilla.fenix.databinding.InactiveTabListItemBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.loadIntoView
@@ -21,43 +23,95 @@ import org.mozilla.fenix.tabstray.browser.AutoCloseInterval.OneMonth
 import org.mozilla.fenix.tabstray.browser.AutoCloseInterval.OneWeek
 
 sealed class InactiveTabViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    class HeaderHolder(itemView: View) : InactiveTabViewHolder(itemView) {
+
+    class HeaderHolder(
+        itemView: View,
+        interactor: InactiveTabsInteractor
+    ) : InactiveTabViewHolder(itemView) {
+
+        private val binding = InactiveHeaderItemBinding.bind(itemView)
+
+        init {
+            itemView.apply {
+                isActivated = InactiveTabsState.isExpanded
+
+                setOnClickListener {
+                    val newState = !it.isActivated
+
+                    interactor.onHeaderClicked(newState)
+
+                    it.isActivated = newState
+                    binding.chevron.rotation = ROTATION_DEGREE
+                }
+            }
+        }
+
         companion object {
             const val LAYOUT_ID = R.layout.inactive_header_item
+            private const val ROTATION_DEGREE = 180F
         }
     }
 
+    /**
+     * A RecyclerView ViewHolder implementation for an inactive tab view.
+     *
+     * @param itemView the inactive tab [View].
+     * @param browserTrayInteractor [BrowserTrayInteractor] handling tabs interactions in a tab tray.
+     * @param featureName [String] representing the name of the feature displaying tabs. Used in telemetry reporting.
+     */
     class TabViewHolder(
         itemView: View,
-        private val browserTrayInteractor: BrowserTrayInteractor
+        private val browserTrayInteractor: BrowserTrayInteractor,
+        private val featureName: String
     ) : InactiveTabViewHolder(itemView) {
 
         private val binding = InactiveTabListItemBinding.bind(itemView)
 
         fun bind(tab: Tab) {
             val components = itemView.context.components
-            val makePrettyUrl: (String) -> String = {
-                it.toShortUrl(components.publicSuffixList).take(MAX_URI_LENGTH)
-            }
+            val title = tab.title.ifEmpty { tab.url.take(MAX_URI_LENGTH) }
+            val url = tab.url.toShortUrl(components.publicSuffixList).take(MAX_URI_LENGTH)
 
             itemView.setOnClickListener {
-                browserTrayInteractor.open(tab)
+                browserTrayInteractor.open(tab, featureName)
             }
 
             binding.siteListItem.apply {
                 components.core.icons.loadIntoView(iconView, tab.url)
-                setText(tab.title, makePrettyUrl(tab.url))
+                setText(title, url)
                 setSecondaryButton(
                     R.drawable.mozac_ic_close,
                     R.string.content_description_close_button
                 ) {
-                    browserTrayInteractor.close(tab)
+                    browserTrayInteractor.close(tab, featureName)
                 }
             }
         }
 
         companion object {
             const val LAYOUT_ID = R.layout.inactive_tab_list_item
+        }
+    }
+
+    class RecentlyClosedHolder(
+        itemView: View,
+        private val browserTrayInteractor: BrowserTrayInteractor,
+    ) : InactiveTabViewHolder(itemView) {
+
+        val binding = InactiveRecentlyClosedItemBinding.bind(itemView)
+
+        fun bind() {
+            val context = itemView.context
+            binding.inactiveRecentlyClosedText.text =
+                context.getString(R.string.tab_tray_inactive_recently_closed)
+
+            binding.inactiveRecentlyClosed.setOnClickListener {
+                browserTrayInteractor.onRecentlyClosedClicked()
+            }
+        }
+
+        companion object {
+            const val LAYOUT_ID = R.layout.inactive_recently_closed_item
         }
     }
 
