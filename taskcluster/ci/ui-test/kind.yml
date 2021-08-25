@@ -19,9 +19,9 @@ job-defaults:
             signing-android-test: signing-android-test-debug
     include-pull-request-number: true
     routes:
-        - notify.slack-channel.C028QK733QR.on-completed
+        - notify.slack-channel.C028QK733QR.on-failed
     scopes:
-        - queue:route:notify.slack-channel.C028QK733QR.on-completed
+        - queue:route:notify.slack-channel.C028QK733QR.on-failed
         - notify:slack-channel:C028QK733QR
     extra:
         notify:
