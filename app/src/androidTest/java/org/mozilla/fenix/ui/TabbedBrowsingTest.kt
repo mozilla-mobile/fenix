@@ -68,7 +68,7 @@ class TabbedBrowsingTest {
             verifyTabCounter("1")
         }.openTabDrawer {
             verifyNormalModeSelected()
-            verifyExistingOpenTabs("Test_Page_1")
+            verifyExistingOpenTabs("Test_Page_0")
             closeTab()
         }.openTabDrawer {
             verifyNoTabsOpened()
@@ -78,7 +78,7 @@ class TabbedBrowsingTest {
             verifyTabCounter("1")
         }.openTabDrawer {
             verifyNormalModeSelected()
-            verifyExistingOpenTabs("Test_Page_1")
+            verifyExistingOpenTabs("Test_Page_0")
         }
     }
 
