@@ -1500,11 +1500,13 @@ class SmokeTest {
     }
 
     @Test
-    fun startOnHomeSettingsMenuItemsTest() {
+    fun tabsSettingsMenuItemsTest() {
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
         }.openTabsSubMenu {
+            verifyTabViewOptions()
+            verifyCloseTabsOptions()
             verifyStartOnHomeOptions()
         }
     }
