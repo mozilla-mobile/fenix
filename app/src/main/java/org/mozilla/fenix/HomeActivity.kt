@@ -115,6 +115,7 @@ import org.mozilla.fenix.tabstray.TabsTrayFragment
 import org.mozilla.fenix.tabstray.TabsTrayFragmentDirections
 import org.mozilla.fenix.theme.DefaultThemeManager
 import org.mozilla.fenix.theme.ThemeManager
+import org.mozilla.fenix.trackingprotection.TrackingProtectionPanelDialogFragmentDirections
 import org.mozilla.fenix.utils.BrowsersCache
 import org.mozilla.fenix.utils.Settings
 import java.lang.ref.WeakReference
@@ -734,6 +735,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             AboutFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromTrackingProtection ->
             TrackingProtectionFragmentDirections.actionGlobalBrowser(customTabSessionId)
+        BrowserDirection.FromTrackingProtectionDialog ->
+            TrackingProtectionPanelDialogFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromSavedLoginsFragment ->
             SavedLoginsAuthFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromAddNewDeviceFragment ->
