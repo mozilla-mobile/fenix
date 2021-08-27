@@ -25,7 +25,7 @@ job-defaults:
         - notify:slack-channel:C028QK733QR
     extra:
         notify:
-            slackText: 'Things worked in ${status.taskId}'
+            slackText: 'https://firefox-ci-tc.services.mozilla.com/tasks/${status.taskId}'
     run:
         commands:
             - [wget, {artifact-reference: '<signing/public/build/x86/target.apk>'}, '-O', app.apk]
