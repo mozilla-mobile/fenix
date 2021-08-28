@@ -43,7 +43,6 @@ job-defaults:
                           "action_id": "button-action"
                       }
                 }
-
     run:
         commands:
             - [wget, {artifact-reference: '<signing/public/build/x86/target.apk>'}, '-O', app.apk]
