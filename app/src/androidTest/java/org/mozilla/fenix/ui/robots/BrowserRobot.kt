@@ -45,6 +45,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.Constants.LONG_CLICK_DURATION
 import org.mozilla.fenix.helpers.SessionLoadedIdlingResource
+import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.click
@@ -397,6 +398,8 @@ class BrowserRobot {
     }
 
     fun saveLoginFromPrompt(optionToSaveLogin: String) {
+        mDevice.findObject(UiSelector().resourceId("$packageName:id/save_message"))
+            .waitForExists(waitingTime)
         mDevice.findObject(text(optionToSaveLogin)).click()
     }
 
@@ -468,6 +471,34 @@ class BrowserRobot {
             navURLBar().perform(ViewActions.swipeLeft())
             assertTrue(mDevice.findObject(UiSelector().text(tabUrl)).waitUntilGone(waitingTime))
         }
+    }
+
+    fun typeAndSubmitLoginCredentials() {
+        val userNameInput = mDevice.findObject(
+            UiSelector()
+                .instance(0)
+                .className(EditText::class.java)
+        )
+        userNameInput.waitForExists(TestAssetHelper.waitingTime)
+
+        val emailAddress = "mozilla"
+        userNameInput.setText(emailAddress)
+        mDevice.waitForIdle()
+
+        val passwordInput = mDevice.findObject(
+            UiSelector()
+                .instance(1)
+                .className(EditText::class.java)
+        )
+        passwordInput.waitForExists(TestAssetHelper.waitingTime)
+
+        val password = "test"
+        passwordInput.setText(password)
+        mDevice.waitForIdle()
+
+        val submitButton = mDevice.findObject(UiSelector().textContains("Submit Query"))
+        submitButton.waitForExists(waitingTime)
+        submitButton.clickAndWaitForNewWindow(waitingTime)
     }
 
     class Transition {

@@ -617,7 +617,7 @@ class SmokeTest {
             tapSetupLater()
             // Verify that the login appears correctly
             verifySavedLoginFromPrompt()
-            viewSavedLoginDetails()
+            viewSavedLoginDetails("test@example.com")
             revealPassword()
             verifyPasswordSaved("test") // failing here locally
         }
@@ -1527,6 +1527,27 @@ class SmokeTest {
 
         homeScreen {
             verifyHomeScreen()
+        }
+    }
+
+    @Test
+    fun openLoginInBrowserTest() {
+        val testPage = "https://daleharvey.github.io/testapp/"
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(testPage.toUri()) {
+            mDevice.waitForIdle()
+            verifyPageContent("Lets test!")
+            typeAndSubmitLoginCredentials()
+            saveLoginFromPrompt("Save")
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openLoginsAndPasswordSubMenu {
+        }.openSavedLogins {
+            tapSetupLater()
+            viewSavedLoginDetails("mozilla")
+        }.clickOpenWebAddress {
+            verifyUrl("daleharvey.github.io")
         }
     }
 }

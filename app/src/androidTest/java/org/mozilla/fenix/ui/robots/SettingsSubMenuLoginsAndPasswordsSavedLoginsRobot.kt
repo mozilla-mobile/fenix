@@ -11,13 +11,18 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withSubstring
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.uiautomator.By
+import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
 import org.hamcrest.CoreMatchers
+import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.containsString
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.TestAssetHelper
+import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
+import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
 
@@ -47,7 +52,14 @@ class SettingsSubMenuLoginsAndPasswordsSavedLoginsRobot {
     fun verifyLocalhostExceptionAdded() = onView(ViewMatchers.withText(containsString("localhost")))
         .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
 
-    fun viewSavedLoginDetails() = onView(ViewMatchers.withText("test@example.com")).click()
+    fun viewSavedLoginDetails(details: String) {
+        onView(
+            allOf(
+                withId(R.id.usernameView),
+                withSubstring(details)
+            )
+        ).click()
+    }
 
     fun revealPassword() = onView(withId(R.id.revealPasswordButton)).click()
 
@@ -60,6 +72,15 @@ class SettingsSubMenuLoginsAndPasswordsSavedLoginsRobot {
 
             SettingsSubMenuLoginsAndPasswordRobot().interact()
             return SettingsSubMenuLoginsAndPasswordRobot.Transition()
+        }
+
+        fun clickOpenWebAddress(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
+            val openWebAddressButton =
+                mDevice.findObject(UiSelector().resourceId("$packageName:id/openWebAddress"))
+            openWebAddressButton.clickAndWaitForNewWindow(waitingTime)
+
+            BrowserRobot().interact()
+            return BrowserRobot.Transition()
         }
     }
 }
