@@ -83,8 +83,12 @@ class DynamicDownloadDialog(
                 )
                 setOnClickListener {
                     tryAgain(downloadState.id)
+<<<<<<< HEAD
                     context.metrics.track(Event.InAppNotificationDownloadTryAgain)
                     dismiss(view)
+=======
+                    dismiss()
+>>>>>>> c4ec8aa52 (Remove download notification telemetry.)
                 }
             }
         } else {
@@ -114,8 +118,12 @@ class DynamicDownloadDialog(
                         onCannotOpenFile(downloadState)
                     }
 
+<<<<<<< HEAD
                     context.metrics.track(Event.InAppNotificationDownloadOpen)
                     dismiss(view)
+=======
+                    dismiss()
+>>>>>>> c4ec8aa52 (Remove download notification telemetry.)
                 }
             }
         }
