@@ -25,28 +25,7 @@ job-defaults:
         - notify:slack-channel:C028QK733QR
     extra:
         notify:
-            #slackText: 'https://firefox-ci-tc.services.mozilla.com/tasks/${status.taskId} | ${task.metadata.name} | ${task.metadata.source} | ${task.payload.env.PULL_REQUEST_NUMBER}'
-            slackBlocks: |
-                {
-                "blocks": [
-                   {
-                        "type": "section",
-                        "text": {
-                            "type": "mrkdwn",
-                            "text": '${task.metadata.name}'
-                        },
-                        "accessory": {
-                            "type": "button",
-                            "text": {
-                                "type": "plain_text",
-                                "text": "Test"
-                            },
-                            "value": "click",
-                            "action_id": "button-action"
-                        }
-                   }
-                ]
-                }
+            slackText: 'https://firefox-ci-tc.services.mozilla.com/tasks/${status.taskId} | ${task.metadata.name} | ${task.metadata.source} | ${task.payload.env.PULL_REQUEST_NUMBER}'
     run:
         commands:
             - [wget, {artifact-reference: '<signing/public/build/x86/target.apk>'}, '-O', app.apk]
