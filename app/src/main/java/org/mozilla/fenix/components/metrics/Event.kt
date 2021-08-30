@@ -139,8 +139,6 @@ sealed class Event {
     object CustomEngineDeleted : Event()
     object PrivateBrowsingShowSearchSuggestions : Event()
     object WhatsNewTapped : Event()
-    object SupportTapped : Event()
-    object PrivacyNoticeTapped : Event()
     object PocketTopSiteClicked : Event()
     object PocketTopSiteRemoved : Event()
     object FennecToFenixMigrated : Event()
