@@ -2924,6 +2924,7 @@ search_widget:
       - android-probes@mozilla.com
     expires: "2022-02-01"
 
+<<<<<<< HEAD
 private_browsing_mode:
   snackbar_undo:
     type: event
@@ -3028,6 +3029,8 @@ contextual_hint.tracking_protection:
       - android-probes@mozilla.com
     expires: "2021-07-01"
 
+=======
+>>>>>>> cb9bbd265 (Remove private browsing mode telemetry)
 tracking_protection:
   exception_added:
     type: event
