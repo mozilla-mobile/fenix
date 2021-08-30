@@ -36,7 +36,6 @@ import org.mozilla.fenix.GleanMetrics.HomeMenu
 import org.mozilla.fenix.GleanMetrics.HomeScreen
 import org.mozilla.fenix.GleanMetrics.LoginDialog
 import org.mozilla.fenix.GleanMetrics.Logins
-import org.mozilla.fenix.GleanMetrics.MasterPassword
 import org.mozilla.fenix.GleanMetrics.MediaNotification
 import org.mozilla.fenix.GleanMetrics.MediaState
 import org.mozilla.fenix.GleanMetrics.Metrics
@@ -730,12 +729,6 @@ private val Event.wrapper: EventWrapper<*>?
             { Events.recentlyClosedTabsOpened.record(it) }
         )
 
-        is Event.MasterPasswordMigrationDisplayed -> EventWrapper<NoExtraKeys>(
-            { MasterPassword.displayed.record(it) }
-        )
-        is Event.MasterPasswordMigrationSuccess -> EventWrapper<NoExtraKeys>(
-            { MasterPassword.migration.record(it) }
-        )
         is Event.TabSettingsOpened -> EventWrapper<NoExtraKeys>(
             { Tabs.settingOpened.record(it) }
         )

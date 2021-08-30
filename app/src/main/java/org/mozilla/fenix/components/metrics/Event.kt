@@ -194,9 +194,6 @@ sealed class Event {
     object ProgressiveWebAppOpenFromHomescreenTap : Event()
     object ProgressiveWebAppInstallAsShortcut : Event()
 
-    object MasterPasswordMigrationSuccess : Event()
-    object MasterPasswordMigrationDisplayed : Event()
-
     object TabSettingsOpened : Event()
 
     object CopyUrlUsed : Event()
