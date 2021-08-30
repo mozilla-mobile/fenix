@@ -17,7 +17,6 @@ import mozilla.components.feature.downloads.toMegabyteOrKilobyteString
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
-import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.settings
 
 /**
@@ -83,7 +82,6 @@ class DynamicDownloadDialog(
                 )
                 setOnClickListener {
                     tryAgain(downloadState.id)
-                    context.metrics.track(Event.InAppNotificationDownloadTryAgain)
                     dismiss(view)
                 }
             }
@@ -114,7 +112,6 @@ class DynamicDownloadDialog(
                         onCannotOpenFile(downloadState)
                     }
 
-                    context.metrics.track(Event.InAppNotificationDownloadOpen)
                     dismiss(view)
                 }
             }
