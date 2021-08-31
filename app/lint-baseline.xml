@@ -3994,6 +3994,116 @@
     </issue>
 
     <issue
+        id="UnusedResources"
+        message="The resource `R.string.studies_remove` appears to be unused"
+        errorLine1="    &lt;string name=&quot;studies_remove&quot;>Caccià&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-co/strings.xml"
+            line="640"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.studies_active` appears to be unused"
+        errorLine1="    &lt;string name=&quot;studies_active&quot;>Attivi&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-co/strings.xml"
+            line="642"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.studies_description` appears to be unused"
+        errorLine1="    &lt;string name=&quot;studies_description&quot;>Firefox pò installà è lancià studii di quandu in quandu.&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-co/strings.xml"
+            line="644"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.studies_learn_more` appears to be unused"
+        errorLine1="    &lt;string name=&quot;studies_learn_more&quot;>Sapene di più&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-co/strings.xml"
+            line="646"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.studies_restart_app` appears to be unused"
+        errorLine1="    &lt;string name=&quot;studies_restart_app&quot;>L’appiecazione hà da piantà per appiecà i cambiamenti&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-co/strings.xml"
+            line="648"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.studies_restart_dialog_ok` appears to be unused"
+        errorLine1="    &lt;string name=&quot;studies_restart_dialog_ok&quot;>Vai&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-co/strings.xml"
+            line="650"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.studies_restart_dialog_cancel` appears to be unused"
+        errorLine1="    &lt;string name=&quot;studies_restart_dialog_cancel&quot;>Abbandunà&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-co/strings.xml"
+            line="653"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.studies_on` appears to be unused"
+        errorLine1="    &lt;string name=&quot;studies_on&quot;>Attivati&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-co/strings.xml"
+            line="983"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.studies_off` appears to be unused"
+        errorLine1="    &lt;string name=&quot;studies_off&quot;>Disattivati&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-co/strings.xml"
+            line="985"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.enhanced_tracking_protection_details` appears to be unused"
+        errorLine1="    &lt;string name=&quot;enhanced_tracking_protection_details&quot;>Detaglii&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-co/strings.xml"
+            line="985"
+            column="13"/>
+    </issue>
+
+    <issue
         id="ExtraTranslation"
         message="&quot;preference_enhanced_tracking_protection_standard&quot; is translated here but not found in default locale"
         errorLine1="    &lt;string name=&quot;preference_enhanced_tracking_protection_standard&quot;>Gaadanteejo (basiyaaɗo)&lt;/string>"
