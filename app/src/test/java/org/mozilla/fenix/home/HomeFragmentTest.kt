@@ -14,13 +14,7 @@ import mozilla.components.browser.menu.view.MenuButton
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
-<<<<<<< HEAD
 import org.mozilla.fenix.ext.settings
-=======
-import org.mozilla.fenix.FenixApplication
-import org.mozilla.fenix.ext.application
-import org.mozilla.fenix.ext.components
->>>>>>> 7653691d3 (Remove private browsing shortcut telemetry)
 import org.mozilla.fenix.utils.Settings
 
 @ExperimentalCoroutinesApi

@@ -499,16 +499,9 @@ abstract class BaseBrowserFragment :
                     onCannotOpenFile = {
                         showCannotOpenFileError(view.browserLayout, context, it)
                     },
-<<<<<<< HEAD
-                    view = view.viewDynamicDownloadDialog,
-                    toolbarHeight = toolbarHeight,
-                    onDismiss = { sharedViewModel.downloadDialogState.remove(downloadState.sessionId) }
-                )
-=======
                     binding = binding.viewDynamicDownloadDialog,
                     toolbarHeight = toolbarHeight
                 ) { sharedViewModel.downloadDialogState.remove(downloadState.sessionId) }
->>>>>>> 1b066458d (Remove downloads management telemetry)
 
                 dynamicDownloadDialog.show()
                 browserToolbarView.expand()

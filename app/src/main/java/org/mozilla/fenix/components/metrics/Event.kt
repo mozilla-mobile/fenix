@@ -21,11 +21,6 @@ import org.mozilla.fenix.GleanMetrics.Logins
 import org.mozilla.fenix.GleanMetrics.Onboarding
 import org.mozilla.fenix.GleanMetrics.ProgressiveWebApp
 import org.mozilla.fenix.GleanMetrics.SearchShortcuts
-<<<<<<< HEAD
-import org.mozilla.fenix.GleanMetrics.Tip
-=======
-import org.mozilla.fenix.GleanMetrics.TabsTray
->>>>>>> d137becd4 (Remove tip telemetry)
 import org.mozilla.fenix.GleanMetrics.ToolbarSettings
 import org.mozilla.fenix.GleanMetrics.TopSites
 import org.mozilla.fenix.GleanMetrics.TrackingProtection

@@ -15,13 +15,6 @@ import mozilla.components.browser.state.state.content.DownloadState
 import mozilla.components.feature.downloads.AbstractFetchDownloadService
 import mozilla.components.feature.downloads.toMegabyteOrKilobyteString
 import org.mozilla.fenix.R
-<<<<<<< HEAD
-import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.components.metrics.MetricController
-import org.mozilla.fenix.ext.metrics
-=======
-import org.mozilla.fenix.databinding.DownloadDialogLayoutBinding
->>>>>>> 1b066458d (Remove downloads management telemetry)
 import org.mozilla.fenix.ext.settings
 
 /**
@@ -86,12 +79,7 @@ class DynamicDownloadDialog(
                 )
                 setOnClickListener {
                     tryAgain(downloadState.id)
-<<<<<<< HEAD
-                    context.metrics.track(Event.InAppNotificationDownloadTryAgain)
                     dismiss(view)
-=======
-                    dismiss()
->>>>>>> c4ec8aa52 (Remove download notification telemetry.)
                 }
             }
         } else {
@@ -119,12 +107,7 @@ class DynamicDownloadDialog(
                         onCannotOpenFile(downloadState)
                     }
 
-<<<<<<< HEAD
-                    context.metrics.track(Event.InAppNotificationDownloadOpen)
                     dismiss(view)
-=======
-                    dismiss()
->>>>>>> c4ec8aa52 (Remove download notification telemetry.)
                 }
             }
         }

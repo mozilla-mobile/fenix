@@ -49,12 +49,7 @@ class ButtonTipViewHolderTest {
                 .inflate(ButtonTipViewHolder.LAYOUT_ID, null)
         )
 
-<<<<<<< HEAD
-        viewHolder = ButtonTipViewHolder(view, interactor, metrics, settings)
-=======
         viewHolder = ButtonTipViewHolder(view, interactor, settings)
-        binding = ButtonTipItemBinding.bind(view)
->>>>>>> d137becd4 (Remove tip telemetry)
         every { view.context } returns activity
         every { activity.openToBrowserAndLoad(any(), any(), any()) } just Runs
         every { interactor.onCloseTip(any()) } just Runs
@@ -68,17 +63,9 @@ class ButtonTipViewHolderTest {
     fun `text is displayed based on given tip`() {
         viewHolder.bind(defaultTip())
 
-<<<<<<< HEAD
         assertEquals("Tip Title", viewHolder.tip_header_text.text)
         assertEquals("Tip description", viewHolder.tip_description_text.text)
         assertEquals("button", viewHolder.tip_button.text)
-
-        verify { metrics.track(Event.TipDisplayed("tipIdentifier")) }
-=======
-        assertEquals("Tip Title", binding.tipHeaderText.text)
-        assertEquals("Tip description", binding.tipDescriptionText.text)
-        assertEquals("button", binding.tipButton.text)
->>>>>>> d137becd4 (Remove tip telemetry)
     }
 
     @Test
