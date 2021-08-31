@@ -4998,7 +4998,7 @@ home_screen:
     type: event
     description: The home screen was displayed.
     bugs:
-      - https://github.com/mozilla-mobile/fenix/issues/18856
+      - https://github.com/mozilla-mobile/fenix/issues/18854
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/19025
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
