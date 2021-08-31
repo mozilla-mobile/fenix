@@ -11,7 +11,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import mozilla.components.browser.state.engine.EngineMiddleware
 import mozilla.components.browser.state.action.ContentAction
-import mozilla.components.browser.state.action.DownloadAction
 import mozilla.components.browser.state.action.EngineAction
 import mozilla.components.browser.state.action.TabListAction
 import mozilla.components.browser.state.state.BrowserState
@@ -179,36 +178,25 @@ class TelemetryMiddlewareTest {
     }
 
     @Test
-    fun `GIVEN a page is loading WHEN loading is complete THEN we record a UriOpened event`() {
+    fun `GIVEN a normal page is loading WHEN loading is complete THEN we record a UriOpened event`() {
         val tab = createTab(id = "1", url = "https://mozilla.org")
         store.dispatch(TabListAction.AddTabAction(tab)).joinBlocking()
         store.dispatch(ContentAction.UpdateLoadingStateAction(tab.id, true)).joinBlocking()
-        verify(exactly = 0) { metrics.track(Event.UriOpened) }
         verify(exactly = 0) { metrics.track(Event.NormalAndPrivateUriOpened) }
 
         store.dispatch(ContentAction.UpdateLoadingStateAction(tab.id, false)).joinBlocking()
-        verify(exactly = 1) { metrics.track(Event.UriOpened) }
         verify(exactly = 1) { metrics.track(Event.NormalAndPrivateUriOpened) }
     }
 
     @Test
-    fun `GIVEN a private page is loading WHEN loading is complete THEN we never record a UriOpened event`() {
+    fun `GIVEN a private page is loading WHEN loading is complete THEN we record a UriOpened event`() {
         val tab = createTab(id = "1", url = "https://mozilla.org", private = true)
         store.dispatch(TabListAction.AddTabAction(tab)).joinBlocking()
         store.dispatch(ContentAction.UpdateLoadingStateAction(tab.id, true)).joinBlocking()
-        verify(exactly = 0) { metrics.track(Event.UriOpened) }
         verify(exactly = 0) { metrics.track(Event.NormalAndPrivateUriOpened) }
 
         store.dispatch(ContentAction.UpdateLoadingStateAction(tab.id, false)).joinBlocking()
-        verify(exactly = 0) { metrics.track(Event.UriOpened) }
         verify(exactly = 1) { metrics.track(Event.NormalAndPrivateUriOpened) }
-    }
-
-    @Test
-    fun `WHEN a download is added THEN the downloads count is updated`() {
-        store.dispatch(DownloadAction.AddDownloadAction(mock())).joinBlocking()
-
-        verify { metrics.track(Event.DownloadAdded) }
     }
 
     @Test
