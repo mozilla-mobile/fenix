@@ -593,7 +593,6 @@ class SmokeTest {
 
     @Test
     // Saves a login, then changes it and verifies the update
-    @Ignore("To be fixed in https://github.com/mozilla-mobile/fenix/issues/20702")
     fun updateSavedLoginTest() {
         val saveLoginTest =
             TestAssetHelper.getSaveLoginAsset(mockWebServer)
@@ -1500,11 +1499,13 @@ class SmokeTest {
     }
 
     @Test
-    fun startOnHomeSettingsMenuItemsTest() {
+    fun tabsSettingsMenuItemsTest() {
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
         }.openTabsSubMenu {
+            verifyTabViewOptions()
+            verifyCloseTabsOptions()
             verifyStartOnHomeOptions()
         }
     }
