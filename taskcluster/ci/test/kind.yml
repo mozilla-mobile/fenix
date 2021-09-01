@@ -39,13 +39,13 @@ jobs:
             build-type: debug
             code-review: true
         run:
+            pre-gradlew:
+                - ['java', '-version']
             gradlew:
                 - 'clean'
-                - '-Pcoverage'
-                - 'jacocoDebugTestReport'
-                - 'githubTestDetails'
-            post-gradlew:
-                - ['automation/taskcluster/upload_coverage_report.sh']
+                #- '-Pcoverage'
+                #- 'jacocoDebugTestReport'
+                #- 'githubTestDetails'
             secrets:
                 - name: project/mobile/fenix/public-tokens
                   key: codecov
