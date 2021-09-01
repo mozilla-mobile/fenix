@@ -10,7 +10,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.findFragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
-import kotlinx.android.synthetic.main.component_sync_tabs_tray_layout.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -20,6 +19,7 @@ import mozilla.components.feature.syncedtabs.SyncedTabsFeature
 import mozilla.components.feature.syncedtabs.view.SyncedTabsView
 import mozilla.components.support.base.observer.Observable
 import mozilla.components.support.base.observer.ObserverRegistry
+import org.mozilla.fenix.databinding.ComponentSyncTabsTrayLayoutBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.sync.SyncedTabsAdapter
 import org.mozilla.fenix.sync.SyncedTabsTitleDecoration
@@ -34,11 +34,14 @@ class SyncedTabsTrayLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : ConstraintLayout(context, attrs, defStyleAttr), SyncedTabsView,
+) : ConstraintLayout(context, attrs, defStyleAttr),
+    SyncedTabsView,
     Observable<SyncedTabsView.Listener> by ObserverRegistry() {
 
     private val lifecycleProvider = LifecycleViewProvider(this)
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
+    private var _binding: ComponentSyncTabsTrayLayoutBinding? = null
+    private val binding get() = _binding!!
 
     private val syncedTabsFeature by lazy {
         SyncedTabsFeature(
@@ -66,14 +69,15 @@ class SyncedTabsTrayLayout @JvmOverloads constructor(
     override var listener: SyncedTabsView.Listener? = null
 
     override fun onFinishInflate() {
-        synced_tabs_list.addItemDecoration(SyncedTabsTitleDecoration(context))
+        _binding = ComponentSyncTabsTrayLayoutBinding.bind(this)
+        binding.syncedTabsList.addItemDecoration(SyncedTabsTitleDecoration(context))
 
         super.onFinishInflate()
     }
 
     override fun displaySyncedTabs(syncedTabs: List<SyncedDeviceTabs>) {
         coroutineScope.launch {
-            (synced_tabs_list.adapter as SyncedTabsAdapter).updateData(syncedTabs)
+            (binding.syncedTabsList.adapter as SyncedTabsAdapter).updateData(syncedTabs)
         }
     }
 
@@ -92,7 +96,7 @@ class SyncedTabsTrayLayout @JvmOverloads constructor(
             val errorItem = error.toAdapterItem(descriptionResId, navController)
 
             val errorList: List<SyncedTabsAdapter.AdapterItem> = listOf(errorItem)
-            (synced_tabs_list.adapter as SyncedTabsAdapter).submitList(errorList)
+            (binding.syncedTabsList.adapter as SyncedTabsAdapter).submitList(errorList)
         }
     }
 
@@ -105,6 +109,7 @@ class SyncedTabsTrayLayout @JvmOverloads constructor(
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
+        _binding = null
 
         syncedTabsFeature.stop()
         syncButtonBinding.stop()

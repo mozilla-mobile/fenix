@@ -161,7 +161,7 @@ class HomeMenu(
 
         val helpItem = BrowserMenuImageText(
             context.getString(R.string.browser_menu_help),
-            R.drawable.ic_help,
+            R.drawable.mozac_ic_help,
             primaryTextColor
         ) {
             onItemTapped.invoke(Item.Help)
@@ -171,7 +171,7 @@ class HomeMenu(
         val variables = experiments.getVariables(FeatureId.NIMBUS_VALIDATION)
         val settingsItem = BrowserMenuImageText(
             variables.getText("settings-title") ?: context.getString(R.string.browser_menu_settings),
-            variables.getDrawableResource("settings-icon") ?: R.drawable.ic_settings,
+            variables.getDrawableResource("settings-icon") ?: R.drawable.mozac_ic_settings,
             primaryTextColor
         ) {
             onItemTapped.invoke(Item.Settings)
@@ -181,7 +181,8 @@ class HomeMenu(
         // We don't want to cause its initialization just for this check.
         val accountAuthItem =
             if (context.components.backgroundServices.accountManagerAvailableQueue.isReady() &&
-                context.components.backgroundServices.accountManager.accountNeedsReauth()) {
+                context.components.backgroundServices.accountManager.accountNeedsReauth()
+            ) {
                 reconnectToSyncItem
             } else {
                 null
@@ -220,37 +221,40 @@ class HomeMenu(
             if (lifecycleOwner.lifecycle.currentState == Lifecycle.State.DESTROYED) {
                 return@runIfReadyOrQueue
             }
-            context.components.backgroundServices.accountManager.register(object : AccountObserver {
-                override fun onAuthenticationProblems() {
-                    lifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
-                        onMenuBuilderChanged(
-                            BrowserMenuBuilder(
-                                menuItems
+            context.components.backgroundServices.accountManager.register(
+                object : AccountObserver {
+                    override fun onAuthenticationProblems() {
+                        lifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+                            onMenuBuilderChanged(
+                                BrowserMenuBuilder(
+                                    menuItems
+                                )
                             )
-                        )
+                        }
                     }
-                }
 
-                override fun onAuthenticated(account: OAuthAccount, authType: AuthType) {
-                    lifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
-                        onMenuBuilderChanged(
-                            BrowserMenuBuilder(
-                                menuItems
+                    override fun onAuthenticated(account: OAuthAccount, authType: AuthType) {
+                        lifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+                            onMenuBuilderChanged(
+                                BrowserMenuBuilder(
+                                    menuItems
+                                )
                             )
-                        )
+                        }
                     }
-                }
 
-                override fun onLoggedOut() {
-                    lifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
-                        onMenuBuilderChanged(
-                            BrowserMenuBuilder(
-                                menuItems
+                    override fun onLoggedOut() {
+                        lifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+                            onMenuBuilderChanged(
+                                BrowserMenuBuilder(
+                                    menuItems
+                                )
                             )
-                        )
+                        }
                     }
-                }
-            }, lifecycleOwner)
+                },
+                lifecycleOwner
+            )
         }
     }
 }

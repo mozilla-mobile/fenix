@@ -197,13 +197,7 @@ class DefaultSessionControlController(
     private val viewLifecycleScope: CoroutineScope,
     private val hideOnboarding: () -> Unit,
     private val registerCollectionStorageObserver: () -> Unit,
-    private val showDeleteCollectionPrompt: (
-        tabCollection: TabCollection,
-        title: String?,
-        message: String,
-        wasSwiped: Boolean,
-        handleSwipedItemDeletionCancel: () -> Unit
-    ) -> Unit,
+    private val removeCollectionWithUndo: (tabCollection: TabCollection) -> Unit,
     private val showTabTray: () -> Unit,
     private val handleSwipedItemDeletionCancel: () -> Unit
 ) : SessionControlController {
@@ -266,19 +260,7 @@ class DefaultSessionControlController(
         metrics.track(Event.CollectionTabRemoved)
 
         if (collection.tabs.size == 1) {
-            val title = activity.resources.getString(
-                R.string.delete_tab_and_collection_dialog_title,
-                collection.title
-            )
-            val message =
-                activity.resources.getString(R.string.delete_tab_and_collection_dialog_message)
-            showDeleteCollectionPrompt(
-                collection,
-                title,
-                message,
-                wasSwiped,
-                handleSwipedItemDeletionCancel
-            )
+            removeCollectionWithUndo(collection)
         } else {
             viewLifecycleScope.launch {
                 tabCollectionStorage.removeTabFromCollection(collection, tab)
@@ -296,9 +278,7 @@ class DefaultSessionControlController(
     }
 
     override fun handleDeleteCollectionTapped(collection: TabCollection) {
-        val message =
-            activity.resources.getString(R.string.tab_collection_dialog_message, collection.title)
-        showDeleteCollectionPrompt(collection, null, message, false, handleSwipedItemDeletionCancel)
+        removeCollectionWithUndo(collection)
     }
 
     override fun handleOpenInPrivateTabClicked(topSite: TopSite) {
@@ -317,7 +297,7 @@ class DefaultSessionControlController(
         dismissSearchDialogIfDisplayed()
         activity.openToBrowserAndLoad(
             searchTermOrURL = SupportUtils.getGenericSumoURLForTopic
-                (SupportUtils.SumoTopic.PRIVATE_BROWSING_MYTHS),
+            (SupportUtils.SumoTopic.PRIVATE_BROWSING_MYTHS),
             newTab = true,
             from = BrowserDirection.FromHome
         )
@@ -392,6 +372,10 @@ class DefaultSessionControlController(
             metrics.track(Event.TopSiteOpenGoogle)
         }
 
+        if (url == SupportUtils.BAIDU_URL) {
+            metrics.track(Event.TopSiteOpenBaidu)
+        }
+
         if (url == SupportUtils.POCKET_TRENDING_URL) {
             metrics.track(Event.PocketTopSiteClicked)
         }
@@ -401,9 +385,11 @@ class DefaultSessionControlController(
         val searchAccessPoint = Event.PerformedSearch.SearchAccessPoint.TOPSITE
         val event =
             availableEngines.firstOrNull {
-                    engine -> engine.resultUrls.firstOrNull { it.contains(url) } != null
+                engine ->
+                engine.resultUrls.firstOrNull { it.contains(url) } != null
             }?.let {
-                    searchEngine -> searchAccessPoint.let { sap ->
+                searchEngine ->
+                searchAccessPoint.let { sap ->
                     MetricsUtils.createSearchEvent(searchEngine, store, sap)
                 }
             }
@@ -424,7 +410,7 @@ class DefaultSessionControlController(
     @VisibleForTesting
     internal fun getAvailableSearchEngines() =
         activity.components.core.store.state.search.searchEngines +
-                activity.components.core.store.state.search.availableSearchEngines
+            activity.components.core.store.state.search.availableSearchEngines
 
     /**
      * Append a search attribution query to any provided search engine URL based on the

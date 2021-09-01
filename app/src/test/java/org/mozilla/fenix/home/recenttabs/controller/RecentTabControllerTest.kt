@@ -39,27 +39,31 @@ class RecentTabControllerTest {
     private val metrics: MetricController = mockk(relaxed = true)
 
     private lateinit var store: BrowserStore
-    private lateinit var controller: RecentTabController
+
+    private lateinit var controller: DefaultRecentTabsController
 
     @Before
     fun setup() {
         store = BrowserStore(
             BrowserState()
         )
-        controller = spyk(DefaultRecentTabsController(
-            selectTabUseCase = selectTabUseCase.selectTab,
-            navController = navController,
-            metrics = metrics,
-            store = store
-        ))
-
-        every { navController.currentDestination } returns mockk {
-            every { id } returns R.id.homeFragment
-        }
+        controller = spyk(
+            DefaultRecentTabsController(
+                selectTabUseCase = selectTabUseCase.selectTab,
+                navController = navController,
+                metrics = metrics,
+                store = store,
+            )
+        )
+        every { navController.navigateUp() } returns true
     }
 
     @Test
     fun handleRecentTabClicked() {
+        every { navController.currentDestination } returns mockk {
+            every { id } returns R.id.homeFragment
+        }
+
         val tab = createTab(
             url = "https://mozilla.org",
             title = "Mozilla"
@@ -77,13 +81,38 @@ class RecentTabControllerTest {
     }
 
     @Test
-    fun handleRecentTabShowAllClicked() {
+    fun handleRecentTabShowAllClickedFromHome() {
+        every { navController.currentDestination } returns mockk {
+            every { id } returns R.id.homeFragment
+        }
+
         controller.handleRecentTabShowAllClicked()
 
         verify {
+            controller.dismissSearchDialogIfDisplayed()
             navController.navigate(
-                match<NavDirections> { it.actionId == R.id.action_global_tabsTrayFragment },
-                null
+                match<NavDirections> { it.actionId == R.id.action_global_tabsTrayFragment }
+            )
+            metrics.track(Event.ShowAllRecentTabs)
+        }
+        verify(exactly = 0) {
+            navController.navigateUp()
+        }
+    }
+
+    @Test
+    fun handleRecentTabShowAllClickedFromSearchDialog() {
+        every { navController.currentDestination } returns mockk {
+            every { id } returns R.id.searchDialogFragment
+        }
+
+        controller.handleRecentTabShowAllClicked()
+
+        verify {
+            controller.dismissSearchDialogIfDisplayed()
+            navController.navigateUp()
+            navController.navigate(
+                match<NavDirections> { it.actionId == R.id.action_global_tabsTrayFragment }
             )
             metrics.track(Event.ShowAllRecentTabs)
         }

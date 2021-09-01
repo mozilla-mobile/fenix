@@ -34,6 +34,8 @@ import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.support.test.ext.joinBlocking
 import mozilla.components.support.test.rule.MainCoroutineRule
 import org.junit.After
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Rule
@@ -71,17 +73,6 @@ class DefaultSessionControlControllerTest {
     private val tabsUseCases: TabsUseCases = mockk(relaxed = true)
     private val reloadUrlUseCase: SessionUseCases = mockk(relaxed = true)
     private val selectTabUseCase: TabsUseCases = mockk(relaxed = true)
-    private val hideOnboarding: () -> Unit = mockk(relaxed = true)
-    private val registerCollectionStorageObserver: () -> Unit = mockk(relaxed = true)
-    private val showTabTray: () -> Unit = mockk(relaxed = true)
-    private val handleSwipedItemDeletionCancel: () -> Unit = mockk(relaxed = true)
-    private val showDeleteCollectionPrompt: (
-        tabCollection: TabCollection,
-        title: String?,
-        message: String,
-        wasSwiped: Boolean,
-        handleSwipedItemDeletionCancel: () -> Unit
-    ) -> Unit = mockk(relaxed = true)
     private val settings: Settings = mockk(relaxed = true)
     private val analytics: Analytics = mockk(relaxed = true)
     private val scope = TestCoroutineScope()
@@ -112,7 +103,6 @@ class DefaultSessionControlControllerTest {
     )
 
     private lateinit var store: BrowserStore
-    private lateinit var controller: DefaultSessionControlController
 
     @Before
     fun setup() {
@@ -142,29 +132,6 @@ class DefaultSessionControlControllerTest {
         every { activity.settings() } returns settings
         every { activity.components.analytics } returns analytics
         every { analytics.metrics } returns metrics
-
-        val restoreUseCase: TabsUseCases.RestoreUseCase = mockk(relaxed = true)
-
-        controller = spyk(DefaultSessionControlController(
-            activity = activity,
-            store = store,
-            settings = settings,
-            engine = engine,
-            metrics = metrics,
-            tabCollectionStorage = tabCollectionStorage,
-            addTabUseCase = tabsUseCases.addTab,
-            reloadUrlUseCase = reloadUrlUseCase.reload,
-            selectTabUseCase = selectTabUseCase.selectTab,
-            restoreUseCase = restoreUseCase,
-            fragmentStore = fragmentStore,
-            navController = navController,
-            viewLifecycleScope = scope,
-            hideOnboarding = hideOnboarding,
-            registerCollectionStorageObserver = registerCollectionStorageObserver,
-            showDeleteCollectionPrompt = showDeleteCollectionPrompt,
-            showTabTray = showTabTray,
-            handleSwipedItemDeletionCancel = handleSwipedItemDeletionCancel
-        ))
     }
 
     @After
@@ -178,7 +145,7 @@ class DefaultSessionControlControllerTest {
         val collection = mockk<TabCollection> {
             every { id } returns 12L
         }
-        controller.handleCollectionAddTabTapped(collection)
+        createController().handleCollectionAddTabTapped(collection)
 
         verify { metrics.track(Event.CollectionAddTabPressed) }
         verify {
@@ -197,7 +164,7 @@ class DefaultSessionControlControllerTest {
             every { url } returns "https://mozilla.org"
             every { restore(activity, engine, restoreSessionId = false) } returns null
         }
-        controller.handleCollectionOpenTabClicked(tab)
+        createController().handleCollectionOpenTabClicked(tab)
 
         verify { metrics.track(Event.CollectionTabRestored) }
         verify {
@@ -233,7 +200,7 @@ class DefaultSessionControlControllerTest {
         store.dispatch(TabListAction.SelectTabAction(otherTab.id)).joinBlocking()
         store.dispatch(TabListAction.AddTabAction(restoredTab)).joinBlocking()
 
-        controller.handleCollectionOpenTabClicked(tab)
+        createController().handleCollectionOpenTabClicked(tab)
         verify { metrics.track(Event.CollectionTabRestored) }
         verify { activity.openToBrowser(BrowserDirection.FromHome) }
         verify { selectTabUseCase.selectTab.invoke(restoredTab.id) }
@@ -261,7 +228,7 @@ class DefaultSessionControlControllerTest {
         val restoredTab = createTab(id = recoverableTab.id, url = recoverableTab.url)
         store.dispatch(TabListAction.AddTabAction(restoredTab)).joinBlocking()
 
-        controller.handleCollectionOpenTabClicked(tab)
+        createController().handleCollectionOpenTabClicked(tab)
         verify { metrics.track(Event.CollectionTabRestored) }
         verify { activity.openToBrowser(BrowserDirection.FromHome) }
         verify { selectTabUseCase.selectTab.invoke(restoredTab.id) }
@@ -273,14 +240,14 @@ class DefaultSessionControlControllerTest {
         val collection = mockk<TabCollection> {
             every { tabs } returns emptyList()
         }
-        controller.handleCollectionOpenTabsTapped(collection)
+        createController().handleCollectionOpenTabsTapped(collection)
 
         verify { metrics.track(Event.CollectionAllTabsRestored) }
     }
 
     @Test
     fun `handleCollectionRemoveTab one tab`() {
-        val collection = mockk<TabCollection> {
+        val expectedCollection = mockk<TabCollection> {
             every { tabs } returns listOf(mockk())
             every { title } returns "Collection"
         }
@@ -295,25 +262,24 @@ class DefaultSessionControlControllerTest {
             activity.resources.getString(R.string.delete_tab_and_collection_dialog_message)
         } returns "Deleting this tab will delete everything."
 
-        controller.handleCollectionRemoveTab(collection, tab, false)
+        var actualCollection: TabCollection? = null
+
+        createController(
+            removeCollectionWithUndo = { collection ->
+                actualCollection = collection
+            }
+        ).handleCollectionRemoveTab(expectedCollection, tab, false)
 
         verify { metrics.track(Event.CollectionTabRemoved) }
-        verify {
-            showDeleteCollectionPrompt(
-                collection,
-                "Delete Collection?",
-                "Deleting this tab will delete everything.",
-                false,
-                handleSwipedItemDeletionCancel
-            )
-        }
+
+        assertEquals(expectedCollection, actualCollection)
     }
 
     @Test
     fun `handleCollectionRemoveTab multiple tabs`() {
         val collection: TabCollection = mockk(relaxed = true)
         val tab: ComponentTab = mockk(relaxed = true)
-        controller.handleCollectionRemoveTab(collection, tab, false)
+        createController().handleCollectionRemoveTab(collection, tab, false)
         verify { metrics.track(Event.CollectionTabRemoved) }
     }
 
@@ -323,7 +289,7 @@ class DefaultSessionControlControllerTest {
             every { tabs } returns emptyList()
             every { title } returns ""
         }
-        controller.handleCollectionShareTabsClicked(collection)
+        createController().handleCollectionShareTabsClicked(collection)
 
         verify { metrics.track(Event.CollectionShared) }
         verify {
@@ -336,32 +302,31 @@ class DefaultSessionControlControllerTest {
 
     @Test
     fun handleDeleteCollectionTapped() {
-        val collection = mockk<TabCollection> {
+        val expectedCollection = mockk<TabCollection> {
             every { title } returns "Collection"
         }
         every {
             activity.resources.getString(R.string.tab_collection_dialog_message, "Collection")
         } returns "Are you sure you want to delete Collection?"
 
-        controller.handleDeleteCollectionTapped(collection)
-        verify {
-            showDeleteCollectionPrompt(
-                collection,
-                null,
-                "Are you sure you want to delete Collection?",
-                false,
-                handleSwipedItemDeletionCancel
-            )
-        }
+        var actualCollection: TabCollection? = null
+
+        createController(
+            removeCollectionWithUndo = { collection ->
+                actualCollection = collection
+            }
+        ).handleDeleteCollectionTapped(expectedCollection)
+
+        assertEquals(expectedCollection, actualCollection)
     }
 
     @Test
     fun handlePrivateBrowsingLearnMoreClicked() {
-        controller.handlePrivateBrowsingLearnMoreClicked()
+        createController().handlePrivateBrowsingLearnMoreClicked()
         verify {
             activity.openToBrowserAndLoad(
                 searchTermOrURL = SupportUtils.getGenericSumoURLForTopic
-                    (SupportUtils.SumoTopic.PRIVATE_BROWSING_MYTHS),
+                (SupportUtils.SumoTopic.PRIVATE_BROWSING_MYTHS),
                 newTab = true,
                 from = BrowserDirection.FromHome
             )
@@ -373,7 +338,7 @@ class DefaultSessionControlControllerTest {
         val collection = mockk<TabCollection> {
             every { id } returns 3L
         }
-        controller.handleRenameCollectionTapped(collection)
+        createController().handleRenameCollectionTapped(collection)
 
         verify { metrics.track(Event.CollectionRenamePressed) }
         verify {
@@ -387,6 +352,7 @@ class DefaultSessionControlControllerTest {
     @Test
     fun handleSelectDefaultTopSite() {
         val topSiteUrl = "mozilla.org"
+        val controller = spyk(createController())
         every { controller.getAvailableSearchEngines() } returns listOf(searchEngine)
 
         controller.handleSelectTopSite(topSiteUrl, TopSite.Type.DEFAULT)
@@ -405,6 +371,7 @@ class DefaultSessionControlControllerTest {
     @Test
     fun handleSelectNonDefaultTopSite() {
         val topSiteUrl = "mozilla.org"
+        val controller = spyk(createController())
         every { controller.getAvailableSearchEngines() } returns listOf(searchEngine)
 
         controller.handleSelectTopSite(topSiteUrl, TopSite.Type.FRECENT)
@@ -422,6 +389,7 @@ class DefaultSessionControlControllerTest {
     @Test
     fun handleSelectGoogleDefaultTopSiteUS() {
         val topSiteUrl = SupportUtils.GOOGLE_URL
+        val controller = spyk(createController())
         every { controller.getAvailableSearchEngines() } returns listOf(searchEngine)
 
         store.dispatch(SearchAction.SetRegionAction(RegionState("US", "US"))).joinBlocking()
@@ -443,6 +411,7 @@ class DefaultSessionControlControllerTest {
     @Test
     fun handleSelectGoogleDefaultTopSiteXX() {
         val topSiteUrl = SupportUtils.GOOGLE_URL
+        val controller = spyk(createController())
         every { controller.getAvailableSearchEngines() } returns listOf(searchEngine)
 
         store.dispatch(SearchAction.SetRegionAction(RegionState("DE", "FR"))).joinBlocking()
@@ -465,6 +434,7 @@ class DefaultSessionControlControllerTest {
     fun handleSelectGoogleDefaultTopSite_EventPerformedSearchTopSite() {
         val topSiteUrl = SupportUtils.GOOGLE_URL
         val engineSource = EngineSource.Default(googleSearchEngine, false)
+        val controller = spyk(createController())
         every { controller.getAvailableSearchEngines() } returns listOf(googleSearchEngine)
         try {
             mockkStatic("mozilla.components.browser.state.state.SearchStateKt")
@@ -493,6 +463,7 @@ class DefaultSessionControlControllerTest {
     fun handleSelectDuckDuckGoTopSite_EventPerformedSearchTopSite() {
         val topSiteUrl = "https://duckduckgo.com"
         val engineSource = EngineSource.Shortcut(duckDuckGoSearchEngine, false)
+        val controller = spyk(createController())
         every { controller.getAvailableSearchEngines() } returns listOf(googleSearchEngine, duckDuckGoSearchEngine)
         try {
             mockkStatic("mozilla.components.browser.state.state.SearchStateKt")
@@ -520,6 +491,7 @@ class DefaultSessionControlControllerTest {
     @Test
     fun handleSelectGooglePinnedTopSiteUS() {
         val topSiteUrl = SupportUtils.GOOGLE_URL
+        val controller = spyk(createController())
         every { controller.getAvailableSearchEngines() } returns listOf(searchEngine)
 
         store.dispatch(SearchAction.SetRegionAction(RegionState("US", "US"))).joinBlocking()
@@ -541,6 +513,7 @@ class DefaultSessionControlControllerTest {
     @Test
     fun handleSelectGooglePinnedTopSiteXX() {
         val topSiteUrl = SupportUtils.GOOGLE_URL
+        val controller = spyk(createController())
         every { controller.getAvailableSearchEngines() } returns listOf(searchEngine)
 
         store.dispatch(SearchAction.SetRegionAction(RegionState("DE", "FR"))).joinBlocking()
@@ -562,6 +535,7 @@ class DefaultSessionControlControllerTest {
     @Test
     fun handleSelectGoogleFrecentTopSiteUS() {
         val topSiteUrl = SupportUtils.GOOGLE_URL
+        val controller = spyk(createController())
         every { controller.getAvailableSearchEngines() } returns listOf(searchEngine)
 
         store.dispatch(SearchAction.SetRegionAction(RegionState("US", "US"))).joinBlocking()
@@ -583,6 +557,7 @@ class DefaultSessionControlControllerTest {
     @Test
     fun handleSelectGoogleFrecentTopSiteXX() {
         val topSiteUrl = SupportUtils.GOOGLE_URL
+        val controller = spyk(createController())
         every { controller.getAvailableSearchEngines() } returns listOf(searchEngine)
 
         store.dispatch(SearchAction.SetRegionAction(RegionState("DE", "FR"))).joinBlocking()
@@ -603,13 +578,15 @@ class DefaultSessionControlControllerTest {
 
     @Test
     fun handleStartBrowsingClicked() {
-        controller.handleStartBrowsingClicked()
-        verify { hideOnboarding() }
+        var hideOnboardingInvoked = false
+        createController(hideOnboarding = { hideOnboardingInvoked = true }).handleStartBrowsingClicked()
+
+        assertTrue(hideOnboardingInvoked)
     }
 
     @Test
     fun handleOpenSettingsClicked() {
-        controller.handleOpenSettingsClicked()
+        createController().handleOpenSettingsClicked()
         verify {
             navController.navigate(
                 match<NavDirections> { it.actionId == R.id.action_global_privateBrowsingFragment },
@@ -620,7 +597,7 @@ class DefaultSessionControlControllerTest {
 
     @Test
     fun handleWhatsNewGetAnswersClicked() {
-        controller.handleWhatsNewGetAnswersClicked()
+        createController().handleWhatsNewGetAnswersClicked()
         val whatsNewUrl = SupportUtils.getWhatsNewUrl(activity)
         verify {
             activity.openToBrowserAndLoad(
@@ -633,7 +610,7 @@ class DefaultSessionControlControllerTest {
 
     @Test
     fun handleReadPrivacyNoticeClicked() {
-        controller.handleReadPrivacyNoticeClicked()
+        createController().handleReadPrivacyNoticeClicked()
         verify {
             activity.openToBrowserAndLoad(
                 searchTermOrURL = SupportUtils.getMozillaPageUrl(SupportUtils.MozillaPage.PRIVATE_NOTICE),
@@ -646,20 +623,20 @@ class DefaultSessionControlControllerTest {
     @Test
     fun handleToggleCollectionExpanded() {
         val collection = mockk<TabCollection>()
-        controller.handleToggleCollectionExpanded(collection, true)
+        createController().handleToggleCollectionExpanded(collection, true)
         verify { fragmentStore.dispatch(HomeFragmentAction.CollectionExpanded(collection, true)) }
     }
 
     @Test
     fun handleCloseTip() {
         val tip = mockk<Tip>()
-        controller.handleCloseTip(tip)
+        createController().handleCloseTip(tip)
         verify { fragmentStore.dispatch(HomeFragmentAction.RemoveTip(tip)) }
     }
 
     @Test
     fun handleCreateCollection() {
-        controller.handleCreateCollection()
+        createController().handleCreateCollection()
 
         verify {
             navController.navigate(
@@ -671,7 +648,7 @@ class DefaultSessionControlControllerTest {
 
     @Test
     fun handlePasteAndGo() {
-        controller.handlePasteAndGo("text")
+        createController().handlePasteAndGo("text")
 
         verify {
             activity.openToBrowserAndLoad(
@@ -683,7 +660,7 @@ class DefaultSessionControlControllerTest {
             metrics.track(any<Event.PerformedSearch>())
         }
 
-        controller.handlePasteAndGo("https://mozilla.org")
+        createController().handlePasteAndGo("https://mozilla.org")
         verify {
             activity.openToBrowserAndLoad(
                 searchTermOrURL = "https://mozilla.org",
@@ -697,7 +674,7 @@ class DefaultSessionControlControllerTest {
 
     @Test
     fun handlePaste() {
-        controller.handlePaste("text")
+        createController().handlePaste("text")
 
         verify {
             navController.navigate(
@@ -709,7 +686,7 @@ class DefaultSessionControlControllerTest {
 
     @Test
     fun handleRemoveCollectionsPlaceholder() {
-        controller.handleRemoveCollectionsPlaceholder()
+        createController().handleRemoveCollectionsPlaceholder()
 
         verify {
             settings.showCollectionsPlaceholderOnHome = false
@@ -724,7 +701,7 @@ class DefaultSessionControlControllerTest {
             every { id } returns R.id.searchDialogFragment
         }
 
-        controller.handleMenuOpened()
+        createController().handleMenuOpened()
 
         verify {
             navController.navigateUp()
@@ -737,10 +714,39 @@ class DefaultSessionControlControllerTest {
             every { id } returns R.id.homeFragment
         }
 
-        controller.handleMenuOpened()
+        createController().handleMenuOpened()
 
         verify(exactly = 0) {
             navController.navigateUp()
         }
+    }
+
+    private fun createController(
+        hideOnboarding: () -> Unit = { },
+        registerCollectionStorageObserver: () -> Unit = { },
+        showTabTray: () -> Unit = { },
+        handleSwipedItemDeletionCancel: () -> Unit = { },
+        removeCollectionWithUndo: (tabCollection: TabCollection) -> Unit = { }
+    ): DefaultSessionControlController {
+        return DefaultSessionControlController(
+            activity = activity,
+            store = store,
+            settings = settings,
+            engine = engine,
+            metrics = metrics,
+            tabCollectionStorage = tabCollectionStorage,
+            addTabUseCase = tabsUseCases.addTab,
+            reloadUrlUseCase = reloadUrlUseCase.reload,
+            selectTabUseCase = selectTabUseCase.selectTab,
+            restoreUseCase = mockk(relaxed = true),
+            fragmentStore = fragmentStore,
+            navController = navController,
+            viewLifecycleScope = scope,
+            hideOnboarding = hideOnboarding,
+            registerCollectionStorageObserver = registerCollectionStorageObserver,
+            removeCollectionWithUndo = removeCollectionWithUndo,
+            showTabTray = showTabTray,
+            handleSwipedItemDeletionCancel = handleSwipedItemDeletionCancel
+        )
     }
 }

@@ -49,12 +49,14 @@ class FennecBookmarkShortcutsIntentProcessorTest {
         val testUrl = "http://mozilla.org"
         fennecShortcutsIntent.data = Uri.parse(testUrl)
 
-        every { addNewTabUseCase(
-            url = testUrl,
-            flags = EngineSession.LoadUrlFlags.external(),
-            source = SessionState.Source.HOME_SCREEN,
-            selectTab = true,
-            startLoading = true)
+        every {
+            addNewTabUseCase(
+                url = testUrl,
+                flags = EngineSession.LoadUrlFlags.external(),
+                source = SessionState.Source.Internal.HomeScreen,
+                selectTab = true,
+                startLoading = true
+            )
         } returns expectedSessionId
 
         val wasIntentProcessed = processor.process(fennecShortcutsIntent)
@@ -65,7 +67,7 @@ class FennecBookmarkShortcutsIntentProcessorTest {
             addNewTabUseCase(
                 url = testUrl,
                 flags = EngineSession.LoadUrlFlags.external(),
-                source = SessionState.Source.HOME_SCREEN,
+                source = SessionState.Source.Internal.HomeScreen,
                 selectTab = true,
                 startLoading = true
             )

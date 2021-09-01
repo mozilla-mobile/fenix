@@ -14,7 +14,7 @@ import mozilla.components.browser.state.state.searchEngines
 import mozilla.components.concept.awesomebar.AwesomeBar
 import mozilla.components.concept.engine.EngineSession
 import mozilla.components.feature.awesomebar.provider.BookmarksStorageSuggestionProvider
-import mozilla.components.feature.awesomebar.provider.HistoryMetadataSuggestionProvider
+import mozilla.components.feature.awesomebar.provider.CombinedHistorySuggestionProvider
 import mozilla.components.feature.awesomebar.provider.HistoryStorageSuggestionProvider
 import mozilla.components.feature.awesomebar.provider.SearchActionProvider
 import mozilla.components.feature.awesomebar.provider.SearchEngineSuggestionProvider
@@ -26,11 +26,11 @@ import mozilla.components.feature.syncedtabs.DeviceIndicators
 import mozilla.components.feature.syncedtabs.SyncedTabsStorageSuggestionProvider
 import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.support.ktx.android.content.getColorFromAttr
-import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.search.SearchEngineSource
 import org.mozilla.fenix.search.SearchFragmentState
 
@@ -46,7 +46,7 @@ class AwesomeBarView(
 ) {
     private val sessionProvider: SessionSuggestionProvider
     private val historyStorageProvider: HistoryStorageSuggestionProvider
-    private val historyMetadataProvider: HistoryMetadataSuggestionProvider
+    private val combinedHistoryProvider: CombinedHistorySuggestionProvider
     private val shortcutsEnginePickerProvider: ShortcutsSuggestionProvider
     private val bookmarksStorageSuggestionProvider: BookmarksStorageSuggestionProvider
     private val syncedTabsStorageSuggestionProvider: SyncedTabsStorageSuggestionProvider
@@ -120,9 +120,10 @@ class AwesomeBarView(
                 engineForSpeculativeConnects
             )
 
-        historyMetadataProvider =
-            HistoryMetadataSuggestionProvider(
+        combinedHistoryProvider =
+            CombinedHistorySuggestionProvider(
                 historyStorage = components.core.historyStorage,
+                historyMetadataStorage = components.core.historyStorage,
                 loadUrlUseCase = loadUrlUseCase,
                 icons = components.core.icons,
                 engine = engineForSpeculativeConnects,
@@ -250,8 +251,8 @@ class AwesomeBarView(
         val providersToAdd = mutableSetOf<AwesomeBar.SuggestionProvider>()
 
         if (state.showHistorySuggestions) {
-            if (FeatureFlags.historyMetadataFeature) {
-                providersToAdd.add(historyMetadataProvider)
+            if (activity.settings().historyMetadataUIFeature) {
+                providersToAdd.add(combinedHistoryProvider)
             } else {
                 providersToAdd.add(historyStorageProvider)
             }
@@ -284,8 +285,8 @@ class AwesomeBarView(
         providersToRemove.add(shortcutsEnginePickerProvider)
 
         if (!state.showHistorySuggestions) {
-            if (FeatureFlags.historyMetadataFeature) {
-                providersToRemove.add(historyMetadataProvider)
+            if (activity.settings().historyMetadataUIFeature) {
+                providersToRemove.add(combinedHistoryProvider)
             } else {
                 providersToRemove.add(historyStorageProvider)
             }

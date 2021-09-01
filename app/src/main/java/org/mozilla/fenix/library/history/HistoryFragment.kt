@@ -20,7 +20,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
-import kotlinx.android.synthetic.main.fragment_history.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -43,6 +42,7 @@ import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.history.createSynchronousPagedHistoryProvider
 import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.databinding.FragmentHistoryBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
@@ -62,13 +62,16 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
     private var _historyView: HistoryView? = null
     protected val historyView: HistoryView
         get() = _historyView!!
+    private var _binding: FragmentHistoryBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_history, container, false)
+    ): View {
+        _binding = FragmentHistoryBinding.inflate(inflater, container, false)
+        val view = binding.root
         historyStore = StoreProvider.get(this) {
             HistoryFragmentStore(
                 HistoryFragmentState(
@@ -98,11 +101,11 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
             syncHistory = ::syncHistory,
             metrics = requireComponents.analytics.metrics
         )
-        historyInteractor = HistoryInteractor(
+        historyInteractor = DefaultHistoryInteractor(
             historyController
         )
         _historyView = HistoryView(
-            view.historyLayout,
+            binding.historyLayout,
             historyInteractor
         )
 
@@ -122,9 +125,12 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
             requireComponents.core.historyStorage.createSynchronousPagedHistoryProvider()
         )
 
-        viewModel.userHasHistory.observe(this, Observer {
-            historyView.updateEmptyState(it)
-        })
+        viewModel.userHasHistory.observe(
+            this,
+            Observer {
+                historyView.updateEmptyState(it)
+            }
+        )
 
         requireComponents.analytics.metrics.track(Event.HistoryOpened)
 
@@ -132,7 +138,6 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
     }
 
     private fun deleteHistoryItems(items: Set<HistoryItem>) {
-
         updatePendingHistoryToDelete(items)
         undoScope = CoroutineScope(IO)
         undoScope?.allowUndo(
@@ -154,9 +159,12 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
             historyView.update(it)
         }
 
-        viewModel.history.observe(viewLifecycleOwner, Observer {
-            historyView.historyAdapter.submitList(it)
-        })
+        viewModel.history.observe(
+            viewLifecycleOwner,
+            Observer {
+                historyView.historyAdapter.submitList(it)
+            }
+        )
     }
 
     override fun onResume() {
@@ -173,6 +181,8 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
                 SpannableString(getString(R.string.bookmark_menu_delete_button)).apply {
                     setTextColor(requireContext(), R.attr.destructive)
                 }
+        } else {
+            inflater.inflate(R.menu.history_menu, menu)
         }
     }
 
@@ -211,6 +221,10 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
             showTabTray()
             true
         }
+        R.id.history_delete_all -> {
+            historyInteractor.onDeleteAll()
+            true
+        }
         else -> super.onOptionsItemSelected(item)
     }
 
@@ -229,7 +243,8 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
             String.format(
                 requireContext().getString(
                     R.string.history_delete_single_item_snackbar
-                ), historyItems.first().url.toShortUrl(requireComponents.publicSuffixList)
+                ),
+                historyItems.first().url.toShortUrl(requireComponents.publicSuffixList)
             )
         }
     }
@@ -247,6 +262,7 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
     override fun onDestroyView() {
         super.onDestroyView()
         _historyView = null
+        _binding = null
     }
 
     private fun openItem(item: HistoryItem) {

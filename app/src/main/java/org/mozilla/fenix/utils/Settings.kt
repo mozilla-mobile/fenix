@@ -181,14 +181,14 @@ class Settings(private val appContext: Context) : PreferencesHolder {
             appContext.getString(R.string.pref_key_migrating_from_fenix_nightly_tip),
             true
         ) &&
-                preferences.getBoolean(
-                    appContext.getString(R.string.pref_key_migrating_from_firefox_nightly_tip),
-                    true
-                ) &&
-                preferences.getBoolean(
-                    appContext.getString(R.string.pref_key_migrating_from_fenix_tip),
-                    true
-                )
+            preferences.getBoolean(
+                appContext.getString(R.string.pref_key_migrating_from_firefox_nightly_tip),
+                true
+            ) &&
+            preferences.getBoolean(
+                appContext.getString(R.string.pref_key_migrating_from_fenix_tip),
+                true
+            )
 
     var defaultSearchEngineName by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_search_engine),
@@ -212,10 +212,10 @@ class Settings(private val appContext: Context) : PreferencesHolder {
 
     val isCrashReportingEnabled: Boolean
         get() = isCrashReportEnabledInBuild &&
-                preferences.getBoolean(
-                    appContext.getPreferenceKey(R.string.pref_key_crash_reporter),
-                    true
-                )
+            preferences.getBoolean(
+                appContext.getPreferenceKey(R.string.pref_key_crash_reporter),
+                true
+            )
 
     val isRemoteDebuggingEnabled by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_remote_debugging),
@@ -237,13 +237,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = true
     )
 
-    private var trackingProtectionOnboardingShownThisSession = false
     var isOverrideTPPopupsForPerformanceTest = false
-
-    val shouldShowTrackingProtectionCfr: Boolean
-        get() = !isOverrideTPPopupsForPerformanceTest && canShowCfr &&
-                (trackingProtectionOnboardingCount.underMaxCount() &&
-                        !trackingProtectionOnboardingShownThisSession)
 
     var showSecretDebugMenuThisSession = false
 
@@ -318,9 +312,9 @@ class Settings(private val appContext: Context) : PreferencesHolder {
                 (experimentBranch == ExperimentBranch.DEFAULT_BROWSER_NEW_TAB_BANNER)
             }
         return isExperimentBranch == true &&
-                !userDismissedExperimentCard &&
-                !browsers.isFirefoxDefaultBrowser &&
-                numberOfAppLaunches > APP_LAUNCHES_TO_SHOW_DEFAULT_BROWSER_CARD
+            !userDismissedExperimentCard &&
+            !browsers.isFirefoxDefaultBrowser &&
+            numberOfAppLaunches > APP_LAUNCHES_TO_SHOW_DEFAULT_BROWSER_CARD
     }
 
     var gridTabView by booleanPreference(
@@ -797,17 +791,6 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = true
     )
 
-    @VisibleForTesting(otherwise = PRIVATE)
-    internal val trackingProtectionOnboardingCount = counterPreference(
-        appContext.getPreferenceKey(R.string.pref_key_tracking_protection_onboarding),
-        maxCount = 1
-    )
-
-    fun incrementTrackingProtectionOnboardingCount() {
-        trackingProtectionOnboardingShownThisSession = true
-        trackingProtectionOnboardingCount.increment()
-    }
-
     fun getSitePermissionsPhoneFeatureAction(
         feature: PhoneFeature,
         default: Action = Action.ASK_TO_ALLOW
@@ -1036,7 +1019,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     /**
-     * Stores the number of installed add-ons for telemetry purposes
+     * Storing number of installed add-ons for telemetry purposes
      */
     var installedAddonsCount by intPreference(
         appContext.getPreferenceKey(R.string.pref_key_installed_addons_count),
@@ -1044,7 +1027,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     /**
-     * Stores the list of installed add-ons for telemetry purposes
+     * Storing the list of installed add-ons for telemetry purposes
      */
     var installedAddonsList by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_installed_addons_list),
@@ -1052,7 +1035,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     /**
-     * Stores the number of enabled add-ons for telemetry purposes
+     * Storing number of enabled add-ons for telemetry purposes
      */
     var enabledAddonsCount by intPreference(
         appContext.getPreferenceKey(R.string.pref_key_enabled_addons_count),
@@ -1060,35 +1043,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     /**
-     * Stores the list of enabled add-ons for telemetry purposes
+     * Storing the list of enabled add-ons for telemetry purposes
      */
     var enabledAddonsList by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_enabled_addons_list),
         default = ""
-    )
-
-    /**
-     * Stores the number of credit cards that have been saved manually by the user.
-     */
-    var creditCardsSavedCount by intPreference(
-        appContext.getPreferenceKey(R.string.pref_key_credit_cards_saved_count),
-        0
-    )
-
-    /**
-     * Stores the number of credit cards that have been deleted by the user.
-     */
-    var creditCardsDeletedCount by intPreference(
-        appContext.getPreferenceKey(R.string.pref_key_credit_cards_deleted_count),
-        0
-    )
-
-    /**
-     * Stores the number of times that user has autofilled a credit card.
-     */
-    var creditCardsAutofilledCount by intPreference(
-        appContext.getPreferenceKey(R.string.pref_key_credit_cards_autofilled_count),
-        0
     )
 
     private var savedLoginsSortingStrategyString by stringPreference(
@@ -1137,6 +1096,17 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         featureFlag = FeatureFlags.addressesFeature
     )
 
+    var isHistoryMetadataEnabled by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_history_metadata_feature),
+        default = false
+    )
+
+    var historyMetadataUIFeature by featureFlagPreference(
+        appContext.getPreferenceKey(R.string.pref_key_history_metadata_feature),
+        default = FeatureFlags.historyMetadataUIFeature,
+        featureFlag = FeatureFlags.historyMetadataUIFeature || isHistoryMetadataEnabled
+    )
+
     /**
      * Storing desktop item checkbox value in the home screen menu.
      * If set to true, next opened tab from home screen will be opened in desktop mode.
@@ -1160,5 +1130,10 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var shouldAutofillCreditCardDetails by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_credit_cards_save_and_autofill_cards),
         default = true
+    )
+
+    var pocketRecommendations by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_pocket_homescreen_recommendations),
+        default = false
     )
 }

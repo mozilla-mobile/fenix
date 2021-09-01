@@ -13,7 +13,6 @@ import androidx.annotation.VisibleForTesting
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
-import kotlinx.android.extensions.LayoutContainer
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import mozilla.components.browser.domains.autocomplete.ShippedDomainsProvider
 import mozilla.components.browser.state.selector.selectedTab
@@ -43,10 +42,7 @@ class BrowserToolbarView(
     private val interactor: BrowserToolbarInteractor,
     private val customTabSession: CustomTabSessionState?,
     private val lifecycleOwner: LifecycleOwner
-) : LayoutContainer {
-
-    override val containerView: View?
-        get() = container
+) {
 
     private val settings = container.context.settings()
 
@@ -68,7 +64,7 @@ class BrowserToolbarView(
     @VisibleForTesting
     internal val isPwaTabOrTwaTab: Boolean
         get() = customTabSession?.config?.externalAppType == ExternalAppType.PROGRESSIVE_WEB_APP ||
-                customTabSession?.config?.externalAppType == ExternalAppType.TRUSTED_WEB_ACTIVITY
+            customTabSession?.config?.externalAppType == ExternalAppType.TRUSTED_WEB_ACTIVITY
 
     init {
         val isCustomTabSession = customTabSession != null
@@ -90,7 +86,6 @@ class BrowserToolbarView(
                 setToolbarBehavior()
 
                 elevation = resources.getDimension(R.dimen.browser_fragment_toolbar_elevation)
-
                 if (!isCustomTabSession) {
                     display.setUrlBackground(getDrawable(R.drawable.search_url_background))
                 }

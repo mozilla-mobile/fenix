@@ -13,7 +13,7 @@ import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
-import org.mozilla.fenix.helpers.HomeActivityTestRule
+import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.helpers.TestHelper.openAppFromExternalLink
@@ -36,7 +36,7 @@ class SettingsPrivacyTest {
     private val pageShortcutName = "TestShortcut"
 
     @get:Rule
-    val activityTestRule = HomeActivityTestRule()
+    val activityTestRule = HomeActivityIntentTestRule()
 
     @Before
     fun setUp() {
@@ -176,7 +176,7 @@ class SettingsPrivacyTest {
             TestHelper.scrollToElementByText("Logins and passwords")
         }.openLoginsAndPasswordSubMenu {
             verifyDefaultView()
-            verifyDefaultValueAutofillLogins()
+            verifyDefaultValueAutofillLogins(InstrumentationRegistry.getInstrumentation().targetContext)
             verifyDefaultValueExceptions()
         }.openSavedLogins {
             verifySecurityPromptForLogins()

@@ -19,9 +19,9 @@ import org.mozilla.fenix.GleanMetrics.Awesomebar
 import org.mozilla.fenix.GleanMetrics.BookmarksManagement
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.History
+import org.mozilla.fenix.GleanMetrics.RecentBookmarks
 import org.mozilla.fenix.GleanMetrics.SyncedTabs
 import org.mozilla.fenix.GleanMetrics.TabsTray
-import org.mozilla.fenix.GleanMetrics.TabsTrayCfr
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 
 @RunWith(FenixRobolectricTestRunner::class)
@@ -208,12 +208,24 @@ class GleanMetricsServiceTest {
         assertTrue(TabsTray.closed.testHasValue())
 
         assertFalse(TabsTray.openedExistingTab.testHasValue())
-        gleanService.track(Event.OpenedExistingTab)
+        gleanService.track(Event.OpenedExistingTab("Test"))
         assertTrue(TabsTray.openedExistingTab.testHasValue())
+        var events = TabsTray.openedExistingTab.testGetValue()
+        assertEquals(1, events.size)
+        assertEquals("tabs_tray", events[0].category)
+        assertEquals("opened_existing_tab", events[0].name)
+        assertEquals(1, events[0].extra!!.size)
+        assertEquals("Test", events[0].extra!!["source"])
 
         assertFalse(TabsTray.closedExistingTab.testHasValue())
-        gleanService.track(Event.ClosedExistingTab)
+        gleanService.track(Event.ClosedExistingTab("Test"))
         assertTrue(TabsTray.closedExistingTab.testHasValue())
+        events = TabsTray.closedExistingTab.testGetValue()
+        assertEquals(1, events.size)
+        assertEquals("tabs_tray", events[0].category)
+        assertEquals("closed_existing_tab", events[0].name)
+        assertEquals(1, events[0].extra!!.size)
+        assertEquals("Test", events[0].extra!!["source"])
 
         assertFalse(TabsTray.privateModeTapped.testHasValue())
         gleanService.track(Event.TabsTrayPrivateModeTapped)
@@ -251,13 +263,9 @@ class GleanMetricsServiceTest {
         gleanService.track(Event.TabsTrayCloseAllTabsPressed)
         assertTrue(TabsTray.closeAllTabs.testHasValue())
 
-        assertFalse(TabsTrayCfr.dismiss.testHasValue())
-        gleanService.track(Event.TabsTrayCfrDismissed)
-        assertTrue(TabsTrayCfr.dismiss.testHasValue())
-
-        assertFalse(TabsTrayCfr.goToSettings.testHasValue())
-        gleanService.track(Event.TabsTrayCfrTapped)
-        assertTrue(TabsTrayCfr.goToSettings.testHasValue())
+        assertFalse(TabsTray.inactiveTabsRecentlyClosed.testHasValue())
+        gleanService.track(Event.TabsTrayRecentlyClosedPressed)
+        assertTrue(TabsTray.inactiveTabsRecentlyClosed.testHasValue())
     }
 
     @Test
@@ -269,5 +277,16 @@ class GleanMetricsServiceTest {
         assertFalse(Events.defaultBrowserNotifTapped.testHasValue())
         gleanService.track(Event.DefaultBrowserNotifTapped)
         assertTrue(Events.defaultBrowserNotifTapped.testHasValue())
+    }
+
+    @Test
+    fun `Home screen recent bookmarks events are correctly recorded`() {
+        assertFalse(RecentBookmarks.bookmarkClicked.testHasValue())
+        gleanService.track(Event.BookmarkClicked)
+        assertTrue(RecentBookmarks.bookmarkClicked.testHasValue())
+
+        assertFalse(RecentBookmarks.showAllBookmarks.testHasValue())
+        gleanService.track(Event.ShowAllBookmarks)
+        assertTrue(RecentBookmarks.showAllBookmarks.testHasValue())
     }
 }

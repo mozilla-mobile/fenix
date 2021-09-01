@@ -6,7 +6,6 @@
 
 package org.mozilla.fenix.ui.robots
 
-import android.content.pm.PackageManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.ViewInteraction
@@ -34,6 +33,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.Constants.PackageName.GOOGLE_PLAY_SERVICES
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestHelper.appName
+import org.mozilla.fenix.helpers.TestHelper.isPackageInstalled
 import org.mozilla.fenix.helpers.TestHelper.scrollToElementByText
 import org.mozilla.fenix.helpers.assertIsEnabled
 import org.mozilla.fenix.helpers.click
@@ -111,7 +111,7 @@ class SettingsRobot {
         }
 
         fun openAboutFirefoxPreview(interact: SettingsSubMenuAboutRobot.() -> Unit):
-                SettingsSubMenuAboutRobot.Transition {
+            SettingsSubMenuAboutRobot.Transition {
 
             assertAboutFirefoxPreview().click()
 
@@ -120,7 +120,7 @@ class SettingsRobot {
         }
 
         fun openSearchSubMenu(interact: SettingsSubMenuSearchRobot.() -> Unit):
-                SettingsSubMenuSearchRobot.Transition {
+            SettingsSubMenuSearchRobot.Transition {
 
             fun searchEngineButton() = onView(withText("Search"))
             searchEngineButton().click()
@@ -401,7 +401,7 @@ private fun assertNotificationsButton() {
 private fun assertDataCollectionButton() {
     scrollToElementByText("Data collection")
     onView(withText("Data collection"))
-    .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
 private fun openLinksInAppsButton() = onView(withText("Open links in apps"))
@@ -490,15 +490,6 @@ private fun assertGooglePlayRedirect() {
         intended(toPackage(GOOGLE_PLAY_SERVICES))
     } else {
         BrowserRobot().verifyRateOnGooglePlayURL()
-    }
-}
-
-fun isPackageInstalled(packageName: String): Boolean {
-    return try {
-        val packageManager = InstrumentationRegistry.getInstrumentation().context.packageManager
-        packageManager.getApplicationInfo(packageName, 0).enabled
-    } catch (exception: PackageManager.NameNotFoundException) {
-        false
     }
 }
 

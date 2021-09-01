@@ -31,7 +31,6 @@ import androidx.test.uiautomator.UiObject
 import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
 import org.hamcrest.CoreMatchers.allOf
-import org.hamcrest.CoreMatchers.anyOf
 import org.hamcrest.CoreMatchers.startsWith
 import org.hamcrest.Matchers
 import org.junit.Assert.assertEquals
@@ -73,8 +72,10 @@ class SearchRobot {
         selectDefaultSearchEngine(searchEngineName)
 
     fun clickSearchEngineShortcutButton() {
-        val searchEnginesShortcutButton = mDevice.findObject(UiSelector()
-            .resourceId("$packageName:id/search_engines_shortcut_button"))
+        val searchEnginesShortcutButton = mDevice.findObject(
+            UiSelector()
+                .resourceId("$packageName:id/search_engines_shortcut_button")
+        )
         searchEnginesShortcutButton.waitForExists(waitingTime)
         searchEnginesShortcutButton.click()
     }
@@ -171,12 +172,7 @@ class SearchRobot {
             browserToolbarEditView().perform(typeText(query + "\n"))
 
             runWithIdleRes(sessionLoadedIdlingResource) {
-                onView(
-                    anyOf(
-                        ViewMatchers.withResourceName("browserLayout"),
-                        ViewMatchers.withResourceName("onboarding_message") // Req ETP dialog
-                    )
-                )
+                onView(ViewMatchers.withResourceName("browserLayout"))
                     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
             }
 
@@ -270,7 +266,8 @@ private fun assertKeyboardVisibility(isExpectedToBeVisible: Boolean) = {
     mDevice.waitNotNull(
         Until.findObject(
             By.text("Search Engine")
-        ), waitingTime
+        ),
+        waitingTime
     )
     assertEquals(
         isExpectedToBeVisible,

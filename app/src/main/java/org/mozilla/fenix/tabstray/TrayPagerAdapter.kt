@@ -8,6 +8,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.annotation.VisibleForTesting
+import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.RecyclerView
 import mozilla.components.browser.state.selector.normalTabs
 import mozilla.components.browser.state.selector.privateTabs
@@ -16,6 +17,7 @@ import mozilla.components.browser.state.store.BrowserStore
 import org.mozilla.fenix.sync.SyncedTabsAdapter
 import org.mozilla.fenix.tabstray.browser.BrowserTabsAdapter
 import org.mozilla.fenix.tabstray.browser.BrowserTrayInteractor
+import org.mozilla.fenix.tabstray.browser.InactiveTabsAdapter
 import org.mozilla.fenix.tabstray.syncedtabs.TabClickDelegate
 import org.mozilla.fenix.tabstray.viewholders.AbstractPageViewHolder
 import org.mozilla.fenix.tabstray.viewholders.NormalBrowserPageViewHolder
@@ -31,8 +33,13 @@ class TrayPagerAdapter(
     @VisibleForTesting internal val browserStore: BrowserStore
 ) : RecyclerView.Adapter<AbstractPageViewHolder>() {
 
-    private val normalAdapter by lazy { BrowserTabsAdapter(context, browserInteractor, store) }
-    private val privateAdapter by lazy { BrowserTabsAdapter(context, browserInteractor, store) }
+    private val normalAdapter by lazy {
+        ConcatAdapter(
+            BrowserTabsAdapter(context, browserInteractor, store, TABS_TRAY_FEATURE_NAME),
+            InactiveTabsAdapter(context, browserInteractor, INACTIVE_TABS_FEATURE_NAME)
+        )
+    }
+    private val privateAdapter by lazy { BrowserTabsAdapter(context, browserInteractor, store, TABS_TRAY_FEATURE_NAME) }
     private val syncedTabsAdapter by lazy { SyncedTabsAdapter(TabClickDelegate(navInteractor)) }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AbstractPageViewHolder {
@@ -74,7 +81,7 @@ class TrayPagerAdapter(
             POSITION_SYNCED_TABS -> syncedTabsAdapter
             else -> throw IllegalStateException("View type does not exist.")
         }
-        viewHolder.bind(adapter, browserInteractor.getLayoutManagerForPosition(context, position))
+        viewHolder.bind(adapter)
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -90,6 +97,10 @@ class TrayPagerAdapter(
 
     companion object {
         const val TRAY_TABS_COUNT = 3
+
+        // Telemetry keys for identifying from which app features the a was opened / closed.
+        const val TABS_TRAY_FEATURE_NAME = "Tabs tray"
+        const val INACTIVE_TABS_FEATURE_NAME = "Inactive tabs"
 
         val POSITION_NORMAL_TABS = Page.NormalTabs.ordinal
         val POSITION_PRIVATE_TABS = Page.PrivateTabs.ordinal

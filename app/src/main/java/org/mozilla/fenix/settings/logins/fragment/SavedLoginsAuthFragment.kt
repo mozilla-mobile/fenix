@@ -22,6 +22,7 @@ import androidx.preference.SwitchPreference
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import mozilla.components.feature.autofill.preference.AutofillPreference
 import mozilla.components.service.fxa.SyncEngine
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import org.mozilla.fenix.R
@@ -39,7 +40,6 @@ import org.mozilla.fenix.settings.requirePreference
 
 @Suppress("TooManyFunctions")
 class SavedLoginsAuthFragment : PreferenceFragmentCompat() {
-
     private val biometricPromptFeature = ViewBoundFeatureWrapper<BiometricPromptFeature>()
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -99,6 +99,10 @@ class SavedLoginsAuthFragment : PreferenceFragmentCompat() {
             }
         }
 
+        requirePreference<AutofillPreference>(R.string.pref_key_android_autofill).apply {
+            update()
+        }
+
         requirePreference<Preference>(R.string.pref_key_login_exceptions).apply {
             setOnPreferenceClickListener {
                 navigateToLoginExceptionFragment()
@@ -107,6 +111,14 @@ class SavedLoginsAuthFragment : PreferenceFragmentCompat() {
         }
 
         requirePreference<SwitchPreference>(R.string.pref_key_autofill_logins).apply {
+            title = context.getString(
+                R.string.preferences_passwords_autofill2,
+                getString(R.string.app_name)
+            )
+            summary = context.getString(
+                R.string.preferences_passwords_autofill_description,
+                getString(R.string.app_name)
+            )
             isChecked = context.settings().shouldAutofillLogins
             onPreferenceChangeListener = object : SharedPreferenceUpdater() {
                 override fun onPreferenceChange(preference: Preference, newValue: Any?): Boolean {

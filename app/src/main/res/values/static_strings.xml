@@ -37,6 +37,10 @@
     <string name="preferences_debug_info" translatable="false">Secret Debug Info</string>
     <!-- Label for enabling Address Autofill -->
     <string name="preferences_debug_settings_enable_address_feature" translatable="false">Enable Address Autofill</string>
+    <!-- Label for enabling History Metadata feature -->
+    <string name="preferences_debug_settings_history_metadata_feature" translatable="false">Enable History Metadata</string>
+    <!-- Toast shown after confirming the History Metadata feature configuration -->
+    <string name="toast_history_metadata_feature_done">History Metadata feature modified. Quitting the application to apply changes…</string>
     <!-- Label for allowing third party root certificates from the Android OS CA store preference -->
     <string name="preferences_debug_settings_allow_third_party_root_certs">Use third party CA certificates</string>
     <!-- Label for a longer description of allowing third party root certificates from the Android OS CA store preference -->
@@ -45,6 +49,11 @@
     <string name="preferences_nimbus_experiments">Nimbus Experiments</string>
     <!-- Label for using the nimbus collections preview -->
     <string name="preferences_nimbus_use_preview_collection">Use Nimbus Preview Collection (requires restart)</string>
+    <!-- Label for the Pocket articles recommendations on homescreen -->
+    <string name="preferences_pocket_homescreen_recommendations">Debug only. Enable Pocket recommended articles on homescreen.</string>
+
+    <!-- A secret menu option in the tabs tray for making a tab inactive for testing. -->
+    <string name="inactive_tabs_menu_item">Make inactive</string>
 
     <!-- Label for showing Synced Tabs in the tabs tray -->
     <string name="preferences_debug_synced_tabs_tabs_tray">Show Synced Tabs in the tabs tray</string>

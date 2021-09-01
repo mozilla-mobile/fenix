@@ -51,7 +51,6 @@ import org.mozilla.fenix.GleanMetrics.PerfStartup
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.components.metrics.MetricServiceType
 import org.mozilla.fenix.components.metrics.SecurePrefsTelemetry
-import org.mozilla.fenix.ext.measureNoInline
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.perf.ProfilerMarkerFactProcessor
 import org.mozilla.fenix.perf.StartupTimeline
@@ -65,12 +64,15 @@ import org.mozilla.fenix.telemetry.TelemetryLifecycleObserver
 import org.mozilla.fenix.utils.BrowsersCache
 import java.util.concurrent.TimeUnit
 import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.feature.autofill.AutofillUseCases
 import mozilla.components.feature.search.ext.buildSearchUrl
 import mozilla.components.feature.search.ext.waitForSelectedOrDefaultSearchEngine
 import mozilla.components.service.fxa.manager.SyncEnginesStorage
 import org.mozilla.fenix.GleanMetrics.Addons
+import org.mozilla.fenix.GleanMetrics.AndroidAutofill
 import org.mozilla.fenix.GleanMetrics.Preferences
 import org.mozilla.fenix.GleanMetrics.SearchDefaultEngine
+import org.mozilla.fenix.components.Core
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MozillaProductDetector
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
@@ -96,7 +98,6 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
     override fun onCreate() {
         // We use start/stop instead of measure so we don't measure outside the main process.
         val completeMethodDurationTimerId = PerfStartup.applicationOnCreate.start() // DO NOT MOVE ANYTHING ABOVE HERE.
-        val subsectionThroughGleanTimerId = PerfStartup.appOnCreateToGleanInit.start()
 
         super.onCreate()
 
@@ -118,8 +119,6 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             initializeGlean()
         }
 
-        PerfStartup.appOnCreateToGleanInit.stopAndAccumulate(subsectionThroughGleanTimerId)
-
         setupInMainProcessOnly()
 
         // DO NOT MOVE ANYTHING BELOW THIS stop CALL.
@@ -138,7 +137,8 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                 channel = BuildConfig.BUILD_TYPE,
                 httpClient = ConceptFetchHttpUploader(
                     lazy(LazyThreadSafetyMode.NONE) { components.core.client }
-                )),
+                )
+            ),
             uploadEnabled = telemetryEnabled,
             buildInfo = GleanBuildInfo.buildInfo
         )
@@ -160,54 +160,50 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
 
     @CallSuper
     open fun setupInMainProcessOnly() {
-        PerfStartup.appOnCreateToMegazordInit.measureNoInline {
-            ProfilerMarkerFactProcessor.create { components.core.engine.profiler }.register()
+        ProfilerMarkerFactProcessor.create { components.core.engine.profiler }.register()
 
-            run {
-                // Attention: Do not invoke any code from a-s in this scope.
-                val megazordSetup = setupMegazord()
+        run {
+            // Attention: Do not invoke any code from a-s in this scope.
+            val megazordSetup = setupMegazord()
 
-                setDayNightTheme()
-                components.strictMode.enableStrictMode(true)
-                warmBrowsersCache()
+            setDayNightTheme()
+            components.strictMode.enableStrictMode(true)
+            warmBrowsersCache()
 
-                // Make sure the engine is initialized and ready to use.
-                components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
-                    components.core.engine.warmUp()
-                }
-                initializeWebExtensionSupport()
-                restoreBrowserState()
-                restoreDownloads()
+            // Make sure the engine is initialized and ready to use.
+            components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
+                components.core.engine.warmUp()
+            }
+            initializeWebExtensionSupport()
+            restoreBrowserState()
+            restoreDownloads()
 
-                // Just to make sure it is impossible for any application-services pieces
-                // to invoke parts of itself that require complete megazord initialization
-                // before that process completes, we wait here, if necessary.
-                if (!megazordSetup.isCompleted) {
-                    runBlockingIncrement { megazordSetup.await() }
-                }
+            // Just to make sure it is impossible for any application-services pieces
+            // to invoke parts of itself that require complete megazord initialization
+            // before that process completes, we wait here, if necessary.
+            if (!megazordSetup.isCompleted) {
+                runBlockingIncrement { megazordSetup.await() }
             }
         }
 
-        PerfStartup.appOnCreateToSetupInMain.measureNoInline {
-            setupLeakCanary()
-            startMetricsIfEnabled()
-            setupPush()
+        setupLeakCanary()
+        startMetricsIfEnabled()
+        setupPush()
 
-            visibilityLifecycleCallback = VisibilityLifecycleCallback(getSystemService())
-            registerActivityLifecycleCallbacks(visibilityLifecycleCallback)
+        visibilityLifecycleCallback = VisibilityLifecycleCallback(getSystemService())
+        registerActivityLifecycleCallbacks(visibilityLifecycleCallback)
 
-            // Storage maintenance disabled, for now, as it was interfering with background migrations.
-            // See https://github.com/mozilla-mobile/fenix/issues/7227 for context.
-            // if ((System.currentTimeMillis() - settings().lastPlacesStorageMaintenance) > ONE_DAY_MILLIS) {
-            //    runStorageMaintenance()
-            // }
+        // Storage maintenance disabled, for now, as it was interfering with background migrations.
+        // See https://github.com/mozilla-mobile/fenix/issues/7227 for context.
+        // if ((System.currentTimeMillis() - settings().lastPlacesStorageMaintenance) > ONE_DAY_MILLIS) {
+        //    runStorageMaintenance()
+        // }
 
-            components.appStartReasonProvider.registerInAppOnCreate(this)
-            components.startupActivityLog.registerInAppOnCreate(this)
-            initVisualCompletenessQueueAndQueueTasks()
+        components.appStartReasonProvider.registerInAppOnCreate(this)
+        components.startupActivityLog.registerInAppOnCreate(this)
+        initVisualCompletenessQueueAndQueueTasks()
 
-            ProcessLifecycleOwner.get().lifecycle.addObserver(TelemetryLifecycleObserver(components.core.store))
-        }
+        ProcessLifecycleOwner.get().lifecycle.addObserver(TelemetryLifecycleObserver(components.core.store))
     }
 
     @OptIn(DelicateCoroutinesApi::class) // GlobalScope usage
@@ -246,6 +242,14 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                         components.core.bookmarksStorage.warmUp()
                         components.core.passwordsStorage.warmUp()
                         components.core.autofillStorage.warmUp()
+
+                        // This service uses `historyStorage`, and so we can only touch it when we know
+                        // it's safe to touch `historyStorage. By 'safe', we mainly mean that underlying
+                        // places library will be able to load, which requires first running Megazord.init().
+                        // The visual completeness tasks are scheduled after the Megazord.init() call.
+                        components.core.historyMetadataService.cleanup(
+                            System.currentTimeMillis() - Core.HISTORY_METADATA_MAX_AGE_IN_MS
+                        )
                     }
 
                     SecurePrefsTelemetry(this@FenixApplication, components.analytics.experiments).startTests()
@@ -390,15 +394,17 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
 
         logger.info("onTrimMemory(), level=$level, main=${isMainProcess()}")
 
-        components.analytics.crashReporter.recordCrashBreadcrumb(Breadcrumb(
-            category = "Memory",
-            message = "onTrimMemory()",
-            data = mapOf(
-                "level" to level.toString(),
-                "main" to isMainProcess().toString()
-            ),
-            level = Breadcrumb.Level.INFO
-        ))
+        components.analytics.crashReporter.recordCrashBreadcrumb(
+            Breadcrumb(
+                category = "Memory",
+                message = "onTrimMemory()",
+                data = mapOf(
+                    "level" to level.toString(),
+                    "main" to isMainProcess().toString()
+                ),
+                level = Breadcrumb.Level.INFO
+            )
+        )
 
         runOnlyInMainProcess {
             components.core.icons.onTrimMemory(level)
@@ -471,22 +477,24 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                 components.core.store,
                 onNewTabOverride = {
                     _, engineSession, url ->
-                        val shouldCreatePrivateSession =
-                            components.core.store.state.selectedTab?.content?.private
-                                ?: components.settings.openLinksInAPrivateTab
+                    val shouldCreatePrivateSession =
+                        components.core.store.state.selectedTab?.content?.private
+                            ?: components.settings.openLinksInAPrivateTab
 
-                        components.useCases.tabsUseCases.addTab(
-                            url = url,
-                            selectTab = true,
-                            engineSession = engineSession,
-                            private = shouldCreatePrivateSession
-                        )
+                    components.useCases.tabsUseCases.addTab(
+                        url = url,
+                        selectTab = true,
+                        engineSession = engineSession,
+                        private = shouldCreatePrivateSession
+                    )
                 },
                 onCloseTabOverride = {
-                    _, sessionId -> components.useCases.tabsUseCases.removeTab(sessionId)
+                    _, sessionId ->
+                    components.useCases.tabsUseCases.removeTab(sessionId)
                 },
                 onSelectTabOverride = {
-                    _, sessionId -> components.useCases.tabsUseCases.selectTab(sessionId)
+                    _, sessionId ->
+                    components.useCases.tabsUseCases.selectTab(sessionId)
                 },
                 onExtensionsLoaded = { extensions ->
                     components.addonUpdater.registerForFutureUpdates(extensions)
@@ -566,18 +574,6 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                 topSitesCount.add(topSitesSize)
             }
 
-            if (settings.creditCardsSavedCount > 0) {
-                creditCardsSavedCount.add(settings.creditCardsSavedCount)
-            }
-
-            if (settings.creditCardsDeletedCount > 0) {
-                creditCardsDeletedCount.add(settings.creditCardsDeletedCount)
-            }
-
-            if (settings.creditCardsAutofilledCount > 0) {
-                creditCardsAutofillCount.add(settings.creditCardsAutofilledCount)
-            }
-
             val installedAddonSize = settings.installedAddonsCount
             Addons.hasInstalledAddons.set(installedAddonSize > 0)
             if (installedAddonSize > 0) {
@@ -613,6 +609,12 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             closeTabSetting.set(settings.getTabTimeoutPingString())
         }
 
+        with(AndroidAutofill) {
+            val autofillUseCases = AutofillUseCases()
+            supported.set(autofillUseCases.isSupported(applicationContext))
+            enabled.set(autofillUseCases.isEnabled(applicationContext))
+        }
+
         browserStore.waitForSelectedOrDefaultSearchEngine { searchEngine ->
             if (searchEngine != null) {
                 SearchDefaultEngine.apply {
@@ -636,8 +638,6 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             bookmarksSuggestion.set(settings.shouldShowBookmarkSuggestions)
             clipboardSuggestionsEnabled.set(settings.shouldShowClipboardSuggestions)
             searchShortcutsEnabled.set(settings.shouldShowSearchShortcuts)
-            openLinksInPrivate.set(settings.openLinksInAPrivateTab)
-            privateSearchSuggestions.set(settings.shouldShowSearchSuggestionsInPrivate)
             voiceSearchEnabled.set(settings.shouldShowVoiceSearch)
             openLinksInAppEnabled.set(settings.openLinksInExternalApp)
             signedInSync.set(settings.signedInFxaAccount)

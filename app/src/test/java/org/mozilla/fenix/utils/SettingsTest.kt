@@ -231,7 +231,7 @@ class SettingsTest {
         settings.manuallyCloseTabs = false
 
         // Then
-        assertFalse(settings.shouldUseLightTheme)
+        assertFalse(settings.manuallyCloseTabs)
     }
 
     @Test
@@ -673,25 +673,6 @@ class SettingsTest {
         // Then
         assertEquals("testAmoUser", settings.overrideAmoUser)
         assertTrue(settings.amoCollectionOverrideConfigured())
-    }
-
-    @Test
-    fun creditCardsSavedCount() {
-        // When just created
-        // Then
-        assertEquals(0, settings.creditCardsSavedCount)
-
-        // When
-        settings.creditCardsSavedCount += 1
-
-        // Then
-        assertEquals(1, settings.creditCardsSavedCount)
-
-        // When
-        settings.creditCardsSavedCount += 1
-
-        // Then
-        assertEquals(2, settings.creditCardsSavedCount)
     }
 
     @Test

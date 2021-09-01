@@ -17,23 +17,27 @@ import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 class DynamicInfoBannerTest {
     @Test
     fun `showBanner should set DynamicInfoBannerBehavior as behavior if scrollWithTopToolbar`() {
-        val banner = spyk(DynamicInfoBanner(
-            testContext, CoordinatorLayout(testContext), true, "", ""
-        ))
+        val banner = spyk(
+            DynamicInfoBanner(
+                testContext, CoordinatorLayout(testContext), true, "", ""
+            )
+        )
 
         banner.showBanner()
 
-        assertTrue((banner.bannerLayout.layoutParams as CoordinatorLayout.LayoutParams).behavior is DynamicInfoBannerBehavior)
+        assertTrue((banner.binding.root.layoutParams as CoordinatorLayout.LayoutParams).behavior is DynamicInfoBannerBehavior)
     }
 
     @Test
     fun `showBanner should not set a behavior if not scrollWithTopToolbar`() {
-        val banner = spyk(DynamicInfoBanner(
-            testContext, CoordinatorLayout(testContext), false, "", ""
-        ))
+        val banner = spyk(
+            DynamicInfoBanner(
+                testContext, CoordinatorLayout(testContext), false, "", ""
+            )
+        )
 
         banner.showBanner()
 
-        assertNull((banner.bannerLayout.layoutParams as CoordinatorLayout.LayoutParams).behavior)
+        assertNull((banner.binding.root.layoutParams as CoordinatorLayout.LayoutParams).behavior)
     }
 }

@@ -4,7 +4,6 @@
 
 package org.mozilla.fenix.components
 
-import org.mozilla.fenix.gecko.GeckoProvider
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Build
@@ -14,8 +13,8 @@ import mozilla.components.browser.engine.gecko.GeckoEngine
 import mozilla.components.browser.engine.gecko.fetch.GeckoViewFetchClient
 import mozilla.components.browser.engine.gecko.permission.GeckoSitePermissionsStorage
 import mozilla.components.browser.icons.BrowserIcons
-import mozilla.components.browser.state.engine.EngineMiddleware
 import mozilla.components.browser.session.storage.SessionStorage
+import mozilla.components.browser.state.engine.EngineMiddleware
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.browser.storage.sync.PlacesBookmarksStorage
@@ -60,19 +59,22 @@ import mozilla.components.service.digitalassetlinks.local.StatementApi
 import mozilla.components.service.digitalassetlinks.local.StatementRelationChecker
 import mozilla.components.service.location.LocationService
 import mozilla.components.service.location.MozillaLocationService
+import mozilla.components.service.pocket.Frequency
+import mozilla.components.service.pocket.PocketStoriesConfig
+import mozilla.components.service.pocket.PocketStoriesService
 import mozilla.components.service.sync.autofill.AutofillCreditCardsAddressesStorage
 import mozilla.components.service.sync.logins.SyncableLoginsStorage
 import mozilla.components.support.locale.LocaleManager
 import org.mozilla.fenix.AppRequestInterceptor
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
-import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.search.SearchMigration
 import org.mozilla.fenix.downloads.DownloadService
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.gecko.GeckoProvider
 import org.mozilla.fenix.historymetadata.DefaultHistoryMetadataService
 import org.mozilla.fenix.historymetadata.HistoryMetadataMiddleware
 import org.mozilla.fenix.historymetadata.HistoryMetadataService
@@ -86,6 +88,7 @@ import org.mozilla.fenix.utils.Mockable
 import org.mozilla.fenix.utils.getUndoDelay
 import org.mozilla.geckoview.GeckoRuntime
 import java.lang.IllegalStateException
+import java.util.concurrent.TimeUnit
 
 /**
  * Component group for all core browser functionality.
@@ -105,7 +108,7 @@ class Core(
         val defaultSettings = DefaultSettings(
             requestInterceptor = requestInterceptor,
             remoteDebuggingEnabled = context.settings().isRemoteDebuggingEnabled &&
-                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.M,
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.M,
             testingModeEnabled = false,
             trackingProtectionPolicy = trackingProtectionPolicyFactory.createTrackingProtectionPolicy(),
             historyTrackingDelegate = HistoryDelegate(lazyHistoryStorage),
@@ -210,12 +213,9 @@ class Core(
                 RecordingDevicesMiddleware(context),
                 PromptMiddleware(),
                 AdsTelemetryMiddleware(adsTelemetry),
-                LastMediaAccessMiddleware()
+                LastMediaAccessMiddleware(),
+                HistoryMetadataMiddleware(historyMetadataService)
             )
-
-        if (FeatureFlags.historyMetadataFeature) {
-            middlewareList += HistoryMetadataMiddleware(historyMetadataService)
-        }
 
         BrowserStore(
             middleware = middlewareList + EngineMiddleware.create(engine)
@@ -254,9 +254,7 @@ class Core(
      * The [HistoryMetadataService] is used to record history metadata.
      */
     val historyMetadataService: HistoryMetadataService by lazyMonitored {
-        DefaultHistoryMetadataService(storage = historyStorage).apply {
-            cleanup(System.currentTimeMillis() - HISTORY_METADATA_MAX_AGE_IN_MS)
-        }
+        DefaultHistoryMetadataService(storage = historyStorage)
     }
 
     /**
@@ -323,6 +321,14 @@ class Core(
     val thumbnailStorage by lazyMonitored { ThumbnailStorage(context) }
 
     val pinnedSiteStorage by lazyMonitored { PinnedSiteStorage(context) }
+
+    @Suppress("MagicNumber")
+    val pocketStoriesConfig by lazyMonitored {
+        PocketStoriesConfig(
+            BuildConfig.POCKET_TOKEN, client, Frequency(4, TimeUnit.HOURS), 7
+        )
+    }
+    val pocketStoriesService by lazyMonitored { PocketStoriesService(context, pocketStoriesConfig) }
 
     val topSitesStorage by lazyMonitored {
         val defaultTopSites = mutableListOf<Pair<String, String>>()
@@ -432,7 +438,7 @@ class Core(
     fun getPreferredColorScheme(): PreferredColorScheme {
         val inDark =
             (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
-                    Configuration.UI_MODE_NIGHT_YES
+                Configuration.UI_MODE_NIGHT_YES
         return when {
             context.settings().shouldUseDarkTheme -> PreferredColorScheme.Dark
             context.settings().shouldUseLightTheme -> PreferredColorScheme.Light
@@ -446,6 +452,6 @@ class Core(
         private const val KEY_STORAGE_NAME = "core_prefs"
         private const val PASSWORDS_KEY = "passwords"
         private const val RECENTLY_CLOSED_MAX = 10
-        private const val HISTORY_METADATA_MAX_AGE_IN_MS = 7 * 24 * 60 * 60 * 1000 // 7 days
+        const val HISTORY_METADATA_MAX_AGE_IN_MS = 14 * 24 * 60 * 60 * 1000 // 14 days
     }
 }

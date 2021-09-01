@@ -8,7 +8,6 @@ import android.content.Intent
 import androidx.annotation.VisibleForTesting
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDirections
-import kotlinx.android.synthetic.main.activity_home.*
 import mozilla.components.browser.state.selector.findCustomTab
 import mozilla.components.browser.state.state.SessionState
 import mozilla.components.concept.engine.manifest.WebAppManifestParser
@@ -47,8 +46,6 @@ open class ExternalAppBrowserActivity : HomeActivity() {
     }
 
     final override fun getIntentSource(intent: SafeIntent) = Event.OpenedApp.Source.CUSTOM_TAB
-
-    final override fun getIntentAllSource(intent: SafeIntent) = Event.AppReceivedIntent.Source.CUSTOM_TAB
 
     final override fun getIntentSessionId(intent: SafeIntent) = intent.getSessionId()
 
