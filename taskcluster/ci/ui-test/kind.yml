@@ -26,6 +26,14 @@ job-defaults:
     extra:
         notify:
             slackText: 'https://firefox-ci-tc.services.mozilla.com/tasks/${status.taskId} | ${task.metadata.name} | ${task.metadata.source} | ${task.payload.env.PULL_REQUEST_NUMBER}'
+            slackBlocks: |
+                {
+                    "type": "section",
+                    "text": {
+                    "type": "plain_text",
+                        "text": '${task.metadata.name}'
+                    }
+                }
     run:
         commands:
             - [wget, {artifact-reference: '<signing/public/build/x86/target.apk>'}, '-O', app.apk]
