@@ -120,7 +120,7 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
             DragEvent.ACTION_DROP -> {
                 val target = getDropPosition(event.x, event.y)
                 @Suppress("UNCHECKED_CAST") // Cast is checked on drag start
-                interactor.onTabsMove(event.localState as Collection<Tab>, target, tabsFeature.getFilter())
+                interactor.onTabsMove(event.localState as Collection<Tab>, target, tabsFeature.defaultTabsFilter)
                 true
             }
             DragEvent.ACTION_DRAG_ENDED -> {
