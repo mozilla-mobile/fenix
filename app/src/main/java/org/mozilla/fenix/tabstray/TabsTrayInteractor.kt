@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.tabstray
 
+import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.concept.tabstray.Tab
 
 interface TabsTrayInteractor {
@@ -34,6 +35,11 @@ interface TabsTrayInteractor {
      * Called when clicking the debug menu option for inactive tabs.
      */
     fun onInactiveDebugClicked(tabs: Collection<Tab>)
+
+    /**
+     * Invoked when [tabs] should be moved to [position] from a drag-drop operation
+     */
+    fun onTabsMove(tabs: Collection<Tab>, position: Int, filter: (TabSessionState) -> Boolean = {true})
 }
 
 /**
@@ -58,6 +64,10 @@ class DefaultTabsTrayInteractor(
 
     override fun onDeleteTabs(tabs: Collection<Tab>) {
         controller.handleMultipleTabsDeletion(tabs)
+    }
+
+    override fun onTabsMove(tabs: Collection<Tab>, position: Int,filter: (TabSessionState) -> Boolean) {
+        controller.handleTabsMove(tabs, position, filter)
     }
 
     override fun onInactiveDebugClicked(tabs: Collection<Tab>) {

@@ -61,6 +61,14 @@ interface TabsTrayController {
     fun handleMultipleTabsDeletion(tabs: Collection<Tab>)
 
     /**
+     * Moves tabs to a new position
+     *
+     * @param tabs The tabs to be moved
+     * @param position The new position to put the tabs
+     */
+    fun handleTabsMove(tabs: Collection<Tab>, position: Int,filter: (TabSessionState) -> Boolean)
+
+    /**
      * Navigate from TabsTray to Recently Closed section in the History fragment.
      */
     fun handleNavigateToRecentlyClosed()
@@ -165,6 +173,16 @@ class DefaultTabsTrayController(
             }
         }
         showUndoSnackbarForTab(isPrivate)
+    }
+
+    /**
+     * Moves currently selected tabs to position
+     *
+     * @param position The position to move the tabs to
+     */
+    override fun handleTabsMove(tabs: Collection<Tab>, position: Int,filter: (TabSessionState) -> Boolean) {
+        val tabIDs = tabs.map{it.id}
+        tabsUseCases.moveTabs(tabIDs,position,filter)
     }
 
     /**
