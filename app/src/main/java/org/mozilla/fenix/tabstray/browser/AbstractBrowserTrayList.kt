@@ -73,30 +73,28 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
 
     // Find the closest item to the x/y position.
     // Then, based on the offset between the first and second
-    //determine if it goes before or after that item.
+    // determine if it goes before or after that item.
     // This will fail if there's a spiral layout or something
-    //but should work perfectly for lists and grids.
-    private fun getDropPosition(x: Float, y: Float): Int{
-        val lm = layoutManager?: return 0//No layoutManager should never happen
-        val targetCount = lm.childCount
-        if (targetCount < 1) return 0//There's nothing here!
-        if (targetCount < 2) return lm.getPosition(lm.getChildAt(0)!!)//only one item, can't get offset
+    // but should work perfectly for lists and grids.
+    private fun getDropPosition(x: Float, y: Float): Int {
+        val lm = layoutManager ?: return 0 // No layoutManager should never happen
+        if (lm.childCount < 2) return 0 // If there's 0 or 1 tabs visible, can't reorder
         val first = lm.getChildAt(0)!!
         val second = lm.getChildAt(1)!!
-        val xOffset = second.x-first.x
-        val yOffset = second.y-first.y
+        val xOffset = second.x - first.x
+        val yOffset = second.y - first.y
 
         var bestDist = Float.MAX_VALUE
         var bestPos = 0
-        for (i in 0 until targetCount){
+        for (i in 0 until lm.childCount) {
             val proposedTarget = lm.getChildAt(i)!!
-            val xDiff = x-(proposedTarget.x+proposedTarget.width/2)
-            val yDiff = y-(proposedTarget.y+proposedTarget.height/2)
-            val dist = abs(xDiff)+abs(yDiff)
-            if (dist < bestDist){
+            val xDiff = x - (proposedTarget.x + proposedTarget.width / 2)
+            val yDiff = y - (proposedTarget.y + proposedTarget.height / 2)
+            val dist = abs(xDiff) + abs(yDiff)
+            if (dist < bestDist) {
                 bestDist = dist
                 bestPos = getChildAdapterPosition(proposedTarget)
-                val modifier = (xDiff*xOffset)+(yDiff*yOffset)
+                val modifier = (xDiff * xOffset) + (yDiff * yOffset)
                 if (modifier > 0) bestPos += 1
             }
         }
@@ -105,8 +103,8 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
     private val dragListen = OnDragListener { _, event ->
         when (event.action) {
             DragEvent.ACTION_DRAG_STARTED -> {
-                //This check is required for the unchecked cast later on
-                if (event.localState is Collection<*>){
+                // This check is required for the unchecked cast later on
+                if (event.localState is Collection<*>) {
                     (event.localState as Collection<*>).all { it is Tab }
                 } else false
             }
@@ -121,17 +119,16 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
             }
             DragEvent.ACTION_DROP -> {
                 val target = getDropPosition(event.x, event.y)
-                @Suppress("UNCHECKED_CAST") //Cast is checked on drag start
-                interactor.onTabsMove(event.localState as Collection<Tab>,target,tabsFeature.getFilter())
+                @Suppress("UNCHECKED_CAST") // Cast is checked on drag start
+                interactor.onTabsMove(event.localState as Collection<Tab>, target, tabsFeature.getFilter())
                 true
             }
             DragEvent.ACTION_DRAG_ENDED -> {
                 true
             }
-            else -> { //Unknown action
+            else -> { // Unknown action
                 false
             }
         }
     }
-
 }
