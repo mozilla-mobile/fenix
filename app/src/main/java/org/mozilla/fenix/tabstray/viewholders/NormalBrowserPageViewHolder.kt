@@ -15,6 +15,9 @@ import org.mozilla.fenix.tabstray.TabsTrayInteractor
 import org.mozilla.fenix.tabstray.TabsTrayStore
 import org.mozilla.fenix.tabstray.ext.browserAdapter
 import org.mozilla.fenix.tabstray.ext.defaultBrowserLayoutColumns
+import org.mozilla.fenix.tabstray.ext.titleHeaderAdapter
+import org.mozilla.fenix.tabstray.ext.inactiveTabsAdapter
+import org.mozilla.fenix.tabstray.ext.tabGroupAdapter
 
 /**
  * View holder for the normal tabs tray list.
@@ -47,17 +50,23 @@ class NormalBrowserPageViewHolder(
     override fun bind(
         adapter: RecyclerView.Adapter<out RecyclerView.ViewHolder>
     ) {
-        val browserAdapter = (adapter as ConcatAdapter).browserAdapter
+        val concatAdapter = adapter as ConcatAdapter
+        val headerAdapter = concatAdapter.titleHeaderAdapter
+        val browserAdapter = concatAdapter.browserAdapter
+        val inactiveTabAdapter = concatAdapter.inactiveTabsAdapter
+        val tabGroupAdapter = concatAdapter.tabGroupAdapter
         browserAdapter.selectionHolder = this
 
-        val number = containerView.context.defaultBrowserLayoutColumns
-        val manager = GridLayoutManager(containerView.context, number).apply {
+        val numberOfColumns = containerView.context.defaultBrowserLayoutColumns
+        val manager = GridLayoutManager(containerView.context, numberOfColumns).apply {
             spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                 override fun getSpanSize(position: Int): Int {
-                    return if (position >= browserAdapter.itemCount) {
-                        number
-                    } else {
+                    return if (position >= inactiveTabAdapter.itemCount + tabGroupAdapter.itemCount +
+                        headerAdapter.itemCount
+                    ) {
                         1
+                    } else {
+                        numberOfColumns
                     }
                 }
             }

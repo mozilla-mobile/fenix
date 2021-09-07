@@ -14,12 +14,15 @@ import mozilla.components.browser.state.selector.normalTabs
 import mozilla.components.browser.state.selector.privateTabs
 import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.browser.state.store.BrowserStore
+import org.mozilla.fenix.R
 import org.mozilla.fenix.sync.SyncedTabsAdapter
 import org.mozilla.fenix.tabstray.browser.BrowserTabsAdapter
 import org.mozilla.fenix.tabstray.browser.BrowserTrayInteractor
+import org.mozilla.fenix.tabstray.browser.TitleHeaderAdapter
 import org.mozilla.fenix.tabstray.browser.InactiveTabsAdapter
 import org.mozilla.fenix.tabstray.browser.maxActiveTime
 import org.mozilla.fenix.tabstray.ext.isNormalTabActive
+import org.mozilla.fenix.tabstray.browser.TabGroupAdapter
 import org.mozilla.fenix.tabstray.syncedtabs.TabClickDelegate
 import org.mozilla.fenix.tabstray.viewholders.AbstractPageViewHolder
 import org.mozilla.fenix.tabstray.viewholders.NormalBrowserPageViewHolder
@@ -37,8 +40,10 @@ class TrayPagerAdapter(
 
     private val normalAdapter by lazy {
         ConcatAdapter(
-            BrowserTabsAdapter(context, browserInteractor, store, TABS_TRAY_FEATURE_NAME),
-            InactiveTabsAdapter(context, browserInteractor, INACTIVE_TABS_FEATURE_NAME)
+            InactiveTabsAdapter(context, browserInteractor, INACTIVE_TABS_FEATURE_NAME),
+            TabGroupAdapter(context, browserInteractor, store, TAB_GROUP_FEATURE_NAME),
+            TitleHeaderAdapter(context.getString(R.string.tab_tray_header_title)),
+            BrowserTabsAdapter(context, browserInteractor, store, TABS_TRAY_FEATURE_NAME)
         )
     }
     private val privateAdapter by lazy { BrowserTabsAdapter(context, browserInteractor, store, TABS_TRAY_FEATURE_NAME) }
@@ -102,6 +107,7 @@ class TrayPagerAdapter(
 
         // Telemetry keys for identifying from which app features the a was opened / closed.
         const val TABS_TRAY_FEATURE_NAME = "Tabs tray"
+        const val TAB_GROUP_FEATURE_NAME = "Tab group"
         const val INACTIVE_TABS_FEATURE_NAME = "Inactive tabs"
 
         val POSITION_NORMAL_TABS = Page.NormalTabs.ordinal
