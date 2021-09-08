@@ -1769,7 +1769,7 @@
     <!--  The error message in add login view when username field is blank. -->
     <string name="saved_login_username_required">Username required</string>
     <!--  The error message in add login view when hostname field is blank. -->
-    <string name="saved_login_hostname_required">Hostname required</string>
+    <string name="saved_login_hostname_required" tools:ignore="UnusedResources">Hostname required</string>
     <!-- Voice search button content description  -->
     <string name="voice_search_content_description">Voice search</string>
     <!-- Voice search prompt description displayed after the user presses the voice search button -->
@@ -1778,8 +1778,10 @@
     <string name="saved_login_duplicate">A login with that username already exists</string>
     <!-- This is the hint text that is shown inline on the hostname field of the create new login page. -->
     <string name="add_login_hostname_hint_text">https://www.example.com</string>
+    <!-- This is an error message shown below the hostname field of the add login page when a hostname does not contain http or https. -->
+    <string name="add_login_hostname_invalid_text_1">Web address must contain \“https://\“ or \“http://\“</string>
     <!-- This is an error message shown below the hostname field of the add login page when a hostname is invalid. -->
-    <string name="add_login_hostname_invalid_text">Web address must contain \“https://\“ or \“http://\“</string>
+    <string name="add_login_hostname_invalid_text_2">Valid hostname required</string>
 
     <!-- Synced Tabs -->
     <!-- Text displayed to ask user to connect another device as no devices found with account -->

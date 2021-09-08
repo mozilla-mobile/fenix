@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.settings.logins.fragment
 
+import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.text.Editable
@@ -13,6 +14,8 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.view.inputmethod.InputMethodManager
+import android.webkit.URLUtil
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -49,7 +52,7 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login) {
 
     private var validPassword = true
     private var validUsername = true
-    private var validHostname = true
+    private var validHostname = false
 
     private var _binding: FragmentAddLoginBinding? = null
     private val binding get() = _binding!!
@@ -104,6 +107,9 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login) {
 
     private fun setUpClickListeners() {
         binding.hostnameText.requestFocus()
+        val imm =
+            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0)
 
         binding.clearHostnameTextButton.setOnClickListener {
             binding.hostnameText.text?.clear()
@@ -147,12 +153,31 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login) {
 
         binding.hostnameText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(h: Editable?) {
-                interactor.findPotentialDuplicates(
-                    hostnameText = h.toString(),
-                    binding.usernameText.text.toString(),
-                    binding.passwordText.text.toString()
-                )
-                binding.clearHostnameTextButton.isEnabled = h.toString().isNotEmpty()
+                val hostnameText = h.toString()
+
+                when {
+                    hostnameText.isEmpty() -> {
+                        setHostnameError()
+                        binding.clearHostnameTextButton.isEnabled = false
+                    }
+                    !URLUtil.isHttpUrl(hostnameText) && !URLUtil.isHttpsUrl(hostnameText) -> {
+                        setHostnameError()
+                        binding.clearHostnameTextButton.isEnabled = true
+                    }
+                    else -> {
+                        validHostname = true
+
+                        binding.clearHostnameTextButton.isEnabled = true
+                        binding.inputLayoutHostname.error = null
+                        binding.inputLayoutHostname.errorIconDrawable = null
+
+                        interactor.findPotentialDuplicates(
+                            hostnameText = h.toString(),
+                            binding.usernameText.text.toString(),
+                            binding.passwordText.text.toString()
+                        )
+                    }
+                }
                 setSaveButtonState()
             }
 
@@ -174,6 +199,8 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login) {
                     }
                     else -> {
                         setDupeError()
+                        binding.inputLayoutUsername.error = null
+                        binding.inputLayoutUsername.errorIconDrawable = null
                     }
                 }
                 binding.clearUsernameTextButton.isEnabled = u.toString().isNotEmpty()
@@ -269,7 +296,7 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login) {
     private fun setHostnameError() {
         binding.inputLayoutHostname.let { layout ->
             validHostname = false
-            layout.error = context?.getString(R.string.saved_login_hostname_required)
+            layout.error = context?.getString(R.string.add_login_hostname_invalid_text_2)
             layout.setErrorIconDrawable(R.drawable.mozac_ic_warning_with_bottom_padding)
             layout.setErrorIconTintList(
                 ColorStateList.valueOf(
@@ -289,7 +316,7 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login) {
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         val saveButton = menu.findItem(R.id.save_login_button)
-        val changesMadeWithNoErrors = validUsername && validPassword
+        val changesMadeWithNoErrors = validHostname && validUsername && validPassword
         saveButton.isEnabled = changesMadeWithNoErrors
     }
 
