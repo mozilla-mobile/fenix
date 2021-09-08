@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import org.junit.Assert.assertEquals
-import org.junit.Ignore
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.R
@@ -22,9 +22,10 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 
 // BEFORE INCREASING THESE VALUES, PLEASE CONSULT WITH THE PERF TEAM.
-private const val EXPECTED_SUPPRESSION_COUNT = 11
-private const val EXPECTED_RUNBLOCKING_COUNT = 3
-private const val EXPECTED_COMPONENT_INIT_COUNT = 42
+private const val EXPECTED_SUPPRESSION_COUNT = 19
+@Suppress("TopLevelPropertyNaming") // it's silly this would have a different naming convention b/c no const
+private val EXPECTED_RUNBLOCKING_RANGE = 0..1 // CI has +1 counts compared to local runs: increment these together
+private const val EXPECTED_COMPONENT_INIT_COUNT = 50
 private const val EXPECTED_VIEW_HIERARCHY_DEPTH = 12
 private const val EXPECTED_RECYCLER_VIEW_CONSTRAINT_LAYOUT_CHILDREN = 4
 private const val EXPECTED_NUMBER_OF_INFLATION = 12
@@ -83,7 +84,6 @@ class StartupExcessiveResourceUseTest {
 
     private val uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
-    @Ignore("See: https://github.com/mozilla-mobile/fenix/pull/20841#issuecomment-898630241c")
     @Test
     fun verifyRunBlockingAndStrictModeSuppresionCount() {
         uiDevice.waitForIdle() // wait for async UI to load.
@@ -102,7 +102,7 @@ class StartupExcessiveResourceUseTest {
         val actualNumberOfInflations = InflationCounter.inflationCount.get()
 
         assertEquals(failureMsgStrictMode, EXPECTED_SUPPRESSION_COUNT, actualSuppresionCount)
-        assertEquals(failureMsgRunBlocking, EXPECTED_RUNBLOCKING_COUNT, actualRunBlocking)
+        assertTrue(failureMsgRunBlocking + "actual: $actualRunBlocking", actualRunBlocking in EXPECTED_RUNBLOCKING_RANGE)
         assertEquals(failureMsgComponentInit, EXPECTED_COMPONENT_INIT_COUNT, actualComponentInitCount)
         assertEquals(failureMsgViewHierarchyDepth, EXPECTED_VIEW_HIERARCHY_DEPTH, actualViewHierarchyDepth)
         assertEquals(
