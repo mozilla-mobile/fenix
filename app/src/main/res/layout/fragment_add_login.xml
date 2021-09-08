@@ -10,9 +10,9 @@
     android:id="@+id/addLoginLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="72dp"
+    android:layout_marginStart="20dp"
     android:layout_marginEnd="20dp"
-    android:layout_marginTop="12dp"
+    android:layout_marginTop="16dp"
     android:clickable="true"
     android:focusable="true" >
 
@@ -37,18 +37,15 @@
         android:id="@+id/inputLayoutHostname"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clickable="false"
-        android:focusable="false"
-        android:background="@android:color/transparent"
+        android:colorControlHighlight="?primaryText"
+        android:colorControlActivated="?primaryText"
         android:textColor="?primaryText"
-        android:layout_marginTop="12dp"
-        android:layout_marginStart="3dp"
-        android:contentDescription="@string/saved_login_hostname_description"
-        app:backgroundTint="@android:color/transparent"
-        app:hintEnabled="false"
         app:layout_constraintEnd_toEndOf="@id/hostnameHeaderText"
         app:layout_constraintStart_toStartOf="@id/hostnameHeaderText"
-        app:layout_constraintTop_toBottomOf="@id/hostnameHeaderText">
+        app:layout_constraintTop_toBottomOf="@id/hostnameHeaderText"
+        app:helperTextEnabled="true"
+        app:helperText="@string/add_login_hostname_invalid_text"
+        app:hintEnabled="false" >
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/hostnameText"
@@ -57,21 +54,37 @@
             android:textSize="16sp"
             android:fontFamily="sans-serif"
             android:textStyle="normal"
+            android:colorControlHighlight="?primaryText"
+            android:colorControlActivated="?primaryText"
             android:textColor="?primaryText"
             android:letterSpacing="0.01"
             android:lineSpacingExtra="8sp"
-            android:hint="@string/saved_login_hostname_description"
+            android:hint="@string/add_login_hostname_hint_text"
             android:inputType="textNoSuggestions"
             android:ellipsize="end"
             android:maxLines="1"
             android:singleLine="true"
             android:clickable="true"
             android:focusable="true"
-            android:textCursorDrawable="@android:color/transparent"
-            android:background="@android:color/transparent"
-            app:backgroundTint="@android:color/transparent"
+            android:cursorVisible="true"
+            android:textCursorDrawable="@null"
+            app:backgroundTint="?primaryText"
             tools:ignore="Autofill"/>
     </com.google.android.material.textfield.TextInputLayout>
+
+    <ImageButton
+        android:id="@+id/clearHostnameTextButton"
+        android:layout_width="48dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="10dp"
+        android:background="@null"
+        android:contentDescription="@string/saved_login_clear_hostname"
+        android:visibility="invisible"
+        app:tint="@color/saved_login_clear_edit_text_tint"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/inputLayoutHostname"
+        app:srcCompat="@drawable/mozac_ic_clear" />
 
     <TextView
         android:id="@+id/usernameHeader"

@@ -49,6 +49,7 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login) {
 
     private var validPassword = true
     private var validUsername = true
+    private var validHostname = true
 
     private var _binding: FragmentAddLoginBinding? = null
     private val binding get() = _binding!!
@@ -74,17 +75,8 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login) {
             )
         )
 
-        // loginsFragmentStore.dispatch(LoginsAction.UpdateCurrentLogin(args.savedLoginItem))
+        initEditableValues()
 
-        // initialize editable values
-        binding.hostnameText.text = "".toEditable()
-        binding.usernameText.text = "".toEditable()
-        binding.passwordText.text = "".toEditable()
-
-        setUsernameError()
-        setPasswordError()
-
-        formatEditableValues()
         setUpClickListeners()
         setUpTextListeners()
 
@@ -93,16 +85,34 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login) {
         }
     }
 
-    private fun formatEditableValues() {
+    private fun initEditableValues() {
+        binding.hostnameText.text = "".toEditable()
+        binding.usernameText.text = "".toEditable()
+        binding.passwordText.text = "".toEditable()
+
+        binding.hostnameText.inputType = InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
         binding.usernameText.inputType = InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
+
         // TODO: extend PasswordTransformationMethod() to change bullets to asterisks
-        binding.passwordText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+        binding.passwordText.inputType =
+            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+
         binding.passwordText.compoundDrawablePadding =
             requireContext().resources
                 .getDimensionPixelOffset(R.dimen.saved_logins_end_icon_drawable_padding)
     }
 
     private fun setUpClickListeners() {
+        binding.hostnameText.requestFocus()
+
+        binding.clearHostnameTextButton.setOnClickListener {
+            binding.hostnameText.text?.clear()
+            binding.hostnameText.isCursorVisible = true
+            binding.hostnameText.hasFocus()
+            binding.inputLayoutHostname.hasFocus()
+            it.isEnabled = false
+        }
+
         binding.clearUsernameTextButton.setOnClickListener {
             binding.usernameText.text?.clear()
             binding.usernameText.isCursorVisible = true
@@ -110,21 +120,25 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login) {
             binding.inputLayoutUsername.hasFocus()
             it.isEnabled = false
         }
+
         binding.clearPasswordTextButton.setOnClickListener {
             binding.passwordText.text?.clear()
             binding.passwordText.isCursorVisible = true
             binding.passwordText.hasFocus()
             binding.inputLayoutPassword.hasFocus()
+            it.isEnabled = false
         }
     }
 
     private fun setUpTextListeners() {
         val frag = view?.findViewById<View>(R.id.addLoginFragment)
+
         frag?.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
                 view?.hideKeyboard()
             }
         }
+
         binding.addLoginLayout.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
                 view?.hideKeyboard()
@@ -138,7 +152,8 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login) {
                     binding.usernameText.text.toString(),
                     binding.passwordText.text.toString()
                 )
-                setDupeError() // won't work because findPotentialDuplicates is async
+                binding.clearHostnameTextButton.isEnabled = h.toString().isNotEmpty()
+                setSaveButtonState()
             }
 
             override fun beforeTextChanged(u: CharSequence?, start: Int, count: Int, after: Int) {
@@ -251,6 +266,19 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login) {
         }
     }
 
+    private fun setHostnameError() {
+        binding.inputLayoutHostname.let { layout ->
+            validHostname = false
+            layout.error = context?.getString(R.string.saved_login_hostname_required)
+            layout.setErrorIconDrawable(R.drawable.mozac_ic_warning_with_bottom_padding)
+            layout.setErrorIconTintList(
+                ColorStateList.valueOf(
+                    ContextCompat.getColor(requireContext(), R.color.design_error)
+                )
+            )
+        }
+    }
+
     private fun setSaveButtonState() {
         activity?.invalidateOptionsMenu()
     }
@@ -287,7 +315,6 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login) {
                 binding.usernameText.text.toString(),
                 binding.passwordText.text.toString()
             )
-            // requireComponents.analytics.metrics.track(Event.AddLoginSave)
             true
         }
         else -> false
