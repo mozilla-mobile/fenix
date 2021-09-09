@@ -108,7 +108,8 @@ events:
     type: event
     description: |
       A browser menu item was tapped.
-      The name of the item that the user tapped is stored in extras with the key `item`.
+      The name of the item that the user tapped is stored in extras with the
+      key `item`.
     extra_keys:
       item:
         description: |
