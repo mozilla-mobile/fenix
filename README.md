@@ -1,4 +1,3 @@
-# Firefox for Android
 
 [![Task Status](https://github.taskcluster.net/v1/repository/mozilla-mobile/fenix/main/badge.svg)](https://github.taskcluster.net/v1/repository/mozilla-mobile/fenix/main/latest)
 [![codecov](https://codecov.io/gh/mozilla-mobile/fenix/branch/main/graph/badge.svg)](https://codecov.io/gh/mozilla-mobile/fenix)
