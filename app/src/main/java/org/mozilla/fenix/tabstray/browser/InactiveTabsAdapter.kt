@@ -13,8 +13,10 @@ import mozilla.components.concept.tabstray.Tab as TabsTrayTab
 import mozilla.components.concept.tabstray.Tabs
 import mozilla.components.concept.tabstray.TabsTray
 import mozilla.components.support.base.observer.ObserverRegistry
+import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.tabstray.browser.InactiveTabViewHolder.FooterHolder
 import org.mozilla.fenix.tabstray.browser.InactiveTabViewHolder.HeaderHolder
+import org.mozilla.fenix.tabstray.browser.InactiveTabViewHolder.RecentlyClosedHolder
 import org.mozilla.fenix.tabstray.browser.InactiveTabViewHolder.TabViewHolder
 import org.mozilla.fenix.tabstray.ext.autoCloseInterval
 import mozilla.components.support.base.observer.Observable as ComponentObservable
@@ -31,21 +33,30 @@ private typealias Observable = ComponentObservable<TabsTray.Observer>
 
 /**
  * The [ListAdapter] for displaying the list of inactive tabs.
+ *
+ * @param context [Context] used for various platform interactions or accessing [Components]
+ * @param browserTrayInteractor [BrowserTrayInteractor] handling tabs interactions in a tab tray.
+ * @param featureName [String] representing the name of the feature displaying tabs. Used in telemetry reporting.
+ * @param delegate [Observable]<[TabsTray.Observer]> for observing tabs tray changes. Defaults to [ObserverRegistry].
  */
 class InactiveTabsAdapter(
     private val context: Context,
     private val browserTrayInteractor: BrowserTrayInteractor,
+    private val featureName: String,
     delegate: Observable = ObserverRegistry()
 ) : Adapter(DiffCallback), TabsTray, Observable by delegate {
+
+    internal lateinit var inactiveTabsInteractor: InactiveTabsInteractor
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): InactiveTabViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(viewType, parent, false)
 
         return when (viewType) {
-            HeaderHolder.LAYOUT_ID -> HeaderHolder(view)
-            TabViewHolder.LAYOUT_ID -> TabViewHolder(view, browserTrayInteractor)
+            HeaderHolder.LAYOUT_ID -> HeaderHolder(view, inactiveTabsInteractor)
+            TabViewHolder.LAYOUT_ID -> TabViewHolder(view, browserTrayInteractor, featureName)
             FooterHolder.LAYOUT_ID -> FooterHolder(view)
+            RecentlyClosedHolder.LAYOUT_ID -> RecentlyClosedHolder(view, browserTrayInteractor)
             else -> throw IllegalStateException("Unknown viewType: $viewType")
         }
     }
@@ -63,28 +74,38 @@ class InactiveTabsAdapter(
             is HeaderHolder -> {
                 // do nothing.
             }
+            is RecentlyClosedHolder -> {
+                holder.bind()
+            }
         }
     }
 
     override fun getItemViewType(position: Int): Int {
         return when (position) {
             0 -> HeaderHolder.LAYOUT_ID
+            itemCount - 2 -> RecentlyClosedHolder.LAYOUT_ID
             itemCount - 1 -> FooterHolder.LAYOUT_ID
             else -> TabViewHolder.LAYOUT_ID
         }
     }
 
     override fun updateTabs(tabs: Tabs) {
+        // Early return with an empty list to remove the header/footer items.
         if (tabs.list.isEmpty()) {
-            // Early return with an empty list to remove the header/footer items.
             submitList(emptyList())
+            return
+        }
+
+        // If we have items, but we should be in a collapsed state.
+        if (!InactiveTabsState.isExpanded) {
+            submitList(listOf(Item.Header))
             return
         }
 
         val items = tabs.list.map { Item.Tab(it) }
         val footer = Item.Footer(context.autoCloseInterval)
 
-        submitList(listOf(Item.Header) + items + listOf(footer))
+        submitList(listOf(Item.Header) + items + listOf(Item.RecentlyClosed, footer))
     }
 
     override fun isTabSelected(tabs: Tabs, position: Int): Boolean = false
@@ -122,6 +143,11 @@ class InactiveTabsAdapter(
          * A tab that is now considered inactive.
          */
         data class Tab(val tab: TabsTrayTab) : Item()
+
+        /**
+         * A button that leads to the Recently Closed section in History.
+         */
+        object RecentlyClosed : Item()
 
         /**
          * A footer for the inactive tab section. This may be seen only

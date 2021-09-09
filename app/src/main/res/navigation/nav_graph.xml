@@ -111,6 +111,9 @@
         android:id="@+id/action_global_quickSettingsSheetDialogFragment"
         app:destination="@id/quickSettingsSheetDialogFragment" />
     <action
+        android:id="@+id/action_global_connectionDetailsDialogFragment"
+        app:destination="@id/connectionPanelDialogFragment" />
+    <action
         android:id="@+id/action_global_tabsTrayFragment"
         app:destination="@id/tabsTrayFragment"
         app:popUpTo="@id/tabsTrayFragment"
@@ -205,9 +208,6 @@
         <action
             android:id="@+id/action_browserFragment_to_quickSettingsSheetDialogFragment"
             app:destination="@id/quickSettingsSheetDialogFragment" />
-        <action
-            android:id="@+id/action_browserFragment_to_trackingProtectionPanelDialogFragment"
-            app:destination="@id/trackingProtectionPanelDialogFragment" />
     </fragment>
 
     <fragment
@@ -345,6 +345,11 @@
             android:id="@+id/action_savedLoginsFragment_to_loginDetailFragment"
             app:destination="@id/loginDetailFragment" />
         <action
+            android:id="@+id/action_savedLoginsFragment_to_addLoginFragment"
+            app:destination="@id/addLoginFragment"
+            app:popUpTo="@id/addLoginFragment"
+            app:popUpToInclusive="true" />
+        <action
             android:id="@+id/action_savedLoginsFragment_to_browserFragment"
             app:destination="@id/browserFragment"
             app:popUpTo="@id/settingsFragment"
@@ -385,6 +390,18 @@
             android:id="@+id/action_editLoginFragment_to_loginDetailFragment"
             app:destination="@id/loginDetailFragment"
             app:popUpTo="@id/loginDetailFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/addLoginFragment"
+        android:name="org.mozilla.fenix.settings.logins.fragment.AddLoginFragment"
+        android:label="@string/add_login"
+        tools:layout="@layout/fragment_add_login">
+        <action
+            android:id="@+id/action_addLoginFragment_to_savedLoginsFragment"
+            app:destination="@id/savedLoginsFragment"
+            app:popUpTo="@id/savedLoginsFragment"
             app:popUpToInclusive="true" />
     </fragment>
 
@@ -553,7 +570,20 @@
     <fragment
         android:id="@+id/dataChoicesFragment"
         android:name="org.mozilla.fenix.settings.DataChoicesFragment"
-        android:label="@string/preferences_data_choices" />
+        android:label="@string/preferences_data_choices">
+        <action
+            android:id="@+id/action_dataChoicesFragment_to_studiesFragment"
+            app:destination="@id/studiesFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:popUpTo="@id/dataChoicesFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/studiesFragment"
+        android:name="org.mozilla.fenix.settings.studies.StudiesFragment"
+        android:label="@string/preference_experiments_2" />
     <fragment
         android:id="@+id/sitePermissionsFragment"
         android:name="org.mozilla.fenix.settings.sitepermissions.SitePermissionsFragment"
@@ -767,6 +797,9 @@
         <argument
             android:name="permissionHighlights"
             app:argType="mozilla.components.browser.state.state.content.PermissionHighlightsState" />
+        <argument
+            android:name="isTrackingProtectionEnabled"
+            app:argType="boolean" />
     </dialog>
     <fragment
         android:id="@+id/accountProblemFragment"
@@ -792,6 +825,39 @@
         <argument
             android:name="trackingProtectionEnabled"
             app:argType="boolean" />
+        <argument
+            android:name="gravity"
+            android:defaultValue="80"
+            app:argType="integer" />
+        <argument
+            android:name="sitePermissions"
+            app:argType="mozilla.components.concept.engine.permission.SitePermissions"
+            app:nullable="true" />
+    </dialog>
+    <dialog
+        android:id="@+id/connectionPanelDialogFragment"
+        android:name="org.mozilla.fenix.settings.quicksettings.ConnectionPanelDialogFragment"
+        tools:layout="@layout/quicksettings_website_info">
+        <argument
+            android:name="sessionId"
+            app:argType="string" />
+        <argument
+            android:name="title"
+            app:argType="string" />
+        <argument
+            android:name="url"
+            app:argType="string" />
+        <argument
+            android:name="isSecured"
+            app:argType="boolean" />
+        <argument
+            android:name="certificateName"
+            android:defaultValue=" "
+            app:argType="string" />
+        <argument
+            android:name="sitePermissions"
+            app:argType="mozilla.components.concept.engine.permission.SitePermissions"
+            app:nullable="true" />
         <argument
             android:name="gravity"
             android:defaultValue="80"

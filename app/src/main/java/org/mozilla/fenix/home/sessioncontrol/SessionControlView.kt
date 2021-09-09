@@ -4,21 +4,24 @@
 
 package org.mozilla.fenix.home.sessioncontrol
 
+import android.content.Context
 import android.view.View
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.extensions.LayoutContainer
 import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
+import mozilla.components.service.pocket.PocketRecommendedStory
 import org.mozilla.fenix.components.tips.Tip
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.historymetadata.HistoryMetadataGroup
 import org.mozilla.fenix.home.HomeFragmentState
+import org.mozilla.fenix.home.HomeFragmentStore
 import org.mozilla.fenix.home.HomeScreenViewModel
 import org.mozilla.fenix.home.Mode
 import org.mozilla.fenix.home.OnboardingState
@@ -28,6 +31,7 @@ import org.mozilla.fenix.home.recenttabs.view.RecentTabsItemPosition
 // When we remove the tabs from the home screen this will get much simpler again.
 @Suppress("ComplexMethod", "LongParameterList")
 private fun normalModeAdapterItems(
+    context: Context,
     topSites: List<TopSite>,
     collections: List<TabCollection>,
     expandedCollections: Set<Long>,
@@ -36,7 +40,8 @@ private fun normalModeAdapterItems(
     showCollectionsPlaceholder: Boolean,
     showSetAsDefaultBrowserCard: Boolean,
     recentTabs: List<TabSessionState>,
-    historyMetadata: List<HistoryMetadataGroup>
+    historyMetadata: List<HistoryMetadataGroup>,
+    pocketArticles: List<PocketRecommendedStory>
 ): List<AdapterItem> {
     val items = mutableListOf<AdapterItem>()
 
@@ -68,6 +73,10 @@ private fun normalModeAdapterItems(
         }
     } else {
         showCollections(collections, expandedCollections, items)
+    }
+
+    if (context.settings().pocketRecommendations && pocketArticles.isNotEmpty()) {
+        items.add(AdapterItem.PocketStoriesItem)
     }
 
     return items
@@ -185,8 +194,9 @@ private fun onboardingAdapterItems(onboardingState: OnboardingState): List<Adapt
     return items
 }
 
-private fun HomeFragmentState.toAdapterList(): List<AdapterItem> = when (mode) {
+private fun HomeFragmentState.toAdapterList(context: Context): List<AdapterItem> = when (mode) {
     is Mode.Normal -> normalModeAdapterItems(
+        context,
         topSites,
         collections,
         expandedCollections,
@@ -195,7 +205,8 @@ private fun HomeFragmentState.toAdapterList(): List<AdapterItem> = when (mode) {
         showCollectionPlaceholder,
         showSetAsDefaultBrowserCard,
         recentTabs,
-        historyMetadata
+        historyMetadata,
+        pocketArticles
     )
     is Mode.Private -> privateModeAdapterItems()
     is Mode.Onboarding -> onboardingAdapterItems(mode.state)
@@ -207,15 +218,17 @@ private fun collectionTabItems(collection: TabCollection) =
     }
 
 class SessionControlView(
-    override val containerView: View,
+    store: HomeFragmentStore,
+    val containerView: View,
     viewLifecycleOwner: LifecycleOwner,
     interactor: SessionControlInteractor,
     private var homeScreenViewModel: HomeScreenViewModel
-) : LayoutContainer {
+) {
 
     val view: RecyclerView = containerView as RecyclerView
 
     private val sessionControlAdapter = SessionControlAdapter(
+        store,
         interactor,
         viewLifecycleOwner,
         containerView.context.components
@@ -236,7 +249,7 @@ class SessionControlView(
     }
 
     fun update(state: HomeFragmentState) {
-        val stateAdapterList = state.toAdapterList()
+        val stateAdapterList = state.toAdapterList(view.context)
         if (homeScreenViewModel.shouldScrollToTopSites) {
             sessionControlAdapter.submitList(stateAdapterList) {
 

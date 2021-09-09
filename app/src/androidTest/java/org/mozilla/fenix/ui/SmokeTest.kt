@@ -25,13 +25,18 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
+import org.mozilla.fenix.helpers.Constants.PackageName.YOUTUBE_APP
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.RecyclerViewIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.helpers.TestHelper.appName
+import org.mozilla.fenix.helpers.TestHelper.assertExternalAppOpens
 import org.mozilla.fenix.helpers.TestHelper.createCustomTabIntent
 import org.mozilla.fenix.helpers.TestHelper.deleteDownloadFromStorage
+import org.mozilla.fenix.helpers.TestHelper.isPackageInstalled
+import org.mozilla.fenix.helpers.TestHelper.restartApp
+import org.mozilla.fenix.helpers.TestHelper.returnToBrowser
 import org.mozilla.fenix.helpers.TestHelper.scrollToElementByText
 import org.mozilla.fenix.helpers.ViewVisibilityIdlingResource
 import org.mozilla.fenix.ui.robots.browserScreen
@@ -39,7 +44,6 @@ import org.mozilla.fenix.ui.robots.clickTabCrashedRestoreButton
 import org.mozilla.fenix.ui.robots.clickUrlbar
 import org.mozilla.fenix.ui.robots.collectionRobot
 import org.mozilla.fenix.ui.robots.customTabScreen
-import org.mozilla.fenix.ui.robots.dismissTrackingOnboarding
 import org.mozilla.fenix.ui.robots.downloadRobot
 import org.mozilla.fenix.ui.robots.enhancedTrackingProtection
 import org.mozilla.fenix.ui.robots.homeScreen
@@ -238,10 +242,13 @@ class SmokeTest {
     @Test
     // Verifies the History menu opens from a tab's 3 dot menu
     fun openMainMenuHistoryItemTest() {
-        homeScreen {
+        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
         }.openThreeDotMenu {
         }.openHistory {
-            verifyHistoryMenuView()
+            verifyHistoryListExists()
         }
     }
 
@@ -249,7 +256,10 @@ class SmokeTest {
     @Test
     // Verifies the Bookmarks menu opens from a tab's 3 dot menu
     fun openMainMenuBookmarksItemTest() {
-        homeScreen {
+        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
         }.openThreeDotMenu {
         }.openBookmarks {
             verifyBookmarksMenuView()
@@ -260,7 +270,10 @@ class SmokeTest {
     // Verifies the Synced tabs menu or Sync Sign In menu opens from a tab's 3 dot menu.
     // The test is assuming we are NOT signed in.
     fun openMainMenuSyncItemTest() {
-        homeScreen {
+        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
         }.openThreeDotMenu {
         }.openSyncSignIn {
             verifySyncSignInMenuHeader()
@@ -272,7 +285,10 @@ class SmokeTest {
     // caution when making changes to it, so they don't block the builds
     // Verifies the Settings menu opens from a tab's 3 dot menu
     fun openMainMenuSettingsItemTest() {
-        homeScreen {
+        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
         }.openThreeDotMenu {
         }.openSettings {
             verifySettingsView()
@@ -363,6 +379,37 @@ class SmokeTest {
     }
 
     @Test
+    // Verifies the Open in app button when an app is installed
+    fun mainMenuOpenInAppTest() {
+        val youtubeUrl = "m.youtube.com"
+        if (isPackageInstalled(YOUTUBE_APP)) {
+            navigationToolbar {
+            }.enterURLAndEnterToBrowser(youtubeUrl.toUri()) {
+                verifyNotificationDotOnMainMenu()
+            }.openThreeDotMenu {
+            }.clickOpenInApp {
+                assertExternalAppOpens(YOUTUBE_APP)
+                returnToBrowser()
+                verifyUrl(youtubeUrl)
+            }
+        }
+    }
+
+    @Test
+    // Verifies the Desktop site toggle in a tab's 3 dot menu
+    fun mainMenuDesktopSiteTest() {
+        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+        }.openThreeDotMenu {
+        }.switchDesktopSiteMode {
+        }.openThreeDotMenu {
+            verifyDesktopSiteModeEnabled(true)
+        }
+    }
+
+    @Test
     // Verifies the Share button in a tab's 3 dot menu
     fun mainMenuShareButtonTest() {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -391,34 +438,6 @@ class SmokeTest {
     }
 
     @Test
-    // Turns ETP toggle off from Settings and verifies the ETP shield is not displayed in the nav bar
-    fun verifyETPShieldNotDisplayedIfOFFGlobally() {
-        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openEnhancedTrackingProtectionSubMenu {
-            switchEnhancedTrackingProtectionToggle()
-            verifyEnhancedTrackingProtectionOptionsGrayedOut()
-        }.goBackToHomeScreen {
-            navigationToolbar {
-            }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-                verifyEnhancedTrackingProtectionPanelNotVisible()
-            }.openThreeDotMenu {
-            }.openSettings {
-            }.openEnhancedTrackingProtectionSubMenu {
-                switchEnhancedTrackingProtectionToggle()
-            }.goBack {
-            }.goBackToBrowser {
-                clickEnhancedTrackingProtectionPanel()
-                verifyEnhancedTrackingProtectionSwitch()
-                clickEnhancedTrackingProtectionSwitchOffOn()
-            }
-        }
-    }
-
-    @Test
     fun customTrackingProtectionSettingsTest() {
         val genericWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
         val trackingPage = TestAssetHelper.getEnhancedTrackingProtectionAsset(mockWebServer)
@@ -436,16 +455,16 @@ class SmokeTest {
             // browsing a basic page to allow GV to load on a fresh run
         }.enterURLAndEnterToBrowser(genericWebPage.url) {
         }.openNavigationToolbar {
-        }.openTrackingProtectionTestPage(trackingPage.url, true) {
-            dismissTrackingOnboarding()
-        }
+        }.enterURLAndEnterToBrowser(trackingPage.url) {}
 
         enhancedTrackingProtection {
         }.openEnhancedTrackingProtectionSheet {
+        }.openDetails {
             verifyTrackingCookiesBlocked()
             verifyCryptominersBlocked()
             verifyFingerprintersBlocked()
-            verifyBasicLevelTrackingContentBlocked()
+            verifyTrackingContentBlocked()
+            viewTrackingContentBlockList()
         }
     }
 
@@ -600,7 +619,7 @@ class SmokeTest {
             verifySavedLoginFromPrompt()
             viewSavedLoginDetails()
             revealPassword()
-            verifyPasswordSaved("test")
+            verifyPasswordSaved("test") // failing here locally
         }
     }
 
@@ -661,10 +680,9 @@ class SmokeTest {
             IdlingRegistry.getInstance().unregister(addonsListIdlingResource!!)
         }.goBack {
         }.openNavigationToolbar {
-        }.openTrackingProtectionTestPage(trackingProtectionPage.url, true) {}
-        enhancedTrackingProtection {
-            verifyEnhancedTrackingProtectionNotice()
-        }.closeNotificationPopup {}
+        }.enterURLAndEnterToBrowser(trackingProtectionPage.url) {
+            verifyPageContent(trackingProtectionPage.content)
+        }
     }
 
     @Test
@@ -1011,10 +1029,10 @@ class SmokeTest {
         }.expandCollection(collectionName) {
             clickCollectionThreeDotButton()
             selectDeleteCollection()
-            confirmDeleteCollection()
         }
 
         homeScreen {
+            verifySnackBarText("Collection deleted")
             verifyNoCollectionsText()
         }
     }
@@ -1160,7 +1178,7 @@ class SmokeTest {
 
     @Test
     fun mainMenuInstallPWATest() {
-        val pwaPage = "https://rpappalax.github.io/testapp/"
+        val pwaPage = "https://mozilla-mobile.github.io/testapp/"
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(pwaPage.toUri()) {
@@ -1410,6 +1428,105 @@ class SmokeTest {
             selectLanguage(FRENCH_SYSTEM_LOCALE_OPTION)
             verifyLanguageHeaderIsTranslated("Language")
             IdlingRegistry.getInstance().unregister(localeListIdlingResource)
+        }
+    }
+
+    @Test
+    fun goToHomeScreenBottomToolbarTest() {
+        val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(genericURL.url) {
+            mDevice.waitForIdle()
+        }.goToHomescreen {
+            verifyHomeScreen()
+        }
+    }
+
+    @Test
+    fun goToHomeScreenTopToolbarTest() {
+        val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openCustomizeSubMenu {
+            clickTopToolbarToggle()
+        }.goBack {
+        }.goBack {
+        }.openNavigationToolbar {
+        }.enterURLAndEnterToBrowser(genericURL.url) {
+            mDevice.waitForIdle()
+        }.goToHomescreen {
+            verifyHomeScreen()
+        }
+    }
+
+    @Test
+    fun goToHomeScreenBottomToolbarPrivateModeTest() {
+        val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        homeScreen {
+            togglePrivateBrowsingModeOnOff()
+        }
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(genericURL.url) {
+            mDevice.waitForIdle()
+        }.goToHomescreen {
+            verifyHomeScreen()
+        }
+    }
+
+    @Test
+    fun goToHomeScreenTopToolbarPrivateModeTest() {
+        val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        homeScreen {
+            togglePrivateBrowsingModeOnOff()
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openCustomizeSubMenu {
+            clickTopToolbarToggle()
+        }.goBack {
+        }.goBack {
+        }.openNavigationToolbar {
+        }.enterURLAndEnterToBrowser(genericURL.url) {
+            mDevice.waitForIdle()
+        }.goToHomescreen {
+            verifyHomeScreen()
+        }
+    }
+
+    @Test
+    fun tabsSettingsMenuItemsTest() {
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openTabsSubMenu {
+            verifyTabViewOptions()
+            verifyCloseTabsOptions()
+            verifyStartOnHomeOptions()
+        }
+    }
+
+    @Test
+    fun alwaysStartOnHomeTest() {
+        val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(genericURL.url) {
+            mDevice.waitForIdle()
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openTabsSubMenu {
+            clickAlwaysStartOnHomeToggle()
+        }
+
+        restartApp(activityTestRule)
+
+        homeScreen {
+            verifyHomeScreen()
         }
     }
 }

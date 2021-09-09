@@ -6,14 +6,13 @@ package org.mozilla.fenix.browser
 
 import android.content.Context
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import androidx.navigation.NavController
 import io.mockk.every
-import io.mockk.just
 import io.mockk.mockk
-import io.mockk.runs
 import io.mockk.spyk
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -34,7 +33,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.browser.infobanner.DynamicInfoBanner
-import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.utils.Settings
 
@@ -149,7 +147,7 @@ class OpenInAppOnboardingObserverTest {
         every { settings.openLinksInExternalApp } returns false
         every { settings.shouldShowOpenInAppCfr } returns true
         every { appLinksUseCases.appLinkRedirect.invoke(any()).hasExternalApp() } returns true
-        every { context.components.analytics.metrics.track(any()) } just runs
+
         store.dispatch(ContentAction.UpdateLoadingStateAction("1", true)).joinBlocking()
 
         openInAppOnboardingObserver.start()
@@ -172,7 +170,7 @@ class OpenInAppOnboardingObserverTest {
 
         openInAppOnboardingObserver = spyk(
             OpenInAppOnboardingObserver(
-                testContext, mockk(), mockk(), mockk(), mockk(), mockk(), mockk(), shouldScrollWithTopToolbar = true
+                testContext, mockk(), mockk(), mockk(), mockk(), mockk(), FrameLayout(testContext), shouldScrollWithTopToolbar = true
             )
         )
         val banner1 = openInAppOnboardingObserver.createInfoBanner()
@@ -180,7 +178,7 @@ class OpenInAppOnboardingObserverTest {
 
         openInAppOnboardingObserver = spyk(
             OpenInAppOnboardingObserver(
-                testContext, mockk(), mockk(), mockk(), mockk(), mockk(), mockk(), shouldScrollWithTopToolbar = false
+                testContext, mockk(), mockk(), mockk(), mockk(), mockk(), FrameLayout(testContext), shouldScrollWithTopToolbar = false
             )
         )
         val banner2 = openInAppOnboardingObserver.createInfoBanner()

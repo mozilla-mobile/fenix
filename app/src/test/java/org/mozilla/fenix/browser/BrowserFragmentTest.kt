@@ -90,7 +90,7 @@ class BrowserFragmentTest {
         every { browserFragment.requireContext() } returns context
         every { browserFragment.initializeUI(any(), any()) } returns mockk()
         every { browserFragment.fullScreenChanged(any()) } returns Unit
-        every { browserFragment.resumeDownloadDialogState(any(), any(), any(), any(), any()) } returns Unit
+        every { browserFragment.resumeDownloadDialogState(any(), any(), any(), any()) } returns Unit
 
         testTab = createTab(url = "https://mozilla.org")
         store = BrowserStore()
@@ -160,7 +160,7 @@ class BrowserFragmentTest {
         val newSelectedTab = createTab("https://firefox.com")
         addAndSelectTab(newSelectedTab)
         verify(exactly = 1) {
-            browserFragment.resumeDownloadDialogState(newSelectedTab.id, store, view, context, any())
+            browserFragment.resumeDownloadDialogState(newSelectedTab.id, store, context, any())
         }
     }
 
@@ -261,13 +261,10 @@ class BrowserFragmentTest {
 
         browserFragment.observeTabSource(store)
 
-        val newSelectedTab1: TabSessionState = mockk(relaxed = true)
-        val newSelectedTab2: TabSessionState = mockk(relaxed = true)
-        val newSelectedTab3: TabSessionState = mockk(relaxed = true)
-
-        every { newSelectedTab1.source } returns SessionState.Source.ACTION_SEARCH
-        every { newSelectedTab2.source } returns SessionState.Source.ACTION_SEND
-        every { newSelectedTab3.source } returns SessionState.Source.ACTION_VIEW
+        val newSelectedTab1 = createTab("any-tab-1.org", source = SessionState.Source.External.ActionSearch(mockk()))
+        val newSelectedTab2 = createTab("any-tab-2.org", source = SessionState.Source.External.ActionView(mockk()))
+        val newSelectedTab3 = createTab("any-tab-3.org", source = SessionState.Source.External.ActionSend(mockk()))
+        val newSelectedTab4 = createTab("any-tab-4.org", source = SessionState.Source.External.CustomTab(mockk()))
 
         addAndSelectTab(newSelectedTab1)
         verify(exactly = 0) { onboarding.finish() }
@@ -276,6 +273,9 @@ class BrowserFragmentTest {
         verify(exactly = 0) { onboarding.finish() }
 
         addAndSelectTab(newSelectedTab3)
+        verify(exactly = 0) { onboarding.finish() }
+
+        addAndSelectTab(newSelectedTab4)
         verify(exactly = 0) { onboarding.finish() }
     }
 

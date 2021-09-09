@@ -10,9 +10,9 @@
     android:id="@+id/editLoginLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="72dp"
+    android:layout_marginStart="20dp"
     android:layout_marginEnd="20dp"
-    android:layout_marginTop="12dp"
+    android:layout_marginTop="16dp"
     android:clickable="true"
     android:focusable="true" >
 
@@ -141,7 +141,7 @@
         app:tint="@color/saved_login_clear_edit_text_tint"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/inputLayoutUsername"
-        app:srcCompat="@drawable/ic_clear" />
+        app:srcCompat="@drawable/mozac_ic_clear" />
 
     <TextView
         android:id="@+id/passwordHeader"
@@ -223,5 +223,5 @@
         app:tint="@color/saved_login_clear_edit_text_tint"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/revealPasswordButton"
-        app:srcCompat="@drawable/ic_clear" />
+        app:srcCompat="@drawable/mozac_ic_clear" />
 </androidx.constraintlayout.widget.ConstraintLayout>

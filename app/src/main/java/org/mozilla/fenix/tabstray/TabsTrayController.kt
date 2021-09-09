@@ -7,6 +7,7 @@ package org.mozilla.fenix.tabstray
 import androidx.annotation.VisibleForTesting
 import androidx.navigation.NavController
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import mozilla.components.browser.state.action.DebugAction
 import mozilla.components.browser.state.action.LastAccessAction
 import mozilla.components.browser.state.selector.findTab
 import mozilla.components.browser.state.selector.getNormalOrPrivateTabs
@@ -15,13 +16,14 @@ import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.base.profiler.Profiler
 import mozilla.components.concept.tabstray.Tab
 import mozilla.components.feature.tabs.TabsUseCases
+import mozilla.components.lib.state.DelicateAction
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.home.HomeFragment
-import org.mozilla.fenix.tabstray.browser.DEFAULT_INACTIVE_DAYS
+import org.mozilla.fenix.tabstray.browser.DEFAULT_ACTIVE_DAYS
 import java.util.concurrent.TimeUnit
 
 interface TabsTrayController {
@@ -59,6 +61,11 @@ interface TabsTrayController {
     fun handleMultipleTabsDeletion(tabs: Collection<Tab>)
 
     /**
+     * Navigate from TabsTray to Recently Closed section in the History fragment.
+     */
+    fun handleNavigateToRecentlyClosed()
+
+    /**
      * Set the list of [tabs] into the inactive state.
      *
      * ⚠️ DO NOT USE THIS OUTSIDE OF DEBUGGING/TESTING.
@@ -67,7 +74,7 @@ interface TabsTrayController {
      */
     fun forceTabsAsInactive(
         tabs: Collection<Tab>,
-        numOfDays: Long = DEFAULT_INACTIVE_DAYS + 1
+        numOfDays: Long = DEFAULT_ACTIVE_DAYS + 1
     )
 }
 
@@ -161,15 +168,30 @@ class DefaultTabsTrayController(
     }
 
     /**
+     * Dismisses the tabs tray and navigates to the Recently Closed section in the History fragment.
+     */
+    override fun handleNavigateToRecentlyClosed() {
+        dismissTray()
+
+        navController.navigate(R.id.recentlyClosedFragment)
+
+        metrics.track(Event.TabsTrayRecentlyClosedPressed)
+    }
+
+    /**
      * Marks all the [tabs] with the [TabSessionState.lastAccess] to 5 days; enough time to
      * have a tab considered as inactive.
      *
      * ⚠️ DO NOT USE THIS OUTSIDE OF DEBUGGING/TESTING.
      */
+    @OptIn(DelicateAction::class)
     override fun forceTabsAsInactive(tabs: Collection<Tab>, numOfDays: Long) {
         tabs.forEach { tab ->
             val daysSince = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(numOfDays)
-            browserStore.dispatch(LastAccessAction.UpdateLastAccessAction(tab.id, daysSince))
+            browserStore.apply {
+                dispatch(LastAccessAction.UpdateLastAccessAction(tab.id, daysSince))
+                dispatch(DebugAction.UpdateCreatedAtAction(tab.id, daysSince))
+            }
         }
     }
 

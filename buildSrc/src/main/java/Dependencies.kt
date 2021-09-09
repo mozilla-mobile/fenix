@@ -128,6 +128,7 @@ object Deps {
     const val mozilla_feature_webcompat = "org.mozilla.components:feature-webcompat:${Versions.mozilla_android_components}"
     const val mozilla_feature_webnotifications = "org.mozilla.components:feature-webnotifications:${Versions.mozilla_android_components}"
     const val mozilla_feature_webcompat_reporter = "org.mozilla.components:feature-webcompat-reporter:${Versions.mozilla_android_components}"
+    const val mozilla_service_pocket = "org.mozilla.components:service-pocket:${Versions.mozilla_android_components}"
 
     const val mozilla_service_digitalassetlinks =
         "org.mozilla.components:service-digitalassetlinks:${Versions.mozilla_android_components}"
@@ -180,7 +181,9 @@ object Deps {
     const val androidx_coordinatorlayout = "androidx.coordinatorlayout:coordinatorlayout:${Versions.androidx_coordinator_layout}"
     const val androidx_constraintlayout = "androidx.constraintlayout:constraintlayout:${Versions.androidx_constraint_layout}"
     const val androidx_legacy = "androidx.legacy:legacy-support-v4:${Versions.androidx_legacy}"
+    const val androidx_lifecycle_common = "androidx.lifecycle:lifecycle-common-java8:${Versions.androidx_lifecycle}"
     const val androidx_lifecycle_livedata = "androidx.lifecycle:lifecycle-livedata-ktx:${Versions.androidx_lifecycle}"
+    const val androidx_lifecycle_process = "androidx.lifecycle:lifecycle-process:${Versions.androidx_lifecycle}"
     const val androidx_lifecycle_viewmodel = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.androidx_lifecycle}"
     const val androidx_lifecycle_runtime = "androidx.lifecycle:lifecycle-runtime-ktx:${Versions.androidx_lifecycle}"
     const val androidx_paging = "androidx.paging:paging-runtime-ktx:${Versions.androidx_paging}"

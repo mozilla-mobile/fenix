@@ -86,9 +86,6 @@
     <dimen name="sign_in_button_margin_top">32dp</dimen>
     <dimen name="sign_in_button_margin">16dp</dimen>
 
-    <!-- ETP Onboarding Popup -->
-    <dimen name="etp_onboarding_popup_width">256dp</dimen>
-
     <!-- Bookmark Edit Fragment  -->
     <dimen name="bookmark_edit_text_height">48dp</dimen>
     <dimen name="bookmark_select_folder_indent">10dp</dimen>
@@ -196,8 +193,8 @@
     <dimen name="tab_tray_multiselect_handle_top_margin">0dp</dimen>
     <dimen name="tab_tray_new_collection_padding_start">24dp</dimen>
     <dimen name="tab_tray_new_collection_drawable_padding">28dp</dimen>
-    <!--  Keeps FAB from covering last item in list. Fab 64dp, top & bottom margins 16dp each.  -->
-    <dimen name="tab_tray_list_bottom_padding">96dp</dimen>
+    <!--  Keeps FAB and snackbar from covering last item in list -->
+    <dimen name="tab_tray_list_bottom_padding">190dp</dimen>
 
     <!-- Saved Logins Fragment -->
     <dimen name="saved_logins_sort_menu_dropdown_chevron_icon_margin_start">24dp</dimen>

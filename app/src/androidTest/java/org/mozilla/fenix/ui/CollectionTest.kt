@@ -182,10 +182,13 @@ class CollectionTest {
         }.openThreeDotMenu {
         }.openSaveToCollection {
         }.selectExistingCollection(firstCollectionName) {
-        }.goToHomescreen {}
+        }.openTabDrawer {
+            closeTab()
+        }
 
         homeScreen {
         }.expandCollection(firstCollectionName) {
+            swipeToBottom()
             swipeCollectionItemLeft(firstWebPage.title)
             verifyTabSavedInCollection(firstWebPage.title, false)
             swipeCollectionItemRight(secondWebPage.title)

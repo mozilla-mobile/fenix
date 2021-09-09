@@ -40,7 +40,7 @@ class CreditCardsManagementFragment : SecureFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_saved_cards, container, false)
+        val view = inflater.inflate(CreditCardsManagementView.LAYOUT_ID, container, false)
 
         creditCardsStore = StoreProvider.get(this) {
             CreditCardsFragmentStore(CreditCardsListState(creditCards = emptyList()))
@@ -49,7 +49,8 @@ class CreditCardsManagementFragment : SecureFragment() {
         interactor = DefaultCreditCardsManagementInteractor(
             controller = DefaultCreditCardsManagementController(
                 navController = findNavController()
-            )
+            ),
+            requireContext().components.analytics.metrics
         )
         val binding = ComponentCreditCardsBinding.bind(view)
 

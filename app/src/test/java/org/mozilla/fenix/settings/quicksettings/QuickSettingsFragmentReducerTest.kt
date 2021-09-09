@@ -4,15 +4,17 @@
 
 package org.mozilla.fenix.settings.quicksettings
 
-import mozilla.components.support.test.mock
+import kotlinx.coroutines.runBlocking
+import mozilla.components.feature.sitepermissions.SitePermissionsRules
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotSame
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.settings.PhoneFeature
+import org.mozilla.fenix.trackingprotection.TrackingProtectionState
+import org.mozilla.fenix.trackingprotection.TrackingProtectionState.Mode.Normal
 
-@RunWith(FenixRobolectricTestRunner::class)
 class QuickSettingsFragmentReducerTest {
 
     @Test
@@ -27,8 +29,12 @@ class QuickSettingsFragmentReducerTest {
 
         val map =
             mapOf<PhoneFeature, WebsitePermission>(PhoneFeature.CAMERA to toggleablePermission)
-
-        val state = QuickSettingsFragmentState(mock(), map)
+        val infoState = WebsiteInfoState("", "", WebsiteSecurityUiValues.SECURE, "")
+        val tpState = TrackingProtectionState(
+            null, "", false, emptyList(),
+            Normal, ""
+        )
+        val state = QuickSettingsFragmentState(infoState, map, tpState)
         val newState = quickSettingsFragmentReducer(
             state,
             WebsitePermissionAction.TogglePermission(
@@ -47,7 +53,7 @@ class QuickSettingsFragmentReducerTest {
         val permissionPermission = WebsitePermission.Autoplay(
             autoplayValue = AutoplayValue.BlockAll(
                 label = "label",
-                rules = mock(),
+                rules = createTestRule(),
                 sitePermission = null
             ),
             options = emptyList(),
@@ -56,11 +62,15 @@ class QuickSettingsFragmentReducerTest {
 
         val map =
             mapOf<PhoneFeature, WebsitePermission>(PhoneFeature.AUTOPLAY to permissionPermission)
-
-        val state = QuickSettingsFragmentState(mock(), map)
+        val infoState = WebsiteInfoState("", "", WebsiteSecurityUiValues.SECURE, "")
+        val tpState = TrackingProtectionState(
+            null, "", false, emptyList(),
+            Normal, ""
+        )
+        val state = QuickSettingsFragmentState(infoState, map, tpState)
         val autoplayValue = AutoplayValue.AllowAll(
             label = "newLabel",
-            rules = mock(),
+            rules = createTestRule(),
             sitePermission = null
         )
         val newState = quickSettingsFragmentReducer(
@@ -72,4 +82,39 @@ class QuickSettingsFragmentReducerTest {
             newState.websitePermissionsState[PhoneFeature.AUTOPLAY] as WebsitePermission.Autoplay
         assertEquals(autoplayValue, result.autoplayValue)
     }
+
+    @Test
+    fun `TrackingProtectionAction - ToggleTrackingProtectionEnabled`() = runBlocking {
+        val state = QuickSettingsFragmentState(
+            webInfoState = WebsiteInfoState("", "", WebsiteSecurityUiValues.SECURE, ""),
+            websitePermissionsState = emptyMap(),
+            trackingProtectionState = TrackingProtectionState(
+                tab = null,
+                url = "https://www.firefox.com",
+                isTrackingProtectionEnabled = true,
+                listTrackers = listOf(),
+                mode = Normal,
+                lastAccessedCategory = ""
+            )
+        )
+
+        val newState = quickSettingsFragmentReducer(
+            state = state,
+            action = TrackingProtectionAction.ToggleTrackingProtectionEnabled(false)
+        )
+
+        assertNotSame(state, newState)
+        assertFalse(newState.trackingProtectionState.isTrackingProtectionEnabled)
+    }
+
+    private fun createTestRule() = SitePermissionsRules(
+        SitePermissionsRules.Action.ALLOWED,
+        SitePermissionsRules.Action.ALLOWED,
+        SitePermissionsRules.Action.ALLOWED,
+        SitePermissionsRules.Action.ALLOWED,
+        SitePermissionsRules.AutoplayAction.ALLOWED,
+        SitePermissionsRules.AutoplayAction.ALLOWED,
+        SitePermissionsRules.Action.ALLOWED,
+        SitePermissionsRules.Action.ALLOWED,
+    )
 }

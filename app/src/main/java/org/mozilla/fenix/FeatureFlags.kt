@@ -20,11 +20,6 @@ object FeatureFlags {
     val addressesFeature = Config.channel.isNightlyOrDebug
 
     /**
-     * Enables the Credit Cards autofill feature.
-     */
-    const val creditCardsFeature = true
-
-    /**
      * Enables WebAuthn support.
      */
     const val webAuthFeature = true
@@ -45,9 +40,9 @@ object FeatureFlags {
     val showRecentTabsFeature = Config.channel.isNightlyOrDebug
 
     /**
-     * Enables recording of history metadata.
+     * Enables UI features based on history metadata.
      */
-    val historyMetadataFeature = Config.channel.isDebug
+    val historyMetadataUIFeature = Config.channel.isDebug
 
     /**
      * Enables the recently saved bookmarks feature in the home screen.
@@ -60,10 +55,7 @@ object FeatureFlags {
     val inactiveTabs = Config.channel.isNightlyOrDebug
 
     /**
-     * Enables support for Android Autofill.
-     *
-     * In addition to toggling this flag, matching entries in the Android Manifest of the build
-     * type need to present.
+     * Enables showing the home screen behind the search dialog
      */
-    val androidAutofill = Config.channel.isNightlyOrDebug || Config.channel.isBeta
+    val showHomeBehindSearch = Config.channel.isNightlyOrDebug
 }
