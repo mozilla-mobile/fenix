@@ -19,10 +19,10 @@ job-defaults:
             signing-android-test: signing-android-test-debug
     include-pull-request-number: true
     routes:
-        - notify.slack-channel.C028QK733QR.on-failed
+        - notify.slack-channel.G016BC5FUHJ.on-failed
     scopes:
-        - queue:route:notify.slack-channel.C028QK733QR.on-failed
-        - notify:slack-channel:C028QK733QR
+        - queue:route:notify.slack-channel.G016BC5FUHJ.on-failed
+        - notify:slack-channel:G016BC5FUHJ
     extra:
         notify:
             slackText: 'https://firefox-ci-tc.services.mozilla.com/tasks/${status.taskId} | ${task.metadata.name} | ${task.metadata.source}'
