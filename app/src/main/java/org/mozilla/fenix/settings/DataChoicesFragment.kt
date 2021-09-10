@@ -108,7 +108,7 @@ class DataChoicesFragment : PreferenceFragmentCompat() {
         val rawString = getString(R.string.toast_override_fxa_sync_server_done)
         return try {
             rawString.split(".")[1]
-        } catch (e: ArrayIndexOutOfBoundsException) {
+        } catch (e: Exception) {
             rawString
         }
     }
