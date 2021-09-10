@@ -9,28 +9,6 @@
     </issue>
 
     <issue
-        id="ScopedStorage"
-        message="WRITE_EXTERNAL_STORAGE no longer provides write access when targeting Android 10+"
-        errorLine1="    &lt;uses-permission android:name=&quot;android.permission.WRITE_EXTERNAL_STORAGE&quot; />"
-        errorLine2="                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/AndroidManifest.xml"
-            line="9"
-            column="36"/>
-    </issue>
-
-    <issue
-        id="ScopedStorage"
-        message="WRITE_EXTERNAL_STORAGE no longer provides write access when targeting Android 10+"
-        errorLine1="    &lt;uses-permission android:name=&quot;android.permission.WRITE_EXTERNAL_STORAGE&quot; />"
-        errorLine2="                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/debug/AndroidManifest.xml"
-            line="12"
-            column="36"/>
-    </issue>
-
-    <issue
         id="UnusedAttribute"
         message="Attribute `android:foreground` has no effect on API levels lower than 23 (current min is 21)"
         errorLine1="    android:foreground=&quot;?android:attr/selectableItemBackground&quot;"
@@ -655,160 +633,6 @@
             file="src/main/res/layout/tab_tray_item.xml"
             line="13"
             column="5"/>
-    </issue>
-
-    <issue
-        id="FragmentTagUsage"
-        message="Replace the &lt;fragment> tag with FragmentContainerView."
-        errorLine1="    &lt;fragment"
-        errorLine2="     ~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_home.xml"
-            line="21"
-            column="6"/>
-    </issue>
-
-    <issue
-        id="InflateParams"
-        message="Avoid passing `null` as the view root (needed to resolve layout parameters on the inflated layout&apos;s root element)"
-        errorLine1="            .inflate(R.layout.custom_search_engine_radio_button, null) as ConstraintLayout"
-        errorLine2="                                                                 ~~~~">
-        <location
-            file="src/main/java/org/mozilla/fenix/settings/search/AddSearchEngineFragment.kt"
-            line="243"
-            column="66"/>
-    </issue>
-
-    <issue
-        id="InflateParams"
-        message="Avoid passing `null` as the view root (needed to resolve layout parameters on the inflated layout&apos;s root element)"
-        errorLine1="            .inflate(R.layout.search_engine_radio_button, null) as LinearLayout"
-        errorLine2="                                                          ~~~~">
-        <location
-            file="src/main/java/org/mozilla/fenix/settings/search/AddSearchEngineFragment.kt"
-            line="263"
-            column="59"/>
-    </issue>
-
-    <issue
-        id="InflateParams"
-        message="Avoid passing `null` as the view root (needed to resolve layout parameters on the inflated layout&apos;s root element)"
-        errorLine1="                .inflate(R.layout.pbm_shortcut_popup, null)"
-        errorLine2="                                                      ~~~~">
-        <location
-            file="src/main/java/org/mozilla/fenix/home/HomeFragment.kt"
-            line="765"
-            column="55"/>
-    </issue>
-
-    <issue
-        id="InflateParams"
-        message="Avoid passing `null` as the view root (needed to resolve layout parameters on the inflated layout&apos;s root element)"
-        errorLine1="        val dialogView = LayoutInflater.from(context).inflate(R.layout.mp_migration_dialog, null)"
-        errorLine2="                                                                                            ~~~~">
-        <location
-            file="src/main/java/org/mozilla/fenix/components/tips/providers/MasterPasswordTipProvider.kt"
-            line="77"
-            column="93"/>
-    </issue>
-
-    <issue
-        id="InflateParams"
-        message="Avoid passing `null` as the view root (needed to resolve layout parameters on the inflated layout&apos;s root element)"
-        errorLine1="            LayoutInflater.from(context).inflate(R.layout.mp_migration_done_dialog, null)"
-        errorLine2="                                                                                    ~~~~">
-        <location
-            file="src/main/java/org/mozilla/fenix/components/tips/providers/MasterPasswordTipProvider.kt"
-            line="166"
-            column="85"/>
-    </issue>
-
-    <issue
-        id="InflateParams"
-        message="Avoid passing `null` as the view root (needed to resolve layout parameters on the inflated layout&apos;s root element)"
-        errorLine1="            LayoutInflater.from(context).inflate(R.layout.mp_migration_done_dialog, null)"
-        errorLine2="                                                                                    ~~~~">
-        <location
-            file="src/main/java/org/mozilla/fenix/components/tips/providers/MasterPasswordTipProvider.kt"
-            line="228"
-            column="85"/>
-    </issue>
-
-    <issue
-        id="InflateParams"
-        message="Avoid passing `null` as the view root (needed to resolve layout parameters on the inflated layout&apos;s root element)"
-        errorLine1="                LayoutInflater.from(it).inflate(R.layout.top_sites_rename_dialog, null)"
-        errorLine2="                                                                                  ~~~~">
-        <location
-            file="src/main/java/org/mozilla/fenix/home/sessioncontrol/SessionControlController.kt"
-            line="309"
-            column="83"/>
-    </issue>
-
-    <issue
-        id="InflateParams"
-        message="Avoid passing `null` as the view root (needed to resolve layout parameters on the inflated layout&apos;s root element)"
-        errorLine1="                val dialogView = LayoutInflater.from(context).inflate(R.layout.amo_collection_override_dialog, null)"
-        errorLine2="                                                                                                               ~~~~">
-        <location
-            file="src/main/java/org/mozilla/fenix/settings/SettingsFragment.kt"
-            line="352"
-            column="112"/>
-    </issue>
-
-    <issue
-        id="InvalidLicenseFormat"
-        message="The license comment must be followed by a newline character"
-        errorLine1=" * file, You can obtain one at http://mozilla.org/MPL/2.0/. */"
-        errorLine2="                                                             ~">
-        <location
-            file="src/main/java/org/mozilla/fenix/components/FxaServer.kt"
-            line="3"
-            column="62"/>
-    </issue>
-
-    <issue
-        id="MissingLicense"
-        message="The file must start with a comment containing the license"
-        errorLine1="package org.mozilla.fenix.utils;"
-        errorLine2="~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/org/mozilla/fenix/utils/OnWifiChanged.java"
-            line="1"
-            column="1"/>
-    </issue>
-
-    <issue
-        id="UseSwitchCompatOrMaterialCode"
-        message="Use `SwitchCompat` from AppCompat or `SwitchMaterial` from Material library"
-        errorLine1="    private var switchView: Switch? = null"
-        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/org/mozilla/fenix/settings/DefaultBrowserPreference.kt"
-            line="20"
-            column="5"/>
-    </issue>
-
-    <issue
-        id="UseSwitchCompatOrMaterialXml"
-        message="Use `SwitchCompat` from AppCompat or `SwitchMaterial` from Material library"
-        errorLine1="&lt;Switch xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
-        errorLine2="^">
-        <location
-            file="src/main/res/layout/mozac_browser_menu_item_switch.xml"
-            line="5"
-            column="1"/>
-    </issue>
-
-    <issue
-        id="UseSwitchCompatOrMaterialXml"
-        message="Use `SwitchCompat` from AppCompat or `SwitchMaterial` from Material library"
-        errorLine1="&lt;Switch xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
-        errorLine2="^">
-        <location
-            file="src/main/res/layout/preference_default_browser.xml"
-            line="6"
-            column="1"/>
     </issue>
 
     <issue
@@ -6043,7 +5867,7 @@
         errorLine2="         ~~~~~~~~~~~~~~">
         <location
             file="src/main/AndroidManifest.xml"
-            line="44"
+            line="48"
             column="10"/>
     </issue>
 
@@ -6054,7 +5878,7 @@
         errorLine2="         ~~~~~~~~~~~~~~">
         <location
             file="src/main/AndroidManifest.xml"
-            line="68"
+            line="72"
             column="10"/>
     </issue>
 
@@ -6065,7 +5889,7 @@
         errorLine2="         ~~~~~~~~">
         <location
             file="src/main/AndroidManifest.xml"
-            line="76"
+            line="80"
             column="10"/>
     </issue>
 
@@ -6076,7 +5900,7 @@
         errorLine2="         ~~~~~~~">
         <location
             file="src/main/AndroidManifest.xml"
-            line="260"
+            line="264"
             column="10"/>
     </issue>
 
@@ -6087,7 +5911,7 @@
         errorLine2="         ~~~~~~~~">
         <location
             file="src/main/AndroidManifest.xml"
-            line="283"
+            line="287"
             column="10"/>
     </issue>
 
@@ -7491,7 +7315,7 @@
     <issue
         id="UnusedResources"
         message="The resource `R.layout.mozac_browser_menu_item_switch` appears to be unused"
-        errorLine1="&lt;Switch xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine1="&lt;com.google.android.material.switchmaterial.SwitchMaterial xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
         errorLine2="^">
         <location
             file="src/main/res/layout/mozac_browser_menu_item_switch.xml"
@@ -9761,7 +9585,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="1461"
+            line="1465"
             column="13"/>
     </issue>
 
@@ -9772,7 +9596,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="1463"
+            line="1467"
             column="13"/>
     </issue>
 
@@ -9783,7 +9607,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="1514"
+            line="1518"
             column="13"/>
     </issue>
 
@@ -9794,7 +9618,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="1516"
+            line="1520"
             column="13"/>
     </issue>
 
@@ -9816,7 +9640,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="1534"
+            line="1538"
             column="13"/>
     </issue>
 
@@ -9827,7 +9651,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="1536"
+            line="1540"
             column="13"/>
     </issue>
 
@@ -9836,28 +9660,6 @@
         message="The resource `R.string.preferences_passwords_saved_logins_enter_pin` appears to be unused"
         errorLine1="    &lt;string name=&quot;preferences_passwords_saved_logins_enter_pin&quot;>Re-enter your PIN&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="1544"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="UnusedResources"
-        message="The resource `R.string.preferences_passwords_saved_logins_enter_pin_description` appears to be unused"
-        errorLine1="    &lt;string name=&quot;preferences_passwords_saved_logins_enter_pin_description&quot;>Unlock to view your saved logins&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="1546"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="UnusedResources"
-        message="The resource `R.string.logins_insecure_connection_warning` appears to be unused"
-        errorLine1="    &lt;string name=&quot;logins_insecure_connection_warning&quot;>This connection is not secure. Logins entered here could be compromised.&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
             line="1548"
@@ -9877,9 +9679,9 @@
 
     <issue
         id="UnusedResources"
-        message="The resource `R.string.logins_insecure_connection_warning_learn_more` appears to be unused"
-        errorLine1="    &lt;string name=&quot;logins_insecure_connection_warning_learn_more&quot;>Learn more&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        message="The resource `R.string.preferences_passwords_saved_logins_enter_pin_description` appears to be unused"
+        errorLine1="    &lt;string name=&quot;preferences_passwords_saved_logins_enter_pin_description&quot;>Unlock to view your saved logins&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
             line="1550"
@@ -9888,9 +9690,9 @@
 
     <issue
         id="UnusedResources"
-        message="The resource `R.string.logins_doorhanger_save` appears to be unused"
-        errorLine1="    &lt;string name=&quot;logins_doorhanger_save&quot;>Do you want %s to save this login?&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        message="The resource `R.string.logins_insecure_connection_warning` appears to be unused"
+        errorLine1="    &lt;string name=&quot;logins_insecure_connection_warning&quot;>This connection is not secure. Logins entered here could be compromised.&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
             line="1552"
@@ -9910,9 +9712,9 @@
 
     <issue
         id="UnusedResources"
-        message="The resource `R.string.logins_doorhanger_save_confirmation` appears to be unused"
-        errorLine1="    &lt;string name=&quot;logins_doorhanger_save_confirmation&quot;>Save&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        message="The resource `R.string.logins_insecure_connection_warning_learn_more` appears to be unused"
+        errorLine1="    &lt;string name=&quot;logins_insecure_connection_warning_learn_more&quot;>Learn more&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
             line="1554"
@@ -9932,9 +9734,9 @@
 
     <issue
         id="UnusedResources"
-        message="The resource `R.string.logins_doorhanger_save_dont_save` appears to be unused"
-        errorLine1="    &lt;string name=&quot;logins_doorhanger_save_dont_save&quot;>Don’t save&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        message="The resource `R.string.logins_doorhanger_save` appears to be unused"
+        errorLine1="    &lt;string name=&quot;logins_doorhanger_save&quot;>Do you want %s to save this login?&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
             line="1556"
@@ -9965,12 +9767,34 @@
 
     <issue
         id="UnusedResources"
+        message="The resource `R.string.logins_doorhanger_save_confirmation` appears to be unused"
+        errorLine1="    &lt;string name=&quot;logins_doorhanger_save_confirmation&quot;>Save&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="1558"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.logins_doorhanger_save_dont_save` appears to be unused"
+        errorLine1="    &lt;string name=&quot;logins_doorhanger_save_dont_save&quot;>Don’t save&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="1560"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
         message="The resource `R.string.logins_site_copied` appears to be unused"
         errorLine1="    &lt;string name=&quot;logins_site_copied&quot;>Site copied to clipboard&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="1562"
+            line="1566"
             column="13"/>
     </issue>
 
@@ -9981,7 +9805,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="1574"
+            line="1578"
             column="13"/>
     </issue>
 
@@ -9992,7 +9816,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="1634"
+            line="1638"
             column="13"/>
     </issue>
 
@@ -10003,7 +9827,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="1688"
+            line="1692"
             column="13"/>
     </issue>
 
@@ -10014,7 +9838,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="1692"
+            line="1696"
             column="13"/>
     </issue>
 
@@ -10025,7 +9849,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="1697"
+            line="1701"
             column="13"/>
     </issue>
 
@@ -10036,7 +9860,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="1750"
+            line="1754"
             column="13"/>
     </issue>
 
@@ -10047,7 +9871,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="1777"
+            line="1781"
             column="13"/>
     </issue>
 
@@ -10218,7 +10042,7 @@
 
     <issue
         id="IconXmlAndPng"
-        message="The following images appear both as density independent `.xml` files and as bitmap files: /Users/rotbolt/AndroidStudioProjects/fenix/app/src/main/res/drawable-hdpi/ic_logo_wordmark_normal.png, /Users/rotbolt/AndroidStudioProjects/fenix/app/src/main/res/drawable-night/ic_logo_wordmark_normal.xml">
+        message="The following images appear both as density independent `.xml` files and as bitmap files: /home/rotbolt/StudioProjects/fenix/app/src/main/res/drawable-hdpi/ic_logo_wordmark_normal.png, /home/rotbolt/StudioProjects/fenix/app/src/main/res/drawable-night/ic_logo_wordmark_normal.xml">
         <location
             file="src/main/res/drawable-xxxhdpi/ic_logo_wordmark_normal.png"/>
         <location
