@@ -39,10 +39,17 @@ job-defaults:
                     "type": "divider"
                   },
                   {
+                     "type": "section",
+                     "text": {
+                         "type": "mrkdwn",
+                         "text": "*Task*: <https://firefox-ci-tc.services.mozilla.com/tasks/${status.taskId}|Taskcluster>"
+                    }
+                  },                  
+                  {
                     "type": "section",
                     "text": {
                       "type": "mrkdwn",
-                      "text": "*Owner*:${task.metadata.owner}"
+                      "text": "*Owner*: ${task.metadata.owner}"
                     }
                   },
                   {
