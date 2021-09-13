@@ -391,6 +391,9 @@ class BookmarksTest {
 
         bookmarksMenu {
             verifyDeleteMultipleBookmarksSnackBar()
+            clickUndoDeleteButton()
+            verifyBookmarkedURL(firstWebPage.url.toString())
+            verifyBookmarkedURL(secondWebPage.url.toString())
         }
     }
 
