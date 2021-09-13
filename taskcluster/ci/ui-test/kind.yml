@@ -29,12 +29,28 @@ job-defaults:
             slackBlocks: |
                 [
                   {
-                      "type": "section",
-                      "text": {
-                        "type": "plain_text",
-                        "text": "This is a test.",
-                        "emoji": true
-                      }
+                    "type": "header",
+                    "text": {
+                      "type": "plain_text",
+                      "text": "UI Test Failure\nFenix :firefox: ${task.metadata.name} failure :x:\n "
+                    }
+                  },
+                  {
+                    "type": "divider"
+                  },
+                  {
+                    "type": "section",
+                    "text": {
+                      "type": "mrkdwn",
+                      "text": "*Owner*:${task.metadata.owner}"
+                    }
+                  },
+                  {
+                    "type": "section",
+                    "text": {
+                      "type": "mrkdwn",
+                      "text": "*Source*: <${task.metadata.source}|Github :github:>"
+                    }
                   }
                 ]
     run:
