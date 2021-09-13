@@ -20,11 +20,6 @@ object FeatureFlags {
     val addressesFeature = Config.channel.isNightlyOrDebug
 
     /**
-     * Enables the Credit Cards autofill feature.
-     */
-    const val creditCardsFeature = true
-
-    /**
      * Enables WebAuthn support.
      */
     const val webAuthFeature = true
@@ -63,4 +58,9 @@ object FeatureFlags {
      * Enables showing the home screen behind the search dialog
      */
     val showHomeBehindSearch = Config.channel.isNightlyOrDebug
+
+    /**
+     * Enables customizing the home screen
+     */
+    val customizeHome = Config.channel.isNightlyOrDebug
 }

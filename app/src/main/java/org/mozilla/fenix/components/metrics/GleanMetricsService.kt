@@ -8,48 +8,39 @@ import android.content.Context
 import mozilla.components.service.glean.Glean
 import mozilla.components.service.glean.private.NoExtraKeys
 import mozilla.components.support.base.log.logger.Logger
-import org.mozilla.fenix.GleanMetrics.AboutPage
 import org.mozilla.fenix.GleanMetrics.Addons
 import org.mozilla.fenix.GleanMetrics.AndroidAutofill
 import org.mozilla.fenix.GleanMetrics.AndroidKeystoreExperiment
 import org.mozilla.fenix.GleanMetrics.AppTheme
 import org.mozilla.fenix.GleanMetrics.Autoplay
 import org.mozilla.fenix.GleanMetrics.Awesomebar
-import org.mozilla.fenix.GleanMetrics.BannerOpenInApp
 import org.mozilla.fenix.GleanMetrics.BookmarksManagement
 import org.mozilla.fenix.GleanMetrics.BrowserSearch
 import org.mozilla.fenix.GleanMetrics.Collections
 import org.mozilla.fenix.GleanMetrics.ContextMenu
 import org.mozilla.fenix.GleanMetrics.ContextualMenu
 import org.mozilla.fenix.GleanMetrics.CrashReporter
+import org.mozilla.fenix.GleanMetrics.CreditCards
 import org.mozilla.fenix.GleanMetrics.CustomTab
-import org.mozilla.fenix.GleanMetrics.DownloadNotification
-import org.mozilla.fenix.GleanMetrics.DownloadsMisc
-import org.mozilla.fenix.GleanMetrics.DownloadsManagement
 import org.mozilla.fenix.GleanMetrics.ErrorPage
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.ExperimentsDefaultBrowser
-import org.mozilla.fenix.GleanMetrics.FindInPage
 import org.mozilla.fenix.GleanMetrics.History
 import org.mozilla.fenix.GleanMetrics.HomeMenu
 import org.mozilla.fenix.GleanMetrics.HomeScreen
 import org.mozilla.fenix.GleanMetrics.LoginDialog
 import org.mozilla.fenix.GleanMetrics.Logins
-import org.mozilla.fenix.GleanMetrics.MasterPassword
 import org.mozilla.fenix.GleanMetrics.MediaNotification
 import org.mozilla.fenix.GleanMetrics.MediaState
 import org.mozilla.fenix.GleanMetrics.Metrics
 import org.mozilla.fenix.GleanMetrics.Onboarding
 import org.mozilla.fenix.GleanMetrics.Pings
 import org.mozilla.fenix.GleanMetrics.Pocket
-import org.mozilla.fenix.GleanMetrics.PrivateBrowsingMode
-import org.mozilla.fenix.GleanMetrics.PrivateBrowsingShortcut
 import org.mozilla.fenix.GleanMetrics.ProgressiveWebApp
 import org.mozilla.fenix.GleanMetrics.ReaderMode
 import org.mozilla.fenix.GleanMetrics.RecentBookmarks
 import org.mozilla.fenix.GleanMetrics.RecentTabs
 import org.mozilla.fenix.GleanMetrics.SearchShortcuts
-import org.mozilla.fenix.GleanMetrics.SearchSuggestions
 import org.mozilla.fenix.GleanMetrics.SearchWidget
 import org.mozilla.fenix.GleanMetrics.SetDefaultNewtabExperiment
 import org.mozilla.fenix.GleanMetrics.SetDefaultSettingExperiment
@@ -60,11 +51,9 @@ import org.mozilla.fenix.GleanMetrics.SyncedTabs
 import org.mozilla.fenix.GleanMetrics.Tab
 import org.mozilla.fenix.GleanMetrics.Tabs
 import org.mozilla.fenix.GleanMetrics.TabsTray
-import org.mozilla.fenix.GleanMetrics.Tip
 import org.mozilla.fenix.GleanMetrics.ToolbarSettings
 import org.mozilla.fenix.GleanMetrics.TopSites
 import org.mozilla.fenix.GleanMetrics.TrackingProtection
-import org.mozilla.fenix.GleanMetrics.UserSpecifiedSearchEngines
 import org.mozilla.fenix.GleanMetrics.VoiceSearch
 import org.mozilla.fenix.ext.components
 
@@ -161,15 +150,6 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.LoginDialogPromptNeverSave -> EventWrapper<NoExtraKeys>(
             { LoginDialog.neverSave.record(it) }
         )
-        is Event.FindInPageOpened -> EventWrapper<NoExtraKeys>(
-            { FindInPage.opened.record(it) }
-        )
-        is Event.FindInPageClosed -> EventWrapper<NoExtraKeys>(
-            { FindInPage.closed.record(it) }
-        )
-        is Event.FindInPageSearchCommitted -> EventWrapper<NoExtraKeys>(
-            { FindInPage.searchedPage.record(it) }
-        )
         is Event.ContextMenuItemTapped -> EventWrapper(
             { ContextMenu.itemTapped.record(it) },
             { ContextMenu.itemTappedKeys.valueOf(it) }
@@ -244,9 +224,6 @@ private val Event.wrapper: EventWrapper<*>?
         )
         is Event.CustomTabsClosed -> EventWrapper<NoExtraKeys>(
             { CustomTab.closed.record(it) }
-        )
-        is Event.UriOpened -> EventWrapper<NoExtraKeys>(
-            { Events.totalUriCount.add(1) }
         )
         is Event.NormalAndPrivateUriOpened -> EventWrapper<NoExtraKeys>(
             { Events.normalAndPrivateUriCount.add(1) }
@@ -391,30 +368,6 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.SearchWidgetVoiceSearchPressed -> EventWrapper<NoExtraKeys>(
             { SearchWidget.voiceButton.record(it) }
         )
-        is Event.PrivateBrowsingSnackbarUndoTapped -> EventWrapper<NoExtraKeys>(
-            { PrivateBrowsingMode.snackbarUndo.record(it) }
-        )
-        is Event.PrivateBrowsingNotificationTapped -> EventWrapper<NoExtraKeys>(
-            { PrivateBrowsingMode.notificationTapped.record(it) }
-        )
-        is Event.PrivateBrowsingCreateShortcut -> EventWrapper<NoExtraKeys>(
-            { PrivateBrowsingShortcut.createShortcut.record(it) }
-        )
-        is Event.PrivateBrowsingAddShortcutCFR -> EventWrapper<NoExtraKeys>(
-            { PrivateBrowsingShortcut.cfrAddShortcut.record(it) }
-        )
-        is Event.PrivateBrowsingCancelCFR -> EventWrapper<NoExtraKeys>(
-            { PrivateBrowsingShortcut.cfrCancel.record(it) }
-        )
-        is Event.PrivateBrowsingPinnedShortcutPrivateTab -> EventWrapper<NoExtraKeys>(
-            { PrivateBrowsingShortcut.pinnedShortcutPriv.record(it) }
-        )
-        is Event.PrivateBrowsingStaticShortcutTab -> EventWrapper<NoExtraKeys>(
-            { PrivateBrowsingShortcut.staticShortcutTab.record(it) }
-        )
-        is Event.PrivateBrowsingStaticShortcutPrivateTab -> EventWrapper<NoExtraKeys>(
-            { PrivateBrowsingShortcut.staticShortcutPriv.record(it) }
-        )
         is Event.WhatsNewTapped -> EventWrapper<NoExtraKeys>(
             { Events.whatsNewTapped.record(it) }
         )
@@ -438,39 +391,6 @@ private val Event.wrapper: EventWrapper<*>?
         )
         is Event.MediaPictureInPictureState -> EventWrapper<NoExtraKeys>(
             { MediaState.pictureInPicture.record(it) }
-        )
-        is Event.InAppNotificationDownloadOpen -> EventWrapper<NoExtraKeys>(
-            { DownloadNotification.inAppOpen.record(it) }
-        )
-        is Event.InAppNotificationDownloadTryAgain -> EventWrapper<NoExtraKeys>(
-            { DownloadNotification.inAppTryAgain.record(it) }
-        )
-        is Event.NotificationDownloadCancel -> EventWrapper<NoExtraKeys>(
-            { DownloadNotification.cancel.record(it) }
-        )
-        is Event.NotificationDownloadOpen -> EventWrapper<NoExtraKeys>(
-            { DownloadNotification.open.record(it) }
-        )
-        is Event.NotificationDownloadPause -> EventWrapper<NoExtraKeys>(
-            { DownloadNotification.pause.record(it) }
-        )
-        is Event.NotificationDownloadResume -> EventWrapper<NoExtraKeys>(
-            { DownloadNotification.resume.record(it) }
-        )
-        is Event.NotificationDownloadTryAgain -> EventWrapper<NoExtraKeys>(
-            { DownloadNotification.tryAgain.record(it) }
-        )
-        is Event.DownloadAdded -> EventWrapper<NoExtraKeys>(
-            { DownloadsMisc.downloadAdded.record(it) }
-        )
-        is Event.DownloadsScreenOpened -> EventWrapper<NoExtraKeys>(
-            { DownloadsManagement.downloadsScreenOpened.record(it) }
-        )
-        is Event.DownloadsItemOpened -> EventWrapper<NoExtraKeys>(
-            { DownloadsManagement.itemOpened.record(it) }
-        )
-        is Event.DownloadsItemDeleted -> EventWrapper<NoExtraKeys>(
-            { DownloadsManagement.itemDeleted.record(it) }
         )
         is Event.NotificationMediaPlay -> EventWrapper<NoExtraKeys>(
             { MediaNotification.play.record(it) }
@@ -522,18 +442,9 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.EditLoginSave -> EventWrapper<NoExtraKeys>(
             { Logins.saveEditedLogin.record(it) }
         )
-        is Event.PrivateBrowsingShowSearchSuggestions -> EventWrapper<NoExtraKeys>(
-            { SearchSuggestions.enableInPrivate.record(it) }
-        )
         is Event.ToolbarPositionChanged -> EventWrapper(
             { ToolbarSettings.changedPosition.record(it) },
             { ToolbarSettings.changedPositionKeys.valueOf(it) }
-        )
-        is Event.CustomEngineAdded -> EventWrapper<NoExtraKeys>(
-            { UserSpecifiedSearchEngines.customEngineAdded.record(it) }
-        )
-        is Event.CustomEngineDeleted -> EventWrapper<NoExtraKeys>(
-            { UserSpecifiedSearchEngines.customEngineDeleted.record(it) }
         )
         is Event.SaveLoginsSettingChanged -> EventWrapper(
             { Logins.saveLoginsSettingChanged.record(it) },
@@ -571,12 +482,6 @@ private val Event.wrapper: EventWrapper<*>?
             { TopSites.swipeCarousel.record(it) },
             { TopSites.swipeCarouselKeys.valueOf(it) }
         )
-        is Event.SupportTapped -> EventWrapper<NoExtraKeys>(
-            { AboutPage.supportTapped.record(it) }
-        )
-        is Event.PrivacyNoticeTapped -> EventWrapper<NoExtraKeys>(
-            { AboutPage.privacyNoticeTapped.record(it) }
-        )
         is Event.PocketTopSiteClicked -> EventWrapper<NoExtraKeys>(
             { Pocket.pocketTopSiteClicked.record(it) }
         )
@@ -597,18 +502,6 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.AddonOpenSetting -> EventWrapper(
             { Addons.openAddonSetting.record(it) },
             { Addons.openAddonSettingKeys.valueOf(it) }
-        )
-        is Event.TipDisplayed -> EventWrapper(
-            { Tip.displayed.record(it) },
-            { Tip.displayedKeys.valueOf(it) }
-        )
-        is Event.TipPressed -> EventWrapper(
-            { Tip.pressed.record(it) },
-            { Tip.pressedKeys.valueOf(it) }
-        )
-        is Event.TipClosed -> EventWrapper(
-            { Tip.closed.record(it) },
-            { Tip.closedKeys.valueOf(it) }
         )
         is Event.VoiceSearchTapped -> EventWrapper<NoExtraKeys>(
             { VoiceSearch.tapped.record(it) }
@@ -728,12 +621,6 @@ private val Event.wrapper: EventWrapper<*>?
             { Events.recentlyClosedTabsOpened.record(it) }
         )
 
-        is Event.MasterPasswordMigrationDisplayed -> EventWrapper<NoExtraKeys>(
-            { MasterPassword.displayed.record(it) }
-        )
-        is Event.MasterPasswordMigrationSuccess -> EventWrapper<NoExtraKeys>(
-            { MasterPassword.migration.record(it) }
-        )
         is Event.TabSettingsOpened -> EventWrapper<NoExtraKeys>(
             { Tabs.settingOpened.record(it) }
         )
@@ -754,15 +641,6 @@ private val Event.wrapper: EventWrapper<*>?
         )
         Event.HaveNoOpenTabs -> EventWrapper<NoExtraKeys>(
             { Metrics.hasOpenTabs.set(false) }
-        )
-        is Event.BannerOpenInAppDisplayed -> EventWrapper<NoExtraKeys>(
-            { BannerOpenInApp.displayed.record(it) }
-        )
-        is Event.BannerOpenInAppDismissed -> EventWrapper<NoExtraKeys>(
-            { BannerOpenInApp.dismissed.record(it) }
-        )
-        is Event.BannerOpenInAppGoToSettings -> EventWrapper<NoExtraKeys>(
-            { BannerOpenInApp.goToSettings.record(it) }
         )
         is Event.SyncedTabSuggestionClicked -> EventWrapper<NoExtraKeys>(
             { SyncedTabs.syncedTabsSuggestionClicked.record(it) }
@@ -885,6 +763,36 @@ private val Event.wrapper: EventWrapper<*>?
         )
         is Event.AndroidAutofillConfirmationSuccessful -> EventWrapper<NoExtraKeys>(
             { AndroidAutofill.confirmSuccessful.record(it) }
+        )
+        is Event.CreditCardSaved -> EventWrapper<NoExtraKeys>(
+            { CreditCards.saved.add() }
+        )
+        is Event.CreditCardDeleted -> EventWrapper<NoExtraKeys>(
+            { CreditCards.deleted.add() }
+        )
+        is Event.CreditCardModified -> EventWrapper<NoExtraKeys>(
+            { CreditCards.modified.record(it) }
+        )
+        is Event.CreditCardFormDetected -> EventWrapper<NoExtraKeys>(
+            { CreditCards.formDetected.record(it) }
+        )
+        is Event.CreditCardAutofillPromptShown -> EventWrapper<NoExtraKeys>(
+            { CreditCards.autofillPromptShown.record(it) }
+        )
+        is Event.CreditCardAutofillPromptExpanded -> EventWrapper<NoExtraKeys>(
+            { CreditCards.autofillPromptExpanded.record(it) }
+        )
+        is Event.CreditCardAutofillPromptDismissed -> EventWrapper<NoExtraKeys>(
+            { CreditCards.autofillPromptDismissed.record(it) }
+        )
+        is Event.CreditCardAutofilled -> EventWrapper<NoExtraKeys>(
+            { CreditCards.autofilled.record(it) }
+        )
+        is Event.CreditCardManagementAddTapped -> EventWrapper<NoExtraKeys>(
+            { CreditCards.managementAddTapped.record(it) }
+        )
+        is Event.CreditCardManagementCardTapped -> EventWrapper<NoExtraKeys>(
+            { CreditCards.managementCardTapped.record(it) }
         )
 
         // Don't record other events in Glean:
