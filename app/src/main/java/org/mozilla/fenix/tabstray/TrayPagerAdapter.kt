@@ -37,8 +37,8 @@ class TrayPagerAdapter(
 
     private val normalAdapter by lazy {
         ConcatAdapter(
-            BrowserTabsAdapter(context, browserInteractor, store, TABS_TRAY_FEATURE_NAME),
-            InactiveTabsAdapter(context, browserInteractor, INACTIVE_TABS_FEATURE_NAME)
+            InactiveTabsAdapter(context, browserInteractor, INACTIVE_TABS_FEATURE_NAME),
+            BrowserTabsAdapter(context, browserInteractor, store, TABS_TRAY_FEATURE_NAME)
         )
     }
     private val privateAdapter by lazy { BrowserTabsAdapter(context, browserInteractor, store, TABS_TRAY_FEATURE_NAME) }
@@ -55,7 +55,7 @@ class TrayPagerAdapter(
                     itemView,
                     store,
                     interactor,
-                    browserStore.state.normalTabs.filter { it.isNormalTabActive(maxActiveTime) }.indexOf(selectedTab)
+                    browserStore.state.normalTabs.filter { it.isNormalTabActive(maxActiveTime) }.indexOf(selectedTab) // todo: fix after inactive tab position change
                 )
             }
             PrivateBrowserPageViewHolder.LAYOUT_ID -> {

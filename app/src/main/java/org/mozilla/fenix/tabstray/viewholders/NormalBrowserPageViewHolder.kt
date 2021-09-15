@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.tabstray.viewholders
 
+import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.GridLayoutManager
@@ -15,6 +16,7 @@ import org.mozilla.fenix.tabstray.TabsTrayInteractor
 import org.mozilla.fenix.tabstray.TabsTrayStore
 import org.mozilla.fenix.tabstray.ext.browserAdapter
 import org.mozilla.fenix.tabstray.ext.defaultBrowserLayoutColumns
+import org.mozilla.fenix.tabstray.ext.inactiveTabsAdapter
 
 /**
  * View holder for the normal tabs tray list.
@@ -48,13 +50,14 @@ class NormalBrowserPageViewHolder(
         adapter: RecyclerView.Adapter<out RecyclerView.ViewHolder>
     ) {
         val browserAdapter = (adapter as ConcatAdapter).browserAdapter
+        val inactiveAdapter = adapter.inactiveTabsAdapter
         browserAdapter.selectionHolder = this
 
         val number = containerView.context.defaultBrowserLayoutColumns
         val manager = GridLayoutManager(containerView.context, number).apply {
             spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                 override fun getSpanSize(position: Int): Int {
-                    return if (position >= browserAdapter.itemCount) {
+                    return if (position < inactiveAdapter.itemCount) {
                         number
                     } else {
                         1
