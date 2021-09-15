@@ -24,6 +24,9 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.home.HomeFragment
 import org.mozilla.fenix.tabstray.browser.DEFAULT_ACTIVE_DAYS
+import org.mozilla.fenix.tabstray.browser.maxActiveTime
+import org.mozilla.fenix.tabstray.ext.isNormalTabActive
+import org.mozilla.fenix.tabstray.ext.isNormalTabInactive
 import java.util.concurrent.TimeUnit
 
 interface TabsTrayController {
@@ -76,6 +79,11 @@ interface TabsTrayController {
         tabs: Collection<Tab>,
         numOfDays: Long = DEFAULT_ACTIVE_DAYS + 1
     )
+
+    /**
+     * Deletes all inactive tabs.
+     */
+    fun deleteAllInactiveTabs()
 }
 
 class DefaultTabsTrayController(
@@ -210,5 +218,12 @@ class DefaultTabsTrayController(
     internal fun dismissTabsTrayAndNavigateHome(sessionId: String) {
         dismissTray()
         navigateToHomeAndDeleteSession(sessionId)
+    }
+
+    override fun deleteAllInactiveTabs() {
+        browserStore.state.tabs.filter { it.isNormalTabInactive(maxActiveTime) }.map { it.id }.let {
+            tabsUseCases.removeTabs(it)
+        }
+        showUndoSnackbarForTab(false)
     }
 }

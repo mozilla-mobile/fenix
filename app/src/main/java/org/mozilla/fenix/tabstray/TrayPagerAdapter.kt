@@ -37,7 +37,7 @@ class TrayPagerAdapter(
 
     private val normalAdapter by lazy {
         ConcatAdapter(
-            InactiveTabsAdapter(context, browserInteractor, INACTIVE_TABS_FEATURE_NAME),
+            InactiveTabsAdapter(context, browserInteractor, interactor, INACTIVE_TABS_FEATURE_NAME),
             BrowserTabsAdapter(context, browserInteractor, store, TABS_TRAY_FEATURE_NAME)
         )
     }
