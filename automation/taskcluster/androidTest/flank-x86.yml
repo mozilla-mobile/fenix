@@ -38,12 +38,20 @@ gcloud:
   performance-metrics: true
 
   test-targets:
-   - notPackage org.mozilla.fenix.screenshots
-   - notPackage org.mozilla.fenix.syncintegration
+   - class org.mozilla.fenix.ui#SmokeTest
+
 
   device:
+   - model: Nexus9
+     version: 25
    - model: Pixel2
-     version: 29
+     version: 26
+   - model: Nexus6P
+     version: 27
+   - model: Pixel2
+     version: 28
+   - model: Pixel2
+     version: 30
 
 flank:
   project: GOOGLE_PROJECT
