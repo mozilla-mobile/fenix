@@ -67,5 +67,5 @@ object FeatureFlags {
     /**
      * Identifies and separates the tabs list with a group containing search term tabs.
      */
-    val tabGroupFeature = Config.channel.isDebug
+    val tabGroupFeature = Config.channel.isNightlyOrDebug
 }

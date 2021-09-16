@@ -17,7 +17,7 @@ import org.mozilla.fenix.tabstray.ext.inactiveTabsAdapter
 import org.mozilla.fenix.tabstray.ext.isNormalTabActive
 import org.mozilla.fenix.tabstray.ext.isNormalTabActiveWithoutSearchTerm
 import org.mozilla.fenix.tabstray.ext.isNormalTabInactive
-import org.mozilla.fenix.tabstray.ext.isNormalTabWithSearchTerm
+import org.mozilla.fenix.tabstray.ext.isNormalTabActiveWithSearchTerm
 import org.mozilla.fenix.tabstray.ext.tabGroupAdapter
 import java.util.concurrent.TimeUnit
 
@@ -68,7 +68,7 @@ class NormalBrowserTrayList @JvmOverloads constructor(
             if (!FeatureFlags.tabGroupFeature) {
                 return@filter false
             }
-            it.isNormalTabWithSearchTerm(maxActiveTime)
+            it.isNormalTabActiveWithSearchTerm(maxActiveTime)
         }
         val tabsAdapter = concatAdapter.tabGroupAdapter
 
@@ -123,9 +123,9 @@ class NormalBrowserTrayList @JvmOverloads constructor(
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
 
-        tabsFeature.start()
-        searchTermFeature.start()
         inactiveFeature.start()
+        searchTermFeature.start()
+        tabsFeature.start()
 
         touchHelper.attachToRecyclerView(this)
     }

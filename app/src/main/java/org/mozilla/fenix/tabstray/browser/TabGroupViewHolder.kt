@@ -5,10 +5,13 @@
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import mozilla.components.concept.tabstray.Tab
 import mozilla.components.concept.tabstray.TabsTray
 import mozilla.components.support.base.observer.Observable
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.TabGroupItemBinding
+import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.selection.SelectionHolder
 import org.mozilla.fenix.tabstray.TabsTrayStore
 import org.mozilla.fenix.tabstray.TrayPagerAdapter
 import org.mozilla.fenix.tabstray.browser.BrowserTrayInteractor
@@ -20,32 +23,61 @@ import org.mozilla.fenix.tabstray.browser.TabGroupListAdapter
  *
  * @param itemView [View] that displays a "tab".
  * @param orientation [Int] orientation of the items.  Horizontal for grid layout, vertical for list layout
+ * @param interactor the [BrowserTrayInteractor] for tab interactions.
+ * @param store the [TabsTrayStore] instance.
+ * @param selectionHolder the store that holds the currently selected tabs.
  */
 class TabGroupViewHolder(
     itemView: View,
-    val orientation: Int
+    val orientation: Int,
+    val interactor: BrowserTrayInteractor,
+    val store: TabsTrayStore,
+    val selectionHolder: SelectionHolder<Tab>? = null
 ) : RecyclerView.ViewHolder(itemView) {
     private val binding = TabGroupItemBinding.bind(itemView)
 
+    lateinit var groupListAdapter: TabGroupListAdapter
+
     fun bind(
         group: TabGroupAdapter.Group,
-        interactor: BrowserTrayInteractor,
-        store: TabsTrayStore,
         observable: Observable<TabsTray.Observer>
     ) {
-        // bind title
+        val selectedTabId = itemView.context.components.core.store.state.selectedTabId
+        val selectedIndex = group.tabs.indexOfFirst { it.id == selectedTabId }
+
         binding.tabGroupTitle.text = group.title
-        // bind recyclerview for search term adapter
         binding.tabGroupList.apply {
-            val groupListAdapter = TabGroupListAdapter(
-                itemView.context, interactor, store, observable, TrayPagerAdapter.TAB_GROUP_FEATURE_NAME
-            )
             layoutManager = LinearLayoutManager(itemView.context, orientation, false)
+            groupListAdapter = TabGroupListAdapter(
+                context = itemView.context,
+                interactor = interactor,
+                store = store,
+                delegate = observable,
+                selectionHolder = selectionHolder,
+                featureName = TrayPagerAdapter.TAB_GROUP_FEATURE_NAME
+            )
+
             adapter = groupListAdapter
 
             groupListAdapter.submitList(group.tabs)
+            scrollToPosition(selectedIndex)
         }
     }
+
+    /**
+     * Notify the nested [RecyclerView] that it has been detached.
+     */
+    fun unbind() {
+        groupListAdapter.onDetachedFromRecyclerView(binding.tabGroupList)
+    }
+
+    /**
+     * Notify the nested [RecyclerView] that it has been attached. This is so our observers know when to start again.
+     */
+    fun rebind() {
+        groupListAdapter.onAttachedToRecyclerView(binding.tabGroupList)
+    }
+
     companion object {
         const val LAYOUT_ID = R.layout.tab_group_item
     }

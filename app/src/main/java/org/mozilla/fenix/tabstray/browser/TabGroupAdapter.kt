@@ -10,17 +10,22 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.HORIZONTAL
 import androidx.recyclerview.widget.RecyclerView.VERTICAL
 import mozilla.components.concept.tabstray.Tabs
-import mozilla.components.concept.tabstray.Tab as TabsTrayTab
 import mozilla.components.concept.tabstray.TabsTray
 import mozilla.components.support.base.observer.ObserverRegistry
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.selection.SelectionHolder
 import org.mozilla.fenix.tabstray.TabsTrayStore
+import org.mozilla.fenix.tabstray.browser.TabGroupAdapter.Group
 import kotlin.math.max
-import mozilla.components.support.base.observer.Observable as ComponentObservable
+import mozilla.components.concept.tabstray.Tab as TabsTrayTab
+import mozilla.components.support.base.observer.Observable
+
+typealias TrayObservable = Observable<TabsTray.Observer>
 
 /**
  * The [ListAdapter] for displaying the list of search term tabs.
@@ -30,38 +35,74 @@ import mozilla.components.support.base.observer.Observable as ComponentObservabl
  * @param featureName [String] representing the name of the feature displaying tabs. Used in telemetry reporting.
  * @param delegate [Observable]<[TabsTray.Observer]> for observing tabs tray changes. Defaults to [ObserverRegistry].
  */
+@Suppress("TooManyFunctions")
 class TabGroupAdapter(
     private val context: Context,
     private val browserTrayInteractor: BrowserTrayInteractor,
     private val store: TabsTrayStore,
     private val featureName: String,
-    delegate: ComponentObservable<TabsTray.Observer> = ObserverRegistry()
-) : ListAdapter<TabGroupAdapter.Group, TabGroupViewHolder>(DiffCallback),
-    TabsTray,
-    ComponentObservable<TabsTray.Observer> by delegate {
+    delegate: TrayObservable = ObserverRegistry()
+) : ListAdapter<Group, TabGroupViewHolder>(DiffCallback), TabsTray, TrayObservable by delegate {
+
+    data class Group(
+        /**
+         * A title for the tab group.
+         */
+        val title: String,
+
+        /**
+         * The list of tabs belonging to this tab group.
+         */
+        val tabs: List<TabsTrayTab>,
+
+        /**
+         * The last time tabs in this group was accessed.
+         */
+        val lastAccess: Long
+    )
+
+    /**
+     * Tracks the selected tabs in multi-select mode.
+     */
+    var selectionHolder: SelectionHolder<TabsTrayTab>? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TabGroupViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
 
         return when {
             context.components.settings.gridTabView -> {
-                TabGroupViewHolder(view, HORIZONTAL)
+                TabGroupViewHolder(view, HORIZONTAL, browserTrayInteractor, store, selectionHolder)
             }
             else -> {
-                TabGroupViewHolder(view, VERTICAL)
+                TabGroupViewHolder(view, VERTICAL, browserTrayInteractor, store, selectionHolder)
             }
         }
     }
 
     override fun onBindViewHolder(holder: TabGroupViewHolder, position: Int) {
         val group = getItem(position)
-        holder.bind(group, browserTrayInteractor, store, this)
+        holder.bind(group, this)
     }
 
-    override fun getItemViewType(position: Int): Int {
-        return TabGroupViewHolder.LAYOUT_ID
+    override fun getItemViewType(position: Int) = TabGroupViewHolder.LAYOUT_ID
+
+    /**
+     * Notify the nested [RecyclerView] when this view has been attached.
+     */
+    override fun onViewAttachedToWindow(holder: TabGroupViewHolder) {
+        holder.rebind()
     }
 
+    /**
+     * Notify the nested [RecyclerView] when this view has been detached.
+     */
+    override fun onViewDetachedFromWindow(holder: TabGroupViewHolder) {
+        holder.unbind()
+    }
+
+    /**
+     * Creates a grouping of data classes for how groupings will be structured.
+     */
     override fun updateTabs(tabs: Tabs) {
         val data = tabs.list.groupBy { it.searchTerm.lowercase() }
 
@@ -82,37 +123,21 @@ class TabGroupAdapter(
         submitList(grouping)
     }
 
-    data class Group(
-        /**
-         * A title for the tab group.
-         */
-        val title: String,
-
-        /**
-         * The list of tabs belonging to this tab group.
-         */
-        val tabs: List<TabsTrayTab>,
-
-        /**
-         * The last time tabs in this group was accessed.
-         */
-        val lastAccess: Long
-    )
-
-    override fun isTabSelected(tabs: Tabs, position: Int): Boolean =
-        tabs.selectedIndex == position
+    /**
+     * Not implemented; handled by nested [RecyclerView].
+     */
+    override fun isTabSelected(tabs: Tabs, position: Int): Boolean = false
     override fun onTabsChanged(position: Int, count: Int) = Unit
     override fun onTabsInserted(position: Int, count: Int) = Unit
     override fun onTabsMoved(fromPosition: Int, toPosition: Int) = Unit
     override fun onTabsRemoved(position: Int, count: Int) = Unit
 
     private object DiffCallback : DiffUtil.ItemCallback<Group>() {
-        override fun areItemsTheSame(oldItem: Group, newItem: Group): Boolean {
-            return oldItem.title == newItem.title
-        }
-
-        override fun areContentsTheSame(oldItem: Group, newItem: Group): Boolean {
-            return oldItem == newItem
-        }
+        override fun areItemsTheSame(oldItem: Group, newItem: Group) = oldItem.title == newItem.title
+        override fun areContentsTheSame(oldItem: Group, newItem: Group) = oldItem == newItem
     }
+}
+
+internal fun Group.containsTabId(tabId: String): Boolean {
+    return tabs.firstOrNull { it.id == tabId } != null
 }
