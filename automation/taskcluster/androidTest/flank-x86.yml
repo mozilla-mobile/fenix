@@ -38,7 +38,7 @@ gcloud:
   performance-metrics: true
 
   test-targets:
-   - package org.mozilla.fenix.ui#SmokeTest
+   - class org.mozilla.fenix.ui.SmokeTest
 
 
   device:
