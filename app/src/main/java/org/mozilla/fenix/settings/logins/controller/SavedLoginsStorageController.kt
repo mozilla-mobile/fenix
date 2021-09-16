@@ -15,6 +15,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import mozilla.components.concept.storage.Login
+import mozilla.components.concept.storage.LoginEntry
 import mozilla.components.service.sync.logins.InvalidRecordException
 import mozilla.components.service.sync.logins.LoginsStorageException
 import mozilla.components.service.sync.logins.NoSuchRecordException
@@ -62,18 +63,13 @@ open class SavedLoginsStorageController(
         var saveLoginJob: Deferred<Unit>? = null
         lifecycleScope.launch(ioDispatcher) {
             saveLoginJob = async {
-                val loginToSave = Login(
-                    guid = null,
+                val loginEntryToSave = LoginEntry(
                     origin = hostnameText,
                     username = usernameText,
                     password = passwordText,
                     httpRealm = hostnameText
                 )
-                val newLoginId = add(loginToSave)
-                if (newLoginId.isNotEmpty()) {
-                    val newLogin = passwordsStorage.get(newLoginId)
-                    syncAndUpdateList(newLogin!!)
-                }
+                add(loginEntryToSave)
             }
             saveLoginJob?.await()
             withContext(Dispatchers.Main) {
@@ -89,17 +85,16 @@ open class SavedLoginsStorageController(
         }
     }
 
-    private suspend fun add(loginToSave: Login): String {
-        var newLoginId = ""
+    private suspend fun add(loginEntryToSave: LoginEntry) {
         try {
-            newLoginId = passwordsStorage.add(loginToSave)
+            val encryptedLogin = passwordsStorage.add(loginEntryToSave)
+            syncAndUpdateList(passwordsStorage.decryptLogin(encryptedLogin))
         } catch (loginException: LoginsStorageException) {
             Log.e(
                 "Add new login",
                 "Failed to add new login.", loginException
             )
         }
-        return newLoginId
     }
 
     fun save(loginId: String, usernameText: String, passwordText: String) {
@@ -111,8 +106,7 @@ open class SavedLoginsStorageController(
 
                 // Update requires a Login type, which needs at least one of
                 // httpRealm or formActionOrigin
-                val loginToSave = Login(
-                    guid = loginId,
+                val loginEntryToSave = LoginEntry(
                     origin = oldLogin?.origin!!,
                     username = usernameText, // new value
                     password = passwordText, // new value
@@ -120,8 +114,7 @@ open class SavedLoginsStorageController(
                     formActionOrigin = oldLogin.formActionOrigin
                 )
 
-                save(loginToSave)
-                syncAndUpdateList(loginToSave)
+                save(loginId, loginEntryToSave)
             }
             saveLoginJob?.await()
             withContext(Dispatchers.Main) {
@@ -139,9 +132,10 @@ open class SavedLoginsStorageController(
         }
     }
 
-    private suspend fun save(loginToSave: Login) {
+    private suspend fun save(guid: String, loginEntryToSave: LoginEntry) {
         try {
-            passwordsStorage.update(loginToSave)
+            val encryptedLogin = passwordsStorage.update(guid, loginEntryToSave)
+            syncAndUpdateList(passwordsStorage.decryptLogin(encryptedLogin))
         } catch (loginException: LoginsStorageException) {
             when (loginException) {
                 is NoSuchRecordException,
@@ -169,59 +163,29 @@ open class SavedLoginsStorageController(
     }
 
     fun findPotentialDuplicates(loginId: String) {
-        var deferredLogin: Deferred<List<Login>>? = null
-        val fetchLoginJob = lifecycleScope.launch(ioDispatcher) {
-            deferredLogin = async {
-                val login = getLogin(loginId)
-                passwordsStorage.getPotentialDupesIgnoringUsername(login!!)
-            }
-            val fetchedDuplicatesList = deferredLogin?.await()
-            fetchedDuplicatesList?.let { list ->
-                withContext(Dispatchers.Main) {
-                    val savedLoginList = list.map { it.mapToSavedLogin() }
-                    loginsFragmentStore.dispatch(
-                        LoginsAction.ListOfDupes(
-                            savedLoginList
-                        )
-                    )
-                }
-            }
-        }
-        fetchLoginJob.invokeOnCompletion {
-            if (it is CancellationException) {
-                deferredLogin?.cancel()
-            }
+        lifecycleScope.launch(ioDispatcher) {
+            val login = getLogin(loginId)
+            doFindPotentialDuplicates(login!!.origin, loginId)
         }
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun findPotentialDuplicates(hostnameText: String, usernameText: String, passwordText: String) {
-        var deferredLogin: Deferred<List<Login>>? = null
-        val fetchLoginJob = lifecycleScope.launch(ioDispatcher) {
-            deferredLogin = async {
-                val login = Login(
-                    guid = null,
-                    origin = hostnameText,
-                    username = usernameText,
-                    password = passwordText,
-                    httpRealm = hostnameText
-                )
-                passwordsStorage.getPotentialDupesIgnoringUsername(login)
-            }
-            val fetchedDuplicatesList = deferredLogin?.await()
-            fetchedDuplicatesList?.let { list ->
-                withContext(Dispatchers.Main) {
-                    val savedLoginList = list.map { it.mapToSavedLogin() }
-                    loginsFragmentStore.dispatch(
-                        LoginsAction.ListOfDupes(
-                            savedLoginList
-                        )
-                    )
-                }
-            }
+        lifecycleScope.launch(ioDispatcher) {
+            doFindPotentialDuplicates(hostnameText, null)
         }
-        fetchLoginJob.invokeOnCompletion {
-            if (it is CancellationException) {
-                deferredLogin?.cancel()
+    }
+
+    private suspend fun doFindPotentialDuplicates(origin: String, loginId: String?) {
+        val fetchedDuplicatesList = passwordsStorage.getByBaseDomain(origin).filter { it.guid != loginId }
+        fetchedDuplicatesList.let { list ->
+            withContext(Dispatchers.Main) {
+                val savedLoginList = list.map { it.mapToSavedLogin() }
+                loginsFragmentStore.dispatch(
+                    LoginsAction.ListOfDupes(
+                        savedLoginList
+                    )
+                )
             }
         }
     }

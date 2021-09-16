@@ -6,16 +6,15 @@ package org.mozilla.fenix.settings.logins
 
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
-import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
-import io.mockk.just
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
+import mozilla.components.concept.storage.EncryptedLogin
 import mozilla.components.concept.storage.Login
 import mozilla.components.service.sync.logins.SyncableLoginsStorage
 import mozilla.components.support.test.rule.MainCoroutineRule
@@ -93,7 +92,7 @@ class SavedLoginsStorageControllerTest {
         )
         coEvery { passwordsStorage.list() } returns listOf(login)
 
-        controller.fetchLoginDetails(login.guid!!)
+        controller.fetchLoginDetails(login.guid)
 
         val expectedLogin = login.mapToSavedLogin()
 
@@ -117,17 +116,13 @@ class SavedLoginsStorageControllerTest {
             httpRealm = "httpRealm",
             formActionOrigin = ""
         )
-
-        coEvery { passwordsStorage.get(any()) } returns oldLogin
-        coEvery { passwordsStorage.update(any()) } just Runs
-
-        controller.save(oldLogin.guid!!, "newUsername", "newPassword")
-
-        val directions =
-            EditLoginFragmentDirections.actionEditLoginFragmentToLoginDetailFragment(
-                oldLogin.guid!!
-            )
-
+        val oldLoginEncrypted = EncryptedLogin(
+            guid = "id",
+            origin = "https://www.test.co.gov.org",
+            httpRealm = "httpRealm",
+            formActionOrigin = "",
+            secFields = "fake-encrypted-data",
+        )
         val newLogin = Login(
             guid = "id",
             origin = "https://www.test.co.gov.org",
@@ -137,11 +132,22 @@ class SavedLoginsStorageControllerTest {
             formActionOrigin = ""
         )
 
+        coEvery { passwordsStorage.get(any()) } returns oldLogin
+        coEvery { passwordsStorage.update(any(), any()) } returns oldLoginEncrypted
+        coEvery { passwordsStorage.decryptLogin(any()) } returns newLogin
+
+        controller.save(oldLogin.guid, "newUsername", "newPassword")
+
+        val directions =
+            EditLoginFragmentDirections.actionEditLoginFragmentToLoginDetailFragment(
+                oldLogin.guid
+            )
+
         val expectedNewList = listOf(newLogin.mapToSavedLogin())
 
         coVerify {
-            passwordsStorage.get(oldLogin.guid!!)
-            passwordsStorage.update(newLogin)
+            passwordsStorage.get(oldLogin.guid)
+            passwordsStorage.update(newLogin.guid, newLogin.toEntry())
             loginsFragmentStore.dispatch(
                 LoginsAction.UpdateLoginsList(
                     expectedNewList
@@ -176,15 +182,15 @@ class SavedLoginsStorageControllerTest {
         val dupeList = listOf(login2)
 
         coEvery {
-            passwordsStorage.getPotentialDupesIgnoringUsername(any())
+            passwordsStorage.getByBaseDomain(any())
         } returns dupeList
 
-        controller.findPotentialDuplicates(login.guid!!)
+        controller.findPotentialDuplicates(login.guid)
 
         val expectedDupeList = dupeList.map { it.mapToSavedLogin() }
 
         coVerify {
-            passwordsStorage.getPotentialDupesIgnoringUsername(login)
+            passwordsStorage.getByBaseDomain(login.origin)
             loginsFragmentStore.dispatch(
                 LoginsAction.ListOfDupes(
                     dupeList = expectedDupeList

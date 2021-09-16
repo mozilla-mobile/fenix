@@ -31,7 +31,7 @@ data class SavedLogin(
 
 fun Login.mapToSavedLogin(): SavedLogin =
     SavedLogin(
-        guid = this.guid!!,
+        guid = this.guid,
         origin = this.origin,
         username = this.username,
         password = this.password,
