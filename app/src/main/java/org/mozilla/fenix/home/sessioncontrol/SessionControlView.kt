@@ -11,8 +11,8 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.browser.state.state.TabSessionState
+import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.service.pocket.PocketRecommendedStory
@@ -25,12 +25,12 @@ import org.mozilla.fenix.home.HomeFragmentStore
 import org.mozilla.fenix.home.HomeScreenViewModel
 import org.mozilla.fenix.home.Mode
 import org.mozilla.fenix.home.OnboardingState
-import org.mozilla.fenix.home.recenttabs.view.RecentTabsItemPosition
 
 // This method got a little complex with the addition of the tab tray feature flag
 // When we remove the tabs from the home screen this will get much simpler again.
 @Suppress("ComplexMethod", "LongParameterList")
-private fun normalModeAdapterItems(
+@VisibleForTesting
+internal fun normalModeAdapterItems(
     context: Context,
     topSites: List<TopSite>,
     collections: List<TabCollection>,
@@ -44,6 +44,7 @@ private fun normalModeAdapterItems(
     pocketArticles: List<PocketRecommendedStory>
 ): List<AdapterItem> {
     val items = mutableListOf<AdapterItem>()
+    var shouldShowCustomizeHome = false
 
     tip?.let { items.add(AdapterItem.TipItem(it)) }
 
@@ -56,14 +57,18 @@ private fun normalModeAdapterItems(
     }
 
     if (recentTabs.isNotEmpty()) {
-        showRecentTabs(recentTabs, items)
+        shouldShowCustomizeHome = true
+        items.add(AdapterItem.RecentTabsHeader)
+        items.add(AdapterItem.RecentTabItem)
     }
 
     if (recentBookmarks.isNotEmpty()) {
+        shouldShowCustomizeHome = true
         items.add(AdapterItem.RecentBookmarks(recentBookmarks))
     }
 
     if (historyMetadata.isNotEmpty()) {
+        shouldShowCustomizeHome = true
         showHistoryMetadata(historyMetadata, items)
     }
 
@@ -76,49 +81,15 @@ private fun normalModeAdapterItems(
     }
 
     if (context.settings().pocketRecommendations && pocketArticles.isNotEmpty()) {
+        shouldShowCustomizeHome = true
         items.add(AdapterItem.PocketStoriesItem)
     }
 
-    return items
-}
-
-/**
- * Constructs the list of items to be shown in the recent tabs section.
- *
- * This section's structure is:
- * - section header
- * - one or more normal tabs
- * - zero or one media tab (if there is a tab opened on which media started playing.
- * This may be a duplicate of one of the normal tabs shown above).
- */
-@VisibleForTesting
-internal fun showRecentTabs(
-    recentTabs: List<TabSessionState>,
-    items: MutableList<AdapterItem>
-) {
-    items.add(AdapterItem.RecentTabsHeader)
-
-    recentTabs.forEachIndexed { index, recentTab ->
-        // If this is the first tab to be shown but more will follow.
-        if (index == 0 && recentTabs.size > 1) {
-            items.add(AdapterItem.RecentTabItem(recentTab, RecentTabsItemPosition.TOP))
-        }
-
-        // if this is the only tab to be shown.
-        else if (index == 0 && recentTabs.size == 1) {
-            items.add(AdapterItem.RecentTabItem(recentTab, RecentTabsItemPosition.SINGLE))
-        }
-
-        // If there are items above and below.
-        else if (index < recentTabs.size - 1) {
-            items.add(AdapterItem.RecentTabItem(recentTab, RecentTabsItemPosition.MIDDLE))
-        }
-
-        // If this is the last recent tab to be shown.
-        else if (index < recentTabs.size) {
-            items.add(AdapterItem.RecentTabItem(recentTab, RecentTabsItemPosition.BOTTOM))
-        }
+    if (shouldShowCustomizeHome) {
+        items.add(AdapterItem.CustomizeHomeButton)
     }
+
+    return items
 }
 
 private fun showHistoryMetadata(
