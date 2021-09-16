@@ -263,14 +263,15 @@ android.applicationVariants.all { variant ->
         println("versionName override: $versionName")
 
         variant.outputs.each { output ->
+            def isMozillaOnline = project.hasProperty("mozillaOnline") || gradle.hasProperty("localProperties.mozillaOnline")
             def abi = output.getFilter(OutputFile.ABI)
             // If it is a Mozilla Online build, use a unified version code of armeabi-v7a
-            def arch = (project.hasProperty("mozillaOnline") || gradle.hasProperty("localProperties.mozillaOnline")) ? "armeabi-v7a" : abi
+            def arch = (isMozillaOnline) ? "armeabi-v7a" : abi
             // We use the same version code generator, that we inherited from Fennec, across all channels - even on
             // channels that never shipped a Fennec build.
             def versionCodeOverride = Config.generateFennecVersionCode(arch)
 
-            println("versionCode for $abi = $versionCodeOverride")
+            println("versionCode for $abi = $versionCodeOverride, isMozillaOnline = $isMozillaOnline")
 
             output.versionNameOverride = versionName
             output.versionCodeOverride = versionCodeOverride
@@ -477,7 +478,9 @@ dependencies {
     implementation Deps.mozilla_service_sync_autofill
     implementation Deps.mozilla_service_sync_logins
     implementation Deps.mozilla_service_firefox_accounts
-    implementation Deps.mozilla_service_glean
+    implementation(Deps.mozilla_service_glean) {
+      exclude group: 'org.mozilla.telemetry', module: 'glean-native'
+    }
     implementation Deps.mozilla_service_location
     implementation Deps.mozilla_service_nimbus
 
@@ -514,7 +517,9 @@ dependencies {
     implementation Deps.androidx_navigation_fragment
     implementation Deps.androidx_navigation_ui
     implementation Deps.androidx_recyclerview
+    implementation Deps.androidx_lifecycle_common
     implementation Deps.androidx_lifecycle_livedata
+    implementation Deps.androidx_lifecycle_process
     implementation Deps.androidx_lifecycle_runtime
     implementation Deps.androidx_lifecycle_viewmodel
     implementation Deps.androidx_core
@@ -580,7 +585,7 @@ dependencies {
 
     // For the initial release of Glean 19, we require consumer applications to
     // depend on a separate library for unit tests. This will be removed in future releases.
-    testImplementation "org.mozilla.telemetry:glean-forUnitTests:${project.ext.glean_version}"
+    testImplementation "org.mozilla.telemetry:glean-native-forUnitTests:${project.ext.glean_version}"
 
     lintChecks project(":mozilla-lint-rules")
 }

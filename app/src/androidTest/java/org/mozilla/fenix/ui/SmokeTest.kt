@@ -41,7 +41,6 @@ import org.mozilla.fenix.helpers.TestHelper.scrollToElementByText
 import org.mozilla.fenix.helpers.ViewVisibilityIdlingResource
 import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.clickTabCrashedRestoreButton
-import org.mozilla.fenix.ui.robots.clickUrlbar
 import org.mozilla.fenix.ui.robots.collectionRobot
 import org.mozilla.fenix.ui.robots.customTabScreen
 import org.mozilla.fenix.ui.robots.downloadRobot
@@ -274,9 +273,10 @@ class SmokeTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+            mDevice.waitForIdle()
         }.openThreeDotMenu {
         }.openSyncSignIn {
-            verifySyncSignInMenuHeader()
+            verifyTurnOnSyncMenu()
         }
     }
 
@@ -511,9 +511,8 @@ class SmokeTest {
         }.goToSearchEngine {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
         }.openNavigationToolbar {
-            clickUrlbar {
-                verifyDefaultSearchEngine("Google")
-            }
+        }.clickUrlbar {
+            verifyDefaultSearchEngine("Google")
         }
     }
 
@@ -1065,7 +1064,7 @@ class SmokeTest {
             verifyFolderTitle("My Folder")
         }.openThreeDotMenu("My Folder") {
         }.clickDelete {
-            confirmFolderDeletion()
+            confirmDeletion()
             verifyDeleteSnackBarText()
             navigateUp()
         }
