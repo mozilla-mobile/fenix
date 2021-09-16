@@ -76,9 +76,9 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
     // determine if it goes before or after that item.
     // This will fail if there's a spiral layout or something
     // but should work perfectly for lists and grids.
-    private fun getDropPosition(x: Float, y: Float): Int {
-        val lm = layoutManager ?: return 0 // No layoutManager should never happen
-        if (lm.childCount < 2) return 0 // If there's 0 or 1 tabs visible, can't reorder
+    private fun getDropPosition(x: Float, y: Float): Pair<Int, Boolean>? {
+        val lm = layoutManager ?: return null // No layoutManager should never happen
+        if (lm.childCount < 2) return null // If there's 0 or 1 tabs visible, can't reorder
         val first = lm.getChildAt(0)!!
         val second = lm.getChildAt(1)!!
         val xOffset = second.x - first.x
@@ -86,6 +86,7 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
 
         var bestDist = Float.MAX_VALUE
         var bestPos = 0
+        var placeAfter = false
         for (i in 0 until lm.childCount) {
             val proposedTarget = lm.getChildAt(i)!!
             val xDiff = x - (proposedTarget.x + proposedTarget.width / 2)
@@ -95,10 +96,10 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
                 bestDist = dist
                 bestPos = getChildAdapterPosition(proposedTarget)
                 val modifier = (xDiff * xOffset) + (yDiff * yOffset)
-                if (modifier > 0) bestPos += 1
+                placeAfter = (modifier > 0)
             }
         }
-        return bestPos
+        return Pair(bestPos, placeAfter)
     }
     private val dragListen = OnDragListener { _, event ->
         when (event.action) {
@@ -119,8 +120,12 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
             }
             DragEvent.ACTION_DROP -> {
                 val target = getDropPosition(event.x, event.y)
-                @Suppress("UNCHECKED_CAST") // Cast is checked on drag start
-                interactor.onTabsMove(event.localState as Collection<Tab>, target, tabsFeature.defaultTabsFilter)
+                if (target != null) {
+                    val (targetPos, placeAfter) = target
+                    val filter = tabsFeature.defaultTabsFilter
+                    @Suppress("UNCHECKED_CAST") // Cast is checked on drag start
+                    interactor.onTabsMove(event.localState as Collection<Tab>, targetPos, placeAfter, filter)
+                }
                 true
             }
             DragEvent.ACTION_DRAG_ENDED -> {

@@ -64,9 +64,11 @@ interface TabsTrayController {
      * Moves tabs to a new position
      *
      * @param tabs The tabs to be moved
-     * @param position The new position to put the tabs
+     * @param targetPos Place the moved tabs next to the target position
+     * @param placeAfter Place the moved tabs before or after the target
+     * @param filter Filter the full tab list to whatever the displayed tabs are to find the target
      */
-    fun handleTabsMove(tabs: Collection<Tab>, position: Int, filter: (TabSessionState) -> Boolean)
+    fun handleTabsMove(tabs: Collection<Tab>, targetPos: Int, placeAfter: Boolean, filter: (TabSessionState) -> Boolean)
 
     /**
      * Navigate from TabsTray to Recently Closed section in the History fragment.
@@ -176,13 +178,22 @@ class DefaultTabsTrayController(
     }
 
     /**
-     * Moves currently selected tabs to position
+     * Moves a set of tabs to a position
      *
-     * @param position The position to move the tabs to
+     * @param tabs The tabs to be moved
+     * @param targetPos The position to move the tabs to in the displayed list
+     * @param placeAfter Place the tabs before or after the target
+     * @param filter The filter to go from the full tab list to the displayed list
      */
-    override fun handleTabsMove(tabs: Collection<Tab>, position: Int, filter: (TabSessionState) -> Boolean) {
+    override fun handleTabsMove(
+        tabs: Collection<Tab>,
+        targetPos: Int,
+        placeAfter: Boolean,
+        filter: (TabSessionState) -> Boolean
+    ) {
         val tabIDs = tabs.map { it.id }
-        tabsUseCases.moveTabs(tabIDs, position, filter)
+        val target = browserStore.state.tabs.filter(filter)[targetPos]
+        tabsUseCases.moveTabs(tabIDs, target.id, placeAfter)
     }
 
     /**

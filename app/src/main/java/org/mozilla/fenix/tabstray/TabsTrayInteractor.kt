@@ -37,9 +37,15 @@ interface TabsTrayInteractor {
     fun onInactiveDebugClicked(tabs: Collection<Tab>)
 
     /**
-     * Invoked when [tabs] should be moved to [position] from a drag-drop operation
+     * Invoked when [tabs] should be moved to before/after position [targetPos] from a drag-drop operation
+     * Filter modifies [targetPos] in the controller.
      */
-    fun onTabsMove(tabs: Collection<Tab>, position: Int, filter: (TabSessionState) -> Boolean = { true })
+    fun onTabsMove(
+        tabs: Collection<Tab>,
+        targetPos: Int,
+        placeAfter: Boolean,
+        filter: (TabSessionState) -> Boolean = { true }
+    )
 }
 
 /**
@@ -66,8 +72,13 @@ class DefaultTabsTrayInteractor(
         controller.handleMultipleTabsDeletion(tabs)
     }
 
-    override fun onTabsMove(tabs: Collection<Tab>, position: Int, filter: (TabSessionState) -> Boolean) {
-        controller.handleTabsMove(tabs, position, filter)
+    override fun onTabsMove(
+        tabs: Collection<Tab>,
+        targetPos: Int,
+        placeAfter: Boolean,
+        filter: (TabSessionState) -> Boolean
+    ) {
+        controller.handleTabsMove(tabs, targetPos, placeAfter, filter)
     }
 
     override fun onInactiveDebugClicked(tabs: Collection<Tab>) {
