@@ -11,7 +11,6 @@ import androidx.annotation.VisibleForTesting
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.RecyclerView
 import mozilla.components.browser.state.store.BrowserStore
-import org.mozilla.fenix.R
 import org.mozilla.fenix.sync.SyncedTabsAdapter
 import org.mozilla.fenix.tabstray.browser.BrowserTabsAdapter
 import org.mozilla.fenix.tabstray.browser.BrowserTrayInteractor
@@ -42,7 +41,7 @@ class TrayPagerAdapter(
         ConcatAdapter(
             InactiveTabsAdapter(context, browserInteractor, INACTIVE_TABS_FEATURE_NAME),
             TabGroupAdapter(context, browserInteractor, tabsTrayStore, TAB_GROUP_FEATURE_NAME),
-            TitleHeaderAdapter(browserStore, R.string.tab_tray_header_title),
+            TitleHeaderAdapter(browserStore),
             BrowserTabsAdapter(context, browserInteractor, tabsTrayStore, TABS_TRAY_FEATURE_NAME)
         )
     }

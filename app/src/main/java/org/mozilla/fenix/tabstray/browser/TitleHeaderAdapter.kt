@@ -7,7 +7,6 @@ package org.mozilla.fenix.tabstray.browser
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.StringRes
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -17,21 +16,18 @@ import org.mozilla.fenix.databinding.TabTrayTitleHeaderItemBinding
 
 /**
  * A [RecyclerView.Adapter] for tab header.
- *
- * @param title [String] used for the title
  */
 class TitleHeaderAdapter(
-    private val browserStore: BrowserStore,
-    @StringRes val title: Int
+    browserStore: BrowserStore
 ) : ListAdapter<TitleHeaderAdapter.Header, TitleHeaderAdapter.HeaderViewHolder>(DiffCallback) {
 
-    object Header
+    class Header
 
     private val normalTabsHeaderBinding = TitleHeaderBinding(browserStore, ::handleListChanges)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HeaderViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
-        return HeaderViewHolder(view, title)
+        return HeaderViewHolder(view)
     }
 
     override fun getItemViewType(position: Int) = HeaderViewHolder.LAYOUT_ID
@@ -49,7 +45,7 @@ class TitleHeaderAdapter(
 
     private fun handleListChanges(showHeader: Boolean) {
         val header = if (showHeader) {
-            listOf(Header)
+            listOf(Header())
         } else {
             emptyList()
         }
@@ -57,14 +53,12 @@ class TitleHeaderAdapter(
         submitList(header)
     }
 
-    class HeaderViewHolder(
-        itemView: View,
-        @StringRes val title: Int
-    ) : RecyclerView.ViewHolder(itemView) {
+    class HeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val binding = TabTrayTitleHeaderItemBinding.bind(itemView)
 
         fun bind() {
-            binding.tabTrayHeaderTitle.text = itemView.context.getString(title)
+            binding.tabTrayHeaderTitle.text =
+                itemView.context.getString(R.string.tab_tray_header_title)
         }
 
         companion object {
