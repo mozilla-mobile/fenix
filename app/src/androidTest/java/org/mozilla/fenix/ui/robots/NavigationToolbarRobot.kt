@@ -119,8 +119,8 @@ class NavigationToolbarRobot {
         ): BrowserRobot.Transition {
             sessionLoadedIdlingResource = SessionLoadedIdlingResource()
 
-            rule.waitForIdle()
             openEditURLView()
+            rule.waitForIdle()
 
             awesomeBar().setText(url.toString())
 
