@@ -251,7 +251,6 @@ fun navigationToolbar(interact: NavigationToolbarRobot.() -> Unit): NavigationTo
 
 val sessionLoadedIdlingResource2 = SessionLoadedIdlingResource()
 
-
 fun clickUrlbar(interact: SearchRobot.() -> Unit): SearchRobot.Transition {
     runWithIdleRes(sessionLoadedIdlingResource2) {
         mDevice.findObject(UiSelector().resourceId("$packageName:id/toolbar"))
