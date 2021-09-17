@@ -309,23 +309,26 @@ internal class ReleaseMetricController(
             else -> null
         }
 
-        Component.FEATURE_AWESOMEBAR to AwesomeBarFacts.Items.BOOKMARK_SUGGESTION_CLICKED -> {
-            Event.BookmarkSuggestionClicked
-        }
-        Component.FEATURE_AWESOMEBAR to AwesomeBarFacts.Items.CLIPBOARD_SUGGESTION_CLICKED -> {
-            Event.ClipboardSuggestionClicked
-        }
-        Component.FEATURE_AWESOMEBAR to AwesomeBarFacts.Items.HISTORY_SUGGESTION_CLICKED -> {
-            Event.HistorySuggestionClicked
-        }
-        Component.FEATURE_AWESOMEBAR to AwesomeBarFacts.Items.SEARCH_ACTION_CLICKED -> {
-            Event.SearchActionClicked
-        }
-        Component.FEATURE_AWESOMEBAR to AwesomeBarFacts.Items.SEARCH_SUGGESTION_CLICKED -> {
-            Event.SearchSuggestionClicked
-        }
-        Component.FEATURE_AWESOMEBAR to AwesomeBarFacts.Items.OPENED_TAB_SUGGESTION_CLICKED -> {
-            Event.OpenedTabSuggestionClicked
+        Component.FEATURE_AWESOMEBAR -> when (item) {
+            AwesomeBarFacts.Items.BOOKMARK_SUGGESTION_CLICKED -> {
+                Event.BookmarkSuggestionClicked
+            }
+            AwesomeBarFacts.Items.CLIPBOARD_SUGGESTION_CLICKED -> {
+                Event.ClipboardSuggestionClicked
+            }
+            AwesomeBarFacts.Items.HISTORY_SUGGESTION_CLICKED -> {
+                Event.HistorySuggestionClicked
+            }
+            AwesomeBarFacts.Items.SEARCH_ACTION_CLICKED -> {
+                Event.SearchActionClicked
+            }
+            AwesomeBarFacts.Items.SEARCH_SUGGESTION_CLICKED -> {
+                Event.SearchSuggestionClicked
+            }
+            AwesomeBarFacts.Items.OPENED_TAB_SUGGESTION_CLICKED -> {
+                Event.OpenedTabSuggestionClicked
+            }
+            else -> null
         }
 
         Component.LIB_DATAPROTECT to SecurePrefsReliabilityExperiment.Companion.Actions.EXPERIMENT -> {
