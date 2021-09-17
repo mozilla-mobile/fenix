@@ -158,21 +158,23 @@ internal class ReleaseMetricController(
     }
 
     @Suppress("LongMethod")
-    private fun Fact.toEvent(): Event? = when (Pair(component, item)) {
-        Component.FEATURE_PROMPTS to LoginDialogFacts.Items.DISPLAY -> Event.LoginDialogPromptDisplayed
-        Component.FEATURE_PROMPTS to LoginDialogFacts.Items.CANCEL -> Event.LoginDialogPromptCancelled
-        Component.FEATURE_PROMPTS to LoginDialogFacts.Items.NEVER_SAVE -> Event.LoginDialogPromptNeverSave
-        Component.FEATURE_PROMPTS to LoginDialogFacts.Items.SAVE -> Event.LoginDialogPromptSave
-        Component.FEATURE_PROMPTS to CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_FORM_DETECTED ->
-            Event.CreditCardFormDetected
-        Component.FEATURE_PROMPTS to CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_SUCCESS ->
-            Event.CreditCardAutofilled
-        Component.FEATURE_PROMPTS to CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_PROMPT_SHOWN ->
-            Event.CreditCardAutofillPromptShown
-        Component.FEATURE_PROMPTS to CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_PROMPT_EXPANDED ->
-            Event.CreditCardAutofillPromptExpanded
-        Component.FEATURE_PROMPTS to CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_PROMPT_DISMISSED ->
-            Event.CreditCardAutofillPromptDismissed
+    private fun Fact.toEvent(): Event? = when (component) {
+        Component.FEATURE_PROMPTS -> when (item) {
+            LoginDialogFacts.Items.DISPLAY -> Event.LoginDialogPromptDisplayed
+            LoginDialogFacts.Items.CANCEL -> Event.LoginDialogPromptCancelled
+            LoginDialogFacts.Items.NEVER_SAVE -> Event.LoginDialogPromptNeverSave
+            LoginDialogFacts.Items.SAVE -> Event.LoginDialogPromptSave
+            CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_FORM_DETECTED ->
+                Event.CreditCardFormDetected
+            CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_SUCCESS -> Event.CreditCardAutofilled
+            CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_PROMPT_SHOWN ->
+                Event.CreditCardAutofillPromptShown
+            CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_PROMPT_EXPANDED ->
+                Event.CreditCardAutofillPromptExpanded
+            CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_PROMPT_DISMISSED ->
+                Event.CreditCardAutofillPromptDismissed
+            else -> null
+        }
 
         Component.FEATURE_CONTEXTMENU to ContextMenuFacts.Items.ITEM -> {
             metadata?.get("item")?.let { Event.ContextMenuItemTapped.create(it.toString()) }
