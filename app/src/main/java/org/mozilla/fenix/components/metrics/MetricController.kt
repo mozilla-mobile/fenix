@@ -368,35 +368,39 @@ internal class ReleaseMetricController(
             else -> null
         }
 
-        Component.FEATURE_AUTOFILL to AutofillFacts.Items.AUTOFILL_REQUEST -> {
-            val hasMatchingLogins = metadata?.get(AutofillFacts.Metadata.HAS_MATCHING_LOGINS) as Boolean?
-            if (hasMatchingLogins == true) {
-                Event.AndroidAutofillRequestWithLogins
-            } else {
-                Event.AndroidAutofillRequestWithoutLogins
+        Component.FEATURE_AUTOFILL -> when (item) {
+            AutofillFacts.Items.AUTOFILL_REQUEST -> {
+                val hasMatchingLogins = metadata?.get(AutofillFacts.Metadata.HAS_MATCHING_LOGINS) as Boolean?
+                if (hasMatchingLogins == true) {
+                    Event.AndroidAutofillRequestWithLogins
+                } else {
+                    Event.AndroidAutofillRequestWithoutLogins
+                }
             }
-        }
-        Component.FEATURE_AUTOFILL to AutofillFacts.Items.AUTOFILL_SEARCH -> {
-            if (action == Action.SELECT) {
-                Event.AndroidAutofillSearchItemSelected
-            } else {
-                Event.AndroidAutofillSearchDisplayed
+            AutofillFacts.Items.AUTOFILL_SEARCH -> {
+                if (action == Action.SELECT) {
+                    Event.AndroidAutofillSearchItemSelected
+                } else {
+                    Event.AndroidAutofillSearchDisplayed
+                }
             }
-        }
-        Component.FEATURE_AUTOFILL to AutofillFacts.Items.AUTOFILL_LOCK -> {
-            if (action == Action.CONFIRM) {
-                Event.AndroidAutofillUnlockSuccessful
-            } else {
-                Event.AndroidAutofillUnlockCanceled
+            AutofillFacts.Items.AUTOFILL_LOCK -> {
+                if (action == Action.CONFIRM) {
+                    Event.AndroidAutofillUnlockSuccessful
+                } else {
+                    Event.AndroidAutofillUnlockCanceled
+                }
             }
-        }
-        Component.FEATURE_AUTOFILL to AutofillFacts.Items.AUTOFILL_CONFIRMATION -> {
-            if (action == Action.CONFIRM) {
-                Event.AndroidAutofillConfirmationSuccessful
-            } else {
-                Event.AndroidAutofillConfirmationCanceled
+            AutofillFacts.Items.AUTOFILL_CONFIRMATION -> {
+                if (action == Action.CONFIRM) {
+                    Event.AndroidAutofillConfirmationSuccessful
+                } else {
+                    Event.AndroidAutofillConfirmationCanceled
+                }
             }
+            else -> null
         }
+
         else -> null
     }
 
