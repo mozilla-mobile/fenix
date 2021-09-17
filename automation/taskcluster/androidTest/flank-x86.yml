@@ -42,16 +42,16 @@ gcloud:
 
 
   device:
-   - model: Nexus9
-     version: 25
-   - model: Pixel2
-     version: 26
-   - model: Nexus6P
-     version: 27
+   #- model: Nexus9
+   #  version: 25
+   #- model: Pixel2
+   #  version: 26
+   #- model: Nexus6P
+   #  version: 27
    - model: Pixel2
      version: 28
-   - model: Pixel2
-     version: 30
+   #- model: Pixel2
+   #  version: 30
 
 flank:
   project: GOOGLE_PROJECT

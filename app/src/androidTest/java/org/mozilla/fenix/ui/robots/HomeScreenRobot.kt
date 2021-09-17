@@ -226,7 +226,13 @@ class HomeScreenRobot {
             onView(ViewMatchers.isRoot()).perform(ViewActions.pressBack())
         }
 
+        val sessionLoadedIdlingResource2 = SessionLoadedIdlingResource()
+
         fun openNavigationToolbar(interact: NavigationToolbarRobot.() -> Unit): NavigationToolbarRobot.Transition {
+            runWithIdleRes(sessionLoadedIdlingResource2) {
+                org.mozilla.fenix.ui.robots.mDevice.findObject(UiSelector().resourceId("$packageName:id/toolbar"))
+            }
+
             mDevice.findObject(UiSelector().resourceId("$packageName:id/toolbar"))
                 .waitForExists(waitingTime)
             navigationToolbar().perform(click())
