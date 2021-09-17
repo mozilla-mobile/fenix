@@ -176,17 +176,20 @@ internal class ReleaseMetricController(
             else -> null
         }
 
-        Component.FEATURE_CONTEXTMENU to ContextMenuFacts.Items.ITEM -> {
-            metadata?.get("item")?.let { Event.ContextMenuItemTapped.create(it.toString()) }
-        }
-        Component.FEATURE_CONTEXTMENU to ContextMenuFacts.Items.TEXT_SELECTION_OPTION -> {
-            when (metadata?.get("textSelectionOption")?.toString()) {
-                CONTEXT_MENU_COPY -> Event.ContextMenuCopyTapped
-                CONTEXT_MENU_SEARCH, CONTEXT_MENU_SEARCH_PRIVATELY -> Event.ContextMenuSearchTapped
-                CONTEXT_MENU_SELECT_ALL -> Event.ContextMenuSelectAllTapped
-                CONTEXT_MENU_SHARE -> Event.ContextMenuShareTapped
-                else -> null
+        Component.FEATURE_CONTEXTMENU -> when (item) {
+            ContextMenuFacts.Items.ITEM -> {
+                metadata?.get("item")?.let { Event.ContextMenuItemTapped.create(it.toString()) }
             }
+            ContextMenuFacts.Items.TEXT_SELECTION_OPTION -> {
+                when (metadata?.get("textSelectionOption")?.toString()) {
+                    CONTEXT_MENU_COPY -> Event.ContextMenuCopyTapped
+                    CONTEXT_MENU_SEARCH, CONTEXT_MENU_SEARCH_PRIVATELY -> Event.ContextMenuSearchTapped
+                    CONTEXT_MENU_SELECT_ALL -> Event.ContextMenuSelectAllTapped
+                    CONTEXT_MENU_SHARE -> Event.ContextMenuShareTapped
+                    else -> null
+                }
+            }
+            else -> null
         }
 
         Component.BROWSER_TOOLBAR to ToolbarFacts.Items.MENU -> {
