@@ -121,10 +121,8 @@ class NavigationToolbarRobot {
 
             rule.waitForIdle()
             openEditURLView()
-            rule.waitForIdle()
 
             awesomeBar().setText(url.toString())
-            rule.waitForIdle()
 
             mDevice.pressEnter()
 
