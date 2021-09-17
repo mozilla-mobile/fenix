@@ -252,24 +252,27 @@ internal class ReleaseMetricController(
             else -> null
         }
 
-        Component.BROWSER_AWESOMEBAR to BrowserAwesomeBarFacts.Items.PROVIDER_DURATION -> {
-            metadata?.get(BrowserAwesomeBarFacts.MetadataKeys.DURATION_PAIR)?.let { providerTiming ->
-                require(providerTiming is Pair<*, *>) { "Expected providerTiming to be a Pair" }
-                when (val provider = providerTiming.first as AwesomeBar.SuggestionProvider) {
-                    is HistoryStorageSuggestionProvider -> PerfAwesomebar.historySuggestions
-                    is BookmarksStorageSuggestionProvider -> PerfAwesomebar.bookmarkSuggestions
-                    is SessionSuggestionProvider -> PerfAwesomebar.sessionSuggestions
-                    is SearchSuggestionProvider -> PerfAwesomebar.searchEngineSuggestions
-                    is ClipboardSuggestionProvider -> PerfAwesomebar.clipboardSuggestions
-                    is ShortcutsSuggestionProvider -> PerfAwesomebar.shortcutsSuggestions
-                    // NB: add PerfAwesomebar.syncedTabsSuggestions once we're using SyncedTabsSuggestionProvider
-                    else -> {
-                        Logger("Metrics").error("Unknown suggestion provider: $provider")
-                        null
-                    }
-                }?.accumulateSamples(longArrayOf(providerTiming.second as Long))
+        Component.BROWSER_AWESOMEBAR -> when (item) {
+            BrowserAwesomeBarFacts.Items.PROVIDER_DURATION -> {
+                metadata?.get(BrowserAwesomeBarFacts.MetadataKeys.DURATION_PAIR)?.let { providerTiming ->
+                    require(providerTiming is Pair<*, *>) { "Expected providerTiming to be a Pair" }
+                    when (val provider = providerTiming.first as AwesomeBar.SuggestionProvider) {
+                        is HistoryStorageSuggestionProvider -> PerfAwesomebar.historySuggestions
+                        is BookmarksStorageSuggestionProvider -> PerfAwesomebar.bookmarkSuggestions
+                        is SessionSuggestionProvider -> PerfAwesomebar.sessionSuggestions
+                        is SearchSuggestionProvider -> PerfAwesomebar.searchEngineSuggestions
+                        is ClipboardSuggestionProvider -> PerfAwesomebar.clipboardSuggestions
+                        is ShortcutsSuggestionProvider -> PerfAwesomebar.shortcutsSuggestions
+                        // NB: add PerfAwesomebar.syncedTabsSuggestions once we're using SyncedTabsSuggestionProvider
+                        else -> {
+                            Logger("Metrics").error("Unknown suggestion provider: $provider")
+                            null
+                        }
+                    }?.accumulateSamples(longArrayOf(providerTiming.second as Long))
+                }
+                null
             }
-            null
+            else -> null
         }
         Component.FEATURE_PWA to ProgressiveWebAppFacts.Items.HOMESCREEN_ICON_TAP -> {
             Event.ProgressiveWebAppOpenFromHomescreenTap
