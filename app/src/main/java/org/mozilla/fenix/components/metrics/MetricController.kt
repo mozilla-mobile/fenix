@@ -230,23 +230,28 @@ internal class ReleaseMetricController(
             }
             else -> null
         }
-        Component.SUPPORT_WEBEXTENSIONS to WebExtensionFacts.Items.WEB_EXTENSIONS_INITIALIZED -> {
-            metadata?.get("installed")?.let { installedAddons ->
-                if (installedAddons is List<*>) {
-                    settings.installedAddonsCount = installedAddons.size
-                    settings.installedAddonsList = installedAddons.joinToString(",")
-                }
-            }
 
-            metadata?.get("enabled")?.let { enabledAddons ->
-                if (enabledAddons is List<*>) {
-                    settings.enabledAddonsCount = enabledAddons.size
-                    settings.enabledAddonsList = enabledAddons.joinToString(",")
+        Component.SUPPORT_WEBEXTENSIONS -> when (item) {
+            WebExtensionFacts.Items.WEB_EXTENSIONS_INITIALIZED -> {
+                metadata?.get("installed")?.let { installedAddons ->
+                    if (installedAddons is List<*>) {
+                        settings.installedAddonsCount = installedAddons.size
+                        settings.installedAddonsList = installedAddons.joinToString(",")
+                    }
                 }
-            }
 
-            null
+                metadata?.get("enabled")?.let { enabledAddons ->
+                    if (enabledAddons is List<*>) {
+                        settings.enabledAddonsCount = enabledAddons.size
+                        settings.enabledAddonsList = enabledAddons.joinToString(",")
+                    }
+                }
+
+                null
+            }
+            else -> null
         }
+
         Component.BROWSER_AWESOMEBAR to BrowserAwesomeBarFacts.Items.PROVIDER_DURATION -> {
             metadata?.get(BrowserAwesomeBarFacts.MetadataKeys.DURATION_PAIR)?.let { providerTiming ->
                 require(providerTiming is Pair<*, *>) { "Expected providerTiming to be a Pair" }
