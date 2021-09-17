@@ -206,8 +206,11 @@ internal class ReleaseMetricController(
             else -> null
         }
 
-        Component.FEATURE_CUSTOMTABS to CustomTabsFacts.Items.CLOSE -> Event.CustomTabsClosed
-        Component.FEATURE_CUSTOMTABS to CustomTabsFacts.Items.ACTION_BUTTON -> Event.CustomTabsActionTapped
+        Component.FEATURE_CUSTOMTABS -> when (item) {
+            CustomTabsFacts.Items.CLOSE -> Event.CustomTabsClosed
+            CustomTabsFacts.Items.ACTION_BUTTON -> Event.CustomTabsActionTapped
+            else -> null
+        }
 
         Component.FEATURE_MEDIA to MediaFacts.Items.NOTIFICATION -> {
             when (action) {
