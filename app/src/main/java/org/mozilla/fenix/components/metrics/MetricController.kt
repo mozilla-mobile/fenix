@@ -331,25 +331,28 @@ internal class ReleaseMetricController(
             else -> null
         }
 
-        Component.LIB_DATAPROTECT to SecurePrefsReliabilityExperiment.Companion.Actions.EXPERIMENT -> {
-            Event.SecurePrefsExperimentFailure(metadata?.get("javaClass") as String? ?: "null")
-        }
-        Component.LIB_DATAPROTECT to SecurePrefsReliabilityExperiment.Companion.Actions.GET -> {
-            if (SecurePrefsReliabilityExperiment.Companion.Values.FAIL.v == value?.toInt()) {
-                Event.SecurePrefsGetFailure(metadata?.get("javaClass") as String? ?: "null")
-            } else {
-                Event.SecurePrefsGetSuccess(value ?: "")
+        Component.LIB_DATAPROTECT -> when (item) {
+            SecurePrefsReliabilityExperiment.Companion.Actions.EXPERIMENT -> {
+                Event.SecurePrefsExperimentFailure(metadata?.get("javaClass") as String? ?: "null")
             }
-        }
-        Component.LIB_DATAPROTECT to SecurePrefsReliabilityExperiment.Companion.Actions.WRITE -> {
-            if (SecurePrefsReliabilityExperiment.Companion.Values.FAIL.v == value?.toInt()) {
-                Event.SecurePrefsWriteFailure(metadata?.get("javaClass") as String? ?: "null")
-            } else {
-                Event.SecurePrefsWriteSuccess
+            SecurePrefsReliabilityExperiment.Companion.Actions.GET -> {
+                if (SecurePrefsReliabilityExperiment.Companion.Values.FAIL.v == value?.toInt()) {
+                    Event.SecurePrefsGetFailure(metadata?.get("javaClass") as String? ?: "null")
+                } else {
+                    Event.SecurePrefsGetSuccess(value ?: "")
+                }
             }
-        }
-        Component.LIB_DATAPROTECT to SecurePrefsReliabilityExperiment.Companion.Actions.RESET -> {
-            Event.SecurePrefsReset
+            SecurePrefsReliabilityExperiment.Companion.Actions.WRITE -> {
+                if (SecurePrefsReliabilityExperiment.Companion.Values.FAIL.v == value?.toInt()) {
+                    Event.SecurePrefsWriteFailure(metadata?.get("javaClass") as String? ?: "null")
+                } else {
+                    Event.SecurePrefsWriteSuccess
+                }
+            }
+            SecurePrefsReliabilityExperiment.Companion.Actions.RESET -> {
+                Event.SecurePrefsReset
+            }
+            else -> null
         }
 
         Component.FEATURE_SEARCH to AdsTelemetry.SERP_ADD_CLICKED -> {
