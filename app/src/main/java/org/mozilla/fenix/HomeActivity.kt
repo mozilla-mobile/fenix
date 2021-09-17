@@ -96,6 +96,7 @@ import org.mozilla.fenix.library.bookmarks.DesktopFolders
 import org.mozilla.fenix.library.history.HistoryFragmentDirections
 import org.mozilla.fenix.library.recentlyclosed.RecentlyClosedFragmentDirections
 import org.mozilla.fenix.onboarding.DefaultBrowserNotificationWorker
+import org.mozilla.fenix.perf.MarkersLifecycleCallbacks
 import org.mozilla.fenix.perf.Performance
 import org.mozilla.fenix.perf.PerformanceInflater
 import org.mozilla.fenix.perf.ProfilerMarkers
@@ -180,8 +181,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     private lateinit var startupTypeTelemetry: StartupTypeTelemetry
 
     final override fun onCreate(savedInstanceState: Bundle?) {
-        // DO NOT MOVE ANYTHING ABOVE THIS addMarker CALL.
-        components.core.engine.profiler?.addMarker("Activity.onCreate", "HomeActivity")
+        // DO NOT MOVE ANYTHING ABOVE THIS getProfilerTime CALL.
+        val startTimeProfiler = components.core.engine.profiler?.getProfilerTime()
 
         components.strictMode.attachListenerToDisablePenaltyDeath(supportFragmentManager)
         // There is disk read violations on some devices such as samsung and pixel for android 9/10
@@ -270,6 +271,9 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             components.core.pocketStoriesService.startPeriodicStoriesRefresh()
         }
 
+        components.core.engine.profiler?.addMarker(
+            MarkersLifecycleCallbacks.MARKER_NAME, startTimeProfiler, "HomeActivity.onCreate"
+        )
         StartupTimeline.onActivityCreateEndHome(this) // DO NOT MOVE ANYTHING BELOW HERE.
     }
 
@@ -320,6 +324,9 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     }
 
     override fun onStart() {
+        // DO NOT MOVE ANYTHING ABOVE THIS getProfilerTime CALL.
+        val startProfilerTime = components.core.engine.profiler?.getProfilerTime()
+
         super.onStart()
 
         // Diagnostic breadcrumb for "Display already aquired" crash:
@@ -329,6 +336,9 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         )
 
         ProfilerMarkers.homeActivityOnStart(binding.rootContainer, components.core.engine.profiler)
+        components.core.engine.profiler?.addMarker(
+            MarkersLifecycleCallbacks.MARKER_NAME, startProfilerTime, "HomeActivity.onStart"
+        ) // DO NOT MOVE ANYTHING BELOW THIS addMarker CALL.
     }
 
     override fun onStop() {
