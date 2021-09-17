@@ -192,8 +192,12 @@ class DefaultTabsTrayController(
         filter: (TabSessionState) -> Boolean
     ) {
         val tabIDs = tabs.map { it.id }
-        val target = browserStore.state.tabs.filter(filter)[targetPos]
-        tabsUseCases.moveTabs(tabIDs, target.id, placeAfter)
+        val filteredTabs = browserStore.state.tabs.filter(filter)
+        if (targetPos <filteredTabs.size) {
+            tabsUseCases.moveTabs(tabIDs, filteredTabs[targetPos].id, placeAfter)
+        } else {
+            tabsUseCases.moveTabs(tabIDs, filteredTabs[filteredTabs.size - 1].id, true)
+        }
     }
 
     /**
