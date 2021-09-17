@@ -54,6 +54,7 @@ import org.mozilla.fenix.helpers.withBitmapDrawable
 import org.mozilla.fenix.ui.util.STRING_ONBOARDING_ACCOUNT_SIGN_IN_HEADER
 import org.mozilla.fenix.ui.util.STRING_ONBOARDING_TOOLBAR_PLACEMENT_HEADER
 import org.mozilla.fenix.ui.util.STRING_ONBOARDING_TRACKING_PROTECTION_HEADER
+import org.mozilla.fenix.helpers.SessionLoadedIdlingResource
 
 /**
  * Implementation of Robot Pattern for the home screen menu.
@@ -153,6 +154,8 @@ class HomeScreenRobot {
     }
 
     class Transition {
+        private lateinit var sessionLoadedIdlingResource: SessionLoadedIdlingResource
+
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
         fun openTabDrawer(interact: TabDrawerRobot.() -> Unit): TabDrawerRobot.Transition {
