@@ -249,13 +249,22 @@ fun navigationToolbar(interact: NavigationToolbarRobot.() -> Unit): NavigationTo
     return NavigationToolbarRobot.Transition()
 }
 
+val sessionLoadedIdlingResource2 = SessionLoadedIdlingResource()
+
+
 fun clickUrlbar(interact: SearchRobot.() -> Unit): SearchRobot.Transition {
+    runWithIdleRes(sessionLoadedIdlingResource2) {
+        mDevice.findObject(UiSelector().resourceId("$packageName:id/toolbar"))
+    }
     urlBar().click()
     SearchRobot().interact()
     return SearchRobot.Transition()
 }
 
 fun openEditURLView() {
+    runWithIdleRes(sessionLoadedIdlingResource2) {
+        mDevice.findObject(UiSelector().resourceId("$packageName:id/toolbar"))
+    }
     mDevice.waitNotNull(
         Until.findObject(By.res("$packageName:id/toolbar")),
         waitingTime
