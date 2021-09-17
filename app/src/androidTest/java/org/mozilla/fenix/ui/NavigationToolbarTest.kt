@@ -57,14 +57,11 @@ class NavigationToolbarTest {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
         val nextWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 2)
 
-        activityTestRule.mainClock.autoAdvance = true
-        activityTestRule.waitForIdle()
-
         navigationToolbar {
-        }.enterURLAndEnterToBrowser2(defaultWebPage.url, activityTestRule) {
+        }.enterURLAndEnterToBrowser2(defaultWebPage.url) {
             mDevice.waitForIdle()
         }.openNavigationToolbar {
-        }.enterURLAndEnterToBrowser2(nextWebPage.url, activityTestRule) {
+        }.enterURLAndEnterToBrowser2(nextWebPage.url) {
             verifyUrl(nextWebPage.url.toString())
         }.openThreeDotMenu {
         }.goBack {

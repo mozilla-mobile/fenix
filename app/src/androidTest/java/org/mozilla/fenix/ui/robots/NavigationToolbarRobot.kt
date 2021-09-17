@@ -7,9 +7,9 @@
 package org.mozilla.fenix.ui.robots
 
 import android.net.Uri
-import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.IdlingPolicies
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.IdlingResource
 import androidx.test.espresso.action.ViewActions
@@ -39,6 +39,7 @@ import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
+import java.util.concurrent.TimeUnit
 
 /**
  * Implementation of Robot Pattern for the URL toolbar.
@@ -114,13 +115,10 @@ class NavigationToolbarRobot {
 
         fun enterURLAndEnterToBrowser2(
             url: Uri,
-            rule: ComposeContentTestRule,
             interact: BrowserRobot.() -> Unit
         ): BrowserRobot.Transition {
             sessionLoadedIdlingResource = SessionLoadedIdlingResource()
-
             openEditURLView()
-            rule.waitForIdle()
 
             awesomeBar().setText(url.toString())
 
@@ -295,6 +293,8 @@ fun clickUrlbar(interact: SearchRobot.() -> Unit): SearchRobot.Transition {
 }
 
 fun openEditURLView() {
+    IdlingPolicies.setIdlingResourceTimeout(5000, TimeUnit.MILLISECONDS)
+
     runWithIdleRes(sessionLoadedIdlingResource2) {
         mDevice.findObject(UiSelector().resourceId("$packageName:id/toolbar"))
     }
