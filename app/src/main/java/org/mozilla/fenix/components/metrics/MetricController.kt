@@ -285,22 +285,30 @@ internal class ReleaseMetricController(
             else -> null
         }
 
-        Component.FEATURE_TOP_SITES to TopSitesFacts.Items.COUNT -> {
-            value?.let {
-                var count = 0
-                try {
-                    count = it.toInt()
-                } catch (e: NumberFormatException) {
-                    // Do nothing
-                }
+        Component.FEATURE_TOP_SITES -> when (item) {
+            TopSitesFacts.Items.COUNT -> {
+                value?.let {
+                    var count = 0
+                    try {
+                        count = it.toInt()
+                    } catch (e: NumberFormatException) {
+                        // Do nothing
+                    }
 
-                settings.topSitesSize = count
+                    settings.topSitesSize = count
+                }
+                null
             }
-            null
+            else -> null
         }
-        Component.FEATURE_SYNCEDTABS to SyncedTabsFacts.Items.SYNCED_TABS_SUGGESTION_CLICKED -> {
-            Event.SyncedTabSuggestionClicked
+
+        Component.FEATURE_SYNCEDTABS -> when (item) {
+            SyncedTabsFacts.Items.SYNCED_TABS_SUGGESTION_CLICKED -> {
+                Event.SyncedTabSuggestionClicked
+            }
+            else -> null
         }
+
         Component.FEATURE_AWESOMEBAR to AwesomeBarFacts.Items.BOOKMARK_SUGGESTION_CLICKED -> {
             Event.BookmarkSuggestionClicked
         }
