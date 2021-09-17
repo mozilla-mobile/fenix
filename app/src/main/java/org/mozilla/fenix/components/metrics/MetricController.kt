@@ -274,12 +274,17 @@ internal class ReleaseMetricController(
             }
             else -> null
         }
-        Component.FEATURE_PWA to ProgressiveWebAppFacts.Items.HOMESCREEN_ICON_TAP -> {
-            Event.ProgressiveWebAppOpenFromHomescreenTap
+
+        Component.FEATURE_PWA -> when (item) {
+            ProgressiveWebAppFacts.Items.HOMESCREEN_ICON_TAP -> {
+                Event.ProgressiveWebAppOpenFromHomescreenTap
+            }
+            ProgressiveWebAppFacts.Items.INSTALL_SHORTCUT -> {
+                Event.ProgressiveWebAppInstallAsShortcut
+            }
+            else -> null
         }
-        Component.FEATURE_PWA to ProgressiveWebAppFacts.Items.INSTALL_SHORTCUT -> {
-            Event.ProgressiveWebAppInstallAsShortcut
-        }
+
         Component.FEATURE_TOP_SITES to TopSitesFacts.Items.COUNT -> {
             value?.let {
                 var count = 0
