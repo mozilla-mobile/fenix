@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.ui
 
+import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
@@ -13,7 +14,7 @@ import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
-import org.mozilla.fenix.helpers.HomeActivityTestRule
+import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.ui.robots.navigationToolbar
 
@@ -33,7 +34,10 @@ class NavigationToolbarTest {
 
     /* ktlint-disable no-blank-line-before-rbrace */ // This imposes unreadable grouping.
     @get:Rule
-    val activityTestRule = HomeActivityTestRule()
+    val activityTestRule = AndroidComposeTestRule(
+        HomeActivityIntentTestRule(),
+        { it.activity }
+    )
 
     @Before
     fun setUp() {
@@ -53,11 +57,14 @@ class NavigationToolbarTest {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
         val nextWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 2)
 
+        activityTestRule.mainClock.autoAdvance = true
+        activityTestRule.waitForIdle()
+
         navigationToolbar {
-        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+        }.enterURLAndEnterToBrowser2(defaultWebPage.url, activityTestRule) {
             mDevice.waitForIdle()
         }.openNavigationToolbar {
-        }.enterURLAndEnterToBrowser(nextWebPage.url) {
+        }.enterURLAndEnterToBrowser2(nextWebPage.url, activityTestRule) {
             verifyUrl(nextWebPage.url.toString())
         }.openThreeDotMenu {
         }.goBack {

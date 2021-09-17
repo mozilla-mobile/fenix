@@ -7,6 +7,7 @@
 package org.mozilla.fenix.ui.robots
 
 import android.net.Uri
+import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.IdlingRegistry
@@ -31,13 +32,13 @@ import androidx.test.uiautomator.Until
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.anyOf
 import org.hamcrest.CoreMatchers.not
+import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.SessionLoadedIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
-import org.junit.Assert.assertTrue
 
 /**
  * Implementation of Robot Pattern for the URL toolbar.
@@ -96,6 +97,35 @@ class NavigationToolbarRobot {
             openEditURLView()
 
             awesomeBar().setText(url.toString())
+            mDevice.pressEnter()
+
+            runWithIdleRes(sessionLoadedIdlingResource) {
+                onView(
+                    anyOf(
+                        withResourceName("browserLayout"),
+                        withResourceName("download_button")
+                    )
+                ).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+            }
+
+            BrowserRobot().interact()
+            return BrowserRobot.Transition()
+        }
+
+        fun enterURLAndEnterToBrowser2(
+            url: Uri,
+            rule: ComposeContentTestRule,
+            interact: BrowserRobot.() -> Unit
+        ): BrowserRobot.Transition {
+            sessionLoadedIdlingResource = SessionLoadedIdlingResource()
+
+            rule.waitForIdle()
+            openEditURLView()
+            rule.waitForIdle()
+
+            awesomeBar().setText(url.toString())
+            rule.waitForIdle()
+
             mDevice.pressEnter()
 
             runWithIdleRes(sessionLoadedIdlingResource) {

@@ -38,7 +38,7 @@ gcloud:
   performance-metrics: true
 
   test-targets:
-   - class org.mozilla.fenix.ui.SmokeTest
+   - class org.mozilla.fenix.ui.NavigationToolbarTest#goBackTest
 
 
   device:
@@ -60,7 +60,7 @@ flank:
   max-test-shards: -1
   # num-test-runs: the amount of times to run the tests.
   # 1 runs the tests once. 10 runs all the tests 10x
-  num-test-runs: 1
+  num-test-runs: 5
   ### Output Style flag
   ## Output style of execution status. May be one of [verbose, multi, single, compact].
   ## For runs with only one test execution the default value is 'verbose', in other cases
