@@ -212,20 +212,23 @@ internal class ReleaseMetricController(
             else -> null
         }
 
-        Component.FEATURE_MEDIA to MediaFacts.Items.NOTIFICATION -> {
-            when (action) {
-                Action.PLAY -> Event.NotificationMediaPlay
-                Action.PAUSE -> Event.NotificationMediaPause
-                else -> null
+        Component.FEATURE_MEDIA -> when (item) {
+            MediaFacts.Items.NOTIFICATION -> {
+                when (action) {
+                    Action.PLAY -> Event.NotificationMediaPlay
+                    Action.PAUSE -> Event.NotificationMediaPause
+                    else -> null
+                }
             }
-        }
-        Component.FEATURE_MEDIA to MediaFacts.Items.STATE -> {
-            when (action) {
-                Action.PLAY -> Event.MediaPlayState
-                Action.PAUSE -> Event.MediaPauseState
-                Action.STOP -> Event.MediaStopState
-                else -> null
+            MediaFacts.Items.STATE -> {
+                when (action) {
+                    Action.PLAY -> Event.MediaPlayState
+                    Action.PAUSE -> Event.MediaPauseState
+                    Action.STOP -> Event.MediaStopState
+                    else -> null
+                }
             }
+            else -> null
         }
         Component.SUPPORT_WEBEXTENSIONS to WebExtensionFacts.Items.WEB_EXTENSIONS_INITIALIZED -> {
             metadata?.get("installed")?.let { installedAddons ->
