@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit
 /**
  * The time until which a tab is considered in-active (in days).
  */
-const val DEFAULT_ACTIVE_DAYS = 4L
+const val DEFAULT_ACTIVE_DAYS = 14L
 
 /**
  * The maximum time from when a tab was created or accessed until it is considered "inactive".
