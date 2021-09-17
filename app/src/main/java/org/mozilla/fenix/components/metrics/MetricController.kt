@@ -192,12 +192,20 @@ internal class ReleaseMetricController(
             else -> null
         }
 
-        Component.BROWSER_TOOLBAR to ToolbarFacts.Items.MENU -> {
-            metadata?.get("customTab")?.let { Event.CustomTabsMenuOpened } ?: Event.ToolbarMenuShown
+        Component.BROWSER_TOOLBAR -> when (item) {
+            ToolbarFacts.Items.MENU -> {
+                metadata?.get("customTab")?.let { Event.CustomTabsMenuOpened } ?: Event.ToolbarMenuShown
+            }
+            else -> null
         }
-        Component.BROWSER_MENU to BrowserMenuFacts.Items.WEB_EXTENSION_MENU_ITEM -> {
-            metadata?.get("id")?.let { Event.AddonsOpenInToolbarMenu(it.toString()) }
+
+        Component.BROWSER_MENU -> when (item) {
+            BrowserMenuFacts.Items.WEB_EXTENSION_MENU_ITEM -> {
+                metadata?.get("id")?.let { Event.AddonsOpenInToolbarMenu(it.toString()) }
+            }
+            else -> null
         }
+
         Component.FEATURE_CUSTOMTABS to CustomTabsFacts.Items.CLOSE -> Event.CustomTabsClosed
         Component.FEATURE_CUSTOMTABS to CustomTabsFacts.Items.ACTION_BUTTON -> Event.CustomTabsActionTapped
 
