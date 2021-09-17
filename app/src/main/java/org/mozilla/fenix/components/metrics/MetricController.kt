@@ -355,15 +355,19 @@ internal class ReleaseMetricController(
             else -> null
         }
 
-        Component.FEATURE_SEARCH to AdsTelemetry.SERP_ADD_CLICKED -> {
-            Event.SearchAdClicked(value!!)
+        Component.FEATURE_SEARCH -> when (item) {
+            AdsTelemetry.SERP_ADD_CLICKED -> {
+                Event.SearchAdClicked(value!!)
+            }
+            AdsTelemetry.SERP_SHOWN_WITH_ADDS -> {
+                Event.SearchWithAds(value!!)
+            }
+            InContentTelemetry.IN_CONTENT_SEARCH -> {
+                Event.SearchInContent(value!!)
+            }
+            else -> null
         }
-        Component.FEATURE_SEARCH to AdsTelemetry.SERP_SHOWN_WITH_ADDS -> {
-            Event.SearchWithAds(value!!)
-        }
-        Component.FEATURE_SEARCH to InContentTelemetry.IN_CONTENT_SEARCH -> {
-            Event.SearchInContent(value!!)
-        }
+
         Component.FEATURE_AUTOFILL to AutofillFacts.Items.AUTOFILL_REQUEST -> {
             val hasMatchingLogins = metadata?.get(AutofillFacts.Metadata.HAS_MATCHING_LOGINS) as Boolean?
             if (hasMatchingLogins == true) {
