@@ -157,7 +157,7 @@ internal class ReleaseMetricController(
         MetricServiceType.Marketing -> isMarketingDataTelemetryEnabled()
     }
 
-    @Suppress("LongMethod")
+    @Suppress("LongMethod", "NestedBlockDepth")
     private fun Fact.toEvent(): Event? = when (component) {
         Component.FEATURE_PROMPTS -> when (item) {
             LoginDialogFacts.Items.DISPLAY -> Event.LoginDialogPromptDisplayed
