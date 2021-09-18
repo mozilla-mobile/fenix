@@ -52,7 +52,7 @@ object FeatureFlags {
     /**
      * Identifies and separates the tabs list with a secondary section containing least used tabs.
      */
-    val inactiveTabs = Config.channel.isNightlyOrDebug
+    val inactiveTabs = false
 
     /**
      * Enables showing the home screen behind the search dialog
