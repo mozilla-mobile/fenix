@@ -138,7 +138,7 @@ class Core(
              * disabled in Fenix Release builds for now.
              * This is consistent with both Fennec and Firefox Desktop.
              */
-            if (Config.channel.isNightlyOrDebug || Config.channel.isBeta) {
+            if (Config.channel.isNonstable) {
                 WebCompatReporterFeature.install(it, "fenix")
             }
         }

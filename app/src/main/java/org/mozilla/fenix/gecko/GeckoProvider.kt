@@ -57,7 +57,7 @@ object GeckoProvider {
             .telemetryDelegate(GeckoAdapter())
             .contentBlocking(policy.toContentBlockingSetting())
             .debugLogging(Config.channel.isDebug)
-            .aboutConfigEnabled(Config.channel.isBeta || Config.channel.isNightlyOrDebug)
+            .aboutConfigEnabled(Config.channel.isNonstable)
             .build()
 
         val settings = context.components.settings
