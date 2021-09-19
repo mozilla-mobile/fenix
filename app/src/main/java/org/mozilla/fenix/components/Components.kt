@@ -95,7 +95,7 @@ class Components(private val context: Context) {
 
     val addonCollectionProvider by lazyMonitored {
         // Check if we have a customized (overridden) AMO collection (only supported in Nightly)
-        if (Config.channel.isNightlyOrDebug && context.settings().amoCollectionOverrideConfigured()) {
+        if (Config.channel.isNonstable && context.settings().amoCollectionOverrideConfigured()) {
             AddonCollectionProvider(
                 context,
                 core.client,
