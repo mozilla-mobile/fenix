@@ -23,7 +23,6 @@ import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.closeSoftKeyboard
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers
-import androidx.test.espresso.matcher.ViewMatchers.Visibility
 import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
@@ -37,7 +36,6 @@ import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.startsWith
-import org.hamcrest.Matchers
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
@@ -179,6 +177,7 @@ class SearchRobot {
         fun openBrowser(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
             mDevice.waitForIdle()
             browserToolbarEditView().setText("mozilla\n")
+            mDevice.pressEnter()
 
             BrowserRobot().interact()
             return BrowserRobot.Transition()
@@ -187,7 +186,8 @@ class SearchRobot {
         fun submitQuery(query: String, interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
             sessionLoadedIdlingResource = SessionLoadedIdlingResource()
             mDevice.waitForIdle()
-            browserToolbarEditView().setText(query + "\n")
+            browserToolbarEditView().setText(query)
+            mDevice.pressEnter()
 
             runWithIdleRes(sessionLoadedIdlingResource) {
                 assertTrue(
@@ -253,16 +253,25 @@ private fun assertSearchView() =
     )
 
 private fun assertBrowserToolbarEditView() =
-    onView(Matchers.allOf(withId(R.id.mozac_browser_toolbar_edit_url_view)))
-        .check(matches(ViewMatchers.withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+    assertTrue(
+        mDevice.findObject(
+            UiSelector().resourceId("$packageName:id/mozac_browser_toolbar_edit_url_view")
+        ).waitForExists(waitingTime)
+    )
 
 private fun assertScanButton() =
-    onView(allOf(withText("Scan")))
-        .check(matches(ViewMatchers.withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+    assertTrue(
+        mDevice.findObject(
+            UiSelector().resourceId("$packageName:id/qr_scan_button")
+        ).waitForExists(waitingTime)
+    )
 
 private fun assertSearchEngineButton() =
-    onView(withId(R.id.search_engines_shortcut_button))
-        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+    assertTrue(
+        mDevice.findObject(
+            UiSelector().resourceId("$packageName:id/search_engines_shortcut_button")
+        ).waitForExists(waitingTime)
+    )
 
 private fun assertSearchWithText() =
     onView(allOf(withText("THIS TIME, SEARCH WITH:")))

@@ -498,6 +498,11 @@ class BrowserRobot {
 
         fun openTabDrawer(interact: TabDrawerRobot.() -> Unit): TabDrawerRobot.Transition {
             mDevice.waitForIdle(waitingTime)
+            mDevice.findObject(
+                UiSelector()
+                    .resourceId("$packageName:id/counter_box")
+                    .descriptionContains("The tab counter toolbar button.")
+            ).waitForExists(waitingTime)
             tabsCounter().click()
             mDevice.waitNotNull(
                 Until.findObject(By.res("$packageName:id/tab_layout")),
@@ -511,9 +516,7 @@ class BrowserRobot {
         fun openTabButtonShortcutsMenu(interact: NavigationToolbarRobot.() -> Unit): NavigationToolbarRobot.Transition {
             mDevice.waitForIdle(waitingTime)
 
-            tabsCounter().perform(
-                ViewActions.longClick()
-            )
+            tabsCounter().click(LONG_CLICK_DURATION)
 
             NavigationToolbarRobot().interact()
             return NavigationToolbarRobot.Transition()
@@ -584,7 +587,7 @@ private fun assertMenuButton() {
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
-private fun tabsCounter() = onView(withId(R.id.counter_box))
+private fun tabsCounter() = mDevice.findObject(By.res("$packageName:id/counter_box"))
 
 private fun mediaPlayerPlayButton() =
     mDevice.findObject(
