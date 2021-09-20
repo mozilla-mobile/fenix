@@ -4,80 +4,174 @@
 
 package org.mozilla.fenix.home.sessioncontrol
 
+import io.mockk.every
 import io.mockk.mockk
+import io.mockk.spyk
 import mozilla.components.browser.state.state.TabSessionState
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertSame
+import mozilla.components.concept.storage.BookmarkNode
+import mozilla.components.concept.storage.BookmarkNodeType
+import mozilla.components.feature.tab.collections.TabCollection
+import mozilla.components.feature.top.sites.TopSite
+import mozilla.components.service.pocket.PocketRecommendedStory
+import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import org.mozilla.fenix.home.recenttabs.view.RecentTabsItemPosition
+import org.junit.runner.RunWith
+import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
+import org.mozilla.fenix.historymetadata.HistoryMetadataGroup
+import org.mozilla.fenix.utils.Settings
 
+@RunWith(FenixRobolectricTestRunner::class)
 class SessionControlViewTest {
     @Test
-    fun `GIVEN two recent tabs WHEN showRecentTabs is called THEN add the header, and two recent items to be shown`() {
-        val recentTab: TabSessionState = mockk()
-        val mediaTab: TabSessionState = mockk()
-        val items = mutableListOf<AdapterItem>()
+    fun `GIVEN recent Bookmarks WHEN normalModeAdapterItems is called THEN add a customize home button`() {
+        val topSites = emptyList<TopSite>()
+        val collections = emptyList<TabCollection>()
+        val expandedCollections = emptySet<Long>()
+        val recentBookmarks =
+            listOf(BookmarkNode(BookmarkNodeType.ITEM, "guid", null, null, null, null, 0, null))
+        val recentTabs = emptyList<TabSessionState>()
+        val historyMetadata = emptyList<HistoryMetadataGroup>()
+        val pocketArticles = emptyList<PocketRecommendedStory>()
 
-        showRecentTabs(listOf(recentTab, mediaTab), items)
+        val results = normalModeAdapterItems(
+            testContext,
+            topSites,
+            collections,
+            expandedCollections,
+            null,
+            recentBookmarks,
+            false,
+            false,
+            recentTabs,
+            historyMetadata,
+            pocketArticles
+        )
 
-        assertEquals(3, items.size)
-        assertTrue(items[0] is AdapterItem.RecentTabsHeader)
-        assertEquals(recentTab, (items[1] as AdapterItem.RecentTabItem).tab)
-        assertEquals(mediaTab, (items[2] as AdapterItem.RecentTabItem).tab)
+        assertTrue(results[0] is AdapterItem.RecentBookmarks)
+        assertTrue(results[1] is AdapterItem.CustomizeHomeButton)
     }
 
     @Test
-    fun `GIVEN one recent tab WHEN showRecentTabs is called THEN add the header and the recent tab to items shown`() {
-        val recentTab: TabSessionState = mockk()
-        val items = mutableListOf<AdapterItem>()
+    fun `GIVEN recent tabs WHEN normalModeAdapterItems is called THEN add a customize home button`() {
+        val topSites = emptyList<TopSite>()
+        val collections = emptyList<TabCollection>()
+        val expandedCollections = emptySet<Long>()
+        val recentBookmarks = listOf<BookmarkNode>()
+        val recentTabs = listOf<TabSessionState>(mockk())
+        val historyMetadata = emptyList<HistoryMetadataGroup>()
+        val pocketArticles = emptyList<PocketRecommendedStory>()
 
-        showRecentTabs(listOf(recentTab), items)
+        val results = normalModeAdapterItems(
+            testContext,
+            topSites,
+            collections,
+            expandedCollections,
+            null,
+            recentBookmarks,
+            false,
+            false,
+            recentTabs,
+            historyMetadata,
+            pocketArticles
+        )
 
-        assertEquals(2, items.size)
-        assertTrue(items[0] is AdapterItem.RecentTabsHeader)
-        assertEquals(recentTab, (items[1] as AdapterItem.RecentTabItem).tab)
+        assertTrue(results[0] is AdapterItem.RecentTabsHeader)
+        assertTrue(results[1] is AdapterItem.RecentTabItem)
+        assertTrue(results[2] is AdapterItem.CustomizeHomeButton)
     }
 
     @Test
-    fun `GIVEN only one recent tab and no media tab WHEN showRecentTabs is called THEN add the recent item as a single one to be shown`() {
-        val recentTab: TabSessionState = mockk()
-        val items = mutableListOf<AdapterItem>()
+    fun `GIVEN history metadata WHEN normalModeAdapterItems is called THEN add a customize home button`() {
+        val topSites = emptyList<TopSite>()
+        val collections = emptyList<TabCollection>()
+        val expandedCollections = emptySet<Long>()
+        val recentBookmarks = listOf<BookmarkNode>()
+        val recentTabs = emptyList<TabSessionState>()
+        val historyMetadata = listOf(HistoryMetadataGroup("title", emptyList(), false))
+        val pocketArticles = emptyList<PocketRecommendedStory>()
 
-        showRecentTabs(listOf(recentTab), items)
+        val results = normalModeAdapterItems(
+            testContext,
+            topSites,
+            collections,
+            expandedCollections,
+            null,
+            recentBookmarks,
+            false,
+            false,
+            recentTabs,
+            historyMetadata,
+            pocketArticles
+        )
 
-        assertEquals(recentTab, (items[1] as AdapterItem.RecentTabItem).tab)
-        assertSame(RecentTabsItemPosition.SINGLE, (items[1] as AdapterItem.RecentTabItem).position)
+        assertTrue(results[0] is AdapterItem.HistoryMetadataHeader)
+        assertTrue(results[1] is AdapterItem.HistoryMetadataGroup)
+        assertTrue(results[2] is AdapterItem.CustomizeHomeButton)
     }
 
     @Test
-    fun `GIVEN two recent tabs WHEN showRecentTabs is called THEN add one item as top and one as bottom to be shown`() {
-        val recentTab: TabSessionState = mockk()
-        val mediaTab: TabSessionState = mockk()
-        val items = mutableListOf<AdapterItem>()
+    fun `GIVEN pocket articles WHEN normalModeAdapterItems is called THEN add a customize home button`() {
+        val topSites = emptyList<TopSite>()
+        val collections = emptyList<TabCollection>()
+        val expandedCollections = emptySet<Long>()
+        val recentBookmarks = listOf<BookmarkNode>()
+        val recentTabs = emptyList<TabSessionState>()
+        val historyMetadata = emptyList<HistoryMetadataGroup>()
+        val pocketArticles = listOf(PocketRecommendedStory("", "", "", "", 0, ""))
+        val context = spyk(testContext)
 
-        showRecentTabs(listOf(recentTab, mediaTab), items)
+        val settings: Settings = mockk()
+        every { settings.pocketRecommendations } returns true
+        every { context.settings() } returns settings
 
-        assertEquals(recentTab, (items[1] as AdapterItem.RecentTabItem).tab)
-        assertSame(RecentTabsItemPosition.TOP, (items[1] as AdapterItem.RecentTabItem).position)
-        assertEquals(mediaTab, (items[2] as AdapterItem.RecentTabItem).tab)
-        assertSame(RecentTabsItemPosition.BOTTOM, (items[2] as AdapterItem.RecentTabItem).position)
+        val results = normalModeAdapterItems(
+            context,
+            topSites,
+            collections,
+            expandedCollections,
+            null,
+            recentBookmarks,
+            false,
+            false,
+            recentTabs,
+            historyMetadata,
+            pocketArticles
+        )
+
+        assertTrue(results[0] is AdapterItem.PocketStoriesItem)
+        assertTrue(results[1] is AdapterItem.CustomizeHomeButton)
     }
 
     @Test
-    fun `GIVEN three recent tabs WHEN showRecentTabs is called THEN add one recent item as top, one as middle and one as bottom to be shown`() {
-        val recentTab1: TabSessionState = mockk()
-        val recentTab2: TabSessionState = mockk()
-        val mediaTab: TabSessionState = mockk()
-        val items = mutableListOf<AdapterItem>()
+    fun `GIVEN none recentBookmarks,recentTabs, historyMetadata or pocketArticles WHEN normalModeAdapterItems is called THEN the customize home button is not added`() {
+        val topSites = emptyList<TopSite>()
+        val collections = emptyList<TabCollection>()
+        val expandedCollections = emptySet<Long>()
+        val recentBookmarks = listOf<BookmarkNode>()
+        val recentTabs = emptyList<TabSessionState>()
+        val historyMetadata = emptyList<HistoryMetadataGroup>()
+        val pocketArticles = emptyList<PocketRecommendedStory>()
+        val context = spyk(testContext)
 
-        showRecentTabs(listOf(recentTab1, recentTab2, mediaTab), items)
+        val settings: Settings = mockk()
+        every { settings.pocketRecommendations } returns true
+        every { context.settings() } returns settings
 
-        assertEquals(recentTab1, (items[1] as AdapterItem.RecentTabItem).tab)
-        assertSame(RecentTabsItemPosition.TOP, (items[1] as AdapterItem.RecentTabItem).position)
-        assertEquals(recentTab2, (items[2] as AdapterItem.RecentTabItem).tab)
-        assertSame(RecentTabsItemPosition.MIDDLE, (items[2] as AdapterItem.RecentTabItem).position)
-        assertEquals(mediaTab, (items[3] as AdapterItem.RecentTabItem).tab)
-        assertSame(RecentTabsItemPosition.BOTTOM, (items[3] as AdapterItem.RecentTabItem).position)
+        val results = normalModeAdapterItems(
+            context,
+            topSites,
+            collections,
+            expandedCollections,
+            null,
+            recentBookmarks,
+            false,
+            false,
+            recentTabs,
+            historyMetadata,
+            pocketArticles
+        )
+        assertTrue(results.isEmpty())
     }
 }

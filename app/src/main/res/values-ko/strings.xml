@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:moz="http://mozac.org/tools">
 
 
     <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
@@ -208,6 +208,8 @@
     <!-- Browser menu label for editing a bookmark -->
     <string name="browser_menu_edit">편집</string>
 
+    <!-- Browser menu button that opens the Customize menu -->
+    <string name="browser_menu_customize_home">홈 사용자 지정</string>
     <!-- Browser Toolbar -->
     <!-- Content description for the Home screen button on the browser toolbar -->
     <string name="browser_toolbar_home">홈 화면</string>
@@ -401,6 +403,16 @@
     <string name="customize_addon_collection_user_hint">모음집 소유자 (사용자 ID)</string>
     <!-- Toast shown after confirming the custom add-on collection configuration -->
     <string name="toast_customize_addon_collection_done">부가 기능 모음집이 변경되었습니다. 변경 사항을 적용하기 위해 애플리케이션을 종료하는 중…</string>
+
+    <!-- Customize Home -->
+    <!-- Header text for jumping back into the recent tab in customize the home screen -->
+    <string name="customize_toggle_jump_back_in">최근 탭으로 이동</string>
+    <!-- Title for the customize home screen section with recently saved bookmarks. -->
+    <string name="customize_toggle_recently_saved_bookmarks">최근에 저장됨</string>
+    <!-- Title for the customize home screen section with recently visited. Recently visited is a section where users see a list of tabs that they have visited in the past few days -->
+    <string name="customize_toggle_recently_visited">최근에 방문함</string>
+    <!-- Title for the customize home screen section with Pocket. -->
+    <string name="customize_toggle_pocket">포켓</string>
 
     <!-- Add-on Installation from AMO-->
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
@@ -660,7 +672,7 @@
     <string name="studies_restart_dialog_cancel">취소</string>
 
     <!-- Toast shown after turning on/off studies preferences -->
-    <string name="studies_toast_quit_application">변경 사항을 적용하기 위해 애플리케이션을 종료하는 중...</string>
+    <string name="studies_toast_quit_application" tools:ignore="UnusedResources">변경 사항을 적용하기 위해 애플리케이션을 종료하는 중...</string>
 
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
@@ -764,6 +776,9 @@
 
     <!-- Button in the current tab tray header in multiselect mode. Saved the selected tabs to a collection when pressed. -->
     <string name="tab_tray_save_to_collection">저장</string>
+
+    <!-- Title text for the normal tabs header in the tabs tray which are not part of any tab grouping. -->
+    <string name="tab_tray_header_title">기타</string>
 
     <!-- History -->
     <!-- Text for the button to clear all history -->
@@ -1178,7 +1193,7 @@
     <!-- Tab collection deletion prompt dialog option to delete the collection -->
     <string name="tab_collection_dialog_positive">삭제</string>
     <!-- Tab collection deletion prompt dialog option to cancel deleting the collection -->
-    <string name="tab_collection_dialog_negative" tools:ignore="UnusedResources">취소</string>
+    <string moz:removedIn="93" name="tab_collection_dialog_negative" tools:ignore="UnusedResources">취소</string>
     <!-- Text displayed in a notification when the user enters full screen mode -->
     <string name="full_screen_notification">전체 화면 모드로 전환 중</string>
 
@@ -1350,7 +1365,7 @@
     <string name="onboarding_privacy_notice_read_button">개인정보처리방침 읽기</string>
 
     <!-- Content description (not visible, for screen readers etc.): Close onboarding screen -->
-    <string name="onboarding_close" tools:ignore="UnusedResources">닫기</string>
+    <string moz:removedIn="93" name="onboarding_close" tools:ignore="UnusedResources">닫기</string>
 
     <!-- text for the button to finish onboarding -->
     <string name="onboarding_finish">탐색 시작</string>
@@ -1480,7 +1495,7 @@
     <!-- Description of tracking content that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_tracking_content_description">추적 코드가 포함된 외부 광고, 동영상 및 기타 콘텐츠가 로드되지 않도록 합니다. 일부 웹 사이트의 기능에 영향을 줄 수 있습니다.</string>
     <!-- Enhanced Tracking Protection Onboarding Message shown in a dialog above the toolbar. The first parameter is the name of the application (For example: Fenix) -->
-    <string name="etp_onboarding_cfr_message" tools:ignore="UnusedResources">방패가 자주색일 때마다 %s가 사이트에서 추적기를 차단합니다. 자세한 내용을 보시려면 누르세요.</string>
+    <string moz:removedIn="93" name="etp_onboarding_cfr_message" tools:ignore="UnusedResources">방패가 자주색일 때마다 %s가 사이트에서 추적기를 차단합니다. 자세한 내용을 보시려면 누르세요.</string>
     <!-- Enhanced Tracking Protection message that protection is currently on for this site -->
     <string name="etp_panel_on">이 사이트에서 보호 켜짐</string>
     <!-- Enhanced Tracking Protection message that protection is currently off for this site -->
@@ -1506,6 +1521,12 @@
 
     <!-- Description of redirect tracker cookies that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_redirect_trackers_description">알려진 추적 웹 사이트로 리디렉션하여 설정된 쿠키를 지웁니다.</string>
+
+    <!-- Description of the SmartBlock Enhanced Tracking Protection feature. The * symbol is intentionally hardcoded here,
+         as we use it on the UI to indicate which trackers have been partially unblocked.  -->
+    <string name="preference_etp_smartblock_description">아래에 표시된 일부 추적기는 사용자가 *과 상호 작용했기 때문에 이 페이지에서 부분적으로 차단 해제되었습니다.</string>
+    <!-- Text displayed that links to website about enhanced tracking protection SmartBlock -->
+    <string name="preference_etp_smartblock_learn_more">더 알아보기</string>
 
     <!-- About page link text to open support link -->
     <string name="about_support">지원</string>
@@ -1564,7 +1585,7 @@
     <!-- Preference option for never saving passwords in Fenix -->
     <string name="preferences_passwords_save_logins_never_save">저장 안 함</string>
     <!-- Preference for autofilling saved logins in Fenix -->
-    <string name="preferences_passwords_autofill" tools:ignore="UnusedResources">자동 채우기</string>
+    <string moz:removedIn="93" name="preferences_passwords_autofill" tools:ignore="UnusedResources">자동 채우기</string>
 
     <!-- Preference for autofilling saved logins in Firefox (in web content), %1$s will be replaced with the app name -->
     <string name="preferences_passwords_autofill2">%1$s에서 자동 채우기</string>
@@ -1574,6 +1595,9 @@
     <string name="preferences_android_autofill">다른 앱에서 자동 채우기</string>
     <!-- Description for the preference for autofilling logins from Fenix in other apps (e.g. autofilling the Twitter app) -->
     <string name="preferences_android_autofill_description">기기의 다른 앱에서 사용자 이름과 비밀번호를 채웁니다.</string>
+
+    <!-- Preference option for adding a login -->
+    <string name="preferences_logins_add_login">로그인 추가</string>
 
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">Sync 로그인</string>
@@ -1637,6 +1661,8 @@
     <string name="saved_login_copy_username">사용자 이름 복사</string>
     <!-- Content Description (for screenreaders etc) read for the button to clear a username while editing a login -->
     <string name="saved_login_clear_username">사용자 이름 지우기</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear the hostname field while creating a login -->
+    <string name="saved_login_clear_hostname">호스트 이름 지우기</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a site in logins -->
     <string name="saved_login_copy_site">사이트 복사</string>
     <!-- Content Description (for screenreaders etc) read for the button to open a site in logins -->
@@ -1809,9 +1835,13 @@
     <string name="phone_feature_blocked_step_feature"><![CDATA[3. <b>%1$s</b>을(를) 켜기로 전환하세요]]></string>
 
     <!-- Label that indicates a site is using a secure connection -->
-    <string name="quick_settings_sheet_secure_connection">안전한 연결</string>
+    <string name="quick_settings_sheet_secure_connection_2">연결이 안전함</string>
     <!-- Label that indicates a site is using a insecure connection -->
-    <string name="quick_settings_sheet_insecure_connection">안전하지 않은 연결</string>
+    <string name="quick_settings_sheet_insecure_connection_2">연결이 안전하지 않음</string>
+    <!-- Label that indicates a site is using a secure connection -->
+    <string moz:removedIn="94" name="quick_settings_sheet_secure_connection" tools:ignore="UnusedResources">안전한 연결</string>
+    <!-- Label that indicates a site is using a insecure connection -->
+    <string moz:removedIn="94" name="quick_settings_sheet_insecure_connection" tools:ignore="UnusedResources">안전하지 않은 연결</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete all the permissions for all sites-->
     <string name="confirm_clear_permissions_on_all_sites">모든 사이트에 대해 모든 권한을 지우시겠습니까?</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete all the permissions for a site-->
@@ -1851,8 +1881,14 @@
     <string name="discard_changes">변경 내용 취소</string>
     <!--  The page title for editing a saved login. -->
     <string name="edit">편집</string>
-    <!--  The error message in edit login view when password field is blank. -->
+    <!--  The page title for adding new login. -->
+    <string name="add_login">새 로그인 추가</string>
+    <!--  The error message in add/edit login view when password field is blank. -->
     <string name="saved_login_password_required">비밀번호 필요</string>
+    <!--  The error message in add login view when username field is blank. -->
+    <string name="saved_login_username_required">사용자 이름은 필수입니다</string>
+    <!--  The error message in add login view when hostname field is blank. -->
+    <string name="saved_login_hostname_required" tools:ignore="UnusedResources">호스트 이름은 필수입니다</string>
     <!-- Voice search button content description  -->
     <string name="voice_search_content_description">음성 검색</string>
     <!-- Voice search prompt description displayed after the user presses the voice search button -->
@@ -1860,6 +1896,13 @@
 
     <!--  The error message in edit login view when a duplicate username exists. -->
     <string name="saved_login_duplicate">해당 사용자 이름을 가진 로그인이 이미 존재합니다</string>
+
+    <!-- This is the hint text that is shown inline on the hostname field of the create new login page. 'https://www.example.com' intentionally hardcoded here -->
+    <string name="add_login_hostname_hint_text">https://www.example.com</string>
+    <!-- This is an error message shown below the hostname field of the add login page when a hostname does not contain http or https. -->
+    <string name="add_login_hostname_invalid_text_1">웹 주소에는 \“https://\“ 또는 \“http://\“가 포함되어야 합니다.</string>
+    <!-- This is an error message shown below the hostname field of the add login page when a hostname is invalid. -->
+    <string name="add_login_hostname_invalid_text_2">유효한 호스트 이름은 필수입니다</string>
 
     <!-- Synced Tabs -->
     <!-- Text displayed to ask user to connect another device as no devices found with account -->
@@ -1887,8 +1930,10 @@
     <!-- Confirmation dialog button text when top sites limit is reached. -->
     <string name="top_sites_max_limit_confirmation_button">확인</string>
 
+    <!-- Label for the show most visited top sites preference -->
+    <string name="top_sites_toggle_top_frecent_sites_2">자주 방문한 상위 사이트 표시</string>
     <!-- Label for the show most visited sites preference -->
-    <string name="top_sites_toggle_top_frecent_sites">자주 방문한 사이트 표시</string>
+    <string moz:removedIn="93" name="top_sites_toggle_top_frecent_sites" tools:ignore="UnusedResources">자주 방문한 사이트 표시</string>
 
     <!-- Title text displayed in the rename top site dialog. -->
 	<string name="top_sites_rename_dialog_title">이름</string>
