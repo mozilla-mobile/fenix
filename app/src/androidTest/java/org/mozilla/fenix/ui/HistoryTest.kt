@@ -307,6 +307,7 @@ class HistoryTest {
         }.openTabDrawer {
         }.openNewTab {
         }.submitQuery(secondWebPage.url.toString()) {
+            mDevice.waitForIdle()
         }.openThreeDotMenu {
         }.openHistory {
             verifyHistoryListExists()
