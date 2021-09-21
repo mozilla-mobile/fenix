@@ -25,7 +25,6 @@ import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.home.HomeFragment
 import org.mozilla.fenix.tabstray.browser.DEFAULT_ACTIVE_DAYS
 import org.mozilla.fenix.tabstray.browser.maxActiveTime
-import org.mozilla.fenix.tabstray.ext.isNormalTabActive
 import org.mozilla.fenix.tabstray.ext.isNormalTabInactive
 import java.util.concurrent.TimeUnit
 

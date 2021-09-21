@@ -399,6 +399,14 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         }
     }
 
+    /**
+     * Indicates if the user has enabled the inactive tabs feature.
+     */
+    var inactiveTabs by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_inactive_tabs),
+        default = true
+    )
+
     @VisibleForTesting
     internal fun timeNowInMillis(): Long = System.currentTimeMillis()
 

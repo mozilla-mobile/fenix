@@ -9,6 +9,7 @@ import mozilla.components.browser.state.selector.privateTabs
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.TabSessionState
 import org.mozilla.fenix.FeatureFlags
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.tabstray.browser.maxActiveTime
 
 /**
@@ -41,17 +42,16 @@ val BrowserState.inactiveTabs: List<TabSessionState>
 /**
  * The list of normal tabs in the tabs tray filtered appropriately based on feature flags.
  */
-val BrowserState.normalTrayTabs: List<TabSessionState>
-    get() {
-        return normalTabs.run {
-            if (FeatureFlags.tabGroupFeature && FeatureFlags.inactiveTabs) {
-                filter { it.isNormalTabActiveWithoutSearchTerm(maxActiveTime) }
-            } else if (FeatureFlags.inactiveTabs) {
-                filter { it.isNormalTabActive(maxActiveTime) }
-            } else if (FeatureFlags.tabGroupFeature) {
-                filter { it.isNormalTabWithSearchTerm() }
-            } else {
-                this
-            }
+fun BrowserState.getNormalTrayTabs(inactiveTabsEnabled: Boolean): List<TabSessionState> {
+    return normalTabs.run {
+        if (FeatureFlags.tabGroupFeature && FeatureFlags.inactiveTabs && inactiveTabsEnabled) {
+            filter { it.isNormalTabActiveWithoutSearchTerm(maxActiveTime) }
+        } else if (FeatureFlags.inactiveTabs && inactiveTabsEnabled) {
+            filter { it.isNormalTabActive(maxActiveTime) }
+        } else if (FeatureFlags.tabGroupFeature) {
+            filter { it.isNormalTabWithSearchTerm() }
+        } else {
+            this
         }
     }
+}
