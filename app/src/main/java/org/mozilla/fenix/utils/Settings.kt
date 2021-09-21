@@ -66,6 +66,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         private const val CFR_COUNT_CONDITION_FOCUS_INSTALLED = 1
         private const val CFR_COUNT_CONDITION_FOCUS_NOT_INSTALLED = 3
         private const val APP_LAUNCHES_TO_SHOW_DEFAULT_BROWSER_CARD = 3
+        private const val APP_LAUNCHES_TO_SHOW_HOME_PAGE_EXPERIMENTS = 2
 
         const val FOUR_HOURS_MS = 60 * 60 * 4 * 1000L
         const val ONE_DAY_MS = 60 * 60 * 24 * 1000L
@@ -317,6 +318,31 @@ class Settings(private val appContext: Context) : PreferencesHolder {
             numberOfAppLaunches > APP_LAUNCHES_TO_SHOW_DEFAULT_BROWSER_CARD
     }
 
+    /**
+     * Indicates if the sections Jump back in, Recently saved Recent explorations and Pocket,
+     * should be visible in the home screen.
+     */
+    private fun shouldShowMR2HomePageFeatures(): Boolean {
+        val experiments = appContext.components.analytics.experiments
+        val isExperimentBranch =
+            experiments.withExperiment(FeatureId.HOME_PAGE) { experimentBranch ->
+                (experimentBranch == ExperimentBranch.HOME_PAGE_TREATMENT)
+            }
+
+        return isExperimentBranch && numberOfAppLaunches > APP_LAUNCHES_TO_SHOW_HOME_PAGE_EXPERIMENTS &&
+         timeNowInMillis() - installationDate >= ONE_WEEK_MS
+    }
+
+    /**
+     * Indicates the last time when the user was interacting with the [BrowserFragment],
+     * This is useful to determine if the user has to start on the [HomeFragment]
+     * or it should go directly to the [BrowserFragment].
+     */
+    var installationDate by longPreference(
+        appContext.getPreferenceKey(R.string.pref_key_last_browse_activity_time),
+        default = timeNowInMillis()
+    )
+
     var gridTabView by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_tab_view_grid),
         default = true
@@ -399,8 +425,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         }
     }
 
-    @VisibleForTesting
-    internal fun timeNowInMillis(): Long = System.currentTimeMillis()
+    fun timeNowInMillis(): Long = System.currentTimeMillis()
 
     fun getTabTimeout(): Long = when {
         closeTabsAfterOneDay -> ONE_DAY_MS
@@ -1103,8 +1128,9 @@ class Settings(private val appContext: Context) : PreferencesHolder {
 
     var historyMetadataUIFeature by featureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_history_metadata_feature),
-        default = FeatureFlags.historyMetadataUIFeature,
-        featureFlag = FeatureFlags.historyMetadataUIFeature || isHistoryMetadataEnabled
+        default = FeatureFlags.historyMetadataUIFeature || shouldShowMR2HomePageFeatures(),
+        featureFlag = FeatureFlags.historyMetadataUIFeature || isHistoryMetadataEnabled ||
+                shouldShowMR2HomePageFeatures()
     )
 
     /**
@@ -1113,8 +1139,8 @@ class Settings(private val appContext: Context) : PreferencesHolder {
      */
     var showRecentTabsFeature by featureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_recent_tabs),
-        default = FeatureFlags.showRecentTabsFeature,
-        featureFlag = FeatureFlags.showRecentTabsFeature
+        default = FeatureFlags.showRecentTabsFeature || shouldShowMR2HomePageFeatures(),
+        featureFlag = FeatureFlags.showRecentTabsFeature || shouldShowMR2HomePageFeatures()
     )
 
     /**
@@ -1123,8 +1149,8 @@ class Settings(private val appContext: Context) : PreferencesHolder {
      */
     var showRecentBookmarksFeature by featureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_recent_bookmarks),
-        default = FeatureFlags.recentBookmarksFeature,
-        featureFlag = FeatureFlags.recentBookmarksFeature
+        default = FeatureFlags.recentBookmarksFeature || shouldShowMR2HomePageFeatures(),
+        featureFlag = FeatureFlags.recentBookmarksFeature || shouldShowMR2HomePageFeatures()
     )
 
     /**

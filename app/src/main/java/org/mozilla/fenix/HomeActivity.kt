@@ -271,6 +271,10 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             components.core.pocketStoriesService.startPeriodicStoriesRefresh()
         }
 
+        if (settings().numberOfAppLaunches == 0){
+            settings().installationDate = settings().timeNowInMillis()
+        }
+
         components.core.engine.profiler?.addMarker(
             MarkersLifecycleCallbacks.MARKER_NAME, startTimeProfiler, "HomeActivity.onCreate"
         )

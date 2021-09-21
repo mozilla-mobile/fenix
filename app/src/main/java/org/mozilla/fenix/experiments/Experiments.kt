@@ -14,7 +14,8 @@ package org.mozilla.fenix.experiments
 enum class FeatureId(val jsonName: String) {
     NIMBUS_VALIDATION("nimbus-validation"),
     ANDROID_KEYSTORE("fenix-android-keystore"),
-    DEFAULT_BROWSER("fenix-default-browser")
+    DEFAULT_BROWSER("fenix-default-browser"),
+    HOME_PAGE("fenix-home-page")
 }
 
 /**
@@ -30,5 +31,6 @@ class ExperimentBranch {
         const val DEFAULT_BROWSER_TOOLBAR_MENU = "default_browser_toolbar_menu"
         const val DEFAULT_BROWSER_NEW_TAB_BANNER = "default_browser_newtab_banner"
         const val DEFAULT_BROWSER_SETTINGS_MENU = "default_browser_settings_menu"
+        const val HOME_PAGE_TREATMENT = "HOME_PAGE_TREATMENT"
     }
 }
