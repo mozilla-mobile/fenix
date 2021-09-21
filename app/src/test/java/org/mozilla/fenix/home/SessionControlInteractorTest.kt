@@ -15,6 +15,7 @@ import mozilla.components.feature.tab.collections.Tab
 import mozilla.components.feature.tab.collections.TabCollection
 import org.junit.Before
 import org.junit.Test
+import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.historymetadata.HistoryMetadataGroup
 import org.mozilla.fenix.historymetadata.controller.HistoryMetadataController
 import org.mozilla.fenix.home.recentbookmarks.controller.RecentBookmarksController
@@ -167,7 +168,8 @@ class SessionControlInteractorTest {
             createdAt = System.currentTimeMillis(),
             updatedAt = System.currentTimeMillis(),
             totalViewTime = 10,
-            documentType = DocumentType.Regular
+            documentType = DocumentType.Regular,
+            previewImageUrl = null
         )
 
         interactor.onHistoryMetadataItemClicked(historyEntry.key.url, historyEntry.key)
@@ -193,7 +195,8 @@ class SessionControlInteractorTest {
             createdAt = System.currentTimeMillis(),
             updatedAt = System.currentTimeMillis(),
             totalViewTime = 10,
-            documentType = DocumentType.Regular
+            documentType = DocumentType.Regular,
+            previewImageUrl = null
         )
         val historyGroup = HistoryMetadataGroup(
             title = "mozilla",
@@ -221,8 +224,23 @@ class SessionControlInteractorTest {
     }
 
     @Test
+    fun `WHEN tapping on the customize home button THEN openCustomizeHomePage`() {
+        interactor.openCustomizeHomePage()
+        verify { controller.handleCustomizeHomeTapped() }
+    }
+
+    @Test
     fun `WHEN Show All recently saved bookmarks button is clicked THEN the click is handled`() {
         interactor.onShowAllBookmarksClicked()
         verify { recentBookmarksController.handleShowAllBookmarksClicked() }
+    }
+
+    @Test
+    fun `WHEN private mode button is clicked THEN the click is handled`() {
+        val newMode = BrowsingMode.Private
+        val hasBeenOnboarded = true
+
+        interactor.onPrivateModeButtonClicked(newMode, hasBeenOnboarded)
+        verify { controller.handlePrivateModeButtonClicked(newMode, hasBeenOnboarded) }
     }
 }

@@ -70,12 +70,14 @@ import mozilla.components.feature.search.ext.waitForSelectedOrDefaultSearchEngin
 import mozilla.components.service.fxa.manager.SyncEnginesStorage
 import org.mozilla.fenix.GleanMetrics.Addons
 import org.mozilla.fenix.GleanMetrics.AndroidAutofill
+import org.mozilla.fenix.GleanMetrics.CustomizeHome
 import org.mozilla.fenix.GleanMetrics.Preferences
 import org.mozilla.fenix.GleanMetrics.SearchDefaultEngine
 import org.mozilla.fenix.components.Core
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MozillaProductDetector
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
+import org.mozilla.fenix.perf.MarkersLifecycleCallbacks
 import org.mozilla.fenix.utils.Settings
 
 /**
@@ -192,6 +194,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
 
         visibilityLifecycleCallback = VisibilityLifecycleCallback(getSystemService())
         registerActivityLifecycleCallbacks(visibilityLifecycleCallback)
+        registerActivityLifecycleCallbacks(MarkersLifecycleCallbacks(components.core.engine))
 
         // Storage maintenance disabled, for now, as it was interfering with background migrations.
         // See https://github.com/mozilla-mobile/fenix/issues/7227 for context.
@@ -687,6 +690,11 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                 }
             )
         }
+        CustomizeHome.jumpBackIn.set(settings.showRecentTabsFeature)
+        CustomizeHome.recentlySaved.set(settings.showRecentBookmarksFeature)
+        CustomizeHome.mostVisitedSites.set(settings.showTopFrecentSites)
+        CustomizeHome.recentlyVisited.set(settings.historyMetadataUIFeature)
+        CustomizeHome.pocket.set(settings.pocketRecommendations)
     }
 
     protected fun recordOnInit() {

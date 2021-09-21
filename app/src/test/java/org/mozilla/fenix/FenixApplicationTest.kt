@@ -16,15 +16,13 @@ import mozilla.components.feature.addons.migration.DefaultSupportedAddonsChecker
 import mozilla.components.service.glean.testing.GleanTestRule
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.GleanMetrics.Addons
+import org.mozilla.fenix.GleanMetrics.CustomizeHome
 import org.mozilla.fenix.GleanMetrics.Metrics
-import org.mozilla.fenix.GleanMetrics.PerfStartup
 import org.mozilla.fenix.GleanMetrics.Preferences
 import org.mozilla.fenix.GleanMetrics.SearchDefaultEngine
 import org.mozilla.fenix.components.metrics.MozillaProductDetector
@@ -49,14 +47,6 @@ class FenixApplicationTest {
         browsersCache = mockk(relaxed = true)
         mozillaProductDetector = mockk(relaxed = true)
         browserStore = BrowserStore()
-    }
-
-    @Ignore("See https://github.com/mozilla-mobile/fenix/issues/18102")
-    @Test
-    fun `GIVEN onCreate is called THEN the duration is measured`() {
-        // application.onCreate is called before the test as part of test set up:
-        // https://robolectric.blogspot.com/2013/04/the-test-lifecycle-in-20.html
-        assertTrue(PerfStartup.applicationOnCreate.testHasValue())
     }
 
     @Test
@@ -128,6 +118,11 @@ class FenixApplicationTest {
         every { settings.touchExplorationIsEnabled } returns true
         every { settings.shouldUseLightTheme } returns true
         every { settings.signedInFxaAccount } returns true
+        every { settings.showRecentTabsFeature } returns true
+        every { settings.showRecentBookmarksFeature } returns true
+        every { settings.showTopFrecentSites } returns true
+        every { settings.historyMetadataUIFeature } returns true
+        every { settings.pocketRecommendations } returns true
 
         application.setStartupMetrics(browserStore, settings, browsersCache, mozillaProductDetector)
 
@@ -163,7 +158,11 @@ class FenixApplicationTest {
         assertEquals("fixed_top", Preferences.toolbarPositionSetting.testGetValue())
         assertEquals("standard", Preferences.enhancedTrackingProtection.testGetValue())
         assertEquals(listOf("switch", "touch exploration"), Preferences.accessibilityServices.testGetValue())
-        assertEquals("light", Preferences.userTheme.testGetValue())
+        assertEquals(true, CustomizeHome.jumpBackIn.testGetValue())
+        assertEquals(true, CustomizeHome.recentlySaved.testGetValue())
+        assertEquals(true, CustomizeHome.mostVisitedSites.testGetValue())
+        assertEquals(true, CustomizeHome.recentlyVisited.testGetValue())
+        assertEquals(true, CustomizeHome.pocket.testGetValue())
 
         // Verify that search engine defaults are NOT set. This test does
         // not mock most of the objects telemetry is collected from.

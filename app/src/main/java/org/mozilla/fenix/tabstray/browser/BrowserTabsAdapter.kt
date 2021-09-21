@@ -16,7 +16,6 @@ import mozilla.components.concept.tabstray.Tab
 import mozilla.components.concept.tabstray.TabsTray
 import mozilla.components.support.base.observer.Observable
 import mozilla.components.support.base.observer.ObserverRegistry
-import org.mozilla.fenix.R
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.databinding.TabTrayGridItemBinding
 import org.mozilla.fenix.databinding.TabTrayItemBinding
@@ -45,8 +44,8 @@ class BrowserTabsAdapter(
      * The layout types for the tabs.
      */
     enum class ViewType(val layoutRes: Int) {
-        LIST(R.layout.tab_tray_item),
-        GRID(R.layout.tab_tray_grid_item)
+        LIST(BrowserTabViewHolder.ListViewHolder.LAYOUT_ID),
+        GRID(BrowserTabViewHolder.GridViewHolder.LAYOUT_ID)
     }
 
     /**
@@ -58,10 +57,13 @@ class BrowserTabsAdapter(
     private val imageLoader = ThumbnailLoader(context.components.core.thumbnailStorage)
 
     override fun getItemViewType(position: Int): Int {
-        return if (context.components.settings.gridTabView) {
-            ViewType.GRID.layoutRes
-        } else {
-            ViewType.LIST.layoutRes
+        return when {
+            context.components.settings.gridTabView -> {
+                ViewType.GRID.layoutRes
+            }
+            else -> {
+                ViewType.LIST.layoutRes
+            }
         }
     }
 
@@ -70,9 +72,9 @@ class BrowserTabsAdapter(
 
         return when (viewType) {
             ViewType.GRID.layoutRes ->
-                BrowserTabGridViewHolder(imageLoader, interactor, store, selectionHolder, view, featureName)
+                BrowserTabViewHolder.GridViewHolder(imageLoader, interactor, store, selectionHolder, view, featureName)
             else ->
-                BrowserTabListViewHolder(imageLoader, interactor, store, selectionHolder, view, featureName)
+                BrowserTabViewHolder.ListViewHolder(imageLoader, interactor, store, selectionHolder, view, featureName)
         }
     }
 
