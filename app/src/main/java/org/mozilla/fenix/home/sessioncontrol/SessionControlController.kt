@@ -124,16 +124,6 @@ interface SessionControlController {
     fun handleStartBrowsingClicked()
 
     /**
-     * @see [OnboardingInteractor.onOpenSettingsClicked]
-     */
-    fun handleOpenSettingsClicked()
-
-    /**
-     * @see [OnboardingInteractor.onWhatsNewGetAnswersClicked]
-     */
-    fun handleWhatsNewGetAnswersClicked()
-
-    /**
      * @see [OnboardingInteractor.onReadPrivacyNoticeClicked]
      */
     fun handleReadPrivacyNoticeClicked()
@@ -452,22 +442,9 @@ class DefaultSessionControlController(
         hideOnboarding()
     }
 
-    override fun handleOpenSettingsClicked() {
-        val directions = HomeFragmentDirections.actionGlobalPrivateBrowsingFragment()
-        navController.nav(R.id.homeFragment, directions)
-    }
-
     override fun handleCustomizeHomeTapped() {
         val directions = HomeFragmentDirections.actionGlobalCustomizationFragment()
         navController.nav(R.id.homeFragment, directions)
-    }
-
-    override fun handleWhatsNewGetAnswersClicked() {
-        activity.openToBrowserAndLoad(
-            searchTermOrURL = SupportUtils.getWhatsNewUrl(activity),
-            newTab = true,
-            from = BrowserDirection.FromHome
-        )
     }
 
     override fun handleReadPrivacyNoticeClicked() {
