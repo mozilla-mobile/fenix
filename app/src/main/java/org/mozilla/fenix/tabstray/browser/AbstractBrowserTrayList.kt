@@ -84,7 +84,7 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
         var bestId: String? = null
         var placeAfter = false
         for (i in 0 until childCount) {
-            val targetHolder = findViewHolderForAdapterPosition(i)!!
+            val targetHolder = findViewHolderForAdapterPosition(i)
             val proposedTarget = getChildAt(i)!!
             val xDiff = x - (proposedTarget.x + proposedTarget.width / 2)
             val yDiff = y - (proposedTarget.y + proposedTarget.height / 2)
