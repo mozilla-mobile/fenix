@@ -68,7 +68,7 @@ interface TabsTrayController {
      * @param placeAfter Place the moved tabs before or after the target
      * @param filter Filter the full tab list to whatever the displayed tabs are to find the target
      */
-    fun handleTabsMove(tabs: Collection<Tab>, targetPos: Int, placeAfter: Boolean, filter: (TabSessionState) -> Boolean)
+    fun handleTabsMove(tabs: Collection<Tab>, targetId: String?, placeAfter: Boolean)
 
     /**
      * Navigate from TabsTray to Recently Closed section in the History fragment.
@@ -187,16 +187,12 @@ class DefaultTabsTrayController(
      */
     override fun handleTabsMove(
         tabs: Collection<Tab>,
-        targetPos: Int,
+        targetId: String?,
         placeAfter: Boolean,
-        filter: (TabSessionState) -> Boolean
     ) {
         val tabIDs = tabs.map { it.id }
-        val filteredTabs = browserStore.state.tabs.filter(filter)
-        if (targetPos <filteredTabs.size) {
-            tabsUseCases.moveTabs(tabIDs, filteredTabs[targetPos].id, placeAfter)
-        } else {
-            tabsUseCases.moveTabs(tabIDs, filteredTabs[filteredTabs.size - 1].id, true)
+        if (targetId != null) {
+            tabsUseCases.moveTabs(tabIDs, targetId, placeAfter)
         }
     }
 

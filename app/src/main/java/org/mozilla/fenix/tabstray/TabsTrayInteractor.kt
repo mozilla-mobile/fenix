@@ -42,9 +42,8 @@ interface TabsTrayInteractor {
      */
     fun onTabsMove(
         tabs: Collection<Tab>,
-        targetPos: Int,
+        targetId: String?,
         placeAfter: Boolean,
-        filter: (TabSessionState) -> Boolean = { true }
     )
 }
 
@@ -74,11 +73,10 @@ class DefaultTabsTrayInteractor(
 
     override fun onTabsMove(
         tabs: Collection<Tab>,
-        targetPos: Int,
+        targetId: String?,
         placeAfter: Boolean,
-        filter: (TabSessionState) -> Boolean
     ) {
-        controller.handleTabsMove(tabs, targetPos, placeAfter, filter)
+        controller.handleTabsMove(tabs, targetId, placeAfter)
     }
 
     override fun onInactiveDebugClicked(tabs: Collection<Tab>) {

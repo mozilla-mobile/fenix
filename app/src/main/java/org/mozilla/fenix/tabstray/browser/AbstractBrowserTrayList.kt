@@ -8,6 +8,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.DragEvent
 import androidx.recyclerview.widget.RecyclerView
+import mozilla.components.browser.tabstray.TabViewHolder
 import mozilla.components.concept.tabstray.Tab
 import mozilla.components.feature.tabs.tabstray.TabsFeature
 import org.mozilla.fenix.ext.components
@@ -76,7 +77,7 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
     // determine if it goes before or after that item.
     // This will fail if there's a spiral layout or something
     // but should work perfectly for lists and grids.
-    private fun getDropPosition(x: Float, y: Float): Pair<Int, Boolean>? {
+    private fun getDropPosition(x: Float, y: Float): Pair<String?, Boolean>? {
         if (childCount < 2) return null // If there's 0 or 1 tabs visible, can't reorder
         val first = getChildAt(0)!!
         val second = getChildAt(1)!!
@@ -84,21 +85,24 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
         val yOffset = second.y - first.y
 
         var bestDist = Float.MAX_VALUE
-        var bestPos = 0
+        var bestId: String? = null
         var placeAfter = false
         for (i in 0 until childCount) {
             val proposedTarget = getChildAt(i)!!
-            val xDiff = x - (proposedTarget.x + proposedTarget.width / 2)
-            val yDiff = y - (proposedTarget.y + proposedTarget.height / 2)
-            val dist = abs(xDiff) + abs(yDiff)
-            if (dist < bestDist) {
-                bestDist = dist
-                bestPos = getChildAdapterPosition(proposedTarget)
-                val modifier = (xDiff * xOffset) + (yDiff * yOffset)
-                placeAfter = (modifier > 0)
+            if (proposedTarget is TabViewHolder) {
+                val targetTabId = (proposedTarget as TabViewHolder).tab?.id
+                val xDiff = x - (proposedTarget.x + proposedTarget.width / 2)
+                val yDiff = y - (proposedTarget.y + proposedTarget.height / 2)
+                val dist = abs(xDiff) + abs(yDiff)
+                if (dist < bestDist) {
+                    bestDist = dist
+                    bestId = targetTabId
+                    val modifier = (xDiff * xOffset) + (yDiff * yOffset)
+                    placeAfter = (modifier > 0)
+                }
             }
         }
-        return Pair(bestPos, placeAfter)
+        return Pair(bestId, placeAfter)
     }
     private val dragListen = OnDragListener { _, event ->
         when (event.action) {
@@ -120,10 +124,9 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
             DragEvent.ACTION_DROP -> {
                 val target = getDropPosition(event.x, event.y)
                 if (target != null) {
-                    val (targetPos, placeAfter) = target
-                    val filter = tabsFeature.defaultTabsFilter
+                    val (targetId, placeAfter) = target
                     @Suppress("UNCHECKED_CAST") // Cast is checked on drag start
-                    interactor.onTabsMove(event.localState as Collection<Tab>, targetPos, placeAfter, filter)
+                    interactor.onTabsMove(event.localState as Collection<Tab>, targetId, placeAfter)
                 }
                 true
             }
