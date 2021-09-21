@@ -79,27 +79,22 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
     // but should work perfectly for lists and grids.
     private fun getDropPosition(x: Float, y: Float): Pair<String?, Boolean>? {
         if (childCount < 2) return null // If there's 0 or 1 tabs visible, can't reorder
-        val first = getChildAt(0)!!
-        val second = getChildAt(1)!!
-        val xOffset = second.x - first.x
-        val yOffset = second.y - first.y
-
+        val isGrid = context.components.settings.gridTabView
         var bestDist = Float.MAX_VALUE
         var bestId: String? = null
         var placeAfter = false
         for (i in 0 until childCount) {
+            val targetHolder = findViewHolderForAdapterPosition(i)!!
             val proposedTarget = getChildAt(i)!!
-            if (proposedTarget is TabViewHolder) {
-                val targetTabId = (proposedTarget as TabViewHolder).tab?.id
-                val xDiff = x - (proposedTarget.x + proposedTarget.width / 2)
-                val yDiff = y - (proposedTarget.y + proposedTarget.height / 2)
-                val dist = abs(xDiff) + abs(yDiff)
-                if (dist < bestDist) {
-                    bestDist = dist
-                    bestId = targetTabId
-                    val modifier = (xDiff * xOffset) + (yDiff * yOffset)
-                    placeAfter = (modifier > 0)
-                }
+            val xDiff = x - (proposedTarget.x + proposedTarget.width / 2)
+            val yDiff = y - (proposedTarget.y + proposedTarget.height / 2)
+            val dist = abs(xDiff) + abs(yDiff)
+            if (dist < bestDist && targetHolder is TabViewHolder) {
+                val targetTabId = targetHolder.tab?.id
+                bestDist = dist
+                bestId = targetTabId
+                val modifier = if (isGrid) xDiff else yDiff
+                placeAfter = (modifier > 0)
             }
         }
         return Pair(bestId, placeAfter)
