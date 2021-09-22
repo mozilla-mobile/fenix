@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.components.toolbar
 
+import android.graphics.Color
 import android.view.HapticFeedbackConstants
 import android.view.LayoutInflater
 import android.view.View
@@ -13,7 +14,6 @@ import androidx.annotation.VisibleForTesting
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
-import kotlinx.android.extensions.LayoutContainer
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import mozilla.components.browser.domains.autocomplete.ShippedDomainsProvider
 import mozilla.components.browser.state.selector.selectedTab
@@ -43,10 +43,7 @@ class BrowserToolbarView(
     private val interactor: BrowserToolbarInteractor,
     private val customTabSession: CustomTabSessionState?,
     private val lifecycleOwner: LifecycleOwner
-) : LayoutContainer {
-
-    override val containerView: View?
-        get() = container
+) {
 
     private val settings = container.context.settings()
 
@@ -122,7 +119,7 @@ class BrowserToolbarView(
                 display.colors = display.colors.copy(
                     text = primaryTextColor,
                     securityIconSecure = primaryTextColor,
-                    securityIconInsecure = primaryTextColor,
+                    securityIconInsecure = Color.TRANSPARENT,
                     menu = primaryTextColor,
                     hint = secondaryTextColor,
                     separator = separatorColor,

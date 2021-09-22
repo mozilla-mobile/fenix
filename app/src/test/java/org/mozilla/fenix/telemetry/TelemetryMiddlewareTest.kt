@@ -11,11 +11,11 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import mozilla.components.browser.state.engine.EngineMiddleware
 import mozilla.components.browser.state.action.ContentAction
-import mozilla.components.browser.state.action.DownloadAction
 import mozilla.components.browser.state.action.EngineAction
 import mozilla.components.browser.state.action.TabListAction
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.createTab
+import mozilla.components.browser.state.state.recover.RecoverableTab
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.service.glean.testing.GleanTestRule
 import mozilla.components.support.base.android.Clock
@@ -169,46 +169,40 @@ class TelemetryMiddlewareTest {
     fun `WHEN tabs are restored THEN the open tab count is updated`() {
         assertEquals(0, settings.openTabsCount)
         val tabsToRestore = listOf(
-            createTab("https://mozilla.org"),
-            createTab("https://firefox.com")
+            RecoverableTab(url = "https://mozilla.org", id = "1"),
+            RecoverableTab(url = "https://firefox.com", id = "2")
         )
 
-        store.dispatch(TabListAction.RestoreAction(tabsToRestore)).joinBlocking()
+        store.dispatch(
+            TabListAction.RestoreAction(
+                tabs = tabsToRestore,
+                restoreLocation = TabListAction.RestoreAction.RestoreLocation.BEGINNING
+            )
+        ).joinBlocking()
         assertEquals(2, settings.openTabsCount)
         verify(exactly = 1) { metrics.track(Event.HaveOpenTabs) }
     }
 
     @Test
-    fun `GIVEN a page is loading WHEN loading is complete THEN we record a UriOpened event`() {
+    fun `GIVEN a normal page is loading WHEN loading is complete THEN we record a UriOpened event`() {
         val tab = createTab(id = "1", url = "https://mozilla.org")
         store.dispatch(TabListAction.AddTabAction(tab)).joinBlocking()
         store.dispatch(ContentAction.UpdateLoadingStateAction(tab.id, true)).joinBlocking()
-        verify(exactly = 0) { metrics.track(Event.UriOpened) }
         verify(exactly = 0) { metrics.track(Event.NormalAndPrivateUriOpened) }
 
         store.dispatch(ContentAction.UpdateLoadingStateAction(tab.id, false)).joinBlocking()
-        verify(exactly = 1) { metrics.track(Event.UriOpened) }
         verify(exactly = 1) { metrics.track(Event.NormalAndPrivateUriOpened) }
     }
 
     @Test
-    fun `GIVEN a private page is loading WHEN loading is complete THEN we never record a UriOpened event`() {
+    fun `GIVEN a private page is loading WHEN loading is complete THEN we record a UriOpened event`() {
         val tab = createTab(id = "1", url = "https://mozilla.org", private = true)
         store.dispatch(TabListAction.AddTabAction(tab)).joinBlocking()
         store.dispatch(ContentAction.UpdateLoadingStateAction(tab.id, true)).joinBlocking()
-        verify(exactly = 0) { metrics.track(Event.UriOpened) }
         verify(exactly = 0) { metrics.track(Event.NormalAndPrivateUriOpened) }
 
         store.dispatch(ContentAction.UpdateLoadingStateAction(tab.id, false)).joinBlocking()
-        verify(exactly = 0) { metrics.track(Event.UriOpened) }
         verify(exactly = 1) { metrics.track(Event.NormalAndPrivateUriOpened) }
-    }
-
-    @Test
-    fun `WHEN a download is added THEN the downloads count is updated`() {
-        store.dispatch(DownloadAction.AddDownloadAction(mock())).joinBlocking()
-
-        verify { metrics.track(Event.DownloadAdded) }
     }
 
     @Test
@@ -216,11 +210,12 @@ class TelemetryMiddlewareTest {
         store.dispatch(
             TabListAction.RestoreAction(
                 listOf(
-                    createTab("https://www.mozilla.org", id = "foreground"),
-                    createTab("https://getpocket.com", id = "background_pocket"),
-                    createTab("https://theverge.com", id = "background_verge")
+                    RecoverableTab(url = "https://www.mozilla.org", id = "foreground"),
+                    RecoverableTab(url = "https://getpocket.com", id = "background_pocket"),
+                    RecoverableTab(url = "https://theverge.com", id = "background_verge")
                 ),
-                selectedTabId = "foreground"
+                selectedTabId = "foreground",
+                restoreLocation = TabListAction.RestoreAction.RestoreLocation.BEGINNING
             )
         ).joinBlocking()
 
@@ -239,11 +234,12 @@ class TelemetryMiddlewareTest {
         store.dispatch(
             TabListAction.RestoreAction(
                 listOf(
-                    createTab("https://www.mozilla.org", id = "foreground"),
-                    createTab("https://getpocket.com", id = "background_pocket"),
-                    createTab("https://theverge.com", id = "background_verge")
+                    RecoverableTab(url = "https://www.mozilla.org", id = "foreground"),
+                    RecoverableTab(url = "https://getpocket.com", id = "background_pocket"),
+                    RecoverableTab(url = "https://theverge.com", id = "background_verge")
                 ),
-                selectedTabId = "foreground"
+                selectedTabId = "foreground",
+                restoreLocation = TabListAction.RestoreAction.RestoreLocation.BEGINNING
             )
         ).joinBlocking()
 
@@ -272,11 +268,12 @@ class TelemetryMiddlewareTest {
         store.dispatch(
             TabListAction.RestoreAction(
                 listOf(
-                    createTab("https://www.mozilla.org", id = "foreground"),
-                    createTab("https://getpocket.com", id = "background_pocket"),
-                    createTab("https://theverge.com", id = "background_verge")
+                    RecoverableTab(url = "https://www.mozilla.org", id = "foreground"),
+                    RecoverableTab(url = "https://getpocket.com", id = "background_pocket"),
+                    RecoverableTab(url = "https://theverge.com", id = "background_verge")
                 ),
-                selectedTabId = "foreground"
+                selectedTabId = "foreground",
+                restoreLocation = TabListAction.RestoreAction.RestoreLocation.BEGINNING
             )
         ).joinBlocking()
 
@@ -308,11 +305,12 @@ class TelemetryMiddlewareTest {
         store.dispatch(
             TabListAction.RestoreAction(
                 listOf(
-                    createTab("https://www.mozilla.org", id = "foreground"),
-                    createTab("https://getpocket.com", id = "background_pocket"),
-                    createTab("https://theverge.com", id = "background_verge")
+                    RecoverableTab(url = "https://www.mozilla.org", id = "foreground"),
+                    RecoverableTab(url = "https://getpocket.com", id = "background_pocket"),
+                    RecoverableTab(url = "https://theverge.com", id = "background_verge")
                 ),
-                selectedTabId = "foreground"
+                selectedTabId = "foreground",
+                restoreLocation = TabListAction.RestoreAction.RestoreLocation.BEGINNING
             )
         ).joinBlocking()
 

@@ -254,9 +254,7 @@ class Core(
      * The [HistoryMetadataService] is used to record history metadata.
      */
     val historyMetadataService: HistoryMetadataService by lazyMonitored {
-        DefaultHistoryMetadataService(storage = historyStorage).apply {
-            cleanup(System.currentTimeMillis() - HISTORY_METADATA_MAX_AGE_IN_MS)
-        }
+        DefaultHistoryMetadataService(storage = historyStorage)
     }
 
     /**
@@ -326,9 +324,7 @@ class Core(
 
     @Suppress("MagicNumber")
     val pocketStoriesConfig by lazyMonitored {
-        PocketStoriesConfig(
-            BuildConfig.POCKET_TOKEN, client, Frequency(4, TimeUnit.HOURS), 7
-        )
+        PocketStoriesConfig(client, Frequency(4, TimeUnit.HOURS))
     }
     val pocketStoriesService by lazyMonitored { PocketStoriesService(context, pocketStoriesConfig) }
 
@@ -356,6 +352,13 @@ class Core(
                         Pair(
                             context.getString(R.string.default_top_site_pdd),
                             SupportUtils.PDD_URL
+                        )
+                    )
+
+                    defaultTopSites.add(
+                        Pair(
+                            context.getString(R.string.default_top_site_tc),
+                            SupportUtils.TC_URL
                         )
                     )
                 } else {
@@ -454,6 +457,6 @@ class Core(
         private const val KEY_STORAGE_NAME = "core_prefs"
         private const val PASSWORDS_KEY = "passwords"
         private const val RECENTLY_CLOSED_MAX = 10
-        private const val HISTORY_METADATA_MAX_AGE_IN_MS = 14 * 24 * 60 * 60 * 1000 // 14 days
+        const val HISTORY_METADATA_MAX_AGE_IN_MS = 14 * 24 * 60 * 60 * 1000 // 14 days
     }
 }

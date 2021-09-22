@@ -69,7 +69,6 @@ import mozilla.components.feature.top.sites.TopSitesConfig
 import mozilla.components.feature.top.sites.TopSitesFeature
 import mozilla.components.lib.state.ext.consumeFlow
 import mozilla.components.lib.state.ext.consumeFrom
-import mozilla.components.service.pocket.stories.PocketStoriesUseCases
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.ktx.android.content.res.resolveAttribute
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
@@ -243,7 +242,7 @@ class HomeFragment : Fragment() {
 
         if (requireContext().settings().pocketRecommendations) {
             lifecycleScope.async(IO) {
-                val stories = PocketStoriesUseCases().GetPocketStories(requireContext()).invoke()
+                val stories = components.core.pocketStoriesService.getStories()
                 homeFragmentStore.dispatch(HomeFragmentAction.PocketArticlesChange(stories))
             }
         }
@@ -258,7 +257,7 @@ class HomeFragment : Fragment() {
             view = binding.root
         )
 
-        if (FeatureFlags.showRecentTabsFeature) {
+        if (requireContext().settings().showRecentTabsFeature) {
             recentTabsListFeature.set(
                 feature = RecentTabsListFeature(
                     browserStore = components.core.store,
@@ -269,7 +268,7 @@ class HomeFragment : Fragment() {
             )
         }
 
-        if (FeatureFlags.recentBookmarksFeature) {
+        if (requireContext().settings().showRecentBookmarksFeature) {
             recentBookmarksFeature.set(
                 feature = RecentBookmarksFeature(
                     homeStore = homeFragmentStore,
@@ -470,19 +469,11 @@ class HomeFragment : Fragment() {
             openTabsTray()
         }
 
-        PrivateBrowsingButtonView(
-            binding.privateBrowsingButton,
-            browsingModeManager
-        ) { newMode ->
-            if (newMode == BrowsingMode.Private) {
-                requireContext().settings().incrementNumTimesPrivateModeOpened()
-            }
-
-            if (onboarding.userHasBeenOnboarded()) {
-                homeFragmentStore.dispatch(
-                    HomeFragmentAction.ModeChange(Mode.fromBrowsingMode(newMode))
-                )
-            }
+        PrivateBrowsingButtonView(binding.privateBrowsingButton, browsingModeManager) { newMode ->
+            sessionControlInteractor.onPrivateModeButtonClicked(
+                newMode,
+                onboarding.userHasBeenOnboarded()
+            )
         }
 
         consumeFrom(requireComponents.core.store) {
@@ -776,14 +767,12 @@ class HomeFragment : Fragment() {
                 )
             layout.findViewById<Button>(R.id.cfr_pos_button).apply {
                 setOnClickListener {
-                    context.metrics.track(Event.PrivateBrowsingAddShortcutCFR)
                     PrivateShortcutCreateManager.createPrivateShortcut(context)
                     privateBrowsingRecommend.dismiss()
                 }
             }
             layout.findViewById<Button>(R.id.cfr_neg_button).apply {
                 setOnClickListener {
-                    context.metrics.track(Event.PrivateBrowsingCancelCFR)
                     privateBrowsingRecommend.dismiss()
                 }
             }
@@ -855,6 +844,14 @@ class HomeFragment : Fragment() {
                             HomeFragmentDirections.actionGlobalSettingsFragment()
                         )
                         requireComponents.analytics.metrics.track(Event.HomeMenuSettingsItemClicked)
+                    }
+                    HomeMenu.Item.CustomizeHome -> {
+                        context.metrics.track(Event.HomeScreenCustomizedHomeClicked)
+                        hideOnboardingIfNeeded()
+                        nav(
+                            R.id.homeFragment,
+                            HomeFragmentDirections.actionGlobalCustomizationFragment()
+                        )
                     }
                     is HomeMenu.Item.SyncAccount -> {
                         hideOnboardingIfNeeded()

@@ -13,7 +13,6 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.concept.storage.HistoryMetadata
 import mozilla.components.feature.tab.collections.TabCollection
@@ -28,14 +27,12 @@ import org.mozilla.fenix.historymetadata.view.HistoryMetadataViewHolder
 import org.mozilla.fenix.home.HomeFragmentStore
 import org.mozilla.fenix.home.OnboardingState
 import org.mozilla.fenix.home.recentbookmarks.view.RecentBookmarksViewHolder
-import org.mozilla.fenix.home.recenttabs.view.RecentTabViewDecorator
 import org.mozilla.fenix.home.recenttabs.view.RecentTabViewHolder
 import org.mozilla.fenix.home.recenttabs.view.RecentTabsHeaderViewHolder
-import org.mozilla.fenix.home.recenttabs.view.RecentTabsItemPosition
 import org.mozilla.fenix.home.sessioncontrol.viewholders.CollectionHeaderViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.CollectionViewHolder
+import org.mozilla.fenix.home.sessioncontrol.viewholders.CustomizeHomeButtonViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.NoCollectionsMessageViewHolder
-import org.mozilla.fenix.home.sessioncontrol.viewholders.pocket.PocketStoriesViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.PrivateBrowsingDescriptionViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.TabInCollectionViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.TopSitePagerViewHolder
@@ -45,12 +42,11 @@ import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingFi
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingHeaderViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingManualSignInViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingPrivacyNoticeViewHolder
-import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingPrivateBrowsingViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingSectionHeaderViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingThemePickerViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingToolbarPositionPickerViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingTrackingProtectionViewHolder
-import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingWhatsNewViewHolder
+import org.mozilla.fenix.home.sessioncontrol.viewholders.pocket.PocketStoriesViewHolder
 import org.mozilla.fenix.home.tips.ButtonTipViewHolder
 import mozilla.components.feature.tab.collections.Tab as ComponentTab
 
@@ -158,30 +154,15 @@ sealed class AdapterItem(@LayoutRes val viewType: Int) {
     object OnboardingTrackingProtection :
         AdapterItem(OnboardingTrackingProtectionViewHolder.LAYOUT_ID)
 
-    object OnboardingPrivateBrowsing : AdapterItem(OnboardingPrivateBrowsingViewHolder.LAYOUT_ID)
     object OnboardingPrivacyNotice : AdapterItem(OnboardingPrivacyNoticeViewHolder.LAYOUT_ID)
     object OnboardingFinish : AdapterItem(OnboardingFinishViewHolder.LAYOUT_ID)
     object OnboardingToolbarPositionPicker :
         AdapterItem(OnboardingToolbarPositionPickerViewHolder.LAYOUT_ID)
 
-    object OnboardingWhatsNew : AdapterItem(OnboardingWhatsNewViewHolder.LAYOUT_ID)
+    object CustomizeHomeButton : AdapterItem(CustomizeHomeButtonViewHolder.LAYOUT_ID)
 
     object RecentTabsHeader : AdapterItem(RecentTabsHeaderViewHolder.LAYOUT_ID)
-    data class RecentTabItem(
-        val tab: TabSessionState,
-        val position: RecentTabsItemPosition
-    ) : AdapterItem(RecentTabViewHolder.LAYOUT_ID) {
-        override fun sameAs(other: AdapterItem) = other is RecentTabItem && tab.id == other.tab.id &&
-            position == other.position
-
-        override fun contentsSameAs(other: AdapterItem): Boolean {
-            val otherItem = other as RecentTabItem
-            // We only care about updating if the title and icon have changed because that is
-            // all we show today. This should be updated if we want to show updates for more.
-            return tab.content.title == otherItem.tab.content.title &&
-                tab.content.icon == otherItem.tab.content.icon
-        }
-    }
+    object RecentTabItem : AdapterItem(RecentTabViewHolder.LAYOUT_ID)
 
     object HistoryMetadataHeader : AdapterItem(HistoryMetadataHeaderViewHolder.LAYOUT_ID)
 
@@ -267,12 +248,18 @@ class SessionControlAdapter(
 ) : ListAdapter<AdapterItem, RecyclerView.ViewHolder>(AdapterItemDiffCallback()) {
 
     // This method triggers the ComplexMethod lint error when in fact it's quite simple.
-    @SuppressWarnings("ComplexMethod")
+    @SuppressWarnings("ComplexMethod", "LongMethod")
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         when (viewType) {
             PocketStoriesViewHolder.LAYOUT_ID -> return PocketStoriesViewHolder(
                 ComposeView(parent.context),
-                store
+                store,
+                components.core.client
+            )
+            RecentTabViewHolder.LAYOUT_ID -> return RecentTabViewHolder(
+                composeView = ComposeView(parent.context),
+                store = store,
+                interactor = interactor
             )
         }
 
@@ -307,22 +294,17 @@ class SessionControlAdapter(
             OnboardingTrackingProtectionViewHolder.LAYOUT_ID -> OnboardingTrackingProtectionViewHolder(
                 view
             )
-            OnboardingPrivateBrowsingViewHolder.LAYOUT_ID -> OnboardingPrivateBrowsingViewHolder(
-                view,
-                interactor
-            )
             OnboardingPrivacyNoticeViewHolder.LAYOUT_ID -> OnboardingPrivacyNoticeViewHolder(
                 view,
                 interactor
             )
+            CustomizeHomeButtonViewHolder.LAYOUT_ID -> CustomizeHomeButtonViewHolder(view, interactor)
             OnboardingFinishViewHolder.LAYOUT_ID -> OnboardingFinishViewHolder(view, interactor)
-            OnboardingWhatsNewViewHolder.LAYOUT_ID -> OnboardingWhatsNewViewHolder(view, interactor)
             OnboardingToolbarPositionPickerViewHolder.LAYOUT_ID -> OnboardingToolbarPositionPickerViewHolder(
                 view
             )
             ExperimentDefaultBrowserCardViewHolder.LAYOUT_ID -> ExperimentDefaultBrowserCardViewHolder(view, interactor)
             RecentTabsHeaderViewHolder.LAYOUT_ID -> RecentTabsHeaderViewHolder(view, interactor)
-            RecentTabViewHolder.LAYOUT_ID -> RecentTabViewHolder(view, interactor)
             RecentBookmarksViewHolder.LAYOUT_ID -> {
                 RecentBookmarksViewHolder(view, interactor)
             }
@@ -341,7 +323,14 @@ class SessionControlAdapter(
 
     override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
         when (holder) {
-            is PocketStoriesViewHolder -> holder.composeView.disposeComposition()
+            is RecentTabViewHolder,
+            is PocketStoriesViewHolder -> {
+                // no op
+                // This previously called "composeView.disposeComposition" which would have the
+                // entire Composable destroyed and recreated when this View is scrolled off or on screen again.
+                // This View already listens and maps store updates. Avoid creating and binding new Views.
+                // The composition will live until the ViewTreeLifecycleOwner to which it's attached to is destroyed.
+            }
             else -> super.onViewRecycled(holder)
         }
     }
@@ -393,12 +382,6 @@ class SessionControlAdapter(
             is OnboardingAutomaticSignInViewHolder -> holder.bind(
                 (item as AdapterItem.OnboardingAutomaticSignIn).state.withAccount
             )
-            is RecentTabViewHolder -> {
-                val (tab, tabPosition) = item as AdapterItem.RecentTabItem
-                holder.bindTab(tab).apply {
-                    RecentTabViewDecorator.forPosition(tabPosition).invoke(this)
-                }
-            }
             is RecentBookmarksViewHolder -> {
                 holder.bind(
                     (item as AdapterItem.RecentBookmarks).recentBookmarks
@@ -410,6 +393,7 @@ class SessionControlAdapter(
             is HistoryMetadataGroupViewHolder -> {
                 holder.bind((item as AdapterItem.HistoryMetadataGroup).historyMetadataGroup)
             }
+            is RecentTabViewHolder,
             is PocketStoriesViewHolder -> {
                 // no-op. This ViewHolder receives the HomeStore as argument and will observe that
                 // without the need for us to manually update from here the data to be displayed.

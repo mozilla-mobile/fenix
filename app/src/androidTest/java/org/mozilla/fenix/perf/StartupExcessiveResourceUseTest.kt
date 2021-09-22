@@ -4,27 +4,26 @@
 
 package org.mozilla.fenix.perf
 
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
-import kotlinx.android.synthetic.main.activity_home.*
 import org.junit.Assert.assertEquals
-import org.junit.Ignore
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
+import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 
 // BEFORE INCREASING THESE VALUES, PLEASE CONSULT WITH THE PERF TEAM.
-private const val EXPECTED_SUPPRESSION_COUNT = 11
-private const val EXPECTED_RUNBLOCKING_COUNT = 3
-private const val EXPECTED_COMPONENT_INIT_COUNT = 42
-private const val EXPECTED_VIEW_HIERARCHY_DEPTH = 12
+private const val EXPECTED_SUPPRESSION_COUNT = 19
+@Suppress("TopLevelPropertyNaming") // it's silly this would have a different naming convention b/c no const
+private val EXPECTED_RUNBLOCKING_RANGE = 0..1 // CI has +1 counts compared to local runs: increment these together
 private const val EXPECTED_RECYCLER_VIEW_CONSTRAINT_LAYOUT_CHILDREN = 4
 private const val EXPECTED_NUMBER_OF_INFLATION = 12
 
@@ -37,17 +36,6 @@ private val failureMsgRunBlocking = getErrorMessage(
     shortName = "runBlockingIncrement",
     implications = "using runBlocking may block the main thread and have other negative performance implications?"
 )
-
-private val failureMsgComponentInit = getErrorMessage(
-    shortName = "Component init",
-    implications = "initializing new components on start up may be an indication that we're doing more work than necessary on start up?"
-)
-
-private val failureMsgViewHierarchyDepth = getErrorMessage(
-    shortName = "view hierarchy depth",
-    implications = "having a deep view hierarchy can slow down measure/layout performance?"
-) + "Please note that we're not sure if this is a useful metric to assert: with your feedback, " +
-    "we'll find out over time if it is or is not."
 
 private val failureMsgRecyclerViewConstraintLayoutChildren = getErrorMessage(
     shortName = "ConstraintLayout being a common direct descendant of a RecyclerView",
@@ -82,7 +70,6 @@ class StartupExcessiveResourceUseTest {
 
     private val uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
-    @Ignore("See: https://github.com/mozilla-mobile/fenix/pull/20841#issuecomment-898630241c")
     @Test
     fun verifyRunBlockingAndStrictModeSuppresionCount() {
         uiDevice.waitForIdle() // wait for async UI to load.
@@ -92,37 +79,20 @@ class StartupExcessiveResourceUseTest {
         // causing this number to fluctuate depending on device speed. We'll deal with it if it occurs.
         val actualSuppresionCount = activityTestRule.activity.components.strictMode.suppressionCount.get().toInt()
         val actualRunBlocking = RunBlockingCounter.count.get()
-        val actualComponentInitCount = ComponentInitCount.count.get()
 
-        val rootView = activityTestRule.activity.rootContainer
-        val actualViewHierarchyDepth = countAndLogViewHierarchyDepth(rootView, 1)
+        val rootView = activityTestRule.activity.findViewById<LinearLayout>(R.id.rootContainer)
         val actualRecyclerViewConstraintLayoutChildren = countRecyclerViewConstraintLayoutChildren(rootView, null)
 
         val actualNumberOfInflations = InflationCounter.inflationCount.get()
 
         assertEquals(failureMsgStrictMode, EXPECTED_SUPPRESSION_COUNT, actualSuppresionCount)
-        assertEquals(failureMsgRunBlocking, EXPECTED_RUNBLOCKING_COUNT, actualRunBlocking)
-        assertEquals(failureMsgComponentInit, EXPECTED_COMPONENT_INIT_COUNT, actualComponentInitCount)
-        assertEquals(failureMsgViewHierarchyDepth, EXPECTED_VIEW_HIERARCHY_DEPTH, actualViewHierarchyDepth)
+        assertTrue(failureMsgRunBlocking + "actual: $actualRunBlocking", actualRunBlocking in EXPECTED_RUNBLOCKING_RANGE)
         assertEquals(
             failureMsgRecyclerViewConstraintLayoutChildren,
             EXPECTED_RECYCLER_VIEW_CONSTRAINT_LAYOUT_CHILDREN,
             actualRecyclerViewConstraintLayoutChildren
         )
         assertEquals(failureMsgNumberOfInflation, EXPECTED_NUMBER_OF_INFLATION, actualNumberOfInflations)
-    }
-}
-
-private fun countAndLogViewHierarchyDepth(view: View, level: Int): Int {
-    // Log for debugging purposes: not sure if this is actually helpful.
-    val indent = "| ".repeat(level - 1)
-    Log.d("Startup...Test", "${indent}$view")
-
-    return if (view !is ViewGroup) {
-        level
-    } else {
-        val maxDepth = view.children.map { countAndLogViewHierarchyDepth(it, level + 1) }.maxOrNull()
-        maxDepth ?: level
     }
 }
 

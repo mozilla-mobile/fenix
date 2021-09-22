@@ -18,7 +18,6 @@ import mozilla.components.concept.storage.HistoryMetadataStorage
 import mozilla.components.support.test.libstate.ext.waitUntilIdle
 import mozilla.components.support.test.middleware.CaptureActionsMiddleware
 import mozilla.components.support.test.rule.MainCoroutineRule
-import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -34,20 +33,6 @@ class HistoryMetadataFeatureTest {
 
     private val middleware = CaptureActionsMiddleware<HomeFragmentState, HomeFragmentAction>()
     private val homeStore = HomeFragmentStore(middlewares = listOf(middleware))
-
-    private val historyEntry = HistoryMetadata(
-        key = HistoryMetadataKey("http://www.mozilla.com", "mozilla", null),
-        title = "mozilla",
-        createdAt = System.currentTimeMillis(),
-        updatedAt = System.currentTimeMillis(),
-        totalViewTime = 10,
-        documentType = DocumentType.Regular
-    )
-    private val historyGroup = HistoryMetadataGroup(
-        title = "mozilla",
-        historyMetadata = listOf(historyEntry)
-    )
-
     private val testDispatcher = TestCoroutineDispatcher()
 
     @get:Rule
@@ -56,42 +41,286 @@ class HistoryMetadataFeatureTest {
     @Before
     fun setup() {
         historyMetadataStorage = mockk(relaxed = true)
-
-        coEvery { historyMetadataStorage.getHistoryMetadataSince(any()) }.coAnswers {
-            listOf(
-                historyEntry
-            )
-        }
-    }
-
-    @After
-    fun cleanUp() {
-        testDispatcher.cleanupTestCoroutines()
     }
 
     @Test
     fun `GIVEN no history metadata WHEN feature starts THEN fetch history metadata and notify store`() =
         testDispatcher.runBlockingTest {
-            val feature = HistoryMetadataFeature(
-                homeStore,
-                historyMetadataStorage,
-                CoroutineScope(testDispatcher),
-                testDispatcher
+            val historyEntry = HistoryMetadata(
+                key = HistoryMetadataKey("http://www.mozilla.com", "mozilla", null),
+                title = "mozilla",
+                createdAt = System.currentTimeMillis(),
+                updatedAt = System.currentTimeMillis(),
+                totalViewTime = 10,
+                documentType = DocumentType.Regular,
+                previewImageUrl = null
+            )
+            val expectedHistoryGroup = HistoryMetadataGroup(
+                title = "mozilla",
+                historyMetadata = listOf(historyEntry)
             )
 
-            assertEquals(emptyList<HistoryMetadataGroup>(), homeStore.state.historyMetadata)
-
-            feature.start()
-
-            testDispatcher.advanceUntilIdle()
-            homeStore.waitUntilIdle()
-
-            coVerify {
-                historyMetadataStorage.getHistoryMetadataSince(any())
+            coEvery { historyMetadataStorage.getHistoryMetadataSince(any()) }.coAnswers {
+                listOf(
+                    historyEntry
+                )
             }
+
+            startHistoryMetadataFeature()
 
             middleware.assertLastAction(HomeFragmentAction.HistoryMetadataChange::class) {
-                assertEquals(listOf(historyGroup), it.historyMetadata)
+                assertEquals(listOf(expectedHistoryGroup), it.historyMetadata)
             }
         }
+
+    @Test
+    fun `GIVEN history metadata WHEN group contains multiple entries with same url THEN entries are deduped`() =
+        testDispatcher.runBlockingTest {
+            val historyEntry1 = HistoryMetadata(
+                key = HistoryMetadataKey("http://www.mozilla.com", "mozilla", null),
+                title = "mozilla",
+                createdAt = System.currentTimeMillis(),
+                updatedAt = 1,
+                totalViewTime = 10,
+                documentType = DocumentType.Regular,
+                previewImageUrl = null
+            )
+
+            val historyEntry2 = HistoryMetadata(
+                key = HistoryMetadataKey("http://firefox.com", "mozilla", null),
+                title = "firefox",
+                createdAt = System.currentTimeMillis(),
+                updatedAt = 2,
+                totalViewTime = 20,
+                documentType = DocumentType.Regular,
+                previewImageUrl = "http://firefox.com/image1"
+            )
+
+            val historyEntry3 = HistoryMetadata(
+                key = HistoryMetadataKey("http://www.mozilla.com", "mozilla", null),
+                title = "mozilla",
+                createdAt = System.currentTimeMillis(),
+                updatedAt = 3,
+                totalViewTime = 30,
+                documentType = DocumentType.Regular,
+                previewImageUrl = null
+            )
+
+            val expectedHistoryGroup = HistoryMetadataGroup(
+                title = "mozilla",
+                historyMetadata = listOf(
+                    // Expected total view time to be summed up for deduped entries
+                    historyEntry1.copy(
+                        totalViewTime = historyEntry1.totalViewTime + historyEntry3.totalViewTime,
+                        updatedAt = historyEntry3.updatedAt
+                    ),
+                    historyEntry2
+                )
+            )
+
+            coEvery { historyMetadataStorage.getHistoryMetadataSince(any()) }.coAnswers {
+                listOf(
+                    historyEntry1, historyEntry2, historyEntry3
+                )
+            }
+
+            startHistoryMetadataFeature()
+
+            middleware.assertLastAction(HomeFragmentAction.HistoryMetadataChange::class) {
+                assertEquals(listOf(expectedHistoryGroup), it.historyMetadata)
+            }
+        }
+
+    @Test
+    fun `GIVEN history metadata WHEN different groups contain entries with same url THEN entries are not deduped`() =
+        testDispatcher.runBlockingTest {
+            val now = System.currentTimeMillis()
+            val historyEntry1 = HistoryMetadata(
+                key = HistoryMetadataKey("http://www.mozilla.com", "mozilla", null),
+                title = "mozilla",
+                createdAt = now,
+                updatedAt = now + 3,
+                totalViewTime = 10,
+                documentType = DocumentType.Regular,
+                previewImageUrl = null
+            )
+
+            val historyEntry2 = HistoryMetadata(
+                key = HistoryMetadataKey("http://firefox.com", "mozilla", null),
+                title = "firefox",
+                createdAt = now,
+                updatedAt = now + 2,
+                totalViewTime = 20,
+                documentType = DocumentType.Regular,
+                previewImageUrl = null
+            )
+
+            val historyEntry3 = HistoryMetadata(
+                key = HistoryMetadataKey("http://www.mozilla.com", "firefox", null),
+                title = "mozilla",
+                createdAt = now,
+                updatedAt = now + 1,
+                totalViewTime = 30,
+                documentType = DocumentType.Regular,
+                previewImageUrl = null
+            )
+
+            val expectedHistoryGroup1 = HistoryMetadataGroup(
+                title = "mozilla",
+                historyMetadata = listOf(historyEntry1, historyEntry2)
+            )
+
+            val expectedHistoryGroup2 = HistoryMetadataGroup(
+                title = "firefox",
+                historyMetadata = listOf(historyEntry3)
+            )
+
+            coEvery { historyMetadataStorage.getHistoryMetadataSince(any()) }.coAnswers {
+                listOf(
+                    historyEntry1, historyEntry2, historyEntry3
+                )
+            }
+
+            startHistoryMetadataFeature()
+
+            middleware.assertLastAction(HomeFragmentAction.HistoryMetadataChange::class) {
+                assertEquals(listOf(expectedHistoryGroup1, expectedHistoryGroup2), it.historyMetadata)
+            }
+        }
+
+    @Test
+    fun `GIVEN history metadata WHEN multiple groups exist THEN groups are sorted descending by last updated timestamp`() =
+        testDispatcher.runBlockingTest {
+            val now = System.currentTimeMillis()
+            val historyEntry1 = HistoryMetadata(
+                key = HistoryMetadataKey("http://www.mozilla.com", "mozilla", null),
+                title = "mozilla",
+                createdAt = now,
+                updatedAt = now + 1,
+                totalViewTime = 10,
+                documentType = DocumentType.Regular,
+                previewImageUrl = null
+            )
+
+            val historyEntry2 = HistoryMetadata(
+                key = HistoryMetadataKey("http://firefox.com", "mozilla", null),
+                title = "firefox",
+                createdAt = now,
+                updatedAt = now + 2,
+                totalViewTime = 20,
+                documentType = DocumentType.Regular,
+                previewImageUrl = null
+            )
+
+            val historyEntry3 = HistoryMetadata(
+                key = HistoryMetadataKey("http://www.mozilla.com", "firefox", null),
+                title = "mozilla",
+                createdAt = now,
+                updatedAt = now + 3,
+                totalViewTime = 30,
+                documentType = DocumentType.Regular,
+                previewImageUrl = null
+            )
+
+            val expectedHistoryGroup1 = HistoryMetadataGroup(
+                title = "mozilla",
+                historyMetadata = listOf(historyEntry1, historyEntry2)
+            )
+
+            val expectedHistoryGroup2 = HistoryMetadataGroup(
+                title = "firefox",
+                historyMetadata = listOf(historyEntry3)
+            )
+
+            coEvery { historyMetadataStorage.getHistoryMetadataSince(any()) }.coAnswers {
+                listOf(
+                    historyEntry1, historyEntry2, historyEntry3
+                )
+            }
+
+            startHistoryMetadataFeature()
+
+            middleware.assertLastAction(HomeFragmentAction.HistoryMetadataChange::class) {
+                assertEquals(listOf(expectedHistoryGroup2, expectedHistoryGroup1), it.historyMetadata)
+            }
+        }
+
+    @Test
+    fun `GIVEN history metadata WHEN multiple groups exist THEN no more than the configured maximum number of results are added to the store`() =
+        testDispatcher.runBlockingTest {
+            val now = System.currentTimeMillis()
+            val historyEntry1 = HistoryMetadata(
+                key = HistoryMetadataKey("http://www.mozilla.com", "mozilla", null),
+                title = "mozilla",
+                createdAt = now,
+                updatedAt = now + 1,
+                totalViewTime = 10,
+                documentType = DocumentType.Regular,
+                previewImageUrl = null
+            )
+
+            val historyEntry2 = HistoryMetadata(
+                key = HistoryMetadataKey("http://firefox.com", "firefox", null),
+                title = "firefox",
+                createdAt = now,
+                updatedAt = now + 2,
+                totalViewTime = 20,
+                documentType = DocumentType.Regular,
+                previewImageUrl = null
+            )
+
+            val historyEntry3 = HistoryMetadata(
+                key = HistoryMetadataKey("http://getpocket.com", "pocket", null),
+                title = "pocket",
+                createdAt = now,
+                updatedAt = now + 3,
+                totalViewTime = 30,
+                documentType = DocumentType.Regular,
+                previewImageUrl = null
+            )
+
+            val expectedHistoryGroup1 = HistoryMetadataGroup(
+                title = "firefox",
+                historyMetadata = listOf(historyEntry2)
+            )
+
+            val expectedHistoryGroup2 = HistoryMetadataGroup(
+                title = "pocket",
+                historyMetadata = listOf(historyEntry3)
+            )
+
+            coEvery { historyMetadataStorage.getHistoryMetadataSince(any()) }.coAnswers {
+                listOf(
+                    historyEntry1, historyEntry2, historyEntry3
+                )
+            }
+
+            startHistoryMetadataFeature(maxResults = 2)
+
+            // Should not get more than maxResults number of groups back
+            middleware.assertLastAction(HomeFragmentAction.HistoryMetadataChange::class) {
+                assertEquals(listOf(expectedHistoryGroup2, expectedHistoryGroup1), it.historyMetadata)
+            }
+        }
+
+    private fun startHistoryMetadataFeature(maxResults: Int = 10) {
+        val feature = HistoryMetadataFeature(
+            homeStore,
+            historyMetadataStorage,
+            CoroutineScope(testDispatcher),
+            testDispatcher,
+            maxResults
+        )
+
+        assertEquals(emptyList<HistoryMetadataGroup>(), homeStore.state.historyMetadata)
+
+        feature.start()
+
+        testDispatcher.advanceUntilIdle()
+        homeStore.waitUntilIdle()
+
+        coVerify {
+            historyMetadataStorage.getHistoryMetadataSince(any())
+        }
+    }
 }

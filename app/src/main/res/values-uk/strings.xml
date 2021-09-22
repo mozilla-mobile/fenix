@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:moz="http://mozac.org/tools">
     <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
     <string name="app_name_private_5">Приватний перегляд %s</string>
     <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
@@ -50,7 +50,9 @@
 
     <!-- Home - Recently saved bookmarks -->
     <!-- Title for the home screen section with recently saved bookmarks. -->
-    <string name="recently_saved_bookmarks">Недавно збережені</string>
+    <string moz:removedIn="94" name="recently_saved_bookmarks" tools:ignore="UnusedResources">Недавно збережені</string>
+    <!-- Title for the home screen section with recently saved bookmarks. -->
+    <string name="recently_bookmarked">Останні закладки</string>
     <!-- Content description for the recently saved bookmarks section on the home screen. -->
     <string name="recently_saved_bookmarks_content_description">Недавно збережені закладки</string>
     <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
@@ -201,6 +203,8 @@
     <!-- Browser menu label for editing a bookmark -->
     <string name="browser_menu_edit">Редагувати</string>
 
+    <!-- Browser menu button that opens the Customize menu -->
+    <string name="browser_menu_customize_home">Налаштувати домівку</string>
     <!-- Browser Toolbar -->
     <!-- Content description for the Home screen button on the browser toolbar -->
     <string name="browser_toolbar_home">Домашній екран</string>
@@ -296,15 +300,15 @@
     <!-- Preference category for privacy settings -->
     <string name="preferences_category_privacy">Приватність</string>
     <!-- Preference category for privacy and security settings -->
-    <string name="preferences_category_privacy_security">Приватність та безпека</string>
+    <string name="preferences_category_privacy_security">Приватність і безпека</string>
     <!-- Preference for advanced site permissions -->
     <string name="preferences_site_permissions">Дозволи сайтів</string>
     <!-- Preference for private browsing options -->
     <string name="preferences_private_browsing_options">Приватний перегляд</string>
     <!-- Preference for opening links in a private tab-->
-    <string name="preferences_open_links_in_a_private_tab">Відкривати посилання в приватній вкладці</string>
+    <string name="preferences_open_links_in_a_private_tab">Відкривати посилання у приватній вкладці</string>
     <!-- Preference for allowing screenshots to be taken while in a private tab-->
-    <string name="preferences_allow_screenshots_in_private_mode">Дозволити знімки екрана в приватному перегляді</string>
+    <string name="preferences_allow_screenshots_in_private_mode">Дозволити знімки екрана у приватному перегляді</string>
     <!-- Will inform the user of the risk of activating Allow screenshots in private browsing option -->
     <string name="preferences_screenshots_in_private_mode_disclaimer">Якщо дозволено, приватні вкладки також будуть видимі, коли відкрито декілька програм</string>
     <!-- Preference for adding private browsing shortcut -->
@@ -396,6 +400,18 @@
     <string name="customize_addon_collection_user_hint">Власник збірки (ID користувача)</string>
     <!-- Toast shown after confirming the custom add-on collection configuration -->
     <string name="toast_customize_addon_collection_done">Збірку додатків змінено. Вихід з програми для застосування змін…</string>
+
+    <!-- Customize Home -->
+    <!-- Header text for jumping back into the recent tab in customize the home screen -->
+    <string name="customize_toggle_jump_back_in">Повернутися до</string>
+    <!-- Title for the customize home screen section with recently saved bookmarks. -->
+    <string moz:removedIn="94" name="customize_toggle_recently_saved_bookmarks" tools:ignore="UnusedResources">Недавно збережені</string>
+    <!-- Title for the customize home screen section with recently saved bookmarks. -->
+    <string name="customize_toggle_recently_bookmarked">Останні закладки</string>
+    <!-- Title for the customize home screen section with recently visited. Recently visited is a section where users see a list of tabs that they have visited in the past few days -->
+    <string name="customize_toggle_recently_visited">Недавно відвідані</string>
+    <!-- Title for the customize home screen section with Pocket. -->
+    <string name="customize_toggle_pocket">Pocket</string>
 
     <!-- Add-on Installation from AMO-->
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
@@ -607,9 +623,9 @@
     <!-- Option for a grid tab view -->
     <string name="tab_view_grid">Сіткою</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
-    <string name="preferences_close_tabs">Закрити вкладки</string>
+    <string name="preferences_close_tabs">Закривати вкладки</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
-    <string name="close_tabs_manually">Вручну</string>
+    <string name="close_tabs_manually">Власноруч</string>
     <!-- Option for auto closing tabs that will auto close tabs after one day -->
     <string name="close_tabs_after_one_day">Через день</string>
     <!-- Option for auto closing tabs that will auto close tabs after one week -->
@@ -627,7 +643,7 @@
     <!-- Option for never starting on the home screen -->
     <string name="start_on_home_never">Ніколи</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
-    <string name="close_tabs_manually_summary">Закрити власноруч</string>
+    <string name="close_tabs_manually_summary">Закривати власноруч</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
     <string name="close_tabs_after_one_day_summary">Закрити через день</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one week-->
@@ -644,6 +660,16 @@
     <string name="studies_description">Firefox може час від часу встановлювати та виконувати дослідження.</string>
     <!-- Learn more link for studies, links to an article for more information about studies. -->
     <string name="studies_learn_more">Докладніше</string>
+
+    <!-- Dialog message shown after removing a study -->
+    <string name="studies_restart_app">Програма припинить застосовувати зміни</string>
+    <!-- Dialog button to confirm the removing a study. -->
+    <string name="studies_restart_dialog_ok">Гаразд</string>
+    <!-- Dialog button text for canceling removing a study. -->
+    <string name="studies_restart_dialog_cancel">Скасувати</string>
+
+    <!-- Toast shown after turning on/off studies preferences -->
+    <string name="studies_toast_quit_application" tools:ignore="UnusedResources">Закриття програми для застосування змін…</string>
 
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
@@ -745,6 +771,9 @@
 
     <!-- Button in the current tab tray header in multiselect mode. Saved the selected tabs to a collection when pressed. -->
     <string name="tab_tray_save_to_collection">Зберегти</string>
+
+    <!-- Title text for the normal tabs header in the tabs tray which are not part of any tab grouping. -->
+    <string name="tab_tray_header_title">Інші</string>
 
     <!-- History -->
     <!-- Text for the button to clear all history -->
@@ -1137,7 +1166,7 @@
     <!-- Tab collection deletion prompt dialog option to delete the collection -->
     <string name="tab_collection_dialog_positive">Видалити</string>
     <!-- Tab collection deletion prompt dialog option to cancel deleting the collection -->
-    <string name="tab_collection_dialog_negative" tools:ignore="UnusedResources">Скасувати</string>
+    <string moz:removedIn="93" name="tab_collection_dialog_negative" tools:ignore="UnusedResources">Скасувати</string>
     <!-- Text displayed in a notification when the user enters full screen mode -->
     <string name="full_screen_notification">Вхід у повноекранний режим</string>
     <!-- Message for copying the URL via long press on the toolbar -->
@@ -1307,7 +1336,7 @@
     <string name="onboarding_privacy_notice_read_button">Повідомлення про приватність</string>
 
     <!-- Content description (not visible, for screen readers etc.): Close onboarding screen -->
-    <string name="onboarding_close" tools:ignore="UnusedResources">Закрити</string>
+    <string moz:removedIn="93" name="onboarding_close" tools:ignore="UnusedResources">Закрити</string>
 
     <!-- text for the button to finish onboarding -->
     <string name="onboarding_finish">Почати перегляд</string>
@@ -1438,7 +1467,7 @@
     <!-- Description of tracking content that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_tracking_content_description">Блокує завантаження зовнішньої реклами, відео та іншого вмісту з вбудованим кодом стеження. Може вплинути на функціональність вебсайтів.</string>
     <!-- Enhanced Tracking Protection Onboarding Message shown in a dialog above the toolbar. The first parameter is the name of the application (For example: Fenix) -->
-    <string name="etp_onboarding_cfr_message" tools:ignore="UnusedResources">Коли %s блокує стеження на сайті, щит стає фіолетовим. Торкніться, щоб дізнатися більше.</string>
+    <string moz:removedIn="93" name="etp_onboarding_cfr_message" tools:ignore="UnusedResources">Коли %s блокує стеження на сайті, щит стає фіолетовим. Торкніться, щоб дізнатися більше.</string>
     <!-- Enhanced Tracking Protection message that protection is currently on for this site -->
     <string name="etp_panel_on">Захист на цьому сайті увімкнено</string>
     <!-- Enhanced Tracking Protection message that protection is currently off for this site -->
@@ -1462,6 +1491,12 @@
     <string name="etp_redirect_trackers_title">Елементи стеження переспрямуванням</string>
     <!-- Description of redirect tracker cookies that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_redirect_trackers_description">Очищує куки, встановлені переспрямовувачами на відомі вебсайти для стеження.</string>
+
+    <!-- Description of the SmartBlock Enhanced Tracking Protection feature. The * symbol is intentionally hardcoded here,
+         as we use it on the UI to indicate which trackers have been partially unblocked.  -->
+    <string name="preference_etp_smartblock_description">Деякі елементи стеження, зазначені нижче, були частково розблоковані на цій сторінці, тому що ви взаємодіяли з ними *.</string>
+    <!-- Text displayed that links to website about enhanced tracking protection SmartBlock -->
+    <string name="preference_etp_smartblock_learn_more">Докладніше</string>
 
     <!-- About page link text to open support link -->
     <string name="about_support">Підтримка</string>
@@ -1519,7 +1554,7 @@
     <!-- Preference option for never saving passwords in Fenix -->
     <string name="preferences_passwords_save_logins_never_save">Ніколи не зберігати</string>
     <!-- Preference for autofilling saved logins in Fenix -->
-    <string name="preferences_passwords_autofill" tools:ignore="UnusedResources">Автозаповнення</string>
+    <string moz:removedIn="93" name="preferences_passwords_autofill" tools:ignore="UnusedResources">Автозаповнення</string>
     <!-- Preference for autofilling saved logins in Firefox (in web content), %1$s will be replaced with the app name -->
     <string name="preferences_passwords_autofill2">Автозаповнення у %1$s</string>
     <!-- Description for the preference for autofilling saved logins in Firefox (in web content), %1$s will be replaced with the app name -->
@@ -1528,6 +1563,9 @@
     <string name="preferences_android_autofill">Автозаповнення в інших програмах</string>
     <!-- Description for the preference for autofilling logins from Fenix in other apps (e.g. autofilling the Twitter app) -->
     <string name="preferences_android_autofill_description">Заповнення імен користувачів та паролів у інших програмах на цьому пристрої.</string>
+
+    <!-- Preference option for adding a login -->
+    <string name="preferences_logins_add_login">Додати пароль</string>
 
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">Синхронізація паролів</string>
@@ -1593,6 +1631,8 @@
     <string name="saved_login_copy_username">Копіювати ім’я користувача</string>
     <!-- Content Description (for screenreaders etc) read for the button to clear a username while editing a login -->
     <string name="saved_login_clear_username">Стерти ім’я користувача</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear the hostname field while creating a login -->
+    <string name="saved_login_clear_hostname">Стерти вузол</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a site in logins -->
     <string name="saved_login_copy_site">Копіювати сайт</string>
     <!-- Content Description (for screenreaders etc) read for the button to open a site in logins -->
@@ -1763,9 +1803,13 @@
     <string name="phone_feature_blocked_step_feature"><![CDATA[3. Увімкніть перемикач <b>%1$s</b>]]></string>
 
     <!-- Label that indicates a site is using a secure connection -->
-    <string name="quick_settings_sheet_secure_connection">Захищене з’єднання</string>
+    <string name="quick_settings_sheet_secure_connection_2">З’єднання захищене</string>
     <!-- Label that indicates a site is using a insecure connection -->
-    <string name="quick_settings_sheet_insecure_connection">Незахищене з’єднання</string>
+    <string name="quick_settings_sheet_insecure_connection_2">З’єднання не захищене</string>
+    <!-- Label that indicates a site is using a secure connection -->
+    <string moz:removedIn="94" name="quick_settings_sheet_secure_connection" tools:ignore="UnusedResources">Захищене з’єднання</string>
+    <!-- Label that indicates a site is using a insecure connection -->
+    <string moz:removedIn="94" name="quick_settings_sheet_insecure_connection" tools:ignore="UnusedResources">Незахищене з’єднання</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete all the permissions for all sites-->
     <string name="confirm_clear_permissions_on_all_sites">Ви впевнені, що хочете очистити всі дозволи на всіх сайтах?</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete all the permissions for a site-->
@@ -1805,8 +1849,14 @@
     <string name="discard_changes">Відхилити зміни</string>
     <!--  The page title for editing a saved login. -->
     <string name="edit">Змінити</string>
-    <!--  The error message in edit login view when password field is blank. -->
+    <!--  The page title for adding new login. -->
+    <string name="add_login">Додати новий пароль</string>
+    <!--  The error message in add/edit login view when password field is blank. -->
     <string name="saved_login_password_required">Потрібен пароль</string>
+    <!--  The error message in add login view when username field is blank. -->
+    <string name="saved_login_username_required">Необхідно вказати ім’я користувача</string>
+    <!--  The error message in add login view when hostname field is blank. -->
+    <string name="saved_login_hostname_required" tools:ignore="UnusedResources">Необхідно вказати назву вузла</string>
     <!-- Voice search button content description  -->
     <string name="voice_search_content_description">Голосовий пошук</string>
     <!-- Voice search prompt description displayed after the user presses the voice search button -->
@@ -1814,6 +1864,15 @@
 
     <!--  The error message in edit login view when a duplicate username exists. -->
     <string name="saved_login_duplicate">Запис з таким іменем користувача вже існує</string>
+
+    <!-- This is the hint text that is shown inline on the hostname field of the create new login page. 'https://www.example.com' intentionally hardcoded here -->
+    <string name="add_login_hostname_hint_text">https://www.example.com</string>
+    <!-- This is an error message shown below the hostname field of the add login page when a hostname does not contain http or https. -->
+    <string moz:removedIn="94" name="add_login_hostname_invalid_text_1" tools:ignore="UnusedResources">Вебадреса повинна містити \“https://\“ або \“http://\“</string>
+    <!-- This is an error message shown below the hostname field of the add login page when a hostname does not contain http or https. -->
+    <string name="add_login_hostname_invalid_text_3">Вебадреса повинна містити &quot;https://&quot; або &quot;http://&quot;</string>
+    <!-- This is an error message shown below the hostname field of the add login page when a hostname is invalid. -->
+    <string name="add_login_hostname_invalid_text_2">Необхідно ввести дійсний вузол</string>
 
     <!-- Synced Tabs -->
     <!-- Text displayed to ask user to connect another device as no devices found with account -->
@@ -1840,8 +1899,10 @@
     <!-- Confirmation dialog button text when top sites limit is reached. -->
     <string name="top_sites_max_limit_confirmation_button">Гаразд, зрозуміло</string>
 
+    <!-- Label for the show most visited top sites preference -->
+    <string name="top_sites_toggle_top_frecent_sites_2">Показати найвідвідуваніші сайти</string>
     <!-- Label for the show most visited sites preference -->
-    <string name="top_sites_toggle_top_frecent_sites">Показати найвідвідуваніші сайти</string>
+    <string moz:removedIn="93" name="top_sites_toggle_top_frecent_sites" tools:ignore="UnusedResources">Показати найвідвідуваніші сайти</string>
 
     <!-- Title text displayed in the rename top site dialog. -->
 	<string name="top_sites_rename_dialog_title">Назва</string>

@@ -70,11 +70,14 @@ import mozilla.components.feature.search.ext.waitForSelectedOrDefaultSearchEngin
 import mozilla.components.service.fxa.manager.SyncEnginesStorage
 import org.mozilla.fenix.GleanMetrics.Addons
 import org.mozilla.fenix.GleanMetrics.AndroidAutofill
+import org.mozilla.fenix.GleanMetrics.CustomizeHome
 import org.mozilla.fenix.GleanMetrics.Preferences
 import org.mozilla.fenix.GleanMetrics.SearchDefaultEngine
+import org.mozilla.fenix.components.Core
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MozillaProductDetector
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
+import org.mozilla.fenix.perf.MarkersLifecycleCallbacks
 import org.mozilla.fenix.utils.Settings
 
 /**
@@ -191,6 +194,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
 
         visibilityLifecycleCallback = VisibilityLifecycleCallback(getSystemService())
         registerActivityLifecycleCallbacks(visibilityLifecycleCallback)
+        registerActivityLifecycleCallbacks(MarkersLifecycleCallbacks(components.core.engine))
 
         // Storage maintenance disabled, for now, as it was interfering with background migrations.
         // See https://github.com/mozilla-mobile/fenix/issues/7227 for context.
@@ -241,6 +245,14 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                         components.core.bookmarksStorage.warmUp()
                         components.core.passwordsStorage.warmUp()
                         components.core.autofillStorage.warmUp()
+
+                        // This service uses `historyStorage`, and so we can only touch it when we know
+                        // it's safe to touch `historyStorage. By 'safe', we mainly mean that underlying
+                        // places library will be able to load, which requires first running Megazord.init().
+                        // The visual completeness tasks are scheduled after the Megazord.init() call.
+                        components.core.historyMetadataService.cleanup(
+                            System.currentTimeMillis() - Core.HISTORY_METADATA_MAX_AGE_IN_MS
+                        )
                     }
 
                     SecurePrefsTelemetry(this@FenixApplication, components.analytics.experiments).startTests()
@@ -629,8 +641,6 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             bookmarksSuggestion.set(settings.shouldShowBookmarkSuggestions)
             clipboardSuggestionsEnabled.set(settings.shouldShowClipboardSuggestions)
             searchShortcutsEnabled.set(settings.shouldShowSearchShortcuts)
-            openLinksInPrivate.set(settings.openLinksInAPrivateTab)
-            privateSearchSuggestions.set(settings.shouldShowSearchSuggestionsInPrivate)
             voiceSearchEnabled.set(settings.shouldShowVoiceSearch)
             openLinksInAppEnabled.set(settings.openLinksInExternalApp)
             signedInSync.set(settings.signedInFxaAccount)
@@ -680,6 +690,11 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                 }
             )
         }
+        CustomizeHome.jumpBackIn.set(settings.showRecentTabsFeature)
+        CustomizeHome.recentlySaved.set(settings.showRecentBookmarksFeature)
+        CustomizeHome.mostVisitedSites.set(settings.showTopFrecentSites)
+        CustomizeHome.recentlyVisited.set(settings.historyMetadataUIFeature)
+        CustomizeHome.pocket.set(settings.pocketRecommendations)
     }
 
     protected fun recordOnInit() {

@@ -15,7 +15,10 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.tabstray.ext.browserAdapter
 import org.mozilla.fenix.tabstray.ext.inactiveTabsAdapter
 import org.mozilla.fenix.tabstray.ext.isNormalTabActive
+import org.mozilla.fenix.tabstray.ext.isNormalTabActiveWithoutSearchTerm
 import org.mozilla.fenix.tabstray.ext.isNormalTabInactive
+import org.mozilla.fenix.tabstray.ext.isNormalTabActiveWithSearchTerm
+import org.mozilla.fenix.tabstray.ext.tabGroupAdapter
 import java.util.concurrent.TimeUnit
 
 /**
@@ -23,16 +26,16 @@ import java.util.concurrent.TimeUnit
  */
 const val DEFAULT_ACTIVE_DAYS = 4L
 
+/**
+ * The maximum time from when a tab was created or accessed until it is considered "inactive".
+ */
+val maxActiveTime = TimeUnit.DAYS.toMillis(DEFAULT_ACTIVE_DAYS)
+
 class NormalBrowserTrayList @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : AbstractBrowserTrayList(context, attrs, defStyleAttr) {
-
-    /**
-     * The maximum time from when a tab was created or accessed until it is considered "inactive".
-     */
-    var maxActiveTime = TimeUnit.DAYS.toMillis(DEFAULT_ACTIVE_DAYS)
 
     private val concatAdapter by lazy { adapter as ConcatAdapter }
 
@@ -48,8 +51,33 @@ class NormalBrowserTrayList @JvmOverloads constructor(
                 if (!FeatureFlags.inactiveTabs) {
                     return@TabsFeature !state.content.private
                 }
-                state.isNormalTabActive(maxActiveTime)
+
+                if (!FeatureFlags.tabGroupFeature) {
+                    state.isNormalTabActive(maxActiveTime)
+                } else {
+                    state.isNormalTabActiveWithoutSearchTerm(maxActiveTime)
+                }
             },
+            {}
+        )
+    }
+
+    private val searchTermFeature by lazy {
+        val store = context.components.core.store
+        val tabFilter: (TabSessionState) -> Boolean = filter@{
+            if (!FeatureFlags.tabGroupFeature) {
+                return@filter false
+            }
+            it.isNormalTabActiveWithSearchTerm(maxActiveTime)
+        }
+        val tabsAdapter = concatAdapter.tabGroupAdapter
+
+        TabsFeature(
+            tabsAdapter,
+            store,
+            selectTabUseCase,
+            removeTabUseCase,
+            tabFilter,
             {}
         )
     }
@@ -68,7 +96,7 @@ class NormalBrowserTrayList @JvmOverloads constructor(
         }
         val tabsAdapter = concatAdapter.inactiveTabsAdapter.apply {
             inactiveTabsInteractor = DefaultInactiveTabsInteractor(
-                InactiveTabsController(store, tabFilter, this)
+                InactiveTabsController(store, tabFilter, this, context.components.analytics.metrics)
             )
         }
 
@@ -95,8 +123,9 @@ class NormalBrowserTrayList @JvmOverloads constructor(
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
 
-        tabsFeature.start()
         inactiveFeature.start()
+        searchTermFeature.start()
+        tabsFeature.start()
 
         touchHelper.attachToRecyclerView(this)
     }
@@ -105,6 +134,7 @@ class NormalBrowserTrayList @JvmOverloads constructor(
         super.onDetachedFromWindow()
 
         tabsFeature.stop()
+        searchTermFeature.stop()
         inactiveFeature.stop()
 
         touchHelper.attachToRecyclerView(null)

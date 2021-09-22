@@ -9,6 +9,7 @@ import mozilla.components.concept.storage.HistoryMetadataKey
 import mozilla.components.feature.tab.collections.Tab
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
+import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.tips.Tip
 import org.mozilla.fenix.historymetadata.HistoryMetadataGroup
 import org.mozilla.fenix.historymetadata.controller.HistoryMetadataController
@@ -27,6 +28,11 @@ interface TabSessionInteractor {
      * "Common myths about private browsing" link in private mode.
      */
     fun onPrivateBrowsingLearnMoreClicked()
+
+    /**
+     * Called when a user clicks on the Private Mode button on the homescreen.
+     */
+    fun onPrivateModeButtonClicked(newMode: BrowsingMode, userHasBeenOnboarded: Boolean)
 }
 
 /**
@@ -137,16 +143,6 @@ interface OnboardingInteractor {
     fun onStartBrowsingClicked()
 
     /**
-     * Hides the onboarding and navigates to Settings. Called when a user clicks on the "Open settings" button.
-     */
-    fun onOpenSettingsClicked()
-
-    /**
-     * Opens a custom tab to what's new url. Called when a user clicks on the "Get answers here" link.
-     */
-    fun onWhatsNewGetAnswersClicked()
-
-    /**
      * Opens a custom tab to privacy notice url. Called when a user clicks on the "read our privacy notice" button.
      */
     fun onReadPrivacyNoticeClicked()
@@ -157,6 +153,13 @@ interface TipInteractor {
      * Dismisses the tip view adapter
      */
     fun onCloseTip(tip: Tip)
+}
+
+interface CustomizeHomeIteractor {
+    /**
+     * Opens the customize home settings page.
+     */
+    fun openCustomizeHomePage()
 }
 
 /**
@@ -231,7 +234,8 @@ class SessionControlInteractor(
     ExperimentCardInteractor,
     RecentTabInteractor,
     RecentBookmarksInteractor,
-    HistoryMetadataInteractor {
+    HistoryMetadataInteractor,
+    CustomizeHomeIteractor {
 
     override fun onCollectionAddTabTapped(collection: TabCollection) {
         controller.handleCollectionAddTabTapped(collection)
@@ -281,14 +285,6 @@ class SessionControlInteractor(
         controller.handleStartBrowsingClicked()
     }
 
-    override fun onOpenSettingsClicked() {
-        controller.handleOpenSettingsClicked()
-    }
-
-    override fun onWhatsNewGetAnswersClicked() {
-        controller.handleWhatsNewGetAnswersClicked()
-    }
-
     override fun onReadPrivacyNoticeClicked() {
         controller.handleReadPrivacyNoticeClicked()
     }
@@ -307,6 +303,10 @@ class SessionControlInteractor(
 
     override fun onPrivateBrowsingLearnMoreClicked() {
         controller.handlePrivateBrowsingLearnMoreClicked()
+    }
+
+    override fun onPrivateModeButtonClicked(newMode: BrowsingMode, userHasBeenOnboarded: Boolean) {
+        controller.handlePrivateModeButtonClicked(newMode, userHasBeenOnboarded)
     }
 
     override fun onPasteAndGo(clipboardText: String) {
@@ -365,5 +365,9 @@ class SessionControlInteractor(
         historyMetadataController.handleToggleHistoryMetadataGroupExpanded(
             historyMetadataGroup
         )
+    }
+
+    override fun openCustomizeHomePage() {
+        controller.handleCustomizeHomeTapped()
     }
 }
