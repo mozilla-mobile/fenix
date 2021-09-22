@@ -155,6 +155,13 @@ class SessionControlInteractorTest {
     }
 
     @Test
+    fun onRecentSearchGroupClicked() {
+        val tabId = "tabId"
+        interactor.onRecentSearchGroupClicked(tabId)
+        verify { recentTabController.handleRecentSearchGroupClicked(tabId) }
+    }
+
+    @Test
     fun onRecentTabShowAllClicked() {
         interactor.onRecentTabShowAllClicked()
         verify { recentTabController.handleRecentTabShowAllClicked() }

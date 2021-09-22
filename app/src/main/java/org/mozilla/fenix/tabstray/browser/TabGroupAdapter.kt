@@ -20,7 +20,6 @@ import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.selection.SelectionHolder
 import org.mozilla.fenix.tabstray.TabsTrayStore
-import org.mozilla.fenix.tabstray.browser.TabGroupAdapter.Group
 import kotlin.math.max
 import mozilla.components.concept.tabstray.Tab as TabsTrayTab
 import mozilla.components.support.base.observer.Observable
@@ -42,24 +41,7 @@ class TabGroupAdapter(
     private val store: TabsTrayStore,
     private val featureName: String,
     delegate: TrayObservable = ObserverRegistry()
-) : ListAdapter<Group, TabGroupViewHolder>(DiffCallback), TabsTray, TrayObservable by delegate {
-
-    data class Group(
-        /**
-         * A title for the tab group.
-         */
-        val title: String,
-
-        /**
-         * The list of tabs belonging to this tab group.
-         */
-        val tabs: List<TabsTrayTab>,
-
-        /**
-         * The last time tabs in this group was accessed.
-         */
-        val lastAccess: Long
-    )
+) : ListAdapter<TabGroup, TabGroupViewHolder>(DiffCallback), TabsTray, TrayObservable by delegate {
 
     /**
      * Tracks the selected tabs in multi-select mode.
@@ -104,6 +86,8 @@ class TabGroupAdapter(
      * Creates a grouping of data classes for how groupings will be structured.
      */
     override fun updateTabs(tabs: Tabs) {
+        // TODO use [List<TabSessionState>.toSearchGroup()]
+        //  see https://github.com/mozilla-mobile/android-components/issues/11012
         val data = tabs.list.groupBy { it.searchTerm.lowercase() }
 
         val grouping = data.map { mapEntry ->
@@ -113,8 +97,8 @@ class TabGroupAdapter(
                 max(tab.lastAccess, acc)
             }
 
-            Group(
-                title = searchTerm,
+            TabGroup(
+                searchTerm = searchTerm,
                 tabs = groupTabs,
                 lastAccess = groupMax
             )
@@ -132,12 +116,12 @@ class TabGroupAdapter(
     override fun onTabsMoved(fromPosition: Int, toPosition: Int) = Unit
     override fun onTabsRemoved(position: Int, count: Int) = Unit
 
-    private object DiffCallback : DiffUtil.ItemCallback<Group>() {
-        override fun areItemsTheSame(oldItem: Group, newItem: Group) = oldItem.title == newItem.title
-        override fun areContentsTheSame(oldItem: Group, newItem: Group) = oldItem == newItem
+    private object DiffCallback : DiffUtil.ItemCallback<TabGroup>() {
+        override fun areItemsTheSame(oldItem: TabGroup, newItem: TabGroup) = oldItem.searchTerm == newItem.searchTerm
+        override fun areContentsTheSame(oldItem: TabGroup, newItem: TabGroup) = oldItem == newItem
     }
 }
 
-internal fun Group.containsTabId(tabId: String): Boolean {
-    return tabs.firstOrNull { it.id == tabId } != null
+internal fun TabGroup.containsTabId(tabId: String): Boolean {
+    return tabs?.firstOrNull { it.id == tabId } != null
 }

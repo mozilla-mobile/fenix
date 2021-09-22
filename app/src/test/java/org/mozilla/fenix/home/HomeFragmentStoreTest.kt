@@ -8,7 +8,6 @@ import android.content.Context
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
-import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.concept.storage.DocumentType
 import mozilla.components.concept.storage.HistoryMetadata
@@ -25,6 +24,7 @@ import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.historymetadata.HistoryMetadataGroup
+import org.mozilla.fenix.home.recenttabs.RecentTab
 import org.mozilla.fenix.onboarding.FenixOnboarding
 
 class HomeFragmentStoreTest {
@@ -107,7 +107,7 @@ class HomeFragmentStoreTest {
         assertEquals(0, homeFragmentStore.state.recentTabs.size)
 
         // Add 2 TabSessionState to the HomeFragmentStore.
-        val recentTabs: List<TabSessionState> = listOf(mockk(), mockk())
+        val recentTabs: List<RecentTab> = listOf(mockk(), mockk())
         homeFragmentStore.dispatch(HomeFragmentAction.RecentTabsChange(recentTabs)).join()
 
         assertEquals(recentTabs, homeFragmentStore.state.recentTabs)
@@ -186,7 +186,7 @@ class HomeFragmentStoreTest {
 
             val collections: List<TabCollection> = listOf(mockk())
             val topSites: List<TopSite> = listOf(mockk(), mockk())
-            val recentTabs: List<TabSessionState> = listOf(mockk(), mockk())
+            val recentTabs: List<RecentTab> = listOf(mockk(), mockk())
             val recentBookmarks: List<BookmarkNode> = listOf(mockk(), mockk())
             val historyMetadata: List<HistoryMetadataGroup> = listOf(mockk(), mockk())
 

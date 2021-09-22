@@ -24,47 +24,66 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import mozilla.components.browser.icons.compose.Loader
 import mozilla.components.browser.icons.compose.Placeholder
 import mozilla.components.browser.icons.compose.WithIcon
-import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.support.ktx.kotlin.getRepresentativeSnippet
 import mozilla.components.ui.colors.PhotonColors
+import org.mozilla.fenix.R
 import org.mozilla.fenix.components.components
+import org.mozilla.fenix.home.recenttabs.RecentTab
 import org.mozilla.fenix.theme.FirefoxTheme
 
 /**
  * A list of recent tabs to jump back to.
  *
- * @param recentTabs List of [TabSessionState] to display.
+ * @param recentTabs List of [RecentTab] to display.
  * @param onRecentTabClick Invoked when the user clicks on a recent tab.
  */
 @Composable
 fun RecentTabs(
-    recentTabs: List<TabSessionState>,
-    onRecentTabClick: (String) -> Unit = {}
+    recentTabs: List<RecentTab>,
+    onRecentTabClick: (String) -> Unit = {},
+    onRecentSearchGroupClicked: (String) -> Unit = {}
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         recentTabs.forEach { tab ->
-            RecentTabItem(
-                tabId = tab.id,
-                url = tab.content.url,
-                title = tab.content.title,
-                icon = tab.content.icon,
-                onRecentTabClick = onRecentTabClick
-            )
+            when (tab) {
+                is RecentTab.Tab -> {
+                    RecentTabItem(
+                        tabId = tab.tabSessionState.id,
+                        url = tab.tabSessionState.content.url,
+                        title = tab.tabSessionState.content.title,
+                        icon = tab.tabSessionState.content.icon,
+                        onRecentTabClick = onRecentTabClick
+                    )
+                }
+                is RecentTab.SearchGroup -> {
+                    RecentSearchGroupItem(
+                        searchTerm = tab.searchTerm,
+                        tabId = tab.tabId,
+                        url = tab.url,
+                        icon = tab.icon,
+                        count = tab.count,
+                        onSearchGroupClicked = onRecentSearchGroupClicked
+                    )
+                }
+            }
         }
     }
 }
@@ -72,7 +91,7 @@ fun RecentTabs(
 /**
  * A recent tab item.
  *
- * @param tabId Tbe id of the tab.
+ * @param tabId The id of the tab.
  * @param url The loaded URL of the tab.
  * @param title The title of the tab.
  * @param icon The icon of the tab.
@@ -113,6 +132,67 @@ private fun RecentTabItem(
                 RecentTabTitle(title = title)
 
                 RecentTabSubtitle(url = url)
+            }
+        }
+    }
+}
+
+/**
+ * A recent search group item.
+ *
+ * @param searchTerm The search term for the group.
+ * @param tabId The id of the last accessed tab in the group.
+ * @param url The loaded URL of the last accessed tab in the group.
+ * @param icon The icon of the group.
+ * @param count Count of how many tabs belongs to the group.
+ * @param onSearchGroupClicked Invoked when the user clicks on a group.
+ */
+@Suppress("LongParameterList")
+@Composable
+private fun RecentSearchGroupItem(
+    searchTerm: String,
+    tabId: String,
+    url: String,
+    icon: Bitmap?,
+    count: Int,
+    onSearchGroupClicked: (String) -> Unit = {}
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(116.dp)
+            .clickable { onSearchGroupClicked(tabId) },
+        shape = RoundedCornerShape(8.dp),
+        backgroundColor = FirefoxTheme.colors.surface,
+        elevation = 6.dp
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            RecentTabImage(
+                url = url,
+                modifier = Modifier.size(116.dp, 84.dp),
+                icon = icon
+            )
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                RecentTabTitle(title = stringResource(R.string.recent_tabs_search_term, searchTerm))
+
+                Row {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_all_tabs),
+                        contentDescription = null // decorative element
+                    )
+
+                    Spacer(modifier = Modifier.width(16.dp))
+
+                    RecentTabSubtitle(url = stringResource(R.string.recent_tabs_search_term_count, count))
+                }
             }
         }
     }

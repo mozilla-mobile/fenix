@@ -341,6 +341,10 @@ class SessionControlInteractor(
         recentTabController.handleRecentTabClicked(tabId)
     }
 
+    override fun onRecentSearchGroupClicked(tabId: String) {
+        recentTabController.handleRecentSearchGroupClicked(tabId)
+    }
+
     override fun onRecentTabShowAllClicked() {
         recentTabController.handleRecentTabShowAllClicked()
     }

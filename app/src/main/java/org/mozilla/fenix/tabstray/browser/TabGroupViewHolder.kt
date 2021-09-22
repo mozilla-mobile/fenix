@@ -15,7 +15,7 @@ import org.mozilla.fenix.selection.SelectionHolder
 import org.mozilla.fenix.tabstray.TabsTrayStore
 import org.mozilla.fenix.tabstray.TrayPagerAdapter
 import org.mozilla.fenix.tabstray.browser.BrowserTrayInteractor
-import org.mozilla.fenix.tabstray.browser.TabGroupAdapter
+import org.mozilla.fenix.tabstray.browser.TabGroup
 import org.mozilla.fenix.tabstray.browser.TabGroupListAdapter
 
 /**
@@ -39,13 +39,13 @@ class TabGroupViewHolder(
     lateinit var groupListAdapter: TabGroupListAdapter
 
     fun bind(
-        group: TabGroupAdapter.Group,
+        tabGroup: TabGroup,
         observable: Observable<TabsTray.Observer>
     ) {
         val selectedTabId = itemView.context.components.core.store.state.selectedTabId
-        val selectedIndex = group.tabs.indexOfFirst { it.id == selectedTabId }
+        val selectedIndex = tabGroup.tabs?.indexOfFirst { it.id == selectedTabId }
 
-        binding.tabGroupTitle.text = group.title
+        binding.tabGroupTitle.text = tabGroup.searchTerm
         binding.tabGroupList.apply {
             layoutManager = LinearLayoutManager(itemView.context, orientation, false)
             groupListAdapter = TabGroupListAdapter(
@@ -59,8 +59,10 @@ class TabGroupViewHolder(
 
             adapter = groupListAdapter
 
-            groupListAdapter.submitList(group.tabs)
-            scrollToPosition(selectedIndex)
+            groupListAdapter.submitList(tabGroup.tabs)
+            selectedIndex?.let {
+                scrollToPosition(it)
+            }
         }
     }
 
