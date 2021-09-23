@@ -227,7 +227,7 @@ abstract class AbstractBrowserTabViewHolder(
                 metrics.track(Event.CollectionTabLongPressed)
                 interactor.select(item)
                 true
-            } else if (holder.selectedItems.contains(item)) {
+            } else if (holder.selectedItems.contains(item) && itemView.parent is NormalBrowserTrayList) {
                 val shadow = View.DragShadowBuilder(itemView)
                 itemView.startDragAndDrop(null, shadow, holder.selectedItems, 0)
                 true
