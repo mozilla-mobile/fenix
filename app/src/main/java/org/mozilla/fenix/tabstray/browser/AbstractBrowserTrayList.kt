@@ -72,11 +72,10 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
         this.setOnDragListener(null)
     }
 
-    // Find the closest item to the x/y position.
-    // Then, based on the offset between the first and second
-    // determine if it goes before or after that item.
-    // This will fail if there's a spiral layout or something
-    // but should work perfectly for lists and grids.
+    // Find the closest item to the x/y position of the drop.
+    // This gets all the children of the tab tray, which will not include grouped tabs
+    // Since those are children of the group which is a child of the tab tray.
+    // Determine if the drop is before or after based on the current grid/list view setting
     private fun getDropPosition(x: Float, y: Float): Pair<String?, Boolean>? {
         if (childCount < 2) return null // If there's 0 or 1 tabs visible, can't reorder
         val isGrid = context.components.settings.gridTabView

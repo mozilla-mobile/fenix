@@ -228,6 +228,9 @@ abstract class AbstractBrowserTabViewHolder(
                 interactor.select(item)
                 true
             } else if (holder.selectedItems.contains(item) && itemView.parent is NormalBrowserTrayList) {
+                // Only allow a drag to start if the tab is a non-grouped tab (parent is normal list)
+                // Non-grouped tabs can be selected, but they can't be drop targets
+                // so it's useless to try to move them (and they're auto-sorted anyway)
                 val shadow = View.DragShadowBuilder(itemView)
                 itemView.startDragAndDrop(null, shadow, holder.selectedItems, 0)
                 true

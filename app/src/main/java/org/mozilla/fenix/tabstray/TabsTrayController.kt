@@ -61,12 +61,11 @@ interface TabsTrayController {
     fun handleMultipleTabsDeletion(tabs: Collection<Tab>)
 
     /**
-     * Moves tabs to a new position
+     * Moves [tabs] to before/after the target
      *
      * @param tabs The tabs to be moved
-     * @param targetPos Place the moved tabs next to the target position
-     * @param placeAfter Place the moved tabs before or after the target
-     * @param filter Filter the full tab list to whatever the displayed tabs are to find the target
+     * @param targetId The id of the tab that the [tabs] will be placed next to
+     * @param placeAfter Place [tabs] before or after the target
      */
     fun handleTabsMove(tabs: Collection<Tab>, targetId: String?, placeAfter: Boolean)
 
@@ -178,12 +177,11 @@ class DefaultTabsTrayController(
     }
 
     /**
-     * Moves a set of tabs to a position
+     * Moves [tabs] to before/after the target
      *
      * @param tabs The tabs to be moved
-     * @param targetPos The position to move the tabs to in the displayed list
-     * @param placeAfter Place the tabs before or after the target
-     * @param filter The filter to go from the full tab list to the displayed list
+     * @param targetId The id of the tab that the [tabs] will be placed next to
+     * @param placeAfter Place [tabs] before or after the target
      */
     override fun handleTabsMove(
         tabs: Collection<Tab>,

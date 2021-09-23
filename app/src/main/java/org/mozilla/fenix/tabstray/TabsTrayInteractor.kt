@@ -36,8 +36,7 @@ interface TabsTrayInteractor {
     fun onInactiveDebugClicked(tabs: Collection<Tab>)
 
     /**
-     * Invoked when [tabs] should be moved to before/after position [targetPos] from a drag-drop operation
-     * Filter modifies [targetPos] in the controller.
+     * Invoked when [tabs] should be moved to before/after [targetId] from a drag-drop operation
      */
     fun onTabsMove(
         tabs: Collection<Tab>,
