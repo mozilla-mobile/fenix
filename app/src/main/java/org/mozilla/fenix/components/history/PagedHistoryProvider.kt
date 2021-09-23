@@ -10,6 +10,7 @@ import mozilla.components.concept.storage.VisitType
 import mozilla.components.support.ktx.kotlin.tryGetHostFromUrl
 import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.library.history.History
+import org.mozilla.fenix.library.history.toHistoryMetadata
 import org.mozilla.fenix.perf.runBlockingIncrement
 
 /**
@@ -60,17 +61,7 @@ class DefaultPagedHistoryProvider(
                                 id = items.first().createdAt.toInt(),
                                 title = searchTerm,
                                 visitedAt = items.first().updatedAt,
-                                items = items.map {
-                                    History.Metadata(
-                                        id = it.createdAt.toInt(),
-                                        title = it.title?.takeIf(String::isNotEmpty)
-                                            ?: it.key.url.tryGetHostFromUrl(),
-                                        url = it.key.url,
-                                        visitedAt = it.createdAt,
-                                        totalViewTime = it.totalViewTime,
-                                        historyMetadataKey = it.key
-                                    )
-                                }
+                                items = items.map { it.toHistoryMetadata() }
                             )
                         }
                 }
@@ -141,10 +132,14 @@ class DefaultPagedHistoryProvider(
         // item.
         result.addAll(history.filter { item -> historyMetadata.find { it.url == item.url } == null })
 
-        // Filter history metadata items with no view time.
+        // Filter history metadata items with no view time and dedupe by url.
+        // Note that distinctBy is sufficient here as it keeps the order of the source
+        // collection, and we're only sorting by visitedAt (=updatedAt) currently.
+        // If we needed the view time we'd have to aggregate it for entries with the same
+        // url, but we don't have a use case for this currently in the history view.
         result.addAll(
             historyGroupsInOffset.map { group ->
-                group.copy(items = group.items.filter { it.totalViewTime > 0 })
+                group.copy(items = group.items.filter { it.totalViewTime > 0 }.distinctBy { it.url })
             }
         )
 
