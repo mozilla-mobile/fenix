@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.tabstray.browser
 
+import android.os.Build
 import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -232,7 +233,11 @@ abstract class AbstractBrowserTabViewHolder(
                 // Non-grouped tabs can be selected, but they can't be drop targets
                 // so it's useless to try to move them (and they're auto-sorted anyway)
                 val shadow = View.DragShadowBuilder(itemView)
-                itemView.startDragAndDrop(null, shadow, holder.selectedItems, 0)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    itemView.startDragAndDrop(null, shadow, holder.selectedItems, 0)
+                } else {
+                    itemView.startDrag(null, shadow, holder.selectedItems, 0)
+                }
                 true
             } else {
                 false
