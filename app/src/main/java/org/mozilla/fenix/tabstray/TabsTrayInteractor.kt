@@ -4,7 +4,6 @@
 
 package org.mozilla.fenix.tabstray
 
-import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.concept.tabstray.Tab
 
 interface TabsTrayInteractor {
