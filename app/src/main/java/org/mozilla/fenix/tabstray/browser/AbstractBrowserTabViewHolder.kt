@@ -232,7 +232,9 @@ abstract class AbstractBrowserTabViewHolder(
                 // Non-grouped tabs can be selected, but they can't be drop targets
                 // so it's useless to try to move them (and they're auto-sorted anyway)
                 val shadow = View.DragShadowBuilder(itemView)
-                itemView.startDragAndDrop(null, shadow, holder.selectedItems, 0)
+                @Suppress("DEPRECATION")
+                itemView.startDrag(null, shadow, holder.selectedItems, 0)
+                //startDragAndDrop is the non-deprecated version, but requires API 24
                 true
             } else {
                 false
