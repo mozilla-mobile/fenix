@@ -7548,6 +7548,182 @@
 
     <issue
         id="UnusedResources"
+        message="The resource `R.string.recently_bookmarked` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;Merket evel sined nevez ’zo&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-br/strings.xml"
+            line="35"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.browser_menu_customize_home` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;Personelaat an degemer&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-br/strings.xml"
+            line="35"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.history_metadata_header_2` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;Ymwelwyd yn ddiweddar&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-cy/strings.xml"
+            line="35"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.recently_visited_menu_item_remove` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;Tynnu&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-cy/strings.xml"
+            line="35"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.customize_toggle_jump_back_in` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;Distreiñ&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-br/strings.xml"
+            line="35"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.customize_toggle_recently_bookmarked` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;Merket evel sined nevez ’zo&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-br/strings.xml"
+            line="35"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.customize_toggle_recently_visited` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;Gweladennet nevez ’zo&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-br/strings.xml"
+            line="35"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.customize_toggle_pocket` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;Pocket&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-br/strings.xml"
+            line="35"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.history_search_group_site` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;%d gwefan&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-cy/strings.xml"
+            line="35"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.tab_tray_header_title` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;All&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-br/strings.xml"
+            line="35"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.preference_etp_smartblock_description` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;Un nebeud heulierien merket a-zindan a zo bet damzistanket war ar bajenn-mañ peogwir ho peus etrewezhiet gante *.&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-br/strings.xml"
+            line="35"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.preference_etp_smartblock_learn_more` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;Gouzout hiroc’h&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-br/strings.xml"
+            line="35"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.quick_settings_sheet_secure_connection_2` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;La conexón ye segura&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-ast/strings.xml"
+            line="35"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.quick_settings_sheet_insecure_connection_2` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;La conexón nun ye segura&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-ast/strings.xml"
+            line="35"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.add_login_hostname_invalid_text_3` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;Ar chomlec’h web a rank kaout &quot;https://&quot; pe &quot;http://&quot; enni&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-br/strings.xml"
+            line="35"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.top_sites_toggle_top_frecent_sites_2` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;Diskouez al lec’hiennoù gweladennet ar muiañ&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-br/strings.xml"
+            line="35"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
         message="The resource `R.string.about_scheme` appears to be unused"
         errorLine1="    &lt;string name=&quot;about_scheme&quot;>&quot;about:&quot;&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~">
