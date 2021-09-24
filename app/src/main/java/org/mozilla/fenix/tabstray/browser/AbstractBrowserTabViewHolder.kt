@@ -234,7 +234,7 @@ abstract class AbstractBrowserTabViewHolder(
                 val shadow = View.DragShadowBuilder(itemView)
                 @Suppress("DEPRECATION")
                 itemView.startDrag(null, shadow, holder.selectedItems, 0)
-                //startDragAndDrop is the non-deprecated version, but requires API 24
+                // startDragAndDrop is the non-deprecated version, but requires API 24
                 true
             } else {
                 false
