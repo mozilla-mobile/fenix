@@ -326,10 +326,6 @@ class HomeFragment : Fragment() {
                 navController = findNavController()
             ),
             historyMetadataController = DefaultHistoryMetadataController(
-                activity = activity,
-                settings = components.settings,
-                homeFragmentStore = homeFragmentStore,
-                selectOrAddUseCase = components.useCases.tabsUseCases.selectOrAddTab,
                 navController = findNavController()
             )
         )
@@ -846,6 +842,7 @@ class HomeFragment : Fragment() {
                         requireComponents.analytics.metrics.track(Event.HomeMenuSettingsItemClicked)
                     }
                     HomeMenu.Item.CustomizeHome -> {
+                        context.metrics.track(Event.HomeScreenCustomizedHomeClicked)
                         hideOnboardingIfNeeded()
                         nav(
                             R.id.homeFragment,

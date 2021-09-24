@@ -196,7 +196,6 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         )
 
         val awesomeBar = binding.awesomeBar
-        awesomeBar.customizeForBottomToolbar = requireContext().settings().shouldUseBottomToolbar
 
         awesomeBarView = AwesomeBarView(
             activity,
@@ -382,11 +381,9 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             // We delay querying the clipboard by posting this code to the main thread message queue,
             // because ClipboardManager will return null if the does app not have input focus yet.
             lifecycleScope.launch(Dispatchers.Cached) {
-                store.dispatch(
-                    SearchFragmentAction.UpdateClipboardUrl(
-                        requireContext().components.clipboardHandler.url
-                    )
-                )
+                context?.components?.clipboardHandler?.url?.let { clipboardUrl ->
+                    store.dispatch(SearchFragmentAction.UpdateClipboardUrl(clipboardUrl))
+                }
             }
         }
     }

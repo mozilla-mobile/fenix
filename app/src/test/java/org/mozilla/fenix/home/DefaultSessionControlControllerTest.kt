@@ -165,6 +165,7 @@ class DefaultSessionControlControllerTest {
     @Test
     fun handleCustomizeHomeTapped() {
         createController().handleCustomizeHomeTapped()
+        verify { metrics.track(Event.HomeScreenCustomizedHomeClicked) }
 
         verify {
             navController.navigate(
@@ -600,30 +601,6 @@ class DefaultSessionControlControllerTest {
         createController(hideOnboarding = { hideOnboardingInvoked = true }).handleStartBrowsingClicked()
 
         assertTrue(hideOnboardingInvoked)
-    }
-
-    @Test
-    fun handleOpenSettingsClicked() {
-        createController().handleOpenSettingsClicked()
-        verify {
-            navController.navigate(
-                match<NavDirections> { it.actionId == R.id.action_global_privateBrowsingFragment },
-                null
-            )
-        }
-    }
-
-    @Test
-    fun handleWhatsNewGetAnswersClicked() {
-        createController().handleWhatsNewGetAnswersClicked()
-        val whatsNewUrl = SupportUtils.getWhatsNewUrl(activity)
-        verify {
-            activity.openToBrowserAndLoad(
-                searchTermOrURL = whatsNewUrl,
-                newTab = true,
-                from = BrowserDirection.FromHome
-            )
-        }
     }
 
     @Test

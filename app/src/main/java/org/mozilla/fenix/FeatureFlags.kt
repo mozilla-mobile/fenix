@@ -42,7 +42,7 @@ object FeatureFlags {
     /**
      * Enables UI features based on history metadata.
      */
-    val historyMetadataUIFeature = Config.channel.isDebug
+    val historyMetadataUIFeature = Config.channel.isNightlyOrDebug
 
     /**
      * Enables the recently saved bookmarks feature in the home screen.
@@ -68,4 +68,9 @@ object FeatureFlags {
      * Identifies and separates the tabs list with a group containing search term tabs.
      */
     val tabGroupFeature = Config.channel.isNightlyOrDebug
+
+    /**
+     * Enables showing search groupings in the History.
+     */
+    val showHistorySearchGroups = Config.channel.isNightlyOrDebug
 }

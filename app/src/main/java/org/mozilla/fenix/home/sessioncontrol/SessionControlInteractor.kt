@@ -5,7 +5,6 @@
 package org.mozilla.fenix.home.sessioncontrol
 
 import mozilla.components.concept.storage.BookmarkNode
-import mozilla.components.concept.storage.HistoryMetadataKey
 import mozilla.components.feature.tab.collections.Tab
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
@@ -141,16 +140,6 @@ interface OnboardingInteractor {
      * Hides the onboarding and navigates to Search. Called when a user clicks on the "Start Browsing" button.
      */
     fun onStartBrowsingClicked()
-
-    /**
-     * Hides the onboarding and navigates to Settings. Called when a user clicks on the "Open settings" button.
-     */
-    fun onOpenSettingsClicked()
-
-    /**
-     * Opens a custom tab to what's new url. Called when a user clicks on the "Get answers here" link.
-     */
-    fun onWhatsNewGetAnswersClicked()
 
     /**
      * Opens a custom tab to privacy notice url. Called when a user clicks on the "read our privacy notice" button.
@@ -295,14 +284,6 @@ class SessionControlInteractor(
         controller.handleStartBrowsingClicked()
     }
 
-    override fun onOpenSettingsClicked() {
-        controller.handleOpenSettingsClicked()
-    }
-
-    override fun onWhatsNewGetAnswersClicked() {
-        controller.handleWhatsNewGetAnswersClicked()
-    }
-
     override fun onReadPrivacyNoticeClicked() {
         controller.handleReadPrivacyNoticeClicked()
     }
@@ -371,16 +352,12 @@ class SessionControlInteractor(
         recentBookmarksController.handleShowAllBookmarksClicked()
     }
 
-    override fun onHistoryMetadataItemClicked(url: String, historyMetadata: HistoryMetadataKey) {
-        historyMetadataController.handleHistoryMetadataItemClicked(url, historyMetadata)
-    }
-
     override fun onHistoryMetadataShowAllClicked() {
         historyMetadataController.handleHistoryShowAllClicked()
     }
 
-    override fun onToggleHistoryMetadataGroupExpanded(historyMetadataGroup: HistoryMetadataGroup) {
-        historyMetadataController.handleToggleHistoryMetadataGroupExpanded(
+    override fun onHistoryMetadataGroupClicked(historyMetadataGroup: HistoryMetadataGroup) {
+        historyMetadataController.handleHistoryMetadataGroupClicked(
             historyMetadataGroup
         )
     }
