@@ -9,11 +9,11 @@
     <!-- Content description (not visible, for screen readers etc.): "Three dot" menu button. -->
     <string name="content_description_menu">ᱰᱷᱮᱨ ᱮᱴᱟᱜᱟᱜ</string>
     <!-- Content description (not visible, for screen readers etc.): "Private Browsing" menu button. -->
-    <string name="content_description_private_browsing_button">ᱯᱨᱟᱭᱣᱮᱴ ᱵᱽᱨᱳᱣᱡᱤᱝ ᱦᱩᱭ ᱦᱚᱪᱚᱭ ᱢᱮ</string>
+    <string name="content_description_private_browsing_button">ᱯᱨᱟᱭᱣᱮᱴ ᱵᱽᱨᱟᱣᱡᱤᱝ ᱦᱩᱭ ᱦᱚᱪᱚᱭ ᱢᱮ</string>
     <!-- Content description (not visible, for screen readers etc.): "Private Browsing" menu button. -->
-    <string name="content_description_disable_private_browsing_button">ᱯᱨᱟᱭᱣᱮᱴ ᱵᱽᱨᱳᱣᱡᱤᱝ ᱵᱟᱝ ᱦᱩᱭ ᱦᱚᱪᱚᱜ ᱢᱮ</string>
+    <string name="content_description_disable_private_browsing_button">ᱯᱨᱟᱭᱣᱮᱴ ᱵᱽᱨᱟᱣᱡᱤᱝ ᱵᱟᱝ ᱦᱩᱭ ᱦᱚᱪᱚᱜ ᱢᱮ</string>
     <!-- Placeholder text shown in the search bar before a user enters text -->
-    <string name="search_hint">ᱥᱮᱸᱫᱽᱨᱟ ᱵᱟᱝᱠᱷᱟᱱ ᱴᱷᱤᱠᱟᱹᱬᱟ ᱟᱫᱮᱨ</string>
+    <string name="search_hint">ᱥᱮᱸᱫᱽᱨᱟ ᱟᱨ ᱵᱟᱝ ᱴᱷᱤᱠᱬᱟᱹ ᱟᱫᱮᱨ ᱢᱮ</string>
     <!-- No Open Tabs Message Description -->
     <string name="no_open_tabs_description">ᱟᱢᱟᱜ ᱠᱷᱩᱞᱟᱹ ᱟᱠᱟᱱ ᱴᱮᱵᱽ ᱠᱚ ᱫᱚ ᱱᱚᱰᱮ ᱫᱮᱠᱷᱟᱣᱜᱼᱟ ᱾</string>
     <!-- No Private Tabs Message Description -->
@@ -33,7 +33,7 @@
     <!-- Content description for close button while in multiselect mode in tab tray -->
     <string name="tab_tray_close_multiselect_content_description">ᱢᱟᱹᱞᱴᱤᱥᱤᱞᱮᱠᱼᱴ ᱢᱳᱰ ᱵᱟᱹᱰ</string>
     <!-- Content description for save to collection button while in multiselect mode in tab tray -->
-    <string name="tab_tray_collection_button_multiselect_content_description">ᱵᱟᱪᱷᱟᱣᱠᱟᱱ ᱴᱮᱵᱽ ᱠᱚ ᱛᱩᱢᱟᱹᱞ ᱥᱟᱸᱪᱟᱣ ᱢᱮ</string>
+    <string name="tab_tray_collection_button_multiselect_content_description">ᱵᱟᱪᱷᱟᱣᱠᱟᱱ ᱴᱮᱵᱽ ᱠᱚ ᱛᱩᱢᱟᱹᱞ ᱥᱟᱺᱪᱟᱣ ᱢᱮ</string>
     <!-- Content description for checkmark while tab is selected while in multiselect mode in tab tray. The first parameter is the title of the tab selected -->
     <string name="tab_tray_item_selected_multiselect_content_description">ᱵᱟᱪᱷᱟᱣᱮᱱᱟ %1$s</string>
     <!-- Content description when tab is unselected while in multiselect mode in tab tray. The first parameter is the title of the tab unselected -->
@@ -41,18 +41,21 @@
     <!-- Content description announcement when exiting multiselect mode in tab tray -->
     <string name="tab_tray_exit_multiselect_content_description">ᱵᱟᱹᱰ ᱟᱠᱟᱱᱟ ᱢᱟᱹᱴᱤᱥᱤᱞᱮᱼᱴ ᱢᱳᱰ</string>
     <!-- Content description announcement when entering multiselect mode in tab tray -->
-    <string name="tab_tray_enter_multiselect_content_description">ᱢᱟᱹᱞᱴᱤᱥᱤᱞᱮᱠᱼᱴ ᱢᱳᱰ ᱵᱚᱞᱚ ᱮᱱᱟᱢ, ᱛᱩᱢᱟᱹᱞ ᱥᱟᱸᱪᱟᱣ ᱞᱟᱹᱜᱤᱫ ᱴᱮᱵᱽ ᱠᱚ ᱵᱟᱪᱷᱟᱣ ᱢᱮ </string>
+    <string name="tab_tray_enter_multiselect_content_description">ᱢᱟᱹᱞᱴᱤᱥᱤᱞᱮᱠᱼᱴ ᱢᱳᱰ ᱵᱚᱞᱚ ᱮᱱᱟᱢ, ᱛᱩᱢᱟᱹᱞ ᱥᱟᱺᱪᱟᱣ ᱞᱟᱹᱜᱤᱫ ᱴᱮᱵᱽ ᱠᱚ ᱵᱟᱪᱷᱟᱣ ᱢᱮ </string>
     <!-- Content description on checkmark while tab is selected in multiselect mode in tab tray -->
     <string name="tab_tray_multiselect_selected_content_description">ᱵᱟᱪᱷᱟᱣᱮᱱᱟ</string>
 
     <!-- Home - Recently saved bookmarks -->
     <!-- Title for the home screen section with recently saved bookmarks. -->
-    <string name="recently_saved_bookmarks">ᱱᱤᱛᱜᱮ ᱥᱟᱺᱪᱟᱣ ᱟᱠᱟᱱᱟ</string>
+    <string name="recently_saved_bookmarks">ᱱᱤᱛ ᱥᱟᱺᱪᱟᱣᱟᱜ</string>
 
     <!-- Content description for the recently saved bookmarks section on the home screen. -->
     <string name="recently_saved_bookmarks_content_description">ᱱᱮᱛᱚᱜ ᱜᱮ ᱥᱟᱺᱪᱟᱣ ᱟᱠᱟᱱ ᱵᱩᱠᱢᱟᱨᱠ ᱠᱚ</string>
     <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
     <string name="recently_saved_show_all">ᱡᱷᱚᱛᱚ ᱫᱮᱠᱷᱟᱣ ᱢᱮ</string>
+
+    <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
+    <string name="recently_saved_show_all_content_description">ᱡᱷᱚᱛᱚ ᱥᱟᱺᱪᱟᱣ ᱠᱟᱱ ᱵᱩᱠᱢᱟᱨᱠ ᱵᱩᱛᱟᱹᱢ ᱠᱚ ᱫᱮᱠᱷᱟᱣ ᱢᱮ</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
     <string name="about_content">%1$s ᱛᱮᱭᱟᱨ ᱦᱩᱭ ᱠᱟᱱᱟ ᱢᱳᱡᱤᱞᱟ ᱫᱟᱨᱟᱭᱛᱮ ᱾</string>
@@ -62,9 +65,9 @@
     <string name="private_browsing_title">ᱟᱢ ᱱᱤᱡᱚᱨᱟᱜ ᱚᱠᱛᱚ ᱨᱮ ᱢᱮᱱᱟᱢ-ᱟ</string>
     <!-- Explanation for private browsing displayed to users on home view when they first enable private mode
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="private_browsing_placeholder_description_2">%1$s ᱟᱢᱟᱜ ᱥᱮᱸᱫᱽᱨᱟ ᱟᱨ ᱵᱽᱨᱳᱣᱡᱤᱝ ᱱᱟᱜᱟᱢ ᱯᱷᱟᱨᱪᱟᱭ ᱛᱟᱦᱮᱱᱟ ᱱᱤᱡᱮᱨᱟᱜ ᱴᱮᱵᱽ ᱠᱷᱚᱱ ᱡᱚᱠᱷᱚᱱ ᱟᱢ ᱚᱱᱟ ᱵᱚᱸᱫᱚᱭ ᱛᱟᱦᱮᱱᱟᱢ ᱵᱟᱝᱠᱷᱟᱱ ᱮᱯ ᱵᱟᱹᱜᱤ ᱜᱷᱟᱹᱰᱤᱠ ᱾
+    <string name="private_browsing_placeholder_description_2">%1$s ᱟᱢᱟᱜ ᱥᱮᱸᱫᱽᱨᱟ ᱟᱨ ᱵᱽᱨᱟᱣᱡᱤᱝ ᱱᱟᱜᱟᱢ ᱯᱷᱟᱨᱪᱟᱭ ᱛᱟᱦᱮᱱᱟ ᱱᱤᱡᱮᱨᱟᱜ ᱴᱮᱵᱽ ᱠᱷᱚᱱ ᱡᱚᱠᱷᱚᱱ ᱟᱢ ᱚᱱᱟ ᱵᱚᱸᱫᱚᱭ ᱛᱟᱦᱮᱱᱟᱢ ᱵᱟᱝᱠᱷᱟᱱ ᱮᱯ ᱵᱟᱹᱜᱤ ᱜᱷᱟᱹᱰᱤᱠ ᱾
 ᱡᱚᱦᱚᱜᱽ ᱱᱚᱶᱟ ᱫᱚ ᱮᱱᱚᱱᱚᱢᱟᱥ ᱵᱟᱭ ᱵᱮᱱᱟᱣ ᱢᱮᱭᱟ ᱣᱮᱵᱥᱟᱭᱤᱴ ᱨᱮ ᱟᱨ ᱟᱢᱟᱜ ᱤᱱᱴᱚᱨᱱᱮᱴ ᱥᱮᱣᱟ ᱮᱢᱚᱜᱤᱪ ᱠᱷᱚᱱ, ᱱᱚᱶᱟ ᱫᱚ ᱟᱥᱟᱱ ᱵᱮᱱᱟᱣ ᱛᱟᱦᱮᱱᱟᱭ ᱟᱢᱟᱜ ᱚᱱᱞᱟᱭᱤᱱ ᱠᱟᱹᱢᱤ ᱠᱚ ᱱᱤᱡᱮᱨᱟᱜ ᱫᱚᱦᱚ ᱞᱟᱹᱜᱤᱫ ᱩᱱᱠᱩ ᱠᱷᱚᱱ ᱡᱟᱦᱟᱸᱭ ᱠᱚ ᱱᱚᱶᱟ ᱥᱟᱫᱷᱚᱱ ᱵᱮᱵᱷᱟᱨ ᱛᱟᱦᱮᱱᱼᱟ ᱾</string>
-    <string name="private_browsing_common_myths">ᱱᱤᱡᱮᱨᱟᱜ ᱵᱽᱨᱳᱣᱡᱤᱝ ᱵᱟᱵᱚᱛ ᱥᱚᱢᱟᱱ ᱮᱰᱮ ᱠᱚ</string>
+    <string name="private_browsing_common_myths">ᱱᱤᱡᱮᱨᱟᱜ ᱵᱽᱨᱟᱣᱡᱤᱝ ᱵᱟᱵᱚᱛ ᱥᱚᱢᱟᱱ ᱮᱰᱮ ᱠᱚ</string>
     <!-- Delete session button to erase your history in a private session -->
     <string name="private_browsing_delete_session">ᱚᱠᱛᱚ ᱢᱮᱴᱟᱣ ᱢᱮ</string>
 
@@ -79,7 +82,7 @@
 
     <!-- Open in App "contextual feature recommendation" (CFR) -->
     <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
-    <string name="open_in_app_cfr_info_message">ᱟᱢ ᱮᱯᱯ ᱠᱚ ᱮᱢᱟᱱ ᱨᱮ ᱟᱡ ᱛᱮᱜᱮ ᱞᱤᱸᱠ ᱠᱚ ᱮᱢᱟᱱ ᱚᱰᱚᱠ ᱨᱮᱭᱟᱜ Firefox ᱨᱮ ᱥᱮᱴ ᱫᱟᱲᱮᱟᱜᱼᱟᱢ ᱾</string>
+    <string name="open_in_app_cfr_info_message">ᱟᱢ ᱮᱯᱯ ᱠᱚ ᱮᱢᱟᱱ ᱨᱮ ᱟᱡ ᱛᱮᱜᱮ ᱞᱤᱝᱠ ᱠᱚ ᱮᱢᱟᱱ ᱚᱰᱚᱠ ᱨᱮᱭᱟᱜ Firefox ᱨᱮ ᱥᱮᱴ ᱫᱟᱲᱮᱟᱜᱼᱟᱢ ᱾</string>
     <!-- Text for the positive action button -->
     <string name="open_in_app_cfr_positive_button_text">ᱥᱟᱡᱟᱣ ᱠᱚ ᱨᱮ ᱪᱟᱞᱟᱜ ᱢᱮ</string>
 
@@ -109,6 +112,12 @@
 
     <!-- Heading for the Top Sites block -->
     <string name="home_screen_top_sites_heading">ᱪᱮᱛᱟᱱ ᱨᱤᱱ ᱥᱟᱭᱤᱴ ᱠᱚ</string>
+
+    <!-- Recent Tabs -->
+    <!-- Header text for jumping back into the recent tab in the home screen -->
+    <string name="recent_tabs_header">ᱦᱮᱡ ᱨᱩᱟᱹᱲᱚᱜ ᱢᱮ</string>
+    <!-- Button text for showing all the tabs in the tabs tray -->
+    <string name="recent_tabs_show_all">ᱡᱷᱚᱛᱚ ᱫᱮᱠᱷᱟᱣ ᱢᱮ</string>
 
     <!-- Browser Fragment -->
     <!-- Content description (not visible, for screen readers etc.): Navigate to open tabs -->
@@ -154,7 +163,7 @@
     <!-- Browser menu button that creates a private tab -->
     <string name="browser_menu_private_tab">ᱱᱤᱡᱚᱨᱟᱜ ᱴᱮᱵᱽ᱿</string>
     <!-- Browser menu button that saves the current tab to a collection -->
-    <string name="browser_menu_save_to_collection_2">ᱛᱩᱢᱟᱹᱞ ᱨᱮ ᱥᱟᱸᱪᱟᱣ ᱢᱮ</string>
+    <string name="browser_menu_save_to_collection_2">ᱛᱩᱢᱟᱹᱞ ᱨᱮ ᱥᱟᱺᱪᱟᱣ ᱢᱮ</string>
     <!-- Browser menu button that open a share menu to share the current site -->
     <string name="browser_menu_share">ᱦᱟᱹᱴᱤᱧ</string>
     <!-- Share menu title, displayed when a user is sharing their current site -->
@@ -178,10 +187,16 @@
     <!-- Browser menu button to configure reader mode appearance e.g. the used font type and size -->
     <string name="browser_menu_read_appearance">ᱧᱮᱞ ᱵᱤᱰᱟᱹᱣ</string>
 
+    <!-- Browser menu button to show reader view appearance controls e.g. the used font type and size -->
+    <string name="browser_menu_customize_reader_view">ᱨᱤᱰᱟᱹᱨ ᱣᱤᱣ ᱠᱚᱥᱴᱚᱢᱟᱭᱤᱡᱽ ᱢᱮ</string>
     <!-- Browser menu label for adding a bookmark -->
     <string name="browser_menu_add">ᱥᱮᱞᱮᱫᱽ</string>
     <!-- Browser menu label for editing a bookmark -->
     <string name="browser_menu_edit">ᱥᱟᱯᱲᱟᱣ</string>
+
+    <!-- Browser Toolbar -->
+    <!-- Content description for the Home screen button on the browser toolbar -->
+    <string name="browser_toolbar_home">ᱚᱲᱟᱜ ᱥᱠᱨᱤᱱ</string>
 
     <!-- Error message to show when the user tries to access a scheme not
         handled by the app (Ex: blob, tel etc) -->
@@ -199,15 +214,15 @@
 
     <!-- Search Fragment -->
     <!-- Button in the search view that lets a user search by scanning a QR code -->
-    <string name="search_scan_button">ᱥᱠᱮᱱ</string>
+    <string name="search_scan_button">ᱥᱠᱟᱱ</string>
     <!-- Button in the search view that lets a user change their search engine -->
-    <string name="search_engine_button">ᱥᱮᱸᱫᱽᱨᱟ ᱤᱱᱡᱤᱱ</string>
+    <string name="search_engine_button">ᱥᱮᱸᱫᱽᱨᱟ ᱤᱧᱡᱤᱱ</string>
     <!-- Button in the search view when shortcuts are displayed that takes a user to the search engine settings -->
-    <string name="search_shortcuts_engine_settings">ᱥᱮᱸᱫᱽᱨᱟᱭ ᱤᱱᱡᱤᱱ ᱥᱟᱡᱟᱣ ᱠᱚ</string>
+    <string name="search_shortcuts_engine_settings">ᱥᱮᱸᱫᱽᱨᱟᱭ ᱤᱧᱡᱤᱱ ᱥᱟᱡᱟᱣ ᱠᱚ</string>
     <!-- Header displayed when selecting a shortcut search engine -->
     <string name="search_engines_search_with">ᱱᱤᱭᱟᱹ ᱫᱷᱟᱣ, ᱱᱚᱶᱟ ᱛᱮ ᱥᱮᱸᱫᱽᱨᱟᱭ ᱢᱮᱺ</string>
     <!-- Button in the search view that lets a user navigate to the site in their clipboard -->
-    <string name="awesomebar_clipboard_title">ᱠᱞᱤᱯᱷᱵᱚᱰ ᱠᱷᱚᱱ ᱞᱤᱸᱠ ᱯᱮᱨᱮᱡ ᱢᱮ</string>
+    <string name="awesomebar_clipboard_title">ᱠᱞᱤᱯᱷᱵᱚᱰ ᱠᱷᱚᱱ ᱞᱤᱝᱠ ᱯᱮᱨᱮᱡ ᱢᱮ</string>
 
     <!-- Button in the search suggestions onboarding that allows search suggestions in private sessions -->
     <string name="search_suggestions_onboarding_allow_button">ᱦᱮᱥᱟᱨᱤᱭᱟᱹ</string>
@@ -216,12 +231,15 @@
     <!-- Search suggestion onboarding hint title text -->
     <string name="search_suggestions_onboarding_title">ᱥᱮᱸᱫᱽᱨᱟ ᱥᱚᱞᱦᱟ ᱱᱤᱡᱮᱨᱟᱜ ᱚᱠᱛᱚ ᱨᱮ ᱵᱟᱛᱟᱣ ᱮᱢᱟᱢ ᱥᱮ?</string>
     <!-- Search suggestion onboarding hint description text, first parameter is the name of the app defined in app_name (for example: Fenix)-->
-    <string name="search_suggestions_onboarding_text">ᱟᱢᱟᱜ ᱢᱩᱞ ᱥᱟᱸᱽᱨᱟ ᱤᱱᱡᱤᱱ ᱨᱮᱭᱟᱜ ᱴᱷᱤᱠᱬᱟ ᱵᱟᱨ ᱨᱮ ᱡᱟᱦᱟᱸ ᱜᱮ ᱚᱞᱟᱢ ᱚᱱᱟ ᱠᱚ %s ᱡᱷᱚᱛᱚ ᱦᱟᱹᱴᱤᱧᱟᱭ ᱾</string>
+    <string name="search_suggestions_onboarding_text">ᱟᱢᱟᱜ ᱢᱩᱞ ᱥᱟᱸᱽᱨᱟ ᱤᱧᱡᱤᱱ ᱨᱮᱭᱟᱜ ᱴᱷᱤᱠᱬᱟ ᱵᱟᱨ ᱨᱮ ᱡᱟᱦᱟᱸ ᱜᱮ ᱚᱞᱟᱢ ᱚᱱᱟ ᱠᱚ %s ᱡᱷᱚᱛᱚ ᱦᱟᱹᱴᱤᱧᱟᱭ ᱾</string>
     <!-- Search suggestion onboarding hint Learn more link text -->
     <string name="search_suggestions_onboarding_learn_more_link">ᱰᱷᱮᱨ ᱥᱮᱬᱟᱭ ᱢᱮ</string>
 
     <!-- Search engine suggestion title text. The first parameter is the name of teh suggested engine-->
     <string name="search_engine_suggestions_title">%s ᱥᱮᱸᱫᱽᱨᱟᱭ ᱢᱮ</string>
+
+    <!-- Search engine suggestion description text -->
+    <string name="search_engine_suggestions_description">ᱴᱷᱤᱬᱟ ᱵᱟᱨ ᱠᱷᱚᱱ ᱥᱤᱫᱷᱟᱹ ᱥᱮᱸᱫᱽᱨᱟᱭ ᱢᱮ</string>
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
@@ -243,7 +261,7 @@
     <!-- Preference category for all links about Fenix -->
     <string name="preferences_category_about">ᱵᱟᱵᱚᱛ</string>
     <!-- Preference for settings related to changing the default search engine -->
-    <string name="preferences_default_search_engine">ᱢᱩᱞ ᱥᱮᱸᱫᱽᱨᱟ ᱤᱱᱡᱤᱱ</string>
+    <string name="preferences_default_search_engine">ᱢᱩᱞ ᱥᱮᱸᱫᱽᱨᱟ ᱤᱧᱡᱤᱱ</string>
     <!-- Preference for settings related to Search -->
     <string name="preferences_search">ᱥᱮᱸᱫᱽᱨᱟ</string>
     <!-- Preference for settings related to Search address bar -->
@@ -274,11 +292,11 @@
     <!-- Preference for advanced site permissions -->
     <string name="preferences_site_permissions">ᱥᱟᱭᱤᱴ ᱨᱮᱭᱟᱜ ᱪᱷᱟᱹᱲ ᱠᱚ</string>
     <!-- Preference for private browsing options -->
-    <string name="preferences_private_browsing_options">ᱱᱤᱡᱮᱨᱟᱜ ᱵᱽᱨᱳᱣᱡᱤᱝ</string>
+    <string name="preferences_private_browsing_options">ᱱᱤᱡᱮᱨᱟᱜ ᱵᱽᱨᱟᱣᱡᱤᱝ</string>
     <!-- Preference for opening links in a private tab-->
-    <string name="preferences_open_links_in_a_private_tab">ᱞᱤᱸᱠ ᱠᱚ ᱱᱤᱡᱮᱨᱟᱜ ᱴᱮᱵ ᱨᱮ ᱡᱷᱤᱡᱽ ᱢᱮ</string>
+    <string name="preferences_open_links_in_a_private_tab">ᱞᱤᱝᱠ ᱠᱚ ᱱᱤᱡᱮᱨᱟᱜ ᱴᱮᱵ ᱨᱮ ᱡᱷᱤᱡᱽ ᱢᱮ</string>
     <!-- Preference for allowing screenshots to be taken while in a private tab-->
-    <string name="preferences_allow_screenshots_in_private_mode">ᱱᱤᱡᱮᱨᱟᱜ ᱵᱽᱨᱳᱣᱡᱤᱝ ᱨᱮ ᱥᱠᱨᱤᱱᱥᱚᱴ ᱠᱚ ᱦᱮᱥᱟᱨᱤᱭᱟᱹ ᱢᱮ</string>
+    <string name="preferences_allow_screenshots_in_private_mode">ᱱᱤᱡᱮᱨᱟᱜ ᱵᱽᱨᱟᱣᱡᱤᱝ ᱨᱮ ᱥᱠᱨᱤᱱᱥᱚᱴ ᱠᱚ ᱦᱮᱥᱟᱨᱤᱭᱟᱹ ᱢᱮ</string>
     <!-- Will inform the user of the risk of activating Allow screenshots in private browsing option -->
     <string name="preferences_screenshots_in_private_mode_disclaimer">ᱡᱩᱫᱤ ᱢᱟᱸᱡᱩᱨ ᱮᱱᱟ, ᱯᱨᱟᱭᱣᱮᱴ ᱴᱮᱵᱽ ᱠᱚ ᱫᱚ ᱧᱮᱞᱚᱜ ᱜᱮᱭᱟ ᱡᱩᱫᱤ ᱢᱟᱹᱞᱴᱤᱯᱟᱹᱞ ᱮᱯᱯ ᱠᱚ ᱠᱷᱩᱞᱟᱹ ᱛᱟᱦᱮᱸᱱᱟ</string>
     <!-- Preference for adding private browsing shortcut -->
@@ -290,7 +308,7 @@
     <!-- Preference to override the Sync token server -->
     <string name="preferences_override_sync_tokenserver">ᱠᱩᱥᱤᱭᱟᱜ ᱥᱤᱸᱠ ᱥᱟᱹᱨᱣᱟᱹᱨ</string>
     <!-- Toast shown after updating the FxA/Sync server override preferences -->
-    <string name="toast_override_fxa_sync_server_done">Firefox ᱠᱷᱟᱛᱟ/ ᱥᱭᱸᱠ ᱠᱟᱹᱨᱣᱟᱹᱨ ᱵᱚᱫᱚᱞᱮᱱᱟ ᱾ ᱵᱚᱫᱚᱞ ᱠᱚ ᱫᱚᱦᱚ ᱞᱟᱹᱜᱤᱫ ᱮᱯᱯᱞᱤᱠᱮᱥᱚᱱ ᱵᱚᱸᱫᱚᱜ ᱠᱟᱱᱟ…</string>
+    <string name="toast_override_fxa_sync_server_done">Firefox ᱠᱷᱟᱛᱟ/ ᱥᱭᱝᱠ ᱠᱟᱹᱨᱣᱟᱹᱨ ᱵᱚᱫᱚᱞᱮᱱᱟ ᱾ ᱵᱚᱫᱚᱞ ᱠᱚ ᱫᱚᱦᱚ ᱞᱟᱹᱜᱤᱫ ᱮᱯᱯᱞᱤᱠᱮᱥᱚᱱ ᱵᱚᱸᱫᱚᱜ ᱠᱟᱱᱟ…</string>
     <!-- Preference category for account information -->
     <string name="preferences_category_account">ᱠᱷᱟᱛᱟ</string>
     <!-- Preference shown on banner to sign into account -->
@@ -306,11 +324,11 @@
     <!-- Preference for settings related to visual options -->
     <string name="preferences_customize">ᱠᱩᱥᱤᱭᱟᱜ ᱛᱮᱭᱟᱨ</string>
     <!-- Preference description for banner about signing in -->
-    <string name="preferences_sign_in_description">ᱵᱩᱠᱢᱟᱨᱠ, ᱱᱟᱜᱟᱢ ᱟᱨ ᱵᱟᱹᱲᱛᱤ ᱠᱚ ᱟᱢᱟᱜ Firefox ᱠᱷᱟᱛᱟ ᱥᱟᱶᱛᱮ ᱥᱭᱸᱠ ᱢᱮ</string>
+    <string name="preferences_sign_in_description">ᱵᱩᱠᱢᱟᱨᱠ, ᱱᱟᱜᱟᱢ ᱟᱨ ᱵᱟᱹᱲᱛᱤ ᱠᱚ ᱟᱢᱟᱜ Firefox ᱠᱷᱟᱛᱟ ᱥᱟᱶᱛᱮ ᱥᱭᱝᱠ ᱢᱮ</string>
     <!-- Preference shown instead of account display name while account profile information isn't available yet. -->
     <string name="preferences_account_default_name">Firefox ᱠᱷᱟᱛᱟ</string>
     <!-- Preference text for account title when there was an error syncing FxA -->
-    <string name="preferences_account_sync_error">ᱥᱭᱸᱠ ᱠᱚ ᱪᱟᱹᱞᱩ ᱫᱚᱦᱚ ᱞᱟᱹᱜᱤᱫ ᱫᱩᱦᱲᱟᱹ ᱡᱩᱰᱟᱹᱣ</string>
+    <string name="preferences_account_sync_error">ᱥᱭᱝᱠ ᱠᱚ ᱪᱟᱹᱞᱩ ᱫᱚᱦᱚ ᱞᱟᱹᱜᱤᱫ ᱫᱩᱦᱲᱟᱹ ᱡᱩᱰᱟᱹᱣ</string>
     <!-- Preference for language -->
     <string name="preferences_language">ᱯᱟᱹᱨᱥᱤ</string>
     <!-- Preference for data choices -->
@@ -324,7 +342,7 @@
     <!-- Preference for developers -->
     <string name="preferences_remote_debugging">ᱨᱤᱢᱳᱴ ᱰᱤᱵᱚᱜᱤᱝ ᱣᱟᱭᱟ USB</string>
     <!-- Preference title for switch preference to show search engines -->
-    <string name="preferences_show_search_engines">ᱥᱮᱸᱫᱽᱨᱟ ᱤᱱᱡᱤᱱ ᱠᱚ ᱩᱫᱩᱜ ᱢᱮ</string>
+    <string name="preferences_show_search_engines">ᱥᱮᱸᱫᱽᱨᱟ ᱤᱧᱡᱤᱱ ᱠᱚ ᱩᱫᱩᱜ ᱢᱮ</string>
     <!-- Preference title for switch preference to show search suggestions -->
     <string name="preferences_show_search_suggestions">ᱥᱮᱸᱫᱽᱨᱟ ᱦᱩᱫᱤᱥ ᱠᱚ ᱩᱫᱩᱜ</string>
     <!-- Preference title for switch preference to show voice search button -->
@@ -338,13 +356,13 @@
     <!-- Preference title for switch preference to suggest bookmarks when searching -->
     <string name="preferences_search_bookmarks">ᱵᱩᱠᱢᱟᱨᱠ ᱠᱚ ᱥᱮᱸᱫᱽᱨᱟᱭ ᱢᱮ</string>
     <!-- Preference title for switch preference to suggest synced tabs when searching -->
-    <string name="preferences_search_synced_tabs">ᱥᱭᱸᱠ ᱟᱠᱟᱱ ᱴᱮᱵᱽ ᱠᱚ ᱥᱮᱸᱫᱽᱨᱟᱭ ᱢᱮ</string>
+    <string name="preferences_search_synced_tabs">ᱥᱭᱝᱠ ᱟᱠᱟᱱ ᱴᱮᱵᱽ ᱠᱚ ᱥᱮᱸᱫᱽᱨᱟᱭ ᱢᱮ</string>
     <!-- Preference for account settings -->
     <string name="preferences_account_settings">ᱠᱷᱟᱛᱟ ᱨᱮᱭᱟᱜ ᱥᱟᱡᱟᱣ ᱠᱚ</string>
     <!-- Preference for enabling url autocomplete-->
     <string name="preferences_enable_autocomplete_urls">URLs ᱟᱪᱛᱮ ᱯᱩᱨᱟᱹᱣᱼᱜ ᱢᱟ</string>
     <!-- Preference for open links in third party apps -->
-    <string name="preferences_open_links_in_apps">ᱞᱤᱸᱠ ᱠᱚ ᱮᱯ ᱨᱮ ᱡᱷᱤᱡᱽ ᱢᱮ</string>
+    <string name="preferences_open_links_in_apps">ᱞᱤᱝᱠ ᱠᱚ ᱮᱯ ᱨᱮ ᱡᱷᱤᱡᱽ ᱢᱮ</string>
 
     <!-- Preference for open download with an external download manager app -->
     <string name="preferences_external_download_manager">ᱵᱟᱦᱨᱮ ᱨᱮᱭᱟᱜ ᱰᱟᱣᱱᱞᱳᱰ ᱢᱮᱱᱮᱡᱟᱹᱨ</string>
@@ -365,7 +383,7 @@
     <!-- Hint displayed on input field for custom collection user ID-->
     <string name="customize_addon_collection_user_hint">ᱛᱩᱢᱟᱹᱞ ᱢᱟᱞᱤᱠ (ᱵᱮᱵᱷᱟᱨᱤᱭᱟᱹ ID)</string>
     <!-- Toast shown after confirming the custom add-on collection configuration -->
-    <string name="toast_customize_addon_collection_done">ᱥᱮᱞᱮᱫᱽ ᱮᱦᱚᱵᱽ ᱛᱩᱢᱟᱹᱞ ᱵᱚᱫᱚᱞᱮᱱᱟ ᱾ ᱵᱚᱫᱚᱞ ᱠᱚ ᱫᱚᱦᱚ ᱞᱟᱹᱜᱤᱫ ᱮᱯᱯᱞᱤᱠᱮᱥᱚᱱ ᱵᱚᱸᱫᱚᱜ ᱠᱟᱱᱟ…</string>
+    <string name="toast_customize_addon_collection_done">ᱮᱰᱼᱚᱱ ᱛᱩᱢᱟᱹᱞ ᱵᱚᱫᱚᱞᱮᱱᱟ ᱾ ᱵᱚᱫᱚᱞ ᱠᱚ ᱫᱚᱦᱚ ᱞᱟᱹᱜᱤᱫ ᱮᱯᱯᱞᱤᱠᱮᱥᱚᱱ ᱵᱚᱸᱫᱚᱜ ᱠᱟᱱᱟ…</string>
 
     <!-- Add-on Installation from AMO-->
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
@@ -375,9 +393,9 @@
 
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
-    <string name="preferences_sync_now">ᱱᱤᱛᱚᱜ ᱥᱭᱸᱠ ᱢᱮ</string>
+    <string name="preferences_sync_now">ᱱᱤᱛᱚᱜ ᱥᱭᱝᱠ ᱢᱮ</string>
     <!-- Preference category for sync -->
-    <string name="preferences_sync_category">ᱚᱠᱟ ᱥᱭᱸᱠ ᱨᱮᱭᱟᱜ ᱛᱟᱦᱮᱸᱱᱟ ᱵᱟᱪᱷᱟᱣ ᱢᱮ </string>
+    <string name="preferences_sync_category">ᱚᱠᱟ ᱥᱭᱝᱠ ᱨᱮᱭᱟᱜ ᱛᱟᱦᱮᱸᱱᱟ ᱵᱟᱪᱷᱟᱣ ᱢᱮ </string>
     <!-- Preference for syncing history -->
     <string name="preferences_sync_history">ᱱᱟᱜᱟᱢ</string>
     <!-- Preference for syncing bookmarks -->
@@ -395,17 +413,22 @@
     <!-- Label indicating that sync is in progress -->
     <string name="sync_syncing_in_progress">ᱥᱤᱸᱠ ᱦᱩᱭᱩ ᱠᱟᱱᱟ...</string>
     <!-- Label summary indicating that sync failed. The first parameter is the date stamp showing last time it succeeded -->
-    <string name="sync_failed_summary">ᱥᱭᱸᱠ ᱰᱤᱜᱟᱹᱣ ᱾ ᱢᱟᱲᱟᱝ ᱨᱟᱹᱥ ᱞᱮᱠᱟᱛᱮ ᱪᱟᱵᱟ:%s</string>
+    <string name="sync_failed_summary">ᱥᱭᱝᱠ ᱰᱤᱜᱟᱹᱣ ᱾ ᱢᱟᱲᱟᱝ ᱨᱟᱹᱥ ᱞᱮᱠᱟᱛᱮ ᱪᱟᱵᱟ:%s</string>
     <!-- Label summary showing never synced -->
-    <string name="sync_failed_never_synced_summary">ᱥᱭᱸᱠ ᱰᱤᱜᱟᱹᱣ ᱾ ᱢᱟᱲᱟᱝ ᱥᱭᱸᱠᱼᱰ:ᱛᱤᱥ ᱦᱚᱸ ᱵᱟᱝᱼᱟ</string>
+    <string name="sync_failed_never_synced_summary">ᱥᱭᱝᱠ ᱰᱤᱜᱟᱹᱣ ᱾ ᱢᱟᱲᱟᱝ ᱥᱭᱝᱠᱼᱰ:ᱛᱤᱥ ᱦᱚᱸ ᱵᱟᱝᱼᱟ</string>
     <!-- Label summary the date we last synced. The first parameter is date stamp showing last time synced -->
-    <string name="sync_last_synced_summary">ᱢᱟᱲᱟᱝ ᱥᱭᱸᱠ ᱠᱚᱺ %s</string>
+    <string name="sync_last_synced_summary">ᱢᱟᱲᱟᱝ ᱥᱭᱝᱠ ᱠᱚᱺ %s</string>
     <!-- Label summary showing never synced -->
-    <string name="sync_never_synced_summary">ᱢᱟᱲᱟᱝ ᱥᱭᱸᱠ ᱠᱚᱺ ᱛᱤᱥ ᱦᱚᱸ ᱵᱟᱝᱟ</string>
+    <string name="sync_never_synced_summary">ᱢᱟᱲᱟᱝ ᱥᱭᱝᱠ ᱠᱚᱺ ᱛᱤᱥ ᱦᱚᱸ ᱵᱟᱝᱟ</string>
     <!-- Text for displaying the default device name.
         The first parameter is the application name, the second is the device manufacturer name
         and the third is the device model. -->
     <string name="default_device_name_2">%1$s on %2$s %3$s</string>
+
+    <!-- Preference for syncing credit cards -->
+    <string name="preferences_sync_credit_cards">ᱠᱨᱮᱰᱤᱴ ᱠᱟᱰ</string>
+    <!-- Preference for syncing addresses -->
+    <string name="preferences_sync_address">ᱴᱷᱤᱠᱬᱟᱤᱭᱟᱹ</string>
 
     <!-- Send Tab -->
     <!-- Name of the "receive tabs" notification channel. Displayed in the "App notifications" system settings for the app -->
@@ -442,13 +465,15 @@
     <!-- Preference switch for Telemetry -->
     <string name="preferences_telemetry">ᱴᱮᱞᱭᱢᱮᱴᱨᱭ</string>
     <!-- Preference switch for usage and technical data collection -->
-    <string name="preference_usage_data">ᱵᱮᱵᱷᱟᱨ ᱟᱨ ᱴᱮᱠᱱᱤᱠᱚᱞ ᱰᱟᱴᱟ ᱠᱚ</string>
+    <string name="preference_usage_data">ᱵᱮᱵᱷᱟᱨ ᱟᱨ ᱴᱮᱠᱱᱤᱠᱟᱹᱞ ᱰᱟᱴᱟ ᱠᱚ</string>
     <!-- Preference description for usage and technical data collection -->
     <string name="preferences_usage_data_description">ᱟᱢᱟᱜ ᱵᱨᱟᱣᱡᱟᱚᱨ ᱨᱮᱭᱟᱜ ᱠᱟᱹᱢᱤ, ᱭᱩᱥᱮᱡ, ᱦᱟᱰᱣᱮᱨ ᱟᱨ ᱠᱟᱹᱥᱴᱚᱢᱟᱭᱡᱮᱥᱚᱱ ᱰᱟᱴᱟ ᱠᱚ Mozilla ᱥᱟᱞᱟᱜ ᱦᱟᱹᱴᱤᱧᱚᱜ ᱠᱟᱱᱟ ᱚᱠᱟ ᱫᱚ %1$s ᱵᱮᱥ ᱛᱮᱭᱟᱜ ᱨᱮ ᱜᱚᱲᱚ ᱮᱢᱟᱭ</string>
     <!-- Preference switch for marketing data collection -->
     <string name="preferences_marketing_data">ᱢᱟᱨᱠᱮᱴᱤᱝ ᱰᱟᱴᱟ</string>
     <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
     <string name="preferences_marketing_data_description">Leanplum ᱚᱠᱚᱭ ᱫᱚ ᱟᱞᱮᱭᱤᱡ ᱢᱚᱵᱟᱭᱤᱞ ᱢᱟᱨᱠᱮᱴᱤᱝ ᱣᱮᱱᱰᱚᱨ ᱠᱟᱱᱟᱭ ᱩᱱᱤ ᱥᱟᱞᱟᱜ %1$s ᱨᱮ ᱯᱷᱤᱪᱚᱨ ᱵᱟᱵᱚᱛ ᱵᱮᱵᱷᱟᱨᱚᱜ ᱠᱟᱱ ᱰᱟᱴᱟ ᱦᱟᱹᱴᱤᱧᱚᱜᱼᱟ ᱾</string>
+    <!-- Preference description for marketing data collection -->
+    <string name="preferences_marketing_data_description2">Adjust, ᱟᱞᱮᱭᱤᱡ ᱢᱚᱵᱟᱭᱤᱠ ᱢᱟᱨᱠᱮᱴᱤᱝ ᱣᱮᱱᱰᱚᱨ ᱥᱟᱶ ᱵᱮᱥᱤᱠ ᱭᱩᱥᱮᱡᱽ ᱰᱟᱴᱟ ᱦᱟᱹᱴᱤᱧᱚᱜᱼᱟ ᱾</string>
     <!-- Title for studies preferences -->
     <string name="preference_experiments_2">ᱯᱟᱲᱦᱟᱣ ᱠᱚ</string>
     <!-- Summary for studies preferences -->
@@ -467,9 +492,9 @@
 
     <!-- Turn On Sync Preferences -->
     <!-- Header of the Turn on Sync preference view -->
-    <string name="preferences_sync">ᱥᱭᱸᱠ ᱪᱟᱹᱞᱩᱭ ᱢᱮ</string>
+    <string name="preferences_sync">ᱥᱭᱝᱠ ᱪᱟᱹᱞᱩᱭ ᱢᱮ</string>
     <!-- Preference for pairing -->
-    <string name="preferences_sync_pair">ᱡᱚᱲᱟᱣ ᱠᱳᱰ ᱥᱠᱮᱱ ᱢᱮ ᱰᱮᱥᱠᱴᱚᱯ Firefox ᱨᱮ</string>
+    <string name="preferences_sync_pair">ᱡᱚᱲᱟᱣ ᱠᱳᱰ ᱥᱠᱟᱱ ᱢᱮ ᱰᱮᱥᱠᱴᱚᱯ Firefox ᱨᱮ</string>
     <!-- Preference for account login -->
     <string name="preferences_sync_sign_in">ᱵᱚᱞᱚᱱ ᱥᱩᱦᱤ</string>
     <!-- Preference for reconnecting to FxA sync -->
@@ -479,7 +504,7 @@
 
     <!-- Pairing Feature strings -->
     <!-- Instructions on how to access pairing -->
-    <string name="pair_instructions_2"><![CDATA[QR ᱠᱳᱰ ᱥᱠᱮᱱ ᱢᱮ ᱡᱟ <b>firefox.com/pair</b> ᱨᱮ ᱩᱫᱩᱠ ᱠᱟᱫᱟ ᱠᱚ]]></string>
+    <string name="pair_instructions_2"><![CDATA[QR ᱠᱳᱰ ᱥᱠᱟᱱ ᱢᱮ ᱡᱟ <b>firefox.com/pair</b> ᱨᱮ ᱩᱫᱩᱠ ᱠᱟᱫᱟ ᱠᱚ]]></string>
     <!-- Button to open camera for pairing -->
     <string name="pair_open_camera">ᱠᱮᱢᱨᱟ ᱡᱷᱤᱜ ᱢᱮ</string>
     <!-- Button to cancel pairing -->
@@ -519,7 +544,7 @@
     <!-- Option in Library to open Screenshots page -->
     <string name="library_screenshots">ᱤᱥᱠᱨᱤᱱᱥᱚᱴ ᱠᱚ</string>
     <!-- Option in Library to open Downloads page -->
-    <string name="library_downloads">ᱰᱟᱩᱱᱞᱳᱰ ᱠᱚ</string>
+    <string name="library_downloads">ᱰᱟᱩᱱᱞᱚᱰ ᱠᱚ</string>
     <!-- Option in library to open Bookmarks page -->
     <string name="library_bookmarks">ᱵᱩᱠᱢᱟᱨᱠ ᱠᱚ</string>
     <!-- Option in library to open Desktop Bookmarks root page -->
@@ -532,6 +557,10 @@
     <string name="library_desktop_bookmarks_unfiled">ᱮᱴᱟᱜᱟ ᱵᱩᱠᱢᱟᱨᱠ ᱠᱚ</string>
     <!-- Option in Library to open History page -->
     <string name="library_history">ᱱᱟᱜᱟᱢ</string>
+    <!-- Option in Library to open a new tab -->
+    <string name="library_new_tab">ᱱᱟᱶᱟ ᱴᱮᱵᱽ</string>
+    <!-- Option in Library to find text in page -->
+    <string name="library_find_in_page">ᱥᱟᱦᱴᱟ ᱨᱮ ᱯᱟᱱᱛᱮ ᱢᱮ</string>
     <!-- Option in Library to open Reading List -->
     <string name="library_reading_list">ᱯᱟᱲᱦᱟᱣ ᱞᱤᱥᱴᱤ</string>
     <!-- Menu Item Label for Search in Library -->
@@ -578,15 +607,24 @@
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">ᱢᱤᱫ ᱪᱟᱸᱫᱚ ᱛᱟᱭᱚᱢ</string>
 
+    <!-- Start on Home -->
+    <!-- Title of a preference that allows a user to indicate after a specified amount of time when the app should start on the home screen -->
+    <string name="preferences_start_on_home">ᱚᱲᱟᱜ ᱠᱷᱚᱱ ᱮᱦᱚᱵᱽ ᱢᱮ</string>
+    <!-- Option for starting on the home screen after after four hours or inactivity -->
+    <string name="start_on_home_after_four_hours">ᱯᱩᱱ ᱴᱟᱲᱟᱝ ᱛᱟᱭᱚᱢ</string>
+    <!-- Option for always starting on the home screen -->
+    <string name="start_on_home_always">ᱡᱟᱣᱜᱮ</string>
+    <!-- Option for never starting on the home screen -->
+    <string name="start_on_home_never">ᱛᱤᱥ ᱦᱚᱸ ᱵᱟᱝ</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
     <string name="close_tabs_manually_summary">ᱱᱤᱡᱮ ᱛᱮ ᱵᱚᱸᱫᱽ ᱢᱮ
 </string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
-    <string name="close_tabs_after_one_day_summary">ᱢᱤᱫᱽ ᱫᱤᱱ ᱯᱚᱨᱮ ᱵᱚᱸᱫᱚᱭ ᱢᱮ</string>
+    <string name="close_tabs_after_one_day_summary">ᱢᱤᱫᱽ ᱫᱤᱱ ᱛᱟᱭᱚᱢ ᱛᱮ ᱵᱚᱸᱫᱚᱭ ᱢᱮ</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one week-->
-    <string name="close_tabs_after_one_week_summary">ᱢᱤᱫᱽ ᱦᱟᱴ ᱯᱚᱨᱮ ᱵᱚᱸᱫ ᱢᱮ</string>
+    <string name="close_tabs_after_one_week_summary">ᱢᱤᱫᱽ ᱦᱟᱴ ᱛᱟᱭᱚᱢ ᱛᱮ ᱵᱚᱸᱫ ᱢᱮ</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one month-->
-    <string name="close_tabs_after_one_month_summary">ᱢᱤᱫ ᱪᱟᱸᱫᱚ ᱯᱚᱨᱮ ᱵᱚᱸᱫᱽ ᱢᱮ</string>
+    <string name="close_tabs_after_one_month_summary">ᱢᱤᱫ ᱪᱟᱸᱫᱚ ᱛᱟᱭᱚᱢ ᱛᱮ ᱵᱚᱸᱫᱽ ᱢᱮ</string>
 
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
@@ -595,22 +633,28 @@
     <string name="tabs_header_private_title">ᱯᱨᱭᱣᱮᱴ ᱯᱟᱲᱤ</string>
     <!-- Title for the list of tabs in the current private session -->
     <string name="tabs_header_private_tabs_title">ᱯᱨᱟᱭᱣᱮᱴ ᱴᱮᱵᱽ ᱠᱚ</string>
+    <!-- Title for the list of tabs in the synced tabs -->
+    <string name="tabs_header_synced_tabs_title">ᱥᱤᱸᱠᱼᱰ ᱴᱮᱵᱽ ᱠᱚ</string>
     <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
     <string name="add_tab">ᱴᱮᱵ ᱥᱮᱞᱮᱫᱽ ᱢᱮ</string>
     <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
     <string name="add_private_tab">ᱱᱤᱡᱮᱨᱟᱜ ᱴᱮᱵ ᱥᱮᱞᱮᱫᱽ ᱢᱮ</string>
     <!-- Text for the new tab button to indicate adding a new private tab in the tab -->
     <string name="tab_drawer_fab_content">ᱯᱨᱭᱣᱮᱴ</string>
+    <!-- Text for the new tab button to indicate syncing command on the synced tabs page -->
+    <string name="tab_drawer_fab_sync">ᱥᱤᱝᱠ</string>
     <!-- Text shown as the title of the open tab tray -->
     <string name="tab_tray_title">ᱡᱷᱤᱡᱽ ᱟᱠᱟᱱ ᱴᱮᱵᱽ ᱠᱚ</string>
     <!-- Text shown in the menu for saving tabs to a collection -->
-    <string name="tab_tray_menu_item_save">ᱛᱩᱢᱟᱹᱞ ᱨᱮ ᱥᱟᱸᱪᱟᱣ ᱢᱮ</string>
+    <string name="tab_tray_menu_item_save">ᱛᱩᱢᱟᱹᱞ ᱨᱮ ᱥᱟᱺᱪᱟᱣ ᱢᱮ</string>
     <!-- Text shown in the menu for the collection selector -->
     <string name="tab_tray_menu_select">ᱵᱟᱪᱷᱟᱣ</string>
     <!-- Text shown in the menu for sharing all tabs -->
     <string name="tab_tray_menu_item_share">ᱡᱷᱚᱛᱚ ᱴᱮᱵᱽ ᱠᱚ ᱦᱟᱹᱴᱧ ᱢᱮ</string>
     <!-- Text shown in the menu to view recently closed tabs -->
     <string name="tab_tray_menu_recently_closed">ᱱᱤᱛᱚᱜᱽᱼᱟᱜ ᱵᱚᱸᱫᱚᱼᱟᱜ ᱴᱮᱵᱽ ᱠᱚ</string>
+    <!-- Text shown in the menu to view account settings -->
+    <string name="tab_tray_menu_account_settings">ᱠᱷᱟᱛᱟ ᱨᱮᱭᱟᱜ ᱥᱟᱡᱟᱣ ᱠᱚ</string>
     <!-- Text shown in the menu to view tab settings -->
     <string name="tab_tray_menu_tab_settings">ᱴᱮᱵ ᱨᱮᱭᱟᱜ ᱥᱟᱡᱟᱣ ᱠᱚ</string>
     <!-- Text shown in the menu for closing all tabs -->
@@ -644,7 +688,7 @@
     <!-- Open tabs menu item to share all tabs -->
     <string name="tabs_menu_share_tabs">ᱴᱮᱵᱽ ᱠᱚ ᱦᱟᱹᱴᱤᱧ ᱢᱮ</string>
     <!-- Open tabs menu item to save tabs to collection -->
-    <string name="tabs_menu_save_to_collection1">ᱴᱮᱵᱽ ᱠᱚ ᱛᱩᱢᱟᱹᱞ ᱨᱮ ᱥᱟᱸᱪᱟᱣ ᱢᱮ</string>
+    <string name="tabs_menu_save_to_collection1">ᱴᱮᱵᱽ ᱠᱚ ᱛᱩᱢᱟᱹᱞ ᱨᱮ ᱥᱟᱺᱪᱟᱣ ᱢᱮ</string>
     <!-- Content description (not visible, for screen readers etc.): Opens the tab menu when pressed -->
     <string name="tab_menu">ᱴᱮᱵ ᱢᱮᱱᱭᱩ</string>
     <!-- Tab menu item to share the tab -->
@@ -652,19 +696,19 @@
     <!-- Button in the current session menu. Deletes the session when pressed -->
     <string name="current_session_delete">ᱢᱮᱴᱟᱣ ᱢᱮ</string>
     <!-- Button in the current session menu. Saves the session when pressed -->
-    <string name="current_session_save">ᱥᱟᱸᱪᱟᱣ ᱢᱮ</string>
+    <string name="current_session_save">ᱥᱟᱺᱪᱟᱣ ᱢᱮ</string>
     <!-- Button in the current session menu. Opens the share menu when pressed -->
     <string name="current_session_share">ᱦᱟᱹᱴᱤᱧ ᱢᱮ</string>
     <!-- Content description (not visible, for screen readers etc.): Title icon for current session menu -->
     <string name="current_session_image">Current session image</string>
     <!-- Button to save the current set of tabs into a collection -->
-    <string name="save_to_collection">ᱛᱩᱢᱟᱹᱞ ᱨᱮ ᱥᱟᱸᱪᱟᱣ ᱢᱮ</string>
+    <string name="save_to_collection">ᱛᱩᱢᱟᱹᱞ ᱨᱮ ᱥᱟᱺᱪᱟᱣ ᱢᱮ</string>
     <!-- Text for the menu button to delete a collection -->
     <string name="collection_delete">ᱛᱩᱢᱟᱹᱞ ᱢᱮᱴᱟᱣ ᱢᱮ</string>
     <!-- Text for the menu button to rename a collection -->
     <string name="collection_rename">ᱛᱩᱢᱟᱹᱞ ᱫᱚᱦᱲᱟ ᱧᱩᱛᱩᱢ ᱢᱮ</string>
     <!-- Text for the button to open tabs of the selected collection -->
-    <string name="collection_open_tabs">ᱡᱷᱤᱡᱽ ᱟᱠᱟᱱ ᱴᱮᱵ ᱠᱚ</string>
+    <string name="collection_open_tabs">ᱡᱷᱤᱡᱽ ᱟᱠᱟᱱ ᱴᱮᱵᱽ ᱠᱚ</string>
     <!-- Hint for adding name of a collection -->
     <string name="collection_name_hint">ᱛᱩᱢᱟᱹᱞ ᱧᱩᱛᱩᱢ</string>
     <!-- Text for the menu button to rename a top site -->
@@ -676,7 +720,7 @@
     <!-- Postfix for private WebApp titles, placeholder is replaced with app name -->
     <string name="pwa_site_controls_title_private">%1$s (ᱯᱨᱭᱣᱮᱴ ᱢᱳᱰ)</string>
     <!-- Button in the current tab tray header in multiselect mode. Saved the selected tabs to a collection when pressed. -->
-    <string name="tab_tray_save_to_collection">ᱥᱟᱸᱪᱟᱣ</string>
+    <string name="tab_tray_save_to_collection">ᱥᱟᱺᱪᱟᱣ</string>
 
     <!-- History -->
     <!-- Text for the button to clear all history -->
@@ -722,15 +766,15 @@
 
     <!-- Downloads -->
     <!-- Text for the button to clear all downloads -->
-    <string name="download_delete_all">ᱰᱟᱩᱱᱞᱳᱰ ᱠᱚ ᱢᱮᱴᱟᱣ ᱢᱮ</string>
+    <string name="download_delete_all">ᱰᱟᱩᱱᱞᱚᱰ ᱠᱚ ᱢᱮᱴᱟᱣ ᱢᱮ</string>
     <!-- Text for the dialog to confirm clearing all downloads -->
-    <string name="download_delete_all_dialog">ᱟᱢ ᱡᱷᱚᱛᱚ ᱞᱮᱠᱷᱟ ᱛᱮ ᱟᱢᱟᱜ ᱰᱟᱩᱱᱞᱳᱰ ᱠᱚ ᱢᱮᱴᱟᱣ ᱥᱟᱱᱟᱢ ᱠᱟᱱᱟ ᱥᱮ?</string>
+    <string name="download_delete_all_dialog">ᱟᱢ ᱡᱷᱚᱛᱚ ᱞᱮᱠᱷᱟ ᱛᱮ ᱟᱢᱟᱜ ᱰᱟᱩᱱᱞᱚᱰ ᱠᱚ ᱢᱮᱴᱟᱣ ᱥᱟᱱᱟᱢ ᱠᱟᱱᱟ ᱥᱮ?</string>
     <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
-    <string name="download_delete_multiple_items_snackbar_1">ᱰᱟᱩᱱᱞᱳᱰᱠᱚ ᱚᱪᱚᱜᱮᱱᱟ</string>
+    <string name="download_delete_multiple_items_snackbar_1">ᱰᱟᱩᱱᱞᱚᱰᱠᱚ ᱚᱪᱚᱜᱮᱱᱟ</string>
     <!-- Text for the snackbar to confirm that a single download item has been removed. The first parameter is the name of the download item. -->
     <string name="download_delete_single_item_snackbar">%1$s ᱚᱪᱚᱜᱮᱱᱟ</string>
     <!-- Text shown when no download exists -->
-    <string name="download_empty_message_1">ᱱᱚᱰᱮ ᱰᱟᱩᱱᱞᱳᱰ ᱟᱠᱟᱱ ᱨᱮᱫ ᱠᱚ ᱵᱚᱱᱩᱜ-ᱟ</string>
+    <string name="download_empty_message_1">ᱱᱚᱰᱮ ᱰᱟᱩᱱᱞᱚᱰ ᱟᱠᱟᱱ ᱨᱮᱫ ᱠᱚ ᱵᱚᱱᱩᱜ-ᱟ</string>
     <!-- History multi select title in app bar
     The first parameter is the number of downloads selected -->
     <string name="download_multi_select_title">%1$d ᱵᱟᱪᱷᱟᱣᱮᱱᱟ</string>
@@ -779,7 +823,7 @@
     <!-- Screen title for adding a bookmarks folder -->
     <string name="bookmark_add_folder">ᱯᱚᱴᱚᱢ ᱥᱮᱞᱮᱫᱽ ᱢᱮ</string>
     <!-- Snackbar title shown after a bookmark has been created. -->
-    <string name="bookmark_saved_snackbar">ᱵᱩᱠᱢᱟᱨᱠ ᱥᱟᱸᱪᱟᱣᱮᱱᱟ!</string>
+    <string name="bookmark_saved_snackbar">ᱵᱩᱠᱢᱟᱨᱠ ᱥᱟᱺᱪᱟᱣᱮᱱᱟ!</string>
     <!-- Snackbar edit button shown after a bookmark has been created. -->
     <string name="edit_bookmark_snackbar_action">ᱥᱟᱯᱲᱣ ᱢᱮ</string>
     <!-- Bookmark overflow menu edit button -->
@@ -797,7 +841,7 @@
     <!-- Bookmark overflow menu delete button -->
     <string name="bookmark_menu_delete_button">ᱢᱮᱴᱟᱣ ᱢᱮ</string>
     <!--Bookmark overflow menu save button -->
-    <string name="bookmark_menu_save_button">ᱥᱟᱸᱪᱟᱣ ᱢᱮ</string>
+    <string name="bookmark_menu_save_button">ᱥᱟᱺᱪᱟᱣ ᱢᱮ</string>
     <!-- Bookmark multi select title in app bar
      The first parameter is the number of bookmarks selected -->
     <string name="bookmarks_multi_select_title">%1$d ᱵᱟᱪᱷᱟᱣᱮᱱᱟ</string>
@@ -806,7 +850,7 @@
     <!-- Bookmark folder editing screen title -->
     <string name="edit_bookmark_folder_fragment_title">ᱯᱚᱴᱚᱢ ᱥᱮᱞᱮᱫᱽ ᱢᱮ</string>
     <!-- Bookmark sign in button message -->
-    <string name="bookmark_sign_in_button">ᱥᱭᱸᱠᱼᱰ ᱵᱩᱠᱢᱟᱨᱠ ᱠᱚ ᱧᱮᱞ ᱞᱟᱹᱜᱤᱫ ᱛᱮ ᱵᱚᱞᱚᱱ ᱥᱩᱦᱤ ᱢᱮ</string>
+    <string name="bookmark_sign_in_button">ᱥᱭᱝᱠᱼᱰ ᱵᱩᱠᱢᱟᱨᱠ ᱠᱚ ᱧᱮᱞ ᱞᱟᱹᱜᱤᱫ ᱛᱮ ᱵᱚᱞᱚᱱ ᱥᱩᱦᱤ ᱢᱮ</string>
     <!-- Bookmark URL editing field label -->
     <string name="bookmark_url_label">URL</string>
     <!-- Bookmark FOLDER editing field label -->
@@ -882,14 +926,20 @@
     <string name="tracking_protection_off">ᱵᱚᱸᱫᱚ</string>
     <!-- Label for global setting that indicates that all video and audio autoplay is allowed -->
     <string name="preference_option_autoplay_allowed2">ᱟᱰᱤᱭᱳ ᱟᱨ ᱣᱤᱰᱤᱭᱳ ᱦᱮᱥᱟᱨᱤᱭᱟᱹ ᱢᱮ</string>
+    <!-- Label for site specific setting that indicates that all video and audio autoplay is allowed -->
+    <string name="quick_setting_option_autoplay_allowed">ᱟᱰᱤᱭᱳ ᱟᱨ ᱣᱤᱰᱤᱭᱳ ᱦᱮᱥᱟᱨᱤᱭᱟᱹ ᱢᱮ</string>
     <!-- Label that indicates that video and audio autoplay is only allowed over Wi-Fi -->
     <string name="preference_option_autoplay_allowed_wifi_only2">ᱥᱮᱞᱩᱞᱟᱹᱨ ᱰᱟᱴᱟ ᱨᱮᱜᱤ ᱟᱰᱤᱭᱳ ᱟᱨ ᱣᱤᱰᱤᱭᱳ ᱟᱴᱠᱟᱣ ᱢᱮ</string>
     <!-- Subtext that explains 'autoplay on Wi-Fi only' option -->
     <string name="preference_option_autoplay_allowed_wifi_subtext">ᱟᱰᱤᱭᱳ ᱟᱨ ᱣᱤᱰᱤᱭᱳ Wi-Fi ᱨᱮ ᱮᱱᱮᱡᱚᱣᱟ</string>
     <!-- Label for global setting that indicates that video autoplay is allowed, but audio autoplay is blocked -->
     <string name="preference_option_autoplay_block_audio2">ᱟᱰᱤᱭᱳ ᱜᱤ ᱟᱴᱠᱟᱣ ᱢᱮ</string>
+    <!-- Label for site specific setting that indicates that video autoplay is allowed, but audio autoplay is blocked -->
+    <string name="quick_setting_option_autoplay_block_audio">ᱚᱰᱤᱭᱳ ᱜᱤ ᱟᱴᱠᱟᱣ ᱢᱮ</string>
     <!-- Label for global setting that indicates that all video and audio autoplay is blocked -->
     <string name="preference_option_autoplay_blocked3">ᱟᱰᱤᱭᱳ ᱟᱨ ᱣᱤᱰᱤᱭᱳ ᱟᱴᱠᱟᱣ ᱢᱮ</string>
+    <!-- Label for site specific setting that indicates that all video and audio autoplay is blocked -->
+    <string name="quick_setting_option_autoplay_blocked">ᱚᱰᱤᱭᱳ ᱟᱨ ᱣᱤᱰᱤᱭᱳ ᱟᱴᱠᱟᱣ ᱢᱮ</string>
     <!-- Summary of delete browsing data on quit preference if it is set to on -->
     <string name="delete_browsing_data_quit_on">ᱪᱚᱞᱩ</string>
 
@@ -902,7 +952,7 @@
     <!-- Content description (not visible, for screen readers etc.): Opens the collection menu when pressed -->
     <string name="collection_menu_button_content_description">ᱛᱩᱢᱟᱹᱞ ᱢᱮᱱᱭᱩ</string>
     <!-- Label to describe what collections are to a new user without any collections -->
-    <string name="no_collections_description2">ᱡᱤᱱᱤᱥ ᱠᱚ ᱡᱟᱣᱨᱟᱭ ᱢᱮ ᱚᱠᱟ ᱟᱢ ᱞᱟᱹᱜᱤᱫ ᱴᱷᱤᱠ ᱟ ᱾ \nᱞᱚᱜᱚᱱᱛᱮ ᱧᱟᱢ ᱞᱟᱹᱜᱤᱫ ᱥᱚᱢᱟᱱ ᱥᱮᱸᱫᱽᱨᱟ, ᱥᱟᱭᱤᱴ ᱟᱨ ᱴᱮᱵᱽ ᱠᱚ ᱫᱳᱞ ᱠᱟᱜ ᱢᱮ ᱾</string>
+    <string name="no_collections_description2">ᱡᱤᱱᱤᱥ ᱠᱚ ᱡᱟᱣᱨᱟᱭ ᱢᱮ ᱚᱠᱟ ᱟᱢ ᱞᱟᱹᱜᱤᱫ ᱴᱷᱤᱠ ᱟ ᱾ \nᱞᱚᱜᱚᱱᱛᱮ ᱧᱟᱢ ᱞᱟᱹᱜᱤᱫ ᱥᱚᱢᱟᱱ ᱥᱮᱸᱫᱽᱨᱟ, ᱥᱟᱭᱤᱴ ᱟᱨ ᱴᱮᱵᱽ ᱠᱚ ᱡᱟᱣᱨᱟ ᱠᱟᱜ ᱢᱮ ᱾</string>
     <!-- Title for the "select tabs" step of the collection creator -->
     <string name="create_collection_select_tabs">ᱴᱮᱵᱽ ᱠᱚ ᱵᱟᱪᱷᱟᱣ ᱢᱮ</string>
     <!-- Title for the "select collection" step of the collection creator -->
@@ -916,7 +966,7 @@
     <!-- Button to deselect all tabs in the "select tabs" step of the collection creator -->
     <string name="create_collection_deselect_all">ᱡᱚᱛᱚ ᱠᱚ ᱵᱟᱝ ᱵᱟᱪᱷᱟᱣ ᱢᱮ</string>
     <!-- Text to prompt users to select the tabs to save in the "select tabs" step of the collection creator -->
-    <string name="create_collection_save_to_collection_empty">ᱥᱟᱸᱪᱟᱣ ᱞᱟᱹᱜᱤᱛ ᱛᱮ ᱴᱮᱵᱽ ᱠᱚ ᱵᱟᱪᱷᱟᱣ ᱢᱮ</string>
+    <string name="create_collection_save_to_collection_empty">ᱥᱟᱺᱪᱟᱣ ᱞᱟᱹᱜᱤᱛ ᱛᱮ ᱴᱮᱵᱽ ᱠᱚ ᱵᱟᱪᱷᱟᱣ ᱢᱮ</string>
     <!-- Text to show users how many tabs they have selected in the "select tabs" step of the collection creator.
      %d is a placeholder for the number of tabs selected. -->
     <string name="create_collection_save_to_collection_tabs_selected">%d ᱴᱮᱵᱽ ᱠᱚ ᱵᱟᱪᱷᱟᱣ ᱟᱠᱟᱱᱟ</string>
@@ -924,15 +974,15 @@
     %d is a placeholder for the number of tabs selected. -->
     <string name="create_collection_save_to_collection_tab_selected">%d ᱴᱮᱵᱽ ᱵᱟᱪᱷᱟᱣ ᱟᱠᱟᱱᱟ</string>
     <!-- Text shown in snackbar when multiple tabs have been saved in a collection -->
-    <string name="create_collection_tabs_saved">ᱴᱮᱵᱽ ᱠᱚ ᱥᱟᱸᱪᱟᱣᱮᱱᱟ!</string>
+    <string name="create_collection_tabs_saved">ᱴᱮᱵᱽ ᱠᱚ ᱥᱟᱺᱪᱟᱣᱮᱱᱟ!</string>
     <!-- Text shown in snackbar when one or multiple tabs have been saved in a new collection -->
-    <string name="create_collection_tabs_saved_new_collection">ᱛᱩᱢᱟᱹᱞ ᱥᱟᱸᱪᱟᱣᱮᱱᱟ!</string>
+    <string name="create_collection_tabs_saved_new_collection">ᱛᱩᱢᱟᱹᱞ ᱥᱟᱺᱪᱟᱣᱮᱱᱟ!</string>
     <!-- Text shown in snackbar when one tab has been saved in a collection -->
-    <string name="create_collection_tab_saved">ᱴᱮᱵ ᱥᱟᱸᱪᱟᱣᱮᱱᱟ!</string>
+    <string name="create_collection_tab_saved">ᱴᱮᱵ ᱥᱟᱺᱪᱟᱣᱮᱱᱟ!</string>
     <!-- Content description (not visible, for screen readers etc.): button to close the collection creator -->
     <string name="create_collection_close">ᱵᱚᱸᱫᱚᱭ ᱢᱮ</string>
     <!-- Button to save currently selected tabs in the "select tabs" step of the collection creator-->
-    <string name="create_collection_save">ᱥᱟᱸᱪᱟᱣ ᱢᱮ</string>
+    <string name="create_collection_save">ᱥᱟᱺᱪᱟᱣ ᱢᱮ</string>
     <!-- Snackbar action to view the collection the user just created or updated -->
     <string name="create_collection_view">ᱵᱷᱤᱭᱩ</string>
 
@@ -949,19 +999,21 @@
     <string name="share_button_content_description">ᱦᱟᱹᱴᱤᱧ ᱢᱮ</string>
 
     <!-- Sub-header in the dialog to share a link to another app -->
-    <string name="share_link_subheader">ᱢᱤᱫ ᱴᱟᱝ ᱞᱤᱸᱠ ᱦᱟᱹᱴᱤᱧ ᱢᱮ</string>
+    <string name="share_link_subheader">ᱢᱤᱫ ᱴᱟᱝ ᱞᱤᱝᱠ ᱦᱟᱹᱴᱤᱧ ᱢᱮ</string>
     <!-- Sub-header in the dialog to share a link to another sync device -->
     <string name="share_device_subheader">ᱥᱟᱫᱷᱚᱱ ᱨᱮ ᱠᱩᱞ ᱢᱮ</string>
     <!-- Sub-header in the dialog to share a link to an app from the full list -->
     <string name="share_link_all_apps_subheader">ᱡᱚᱛᱚ ᱠᱟᱹᱢᱤᱠᱚ</string>
     <!-- Sub-header in the dialog to share a link to an app from the most-recent sorted list -->
     <string name="share_link_recent_apps_subheader">ᱱᱤᱛᱚᱜ ᱵᱮᱵᱷᱟᱨᱟᱜ</string>
+    <!-- An option from the three dot menu to into sync -->
+    <string name="sync_menu_sign_in">ᱛᱷᱟᱨ ᱞᱟᱹᱜᱤᱫ ᱵᱚᱞᱚᱱ ᱥᱩᱦᱤ ᱢᱮ</string>
     <!-- An option from the share dialog to sign into sync -->
-    <string name="sync_sign_in">ᱥᱭᱸᱠ ᱞᱟᱹᱜᱤᱫ ᱛᱮ ᱵᱚᱞᱚᱱ ᱥᱩᱦᱤ ᱢᱮ</string>
+    <string name="sync_sign_in">ᱥᱭᱝᱠ ᱞᱟᱹᱜᱤᱫ ᱛᱮ ᱵᱚᱞᱚᱱ ᱥᱩᱦᱤ ᱢᱮ</string>
     <!-- An option from the share dialog to send link to all other sync devices -->
     <string name="sync_send_to_all">ᱡᱚᱛᱚ ᱥᱟᱫᱷᱚᱱ ᱛᱮ ᱵᱷᱮᱡᱟᱭᱢᱮ</string>
     <!-- An option from the share dialog to reconnect to sync -->
-    <string name="sync_reconnect">ᱥᱭᱸᱠ ᱞᱟᱹᱜᱤᱫ ᱫᱩᱦᱲᱟᱹ ᱡᱩᱲᱟᱹᱣ</string>
+    <string name="sync_reconnect">ᱥᱭᱝᱠ ᱞᱟᱹᱜᱤᱫ ᱫᱩᱦᱲᱟᱹ ᱡᱩᱲᱟᱹᱣ</string>
     <!-- Text displayed when sync is offline and cannot be accessed -->
     <string name="sync_offline">ᱟᱸᱯᱷᱞᱟᱭᱤᱱ</string>
     <!-- An option to connect additional devices -->
@@ -995,6 +1047,17 @@
     <string name="notification_pbm_action_delete_and_open">ᱢᱮᱴᱟᱣ ᱢᱮ ᱟᱨ ᱡᱷᱤᱡ ᱢᱮ</string>
     <!-- Name of the "Powered by Fenix" notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="notification_powered_by_channel_name">ᱦᱚᱛᱮ ᱛᱮ ᱫᱟᱲᱮ ᱮᱢ</string>
+    <!-- Name of the marketing notification channel. Displayed in the "App notifications" system settings for the app -->
+    <string name="notification_marketing_channel_name">ᱢᱟᱨᱠᱮᱴᱤᱝ</string>
+    <!-- Title shown in the notification that pops up to remind the user to set fenix as default browser.
+    %1$s is a placeholder that will be replaced by the app name (Fenix). -->
+    <string name="notification_default_browser_title">%1$s ᱫᱚ ᱞᱚᱜᱚᱱ ᱜᱮ ᱟᱨ ᱯᱨᱟᱭᱣᱮᱴ ᱜᱮ ᱠᱟᱹᱢᱤᱟᱭ</string>
+
+    <!-- Text shown in the notification that pops up to remind the user to set fenix as default browser.
+    %1$s is a placeholder that will be replaced by the app name (Fenix). -->
+    <string name="notification_default_browser_text">%1$s ᱫᱚ ᱟᱢᱟᱜ ᱢᱩᱞ ᱯᱷᱮᱲᱟᱛ ᱵᱽᱨᱟᱩᱡᱚᱨ ᱥᱮᱴ ᱢᱮ</string>
+
+    <!-- Snackbar -->
     <!-- Text shown in snackbar when user deletes a collection -->
     <string name="snackbar_collection_deleted">ᱛᱩᱢᱟᱹᱞ ᱢᱮᱴᱟᱣᱮᱱᱟ</string>
     <!-- Text shown in snackbar when user renames a collection -->
@@ -1065,7 +1128,7 @@
     <string name="preference_accessibility_auto_size_summary">ᱪᱤᱠᱤ ᱢᱟᱞ ᱫᱚ ᱮᱱᱰᱨᱚᱭᱮᱰ ᱥᱟᱡᱟᱣ ᱥᱟᱞᱟᱜ ᱥᱚᱢᱟᱱᱚᱜᱼᱟ ᱾ ᱪᱤᱠᱤ ᱢᱟᱯ ᱵᱚᱸᱫᱚ ᱞᱟᱹᱜᱤᱫ ᱱᱚᱰᱮ ᱢᱮᱱᱮᱡ ᱢᱮ ᱾</string>
 
     <!-- Title for the Delete browsing data preference -->
-    <string name="preferences_delete_browsing_data">ᱵᱽᱨᱳᱣᱡᱤᱝ ᱰᱟᱴᱟ ᱢᱮᱴᱟᱣ</string>
+    <string name="preferences_delete_browsing_data">ᱵᱽᱨᱟᱣᱡᱤᱝ ᱰᱟᱴᱟ ᱢᱮᱴᱟᱣ</string>
     <!-- Title for the tabs item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_tabs_title_2">ᱡᱷᱤᱡᱽ ᱴᱮᱵᱽ ᱠᱚ</string>
     <!-- Subtitle for the tabs item in Delete browsing data, parameter will be replaced with the number of open tabs -->
@@ -1091,11 +1154,11 @@
     <!-- Title for the site permissions item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_site_permissions">ᱥᱟᱭᱤᱴ ᱨᱮᱭᱟᱜ ᱪᱷᱟᱹᱲ ᱠᱚ</string>
     <!-- Title for the downloads item in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_downloads">ᱰᱟᱩᱱᱞᱳᱰ ᱠᱚ</string>
+    <string name="preferences_delete_browsing_data_downloads">ᱰᱟᱩᱱᱞᱚᱰ ᱠᱚ</string>
     <!-- Text for the button to delete browsing data -->
-    <string name="preferences_delete_browsing_data_button">ᱵᱽᱨᱳᱣᱡᱤᱝ ᱰᱟᱴᱟ ᱢᱮᱴᱟᱣ ᱢᱮ</string>
+    <string name="preferences_delete_browsing_data_button">ᱵᱽᱨᱟᱣᱡᱤᱝ ᱰᱟᱴᱟ ᱢᱮᱴᱟᱣ ᱢᱮ</string>
     <!-- Title for the Delete browsing data on quit preference -->
-    <string name="preferences_delete_browsing_data_on_quit">ᱵᱽᱨᱳᱣᱡᱤᱝ ᱰᱟᱴᱟ ᱢᱮᱴᱟᱣ ᱢᱮ ᱟᱲᱟᱜ ᱜᱷᱚᱲᱤ</string>
+    <string name="preferences_delete_browsing_data_on_quit">ᱵᱽᱨᱟᱣᱡᱤᱝ ᱰᱟᱴᱟ ᱢᱮᱴᱟᱣ ᱢᱮ ᱟᱲᱟᱜ ᱜᱷᱚᱲᱤ</string>
     <!-- Summary for the Delete browsing data on quit preference. "Quit" translation should match delete_browsing_data_on_quit_action translation. -->
     <string name="preference_summary_delete_browsing_data_on_quit">ᱵᱨᱟᱩᱡᱤᱝ ᱰᱟᱴᱟ ᱟᱪᱛᱮ ᱢᱮᱴᱟᱣ ᱛᱟᱦᱮᱱᱟᱭ ᱡᱚᱠᱷᱚᱱ ᱟᱢ \&quot;ᱟᱲᱟᱹᱜ\&quot; ᱵᱟᱪᱷᱟᱣ ᱛᱟᱦᱮᱱᱟᱢ ᱢᱩᱞ ᱢᱮᱱᱩ ᱠᱷᱚᱱ</string>
     <!-- Summary for the Delete browsing data on quit preference. "Quit" translation should match delete_browsing_data_on_quit_action translation. -->
@@ -1123,7 +1186,7 @@
     <!-- text for firefox preview moving tip description -->
     <string name="tip_firefox_preview_moved_description">
         Firefox Nightly ᱫᱚ ᱡᱷᱚᱛᱚ ᱟᱹᱭᱩᱵᱽ ᱟᱹᱯᱰᱮᱴᱚᱜ ᱠᱟᱱᱟ ᱟᱨ ᱚᱱᱟ ᱨᱮ ᱮᱠᱥᱯᱮᱨᱤᱢᱮᱱᱴᱟᱞ ᱯᱷᱤᱪᱚᱨ ᱠᱚ ᱢᱮᱱᱟᱜᱼᱟ ᱾
-        ᱦᱮᱞᱮ ᱚᱱᱟ ᱫᱚ ᱠᱚᱢ ᱥᱴᱮᱵᱚᱞ ᱛᱟᱦᱮᱸᱱᱟ ᱾ ᱵᱮᱥ ᱥᱴᱮᱵᱟᱹᱞ ᱮᱠᱥᱯᱤᱨᱤᱭᱮᱸᱥ ᱞᱟᱹᱜᱤᱫᱽ ᱟᱞᱮᱭᱟᱜ ᱵᱮᱴᱟ ᱵᱨᱟᱣᱡᱟᱹᱨ ᱰᱟᱩᱱᱞᱳᱰ ᱯᱮ ᱾</string>
+        ᱦᱮᱞᱮ ᱚᱱᱟ ᱫᱚ ᱠᱚᱢ ᱥᱴᱮᱵᱚᱞ ᱛᱟᱦᱮᱸᱱᱟ ᱾ ᱵᱮᱥ ᱥᱴᱮᱵᱟᱹᱞ ᱮᱠᱥᱯᱤᱨᱤᱭᱮᱸᱥ ᱞᱟᱹᱜᱤᱫᱽ ᱟᱞᱮᱭᱟᱜ ᱵᱮᱴᱟ ᱵᱨᱟᱣᱡᱟᱹᱨ ᱰᱟᱩᱱᱞᱚᱰ ᱯᱮ ᱾</string>
     <!-- text for firefox preview moving tip button. "Firefox for Android Beta" is intentionally hardcoded -->
     <string name="tip_firefox_preview_moved_button_2">Firefox ᱧᱟᱢ ᱢᱮ Android Beta ᱞᱟᱹᱜᱤᱫ ᱛᱮ</string>
 
@@ -1158,6 +1221,10 @@
     <string name="onboarding_whats_new_description">ᱨᱤᱰᱤᱡᱟᱭᱤᱱ %s ᱵᱟᱵᱚᱛ ᱠᱩᱞᱤ ᱢᱮᱱᱟᱜᱼᱟ? ᱵᱚᱫᱚᱞ ᱠᱚ ᱵᱟᱰᱟᱭ ᱥᱟᱱᱟᱢ ᱠᱟᱱᱟ ᱥᱮ?</string>
     <!-- text for underlined clickable link that is part of "what's new" onboarding card description that links to an FAQ -->
     <string name="onboarding_whats_new_description_linktext">ᱱᱚᱰᱮ ᱛᱮᱞᱟ ᱠᱚ ᱧᱟᱢ ᱟᱢ</string>
+    <!-- text for the Firefox account onboarding sign in card header. The word "Firefox" should not be translated -->
+    <string name="onboarding_account_sign_in_header_1">ᱥᱟᱫᱷᱚᱱ ᱵᱷᱤᱛᱨᱭ ᱨᱮ Firefox ᱥᱤᱝᱠ ᱢᱮ</string>
+    <!-- Text for the button to learn more about signing in to your Firefox account -->
+    <string name="onboarding_manual_sign_in_description">ᱯᱷᱟᱭᱟᱹᱨᱯᱷᱚᱠᱥ ᱨᱮ ᱵᱩᱠᱢᱟᱨᱠᱥ, ᱦᱤᱛᱟᱹᱞ, ᱟᱨ ᱫᱟᱱᱟᱝ ᱥᱟᱵᱟᱫᱽ ᱨᱮ ᱟᱹᱜᱩ ᱪᱷᱚᱭ ᱢᱮ ᱾</string>
     <!-- text for the firefox account onboarding card header when we detect you're already signed in to
         another Firefox browser. (The word `Firefox` should not be translated)
         The first parameter is the email of the detected user's account -->
@@ -1166,18 +1233,32 @@
     <string name="onboarding_firefox_account_auto_signin_confirm">ᱦᱮᱸ, ᱵᱚᱞᱚ ᱪᱷᱚᱭᱤᱧ ᱢᱮ</string>
     <!-- text for the automatic sign-in button while signing in is in process -->
     <string name="onboarding_firefox_account_signing_in">ᱵᱚᱞᱚᱱᱟ ᱠᱟᱹᱱᱟᱹᱧ…</string>
+    <!-- text for the button to manually sign into Firefox account. -->
+    <string name="onboarding_firefox_account_sign_in_1">ᱥᱩᱦᱤ ᱮᱡ ᱪᱷᱚ</string>
     <!-- text for the button to stay signed out when presented with an option to automatically sign-in. -->
     <string name="onboarding_firefox_account_stay_signed_out">ᱵᱟᱦᱨᱮ ᱨᱮᱜᱮ ᱛᱟᱦᱮᱸ ᱠᱚᱜ ᱢᱮ</string>
     <!-- text to display in the snackbar once account is signed-in -->
-    <string name="onboarding_firefox_account_sync_is_on">ᱥᱭᱸᱠ ᱪᱟᱹᱞᱩ ᱢᱮᱱᱟᱜ-ᱟ</string>
+    <string name="onboarding_firefox_account_sync_is_on">ᱥᱭᱝᱠ ᱪᱟᱹᱞᱩ ᱢᱮᱱᱟᱜ-ᱟ</string>
     <!-- text to display in the snackbar if automatic sign-in fails. user may try again -->
     <string name="onboarding_firefox_account_automatic_signin_failed">ᱵᱚᱞᱚᱱ ᱥᱩᱦᱤ ᱰᱤᱜᱟᱹᱣᱮᱱᱟ</string>
+    <!-- text for the tracking protection onboarding card header -->
+    <string name="onboarding_tracking_protection_header_3">ᱯᱨᱟᱭᱣᱮᱥᱭ ᱡᱷᱚᱛᱚ ᱵᱮᱲᱟ ᱮᱢ ᱪᱷᱚᱭ ᱢᱮ</string>
+    <!-- text for the tracking protection card description. 'Firefox' intentionally hardcoded here -->
+    <string name="onboarding_tracking_protection_description_3">ᱯᱷᱟᱭᱟᱹᱨᱯᱷᱚᱠᱥ ᱫᱚ ᱵᱟᱦᱨᱮ ᱠᱚᱢᱯᱟᱱᱤ ᱠᱚ ᱣᱮᱵᱽ ᱨᱮ ᱟᱢ ᱯᱟᱸᱡᱟ ᱠᱚ ᱵᱚᱸᱫᱚᱜᱼᱟ ᱾</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
     <string name="onboarding_tracking_protection_standard_button_2">ᱵᱮᱥᱟᱜ (ᱢᱩᱞ ᱯᱷᱮᱲᱟᱛ)</string>
+    <!-- text for standard blocking option button description -->
+    <string name="onboarding_tracking_protection_standard_button_description_3">ᱯᱨᱟᱭᱣᱮᱥᱭ ᱟᱨ ᱯᱚᱨᱯᱷᱚᱨᱢᱮᱱᱥ ᱞᱟᱹᱜᱤᱫ ᱥᱚᱢᱟᱱ ᱾ ᱥᱟᱦᱴᱟ ᱢᱩᱞ ᱞᱮᱠᱷᱟᱛᱮ ᱞᱟᱫᱮᱜᱼᱟ ᱾</string>
     <!-- text for tracking protection radio button option for strict level of blocking -->
     <string name="onboarding_tracking_protection_strict_button">ᱱᱤᱦᱟᱹᱛ (ᱵᱟᱛᱟᱣᱮᱢᱠᱟᱱᱟ)</string>
     <!-- text for tracking protection radio button option for strict level of blocking -->
     <string name="onboarding_tracking_protection_strict_option">ᱱᱤᱦᱟᱹᱛ</string>
+    <!-- text for strict blocking option button description -->
+    <string name="onboarding_tracking_protection_strict_button_description_3">ᱥᱟᱦᱴᱟ ᱞᱚᱜᱚᱱ ᱞᱳᱰ ᱞᱟᱹᱜᱤᱫ ᱯᱟᱧᱡᱟ ᱫᱟᱱᱟᱲ ᱠᱚ ᱵᱞᱚᱠ ᱠᱚᱟᱭ, ᱦᱮᱞᱮ ᱥᱟᱦᱴᱟ ᱞᱳᱰ ᱨᱮ ᱰᱤᱜᱟᱹᱣ ᱦᱩᱭ ᱫᱟᱲᱮᱭᱟᱜᱼᱟ ᱾</string>
+    <!-- text for the toolbar position card header  -->
+    <string name="onboarding_toolbar_placement_header_1">ᱟᱢᱟᱜ ᱴᱩᱞᱵᱟᱨ ᱯᱞᱮᱥᱢᱮᱱᱴ ᱨᱟᱠᱟᱵᱽ ᱛᱟᱢ</string>
+    <!-- text for the toolbar position card description -->
+    <string name="onboarding_toolbar_placement_description_1">ᱴᱩᱞᱵᱟᱨ ᱫᱚ ᱥᱮᱴᱮᱨᱚᱜ ᱴᱷᱮᱱ ᱫᱚᱦᱚᱭ ᱢᱮ ᱾ ᱞᱟᱛᱟᱨ ᱨᱮ ᱫᱚᱦᱚᱭ ᱢᱮ, ᱟᱨ ᱵᱟᱝ ᱪᱮᱛᱟᱱ ᱥᱮᱫ ᱩᱪᱟᱹᱲ ᱢᱮ ᱾</string>
     <!-- text for the private browsing onboarding card header -->
     <string name="onboarding_private_browsing_header">ᱱᱤᱡᱮᱨᱟᱜ ᱨᱮ ᱵᱨᱟᱩᱡ ᱢᱮ</string>
     <!-- text for the private browsing onboarding card description
@@ -1190,6 +1271,9 @@
 
     <!-- text for the privacy notice onboarding card header -->
     <string name="onboarding_privacy_notice_header">ᱟᱢᱟᱜ ᱱᱤᱥᱚᱱ</string>
+    <!-- text for the privacy notice onboarding card description
+    The first parameter is the name of the app (e.g. Firefox Preview) Substitute %s for long browser name. -->
+    <string name="onboarding_privacy_notice_description2">ᱟᱞᱮ  %s ᱞᱮ ᱰᱤᱡᱟᱭᱤᱱ ᱟᱠᱟᱫᱼᱟ ᱚᱠᱟ ᱫᱚ ᱡᱟᱦᱟᱱᱟᱜ ᱠᱚ ᱚᱱᱞᱟᱭᱤᱱ ᱦᱟᱹᱴᱤᱧ ᱨᱮ ᱟᱨ ᱚᱠᱟ ᱠᱚ ᱟᱞᱮ ᱦᱟᱹᱤᱧ ᱟᱞᱮᱭᱟᱢ, ᱜᱚᱲᱚ ᱮᱢᱟᱭ ᱾</string>
     <!-- Text for the button to read the privacy notice -->
     <string name="onboarding_privacy_notice_read_button">ᱟᱞᱮᱭᱟᱜ ᱱᱤᱥᱚᱱ ᱱᱚᱴᱤᱥ ᱯᱟᱲᱦᱟᱣ ᱯᱮ</string>
     <!-- Content description (not visible, for screen readers etc.): Close onboarding screen -->
@@ -1201,6 +1285,8 @@
     <!-- Onboarding theme -->
     <!-- text for the theme picker onboarding card header -->
     <string name="onboarding_theme_picker_header">ᱩᱭᱦᱟᱹᱨ ᱵᱟᱪᱷᱟᱣ ᱛᱟᱢ</string>
+    <!-- text for the theme picker onboarding card description -->
+    <string name="onboarding_theme_picker_description_2">ᱛᱤᱱᱟᱹᱜ ᱜᱟᱱ ᱵᱮᱴᱨᱭ ᱵᱚᱪᱚᱛ ᱢᱮ ᱟᱨ ᱟᱢᱟᱜ ᱢᱮᱫ ᱵᱟᱧᱪᱟᱣ ᱛᱟᱢ ᱧᱩᱛ ᱩᱭᱦᱟᱹᱨ ᱪᱟᱹᱞᱩ ᱠᱟᱛᱮ ᱾</string>
     <!-- Automatic theme setting (will follow device setting) -->
     <string name="onboarding_theme_automatic_title">ᱟᱪᱛᱮ</string>
     <!-- Summary of automatic theme setting (will follow device setting) -->
@@ -1219,21 +1305,21 @@
     <!-- Text shown in snackbar for the "retry" action that the user has after sharing tabs failed -->
     <string name="sync_sent_tab_error_snackbar_action">ᱨᱤᱴᱨᱭ</string>
     <!-- Title of QR Pairing Fragment -->
-    <string name="sync_scan_code">ᱠᱳᱰ ᱥᱠᱮᱱ ᱢᱮ</string>
+    <string name="sync_scan_code">ᱠᱳᱰ ᱥᱠᱟᱱ ᱢᱮ</string>
     <!-- Instructions on how to access pairing -->
     <string name="sign_in_instructions"><![CDATA[ᱟᱢᱟᱜ ᱠᱚᱢᱯᱤᱭᱩᱴᱟᱨ ᱨᱮ Firefox ᱡᱷᱤᱡᱽ ᱢᱮ ᱟᱨ <b>https://firefox.com/pair</b> ᱨᱮ ᱪᱟᱞᱟᱜ ᱢᱮ]]></string>
     <!-- Text shown for sign in pairing when ready -->
-    <string name="sign_in_ready_for_scan">ᱥᱠᱮᱱ ᱞᱚᱜᱤᱫᱛᱮ ᱛᱮᱭᱟᱨ ᱢᱮᱱᱟᱢᱼᱟ</string>
+    <string name="sign_in_ready_for_scan">ᱥᱠᱟᱱ ᱞᱚᱜᱤᱫᱛᱮ ᱛᱮᱭᱟᱨ ᱢᱮᱱᱟᱢᱼᱟ</string>
     <!-- Text shown for settings option for sign with pairing -->
     <string name="sign_in_with_camera">ᱟᱢᱟᱜ ᱠᱮᱢᱮᱨᱟ ᱛᱮ ᱵᱚᱞᱚᱱ ᱥᱩᱦᱤ ᱢᱮ</string>
     <!-- Text shown for settings option for sign with email -->
     <string name="sign_in_with_email">ᱵᱟᱹᱫᱟᱹᱞ ᱛᱮ ᱮᱢᱮᱞ ᱵᱮᱵᱷᱟᱨ ᱢᱮ</string>
     <!-- Text shown for settings option for create new account text.'Firefox' intentionally hardcoded here.-->
-    <string name="sign_in_create_account_text"><![CDATA[ᱠᱷᱟᱛᱟ ᱵᱟᱹᱱᱩᱜᱼᱟ? <u>ᱢᱤᱫᱴᱟᱹᱝ ᱛᱮᱭᱟᱨ ᱢᱮ</u> ᱰᱥᱫᱷᱚᱱ ᱠᱚ ᱵᱷᱤᱛᱨᱭ ᱨᱮ Firefox ᱥᱭᱸᱠ ᱞᱟᱹᱜᱤᱫ ᱾]]></string>
+    <string name="sign_in_create_account_text"><![CDATA[ᱠᱷᱟᱛᱟ ᱵᱟᱹᱱᱩᱜᱼᱟ? <u>ᱢᱤᱫᱴᱟᱹᱝ ᱛᱮᱭᱟᱨ ᱢᱮ</u> ᱰᱥᱫᱷᱚᱱ ᱠᱚ ᱵᱷᱤᱛᱨᱭ ᱨᱮ Firefox ᱥᱭᱝᱠ ᱞᱟᱹᱜᱤᱫ ᱾]]></string>
     <!-- Text shown in confirmation dialog to sign out of account -->
     <string name="sign_out_confirmation_message">Firefox ᱟᱢᱟᱜ ᱠᱷᱟᱛᱟ ᱥᱟᱞᱟᱜ ᱟᱭᱩᱨ ᱢᱤᱫ ᱵᱚᱸᱫᱭ ᱟᱭ, ᱦᱮᱞᱮ ᱟᱢᱟᱜ ᱥᱟᱫᱷᱚᱱ ᱠᱷᱚᱱ ᱪᱮᱫ ᱦᱚᱸ ᱵᱟᱭ ᱢᱮᱴᱟᱣᱟᱭ ᱾</string>
     <!-- Text shown in confirmation dialog to sign out of account. The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="sign_out_confirmation_message_2">%s ᱫᱚ ᱟᱢᱟᱜ ᱠᱷᱟᱛᱟ ᱥᱟᱞᱟᱜ ᱥᱭᱸᱠ ᱵᱚᱸᱫᱽᱚᱭ ᱟ , ᱦᱮᱞᱮ ᱟᱢᱟᱜ ᱚᱠᱟ ᱵᱨᱟᱩᱡᱤᱸᱝ ᱰᱟᱴᱟ ᱦᱚᱸ ᱟᱢᱟᱜ ᱥᱟᱫᱷᱚᱱ ᱨᱮ ᱵᱟᱭ ᱢᱮᱴᱟᱣᱜᱼᱟ ᱾</string>
+    <string name="sign_out_confirmation_message_2">%s ᱫᱚ ᱟᱢᱟᱜ ᱠᱷᱟᱛᱟ ᱥᱟᱞᱟᱜ ᱥᱭᱝᱠ ᱵᱚᱸᱫᱽᱚᱭ ᱟ , ᱦᱮᱞᱮ ᱟᱢᱟᱜ ᱚᱠᱟ ᱵᱨᱟᱩᱡᱤᱸᱝ ᱰᱟᱴᱟ ᱦᱚᱸ ᱟᱢᱟᱜ ᱥᱟᱫᱷᱚᱱ ᱨᱮ ᱵᱟᱭ ᱢᱮᱴᱟᱣᱜᱼᱟ ᱾</string>
     <!-- Option to continue signing out of account shown in confirmation dialog to sign out of account -->
     <string name="sign_out_disconnect">ᱡᱚᱱᱚᱲᱟᱣ ᱚᱪᱚᱜ</string>
     <!-- Option to cancel signing out shown in confirmation dialog to sign out of account -->
@@ -1254,10 +1340,14 @@
     <string name="preference_enhanced_tracking_protection_explanation_learn_more">ᱰᱷᱮᱨ ᱥᱮᱬᱟᱭ ᱢᱮ</string>
     <!-- Preference for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_standard_default_1">ᱱᱟᱯ (ᱢᱩᱞ ᱯᱷᱮᱲᱟᱛ)</string>
+    <!-- Preference description for enhanced tracking protection for the standard protection settings -->
+    <string name="preference_enhanced_tracking_protection_standard_description_4">ᱯᱨᱟᱭᱣᱮᱥᱭ ᱟᱨ ᱯᱚᱨᱯᱷᱚᱨᱢᱮᱱᱥ ᱞᱟᱹᱜᱤᱫ ᱥᱚᱢᱟᱱ ᱾ ᱥᱟᱦᱴᱟ ᱢᱩᱞ ᱞᱮᱠᱷᱟᱛᱮ ᱞᱟᱫᱮᱜᱼᱟ ᱾</string>
     <!--  Accessibility text for the Standard protection information icon  -->
     <string name="preference_enhanced_tracking_protection_standard_info_button">ᱢᱩᱞ ᱜᱷᱮᱨ ᱮᱥᱮᱫ ᱨᱚᱠᱷᱭᱟ ᱫᱚ ᱪᱮᱫ ᱮ ᱵᱞᱚᱠ ᱪᱷᱚ ᱠᱮᱜᱼᱟᱭ</string>
     <!-- Preference for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict">ᱱᱤᱦᱟᱹᱛ</string>
+    <!-- Preference description for enhanced tracking protection for the strict protection settings -->
+    <string name="preference_enhanced_tracking_protection_strict_description_3">ᱥᱟᱦᱴᱟ ᱞᱚᱜᱚᱱ ᱞᱳᱰ ᱞᱟᱹᱜᱤᱫ ᱯᱟᱧᱡᱟ ᱫᱟᱱᱟᱲ ᱠᱚ ᱵᱞᱚᱠ ᱠᱚᱟᱭ, ᱦᱮᱞᱮ ᱥᱟᱦᱴᱟ ᱞᱳᱰ ᱨᱮ ᱰᱤᱜᱟᱹᱣ ᱦᱩᱭ ᱫᱟᱲᱮᱭᱟᱜᱼᱟ ᱾</string>
     <!--  Accessibility text for the Strict protection information icon  -->
     <string name="preference_enhanced_tracking_protection_strict_info_button">ᱴᱷᱤᱴ ᱜᱷᱮᱨ ᱮᱥᱮᱫ ᱨᱩᱠᱷᱭᱟ ᱫᱚ ᱪᱮᱫ ᱵᱞᱚᱠ ᱠᱮᱜᱼᱟᱭ</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
@@ -1389,31 +1479,33 @@
     <!-- Preference for managing the settings for logins and passwords in Fenix -->
     <string name="preferences_passwords_logins_and_passwords">ᱵᱚᱞᱚᱱ ᱠᱚ ᱟᱨ ᱫᱟᱱᱟᱝ ᱥᱟᱵᱟᱫ ᱠᱚ</string>
     <!-- Preference for managing the saving of logins and passwords in Fenix -->
-    <string name="preferences_passwords_save_logins">ᱞᱚᱜᱤᱱ ᱠᱚ ᱟᱨ ᱫᱟᱱᱟᱝ ᱥᱟᱵᱟᱫ ᱠᱚ ᱥᱟᱸᱪᱟᱣ ᱢᱮ</string>
+    <string name="preferences_passwords_save_logins">ᱞᱚᱜᱤᱱ ᱠᱚ ᱟᱨ ᱫᱟᱱᱟᱝ ᱥᱟᱵᱟᱫ ᱠᱚ ᱥᱟᱺᱪᱟᱣ ᱢᱮ</string>
     <!-- Preference option for asking to save passwords in Fenix -->
-    <string name="preferences_passwords_save_logins_ask_to_save">ᱥᱟᱸᱪᱟᱣ ᱞᱟᱹᱜᱤᱫᱛᱮ ᱠᱩᱠᱞᱤ</string>
+    <string name="preferences_passwords_save_logins_ask_to_save">ᱥᱟᱺᱪᱟᱣ ᱞᱟᱹᱜᱤᱫᱛᱮ ᱠᱩᱠᱞᱤ</string>
     <!-- Preference option for never saving passwords in Fenix -->
-    <string name="preferences_passwords_save_logins_never_save">ᱛᱤᱥ ᱦᱚᱸ ᱟᱞᱳᱢ ᱥᱟᱸᱪᱟᱣᱼᱟ</string>
+    <string name="preferences_passwords_save_logins_never_save">ᱛᱤᱥ ᱦᱚᱸ ᱟᱞᱳᱢ ᱥᱟᱺᱪᱟᱣᱼᱟ</string>
     <!-- Preference for autofilling saved logins in Fenix -->
     <string name="preferences_passwords_autofill">ᱟᱪᱛᱮ ᱯᱮᱨᱮᱡᱽ</string>
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">ᱞᱚᱜᱤᱱ ᱠᱚ ᱥᱤᱸᱠ ᱢᱮ</string>
+    <!-- Preference for syncing saved logins in Fenix, when not signed in-->
+    <string name="preferences_passwords_sync_logins_across_devices">ᱡᱷᱚᱛᱚ ᱥᱟᱫᱷᱚᱱ ᱵᱷᱤᱛᱨᱤ ᱨᱮ ᱵᱚᱞᱚ ᱠᱚ ᱥᱤᱝᱠ ᱢᱮ</string>
     <!-- Syncing saved logins in Fenix needs reconnect to sync -->
     <string name="preferences_passwords_sync_logins_reconnect">ᱨᱤᱠᱚᱱᱮᱠᱼᱴ</string>
     <!-- Syncing saved logins in Fenix needs login -->
     <string name="preferences_passwords_sync_logins_sign_in">ᱛᱷᱟᱨ ᱞᱟᱹᱜᱤᱛ ᱵᱚᱞᱚᱱ ᱥᱩᱦᱤ ᱢᱮ</string>
     <!-- Preference to access list of saved logins -->
-    <string name="preferences_passwords_saved_logins">ᱥᱟᱸᱪᱟᱣᱟᱠᱟᱱ ᱞᱚᱜᱤᱱ ᱠᱚ</string>
+    <string name="preferences_passwords_saved_logins">ᱥᱟᱺᱪᱟᱣᱟᱠᱟᱱ ᱞᱚᱜᱤᱱ ᱠᱚ</string>
     <!-- Description of empty list of saved passwords. Placeholder is replaced with app name.  -->
-    <string name="preferences_passwords_saved_logins_description_empty_text">ᱞᱚᱜᱤᱱ ᱚᱠᱟ %s ᱨᱮ ᱥᱟᱸᱪᱟᱣ ᱟᱨ ᱥᱭᱸᱠ ᱥᱟᱱᱟᱢ ᱠᱟᱱᱟ ᱚᱱᱟ ᱠᱚ ᱱᱚᱰᱮ ᱫᱮᱠᱷᱟᱣᱜᱼᱟ ᱾</string>
+    <string name="preferences_passwords_saved_logins_description_empty_text">ᱞᱚᱜᱤᱱ ᱚᱠᱟ %s ᱨᱮ ᱥᱟᱺᱪᱟᱣ ᱟᱨ ᱥᱭᱝᱠ ᱥᱟᱱᱟᱢ ᱠᱟᱱᱟ ᱚᱱᱟ ᱠᱚ ᱱᱚᱰᱮ ᱫᱮᱠᱷᱟᱣᱜᱼᱟ ᱾</string>
     <!-- Preference to access list of saved logins -->
-    <string name="preferences_passwords_saved_logins_description_empty_learn_more_link">ᱥᱭᱸᱠ ᱵᱟᱵᱚᱛ ᱡᱟᱹᱥᱛᱤ ᱵᱟᱰᱟᱭ ᱢᱮ ᱾</string>
+    <string name="preferences_passwords_saved_logins_description_empty_learn_more_link">ᱥᱭᱝᱠ ᱵᱟᱵᱚᱛ ᱡᱟᱹᱥᱛᱤ ᱵᱟᱰᱟᱭ ᱢᱮ ᱾</string>
     <!-- Preference to access list of login exceptions that we never save logins for -->
     <string name="preferences_passwords_exceptions">ᱪᱷᱟᱰᱟ ᱠᱚ</string>
     <!-- Empty description of list of login exceptions that we never save logins for -->
-    <string name="preferences_passwords_exceptions_description_empty">ᱵᱚᱞᱚᱱ ᱥᱩᱦᱤ ᱟᱨ ᱫᱟᱱᱟᱝ ᱥᱟᱵᱟᱫ ᱠᱚ ᱡᱟ ᱵᱟᱝ ᱥᱟᱸᱪᱟᱣ ᱠᱟᱱᱟ ᱚᱱᱟᱠᱩ ᱱᱚᱰᱮ ᱩᱫᱩᱜᱚᱣᱟ ᱾</string>
+    <string name="preferences_passwords_exceptions_description_empty">ᱵᱚᱞᱚᱱ ᱥᱩᱦᱤ ᱟᱨ ᱫᱟᱱᱟᱝ ᱥᱟᱵᱟᱫ ᱠᱚ ᱡᱟ ᱵᱟᱝ ᱥᱟᱺᱪᱟᱣ ᱠᱟᱱᱟ ᱚᱱᱟᱠᱩ ᱱᱚᱰᱮ ᱩᱫᱩᱜᱚᱣᱟ ᱾</string>
     <!-- Description of list of login exceptions that we never save logins for -->
-    <string name="preferences_passwords_exceptions_description">ᱞᱚᱜᱤᱱᱥ ᱟᱨ ᱫᱟᱱᱟᱝ ᱥᱟᱵᱟᱫ ᱫᱚ ᱱᱚᱶᱟ ᱥᱟᱭᱤᱴ ᱞᱟᱹᱜᱤᱫ ᱵᱟᱝ ᱥᱟᱸᱪᱟᱣᱜᱼᱟ ᱾</string>
+    <string name="preferences_passwords_exceptions_description">ᱞᱚᱜᱤᱱᱥ ᱟᱨ ᱫᱟᱱᱟᱝ ᱥᱟᱵᱟᱫ ᱫᱚ ᱱᱚᱶᱟ ᱥᱟᱭᱤᱴ ᱞᱟᱹᱜᱤᱫ ᱵᱟᱝ ᱥᱟᱺᱪᱟᱣᱜᱼᱟ ᱾</string>
     <!-- Text on button to remove all saved login exceptions -->
     <string name="preferences_passwords_exceptions_remove_all">ᱡᱷᱚᱛᱚ ᱪᱷᱟᱰᱟᱠᱚ ᱢᱮᱴᱟᱣ ᱢᱮ</string>
     <!-- Hint for search box in logins list -->
@@ -1431,17 +1523,17 @@
     <!-- Message displayed in security prompt to reenter a secret pin to access saved logins -->
     <string name="preferences_passwords_saved_logins_enter_pin">PIN ᱫᱩᱦᱲᱟᱹ ᱟᱫᱮᱨ ᱢᱮ</string>
     <!-- Message displayed in security prompt to access saved logins -->
-    <string name="preferences_passwords_saved_logins_enter_pin_description">ᱥᱟᱸᱪᱟᱣᱠᱟᱱ ᱵᱚᱞᱚᱱ ᱥᱩᱦᱤ ᱠᱚ ᱧᱮᱞ ᱞᱟᱹᱜᱤᱛ ᱛᱮ ᱚᱱᱞᱚᱠ ᱢᱮ</string>
+    <string name="preferences_passwords_saved_logins_enter_pin_description">ᱥᱟᱺᱪᱟᱣᱠᱟᱱ ᱵᱚᱞᱚᱱ ᱥᱩᱦᱤ ᱠᱚ ᱧᱮᱞ ᱞᱟᱹᱜᱤᱛ ᱛᱮ ᱚᱱᱞᱚᱠ ᱢᱮ</string>
     <!-- Message displayed when a connection is insecure and we detect the user is entering a password -->
     <string name="logins_insecure_connection_warning">ᱱᱚᱶᱟ ᱡᱩᱲᱟᱹᱣ ᱫᱚ ᱵᱟᱝ ᱴᱷᱤᱠ ᱟ ᱾ ᱞᱚᱜᱤᱱ ᱨᱮ ᱚᱞ ᱮᱢ ᱡᱤᱱᱤᱥ ᱫᱚ ᱠᱚᱢᱯᱨᱚᱢᱟᱭᱤᱡ ᱫᱟᱲᱮᱟᱜᱼᱟ ᱾</string>
     <!-- Learn more link that will link to a page with more information displayed when a connection is insecure and we detect the user is entering a password -->
     <string name="logins_insecure_connection_warning_learn_more">ᱰᱷᱮᱨ ᱥᱮᱬᱟᱭ ᱢᱮ</string>
     <!-- Prompt message displayed when Fenix detects a user has entered a password and user decides if Fenix should save it. The first parameter is the name of the application (For example: Fenix)  -->
-    <string name="logins_doorhanger_save">ᱟᱢ ᱪᱮᱫ %s ᱱᱚᱶᱟ ᱞᱚᱜᱤᱱ ᱥᱟᱸᱪᱟᱣ ᱥᱮᱱᱟᱢ ᱠᱟᱱᱟ ᱥᱮ?</string>
+    <string name="logins_doorhanger_save">ᱟᱢ ᱪᱮᱫ %s ᱱᱚᱶᱟ ᱞᱚᱜᱤᱱ ᱥᱟᱺᱪᱟᱣ ᱥᱮᱱᱟᱢ ᱠᱟᱱᱟ ᱥᱮ?</string>
     <!-- Positive confirmation that Fenix should save the new or updated login -->
-    <string name="logins_doorhanger_save_confirmation">ᱥᱟᱸᱪᱟᱣ</string>
+    <string name="logins_doorhanger_save_confirmation">ᱥᱟᱺᱪᱟᱣ</string>
     <!-- Negative confirmation that Fenix should not save the new or updated login -->
-    <string name="logins_doorhanger_save_dont_save">ᱟᱞᱚᱢ ᱥᱟᱸᱪᱟᱣ-ᱟ</string>
+    <string name="logins_doorhanger_save_dont_save">ᱟᱞᱚᱢ ᱥᱟᱺᱪᱟᱣ-ᱟ</string>
     <!-- Shown in snackbar to tell user that the password has been copied -->
     <string name="logins_password_copied">ᱫᱟᱱᱟᱝ ᱥᱟᱵᱟᱫ ᱨᱮᱴᱚᱵ-ᱵᱚᱰ ᱨᱮ ᱱᱚᱠᱚᱞᱮᱱᱟ</string>
     <!-- Shown in snackbar to tell user that the username has been copied -->
@@ -1465,11 +1557,11 @@
     <!-- Content Description (for screenreaders etc) read for the button to hide a password in logins -->
     <string name="saved_login_hide_password">ᱫᱟᱱᱟᱝ ᱥᱟᱵᱟᱫ ᱩᱠᱩ</string>
     <!-- Message displayed in biometric prompt displayed for authentication before allowing users to view their logins -->
-    <string name="logins_biometric_prompt_message">ᱥᱟᱸᱪᱟᱣᱠᱟᱱ ᱵᱚᱞᱚᱱ ᱥᱩᱦᱤ ᱠᱚ ᱧᱮᱞ ᱞᱟᱹᱜᱤᱛ ᱛᱮ ᱚᱱᱞᱚᱠ ᱢᱮ</string>
+    <string name="logins_biometric_prompt_message">ᱥᱟᱺᱪᱟᱣᱠᱟᱱ ᱵᱚᱞᱚᱱ ᱥᱩᱦᱤ ᱠᱚ ᱧᱮᱞ ᱞᱟᱹᱜᱤᱛ ᱛᱮ ᱚᱱᱞᱚᱠ ᱢᱮ</string>
     <!-- Title of warning dialog if users have no device authentication set up -->
     <string name="logins_warning_dialog_title">ᱟᱢᱟᱜ ᱞᱚᱜᱤᱱ ᱠᱚ ᱟᱨ ᱫᱟᱱᱟᱝ ᱥᱟᱵᱟᱫ ᱠᱚ ᱡᱟᱯᱛᱤ ᱢᱮ</string>
     <!-- Message of warning dialog if users have no device authentication set up -->
-    <string name="logins_warning_dialog_message">ᱥᱟᱫᱷᱚᱱ ᱠᱩᱞᱩᱯ ᱪᱤᱱᱦᱟᱹ, ᱯᱤᱱ, ᱟᱨ ᱵᱟᱝ ᱫᱟᱱᱟᱝ ᱥᱟᱵᱟᱫ ᱞᱟᱜᱟᱣᱢᱮ ᱟᱢᱟᱜ ᱥᱟᱸᱪᱟᱣ ᱞᱚᱜᱤᱱ ᱠᱚ ᱮᱢᱟᱱ ᱨᱩᱠᱷᱭᱟ ᱞᱟᱹᱜᱤᱫ ᱡᱩᱫᱤ ᱚᱞᱜᱟ ᱦᱚᱲ ᱴᱷᱮᱱ ᱟᱢᱟᱜ ᱥᱟᱫᱷᱚᱱ ᱛᱟᱦᱮᱸᱱ ᱠᱷᱟᱱ ᱾</string>
+    <string name="logins_warning_dialog_message">ᱥᱟᱫᱷᱚᱱ ᱠᱩᱞᱩᱯ ᱪᱤᱱᱦᱟᱹ, ᱯᱤᱱ, ᱟᱨ ᱵᱟᱝ ᱫᱟᱱᱟᱝ ᱥᱟᱵᱟᱫ ᱞᱟᱜᱟᱣᱢᱮ ᱟᱢᱟᱜ ᱥᱟᱺᱪᱟᱣ ᱞᱚᱜᱤᱱ ᱠᱚ ᱮᱢᱟᱱ ᱨᱩᱠᱷᱭᱟ ᱞᱟᱹᱜᱤᱫ ᱡᱩᱫᱤ ᱚᱞᱜᱟ ᱦᱚᱲ ᱴᱷᱮᱱ ᱟᱢᱟᱜ ᱥᱟᱫᱷᱚᱱ ᱛᱟᱦᱮᱸᱱ ᱠᱷᱟᱱ ᱾</string>
     <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
     <string name="logins_warning_dialog_later">ᱛᱟᱭᱚᱢ ᱛᱮ</string>
     <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->
@@ -1488,14 +1580,80 @@
     <!-- Content description (not visible, for screen readers etc.): Sort saved logins dropdown menu chevron icon -->
     <string name="saved_logins_menu_dropdown_chevron_icon_content_description">ᱞᱚᱜᱤᱱ ᱢᱮᱱᱭᱩ ᱥᱟᱞᱟᱭ ᱢᱮ</string>
 
+    <!-- Credit Cards Autofill -->
+    <!-- Preference and title for managing the settings for credit cards -->
+    <string name="preferences_credit_cards">ᱠᱨᱮᱰᱤᱴ ᱠᱟᱰ</string>
+
+    <!-- Preference for saving and autofilling credit cards -->
+    <string name="preferences_credit_cards_save_and_autofill_cards">ᱥᱟᱺᱪᱟᱣ ᱟᱨ ᱠᱟᱰ ᱠᱚ ᱟᱡ ᱛᱮ ᱯᱮᱨᱮᱡᱽ ᱢᱮ</string>
+    <!-- Preference summary for saving and autofilling credit card data -->
+    <string name="preferences_credit_cards_save_and_autofill_cards_summary">ᱰᱟᱴᱟ ᱫᱚ ᱮᱱᱠᱨᱤᱯᱴᱮᱰ ᱠᱟᱱᱟ</string>
+    <!-- Preference option for syncing credit cards across devices. This is displayed when the user is not signed into sync -->
+    <string name="preferences_credit_cards_sync_cards_across_devices">ᱡᱷᱚᱛᱚ ᱥᱟᱫᱷᱚᱱ ᱵᱷᱤᱛᱨᱤ ᱨᱮ ᱠᱟᱰ ᱥᱤᱝᱠ ᱢᱮ</string>
+    <!-- Preference option for syncing credit cards across devices. This is displayed when the user is signed into sync -->
+    <string name="preferences_credit_cards_sync_cards">ᱠᱟᱰ ᱥᱤᱝᱠ ᱢᱮ</string>
+
+    <!-- Preference option for adding a credit card -->
+    <string name="preferences_credit_cards_add_credit_card">ᱠᱨᱮᱰᱤᱴ ᱠᱟᱰ ᱥᱮᱞᱮᱫᱽ ᱢᱮ</string>
+
+    <!-- Preference option for managing saved credit cards -->
+    <string name="preferences_credit_cards_manage_saved_cards">ᱥᱟᱺᱪᱟᱣ ᱠᱟᱰ ᱠᱚ ᱢᱮᱱᱮᱡᱽ ᱢᱮ</string>
+    <!-- Title of the "Add card" screen -->
+    <string name="credit_cards_add_card">ᱠᱟᱰ ᱥᱮᱞᱮᱫᱽ ᱢᱮ</string>
+    <!-- Title of the "Edit card" screen -->
+    <string name="credit_cards_edit_card">ᱠᱟᱰ ᱥᱟᱯᱲᱟᱣ ᱢᱮ</string>
+    <!-- The header for the card number of a credit card -->
+    <string name="credit_cards_card_number">ᱠᱟᱲ ᱮᱞ</string>
+
+    <!-- The header for the expiration date of a credit card -->
+    <string name="credit_cards_expiration_date">ᱮᱠᱥᱯᱟᱭᱨᱮᱥᱚᱱ ᱢᱟᱦᱟᱸ</string>
+    <!-- The label for the expiration date month of a credit card to be used by a11y services-->
+    <string name="credit_cards_expiration_date_month">ᱮᱠᱥᱯᱟᱭᱨᱮᱥᱚᱱ ᱢᱟᱦᱟᱸ ᱪᱟᱸᱫᱚ</string>
+    <!-- The label for the expiration date year of a credit card to be used by a11y services-->
+    <string name="credit_cards_expiration_date_year">ᱮᱠᱥᱯᱟᱭᱨᱮᱥᱚᱱ ᱢᱟᱦᱟᱸ ᱥᱮᱨᱢᱟ</string>
+    <!-- The header for the name on the credit card -->
+    <string name="credit_cards_name_on_card">ᱠᱟᱰ ᱨᱮ ᱧᱩᱛᱩᱢ</string>
+    <!-- The header for the nickname for a credit card -->
+    <string name="credit_cards_card_nickname">ᱠᱟᱰ ᱱᱤᱠᱱᱮᱢ</string>
+    <!-- The text for the "Delete card" menu item for deleting a credit card -->
+    <string name="credit_cards_menu_delete_card">ᱠᱟᱰ ᱢᱮᱴᱟᱣ ᱢᱮ</string>
+    <!-- The text for the "Delete card" button for deleting a credit card -->
+    <string name="credit_cards_delete_card_button">ᱠᱟᱰ ᱢᱮᱴᱟᱣ ᱢᱮ</string>
+    <!-- The title for the "Save" menu item for saving a credit card -->
+    <string name="credit_cards_menu_save">ᱥᱟᱺᱪᱟᱣ</string>
+    <!-- The text for the "Save" button for saving a credit card -->
+    <string name="credit_cards_save_button">ᱥᱟᱺᱪᱟᱣ</string>
+    <!-- The text for the "Cancel" button for cancelling adding or updating a credit card -->
+    <string name="credit_cards_cancel_button">ᱵᱟᱹᱰᱨᱟᱹ</string>
+    <!-- Title of the "Saved cards" screen -->
+    <string name="credit_cards_saved_cards">ᱥᱟᱺᱪᱟᱣ ᱠᱟᱱ ᱠᱟᱰ</string>
+    <!-- Error message for credit card number validation -->
+    <string name="credit_cards_number_validation_error_message">ᱴᱷᱤᱠ ᱠᱨᱮᱰᱤᱴ ᱠᱟᱰ ᱮᱞ ᱟᱫᱮᱨ ᱢᱮ</string>
+    <!-- Error message for credit card name on card validation -->
+    <string name="credit_cards_name_on_card_validation_error_message">ᱱᱚᱶᱟ ᱡᱟᱭᱜᱟ ᱯᱮᱨᱮᱡᱽ ᱢᱮ</string>
+    <!-- Message displayed in biometric prompt displayed for authentication before allowing users to view their saved credit cards -->
+    <string name="credit_cards_biometric_prompt_message">ᱥᱟᱺᱪᱟᱣᱟᱠᱟᱱ ᱠᱟᱰ ᱠᱚ ᱧᱮᱞ ᱞᱟᱹᱜᱤᱫ ᱠᱷᱩᱞᱟᱹᱭ ᱢᱮ</string>
+    <!-- Title of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_title">ᱟᱢᱟᱜ ᱠᱨᱮᱰᱤᱴ ᱠᱟᱰ ᱨᱩᱠᱷᱤᱭᱟᱹᱭ ᱢᱮ</string>
+    <!-- Message of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_message">ᱥᱟᱫᱷᱚᱱ ᱠᱩᱞᱩᱯ ᱪᱤᱱᱦᱟᱹ, ᱯᱤᱱ, ᱟᱨ ᱵᱟᱝ ᱫᱟᱱᱟᱝ ᱥᱟᱵᱟᱫ ᱟᱢᱟᱜ ᱥᱟᱺᱪᱟᱣ ᱠᱨᱮᱰᱤᱴ ᱠᱟᱰ ᱠᱚ ᱮᱢᱟᱱ ᱨᱩᱠᱷᱭᱟ ᱞᱟᱹᱜᱤᱫ ᱡᱩᱫᱤ ᱚᱞᱜᱟ ᱦᱚᱲ ᱴᱷᱮᱱ ᱟᱢᱟᱜ ᱥᱟᱫᱷᱚᱱ ᱛᱟᱦᱮᱸᱱ ᱠᱷᱟᱱ ᱾</string>
+    <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_set_up_now">ᱱᱤᱛᱚᱜ ᱥᱟᱡᱟᱣ ᱢᱮ</string>
+    <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_later">ᱛᱟᱭᱚᱢ ᱛᱮ</string>
+    <!-- Title of PIN verification dialog to direct users to re-enter their device credentials to access their credit cards -->
+    <string name="credit_cards_biometric_prompt_message_pin">ᱟᱢᱟᱜ ᱥᱟᱫᱷᱚᱱ ᱚᱱᱞᱚᱠ ᱢᱮ</string>
+    <!-- Message displayed in biometric prompt for authentication, before allowing users to use their stored credit card information -->
+    <string name="credit_cards_biometric_prompt_unlock_message">ᱫᱚᱦᱚ ᱠᱟᱱ ᱠᱨᱮᱰᱤᱴ ᱠᱟᱰ ᱵᱤᱵᱨᱚᱬ ᱠᱷᱩᱞᱟᱹᱭ ᱢᱮ</string>
+
     <!-- Title of the Add search engine screen -->
-    <string name="search_engine_add_custom_search_engine_title">ᱥᱮᱸᱫᱽᱨᱟ ᱤᱱᱡᱤᱱ ᱥᱮᱞᱮᱫᱽ ᱢᱮ</string>
+    <string name="search_engine_add_custom_search_engine_title">ᱥᱮᱸᱫᱽᱨᱟ ᱤᱧᱡᱤᱱ ᱥᱮᱞᱮᱫᱽ ᱢᱮ</string>
     <!-- Title of the Edit search engine screen -->
     <string name="search_engine_edit_custom_search_engine_title">ᱥᱮᱸᱫᱽᱨᱟ ᱤᱧᱡᱤᱱ ᱥᱟᱯᱲᱟᱣ ᱢᱮ</string>
     <!-- Content description (not visible, for screen readers etc.): Title for the button to add a search engine in the action bar -->
     <string name="search_engine_add_button_content_description">ᱥᱮᱞᱮᱫᱽ ᱢᱮ</string>
     <!-- Content description (not visible, for screen readers etc.): Title for the button to save a search engine in the action bar -->
-    <string name="search_engine_add_custom_search_engine_edit_button_content_description">ᱥᱟᱸᱪᱟᱣ</string>
+    <string name="search_engine_add_custom_search_engine_edit_button_content_description">ᱥᱟᱺᱪᱟᱣ</string>
     <!-- Text for the menu button to edit a search engine -->
     <string name="search_engine_edit">ᱥᱟᱯᱲᱟᱣ</string>
     <!-- Text for the menu button to delete a search engine -->
@@ -1509,13 +1667,13 @@
     <!-- Placeholder text shown in the Search String TextField before a user enters text -->
     <string name="search_add_custom_engine_search_string_hint">ᱵᱮᱵᱷᱟᱨ ᱞᱟᱹᱜᱤᱫ ᱥᱴᱨᱭᱸᱜ ᱥᱮᱸᱫᱽᱨᱟᱭ ᱢᱮ</string>
     <!-- Description text for the Search String TextField. The %s is part of the string -->
-    <string name="search_add_custom_engine_search_string_example">“%s” ᱥᱟᱞᱟᱜ ᱠᱣᱮᱨᱭ ᱵᱚᱫᱚᱞ ᱢᱮ ᱾ ᱡᱮᱢᱚᱱ:\nhttps://www.google.com/search?q=%s</string>
+    <string formatted="false" name="search_add_custom_engine_search_string_example">“%s” ᱥᱟᱞᱟᱜ ᱠᱣᱮᱨᱭ ᱵᱚᱫᱚᱞ ᱢᱮ ᱾ ᱡᱮᱢᱚᱱ:\nhttps://www.google.com/search?q=%s</string>
     <!-- Text for the button to learn more about adding a custom search engine -->
     <string name="search_add_custom_engine_learn_more_label">ᱰᱷᱮᱨ ᱥᱮᱬᱟᱭ ᱢᱮ</string>
     <!-- Accessibility description for the form in which details about the custom search engine are entered -->
     <string name="search_add_custom_engine_form_description">ᱠᱩᱥᱤᱭᱟᱜ ᱥᱮᱸᱫᱽᱨᱟ ᱤᱧᱡᱤᱱ ᱨᱮᱭᱟᱜ ᱵᱤᱵᱨᱚᱬ</string>
     <!-- Accessibility description for the 'Learn more' link -->
-    <string name="search_add_custom_engine_learn_more_description">ᱰᱷᱮᱨ ᱥᱮᱬᱟᱭ ᱨᱮᱭᱟᱜ ᱞᱤᱸᱠ</string>
+    <string name="search_add_custom_engine_learn_more_description">ᱰᱷᱮᱨ ᱥᱮᱬᱟᱭ ᱨᱮᱭᱟᱜ ᱞᱤᱝᱠ</string>
 
     <!-- Text shown when a user leaves the name field empty -->
     <string name="search_add_custom_engine_error_empty_name">ᱥᱮᱸᱫᱽᱨᱟ ᱤᱧᱡᱤᱱ ᱨᱮᱭᱟᱜ ᱧᱩᱛᱩᱢ ᱟᱫᱮᱨ ᱢᱮ</string>
@@ -1530,7 +1688,7 @@
     <!-- Text shown when a user creates a new search engine -->
     <string name="search_add_custom_engine_success_message">%s ᱛᱮᱭᱟᱨᱮᱱᱟ</string>
     <!-- Text shown when a user successfully edits a custom search engine -->
-    <string name="search_edit_custom_engine_success_message">%s ᱥᱟᱸᱪᱟᱣᱮᱱᱟ</string>
+    <string name="search_edit_custom_engine_success_message">%s ᱥᱟᱺᱪᱟᱣᱮᱱᱟ</string>
     <!-- Text shown when a user successfully deletes a custom search engine -->
     <string name="search_delete_search_engine_success_message">%s ᱢᱮᱴᱟᱣᱮᱱᱟ</string>
 
@@ -1594,7 +1752,7 @@
     <!--  The editable text field for a login's password. -->
     <string name="saved_login_password_description">ᱫᱟᱱᱟᱝ ᱥᱟᱵᱟᱫ ᱞᱚᱜᱤᱱ ᱞᱟᱹᱜᱤᱫ ᱥᱟᱯᱲᱟᱣ ᱚᱞ ᱡᱟᱭᱜᱟ ᱾</string>
     <!--  The button description to save changes to an edited login. -->
-    <string name="save_changes_to_login">ᱞᱚᱜᱤᱱ ᱵᱚᱫᱚᱞ ᱠᱚ ᱥᱟᱸᱪᱟᱣ ᱢᱮ ᱾</string>
+    <string name="save_changes_to_login">ᱞᱚᱜᱤᱱ ᱵᱚᱫᱚᱞ ᱠᱚ ᱥᱟᱺᱪᱟᱣ ᱢᱮ ᱾</string>
     <!--  The button description to discard changes to an edited login. -->
     <string name="discard_changes">ᱵᱚᱫᱚᱞ ᱩᱰᱩᱜ ᱜᱤᱰᱤ ᱢᱮ</string>
     <!--  The page title for editing a saved login. -->
@@ -1616,7 +1774,7 @@
     <!-- Text displayed asking user to re-authenticate -->
     <string name="synced_tabs_reauth">ᱫᱚᱭᱟᱠᱟᱛᱮ ᱨᱤᱼᱚᱛᱷᱮᱱᱴᱤᱠᱮᱴ ᱢᱮ ᱾</string>
     <!-- Text displayed when user has disabled tab syncing in Firefox Sync Account -->
-    <string name="synced_tabs_enable_tab_syncing">ᱫᱚᱭᱟᱠᱟᱛᱮ ᱴᱮᱵ ᱥᱭᱸᱠᱤᱝ ᱮᱢ ᱪᱷᱚᱭ ᱢᱮ ᱾</string>
+    <string name="synced_tabs_enable_tab_syncing">ᱫᱚᱭᱟᱠᱟᱛᱮ ᱴᱮᱵ ᱥᱭᱝᱠᱤᱝ ᱮᱢ ᱪᱷᱚᱭ ᱢᱮ ᱾</string>
     <!-- Text displayed when user has no tabs that have been synced -->
     <string name="synced_tabs_no_tabs">ᱟᱢ ᱴᱷᱮᱱ ᱚᱠᱟ ᱦᱚᱸ ᱴᱮᱵᱽ ᱠᱚ ᱚᱞᱜᱟ Firefox ᱢᱮᱱᱟᱜ ᱥᱟᱫᱷᱚᱱ ᱨᱮ ᱵᱟᱝ ᱠᱷᱩᱞᱟᱹ ᱟᱠᱟᱱᱟ ᱾</string>
     <!-- Text displayed in the synced tabs screen when a user is not signed in to Firefox Sync describing Synced Tabs -->
@@ -1624,7 +1782,7 @@
     <!-- Text displayed on a button in the synced tabs screen to link users to sign in when a user is not signed in to Firefox Sync -->
     <string name="synced_tabs_sign_in_button">ᱛᱷᱟᱨ ᱞᱟᱹᱜᱤᱛ ᱵᱚᱞᱚᱱ ᱥᱩᱦᱤ ᱢᱮ</string>
     <!-- The text displayed when a synced device has no tabs to show in the list of Synced Tabs. -->
-    <string name="synced_tabs_no_open_tabs">ᱵᱟᱝᱟ ᱴᱮᱵ ᱠᱚ ᱠᱷᱩᱞᱟᱹᱭ ᱢᱮ</string>
+    <string name="synced_tabs_no_open_tabs">ᱠᱷᱩᱞᱟᱹᱟᱠᱟᱱ ᱴᱮᱵᱽ ᱠᱚ ᱵᱟᱹᱱᱩᱜᱼᱟ</string>
 
     <!-- Top Sites -->
     <!-- Title text displayed in the dialog when top sites limit is reached. -->
@@ -1645,10 +1803,19 @@
 	<!-- Dialog button text for canceling the rename top site prompt. -->
 	<string name="top_sites_rename_dialog_cancel">ᱵᱟᱹᱰᱨᱟᱹ</string>
 
+    <!-- Default browser experiment -->
+    <string name="default_browser_experiment_card_text">Firefox ᱟᱡ ᱛᱮ ᱠᱷᱩᱞᱟᱹ ᱪᱷᱚ ᱞᱟᱹᱜᱤᱫ ᱣᱮᱵᱥᱟᱭᱤᱴ, ᱤᱢᱮᱞ, ᱟᱨ ᱢᱮᱥᱮᱡᱽ ᱨᱮᱭᱟᱜ ᱞᱤᱝᱠ ᱥᱮᱴ ᱢᱮ ᱾ </string>
+
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">ᱚᱪᱟᱜ</string>
 
     <!-- Content description radio buttons with a link to more information -->
     <string name="radio_preference_info_content_description">ᱟᱨᱦᱚᱸ ᱵᱤᱵᱨᱚᱬ ᱞᱟᱹᱜᱤᱫ ᱱᱚᱰᱮ ᱚᱛᱟᱭ ᱢᱮ</string>
 
-    </resources>
+    <!-- Content description for the action bar "up" button -->
+    <string name="action_bar_up_description">ᱪᱮᱛᱟᱱ ᱥᱮᱱ ᱱᱮᱣᱤᱜᱮᱴ ᱢᱮ</string>
+
+    <!-- Content description for privacy content close button -->
+    <string name="privacy_content_close_button_content_description">ᱵᱚᱸᱫ</string>
+
+</resources>

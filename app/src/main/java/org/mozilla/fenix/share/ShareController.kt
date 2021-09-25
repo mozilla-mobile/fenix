@@ -20,6 +20,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import mozilla.components.concept.engine.prompt.ShareData
@@ -31,7 +32,6 @@ import mozilla.components.support.ktx.kotlin.isExtensionUrl
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.share.listadapters.AppShareOption
@@ -122,7 +122,7 @@ class DefaultShareController(
 
     override fun handleAddNewDevice() {
         val directions = ShareFragmentDirections.actionShareFragmentToAddNewDeviceFragment()
-        navController.navigateBlockingForAsyncNavGraph(directions)
+        navController.navigate(directions)
     }
 
     override fun handleShareToDevice(device: Device) {
@@ -142,6 +142,7 @@ class DefaultShareController(
         dismiss(ShareController.Result.DISMISSED)
     }
 
+    @OptIn(DelicateCoroutinesApi::class) // GlobalScope usage
     private fun shareToDevicesWithRetry(shareOperation: () -> Deferred<Boolean>) {
         // Use GlobalScope to allow the continuation of this method even if the share fragment is closed.
         GlobalScope.launch(Dispatchers.Main) {

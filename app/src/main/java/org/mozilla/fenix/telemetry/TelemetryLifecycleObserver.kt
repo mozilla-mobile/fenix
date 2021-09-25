@@ -35,15 +35,19 @@ class TelemetryLifecycleObserver(
         val lastState = pausedState ?: return
         val currentState = createTabState()
 
-        EngineMetrics.foregroundMetrics.record(mapOf(
-            MetricsKeys.backgroundActiveTabs to lastState.activeEngineTabs.toString(),
-            MetricsKeys.backgroundCrashedTabs to lastState.crashedTabs.toString(),
-            MetricsKeys.backgroundTotalTabs to lastState.totalTabs.toString(),
-            MetricsKeys.foregroundActiveTabs to currentState.activeEngineTabs.toString(),
-            MetricsKeys.foregroundCrashedTabs to currentState.crashedTabs.toString(),
-            MetricsKeys.foregroundTotalTabs to currentState.totalTabs.toString(),
-            MetricsKeys.timeInBackground to (currentState.timestamp - lastState.timestamp).toString()
-        ))
+        @Suppress("DEPRECATION")
+        // FIXME(#19967): Migrate to non-deprecated API.
+        EngineMetrics.foregroundMetrics.record(
+            mapOf(
+                MetricsKeys.backgroundActiveTabs to lastState.activeEngineTabs.toString(),
+                MetricsKeys.backgroundCrashedTabs to lastState.crashedTabs.toString(),
+                MetricsKeys.backgroundTotalTabs to lastState.totalTabs.toString(),
+                MetricsKeys.foregroundActiveTabs to currentState.activeEngineTabs.toString(),
+                MetricsKeys.foregroundCrashedTabs to currentState.crashedTabs.toString(),
+                MetricsKeys.foregroundTotalTabs to currentState.totalTabs.toString(),
+                MetricsKeys.timeInBackground to (currentState.timestamp - lastState.timestamp).toString()
+            )
+        )
 
         pausedState = null
     }

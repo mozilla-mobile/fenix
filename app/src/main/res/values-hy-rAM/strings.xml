@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:moz="http://mozac.org/tools">
     <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
     <string name="app_name_private_5">Մասնավոր %s</string>
     <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
@@ -14,7 +14,7 @@
     <!-- Content description (not visible, for screen readers etc.): "Private Browsing" menu button. -->
     <string name="content_description_disable_private_browsing_button">Անջատել գաղտնի դիտարկումը</string>
     <!-- Placeholder text shown in the search bar before a user enters text -->
-    <string name="search_hint">Մուտքագրեք որոնում կամ կայքի հասցե</string>
+    <string name="search_hint">Մուտքագրեք որոնում կամ կայք</string>
     <!-- No Open Tabs Message Description -->
     <string name="no_open_tabs_description">Ձեր բաց ներդիրները կցուցադրվեն այստեղ:</string>
 
@@ -60,7 +60,7 @@
     <string name="recently_saved_show_all_content_description">Ցուցադրել բոլոր պահպանված էջանիշների կոճակը</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
-    <string name="about_content">%1$s-ը մշակված է @fork-maintainers-ի կողմից:</string>
+    <string name="about_content">%1$s-ը մշակված է Mozilla-ի կողմից:</string>
 
     <!-- Private Browsing -->
     <!-- Title for private session option -->
@@ -118,6 +118,11 @@
     <string name="recent_tabs_header">Վերադառնալ</string>
     <!-- Button text for showing all the tabs in the tabs tray -->
     <string name="recent_tabs_show_all">Ցուցադրել բոլորը</string>
+
+    <!-- History Metadata -->
+    <!-- Header text for a section on the home screen that displays grouped highlights from the
+         user's browsing history, such as topics they have researched or explored on the web -->
+    <string name="history_metadata_header">Անցյալ հետազոտություններ</string>
 
     <!-- Browser Fragment -->
     <!-- Content description (not visible, for screen readers etc.): Navigate to open tabs -->
@@ -621,6 +626,25 @@
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one month-->
     <string name="close_tabs_after_one_month_summary">Փակել մեկ ամիս անց</string>
 
+    <!-- Studies -->
+    <!-- Title of the remove studies button -->
+    <string name="studies_remove">Հեռացնել</string>
+    <!-- Title of the active section on the studies list -->
+    <string name="studies_active">Գործուն</string>
+    <!-- Description for studies, it indicates why Firefox use studies -->
+    <string name="studies_description">Firefox-ը կարող է ժամանակ առ ժամանակ տեղադրել և գործարկել ուսումնասիրություններ:</string>
+    <!-- Learn more link for studies, links to an article for more information about studies. -->
+    <string name="studies_learn_more">Իմանալ ավելին</string>
+
+    <!-- Dialog message shown after removing a study -->
+    <string name="studies_restart_app">Փոփոխությունները գործադրելու համար հավելվածը կվերամեկնարկի</string>
+    <!-- Dialog button to confirm the removing a study. -->
+    <string name="studies_restart_dialog_ok">Լավ</string>
+    <!-- Dialog button text for canceling removing a study. -->
+    <string name="studies_restart_dialog_cancel">Չեղարկել</string>
+    <!-- Toast shown after turning on/off studies preferences -->
+    <string name="studies_toast_quit_application" tools:ignore="UnusedResources">Փոփոխությունները գործադրելու համար դուրս է գալիս հավելվածից…</string>
+
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
     <string name="tab_header_label">Բաց ներդիրներ</string>
@@ -648,6 +672,8 @@
     <string name="tab_tray_menu_item_share">Համօգտագործել ներդիրները</string>
     <!-- Text shown in the menu to view recently closed tabs -->
     <string name="tab_tray_menu_recently_closed">Վերջերս փակված ներդիրներ</string>
+    <!-- Text shown in the tabs tray inactive tabs section -->
+    <string name="tab_tray_inactive_recently_closed">Վերջին փակվածը</string>
     <!-- Text shown in the menu to view account settings -->
     <string name="tab_tray_menu_account_settings">Հաշվի կարգավորումներ</string>
     <!-- Text shown in the menu to view tab settings -->
@@ -943,6 +969,11 @@
     <!-- Summary of delete browsing data on quit preference if it is set to off -->
     <string name="delete_browsing_data_quit_off">Անջ.</string>
 
+    <!-- Summary of studies preference if it is set to on -->
+    <string name="studies_on">Միաց.</string>
+    <!-- Summary of studies data on quit preference if it is set to off -->
+    <string name="studies_off">Անջ.</string>
+
     <!-- Collections -->
     <!-- Collections header on home fragment -->
     <string name="collections_header">Հավաքածուներ</string>
@@ -1045,6 +1076,16 @@
     <string name="notification_pbm_action_delete_and_open">Ջնջել և բացել</string>
     <!-- Name of the "Powered by Fenix" notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="notification_powered_by_channel_name">Օժանդակող`</string>
+    <!-- Name of the marketing notification channel. Displayed in the "App notifications" system settings for the app -->
+    <string name="notification_marketing_channel_name">Մարկեթինգ</string>
+    <!-- Title shown in the notification that pops up to remind the user to set fenix as default browser.
+    %1$s is a placeholder that will be replaced by the app name (Fenix). -->
+    <string name="notification_default_browser_title">%1$s-ը արագ է և մասնավոր</string>
+    <!-- Text shown in the notification that pops up to remind the user to set fenix as default browser.
+    %1$s is a placeholder that will be replaced by the app name (Fenix). -->
+    <string name="notification_default_browser_text">Դարձրեք %1$s-ը ձեր սկզբնադիր զննիչը</string>
+
+    <!-- Snackbar -->
     <!-- Text shown in snackbar when user deletes a collection -->
     <string name="snackbar_collection_deleted">Հավաքածուն ջնջվեց</string>
     <!-- Text shown in snackbar when user renames a collection -->
@@ -1096,7 +1137,7 @@
     <!-- Tab collection deletion prompt dialog option to delete the collection -->
     <string name="tab_collection_dialog_positive">Ջնջել</string>
     <!-- Tab collection deletion prompt dialog option to cancel deleting the collection -->
-    <string name="tab_collection_dialog_negative">Չեղարկել</string>
+    <string moz:removedIn="93" name="tab_collection_dialog_negative" tools:ignore="UnusedResources">Չեղարկել</string>
     <!-- Text displayed in a notification when the user enters full screen mode -->
     <string name="full_screen_notification">Մուտք լիաէկրան</string>
     <!-- Message for copying the URL via long press on the toolbar -->
@@ -1262,7 +1303,7 @@
     <string name="onboarding_privacy_notice_read_button">Կարդացեք մեր գաղտնիության ծանուցումը</string>
 
     <!-- Content description (not visible, for screen readers etc.): Close onboarding screen -->
-    <string name="onboarding_close">Փակել</string>
+    <string moz:removedIn="93" name="onboarding_close" tools:ignore="UnusedResources">Փակել</string>
 
     <!-- text for the button to finish onboarding -->
     <string name="onboarding_finish">Սկսել դիտարկումը</string>
@@ -1365,6 +1406,9 @@
     <string name="preference_enhanced_tracking_protection_custom_cryptominers">Գաղտնազերծիչներ</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
     <string name="preference_enhanced_tracking_protection_custom_fingerprinters">Մատնահետքեր</string>
+    <!-- Button label for navigating to the Enhanced Tracking Protection details -->
+    <string name="enhanced_tracking_protection_details">Մանրամասներ</string>
+    <!-- Header for categories that are being being blocked by current Enhanced Tracking Protection settings -->
     <string name="enhanced_tracking_protection_blocked">Արգելափակված</string>
     <!-- Header for categories that are being not being blocked by current Enhanced Tracking Protection settings -->
     <string name="enhanced_tracking_protection_allowed">Թույլատրված</string>
@@ -1390,7 +1434,7 @@
     <!-- Description of tracking content that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_tracking_content_description">Դադարեցվում է արտաքին գովազդի, տեսանյութերի և այլ բովանդակության բեռնումը, որը պարունակում է հետագծման կոդ: Կարող է ազդել կայքի որոշ գործառությունների վրա:</string>
     <!-- Enhanced Tracking Protection Onboarding Message shown in a dialog above the toolbar. The first parameter is the name of the application (For example: Fenix) -->
-    <string name="etp_onboarding_cfr_message">Ամեն անգամ, երբ վահանը մանուշակագույն է, ուրեմն %s-ն արգելափակել է հետագծիչները այս կայքում: Հպեք՝ տեղեկությունների համար:</string>
+    <string moz:removedIn="93" name="etp_onboarding_cfr_message" tools:ignore="UnusedResources">Ամեն անգամ, երբ վահանը մանուշակագույն է, ուրեմն %s-ն արգելափակել է հետագծիչները այս կայքում: Հպեք՝ տեղեկությունների համար:</string>
     <!-- Enhanced Tracking Protection message that protection is currently on for this site -->
     <string name="etp_panel_on">Պաշտպանությունը միացված է այս կայքի համար</string>
     <!-- Enhanced Tracking Protection message that protection is currently off for this site -->
@@ -1471,7 +1515,16 @@
     <!-- Preference option for never saving passwords in Fenix -->
     <string name="preferences_passwords_save_logins_never_save">Երբեք չպահպանել</string>
     <!-- Preference for autofilling saved logins in Fenix -->
-    <string name="preferences_passwords_autofill">Ինքնալցնում</string>
+    <string moz:removedIn="93" name="preferences_passwords_autofill" tools:ignore="UnusedResources">Ինքնալցնում</string>
+    <!-- Preference for autofilling saved logins in Firefox (in web content), %1$s will be replaced with the app name -->
+    <string name="preferences_passwords_autofill2">Ինքնալցնել %1$s-ում</string>
+    <!-- Description for the preference for autofilling saved logins in Firefox (in web content), %1$s will be replaced with the app name -->
+    <string name="preferences_passwords_autofill_description">%1$s-ը օգտագործելիս կայքերում լցրեք և պահեք օգտվողի անունները և գաղտնաբառերը:</string>
+    <!-- Preference for autofilling logins from Fenix in other apps (e.g. autofilling the Twitter app) -->
+    <string name="preferences_android_autofill">Ինքնալցնել այլ հավելվածներում</string>
+    <!-- Description for the preference for autofilling logins from Fenix in other apps (e.g. autofilling the Twitter app) -->
+    <string name="preferences_android_autofill_description">Լցրեք օգտվողի անուններն ու գաղտնաբառերը ձեր սարքի այլ հավելվածներում:</string>
+
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">Համաժամեցնել մուտքանունները</string>
     <!-- Preference for syncing saved logins in Fenix, when not signed in-->
@@ -1653,7 +1706,7 @@
     <!-- Placeholder text shown in the Search String TextField before a user enters text -->
     <string name="search_add_custom_engine_search_string_hint">Օգտագործվող որոնման տողը </string>
     <!-- Description text for the Search String TextField. The %s is part of the string -->
-    <string name="search_add_custom_engine_search_string_example">Հարցումը փոխարինել “%s”-ով: Օրինակ՝ \nhttps://www.google.com/search?q=%s</string>
+    <string formatted="false" name="search_add_custom_engine_search_string_example">Հարցումը փոխարինել “%s”-ով: Օրինակ՝ \nhttps://www.google.com/search?q=%s</string>
     <!-- Text for the button to learn more about adding a custom search engine -->
     <string name="search_add_custom_engine_learn_more_label">Իմանալ ավելին</string>
     <!-- Accessibility description for the form in which details about the custom search engine are entered -->
@@ -1791,6 +1844,16 @@
 	<string name="top_sites_rename_dialog_ok">Լավ</string>
 	<!-- Dialog button text for canceling the rename top site prompt. -->
 	<string name="top_sites_rename_dialog_cancel">Չեղարկել</string>
+
+    <!-- In-activate tabs in the tabs tray -->
+    <!-- Title text displayed in the tabs tray when a tab has been unused for 4 days. -->
+    <string name="inactive_tabs_title">Ոչ ակտիվ ներդիրներ</string>
+    <!-- A description below the section of "inactive" tabs to notify the user when those tabs will be closed, if appropriate. See strings inactive_tabs_30_days and inactive_tabs_7_days for placeholders options. -->
+    <string name="inactive_tabs_description">Ներդիրներն այստեղ հասանելի են %s: Այդ ժամանակից հետո ներդիրներն ինքնաբար կփակվեն:</string>
+    <!-- The amount of time until a tab in the "inactive" section of the tabs tray will be closed. See string inactive_tabs_description as well -->
+    <string name="inactive_tabs_30_days">30 օր</string>
+    <!-- The amount of time until a tab in the "inactive" section of the tabs tray will be closed. See string inactive_tabs_description as well -->
+    <string name="inactive_tabs_7_days">1 շաբաթ</string>
 
     <!-- Default browser experiment -->
     <string name="default_browser_experiment_card_text">Կայեք հղումներ կայքերից, էլ. նամակներից և հաղորդագրություններից, որոնք ինքնաբար կերպով կբացվեն Firefox-ում:</string>

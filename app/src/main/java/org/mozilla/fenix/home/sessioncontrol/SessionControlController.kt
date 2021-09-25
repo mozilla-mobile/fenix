@@ -192,7 +192,6 @@ class DefaultSessionControlController(
     private val restoreUseCase: TabsUseCases.RestoreUseCase,
     private val reloadUrlUseCase: SessionUseCases.ReloadUrlUseCase,
     private val selectTabUseCase: TabsUseCases.SelectTabUseCase,
-    private val requestDesktopSiteUseCase: SessionUseCases.RequestDesktopSiteUseCase,
     private val fragmentStore: HomeFragmentStore,
     private val navController: NavController,
     private val viewLifecycleScope: CoroutineScope,
@@ -318,7 +317,7 @@ class DefaultSessionControlController(
         dismissSearchDialogIfDisplayed()
         activity.openToBrowserAndLoad(
             searchTermOrURL = SupportUtils.getGenericSumoURLForTopic
-                (SupportUtils.SumoTopic.PRIVATE_BROWSING_MYTHS),
+            (SupportUtils.SumoTopic.PRIVATE_BROWSING_MYTHS),
             newTab = true,
             from = BrowserDirection.FromHome
         )
@@ -402,22 +401,24 @@ class DefaultSessionControlController(
         val searchAccessPoint = Event.PerformedSearch.SearchAccessPoint.TOPSITE
         val event =
             availableEngines.firstOrNull {
-                    engine -> engine.resultUrls.firstOrNull { it.contains(url) } != null
+                engine ->
+                engine.resultUrls.firstOrNull { it.contains(url) } != null
             }?.let {
-                    searchEngine -> searchAccessPoint.let { sap ->
+                searchEngine ->
+                searchAccessPoint.let { sap ->
                     MetricsUtils.createSearchEvent(searchEngine, store, sap)
                 }
             }
         event?.let { activity.metrics.track(it) }
 
-        addTabUseCase.invoke(
+        val tabId = addTabUseCase.invoke(
             url = appendSearchAttributionToUrlIfNeeded(url),
             selectTab = true,
             startLoading = true
         )
 
         if (settings.openNextTabInDesktopMode) {
-            activity.handleRequestDesktopMode()
+            activity.handleRequestDesktopMode(tabId)
         }
         activity.openToBrowser(BrowserDirection.FromHome)
     }
@@ -425,7 +426,7 @@ class DefaultSessionControlController(
     @VisibleForTesting
     internal fun getAvailableSearchEngines() =
         activity.components.core.store.state.search.searchEngines +
-                activity.components.core.store.state.search.availableSearchEngines
+            activity.components.core.store.state.search.availableSearchEngines
 
     /**
      * Append a search attribution query to any provided search engine URL based on the
@@ -484,7 +485,7 @@ class DefaultSessionControlController(
     }
 
     private fun showTabTrayCollectionCreation() {
-        val directions = HomeFragmentDirections.actionGlobalTabTrayDialogFragment(
+        val directions = HomeFragmentDirections.actionGlobalTabsTrayFragment(
             enterMultiselect = true
         )
         navController.nav(R.id.homeFragment, directions)

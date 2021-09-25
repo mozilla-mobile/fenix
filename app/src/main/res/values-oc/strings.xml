@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:moz="http://mozac.org/tools">
     <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
     <string name="app_name_private_5">%s privat</string>
     <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
     <string name="app_name_private_4">%s (nav. privada)</string>
+
     <!-- Home Fragment -->
     <!-- Content description (not visible, for screen readers etc.): "Three dot" menu button. -->
     <string name="content_description_menu">Mai d’opcions</string>
@@ -48,6 +49,17 @@
     <!-- Content description on checkmark while tab is selected in multiselect mode in tab tray -->
     <string name="tab_tray_multiselect_selected_content_description">Seleccionat</string>
 
+    <!-- Home - Recently saved bookmarks -->
+    <!-- Title for the home screen section with recently saved bookmarks. -->
+    <string name="recently_saved_bookmarks">Salvats recentament</string>
+    <!-- Content description for the recently saved bookmarks section on the home screen. -->
+    <string name="recently_saved_bookmarks_content_description">Marcats recentament</string>
+    <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
+    <string name="recently_saved_show_all">O afichar tot</string>
+
+    <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
+    <string name="recently_saved_show_all_content_description">Mostrar lo boton dels marcapaginas salvats</string>
+
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
     <string name="about_content">%1$s es produch per @fork-maintainers.</string>
 
@@ -91,13 +103,6 @@
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">Ignorar</string>
 
-    <!-- Text for the banner message to tell users about our grid view feature. -->
-    <string name="tab_tray_grid_view_banner_message">Cambiatz la disposicion dels onglet dubèrts. Anatz als paramètres e seleccionatz « »Gresilha » jos « Vista onglet ».</string>
-    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
-    <string name="tab_tray_grid_view_banner_positive_button_text">Anar als paramètres</string>
-    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
-    <string name="tab_tray_grid_view_banner_negative_button_text">Ignorar</string>
-
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
     <string name="home_screen_shortcut_open_new_tab_2">Onglet novèl</string>
@@ -107,6 +112,17 @@
 
     <!-- Heading for the Top Sites block -->
     <string name="home_screen_top_sites_heading">Mai visitats</string>
+
+    <!-- Recent Tabs -->
+    <!-- Header text for jumping back into the recent tab in the home screen -->
+    <string name="recent_tabs_header">Tornar a aqueste onglet</string>
+    <!-- Button text for showing all the tabs in the tabs tray -->
+    <string name="recent_tabs_show_all">O afichar tot</string>
+
+    <!-- History Metadata -->
+    <!-- Header text for a section on the home screen that displays grouped highlights from the
+         user's browsing history, such as topics they have researched or explored on the web -->
+    <string name="history_metadata_header">Exploracions passadas</string>
 
     <!-- Browser Fragment -->
     <!-- Content description (not visible, for screen readers etc.): Navigate to open tabs -->
@@ -182,6 +198,10 @@
     <string name="browser_menu_add">Apondre</string>
     <!-- Browser menu label for editing a bookmark -->
     <string name="browser_menu_edit">Modificar</string>
+
+    <!-- Browser Toolbar -->
+    <!-- Content description for the Home screen button on the browser toolbar -->
+    <string name="browser_toolbar_home">Ecran d’acuèlh</string>
 
     <!-- Error message to show when the user tries to access a scheme not
         handled by the app (Ex: blob, tel etc) -->
@@ -550,8 +570,6 @@
     <string name="library_new_tab">Onglet novèl</string>
     <!-- Option in Library to find text in page -->
     <string name="library_find_in_page">Recercar dins la pagina</string>
-    <!-- Option in Library to open Synced Tabs page -->
-    <string name="library_synced_tabs">Onglets sincronizats</string>
     <!-- Option in Library to open Reading List -->
     <string name="library_reading_list">Lista de lectura</string>
     <!-- Menu Item Label for Search in Library -->
@@ -597,6 +615,15 @@
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">Aprèp un mes</string>
 
+    <!-- Start on Home -->
+    <!-- Title of a preference that allows a user to indicate after a specified amount of time when the app should start on the home screen -->
+    <string name="preferences_start_on_home">Començar per l’ecran d’acuèlh</string>
+    <!-- Option for starting on the home screen after after four hours or inactivity -->
+    <string name="start_on_home_after_four_hours">Aprèp 4 oras</string>
+    <!-- Option for always starting on the home screen -->
+    <string name="start_on_home_always">Totjorn</string>
+    <!-- Option for never starting on the home screen -->
+    <string name="start_on_home_never">Jamai</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
     <string name="close_tabs_manually_summary">Tampar manualament</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
@@ -605,6 +632,26 @@
     <string name="close_tabs_after_one_week_summary">Tampar aprèp una setmana</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one month-->
     <string name="close_tabs_after_one_month_summary">Tampar aprèp un mes</string>
+
+    <!-- Studies -->
+    <!-- Title of the remove studies button -->
+    <string name="studies_remove">Suprimir</string>
+    <!-- Title of the active section on the studies list -->
+    <string name="studies_active">Actiu</string>
+    <!-- Description for studies, it indicates why Firefox use studies -->
+    <string name="studies_description">Firefox pòt installar e lançar d’estudis de temps en temps.</string>
+    <!-- Learn more link for studies, links to an article for more information about studies. -->
+    <string name="studies_learn_more">Ne saber mai</string>
+
+    <!-- Dialog message shown after removing a study -->
+    <string name="studies_restart_app">L’aplicacion es a se tampar per aplicar las modifcacions</string>
+    <!-- Dialog button to confirm the removing a study. -->
+    <string name="studies_restart_dialog_ok">D’acòrdi</string>
+    <!-- Dialog button text for canceling removing a study. -->
+    <string name="studies_restart_dialog_cancel">Anullar</string>
+
+    <!-- Toast shown after turning on/off studies preferences -->
+    <string name="studies_toast_quit_application" tools:ignore="UnusedResources">Tampadura de l’aplicacion per aplicar las modificacions…</string>
 
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
@@ -633,6 +680,8 @@
     <string name="tab_tray_menu_item_share">Partejar totes los onglets</string>
     <!-- Text shown in the menu to view recently closed tabs -->
     <string name="tab_tray_menu_recently_closed">Onglets tampats recentament</string>
+    <!-- Text shown in the tabs tray inactive tabs section -->
+    <string name="tab_tray_inactive_recently_closed">Tampaduras recentas</string>
     <!-- Text shown in the menu to view account settings -->
     <string name="tab_tray_menu_account_settings">Paramètres del compte</string>
     <!-- Text shown in the menu to view tab settings -->
@@ -934,6 +983,11 @@
     <!-- Summary of delete browsing data on quit preference if it is set to off -->
     <string name="delete_browsing_data_quit_off">Desactivat</string>
 
+    <!-- Summary of studies preference if it is set to on -->
+    <string name="studies_on">Activat</string>
+    <!-- Summary of studies data on quit preference if it is set to off -->
+    <string name="studies_off">Desactivat</string>
+
     <!-- Collections -->
     <!-- Collections header on home fragment -->
     <string name="collections_header">Colleccions</string>
@@ -1035,6 +1089,16 @@
     <string name="notification_pbm_action_delete_and_open">Suprimir e dobrir</string>
     <!-- Name of the "Powered by Fenix" notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="notification_powered_by_channel_name">Fonciona amb</string>
+    <!-- Name of the marketing notification channel. Displayed in the "App notifications" system settings for the app -->
+    <string name="notification_marketing_channel_name">Marketing</string>
+    <!-- Title shown in the notification that pops up to remind the user to set fenix as default browser.
+    %1$s is a placeholder that will be replaced by the app name (Fenix). -->
+    <string name="notification_default_browser_title">%1$s es rapid e privat</string>
+    <!-- Text shown in the notification that pops up to remind the user to set fenix as default browser.
+    %1$s is a placeholder that will be replaced by the app name (Fenix). -->
+    <string name="notification_default_browser_text">Far que %1$s siá lo navegador per defaut</string>
+
+    <!-- Snackbar -->
     <!-- Text shown in snackbar when user deletes a collection -->
     <string name="snackbar_collection_deleted">Colleccion suprimida</string>
     <!-- Text shown in snackbar when user renames a collection -->
@@ -1085,7 +1149,7 @@
     <!-- Tab collection deletion prompt dialog option to delete the collection -->
     <string name="tab_collection_dialog_positive">Suprimir</string>
     <!-- Tab collection deletion prompt dialog option to cancel deleting the collection -->
-    <string name="tab_collection_dialog_negative">Anullar</string>
+    <string moz:removedIn="93" name="tab_collection_dialog_negative" tools:ignore="UnusedResources">Anullar</string>
 
     <!-- Text displayed in a notification when the user enters full screen mode -->
     <string name="full_screen_notification">Mòde plen ecran actiu</string>
@@ -1257,7 +1321,7 @@
     <!-- Text for the button to read the privacy notice -->
     <string name="onboarding_privacy_notice_read_button">Legissètz nòstra politica de confidencialitat</string>
     <!-- Content description (not visible, for screen readers etc.): Close onboarding screen -->
-    <string name="onboarding_close">Tampar</string>
+    <string moz:removedIn="93" name="onboarding_close" tools:ignore="UnusedResources">Tampar</string>
 
     <!-- text for the button to finish onboarding -->
     <string name="onboarding_finish">Començar de navegar</string>
@@ -1361,6 +1425,9 @@
     <string name="preference_enhanced_tracking_protection_custom_cryptominers">Minaires de criptomonedas</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
     <string name="preference_enhanced_tracking_protection_custom_fingerprinters">Generadors d’emprentas numericas</string>
+    <!-- Button label for navigating to the Enhanced Tracking Protection details -->
+    <string name="enhanced_tracking_protection_details">Detalhs</string>
+    <!-- Header for categories that are being being blocked by current Enhanced Tracking Protection settings -->
     <string name="enhanced_tracking_protection_blocked">Blocat</string>
     <!-- Header for categories that are being not being blocked by current Enhanced Tracking Protection settings -->
     <string name="enhanced_tracking_protection_allowed">Autorizat</string>
@@ -1386,7 +1453,7 @@
     <!-- Description of tracking content that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_tracking_content_description">Empacha lo cargament de publicitats, vidèos e autre contengut que contenon de còdi de seguiment. Pòt afectar d’unas foncionalitats de sites web.</string>
     <!-- Enhanced Tracking Protection Onboarding Message shown in a dialog above the toolbar. The first parameter is the name of the application (For example: Fenix) -->
-    <string name="etp_onboarding_cfr_message">Quand l’escut es violet, %s a blocat de traçadors sus aqueste site. Tocatz aquí per ne saber mai.</string>
+    <string moz:removedIn="93" name="etp_onboarding_cfr_message" tools:ignore="UnusedResources">Quand l’escut es violet, %s a blocat de traçadors sus aqueste site. Tocatz aquí per ne saber mai.</string>
     <!-- Enhanced Tracking Protection message that protection is currently on for this site -->
     <string name="etp_panel_on">Las proteccions son activadas per aqueste site</string>
     <!-- Enhanced Tracking Protection message that protection is currently off for this site -->
@@ -1473,7 +1540,18 @@
     <!-- Preference option for never saving passwords in Fenix -->
     <string name="preferences_passwords_save_logins_never_save">Salvar pas jamai</string>
     <!-- Preference for autofilling saved logins in Fenix -->
-    <string name="preferences_passwords_autofill">Emplenament automatic</string>
+    <string moz:removedIn="93" name="preferences_passwords_autofill" tools:ignore="UnusedResources">Emplenament automatic</string>
+
+    <!-- Preference for autofilling saved logins in Firefox (in web content), %1$s will be replaced with the app name -->
+    <string name="preferences_passwords_autofill2">Emplenatge automatic dins %1$s</string>
+    <!-- Description for the preference for autofilling saved logins in Firefox (in web content), %1$s will be replaced with the app name -->
+    <string name="preferences_passwords_autofill_description">Emplenar e enregistrar los noms d’utilizaire e los senhals als sites web en utilizant %1$s.</string>
+    <!-- Preference for autofilling logins from Fenix in other apps (e.g. autofilling the Twitter app) -->
+    <string name="preferences_android_autofill">Emplenatge automatic dins d’autras aplicacions</string>
+
+    <!-- Description for the preference for autofilling logins from Fenix in other apps (e.g. autofilling the Twitter app) -->
+    <string name="preferences_android_autofill_description">Emplena los noms d’utilizaires e los senhals d’autres aplicacions sus vòstre periferic.</string>
+
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">Sincronizar los identificants</string>
     <!-- Preference for syncing saved logins in Fenix, when not signed in-->
@@ -1593,6 +1671,10 @@
     <string name="credit_cards_card_number">Numèro de carta</string>
     <!-- The header for the expiration date of a credit card -->
     <string name="credit_cards_expiration_date">Data d’expiracion</string>
+    <!-- The label for the expiration date month of a credit card to be used by a11y services-->
+    <string name="credit_cards_expiration_date_month">Mes d’expiracion</string>
+    <!-- The label for the expiration date year of a credit card to be used by a11y services-->
+    <string name="credit_cards_expiration_date_year">Annada d’expiracion</string>
     <!-- The header for the name on the credit card -->
     <string name="credit_cards_name_on_card">Titular</string>
     <!-- The header for the nickname for a credit card -->
@@ -1614,6 +1696,8 @@
     <!-- Error message for credit card number validation -->
     <string name="credit_cards_number_validation_error_message">Picatz un numèro de carta de crèdit valid</string>
 
+    <!-- Error message for credit card name on card validation -->
+    <string name="credit_cards_name_on_card_validation_error_message">Completatz aqueste camp</string>
     <!-- Message displayed in biometric prompt displayed for authentication before allowing users to view their saved credit cards -->
     <string name="credit_cards_biometric_prompt_message">Desblocatz per veire las cartas enregistradas</string>
 
@@ -1651,7 +1735,7 @@
     <!-- Placeholder text shown in the Search String TextField before a user enters text -->
     <string name="search_add_custom_engine_search_string_hint">Cadena de recèrca d’utilizar</string>
     <!-- Description text for the Search String TextField. The %s is part of the string -->
-    <string name="search_add_custom_engine_search_string_example">Remplaçar los tèrmes de la recèrca per « %s ». Per exemple :\nhttps://www.google.com/search?q=%s</string>
+    <string formatted="false" name="search_add_custom_engine_search_string_example">Remplaçar los tèrmes de la recèrca per « %s ». Per exemple :\nhttps://www.google.com/search?q=%s</string>
     <!-- Text for the button to learn more about adding a custom search engine -->
     <string name="search_add_custom_engine_learn_more_label">Ne saber mai</string>
 
@@ -1790,6 +1874,16 @@
 	<string name="top_sites_rename_dialog_ok">D’acòrdi</string>
 	<!-- Dialog button text for canceling the rename top site prompt. -->
 	<string name="top_sites_rename_dialog_cancel">Anullar</string>
+
+    <!-- In-activate tabs in the tabs tray -->
+    <!-- Title text displayed in the tabs tray when a tab has been unused for 4 days. -->
+    <string name="inactive_tabs_title">Onglets inactius</string>
+    <!-- A description below the section of "inactive" tabs to notify the user when those tabs will be closed, if appropriate. See strings inactive_tabs_30_days and inactive_tabs_7_days for placeholders options. -->
+    <string name="inactive_tabs_description">Los onglets son disponible aicí pendent %s jorns. Aprèp, seràn automaticament tampats.</string>
+    <!-- The amount of time until a tab in the "inactive" section of the tabs tray will be closed. See string inactive_tabs_description as well -->
+    <string name="inactive_tabs_30_days">30 jorns</string>
+    <!-- The amount of time until a tab in the "inactive" section of the tabs tray will be closed. See string inactive_tabs_description as well -->
+    <string name="inactive_tabs_7_days">1 setmana</string>
 
     <!-- Default browser experiment -->
     <string name="default_browser_experiment_card_text">Causir de dobrir los sites web, los corrièls e messatges automaticament dins Firefox.</string>

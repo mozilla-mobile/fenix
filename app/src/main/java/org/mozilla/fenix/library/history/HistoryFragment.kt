@@ -35,6 +35,7 @@ import mozilla.components.service.fxa.sync.SyncReason
 import mozilla.components.support.base.feature.UserInteractionHandler
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.NavHostActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.addons.showSnackBar
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
@@ -46,7 +47,6 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.setTextColor
-import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.ext.toShortUrl
 import org.mozilla.fenix.library.LibraryPageFragment
 import org.mozilla.fenix.utils.allowUndo
@@ -105,7 +105,6 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
             view.historyLayout,
             historyInteractor
         )
-        showToolbar(getString(R.string.library_history))
 
         return view
     }
@@ -123,9 +122,12 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
             requireComponents.core.historyStorage.createSynchronousPagedHistoryProvider()
         )
 
-        viewModel.userHasHistory.observe(this, Observer {
-            historyView.updateEmptyState(it)
-        })
+        viewModel.userHasHistory.observe(
+            this,
+            Observer {
+                historyView.updateEmptyState(it)
+            }
+        )
 
         requireComponents.analytics.metrics.track(Event.HistoryOpened)
 
@@ -155,13 +157,18 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
             historyView.update(it)
         }
 
-        viewModel.history.observe(viewLifecycleOwner, Observer {
-            historyView.historyAdapter.submitList(it)
-        })
+        viewModel.history.observe(
+            viewLifecycleOwner,
+            Observer {
+                historyView.historyAdapter.submitList(it)
+            }
+        )
     }
 
     override fun onResume() {
         super.onResume()
+
+        (activity as NavHostActivity).getSupportActionBarAndInflateIfNecessary().show()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -228,7 +235,8 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
             String.format(
                 requireContext().getString(
                     R.string.history_delete_single_item_snackbar
-                ), historyItems.first().url.toShortUrl(requireComponents.publicSuffixList)
+                ),
+                historyItems.first().url.toShortUrl(requireComponents.publicSuffixList)
             )
         }
     }
@@ -266,10 +274,9 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
 
         val homeActivity = activity as HomeActivity
         homeActivity.browsingModeManager.mode = mode
-        homeActivity.components.useCases.tabsUseCases.let { tabsUseCases ->
-            val addTab = if (mode == BrowsingMode.Private) tabsUseCases.addPrivateTab else tabsUseCases.addTab
-            addTab.invoke(item.url)
-        }
+        homeActivity.components.useCases.tabsUseCases.addTab.invoke(
+            item.url, private = (mode == BrowsingMode.Private)
+        )
 
         showTabTray()
     }

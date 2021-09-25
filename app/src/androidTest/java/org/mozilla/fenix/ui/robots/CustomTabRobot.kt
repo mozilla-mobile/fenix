@@ -7,13 +7,14 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.uiautomator.UiSelector
 import junit.framework.TestCase.assertTrue
-import mozilla.components.support.ktx.android.content.appName
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
+import org.mozilla.fenix.helpers.TestHelper.appName
 
 /**
  *  Implementation of the robot pattern for Custom tabs
@@ -29,7 +30,10 @@ class CustomTabRobot {
     }
 
     fun verifyPoweredByTextIsDisplayed() {
-        mDevice.findObject(UiSelector().textContains("POWERED BY ${appContext.appName}"))
+        assertTrue(
+            mDevice.findObject(UiSelector().textContains("POWERED BY $appName"))
+                .waitForExists(waitingTime)
+        )
     }
 
     fun verifyOpenInBrowserButtonExists() {
@@ -43,7 +47,11 @@ class CustomTabRobot {
     fun verifyRefreshButtonExists() = assertTrue(refreshButton().waitForExists(waitingTime))
 
     fun verifyCustomMenuItem(label: String) {
-        assertTrue(mDevice.findObject(UiSelector().text(label)).exists())
+        assertTrue(mDevice.findObject(UiSelector().text(label)).waitForExists(waitingTime))
+    }
+
+    fun verifyCustomTabCloseButton() {
+        closeButton().check(matches(isDisplayed()))
     }
 
     class Transition {
@@ -75,10 +83,12 @@ private fun desktopSiteButton() = onView(withId(R.id.switch_widget))
 
 private fun findInPageButton() = onView(withText("Find in page"))
 
-private fun openInBrowserButton() = onView(withText("Open in ${appContext.appName}"))
+private fun openInBrowserButton() = onView(withText("Open in $appName"))
 
 private fun refreshButton() = mDevice.findObject(UiSelector().description("Refresh"))
 
 private fun forwardButton() = mDevice.findObject(UiSelector().description("Forward"))
 
 private fun backButton() = mDevice.findObject(UiSelector().description("Back"))
+
+private fun closeButton() = onView(withContentDescription("Return to previous app"))

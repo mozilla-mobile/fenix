@@ -20,7 +20,6 @@ import mozilla.components.service.sync.logins.LoginsStorageException
 import mozilla.components.service.sync.logins.NoSuchRecordException
 import mozilla.components.service.sync.logins.SyncableLoginsStorage
 import org.mozilla.fenix.R
-import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.settings.logins.LoginsAction
 import org.mozilla.fenix.settings.logins.LoginsFragmentStore
 import org.mozilla.fenix.settings.logins.fragment.EditLoginFragmentDirections
@@ -84,7 +83,7 @@ open class SavedLoginsStorageController(
                     EditLoginFragmentDirections.actionEditLoginFragmentToLoginDetailFragment(
                         loginId
                     )
-                navController.navigateBlockingForAsyncNavGraph(directions)
+                navController.navigate(directions)
             }
         }
         saveLoginJob?.invokeOnCompletion {
@@ -188,7 +187,8 @@ open class SavedLoginsStorageController(
                 withContext(Dispatchers.Main) {
                     loginsFragmentStore.dispatch(
                         LoginsAction.UpdateLoginsList(
-                            logins.map { it.mapToSavedLogin() })
+                            logins.map { it.mapToSavedLogin() }
+                        )
                     )
                 }
             }

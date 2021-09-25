@@ -23,7 +23,7 @@ import mozilla.components.feature.pwa.feature.ManifestUpdateFeature
 import mozilla.components.feature.pwa.feature.WebAppActivityFeature
 import mozilla.components.feature.pwa.feature.WebAppHideToolbarFeature
 import mozilla.components.feature.pwa.feature.WebAppSiteControlsFeature
-import mozilla.components.feature.sitepermissions.SitePermissions
+import mozilla.components.concept.engine.permission.SitePermissions
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.ktx.android.arch.lifecycle.addObservers
@@ -37,6 +37,7 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.ext.runIfFragmentIsAttached
 
 /**
  * Fragment used for browsing the web within external apps.
@@ -66,7 +67,7 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
                 toolbar = toolbar,
                 sessionId = customTabSessionId,
                 activity = activity,
-                onItemTapped = { browserInteractor.onBrowserToolbarMenuItemTapped(it) },
+                onItemTapped = { browserToolbarInteractor.onBrowserToolbarMenuItemTapped(it) },
                 isPrivate = tab.content.private,
                 shouldReverseItems = !activity.settings().shouldUseBottomToolbar
             ),
@@ -193,16 +194,18 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
 
     override fun navToTrackingProtectionPanel(tab: SessionState) {
         requireComponents.useCases.trackingProtectionUseCases.containsException(tab.id) { contains ->
-            val isEnabled = tab.trackingProtection.enabled && !contains
-            val directions =
-                ExternalAppBrowserFragmentDirections
-                    .actionGlobalTrackingProtectionPanelDialogFragment(
-                        sessionId = tab.id,
-                        url = tab.content.url,
-                        trackingProtectionEnabled = isEnabled,
-                        gravity = getAppropriateLayoutGravity()
-                    )
-            nav(R.id.externalAppBrowserFragment, directions)
+            runIfFragmentIsAttached {
+                val isEnabled = tab.trackingProtection.enabled && !contains
+                val directions =
+                    ExternalAppBrowserFragmentDirections
+                        .actionGlobalTrackingProtectionPanelDialogFragment(
+                            sessionId = tab.id,
+                            url = tab.content.url,
+                            trackingProtectionEnabled = isEnabled,
+                            gravity = getAppropriateLayoutGravity()
+                        )
+                nav(R.id.externalAppBrowserFragment, directions)
+            }
         }
     }
 

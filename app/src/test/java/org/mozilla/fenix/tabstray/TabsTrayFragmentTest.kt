@@ -5,6 +5,8 @@
 package org.mozilla.fenix.tabstray
 
 import android.content.Context
+import android.content.res.Configuration
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
@@ -15,6 +17,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.tabs.TabLayout
 import io.mockk.Runs
@@ -34,6 +37,7 @@ import kotlinx.coroutines.CoroutineScope
 import mozilla.components.browser.menu.BrowserMenu
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.support.test.robolectric.testContext
+import org.junit.Assert
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertSame
 import org.junit.Before
@@ -44,7 +48,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.home.HomeScreenViewModel
 import org.mozilla.fenix.tabstray.browser.BrowserTrayInteractor
@@ -83,16 +87,18 @@ class TabsTrayFragmentTest {
 
             fragment.showUndoSnackbarForTab(true)
 
-            verify { lifecycleScope.allowUndo(
-                fragment.view!!,
-                testContext.getString(R.string.snackbar_private_tab_closed),
-                testContext.getString(R.string.snackbar_deleted_undo),
-                any(),
-                any(),
-                newTabButton,
-                TabsTrayFragment.ELEVATION,
-                false
-            ) }
+            verify {
+                lifecycleScope.allowUndo(
+                    fragment.view!!,
+                    testContext.getString(R.string.snackbar_private_tab_closed),
+                    testContext.getString(R.string.snackbar_deleted_undo),
+                    any(),
+                    any(),
+                    newTabButton,
+                    TabsTrayFragment.ELEVATION,
+                    false
+                )
+            }
         } finally {
             unmockkStatic("org.mozilla.fenix.utils.UndoKt")
             unmockkStatic("androidx.lifecycle.LifecycleOwnerKt")
@@ -115,16 +121,18 @@ class TabsTrayFragmentTest {
 
             fragment.showUndoSnackbarForTab(true)
 
-            verify { lifecycleScope.allowUndo(
-                fragment.view!!,
-                testContext.getString(R.string.snackbar_private_tab_closed),
-                testContext.getString(R.string.snackbar_deleted_undo),
-                any(),
-                any(),
-                null,
-                TabsTrayFragment.ELEVATION,
-                false
-            ) }
+            verify {
+                lifecycleScope.allowUndo(
+                    fragment.view!!,
+                    testContext.getString(R.string.snackbar_private_tab_closed),
+                    testContext.getString(R.string.snackbar_deleted_undo),
+                    any(),
+                    any(),
+                    null,
+                    TabsTrayFragment.ELEVATION,
+                    false
+                )
+            }
         } finally {
             unmockkStatic("org.mozilla.fenix.utils.UndoKt")
             unmockkStatic("androidx.lifecycle.LifecycleOwnerKt")
@@ -147,16 +155,18 @@ class TabsTrayFragmentTest {
 
             fragment.showUndoSnackbarForTab(false)
 
-            verify { lifecycleScope.allowUndo(
-                fragment.view!!,
-                testContext.getString(R.string.snackbar_tab_closed),
-                testContext.getString(R.string.snackbar_deleted_undo),
-                any(),
-                any(),
-                newTabButton,
-                TabsTrayFragment.ELEVATION,
-                false
-            ) }
+            verify {
+                lifecycleScope.allowUndo(
+                    fragment.view!!,
+                    testContext.getString(R.string.snackbar_tab_closed),
+                    testContext.getString(R.string.snackbar_deleted_undo),
+                    any(),
+                    any(),
+                    newTabButton,
+                    TabsTrayFragment.ELEVATION,
+                    false
+                )
+            }
         } finally {
             unmockkStatic("org.mozilla.fenix.utils.UndoKt")
             unmockkStatic("androidx.lifecycle.LifecycleOwnerKt")
@@ -179,16 +189,18 @@ class TabsTrayFragmentTest {
 
             fragment.showUndoSnackbarForTab(false)
 
-            verify { lifecycleScope.allowUndo(
-                fragment.view!!,
-                testContext.getString(R.string.snackbar_tab_closed),
-                testContext.getString(R.string.snackbar_deleted_undo),
-                any(),
-                any(),
-                null,
-                TabsTrayFragment.ELEVATION,
-                false
-            ) }
+            verify {
+                lifecycleScope.allowUndo(
+                    fragment.view!!,
+                    testContext.getString(R.string.snackbar_tab_closed),
+                    testContext.getString(R.string.snackbar_deleted_undo),
+                    any(),
+                    any(),
+                    null,
+                    TabsTrayFragment.ELEVATION,
+                    false
+                )
+            }
         } finally {
             unmockkStatic("org.mozilla.fenix.utils.UndoKt")
             unmockkStatic("androidx.lifecycle.LifecycleOwnerKt")
@@ -310,7 +322,7 @@ class TabsTrayFragmentTest {
             fragment.navigateToHomeAndDeleteSession("test")
 
             verify { viewModel.sessionToDelete = "test" }
-            verify { navController.navigateBlockingForAsyncNavGraph(NavGraphDirections.actionGlobalHome()) }
+            verify { navController.navigate(NavGraphDirections.actionGlobalHome()) }
         } finally {
             unmockkStatic("org.mozilla.fenix.ext.NavControllerKt")
             unmockkStatic("androidx.navigation.fragment.FragmentKt")
@@ -343,5 +355,82 @@ class TabsTrayFragmentTest {
         fragment.dismissTabsTray()
 
         verify { fragment.dismissAllowingStateLoss() }
+    }
+
+    @Test
+    fun `WHEN onConfigurationChanged is called THEN it delegates the tray behavior manager to update the tray`() {
+        val trayBehaviorManager: TabSheetBehaviorManager = mockk(relaxed = true)
+        fragment.trayBehaviorManager = trayBehaviorManager
+        val newConfiguration = Configuration()
+        every { context.settings().gridTabView } returns false
+
+        fragment.onConfigurationChanged(newConfiguration)
+
+        verify { trayBehaviorManager.updateDependingOnOrientation(newConfiguration.orientation) }
+    }
+
+    @Test
+    fun `WHEN the tabs tray is declared in XML THEN certain options are set for the behavior`() {
+        val view: View = LayoutInflater.from(testContext)
+            .inflate(R.layout.component_tabstray2, CoordinatorLayout(testContext), true)
+        val behavior = BottomSheetBehavior.from(view.tab_wrapper)
+
+        Assert.assertFalse(behavior.isFitToContents)
+        Assert.assertFalse(behavior.skipCollapsed)
+        assert(behavior.halfExpandedRatio <= 0.001f)
+    }
+
+    @Test
+    fun `GIVEN a grid TabView WHEN onConfigurationChanged is called THEN the adapter structure is updated`() {
+        val tray: ViewPager2 = mockk(relaxed = true)
+        val store: TabsTrayStore = mockk()
+        val trayInteractor: TabsTrayInteractor = mockk()
+        val browserInteractor: BrowserTrayInteractor = mockk()
+        val navigationInteractor: NavigationInteractor = mockk()
+        val browserStore: BrowserStore = mockk()
+
+        every { fragment.tabsTray } returns tray
+        every { context.components.core.store } returns browserStore
+        every { context.settings().gridTabView } returns true
+
+        fragment.setupPager(
+            context, store, trayInteractor, browserInteractor, navigationInteractor
+        )
+
+        val trayBehaviorManager: TabSheetBehaviorManager = mockk(relaxed = true)
+        fragment.trayBehaviorManager = trayBehaviorManager
+
+        val newConfiguration = Configuration()
+
+        fragment.onConfigurationChanged(newConfiguration)
+
+        verify { tray.adapter?.notifyDataSetChanged() }
+    }
+
+    @Test
+    fun `GIVEN a list TabView WHEN onConfigurationChanged is called THEN the adapter structure is NOT updated`() {
+        val tray: ViewPager2 = mockk(relaxed = true)
+        val store: TabsTrayStore = mockk()
+        val trayInteractor: TabsTrayInteractor = mockk()
+        val browserInteractor: BrowserTrayInteractor = mockk()
+        val navigationInteractor: NavigationInteractor = mockk()
+        val browserStore: BrowserStore = mockk()
+
+        every { fragment.tabsTray } returns tray
+        every { context.components.core.store } returns browserStore
+        every { context.settings().gridTabView } returns false
+
+        fragment.setupPager(
+            context, store, trayInteractor, browserInteractor, navigationInteractor
+        )
+
+        val trayBehaviorManager: TabSheetBehaviorManager = mockk(relaxed = true)
+        fragment.trayBehaviorManager = trayBehaviorManager
+
+        val newConfiguration = Configuration()
+
+        fragment.onConfigurationChanged(newConfiguration)
+
+        verify(exactly = 0) { tray.adapter?.notifyDataSetChanged() }
     }
 }

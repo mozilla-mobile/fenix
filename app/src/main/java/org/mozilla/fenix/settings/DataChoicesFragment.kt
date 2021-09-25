@@ -5,15 +5,17 @@
 package org.mozilla.fenix.settings
 
 import android.os.Bundle
+import androidx.appcompat.app.AlertDialog
+import androidx.core.content.edit
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
-import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.MetricServiceType
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
+import kotlin.system.exitProcess
 
 /**
  * Lets the user toggle telemetry on/off.
@@ -41,9 +43,6 @@ class DataChoicesFragment : PreferenceFragmentCompat() {
                 } else {
                     context.components.analytics.metrics.stop(MetricServiceType.Marketing)
                 }
-            } else if (key == getPreferenceKey(R.string.pref_key_experimentation)) {
-                val enabled = context.settings().isExperimentationEnabled
-                context.components.analytics.experiments.globalUserParticipation = enabled
             }
         }
     }
@@ -72,8 +71,49 @@ class DataChoicesFragment : PreferenceFragmentCompat() {
 
         requirePreference<SwitchPreference>(R.string.pref_key_experimentation).apply {
             isChecked = context.settings().isExperimentationEnabled
-            isVisible = FeatureFlags.nimbusExperiments
-            onPreferenceChangeListener = SharedPreferenceUpdater()
+
+            setOnPreferenceChangeListener<Boolean> { preference, enabled ->
+                val builder = AlertDialog.Builder(context)
+                    .setPositiveButton(
+                        R.string.top_sites_rename_dialog_ok
+                    ) { dialog, _ ->
+                        context.settings().preferences.edit {
+                            putBoolean(preference.key, enabled).commit()
+                        }
+                        context.components.analytics.experiments.globalUserParticipation = enabled
+                        dialog.dismiss()
+                        exitProcess(0)
+                    }
+                    .setNegativeButton(
+                        R.string.top_sites_rename_dialog_cancel
+                    ) { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    .setTitle(R.string.preference_experiments_2)
+                    .setMessage(getQuittingAppString())
+                    .setCancelable(false)
+                val alertDialog: AlertDialog = builder.create()
+                alertDialog.show()
+                false
+            }
         }
+    }
+
+    @Suppress("TooGenericExceptionCaught")
+    private fun getQuittingAppString(): String {
+        // Fix for #20919. As we are not able to get new strings on Beta and Release,
+        // We are using a string that it's already translated and taking some parts of it.
+        // To be specific "Firefox Account/Sync server modified. Quitting the application to apply changes…"
+        // We are interested on the phrase after the dot, that is generic and we can use for this case.
+        val rawString = getString(R.string.toast_override_fxa_sync_server_done)
+        return try {
+            rawString.split(".")[1]
+        } catch (e: ArrayIndexOutOfBoundsException) {
+            rawString
+        }
+    }
+
+    companion object {
+        private const val OVERRIDE_EXIT_DELAY = 3000L
     }
 }

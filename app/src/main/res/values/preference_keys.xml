@@ -65,7 +65,9 @@
     <string name="pref_key_install_pwa_visits" translatable="false">pref_key_install_pwa_visits</string>
     <string name="pref_key_times_app_opened" translatable="false">pref_key_times_app_opened</string>
     <string name="pref_key_last_review_prompt_shown_time" translatable="false">pref_key_last_review_prompt_shown_time</string>
+    <string name="pref_key_last_browse_activity_time" translatable="false">pref_key_last_browse_activity_time</string>
     <string name="pref_key_last_cfr_shown_time" translatable="false">pref_key_last_cfr_shown_time</string>
+    <string name="pref_key_should_show_default_browser_notification" translatable="false">pref_key_should_show_default_browser_notification</string>
 
     <!-- Data Choices -->
     <string name="pref_key_telemetry" translatable="false">pref_key_telemetry</string>
@@ -114,9 +116,9 @@
     <string name="pref_key_show_site_exceptions" translatable="false">pref_key_show_site_exceptions</string>
     <string name="pref_key_recommended_settings" translatable="false">pref_key_recommended_settings</string>
     <string name="pref_key_custom_settings" translatable="false">pref_key_custom_settings</string>
-    <string name="pref_key_browser_feature_autoplay" translatable="false">pref_key_browser_feature_autoplay</string>
-    <string name="pref_key_browser_feature_autoplay_audible" translatable="false">pref_key_browser_feature_autoplay</string>
-    <string name="pref_key_browser_feature_autoplay_inaudible" translatable="false">pref_key_browser_feature_autoplay_inaudible</string>
+    <string name="pref_key_browser_feature_autoplay_v2" translatable="false">pref_key_browser_feature_autoplay_v2</string>
+    <string name="pref_key_browser_feature_autoplay_audible_v2" translatable="false">pref_key_browser_feature_autoplay_v2</string>
+    <string name="pref_key_browser_feature_autoplay_inaudible_v2" translatable="false">pref_key_browser_feature_autoplay_inaudible_v2</string>
     <string name="pref_key_browser_feature_persistent_storage" translatable="false">pref_key_browser_feature_persistent_storage</string>
     <string name="pref_key_browser_feature_media_key_system_access" translatable="false">pref_key_browser_feature_media_key_system_access</string>
     <string name="pref_key_phone_feature_camera" translatable="false">pref_key_phone_feature_camera</string>
@@ -177,6 +179,7 @@
     <string name="pref_key_save_logins_settings" translatable="false">pref_key_save_logins_settings</string>
     <string name="pref_key_save_logins" translatable="false">pref_key_save_logins</string>
     <string name="pref_key_autofill_logins" translatable="false">pref_key_autofill_logins</string>
+    <string name="pref_key_android_autofill" translatable="false">pref_key_android_autofill</string>
     <string name="pref_key_never_save_logins" translatable="false">pref_key_never_save_logins</string>
     <string name="pref_key_saved_logins" translatable="false">pref_key_saved_logins</string>
     <string name="pref_key_password_sync_logins" translatable="false">pref_key_password_sync_logins</string>
@@ -192,12 +195,6 @@
     <string name="pref_key_credit_cards_sync_cards_across_devices" translatable="false">pref_key_credit_cards_sync_cards_across_devices</string>
     <!-- Key for the "Manage saved cards" preference in the "Credit cards" fragment -->
     <string name="pref_key_credit_cards_manage_cards" translatable="false">pref_key_credit_cards_manage_cards</string>
-    <!-- Key for the number of credit cards that have been saved manually by the user metric value -->
-    <string name="pref_key_credit_cards_saved_count" translatable="false">pref_key_credit_cards_saved_count</string>
-    <!-- Key for the number of credit cards that have been deleted by the user metric value -->
-    <string name="pref_key_credit_cards_deleted_count" translatable="false">pref_key_credit_cards_deleted_count</string>
-    <!-- Key for the number of times the user has autofilled a credit card metric value -->
-    <string name="pref_key_credit_cards_autofilled_count" translatable="false">pref_key_credit_cards_autofilled_count</string>
 
     <!-- Privacy Settings -->
     <string name="pref_key_open_links_in_a_private_tab" translatable="false">pref_key_open_links_in_a_private_tab</string>
@@ -235,9 +232,6 @@
     <!-- A value  of `true` means the Auto Close Tabs Banner has not been shown yet -->
     <string name="pref_key_should_show_auto_close_tabs_banner" translatable="false">pref_key_should_show_auto_close_tabs_banner</string>
 
-    <!-- A value  of `true` means the Grid View Banner has not been shown yet -->
-    <string name="pref_key_should_show_grid_view_banner" translatable="false">pref_key_should_show_grid_view_banner</string>
-
     <string name="pref_key_migrating_from_fenix_nightly_tip" translatable="false">pref_key_migrating_from_fenix_nightly_tip</string>
     <string name="pref_key_migrating_from_firefox_nightly_tip" translatable="false">pref_key_migrating_from_firefox_nightly_tip</string>
     <string name="pref_key_migrating_from_fenix_tip" translatable="false">pref_key_migrating_from_fenix_tip</string>
@@ -267,16 +261,19 @@
     <string name="pref_key_show_collections_placeholder_home" translatable="false">pref_key_show_collections_home</string>
 
     <!-- Tabs Settings -->
-    <string name="pref_key_tab_view_list" translatable="false">pref_key_tab_view_list</string>
+    <!-- pref_key_tab_view_list_do_not_use is needed for UI implementation only and should be expected to be useful. -->
+    <string name="pref_key_tab_view_list_do_not_use" translatable="false">pref_key_tab_view_list</string>
     <string name="pref_key_tab_view_grid" translatable="false">pref_key_tab_view_grid</string>
     <string name="pref_key_tabs" translatable="false">pref_key_tabs</string>
     <string name="pref_key_close_tabs_manually" translatable="false">pref_key_close_tabs_manually</string>
     <string name="pref_key_close_tabs_after_one_day" translatable="false">pref_key_close_tabs_after_one_day</string>
     <string name="pref_key_close_tabs_after_one_week" translatable="false">pref_key_close_tabs_after_one_week</string>
     <string name="pref_key_close_tabs_after_one_month" translatable="false">pref_key_close_tabs_after_one_month</string>
-    <string name="pref_key_new_tabs_tray" translatable="false">pref_key_new_tabs_tray</string>
     <string name="pref_key_allow_third_party_root_certs" translatable="false">pref_key_allow_third_party_cert_roots</string>
-
+    <string name="pref_key_start_on_home_after_four_hours" translatable="false">pref_key_start_on_home_after_four_hours</string>
+    <string name="pref_key_start_on_home_always" translatable="false">pref_key_start_on_home_always</string>
+    <string name="pref_key_start_on_home_never" translatable="false">pref_key_start_on_home_never</string>
+    <string name="pref_key_start_on_home_category" translatable="false">pref_key_start_on_home_category</string>
     <string name="pref_key_camera_permissions_needed" translatable="false">pref_key_camera_permissions_needed</string>
 
     <string name="pref_key_return_to_browser" translatable="false">pref_key_return_to_browser</string>
@@ -288,10 +285,10 @@
 
     <!-- Secret Info Setting Keys -->
     <string name="pref_key_secret_debug_info" translatable="false">pref_key_secret_debug_info</string>
-    <string name="pref_key_search_region_home" translatable="false">pref_key_search_region_home</string>
-    <string name="pref_key_search_region_current" translatable="false">pref_key_search_region_current</string>
 
     <!-- Secret Settings -->
     <string name="pref_key_show_address_feature" translatable="false">pref_key_show_address_feature</string>
     <string name="pref_key_nimbus_experiments" translatable="false">pref_key_nimbus_experiments</string>
+    <string name="pref_key_nimbus_use_preview" translatable="false">pref_key_nimbus_use_preview</string>
+    <string name="pref_key_history_metadata_feature" translatable="false">pref_key_history_metadata_feature</string>
 </resources>

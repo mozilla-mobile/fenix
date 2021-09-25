@@ -12,18 +12,16 @@ import mozilla.components.browser.state.state.createTab
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.support.ktx.kotlin.getOrigin
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.mozilla.fenix.components.Components
-import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.settings.sitepermissions.tryReloadTabBy
 
-@RunWith(FenixRobolectricTestRunner::class)
 class ExtensionsTest {
 
     @Test
     fun `tryReloadTabBy reloads latest tab matching origin`() {
         val store = BrowserStore(
-            BrowserState(tabs = listOf(
+            BrowserState(
+                tabs = listOf(
                     createTab(id = "1", url = "https://www.mozilla.org/1", lastAccess = 1),
                     createTab(id = "2", url = "https://www.mozilla.org/2", lastAccess = 2),
                     createTab(id = "3", url = "https://www.firefox.com")

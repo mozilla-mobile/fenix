@@ -2,31 +2,35 @@ package org.mozilla.fenix.ui.robots
 
 import android.widget.RelativeLayout
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.IdlingResourceTimeoutException
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.ViewMatchers.Visibility
 import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
 import androidx.test.espresso.matcher.ViewMatchers.hasSibling
 import androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom
 import androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA
 import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
-import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
-import androidx.test.espresso.matcher.ViewMatchers.Visibility
+import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withParent
+import androidx.test.espresso.matcher.ViewMatchers.withText
+import androidx.test.rule.ActivityTestRule
 import androidx.test.uiautomator.By
+import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.CoreMatchers.instanceOf
 import org.hamcrest.CoreMatchers.not
+import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
-import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.IdlingResourceHelper.registerAddonInstallingIdlingResource
 import org.mozilla.fenix.helpers.IdlingResourceHelper.unregisterAddonInstallingIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestHelper
+import org.mozilla.fenix.helpers.TestHelper.appName
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
 
@@ -36,9 +40,23 @@ import org.mozilla.fenix.helpers.ext.waitNotNull
 
 class SettingsSubMenuAddonsManagerRobot {
     fun verifyAddonPrompt(addonName: String) = assertAddonPrompt(addonName)
+
     fun clickInstallAddon(addonName: String) = selectInstallAddon(addonName)
-    fun verifyDownloadAddonPrompt(addonName: String, activityTestRule: HomeActivityTestRule) =
-        assertDownloadingAddonPrompt(addonName, activityTestRule)
+
+    fun verifyDownloadAddonPrompt(
+        addonName: String,
+        activityTestRule: ActivityTestRule<HomeActivity>
+    ) {
+        try {
+            assertDownloadingAddonPrompt(addonName, activityTestRule)
+        } catch (e: IdlingResourceTimeoutException) {
+            if (mDevice.findObject(UiSelector().text("Failed to install $addonName")).exists()) {
+                clickInstallAddon(addonName)
+                acceptInstallAddon()
+                assertDownloadingAddonPrompt(addonName, activityTestRule)
+            }
+        }
+    }
 
     fun cancelInstallAddon() = cancelInstall()
     fun acceptInstallAddon() = allowInstall()
@@ -124,7 +142,7 @@ class SettingsSubMenuAddonsManagerRobot {
 
     private fun assertDownloadingAddonPrompt(
         addonName: String,
-        activityTestRule: HomeActivityTestRule
+        activityTestRule: ActivityTestRule<HomeActivity>
     ) {
         registerAddonInstallingIdlingResource(activityTestRule)
 
@@ -132,7 +150,7 @@ class SettingsSubMenuAddonsManagerRobot {
             allOf(
                 withText("Okay, Got it"),
                 withParent(instanceOf(RelativeLayout::class.java)),
-                hasSibling(withText("$addonName has been added to Firefox Preview")),
+                hasSibling(withText("$addonName has been added to $appName")),
                 hasSibling(withText("Open it in the menu")),
                 hasSibling(withText("Allow in private browsing"))
             )

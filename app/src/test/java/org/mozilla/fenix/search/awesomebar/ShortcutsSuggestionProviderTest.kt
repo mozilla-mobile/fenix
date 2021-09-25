@@ -19,7 +19,6 @@ import mozilla.components.browser.state.state.SearchState
 import mozilla.components.browser.state.store.BrowserStore
 import org.junit.After
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Before
 import org.junit.Test
 import org.mozilla.fenix.R
@@ -45,12 +44,6 @@ class ShortcutsSuggestionProviderTest {
     }
 
     @Test
-    fun `should clear is always false`() {
-        val provider = ShortcutsSuggestionProvider(mockk(), mockk(), mockk(), mockk())
-        assertFalse(provider.shouldClearSuggestions)
-    }
-
-    @Test
     fun `returns suggestions from search engine provider`() = runBlockingTest {
         val engineOne = mockk<SearchEngine> {
             every { id } returns "1"
@@ -62,11 +55,13 @@ class ShortcutsSuggestionProviderTest {
             every { name } returns "EngineTwo"
             every { icon } returns mockk()
         }
-        val store = BrowserStore(BrowserState(
-            search = SearchState(
-                regionSearchEngines = listOf(engineOne, engineTwo)
+        val store = BrowserStore(
+            BrowserState(
+                search = SearchState(
+                    regionSearchEngines = listOf(engineOne, engineTwo)
+                )
             )
-        ))
+        )
         val provider = ShortcutsSuggestionProvider(store, context, mockk(), mockk())
 
         val suggestions = provider.onInputChanged("")
@@ -90,11 +85,13 @@ class ShortcutsSuggestionProviderTest {
     @Test
     fun `callbacks are triggered when suggestions are clicked`() = runBlockingTest {
         val engineOne = mockk<SearchEngine>(relaxed = true)
-        val store = BrowserStore(BrowserState(
-            search = SearchState(
-                regionSearchEngines = listOf(engineOne)
+        val store = BrowserStore(
+            BrowserState(
+                search = SearchState(
+                    regionSearchEngines = listOf(engineOne)
+                )
             )
-        ))
+        )
 
         val selectShortcutEngine = mockk<(SearchEngine) -> Unit>(relaxed = true)
         val selectShortcutEngineSettings = mockk<() -> Unit>(relaxed = true)

@@ -10,7 +10,6 @@ import androidx.lifecycle.LifecycleRegistry
 import androidx.navigation.NavController
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.spyk
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineDispatcher
@@ -25,9 +24,12 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.utils.Settings
 
 @ExperimentalCoroutinesApi
+@RunWith(FenixRobolectricTestRunner::class)
 class PwaOnboardingObserverTest {
 
     private lateinit var store: BrowserStore
@@ -48,7 +50,8 @@ class PwaOnboardingObserverTest {
             BrowserState(
                 tabs = listOf(
                     createTab(url = "https://firefox.com", id = "1")
-                ), selectedTabId = "1"
+                ),
+                selectedTabId = "1"
             )
         )
         lifecycleOwner = MockedLifecycleOwner(Lifecycle.State.STARTED)
@@ -57,13 +60,13 @@ class PwaOnboardingObserverTest {
         settings = mockk(relaxed = true)
         webAppUseCases = mockk(relaxed = true)
 
-        pwaOnboardingObserver = spyk(PwaOnboardingObserver(
+        pwaOnboardingObserver = PwaOnboardingObserver(
             store = store,
             lifecycleOwner = lifecycleOwner,
             navController = navigationController,
             settings = settings,
             webAppUseCases = webAppUseCases
-        ))
+        )
         every { pwaOnboardingObserver.navigateToPwaOnboarding() } returns Unit
     }
 

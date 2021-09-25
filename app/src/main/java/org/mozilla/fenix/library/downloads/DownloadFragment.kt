@@ -16,7 +16,6 @@ import android.view.ViewGroup
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
-import kotlinx.android.synthetic.main.fragment_downloads.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
@@ -33,8 +32,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.addons.showSnackBar
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.StoreProvider
-import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.components.metrics.MetricController
+import org.mozilla.fenix.databinding.FragmentDownloadsBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.filterNotExistsOnDisk
 import org.mozilla.fenix.ext.requireComponents
@@ -48,17 +46,19 @@ class DownloadFragment : LibraryPageFragment<DownloadItem>(), UserInteractionHan
     private lateinit var downloadStore: DownloadFragmentStore
     private lateinit var downloadView: DownloadView
     private lateinit var downloadInteractor: DownloadInteractor
-    private lateinit var metrics: MetricController
     private var undoScope: CoroutineScope? = null
     private var pendingDownloadDeletionJob: (suspend () -> Unit)? = null
     private lateinit var downloadsUseCases: DownloadsUseCases
+
+    private var _binding: FragmentDownloadsBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_downloads, container, false)
+    ): View {
+        _binding = FragmentDownloadsBinding.inflate(inflater, container, false)
 
         val items = provideDownloads(requireComponents.core.store.state)
         downloadsUseCases = requireContext().components.useCases.downloadUseCases
@@ -83,9 +83,14 @@ class DownloadFragment : LibraryPageFragment<DownloadItem>(), UserInteractionHan
         downloadInteractor = DownloadInteractor(
             downloadController
         )
-        downloadView = DownloadView(view.downloadsLayout, downloadInteractor)
+        downloadView = DownloadView(binding.downloadsLayout, downloadInteractor)
 
-        return view
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     /**
@@ -120,13 +125,9 @@ class DownloadFragment : LibraryPageFragment<DownloadItem>(), UserInteractionHan
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-
-        metrics = requireComponents.analytics.metrics
-        metrics.track(Event.DownloadsScreenOpened)
     }
 
     private fun displayDeleteAll() {
-        metrics.track(Event.DownloadsItemDeleted)
         activity?.let { activity ->
             AlertDialog.Builder(activity).apply {
                 setMessage(R.string.download_delete_all_dialog)
@@ -158,8 +159,6 @@ class DownloadFragment : LibraryPageFragment<DownloadItem>(), UserInteractionHan
      * (itemView.overflow_menu) this [items].size() will be 1.
      */
     private fun deleteDownloadItems(items: Set<DownloadItem>) {
-        metrics.track(Event.DownloadsItemDeleted)
-
         updatePendingDownloadToDelete(items)
         undoScope = CoroutineScope(IO)
         undoScope?.allowUndo(
@@ -231,7 +230,8 @@ class DownloadFragment : LibraryPageFragment<DownloadItem>(), UserInteractionHan
             String.format(
                 requireContext().getString(
                     R.string.download_delete_single_item_snackbar
-                ), downloadItems.first().fileName
+                ),
+                downloadItems.first().fileName
             )
         }
     }
@@ -267,8 +267,6 @@ class DownloadFragment : LibraryPageFragment<DownloadItem>(), UserInteractionHan
                 )
             )
         }
-
-        metrics.track(Event.DownloadsItemOpened)
     }
 
     /**

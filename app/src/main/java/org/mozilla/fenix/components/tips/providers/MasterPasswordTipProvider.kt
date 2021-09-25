@@ -14,26 +14,23 @@ import androidx.core.view.isVisible
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
-import io.sentry.Sentry
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import mozilla.appservices.logins.IdCollisionException
-import mozilla.appservices.logins.InvalidRecordException
-import mozilla.appservices.logins.LoginsStorageException
-import mozilla.appservices.logins.ServerPassword
-import mozilla.components.concept.storage.Login
+import mozilla.components.service.sync.logins.IdCollisionException
+import mozilla.components.service.sync.logins.InvalidRecordException
+import mozilla.components.service.sync.logins.LoginsStorageException
+import mozilla.components.service.sync.logins.ServerPassword
+import mozilla.components.service.sync.logins.toLogin
 import mozilla.components.support.migration.FennecLoginsMPImporter
 import mozilla.components.support.migration.FennecProfile
 import org.mozilla.fenix.R
-import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.tips.Tip
 import org.mozilla.fenix.components.tips.TipProvider
 import org.mozilla.fenix.components.tips.TipType
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.settings
 
 /**
@@ -60,7 +57,7 @@ class MasterPasswordTipProvider(
 
     override val shouldDisplay: Boolean by lazy {
         context.settings().shouldDisplayMasterPasswordMigrationTip &&
-                fennecLoginsMPImporter?.hasMasterPassword() == true
+            fennecLoginsMPImporter?.hasMasterPassword() == true
     }
 
     private fun masterPasswordMigrationTip(): Tip =
@@ -87,8 +84,6 @@ class MasterPasswordTipProvider(
         }
 
         val dialog = dialogBuilder.show()
-
-        context.metrics.track(Event.MasterPasswordMigrationDisplayed)
 
         val passwordErrorText = context.getString(R.string.mp_dialog_error_transfer_saved_logins)
         val migrationContinueButton =
@@ -198,13 +193,13 @@ class MasterPasswordTipProvider(
                     context.components.core.passwordsStorage.add(it)
                 } catch (e: InvalidRecordException) {
                     // This record was invalid and we couldn't save this login
-                    Sentry.capture("Master Password migration add login error $e for reason ${e.reason}")
+                    context.components.analytics.crashReporter.submitCaughtException(e)
                 } catch (e: IdCollisionException) {
                     // Nonempty ID was provided
-                    Sentry.capture("Master Password migration add login error $e")
+                    context.components.analytics.crashReporter.submitCaughtException(e)
                 } catch (e: LoginsStorageException) {
                     // Some other error occurred
-                    Sentry.capture("Master Password migration add login error $e")
+                    context.components.analytics.crashReporter.submitCaughtException(e)
                 }
             }
             withContext(Dispatchers.Main) {
@@ -217,8 +212,6 @@ class MasterPasswordTipProvider(
 
     private fun dismissMPTip() {
         tip?.let {
-            context.metrics.track(Event.TipClosed(it.identifier))
-
             context.components.settings.preferences
                 .edit()
                 .putBoolean(it.identifier, false)
@@ -230,8 +223,6 @@ class MasterPasswordTipProvider(
 
     private fun showSuccessDialog() {
         dismissMPTip()
-
-        context.metrics.track(Event.MasterPasswordMigrationSuccess)
 
         val dialogView =
             LayoutInflater.from(context).inflate(R.layout.mp_migration_done_dialog, null)
@@ -257,23 +248,6 @@ class MasterPasswordTipProvider(
             }
         }
     }
-
-    /**
-     * Converts an Application Services [ServerPassword] to an Android Components [Login]
-     */
-    fun ServerPassword.toLogin() = Login(
-        origin = hostname,
-        formActionOrigin = formSubmitURL,
-        httpRealm = httpRealm,
-        username = username,
-        password = password,
-        timesUsed = timesUsed,
-        timeCreated = timeCreated,
-        timeLastUsed = timeLastUsed,
-        timePasswordChanged = timePasswordChanged,
-        usernameField = usernameField,
-        passwordField = passwordField
-    )
 
     companion object {
         private const val HALF_OPACITY = .5F

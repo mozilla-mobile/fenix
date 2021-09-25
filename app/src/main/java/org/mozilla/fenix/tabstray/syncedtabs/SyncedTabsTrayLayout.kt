@@ -22,6 +22,7 @@ import mozilla.components.support.base.observer.Observable
 import mozilla.components.support.base.observer.ObserverRegistry
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.sync.SyncedTabsAdapter
+import org.mozilla.fenix.sync.SyncedTabsTitleDecoration
 import org.mozilla.fenix.sync.ext.toAdapterItem
 import org.mozilla.fenix.sync.ext.toStringRes
 import org.mozilla.fenix.tabstray.TabsTrayAction
@@ -33,7 +34,8 @@ class SyncedTabsTrayLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : ConstraintLayout(context, attrs, defStyleAttr), SyncedTabsView,
+) : ConstraintLayout(context, attrs, defStyleAttr),
+    SyncedTabsView,
     Observable<SyncedTabsView.Listener> by ObserverRegistry() {
 
     private val lifecycleProvider = LifecycleViewProvider(this)
@@ -63,6 +65,12 @@ class SyncedTabsTrayLayout @JvmOverloads constructor(
     lateinit var tabsTrayStore: TabsTrayStore
 
     override var listener: SyncedTabsView.Listener? = null
+
+    override fun onFinishInflate() {
+        synced_tabs_list.addItemDecoration(SyncedTabsTitleDecoration(context))
+
+        super.onFinishInflate()
+    }
 
     override fun displaySyncedTabs(syncedTabs: List<SyncedDeviceTabs>) {
         coroutineScope.launch {

@@ -13,29 +13,16 @@ import mozilla.components.lib.state.helpers.AbstractBinding
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifAnyChanged
 import org.mozilla.fenix.R
 import org.mozilla.fenix.tabstray.browser.BrowserTrayInteractor
-import org.mozilla.fenix.utils.Settings
 
 /**
- * Do not show fab when accessibility service is enabled
- *
- * This binding is coupled with [AccessibleNewTabButtonBinding].
- * When [AccessibleNewTabButtonBinding] is visible this should not be visible
+ * A binding that show a FAB in tab tray used to open a new tab.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 class FloatingActionButtonBinding(
     private val store: TabsTrayStore,
-    private val settings: Settings,
     private val actionButton: ExtendedFloatingActionButton,
     private val browserTrayInteractor: BrowserTrayInteractor
 ) : AbstractBinding<TabsTrayState>(store) {
-
-    override fun start() {
-        if (settings.accessibilityServicesEnabled) {
-            actionButton.hide()
-            return
-        }
-        super.start()
-    }
 
     override suspend fun onState(flow: Flow<TabsTrayState>) {
         flow.map { it }
@@ -56,6 +43,7 @@ class FloatingActionButtonBinding(
                 actionButton.apply {
                     shrink()
                     show()
+                    contentDescription = context.getString(R.string.add_tab)
                     setIconResource(R.drawable.ic_new)
                     setOnClickListener {
                         browserTrayInteractor.onFabClicked(false)
@@ -67,6 +55,7 @@ class FloatingActionButtonBinding(
                     setText(R.string.tab_drawer_fab_content)
                     extend()
                     show()
+                    contentDescription = context.getString(R.string.add_private_tab)
                     setIconResource(R.drawable.ic_new)
                     setOnClickListener {
                         browserTrayInteractor.onFabClicked(true)
