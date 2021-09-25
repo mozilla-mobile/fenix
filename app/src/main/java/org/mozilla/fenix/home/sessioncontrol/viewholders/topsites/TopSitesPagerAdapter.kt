@@ -14,6 +14,7 @@ import org.mozilla.fenix.home.sessioncontrol.AdapterItem.TopSitePagerPayload
 import org.mozilla.fenix.home.sessioncontrol.TopSiteInteractor
 import org.mozilla.fenix.home.sessioncontrol.viewholders.TopSitePagerViewHolder.Companion.TOP_SITES_PER_PAGE
 import org.mozilla.fenix.home.sessioncontrol.viewholders.TopSiteViewHolder
+import java.lang.IndexOutOfBoundsException
 
 class TopSitesPagerAdapter(
     private val interactor: TopSiteInteractor
@@ -30,15 +31,19 @@ class TopSitesPagerAdapter(
         position: Int,
         payloads: MutableList<Any>
     ) {
-        if (payloads.isNullOrEmpty()) {
-            onBindViewHolder(holder, position)
-        } else {
-            if (payloads[0] is TopSitePagerPayload) {
-                val adapter = holder.binding.topSitesList.adapter as TopSitesAdapter
-                val payload = payloads[0] as TopSitePagerPayload
+        try {
+            if (payloads.isNullOrEmpty()) {
+                onBindViewHolder(holder, position)
+            } else {
+                if (payloads[0] is TopSitePagerPayload) {
+                    val adapter = holder.binding.topSitesList.adapter as TopSitesAdapter
+                    val payload = payloads[0] as TopSitePagerPayload
 
-                update(payload, position, adapter)
+                    update(payload, position, adapter)
+                }
             }
+        } catch (e: IndexOutOfBoundsException) {
+            // IDK where this comes from
         }
     }
 
