@@ -22,6 +22,8 @@ import org.mozilla.fenix.home.recentbookmarks.controller.RecentBookmarksControll
 import org.mozilla.fenix.home.recenttabs.controller.RecentTabController
 import org.mozilla.fenix.home.sessioncontrol.DefaultSessionControlController
 import org.mozilla.fenix.home.sessioncontrol.SessionControlInteractor
+import org.mozilla.fenix.home.sessioncontrol.viewholders.pocket.PocketRecommendedStoryCategory
+import org.mozilla.fenix.home.sessioncontrol.viewholders.pocket.PocketStoriesController
 
 class SessionControlInteractorTest {
 
@@ -29,6 +31,7 @@ class SessionControlInteractorTest {
     private val recentTabController: RecentTabController = mockk(relaxed = true)
     private val recentBookmarksController: RecentBookmarksController = mockk(relaxed = true)
     private val historyMetadataController: HistoryMetadataController = mockk(relaxed = true)
+    private val pocketStoriesController: PocketStoriesController = mockk(relaxed = true)
 
     private lateinit var interactor: SessionControlInteractor
 
@@ -38,7 +41,8 @@ class SessionControlInteractorTest {
             controller,
             recentTabController,
             recentBookmarksController,
-            historyMetadataController
+            historyMetadataController,
+            pocketStoriesController
         )
     }
 
@@ -161,27 +165,6 @@ class SessionControlInteractorTest {
     }
 
     @Test
-    fun onHistoryMetadataItemClicked() {
-        val historyEntry = HistoryMetadata(
-            key = HistoryMetadataKey("http://www.mozilla.com", null, null),
-            title = "mozilla",
-            createdAt = System.currentTimeMillis(),
-            updatedAt = System.currentTimeMillis(),
-            totalViewTime = 10,
-            documentType = DocumentType.Regular,
-            previewImageUrl = null
-        )
-
-        interactor.onHistoryMetadataItemClicked(historyEntry.key.url, historyEntry.key)
-        verify {
-            historyMetadataController.handleHistoryMetadataItemClicked(
-                historyEntry.key.url,
-                historyEntry.key
-            )
-        }
-    }
-
-    @Test
     fun onHistoryMetadataShowAllClicked() {
         interactor.onHistoryMetadataShowAllClicked()
         verify { historyMetadataController.handleHistoryShowAllClicked() }
@@ -202,8 +185,8 @@ class SessionControlInteractorTest {
             title = "mozilla",
             historyMetadata = listOf(historyEntry)
         )
-        interactor.onToggleHistoryMetadataGroupExpanded(historyGroup)
-        verify { historyMetadataController.handleToggleHistoryMetadataGroupExpanded(historyGroup) }
+        interactor.onHistoryMetadataGroupClicked(historyGroup)
+        verify { historyMetadataController.handleHistoryMetadataGroupClicked(historyGroup) }
     }
 
     @Test
@@ -242,5 +225,14 @@ class SessionControlInteractorTest {
 
         interactor.onPrivateModeButtonClicked(newMode, hasBeenOnboarded)
         verify { controller.handlePrivateModeButtonClicked(newMode, hasBeenOnboarded) }
+    }
+
+    @Test
+    fun `GIVEN a PocketStoriesInteractor WHEN a category is clicked THEN handle it in a PocketStoriesController`() {
+        val clickedCategory: PocketRecommendedStoryCategory = mockk()
+
+        interactor.onCategoryClick(clickedCategory)
+
+        verify { pocketStoriesController.handleCategoryClick(clickedCategory) }
     }
 }

@@ -41,7 +41,7 @@ internal fun normalModeAdapterItems(
     showSetAsDefaultBrowserCard: Boolean,
     recentTabs: List<TabSessionState>,
     historyMetadata: List<HistoryMetadataGroup>,
-    pocketArticles: List<PocketRecommendedStory>
+    pocketStories: List<PocketRecommendedStory>
 ): List<AdapterItem> {
     val items = mutableListOf<AdapterItem>()
     var shouldShowCustomizeHome = false
@@ -69,7 +69,8 @@ internal fun normalModeAdapterItems(
 
     if (historyMetadata.isNotEmpty()) {
         shouldShowCustomizeHome = true
-        showHistoryMetadata(historyMetadata, items)
+        items.add(AdapterItem.HistoryMetadataHeader)
+        items.add(AdapterItem.HistoryMetadataGroup)
     }
 
     if (collections.isEmpty()) {
@@ -80,7 +81,7 @@ internal fun normalModeAdapterItems(
         showCollections(collections, expandedCollections, items)
     }
 
-    if (context.settings().pocketRecommendations && pocketArticles.isNotEmpty()) {
+    if (context.settings().pocketRecommendations && pocketStories.isNotEmpty()) {
         shouldShowCustomizeHome = true
         items.add(AdapterItem.PocketStoriesItem)
     }
@@ -90,23 +91,6 @@ internal fun normalModeAdapterItems(
     }
 
     return items
-}
-
-private fun showHistoryMetadata(
-    historyMetadata: List<HistoryMetadataGroup>,
-    items: MutableList<AdapterItem>
-) {
-    items.add(AdapterItem.HistoryMetadataHeader)
-
-    historyMetadata.forEach { container ->
-        items.add(AdapterItem.HistoryMetadataGroup(historyMetadataGroup = container))
-
-        if (container.expanded) {
-            container.historyMetadata.forEach {
-                items.add(AdapterItem.HistoryMetadataItem(it))
-            }
-        }
-    }
 }
 
 private fun showCollections(
@@ -177,7 +161,7 @@ private fun HomeFragmentState.toAdapterList(context: Context): List<AdapterItem>
         showSetAsDefaultBrowserCard,
         recentTabs,
         historyMetadata,
-        pocketArticles
+        pocketStories
     )
     is Mode.Private -> privateModeAdapterItems()
     is Mode.Onboarding -> onboardingAdapterItems(mode.state)
