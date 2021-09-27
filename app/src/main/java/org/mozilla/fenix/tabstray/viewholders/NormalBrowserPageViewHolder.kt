@@ -21,14 +21,16 @@ import org.mozilla.fenix.tabstray.TabsTrayStore
 import org.mozilla.fenix.tabstray.browser.containsTabId
 import org.mozilla.fenix.tabstray.browser.InactiveTabsState
 import org.mozilla.fenix.tabstray.browser.maxActiveTime
-import org.mozilla.fenix.tabstray.ext.*
 import org.mozilla.fenix.tabstray.ext.browserAdapter
 import org.mozilla.fenix.tabstray.ext.defaultBrowserLayoutColumns
+import org.mozilla.fenix.tabstray.ext.getNormalTrayTabs
+import org.mozilla.fenix.tabstray.ext.inactiveTabs
+import org.mozilla.fenix.tabstray.ext.titleHeaderAdapter
 import org.mozilla.fenix.tabstray.ext.inactiveTabsAdapter
 import org.mozilla.fenix.tabstray.ext.isNormalTabActiveWithSearchTerm
 import org.mozilla.fenix.tabstray.ext.isNormalTabInactive
+import org.mozilla.fenix.tabstray.ext.observeFirstInsert
 import org.mozilla.fenix.tabstray.ext.tabGroupAdapter
-import org.mozilla.fenix.tabstray.ext.titleHeaderAdapter
 
 /**
  * View holder for the normal tabs tray list.
@@ -77,7 +79,7 @@ class NormalBrowserPageViewHolder(
         val browserAdapter = concatAdapter.browserAdapter
         val inactiveTabAdapter = concatAdapter.inactiveTabsAdapter
         val tabGroupAdapter = concatAdapter.tabGroupAdapter
-        val inactiveTabsEnabled = containerView.context.settings().inactiveTabs
+        val inactiveTabsEnabled = containerView.context.settings().inactiveTabsAreEnabled
 
         val selectedTab = browserStore.state.selectedNormalTab ?: return
 

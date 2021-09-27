@@ -4,6 +4,8 @@
 
 package org.mozilla.fenix.tabstray.browser
 
+import io.mockk.every
+import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import mozilla.components.browser.state.action.TabListAction
 import mozilla.components.browser.state.state.BrowserState
@@ -16,6 +18,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
+import org.mozilla.fenix.utils.Settings
 
 class TitleHeaderBindingTest {
 
@@ -27,7 +30,10 @@ class TitleHeaderBindingTest {
     fun `WHEN normal tabs are added to the list THEN return true`() {
         var result = false
         val store = BrowserStore()
-        val binding = TitleHeaderBinding(store) { result = it }
+        val settings: Settings = mockk(relaxed = true)
+        val binding = TitleHeaderBinding(store, settings) { result = it }
+
+        every { settings.inactiveTabsAreEnabled } returns true
 
         store.dispatch(TabListAction.AddTabAction(createTab("https://mozilla.org")))
 
@@ -42,7 +48,10 @@ class TitleHeaderBindingTest {
     fun `WHEN grouped tabs are added to the list THEN return false`() {
         var result = false
         val store = BrowserStore()
-        val binding = TitleHeaderBinding(store) { result = it }
+        val settings: Settings = mockk(relaxed = true)
+        val binding = TitleHeaderBinding(store, settings) { result = it }
+
+        every { settings.inactiveTabsAreEnabled } returns true
 
         store.dispatch(
             TabListAction.AddTabAction(
@@ -71,7 +80,8 @@ class TitleHeaderBindingTest {
                 tabs = listOf(createTab("https://getpocket.com", id = "123"))
             )
         )
-        val binding = TitleHeaderBinding(store) { result = it }
+        val settings: Settings = mockk(relaxed = true)
+        val binding = TitleHeaderBinding(store, settings) { result = it }
 
         store.dispatch(TabListAction.RemoveTabAction("123"))
 

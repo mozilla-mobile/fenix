@@ -47,7 +47,6 @@ sealed class InactiveTabViewHolder(itemView: View) : RecyclerView.ViewHolder(ite
                 }
 
                 binding.delete.setOnClickListener {
-                    // todo: telemetry?
                     tabsTrayInteractor.onDeleteInactiveTabs()
                 }
             }

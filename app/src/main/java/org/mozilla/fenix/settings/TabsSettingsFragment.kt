@@ -6,11 +6,9 @@ package org.mozilla.fenix.settings
 
 import android.os.Bundle
 import android.view.View
-import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
-import org.mozilla.fenix.Config
 import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
@@ -74,7 +72,7 @@ class TabsSettingsFragment : PreferenceFragmentCompat() {
             FeatureFlags.showStartOnHomeSettings
 
         inactiveTabs = requirePreference<SwitchPreference>(R.string.pref_key_inactive_tabs).also {
-            it.isChecked = it.context.settings().inactiveTabs
+            it.isChecked = it.context.settings().inactiveTabsAreEnabled
             it.onPreferenceChangeListener = SharedPreferenceUpdater()
         }
 
@@ -92,8 +90,6 @@ class TabsSettingsFragment : PreferenceFragmentCompat() {
         radioOneMonth.onClickListener(::enableInactiveTabsSetting)
 
         setupRadioGroups()
-
-        // todo: put enable / disable logic here for inactive tabs when timeout is <= 7 days
     }
 
     private fun setupRadioGroups() {
@@ -136,7 +132,7 @@ class TabsSettingsFragment : PreferenceFragmentCompat() {
         inactiveTabsCategory.apply {
             isEnabled = false
             inactiveTabs.isChecked = false
-            context.settings().inactiveTabs = false
+            context.settings().inactiveTabsAreEnabled = false
         }
     }
 }

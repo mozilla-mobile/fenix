@@ -70,6 +70,6 @@ class DefaultTabsTrayInteractor(
     }
 
     override fun onDeleteInactiveTabs() {
-        controller.deleteAllInactiveTabs()
+        controller.handleDeleteAllInactiveTabs()
     }
 }

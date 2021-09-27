@@ -20,7 +20,6 @@ import org.mozilla.fenix.tabstray.ext.isNormalTabActiveWithoutSearchTerm
 import org.mozilla.fenix.tabstray.ext.isNormalTabInactive
 import org.mozilla.fenix.tabstray.ext.isNormalTabActiveWithSearchTerm
 import org.mozilla.fenix.tabstray.ext.tabGroupAdapter
-import org.mozilla.fenix.utils.Settings
 import java.util.concurrent.TimeUnit
 
 /**
@@ -50,7 +49,7 @@ class NormalBrowserTrayList @JvmOverloads constructor(
             selectTabUseCase,
             removeTabUseCase,
             { state ->
-                if (!FeatureFlags.inactiveTabs || !context.settings().inactiveTabs) {
+                if (!FeatureFlags.inactiveTabs || !context.settings().inactiveTabsAreEnabled) {
                     return@TabsFeature !state.content.private
                 }
 
@@ -91,7 +90,7 @@ class NormalBrowserTrayList @JvmOverloads constructor(
     private val inactiveFeature by lazy {
         val store = context.components.core.store
         val tabFilter: (TabSessionState) -> Boolean = filter@{
-            if (!FeatureFlags.inactiveTabs || !context.settings().inactiveTabs) {
+            if (!FeatureFlags.inactiveTabs || !context.settings().inactiveTabsAreEnabled) {
                 return@filter false
             }
             it.isNormalTabInactive(maxActiveTime)
