@@ -16,6 +16,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.bookmarkStorage
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.RecyclerViewIdlingResource
@@ -65,6 +66,25 @@ class BookmarksTest {
 
         if (bookmarksListIdlingResource != null) {
             IdlingRegistry.getInstance().unregister(bookmarksListIdlingResource!!)
+        }
+    }
+
+    @Test
+    fun verifyEmptyBookmarksMenuTest() {
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openBookmarks {
+            bookmarksListIdlingResource =
+                RecyclerViewIdlingResource(
+                    activityTestRule.activity.findViewById(R.id.bookmark_list),
+                    1
+                )
+            IdlingRegistry.getInstance().register(bookmarksListIdlingResource!!)
+
+            verifyBookmarksMenuView()
+            verifyAddFolderButton()
+            verifyCloseButton()
+            verifyBookmarkTitle("Desktop Bookmarks")
         }
     }
 
@@ -325,6 +345,8 @@ class BookmarksTest {
 
     @Test
     fun openSelectionInNewTabTest() {
+        val settings = activityTestRule.activity.applicationContext.settings()
+        settings.hasShownHomeOnboardingDialog = true
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         browserScreen {
@@ -400,6 +422,38 @@ class BookmarksTest {
 
         bookmarksMenu {
             verifyDeleteMultipleBookmarksSnackBar()
+        }
+    }
+
+    @Test
+    fun undoDeleteMultipleSelectionTest() {
+        val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+        val secondWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 2)
+
+        browserScreen {
+            createBookmark(firstWebPage.url)
+            createBookmark(secondWebPage.url)
+        }.openThreeDotMenu {
+        }.openBookmarks {
+            bookmarksListIdlingResource =
+                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.bookmark_list), 3)
+            IdlingRegistry.getInstance().register(bookmarksListIdlingResource!!)
+
+            longTapSelectItem(firstWebPage.url)
+            longTapSelectItem(secondWebPage.url)
+            IdlingRegistry.getInstance().unregister(bookmarksListIdlingResource!!)
+            openActionBarOverflowOrOptionsMenu(activityTestRule.activity)
+        }
+
+        multipleSelectionToolbar {
+            clickMultiSelectionDelete()
+        }
+
+        bookmarksMenu {
+            verifyDeleteMultipleBookmarksSnackBar()
+            clickUndoDeleteButton()
+            verifyBookmarkedURL(firstWebPage.url.toString())
+            verifyBookmarkedURL(secondWebPage.url.toString())
         }
     }
 

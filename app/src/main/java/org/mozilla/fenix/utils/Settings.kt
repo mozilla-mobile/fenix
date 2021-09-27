@@ -352,6 +352,19 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = false
     )
 
+    val isFirstRun: Boolean =
+        if (!preferences.contains(appContext.getPreferenceKey(R.string.pref_key_is_first_run))) {
+            preferences.edit()
+                .putBoolean(
+                    appContext.getPreferenceKey(R.string.pref_key_is_first_run),
+                    false
+                )
+                .apply()
+            true
+        } else {
+            false
+        }
+
     /**
      * Indicates the last time when the user was interacting with the [BrowserFragment],
      * This is useful to determine if the user has to start on the [HomeFragment]
@@ -749,6 +762,14 @@ class Settings(private val appContext: Context) : PreferencesHolder {
 
     var showSearchSuggestionsInPrivateOnboardingFinished by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_show_search_suggestions_in_private_onboarding),
+        default = false
+    )
+
+    /**
+     * Indicates if the home onboarding dialog has already shown before.
+     */
+    var hasShownHomeOnboardingDialog by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_has_shown_home_onboarding),
         default = false
     )
 

@@ -24,6 +24,11 @@
         app:popUpToInclusive="false" />
 
     <action
+        android:id="@+id/action_global_home_onboarding_dialog"
+        app:destination="@id/homeOnboardingDialogFragment"
+        app:popUpTo="@id/homeFragment" />
+
+    <action
         android:id="@+id/action_global_search_dialog"
         app:destination="@id/searchDialogFragment"
         app:popUpTo="@id/searchDialogFragment"
@@ -32,6 +37,10 @@
     <action
         android:id="@+id/action_global_recently_closed"
         app:destination="@id/recentlyClosedFragment" />
+
+    <action
+        android:id="@+id/action_global_history_metadata_group"
+        app:destination="@id/historyMetadataGroupFragment" />
 
     <action
         android:id="@+id/action_global_shareFragment"
@@ -156,6 +165,10 @@
             android:defaultValue="-1L"
             app:argType="long" />
     </fragment>
+    <dialog
+        android:id="@+id/homeOnboardingDialogFragment"
+        android:name="org.mozilla.fenix.onboarding.HomeOnboardingDialogFragment"
+        tools:layout="@layout/fragment_onboarding_home_dialog"/>
 
     <dialog
         android:id="@+id/searchDialogFragment"
@@ -235,6 +248,17 @@
         android:name="org.mozilla.fenix.library.history.HistoryFragment"
         android:label="@string/library_history"
         tools:layout="@layout/fragment_history" />
+
+    <fragment
+        android:id="@+id/historyMetadataGroupFragment"
+        android:name="org.mozilla.fenix.library.historymetadata.HistoryMetadataGroupFragment">
+        <argument
+            android:name="title"
+            app:argType="string" />
+        <argument
+            android:name="historyMetadataItems"
+            app:argType="org.mozilla.fenix.library.history.History[]" />
+    </fragment>
 
     <fragment
         android:id="@+id/downloadsFragment"

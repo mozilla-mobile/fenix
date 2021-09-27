@@ -12,9 +12,6 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.IdlingResource
 import androidx.test.espresso.action.ViewActions
-import androidx.test.espresso.action.ViewActions.pressImeActionButton
-import androidx.test.espresso.action.ViewActions.replaceText
-import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
@@ -33,14 +30,12 @@ import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.anyOf
-import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.CoreMatchers.not
+import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.SessionLoadedIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestHelper.packageName
-import org.mozilla.fenix.helpers.assertions.AwesomeBarAssertion.Companion.suggestionsAreEqualTo
-import org.mozilla.fenix.helpers.assertions.AwesomeBarAssertion.Companion.suggestionsAreGreaterThan
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
 
@@ -48,12 +43,6 @@ import org.mozilla.fenix.helpers.ext.waitNotNull
  * Implementation of Robot Pattern for the URL toolbar.
  */
 class NavigationToolbarRobot {
-
-    fun verifySearchSuggestionsAreMoreThan(suggestionSize: Int) =
-        assertSuggestionsAreMoreThan(suggestionSize)
-
-    fun verifySearchSuggestionsAreEqualTo(suggestionSize: Int) =
-        assertSuggestionsAreEqualTo(suggestionSize)
 
     fun verifyNoHistoryBookmarks() = assertNoHistoryBookmarks()
 
@@ -65,7 +54,7 @@ class NavigationToolbarRobot {
     fun verifyCloseReaderViewDetected(visible: Boolean = false) =
         assertCloseReaderViewDetected(visible)
 
-    fun typeSearchTerm(searchTerm: String) = awesomeBar().perform(typeText(searchTerm))
+    fun typeSearchTerm(searchTerm: String) = awesomeBar().setText(searchTerm)
 
     fun toggleReaderView() {
         mDevice.findObject(
@@ -85,7 +74,14 @@ class NavigationToolbarRobot {
         fun goBackToWebsite(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
             openEditURLView()
             clearAddressBar().click()
-            awesomeBar().check((matches(withText(containsString("")))))
+            assertTrue(
+                mDevice.findObject(
+                    UiSelector()
+                        .resourceId("$packageName:id/mozac_browser_toolbar_edit_url_view")
+                        .textContains("")
+                ).waitForExists(waitingTime)
+            )
+
             goBackButton()
 
             BrowserRobot().interact()
@@ -100,7 +96,8 @@ class NavigationToolbarRobot {
 
             openEditURLView()
 
-            awesomeBar().perform(replaceText(url.toString()), pressImeActionButton())
+            awesomeBar().setText(url.toString())
+            mDevice.pressEnter()
 
             runWithIdleRes(sessionLoadedIdlingResource) {
                 onView(
@@ -122,7 +119,8 @@ class NavigationToolbarRobot {
 
             openEditURLView()
 
-            awesomeBar().perform(replaceText(crashUrl), pressImeActionButton())
+            awesomeBar().setText(crashUrl)
+            mDevice.pressEnter()
 
             runWithIdleRes(sessionLoadedIdlingResource) {
                 mDevice.findObject(UiSelector().resourceId("$packageName:id/crash_tab_image"))
@@ -159,7 +157,8 @@ class NavigationToolbarRobot {
             sessionLoadedIdlingResource = SessionLoadedIdlingResource()
             mDevice.waitNotNull(Until.findObject(By.res("$packageName:id/toolbar")), waitingTime)
             urlBar().click()
-            awesomeBar().perform(replaceText(url.toString()), pressImeActionButton())
+            awesomeBar().setText(url.toString())
+            mDevice.pressEnter()
 
             runWithIdleRes(sessionLoadedIdlingResource) {
                 onView(ViewMatchers.withResourceName("browserLayout"))
@@ -280,16 +279,6 @@ fun openEditURLView() {
     )
 }
 
-private fun assertSuggestionsAreEqualTo(suggestionSize: Int) {
-    mDevice.waitForIdle()
-    onView(withId(R.id.awesome_bar)).check(suggestionsAreEqualTo(suggestionSize))
-}
-
-private fun assertSuggestionsAreMoreThan(suggestionSize: Int) {
-    mDevice.waitForIdle()
-    onView(withId(R.id.awesome_bar)).check(suggestionsAreGreaterThan(suggestionSize))
-}
-
 private fun assertNoHistoryBookmarks() {
     onView(withId(R.id.container))
         .check(matches(not(hasDescendant(withText("Test_Page_1")))))
@@ -304,12 +293,14 @@ private fun assertTabButtonShortcutMenuItems() {
         .check(matches(hasDescendant(withText("New tab"))))
 }
 
-private fun urlBar() = onView(withId(R.id.toolbar))
-private fun awesomeBar() = onView(withId(R.id.mozac_browser_toolbar_edit_url_view))
+private fun urlBar() = mDevice.findObject(UiSelector().resourceId("$packageName:id/toolbar"))
+private fun awesomeBar() =
+    mDevice.findObject(UiSelector().resourceId("$packageName:id/mozac_browser_toolbar_edit_url_view"))
 private fun threeDotButton() = onView(withId(R.id.mozac_browser_toolbar_menu))
 private fun tabTrayButton() = onView(withId(R.id.tab_button))
 private fun fillLinkButton() = onView(withId(R.id.fill_link_from_clipboard))
-private fun clearAddressBar() = onView(withId(R.id.mozac_browser_toolbar_clear_view))
+private fun clearAddressBar() =
+    mDevice.findObject(UiSelector().resourceId("$packageName:id/mozac_browser_toolbar_clear_view"))
 private fun goBackButton() = mDevice.pressBack()
 private fun readerViewToggle() =
     onView(withParent(withId(R.id.mozac_browser_toolbar_page_actions)))
