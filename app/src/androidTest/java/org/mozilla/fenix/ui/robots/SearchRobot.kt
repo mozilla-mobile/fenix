@@ -59,6 +59,10 @@ class SearchRobot {
     fun verifySearchWithText() = assertSearchWithText()
     fun verifySearchEngineResults(rule: ComposeTestRule, searchEngineName: String, count: Int) =
         assertSearchEngineResults(rule, searchEngineName, count)
+    fun verifySearchEngineSuggestionResults(rule: ComposeTestRule, searchSuggestion: String) =
+        assertSearchEngineSuggestionResults(rule, searchSuggestion)
+    fun verifyNoSuggestionsAreDisplayed(rule: ComposeTestRule, searchSuggestion: String) =
+        assertNoSuggestionsAreDisplayed(rule, searchSuggestion)
 
     fun verifySearchEngineURL(searchEngineName: String) = assertSearchEngineURL(searchEngineName)
     fun verifySearchSettings() = assertSearchSettings()
@@ -262,6 +266,26 @@ private fun assertSearchEngineResults(rule: ComposeTestRule, searchEngineName: S
 
     rule.onAllNodesWithText(searchEngineName)
         .assertCountEquals(count)
+}
+
+private fun assertSearchEngineSuggestionResults(rule: ComposeTestRule, searchResult: String) {
+    rule.waitForIdle()
+
+    mDevice.waitForAwesomeBarContent(
+        mDevice.findObject(
+            UiSelector().textContains(searchResult)
+        )
+    )
+
+    rule.onNodeWithText(searchResult)
+        .assertExists()
+}
+
+private fun assertNoSuggestionsAreDisplayed(rule: ComposeTestRule, searchTerm: String) {
+    rule.waitForIdle()
+
+    rule.onNodeWithText(searchTerm)
+        .assertDoesNotExist()
 }
 
 private fun assertSearchView() =
