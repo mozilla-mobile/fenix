@@ -33,6 +33,7 @@ import org.hamcrest.CoreMatchers
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.Constants.PackageName.GOOGLE_PLAY_SERVICES
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
+import org.mozilla.fenix.helpers.TestHelper.appName
 import org.mozilla.fenix.helpers.TestHelper.scrollToElementByText
 import org.mozilla.fenix.helpers.assertIsEnabled
 import org.mozilla.fenix.helpers.click
@@ -110,7 +111,7 @@ class SettingsRobot {
         }
 
         fun openAboutFirefoxPreview(interact: SettingsSubMenuAboutRobot.() -> Unit):
-                SettingsSubMenuAboutRobot.Transition {
+            SettingsSubMenuAboutRobot.Transition {
 
             assertAboutFirefoxPreview().click()
 
@@ -119,7 +120,7 @@ class SettingsRobot {
         }
 
         fun openSearchSubMenu(interact: SettingsSubMenuSearchRobot.() -> Unit):
-                SettingsSubMenuSearchRobot.Transition {
+            SettingsSubMenuSearchRobot.Transition {
 
             fun searchEngineButton() = onView(withText("Search"))
             searchEngineButton().click()
@@ -147,15 +148,19 @@ class SettingsRobot {
         }
 
         fun openAccessibilitySubMenu(interact: SettingsSubMenuAccessibilityRobot.() -> Unit): SettingsSubMenuAccessibilityRobot.Transition {
+            scrollToElementByText("Accessibility")
 
             fun accessibilityButton() = onView(withText("Accessibility"))
-            accessibilityButton().click()
+            accessibilityButton()
+                .check(matches(isDisplayed()))
+                .click()
 
             SettingsSubMenuAccessibilityRobot().interact()
             return SettingsSubMenuAccessibilityRobot.Transition()
         }
 
         fun openLanguageSubMenu(interact: SettingsSubMenuLanguageRobot.() -> Unit): SettingsSubMenuLanguageRobot.Transition {
+            scrollToElementByText("Language")
 
             fun languageButton() = onView(withText("Language"))
             languageButton().click()
@@ -310,14 +315,8 @@ private fun assertDefaultBrowserIsDisabled() {
 }
 
 private fun toggleDefaultBrowserSwitch() {
-    scrollToElementByText("Set as default browser")
-    onView(
-        CoreMatchers.allOf(
-            ViewMatchers.withParent(CoreMatchers.not(withId(R.id.navigationToolbar))),
-            withText("Set as default browser")
-        )
-    )
-        .perform(ViewActions.click())
+    scrollToElementByText("Privacy and security")
+    onView(withText("Set as default browser")).perform(ViewActions.click())
 }
 
 private fun assertAndroidDefaultAppsMenuAppears() {
@@ -402,7 +401,7 @@ private fun assertNotificationsButton() {
 private fun assertDataCollectionButton() {
     scrollToElementByText("Data collection")
     onView(withText("Data collection"))
-    .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
 private fun openLinksInAppsButton() = onView(withText("Open links in apps"))
@@ -475,8 +474,8 @@ private fun assertRateOnGooglePlay(): ViewInteraction {
 
 private fun assertAboutFirefoxPreview(): ViewInteraction {
     onView(withId(R.id.recycler_view))
-        .perform(RecyclerViewActions.scrollTo<RecyclerView.ViewHolder>(hasDescendant(withText("About Firefox Preview"))))
-    return onView(withText("About Firefox Preview"))
+        .perform(RecyclerViewActions.scrollTo<RecyclerView.ViewHolder>(hasDescendant(withText("About $appName"))))
+    return onView(withText("About $appName"))
         .check(matches(isDisplayed()))
 }
 

@@ -23,9 +23,8 @@ import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.support.ktx.android.content.getColorFromAttr
-import org.mozilla.fenix.FeatureFlags
-import org.mozilla.fenix.FeatureFlags.tabsTrayRewrite
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.accounts.AccountState
 import org.mozilla.fenix.components.accounts.FenixAccountManager
 import org.mozilla.fenix.experiments.FeatureId
 import org.mozilla.fenix.ext.components
@@ -47,8 +46,7 @@ class HomeMenu(
         object History : Item()
         object Downloads : Item()
         object Extensions : Item()
-        object SyncTabs : Item()
-        data class SyncAccount(val signedIn: Boolean) : Item()
+        data class SyncAccount(val accountState: AccountState) : Item()
         object WhatsNew : Item()
         object Help : Item()
         object Settings : Item()
@@ -93,129 +91,15 @@ class HomeMenu(
         }
     }
 
-    val syncedTabsItem = BrowserMenuImageText(
-        context.getString(R.string.synced_tabs),
-        R.drawable.ic_synced_tabs,
-        primaryTextColor
-    ) {
-        onItemTapped.invoke(Item.SyncTabs)
-    }
+    private fun getSyncItemTitle(): String =
+        accountManager.accountProfileEmail ?: context.getString(R.string.sync_menu_sign_in)
 
-    private fun getSyncItemTitle(): String {
-        val authenticatedAccount = accountManager.authenticatedAccount
-        val email = accountManager.accountProfileEmail
-
-        return if (authenticatedAccount && !email.isNullOrEmpty()) {
-            email
-        } else {
-            context.getString(R.string.sync_menu_sign_in)
-        }
-    }
-
-    val syncSignInMenuItem = BrowserMenuImageText(
+    private val syncSignInMenuItem = BrowserMenuImageText(
         getSyncItemTitle(),
         R.drawable.ic_synced_tabs,
         primaryTextColor
     ) {
-        onItemTapped.invoke(Item.SyncAccount(accountManager.signedInToFxa()))
-    }
-
-    private val oldCoreMenuItems by lazy {
-        val whatsNewItem = BrowserMenuHighlightableItem(
-            context.getString(R.string.browser_menu_whats_new),
-            R.drawable.ic_whats_new,
-            iconTintColorResource = primaryTextColor,
-            highlight = BrowserMenuHighlight.LowPriority(
-                notificationTint = getColor(context, R.color.whats_new_notification_color)
-            ),
-            isHighlighted = { WhatsNew.shouldHighlightWhatsNew(context) }
-        ) {
-            onItemTapped.invoke(Item.WhatsNew)
-        }
-        val experiments = context.components.analytics.experiments
-        val bookmarksItem = BrowserMenuImageText(
-            context.getString(R.string.library_bookmarks),
-            R.drawable.ic_bookmark_list,
-            primaryTextColor
-        ) {
-            onItemTapped.invoke(Item.Bookmarks)
-        }
-
-        val historyItem = BrowserMenuImageText(
-            context.getString(R.string.library_history),
-            R.drawable.ic_history,
-            primaryTextColor
-        ) {
-            onItemTapped.invoke(Item.History)
-        }
-
-        val addons = BrowserMenuImageText(
-            context.getString(R.string.browser_menu_add_ons),
-            R.drawable.ic_addons_extensions,
-            primaryTextColor
-        ) {
-            onItemTapped.invoke(Item.Extensions)
-        }
-
-        // Use nimbus to set the icon and title.
-        val variables = experiments.getVariables(FeatureId.NIMBUS_VALIDATION)
-        val settingsItem = BrowserMenuImageText(
-            variables.getText("settings-title") ?: context.getString(R.string.browser_menu_settings),
-            variables.getDrawableResource("settings-icon") ?: R.drawable.ic_settings,
-            primaryTextColor
-        ) {
-            onItemTapped.invoke(Item.Settings)
-        }
-
-        val helpItem = BrowserMenuImageText(
-            context.getString(R.string.browser_menu_help),
-            R.drawable.ic_help,
-            primaryTextColor
-        ) {
-            onItemTapped.invoke(Item.Help)
-        }
-
-        val downloadsItem = BrowserMenuImageText(
-            context.getString(R.string.library_downloads),
-            R.drawable.ic_download,
-            primaryTextColor
-        ) {
-            onItemTapped.invoke(Item.Downloads)
-        }
-
-        // Only query account manager if it has been initialized.
-        // We don't want to cause its initialization just for this check.
-        val accountAuthItem = if (context.components.backgroundServices.accountManagerAvailableQueue.isReady()) {
-            if (context.components.backgroundServices.accountManager.accountNeedsReauth()) reconnectToSyncItem else null
-        } else {
-            null
-        }
-
-        val settings = context.components.settings
-
-        val menuItems = listOfNotNull(
-            if (settings.shouldDeleteBrowsingDataOnQuit) quitItem else null,
-            settingsItem,
-            BrowserMenuDivider(),
-            syncedTabsItem,
-            bookmarksItem,
-            historyItem,
-            downloadsItem,
-            BrowserMenuDivider(),
-            addons,
-            BrowserMenuDivider(),
-            whatsNewItem,
-            helpItem,
-            accountAuthItem
-        ).also { items ->
-            items.getHighlight()?.let { onHighlightPresent(it) }
-        }
-
-        if (shouldUseBottomToolbar) {
-            menuItems.reversed()
-        } else {
-            menuItems
-        }
+        onItemTapped.invoke(Item.SyncAccount(accountManager.accountState))
     }
 
     val desktopItem = BrowserMenuImageSwitch(
@@ -227,7 +111,7 @@ class HomeMenu(
     }
 
     @Suppress("ComplexMethod")
-    private fun newCoreMenuItems(): List<BrowserMenuItem> {
+    private fun coreMenuItems(): List<BrowserMenuItem> {
         val experiments = context.components.analytics.experiments
         val settings = context.components.settings
 
@@ -297,7 +181,8 @@ class HomeMenu(
         // We don't want to cause its initialization just for this check.
         val accountAuthItem =
             if (context.components.backgroundServices.accountManagerAvailableQueue.isReady() &&
-                context.components.backgroundServices.accountManager.accountNeedsReauth()) {
+                context.components.backgroundServices.accountManager.accountNeedsReauth()
+            ) {
                 reconnectToSyncItem
             } else {
                 null
@@ -308,7 +193,7 @@ class HomeMenu(
             historyItem,
             downloadsItem,
             extensionsItem,
-            if (tabsTrayRewrite) syncSignInMenuItem else syncedTabsItem,
+            syncSignInMenuItem,
             accountAuthItem,
             BrowserMenuDivider(),
             desktopItem,
@@ -325,21 +210,10 @@ class HomeMenu(
     }
 
     init {
-        val menuItems = if (FeatureFlags.toolbarMenuFeature) {
-            newCoreMenuItems()
-        } else {
-            oldCoreMenuItems
-        }
+        val menuItems = coreMenuItems()
 
         // Report initial state.
         onMenuBuilderChanged(BrowserMenuBuilder(menuItems))
-
-        val menuItemsWithReconnectItem = if (FeatureFlags.toolbarMenuFeature) {
-            menuItems
-        } else {
-            // reconnect item is manually added to the beginning of the list
-            listOf(reconnectToSyncItem) + menuItems
-        }
 
         // Observe account state changes, and update menu item builder with a new set of items.
         context.components.backgroundServices.accountManagerAvailableQueue.runIfReadyOrQueue {
@@ -347,37 +221,40 @@ class HomeMenu(
             if (lifecycleOwner.lifecycle.currentState == Lifecycle.State.DESTROYED) {
                 return@runIfReadyOrQueue
             }
-            context.components.backgroundServices.accountManager.register(object : AccountObserver {
-                override fun onAuthenticationProblems() {
-                    lifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
-                        onMenuBuilderChanged(
-                            BrowserMenuBuilder(
-                                menuItemsWithReconnectItem
+            context.components.backgroundServices.accountManager.register(
+                object : AccountObserver {
+                    override fun onAuthenticationProblems() {
+                        lifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+                            onMenuBuilderChanged(
+                                BrowserMenuBuilder(
+                                    menuItems
+                                )
                             )
-                        )
+                        }
                     }
-                }
 
-                override fun onAuthenticated(account: OAuthAccount, authType: AuthType) {
-                    lifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
-                        onMenuBuilderChanged(
-                            BrowserMenuBuilder(
-                                menuItems
+                    override fun onAuthenticated(account: OAuthAccount, authType: AuthType) {
+                        lifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+                            onMenuBuilderChanged(
+                                BrowserMenuBuilder(
+                                    menuItems
+                                )
                             )
-                        )
+                        }
                     }
-                }
 
-                override fun onLoggedOut() {
-                    lifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
-                        onMenuBuilderChanged(
-                            BrowserMenuBuilder(
-                                menuItems
+                    override fun onLoggedOut() {
+                        lifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+                            onMenuBuilderChanged(
+                                BrowserMenuBuilder(
+                                    menuItems
+                                )
                             )
-                        )
+                        }
                     }
-                }
-            }, lifecycleOwner)
+                },
+                lifecycleOwner
+            )
         }
     }
 }

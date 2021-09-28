@@ -17,6 +17,7 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.work.Configuration.Builder
 import androidx.work.Configuration.Provider
 import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -64,10 +65,12 @@ import org.mozilla.fenix.telemetry.TelemetryLifecycleObserver
 import org.mozilla.fenix.utils.BrowsersCache
 import java.util.concurrent.TimeUnit
 import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.feature.autofill.AutofillUseCases
 import mozilla.components.feature.search.ext.buildSearchUrl
 import mozilla.components.feature.search.ext.waitForSelectedOrDefaultSearchEngine
 import mozilla.components.service.fxa.manager.SyncEnginesStorage
 import org.mozilla.fenix.GleanMetrics.Addons
+import org.mozilla.fenix.GleanMetrics.AndroidAutofill
 import org.mozilla.fenix.GleanMetrics.Preferences
 import org.mozilla.fenix.GleanMetrics.SearchDefaultEngine
 import org.mozilla.fenix.components.metrics.Event
@@ -125,6 +128,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         PerfStartup.applicationOnCreate.stopAndAccumulate(completeMethodDurationTimerId)
     }
 
+    @OptIn(DelicateCoroutinesApi::class) // GlobalScope usage
     protected open fun initializeGlean() {
         val telemetryEnabled = settings().isTelemetryEnabled
 
@@ -136,7 +140,8 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                 channel = BuildConfig.BUILD_TYPE,
                 httpClient = ConceptFetchHttpUploader(
                     lazy(LazyThreadSafetyMode.NONE) { components.core.client }
-                )),
+                )
+            ),
             uploadEnabled = telemetryEnabled,
             buildInfo = GleanBuildInfo.buildInfo
         )
@@ -205,11 +210,10 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             initVisualCompletenessQueueAndQueueTasks()
 
             ProcessLifecycleOwner.get().lifecycle.addObserver(TelemetryLifecycleObserver(components.core.store))
-
-            components.appStartupTelemetry.onFenixApplicationOnCreate()
         }
     }
 
+    @OptIn(DelicateCoroutinesApi::class) // GlobalScope usage
     private fun restoreBrowserState() = GlobalScope.launch(Dispatchers.Main) {
         val store = components.core.store
         val sessionStorage = components.core.sessionStorage
@@ -235,6 +239,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             registerActivityLifecycleCallbacks(PerformanceActivityLifecycleCallbacks(queue))
         }
 
+        @OptIn(DelicateCoroutinesApi::class) // GlobalScope usage
         fun queueInitStorageAndServices() {
             components.performance.visualCompletenessQueue.queue.runIfReadyOrQueue {
                 GlobalScope.launch(Dispatchers.IO) {
@@ -268,12 +273,14 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             }
         }
 
+        @OptIn(DelicateCoroutinesApi::class) // GlobalScope usage
         fun queueReviewPrompt() {
             GlobalScope.launch(Dispatchers.IO) {
                 components.reviewPromptController.trackApplicationLaunch()
             }
         }
 
+        @OptIn(DelicateCoroutinesApi::class) // GlobalScope usage
         fun queueRestoreLocale() {
             components.performance.visualCompletenessQueue.queue.runIfReadyOrQueue {
                 GlobalScope.launch(Dispatchers.IO) {
@@ -306,6 +313,8 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
     // To re-enable this, we need to do so in a way that won't interfere with any startup operations
     // which acquire reserved+ sqlite lock. Currently, Fennec migrations need to write to storage
     // on startup, and since they run in a background service we can't simply order these operations.
+
+    @OptIn(DelicateCoroutinesApi::class) // GlobalScope usage
     private fun runStorageMaintenance() {
         GlobalScope.launch(Dispatchers.IO) {
             // Bookmarks and history storage sit on top of the same db file so we only need to
@@ -360,6 +369,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
      * - https://github.com/mozilla/application-services/blob/master/docs/design/megazords.md
      * - https://mozilla.github.io/application-services/docs/applications/consuming-megazord-libraries.html
      */
+    @OptIn(DelicateCoroutinesApi::class) // GlobalScope usage
     private fun setupMegazord(): Deferred<Unit> {
         // Note: Megazord.init() must be called as soon as possible ...
         Megazord.init()
@@ -383,15 +393,17 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
 
         logger.info("onTrimMemory(), level=$level, main=${isMainProcess()}")
 
-        components.analytics.crashReporter.recordCrashBreadcrumb(Breadcrumb(
-            category = "Memory",
-            message = "onTrimMemory()",
-            data = mapOf(
-                "level" to level.toString(),
-                "main" to isMainProcess().toString()
-            ),
-            level = Breadcrumb.Level.INFO
-        ))
+        components.analytics.crashReporter.recordCrashBreadcrumb(
+            Breadcrumb(
+                category = "Memory",
+                message = "onTrimMemory()",
+                data = mapOf(
+                    "level" to level.toString(),
+                    "main" to isMainProcess().toString()
+                ),
+                level = Breadcrumb.Level.INFO
+            )
+        )
 
         runOnlyInMainProcess {
             components.core.icons.onTrimMemory(level)
@@ -456,6 +468,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         }
     }
 
+    @OptIn(DelicateCoroutinesApi::class) // GlobalScope usage
     private fun warmBrowsersCache() {
         // We avoid blocking the main thread for BrowsersCache on startup by loading it on
         // background thread.
@@ -478,29 +491,24 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                 components.core.store,
                 onNewTabOverride = {
                     _, engineSession, url ->
-                        val shouldCreatePrivateSession =
-                            components.core.store.state.selectedTab?.content?.private
-                                ?: components.settings.openLinksInAPrivateTab
+                    val shouldCreatePrivateSession =
+                        components.core.store.state.selectedTab?.content?.private
+                            ?: components.settings.openLinksInAPrivateTab
 
-                        if (shouldCreatePrivateSession) {
-                            components.useCases.tabsUseCases.addPrivateTab(
-                                url = url,
-                                selectTab = true,
-                                engineSession = engineSession
-                            )
-                        } else {
-                            components.useCases.tabsUseCases.addTab(
-                                url = url,
-                                selectTab = true,
-                                engineSession = engineSession
-                            )
-                        }
+                    components.useCases.tabsUseCases.addTab(
+                        url = url,
+                        selectTab = true,
+                        engineSession = engineSession,
+                        private = shouldCreatePrivateSession
+                    )
                 },
                 onCloseTabOverride = {
-                    _, sessionId -> components.useCases.tabsUseCases.removeTab(sessionId)
+                    _, sessionId ->
+                    components.useCases.tabsUseCases.removeTab(sessionId)
                 },
                 onSelectTabOverride = {
-                    _, sessionId -> components.useCases.tabsUseCases.selectTab(sessionId)
+                    _, sessionId ->
+                    components.useCases.tabsUseCases.selectTab(sessionId)
                 },
                 onExtensionsLoaded = { extensions ->
                     components.addonUpdater.registerForFutureUpdates(extensions)
@@ -580,18 +588,6 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                 topSitesCount.add(topSitesSize)
             }
 
-            if (settings.creditCardsSavedCount > 0) {
-                creditCardsSavedCount.add(settings.creditCardsSavedCount)
-            }
-
-            if (settings.creditCardsDeletedCount > 0) {
-                creditCardsDeletedCount.add(settings.creditCardsDeletedCount)
-            }
-
-            if (settings.creditCardsAutofilledCount > 0) {
-                creditCardsAutofillCount.add(settings.creditCardsAutofilledCount)
-            }
-
             val installedAddonSize = settings.installedAddonsCount
             Addons.hasInstalledAddons.set(installedAddonSize > 0)
             if (installedAddonSize > 0) {
@@ -627,6 +623,12 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             closeTabSetting.set(settings.getTabTimeoutPingString())
         }
 
+        with(AndroidAutofill) {
+            val autofillUseCases = AutofillUseCases()
+            supported.set(autofillUseCases.isSupported(applicationContext))
+            enabled.set(autofillUseCases.isEnabled(applicationContext))
+        }
+
         browserStore.waitForSelectedOrDefaultSearchEngine { searchEngine ->
             if (searchEngine != null) {
                 SearchDefaultEngine.apply {
@@ -650,8 +652,6 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             bookmarksSuggestion.set(settings.shouldShowBookmarkSuggestions)
             clipboardSuggestionsEnabled.set(settings.shouldShowClipboardSuggestions)
             searchShortcutsEnabled.set(settings.shouldShowSearchShortcuts)
-            openLinksInPrivate.set(settings.openLinksInAPrivateTab)
-            privateSearchSuggestions.set(settings.shouldShowSearchSuggestionsInPrivate)
             voiceSearchEnabled.set(settings.shouldShowVoiceSearch)
             openLinksInAppEnabled.set(settings.openLinksInExternalApp)
             signedInSync.set(settings.signedInFxaAccount)

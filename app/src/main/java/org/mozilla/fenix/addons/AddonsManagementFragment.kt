@@ -119,7 +119,7 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
         addons?.forEach { addon ->
             val names = addon.translatableName
             names["en-US"]?.let { name ->
-                if (name.toLowerCase(Locale.ENGLISH).contains(addonNameSubStr.toLowerCase(Locale.ENGLISH))) {
+                if (name.lowercase().contains(addonNameSubStr.lowercase())) {
                     searchedAddons.add(addon)
                 }
             }

@@ -17,11 +17,10 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import mozilla.components.feature.sitepermissions.SitePermissions
+import mozilla.components.concept.engine.permission.SitePermissions
 import mozilla.components.support.ktx.kotlin.stripDefaultPort
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
@@ -132,11 +131,11 @@ class SitePermissionsDetailsExceptionsFragment : PreferenceFragmentCompat() {
             AlertDialog.Builder(requireContext()).apply {
                 setMessage(R.string.confirm_clear_permissions_site)
                 setTitle(R.string.clear_permissions)
-                setPositiveButton(android.R.string.yes) { dialog: DialogInterface, _ ->
+                setPositiveButton(android.R.string.ok) { dialog: DialogInterface, _ ->
                     clearSitePermissions()
                     dialog.dismiss()
                 }
-                setNegativeButton(android.R.string.no) { dialog: DialogInterface, _ ->
+                setNegativeButton(android.R.string.cancel) { dialog: DialogInterface, _ ->
                     dialog.cancel()
                 }
             }.show()
@@ -163,6 +162,6 @@ class SitePermissionsDetailsExceptionsFragment : PreferenceFragmentCompat() {
                 phoneFeature = phoneFeature,
                 sitePermissions = sitePermissions
             )
-        requireView().findNavController().navigateBlockingForAsyncNavGraph(directions)
+        requireView().findNavController().navigate(directions)
     }
 }

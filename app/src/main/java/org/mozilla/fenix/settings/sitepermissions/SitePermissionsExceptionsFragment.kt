@@ -24,9 +24,11 @@ import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
-import mozilla.components.feature.sitepermissions.SitePermissions
+import kotlinx.coroutines.withContext
+import mozilla.components.concept.engine.permission.SitePermissions
 import mozilla.components.support.ktx.kotlin.stripDefaultPort
 import org.mozilla.fenix.NavHostActivity
 import org.mozilla.fenix.R
@@ -58,20 +60,27 @@ class SitePermissionsExceptionsFragment :
         recyclerView = rootView.findViewById(R.id.exceptions)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        val sitePermissionsPaged = requireContext().components.core.permissionStorage.getSitePermissionsPaged()
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+            val sitePermissionsPaged = requireContext().components.core.permissionStorage.getSitePermissionsPaged()
 
-        val adapter = ExceptionsAdapter(this)
-        val liveData = LivePagedListBuilder(sitePermissionsPaged, MAX_ITEMS_PER_PAGE).build()
+            withContext(Main) {
+                val adapter = ExceptionsAdapter(this@SitePermissionsExceptionsFragment)
+                val liveData = LivePagedListBuilder(sitePermissionsPaged, MAX_ITEMS_PER_PAGE).build()
 
-        liveData.observe(viewLifecycleOwner, Observer<PagedList<SitePermissions>> {
-            if (it.isEmpty()) {
-                showEmptyListMessage()
-            } else {
-                hideEmptyListMessage()
-                adapter.submitList(it)
-                recyclerView.adapter = adapter
+                liveData.observe(
+                    viewLifecycleOwner,
+                    Observer<PagedList<SitePermissions>> {
+                        if (it.isEmpty()) {
+                            showEmptyListMessage()
+                        } else {
+                            hideEmptyListMessage()
+                            adapter.submitList(it)
+                            recyclerView.adapter = adapter
+                        }
+                    }
+                )
             }
-        })
+        }
     }
 
     private fun hideEmptyListMessage() {
@@ -96,11 +105,11 @@ class SitePermissionsExceptionsFragment :
             AlertDialog.Builder(requireContext()).apply {
                 setMessage(R.string.confirm_clear_permissions_on_all_sites)
                 setTitle(R.string.clear_permissions)
-                setPositiveButton(android.R.string.yes) { dialog: DialogInterface, _ ->
+                setPositiveButton(android.R.string.ok) { dialog: DialogInterface, _ ->
                     deleteAllSitePermissions()
                     dialog.dismiss()
                 }
-                setNegativeButton(android.R.string.no) { dialog: DialogInterface, _ ->
+                setNegativeButton(android.R.string.cancel) { dialog: DialogInterface, _ ->
                     dialog.cancel()
                 }
             }.show()

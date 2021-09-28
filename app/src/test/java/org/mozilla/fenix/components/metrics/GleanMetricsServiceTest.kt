@@ -21,7 +21,6 @@ import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.History
 import org.mozilla.fenix.GleanMetrics.SyncedTabs
 import org.mozilla.fenix.GleanMetrics.TabsTray
-import org.mozilla.fenix.GleanMetrics.TabsTrayCfr
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 
 @RunWith(FenixRobolectricTestRunner::class)
@@ -250,13 +249,16 @@ class GleanMetricsServiceTest {
         assertFalse(TabsTray.closeAllTabs.testHasValue())
         gleanService.track(Event.TabsTrayCloseAllTabsPressed)
         assertTrue(TabsTray.closeAllTabs.testHasValue())
+    }
 
-        assertFalse(TabsTrayCfr.dismiss.testHasValue())
-        gleanService.track(Event.TabsTrayCfrDismissed)
-        assertTrue(TabsTrayCfr.dismiss.testHasValue())
+    @Test
+    fun `default browser events are correctly recorded`() {
+        assertFalse(Events.defaultBrowserChanged.testHasValue())
+        gleanService.track(Event.ChangedToDefaultBrowser)
+        assertTrue(Events.defaultBrowserChanged.testHasValue())
 
-        assertFalse(TabsTrayCfr.goToSettings.testHasValue())
-        gleanService.track(Event.TabsTrayCfrTapped)
-        assertTrue(TabsTrayCfr.goToSettings.testHasValue())
+        assertFalse(Events.defaultBrowserNotifTapped.testHasValue())
+        gleanService.track(Event.DefaultBrowserNotifTapped)
+        assertTrue(Events.defaultBrowserNotifTapped.testHasValue())
     }
 }

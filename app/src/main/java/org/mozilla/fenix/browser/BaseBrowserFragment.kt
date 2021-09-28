@@ -77,7 +77,7 @@ import mozilla.components.feature.session.FullScreenFeature
 import mozilla.components.feature.session.PictureInPictureFeature
 import mozilla.components.feature.session.SessionFeature
 import mozilla.components.feature.session.SwipeRefreshFeature
-import mozilla.components.feature.sitepermissions.SitePermissions
+import mozilla.components.concept.engine.permission.SitePermissions
 import mozilla.components.feature.sitepermissions.SitePermissionsFeature
 import mozilla.components.lib.state.ext.consumeFlow
 import mozilla.components.lib.state.ext.flowScoped
@@ -104,9 +104,7 @@ import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.toolbar.BrowserFragmentState
 import org.mozilla.fenix.components.toolbar.BrowserFragmentStore
-import org.mozilla.fenix.components.toolbar.BrowserInteractor
 import org.mozilla.fenix.components.toolbar.BrowserToolbarView
-import org.mozilla.fenix.components.toolbar.BrowserToolbarViewInteractor
 import org.mozilla.fenix.components.toolbar.DefaultBrowserToolbarController
 import org.mozilla.fenix.components.toolbar.DefaultBrowserToolbarMenuController
 import org.mozilla.fenix.components.toolbar.ToolbarIntegration
@@ -133,10 +131,11 @@ import java.lang.ref.WeakReference
 import mozilla.components.feature.session.behavior.EngineViewBrowserToolbarBehavior
 import mozilla.components.feature.webauthn.WebAuthnFeature
 import mozilla.components.support.base.feature.ActivityResultHandler
-import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import mozilla.components.support.ktx.android.view.enterToImmersiveMode
 import mozilla.components.support.ktx.kotlin.getOrigin
 import org.mozilla.fenix.GleanMetrics.PerfStartup
+import org.mozilla.fenix.components.toolbar.interactor.BrowserToolbarInteractor
+import org.mozilla.fenix.components.toolbar.interactor.DefaultBrowserToolbarInteractor
 import org.mozilla.fenix.ext.measureNoInline
 import org.mozilla.fenix.ext.secure
 import org.mozilla.fenix.settings.biometric.BiometricPromptFeature
@@ -149,15 +148,19 @@ import mozilla.components.feature.session.behavior.ToolbarPosition as MozacToolb
  */
 @ExperimentalCoroutinesApi
 @Suppress("TooManyFunctions", "LargeClass")
-abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, ActivityResultHandler,
-    OnBackLongPressedListener, AccessibilityManager.AccessibilityStateChangeListener {
+abstract class BaseBrowserFragment :
+    Fragment(),
+    UserInteractionHandler,
+    ActivityResultHandler,
+    OnBackLongPressedListener,
+    AccessibilityManager.AccessibilityStateChangeListener {
 
     private lateinit var browserFragmentStore: BrowserFragmentStore
     private lateinit var browserAnimator: BrowserAnimator
 
-    private var _browserInteractor: BrowserToolbarViewInteractor? = null
-    protected val browserInteractor: BrowserToolbarViewInteractor
-        get() = _browserInteractor!!
+    private var _browserToolbarInteractor: BrowserToolbarInteractor? = null
+    protected val browserToolbarInteractor: BrowserToolbarInteractor
+        get() = _browserToolbarInteractor!!
 
     @VisibleForTesting
     @Suppress("VariableNaming")
@@ -236,25 +239,25 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
     }
 
     final override fun onViewCreated(view: View, savedInstanceState: Bundle?) =
-            PerfStartup.baseBfragmentOnViewCreated.measureNoInline { // weird indentation to avoid breaking blame.
-        initializeUI(view)
+        PerfStartup.baseBfragmentOnViewCreated.measureNoInline { // weird indentation to avoid breaking blame.
+            initializeUI(view)
 
-        if (customTabSessionId == null) {
-            // We currently only need this observer to navigate to home
-            // in case all tabs have been removed on startup. No need to
-            // this if we have a known session to display.
-            observeRestoreComplete(requireComponents.core.store, findNavController())
+            if (customTabSessionId == null) {
+                // We currently only need this observer to navigate to home
+                // in case all tabs have been removed on startup. No need to
+                // this if we have a known session to display.
+                observeRestoreComplete(requireComponents.core.store, findNavController())
+            }
+
+            observeTabSelection(requireComponents.core.store)
+
+            if (!onboarding.userHasBeenOnboarded()) {
+                observeTabSource(requireComponents.core.store)
+            }
+
+            requireContext().accessibilityManager.addAccessibilityStateChangeListener(this)
+            Unit
         }
-
-        observeTabSelection(requireComponents.core.store)
-
-        if (!onboarding.userHasBeenOnboarded()) {
-            observeTabSource(requireComponents.core.store)
-        }
-
-        requireContext().accessibilityManager.addAccessibilityStateChangeListener(this)
-        Unit
-    }
 
     private fun initializeUI(view: View) {
         val tab = getCurrentTab()
@@ -266,7 +269,8 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
         }
     }
 
-    @Suppress("ComplexMethod", "LongMethod")
+    @Suppress("ComplexMethod", "LongMethod", "DEPRECATION")
+    // https://github.com/mozilla-mobile/fenix/issues/19920
     @CallSuper
     internal open fun initializeUI(view: View, tab: SessionState) {
         val context = requireContext()
@@ -309,7 +313,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
                 thumbnailsFeature.get()?.requestScreenshot()
                 findNavController().nav(
                     R.id.browserFragment,
-                    getTrayDirection(context)
+                    BrowserFragmentDirections.actionGlobalTabsTrayFragment()
                 )
             },
             onCloseTab = { closedSession ->
@@ -357,7 +361,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
             browserStore = store
         )
 
-        _browserInteractor = BrowserInteractor(
+        _browserToolbarInteractor = DefaultBrowserToolbarInteractor(
             browserToolbarController,
             browserToolbarMenuController
         )
@@ -365,7 +369,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
         _browserToolbarView = BrowserToolbarView(
             container = view.browserLayout,
             toolbarPosition = context.settings().toolbarPosition,
-            interactor = browserInteractor,
+            interactor = browserToolbarInteractor,
             customTabSession = customTabSessionId?.let { store.state.findCustomTab(it) },
             lifecycleOwner = viewLifecycleOwner
         )
@@ -420,7 +424,8 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
                 window = requireActivity().window,
                 store = store,
                 customTabId = customTabSessionId,
-                isSecure = { !allowScreenshotsInPrivateMode && it.content.private }
+                isSecure = { !allowScreenshotsInPrivateMode && it.content.private },
+                clearFlagOnStop = false
             ),
             owner = this,
             view = view
@@ -489,16 +494,14 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
                 val dynamicDownloadDialog = DynamicDownloadDialog(
                     container = view.browserLayout,
                     downloadState = downloadState,
-                    metrics = requireComponents.analytics.metrics,
                     didFail = downloadJobStatus == DownloadState.Status.FAILED,
                     tryAgain = downloadFeature::tryAgain,
                     onCannotOpenFile = {
                         showCannotOpenFileError(view.browserLayout, context, it)
                     },
                     view = view.viewDynamicDownloadDialog,
-                    toolbarHeight = toolbarHeight,
-                    onDismiss = { sharedViewModel.downloadDialogState.remove(downloadState.sessionId) }
-                )
+                    toolbarHeight = toolbarHeight
+                ) { sharedViewModel.downloadDialogState.remove(downloadState.sessionId) }
 
                 dynamicDownloadDialog.show()
                 browserToolbarView.expand()
@@ -585,7 +588,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
                             showPage = true,
                             sessionId = getCurrentTab()?.id
                         )
-                        findNavController().navigateBlockingForAsyncNavGraph(directions)
+                        findNavController().navigate(directions)
                     }
                 },
                 onNeedToRequestPermissions = { permissions ->
@@ -596,14 +599,14 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
                     browserAnimator.captureEngineViewAndDrawStatically {
                         val directions =
                             NavGraphDirections.actionGlobalSavedLoginsAuthFragment()
-                        findNavController().navigateBlockingForAsyncNavGraph(directions)
+                        findNavController().navigate(directions)
                     }
                 },
                 creditCardPickerView = creditCardSelectBar,
                 onManageCreditCards = {
                     val directions =
                         NavGraphDirections.actionGlobalCreditCardsSettingFragment()
-                    findNavController().navigateBlockingForAsyncNavGraph(directions)
+                    findNavController().navigate(directions)
                 },
                 onSelectCreditCard = {
                     showBiometricPrompt(context)
@@ -650,7 +653,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
         sitePermissionsFeature.set(
             feature = SitePermissionsFeature(
                 context = context,
-                storage = context.components.core.permissionStorage.permissionsStorage,
+                storage = context.components.core.geckoSitePermissionsStorage,
                 fragmentManager = parentFragmentManager,
                 promptsStyling = SitePermissionsFeature.PromptsStyling(
                     gravity = getAppropriateLayoutGravity(),
@@ -822,15 +825,17 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
     internal fun expandToolbarOnNavigation(store: BrowserStore) {
         consumeFlow(store) { flow ->
             flow.mapNotNull {
-                state -> state.findCustomTabOrSelectedTab(customTabSessionId)
+                state ->
+                state.findCustomTabOrSelectedTab(customTabSessionId)
             }
-            .ifAnyChanged {
-                tab -> arrayOf(tab.content.url, tab.content.loadRequest)
-            }
-            .collect {
-                findInPageIntegration.onBackPressed()
-                browserToolbarView.expand()
-            }
+                .ifAnyChanged {
+                    tab ->
+                    arrayOf(tab.content.url, tab.content.loadRequest)
+                }
+                .collect {
+                    findInPageIntegration.onBackPressed()
+                    browserToolbarView.expand()
+                }
         }
     }
 
@@ -889,7 +894,6 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
         DynamicDownloadDialog(
             container = view.browserLayout,
             downloadState = savedDownloadState.first,
-            metrics = requireComponents.analytics.metrics,
             didFail = savedDownloadState.second,
             tryAgain = onTryAgain,
             onCannotOpenFile = {
@@ -906,8 +910,8 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
     @VisibleForTesting
     internal fun shouldPullToRefreshBeEnabled(inFullScreen: Boolean): Boolean {
         return FeatureFlags.pullToRefreshEnabled &&
-                requireContext().settings().isPullToRefreshEnabledInBrowser &&
-                !inFullScreen
+            requireContext().settings().isPullToRefreshEnabledInBrowser &&
+            !inFullScreen
     }
 
     @VisibleForTesting
@@ -980,12 +984,12 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
             flow.ifChanged {
                 it.selectedTabId
             }
-            .mapNotNull {
-                it.selectedTab
-            }
-            .collect {
-                handleTabSelected(it)
-            }
+                .mapNotNull {
+                    it.selectedTab
+                }
+                .collect {
+                    handleTabSelected(it)
+                }
         }
     }
 
@@ -997,14 +1001,14 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
                 state.selectedTab
             }
                 .collect {
-                if (!onboarding.userHasBeenOnboarded() &&
-                    it.content.loadRequest?.triggeredByRedirect != true &&
-                    it.source !in intentSourcesList &&
-                    it.content.url !in onboardingLinksList
-                ) {
-                    onboarding.finish()
+                    if (!onboarding.userHasBeenOnboarded() &&
+                        it.content.loadRequest?.triggeredByRedirect != true &&
+                        it.source !is SessionState.Source.External &&
+                        it.content.url !in onboardingLinksList
+                    ) {
+                        onboarding.finish()
+                    }
                 }
-            }
         }
     }
 
@@ -1069,14 +1073,14 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
     @CallSuper
     override fun onBackPressed(): Boolean {
         return findInPageIntegration.onBackPressed() ||
-                fullScreenFeature.onBackPressed() ||
-                promptsFeature.onBackPressed() ||
-                sessionFeature.onBackPressed() ||
-                removeSessionIfNeeded()
+            fullScreenFeature.onBackPressed() ||
+            promptsFeature.onBackPressed() ||
+            sessionFeature.onBackPressed() ||
+            removeSessionIfNeeded()
     }
 
     override fun onBackLongPressed(): Boolean {
-        findNavController().navigateBlockingForAsyncNavGraph(
+        findNavController().navigate(
             NavGraphDirections.actionGlobalTabHistoryDialogFragment(
                 activeSessionId = customTabSessionId
             )
@@ -1137,7 +1141,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
      */
     protected open fun removeSessionIfNeeded(): Boolean {
         getCurrentTab()?.let { session ->
-            return if (session.source == SessionState.Source.ACTION_VIEW) {
+            return if (session.source is SessionState.Source.External && !session.restored) {
                 activity?.finish()
                 requireComponents.useCases.tabsUseCases.removeTab(session.id)
                 true
@@ -1186,7 +1190,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
         val tab = getCurrentTab() ?: return
         viewLifecycleOwner.lifecycleScope.launch(Main) {
             val sitePermissions: SitePermissions? = tab.content.url.getOrigin()?.let { origin ->
-            val storage = requireComponents.core.permissionStorage
+                val storage = requireComponents.core.permissionStorage
                 storage.findSitePermissionsBy(origin)
             }
 
@@ -1343,7 +1347,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
 
         requireContext().accessibilityManager.removeAccessibilityStateChangeListener(this)
         _browserToolbarView = null
-        _browserInteractor = null
+        _browserToolbarInteractor = null
     }
 
     override fun onAttach(context: Context) {
@@ -1379,17 +1383,6 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
             .show()
     }
 
-    /**
-     * Retrieves the correct tray direction while using a feature flag.
-     *
-     * Remove this when [FeatureFlags.tabsTrayRewrite] is removed.
-     */
-    private fun getTrayDirection(context: Context) = if (context.settings().tabsTrayRewrite) {
-        BrowserFragmentDirections.actionGlobalTabsTrayFragment()
-    } else {
-        BrowserFragmentDirections.actionGlobalTabTrayDialogFragment()
-    }
-
     companion object {
         private const val KEY_CUSTOM_TAB_SESSION_ID = "custom_tab_session_id"
         private const val REQUEST_CODE_DOWNLOAD_PERMISSIONS = 1
@@ -1399,12 +1392,6 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
         val onboardingLinksList: List<String> = listOf(
             SupportUtils.getMozillaPageUrl(SupportUtils.MozillaPage.PRIVATE_NOTICE),
             SupportUtils.getFirefoxAccountSumoUrl()
-        )
-
-        val intentSourcesList: List<SessionState.Source> = listOf(
-            SessionState.Source.ACTION_SEARCH,
-            SessionState.Source.ACTION_SEND,
-            SessionState.Source.ACTION_VIEW
         )
     }
 

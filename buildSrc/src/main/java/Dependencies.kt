@@ -3,21 +3,24 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 object Versions {
-    const val kotlin = "1.4.30"
-    const val coroutines = "1.4.2"
+    const val kotlin = "1.5.10"
+    const val coroutines = "1.5.0"
 
     // These versions are linked: lint should be X+23.Y.Z of gradle_plugin version, according to:
     // https://github.com/alexjlockwood/android-lint-checks-demo/blob/0245fc027463137b1b4afb97c5295d60dce998b6/dependencies.gradle#L3
-    const val android_gradle_plugin = "4.0.1"
-    const val android_lint_api = "27.0.1"
+    const val android_gradle_plugin = "7.0.0"
+    const val android_lint_api = "30.0.0"
 
     const val sentry = "1.7.10"
     const val leakcanary = "2.4"
-    const val osslicenses_plugin = "0.9.5"
+    const val osslicenses_plugin = "0.10.4"
     const val detekt = "1.17.1"
     const val jna = "5.6.0"
 
-    const val androidx_appcompat = "1.2.0"
+    const val androidx_activity_compose = "1.3.0"
+    const val androidx_compose = "1.0.0"
+    const val androidx_appcompat = "1.3.0"
+    const val androidx_benchmark = "1.0.0"
     const val androidx_biometric = "1.1.0"
     const val androidx_coordinator_layout = "1.1.0"
     const val androidx_constraint_layout = "2.0.4"
@@ -25,7 +28,7 @@ object Versions {
     const val androidx_legacy = "1.0.0"
     const val androidx_annotation = "1.1.0"
     const val androidx_lifecycle = "2.2.0"
-    const val androidx_fragment = "1.2.5"
+    const val androidx_fragment = "1.3.4"
     const val androidx_navigation = "2.3.3"
     const val androidx_recyclerview = "1.2.0-beta01"
     const val androidx_core = "1.3.2"
@@ -40,11 +43,11 @@ object Versions {
     const val installreferrer = "1.0"
 
     const val junit = "5.5.2"
-    const val mockk = "1.10.0"
+    const val mockk = "1.12.0"
 
     const val mockwebserver = "4.9.0"
     const val uiautomator = "2.2.0"
-    const val robolectric = "4.3.1"
+    const val robolectric = "4.6.1"
 
     const val google_ads_id_version = "16.0.0"
 
@@ -55,6 +58,7 @@ object Versions {
 object Deps {
     const val tools_androidgradle = "com.android.tools.build:gradle:${Versions.android_gradle_plugin}"
     const val tools_kotlingradle = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlin}"
+    const val tools_benchmarkgradle = "androidx.benchmark:benchmark-gradle-plugin:${Versions.androidx_benchmark}"
     const val kotlin_stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${Versions.kotlin}"
     const val kotlin_stdlib_jdk8 = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${Versions.kotlin}"
     const val kotlin_reflect = "org.jetbrains.kotlin:kotlin-reflect:${Versions.kotlin}"
@@ -78,7 +82,6 @@ object Deps {
     const val mozilla_browser_engine_gecko = "org.mozilla.components:browser-engine-gecko:${Versions.mozilla_android_components}"
     const val mozilla_browser_domains = "org.mozilla.components:browser-domains:${Versions.mozilla_android_components}"
     const val mozilla_browser_icons = "org.mozilla.components:browser-icons:${Versions.mozilla_android_components}"
-    const val mozilla_browser_session = "org.mozilla.components:browser-session:${Versions.mozilla_android_components}"
     const val mozilla_browser_session_storage = "org.mozilla.components:browser-session-storage:${Versions.mozilla_android_components}"
     const val mozilla_browser_state = "org.mozilla.components:browser-state:${Versions.mozilla_android_components}"
     const val mozilla_browser_tabstray = "org.mozilla.components:browser-tabstray:${Versions.mozilla_android_components}"
@@ -163,7 +166,14 @@ object Deps {
     const val sentry = "io.sentry:sentry-android:${Versions.sentry}"
     const val leakcanary = "com.squareup.leakcanary:leakcanary-android:${Versions.leakcanary}"
 
+    const val androidx_compose_ui = "androidx.compose.ui:ui:${Versions.androidx_compose}"
+    const val androidx_compose_ui_test = "androidx.compose.ui:ui-test-junit4:${Versions.androidx_compose}"
+    const val androidx_compose_ui_test_manifest = "androidx.compose.ui:ui-test-manifest:${Versions.androidx_compose}"
+    const val androidx_compose_ui_tooling = "androidx.compose.ui:ui-tooling:${Versions.androidx_compose}"
+    const val androidx_compose_foundation = "androidx.compose.foundation:foundation:${Versions.androidx_compose}"
+    const val androidx_compose_material = "androidx.compose.material:material:${Versions.androidx_compose}"
     const val androidx_annotation = "androidx.annotation:annotation:${Versions.androidx_annotation}"
+    const val androidx_benchmark_junit4 = "androidx.benchmark:benchmark-junit4:${Versions.androidx_benchmark}"
     const val androidx_biometric = "androidx.biometric:biometric:${Versions.androidx_biometric}"
     const val androidx_fragment = "androidx.fragment:fragment-ktx:${Versions.androidx_fragment}"
     const val androidx_appcompat = "androidx.appcompat:appcompat:${Versions.androidx_appcompat}"
@@ -244,6 +254,7 @@ object RepoMatching {
     const val androidx = "androidx\\..*"
     const val comAndroid = "com\\.android.*"
     const val comGoogleFirebase = "com\\.google\\.firebase"
+    const val comGoogleTesting = "com\\.google\\.testing\\..*"
 
     /**
      * A matcher for com.google.android.* with one exception: the espresso-contrib dependency includes the

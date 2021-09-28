@@ -13,9 +13,9 @@ import java.util.Locale
 
 object Config {
     // Synchronized build configuration for all modules
-    const val compileSdkVersion = 29
+    const val compileSdkVersion = 30
     const val minSdkVersion = 21
-    const val targetSdkVersion = 29
+    const val targetSdkVersion = 30
 
     @JvmStatic
     private fun generateDebugVersionName(): String {
@@ -44,12 +44,12 @@ object Config {
         return "$majorVersion.0a1"
     }
 
+    /**
+     * Generate a build date that follows the ISO-8601 format
+     */
     @JvmStatic
     fun generateBuildDate(): String {
-        val dateTime = LocalDateTime.now()
-        val timeFormatter = DateTimeFormatter.ofPattern("h:mm a")
-
-        return "${dateTime.dayOfWeek.toString().toLowerCase().capitalize()} ${dateTime.monthValue}/${dateTime.dayOfMonth} @ ${timeFormatter.format(dateTime)}"
+        return LocalDateTime.now().toString()
     }
 
     private val fennecBaseVersionCode by lazy {

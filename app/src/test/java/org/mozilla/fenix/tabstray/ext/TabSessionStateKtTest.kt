@@ -4,54 +4,103 @@
 
 package org.mozilla.fenix.tabstray.ext
 
-import io.mockk.every
-import io.mockk.mockk
-import mozilla.components.browser.state.state.ContentState
-import mozilla.components.browser.state.state.TabSessionState
+import mozilla.components.browser.state.state.createTab
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
+import org.junit.Before
 import org.junit.Test
-import org.mozilla.fenix.tabstray.browser.BrowserTrayList.BrowserTabType.NORMAL
-import org.mozilla.fenix.tabstray.browser.BrowserTrayList.BrowserTabType.PRIVATE
+import org.mozilla.fenix.tabstray.browser.DEFAULT_ACTIVE_DAYS
+import java.util.concurrent.TimeUnit
 
 class TabSessionStateKtTest {
 
-    @Test
-    fun `WHEN configuration is private THEN return true`() {
-        val contentState = mockk<ContentState>()
-        val state = TabSessionState(content = contentState)
-        val config = PRIVATE
+    private val maxTime = TimeUnit.DAYS.toMillis(DEFAULT_ACTIVE_DAYS)
+    private var inactiveTimestamp = 0L
 
-        every { contentState.private } returns true
-
-        assertTrue(state.filterFromConfig(config))
+    @Before
+    fun setup() {
+        // Subtracting an extra 10 seconds in case the test runner is loopy.
+        inactiveTimestamp = System.currentTimeMillis() - maxTime - 10_000
     }
 
     @Test
-    fun `WHEN configuration is normal THEN return false`() {
-        val contentState = mockk<ContentState>()
-        val state = TabSessionState(content = contentState)
-        val config = NORMAL
-
-        every { contentState.private } returns false
-
-        assertTrue(state.filterFromConfig(config))
+    fun `WHEN tab was recently accessed THEN isActive is true`() {
+        val tab = createTab(
+            url = "https://mozilla.org",
+            lastAccess = System.currentTimeMillis(),
+            createdAt = 0
+        )
+        assertTrue(tab.isNormalTabActive(maxTime))
     }
 
     @Test
-    fun `WHEN configuration does not match THEN return false`() {
-        val contentState = mockk<ContentState>()
-        val state = TabSessionState(content = contentState)
-        val config = NORMAL
+    fun `WHEN tab was recently created THEN isActive is true`() {
+        val tab = createTab(
+            url = "https://mozilla.org",
+            lastAccess = 0,
+            createdAt = System.currentTimeMillis()
+        )
+        assertTrue(tab.isNormalTabActive(maxTime))
+    }
 
-        every { contentState.private } returns true
+    @Test
+    fun `WHEN tab either was not created or accessed recently THEN isActive is true`() {
+        val tab = createTab(
+            url = "https://mozilla.org",
+            lastAccess = 0,
+            createdAt = inactiveTimestamp
+        )
+        assertFalse(tab.isNormalTabActive(maxTime))
 
-        assertFalse(state.filterFromConfig(config))
+        val tab2 = createTab(
+            url = "https://mozilla.org",
+            lastAccess = inactiveTimestamp,
+            createdAt = 0
+        )
+        assertFalse(tab2.isNormalTabActive(maxTime))
+    }
 
-        val config2 = PRIVATE
+    @Test
+    fun `WHEN tab has not been accessed or recently created THEN isActive is false`() {
+        val tab = createTab(
+            url = "https://mozilla.org",
+            lastAccess = inactiveTimestamp,
+            createdAt = inactiveTimestamp
+        )
+        assertFalse(tab.isNormalTabActive(maxTime))
+    }
 
-        every { contentState.private } returns false
+    @Test
+    fun `WHEN normal tab is recently used THEN return true`() {
+        val tab = createTab(
+            url = "https://mozilla.org",
+            lastAccess = System.currentTimeMillis(),
+            createdAt = System.currentTimeMillis(),
+            private = false
+        )
+        val test = tab.isNormalTabActive(maxTime)
+        assertTrue(test)
+    }
 
-        assertFalse(state.filterFromConfig(config2))
+    @Test
+    fun `WHEN tabs are private THEN always false`() {
+        val tab = createTab(
+            url = "https://mozilla.org",
+            lastAccess = System.currentTimeMillis(),
+            createdAt = System.currentTimeMillis(),
+            private = true
+        )
+        assertFalse(tab.isNormalTabActive(maxTime))
+    }
+
+    @Test
+    fun `WHEN inactive tabs are private THEN always false`() {
+        val tab = createTab(
+            url = "https://mozilla.org",
+            lastAccess = inactiveTimestamp,
+            createdAt = inactiveTimestamp,
+            private = true
+        )
+        assertFalse(tab.isNormalTabActive(maxTime))
     }
 }

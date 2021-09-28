@@ -37,4 +37,7 @@ public class Adjust {
 
     public static void setEnabled(boolean enabled) {
     }
+    
+    public static void gdprForgetMe(Object ignored) {
+    }
 }

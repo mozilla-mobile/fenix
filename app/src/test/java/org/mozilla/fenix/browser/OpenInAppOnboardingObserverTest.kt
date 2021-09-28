@@ -11,9 +11,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import androidx.navigation.NavController
 import io.mockk.every
-import io.mockk.just
 import io.mockk.mockk
-import io.mockk.runs
 import io.mockk.spyk
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -34,7 +32,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.browser.infobanner.DynamicInfoBanner
-import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.utils.Settings
 
@@ -63,7 +60,8 @@ class OpenInAppOnboardingObserverTest {
             BrowserState(
                 tabs = listOf(
                     createTab(url = "https://www.mozilla.org", id = "1")
-                ), selectedTabId = "1"
+                ),
+                selectedTabId = "1"
             )
         )
         lifecycleOwner = MockedLifecycleOwner(Lifecycle.State.STARTED)
@@ -73,16 +71,18 @@ class OpenInAppOnboardingObserverTest {
         container = mockk(relaxed = true)
         context = mockk(relaxed = true)
         infoBanner = mockk(relaxed = true)
-        openInAppOnboardingObserver = spyk(OpenInAppOnboardingObserver(
-            context = context,
-            store = store,
-            lifecycleOwner = lifecycleOwner,
-            navController = navigationController,
-            settings = settings,
-            appLinksUseCases = appLinksUseCases,
-            container = container,
-            shouldScrollWithTopToolbar = true
-        ))
+        openInAppOnboardingObserver = spyk(
+            OpenInAppOnboardingObserver(
+                context = context,
+                store = store,
+                lifecycleOwner = lifecycleOwner,
+                navController = navigationController,
+                settings = settings,
+                appLinksUseCases = appLinksUseCases,
+                container = container,
+                shouldScrollWithTopToolbar = true
+            )
+        )
         every { openInAppOnboardingObserver.createInfoBanner() } returns infoBanner
     }
 
@@ -146,7 +146,7 @@ class OpenInAppOnboardingObserverTest {
         every { settings.openLinksInExternalApp } returns false
         every { settings.shouldShowOpenInAppCfr } returns true
         every { appLinksUseCases.appLinkRedirect.invoke(any()).hasExternalApp() } returns true
-        every { context.components.analytics.metrics.track(any()) } just runs
+
         store.dispatch(ContentAction.UpdateLoadingStateAction("1", true)).joinBlocking()
 
         openInAppOnboardingObserver.start()
@@ -167,15 +167,19 @@ class OpenInAppOnboardingObserverTest {
         // Mockk currently doesn't support verifying constructor parameters
         // But we can check the values found in the constructed objects
 
-        openInAppOnboardingObserver = spyk(OpenInAppOnboardingObserver(
-            testContext, mockk(), mockk(), mockk(), mockk(), mockk(), mockk(), shouldScrollWithTopToolbar = true
-        ))
+        openInAppOnboardingObserver = spyk(
+            OpenInAppOnboardingObserver(
+                testContext, mockk(), mockk(), mockk(), mockk(), mockk(), mockk(), shouldScrollWithTopToolbar = true
+            )
+        )
         val banner1 = openInAppOnboardingObserver.createInfoBanner()
         assertTrue(banner1.shouldScrollWithTopToolbar)
 
-        openInAppOnboardingObserver = spyk(OpenInAppOnboardingObserver(
-            testContext, mockk(), mockk(), mockk(), mockk(), mockk(), mockk(), shouldScrollWithTopToolbar = false
-        ))
+        openInAppOnboardingObserver = spyk(
+            OpenInAppOnboardingObserver(
+                testContext, mockk(), mockk(), mockk(), mockk(), mockk(), mockk(), shouldScrollWithTopToolbar = false
+            )
+        )
         val banner2 = openInAppOnboardingObserver.createInfoBanner()
         assertFalse(banner2.shouldScrollWithTopToolbar)
     }

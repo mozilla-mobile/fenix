@@ -44,11 +44,12 @@ import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.test.ext.joinBlocking
 import mozilla.components.support.test.rule.MainCoroutineRule
 import org.junit.After
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
@@ -58,6 +59,7 @@ import org.mozilla.fenix.browser.readermode.ReaderModeController
 import org.mozilla.fenix.collections.SaveCollectionStep
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.TabCollectionStorage
+import org.mozilla.fenix.components.accounts.AccountState
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.components
@@ -68,7 +70,6 @@ import org.mozilla.fenix.utils.Settings
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(FenixRobolectricTestRunner::class)
-@Suppress("ForbiddenComment")
 class DefaultBrowserToolbarMenuControllerTest {
 
     @get:Rule
@@ -77,8 +78,6 @@ class DefaultBrowserToolbarMenuControllerTest {
     @MockK private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     @RelaxedMockK private lateinit var activity: HomeActivity
     @RelaxedMockK private lateinit var navController: NavController
-    @RelaxedMockK private lateinit var findInPageLauncher: () -> Unit
-    @RelaxedMockK private lateinit var bookmarkTapped: (String, String) -> Unit
     @RelaxedMockK private lateinit var openInFenixIntent: Intent
     @RelaxedMockK private lateinit var metrics: MetricController
     @RelaxedMockK private lateinit var settings: Settings
@@ -137,76 +136,83 @@ class DefaultBrowserToolbarMenuControllerTest {
         unmockkObject(FenixSnackbar.Companion)
     }
 
-    // TODO: These can be removed for https://github.com/mozilla-mobile/fenix/issues/17870
-    // todo === Start ===
     @Test
     fun handleToolbarBookmarkPressWithReaderModeInactive() = runBlockingTest {
-        if (!FeatureFlags.toolbarMenuFeature) {
-            val item = ToolbarMenu.Item.Bookmark
+        val item = ToolbarMenu.Item.Bookmark
 
-            val title = "Mozilla"
-            val url = "https://mozilla.org"
-            val regularTab = createTab(
-                url = url,
-                readerState = ReaderState(active = false, activeUrl = "https://1234.org"),
-                title = title
-            )
-            val store =
-                BrowserStore(BrowserState(tabs = listOf(regularTab), selectedTabId = regularTab.id))
+        val expectedTitle = "Mozilla"
+        val expectedUrl = "https://mozilla.org"
+        val regularTab = createTab(
+            url = expectedUrl,
+            readerState = ReaderState(active = false, activeUrl = "https://1234.org"),
+            title = expectedTitle
+        )
+        val store =
+            BrowserStore(BrowserState(tabs = listOf(regularTab), selectedTabId = regularTab.id))
 
-            val controller = createController(scope = this, store = store)
-            controller.handleToolbarItemInteraction(item)
+        var bookmarkTappedInvoked = false
+        val controller = createController(
+            scope = this, store = store,
+            bookmarkTapped = { url, title ->
+                assertEquals(expectedTitle, title)
+                assertEquals(expectedUrl, url)
+                bookmarkTappedInvoked = true
+            }
+        )
+        controller.handleToolbarItemInteraction(item)
 
-            verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.BOOKMARK)) }
-            verify { bookmarkTapped(url, title) }
-        }
+        verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.BOOKMARK)) }
+        assertTrue(bookmarkTappedInvoked)
     }
 
     @Test
     fun `IF reader mode is active WHEN bookmark menu item is pressed THEN menu item is handled`() = runBlockingTest {
-        if (!FeatureFlags.toolbarMenuFeature) {
-            val item = ToolbarMenu.Item.Bookmark
-            val title = "Mozilla"
-            val readerUrl = "moz-extension://1234"
-            val readerTab = createTab(
-                url = readerUrl,
-                readerState = ReaderState(active = true, activeUrl = "https://mozilla.org"),
-                title = title
-            )
-            browserStore =
-                BrowserStore(BrowserState(tabs = listOf(readerTab), selectedTabId = readerTab.id))
+        val item = ToolbarMenu.Item.Bookmark
+        val expectedTitle = "Mozilla"
+        val readerUrl = "moz-extension://1234"
+        val readerTab = createTab(
+            url = readerUrl,
+            readerState = ReaderState(active = true, activeUrl = "https://mozilla.org"),
+            title = expectedTitle
+        )
+        browserStore =
+            BrowserStore(BrowserState(tabs = listOf(readerTab), selectedTabId = readerTab.id))
 
-            val controller = createController(scope = this, store = browserStore)
-            controller.handleToolbarItemInteraction(item)
+        var bookmarkTappedInvoked = false
+        val controller = createController(
+            scope = this, store = browserStore,
+            bookmarkTapped = { url, title ->
+                assertEquals(expectedTitle, title)
+                assertEquals(readerTab.readerState.activeUrl, url)
+                bookmarkTappedInvoked = true
+            }
+        )
+        controller.handleToolbarItemInteraction(item)
 
-            verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.BOOKMARK)) }
-            verify { bookmarkTapped("https://mozilla.org", title) }
-        }
+        verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.BOOKMARK)) }
+        assertTrue(bookmarkTappedInvoked)
     }
 
     @Test
     fun `WHEN open in Fenix menu item is pressed THEN menu item is handled correctly`() = runBlockingTest {
-        if (!FeatureFlags.toolbarMenuFeature) {
-            val customTab = createCustomTab("https://mozilla.org")
-            browserStore.dispatch(CustomTabListAction.AddCustomTabAction(customTab)).joinBlocking()
-            val controller = createController(
-                scope = this,
-                store = browserStore,
-                customTabSessionId = customTab.id
-            )
+        val customTab = createCustomTab("https://mozilla.org")
+        browserStore.dispatch(CustomTabListAction.AddCustomTabAction(customTab)).joinBlocking()
+        val controller = createController(
+            scope = this,
+            store = browserStore,
+            customTabSessionId = customTab.id
+        )
 
-            val item = ToolbarMenu.Item.OpenInFenix
+        val item = ToolbarMenu.Item.OpenInFenix
 
-            every { activity.startActivity(any()) } just Runs
-            controller.handleToolbarItemInteraction(item)
+        every { activity.startActivity(any()) } just Runs
+        controller.handleToolbarItemInteraction(item)
 
-            verify { sessionFeature.release() }
-            verify { customTabUseCases.migrate(customTab.id, true) }
-            verify { activity.startActivity(openInFenixIntent) }
-            verify { activity.finishAndRemoveTask() }
-        }
+        verify { sessionFeature.release() }
+        verify { customTabUseCases.migrate(customTab.id, true) }
+        verify { activity.startActivity(openInFenixIntent) }
+        verify { activity.finishAndRemoveTask() }
     }
-    // todo === End ===
 
     @Test
     fun `WHEN reader mode menu item is pressed THEN handle appearance change`() = runBlockingTest {
@@ -493,11 +499,16 @@ class DefaultBrowserToolbarMenuControllerTest {
     fun `WHEN Find In Page menu item is pressed THEN launch finder`() = runBlockingTest {
         val item = ToolbarMenu.Item.FindInPage
 
-        val controller = createController(scope = this, store = browserStore)
+        var launcherInvoked = false
+        val controller = createController(
+            scope = this, store = browserStore,
+            findInPageLauncher = {
+                launcherInvoked = true
+            }
+        )
         controller.handleToolbarItemInteraction(item)
 
-        verify { findInPageLauncher() }
-        verify { metrics.track(Event.FindInPageOpened) }
+        assertTrue(launcherInvoked)
     }
 
     @Test
@@ -573,32 +584,46 @@ class DefaultBrowserToolbarMenuControllerTest {
     }
 
     @Test
-    fun `WHEN sync sign in menu item is pressed AND account is signed out THEN navigate to sync sign in`() = runBlockingTest {
-        val item = ToolbarMenu.Item.SyncAccount(false)
-        val directions = BrowserFragmentDirections.actionGlobalTurnOnSync()
-
+    fun `GIVEN account exists and the user is signed in WHEN sign in to sync menu item is pressed THEN navigate to account settings`() = runBlockingTest {
+        val item = ToolbarMenu.Item.SyncAccount(AccountState.AUTHENTICATED)
+        val accountSettingsDirections = BrowserFragmentDirections.actionGlobalAccountSettingsFragment()
         val controller = createController(scope = this, store = browserStore)
+
         controller.handleToolbarItemInteraction(item)
 
-        verify { navController.navigate(directions, null) }
+        verify { navController.navigate(accountSettingsDirections, null) }
     }
 
     @Test
-    fun `WHEN sync sign in menu item is pressed AND account is signed in THEN navigate to sync sign in`() = runBlockingTest {
-        val item = ToolbarMenu.Item.SyncAccount(true)
-        val directions = BrowserFragmentDirections.actionGlobalAccountSettingsFragment()
-
+    fun `GIVEN account exists and the user is not signed in WHEN sign in to sync menu item is pressed THEN navigate to account problem fragment`() = runBlockingTest {
+        val item = ToolbarMenu.Item.SyncAccount(AccountState.NEEDS_REAUTHENTICATION)
+        val accountProblemDirections = BrowserFragmentDirections.actionGlobalAccountProblemFragment()
         val controller = createController(scope = this, store = browserStore)
+
         controller.handleToolbarItemInteraction(item)
 
-        verify { navController.navigate(directions, null) }
+        verify { navController.navigate(accountProblemDirections, null) }
     }
 
+    @Test
+    fun `GIVEN account doesn't exist WHEN sign in to sync menu item is pressed THEN navigate to sign in`() = runBlockingTest {
+        val item = ToolbarMenu.Item.SyncAccount(AccountState.NO_ACCOUNT)
+        val turnOnSyncDirections = BrowserFragmentDirections.actionGlobalTurnOnSync()
+        val controller = createController(scope = this, store = browserStore)
+
+        controller.handleToolbarItemInteraction(item)
+
+        verify { navController.navigate(turnOnSyncDirections, null) }
+    }
+
+    @Suppress("LongParameterList")
     private fun createController(
         scope: CoroutineScope,
         store: BrowserStore,
         activity: HomeActivity = this.activity,
-        customTabSessionId: String? = null
+        customTabSessionId: String? = null,
+        findInPageLauncher: () -> Unit = { },
+        bookmarkTapped: (String, String) -> Unit = { _, _ -> }
     ) = DefaultBrowserToolbarMenuController(
         store = store,
         activity = activity,

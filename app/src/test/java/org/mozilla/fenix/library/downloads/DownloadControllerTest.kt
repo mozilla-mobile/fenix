@@ -11,15 +11,14 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineScope
 import mozilla.components.browser.state.state.content.DownloadState
 import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
-import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 
 @ExperimentalCoroutinesApi
-@RunWith(FenixRobolectricTestRunner::class)
 class DownloadControllerTest {
     private val downloadItem = DownloadItem(
         id = "0",
@@ -33,10 +32,23 @@ class DownloadControllerTest {
     private val scope = TestCoroutineScope()
     private val store: DownloadFragmentStore = mockk(relaxed = true)
     private val state: DownloadFragmentState = mockk(relaxed = true)
-    private val openToFileManager: (DownloadItem, BrowsingMode?) -> Unit = mockk(relaxed = true)
-    private val displayDeleteAll: () -> Unit = mockk(relaxed = true)
-    private val invalidateOptionsMenu: () -> Unit = mockk(relaxed = true)
-    private val deleteDownloadItems: (Set<DownloadItem>) -> Unit = mockk(relaxed = true)
+
+    private val openToFileManager: (DownloadItem, BrowsingMode?) -> Unit = { item, mode ->
+        openToFileManagerCapturedItem = item
+        openToFileManagerCapturedMode = mode
+    }
+    private var openToFileManagerCapturedItem: DownloadItem? = null
+    private var openToFileManagerCapturedMode: BrowsingMode? = null
+
+    private val displayDeleteAll: () -> Unit = { wasDisplayDeleteAllCalled = true }
+    private var wasDisplayDeleteAllCalled = false
+
+    private val invalidateOptionsMenu: () -> Unit = { wasInvalidateOptionsMenuCalled = true }
+    private var wasInvalidateOptionsMenuCalled = false
+
+    private val deleteDownloadItems: (Set<DownloadItem>) -> Unit = { deleteDownloadItemsCapturedItems = it }
+    private var deleteDownloadItemsCapturedItems = emptySet<DownloadItem>()
+
     private val controller = DefaultDownloadController(
         store,
         openToFileManager,
@@ -59,18 +71,16 @@ class DownloadControllerTest {
     fun onPressDownloadItemInNormalMode() {
         controller.handleOpen(downloadItem)
 
-        verify {
-            openToFileManager(downloadItem, null)
-        }
+        assertEquals(downloadItem, openToFileManagerCapturedItem)
+        assertEquals(null, openToFileManagerCapturedMode)
     }
 
     @Test
     fun onOpenItemInNormalMode() {
         controller.handleOpen(downloadItem, BrowsingMode.Normal)
 
-        verify {
-            openToFileManager(downloadItem, BrowsingMode.Normal)
-        }
+        assertEquals(downloadItem, openToFileManagerCapturedItem)
+        assertEquals(BrowsingMode.Normal, openToFileManagerCapturedMode)
     }
 
     @Test
@@ -106,18 +116,14 @@ class DownloadControllerTest {
     fun onModeSwitched() {
         controller.handleModeSwitched()
 
-        verify {
-            invalidateOptionsMenu.invoke()
-        }
+        assertTrue(wasInvalidateOptionsMenuCalled)
     }
 
     @Test
     fun onDeleteAll() {
         controller.handleDeleteAll()
 
-        verify {
-            displayDeleteAll.invoke()
-        }
+        assertTrue(wasDisplayDeleteAllCalled)
     }
 
     @Test
@@ -126,8 +132,6 @@ class DownloadControllerTest {
 
         controller.handleDeleteSome(itemsToDelete)
 
-        verify {
-            deleteDownloadItems(itemsToDelete)
-        }
+        assertEquals(itemsToDelete, deleteDownloadItemsCapturedItems)
     }
 }

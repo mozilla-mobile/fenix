@@ -25,7 +25,6 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
 
@@ -205,18 +204,14 @@ class InstalledAddonDetailsFragment : Fragment() {
                     val shouldCreatePrivateSession =
                         (activity as HomeActivity).browsingModeManager.mode.isPrivate
 
-                    if (shouldCreatePrivateSession) {
-                        components.useCases.tabsUseCases.addPrivateTab(settingUrl)
-                    } else {
-                        components.useCases.tabsUseCases.addTab(settingUrl)
-                    }
+                    components.useCases.tabsUseCases.addTab(settingUrl, private = shouldCreatePrivateSession)
 
                     InstalledAddonDetailsFragmentDirections.actionGlobalBrowser(null)
                 } else {
                     InstalledAddonDetailsFragmentDirections
                         .actionInstalledAddonFragmentToAddonInternalSettingsFragment(addon)
                 }
-                Navigation.findNavController(this).navigateBlockingForAsyncNavGraph(directions)
+                Navigation.findNavController(this).navigate(directions)
             }
         }
     }
@@ -227,7 +222,7 @@ class InstalledAddonDetailsFragment : Fragment() {
                 InstalledAddonDetailsFragmentDirections.actionInstalledAddonFragmentToAddonDetailsFragment(
                     addon
                 )
-            Navigation.findNavController(view).navigateBlockingForAsyncNavGraph(directions)
+            Navigation.findNavController(view).navigate(directions)
         }
     }
 
@@ -237,7 +232,7 @@ class InstalledAddonDetailsFragment : Fragment() {
                 InstalledAddonDetailsFragmentDirections.actionInstalledAddonFragmentToAddonPermissionsDetailsFragment(
                     addon
                 )
-            Navigation.findNavController(view).navigateBlockingForAsyncNavGraph(directions)
+            Navigation.findNavController(view).navigate(directions)
         }
     }
 

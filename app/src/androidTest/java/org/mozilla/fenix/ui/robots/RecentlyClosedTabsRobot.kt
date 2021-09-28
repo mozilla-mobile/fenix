@@ -18,6 +18,7 @@ import org.hamcrest.Matchers
 import org.hamcrest.Matchers.allOf
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.TestAssetHelper
+import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.click
 
 /**
@@ -27,7 +28,7 @@ import org.mozilla.fenix.helpers.click
 class RecentlyClosedTabsRobot {
 
     fun waitForListToExist() =
-        mDevice.findObject(UiSelector().resourceId("org.mozilla.fenix.debug:id/recently_closed_list"))
+        mDevice.findObject(UiSelector().resourceId("$packageName:id/recently_closed_list"))
             .waitForExists(
                 TestAssetHelper.waitingTime
             )
@@ -93,7 +94,8 @@ private fun assertRecentlyClosedTabsMenuView() {
         )
     )
         .check(
-            matches(withEffectiveVisibility(Visibility.VISIBLE)))
+            matches(withEffectiveVisibility(Visibility.VISIBLE))
+        )
 }
 
 private fun assertEmptyRecentlyClosedTabsList() =
@@ -104,7 +106,8 @@ private fun assertEmptyRecentlyClosedTabsList() =
         )
     )
         .check(
-            matches(withText("No recently closed tabs here")))
+            matches(withText("No recently closed tabs here"))
+        )
 
 private fun assertPageUrl(expectedUrl: Uri) = onView(
     allOf(
@@ -115,7 +118,8 @@ private fun assertPageUrl(expectedUrl: Uri) = onView(
     )
 )
     .check(
-        matches(withText(Matchers.containsString(expectedUrl.toString()))))
+        matches(withText(Matchers.containsString(expectedUrl.toString())))
+    )
 
 private fun recentlyClosedTabsPageTitle() = onView(
     allOf(
@@ -127,9 +131,11 @@ private fun recentlyClosedTabsPageTitle() = onView(
 private fun assertRecentlyClosedTabsPageTitle(title: String) {
     recentlyClosedTabsPageTitle()
         .check(
-            matches(withEffectiveVisibility(Visibility.VISIBLE)))
+            matches(withEffectiveVisibility(Visibility.VISIBLE))
+        )
         .check(
-            matches(withText(title)))
+            matches(withText(title))
+        )
 }
 
 private fun recentlyClosedTabsThreeDotButton() =
@@ -137,45 +143,50 @@ private fun recentlyClosedTabsThreeDotButton() =
         allOf(
             withId(R.id.overflow_menu),
             withEffectiveVisibility(
-            Visibility.VISIBLE
+                Visibility.VISIBLE
+            )
         )
     )
-)
 
 private fun assertRecentlyClosedTabsMenuCopy() =
     onView(withText("Copy"))
         .check(
             matches(
-                withEffectiveVisibility(Visibility.VISIBLE)))
+                withEffectiveVisibility(Visibility.VISIBLE)
+            )
+        )
 
 private fun assertRecentlyClosedTabsMenuShare() =
     onView(withText("Share"))
         .check(
             matches(
-                withEffectiveVisibility(Visibility.VISIBLE)))
+                withEffectiveVisibility(Visibility.VISIBLE)
+            )
+        )
 
 private fun assertRecentlyClosedTabsOverlayNewTab() =
     onView(withText("Open in new tab"))
         .check(
             matches(
-                withEffectiveVisibility(Visibility.VISIBLE))
-)
+                withEffectiveVisibility(Visibility.VISIBLE)
+            )
+        )
 
 private fun assertRecentlyClosedTabsMenuPrivateTab() =
     onView(withText("Open in private tab"))
         .check(
             matches(
                 withEffectiveVisibility(Visibility.VISIBLE)
+            )
         )
-    )
 
 private fun assertRecentlyClosedTabsMenuDelete() =
     onView(withText("Delete"))
         .check(
             matches(
                 withEffectiveVisibility(Visibility.VISIBLE)
-    )
-)
+            )
+        )
 
 private fun recentlyClosedTabsCopyButton() = onView(withText("Copy"))
 
@@ -184,26 +195,31 @@ private fun copySnackBarText() = onView(withId(R.id.snackbar_text))
 private fun assertCopySnackBarText() = copySnackBarText()
     .check(
         matches
-            (withText("URL copied")))
+        (withText("URL copied"))
+    )
 
 private fun recentlyClosedTabsShareButton() = onView(withText("Share"))
 
 private fun assertRecentlyClosedShareOverlay() =
     onView(withId(R.id.shareWrapper))
         .check(
-            matches(ViewMatchers.isDisplayed()))
+            matches(ViewMatchers.isDisplayed())
+        )
 
 private fun assetRecentlyClosedShareTitle(title: String) =
     onView(withId(R.id.share_tab_title))
         .check(
-            matches(ViewMatchers.isDisplayed()))
+            matches(ViewMatchers.isDisplayed())
+        )
         .check(
-            matches(withText(title)))
+            matches(withText(title))
+        )
 
 private fun assertRecentlyClosedShareFavicon() =
     onView(withId(R.id.share_tab_favicon))
         .check(
-            matches(ViewMatchers.isDisplayed()))
+            matches(ViewMatchers.isDisplayed())
+        )
 
 private fun assertRecentlyClosedShareUrl(expectedUrl: Uri) =
     onView(
@@ -213,7 +229,8 @@ private fun assertRecentlyClosedShareUrl(expectedUrl: Uri) =
         )
     )
         .check(
-            matches(withText(Matchers.containsString(expectedUrl.toString()))))
+            matches(withText(Matchers.containsString(expectedUrl.toString())))
+        )
 
 private fun recentlyClosedTabsNewTabButton() = onView(withText("Open in new tab"))
 

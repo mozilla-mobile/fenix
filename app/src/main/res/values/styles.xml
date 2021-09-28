@@ -116,6 +116,33 @@
         <item name="tabCounterTintColor">?primaryText</item>
     </style>
 
+    <!-- A theme derived from the normal activity theme, but to look and behave like a dialog -->
+    <style name="DialogActivityTheme" parent="NormalTheme">
+        <item name="android:windowElevation">16dp</item>
+        <item name="android:colorBackground">?attr/colorBackgroundFloating</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowTitleStyle">@style/RtlOverlay.DialogWindowTitle.AppCompat</item>
+        <item name="android:windowTitleBackgroundStyle">@style/Base.DialogWindowTitleBackground.AppCompat</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowAnimationStyle">@style/Animation.AppCompat.Dialog</item>
+        <item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
+
+        <item name="windowActionBar">false</item>
+        <item name="windowActionModeOverlay">true</item>
+
+        <item name="listPreferredItemPaddingLeft">24dip</item>
+        <item name="listPreferredItemPaddingRight">24dip</item>
+
+        <item name="android:listDivider">@null</item>
+
+        <item name="android:buttonBarStyle">@style/Widget.AppCompat.ButtonBar.AlertDialog</item>
+        <item name="android:borderlessButtonStyle">@style/Widget.AppCompat.Button.Borderless</item>
+        <item name="android:windowCloseOnTouchOutside">true</item>
+    </style>
+
     <style name="NormalTheme" parent="NormalThemeBase" />
 
     <style name="BaseDialogStyle" parent="Theme.MaterialComponents.Dialog.Alert">
@@ -369,6 +396,12 @@
         <item name="fontFamily">@font/metropolis_semibold</item>
     </style>
 
+    <style name="Header20TextStyle" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:textColor">?primaryText</item>
+        <item name="android:textSize">20sp</item>
+        <item name="fontFamily">@font/metropolis_semibold</item>
+    </style>
+
     <style name="Header16TextStyle" parent="TextAppearance.MaterialComponents.Body1">
         <item name="android:textColor">?primaryText</item>
         <item name="android:textSize">16sp</item>
@@ -395,6 +428,18 @@
 
     <style name="Body16TextStyle" parent="TextAppearance.MaterialComponents.Body1">
         <item name="android:textColor">?primaryText</item>
+    </style>
+
+    <style name="Body12TextStyle" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:textColor">?primaryText</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <style name="Button12TextStyle" parent="TextAppearance.MaterialComponents.Button">
+        <item name="android:textSize">12sp</item>
+        <item name="fontFamily">@font/metropolis</item>
+        <item name="android:textAllCaps">false</item>
     </style>
 
     <style name="SubtitleTextStyle" parent="TextAppearance.MaterialComponents.Body1">
@@ -521,7 +566,7 @@
     <style name="ShareHeaderTextStyle">
         <item name="android:singleLine">true</item>
         <item name="android:textAllCaps">true</item>
-        <item name="android:textColor">?secondaryText</item>
+        <item name="android:textColor">@color/photonDarkGrey10</item>
         <item name="android:textSize">@dimen/share_header_text_size</item>
         <item name="android:textStyle">bold</item>
         <item name="fontFamily">@font/metropolis_semibold</item>
@@ -604,7 +649,6 @@
     <style name="BottomSheetModal" parent="Widget.Design.BottomSheet.Modal">
         <item name="shapeAppearance">@style/BottomSheetShapeAppearance</item>
         <item name="behavior_fitToContents">false</item>
-        <item name="behavior_expandedOffset">80dp</item>
         <item name="behavior_skipCollapsed">false</item>
         <!-- Effectively disable STATE_HALF_EXPANDED by having the tray have a minuscule height in this state -->
         <item name="behavior_halfExpandedRatio">0.001</item>
@@ -633,6 +677,59 @@
         <item name="cornerFamily">rounded</item>
         <item name="elevation">@dimen/top_sites_favicon_elevation</item>
         <item name="cornerSize">@dimen/top_sites_favicon_corner_size</item>
+    </style>
+
+    <style name="recentTabIcon">
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="shapeAppearanceOverlay">@style/recentTabIconShape</item>
+    </style>
+
+    <style name="recentTabIconShape">
+        <item name="cornerFamily">rounded</item>
+        <item name="elevation">@dimen/recent_tabs_icon_elevation</item>
+        <item name="cornerSize">@dimen/recent_tabs_icon_corner_size</item>
+    </style>
+
+    <style name="RecentBookmarks.FaviconCard" parent="Mozac.Widgets.Favicon">
+        <item name="android:layout_width">@dimen/recent_bookmark_item_width</item>
+        <item name="android:layout_height">@dimen/recent_bookmark_item_height</item>
+        <item name="android:padding">16dp</item>
+        <item name="cardBackgroundColor">?mozac_widget_favicon_background_color</item>
+        <item name="cardCornerRadius">8dp</item>
+        <item name="cardElevation">@dimen/home_item_elevation</item>
+    </style>
+
+    <style name="recentBookmarkFavicon">
+        <item name="android:layout_width">@dimen/recent_bookmark_item_width</item>
+        <item name="android:layout_height">@dimen/recent_bookmark_item_favicon_height</item>
+        <item name="android:scaleType">fitStart</item>
+        <item name="android:layout_gravity">start|top</item>
+        <item name="shapeAppearanceOverlay">@style/recentBookmarkFaviconShape</item>
+    </style>
+
+    <style name="recentBookmarkFaviconShape">
+        <item name="cornerFamily">rounded</item>
+        <item name="elevation">@dimen/recent_bookmark_item_favicon_elevation</item>
+        <item name="cornerSize">@dimen/recent_bookmark_item_favicon_corner_size</item>
+    </style>
+
+    <style name="recentBookmarkItemTitleText" parent="Body16TextStyle">
+        <item name="android:gravity">start</item>
+        <item name="android:textAlignment">gravity</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textColor">?primaryText</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">1</item>
+    </style>
+
+    <style name="recentBookmarkItemSubTitleText" parent="Body12TextStyle">
+        <item name="android:gravity">start</item>
+        <item name="android:textColor">?primaryText</item>
+        <item name="android:textAlignment">gravity</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">1</item>
     </style>
 
     <style name="TabTrayFab" parent="Widget.MaterialComponents.ExtendedFloatingActionButton">

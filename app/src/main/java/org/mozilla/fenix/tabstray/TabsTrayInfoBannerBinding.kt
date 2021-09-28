@@ -21,8 +21,6 @@ import mozilla.components.lib.state.helpers.AbstractBinding
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.infobanner.InfoBanner
-import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.utils.Settings
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -31,8 +29,7 @@ class TabsTrayInfoBannerBinding(
     store: BrowserStore,
     private val infoBannerView: ViewGroup,
     private val settings: Settings,
-    private val navigationInteractor: NavigationInteractor,
-    private val metrics: MetricController?
+    private val navigationInteractor: NavigationInteractor
 ) : AbstractBinding<BrowserState>(store) {
 
     @VisibleForTesting
@@ -49,39 +46,11 @@ class TabsTrayInfoBannerBinding(
     }
 
     private fun displayInfoBannerIfNeeded(settings: Settings) {
-        banner = displayGridViewBannerIfNeeded(settings)
-            ?: displayAutoCloseTabsBannerIfNeeded(settings)
+        banner = displayAutoCloseTabsBannerIfNeeded(settings)
 
         banner?.apply {
             infoBannerView.visibility = VISIBLE
             showBanner()
-        }
-    }
-
-    private fun displayGridViewBannerIfNeeded(settings: Settings): InfoBanner? {
-        return if (
-            settings.shouldShowGridViewBanner &&
-            settings.canShowCfr &&
-            settings.listTabView
-        ) {
-            InfoBanner(
-                context = context,
-                message = context.getString(R.string.tab_tray_grid_view_banner_message),
-                dismissText = context.getString(R.string.tab_tray_grid_view_banner_negative_button_text),
-                actionText = context.getString(R.string.tab_tray_grid_view_banner_positive_button_text),
-                container = infoBannerView,
-                dismissByHiding = true,
-                dismissAction = {
-                    metrics?.track(Event.TabsTrayCfrDismissed)
-                    settings.shouldShowGridViewBanner = false
-                }
-            ) {
-                navigationInteractor.onTabSettingsClicked()
-                metrics?.track(Event.TabsTrayCfrTapped)
-                settings.shouldShowGridViewBanner = false
-            }
-        } else {
-            null
         }
     }
 
@@ -98,12 +67,10 @@ class TabsTrayInfoBannerBinding(
                 container = infoBannerView,
                 dismissByHiding = true,
                 dismissAction = {
-                    metrics?.track(Event.TabsTrayCfrDismissed)
                     settings.shouldShowAutoCloseTabsBanner = false
                 }
             ) {
                 navigationInteractor.onTabSettingsClicked()
-                metrics?.track(Event.TabsTrayCfrTapped)
                 settings.shouldShowAutoCloseTabsBanner = false
             }
         } else {

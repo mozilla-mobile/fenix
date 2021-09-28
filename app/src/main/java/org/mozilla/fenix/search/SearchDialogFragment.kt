@@ -57,6 +57,7 @@ import mozilla.components.support.ktx.android.view.hideKeyboard
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import mozilla.components.ui.autocomplete.InlineAutocompleteEditText
 import org.mozilla.fenix.BrowserDirection
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
@@ -86,10 +87,20 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
 
     override fun onStart() {
         super.onStart()
-        // https://github.com/mozilla-mobile/fenix/issues/14279
-        // To prevent GeckoView from resizing we're going to change the softInputMode to not adjust
-        // the size of the window.
-        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
+
+        if (FeatureFlags.showHomeBehindSearch) {
+            // This will need to be handled for the update to R. We need to resize here in order to
+            // see the whole homescreen behind the search dialog.
+            @Suppress("DEPRECATION")
+            requireActivity().window.setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
+            )
+        } else {
+            // https://github.com/mozilla-mobile/fenix/issues/14279
+            // To prevent GeckoView from resizing we're going to change the softInputMode to not adjust
+            // the size of the window.
+            requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
+        }
         // Refocus the toolbar editing and show keyboard if the QR fragment isn't showing
         if (childFragmentManager.findFragmentByTag(QR_FRAGMENT_TAG) == null) {
             toolbarView.view.edit.focus()
@@ -303,7 +314,6 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                 }
                 store.dispatch(SearchFragmentAction.SetShowSearchSuggestions(true))
                 store.dispatch(SearchFragmentAction.AllowSearchSuggestionsInPrivateModePrompt(false))
-                requireComponents.analytics.metrics.track(Event.PrivateBrowsingShowSearchSuggestions)
             }
 
             inflated.dismiss.setOnClickListener {
@@ -400,6 +410,14 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                 true
             }
             else -> {
+                if (FeatureFlags.showHomeBehindSearch) {
+                    val args by navArgs<SearchDialogFragmentArgs>()
+                    args.sessionId?.let {
+                        findNavController().navigate(
+                            SearchDialogFragmentDirections.actionGlobalBrowser(null)
+                        )
+                    }
+                }
                 view?.hideKeyboard()
                 dismissAllowingStateLoss()
                 true
@@ -413,6 +431,8 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         } else null
     }
 
+    @Suppress("DEPRECATION")
+    // https://github.com/mozilla-mobile/fenix/issues/19920
     private fun createQrFeature(): QrFeature {
         return QrFeature(
             requireContext(),
@@ -448,6 +468,8 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         )
     }
 
+    @Suppress("DEPRECATION")
+    // https://github.com/mozilla-mobile/fenix/issues/19920
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
@@ -504,8 +526,8 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
     private fun updateSearchSuggestionsHintVisibility(state: SearchFragmentState) {
         view?.apply {
             val showHint = state.showSearchSuggestionsHint &&
-                    !state.showSearchShortcuts &&
-                    state.url != state.query
+                !state.showSearchShortcuts &&
+                state.url != state.query
 
             findViewById<View>(R.id.search_suggestions_hint)?.isVisible = showHint
             search_suggestions_hint_divider?.isVisible = showHint
@@ -518,8 +540,8 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
 
         val isVisible =
             searchEngine?.id?.contains("google") == true &&
-                    isSpeechAvailable() &&
-                    requireContext().settings().shouldShowVoiceSearch
+                isSpeechAvailable() &&
+                requireContext().settings().shouldShowVoiceSearch
 
         if (isVisible) {
             toolbarView.view.addEditAction(
@@ -534,6 +556,8 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         }
     }
 
+    @Suppress("DEPRECATION")
+    // https://github.com/mozilla-mobile/fenix/issues/19919
     private fun launchVoiceSearch() {
         // Note if a user disables speech while the app is on the search fragment
         // the voice button will still be available and *will* cause a crash if tapped,
@@ -553,8 +577,8 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
 
     private fun updateClipboardSuggestion(searchState: SearchFragmentState, clipboardUrl: String?) {
         val shouldShowView = searchState.showClipboardSuggestions &&
-                searchState.query.isEmpty() &&
-                !clipboardUrl.isNullOrEmpty() && !searchState.showSearchShortcuts
+            searchState.query.isEmpty() &&
+            !clipboardUrl.isNullOrEmpty() && !searchState.showSearchShortcuts
 
         fill_link_from_clipboard.isVisible = shouldShowView
         fill_link_divider.isVisible = shouldShowView
