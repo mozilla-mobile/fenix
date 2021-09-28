@@ -43,9 +43,9 @@ val BrowserState.inactiveTabs: List<TabSessionState>
  */
 fun BrowserState.getNormalTrayTabs(inactiveTabsEnabled: Boolean): List<TabSessionState> {
     return normalTabs.run {
-        if (FeatureFlags.tabGroupFeature && FeatureFlags.inactiveTabs && inactiveTabsEnabled) {
+        if (FeatureFlags.tabGroupFeature && inactiveTabsEnabled) {
             filter { it.isNormalTabActiveWithoutSearchTerm(maxActiveTime) }
-        } else if (FeatureFlags.inactiveTabs && inactiveTabsEnabled) {
+        } else if (inactiveTabsEnabled) {
             filter { it.isNormalTabActive(maxActiveTime) }
         } else if (FeatureFlags.tabGroupFeature) {
             filter { it.isNormalTabWithSearchTerm() }

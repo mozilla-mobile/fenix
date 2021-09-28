@@ -79,12 +79,12 @@ class NormalBrowserPageViewHolder(
         val browserAdapter = concatAdapter.browserAdapter
         val inactiveTabAdapter = concatAdapter.inactiveTabsAdapter
         val tabGroupAdapter = concatAdapter.tabGroupAdapter
-        val inactiveTabsEnabled = containerView.context.settings().inactiveTabsAreEnabled
+        val inactiveTabsAreEnabled = containerView.context.settings().inactiveTabsAreEnabled
 
         val selectedTab = browserStore.state.selectedNormalTab ?: return
 
         // Update tabs into the inactive adapter.
-        if (FeatureFlags.inactiveTabs && selectedTab.isNormalTabInactive(maxActiveTime) && inactiveTabsEnabled) {
+        if (FeatureFlags.inactiveTabs && selectedTab.isNormalTabInactive(maxActiveTime) && inactiveTabsAreEnabled) {
             val inactiveTabsList = browserStore.state.inactiveTabs
             // We want to expand the inactive section first before we want to fire our scroll observer.
             InactiveTabsState.isExpanded = true
@@ -127,7 +127,7 @@ class NormalBrowserPageViewHolder(
 
         // Updates tabs into the normal browser tabs adapter.
         browserAdapter.observeFirstInsert {
-            val activeTabsList = browserStore.state.getNormalTrayTabs(inactiveTabsEnabled)
+            val activeTabsList = browserStore.state.getNormalTrayTabs(inactiveTabsAreEnabled)
             activeTabsList.forEachIndexed { tabIndex, trayTab ->
                 if (trayTab.id == selectedTab.id) {
 
