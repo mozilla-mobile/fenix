@@ -57,7 +57,7 @@ class PagedHistoryProviderTest {
             key = historyMetadataKey1,
             title = "mozilla",
             createdAt = 5,
-            updatedAt = 5,
+            updatedAt = 10,
             totalViewTime = 10,
             documentType = DocumentType.Regular,
             previewImageUrl = null
@@ -67,14 +67,26 @@ class PagedHistoryProviderTest {
             key = historyMetadataKey2,
             title = "firefox",
             createdAt = 2,
-            updatedAt = 2,
+            updatedAt = 11,
             totalViewTime = 20,
             documentType = DocumentType.Regular,
             previewImageUrl = null
         )
 
+        // Adding a third entry with same url to test de-duping
+        val historyMetadataKey3 = HistoryMetadataKey("http://www.firefox.com", "mozilla", null)
+        val historyEntry3 = HistoryMetadata(
+            key = historyMetadataKey3,
+            title = "firefox",
+            createdAt = 3,
+            updatedAt = 12,
+            totalViewTime = 30,
+            documentType = DocumentType.Regular,
+            previewImageUrl = null
+        )
+
         coEvery { storage.getVisitsPaginated(any(), any(), any()) } returns listOf(visitInfo1, visitInfo2, visitInfo3)
-        coEvery { storage.getHistoryMetadataSince(any()) } returns listOf(historyEntry1, historyEntry2)
+        coEvery { storage.getHistoryMetadataSince(any()) } returns listOf(historyEntry1, historyEntry2, historyEntry3)
 
         var actualResults: List<History>? = null
         provider.getHistory(10L, 5) {
@@ -102,6 +114,7 @@ class PagedHistoryProviderTest {
                 id = historyEntry1.createdAt.toInt(),
                 title = historyEntry1.key.searchTerm!!,
                 visitedAt = historyEntry1.createdAt,
+                // Results are de-duped by URL and sorted descending by createdAt/visitedAt
                 items = listOf(
                     History.Metadata(
                         id = historyEntry1.createdAt.toInt(),
@@ -112,11 +125,11 @@ class PagedHistoryProviderTest {
                         historyMetadataKey = historyMetadataKey1
                     ),
                     History.Metadata(
-                        id = historyEntry2.createdAt.toInt(),
-                        title = historyEntry2.title!!,
-                        url = historyEntry2.key.url,
-                        visitedAt = historyEntry2.createdAt,
-                        totalViewTime = historyEntry2.totalViewTime,
+                        id = historyEntry3.createdAt.toInt(),
+                        title = historyEntry3.title!!,
+                        url = historyEntry3.key.url,
+                        visitedAt = historyEntry3.createdAt,
+                        totalViewTime = historyEntry3.totalViewTime,
                         historyMetadataKey = historyMetadataKey2
                     )
                 )

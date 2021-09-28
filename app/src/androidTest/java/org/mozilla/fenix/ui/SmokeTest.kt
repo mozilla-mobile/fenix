@@ -5,9 +5,7 @@
 package org.mozilla.fenix.ui
 
 import android.view.View
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
-import androidx.compose.ui.test.onNodeWithText
 import androidx.core.net.toUri
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.platform.app.InstrumentationRegistry
@@ -312,6 +310,9 @@ class SmokeTest {
     @Test
     // Verifies the Add to top sites option in a tab's 3 dot menu
     fun openMainMenuAddTopSiteTest() {
+        val settings = activityTestRule.activity.applicationContext.settings()
+        settings.hasShownHomeOnboardingDialog = true
+
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         navigationToolbar {
@@ -544,7 +545,37 @@ class SmokeTest {
         }
     }
 
-    @Ignore("Disabled for failing with new Compose Awesomebar")
+    @Test
+    // Verifies setting as default a customized search engine name and URL
+    fun editCustomSearchEngineTest() {
+        val searchEngine = object {
+            var title = "Elefant"
+            var url = "https://www.elefant.ro/search?SearchTerm=%s"
+            var newTitle = "Test"
+        }
+
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openSearchSubMenu {
+            openAddSearchEngineMenu()
+            selectAddCustomSearchEngine()
+            typeCustomEngineDetails(searchEngine.title, searchEngine.url)
+            saveNewSearchEngine()
+            openEngineOverflowMenu(searchEngine.title)
+            clickEdit()
+            typeCustomEngineDetails(searchEngine.newTitle, searchEngine.url)
+            saveEditSearchEngine()
+            changeDefaultSearchEngine(searchEngine.newTitle)
+        }.goBack {
+        }.goBack {
+        }.openSearch {
+            verifyDefaultSearchEngine(searchEngine.newTitle)
+            clickSearchEngineShortcutButton()
+            verifyEnginesListShortcutContains(activityTestRule, searchEngine.newTitle)
+        }
+    }
+
     @Test
     // Test running on beta/release builds in CI:
     // caution when making changes to it, so they don't block the builds
@@ -552,35 +583,19 @@ class SmokeTest {
     fun toggleSearchSuggestions() {
 
         homeScreen {
-        }.openNavigationToolbar {
-            typeSearchTerm("mozilla")
-            val awesomeBarView = getAwesomebarView()
-            awesomeBarView?.let {
-                awesomeBar = ViewVisibilityIdlingResource(it, View.VISIBLE)
-            }
-            IdlingRegistry.getInstance().register(awesomeBar!!)
-
-            activityTestRule.waitForIdle()
-
-            activityTestRule
-                .onNodeWithText("mozilla firefox")
-                .assertExists()
-                .assertIsDisplayed()
-        }.goBack {
+        }.openSearch {
+            typeSearch("mozilla")
+            verifySearchEngineSuggestionResults(activityTestRule, "mozilla firefox")
+        }.dismissSearchBar {
         }.openThreeDotMenu {
         }.openSettings {
         }.openSearchSubMenu {
             disableShowSearchSuggestions()
         }.goBack {
         }.goBack {
-        }.openNavigationToolbar {
-            typeSearchTerm("mozilla")
-
-            activityTestRule.waitForIdle()
-
-            activityTestRule
-                .onNodeWithText("mozilla firefox")
-                .assertDoesNotExist()
+        }.openSearch {
+            typeSearch("mozilla")
+            verifyNoSuggestionsAreDisplayed(activityTestRule, "mozilla firefox")
         }
     }
 
@@ -806,6 +821,8 @@ class SmokeTest {
 
     @Test
     fun createFirstCollectionTest() {
+        val settings = activityTestRule.activity.applicationContext.settings()
+        settings.hasShownHomeOnboardingDialog = true
         val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
         val secondWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 2)
 
@@ -837,6 +854,8 @@ class SmokeTest {
 
     @Test
     fun verifyExpandedCollectionItemsTest() {
+        val settings = activityTestRule.activity.applicationContext.settings()
+        settings.hasShownHomeOnboardingDialog = true
         val webPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         navigationToolbar {
@@ -889,6 +908,9 @@ class SmokeTest {
 
     @Test
     fun shareCollectionTest() {
+        val settings = activityTestRule.activity.applicationContext.settings()
+        settings.hasShownHomeOnboardingDialog = true
+
         val webPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         navigationToolbar {
@@ -912,6 +934,8 @@ class SmokeTest {
     // Test running on beta/release builds in CI:
     // caution when making changes to it, so they don't block the builds
     fun deleteCollectionTest() {
+        val settings = activityTestRule.activity.applicationContext.settings()
+        settings.hasShownHomeOnboardingDialog = true
         val webPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         navigationToolbar {
@@ -1329,6 +1353,8 @@ class SmokeTest {
 
     @Test
     fun goToHomeScreenBottomToolbarTest() {
+        val settings = activityTestRule.activity.applicationContext.settings()
+        settings.hasShownHomeOnboardingDialog = true
         val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         navigationToolbar {
@@ -1341,6 +1367,9 @@ class SmokeTest {
 
     @Test
     fun goToHomeScreenTopToolbarTest() {
+        val settings = activityTestRule.activity.applicationContext.settings()
+        settings.hasShownHomeOnboardingDialog = true
+
         val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         homeScreen {
@@ -1408,6 +1437,8 @@ class SmokeTest {
 
     @Test
     fun alwaysStartOnHomeTest() {
+        val settings = activityTestRule.activity.applicationContext.settings()
+        settings.hasShownHomeOnboardingDialog = true
         val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         navigationToolbar {
