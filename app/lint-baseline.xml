@@ -7548,6 +7548,17 @@
 
     <issue
         id="UnusedResources"
+        message="The resource `R.string.history_search_group_sites` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;%d gwefan&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-cy/strings.xml"
+            line="35"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
         message="The resource `R.string.recently_bookmarked` appears to be unused"
         errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;Merket evel sined nevez ’zo&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
