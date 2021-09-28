@@ -31,5 +31,6 @@
         android:maxLines="2"
         android:text="@string/synced_tabs_sign_in_button"
         android:visibility="gone"
+
         app:icon="@drawable/ic_sign_in" />
 </LinearLayout>
