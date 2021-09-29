@@ -84,7 +84,7 @@ class NormalBrowserPageViewHolder(
         val selectedTab = browserStore.state.selectedNormalTab ?: return
 
         // Update tabs into the inactive adapter.
-        if (FeatureFlags.inactiveTabs && selectedTab.isNormalTabInactive(maxActiveTime) && inactiveTabsAreEnabled) {
+        if (inactiveTabsAreEnabled && selectedTab.isNormalTabInactive(maxActiveTime)) {
             val inactiveTabsList = browserStore.state.inactiveTabs
             // We want to expand the inactive section first before we want to fire our scroll observer.
             InactiveTabsState.isExpanded = true
