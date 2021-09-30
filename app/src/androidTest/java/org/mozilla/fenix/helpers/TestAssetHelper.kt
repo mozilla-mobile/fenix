@@ -108,4 +108,10 @@ object TestAssetHelper {
 
         return TestAsset(url, content, title)
     }
+
+    fun getSitePermissionsAsset(server: MockWebServer): TestAsset {
+        val url = server.url("pages/sitePermissions.html").toString().toUri()!!
+
+        return TestAsset(url, "", "")
+    }
 }

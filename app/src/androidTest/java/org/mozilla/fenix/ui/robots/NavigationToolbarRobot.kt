@@ -31,11 +31,13 @@ import androidx.test.uiautomator.Until
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.anyOf
 import org.hamcrest.CoreMatchers.not
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.SessionLoadedIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestHelper.packageName
+import org.mozilla.fenix.helpers.TestHelper.waitForObjects
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
 
@@ -54,6 +56,8 @@ class NavigationToolbarRobot {
     fun verifyCloseReaderViewDetected(visible: Boolean = false) =
         assertCloseReaderViewDetected(visible)
 
+    fun verifyPermissionIndicator() = assertPermissionIndicator()
+
     fun typeSearchTerm(searchTerm: String) = awesomeBar().setText(searchTerm)
 
     fun toggleReaderView() {
@@ -65,6 +69,17 @@ class NavigationToolbarRobot {
 
         readerViewToggle().click()
     }
+
+    fun clickToolBarSecurityIcon() {
+        mDevice.findObject(
+            UiSelector().resourceId("$packageName:id/mozac_browser_toolbar_security_indicator")
+        ).click()
+        mDevice.waitForIdle()
+    }
+
+    fun verifyCameraPermissionStatus(status: String) = assertCameraPermissionStatus(status)
+    fun verifyCameraPermissionIsNotDisplayed() = assertCameraPermissionIsNotDisplayed()
+    fun dismissQuickActionSheet() = mDevice.pressBack()
 
     class Transition {
 
@@ -338,6 +353,43 @@ private fun assertCloseReaderViewDetected(visible: Boolean) {
     ).check(
         if (visible) matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE))
         else ViewAssertions.doesNotExist()
+    )
+}
+
+private fun assertCameraPermissionStatus(status: String) {
+    mDevice.waitNotNull(Until.findObject(By.res("$packageName:id/quick_action_sheet")), waitingTime)
+    mDevice.waitForObjects(mDevice.findObject(UiSelector().resourceId("$packageName:id/cameraStatus")))
+    assertTrue(
+        mDevice.findObject(
+            UiSelector()
+                .resourceId("$packageName:id/cameraStatus")
+                .textContains(status)
+        ).waitForExists(waitingTime)
+    )
+}
+
+private fun assertCameraPermissionIsNotDisplayed() {
+    mDevice.waitNotNull(Until.findObject(By.res("$packageName:id/quick_action_sheet")), waitingTime)
+    assertFalse(
+        mDevice.findObject(
+            UiSelector().resourceId("$packageName:id/cameraStatus")
+        ).waitForExists(waitingTime)
+    )
+}
+
+private fun assertPermissionIndicator() {
+    mDevice.waitForIdle()
+    mDevice.waitForObjects(
+        mDevice.findObject(
+            UiSelector()
+                .resourceId("$packageName:id/mozac_browser_toolbar_permission_indicator")
+        )
+    )
+    assertTrue(
+        mDevice.findObject(
+            UiSelector()
+                .resourceId("$packageName:id/mozac_browser_toolbar_permission_indicator")
+        ).waitForExists(waitingTime)
     )
 }
 

@@ -514,6 +514,51 @@ class SettingsPrivacyTest {
             verifyEmptyHistoryView()
         }
     }
+
+    @Test
+    fun deleteSitePermissionDataTest() {
+        val permissionsPage = TestAssetHelper.getSitePermissionsAsset(mockWebServer)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(permissionsPage.url) {
+            mDevice.waitForIdle()
+            clickPagePermissionOption("Camera")
+            clickAllowAndroidPermission()
+            clickRememberDecisionButton()
+            clickAllowPermissionButton()
+        }
+
+        browserScreen {
+            verifyUrl(permissionsPage.url.toString())
+        }
+
+        navigationToolbar {
+            verifyPermissionIndicator()
+            clickToolBarSecurityIcon()
+            verifyCameraPermissionStatus("Allowed")
+            dismissQuickActionSheet()
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openSettingsSubMenuDeleteBrowsingData {
+            selectOnlySitePermissionsCheckBox()
+            clickDeleteBrowsingDataButton()
+            clickDialogCancelButton()
+            clickDeleteBrowsingDataButton()
+            confirmDeletionAndAssertSnackbar()
+        }.goBack {
+        }.goBack {
+        }
+        navigationToolbar {
+            clickToolBarSecurityIcon()
+            verifyCameraPermissionIsNotDisplayed()
+            dismissQuickActionSheet()
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openSettingsSubMenuSitePermissions {
+        }.openExceptions {
+            verifyExceptionDefault()
+        }
+    }
 }
 
 private fun setOpenLinksInPrivateOn() {

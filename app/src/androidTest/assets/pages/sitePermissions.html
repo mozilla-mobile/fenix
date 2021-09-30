@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>gUM Test Page</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" charset="utf-8">
+    <style>
+    #main {
+      display: block;
+      margin: 0px auto;
+      text-align: center
+    }
+    #content {
+      display: inline-block;
+    }
+    #frames {
+      display: inline-block;
+      max-width: 180px;
+      vertical-align: top;
+    }
+    #startbuttons {
+      display: block;
+    }
+    #stopbuttons {
+      display: none;
+    }
+    #message {
+      font-size: 24px;
+      font-family: "Gentium Basic", serif;
+    }
+    h1 {
+      font-size: 40px;
+      font-family: "Gentium Basic", serif;
+    }
+    input {
+      font-size: 28px;
+      font-family: "Gentium Basic", serif;
+    }
+    p {
+      color: green;
+    }
+    p.error {
+      color: red;
+    }
+    input[type=number] {
+      width: 65px;
+    }
+
+
+
+    </style>
+</head>
+<body>
+<div id="main">
+    <h2><b>getUserMedia / getDisplayMedia Test Page</b></h2>
+    <p><a href="https://mozilla.github.io/webrtc-landing">Main webrtc demo page</a></p>
+
+    <div id="gum_warn" style="display: none">
+        <font color="red">
+            <h4>getUserMedia is missing!</h4>
+            This page only works when loaded loaded <a
+                href="https://mozilla.github.io/webrtc-landing/gum_test.html">via HTTPS</a> as
+            getUserMedia() can only be accessed via HTTPS.<br><br>
+        </font>
+    </div>
+
+    <div id="startbuttons">
+        <input value="Camera" onclick="startVideo();" type="button">
+        <input value="Microphone" onclick="startAudio();" type="button">
+        <input value="Notification" onclick="open_notifications();" type="button">
+        <input value="Location" onclick="geo_locate();" type="button">
+        <input value="Camera and microphone" onclick="startAudioVideo();" type="button">
+        <input value="Screen capture" onclick="startScreen();" type="button">
+        <br>
+        <input id="fps_range" min="0" max="120" value="0" type="range">
+        <input id="fps_number" min="0" max="120" value="0" type="number">
+        <label for="fps_number">FPS desired (0 for default)</label>
+    </div>
+    <div id="images">
+        <div id="content"></div>
+        <div id="controls"></div>
+        <div id="frames"></div>
+        <div id="fps"></div>
+    </div>
+    <div id="message"></div>
+    <div style="display: none;" id="stopbuttons">
+        <input value="Stop" onclick="stopMedia();" type="button">
+        <input value="Pause/Play" onclick="pauseMedia();" type="button">
+        <input id="snapshot" value="Snapshot" onclick="startSnapshot();" type="button">
+    </div>
+</div>
+
+<script type="application/javascript">
+  if (!navigator.mediaDevices.getUserMedia) {
+    document.getElementById("gum_warn").style.display = "none";
+  }
+
+  const video = document.createElement("video");
+  video.setAttribute("width", 640);
+  video.setAttribute("height", 480);
+
+  const muted = document.createElement("input");
+  muted.type = "checkbox";
+  muted.checked = true;
+  muted.onclick = () => { video.muted = muted.checked; };
+
+  const mute = document.createElement("label");
+  mute.innerHTML = "Volume mute";
+  mute.insertBefore(muted, mute.firstChild);
+
+  const snapshots = [];
+
+  const audio = document.createElement("audio");
+  audio.setAttribute("controls", true);
+
+  const start = document.getElementById("startbuttons");
+  const stop = document.getElementById("stopbuttons");
+
+  const message = document.getElementById("message");
+  const content = document.getElementById("content");
+  const frames = document.getElementById("frames");
+  const snapshot = document.getElementById("snapshot");
+  const fps = document.getElementById("fps");
+
+  const fps_range = document.getElementById("fps_range");
+  const fps_number = document.getElementById("fps_number");
+
+  fps_range.oninput = () => fps_number.value = fps_range.value;
+  fps_number.oninput = () => fps_range.value = fps_number.value;
+
+  let saved_stream = null;
+  let capturing = false;
+  let running = false;
+
+  let fps_now = 0;
+  let fps_total = 0;
+  let last_fps_time;
+  let first_fps_time;
+  let last_fps_frames;
+  let first_fps_frames;
+  let fps_constraint;
+
+  function startScreen() {
+    startMedia("getDisplayMedia", {video: true});
+  }
+
+  function startAudioVideo() {
+    startMedia("getUserMedia", {video: true, audio: true});
+  }
+
+  function startAudio() {
+    startMedia("getUserMedia", {audio: true});
+  }
+
+  function startVideo() {
+    startMedia("getUserMedia", {video: true});
+  }
+
+  function stopMedia() {
+    if (video.srcObject) {
+      for (const track of video.srcObject.getTracks()) {
+        track.stop();
+      }
+      video.srcObject = null;
+      content.removeChild(video);
+      if (mute.parentNode) {
+        controls.removeChild(mute);
+      }
+      fps.innerHTML = "";
+      stopbuttons.removeChild(snapshot);
+      snapshot.value = "Snapshot";
+      frames.innerHTML = '';
+      capturing = false;
+    } else if (audio.srcObject) {
+      for (const track of audio.srcObject.getTracks()) {
+        track.stop();
+      }
+      audio.srcObject = null;
+      content.removeChild(audio);
+    }
+    saved_stream = null;
+    stop.style.display = "none";
+    start.style.display = "block";
+    running = false;
+  }
+
+  function pauseMedia() {
+    if (saved_stream) {
+      if (saved_stream.getVideoTracks().length) {
+        video.srcObject = saved_stream;
+        video.play();
+      } else {
+        audio.srcObject = saved_stream;
+        audio.play();
+      }
+      saved_stream = null;
+    } else {
+      if (video.srcObject) {
+        video.pause();
+        saved_stream = video.srcObject;
+        video.srcObject = null;
+      } else if (audio.srcObject) {
+        audio.pause();
+        saved_stream = audio.srcObject;
+        audio.srcObject = null;
+      }
+    }
+  }
+
+  const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+  async function startMedia(gum, constraints) {
+    if (constraints.video) {
+      const frameRate = +fps_number.value || undefined;
+      constraints.video = Object.assign(constraints.video, {frameRate});
+    }
+    stop.style.display = "block";
+    start.style.display = "none";
+    try {
+      const stream = await navigator.mediaDevices[gum](constraints);
+      message.innerHTML = "<p>Success!</p>";
+      if (stream.getVideoTracks().length) {
+        content.appendChild(video);
+        if (stream.getAudioTracks().length) {
+          controls.appendChild(mute);
+          video.muted = muted.checked;
+        }
+        video.srcObject = stream;
+        video.play();
+        frames.innerHTML = '';
+        stopbuttons.appendChild(snapshot);
+        first_fps_time = last_fps_time = new Date();
+        first_fps_frames = last_fps_frames = video.mozPaintedFrames;
+        fps.innerHTML="FPS now:  0.0 , entire capture:  0.0";
+        setTimeout(get_fps, 2000);
+      } else {
+        content.appendChild(audio);
+        audio.srcObject = stream;
+        audio.play();
+      }
+      running = true;
+    } catch (err) {
+      if (location.protocol != "https:") {
+        message.innerHTML = `<p class='error'>${err}</p>
+          <p>getUserMedia and getDisplayMedia now require the site be loaded from an https URL</p>
+          <p>Reloading page in https in 10 seconds</p>`;
+        await wait(10000);
+        window.location.href = `https:${window.location.href.substring(window.location.protocol.length)}`;
+      } else {
+        message.innerHTML = `<p class='error'>${err}</p>`;
+      }
+      stopMedia();
+    }
+  }
+
+  function get_fps() {
+    if (running) {
+      const now = new Date();
+      const frames = video.mozPaintedFrames;
+      fps_now = (frames - last_fps_frames)/((now - last_fps_time)/1000);
+      fps_total = (frames - first_fps_frames)/((now - first_fps_time)/1000);
+      fps.innerHTML= `FPS now: ${fps_now.toFixed(1)} , entire capture: ${fps_total.toFixed(1)}`;
+      last_fps_time = now;
+      last_fps_frames = frames;
+      setTimeout(get_fps, 1000);
+    }
+  }
+
+  function startSnapshot() {
+    capturing = !capturing;
+    if (capturing) {
+      captureImage();
+      snapshot.value = "Stop Snapshot";
+    } else {
+      snapshot.value = "Snapshot";
+    }
+  }
+
+  function captureImage() {
+    if (video.srcObject && capturing) {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+
+      canvas.width  = video.videoWidth / 4;
+      canvas.height = video.videoHeight / 4;
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      if (snapshots.unshift(canvas) > 4) {
+        snapshots.length = 4;
+      }
+      frames.innerHTML = '';
+      for (const snapshot of snapshots) {
+        frames.appendChild(snapshot);
+      }
+      setTimeout(captureImage, 2000);
+    }
+  }
+
+  function open_notifications() {
+	Notification.requestPermission().then(function(result) {
+	  if (result === 'denied') {
+	    console.log('Permission wasn\'t granted. Allow a retry.');
+	    return;
+	  }
+	  if (result === 'default') {
+	    console.log('The permission request was dismissed.');
+	    return;
+	  }
+	  // Do something with the granted permission.
+	});
+  }
+
+  function geo_locate() {
+      const status = document.querySelector('#content');
+      const mapLink = document.querySelector('#content');
+
+      mapLink.href = '';
+      mapLink.textContent = '';
+
+      function success(position) {
+        const latitude  = position.coords.latitude;
+        const longitude = position.coords.longitude;
+
+        status.textContent = '';
+        mapLink.href = `https://www.openstreetmap.org/#map=18/${latitude}/${longitude}`;
+        mapLink.textContent = `Latitude: ${latitude} °, Longitude: ${longitude} °`;
+      }
+
+      function error() {
+        status.textContent = 'Unable to retrieve your location';
+      }
+
+      if (!navigator.geolocation) {
+        status.textContent = 'Geolocation is not supported by your browser';
+      } else {
+        status.textContent = 'Locating…';
+        navigator.geolocation.getCurrentPosition(success, error);
+      }
+  }
+
+
+</script>
+
+</body>
+</html>
