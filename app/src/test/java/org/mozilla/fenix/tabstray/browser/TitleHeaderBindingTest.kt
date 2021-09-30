@@ -18,6 +18,7 @@ import mozilla.components.support.test.libstate.ext.waitUntilIdle
 import mozilla.components.support.test.rule.MainCoroutineRule
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.utils.Settings
@@ -46,6 +47,7 @@ class TitleHeaderBindingTest {
         assertTrue(result)
     }
 
+    @Ignore // To be fixed with https://github.com/mozilla-mobile/fenix/issues/21360
     @Test
     fun `WHEN grouped tabs are added to the list THEN return false`() = runBlockingTest {
         var result = false
