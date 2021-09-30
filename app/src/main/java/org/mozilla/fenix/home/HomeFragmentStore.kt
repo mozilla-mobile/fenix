@@ -53,7 +53,7 @@ data class Tab(
  * @property recentTabs The list of recent [RecentTab] in the [HomeFragment].
  * @property recentBookmarks The list of recently saved [BookmarkNode]s to show on the [HomeFragment].
  * @property historyMetadata The list of [HistoryMetadataGroup].
- * @property pocketStories Currently shown [PocketRecommendedStory]ies.
+ * @property pocketStories The list of currently shown [PocketRecommendedStory]s.
  * @property pocketStoriesCategories All [PocketRecommendedStory] categories.
  * Also serves as an in memory cache of all stories mapped by category allowing for quick stories filtering.
  */
@@ -149,7 +149,7 @@ private fun homeFragmentStateReducer(
             val updatedCategoriesState = state.copy(
                 pocketStoriesCategories = state.pocketStoriesCategories.map {
                     when (it.name == action.categoryName) {
-                        true -> it.copy(isSelected = true)
+                        true -> it.copy(isSelected = true, lastInteractedWithTimestamp = System.currentTimeMillis())
                         false -> it
                     }
                 }
@@ -163,7 +163,7 @@ private fun homeFragmentStateReducer(
                 // Deselecting a category means the stories to be displayed needs to also be changed.
                 pocketStoriesCategories = state.pocketStoriesCategories.map {
                     when (it.name == action.categoryName) {
-                        true -> it.copy(isSelected = false)
+                        true -> it.copy(isSelected = false, lastInteractedWithTimestamp = System.currentTimeMillis())
                         false -> it
                     }
                 }

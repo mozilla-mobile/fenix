@@ -75,24 +75,6 @@ class HomeFragmentStateTest {
     }
 
     @Test
-    fun `GIVEN a category is selected WHEN getFilteredStories is called for more than in the category THEN results topped with ones from the default category are returned`() {
-        val homeState = HomeFragmentState(
-            pocketStoriesCategories = listOf(
-                otherStoriesCategory.copy(isSelected = true), anotherStoriesCategory, defaultStoriesCategory
-            )
-        )
-
-        val result = homeState.getFilteredStories(5)
-
-        assertEquals(5, result.size)
-        assertEquals(3, result.filter { it.category == otherStoriesCategory.name }.size)
-        assertEquals(
-            2,
-            result.filter { it.category == POCKET_STORIES_DEFAULT_CATEGORY_NAME }.size
-        )
-    }
-
-    @Test
     fun `GIVEN two categories are selected WHEN getFilteredStories is called for fewer than in both THEN only stories from those categories are returned`() {
         val homeState = HomeFragmentState(
             pocketStoriesCategories = listOf(
@@ -120,28 +102,7 @@ class HomeFragmentStateTest {
     }
 
     @Test
-    fun `GIVEN two categories are selected WHEN getFilteredStories is called for more than in the categories THEN results topped with ones from the default category are returned`() {
-        val homeState = HomeFragmentState(
-            pocketStoriesCategories = listOf(
-                otherStoriesCategory.copy(isSelected = true),
-                anotherStoriesCategory.copy(isSelected = true),
-                defaultStoriesCategory
-            )
-        )
-
-        val result = homeState.getFilteredStories(8)
-
-        assertEquals(8, result.size)
-        assertEquals(3, result.filter { it.category == otherStoriesCategory.name }.size)
-        assertEquals(3, result.filter { it.category == anotherStoriesCategory.name }.size)
-        assertEquals(
-            2,
-            result.filter { it.category == POCKET_STORIES_DEFAULT_CATEGORY_NAME }.size
-        )
-    }
-
-    @Test
-    fun `GIVEN two categories are selected WHEN getFilteredStories is called for an odd number of stories THEN there are more by one stories from the oldest category`() {
+    fun `GIVEN two categories are selected WHEN getFilteredStories is called for an odd number of stories THEN there are more by one stories from the newest category`() {
         val firstSelectedCategory = otherStoriesCategory.copy(lastInteractedWithTimestamp = 0, isSelected = true)
         val lastSelectedCategory = anotherStoriesCategory.copy(lastInteractedWithTimestamp = 1, isSelected = true)
         val homeState = HomeFragmentState(
@@ -153,64 +114,41 @@ class HomeFragmentStateTest {
         val result = homeState.getFilteredStories(5)
 
         assertEquals(5, result.size)
-        assertEquals(3, result.filter { it.category == firstSelectedCategory.name }.size)
-        assertEquals(2, result.filter { it.category == lastSelectedCategory.name }.size)
+        assertEquals(2, result.filter { it.category == firstSelectedCategory.name }.size)
+        assertEquals(3, result.filter { it.category == lastSelectedCategory.name }.size)
     }
 
     @Test
-    fun `GIVEN no category is selected WHEN getFilteredStoriesCount is called THEN Pocket stories count only from the default category are returned`() {
-        val availableCategories = listOf(otherStoriesCategory, defaultStoriesCategory, anotherStoriesCategory)
+    fun `GIVEN no category is selected WHEN getFilteredStoriesCount is called THEN return an empty result`() {
+        val result = getFilteredStoriesCount(emptyList(), 1)
 
-        var result = getFilteredStoriesCount(availableCategories, emptyList(), 2)
-        assertEquals(1, result.keys.size)
-        assertEquals(defaultStoriesCategory.name, result.entries.first().key)
-        assertEquals(2, result[defaultStoriesCategory.name])
-
-        result = getFilteredStoriesCount(availableCategories, emptyList(), 5)
-        assertEquals(1, result.keys.size)
-        assertEquals(defaultStoriesCategory.name, result.entries.first().key)
-        assertEquals(3, result[defaultStoriesCategory.name])
+        assertTrue(result.isEmpty())
     }
 
     @Test
     fun `GIVEN a category is selected WHEN getFilteredStoriesCount is called for at most the stories from this category THEN only stories count only from that category are returned`() {
-        val availableCategories = listOf(otherStoriesCategory, defaultStoriesCategory, anotherStoriesCategory)
-
-        var result = getFilteredStoriesCount(availableCategories, listOf(otherStoriesCategory), 2)
+        var result = getFilteredStoriesCount(listOf(otherStoriesCategory), 2)
         assertEquals(1, result.keys.size)
         assertEquals(otherStoriesCategory.name, result.entries.first().key)
         assertEquals(2, result[otherStoriesCategory.name])
 
-        result = getFilteredStoriesCount(availableCategories, listOf(otherStoriesCategory), 3)
+        result = getFilteredStoriesCount(listOf(otherStoriesCategory), 3)
         assertEquals(1, result.keys.size)
         assertEquals(otherStoriesCategory.name, result.entries.first().key)
         assertEquals(3, result[otherStoriesCategory.name])
     }
 
     @Test
-    fun `GIVEN a category is selected WHEN getFilteredStoriesCount is called for more stories than this category has THEN results topped with ones from the default category are returned`() {
-        val availableCategories = listOf(otherStoriesCategory, defaultStoriesCategory, anotherStoriesCategory)
-
-        val result = getFilteredStoriesCount(availableCategories, listOf(otherStoriesCategory), 5)
-
-        assertEquals(2, result.keys.size)
-        assertTrue(
-            result.keys.containsAll(
-                listOf(
-                    defaultStoriesCategory.name,
-                    otherStoriesCategory.name
-                )
-            )
-        )
+    fun `GIVEN a category is selected WHEN getFilteredStoriesCount is called for more stories than in this category THEN return only that`() {
+        var result = getFilteredStoriesCount(listOf(otherStoriesCategory), 4)
+        assertEquals(1, result.keys.size)
+        assertEquals(otherStoriesCategory.name, result.entries.first().key)
         assertEquals(3, result[otherStoriesCategory.name])
-        assertEquals(2, result[defaultStoriesCategory.name])
     }
 
     @Test
     fun `GIVEN two categories are selected WHEN getFilteredStoriesCount is called for at most the stories count in both THEN only stories counts from those categories are returned`() {
-        val availableCategories = listOf(otherStoriesCategory, defaultStoriesCategory, anotherStoriesCategory)
-
-        var result = getFilteredStoriesCount(availableCategories, listOf(otherStoriesCategory, anotherStoriesCategory), 2)
+        var result = getFilteredStoriesCount(listOf(otherStoriesCategory, anotherStoriesCategory), 2)
         assertEquals(2, result.keys.size)
         assertTrue(
             result.keys.containsAll(
@@ -223,7 +161,7 @@ class HomeFragmentStateTest {
         assertEquals(1, result[otherStoriesCategory.name])
         assertEquals(1, result[anotherStoriesCategory.name])
 
-        result = getFilteredStoriesCount(availableCategories, listOf(otherStoriesCategory, anotherStoriesCategory), 6)
+        result = getFilteredStoriesCount(listOf(otherStoriesCategory, anotherStoriesCategory), 6)
         assertEquals(2, result.keys.size)
         assertTrue(
             result.keys.containsAll(
@@ -238,16 +176,12 @@ class HomeFragmentStateTest {
     }
 
     @Test
-    fun `GIVEN two categories are selected WHEN getFilteredStoriesCount is called for more results than in those categories THEN results topped with ones from the default category are returned`() {
-        val availableCategories = listOf(otherStoriesCategory, defaultStoriesCategory, anotherStoriesCategory)
-
-        val result = getFilteredStoriesCount(availableCategories, listOf(otherStoriesCategory, anotherStoriesCategory), 8)
-
-        assertEquals(3, result.size)
+    fun `GIVEN two categories are selected WHEN getFilteredStoriesCount is called for more results than stories in both THEN only stories counts from those categories are returned`() {
+        val result = getFilteredStoriesCount(listOf(otherStoriesCategory, anotherStoriesCategory), 8)
+        assertEquals(2, result.keys.size)
         assertTrue(
             result.keys.containsAll(
                 listOf(
-                    defaultStoriesCategory.name,
                     otherStoriesCategory.name,
                     anotherStoriesCategory.name
                 )
@@ -255,15 +189,11 @@ class HomeFragmentStateTest {
         )
         assertEquals(3, result[otherStoriesCategory.name])
         assertEquals(3, result[anotherStoriesCategory.name])
-        assertEquals(2, result[defaultStoriesCategory.name])
     }
 
     @Test
     fun `GIVEN two categories are selected WHEN getFilteredStoriesCount is called for an odd number of results THEN there are more by one results from first selected category`() {
-        val availableCategories = listOf(otherStoriesCategory, defaultStoriesCategory, anotherStoriesCategory)
-
-        // The lastInteractedWithTimestamp is not checked in this method but the selected categories order
-        val result = getFilteredStoriesCount(availableCategories, listOf(otherStoriesCategory, anotherStoriesCategory), 5)
+        val result = getFilteredStoriesCount(listOf(otherStoriesCategory, anotherStoriesCategory), 5)
 
         assertTrue(
             result.keys.containsAll(
@@ -280,7 +210,7 @@ class HomeFragmentStateTest {
     @Test
     fun `GIVEN two categories selected with more than needed stories WHEN getFilteredStories is called THEN the results are sorted in the order of least shown`() {
         val firstCategory = PocketRecommendedStoryCategory(
-            "first", getFakePocketStories(3, "first"), true, 222
+            "first", getFakePocketStories(3, "first"), true, 0
         ).run {
             // Avoid the first item also being the oldest to eliminate a potential bug in code
             // that would still get the expected result.
@@ -295,7 +225,7 @@ class HomeFragmentStateTest {
             )
         }
         val secondCategory = PocketRecommendedStoryCategory(
-            "second", getFakePocketStories(3, "second"), true, 0
+            "second", getFakePocketStories(3, "second"), true, 222
         ).run {
             // Avoid the first item also being the oldest to eliminate a potential bug in code
             // that would still get the expected result.
