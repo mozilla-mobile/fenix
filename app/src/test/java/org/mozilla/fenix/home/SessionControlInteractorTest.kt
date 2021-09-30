@@ -159,6 +159,13 @@ class SessionControlInteractorTest {
     }
 
     @Test
+    fun onRecentSearchGroupClicked() {
+        val tabId = "tabId"
+        interactor.onRecentSearchGroupClicked(tabId)
+        verify { recentTabController.handleRecentSearchGroupClicked(tabId) }
+    }
+
+    @Test
     fun onRecentTabShowAllClicked() {
         interactor.onRecentTabShowAllClicked()
         verify { recentTabController.handleRecentTabShowAllClicked() }
@@ -240,5 +247,14 @@ class SessionControlInteractorTest {
         interactor.onCategoryClick(clickedCategory)
 
         verify { pocketStoriesController.handleCategoryClick(clickedCategory) }
+    }
+
+    @Test
+    fun `GIVEN a PocketStoriesInteractor WHEN an external link is clicked THEN handle it in a PocketStoriesController`() {
+        val link = "https://www.mozilla.org/en-US/firefox/pocket/"
+
+        interactor.onExternalLinkClicked(link)
+
+        verify { pocketStoriesController.handleExternalLinkClick(link) }
     }
 }

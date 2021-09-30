@@ -7,9 +7,7 @@ package org.mozilla.fenix.home.sessioncontrol
 import androidx.recyclerview.widget.RecyclerView
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.spyk
 import io.mockk.verify
-import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.concept.storage.BookmarkNodeType
 import mozilla.components.feature.tab.collections.TabCollection
@@ -20,10 +18,10 @@ import org.junit.Assert.assertTrue
 import org.junit.Assert.assertFalse
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.historymetadata.HistoryMetadataGroup
 import org.mozilla.fenix.home.HomeFragmentState
+import org.mozilla.fenix.home.recenttabs.RecentTab
 import org.mozilla.fenix.utils.Settings
 
 @RunWith(FenixRobolectricTestRunner::class)
@@ -44,7 +42,7 @@ class SessionControlViewTest {
 
     @Test
     fun `GIVEN recentTabs WHEN calling shouldShowHomeOnboardingDialog THEN show the dialog `() {
-        val recentTabs = listOf<TabSessionState>(mockk())
+        val recentTabs = listOf<RecentTab>(mockk())
         val settings: Settings = mockk()
 
         every { settings.hasShownHomeOnboardingDialog } returns false
@@ -68,7 +66,7 @@ class SessionControlViewTest {
 
     @Test
     fun `GIVEN pocketArticles WHEN calling shouldShowHomeOnboardingDialog THEN show the dialog `() {
-        val pocketArticles = listOf(PocketRecommendedStory("", "", "", "", 0, ""))
+        val pocketArticles = listOf(PocketRecommendedStory("", "", "", "", "", 0, 0))
         val settings: Settings = mockk()
 
         every { settings.hasShownHomeOnboardingDialog } returns false
@@ -80,7 +78,7 @@ class SessionControlViewTest {
 
     @Test
     fun `GIVEN the home onboading dialog has been shown before WHEN calling shouldShowHomeOnboardingDialog THEN DO NOT showthe dialog `() {
-        val pocketArticles = listOf(PocketRecommendedStory("", "", "", "", 0, ""))
+        val pocketArticles = listOf(PocketRecommendedStory("", "", "", "", "", 0, 0))
         val settings: Settings = mockk()
 
         every { settings.hasShownHomeOnboardingDialog } returns true
@@ -101,7 +99,7 @@ class SessionControlViewTest {
             interactor,
             mockk(relaxed = true)
         )
-        val recentTabs = listOf<TabSessionState>(mockk(relaxed = true))
+        val recentTabs = listOf<RecentTab>(mockk(relaxed = true))
 
         val state = HomeFragmentState(recentTabs = recentTabs)
 
@@ -140,12 +138,11 @@ class SessionControlViewTest {
         val expandedCollections = emptySet<Long>()
         val recentBookmarks =
             listOf(BookmarkNode(BookmarkNodeType.ITEM, "guid", null, null, null, null, 0, null))
-        val recentTabs = emptyList<TabSessionState>()
+        val recentTabs = emptyList<RecentTab.Tab>()
         val historyMetadata = emptyList<HistoryMetadataGroup>()
         val pocketArticles = emptyList<PocketRecommendedStory>()
 
         val results = normalModeAdapterItems(
-            testContext,
             topSites,
             collections,
             expandedCollections,
@@ -168,12 +165,11 @@ class SessionControlViewTest {
         val collections = emptyList<TabCollection>()
         val expandedCollections = emptySet<Long>()
         val recentBookmarks = listOf<BookmarkNode>()
-        val recentTabs = listOf<TabSessionState>(mockk())
+        val recentTabs = listOf<RecentTab.Tab>(mockk())
         val historyMetadata = emptyList<HistoryMetadataGroup>()
         val pocketArticles = emptyList<PocketRecommendedStory>()
 
         val results = normalModeAdapterItems(
-            testContext,
             topSites,
             collections,
             expandedCollections,
@@ -197,12 +193,11 @@ class SessionControlViewTest {
         val collections = emptyList<TabCollection>()
         val expandedCollections = emptySet<Long>()
         val recentBookmarks = listOf<BookmarkNode>()
-        val recentTabs = emptyList<TabSessionState>()
+        val recentTabs = emptyList<RecentTab.Tab>()
         val historyMetadata = listOf(HistoryMetadataGroup("title", emptyList()))
         val pocketArticles = emptyList<PocketRecommendedStory>()
 
         val results = normalModeAdapterItems(
-            testContext,
             topSites,
             collections,
             expandedCollections,
@@ -226,17 +221,11 @@ class SessionControlViewTest {
         val collections = emptyList<TabCollection>()
         val expandedCollections = emptySet<Long>()
         val recentBookmarks = listOf<BookmarkNode>()
-        val recentTabs = emptyList<TabSessionState>()
+        val recentTabs = emptyList<RecentTab.Tab>()
         val historyMetadata = emptyList<HistoryMetadataGroup>()
-        val pocketArticles = listOf(PocketRecommendedStory("", "", "", "", 0, ""))
-        val context = spyk(testContext)
-
-        val settings: Settings = mockk()
-        every { settings.pocketRecommendations } returns true
-        every { context.settings() } returns settings
+        val pocketArticles = listOf(PocketRecommendedStory("", "", "", "", "", 1, 1))
 
         val results = normalModeAdapterItems(
-            context,
             topSites,
             collections,
             expandedCollections,
@@ -259,17 +248,11 @@ class SessionControlViewTest {
         val collections = emptyList<TabCollection>()
         val expandedCollections = emptySet<Long>()
         val recentBookmarks = listOf<BookmarkNode>()
-        val recentTabs = emptyList<TabSessionState>()
+        val recentTabs = emptyList<RecentTab.Tab>()
         val historyMetadata = emptyList<HistoryMetadataGroup>()
         val pocketArticles = emptyList<PocketRecommendedStory>()
-        val context = spyk(testContext)
-
-        val settings: Settings = mockk()
-        every { settings.pocketRecommendations } returns true
-        every { context.settings() } returns settings
 
         val results = normalModeAdapterItems(
-            context,
             topSites,
             collections,
             expandedCollections,

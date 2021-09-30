@@ -5,9 +5,7 @@
 package org.mozilla.fenix.ui
 
 import android.view.View
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
-import androidx.compose.ui.test.onNodeWithText
 import androidx.core.net.toUri
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.platform.app.InstrumentationRegistry
@@ -110,6 +108,7 @@ class SmokeTest {
         // So we are initializing this here instead of in all related tests.
         browserStore = activityTestRule.activity.components.core.store
 
+        activityTestRule.activity.applicationContext.settings().hasShownHomeOnboardingDialog = true
         mockWebServer = MockWebServer().apply {
             dispatcher = AndroidAssetDispatcher()
             start()
@@ -578,7 +577,6 @@ class SmokeTest {
         }
     }
 
-    @Ignore("Disabled for failing with new Compose Awesomebar")
     @Test
     // Test running on beta/release builds in CI:
     // caution when making changes to it, so they don't block the builds
@@ -586,35 +584,19 @@ class SmokeTest {
     fun toggleSearchSuggestions() {
 
         homeScreen {
-        }.openNavigationToolbar {
-            typeSearchTerm("mozilla")
-            val awesomeBarView = getAwesomebarView()
-            awesomeBarView?.let {
-                awesomeBar = ViewVisibilityIdlingResource(it, View.VISIBLE)
-            }
-            IdlingRegistry.getInstance().register(awesomeBar!!)
-
-            activityTestRule.waitForIdle()
-
-            activityTestRule
-                .onNodeWithText("mozilla firefox")
-                .assertExists()
-                .assertIsDisplayed()
-        }.goBack {
+        }.openSearch {
+            typeSearch("mozilla")
+            verifySearchEngineSuggestionResults(activityTestRule, "mozilla firefox")
+        }.dismissSearchBar {
         }.openThreeDotMenu {
         }.openSettings {
         }.openSearchSubMenu {
             disableShowSearchSuggestions()
         }.goBack {
         }.goBack {
-        }.openNavigationToolbar {
-            typeSearchTerm("mozilla")
-
-            activityTestRule.waitForIdle()
-
-            activityTestRule
-                .onNodeWithText("mozilla firefox")
-                .assertDoesNotExist()
+        }.openSearch {
+            typeSearch("mozilla")
+            verifyNoSuggestionsAreDisplayed(activityTestRule, "mozilla firefox")
         }
     }
 
@@ -839,6 +821,7 @@ class SmokeTest {
     }
 
     @Test
+    @Ignore("https://github.com/mozilla-mobile/fenix/issues/21397")
     fun createFirstCollectionTest() {
         val settings = activityTestRule.activity.applicationContext.settings()
         settings.hasShownHomeOnboardingDialog = true
@@ -872,6 +855,7 @@ class SmokeTest {
     }
 
     @Test
+    @Ignore("https://github.com/mozilla-mobile/fenix/issues/21397")
     fun verifyExpandedCollectionItemsTest() {
         val settings = activityTestRule.activity.applicationContext.settings()
         settings.hasShownHomeOnboardingDialog = true
