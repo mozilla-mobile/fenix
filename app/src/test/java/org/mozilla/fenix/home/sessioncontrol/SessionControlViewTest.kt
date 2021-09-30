@@ -7,7 +7,6 @@ package org.mozilla.fenix.home.sessioncontrol
 import androidx.recyclerview.widget.RecyclerView
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.spyk
 import io.mockk.verify
 import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.concept.storage.BookmarkNodeType
@@ -19,7 +18,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Assert.assertFalse
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.historymetadata.HistoryMetadataGroup
 import org.mozilla.fenix.home.HomeFragmentState
@@ -68,7 +66,7 @@ class SessionControlViewTest {
 
     @Test
     fun `GIVEN pocketArticles WHEN calling shouldShowHomeOnboardingDialog THEN show the dialog `() {
-        val pocketArticles = listOf(PocketRecommendedStory("", "", "", "", 0, ""))
+        val pocketArticles = listOf(PocketRecommendedStory("", "", "", "", "", 0, 0))
         val settings: Settings = mockk()
 
         every { settings.hasShownHomeOnboardingDialog } returns false
@@ -80,7 +78,7 @@ class SessionControlViewTest {
 
     @Test
     fun `GIVEN the home onboading dialog has been shown before WHEN calling shouldShowHomeOnboardingDialog THEN DO NOT showthe dialog `() {
-        val pocketArticles = listOf(PocketRecommendedStory("", "", "", "", 0, ""))
+        val pocketArticles = listOf(PocketRecommendedStory("", "", "", "", "", 0, 0))
         val settings: Settings = mockk()
 
         every { settings.hasShownHomeOnboardingDialog } returns true
@@ -145,7 +143,6 @@ class SessionControlViewTest {
         val pocketArticles = emptyList<PocketRecommendedStory>()
 
         val results = normalModeAdapterItems(
-            testContext,
             topSites,
             collections,
             expandedCollections,
@@ -173,7 +170,6 @@ class SessionControlViewTest {
         val pocketArticles = emptyList<PocketRecommendedStory>()
 
         val results = normalModeAdapterItems(
-            testContext,
             topSites,
             collections,
             expandedCollections,
@@ -202,7 +198,6 @@ class SessionControlViewTest {
         val pocketArticles = emptyList<PocketRecommendedStory>()
 
         val results = normalModeAdapterItems(
-            testContext,
             topSites,
             collections,
             expandedCollections,
@@ -228,15 +223,9 @@ class SessionControlViewTest {
         val recentBookmarks = listOf<BookmarkNode>()
         val recentTabs = emptyList<RecentTab.Tab>()
         val historyMetadata = emptyList<HistoryMetadataGroup>()
-        val pocketArticles = listOf(PocketRecommendedStory("", "", "", "", 0, ""))
-        val context = spyk(testContext)
-
-        val settings: Settings = mockk()
-        every { settings.pocketRecommendations } returns true
-        every { context.settings() } returns settings
+        val pocketArticles = listOf(PocketRecommendedStory("", "", "", "", "", 1, 1))
 
         val results = normalModeAdapterItems(
-            context,
             topSites,
             collections,
             expandedCollections,
@@ -262,14 +251,8 @@ class SessionControlViewTest {
         val recentTabs = emptyList<RecentTab.Tab>()
         val historyMetadata = emptyList<HistoryMetadataGroup>()
         val pocketArticles = emptyList<PocketRecommendedStory>()
-        val context = spyk(testContext)
-
-        val settings: Settings = mockk()
-        every { settings.pocketRecommendations } returns true
-        every { context.settings() } returns settings
 
         val results = normalModeAdapterItems(
-            context,
             topSites,
             collections,
             expandedCollections,

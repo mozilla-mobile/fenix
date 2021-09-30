@@ -118,6 +118,8 @@
     <string name="recent_tabs_header">Jump back in</string>
     <!-- Button text for showing all the tabs in the tabs tray -->
     <string name="recent_tabs_show_all">Show all</string>
+    <!-- Content description for the button which navigates the user to show all recent tabs in the tabs tray. -->
+    <string name="recent_tabs_show_all_content_description">Show all recent tabs button</string>
     <!-- Title for showing a group item in the 'Jump back in' section of the new tab -->
     <string name="recent_tabs_search_term">Your search for \"%1$s\"</string>
     <!-- Text for the number of tabs in a group in the 'Jump back in' section of the new tab -->
@@ -133,6 +135,8 @@
     <!-- Text for the menu button to remove a grouped highlight from the user's browsing history
          in the Recently visited section -->
     <string name="recently_visited_menu_item_remove">Remove</string>
+    <!-- Content description for the button which navigates the user to show all of their history. -->
+    <string name="past_explorations_show_all_content_description">Show all past explorations button</string>
 
     <!-- Browser Fragment -->
     <!-- Content description (not visible, for screen readers etc.): Navigate to open tabs -->
@@ -251,6 +255,8 @@
     <string name="search_engine_suggestions_title">Search %s</string>
     <!-- Search engine suggestion description text -->
     <string name="search_engine_suggestions_description">Search directly from the address bar</string>
+
+    <!-- Home onboarding -->
     <!-- Onboarding home screen dialog title text. Firefox is intentionally hardcoded. -->
     <string name="onboarding_home_screen_title">What’s new in Firefox!</string>
     <!-- Onboarding home screen dialog description text. -->
@@ -1905,4 +1911,17 @@
     <!-- Content description for privacy content close button -->
     <string name="privacy_content_close_button_content_description">Close</string>
 
+    <!-- Pocket recommended stories -->
+    <!-- Header text for a section on the home screen. -->
+    <string name="pocket_stories_header">Thought provoking stories</string>
+    <!-- Header text for a section on the home screen. -->
+    <string name="pocket_stories_categories_header">Stories by topic</string>
+    <!-- Text of a button allowing users to access an external url for more Pocket recommendations. -->
+    <string name="pocket_stories_placeholder_text">Discover more</string>
+    <!-- Title of an app feature. Smaller than a heading.-->
+    <string name="pocket_stories_feature_title">Powered by Pocket</string>
+    <!-- Caption which concatenates the text of "pocket_stories_feature_learn_more"  -->
+    <string name="pocket_stories_feature_caption">Part of the Firefox family. %s</string>
+    <!-- Clickable text for opening an external link for more information about Pocket. -->
+    <string name="pocket_stories_feature_learn_more">Learn more</string>
 </resources>

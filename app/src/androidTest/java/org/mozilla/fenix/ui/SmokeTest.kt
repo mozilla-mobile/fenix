@@ -108,6 +108,7 @@ class SmokeTest {
         // So we are initializing this here instead of in all related tests.
         browserStore = activityTestRule.activity.components.core.store
 
+        activityTestRule.activity.applicationContext.settings().hasShownHomeOnboardingDialog = true
         mockWebServer = MockWebServer().apply {
             dispatcher = AndroidAssetDispatcher()
             start()
@@ -820,6 +821,7 @@ class SmokeTest {
     }
 
     @Test
+    @Ignore("https://github.com/mozilla-mobile/fenix/issues/21397")
     fun createFirstCollectionTest() {
         val settings = activityTestRule.activity.applicationContext.settings()
         settings.hasShownHomeOnboardingDialog = true
@@ -853,6 +855,7 @@ class SmokeTest {
     }
 
     @Test
+    @Ignore("https://github.com/mozilla-mobile/fenix/issues/21397")
     fun verifyExpandedCollectionItemsTest() {
         val settings = activityTestRule.activity.applicationContext.settings()
         settings.hasShownHomeOnboardingDialog = true
