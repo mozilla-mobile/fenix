@@ -80,6 +80,7 @@ class NormalBrowserPageViewHolder(
         val inactiveTabAdapter = concatAdapter.inactiveTabsAdapter
         val tabGroupAdapter = concatAdapter.tabGroupAdapter
         val inactiveTabsAreEnabled = containerView.context.settings().inactiveTabsAreEnabled
+        val searchTermTabGroupsAreEnabled = containerView.context.settings().searchTermTabGroupsAreEnabled
 
         val selectedTab = browserStore.state.selectedNormalTab ?: return
 
@@ -102,7 +103,7 @@ class NormalBrowserPageViewHolder(
         }
 
         // Updates tabs into the search term group adapter.
-        if (FeatureFlags.tabGroupFeature && selectedTab.isNormalTabActiveWithSearchTerm(maxActiveTime)) {
+        if (searchTermTabGroupsAreEnabled && selectedTab.isNormalTabActiveWithSearchTerm(maxActiveTime)) {
             tabGroupAdapter.observeFirstInsert {
                 // With a grouping, we need to use the list of the adapter that is already grouped
                 // together for the UI, so we know the final index of the grouping to scroll to.
@@ -127,7 +128,7 @@ class NormalBrowserPageViewHolder(
 
         // Updates tabs into the normal browser tabs adapter.
         browserAdapter.observeFirstInsert {
-            val activeTabsList = browserStore.state.getNormalTrayTabs(inactiveTabsAreEnabled)
+            val activeTabsList = browserStore.state.getNormalTrayTabs(searchTermTabGroupsAreEnabled, inactiveTabsAreEnabled)
             activeTabsList.forEachIndexed { tabIndex, trayTab ->
                 if (trayTab.id == selectedTab.id) {
 
