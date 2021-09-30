@@ -65,6 +65,7 @@ class SettingsSubMenuDeleteBrowsingDataRobot {
     fun clickDialogCancelButton() = dialogCancelButton().click()
     fun selectOnlyOpenTabsCheckBox() = checkOnlyOpenTabsCheckBox()
     fun selectOnlyBrowsingHistoryCheckBox() = checkOnlyBrowsingHistoryCheckBox()
+    fun selectOnlyDownloadsCheckBox() = checkOnlyDownloadsCheckBox()
 
     fun clickCancelButtonInDialogBoxAndVerifyContentsInDialogBox() {
         mDevice.wait(
@@ -272,4 +273,23 @@ fun checkOnlyBrowsingHistoryCheckBox() {
     assertDownloadsCheckBox(false)
 
     assertBrowsingHistoryCheckBox(true)
+}
+
+fun checkOnlyDownloadsCheckBox() {
+    clickOpenTabsCheckBox()
+    assertOpenTabsCheckBox(false)
+
+    clickBrowsingHistoryCheckBox()
+    assertBrowsingHistoryCheckBox(false)
+
+    clickCookiesCheckBox()
+    assertCookiesCheckBox(false)
+
+    clickCachedFilesCheckBox()
+    assertCachedFilesCheckBox(false)
+
+    clickSitePermissionsCheckBox()
+    assertSitePermissionsCheckBox(false)
+
+    assertDownloadsCheckBox(true)
 }

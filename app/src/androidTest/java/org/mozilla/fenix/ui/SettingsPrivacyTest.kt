@@ -5,6 +5,7 @@
 package org.mozilla.fenix.ui
 
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.rule.GrantPermissionRule
 import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
@@ -16,10 +17,12 @@ import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper
+import org.mozilla.fenix.helpers.TestHelper.deleteDownloadFromStorage
 import org.mozilla.fenix.helpers.TestHelper.openAppFromExternalLink
 import org.mozilla.fenix.helpers.TestHelper.restartApp
 import org.mozilla.fenix.ui.robots.addToHomeScreen
 import org.mozilla.fenix.ui.robots.browserScreen
+import org.mozilla.fenix.ui.robots.downloadRobot
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
 import org.mozilla.fenix.ui.robots.settingsScreen
@@ -35,9 +38,15 @@ class SettingsPrivacyTest {
     private val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
     private lateinit var mockWebServer: MockWebServer
     private val pageShortcutName = "TestShortcut"
+    private val downloadFileName = "Globe.svg"
 
     @get:Rule
     val activityTestRule = HomeActivityIntentTestRule()
+
+    @get:Rule
+    var mGrantPermissions = GrantPermissionRule.grant(
+        android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+    )
 
     @Before
     fun setUp() {
@@ -53,6 +62,8 @@ class SettingsPrivacyTest {
     @After
     fun tearDown() {
         mockWebServer.shutdown()
+
+        deleteDownloadFromStorage(downloadFileName)
     }
 
     @Test
@@ -515,6 +526,42 @@ class SettingsPrivacyTest {
         }.openThreeDotMenu {
         }.openHistory {
             verifyEmptyHistoryView()
+        }
+    }
+
+    @Test
+    fun deleteDownloadsDataTest() {
+        val downloadWebPage = TestAssetHelper.getDownloadAsset(mockWebServer)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(downloadWebPage.url) {
+            mDevice.waitForIdle()
+        }
+
+        downloadRobot {
+            verifyDownloadPrompt()
+        }.clickDownload {
+            mDevice.waitForIdle()
+            verifyDownloadNotificationPopup()
+        }.closePrompt {
+        }.openThreeDotMenu {
+        }.openDownloadsManager {
+            waitForDownloadsListToExist()
+            verifyDownloadedFileName(downloadFileName)
+        }.exitDownloadsManagerToBrowser {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openSettingsSubMenuDeleteBrowsingData {
+            selectOnlyDownloadsCheckBox()
+            clickDeleteBrowsingDataButton()
+            clickDialogCancelButton()
+            clickDeleteBrowsingDataButton()
+            confirmDeletionAndAssertSnackbar()
+        }.goBack {
+        }.goBackToBrowser {
+        }.openThreeDotMenu {
+        }.openDownloadsManager {
+            verifyEmptyDownloadsList()
         }
     }
 }

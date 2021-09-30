@@ -146,6 +146,8 @@ class ThreeDotMenuMainRobot {
             threeDotMenuRecyclerView().perform(swipeDown())
             downloadsButton().click()
 
+            mDevice.waitForIdle()
+
             DownloadRobot().interact()
             return DownloadRobot.Transition()
         }

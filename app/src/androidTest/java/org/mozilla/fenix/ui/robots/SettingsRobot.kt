@@ -106,6 +106,8 @@ class SettingsRobot {
         fun goBackToBrowser(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
             goBackButton().click()
 
+            mDevice.waitForIdle()
+
             BrowserRobot().interact()
             return BrowserRobot.Transition()
         }

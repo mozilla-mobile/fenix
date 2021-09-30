@@ -804,9 +804,7 @@ class SmokeTest {
         }.clickDownload {
             mDevice.waitForIdle()
             verifyDownloadNotificationPopup()
-        }
-
-        browserScreen {
+        }.closePrompt {
         }.openThreeDotMenu {
         }.openDownloadsManager {
             waitForDownloadsListToExist()

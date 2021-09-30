@@ -30,6 +30,7 @@ import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.helpers.TestHelper.assertExternalAppOpens
 import org.mozilla.fenix.helpers.TestHelper.packageName
+import org.mozilla.fenix.helpers.TestHelper.waitForObjects
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
 
@@ -58,11 +59,21 @@ class DownloadRobot {
         onView(withText("No downloaded files")).check(matches(isDisplayed()))
     }
 
-    fun waitForDownloadsListToExist() =
+    fun waitForDownloadsListToExist() {
+        mDevice.waitForIdle()
+
+        mDevice.waitForObjects(
+            mDevice.findObject(
+                UiSelector()
+                    .resourceId("$packageName:id/download_list")
+            )
+        )
+
         assertTrue(
             mDevice.findObject(UiSelector().resourceId("$packageName:id/download_list"))
                 .waitForExists(waitingTime)
         )
+    }
 
     class Transition {
         fun clickDownload(interact: DownloadRobot.() -> Unit): Transition {
@@ -74,6 +85,8 @@ class DownloadRobot {
 
         fun closePrompt(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
             closePromptButton().click()
+
+            mDevice.waitForIdle()
 
             BrowserRobot().interact()
             return BrowserRobot.Transition()
@@ -112,6 +125,8 @@ class DownloadRobot {
         fun exitDownloadsManagerToBrowser(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
             onView(withContentDescription("Navigate up")).click()
 
+            mDevice.waitForIdle()
+
             BrowserRobot().interact()
             return BrowserRobot.Transition()
         }
@@ -135,7 +150,7 @@ private fun assertDownloadNotificationPopup() {
 }
 
 private fun closePromptButton() =
-    onView(withId(R.id.close_button)).inRoot(isDialog()).check(matches(isDisplayed()))
+    mDevice.findObject(UiSelector().resourceId("$packageName:id/download_dialog_close_button"))
 
 private fun clickDownloadButton() =
     onView(withText("Download")).inRoot(isDialog()).check(matches(isDisplayed()))
