@@ -43,7 +43,6 @@ import mozilla.components.browser.icons.compose.Placeholder
 import mozilla.components.browser.icons.compose.WithIcon
 import mozilla.components.support.ktx.kotlin.getRepresentativeSnippet
 import mozilla.components.ui.colors.PhotonColors
-import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.components
 import org.mozilla.fenix.home.recenttabs.RecentTab

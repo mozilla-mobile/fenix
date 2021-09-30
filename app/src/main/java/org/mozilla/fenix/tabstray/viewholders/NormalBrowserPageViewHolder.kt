@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView
 import mozilla.components.browser.state.selector.selectedNormalTab
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.tabstray.Tab
-import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.selection.SelectionHolder
@@ -128,7 +127,10 @@ class NormalBrowserPageViewHolder(
 
         // Updates tabs into the normal browser tabs adapter.
         browserAdapter.observeFirstInsert {
-            val activeTabsList = browserStore.state.getNormalTrayTabs(searchTermTabGroupsAreEnabled, inactiveTabsAreEnabled)
+            val activeTabsList = browserStore.state.getNormalTrayTabs(
+                searchTermTabGroupsAreEnabled,
+                inactiveTabsAreEnabled
+            )
             activeTabsList.forEachIndexed { tabIndex, trayTab ->
                 if (trayTab.id == selectedTab.id) {
 

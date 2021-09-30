@@ -36,7 +36,6 @@ class TabsSettingsFragment : PreferenceFragmentCompat() {
     private lateinit var inactiveTabs: SwitchPreference
     private lateinit var searchTermTabGroups: SwitchPreference
 
-
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.tabs_preferences, rootKey)
     }

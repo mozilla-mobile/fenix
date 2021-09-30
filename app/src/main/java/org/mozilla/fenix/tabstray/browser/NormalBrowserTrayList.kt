@@ -74,7 +74,8 @@ class NormalBrowserTrayList @JvmOverloads constructor(
         val searchTermTabGroupsAreEnabled = context.settings().searchTermTabGroupsAreEnabled
         val tabFilter: (TabSessionState) -> Boolean = {
             when {
-                searchTermTabGroupsAreEnabled && inactiveTabsEnabled -> it.isNormalTabActiveWithSearchTerm(maxActiveTime)
+                searchTermTabGroupsAreEnabled && inactiveTabsEnabled ->
+                    it.isNormalTabActiveWithSearchTerm(maxActiveTime)
 
                 searchTermTabGroupsAreEnabled -> it.isNormalTabWithSearchTerm()
 
