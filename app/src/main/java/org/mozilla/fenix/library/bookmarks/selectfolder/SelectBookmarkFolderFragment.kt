@@ -11,6 +11,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -29,12 +30,14 @@ import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.library.bookmarks.BookmarksSharedViewModel
 import org.mozilla.fenix.library.bookmarks.DesktopFolders
 
-class SelectBookmarkFolderFragment : Fragment() {
+class SelectBookmarkFolderFragment : Fragment(), SearchView.OnQueryTextListener {
     private var _binding: FragmentSelectBookmarkFolderBinding? = null
     private val binding get() = _binding!!
 
     private val sharedViewModel: BookmarksSharedViewModel by activityViewModels()
     private var bookmarkNode: BookmarkNode? = null
+    private var search: SearchView? = null
+    private var adapter: SelectBookmarkFolderAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,9 +69,10 @@ class SelectBookmarkFolderFragment : Fragment() {
                     .getTree(BookmarkRoot.Root.id, recursive = true)
                     ?.let { DesktopFolders(context, showMobileRoot = true).withOptionalDesktopFolders(it) }
             }
-            val adapter = SelectBookmarkFolderAdapter(sharedViewModel)
+            adapter = SelectBookmarkFolderAdapter(sharedViewModel)
+
             binding.recylerViewBookmarkFolders.adapter = adapter
-            adapter.updateData(bookmarkNode, args.hideFolderGuid)
+            adapter!!.updateData(bookmarkNode, args.hideFolderGuid)
         }
     }
 
@@ -76,6 +80,8 @@ class SelectBookmarkFolderFragment : Fragment() {
         val args: SelectBookmarkFolderFragmentArgs by navArgs()
         if (!args.allowCreatingNewFolder) {
             inflater.inflate(R.menu.bookmarks_select_folder, menu)
+            search = menu.findItem(R.id.bookmark_select_search).actionView as SearchView
+            search!!.setOnQueryTextListener(this)
         }
     }
 
@@ -93,5 +99,19 @@ class SelectBookmarkFolderFragment : Fragment() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun onQueryTextSubmit(query: String?): Boolean {
+        return true
+    }
+
+    override fun onQueryTextChange(newText: String?): Boolean {
+        if(adapter != null){
+            if(newText == null || newText == "")
+                adapter!!.updateData(bookmarkNode, "")
+            else
+                adapter!!.updateSearchData(bookmarkNode, newText)
+        }
+        return true
     }
 }

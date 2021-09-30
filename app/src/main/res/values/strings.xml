@@ -1904,5 +1904,6 @@
 
     <!-- Content description for privacy content close button -->
     <string name="privacy_content_close_button_content_description">Close</string>
+    <string name="search_bookmarks">Search Bookmarks</string>
 
 </resources>

@@ -32,6 +32,16 @@ class SelectBookmarkFolderAdapter(private val sharedViewModel: BookmarksSharedVi
         submitList(updatedData)
     }
 
+    fun updateSearchData(tree: BookmarkNode?, queryText: String){
+        val updatedData = tree
+            ?.flatNodeList(null)
+            ?.filter { node: BookmarkNodeWithDepth ->
+                (node.node.title?.contains(queryText) == true || node.node.url?.contains(queryText) == true)
+             }
+            .orEmpty()
+        submitList(updatedData)
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookmarkFolderViewHolder {
         val view = LibrarySiteItemView(parent.context).apply {
             layoutParams = ViewGroup.LayoutParams(
