@@ -93,6 +93,7 @@ interface TabsTrayController {
     fun handleDeleteAllInactiveTabs()
 }
 
+@Suppress("TooManyFunctions")
 class DefaultTabsTrayController(
     private val trayStore: TabsTrayStore,
     private val browserStore: BrowserStore,
