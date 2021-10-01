@@ -60,6 +60,7 @@ class TabsSettingsFragment : PreferenceFragmentCompat() {
         listRadioButton = requirePreference(R.string.pref_key_tab_view_list_do_not_use)
         gridRadioButton = requirePreference(R.string.pref_key_tab_view_grid)
         searchTermTabGroups = requirePreference<SwitchPreference>(R.string.pref_key_search_term_tab_groups).also {
+            it.isVisible = FeatureFlags.tabGroupFeature
             it.isChecked = it.context.settings().searchTermTabGroupsAreEnabled
             it.onPreferenceChangeListener = SharedPreferenceUpdater()
         }
