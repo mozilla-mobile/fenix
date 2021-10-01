@@ -43,6 +43,11 @@ interface TabsTrayInteractor {
         targetId: String?,
         placeAfter: Boolean,
     )
+
+    /**
+     * Deletes all inactive tabs.
+     */
+    fun onDeleteInactiveTabs()
 }
 
 /**
@@ -79,5 +84,9 @@ class DefaultTabsTrayInteractor(
 
     override fun onInactiveDebugClicked(tabs: Collection<Tab>) {
         controller.forceTabsAsInactive(tabs)
+    }
+
+    override fun onDeleteInactiveTabs() {
+        controller.handleDeleteAllInactiveTabs()
     }
 }

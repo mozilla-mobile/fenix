@@ -7,6 +7,7 @@ package org.mozilla.fenix.ui
 import android.content.Context
 import androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu
 import androidx.test.espresso.IdlingRegistry
+import androidx.test.platform.app.InstrumentationRegistry
 import kotlinx.coroutines.runBlocking
 import mozilla.components.browser.storage.sync.PlacesHistoryStorage
 import okhttp3.mockwebserver.MockWebServer
@@ -15,6 +16,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.RecyclerViewIdlingResource
@@ -40,6 +42,9 @@ class HistoryTest {
 
     @Before
     fun setUp() {
+        InstrumentationRegistry.getInstrumentation().targetContext.settings()
+            .hasShownHomeOnboardingDialog = true
+
         mockWebServer = MockWebServer().apply {
             dispatcher = AndroidAssetDispatcher()
             start()
@@ -222,16 +227,18 @@ class HistoryTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(firstWebPage.url) {
-        }.openTabDrawer {
-        }.openNewTab {
-        }.submitQuery(secondWebPage.url.toString()) {
+        }.openNavigationToolbar {
+        }.enterURLAndEnterToBrowser(secondWebPage.url) {
             mDevice.waitForIdle()
+            verifyUrl(secondWebPage.url.toString())
         }.openThreeDotMenu {
         }.openHistory {
             verifyHistoryListExists()
             historyListIdlingResource =
                 RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.history_list), 2)
             IdlingRegistry.getInstance().register(historyListIdlingResource!!)
+            verifyHistoryItemExists(firstWebPage.url.toString())
+            verifyHistoryItemExists(secondWebPage.url.toString())
             longTapSelectItem(firstWebPage.url)
             longTapSelectItem(secondWebPage.url)
             openActionBarOverflowOrOptionsMenu(activityTestRule.activity)

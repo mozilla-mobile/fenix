@@ -4,14 +4,12 @@
 
 package org.mozilla.fenix.home.sessioncontrol
 
-import android.content.Context
 import android.view.View
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
@@ -25,13 +23,14 @@ import org.mozilla.fenix.home.HomeFragmentStore
 import org.mozilla.fenix.home.HomeScreenViewModel
 import org.mozilla.fenix.home.Mode
 import org.mozilla.fenix.home.OnboardingState
+import org.mozilla.fenix.home.recenttabs.RecentTab
+import org.mozilla.fenix.utils.Settings
 
 // This method got a little complex with the addition of the tab tray feature flag
 // When we remove the tabs from the home screen this will get much simpler again.
 @Suppress("ComplexMethod", "LongParameterList")
 @VisibleForTesting
 internal fun normalModeAdapterItems(
-    context: Context,
     topSites: List<TopSite>,
     collections: List<TabCollection>,
     expandedCollections: Set<Long>,
@@ -39,9 +38,9 @@ internal fun normalModeAdapterItems(
     recentBookmarks: List<BookmarkNode>,
     showCollectionsPlaceholder: Boolean,
     showSetAsDefaultBrowserCard: Boolean,
-    recentTabs: List<TabSessionState>,
+    recentTabs: List<RecentTab>,
     historyMetadata: List<HistoryMetadataGroup>,
-    pocketArticles: List<PocketRecommendedStory>
+    pocketStories: List<PocketRecommendedStory>
 ): List<AdapterItem> {
     val items = mutableListOf<AdapterItem>()
     var shouldShowCustomizeHome = false
@@ -81,7 +80,7 @@ internal fun normalModeAdapterItems(
         showCollections(collections, expandedCollections, items)
     }
 
-    if (context.settings().pocketRecommendations && pocketArticles.isNotEmpty()) {
+    if (pocketStories.isNotEmpty()) {
         shouldShowCustomizeHome = true
         items.add(AdapterItem.PocketStoriesItem)
     }
@@ -149,9 +148,8 @@ private fun onboardingAdapterItems(onboardingState: OnboardingState): List<Adapt
     return items
 }
 
-private fun HomeFragmentState.toAdapterList(context: Context): List<AdapterItem> = when (mode) {
+private fun HomeFragmentState.toAdapterList(): List<AdapterItem> = when (mode) {
     is Mode.Normal -> normalModeAdapterItems(
-        context,
         topSites,
         collections,
         expandedCollections,
@@ -161,10 +159,17 @@ private fun HomeFragmentState.toAdapterList(context: Context): List<AdapterItem>
         showSetAsDefaultBrowserCard,
         recentTabs,
         historyMetadata,
-        pocketArticles
+        pocketStories
     )
     is Mode.Private -> privateModeAdapterItems()
     is Mode.Onboarding -> onboardingAdapterItems(mode.state)
+}
+
+@VisibleForTesting
+internal fun HomeFragmentState.shouldShowHomeOnboardingDialog(settings: Settings): Boolean {
+    val isAnySectionsVisible = recentTabs.isNotEmpty() || recentBookmarks.isNotEmpty() ||
+        historyMetadata.isNotEmpty() || pocketStories.isNotEmpty()
+    return isAnySectionsVisible && !settings.hasShownHomeOnboardingDialog
 }
 
 private fun collectionTabItems(collection: TabCollection) =
@@ -176,7 +181,7 @@ class SessionControlView(
     store: HomeFragmentStore,
     val containerView: View,
     viewLifecycleOwner: LifecycleOwner,
-    interactor: SessionControlInteractor,
+    internal val interactor: SessionControlInteractor,
     private var homeScreenViewModel: HomeScreenViewModel
 ) {
 
@@ -204,7 +209,11 @@ class SessionControlView(
     }
 
     fun update(state: HomeFragmentState) {
-        val stateAdapterList = state.toAdapterList(view.context)
+        if (state.shouldShowHomeOnboardingDialog(view.context.settings())) {
+            interactor.showOnboardingDialog()
+        }
+
+        val stateAdapterList = state.toAdapterList()
         if (homeScreenViewModel.shouldScrollToTopSites) {
             sessionControlAdapter.submitList(stateAdapterList) {
 

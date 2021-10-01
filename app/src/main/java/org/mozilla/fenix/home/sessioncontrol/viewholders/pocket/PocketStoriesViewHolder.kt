@@ -5,16 +5,29 @@
 package org.mozilla.fenix.home.sessioncontrol.viewholders.pocket
 
 import android.view.View
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.recyclerview.widget.RecyclerView
 import mozilla.components.concept.fetch.Client
 import mozilla.components.lib.state.ext.observeAsComposableState
 import mozilla.components.service.pocket.PocketRecommendedStory
+import org.mozilla.fenix.R
+import org.mozilla.fenix.compose.SectionHeader
 import org.mozilla.fenix.home.HomeFragmentStore
+import org.mozilla.fenix.theme.FirefoxTheme
 
-private const val STORIES_TO_SHOW_COUNT = 7
+internal const val POCKET_STORIES_TO_SHOW_COUNT = 8
+internal const val POCKET_CATEGORIES_SELECTED_AT_A_TIME_COUNT = 8
 
 /**
  * [RecyclerView.ViewHolder] that will display a list of [PocketRecommendedStory]es
@@ -22,11 +35,14 @@ private const val STORIES_TO_SHOW_COUNT = 7
  *
  * @param composeView [ComposeView] which will be populated with Jetpack Compose UI content.
  * @param store [HomeFragmentStore] containing the list of Pocket stories to be displayed.
+ * @param client [Client] instance used for the stories header images.
+ * @param interactor [PocketStoriesInteractor] callback for user interaction.
  */
 class PocketStoriesViewHolder(
     val composeView: ComposeView,
     val store: HomeFragmentStore,
-    val client: Client
+    val client: Client,
+    val interactor: PocketStoriesInteractor
 ) : RecyclerView.ViewHolder(composeView) {
 
     init {
@@ -34,7 +50,15 @@ class PocketStoriesViewHolder(
             ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed
         )
         composeView.setContent {
-            PocketStories(store, client)
+            FirefoxTheme {
+                PocketStories(
+                    store,
+                    client,
+                    interactor::onStoriesShown,
+                    interactor::onCategoryClick,
+                    interactor::onExternalLinkClicked
+                )
+            }
         }
     }
 
@@ -46,18 +70,51 @@ class PocketStoriesViewHolder(
 @Composable
 fun PocketStories(
     store: HomeFragmentStore,
-    client: Client
+    client: Client,
+    onStoriesShown: (List<PocketRecommendedStory>) -> Unit,
+    onCategoryClick: (PocketRecommendedStoryCategory) -> Unit,
+    onExternalLinkClicked: (String) -> Unit
 ) {
     val stories = store
-        .observeAsComposableState { state -> state.pocketArticles }.value
-        ?.take(STORIES_TO_SHOW_COUNT)
+        .observeAsComposableState { state -> state.pocketStories }.value
 
-    ExpandableCard {
-        PocketRecommendations {
-            PocketStories(
-                stories ?: emptyList(),
-                client
-            )
+    val categories = store
+        .observeAsComposableState { state -> state.pocketStoriesCategories }.value
+
+    LaunchedEffect(stories) {
+        // We should report back when a certain story is actually being displayed.
+        // Cannot do it reliably so for now we'll just mass report everything as being displayed.
+        stories?.let {
+            onStoriesShown(it)
         }
+    }
+
+    Column(modifier = Modifier.padding(vertical = 48.dp)) {
+        SectionHeader(
+            text = stringResource(R.string.pocket_stories_header),
+            modifier = Modifier
+                .fillMaxWidth()
+        )
+
+        Spacer(Modifier.height(17.dp))
+
+        PocketStories(stories ?: emptyList(), client, onExternalLinkClicked)
+
+        Spacer(Modifier.height(24.dp))
+
+        SectionHeader(
+            text = stringResource(R.string.pocket_stories_categories_header),
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(Modifier.height(17.dp))
+
+        PocketStoriesCategories(categories ?: emptyList()) {
+            onCategoryClick(it)
+        }
+
+        Spacer(Modifier.height(24.dp))
+
+        PoweredByPocketHeader(onExternalLinkClicked)
     }
 }

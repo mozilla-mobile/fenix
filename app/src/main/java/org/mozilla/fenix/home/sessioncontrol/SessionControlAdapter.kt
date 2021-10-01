@@ -219,6 +219,7 @@ class AdapterItemDiffCallback : DiffUtil.ItemCallback<AdapterItem>() {
     }
 }
 
+@Suppress("LongParameterList")
 class SessionControlAdapter(
     private val store: HomeFragmentStore,
     private val interactor: SessionControlInteractor,
@@ -233,7 +234,8 @@ class SessionControlAdapter(
             PocketStoriesViewHolder.LAYOUT_ID -> return PocketStoriesViewHolder(
                 ComposeView(parent.context),
                 store,
-                components.core.client
+                components.core.client,
+                interactor = interactor
             )
             RecentTabViewHolder.LAYOUT_ID -> return RecentTabViewHolder(
                 composeView = ComposeView(parent.context),
