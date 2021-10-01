@@ -16,6 +16,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import org.hamcrest.CoreMatchers.allOf
+import org.mozilla.fenix.helpers.TestHelper.scrollToElementByText
 import org.mozilla.fenix.helpers.click
 
 /**
@@ -67,6 +68,8 @@ private fun assertCloseTabsOptions() {
 }
 
 private fun assertStartOnHomeOptions() {
+    // Scroll to ensure all the items are visible.
+    scrollToElementByText("Never")
     startOnHomeHeading()
         .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
     afterFourHoursToggle()
