@@ -30,7 +30,10 @@ class SettingsSubMenuTabsRobot {
 
     fun verifyStartOnHomeOptions() = assertStartOnHomeOptions()
 
-    fun clickAlwaysStartOnHomeToggle() = alwaysStartOnHomeToggle().click()
+    fun clickAlwaysStartOnHomeToggle() {
+        scrollToElementByText("Always")
+        alwaysStartOnHomeToggle().click()
+    }
 
     class Transition {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
