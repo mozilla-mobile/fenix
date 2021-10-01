@@ -1438,7 +1438,7 @@ class SmokeTest {
         }
     }
 
-    @Ignore
+    @Ignore // to be fixed here https://github.com/mozilla-mobile/fenix/issues/21644
     @Test
     fun alwaysStartOnHomeTest() {
         val settings = activityTestRule.activity.applicationContext.settings()
