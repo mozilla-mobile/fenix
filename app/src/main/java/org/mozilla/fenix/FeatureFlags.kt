@@ -4,6 +4,10 @@
 
 package org.mozilla.fenix
 
+import android.content.Context
+import mozilla.components.support.locale.LocaleManager
+import mozilla.components.support.locale.LocaleManager.getSystemDefault
+
 /**
  * A single source for setting feature flags that are mostly based on build type.
  */
@@ -42,7 +46,7 @@ object FeatureFlags {
     /**
      * Enables UI features based on history metadata.
      */
-    val historyMetadataUIFeature = Config.channel.isDebug
+    val historyMetadataUIFeature = Config.channel.isNightlyOrDebug
 
     /**
      * Enables the recently saved bookmarks feature in the home screen.
@@ -63,4 +67,22 @@ object FeatureFlags {
      * Enables customizing the home screen
      */
     val customizeHome = Config.channel.isNightlyOrDebug
+
+    /**
+     * Identifies and separates the tabs list with a group containing search term tabs.
+     */
+    val tabGroupFeature = Config.channel.isNightlyOrDebug
+
+    /**
+     * Enables showing search groupings in the History.
+     */
+    val showHistorySearchGroups = Config.channel.isNightlyOrDebug
+
+    /**
+     * Show Pocket recommended stories on home.
+     */
+    fun isPocketRecommendationsFeatureEnabled(context: Context): Boolean {
+        return Config.channel.isNightlyOrDebug &&
+            "en-US" == LocaleManager.getCurrentLocale(context)?.toLanguageTag() ?: getSystemDefault().toLanguageTag()
+    }
 }

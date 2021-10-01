@@ -29,6 +29,7 @@ import mozilla.components.support.ktx.kotlin.isUrl
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.browser.BrowserFragmentDirections
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.collections.SaveCollectionStep
 import org.mozilla.fenix.components.TabCollectionStorage
@@ -40,11 +41,14 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.openSetDefaultBrowserOption
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.HomeFragment
 import org.mozilla.fenix.home.HomeFragmentAction
 import org.mozilla.fenix.home.HomeFragmentDirections
 import org.mozilla.fenix.home.HomeFragmentStore
+import org.mozilla.fenix.home.Mode
 import org.mozilla.fenix.settings.SupportUtils
+import org.mozilla.fenix.settings.SupportUtils.SumoTopic.PRIVATE_BROWSING_MYTHS
 import org.mozilla.fenix.utils.Settings
 import mozilla.components.feature.tab.collections.Tab as ComponentTab
 
@@ -120,16 +124,6 @@ interface SessionControlController {
     fun handleStartBrowsingClicked()
 
     /**
-     * @see [OnboardingInteractor.onOpenSettingsClicked]
-     */
-    fun handleOpenSettingsClicked()
-
-    /**
-     * @see [OnboardingInteractor.onWhatsNewGetAnswersClicked]
-     */
-    fun handleWhatsNewGetAnswersClicked()
-
-    /**
      * @see [OnboardingInteractor.onReadPrivacyNoticeClicked]
      */
     fun handleReadPrivacyNoticeClicked()
@@ -178,6 +172,21 @@ interface SessionControlController {
      * @see [ExperimentCardInteractor.onCloseExperimentCardClicked]
      */
     fun handleCloseExperimentCard()
+
+    /**
+     * @see [TabSessionInteractor.onPrivateModeButtonClicked]
+     */
+    fun handlePrivateModeButtonClicked(newMode: BrowsingMode, userHasBeenOnboarded: Boolean)
+
+    /**
+     * @see [CustomizeHomeIteractor.openCustomizeHomePage]
+     */
+    fun handleCustomizeHomeTapped()
+
+    /**
+     * @see [OnboardingInteractor.showOnboardingDialog]
+     */
+    fun handleShowOnboardingDialog()
 }
 
 @Suppress("TooManyFunctions", "LargeClass")
@@ -296,8 +305,7 @@ class DefaultSessionControlController(
     override fun handlePrivateBrowsingLearnMoreClicked() {
         dismissSearchDialogIfDisplayed()
         activity.openToBrowserAndLoad(
-            searchTermOrURL = SupportUtils.getGenericSumoURLForTopic
-            (SupportUtils.SumoTopic.PRIVATE_BROWSING_MYTHS),
+            searchTermOrURL = SupportUtils.getGenericSumoURLForTopic(PRIVATE_BROWSING_MYTHS),
             newTab = true,
             from = BrowserDirection.FromHome
         )
@@ -439,16 +447,16 @@ class DefaultSessionControlController(
         hideOnboarding()
     }
 
-    override fun handleOpenSettingsClicked() {
-        val directions = HomeFragmentDirections.actionGlobalPrivateBrowsingFragment()
+    override fun handleCustomizeHomeTapped() {
+        val directions = HomeFragmentDirections.actionGlobalCustomizationFragment()
         navController.nav(R.id.homeFragment, directions)
+        metrics.track(Event.HomeScreenCustomizedHomeClicked)
     }
 
-    override fun handleWhatsNewGetAnswersClicked() {
-        activity.openToBrowserAndLoad(
-            searchTermOrURL = SupportUtils.getWhatsNewUrl(activity),
-            newTab = true,
-            from = BrowserDirection.FromHome
+    override fun handleShowOnboardingDialog() {
+        navController.nav(
+            R.id.homeFragment,
+            HomeFragmentDirections.actionGlobalHomeOnboardingDialog()
         )
     }
 
@@ -560,5 +568,28 @@ class DefaultSessionControlController(
         settings.userDismissedExperimentCard = true
         metrics.track(Event.CloseExperimentCardClicked)
         fragmentStore.dispatch(HomeFragmentAction.RemoveSetDefaultBrowserCard)
+    }
+
+    override fun handlePrivateModeButtonClicked(
+        newMode: BrowsingMode,
+        userHasBeenOnboarded: Boolean
+    ) {
+        if (newMode == BrowsingMode.Private) {
+            activity.settings().incrementNumTimesPrivateModeOpened()
+        }
+
+        if (userHasBeenOnboarded) {
+            fragmentStore.dispatch(
+                HomeFragmentAction.ModeChange(Mode.fromBrowsingMode(newMode))
+            )
+
+            if (navController.currentDestination?.id == R.id.searchDialogFragment) {
+                navController.navigate(
+                    BrowserFragmentDirections.actionGlobalSearchDialog(
+                        sessionId = null
+                    )
+                )
+            }
+        }
     }
 }

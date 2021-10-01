@@ -54,7 +54,9 @@
 
     <!-- Home - Recently saved bookmarks -->
     <!-- Title for the home screen section with recently saved bookmarks. -->
-    <string name="recently_saved_bookmarks">最近保存</string>
+    <string moz:removedIn="94" name="recently_saved_bookmarks" tools:ignore="UnusedResources">最近保存</string>
+    <!-- Title for the home screen section with recently saved bookmarks. -->
+    <string name="recently_bookmarked">最近追加したブックマーク</string>
     <!-- Content description for the recently saved bookmarks section on the home screen. -->
     <string name="recently_saved_bookmarks_content_description">最近保存したブックマーク</string>
     <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
@@ -126,7 +128,14 @@
     <!-- History Metadata -->
     <!-- Header text for a section on the home screen that displays grouped highlights from the
          user's browsing history, such as topics they have researched or explored on the web -->
-    <string name="history_metadata_header">過去の調査</string>
+    <string moz:removedIn="94" name="history_metadata_header" tools:ignore="UnusedResources">過去の調査</string>
+
+    <!-- Header text for a section on the home screen that displays grouped highlights from the
+         user's browsing history, such as topics they have researched or explored on the web -->
+    <string name="history_metadata_header_2">最近訪れたサイト</string>
+    <!-- Text for the menu button to remove a grouped highlight from the user's browsing history
+         in the Recently visited section -->
+    <string name="recently_visited_menu_item_remove">削除</string>
 
     <!-- Browser Fragment -->
     <!-- Content description (not visible, for screen readers etc.): Navigate to open tabs -->
@@ -204,6 +213,8 @@
     <!-- Browser menu label for editing a bookmark -->
     <string name="browser_menu_edit">編集</string>
 
+    <!-- Browser menu button that opens the Customize menu -->
+    <string name="browser_menu_customize_home">カスタマイズホーム</string>
     <!-- Browser Toolbar -->
     <!-- Content description for the Home screen button on the browser toolbar -->
     <string name="browser_toolbar_home">ホーム画面</string>
@@ -399,6 +410,18 @@
     <!-- Toast shown after confirming the custom add-on collection configuration -->
     <string name="toast_customize_addon_collection_done">アドオンコレクションが変更されました。変更を適用するためにアプリケーションを終了しています…</string>
 
+    <!-- Customize Home -->
+    <!-- Header text for jumping back into the recent tab in customize the home screen -->
+    <string name="customize_toggle_jump_back_in">以前表示したタブ</string>
+    <!-- Title for the customize home screen section with recently saved bookmarks. -->
+    <string moz:removedIn="94" name="customize_toggle_recently_saved_bookmarks" tools:ignore="UnusedResources">最近保存したサイト</string>
+    <!-- Title for the customize home screen section with recently saved bookmarks. -->
+    <string name="customize_toggle_recently_bookmarked">最近追加したブックマーク</string>
+    <!-- Title for the customize home screen section with recently visited. Recently visited is a section where users see a list of tabs that they have visited in the past few days -->
+    <string name="customize_toggle_recently_visited">最近訪れたサイト</string>
+    <!-- Title for the customize home screen section with Pocket. -->
+    <string name="customize_toggle_pocket">Pocket</string>
+
     <!-- Add-on Installation from AMO-->
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
     <string name="addon_not_supported_error">サポートされていないアドオンです</string>
@@ -586,6 +609,13 @@
     <!-- Content description (not visible, for screen readers etc.): "Close button for library settings" -->
     <string name="content_description_close_button">閉じる</string>
 
+    <!-- Text to show users they have one site in the history group section of the History fragment.
+    %d is a placeholder for the number of sites in the group. -->
+    <string name="history_search_group_site">%d サイト</string>
+    <!-- Text to show users they have multiple sites in the history group section of the History fragment.
+    %d is a placeholder for the number of sites in the group. -->
+    <string name="history_search_group_sites">%d サイト</string>
+
     <!-- Option in library for Recently Closed Tabs -->
     <string name="library_recently_closed_tabs">最近閉じたタブ</string>
     <!-- Option in library to open Recently Closed Tabs page -->
@@ -759,6 +789,9 @@
     <!-- Button in the current tab tray header in multiselect mode. Saved the selected tabs to a collection when pressed. -->
     <string name="tab_tray_save_to_collection">保存</string>
 
+    <!-- Title text for the normal tabs header in the tabs tray which are not part of any tab grouping. -->
+    <string name="tab_tray_header_title">その他</string>
+
     <!-- History -->
     <!-- Text for the button to clear all history -->
     <string name="history_delete_all">履歴を削除</string>
@@ -771,15 +804,15 @@
     <!-- Text for positive action to delete history in deleting history dialog -->
     <string name="history_clear_dialog">消去</string>
     <!-- History overflow menu copy button -->
-    <string name="history_menu_copy_button">コピー</string>
+    <string moz:removedIn="94" name="history_menu_copy_button" tools:ignore="UnusedResources">コピー</string>
     <!-- History overflow menu share button -->
-    <string name="history_menu_share_button">共有</string>
+    <string moz:removedIn="94" name="history_menu_share_button" tools:ignore="UnusedResources">共有</string>
     <!-- History overflow menu open in new tab button -->
-    <string name="history_menu_open_in_new_tab_button">新しいタブで開く</string>
+    <string moz:removedIn="94" name="history_menu_open_in_new_tab_button" tools:ignore="UnusedResources">新しいタブで開く</string>
     <!-- History overflow menu open in private tab button -->
-    <string name="history_menu_open_in_private_tab_button">プライベートタブで開く</string>
+    <string moz:removedIn="94" name="history_menu_open_in_private_tab_button" tools:ignore="UnusedResources">プライベートタブで開く</string>
     <!-- Text for the button to delete a single history item -->
-    <string name="history_delete_item">削除</string>
+    <string moz:removedIn="94" name="history_delete_item" tools:ignore="UnusedResources">削除</string>
     <!-- History multi select title in app bar
     The first parameter is the number of bookmarks selected -->
     <string name="history_multi_select_title">%1$d 件選択</string>
@@ -1261,12 +1294,12 @@
     <!-- text for the Firefox Accounts section header -->
     <string name="onboarding_fxa_section_header">アカウントをお持ちですか？</string>
     <!-- text for the "What's New" onboarding card header -->
-    <string name="onboarding_whats_new_header1">新機能の紹介</string>
+    <string moz:removedIn="94" name="onboarding_whats_new_header1" tools:ignore="UnusedResources">新機能の紹介</string>
     <!-- text for the "what's new" onboarding card description
     The first parameter is the short name of the app (e.g. Firefox) -->
-    <string name="onboarding_whats_new_description">再設計された %s について、どこが新しくなったのか知りたいですか？</string>
+    <string moz:removedIn="94" name="onboarding_whats_new_description" tools:ignore="UnusedResources">再設計された %s について、どこが新しくなったのか知りたいですか？</string>
     <!-- text for underlined clickable link that is part of "what's new" onboarding card description that links to an FAQ -->
-    <string name="onboarding_whats_new_description_linktext">その答えはこちらにあります</string>
+    <string moz:removedIn="94" name="onboarding_whats_new_description_linktext" tools:ignore="UnusedResources">その答えはこちらにあります</string>
     <!-- text for the Firefox account onboarding sign in card header. The word "Firefox" should not be translated -->
     <string name="onboarding_account_sign_in_header_1">端末間で Firefox を同期</string>
     <!-- Text for the button to learn more about signing in to your Firefox account -->
@@ -1306,14 +1339,14 @@
     <!-- text for the toolbar position card description -->
     <string name="onboarding_toolbar_placement_description_1">ツールバーを簡単に手の届く位置に置きましょう。画面下または上に移動できます。</string>
     <!-- text for the private browsing onboarding card header -->
-    <string name="onboarding_private_browsing_header">プライベートなブラウジング</string>
+    <string moz:removedIn="94" name="onboarding_private_browsing_header" tools:ignore="UnusedResources">プライベートなブラウジング</string>
     <!-- text for the private browsing onboarding card description
     The first parameter is an icon that represents private browsing -->
-    <string name="onboarding_private_browsing_description1">プライベートタブを今回のみ開く: %s アイコンをタップします。</string>
+    <string moz:removedIn="94" name="onboarding_private_browsing_description1" tools:ignore="UnusedResources">プライベートタブを今回のみ開く: %s アイコンをタップします。</string>
     <!-- text for the private browsing onboarding card description, explaining how to always using private browsing -->
-    <string name="onboarding_private_browsing_always_description">プライベートタブを毎回開く: プライベートブラウジング設定を変更してください。</string>
+    <string moz:removedIn="94" name="onboarding_private_browsing_always_description" tools:ignore="UnusedResources">プライベートタブを毎回開く: プライベートブラウジング設定を変更してください。</string>
     <!-- text for the private browsing onbording card button, that launches settings -->
-    <string name="onboarding_private_browsing_button">設定を開く</string>
+    <string moz:removedIn="94" name="onboarding_private_browsing_button" tools:ignore="UnusedResources">設定を開く</string>
     <!-- text for the privacy notice onboarding card header -->
     <string name="onboarding_privacy_notice_header">あなたのプライバシー</string>
     <!-- text for the privacy notice onboarding card description
@@ -1477,6 +1510,12 @@
     <!-- Description of redirect tracker cookies that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_redirect_trackers_description">既知のトラッキングウェブサイトへのリダイレクトにより設定された Cookie を消去します。</string>
 
+    <!-- Description of the SmartBlock Enhanced Tracking Protection feature. The * symbol is intentionally hardcoded here,
+         as we use it on the UI to indicate which trackers have been partially unblocked.  -->
+    <string name="preference_etp_smartblock_description">ユーザーの操作により、以下のマークされたトラッカー*のブロックがこのページ上で部分的に解除されています。</string>
+    <!-- Text displayed that links to website about enhanced tracking protection SmartBlock -->
+    <string name="preference_etp_smartblock_learn_more">詳細情報</string>
+
     <!-- About page link text to open support link -->
     <string name="about_support">サポート</string>
     <!-- About page link text to list of past crashes (like about:crashes on desktop) -->
@@ -1546,6 +1585,9 @@
     <!-- Description for the preference for autofilling logins from Fenix in other apps (e.g. autofilling the Twitter app) -->
     <string name="preferences_android_autofill_description">端末上の他のアプリにユーザー名とパスワードを入力します。</string>
 
+    <!-- Preference option for adding a login -->
+    <string name="preferences_logins_add_login">ログイン情報を追加</string>
+
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">ログイン情報を同期</string>
     <!-- Preference for syncing saved logins in Fenix, when not signed in-->
@@ -1608,6 +1650,8 @@
     <string name="saved_login_copy_username">ユーザー名をコピー</string>
     <!-- Content Description (for screenreaders etc) read for the button to clear a username while editing a login -->
     <string name="saved_login_clear_username">ユーザー名を消去</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear the hostname field while creating a login -->
+    <string name="saved_login_clear_hostname">ホスト名を消去</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a site in logins -->
     <string name="saved_login_copy_site">サイトをコピー</string>
     <!-- Content Description (for screenreaders etc) read for the button to open a site in logins -->
@@ -1779,9 +1823,13 @@
     <string name="phone_feature_blocked_step_feature"><![CDATA[3. <b>%1$s</b> をオンに切り替えます]]></string>
 
     <!-- Label that indicates a site is using a secure connection -->
-    <string name="quick_settings_sheet_secure_connection">安全な接続</string>
+    <string name="quick_settings_sheet_secure_connection_2">接続は安全です</string>
     <!-- Label that indicates a site is using a insecure connection -->
-    <string name="quick_settings_sheet_insecure_connection">安全でない接続</string>
+    <string name="quick_settings_sheet_insecure_connection_2">接続は安全ではありません</string>
+    <!-- Label that indicates a site is using a secure connection -->
+    <string moz:removedIn="94" name="quick_settings_sheet_secure_connection" tools:ignore="UnusedResources">安全な接続</string>
+    <!-- Label that indicates a site is using a insecure connection -->
+    <string moz:removedIn="94" name="quick_settings_sheet_insecure_connection" tools:ignore="UnusedResources">安全でない接続</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete all the permissions for all sites-->
     <string name="confirm_clear_permissions_on_all_sites">すべてのサイトの許可設定を消去してもよろしいですか？</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete all the permissions for a site-->
@@ -1822,8 +1870,14 @@
     <string name="discard_changes">変更を破棄</string>
     <!--  The page title for editing a saved login. -->
     <string name="edit">編集</string>
-    <!--  The error message in edit login view when password field is blank. -->
+    <!--  The page title for adding new login. -->
+    <string name="add_login">新しいログイン情報の追加</string>
+    <!--  The error message in add/edit login view when password field is blank. -->
     <string name="saved_login_password_required">パスワードが必要です</string>
+    <!--  The error message in add login view when username field is blank. -->
+    <string name="saved_login_username_required">ユーザー名は必須です</string>
+    <!--  The error message in add login view when hostname field is blank. -->
+    <string name="saved_login_hostname_required" tools:ignore="UnusedResources">ホスト名は必須です</string>
     <!-- Voice search button content description  -->
     <string name="voice_search_content_description">音声検索</string>
     <!-- Voice search prompt description displayed after the user presses the voice search button -->
@@ -1831,6 +1885,15 @@
 
     <!--  The error message in edit login view when a duplicate username exists. -->
     <string name="saved_login_duplicate">このユーザー名を持つログイン情報がすでに存在します。</string>
+
+    <!-- This is the hint text that is shown inline on the hostname field of the create new login page. 'https://www.example.com' intentionally hardcoded here -->
+    <string name="add_login_hostname_hint_text">https://www.example.com</string>
+    <!-- This is an error message shown below the hostname field of the add login page when a hostname does not contain http or https. -->
+    <string moz:removedIn="94" name="add_login_hostname_invalid_text_1" tools:ignore="UnusedResources">ウェブアドレスには \“https://\“ または \“http://\“ が含まれている必要があります</string>
+    <!-- This is an error message shown below the hostname field of the add login page when a hostname does not contain http or https. -->
+    <string name="add_login_hostname_invalid_text_3">ウェブアドレスには “https://“ または “http://“ が含まれている必要があります</string>
+    <!-- This is an error message shown below the hostname field of the add login page when a hostname is invalid. -->
+    <string name="add_login_hostname_invalid_text_2">正しいホスト名を入力してください</string>
 
     <!-- Synced Tabs -->
     <!-- Text displayed to ask user to connect another device as no devices found with account -->
@@ -1858,8 +1921,10 @@
     <!-- Confirmation dialog button text when top sites limit is reached. -->
     <string name="top_sites_max_limit_confirmation_button">OK</string>
 
+    <!-- Label for the show most visited top sites preference -->
+    <string name="top_sites_toggle_top_frecent_sites_2">よく訪れるサイトを表示</string>
     <!-- Label for the show most visited sites preference -->
-    <string name="top_sites_toggle_top_frecent_sites">よく訪れるサイトを表示</string>
+    <string moz:removedIn="93" name="top_sites_toggle_top_frecent_sites" tools:ignore="UnusedResources">よく訪れるサイトを表示</string>
 
     <!-- Title text displayed in the rename top site dialog. -->
 	<string name="top_sites_rename_dialog_title">タイトル</string>

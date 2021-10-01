@@ -201,6 +201,8 @@ android {
 
     packagingOptions {
         exclude 'META-INF/atomicfu.kotlin_module'
+        exclude 'META-INF/AL2.0'
+        exclude 'META-INF/LGPL2.1'
     }
 
     testOptions {
@@ -415,6 +417,9 @@ dependencies {
 
     implementation Deps.sentry
 
+    implementation Deps.mozilla_compose_awesomebar
+
+    implementation Deps.mozilla_concept_awesomebar
     implementation Deps.mozilla_concept_base
     implementation Deps.mozilla_concept_engine
     implementation Deps.mozilla_concept_menu
@@ -424,8 +429,6 @@ dependencies {
     implementation Deps.mozilla_concept_toolbar
     implementation Deps.mozilla_concept_tabstray
 
-    implementation Deps.mozilla_browser_awesomebar
-    implementation Deps.mozilla_feature_downloads
     implementation Deps.mozilla_browser_domains
     implementation Deps.mozilla_browser_icons
     implementation Deps.mozilla_browser_menu
@@ -437,9 +440,7 @@ dependencies {
     implementation Deps.mozilla_browser_thumbnails
     implementation Deps.mozilla_browser_toolbar
 
-    implementation Deps.mozilla_support_extensions
     implementation Deps.mozilla_feature_addons
-
     implementation Deps.mozilla_feature_accounts
     implementation Deps.mozilla_feature_app_links
     implementation Deps.mozilla_feature_autofill
@@ -478,17 +479,17 @@ dependencies {
     implementation Deps.mozilla_service_sync_autofill
     implementation Deps.mozilla_service_sync_logins
     implementation Deps.mozilla_service_firefox_accounts
-    implementation Deps.mozilla_service_glean
+    implementation(Deps.mozilla_service_glean)
     implementation Deps.mozilla_service_location
     implementation Deps.mozilla_service_nimbus
 
+    implementation Deps.mozilla_support_extensions
     implementation Deps.mozilla_support_base
     implementation Deps.mozilla_support_images
     implementation Deps.mozilla_support_ktx
     implementation Deps.mozilla_support_rustlog
     implementation Deps.mozilla_support_utils
     implementation Deps.mozilla_support_locale
-
     implementation Deps.mozilla_support_migration
 
     implementation Deps.mozilla_ui_colors
@@ -534,11 +535,11 @@ dependencies {
     implementation Deps.google_play_store // Required for in-app reviews
 
     androidTestImplementation Deps.uiautomator
-// Removed pending AndroidX fixes
     androidTestImplementation "tools.fastlane:screengrab:2.0.0"
     // This Falcon version is added to maven central now required for Screengrab
     implementation 'com.jraska:falcon:2.2.0'
-//    androidTestImplementation "br.com.concretesolutions:kappuccino:1.2.1"
+
+    androidTestImplementation Deps.androidx_compose_ui_test
 
     androidTestImplementation Deps.espresso_core, {
         exclude group: 'com.android.support', module: 'support-annotations'
@@ -583,7 +584,7 @@ dependencies {
 
     // For the initial release of Glean 19, we require consumer applications to
     // depend on a separate library for unit tests. This will be removed in future releases.
-    testImplementation "org.mozilla.telemetry:glean-forUnitTests:${project.ext.glean_version}"
+    testImplementation "org.mozilla.telemetry:glean-native-forUnitTests:${project.ext.glean_version}"
 
     lintChecks project(":mozilla-lint-rules")
 }

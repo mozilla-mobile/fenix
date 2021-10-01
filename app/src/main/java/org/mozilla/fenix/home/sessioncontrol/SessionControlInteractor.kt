@@ -5,10 +5,11 @@
 package org.mozilla.fenix.home.sessioncontrol
 
 import mozilla.components.concept.storage.BookmarkNode
-import mozilla.components.concept.storage.HistoryMetadataKey
 import mozilla.components.feature.tab.collections.Tab
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
+import mozilla.components.service.pocket.PocketRecommendedStory
+import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.tips.Tip
 import org.mozilla.fenix.historymetadata.HistoryMetadataGroup
 import org.mozilla.fenix.historymetadata.controller.HistoryMetadataController
@@ -17,6 +18,9 @@ import org.mozilla.fenix.home.recentbookmarks.controller.RecentBookmarksControll
 import org.mozilla.fenix.home.recentbookmarks.interactor.RecentBookmarksInteractor
 import org.mozilla.fenix.home.recenttabs.controller.RecentTabController
 import org.mozilla.fenix.home.recenttabs.interactor.RecentTabInteractor
+import org.mozilla.fenix.home.sessioncontrol.viewholders.pocket.PocketRecommendedStoryCategory
+import org.mozilla.fenix.home.sessioncontrol.viewholders.pocket.PocketStoriesController
+import org.mozilla.fenix.home.sessioncontrol.viewholders.pocket.PocketStoriesInteractor
 
 /**
  * Interface for tab related actions in the [SessionControlInteractor].
@@ -27,6 +31,11 @@ interface TabSessionInteractor {
      * "Common myths about private browsing" link in private mode.
      */
     fun onPrivateBrowsingLearnMoreClicked()
+
+    /**
+     * Called when a user clicks on the Private Mode button on the homescreen.
+     */
+    fun onPrivateModeButtonClicked(newMode: BrowsingMode, userHasBeenOnboarded: Boolean)
 }
 
 /**
@@ -137,19 +146,15 @@ interface OnboardingInteractor {
     fun onStartBrowsingClicked()
 
     /**
-     * Hides the onboarding and navigates to Settings. Called when a user clicks on the "Open settings" button.
-     */
-    fun onOpenSettingsClicked()
-
-    /**
-     * Opens a custom tab to what's new url. Called when a user clicks on the "Get answers here" link.
-     */
-    fun onWhatsNewGetAnswersClicked()
-
-    /**
      * Opens a custom tab to privacy notice url. Called when a user clicks on the "read our privacy notice" button.
      */
     fun onReadPrivacyNoticeClicked()
+
+    /**
+     * Show the onboarding dialog to onboard users about recentTabs,recentBookmarks,
+     * historyMetadata and pocketArticles sections.
+     */
+    fun showOnboardingDialog()
 }
 
 interface TipInteractor {
@@ -157,6 +162,13 @@ interface TipInteractor {
      * Dismisses the tip view adapter
      */
     fun onCloseTip(tip: Tip)
+}
+
+interface CustomizeHomeIteractor {
+    /**
+     * Opens the customize home settings page.
+     */
+    fun openCustomizeHomePage()
 }
 
 /**
@@ -214,14 +226,16 @@ interface ExperimentCardInteractor {
 /**
  * Interactor for the Home screen. Provides implementations for the CollectionInteractor,
  * OnboardingInteractor, TopSiteInteractor, TipInteractor, TabSessionInteractor,
- * ToolbarInteractor, ExperimentCardInteractor, RecentTabInteractor, and RecentBookmarksInteractor.
+ * ToolbarInteractor, ExperimentCardInteractor, RecentTabInteractor, RecentBookmarksInteractor
+ * and others.
  */
 @SuppressWarnings("TooManyFunctions")
 class SessionControlInteractor(
     private val controller: SessionControlController,
     private val recentTabController: RecentTabController,
     private val recentBookmarksController: RecentBookmarksController,
-    private val historyMetadataController: HistoryMetadataController
+    private val historyMetadataController: HistoryMetadataController,
+    private val pocketStoriesController: PocketStoriesController
 ) : CollectionInteractor,
     OnboardingInteractor,
     TopSiteInteractor,
@@ -231,7 +245,9 @@ class SessionControlInteractor(
     ExperimentCardInteractor,
     RecentTabInteractor,
     RecentBookmarksInteractor,
-    HistoryMetadataInteractor {
+    HistoryMetadataInteractor,
+    CustomizeHomeIteractor,
+    PocketStoriesInteractor {
 
     override fun onCollectionAddTabTapped(collection: TabCollection) {
         controller.handleCollectionAddTabTapped(collection)
@@ -281,16 +297,12 @@ class SessionControlInteractor(
         controller.handleStartBrowsingClicked()
     }
 
-    override fun onOpenSettingsClicked() {
-        controller.handleOpenSettingsClicked()
-    }
-
-    override fun onWhatsNewGetAnswersClicked() {
-        controller.handleWhatsNewGetAnswersClicked()
-    }
-
     override fun onReadPrivacyNoticeClicked() {
         controller.handleReadPrivacyNoticeClicked()
+    }
+
+    override fun showOnboardingDialog() {
+        controller.handleShowOnboardingDialog()
     }
 
     override fun onToggleCollectionExpanded(collection: TabCollection, expand: Boolean) {
@@ -307,6 +319,10 @@ class SessionControlInteractor(
 
     override fun onPrivateBrowsingLearnMoreClicked() {
         controller.handlePrivateBrowsingLearnMoreClicked()
+    }
+
+    override fun onPrivateModeButtonClicked(newMode: BrowsingMode, userHasBeenOnboarded: Boolean) {
+        controller.handlePrivateModeButtonClicked(newMode, userHasBeenOnboarded)
     }
 
     override fun onPasteAndGo(clipboardText: String) {
@@ -341,6 +357,10 @@ class SessionControlInteractor(
         recentTabController.handleRecentTabClicked(tabId)
     }
 
+    override fun onRecentSearchGroupClicked(tabId: String) {
+        recentTabController.handleRecentSearchGroupClicked(tabId)
+    }
+
     override fun onRecentTabShowAllClicked() {
         recentTabController.handleRecentTabShowAllClicked()
     }
@@ -353,17 +373,33 @@ class SessionControlInteractor(
         recentBookmarksController.handleShowAllBookmarksClicked()
     }
 
-    override fun onHistoryMetadataItemClicked(url: String, historyMetadata: HistoryMetadataKey) {
-        historyMetadataController.handleHistoryMetadataItemClicked(url, historyMetadata)
-    }
-
     override fun onHistoryMetadataShowAllClicked() {
         historyMetadataController.handleHistoryShowAllClicked()
     }
 
-    override fun onToggleHistoryMetadataGroupExpanded(historyMetadataGroup: HistoryMetadataGroup) {
-        historyMetadataController.handleToggleHistoryMetadataGroupExpanded(
+    override fun onHistoryMetadataGroupClicked(historyMetadataGroup: HistoryMetadataGroup) {
+        historyMetadataController.handleHistoryMetadataGroupClicked(
             historyMetadataGroup
         )
+    }
+
+    override fun onRemoveGroup(searchTerm: String) {
+        historyMetadataController.handleRemoveGroup(searchTerm)
+    }
+
+    override fun openCustomizeHomePage() {
+        controller.handleCustomizeHomeTapped()
+    }
+
+    override fun onCategoryClick(categoryClicked: PocketRecommendedStoryCategory) {
+        pocketStoriesController.handleCategoryClick(categoryClicked)
+    }
+
+    override fun onStoriesShown(storiesShown: List<PocketRecommendedStory>) {
+        pocketStoriesController.handleStoriesShown(storiesShown)
+    }
+
+    override fun onExternalLinkClicked(link: String) {
+        pocketStoriesController.handleExternalLinkClick(link)
     }
 }

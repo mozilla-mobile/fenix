@@ -170,8 +170,17 @@ class HomeScreenRobot {
         }
 
         fun openThreeDotMenu(interact: ThreeDotMenuMainRobot.() -> Unit): ThreeDotMenuMainRobot.Transition {
-            mDevice.waitNotNull(Until.findObject(By.res("$packageName:id/menuButton")), waitingTime)
-            threeDotButton().perform(click())
+            // Issue: https://github.com/mozilla-mobile/fenix/issues/21578
+            try {
+                mDevice.waitNotNull(
+                    Until.findObject(By.res("$packageName:id/menuButton")),
+                    waitingTime
+                )
+            } catch (e: AssertionError) {
+                mDevice.pressBack()
+            } finally {
+                threeDotButton().perform(click())
+            }
 
             ThreeDotMenuMainRobot().interact()
             return ThreeDotMenuMainRobot.Transition()
@@ -180,7 +189,7 @@ class HomeScreenRobot {
         fun openSearch(interact: SearchRobot.() -> Unit): SearchRobot.Transition {
             mDevice.findObject(UiSelector().resourceId("$packageName:id/toolbar"))
                 .waitForExists(waitingTime)
-            navigationToolbar().perform(click())
+            navigationToolbar().click()
 
             SearchRobot().interact()
             return SearchRobot.Transition()
@@ -229,7 +238,7 @@ class HomeScreenRobot {
         fun openNavigationToolbar(interact: NavigationToolbarRobot.() -> Unit): NavigationToolbarRobot.Transition {
             mDevice.findObject(UiSelector().resourceId("$packageName:id/toolbar"))
                 .waitForExists(waitingTime)
-            navigationToolbar().perform(click())
+            navigationToolbar().click()
 
             NavigationToolbarRobot().interact()
             return NavigationToolbarRobot.Transition()
@@ -344,10 +353,9 @@ private fun assertKeyboardVisibility(isExpectedToBeVisible: Boolean) =
             .contains("mInputShown=true")
     )
 
-private fun navigationToolbar() = onView(withId(R.id.toolbar))
+private fun navigationToolbar() = mDevice.findObject(UiSelector().resourceId("$packageName:id/toolbar"))
 
-private fun assertNavigationToolbar() =
-    navigationToolbar().check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+private fun assertNavigationToolbar() = assertTrue(navigationToolbar().waitForExists(waitingTime))
 
 private fun assertFocusedNavigationToolbar() =
     onView(allOf(withHint("Search or enter address")))

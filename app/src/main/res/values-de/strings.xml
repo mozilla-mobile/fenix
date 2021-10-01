@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:moz="http://mozac.org/tools">
 
 
     <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
@@ -53,7 +53,9 @@
 
     <!-- Home - Recently saved bookmarks -->
     <!-- Title for the home screen section with recently saved bookmarks. -->
-    <string name="recently_saved_bookmarks">Kürzlich gespeichert</string>
+    <string moz:removedIn="94" name="recently_saved_bookmarks" tools:ignore="UnusedResources">Kürzlich gespeichert</string>
+    <!-- Title for the home screen section with recently saved bookmarks. -->
+    <string name="recently_bookmarked">Kürzlich als Lesezeichen gesetzt</string>
     <!-- Content description for the recently saved bookmarks section on the home screen. -->
     <string name="recently_saved_bookmarks_content_description">Kürzlich gespeicherte Lesezeichen</string>
     <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
@@ -126,7 +128,14 @@
     <!-- History Metadata -->
     <!-- Header text for a section on the home screen that displays grouped highlights from the
          user's browsing history, such as topics they have researched or explored on the web -->
-    <string name="history_metadata_header">Früher gesuchte Themen</string>
+    <string moz:removedIn="94" name="history_metadata_header" tools:ignore="UnusedResources">Früher gesuchte Themen</string>
+
+    <!-- Header text for a section on the home screen that displays grouped highlights from the
+         user's browsing history, such as topics they have researched or explored on the web -->
+    <string name="history_metadata_header_2">Kürzlich besucht</string>
+    <!-- Text for the menu button to remove a grouped highlight from the user's browsing history
+         in the Recently visited section -->
+    <string name="recently_visited_menu_item_remove">Entfernen</string>
 
     <!-- Browser Fragment -->
     <!-- Content description (not visible, for screen readers etc.): Navigate to open tabs -->
@@ -204,6 +213,8 @@
     <!-- Browser menu label for editing a bookmark -->
     <string name="browser_menu_edit">Bearbeiten</string>
 
+    <!-- Browser menu button that opens the Customize menu -->
+    <string name="browser_menu_customize_home">Startbildschirm anpassen</string>
     <!-- Browser Toolbar -->
     <!-- Content description for the Home screen button on the browser toolbar -->
     <string name="browser_toolbar_home">Startbildschirm</string>
@@ -398,6 +409,18 @@
     <!-- Toast shown after confirming the custom add-on collection configuration -->
     <string name="toast_customize_addon_collection_done">Add-on-Sammlung geändert. Anwendung wird beendet, um Änderungen zu übernehmen…</string>
 
+    <!-- Customize Home -->
+    <!-- Header text for jumping back into the recent tab in customize the home screen -->
+    <string name="customize_toggle_jump_back_in">Zurückspringen</string>
+    <!-- Title for the customize home screen section with recently saved bookmarks. -->
+    <string moz:removedIn="94" name="customize_toggle_recently_saved_bookmarks" tools:ignore="UnusedResources">Kürzlich gespeichert</string>
+    <!-- Title for the customize home screen section with recently saved bookmarks. -->
+    <string name="customize_toggle_recently_bookmarked">Kürzlich als Lesezeichen gesetzt</string>
+    <!-- Title for the customize home screen section with recently visited. Recently visited is a section where users see a list of tabs that they have visited in the past few days -->
+    <string name="customize_toggle_recently_visited">Kürzlich besucht</string>
+    <!-- Title for the customize home screen section with Pocket. -->
+    <string name="customize_toggle_pocket">Pocket</string>
+
     <!-- Add-on Installation from AMO-->
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
     <string name="addon_not_supported_error">Add-on wird nicht unterstützt</string>
@@ -586,6 +609,13 @@
     <!-- Content description (not visible, for screen readers etc.): "Close button for library settings" -->
     <string name="content_description_close_button">Schließen</string>
 
+    <!-- Text to show users they have one site in the history group section of the History fragment.
+    %d is a placeholder for the number of sites in the group. -->
+    <string name="history_search_group_site">%d Website</string>
+    <!-- Text to show users they have multiple sites in the history group section of the History fragment.
+    %d is a placeholder for the number of sites in the group. -->
+    <string name="history_search_group_sites">%d Websites</string>
+
     <!-- Option in library for Recently Closed Tabs -->
     <string name="library_recently_closed_tabs">Kürzlich geschlossene Tabs</string>
     <!-- Option in library to open Recently Closed Tabs page -->
@@ -657,7 +687,7 @@
     <string name="studies_restart_dialog_cancel">Abbrechen</string>
 
     <!-- Toast shown after turning on/off studies preferences -->
-    <string name="studies_toast_quit_application">Beenden der Anwendung, um Änderungen zu übernehmen…</string>
+    <string name="studies_toast_quit_application" tools:ignore="UnusedResources">Beenden der Anwendung, um Änderungen zu übernehmen…</string>
 
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
@@ -761,6 +791,9 @@
     <!-- Button in the current tab tray header in multiselect mode. Saved the selected tabs to a collection when pressed. -->
     <string name="tab_tray_save_to_collection">Speichern</string>
 
+    <!-- Title text for the normal tabs header in the tabs tray which are not part of any tab grouping. -->
+    <string name="tab_tray_header_title">Andere</string>
+
     <!-- History -->
     <!-- Text for the button to clear all history -->
     <string name="history_delete_all">Chronik löschen</string>
@@ -773,15 +806,15 @@
     <!-- Text for positive action to delete history in deleting history dialog -->
     <string name="history_clear_dialog">Leeren</string>
     <!-- History overflow menu copy button -->
-    <string name="history_menu_copy_button">Kopieren</string>
+    <string moz:removedIn="94" name="history_menu_copy_button" tools:ignore="UnusedResources">Kopieren</string>
     <!-- History overflow menu share button -->
-    <string name="history_menu_share_button">Teilen</string>
+    <string moz:removedIn="94" name="history_menu_share_button" tools:ignore="UnusedResources">Teilen</string>
     <!-- History overflow menu open in new tab button -->
-    <string name="history_menu_open_in_new_tab_button">In neuem Tab öffnen</string>
+    <string moz:removedIn="94" name="history_menu_open_in_new_tab_button" tools:ignore="UnusedResources">In neuem Tab öffnen</string>
     <!-- History overflow menu open in private tab button -->
-    <string name="history_menu_open_in_private_tab_button">In privatem Tab öffnen</string>
+    <string moz:removedIn="94" name="history_menu_open_in_private_tab_button" tools:ignore="UnusedResources">In privatem Tab öffnen</string>
     <!-- Text for the button to delete a single history item -->
-    <string name="history_delete_item">Löschen</string>
+    <string moz:removedIn="94" name="history_delete_item" tools:ignore="UnusedResources">Löschen</string>
     <!-- History multi select title in app bar
     The first parameter is the number of bookmarks selected -->
     <string name="history_multi_select_title">%1$d ausgewählt</string>
@@ -1170,7 +1203,7 @@
     <!-- Tab collection deletion prompt dialog option to delete the collection -->
     <string name="tab_collection_dialog_positive">Löschen</string>
     <!-- Tab collection deletion prompt dialog option to cancel deleting the collection -->
-    <string name="tab_collection_dialog_negative" tools:ignore="UnusedResources">Abbrechen</string>
+    <string moz:removedIn="93" name="tab_collection_dialog_negative" tools:ignore="UnusedResources">Abbrechen</string>
     <!-- Text displayed in a notification when the user enters full screen mode -->
     <string name="full_screen_notification">Vollbildmodus wird gestartet</string>
 
@@ -1277,12 +1310,12 @@
     <!-- text for the Firefox Accounts section header -->
     <string name="onboarding_fxa_section_header">Haben Sie schon ein Konto?</string>
     <!-- text for the "What's New" onboarding card header -->
-    <string name="onboarding_whats_new_header1">Sehen Sie sich an, was es Neues gibt</string>
+    <string moz:removedIn="94" name="onboarding_whats_new_header1" tools:ignore="UnusedResources">Sehen Sie sich an, was es Neues gibt</string>
     <!-- text for the "what's new" onboarding card description
     The first parameter is the short name of the app (e.g. Firefox) -->
-    <string name="onboarding_whats_new_description">Haben Sie Fragen zu den neu gestalteten %s? Möchten Sie wissen, was sich geändert hat?</string>
+    <string moz:removedIn="94" name="onboarding_whats_new_description" tools:ignore="UnusedResources">Haben Sie Fragen zu den neu gestalteten %s? Möchten Sie wissen, was sich geändert hat?</string>
     <!-- text for underlined clickable link that is part of "what's new" onboarding card description that links to an FAQ -->
-    <string name="onboarding_whats_new_description_linktext">Hier erhalten Sie Antworten</string>
+    <string moz:removedIn="94" name="onboarding_whats_new_description_linktext" tools:ignore="UnusedResources">Hier erhalten Sie Antworten</string>
     <!-- text for the Firefox account onboarding sign in card header. The word "Firefox" should not be translated -->
     <string name="onboarding_account_sign_in_header_1">Synchronisieren Sie Firefox zwischen Geräten</string>
     <!-- Text for the button to learn more about signing in to your Firefox account -->
@@ -1322,14 +1355,14 @@
     <!-- text for the toolbar position card description -->
     <string name="onboarding_toolbar_placement_description_1">Platzieren Sie die Symbolleiste in Reichweite. Behalten Sie sie unten oder verschieben Sie sie nach oben.</string>
     <!-- text for the private browsing onboarding card header -->
-    <string name="onboarding_private_browsing_header">Privat surfen</string>
+    <string moz:removedIn="94" name="onboarding_private_browsing_header" tools:ignore="UnusedResources">Privat surfen</string>
     <!-- text for the private browsing onboarding card description
     The first parameter is an icon that represents private browsing -->
-    <string name="onboarding_private_browsing_description1">Einmalig einen privaten Tab öffnen: Tippen Sie auf das %s-Symbol.</string>
+    <string moz:removedIn="94" name="onboarding_private_browsing_description1" tools:ignore="UnusedResources">Einmalig einen privaten Tab öffnen: Tippen Sie auf das %s-Symbol.</string>
     <!-- text for the private browsing onboarding card description, explaining how to always using private browsing -->
-    <string name="onboarding_private_browsing_always_description">Jedes Mal private Tabs öffnen: Aktualisieren Sie Ihre Einstellungen für das private Surfen.</string>
+    <string moz:removedIn="94" name="onboarding_private_browsing_always_description" tools:ignore="UnusedResources">Jedes Mal private Tabs öffnen: Aktualisieren Sie Ihre Einstellungen für das private Surfen.</string>
     <!-- text for the private browsing onbording card button, that launches settings -->
-    <string name="onboarding_private_browsing_button">Einstellungen öffnen</string>
+    <string moz:removedIn="94" name="onboarding_private_browsing_button" tools:ignore="UnusedResources">Einstellungen öffnen</string>
     <!-- text for the privacy notice onboarding card header -->
     <string name="onboarding_privacy_notice_header">Ihre Privatsphäre</string>
     <!-- text for the privacy notice onboarding card description
@@ -1339,7 +1372,7 @@
     <string name="onboarding_privacy_notice_read_button">Lesen Sie unseren Datenschutzhinweis</string>
 
     <!-- Content description (not visible, for screen readers etc.): Close onboarding screen -->
-    <string name="onboarding_close" tools:ignore="UnusedResources">Schließen</string>
+    <string moz:removedIn="93" name="onboarding_close" tools:ignore="UnusedResources">Schließen</string>
 
     <!-- text for the button to finish onboarding -->
     <string name="onboarding_finish">Lossurfen</string>
@@ -1468,7 +1501,7 @@
     <!-- Description of tracking content that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_tracking_content_description">Verhindert das Laden von Werbung, Videos und anderen Inhalten, die Skripte zur Aktivitätenverfolgung enthalten. Kann einige Funktionen der Website beeinträchtigen.</string>
     <!-- Enhanced Tracking Protection Onboarding Message shown in a dialog above the toolbar. The first parameter is the name of the application (For example: Fenix) -->
-    <string name="etp_onboarding_cfr_message" tools:ignore="UnusedResources">Immer wenn der Schild lila ist, hat %s Tracker auf einer Website blockiert. Antippen, um weitere Informationen zu erhalten.</string>
+    <string moz:removedIn="93" name="etp_onboarding_cfr_message" tools:ignore="UnusedResources">Immer wenn der Schild lila ist, hat %s Tracker auf einer Website blockiert. Antippen, um weitere Informationen zu erhalten.</string>
     <!-- Enhanced Tracking Protection message that protection is currently on for this site -->
     <string name="etp_panel_on">Der Schutz für diese Website ist aktiviert</string>
     <!-- Enhanced Tracking Protection message that protection is currently off for this site -->
@@ -1492,6 +1525,12 @@
     <string name="etp_redirect_trackers_title">Weiterleitungs-Tracker</string>
     <!-- Description of redirect tracker cookies that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_redirect_trackers_description">Löscht Cookies, die durch Weiterleitungen zu bekannten Tracking-Websites gesetzt wurden.</string>
+
+    <!-- Description of the SmartBlock Enhanced Tracking Protection feature. The * symbol is intentionally hardcoded here,
+         as we use it on the UI to indicate which trackers have been partially unblocked.  -->
+    <string name="preference_etp_smartblock_description">Die Blockierung von einigen der unten markierten Skripte zur Aktivitätenverfolgung wurde teilweise aufgehoben, weil Sie mit diesen interagiert haben *.</string>
+    <!-- Text displayed that links to website about enhanced tracking protection SmartBlock -->
+    <string name="preference_etp_smartblock_learn_more">Weitere Informationen</string>
 
     <!-- About page link text to open support link -->
     <string name="about_support">Hilfe</string>
@@ -1550,7 +1589,7 @@
     <!-- Preference option for never saving passwords in Fenix -->
     <string name="preferences_passwords_save_logins_never_save">Nie speichern</string>
     <!-- Preference for autofilling saved logins in Fenix -->
-    <string name="preferences_passwords_autofill" tools:ignore="UnusedResources">Automatisch ausfüllen</string>
+    <string moz:removedIn="93" name="preferences_passwords_autofill" tools:ignore="UnusedResources">Automatisch ausfüllen</string>
 
     <!-- Preference for autofilling saved logins in Firefox (in web content), %1$s will be replaced with the app name -->
     <string name="preferences_passwords_autofill2">Automatisches Ausfüllen in %1$s</string>
@@ -1560,6 +1599,9 @@
     <string name="preferences_android_autofill">Automatisches Ausfüllen in anderen Apps</string>
     <!-- Description for the preference for autofilling logins from Fenix in other apps (e.g. autofilling the Twitter app) -->
     <string name="preferences_android_autofill_description">Benutzernamen und Passwörter auf Webseite bei Nutzung von anderen Apps auf Ihrem Gerät automatisch ausfüllen.</string>
+
+    <!-- Preference option for adding a login -->
+    <string name="preferences_logins_add_login">Zugangsdaten hinzufügen</string>
 
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">Zugangsdaten synchronisieren</string>
@@ -1623,6 +1665,8 @@
     <string name="saved_login_copy_username">Benutzernamen kopieren</string>
     <!-- Content Description (for screenreaders etc) read for the button to clear a username while editing a login -->
     <string name="saved_login_clear_username">Benutzername löschen</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear the hostname field while creating a login -->
+    <string name="saved_login_clear_hostname">Hostname löschen</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a site in logins -->
     <string name="saved_login_copy_site">Website kopieren</string>
     <!-- Content Description (for screenreaders etc) read for the button to open a site in logins -->
@@ -1792,9 +1836,13 @@
     <string name="phone_feature_blocked_step_feature"><![CDATA[3. Schalten Sie <b>%1$s</b> auf AN]]></string>
 
     <!-- Label that indicates a site is using a secure connection -->
-    <string name="quick_settings_sheet_secure_connection">Sichere Verbindung</string>
+    <string name="quick_settings_sheet_secure_connection_2">Verbindung ist sicher</string>
     <!-- Label that indicates a site is using a insecure connection -->
-    <string name="quick_settings_sheet_insecure_connection">Nicht gesicherte Verbindung</string>
+    <string name="quick_settings_sheet_insecure_connection_2">Verbindung ist nicht sicher</string>
+    <!-- Label that indicates a site is using a secure connection -->
+    <string moz:removedIn="94" name="quick_settings_sheet_secure_connection" tools:ignore="UnusedResources">Sichere Verbindung</string>
+    <!-- Label that indicates a site is using a insecure connection -->
+    <string moz:removedIn="94" name="quick_settings_sheet_insecure_connection" tools:ignore="UnusedResources">Nicht gesicherte Verbindung</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete all the permissions for all sites-->
     <string name="confirm_clear_permissions_on_all_sites">Möchten Sie wirklich alle Berechtigungen für alle Websites löschen?</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete all the permissions for a site-->
@@ -1834,8 +1882,14 @@
     <string name="discard_changes">Änderungen verwerfen</string>
     <!--  The page title for editing a saved login. -->
     <string name="edit">Bearbeiten</string>
-    <!--  The error message in edit login view when password field is blank. -->
+    <!--  The page title for adding new login. -->
+    <string name="add_login">Neue Zugangsdaten hinzufügen</string>
+    <!--  The error message in add/edit login view when password field is blank. -->
     <string name="saved_login_password_required">Passwort erforderlich</string>
+    <!--  The error message in add login view when username field is blank. -->
+    <string name="saved_login_username_required">Benutzername erforderlich</string>
+    <!--  The error message in add login view when hostname field is blank. -->
+    <string name="saved_login_hostname_required" tools:ignore="UnusedResources">Hostname erforderlich</string>
     <!-- Voice search button content description  -->
     <string name="voice_search_content_description">Sprachsuche</string>
     <!-- Voice search prompt description displayed after the user presses the voice search button -->
@@ -1843,6 +1897,15 @@
 
     <!--  The error message in edit login view when a duplicate username exists. -->
     <string name="saved_login_duplicate">Es existieren bereits Zugangsdaten mit diesem Benutzernamen</string>
+
+    <!-- This is the hint text that is shown inline on the hostname field of the create new login page. 'https://www.example.com' intentionally hardcoded here -->
+    <string name="add_login_hostname_hint_text">https://www.example.com</string>
+    <!-- This is an error message shown below the hostname field of the add login page when a hostname does not contain http or https. -->
+    <string moz:removedIn="94" name="add_login_hostname_invalid_text_1" tools:ignore="UnusedResources">Die Internetadresse muss \„https://\“ oder \„http://\“ enthalten</string>
+    <!-- This is an error message shown below the hostname field of the add login page when a hostname does not contain http or https. -->
+    <string name="add_login_hostname_invalid_text_3">Die Internetadresse muss „https://“ oder „http://“ enthalten</string>
+    <!-- This is an error message shown below the hostname field of the add login page when a hostname is invalid. -->
+    <string name="add_login_hostname_invalid_text_2">Gültiger Hostname erforderlich</string>
 
     <!-- Synced Tabs -->
     <!-- Text displayed to ask user to connect another device as no devices found with account -->
@@ -1869,8 +1932,10 @@
     <!-- Confirmation dialog button text when top sites limit is reached. -->
     <string name="top_sites_max_limit_confirmation_button">Ok, verstanden</string>
 
+    <!-- Label for the show most visited top sites preference -->
+    <string name="top_sites_toggle_top_frecent_sites_2">Meistbesuchte Seiten anzeigen</string>
     <!-- Label for the show most visited sites preference -->
-    <string name="top_sites_toggle_top_frecent_sites">Meistbesuchte Seiten anzeigen</string>
+    <string moz:removedIn="93" name="top_sites_toggle_top_frecent_sites" tools:ignore="UnusedResources">Meistbesuchte Seiten anzeigen</string>
 
     <!-- Title text displayed in the rename top site dialog. -->
 	<string name="top_sites_rename_dialog_title">Name</string>

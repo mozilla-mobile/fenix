@@ -50,7 +50,9 @@
 
     <!-- Home - Recently saved bookmarks -->
     <!-- Title for the home screen section with recently saved bookmarks. -->
-    <string name="recently_saved_bookmarks">Недавно збережені</string>
+    <string moz:removedIn="94" name="recently_saved_bookmarks" tools:ignore="UnusedResources">Недавно збережені</string>
+    <!-- Title for the home screen section with recently saved bookmarks. -->
+    <string name="recently_bookmarked">Останні закладки</string>
     <!-- Content description for the recently saved bookmarks section on the home screen. -->
     <string name="recently_saved_bookmarks_content_description">Недавно збережені закладки</string>
     <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
@@ -66,7 +68,7 @@
     <string name="private_browsing_title">Ви у приватному сеансі</string>
     <!-- Explanation for private browsing displayed to users on home view when they first enable private mode
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="private_browsing_placeholder_description_2">%1$s стирає вашу історію пошуку та перегляду для приватних вкладок, коли ви закриваєте їх чи виходите з програми. Це не робить вас анонімними для вебсайтів чи вашого провайдера, але дозволяє приховати вашу діяльність в Інтернеті від будь-кого іншого, хто використовує цей пристрій.</string>
+    <string name="private_browsing_placeholder_description_2">%1$s стирає вашу історію пошуку та перегляду для приватних вкладок, коли ви закриваєте їх чи виходите з програми. Це не робить вас анонімними для вебсайтів чи вашого провайдера, але дозволяє приховати вашу діяльність в інтернеті від будь-кого іншого, хто використовує цей пристрій.</string>
     <string name="private_browsing_common_myths">
        Поширені міфи про приватний перегляд
     </string>
@@ -122,7 +124,14 @@
     <!-- History Metadata -->
     <!-- Header text for a section on the home screen that displays grouped highlights from the
          user's browsing history, such as topics they have researched or explored on the web -->
-    <string name="history_metadata_header">Минулі перегляди</string>
+    <string moz:removedIn="94" name="history_metadata_header" tools:ignore="UnusedResources">Минулі перегляди</string>
+
+    <!-- Header text for a section on the home screen that displays grouped highlights from the
+         user's browsing history, such as topics they have researched or explored on the web -->
+    <string name="history_metadata_header_2">Недавно відвідані</string>
+    <!-- Text for the menu button to remove a grouped highlight from the user's browsing history
+         in the Recently visited section -->
+    <string name="recently_visited_menu_item_remove">Вилучити</string>
 
     <!-- Browser Fragment -->
     <!-- Content description (not visible, for screen readers etc.): Navigate to open tabs -->
@@ -201,6 +210,8 @@
     <!-- Browser menu label for editing a bookmark -->
     <string name="browser_menu_edit">Редагувати</string>
 
+    <!-- Browser menu button that opens the Customize menu -->
+    <string name="browser_menu_customize_home">Налаштувати домівку</string>
     <!-- Browser Toolbar -->
     <!-- Content description for the Home screen button on the browser toolbar -->
     <string name="browser_toolbar_home">Домашній екран</string>
@@ -397,6 +408,18 @@
     <!-- Toast shown after confirming the custom add-on collection configuration -->
     <string name="toast_customize_addon_collection_done">Збірку додатків змінено. Вихід з програми для застосування змін…</string>
 
+    <!-- Customize Home -->
+    <!-- Header text for jumping back into the recent tab in customize the home screen -->
+    <string name="customize_toggle_jump_back_in">Повернутися до</string>
+    <!-- Title for the customize home screen section with recently saved bookmarks. -->
+    <string moz:removedIn="94" name="customize_toggle_recently_saved_bookmarks" tools:ignore="UnusedResources">Недавно збережені</string>
+    <!-- Title for the customize home screen section with recently saved bookmarks. -->
+    <string name="customize_toggle_recently_bookmarked">Останні закладки</string>
+    <!-- Title for the customize home screen section with recently visited. Recently visited is a section where users see a list of tabs that they have visited in the past few days -->
+    <string name="customize_toggle_recently_visited">Недавно відвідані</string>
+    <!-- Title for the customize home screen section with Pocket. -->
+    <string name="customize_toggle_pocket">Pocket</string>
+
     <!-- Add-on Installation from AMO-->
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
     <string name="addon_not_supported_error">Додаток не підтримується</string>
@@ -584,6 +607,13 @@
     <!-- Content description (not visible, for screen readers etc.): "Close button for library settings" -->
     <string name="content_description_close_button">Закрити</string>
 
+    <!-- Text to show users they have one site in the history group section of the History fragment.
+    %d is a placeholder for the number of sites in the group. -->
+    <string name="history_search_group_site">%d сайт</string>
+    <!-- Text to show users they have multiple sites in the history group section of the History fragment.
+    %d is a placeholder for the number of sites in the group. -->
+    <string name="history_search_group_sites">сайтів: %d</string>
+
     <!-- Option in library for Recently Closed Tabs -->
     <string name="library_recently_closed_tabs">Недавно закриті вкладки</string>
     <!-- Option in library to open Recently Closed Tabs page -->
@@ -756,6 +786,9 @@
     <!-- Button in the current tab tray header in multiselect mode. Saved the selected tabs to a collection when pressed. -->
     <string name="tab_tray_save_to_collection">Зберегти</string>
 
+    <!-- Title text for the normal tabs header in the tabs tray which are not part of any tab grouping. -->
+    <string name="tab_tray_header_title">Інші</string>
+
     <!-- History -->
     <!-- Text for the button to clear all history -->
     <string name="history_delete_all">Видалити історію</string>
@@ -769,15 +802,15 @@
     <!-- Text for positive action to delete history in deleting history dialog -->
     <string name="history_clear_dialog">Стерти</string>
     <!-- History overflow menu copy button -->
-    <string name="history_menu_copy_button">Копіювати</string>
+    <string moz:removedIn="94" name="history_menu_copy_button" tools:ignore="UnusedResources">Копіювати</string>
     <!-- History overflow menu share button -->
-    <string name="history_menu_share_button">Поділитися</string>
+    <string moz:removedIn="94" name="history_menu_share_button" tools:ignore="UnusedResources">Поділитися</string>
     <!-- History overflow menu open in new tab button -->
-    <string name="history_menu_open_in_new_tab_button">Відкрити у новій вкладці</string>
+    <string moz:removedIn="94" name="history_menu_open_in_new_tab_button" tools:ignore="UnusedResources">Відкрити у новій вкладці</string>
     <!-- History overflow menu open in private tab button -->
-    <string name="history_menu_open_in_private_tab_button">Відкрити у приватній вкладці</string>
+    <string moz:removedIn="94" name="history_menu_open_in_private_tab_button" tools:ignore="UnusedResources">Відкрити у приватній вкладці</string>
     <!-- Text for the button to delete a single history item -->
-    <string name="history_delete_item">Видалити</string>
+    <string moz:removedIn="94" name="history_delete_item" tools:ignore="UnusedResources">Видалити</string>
     <!-- History multi select title in app bar
     The first parameter is the number of bookmarks selected -->
     <string name="history_multi_select_title">Вибрано %1$d</string>
@@ -1251,12 +1284,12 @@
     <!-- text for the Firefox Accounts section header -->
     <string name="onboarding_fxa_section_header">Вже маєте обліковий запис?</string>
     <!-- text for the "What's New" onboarding card header -->
-    <string name="onboarding_whats_new_header1">Погляньте, що нового</string>
+    <string moz:removedIn="94" name="onboarding_whats_new_header1" tools:ignore="UnusedResources">Погляньте, що нового</string>
     <!-- text for the "what's new" onboarding card description
     The first parameter is the short name of the app (e.g. Firefox) -->
-    <string name="onboarding_whats_new_description">Маєте запитання про оновлений %s? Хочете дізнатися, що змінилося?</string>
+    <string moz:removedIn="94" name="onboarding_whats_new_description" tools:ignore="UnusedResources">Маєте запитання про оновлений %s? Хочете дізнатися, що змінилося?</string>
     <!-- text for underlined clickable link that is part of "what's new" onboarding card description that links to an FAQ -->
-    <string name="onboarding_whats_new_description_linktext">Отримайте відповіді тут</string>
+    <string moz:removedIn="94" name="onboarding_whats_new_description_linktext" tools:ignore="UnusedResources">Отримайте відповіді тут</string>
 
     <!-- text for the Firefox account onboarding sign in card header. The word "Firefox" should not be translated -->
     <string name="onboarding_account_sign_in_header_1">Синхронізуйте Firefox між пристроями</string>
@@ -1298,15 +1331,15 @@
     <!-- text for the toolbar position card description -->
     <string name="onboarding_toolbar_placement_description_1">Розташуйте панель для легкого доступу. Тримайте її внизу, або перемістіть вгору.</string>
     <!-- text for the private browsing onboarding card header -->
-    <string name="onboarding_private_browsing_header">Переглядайте приватно</string>
+    <string moz:removedIn="94" name="onboarding_private_browsing_header" tools:ignore="UnusedResources">Переглядайте приватно</string>
 
     <!-- text for the private browsing onboarding card description
     The first parameter is an icon that represents private browsing -->
-    <string name="onboarding_private_browsing_description1">Відкрийте приватну вкладку один раз: Торкніться піктограми %s.</string>
+    <string moz:removedIn="94" name="onboarding_private_browsing_description1" tools:ignore="UnusedResources">Відкрийте приватну вкладку один раз: Торкніться піктограми %s.</string>
     <!-- text for the private browsing onboarding card description, explaining how to always using private browsing -->
-    <string name="onboarding_private_browsing_always_description">Відкривайте приватні вкладки щоразу: Оновіть налаштування приватного перегляду.</string>
+    <string moz:removedIn="94" name="onboarding_private_browsing_always_description" tools:ignore="UnusedResources">Відкривайте приватні вкладки щоразу: Оновіть налаштування приватного перегляду.</string>
     <!-- text for the private browsing onbording card button, that launches settings -->
-    <string name="onboarding_private_browsing_button">Відкрити налаштування</string>
+    <string moz:removedIn="94" name="onboarding_private_browsing_button" tools:ignore="UnusedResources">Відкрити налаштування</string>
     <!-- text for the privacy notice onboarding card header -->
     <string name="onboarding_privacy_notice_header">Ваша приватність</string>
 
@@ -1473,6 +1506,12 @@
     <!-- Description of redirect tracker cookies that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_redirect_trackers_description">Очищує куки, встановлені переспрямовувачами на відомі вебсайти для стеження.</string>
 
+    <!-- Description of the SmartBlock Enhanced Tracking Protection feature. The * symbol is intentionally hardcoded here,
+         as we use it on the UI to indicate which trackers have been partially unblocked.  -->
+    <string name="preference_etp_smartblock_description">Деякі елементи стеження, зазначені нижче, були частково розблоковані на цій сторінці, тому що ви взаємодіяли з ними *.</string>
+    <!-- Text displayed that links to website about enhanced tracking protection SmartBlock -->
+    <string name="preference_etp_smartblock_learn_more">Докладніше</string>
+
     <!-- About page link text to open support link -->
     <string name="about_support">Підтримка</string>
     <!-- About page link text to list of past crashes (like about:crashes on desktop) -->
@@ -1539,6 +1578,9 @@
     <!-- Description for the preference for autofilling logins from Fenix in other apps (e.g. autofilling the Twitter app) -->
     <string name="preferences_android_autofill_description">Заповнення імен користувачів та паролів у інших програмах на цьому пристрої.</string>
 
+    <!-- Preference option for adding a login -->
+    <string name="preferences_logins_add_login">Додати пароль</string>
+
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">Синхронізація паролів</string>
     <!-- Preference for syncing saved logins in Fenix, when not signed in-->
@@ -1603,6 +1645,8 @@
     <string name="saved_login_copy_username">Копіювати ім’я користувача</string>
     <!-- Content Description (for screenreaders etc) read for the button to clear a username while editing a login -->
     <string name="saved_login_clear_username">Стерти ім’я користувача</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear the hostname field while creating a login -->
+    <string name="saved_login_clear_hostname">Стерти вузол</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a site in logins -->
     <string name="saved_login_copy_site">Копіювати сайт</string>
     <!-- Content Description (for screenreaders etc) read for the button to open a site in logins -->
@@ -1773,9 +1817,13 @@
     <string name="phone_feature_blocked_step_feature"><![CDATA[3. Увімкніть перемикач <b>%1$s</b>]]></string>
 
     <!-- Label that indicates a site is using a secure connection -->
-    <string name="quick_settings_sheet_secure_connection">Захищене з’єднання</string>
+    <string name="quick_settings_sheet_secure_connection_2">З’єднання захищене</string>
     <!-- Label that indicates a site is using a insecure connection -->
-    <string name="quick_settings_sheet_insecure_connection">Незахищене з’єднання</string>
+    <string name="quick_settings_sheet_insecure_connection_2">З’єднання не захищене</string>
+    <!-- Label that indicates a site is using a secure connection -->
+    <string moz:removedIn="94" name="quick_settings_sheet_secure_connection" tools:ignore="UnusedResources">Захищене з’єднання</string>
+    <!-- Label that indicates a site is using a insecure connection -->
+    <string moz:removedIn="94" name="quick_settings_sheet_insecure_connection" tools:ignore="UnusedResources">Незахищене з’єднання</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete all the permissions for all sites-->
     <string name="confirm_clear_permissions_on_all_sites">Ви впевнені, що хочете очистити всі дозволи на всіх сайтах?</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete all the permissions for a site-->
@@ -1815,8 +1863,14 @@
     <string name="discard_changes">Відхилити зміни</string>
     <!--  The page title for editing a saved login. -->
     <string name="edit">Змінити</string>
-    <!--  The error message in edit login view when password field is blank. -->
+    <!--  The page title for adding new login. -->
+    <string name="add_login">Додати новий пароль</string>
+    <!--  The error message in add/edit login view when password field is blank. -->
     <string name="saved_login_password_required">Потрібен пароль</string>
+    <!--  The error message in add login view when username field is blank. -->
+    <string name="saved_login_username_required">Необхідно вказати ім’я користувача</string>
+    <!--  The error message in add login view when hostname field is blank. -->
+    <string name="saved_login_hostname_required" tools:ignore="UnusedResources">Необхідно вказати назву вузла</string>
     <!-- Voice search button content description  -->
     <string name="voice_search_content_description">Голосовий пошук</string>
     <!-- Voice search prompt description displayed after the user presses the voice search button -->
@@ -1824,6 +1878,15 @@
 
     <!--  The error message in edit login view when a duplicate username exists. -->
     <string name="saved_login_duplicate">Запис з таким іменем користувача вже існує</string>
+
+    <!-- This is the hint text that is shown inline on the hostname field of the create new login page. 'https://www.example.com' intentionally hardcoded here -->
+    <string name="add_login_hostname_hint_text">https://www.example.com</string>
+    <!-- This is an error message shown below the hostname field of the add login page when a hostname does not contain http or https. -->
+    <string moz:removedIn="94" name="add_login_hostname_invalid_text_1" tools:ignore="UnusedResources">Вебадреса повинна містити \“https://\“ або \“http://\“</string>
+    <!-- This is an error message shown below the hostname field of the add login page when a hostname does not contain http or https. -->
+    <string name="add_login_hostname_invalid_text_3">Вебадреса повинна містити &quot;https://&quot; або &quot;http://&quot;</string>
+    <!-- This is an error message shown below the hostname field of the add login page when a hostname is invalid. -->
+    <string name="add_login_hostname_invalid_text_2">Необхідно ввести дійсний вузол</string>
 
     <!-- Synced Tabs -->
     <!-- Text displayed to ask user to connect another device as no devices found with account -->
@@ -1850,8 +1913,10 @@
     <!-- Confirmation dialog button text when top sites limit is reached. -->
     <string name="top_sites_max_limit_confirmation_button">Гаразд, зрозуміло</string>
 
+    <!-- Label for the show most visited top sites preference -->
+    <string name="top_sites_toggle_top_frecent_sites_2">Показати найвідвідуваніші сайти</string>
     <!-- Label for the show most visited sites preference -->
-    <string name="top_sites_toggle_top_frecent_sites">Показати найвідвідуваніші сайти</string>
+    <string moz:removedIn="93" name="top_sites_toggle_top_frecent_sites" tools:ignore="UnusedResources">Показати найвідвідуваніші сайти</string>
 
     <!-- Title text displayed in the rename top site dialog. -->
 	<string name="top_sites_rename_dialog_title">Назва</string>

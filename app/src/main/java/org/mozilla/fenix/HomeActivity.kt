@@ -15,10 +15,11 @@ import android.os.StrictMode
 import android.os.SystemClock
 import android.text.format.DateUtils
 import android.util.AttributeSet
+import android.view.ActionMode
 import android.view.KeyEvent
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
-import android.view.ActionMode
 import android.view.ViewConfiguration
 import android.view.WindowManager.LayoutParams.FLAG_SECURE
 import androidx.annotation.CallSuper
@@ -34,12 +35,12 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.Dispatchers.IO
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.browser.state.action.ContentAction
 import mozilla.components.browser.state.search.SearchEngine
@@ -50,6 +51,7 @@ import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.engine.EngineView
 import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.concept.storage.BookmarkNodeType
+import mozilla.components.concept.storage.HistoryMetadataKey
 import mozilla.components.feature.contextmenu.DefaultSelectionActionDelegate
 import mozilla.components.feature.privatemode.notification.PrivateNotificationFeature
 import mozilla.components.feature.search.BrowserStoreSearchAdapter
@@ -93,8 +95,10 @@ import org.mozilla.fenix.home.intent.StartSearchIntentProcessor
 import org.mozilla.fenix.library.bookmarks.BookmarkFragmentDirections
 import org.mozilla.fenix.library.bookmarks.DesktopFolders
 import org.mozilla.fenix.library.history.HistoryFragmentDirections
+import org.mozilla.fenix.library.historymetadata.HistoryMetadataGroupFragmentDirections
 import org.mozilla.fenix.library.recentlyclosed.RecentlyClosedFragmentDirections
 import org.mozilla.fenix.onboarding.DefaultBrowserNotificationWorker
+import org.mozilla.fenix.perf.MarkersLifecycleCallbacks
 import org.mozilla.fenix.perf.Performance
 import org.mozilla.fenix.perf.PerformanceInflater
 import org.mozilla.fenix.perf.ProfilerMarkers
@@ -116,6 +120,7 @@ import org.mozilla.fenix.tabstray.TabsTrayFragment
 import org.mozilla.fenix.tabstray.TabsTrayFragmentDirections
 import org.mozilla.fenix.theme.DefaultThemeManager
 import org.mozilla.fenix.theme.ThemeManager
+import org.mozilla.fenix.trackingprotection.TrackingProtectionPanelDialogFragmentDirections
 import org.mozilla.fenix.utils.BrowsersCache
 import org.mozilla.fenix.utils.Settings
 import java.lang.ref.WeakReference
@@ -178,8 +183,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     private lateinit var startupTypeTelemetry: StartupTypeTelemetry
 
     final override fun onCreate(savedInstanceState: Bundle?) {
-        // DO NOT MOVE ANYTHING ABOVE THIS addMarker CALL.
-        components.core.engine.profiler?.addMarker("Activity.onCreate", "HomeActivity")
+        // DO NOT MOVE ANYTHING ABOVE THIS getProfilerTime CALL.
+        val startTimeProfiler = components.core.engine.profiler?.getProfilerTime()
 
         components.strictMode.attachListenerToDisablePenaltyDeath(supportFragmentManager)
         // There is disk read violations on some devices such as samsung and pixel for android 9/10
@@ -204,11 +209,12 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
         components.publicSuffixList.prefetch()
 
-        setContentView(R.layout.activity_home)
+        binding = ActivityHomeBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        ProfilerMarkers.addListenerForOnGlobalLayout(components.core.engine, this, binding.root)
 
         // Must be after we set the content view
         if (isVisuallyComplete) {
-            binding = ActivityHomeBinding.bind(window.decorView.findViewById(R.id.rootContainer))
             components.performance.visualCompletenessQueue
                 .attachViewToRunVisualCompletenessQueueLater(WeakReference(binding.rootContainer))
         }
@@ -267,6 +273,9 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             components.core.pocketStoriesService.startPeriodicStoriesRefresh()
         }
 
+        components.core.engine.profiler?.addMarker(
+            MarkersLifecycleCallbacks.MARKER_NAME, startTimeProfiler, "HomeActivity.onCreate"
+        )
         StartupTimeline.onActivityCreateEndHome(this) // DO NOT MOVE ANYTHING BELOW HERE.
     }
 
@@ -317,6 +326,9 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     }
 
     override fun onStart() {
+        // DO NOT MOVE ANYTHING ABOVE THIS getProfilerTime CALL.
+        val startProfilerTime = components.core.engine.profiler?.getProfilerTime()
+
         super.onStart()
 
         // Diagnostic breadcrumb for "Display already aquired" crash:
@@ -326,6 +338,9 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         )
 
         ProfilerMarkers.homeActivityOnStart(binding.rootContainer, components.core.engine.profiler)
+        components.core.engine.profiler?.addMarker(
+            MarkersLifecycleCallbacks.MARKER_NAME, startProfilerTime, "HomeActivity.onStart"
+        ) // DO NOT MOVE ANYTHING BELOW THIS addMarker CALL.
     }
 
     override fun onStop() {
@@ -569,6 +584,11 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         return false
     }
 
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        ProfilerMarkers.addForDispatchTouchEvent(components.core.engine.profiler, ev)
+        return super.dispatchTouchEvent(ev)
+    }
+
     final override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         // Inspired by https://searchfox.org/mozilla-esr68/source/mobile/android/base/java/org/mozilla/gecko/BrowserApp.java#584-613
         // Android N and Huawei devices have broken onKeyLongPress events for the back button, so we
@@ -709,10 +729,11 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         engine: SearchEngine? = null,
         forceSearch: Boolean = false,
         flags: EngineSession.LoadUrlFlags = EngineSession.LoadUrlFlags.none(),
-        requestDesktopMode: Boolean = false
+        requestDesktopMode: Boolean = false,
+        historyMetadata: HistoryMetadataKey? = null
     ) {
         openToBrowser(from, customTabSessionId)
-        load(searchTermOrURL, newTab, engine, forceSearch, flags, requestDesktopMode)
+        load(searchTermOrURL, newTab, engine, forceSearch, flags, requestDesktopMode, historyMetadata)
     }
 
     fun openToBrowser(from: BrowserDirection, customTabSessionId: String? = null) {
@@ -740,12 +761,16 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             BookmarkFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromHistory ->
             HistoryFragmentDirections.actionGlobalBrowser(customTabSessionId)
+        BrowserDirection.FromHistoryMetadataGroup ->
+            HistoryMetadataGroupFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromTrackingProtectionExceptions ->
             TrackingProtectionExceptionsFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromAbout ->
             AboutFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromTrackingProtection ->
             TrackingProtectionFragmentDirections.actionGlobalBrowser(customTabSessionId)
+        BrowserDirection.FromTrackingProtectionDialog ->
+            TrackingProtectionPanelDialogFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromSavedLoginsFragment ->
             SavedLoginsAuthFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromAddNewDeviceFragment ->
@@ -773,6 +798,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
      * Loads a URL or performs a search (depending on the value of [searchTermOrURL]).
      *
      * @param flags Flags that will be used when loading the URL (not applied to searches).
+     * @param historyMetadata The [HistoryMetadataKey] of the new tab in case this tab
+     * was opened from history.
      */
     private fun load(
         searchTermOrURL: String,
@@ -780,7 +807,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         engine: SearchEngine?,
         forceSearch: Boolean,
         flags: EngineSession.LoadUrlFlags = EngineSession.LoadUrlFlags.none(),
-        requestDesktopMode: Boolean = false
+        requestDesktopMode: Boolean = false,
+        historyMetadata: HistoryMetadataKey? = null
     ) {
         val startTime = components.core.engine.profiler?.getProfilerTime()
         val mode = browsingModeManager.mode
@@ -798,7 +826,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
                 components.useCases.tabsUseCases.addTab(
                     url = searchTermOrURL.toNormalizedUrl(),
                     flags = flags,
-                    private = private
+                    private = private,
+                    historyMetadata = historyMetadata
                 )
             } else {
                 components.useCases.sessionUseCases.loadUrl(

@@ -11,6 +11,7 @@ import io.mockk.slot
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import mozilla.components.browser.state.action.ContentAction
+import mozilla.components.browser.state.action.EngineAction
 import mozilla.components.browser.state.action.MediaSessionAction
 import mozilla.components.browser.state.action.SearchAction
 import mozilla.components.browser.state.action.TabListAction
@@ -160,6 +161,30 @@ class HistoryMetadataMiddlewareTest {
     }
 
     @Test
+    fun `GIVEN a normal tab with history state WHEN directly loaded THEN search terms and referrer not recorded`() {
+        val tab = createTab("https://mozilla.org")
+        store.dispatch(TabListAction.AddTabAction(tab)).joinBlocking()
+        setupGoogleSearchEngine()
+
+        val historyState = listOf(
+            HistoryItem("firefox", "https://google.com?q=mozilla+website"),
+            HistoryItem("mozilla", "https://mozilla.org")
+        )
+        store.dispatch(EngineAction.LoadUrlAction(tab.id, tab.content.url)).joinBlocking()
+        store.dispatch(ContentAction.UpdateHistoryStateAction(tab.id, historyState, currentIndex = 1)).joinBlocking()
+
+        verify {
+            service.createMetadata(any(), null, null)
+        }
+
+        // Once direct load is "consumed", we're looking up the history stack again.
+        store.dispatch(ContentAction.UpdateHistoryStateAction(tab.id, historyState, currentIndex = 1)).joinBlocking()
+        verify {
+            service.createMetadata(any(), eq("mozilla website"), eq("https://google.com?q=mozilla+website"))
+        }
+    }
+
+    @Test
     fun `GIVEN private tab WHEN loading completed THEN no meta data is recorded`() {
         val tab = createTab("https://mozilla.org", private = true)
 
@@ -174,18 +199,30 @@ class HistoryMetadataMiddlewareTest {
     }
 
     @Test
-    fun `GIVEN normal tab WHEN user navigates and new page starts loading THEN meta data is updated`() {
+    fun `GIVEN normal tab WHEN update url action event with a different url is received THEN meta data is updated`() {
         val existingKey = HistoryMetadataKey(url = "https://mozilla.org")
         val tab = createTab(url = existingKey.url, historyMetadata = existingKey)
 
         store.dispatch(TabListAction.AddTabAction(tab)).joinBlocking()
         verify { service wasNot Called }
 
-        store.dispatch(ContentAction.UpdateLoadingStateAction(tab.id, true)).joinBlocking()
+        store.dispatch(ContentAction.UpdateUrlAction(tab.id, "https://www.someother.url")).joinBlocking()
         val capturedTab = slot<TabSessionState>()
         verify { service.updateMetadata(existingKey, capture(capturedTab)) }
 
         assertEquals(tab.id, capturedTab.captured.id)
+    }
+
+    @Test
+    fun `GIVEN normal tab WHEN update url action event with the same url is received THEN meta data is not updated`() {
+        val existingKey = HistoryMetadataKey(url = "https://mozilla.org")
+        val tab = createTab(url = existingKey.url, historyMetadata = existingKey)
+
+        store.dispatch(TabListAction.AddTabAction(tab)).joinBlocking()
+        verify { service wasNot Called }
+
+        store.dispatch(ContentAction.UpdateUrlAction(tab.id, existingKey.url)).joinBlocking()
+        verify { service wasNot Called }
     }
 
     @Test

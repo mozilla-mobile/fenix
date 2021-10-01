@@ -352,6 +352,19 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = false
     )
 
+    val isFirstRun: Boolean =
+        if (!preferences.contains(appContext.getPreferenceKey(R.string.pref_key_is_first_run))) {
+            preferences.edit()
+                .putBoolean(
+                    appContext.getPreferenceKey(R.string.pref_key_is_first_run),
+                    false
+                )
+                .apply()
+            true
+        } else {
+            false
+        }
+
     /**
      * Indicates the last time when the user was interacting with the [BrowserFragment],
      * This is useful to determine if the user has to start on the [HomeFragment]
@@ -398,6 +411,15 @@ class Settings(private val appContext: Context) : PreferencesHolder {
             else -> false
         }
     }
+
+    /**
+     * Indicates if the user has enabled the inactive tabs feature.
+     */
+    var inactiveTabsAreEnabled by featureFlagPreference(
+        appContext.getPreferenceKey(R.string.pref_key_inactive_tabs),
+        default = FeatureFlags.inactiveTabs,
+        featureFlag = FeatureFlags.inactiveTabs
+    )
 
     @VisibleForTesting
     internal fun timeNowInMillis(): Long = System.currentTimeMillis()
@@ -741,6 +763,14 @@ class Settings(private val appContext: Context) : PreferencesHolder {
 
     var showSearchSuggestionsInPrivateOnboardingFinished by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_show_search_suggestions_in_private_onboarding),
+        default = false
+    )
+
+    /**
+     * Indicates if the home onboarding dialog has already shown before.
+     */
+    var hasShownHomeOnboardingDialog by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_has_shown_home_onboarding),
         default = false
     )
 
@@ -1154,6 +1184,6 @@ class Settings(private val appContext: Context) : PreferencesHolder {
 
     var pocketRecommendations by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_pocket_homescreen_recommendations),
-        default = false
+        default = true
     )
 }

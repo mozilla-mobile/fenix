@@ -9,8 +9,10 @@ import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper.getGenericAsset
@@ -38,6 +40,8 @@ class CollectionTest {
 
     @Before
     fun setUp() {
+        activityTestRule.activity.applicationContext.settings().hasShownHomeOnboardingDialog = true
+
         mockWebServer = MockWebServer().apply {
             dispatcher = AndroidAssetDispatcher()
             start()
@@ -77,6 +81,7 @@ class CollectionTest {
     }
 
     @Test
+    @Ignore("https://github.com/mozilla-mobile/fenix/issues/21397")
     fun verifyAddTabButtonOfCollectionMenu() {
         val firstWebPage = getGenericAsset(mockWebServer, 1)
         val secondWebPage = getGenericAsset(mockWebServer, 2)
@@ -103,6 +108,7 @@ class CollectionTest {
     }
 
     @Test
+    @Ignore("https://github.com/mozilla-mobile/fenix/issues/21397")
     fun renameCollectionTest() {
         val webPage = getGenericAsset(mockWebServer, 1)
 
@@ -152,8 +158,10 @@ class CollectionTest {
         }.openTabDrawer {
             createCollection(webPage.title, firstCollectionName)
             verifySnackBarText("Collection saved!")
-        }.closeTabDrawer {
-        }.goToHomescreen {
+            closeTab()
+        }
+
+        homeScreen {
         }.expandCollection(firstCollectionName) {
             removeTabFromCollection(webPage.title)
             verifyTabSavedInCollection(webPage.title, false)
@@ -210,6 +218,7 @@ class CollectionTest {
         }.openTabDrawer {
         }.openNewTab {
         }.submitQuery(secondWebPage.url.toString()) {
+            mDevice.waitForIdle()
         }.openTabDrawer {
             longClickTab(firstWebPage.title)
             verifyTabsMultiSelectionCounter(1)
