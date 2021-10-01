@@ -1438,6 +1438,7 @@ class SmokeTest {
         }
     }
 
+    @Ignore
     @Test
     fun alwaysStartOnHomeTest() {
         val settings = activityTestRule.activity.applicationContext.settings()
