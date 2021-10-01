@@ -1908,12 +1908,14 @@
     <string name="inactive_tabs_30_days">30 days</string>
     <!-- The amount of time until a tab in the "inactive" section of the tabs tray will be closed. See string inactive_tabs_description as well -->
     <string name="inactive_tabs_7_days">1 week</string>
-    <!-- The header of the tab auto-close message -->
-    <string name="inactive_tabs_auto_close_message_header">Auto-close after one month?</string>
-    <!-- The body of text of the tab auto-close message -->
-    <string name="inactive_tabs_auto_close_message_body">Firefox can close tabs you haven’t viewed over the past month.</string>
-    <!-- The text of the call-to-action of the tab auto-close message -->
-    <string name="inactive_tabs_auto_close_message_action">TURN ON AUTO CLOSE</string>
+
+    <!-- Inactive tabs auto-close message in the tabs tray -->
+    <!-- The header text of the auto-close message when the user is asked if they want to turn on the auto-closing of inactive tabs. -->
+    <string name="inactive_tabs_auto_close_message_header" tools:ignore="UnusedResources">Auto-close after one month?</string>
+    <!-- A description below the header to notify the user what the inactive tabs auto-close feature is. -->
+    <string name="inactive_tabs_auto_close_message_description" tools:ignore="UnusedResources">Firefox can close tabs you haven’t viewed over the past month.</string>
+    <!-- A call to action below the description to allow the user to turn on the auto closing of inactive tabs. -->
+    <string name="inactive_tabs_auto_close_message_action" tools:ignore="UnusedResources">TURN ON AUTO CLOSE</string>
 
 
     <!-- Default browser experiment -->
