@@ -1897,8 +1897,8 @@
 	<!-- Dialog button text for canceling the rename top site prompt. -->
 	<string name="top_sites_rename_dialog_cancel">Cancel</string>
 
-    <!-- In-activate tabs in the tabs tray -->
-    <!-- Title text displayed in the tabs tray when a tab has been unused for 4 days. -->
+    <!-- Inactive tabs in the tabs tray -->
+    <!-- Title text displayed in the tabs tray when a tab has been unused for 14 days. -->
     <string name="inactive_tabs_title">Inactive tabs</string>
     <!-- Content description for closing all inactive tabs -->
     <string name="inactive_tabs_delete_all">Close all inactive tabs</string>
@@ -1908,6 +1908,13 @@
     <string name="inactive_tabs_30_days">30 days</string>
     <!-- The amount of time until a tab in the "inactive" section of the tabs tray will be closed. See string inactive_tabs_description as well -->
     <string name="inactive_tabs_7_days">1 week</string>
+    <!-- The header of the tab auto-close message -->
+    <string name="inactive_tabs_auto_close_message_header">Auto-close after one month?</string>
+    <!-- The body of text of the tab auto-close message -->
+    <string name="inactive_tabs_auto_close_message_body">Firefox can close tabs you haven’t viewed over the past month.</string>
+    <!-- The text of the call-to-action of the tab auto-close message -->
+    <string name="inactive_tabs_auto_close_message_action">TURN ON AUTO CLOSE</string>
+
 
     <!-- Default browser experiment -->
     <string name="default_browser_experiment_card_text">Set links from websites, emails, and messages to open automatically in Firefox.</string>
