@@ -51,6 +51,8 @@ private fun assertTabViewOptions() {
         .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
     gridToggle()
         .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+    searchTermTabGroupsToggle()
+        .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
 }
 
 private fun assertCloseTabsOptions() {
@@ -82,6 +84,8 @@ private fun tabViewHeading() = onView(withText("Tab view"))
 private fun listToggle() = onView(withText("List"))
 
 private fun gridToggle() = onView(withText("Grid"))
+
+private fun searchTermTabGroupsToggle() = onView(withText("Search groups"))
 
 private fun closeTabsHeading() = onView(withText("Close tabs"))
 
