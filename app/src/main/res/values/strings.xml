@@ -51,7 +51,9 @@
     <!-- Title for the home screen section with recently saved bookmarks. -->
     <string name="recently_saved_bookmarks" moz:removedIn="94" tools:ignore="UnusedResources">Recently saved</string>
     <!-- Title for the home screen section with recently saved bookmarks. -->
-    <string name="recently_bookmarked">Recently bookmarked</string>
+    <string name="recently_bookmarked" moz:removedIn="94" tools:ignore="UnusedResources">Recently bookmarked</string>
+    <!-- Title for the home screen section with recently saved bookmarks. -->
+    <string name="recent_bookmarks_title">Recent bookmarks</string>
     <!-- Content description for the recently saved bookmarks section on the home screen. -->
     <string name="recently_saved_bookmarks_content_description">Recently saved bookmarks</string>
     <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
@@ -104,6 +106,10 @@
     <string name="tab_tray_close_tabs_banner_positive_button_text">View options</string>
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">Dismiss</string>
+    <!-- Text for the banner message to tell users about our inactive tabs feature. -->
+    <string name="tab_tray_inactive_onboarding_message" tools:ignore="UnusedResources">Tabs you haven’t viewed for two weeks get moved here.</string>
+    <!-- Text for the action link to go to Settings for inactive tabs. -->
+    <string name="tab_tray_inactive_onboarding_button_text" tools:ignore="UnusedResources">Turn off in settings</string>
 
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
@@ -133,7 +139,10 @@
     <string name="history_metadata_header" moz:removedIn="94" tools:ignore="UnusedResources">Past explorations</string>
     <!-- Header text for a section on the home screen that displays grouped highlights from the
          user's browsing history, such as topics they have researched or explored on the web -->
-    <string name="history_metadata_header_2">Recently visited</string>
+    <string name="history_metadata_header_2" moz:removedIn="94" tools:ignore="UnusedResources">Recently visited</string>
+    <!-- Header text for a section on the home screen that displays grouped highlights from the
+         user's browsing history, such as topics they have researched or explored on the web -->
+    <string name="history_metadata_header_3">Recent searches</string>
     <!-- Text for the menu button to remove a grouped highlight from the user's browsing history
          in the Recently visited section -->
     <string name="recently_visited_menu_item_remove">Remove</string>
@@ -214,6 +223,8 @@
     <string name="browser_menu_edit">Edit</string>
     <!-- Browser menu button that opens the Customize menu -->
     <string name="browser_menu_customize_home">Customize home</string>
+    <!-- Button shown on the home page that opens the Customize home settings -->
+    <string name="browser_menu_customize_home_1">Customize homepage</string>
     <!-- Browser Toolbar -->
     <!-- Content description for the Home screen button on the browser toolbar -->
     <string name="browser_toolbar_home">Home screen</string>
@@ -428,9 +439,15 @@
     <!-- Title for the customize home screen section with recently saved bookmarks. -->
     <string name="customize_toggle_recently_saved_bookmarks" moz:removedIn="94" tools:ignore="UnusedResources">Recently saved</string>
     <!-- Title for the customize home screen section with recently saved bookmarks. -->
-    <string name="customize_toggle_recently_bookmarked">Recently bookmarked</string>
-    <!-- Title for the customize home screen section with recently visited. Recently visited is a section where users see a list of tabs that they have visited in the past few days -->
-    <string name="customize_toggle_recently_visited">Recently visited</string>
+    <string name="customize_toggle_recently_bookmarked" moz:removedIn="94" tools:ignore="UnusedResources">Recently bookmarked</string>
+    <!-- Title for the customize home screen section with recently saved bookmarks. -->
+    <string name="customize_toggle_recent_bookmarks">Recent bookmarks</string>
+    <!-- Title for the customize home screen section with recently visited. Recently visited is
+    a section where users see a list of tabs that they have visited in the past few days -->
+    <string name="customize_toggle_recently_visited" moz:removedIn="94" tools:ignore="UnusedResources">Recently visited</string>
+    <!-- Title for the customize home screen settings section for recent searches. Recent searches
+     is a section where users see a list of groups of tabs that they have visited in the past few days -->
+    <string name="customize_toggle_recent_searches">Recent searches</string>
     <!-- Title for the customize home screen section with Pocket. -->
     <string name="customize_toggle_pocket">Pocket</string>
 
@@ -644,6 +661,10 @@
     <string name="tab_view_list">List</string>
     <!-- Option for a grid tab view -->
     <string name="tab_view_grid">Grid</string>
+    <!-- Option for search term tab groups -->
+    <string name="tab_view_search_term_tab_groups">Search groups</string>
+    <!-- Summary text for search term tab groups -->
+    <string name="tab_view_search_term_tab_groups_summary">Group related sites together</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
     <string name="preferences_close_tabs">Close tabs</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
@@ -654,6 +675,8 @@
     <string name="close_tabs_after_one_week">After one week</string>
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">After one month</string>
+    <!-- Title of preference that allows a user to specify the auto-close settings for open tabs -->
+    <string name="preference_auto_close_tabs" tools:ignore="UnusedResources">Auto-close open tabs</string>
 
     <!-- Start on Home -->
     <!-- Title of a preference that allows a user to indicate after a specified amount of time when the app should start on the home screen -->
@@ -795,7 +818,9 @@
     <!-- Button in the current tab tray header in multiselect mode. Saved the selected tabs to a collection when pressed. -->
     <string name="tab_tray_save_to_collection">Save</string>
     <!-- Title text for the normal tabs header in the tabs tray which are not part of any tab grouping. -->
-    <string name="tab_tray_header_title">Other</string>
+    <string name="tab_tray_header_title" moz:removedIn="94" tools:ignore="UnusedResources">Other</string>
+    <!-- Title text for the normal tabs header in the tabs tray which are not part of any tab grouping. -->
+    <string name="tab_tray_header_title_1">Other tabs</string>
 
     <!-- History -->
     <!-- Text for the button to clear all history -->
@@ -1950,7 +1975,9 @@
 
     <!-- Pocket recommended stories -->
     <!-- Header text for a section on the home screen. -->
-    <string name="pocket_stories_header">Thought provoking stories</string>
+    <string name="pocket_stories_header" moz:removedIn="94" tools:ignore="UnusedResources">Thought provoking stories</string>
+    <!-- Header text for a section on the home screen. -->
+    <string name="pocket_stories_header_1">Thought-provoking stories</string>
     <!-- Header text for a section on the home screen. -->
     <string name="pocket_stories_categories_header">Stories by topic</string>
     <!-- Text of a button allowing users to access an external url for more Pocket recommendations. -->
