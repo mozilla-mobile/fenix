@@ -39,7 +39,6 @@ import mozilla.components.ui.colors.PhotonColors
 import org.mozilla.fenix.R
 import org.mozilla.fenix.compose.ClickableSubstringLink
 import org.mozilla.fenix.compose.EagerFlingBehavior
-import org.mozilla.fenix.compose.FakeClient
 import org.mozilla.fenix.compose.ListItemTabLarge
 import org.mozilla.fenix.compose.ListItemTabLargePlaceholder
 import org.mozilla.fenix.compose.SelectableChip
@@ -61,13 +60,11 @@ private val placeholderStory = PocketRecommendedStory("", "", "", "", "", 0, 0)
  * Displays a single [PocketRecommendedStory].
  *
  * @param story The [PocketRecommendedStory] to be displayed.
- * @param client [Client] instance to be used for downloading the story header image.
  * @param onStoryClick Callback for when the user taps on this story.
  */
 @Composable
 fun PocketStory(
     @PreviewParameter(PocketStoryProvider::class) story: PocketRecommendedStory,
-    client: Client,
     onStoryClick: (PocketRecommendedStory) -> Unit,
 ) {
     val imageUrl = story.imageUrl.replace(
@@ -75,7 +72,6 @@ fun PocketStory(
         with(LocalDensity.current) { "${116.dp.toPx().roundToInt()}x${84.dp.toPx().roundToInt()}" }
     )
     ListItemTabLarge(
-        client = client,
         imageUrl = imageUrl,
         onClick = { onStoryClick(story) },
         title = {
@@ -100,7 +96,6 @@ fun PocketStory(
 @Composable
 fun PocketStories(
     @PreviewParameter(PocketStoryProvider::class) stories: List<PocketRecommendedStory>,
-    client: Client,
     onExternalLinkClicked: (String) -> Unit
 ) {
     // Show stories in at most 3 rows but on any number of columns depending on the data received.
@@ -119,7 +114,7 @@ fun PocketStories(
                             onExternalLinkClicked("http://getpocket.com/explore")
                         }
                     } else {
-                        PocketStory(story, client) {
+                        PocketStory(story) {
                             onExternalLinkClicked(story.url)
                         }
                     }
@@ -213,7 +208,6 @@ private fun PocketStoriesComposablesPreview() {
             Column {
                 PocketStories(
                     stories = getFakePocketStories(8),
-                    client = FakeClient(),
                     onExternalLinkClicked = { }
                 )
                 Spacer(Modifier.height(10.dp))
