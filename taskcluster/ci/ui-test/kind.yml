@@ -20,7 +20,7 @@ job-defaults:
     include-pull-request-number: true
     run:
         commands:
-            - [wget, {artifact-reference: '<signing/public/build/x86/target.apk>'}, '-O', app.apk]
+            - [wget, {artifact-reference: '<signing/public/build/arm64-v8a/target.apk>'}, '-O', app.apk]
             - [wget, {artifact-reference: '<signing-android-test/public/build/noarch/target.apk>'}, '-O', android-test.apk]
         secrets:
             - name: project/mobile/fenix/firebase
@@ -52,7 +52,7 @@ jobs:
         run-on-git-branches: ["^((?!releases[_/]).+)$"]
         run:
             commands:
-                - [automation/taskcluster/androidTest/ui-test.sh, x86, app.apk, android-test.apk, '-1']
+                - [automation/taskcluster/androidTest/ui-test.sh, arm64-v8a, app.apk, android-test.apk, '-1']
         treeherder:
             symbol: debug(ui-test-x86)
     screenshots-x86:
