@@ -469,6 +469,30 @@ class BrowserRobot {
         }
     }
 
+    fun clickPagePermissionOption(option: String) {
+        mDevice.waitNotNull(Until.findObject(By.text(option)), waitingTime)
+        mDevice.findObject(By.text(option)).click()
+    }
+
+    fun clickAllowAndroidPermission() {
+        mDevice.findObject(UiSelector().textContains("ALLOW")).waitForExists(waitingTime)
+        mDevice.findObject(By.textContains("ALLOW")).click()
+    }
+
+    fun clickRememberDecisionButton() {
+        mDevice.findObject(UiSelector().resourceId("$packageName:id/do_not_ask_again"))
+            .waitForExists(waitingTime)
+        mDevice.findObject(UiSelector().resourceId("$packageName:id/do_not_ask_again"))
+            .clickAndWaitForNewWindow(waitingTime)
+    }
+
+    fun clickAllowPermissionButton() {
+        mDevice.findObject(UiSelector().resourceId("$packageName:id/allow_button"))
+            .waitForExists(waitingTime)
+        mDevice.findObject(UiSelector().resourceId("$packageName:id/allow_button"))
+            .clickAndWaitForNewWindow(waitingTime)
+    }
+
     class Transition {
         private val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         private fun threeDotButton() = onView(
