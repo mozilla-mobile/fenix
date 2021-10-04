@@ -20,6 +20,9 @@ import mozilla.components.service.glean.Glean
 import mozilla.components.service.glean.config.Configuration
 import mozilla.components.service.glean.net.ConceptFetchHttpUploader
 import mozilla.components.service.glean.testing.GleanTestLocalServer
+import mozilla.components.service.glean.private.LabeledMetricType
+import mozilla.components.service.glean.private.CounterMetricType
+import mozilla.components.service.glean.private.Lifetime
 import okhttp3.mockwebserver.RecordedRequest
 import org.json.JSONObject
 import org.junit.Assert.assertTrue
@@ -136,10 +139,30 @@ class BaselinePingTest {
 
     @Test
     fun validateBaselinePing() {
+        val counter = CounterMetricType(
+            category = "testing",
+            name = "nocrashes",
+            sendInPings = listOf("baseline"),
+            lifetime = Lifetime.Ping,
+            disabled = false,
+        )
+        val labelCounter = LabeledMetricType(
+            category = "testing",
+            name = "nocrashes",
+            subMetric = counter,
+            disabled = false,
+            lifetime = Lifetime.Ping,
+            sendInPings = listOf("baseline"),
+            labels = null,
+        )
+
         // Wait for the app to be idle/ready.
         InstrumentationRegistry.getInstrumentation().waitForIdleSync()
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         device.waitForIdle()
+
+        // Let's test labeled counters
+        labelCounter["valid"].add(3)
 
         // Wait for 1 second: this should guarantee we have some valid duration in the
         // ping.
@@ -169,6 +192,9 @@ class BaselinePingTest {
         // we slept for 1000ms.
         val timespans = metrics.getJSONObject("timespan")
         assertTrue(timespans.getJSONObject("glean.baseline.duration").getLong("value") >= 1L)
+
+        val labeledCounters = metrics.getJSONObject("labeled_counter")
+        assertTrue(labeledCounters.getJSONObject("testing.nocrashes").getLong("valid") == 3L)
 
         // Make sure there's no errors.
         val errors = metrics.optJSONObject("labeled_counter")?.keys()
