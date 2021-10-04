@@ -21,7 +21,7 @@ import androidx.recyclerview.widget.RecyclerView
 import mozilla.components.lib.state.ext.observeAsComposableState
 import mozilla.components.service.pocket.PocketRecommendedStory
 import org.mozilla.fenix.R
-import org.mozilla.fenix.compose.SectionHeader
+import org.mozilla.fenix.compose.HomeSectionHeader
 import org.mozilla.fenix.home.HomeFragmentStore
 import org.mozilla.fenix.theme.FirefoxTheme
 
@@ -67,7 +67,7 @@ class PocketStoriesViewHolder(
 fun PocketStories(
     store: HomeFragmentStore,
     onStoriesShown: (List<PocketRecommendedStory>) -> Unit,
-    onCategoryClick: (PocketRecommendedStoryCategory) -> Unit,
+    onCategoryClick: (PocketRecommendedStoriesCategory) -> Unit,
     onExternalLinkClicked: (String) -> Unit
 ) {
     val stories = store
@@ -75,6 +75,9 @@ fun PocketStories(
 
     val categories = store
         .observeAsComposableState { state -> state.pocketStoriesCategories }.value
+
+    val categoriesSelections = store
+        .observeAsComposableState { state -> state.pocketStoriesCategoriesSelections }.value
 
     LaunchedEffect(stories) {
         // We should report back when a certain story is actually being displayed.
@@ -85,7 +88,7 @@ fun PocketStories(
     }
 
     Column(modifier = Modifier.padding(vertical = 48.dp)) {
-        SectionHeader(
+        HomeSectionHeader(
             text = stringResource(R.string.pocket_stories_header_1),
             modifier = Modifier
                 .fillMaxWidth()
@@ -97,14 +100,17 @@ fun PocketStories(
 
         Spacer(Modifier.height(24.dp))
 
-        SectionHeader(
+        HomeSectionHeader(
             text = stringResource(R.string.pocket_stories_categories_header),
             modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(Modifier.height(17.dp))
 
-        PocketStoriesCategories(categories ?: emptyList()) {
+        PocketStoriesCategories(
+            categories = categories ?: emptyList(),
+            selections = categoriesSelections ?: emptyList()
+        ) {
             onCategoryClick(it)
         }
 

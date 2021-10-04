@@ -8,13 +8,14 @@ package org.mozilla.fenix.home.sessioncontrol.viewholders.pocket
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -33,6 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import mozilla.components.concept.fetch.Client
 import mozilla.components.service.pocket.PocketRecommendedStory
 import mozilla.components.ui.colors.PhotonColors
@@ -43,6 +45,7 @@ import org.mozilla.fenix.compose.ListItemTabLarge
 import org.mozilla.fenix.compose.ListItemTabLargePlaceholder
 import org.mozilla.fenix.compose.SelectableChip
 import org.mozilla.fenix.compose.StaggeredHorizontalGrid
+import org.mozilla.fenix.compose.TabSubtitle
 import org.mozilla.fenix.compose.TabSubtitleWithInterdot
 import org.mozilla.fenix.compose.TabTitle
 import org.mozilla.fenix.theme.FirefoxTheme
@@ -71,6 +74,8 @@ fun PocketStory(
         "{wh}",
         with(LocalDensity.current) { "${116.dp.toPx().roundToInt()}x${84.dp.toPx().roundToInt()}" }
     )
+    val isValidPublisher = story.publisher.isNotBlank()
+    val isValidTimeToRead = story.timeToRead >= 0
     ListItemTabLarge(
         imageUrl = imageUrl,
         onClick = { onStoryClick(story) },
@@ -78,7 +83,13 @@ fun PocketStory(
             TabTitle(text = story.title, maxLines = 3)
         },
         subtitle = {
-            TabSubtitleWithInterdot(story.publisher, "${story.timeToRead} min")
+            if (isValidPublisher && isValidTimeToRead) {
+                TabSubtitleWithInterdot(story.publisher, "${story.timeToRead} min")
+            } else if (isValidPublisher) {
+                TabSubtitle(story.publisher)
+            } else if (isValidTimeToRead) {
+                TabSubtitle("${story.timeToRead} min")
+            }
         }
     )
 }
@@ -105,9 +116,14 @@ fun PocketStories(
     val listState = rememberLazyListState()
     val flingBehavior = EagerFlingBehavior(lazyRowState = listState)
 
-    LazyRow(state = listState, flingBehavior = flingBehavior) {
-        itemsIndexed(storiesToShow) { columnIndex, columnItems ->
-            Column(Modifier.padding(end = if (columnIndex < storiesToShow.size - 1) 8.dp else 0.dp)) {
+    LazyRow(
+        contentPadding = PaddingValues(start = 8.dp, end = 8.dp),
+        state = listState,
+        flingBehavior = flingBehavior,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        itemsIndexed(storiesToShow) { _, columnItems ->
+            Column {
                 columnItems.forEachIndexed { rowIndex, story ->
                     if (story == placeholderStory) {
                         ListItemTabLargePlaceholder(stringResource(R.string.pocket_stories_placeholder_text)) {
@@ -129,21 +145,22 @@ fun PocketStories(
 }
 
 /**
- * Displays a list of [PocketRecommendedStoryCategory].
+ * Displays a list of [PocketRecommendedStoriesCategory]s.
  *
  * @param categories The categories needed to be displayed.
  * @param onCategoryClick Callback for when the user taps a category.
  */
 @Composable
 fun PocketStoriesCategories(
-    categories: List<PocketRecommendedStoryCategory>,
-    onCategoryClick: (PocketRecommendedStoryCategory) -> Unit
+    categories: List<PocketRecommendedStoriesCategory>,
+    selections: List<PocketRecommendedStoriesSelectedCategory>,
+    onCategoryClick: (PocketRecommendedStoriesCategory) -> Unit
 ) {
     StaggeredHorizontalGrid(
         horizontalItemsSpacing = 16.dp
     ) {
         categories.filter { it.name != POCKET_STORIES_DEFAULT_CATEGORY_NAME }.forEach { category ->
-            SelectableChip(category.name, category.isSelected) {
+            SelectableChip(category.name, selections.map { it.name }.contains(category.name)) {
                 onCategoryClick(category)
             }
         }
@@ -190,7 +207,12 @@ fun PoweredByPocketHeader(
             Spacer(modifier = Modifier.width(16.dp))
 
             Column {
-                Text(text = stringResource(R.string.pocket_stories_feature_title), color = color)
+                Text(
+                    text = stringResource(R.string.pocket_stories_feature_title),
+                    color = color,
+                    fontSize = 12.sp,
+                    lineHeight = 16.sp
+                )
 
                 ClickableSubstringLink(text, color, linkStartIndex, linkEndIndex) {
                     onExternalLinkClicked("https://www.mozilla.org/en-US/firefox/pocket/")
@@ -214,8 +236,9 @@ private fun PocketStoriesComposablesPreview() {
 
                 PocketStoriesCategories(
                     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor".split(" ").map {
-                        PocketRecommendedStoryCategory(it)
-                    }
+                        PocketRecommendedStoriesCategory(it)
+                    },
+                    emptyList()
                 ) { }
                 Spacer(Modifier.height(10.dp))
 
