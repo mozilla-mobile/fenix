@@ -399,13 +399,12 @@ private fun threeDotMenu() = onView(withId(R.id.tab_tray_overflow))
 
 private fun assertExistingOpenTabs(title: String) {
     try {
-        mDevice.findObject(
-            UiSelector()
-                .resourceId("$packageName:id/mozac_browser_tabstray_title")
-                .textContains(title)
+        mDevice.waitNotNull(
+            Until.findObjects(By.textContains(title)), waitingTime
         )
-            .waitForExists(waitingTime)
-
+        mDevice.waitNotNull(
+            Until.findObjects(By.res("$packageName:id/mozac_browser_tabstray_title")), waitingTime
+        )
         tab(title).check(matches(isDisplayed()))
     } catch (e: NoMatchingViewException) {
         onView(withId(R.id.tabsTray)).perform(
