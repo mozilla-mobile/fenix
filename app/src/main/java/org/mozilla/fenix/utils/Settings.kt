@@ -382,7 +382,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
      * four hours of inactivity.
      */
     var startOnHomeAfterFourHours by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_start_on_home_after_four_hours),
+        appContext.getPreferenceKey(R.string.pref_key_opening_screen_homepage),
         default = true
     )
 
@@ -390,7 +390,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
      * Indicates if the user has selected the option to always start on the home screen.
      */
     var startOnHomeAlways by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_start_on_home_always),
+        appContext.getPreferenceKey(R.string.pref_key_opening_screen_last_tab),
         default = false
     )
 
@@ -398,7 +398,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
      * Indicates if the user has selected the option to never start on the home screen.
      */
     var startOnHomeNever by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_start_on_home_never),
+        appContext.getPreferenceKey(R.string.pref_key_opening_screen_after_four_hours_of_inactivity),
         default = false
     )
 

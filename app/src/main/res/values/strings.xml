@@ -367,7 +367,9 @@
     <!-- Preference for changing default theme to dark or light mode -->
     <string name="preferences_theme">Theme</string>
     <!-- Preference for customizing the home screen -->
-    <string name="preferences_home">Home</string>
+    <string name="preferences_home" moz:removedIn="94" tools:ignore="UnusedResources">Home</string>
+    <!-- Preference for customizing the home screen -->
+    <string name="preferences_home_2">Homepage</string>
     <!-- Preference for gestures based actions -->
     <string name="preferences_gestures">Gestures</string>
     <!-- Preference for settings related to visual options -->
@@ -678,15 +680,23 @@
     <!-- Title of preference that allows a user to specify the auto-close settings for open tabs -->
     <string name="preference_auto_close_tabs" tools:ignore="UnusedResources">Auto-close open tabs</string>
 
-    <!-- Start on Home -->
+    <!-- Opening screen -->
     <!-- Title of a preference that allows a user to indicate after a specified amount of time when the app should start on the home screen -->
-    <string name="preferences_start_on_home">Start on home</string>
+    <string name="preferences_start_on_home" moz:removedIn="94" tools:ignore="UnusedResources">Start on home</string>
+    <!-- Title of a preference that allows a user to choose what screen to show after opening the app -->
+    <string name="preferences_opening_screen">Opening screen</string>
     <!-- Option for starting on the home screen after after four hours or inactivity -->
-    <string name="start_on_home_after_four_hours">After four hours</string>
+    <string name="start_on_home_after_four_hours" moz:removedIn="94" tools:ignore="UnusedResources">After four hours</string>
+    <!-- Option for always opening the homepage when re-opening the app -->
+    <string name="opening_screen_homepage">Homepage</string>
     <!-- Option for always starting on the home screen -->
-    <string name="start_on_home_always">Always</string>
+    <string name="start_on_home_always" moz:removedIn="94" tools:ignore="UnusedResources">Always</string>
+    <!-- Option for always opening the user's last-open tab when re-opening the app -->
+    <string name="opening_screen_last_tab">Last tab</string>
     <!-- Option for never starting on the home screen -->
-    <string name="start_on_home_never">Never</string>
+    <string name="start_on_home_never" moz:removedIn="94" tools:ignore="UnusedResources">Never</string>
+    <!-- Option for always opening the homepage when re-opening the app after four hours of inactivity -->
+    <string name="opening_screen_after_four_hours_of_inactivity">Homepage after four hours of inactivity</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
     <string name="close_tabs_manually_summary">Close manually</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
