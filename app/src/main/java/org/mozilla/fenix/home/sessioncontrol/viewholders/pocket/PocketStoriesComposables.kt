@@ -6,6 +6,7 @@
 
 package org.mozilla.fenix.home.sessioncontrol.viewholders.pocket
 
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -18,7 +19,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -33,9 +34,9 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import mozilla.components.concept.fetch.Client
 import mozilla.components.service.pocket.PocketRecommendedStory
 import mozilla.components.ui.colors.PhotonColors
 import org.mozilla.fenix.R
@@ -51,6 +52,10 @@ import org.mozilla.fenix.compose.TabTitle
 import org.mozilla.fenix.theme.FirefoxTheme
 import kotlin.math.roundToInt
 import kotlin.random.Random
+
+private const val URI_PARAM_UTM_KEY = "utm_source"
+private const val POCKET_STORIES_UTM_VALUE = "pocket-newtab-android"
+private const val POCKET_FEATURE_UTM_KEY_VALUE = "utm_source=ff_android"
 
 /**
  * Placeholder [PocketRecommendedStory] allowing to combine other items in the same list that shows stories.
@@ -100,13 +105,15 @@ fun PocketStory(
  * to go to Pocket for more recommendations are added.
  *
  * @param stories The list of [PocketRecommendedStory]ies to be displayed. Expect a list with 8 items.
- * @param client [Client] instance to be used for downloading the story header image.
+ * @param contentPadding Dimension for padding the content after it has been clipped.
+ * This space will be used for shadows and also content rendering when the list is scrolled.
  * @param onExternalLinkClicked Callback for when the user taps an element which contains an
  * external link for where user can go for more recommendations.
  */
 @Composable
 fun PocketStories(
     @PreviewParameter(PocketStoryProvider::class) stories: List<PocketRecommendedStory>,
+    contentPadding: Dp,
     onExternalLinkClicked: (String) -> Unit
 ) {
     // Show stories in at most 3 rows but on any number of columns depending on the data received.
@@ -117,26 +124,26 @@ fun PocketStories(
     val flingBehavior = EagerFlingBehavior(lazyRowState = listState)
 
     LazyRow(
-        contentPadding = PaddingValues(start = 8.dp, end = 8.dp),
+        contentPadding = PaddingValues(horizontal = contentPadding),
         state = listState,
         flingBehavior = flingBehavior,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        itemsIndexed(storiesToShow) { _, columnItems ->
-            Column {
-                columnItems.forEachIndexed { rowIndex, story ->
+        items(storiesToShow) { columnItems ->
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                columnItems.forEach { story ->
                     if (story == placeholderStory) {
                         ListItemTabLargePlaceholder(stringResource(R.string.pocket_stories_placeholder_text)) {
-                            onExternalLinkClicked("http://getpocket.com/explore")
+                            onExternalLinkClicked("https://getpocket.com/explore?$POCKET_FEATURE_UTM_KEY_VALUE")
                         }
                     } else {
+                        val uri = Uri.parse(story.url)
+                            .buildUpon()
+                            .appendQueryParameter(URI_PARAM_UTM_KEY, POCKET_STORIES_UTM_VALUE)
+                            .build().toString()
                         PocketStory(story) {
-                            onExternalLinkClicked(story.url)
+                            onExternalLinkClicked(uri)
                         }
-                    }
-
-                    if (rowIndex < maxRowsNo - 1) {
-                        Spacer(modifier = Modifier.height(8.dp))
                     }
                 }
             }
@@ -148,20 +155,25 @@ fun PocketStories(
  * Displays a list of [PocketRecommendedStoriesCategory]s.
  *
  * @param categories The categories needed to be displayed.
+ * @param selections List of categories currently selected.
  * @param onCategoryClick Callback for when the user taps a category.
+ * @param modifier [Modifier] to be applied to the layout.
  */
 @Composable
 fun PocketStoriesCategories(
     categories: List<PocketRecommendedStoriesCategory>,
     selections: List<PocketRecommendedStoriesSelectedCategory>,
-    onCategoryClick: (PocketRecommendedStoriesCategory) -> Unit
+    onCategoryClick: (PocketRecommendedStoriesCategory) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    StaggeredHorizontalGrid(
-        horizontalItemsSpacing = 16.dp
-    ) {
-        categories.filter { it.name != POCKET_STORIES_DEFAULT_CATEGORY_NAME }.forEach { category ->
-            SelectableChip(category.name, selections.map { it.name }.contains(category.name)) {
-                onCategoryClick(category)
+    Box(modifier = modifier) {
+        StaggeredHorizontalGrid(
+            horizontalItemsSpacing = 16.dp
+        ) {
+            categories.filter { it.name != POCKET_STORIES_DEFAULT_CATEGORY_NAME }.forEach { category ->
+                SelectableChip(category.name, selections.map { it.name }.contains(category.name)) {
+                    onCategoryClick(category)
+                }
             }
         }
     }
@@ -173,10 +185,12 @@ fun PocketStoriesCategories(
  *
  * @param onExternalLinkClicked Callback invoked when the user clicks the "Learn more" link.
  * Contains the full URL for where the user should be navigated to.
+ * @param modifier [Modifier] to be applied to the layout.
  */
 @Composable
 fun PoweredByPocketHeader(
     onExternalLinkClicked: (String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val color = when (isSystemInDarkTheme()) {
         true -> PhotonColors.LightGrey30
@@ -189,6 +203,7 @@ fun PoweredByPocketHeader(
     val linkEndIndex = linkStartIndex + link.length
 
     Column(
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Row(
@@ -215,7 +230,7 @@ fun PoweredByPocketHeader(
                 )
 
                 ClickableSubstringLink(text, color, linkStartIndex, linkEndIndex) {
-                    onExternalLinkClicked("https://www.mozilla.org/en-US/firefox/pocket/")
+                    onExternalLinkClicked("https://www.mozilla.org/en-US/firefox/pocket/?$POCKET_FEATURE_UTM_KEY_VALUE")
                 }
             }
         }
@@ -230,6 +245,7 @@ private fun PocketStoriesComposablesPreview() {
             Column {
                 PocketStories(
                     stories = getFakePocketStories(8),
+                    contentPadding = 0.dp,
                     onExternalLinkClicked = { }
                 )
                 Spacer(Modifier.height(10.dp))
@@ -238,11 +254,12 @@ private fun PocketStoriesComposablesPreview() {
                     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor".split(" ").map {
                         PocketRecommendedStoriesCategory(it)
                     },
-                    emptyList()
-                ) { }
+                    emptyList(),
+                    { }
+                )
                 Spacer(Modifier.height(10.dp))
 
-                PoweredByPocketHeader { }
+                PoweredByPocketHeader({ })
             }
         }
     }
