@@ -18,7 +18,6 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.recyclerview.widget.RecyclerView
-import mozilla.components.concept.fetch.Client
 import mozilla.components.lib.state.ext.observeAsComposableState
 import mozilla.components.service.pocket.PocketRecommendedStory
 import org.mozilla.fenix.R
@@ -35,13 +34,11 @@ internal const val POCKET_CATEGORIES_SELECTED_AT_A_TIME_COUNT = 8
  *
  * @param composeView [ComposeView] which will be populated with Jetpack Compose UI content.
  * @param store [HomeFragmentStore] containing the list of Pocket stories to be displayed.
- * @param client [Client] instance used for the stories header images.
  * @param interactor [PocketStoriesInteractor] callback for user interaction.
  */
 class PocketStoriesViewHolder(
     val composeView: ComposeView,
     val store: HomeFragmentStore,
-    val client: Client,
     val interactor: PocketStoriesInteractor
 ) : RecyclerView.ViewHolder(composeView) {
 
@@ -53,7 +50,6 @@ class PocketStoriesViewHolder(
             FirefoxTheme {
                 PocketStories(
                     store,
-                    client,
                     interactor::onStoriesShown,
                     interactor::onCategoryClick,
                     interactor::onExternalLinkClicked
@@ -70,9 +66,8 @@ class PocketStoriesViewHolder(
 @Composable
 fun PocketStories(
     store: HomeFragmentStore,
-    client: Client,
     onStoriesShown: (List<PocketRecommendedStory>) -> Unit,
-    onCategoryClick: (PocketRecommendedStoryCategory) -> Unit,
+    onCategoryClick: (PocketRecommendedStoriesCategory) -> Unit,
     onExternalLinkClicked: (String) -> Unit
 ) {
     val stories = store
@@ -80,6 +75,9 @@ fun PocketStories(
 
     val categories = store
         .observeAsComposableState { state -> state.pocketStoriesCategories }.value
+
+    val categoriesSelections = store
+        .observeAsComposableState { state -> state.pocketStoriesCategoriesSelections }.value
 
     LaunchedEffect(stories) {
         // We should report back when a certain story is actually being displayed.
@@ -98,7 +96,7 @@ fun PocketStories(
 
         Spacer(Modifier.height(17.dp))
 
-        PocketStories(stories ?: emptyList(), client, onExternalLinkClicked)
+        PocketStories(stories ?: emptyList(), onExternalLinkClicked)
 
         Spacer(Modifier.height(24.dp))
 
@@ -109,7 +107,10 @@ fun PocketStories(
 
         Spacer(Modifier.height(17.dp))
 
-        PocketStoriesCategories(categories ?: emptyList()) {
+        PocketStoriesCategories(
+            categories = categories ?: emptyList(),
+            selections = categoriesSelections ?: emptyList()
+        ) {
             onCategoryClick(it)
         }
 

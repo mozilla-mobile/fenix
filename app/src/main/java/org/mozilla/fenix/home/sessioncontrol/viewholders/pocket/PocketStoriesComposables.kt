@@ -41,11 +41,11 @@ import mozilla.components.ui.colors.PhotonColors
 import org.mozilla.fenix.R
 import org.mozilla.fenix.compose.ClickableSubstringLink
 import org.mozilla.fenix.compose.EagerFlingBehavior
-import org.mozilla.fenix.compose.FakeClient
 import org.mozilla.fenix.compose.ListItemTabLarge
 import org.mozilla.fenix.compose.ListItemTabLargePlaceholder
 import org.mozilla.fenix.compose.SelectableChip
 import org.mozilla.fenix.compose.StaggeredHorizontalGrid
+import org.mozilla.fenix.compose.TabSubtitle
 import org.mozilla.fenix.compose.TabSubtitleWithInterdot
 import org.mozilla.fenix.compose.TabTitle
 import org.mozilla.fenix.theme.FirefoxTheme
@@ -63,28 +63,33 @@ private val placeholderStory = PocketRecommendedStory("", "", "", "", "", 0, 0)
  * Displays a single [PocketRecommendedStory].
  *
  * @param story The [PocketRecommendedStory] to be displayed.
- * @param client [Client] instance to be used for downloading the story header image.
  * @param onStoryClick Callback for when the user taps on this story.
  */
 @Composable
 fun PocketStory(
     @PreviewParameter(PocketStoryProvider::class) story: PocketRecommendedStory,
-    client: Client,
     onStoryClick: (PocketRecommendedStory) -> Unit,
 ) {
     val imageUrl = story.imageUrl.replace(
         "{wh}",
         with(LocalDensity.current) { "${116.dp.toPx().roundToInt()}x${84.dp.toPx().roundToInt()}" }
     )
+    val isValidPublisher = story.publisher.isNotBlank()
+    val isValidTimeToRead = story.timeToRead >= 0
     ListItemTabLarge(
-        client = client,
         imageUrl = imageUrl,
         onClick = { onStoryClick(story) },
         title = {
             TabTitle(text = story.title, maxLines = 3)
         },
         subtitle = {
-            TabSubtitleWithInterdot(story.publisher, "${story.timeToRead} min")
+            if (isValidPublisher && isValidTimeToRead) {
+                TabSubtitleWithInterdot(story.publisher, "${story.timeToRead} min")
+            } else if (isValidPublisher) {
+                TabSubtitle(story.publisher)
+            } else if (isValidTimeToRead) {
+                TabSubtitle("${story.timeToRead} min")
+            }
         }
     )
 }
@@ -102,7 +107,6 @@ fun PocketStory(
 @Composable
 fun PocketStories(
     @PreviewParameter(PocketStoryProvider::class) stories: List<PocketRecommendedStory>,
-    client: Client,
     onExternalLinkClicked: (String) -> Unit
 ) {
     // Show stories in at most 3 rows but on any number of columns depending on the data received.
@@ -126,7 +130,7 @@ fun PocketStories(
                             onExternalLinkClicked("http://getpocket.com/explore")
                         }
                     } else {
-                        PocketStory(story, client) {
+                        PocketStory(story) {
                             onExternalLinkClicked(story.url)
                         }
                     }
@@ -141,21 +145,22 @@ fun PocketStories(
 }
 
 /**
- * Displays a list of [PocketRecommendedStoryCategory].
+ * Displays a list of [PocketRecommendedStoriesCategory]s.
  *
  * @param categories The categories needed to be displayed.
  * @param onCategoryClick Callback for when the user taps a category.
  */
 @Composable
 fun PocketStoriesCategories(
-    categories: List<PocketRecommendedStoryCategory>,
-    onCategoryClick: (PocketRecommendedStoryCategory) -> Unit
+    categories: List<PocketRecommendedStoriesCategory>,
+    selections: List<PocketRecommendedStoriesSelectedCategory>,
+    onCategoryClick: (PocketRecommendedStoriesCategory) -> Unit
 ) {
     StaggeredHorizontalGrid(
         horizontalItemsSpacing = 16.dp
     ) {
         categories.filter { it.name != POCKET_STORIES_DEFAULT_CATEGORY_NAME }.forEach { category ->
-            SelectableChip(category.name, category.isSelected) {
+            SelectableChip(category.name, selections.map { it.name }.contains(category.name)) {
                 onCategoryClick(category)
             }
         }
@@ -225,15 +230,15 @@ private fun PocketStoriesComposablesPreview() {
             Column {
                 PocketStories(
                     stories = getFakePocketStories(8),
-                    client = FakeClient(),
                     onExternalLinkClicked = { }
                 )
                 Spacer(Modifier.height(10.dp))
 
                 PocketStoriesCategories(
                     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor".split(" ").map {
-                        PocketRecommendedStoryCategory(it)
-                    }
+                        PocketRecommendedStoriesCategory(it)
+                    },
+                    emptyList()
                 ) { }
                 Spacer(Modifier.height(10.dp))
 

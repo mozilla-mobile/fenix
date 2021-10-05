@@ -107,7 +107,9 @@ events:
   browser_menu_action:
     type: event
     description: |
-      A browser menu item was tapped
+      A browser menu item was tapped.
+      The name of the item that the user tapped is stored in extras with the
+      key `item`.
     extra_keys:
       item:
         description: |
@@ -4994,9 +4996,9 @@ home_menu:
 home_screen:
   home_screen_displayed:
     type: event
-    description: The user clicked the settings option in home menu.
+    description: The home screen was displayed.
     bugs:
-      - https://github.com/mozilla-mobile/fenix/issues/18856
+      - https://github.com/mozilla-mobile/fenix/issues/18854
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/19025
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
