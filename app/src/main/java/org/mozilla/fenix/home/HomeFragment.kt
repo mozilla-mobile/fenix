@@ -93,6 +93,7 @@ import org.mozilla.fenix.components.tips.providers.MasterPasswordTipProvider
 import org.mozilla.fenix.components.toolbar.FenixTabCounterMenu
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.databinding.FragmentHomeBinding
+import org.mozilla.fenix.datastore.pocketStoriesSelectedCategoriesDataStore
 import org.mozilla.fenix.ext.asRecentTabs
 import org.mozilla.fenix.experiments.FeatureId
 import org.mozilla.fenix.ext.components
@@ -116,7 +117,7 @@ import org.mozilla.fenix.home.sessioncontrol.SessionControlInteractor
 import org.mozilla.fenix.home.sessioncontrol.SessionControlView
 import org.mozilla.fenix.home.sessioncontrol.viewholders.CollectionViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.pocket.DefaultPocketStoriesController
-import org.mozilla.fenix.home.sessioncontrol.viewholders.pocket.PocketRecommendedStoryCategory
+import org.mozilla.fenix.home.sessioncontrol.viewholders.pocket.PocketRecommendedStoriesCategory
 import org.mozilla.fenix.home.sessioncontrol.viewholders.topsites.DefaultTopSitesView
 import org.mozilla.fenix.onboarding.FenixOnboarding
 import org.mozilla.fenix.settings.SupportUtils
@@ -248,7 +249,9 @@ class HomeFragment : Fragment() {
                 ),
                 listOf(
                     PocketUpdatesMiddleware(
-                        lifecycleScope, requireComponents.core.pocketStoriesService
+                        lifecycleScope,
+                        requireComponents.core.pocketStoriesService,
+                        requireContext().pocketStoriesSelectedCategoriesDataStore
                     )
                 )
             )
@@ -258,7 +261,7 @@ class HomeFragment : Fragment() {
             if (requireContext().settings().showPocketRecommendationsFeature) {
                 val categories = components.core.pocketStoriesService.getStories()
                     .groupBy { story -> story.category }
-                    .map { (category, stories) -> PocketRecommendedStoryCategory(category, stories) }
+                    .map { (category, stories) -> PocketRecommendedStoriesCategory(category, stories) }
 
                 homeFragmentStore.dispatch(HomeFragmentAction.PocketStoriesCategoriesChange(categories))
             } else {
