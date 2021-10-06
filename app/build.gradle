@@ -576,6 +576,7 @@ dependencies {
     testImplementation Deps.mozilla_support_test_libstate
     testImplementation Deps.androidx_junit
     testImplementation Deps.androidx_work_testing
+    testImplementation Deps.androidx_compose_ui_test
     testImplementation (Deps.robolectric) {
         exclude group: 'org.apache.maven'
     }

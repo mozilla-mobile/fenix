@@ -18,6 +18,8 @@ import androidx.compose.material.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.mozilla.fenix.theme.FirefoxTheme
@@ -104,7 +106,10 @@ private fun ListItemTabSurface(
     onClick: (() -> Unit)? = null,
     tabDetails: @Composable () -> Unit
 ) {
-    var modifier = Modifier.size(328.dp, 116.dp)
+    var modifier = Modifier
+        .size(328.dp, 116.dp)
+        .testTag("ListItemTabLarge")
+        .semantics { url = imageUrl }
     if (onClick != null) modifier = modifier.then(Modifier.clickable { onClick() })
 
     Card(

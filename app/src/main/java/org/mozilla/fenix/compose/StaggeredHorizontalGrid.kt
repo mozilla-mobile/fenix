@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
@@ -44,7 +45,12 @@ fun StaggeredHorizontalGrid(
 ) {
     val currentLayoutDirection = LocalLayoutDirection.current
 
-    Layout(content, modifier) { items, constraints ->
+    Layout(
+        content,
+        modifier.then(
+            Modifier.testTag("StaggeredHorizontalGrid")
+        )
+    ) { items, constraints ->
         val horizontalItemsSpacingPixels = horizontalItemsSpacing.roundToPx()
         val verticalItemsSpacingPixels = verticalItemsSpacing.roundToPx()
         var totalHeight = 0
