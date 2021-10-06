@@ -60,7 +60,7 @@ fun HomeSectionHeader(
             fontSize = 16.sp,
             lineHeight = 20.sp
         ),
-        maxLines = 1,
+        maxLines = 2,
         overflow = TextOverflow.Ellipsis,
         color = FirefoxTheme.colors.textPrimary
     )
