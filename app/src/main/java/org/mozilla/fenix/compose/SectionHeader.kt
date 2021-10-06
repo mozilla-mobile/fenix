@@ -62,7 +62,11 @@ fun HomeSectionHeader(
         ),
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
+<<<<<<< HEAD
         color = FirefoxTheme.colors.textPrimary
+=======
+        maxLines = 2
+>>>>>>> 4bd140a0f (For #21522: Wrap section titles on home)
     )
 }
 
