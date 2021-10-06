@@ -63,11 +63,11 @@ class HomeSettingsFragment : PreferenceFragmentCompat() {
         }
 
         val openingScreenRadioHomepage =
-            requirePreference<RadioButtonPreference>(R.string.pref_key_opening_screen_homepage)
+            requirePreference<RadioButtonPreference>(R.string.pref_key_start_on_home_always)
         val openingScreenLastTab =
-            requirePreference<RadioButtonPreference>(R.string.pref_key_opening_screen_last_tab)
+            requirePreference<RadioButtonPreference>(R.string.pref_key_start_on_home_never)
         val openingScreenAfterFourHours =
-            requirePreference<RadioButtonPreference>(R.string.pref_key_opening_screen_after_four_hours_of_inactivity)
+            requirePreference<RadioButtonPreference>(R.string.pref_key_start_on_home_after_four_hours)
 
         requirePreference<PreferenceCategory>(R.string.pref_key_start_on_home_category).isVisible =
             FeatureFlags.showStartOnHomeSettings

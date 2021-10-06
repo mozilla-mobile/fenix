@@ -28,7 +28,6 @@ class SettingsSubMenuTabsRobot {
 
     fun verifyCloseTabsOptions() = assertCloseTabsOptions()
 
-
     fun clickAlwaysStartOnHomeToggle() {
         scrollToElementByText("Move old tabs to inactive")
         alwaysStartOnHomeToggle().click()
