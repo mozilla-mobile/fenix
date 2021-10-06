@@ -1434,7 +1434,6 @@ class SmokeTest {
         }.openTabsSubMenu {
             verifyTabViewOptions()
             verifyCloseTabsOptions()
-            verifyStartOnHomeOptions()
         }
     }
 

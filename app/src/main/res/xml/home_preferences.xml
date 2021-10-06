@@ -7,7 +7,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <androidx.preference.SwitchPreference
         android:key="@string/pref_key_enable_top_frecent_sites"
-        android:title="@string/top_sites_toggle_top_frecent_sites_2" />
+        android:title="@string/top_sites_toggle_top_recent_sites_3" />
 
     <androidx.preference.SwitchPreference
         android:key="@string/pref_key_recent_tabs"
