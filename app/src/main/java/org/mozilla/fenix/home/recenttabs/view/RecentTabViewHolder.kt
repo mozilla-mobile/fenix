@@ -8,6 +8,7 @@ import android.view.View
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import mozilla.components.lib.state.ext.observeAsComposableState
+import org.mozilla.fenix.R
 import org.mozilla.fenix.home.HomeFragmentStore
 import org.mozilla.fenix.home.recenttabs.interactor.RecentTabInteractor
 import org.mozilla.fenix.theme.FirefoxTheme
@@ -27,6 +28,9 @@ class RecentTabViewHolder(
 ) : ViewHolder(composeView) {
 
     init {
+        val horizontalPadding = composeView.resources.getDimensionPixelSize(R.dimen.home_item_horizontal_margin)
+        composeView.setPadding(horizontalPadding, 0, horizontalPadding, 0)
+
         composeView.setViewCompositionStrategy(
             ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed
         )
@@ -36,7 +40,8 @@ class RecentTabViewHolder(
             FirefoxTheme {
                 RecentTabs(
                     recentTabs = recentTabs.value ?: emptyList(),
-                    onRecentTabClick = { interactor.onRecentTabClicked(it) }
+                    onRecentTabClick = { interactor.onRecentTabClicked(it) },
+                    onRecentSearchGroupClicked = { interactor.onRecentSearchGroupClicked(it) }
                 )
             }
         }

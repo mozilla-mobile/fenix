@@ -7,6 +7,7 @@ package org.mozilla.fenix.ui
 import android.content.Context
 import androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu
 import androidx.test.espresso.IdlingRegistry
+import androidx.test.platform.app.InstrumentationRegistry
 import kotlinx.coroutines.runBlocking
 import mozilla.components.browser.storage.sync.PlacesHistoryStorage
 import okhttp3.mockwebserver.MockWebServer
@@ -15,6 +16,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.RecyclerViewIdlingResource
@@ -40,6 +42,9 @@ class HistoryTest {
 
     @Before
     fun setUp() {
+        InstrumentationRegistry.getInstrumentation().targetContext.settings()
+            .shouldShowJumpBackInCFR = false
+
         mockWebServer = MockWebServer().apply {
             dispatcher = AndroidAssetDispatcher()
             start()
@@ -96,87 +101,6 @@ class HistoryTest {
     }
 
     @Test
-    fun copyHistoryItemURLTest() {
-        val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(firstWebPage.url) {
-            mDevice.waitForIdle()
-        }.openThreeDotMenu {
-        }.openHistory {
-            verifyHistoryListExists()
-            historyListIdlingResource =
-                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.history_list), 1)
-            IdlingRegistry.getInstance().register(historyListIdlingResource!!)
-        }.openThreeDotMenu {
-        }.clickCopy {
-            verifyCopySnackBarText()
-        }
-    }
-
-    @Test
-    fun shareHistoryItemTest() {
-        val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(firstWebPage.url) {
-            mDevice.waitForIdle()
-        }.openThreeDotMenu {
-        }.openHistory {
-            verifyHistoryListExists()
-            historyListIdlingResource =
-                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.history_list), 1)
-            IdlingRegistry.getInstance().register(historyListIdlingResource!!)
-        }.openThreeDotMenu {
-        }.clickShare {
-            verifyShareOverlay()
-            verifyShareTabFavicon()
-            verifyShareTabTitle()
-            verifyShareTabUrl()
-        }
-    }
-
-    @Test
-    fun openHistoryItemInNewTabTest() {
-        val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(firstWebPage.url) {
-            mDevice.waitForIdle()
-        }.openThreeDotMenu {
-        }.openHistory {
-            verifyHistoryListExists()
-            historyListIdlingResource =
-                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.history_list), 1)
-            IdlingRegistry.getInstance().register(historyListIdlingResource!!)
-        }.openThreeDotMenu {
-        }.clickOpenInNormalTab {
-            verifyTabTrayIsOpened()
-            verifyNormalModeSelected()
-        }
-    }
-
-    @Test
-    fun openHistoryItemInNewPrivateTabTest() {
-        val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(firstWebPage.url) {
-            mDevice.waitForIdle()
-        }.openThreeDotMenu {
-        }.openHistory {
-            verifyHistoryListExists()
-            historyListIdlingResource =
-                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.history_list), 1)
-            IdlingRegistry.getInstance().register(historyListIdlingResource!!)
-        }.openThreeDotMenu {
-        }.clickOpenInPrivateTab {
-            verifyTabTrayIsOpened()
-            verifyPrivateModeSelected()
-        }
-    }
-
-    @Test
     fun deleteHistoryItemTest() {
         val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
@@ -189,9 +113,8 @@ class HistoryTest {
             historyListIdlingResource =
                 RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.history_list), 1)
             IdlingRegistry.getInstance().register(historyListIdlingResource!!)
-        }.openThreeDotMenu {
+            clickDeleteHistoryButton()
             IdlingRegistry.getInstance().unregister(historyListIdlingResource!!)
-        }.clickDelete {
             verifyDeleteSnackbarText("Deleted")
             verifyEmptyHistoryView()
         }
@@ -210,7 +133,7 @@ class HistoryTest {
             historyListIdlingResource =
                 RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.history_list), 1)
             IdlingRegistry.getInstance().register(historyListIdlingResource!!)
-            clickDeleteHistoryButton()
+            clickDeleteAllHistoryButton()
             IdlingRegistry.getInstance().unregister(historyListIdlingResource!!)
             verifyDeleteConfirmationMessage()
             confirmDeleteAllHistory()
@@ -304,15 +227,18 @@ class HistoryTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(firstWebPage.url) {
-        }.openTabDrawer {
-        }.openNewTab {
-        }.submitQuery(secondWebPage.url.toString()) {
+        }.openNavigationToolbar {
+        }.enterURLAndEnterToBrowser(secondWebPage.url) {
+            mDevice.waitForIdle()
+            verifyUrl(secondWebPage.url.toString())
         }.openThreeDotMenu {
         }.openHistory {
             verifyHistoryListExists()
             historyListIdlingResource =
                 RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.history_list), 2)
             IdlingRegistry.getInstance().register(historyListIdlingResource!!)
+            verifyHistoryItemExists(firstWebPage.url.toString())
+            verifyHistoryItemExists(secondWebPage.url.toString())
             longTapSelectItem(firstWebPage.url)
             longTapSelectItem(secondWebPage.url)
             openActionBarOverflowOrOptionsMenu(activityTestRule.activity)

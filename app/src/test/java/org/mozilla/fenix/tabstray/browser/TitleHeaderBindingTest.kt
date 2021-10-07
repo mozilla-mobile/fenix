@@ -4,6 +4,8 @@
 
 package org.mozilla.fenix.tabstray.browser
 
+import io.mockk.every
+import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import mozilla.components.browser.state.action.TabListAction
@@ -18,6 +20,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
+import org.mozilla.fenix.utils.Settings
 
 @ExperimentalCoroutinesApi
 class TitleHeaderBindingTest {
@@ -26,14 +29,61 @@ class TitleHeaderBindingTest {
     val coroutinesTestRule = MainCoroutineRule()
 
     @Test
-    fun `WHEN normal tabs are added to the list THEN return true`() = runBlockingTest {
+    fun `WHEN normal tabs are added to the list THEN return false`() = runBlockingTest {
         var result = false
         val store = BrowserStore()
-        val binding = TitleHeaderBinding(store) { result = it }
+        val settings: Settings = mockk(relaxed = true)
+        val binding = TitleHeaderBinding(store, settings) { result = it }
+
+        every { settings.inactiveTabsAreEnabled } returns true
+
+        binding.start()
 
         store.dispatch(TabListAction.AddTabAction(createTab("https://mozilla.org"))).joinBlocking()
 
+        store.waitUntilIdle()
+
+        assertFalse(result)
+    }
+
+    @Test
+    fun `WHEN grouped and normal tabs are added THEN return true`() = runBlockingTest {
+        var result = false
+        val store = BrowserStore(
+            initialState = BrowserState(
+                listOf(
+                    createTab(
+                        url = "https://mozilla.org",
+                        historyMetadata = HistoryMetadataKey(
+                            url = "https://getpocket.com",
+                            searchTerm = "Mozilla"
+                        )
+                    ),
+                    createTab(
+                        url = "https://firefox.com",
+                        historyMetadata = HistoryMetadataKey(
+                            url = "https://getpocket.com",
+                            searchTerm = "Mozilla"
+                        )
+                    )
+                )
+            )
+        )
+        val settings: Settings = mockk(relaxed = true)
+        val binding = TitleHeaderBinding(store, settings) { result = it }
+
+        every { settings.inactiveTabsAreEnabled } returns true
+        every { settings.searchTermTabGroupsAreEnabled } returns true
+
         binding.start()
+
+        store.dispatch(
+            TabListAction.AddTabAction(
+                createTab(
+                    url = "https://getpocket.com",
+                )
+            )
+        ).joinBlocking()
 
         store.waitUntilIdle()
 
@@ -41,10 +91,16 @@ class TitleHeaderBindingTest {
     }
 
     @Test
-    fun `WHEN grouped tabs are added to the list THEN return false`() = runBlockingTest {
+    fun `WHEN grouped tab is added to the list THEN return false`() = runBlockingTest {
         var result = false
         val store = BrowserStore()
-        val binding = TitleHeaderBinding(store) { result = it }
+        val settings: Settings = mockk(relaxed = true)
+        val binding = TitleHeaderBinding(store, settings) { result = it }
+
+        every { settings.inactiveTabsAreEnabled } returns true
+        every { settings.searchTermTabGroupsAreEnabled } returns true
+
+        binding.start()
 
         store.dispatch(
             TabListAction.AddTabAction(
@@ -57,8 +113,6 @@ class TitleHeaderBindingTest {
                 )
             )
         ).joinBlocking()
-
-        binding.start()
 
         store.waitUntilIdle()
 
@@ -73,11 +127,12 @@ class TitleHeaderBindingTest {
                 tabs = listOf(createTab("https://getpocket.com", id = "123"))
             )
         )
-        val binding = TitleHeaderBinding(store) { result = it }
-
-        store.dispatch(TabListAction.RemoveTabAction("123")).joinBlocking()
+        val settings: Settings = mockk(relaxed = true)
+        val binding = TitleHeaderBinding(store, settings) { result = it }
 
         binding.start()
+
+        store.dispatch(TabListAction.RemoveTabAction("123")).joinBlocking()
 
         store.waitUntilIdle()
 

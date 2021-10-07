@@ -47,7 +47,6 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
@@ -81,6 +80,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BrowserAnimator.Companion.getToolbarNavOptions
 import org.mozilla.fenix.browser.BrowserFragmentDirections
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
+import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.PrivateShortcutCreateManager
 import org.mozilla.fenix.components.StoreProvider
@@ -93,10 +93,14 @@ import org.mozilla.fenix.components.tips.providers.MasterPasswordTipProvider
 import org.mozilla.fenix.components.toolbar.FenixTabCounterMenu
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.databinding.FragmentHomeBinding
+import org.mozilla.fenix.datastore.pocketStoriesSelectedCategoriesDataStore
+import org.mozilla.fenix.ext.asRecentTabs
+import org.mozilla.fenix.experiments.FeatureId
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.hideToolbar
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
+import org.mozilla.fenix.ext.recordExposureEvent
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.settings
@@ -105,13 +109,16 @@ import org.mozilla.fenix.historymetadata.controller.DefaultHistoryMetadataContro
 import org.mozilla.fenix.home.mozonline.showPrivacyPopWindow
 import org.mozilla.fenix.home.recentbookmarks.RecentBookmarksFeature
 import org.mozilla.fenix.home.recentbookmarks.controller.DefaultRecentBookmarksController
+import org.mozilla.fenix.home.recenttabs.RecentTab
 import org.mozilla.fenix.home.recenttabs.RecentTabsListFeature
 import org.mozilla.fenix.home.recenttabs.controller.DefaultRecentTabsController
 import org.mozilla.fenix.home.sessioncontrol.DefaultSessionControlController
 import org.mozilla.fenix.home.sessioncontrol.SessionControlInteractor
 import org.mozilla.fenix.home.sessioncontrol.SessionControlView
 import org.mozilla.fenix.home.sessioncontrol.viewholders.CollectionViewHolder
-import org.mozilla.fenix.home.sessioncontrol.viewholders.topsites.DefaultTopSitesView
+import org.mozilla.fenix.home.sessioncontrol.viewholders.pocket.DefaultPocketStoriesController
+import org.mozilla.fenix.home.sessioncontrol.viewholders.pocket.PocketRecommendedStoriesCategory
+import org.mozilla.fenix.home.topsites.DefaultTopSitesView
 import org.mozilla.fenix.onboarding.FenixOnboarding
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.settings.SupportUtils.SumoTopic.HELP
@@ -234,16 +241,31 @@ class HomeFragment : Fragment() {
                     recentBookmarks = emptyList(),
                     showCollectionPlaceholder = components.settings.showCollectionsPlaceholderOnHome,
                     showSetAsDefaultBrowserCard = components.settings.shouldShowSetAsDefaultBrowserCard(),
-                    recentTabs = emptyList(),
+                    // Provide an initial state for recent tabs to prevent re-rendering on the home screen.
+                    //  This will otherwise cause a visual jump as the section gets rendered from no state
+                    //  to some state.
+                    recentTabs = getRecentTabs(components),
                     historyMetadata = emptyList()
+                ),
+                listOf(
+                    PocketUpdatesMiddleware(
+                        lifecycleScope,
+                        requireComponents.core.pocketStoriesService,
+                        requireContext().pocketStoriesSelectedCategoriesDataStore
+                    )
                 )
             )
         }
 
-        if (requireContext().settings().pocketRecommendations) {
-            lifecycleScope.async(IO) {
-                val stories = components.core.pocketStoriesService.getStories()
-                homeFragmentStore.dispatch(HomeFragmentAction.PocketArticlesChange(stories))
+        lifecycleScope.launch(IO) {
+            if (requireContext().settings().showPocketRecommendationsFeature) {
+                val categories = components.core.pocketStoriesService.getStories()
+                    .groupBy { story -> story.category }
+                    .map { (category, stories) -> PocketRecommendedStoriesCategory(category, stories) }
+
+                homeFragmentStore.dispatch(HomeFragmentAction.PocketStoriesCategoriesChange(categories))
+            } else {
+                homeFragmentStore.dispatch(HomeFragmentAction.PocketStoriesChange(emptyList()))
             }
         }
 
@@ -326,10 +348,13 @@ class HomeFragment : Fragment() {
                 navController = findNavController()
             ),
             historyMetadataController = DefaultHistoryMetadataController(
-                activity = activity,
-                settings = components.settings,
-                homeFragmentStore = homeFragmentStore,
-                selectOrAddUseCase = components.useCases.tabsUseCases.selectOrAddTab,
+                navController = findNavController(),
+                storage = components.core.historyStorage,
+                scope = viewLifecycleOwner.lifecycleScope
+            ),
+            pocketStoriesController = DefaultPocketStoriesController(
+                homeActivity = activity,
+                homeStore = homeFragmentStore,
                 navController = findNavController()
             )
         )
@@ -348,6 +373,8 @@ class HomeFragment : Fragment() {
         appBarLayout = binding.homeAppBar
 
         activity.themeManager.applyStatusBarTheme(activity)
+
+        requireContext().components.analytics.experiments.recordExposureEvent(FeatureId.HOME_PAGE)
         return binding.root
     }
 
@@ -642,7 +669,10 @@ class HomeFragment : Fragment() {
                     ).getTip()
                 },
                 showCollectionPlaceholder = components.settings.showCollectionsPlaceholderOnHome,
-                recentTabs = emptyList(),
+                // Provide an initial state for recent tabs to prevent re-rendering on the home screen.
+                //  This will otherwise cause a visual jump as the section gets rendered from no state
+                //  to some state.
+                recentTabs = getRecentTabs(components),
                 recentBookmarks = emptyList(),
                 historyMetadata = emptyList()
             )
@@ -846,6 +876,7 @@ class HomeFragment : Fragment() {
                         requireComponents.analytics.metrics.track(Event.HomeMenuSettingsItemClicked)
                     }
                     HomeMenu.Item.CustomizeHome -> {
+                        context.metrics.track(Event.HomeScreenCustomizedHomeClicked)
                         hideOnboardingIfNeeded()
                         nav(
                             R.id.homeFragment,
@@ -1125,6 +1156,14 @@ class HomeFragment : Fragment() {
     @SuppressLint("NotifyDataSetChanged")
     private fun handleSwipedItemDeletionCancel() {
         binding.sessionControlRecyclerView.adapter?.notifyDataSetChanged()
+    }
+
+    private fun getRecentTabs(components: Components): List<RecentTab> {
+        return if (components.settings.showRecentTabsFeature) {
+            components.core.store.state.asRecentTabs()
+        } else {
+            emptyList()
+        }
     }
 
     companion object {

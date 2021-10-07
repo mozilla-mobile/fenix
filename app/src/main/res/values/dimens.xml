@@ -93,13 +93,14 @@
     <!-- Home Fragment -->
     <dimen name="home_fragment_top_toolbar_header_margin">60dp</dimen>
     <dimen name="home_item_elevation">5dp</dimen>
+    <dimen name="home_item_horizontal_margin">16dp</dimen>
 
     <!-- Home - Recently saved bookmarks -->
-    <dimen name="recent_bookmark_item_height">128dp</dimen>
-    <dimen name="recent_bookmark_item_width">152dp</dimen>
-    <dimen name="recent_bookmark_item_favicon_height">72dp</dimen>
+    <dimen name="recent_bookmark_item_height">136dp</dimen>
+    <dimen name="recent_bookmark_item_width">156dp</dimen>
+    <dimen name="recent_bookmark_item_favicon_height">96dp</dimen>
     <dimen name="recent_bookmark_item_favicon_elevation">0dp</dimen>
-    <dimen name="recent_bookmark_item_favicon_corner_size">4dp</dimen>
+    <dimen name="recent_bookmark_item_favicon_corner_size">8dp</dimen>
 
     <!-- Browser Fragment -->
     <!--The size of the gap between the tab preview and content layout.-->
@@ -173,6 +174,9 @@
     <!--  Onboarding  -->
     <dimen name="onboarding_dual_pane_radio_button_translation_x">-7dp</dimen>
     <dimen name="onboarding_dual_pane_radio_button_translation_y">-8dp</dimen>
+
+    <!--Onboarding home dialog-->
+    <dimen name="oboarding_home_dialog_margin_horizontal">24dp</dimen>
 
     <!-- Addon Details Fragment -->
     <dimen name="addon_details_rating_view_margin_start">6dp</dimen>

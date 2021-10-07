@@ -54,7 +54,9 @@
 
     <!-- Home - Recently saved bookmarks -->
     <!-- Title for the home screen section with recently saved bookmarks. -->
-    <string name="recently_saved_bookmarks">Onlangs opgeslagen</string>
+    <string moz:removedIn="94" name="recently_saved_bookmarks" tools:ignore="UnusedResources">Onlangs opgeslagen</string>
+    <!-- Title for the home screen section with recently saved bookmarks. -->
+    <string name="recently_bookmarked">Recent aangemaakte bladwijzers</string>
     <!-- Content description for the recently saved bookmarks section on the home screen. -->
     <string name="recently_saved_bookmarks_content_description">Recent opgeslagen bladwijzers</string>
     <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
@@ -127,7 +129,14 @@
     <!-- History Metadata -->
     <!-- Header text for a section on the home screen that displays grouped highlights from the
          user's browsing history, such as topics they have researched or explored on the web -->
-    <string name="history_metadata_header">Eerdere verkenningen</string>
+    <string moz:removedIn="94" name="history_metadata_header" tools:ignore="UnusedResources">Eerdere verkenningen</string>
+
+    <!-- Header text for a section on the home screen that displays grouped highlights from the
+         user's browsing history, such as topics they have researched or explored on the web -->
+    <string name="history_metadata_header_2">Onlangs bezocht</string>
+    <!-- Text for the menu button to remove a grouped highlight from the user's browsing history
+         in the Recently visited section -->
+    <string name="recently_visited_menu_item_remove">Verwijderen</string>
 
     <!-- Browser Fragment -->
     <!-- Content description (not visible, for screen readers etc.): Navigate to open tabs -->
@@ -205,6 +214,8 @@
     <!-- Browser menu label for editing a bookmark -->
     <string name="browser_menu_edit">Bewerken</string>
 
+    <!-- Browser menu button that opens the Customize menu -->
+    <string name="browser_menu_customize_home">Startpagina aanpassen</string>
     <!-- Browser Toolbar -->
     <!-- Content description for the Home screen button on the browser toolbar -->
     <string name="browser_toolbar_home">Startscherm</string>
@@ -398,6 +409,18 @@
     <!-- Toast shown after confirming the custom add-on collection configuration -->
     <string name="toast_customize_addon_collection_done">Add-oncollectie aangepast. Toepassing wordt afgesloten om wijzigingen toe te passen…</string>
 
+    <!-- Customize Home -->
+    <!-- Header text for jumping back into the recent tab in customize the home screen -->
+    <string name="customize_toggle_jump_back_in">Terugspringen</string>
+    <!-- Title for the customize home screen section with recently saved bookmarks. -->
+    <string moz:removedIn="94" name="customize_toggle_recently_saved_bookmarks" tools:ignore="UnusedResources">Onlangs opgeslagen</string>
+    <!-- Title for the customize home screen section with recently saved bookmarks. -->
+    <string name="customize_toggle_recently_bookmarked">Recent aangemaakte bladwijzers</string>
+    <!-- Title for the customize home screen section with recently visited. Recently visited is a section where users see a list of tabs that they have visited in the past few days -->
+    <string name="customize_toggle_recently_visited">Onlangs bezocht</string>
+    <!-- Title for the customize home screen section with Pocket. -->
+    <string name="customize_toggle_pocket">Pocket</string>
+
     <!-- Add-on Installation from AMO-->
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
     <string name="addon_not_supported_error">Add-on wordt niet ondersteund</string>
@@ -583,6 +606,13 @@
     <!-- Content description (not visible, for screen readers etc.): "Close button for library settings" -->
     <string name="content_description_close_button">Sluiten</string>
 
+    <!-- Text to show users they have one site in the history group section of the History fragment.
+    %d is a placeholder for the number of sites in the group. -->
+    <string name="history_search_group_site">%d website</string>
+    <!-- Text to show users they have multiple sites in the history group section of the History fragment.
+    %d is a placeholder for the number of sites in the group. -->
+    <string name="history_search_group_sites">%d websites</string>
+
     <!-- Option in library for Recently Closed Tabs -->
     <string name="library_recently_closed_tabs">Onlangs gesloten tabbladen</string>
 
@@ -757,6 +787,9 @@
     <!-- Button in the current tab tray header in multiselect mode. Saved the selected tabs to a collection when pressed. -->
     <string name="tab_tray_save_to_collection">Opslaan</string>
 
+    <!-- Title text for the normal tabs header in the tabs tray which are not part of any tab grouping. -->
+    <string name="tab_tray_header_title">Overig</string>
+
     <!-- History -->
     <!-- Text for the button to clear all history -->
     <string name="history_delete_all">Geschiedenis verwijderen</string>
@@ -769,15 +802,15 @@
     <!-- Text for positive action to delete history in deleting history dialog -->
     <string name="history_clear_dialog">Wissen</string>
     <!-- History overflow menu copy button -->
-    <string name="history_menu_copy_button">Kopiëren</string>
+    <string moz:removedIn="94" name="history_menu_copy_button" tools:ignore="UnusedResources">Kopiëren</string>
     <!-- History overflow menu share button -->
-    <string name="history_menu_share_button">Delen</string>
+    <string moz:removedIn="94" name="history_menu_share_button" tools:ignore="UnusedResources">Delen</string>
     <!-- History overflow menu open in new tab button -->
-    <string name="history_menu_open_in_new_tab_button">Openen in nieuw tabblad</string>
+    <string moz:removedIn="94" name="history_menu_open_in_new_tab_button" tools:ignore="UnusedResources">Openen in nieuw tabblad</string>
     <!-- History overflow menu open in private tab button -->
-    <string name="history_menu_open_in_private_tab_button">Openen in privétabblad</string>
+    <string moz:removedIn="94" name="history_menu_open_in_private_tab_button" tools:ignore="UnusedResources">Openen in privétabblad</string>
     <!-- Text for the button to delete a single history item -->
-    <string name="history_delete_item">Verwijderen</string>
+    <string moz:removedIn="94" name="history_delete_item" tools:ignore="UnusedResources">Verwijderen</string>
     <!-- History multi select title in app bar
     The first parameter is the number of bookmarks selected -->
     <string name="history_multi_select_title">%1$d geselecteerd</string>
@@ -1252,12 +1285,12 @@
     <!-- text for the Firefox Accounts section header -->
     <string name="onboarding_fxa_section_header">Hebt u al een account?</string>
     <!-- text for the "What's New" onboarding card header -->
-    <string name="onboarding_whats_new_header1">Bekijk wat er nieuw is</string>
+    <string moz:removedIn="94" name="onboarding_whats_new_header1" tools:ignore="UnusedResources">Bekijk wat er nieuw is</string>
     <!-- text for the "what's new" onboarding card description
     The first parameter is the short name of the app (e.g. Firefox) -->
-    <string name="onboarding_whats_new_description">Hebt u vragen over het opnieuw ontworpen %s? Wilt u weten wat er is gewijzigd?</string>
+    <string moz:removedIn="94" name="onboarding_whats_new_description" tools:ignore="UnusedResources">Hebt u vragen over het opnieuw ontworpen %s? Wilt u weten wat er is gewijzigd?</string>
     <!-- text for underlined clickable link that is part of "what's new" onboarding card description that links to an FAQ -->
-    <string name="onboarding_whats_new_description_linktext">Hier vindt u antwoorden</string>
+    <string moz:removedIn="94" name="onboarding_whats_new_description_linktext" tools:ignore="UnusedResources">Hier vindt u antwoorden</string>
     <!-- text for the Firefox account onboarding sign in card header. The word "Firefox" should not be translated -->
     <string name="onboarding_account_sign_in_header_1">Synchroniseer Firefox tussen apparaten</string>
     <!-- Text for the button to learn more about signing in to your Firefox account -->
@@ -1297,14 +1330,14 @@
     <!-- text for the toolbar position card description -->
     <string name="onboarding_toolbar_placement_description_1">Plaats de werkbalk binnen handbereik. Houd hem onderaan of verplaats hem naar boven.</string>
     <!-- text for the private browsing onboarding card header -->
-    <string name="onboarding_private_browsing_header">Surf privé</string>
+    <string moz:removedIn="94" name="onboarding_private_browsing_header" tools:ignore="UnusedResources">Surf privé</string>
     <!-- text for the private browsing onboarding card description
     The first parameter is an icon that represents private browsing -->
-    <string name="onboarding_private_browsing_description1">Eenmalig een privétabblad openen: tik op het pictogram %s.</string>
+    <string moz:removedIn="94" name="onboarding_private_browsing_description1" tools:ignore="UnusedResources">Eenmalig een privétabblad openen: tik op het pictogram %s.</string>
     <!-- text for the private browsing onboarding card description, explaining how to always using private browsing -->
-    <string name="onboarding_private_browsing_always_description">Altijd privétabbladen openen: werk uw instellingen voor privénavigatie bij.</string>
+    <string moz:removedIn="94" name="onboarding_private_browsing_always_description" tools:ignore="UnusedResources">Altijd privétabbladen openen: werk uw instellingen voor privénavigatie bij.</string>
     <!-- text for the private browsing onbording card button, that launches settings -->
-    <string name="onboarding_private_browsing_button">Instellingen openen</string>
+    <string moz:removedIn="94" name="onboarding_private_browsing_button" tools:ignore="UnusedResources">Instellingen openen</string>
     <!-- text for the privacy notice onboarding card header -->
     <string name="onboarding_privacy_notice_header">Uw privacy</string>
     <!-- text for the privacy notice onboarding card description
@@ -1468,6 +1501,12 @@
     <!-- Description of redirect tracker cookies that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_redirect_trackers_description">Wist cookies die zijn ingesteld door doorgeleidingen naar bekende trackingwebsites.</string>
 
+    <!-- Description of the SmartBlock Enhanced Tracking Protection feature. The * symbol is intentionally hardcoded here,
+         as we use it on the UI to indicate which trackers have been partially unblocked.  -->
+    <string name="preference_etp_smartblock_description">Sommige hieronder gelabelde trackers zijn op deze pagina deels gedeblokkeerd, omdat u er interactie mee hebt gehad *.</string>
+    <!-- Text displayed that links to website about enhanced tracking protection SmartBlock -->
+    <string name="preference_etp_smartblock_learn_more">Meer info</string>
+
     <!-- About page link text to open support link -->
     <string name="about_support">Ondersteuning</string>
     <!-- About page link text to list of past crashes (like about:crashes on desktop) -->
@@ -1536,6 +1575,9 @@
     <!-- Description for the preference for autofilling logins from Fenix in other apps (e.g. autofilling the Twitter app) -->
     <string name="preferences_android_autofill_description">Gebruikersnamen en wachtwoorden in andere apps op uw apparaat invullen.</string>
 
+    <!-- Preference option for adding a login -->
+    <string name="preferences_logins_add_login">Aanmelding toevoegen</string>
+
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">Aanmeldingen synchroniseren</string>
     <!-- Preference for syncing saved logins in Fenix, when not signed in-->
@@ -1598,6 +1640,8 @@
     <string name="saved_login_copy_username">Gebruikersnaam kopiëren</string>
     <!-- Content Description (for screenreaders etc) read for the button to clear a username while editing a login -->
     <string name="saved_login_clear_username">Gebruikersnaam wissen</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear the hostname field while creating a login -->
+    <string name="saved_login_clear_hostname">Hostnaam wissen</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a site in logins -->
     <string name="saved_login_copy_site">Website kopiëren</string>
     <!-- Content Description (for screenreaders etc) read for the button to open a site in logins -->
@@ -1766,9 +1810,13 @@
     <string name="phone_feature_blocked_step_feature"><![CDATA[3. Zet <b>%1$s</b> op AAN]]></string>
 
     <!-- Label that indicates a site is using a secure connection -->
-    <string name="quick_settings_sheet_secure_connection">Beveiligde verbinding</string>
+    <string name="quick_settings_sheet_secure_connection_2">Verbinding is beveiligd</string>
     <!-- Label that indicates a site is using a insecure connection -->
-    <string name="quick_settings_sheet_insecure_connection">Niet-beveiligde verbinding</string>
+    <string name="quick_settings_sheet_insecure_connection_2">Verbinding is niet beveiligd</string>
+    <!-- Label that indicates a site is using a secure connection -->
+    <string moz:removedIn="94" name="quick_settings_sheet_secure_connection" tools:ignore="UnusedResources">Beveiligde verbinding</string>
+    <!-- Label that indicates a site is using a insecure connection -->
+    <string moz:removedIn="94" name="quick_settings_sheet_insecure_connection" tools:ignore="UnusedResources">Niet-beveiligde verbinding</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete all the permissions for all sites-->
     <string name="confirm_clear_permissions_on_all_sites">Weet u zeker dat u alle machtigingen op alle websites wilt wissen?</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete all the permissions for a site-->
@@ -1808,8 +1856,14 @@
     <string name="discard_changes">Wijzigingen verwerpen</string>
     <!--  The page title for editing a saved login. -->
     <string name="edit">Bewerken</string>
-    <!--  The error message in edit login view when password field is blank. -->
+    <!--  The page title for adding new login. -->
+    <string name="add_login">Nieuwe aanmelding toevoegen</string>
+    <!--  The error message in add/edit login view when password field is blank. -->
     <string name="saved_login_password_required">Wachtwoord vereist</string>
+    <!--  The error message in add login view when username field is blank. -->
+    <string name="saved_login_username_required">Gebruikersnaam vereist</string>
+    <!--  The error message in add login view when hostname field is blank. -->
+    <string name="saved_login_hostname_required" tools:ignore="UnusedResources">Hostnaam vereist</string>
     <!-- Voice search button content description  -->
     <string name="voice_search_content_description">Gesproken zoekopdracht</string>
     <!-- Voice search prompt description displayed after the user presses the voice search button -->
@@ -1817,6 +1871,15 @@
 
     <!--  The error message in edit login view when a duplicate username exists. -->
     <string name="saved_login_duplicate">Er bestaat al een aanmelding met die gebruikersnaam</string>
+
+    <!-- This is the hint text that is shown inline on the hostname field of the create new login page. 'https://www.example.com' intentionally hardcoded here -->
+    <string name="add_login_hostname_hint_text">https://www.example.com</string>
+    <!-- This is an error message shown below the hostname field of the add login page when a hostname does not contain http or https. -->
+    <string moz:removedIn="94" name="add_login_hostname_invalid_text_1" tools:ignore="UnusedResources">Het webadres moet \‘https://\’ of \‘http://\’ bevatten</string>
+    <!-- This is an error message shown below the hostname field of the add login page when a hostname does not contain http or https. -->
+    <string name="add_login_hostname_invalid_text_3">Het webadres moet ‘https://’ of ‘http://’ bevatten</string>
+    <!-- This is an error message shown below the hostname field of the add login page when a hostname is invalid. -->
+    <string name="add_login_hostname_invalid_text_2">Geldige hostnaam vereist</string>
 
     <!-- Synced Tabs -->
     <!-- Text displayed to ask user to connect another device as no devices found with account -->
@@ -1844,8 +1907,10 @@
     <!-- Confirmation dialog button text when top sites limit is reached. -->
     <string name="top_sites_max_limit_confirmation_button">OK, begrepen</string>
 
+    <!-- Label for the show most visited top sites preference -->
+    <string name="top_sites_toggle_top_frecent_sites_2">Meest bezochte topwebsites tonen</string>
     <!-- Label for the show most visited sites preference -->
-    <string name="top_sites_toggle_top_frecent_sites">Meest bezochte websites tonen</string>
+    <string moz:removedIn="93" name="top_sites_toggle_top_frecent_sites" tools:ignore="UnusedResources">Meest bezochte websites tonen</string>
 
     <!-- Title text displayed in the rename top site dialog. -->
 	<string name="top_sites_rename_dialog_title">Naam</string>

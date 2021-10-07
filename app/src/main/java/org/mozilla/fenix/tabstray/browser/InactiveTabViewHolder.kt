@@ -6,17 +6,19 @@ package org.mozilla.fenix.tabstray.browser
 
 import android.view.View
 import androidx.annotation.StringRes
+import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.RecyclerView
 import mozilla.components.browser.toolbar.MAX_URI_LENGTH
 import mozilla.components.concept.tabstray.Tab
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.InactiveFooterItemBinding
-import org.mozilla.fenix.databinding.InactiveRecentlyClosedItemBinding
 import org.mozilla.fenix.databinding.InactiveHeaderItemBinding
 import org.mozilla.fenix.databinding.InactiveTabListItemBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.loadIntoView
 import org.mozilla.fenix.ext.toShortUrl
+import org.mozilla.fenix.home.topsites.dpToPx
+import org.mozilla.fenix.tabstray.TabsTrayInteractor
 import org.mozilla.fenix.tabstray.browser.AutoCloseInterval.Manual
 import org.mozilla.fenix.tabstray.browser.AutoCloseInterval.OneDay
 import org.mozilla.fenix.tabstray.browser.AutoCloseInterval.OneMonth
@@ -26,7 +28,8 @@ sealed class InactiveTabViewHolder(itemView: View) : RecyclerView.ViewHolder(ite
 
     class HeaderHolder(
         itemView: View,
-        interactor: InactiveTabsInteractor
+        inactiveTabsInteractor: InactiveTabsInteractor,
+        tabsTrayInteractor: TabsTrayInteractor,
     ) : InactiveTabViewHolder(itemView) {
 
         private val binding = InactiveHeaderItemBinding.bind(itemView)
@@ -35,15 +38,32 @@ sealed class InactiveTabViewHolder(itemView: View) : RecyclerView.ViewHolder(ite
             itemView.apply {
                 isActivated = InactiveTabsState.isExpanded
 
+                correctHeaderBorder(isActivated)
+
                 setOnClickListener {
                     val newState = !it.isActivated
 
-                    interactor.onHeaderClicked(newState)
+                    inactiveTabsInteractor.onHeaderClicked(newState)
 
                     it.isActivated = newState
                     binding.chevron.rotation = ROTATION_DEGREE
+
+                    correctHeaderBorder(isActivated)
+                }
+
+                binding.delete.setOnClickListener {
+                    tabsTrayInteractor.onDeleteInactiveTabs()
                 }
             }
+        }
+
+        /**
+         * When the header is collapsed we use its bottom border instead of the footer's
+         */
+        private fun correctHeaderBorder(isActivated: Boolean) {
+            binding.inactiveHeaderBorder.updatePadding(
+                bottom = binding.root.context.dpToPx(if (isActivated) 0f else 1f)
+            )
         }
 
         companion object {
@@ -90,28 +110,6 @@ sealed class InactiveTabViewHolder(itemView: View) : RecyclerView.ViewHolder(ite
 
         companion object {
             const val LAYOUT_ID = R.layout.inactive_tab_list_item
-        }
-    }
-
-    class RecentlyClosedHolder(
-        itemView: View,
-        private val browserTrayInteractor: BrowserTrayInteractor,
-    ) : InactiveTabViewHolder(itemView) {
-
-        val binding = InactiveRecentlyClosedItemBinding.bind(itemView)
-
-        fun bind() {
-            val context = itemView.context
-            binding.inactiveRecentlyClosedText.text =
-                context.getString(R.string.tab_tray_inactive_recently_closed)
-
-            binding.inactiveRecentlyClosed.setOnClickListener {
-                browserTrayInteractor.onRecentlyClosedClicked()
-            }
-        }
-
-        companion object {
-            const val LAYOUT_ID = R.layout.inactive_recently_closed_item
         }
     }
 

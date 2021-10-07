@@ -20,8 +20,6 @@ import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.selection.SelectionHolder
 import org.mozilla.fenix.tabstray.TabsTrayStore
-import org.mozilla.fenix.tabstray.browser.TabGroupAdapter.Group
-import kotlin.math.max
 import mozilla.components.concept.tabstray.Tab as TabsTrayTab
 import mozilla.components.support.base.observer.Observable
 
@@ -42,8 +40,10 @@ class TabGroupAdapter(
     private val store: TabsTrayStore,
     private val featureName: String,
     delegate: TrayObservable = ObserverRegistry()
-) : ListAdapter<Group, TabGroupViewHolder>(DiffCallback), TabsTray, TrayObservable by delegate {
+) : ListAdapter<TabGroupAdapter.Group, TabGroupViewHolder>(DiffCallback), TabsTray, TrayObservable by delegate {
 
+    // TODO use [List<TabSessionState>.toSearchGroup()]
+    //  see https://github.com/mozilla-mobile/android-components/issues/11012
     data class Group(
         /**
          * A title for the tab group.
@@ -101,27 +101,9 @@ class TabGroupAdapter(
     }
 
     /**
-     * Creates a grouping of data classes for how groupings will be structured.
+     * Not implemented; implementation is handled [List<Tab>.toSearchGroups]
      */
-    override fun updateTabs(tabs: Tabs) {
-        val data = tabs.list.groupBy { it.searchTerm.lowercase() }
-
-        val grouping = data.map { mapEntry ->
-            val searchTerm = mapEntry.key.replaceFirstChar(Char::uppercase)
-            val groupTabs = mapEntry.value
-            val groupMax = groupTabs.fold(0L) { acc, tab ->
-                max(tab.lastAccess, acc)
-            }
-
-            Group(
-                title = searchTerm,
-                tabs = groupTabs,
-                lastAccess = groupMax
-            )
-        }.sortedBy { it.lastAccess }
-
-        submitList(grouping)
-    }
+    override fun updateTabs(tabs: Tabs) = throw UnsupportedOperationException("Use submitList instead.")
 
     /**
      * Not implemented; handled by nested [RecyclerView].
@@ -138,6 +120,6 @@ class TabGroupAdapter(
     }
 }
 
-internal fun Group.containsTabId(tabId: String): Boolean {
+internal fun TabGroupAdapter.Group.containsTabId(tabId: String): Boolean {
     return tabs.firstOrNull { it.id == tabId } != null
 }

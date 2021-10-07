@@ -8,7 +8,8 @@ import mozilla.components.browser.state.selector.normalTabs
 import mozilla.components.browser.state.selector.privateTabs
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.TabSessionState
-import org.mozilla.fenix.FeatureFlags
+import org.mozilla.fenix.ext.toSearchGroup
+import org.mozilla.fenix.tabstray.browser.TabGroup
 import org.mozilla.fenix.tabstray.browser.maxActiveTime
 
 /**
@@ -41,17 +42,30 @@ val BrowserState.inactiveTabs: List<TabSessionState>
 /**
  * The list of normal tabs in the tabs tray filtered appropriately based on feature flags.
  */
-val BrowserState.normalTrayTabs: List<TabSessionState>
-    get() {
-        return normalTabs.run {
-            if (FeatureFlags.tabGroupFeature && FeatureFlags.inactiveTabs) {
-                filter { it.isNormalTabActiveWithoutSearchTerm(maxActiveTime) }
-            } else if (FeatureFlags.inactiveTabs) {
-                filter { it.isNormalTabActive(maxActiveTime) }
-            } else if (FeatureFlags.tabGroupFeature) {
-                filter { it.isNormalTabWithSearchTerm() }
-            } else {
-                this
-            }
+fun BrowserState.getNormalTrayTabs(
+    searchTermTabGroupsAreEnabled: Boolean,
+    inactiveTabsEnabled: Boolean
+): List<TabSessionState> {
+    return normalTabs.run {
+        if (searchTermTabGroupsAreEnabled && inactiveTabsEnabled) {
+            filter { it.isNormalTabActiveWithoutSearchTerm(maxActiveTime) }
+        } else if (inactiveTabsEnabled) {
+            filter { it.isNormalTabActive(maxActiveTime) }
+        } else if (searchTermTabGroupsAreEnabled) {
+            filter { it.isNormalTabWithSearchTerm() }
+        } else {
+            this
         }
     }
+}
+
+/**
+ * The list of search groups filtered appropriately based on feature flags.
+ */
+fun BrowserState.getSearchTabGroups(
+    searchTermTabGroupsAreEnabled: Boolean
+): List<TabGroup> = if (searchTermTabGroupsAreEnabled) {
+    normalTabs.toSearchGroup().filter { it.tabs.size > 1 }
+} else {
+    emptyList()
+}

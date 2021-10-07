@@ -8,26 +8,27 @@ import io.mockk.mockk
 import io.mockk.verify
 import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.concept.storage.BookmarkNodeType
-import mozilla.components.concept.storage.DocumentType
-import mozilla.components.concept.storage.HistoryMetadata
-import mozilla.components.concept.storage.HistoryMetadataKey
 import mozilla.components.feature.tab.collections.Tab
 import mozilla.components.feature.tab.collections.TabCollection
 import org.junit.Before
 import org.junit.Test
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
-import org.mozilla.fenix.historymetadata.HistoryMetadataGroup
 import org.mozilla.fenix.historymetadata.controller.HistoryMetadataController
 import org.mozilla.fenix.home.recentbookmarks.controller.RecentBookmarksController
 import org.mozilla.fenix.home.recenttabs.controller.RecentTabController
 import org.mozilla.fenix.home.sessioncontrol.DefaultSessionControlController
 import org.mozilla.fenix.home.sessioncontrol.SessionControlInteractor
+import org.mozilla.fenix.home.sessioncontrol.viewholders.pocket.PocketRecommendedStoriesCategory
+import org.mozilla.fenix.home.sessioncontrol.viewholders.pocket.PocketStoriesController
 
 class SessionControlInteractorTest {
 
     private val controller: DefaultSessionControlController = mockk(relaxed = true)
     private val recentTabController: RecentTabController = mockk(relaxed = true)
     private val recentBookmarksController: RecentBookmarksController = mockk(relaxed = true)
+    private val pocketStoriesController: PocketStoriesController = mockk(relaxed = true)
+
+    // Note: the historyMetadata tests are handled in [HistoryMetadataInteractorTest] and [HistoryMetadataControllerTest]
     private val historyMetadataController: HistoryMetadataController = mockk(relaxed = true)
 
     private lateinit var interactor: SessionControlInteractor
@@ -38,7 +39,8 @@ class SessionControlInteractorTest {
             controller,
             recentTabController,
             recentBookmarksController,
-            historyMetadataController
+            historyMetadataController,
+            pocketStoriesController
         )
     }
 
@@ -155,55 +157,16 @@ class SessionControlInteractorTest {
     }
 
     @Test
+    fun onRecentSearchGroupClicked() {
+        val tabId = "tabId"
+        interactor.onRecentSearchGroupClicked(tabId)
+        verify { recentTabController.handleRecentSearchGroupClicked(tabId) }
+    }
+
+    @Test
     fun onRecentTabShowAllClicked() {
         interactor.onRecentTabShowAllClicked()
         verify { recentTabController.handleRecentTabShowAllClicked() }
-    }
-
-    @Test
-    fun onHistoryMetadataItemClicked() {
-        val historyEntry = HistoryMetadata(
-            key = HistoryMetadataKey("http://www.mozilla.com", null, null),
-            title = "mozilla",
-            createdAt = System.currentTimeMillis(),
-            updatedAt = System.currentTimeMillis(),
-            totalViewTime = 10,
-            documentType = DocumentType.Regular,
-            previewImageUrl = null
-        )
-
-        interactor.onHistoryMetadataItemClicked(historyEntry.key.url, historyEntry.key)
-        verify {
-            historyMetadataController.handleHistoryMetadataItemClicked(
-                historyEntry.key.url,
-                historyEntry.key
-            )
-        }
-    }
-
-    @Test
-    fun onHistoryMetadataShowAllClicked() {
-        interactor.onHistoryMetadataShowAllClicked()
-        verify { historyMetadataController.handleHistoryShowAllClicked() }
-    }
-
-    @Test
-    fun onToggleHistoryMetadataGroupExpanded() {
-        val historyEntry = HistoryMetadata(
-            key = HistoryMetadataKey("http://www.mozilla.com", "mozilla", null),
-            title = "mozilla",
-            createdAt = System.currentTimeMillis(),
-            updatedAt = System.currentTimeMillis(),
-            totalViewTime = 10,
-            documentType = DocumentType.Regular,
-            previewImageUrl = null
-        )
-        val historyGroup = HistoryMetadataGroup(
-            title = "mozilla",
-            historyMetadata = listOf(historyEntry)
-        )
-        interactor.onToggleHistoryMetadataGroupExpanded(historyGroup)
-        verify { historyMetadataController.handleToggleHistoryMetadataGroupExpanded(historyGroup) }
     }
 
     @Test
@@ -230,6 +193,12 @@ class SessionControlInteractorTest {
     }
 
     @Test
+    fun `WHEN calling showOnboardingDialog THEN handleShowOnboardingDialog`() {
+        interactor.showOnboardingDialog()
+        verify { controller.handleShowOnboardingDialog() }
+    }
+
+    @Test
     fun `WHEN Show All recently saved bookmarks button is clicked THEN the click is handled`() {
         interactor.onShowAllBookmarksClicked()
         verify { recentBookmarksController.handleShowAllBookmarksClicked() }
@@ -242,5 +211,23 @@ class SessionControlInteractorTest {
 
         interactor.onPrivateModeButtonClicked(newMode, hasBeenOnboarded)
         verify { controller.handlePrivateModeButtonClicked(newMode, hasBeenOnboarded) }
+    }
+
+    @Test
+    fun `GIVEN a PocketStoriesInteractor WHEN a category is clicked THEN handle it in a PocketStoriesController`() {
+        val clickedCategory: PocketRecommendedStoriesCategory = mockk()
+
+        interactor.onCategoryClick(clickedCategory)
+
+        verify { pocketStoriesController.handleCategoryClick(clickedCategory) }
+    }
+
+    @Test
+    fun `GIVEN a PocketStoriesInteractor WHEN an external link is clicked THEN handle it in a PocketStoriesController`() {
+        val link = "https://www.mozilla.org/en-US/firefox/pocket/"
+
+        interactor.onExternalLinkClicked(link)
+
+        verify { pocketStoriesController.handleExternalLinkClick(link) }
     }
 }
