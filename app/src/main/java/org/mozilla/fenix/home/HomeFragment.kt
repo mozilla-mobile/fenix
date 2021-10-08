@@ -355,7 +355,8 @@ class HomeFragment : Fragment() {
             pocketStoriesController = DefaultPocketStoriesController(
                 homeActivity = activity,
                 homeStore = homeFragmentStore,
-                navController = findNavController()
+                navController = findNavController(),
+                metrics = requireComponents.analytics.metrics
             )
         )
 
@@ -880,7 +881,7 @@ class HomeFragment : Fragment() {
                         hideOnboardingIfNeeded()
                         nav(
                             R.id.homeFragment,
-                            HomeFragmentDirections.actionGlobalCustomizationFragment()
+                            HomeFragmentDirections.actionGlobalHomeSettingsFragment()
                         )
                     }
                     is HomeMenu.Item.SyncAccount -> {
