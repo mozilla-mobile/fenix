@@ -536,10 +536,6 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.VoiceSearchTapped -> EventWrapper<NoExtraKeys>(
             { VoiceSearch.tapped.record(it) }
         )
-        is Event.TabCounterMenuItemTapped -> EventWrapper(
-            { Events.tabCounterMenuAction.record(it) },
-            { Events.tabCounterMenuActionKeys.valueOf(it) }
-        )
         is Event.OnboardingPrivacyNotice -> EventWrapper<NoExtraKeys>(
             { Onboarding.privacyNotice.record(it) }
         )
