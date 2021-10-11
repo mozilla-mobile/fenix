@@ -41,6 +41,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestHelper.packageName
+import org.mozilla.fenix.helpers.TestHelper.waitForObjects
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.clickAtLocationInView
 import org.mozilla.fenix.helpers.ext.waitNotNull
@@ -132,13 +133,20 @@ class TabDrawerRobot {
         mDevice.waitForIdle()
 
         mDevice.findObject(
-            UiSelector()
-                .resourceId("$packageName:id/play_pause_button")
-        ).waitForExists(waitingTime)
+            UiSelector().resourceId("$packageName:id/tab_tray_empty_view")
+        ).waitUntilGone(waitingTime)
+
+        mDevice.waitForObjects(
+            mDevice.findObject(
+                UiSelector().resourceId("$packageName:id/tab_tray_grid_item")
+            )
+        )
 
         assertTrue(
             mDevice.findObject(
-                UiSelector().descriptionContains(action)
+                UiSelector()
+                    .resourceId("$packageName:id/play_pause_button")
+                    .descriptionContains(action)
             ).waitForExists(waitingTime)
         )
     }
@@ -355,7 +363,8 @@ fun tabDrawer(interact: TabDrawerRobot.() -> Unit): TabDrawerRobot.Transition {
     return TabDrawerRobot.Transition()
 }
 
-private fun tabMediaControlButton() = onView(withId(R.id.play_pause_button))
+private fun tabMediaControlButton() =
+    mDevice.findObject(UiSelector().resourceId("$packageName:id/play_pause_button"))
 
 private fun closeTabButton() =
     mDevice.findObject(UiSelector().resourceId("$packageName:id/mozac_browser_tabstray_close"))

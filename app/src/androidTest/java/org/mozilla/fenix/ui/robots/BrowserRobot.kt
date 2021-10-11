@@ -416,6 +416,7 @@ class BrowserRobot {
     fun clickMediaPlayerPlayButton() {
         mediaPlayerPlayButton().waitForExists(waitingTime)
         mediaPlayerPlayButton().click()
+        mDevice.waitForIdle()
     }
 
     /**
