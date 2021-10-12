@@ -17,7 +17,7 @@ import org.mozilla.fenix.databinding.InactiveTabListItemBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.loadIntoView
 import org.mozilla.fenix.ext.toShortUrl
-import org.mozilla.fenix.home.sessioncontrol.viewholders.topsites.dpToPx
+import org.mozilla.fenix.home.topsites.dpToPx
 import org.mozilla.fenix.tabstray.TabsTrayInteractor
 import org.mozilla.fenix.tabstray.browser.AutoCloseInterval.Manual
 import org.mozilla.fenix.tabstray.browser.AutoCloseInterval.OneDay
@@ -38,6 +38,8 @@ sealed class InactiveTabViewHolder(itemView: View) : RecyclerView.ViewHolder(ite
             itemView.apply {
                 isActivated = InactiveTabsState.isExpanded
 
+                correctHeaderBorder(isActivated)
+
                 setOnClickListener {
                     val newState = !it.isActivated
 
@@ -46,16 +48,22 @@ sealed class InactiveTabViewHolder(itemView: View) : RecyclerView.ViewHolder(ite
                     it.isActivated = newState
                     binding.chevron.rotation = ROTATION_DEGREE
 
-                    // When the header is collapsed we use its bottom border instead of the footer's
-                    binding.inactiveHeaderBorder.updatePadding(
-                        bottom = binding.root.context.dpToPx(if (it.isActivated) 0f else 1f)
-                    )
+                    correctHeaderBorder(isActivated)
                 }
 
                 binding.delete.setOnClickListener {
                     tabsTrayInteractor.onDeleteInactiveTabs()
                 }
             }
+        }
+
+        /**
+         * When the header is collapsed we use its bottom border instead of the footer's
+         */
+        private fun correctHeaderBorder(isActivated: Boolean) {
+            binding.inactiveHeaderBorder.updatePadding(
+                bottom = binding.root.context.dpToPx(if (isActivated) 0f else 1f)
+            )
         }
 
         companion object {

@@ -27,6 +27,7 @@ import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.support.ktx.android.view.showKeyboard
 import mozilla.components.support.ktx.kotlin.isUrl
 import org.mozilla.fenix.BrowserDirection
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BrowserFragmentDirections
@@ -448,16 +449,18 @@ class DefaultSessionControlController(
     }
 
     override fun handleCustomizeHomeTapped() {
-        val directions = HomeFragmentDirections.actionGlobalCustomizationFragment()
+        val directions = HomeFragmentDirections.actionGlobalHomeSettingsFragment()
         navController.nav(R.id.homeFragment, directions)
         metrics.track(Event.HomeScreenCustomizedHomeClicked)
     }
 
     override fun handleShowOnboardingDialog() {
-        navController.nav(
-            R.id.homeFragment,
-            HomeFragmentDirections.actionGlobalHomeOnboardingDialog()
-        )
+        if (FeatureFlags.showHomeOnboarding) {
+            navController.nav(
+                R.id.homeFragment,
+                HomeFragmentDirections.actionGlobalHomeOnboardingDialog()
+            )
+        }
     }
 
     override fun handleReadPrivacyNoticeClicked() {

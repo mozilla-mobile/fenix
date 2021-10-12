@@ -11,8 +11,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
@@ -22,7 +24,7 @@ import androidx.recyclerview.widget.RecyclerView
 import mozilla.components.lib.state.ext.observeAsComposableState
 import mozilla.components.service.pocket.PocketRecommendedStory
 import org.mozilla.fenix.R
-import org.mozilla.fenix.compose.HomeSectionHeader
+import org.mozilla.fenix.compose.SectionHeader
 import org.mozilla.fenix.home.HomeFragmentStore
 import org.mozilla.fenix.theme.FirefoxTheme
 
@@ -52,8 +54,10 @@ class PocketStoriesViewHolder(
                 PocketStories(
                     store,
                     interactor::onStoriesShown,
-                    interactor::onCategoryClick,
-                    interactor::onExternalLinkClicked,
+                    interactor::onStoryClicked,
+                    interactor::onCategoryClicked,
+                    interactor::onDiscoverMoreClicked,
+                    interactor::onLearnMoreClicked,
                     with(composeView.resources) {
                         getDimensionPixelSize(R.dimen.home_item_horizontal_margin) / displayMetrics.density
                     }
@@ -68,11 +72,14 @@ class PocketStoriesViewHolder(
 }
 
 @Composable
+@Suppress("LongParameterList")
 fun PocketStories(
     store: HomeFragmentStore,
     onStoriesShown: (List<PocketRecommendedStory>) -> Unit,
-    onCategoryClick: (PocketRecommendedStoriesCategory) -> Unit,
-    onExternalLinkClicked: (String) -> Unit,
+    onStoryClicked: (PocketRecommendedStory, Pair<Int, Int>) -> Unit,
+    onCategoryClicked: (PocketRecommendedStoriesCategory) -> Unit,
+    onDiscoverMoreClicked: (String) -> Unit,
+    onLearnMoreClicked: (String) -> Unit,
     @Dimension horizontalPadding: Float = 0f
 ) {
     val stories = store
@@ -92,25 +99,27 @@ fun PocketStories(
         }
     }
 
-    Column(modifier = Modifier.padding(vertical = 44.dp)) {
-        HomeSectionHeader(
+    Column(modifier = Modifier.padding(top = 72.dp)) {
+        SectionHeader(
             text = stringResource(R.string.pocket_stories_header_1),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = horizontalPadding.dp)
+                .wrapContentHeight(align = Alignment.Top)
         )
 
         Spacer(Modifier.height(17.dp))
 
-        PocketStories(stories ?: emptyList(), horizontalPadding.dp, onExternalLinkClicked)
+        PocketStories(stories ?: emptyList(), horizontalPadding.dp, onStoryClicked, onDiscoverMoreClicked)
 
         Spacer(Modifier.height(24.dp))
 
-        HomeSectionHeader(
+        SectionHeader(
             text = stringResource(R.string.pocket_stories_categories_header),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = horizontalPadding.dp)
+                .wrapContentHeight(align = Alignment.Top)
         )
 
         Spacer(Modifier.height(17.dp))
@@ -118,7 +127,7 @@ fun PocketStories(
         PocketStoriesCategories(
             categories = categories ?: emptyList(),
             selections = categoriesSelections ?: emptyList(),
-            onCategoryClick = onCategoryClick,
+            onCategoryClick = onCategoryClicked,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = horizontalPadding.dp)
@@ -127,7 +136,7 @@ fun PocketStories(
         Spacer(Modifier.height(24.dp))
 
         PoweredByPocketHeader(
-            onExternalLinkClicked,
+            onLearnMoreClicked,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = horizontalPadding.dp)
