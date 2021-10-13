@@ -81,7 +81,7 @@ class TelemetryMiddlewareTest {
     fun `WHEN a tab is added THEN the open tab count is updated`() {
         assertEquals(0, settings.openTabsCount)
 
-        store.dispatch(TabListAction.AddTabAction(createTab("https://mozilla.org", lastAccess = 0, createdAt = 0))).joinBlocking()
+        store.dispatch(TabListAction.AddTabAction(createTab("https://mozilla.org"))).joinBlocking()
         assertEquals(1, settings.openTabsCount)
         verify(exactly = 1) { metrics.track(Event.HaveOpenTabs) }
     }
@@ -90,7 +90,7 @@ class TelemetryMiddlewareTest {
     fun `WHEN a private tab is added THEN the open tab count is not updated`() {
         assertEquals(0, settings.openTabsCount)
 
-        store.dispatch(TabListAction.AddTabAction(createTab("https://mozilla.org", private = true, lastAccess = 0, createdAt = 0))).joinBlocking()
+        store.dispatch(TabListAction.AddTabAction(createTab("https://mozilla.org", private = true))).joinBlocking()
         assertEquals(0, settings.openTabsCount)
         verify(exactly = 1) { metrics.track(Event.HaveNoOpenTabs) }
     }
@@ -101,8 +101,8 @@ class TelemetryMiddlewareTest {
         store.dispatch(
             TabListAction.AddMultipleTabsAction(
                 listOf(
-                    createTab("https://mozilla.org", lastAccess = 0, createdAt = 0),
-                    createTab("https://firefox.com", lastAccess = 0, createdAt = 0)
+                    createTab("https://mozilla.org"),
+                    createTab("https://firefox.com")
                 )
             )
         ).joinBlocking()
@@ -116,8 +116,8 @@ class TelemetryMiddlewareTest {
         store.dispatch(
             TabListAction.AddMultipleTabsAction(
                 listOf(
-                    createTab(id = "1", url = "https://mozilla.org", lastAccess = 0, createdAt = 0),
-                    createTab(id = "2", url = "https://firefox.com", lastAccess = 0, createdAt = 0)
+                    createTab(id = "1", url = "https://mozilla.org"),
+                    createTab(id = "2", url = "https://firefox.com")
                 )
             )
         ).joinBlocking()
@@ -134,8 +134,8 @@ class TelemetryMiddlewareTest {
         store.dispatch(
             TabListAction.AddMultipleTabsAction(
                 listOf(
-                    createTab("https://mozilla.org", lastAccess = 0, createdAt = 0),
-                    createTab("https://firefox.com", lastAccess = 0, createdAt = 0)
+                    createTab("https://mozilla.org"),
+                    createTab("https://firefox.com")
                 )
             )
         ).joinBlocking()
@@ -152,9 +152,9 @@ class TelemetryMiddlewareTest {
         store.dispatch(
             TabListAction.AddMultipleTabsAction(
                 listOf(
-                    createTab("https://mozilla.org", lastAccess = 0, createdAt = 0),
-                    createTab("https://firefox.com", lastAccess = 0, createdAt = 0),
-                    createTab("https://getpocket.com", private = true, lastAccess = 0, createdAt = 0)
+                    createTab("https://mozilla.org"),
+                    createTab("https://firefox.com"),
+                    createTab("https://getpocket.com", private = true)
                 )
             )
         ).joinBlocking()

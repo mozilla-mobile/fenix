@@ -27,6 +27,7 @@ import org.mozilla.fenix.GleanMetrics.Addons
 import org.mozilla.fenix.GleanMetrics.Metrics
 import org.mozilla.fenix.GleanMetrics.Preferences
 import org.mozilla.fenix.GleanMetrics.SearchDefaultEngine
+import org.mozilla.fenix.GleanMetrics.TabsTray
 import org.mozilla.fenix.components.metrics.MozillaProductDetector
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
@@ -129,6 +130,7 @@ class FenixApplicationTest {
         every { settings.showPocketRecommendationsFeature } returns true
         every { settings.showPocketRecommendationsFeature } returns true
         every { application.reportHomeScreenMetrics(settings) } just Runs
+        every { settings.inactiveTabsCount } returns 7
 
         application.setStartupMetrics(browserStore, settings, browsersCache, mozillaProductDetector)
 
@@ -164,6 +166,8 @@ class FenixApplicationTest {
         assertEquals("fixed_top", Preferences.toolbarPositionSetting.testGetValue())
         assertEquals("standard", Preferences.enhancedTrackingProtection.testGetValue())
         assertEquals(listOf("switch", "touch exploration"), Preferences.accessibilityServices.testGetValue())
+        assertEquals(true, TabsTray.hasInactiveTabs.testGetValue())
+        assertEquals(7, TabsTray.inactiveTabsCount.testGetValue())
 
         // Verify that search engine defaults are NOT set. This test does
         // not mock most of the objects telemetry is collected from.
