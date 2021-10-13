@@ -71,12 +71,13 @@ fun Fragment.redirectToReAuth(
     currentDestination: Int?,
     currentLocation: Int
 ) {
-    setHasOptionsMenu(false)
     if (currentDestination !in destinations) {
+        // Workaround for memory leak caused by Android SDK bug
+        // https://issuetracker.google.com/issues/37125819
+        activity?.invalidateOptionsMenu()
         when (currentLocation) {
             R.id.loginDetailFragment,
             R.id.editLoginFragment,
-            R.id.addLoginFragment,
             R.id.savedLoginsFragment -> {
                 findNavController().popBackStack(R.id.savedLoginsAuthFragment, false)
             }
