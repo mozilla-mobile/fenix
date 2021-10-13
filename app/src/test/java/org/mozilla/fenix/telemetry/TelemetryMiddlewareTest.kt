@@ -34,6 +34,7 @@ import org.junit.runner.RunWith
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
+import org.mozilla.fenix.tabstray.browser.maxActiveTime
 import org.mozilla.fenix.utils.Settings
 import org.mozilla.fenix.GleanMetrics.EngineTab as EngineMetrics
 
@@ -80,7 +81,7 @@ class TelemetryMiddlewareTest {
     fun `WHEN a tab is added THEN the open tab count is updated`() {
         assertEquals(0, settings.openTabsCount)
 
-        store.dispatch(TabListAction.AddTabAction(createTab("https://mozilla.org"))).joinBlocking()
+        store.dispatch(TabListAction.AddTabAction(createTab("https://mozilla.org", lastAccess = 0, createdAt = 0))).joinBlocking()
         assertEquals(1, settings.openTabsCount)
         verify(exactly = 1) { metrics.track(Event.HaveOpenTabs) }
     }
@@ -89,7 +90,7 @@ class TelemetryMiddlewareTest {
     fun `WHEN a private tab is added THEN the open tab count is not updated`() {
         assertEquals(0, settings.openTabsCount)
 
-        store.dispatch(TabListAction.AddTabAction(createTab("https://mozilla.org", private = true))).joinBlocking()
+        store.dispatch(TabListAction.AddTabAction(createTab("https://mozilla.org", private = true, lastAccess = 0, createdAt = 0))).joinBlocking()
         assertEquals(0, settings.openTabsCount)
         verify(exactly = 1) { metrics.track(Event.HaveNoOpenTabs) }
     }
@@ -100,8 +101,8 @@ class TelemetryMiddlewareTest {
         store.dispatch(
             TabListAction.AddMultipleTabsAction(
                 listOf(
-                    createTab("https://mozilla.org"),
-                    createTab("https://firefox.com")
+                    createTab("https://mozilla.org", lastAccess = 0, createdAt = 0),
+                    createTab("https://firefox.com", lastAccess = 0, createdAt = 0)
                 )
             )
         ).joinBlocking()
@@ -115,8 +116,8 @@ class TelemetryMiddlewareTest {
         store.dispatch(
             TabListAction.AddMultipleTabsAction(
                 listOf(
-                    createTab(id = "1", url = "https://mozilla.org"),
-                    createTab(id = "2", url = "https://firefox.com")
+                    createTab(id = "1", url = "https://mozilla.org", lastAccess = 0, createdAt = 0),
+                    createTab(id = "2", url = "https://firefox.com", lastAccess = 0, createdAt = 0)
                 )
             )
         ).joinBlocking()
@@ -133,8 +134,8 @@ class TelemetryMiddlewareTest {
         store.dispatch(
             TabListAction.AddMultipleTabsAction(
                 listOf(
-                    createTab("https://mozilla.org"),
-                    createTab("https://firefox.com")
+                    createTab("https://mozilla.org", lastAccess = 0, createdAt = 0),
+                    createTab("https://firefox.com", lastAccess = 0, createdAt = 0)
                 )
             )
         ).joinBlocking()
@@ -151,9 +152,9 @@ class TelemetryMiddlewareTest {
         store.dispatch(
             TabListAction.AddMultipleTabsAction(
                 listOf(
-                    createTab("https://mozilla.org"),
-                    createTab("https://firefox.com"),
-                    createTab("https://getpocket.com", private = true)
+                    createTab("https://mozilla.org", lastAccess = 0, createdAt = 0),
+                    createTab("https://firefox.com", lastAccess = 0, createdAt = 0),
+                    createTab("https://getpocket.com", private = true, lastAccess = 0, createdAt = 0)
                 )
             )
         ).joinBlocking()
@@ -335,6 +336,103 @@ class TelemetryMiddlewareTest {
         assertTrue(EngineMetrics.killBackgroundAge.testHasValue())
         assertFalse(EngineMetrics.killForegroundAge.testHasValue())
         assertEquals(600_000_000, EngineMetrics.killBackgroundAge.testGetValue().sum)
+    }
+
+    @Test
+    fun `WHEN an inactive tab is added THEN the inactive tab count is updated`() {
+        assertEquals(0, settings.inactiveTabsCount)
+
+        store.dispatch(
+            TabListAction.AddTabAction(
+                createTab(
+                    "https://mozilla.org",
+                    lastAccess = maxActiveTime,
+                    createdAt = 0
+                )
+            )
+        ).joinBlocking()
+        assertEquals(1, settings.inactiveTabsCount)
+        verify(exactly = 1) { metrics.track(Event.TabsTrayHaveInactiveTabs) }
+    }
+
+    @Test
+    fun `WHEN multiple inactive tabs are added THEN the open tab count is updated`() {
+        assertEquals(0, settings.inactiveTabsCount)
+        store.dispatch(
+            TabListAction.AddMultipleTabsAction(
+                listOf(
+                    createTab("https://mozilla.org", lastAccess = maxActiveTime, createdAt = 0),
+                    createTab("https://firefox.com", lastAccess = maxActiveTime, createdAt = 0)
+                )
+            )
+        ).joinBlocking()
+
+        assertEquals(2, settings.inactiveTabsCount)
+        verify(exactly = 1) { metrics.track(Event.TabsTrayHaveInactiveTabs) }
+    }
+
+    @Test
+    fun `WHEN an inactive tab is removed THEN the inactive tab count is updated`() {
+        store.dispatch(
+            TabListAction.AddMultipleTabsAction(
+                listOf(
+                    createTab(
+                        id = "1",
+                        url = "https://mozilla.org",
+                        lastAccess = maxActiveTime,
+                        createdAt = 0
+                    ),
+                    createTab(
+                        id = "2",
+                        url = "https://firefox.com",
+                        lastAccess = maxActiveTime,
+                        createdAt = 0
+                    )
+                )
+            )
+        ).joinBlocking()
+        assertEquals(2, settings.inactiveTabsCount)
+        verify(exactly = 1) { metrics.track(Event.TabsTrayHaveInactiveTabs) }
+
+        store.dispatch(TabListAction.RemoveTabAction("1")).joinBlocking()
+        assertEquals(1, settings.inactiveTabsCount)
+        verify(exactly = 2) { metrics.track(Event.TabsTrayHaveInactiveTabs) }
+    }
+
+    @Test
+    fun `WHEN all inactive tabs are removed THEN the inactive tab count is updated`() {
+        store.dispatch(
+            TabListAction.AddMultipleTabsAction(
+                listOf(
+                    createTab("https://mozilla.org", lastAccess = maxActiveTime, createdAt = 0),
+                    createTab("https://firefox.com", lastAccess = maxActiveTime, createdAt = 0)
+                )
+            )
+        ).joinBlocking()
+        assertEquals(2, settings.inactiveTabsCount)
+        verify(exactly = 1) { metrics.track(Event.TabsTrayHaveInactiveTabs) }
+
+        store.dispatch(TabListAction.RemoveAllTabsAction()).joinBlocking()
+        assertEquals(0, settings.inactiveTabsCount)
+        verify(exactly = 1) { metrics.track(Event.TabsTrayHaveNoInactiveTabs) }
+    }
+
+    @Test
+    fun `WHEN inactive tabs are restored THEN the inactive tab count is updated`() {
+        assertEquals(0, settings.inactiveTabsCount)
+        val tabsToRestore = listOf(
+            RecoverableTab(url = "https://mozilla.org", id = "1", lastAccess = maxActiveTime, createdAt = 0),
+            RecoverableTab(url = "https://firefox.com", id = "2", lastAccess = maxActiveTime, createdAt = 0)
+        )
+
+        store.dispatch(
+            TabListAction.RestoreAction(
+                tabs = tabsToRestore,
+                restoreLocation = TabListAction.RestoreAction.RestoreLocation.BEGINNING
+            )
+        ).joinBlocking()
+        assertEquals(2, settings.inactiveTabsCount)
+        verify(exactly = 1) { metrics.track(Event.TabsTrayHaveInactiveTabs) }
     }
 }
 

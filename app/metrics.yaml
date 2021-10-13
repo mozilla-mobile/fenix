@@ -2784,6 +2784,80 @@ tabs_tray:
     notification_emails:
       - android-probes@mozilla.com
     expires: "2022-08-01"
+  has_inactive_tabs:
+    type: boolean
+    lifetime: application
+    description: |
+      A boolean that indicates if the user has any INACTIVE tabs.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/21903
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2022-04-01"
+  inactive_tabs_count:
+    type: counter
+    lifetime: application
+    description: |
+      A counter that indicates how many INACTIVE tabs a user has. This
+      value will only be set if the user has at least *one* inactive tab.
+      If theyhave 0, this ping will not get sent, resulting in a null value. To
+      disambiguate between a failed `inactive_tabs_count` ping and 0 open tabs,
+      please see `has_inactive_tabs`.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/21903
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2022-04-01"
+  close_all_inactive_tabs:
+    type: event
+    lifetime: ping
+    description: |
+      A user tapped the close all inactive tabs button in the the tabs tray
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/21903
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2022-04-01"
+  close_inactive_tab:
+    type: counter
+    lifetime: application
+    description: |
+      A counter that indicates how many INACTIVE tabs a user has closed.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/21903
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2022-04-01"
+  open_inactive_tab:
+    type: counter
+    lifetime: application
+    description: |
+      A counter that indicates how many INACTIVE tabs a user has opened.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/21903
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2022-04-01"
 
 collections:
   renamed:

@@ -194,6 +194,11 @@ sealed class Event {
     object TabsTrayRecentlyClosedPressed : Event()
     object TabsTrayInactiveTabsExpanded : Event()
     object TabsTrayInactiveTabsCollapsed : Event()
+    object TabsTrayHaveInactiveTabs : Event()
+    object TabsTrayHaveNoInactiveTabs : Event()
+    object TabsTrayCloseAllInactiveTabs : Event()
+    object TabsTrayCloseInactiveTab : Event()
+    object TabsTrayOpenInactiveTab : Event()
 
     object ProgressiveWebAppOpenFromHomescreenTap : Event()
     object ProgressiveWebAppInstallAsShortcut : Event()
@@ -352,7 +357,8 @@ sealed class Event {
             context.getString(R.string.pref_key_sync_bookmarks),
             context.getString(R.string.pref_key_sync_history),
             context.getString(R.string.pref_key_show_voice_search),
-            context.getString(R.string.pref_key_show_search_suggestions_in_private)
+            context.getString(R.string.pref_key_show_search_suggestions_in_private),
+            context.getString(R.string.pref_key_inactive_tabs)
         )
 
         override val extras: Map<Events.preferenceToggledKeys, String>?
