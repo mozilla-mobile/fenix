@@ -2792,7 +2792,7 @@ tabs_tray:
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/21903
     data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/
+      - https://github.com/mozilla-mobile/fenix/pull/21908
     data_sensitivity:
       - interaction
     notification_emails:
@@ -2810,7 +2810,7 @@ tabs_tray:
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/21903
     data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/
+      - https://github.com/mozilla-mobile/fenix/pull/21908
     data_sensitivity:
       - interaction
     notification_emails:
@@ -2824,7 +2824,7 @@ tabs_tray:
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/21903
     data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/
+      - https://github.com/mozilla-mobile/fenix/pull/21908
     data_sensitivity:
       - interaction
     notification_emails:
@@ -2838,7 +2838,7 @@ tabs_tray:
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/21903
     data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/
+      - https://github.com/mozilla-mobile/fenix/pull/21908
     data_sensitivity:
       - interaction
     notification_emails:
@@ -2852,7 +2852,7 @@ tabs_tray:
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/21903
     data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/
+      - https://github.com/mozilla-mobile/fenix/pull/21908
     data_sensitivity:
       - interaction
     notification_emails:
