@@ -432,7 +432,7 @@ class DefaultTabsTrayControllerTest {
     }
 
     @Test
-    fun `WHEN handleDeleteAllInactiveTabs is called THEN Event#TabsTrayCloseAllInactiveTabs is added to telemetry`() {
+    fun `WHEN handleDeleteAllInactiveTabs is called THEN Event#TabsTrayCloseAllInactiveTabs and Event#TabsTrayCloseInactiveTab are added to telemetry`() {
         val inactiveTab: TabSessionState = mockk {
             every { lastAccess } returns maxActiveTime
             every { createdAt } returns 0
@@ -449,6 +449,7 @@ class DefaultTabsTrayControllerTest {
             createController().handleDeleteAllInactiveTabs()
 
             verify { metrics.track(Event.TabsTrayCloseAllInactiveTabs) }
+            verify { metrics.track(Event.TabsTrayCloseInactiveTab(1)) }
         } finally {
             unmockkStatic("mozilla.components.browser.state.selector.SelectorsKt")
         }

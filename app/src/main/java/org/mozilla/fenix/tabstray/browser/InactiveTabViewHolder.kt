@@ -127,7 +127,7 @@ sealed class InactiveTabViewHolder(itemView: View) : RecyclerView.ViewHolder(ite
                     R.drawable.mozac_ic_close,
                     R.string.content_description_close_button
                 ) {
-                    components.analytics.metrics.track(Event.TabsTrayCloseInactiveTab)
+                    components.analytics.metrics.track(Event.TabsTrayCloseInactiveTab())
                     browserTrayInteractor.close(tab, featureName)
                 }
             }

@@ -197,7 +197,7 @@ sealed class Event {
     object TabsTrayHaveInactiveTabs : Event()
     object TabsTrayHaveNoInactiveTabs : Event()
     object TabsTrayCloseAllInactiveTabs : Event()
-    object TabsTrayCloseInactiveTab : Event()
+    data class TabsTrayCloseInactiveTab(val amountClosed: Int = 1) : Event()
     object TabsTrayOpenInactiveTab : Event()
 
     object ProgressiveWebAppOpenFromHomescreenTap : Event()
