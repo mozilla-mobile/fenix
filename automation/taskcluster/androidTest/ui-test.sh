@@ -130,15 +130,36 @@ echo
 echo
 echo "EXECUTE TEST(S)"
 echo
+
+DEVICE="model=Pixel2,version=28,locale=en,orientation=portrait"
+GOOGLE_CLOUD_STORAGE_BUCKET="fenix_test_artifacts"
+NUM_UNIFORM_SHARDS=3
+
+gcloud beta firebase test android run \
+    --type instrumentation \
+    --app ${APK_APP} \
+    --test ${APK_TEST} \
+    --device ${DEVICE} \
+    --timeout 30m \
+    --results-bucket gs://${GOOGLE_CLOUD_STORAGE_BUCKET} \
+    --results-dir ${RESULTS_DIR} \
+    --num-uniform-shards ${NUM_UNIFORM_SHARDS} \
+    --record-video \
+    --num-flaky-test-attempts 1 \
+    --no-auto-google-login \
+    --test-targets "class org.mozilla.fenix.ui.NavigationToolbarTest#visitURLTest" \
+    --use-orchestrator
+
+
 # Note that if --local-results-dir is "results", timestamped sub-directory will
 # contain the results. For any other value, the directory itself will have the results.
-set -o pipefail && $JAVA_BIN -jar $FLANK_BIN android run \
-	--config=$flank_template \
-	--max-test-shards=$num_shards \
-	--app=$APK_APP --test=$APK_TEST \
-	--local-result-dir="${RESULTS_DIR}" \
-	--project=$GOOGLE_PROJECT \
-	| tee flank.log
+# set -o pipefail && $JAVA_BIN -jar $FLANK_BIN android run \
+# 	--config=$flank_template \
+# 	--max-test-shards=$num_shards \
+# 	--app=$APK_APP --test=$APK_TEST \
+# 	--local-result-dir="${RESULTS_DIR}" \
+# 	--project=$GOOGLE_PROJECT \
+# 	| tee flank.log
 
 exitcode=$?
 failure_check

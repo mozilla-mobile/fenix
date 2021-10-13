@@ -13,7 +13,7 @@ RUN apt-get install -y jq \
 USER worker:worker
 
 ENV GOOGLE_SDK_DOWNLOAD ./gcloud.tar.gz
-ENV GOOGLE_SDK_VERSION 233
+ENV GOOGLE_SDK_VERSION 360
 
 ENV TEST_TOOLS /builds/worker/test-tools
 ENV PATH ${PATH}:${TEST_TOOLS}:${TEST_TOOLS}/google-cloud-sdk/bin
@@ -25,6 +25,7 @@ RUN curl https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud
     && tar -xvf ${GOOGLE_SDK_DOWNLOAD} -C ${TEST_TOOLS} \
     && rm -f ${GOOGLE_SDK_DOWNLOAD} \
     && ${TEST_TOOLS}/google-cloud-sdk/install.sh --quiet \
+    && ${TEST_TOOLS}/google-cloud-sdk/bin/gcloud --quiet components install beta \
     && ${TEST_TOOLS}/google-cloud-sdk/bin/gcloud --quiet components update
 
 # Flank v21.08.1
