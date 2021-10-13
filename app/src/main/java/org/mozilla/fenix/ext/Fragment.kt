@@ -78,6 +78,7 @@ fun Fragment.redirectToReAuth(
         when (currentLocation) {
             R.id.loginDetailFragment,
             R.id.editLoginFragment,
+            R.id.addLoginFragment,
             R.id.savedLoginsFragment -> {
                 findNavController().popBackStack(R.id.savedLoginsAuthFragment, false)
             }
