@@ -9,7 +9,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+<<<<<<< HEAD
     android:layout_marginTop="40dp">
+=======
+    android:layout_marginTop="@dimen/recent_bookmark_header_margin_top">
+>>>>>>> 4a8f01bee (Close #21573: Add shadow to recent bookmarks section)
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/header"
