@@ -699,6 +699,8 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                     else -> ""
                 }
             )
+
+            inactiveTabsEnabled.set(settings.inactiveTabsAreEnabled)
         }
         reportHomeScreenMetrics(settings)
     }

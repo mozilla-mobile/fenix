@@ -1651,6 +1651,22 @@ preferences:
     notification_emails:
       - android-probes@mozilla.com
     expires: "2022-02-01"
+  inactive_tabs_enabled:
+    type: boolean
+    description: >
+      Whether or not the user has the inactive tabs feature enabled.
+      default: true
+    send_in_pings:
+      - metrics
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/21903
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/21908
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2022-04-01"
 
 search.default_engine:
   code:
