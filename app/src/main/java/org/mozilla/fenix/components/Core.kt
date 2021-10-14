@@ -53,7 +53,6 @@ import mozilla.components.feature.webcompat.WebCompatFeature
 import mozilla.components.feature.webcompat.reporter.WebCompatReporterFeature
 import mozilla.components.feature.webnotifications.WebNotificationFeature
 import mozilla.components.lib.dataprotect.SecureAbove22Preferences
-import mozilla.components.lib.dataprotect.generateEncryptionKey
 import mozilla.components.service.digitalassetlinks.RelationChecker
 import mozilla.components.service.digitalassetlinks.local.StatementApi
 import mozilla.components.service.digitalassetlinks.local.StatementRelationChecker
@@ -87,7 +86,6 @@ import org.mozilla.fenix.telemetry.TelemetryMiddleware
 import org.mozilla.fenix.utils.Mockable
 import org.mozilla.fenix.utils.getUndoDelay
 import org.mozilla.geckoview.GeckoRuntime
-import java.lang.IllegalStateException
 import java.util.concurrent.TimeUnit
 
 /**
@@ -294,7 +292,7 @@ class Core(
     // We can fully initialize GeckoEngine without initialized our storage.
     val lazyHistoryStorage = lazyMonitored { PlacesHistoryStorage(context, crashReporter) }
     val lazyBookmarksStorage = lazyMonitored { PlacesBookmarksStorage(context) }
-    val lazyPasswordsStorage = lazyMonitored { SyncableLoginsStorage(context, passwordsEncryptionKey) }
+    val lazyPasswordsStorage = lazyMonitored { SyncableLoginsStorage(context, lazySecurePrefs) }
     val lazyAutofillStorage = lazyMonitored { AutofillCreditCardsAddressesStorage(context, lazySecurePrefs) }
 
     /**
@@ -418,23 +416,6 @@ class Core(
 
     // Temporary. See https://github.com/mozilla-mobile/fenix/issues/19155
     private val lazySecurePrefs = lazyMonitored { getSecureAbove22Preferences() }
-
-    private val passwordsEncryptionKey by lazyMonitored {
-        getSecureAbove22Preferences().getString(PASSWORDS_KEY)
-            ?: generateEncryptionKey(KEY_STRENGTH).also {
-                if (context.settings().passwordsEncryptionKeyGenerated) {
-                    // We already had previously generated an encryption key, but we have lost it
-                    crashReporter.submitCaughtException(
-                        IllegalStateException(
-                            "Passwords encryption key for passwords storage was lost and we generated a new one"
-                        )
-                    )
-                }
-                context.settings().recordPasswordsEncryptionKeyGenerated()
-                getSecureAbove22Preferences().putString(PASSWORDS_KEY, it)
-            }
-    }
-
     val trackingProtectionPolicyFactory = TrackingProtectionPolicyFactory(context.settings())
 
     /**
