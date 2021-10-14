@@ -544,7 +544,6 @@ class SmokeTest {
         }
     }
 
-    @Ignore("Started failing: https://github.com/mozilla-mobile/fenix/issues/21540")
     @Test
     // Verifies setting as default a customized search engine name and URL
     fun editCustomSearchEngineTest() {
@@ -1273,7 +1272,7 @@ class SmokeTest {
             assertPlaybackState(browserStore, MediaSession.PlaybackState.PLAYING)
         }.openTabDrawer {
             verifyTabMediaControlButtonState("Pause")
-            clickTabMediaControlButton()
+            clickTabMediaControlButton("Pause")
             verifyTabMediaControlButtonState("Play")
         }.openTab(audioTestPage.title) {
             assertPlaybackState(browserStore, MediaSession.PlaybackState.PAUSED)
