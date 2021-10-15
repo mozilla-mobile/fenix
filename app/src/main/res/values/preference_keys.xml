@@ -222,8 +222,6 @@
 
     <string name="pref_key_open_tabs_count" translatable="false">pref_key_open_tabs_count</string>
 
-    <string name="pref_key_inactive_tabs_count" translatable="false">pref_key_inactive_tabs_count</string>
-
     <!-- Add-on Metrics Values -->
     <string name="pref_key_installed_addons_count" translatable="false">pref_key_installed_addons_count</string>
     <string name="pref_key_installed_addons_list" translatable="false">pref_key_installed_addons_list</string>

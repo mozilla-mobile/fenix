@@ -38,7 +38,7 @@ class TabSorter(
         // Inactive tabs
         val selectedInactiveIndex = inactiveTabs.findSelectedIndex(selectedTabId)
         concatAdapter.inactiveTabsAdapter.updateTabs((Tabs(inactiveTabs, selectedInactiveIndex)))
-        if (inactiveTabs.isNotEmpty()) {
+        if (context.settings().inactiveTabsAreEnabled) {
             context.components.analytics.metrics.track(Event.TabsTrayHasInactiveTabs(inactiveTabs.size))
         }
 
