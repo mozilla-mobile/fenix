@@ -4,7 +4,6 @@
 
 package org.mozilla.fenix.tabstray.browser
 
-import android.content.Context
 import androidx.recyclerview.widget.ConcatAdapter
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.tabstray.Tab
@@ -14,38 +13,45 @@ import mozilla.components.feature.tabs.tabstray.TabsFeature
 import mozilla.components.support.base.observer.Observable
 import mozilla.components.support.base.observer.ObserverRegistry
 import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.tabstray.ext.browserAdapter
 import org.mozilla.fenix.tabstray.ext.inactiveTabsAdapter
 import org.mozilla.fenix.tabstray.ext.tabGroupAdapter
+import org.mozilla.fenix.utils.Settings
 import kotlin.math.max
 
 /**
  * An intermediary layer to consume tabs from [TabsFeature] for sorting into the various adapters.
  */
 class TabSorter(
-    private val context: Context,
+    private val settings: Settings,
+    private val metrics: MetricController,
     private val concatAdapter: ConcatAdapter,
     private val store: BrowserStore
 ) : TabsTray, Observable<TabsTray.Observer> by ObserverRegistry() {
+    private val groupsSet = mutableSetOf<String>()
+
     override fun updateTabs(tabs: Tabs) {
-        val inactiveTabs = tabs.list.getInactiveTabs(context)
-        val searchTermTabs = tabs.list.getSearchGroupTabs(context)
+        val inactiveTabs = tabs.list.getInactiveTabs(settings)
+        val searchTermTabs = tabs.list.getSearchGroupTabs(settings)
         val normalTabs = tabs.list - inactiveTabs - searchTermTabs
         val selectedTabId = store.state.selectedTabId
 
         // Inactive tabs
         val selectedInactiveIndex = inactiveTabs.findSelectedIndex(selectedTabId)
         concatAdapter.inactiveTabsAdapter.updateTabs((Tabs(inactiveTabs, selectedInactiveIndex)))
-        if (context.settings().inactiveTabsAreEnabled) {
-            context.components.analytics.metrics.track(Event.TabsTrayHasInactiveTabs(inactiveTabs.size))
+        if (settings.inactiveTabsAreEnabled) {
+            metrics.track(Event.TabsTrayHasInactiveTabs(inactiveTabs.size))
         }
 
         // Tab groups
         // We don't need to provide a selectedId, because the [TabGroupAdapter] has that built-in with support from
         //  NormalBrowserPageViewHolder.scrollToTab.
-        val (groups, remainderTabs) = searchTermTabs.toSearchGroups()
+        val (groups, remainderTabs) = searchTermTabs.toSearchGroups(groupsSet)
+
+        groupsSet.clear()
+        groupsSet.addAll(groups.map { it.title })
+
         concatAdapter.tabGroupAdapter.submitList(groups)
 
         // Normal tabs.
@@ -65,8 +71,8 @@ private fun List<Tab>.findSelectedIndex(tabId: String?): Int {
 /**
  * Returns a list of inactive tabs based on our preferences.
  */
-private fun List<Tab>.getInactiveTabs(context: Context): List<Tab> {
-    val inactiveTabsEnabled = context.settings().inactiveTabsAreEnabled
+private fun List<Tab>.getInactiveTabs(settings: Settings): List<Tab> {
+    val inactiveTabsEnabled = settings.inactiveTabsAreEnabled
     return if (inactiveTabsEnabled) {
         filter { !it.isActive(maxActiveTime) }
     } else {
@@ -77,9 +83,9 @@ private fun List<Tab>.getInactiveTabs(context: Context): List<Tab> {
 /**
  * Returns a list of search term tabs based on our preferences.
  */
-private fun List<Tab>.getSearchGroupTabs(context: Context): List<Tab> {
-    val inactiveTabsEnabled = context.settings().inactiveTabsAreEnabled
-    val tabGroupsEnabled = context.settings().searchTermTabGroupsAreEnabled
+private fun List<Tab>.getSearchGroupTabs(settings: Settings): List<Tab> {
+    val inactiveTabsEnabled = settings.inactiveTabsAreEnabled
+    val tabGroupsEnabled = settings.searchTermTabGroupsAreEnabled
     return when {
         tabGroupsEnabled && inactiveTabsEnabled ->
             filter { it.searchTerm.isNotBlank() && it.isActive(maxActiveTime) }
@@ -112,7 +118,7 @@ private fun Tab.isActive(maxActiveTime: Long): Boolean {
  *
  * See also: https://github.com/mozilla-mobile/android-components/issues/11012
  */
-private fun List<Tab>.toSearchGroups(): Pair<List<TabGroupAdapter.Group>, List<Tab>> {
+private fun List<Tab>.toSearchGroups(groupSet: Set<String>): Pair<List<TabGroupAdapter.Group>, List<Tab>> {
     val data = groupBy { it.searchTerm.lowercase() }
 
     val groupings = data.map { mapEntry ->
@@ -132,7 +138,7 @@ private fun List<Tab>.toSearchGroups(): Pair<List<TabGroupAdapter.Group>, List<T
         )
     }
 
-    val groups = groupings.filter { it.tabs.size > 1 }.sortedBy { it.lastAccess }
+    val groups = groupings.filter { it.tabs.size > 1 || groupSet.contains(it.title) }.sortedBy { it.lastAccess }
     val remainderTabs = (groupings - groups).flatMap { it.tabs }
 
     return groups to remainderTabs
