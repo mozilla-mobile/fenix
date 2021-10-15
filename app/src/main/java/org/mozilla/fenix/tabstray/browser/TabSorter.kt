@@ -38,6 +38,9 @@ class TabSorter(
         // Inactive tabs
         val selectedInactiveIndex = inactiveTabs.findSelectedIndex(selectedTabId)
         concatAdapter.inactiveTabsAdapter.updateTabs((Tabs(inactiveTabs, selectedInactiveIndex)))
+        if (inactiveTabs.isNotEmpty()) {
+            context.components.analytics.metrics.track(Event.TabsTrayHasInactiveTabs(inactiveTabs.size))
+        }
 
         // Tab groups
         // We don't need to provide a selectedId, because the [TabGroupAdapter] has that built-in with support from
