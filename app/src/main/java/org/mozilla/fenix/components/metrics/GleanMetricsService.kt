@@ -607,11 +607,9 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.TabsTrayInactiveTabsCollapsed -> EventWrapper<NoExtraKeys>(
             { TabsTray.inactiveTabsCollapsed.record(it) }
         )
-        is Event.TabsTrayHaveInactiveTabs -> EventWrapper<NoExtraKeys>(
-            { TabsTray.hasInactiveTabs.set(true) }
-        )
-        is Event.TabsTrayHaveNoInactiveTabs -> EventWrapper<NoExtraKeys>(
-            { TabsTray.hasInactiveTabs.set(false) }
+        is Event.TabsTrayHasInactiveTabs -> EventWrapper(
+            { TabsTray.hasInactiveTabs.record(it) },
+            { TabsTray.hasInactiveTabsKeys.valueOf(it) }
         )
         is Event.TabsTrayCloseAllInactiveTabs -> EventWrapper<NoExtraKeys>(
             { TabsTray.closeAllInactiveTabs.record(it) }

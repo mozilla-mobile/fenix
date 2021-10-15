@@ -75,8 +75,6 @@ import org.mozilla.fenix.GleanMetrics.AndroidAutofill
 import org.mozilla.fenix.GleanMetrics.CustomizeHome
 import org.mozilla.fenix.GleanMetrics.Preferences
 import org.mozilla.fenix.GleanMetrics.SearchDefaultEngine
-import org.mozilla.fenix.GleanMetrics.TabsTray.hasInactiveTabs
-import org.mozilla.fenix.GleanMetrics.TabsTray.inactiveTabsCount
 import org.mozilla.fenix.components.Core
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MozillaProductDetector
@@ -573,12 +571,6 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             hasOpenTabs.set(openTabsCount > 0)
             if (openTabsCount > 0) {
                 tabsOpenCount.add(openTabsCount)
-            }
-
-            val inactiveTabsAmount = settings.inactiveTabsCount
-            hasInactiveTabs.set(inactiveTabsAmount > 0)
-            if (inactiveTabsAmount > 0) {
-                inactiveTabsCount.add(inactiveTabsAmount)
             }
 
             val topSitesSize = settings.topSitesSize

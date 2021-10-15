@@ -22,7 +22,6 @@ import mozilla.components.support.base.android.Clock
 import mozilla.components.support.base.log.logger.Logger
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
-import org.mozilla.fenix.tabstray.ext.inactiveTabs
 import org.mozilla.fenix.utils.Settings
 import org.mozilla.fenix.GleanMetrics.EngineTab as EngineMetrics
 
@@ -79,17 +78,6 @@ class TelemetryMiddleware(
                     metrics.track(Event.HaveOpenTabs)
                 } else {
                     metrics.track(Event.HaveNoOpenTabs)
-                }
-
-                if (settings.inactiveTabsAreEnabled) {
-                    settings.inactiveTabsCount = context.state.inactiveTabs.count()
-                    metrics.track(
-                        if (context.state.inactiveTabs.count() > 0) {
-                            Event.TabsTrayHaveInactiveTabs
-                        } else {
-                            Event.TabsTrayHaveNoInactiveTabs
-                        }
-                    )
                 }
             }
         }
