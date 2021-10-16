@@ -11,7 +11,6 @@
     <color name="accent_light_theme">@color/photonInk20</color>
     <color name="accent_bright_light_theme">@color/photonViolet70</color>
     <color name="about_link_normal_theme">@color/photonViolet70</color>
-    <color name="scrimEnd_light_theme">#F542414D</color>
     <color name="dark_grey_90_gradient_start">@color/photonDarkGrey90</color>
     <color name="dark_grey_90_gradient_end">#0015141A</color>
     <color name="synced_tabs_separator_light_theme">@color/photonLightGrey30</color>
@@ -163,7 +162,7 @@
     <color name="destructive_normal_theme">@color/photonRed70</color>
     <color name="disabled_normal_theme">#6620123A</color>
     <color name="scrimStart_normal_theme">#F515141A</color>
-    <color name="scrimEnd_normal_theme">@color/scrimEnd_light_theme</color>
+    <color name="scrimEnd_normal_theme">#F542414D</color>
     <color name="snackbar_normal_theme">@color/accent_light_theme</color>
     <color name="accent_on_dark_background_normal_theme">@color/accent_bright_light_theme</color>
     <color name="toolbar_start_gradient_normal_theme">@color/toolbar_start_gradient_light_theme</color>
