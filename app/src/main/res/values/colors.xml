@@ -13,7 +13,6 @@
     <color name="about_link_normal_theme">@color/photonViolet70</color>
     <color name="dark_grey_90_gradient_start">@color/photonDarkGrey90</color>
     <color name="dark_grey_90_gradient_end">#0015141A</color>
-    <color name="onboarding_illustration_selected_light_theme">@color/accent_bright_light_theme</color>
     <color name="onboarding_illustration_deselected_light_theme">#9915141A</color>
     <color name="add_on_private_browsing_exterior_circle_background_light_theme">@color/accent_bright_light_theme</color>
     <color name="add_on_private_browsing_interior_icon_background_light_theme">@color/photonWhite</color>
@@ -167,7 +166,7 @@
     <color name="swipe_delete_background_normal_theme">@color/photonLightGrey30</color>
     <color name="onboarding_card_background_start_gradient_normal_theme">@color/onboarding_card_background_start_gradient_dark_theme</color>
     <color name="onboarding_card_background_end_gradient_normal_theme">@color/onboarding_card_background_end_gradient_dark_theme</color>
-    <color name="onboarding_illustration_selected_normal_theme">@color/onboarding_illustration_selected_light_theme</color>
+    <color name="onboarding_illustration_selected_normal_theme">@color/accent_bright_light_theme</color>
     <color name="onboarding_illustration_deselected_normal_theme">@color/onboarding_illustration_deselected_light_theme</color>
     <color name="add_on_private_browsing_exterior_circle_background_normal_theme">@color/add_on_private_browsing_exterior_circle_background_light_theme</color>
     <color name="add_on_private_browsing_interior_icon_background_normal_theme">@color/add_on_private_browsing_interior_icon_background_light_theme</color>
