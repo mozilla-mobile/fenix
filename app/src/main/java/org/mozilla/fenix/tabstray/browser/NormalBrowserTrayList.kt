@@ -38,7 +38,18 @@ class NormalBrowserTrayList @JvmOverloads constructor(
 
     private val swipeDelegate = SwipeToDeleteDelegate()
     private val concatAdapter by lazy { adapter as ConcatAdapter }
+<<<<<<< HEAD
     private val tabSorter by lazy { TabSorter(context, concatAdapter, context.components.core.store) }
+=======
+    private val tabSorter by lazy {
+        TabSorter(
+            context.settings(),
+            context.components.analytics.metrics,
+            concatAdapter,
+            context.components.core.store
+        )
+    }
+>>>>>>> 826249497 (MR2 Inactive tabs telemetry (#21908))
     private val inactiveTabsFilter: (TabSessionState) -> Boolean = filter@{
         if (!context.settings().inactiveTabsAreEnabled) {
             return@filter false
