@@ -449,7 +449,6 @@ class DefaultTabsTrayControllerTest {
             createController().handleDeleteAllInactiveTabs()
 
             verify { metrics.track(Event.TabsTrayCloseAllInactiveTabs) }
-            verify { metrics.track(Event.TabsTrayCloseInactiveTab(1)) }
         } finally {
             unmockkStatic("mozilla.components.browser.state.selector.SelectorsKt")
         }
