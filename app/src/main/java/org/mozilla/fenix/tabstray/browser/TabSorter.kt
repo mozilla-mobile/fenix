@@ -55,7 +55,7 @@ class TabSorter(
         concatAdapter.tabGroupAdapter.submitList(groups)
 
         // Normal tabs.
-        val totalNormalTabs = (normalTabs + remainderTabs)
+        val totalNormalTabs = (normalTabs + remainderTabs).sortedBy { it.lastAccess }
         val selectedTabIndex = totalNormalTabs.findSelectedIndex(selectedTabId)
         concatAdapter.browserAdapter.updateTabs(Tabs(totalNormalTabs, selectedTabIndex))
     }

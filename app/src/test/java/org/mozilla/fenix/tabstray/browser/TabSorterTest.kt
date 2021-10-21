@@ -315,4 +315,39 @@ class TabSorterTest {
         assertEquals(adapter.tabGroupAdapter.itemCount, 1)
         assertEquals(adapter.browserAdapter.itemCount, 0)
     }
+
+    @Test
+    fun `WHEN updated with two normal tab and one search term tab THEN these tabs are shown in the right order`() {
+        val store = BrowserStore(
+            BrowserState(
+                tabs = emptyList()
+            )
+        )
+        val adapter = ConcatAdapter(
+            InactiveTabsAdapter(context, mock(), mock(), INACTIVE_TABS_FEATURE_NAME, settings),
+            TabGroupAdapter(context, mock(), mock(), TAB_GROUP_FEATURE_NAME),
+            TitleHeaderAdapter(store, context.settings()),
+            BrowserTabsAdapter(context, mock(), mock(), TABS_TRAY_FEATURE_NAME)
+        )
+        val tabSorter = TabSorter(settings, metrics, adapter, store)
+
+        tabSorter.updateTabs(
+            Tabs(
+                list = listOf(
+                    createTab("tab1", System.currentTimeMillis() + 1000),
+                    createTab("tab2", System.currentTimeMillis() + 2000, searchTerm = "mozilla"),
+                    createTab("tab3", System.currentTimeMillis() + 3000)
+                ),
+                selectedIndex = 0
+            )
+        )
+
+        assertEquals(adapter.itemCount, 3)
+        assertEquals(adapter.inactiveTabsAdapter.inActiveTabsCount, 0)
+        assertEquals(adapter.tabGroupAdapter.itemCount, 0)
+        assertEquals(adapter.browserAdapter.itemCount, 3)
+        assertEquals(adapter.browserAdapter.currentList[0].searchTerm, "")
+        assertEquals(adapter.browserAdapter.currentList[1].searchTerm, "mozilla")
+        assertEquals(adapter.browserAdapter.currentList[2].searchTerm, "")
+    }
 }
