@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.library.history
 
+import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.os.Bundle
 import android.text.SpannableString
@@ -13,8 +14,8 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.RadioGroup
 import androidx.appcompat.app.AlertDialog
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
@@ -30,10 +31,7 @@ import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.service.fxa.sync.SyncReason
 import mozilla.components.support.base.feature.UserInteractionHandler
-import org.mozilla.fenix.BrowserDirection
-import org.mozilla.fenix.HomeActivity
-import org.mozilla.fenix.NavHostActivity
-import org.mozilla.fenix.R
+import org.mozilla.fenix.*
 import org.mozilla.fenix.addons.showSnackBar
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.StoreProvider
@@ -47,6 +45,8 @@ import org.mozilla.fenix.ext.setTextColor
 import org.mozilla.fenix.ext.toShortUrl
 import org.mozilla.fenix.library.LibraryPageFragment
 import org.mozilla.fenix.utils.allowUndo
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 @SuppressWarnings("TooManyFunctions", "LargeClass")
 class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
@@ -116,12 +116,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
 
         viewModel = HistoryViewModel(historyProvider)
 
-        viewModel.userHasHistory.observe(
-            this,
-            Observer {
-                historyView.updateEmptyState(it)
-            }
-        )
+        viewModel.userHasHistory.observe(this) { historyView.updateEmptyState(it) }
 
         requireComponents.analytics.metrics.track(Event.HistoryOpened)
 
@@ -150,12 +145,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
             historyView.update(it)
         }
 
-        viewModel.history.observe(
-            viewLifecycleOwner,
-            Observer {
-                historyView.historyAdapter.submitList(it)
-            }
-        )
+        viewModel.history.observe(viewLifecycleOwner) { historyView.historyAdapter.submitList(it) }
     }
 
     override fun onResume() {
@@ -293,35 +283,54 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
     }
 
     private fun displayDeleteAllDialog() {
-        activity?.let { activity ->
-            AlertDialog.Builder(activity).apply {
-                setMessage(R.string.delete_browsing_data_prompt_message)
-                setNegativeButton(R.string.delete_browsing_data_prompt_cancel) { dialog: DialogInterface, _ ->
-                    dialog.cancel()
-                }
-                setPositiveButton(R.string.delete_browsing_data_prompt_allow) { dialog: DialogInterface, _ ->
-                    historyStore.dispatch(HistoryFragmentAction.EnterDeletionMode)
-                    // Use fragment's lifecycle; the view may be gone by the time dialog is interacted with.
-                    lifecycleScope.launch(IO) {
-                        requireComponents.analytics.metrics.track(Event.HistoryAllItemsRemoved)
-                        requireComponents.core.store.dispatch(RecentlyClosedAction.RemoveAllClosedTabAction)
-                        requireComponents.core.historyStorage.deleteEverything()
-                        deleteOpenTabsEngineHistory(requireComponents.core.store)
-                        launch(Main) {
-                            viewModel.invalidate()
-                            historyStore.dispatch(HistoryFragmentAction.ExitDeletionMode)
-                            showSnackBar(
-                                requireView(),
-                                getString(R.string.preferences_delete_browsing_data_snackbar)
-                            )
-                        }
-                    }
+        val activity = activity ?: return
 
-                    dialog.dismiss()
+        val v = layoutInflater.inflate(R.layout.dialog_delete_browsing_data, null)
+
+        AlertDialog.Builder(activity)
+            .setView(v)
+            .setNegativeButton(R.string.delete_browsing_data_prompt_cancel) { dialog, _ ->
+                dialog.cancel()
+            }
+            .setPositiveButton(R.string.delete_browsing_data_prompt_allow) { _, _ ->
+                val checkedId = v.findViewById<RadioGroup>(R.id.history_deletion_period)
+                    .checkedRadioButtonId
+
+                val deleteSince = when (checkedId) {
+                    R.id.last_hour -> Calendar.getInstance().timeInMillis - TimeUnit.HOURS.toMillis(1)
+                    R.id.last_two_hours -> Calendar.getInstance().timeInMillis - TimeUnit.HOURS.toMillis(2)
+                    R.id.last_four_hours -> Calendar.getInstance().timeInMillis - TimeUnit.HOURS.toMillis(4)
+                    R.id.today -> {
+                        val calendar = Calendar.getInstance()
+                        calendar.set(Calendar.HOUR_OF_DAY, 0)
+                        calendar.set(Calendar.MINUTE, 0)
+                        calendar.set(Calendar.SECOND, 0)
+                        calendar.set(Calendar.MILLISECOND, 0)
+                        calendar.timeInMillis
+                    }
+                    else -> 0 // Since beginning of time, also known as: everything.
                 }
-                create()
-            }.show()
-        }
+
+                historyStore.dispatch(HistoryFragmentAction.EnterDeletionMode)
+                // Use fragment's lifecycle; the view may be gone by the time dialog is interacted with.
+                lifecycleScope.launch(IO) {
+                    requireComponents.analytics.metrics.track(Event.HistoryAllItemsRemoved) // TODO Adjust
+                    requireComponents.core.store.dispatch(RecentlyClosedAction.RemoveAllClosedTabAction)
+                    requireComponents.core.historyStorage.deleteVisitsSince(deleteSince)
+
+                    deleteOpenTabsEngineHistory(requireComponents.core.store)
+
+                    launch(Main) {
+                        viewModel.invalidate()
+                        historyStore.dispatch(HistoryFragmentAction.ExitDeletionMode)
+                        showSnackBar(
+                            requireView(),
+                            getString(R.string.preferences_delete_browsing_data_snackbar)
+                        )
+                    }
+                }
+            }
+            .show()
     }
 
     private suspend fun deleteOpenTabsEngineHistory(store: BrowserStore) {

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingHorizontal="?attr/dialogPreferredPadding"
+    android:paddingTop="?attr/dialogPreferredPadding">
+
+    <!-- TODO adjust message -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/delete_browsing_data_prompt_message"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1" />
+
+    <!-- TODO define the value in dimens? -->
+    <RadioGroup
+        android:id="@+id/history_deletion_period"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:checkedButton="@id/everything">
+
+        <!-- TODO localize -->
+        <RadioButton
+            android:id="@+id/last_hour"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="?android:attr/colorControlNormal"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+            android:text="Last hour" />
+
+        <RadioButton
+            android:id="@+id/last_two_hours"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="?android:attr/colorControlNormal"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+            android:text="Last two hours" />
+
+        <RadioButton
+            android:id="@+id/last_four_hours"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="?android:attr/colorControlNormal"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+            android:text="Last four hours" />
+
+        <RadioButton
+            android:id="@+id/today"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="?android:attr/colorControlNormal"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+            android:text="Today" />
+
+        <RadioButton
+            android:id="@+id/everything"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="?android:attr/colorControlNormal"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+            android:text="Everything" />
+
+    </RadioGroup>
+
+</LinearLayout>
