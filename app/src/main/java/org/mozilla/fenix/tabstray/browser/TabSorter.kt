@@ -14,9 +14,12 @@ import mozilla.components.feature.tabs.tabstray.TabsFeature
 import mozilla.components.support.base.observer.Observable
 import mozilla.components.support.base.observer.ObserverRegistry
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.tabstray.ext.browserAdapter
 import org.mozilla.fenix.tabstray.ext.inactiveTabsAdapter
 import org.mozilla.fenix.tabstray.ext.tabGroupAdapter
+import org.mozilla.fenix.utils.Settings
 import kotlin.math.max
 
 /**
@@ -24,6 +27,8 @@ import kotlin.math.max
  */
 class TabSorter(
     private val context: Context,
+    private val settings: Settings,
+    private val metrics: MetricController,
     private val concatAdapter: ConcatAdapter,
     private val store: BrowserStore
 ) : TabsTray, Observable<TabsTray.Observer> by ObserverRegistry() {
@@ -36,6 +41,9 @@ class TabSorter(
         // Inactive tabs
         val selectedInactiveIndex = inactiveTabs.findSelectedIndex(selectedTabId)
         concatAdapter.inactiveTabsAdapter.updateTabs((Tabs(inactiveTabs, selectedInactiveIndex)))
+        if (settings.inactiveTabsAreEnabled) {
+            metrics.track(Event.TabsTrayHasInactiveTabs(inactiveTabs.size))
+        }
 
         // Tab groups
         // We don't need to provide a selectedId, because the [TabGroupAdapter] has that built-in with support from
