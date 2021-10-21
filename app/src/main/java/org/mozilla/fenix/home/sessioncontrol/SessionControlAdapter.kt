@@ -24,6 +24,8 @@ import org.mozilla.fenix.historymetadata.view.HistoryMetadataGroupViewHolder
 import org.mozilla.fenix.historymetadata.view.HistoryMetadataHeaderViewHolder
 import org.mozilla.fenix.home.HomeFragmentStore
 import org.mozilla.fenix.home.OnboardingState
+import org.mozilla.fenix.home.pocket.PocketCategoriesViewHolder
+import org.mozilla.fenix.home.pocket.PocketRecommendationsHeaderViewHolder
 import org.mozilla.fenix.home.recentbookmarks.view.RecentBookmarksViewHolder
 import org.mozilla.fenix.home.recenttabs.view.RecentTabViewHolder
 import org.mozilla.fenix.home.recenttabs.view.RecentTabsHeaderViewHolder
@@ -190,8 +192,9 @@ sealed class AdapterItem(@LayoutRes val viewType: Int) {
         }
     }
 
-    object PocketStoriesItem :
-        AdapterItem(PocketStoriesViewHolder.LAYOUT_ID)
+    object PocketStoriesItem : AdapterItem(PocketStoriesViewHolder.LAYOUT_ID)
+    object PocketCategoriesItem : AdapterItem(PocketCategoriesViewHolder.LAYOUT_ID)
+    object PocketRecommendationsFooterItem : AdapterItem(PocketRecommendationsHeaderViewHolder.LAYOUT_ID)
 
     /**
      * True if this item represents the same value as other. Used by [AdapterItemDiffCallback].
@@ -238,6 +241,15 @@ class SessionControlAdapter(
             PocketStoriesViewHolder.LAYOUT_ID -> return PocketStoriesViewHolder(
                 composeView = ComposeView(parent.context),
                 store = store,
+                interactor = interactor
+            )
+            PocketCategoriesViewHolder.LAYOUT_ID -> return PocketCategoriesViewHolder(
+                composeView = ComposeView(parent.context),
+                store = store,
+                interactor = interactor
+            )
+            PocketRecommendationsHeaderViewHolder.LAYOUT_ID -> return PocketRecommendationsHeaderViewHolder(
+                composeView = ComposeView(parent.context),
                 interactor = interactor
             )
             RecentTabViewHolder.LAYOUT_ID -> return RecentTabViewHolder(
@@ -310,6 +322,8 @@ class SessionControlAdapter(
             is CustomizeHomeButtonViewHolder,
             is HistoryMetadataGroupViewHolder,
             is RecentTabViewHolder,
+            is PocketCategoriesViewHolder,
+            is PocketRecommendationsHeaderViewHolder,
             is PocketStoriesViewHolder -> {
                 // no op
                 // This previously called "composeView.disposeComposition" which would have the

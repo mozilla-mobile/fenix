@@ -273,7 +273,7 @@ private class PocketStoryProvider : PreviewParameterProvider<PocketRecommendedSt
     override val count = 8
 }
 
-private fun getFakePocketStories(limit: Int = 1): List<PocketRecommendedStory> {
+internal fun getFakePocketStories(limit: Int = 1): List<PocketRecommendedStory> {
     return mutableListOf<PocketRecommendedStory>().apply {
         for (index in 0 until limit) {
             val randomNumber = Random.nextInt(0, 10)
