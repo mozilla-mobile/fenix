@@ -32,6 +32,12 @@ class TabSorter(
     private val concatAdapter: ConcatAdapter,
     private val store: BrowserStore
 ) : TabsTray, Observable<TabsTray.Observer> by ObserverRegistry() {
+<<<<<<< HEAD
+=======
+    private var shouldReportMetrics: Boolean = true
+    private val groupsSet = mutableSetOf<String>()
+
+>>>>>>> b5c15280f (No issue: Only report telemetry when tabs tray is first opened)
     override fun updateTabs(tabs: Tabs) {
         val inactiveTabs = tabs.list.getInactiveTabs(context)
         val searchTermTabs = tabs.list.getSearchGroupTabs(context)
@@ -41,9 +47,6 @@ class TabSorter(
         // Inactive tabs
         val selectedInactiveIndex = inactiveTabs.findSelectedIndex(selectedTabId)
         concatAdapter.inactiveTabsAdapter.updateTabs((Tabs(inactiveTabs, selectedInactiveIndex)))
-        if (settings.inactiveTabsAreEnabled) {
-            metrics.track(Event.TabsTrayHasInactiveTabs(inactiveTabs.size))
-        }
 
         // Tab groups
         // We don't need to provide a selectedId, because the [TabGroupAdapter] has that built-in with support from
@@ -55,6 +58,14 @@ class TabSorter(
         val totalNormalTabs = (normalTabs + remainderTabs)
         val selectedTabIndex = totalNormalTabs.findSelectedIndex(selectedTabId)
         concatAdapter.browserAdapter.updateTabs(Tabs(totalNormalTabs, selectedTabIndex))
+
+        if (shouldReportMetrics) {
+            shouldReportMetrics = false
+
+            if (settings.inactiveTabsAreEnabled) {
+                metrics.track(Event.TabsTrayHasInactiveTabs(inactiveTabs.size))
+            }
+        }
     }
 
     override fun isTabSelected(tabs: Tabs, position: Int): Boolean = false
