@@ -7570,6 +7570,403 @@
 
     <issue
         id="UnusedResources"
+        message="The resource `R.string.search_widget_cfr_message` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;Brže dođite do Firefoxa. Dodajte widget na svoj Početni ekran.&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-bs/strings.xml"
+            line="72"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.browser_menu_new_tab` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;Yeni vərəq&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-az/strings.xml"
+            line="74"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.search_widget_cfr_pos_button_text` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;Dodaj widge&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-bs/strings.xml"
+            line="74"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.search_widget_cfr_neg_button_text` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;Ne sada&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-bs/strings.xml"
+            line="76"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.preferences_home_2` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;Pagina d’accolta&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-co/strings.xml"
+            line="397"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.bookmark_created_snackbar` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;Əlfəcin yaradıldı.&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-az/strings.xml"
+            line="448"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.library_synced_tabs` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;Sinhronizovani tabovi&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-bs/strings.xml"
+            line="478"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.download_empty_message` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;Nema preuzimanja&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-bs/strings.xml"
+            line="630"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.onboarding_firefox_account_header` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;%s səyyahınızdan daha çox şey əldə edin.&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-az/strings.xml"
+            line="708"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.onboarding_firefox_account_sign_in` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;Firefox-a daxil ol&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-az/strings.xml"
+            line="710"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.preferences_opening_screen` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;Screnu d’apertura&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-co/strings.xml"
+            line="724"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.opening_screen_homepage` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;Pagina d’accolta&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-co/strings.xml"
+            line="728"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.opening_screen_last_tab` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;Ultima unghjetta&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-co/strings.xml"
+            line="732"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.opening_screen_after_four_hours_of_inactivity` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;Pagina d’accolta dopu quattru ore d’inattività&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-co/strings.xml"
+            line="736"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.opening_screen_after_four_hours_of_inactivity` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;Pagina d’accolta dopu quattru ore d’inattività&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-co/strings.xml"
+            line="736"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.preferences_passwords_sync_logins_on` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;Aktiv&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-az/strings.xml"
+            line="867"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.preferences_passwords_sync_logins_on` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;Aktiv&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-az/strings.xml"
+            line="867"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.preferences_passwords_sync_logins_off` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;Sönülü&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-az/strings.xml"
+            line="869"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.onboarding_toolbar_position_header` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;অবস্থান নিন&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-bn/strings.xml"
+            line="996"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.onboarding_feature_section_header` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;Upoznajte %s&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-bs/strings.xml"
+            line="1028"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.onboarding_manual_sign_in_learn_more` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;Saznajte više&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-bs/strings.xml"
+            line="1039"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.onboarding_manual_sign_in_learn_more` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;Saznajte više&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-bs/strings.xml"
+            line="1039"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.onboarding_firefox_account_auto_signin_header_2` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;Prijavljeni ste kao %s na drugim Firefox browseru na ovom telefonu. Da li se želite prijaviti s ovim računom?&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-bs/strings.xml"
+            line="1043"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.onboarding_tracking_protection_header_2` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;Automatska privatnost&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-bs/strings.xml"
+            line="1057"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.onboarding_tracking_protection_description_2` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;Postavke privatnosti i sigurnosti blokiraju trackere, malware i kompanije koje vas prate.&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-bs/strings.xml"
+            line="1060"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.onboarding_tracking_protection_standard_button_description_2` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;Blokira manje trackera. Stranice se normalno učitavaju.&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-bs/strings.xml"
+            line="1064"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.onboarding_tracking_protection_strict_button_description_2` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;Blokira više trackera, reklama i popupa. Stranice se brže učitavaju, ali neke funkcionalnosti možda neće raditi.&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-bs/strings.xml"
+            line="1070"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.onboarding_toolbar_position_description` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;Isprobajte jednoručno surafanje s alatnom trakom na dnu ili vrhu.&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-bs/strings.xml"
+            line="1076"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.onboarding_privacy_notice_description` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;%s smo dizajnirali da vam pruži kontrolu nad onim što dijelite
+ 1091       online i što dijelite s nama.&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-bs/strings.xml"
+            line="1090"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.onboarding_theme_picker_description1` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;Štedite bateriju i vid omogućavanjem tamnog režima.&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-bs/strings.xml"
+            line="1104"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.preference_enhanced_tracking_protection_standard_description_3` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;Blokira manje trackera. Stranice se normalno učitavaju.&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-bs/strings.xml"
+            line="1160"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.preference_enhanced_tracking_protection_strict_description_2` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;Blokira više trackera, reklama i popupa. Stranice se brže učitavaju, ali neke funkcionalnosti možda neće raditi.&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-bs/strings.xml"
+            line="1166"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.add_to_homescreen_description` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;Ovu web stranicu možete lahko dodati na Početni ekran telefona za brz pristup istoj i da surfate brže s iskustvom sličnom aplikaciji.&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-bs/strings.xml"
+            line="1286"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.synced_tabs_connect_to_sync_account` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;Conetti un conto Firefox.&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-bs/strings.xml"
+            line="1414"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.no_collections_header1` appears to be unused"
+        errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;Sakupite stvari koje su vam važne&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-bs/strings.xml"
+            line="1548"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.top_sites_toggle_top_recent_sites_3` appears to be unused"
+        errorLine1="    &lt;string name=&quot;Siti principale i più visitati&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-co/strings.xml"
+            line="2002"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
         message="The resource `R.string.browser_menu_customize_home` appears to be unused"
         errorLine1="    &lt;string name=&quot;chrome_scheme&quot;>&quot;Personelaat an degemer&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
