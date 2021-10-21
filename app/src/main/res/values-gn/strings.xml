@@ -25,7 +25,7 @@
     <!-- Message announced to the user when tab tray is selected with 1 tab -->
     <string name="open_tab_tray_single">1 embojuruja tendayke. Eikutu emoambue hag̃ua tendayke.</string>
     <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
-    <string name="open_tab_tray_plural">%1$s tendayke ijurujáva. Eikutu emoambue hag̃ua tendayke.</string>
+    <string moz:removedIn="95" name="open_tab_tray_plural" tools:ignore="UnusedResources">%1$s tendayke ijurujáva. Eikutu emoambue hag̃ua tendayke.</string>
 
     <!-- Tab tray multi select title in app bar. The first parameter is the number of tabs selected -->
     <string name="tab_tray_multi_select_title">%1$d poravopyre</string>
@@ -54,7 +54,9 @@
     <!-- Title for the home screen section with recently saved bookmarks. -->
     <string moz:removedIn="94" name="recently_saved_bookmarks" tools:ignore="UnusedResources">Oñeñongaturamóva</string>
     <!-- Title for the home screen section with recently saved bookmarks. -->
-    <string name="recently_bookmarked">Oñembokurusu ramóva</string>
+    <string moz:removedIn="94" name="recently_bookmarked" tools:ignore="UnusedResources">Oñembokurusu ramóva</string>
+    <!-- Title for the home screen section with recently saved bookmarks. -->
+    <string name="recent_bookmarks_title">Techaukaha ramoguáva</string>
     <!-- Content description for the recently saved bookmarks section on the home screen. -->
     <string name="recently_saved_bookmarks_content_description">Techaukaha oñeñongaturamóva</string>
     <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
@@ -108,6 +110,20 @@
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">Mboyke</string>
 
+    <!-- Text for the banner message to tell users about our inactive tabs feature. -->
+    <string name="tab_tray_inactive_onboarding_message">Ko’ápe oku’e umi tendayke ehecha’ỹa mokõi arapokõindýpe.</string>
+    <!-- Text for the action link to go to Settings for inactive tabs. -->
+    <string name="tab_tray_inactive_onboarding_button_text">Eipe’aite pytyvõhápe</string>
+
+    <!-- Text for title for the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_auto_close_title">¿Omboty ijehegui peteĩ jasy rire?</string>
+    <!-- Text for the body for the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_auto_close_body">Firefox ombotykuaa tendayke ehecha’ỹakuri jasy ohasaramóvape.</string>
+    <!-- Content description for close button in the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_auto_close_button_content_description">Mboty</string>
+    <!-- Text for turn on auto close tabs button in the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_turn_on_auto_close_button">Emyandy mboty jehegui</string>
+
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
     <string name="home_screen_shortcut_open_new_tab_2">Tendayke pyahu</string>
@@ -115,13 +131,22 @@
     <string name="home_screen_shortcut_open_new_private_tab_2">Tendayke pyahu ñemigua</string>
 
     <!-- Heading for the Top Sites block -->
-    <string name="home_screen_top_sites_heading">Tenda jehayhuvéva</string>
+    <string moz:removedIn="95" name="home_screen_top_sites_heading" tools:ignore="UnusedResources">Tenda jehayhuvéva</string>
 
     <!-- Recent Tabs -->
     <!-- Header text for jumping back into the recent tab in the home screen -->
     <string name="recent_tabs_header">Epo tapykue gotyo</string>
     <!-- Button text for showing all the tabs in the tabs tray -->
     <string name="recent_tabs_show_all">Techaukapaite</string>
+
+    <!-- Content description for the button which navigates the user to show all recent tabs in the tabs tray. -->
+    <string name="recent_tabs_show_all_content_description">Ehechauka votõ opaite tendayke ramoguápe</string>
+    <!-- Title for showing a group item in the 'Jump back in' section of the new tab
+        The first parameter is the search term that the user used. (for example: your search for "cat")-->
+    <string name="recent_tabs_search_term">Eheka \&quot;%1$s\&quot; rupive</string>
+    <!-- Text for the number of tabs in a group in the 'Jump back in' section of the new tab
+        The first parameter is the count for number of sites in the group.  This number will always be more than one. -->
+    <string name="recent_tabs_search_term_count">Tendakuéra: %1$s</string>
 
     <!-- History Metadata -->
     <!-- Header text for a section on the home screen that displays grouped highlights from the
@@ -130,10 +155,16 @@
 
     <!-- Header text for a section on the home screen that displays grouped highlights from the
          user's browsing history, such as topics they have researched or explored on the web -->
-    <string name="history_metadata_header_2">Ojeikeramohague</string>
+    <string moz:removedIn="94" name="history_metadata_header_2" tools:ignore="UnusedResources">Ojeikeramohague</string>
+    <!-- Header text for a section on the home screen that displays grouped highlights from the
+         user's browsing history, such as topics they have researched or explored on the web -->
+    <string name="history_metadata_header_3">Ojeheka ramóva</string>
     <!-- Text for the menu button to remove a grouped highlight from the user's browsing history
          in the Recently visited section -->
     <string name="recently_visited_menu_item_remove">Mboguete</string>
+
+    <!-- Content description for the button which navigates the user to show all of their history. -->
+    <string name="past_explorations_show_all_content_description">Ehechauka votõ opaite nde jeheka rapykuere</string>
 
     <!-- Browser Fragment -->
     <!-- Content description (not visible, for screen readers etc.): Navigate to open tabs -->
@@ -147,7 +178,7 @@
     <!-- Content description (not visible, for screen readers etc.): Stop loading current website -->
     <string name="browser_menu_stop">Pyta</string>
     <!-- Content description (not visible, for screen readers etc.): Bookmark the current page -->
-    <string name="browser_menu_bookmark">Techaukaha</string>
+    <string moz:removedIn="95" name="browser_menu_bookmark" tools:ignore="UnusedResources">Techaukaha</string>
     <!-- Content description (not visible, for screen readers etc.): Un-bookmark the current page -->
     <string name="browser_menu_edit_bookmark">Techaukaha mbosako’i</string>
     <!-- Browser menu button that opens the addon manager -->
@@ -213,6 +244,8 @@
 
     <!-- Browser menu button that opens the Customize menu -->
     <string name="browser_menu_customize_home">Emboava moñepyrũ</string>
+    <!-- Button shown on the home page that opens the Customize home settings -->
+    <string name="browser_menu_customize_home_1">Emboava kuatiarogue ñepyrũgua</string>
     <!-- Browser Toolbar -->
     <!-- Content description for the Home screen button on the browser toolbar -->
     <string name="browser_toolbar_home">Mba’erechaha ñepyrũgua</string>
@@ -258,6 +291,28 @@
 
     <!-- Search engine suggestion description text -->
     <string name="search_engine_suggestions_description">Eheka kundaharape renda guive</string>
+
+    <!-- Home onboarding -->
+    <!-- Onboarding home screen dialog title text. Firefox is intentionally hardcoded. -->
+    <string name="onboarding_home_screen_title_2">Firefox mba’epyahu</string>
+    <!-- Onboarding home screen dialog description text. -->
+    <string name="onboarding_home_screen_description_2">Ko’ág̃a ndahasyive eku’ejeývo eheja haguégui.</string>
+    <!-- Onboarding home screen dialog title text for the home section. Firefox is intentionally hardcoded. -->
+    <string name="onboarding_home_screen_section_home_title_2">Firefox kuatiarogue ñepyrũgua mboavapyre</string>
+    <!-- Onboarding home screen dialog description text for the home section. -->
+    <string name="onboarding_home_screen_section_home_description_2">Eike ne rendayke ijurujáva, techaukaha ha tembiasakue rembiasakue.</string>
+    <!-- Onboarding home screen dialog description text for the tab tray section. -->
+    <string name="onboarding_home_screen_section_cleaner_tab_tray_title_2">Tendayke hesakã ha hendaporãva</string>
+    <!-- Onboarding home screen dialog description text for the tab tray section. -->
+    <string name="onboarding_home_screen_section_cleaner_tab_tray_description_2">Emboguete tendayke oĩvaipáva oikoporãvéva ndive ha oñembotýva ha’eño.</string>
+    <!-- Onboarding home screen dialog description text for the history section. -->
+    <string name="onboarding_home_screen_section_useful_history_title_2">Ojeheka ramóva</string>
+
+    <!-- Onboarding home screen dialog description text for the history section. -->
+    <string name="onboarding_home_screen_section_useful_history_description_2">Ehecha eheka ramovéva kuatiarogue ñepyrũ ha tendayke guive.</string>
+
+    <!-- Onboarding home screen popup dialog, shown on top of the Jump back in section. Firefox is intentionally hardcoded. -->
+    <string name="onboarding_home_screen_jump_back_contextual_hint" tools:ignore="UnusedResources">Nde kuatiarogue ñepyrũgua mboavapyre Firefox pegua nombohasyive eñepyrũjeývo eheja haguégui. Ejuhu ne rendayke, techaukaha ha ehekaramovéva.</string>
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
@@ -338,7 +393,9 @@
     <!-- Preference for changing default theme to dark or light mode -->
     <string name="preferences_theme">Téma</string>
     <!-- Preference for customizing the home screen -->
-    <string name="preferences_home">Ñepyrũ</string>
+    <string moz:removedIn="94" name="preferences_home" tools:ignore="UnusedResources">Ñepyrũ</string>
+    <!-- Preference for customizing the home screen -->
+    <string name="preferences_home_2">Kuatiarogue ñepyrũ</string>
     <!-- Preference for gestures based actions -->
     <string name="preferences_gestures">Ñeha’ãnga</string>
     <!-- Preference for settings related to visual options -->
@@ -412,9 +469,15 @@
     <!-- Title for the customize home screen section with recently saved bookmarks. -->
     <string moz:removedIn="94" name="customize_toggle_recently_saved_bookmarks" tools:ignore="UnusedResources">Oñeñongaturamóva</string>
     <!-- Title for the customize home screen section with recently saved bookmarks. -->
-    <string name="customize_toggle_recently_bookmarked">Oñembokurusu ramóva</string>
-    <!-- Title for the customize home screen section with recently visited. Recently visited is a section where users see a list of tabs that they have visited in the past few days -->
-    <string name="customize_toggle_recently_visited">Ojeikeramohague</string>
+    <string moz:removedIn="94" name="customize_toggle_recently_bookmarked" tools:ignore="UnusedResources">Oñembokurusu ramóva</string>
+    <!-- Title for the customize home screen section with recently saved bookmarks. -->
+    <string name="customize_toggle_recent_bookmarks">Techaukaha ramoguáva</string>
+    <!-- Title for the customize home screen section with recently visited. Recently visited is
+    a section where users see a list of tabs that they have visited in the past few days -->
+    <string moz:removedIn="94" name="customize_toggle_recently_visited" tools:ignore="UnusedResources">Ojeikeramohague</string>
+    <!-- Title for the customize home screen settings section for recent searches. Recent searches
+     is a section where users see a list of groups of tabs that they have visited in the past few days -->
+    <string name="customize_toggle_recent_searches">Ojeheka ramóva</string>
     <!-- Title for the customize home screen section with Pocket. -->
     <string name="customize_toggle_pocket">Pocket</string>
 
@@ -528,7 +591,7 @@
     <!-- Header of the Turn on Sync preference view -->
     <string name="preferences_sync">Emyandy Sync</string>
     <!-- Preference for pairing -->
-    <string name="preferences_sync_pair">Emoha’ãnga mbojojaha ayvu Firefox mohendaha reheguaitépe</string>
+    <string moz:removedIn="95" name="preferences_sync_pair" tools:ignore="UnusedResources">Emoha’ãnga mbojojaha ayvu Firefox mohendaha reheguaitépe</string>
     <!-- Preference for account login -->
     <string name="preferences_sync_sign_in">Eñepyrũ tembiapo</string>
     <!-- Preference for reconnecting to FxA sync -->
@@ -636,6 +699,10 @@
     <string name="tab_view_list">Tysýi</string>
     <!-- Option for a grid tab view -->
     <string name="tab_view_grid">Kora’ieta</string>
+    <!-- Option for search term tab groups -->
+    <string name="tab_view_search_term_tab_groups">Eheka atýhápe</string>
+    <!-- Summary text for search term tab groups -->
+    <string name="tab_view_search_term_tab_groups_summary">Ambyaty tenda ojueheguáva</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
     <string name="preferences_close_tabs">Emboty tendayke</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
@@ -647,15 +714,26 @@
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">Peteĩ jasy rire</string>
 
-    <!-- Start on Home -->
+    <!-- Title of preference that allows a user to specify the auto-close settings for open tabs -->
+    <string name="preference_auto_close_tabs" tools:ignore="UnusedResources">Omboty ijehegui tendayke ijurujáva</string>
+
+    <!-- Opening screen -->
     <!-- Title of a preference that allows a user to indicate after a specified amount of time when the app should start on the home screen -->
-    <string name="preferences_start_on_home">Eñepyrũ yvyetégui</string>
+    <string moz:removedIn="94" name="preferences_start_on_home" tools:ignore="UnusedResources">Eñepyrũ yvyetégui</string>
+    <!-- Title of a preference that allows a user to choose what screen to show after opening the app -->
+    <string name="preferences_opening_screen">Mba’erechaha ñepyrũha</string>
     <!-- Option for starting on the home screen after after four hours or inactivity -->
-    <string name="start_on_home_after_four_hours">Irundy aravo rire</string>
+    <string moz:removedIn="94" name="start_on_home_after_four_hours" tools:ignore="UnusedResources">Irundy aravo rire</string>
+    <!-- Option for always opening the homepage when re-opening the app -->
+    <string name="opening_screen_homepage">Kuatiarogue ñepyrũha</string>
     <!-- Option for always starting on the home screen -->
-    <string name="start_on_home_always">Tapiaite</string>
+    <string moz:removedIn="94" name="start_on_home_always" tools:ignore="UnusedResources">Tapiaite</string>
+    <!-- Option for always opening the user's last-open tab when re-opening the app -->
+    <string name="opening_screen_last_tab">Tendayke pahagua</string>
     <!-- Option for never starting on the home screen -->
-    <string name="start_on_home_never">Araka’eve</string>
+    <string moz:removedIn="94" name="start_on_home_never" tools:ignore="UnusedResources">Araka’eve</string>
+    <!-- Option for always opening the homepage when re-opening the app after four hours of inactivity -->
+    <string name="opening_screen_after_four_hours_of_inactivity">Kuatiarrogue ñepyrũha irundy aravo ojeheja rire</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
     <string name="close_tabs_manually_summary">Emboty nde pópe</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
@@ -665,6 +743,13 @@
     <string name="close_tabs_after_one_week_summary">Emboty arapokõindy rire</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one month-->
     <string name="close_tabs_after_one_month_summary">Emboty peteĩ jasy rire</string>
+
+    <!-- Inactive tabs -->
+    <!-- Category header of a preference that allows a user to enable or disable the inactive tabs feature -->
+    <string name="preferences_inactive_tabs">Eguerova tendayke ituja ha ojepuru’ỹva</string>
+
+    <!-- Title of inactive tabs preference -->
+    <string name="preferences_inactive_tabs_title">Umi tendayke ehecha’ỹa mokõi arapokõindýpe ohóma tenda ojepuru’ỹvape.</string>
 
     <!-- Studies -->
     <!-- Title of the remove studies button -->
@@ -710,13 +795,13 @@
     <!-- Text shown in the menu for saving tabs to a collection -->
     <string name="tab_tray_menu_item_save">Eñongatu atyhápe</string>
     <!-- Text shown in the menu for the collection selector -->
-    <string name="tab_tray_menu_select">Poravo</string>
+    <string moz:removedIn="95" name="tab_tray_menu_select" tools:ignore="UnusedResources">Poravo</string>
     <!-- Text shown in the menu for sharing all tabs -->
     <string name="tab_tray_menu_item_share">Emoherakuã opaite tendayke</string>
     <!-- Text shown in the menu to view recently closed tabs -->
     <string name="tab_tray_menu_recently_closed">Tendayke oñemboty ramóva</string>
     <!-- Text shown in the tabs tray inactive tabs section -->
-    <string name="tab_tray_inactive_recently_closed">Oñembotyramovéva</string>
+    <string name="tab_tray_inactive_recently_closed" tools:ignore="UnusedResources">Oñembotyramovéva</string>
     <!-- Text shown in the menu to view account settings -->
     <string name="tab_tray_menu_account_settings">Mba’ete ñemboheko</string>
     <!-- Text shown in the menu to view tab settings -->
@@ -790,7 +875,10 @@
     <string name="tab_tray_save_to_collection">Ñongatu</string>
 
     <!-- Title text for the normal tabs header in the tabs tray which are not part of any tab grouping. -->
-    <string name="tab_tray_header_title">Ambue</string>
+    <string moz:removedIn="94" name="tab_tray_header_title" tools:ignore="UnusedResources">Ambue</string>
+
+    <!-- Title text for the normal tabs header in the tabs tray which are not part of any tab grouping. -->
+    <string name="tab_tray_header_title_1">Ambue tendayke</string>
 
     <!-- History -->
     <!-- Text for the button to clear all history -->
@@ -837,10 +925,6 @@
     <string name="history_empty_message">Ndaipóri tembiasakue</string>
 
     <!-- Downloads -->
-    <!-- Text for the button to clear all downloads -->
-    <string name="download_delete_all">Emboguete ñemboguejy</string>
-    <!-- Text for the dialog to confirm clearing all downloads -->
-    <string name="download_delete_all_dialog">¿Añetehápe emboguetese umi ñemboguejy?</string>
     <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
     <string name="download_delete_multiple_items_snackbar_1">Ñemboguejy Mboguetepyre</string>
     <!-- Text for the snackbar to confirm that a single download item has been removed. The first parameter is the name of the download item. -->
@@ -882,7 +966,7 @@
     <!-- Content description for bookmarks library menu -->
     <string name="bookmark_menu_content_description">Techaukaha poravorã</string>
     <!-- Screen title for editing bookmarks -->
-    <string name="bookmark_edit">Embosako’i techaukaha</string>
+    <string moz:removedIn="95" name="bookmark_edit" tools:ignore="UnusedResources">Embosako’i techaukaha</string>
     <!-- Screen title for selecting a bookmarks folder -->
     <string name="bookmark_select_folder">Ñongatuha jeporavo</string>
 
@@ -1934,8 +2018,10 @@
     <!-- Confirmation dialog button text when top sites limit is reached. -->
     <string name="top_sites_max_limit_confirmation_button">Oĩma, aikumby</string>
 
+    <!-- Label for the preference to show the most visited top sites on the homepage -->
+    <string name="top_sites_toggle_top_recent_sites_3">Tendakuéra ojeikeveha</string>
     <!-- Label for the show most visited top sites preference -->
-    <string name="top_sites_toggle_top_frecent_sites_2">Ehechauka tendakuéra ojeikeveha</string>
+    <string moz:removedIn="94" name="top_sites_toggle_top_frecent_sites_2" tools:ignore="UnusedResources">Ehechauka tendakuéra ojeikeveha</string>
     <!-- Label for the show most visited sites preference -->
     <string moz:removedIn="93" name="top_sites_toggle_top_frecent_sites" tools:ignore="UnusedResources">Ehechauka tenda ojeikeveha</string>
 
@@ -1948,15 +2034,42 @@
 	<!-- Dialog button text for canceling the rename top site prompt. -->
 	<string name="top_sites_rename_dialog_cancel">Heja</string>
 
-    <!-- In-activate tabs in the tabs tray -->
-    <!-- Title text displayed in the tabs tray when a tab has been unused for 4 days. -->
+    <!-- Inactive tabs in the tabs tray -->
+    <!-- Title text displayed in the tabs tray when a tab has been unused for 14 days. -->
     <string name="inactive_tabs_title">Tendayke ojepuru’ỹva</string>
+    <!-- Content description for closing all inactive tabs -->
+    <string name="inactive_tabs_delete_all">Embotypaite tendayke ojepuru’ỹva</string>
     <!-- A description below the section of "inactive" tabs to notify the user when those tabs will be closed, if appropriate. See strings inactive_tabs_30_days and inactive_tabs_7_days for placeholders options. -->
-    <string name="inactive_tabs_description">Tendaykekuéra eipurukuaa ápe %s ndive. Uperire, tendaykekuéra oñembotýta ijehegui.</string>
+    <string moz:removedIn="93" name="inactive_tabs_description" tools:ignore="UnusedResources">Tendaykekuéra eipurukuaa ápe %s ndive. Uperire, tendaykekuéra oñembotýta ijehegui.</string>
     <!-- The amount of time until a tab in the "inactive" section of the tabs tray will be closed. See string inactive_tabs_description as well -->
-    <string name="inactive_tabs_30_days">30 ára</string>
+    <string moz:removedIn="93" name="inactive_tabs_30_days" tools:ignore="UnusedResources">30 ára</string>
     <!-- The amount of time until a tab in the "inactive" section of the tabs tray will be closed. See string inactive_tabs_description as well -->
-    <string name="inactive_tabs_7_days">1 arapokõindy</string>
+    <string moz:removedIn="93" name="inactive_tabs_7_days" tools:ignore="UnusedResources">1 arapokõindy</string>
+
+    <!-- Inactive tabs auto-close message in the tabs tray -->
+    <!-- The header text of the auto-close message when the user is asked if they want to turn on the auto-closing of inactive tabs. -->
+    <string name="inactive_tabs_auto_close_message_header" tools:ignore="UnusedResources">¿Omboty ijehegui peteĩ jasy rire?</string>
+
+    <!-- A description below the header to notify the user what the inactive tabs auto-close feature is. -->
+    <string name="inactive_tabs_auto_close_message_description" tools:ignore="UnusedResources">Firefox ombotykuaa tendayke ehecha’ỹakuri jasy ohasaramóvape.</string>
+    <!-- A call to action below the description to allow the user to turn on the auto closing of inactive tabs. -->
+    <string name="inactive_tabs_auto_close_message_action" tools:ignore="UnusedResources">EMYANDY ÑEMBOTY IJEHEGUÍVA</string>
+
+    <!-- Inactive tabs survey -->
+    <!-- Header text for the inactive tabs survey asking for feedback to improve the inactive tabs feature. -->
+    <string name="inactive_tabs_survey_header" tools:ignore="UnusedResources">Orepytyvõ rojapoporãvévo</string>
+    <!-- Content text for the inactive tabs survey asking the primary survey feedback question. -->
+    <string name="inactive_tabs_survey_content" tools:ignore="UnusedResources">¿Mba’ére emboty tendayke ojepuru’ỹva?</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string name="inactive_tabs_survey_not_interested_option" tools:ignore="UnusedResources">Ndaikuaaséi hembiapoite</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string name="inactive_tabs_survey_time_too_long_option" tools:ignore="UnusedResources">Arapa’ũ ohasa hag̃ua jepuru’ỹme ipukueterei</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string name="inactive_tabs_survey_time_too_short_option" tools:ignore="UnusedResources">Arapa’ũ ohasa hag̃ua jepuru’ỹme mbykyeterei</string>
+    <!-- Confirmation button text to submit the feedback for the inactive tabs survey. -->
+    <string name="inactive_tabs_survey_send_button" tools:ignore="UnusedResources">Mondo</string>
+    <!-- Content description for inactive tabs survey close button -->
+    <string name="inactive_tabs_survey_close_button_content_description" tools:ignore="UnusedResources">Mboty</string>
 
     <!-- Default browser experiment -->
     <string name="default_browser_experiment_card_text">Emboheko ñanduti renda juajuha, ñanduti veve ha ñe’ẽmondo ijuruja hag̃ua ijehegui Firefox-pe.</string>
@@ -1973,4 +2086,19 @@
     <!-- Content description for privacy content close button -->
     <string name="privacy_content_close_button_content_description">Mboty</string>
 
+    <!-- Pocket recommended stories -->
+    <!-- Header text for a section on the home screen. -->
+    <string moz:removedIn="94" name="pocket_stories_header" tools:ignore="UnusedResources">Tembiasakue nemyakãngetáva</string>
+    <!-- Header text for a section on the home screen. -->
+    <string name="pocket_stories_header_1">Tembiasakue nemyakãngetáva</string>
+    <!-- Header text for a section on the home screen. -->
+    <string name="pocket_stories_categories_header">Tembiasakue téma rehegua</string>
+    <!-- Text of a button allowing users to access an external url for more Pocket recommendations. -->
+    <string name="pocket_stories_placeholder_text">Ejuhukuaave</string>
+    <!-- Title of an app feature. Smaller than a heading.-->
+    <string name="pocket_stories_feature_title">Pocket omoheñoipyre.</string>
+    <!-- Caption for describing a certain feature. The placeholder is for a clickable text (eg: Learn more) which will load an url in a new tab when clicked.  -->
+    <string name="pocket_stories_feature_caption">Firefox reheguaite. %s</string>
+    <!-- Clickable text for opening an external link for more information about Pocket. -->
+    <string name="pocket_stories_feature_learn_more">Kuaave</string>
 </resources>
