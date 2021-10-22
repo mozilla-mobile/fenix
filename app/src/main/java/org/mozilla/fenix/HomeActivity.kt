@@ -739,9 +739,13 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     }
 
     fun openToBrowser(from: BrowserDirection, customTabSessionId: String? = null) {
-        if (navHost.navController.alreadyOnDestination(R.id.browserFragment)) return
+        if (navHost.navController.alreadyOnDestination(R.id.browserFragment)){
+            android.util.Log.e("opentobrow", "already on browserfrag")
+            return
+        }
         @IdRes val fragmentId = if (from.fragmentId != 0) from.fragmentId else null
         val directions = getNavDirections(from, customTabSessionId)
+        android.util.Log.e("opentobrow", "customtabsess was $customTabSessionId directions are ${directions.toString()}")
         if (directions != null) {
             navHost.navController.nav(fragmentId, directions)
         }

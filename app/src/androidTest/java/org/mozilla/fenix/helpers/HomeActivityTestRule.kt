@@ -53,7 +53,8 @@ class HomeActivityTestRule(
 class HomeActivityIntentTestRule(
     initialTouchMode: Boolean = false,
     launchActivity: Boolean = true,
-    private val skipOnboarding: Boolean = false
+    private val skipOnboarding: Boolean = false,
+    private val showJumpBackIn: Boolean = false
 ) :
     IntentsTestRule<HomeActivity>(HomeActivity::class.java, initialTouchMode, launchActivity) {
     private val longTapUserPreference = getLongPressTimeout()
@@ -62,6 +63,9 @@ class HomeActivityIntentTestRule(
         super.beforeActivityLaunched()
         setLongTapTimeout(3000)
         if (skipOnboarding) { skipOnboardingBeforeLaunch() }
+        if (showJumpBackIn) {
+            this.
+        }
     }
 
     override fun afterActivityFinished() {
