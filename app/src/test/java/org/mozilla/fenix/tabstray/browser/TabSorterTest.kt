@@ -16,7 +16,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.tabstray.TrayPagerAdapter.Companion.INACTIVE_TABS_FEATURE_NAME
 import org.mozilla.fenix.tabstray.TrayPagerAdapter.Companion.TABS_TRAY_FEATURE_NAME
@@ -31,12 +31,14 @@ import org.mozilla.fenix.utils.Settings
 class TabSorterTest {
     private val context = testContext
     private val settings: Settings = mockk()
+    private val metrics: MetricController = mockk()
     private var inactiveTimestamp = 0L
 
     @Before
     fun setUp() {
         every { settings.inactiveTabsAreEnabled }.answers { true }
         every { settings.searchTermTabGroupsAreEnabled }.answers { true }
+        every { metrics.track(any()) }.answers { } // do nothing
     }
 
     @Test
@@ -49,10 +51,10 @@ class TabSorterTest {
         val adapter = ConcatAdapter(
             InactiveTabsAdapter(context, mock(), mock(), INACTIVE_TABS_FEATURE_NAME, settings),
             TabGroupAdapter(context, mock(), mock(), TAB_GROUP_FEATURE_NAME),
-            TitleHeaderAdapter(store, context.settings()),
+            TitleHeaderAdapter(),
             BrowserTabsAdapter(context, mock(), mock(), TABS_TRAY_FEATURE_NAME)
         )
-        val tabSorter = TabSorter(settings, adapter, store)
+        val tabSorter = TabSorter(settings, metrics, adapter, store)
 
         tabSorter.updateTabs(
             Tabs(
@@ -80,10 +82,10 @@ class TabSorterTest {
         val adapter = ConcatAdapter(
             InactiveTabsAdapter(context, mock(), mock(), INACTIVE_TABS_FEATURE_NAME, settings),
             TabGroupAdapter(context, mock(), mock(), TAB_GROUP_FEATURE_NAME),
-            TitleHeaderAdapter(store, context.settings()),
+            TitleHeaderAdapter(),
             BrowserTabsAdapter(context, mock(), mock(), TABS_TRAY_FEATURE_NAME)
         )
-        val tabSorter = TabSorter(settings, adapter, store)
+        val tabSorter = TabSorter(settings, metrics, adapter, store)
 
         tabSorter.updateTabs(
             Tabs(
@@ -96,9 +98,10 @@ class TabSorterTest {
             )
         )
 
-        assertEquals(adapter.itemCount, 2)
+        assertEquals(adapter.itemCount, 3)
         assertEquals(adapter.inactiveTabsAdapter.inActiveTabsCount, 0)
         assertEquals(adapter.tabGroupAdapter.itemCount, 1)
+        assertEquals(adapter.titleHeaderAdapter.itemCount, 1)
         assertEquals(adapter.browserAdapter.itemCount, 1)
     }
 
@@ -112,10 +115,10 @@ class TabSorterTest {
         val adapter = ConcatAdapter(
             InactiveTabsAdapter(context, mock(), mock(), INACTIVE_TABS_FEATURE_NAME, settings),
             TabGroupAdapter(context, mock(), mock(), TAB_GROUP_FEATURE_NAME),
-            TitleHeaderAdapter(store, context.settings()),
+            TitleHeaderAdapter(),
             BrowserTabsAdapter(context, mock(), mock(), TABS_TRAY_FEATURE_NAME)
         )
-        val tabSorter = TabSorter(settings, adapter, store)
+        val tabSorter = TabSorter(settings, metrics, adapter, store)
 
         tabSorter.updateTabs(
             Tabs(
@@ -129,9 +132,10 @@ class TabSorterTest {
             )
         )
 
-        assertEquals(adapter.itemCount, 3)
+        assertEquals(adapter.itemCount, 4)
         assertEquals(adapter.inactiveTabsAdapter.inActiveTabsCount, 1)
         assertEquals(adapter.tabGroupAdapter.itemCount, 1)
+        assertEquals(adapter.titleHeaderAdapter.itemCount, 1)
         assertEquals(adapter.browserAdapter.itemCount, 1)
     }
 
@@ -146,10 +150,10 @@ class TabSorterTest {
         val adapter = ConcatAdapter(
             InactiveTabsAdapter(context, mock(), mock(), INACTIVE_TABS_FEATURE_NAME, settings),
             TabGroupAdapter(context, mock(), mock(), TAB_GROUP_FEATURE_NAME),
-            TitleHeaderAdapter(store, context.settings()),
+            TitleHeaderAdapter(),
             BrowserTabsAdapter(context, mock(), mock(), TABS_TRAY_FEATURE_NAME)
         )
-        val tabSorter = TabSorter(settings, adapter, store)
+        val tabSorter = TabSorter(settings, metrics, adapter, store)
 
         tabSorter.updateTabs(
             Tabs(
@@ -163,9 +167,10 @@ class TabSorterTest {
             )
         )
 
-        assertEquals(adapter.itemCount, 3)
+        assertEquals(adapter.itemCount, 4)
         assertEquals(adapter.inactiveTabsAdapter.inActiveTabsCount, 0)
         assertEquals(adapter.tabGroupAdapter.itemCount, 1)
+        assertEquals(adapter.titleHeaderAdapter.itemCount, 1)
         assertEquals(adapter.browserAdapter.itemCount, 2)
     }
 
@@ -180,10 +185,10 @@ class TabSorterTest {
         val adapter = ConcatAdapter(
             InactiveTabsAdapter(context, mock(), mock(), INACTIVE_TABS_FEATURE_NAME, settings),
             TabGroupAdapter(context, mock(), mock(), TAB_GROUP_FEATURE_NAME),
-            TitleHeaderAdapter(store, context.settings()),
+            TitleHeaderAdapter(),
             BrowserTabsAdapter(context, mock(), mock(), TABS_TRAY_FEATURE_NAME)
         )
-        val tabSorter = TabSorter(settings, adapter, store)
+        val tabSorter = TabSorter(settings, metrics, adapter, store)
 
         tabSorter.updateTabs(
             Tabs(
@@ -200,6 +205,7 @@ class TabSorterTest {
         assertEquals(adapter.itemCount, 4)
         assertEquals(adapter.inactiveTabsAdapter.inActiveTabsCount, 1)
         assertEquals(adapter.tabGroupAdapter.itemCount, 0)
+        assertEquals(adapter.titleHeaderAdapter.itemCount, 0)
         assertEquals(adapter.browserAdapter.itemCount, 3)
     }
 
@@ -215,10 +221,10 @@ class TabSorterTest {
         val adapter = ConcatAdapter(
             InactiveTabsAdapter(context, mock(), mock(), INACTIVE_TABS_FEATURE_NAME, settings),
             TabGroupAdapter(context, mock(), mock(), TAB_GROUP_FEATURE_NAME),
-            TitleHeaderAdapter(store, context.settings()),
+            TitleHeaderAdapter(),
             BrowserTabsAdapter(context, mock(), mock(), TABS_TRAY_FEATURE_NAME)
         )
-        val tabSorter = TabSorter(settings, adapter, store)
+        val tabSorter = TabSorter(settings, metrics, adapter, store)
 
         tabSorter.updateTabs(
             Tabs(
@@ -235,6 +241,7 @@ class TabSorterTest {
         assertEquals(adapter.itemCount, 4)
         assertEquals(adapter.inactiveTabsAdapter.inActiveTabsCount, 0)
         assertEquals(adapter.tabGroupAdapter.itemCount, 0)
+        assertEquals(adapter.titleHeaderAdapter.itemCount, 0)
         assertEquals(adapter.browserAdapter.itemCount, 4)
     }
 
@@ -248,10 +255,10 @@ class TabSorterTest {
         val adapter = ConcatAdapter(
             InactiveTabsAdapter(context, mock(), mock(), INACTIVE_TABS_FEATURE_NAME, settings),
             TabGroupAdapter(context, mock(), mock(), TAB_GROUP_FEATURE_NAME),
-            TitleHeaderAdapter(store, context.settings()),
+            TitleHeaderAdapter(),
             BrowserTabsAdapter(context, mock(), mock(), TABS_TRAY_FEATURE_NAME)
         )
-        val tabSorter = TabSorter(settings, adapter, store)
+        val tabSorter = TabSorter(settings, metrics, adapter, store)
 
         tabSorter.updateTabs(
             Tabs(
@@ -265,6 +272,7 @@ class TabSorterTest {
         assertEquals(adapter.itemCount, 1)
         assertEquals(adapter.inactiveTabsAdapter.inActiveTabsCount, 0)
         assertEquals(adapter.tabGroupAdapter.itemCount, 0)
+        assertEquals(adapter.titleHeaderAdapter.itemCount, 0)
         assertEquals(adapter.browserAdapter.itemCount, 1)
     }
 
@@ -278,10 +286,10 @@ class TabSorterTest {
         val adapter = ConcatAdapter(
             InactiveTabsAdapter(context, mock(), mock(), INACTIVE_TABS_FEATURE_NAME, settings),
             TabGroupAdapter(context, mock(), mock(), TAB_GROUP_FEATURE_NAME),
-            TitleHeaderAdapter(store, context.settings()),
+            TitleHeaderAdapter(),
             BrowserTabsAdapter(context, mock(), mock(), TABS_TRAY_FEATURE_NAME)
         )
-        val tabSorter = TabSorter(settings, adapter, store)
+        val tabSorter = TabSorter(settings, metrics, adapter, store)
 
         tabSorter.updateTabs(
             Tabs(
@@ -296,6 +304,7 @@ class TabSorterTest {
         assertEquals(adapter.itemCount, 1)
         assertEquals(adapter.inactiveTabsAdapter.inActiveTabsCount, 0)
         assertEquals(adapter.tabGroupAdapter.itemCount, 1)
+        assertEquals(adapter.titleHeaderAdapter.itemCount, 0)
         assertEquals(adapter.browserAdapter.itemCount, 0)
 
         tabSorter.updateTabs(
@@ -310,6 +319,7 @@ class TabSorterTest {
         assertEquals(adapter.itemCount, 1)
         assertEquals(adapter.inactiveTabsAdapter.inActiveTabsCount, 0)
         assertEquals(adapter.tabGroupAdapter.itemCount, 1)
+        assertEquals(adapter.titleHeaderAdapter.itemCount, 0)
         assertEquals(adapter.browserAdapter.itemCount, 0)
     }
 }

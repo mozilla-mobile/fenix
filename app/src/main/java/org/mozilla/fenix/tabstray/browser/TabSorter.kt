@@ -12,9 +12,12 @@ import mozilla.components.concept.tabstray.TabsTray
 import mozilla.components.feature.tabs.tabstray.TabsFeature
 import mozilla.components.support.base.observer.Observable
 import mozilla.components.support.base.observer.ObserverRegistry
+import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.tabstray.ext.browserAdapter
 import org.mozilla.fenix.tabstray.ext.inactiveTabsAdapter
 import org.mozilla.fenix.tabstray.ext.tabGroupAdapter
+import org.mozilla.fenix.tabstray.ext.titleHeaderAdapter
 import org.mozilla.fenix.utils.Settings
 import kotlin.math.max
 
@@ -23,9 +26,11 @@ import kotlin.math.max
  */
 class TabSorter(
     private val settings: Settings,
+    private val metrics: MetricController,
     private val concatAdapter: ConcatAdapter,
     private val store: BrowserStore
 ) : TabsTray, Observable<TabsTray.Observer> by ObserverRegistry() {
+    private var shouldReportMetrics: Boolean = true
     private val groupsSet = mutableSetOf<String>()
 
     override fun updateTabs(tabs: Tabs) {
@@ -52,6 +57,18 @@ class TabSorter(
         val totalNormalTabs = (normalTabs + remainderTabs)
         val selectedTabIndex = totalNormalTabs.findSelectedIndex(selectedTabId)
         concatAdapter.browserAdapter.updateTabs(Tabs(totalNormalTabs, selectedTabIndex))
+
+        // Normal tab title header.
+        concatAdapter.titleHeaderAdapter
+            .handleListChanges(totalNormalTabs.isNotEmpty() && groups.isNotEmpty())
+
+        if (shouldReportMetrics) {
+            shouldReportMetrics = false
+
+            if (settings.inactiveTabsAreEnabled) {
+                metrics.track(Event.TabsTrayHasInactiveTabs(inactiveTabs.size))
+            }
+        }
     }
 
     override fun isTabSelected(tabs: Tabs, position: Int): Boolean = false
