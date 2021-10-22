@@ -56,7 +56,7 @@ class SearchRobot {
     fun verifySearchView() = assertSearchView()
     fun verifyBrowserToolbar() = assertBrowserToolbarEditView()
     fun verifyScanButton() = assertScanButton()
-    fun verifySearchEngineButton() = assertSearchEngineButton()
+    fun verifySearchEngineButton() = assertSearchButton()
     fun verifySearchWithText() = assertSearchWithText()
     fun verifySearchEngineResults(rule: ComposeTestRule, searchEngineName: String, count: Int) =
         assertSearchEngineResults(rule, searchEngineName, count)
@@ -322,7 +322,7 @@ private fun assertScanButton() =
         ).waitForExists(waitingTime)
     )
 
-private fun assertSearchEngineButton() =
+private fun assertSearchButton() =
     assertTrue(
         mDevice.findObject(
             UiSelector().resourceId("$packageName:id/search_engines_shortcut_button")
