@@ -1436,9 +1436,8 @@ class SmokeTest {
         }
     }
 
-    @Ignore // to be fixed here https://github.com/mozilla-mobile/fenix/issues/21747
     @Test
-    fun alwaysStartOnHomeTest() {
+    fun startOnHomepageTest() {
         val settings = activityTestRule.activity.applicationContext.settings()
         settings.shouldShowJumpBackInCFR = false
         val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -1448,8 +1447,8 @@ class SmokeTest {
             mDevice.waitForIdle()
         }.openThreeDotMenu {
         }.openSettings {
-        }.openTabsSubMenu {
-            clickAlwaysStartOnHomeToggle()
+        }.openHomepageSubMenu {
+            clickStartOnHomepageButton()
         }
 
         restartApp(activityTestRule.activityRule)
