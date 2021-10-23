@@ -479,6 +479,12 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.TopSiteRemoved -> EventWrapper<NoExtraKeys>(
             { TopSites.remove.record(it) }
         )
+        is Event.GoogleTopSiteRemoved -> EventWrapper<NoExtraKeys>(
+            { TopSites.googleTopSiteRemoved.record(it) }
+        )
+        is Event.BaiduTopSiteRemoved -> EventWrapper<NoExtraKeys>(
+            { TopSites.baiduTopSiteRemoved.record(it) }
+        )
         is Event.TopSiteLongPress -> EventWrapper(
             { TopSites.longPress.record(it) },
             { TopSites.longPressKeys.valueOf(it) }
@@ -606,6 +612,19 @@ private val Event.wrapper: EventWrapper<*>?
         )
         is Event.TabsTrayInactiveTabsCollapsed -> EventWrapper<NoExtraKeys>(
             { TabsTray.inactiveTabsCollapsed.record(it) }
+        )
+        is Event.TabsTrayHasInactiveTabs -> EventWrapper(
+            { TabsTray.hasInactiveTabs.record(it) },
+            { TabsTray.hasInactiveTabsKeys.valueOf(it) }
+        )
+        is Event.TabsTrayCloseAllInactiveTabs -> EventWrapper<NoExtraKeys>(
+            { TabsTray.closeAllInactiveTabs.record(it) }
+        )
+        is Event.TabsTrayCloseInactiveTab -> EventWrapper<NoExtraKeys>(
+            { TabsTray.closeInactiveTab.add(amountClosed) }
+        )
+        is Event.TabsTrayOpenInactiveTab -> EventWrapper<NoExtraKeys>(
+            { TabsTray.openInactiveTab.add() }
         )
         is Event.AutoPlaySettingVisited -> EventWrapper<NoExtraKeys>(
             { Autoplay.visitedSetting.record(it) }

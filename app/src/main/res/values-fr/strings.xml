@@ -26,7 +26,7 @@
     <!-- Message announced to the user when tab tray is selected with 1 tab -->
     <string name="open_tab_tray_single">1 onglet ouvert. Appuyez pour changer d’onglet.</string>
     <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
-    <string name="open_tab_tray_plural">%1$s onglets ouverts. Appuyez pour changer d’onglet.</string>
+    <string moz:removedIn="95" name="open_tab_tray_plural" tools:ignore="UnusedResources">%1$s onglets ouverts. Appuyez pour changer d’onglet.</string>
 
     <!-- Tab tray multi select title in app bar. The first parameter is the number of tabs selected -->
     <string name="tab_tray_multi_select_title">%1$d sélectionnés</string>
@@ -55,7 +55,9 @@
     <!-- Title for the home screen section with recently saved bookmarks. -->
     <string moz:removedIn="94" name="recently_saved_bookmarks" tools:ignore="UnusedResources">Récemment enregistrés</string>
     <!-- Title for the home screen section with recently saved bookmarks. -->
-    <string name="recently_bookmarked">Marqués récemment</string>
+    <string moz:removedIn="94" name="recently_bookmarked" tools:ignore="UnusedResources">Marqués récemment</string>
+    <!-- Title for the home screen section with recently saved bookmarks. -->
+    <string name="recent_bookmarks_title">Marque-pages récents</string>
     <!-- Content description for the recently saved bookmarks section on the home screen. -->
     <string name="recently_saved_bookmarks_content_description">Marque-pages récemment enregistrés</string>
     <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
@@ -107,6 +109,20 @@
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">Ignorer</string>
 
+    <!-- Text for the banner message to tell users about our inactive tabs feature. -->
+    <string name="tab_tray_inactive_onboarding_message">Les onglets que vous n’avez pas consultés depuis deux semaines sont déplacés ici.</string>
+    <!-- Text for the action link to go to Settings for inactive tabs. -->
+    <string name="tab_tray_inactive_onboarding_button_text">Désactiver dans les paramètres</string>
+
+    <!-- Text for title for the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_auto_close_title">Fermeture automatique après un mois ?</string>
+    <!-- Text for the body for the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_auto_close_body">Firefox peut fermer les onglets que vous n’avez pas consultés au cours du mois dernier.</string>
+    <!-- Content description for close button in the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_auto_close_button_content_description">Fermer</string>
+    <!-- Text for turn on auto close tabs button in the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_turn_on_auto_close_button">Activer la fermeture automatique</string>
+
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
     <string name="home_screen_shortcut_open_new_tab_2">Nouvel onglet</string>
@@ -114,13 +130,23 @@
     <string name="home_screen_shortcut_open_new_private_tab_2">Nouvel onglet nav. privée</string>
 
     <!-- Heading for the Top Sites block -->
-    <string name="home_screen_top_sites_heading">Sites principaux</string>
+    <string moz:removedIn="95" name="home_screen_top_sites_heading" tools:ignore="UnusedResources">Sites principaux</string>
 
     <!-- Recent Tabs -->
     <!-- Header text for jumping back into the recent tab in the home screen -->
     <string name="recent_tabs_header">Revenir dans cet onglet</string>
     <!-- Button text for showing all the tabs in the tabs tray -->
     <string name="recent_tabs_show_all">Tout afficher</string>
+
+    <!-- Content description for the button which navigates the user to show all recent tabs in the tabs tray. -->
+    <string name="recent_tabs_show_all_content_description">Afficher le bouton des onglets récents</string>
+    <!-- Title for showing a group item in the 'Jump back in' section of the new tab
+        The first parameter is the search term that the user used. (for example: your search for "cat")-->
+    <string name="recent_tabs_search_term">Votre recherche de « %1$s »</string>
+
+    <!-- Text for the number of tabs in a group in the 'Jump back in' section of the new tab
+        The first parameter is the count for number of sites in the group.  This number will always be more than one. -->
+    <string name="recent_tabs_search_term_count">Sites : %1$s</string>
 
     <!-- History Metadata -->
     <!-- Header text for a section on the home screen that displays grouped highlights from the
@@ -129,10 +155,16 @@
 
     <!-- Header text for a section on the home screen that displays grouped highlights from the
          user's browsing history, such as topics they have researched or explored on the web -->
-    <string name="history_metadata_header_2">Visités récemment</string>
+    <string moz:removedIn="94" name="history_metadata_header_2" tools:ignore="UnusedResources">Visités récemment</string>
+    <!-- Header text for a section on the home screen that displays grouped highlights from the
+         user's browsing history, such as topics they have researched or explored on the web -->
+    <string name="history_metadata_header_3">Recherches récentes</string>
     <!-- Text for the menu button to remove a grouped highlight from the user's browsing history
          in the Recently visited section -->
     <string name="recently_visited_menu_item_remove">Supprimer</string>
+
+    <!-- Content description for the button which navigates the user to show all of their history. -->
+    <string name="past_explorations_show_all_content_description">Afficher le bouton des navigations passées</string>
 
     <!-- Browser Fragment -->
     <!-- Content description (not visible, for screen readers etc.): Navigate to open tabs -->
@@ -146,7 +178,7 @@
     <!-- Content description (not visible, for screen readers etc.): Stop loading current website -->
     <string name="browser_menu_stop">Arrêter</string>
     <!-- Content description (not visible, for screen readers etc.): Bookmark the current page -->
-    <string name="browser_menu_bookmark">Marque-page</string>
+    <string moz:removedIn="95" name="browser_menu_bookmark" tools:ignore="UnusedResources">Marque-page</string>
     <!-- Content description (not visible, for screen readers etc.): Un-bookmark the current page -->
     <string name="browser_menu_edit_bookmark">Modifier le marque-page</string>
     <!-- Browser menu button that opens the addon manager -->
@@ -212,6 +244,8 @@
 
     <!-- Browser menu button that opens the Customize menu -->
     <string name="browser_menu_customize_home">Personnaliser l’accueil</string>
+    <!-- Button shown on the home page that opens the Customize home settings -->
+    <string name="browser_menu_customize_home_1">Personnaliser la page d’accueil</string>
     <!-- Browser Toolbar -->
     <!-- Content description for the Home screen button on the browser toolbar -->
     <string name="browser_toolbar_home">Écran d’accueil</string>
@@ -257,6 +291,28 @@
     <string name="search_engine_suggestions_title">Recherche %s</string>
     <!-- Search engine suggestion description text -->
     <string name="search_engine_suggestions_description">Recherchez directement depuis la barre d’adresse</string>
+
+    <!-- Home onboarding -->
+    <!-- Onboarding home screen dialog title text. Firefox is intentionally hardcoded. -->
+    <string name="onboarding_home_screen_title_2">Les nouveautés de Firefox</string>
+    <!-- Onboarding home screen dialog description text. -->
+    <string name="onboarding_home_screen_description_2">Il est désormais plus facile de reprendre là où vous en étiez.</string>
+    <!-- Onboarding home screen dialog title text for the home section. Firefox is intentionally hardcoded. -->
+    <string name="onboarding_home_screen_section_home_title_2">Accueil personnalisé de Firefox</string>
+    <!-- Onboarding home screen dialog description text for the home section. -->
+    <string name="onboarding_home_screen_section_home_description_2">Accédez à vos onglets ouverts, vos marque-pages et votre historique de navigation.</string>
+    <!-- Onboarding home screen dialog description text for the tab tray section. -->
+    <string name="onboarding_home_screen_section_cleaner_tab_tray_title_2">Onglets nets et organisés</string>
+    <!-- Onboarding home screen dialog description text for the tab tray section. -->
+    <string name="onboarding_home_screen_section_cleaner_tab_tray_description_2">Éliminez le fouillis d’onglets grâce à une présentation améliorée et des onglets qui se ferment automatiquement.</string>
+    <!-- Onboarding home screen dialog description text for the history section. -->
+    <string name="onboarding_home_screen_section_useful_history_title_2">Recherches récentes</string>
+
+    <!-- Onboarding home screen dialog description text for the history section. -->
+    <string name="onboarding_home_screen_section_useful_history_description_2">Consultez vos dernières recherches depuis votre page d’accueil et vos onglets.</string>
+
+    <!-- Onboarding home screen popup dialog, shown on top of the Jump back in section. Firefox is intentionally hardcoded. -->
+    <string name="onboarding_home_screen_jump_back_contextual_hint" tools:ignore="UnusedResources">L’accueil personnalisé de Firefox permet désormais de reprendre plus facilement là où vous en étiez. Retrouvez vos onglets, marque-pages et résultats de recherche récents.</string>
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
@@ -337,7 +393,9 @@
     <!-- Preference for changing default theme to dark or light mode -->
     <string name="preferences_theme">Thème</string>
     <!-- Preference for customizing the home screen -->
-    <string name="preferences_home">Accueil</string>
+    <string moz:removedIn="94" name="preferences_home" tools:ignore="UnusedResources">Accueil</string>
+    <!-- Preference for customizing the home screen -->
+    <string name="preferences_home_2">Page d’accueil</string>
     <!-- Preference for gestures based actions -->
     <string name="preferences_gestures">Mouvements</string>
     <!-- Preference for settings related to visual options -->
@@ -412,9 +470,15 @@
     <!-- Title for the customize home screen section with recently saved bookmarks. -->
     <string moz:removedIn="94" name="customize_toggle_recently_saved_bookmarks" tools:ignore="UnusedResources">Enregistrés récemment</string>
     <!-- Title for the customize home screen section with recently saved bookmarks. -->
-    <string name="customize_toggle_recently_bookmarked">Marqués récemment</string>
-    <!-- Title for the customize home screen section with recently visited. Recently visited is a section where users see a list of tabs that they have visited in the past few days -->
-    <string name="customize_toggle_recently_visited">Visités récemment</string>
+    <string moz:removedIn="94" name="customize_toggle_recently_bookmarked" tools:ignore="UnusedResources">Marqués récemment</string>
+    <!-- Title for the customize home screen section with recently saved bookmarks. -->
+    <string name="customize_toggle_recent_bookmarks">Marque-pages récents</string>
+    <!-- Title for the customize home screen section with recently visited. Recently visited is
+    a section where users see a list of tabs that they have visited in the past few days -->
+    <string moz:removedIn="94" name="customize_toggle_recently_visited" tools:ignore="UnusedResources">Visités récemment</string>
+    <!-- Title for the customize home screen settings section for recent searches. Recent searches
+     is a section where users see a list of groups of tabs that they have visited in the past few days -->
+    <string name="customize_toggle_recent_searches">Recherches récentes</string>
     <!-- Title for the customize home screen section with Pocket. -->
     <string name="customize_toggle_pocket">Pocket</string>
 
@@ -530,7 +594,7 @@
     <!-- Header of the Turn on Sync preference view -->
     <string name="preferences_sync">Activer Sync</string>
     <!-- Preference for pairing -->
-    <string name="preferences_sync_pair">Scanner le code d’association depuis Firefox pour ordinateur</string>
+    <string moz:removedIn="95" name="preferences_sync_pair" tools:ignore="UnusedResources">Scanner le code d’association depuis Firefox pour ordinateur</string>
     <!-- Preference for account login -->
     <string name="preferences_sync_sign_in">Connexion</string>
 
@@ -637,6 +701,10 @@
     <string name="tab_view_list">Liste</string>
     <!-- Option for a grid tab view -->
     <string name="tab_view_grid">Grille</string>
+    <!-- Option for search term tab groups -->
+    <string name="tab_view_search_term_tab_groups">Groupes de recherches</string>
+    <!-- Summary text for search term tab groups -->
+    <string name="tab_view_search_term_tab_groups_summary">Regrouper les sites liés</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
     <string name="preferences_close_tabs">Fermer les onglets</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
@@ -648,15 +716,24 @@
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">Après un mois</string>
 
-    <!-- Start on Home -->
+    <!-- Title of preference that allows a user to specify the auto-close settings for open tabs -->
+    <string name="preference_auto_close_tabs" tools:ignore="UnusedResources">Fermeture automatique des onglets ouverts</string>
+
+    <!-- Opening screen -->
     <!-- Title of a preference that allows a user to indicate after a specified amount of time when the app should start on the home screen -->
-    <string name="preferences_start_on_home">Démarrer par l’écran d’accueil</string>
+    <string moz:removedIn="94" name="preferences_start_on_home" tools:ignore="UnusedResources">Démarrer par l’écran d’accueil</string>
     <!-- Option for starting on the home screen after after four hours or inactivity -->
-    <string name="start_on_home_after_four_hours">Après quatre heures</string>
+    <string moz:removedIn="94" name="start_on_home_after_four_hours" tools:ignore="UnusedResources">Après quatre heures</string>
+    <!-- Option for always opening the homepage when re-opening the app -->
+    <string name="opening_screen_homepage">Page d’accueil</string>
     <!-- Option for always starting on the home screen -->
-    <string name="start_on_home_always">Toujours</string>
+    <string moz:removedIn="94" name="start_on_home_always" tools:ignore="UnusedResources">Toujours</string>
+    <!-- Option for always opening the user's last-open tab when re-opening the app -->
+    <string name="opening_screen_last_tab">Dernier onglet</string>
     <!-- Option for never starting on the home screen -->
-    <string name="start_on_home_never">Jamais</string>
+    <string moz:removedIn="94" name="start_on_home_never" tools:ignore="UnusedResources">Jamais</string>
+    <!-- Option for always opening the homepage when re-opening the app after four hours of inactivity -->
+    <string name="opening_screen_after_four_hours_of_inactivity">Page d’accueil après quatre heures d’inactivité</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
     <string name="close_tabs_manually_summary">Fermeture manuelle</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
@@ -665,6 +742,9 @@
     <string name="close_tabs_after_one_week_summary">Fermeture après une semaine</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one month-->
     <string name="close_tabs_after_one_month_summary">Fermeture après un mois</string>
+
+    <!-- Title of inactive tabs preference -->
+    <string name="preferences_inactive_tabs_title">Les onglets que vous n’avez pas consultés depuis deux semaines sont déplacés vers la section inactive.</string>
 
     <!-- Studies -->
     <!-- Title of the remove studies button -->
@@ -708,13 +788,13 @@
     <!-- Text shown in the menu for saving tabs to a collection -->
     <string name="tab_tray_menu_item_save">Enregistrer dans une collection</string>
     <!-- Text shown in the menu for the collection selector -->
-    <string name="tab_tray_menu_select">Sélectionner</string>
+    <string moz:removedIn="95" name="tab_tray_menu_select" tools:ignore="UnusedResources">Sélectionner</string>
     <!-- Text shown in the menu for sharing all tabs -->
     <string name="tab_tray_menu_item_share">Partager tous les onglets</string>
     <!-- Text shown in the menu to view recently closed tabs -->
     <string name="tab_tray_menu_recently_closed">Onglets récemment fermés</string>
     <!-- Text shown in the tabs tray inactive tabs section -->
-    <string name="tab_tray_inactive_recently_closed">Récemment fermés</string>
+    <string name="tab_tray_inactive_recently_closed" tools:ignore="UnusedResources">Récemment fermés</string>
     <!-- Text shown in the menu to view account settings -->
     <string name="tab_tray_menu_account_settings">Paramètres du compte</string>
     <!-- Text shown in the menu to view tab settings -->
@@ -789,7 +869,10 @@
     <string name="tab_tray_save_to_collection">Enregistrer</string>
 
     <!-- Title text for the normal tabs header in the tabs tray which are not part of any tab grouping. -->
-    <string name="tab_tray_header_title">Autres</string>
+    <string moz:removedIn="94" name="tab_tray_header_title" tools:ignore="UnusedResources">Autres</string>
+
+    <!-- Title text for the normal tabs header in the tabs tray which are not part of any tab grouping. -->
+    <string name="tab_tray_header_title_1">Autres onglets</string>
 
     <!-- History -->
     <!-- Text for the button to clear all history -->
@@ -835,10 +918,6 @@
     <string name="history_empty_message">Pas d’historique</string>
 
     <!-- Downloads -->
-    <!-- Text for the button to clear all downloads -->
-    <string name="download_delete_all">Effacer la liste des téléchargements</string>
-    <!-- Text for the dialog to confirm clearing all downloads -->
-    <string name="download_delete_all_dialog">Voulez-vous vraiment effacer la liste de vos téléchargements ?</string>
     <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
     <string name="download_delete_multiple_items_snackbar_1">Téléchargements supprimés</string>
     <!-- Text for the snackbar to confirm that a single download item has been removed. The first parameter is the name of the download item. -->
@@ -880,7 +959,7 @@
     <!-- Content description for bookmarks library menu -->
     <string name="bookmark_menu_content_description">Menu des marque-pages</string>
     <!-- Screen title for editing bookmarks -->
-    <string name="bookmark_edit">Modifier le marque-page</string>
+    <string moz:removedIn="95" name="bookmark_edit" tools:ignore="UnusedResources">Modifier le marque-page</string>
     <!-- Screen title for selecting a bookmarks folder -->
     <string name="bookmark_select_folder">Sélectionner un dossier</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete the selected folder -->
@@ -1930,8 +2009,10 @@ Cependant, il peut être moins stable. Téléchargez la version bêta de notre n
     <!-- Confirmation dialog button text when top sites limit is reached. -->
     <string name="top_sites_max_limit_confirmation_button">J’ai compris</string>
 
+    <!-- Label for the preference to show the most visited top sites on the homepage -->
+    <string name="top_sites_toggle_top_recent_sites_3">Les sites les plus visités</string>
     <!-- Label for the show most visited top sites preference -->
-    <string name="top_sites_toggle_top_frecent_sites_2">Afficher les sites les plus visités</string>
+    <string moz:removedIn="94" name="top_sites_toggle_top_frecent_sites_2" tools:ignore="UnusedResources">Afficher les sites les plus visités</string>
     <!-- Label for the show most visited sites preference -->
     <string moz:removedIn="93" name="top_sites_toggle_top_frecent_sites" tools:ignore="UnusedResources">Afficher les sites les plus visités</string>
 
@@ -1944,15 +2025,43 @@ Cependant, il peut être moins stable. Téléchargez la version bêta de notre n
 	<!-- Dialog button text for canceling the rename top site prompt. -->
 	<string name="top_sites_rename_dialog_cancel">Annuler</string>
 
-    <!-- In-activate tabs in the tabs tray -->
-    <!-- Title text displayed in the tabs tray when a tab has been unused for 4 days. -->
+    <!-- Inactive tabs in the tabs tray -->
+    <!-- Title text displayed in the tabs tray when a tab has been unused for 14 days. -->
     <string name="inactive_tabs_title">Onglets inactifs</string>
+    <!-- Content description for closing all inactive tabs -->
+    <string name="inactive_tabs_delete_all">Fermer tous les onglets inactifs</string>
     <!-- A description below the section of "inactive" tabs to notify the user when those tabs will be closed, if appropriate. See strings inactive_tabs_30_days and inactive_tabs_7_days for placeholders options. -->
-    <string name="inactive_tabs_description">Les onglets sont disponibles ici pendant %s jours. Après ce délai, les onglets seront automatiquement fermés.</string>
+    <string moz:removedIn="93" name="inactive_tabs_description" tools:ignore="UnusedResources">Les onglets sont disponibles ici pendant %s jours. Après ce délai, les onglets seront automatiquement fermés.</string>
     <!-- The amount of time until a tab in the "inactive" section of the tabs tray will be closed. See string inactive_tabs_description as well -->
-    <string name="inactive_tabs_30_days">30 jours</string>
+    <string moz:removedIn="93" name="inactive_tabs_30_days" tools:ignore="UnusedResources">30 jours</string>
     <!-- The amount of time until a tab in the "inactive" section of the tabs tray will be closed. See string inactive_tabs_description as well -->
-    <string name="inactive_tabs_7_days">1 semaine</string>
+    <string moz:removedIn="93" name="inactive_tabs_7_days" tools:ignore="UnusedResources">1 semaine</string>
+
+    <!-- Inactive tabs auto-close message in the tabs tray -->
+    <!-- The header text of the auto-close message when the user is asked if they want to turn on the auto-closing of inactive tabs. -->
+    <string name="inactive_tabs_auto_close_message_header" tools:ignore="UnusedResources">Fermeture automatique après un mois ?</string>
+    <!-- A description below the header to notify the user what the inactive tabs auto-close feature is. -->
+    <string name="inactive_tabs_auto_close_message_description" tools:ignore="UnusedResources">Firefox peut fermer les onglets que vous n’avez pas consultés au cours du mois dernier.</string>
+
+    <!-- A call to action below the description to allow the user to turn on the auto closing of inactive tabs. -->
+    <string name="inactive_tabs_auto_close_message_action" tools:ignore="UnusedResources">ACTIVER LA FERMETURE AUTOMATIQUE</string>
+
+    <!-- Inactive tabs survey -->
+    <!-- Header text for the inactive tabs survey asking for feedback to improve the inactive tabs feature. -->
+    <string name="inactive_tabs_survey_header" tools:ignore="UnusedResources">Merci de nous aider à nous améliorer</string>
+    <!-- Content text for the inactive tabs survey asking the primary survey feedback question. -->
+    <string name="inactive_tabs_survey_content" tools:ignore="UnusedResources">Pourquoi avez-vous désactivé les onglets inactifs ?</string>
+
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string name="inactive_tabs_survey_not_interested_option" tools:ignore="UnusedResources">La fonctionnalité ne m’intéresse pas</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string name="inactive_tabs_survey_time_too_long_option" tools:ignore="UnusedResources">Le temps d’inactivité est trop long</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string name="inactive_tabs_survey_time_too_short_option" tools:ignore="UnusedResources">Le temps d’inactivité est trop court</string>
+    <!-- Confirmation button text to submit the feedback for the inactive tabs survey. -->
+    <string name="inactive_tabs_survey_send_button" tools:ignore="UnusedResources">Envoyer</string>
+    <!-- Content description for inactive tabs survey close button -->
+    <string name="inactive_tabs_survey_close_button_content_description" tools:ignore="UnusedResources">Fermer</string>
 
     <!-- Default browser experiment -->
     <string name="default_browser_experiment_card_text">Faites en sorte que les liens des sites web, des courriels et des messages s’ouvrent automatiquement dans Firefox.</string>
@@ -1969,4 +2078,17 @@ Cependant, il peut être moins stable. Téléchargez la version bêta de notre n
     <!-- Content description for privacy content close button -->
     <string name="privacy_content_close_button_content_description">Fermer</string>
 
+    <!-- Pocket recommended stories -->
+    <!-- Header text for a section on the home screen. -->
+    <string moz:removedIn="94" name="pocket_stories_header" tools:ignore="UnusedResources">Des articles qui font réfléchir</string>
+    <!-- Header text for a section on the home screen. -->
+    <string name="pocket_stories_header_1">Des articles qui font réfléchir</string>
+    <!-- Header text for a section on the home screen. -->
+    <string name="pocket_stories_categories_header">Articles par sujet</string>
+    <!-- Text of a button allowing users to access an external url for more Pocket recommendations. -->
+    <string name="pocket_stories_placeholder_text">En découvrir davantage</string>
+    <!-- Caption for describing a certain feature. The placeholder is for a clickable text (eg: Learn more) which will load an url in a new tab when clicked.  -->
+    <string name="pocket_stories_feature_caption">Membre de la famille Firefox. %s</string>
+    <!-- Clickable text for opening an external link for more information about Pocket. -->
+    <string name="pocket_stories_feature_learn_more">En savoir plus</string>
 </resources>

@@ -5,12 +5,12 @@
 package org.mozilla.fenix.tabstray.browser
 
 import android.view.View
-import androidx.annotation.StringRes
 import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.RecyclerView
 import mozilla.components.browser.toolbar.MAX_URI_LENGTH
 import mozilla.components.concept.tabstray.Tab
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.databinding.InactiveFooterItemBinding
 import org.mozilla.fenix.databinding.InactiveHeaderItemBinding
 import org.mozilla.fenix.databinding.InactiveTabListItemBinding
@@ -20,10 +20,6 @@ import org.mozilla.fenix.ext.loadIntoView
 import org.mozilla.fenix.ext.toShortUrl
 import org.mozilla.fenix.home.topsites.dpToPx
 import org.mozilla.fenix.tabstray.TabsTrayInteractor
-import org.mozilla.fenix.tabstray.browser.AutoCloseInterval.Manual
-import org.mozilla.fenix.tabstray.browser.AutoCloseInterval.OneDay
-import org.mozilla.fenix.tabstray.browser.AutoCloseInterval.OneMonth
-import org.mozilla.fenix.tabstray.browser.AutoCloseInterval.OneWeek
 
 sealed class InactiveTabViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
@@ -113,6 +109,7 @@ sealed class InactiveTabViewHolder(itemView: View) : RecyclerView.ViewHolder(ite
             val url = tab.url.toShortUrl(components.publicSuffixList).take(MAX_URI_LENGTH)
 
             itemView.setOnClickListener {
+                components.analytics.metrics.track(Event.TabsTrayOpenInactiveTab)
                 browserTrayInteractor.open(tab, featureName)
             }
 
@@ -123,6 +120,7 @@ sealed class InactiveTabViewHolder(itemView: View) : RecyclerView.ViewHolder(ite
                     R.drawable.mozac_ic_close,
                     R.string.content_description_close_button
                 ) {
+                    components.analytics.metrics.track(Event.TabsTrayCloseInactiveTab())
                     browserTrayInteractor.close(tab, featureName)
                 }
             }
@@ -135,38 +133,12 @@ sealed class InactiveTabViewHolder(itemView: View) : RecyclerView.ViewHolder(ite
 
     class FooterHolder(itemView: View) : InactiveTabViewHolder(itemView) {
 
-        val binding = InactiveFooterItemBinding.bind(itemView)
-
-        fun bind(interval: AutoCloseInterval) {
-            val context = itemView.context
-            val stringRes = when (interval) {
-                Manual, OneDay -> {
-                    binding.inactiveDescription.visibility = View.GONE
-                    binding.topDivider.visibility = View.GONE
-                    null
-                }
-                OneWeek -> {
-                    context.getString(interval.description)
-                }
-                OneMonth -> {
-                    context.getString(interval.description)
-                }
-            }
-            if (stringRes != null) {
-                binding.inactiveDescription.text =
-                    context.getString(R.string.inactive_tabs_description, stringRes)
-            }
+        init {
+            InactiveFooterItemBinding.bind(itemView)
         }
 
         companion object {
             const val LAYOUT_ID = R.layout.inactive_footer_item
         }
     }
-}
-
-enum class AutoCloseInterval(@StringRes val description: Int) {
-    Manual(0),
-    OneDay(0),
-    OneWeek(R.string.inactive_tabs_7_days),
-    OneMonth(R.string.inactive_tabs_30_days)
 }

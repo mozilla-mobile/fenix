@@ -24,7 +24,7 @@
     <!-- Message announced to the user when tab tray is selected with 1 tab -->
     <string name="open_tab_tray_single">1 thẻ đang mở. Chạm để chuyển thẻ.</string>
     <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
-    <string name="open_tab_tray_plural">%1$s thẻ đang mở. Chạm để chuyển thẻ.</string>
+    <string moz:removedIn="95" name="open_tab_tray_plural" tools:ignore="UnusedResources">%1$s thẻ đang mở. Chạm để chuyển thẻ.</string>
 
     <!-- Tab tray multi select title in app bar. The first parameter is the number of tabs selected -->
     <string name="tab_tray_multi_select_title">%1$d đã chọn</string>
@@ -53,7 +53,9 @@
     <!-- Title for the home screen section with recently saved bookmarks. -->
     <string moz:removedIn="94" name="recently_saved_bookmarks" tools:ignore="UnusedResources">Đã lưu gần đây</string>
     <!-- Title for the home screen section with recently saved bookmarks. -->
-    <string name="recently_bookmarked">Dấu trang gần đây</string>
+    <string moz:removedIn="94" name="recently_bookmarked" tools:ignore="UnusedResources">Dấu trang gần đây</string>
+    <!-- Title for the home screen section with recently saved bookmarks. -->
+    <string name="recent_bookmarks_title">Dấu trang gần đây</string>
     <!-- Content description for the recently saved bookmarks section on the home screen. -->
     <string name="recently_saved_bookmarks_content_description">Dấu trang đã lưu gần đây</string>
     <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
@@ -106,6 +108,20 @@
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">Bỏ qua</string>
 
+    <!-- Text for the banner message to tell users about our inactive tabs feature. -->
+    <string name="tab_tray_inactive_onboarding_message">Các thẻ bạn đã không xem trong hai tuần sẽ được chuyển đến đây.</string>
+    <!-- Text for the action link to go to Settings for inactive tabs. -->
+    <string name="tab_tray_inactive_onboarding_button_text">Tắt trong cài đặt</string>
+
+    <!-- Text for title for the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_auto_close_title">Tự động đóng sau một tháng?</string>
+    <!-- Text for the body for the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_auto_close_body">Firefox có thể đóng các thẻ bạn không xem trong tháng qua.</string>
+    <!-- Content description for close button in the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_auto_close_button_content_description">Đóng</string>
+    <!-- Text for turn on auto close tabs button in the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_turn_on_auto_close_button">Bật tự động đóng</string>
+
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
     <string name="home_screen_shortcut_open_new_tab_2">Thẻ mới</string>
@@ -113,13 +129,22 @@
     <string name="home_screen_shortcut_open_new_private_tab_2">Thẻ riêng tư mới</string>
 
     <!-- Heading for the Top Sites block -->
-    <string name="home_screen_top_sites_heading">Trang web hàng đầu</string>
+    <string moz:removedIn="95" name="home_screen_top_sites_heading" tools:ignore="UnusedResources">Trang web hàng đầu</string>
 
     <!-- Recent Tabs -->
     <!-- Header text for jumping back into the recent tab in the home screen -->
     <string name="recent_tabs_header">Quay lại trang trước</string>
     <!-- Button text for showing all the tabs in the tabs tray -->
     <string name="recent_tabs_show_all">Hiển thị tất cả</string>
+
+    <!-- Content description for the button which navigates the user to show all recent tabs in the tabs tray. -->
+    <string name="recent_tabs_show_all_content_description">Nút hiển thị tất cả các thẻ gần đây</string>
+    <!-- Title for showing a group item in the 'Jump back in' section of the new tab
+        The first parameter is the search term that the user used. (for example: your search for "cat")-->
+    <string name="recent_tabs_search_term">Tìm kiếm của bạn cho \&quot;%1$s\&quot;</string>
+    <!-- Text for the number of tabs in a group in the 'Jump back in' section of the new tab
+        The first parameter is the count for number of sites in the group.  This number will always be more than one. -->
+    <string name="recent_tabs_search_term_count">Trang web: %1$s</string>
 
     <!-- History Metadata -->
     <!-- Header text for a section on the home screen that displays grouped highlights from the
@@ -128,10 +153,16 @@
 
     <!-- Header text for a section on the home screen that displays grouped highlights from the
          user's browsing history, such as topics they have researched or explored on the web -->
-    <string name="history_metadata_header_2">Đã xem gần đây</string>
+    <string moz:removedIn="94" name="history_metadata_header_2" tools:ignore="UnusedResources">Đã xem gần đây</string>
+    <!-- Header text for a section on the home screen that displays grouped highlights from the
+         user's browsing history, such as topics they have researched or explored on the web -->
+    <string name="history_metadata_header_3">Tìm kiếm gần đây</string>
     <!-- Text for the menu button to remove a grouped highlight from the user's browsing history
          in the Recently visited section -->
     <string name="recently_visited_menu_item_remove">Xóa</string>
+
+    <!-- Content description for the button which navigates the user to show all of their history. -->
+    <string name="past_explorations_show_all_content_description">Nút hiển thị tất cả các khám phá trước đây</string>
 
     <!-- Browser Fragment -->
     <!-- Content description (not visible, for screen readers etc.): Navigate to open tabs -->
@@ -146,7 +177,7 @@
     <!-- Content description (not visible, for screen readers etc.): Stop loading current website -->
     <string name="browser_menu_stop">Dừng</string>
     <!-- Content description (not visible, for screen readers etc.): Bookmark the current page -->
-    <string name="browser_menu_bookmark">Đánh dấu</string>
+    <string moz:removedIn="95" name="browser_menu_bookmark" tools:ignore="UnusedResources">Đánh dấu</string>
     <!-- Content description (not visible, for screen readers etc.): Un-bookmark the current page -->
     <string name="browser_menu_edit_bookmark">Chỉnh sửa dấu trang</string>
     <!-- Browser menu button that opens the addon manager -->
@@ -210,6 +241,8 @@
 
     <!-- Browser menu button that opens the Customize menu -->
     <string name="browser_menu_customize_home">Tùy chỉnh trang chủ</string>
+    <!-- Button shown on the home page that opens the Customize home settings -->
+    <string name="browser_menu_customize_home_1">Tùy chỉnh trang chủ</string>
     <!-- Browser Toolbar -->
     <!-- Content description for the Home screen button on the browser toolbar -->
     <string name="browser_toolbar_home">Màn hình chính</string>
@@ -254,6 +287,27 @@
     <string name="search_engine_suggestions_title">Tìm kiếm %s</string>
     <!-- Search engine suggestion description text -->
     <string name="search_engine_suggestions_description">Tìm kiếm trực tiếp từ thanh địa chỉ</string>
+
+    <!-- Home onboarding -->
+    <!-- Onboarding home screen dialog title text. Firefox is intentionally hardcoded. -->
+    <string name="onboarding_home_screen_title_2">Có gì mới trong Firefox</string>
+    <!-- Onboarding home screen dialog description text. -->
+    <string name="onboarding_home_screen_description_2">Giờ đây, việc tiếp tục nơi bạn đã dừng lại sẽ trở nên dễ dàng hơn.</string>
+    <!-- Onboarding home screen dialog title text for the home section. Firefox is intentionally hardcoded. -->
+    <string name="onboarding_home_screen_section_home_title_2">Trang chủ Firefox được cá nhân hóa</string>
+    <!-- Onboarding home screen dialog description text for the home section. -->
+    <string name="onboarding_home_screen_section_home_description_2">Chuyển đến các thẻ đang mở, dấu trang và lịch sử duyệt web của bạn.</string>
+    <!-- Onboarding home screen dialog description text for the tab tray section. -->
+    <string name="onboarding_home_screen_section_cleaner_tab_tray_title_2">Các thẻ gọn gàng, có tổ chức</string>
+    <!-- Onboarding home screen dialog description text for the tab tray section. -->
+    <string name="onboarding_home_screen_section_cleaner_tab_tray_description_2">Xóa các thẻ lộn xộn với bố cục được cải thiện và tự động đóng các thẻ. </string>
+    <!-- Onboarding home screen dialog description text for the history section. -->
+    <string name="onboarding_home_screen_section_useful_history_title_2">Tìm kiếm gần đây</string>
+    <!-- Onboarding home screen dialog description text for the history section. -->
+    <string name="onboarding_home_screen_section_useful_history_description_2">Xem lại các tìm kiếm mới nhất của bạn từ trang chủ và các thẻ của bạn.</string>
+
+    <!-- Onboarding home screen popup dialog, shown on top of the Jump back in section. Firefox is intentionally hardcoded. -->
+    <string name="onboarding_home_screen_jump_back_contextual_hint" tools:ignore="UnusedResources">Trang chủ Firefox được cá nhân hóa của bạn giờ đây giúp bạn tiếp tục lại nơi bạn đã dừng lại dễ dàng hơn. Tìm các thẻ, dấu trang và kết quả tìm kiếm gần đây của bạn.</string>
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
@@ -333,7 +387,9 @@
     <!-- Preference for changing default theme to dark or light mode -->
     <string name="preferences_theme">Chủ đề</string>
     <!-- Preference for customizing the home screen -->
-    <string name="preferences_home">Trang chủ</string>
+    <string moz:removedIn="94" name="preferences_home" tools:ignore="UnusedResources">Trang chủ</string>
+    <!-- Preference for customizing the home screen -->
+    <string name="preferences_home_2">Trang chủ</string>
     <!-- Preference for gestures based actions -->
     <string name="preferences_gestures">Cử chỉ</string>
     <!-- Preference for settings related to visual options -->
@@ -407,9 +463,15 @@
     <!-- Title for the customize home screen section with recently saved bookmarks. -->
     <string moz:removedIn="94" name="customize_toggle_recently_saved_bookmarks" tools:ignore="UnusedResources">Đã lưu gần đây</string>
     <!-- Title for the customize home screen section with recently saved bookmarks. -->
-    <string name="customize_toggle_recently_bookmarked">Dấu trang gần đây</string>
-    <!-- Title for the customize home screen section with recently visited. Recently visited is a section where users see a list of tabs that they have visited in the past few days -->
-    <string name="customize_toggle_recently_visited">Đã xem gần đây</string>
+    <string moz:removedIn="94" name="customize_toggle_recently_bookmarked" tools:ignore="UnusedResources">Dấu trang gần đây</string>
+    <!-- Title for the customize home screen section with recently saved bookmarks. -->
+    <string name="customize_toggle_recent_bookmarks">Dấu trang gần đây</string>
+    <!-- Title for the customize home screen section with recently visited. Recently visited is
+    a section where users see a list of tabs that they have visited in the past few days -->
+    <string moz:removedIn="94" name="customize_toggle_recently_visited" tools:ignore="UnusedResources">Đã xem gần đây</string>
+    <!-- Title for the customize home screen settings section for recent searches. Recent searches
+     is a section where users see a list of groups of tabs that they have visited in the past few days -->
+    <string name="customize_toggle_recent_searches">Tìm kiếm gần đây</string>
     <!-- Title for the customize home screen section with Pocket. -->
     <string name="customize_toggle_pocket">Pocket</string>
 
@@ -521,7 +583,7 @@
     <!-- Header of the Turn on Sync preference view -->
     <string name="preferences_sync">Bật đồng bộ hóa</string>
     <!-- Preference for pairing -->
-    <string name="preferences_sync_pair">Quét mã ghép nối trong máy tính để bàn Firefox</string>
+    <string moz:removedIn="95" name="preferences_sync_pair" tools:ignore="UnusedResources">Quét mã ghép nối trong máy tính để bàn Firefox</string>
     <!-- Preference for account login -->
     <string name="preferences_sync_sign_in">Đăng nhập</string>
     <!-- Preference for reconnecting to FxA sync -->
@@ -626,6 +688,10 @@
     <string name="tab_view_list">Danh sách</string>
     <!-- Option for a grid tab view -->
     <string name="tab_view_grid">Lưới</string>
+    <!-- Option for search term tab groups -->
+    <string name="tab_view_search_term_tab_groups">Tìm kiếm nhóm</string>
+    <!-- Summary text for search term tab groups -->
+    <string name="tab_view_search_term_tab_groups_summary">Nhóm các trang web liên quan lại với nhau</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
     <string name="preferences_close_tabs">Đóng thẻ</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
@@ -637,15 +703,26 @@
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">Sau một tháng</string>
 
-    <!-- Start on Home -->
+    <!-- Title of preference that allows a user to specify the auto-close settings for open tabs -->
+    <string name="preference_auto_close_tabs" tools:ignore="UnusedResources">Tự động đóng các thẻ đang mở</string>
+
+    <!-- Opening screen -->
     <!-- Title of a preference that allows a user to indicate after a specified amount of time when the app should start on the home screen -->
-    <string name="preferences_start_on_home">Bắt đầu tại màn hình chính</string>
+    <string moz:removedIn="94" name="preferences_start_on_home" tools:ignore="UnusedResources">Bắt đầu tại màn hình chính</string>
+    <!-- Title of a preference that allows a user to choose what screen to show after opening the app -->
+    <string name="preferences_opening_screen">Khi mở ứng dụng, hãy vào</string>
     <!-- Option for starting on the home screen after after four hours or inactivity -->
-    <string name="start_on_home_after_four_hours">Sau bốn giờ</string>
+    <string moz:removedIn="94" name="start_on_home_after_four_hours" tools:ignore="UnusedResources">Sau bốn giờ</string>
+    <!-- Option for always opening the homepage when re-opening the app -->
+    <string name="opening_screen_homepage">Trang chủ</string>
     <!-- Option for always starting on the home screen -->
-    <string name="start_on_home_always">Luôn luôn</string>
+    <string moz:removedIn="94" name="start_on_home_always" tools:ignore="UnusedResources">Luôn luôn</string>
+    <!-- Option for always opening the user's last-open tab when re-opening the app -->
+    <string name="opening_screen_last_tab">Thẻ cuối cùng</string>
     <!-- Option for never starting on the home screen -->
-    <string name="start_on_home_never">Không bao giờ</string>
+    <string moz:removedIn="94" name="start_on_home_never" tools:ignore="UnusedResources">Không bao giờ</string>
+    <!-- Option for always opening the homepage when re-opening the app after four hours of inactivity -->
+    <string name="opening_screen_after_four_hours_of_inactivity">Trang chủ sau bốn giờ không hoạt động</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
     <string name="close_tabs_manually_summary">Đóng thủ công</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
@@ -654,6 +731,12 @@
     <string name="close_tabs_after_one_week_summary">Đóng sau một tuần</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one month-->
     <string name="close_tabs_after_one_month_summary">Đóng sau một tháng</string>
+
+    <!-- Inactive tabs -->
+    <!-- Category header of a preference that allows a user to enable or disable the inactive tabs feature -->
+    <string name="preferences_inactive_tabs">Chuyển các thẻ cũ sang không hoạt động</string>
+    <!-- Title of inactive tabs preference -->
+    <string name="preferences_inactive_tabs_title">Các thẻ bạn đã không xem trong hai tuần sẽ được chuyển sang phần không hoạt động.</string>
 
     <!-- Studies -->
     <!-- Title of the remove studies button -->
@@ -696,13 +779,13 @@
     <!-- Text shown in the menu for saving tabs to a collection -->
     <string name="tab_tray_menu_item_save">Lưu vào bộ sưu tập</string>
     <!-- Text shown in the menu for the collection selector -->
-    <string name="tab_tray_menu_select">Chọn</string>
+    <string moz:removedIn="95" name="tab_tray_menu_select" tools:ignore="UnusedResources">Chọn</string>
     <!-- Text shown in the menu for sharing all tabs -->
     <string name="tab_tray_menu_item_share">Chia sẻ tất cả các thẻ</string>
     <!-- Text shown in the menu to view recently closed tabs -->
     <string name="tab_tray_menu_recently_closed">Các thẻ đã đóng gần đây</string>
     <!-- Text shown in the tabs tray inactive tabs section -->
-    <string name="tab_tray_inactive_recently_closed">Đã đóng gần đây</string>
+    <string name="tab_tray_inactive_recently_closed" tools:ignore="UnusedResources">Đã đóng gần đây</string>
     <!-- Text shown in the menu to view account settings -->
     <string name="tab_tray_menu_account_settings">Cài đặt tài khoản</string>
     <!-- Text shown in the menu to view tab settings -->
@@ -776,7 +859,10 @@
     <string name="tab_tray_save_to_collection">Lưu</string>
 
     <!-- Title text for the normal tabs header in the tabs tray which are not part of any tab grouping. -->
-    <string name="tab_tray_header_title">Khác</string>
+    <string moz:removedIn="94" name="tab_tray_header_title" tools:ignore="UnusedResources">Khác</string>
+
+    <!-- Title text for the normal tabs header in the tabs tray which are not part of any tab grouping. -->
+    <string name="tab_tray_header_title_1">Các thẻ khác</string>
 
     <!-- History -->
     <!-- Text for the button to clear all history -->
@@ -821,10 +907,6 @@
     <string name="history_empty_message">Không có lịch sử ở đây</string>
 
     <!-- Downloads -->
-    <!-- Text for the button to clear all downloads -->
-    <string name="download_delete_all">Xóa nội dung tải xuống</string>
-    <!-- Text for the dialog to confirm clearing all downloads -->
-    <string name="download_delete_all_dialog">Bạn có chắc chắn muốn xóa nội dung tải xuống của mình không?</string>
     <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
     <string name="download_delete_multiple_items_snackbar_1">Đã xóa tải xuống</string>
     <!-- Text for the snackbar to confirm that a single download item has been removed. The first parameter is the name of the download item. -->
@@ -865,7 +947,7 @@
     <!-- Content description for bookmarks library menu -->
     <string name="bookmark_menu_content_description">Menu dấu trang</string>
     <!-- Screen title for editing bookmarks -->
-    <string name="bookmark_edit">Chỉnh sửa dấu trang</string>
+    <string moz:removedIn="95" name="bookmark_edit" tools:ignore="UnusedResources">Chỉnh sửa dấu trang</string>
     <!-- Screen title for selecting a bookmarks folder -->
     <string name="bookmark_select_folder">Chọn thư mục</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete the selected folder -->
@@ -1886,8 +1968,10 @@
     <!-- Confirmation dialog button text when top sites limit is reached. -->
     <string name="top_sites_max_limit_confirmation_button">OK, đã hiểu</string>
 
+    <!-- Label for the preference to show the most visited top sites on the homepage -->
+    <string name="top_sites_toggle_top_recent_sites_3">Trang web hàng đầu được truy cập nhiều nhất</string>
     <!-- Label for the show most visited top sites preference -->
-    <string name="top_sites_toggle_top_frecent_sites_2">Hiển thị các trang web hàng đầu được xem nhiều nhất</string>
+    <string moz:removedIn="94" name="top_sites_toggle_top_frecent_sites_2" tools:ignore="UnusedResources">Hiển thị các trang web hàng đầu được xem nhiều nhất</string>
     <!-- Label for the show most visited sites preference -->
     <string moz:removedIn="93" name="top_sites_toggle_top_frecent_sites" tools:ignore="UnusedResources">Hiển thị các trang web được truy cập nhiều nhất</string>
 
@@ -1900,15 +1984,41 @@
 	<!-- Dialog button text for canceling the rename top site prompt. -->
 	<string name="top_sites_rename_dialog_cancel">Huỷ bỏ</string>
 
-    <!-- In-activate tabs in the tabs tray -->
-    <!-- Title text displayed in the tabs tray when a tab has been unused for 4 days. -->
+    <!-- Inactive tabs in the tabs tray -->
+    <!-- Title text displayed in the tabs tray when a tab has been unused for 14 days. -->
     <string name="inactive_tabs_title">Thẻ không hoạt động</string>
+    <!-- Content description for closing all inactive tabs -->
+    <string name="inactive_tabs_delete_all">Đóng tất cả các thẻ không hoạt động</string>
     <!-- A description below the section of "inactive" tabs to notify the user when those tabs will be closed, if appropriate. See strings inactive_tabs_30_days and inactive_tabs_7_days for placeholders options. -->
-    <string name="inactive_tabs_description">Các thẻ có sẵn ở đây trong %s. Sau thời gian đó, các thẻ sẽ tự động bị đóng.</string>
+    <string moz:removedIn="93" name="inactive_tabs_description" tools:ignore="UnusedResources">Các thẻ có sẵn ở đây trong %s. Sau thời gian đó, các thẻ sẽ tự động bị đóng.</string>
     <!-- The amount of time until a tab in the "inactive" section of the tabs tray will be closed. See string inactive_tabs_description as well -->
-    <string name="inactive_tabs_30_days">30 ngày</string>
+    <string moz:removedIn="93" name="inactive_tabs_30_days" tools:ignore="UnusedResources">30 ngày</string>
     <!-- The amount of time until a tab in the "inactive" section of the tabs tray will be closed. See string inactive_tabs_description as well -->
-    <string name="inactive_tabs_7_days">1 tuần</string>
+    <string moz:removedIn="93" name="inactive_tabs_7_days" tools:ignore="UnusedResources">1 tuần</string>
+
+    <!-- Inactive tabs auto-close message in the tabs tray -->
+    <!-- The header text of the auto-close message when the user is asked if they want to turn on the auto-closing of inactive tabs. -->
+    <string name="inactive_tabs_auto_close_message_header" tools:ignore="UnusedResources">Tự động đóng sau một tháng?</string>
+    <!-- A description below the header to notify the user what the inactive tabs auto-close feature is. -->
+    <string name="inactive_tabs_auto_close_message_description" tools:ignore="UnusedResources">Firefox có thể đóng các thẻ bạn không xem trong tháng qua.</string>
+    <!-- A call to action below the description to allow the user to turn on the auto closing of inactive tabs. -->
+    <string name="inactive_tabs_auto_close_message_action" tools:ignore="UnusedResources">BẬT TỰ ĐỘNG ĐÓNG</string>
+
+    <!-- Inactive tabs survey -->
+    <!-- Header text for the inactive tabs survey asking for feedback to improve the inactive tabs feature. -->
+    <string name="inactive_tabs_survey_header" tools:ignore="UnusedResources">Hãy giúp chúng tôi cải thiện</string>
+    <!-- Content text for the inactive tabs survey asking the primary survey feedback question. -->
+    <string name="inactive_tabs_survey_content" tools:ignore="UnusedResources">Tại sao bạn tắt tính năng các thẻ không hoạt động?</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string name="inactive_tabs_survey_not_interested_option" tools:ignore="UnusedResources">Không quan tâm đến tính năng</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string name="inactive_tabs_survey_time_too_long_option" tools:ignore="UnusedResources">Thời gian đóng thẻ không hoạt động quá lâu</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string name="inactive_tabs_survey_time_too_short_option" tools:ignore="UnusedResources">Thời gian đóng thẻ không hoạt động quá ngắn</string>
+    <!-- Confirmation button text to submit the feedback for the inactive tabs survey. -->
+    <string name="inactive_tabs_survey_send_button" tools:ignore="UnusedResources">Gửi</string>
+    <!-- Content description for inactive tabs survey close button -->
+    <string name="inactive_tabs_survey_close_button_content_description" tools:ignore="UnusedResources">Đóng</string>
 
     <!-- Default browser experiment -->
     <string name="default_browser_experiment_card_text">Đặt các liên kết từ trang web, email và tin nhắn để tự động mở trong Firefox.</string>
@@ -1925,4 +2035,19 @@
     <!-- Content description for privacy content close button -->
     <string name="privacy_content_close_button_content_description">Đóng</string>
 
+    <!-- Pocket recommended stories -->
+    <!-- Header text for a section on the home screen. -->
+    <string moz:removedIn="94" name="pocket_stories_header" tools:ignore="UnusedResources">Những câu chuyện kích động tư tưởng</string>
+    <!-- Header text for a section on the home screen. -->
+    <string name="pocket_stories_header_1">Những câu chuyện kích động tư tưởng</string>
+    <!-- Header text for a section on the home screen. -->
+    <string name="pocket_stories_categories_header">Các câu chuyện theo chủ đề</string>
+    <!-- Text of a button allowing users to access an external url for more Pocket recommendations. -->
+    <string name="pocket_stories_placeholder_text">Khám phá thêm nữa</string>
+    <!-- Title of an app feature. Smaller than a heading.-->
+    <string name="pocket_stories_feature_title">Được cung cấp bởi Pocket.</string>
+    <!-- Caption for describing a certain feature. The placeholder is for a clickable text (eg: Learn more) which will load an url in a new tab when clicked.  -->
+    <string name="pocket_stories_feature_caption">Một phần của gia đình Firefox. %s</string>
+    <!-- Clickable text for opening an external link for more information about Pocket. -->
+    <string name="pocket_stories_feature_learn_more">Tìm hiểu thêm</string>
 </resources>
