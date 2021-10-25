@@ -35,7 +35,6 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -231,7 +230,6 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
     }
 
     @SuppressWarnings("LongMethod")
-    @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -355,20 +353,17 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         }
     }
 
-    @ExperimentalCoroutinesApi
     private fun observeSuggestionProvidersState() = consumeFlow(store) { flow ->
         flow.map { state -> state.toSearchProviderState() }
             .ifChanged()
             .collect { state -> awesomeBarView.updateSuggestionProvidersVisibility(state) }
     }
 
-    @ExperimentalCoroutinesApi
     private fun observeShortcutsState() = consumeFlow(store) { flow ->
         flow.ifAnyChanged { state -> arrayOf(state.areShortcutsAvailable, state.showSearchShortcuts) }
             .collect { state -> updateSearchShortcutsIcon(state.areShortcutsAvailable, state.showSearchShortcuts) }
     }
 
-    @ExperimentalCoroutinesApi
     private fun observeAwesomeBarState() = consumeFlow(store) { flow ->
         /*
          * firstUpdate is used to make sure we keep the awesomebar hidden on the first run
@@ -387,7 +382,6 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             }
     }
 
-    @ExperimentalCoroutinesApi
     private fun observeClipboardState() = consumeFlow(store) { flow ->
         flow.map { state ->
             val shouldShowView = state.showClipboardSuggestions &&
