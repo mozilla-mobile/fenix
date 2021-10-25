@@ -11,9 +11,9 @@ import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.mozilla.fenix.home.HomeFragmentState
-import org.mozilla.fenix.home.sessioncontrol.viewholders.pocket.POCKET_STORIES_DEFAULT_CATEGORY_NAME
-import org.mozilla.fenix.home.sessioncontrol.viewholders.pocket.PocketRecommendedStoriesCategory
-import org.mozilla.fenix.home.sessioncontrol.viewholders.pocket.PocketRecommendedStoriesSelectedCategory
+import org.mozilla.fenix.home.pocket.POCKET_STORIES_DEFAULT_CATEGORY_NAME
+import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesCategory
+import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesSelectedCategory
 import kotlin.random.Random
 
 class HomeFragmentStateTest {
@@ -257,6 +257,22 @@ class HomeFragmentStateTest {
         assertSame(firstCategory.stories[1], result[3])
         assertSame(firstCategory.stories[0], result[4])
         assertSame(firstCategory.stories[2], result[5])
+    }
+
+    @Test
+    fun `GIVEN old selections of categories which do not exist anymore WHEN getFilteredStories is called THEN ignore not found selections`() {
+        val homeState = HomeFragmentState(
+            pocketStoriesCategories = listOf(otherStoriesCategory, anotherStoriesCategory, defaultStoriesCategory),
+            pocketStoriesCategoriesSelections = listOf(
+                PocketRecommendedStoriesSelectedCategory("unexistent"),
+                PocketRecommendedStoriesSelectedCategory(anotherStoriesCategory.name)
+            )
+        )
+
+        val result = homeState.getFilteredStories(6)
+
+        assertEquals(3, result.size)
+        assertNull(result.firstOrNull { it.category != anotherStoriesCategory.name })
     }
 }
 

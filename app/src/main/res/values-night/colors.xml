@@ -43,8 +43,8 @@
     <color name="add_on_private_browsing_exterior_circle_background_normal_theme">@color/add_on_private_browsing_exterior_circle_background_dark_theme</color>
     <color name="add_on_private_browsing_interior_icon_background_normal_theme">@color/add_on_private_browsing_interior_icon_background_dark_theme</color>
     <color name="prompt_login_edit_text_cursor_color_normal_theme">@color/prompt_login_edit_text_cursor_color_dark_theme</color>
-    <color name="readermode_start_gradient_normal_theme">#C689FF</color>
-    <color name="readermode_end_gradient_normal_theme">#00B3F4</color>
+    <color name="readermode_start_gradient_normal_theme">@color/photonViolet30</color>
+    <color name="readermode_end_gradient_normal_theme">@color/photonBlue30</color>
     <color name="search_suggestion_indicator_icon_color_normal_theme">@color/search_suggestion_indicator_icon_color_dark_theme</color>
     <color name="search_suggestion_indicator_icon_bookmark_color_normal_theme">@color/search_suggestion_indicator_icon_bookmark_color_dark_theme</color>
     <color name="select_login_header_normal_theme">@color/accent_high_contrast_dark_theme</color>
@@ -93,7 +93,7 @@
     <color name="collection_icon_color_yellow">@color/collection_icon_color_yellow_dark_theme</color>
 
     <!-- Home screen -->
-    <color name="home_show_all_button_text">#AB71FF</color>
+    <color name="home_show_all_button_text">@color/photonViolet40</color>
 
     <!-- Search Widget -->
     <color name="search_widget_background">@color/inset_dark_theme</color>

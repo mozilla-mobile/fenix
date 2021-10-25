@@ -6,7 +6,6 @@ package org.mozilla.fenix.tabstray
 
 import androidx.annotation.VisibleForTesting
 import androidx.navigation.NavController
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import mozilla.components.browser.state.action.DebugAction
 import mozilla.components.browser.state.action.LastAccessAction
 import mozilla.components.browser.state.selector.findTab
@@ -156,7 +155,6 @@ class DefaultTabsTrayController(
      *
      * @param tabs List of [Tab]s (sessions) to be removed. This method has no effect for tabs that do not exist.
      */
-    @ExperimentalCoroutinesApi
     override fun handleMultipleTabsDeletion(tabs: Collection<Tab>) {
         val isPrivate = tabs.any { it.private }
 
@@ -219,6 +217,7 @@ class DefaultTabsTrayController(
     }
 
     override fun handleDeleteAllInactiveTabs() {
+        metrics.track(Event.TabsTrayCloseAllInactiveTabs)
         browserStore.state.inactiveTabs.map { it.id }.let {
             tabsUseCases.removeTabs(it)
         }

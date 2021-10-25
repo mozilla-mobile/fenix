@@ -10,6 +10,8 @@ import androidx.recyclerview.widget.RecyclerView
 import mozilla.components.browser.toolbar.MAX_URI_LENGTH
 import mozilla.components.concept.tabstray.Tab
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.databinding.InactiveFooterItemBinding
 import org.mozilla.fenix.databinding.InactiveHeaderItemBinding
 import org.mozilla.fenix.databinding.InactiveTabListItemBinding
@@ -18,6 +20,7 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.loadIntoView
 import org.mozilla.fenix.ext.toShortUrl
 import org.mozilla.fenix.home.topsites.dpToPx
+import org.mozilla.fenix.tabstray.TabsTrayFragment
 import org.mozilla.fenix.tabstray.TabsTrayInteractor
 
 sealed class InactiveTabViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -79,7 +82,21 @@ sealed class InactiveTabViewHolder(itemView: View) : RecyclerView.ViewHolder(ite
 
             binding.action.setOnClickListener {
                 interactor.onEnabledAutoCloseClicked()
+                showConfirmationSnackbar()
             }
+        }
+
+        private fun showConfirmationSnackbar() {
+            val context = binding.root.context
+            val view = binding.root
+            val text = context.getString(R.string.inactive_tabs_auto_close_message_snackbar)
+            val snackbar = FenixSnackbar.make(
+                view = view,
+                duration = FenixSnackbar.LENGTH_SHORT,
+                isDisplayedWithBrowserToolbar = true
+            ).setText(text)
+            snackbar.view.elevation = TabsTrayFragment.ELEVATION
+            snackbar.show()
         }
 
         companion object {
@@ -108,6 +125,7 @@ sealed class InactiveTabViewHolder(itemView: View) : RecyclerView.ViewHolder(ite
             val url = tab.url.toShortUrl(components.publicSuffixList).take(MAX_URI_LENGTH)
 
             itemView.setOnClickListener {
+                components.analytics.metrics.track(Event.TabsTrayOpenInactiveTab)
                 browserTrayInteractor.open(tab, featureName)
             }
 
@@ -118,6 +136,7 @@ sealed class InactiveTabViewHolder(itemView: View) : RecyclerView.ViewHolder(ite
                     R.drawable.mozac_ic_close,
                     R.string.content_description_close_button
                 ) {
+                    components.analytics.metrics.track(Event.TabsTrayCloseInactiveTab())
                     browserTrayInteractor.close(tab, featureName)
                 }
             }
