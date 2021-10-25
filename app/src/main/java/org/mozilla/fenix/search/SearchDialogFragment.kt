@@ -40,6 +40,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import mozilla.components.browser.toolbar.BrowserToolbar
+import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.storage.HistoryStorage
 import mozilla.components.feature.qr.QrFeature
 import mozilla.components.lib.state.ext.consumeFlow
@@ -484,7 +485,8 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                             (activity as? HomeActivity)?.openToBrowserAndLoad(
                                 searchTermOrURL = result,
                                 newTab = store.state.tabId == null,
-                                from = BrowserDirection.FromSearchDialog
+                                from = BrowserDirection.FromSearchDialog,
+                                flags = EngineSession.LoadUrlFlags.external()
                             )
                             dialog.dismiss()
                         }
