@@ -4,51 +4,29 @@
 
 package org.mozilla.fenix.perf
 
-import android.app.Instrumentation
 import android.content.Intent
-import android.net.Uri
-import android.os.Bundle
-import android.os.Looper
 import android.view.View
 import android.view.ViewGroup
 import androidx.benchmark.junit4.BenchmarkRule
 import androidx.benchmark.junit4.measureRepeated
-import androidx.compose.ui.platform.ComposeView
+import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.core.view.children
-import androidx.navigation.navOptions
-import androidx.recyclerview.widget.RecyclerView
-import androidx.test.annotation.UiThreadTest
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.assertion.ViewAssertions
-import androidx.test.espresso.matcher.ViewMatchers
-import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ActivityTestRule
-import androidx.test.uiautomator.By
-import androidx.test.uiautomator.UiDevice
-import androidx.test.uiautomator.UiSelector
-import androidx.test.uiautomator.Until
 import mozilla.components.browser.toolbar.BrowserToolbar
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mozilla.fenix.FenixApplication
-import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.IntentReceiverActivity
 import org.mozilla.fenix.R
-import org.mozilla.fenix.components.toolbar.BrowserToolbarView
-import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.*
-import org.mozilla.fenix.helpers.ext.waitNotNull
-import org.mozilla.fenix.ui.robots.BrowserRobot
-import org.mozilla.fenix.ui.robots.HomeScreenRobot
-import org.mozilla.fenix.ui.robots.homeScreen
-import org.mozilla.fenix.ui.robots.navigationToolbar
+import org.mozilla.fenix.utils.view.ViewHolder
 
 @RunWith(AndroidJUnit4::class)
 class HomeFragmentBenchmark {
@@ -64,7 +42,7 @@ class HomeFragmentBenchmark {
 
     @get:Rule
     val homeActivityRule = HomeActivityTestRule(
-        skipOnboarding = true, skipShouldShowJumpBackIn = false
+        skipOnboarding = true, skipShouldShowJumpBackIn = true
     )
 
     @get: Rule
@@ -76,7 +54,7 @@ class HomeFragmentBenchmark {
     @Before
     fun setup() {
         mockWebServer = MockWebServer().apply {
-            dispatcher = AndroidAssetDispatcher();
+            dispatcher = AndroidAssetDispatcher()
             start()
         }
 
@@ -86,20 +64,28 @@ class HomeFragmentBenchmark {
 
     }
 
-
+    /**
+     * Benchmarks the time taken from clicking the "Home Button" on the URL bar located on the
+     * BrowserFragment up until the HomeFragment is shown and usable.
+     */
     @Test
     fun homeScreenBenchmark() {
-        val toolbar = homeActivityRule.activity.findViewById<BrowserToolbar>(R.id.toolbar)
-        var homeButton = getHomeButton(toolbar)
+        var homeButton : View?  = null
 
         benchmarkRule.measureRepeated {
+            runWithTimingDisabled {
+                homeButton = getHomeButton(homeActivityRule.activity.findViewById<BrowserToolbar>(R.id.toolbar))
+            }
             homeActivityRule.runOnUiThread {
                 homeButton!!.callOnClick()
             }
+
+            //We have to wait for the Sync otherwise we'll execute the test too quickly
             InstrumentationRegistry.getInstrumentation().waitForIdleSync()
             runWithTimingDisabled {
-                val recyclerView = homeActivityRule.activity.findViewById<RecyclerView>(R.id.sessionControlRecyclerView)
-                recyclerView.scrollToPosition(1)
+                homeButton = null
+                onView(withId(R.id.sessionControlRecyclerView)).perform(
+                        RecyclerViewActions.actionOnItemAtPosition<ViewHolder>(2, click()))
             }
         }
     }

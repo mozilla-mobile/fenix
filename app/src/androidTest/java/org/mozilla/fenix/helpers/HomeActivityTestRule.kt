@@ -35,6 +35,10 @@ class HomeActivityTestRule(
         super.beforeActivityLaunched()
         setLongTapTimeout(3000)
         if (skipOnboarding) { skipOnboardingBeforeLaunch() }
+    }
+
+    override fun afterActivityLaunched() {
+        super.afterActivityLaunched()
         if (skipShouldShowJumpBackIn) {
             activity.settings().shouldShowJumpBackInCFR = false
         }
