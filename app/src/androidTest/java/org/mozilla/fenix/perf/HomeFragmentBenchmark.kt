@@ -63,7 +63,9 @@ class HomeFragmentBenchmark {
     val benchmarkRule = BenchmarkRule()
 
     @get:Rule
-    val homeActivityRule = HomeActivityTestRule(skipOnboarding = true)
+    val homeActivityRule = HomeActivityTestRule(
+        skipOnboarding = true, skipShouldShowJumpBackIn = false
+    )
 
     @get: Rule
     val intentReceiverActivityTestRule  = ActivityTestRule(
@@ -78,8 +80,6 @@ class HomeFragmentBenchmark {
             start()
         }
 
-        val settings = homeActivityRule.activity.settings()
-        settings.shouldShowJumpBackInCFR = false
         genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
         intent = Intent(Intent.ACTION_VIEW, genericURL.url)
         intentReceiverActivityTestRule.launchActivity(intent)
@@ -98,7 +98,6 @@ class HomeFragmentBenchmark {
             }
             InstrumentationRegistry.getInstrumentation().waitForIdleSync()
             runWithTimingDisabled {
-
                 val recyclerView = homeActivityRule.activity.findViewById<RecyclerView>(R.id.sessionControlRecyclerView)
                 recyclerView.scrollToPosition(1)
             }

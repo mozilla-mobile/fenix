@@ -11,6 +11,7 @@ import androidx.test.rule.ActivityTestRule
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.TestHelper.appContext
 import org.mozilla.fenix.onboarding.FenixOnboarding
 
@@ -24,7 +25,8 @@ import org.mozilla.fenix.onboarding.FenixOnboarding
 class HomeActivityTestRule(
     initialTouchMode: Boolean = false,
     launchActivity: Boolean = true,
-    private val skipOnboarding: Boolean = false
+    private val skipOnboarding: Boolean = false,
+    private val skipShouldShowJumpBackIn: Boolean = false
 ) :
     ActivityTestRule<HomeActivity>(HomeActivity::class.java, initialTouchMode, launchActivity) {
     private val longTapUserPreference = getLongPressTimeout()
@@ -33,6 +35,9 @@ class HomeActivityTestRule(
         super.beforeActivityLaunched()
         setLongTapTimeout(3000)
         if (skipOnboarding) { skipOnboardingBeforeLaunch() }
+        if (skipShouldShowJumpBackIn) {
+            activity.settings().shouldShowJumpBackInCFR = false
+        }
     }
 
     override fun afterActivityFinished() {
@@ -54,7 +59,7 @@ class HomeActivityIntentTestRule(
     initialTouchMode: Boolean = false,
     launchActivity: Boolean = true,
     private val skipOnboarding: Boolean = false,
-    private val showJumpBackIn: Boolean = false
+    private val skipShowJumpBackIn: Boolean = false
 ) :
     IntentsTestRule<HomeActivity>(HomeActivity::class.java, initialTouchMode, launchActivity) {
     private val longTapUserPreference = getLongPressTimeout()
@@ -63,8 +68,8 @@ class HomeActivityIntentTestRule(
         super.beforeActivityLaunched()
         setLongTapTimeout(3000)
         if (skipOnboarding) { skipOnboardingBeforeLaunch() }
-        if (showJumpBackIn) {
-            this.
+        if (skipShowJumpBackIn) {
+            activity.settings().shouldShowJumpBackInCFR = false
         }
     }
 
