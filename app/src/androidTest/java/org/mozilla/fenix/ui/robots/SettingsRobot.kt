@@ -50,15 +50,17 @@ import org.mozilla.fenix.ui.robots.SettingsRobot.Companion.DEFAULT_APPS_SETTINGS
 class SettingsRobot {
 
     // BASICS SECTION
-    fun verifyBasicsHeading() = assertGeneralHeading()
+    fun verifyGeneralHeading() = assertGeneralHeading()
 
-    fun verifySearchEngineButton() = assertSearchEngineButton()
-    fun verifyThemeButton() = assertCustomizeButton()
+    fun verifySearchButton() = assertSearchButton()
+    fun verifyCustomizeButton() = assertCustomizeButton()
     fun verifyThemeSelected() = assertThemeSelected()
     fun verifyAccessibilityButton() = assertAccessibilityButton()
     fun verifySetAsDefaultBrowserButton() = assertSetAsDefaultBrowserButton()
-    fun verifyDefaultBrowserItem() = assertDefaultBrowserItem()
-    fun verifyTabsItem() = assertTabsItem()
+    fun verifyTabsButton() = assertTabsButton()
+    fun verifyHomepageButton() = assertHomepageButton()
+    fun verifyCreditCardsButton() = assertCreditCardsButton()
+    fun verifyLanguageButton() = assertLanguageButton()
     fun verifyDefaultBrowserIsDisaled() = assertDefaultBrowserIsDisabled()
     fun clickDefaultBrowserSwitch() = toggleDefaultBrowserSwitch()
     fun verifyAndroidDefaultAppsMenuAppears() = assertAndroidDefaultAppsMenuAppears()
@@ -67,7 +69,7 @@ class SettingsRobot {
     fun verifyPrivacyHeading() = assertPrivacyHeading()
 
     fun verifyEnhancedTrackingProtectionButton() = assertEnhancedTrackingProtectionButton()
-    fun verifyLoginsButton() = assertLoginsButton()
+    fun verifyLoginsAndPasswordsButton() = assertLoginsAndPasswordsButton()
     fun verifyEnhancedTrackingProtectionValue(state: String) =
         assertEnhancedTrackingProtectionValue(state)
     fun verifyPrivateBrowsingButton() = assertPrivateBrowsingButton()
@@ -81,6 +83,7 @@ class SettingsRobot {
     fun verifyOpenLinksInAppsButton() = assertOpenLinksInAppsButton()
     fun verifyOpenLinksInAppsSwitchDefault() = assertOpenLinksInAppsValue()
     fun verifySettingsView() = assertSettingsView()
+    fun verifySettingsToolbar() = assertSettingsToolbar()
 
     // ADVANCED SECTION
     fun verifyAdvancedHeading() = assertAdvancedHeading()
@@ -150,6 +153,15 @@ class SettingsRobot {
 
             SettingsSubMenuTabsRobot().interact()
             return SettingsSubMenuTabsRobot.Transition()
+        }
+
+        fun openHomepageSubMenu(interact: SettingsSubMenuHomepageRobot.() -> Unit): SettingsSubMenuHomepageRobot.Transition {
+
+            mDevice.findObject(UiSelector().textContains("Homepage")).waitForExists(waitingTime)
+            onView(withText(R.string.preferences_home_2)).click()
+
+            SettingsSubMenuHomepageRobot().interact()
+            return SettingsSubMenuHomepageRobot.Transition()
         }
 
         fun openAccessibilitySubMenu(interact: SettingsSubMenuAccessibilityRobot.() -> Unit): SettingsSubMenuAccessibilityRobot.Transition {
@@ -291,17 +303,36 @@ private fun assertSettingsView() {
 }
 
 // GENERAL SECTION
+
+private fun assertSettingsToolbar() =
+    onView(
+        CoreMatchers.allOf(
+            withId(R.id.navigationToolbar),
+            hasDescendant(ViewMatchers.withContentDescription(R.string.action_bar_up_description)),
+            hasDescendant(withText(R.string.settings))
+        )
+    ).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+
 private fun assertGeneralHeading() {
     scrollToElementByText("General")
     onView(withText("General"))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
-private fun assertSearchEngineButton() {
+private fun assertSearchButton() {
     mDevice.wait(Until.findObject(By.text("Search")), waitingTime)
-    onView(withText("Search"))
+    onView(withText(R.string.preferences_search))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
+
+private fun assertHomepageButton() =
+    onView(withText(R.string.preferences_home_2)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+
+private fun assertCreditCardsButton() =
+    onView(withText(R.string.preferences_credit_cards)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+
+private fun assertLanguageButton() =
+    onView(withText(R.string.preferences_language)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 private fun assertCustomizeButton() = onView(withText("Customize"))
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
@@ -333,15 +364,9 @@ private fun assertAndroidDefaultAppsMenuAppears() {
     intended(IntentMatchers.hasAction(DEFAULT_APPS_SETTINGS_ACTION))
 }
 
-private fun assertDefaultBrowserItem() {
-    mDevice.wait(Until.findObject(By.text("Set as default browser")), waitingTime)
-    onView(withText("Set as default browser"))
-        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-}
-
-private fun assertTabsItem() {
+private fun assertTabsButton() {
     mDevice.wait(Until.findObject(By.text("Tabs")), waitingTime)
-    onView(withText("Tabs"))
+    onView(withText(R.string.preferences_tabs))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
@@ -366,9 +391,9 @@ private fun assertEnhancedTrackingProtectionValue(state: String) {
     onView(withText(state)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
-private fun assertLoginsButton() {
+private fun assertLoginsAndPasswordsButton() {
     scrollToElementByText("Logins and passwords")
-    onView(withText("Logins and passwords"))
+    onView(withText(R.string.preferences_passwords_logins_and_passwords))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
