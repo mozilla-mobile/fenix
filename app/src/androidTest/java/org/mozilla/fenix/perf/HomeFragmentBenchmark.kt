@@ -25,7 +25,9 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.IntentReceiverActivity
 import org.mozilla.fenix.R
-import org.mozilla.fenix.helpers.*
+import org.mozilla.fenix.helpers.AndroidAssetDispatcher
+import org.mozilla.fenix.helpers.HomeActivityTestRule
+import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.utils.view.ViewHolder
 
 @RunWith(AndroidJUnit4::class)
@@ -33,7 +35,7 @@ class HomeFragmentBenchmark {
 
     private lateinit var mockWebServer: MockWebServer
 
-    private lateinit var genericURL : TestAssetHelper.TestAsset
+    private lateinit var genericURL: TestAssetHelper.TestAsset
 
     private lateinit var intent: Intent
 
@@ -46,10 +48,9 @@ class HomeFragmentBenchmark {
     )
 
     @get: Rule
-    val intentReceiverActivityTestRule  = ActivityTestRule(
+    val intentReceiverActivityTestRule = ActivityTestRule(
         IntentReceiverActivity::class.java, true, false
     )
-
 
     @Before
     fun setup() {
@@ -61,16 +62,19 @@ class HomeFragmentBenchmark {
         genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
         intent = Intent(Intent.ACTION_VIEW, genericURL.url)
         intentReceiverActivityTestRule.launchActivity(intent)
-
     }
 
     /**
      * Benchmarks the time taken from clicking the "Home Button" on the URL bar located on the
      * BrowserFragment up until the HomeFragment is shown and usable.
+     *
+     * NOTE: According to Google's documentations, this test should be annotated with @UiThreadTest.
+     * However, doing so will make UiAutomator or Espresso API's unusable since the test will hang.
+     * Instead, we use the `runOnUiThread{}` which is the method that @UiThreadTest uses.
      */
     @Test
     fun homeScreenBenchmark() {
-        var homeButton : View?  = null
+        var homeButton: View? = null
 
         benchmarkRule.measureRepeated {
             runWithTimingDisabled {
@@ -80,12 +84,13 @@ class HomeFragmentBenchmark {
                 homeButton!!.callOnClick()
             }
 
-            //We have to wait for the Sync otherwise we'll execute the test too quickly
+            // We have to wait for the Sync otherwise we'll execute the test too quickly
             InstrumentationRegistry.getInstrumentation().waitForIdleSync()
             runWithTimingDisabled {
                 homeButton = null
                 onView(withId(R.id.sessionControlRecyclerView)).perform(
-                        RecyclerViewActions.actionOnItemAtPosition<ViewHolder>(2, click()))
+                    RecyclerViewActions.actionOnItemAtPosition<ViewHolder>(2, click())
+                )
             }
         }
     }
