@@ -9,6 +9,7 @@ import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import io.mockk.spyk
 import io.mockk.verify
 import mozilla.components.browser.state.store.BrowserStore
@@ -30,6 +31,7 @@ import org.mozilla.fenix.GleanMetrics.SearchDefaultEngine
 import org.mozilla.fenix.components.metrics.MozillaProductDetector
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
+import org.mozilla.fenix.tabstray.ext.inactiveTabs
 import org.mozilla.fenix.utils.BrowsersCache
 import org.mozilla.fenix.utils.Settings
 
@@ -131,8 +133,13 @@ class FenixApplicationTest {
         every { settings.showPocketRecommendationsFeature } returns true
         every { application.reportHomeScreenMetrics(settings) } just Runs
         every { settings.inactiveTabsAreEnabled } returns true
+        mockkStatic("org.mozilla.fenix.tabstray.ext.TabSelectorsKt") {
+            every { browserStore.state.inactiveTabs } returns listOf(mockk(), mockk())
 
-        application.setStartupMetrics(browserStore, settings, browsersCache, mozillaProductDetector)
+            application.setStartupMetrics(browserStore, settings, browsersCache, mozillaProductDetector)
+
+            assertEquals(2, Metrics.inactiveTabsCount.testGetValue())
+        }
 
         // Verify that browser defaults metrics are set.
         assertEquals("Mozilla", Metrics.distributionId.testGetValue())

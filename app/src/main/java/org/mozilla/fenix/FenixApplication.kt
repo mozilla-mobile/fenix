@@ -80,7 +80,12 @@ import org.mozilla.fenix.components.Core
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MozillaProductDetector
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
+<<<<<<< HEAD
 import org.mozilla.fenix.perf.MarkersLifecycleCallbacks
+=======
+import org.mozilla.fenix.perf.MarkersActivityLifecycleCallbacks
+import org.mozilla.fenix.tabstray.ext.inactiveTabs
+>>>>>>> 207e85e59 (For #22155 - Inactive tabs count telemetry)
 import org.mozilla.fenix.utils.Settings
 
 /**
@@ -626,6 +631,19 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
 
             tabViewSetting.set(settings.getTabViewPingString())
             closeTabSetting.set(settings.getTabTimeoutPingString())
+<<<<<<< HEAD
+=======
+
+            inactiveTabsCount.set(browserStore.state.inactiveTabs.size.toLong())
+
+            val installSourcePackage = if (SDK_INT >= Build.VERSION_CODES.R) {
+                packageManager.getInstallSourceInfo(packageName).installingPackageName
+            } else {
+                @Suppress("DEPRECATION")
+                packageManager.getInstallerPackageName(packageName)
+            }
+            installSource.set(installSourcePackage.orEmpty())
+>>>>>>> 207e85e59 (For #22155 - Inactive tabs count telemetry)
         }
 
         with(AndroidAutofill) {
