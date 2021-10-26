@@ -2537,7 +2537,31 @@ history:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-08-01"
+=======
+      - erichards@mozilla.com
+    expires: never
+  recent_searches_tapped:
+    type: event
+    description: |
+      User has tapped on a recent searches card in home.
+    extra_keys:
+      page_number:
+        description: |
+          The page number in the homescreen carousel that the recent searches
+          card was on.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/22172
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/22173
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2022-11-01"
+
+>>>>>>> 4e5c9a344 (Close #22172: Add Recent searches telemetry)
 
 reader_mode:
   available:
