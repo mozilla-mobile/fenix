@@ -253,7 +253,7 @@ sealed class Event {
     object OpenRecentTab : Event()
     object OpenInProgressMediaTab : Event()
     object RecentTabsSectionIsVisible : Event()
-    object RecentTabsSectionIsNotVisible: Event()
+    object RecentTabsSectionIsNotVisible : Event()
 
     // Recent bookmarks
     object BookmarkClicked : Event()
