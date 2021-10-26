@@ -419,7 +419,7 @@ class HomeFragment : Fragment() {
             sessionControlView?.update(homeFragmentStore.state)
 
             binding.root.consumeFrom(homeFragmentStore, viewLifecycleOwner) {
-                sessionControlView?.update(it)
+                sessionControlView?.update(it, shouldReportMetrics = true)
             }
         }
     }
