@@ -98,7 +98,8 @@ import org.mozilla.fenix.library.history.HistoryFragmentDirections
 import org.mozilla.fenix.library.historymetadata.HistoryMetadataGroupFragmentDirections
 import org.mozilla.fenix.library.recentlyclosed.RecentlyClosedFragmentDirections
 import org.mozilla.fenix.onboarding.DefaultBrowserNotificationWorker
-import org.mozilla.fenix.perf.MarkersLifecycleCallbacks
+import org.mozilla.fenix.perf.MarkersActivityLifecycleCallbacks
+import org.mozilla.fenix.perf.MarkersFragmentLifecycleCallbacks
 import org.mozilla.fenix.perf.Performance
 import org.mozilla.fenix.perf.PerformanceInflater
 import org.mozilla.fenix.perf.ProfilerMarkers
@@ -187,6 +188,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         val startTimeProfiler = components.core.engine.profiler?.getProfilerTime()
 
         components.strictMode.attachListenerToDisablePenaltyDeath(supportFragmentManager)
+        MarkersFragmentLifecycleCallbacks.register(supportFragmentManager, components.core.engine)
+
         // There is disk read violations on some devices such as samsung and pixel for android 9/10
         components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
             // Theme setup should always be called before super.onCreate
@@ -211,6 +214,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.root.profilerProvider = { components.core.engine.profiler }
         ProfilerMarkers.addListenerForOnGlobalLayout(components.core.engine, this, binding.root)
 
         // Must be after we set the content view
@@ -274,7 +278,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         }
 
         components.core.engine.profiler?.addMarker(
-            MarkersLifecycleCallbacks.MARKER_NAME, startTimeProfiler, "HomeActivity.onCreate"
+            MarkersActivityLifecycleCallbacks.MARKER_NAME, startTimeProfiler, "HomeActivity.onCreate"
         )
         StartupTimeline.onActivityCreateEndHome(this) // DO NOT MOVE ANYTHING BELOW HERE.
     }
@@ -339,7 +343,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
         ProfilerMarkers.homeActivityOnStart(binding.rootContainer, components.core.engine.profiler)
         components.core.engine.profiler?.addMarker(
-            MarkersLifecycleCallbacks.MARKER_NAME, startProfilerTime, "HomeActivity.onStart"
+            MarkersActivityLifecycleCallbacks.MARKER_NAME, startProfilerTime, "HomeActivity.onStart"
         ) // DO NOT MOVE ANYTHING BELOW THIS addMarker CALL.
     }
 
