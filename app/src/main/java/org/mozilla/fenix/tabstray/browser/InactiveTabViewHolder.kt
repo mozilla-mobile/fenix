@@ -7,10 +7,12 @@ package org.mozilla.fenix.tabstray.browser
 import android.view.View
 import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.RecyclerView
+import mozilla.components.browser.state.state.TabSessionState
+import mozilla.components.browser.tabstray.TabsTray
 import mozilla.components.browser.toolbar.MAX_URI_LENGTH
-import mozilla.components.concept.tabstray.Tab
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.databinding.InactiveFooterItemBinding
 import org.mozilla.fenix.databinding.InactiveHeaderItemBinding
 import org.mozilla.fenix.databinding.InactiveTabListItemBinding
@@ -19,6 +21,7 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.loadIntoView
 import org.mozilla.fenix.ext.toShortUrl
 import org.mozilla.fenix.home.topsites.dpToPx
+import org.mozilla.fenix.tabstray.TabsTrayFragment
 import org.mozilla.fenix.tabstray.TabsTrayInteractor
 
 sealed class InactiveTabViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -80,7 +83,21 @@ sealed class InactiveTabViewHolder(itemView: View) : RecyclerView.ViewHolder(ite
 
             binding.action.setOnClickListener {
                 interactor.onEnabledAutoCloseClicked()
+                showConfirmationSnackbar()
             }
+        }
+
+        private fun showConfirmationSnackbar() {
+            val context = binding.root.context
+            val view = binding.root
+            val text = context.getString(R.string.inactive_tabs_auto_close_message_snackbar)
+            val snackbar = FenixSnackbar.make(
+                view = view,
+                duration = FenixSnackbar.LENGTH_SHORT,
+                isDisplayedWithBrowserToolbar = true
+            ).setText(text)
+            snackbar.view.elevation = TabsTrayFragment.ELEVATION
+            snackbar.show()
         }
 
         companion object {
@@ -92,36 +109,35 @@ sealed class InactiveTabViewHolder(itemView: View) : RecyclerView.ViewHolder(ite
      * A RecyclerView ViewHolder implementation for an inactive tab view.
      *
      * @param itemView the inactive tab [View].
-     * @param browserTrayInteractor [BrowserTrayInteractor] handling tabs interactions in a tab tray.
      * @param featureName [String] representing the name of the feature displaying tabs. Used in telemetry reporting.
      */
     class TabViewHolder(
         itemView: View,
-        private val browserTrayInteractor: BrowserTrayInteractor,
+        private val delegate: TabsTray.Delegate,
         private val featureName: String
     ) : InactiveTabViewHolder(itemView) {
 
         private val binding = InactiveTabListItemBinding.bind(itemView)
 
-        fun bind(tab: Tab) {
+        fun bind(tab: TabSessionState) {
             val components = itemView.context.components
-            val title = tab.title.ifEmpty { tab.url.take(MAX_URI_LENGTH) }
-            val url = tab.url.toShortUrl(components.publicSuffixList).take(MAX_URI_LENGTH)
+            val title = tab.content.title.ifEmpty { tab.content.url.take(MAX_URI_LENGTH) }
+            val url = tab.content.url.toShortUrl(components.publicSuffixList).take(MAX_URI_LENGTH)
 
             itemView.setOnClickListener {
                 components.analytics.metrics.track(Event.TabsTrayOpenInactiveTab)
-                browserTrayInteractor.open(tab, featureName)
+                delegate.onTabSelected(tab, featureName)
             }
 
             binding.siteListItem.apply {
-                components.core.icons.loadIntoView(iconView, tab.url)
+                components.core.icons.loadIntoView(iconView, tab.content.url)
                 setText(title, url)
                 setSecondaryButton(
                     R.drawable.mozac_ic_close,
                     R.string.content_description_close_button
                 ) {
                     components.analytics.metrics.track(Event.TabsTrayCloseInactiveTab())
-                    browserTrayInteractor.close(tab, featureName)
+                    delegate.onTabClosed(tab, featureName)
                 }
             }
         }
