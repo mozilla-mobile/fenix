@@ -7,15 +7,22 @@ package org.mozilla.fenix.tabstray.browser
 import androidx.annotation.VisibleForTesting
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.state.store.BrowserStore
+<<<<<<< HEAD
 import mozilla.components.concept.tabstray.TabsTray
 import mozilla.components.feature.tabs.ext.toTabs
+=======
+import mozilla.components.browser.tabstray.TabsTray
+import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.components.metrics.MetricController
+>>>>>>> a2c7dfb26 (For #22170: Add telemetry for the auto-close prompt)
 import org.mozilla.fenix.utils.Settings
 
 class InactiveTabsAutoCloseDialogController(
     private val browserStore: BrowserStore,
     private val settings: Settings,
     private val tabFilter: (TabSessionState) -> Boolean,
-    private val tray: TabsTray
+    private val tray: TabsTray,
+    private val metrics: MetricController
 ) {
     /**
      * Dismiss the auto-close dialog.
@@ -23,6 +30,7 @@ class InactiveTabsAutoCloseDialogController(
     fun close() {
         settings.hasInactiveTabsAutoCloseDialogBeenDismissed = true
         refeshInactiveTabsSecion()
+        metrics.track(Event.TabsTrayAutoCloseDialogDismissed)
     }
 
     /**
@@ -34,6 +42,7 @@ class InactiveTabsAutoCloseDialogController(
         settings.closeTabsAfterOneDay = false
         settings.manuallyCloseTabs = false
         refeshInactiveTabsSecion()
+        metrics.track(Event.TabsTrayAutoCloseDialogTurnOnClicked)
     }
 
     @VisibleForTesting
