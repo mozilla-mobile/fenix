@@ -22,7 +22,6 @@ import androidx.navigation.fragment.findNavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import mozilla.components.browser.state.action.EngineAction
 import mozilla.components.browser.state.action.RecentlyClosedAction
@@ -59,7 +58,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
     private var pendingHistoryDeletionJob: (suspend () -> Unit)? = null
 
     private var _historyView: HistoryView? = null
-    protected val historyView: HistoryView
+    private val historyView: HistoryView
         get() = _historyView!!
     private var _binding: FragmentHistoryBinding? = null
     private val binding get() = _binding!!
@@ -116,7 +115,12 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
 
         viewModel = HistoryViewModel(historyProvider)
 
-        viewModel.userHasHistory.observe(this) { historyView.updateEmptyState(it) }
+        viewModel.userHasHistory.observe(
+            this,
+            {
+                historyView.updateEmptyState(it)
+            }
+        )
 
         requireComponents.analytics.metrics.track(Event.HistoryOpened)
 
@@ -137,7 +141,6 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
         )
     }
 
-    @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -145,7 +148,12 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
             historyView.update(it)
         }
 
-        viewModel.history.observe(viewLifecycleOwner) { historyView.historyAdapter.submitList(it) }
+        viewModel.history.observe(
+            viewLifecycleOwner,
+            {
+                historyView.historyAdapter.submitList(it)
+            }
+        )
     }
 
     override fun onResume() {

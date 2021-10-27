@@ -27,13 +27,18 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.By.textContains
 import androidx.test.uiautomator.UiDevice
+import androidx.test.uiautomator.UiObject
+import androidx.test.uiautomator.UiScrollable
+import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
 import org.hamcrest.CoreMatchers
+import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.Constants.PackageName.GOOGLE_PLAY_SERVICES
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestHelper.appName
 import org.mozilla.fenix.helpers.TestHelper.isPackageInstalled
+import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.TestHelper.scrollToElementByText
 import org.mozilla.fenix.helpers.assertIsEnabled
 import org.mozilla.fenix.helpers.click
@@ -45,15 +50,17 @@ import org.mozilla.fenix.ui.robots.SettingsRobot.Companion.DEFAULT_APPS_SETTINGS
 class SettingsRobot {
 
     // BASICS SECTION
-    fun verifyBasicsHeading() = assertGeneralHeading()
+    fun verifyGeneralHeading() = assertGeneralHeading()
 
-    fun verifySearchEngineButton() = assertSearchEngineButton()
-    fun verifyThemeButton() = assertCustomizeButton()
+    fun verifySearchButton() = assertSearchButton()
+    fun verifyCustomizeButton() = assertCustomizeButton()
     fun verifyThemeSelected() = assertThemeSelected()
     fun verifyAccessibilityButton() = assertAccessibilityButton()
     fun verifySetAsDefaultBrowserButton() = assertSetAsDefaultBrowserButton()
-    fun verifyDefaultBrowserItem() = assertDefaultBrowserItem()
-    fun verifyTabsItem() = assertTabsItem()
+    fun verifyTabsButton() = assertTabsButton()
+    fun verifyHomepageButton() = assertHomepageButton()
+    fun verifyCreditCardsButton() = assertCreditCardsButton()
+    fun verifyLanguageButton() = assertLanguageButton()
     fun verifyDefaultBrowserIsDisaled() = assertDefaultBrowserIsDisabled()
     fun clickDefaultBrowserSwitch() = toggleDefaultBrowserSwitch()
     fun verifyAndroidDefaultAppsMenuAppears() = assertAndroidDefaultAppsMenuAppears()
@@ -62,7 +69,7 @@ class SettingsRobot {
     fun verifyPrivacyHeading() = assertPrivacyHeading()
 
     fun verifyEnhancedTrackingProtectionButton() = assertEnhancedTrackingProtectionButton()
-    fun verifyLoginsButton() = assertLoginsButton()
+    fun verifyLoginsAndPasswordsButton() = assertLoginsAndPasswordsButton()
     fun verifyEnhancedTrackingProtectionValue(state: String) =
         assertEnhancedTrackingProtectionValue(state)
     fun verifyPrivateBrowsingButton() = assertPrivateBrowsingButton()
@@ -76,6 +83,7 @@ class SettingsRobot {
     fun verifyOpenLinksInAppsButton() = assertOpenLinksInAppsButton()
     fun verifyOpenLinksInAppsSwitchDefault() = assertOpenLinksInAppsValue()
     fun verifySettingsView() = assertSettingsView()
+    fun verifySettingsToolbar() = assertSettingsToolbar()
 
     // ADVANCED SECTION
     fun verifyAdvancedHeading() = assertAdvancedHeading()
@@ -88,8 +96,8 @@ class SettingsRobot {
     // ABOUT SECTION
     fun verifyAboutHeading() = assertAboutHeading()
 
-    fun verifyRateOnGooglePlay() = assertRateOnGooglePlay()
-    fun verifyAboutFirefoxPreview() = assertAboutFirefoxPreview()
+    fun verifyRateOnGooglePlay() = assertTrue(rateOnGooglePlayHeading().waitForExists(waitingTime))
+    fun verifyAboutFirefoxPreview() = assertTrue(aboutFirefoxHeading().waitForExists(waitingTime))
     fun verifyGooglePlayRedirect() = assertGooglePlayRedirect()
 
     class Transition {
@@ -113,7 +121,7 @@ class SettingsRobot {
         fun openAboutFirefoxPreview(interact: SettingsSubMenuAboutRobot.() -> Unit):
             SettingsSubMenuAboutRobot.Transition {
 
-            assertAboutFirefoxPreview().click()
+            aboutFirefoxHeading().click()
 
             SettingsSubMenuAboutRobot().interact()
             return SettingsSubMenuAboutRobot.Transition()
@@ -145,6 +153,15 @@ class SettingsRobot {
 
             SettingsSubMenuTabsRobot().interact()
             return SettingsSubMenuTabsRobot.Transition()
+        }
+
+        fun openHomepageSubMenu(interact: SettingsSubMenuHomepageRobot.() -> Unit): SettingsSubMenuHomepageRobot.Transition {
+
+            mDevice.findObject(UiSelector().textContains("Homepage")).waitForExists(waitingTime)
+            onView(withText(R.string.preferences_home_2)).click()
+
+            SettingsSubMenuHomepageRobot().interact()
+            return SettingsSubMenuHomepageRobot.Transition()
         }
 
         fun openAccessibilitySubMenu(interact: SettingsSubMenuAccessibilityRobot.() -> Unit): SettingsSubMenuAccessibilityRobot.Transition {
@@ -286,17 +303,36 @@ private fun assertSettingsView() {
 }
 
 // GENERAL SECTION
+
+private fun assertSettingsToolbar() =
+    onView(
+        CoreMatchers.allOf(
+            withId(R.id.navigationToolbar),
+            hasDescendant(ViewMatchers.withContentDescription(R.string.action_bar_up_description)),
+            hasDescendant(withText(R.string.settings))
+        )
+    ).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+
 private fun assertGeneralHeading() {
     scrollToElementByText("General")
     onView(withText("General"))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
-private fun assertSearchEngineButton() {
+private fun assertSearchButton() {
     mDevice.wait(Until.findObject(By.text("Search")), waitingTime)
-    onView(withText("Search"))
+    onView(withText(R.string.preferences_search))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
+
+private fun assertHomepageButton() =
+    onView(withText(R.string.preferences_home_2)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+
+private fun assertCreditCardsButton() =
+    onView(withText(R.string.preferences_credit_cards)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+
+private fun assertLanguageButton() =
+    onView(withText(R.string.preferences_language)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 private fun assertCustomizeButton() = onView(withText("Customize"))
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
@@ -328,15 +364,9 @@ private fun assertAndroidDefaultAppsMenuAppears() {
     intended(IntentMatchers.hasAction(DEFAULT_APPS_SETTINGS_ACTION))
 }
 
-private fun assertDefaultBrowserItem() {
-    mDevice.wait(Until.findObject(By.text("Set as default browser")), waitingTime)
-    onView(withText("Set as default browser"))
-        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-}
-
-private fun assertTabsItem() {
+private fun assertTabsButton() {
     mDevice.wait(Until.findObject(By.text("Tabs")), waitingTime)
-    onView(withText("Tabs"))
+    onView(withText(R.string.preferences_tabs))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
@@ -361,9 +391,9 @@ private fun assertEnhancedTrackingProtectionValue(state: String) {
     onView(withText(state)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
-private fun assertLoginsButton() {
+private fun assertLoginsAndPasswordsButton() {
     scrollToElementByText("Logins and passwords")
-    onView(withText("Logins and passwords"))
+    onView(withText(R.string.preferences_passwords_logins_and_passwords))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
@@ -470,24 +500,32 @@ private fun assertAboutHeading(): ViewInteraction {
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
-private fun assertRateOnGooglePlay(): ViewInteraction {
-    onView(withId(R.id.recycler_view))
-        .perform(RecyclerViewActions.scrollTo<RecyclerView.ViewHolder>(hasDescendant(withText("Rate on Google Play"))))
-    return onView(withText("Rate on Google Play"))
-        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+private fun rateOnGooglePlayHeading(): UiObject {
+    val rateOnGooglePlay = mDevice.findObject(UiSelector().text("Rate on Google Play"))
+    scrollToElementByText("Rate on Google Play")
+    if (!rateOnGooglePlay.exists()) {
+        settingsList().swipeUp(2)
+        rateOnGooglePlay.waitForExists(waitingTime)
+    }
+
+    return rateOnGooglePlay
 }
 
-private fun assertAboutFirefoxPreview(): ViewInteraction {
-    onView(withId(R.id.recycler_view))
-        .perform(RecyclerViewActions.scrollTo<RecyclerView.ViewHolder>(hasDescendant(withText("About $appName"))))
-    return onView(withText("About $appName"))
-        .check(matches(isDisplayed()))
+private fun aboutFirefoxHeading(): UiObject {
+    val aboutFirefoxHeading = mDevice.findObject(UiSelector().text("About $appName"))
+    scrollToElementByText("About $appName")
+    if (!aboutFirefoxHeading.exists()) {
+        settingsList().swipeUp(2)
+        aboutFirefoxHeading.waitForExists(waitingTime)
+    }
+
+    return aboutFirefoxHeading
 }
 
 fun swipeToBottom() = onView(withId(R.id.recycler_view)).perform(ViewActions.swipeUp())
 
 fun clickRateButtonGooglePlay() {
-    assertRateOnGooglePlay().click()
+    rateOnGooglePlayHeading().click()
 }
 
 private fun assertGooglePlayRedirect() {
@@ -502,3 +540,6 @@ private fun addonsManagerButton() = onView(withText(R.string.preferences_addons)
 
 private fun goBackButton() =
     onView(CoreMatchers.allOf(ViewMatchers.withContentDescription("Navigate up")))
+
+private fun settingsList() =
+    UiScrollable(UiSelector().resourceId("$packageName:id/recycler_view"))
