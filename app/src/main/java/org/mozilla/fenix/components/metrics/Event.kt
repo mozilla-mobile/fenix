@@ -20,6 +20,7 @@ import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.Logins
 import org.mozilla.fenix.GleanMetrics.Onboarding
 import org.mozilla.fenix.GleanMetrics.Pocket
+import org.mozilla.fenix.GleanMetrics.Preferences
 import org.mozilla.fenix.GleanMetrics.ProgressiveWebApp
 import org.mozilla.fenix.GleanMetrics.SearchShortcuts
 import org.mozilla.fenix.GleanMetrics.TabsTray
@@ -113,6 +114,8 @@ sealed class Event {
     object TopSiteOpenInNewTab : Event()
     object TopSiteOpenInPrivateTab : Event()
     object TopSiteRemoved : Event()
+    object GoogleTopSiteRemoved : Event()
+    object BaiduTopSiteRemoved : Event()
     object TrackingProtectionTrackerList : Event()
     object TrackingProtectionIconPressed : Event()
     object TrackingProtectionSettingsPanel : Event()
@@ -194,12 +197,21 @@ sealed class Event {
     object TabsTrayRecentlyClosedPressed : Event()
     object TabsTrayInactiveTabsExpanded : Event()
     object TabsTrayInactiveTabsCollapsed : Event()
+    object TabsTrayAutoCloseDialogSeen : Event()
+    object TabsTrayAutoCloseDialogTurnOnClicked : Event()
+    object TabsTrayAutoCloseDialogDismissed : Event()
     data class TabsTrayHasInactiveTabs(val count: Int) : Event() {
         override val extras = mapOf(TabsTray.hasInactiveTabsKeys.inactiveTabsCount to count.toString())
     }
     object TabsTrayCloseAllInactiveTabs : Event()
     data class TabsTrayCloseInactiveTab(val amountClosed: Int = 1) : Event()
     object TabsTrayOpenInactiveTab : Event()
+
+    object InactiveTabsSurveyOpened : Event()
+    data class InactiveTabsOffSurvey(val feedback: String) : Event() {
+        override val extras: Map<Preferences.turnOffInactiveTabsSurveyKeys, String>
+            get() = mapOf(Preferences.turnOffInactiveTabsSurveyKeys.feedback to feedback.lowercase(Locale.ROOT))
+    }
 
     object ProgressiveWebAppOpenFromHomescreenTap : Event()
     object ProgressiveWebAppInstallAsShortcut : Event()
