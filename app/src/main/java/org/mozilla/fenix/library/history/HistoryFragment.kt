@@ -4,17 +4,11 @@
 
 package org.mozilla.fenix.library.history
 
-import android.annotation.SuppressLint
-import android.content.DialogInterface
 import android.os.Bundle
 import android.text.SpannableString
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.RadioGroup
+import androidx.annotation.IdRes
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
@@ -30,18 +24,17 @@ import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.service.fxa.sync.SyncReason
 import mozilla.components.support.base.feature.UserInteractionHandler
-import org.mozilla.fenix.*
+import org.mozilla.fenix.BrowserDirection
+import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.NavHostActivity
+import org.mozilla.fenix.R
 import org.mozilla.fenix.addons.showSnackBar
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.history.DefaultPagedHistoryProvider
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.databinding.FragmentHistoryBinding
-import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.nav
-import org.mozilla.fenix.ext.requireComponents
-import org.mozilla.fenix.ext.setTextColor
-import org.mozilla.fenix.ext.toShortUrl
+import org.mozilla.fenix.ext.*
 import org.mozilla.fenix.library.LibraryPageFragment
 import org.mozilla.fenix.utils.allowUndo
 import java.util.*
@@ -304,20 +297,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
                 val checkedId = v.findViewById<RadioGroup>(R.id.history_deletion_period)
                     .checkedRadioButtonId
 
-                val deleteSince = when (checkedId) {
-                    R.id.last_hour -> Calendar.getInstance().timeInMillis - TimeUnit.HOURS.toMillis(1)
-                    R.id.last_two_hours -> Calendar.getInstance().timeInMillis - TimeUnit.HOURS.toMillis(2)
-                    R.id.last_four_hours -> Calendar.getInstance().timeInMillis - TimeUnit.HOURS.toMillis(4)
-                    R.id.today -> {
-                        val calendar = Calendar.getInstance()
-                        calendar.set(Calendar.HOUR_OF_DAY, 0)
-                        calendar.set(Calendar.MINUTE, 0)
-                        calendar.set(Calendar.SECOND, 0)
-                        calendar.set(Calendar.MILLISECOND, 0)
-                        calendar.timeInMillis
-                    }
-                    else -> 0 // Since beginning of time, also known as: everything.
-                }
+                val deleteSince = calculateDeleteSince(checkedId)
 
                 historyStore.dispatch(HistoryFragmentAction.EnterDeletionMode)
                 // Use fragment's lifecycle; the view may be gone by the time dialog is interacted with.
@@ -339,6 +319,23 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
                 }
             }
             .show()
+    }
+
+    fun calculateDeleteSince(@IdRes checkedId: Int): Long {
+        return when (checkedId) {
+            R.id.last_hour -> Calendar.getInstance().timeInMillis - TimeUnit.HOURS.toMillis(1)
+            R.id.last_two_hours -> Calendar.getInstance().timeInMillis - TimeUnit.HOURS.toMillis(2)
+            R.id.last_four_hours -> Calendar.getInstance().timeInMillis - TimeUnit.HOURS.toMillis(4)
+            R.id.today -> {
+                val calendar = Calendar.getInstance()
+                calendar.set(Calendar.HOUR_OF_DAY, 0)
+                calendar.set(Calendar.MINUTE, 0)
+                calendar.set(Calendar.SECOND, 0)
+                calendar.set(Calendar.MILLISECOND, 0)
+                calendar.timeInMillis
+            }
+            else -> 0 // Since beginning of time, also known as: everything.
+        }
     }
 
     private suspend fun deleteOpenTabsEngineHistory(store: BrowserStore) {
