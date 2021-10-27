@@ -4,15 +4,11 @@
 
 package org.mozilla.fenix.tabstray.browser
 
-import mozilla.components.concept.tabstray.Tab
-import java.util.UUID
-
 /**
- * Helper for writing tests that need a [Tab].
+ * Contains the identifying name of the feature.
+ *
+ * This is commonly used for telemetry.
  */
-fun createTab(
-    tabId: String = UUID.randomUUID().toString()
-) = Tab(
-    tabId,
-    "https://mozilla.org"
-)
+interface FeatureNameHolder {
+    val featureName: String
+}

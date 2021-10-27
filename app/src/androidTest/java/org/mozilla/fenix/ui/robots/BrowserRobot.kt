@@ -12,7 +12,6 @@ import android.net.Uri
 import android.os.SystemClock
 import android.widget.EditText
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
@@ -31,6 +30,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.By.text
 import androidx.test.uiautomator.UiDevice
+import androidx.test.uiautomator.UiObjectNotFoundException
 import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
 import mozilla.components.browser.state.selector.selectedTab
@@ -170,13 +170,12 @@ class BrowserRobot {
     fun verifyMenuButton() = assertMenuButton()
 
     fun verifyNavURLBarItems() {
-        verifyEnhancedTrackingOptions()
-        pressBack()
-        waitingTime
-        verifySecureConnectionLockIcon()
-        verifyTabCounter("1")
-        verifyNavURLBar()
+        navURLBar().waitForExists(waitingTime)
         verifyMenuButton()
+        verifyTabCounter("1")
+        verifySearchBar()
+        verifySecureConnectionLockIcon()
+        verifyHomeScreenButton()
     }
 
     fun verifyNoLinkImageContextMenuItems(containsURL: Uri) {
@@ -198,6 +197,10 @@ class BrowserRobot {
                 .waitForExists(waitingTime)
         )
     }
+
+    fun verifyHomeScreenButton() = assertHomeScreenButton()
+
+    fun verifySearchBar() = assertSearchBar()
 
     fun dismissContentContextMenu(containsURL: Uri) {
         onView(withText(containsURL.toString()))
@@ -405,12 +408,38 @@ class BrowserRobot {
                 .resourceId("password")
                 .className(EditText::class.java)
         )
-        passwordField.waitForExists(waitingTime)
-        passwordField.click()
-        passwordField.clearTextField()
-        passwordField.text = password
-        // wait until the password is hidden
-        assertTrue(mDevice.findObject(UiSelector().text(password)).waitUntilGone(waitingTime))
+        try {
+            passwordField.waitForExists(waitingTime)
+            mDevice.findObject(
+                By
+                    .res("password")
+                    .clazz(EditText::class.java)
+            ).click()
+            passwordField.clearTextField()
+            passwordField.text = password
+            // wait until the password is hidden
+            assertTrue(mDevice.findObject(UiSelector().text(password)).waitUntilGone(waitingTime))
+        } catch (e: UiObjectNotFoundException) {
+            println(e)
+
+            // Lets refresh the page and try again
+            browserScreen {
+            }.openThreeDotMenu {
+            }.refreshPage {
+                mDevice.waitForIdle()
+            }
+        } finally {
+            passwordField.waitForExists(waitingTime)
+            mDevice.findObject(
+                By
+                    .res("password")
+                    .clazz(EditText::class.java)
+            ).click()
+            passwordField.clearTextField()
+            passwordField.text = password
+            // wait until the password is hidden
+            assertTrue(mDevice.findObject(UiSelector().text(password)).waitUntilGone(waitingTime))
+        }
     }
 
     fun clickMediaPlayerPlayButton() {
@@ -559,6 +588,15 @@ fun browserScreen(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
 }
 
 fun navURLBar() = mDevice.findObject(UiSelector().resourceId("$packageName:id/toolbar"))
+
+fun searchBar() = onView(withId(R.id.mozac_browser_toolbar_url_view))
+
+fun homeScreenButton() = onView(withContentDescription(R.string.browser_toolbar_home))
+
+private fun assertHomeScreenButton() =
+    homeScreenButton().check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+
+private fun assertSearchBar() = searchBar().check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 private fun assertNavURLBar() = assertTrue(navURLBar().waitForExists(waitingTime))
 

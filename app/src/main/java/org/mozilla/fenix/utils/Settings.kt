@@ -867,6 +867,14 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = true
     )
 
+    /**
+     * Should we display a feedback request to the user when he turns off the Inactive Tabs feature
+     */
+    var shouldShowInactiveTabsTurnOffSurvey by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_should_show_inactive_tabs_turn_off_survey),
+        default = true
+    )
+
     fun getSitePermissionsPhoneFeatureAction(
         feature: PhoneFeature,
         default: Action = Action.ASK_TO_ALLOW
@@ -1172,7 +1180,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         featureFlag = FeatureFlags.addressesFeature
     )
 
-    var isHistoryMetadataEnabled by booleanPreference(
+    private var isHistoryMetadataEnabled by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_history_metadata_feature),
         default = false
     )

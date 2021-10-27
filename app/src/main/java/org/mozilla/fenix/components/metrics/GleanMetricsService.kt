@@ -37,6 +37,7 @@ import org.mozilla.fenix.GleanMetrics.Metrics
 import org.mozilla.fenix.GleanMetrics.Onboarding
 import org.mozilla.fenix.GleanMetrics.Pings
 import org.mozilla.fenix.GleanMetrics.Pocket
+import org.mozilla.fenix.GleanMetrics.Preferences
 import org.mozilla.fenix.GleanMetrics.ProgressiveWebApp
 import org.mozilla.fenix.GleanMetrics.ReaderMode
 import org.mozilla.fenix.GleanMetrics.RecentBookmarks
@@ -479,6 +480,12 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.TopSiteRemoved -> EventWrapper<NoExtraKeys>(
             { TopSites.remove.record(it) }
         )
+        is Event.GoogleTopSiteRemoved -> EventWrapper<NoExtraKeys>(
+            { TopSites.googleTopSiteRemoved.record(it) }
+        )
+        is Event.BaiduTopSiteRemoved -> EventWrapper<NoExtraKeys>(
+            { TopSites.baiduTopSiteRemoved.record(it) }
+        )
         is Event.TopSiteLongPress -> EventWrapper(
             { TopSites.longPress.record(it) },
             { TopSites.longPressKeys.valueOf(it) }
@@ -606,6 +613,26 @@ private val Event.wrapper: EventWrapper<*>?
         )
         is Event.TabsTrayInactiveTabsCollapsed -> EventWrapper<NoExtraKeys>(
             { TabsTray.inactiveTabsCollapsed.record(it) }
+        )
+        is Event.TabsTrayHasInactiveTabs -> EventWrapper(
+            { TabsTray.hasInactiveTabs.record(it) },
+            { TabsTray.hasInactiveTabsKeys.valueOf(it) }
+        )
+        is Event.TabsTrayCloseAllInactiveTabs -> EventWrapper<NoExtraKeys>(
+            { TabsTray.closeAllInactiveTabs.record(it) }
+        )
+        is Event.TabsTrayCloseInactiveTab -> EventWrapper<NoExtraKeys>(
+            { TabsTray.closeInactiveTab.add(amountClosed) }
+        )
+        is Event.TabsTrayOpenInactiveTab -> EventWrapper<NoExtraKeys>(
+            { TabsTray.openInactiveTab.add() }
+        )
+        is Event.InactiveTabsSurveyOpened -> EventWrapper<NoExtraKeys>(
+            { Preferences.inactiveTabsSurveyOpened.record(it) }
+        )
+        is Event.InactiveTabsOffSurvey -> EventWrapper(
+            { Preferences.turnOffInactiveTabsSurvey.record(it) },
+            { Preferences.turnOffInactiveTabsSurveyKeys.valueOf(it) }
         )
         is Event.AutoPlaySettingVisited -> EventWrapper<NoExtraKeys>(
             { Autoplay.visitedSetting.record(it) }
@@ -877,9 +904,4 @@ class GleanMetricsService(
     override fun shouldTrack(event: Event): Boolean {
         return event.wrapper != null
     }
-}
-
-// Helper function for making our booleans fit into the string list formatting
-fun Boolean.toStringList(): List<String> {
-    return listOf(this.toString())
 }

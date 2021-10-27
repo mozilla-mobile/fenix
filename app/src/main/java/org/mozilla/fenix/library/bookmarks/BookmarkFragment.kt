@@ -24,7 +24,6 @@ import androidx.navigation.fragment.navArgs
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.isActive
@@ -129,7 +128,6 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
         }
     }
 
-    @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val accountManager = requireComponents.backgroundServices.accountManager
@@ -158,9 +156,7 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
         // Reload bookmarks when returning to this fragment in case they have been edited
         val args by navArgs<BookmarkFragmentArgs>()
         val currentGuid = bookmarkStore.state.tree?.guid
-            ?: if (args.currentRoot.isNotEmpty()) {
-                args.currentRoot
-            } else {
+            ?: args.currentRoot.ifEmpty {
                 BookmarkRoot.Mobile.id
             }
         loadInitialBookmarkFolder(currentGuid)

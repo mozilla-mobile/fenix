@@ -538,7 +538,6 @@ class SmokeTest {
         }.openSearch {
             verifyKeyboardVisibility()
             clickSearchEngineShortcutButton()
-            mDevice.waitForIdle()
             activityTestRule.waitForIdle()
             verifyEnginesListShortcutContains(activityTestRule, "YouTube")
         }
@@ -1432,12 +1431,12 @@ class SmokeTest {
         }.openTabsSubMenu {
             verifyTabViewOptions()
             verifyCloseTabsOptions()
+            verifyMoveOldTabsToInactiveOptions()
         }
     }
 
-    @Ignore // to be fixed here https://github.com/mozilla-mobile/fenix/issues/21747
     @Test
-    fun alwaysStartOnHomeTest() {
+    fun startOnHomepageTest() {
         val settings = activityTestRule.activity.applicationContext.settings()
         settings.shouldShowJumpBackInCFR = false
         val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -1447,8 +1446,8 @@ class SmokeTest {
             mDevice.waitForIdle()
         }.openThreeDotMenu {
         }.openSettings {
-        }.openTabsSubMenu {
-            clickAlwaysStartOnHomeToggle()
+        }.openHomepageSubMenu {
+            clickStartOnHomepageButton()
         }
 
         restartApp(activityTestRule.activityRule)
