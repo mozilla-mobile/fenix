@@ -31,9 +31,9 @@
 // I think `android` represents this object:
 // https://google.github.io/android-gradle-dsl/3.3/com.android.build.gradle.AppExtension.html
 ext.maybeConfigForJetpackBenchmark = { android ->
-//    if (!project.hasProperty("benchmark")) {
-//        return
-//    }
+    if (!project.hasProperty("benchmark")) {
+        return
+    }
 
     // The official documentation https://developer.android.com/studio/profile/benchmark#full-setup
     // recommends setting up the Microbenchmark library in a separate module from your app: AFAICT,
@@ -41,7 +41,7 @@ ext.maybeConfigForJetpackBenchmark = { android ->
     // builds. We chose not to do this because it's a lot of work to pull code out into a
     // separate module just to benchmark it. We were able to replicate the outcome by setting
     // this testBuildType property.
-    android.testBuildType "debug"
+    android.testBuildType "nightly"
 
     // WARNING: our proguard configuration for androidTest is not set up correctly so the tests
     // fail if we don't disable minification. DISABLING MINIFICATION PRODUCES BENCHMARKS THAT ARE

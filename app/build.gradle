@@ -22,10 +22,6 @@ import static org.gradle.api.tasks.testing.TestResult.ResultType
 apply from: 'benchmark.gradle'
 
 android {
-    signingConfigs {
-        debug1 {
-        }
-    }
     compileSdkVersion Config.compileSdkVersion
 
     project.maybeConfigForJetpackBenchmark(it)
@@ -97,7 +93,6 @@ android {
 
     buildTypes {
         debug {
-            signingConfig signingConfigs.debug
             shrinkResources false
             minifyEnabled false
             applicationIdSuffix ".fenix.debug"
@@ -105,7 +100,6 @@ android {
             pseudoLocalesEnabled true
         }
         nightly releaseTemplate >> {
-            signingConfig signingConfigs.debug
             applicationIdSuffix ".fenix"
             buildConfigField "boolean", "USE_RELEASE_VERSIONING", "true"
             def deepLinkSchemeValue = "fenix-nightly"
