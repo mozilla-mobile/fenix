@@ -8,6 +8,10 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotSame
 import org.junit.Test
+import org.mozilla.fenix.R
+import java.time.Instant
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 class HistoryFragmentStoreTest {
     private val historyItem = History.Regular(0, "title", "url", 0.toLong())
@@ -91,4 +95,40 @@ class HistoryFragmentStoreTest {
         pendingDeletionIds = emptySet(),
         isDeletingItems = false
     )
+
+    @Test
+    fun calcDeleteSinceMillis_lastHour() {
+        val currentDate = Date(TimeUnit.DAYS.toMillis(1))
+
+        val millis = HistoryFragment.calcDeleteSinceMillis(R.id.last_hour) { currentDate }
+
+        assertEquals(TimeUnit.DAYS.toMillis(1) - TimeUnit.HOURS.toMillis(1), millis)
+    }
+
+    @Test
+    fun calcDeleteSinceMillis_lastTwoHours() {
+        val currentDate = Date(TimeUnit.DAYS.toMillis(1))
+
+        val millis = HistoryFragment.calcDeleteSinceMillis(R.id.last_two_hours) { currentDate }
+
+        assertEquals(TimeUnit.DAYS.toMillis(1) - TimeUnit.HOURS.toMillis(2), millis)
+    }
+
+    @Test
+    fun calcDeleteSinceMillis_lastFourHours() {
+        val currentDate = Date(TimeUnit.DAYS.toMillis(1))
+
+        val millis = HistoryFragment.calcDeleteSinceMillis(R.id.last_four_hours) { currentDate }
+
+        assertEquals(TimeUnit.DAYS.toMillis(1) - TimeUnit.HOURS.toMillis(4), millis)
+    }
+
+    @Test
+    fun calcDeleteSinceMillis_today() {
+        val currentDate = Date(Instant.parse("2021-05-06T23:12:54.123Z").toEpochMilli())
+
+        val millis = HistoryFragment.calcDeleteSinceMillis(R.id.today) { currentDate }
+
+        assertEquals(Instant.parse("2021-05-06T00:00:00.0Z")!!.toEpochMilli(), millis)
+    }
 }

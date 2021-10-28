@@ -297,7 +297,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
                 val checkedId = v.findViewById<RadioGroup>(R.id.history_deletion_period)
                     .checkedRadioButtonId
 
-                val deleteSince = calculateDeleteSince(checkedId)
+                val deleteSince = calcDeleteSinceMillis(checkedId)
 
                 historyStore.dispatch(HistoryFragmentAction.EnterDeletionMode)
                 // Use fragment's lifecycle; the view may be gone by the time dialog is interacted with.
@@ -319,23 +319,6 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
                 }
             }
             .show()
-    }
-
-    fun calculateDeleteSince(@IdRes checkedId: Int): Long {
-        return when (checkedId) {
-            R.id.last_hour -> Calendar.getInstance().timeInMillis - TimeUnit.HOURS.toMillis(1)
-            R.id.last_two_hours -> Calendar.getInstance().timeInMillis - TimeUnit.HOURS.toMillis(2)
-            R.id.last_four_hours -> Calendar.getInstance().timeInMillis - TimeUnit.HOURS.toMillis(4)
-            R.id.today -> {
-                val calendar = Calendar.getInstance()
-                calendar.set(Calendar.HOUR_OF_DAY, 0)
-                calendar.set(Calendar.MINUTE, 0)
-                calendar.set(Calendar.SECOND, 0)
-                calendar.set(Calendar.MILLISECOND, 0)
-                calendar.timeInMillis
-            }
-            else -> 0 // Since beginning of time, also known as: everything.
-        }
     }
 
     private suspend fun deleteOpenTabsEngineHistory(store: BrowserStore) {
@@ -421,5 +404,29 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
         val accountManager = requireComponents.backgroundServices.accountManager
         accountManager.syncNow(SyncReason.User)
         viewModel.invalidate()
+    }
+
+    companion object {
+        fun calcDeleteSinceMillis(
+            @IdRes checkedId: Int,
+            dateProvider: () -> Date = { Date() }
+        ): Long {
+            return when (checkedId) {
+                R.id.last_hour -> dateProvider().time - TimeUnit.HOURS.toMillis(1)
+                R.id.last_two_hours -> dateProvider().time - TimeUnit.HOURS.toMillis(2)
+                R.id.last_four_hours -> dateProvider().time - TimeUnit.HOURS.toMillis(4)
+                R.id.today -> {
+                    val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply {
+                        timeInMillis = dateProvider().time
+                        set(Calendar.HOUR_OF_DAY, 0)
+                        set(Calendar.MINUTE, 0)
+                        set(Calendar.SECOND, 0)
+                        set(Calendar.MILLISECOND, 0)
+                    }
+                    calendar.timeInMillis
+                }
+                else -> 0 // Since beginning of time, also known as: everything.
+            }
+        }
     }
 }
