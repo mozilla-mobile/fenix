@@ -5672,7 +5672,7 @@ recent_tabs:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-11-20"
+    expires: "2022-11-01"
 
 recent_bookmarks:
   bookmark_clicked:
