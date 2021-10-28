@@ -97,6 +97,8 @@ def make_task_worker(config, tasks):
                 "artifact-map": generate_beetmover_artifact_map(
                     config, task, platform=build_type, locale=locale
                 ),
+                # TODO: Fix this function
+                # TODO: https://github.com/mozilla-releng/scriptworker-scripts/blob/master/beetmoverscript/src/beetmoverscript/data/artifactMap_beetmover_task_schema.json#L101
             }
         )
 
