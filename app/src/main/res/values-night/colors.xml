@@ -5,12 +5,12 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Normal theme colors for dark mode -->
     <color name="primary_text_normal_theme">@color/primary_text_dark_theme</color>
-    <color name="secondary_text_normal_theme">@color/secondary_text_dark_theme</color>
-    <color name="contrast_text_normal_theme">@color/contrast_text_dark_theme</color>
-    <color name="caption_text_normal_theme">@color/caption_text_dark_theme</color>
+    <color name="secondary_text_normal_theme">#A7A2B7</color>
+    <color name="contrast_text_normal_theme">@color/primary_text_normal_theme</color>
+    <color name="caption_text_normal_theme">@color/photonLightGrey70</color>
     <color name="foundation_normal_theme">@color/foundation_dark_theme</color>
     <color name="above_normal_theme">@color/above_dark_theme</color>
-    <color name="inset_normal_theme">@color/inset_dark_theme</color>
+    <color name="inset_normal_theme">@color/photonDarkGrey50</color>
     <color name="accent_normal_theme">@color/accent_dark_theme</color>
     <color name="accent_bright_normal_theme">@color/accent_bright_dark_theme</color>
     <color name="accent_high_contrast_normal_theme">@color/accent_high_contrast_dark_theme</color>
@@ -19,7 +19,7 @@
     <color name="neutral_normal_theme">@color/neutral_dark_theme</color>
     <color name="neutral_faded_normal_theme">@color/neutral_faded_dark_theme</color>
     <color name="shadow_normal_theme">@color/shadow_dark_theme</color>
-    <color name="destructive_normal_theme">@color/destructive_dark_theme</color>
+    <color name="destructive_normal_theme">@color/photonRed40</color>
     <color name="disabled_normal_theme">@color/disabled_dark_theme</color>
     <color name="scrimStart_normal_theme">@color/scrimStart_dark_theme</color>
     <color name="scrimEnd_normal_theme">@color/scrimEnd_dark_theme</color>
@@ -76,35 +76,32 @@
     <color name="tab_history_item_selected_background_normal_theme">@color/tab_tray_item_selected_background_dark_theme</color>
 
     <!--Top site colors -->
-    <color name="top_site_title_text">@color/top_site_title_text_dark_theme</color>
+    <color name="top_site_title_text">@color/photonLightGrey05</color>
     <color name="top_site_pager_dot">@color/photonDarkGrey40</color>
     <color name="top_site_pager_dot_selected">@color/photonDarkGrey05</color>
     <color name="top_site_pin_icon_color">@color/foundation_light_theme</color>
     <color name="top_sites_border_color">@color/photonDarkGrey90</color>
 
     <!-- Synced tabs colors-->
-    <color name="synced_tabs_separator">@color/synced_tabs_separator_dark_theme</color>
+    <color name="synced_tabs_separator">@color/photonDarkGrey10</color>
 
     <!-- Collection icons-->
-    <color name="collection_icon_color_violet">@color/collection_icon_color_violet_dark_theme</color>
-    <color name="collection_icon_color_blue">@color/collection_icon_color_blue_dark_theme</color>
-    <color name="collection_icon_color_pink">@color/collection_icon_color_pink_dark_theme</color>
-    <color name="collection_icon_color_green">@color/collection_icon_color_green_dark_theme</color>
-    <color name="collection_icon_color_yellow">@color/collection_icon_color_yellow_dark_theme</color>
+    <color name="collection_icon_color_violet">@color/photonViolet40</color>
+    <color name="collection_icon_color_blue">@color/photonBlue30</color>
+    <color name="collection_icon_color_pink">@color/photonPink30</color>
+    <color name="collection_icon_color_green">#88FFD1</color>
+    <color name="collection_icon_color_yellow">#FFDE67</color>
 
     <!-- Home screen -->
     <color name="home_show_all_button_text">@color/photonViolet40</color>
 
     <!-- Search Widget -->
-    <color name="search_widget_background">@color/inset_dark_theme</color>
+    <color name="search_widget_background">@color/inset_normal_theme</color>
     <color name="search_widget_mic_fill_color">@color/primary_text_dark_theme</color>
     <color name="search_widget_text">@color/primary_text_dark_theme</color>
 
     <!-- Reader View colors -->
     <color name="mozac_feature_readerview_text_color">@color/primary_text_dark_theme</color>
-
-    <!-- TextInputLayout default Error Color -->
-    <color name="design_error" tools:override="true">@color/destructive_dark_theme</color>
 
     <!-- Tab Counter colors -->
     <color name="mozac_ui_tabcounter_default_tint">@color/primary_text_dark_theme</color>
