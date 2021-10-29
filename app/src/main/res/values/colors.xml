@@ -5,21 +5,12 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Light theme color palette -->
     <color name="primary_text_light_theme">@color/photonInk80</color>
-    <color name="secondary_text_light_theme">@color/photonGrey50</color>
     <color name="contrast_text_light_theme">@color/primary_text_dark_theme</color>
-    <color name="caption_text_light_theme">@color/photonLightGrey90</color>
     <color name="foundation_light_theme">@color/photonLightGrey20</color>
     <color name="inset_light_theme">@color/photonLightGrey30</color>
-    <color name="above_light_theme">@color/photonWhite</color>
     <color name="accent_light_theme">@color/photonInk20</color>
     <color name="accent_bright_light_theme">@color/photonViolet70</color>
     <color name="about_link_normal_theme">@color/photonViolet70</color>
-    <color name="accent_high_contrast_light_theme">@color/accent_light_theme</color>
-    <color name="tab_ring_light_theme">@color/accent_light_theme</color>
-    <color name="neutral_light_theme">@color/photonGrey30</color>
-    <color name="neutral_faded_light_theme">@color/photonGrey20</color>
-    <color name="shadow_light_theme">#1F000000</color>
-    <color name="destructive_light_theme">@color/photonRed70</color>
     <color name="disabled_light_theme">#6620123A</color>
     <color name="scrimStart_light_theme">#F515141A</color>
     <color name="scrimEnd_light_theme">#F542414D</color>
@@ -61,7 +52,6 @@
     <color name="above_dark_theme">@color/photonDarkGrey50</color>
     <color name="accent_dark_theme">@color/photonViolet50</color>
     <color name="accent_bright_dark_theme">@color/photonViolet70</color>
-    <color name="about_link_dark_theme">@color/photonViolet40</color>
     <color name="accent_high_contrast_dark_theme">@color/photonViolet40</color>
     <color name="tab_ring_dark_theme">@color/accent_dark_theme</color>
     <color name="neutral_dark_theme">@color/photonGrey20</color>
@@ -159,20 +149,20 @@
 
     <!-- Normal theme colors for light mode -->
     <color name="primary_text_normal_theme">@color/primary_text_light_theme</color>
-    <color name="secondary_text_normal_theme">@color/secondary_text_light_theme</color>
+    <color name="secondary_text_normal_theme">@color/photonGrey50</color>
     <color name="contrast_text_normal_theme">@color/contrast_text_light_theme</color>
-    <color name="caption_text_normal_theme">@color/caption_text_light_theme</color>
+    <color name="caption_text_normal_theme">@color/photonLightGrey90</color>
     <color name="foundation_normal_theme">@color/foundation_light_theme</color>
-    <color name="above_normal_theme">@color/above_light_theme</color>
+    <color name="above_normal_theme">@color/photonWhite</color>
     <color name="inset_normal_theme">@color/inset_light_theme</color>
     <color name="accent_normal_theme">@color/accent_light_theme</color>
     <color name="accent_bright_normal_theme">@color/accent_bright_light_theme</color>
-    <color name="accent_high_contrast_normal_theme">@color/accent_high_contrast_light_theme</color>
-    <color name="tab_ring_normal_theme">@color/tab_ring_light_theme</color>
-    <color name="neutral_normal_theme">@color/neutral_light_theme</color>
-    <color name="neutral_faded_normal_theme">@color/neutral_faded_light_theme</color>
-    <color name="shadow_normal_theme">@color/shadow_light_theme</color>
-    <color name="destructive_normal_theme">@color/destructive_light_theme</color>
+    <color name="accent_high_contrast_normal_theme">@color/accent_light_theme</color>
+    <color name="tab_ring_normal_theme">@color/accent_light_theme</color>
+    <color name="neutral_normal_theme">@color/photonGrey30</color>
+    <color name="neutral_faded_normal_theme">@color/photonGrey20</color>
+    <color name="shadow_normal_theme">#1F000000</color>
+    <color name="destructive_normal_theme">@color/photonRed70</color>
     <color name="disabled_normal_theme">@color/disabled_light_theme</color>
     <color name="scrimStart_normal_theme">@color/scrimStart_light_theme</color>
     <color name="scrimEnd_normal_theme">@color/scrimEnd_light_theme</color>
