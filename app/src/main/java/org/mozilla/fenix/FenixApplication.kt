@@ -64,10 +64,13 @@ import org.mozilla.fenix.telemetry.TelemetryLifecycleObserver
 import org.mozilla.fenix.utils.BrowsersCache
 import java.util.concurrent.TimeUnit
 import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.concept.storage.FrecencyThresholdOption
 import mozilla.components.feature.autofill.AutofillUseCases
 import mozilla.components.feature.search.ext.buildSearchUrl
 import mozilla.components.feature.search.ext.waitForSelectedOrDefaultSearchEngine
 import mozilla.components.service.fxa.manager.SyncEnginesStorage
+import org.mozilla.experiments.nimbus.NimbusInterface
+import org.mozilla.experiments.nimbus.internal.EnrolledExperiment
 import org.mozilla.fenix.GleanMetrics.Addons
 import org.mozilla.fenix.GleanMetrics.AndroidAutofill
 import org.mozilla.fenix.GleanMetrics.CustomizeHome
@@ -77,7 +80,7 @@ import org.mozilla.fenix.components.Core
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MozillaProductDetector
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
-import org.mozilla.fenix.perf.MarkersLifecycleCallbacks
+import org.mozilla.fenix.perf.MarkersActivityLifecycleCallbacks
 import org.mozilla.fenix.utils.Settings
 
 /**
@@ -194,7 +197,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
 
         visibilityLifecycleCallback = VisibilityLifecycleCallback(getSystemService())
         registerActivityLifecycleCallbacks(visibilityLifecycleCallback)
-        registerActivityLifecycleCallbacks(MarkersLifecycleCallbacks(components.core.engine))
+        registerActivityLifecycleCallbacks(MarkersActivityLifecycleCallbacks(components.core.engine))
 
         // Storage maintenance disabled, for now, as it was interfering with background migrations.
         // See https://github.com/mozilla-mobile/fenix/issues/7227 for context.
@@ -245,6 +248,19 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                         components.core.bookmarksStorage.warmUp()
                         components.core.passwordsStorage.warmUp()
                         components.core.autofillStorage.warmUp()
+
+                        // Populate the top site cache to improve initial load experience
+                        // of the home fragment when the app is launched to a tab. The actual
+                        // database call is not expensive. However, the additional context
+                        // switches delay rendering top sites when the cache is empty, which
+                        // we can prevent with this.
+                        components.core.topSitesStorage.getTopSites(
+                            components.settings.topSitesMaxLimit,
+                            if (components.settings.showTopFrecentSites)
+                                FrecencyThresholdOption.SKIP_ONE_TIME_PAGES
+                            else
+                                null
+                        )
 
                         // This service uses `historyStorage`, and so we can only touch it when we know
                         // it's safe to touch `historyStorage. By 'safe', we mainly mean that underlying
@@ -689,12 +705,23 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                     else -> ""
                 }
             )
+
+            inactiveTabsEnabled.set(settings.inactiveTabsAreEnabled)
         }
-        CustomizeHome.jumpBackIn.set(settings.showRecentTabsFeature)
-        CustomizeHome.recentlySaved.set(settings.showRecentBookmarksFeature)
-        CustomizeHome.mostVisitedSites.set(settings.showTopFrecentSites)
-        CustomizeHome.recentlyVisited.set(settings.historyMetadataUIFeature)
-        CustomizeHome.pocket.set(settings.pocketRecommendations)
+        reportHomeScreenMetrics(settings)
+    }
+
+    @VisibleForTesting
+    internal fun reportHomeScreenMetrics(settings: Settings) {
+        components.analytics.experiments.register(object : NimbusInterface.Observer {
+            override fun onUpdatesApplied(updated: List<EnrolledExperiment>) {
+                CustomizeHome.jumpBackIn.set(settings.showRecentTabsFeature)
+                CustomizeHome.recentlySaved.set(settings.showRecentBookmarksFeature)
+                CustomizeHome.mostVisitedSites.set(settings.showTopFrecentSites)
+                CustomizeHome.recentlyVisited.set(settings.historyMetadataUIFeature)
+                CustomizeHome.pocket.set(settings.showPocketRecommendationsFeature)
+            }
+        })
     }
 
     protected fun recordOnInit() {

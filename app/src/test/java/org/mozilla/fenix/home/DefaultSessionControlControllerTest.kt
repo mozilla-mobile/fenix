@@ -170,7 +170,7 @@ class DefaultSessionControlControllerTest {
         verify {
             navController.navigate(
                 match<NavDirections> {
-                    it.actionId == R.id.action_global_customizationFragment
+                    it.actionId == R.id.action_global_homeSettingsFragment
                 },
                 null
             )
@@ -178,6 +178,7 @@ class DefaultSessionControlControllerTest {
     }
 
     @Test
+    @Ignore("Until the feature is enabled again")
     fun handleShowOnboardingDialog() {
         createController().handleShowOnboardingDialog()
 
@@ -819,28 +820,26 @@ class DefaultSessionControlControllerTest {
         hideOnboarding: () -> Unit = { },
         registerCollectionStorageObserver: () -> Unit = { },
         showTabTray: () -> Unit = { },
-        handleSwipedItemDeletionCancel: () -> Unit = { },
         removeCollectionWithUndo: (tabCollection: TabCollection) -> Unit = { }
     ): DefaultSessionControlController {
         return DefaultSessionControlController(
             activity = activity,
-            store = store,
             settings = settings,
             engine = engine,
             metrics = metrics,
+            store = store,
             tabCollectionStorage = tabCollectionStorage,
             addTabUseCase = tabsUseCases.addTab,
+            restoreUseCase = mockk(relaxed = true),
             reloadUrlUseCase = reloadUrlUseCase.reload,
             selectTabUseCase = selectTabUseCase.selectTab,
-            restoreUseCase = mockk(relaxed = true),
             fragmentStore = fragmentStore,
             navController = navController,
             viewLifecycleScope = scope,
             hideOnboarding = hideOnboarding,
             registerCollectionStorageObserver = registerCollectionStorageObserver,
             removeCollectionWithUndo = removeCollectionWithUndo,
-            showTabTray = showTabTray,
-            handleSwipedItemDeletionCancel = handleSwipedItemDeletionCancel
+            showTabTray = showTabTray
         )
     }
 }

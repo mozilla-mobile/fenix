@@ -26,12 +26,14 @@ events:
       - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
       - https://github.com/mozilla-mobile/fenix/pull/18143
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - telemetry-client-dev@mozilla.com
       - android-probes@mozilla.com
-    expires: "2021-12-01"
+      - erichards@mozilla.com
+    expires: never
   search_bar_tapped:
     type: event
     description: |
@@ -49,11 +51,13 @@ events:
       - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
       - https://github.com/mozilla-mobile/fenix/pull/18143
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-12-01"
+      - erichards@mozilla.com
+    expires: never
   entered_url:
     type: event
     description: |
@@ -71,11 +75,13 @@ events:
       - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
       - https://github.com/mozilla-mobile/fenix/pull/18143
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-12-01"
+      - erichards@mozilla.com
+    expires: never
   performed_search:
     type: event
     description: |
@@ -99,15 +105,19 @@ events:
       - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
       - https://github.com/mozilla-mobile/fenix/pull/18143
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-12-01"
+      - erichards@mozilla.com
+    expires: never
   browser_menu_action:
     type: event
     description: |
-      A browser menu item was tapped
+      A browser menu item was tapped.
+      The name of the item that the user tapped is stored in extras with the
+      key `item`.
     extra_keys:
       item:
         description: |
@@ -145,11 +155,13 @@ events:
       - https://github.com/mozilla-mobile/fenix/pull/18982#pullrequestreview-635098629
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/21076#issuecomment-909237275
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-04-01"
+      - erichards@mozilla.com
+    expires: never
   default_browser_notif_tapped:
     type: event
     description: |
@@ -193,11 +205,13 @@ events:
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/17935
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-08-01"
+      - erichards@mozilla.com
+    expires: never
   preference_toggled:
     type: event
     description: |
@@ -236,12 +250,14 @@ events:
       - https://github.com/mozilla-mobile/fenix/pull/6746
       - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - technical
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-12-01"
+      - erichards@mozilla.com
+    expires: never
   whats_new_tapped:
     type: event
     description: |
@@ -277,11 +293,13 @@ events:
       - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
       - https://github.com/mozilla-mobile/fenix/pull/18143
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-12-01"
+      - erichards@mozilla.com
+    expires: never
   tab_counter_menu_action:
     type: event
     description:
@@ -308,7 +326,7 @@ events:
     expires: "2021-12-01"
   synced_tab_opened:
     type: event
-    description: >
+    description: |
       An event that indicates that a synced tab was opened.
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/15369
@@ -316,11 +334,13 @@ events:
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/16727
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-12-10"
+      - erichards@mozilla.com
+    expires: never
   recently_closed_tabs_opened:
     type: event
     description: |
@@ -332,11 +352,13 @@ events:
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/16739
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-12-10"
+      - erichards@mozilla.com
+    expires: never
   copy_url_tapped:
     type: event
     description: |
@@ -348,11 +370,13 @@ events:
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/16915
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-12-10"
+      - erichards@mozilla.com
+    expires: never
   browser_toolbar_home_tapped:
     type: event
     description: |
@@ -401,12 +425,14 @@ onboarding:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
       - erichards@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   fxa_manual_signin:
     type: event
     description:
@@ -418,12 +444,14 @@ onboarding:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
       - erichards@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   privacy_notice:
     type: event
     description:
@@ -435,12 +463,13 @@ onboarding:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
       - erichards@mozilla.com
-    expires: "2022-02-01"
+    expires: never
   pref_toggled_toolbar_position:
     type: event
     description:
@@ -457,12 +486,14 @@ onboarding:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
       - erichards@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   pref_toggled_tracking_prot:
     type: event
     description:
@@ -479,12 +510,14 @@ onboarding:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
       - erichards@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   pref_toggled_theme_picker:
     type: event
     description:
@@ -501,12 +534,14 @@ onboarding:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
       - erichards@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   finish:
     type: event
     description:
@@ -518,12 +553,14 @@ onboarding:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
       - erichards@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
 
 search_shortcuts:
   selected:
@@ -648,11 +685,13 @@ context_menu:
       - https://github.com/mozilla-mobile/fenix/issues/16076#issuecomment-726216734
       - https://github.com/mozilla-mobile/fenix/pull/18143
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-12-01"
+      - erichards@mozilla.com
+    expires: never
 
 login_dialog:
   displayed:
@@ -731,11 +770,13 @@ metrics:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   distribution_id:
     type: string
     lifetime: application
@@ -772,11 +813,13 @@ metrics:
       - https://github.com/mozilla-mobile/fenix/pull/16942#issuecomment-742794701
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   has_mobile_bookmarks:
     type: boolean
     lifetime: application
@@ -791,11 +834,13 @@ metrics:
       - https://github.com/mozilla-mobile/fenix/pull/16942#issuecomment-742794701
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   desktop_bookmarks_count:
     type: counter
     lifetime: application
@@ -814,11 +859,13 @@ metrics:
       - https://github.com/mozilla-mobile/fenix/pull/16942#issuecomment-742794701
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   has_desktop_bookmarks:
     type: boolean
     lifetime: application
@@ -856,11 +903,13 @@ metrics:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   has_top_sites:
     type: boolean
     lifetime: application
@@ -875,11 +924,13 @@ metrics:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   recently_used_pwa_count:
     type: counter
     lifetime: application
@@ -952,12 +1003,14 @@ metrics:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - technical
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   mozilla_products:
     type: string_list
     lifetime: application
@@ -1186,11 +1239,13 @@ metrics:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   has_open_tabs:
     type: boolean
     lifetime: application
@@ -1250,7 +1305,7 @@ metrics:
 customize_home:
   most_visited_sites:
     type: boolean
-    description: >
+    description: |
       An indication of whether the most visited sites
       are enabled to be displayed
     send_in_pings:
@@ -1267,7 +1322,7 @@ customize_home:
     expires: "2022-09-20"
   jump_back_in:
     type: boolean
-    description: >
+    description: |
       An indication of whether the Jump back
       in section is enabled to be displayed
     send_in_pings:
@@ -1284,7 +1339,7 @@ customize_home:
     expires: "2022-09-20"
   recently_saved:
     type: boolean
-    description: >
+    description: |
       An indication of whether the recently
       saved section is enabled to be displayed
     send_in_pings:
@@ -1301,7 +1356,7 @@ customize_home:
     expires: "2022-09-20"
   recently_visited:
     type: boolean
-    description: >
+    description: |
       An indication of whether the Recently
       visited section is enabled to be displayed
     send_in_pings:
@@ -1318,7 +1373,7 @@ customize_home:
     expires: "2022-09-20"
   pocket:
     type: boolean
-    description: >
+    description: |
       An indication of whether Pocket is enabled to be displayed
     send_in_pings:
       - metrics
@@ -1334,7 +1389,7 @@ customize_home:
     expires: "2022-09-20"
   preference_toggled:
     type: event
-    description: >
+    description: |
       A user toggles the preference for the home screen items.
     extra_keys:
       preference_key:
@@ -1360,7 +1415,7 @@ customize_home:
 preferences:
   search_suggestions_enabled:
     type: boolean
-    description: >
+    description: |
       Whether or not the user has search suggestions enabled
       default: true
     send_in_pings:
@@ -1379,7 +1434,7 @@ preferences:
     expires: "2022-02-01"
   remote_debugging_enabled:
     type: boolean
-    description: >
+    description: |
       Whether or not the user has remote debugging enabled
       default: false
     send_in_pings:
@@ -1398,7 +1453,7 @@ preferences:
     expires: "2022-02-01"
   telemetry_enabled:
     type: boolean
-    description: >
+    description: |
       Whether or not the user has telemetry enabled. Note we should
       never receive a "false" value for this since telemetry would
       not send in that case.
@@ -1419,7 +1474,7 @@ preferences:
     expires: "2022-02-01"
   enhanced_tracking_protection:
     type: string
-    description: >
+    description: |
       What type of enhanced tracking protection the user has enabled.
       "standard," "strict," "custom," or "" (if disabled)
       default: "standard"
@@ -1439,7 +1494,7 @@ preferences:
     expires: "2022-02-01"
   bookmarks_suggestion:
     type: boolean
-    description: >
+    description: |
       Whether or not the user has enabled bookmark search suggestions
       default: true
     send_in_pings:
@@ -1458,7 +1513,7 @@ preferences:
     expires: "2022-02-01"
   browsing_history_suggestion:
     type: boolean
-    description: >
+    description: |
       Whether or not the user has enabled browsing history suggestions.
       default: true
     send_in_pings:
@@ -1477,7 +1532,7 @@ preferences:
     expires: "2022-02-01"
   clipboard_suggestions_enabled:
     type: boolean
-    description: >
+    description: |
       Whether or not the user has enabled clipboard search suggestions.
       default: true
     send_in_pings:
@@ -1496,7 +1551,7 @@ preferences:
     expires: "2022-02-01"
   search_shortcuts_enabled:
     type: boolean
-    description: >
+    description: |
       Whether or not the user has enabled search shortcuts.
       default: true
     send_in_pings:
@@ -1515,7 +1570,7 @@ preferences:
     expires: "2022-02-01"
   signed_in_sync:
     type: boolean
-    description: >
+    description: |
       Whether or not the user is signed into FxA
       default: false
     send_in_pings:
@@ -1534,7 +1589,7 @@ preferences:
     expires: "2022-02-01"
   sync_items:
     type: string_list
-    description: >
+    description: |
       The list of items the user has chosen to sync with FxA.
       default: "" if the user is signed out. Otherwise defaults to
       whatever is set in their FxA account. New accounts set:
@@ -1555,7 +1610,7 @@ preferences:
     expires: "2022-02-01"
   voice_search_enabled:
     type: boolean
-    description: >
+    description: |
       Whether or not the user has enabled the voice search button.
       default: true
     send_in_pings:
@@ -1574,7 +1629,7 @@ preferences:
     expires: "2022-02-01"
   toolbar_position_setting:
     type: string
-    description: >
+    description: |
       The position of the toolbar
       default: bottom (defaults to top if the user has accessibility services)
     send_in_pings:
@@ -1593,7 +1648,7 @@ preferences:
     expires: "2022-02-01"
   accessibility_services:
     type: string_list
-    description: >
+    description: |
       Whether or not the user has touch exploration or switch services enabled.
       These are built into the Android OS, not Fenix prefs.
       default: ""
@@ -1613,7 +1668,7 @@ preferences:
     expires: "2022-02-01"
   open_links_in_app_enabled:
     type: boolean
-    description: >
+    description: |
       Whether or not the user has the open links in apps feature enabled.
       default: false
     send_in_pings:
@@ -1632,7 +1687,7 @@ preferences:
     expires: "2022-02-01"
   user_theme:
     type: string
-    description: >
+    description: |
       The theme the user has enabled. "light," "dark," "system," or "battery"
       default: "system" for API 28+, else "light"
     send_in_pings:
@@ -1644,6 +1699,54 @@ preferences:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2022-02-01"
+  inactive_tabs_enabled:
+    type: boolean
+    description: |
+      Whether or not the user has the inactive tabs feature enabled.
+      default: true
+    send_in_pings:
+      - metrics
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/21903
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/21908
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2022-11-01"
+  inactive_tabs_survey_opened:
+    type: event
+    description: >
+      A survey for asking the user why she intends to turn off the
+      inactive tabs feature is shown.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/21732
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/21862#issuecomment-949598042
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2022-02-01"
+  turn_off_inactive_tabs_survey:
+    type: event
+    description: >
+      The user has disabled inactive tabs feature and responded
+      to our request for feedback.
+    extra_keys:
+      feedback:
+        description: |
+          The user's feedback regarding inactive tabs feature.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/21732
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/21862#issuecomment-946977614
     data_sensitivity:
       - interaction
     notification_emails:
@@ -1669,12 +1772,14 @@ search.default_engine:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - technical
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   name:
     type: string
     lifetime: application
@@ -1693,12 +1798,14 @@ search.default_engine:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - technical
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   submission_url:
     type: string
     lifetime: application
@@ -1751,11 +1858,13 @@ bookmarks_management:
       - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
       - https://github.com/mozilla-mobile/fenix/pull/18143
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-12-01"
+      - erichards@mozilla.com
+    expires: never
   open_in_new_tabs:
     type: event
     description: |
@@ -1767,11 +1876,13 @@ bookmarks_management:
       - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
       - https://github.com/mozilla-mobile/fenix/pull/18143
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-12-01"
+      - erichards@mozilla.com
+    expires: never
   open_in_private_tab:
     type: event
     description: |
@@ -1784,11 +1895,13 @@ bookmarks_management:
       - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
       - https://github.com/mozilla-mobile/fenix/pull/18143
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-12-01"
+      - erichards@mozilla.com
+    expires: never
   open_in_private_tabs:
     type: event
     description: |
@@ -1801,11 +1914,13 @@ bookmarks_management:
       - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
       - https://github.com/mozilla-mobile/fenix/pull/18143
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-12-01"
+      - erichards@mozilla.com
+    expires: never
   edited:
     type: event
     description: |
@@ -1818,11 +1933,13 @@ bookmarks_management:
       - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
       - https://github.com/mozilla-mobile/fenix/pull/18143
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-12-01"
+      - erichards@mozilla.com
+    expires: never
   moved:
     type: event
     description: |
@@ -1835,11 +1952,13 @@ bookmarks_management:
       - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
       - https://github.com/mozilla-mobile/fenix/pull/18143
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-12-01"
+      - erichards@mozilla.com
+    expires: never
   removed:
     type: event
     description: |
@@ -1852,11 +1971,13 @@ bookmarks_management:
       - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
       - https://github.com/mozilla-mobile/fenix/pull/18143
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-12-01"
+      - erichards@mozilla.com
+    expires: never
   multi_removed:
     type: event
     description: |
@@ -1869,11 +1990,13 @@ bookmarks_management:
       - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
       - https://github.com/mozilla-mobile/fenix/pull/18143
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-12-01"
+      - erichards@mozilla.com
+    expires: never
   shared:
     type: event
     description: |
@@ -1886,11 +2009,13 @@ bookmarks_management:
       - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
       - https://github.com/mozilla-mobile/fenix/pull/18143
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-12-01"
+      - erichards@mozilla.com
+    expires: never
   copied:
     type: event
     description: |
@@ -1903,11 +2028,13 @@ bookmarks_management:
       - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
       - https://github.com/mozilla-mobile/fenix/pull/18143
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-12-01"
+      - erichards@mozilla.com
+    expires: never
   folder_add:
     type: event
     description: |
@@ -1920,11 +2047,13 @@ bookmarks_management:
       - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
       - https://github.com/mozilla-mobile/fenix/pull/18143
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-12-01"
+      - erichards@mozilla.com
+    expires: never
   folder_remove:
     type: event
     description: |
@@ -1937,11 +2066,13 @@ bookmarks_management:
       - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
       - https://github.com/mozilla-mobile/fenix/pull/18143
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-12-01"
+      - erichards@mozilla.com
+    expires: never
 
 custom_tab:
   closed:
@@ -2014,11 +2145,13 @@ activation:
       - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
       - https://github.com/mozilla-mobile/fenix/pull/18143
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21788#issuecomment-950022224
     data_sensitivity:
       - highly_sensitive
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-12-01"
+      - erichards@mozilla.com
+    expires: never
   activation_id:
     type: uuid
     lifetime: user
@@ -2035,11 +2168,13 @@ activation:
       - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
       - https://github.com/mozilla-mobile/fenix/pull/18143
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21788#issuecomment-950022224
     data_sensitivity:
       - highly_sensitive
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-12-01"
+      - erichards@mozilla.com
+    expires: never
     no_lint:
       - USER_LIFETIME_EXPIRATION
 
@@ -2143,11 +2278,13 @@ sync_auth:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   sign_out:
     type: event
     description: |
@@ -2160,11 +2297,13 @@ sync_auth:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   sign_up:
     type: event
     description: |
@@ -2176,12 +2315,14 @@ sync_auth:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - technical
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   paired:
     type: event
     description: |
@@ -2393,11 +2534,13 @@ history:
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/18261
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-08-01"
+      - erichards@mozilla.com
+    expires: never
   opened_item_in_new_tab:
     type: event
     description: |
@@ -2407,11 +2550,13 @@ history:
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/18261
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-08-01"
+      - erichards@mozilla.com
+    expires: never
   opened_items_in_new_tabs:
     type: event
     description: |
@@ -2422,11 +2567,13 @@ history:
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/18261
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-08-01"
+      - erichards@mozilla.com
+    expires: never
   opened_item_in_private_tab:
     type: event
     description: |
@@ -2436,11 +2583,13 @@ history:
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/18261
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-08-01"
+      - erichards@mozilla.com
+    expires: never
   opened_items_in_private_tabs:
     type: event
     description: |
@@ -2450,11 +2599,13 @@ history:
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/18261
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-08-01"
+      - erichards@mozilla.com
+    expires: never
 
 reader_mode:
   available:
@@ -2468,11 +2619,13 @@ reader_mode:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   opened:
     type: event
     description: |
@@ -2484,11 +2637,13 @@ reader_mode:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   closed:
     type: event
     description: |
@@ -2500,11 +2655,13 @@ reader_mode:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   appearance:
     type: event
     description: |
@@ -2516,11 +2673,15 @@ reader_mode:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+      - erichards@mozilla.com
+      - erichards@mozilla.com
+    expires: never
 
 tabs_tray:
   opened:
@@ -2534,11 +2695,13 @@ tabs_tray:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   closed:
     type: event
     description: |
@@ -2550,11 +2713,13 @@ tabs_tray:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   opened_existing_tab:
     type: event
     description: |
@@ -2571,11 +2736,13 @@ tabs_tray:
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
       - https://github.com/mozilla-mobile/fenix/pull/20508#issuecomment-902160532
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-08-01"
+      - erichards@mozilla.com
+    expires: never
   closed_existing_tab:
     type: event
     description: |
@@ -2592,11 +2759,13 @@ tabs_tray:
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
       - https://github.com/mozilla-mobile/fenix/pull/20508#issuecomment-902160532
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-08-01"
+      - erichards@mozilla.com
+    expires: never
   private_mode_tapped:
     type: event
     description: |
@@ -2608,11 +2777,13 @@ tabs_tray:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   normal_mode_tapped:
     type: event
     description: |
@@ -2624,11 +2795,13 @@ tabs_tray:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   synced_mode_tapped:
     type: event
     description: |
@@ -2638,11 +2811,13 @@ tabs_tray:
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/19004
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-08-01"
+      - erichards@mozilla.com
+    expires: never
   new_tab_tapped:
     type: event
     description: |
@@ -2654,11 +2829,13 @@ tabs_tray:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   new_private_tab_tapped:
     type: event
     description: |
@@ -2670,11 +2847,13 @@ tabs_tray:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   menu_opened:
     type: event
     description: |
@@ -2686,11 +2865,13 @@ tabs_tray:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   save_to_collection:
     type: event
     description: |
@@ -2702,11 +2883,13 @@ tabs_tray:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   share_all_tabs:
     type: event
     description: |
@@ -2719,11 +2902,13 @@ tabs_tray:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   close_all_tabs:
     type: event
     description: |
@@ -2736,11 +2921,13 @@ tabs_tray:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   inactive_tabs_recently_closed:
     type: event
     description: |
@@ -2782,6 +2969,100 @@ tabs_tray:
     notification_emails:
       - android-probes@mozilla.com
     expires: "2022-08-01"
+  has_inactive_tabs:
+    type: event
+    description: |
+      A boolean that indicates if the user has any INACTIVE tabs.
+    extra_keys:
+      inactive_tabs_count:
+        description: "The number of inactive tabs the user currently has."
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/21903
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/21908
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2022-11-01"
+  close_all_inactive_tabs:
+    type: event
+    description: |
+      A user tapped the close all inactive tabs button in the the tabs tray
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/21903
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/21908
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2022-11-01"
+  auto_close_seen:
+    type: event
+    description: |
+      A user has seen the auto-close dialog for inactive tabs.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/22170
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/22171
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2022-11-01"
+  auto_close_turn_on_clicked:
+    type: event
+    description: |
+      A user has clicked the turn-on auto-close button for inactive tabs.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/22170
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/22171
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2022-11-01"
+  auto_close_dimissed:
+    type: event
+    description: |
+      A user has dimissed the auto-close dialog for inactive tabs.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/22170
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/22171
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2022-11-01"
+  close_inactive_tab:
+    type: counter
+    description: |
+      A counter that indicates how many INACTIVE tabs a user has closed.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/21903
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/21908
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2022-11-01"
+  open_inactive_tab:
+    type: counter
+    description: |
+      A counter that indicates how many INACTIVE tabs a user has opened.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/21903
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/21908
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2022-11-01"
 
 collections:
   renamed:
@@ -2796,12 +3077,14 @@ collections:
       - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
       - https://github.com/mozilla-mobile/fenix/pull/18143
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - technical
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-12-01"
+      - erichards@mozilla.com
+    expires: never
   tab_restored:
     type: event
     description: |
@@ -2814,12 +3097,14 @@ collections:
       - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
       - https://github.com/mozilla-mobile/fenix/pull/18143
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - technical
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-12-01"
+      - erichards@mozilla.com
+    expires: never
   all_tabs_restored:
     type: event
     description: |
@@ -2832,12 +3117,14 @@ collections:
       - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
       - https://github.com/mozilla-mobile/fenix/pull/18143
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - technical
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-12-01"
+      - erichards@mozilla.com
+    expires: never
   tab_removed:
     type: event
     description: |
@@ -2850,12 +3137,14 @@ collections:
       - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
       - https://github.com/mozilla-mobile/fenix/pull/18143
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - technical
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-12-01"
+      - erichards@mozilla.com
+    expires: never
   shared:
     type: event
     description: |
@@ -2868,12 +3157,14 @@ collections:
       - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
       - https://github.com/mozilla-mobile/fenix/pull/18143
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - technical
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-12-01"
+      - erichards@mozilla.com
+    expires: never
   removed:
     type: event
     description: |
@@ -2886,12 +3177,14 @@ collections:
       - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
       - https://github.com/mozilla-mobile/fenix/pull/18143
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - technical
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-12-01"
+      - erichards@mozilla.com
+    expires: never
   saved:
     type: event
     description: |
@@ -2909,12 +3202,14 @@ collections:
       - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
       - https://github.com/mozilla-mobile/fenix/pull/18143
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - technical
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-12-01"
+      - erichards@mozilla.com
+    expires: never
   tabs_added:
     type: event
     description: |
@@ -2932,12 +3227,14 @@ collections:
       - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
       - https://github.com/mozilla-mobile/fenix/pull/18143
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - technical
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-12-01"
+      - erichards@mozilla.com
+    expires: never
   tab_select_opened:
     type: event
     description: |
@@ -2951,12 +3248,14 @@ collections:
       - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
       - https://github.com/mozilla-mobile/fenix/pull/18143
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - technical
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-12-01"
+      - erichards@mozilla.com
+    expires: never
   add_tab_button:
     type: event
     description: |
@@ -2969,11 +3268,13 @@ collections:
       - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
       - https://github.com/mozilla-mobile/fenix/pull/18143
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-12-01"
+      - erichards@mozilla.com
+    expires: never
   long_press:
     type: event
     description: |
@@ -2986,11 +3287,13 @@ collections:
       - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
       - https://github.com/mozilla-mobile/fenix/pull/18143
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-12-01"
+      - erichards@mozilla.com
+    expires: never
   save_button:
     type: event
     description: |
@@ -3005,11 +3308,13 @@ collections:
       - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
       - https://github.com/mozilla-mobile/fenix/pull/18143
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-12-01"
+      - erichards@mozilla.com
+    expires: never
     extra_keys:
       from_screen:
         description: |
@@ -3027,11 +3332,13 @@ collections:
       - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
       - https://github.com/mozilla-mobile/fenix/pull/18143
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-12-01"
+      - erichards@mozilla.com
+    expires: never
 
 search_widget:
   new_tab_button:
@@ -3336,11 +3643,13 @@ logins:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   open_individual_login:
     type: event
     description: |
@@ -3489,11 +3798,13 @@ top_sites:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   open_google_search_attribution:
     type: event
     description: |
@@ -3504,11 +3815,13 @@ top_sites:
       - https://github.com/mozilla-mobile/fenix/pull/17637
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   open_baidu_search_attribution:
     type: event
     description: |
@@ -3533,11 +3846,13 @@ top_sites:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   open_pinned:
     type: event
     description: |
@@ -3549,11 +3864,13 @@ top_sites:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   swipe_carousel:
     type: event
     description: |
@@ -3569,11 +3886,13 @@ top_sites:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   long_press:
     type: event
     description: |
@@ -3589,11 +3908,13 @@ top_sites:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   open_in_new_tab:
     type: event
     description: |
@@ -3605,11 +3926,13 @@ top_sites:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   open_in_private_tab:
     type: event
     description: |
@@ -3621,11 +3944,13 @@ top_sites:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   remove:
     type: event
     description: |
@@ -3637,6 +3962,34 @@ top_sites:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+      - erichards@mozilla.com
+    expires: never
+  google_top_site_removed:
+    type: event
+    description: |
+      A user removed the default Google top site
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/21841
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/21845#issuecomment-944608568
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2022-02-01"
+  baidu_top_site_removed:
+    type: event
+    description: |
+      A user removed the default Baidu top site
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/21841
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/21845#issuecomment-944608568
     data_sensitivity:
       - interaction
     notification_emails:
@@ -3679,11 +4032,13 @@ pocket:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
     no_lint:
       - COMMON_PREFIX
   pocket_top_site_removed:
@@ -3702,6 +4057,91 @@ pocket:
     notification_emails:
       - android-probes@mozilla.com
     expires: "2022-02-01"
+  home_recs_shown:
+    type: event
+    description: |
+      The Pocket recommended stories are shown on the home screen.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/21593
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/21625#issuecomment-936745506
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2022-10-01"
+  home_recs_story_clicked:
+    type: event
+    description: |
+      User tapped a Pocket recommended story to be opened.
+    extra_keys:
+      times_shown:
+        description: |
+          How many times was this story shown, including current.
+      position:
+        description: |
+          Position of the clicked story in the list shown.
+          Uses the [row x column] matrix notation.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/21593
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/21625#issuecomment-936745506
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2022-10-01"
+  home_recs_category_clicked:
+    type: event
+    description: |
+      User tapped a Pocket stories category to filter stories.
+    extra_keys:
+      category_name:
+        description: |
+          Pocket set topic name representing the just clicked category.
+      selected_total:
+        description: |
+          How many categories were selected before this being tapped.
+      new_state:
+        description: |
+          Category's new state after being tapped.
+          Possible values: [selected], [deselected].
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/21593
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/21625#issuecomment-936745506
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2022-10-01"
+  home_recs_discover_clicked:
+    type: event
+    description: |
+      User tapped the "Discover more" tile to open a new tab
+      for more Pocket stories.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/21593
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/21625#issuecomment-936745506
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2022-10-01"
+  home_recs_learn_more_clicked:
+    type: event
+    description: |
+      User tapped "Learn more" to open a new tab for Pocket.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/21593
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/21625#issuecomment-936745506
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2022-10-01"
 
 first_session:
   campaign:
@@ -3717,12 +4157,14 @@ first_session:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - technical
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   network:
     type: string
     send_in_pings:
@@ -3736,12 +4178,14 @@ first_session:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - technical
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   adgroup:
     type: string
     send_in_pings:
@@ -3755,12 +4199,14 @@ first_session:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - technical
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   creative:
     send_in_pings:
       - first-session
@@ -3774,12 +4220,14 @@ first_session:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - technical
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   timestamp:
     send_in_pings:
       - first-session
@@ -3795,12 +4243,14 @@ first_session:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - technical
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
 
 browser.search:
   with_ads:
@@ -3817,11 +4267,13 @@ browser.search:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20230#issuecomment-879244938
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-07-01"
+      - erichards@mozilla.com
+    expires: never
   ad_clicks:
     type: labeled_counter
     description: |
@@ -3836,11 +4288,13 @@ browser.search:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20230#issuecomment-879244938
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-07-01"
+      - erichards@mozilla.com
+    expires: never
   in_content:
     type: labeled_counter
     description: |
@@ -3854,11 +4308,13 @@ browser.search:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20230#issuecomment-879244938
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-07-01"
+      - erichards@mozilla.com
+    expires: never
 
 addons:
   open_addons_in_settings:
@@ -3931,11 +4387,13 @@ addons:
       - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
       - https://github.com/mozilla-mobile/fenix/pull/18143
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-12-01"
+      - erichards@mozilla.com
+    expires: never
   has_enabled_addons:
     type: boolean
     description: |
@@ -3950,11 +4408,13 @@ addons:
       - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
       - https://github.com/mozilla-mobile/fenix/pull/18143
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-12-01"
+      - erichards@mozilla.com
+    expires: never
   installed_addons:
     type: string_list
     description: |
@@ -3969,11 +4429,13 @@ addons:
       - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
       - https://github.com/mozilla-mobile/fenix/pull/18143
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21788#issuecomment-950022224
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-12-01"
+      - erichards@mozilla.com
+    expires: never
   enabled_addons:
     type: string_list
     description: |
@@ -4188,7 +4650,7 @@ perf.awesomebar:
       - metrics
     type: timing_distribution
     time_unit: millisecond
-    description: >
+    description: |
       Duration of a history awesomebar suggestion query.
     bugs:
       - https://github.com/mozilla-mobile/android-components/issues/4992
@@ -4208,7 +4670,7 @@ perf.awesomebar:
       - metrics
     type: timing_distribution
     time_unit: millisecond
-    description: >
+    description: |
       Duration of a bookmarks awesomebar suggestion query.
     bugs:
       - https://github.com/mozilla-mobile/android-components/issues/4992
@@ -4228,7 +4690,7 @@ perf.awesomebar:
       - metrics
     type: timing_distribution
     time_unit: millisecond
-    description: >
+    description: |
       Duration of a search engine awesomebar suggestion query.
     bugs:
       - https://github.com/mozilla-mobile/android-components/issues/4992
@@ -4248,7 +4710,7 @@ perf.awesomebar:
       - metrics
     type: timing_distribution
     time_unit: millisecond
-    description: >
+    description: |
       Duration of a session awesomebar suggestion query.
     bugs:
       - https://github.com/mozilla-mobile/android-components/issues/4992
@@ -4268,7 +4730,7 @@ perf.awesomebar:
       - metrics
     type: timing_distribution
     time_unit: millisecond
-    description: >
+    description: |
       Duration of a synced tabs awesomebar suggestion query.
     bugs:
       - https://github.com/mozilla-mobile/android-components/issues/4992
@@ -4288,7 +4750,7 @@ perf.awesomebar:
       - metrics
     type: timing_distribution
     time_unit: millisecond
-    description: >
+    description: |
       Duration of a clipboard awesomebar suggestion query.
     bugs:
       - https://github.com/mozilla-mobile/android-components/issues/4992
@@ -4308,7 +4770,7 @@ perf.awesomebar:
       - metrics
     type: timing_distribution
     time_unit: millisecond
-    description: >
+    description: |
       Duration of a shortcuts awesomebar suggestion query.
     bugs:
       - https://github.com/mozilla-mobile/android-components/issues/4992
@@ -4366,7 +4828,7 @@ storage.stats:
     send_in_pings:
       - metrics
     type: timing_distribution
-    description: >
+    description: |
       How long it took to query the device for the StorageStats that contain the
       file size information. The docs say it may be expensive so we want to
       ensure it's not too expensive.  This value is only available on Android
@@ -4390,7 +4852,7 @@ storage.stats:
     send_in_pings:
       - metrics
     type: memory_distribution
-    description: >
+    description: |
       The size of the app's APK and related files as installed: this is expected
       to be larger than download size. This is the output of
       [StorageStats.getAppBytes](https://developer.android.com/reference/android/app/usage/StorageStats#getAppBytes())
@@ -4417,7 +4879,7 @@ storage.stats:
     send_in_pings:
       - metrics
     type: memory_distribution
-    description: >
+    description: |
       The size of all cached data in the app. This is the output of
       [StorageStats.getCacheBytes](https://developer.android.com/reference/android/app/usage/StorageStats#getCacheBytes())
       so see that for details. This value is only available on Android 8+.
@@ -4441,7 +4903,7 @@ storage.stats:
     send_in_pings:
       - metrics
     type: memory_distribution
-    description: >
+    description: |
       The size of all data minus `cache_bytes`. This is the output of
       [StorageStats.getDataBytes](https://developer.android.com/reference/android/app/usage/StorageStats#getDataBytes())
       except we subtract the value of `cache_bytes` so the cache is not measured
@@ -4553,11 +5015,13 @@ tabs:
       - https://github.com/mozilla-mobile/fenix/pull/15811#issuecomment-706402952
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
 
 contextual_menu:
   copy_tapped:
@@ -4570,11 +5034,13 @@ contextual_menu:
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/16968
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-12-01"
+      - erichards@mozilla.com
+    expires: never
   search_tapped:
     type: event
     description: |
@@ -4585,11 +5051,13 @@ contextual_menu:
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/16968
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-12-01"
+      - erichards@mozilla.com
+    expires: never
   select_all_tapped:
     type: event
     description: |
@@ -4600,11 +5068,13 @@ contextual_menu:
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/16968
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-12-01"
+      - erichards@mozilla.com
+    expires: never
   share_tapped:
     type: event
     description: |
@@ -4615,11 +5085,13 @@ contextual_menu:
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/16968
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2021-12-01"
+      - erichards@mozilla.com
+    expires: never
 
 engine_tab:
   kills:
@@ -4635,12 +5107,13 @@ engine_tab:
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/17864
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21779#issuecomment-938089467
     data_sensitivity:
       - technical
     notification_emails:
       - android-probes@mozilla.com
       - skaspari@mozilla.com
-    expires: "2021-12-31"
+    expires: "2022-07-01"
   kill_foreground_age:
     type: timing_distribution
     time_unit: millisecond
@@ -4652,12 +5125,13 @@ engine_tab:
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/17864
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21779#issuecomment-938089467
     data_sensitivity:
       - technical
     notification_emails:
       - android-probes@mozilla.com
       - skaspari@mozilla.com
-    expires: "2021-12-31"
+    expires: "2022-07-01"
   kill_background_age:
     type: timing_distribution
     time_unit: millisecond
@@ -4669,12 +5143,13 @@ engine_tab:
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/17864
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21779#issuecomment-938089467
     data_sensitivity:
       - technical
     notification_emails:
       - android-probes@mozilla.com
       - skaspari@mozilla.com
-    expires: "2021-12-31"
+    expires: "2022-07-01"
   foreground_metrics:
     type: event
     description: |
@@ -4685,12 +5160,13 @@ engine_tab:
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/18747#issuecomment-815731764
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/21779#issuecomment-938089467
     data_sensitivity:
       - technical
     notification_emails:
       - android-probes@mozilla.com
       - skaspari@mozilla.com
-    expires: "2021-12-31"
+    expires: "2022-07-01"
     extra_keys:
       background_active_tabs:
         description: |
@@ -4745,11 +5221,13 @@ awesomebar:
       - https://github.com/mozilla-mobile/fenix/pull/18090
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   clipboard_suggestion_clicked:
     type: event
     description: |
@@ -4760,11 +5238,13 @@ awesomebar:
       - https://github.com/mozilla-mobile/fenix/pull/18090
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   history_suggestion_clicked:
     type: event
     description: |
@@ -4775,11 +5255,13 @@ awesomebar:
       - https://github.com/mozilla-mobile/fenix/pull/18090
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   search_action_clicked:
     type: event
     description: |
@@ -4790,11 +5272,13 @@ awesomebar:
       - https://github.com/mozilla-mobile/fenix/pull/18090
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   search_suggestion_clicked:
     type: event
     description: |
@@ -4805,11 +5289,13 @@ awesomebar:
       - https://github.com/mozilla-mobile/fenix/pull/18090
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   opened_tab_suggestion_clicked:
     type: event
     description: |
@@ -4820,11 +5306,13 @@ awesomebar:
       - https://github.com/mozilla-mobile/fenix/pull/18090
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/21038#issuecomment-906757301
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
 
 android_autofill:
   supported:
@@ -4994,9 +5482,9 @@ home_menu:
 home_screen:
   home_screen_displayed:
     type: event
-    description: The user clicked the settings option in home menu.
+    description: The home screen was displayed.
     bugs:
-      - https://github.com/mozilla-mobile/fenix/issues/18856
+      - https://github.com/mozilla-mobile/fenix/issues/18854
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/19025
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789

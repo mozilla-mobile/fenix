@@ -27,6 +27,7 @@ import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.support.ktx.android.view.showKeyboard
 import mozilla.components.support.ktx.kotlin.isUrl
 import org.mozilla.fenix.BrowserDirection
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BrowserFragmentDirections
@@ -207,8 +208,7 @@ class DefaultSessionControlController(
     private val hideOnboarding: () -> Unit,
     private val registerCollectionStorageObserver: () -> Unit,
     private val removeCollectionWithUndo: (tabCollection: TabCollection) -> Unit,
-    private val showTabTray: () -> Unit,
-    private val handleSwipedItemDeletionCancel: () -> Unit
+    private val showTabTray: () -> Unit
 ) : SessionControlController {
 
     override fun handleCollectionAddTabTapped(collection: TabCollection) {
@@ -346,8 +346,10 @@ class DefaultSessionControlController(
 
     override fun handleRemoveTopSiteClicked(topSite: TopSite) {
         metrics.track(Event.TopSiteRemoved)
-        if (topSite.url == SupportUtils.POCKET_TRENDING_URL) {
-            metrics.track(Event.PocketTopSiteRemoved)
+        when (topSite.url) {
+            SupportUtils.POCKET_TRENDING_URL -> metrics.track(Event.PocketTopSiteRemoved)
+            SupportUtils.GOOGLE_URL -> metrics.track(Event.GoogleTopSiteRemoved)
+            SupportUtils.BAIDU_URL -> metrics.track(Event.BaiduTopSiteRemoved)
         }
 
         viewLifecycleScope.launch(Dispatchers.IO) {
@@ -448,16 +450,18 @@ class DefaultSessionControlController(
     }
 
     override fun handleCustomizeHomeTapped() {
-        val directions = HomeFragmentDirections.actionGlobalCustomizationFragment()
+        val directions = HomeFragmentDirections.actionGlobalHomeSettingsFragment()
         navController.nav(R.id.homeFragment, directions)
         metrics.track(Event.HomeScreenCustomizedHomeClicked)
     }
 
     override fun handleShowOnboardingDialog() {
-        navController.nav(
-            R.id.homeFragment,
-            HomeFragmentDirections.actionGlobalHomeOnboardingDialog()
-        )
+        if (FeatureFlags.showHomeOnboarding) {
+            navController.nav(
+                R.id.homeFragment,
+                HomeFragmentDirections.actionGlobalHomeOnboardingDialog()
+            )
+        }
     }
 
     override fun handleReadPrivacyNoticeClicked() {

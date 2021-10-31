@@ -19,7 +19,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import org.mozilla.fenix.R
@@ -42,7 +41,6 @@ import org.mozilla.fenix.settings.logins.togglePasswordReveal
 /**
  * Displays the editable saved login information for a single website
  */
-@ExperimentalCoroutinesApi
 @Suppress("TooManyFunctions", "NestedBlockDepth", "ForbiddenComment")
 class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
 
@@ -51,7 +49,7 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
     private lateinit var interactor: EditLoginInteractor
     private lateinit var oldLogin: SavedLogin
 
-    private var listOfPossibleDupes: List<SavedLogin>? = null
+    private var duplicateLogin: SavedLogin? = null
 
     private var usernameChanged = false
     private var passwordChanged = false
@@ -86,7 +84,6 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
         )
 
         loginsFragmentStore.dispatch(LoginsAction.UpdateCurrentLogin(args.savedLoginItem))
-        interactor.findPotentialDuplicates(args.savedLoginItem.guid)
 
         // initialize editable values
         binding.hostnameText.text = args.savedLoginItem.origin.toEditable()
@@ -99,9 +96,11 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
         setUpClickListeners()
         setUpTextListeners()
         togglePasswordReveal(binding.passwordText, binding.revealPasswordButton)
+        findDuplicate()
 
         consumeFrom(loginsFragmentStore) {
-            listOfPossibleDupes = loginsFragmentStore.state.duplicateLogins
+            duplicateLogin = loginsFragmentStore.state.duplicateLogin
+            updateUsernameField()
         }
     }
 
@@ -150,20 +149,8 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
 
         binding.usernameText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(u: Editable?) {
-                when (oldLogin.username) {
-                    u.toString() -> {
-                        usernameChanged = false
-                        validUsername = true
-                        binding.inputLayoutUsername.error = null
-                        binding.inputLayoutUsername.errorIconDrawable = null
-                        binding.clearUsernameTextButton.isVisible = true
-                    }
-                    else -> {
-                        usernameChanged = true
-                        setDupeError()
-                    }
-                }
-                binding.clearUsernameTextButton.isEnabled = u.toString().isNotEmpty()
+                updateUsernameField()
+                findDuplicate()
                 setSaveButtonState()
             }
 
@@ -215,30 +202,45 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
         })
     }
 
-    private fun isDupe(username: String): Boolean =
-        loginsFragmentStore.state.duplicateLogins.filter { it.username == username }.any()
+    private fun findDuplicate() {
+        interactor.findDuplicate(
+            oldLogin.guid,
+            binding.usernameText.text.toString(),
+            binding.passwordText.text.toString(),
+        )
+    }
 
-    private fun setDupeError() {
-        if (isDupe(binding.usernameText.text.toString())) {
-            binding.inputLayoutUsername.let {
+    private fun updateUsernameField() {
+        val currentValue = binding.usernameText.text.toString()
+        val layout = binding.inputLayoutUsername
+        val clearButton = binding.clearUsernameTextButton
+        when {
+            (duplicateLogin == null || oldLogin.username == currentValue) -> {
+                // Valid login, either because there's no dupe or because the
+                // existing login was already a dupe and the username hasn't
+                // changed
+                usernameChanged = oldLogin.username != currentValue
+                validUsername = true
+                layout.error = null
+                layout.errorIconDrawable = null
+                clearButton.isVisible = true
+            }
+            else -> {
+                // Invalid login because it's a dupe of another one
                 usernameChanged = true
                 validUsername = false
-                it.error = context?.getString(R.string.saved_login_duplicate)
-                it.setErrorIconDrawable(R.drawable.mozac_ic_warning_with_bottom_padding)
-                it.setErrorIconTintList(
+                layout.error = context?.getString(R.string.saved_login_duplicate)
+                layout.setErrorIconDrawable(R.drawable.mozac_ic_warning_with_bottom_padding)
+                layout.setErrorIconTintList(
                     ColorStateList.valueOf(
-                        ContextCompat.getColor(requireContext(), R.color.design_error)
+                        ContextCompat.getColor(requireContext(), R.color.destructive_normal_theme)
                     )
                 )
-                binding.clearUsernameTextButton.isVisible = false
+                clearButton.isVisible = false
             }
-        } else {
-            usernameChanged = true
-            validUsername = true
-            binding.inputLayoutUsername.error = null
-            binding.inputLayoutUsername.errorIconDrawable = null
-            binding.clearUsernameTextButton.isVisible = true
         }
+        clearButton.isEnabled = currentValue.isNotEmpty()
+        setSaveButtonState()
     }
 
     private fun setPasswordError() {
@@ -248,7 +250,7 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
             layout.setErrorIconDrawable(R.drawable.mozac_ic_warning_with_bottom_padding)
             layout.setErrorIconTintList(
                 ColorStateList.valueOf(
-                    ContextCompat.getColor(requireContext(), R.color.design_error)
+                    ContextCompat.getColor(requireContext(), R.color.destructive_normal_theme)
                 )
             )
         }

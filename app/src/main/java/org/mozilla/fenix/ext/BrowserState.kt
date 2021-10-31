@@ -24,15 +24,8 @@ import kotlin.math.max
 fun BrowserState.asRecentTabs(): List<RecentTab> {
     return mutableListOf<RecentTab>().apply {
         val lastOpenedNormalTab = lastOpenedNormalTab
-        val inProgressMediaTab = inProgressMediaTab
 
         lastOpenedNormalTab?.let { add(RecentTab.Tab(it)) }
-
-        if (inProgressMediaTab == lastOpenedNormalTab) {
-            secondToLastOpenedNormalTab?.let { add(RecentTab.Tab(it)) }
-        } else {
-            inProgressMediaTab?.let { add(RecentTab.Tab(it)) }
-        }
 
         lastSearchGroup?.let { add(it) }
     }
@@ -67,7 +60,7 @@ val BrowserState.inProgressMediaTab: TabSessionState?
  */
 val BrowserState.lastSearchGroup: RecentTab.SearchGroup?
     get() {
-        val tabGroup = normalTabs.toSearchGroup().lastOrNull { it.tabs.count() > 1 } ?: return null
+        val tabGroup = normalTabs.toSearchGroup().first.lastOrNull() ?: return null
         val firstTab = tabGroup.tabs.firstOrNull() ?: return null
 
         return RecentTab.SearchGroup(
@@ -80,9 +73,12 @@ val BrowserState.lastSearchGroup: RecentTab.SearchGroup?
     }
 
 /**
- * Get search term groups sorted by last access time.
+ * Returns a pair containing a list of search term groups sorted by last access time, and "remainder" tabs that have
+ * search terms but should not be in groups (because the group is of size one).
  */
-private fun List<TabSessionState>.toSearchGroup(): List<TabGroup> {
+fun List<TabSessionState>.toSearchGroup(
+    groupSet: Set<String> = emptySet()
+): Pair<List<TabGroup>, List<TabSessionState>> {
     val data = filter {
         it.isNormalTabActiveWithSearchTerm(maxActiveTime)
     }.groupBy {
@@ -92,7 +88,7 @@ private fun List<TabSessionState>.toSearchGroup(): List<TabGroup> {
         }.lowercase()
     }
 
-    return data.map { mapEntry ->
+    val groupings = data.map { mapEntry ->
         val searchTerm = mapEntry.key.replaceFirstChar(Char::uppercase)
         val groupTabs = mapEntry.value
         val groupMax = groupTabs.fold(0L) { acc, tab ->
@@ -104,5 +100,12 @@ private fun List<TabSessionState>.toSearchGroup(): List<TabGroup> {
             tabs = groupTabs,
             lastAccess = groupMax
         )
-    }.sortedBy { it.lastAccess }
+    }
+
+    val groups = groupings
+        .filter { it.tabs.size > 1 || groupSet.contains(it.searchTerm) }
+        .sortedBy { it.lastAccess }
+    val remainderTabs = (groupings - groups).flatMap { it.tabs }
+
+    return groups to remainderTabs
 }

@@ -677,18 +677,18 @@ class SettingsTest {
 
     @Test
     fun `GIVEN startOnHomeAlways is selected WHEN calling shouldStartOnHome THEN return true`() {
-        settings.startOnHomeAlways = true
-        settings.startOnHomeNever = false
-        settings.startOnHomeAfterFourHours = false
+        settings.alwaysOpenTheHomepageWhenOpeningTheApp = true
+        settings.alwaysOpenTheLastTabWhenOpeningTheApp = false
+        settings.openHomepageAfterFourHoursOfInactivity = false
 
         assertTrue(settings.shouldStartOnHome())
     }
 
     @Test
     fun `GIVEN startOnHomeNever is selected WHEN calling shouldStartOnHome THEN return be false`() {
-        settings.startOnHomeNever = true
-        settings.startOnHomeAlways = false
-        settings.startOnHomeAfterFourHours = false
+        settings.alwaysOpenTheLastTabWhenOpeningTheApp = true
+        settings.alwaysOpenTheHomepageWhenOpeningTheApp = false
+        settings.openHomepageAfterFourHoursOfInactivity = false
 
         assertFalse(settings.shouldStartOnHome())
     }
@@ -698,9 +698,9 @@ class SettingsTest {
         val localSetting = spyk(settings)
         val now = Calendar.getInstance()
 
-        localSetting.startOnHomeAfterFourHours = true
-        localSetting.startOnHomeNever = false
-        localSetting.startOnHomeAlways = false
+        localSetting.openHomepageAfterFourHoursOfInactivity = true
+        localSetting.alwaysOpenTheLastTabWhenOpeningTheApp = false
+        localSetting.alwaysOpenTheHomepageWhenOpeningTheApp = false
 
         now.timeInMillis = System.currentTimeMillis()
         localSetting.lastBrowseActivity = now.timeInMillis
@@ -716,9 +716,9 @@ class SettingsTest {
         val localSetting = spyk(settings)
         val now = System.currentTimeMillis()
 
-        localSetting.startOnHomeAfterFourHours = true
-        localSetting.startOnHomeNever = false
-        localSetting.startOnHomeAlways = false
+        localSetting.openHomepageAfterFourHoursOfInactivity = true
+        localSetting.alwaysOpenTheLastTabWhenOpeningTheApp = false
+        localSetting.alwaysOpenTheHomepageWhenOpeningTheApp = false
 
         localSetting.lastBrowseActivity = now
 
@@ -752,5 +752,35 @@ class SettingsTest {
         // When just created
         // Then
         assertTrue(settings.inactiveTabsAreEnabled)
+    }
+
+    @Test
+    fun `GIVEN shouldShowInactiveTabsAutoCloseDialog WHEN the dialog has been dismissed before THEN no show the dialog`() {
+        val settings = spyk(settings)
+        every { settings.hasInactiveTabsAutoCloseDialogBeenDismissed } returns true
+
+        assertFalse(settings.shouldShowInactiveTabsAutoCloseDialog(20))
+    }
+
+    @Test
+    fun `GIVEN shouldShowInactiveTabsAutoCloseDialog WHEN the inactive tabs are less than the minimum THEN no show the dialog`() {
+        assertFalse(settings.shouldShowInactiveTabsAutoCloseDialog(19))
+    }
+
+    @Test
+    fun `GIVEN shouldShowInactiveTabsAutoCloseDialog WHEN closeTabsAfterOneMonth is already selected THEN no show the dialog`() {
+        val settings = spyk(settings)
+        every { settings.closeTabsAfterOneMonth } returns true
+
+        assertFalse(settings.shouldShowInactiveTabsAutoCloseDialog(19))
+    }
+
+    @Test
+    fun `GIVEN shouldShowInactiveTabsAutoCloseDialog WHEN the dialog has not been dismissed, with more inactive tabs than the queried and closeTabsAfterOneMonth not set THEN show the dialog`() {
+        val settings = spyk(settings)
+        every { settings.closeTabsAfterOneMonth } returns false
+        every { settings.hasInactiveTabsAutoCloseDialogBeenDismissed } returns false
+
+        assertTrue(settings.shouldShowInactiveTabsAutoCloseDialog(20))
     }
 }

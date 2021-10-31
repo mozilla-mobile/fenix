@@ -4,7 +4,6 @@
 
 package org.mozilla.fenix.tabstray.browser
 
-import TabGroupViewHolder
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -13,18 +12,12 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.HORIZONTAL
 import androidx.recyclerview.widget.RecyclerView.VERTICAL
-import mozilla.components.concept.tabstray.Tabs
-import mozilla.components.concept.tabstray.TabsTray
-import mozilla.components.support.base.observer.ObserverRegistry
+import mozilla.components.browser.state.state.TabSessionState
+import mozilla.components.browser.tabstray.TabsTray
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.selection.SelectionHolder
 import org.mozilla.fenix.tabstray.TabsTrayStore
-import kotlin.math.max
-import mozilla.components.concept.tabstray.Tab as TabsTrayTab
-import mozilla.components.support.base.observer.Observable
-
-typealias TrayObservable = Observable<TabsTray.Observer>
 
 /**
  * The [ListAdapter] for displaying the list of search term tabs.
@@ -32,40 +25,19 @@ typealias TrayObservable = Observable<TabsTray.Observer>
  * @param context [Context] used for various platform interactions or accessing [Components]
  * @param browserTrayInteractor [BrowserTrayInteractor] handling tabs interactions in a tab tray.
  * @param featureName [String] representing the name of the feature displaying tabs. Used in telemetry reporting.
- * @param delegate [Observable]<[TabsTray.Observer]> for observing tabs tray changes. Defaults to [ObserverRegistry].
  */
 @Suppress("TooManyFunctions")
 class TabGroupAdapter(
     private val context: Context,
     private val browserTrayInteractor: BrowserTrayInteractor,
     private val store: TabsTrayStore,
-    private val featureName: String,
-    delegate: TrayObservable = ObserverRegistry()
-) : ListAdapter<TabGroupAdapter.Group, TabGroupViewHolder>(DiffCallback), TabsTray, TrayObservable by delegate {
-
-    // TODO use [List<TabSessionState>.toSearchGroup()]
-    //  see https://github.com/mozilla-mobile/android-components/issues/11012
-    data class Group(
-        /**
-         * A title for the tab group.
-         */
-        val title: String,
-
-        /**
-         * The list of tabs belonging to this tab group.
-         */
-        val tabs: List<TabsTrayTab>,
-
-        /**
-         * The last time tabs in this group was accessed.
-         */
-        val lastAccess: Long
-    )
+    override val featureName: String,
+) : ListAdapter<TabGroup, TabGroupViewHolder>(DiffCallback), TabsTray, FeatureNameHolder {
 
     /**
      * Tracks the selected tabs in multi-select mode.
      */
-    var selectionHolder: SelectionHolder<TabsTrayTab>? = null
+    var selectionHolder: SelectionHolder<TabSessionState>? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TabGroupViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
@@ -82,7 +54,7 @@ class TabGroupAdapter(
 
     override fun onBindViewHolder(holder: TabGroupViewHolder, position: Int) {
         val group = getItem(position)
-        holder.bind(group, this)
+        holder.bind(group)
     }
 
     override fun getItemViewType(position: Int) = TabGroupViewHolder.LAYOUT_ID
@@ -102,43 +74,17 @@ class TabGroupAdapter(
     }
 
     /**
-     * Creates a grouping of data classes for how groupings will be structured.
+     * Not implemented; implementation is handled [List<Tab>.toSearchGroups]
      */
-    override fun updateTabs(tabs: Tabs) {
-        val data = tabs.list.groupBy { it.searchTerm.lowercase() }
+    override fun updateTabs(tabs: List<TabSessionState>, selectedTabId: String?) =
+        throw UnsupportedOperationException("Use submitList instead.")
 
-        val grouping = data.map { mapEntry ->
-            val searchTerm = mapEntry.key.replaceFirstChar(Char::uppercase)
-            val groupTabs = mapEntry.value
-            val groupMax = groupTabs.fold(0L) { acc, tab ->
-                max(tab.lastAccess, acc)
-            }
-
-            Group(
-                title = searchTerm,
-                tabs = groupTabs,
-                lastAccess = groupMax
-            )
-        }.sortedBy { it.lastAccess }
-
-        submitList(grouping)
-    }
-
-    /**
-     * Not implemented; handled by nested [RecyclerView].
-     */
-    override fun isTabSelected(tabs: Tabs, position: Int): Boolean = false
-    override fun onTabsChanged(position: Int, count: Int) = Unit
-    override fun onTabsInserted(position: Int, count: Int) = Unit
-    override fun onTabsMoved(fromPosition: Int, toPosition: Int) = Unit
-    override fun onTabsRemoved(position: Int, count: Int) = Unit
-
-    private object DiffCallback : DiffUtil.ItemCallback<Group>() {
-        override fun areItemsTheSame(oldItem: Group, newItem: Group) = oldItem.title == newItem.title
-        override fun areContentsTheSame(oldItem: Group, newItem: Group) = oldItem == newItem
+    private object DiffCallback : DiffUtil.ItemCallback<TabGroup>() {
+        override fun areItemsTheSame(oldItem: TabGroup, newItem: TabGroup) = oldItem.searchTerm == newItem.searchTerm
+        override fun areContentsTheSame(oldItem: TabGroup, newItem: TabGroup) = oldItem == newItem
     }
 }
 
-internal fun TabGroupAdapter.Group.containsTabId(tabId: String): Boolean {
+internal fun TabGroup.containsTabId(tabId: String): Boolean {
     return tabs.firstOrNull { it.id == tabId } != null
 }

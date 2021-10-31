@@ -96,7 +96,7 @@ class HomeScreenTest {
             verifyWelcomeHeader()
         }.openThreeDotMenu {
         }.openSettings {
-            verifyBasicsHeading()
+            verifyGeneralHeading()
         }.goBack {
             verifyExistingTopSitesList()
         }
@@ -119,7 +119,7 @@ class HomeScreenTest {
     @Test
     fun dismissOnboardingUsingHelpTest() {
         val settings = activityTestRule.activity.applicationContext.settings()
-        settings.hasShownHomeOnboardingDialog = true
+        settings.shouldShowJumpBackInCFR = false
         homeScreen {
             verifyWelcomeHeader()
         }.openThreeDotMenu {

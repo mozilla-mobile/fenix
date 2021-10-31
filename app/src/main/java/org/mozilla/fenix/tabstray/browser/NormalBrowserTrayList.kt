@@ -10,18 +10,11 @@ import androidx.recyclerview.widget.ConcatAdapter
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.tabstray.TabViewHolder
 import mozilla.components.feature.tabs.tabstray.TabsFeature
-import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.tabstray.ext.browserAdapter
 import org.mozilla.fenix.tabstray.ext.inactiveTabsAdapter
-import org.mozilla.fenix.tabstray.ext.isNormalTabActive
-import org.mozilla.fenix.tabstray.ext.isNormalTabActiveWithSearchTerm
-import org.mozilla.fenix.tabstray.ext.isNormalTabActiveWithoutSearchTerm
-import org.mozilla.fenix.tabstray.ext.isNormalTabWithoutSearchTerm
-import org.mozilla.fenix.tabstray.ext.isNormalTabWithSearchTerm
 import org.mozilla.fenix.tabstray.ext.isNormalTabInactive
-import org.mozilla.fenix.tabstray.ext.tabGroupAdapter
 import java.util.concurrent.TimeUnit
 
 /**
@@ -41,100 +34,68 @@ class NormalBrowserTrayList @JvmOverloads constructor(
 ) : AbstractBrowserTrayList(context, attrs, defStyleAttr) {
 
     private val concatAdapter by lazy { adapter as ConcatAdapter }
+    private val tabSorter by lazy {
+        TabSorter(
+            context.settings(),
+            context.components.analytics.metrics,
+            concatAdapter
+        )
+    }
+    private val inactiveTabsFilter: (TabSessionState) -> Boolean = filter@{
+        if (!context.settings().inactiveTabsAreEnabled) {
+            return@filter false
+        }
+        it.isNormalTabInactive(maxActiveTime)
+    }
+
+    private val inactiveTabsInteractor by lazy {
+        DefaultInactiveTabsInteractor(
+            InactiveTabsController(
+                context.components.core.store,
+                inactiveTabsFilter,
+                concatAdapter.inactiveTabsAdapter,
+                context.components.analytics.metrics
+            )
+        )
+    }
+
+    private val inactiveTabsAutoCloseInteractor by lazy {
+        DefaultInactiveTabsAutoCloseDialogInteractor(
+            InactiveTabsAutoCloseDialogController(
+                context.components.core.store,
+                context.settings(),
+                inactiveTabsFilter,
+                concatAdapter.inactiveTabsAdapter,
+                context.components.analytics.metrics
+            )
+        )
+    }
 
     override val tabsFeature by lazy {
-        val tabsAdapter = concatAdapter.browserAdapter
-        val inactiveTabsEnabled = context.settings().inactiveTabsAreEnabled
-        val tabFilter: (TabSessionState) -> Boolean = {
-            when {
-                FeatureFlags.tabGroupFeature && inactiveTabsEnabled ->
-                    it.isNormalTabActiveWithoutSearchTerm(maxActiveTime)
-
-                inactiveTabsEnabled -> it.isNormalTabActive(maxActiveTime)
-
-                FeatureFlags.tabGroupFeature -> it.isNormalTabWithoutSearchTerm()
-
-                else -> !it.content.private
-            }
-        }
-
         TabsFeature(
-            tabsAdapter,
+            tabSorter,
             context.components.core.store,
-            selectTabUseCase,
-            removeTabUseCase,
-            tabFilter,
-            {}
-        )
-    }
-
-    private val searchTermFeature by lazy {
-        val store = context.components.core.store
-        val inactiveTabsEnabled = context.settings().inactiveTabsAreEnabled
-        val tabFilter: (TabSessionState) -> Boolean = {
-            when {
-                FeatureFlags.tabGroupFeature && inactiveTabsEnabled -> it.isNormalTabActiveWithSearchTerm(maxActiveTime)
-
-                FeatureFlags.tabGroupFeature -> it.isNormalTabWithSearchTerm()
-
-                else -> false
-            }
-        }
-        val tabsAdapter = concatAdapter.tabGroupAdapter
-
-        TabsFeature(
-            tabsAdapter,
-            store,
-            selectTabUseCase,
-            removeTabUseCase,
-            tabFilter,
-            {}
-        )
-    }
-
-    /**
-     * NB: The setup for this feature is a bit complicated without a better dependency injection
-     * solution to scope it down to just this view.
-     */
-    private val inactiveFeature by lazy {
-        val store = context.components.core.store
-        val tabFilter: (TabSessionState) -> Boolean = filter@{
-            if (!context.settings().inactiveTabsAreEnabled) {
-                return@filter false
-            }
-            it.isNormalTabInactive(maxActiveTime)
-        }
-        val tabsAdapter = concatAdapter.inactiveTabsAdapter.apply {
-            inactiveTabsInteractor = DefaultInactiveTabsInteractor(
-                InactiveTabsController(store, tabFilter, this, context.components.analytics.metrics)
-            )
-        }
-
-        TabsFeature(
-            tabsAdapter,
-            store,
-            selectTabUseCase,
-            removeTabUseCase,
-            tabFilter,
-            {}
+            { !it.content.private },
         )
     }
 
     private val touchHelper by lazy {
         TabsTouchHelper(
-            observable = concatAdapter.browserAdapter,
+            interactionDelegate = concatAdapter.browserAdapter.interactor,
             onViewHolderTouched = {
                 it is TabViewHolder && swipeToDelete.isSwipeable
             },
-            onViewHolderDraw = { context.components.settings.gridTabView.not() }
+            onViewHolderDraw = { context.components.settings.gridTabView.not() },
+            featureNameHolder = concatAdapter.browserAdapter
         )
     }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
 
-        inactiveFeature.start()
-        searchTermFeature.start()
+        concatAdapter.inactiveTabsAdapter.inactiveTabsInteractor = inactiveTabsInteractor
+        concatAdapter.inactiveTabsAdapter.inactiveTabsAutoCloseDialogInteractor = inactiveTabsAutoCloseInteractor
+
         tabsFeature.start()
 
         touchHelper.attachToRecyclerView(this)
@@ -144,8 +105,6 @@ class NormalBrowserTrayList @JvmOverloads constructor(
         super.onDetachedFromWindow()
 
         tabsFeature.stop()
-        searchTermFeature.stop()
-        inactiveFeature.stop()
 
         touchHelper.attachToRecyclerView(null)
     }

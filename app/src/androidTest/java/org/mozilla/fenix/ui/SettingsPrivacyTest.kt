@@ -47,7 +47,7 @@ class SettingsPrivacyTest {
         }
 
         val settings = activityTestRule.activity.applicationContext.settings()
-        settings.hasShownHomeOnboardingDialog = true
+        settings.shouldShowJumpBackInCFR = false
     }
 
     @After
@@ -223,7 +223,7 @@ class SettingsPrivacyTest {
     fun neverSaveLoginFromPromptTest() {
         val saveLoginTest = TestAssetHelper.getSaveLoginAsset(mockWebServer)
         val settings = activityTestRule.activity.settings()
-        settings.hasShownHomeOnboardingDialog = true
+        settings.shouldShowJumpBackInCFR = false
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(saveLoginTest.url) {
@@ -330,7 +330,7 @@ class SettingsPrivacyTest {
     @Test
     fun launchLinksInPrivateToggleOffStateDoesntChangeTest() {
         val settings = activityTestRule.activity.applicationContext.settings()
-        settings.hasShownHomeOnboardingDialog = true
+        settings.shouldShowJumpBackInCFR = false
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         setOpenLinksInPrivateOn()
@@ -449,7 +449,7 @@ class SettingsPrivacyTest {
             confirmDeletionAndAssertSnackbar()
         }
         settingsScreen {
-            verifyBasicsHeading()
+            verifyGeneralHeading()
         }
     }
 
@@ -472,7 +472,7 @@ class SettingsPrivacyTest {
             confirmDeletionAndAssertSnackbar()
         }
         settingsScreen {
-            verifyBasicsHeading()
+            verifyGeneralHeading()
         }.openSettingsSubMenuDeleteBrowsingData {
             verifyOpenTabsDetails("0")
         }.goBack {
@@ -505,7 +505,7 @@ class SettingsPrivacyTest {
             confirmDeletionAndAssertSnackbar()
             verifyBrowsingHistoryDetails("0")
         }.goBack {
-            verifyBasicsHeading()
+            verifyGeneralHeading()
         }.goBack {
         }
         navigationToolbar {

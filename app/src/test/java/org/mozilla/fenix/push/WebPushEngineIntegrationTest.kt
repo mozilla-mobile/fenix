@@ -17,7 +17,6 @@ import io.mockk.mockkStatic
 import io.mockk.slot
 import io.mockk.unmockkStatic
 import io.mockk.verify
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
 import mozilla.components.concept.engine.Engine
@@ -33,9 +32,9 @@ import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 
-@ExperimentalCoroutinesApi
 class WebPushEngineIntegrationTest {
 
     private val scope = TestCoroutineScope()
@@ -90,6 +89,7 @@ class WebPushEngineIntegrationTest {
     }
 
     @Test
+    @Ignore("Intermittent failing test on JDK11: https://github.com/mockk/mockk/issues/598")
     fun `delegate calls getSubscription`() {
         integration.start()
         var subscribeFn: ((AutoPushSubscription?) -> Unit)? = null

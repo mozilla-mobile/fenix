@@ -26,7 +26,7 @@
     <!-- Message announced to the user when tab tray is selected with 1 tab -->
     <string name="open_tab_tray_single">開いているタブ 1 個。タップしてタブを切り替えます。</string>
     <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
-    <string name="open_tab_tray_plural">開いているタブ %1$s 個。タップしてタブを切り替えます。</string>
+    <string moz:removedIn="95" name="open_tab_tray_plural" tools:ignore="UnusedResources">開いているタブ %1$s 個。タップしてタブを切り替えます。</string>
 
     <!-- Tab tray multi select title in app bar. The first parameter is the number of tabs selected -->
     <string name="tab_tray_multi_select_title">%1$d 個選択</string>
@@ -56,7 +56,9 @@
     <!-- Title for the home screen section with recently saved bookmarks. -->
     <string moz:removedIn="94" name="recently_saved_bookmarks" tools:ignore="UnusedResources">最近保存</string>
     <!-- Title for the home screen section with recently saved bookmarks. -->
-    <string name="recently_bookmarked">最近追加したブックマーク</string>
+    <string moz:removedIn="94" name="recently_bookmarked" tools:ignore="UnusedResources">最近追加したブックマーク</string>
+    <!-- Title for the home screen section with recently saved bookmarks. -->
+    <string name="recent_bookmarks_title">最近追加したブックマーク</string>
     <!-- Content description for the recently saved bookmarks section on the home screen. -->
     <string name="recently_saved_bookmarks_content_description">最近保存したブックマーク</string>
     <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
@@ -110,6 +112,20 @@
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">閉じる</string>
 
+    <!-- Text for the banner message to tell users about our inactive tabs feature. -->
+    <string name="tab_tray_inactive_onboarding_message">2 週間以上表示していないタブをここに移動します。</string>
+    <!-- Text for the action link to go to Settings for inactive tabs. -->
+    <string name="tab_tray_inactive_onboarding_button_text">設定でオフにする</string>
+
+    <!-- Text for title for the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_auto_close_title">1 か月後に自動的に閉じますか？</string>
+    <!-- Text for the body for the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_auto_close_body">Firefox は 1 か月以上表示していないタブを閉じることができます。</string>
+    <!-- Content description for close button in the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_auto_close_button_content_description">閉じる</string>
+    <!-- Text for turn on auto close tabs button in the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_turn_on_auto_close_button">タブを自動的に閉じる</string>
+
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
     <string name="home_screen_shortcut_open_new_tab_2">新しいタブ</string>
@@ -117,13 +133,22 @@
     <string name="home_screen_shortcut_open_new_private_tab_2">新しいプライベートタブ</string>
 
     <!-- Heading for the Top Sites block -->
-    <string name="home_screen_top_sites_heading">よく見るサイト</string>
+    <string moz:removedIn="95" name="home_screen_top_sites_heading" tools:ignore="UnusedResources">よく見るサイト</string>
 
     <!-- Recent Tabs -->
     <!-- Header text for jumping back into the recent tab in the home screen -->
     <string name="recent_tabs_header">以前表示したタブ</string>
     <!-- Button text for showing all the tabs in the tabs tray -->
     <string name="recent_tabs_show_all">すべて表示</string>
+
+    <!-- Content description for the button which navigates the user to show all recent tabs in the tabs tray. -->
+    <string name="recent_tabs_show_all_content_description">最近のタブをすべて表示するボタンです</string>
+    <!-- Title for showing a group item in the 'Jump back in' section of the new tab
+        The first parameter is the search term that the user used. (for example: your search for "cat")-->
+    <string name="recent_tabs_search_term">\&quot;%1$s\&quot; についての検索</string>
+    <!-- Text for the number of tabs in a group in the 'Jump back in' section of the new tab
+        The first parameter is the count for number of sites in the group.  This number will always be more than one. -->
+    <string name="recent_tabs_search_term_count">サイト数: %1$s</string>
 
     <!-- History Metadata -->
     <!-- Header text for a section on the home screen that displays grouped highlights from the
@@ -132,10 +157,16 @@
 
     <!-- Header text for a section on the home screen that displays grouped highlights from the
          user's browsing history, such as topics they have researched or explored on the web -->
-    <string name="history_metadata_header_2">最近訪れたサイト</string>
+    <string moz:removedIn="94" name="history_metadata_header_2" tools:ignore="UnusedResources">最近訪れたサイト</string>
+    <!-- Header text for a section on the home screen that displays grouped highlights from the
+         user's browsing history, such as topics they have researched or explored on the web -->
+    <string name="history_metadata_header_3">最近の検索</string>
     <!-- Text for the menu button to remove a grouped highlight from the user's browsing history
          in the Recently visited section -->
     <string name="recently_visited_menu_item_remove">削除</string>
+
+    <!-- Content description for the button which navigates the user to show all of their history. -->
+    <string name="past_explorations_show_all_content_description">過去の検索をすべて表示するボタンです</string>
 
     <!-- Browser Fragment -->
     <!-- Content description (not visible, for screen readers etc.): Navigate to open tabs -->
@@ -149,7 +180,7 @@
     <!-- Content description (not visible, for screen readers etc.): Stop loading current website -->
     <string name="browser_menu_stop">中止</string>
     <!-- Content description (not visible, for screen readers etc.): Bookmark the current page -->
-    <string name="browser_menu_bookmark">ブックマーク</string>
+    <string moz:removedIn="95" name="browser_menu_bookmark" tools:ignore="UnusedResources">ブックマーク</string>
     <!-- Content description (not visible, for screen readers etc.): Un-bookmark the current page -->
     <string name="browser_menu_edit_bookmark">ブックマークを編集</string>
     <!-- Browser menu button that opens the addon manager -->
@@ -215,6 +246,8 @@
 
     <!-- Browser menu button that opens the Customize menu -->
     <string name="browser_menu_customize_home">カスタマイズホーム</string>
+    <!-- Button shown on the home page that opens the Customize home settings -->
+    <string name="browser_menu_customize_home_1">ホームページをカスタマイズ</string>
     <!-- Browser Toolbar -->
     <!-- Content description for the Home screen button on the browser toolbar -->
     <string name="browser_toolbar_home">ホーム画面</string>
@@ -260,6 +293,28 @@
     <string name="search_engine_suggestions_title">%s で検索</string>
     <!-- Search engine suggestion description text -->
     <string name="search_engine_suggestions_description">アドレスバーから直接検索します</string>
+
+    <!-- Home onboarding -->
+    <!-- Onboarding home screen dialog title text. Firefox is intentionally hardcoded. -->
+    <string name="onboarding_home_screen_title_2">Firefox の新機能</string>
+
+    <!-- Onboarding home screen dialog description text. -->
+    <string name="onboarding_home_screen_description_2">前回のページから再開するのが簡単になりました。</string>
+    <!-- Onboarding home screen dialog title text for the home section. Firefox is intentionally hardcoded. -->
+    <string name="onboarding_home_screen_section_home_title_2">個人に合わせた Firefox ホームページ</string>
+    <!-- Onboarding home screen dialog description text for the home section. -->
+    <string name="onboarding_home_screen_section_home_description_2">開いているタブ、ブックマーク、ブラウジング履歴にジャンプします。</string>
+    <!-- Onboarding home screen dialog description text for the tab tray section. -->
+    <string name="onboarding_home_screen_section_cleaner_tab_tray_title_2">きれいに整理されたタブ</string>
+    <!-- Onboarding home screen dialog description text for the tab tray section. -->
+    <string name="onboarding_home_screen_section_cleaner_tab_tray_description_2">改善されたレイアウトとタブを自動的に閉じる機能で散らかったタブを片付けます。</string>
+    <!-- Onboarding home screen dialog description text for the history section. -->
+    <string name="onboarding_home_screen_section_useful_history_title_2">最近の検索</string>
+    <!-- Onboarding home screen dialog description text for the history section. -->
+    <string name="onboarding_home_screen_section_useful_history_description_2">ホームページとタブから最近の検索を確認できます。</string>
+
+    <!-- Onboarding home screen popup dialog, shown on top of the Jump back in section. Firefox is intentionally hardcoded. -->
+    <string name="onboarding_home_screen_jump_back_contextual_hint" tools:ignore="UnusedResources">個人に合わせた Firefox ホームページにより、前回のページから簡単に再開できるようになりました。最近のタブ、ブックマーク、検索結果を見つけられます。</string>
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
@@ -341,7 +396,9 @@
     <!-- Preference for changing default theme to dark or light mode -->
     <string name="preferences_theme">テーマ</string>
     <!-- Preference for customizing the home screen -->
-    <string name="preferences_home">ホーム画面</string>
+    <string moz:removedIn="94" name="preferences_home" tools:ignore="UnusedResources">ホーム画面</string>
+    <!-- Preference for customizing the home screen -->
+    <string name="preferences_home_2">ホームページ</string>
     <!-- Preference for gestures based actions -->
     <string name="preferences_gestures">ジェスチャー</string>
     <!-- Preference for settings related to visual options -->
@@ -416,9 +473,15 @@
     <!-- Title for the customize home screen section with recently saved bookmarks. -->
     <string moz:removedIn="94" name="customize_toggle_recently_saved_bookmarks" tools:ignore="UnusedResources">最近保存したサイト</string>
     <!-- Title for the customize home screen section with recently saved bookmarks. -->
-    <string name="customize_toggle_recently_bookmarked">最近追加したブックマーク</string>
-    <!-- Title for the customize home screen section with recently visited. Recently visited is a section where users see a list of tabs that they have visited in the past few days -->
-    <string name="customize_toggle_recently_visited">最近訪れたサイト</string>
+    <string moz:removedIn="94" name="customize_toggle_recently_bookmarked" tools:ignore="UnusedResources">最近追加したブックマーク</string>
+    <!-- Title for the customize home screen section with recently saved bookmarks. -->
+    <string name="customize_toggle_recent_bookmarks">最近追加したブックマーク</string>
+    <!-- Title for the customize home screen section with recently visited. Recently visited is
+    a section where users see a list of tabs that they have visited in the past few days -->
+    <string moz:removedIn="94" name="customize_toggle_recently_visited" tools:ignore="UnusedResources">最近訪れたサイト</string>
+    <!-- Title for the customize home screen settings section for recent searches. Recent searches
+     is a section where users see a list of groups of tabs that they have visited in the past few days -->
+    <string name="customize_toggle_recent_searches">最近の検索</string>
     <!-- Title for the customize home screen section with Pocket. -->
     <string name="customize_toggle_pocket">Pocket</string>
 
@@ -532,7 +595,7 @@
     <!-- Header of the Turn on Sync preference view -->
     <string name="preferences_sync">Sync を有効化</string>
     <!-- Preference for pairing -->
-    <string name="preferences_sync_pair">デスクトップ版 Firefox のペアリングコードをスキャン</string>
+    <string moz:removedIn="95" name="preferences_sync_pair" tools:ignore="UnusedResources">デスクトップ版 Firefox のペアリングコードをスキャン</string>
     <!-- Preference for account login -->
     <string name="preferences_sync_sign_in">ログイン</string>
 
@@ -638,6 +701,10 @@
     <string name="tab_view_list">リスト</string>
     <!-- Option for a grid tab view -->
     <string name="tab_view_grid">グリッド</string>
+    <!-- Option for search term tab groups -->
+    <string name="tab_view_search_term_tab_groups">タブグループを検索</string>
+    <!-- Summary text for search term tab groups -->
+    <string name="tab_view_search_term_tab_groups_summary">関連サイトをグループ化します</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
     <string name="preferences_close_tabs">タブを閉じる期間</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
@@ -649,15 +716,26 @@
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">1 か月後</string>
 
-    <!-- Start on Home -->
+    <!-- Title of preference that allows a user to specify the auto-close settings for open tabs -->
+    <string name="preference_auto_close_tabs" tools:ignore="UnusedResources">開いたタブを自動的に閉じる</string>
+
+    <!-- Opening screen -->
     <!-- Title of a preference that allows a user to indicate after a specified amount of time when the app should start on the home screen -->
-    <string name="preferences_start_on_home">ホーム画面で開始</string>
+    <string moz:removedIn="94" name="preferences_start_on_home" tools:ignore="UnusedResources">ホーム画面で開始</string>
+    <!-- Title of a preference that allows a user to choose what screen to show after opening the app -->
+    <string name="preferences_opening_screen">最初の画面</string>
     <!-- Option for starting on the home screen after after four hours or inactivity -->
-    <string name="start_on_home_after_four_hours">4 時間後</string>
+    <string moz:removedIn="94" name="start_on_home_after_four_hours" tools:ignore="UnusedResources">4 時間後</string>
+    <!-- Option for always opening the homepage when re-opening the app -->
+    <string name="opening_screen_homepage">ホームページ</string>
     <!-- Option for always starting on the home screen -->
-    <string name="start_on_home_always">常に使用する</string>
+    <string moz:removedIn="94" name="start_on_home_always" tools:ignore="UnusedResources">常に使用する</string>
+    <!-- Option for always opening the user's last-open tab when re-opening the app -->
+    <string name="opening_screen_last_tab">最後のタブ</string>
     <!-- Option for never starting on the home screen -->
-    <string name="start_on_home_never">使用しない</string>
+    <string moz:removedIn="94" name="start_on_home_never" tools:ignore="UnusedResources">使用しない</string>
+    <!-- Option for always opening the homepage when re-opening the app after four hours of inactivity -->
+    <string name="opening_screen_after_four_hours_of_inactivity">操作せずに 4 時間経つとホームページへ戻ります</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
     <string name="close_tabs_manually_summary">手動で閉じる</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
@@ -666,6 +744,12 @@
     <string name="close_tabs_after_one_week_summary">1 週間後に閉じる</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one month-->
     <string name="close_tabs_after_one_month_summary">1 か月後に閉じる</string>
+
+    <!-- Inactive tabs -->
+    <!-- Category header of a preference that allows a user to enable or disable the inactive tabs feature -->
+    <string name="preferences_inactive_tabs">古いタブを休止中に移動する</string>
+    <!-- Title of inactive tabs preference -->
+    <string name="preferences_inactive_tabs_title">2 週間以上表示していないタブを休止中セクションに移動します。</string>
 
     <!-- Studies -->
     <!-- Title of the remove studies button -->
@@ -708,13 +792,13 @@
     <!-- Text shown in the menu for saving tabs to a collection -->
     <string name="tab_tray_menu_item_save">コレクションに保存</string>
     <!-- Text shown in the menu for the collection selector -->
-    <string name="tab_tray_menu_select">選択</string>
+    <string moz:removedIn="95" name="tab_tray_menu_select" tools:ignore="UnusedResources">選択</string>
     <!-- Text shown in the menu for sharing all tabs -->
     <string name="tab_tray_menu_item_share">すべてのタブを共有</string>
     <!-- Text shown in the menu to view recently closed tabs -->
     <string name="tab_tray_menu_recently_closed">最近閉じたタブ</string>
     <!-- Text shown in the tabs tray inactive tabs section -->
-    <string name="tab_tray_inactive_recently_closed">最近閉じたタブ</string>
+    <string name="tab_tray_inactive_recently_closed" tools:ignore="UnusedResources">最近閉じたタブ</string>
     <!-- Text shown in the menu to view account settings -->
     <string name="tab_tray_menu_account_settings">アカウント設定</string>
     <!-- Text shown in the menu to view tab settings -->
@@ -790,7 +874,10 @@
     <string name="tab_tray_save_to_collection">保存</string>
 
     <!-- Title text for the normal tabs header in the tabs tray which are not part of any tab grouping. -->
-    <string name="tab_tray_header_title">その他</string>
+    <string moz:removedIn="94" name="tab_tray_header_title" tools:ignore="UnusedResources">その他</string>
+
+    <!-- Title text for the normal tabs header in the tabs tray which are not part of any tab grouping. -->
+    <string name="tab_tray_header_title_1">他のタブ</string>
 
     <!-- History -->
     <!-- Text for the button to clear all history -->
@@ -836,10 +923,6 @@
     <string name="history_empty_message">履歴はありません</string>
 
     <!-- Downloads -->
-    <!-- Text for the button to clear all downloads -->
-    <string name="download_delete_all">ダウンロード履歴を消去</string>
-    <!-- Text for the dialog to confirm clearing all downloads -->
-    <string name="download_delete_all_dialog">本当にダウンロード履歴を消去しますか？</string>
     <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
     <string name="download_delete_multiple_items_snackbar_1">ダウンロード履歴を削除しました</string>
     <!-- Text for the snackbar to confirm that a single download item has been removed. The first parameter is the name of the download item. -->
@@ -880,7 +963,7 @@
     <!-- Content description for bookmarks library menu -->
     <string name="bookmark_menu_content_description">ブックマークメニュー</string>
     <!-- Screen title for editing bookmarks -->
-    <string name="bookmark_edit">ブックマークを編集</string>
+    <string moz:removedIn="95" name="bookmark_edit" tools:ignore="UnusedResources">ブックマークを編集</string>
     <!-- Screen title for selecting a bookmarks folder -->
     <string name="bookmark_select_folder">フォルダー選択</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete the selected folder -->
@@ -1921,8 +2004,10 @@
     <!-- Confirmation dialog button text when top sites limit is reached. -->
     <string name="top_sites_max_limit_confirmation_button">OK</string>
 
+    <!-- Label for the preference to show the most visited top sites on the homepage -->
+    <string name="top_sites_toggle_top_recent_sites_3">よく訪れるサイト</string>
     <!-- Label for the show most visited top sites preference -->
-    <string name="top_sites_toggle_top_frecent_sites_2">よく訪れるサイトを表示</string>
+    <string moz:removedIn="94" name="top_sites_toggle_top_frecent_sites_2" tools:ignore="UnusedResources">よく訪れるサイトを表示</string>
     <!-- Label for the show most visited sites preference -->
     <string moz:removedIn="93" name="top_sites_toggle_top_frecent_sites" tools:ignore="UnusedResources">よく訪れるサイトを表示</string>
 
@@ -1935,15 +2020,41 @@
 	<!-- Dialog button text for canceling the rename top site prompt. -->
 	<string name="top_sites_rename_dialog_cancel">キャンセル</string>
 
-    <!-- In-activate tabs in the tabs tray -->
-    <!-- Title text displayed in the tabs tray when a tab has been unused for 4 days. -->
+    <!-- Inactive tabs in the tabs tray -->
+    <!-- Title text displayed in the tabs tray when a tab has been unused for 14 days. -->
     <string name="inactive_tabs_title">休止中のタブ</string>
+    <!-- Content description for closing all inactive tabs -->
+    <string name="inactive_tabs_delete_all">休止中のタブをすべて閉じます</string>
     <!-- A description below the section of "inactive" tabs to notify the user when those tabs will be closed, if appropriate. See strings inactive_tabs_30_days and inactive_tabs_7_days for placeholders options. -->
-    <string name="inactive_tabs_description">これらのタブは %sを過ぎると自動的に閉じられます。</string>
+    <string moz:removedIn="93" name="inactive_tabs_description" tools:ignore="UnusedResources">これらのタブは %sを過ぎると自動的に閉じられます。</string>
     <!-- The amount of time until a tab in the "inactive" section of the tabs tray will be closed. See string inactive_tabs_description as well -->
-    <string name="inactive_tabs_30_days">30 日</string>
+    <string moz:removedIn="93" name="inactive_tabs_30_days" tools:ignore="UnusedResources">30 日</string>
     <!-- The amount of time until a tab in the "inactive" section of the tabs tray will be closed. See string inactive_tabs_description as well -->
-    <string name="inactive_tabs_7_days">1 週間</string>
+    <string moz:removedIn="93" name="inactive_tabs_7_days" tools:ignore="UnusedResources">1 週間</string>
+
+    <!-- Inactive tabs auto-close message in the tabs tray -->
+    <!-- The header text of the auto-close message when the user is asked if they want to turn on the auto-closing of inactive tabs. -->
+    <string name="inactive_tabs_auto_close_message_header" tools:ignore="UnusedResources">1 か月後に自動的に閉じますか？</string>
+    <!-- A description below the header to notify the user what the inactive tabs auto-close feature is. -->
+    <string name="inactive_tabs_auto_close_message_description" tools:ignore="UnusedResources">Firefox は 1 か月以上表示していないタブを閉じることができます。</string>
+    <!-- A call to action below the description to allow the user to turn on the auto closing of inactive tabs. -->
+    <string name="inactive_tabs_auto_close_message_action" tools:ignore="UnusedResources">自動的に閉じる</string>
+
+    <!-- Inactive tabs survey -->
+    <!-- Header text for the inactive tabs survey asking for feedback to improve the inactive tabs feature. -->
+    <string name="inactive_tabs_survey_header" tools:ignore="UnusedResources">改善にご協力ください</string>
+    <!-- Content text for the inactive tabs survey asking the primary survey feedback question. -->
+    <string name="inactive_tabs_survey_content" tools:ignore="UnusedResources">タブの休止を無効にしたのはなぜですか？</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string name="inactive_tabs_survey_not_interested_option" tools:ignore="UnusedResources">この機能に興味がない</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string name="inactive_tabs_survey_time_too_long_option" tools:ignore="UnusedResources">休止になるまでの時間が長すぎる</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string name="inactive_tabs_survey_time_too_short_option" tools:ignore="UnusedResources">休止になるまでの時間が短すぎる</string>
+    <!-- Confirmation button text to submit the feedback for the inactive tabs survey. -->
+    <string name="inactive_tabs_survey_send_button" tools:ignore="UnusedResources">送信</string>
+    <!-- Content description for inactive tabs survey close button -->
+    <string name="inactive_tabs_survey_close_button_content_description" tools:ignore="UnusedResources">閉じる</string>
 
     <!-- Default browser experiment -->
     <string name="default_browser_experiment_card_text">ウェブサイトやメール、メッセージのリンクを自動的に Firefox で開きます。</string>
@@ -1960,4 +2071,19 @@
     <!-- Content description for privacy content close button -->
     <string name="privacy_content_close_button_content_description">閉じる</string>
 
+    <!-- Pocket recommended stories -->
+    <!-- Header text for a section on the home screen. -->
+    <string moz:removedIn="94" name="pocket_stories_header" tools:ignore="UnusedResources">示唆に富むストーリー</string>
+    <!-- Header text for a section on the home screen. -->
+    <string name="pocket_stories_header_1">示唆に富むストーリー</string>
+    <!-- Header text for a section on the home screen. -->
+    <string name="pocket_stories_categories_header">トピック別のストーリー</string>
+    <!-- Text of a button allowing users to access an external url for more Pocket recommendations. -->
+    <string name="pocket_stories_placeholder_text">より詳しく</string>
+    <!-- Title of an app feature. Smaller than a heading.-->
+    <string name="pocket_stories_feature_title">Powered by Pocket.</string>
+    <!-- Caption for describing a certain feature. The placeholder is for a clickable text (eg: Learn more) which will load an url in a new tab when clicked.  -->
+    <string name="pocket_stories_feature_caption">Firefox ファミリーの一員です。 %s</string>
+    <!-- Clickable text for opening an external link for more information about Pocket. -->
+    <string name="pocket_stories_feature_learn_more">詳細情報</string>
 </resources>

@@ -18,9 +18,9 @@ import org.mozilla.fenix.home.recentbookmarks.controller.RecentBookmarksControll
 import org.mozilla.fenix.home.recentbookmarks.interactor.RecentBookmarksInteractor
 import org.mozilla.fenix.home.recenttabs.controller.RecentTabController
 import org.mozilla.fenix.home.recenttabs.interactor.RecentTabInteractor
-import org.mozilla.fenix.home.sessioncontrol.viewholders.pocket.PocketRecommendedStoryCategory
-import org.mozilla.fenix.home.sessioncontrol.viewholders.pocket.PocketStoriesController
-import org.mozilla.fenix.home.sessioncontrol.viewholders.pocket.PocketStoriesInteractor
+import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesCategory
+import org.mozilla.fenix.home.pocket.PocketStoriesController
+import org.mozilla.fenix.home.pocket.PocketStoriesInteractor
 
 /**
  * Interface for tab related actions in the [SessionControlInteractor].
@@ -391,15 +391,23 @@ class SessionControlInteractor(
         controller.handleCustomizeHomeTapped()
     }
 
-    override fun onCategoryClick(categoryClicked: PocketRecommendedStoryCategory) {
-        pocketStoriesController.handleCategoryClick(categoryClicked)
-    }
-
     override fun onStoriesShown(storiesShown: List<PocketRecommendedStory>) {
         pocketStoriesController.handleStoriesShown(storiesShown)
     }
 
-    override fun onExternalLinkClicked(link: String) {
-        pocketStoriesController.handleExternalLinkClick(link)
+    override fun onCategoryClicked(categoryClicked: PocketRecommendedStoriesCategory) {
+        pocketStoriesController.handleCategoryClick(categoryClicked)
+    }
+
+    override fun onStoryClicked(storyClicked: PocketRecommendedStory, storyPosition: Pair<Int, Int>) {
+        pocketStoriesController.handleStoryClicked(storyClicked, storyPosition)
+    }
+
+    override fun onLearnMoreClicked(link: String) {
+        pocketStoriesController.handleLearnMoreClicked(link)
+    }
+
+    override fun onDiscoverMoreClicked(link: String) {
+        pocketStoriesController.handleDiscoverMoreClicked(link)
     }
 }

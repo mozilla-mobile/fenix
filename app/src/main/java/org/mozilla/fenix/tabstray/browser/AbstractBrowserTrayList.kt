@@ -8,8 +8,8 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.DragEvent
 import androidx.recyclerview.widget.RecyclerView
+import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.tabstray.TabViewHolder
-import mozilla.components.concept.tabstray.Tab
 import mozilla.components.feature.tabs.tabstray.TabsFeature
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.tabstray.TabsTrayInteractor
@@ -103,7 +103,7 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
             DragEvent.ACTION_DRAG_STARTED -> {
                 // This check is required for the unchecked cast later on
                 if (event.localState is Collection<*>) {
-                    (event.localState as Collection<*>).all { it is Tab }
+                    (event.localState as Collection<*>).all { it is TabSessionState }
                 } else false
             }
             DragEvent.ACTION_DRAG_ENTERED -> {
@@ -120,7 +120,7 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
                 if (target != null) {
                     val (targetId, placeAfter) = target
                     @Suppress("UNCHECKED_CAST") // Cast is checked on drag start
-                    interactor.onTabsMove(event.localState as Collection<Tab>, targetId, placeAfter)
+                    interactor.onTabsMove(event.localState as Collection<TabSessionState>, targetId, placeAfter)
                 }
                 true
             }

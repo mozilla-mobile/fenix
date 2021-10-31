@@ -32,6 +32,7 @@ import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.metrics.MozillaProductDetector
 import org.mozilla.fenix.components.settings.counterPreference
 import org.mozilla.fenix.components.settings.featureFlagPreference
+import org.mozilla.fenix.components.settings.lazyFeatureFlagPreference
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.experiments.ExperimentBranch
 import org.mozilla.fenix.experiments.FeatureId
@@ -66,6 +67,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         private const val CFR_COUNT_CONDITION_FOCUS_INSTALLED = 1
         private const val CFR_COUNT_CONDITION_FOCUS_NOT_INSTALLED = 3
         private const val APP_LAUNCHES_TO_SHOW_DEFAULT_BROWSER_CARD = 3
+        private const val INACTIVE_TAB_MINIMUM_TO_SHOW_AUTO_CLOSE_DIALOG = 20
 
         const val FOUR_HOURS_MS = 60 * 60 * 4 * 1000L
         const val ONE_DAY_MS = 60 * 60 * 24 * 1000L
@@ -107,9 +109,10 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     override val preferences: SharedPreferences =
         appContext.getSharedPreferences(FENIX_PREFERENCES, MODE_PRIVATE)
 
-    var showTopFrecentSites by booleanPreference(
+    var showTopFrecentSites by lazyFeatureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_enable_top_frecent_sites),
-        default = true
+        featureFlag = true,
+        default = { appContext.components.analytics.features.homeScreen.isTopSitesActive() }
     )
 
     var numberOfAppLaunches by intPreference(
@@ -379,7 +382,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
      * Indicates if the user has selected the option to start on the home screen after
      * four hours of inactivity.
      */
-    var startOnHomeAfterFourHours by booleanPreference(
+    var openHomepageAfterFourHoursOfInactivity by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_start_on_home_after_four_hours),
         default = true
     )
@@ -387,15 +390,16 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     /**
      * Indicates if the user has selected the option to always start on the home screen.
      */
-    var startOnHomeAlways by booleanPreference(
+    var alwaysOpenTheHomepageWhenOpeningTheApp by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_start_on_home_always),
         default = false
     )
 
     /**
-     * Indicates if the user has selected the option to never start on the home screen.
+     * Indicates if the user has selected the option to never start on the home screen and have
+     * their last tab opened.
      */
-    var startOnHomeNever by booleanPreference(
+    var alwaysOpenTheLastTabWhenOpeningTheApp by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_start_on_home_never),
         default = false
     )
@@ -405,9 +409,9 @@ class Settings(private val appContext: Context) : PreferencesHolder {
      */
     fun shouldStartOnHome(): Boolean {
         return when {
-            startOnHomeAfterFourHours -> timeNowInMillis() - lastBrowseActivity >= FOUR_HOURS_MS
-            startOnHomeAlways -> true
-            startOnHomeNever -> false
+            openHomepageAfterFourHoursOfInactivity -> timeNowInMillis() - lastBrowseActivity >= FOUR_HOURS_MS
+            alwaysOpenTheHomepageWhenOpeningTheApp -> true
+            alwaysOpenTheLastTabWhenOpeningTheApp -> false
             else -> false
         }
     }
@@ -419,6 +423,15 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         appContext.getPreferenceKey(R.string.pref_key_inactive_tabs),
         default = FeatureFlags.inactiveTabs,
         featureFlag = FeatureFlags.inactiveTabs
+    )
+
+    /**
+     * Indicates if the user has enabled the search term tab groups feature.
+     */
+    var searchTermTabGroupsAreEnabled by featureFlagPreference(
+        appContext.getPreferenceKey(R.string.pref_key_search_term_tab_groups),
+        default = FeatureFlags.tabGroupFeature,
+        featureFlag = FeatureFlags.tabGroupFeature
     )
 
     @VisibleForTesting
@@ -821,6 +834,47 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = true
     )
 
+    var shouldShowInactiveTabsOnboardingPopup by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_should_show_inactive_tabs_popup),
+        default = true
+    )
+
+    /**
+     * Indicates if the auto-close dialog for inactive tabs has been dismissed before.
+     */
+    var hasInactiveTabsAutoCloseDialogBeenDismissed by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_has_inactive_tabs_auto_close_dialog_dismissed),
+        default = false
+    )
+
+    /**
+     * Indicates if the auto-close dialog should be visible based on
+     * if the user has dismissed it before [hasInactiveTabsAutoCloseDialogBeenDismissed],
+     * if the minimum number of tabs has been accumulated [numbersOfTabs]
+     * and if the auto-close setting is already set to [closeTabsAfterOneMonth].
+     */
+    fun shouldShowInactiveTabsAutoCloseDialog(numbersOfTabs: Int): Boolean {
+        return !hasInactiveTabsAutoCloseDialogBeenDismissed &&
+            numbersOfTabs >= INACTIVE_TAB_MINIMUM_TO_SHOW_AUTO_CLOSE_DIALOG &&
+            !closeTabsAfterOneMonth
+    }
+
+    /**
+     * Indicates if the jump back in CRF should be shown.
+     */
+    var shouldShowJumpBackInCFR by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_should_show_jump_back_in_tabs_popup),
+        default = true
+    )
+
+    /**
+     * Should we display a feedback request to the user when he turns off the Inactive Tabs feature
+     */
+    var shouldShowInactiveTabsTurnOffSurvey by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_should_show_inactive_tabs_turn_off_survey),
+        default = true
+    )
+
     fun getSitePermissionsPhoneFeatureAction(
         feature: PhoneFeature,
         default: Action = Action.ASK_TO_ALLOW
@@ -1126,14 +1180,14 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         featureFlag = FeatureFlags.addressesFeature
     )
 
-    var isHistoryMetadataEnabled by booleanPreference(
+    private var isHistoryMetadataEnabled by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_history_metadata_feature),
         default = false
     )
 
-    var historyMetadataUIFeature by featureFlagPreference(
+    var historyMetadataUIFeature by lazyFeatureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_history_metadata_feature),
-        default = FeatureFlags.historyMetadataUIFeature,
+        default = { appContext.components.analytics.features.homeScreen.isRecentExplorationsActive() },
         featureFlag = FeatureFlags.historyMetadataUIFeature || isHistoryMetadataEnabled
     )
 
@@ -1141,19 +1195,19 @@ class Settings(private val appContext: Context) : PreferencesHolder {
      * Indicates if the recent tabs functionality should be visible.
      * Returns true if the [FeatureFlags.showRecentTabsFeature] and [R.string.pref_key_recent_tabs] are true.
      */
-    var showRecentTabsFeature by featureFlagPreference(
+    var showRecentTabsFeature by lazyFeatureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_recent_tabs),
-        default = FeatureFlags.showRecentTabsFeature,
-        featureFlag = FeatureFlags.showRecentTabsFeature
+        featureFlag = FeatureFlags.showRecentTabsFeature,
+        default = { appContext.components.analytics.features.homeScreen.isRecentlyTabsActive() }
     )
 
     /**
      * Indicates if the recent saved bookmarks functionality should be visible.
      * Returns true if the [FeatureFlags.showRecentTabsFeature] and [R.string.pref_key_recent_bookmarks] are true.
      */
-    var showRecentBookmarksFeature by featureFlagPreference(
+    var showRecentBookmarksFeature by lazyFeatureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_recent_bookmarks),
-        default = FeatureFlags.recentBookmarksFeature,
+        default = { appContext.components.analytics.features.homeScreen.isRecentlySavedActive() },
         featureFlag = FeatureFlags.recentBookmarksFeature
     )
 
@@ -1182,8 +1236,9 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = true
     )
 
-    var pocketRecommendations by booleanPreference(
+    var showPocketRecommendationsFeature by lazyFeatureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_pocket_homescreen_recommendations),
-        default = true
+        featureFlag = FeatureFlags.isPocketRecommendationsFeatureEnabled(appContext),
+        default = { appContext.components.analytics.features.homeScreen.isPocketRecommendationsActive() },
     )
 }

@@ -4,7 +4,7 @@
 
 package org.mozilla.fenix.tabstray
 
-import mozilla.components.concept.tabstray.Tab
+import mozilla.components.browser.state.state.TabSessionState
 
 interface TabsTrayInteractor {
     /**
@@ -26,20 +26,20 @@ interface TabsTrayInteractor {
     fun onDeleteTab(tabId: String)
 
     /**
-     * Invoked when [Tab]s need to be deleted.
+     * Invoked when [TabSessionState]s need to be deleted.
      */
-    fun onDeleteTabs(tabs: Collection<Tab>)
+    fun onDeleteTabs(tabs: Collection<TabSessionState>)
 
     /**
      * Called when clicking the debug menu option for inactive tabs.
      */
-    fun onInactiveDebugClicked(tabs: Collection<Tab>)
+    fun onInactiveDebugClicked(tabs: Collection<TabSessionState>)
 
     /**
      * Invoked when [tabs] should be moved to before/after [targetId] from a drag-drop operation
      */
     fun onTabsMove(
-        tabs: Collection<Tab>,
+        tabs: Collection<TabSessionState>,
         targetId: String?,
         placeAfter: Boolean,
     )
@@ -70,19 +70,19 @@ class DefaultTabsTrayInteractor(
         controller.handleTabDeletion(tabId)
     }
 
-    override fun onDeleteTabs(tabs: Collection<Tab>) {
+    override fun onDeleteTabs(tabs: Collection<TabSessionState>) {
         controller.handleMultipleTabsDeletion(tabs)
     }
 
     override fun onTabsMove(
-        tabs: Collection<Tab>,
+        tabs: Collection<TabSessionState>,
         targetId: String?,
         placeAfter: Boolean,
     ) {
         controller.handleTabsMove(tabs, targetId, placeAfter)
     }
 
-    override fun onInactiveDebugClicked(tabs: Collection<Tab>) {
+    override fun onInactiveDebugClicked(tabs: Collection<TabSessionState>) {
         controller.forceTabsAsInactive(tabs)
     }
 

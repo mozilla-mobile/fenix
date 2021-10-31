@@ -8,11 +8,9 @@ package org.mozilla.fenix.ui.robots
 
 import android.content.Context
 import android.view.View
-import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.NoMatchingViewException
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
 import androidx.test.espresso.action.GeneralLocation
@@ -21,9 +19,7 @@ import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.longClick
 import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers
-import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
@@ -36,14 +32,15 @@ import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
 import androidx.test.uiautomator.Until.findObject
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import junit.framework.AssertionFailedError
 import junit.framework.TestCase.assertTrue
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.anyOf
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.Matcher
 import org.mozilla.fenix.R
-import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
+import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
 import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.clickAtLocationInView
@@ -104,7 +101,12 @@ class TabDrawerRobot {
 
     fun swipeTabRight(title: String) {
         var retries = 0 // number of retries before failing, will stop at 2
-        while (mDevice.findObject(UiSelector().text(title)).exists() && retries < 3) {
+        while (!mDevice.findObject(
+                UiSelector()
+                    .resourceId("$packageName:id/mozac_browser_tabstray_title")
+                    .text(title)
+            ).waitUntilGone(waitingTimeShort) && retries < 2
+        ) {
             tab(title).perform(ViewActions.swipeRight())
             retries++
         }
@@ -112,55 +114,105 @@ class TabDrawerRobot {
 
     fun swipeTabLeft(title: String) {
         var retries = 0 // number of retries before failing, will stop at 2
-        while (mDevice.findObject(UiSelector().text(title)).exists() && retries < 3) {
+        while (!mDevice.findObject(
+                UiSelector()
+                    .resourceId("$packageName:id/mozac_browser_tabstray_title")
+                    .text(title)
+            ).waitUntilGone(waitingTimeShort) && retries < 2
+        ) {
             tab(title).perform(ViewActions.swipeLeft())
             retries++
         }
     }
 
-    fun closeTabViaXButton(title: String) {
-        mDevice.findObject(UiSelector().text(title)).waitForExists(waitingTime)
-        var retries = 0 // number of retries before failing, will stop at 2
-        do {
-            val closeButton = onView(
-                allOf(
-                    withId(R.id.mozac_browser_tabstray_close),
-                    withContentDescription("Close tab $title")
-                )
-            )
-            closeButton.perform(click())
-            retries++
-        } while (mDevice.findObject(UiSelector().text(title)).exists() && retries < 3)
-    }
-
     fun verifySnackBarText(expectedText: String) {
-        val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        mDevice.waitNotNull(findObject(By.text(expectedText)), TestAssetHelper.waitingTime)
+        assertTrue(
+            mDevice.findObject(
+                UiSelector().text(expectedText)
+            ).waitForExists(waitingTime)
+        )
     }
 
     fun snackBarButtonClick(expectedText: String) {
-        mDevice.findObject(
-            UiSelector().resourceId("$packageName:id/snackbar_btn")
-        ).waitForExists(waitingTime)
-        onView(allOf(withId(R.id.snackbar_btn), withText(expectedText))).check(
-            matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE))
-        ).perform(click())
+        val snackBarButton =
+            mDevice.findObject(
+                UiSelector()
+                    .resourceId("$packageName:id/snackbar_btn")
+                    .text(expectedText)
+            )
+
+        snackBarButton.waitForExists(waitingTime)
+        snackBarButton.click()
     }
 
     fun verifyTabMediaControlButtonState(action: String) {
+        try {
+            mDevice.findObject(
+                UiSelector().resourceId("$packageName:id/tab_tray_empty_view")
+            ).waitUntilGone(waitingTime)
+
+            mDevice.findObject(
+                UiSelector().resourceId("$packageName:id/tab_tray_grid_item")
+            ).waitForExists(waitingTime)
+
+            mDevice.findObject(
+                UiSelector()
+                    .resourceId("$packageName:id/play_pause_button")
+                    .descriptionContains(action)
+            ).waitForExists(waitingTime)
+
+            assertTrue(
+                mDevice.findObject(UiSelector().descriptionContains(action)).waitForExists(waitingTime)
+            )
+        } catch (e: AssertionFailedError) {
+            // In some cases the tab media button isn't updated after performing an action on it
+            println("Failed to update the state of the tab media button")
+
+            // Let's dismiss the tabs tray and try again
+            mDevice.pressBack()
+            mDevice.findObject(
+                UiSelector()
+                    .resourceId("$packageName:id/toolbar")
+            ).waitForExists(waitingTime)
+
+            browserScreen {
+            }.openTabDrawer {
+                // Click again the tab media button
+                tabMediaControlButton().click()
+
+                mDevice.findObject(
+                    UiSelector().resourceId("$packageName:id/tab_tray_empty_view")
+                ).waitUntilGone(waitingTime)
+
+                mDevice.findObject(
+                    UiSelector().resourceId("$packageName:id/tab_tray_grid_item")
+                ).waitForExists(waitingTime)
+
+                mDevice.findObject(
+                    UiSelector()
+                        .resourceId("$packageName:id/play_pause_button")
+                        .descriptionContains(action)
+                ).waitForExists(waitingTime)
+
+                assertTrue(
+                    mDevice.findObject(UiSelector().descriptionContains(action)).waitForExists(waitingTime)
+                )
+            }
+        }
+    }
+
+    fun clickTabMediaControlButton(action: String) {
         mDevice.waitNotNull(
-            findObject(
+            Until.findObjects(
                 By
                     .res("$packageName:id/play_pause_button")
-                    .desc(action)
+                    .descContains(action)
             ),
             waitingTime
         )
 
-        tabMediaControlButton().check(matches(withContentDescription(action)))
+        tabMediaControlButton().click()
     }
-
-    fun clickTabMediaControlButton() = tabMediaControlButton().click()
 
     fun clickSelectTabs() {
         threeDotMenu().click()
@@ -278,7 +330,11 @@ class TabDrawerRobot {
 
         fun openTab(title: String, interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
             mDevice.waitNotNull(findObject(text(title)))
-            tab(title).click()
+            mDevice.findObject(
+                UiSelector()
+                    .resourceId("$packageName:id/mozac_browser_tabstray_title")
+                    .textContains(title)
+            ).click()
 
             BrowserRobot().interact()
             return BrowserRobot.Transition()
@@ -372,17 +428,19 @@ fun tabDrawer(interact: TabDrawerRobot.() -> Unit): TabDrawerRobot.Transition {
     return TabDrawerRobot.Transition()
 }
 
-private fun tabMediaControlButton() = onView(withId(R.id.play_pause_button))
+private fun tabMediaControlButton() =
+    mDevice.findObject(UiSelector().resourceId("$packageName:id/play_pause_button"))
 
-private fun closeTabButton() = onView(withId(R.id.mozac_browser_tabstray_close))
+private fun closeTabButton() =
+    mDevice.findObject(UiSelector().resourceId("$packageName:id/mozac_browser_tabstray_close"))
 private fun assertCloseTabsButton(title: String) =
-    onView(
-        allOf(
-            withId(R.id.mozac_browser_tabstray_close),
-            withContentDescription("Close tab $title")
-        )
+    assertTrue(
+        mDevice.findObject(
+            UiSelector()
+                .resourceId("$packageName:id/mozac_browser_tabstray_close")
+                .descriptionContains("Close tab $title")
+        ).waitForExists(waitingTime)
     )
-        .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
 
 private fun normalBrowsingButton() = onView(
     anyOf(
@@ -404,22 +462,37 @@ private fun assertExistingOpenTabs(title: String) {
         )
             .waitForExists(waitingTime)
 
-        tab(title).check(matches(isDisplayed()))
-    } catch (e: NoMatchingViewException) {
-        onView(withId(R.id.tabsTray)).perform(
-            RecyclerViewActions.scrollTo<RecyclerView.ViewHolder>(
-                allOf(
-                    withId(R.id.mozac_browser_tabstray_title),
-                    withText(title)
-                )
-            )
-        ).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+        assertTrue(
+            mDevice.findObject(
+                UiSelector()
+                    .resourceId("$packageName:id/mozac_browser_tabstray_title")
+                    .textContains(title)
+            ).waitForExists(waitingTime)
+        )
+    } catch (e: AssertionError) {
+        println("The tab wasn't found")
+        mDevice.findObject(UiSelector().resourceId("$packageName:id/tabsTray")).swipeUp(2)
+        assertTrue(
+            mDevice.findObject(
+                UiSelector()
+                    .resourceId("$packageName:id/mozac_browser_tabstray_title")
+                    .textContains(title)
+            ).waitForExists(waitingTime)
+        )
     }
 }
 
-private fun assertExistingTabList() =
-    onView(allOf(withId(R.id.tab_item)))
-        .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+private fun assertExistingTabList() {
+    mDevice.findObject(
+        UiSelector().resourceId("$packageName:id/tabsTray")
+    ).waitForExists(waitingTime)
+
+    assertTrue(
+        mDevice.findObject(
+            UiSelector().resourceId("$packageName:id/tab_item")
+        ).waitForExists(waitingTime)
+    )
+}
 
 private fun assertNoTabsOpenedText() =
     onView(withId(R.id.tab_tray_empty_view))
@@ -470,8 +543,11 @@ private fun assertNormalBrowsingButton() {
 }
 
 private fun assertTabThumbnail() {
-    onView(withId(R.id.mozac_browser_tabstray_thumbnail))
-        .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+    assertTrue(
+        mDevice.findObject(
+            UiSelector().resourceId("$packageName:id/mozac_browser_tabstray_thumbnail")
+        ).waitForExists(waitingTime)
+    )
 }
 
 private fun tab(title: String) =

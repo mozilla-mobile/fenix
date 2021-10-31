@@ -23,7 +23,7 @@
     <!-- Message announced to the user when tab tray is selected with 1 tab -->
     <string name="open_tab_tray_single">1 open tab. Tap to switch tabs.</string>
     <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
-    <string name="open_tab_tray_plural">%1$s open tabs. Tap to switch tabs.</string>
+    <string name="open_tab_tray_plural" moz:removedIn="95" tools:ignore="UnusedResources">%1$s open tabs. Tap to switch tabs.</string>
     <!-- Tab tray multi select title in app bar. The first parameter is the number of tabs selected -->
     <string name="tab_tray_multi_select_title">%1$d selected</string>
     <!-- Label of button in create collection dialog for creating a new collection  -->
@@ -51,7 +51,9 @@
     <!-- Title for the home screen section with recently saved bookmarks. -->
     <string name="recently_saved_bookmarks" moz:removedIn="94" tools:ignore="UnusedResources">Recently saved</string>
     <!-- Title for the home screen section with recently saved bookmarks. -->
-    <string name="recently_bookmarked">Recently bookmarked</string>
+    <string name="recently_bookmarked" moz:removedIn="94" tools:ignore="UnusedResources">Recently bookmarked</string>
+    <!-- Title for the home screen section with recently saved bookmarks. -->
+    <string name="recent_bookmarks_title">Recent bookmarks</string>
     <!-- Content description for the recently saved bookmarks section on the home screen. -->
     <string name="recently_saved_bookmarks_content_description">Recently saved bookmarks</string>
     <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
@@ -104,6 +106,22 @@
     <string name="tab_tray_close_tabs_banner_positive_button_text">View options</string>
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">Dismiss</string>
+    <!-- Text for the banner message to tell users about our inactive tabs feature. -->
+    <string name="tab_tray_inactive_onboarding_message">Tabs you haven’t viewed for two weeks get moved here.</string>
+    <!-- Text for the action link to go to Settings for inactive tabs. -->
+    <string name="tab_tray_inactive_onboarding_button_text">Turn off in settings</string>
+    <!-- Text for title for the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_auto_close_title">Auto-close after one month?</string>
+    <!-- Text for the body for the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_auto_close_body">Firefox can close tabs you haven’t viewed over the past month.</string>
+    <!-- Content description for close button in the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_auto_close_button_content_description">Close</string>
+    <!-- Text for turn on auto close tabs button in the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_turn_on_auto_close_button" moz:removedIn="95" tools:ignore="UnusedResources">Turn on auto close</string>
+
+    <!-- Text for turn on auto close tabs button in the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_turn_on_auto_close_button_2">Turn on auto-close</string>
+
 
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
@@ -111,7 +129,7 @@
     <!-- Shortcut action to open new private tab -->
     <string name="home_screen_shortcut_open_new_private_tab_2">New private tab</string>
     <!-- Heading for the Top Sites block -->
-    <string name="home_screen_top_sites_heading">Top sites</string>
+    <string name="home_screen_top_sites_heading" moz:removedIn="95" tools:ignore="UnusedResources">Top sites</string>
 
     <!-- Recent Tabs -->
     <!-- Header text for jumping back into the recent tab in the home screen -->
@@ -133,7 +151,10 @@
     <string name="history_metadata_header" moz:removedIn="94" tools:ignore="UnusedResources">Past explorations</string>
     <!-- Header text for a section on the home screen that displays grouped highlights from the
          user's browsing history, such as topics they have researched or explored on the web -->
-    <string name="history_metadata_header_2">Recently visited</string>
+    <string name="history_metadata_header_2" moz:removedIn="94" tools:ignore="UnusedResources">Recently visited</string>
+    <!-- Header text for a section on the home screen that displays grouped highlights from the
+         user's browsing history, such as topics they have researched or explored on the web -->
+    <string name="history_metadata_header_3">Recent searches</string>
     <!-- Text for the menu button to remove a grouped highlight from the user's browsing history
          in the Recently visited section -->
     <string name="recently_visited_menu_item_remove">Remove</string>
@@ -152,7 +173,7 @@
     <!-- Content description (not visible, for screen readers etc.): Stop loading current website -->
     <string name="browser_menu_stop">Stop</string>
     <!-- Content description (not visible, for screen readers etc.): Bookmark the current page -->
-    <string name="browser_menu_bookmark">Bookmark</string>
+    <string name="browser_menu_bookmark" moz:removedIn="95" tools:ignore="UnusedResources">Bookmark</string>
     <!-- Content description (not visible, for screen readers etc.): Un-bookmark the current page -->
     <string name="browser_menu_edit_bookmark">Edit bookmark</string>
     <!-- Browser menu button that opens the addon manager -->
@@ -214,6 +235,8 @@
     <string name="browser_menu_edit">Edit</string>
     <!-- Browser menu button that opens the Customize menu -->
     <string name="browser_menu_customize_home">Customize home</string>
+    <!-- Button shown on the home page that opens the Customize home settings -->
+    <string name="browser_menu_customize_home_1">Customize homepage</string>
     <!-- Browser Toolbar -->
     <!-- Content description for the Home screen button on the browser toolbar -->
     <string name="browser_toolbar_home">Home screen</string>
@@ -356,7 +379,9 @@
     <!-- Preference for changing default theme to dark or light mode -->
     <string name="preferences_theme">Theme</string>
     <!-- Preference for customizing the home screen -->
-    <string name="preferences_home">Home</string>
+    <string name="preferences_home" moz:removedIn="94" tools:ignore="UnusedResources">Home</string>
+    <!-- Preference for customizing the home screen -->
+    <string name="preferences_home_2">Homepage</string>
     <!-- Preference for gestures based actions -->
     <string name="preferences_gestures">Gestures</string>
     <!-- Preference for settings related to visual options -->
@@ -428,9 +453,15 @@
     <!-- Title for the customize home screen section with recently saved bookmarks. -->
     <string name="customize_toggle_recently_saved_bookmarks" moz:removedIn="94" tools:ignore="UnusedResources">Recently saved</string>
     <!-- Title for the customize home screen section with recently saved bookmarks. -->
-    <string name="customize_toggle_recently_bookmarked">Recently bookmarked</string>
-    <!-- Title for the customize home screen section with recently visited. Recently visited is a section where users see a list of tabs that they have visited in the past few days -->
-    <string name="customize_toggle_recently_visited">Recently visited</string>
+    <string name="customize_toggle_recently_bookmarked" moz:removedIn="94" tools:ignore="UnusedResources">Recently bookmarked</string>
+    <!-- Title for the customize home screen section with recently saved bookmarks. -->
+    <string name="customize_toggle_recent_bookmarks">Recent bookmarks</string>
+    <!-- Title for the customize home screen section with recently visited. Recently visited is
+    a section where users see a list of tabs that they have visited in the past few days -->
+    <string name="customize_toggle_recently_visited" moz:removedIn="94" tools:ignore="UnusedResources">Recently visited</string>
+    <!-- Title for the customize home screen settings section for recent searches. Recent searches
+     is a section where users see a list of groups of tabs that they have visited in the past few days -->
+    <string name="customize_toggle_recent_searches">Recent searches</string>
     <!-- Title for the customize home screen section with Pocket. -->
     <string name="customize_toggle_pocket">Pocket</string>
 
@@ -539,7 +570,7 @@
     <!-- Header of the Turn on Sync preference view -->
     <string name="preferences_sync">Turn on Sync</string>
     <!-- Preference for pairing -->
-    <string name="preferences_sync_pair">Scan pairing code in desktop Firefox</string>
+    <string name="preferences_sync_pair" moz:removedIn="95" tools:ignore="UnusedResources">Scan pairing code in desktop Firefox</string>
     <!-- Preference for account login -->
     <string name="preferences_sync_sign_in">Sign in</string>
     <!-- Preference for reconnecting to FxA sync -->
@@ -644,6 +675,10 @@
     <string name="tab_view_list">List</string>
     <!-- Option for a grid tab view -->
     <string name="tab_view_grid">Grid</string>
+    <!-- Option for search term tab groups -->
+    <string name="tab_view_search_term_tab_groups">Search groups</string>
+    <!-- Summary text for search term tab groups -->
+    <string name="tab_view_search_term_tab_groups_summary">Group related sites together</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
     <string name="preferences_close_tabs">Close tabs</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
@@ -654,16 +689,26 @@
     <string name="close_tabs_after_one_week">After one week</string>
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">After one month</string>
+    <!-- Title of preference that allows a user to specify the auto-close settings for open tabs -->
+    <string name="preference_auto_close_tabs" tools:ignore="UnusedResources">Auto-close open tabs</string>
 
-    <!-- Start on Home -->
+    <!-- Opening screen -->
     <!-- Title of a preference that allows a user to indicate after a specified amount of time when the app should start on the home screen -->
-    <string name="preferences_start_on_home">Start on home</string>
+    <string name="preferences_start_on_home" moz:removedIn="94" tools:ignore="UnusedResources">Start on home</string>
+    <!-- Title of a preference that allows a user to choose what screen to show after opening the app -->
+    <string name="preferences_opening_screen">Opening screen</string>
     <!-- Option for starting on the home screen after after four hours or inactivity -->
-    <string name="start_on_home_after_four_hours">After four hours</string>
+    <string name="start_on_home_after_four_hours" moz:removedIn="94" tools:ignore="UnusedResources">After four hours</string>
+    <!-- Option for always opening the homepage when re-opening the app -->
+    <string name="opening_screen_homepage">Homepage</string>
     <!-- Option for always starting on the home screen -->
-    <string name="start_on_home_always">Always</string>
+    <string name="start_on_home_always" moz:removedIn="94" tools:ignore="UnusedResources">Always</string>
+    <!-- Option for always opening the user's last-open tab when re-opening the app -->
+    <string name="opening_screen_last_tab">Last tab</string>
     <!-- Option for never starting on the home screen -->
-    <string name="start_on_home_never">Never</string>
+    <string name="start_on_home_never" moz:removedIn="94" tools:ignore="UnusedResources">Never</string>
+    <!-- Option for always opening the homepage when re-opening the app after four hours of inactivity -->
+    <string name="opening_screen_after_four_hours_of_inactivity">Homepage after four hours of inactivity</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
     <string name="close_tabs_manually_summary">Close manually</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
@@ -719,13 +764,13 @@
     <!-- Text shown in the menu for saving tabs to a collection -->
     <string name="tab_tray_menu_item_save">Save to collection</string>
     <!-- Text shown in the menu for the collection selector -->
-    <string name="tab_tray_menu_select">Select</string>
+    <string name="tab_tray_menu_select" moz:removedIn="95" tools:ignore="UnusedResources">Select</string>
     <!-- Text shown in the menu for sharing all tabs -->
     <string name="tab_tray_menu_item_share">Share all tabs</string>
     <!-- Text shown in the menu to view recently closed tabs -->
     <string name="tab_tray_menu_recently_closed">Recently closed tabs</string>
     <!-- Text shown in the tabs tray inactive tabs section -->
-    <string name="tab_tray_inactive_recently_closed">Recently closed</string>
+    <string name="tab_tray_inactive_recently_closed" tools:ignore="UnusedResources">Recently closed</string>
     <!-- Text shown in the menu to view account settings -->
     <string name="tab_tray_menu_account_settings">Account settings</string>
     <!-- Text shown in the menu to view tab settings -->
@@ -795,7 +840,9 @@
     <!-- Button in the current tab tray header in multiselect mode. Saved the selected tabs to a collection when pressed. -->
     <string name="tab_tray_save_to_collection">Save</string>
     <!-- Title text for the normal tabs header in the tabs tray which are not part of any tab grouping. -->
-    <string name="tab_tray_header_title">Other</string>
+    <string name="tab_tray_header_title" moz:removedIn="94" tools:ignore="UnusedResources">Other</string>
+    <!-- Title text for the normal tabs header in the tabs tray which are not part of any tab grouping. -->
+    <string name="tab_tray_header_title_1">Other tabs</string>
 
     <!-- History -->
     <!-- Text for the button to clear all history -->
@@ -840,10 +887,6 @@
     <string name="history_empty_message">No history here</string>
 
     <!-- Downloads -->
-    <!-- Text for the button to clear all downloads -->
-    <string name="download_delete_all">Delete downloads</string>
-    <!-- Text for the dialog to confirm clearing all downloads -->
-    <string name="download_delete_all_dialog">Are you sure you want to clear your downloads?</string>
     <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
     <string name="download_delete_multiple_items_snackbar_1">Downloads Removed</string>
     <!-- Text for the snackbar to confirm that a single download item has been removed. The first parameter is the name of the download item. -->
@@ -881,7 +924,7 @@
     <!-- Content description for bookmarks library menu -->
     <string name="bookmark_menu_content_description">Bookmark menu</string>
     <!-- Screen title for editing bookmarks -->
-    <string name="bookmark_edit">Edit bookmark</string>
+    <string name="bookmark_edit" moz:removedIn="95" tools:ignore="UnusedResources">Edit bookmark</string>
     <!-- Screen title for selecting a bookmarks folder -->
     <string name="bookmark_select_folder">Select folder</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete the selected folder -->
@@ -1884,8 +1927,10 @@
     <string name="top_sites_max_limit_content_2">To add a new top site, remove one. Touch and hold the site and select remove.</string>
     <!-- Confirmation dialog button text when top sites limit is reached. -->
     <string name="top_sites_max_limit_confirmation_button">OK, Got It</string>
+    <!-- Label for the preference to show the most visited top sites on the homepage -->
+    <string name="top_sites_toggle_top_recent_sites_3">Most visited top sites</string>
     <!-- Label for the show most visited top sites preference -->
-    <string name="top_sites_toggle_top_frecent_sites_2">Show most visited top sites</string>
+    <string name="top_sites_toggle_top_frecent_sites_2" moz:removedIn="94" tools:ignore="UnusedResources">Show most visited top sites</string>
     <!-- Label for the show most visited sites preference -->
     <string name="top_sites_toggle_top_frecent_sites" moz:removedIn="93" tools:ignore="UnusedResources">Show most visited sites</string>
 	<!-- Title text displayed in the rename top site dialog. -->
@@ -1897,17 +1942,52 @@
 	<!-- Dialog button text for canceling the rename top site prompt. -->
 	<string name="top_sites_rename_dialog_cancel">Cancel</string>
 
-    <!-- In-activate tabs in the tabs tray -->
-    <!-- Title text displayed in the tabs tray when a tab has been unused for 4 days. -->
+    <!-- Inactive tabs in the tabs tray -->
+    <!-- Title text displayed in the tabs tray when a tab has been unused for 14 days. -->
     <string name="inactive_tabs_title">Inactive tabs</string>
     <!-- Content description for closing all inactive tabs -->
     <string name="inactive_tabs_delete_all">Close all inactive tabs</string>
     <!-- A description below the section of "inactive" tabs to notify the user when those tabs will be closed, if appropriate. See strings inactive_tabs_30_days and inactive_tabs_7_days for placeholders options. -->
-    <string name="inactive_tabs_description">Tabs are available here for %s. After that time, tabs will be automatically closed.</string>
+    <string name="inactive_tabs_description" moz:removedIn="95" tools:ignore="UnusedResources">Tabs are available here for %s. After that time, tabs will be automatically closed.</string>
     <!-- The amount of time until a tab in the "inactive" section of the tabs tray will be closed. See string inactive_tabs_description as well -->
-    <string name="inactive_tabs_30_days">30 days</string>
+    <string name="inactive_tabs_30_days" moz:removedIn="95" tools:ignore="UnusedResources">30 days</string>
     <!-- The amount of time until a tab in the "inactive" section of the tabs tray will be closed. See string inactive_tabs_description as well -->
-    <string name="inactive_tabs_7_days">1 week</string>
+    <string name="inactive_tabs_7_days" moz:removedIn="95" tools:ignore="UnusedResources">1 week</string>
+
+    <!-- Inactive tabs auto-close message in the tabs tray -->
+    <!-- The header text of the auto-close message when the user is asked if they want to turn on the auto-closing of inactive tabs. -->
+    <string name="inactive_tabs_auto_close_message_header" tools:ignore="UnusedResources">Auto-close after one month?</string>
+    <!-- A description below the header to notify the user what the inactive tabs auto-close feature is. -->
+    <string name="inactive_tabs_auto_close_message_description" tools:ignore="UnusedResources">Firefox can close tabs you haven’t viewed over the past month.</string>
+    <!-- A call to action below the description to allow the user to turn on the auto closing of inactive tabs. -->
+    <string name="inactive_tabs_auto_close_message_action" tools:ignore="UnusedResources">TURN ON AUTO CLOSE</string>
+    <!-- Text for the snackbar to confirm auto-close is enabled for inactive tabs -->
+    <string name="inactive_tabs_auto_close_message_snackbar">Auto-close enabled</string>
+
+    <!-- Inactive tabs survey -->
+    <!-- Header text for the inactive tabs survey asking for feedback to improve the inactive tabs feature. -->
+    <string name="inactive_tabs_survey_header" moz:removedIn="95" tools:ignore="UnusedResources">Help improve Firefox</string>
+    <!-- Header text for the inactive tabs survey asking for feedback to improve the inactive tabs feature. -->
+    <string name="inactive_tabs_survey_header_1">Help improve Firefox</string>
+
+    <!-- Content text for the inactive tabs survey asking the primary survey feedback question. -->
+    <string name="inactive_tabs_survey_content">Why did you disable inactive tabs?</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string name="inactive_tabs_survey_do_not_understand">I don’t understand how it works</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string name="inactive_tabs_survey_do_it_myself">I like to clear out old tabs myself</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string name="inactive_tabs_survey_time_too_long_option" moz:removedIn="95" tools:ignore="UnusedResources">The two-week time period is too long</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string name="inactive_tabs_survey_time_too_long_option_1">The two-week time period is too long</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string name="inactive_tabs_survey_time_too_short_option" moz:removedIn="95" tools:ignore="UnusedResources">The two-week time period is too short</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string name="inactive_tabs_survey_time_too_short_option_1">The two-week time period is too short</string>
+    <!-- Confirmation button text to submit the feedback for the inactive tabs survey. -->
+    <string name="inactive_tabs_survey_send_button">Send</string>
+    <!-- Content description for inactive tabs survey close button -->
+    <string name="inactive_tabs_survey_close_button_content_description">Close</string>
 
     <!-- Default browser experiment -->
     <string name="default_browser_experiment_card_text">Set links from websites, emails, and messages to open automatically in Firefox.</string>
@@ -1926,13 +2006,15 @@
 
     <!-- Pocket recommended stories -->
     <!-- Header text for a section on the home screen. -->
-    <string name="pocket_stories_header">Thought provoking stories</string>
+    <string name="pocket_stories_header" moz:removedIn="94" tools:ignore="UnusedResources">Thought provoking stories</string>
+    <!-- Header text for a section on the home screen. -->
+    <string name="pocket_stories_header_1">Thought-provoking stories</string>
     <!-- Header text for a section on the home screen. -->
     <string name="pocket_stories_categories_header">Stories by topic</string>
     <!-- Text of a button allowing users to access an external url for more Pocket recommendations. -->
     <string name="pocket_stories_placeholder_text">Discover more</string>
     <!-- Title of an app feature. Smaller than a heading.-->
-    <string name="pocket_stories_feature_title">Powered by Pocket</string>
+    <string name="pocket_stories_feature_title">Powered by Pocket.</string>
     <!-- Caption for describing a certain feature. The placeholder is for a clickable text (eg: Learn more) which will load an url in a new tab when clicked.  -->
     <string name="pocket_stories_feature_caption">Part of the Firefox family. %s</string>
     <!-- Clickable text for opening an external link for more information about Pocket. -->
