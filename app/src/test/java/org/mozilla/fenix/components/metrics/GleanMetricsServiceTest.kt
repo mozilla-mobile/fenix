@@ -169,6 +169,13 @@ class GleanMetricsServiceTest {
         assertFalse(History.openedItemsInPrivateTabs.testHasValue())
         gleanService.track(Event.HistoryOpenedInPrivateTabs)
         assertTrue(History.openedItemsInPrivateTabs.testHasValue())
+
+        assertFalse(History.recentSearchesTapped.testHasValue())
+        gleanService.track(Event.HistoryRecentSearchesTapped("5"))
+        assertTrue(History.recentSearchesTapped.testHasValue())
+        val events = History.recentSearchesTapped.testGetValue()
+        assertEquals(1, events[0].extra!!.size)
+        assertEquals("5", events[0].extra!!["page_number"])
     }
 
     @Test
@@ -282,6 +289,10 @@ class GleanMetricsServiceTest {
 
     @Test
     fun `Home screen recent bookmarks events are correctly recorded`() {
+        assertFalse(RecentBookmarks.shown.testHasValue())
+        gleanService.track(Event.RecentBookmarksShown)
+        assertTrue(RecentBookmarks.shown.testHasValue())
+
         assertFalse(RecentBookmarks.bookmarkClicked.testHasValue())
         gleanService.track(Event.BookmarkClicked)
         assertTrue(RecentBookmarks.bookmarkClicked.testHasValue())

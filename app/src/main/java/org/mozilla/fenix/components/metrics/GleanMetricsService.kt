@@ -41,6 +41,7 @@ import org.mozilla.fenix.GleanMetrics.Preferences
 import org.mozilla.fenix.GleanMetrics.ProgressiveWebApp
 import org.mozilla.fenix.GleanMetrics.ReaderMode
 import org.mozilla.fenix.GleanMetrics.RecentBookmarks
+import org.mozilla.fenix.GleanMetrics.RecentSearches
 import org.mozilla.fenix.GleanMetrics.RecentTabs
 import org.mozilla.fenix.GleanMetrics.SearchShortcuts
 import org.mozilla.fenix.GleanMetrics.SearchWidget
@@ -314,6 +315,10 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.HistoryAllItemsRemoved -> EventWrapper<NoExtraKeys>(
             { History.removedAll.record(it) }
         )
+        is Event.HistoryRecentSearchesTapped -> EventWrapper(
+            { History.recentSearchesTapped.record(it) },
+            { History.recentSearchesTappedKeys.valueOf(it) }
+        )
         is Event.CollectionRenamed -> EventWrapper<NoExtraKeys>(
             { Collections.renamed.record(it) }
         )
@@ -523,6 +528,9 @@ private val Event.wrapper: EventWrapper<*>?
         )
         is Event.AddonsOpenInSettings -> EventWrapper<NoExtraKeys>(
             { Addons.openAddonsInSettings.record(it) }
+        )
+        is Event.StudiesSettings -> EventWrapper<NoExtraKeys>(
+            { Preferences.studiesPreferenceEnabled.record(it) }
         )
         is Event.AddonsOpenInToolbarMenu -> EventWrapper(
             { Addons.openAddonInToolbarMenu.record(it) },
@@ -796,6 +804,14 @@ private val Event.wrapper: EventWrapper<*>?
 
         is Event.ShowAllBookmarks -> EventWrapper<NoExtraKeys>(
             { RecentBookmarks.showAllBookmarks.add() }
+        )
+
+        is Event.RecentSearchesGroupDeleted -> EventWrapper<NoExtraKeys>(
+            { RecentSearches.groupDeleted.record(it) }
+        )
+
+        is Event.RecentBookmarksShown -> EventWrapper<NoExtraKeys>(
+            { RecentBookmarks.shown.record(it) }
         )
 
         is Event.AndroidAutofillRequestWithLogins -> EventWrapper<NoExtraKeys>(

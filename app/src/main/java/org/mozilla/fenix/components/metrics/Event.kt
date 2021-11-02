@@ -17,6 +17,7 @@ import org.mozilla.fenix.GleanMetrics.ContextMenu
 import org.mozilla.fenix.GleanMetrics.CrashReporter
 import org.mozilla.fenix.GleanMetrics.ErrorPage
 import org.mozilla.fenix.GleanMetrics.Events
+import org.mozilla.fenix.GleanMetrics.History
 import org.mozilla.fenix.GleanMetrics.Logins
 import org.mozilla.fenix.GleanMetrics.Onboarding
 import org.mozilla.fenix.GleanMetrics.Pocket
@@ -81,6 +82,9 @@ sealed class Event {
     object HistoryOpenedInPrivateTabs : Event()
     object HistoryItemRemoved : Event()
     object HistoryAllItemsRemoved : Event()
+    data class HistoryRecentSearchesTapped(val source: String) : Event() {
+        override val extras = mapOf(History.recentSearchesTappedKeys.pageNumber to source)
+    }
     object ReaderModeAvailable : Event()
     object ReaderModeOpened : Event()
     object ReaderModeClosed : Event()
@@ -162,6 +166,7 @@ sealed class Event {
     }
     object FennecToFenixMigrated : Event()
     object AddonsOpenInSettings : Event()
+    object StudiesSettings : Event()
     object VoiceSearchTapped : Event()
     object SearchWidgetInstalled : Event()
     object OnboardingAutoSignIn : Event()
@@ -266,6 +271,10 @@ sealed class Event {
     // Recent bookmarks
     object BookmarkClicked : Event()
     object ShowAllBookmarks : Event()
+    object RecentBookmarksShown : Event()
+
+    // Recently visited/Recent searches
+    object RecentSearchesGroupDeleted : Event()
 
     // Android Autofill
     object AndroidAutofillUnlockSuccessful : Event()
