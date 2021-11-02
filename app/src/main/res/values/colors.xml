@@ -30,21 +30,7 @@
     <color name="accent_dark_theme">@color/photonViolet50</color>
     <color name="accent_bright_dark_theme">@color/photonViolet70</color>
     <color name="accent_high_contrast_dark_theme">@color/photonViolet40</color>
-    <color name="toolbar_start_gradient_dark_theme">@color/foundation_dark_theme</color>
-    <color name="toolbar_center_gradient_dark_theme">@color/foundation_dark_theme</color>
-    <color name="toolbar_end_gradient_dark_theme">@color/foundation_dark_theme</color>
-    <color name="toolbar_divider_color_dark_theme">@color/photonDarkGrey10</color>
-    <color name="sync_disconnected_icon_fill_dark_theme">#FFF36E</color>
-    <color name="sync_disconnected_background_dark_theme">#5B5846</color>
-    <color name="swipe_delete_background_dark_theme">@color/photonDarkGrey20</color>
-    <color name="onboarding_illustration_selected_dark_theme">@color/accent_dark_theme</color>
-    <color name="onboarding_illustration_deselected_dark_theme">#99FBFBFE</color>
-    <color name="add_on_private_browsing_exterior_circle_background_dark_theme">@color/accent_dark_theme</color>
-    <color name="add_on_private_browsing_interior_icon_background_dark_theme">@color/photonWhite</color>
-    <color name="prompt_login_edit_text_cursor_color_dark_theme">@color/photonViolet50</color>
     <color name="search_suggestion_indicator_icon_color_dark_theme">@color/photonGreen60</color>
-    <color name="search_suggestion_indicator_icon_bookmark_color_dark_theme">@color/photonBlue40</color>
-    <color name="preference_section_header_dark_theme">@color/accent_high_contrast_dark_theme</color>
 
     <color name="mozac_widget_favicon_background_dark_theme">@color/photonDarkGrey50</color>
     <color name="mozac_widget_favicon_border_dark_theme">@color/photonDarkGrey10</color>
@@ -98,7 +84,7 @@
     <color name="onboarding_card_background_start_gradient_private_theme">@color/photonViolet60</color>
     <color name="onboarding_card_background_end_gradient_private_theme">@color/photonPurple50</color>
     <color name="onboarding_illustration_selected_private_theme">@color/accent_private_theme</color>
-    <color name="onboarding_illustration_deselected_private_theme">@color/onboarding_illustration_deselected_dark_theme</color>
+    <color name="onboarding_illustration_deselected_private_theme">#99FBFBFE</color>
     <color name="add_on_private_browsing_exterior_circle_background_private_theme">@color/accent_private_theme</color>
     <color name="add_on_private_browsing_interior_icon_background_private_theme">@color/photonWhite</color>
     <color name="prompt_login_edit_text_cursor_color_private_theme">@color/photonViolet50</color>
