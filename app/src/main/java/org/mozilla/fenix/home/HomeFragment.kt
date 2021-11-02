@@ -169,7 +169,7 @@ class HomeFragment : Fragment() {
 
     private lateinit var homeFragmentStore: HomeFragmentStore
     private var _sessionControlInteractor: SessionControlInteractor? = null
-    protected val sessionControlInteractor: SessionControlInteractor
+    private val sessionControlInteractor: SessionControlInteractor
         get() = _sessionControlInteractor!!
 
     private var sessionControlView: SessionControlView? = null
@@ -344,8 +344,7 @@ class HomeFragment : Fragment() {
                 hideOnboarding = ::hideOnboardingAndOpenSearch,
                 registerCollectionStorageObserver = ::registerCollectionStorageObserver,
                 removeCollectionWithUndo = ::removeCollectionWithUndo,
-                showTabTray = ::openTabsTray,
-                handleSwipedItemDeletionCancel = ::handleSwipedItemDeletionCancel
+                showTabTray = ::openTabsTray
             ),
             recentTabController = DefaultRecentTabsController(
                 selectTabUseCase = components.useCases.tabsUseCases.selectTab,
@@ -362,7 +361,8 @@ class HomeFragment : Fragment() {
                 homeStore = homeFragmentStore,
                 storage = components.core.historyStorage,
                 scope = viewLifecycleOwner.lifecycleScope,
-                store = components.core.store
+                store = components.core.store,
+                metrics = requireComponents.analytics.metrics
             ),
             pocketStoriesController = DefaultPocketStoriesController(
                 homeActivity = activity,
@@ -1177,11 +1177,6 @@ class HomeFragment : Fragment() {
         // The add_tabs_to_collections_button is added at runtime. We need to search for it in the same way.
         sessionControlView?.view?.findViewById<MaterialButton>(R.id.add_tabs_to_collections_button)
             ?.isVisible = tabCount > 0
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
-    private fun handleSwipedItemDeletionCancel() {
-        binding.sessionControlRecyclerView.adapter?.notifyDataSetChanged()
     }
 
     private fun getRecentTabs(components: Components): List<RecentTab> {

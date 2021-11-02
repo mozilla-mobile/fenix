@@ -37,9 +37,11 @@ import org.mozilla.fenix.GleanMetrics.Metrics
 import org.mozilla.fenix.GleanMetrics.Onboarding
 import org.mozilla.fenix.GleanMetrics.Pings
 import org.mozilla.fenix.GleanMetrics.Pocket
+import org.mozilla.fenix.GleanMetrics.Preferences
 import org.mozilla.fenix.GleanMetrics.ProgressiveWebApp
 import org.mozilla.fenix.GleanMetrics.ReaderMode
 import org.mozilla.fenix.GleanMetrics.RecentBookmarks
+import org.mozilla.fenix.GleanMetrics.RecentSearches
 import org.mozilla.fenix.GleanMetrics.RecentTabs
 import org.mozilla.fenix.GleanMetrics.SearchShortcuts
 import org.mozilla.fenix.GleanMetrics.SearchWidget
@@ -313,6 +315,10 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.HistoryAllItemsRemoved -> EventWrapper<NoExtraKeys>(
             { History.removedAll.record(it) }
         )
+        is Event.HistoryRecentSearchesTapped -> EventWrapper(
+            { History.recentSearchesTapped.record(it) },
+            { History.recentSearchesTappedKeys.valueOf(it) }
+        )
         is Event.CollectionRenamed -> EventWrapper<NoExtraKeys>(
             { Collections.renamed.record(it) }
         )
@@ -523,6 +529,9 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.AddonsOpenInSettings -> EventWrapper<NoExtraKeys>(
             { Addons.openAddonsInSettings.record(it) }
         )
+        is Event.StudiesSettings -> EventWrapper<NoExtraKeys>(
+            { Preferences.studiesPreferenceEnabled.record(it) }
+        )
         is Event.AddonsOpenInToolbarMenu -> EventWrapper(
             { Addons.openAddonInToolbarMenu.record(it) },
             { Addons.openAddonInToolbarMenuKeys.valueOf(it) }
@@ -613,6 +622,15 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.TabsTrayInactiveTabsCollapsed -> EventWrapper<NoExtraKeys>(
             { TabsTray.inactiveTabsCollapsed.record(it) }
         )
+        is Event.TabsTrayAutoCloseDialogDismissed -> EventWrapper<NoExtraKeys>(
+            { TabsTray.autoCloseDimissed }
+        )
+        is Event.TabsTrayAutoCloseDialogSeen -> EventWrapper<NoExtraKeys>(
+            { TabsTray.autoCloseSeen }
+        )
+        is Event.TabsTrayAutoCloseDialogTurnOnClicked -> EventWrapper<NoExtraKeys>(
+            { TabsTray.autoCloseTurnOnClicked }
+        )
         is Event.TabsTrayHasInactiveTabs -> EventWrapper(
             { TabsTray.hasInactiveTabs.record(it) },
             { TabsTray.hasInactiveTabsKeys.valueOf(it) }
@@ -625,6 +643,13 @@ private val Event.wrapper: EventWrapper<*>?
         )
         is Event.TabsTrayOpenInactiveTab -> EventWrapper<NoExtraKeys>(
             { TabsTray.openInactiveTab.add() }
+        )
+        is Event.InactiveTabsSurveyOpened -> EventWrapper<NoExtraKeys>(
+            { Preferences.inactiveTabsSurveyOpened.record(it) }
+        )
+        is Event.InactiveTabsOffSurvey -> EventWrapper(
+            { Preferences.turnOffInactiveTabsSurvey.record(it) },
+            { Preferences.turnOffInactiveTabsSurveyKeys.valueOf(it) }
         )
         is Event.AutoPlaySettingVisited -> EventWrapper<NoExtraKeys>(
             { Autoplay.visitedSetting.record(it) }
@@ -789,6 +814,14 @@ private val Event.wrapper: EventWrapper<*>?
             { RecentBookmarks.showAllBookmarks.add() }
         )
 
+        is Event.RecentSearchesGroupDeleted -> EventWrapper<NoExtraKeys>(
+            { RecentSearches.groupDeleted.record(it) }
+        )
+
+        is Event.RecentBookmarksShown -> EventWrapper<NoExtraKeys>(
+            { RecentBookmarks.shown.record(it) }
+        )
+
         is Event.AndroidAutofillRequestWithLogins -> EventWrapper<NoExtraKeys>(
             { AndroidAutofill.requestMatchingLogins.record(it) }
         )
@@ -904,9 +937,4 @@ class GleanMetricsService(
     override fun shouldTrack(event: Event): Boolean {
         return event.wrapper != null
     }
-}
-
-// Helper function for making our booleans fit into the string list formatting
-fun Boolean.toStringList(): List<String> {
-    return listOf(this.toString())
 }

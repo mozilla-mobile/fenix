@@ -19,6 +19,7 @@ import org.mozilla.fenix.databinding.InactiveTabListItemBinding
 import org.mozilla.fenix.databinding.InactiveTabsAutoCloseBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.loadIntoView
+import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.toShortUrl
 import org.mozilla.fenix.home.topsites.dpToPx
 import org.mozilla.fenix.tabstray.TabsTrayFragment
@@ -36,7 +37,7 @@ sealed class InactiveTabViewHolder(itemView: View) : RecyclerView.ViewHolder(ite
 
         init {
             itemView.apply {
-                isActivated = InactiveTabsState.isExpanded
+                isActivated = itemView.context.components.appStore.state.inactiveTabsExpanded
 
                 correctHeaderBorder(isActivated)
 
@@ -77,6 +78,7 @@ sealed class InactiveTabViewHolder(itemView: View) : RecyclerView.ViewHolder(ite
         private val binding = InactiveTabsAutoCloseBinding.bind(itemView)
 
         init {
+            binding.root.context.metrics.track(Event.TabsTrayAutoCloseDialogSeen)
             binding.closeButton.setOnClickListener {
                 interactor.onCloseClicked()
             }

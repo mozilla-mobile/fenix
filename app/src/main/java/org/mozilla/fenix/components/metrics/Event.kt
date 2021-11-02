@@ -17,9 +17,11 @@ import org.mozilla.fenix.GleanMetrics.ContextMenu
 import org.mozilla.fenix.GleanMetrics.CrashReporter
 import org.mozilla.fenix.GleanMetrics.ErrorPage
 import org.mozilla.fenix.GleanMetrics.Events
+import org.mozilla.fenix.GleanMetrics.History
 import org.mozilla.fenix.GleanMetrics.Logins
 import org.mozilla.fenix.GleanMetrics.Onboarding
 import org.mozilla.fenix.GleanMetrics.Pocket
+import org.mozilla.fenix.GleanMetrics.Preferences
 import org.mozilla.fenix.GleanMetrics.ProgressiveWebApp
 import org.mozilla.fenix.GleanMetrics.SearchShortcuts
 import org.mozilla.fenix.GleanMetrics.TabsTray
@@ -80,6 +82,9 @@ sealed class Event {
     object HistoryOpenedInPrivateTabs : Event()
     object HistoryItemRemoved : Event()
     object HistoryAllItemsRemoved : Event()
+    data class HistoryRecentSearchesTapped(val source: String) : Event() {
+        override val extras = mapOf(History.recentSearchesTappedKeys.pageNumber to source)
+    }
     object ReaderModeAvailable : Event()
     object ReaderModeOpened : Event()
     object ReaderModeClosed : Event()
@@ -161,6 +166,7 @@ sealed class Event {
     }
     object FennecToFenixMigrated : Event()
     object AddonsOpenInSettings : Event()
+    object StudiesSettings : Event()
     object VoiceSearchTapped : Event()
     object SearchWidgetInstalled : Event()
     object OnboardingAutoSignIn : Event()
@@ -196,12 +202,21 @@ sealed class Event {
     object TabsTrayRecentlyClosedPressed : Event()
     object TabsTrayInactiveTabsExpanded : Event()
     object TabsTrayInactiveTabsCollapsed : Event()
+    object TabsTrayAutoCloseDialogSeen : Event()
+    object TabsTrayAutoCloseDialogTurnOnClicked : Event()
+    object TabsTrayAutoCloseDialogDismissed : Event()
     data class TabsTrayHasInactiveTabs(val count: Int) : Event() {
         override val extras = mapOf(TabsTray.hasInactiveTabsKeys.inactiveTabsCount to count.toString())
     }
     object TabsTrayCloseAllInactiveTabs : Event()
     data class TabsTrayCloseInactiveTab(val amountClosed: Int = 1) : Event()
     object TabsTrayOpenInactiveTab : Event()
+
+    object InactiveTabsSurveyOpened : Event()
+    data class InactiveTabsOffSurvey(val feedback: String) : Event() {
+        override val extras: Map<Preferences.turnOffInactiveTabsSurveyKeys, String>
+            get() = mapOf(Preferences.turnOffInactiveTabsSurveyKeys.feedback to feedback.lowercase(Locale.ROOT))
+    }
 
     object ProgressiveWebAppOpenFromHomescreenTap : Event()
     object ProgressiveWebAppInstallAsShortcut : Event()
@@ -258,6 +273,10 @@ sealed class Event {
     // Recent bookmarks
     object BookmarkClicked : Event()
     object ShowAllBookmarks : Event()
+    object RecentBookmarksShown : Event()
+
+    // Recently visited/Recent searches
+    object RecentSearchesGroupDeleted : Event()
 
     // Android Autofill
     object AndroidAutofillUnlockSuccessful : Event()
