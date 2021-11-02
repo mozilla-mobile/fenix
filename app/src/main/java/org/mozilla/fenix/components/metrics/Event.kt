@@ -271,6 +271,7 @@ sealed class Event {
     // Recent bookmarks
     object BookmarkClicked : Event()
     object ShowAllBookmarks : Event()
+    object RecentBookmarksShown : Event()
 
     // Recently visited/Recent searches
     object RecentSearchesGroupDeleted : Event()

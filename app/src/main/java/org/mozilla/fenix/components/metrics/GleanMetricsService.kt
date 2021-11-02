@@ -810,6 +810,10 @@ private val Event.wrapper: EventWrapper<*>?
             { RecentSearches.groupDeleted.record(it) }
         )
 
+        is Event.RecentBookmarksShown -> EventWrapper<NoExtraKeys>(
+            { RecentBookmarks.shown.record(it) }
+        )
+
         is Event.AndroidAutofillRequestWithLogins -> EventWrapper<NoExtraKeys>(
             { AndroidAutofill.requestMatchingLogins.record(it) }
         )
