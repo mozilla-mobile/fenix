@@ -11,12 +11,9 @@ import android.view.ViewGroup
 import androidx.benchmark.junit4.BenchmarkRule
 import androidx.benchmark.junit4.measureRepeated
 import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.core.view.children
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.action.ViewActions.swipeUp
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
@@ -42,14 +39,10 @@ import org.mozilla.fenix.utils.view.ViewHolder
 @RunWith(AndroidJUnit4::class)
 class HomeFragmentBenchmark {
 
-    private val resourceId = "sessionControlRecyclerView"
+    private val sessionControlViewResourceId = "sessionControlRecyclerView"
 
-    private val homeButton = "Home screen"
+    private val homeButtonContentDescription = "Home screen"
     private lateinit var mockWebServer: MockWebServer
-
-    private lateinit var genericURL: TestAssetHelper.TestAsset
-
-    private lateinit var intent: Intent
 
     @get:Rule
     val benchmarkRule = BenchmarkRule()
@@ -71,8 +64,8 @@ class HomeFragmentBenchmark {
             start()
         }
 
-        genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-        intent = Intent(Intent.ACTION_VIEW, genericURL.url)
+        val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+        val intent = Intent(Intent.ACTION_VIEW, genericURL.url)
         intentReceiverActivityTestRule.launchActivity(intent)
     }
 
@@ -92,6 +85,7 @@ class HomeFragmentBenchmark {
             runWithTimingDisabled {
                 homeButton = getHomeButton(homeActivityRule.activity.findViewById<BrowserToolbar>(R.id.toolbar))
             }
+
             homeActivityRule.runOnUiThread {
                 homeButton!!.callOnClick()
             }
@@ -108,7 +102,7 @@ class HomeFragmentBenchmark {
             // dependent on the device's height, we force everything to be laid out before the run
             // stops.
             val rv = getRecyclerView()
-            while(rv.canScrollVertically(1)){
+            while (rv.canScrollVertically(1)) {
                 homeActivityRule.runOnUiThread {
                     rv.scrollBy(0, getDeviceHeight())
                 }
@@ -117,7 +111,7 @@ class HomeFragmentBenchmark {
             runWithTimingDisabled {
                 // Make sure that everything is shown on screen. The recyclerview should be the last
                 // thing to be drawn.
-                assertNotNull(mDevice.findObject(By.res(TestHelper.packageName, resourceId)))
+                assertNotNull(mDevice.findObject(By.res(TestHelper.packageName, sessionControlViewResourceId)))
 
                 homeButton = null
                 // Click on the "Jump Back In" tab that was created  in the `Setup()`. This should be
@@ -135,28 +129,22 @@ class HomeFragmentBenchmark {
      * with older phones, the older API must be used.
      */
     @Suppress("Deprecation")
-    private fun getDeviceHeight() : Int {
+    private fun getDeviceHeight(): Int {
         val display = homeActivityRule.activity.windowManager.defaultDisplay
         val size = Point()
         display.getSize(size)
         return size.y
     }
 
-    private fun getRecyclerView() : RecyclerView =
-        (homeActivityRule.activity.supportFragmentManager.fragments[0]
-            .childFragmentManager.fragments[0] as HomeFragment).sessionControlView!!.view
+    private fun getRecyclerView(): RecyclerView =
+        (
+            homeActivityRule.activity.supportFragmentManager.fragments[0]
+                .childFragmentManager.fragments[0] as HomeFragment
+            ).sessionControlView!!.view
 
-    /**
-     * DFS search for the home screen button since it is created dynamically in
-     * `BaseBrowserFragment.kt`. This AppCompatButton is created as an action and doesn't have a
-     * resource ID making it hard to do `findViewById`. However, since it contains a contentDescription
-     * we can find it with it.
-     */
-    private fun getHomeButton(view: View): View? {
-        if (view is ViewGroup) {
-            return view.children.firstNotNullOfOrNull(::getHomeButton)
-        }
-
-        return if (view.contentDescription == homeButton) view else null
+    private fun getHomeButton(view: ViewGroup): View {
+        val result = ArrayList<View>()
+        view.findViewsWithText(result, homeButtonContentDescription, View.FIND_VIEWS_WITH_CONTENT_DESCRIPTION)
+        return result[0]
     }
 }
