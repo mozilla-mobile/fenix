@@ -624,13 +624,13 @@ private val Event.wrapper: EventWrapper<*>?
             { TabsTray.inactiveTabsCollapsed.record(it) }
         )
         is Event.TabsTrayAutoCloseDialogDismissed -> EventWrapper<NoExtraKeys>(
-            { TabsTray.autoCloseDimissed }
+            { TabsTray.autoCloseDimissed.record(it) }
         )
         is Event.TabsTrayAutoCloseDialogSeen -> EventWrapper<NoExtraKeys>(
-            { TabsTray.autoCloseSeen }
+            { TabsTray.autoCloseSeen.record(it) }
         )
         is Event.TabsTrayAutoCloseDialogTurnOnClicked -> EventWrapper<NoExtraKeys>(
-            { TabsTray.autoCloseTurnOnClicked }
+            { TabsTray.autoCloseTurnOnClicked.record(it) }
         )
         is Event.TabsTrayHasInactiveTabs -> EventWrapper(
             { TabsTray.hasInactiveTabs.record(it) },
@@ -797,6 +797,14 @@ private val Event.wrapper: EventWrapper<*>?
 
         is Event.ShowAllRecentTabs -> EventWrapper<NoExtraKeys>(
             { RecentTabs.showAllClicked.record(it) }
+        )
+
+        is Event.RecentTabsSectionIsVisible -> EventWrapper<NoExtraKeys>(
+            { RecentTabs.sectionVisible.set(true) }
+        )
+
+        is Event.RecentTabsSectionIsNotVisible -> EventWrapper<NoExtraKeys>(
+            { RecentTabs.sectionVisible.set(false) }
         )
 
         is Event.BookmarkClicked -> EventWrapper<NoExtraKeys>(
