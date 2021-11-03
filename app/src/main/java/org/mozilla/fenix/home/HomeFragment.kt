@@ -128,6 +128,7 @@ import org.mozilla.fenix.utils.ToolbarPopupWindow
 import org.mozilla.fenix.utils.allowUndo
 import org.mozilla.fenix.whatsnew.WhatsNew
 import java.lang.ref.WeakReference
+import java.lang.reflect.Modifier
 import kotlin.math.min
 
 @Suppress("TooManyFunctions", "LargeClass")
@@ -172,7 +173,8 @@ class HomeFragment : Fragment() {
     private val sessionControlInteractor: SessionControlInteractor
         get() = _sessionControlInteractor!!
 
-    private var sessionControlView: SessionControlView? = null
+    @VisibleForTesting(otherwise = Modifier.PRIVATE)
+    var sessionControlView: SessionControlView? = null
     private var appBarLayout: AppBarLayout? = null
     private lateinit var currentMode: CurrentMode
 

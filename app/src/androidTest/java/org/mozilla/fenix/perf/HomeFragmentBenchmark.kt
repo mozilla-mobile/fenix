@@ -5,20 +5,24 @@
 package org.mozilla.fenix.perf
 
 import android.content.Intent
+import android.graphics.Point
 import android.view.View
 import android.view.ViewGroup
 import androidx.benchmark.junit4.BenchmarkRule
 import androidx.benchmark.junit4.measureRepeated
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.core.view.children
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.swipeUp
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ActivityTestRule
 import androidx.test.uiautomator.By
-import junit.framework.Assert.assertNotNull
+import org.junit.Assert.assertNotNull
 import mozilla.components.browser.toolbar.BrowserToolbar
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.Before
@@ -31,6 +35,7 @@ import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper
+import org.mozilla.fenix.home.HomeFragment
 import org.mozilla.fenix.ui.robots.mDevice
 import org.mozilla.fenix.utils.view.ViewHolder
 
@@ -97,13 +102,24 @@ class HomeFragmentBenchmark {
             // https://android.googlesource.com/platform/frameworks/base/+/8f6f1f43eeb0d7263b626978ee2c21d4053bf610/core/java/android/app/Instrumentation.java#328
             InstrumentationRegistry.getInstrumentation().waitForIdleSync()
 
+            // The test has to scroll to the bottom since there is a possibility not everything is
+            // laid out yet. For example, on smaller screen size (such as the Moto G5), pocket stories
+            // will not be shown until the user scrolls down to it. By triggering a scrolling action
+            // dependent on the device's height, we force everything to be laid out before the run
+            // stops.
+            val rv = getRecyclerView()
+            while(rv.canScrollVertically(1)){
+                homeActivityRule.runOnUiThread {
+                    rv.scrollBy(0, getDeviceHeight())
+                }
+            }
+
             runWithTimingDisabled {
                 // Make sure that everything is shown on screen. The recyclerview should be the last
                 // thing to be drawn.
                 assertNotNull(mDevice.findObject(By.res(TestHelper.packageName, resourceId)))
 
                 homeButton = null
-
                 // Click on the "Jump Back In" tab that was created  in the `Setup()`. This should be
                 // the third item in the recyclerview.
                 onView(withId(R.id.sessionControlRecyclerView)).perform(
@@ -112,6 +128,23 @@ class HomeFragmentBenchmark {
             }
         }
     }
+
+    /**
+     * To calculate the device physical height, the old api `WindowManager.defaultDisplay` is used.
+     * Android 30 deprecated both `Display.getSize()` and `defaultDisplay`. However, to be compatible
+     * with older phones, the older API must be used.
+     */
+    @Suppress("Deprecation")
+    private fun getDeviceHeight() : Int {
+        val display = homeActivityRule.activity.windowManager.defaultDisplay
+        val size = Point()
+        display.getSize(size)
+        return size.y
+    }
+
+    private fun getRecyclerView() : RecyclerView =
+        (homeActivityRule.activity.supportFragmentManager.fragments[0]
+            .childFragmentManager.fragments[0] as HomeFragment).sessionControlView!!.view
 
     /**
      * DFS search for the home screen button since it is created dynamically in
