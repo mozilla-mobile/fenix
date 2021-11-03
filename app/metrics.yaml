@@ -5901,7 +5901,7 @@ recent_bookmarks:
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/22075
     data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/
+      - https://github.com/mozilla-mobile/fenix/pull/22293
     data_sensitivity:
       - interaction
     notification_emails:
