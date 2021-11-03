@@ -136,11 +136,11 @@ class HomeFragmentBenchmark {
         return size.y
     }
 
-    private fun getRecyclerView(): RecyclerView =
-        (
-            homeActivityRule.activity.supportFragmentManager.fragments[0]
-                .childFragmentManager.fragments[0] as HomeFragment
-            ).sessionControlView!!.view
+    private fun getRecyclerView(): RecyclerView {
+        val navHostFragment = homeActivityRule.activity.supportFragmentManager.fragments[0]
+        val homeFragment = navHostFragment.childFragmentManager.fragments[0] as HomeFragment
+        return homeFragment.sessionControlView!!.view
+    }
 
     private fun getHomeButton(view: ViewGroup): View {
         val result = ArrayList<View>()
