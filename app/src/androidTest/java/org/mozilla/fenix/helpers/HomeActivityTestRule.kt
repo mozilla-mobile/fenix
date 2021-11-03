@@ -39,9 +39,7 @@ class HomeActivityTestRule(
 
     override fun afterActivityLaunched() {
         super.afterActivityLaunched()
-        if (skipShouldShowJumpBackIn) {
-            activity.settings().shouldShowJumpBackInCFR = false
-        }
+        if (skipShouldShowJumpBackIn) { hideShowJumpBackInCFR(this) }
     }
 
     override fun afterActivityFinished() {
@@ -88,6 +86,10 @@ class HomeActivityIntentTestRule(
 fun setLongTapTimeout(delay: Int) {
     val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
     mDevice.executeShellCommand("settings put secure long_press_timeout $delay")
+}
+
+private fun hideShowJumpBackInCFR(homeActivityTestRule: HomeActivityTestRule) {
+    homeActivityTestRule.activity.settings().shouldShowJumpBackInCFR = false
 }
 
 private fun skipOnboardingBeforeLaunch() {
