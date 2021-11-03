@@ -12,8 +12,9 @@ import io.mockk.just
 import io.mockk.verify
 import org.junit.Assert.assertEquals
 import org.junit.Before
-import org.junit.Ignore
+import org.junit.Rule
 import org.junit.Test
+import org.mozilla.fenix.helpers.MockkRetryTestRule
 import org.mozilla.fenix.utils.Settings
 
 class DefaultBrowsingModeManagerTest {
@@ -23,6 +24,9 @@ class DefaultBrowsingModeManagerTest {
     lateinit var manager: BrowsingModeManager
 
     private val initMode = BrowsingMode.Normal
+
+    @get:Rule
+    val mockkRule = MockkRetryTestRule()
 
     @Before
     fun before() {
@@ -49,7 +53,6 @@ class DefaultBrowsingModeManagerTest {
     }
 
     @Test
-    @Ignore("Failure on PR: can't instantiate proxy. See https://github.com/mozilla-mobile/fenix/issues/21362")
     fun `WHEN mode is updated THEN it should be returned from get`() {
         assertEquals(BrowsingMode.Normal, manager.mode)
 
