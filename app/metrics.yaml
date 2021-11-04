@@ -1390,7 +1390,7 @@ customize_home:
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/22145
     data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/
+      - https://github.com/mozilla-mobile/fenix/pull/22333
     data_sensitivity:
       - interaction
     notification_emails:
