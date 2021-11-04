@@ -811,6 +811,10 @@ private val Event.wrapper: EventWrapper<*>?
             { RecentBookmarks.shown.record(it) }
         )
 
+        is Event.RecentBookmarkCount -> EventWrapper<NoExtraKeys>(
+            { RecentBookmarks.recentBookmarksCount.set(this.count.toLong()) },
+        )
+
         is Event.AndroidAutofillRequestWithLogins -> EventWrapper<NoExtraKeys>(
             { AndroidAutofill.requestMatchingLogins.record(it) }
         )
