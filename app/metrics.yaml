@@ -1301,6 +1301,37 @@ metrics:
       - perf-android-fe@mozilla.com
       - mcomella@mozilla.com
     expires: "2022-02-01"
+  install_source:
+    type: string
+    lifetime: application
+    description: |
+      Used to identify the source the app was installed from.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/22138
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/22224#issuecomment-956749994
+    data_sensitivity:
+      - technical
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2022-02-01"
+  inactive_tabs_count:
+    type: quantity
+    lifetime: application
+    description: |
+      How many inactive tabs does the user have.
+    send_in_pings:
+      - metrics
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/22155
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/22163#issuecomment-957636802
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2022-02-01"
+    unit: integer
 
 customize_home:
   most_visited_sites:
@@ -1413,6 +1444,35 @@ customize_home:
     expires: "2022-09-20"
 
 preferences:
+  studies_enabled:
+    type: boolean
+    description: >
+      A metric indicating whether or not the user has studies enabled
+      default: true
+    send_in_pings:
+      - metrics
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/22192
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/22193
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2022-11-01"
+  studies_preference_enabled:
+    type: event
+    description: >
+      An event indicating whether or not the user has studies enabled.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/22192
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/22193
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2022-11-01"
   search_suggestions_enabled:
     type: boolean
     description: |
@@ -1752,6 +1812,19 @@ preferences:
     notification_emails:
       - android-probes@mozilla.com
     expires: "2022-02-01"
+  search_term_groups_enabled:
+    type: boolean
+    description: |
+      Is search term group in tabs tray on?
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/22057
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/22058
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2022-11-01"
 
 search.default_engine:
   code:
@@ -2606,6 +2679,25 @@ history:
       - android-probes@mozilla.com
       - erichards@mozilla.com
     expires: never
+  recent_searches_tapped:
+    type: event
+    description: |
+      User has tapped on a recent searches card in home.
+    extra_keys:
+      page_number:
+        description: |
+          The page number in the homescreen carousel that the recent searches
+          card was on.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/22172
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/22173
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2022-11-01"
+
 
 reader_mode:
   available:
@@ -5736,8 +5828,35 @@ recent_tabs:
     notification_emails:
       - android-probes@mozilla.com
     expires: "2022-06-23"
+  section_visible:
+    type: boolean
+    description: |
+      An indication of whether the recent tabs /
+      Jump Back In section is visible on the homepage.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/22107
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/22166
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2022-11-01"
 
 recent_bookmarks:
+  shown:
+    type: event
+    description: |
+      Recent bookmarks section was shown to the user.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/22103
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/22104
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2022-11-01"
   bookmark_clicked:
     type: counter
     lifetime: application
@@ -5774,6 +5893,40 @@ recent_bookmarks:
     notification_emails:
       - android-probes@mozilla.com
     expires: "2022-02-01"
+  recent_bookmarks_count:
+    type: quantity
+    description: |
+      The number of bookmarked items appearing in the
+      Recently Saved section on the home page.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/22075
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/22293
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2022-11-01"
+    unit: integer
+
+recent_searches:
+  group_deleted:
+    type: event
+    description: |
+      A user has deleted a search term group from the
+      "Recent searches" section on the homescreen using
+      the long-press menu "Remove" option. This removes
+      the item from the homescreen, but does not delete
+      the item from history.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/22175
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/22176#issuecomment-956421788
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2022-04-01"
 
 credit_cards:
   saved:
@@ -5908,3 +6061,52 @@ credit_cards:
     notification_emails:
       - android-probes@mozilla.com
     expires: "2022-09-01"
+
+search_terms:
+  number_of_search_term_group:
+    type: event
+    description: |
+      Number of search term group when tabs tray is opened.
+    extra_keys:
+      count:
+        description: |
+          The number of tabs per search group
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/22057
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/22058
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2022-11-01"
+  average_tabs_per_group:
+    type: event
+    description: |
+      Number of search term tabs per group when tabs tray is opened.
+    extra_keys:
+      count:
+        description: |
+          The average number of tabs per search group
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/22057
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/22058
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2022-11-01"
+  jump_back_in_group_tapped:
+    type: event
+    description: |
+      User tapped on the jump back in search term group.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/22057
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/22058
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2022-11-01"

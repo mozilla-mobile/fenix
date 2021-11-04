@@ -248,7 +248,8 @@ class SessionControlAdapter(
             HistoryMetadataGroupViewHolder.LAYOUT_ID -> return HistoryMetadataGroupViewHolder(
                 composeView = ComposeView(parent.context),
                 store = store,
-                interactor = interactor
+                interactor = interactor,
+                metrics = components.analytics.metrics
             )
         }
 
@@ -294,7 +295,7 @@ class SessionControlAdapter(
             ExperimentDefaultBrowserCardViewHolder.LAYOUT_ID -> ExperimentDefaultBrowserCardViewHolder(view, interactor)
             RecentTabsHeaderViewHolder.LAYOUT_ID -> RecentTabsHeaderViewHolder(view, interactor)
             RecentBookmarksViewHolder.LAYOUT_ID -> {
-                RecentBookmarksViewHolder(view, interactor)
+                RecentBookmarksViewHolder(view, interactor, components.analytics.metrics)
             }
             HistoryMetadataHeaderViewHolder.LAYOUT_ID -> HistoryMetadataHeaderViewHolder(
                 view,

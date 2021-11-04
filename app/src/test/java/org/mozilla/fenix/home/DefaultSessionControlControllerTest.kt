@@ -29,6 +29,7 @@ import mozilla.components.browser.state.state.recover.RecoverableTab
 import mozilla.components.browser.state.state.selectedOrDefaultSearchEngine
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.Engine
+import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.tabs.TabsUseCases
@@ -55,6 +56,7 @@ import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.components.tips.Tip
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.home.recenttabs.RecentTab
 import org.mozilla.fenix.home.sessioncontrol.DefaultSessionControlController
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.utils.Settings
@@ -107,6 +109,7 @@ class DefaultSessionControlControllerTest {
     )
 
     private lateinit var store: BrowserStore
+    private val homeFragmentState: HomeFragmentState = mockk(relaxed = true)
 
     @Before
     fun setup() {
@@ -813,6 +816,52 @@ class DefaultSessionControlControllerTest {
                     sessionId = null
                 )
             )
+        }
+    }
+
+    @Test
+    fun `WHEN handleReportSessionMetrics is called AND there are zero recent tabs THEN report Event#RecentTabsSectionIsNotVisible`() {
+        every { homeFragmentState.recentTabs } returns emptyList()
+        createController().handleReportSessionMetrics(homeFragmentState)
+        verify(exactly = 0) {
+            metrics.track(Event.RecentTabsSectionIsVisible)
+        }
+        verify {
+            metrics.track(Event.RecentTabsSectionIsNotVisible)
+        }
+    }
+
+    @Test
+    fun `WHEN handleReportSessionMetrics is called AND there is at least one recent tab THEN report Event#RecentTabsSectionIsVisible`() {
+        val recentTab: RecentTab = mockk(relaxed = true)
+        every { homeFragmentState.recentTabs } returns listOf(recentTab)
+        createController().handleReportSessionMetrics(homeFragmentState)
+        verify(exactly = 0) {
+            metrics.track(Event.RecentTabsSectionIsNotVisible)
+        }
+        verify {
+            metrics.track(Event.RecentTabsSectionIsVisible)
+        }
+    }
+
+    @Test
+    fun `WHEN handleReportSessionMetrics is called AND there are zero recent bookmarks THEN report Event#RecentBookmarkCount(0)`() {
+        every { homeFragmentState.recentBookmarks } returns emptyList()
+        every { homeFragmentState.recentTabs } returns emptyList()
+        createController().handleReportSessionMetrics(homeFragmentState)
+        verify {
+            metrics.track(Event.RecentBookmarkCount(0))
+        }
+    }
+
+    @Test
+    fun `WHEN handleReportSessionMetrics is called AND there is at least one recent bookmark THEN report Event#RecentBookmarkCount(1)`() {
+        val recentBookmark: BookmarkNode = mockk(relaxed = true)
+        every { homeFragmentState.recentBookmarks } returns listOf(recentBookmark)
+        every { homeFragmentState.recentTabs } returns emptyList()
+        createController().handleReportSessionMetrics(homeFragmentState)
+        verify {
+            metrics.track(Event.RecentBookmarkCount(1))
         }
     }
 
