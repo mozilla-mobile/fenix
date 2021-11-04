@@ -71,7 +71,8 @@ class NormalBrowserTrayList @JvmOverloads constructor(
                 context.components.core.store,
                 context.settings(),
                 inactiveTabsFilter,
-                concatAdapter.inactiveTabsAdapter
+                concatAdapter.inactiveTabsAdapter,
+                context.components.analytics.metrics
             )
         )
     }
