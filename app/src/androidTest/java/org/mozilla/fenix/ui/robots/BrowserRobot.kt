@@ -20,7 +20,6 @@ import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.RootMatchers.isDialog
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.Visibility
-import androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
@@ -37,7 +36,6 @@ import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.mediasession.MediaSession
 import org.hamcrest.CoreMatchers.allOf
-import org.hamcrest.CoreMatchers.containsString
 import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.mozilla.fenix.R
@@ -46,6 +44,7 @@ import org.mozilla.fenix.helpers.Constants.LONG_CLICK_DURATION
 import org.mozilla.fenix.helpers.SessionLoadedIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestHelper.packageName
+import org.mozilla.fenix.helpers.TestHelper.waitForObjects
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
 
@@ -103,16 +102,23 @@ class BrowserRobot {
     }
 
     fun verifyTabCounter(expectedText: String) {
-        onView(withId(R.id.counter_text))
-            .check((matches(withText(containsString(expectedText)))))
+        val counter =
+            mDevice.findObject(
+                UiSelector()
+                    .resourceId("$packageName:id/counter_text")
+                    .text(expectedText)
+            )
+        assertTrue(counter.waitForExists(waitingTime))
     }
 
     fun verifySnackBarText(expectedText: String) {
-        val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        mDevice.waitNotNull(Until.findObject(text(expectedText)), waitingTime)
+        mDevice.waitForObjects(mDevice.findObject(UiSelector().textContains(expectedText)))
 
-        onView(withText(expectedText)).check(
-            matches(isCompletelyDisplayed())
+        assertTrue(
+            mDevice.findObject(
+                UiSelector()
+                    .textContains(expectedText)
+            ).waitForExists(waitingTime)
         )
     }
 
@@ -397,10 +403,14 @@ class BrowserRobot {
         }
     }
 
-    fun snackBarButtonClick(expectedText: String) {
-        onView(allOf(withId(R.id.snackbar_btn), withText(expectedText))).check(
-            matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE))
-        ).perform(ViewActions.click())
+    fun snackBarButtonClick() {
+        val switchButton =
+            mDevice.findObject(
+                UiSelector()
+                    .resourceId("$packageName:id/snackbar_btn")
+            )
+        switchButton.waitForExists(waitingTime)
+        switchButton.clickAndWaitForNewWindow(waitingTime)
     }
 
     fun verifySaveLoginPromptIsShown() {
@@ -546,7 +556,10 @@ class BrowserRobot {
         }
 
         fun openTabDrawer(interact: TabDrawerRobot.() -> Unit): TabDrawerRobot.Transition {
-            mDevice.waitNotNull(Until.findObject(By.desc("Tabs")))
+            mDevice.findObject(
+                UiSelector().descriptionContains("open tab. Tap to switch tabs.")
+            ).waitForExists(waitingTime)
+
             tabsCounter().click()
             mDevice.waitNotNull(Until.findObject(By.res("$packageName:id/tab_layout")))
 
@@ -644,7 +657,7 @@ private fun assertMenuButton() {
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
-private fun tabsCounter() = mDevice.findObject(By.desc("Tabs"))
+private fun tabsCounter() = mDevice.findObject(By.res("$packageName:id/counter_root"))
 
 private fun mediaPlayerPlayButton() =
     mDevice.findObject(

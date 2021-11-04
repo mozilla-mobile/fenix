@@ -9,9 +9,9 @@ import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
@@ -41,6 +41,7 @@ class ContextMenusTest {
 
     @Before
     fun setUp() {
+        activityIntentTestRule.activity.applicationContext.settings().shouldShowJumpBackInCFR = false
         mockWebServer = MockWebServer().apply {
             dispatcher = AndroidAssetDispatcher()
             start()
@@ -52,7 +53,6 @@ class ContextMenusTest {
         mockWebServer.shutdown()
     }
 
-    @Ignore("Test failures: https://github.com/mozilla-mobile/fenix/issues/18421")
     @Test
     fun verifyContextOpenLinkNewTab() {
         val pageLinks =
@@ -67,7 +67,7 @@ class ContextMenusTest {
             verifyLinkContextMenuItems(genericURL.url)
             clickContextOpenLinkInNewTab()
             verifySnackBarText("New tab opened")
-            snackBarButtonClick("Switch")
+            snackBarButtonClick()
             verifyUrl(genericURL.url.toString())
         }.openTabDrawer {
             verifyNormalModeSelected()
@@ -76,7 +76,6 @@ class ContextMenusTest {
         }
     }
 
-    @Ignore("Test failures: https://github.com/mozilla-mobile/fenix/issues/18421")
     @Test
     fun verifyContextOpenLinkPrivateTab() {
         val pageLinks =
@@ -91,7 +90,7 @@ class ContextMenusTest {
             verifyLinkContextMenuItems(genericURL.url)
             clickContextOpenLinkInPrivateTab()
             verifySnackBarText("New private tab opened")
-            snackBarButtonClick("Switch")
+            snackBarButtonClick()
             verifyUrl(genericURL.url.toString())
         }.openTabDrawer {
             verifyPrivateModeSelected()
@@ -99,7 +98,6 @@ class ContextMenusTest {
         }
     }
 
-    @Ignore("Test failures: https://github.com/mozilla-mobile/fenix/issues/12473")
     @Test
     fun verifyContextCopyLink() {
         val pageLinks =
@@ -136,7 +134,6 @@ class ContextMenusTest {
         }
     }
 
-    @Ignore("Intermittent: https://github.com/mozilla-mobile/fenix/issues/12367")
     @Test
     fun verifyContextOpenImageNewTab() {
         val pageLinks =
@@ -151,13 +148,12 @@ class ContextMenusTest {
             verifyLinkImageContextMenuItems(imageResource.url)
             clickContextOpenImageNewTab()
             verifySnackBarText("New tab opened")
-            snackBarButtonClick("Switch")
+            snackBarButtonClick()
             verifyUrl(imageResource.url.toString())
         }
     }
 
     @Test
-    @Ignore("Disabled – Google Keyboard Clipboard overlay blocks the address bar: https://github.com/mozilla-mobile/fenix/issues/10586")
     fun verifyContextCopyImageLocation() {
         val pageLinks =
             TestAssetHelper.getGenericAsset(mockWebServer, 4)

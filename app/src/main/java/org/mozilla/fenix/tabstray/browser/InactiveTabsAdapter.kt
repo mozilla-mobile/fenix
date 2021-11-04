@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.ListAdapter
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.tabstray.TabsTray
 import org.mozilla.fenix.components.Components
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.tabstray.TabsTrayInteractor
 import org.mozilla.fenix.tabstray.browser.InactiveTabViewHolder.AutoCloseDialogHolder
 import org.mozilla.fenix.tabstray.browser.InactiveTabViewHolder.FooterHolder
@@ -40,7 +41,6 @@ class InactiveTabsAdapter(
 ) : Adapter(DiffCallback), TabsTray, FeatureNameHolder {
 
     internal lateinit var inactiveTabsInteractor: InactiveTabsInteractor
-    internal lateinit var inactiveTabsAutoCloseDialogInteractor: InactiveTabsAutoCloseDialogInteractor
     internal var inActiveTabsCount: Int = 0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): InactiveTabViewHolder {
@@ -48,7 +48,7 @@ class InactiveTabsAdapter(
             .inflate(viewType, parent, false)
 
         return when (viewType) {
-            AutoCloseDialogHolder.LAYOUT_ID -> AutoCloseDialogHolder(view, inactiveTabsAutoCloseDialogInteractor)
+            AutoCloseDialogHolder.LAYOUT_ID -> AutoCloseDialogHolder(view, inactiveTabsInteractor)
             HeaderHolder.LAYOUT_ID -> HeaderHolder(view, inactiveTabsInteractor, tabsTrayInteractor)
             TabViewHolder.LAYOUT_ID -> TabViewHolder(view, browserTrayInteractor, featureName)
             FooterHolder.LAYOUT_ID -> FooterHolder(view)
@@ -92,7 +92,7 @@ class InactiveTabsAdapter(
         }
 
         // If we have items, but we should be in a collapsed state.
-        if (!InactiveTabsState.isExpanded) {
+        if (!context.components.appStore.state.inactiveTabsExpanded) {
             submitList(listOf(Item.Header))
             return
         }
