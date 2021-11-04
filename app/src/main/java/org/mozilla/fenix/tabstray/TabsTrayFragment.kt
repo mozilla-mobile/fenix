@@ -123,7 +123,8 @@ class TabsTrayFragment : AppCompatDialogFragment() {
         tabsTrayStore = StoreProvider.get(this) {
             TabsTrayStore(
                 initialState = TabsTrayState(
-                    mode = initialMode
+                    mode = initialMode,
+                    focusGroupTabId = args.focusGroupTabId
                 )
             )
         }
@@ -388,7 +389,8 @@ class TabsTrayFragment : AppCompatDialogFragment() {
                 browserInteractor,
                 navigationInteractor,
                 trayInteractor,
-                requireComponents.core.store
+                requireComponents.core.store,
+                requireComponents.appStore
             )
             isUserInputEnabled = false
         }

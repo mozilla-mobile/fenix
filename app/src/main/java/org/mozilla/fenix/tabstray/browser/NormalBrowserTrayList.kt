@@ -52,21 +52,11 @@ class NormalBrowserTrayList @JvmOverloads constructor(
         DefaultInactiveTabsInteractor(
             InactiveTabsController(
                 context.components.core.store,
+                context.components.appStore,
                 inactiveTabsFilter,
                 concatAdapter.inactiveTabsAdapter,
-                context.components.analytics.metrics
-            )
-        )
-    }
-
-    private val inactiveTabsAutoCloseInteractor by lazy {
-        DefaultInactiveTabsAutoCloseDialogInteractor(
-            InactiveTabsAutoCloseDialogController(
-                context.components.core.store,
-                context.settings(),
-                inactiveTabsFilter,
-                concatAdapter.inactiveTabsAdapter,
-                context.components.analytics.metrics
+                context.components.analytics.metrics,
+                context.settings()
             )
         )
     }
@@ -75,8 +65,7 @@ class NormalBrowserTrayList @JvmOverloads constructor(
         TabsFeature(
             tabSorter,
             context.components.core.store,
-            { !it.content.private },
-        )
+        ) { !it.content.private }
     }
 
     private val touchHelper by lazy {
@@ -94,7 +83,6 @@ class NormalBrowserTrayList @JvmOverloads constructor(
         super.onAttachedToWindow()
 
         concatAdapter.inactiveTabsAdapter.inactiveTabsInteractor = inactiveTabsInteractor
-        concatAdapter.inactiveTabsAdapter.inactiveTabsAutoCloseDialogInteractor = inactiveTabsAutoCloseInteractor
 
         tabsFeature.start()
 

@@ -14,15 +14,16 @@ import org.mozilla.fenix.GleanMetrics.AppTheme
 import org.mozilla.fenix.GleanMetrics.Autoplay
 import org.mozilla.fenix.GleanMetrics.Collections
 import org.mozilla.fenix.GleanMetrics.ContextMenu
-import org.mozilla.fenix.GleanMetrics.CrashReporter
 import org.mozilla.fenix.GleanMetrics.ErrorPage
 import org.mozilla.fenix.GleanMetrics.Events
+import org.mozilla.fenix.GleanMetrics.History
 import org.mozilla.fenix.GleanMetrics.Logins
 import org.mozilla.fenix.GleanMetrics.Onboarding
 import org.mozilla.fenix.GleanMetrics.Pocket
 import org.mozilla.fenix.GleanMetrics.Preferences
 import org.mozilla.fenix.GleanMetrics.ProgressiveWebApp
 import org.mozilla.fenix.GleanMetrics.SearchShortcuts
+import org.mozilla.fenix.GleanMetrics.SearchTerms
 import org.mozilla.fenix.GleanMetrics.TabsTray
 import org.mozilla.fenix.GleanMetrics.ToolbarSettings
 import org.mozilla.fenix.GleanMetrics.TopSites
@@ -81,6 +82,9 @@ sealed class Event {
     object HistoryOpenedInPrivateTabs : Event()
     object HistoryItemRemoved : Event()
     object HistoryAllItemsRemoved : Event()
+    data class HistoryRecentSearchesTapped(val source: String) : Event() {
+        override val extras = mapOf(History.recentSearchesTappedKeys.pageNumber to source)
+    }
     object ReaderModeAvailable : Event()
     object ReaderModeOpened : Event()
     object ReaderModeClosed : Event()
@@ -162,6 +166,7 @@ sealed class Event {
     }
     object FennecToFenixMigrated : Event()
     object AddonsOpenInSettings : Event()
+    object StudiesSettings : Event()
     object VoiceSearchTapped : Event()
     object SearchWidgetInstalled : Event()
     object OnboardingAutoSignIn : Event()
@@ -262,10 +267,17 @@ sealed class Event {
     object ShowAllRecentTabs : Event()
     object OpenRecentTab : Event()
     object OpenInProgressMediaTab : Event()
+    object RecentTabsSectionIsVisible : Event()
+    object RecentTabsSectionIsNotVisible : Event()
 
     // Recent bookmarks
     object BookmarkClicked : Event()
     object ShowAllBookmarks : Event()
+    object RecentBookmarksShown : Event()
+    data class RecentBookmarkCount(val count: Int) : Event()
+
+    // Recently visited/Recent searches
+    object RecentSearchesGroupDeleted : Event()
 
     // Android Autofill
     object AndroidAutofillUnlockSuccessful : Event()
@@ -606,13 +618,7 @@ sealed class Event {
         }
     }
 
-    object CrashReporterOpened : Event()
     data class AddonInstalled(val addonId: String) : Event()
-
-    data class CrashReporterClosed(val crashSubmitted: Boolean) : Event() {
-        override val extras: Map<CrashReporter.closedKeys, String>?
-            get() = mapOf(CrashReporter.closedKeys.crashSubmitted to crashSubmitted.toString())
-    }
 
     data class BrowserMenuItemTapped(val item: Item) : Event() {
         enum class Item {
@@ -625,15 +631,6 @@ sealed class Event {
 
         override val extras: Map<Events.browserMenuActionKeys, String>?
             get() = mapOf(Events.browserMenuActionKeys.item to item.toString().lowercase(Locale.ROOT))
-    }
-
-    data class TabCounterMenuItemTapped(val item: Item) : Event() {
-        enum class Item {
-            NEW_TAB, NEW_PRIVATE_TAB, CLOSE_TAB
-        }
-
-        override val extras: Map<Events.tabCounterMenuActionKeys, String>?
-            get() = mapOf(Events.tabCounterMenuActionKeys.item to item.toString().lowercase(Locale.ROOT))
     }
 
     object AutoPlaySettingVisited : Event()
@@ -653,6 +650,18 @@ sealed class Event {
         override val extras: Map<Events.tabViewChangedKeys, String>?
             get() = mapOf(Events.tabViewChangedKeys.type to type.toString().lowercase(Locale.ROOT))
     }
+
+    data class SearchTermGroupCount(val count: Int) : Event() {
+        override val extras: Map<SearchTerms.numberOfSearchTermGroupKeys, String>
+            get() = hashMapOf(SearchTerms.numberOfSearchTermGroupKeys.count to count.toString())
+    }
+
+    data class AverageTabsPerSearchTermGroup(val averageSize: Double) : Event() {
+        override val extras: Map<SearchTerms.averageTabsPerGroupKeys, String>
+            get() = hashMapOf(SearchTerms.averageTabsPerGroupKeys.count to averageSize.toString())
+    }
+
+    object JumpBackInGroupTapped : Event()
 
     sealed class Search
 
