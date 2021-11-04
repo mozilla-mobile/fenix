@@ -8,14 +8,14 @@
     <color name="secondary_text_normal_theme">#A7A2B7</color>
     <color name="contrast_text_normal_theme">@color/primary_text_normal_theme</color>
     <color name="caption_text_normal_theme">@color/photonLightGrey70</color>
-    <color name="foundation_normal_theme">@color/foundation_dark_theme</color>
+    <color name="foundation_normal_theme">@color/photonDarkGrey80</color>
     <color name="above_normal_theme">@color/above_dark_theme</color>
     <color name="inset_normal_theme">@color/photonDarkGrey50</color>
-    <color name="accent_normal_theme">@color/accent_dark_theme</color>
+    <color name="accent_normal_theme">@color/photonViolet50</color>
     <color name="accent_bright_normal_theme">@color/accent_bright_dark_theme</color>
     <color name="accent_high_contrast_normal_theme">@color/accent_high_contrast_dark_theme</color>
     <color name="about_link_normal_theme">@color/photonViolet40</color>
-    <color name="tab_ring_normal_theme">@color/accent_dark_theme</color>
+    <color name="tab_ring_normal_theme">@color/accent_normal_theme</color>
     <color name="neutral_normal_theme">@color/photonGrey20</color>
     <color name="neutral_faded_normal_theme">#1FFBFBFE</color>
     <color name="shadow_normal_theme">#050505</color>
@@ -27,9 +27,9 @@
     <color name="toggle_off_track_normal_theme">@color/toggle_off_track_dark_theme</color>
     <color name="snackbar_normal_theme">@color/accent_bright_dark_theme</color>
     <color name="accent_on_dark_background_normal_theme">@color/accent_high_contrast_dark_theme</color>
-    <color name="toolbar_start_gradient_normal_theme">@color/foundation_dark_theme</color>
-    <color name="toolbar_center_gradient_normal_theme">@color/foundation_dark_theme</color>
-    <color name="toolbar_end_gradient_normal_theme">@color/foundation_dark_theme</color>
+    <color name="toolbar_start_gradient_normal_theme">@color/foundation_normal_theme</color>
+    <color name="toolbar_center_gradient_normal_theme">@color/foundation_normal_theme</color>
+    <color name="toolbar_end_gradient_normal_theme">@color/foundation_normal_theme</color>
     <color name="toolbar_divider_color_normal_theme">@color/photonDarkGrey10</color>
     <color name="fill_link_from_clipboard_normal_theme">@color/accent_on_dark_background_normal_theme</color>
     <color name="menu_category_normal_theme">@color/primary_text_normal_theme</color>
@@ -38,14 +38,14 @@
     <color name="swipe_delete_background_normal_theme">@color/photonDarkGrey20</color>
     <color name="onboarding_card_background_start_gradient_normal_theme">@color/accent_bright_dark_theme</color>
     <color name="onboarding_card_background_end_gradient_normal_theme">@color/accent_high_contrast_dark_theme</color>
-    <color name="onboarding_illustration_selected_normal_theme">@color/accent_dark_theme</color>
+    <color name="onboarding_illustration_selected_normal_theme">@color/accent_normal_theme</color>
     <color name="onboarding_illustration_deselected_normal_theme">#99FBFBFE</color>
-    <color name="add_on_private_browsing_exterior_circle_background_normal_theme">@color/accent_dark_theme</color>
+    <color name="add_on_private_browsing_exterior_circle_background_normal_theme">@color/accent_normal_theme</color>
     <color name="add_on_private_browsing_interior_icon_background_normal_theme">@color/photonWhite</color>
     <color name="prompt_login_edit_text_cursor_color_normal_theme">@color/photonViolet50</color>
     <color name="readermode_start_gradient_normal_theme">@color/photonViolet30</color>
     <color name="readermode_end_gradient_normal_theme">@color/photonBlue30</color>
-    <color name="search_suggestion_indicator_icon_color_normal_theme">@color/search_suggestion_indicator_icon_color_dark_theme</color>
+    <color name="search_suggestion_indicator_icon_color_normal_theme">@color/photonGreen60</color>
     <color name="search_suggestion_indicator_icon_bookmark_color_normal_theme">@color/photonBlue40</color>
     <color name="select_login_header_normal_theme">@color/accent_high_contrast_dark_theme</color>
     <color name="select_credit_card_header_normal_theme">@color/accent_high_contrast_dark_theme</color>
@@ -58,19 +58,19 @@
     <color name="mozac_widget_favicon_border_normal_theme">@color/mozac_widget_favicon_border_dark_theme</color>
 
     <!-- Tab tray -->
-    <color name="tab_tray_item_text_normal_theme">@color/tab_tray_item_text_dark_theme</color>
-    <color name="tab_tray_item_url_normal_theme">@color/tab_tray_item_url_dark_theme</color>
-    <color name="tab_tray_item_background_normal_theme">@color/tab_tray_item_background_dark_theme</color>
+    <color name="tab_tray_item_text_normal_theme">@color/photonLightGrey05</color>
+    <color name="tab_tray_item_url_normal_theme">@color/photonLightGrey60</color>
+    <color name="tab_tray_item_background_normal_theme">@color/photonDarkGrey80</color>
     <color name="tab_tray_item_selected_background_normal_theme">@color/tab_tray_item_selected_background_dark_theme</color>
-    <color name="tab_tray_toolbar_background_normal_theme">@color/tab_tray_toolbar_background_dark_theme</color>
-    <color name="tab_tray_item_divider_normal_theme">@color/tab_tray_item_divider_dark_theme</color>
-    <color name="tab_tray_item_media_background_normal_theme">@color/tab_tray_item_media_background_dark_theme</color>
+    <color name="tab_tray_toolbar_background_normal_theme">@color/photonDarkGrey50</color>
+    <color name="tab_tray_item_divider_normal_theme">@color/photonDarkGrey10</color>
+    <color name="tab_tray_item_media_background_normal_theme">@color/photonViolet50</color>
     <color name="tab_tray_heading_icon_normal_theme">@color/tab_tray_heading_icon_dark_theme</color>
     <color name="tab_tray_heading_icon_inactive_normal_theme">@color/tab_tray_heading_icon_inactive_dark_theme</color>
-    <color name="tab_tray_heading_icon_menu_normal_theme">@color/tab_tray_heading_icon_menu_dark_theme</color>
-    <color name="tab_tray_item_thumbnail_background_normal_theme">@color/tab_tray_item_thumbnail_background_dark_theme</color>
-    <color name="tab_tray_item_thumbnail_icon_normal_theme">@color/tab_tray_item_thumbnail_icon_dark_theme</color>
-    <color name="tab_tray_selected_mask_normal_theme">@color/tab_tray_selected_mask_dark_theme</color>
+    <color name="tab_tray_heading_icon_menu_normal_theme">@color/photonLightGrey05</color>
+    <color name="tab_tray_item_thumbnail_background_normal_theme">@color/photonDarkGrey50</color>
+    <color name="tab_tray_item_thumbnail_icon_normal_theme">@color/photonDarkGrey05</color>
+    <color name="tab_tray_selected_mask_normal_theme">@color/photonViolet50A32</color>
 
     <!-- Tab History -->
     <color name="tab_history_item_selected_background_normal_theme">@color/tab_tray_item_selected_background_dark_theme</color>

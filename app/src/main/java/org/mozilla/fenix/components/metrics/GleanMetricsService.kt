@@ -19,7 +19,6 @@ import org.mozilla.fenix.GleanMetrics.BrowserSearch
 import org.mozilla.fenix.GleanMetrics.Collections
 import org.mozilla.fenix.GleanMetrics.ContextMenu
 import org.mozilla.fenix.GleanMetrics.ContextualMenu
-import org.mozilla.fenix.GleanMetrics.CrashReporter
 import org.mozilla.fenix.GleanMetrics.CreditCards
 import org.mozilla.fenix.GleanMetrics.CustomTab
 import org.mozilla.fenix.GleanMetrics.CustomizeHome
@@ -157,13 +156,6 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.ContextMenuItemTapped -> EventWrapper(
             { ContextMenu.itemTapped.record(it) },
             { ContextMenu.itemTappedKeys.valueOf(it) }
-        )
-        is Event.CrashReporterOpened -> EventWrapper<NoExtraKeys>(
-            { CrashReporter.opened.record(it) }
-        )
-        is Event.CrashReporterClosed -> EventWrapper(
-            { CrashReporter.closed.record(it) },
-            { CrashReporter.closedKeys.valueOf(it) }
         )
         is Event.BrowserMenuItemTapped -> EventWrapper(
             { Events.browserMenuAction.record(it) },
@@ -544,10 +536,6 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.VoiceSearchTapped -> EventWrapper<NoExtraKeys>(
             { VoiceSearch.tapped.record(it) }
         )
-        is Event.TabCounterMenuItemTapped -> EventWrapper(
-            { Events.tabCounterMenuAction.record(it) },
-            { Events.tabCounterMenuActionKeys.valueOf(it) }
-        )
         is Event.OnboardingPrivacyNotice -> EventWrapper<NoExtraKeys>(
             { Onboarding.privacyNotice.record(it) }
         )
@@ -624,13 +612,13 @@ private val Event.wrapper: EventWrapper<*>?
             { TabsTray.inactiveTabsCollapsed.record(it) }
         )
         is Event.TabsTrayAutoCloseDialogDismissed -> EventWrapper<NoExtraKeys>(
-            { TabsTray.autoCloseDimissed }
+            { TabsTray.autoCloseDimissed.record(it) }
         )
         is Event.TabsTrayAutoCloseDialogSeen -> EventWrapper<NoExtraKeys>(
-            { TabsTray.autoCloseSeen }
+            { TabsTray.autoCloseSeen.record(it) }
         )
         is Event.TabsTrayAutoCloseDialogTurnOnClicked -> EventWrapper<NoExtraKeys>(
-            { TabsTray.autoCloseTurnOnClicked }
+            { TabsTray.autoCloseTurnOnClicked.record(it) }
         )
         is Event.TabsTrayHasInactiveTabs -> EventWrapper(
             { TabsTray.hasInactiveTabs.record(it) },
@@ -821,6 +809,10 @@ private val Event.wrapper: EventWrapper<*>?
 
         is Event.RecentBookmarksShown -> EventWrapper<NoExtraKeys>(
             { RecentBookmarks.shown.record(it) }
+        )
+
+        is Event.RecentBookmarkCount -> EventWrapper<NoExtraKeys>(
+            { RecentBookmarks.recentBookmarksCount.set(this.count.toLong()) },
         )
 
         is Event.AndroidAutofillRequestWithLogins -> EventWrapper<NoExtraKeys>(
