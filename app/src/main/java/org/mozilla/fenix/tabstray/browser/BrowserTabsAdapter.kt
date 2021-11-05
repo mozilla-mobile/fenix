@@ -17,6 +17,7 @@ import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.databinding.TabTrayGridItemBinding
 import org.mozilla.fenix.databinding.TabTrayItemBinding
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.selection.SelectionHolder
 import org.mozilla.fenix.tabstray.TabsTrayStore
 
@@ -67,9 +68,11 @@ class BrowserTabsAdapter(
 
         return when (viewType) {
             ViewType.GRID.layoutRes ->
-                BrowserTabViewHolder.GridViewHolder(imageLoader, interactor, store, selectionHolder, view, featureName)
+                BrowserTabViewHolder.GridViewHolder(imageLoader, interactor, store,
+                    selectionHolder, view, featureName, context.settings())
             else ->
-                BrowserTabViewHolder.ListViewHolder(imageLoader, interactor, store, selectionHolder, view, featureName)
+                BrowserTabViewHolder.ListViewHolder(imageLoader, interactor, store,
+                    selectionHolder, view, featureName, context.settings())
         }
     }
 
