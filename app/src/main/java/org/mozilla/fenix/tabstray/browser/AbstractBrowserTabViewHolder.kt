@@ -4,6 +4,8 @@
 
 package org.mozilla.fenix.tabstray.browser
 
+import android.annotation.SuppressLint
+import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -31,6 +33,7 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.ext.removeAndDisable
 import org.mozilla.fenix.ext.removeTouchDelegate
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showAndEnable
 import org.mozilla.fenix.ext.toShortUrl
 import org.mozilla.fenix.selection.SelectionHolder
@@ -201,6 +204,7 @@ abstract class AbstractBrowserTabViewHolder(
         imageLoader.loadIntoView(thumbnailView, ImageLoadRequest(id, thumbnailSize))
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun setSelectionInteractor(
         item: TabSessionState,
         holder: SelectionHolder<TabSessionState>,
@@ -222,22 +226,36 @@ abstract class AbstractBrowserTabViewHolder(
                 metrics.track(Event.CollectionTabLongPressed)
                 interactor.select(item)
                 true
-            } else if (holder.selectedItems.contains(item)) {
-                val parent = itemView.parent as? AbstractBrowserTrayList
-                if (parent?.context?.settings()?.searchTermTabGroupsAreEnabled == false) {
-                    val shadow = View.DragShadowBuilder(itemView)
-                    @Suppress("DEPRECATION")
-                    itemView.startDrag(null, shadow, item, 0)
-                    // startDragAndDrop is the non-deprecated version, but requires API 24
-                    true
-                } else false
             } else {
                 false
             }
         }
+        // Since I immediately pass the event to onTouchEvent if it's not a move
+        // The ClickableViewAccessibility warning isn't useful
+        itemView.setOnTouchListener { view, motionEvent ->
+            when (motionEvent.actionMasked) {
+                MotionEvent.ACTION_MOVE -> if (holder.selectedItems.contains(item)) {
+                    val parent = itemView.parent as? AbstractBrowserTrayList
+                    if (parent?.context?.settings()?.searchTermTabGroupsAreEnabled == false) {
+                        for (tabSelected in holder.selectedItems) {
+                            // Exit selection mode by deselecting everything
+                            interactor.deselect(tabSelected)
+                        }
+                        val shadow = View.DragShadowBuilder(itemView)
+                        // startDragAndDrop is the non-deprecated version, but requires API 24
+                        @Suppress("DEPRECATION")
+                        itemView.startDrag(null, shadow, item, 0)
+                        view.alpha = DRAG_TRANSPARENCY // Make the dragged tab mostly invisible
+                    }
+                }
+                else -> view.onTouchEvent(motionEvent)
+            }
+            true
+        }
     }
 
     companion object {
+        internal const val DRAG_TRANSPARENCY = 0.2f
         internal const val PLAY_PAUSE_BUTTON_EXTRA_DPS = 24
         internal const val GRID_ITEM_CLOSE_BUTTON_EXTRA_DPS = 24
     }

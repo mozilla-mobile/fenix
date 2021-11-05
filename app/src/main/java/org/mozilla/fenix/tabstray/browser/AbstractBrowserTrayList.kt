@@ -8,6 +8,7 @@ import android.content.Context
 import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.DragEvent
+import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.tabstray.TabViewHolder
@@ -76,8 +77,6 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
     // Find the closest item to the x/y position of the drop.
     private fun getDropPosition(x: Float, y: Float): String? {
         if (childCount < 2) return null // If there's 0 or 1 tabs visible, can't reorder
-        if (layoutManager == null) return null
-        val lm = layoutManager!!
         var bestDist = Float.MAX_VALUE
         var bestId: String? = null
         for (i in 0 until childCount) {
@@ -85,7 +84,7 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
             val targetHolder = findContainingViewHolder(proposedTarget)
             if (targetHolder is TabViewHolder) {
                 var rect = Rect() // Use layoutManager to get post-animation positioning
-                lm.getDecoratedBoundsWithMargins(proposedTarget, rect)
+                getDecoratedBoundsWithMargins(proposedTarget, rect)
                 val targetX = (rect.left + rect.right) / 2
                 val targetY = (rect.top + rect.bottom) / 2
                 val xDiff = x - targetX
@@ -98,6 +97,16 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
             }
         }
         return bestId
+    }
+    private fun findSourceView(id: String): View? {
+        for (i in 0 until childCount) {
+            val proposed = getChildAt(i)
+            val targetHolder = findContainingViewHolder(proposed)
+            if (targetHolder is TabViewHolder && targetHolder.tab?.id == id) {
+                return proposed
+            }
+        }
+        return null
     }
     private val dragListen = OnDragListener { _, event ->
         when (event.action) {
@@ -127,6 +136,12 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
                 true
             }
             DragEvent.ACTION_DRAG_ENDED -> {
+                // Revert the invisibility
+                val id = (event.localState as TabSessionState).id
+                val sourceView = findSourceView(id)
+                if (sourceView != null) {
+                    sourceView.alpha = 1.0f
+                }
                 true
             }
             else -> { // Unknown action
