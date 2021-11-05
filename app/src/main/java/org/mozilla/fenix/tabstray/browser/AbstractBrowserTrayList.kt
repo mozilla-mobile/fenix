@@ -75,28 +75,31 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
     }
 
     // Find the closest item to the x/y position of the drop.
-    private fun getDropPosition(x: Float, y: Float): String? {
+    private fun getDropPosition(x: Float, y: Float, source: String): Pair<String, Boolean>? {
         if (childCount < 2) return null // If there's 0 or 1 tabs visible, can't reorder
         var bestDist = Float.MAX_VALUE
-        var bestId: String? = null
+        var bestOut: Pair<String, Boolean>? = null
+        var seenSource = false
         for (i in 0 until childCount) {
             val proposedTarget = getChildAt(i)
             val targetHolder = findContainingViewHolder(proposedTarget)
             if (targetHolder is TabViewHolder) {
-                var rect = Rect() // Use layoutManager to get post-animation positioning
+                var rect = Rect() // Get post-animation positioning
                 getDecoratedBoundsWithMargins(proposedTarget, rect)
                 val targetX = (rect.left + rect.right) / 2
                 val targetY = (rect.top + rect.bottom) / 2
                 val xDiff = x - targetX
                 val yDiff = y - targetY
                 val dist = abs(xDiff) + abs(yDiff)
-                if (dist < bestDist) {
+                val id = targetHolder.tab?.id
+                if (id == source) seenSource = true
+                if (dist < bestDist && id != null) {
                     bestDist = dist
-                    bestId = targetHolder.tab?.id
+                    bestOut = Pair(id, seenSource)
                 }
             }
         }
-        return bestId
+        return bestOut
     }
     private fun findSourceView(id: String): View? {
         for (i in 0 until childCount) {
@@ -111,16 +114,24 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
     private val dragListen = OnDragListener { _, event ->
         when (event.action) {
             DragEvent.ACTION_DRAG_STARTED -> {
-                (event.localState is TabSessionState)
+                if (event.localState is TabSessionState) {
+                    val id = (event.localState as TabSessionState).id
+                    val sourceView = findSourceView(id)
+                    if (sourceView != null) {
+                        sourceView.alpha = DRAG_TRANSPARENCY
+                    }
+                    true
+                } else false
             }
             DragEvent.ACTION_DRAG_ENTERED -> {
                 true
             }
             DragEvent.ACTION_DRAG_LOCATION -> {
-                val target = getDropPosition(event.x, event.y)
+                val source = (event.localState as TabSessionState)
+                val target = getDropPosition(event.x, event.y, source.id)
                 if (target != null) {
-                    val source = (event.localState as TabSessionState)
-                    interactor.onTabsMove(source.id, target)
+                    val (id, placeAfter) = target
+                    interactor.onTabsMove(source.id, id, placeAfter)
                 }
                 true
             }
@@ -128,10 +139,11 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
                 true
             }
             DragEvent.ACTION_DROP -> {
-                val target = getDropPosition(event.x, event.y)
+                val source = (event.localState as TabSessionState)
+                val target = getDropPosition(event.x, event.y, source.id)
                 if (target != null) {
-                    val source = (event.localState as TabSessionState)
-                    interactor.onTabsMove(source.id, target)
+                    val (id, placeAfter) = target
+                    interactor.onTabsMove(source.id, id, placeAfter)
                 }
                 true
             }
@@ -140,7 +152,7 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
                 val id = (event.localState as TabSessionState).id
                 val sourceView = findSourceView(id)
                 if (sourceView != null) {
-                    sourceView.alpha = 1.0f
+                    sourceView.alpha = 1f
                 }
                 true
             }
@@ -148,5 +160,8 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
                 false
             }
         }
+    }
+    companion object {
+        internal const val DRAG_TRANSPARENCY = 0.2f
     }
 }

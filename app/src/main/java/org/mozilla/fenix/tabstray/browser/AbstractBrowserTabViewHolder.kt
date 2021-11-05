@@ -245,7 +245,6 @@ abstract class AbstractBrowserTabViewHolder(
                         // startDragAndDrop is the non-deprecated version, but requires API 24
                         @Suppress("DEPRECATION")
                         itemView.startDrag(null, shadow, item, 0)
-                        view.alpha = DRAG_TRANSPARENCY // Make the dragged tab mostly invisible
                     }
                 }
                 else -> view.onTouchEvent(motionEvent)
@@ -255,7 +254,6 @@ abstract class AbstractBrowserTabViewHolder(
     }
 
     companion object {
-        internal const val DRAG_TRANSPARENCY = 0.2f
         internal const val PLAY_PAUSE_BUTTON_EXTRA_DPS = 24
         internal const val GRID_ITEM_CLOSE_BUTTON_EXTRA_DPS = 24
     }

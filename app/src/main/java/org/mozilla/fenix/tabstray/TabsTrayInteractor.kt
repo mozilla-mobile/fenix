@@ -36,12 +36,12 @@ interface TabsTrayInteractor {
     fun onInactiveDebugClicked(tabs: Collection<TabSessionState>)
 
     /**
-     * Invoked when [tabId] should be moved replace [targetId]'s position
-     * due to a drag-drop operation
+     * Invoked when [tabId] should be moved to before/after [targetId] from a drag-drop operation
      */
     fun onTabsMove(
         tabId: String,
         targetId: String?,
+        placeAfter: Boolean
     )
 
     /**
@@ -77,8 +77,9 @@ class DefaultTabsTrayInteractor(
     override fun onTabsMove(
         tabId: String,
         targetId: String?,
+        placeAfter: Boolean
     ) {
-        controller.handleTabsMove(tabId, targetId)
+        controller.handleTabsMove(tabId, targetId, placeAfter)
     }
 
     override fun onInactiveDebugClicked(tabs: Collection<TabSessionState>) {

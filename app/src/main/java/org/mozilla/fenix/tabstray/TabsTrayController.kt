@@ -60,12 +60,13 @@ interface TabsTrayController {
     fun handleMultipleTabsDeletion(tabs: Collection<TabSessionState>)
 
     /**
-     * Moves [tabId] to replace position of [targetId]
+     * Moves [tabId] next to before/after [targetId]
      *
      * @param tabId The tabs to be moved
-     * @param targetId The id of the tab that the [tab] will replace
+     * @param targetId The id of the tab that the [tab] will be placed next to
+     * @param placeAfter Place [tabs] before or after the target
      */
-    fun handleTabsMove(tabId: String, targetId: String?)
+    fun handleTabsMove(tabId: String, targetId: String?, placeAfter: Boolean)
 
     /**
      * Navigate from TabsTray to Recently Closed section in the History fragment.
@@ -181,17 +182,19 @@ class DefaultTabsTrayController(
     }
 
     /**
-     * Moves [tabId] to replace position of [targetId]
+     * Moves [tabId] next to before/after [targetId]
      *
      * @param tabId The tabs to be moved
-     * @param targetId The id of the tab that the [tab] will replace
+     * @param targetId The id of the tab that the [tab] will be placed next to
+     * @param placeAfter Place [tabs] before or after the target
      */
     override fun handleTabsMove(
         tabId: String,
         targetId: String?,
+        placeAfter: Boolean
     ) {
         if (targetId != null && tabId != targetId) {
-            tabsUseCases.moveTabs(tabId, targetId)
+            tabsUseCases.moveTabs(listOf(tabId), targetId, placeAfter)
         }
     }
 
