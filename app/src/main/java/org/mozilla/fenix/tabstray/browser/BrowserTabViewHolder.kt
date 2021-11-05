@@ -16,7 +16,6 @@ import mozilla.components.concept.base.images.ImageLoader
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.TabTrayGridItemBinding
 import org.mozilla.fenix.ext.increaseTapArea
-import org.mozilla.fenix.utils.Settings
 import kotlin.math.max
 import org.mozilla.fenix.selection.SelectionHolder
 import org.mozilla.fenix.tabstray.TabsTrayStore
@@ -33,7 +32,6 @@ sealed class BrowserTabViewHolder(itemView: View) : RecyclerView.ViewHolder(item
      * @param itemView [View] that displays a "tab".
      * @param featureName [String] representing the name of the feature displaying tabs. Used in telemetry reporting.
      */
-    @Suppress("LongParameterList")
     class GridViewHolder(
         imageLoader: ImageLoader,
         override val browserTrayInteractor: BrowserTrayInteractor,
@@ -41,8 +39,7 @@ sealed class BrowserTabViewHolder(itemView: View) : RecyclerView.ViewHolder(item
         selectionHolder: SelectionHolder<TabSessionState>? = null,
         itemView: View,
         featureName: String,
-        settings: Settings? = null
-    ) : AbstractBrowserTabViewHolder(itemView, imageLoader, store, selectionHolder, featureName, settings) {
+    ) : AbstractBrowserTabViewHolder(itemView, imageLoader, store, selectionHolder, featureName) {
 
         private val closeButton: AppCompatImageButton = itemView.findViewById(R.id.mozac_browser_tabstray_close)
 
@@ -89,16 +86,14 @@ sealed class BrowserTabViewHolder(itemView: View) : RecyclerView.ViewHolder(item
      * @param itemView [View] that displays a "tab".
      * @param featureName [String] representing the name of the feature displaying tabs. Used in telemetry reporting.
      */
-    @Suppress("LongParameterList")
     class ListViewHolder(
         imageLoader: ImageLoader,
         override val browserTrayInteractor: BrowserTrayInteractor,
         store: TabsTrayStore,
         selectionHolder: SelectionHolder<TabSessionState>? = null,
         itemView: View,
-        featureName: String,
-        settings: Settings? = null
-    ) : AbstractBrowserTabViewHolder(itemView, imageLoader, store, selectionHolder, featureName, settings) {
+        featureName: String
+    ) : AbstractBrowserTabViewHolder(itemView, imageLoader, store, selectionHolder, featureName) {
         override val thumbnailSize: Int
             get() = max(
                 itemView.resources.getDimensionPixelSize(R.dimen.tab_tray_list_item_thumbnail_height),

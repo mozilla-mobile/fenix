@@ -31,7 +31,6 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.ext.removeAndDisable
 import org.mozilla.fenix.ext.removeTouchDelegate
-import org.mozilla.fenix.utils.Settings
 import org.mozilla.fenix.ext.showAndEnable
 import org.mozilla.fenix.ext.toShortUrl
 import org.mozilla.fenix.selection.SelectionHolder
@@ -57,7 +56,6 @@ abstract class AbstractBrowserTabViewHolder(
     private val selectionHolder: SelectionHolder<TabSessionState>?,
     @VisibleForTesting
     internal val featureName: String,
-    private val settings: Settings?,
     private val store: BrowserStore = itemView.context.components.core.store,
     private val metrics: MetricController = itemView.context.components.analytics.metrics,
 ) : TabViewHolder(itemView) {
@@ -224,15 +222,15 @@ abstract class AbstractBrowserTabViewHolder(
                 metrics.track(Event.CollectionTabLongPressed)
                 interactor.select(item)
                 true
-            } else if (holder.selectedItems.contains(item) && settings?.searchTermTabGroupsAreEnabled == false) {
-                // Only allow a drag to start if the tab is a non-grouped tab (parent is normal list)
-                // Non-grouped tabs can be selected, but they can't be drop targets
-                // so it's useless to try to move them (and they're auto-sorted anyway)
-                val shadow = View.DragShadowBuilder(itemView)
-                @Suppress("DEPRECATION")
-                itemView.startDrag(null, shadow, item, 0)
-                // startDragAndDrop is the non-deprecated version, but requires API 24
-                true
+            } else if (holder.selectedItems.contains(item)) {
+                val parent = itemView.parent as? AbstractBrowserTrayList
+                if (parent?.context?.settings()?.searchTermTabGroupsAreEnabled == false) {
+                    val shadow = View.DragShadowBuilder(itemView)
+                    @Suppress("DEPRECATION")
+                    itemView.startDrag(null, shadow, item, 0)
+                    // startDragAndDrop is the non-deprecated version, but requires API 24
+                    true
+                } else false
             } else {
                 false
             }

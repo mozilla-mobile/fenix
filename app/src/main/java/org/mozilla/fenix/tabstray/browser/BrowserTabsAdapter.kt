@@ -68,11 +68,9 @@ class BrowserTabsAdapter(
 
         return when (viewType) {
             ViewType.GRID.layoutRes ->
-                BrowserTabViewHolder.GridViewHolder(imageLoader, interactor, store,
-                    selectionHolder, view, featureName, context.settings())
+                BrowserTabViewHolder.GridViewHolder(imageLoader, interactor, store, selectionHolder, view, featureName)
             else ->
-                BrowserTabViewHolder.ListViewHolder(imageLoader, interactor, store,
-                    selectionHolder, view, featureName, context.settings())
+                BrowserTabViewHolder.ListViewHolder(imageLoader, interactor, store, selectionHolder, view, featureName)
         }
     }
 
