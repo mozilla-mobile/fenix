@@ -31,7 +31,7 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.databinding.ComponentTabstray2Binding
 import org.mozilla.fenix.databinding.OnboardingInactiveTabsCfrBinding
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.tabstray.ext.inactiveTabs
+import org.mozilla.fenix.ext.potentialInactiveTabs
 import org.mozilla.fenix.utils.Settings
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -51,7 +51,7 @@ class TabsTrayInactiveTabsOnboardingBinding(
             .ifChanged()
             .collect {
                 val inactiveTabsList =
-                    if (settings.inactiveTabsAreEnabled) { store.state.inactiveTabs } else emptyList()
+                    if (settings.inactiveTabsAreEnabled) { store.state.potentialInactiveTabs } else emptyList()
                 if (inactiveTabsList.isNotEmpty() && shouldShowOnboardingForInactiveTabs()) {
                     createInactiveCFR()
                 }

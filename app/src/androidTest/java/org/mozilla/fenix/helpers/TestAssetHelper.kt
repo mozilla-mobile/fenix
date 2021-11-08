@@ -17,6 +17,8 @@ object TestAssetHelper {
     @Suppress("MagicNumber")
     val waitingTime: Long = TimeUnit.SECONDS.toMillis(15)
     val waitingTimeShort: Long = TimeUnit.SECONDS.toMillis(1)
+    // A long enough file name to not fit on a single line in the UI.
+    const val downloadFileName = "tAJwqaWjJsXS8AhzSninBMCfIZbHBGgcc001lx5DIdDwIcfEgQ6vE5Gb5VgAled17DFZ2A7ZDOHA0NpQPHXXFHPSD4wzCkRWiaOorNI574zLtv4Hjiz6O6T7onmUTGgUQ2YQoiQFyrCrPv8ZB9Kvmt.svg"
 
     data class TestAsset(val url: Uri, val content: String, val title: String)
 
@@ -70,7 +72,7 @@ object TestAssetHelper {
 
     fun getDownloadAsset(server: MockWebServer): TestAsset {
         val url = server.url("pages/download.html").toString().toUri()!!
-        val content = "Page content: Globe.svg"
+        val content = "Page content: $downloadFileName"
 
         return TestAsset(url, content, "")
     }
