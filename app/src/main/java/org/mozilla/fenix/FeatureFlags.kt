@@ -5,6 +5,7 @@
 package org.mozilla.fenix
 
 import android.content.Context
+import android.widget.Toast
 import mozilla.components.support.locale.LocaleManager
 import mozilla.components.support.locale.LocaleManager.getSystemDefault
 
@@ -84,7 +85,15 @@ object FeatureFlags {
     fun isPocketRecommendationsFeatureEnabled(context: Context): Boolean {
         val langTag = LocaleManager.getCurrentLocale(context)
             ?.toLanguageTag() ?: getSystemDefault().toLanguageTag()
-        return listOf("en-US", "en-CA").contains(langTag)
+        return listOf("en-US", "en-CA").contains(langTag).also {
+            Toast.makeText(
+                context,
+                "Pocket is ${if (!it) "not " else ""}enabled for" +
+                    "\napp locale:  ${LocaleManager.getCurrentLocale(context)?.toLanguageTag()}" +
+                    "\nsystem locale: ${getSystemDefault().toLanguageTag()}",
+                Toast.LENGTH_LONG
+            ).show()
+        }
     }
 
     /**
