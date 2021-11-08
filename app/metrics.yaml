@@ -5552,7 +5552,7 @@ home_screen:
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/22146
     data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/
+      - https://github.com/mozilla-mobile/fenix/pull/22377
     data_sensitivity:
       - interaction
     notification_emails:
