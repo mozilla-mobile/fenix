@@ -30,27 +30,6 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
     lateinit var interactor: TabsTrayInteractor
     lateinit var tabsTrayStore: TabsTrayStore
 
-    /**
-     * A [TabsFeature] is required for each browser list to ensure one always exists for displaying
-     * tabs.
-     */
-    abstract val tabsFeature: TabsFeature
-
-    // NB: The use cases here are duplicated because there isn't a nicer
-    // way to share them without a better dependency injection solution.
-    protected val selectTabUseCase = SelectTabUseCaseWrapper(
-        context.components.analytics.metrics,
-        context.components.useCases.tabsUseCases.selectTab
-    ) {
-        interactor.onBrowserTabSelected()
-    }
-
-    protected val removeTabUseCase = RemoveTabUseCaseWrapper(
-        context.components.analytics.metrics
-    ) { sessionId ->
-        interactor.onDeleteTab(sessionId)
-    }
-
     protected val swipeToDelete by lazy {
         SwipeToDeleteBinding(tabsTrayStore)
     }
