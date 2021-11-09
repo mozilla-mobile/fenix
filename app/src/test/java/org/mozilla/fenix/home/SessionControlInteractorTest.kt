@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.home
 
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import mozilla.components.concept.storage.BookmarkNode
@@ -19,8 +20,8 @@ import org.mozilla.fenix.home.recentbookmarks.controller.RecentBookmarksControll
 import org.mozilla.fenix.home.recenttabs.controller.RecentTabController
 import org.mozilla.fenix.home.sessioncontrol.DefaultSessionControlController
 import org.mozilla.fenix.home.sessioncontrol.SessionControlInteractor
-import org.mozilla.fenix.home.sessioncontrol.viewholders.pocket.PocketRecommendedStoriesCategory
-import org.mozilla.fenix.home.sessioncontrol.viewholders.pocket.PocketStoriesController
+import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesCategory
+import org.mozilla.fenix.home.pocket.PocketStoriesController
 
 class SessionControlInteractorTest {
 
@@ -258,5 +259,13 @@ class SessionControlInteractorTest {
         interactor.onLearnMoreClicked(link)
 
         verify { pocketStoriesController.handleLearnMoreClicked(link) }
+    }
+
+    @Test
+    fun reportSessionMetrics() {
+        val homeFragmentState: HomeFragmentState = mockk(relaxed = true)
+        every { homeFragmentState.recentBookmarks } returns emptyList()
+        interactor.reportSessionMetrics(homeFragmentState)
+        verify { controller.handleReportSessionMetrics(homeFragmentState) }
     }
 }

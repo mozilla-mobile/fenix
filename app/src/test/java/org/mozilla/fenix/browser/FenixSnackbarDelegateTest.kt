@@ -14,16 +14,21 @@ import io.mockk.unmockkObject
 import io.mockk.verify
 import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.FenixSnackbar.Companion.LENGTH_SHORT
+import org.mozilla.fenix.helpers.MockkRetryTestRule
 
 class FenixSnackbarDelegateTest {
 
     @MockK private lateinit var view: View
     @MockK(relaxed = true) private lateinit var snackbar: FenixSnackbar
     private lateinit var delegate: FenixSnackbarDelegate
+
+    @get:Rule
+    val mockkRule = MockkRetryTestRule()
 
     @Before
     fun setup() {

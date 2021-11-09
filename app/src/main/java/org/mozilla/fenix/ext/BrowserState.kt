@@ -11,9 +11,21 @@ import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.feature.tabs.ext.hasMediaPlayed
 import org.mozilla.fenix.home.recenttabs.RecentTab
 import org.mozilla.fenix.tabstray.browser.TabGroup
-import org.mozilla.fenix.tabstray.browser.maxActiveTime
 import org.mozilla.fenix.tabstray.ext.isNormalTabActiveWithSearchTerm
+import org.mozilla.fenix.tabstray.ext.isNormalTabInactive
+import org.mozilla.fenix.utils.Settings
+import java.util.concurrent.TimeUnit
 import kotlin.math.max
+
+/**
+ * The time until which a tab is considered in-active (in days).
+ */
+const val DEFAULT_ACTIVE_DAYS = 14L
+
+/**
+ * The maximum time from when a tab was created or accessed until it is considered "inactive".
+ */
+val maxActiveTime = TimeUnit.DAYS.toMillis(DEFAULT_ACTIVE_DAYS)
 
 /**
  * Get the last opened normal tab, last tab with in progress media and last search term group, if available.
@@ -76,7 +88,9 @@ val BrowserState.lastSearchGroup: RecentTab.SearchGroup?
  * Returns a pair containing a list of search term groups sorted by last access time, and "remainder" tabs that have
  * search terms but should not be in groups (because the group is of size one).
  */
-fun List<TabSessionState>.toSearchGroup(): Pair<List<TabGroup>, List<TabSessionState>> {
+fun List<TabSessionState>.toSearchGroup(
+    groupSet: Set<String> = emptySet()
+): Pair<List<TabGroup>, List<TabSessionState>> {
     val data = filter {
         it.isNormalTabActiveWithSearchTerm(maxActiveTime)
     }.groupBy {
@@ -100,8 +114,30 @@ fun List<TabSessionState>.toSearchGroup(): Pair<List<TabGroup>, List<TabSessionS
         )
     }
 
-    val groups = groupings.filter { it.tabs.size > 1 }.sortedBy { it.lastAccess }
+    val groups = groupings
+        .filter { it.tabs.size > 1 || groupSet.contains(it.searchTerm) }
+        .sortedBy { it.lastAccess }
     val remainderTabs = (groupings - groups).flatMap { it.tabs }
 
     return groups to remainderTabs
+}
+
+/**
+ * List of all inactive tabs based on [maxActiveTime].
+ * The user may have disabled the feature so for user interactions consider using the [actualInactiveTabs] method
+ * or an in place check of the feature status.
+ */
+val BrowserState.potentialInactiveTabs: List<TabSessionState>
+    get() = normalTabs.filter { it.isNormalTabInactive(maxActiveTime) }
+
+/**
+ * List of all inactive tabs based on [maxActiveTime].
+ * The result will be always be empty if the user disabled the feature.
+ */
+fun BrowserState.actualInactiveTabs(settings: Settings): List<TabSessionState> {
+    return if (settings.inactiveTabsAreEnabled) {
+        potentialInactiveTabs
+    } else {
+        emptyList()
+    }
 }

@@ -20,7 +20,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import mozilla.components.concept.menu.MenuController
 import mozilla.components.concept.menu.Orientation
 import mozilla.components.lib.state.ext.consumeFrom
@@ -108,7 +107,6 @@ class SavedLoginsFragment : Fragment() {
         return view
     }
 
-    @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         consumeFrom(savedLoginsStore) {
             sortingStrategyMenu.updateMenu(savedLoginsStore.state.highlightedItem)
@@ -148,7 +146,6 @@ class SavedLoginsFragment : Fragment() {
         (activity as HomeActivity).getSupportActionBarAndInflateIfNecessary().setDisplayShowTitleEnabled(true)
         sortingStrategyMenu.menuController.dismiss()
         sortLoginsMenuRoot.setOnClickListener(null)
-        setHasOptionsMenu(false)
 
         redirectToReAuth(
             listOf(R.id.loginDetailFragment, R.id.addLoginFragment),

@@ -2,21 +2,18 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+package org.mozilla.fenix.tabstray.browser
+
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import mozilla.components.concept.tabstray.Tab
-import mozilla.components.concept.tabstray.TabsTray
-import mozilla.components.support.base.observer.Observable
+import mozilla.components.browser.state.state.TabSessionState
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.TabGroupItemBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.selection.SelectionHolder
 import org.mozilla.fenix.tabstray.TabsTrayStore
 import org.mozilla.fenix.tabstray.TrayPagerAdapter
-import org.mozilla.fenix.tabstray.browser.BrowserTrayInteractor
-import org.mozilla.fenix.tabstray.browser.TabGroupAdapter
-import org.mozilla.fenix.tabstray.browser.TabGroupListAdapter
 
 /**
  * A RecyclerView ViewHolder implementation for tab group items.
@@ -32,27 +29,25 @@ class TabGroupViewHolder(
     val orientation: Int,
     val interactor: BrowserTrayInteractor,
     val store: TabsTrayStore,
-    val selectionHolder: SelectionHolder<Tab>? = null
+    val selectionHolder: SelectionHolder<TabSessionState>? = null
 ) : RecyclerView.ViewHolder(itemView) {
     private val binding = TabGroupItemBinding.bind(itemView)
 
-    lateinit var groupListAdapter: TabGroupListAdapter
+    private lateinit var groupListAdapter: TabGroupListAdapter
 
     fun bind(
-        group: TabGroupAdapter.Group,
-        observable: Observable<TabsTray.Observer>
+        group: TabGroup,
     ) {
         val selectedTabId = itemView.context.components.core.store.state.selectedTabId
         val selectedIndex = group.tabs.indexOfFirst { it.id == selectedTabId }
 
-        binding.tabGroupTitle.text = group.title
+        binding.tabGroupTitle.text = group.searchTerm
         binding.tabGroupList.apply {
             layoutManager = LinearLayoutManager(itemView.context, orientation, false)
             groupListAdapter = TabGroupListAdapter(
                 context = itemView.context,
                 interactor = interactor,
                 store = store,
-                delegate = observable,
                 selectionHolder = selectionHolder,
                 featureName = TrayPagerAdapter.TAB_GROUP_FEATURE_NAME
             )

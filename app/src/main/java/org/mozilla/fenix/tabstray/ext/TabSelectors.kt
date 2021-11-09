@@ -9,8 +9,7 @@ import mozilla.components.browser.state.selector.privateTabs
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.TabSessionState
 import org.mozilla.fenix.ext.toSearchGroup
-import org.mozilla.fenix.tabstray.browser.TabGroup
-import org.mozilla.fenix.tabstray.browser.maxActiveTime
+import org.mozilla.fenix.ext.maxActiveTime
 
 /**
  * The currently selected tab if there's one that is private.
@@ -34,12 +33,6 @@ fun BrowserState.findPrivateTab(tabId: String): TabSessionState? {
 }
 
 /**
- * The list of inactive tabs in the tabs tray filtered based on [maxActiveTime].
- */
-val BrowserState.inactiveTabs: List<TabSessionState>
-    get() = normalTabs.filter { it.isNormalTabInactive(maxActiveTime) }
-
-/**
  * The list of normal tabs in the tabs tray filtered appropriately based on feature flags.
  */
 fun BrowserState.getNormalTrayTabs(
@@ -59,15 +52,4 @@ fun BrowserState.getNormalTrayTabs(
             this
         }
     }
-}
-
-/**
- * The list of search groups filtered appropriately based on feature flags.
- */
-fun BrowserState.getSearchTabGroups(
-    searchTermTabGroupsAreEnabled: Boolean
-): List<TabGroup> = if (searchTermTabGroupsAreEnabled) {
-    normalTabs.toSearchGroup().first
-} else {
-    emptyList()
 }

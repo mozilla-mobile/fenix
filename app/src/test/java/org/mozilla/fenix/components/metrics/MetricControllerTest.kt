@@ -333,6 +333,10 @@ class MetricControllerTest {
         every { marketingService1.shouldTrack(Event.HistoryOpenedInNewTabs) } returns true
         every { marketingService1.shouldTrack(Event.HistoryOpenedInPrivateTab) } returns true
         every { marketingService1.shouldTrack(Event.HistoryOpenedInPrivateTabs) } returns true
+        every { marketingService1.shouldTrack(Event.HistoryItemRemoved) } returns true
+        every { marketingService1.shouldTrack(Event.HistoryAllItemsRemoved) } returns true
+        every { marketingService1.shouldTrack(Event.HistoryRecentSearchesTapped("2")) } returns true
+        every { marketingService1.shouldTrack(Event.HistorySearchTermGroupTapped) } returns true
 
         controller.start(MetricServiceType.Marketing)
 
@@ -340,11 +344,19 @@ class MetricControllerTest {
         controller.track(Event.HistoryOpenedInNewTabs)
         controller.track(Event.HistoryOpenedInPrivateTab)
         controller.track(Event.HistoryOpenedInPrivateTabs)
+        controller.track(Event.HistoryItemRemoved)
+        controller.track(Event.HistoryAllItemsRemoved)
+        controller.track(Event.HistoryRecentSearchesTapped("2"))
+        controller.track(Event.HistorySearchTermGroupTapped)
 
         verify { marketingService1.track(Event.HistoryOpenedInNewTab) }
         verify { marketingService1.track(Event.HistoryOpenedInNewTabs) }
         verify { marketingService1.track(Event.HistoryOpenedInPrivateTab) }
         verify { marketingService1.track(Event.HistoryOpenedInPrivateTabs) }
+        verify { marketingService1.track(Event.HistoryItemRemoved) }
+        verify { marketingService1.track(Event.HistoryAllItemsRemoved) }
+        verify { marketingService1.track(Event.HistoryRecentSearchesTapped("2")) }
+        verify { marketingService1.track(Event.HistorySearchTermGroupTapped) }
     }
 
     @Test
@@ -509,5 +521,28 @@ class MetricControllerTest {
             val message = "$expectedEvent $component $item"
             assertEquals(message, expectedEvent, controller.factToEvent(fact))
         }
+    }
+
+    @Test
+    fun `search term group events should be sent to enabled service`() {
+        val controller = ReleaseMetricController(
+            listOf(dataService1),
+            isDataTelemetryEnabled = { true },
+            isMarketingDataTelemetryEnabled = { true },
+            mockk()
+        )
+        every { dataService1.shouldTrack(Event.SearchTermGroupCount(5)) } returns true
+        every { dataService1.shouldTrack(Event.AverageTabsPerSearchTermGroup(2.5)) } returns true
+        every { dataService1.shouldTrack(Event.JumpBackInGroupTapped) } returns true
+
+        controller.start(MetricServiceType.Data)
+
+        controller.track(Event.SearchTermGroupCount(5))
+        controller.track(Event.AverageTabsPerSearchTermGroup(2.5))
+        controller.track(Event.JumpBackInGroupTapped)
+
+        verify { dataService1.track(Event.SearchTermGroupCount(5)) }
+        verify { dataService1.track(Event.AverageTabsPerSearchTermGroup(2.5)) }
+        verify { dataService1.track(Event.JumpBackInGroupTapped) }
     }
 }

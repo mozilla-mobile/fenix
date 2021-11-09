@@ -31,15 +31,16 @@ import androidx.constraintlayout.widget.ConstraintProperties.BOTTOM
 import androidx.constraintlayout.widget.ConstraintProperties.PARENT_ID
 import androidx.constraintlayout.widget.ConstraintProperties.TOP
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import mozilla.components.browser.toolbar.BrowserToolbar
+import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.storage.HistoryStorage
 import mozilla.components.feature.qr.QrFeature
 import mozilla.components.lib.state.ext.consumeFlow
@@ -51,7 +52,9 @@ import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.support.ktx.android.content.hasCamera
 import mozilla.components.support.ktx.android.content.isPermissionGranted
 import mozilla.components.support.ktx.android.content.res.getSpanned
+import mozilla.components.support.ktx.android.net.isHttpOrHttps
 import mozilla.components.support.ktx.android.view.hideKeyboard
+import mozilla.components.support.ktx.kotlin.toNormalizedUrl
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifAnyChanged
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import mozilla.components.ui.autocomplete.InlineAutocompleteEditText
@@ -83,6 +86,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
     private lateinit var interactor: SearchDialogInteractor
     private lateinit var store: SearchDialogFragmentStore
     private lateinit var toolbarView: ToolbarView
+    private lateinit var inlineAutocompleteEditText: InlineAutocompleteEditText
     private lateinit var awesomeBarView: AwesomeBarView
 
     private val qrFeature = ViewBoundFeatureWrapper<QrFeature>()
@@ -176,9 +180,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                 },
                 focusToolbar = { toolbarView.view.edit.focus() },
                 clearToolbar = {
-                    toolbarView.view
-                        .findViewById<InlineAutocompleteEditText>(R.id.mozac_browser_toolbar_edit_url_view)
-                        ?.setText("")
+                    inlineAutocompleteEditText.setText("")
                 }
             )
         )
@@ -194,7 +196,9 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             binding.toolbar,
             requireComponents.core.engine,
             fromHomeFragment
-        )
+        ).also {
+            inlineAutocompleteEditText = it.view.findViewById(R.id.mozac_browser_toolbar_edit_url_view)
+        }
 
         val awesomeBar = binding.awesomeBar
 
@@ -212,9 +216,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
 
         awesomeBarView.view.setOnEditSuggestionListener(toolbarView.view::setSearchTerms)
 
-        val urlView = toolbarView.view
-            .findViewById<InlineAutocompleteEditText>(R.id.mozac_browser_toolbar_edit_url_view)
-        urlView?.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+        inlineAutocompleteEditText.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
 
         requireComponents.core.engine.speculativeCreateSession(isPrivate)
 
@@ -231,7 +233,6 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
     }
 
     @SuppressWarnings("LongMethod")
-    @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -355,20 +356,17 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         }
     }
 
-    @ExperimentalCoroutinesApi
     private fun observeSuggestionProvidersState() = consumeFlow(store) { flow ->
         flow.map { state -> state.toSearchProviderState() }
             .ifChanged()
             .collect { state -> awesomeBarView.updateSuggestionProvidersVisibility(state) }
     }
 
-    @ExperimentalCoroutinesApi
     private fun observeShortcutsState() = consumeFlow(store) { flow ->
         flow.ifAnyChanged { state -> arrayOf(state.areShortcutsAvailable, state.showSearchShortcuts) }
             .collect { state -> updateSearchShortcutsIcon(state.areShortcutsAvailable, state.showSearchShortcuts) }
     }
 
-    @ExperimentalCoroutinesApi
     private fun observeAwesomeBarState() = consumeFlow(store) { flow ->
         /*
          * firstUpdate is used to make sure we keep the awesomebar hidden on the first run
@@ -387,7 +385,6 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             }
     }
 
-    @ExperimentalCoroutinesApi
     private fun observeClipboardState() = consumeFlow(store) { flow ->
         flow.map { state ->
             val shouldShowView = state.showClipboardSuggestions &&
@@ -509,28 +506,42 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                 requestPermissions(permissions, REQUEST_CODE_CAMERA_PERMISSIONS)
             },
             onScanResult = { result ->
-                binding.qrScanButton.isChecked = false
-                activity?.let {
-                    AlertDialog.Builder(it).apply {
-                        val spannable = resources.getSpanned(
-                            R.string.qr_scanner_confirmation_dialog_message,
-                            getString(R.string.app_name) to StyleSpan(Typeface.BOLD),
-                            result to StyleSpan(Typeface.ITALIC)
-                        )
-                        setMessage(spannable)
-                        setNegativeButton(R.string.qr_scanner_dialog_negative) { dialog: DialogInterface, _ ->
-                            dialog.cancel()
-                        }
-                        setPositiveButton(R.string.qr_scanner_dialog_positive) { dialog: DialogInterface, _ ->
-                            (activity as? HomeActivity)?.openToBrowserAndLoad(
-                                searchTermOrURL = result,
-                                newTab = store.state.tabId == null,
-                                from = BrowserDirection.FromSearchDialog
+                val normalizedUrl = result.toNormalizedUrl()
+                if (!normalizedUrl.toUri().isHttpOrHttps) {
+                    activity?.let {
+                        AlertDialog.Builder(it).apply {
+                            setMessage(R.string.qr_scanner_dialog_invalid)
+                            setPositiveButton(R.string.qr_scanner_dialog_invalid_ok) { dialog: DialogInterface, _ ->
+                                dialog.dismiss()
+                            }
+                            create()
+                        }.show()
+                    }
+                } else {
+                    binding.qrScanButton.isChecked = false
+                    activity?.let {
+                        AlertDialog.Builder(it).apply {
+                            val spannable = resources.getSpanned(
+                                R.string.qr_scanner_confirmation_dialog_message,
+                                getString(R.string.app_name) to StyleSpan(Typeface.BOLD),
+                                normalizedUrl to StyleSpan(Typeface.ITALIC)
                             )
-                            dialog.dismiss()
-                        }
-                        create()
-                    }.show()
+                            setMessage(spannable)
+                            setNegativeButton(R.string.qr_scanner_dialog_negative) { dialog: DialogInterface, _ ->
+                                dialog.cancel()
+                            }
+                            setPositiveButton(R.string.qr_scanner_dialog_positive) { dialog: DialogInterface, _ ->
+                                (activity as? HomeActivity)?.openToBrowserAndLoad(
+                                    searchTermOrURL = normalizedUrl,
+                                    newTab = store.state.tabId == null,
+                                    from = BrowserDirection.FromSearchDialog,
+                                    flags = EngineSession.LoadUrlFlags.external()
+                                )
+                                dialog.dismiss()
+                            }
+                            create()
+                        }.show()
+                    }
                 }
             }
         )
@@ -666,14 +677,11 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
     }
 
     private fun updateToolbarContentDescription(source: SearchEngineSource) {
-        val urlView = toolbarView.view
-            .findViewById<InlineAutocompleteEditText>(R.id.mozac_browser_toolbar_edit_url_view)
-
         source.searchEngine?.let { engine ->
-            toolbarView.view.contentDescription = engine.name + ", " + urlView.hint
+            toolbarView.view.contentDescription = engine.name + ", " + inlineAutocompleteEditText.hint
         }
 
-        urlView?.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+        inlineAutocompleteEditText.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
     }
 
     private fun updateSearchShortcutsIcon(

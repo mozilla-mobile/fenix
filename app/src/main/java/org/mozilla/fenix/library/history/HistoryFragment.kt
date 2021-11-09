@@ -14,14 +14,12 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import mozilla.components.browser.state.action.EngineAction
 import mozilla.components.browser.state.action.RecentlyClosedAction
@@ -59,7 +57,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
     private var pendingHistoryDeletionJob: (suspend () -> Unit)? = null
 
     private var _historyView: HistoryView? = null
-    protected val historyView: HistoryView
+    private val historyView: HistoryView
         get() = _historyView!!
     private var _binding: FragmentHistoryBinding? = null
     private val binding get() = _binding!!
@@ -103,7 +101,17 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
         return view
     }
 
-    override val selectedItems get() = historyStore.state.mode.selectedItems
+    /**
+     * All the current selected items. Individual history entries and entries from a group.
+     * When a history group is selected, this will instead contain all the history entries in that group.
+     */
+    override val selectedItems
+        get() = historyStore.state.mode.selectedItems.fold(emptyList<History>()) { accumulator, item ->
+            when (item) {
+                is History.Group -> accumulator + item.items
+                else -> accumulator + item
+            }
+        }.toSet()
 
     private fun invalidateOptionsMenu() {
         activity?.invalidateOptionsMenu()
@@ -113,15 +121,6 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
         super.onCreate(savedInstanceState)
 
         historyProvider = DefaultPagedHistoryProvider(requireComponents.core.historyStorage)
-
-        viewModel = HistoryViewModel(historyProvider)
-
-        viewModel.userHasHistory.observe(
-            this,
-            Observer {
-                historyView.updateEmptyState(it)
-            }
-        )
 
         requireComponents.analytics.metrics.track(Event.HistoryOpened)
 
@@ -142,7 +141,6 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
         )
     }
 
-    @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -150,12 +148,19 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
             historyView.update(it)
         }
 
-        viewModel.history.observe(
-            viewLifecycleOwner,
-            Observer {
-                historyView.historyAdapter.submitList(it)
-            }
-        )
+        // Data may have been updated in below groups.
+        // When returning to this fragment we need to ensure we display the latest data.
+        viewModel = HistoryViewModel(historyProvider).also { model ->
+            model.userHasHistory.observe(
+                viewLifecycleOwner,
+                historyView::updateEmptyState
+            )
+
+            model.history.observe(
+                viewLifecycleOwner,
+                historyView.historyAdapter::submitList
+            )
+        }
     }
 
     override fun onResume() {
@@ -211,9 +216,8 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
         }
         R.id.open_history_in_new_tabs_multi_select -> {
             openItemsInNewTab { selectedItem ->
-                selectedItem as History.Regular
                 requireComponents.analytics.metrics.track(Event.HistoryOpenedInNewTabs)
-                selectedItem.url
+                (selectedItem as? History.Regular)?.url ?: (selectedItem as? History.Metadata)?.url
             }
 
             showTabTray()
@@ -221,9 +225,8 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
         }
         R.id.open_history_in_private_tabs_multi_select -> {
             openItemsInNewTab(private = true) { selectedItem ->
-                selectedItem as History.Regular
                 requireComponents.analytics.metrics.track(Event.HistoryOpenedInPrivateTabs)
-                selectedItem.url
+                (selectedItem as? History.Regular)?.url ?: (selectedItem as? History.Metadata)?.url
             }
 
             (activity as HomeActivity).apply {

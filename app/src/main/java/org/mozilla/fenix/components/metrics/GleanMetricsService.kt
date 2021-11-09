@@ -19,7 +19,6 @@ import org.mozilla.fenix.GleanMetrics.BrowserSearch
 import org.mozilla.fenix.GleanMetrics.Collections
 import org.mozilla.fenix.GleanMetrics.ContextMenu
 import org.mozilla.fenix.GleanMetrics.ContextualMenu
-import org.mozilla.fenix.GleanMetrics.CrashReporter
 import org.mozilla.fenix.GleanMetrics.CreditCards
 import org.mozilla.fenix.GleanMetrics.CustomTab
 import org.mozilla.fenix.GleanMetrics.CustomizeHome
@@ -37,11 +36,14 @@ import org.mozilla.fenix.GleanMetrics.Metrics
 import org.mozilla.fenix.GleanMetrics.Onboarding
 import org.mozilla.fenix.GleanMetrics.Pings
 import org.mozilla.fenix.GleanMetrics.Pocket
+import org.mozilla.fenix.GleanMetrics.Preferences
 import org.mozilla.fenix.GleanMetrics.ProgressiveWebApp
 import org.mozilla.fenix.GleanMetrics.ReaderMode
 import org.mozilla.fenix.GleanMetrics.RecentBookmarks
+import org.mozilla.fenix.GleanMetrics.RecentSearches
 import org.mozilla.fenix.GleanMetrics.RecentTabs
 import org.mozilla.fenix.GleanMetrics.SearchShortcuts
+import org.mozilla.fenix.GleanMetrics.SearchTerms
 import org.mozilla.fenix.GleanMetrics.SearchWidget
 import org.mozilla.fenix.GleanMetrics.SetDefaultNewtabExperiment
 import org.mozilla.fenix.GleanMetrics.SetDefaultSettingExperiment
@@ -154,13 +156,6 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.ContextMenuItemTapped -> EventWrapper(
             { ContextMenu.itemTapped.record(it) },
             { ContextMenu.itemTappedKeys.valueOf(it) }
-        )
-        is Event.CrashReporterOpened -> EventWrapper<NoExtraKeys>(
-            { CrashReporter.opened.record(it) }
-        )
-        is Event.CrashReporterClosed -> EventWrapper(
-            { CrashReporter.closed.record(it) },
-            { CrashReporter.closedKeys.valueOf(it) }
         )
         is Event.BrowserMenuItemTapped -> EventWrapper(
             { Events.browserMenuAction.record(it) },
@@ -312,6 +307,13 @@ private val Event.wrapper: EventWrapper<*>?
         )
         is Event.HistoryAllItemsRemoved -> EventWrapper<NoExtraKeys>(
             { History.removedAll.record(it) }
+        )
+        is Event.HistoryRecentSearchesTapped -> EventWrapper(
+            { History.recentSearchesTapped.record(it) },
+            { History.recentSearchesTappedKeys.valueOf(it) }
+        )
+        is Event.HistorySearchTermGroupTapped -> EventWrapper<NoExtraKeys>(
+            { History.searchTermGroupTapped.record(it) }
         )
         is Event.CollectionRenamed -> EventWrapper<NoExtraKeys>(
             { Collections.renamed.record(it) }
@@ -479,6 +481,12 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.TopSiteRemoved -> EventWrapper<NoExtraKeys>(
             { TopSites.remove.record(it) }
         )
+        is Event.GoogleTopSiteRemoved -> EventWrapper<NoExtraKeys>(
+            { TopSites.googleTopSiteRemoved.record(it) }
+        )
+        is Event.BaiduTopSiteRemoved -> EventWrapper<NoExtraKeys>(
+            { TopSites.baiduTopSiteRemoved.record(it) }
+        )
         is Event.TopSiteLongPress -> EventWrapper(
             { TopSites.longPress.record(it) },
             { TopSites.longPressKeys.valueOf(it) }
@@ -517,6 +525,9 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.AddonsOpenInSettings -> EventWrapper<NoExtraKeys>(
             { Addons.openAddonsInSettings.record(it) }
         )
+        is Event.StudiesSettings -> EventWrapper<NoExtraKeys>(
+            { Preferences.studiesPreferenceEnabled.record(it) }
+        )
         is Event.AddonsOpenInToolbarMenu -> EventWrapper(
             { Addons.openAddonInToolbarMenu.record(it) },
             { Addons.openAddonInToolbarMenuKeys.valueOf(it) }
@@ -527,10 +538,6 @@ private val Event.wrapper: EventWrapper<*>?
         )
         is Event.VoiceSearchTapped -> EventWrapper<NoExtraKeys>(
             { VoiceSearch.tapped.record(it) }
-        )
-        is Event.TabCounterMenuItemTapped -> EventWrapper(
-            { Events.tabCounterMenuAction.record(it) },
-            { Events.tabCounterMenuActionKeys.valueOf(it) }
         )
         is Event.OnboardingPrivacyNotice -> EventWrapper<NoExtraKeys>(
             { Onboarding.privacyNotice.record(it) }
@@ -606,6 +613,35 @@ private val Event.wrapper: EventWrapper<*>?
         )
         is Event.TabsTrayInactiveTabsCollapsed -> EventWrapper<NoExtraKeys>(
             { TabsTray.inactiveTabsCollapsed.record(it) }
+        )
+        is Event.TabsTrayAutoCloseDialogDismissed -> EventWrapper<NoExtraKeys>(
+            { TabsTray.autoCloseDimissed.record(it) }
+        )
+        is Event.TabsTrayAutoCloseDialogSeen -> EventWrapper<NoExtraKeys>(
+            { TabsTray.autoCloseSeen.record(it) }
+        )
+        is Event.TabsTrayAutoCloseDialogTurnOnClicked -> EventWrapper<NoExtraKeys>(
+            { TabsTray.autoCloseTurnOnClicked.record(it) }
+        )
+        is Event.TabsTrayHasInactiveTabs -> EventWrapper(
+            { TabsTray.hasInactiveTabs.record(it) },
+            { TabsTray.hasInactiveTabsKeys.valueOf(it) }
+        )
+        is Event.TabsTrayCloseAllInactiveTabs -> EventWrapper<NoExtraKeys>(
+            { TabsTray.closeAllInactiveTabs.record(it) }
+        )
+        is Event.TabsTrayCloseInactiveTab -> EventWrapper<NoExtraKeys>(
+            { TabsTray.closeInactiveTab.add(amountClosed) }
+        )
+        is Event.TabsTrayOpenInactiveTab -> EventWrapper<NoExtraKeys>(
+            { TabsTray.openInactiveTab.add() }
+        )
+        is Event.InactiveTabsSurveyOpened -> EventWrapper<NoExtraKeys>(
+            { Preferences.inactiveTabsSurveyOpened.record(it) }
+        )
+        is Event.InactiveTabsOffSurvey -> EventWrapper(
+            { Preferences.turnOffInactiveTabsSurvey.record(it) },
+            { Preferences.turnOffInactiveTabsSurveyKeys.valueOf(it) }
         )
         is Event.AutoPlaySettingVisited -> EventWrapper<NoExtraKeys>(
             { Autoplay.visitedSetting.record(it) }
@@ -754,12 +790,32 @@ private val Event.wrapper: EventWrapper<*>?
             { RecentTabs.showAllClicked.record(it) }
         )
 
+        is Event.RecentTabsSectionIsVisible -> EventWrapper<NoExtraKeys>(
+            { RecentTabs.sectionVisible.set(true) }
+        )
+
+        is Event.RecentTabsSectionIsNotVisible -> EventWrapper<NoExtraKeys>(
+            { RecentTabs.sectionVisible.set(false) }
+        )
+
         is Event.BookmarkClicked -> EventWrapper<NoExtraKeys>(
             { RecentBookmarks.bookmarkClicked.add() }
         )
 
         is Event.ShowAllBookmarks -> EventWrapper<NoExtraKeys>(
             { RecentBookmarks.showAllBookmarks.add() }
+        )
+
+        is Event.RecentSearchesGroupDeleted -> EventWrapper<NoExtraKeys>(
+            { RecentSearches.groupDeleted.record(it) }
+        )
+
+        is Event.RecentBookmarksShown -> EventWrapper<NoExtraKeys>(
+            { RecentBookmarks.shown.record(it) }
+        )
+
+        is Event.RecentBookmarkCount -> EventWrapper<NoExtraKeys>(
+            { RecentBookmarks.recentBookmarksCount.set(this.count.toLong()) },
         )
 
         is Event.AndroidAutofillRequestWithLogins -> EventWrapper<NoExtraKeys>(
@@ -815,6 +871,17 @@ private val Event.wrapper: EventWrapper<*>?
         )
         is Event.CreditCardManagementCardTapped -> EventWrapper<NoExtraKeys>(
             { CreditCards.managementCardTapped.record(it) }
+        )
+        is Event.SearchTermGroupCount -> EventWrapper(
+            { SearchTerms.numberOfSearchTermGroup.record(it) },
+            { SearchTerms.numberOfSearchTermGroupKeys.valueOf(it) }
+        )
+        is Event.AverageTabsPerSearchTermGroup -> EventWrapper(
+            { SearchTerms.averageTabsPerGroup.record(it) },
+            { SearchTerms.averageTabsPerGroupKeys.valueOf(it) }
+        )
+        is Event.JumpBackInGroupTapped -> EventWrapper<NoExtraKeys>(
+            { SearchTerms.jumpBackInGroupTapped.record(it) }
         )
 
         // Don't record other events in Glean:
@@ -877,9 +944,4 @@ class GleanMetricsService(
     override fun shouldTrack(event: Event): Boolean {
         return event.wrapper != null
     }
-}
-
-// Helper function for making our booleans fit into the string list formatting
-fun Boolean.toStringList(): List<String> {
-    return listOf(this.toString())
 }
