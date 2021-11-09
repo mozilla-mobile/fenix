@@ -61,7 +61,7 @@ abstract class AbstractBrowserTabViewHolder(
     @VisibleForTesting
     internal val featureName: String,
     private val store: BrowserStore = itemView.context.components.core.store,
-    private val metrics: MetricController = itemView.context.components.analytics.metrics,
+    private val metrics: MetricController = itemView.context.components.analytics.metrics
 ) : TabViewHolder(itemView) {
 
     private val faviconView: ImageView? =
@@ -249,7 +249,7 @@ abstract class AbstractBrowserTabViewHolder(
                         val point = PointF(motionEvent.x, motionEvent.y)
                         // startDragAndDrop is the non-deprecated version, but requires API 24
                         @Suppress("DEPRECATION")
-                        view.startDrag(null, shadow, Pair(item, point), 0)
+                        view.startDrag(null, shadow, TabDragData(item, point), 0)
                     }
                 }
                 else -> view.onTouchEvent(motionEvent)

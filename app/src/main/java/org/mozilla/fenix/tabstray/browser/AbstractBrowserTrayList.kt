@@ -5,13 +5,11 @@
 package org.mozilla.fenix.tabstray.browser
 
 import android.content.Context
-import android.graphics.PointF
 import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.DragEvent
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.tabstray.TabViewHolder
 import org.mozilla.fenix.tabstray.TabsTrayInteractor
 import org.mozilla.fenix.tabstray.TabsTrayStore
@@ -54,10 +52,11 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
     }
 
     // Find the closest item to the x/y position of the drop.
-    private fun getDropPosition(x: Float, y: Float, source: String): Pair<String, Boolean>? {
+    private data class DropPositionData(val id: String, val placeAfter: Boolean)
+    private fun getDropPosition(x: Float, y: Float, source: String): DropPositionData? {
         if (childCount < 2) return null // If there's 0 or 1 tabs visible, can't reorder
         var bestDist = Float.MAX_VALUE
-        var bestOut: Pair<String, Boolean>? = null
+        var bestOut: DropPositionData? = null
         var seenSource = false
         for (i in 0 until childCount) {
             val proposedTarget = getChildAt(i)
@@ -74,7 +73,7 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
                 if (id == source) seenSource = true
                 if (dist < bestDist && id != null) {
                     bestDist = dist
-                    bestOut = Pair(id, seenSource)
+                    bestOut = DropPositionData(id, seenSource)
                 }
             }
         }
@@ -91,63 +90,61 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
         return null
     }
     private val dragListen = OnDragListener { _, event ->
-        if (event.localState is Pair<*, *>) {
-            val (tab, dragOffset) = event.localState as Pair<*, *>
-            if (tab is TabSessionState && dragOffset is PointF) {
-                val sourceId = tab.id
-                val sources = findSourceViewAndHolder(sourceId)
+        if (event.localState is TabDragData) {
+            val (tab, dragOffset) = event.localState as TabDragData
+            val sourceId = tab.id
+            val sources = findSourceViewAndHolder(sourceId)
 
-                when (event.action) {
-                    DragEvent.ACTION_DRAG_STARTED -> {
-                        // Put the dragged tab on top of all other tabs
-                        if (sources != null) {
-                            val (sourceView, _) = sources
-                            sourceView.elevation += DRAGGED_TAB_ELEVATION
-                        }
-                        true
+            when (event.action) {
+                DragEvent.ACTION_DRAG_STARTED -> {
+                    // Put the dragged tab on top of all other tabs
+                    if (sources != null) {
+                        val (sourceView, _) = sources
+                        sourceView.elevation += DRAGGED_TAB_ELEVATION
                     }
-                    DragEvent.ACTION_DRAG_ENTERED -> {
-                        true
-                    }
-                    DragEvent.ACTION_DRAG_LOCATION -> {
-                        val target = getDropPosition(event.x, event.y, tab.id)
-                        if (target != null) {
-                            val (targetId, placeAfter) = target
-                            interactor.onTabsMove(tab.id, targetId, placeAfter)
-                        }
-                        // Move the tab's visual position
-                        if (sources != null) {
-                            val (sourceView, _) = sources
-                            sourceView.x = event.x - dragOffset.x
-                            sourceView.y = event.y - dragOffset.y
-                        }
-
-                        true
-                    }
-                    DragEvent.ACTION_DRAG_EXITED -> {
-                        true
-                    }
-                    DragEvent.ACTION_DROP -> {
-                        true
-                    }
-                    DragEvent.ACTION_DRAG_ENDED -> {
-                        // Move tab to center, set dragging to false, return tab to normal height
-                        if (sources != null) {
-                            val (sourceView, sourceViewHolder) = sources
-                            sourceView.elevation -= DRAGGED_TAB_ELEVATION
-                            sourceView.animate()
-                                .translationX(0f).translationY(0f)
-                                .setDuration(itemAnimator?.moveDuration ?: 0)
-
-                            sourceViewHolder.beingDragged = false
-                        }
-                        true
-                    }
-                    else -> { // Unknown action
-                        false
-                    }
+                    true
                 }
-            } else false
+                DragEvent.ACTION_DRAG_ENTERED -> {
+                    true
+                }
+                DragEvent.ACTION_DRAG_LOCATION -> {
+                    val target = getDropPosition(event.x, event.y, tab.id)
+                    if (target != null) {
+                        val (targetId, placeAfter) = target
+                        interactor.onTabsMove(tab.id, targetId, placeAfter)
+                    }
+                    // Move the tab's visual position
+                    if (sources != null) {
+                        val (sourceView, sourceViewHolder) = sources
+                        sourceView.x = event.x - dragOffset.x
+                        sourceView.y = event.y - dragOffset.y
+                        sourceViewHolder.beingDragged = true
+                    }
+                    true
+                }
+                DragEvent.ACTION_DRAG_EXITED -> {
+                    true
+                }
+                DragEvent.ACTION_DROP -> {
+                    true
+                }
+                DragEvent.ACTION_DRAG_ENDED -> {
+                    // Move tab to center, set dragging to false, return tab to normal height
+                    if (sources != null) {
+                        val (sourceView, sourceViewHolder) = sources
+                        sourceView.elevation -= DRAGGED_TAB_ELEVATION
+                        sourceView.animate()
+                            .translationX(0f).translationY(0f)
+                            .setDuration(itemAnimator?.moveDuration ?: 0)
+
+                        sourceViewHolder.beingDragged = false
+                    }
+                    true
+                }
+                else -> { // Unknown action
+                    false
+                }
+            }
         } else false
     }
     companion object {
