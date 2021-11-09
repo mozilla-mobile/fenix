@@ -5,6 +5,7 @@
 package org.mozilla.fenix.tabstray.browser
 
 import android.content.Context
+import android.graphics.PointF
 import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.DragEvent
@@ -12,8 +13,6 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.tabstray.TabViewHolder
-import mozilla.components.feature.tabs.tabstray.TabsFeature
-import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.tabstray.TabsTrayInteractor
 import org.mozilla.fenix.tabstray.TabsTrayStore
 import kotlin.math.abs
@@ -41,6 +40,7 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
 
         adapter?.onAttachedToRecyclerView(this)
         this.setOnDragListener(dragListen)
+        itemAnimator = DraggableItemAnimator()
     }
 
     override fun onDetachedFromWindow() {
@@ -80,67 +80,77 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
         }
         return bestOut
     }
-    private fun findSourceView(id: String): View? {
+    private fun findSourceViewAndHolder(id: String): Pair<View, AbstractBrowserTabViewHolder>? {
         for (i in 0 until childCount) {
             val proposed = getChildAt(i)
             val targetHolder = findContainingViewHolder(proposed)
-            if (targetHolder is TabViewHolder && targetHolder.tab?.id == id) {
-                return proposed
+            if (targetHolder is AbstractBrowserTabViewHolder && targetHolder.tab?.id == id) {
+                return Pair(proposed, targetHolder)
             }
         }
         return null
     }
     private val dragListen = OnDragListener { _, event ->
-        when (event.action) {
-            DragEvent.ACTION_DRAG_STARTED -> {
-                if (event.localState is TabSessionState) {
-                    val id = (event.localState as TabSessionState).id
-                    val sourceView = findSourceView(id)
-                    if (sourceView != null) {
-                        sourceView.alpha = DRAG_TRANSPARENCY
+        if (event.localState is Pair<*, *>) {
+            val (tab, dragOffset) = event.localState as Pair<*, *>
+            if (tab is TabSessionState && dragOffset is PointF) {
+                val sourceId = tab.id
+                val sources = findSourceViewAndHolder(sourceId)
+
+                when (event.action) {
+                    DragEvent.ACTION_DRAG_STARTED -> {
+                        // Put the dragged tab on top of all other tabs
+                        if (sources != null) {
+                            val (sourceView, _) = sources
+                            sourceView.elevation += DRAGGED_TAB_ELEVATION
+                        }
+                        true
                     }
-                    true
-                } else false
-            }
-            DragEvent.ACTION_DRAG_ENTERED -> {
-                true
-            }
-            DragEvent.ACTION_DRAG_LOCATION -> {
-                val source = (event.localState as TabSessionState)
-                val target = getDropPosition(event.x, event.y, source.id)
-                if (target != null) {
-                    val (id, placeAfter) = target
-                    interactor.onTabsMove(source.id, id, placeAfter)
+                    DragEvent.ACTION_DRAG_ENTERED -> {
+                        true
+                    }
+                    DragEvent.ACTION_DRAG_LOCATION -> {
+                        val target = getDropPosition(event.x, event.y, tab.id)
+                        if (target != null) {
+                            val (targetId, placeAfter) = target
+                            interactor.onTabsMove(tab.id, targetId, placeAfter)
+                        }
+                        // Move the tab's visual position
+                        if (sources != null) {
+                            val (sourceView, _) = sources
+                            sourceView.x = event.x - dragOffset.x
+                            sourceView.y = event.y - dragOffset.y
+                        }
+
+                        true
+                    }
+                    DragEvent.ACTION_DRAG_EXITED -> {
+                        true
+                    }
+                    DragEvent.ACTION_DROP -> {
+                        true
+                    }
+                    DragEvent.ACTION_DRAG_ENDED -> {
+                        // Move tab to center, set dragging to false, return tab to normal height
+                        if (sources != null) {
+                            val (sourceView, sourceViewHolder) = sources
+                            sourceView.elevation -= DRAGGED_TAB_ELEVATION
+                            sourceView.animate()
+                                .translationX(0f).translationY(0f)
+                                .setDuration(itemAnimator?.moveDuration ?: 0)
+
+                            sourceViewHolder.beingDragged = false
+                        }
+                        true
+                    }
+                    else -> { // Unknown action
+                        false
+                    }
                 }
-                true
-            }
-            DragEvent.ACTION_DRAG_EXITED -> {
-                true
-            }
-            DragEvent.ACTION_DROP -> {
-                val source = (event.localState as TabSessionState)
-                val target = getDropPosition(event.x, event.y, source.id)
-                if (target != null) {
-                    val (id, placeAfter) = target
-                    interactor.onTabsMove(source.id, id, placeAfter)
-                }
-                true
-            }
-            DragEvent.ACTION_DRAG_ENDED -> {
-                // Revert the invisibility
-                val id = (event.localState as TabSessionState).id
-                val sourceView = findSourceView(id)
-                if (sourceView != null) {
-                    sourceView.alpha = 1f
-                }
-                true
-            }
-            else -> { // Unknown action
-                false
-            }
-        }
+            } else false
+        } else false
     }
     companion object {
-        internal const val DRAG_TRANSPARENCY = 0.2f
+        internal const val DRAGGED_TAB_ELEVATION = 10f
     }
 }

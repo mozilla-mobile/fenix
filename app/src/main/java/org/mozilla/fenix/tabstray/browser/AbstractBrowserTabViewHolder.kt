@@ -5,6 +5,7 @@
 package org.mozilla.fenix.tabstray.browser
 
 import android.annotation.SuppressLint
+import android.graphics.PointF
 import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageButton
@@ -79,6 +80,7 @@ abstract class AbstractBrowserTabViewHolder(
     abstract val thumbnailSize: Int
 
     override var tab: TabSessionState? = null
+    internal var beingDragged: Boolean = false
 
     /**
      * Displays the data of the given session and notifies the given observable about events.
@@ -91,6 +93,7 @@ abstract class AbstractBrowserTabViewHolder(
         delegate: TabsTray.Delegate
     ) {
         this.tab = tab
+        beingDragged = false
 
         updateTitle(tab)
         updateUrl(tab)
@@ -241,10 +244,12 @@ abstract class AbstractBrowserTabViewHolder(
                             // Exit selection mode by deselecting everything
                             interactor.deselect(tabSelected)
                         }
-                        val shadow = View.DragShadowBuilder(itemView)
+                        val shadow = BlankDragShadowBuilder()
+                        beingDragged = true
+                        val point = PointF(motionEvent.x, motionEvent.y)
                         // startDragAndDrop is the non-deprecated version, but requires API 24
                         @Suppress("DEPRECATION")
-                        itemView.startDrag(null, shadow, item, 0)
+                        view.startDrag(null, shadow, Pair(item, point), 0)
                     }
                 }
                 else -> view.onTouchEvent(motionEvent)
