@@ -4,20 +4,18 @@
 
 package org.mozilla.fenix.tabstray.browser
 
-import androidx.recyclerview.widget.ConcatAdapter
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.tabstray.TabsTray
 import mozilla.components.feature.tabs.tabstray.TabsFeature
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
+import org.mozilla.fenix.ext.maxActiveTime
 import org.mozilla.fenix.ext.toSearchGroup
-import org.mozilla.fenix.tabstray.ext.browserAdapter
+import org.mozilla.fenix.tabstray.TabsTrayAction
+import org.mozilla.fenix.tabstray.TabsTrayStore
 import org.mozilla.fenix.tabstray.ext.hasSearchTerm
-import org.mozilla.fenix.tabstray.ext.inactiveTabsAdapter
 import org.mozilla.fenix.tabstray.ext.isActive
 import org.mozilla.fenix.tabstray.ext.isNormalTabActiveWithSearchTerm
-import org.mozilla.fenix.tabstray.ext.tabGroupAdapter
-import org.mozilla.fenix.tabstray.ext.titleHeaderAdapter
 import org.mozilla.fenix.utils.Settings
 
 /**
@@ -26,36 +24,36 @@ import org.mozilla.fenix.utils.Settings
 class TabSorter(
     private val settings: Settings,
     private val metrics: MetricController,
-    private val concatAdapter: ConcatAdapter
+    private val tabsTrayStore: TabsTrayStore? = null
 ) : TabsTray {
     private var shouldReportMetrics: Boolean = true
     private val groupsSet = mutableSetOf<String>()
 
     override fun updateTabs(tabs: List<TabSessionState>, selectedTabId: String?) {
-        val inactiveTabs = tabs.getInactiveTabs(settings)
-        val searchTermTabs = tabs.getSearchGroupTabs(settings)
-        val normalTabs = tabs - inactiveTabs - searchTermTabs
+        val privateTabs = tabs.filter { it.content.private }
+        val allNormalTabs = tabs - privateTabs
+        val inactiveTabs = allNormalTabs.getInactiveTabs(settings)
+        val searchTermTabs = allNormalTabs.getSearchGroupTabs(settings)
+        val normalTabs = allNormalTabs - inactiveTabs - searchTermTabs
+
+        // Private tabs
+        tabsTrayStore?.dispatch(TabsTrayAction.UpdatePrivateTabs(privateTabs))
 
         // Inactive tabs
-        concatAdapter.inactiveTabsAdapter.updateTabs(inactiveTabs, selectedTabId)
+        tabsTrayStore?.dispatch(TabsTrayAction.UpdateInactiveTabs(inactiveTabs))
 
         // Tab groups
-        // We don't need to provide a selectedId, because the [TabGroupAdapter] has that built-in with support from
-        //  NormalBrowserPageViewHolder.scrollToTab.
         val (groups, remainderTabs) = searchTermTabs.toSearchGroup(groupsSet)
 
         groupsSet.clear()
         groupsSet.addAll(groups.map { it.searchTerm })
-        concatAdapter.tabGroupAdapter.submitList(groups)
+        tabsTrayStore?.dispatch(TabsTrayAction.UpdateSearchGroupTabs(groups))
 
         // Normal tabs.
         val totalNormalTabs = (normalTabs + remainderTabs)
-        concatAdapter.browserAdapter.updateTabs(totalNormalTabs, selectedTabId)
+        tabsTrayStore?.dispatch(TabsTrayAction.UpdateNormalTabs(totalNormalTabs))
 
-        // Normal tab title header.
-        concatAdapter.titleHeaderAdapter
-            .handleListChanges(totalNormalTabs.isNotEmpty() && groups.isNotEmpty())
-
+        // TODO move this to a middleware in the TabsTrayStore.
         if (shouldReportMetrics) {
             shouldReportMetrics = false
 
