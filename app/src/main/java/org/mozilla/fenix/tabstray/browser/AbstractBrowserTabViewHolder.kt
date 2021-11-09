@@ -237,9 +237,11 @@ abstract class AbstractBrowserTabViewHolder(
         // The ClickableViewAccessibility warning isn't useful
         itemView.setOnTouchListener { view, motionEvent ->
             when (motionEvent.actionMasked) {
-                MotionEvent.ACTION_MOVE -> if (holder.selectedItems.contains(item)) {
+                MotionEvent.ACTION_MOVE -> {
                     val parent = itemView.parent as? AbstractBrowserTrayList
-                    if (parent?.context?.settings()?.searchTermTabGroupsAreEnabled == false) {
+                    if (parent?.context?.settings()?.searchTermTabGroupsAreEnabled == false &&
+                        holder.selectedItems.contains(item) && holder.selectedItems.size == 1
+                    ) {
                         for (tabSelected in holder.selectedItems) {
                             // Exit selection mode by deselecting everything
                             interactor.deselect(tabSelected)
@@ -250,7 +252,7 @@ abstract class AbstractBrowserTabViewHolder(
                         // startDragAndDrop is the non-deprecated version, but requires API 24
                         @Suppress("DEPRECATION")
                         view.startDrag(null, shadow, TabDragData(item, point), 0)
-                    }
+                    } else view.onTouchEvent(motionEvent)
                 }
                 else -> view.onTouchEvent(motionEvent)
             }
