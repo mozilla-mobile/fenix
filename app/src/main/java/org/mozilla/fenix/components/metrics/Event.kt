@@ -85,6 +85,7 @@ sealed class Event {
     data class HistoryRecentSearchesTapped(val source: String) : Event() {
         override val extras = mapOf(History.recentSearchesTappedKeys.pageNumber to source)
     }
+    object HistorySearchTermGroupTapped : Event()
     object ReaderModeAvailable : Event()
     object ReaderModeOpened : Event()
     object ReaderModeClosed : Event()
@@ -211,6 +212,9 @@ sealed class Event {
     object TabsTrayCloseAllInactiveTabs : Event()
     data class TabsTrayCloseInactiveTab(val amountClosed: Int = 1) : Event()
     object TabsTrayOpenInactiveTab : Event()
+    object TabsTrayInactiveTabsCFRGotoSettings : Event()
+    object TabsTrayInactiveTabsCFRDismissed : Event()
+    object TabsTrayInactiveTabsCFRIsVisible : Event()
 
     object InactiveTabsSurveyOpened : Event()
     data class InactiveTabsOffSurvey(val feedback: String) : Event() {
