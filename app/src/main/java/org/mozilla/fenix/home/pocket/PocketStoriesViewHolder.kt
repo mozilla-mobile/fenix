@@ -12,7 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
@@ -53,17 +53,6 @@ class PocketStoriesViewHolder(
                 getDimensionPixelSize(R.dimen.home_item_horizontal_margin) / displayMetrics.density
             }
 
-            val stories = store
-                .observeAsComposableState { state -> state.pocketStories }.value
-
-            LaunchedEffect(stories) {
-                // We should report back when a certain story is actually being displayed.
-                // Cannot do it reliably so for now we'll just mass report everything as being displayed.
-                stories?.let {
-                    interactor::onStoriesShown
-                }
-            }
-
             FirefoxTheme {
                 Column(modifier = Modifier.padding(top = 72.dp)) {
                     SectionHeader(
@@ -77,8 +66,9 @@ class PocketStoriesViewHolder(
                     Spacer(Modifier.height(17.dp))
 
                     PocketStories(
-                        stories ?: emptyList(),
+                        store.observeAsComposableState { state -> state.pocketStories },
                         horizontalPadding.dp,
+                        interactor::onStoriesShown,
                         interactor::onStoryClicked,
                         interactor::onDiscoverMoreClicked
                     )
@@ -107,9 +97,11 @@ fun PocketStoriesViewHolderPreview() {
 
             Spacer(Modifier.height(17.dp))
 
+            @Suppress("UnrememberedMutableState")
             PocketStories(
-                stories = getFakePocketStories(POCKET_STORIES_TO_SHOW_COUNT),
+                stories = mutableStateOf(getFakePocketStories(POCKET_STORIES_TO_SHOW_COUNT)),
                 contentPadding = 0.dp,
+                onStoriesShown = { },
                 onStoryClicked = { _, _ -> }
             ) { }
         }

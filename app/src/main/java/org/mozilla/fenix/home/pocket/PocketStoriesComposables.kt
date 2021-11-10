@@ -24,6 +24,10 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,8 +36,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
-import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -72,7 +74,7 @@ private val placeholderStory = PocketRecommendedStory("", "", "", "", "", 0, 0)
  */
 @Composable
 fun PocketStory(
-    @PreviewParameter(PocketStoryProvider::class) story: PocketRecommendedStory,
+    story: PocketRecommendedStory,
     onStoryClick: (PocketRecommendedStory) -> Unit,
 ) {
     val imageUrl = story.imageUrl.replace(
@@ -112,14 +114,24 @@ fun PocketStory(
  */
 @Composable
 fun PocketStories(
-    @PreviewParameter(PocketStoryProvider::class) stories: List<PocketRecommendedStory>,
+    stories: State<List<PocketRecommendedStory>?>,
     contentPadding: Dp,
+    onStoriesShown: (List<PocketRecommendedStory>) -> Unit,
     onStoryClicked: (PocketRecommendedStory, Pair<Int, Int>) -> Unit,
     onDiscoverMoreClicked: (String) -> Unit
 ) {
+    LaunchedEffect(stories) {
+        // We should report back when a certain story is actually being displayed.
+        // Cannot do it reliably so for now we'll just mass report everything as being displayed.
+        stories.value?.let {
+            onStoriesShown(it)
+        }
+    }
+
     // Show stories in at most 3 rows but on any number of columns depending on the data received.
     val maxRowsNo = 3
-    val storiesToShow = (stories + placeholderStory).chunked(maxRowsNo)
+    val storiesToShow = ((stories.value ?: emptyList()) + placeholderStory)
+        .chunked(maxRowsNo)
 
     val listState = rememberLazyListState()
     val flingBehavior = EagerFlingBehavior(lazyRowState = listState)
@@ -162,21 +174,26 @@ fun PocketStories(
  */
 @Composable
 fun PocketStoriesCategories(
-    categories: List<PocketRecommendedStoriesCategory>,
-    selections: List<PocketRecommendedStoriesSelectedCategory>,
+    categories: State<List<PocketRecommendedStoriesCategory>?>,
+    selections: State<List<PocketRecommendedStoriesSelectedCategory>?>,
     onCategoryClick: (PocketRecommendedStoriesCategory) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(modifier = modifier) {
+        val categoriesValue = categories.value ?: emptyList()
+        val selectionsValue = selections.value ?: emptyList()
+
         StaggeredHorizontalGrid(
             horizontalItemsSpacing = 16.dp,
             verticalItemsSpacing = 16.dp
         ) {
-            categories.filter { it.name != POCKET_STORIES_DEFAULT_CATEGORY_NAME }.forEach { category ->
-                SelectableChip(category.name, selections.map { it.name }.contains(category.name)) {
-                    onCategoryClick(category)
+            categoriesValue.filter { it.name != POCKET_STORIES_DEFAULT_CATEGORY_NAME }
+                .forEach { category ->
+                    val isSelected = selectionsValue.map { it.name }.contains(category.name)
+                    SelectableChip(category.name, isSelected) {
+                        onCategoryClick(category)
+                    }
                 }
-            }
         }
     }
 }
@@ -246,18 +263,22 @@ private fun PocketStoriesComposablesPreview() {
         Box(Modifier.background(FirefoxTheme.colors.surface)) {
             Column {
                 PocketStories(
-                    stories = getFakePocketStories(8),
+                    stories = remember { mutableStateOf(getFakePocketStories(8)) },
                     contentPadding = 0.dp,
-                    onStoryClicked = { _, _ -> },
-                    onDiscoverMoreClicked = { }
-                )
+                    onStoriesShown = { },
+                    onStoryClicked = { _, _ -> }
+                ) { }
                 Spacer(Modifier.height(10.dp))
 
                 PocketStoriesCategories(
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor".split(" ").map {
-                        PocketRecommendedStoriesCategory(it)
+                    remember {
+                        mutableStateOf(
+                            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor"
+                                .split(" ")
+                                .map { PocketRecommendedStoriesCategory(it) }
+                        )
                     },
-                    emptyList(),
+                    remember { mutableStateOf(emptyList()) },
                     { }
                 )
                 Spacer(Modifier.height(10.dp))
@@ -266,11 +287,6 @@ private fun PocketStoriesComposablesPreview() {
             }
         }
     }
-}
-
-private class PocketStoryProvider : PreviewParameterProvider<PocketRecommendedStory> {
-    override val values = getFakePocketStories(7).asSequence()
-    override val count = 8
 }
 
 internal fun getFakePocketStories(limit: Int = 1): List<PocketRecommendedStory> {

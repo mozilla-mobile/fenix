@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
@@ -50,12 +52,6 @@ class PocketCategoriesViewHolder(
             val horizontalPadding = with(composeView.resources) {
                 getDimensionPixelSize(R.dimen.home_item_horizontal_margin) / displayMetrics.density
             }
-
-            val categories = store
-                .observeAsComposableState { state -> state.pocketStoriesCategories }.value
-            val categoriesSelections = store
-                .observeAsComposableState { state -> state.pocketStoriesCategoriesSelections }.value
-
             FirefoxTheme {
                 Column(modifier = Modifier.padding(top = 24.dp)) {
                     SectionHeader(
@@ -69,8 +65,12 @@ class PocketCategoriesViewHolder(
                     Spacer(Modifier.height(17.dp))
 
                     PocketStoriesCategories(
-                        categories = categories ?: emptyList(),
-                        selections = categoriesSelections ?: emptyList(),
+                        categories = store.observeAsComposableState { state ->
+                            state.pocketStoriesCategories
+                        },
+                        selections = store.observeAsComposableState { state ->
+                            state.pocketStoriesCategoriesSelections
+                        },
                         onCategoryClick = interactor::onCategoryClicked,
                         modifier = Modifier
                             .fillMaxWidth()
@@ -103,10 +103,16 @@ private fun PocketCategoriesViewHolderPreview() {
 
             @Suppress("UnrememberedMutableState")
             PocketStoriesCategories(
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor".split(" ").map {
-                    PocketRecommendedStoriesCategory(it)
+                remember {
+                    mutableStateOf(
+                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor"
+                            .split(" ")
+                            .map {
+                                PocketRecommendedStoriesCategory(it)
+                            }
+                    )
                 },
-                emptyList(),
+                remember { mutableStateOf(emptyList()) },
                 { }
             )
         }
