@@ -155,6 +155,11 @@ sealed class TabsTrayAction : Action {
      * Updates the list of tabs in [TabsTrayState.privateTabs].
      */
     data class UpdatePrivateTabs(val tabs: List<TabSessionState>) : TabsTrayAction()
+
+    /**
+     * Updates the list of tabs in [TabsTrayState.privateTabs].
+     */
+    data class ReportTabMetrics(val inactiveTabsCount: Int, val tabGroups: List<TabGroup>) : TabsTrayAction()
 }
 
 /**
@@ -195,6 +200,8 @@ internal object TabsTrayReducer {
                 state.copy(normalTabs = action.tabs)
             is TabsTrayAction.UpdatePrivateTabs ->
                 state.copy(privateTabs = action.tabs)
+            is TabsTrayAction.ReportTabMetrics ->
+                state.copy()
         }
     }
 }

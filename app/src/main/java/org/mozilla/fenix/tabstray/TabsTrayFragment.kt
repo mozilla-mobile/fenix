@@ -40,6 +40,7 @@ import org.mozilla.fenix.databinding.FragmentTabTrayDialogBinding
 import org.mozilla.fenix.databinding.TabsTrayTabCounter2Binding
 import org.mozilla.fenix.databinding.TabstrayMultiselectItemsBinding
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.HomeScreenViewModel
@@ -56,6 +57,7 @@ import org.mozilla.fenix.tabstray.ext.collectionMessage
 import org.mozilla.fenix.tabstray.ext.make
 import org.mozilla.fenix.tabstray.ext.orDefault
 import org.mozilla.fenix.tabstray.ext.showWithTheme
+import org.mozilla.fenix.telemetry.TabsTrayMiddleware
 import org.mozilla.fenix.utils.allowUndo
 import kotlin.math.max
 
@@ -128,6 +130,12 @@ class TabsTrayFragment : AppCompatDialogFragment() {
                 initialState = TabsTrayState(
                     mode = initialMode,
                     focusGroupTabId = args.focusGroupTabId
+                ),
+                middlewares = listOf(
+                    TabsTrayMiddleware(
+                        settings = requireContext().settings(),
+                        metrics = requireContext().metrics
+                    )
                 )
             )
         }
@@ -230,7 +238,6 @@ class TabsTrayFragment : AppCompatDialogFragment() {
             feature = TabsFeature(
                 tabsTray = TabSorter(
                     requireContext().settings(),
-                    requireContext().components.analytics.metrics,
                     tabsTrayStore
                 ),
                 store = requireContext().components.core.store,
