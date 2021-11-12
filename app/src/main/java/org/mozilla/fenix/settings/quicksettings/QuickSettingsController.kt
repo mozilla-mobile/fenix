@@ -74,6 +74,12 @@ interface QuickSettingsController {
      * "Secured or Insecure Connection" section.
      */
     fun handleConnectionDetailsClicked()
+
+    /**
+     * Navigates to the connection details. Called when a user clicks on the
+     * "Secured or Insecure Connection" section.
+     */
+    fun handleClearSiteDataClicked()
 }
 
 /**
@@ -226,6 +232,10 @@ class DefaultQuickSettingsController(
                 sitePermissions = sitePermissions
             )
         navController().navigate(directions)
+    }
+
+    override fun handleClearSiteDataClicked() {
+        TODO("Not yet implemented")
     }
 
     /**

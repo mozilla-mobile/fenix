@@ -49,6 +49,7 @@ class QuickSettingsSheetDialogFragment : FenixDialogFragment() {
     private lateinit var quickSettingsController: QuickSettingsController
     private lateinit var websiteInfoView: WebsiteInfoView
     private lateinit var websitePermissionsView: WebsitePermissionsView
+    private lateinit var clearSiteDataView : ClearSiteDataView
 
     @VisibleForTesting
     internal lateinit var trackingProtectionView: TrackingProtectionView
@@ -116,6 +117,8 @@ class QuickSettingsSheetDialogFragment : FenixDialogFragment() {
             WebsitePermissionsView(binding.websitePermissionsLayout, interactor)
         trackingProtectionView =
             TrackingProtectionView(binding.trackingProtectionLayout, interactor, context.settings())
+        clearSiteDataView =
+            ClearSiteDataView(binding.clearSiteDataLayout, interactor)
 
         return rootView
     }
@@ -127,6 +130,7 @@ class QuickSettingsSheetDialogFragment : FenixDialogFragment() {
             websiteInfoView.update(it.webInfoState)
             websitePermissionsView.update(it.websitePermissionsState)
             trackingProtectionView.update(it.trackingProtectionState)
+            clearSiteDataView.update()
         }
     }
 
