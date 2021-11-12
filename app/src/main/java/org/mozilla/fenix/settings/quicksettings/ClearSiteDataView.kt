@@ -42,6 +42,7 @@ class ClearSiteDataView(
 
     fun update() {
         // TODO: Hide behind a feature flag by now?
+        // TODO: Hide if there are no cookies for current host.
         binding.root.isVisible = true
         binding.clearSiteData.setOnClickListener {
             interactor.onClearSiteDataClicked()

@@ -6,11 +6,13 @@ package org.mozilla.fenix.settings.quicksettings
 
 import android.content.Context
 import androidx.annotation.VisibleForTesting
+import androidx.core.net.toUri
 import androidx.navigation.NavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import mozilla.components.browser.state.selector.findTabOrCustomTab
 import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.concept.engine.Engine
 import mozilla.components.concept.engine.permission.SitePermissions
 import mozilla.components.feature.session.SessionUseCases.ReloadUrlUseCase
 import mozilla.components.feature.tabs.TabsUseCases.AddNewTabUseCase
@@ -235,7 +237,24 @@ class DefaultQuickSettingsController(
     }
 
     override fun handleClearSiteDataClicked() {
-        TODO("Not yet implemented")
+        // TODO: Obtain the proper base domain.
+        val host = quickSettingsStore.state.webInfoState.websiteUrl.toUri().host
+        if (host.isNullOrEmpty()) {
+            TODO("handle unknown host")
+        }
+
+        context.components.core.engine.clearData(
+            host = host,
+            data = Engine.BrowsingData.select(
+                Engine.BrowsingData.AUTH_SESSIONS,
+                Engine.BrowsingData.ALL_SITE_DATA,
+            ),
+        )
+
+        // Reload after clearing data? Firefox doesn't do it.
+        //components.useCases.sessionUseCases.reload(sessionId)
+
+        navController().navigateUp()
     }
 
     /**
