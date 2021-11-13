@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.core.net.toUri
 import androidx.core.view.isVisible
+import com.google.common.net.InternetDomainName
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.QuicksettingsClearSiteDataBinding
 
@@ -45,8 +46,6 @@ class ClearSiteDataView(
 
     fun update(webInfoState: WebsiteInfoState) {
         // TODO: Hide behind a feature flag by now?
-
-        // TODO: Obtain the proper base domain.
         val domain = baseDomain(webInfoState.websiteUrl.toUri().host.toString())
         if (domain.isNullOrEmpty()) {
             binding.root.isVisible = false
@@ -60,12 +59,15 @@ class ClearSiteDataView(
         }
     }
 
-    fun baseDomain(host : String) : String {
-        // TODO: Obtain the proper base domain.
-        return host
+    @Suppress("UnstableApiUsage")
+    private fun baseDomain(host : String) : String? {
+        if (!InternetDomainName.isValid(host)) {
+            return host
+        }
+        return InternetDomainName.from(host).topPrivateDomain().toString()
     }
 
-    fun askToClear(domain : String) {
+    private fun askToClear(domain : String) {
         context?.let {
             AlertDialog.Builder(it).apply {
                 setMessage(
