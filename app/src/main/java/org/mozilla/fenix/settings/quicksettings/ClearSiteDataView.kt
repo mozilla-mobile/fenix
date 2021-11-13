@@ -4,11 +4,14 @@
 
 package org.mozilla.fenix.settings.quicksettings
 
+import android.content.DialogInterface
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
+import androidx.core.net.toUri
 import androidx.core.view.isVisible
+import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.QuicksettingsClearSiteDataBinding
-import org.mozilla.fenix.databinding.QuicksettingsPermissionsBinding
 
 /**
  * Contract declaring all possible user interactions with [ClearSiteDataView].
@@ -17,7 +20,7 @@ interface ClearSiteDataViewInteractor {
     /**
      * Shows the confirmation dialog to clear site data for current domain.
      */
-    fun onClearSiteDataClicked()
+    fun onClearSiteDataClicked(domain : String)
 }
 
 
@@ -40,12 +43,48 @@ class ClearSiteDataView(
         true
     )
 
-    fun update() {
+    fun update(webInfoState: WebsiteInfoState) {
         // TODO: Hide behind a feature flag by now?
+
+        // TODO: Obtain the proper base domain.
+        val domain = baseDomain(webInfoState.websiteUrl.toUri().host.toString())
+        if (domain.isNullOrEmpty()) {
+            binding.root.isVisible = false
+            return
+        }
+
         // TODO: Hide if there are no cookies for current host.
         binding.root.isVisible = true
         binding.clearSiteData.setOnClickListener {
-            interactor.onClearSiteDataClicked()
+            askToClear(domain)
+        }
+    }
+
+    fun baseDomain(host : String) : String {
+        // TODO: Obtain the proper base domain.
+        return host
+    }
+
+    fun askToClear(domain : String) {
+        context?.let {
+            AlertDialog.Builder(it).apply {
+                setMessage(
+                    it.getString(
+                        R.string.confirm_clear_site_data,
+                        domain
+                    )
+                )
+
+                setNegativeButton(R.string.delete_browsing_data_prompt_cancel) { it: DialogInterface, _ ->
+                    it.cancel()
+                }
+
+                setPositiveButton(R.string.delete_browsing_data_prompt_allow) { it: DialogInterface, _ ->
+                    it.dismiss()
+                    interactor.onClearSiteDataClicked(domain)
+                }
+                create()
+            }.show()
         }
     }
 }

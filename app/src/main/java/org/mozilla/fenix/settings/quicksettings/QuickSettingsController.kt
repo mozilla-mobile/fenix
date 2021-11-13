@@ -81,7 +81,7 @@ interface QuickSettingsController {
      * Navigates to the connection details. Called when a user clicks on the
      * "Secured or Insecure Connection" section.
      */
-    fun handleClearSiteDataClicked()
+    fun handleClearSiteDataClicked(domain: String)
 }
 
 /**
@@ -236,25 +236,20 @@ class DefaultQuickSettingsController(
         navController().navigate(directions)
     }
 
-    override fun handleClearSiteDataClicked() {
-        // TODO: Obtain the proper base domain.
-        val host = quickSettingsStore.state.webInfoState.websiteUrl.toUri().host
-        if (host.isNullOrEmpty()) {
-            TODO("handle unknown host")
+    override fun handleClearSiteDataClicked(domain : String) {
+        if (domain.isNullOrEmpty()) {
+            return
         }
 
         context.components.core.engine.clearData(
-            host = host,
+            host = domain,
             data = Engine.BrowsingData.select(
                 Engine.BrowsingData.AUTH_SESSIONS,
                 Engine.BrowsingData.ALL_SITE_DATA,
             ),
         )
 
-        // Reload after clearing data? Firefox doesn't do it.
-        //components.useCases.sessionUseCases.reload(sessionId)
-
-        navController().navigateUp()
+        navController().popBackStack()
     }
 
     /**

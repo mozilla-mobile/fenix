@@ -130,7 +130,7 @@ class QuickSettingsSheetDialogFragment : FenixDialogFragment() {
             websiteInfoView.update(it.webInfoState)
             websitePermissionsView.update(it.websitePermissionsState)
             trackingProtectionView.update(it.trackingProtectionState)
-            clearSiteDataView.update()
+            clearSiteDataView.update(it.webInfoState)
         }
     }
 
