@@ -8,6 +8,7 @@ import android.content.DialogInterface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AlertDialog
 import androidx.core.net.toUri
 import androidx.core.view.isVisible
@@ -79,7 +80,8 @@ class ClearSiteDataView(
         return InternetDomainName.from(host).topPrivateDomain().toString()
     }
 
-    private fun askToClear(domain : String) {
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    internal fun askToClear(domain : String) {
         context?.let {
             AlertDialog.Builder(it).apply {
                 setMessage(

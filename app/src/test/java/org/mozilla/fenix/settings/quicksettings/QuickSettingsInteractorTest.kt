@@ -82,4 +82,13 @@ class QuickSettingsInteractorTest {
             controller.handleConnectionDetailsClicked()
         }
     }
+
+    @Test
+    fun `WHEN calling onClearSiteDataClicked THEN delegate to the controller`() {
+        interactor.onClearSiteDataClicked("mozilla.org")
+
+        verify {
+            controller.handleClearSiteDataClicked("mozilla.org")
+        }
+    }
 }
