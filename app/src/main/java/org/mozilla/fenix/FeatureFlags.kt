@@ -91,4 +91,9 @@ object FeatureFlags {
      * Enables showing the homescreen onboarding card.
      */
     const val showHomeOnboarding = false
+
+    /**
+     * Enables showing the option to clear site data.
+     */
+    val showClearSiteData = Config.channel.isNightlyOrDebug
 }

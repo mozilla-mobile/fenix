@@ -118,7 +118,7 @@ class QuickSettingsSheetDialogFragment : FenixDialogFragment() {
         trackingProtectionView =
             TrackingProtectionView(binding.trackingProtectionLayout, interactor, context.settings())
         clearSiteDataView =
-            ClearSiteDataView(binding.clearSiteDataLayout, interactor)
+            ClearSiteDataView(binding.clearSiteDataLayout, binding.clearSiteDataDivider, interactor)
 
         return rootView
     }

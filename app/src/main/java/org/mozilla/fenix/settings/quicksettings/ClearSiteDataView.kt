@@ -6,11 +6,13 @@ package org.mozilla.fenix.settings.quicksettings
 
 import android.content.DialogInterface
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import com.google.common.net.InternetDomainName
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.QuicksettingsClearSiteDataBinding
 
@@ -34,6 +36,7 @@ interface ClearSiteDataViewInteractor {
  */
 class ClearSiteDataView(
     val containerView: ViewGroup,
+    val containerDivider: View,
     val interactor: ClearSiteDataViewInteractor
 ) {
     private val context = containerView.context
@@ -45,18 +48,27 @@ class ClearSiteDataView(
     )
 
     fun update(webInfoState: WebsiteInfoState) {
-        // TODO: Hide behind a feature flag by now?
+        if (!FeatureFlags.showClearSiteData) {
+            setVisibility(false)
+            return
+        }
+
         val domain = baseDomain(webInfoState.websiteUrl.toUri().host.toString())
         if (domain.isNullOrEmpty()) {
-            binding.root.isVisible = false
+            setVisibility(false)
             return
         }
 
         // TODO: Hide if there are no cookies for current host.
-        binding.root.isVisible = true
+        setVisibility(true)
         binding.clearSiteData.setOnClickListener {
             askToClear(domain)
         }
+    }
+
+    private fun setVisibility(visible : Boolean) {
+        binding.root.isVisible = visible
+        containerDivider.isVisible = visible
     }
 
     @Suppress("UnstableApiUsage")
