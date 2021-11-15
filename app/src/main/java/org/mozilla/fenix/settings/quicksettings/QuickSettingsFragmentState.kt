@@ -7,6 +7,8 @@ package org.mozilla.fenix.settings.quicksettings
 import android.content.Context
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.core.net.toUri
+import com.google.common.net.InternetDomainName
 import mozilla.components.concept.engine.permission.SitePermissions
 import mozilla.components.concept.engine.permission.SitePermissions.AutoplayStatus
 import mozilla.components.feature.sitepermissions.SitePermissionsRules
@@ -41,7 +43,6 @@ data class WebsiteInfoState(
     val websiteSecurityUiValues: WebsiteSecurityUiValues,
     val certificateName: String
 ) : State {
-
     companion object {
         /**
          * Construct an initial [WebsiteInfoState]
@@ -63,6 +64,15 @@ data class WebsiteInfoState(
                 if (isSecured) WebsiteSecurityUiValues.SECURE else WebsiteSecurityUiValues.INSECURE
             return WebsiteInfoState(websiteUrl, websiteTitle, uiValues, certificateName)
         }
+    }
+
+    @Suppress("UnstableApiUsage")
+    fun baseDomain(): String {
+        val host = websiteUrl.toUri().host.toString()
+        if (!InternetDomainName.isValid(host)) {
+            return host
+        }
+        return InternetDomainName.from(host).topPrivateDomain().toString()
     }
 }
 

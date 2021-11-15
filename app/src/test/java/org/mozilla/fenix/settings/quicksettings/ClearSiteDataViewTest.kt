@@ -70,10 +70,11 @@ class ClearSiteDataViewTest {
         view.update(websiteInfoState)
 
         Assert.assertTrue(binding.root.isVisible)
+        Assert.assertEquals(expectedBaseDomain, view.baseDomain)
 
         binding.clearSiteData.callOnClick()
         verify {
-            view.askToClear(expectedBaseDomain)
+            view.askToClear()
         }
     }
 }

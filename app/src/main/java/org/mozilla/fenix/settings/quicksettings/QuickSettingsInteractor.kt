@@ -40,7 +40,7 @@ class QuickSettingsInteractor(
         controller.handleConnectionDetailsClicked()
     }
 
-    override fun onClearSiteDataClicked(domain : String) {
-        controller.handleClearSiteDataClicked(domain)
+    override fun onClearSiteDataClicked() {
+        controller.handleClearSiteDataClicked()
     }
 }

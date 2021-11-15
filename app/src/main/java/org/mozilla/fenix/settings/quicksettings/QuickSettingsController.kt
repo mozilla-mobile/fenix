@@ -6,7 +6,6 @@ package org.mozilla.fenix.settings.quicksettings
 
 import android.content.Context
 import androidx.annotation.VisibleForTesting
-import androidx.core.net.toUri
 import androidx.navigation.NavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -78,10 +77,10 @@ interface QuickSettingsController {
     fun handleConnectionDetailsClicked()
 
     /**
-     * Navigates to the connection details. Called when a user clicks on the
-     * "Secured or Insecure Connection" section.
+     * Clears site data for the current website. Called when a user clicks
+     * on the section to clear site data.
      */
-    fun handleClearSiteDataClicked(domain: String)
+    fun handleClearSiteDataClicked()
 }
 
 /**
@@ -236,7 +235,8 @@ class DefaultQuickSettingsController(
         navController().navigate(directions)
     }
 
-    override fun handleClearSiteDataClicked(domain : String) {
+    override fun handleClearSiteDataClicked() {
+        val domain = quickSettingsStore.state.webInfoState.baseDomain()
         if (domain.isNullOrEmpty()) {
             return
         }

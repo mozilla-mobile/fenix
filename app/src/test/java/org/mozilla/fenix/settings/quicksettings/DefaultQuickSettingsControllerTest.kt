@@ -400,7 +400,7 @@ class DefaultQuickSettingsControllerTest {
         )
         every { store.state.webInfoState } returns state
 
-        controller.handleClearSiteDataClicked("mozilla.org")
+        controller.handleClearSiteDataClicked()
 
         verify {
             engine.clearData(

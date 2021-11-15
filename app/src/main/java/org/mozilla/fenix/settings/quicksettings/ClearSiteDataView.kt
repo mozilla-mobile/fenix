@@ -10,9 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AlertDialog
-import androidx.core.net.toUri
 import androidx.core.view.isVisible
-import com.google.common.net.InternetDomainName
 import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.QuicksettingsClearSiteDataBinding
@@ -24,7 +22,7 @@ interface ClearSiteDataViewInteractor {
     /**
      * Shows the confirmation dialog to clear site data for current domain.
      */
-    fun onClearSiteDataClicked(domain : String)
+    fun onClearSiteDataClicked()
 }
 
 
@@ -42,6 +40,9 @@ class ClearSiteDataView(
 ) {
     private val context = containerView.context
 
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    lateinit var baseDomain : String
+
     val binding = QuicksettingsClearSiteDataBinding.inflate(
         LayoutInflater.from(context),
         containerView,
@@ -54,16 +55,12 @@ class ClearSiteDataView(
             return
         }
 
-        val domain = baseDomain(webInfoState.websiteUrl.toUri().host.toString())
-        if (domain.isNullOrEmpty()) {
-            setVisibility(false)
-            return
-        }
-
         // TODO: Hide if there are no cookies for current host.
+        baseDomain = webInfoState.baseDomain()
+
         setVisibility(true)
         binding.clearSiteData.setOnClickListener {
-            askToClear(domain)
+            askToClear()
         }
     }
 
@@ -72,22 +69,14 @@ class ClearSiteDataView(
         containerDivider.isVisible = visible
     }
 
-    @Suppress("UnstableApiUsage")
-    private fun baseDomain(host : String) : String? {
-        if (!InternetDomainName.isValid(host)) {
-            return host
-        }
-        return InternetDomainName.from(host).topPrivateDomain().toString()
-    }
-
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    internal fun askToClear(domain : String) {
+    internal fun askToClear() {
         context?.let {
             AlertDialog.Builder(it).apply {
                 setMessage(
                     it.getString(
                         R.string.confirm_clear_site_data,
-                        domain
+                        baseDomain
                     )
                 )
 
@@ -97,7 +86,7 @@ class ClearSiteDataView(
 
                 setPositiveButton(R.string.delete_browsing_data_prompt_allow) { it: DialogInterface, _ ->
                     it.dismiss()
-                    interactor.onClearSiteDataClicked(domain)
+                    interactor.onClearSiteDataClicked()
                 }
                 create()
             }.show()
