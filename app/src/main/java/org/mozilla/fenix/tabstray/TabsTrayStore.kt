@@ -201,7 +201,7 @@ internal object TabsTrayReducer {
             is TabsTrayAction.UpdatePrivateTabs ->
                 state.copy(privateTabs = action.tabs)
             is TabsTrayAction.ReportTabMetrics ->
-                state.copy()
+                state
         }
     }
 }

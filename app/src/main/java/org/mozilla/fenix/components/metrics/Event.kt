@@ -665,6 +665,8 @@ sealed class Event {
             get() = hashMapOf(SearchTerms.averageTabsPerGroupKeys.count to averageSize.toString())
     }
 
+    data class SearchTermGroupSizeDistribution(val groupSizes: List<Long>) : Event()
+
     object JumpBackInGroupTapped : Event()
 
     sealed class Search

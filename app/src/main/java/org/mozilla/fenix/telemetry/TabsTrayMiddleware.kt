@@ -4,7 +4,6 @@
 
 package org.mozilla.fenix.telemetry
 
-import android.util.Log
 import mozilla.components.lib.state.Middleware
 import mozilla.components.lib.state.MiddlewareContext
 import org.mozilla.fenix.components.metrics.Event
@@ -36,8 +35,21 @@ class TabsTrayMiddleware(
                 }
 
                 if (action.tabGroups.isNotEmpty()) {
-                    val averageTabsPerGroup = action.tabGroups.map { it.tabs.size }.average()
+                    val tabsPerGroup = action.tabGroups.map { it.tabs.size }
+                    val averageTabsPerGroup = tabsPerGroup.average()
                     metrics.track(Event.AverageTabsPerSearchTermGroup(averageTabsPerGroup))
+
+                    // This follows the logic outlined in metrics.yaml for
+                    // "search_terms.group_size_distribution"
+                    val tabGroupSizeMapping = tabsPerGroup.map {
+                        when(it) {
+                            2 -> 1L
+                            in 3..5 -> 2L
+                            in 6..10 -> 3L
+                            else -> 4L
+                        }
+                    }
+                    metrics.track(Event.SearchTermGroupSizeDistribution(tabGroupSizeMapping))
                 }
                 metrics.track(Event.SearchTermGroupCount(action.tabGroups.size))
             }
