@@ -15,6 +15,7 @@ import org.mozilla.fenix.helpers.click
 class SettingsSubMenuHomepageRobot {
 
     fun clickStartOnHomepageButton() = homepageButton().click()
+    fun clickStartOnLastTabButton() = lastTabButton().click()
     fun clickJumpBackInButton() = jumpBackInButton().click()
     fun clickRecentBookmarksButton() = recentBookmarksButton().click()
 
@@ -40,7 +41,14 @@ private fun homepageButton() =
         )
     )
 
-private fun lastTabButton() = onView(withText(R.string.opening_screen_last_tab))
+private fun lastTabButton() =
+    onView(
+        allOf(
+            withId(R.id.title),
+            withText(R.string.opening_screen_last_tab),
+            hasSibling(withId(R.id.radio_button))
+        )
+    )
 
 private fun homepageAfterFourHoursButton() =
     onView(withText(R.string.opening_screen_after_four_hours_of_inactivity))
