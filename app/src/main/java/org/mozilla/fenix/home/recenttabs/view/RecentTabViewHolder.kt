@@ -9,6 +9,9 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import mozilla.components.lib.state.ext.observeAsComposableState
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.components
+import org.mozilla.fenix.experiments.FeatureId
+import org.mozilla.fenix.ext.recordExposureEvent
 import org.mozilla.fenix.home.HomeFragmentStore
 import org.mozilla.fenix.home.recenttabs.interactor.RecentTabInteractor
 import org.mozilla.fenix.theme.FirefoxTheme
@@ -36,6 +39,10 @@ class RecentTabViewHolder(
         )
         composeView.setContent {
             val recentTabs = store.observeAsComposableState { state -> state.recentTabs }
+
+            if (!recentTabs.value.isNullOrEmpty()) {
+                components.analytics.experiments.recordExposureEvent(FeatureId.SEARCH_TERM_GROUPS)
+            }
 
             FirefoxTheme {
                 RecentTabs(

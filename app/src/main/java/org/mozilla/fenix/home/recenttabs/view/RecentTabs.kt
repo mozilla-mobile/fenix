@@ -82,7 +82,7 @@ fun RecentTabs(
                     )
                 }
                 is RecentTab.SearchGroup -> {
-                    if (components.settings.searchTermTabGroupsAreEnabled) {
+                    if (components.settings.showSearchGroupsFeature) {
                         RecentSearchGroupItem(
                             searchTerm = tab.searchTerm,
                             tabId = tab.tabId,

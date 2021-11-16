@@ -19,8 +19,10 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.Event.TabViewSettingChanged
 import org.mozilla.fenix.components.metrics.Event.TabViewSettingChanged.Type
 import org.mozilla.fenix.databinding.SurveyInactiveTabsDisableBinding
+import org.mozilla.fenix.experiments.FeatureId
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.metrics
+import org.mozilla.fenix.ext.recordExposureEvent
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.utils.view.addToRadioGroup
@@ -69,9 +71,15 @@ class TabsSettingsFragment : PreferenceFragmentCompat() {
         listRadioButton = requirePreference(R.string.pref_key_tab_view_list_do_not_use)
         gridRadioButton = requirePreference(R.string.pref_key_tab_view_grid)
         searchTermTabGroups = requirePreference<SwitchPreference>(R.string.pref_key_search_term_tab_groups).also {
-            it.isVisible = FeatureFlags.tabGroupFeature
-            it.isChecked = it.context.settings().searchTermTabGroupsAreEnabled
+            it.isVisible = it.context.settings().showSearchGroupsFeature
+            it.isChecked = it.context.settings().showSearchGroupsFeature
             it.onPreferenceChangeListener = SharedPreferenceUpdater()
+
+            if (it.context.settings().showSearchGroupsFeature) {
+                requireContext().components.analytics.experiments.recordExposureEvent(
+                    FeatureId.SEARCH_TERM_GROUPS
+                )
+            }
         }
 
         radioManual = requirePreference(R.string.pref_key_close_tabs_manually)

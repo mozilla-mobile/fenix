@@ -68,7 +68,7 @@ private fun List<TabSessionState>.getInactiveTabs(settings: Settings): List<TabS
  */
 private fun List<TabSessionState>.getSearchGroupTabs(settings: Settings): List<TabSessionState> {
     val inactiveTabsEnabled = settings.inactiveTabsAreEnabled
-    val tabGroupsEnabled = settings.searchTermTabGroupsAreEnabled
+    val tabGroupsEnabled = settings.showSearchGroupsFeature
     return when {
         tabGroupsEnabled && inactiveTabsEnabled ->
             filter { it.isNormalTabActiveWithSearchTerm(maxActiveTime) }

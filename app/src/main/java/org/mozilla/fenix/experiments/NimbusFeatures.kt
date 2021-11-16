@@ -6,7 +6,9 @@ package org.mozilla.fenix.experiments
 
 import android.content.Context
 import org.mozilla.experiments.nimbus.mapKeysAsEnums
+import org.mozilla.fenix.Config
 import org.mozilla.fenix.FeatureFlags
+import org.mozilla.fenix.ReleaseChannel
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getVariables
 
@@ -20,6 +22,10 @@ class NimbusFeatures(private val context: Context) {
 
     val homeScreen: HomeScreenFeatures by lazy {
         HomeScreenFeatures(context)
+    }
+
+    val searchTermGroups: SearchTermGroupFeatures by lazy {
+        SearchTermGroupFeatures(context, false)
     }
 
     /**
@@ -114,6 +120,25 @@ class NimbusFeatures(private val context: Context) {
          */
         fun isTopSitesActive(): Boolean {
             return homeScreenFeatures[HomeScreenSection.topSites] == true
+        }
+    }
+
+    /**
+     * Component that indicates whether search term groups are active. This accompanies
+     * the `FeatureId.SEARCH_TERM_GROUPS` feature.
+     */
+    class SearchTermGroupFeatures(
+        private val context: Context,
+        val default: Boolean = false
+    ) {
+        /**
+         * Indicates if the search term groups feature is active.
+         */
+        fun isActive(): Boolean {
+            val experiments = context.components.analytics.experiments
+            val variables = experiments.getVariables(FeatureId.SEARCH_TERM_GROUPS, false)
+            return variables.getBool("enabled")
+                ?: (default || Config.channel == ReleaseChannel.Nightly)
         }
     }
 }

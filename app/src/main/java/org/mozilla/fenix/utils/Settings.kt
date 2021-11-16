@@ -426,11 +426,12 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     /**
-     * Indicates if the user has enabled the search term tab groups feature.
+     * Whether we should show search term groups in the tabs tray, homescreen, and
+     * settings.
      */
-    var searchTermTabGroupsAreEnabled by featureFlagPreference(
-        appContext.getPreferenceKey(R.string.pref_key_search_term_tab_groups),
-        default = FeatureFlags.tabGroupFeature,
+    var showSearchGroupsFeature by lazyFeatureFlagPreference(
+        appContext.getPreferenceKey(R.string.pref_key_history_metadata_feature),
+        default = { appContext.components.analytics.features.searchTermGroups.isActive() },
         featureFlag = FeatureFlags.tabGroupFeature
     )
 

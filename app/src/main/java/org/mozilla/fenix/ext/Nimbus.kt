@@ -27,7 +27,7 @@ fun <T> NimbusApi.withExperiment(featureId: FeatureId, transform: (String?) -> T
 /**
  * The synonym for [getExperimentBranch] to complement [withExperiment(String, (String?) -> T))].
  *
- * Short-hand for ` org.mozilla.experiments.nimbus.NimbusApi.getExperimentBranch`.
+ * Short-hand for `org.mozilla.experiments.nimbus.NimbusApi.getExperimentBranch`.
  */
 @Suppress("TooGenericExceptionCaught")
 fun NimbusApi.withExperiment(featureId: FeatureId) =
@@ -49,7 +49,7 @@ fun NimbusApi.withExperiment(featureId: FeatureId) =
  *      event by calling the `sendExposureEvent` function at the time of the exposure to the
  *      feature.
  *
- * See [sendExposureEvent] for more information on manually recording the event.
+ * See [recordExposureEvent] for more information on manually recording the event.
  *
  * @return a [Variables] object used to configure the feature.
  */
@@ -103,7 +103,7 @@ fun <T> NimbusApi.withVariables(featureId: FeatureId, sendExposureEvent: Boolean
  * This function is safe to call even when there is no active experiment for the feature. The SDK
  * will ensure that an event is only recorded for active experiments.
  *
- *  @param featureId string representing the id of the feature for which to record the exposure
+ * @param featureId string representing the id of the feature for which to record the exposure
  *     event.
  */
 fun NimbusApi.recordExposureEvent(featureId: FeatureId) =

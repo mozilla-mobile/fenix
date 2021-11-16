@@ -138,7 +138,7 @@ class FenixApplicationTest {
         every { settings.historyMetadataUIFeature } returns true
         every { settings.showPocketRecommendationsFeature } returns true
         every { settings.showPocketRecommendationsFeature } returns true
-        every { settings.searchTermTabGroupsAreEnabled } returns true
+        every { settings.showSearchGroupsFeature } returns true
         every { application.reportHomeScreenMetrics(settings) } just Runs
         every { settings.inactiveTabsAreEnabled } returns true
 

@@ -35,9 +35,7 @@ class TabGroupViewHolder(
 
     private lateinit var groupListAdapter: TabGroupListAdapter
 
-    fun bind(
-        group: TabGroup,
-    ) {
+    fun bind(group: TabGroup) {
         val selectedTabId = itemView.context.components.core.store.state.selectedTabId
         val selectedIndex = group.tabs.indexOfFirst { it.id == selectedTabId }
 

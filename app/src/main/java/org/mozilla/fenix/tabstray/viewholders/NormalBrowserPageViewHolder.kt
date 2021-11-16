@@ -82,7 +82,7 @@ class NormalBrowserPageViewHolder(
         val inactiveTabAdapter = concatAdapter.inactiveTabsAdapter
         val tabGroupAdapter = concatAdapter.tabGroupAdapter
         val inactiveTabsAreEnabled = containerView.context.settings().inactiveTabsAreEnabled
-        val searchTermTabGroupsAreEnabled = containerView.context.settings().searchTermTabGroupsAreEnabled
+        val searchTermTabGroupsAreEnabled = containerView.context.settings().showSearchGroupsFeature
 
         val selectedTab = browserStore.state.selectedNormalTab ?: return
         // It's safe to read the state directly (i.e. won't cause bugs because of the store actions

@@ -22,7 +22,7 @@ class TabSorterTest {
     @Before
     fun setUp() {
         every { settings.inactiveTabsAreEnabled }.answers { true }
-        every { settings.searchTermTabGroupsAreEnabled }.answers { true }
+        every { settings.showSearchGroupsFeature }.answers { true }
     }
 
     @Test
@@ -148,7 +148,7 @@ class TabSorterTest {
 
     @Test
     fun `WHEN search term tabs is off THEN adapter have no search term group`() {
-        every { settings.searchTermTabGroupsAreEnabled }.answers { false }
+        every { settings.showSearchGroupsFeature }.answers { false }
         val tabSorter = TabSorter(settings, tabsTrayStore)
 
         tabSorter.updateTabs(
@@ -186,7 +186,7 @@ class TabSorterTest {
     @Test
     fun `WHEN both inactive tabs and search term tabs are off THEN adapter have only normal tabs`() {
         every { settings.inactiveTabsAreEnabled }.answers { false }
-        every { settings.searchTermTabGroupsAreEnabled }.answers { false }
+        every { settings.showSearchGroupsFeature }.answers { false }
         val tabSorter = TabSorter(settings, tabsTrayStore)
 
         tabSorter.updateTabs(

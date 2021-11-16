@@ -39,8 +39,10 @@ import org.mozilla.fenix.databinding.ComponentTabstrayFabBinding
 import org.mozilla.fenix.databinding.FragmentTabTrayDialogBinding
 import org.mozilla.fenix.databinding.TabsTrayTabCounter2Binding
 import org.mozilla.fenix.databinding.TabstrayMultiselectItemsBinding
+import org.mozilla.fenix.experiments.FeatureId
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.metrics
+import org.mozilla.fenix.ext.recordExposureEvent
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.HomeScreenViewModel
@@ -357,6 +359,12 @@ class TabsTrayFragment : AppCompatDialogFragment() {
 
         setFragmentResultListener(ShareFragment.RESULT_KEY) { _, _ ->
             dismissTabsTray()
+        }
+
+        if (requireComponents.settings.showSearchGroupsFeature) {
+            requireContext().components.analytics.experiments.recordExposureEvent(
+                FeatureId.SEARCH_TERM_GROUPS
+            )
         }
     }
 

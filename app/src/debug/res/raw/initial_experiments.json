@@ -81,6 +81,54 @@
           "proposedEnrollment": 7,
           "userFacingDescription": "Experiment to test the home screen configurations",
           "last_modified": 1621443780172
+      },
+      {
+          "slug": "feature-search-term-groups-android",
+          "appId": "org.mozilla.fenix",
+          "appName": "fenix",
+          "channel": "nightly",
+          "branches": [
+              {
+                  "slug": "enabled",
+                  "ratio": 0,
+                  "feature": {
+                      "enabled": true,
+                      "featureId": "search-term-groups"
+                  }
+              },
+              {
+                  "slug": "disabled",
+                  "ratio": 100,
+                  "feature": {
+                      "enabled": false,
+                      "featureId": "search-term-groups"
+                  }
+              }
+          ],
+          "outcomes": [],
+          "arguments": {},
+          "probeSets": [],
+          "startDate": null,
+          "targeting": "true",
+          "featureIds": [
+              "search-term-groups"
+          ],
+          "application": "org.mozilla.firefox_beta",
+          "bucketConfig": {
+              "count": 0,
+              "start": 0,
+              "total": 10000,
+              "namespace": "nimbus-validation-2",
+              "randomizationUnit": "nimbus_id"
+          },
+          "schemaVersion": "1.5.0",
+          "userFacingName": "Search term groups test",
+          "referenceBranch": "control",
+          "proposedDuration": 14,
+          "isEnrollmentPaused": false,
+          "proposedEnrollment": 7,
+          "userFacingDescription": "Experiment to test the search term groups on tabs tray and homescreen.",
+          "last_modified": 1621443780172
       }
   ]
 }

@@ -17,6 +17,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import org.hamcrest.CoreMatchers.allOf
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ext.components
 
 /**
  * Implementation of Robot Pattern for the settings Tabs sub menu.
@@ -49,10 +50,14 @@ private fun assertTabViewOptions() {
         .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
     gridToggle()
         .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
-    searchTermTabGroupsToggle()
-        .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
-    searchGroupsDescription()
-        .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+    val context = InstrumentationRegistry.getInstrumentation().targetContext
+
+    if (context.components.settings.showSearchGroupsFeature) {
+        searchTermTabGroupsToggle()
+            .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+        searchGroupsDescription()
+            .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+    }
 }
 
 private fun assertCloseTabsOptions() {
