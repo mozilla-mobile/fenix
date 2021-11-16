@@ -202,6 +202,26 @@ class ThreeDotMenuMainRobot {
             return BrowserRobot.Transition()
         }
 
+        fun openCustomizeHome(interact: SettingsSubMenuHomepageRobot.() -> Unit): SettingsSubMenuHomepageRobot.Transition {
+
+            mDevice.wait(
+                Until
+                    .findObject(
+                        By.textContains("$packageName:id/browser_menu_customize_home")
+                    ),
+                waitingTime
+            )
+
+            customizeHomeButton().click()
+
+            mDevice.findObject(
+                UiSelector().resourceId("$packageName:id/recycler_view")
+            ).waitForExists(waitingTime)
+
+            SettingsSubMenuHomepageRobot().interact()
+            return SettingsSubMenuHomepageRobot.Transition()
+        }
+
         fun goForward(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
             forwardButton().click()
 
@@ -356,6 +376,14 @@ private fun threeDotMenuRecyclerViewExists() {
 
 private fun settingsButton() = mDevice.findObject(UiSelector().text("Settings"))
 private fun assertSettingsButton() = assertTrue(settingsButton().waitForExists(waitingTime))
+
+private fun customizeHomeButton() =
+    onView(
+        allOf(
+            withId(R.id.text),
+            withText(R.string.browser_menu_customize_home)
+        )
+    )
 
 private fun addOnsButton() = onView(allOf(withText("Add-ons")))
 private fun assertAddOnsButton() {
