@@ -16,6 +16,7 @@ class SettingsSubMenuHomepageRobot {
 
     fun clickStartOnHomepageButton() = homepageButton().click()
     fun clickJumpBackInButton() = jumpBackInButton().click()
+    fun clickRecentBookmarksButton() = recentBookmarksButton().click()
 
     class Transition {
 
@@ -46,5 +47,8 @@ private fun homepageAfterFourHoursButton() =
 
 private fun jumpBackInButton() =
     onView(allOf(withText(R.string.customize_toggle_jump_back_in)))
+
+private fun recentBookmarksButton() =
+    onView(allOf(withText(R.string.customize_toggle_recent_bookmarks)))
 
 private fun goBackButton() = onView(allOf(withContentDescription(R.string.action_bar_up_description)))
