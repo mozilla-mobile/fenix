@@ -5,6 +5,7 @@
 package org.mozilla.fenix.tabstray.browser
 
 import android.content.Context
+import android.graphics.PointF
 import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.DragEvent
@@ -26,6 +27,9 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
 
     lateinit var interactor: TabsTrayInteractor
     lateinit var tabsTrayStore: TabsTrayStore
+
+    private var lastDragPos: PointF? = null
+    private var lastDragData: TabDragData? = null
 
     protected val swipeToDelete by lazy {
         SwipeToDeleteBinding(tabsTrayStore)
@@ -62,7 +66,7 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
             val proposedTarget = getChildAt(i)
             val targetHolder = findContainingViewHolder(proposedTarget)
             if (targetHolder is TabViewHolder) {
-                var rect = Rect() // Get post-animation positioning
+                val rect = Rect() // Get post-animation positioning
                 getDecoratedBoundsWithMargins(proposedTarget, rect)
                 val targetX = (rect.left + rect.right) / 2
                 val targetY = (rect.top + rect.bottom) / 2
@@ -70,6 +74,8 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
                 val yDiff = y - targetY
                 val dist = abs(xDiff) + abs(yDiff)
                 val id = targetHolder.tab?.id
+                // Determine before/after drop placement
+                // based on if source tab is coming from before/after the target
                 if (id == source) seenSource = true
                 if (dist < bestDist && id != null) {
                     bestDist = dist
@@ -91,7 +97,7 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
     }
     private val dragListen = OnDragListener { _, event ->
         if (event.localState is TabDragData) {
-            val (tab, dragOffset) = event.localState as TabDragData
+            val (tab, _) = event.localState as TabDragData
             val sourceId = tab.id
             val sources = findSourceViewAndHolder(sourceId)
 
@@ -102,24 +108,17 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
                         val (sourceView, _) = sources
                         sourceView.elevation += DRAGGED_TAB_ELEVATION
                     }
+                    //Setup the scrolling/updating loop
+                    lastDragPos = PointF(event.x,event.y)
+                    lastDragData = event.localState as TabDragData
+                    handler.postDelayed(dragRunnable, DRAG_UPDATE_PERIOD_MS)
                     true
                 }
                 DragEvent.ACTION_DRAG_ENTERED -> {
                     true
                 }
                 DragEvent.ACTION_DRAG_LOCATION -> {
-                    val target = getDropPosition(event.x, event.y, tab.id)
-                    if (target != null) {
-                        val (targetId, placeAfter) = target
-                        interactor.onTabsMove(tab.id, targetId, placeAfter)
-                    }
-                    // Move the tab's visual position
-                    if (sources != null) {
-                        val (sourceView, sourceViewHolder) = sources
-                        sourceView.x = event.x - dragOffset.x
-                        sourceView.y = event.y - dragOffset.y
-                        sourceViewHolder.beingDragged = true
-                    }
+                    lastDragPos = PointF(event.x,event.y)
                     true
                 }
                 DragEvent.ACTION_DRAG_EXITED -> {
@@ -134,11 +133,14 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
                         val (sourceView, sourceViewHolder) = sources
                         sourceView.elevation -= DRAGGED_TAB_ELEVATION
                         sourceView.animate()
-                            .translationX(0f).translationY(0f)
-                            .setDuration(itemAnimator?.moveDuration ?: 0)
+                            .translationX(0f).translationY(0f).duration =
+                            itemAnimator?.moveDuration ?: 0
 
                         sourceViewHolder.beingDragged = false
                     }
+                    //This will stop the scroll/update loop
+                    lastDragPos = null
+                    lastDragData = null
                     true
                 }
                 else -> { // Unknown action
@@ -147,7 +149,42 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
             }
         } else false
     }
+
+    private val dragRunnable: Runnable = object: Runnable {
+        override fun run() {
+            val pos = lastDragPos
+            val data = lastDragData
+            if (pos != null && data != null) {
+                val (tab, dragOffset) = data
+                val sourceId = tab.id
+                val sources = findSourceViewAndHolder(sourceId)
+                // Move the tab's position in the list
+                val target = getDropPosition(pos.x, pos.y, tab.id)
+                if (target != null) {
+                    val (targetId, placeAfter) = target
+                    interactor.onTabsMove(tab.id, targetId, placeAfter)
+                }
+                // Move the tab's visual position
+                if (sources != null) {
+                    val (sourceView, sourceViewHolder) = sources
+                    sourceView.x = pos.x - dragOffset.x
+                    sourceView.y = pos.y - dragOffset.y
+                    sourceViewHolder.beingDragged = true
+                }
+                //Scroll the tray
+                var scroll = 0
+                if (pos.y < SCROLL_AREA) scroll = -SCROLL_SPEED
+                if (pos.y > height-SCROLL_AREA) scroll = SCROLL_SPEED
+                scrollBy(0, scroll)
+
+                handler.postDelayed(this, DRAG_UPDATE_PERIOD_MS)
+            }
+        }
+    }
     companion object {
         internal const val DRAGGED_TAB_ELEVATION = 10f
+        internal const val DRAG_UPDATE_PERIOD_MS = 10L
+        internal const val SCROLL_SPEED = 20
+        internal const val SCROLL_AREA = 200
     }
 }
