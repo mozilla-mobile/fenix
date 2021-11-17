@@ -53,8 +53,6 @@ abstract class AbstractBrowserPageViewHolder(
     ) {
         adapterRef = adapter
 
-        scrollToTab(adapter, layoutManager)
-
         trayList.layoutManager = layoutManager
         trayList.adapter = adapter
     }
