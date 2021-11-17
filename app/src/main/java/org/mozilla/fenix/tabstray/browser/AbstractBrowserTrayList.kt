@@ -10,6 +10,7 @@ import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.DragEvent
 import android.view.View
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import mozilla.components.browser.tabstray.TabViewHolder
 import org.mozilla.fenix.tabstray.TabsTrayInteractor
@@ -56,7 +57,7 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
     }
 
     // Find the closest item to the x/y position of the drop.
-    private data class DropPositionData(val id: String, val placeAfter: Boolean)
+    private data class DropPositionData(val id: String, val placeAfter: Boolean, val view: View)
     private fun getDropPosition(x: Float, y: Float, source: String): DropPositionData? {
         if (childCount < 2) return null // If there's 0 or 1 tabs visible, can't reorder
         var bestDist = Float.MAX_VALUE
@@ -79,7 +80,7 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
                 if (id == source) seenSource = true
                 if (dist < bestDist && id != null) {
                     bestDist = dist
-                    bestOut = DropPositionData(id, seenSource)
+                    bestOut = DropPositionData(id, seenSource, proposedTarget)
                 }
             }
         }
@@ -158,18 +159,25 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
                 val (tab, dragOffset) = data
                 val sourceId = tab.id
                 val sources = findSourceViewAndHolder(sourceId)
-                // Move the tab's position in the list
-                val target = getDropPosition(pos.x, pos.y, tab.id)
-                if (target != null) {
-                    val (targetId, placeAfter) = target
-                    interactor.onTabsMove(tab.id, targetId, placeAfter)
-                }
                 // Move the tab's visual position
                 if (sources != null) {
                     val (sourceView, sourceViewHolder) = sources
                     sourceView.x = pos.x - dragOffset.x
                     sourceView.y = pos.y - dragOffset.y
                     sourceViewHolder.beingDragged = true
+
+                    // Move the tab's position in the list
+                    val target = getDropPosition(pos.x, pos.y, tab.id)
+                    if (target != null) {
+                        val (targetId, placeAfter, targetView) = target
+                        if (sourceView != targetView){
+                            interactor.onTabsMove(tab.id, targetId, placeAfter)
+                            // Deal with https://issuetracker.google.com/issues/37018279
+                            (layoutManager as? ItemTouchHelper.ViewDropHandler)?.prepareForDrop(
+                                sourceView,targetView,
+                                dragOffset.x.toInt(),dragOffset.y.toInt())
+                        }
+                    }
                 }
                 //Scroll the tray
                 var scroll = 0
