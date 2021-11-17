@@ -242,16 +242,12 @@ abstract class AbstractBrowserTabViewHolder(
                     if (parent?.context?.settings()?.searchTermTabGroupsAreEnabled == false &&
                         holder.selectedItems.contains(item) && holder.selectedItems.size == 1
                     ) {
-                        for (tabSelected in holder.selectedItems) {
-                            // Exit selection mode by deselecting everything
-                            interactor.deselect(tabSelected)
-                        }
+                        interactor.deselect(item) // Exit selection mode
                         val shadow = BlankDragShadowBuilder()
-                        beingDragged = true
-                        val point = PointF(motionEvent.x, motionEvent.y)
+                        val dragOffset = PointF(motionEvent.x, motionEvent.y)
                         // startDragAndDrop is the non-deprecated version, but requires API 24
                         @Suppress("DEPRECATION")
-                        view.startDrag(null, shadow, TabDragData(item, point), 0)
+                        view.startDrag(null, shadow, TabDragData(item, dragOffset), 0)
                     } else view.onTouchEvent(motionEvent)
                 }
                 else -> view.onTouchEvent(motionEvent)

@@ -106,8 +106,9 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
                 DragEvent.ACTION_DRAG_STARTED -> {
                     // Put the dragged tab on top of all other tabs
                     if (sources != null) {
-                        val (sourceView, _) = sources
-                        sourceView.elevation += DRAGGED_TAB_ELEVATION
+                        val (sourceView, sourceViewHolder) = sources
+                        sourceViewHolder.beingDragged = true
+                        sourceView.elevation = DRAGGED_TAB_ELEVATION
                     }
                     // Setup the scrolling/updating loop
                     lastDragPos = PointF(event.x, event.y)
@@ -132,12 +133,11 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
                     // Move tab to center, set dragging to false, return tab to normal height
                     if (sources != null) {
                         val (sourceView, sourceViewHolder) = sources
-                        sourceView.elevation -= DRAGGED_TAB_ELEVATION
+                        sourceViewHolder.beingDragged = false
+                        sourceView.elevation = 0f
                         sourceView.animate()
                             .translationX(0f).translationY(0f).duration =
                             itemAnimator?.moveDuration ?: 0
-
-                        sourceViewHolder.beingDragged = false
                     }
                     // This will stop the scroll/update loop
                     lastDragPos = null
@@ -165,6 +165,7 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
                 sourceView.x = pos.x - dragOffset.x
                 sourceView.y = pos.y - dragOffset.y
                 sourceViewHolder.beingDragged = true
+                sourceView.elevation = DRAGGED_TAB_ELEVATION
 
                 // Move the tab's position in the list
                 val target = getDropPosition(pos.x, pos.y, tab.id)
