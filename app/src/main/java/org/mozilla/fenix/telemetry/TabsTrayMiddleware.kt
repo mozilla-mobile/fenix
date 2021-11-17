@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.telemetry
 
+import androidx.annotation.VisibleForTesting
 import mozilla.components.lib.state.Middleware
 import mozilla.components.lib.state.MiddlewareContext
 import org.mozilla.fenix.components.metrics.Event
@@ -39,16 +40,7 @@ class TabsTrayMiddleware(
                     val averageTabsPerGroup = tabsPerGroup.average()
                     metrics.track(Event.AverageTabsPerSearchTermGroup(averageTabsPerGroup))
 
-                    // This follows the logic outlined in metrics.yaml for
-                    // "search_terms.group_size_distribution"
-                    val tabGroupSizeMapping = tabsPerGroup.map {
-                        when(it) {
-                            2 -> 1L
-                            in 3..5 -> 2L
-                            in 6..10 -> 3L
-                            else -> 4L
-                        }
-                    }
+                    val tabGroupSizeMapping = tabsPerGroup.map { generateTabGroupSizeMappedValue(it) }
                     metrics.track(Event.SearchTermGroupSizeDistribution(tabGroupSizeMapping))
                 }
                 metrics.track(Event.SearchTermGroupCount(action.tabGroups.size))
@@ -56,4 +48,16 @@ class TabsTrayMiddleware(
             else -> {}
         }
     }
+
+    @Suppress("MagicNumber")
+    @VisibleForTesting
+    // This follows the logic outlined in metrics.yaml for
+    // "search_terms.group_size_distribution"
+    internal fun generateTabGroupSizeMappedValue(size: Int): Long =
+        when (size) {
+            2 -> 1L
+            in 3..5 -> 2L
+            in 6..10 -> 3L
+            else -> 4L
+        }
 }

@@ -30,7 +30,7 @@ class TabSorterTest {
 
     @Test
     fun `WHEN updated with one normal tab THEN adapter have only one normal tab and no header`() {
-        val tabSorter = TabSorter(settings, metrics, tabsTrayStore)
+        val tabSorter = TabSorter(settings, tabsTrayStore)
 
         tabSorter.updateTabs(
             listOf(
@@ -48,7 +48,7 @@ class TabSorterTest {
 
     @Test
     fun `WHEN updated with one normal tab and two search term tab THEN adapter have normal tab and a search group`() {
-        val tabSorter = TabSorter(settings, metrics, tabsTrayStore)
+        val tabSorter = TabSorter(settings, tabsTrayStore)
 
         tabSorter.updateTabs(
             listOf(
@@ -78,7 +78,7 @@ class TabSorterTest {
 
     @Test
     fun `WHEN updated with one normal tab, one inactive tab and two search term tab THEN adapter have normal tab, inactive tab and a search group`() {
-        val tabSorter = TabSorter(settings, metrics, tabsTrayStore)
+        val tabSorter = TabSorter(settings, tabsTrayStore)
 
         tabSorter.updateTabs(
             listOf(
@@ -115,7 +115,7 @@ class TabSorterTest {
     @Test
     fun `WHEN inactive tabs is off THEN adapter have no inactive tab`() {
         every { settings.inactiveTabsAreEnabled }.answers { false }
-        val tabSorter = TabSorter(settings, metrics, tabsTrayStore)
+        val tabSorter = TabSorter(settings, tabsTrayStore)
 
         tabSorter.updateTabs(
             listOf(
@@ -152,7 +152,7 @@ class TabSorterTest {
     @Test
     fun `WHEN search term tabs is off THEN adapter have no search term group`() {
         every { settings.searchTermTabGroupsAreEnabled }.answers { false }
-        val tabSorter = TabSorter(settings, metrics, tabsTrayStore)
+        val tabSorter = TabSorter(settings, tabsTrayStore)
 
         tabSorter.updateTabs(
             listOf(
@@ -190,7 +190,7 @@ class TabSorterTest {
     fun `WHEN both inactive tabs and search term tabs are off THEN adapter have only normal tabs`() {
         every { settings.inactiveTabsAreEnabled }.answers { false }
         every { settings.searchTermTabGroupsAreEnabled }.answers { false }
-        val tabSorter = TabSorter(settings, metrics, tabsTrayStore)
+        val tabSorter = TabSorter(settings, tabsTrayStore)
 
         tabSorter.updateTabs(
             listOf(
@@ -225,7 +225,7 @@ class TabSorterTest {
 
     @Test
     fun `WHEN only one search term tab THEN there is no search group`() {
-        val tabSorter = TabSorter(settings, metrics, tabsTrayStore)
+        val tabSorter = TabSorter(settings, tabsTrayStore)
 
         tabSorter.updateTabs(
             listOf(
@@ -246,7 +246,7 @@ class TabSorterTest {
 
     @Test
     fun `WHEN remove second last one search term tab THEN search group is kept even if there's only one tab`() {
-        val tabSorter = TabSorter(settings, metrics, tabsTrayStore)
+        val tabSorter = TabSorter(settings, tabsTrayStore)
 
         tabSorter.updateTabs(
             listOf(

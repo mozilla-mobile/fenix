@@ -52,7 +52,6 @@ class TabSorter(
 
         if (shouldReportMetrics) {
             shouldReportMetrics = false
-            // todo: report tab group size breakdown
             tabsTrayStore?.dispatch(
                 TabsTrayAction.ReportTabMetrics(
                     inactiveTabs.size,
