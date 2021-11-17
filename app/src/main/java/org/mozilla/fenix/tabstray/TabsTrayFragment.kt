@@ -57,7 +57,6 @@ import org.mozilla.fenix.tabstray.ext.collectionMessage
 import org.mozilla.fenix.tabstray.ext.make
 import org.mozilla.fenix.tabstray.ext.orDefault
 import org.mozilla.fenix.tabstray.ext.showWithTheme
-import org.mozilla.fenix.telemetry.TabsTrayMiddleware
 import org.mozilla.fenix.utils.allowUndo
 import kotlin.math.max
 

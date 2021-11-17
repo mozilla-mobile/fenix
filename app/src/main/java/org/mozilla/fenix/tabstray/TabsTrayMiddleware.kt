@@ -2,15 +2,13 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.fenix.telemetry
+package org.mozilla.fenix.tabstray
 
 import androidx.annotation.VisibleForTesting
 import mozilla.components.lib.state.Middleware
 import mozilla.components.lib.state.MiddlewareContext
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
-import org.mozilla.fenix.tabstray.TabsTrayAction
-import org.mozilla.fenix.tabstray.TabsTrayState
 import org.mozilla.fenix.utils.Settings
 
 /**
@@ -29,6 +27,8 @@ class TabsTrayMiddleware(
         next: (TabsTrayAction) -> Unit,
         action: TabsTrayAction
     ) {
+        next(action)
+
         when (action) {
             is TabsTrayAction.ReportTabMetrics -> {
                 metrics.track(Event.InactiveTabsCountUpdate(action.inactiveTabsCount))

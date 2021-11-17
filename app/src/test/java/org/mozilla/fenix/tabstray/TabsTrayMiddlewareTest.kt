@@ -14,7 +14,6 @@ import org.junit.Test
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.tabstray.browser.TabGroup
-import org.mozilla.fenix.telemetry.TabsTrayMiddleware
 import org.mozilla.fenix.utils.Settings
 
 class TabsTrayMiddlewareTest {
