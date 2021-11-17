@@ -6198,7 +6198,7 @@ search_terms:
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/22410
     data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/
+      - https://github.com/mozilla-mobile/fenix/pull/22479
     data_sensitivity:
       - interaction
     notification_emails:

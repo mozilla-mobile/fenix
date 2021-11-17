@@ -157,7 +157,8 @@ sealed class TabsTrayAction : Action {
     data class UpdatePrivateTabs(val tabs: List<TabSessionState>) : TabsTrayAction()
 
     /**
-     * Updates the list of tabs in [TabsTrayState.privateTabs].
+     * Reports metrics related to the updates of normal tabs (inactive tabs, search term
+     * tab groups, etc.)
      */
     data class ReportTabMetrics(val inactiveTabsCount: Int, val tabGroups: List<TabGroup>) : TabsTrayAction()
 }
