@@ -7,6 +7,7 @@ package org.mozilla.fenix.tabstray
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import mozilla.components.support.test.libstate.ext.waitUntilIdle
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -41,24 +42,28 @@ class TabsTrayMiddlewareTest {
     fun `WHEN metrics are reported AND the inactive tabs feature is enabled THEN report the count of inactive tabs`() {
         every { settings.inactiveTabsAreEnabled } returns true
         store.dispatch(TabsTrayAction.ReportTabMetrics(10, emptyList()))
+        store.waitUntilIdle()
         verify { metrics.track(Event.TabsTrayHasInactiveTabs(10)) }
     }
 
     @Test
     fun `WHEN metrics are reported AND there are search term tab groups THEN report the average tabs per group`() {
         store.dispatch(TabsTrayAction.ReportTabMetrics(0, generateSearchTermTabGroupsForAverage()))
+        store.waitUntilIdle()
         verify { metrics.track(Event.AverageTabsPerSearchTermGroup(5.0)) }
     }
 
     @Test
     fun `WHEN metrics are reported AND there are search term tab groups THEN report the distribution of tab sizes`() {
         store.dispatch(TabsTrayAction.ReportTabMetrics(0, generateSearchTermTabGroupsForDistribution()))
+        store.waitUntilIdle()
         verify { metrics.track(Event.SearchTermGroupSizeDistribution(listOf(3L, 2L, 1L, 4L))) }
     }
 
     @Test
     fun `WHEN metrics are reported THEN report the count of search term tab groups AND the count of inactive tabs`() {
         store.dispatch(TabsTrayAction.ReportTabMetrics(0, emptyList()))
+        store.waitUntilIdle()
         verify { metrics.track(Event.SearchTermGroupCount(0)) }
         verify { metrics.track(Event.InactiveTabsCountUpdate(0)) }
     }
