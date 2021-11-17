@@ -31,6 +31,8 @@ class TabsTrayMiddleware(
     ) {
         when (action) {
             is TabsTrayAction.ReportTabMetrics -> {
+                metrics.track(Event.InactiveTabsCountUpdate(action.inactiveTabsCount))
+
                 if (settings.inactiveTabsAreEnabled) {
                     metrics.track(Event.TabsTrayHasInactiveTabs(action.inactiveTabsCount))
                 }

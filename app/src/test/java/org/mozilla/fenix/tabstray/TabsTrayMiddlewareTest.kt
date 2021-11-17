@@ -38,7 +38,7 @@ class TabsTrayMiddlewareTest {
     }
 
     @Test
-    fun `WHEN metrics are reported AND the inactive tabs is enabled THEN report the count of inactive tabs`() {
+    fun `WHEN metrics are reported AND the inactive tabs feature is enabled THEN report the count of inactive tabs`() {
         every { settings.inactiveTabsAreEnabled } returns true
         store.dispatch(TabsTrayAction.ReportTabMetrics(10, emptyList()))
         verify { metrics.track(Event.TabsTrayHasInactiveTabs(10)) }
@@ -53,13 +53,14 @@ class TabsTrayMiddlewareTest {
     @Test
     fun `WHEN metrics are reported AND there are search term tab groups THEN report the distribution of tab sizes`() {
         store.dispatch(TabsTrayAction.ReportTabMetrics(0, generateSearchTermTabGroupsForDistribution()))
-        verify { metrics.track(Event.SearchTermGroupSizeDistribution(correctDistributionReportingValues)) }
+        verify { metrics.track(Event.SearchTermGroupSizeDistribution(listOf(3L, 2L, 1L, 4L))) }
     }
 
     @Test
-    fun `WHEN metrics are reported THEN report the count of search term tab groups`() {
+    fun `WHEN metrics are reported THEN report the count of search term tab groups AND the count of inactive tabs`() {
         store.dispatch(TabsTrayAction.ReportTabMetrics(0, emptyList()))
         verify { metrics.track(Event.SearchTermGroupCount(0)) }
+        verify { metrics.track(Event.InactiveTabsCountUpdate(0)) }
     }
 
     @Test
@@ -104,6 +105,4 @@ class TabsTrayMiddlewareTest {
 
         return listOf(group1, group2, group3, group4)
     }
-
-    private val correctDistributionReportingValues = listOf(3L, 2L, 1L, 4L)
 }

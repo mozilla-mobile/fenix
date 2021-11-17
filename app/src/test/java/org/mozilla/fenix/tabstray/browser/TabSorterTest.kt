@@ -289,7 +289,7 @@ class TabSorterTest {
 
     @Test
     fun `GIVEN the inactive tabs feature is enabled WHEN the tray is opened THEN we report the number of inactive tabs`() {
-        val tabSorter = TabSorter(settings, metrics, tabsTrayStore)
+        val tabSorter = TabSorter(settings, tabsTrayStore)
 
         tabSorter.updateTabs(
             listOf(
@@ -305,7 +305,7 @@ class TabSorterTest {
 
     @Test
     fun `GIVEN the inactive tabs feature is disabled WHEN the tray is opened THEN we report 0 for the number of inactive tabs`() {
-        val tabSorter = TabSorter(settings, metrics, tabsTrayStore)
+        val tabSorter = TabSorter(settings, tabsTrayStore)
         every { settings.inactiveTabsAreEnabled }.answers { false }
 
         tabSorter.updateTabs(
