@@ -109,8 +109,8 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
                         val (sourceView, _) = sources
                         sourceView.elevation += DRAGGED_TAB_ELEVATION
                     }
-                    //Setup the scrolling/updating loop
-                    lastDragPos = PointF(event.x,event.y)
+                    // Setup the scrolling/updating loop
+                    lastDragPos = PointF(event.x, event.y)
                     lastDragData = event.localState as TabDragData
                     handler.postDelayed(dragRunnable, DRAG_UPDATE_PERIOD_MS)
                     true
@@ -119,7 +119,7 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
                     true
                 }
                 DragEvent.ACTION_DRAG_LOCATION -> {
-                    lastDragPos = PointF(event.x,event.y)
+                    lastDragPos = PointF(event.x, event.y)
                     true
                 }
                 DragEvent.ACTION_DRAG_EXITED -> {
@@ -139,7 +139,7 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
 
                         sourceViewHolder.beingDragged = false
                     }
-                    //This will stop the scroll/update loop
+                    // This will stop the scroll/update loop
                     lastDragPos = null
                     lastDragData = null
                     true
@@ -151,42 +151,41 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
         } else false
     }
 
-    private val dragRunnable: Runnable = object: Runnable {
+    private val dragRunnable: Runnable = object : Runnable {
         override fun run() {
             val pos = lastDragPos
             val data = lastDragData
-            if (pos != null && data != null) {
-                val (tab, dragOffset) = data
-                val sourceId = tab.id
-                val sources = findSourceViewAndHolder(sourceId)
-                // Move the tab's visual position
-                if (sources != null) {
-                    val (sourceView, sourceViewHolder) = sources
-                    sourceView.x = pos.x - dragOffset.x
-                    sourceView.y = pos.y - dragOffset.y
-                    sourceViewHolder.beingDragged = true
+            if (pos == null || data == null) return
+            val (tab, dragOffset) = data
+            val sourceId = tab.id
+            val sources = findSourceViewAndHolder(sourceId)
+            // Move the tab's visual position
+            if (sources != null) {
+                val (sourceView, sourceViewHolder) = sources
+                sourceView.x = pos.x - dragOffset.x
+                sourceView.y = pos.y - dragOffset.y
+                sourceViewHolder.beingDragged = true
 
-                    // Move the tab's position in the list
-                    val target = getDropPosition(pos.x, pos.y, tab.id)
-                    if (target != null) {
-                        val (targetId, placeAfter, targetView) = target
-                        if (sourceView != targetView){
-                            interactor.onTabsMove(tab.id, targetId, placeAfter)
-                            // Deal with https://issuetracker.google.com/issues/37018279
-                            (layoutManager as? ItemTouchHelper.ViewDropHandler)?.prepareForDrop(
-                                sourceView,targetView,
-                                dragOffset.x.toInt(),dragOffset.y.toInt())
-                        }
+                // Move the tab's position in the list
+                val target = getDropPosition(pos.x, pos.y, tab.id)
+                if (target != null) {
+                    val (targetId, placeAfter, targetView) = target
+                    if (sourceView != targetView) {
+                        interactor.onTabsMove(tab.id, targetId, placeAfter)
+                        // Deal with https://issuetracker.google.com/issues/37018279
+                        (layoutManager as? ItemTouchHelper.ViewDropHandler)?.prepareForDrop(
+                            sourceView, targetView, dragOffset.x.toInt(), dragOffset.y.toInt()
+                        )
                     }
                 }
-                //Scroll the tray
-                var scroll = 0
-                if (pos.y < SCROLL_AREA) scroll = -SCROLL_SPEED
-                if (pos.y > height-SCROLL_AREA) scroll = SCROLL_SPEED
-                scrollBy(0, scroll)
-
-                handler.postDelayed(this, DRAG_UPDATE_PERIOD_MS)
             }
+            // Scroll the tray
+            var scroll = 0
+            if (pos.y < SCROLL_AREA) scroll = -SCROLL_SPEED
+            if (pos.y > height - SCROLL_AREA) scroll = SCROLL_SPEED
+            scrollBy(0, scroll)
+
+            handler.postDelayed(this, DRAG_UPDATE_PERIOD_MS)
         }
     }
     companion object {
