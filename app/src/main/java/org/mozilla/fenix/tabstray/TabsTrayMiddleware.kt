@@ -53,7 +53,6 @@ class TabsTrayMiddleware(
                     }
                 }
             }
-            else -> {}
         }
     }
 
