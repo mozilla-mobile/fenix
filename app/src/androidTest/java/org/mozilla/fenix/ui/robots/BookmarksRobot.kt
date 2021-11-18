@@ -52,6 +52,10 @@ class BookmarksRobot {
         assertBookmarksView()
     }
 
+    fun verifyAddFolderButton() = assertAddFolderButton()
+
+    fun verifyCloseButton() = assertCloseButton()
+
     fun verifyDeleteMultipleBookmarksSnackBar() = assertSnackBarText("Bookmarks deleted")
 
     fun verifyBookmarkFavicon(forUrl: Uri) = assertBookmarkFavicon(forUrl)
@@ -197,12 +201,14 @@ class BookmarksRobot {
 
     fun longTapDesktopFolder(title: String) = onView(withText(title)).perform(longClick())
 
-    fun confirmFolderDeletion() {
+    fun confirmDeletion() {
         onView(withText(R.string.delete_browsing_data_prompt_allow))
             .inRoot(RootMatchers.isDialog())
             .check(matches(isDisplayed()))
             .click()
     }
+
+    fun clickDeleteInEditModeButton() = deleteInEditModeButton().click()
 
     class Transition {
         fun closeMenu(interact: HomeScreenRobot.() -> Unit): Transition {
@@ -290,6 +296,8 @@ private fun bookmarkURLEditBox() = onView(withId(R.id.bookmarkUrlEdit))
 
 private fun saveBookmarkButton() = onView(withId(R.id.save_bookmark_button))
 
+private fun deleteInEditModeButton() = onView(withId(R.id.delete_bookmark_button))
+
 private fun signInToSyncButton() = onView(withId(R.id.bookmark_folders_sign_in))
 
 private fun assertBookmarksView() {
@@ -301,6 +309,11 @@ private fun assertBookmarksView() {
     )
         .check(matches(isDisplayed()))
 }
+
+private fun assertAddFolderButton() =
+    addFolderButton().check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+
+private fun assertCloseButton() = closeButton().check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
 
 private fun assertEmptyBookmarksList() =
     onView(withId(R.id.bookmarks_empty_view)).check(matches(withText("No bookmarks here")))

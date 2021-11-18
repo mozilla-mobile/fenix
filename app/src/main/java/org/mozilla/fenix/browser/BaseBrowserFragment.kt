@@ -30,8 +30,6 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.fragment_browser.*
-import kotlinx.android.synthetic.main.fragment_browser.view.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -115,7 +113,6 @@ import org.mozilla.fenix.ext.breadcrumb
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.hideToolbar
-import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
@@ -133,10 +130,9 @@ import mozilla.components.feature.webauthn.WebAuthnFeature
 import mozilla.components.support.base.feature.ActivityResultHandler
 import mozilla.components.support.ktx.android.view.enterToImmersiveMode
 import mozilla.components.support.ktx.kotlin.getOrigin
-import org.mozilla.fenix.GleanMetrics.PerfStartup
 import org.mozilla.fenix.components.toolbar.interactor.BrowserToolbarInteractor
 import org.mozilla.fenix.components.toolbar.interactor.DefaultBrowserToolbarInteractor
-import org.mozilla.fenix.ext.measureNoInline
+import org.mozilla.fenix.databinding.FragmentBrowserBinding
 import org.mozilla.fenix.ext.secure
 import org.mozilla.fenix.settings.biometric.BiometricPromptFeature
 import mozilla.components.feature.session.behavior.ToolbarPosition as MozacToolbarPosition
@@ -154,6 +150,9 @@ abstract class BaseBrowserFragment :
     ActivityResultHandler,
     OnBackLongPressedListener,
     AccessibilityManager.AccessibilityStateChangeListener {
+
+    private var _binding: FragmentBrowserBinding? = null
+    protected val binding get() = _binding!!
 
     private lateinit var browserFragmentStore: BrowserFragmentStore
     private lateinit var browserAnimator: BrowserAnimator
@@ -212,7 +211,7 @@ abstract class BaseBrowserFragment :
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View = PerfStartup.baseBfragmentOnCreateView.measureNoInline {
+    ): View {
         customTabSessionId = requireArguments().getString(EXTRA_SESSION_ID)
 
         // Diagnostic breadcrumb for "Display already aquired" crash:
@@ -224,7 +223,7 @@ abstract class BaseBrowserFragment :
             )
         )
 
-        val view = inflater.inflate(R.layout.fragment_browser, container, false)
+        _binding = FragmentBrowserBinding.inflate(inflater, container, false)
 
         val activity = activity as HomeActivity
         activity.themeManager.applyStatusBarTheme(activity)
@@ -235,29 +234,27 @@ abstract class BaseBrowserFragment :
             )
         }
 
-        view
+        return binding.root
     }
 
-    final override fun onViewCreated(view: View, savedInstanceState: Bundle?) =
-        PerfStartup.baseBfragmentOnViewCreated.measureNoInline { // weird indentation to avoid breaking blame.
-            initializeUI(view)
+    final override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        initializeUI(view)
 
-            if (customTabSessionId == null) {
-                // We currently only need this observer to navigate to home
-                // in case all tabs have been removed on startup. No need to
-                // this if we have a known session to display.
-                observeRestoreComplete(requireComponents.core.store, findNavController())
-            }
-
-            observeTabSelection(requireComponents.core.store)
-
-            if (!onboarding.userHasBeenOnboarded()) {
-                observeTabSource(requireComponents.core.store)
-            }
-
-            requireContext().accessibilityManager.addAccessibilityStateChangeListener(this)
-            Unit
+        if (customTabSessionId == null) {
+            // We currently only need this observer to navigate to home
+            // in case all tabs have been removed on startup. No need to
+            // this if we have a known session to display.
+            observeRestoreComplete(requireComponents.core.store, findNavController())
         }
+
+        observeTabSelection(requireComponents.core.store)
+
+        if (!onboarding.userHasBeenOnboarded()) {
+            observeTabSource(requireComponents.core.store)
+        }
+
+        requireContext().accessibilityManager.addAccessibilityStateChangeListener(this)
+    }
 
     private fun initializeUI(view: View) {
         val tab = getCurrentTab()
@@ -281,8 +278,8 @@ abstract class BaseBrowserFragment :
 
         browserAnimator = BrowserAnimator(
             fragment = WeakReference(this),
-            engineView = WeakReference(engineView),
-            swipeRefresh = WeakReference(swipeRefresh),
+            engineView = WeakReference(binding.engineView),
+            swipeRefresh = WeakReference(binding.swipeRefresh),
             viewLifecycleScope = WeakReference(viewLifecycleOwner.lifecycleScope)
         ).apply {
             beginAnimateInIfNecessary()
@@ -295,7 +292,7 @@ abstract class BaseBrowserFragment :
 
         val readerMenuController = DefaultReaderModeController(
             readerViewFeature,
-            view.readerViewControlsBar,
+            binding.readerViewControlsBar,
             isPrivate = activity.browsingModeManager.mode.isPrivate,
             onReaderModeChanged = { activity.finishActionMode() }
         )
@@ -306,7 +303,7 @@ abstract class BaseBrowserFragment :
             navController = findNavController(),
             metrics = requireComponents.analytics.metrics,
             readerModeController = readerMenuController,
-            engineView = engineView,
+            engineView = binding.engineView,
             homeViewModel = homeViewModel,
             customTabSessionId = customTabSessionId,
             onTabCounterClicked = {
@@ -326,7 +323,7 @@ abstract class BaseBrowserFragment :
                 }
 
                 viewLifecycleOwner.lifecycleScope.allowUndo(
-                    requireView().browserLayout,
+                    binding.browserLayout,
                     snackbarMessage,
                     requireContext().getString(R.string.snackbar_deleted_undo),
                     {
@@ -346,7 +343,7 @@ abstract class BaseBrowserFragment :
             readerModeController = readerMenuController,
             sessionFeature = sessionFeature,
             findInPageLauncher = { findInPageIntegration.withFeature { it.launch() } },
-            swipeRefresh = swipeRefresh,
+            swipeRefresh = binding.swipeRefresh,
             browserAnimator = browserAnimator,
             customTabSessionId = customTabSessionId,
             openInFenixIntent = openInFenixIntent,
@@ -367,7 +364,7 @@ abstract class BaseBrowserFragment :
         )
 
         _browserToolbarView = BrowserToolbarView(
-            container = view.browserLayout,
+            container = binding.browserLayout,
             toolbarPosition = context.settings().toolbarPosition,
             interactor = browserToolbarInteractor,
             customTabSession = customTabSessionId?.let { store.state.findCustomTab(it) },
@@ -384,8 +381,8 @@ abstract class BaseBrowserFragment :
             feature = FindInPageIntegration(
                 store = store,
                 sessionId = customTabSessionId,
-                stub = view.stubFindInPage,
-                engineView = engineView,
+                stub = binding.stubFindInPage,
+                engineView = binding.engineView,
                 toolbarInfo = FindInPageIntegration.ToolbarInfo(
                     browserToolbarView.view,
                     !context.settings().shouldUseFixedTopToolbar && context.settings().isDynamicToolbarEnabled,
@@ -400,17 +397,12 @@ abstract class BaseBrowserFragment :
             showQuickSettingsDialog()
         }
 
-        browserToolbarView.view.display.setOnTrackingProtectionClickedListener {
-            context.metrics.track(Event.TrackingProtectionIconPressed)
-            showTrackingProtectionPanel()
-        }
-
         contextMenuFeature.set(
             feature = ContextMenuFeature(
                 fragmentManager = parentFragmentManager,
                 store = store,
-                candidates = getContextMenuCandidates(context, view.browserLayout),
-                engineView = view.engineView,
+                candidates = getContextMenuCandidates(context, binding.browserLayout),
+                engineView = binding.engineView,
                 useCases = context.components.useCases.contextMenuUseCases,
                 tabId = customTabSessionId
             ),
@@ -492,14 +484,14 @@ abstract class BaseBrowserFragment :
                 )
 
                 val dynamicDownloadDialog = DynamicDownloadDialog(
-                    container = view.browserLayout,
+                    context = context,
                     downloadState = downloadState,
                     didFail = downloadJobStatus == DownloadState.Status.FAILED,
                     tryAgain = downloadFeature::tryAgain,
                     onCannotOpenFile = {
-                        showCannotOpenFileError(view.browserLayout, context, it)
+                        showCannotOpenFileError(binding.browserLayout, context, it)
                     },
-                    view = view.viewDynamicDownloadDialog,
+                    binding = binding.viewDynamicDownloadDialog,
                     toolbarHeight = toolbarHeight
                 ) { sharedViewModel.downloadDialogState.remove(downloadState.sessionId) }
 
@@ -510,7 +502,7 @@ abstract class BaseBrowserFragment :
 
         resumeDownloadDialogState(
             getCurrentTab()?.id,
-            store, view, context, toolbarHeight
+            store, context, toolbarHeight
         )
 
         shareDownloadsFeature.set(
@@ -594,7 +586,7 @@ abstract class BaseBrowserFragment :
                 onNeedToRequestPermissions = { permissions ->
                     requestPermissions(permissions, REQUEST_CODE_PROMPT_PERMISSIONS)
                 },
-                loginPickerView = loginSelectBar,
+                loginPickerView = binding.loginSelectBar,
                 onManageLogins = {
                     browserAnimator.captureEngineViewAndDrawStatically {
                         val directions =
@@ -602,7 +594,7 @@ abstract class BaseBrowserFragment :
                         findNavController().navigate(directions)
                     }
                 },
-                creditCardPickerView = creditCardSelectBar,
+                creditCardPickerView = binding.creditCardSelectBar,
                 onManageCreditCards = {
                     val directions =
                         NavGraphDirections.actionGlobalCreditCardsSettingFragment()
@@ -620,7 +612,7 @@ abstract class BaseBrowserFragment :
             feature = SessionFeature(
                 requireComponents.core.store,
                 requireComponents.useCases.sessionUseCases.goBack,
-                view.engineView,
+                binding.engineView,
                 customTabSessionId
             ),
             owner = this,
@@ -726,17 +718,17 @@ abstract class BaseBrowserFragment :
                 .collect { tab -> pipModeChanged(tab) }
         }
 
-        view.swipeRefresh.isEnabled = shouldPullToRefreshBeEnabled(false)
+        binding.swipeRefresh.isEnabled = shouldPullToRefreshBeEnabled(false)
 
-        if (view.swipeRefresh.isEnabled) {
+        if (binding.swipeRefresh.isEnabled) {
             val primaryTextColor =
                 ThemeManager.resolveAttribute(R.attr.primaryText, context)
-            view.swipeRefresh.setColorSchemeColors(primaryTextColor)
+            binding.swipeRefresh.setColorSchemeColors(primaryTextColor)
             swipeRefreshFeature.set(
                 feature = SwipeRefreshFeature(
                     requireComponents.core.store,
                     context.components.useCases.sessionUseCases.reload,
-                    view.swipeRefresh,
+                    binding.swipeRefresh,
                     customTabSessionId
                 ),
                 owner = this,
@@ -866,7 +858,6 @@ abstract class BaseBrowserFragment :
     internal fun resumeDownloadDialogState(
         sessionId: String?,
         store: BrowserStore,
-        view: View,
         context: Context,
         toolbarHeight: Int
     ) {
@@ -874,7 +865,7 @@ abstract class BaseBrowserFragment :
             sharedViewModel.downloadDialogState[sessionId]
 
         if (savedDownloadState == null || sessionId == null) {
-            view.viewDynamicDownloadDialog.visibility = View.GONE
+            binding.viewDynamicDownloadDialog.root.visibility = View.GONE
             return
         }
 
@@ -892,14 +883,14 @@ abstract class BaseBrowserFragment :
             { sharedViewModel.downloadDialogState.remove(sessionId) }
 
         DynamicDownloadDialog(
-            container = view.browserLayout,
+            context = context,
             downloadState = savedDownloadState.first,
             didFail = savedDownloadState.second,
             tryAgain = onTryAgain,
             onCannotOpenFile = {
-                showCannotOpenFileError(view.browserLayout, context, it)
+                showCannotOpenFileError(binding.browserLayout, context, it)
             },
-            view = view.viewDynamicDownloadDialog,
+            binding = binding.viewDynamicDownloadDialog,
             toolbarHeight = toolbarHeight,
             onDismiss = onDismiss
         ).show()
@@ -1018,13 +1009,13 @@ abstract class BaseBrowserFragment :
         }
 
         if (browserInitialized) {
-            view?.let { view ->
+            view?.let {
                 fullScreenChanged(false)
                 browserToolbarView.expand()
 
                 val toolbarHeight = resources.getDimensionPixelSize(R.dimen.browser_toolbar_height)
                 val context = requireContext()
-                resumeDownloadDialogState(selectedTab.id, context.components.core.store, view, context, toolbarHeight)
+                resumeDownloadDialogState(selectedTab.id, context.components.core.store, context, toolbarHeight)
             }
         } else {
             view?.let { view -> initializeUI(view) }
@@ -1163,8 +1154,6 @@ abstract class BaseBrowserFragment :
         sitePermissions: SitePermissions?
     )
 
-    protected abstract fun navToTrackingProtectionPanel(tab: SessionState)
-
     /**
      * Returns the layout [android.view.Gravity] for the quick settings and ETP dialog.
      */
@@ -1197,13 +1186,6 @@ abstract class BaseBrowserFragment :
             view?.let {
                 navToQuickSettingsSheet(tab, sitePermissions)
             }
-        }
-    }
-
-    private fun showTrackingProtectionPanel() {
-        val tab = getCurrentTab() ?: return
-        view?.let {
-            navToTrackingProtectionPanel(tab)
         }
     }
 
@@ -1245,9 +1227,9 @@ abstract class BaseBrowserFragment :
             withContext(Main) {
                 requireComponents.analytics.metrics.track(Event.AddBookmark)
 
-                view?.let { view ->
+                view?.let {
                     FenixSnackbar.make(
-                        view = view.browserLayout,
+                        view = binding.browserLayout,
                         duration = FenixSnackbar.LENGTH_LONG,
                         isDisplayedWithBrowserToolbar = true
                     )
@@ -1298,7 +1280,7 @@ abstract class BaseBrowserFragment :
             // Close find in page bar if opened
             findInPageIntegration.onBackPressed()
             FenixSnackbar.make(
-                view = requireView().browserLayout,
+                view = binding.browserLayout,
                 duration = Snackbar.LENGTH_SHORT,
                 isDisplayedWithBrowserToolbar = false
             )
@@ -1307,14 +1289,14 @@ abstract class BaseBrowserFragment :
             activity?.enterToImmersiveMode()
             browserToolbarView.collapse()
             browserToolbarView.view.isVisible = false
-            val browserEngine = swipeRefresh.layoutParams as CoordinatorLayout.LayoutParams
+            val browserEngine = binding.swipeRefresh.layoutParams as CoordinatorLayout.LayoutParams
             browserEngine.bottomMargin = 0
             browserEngine.topMargin = 0
-            swipeRefresh.translationY = 0f
+            binding.swipeRefresh.translationY = 0f
 
-            engineView.setDynamicToolbarMaxHeight(0)
+            binding.engineView.setDynamicToolbarMaxHeight(0)
             // Without this, fullscreen has a margin at the top.
-            engineView.setVerticalClipping(0)
+            binding.engineView.setVerticalClipping(0)
 
             requireComponents.analytics.metrics.track(Event.MediaFullscreenState)
         } else {
@@ -1330,7 +1312,7 @@ abstract class BaseBrowserFragment :
             }
         }
 
-        activity?.swipeRefresh?.isEnabled = shouldPullToRefreshBeEnabled(inFullScreen)
+        binding.swipeRefresh.isEnabled = shouldPullToRefreshBeEnabled(inFullScreen)
     }
 
     /*
@@ -1348,6 +1330,7 @@ abstract class BaseBrowserFragment :
         requireContext().accessibilityManager.removeAccessibilityStateChangeListener(this)
         _browserToolbarView = null
         _browserToolbarInteractor = null
+        _binding = null
     }
 
     override fun onAttach(context: Context) {
@@ -1424,13 +1407,13 @@ abstract class BaseBrowserFragment :
      * Convenience method for replacing EngineView (id/engineView) in unit tests.
      */
     @VisibleForTesting
-    internal fun getEngineView() = engineView
+    internal fun getEngineView() = binding.engineView
 
     /**
      * Convenience method for replacing SwipeRefreshLayout (id/swipeRefresh) in unit tests.
      */
     @VisibleForTesting
-    internal fun getSwipeRefreshLayout() = swipeRefresh
+    internal fun getSwipeRefreshLayout() = binding.swipeRefresh
 
     @VisibleForTesting
     internal fun shouldShowCompletedDownloadDialog(

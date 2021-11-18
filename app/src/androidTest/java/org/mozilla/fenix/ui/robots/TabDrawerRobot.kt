@@ -148,16 +148,18 @@ class TabDrawerRobot {
     }
 
     fun verifyTabMediaControlButtonState(action: String) {
-        mDevice.waitNotNull(
-            findObject(
-                By
-                    .res("$packageName:id/play_pause_button")
-                    .desc(action)
-            ),
-            waitingTime
-        )
+        mDevice.waitForIdle()
 
-        tabMediaControlButton().check(matches(withContentDescription(action)))
+        mDevice.findObject(
+            UiSelector()
+                .resourceId("$packageName:id/play_pause_button")
+        ).waitForExists(waitingTime)
+
+        assertTrue(
+            mDevice.findObject(
+                UiSelector().descriptionContains(action)
+            ).waitForExists(waitingTime)
+        )
     }
 
     fun clickTabMediaControlButton() = tabMediaControlButton().click()
@@ -252,7 +254,7 @@ class TabDrawerRobot {
         fun openNewTab(interact: SearchRobot.() -> Unit): SearchRobot.Transition {
             mDevice.waitForIdle()
 
-            newTabButton().perform(click())
+            newTabButton().click()
             SearchRobot().interact()
             return SearchRobot.Transition()
         }
@@ -392,7 +394,7 @@ private fun normalBrowsingButton() = onView(
 )
 
 private fun privateBrowsingButton() = onView(withContentDescription("Private tabs"))
-private fun newTabButton() = onView(withId(R.id.new_tab_button))
+private fun newTabButton() = mDevice.findObject(UiSelector().resourceId("$packageName:id/new_tab_button"))
 private fun threeDotMenu() = onView(withId(R.id.tab_tray_overflow))
 
 private fun assertExistingOpenTabs(title: String) {

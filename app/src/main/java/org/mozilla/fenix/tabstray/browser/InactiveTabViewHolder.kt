@@ -5,28 +5,29 @@
 package org.mozilla.fenix.tabstray.browser
 
 import android.view.View
-import androidx.annotation.StringRes
+import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.RecyclerView
 import mozilla.components.browser.toolbar.MAX_URI_LENGTH
 import mozilla.components.concept.tabstray.Tab
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.databinding.InactiveFooterItemBinding
-import org.mozilla.fenix.databinding.InactiveRecentlyClosedItemBinding
 import org.mozilla.fenix.databinding.InactiveHeaderItemBinding
 import org.mozilla.fenix.databinding.InactiveTabListItemBinding
+import org.mozilla.fenix.databinding.InactiveTabsAutoCloseBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.loadIntoView
+import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.toShortUrl
-import org.mozilla.fenix.tabstray.browser.AutoCloseInterval.Manual
-import org.mozilla.fenix.tabstray.browser.AutoCloseInterval.OneDay
-import org.mozilla.fenix.tabstray.browser.AutoCloseInterval.OneMonth
-import org.mozilla.fenix.tabstray.browser.AutoCloseInterval.OneWeek
+import org.mozilla.fenix.home.sessioncontrol.viewholders.topsites.dpToPx
+import org.mozilla.fenix.tabstray.TabsTrayInteractor
 
 sealed class InactiveTabViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     class HeaderHolder(
         itemView: View,
-        interactor: InactiveTabsInteractor
+        inactiveTabsInteractor: InactiveTabsInteractor,
+        tabsTrayInteractor: TabsTrayInteractor,
     ) : InactiveTabViewHolder(itemView) {
 
         private val binding = InactiveHeaderItemBinding.bind(itemView)
@@ -35,26 +36,71 @@ sealed class InactiveTabViewHolder(itemView: View) : RecyclerView.ViewHolder(ite
             itemView.apply {
                 isActivated = InactiveTabsState.isExpanded
 
+                correctHeaderBorder(isActivated)
+
                 setOnClickListener {
                     val newState = !it.isActivated
 
-                    interactor.onHeaderClicked(newState)
+                    inactiveTabsInteractor.onHeaderClicked(newState)
 
                     it.isActivated = newState
-                    binding.chevron.rotation = ROTATION_DEGREE
+
+                    correctHeaderBorder(isActivated)
+                }
+
+                binding.delete.setOnClickListener {
+                    tabsTrayInteractor.onDeleteInactiveTabs()
                 }
             }
         }
 
+        /**
+         * When the header is collapsed we use its bottom border instead of the footer's
+         */
+        private fun correctHeaderBorder(isActivated: Boolean) {
+            binding.inactiveHeaderBorder.updatePadding(
+                bottom = binding.root.context.dpToPx(if (isActivated) 0f else 1f)
+            )
+        }
+
         companion object {
             const val LAYOUT_ID = R.layout.inactive_header_item
-            private const val ROTATION_DEGREE = 180F
         }
     }
 
+    class AutoCloseDialogHolder(
+        itemView: View,
+        interactor: InactiveTabsAutoCloseDialogInteractor
+    ) : InactiveTabViewHolder(itemView) {
+        private val binding = InactiveTabsAutoCloseBinding.bind(itemView)
+
+        init {
+            binding.root.context.metrics.track(Event.TabsTrayAutoCloseDialogSeen)
+            binding.closeButton.setOnClickListener {
+                interactor.onCloseClicked()
+            }
+
+            binding.action.setOnClickListener {
+                interactor.onEnabledAutoCloseClicked()
+            }
+        }
+
+        companion object {
+            const val LAYOUT_ID = R.layout.inactive_tabs_auto_close
+        }
+    }
+
+    /**
+     * A RecyclerView ViewHolder implementation for an inactive tab view.
+     *
+     * @param itemView the inactive tab [View].
+     * @param browserTrayInteractor [BrowserTrayInteractor] handling tabs interactions in a tab tray.
+     * @param featureName [String] representing the name of the feature displaying tabs. Used in telemetry reporting.
+     */
     class TabViewHolder(
         itemView: View,
-        private val browserTrayInteractor: BrowserTrayInteractor
+        private val browserTrayInteractor: BrowserTrayInteractor,
+        private val featureName: String
     ) : InactiveTabViewHolder(itemView) {
 
         private val binding = InactiveTabListItemBinding.bind(itemView)
@@ -65,7 +111,8 @@ sealed class InactiveTabViewHolder(itemView: View) : RecyclerView.ViewHolder(ite
             val url = tab.url.toShortUrl(components.publicSuffixList).take(MAX_URI_LENGTH)
 
             itemView.setOnClickListener {
-                browserTrayInteractor.open(tab)
+                components.analytics.metrics.track(Event.TabsTrayOpenInactiveTab)
+                browserTrayInteractor.open(tab, featureName)
             }
 
             binding.siteListItem.apply {
@@ -75,7 +122,8 @@ sealed class InactiveTabViewHolder(itemView: View) : RecyclerView.ViewHolder(ite
                     R.drawable.mozac_ic_close,
                     R.string.content_description_close_button
                 ) {
-                    browserTrayInteractor.close(tab)
+                    components.analytics.metrics.track(Event.TabsTrayCloseInactiveTab())
+                    browserTrayInteractor.close(tab, featureName)
                 }
             }
         }
@@ -85,62 +133,14 @@ sealed class InactiveTabViewHolder(itemView: View) : RecyclerView.ViewHolder(ite
         }
     }
 
-    class RecentlyClosedHolder(
-        itemView: View,
-        private val browserTrayInteractor: BrowserTrayInteractor,
-    ) : InactiveTabViewHolder(itemView) {
-
-        val binding = InactiveRecentlyClosedItemBinding.bind(itemView)
-
-        fun bind() {
-            val context = itemView.context
-            binding.inactiveRecentlyClosedText.text =
-                context.getString(R.string.tab_tray_inactive_recently_closed)
-
-            binding.inactiveRecentlyClosed.setOnClickListener {
-                browserTrayInteractor.onRecentlyClosedClicked()
-            }
-        }
-
-        companion object {
-            const val LAYOUT_ID = R.layout.inactive_recently_closed_item
-        }
-    }
-
     class FooterHolder(itemView: View) : InactiveTabViewHolder(itemView) {
 
-        val binding = InactiveFooterItemBinding.bind(itemView)
-
-        fun bind(interval: AutoCloseInterval) {
-            val context = itemView.context
-            val stringRes = when (interval) {
-                Manual, OneDay -> {
-                    binding.inactiveDescription.visibility = View.GONE
-                    binding.topDivider.visibility = View.GONE
-                    null
-                }
-                OneWeek -> {
-                    context.getString(interval.description)
-                }
-                OneMonth -> {
-                    context.getString(interval.description)
-                }
-            }
-            if (stringRes != null) {
-                binding.inactiveDescription.text =
-                    context.getString(R.string.inactive_tabs_description, stringRes)
-            }
+        init {
+            InactiveFooterItemBinding.bind(itemView)
         }
 
         companion object {
             const val LAYOUT_ID = R.layout.inactive_footer_item
         }
     }
-}
-
-enum class AutoCloseInterval(@StringRes val description: Int) {
-    Manual(0),
-    OneDay(0),
-    OneWeek(R.string.inactive_tabs_7_days),
-    OneMonth(R.string.inactive_tabs_30_days)
 }

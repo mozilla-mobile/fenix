@@ -6,7 +6,9 @@ package org.mozilla.fenix.home
 
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
+import io.mockk.Runs
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.spyk
@@ -27,6 +29,7 @@ import mozilla.components.browser.state.state.recover.RecoverableTab
 import mozilla.components.browser.state.state.selectedOrDefaultSearchEngine
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.Engine
+import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.tabs.TabsUseCases
@@ -43,6 +46,8 @@ import org.junit.Test
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.browser.BrowserFragmentDirections
+import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.Analytics
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.metrics.Event
@@ -51,6 +56,7 @@ import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.components.tips.Tip
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.home.recenttabs.RecentTab
 import org.mozilla.fenix.home.sessioncontrol.DefaultSessionControlController
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.utils.Settings
@@ -103,6 +109,7 @@ class DefaultSessionControlControllerTest {
     )
 
     private lateinit var store: BrowserStore
+    private val homeFragmentState: HomeFragmentState = mockk(relaxed = true)
 
     @Before
     fun setup() {
@@ -152,6 +159,36 @@ class DefaultSessionControlControllerTest {
             navController.navigate(
                 match<NavDirections> {
                     it.actionId == R.id.action_global_collectionCreationFragment
+                },
+                null
+            )
+        }
+    }
+
+    @Test
+    fun handleCustomizeHomeTapped() {
+        createController().handleCustomizeHomeTapped()
+        verify { metrics.track(Event.HomeScreenCustomizedHomeClicked) }
+
+        verify {
+            navController.navigate(
+                match<NavDirections> {
+                    it.actionId == R.id.action_global_customizationFragment
+                },
+                null
+            )
+        }
+    }
+
+    @Test
+    @Ignore("Until the feature is enabled again")
+    fun handleShowOnboardingDialog() {
+        createController().handleShowOnboardingDialog()
+
+        verify {
+            navController.navigate(
+                match<NavDirections> {
+                    it.actionId == R.id.action_global_home_onboarding_dialog
                 },
                 null
             )
@@ -263,25 +300,16 @@ class DefaultSessionControlControllerTest {
         } returns "Deleting this tab will delete everything."
 
         var actualCollection: TabCollection? = null
-        var actualTitle: String? = null
-        var actualMessage: String? = null
-        var actualWasSwipe: Boolean? = null
 
         createController(
-            showDeleteCollectionPrompt = { collection, title, message, wasSwipe, _ ->
+            removeCollectionWithUndo = { collection ->
                 actualCollection = collection
-                actualTitle = title
-                actualMessage = message
-                actualWasSwipe = wasSwipe
             }
         ).handleCollectionRemoveTab(expectedCollection, tab, false)
 
         verify { metrics.track(Event.CollectionTabRemoved) }
 
         assertEquals(expectedCollection, actualCollection)
-        assertEquals("Delete Collection?", actualTitle)
-        assertEquals("Deleting this tab will delete everything.", actualMessage)
-        assertEquals(false, actualWasSwipe)
     }
 
     @Test
@@ -319,23 +347,14 @@ class DefaultSessionControlControllerTest {
         } returns "Are you sure you want to delete Collection?"
 
         var actualCollection: TabCollection? = null
-        var actualTitle: String? = null
-        var actualMessage: String? = null
-        var actualWasSwipe: Boolean? = null
 
         createController(
-            showDeleteCollectionPrompt = { collection, title, message, wasSwipe, _ ->
+            removeCollectionWithUndo = { collection ->
                 actualCollection = collection
-                actualTitle = title
-                actualMessage = message
-                actualWasSwipe = wasSwipe
             }
         ).handleDeleteCollectionTapped(expectedCollection)
 
         assertEquals(expectedCollection, actualCollection)
-        assertEquals(null, actualTitle)
-        assertEquals("Are you sure you want to delete Collection?", actualMessage)
-        assertEquals(false, actualWasSwipe)
     }
 
     @Test
@@ -603,30 +622,6 @@ class DefaultSessionControlControllerTest {
     }
 
     @Test
-    fun handleOpenSettingsClicked() {
-        createController().handleOpenSettingsClicked()
-        verify {
-            navController.navigate(
-                match<NavDirections> { it.actionId == R.id.action_global_privateBrowsingFragment },
-                null
-            )
-        }
-    }
-
-    @Test
-    fun handleWhatsNewGetAnswersClicked() {
-        createController().handleWhatsNewGetAnswersClicked()
-        val whatsNewUrl = SupportUtils.getWhatsNewUrl(activity)
-        verify {
-            activity.openToBrowserAndLoad(
-                searchTermOrURL = whatsNewUrl,
-                newTab = true,
-                from = BrowserDirection.FromHome
-            )
-        }
-    }
-
-    @Test
     fun handleReadPrivacyNoticeClicked() {
         createController().handleReadPrivacyNoticeClicked()
         verify {
@@ -739,18 +734,143 @@ class DefaultSessionControlControllerTest {
         }
     }
 
+    @Test
+    fun `WHEN private mode button is selected from home THEN handle mode change`() {
+        every { navController.currentDestination } returns mockk {
+            every { id } returns R.id.homeFragment
+        }
+
+        every { settings.incrementNumTimesPrivateModeOpened() } just Runs
+
+        val newMode = BrowsingMode.Private
+        val hasBeenOnboarded = true
+
+        createController().handlePrivateModeButtonClicked(newMode, hasBeenOnboarded)
+
+        verify {
+            settings.incrementNumTimesPrivateModeOpened()
+            HomeFragmentAction.ModeChange(Mode.fromBrowsingMode(newMode))
+        }
+    }
+
+    @Test
+    fun `WHEN private mode is selected on home from behind search THEN handle mode change`() {
+        every { navController.currentDestination } returns mockk {
+            every { id } returns R.id.searchDialogFragment
+        }
+
+        every { settings.incrementNumTimesPrivateModeOpened() } just Runs
+
+        val url = "https://mozilla.org"
+        val tab = createTab(
+            id = "otherTab",
+            url = url,
+            private = false,
+            engineSession = mockk(relaxed = true)
+        )
+        store.dispatch(TabListAction.AddTabAction(tab, select = true)).joinBlocking()
+
+        val newMode = BrowsingMode.Private
+        val hasBeenOnboarded = true
+
+        createController().handlePrivateModeButtonClicked(newMode, hasBeenOnboarded)
+
+        verify {
+            settings.incrementNumTimesPrivateModeOpened()
+            HomeFragmentAction.ModeChange(Mode.fromBrowsingMode(newMode))
+            navController.navigate(
+                BrowserFragmentDirections.actionGlobalSearchDialog(
+                    sessionId = null
+                )
+            )
+        }
+    }
+
+    @Test
+    fun `WHEN private mode is deselected on home from behind search THEN handle mode change`() {
+        every { navController.currentDestination } returns mockk {
+            every { id } returns R.id.searchDialogFragment
+        }
+
+        val url = "https://mozilla.org"
+        val tab = createTab(
+            id = "otherTab",
+            url = url,
+            private = true,
+            engineSession = mockk(relaxed = true)
+        )
+        store.dispatch(TabListAction.AddTabAction(tab, select = true)).joinBlocking()
+
+        val newMode = BrowsingMode.Normal
+        val hasBeenOnboarded = true
+
+        createController().handlePrivateModeButtonClicked(newMode, hasBeenOnboarded)
+
+        verify(exactly = 0) {
+            settings.incrementNumTimesPrivateModeOpened()
+        }
+        verify {
+            HomeFragmentAction.ModeChange(Mode.fromBrowsingMode(newMode))
+            navController.navigate(
+                BrowserFragmentDirections.actionGlobalSearchDialog(
+                    sessionId = null
+                )
+            )
+        }
+    }
+
+    @Test
+    fun `WHEN handleReportSessionMetrics is called AND there are zero recent tabs THEN report Event#RecentTabsSectionIsNotVisible`() {
+        every { homeFragmentState.recentTabs } returns emptyList()
+        createController().handleReportSessionMetrics(homeFragmentState)
+        verify(exactly = 0) {
+            metrics.track(Event.RecentTabsSectionIsVisible)
+        }
+        verify {
+            metrics.track(Event.RecentTabsSectionIsNotVisible)
+        }
+    }
+
+    @Test
+    fun `WHEN handleReportSessionMetrics is called AND there is at least one recent tab THEN report Event#RecentTabsSectionIsVisible`() {
+        val recentTab: RecentTab = mockk(relaxed = true)
+        every { homeFragmentState.recentTabs } returns listOf(recentTab)
+        createController().handleReportSessionMetrics(homeFragmentState)
+        verify(exactly = 0) {
+            metrics.track(Event.RecentTabsSectionIsNotVisible)
+        }
+        verify {
+            metrics.track(Event.RecentTabsSectionIsVisible)
+        }
+    }
+
+    @Test
+    fun `WHEN handleReportSessionMetrics is called AND there are zero recent bookmarks THEN report Event#RecentBookmarkCount(0)`() {
+        every { homeFragmentState.recentBookmarks } returns emptyList()
+        every { homeFragmentState.recentTabs } returns emptyList()
+        createController().handleReportSessionMetrics(homeFragmentState)
+        verify {
+            metrics.track(Event.RecentBookmarkCount(0))
+        }
+    }
+
+    @Test
+    fun `WHEN handleReportSessionMetrics is called AND there is at least one recent bookmark THEN report Event#RecentBookmarkCount(1)`() {
+        val recentBookmark: BookmarkNode = mockk(relaxed = true)
+        every { homeFragmentState.recentBookmarks } returns listOf(recentBookmark)
+        every { homeFragmentState.recentTabs } returns emptyList()
+        createController().handleReportSessionMetrics(homeFragmentState)
+        verify {
+            metrics.track(Event.RecentBookmarkCount(1))
+        }
+    }
+
     private fun createController(
         hideOnboarding: () -> Unit = { },
         registerCollectionStorageObserver: () -> Unit = { },
         showTabTray: () -> Unit = { },
         handleSwipedItemDeletionCancel: () -> Unit = { },
-        showDeleteCollectionPrompt: (
-            tabCollection: TabCollection,
-            title: String?,
-            message: String,
-            wasSwiped: Boolean,
-            handleSwipedItemDeletionCancel: () -> Unit
-        ) -> Unit = { _, _, _, _, _ -> }
+        removeCollectionWithUndo: (tabCollection: TabCollection) -> Unit = { }
     ): DefaultSessionControlController {
         return DefaultSessionControlController(
             activity = activity,
@@ -768,7 +888,7 @@ class DefaultSessionControlControllerTest {
             viewLifecycleScope = scope,
             hideOnboarding = hideOnboarding,
             registerCollectionStorageObserver = registerCollectionStorageObserver,
-            showDeleteCollectionPrompt = showDeleteCollectionPrompt,
+            removeCollectionWithUndo = removeCollectionWithUndo,
             showTabTray = showTabTray,
             handleSwipedItemDeletionCancel = handleSwipedItemDeletionCancel
         )

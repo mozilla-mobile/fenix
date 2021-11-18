@@ -30,39 +30,24 @@ abstract class TabsAdapter<T : TabViewHolder>(
     delegate: Observable<TabsTray.Observer> = ObserverRegistry()
 ) : ListAdapter<Tab, T>(DiffCallback), TabsTray, Observable<TabsTray.Observer> by delegate {
 
-    protected var tabs: Tabs? = null
+    protected var selectedIndex: Int? = null
     protected var styling: TabsTrayStyling = TabsTrayStyling()
 
     @CallSuper
     override fun updateTabs(tabs: Tabs) {
-        this.tabs = tabs
+        this.selectedIndex = tabs.selectedIndex
+
+        submitList(tabs.list)
 
         notifyObservers { onTabsUpdated() }
     }
 
     @CallSuper
     override fun onBindViewHolder(holder: T, position: Int) {
-        val tabs = tabs ?: return
-
-        holder.bind(tabs.list[position], isTabSelected(tabs, position), styling, this)
+        holder.bind(getItem(position), selectedIndex == position, styling, this)
     }
 
-    override fun getItemCount(): Int = tabs?.list?.size ?: 0
-
-    final override fun isTabSelected(tabs: Tabs, position: Int): Boolean =
-        tabs.selectedIndex == position
-
-    final override fun onTabsChanged(position: Int, count: Int) =
-        notifyItemRangeChanged(position, count)
-
-    final override fun onTabsInserted(position: Int, count: Int) =
-        notifyItemRangeInserted(position, count)
-
-    final override fun onTabsMoved(fromPosition: Int, toPosition: Int) =
-        notifyItemMoved(fromPosition, toPosition)
-
-    final override fun onTabsRemoved(position: Int, count: Int) =
-        notifyItemRangeRemoved(position, count)
+    override fun isTabSelected(tabs: Tabs, position: Int): Boolean = false
 
     private object DiffCallback : DiffUtil.ItemCallback<Tab>() {
         override fun areItemsTheSame(oldItem: Tab, newItem: Tab): Boolean {

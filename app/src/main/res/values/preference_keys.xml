@@ -57,6 +57,7 @@
     <string name="pref_key_private_browsing" translatable="false">pref_key_private_browsing</string>
     <string name="pref_key_leakcanary" translatable="false">pref_key_leakcanary</string>
     <string name="pref_key_remote_debugging" translatable="false">pref_key_remote_debugging</string>
+    <string name="pref_key_studies_section" translatable="false">pref_key_studies_section</string>
     <string name="pref_key_experimentation" translatable="false">pref_key_experimentation</string>
     <string name="pref_key_showed_private_mode_cfr" translatable="false">pref_key_showed_private_mode_cfr</string>
     <string name="pref_key_private_mode_opened" translatable="false">pref_key_private_mode_opened</string>
@@ -68,6 +69,8 @@
     <string name="pref_key_last_browse_activity_time" translatable="false">pref_key_last_browse_activity_time</string>
     <string name="pref_key_last_cfr_shown_time" translatable="false">pref_key_last_cfr_shown_time</string>
     <string name="pref_key_should_show_default_browser_notification" translatable="false">pref_key_should_show_default_browser_notification</string>
+    <string name="pref_key_is_first_run" translatable="false">pref_key_is_first_run</string>
+    <string name="pref_key_has_shown_home_onboarding" translatable="false">pref_key_has_shown_home_onboarding</string>
 
     <!-- Data Choices -->
     <string name="pref_key_telemetry" translatable="false">pref_key_telemetry</string>
@@ -147,6 +150,8 @@
     <string name="pref_key_dynamic_toolbar" translatable="false">pref_key_dynamic_toolbar</string>
     <string name="pref_key_swipe_toolbar_switch_tabs" translatable="false">pref_key_swipe_toolbar_switch_tabs</string>
     <string name="pref_key_swipe_toolbar_show_tabs" translatable="false">pref_key_swipe_toolbar_show_tabs</string>
+    <string name="pref_key_recent_tabs" translatable="false">pref_key_recent_tabs</string>
+    <string name="pref_key_recent_bookmarks" translatable="false">pref_key_recent_bookmarks</string>
     
     <!-- Add-ons Source Customization Settings -->
     <string name="pref_addons_settings_category" translatable="false">pref_addons_settings_category</string>
@@ -172,8 +177,6 @@
     <string name="pref_key_tracking_protection_custom_cryptominers" translatable="false">pref_key_tracking_protection_custom_cryptominers</string>
     <string name="pref_key_tracking_protection_custom_fingerprinters" translatable="false">pref_key_tracking_protection_custom_fingerprinters</string>
     <string name="pref_key_tracking_protection_redirect_trackers" translatable="false">pref_key_tracking_protection_redirect_trackers</string>
-
-    <string name="pref_key_tracking_protection_onboarding" translatable="false">pref_key_tracking_protection_onboarding</string>
 
     <!-- Logins Settings -->
     <string name="pref_key_save_logins_settings" translatable="false">pref_key_save_logins_settings</string>
@@ -232,6 +235,17 @@
     <!-- A value  of `true` means the Auto Close Tabs Banner has not been shown yet -->
     <string name="pref_key_should_show_auto_close_tabs_banner" translatable="false">pref_key_should_show_auto_close_tabs_banner</string>
 
+    <!-- A value  of `true` means the Inactive tabs onboarding popup has not been shown yet -->
+    <string name="pref_key_should_show_inactive_tabs_popup" translatable="false">pref_key_should_show_inactive_tabs_popup</string>
+    <!-- A value  of `true` means the Inactive tabs auto close dialog has been dismissed by the user -->
+    <string name="pref_key_has_inactive_tabs_auto_close_dialog_dismissed" translatable="false">pref_key_has_inactive_tabs_auto_close_dialog_dismissed</string>
+    <!-- A value  of `true` means the jump back in onboarding popup has not been shown yet -->
+    <string name="pref_key_should_show_jump_back_in_tabs_popup" translatable="false">pref_key_should_show_jump_back_in_tabs_popup</string>
+
+    <!-- A value  of `true` means the inactive tabs turn off - survey hasn't been shown yet-->
+    <string name="pref_key_should_show_inactive_tabs_turn_off_survey" translatable="false">pref_key_should_show_inactive_tabs_turn_off_survey</string>
+
+
     <string name="pref_key_migrating_from_fenix_nightly_tip" translatable="false">pref_key_migrating_from_fenix_nightly_tip</string>
     <string name="pref_key_migrating_from_firefox_nightly_tip" translatable="false">pref_key_migrating_from_firefox_nightly_tip</string>
     <string name="pref_key_migrating_from_fenix_tip" translatable="false">pref_key_migrating_from_fenix_tip</string>
@@ -275,6 +289,9 @@
     <string name="pref_key_start_on_home_never" translatable="false">pref_key_start_on_home_never</string>
     <string name="pref_key_start_on_home_category" translatable="false">pref_key_start_on_home_category</string>
     <string name="pref_key_camera_permissions_needed" translatable="false">pref_key_camera_permissions_needed</string>
+    <string name="pref_key_inactive_tabs_category" translatable="false">pref_key_inactive_tabs_category</string>
+    <string name="pref_key_inactive_tabs" translatable="false">pref_key_inactive_tabs</string>
+    <string name="pref_key_search_term_tab_groups" translatable="false">pref_key_search_term_tab_groups</string>
 
     <string name="pref_key_return_to_browser" translatable="false">pref_key_return_to_browser</string>
 
@@ -291,4 +308,5 @@
     <string name="pref_key_nimbus_experiments" translatable="false">pref_key_nimbus_experiments</string>
     <string name="pref_key_nimbus_use_preview" translatable="false">pref_key_nimbus_use_preview</string>
     <string name="pref_key_history_metadata_feature" translatable="false">pref_key_history_metadata_feature</string>
+    <string name="pref_key_pocket_homescreen_recommendations" translatable="false">pref_key_pocket_homescreen_recommendations</string>
 </resources>

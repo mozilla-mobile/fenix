@@ -8,7 +8,6 @@ import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.core.graphics.BlendModeColorFilterCompat.createBlendModeColorFilterCompat
 import androidx.core.graphics.BlendModeCompat.SRC_IN
 import androidx.core.graphics.drawable.toBitmap
-import mozilla.components.browser.awesomebar.BrowserAwesomeBar
 import mozilla.components.browser.state.search.SearchEngine
 import mozilla.components.browser.state.state.searchEngines
 import mozilla.components.concept.awesomebar.AwesomeBar
@@ -41,7 +40,7 @@ import org.mozilla.fenix.search.SearchFragmentState
 class AwesomeBarView(
     private val activity: HomeActivity,
     val interactor: AwesomeBarInteractor,
-    val view: BrowserAwesomeBar,
+    val view: AwesomeBarWrapper,
     private val fromHomeFragment: Boolean
 ) {
     private val sessionProvider: SessionSuggestionProvider
@@ -93,8 +92,6 @@ class AwesomeBarView(
     }
 
     init {
-        view.itemAnimator = null
-
         val components = activity.components
         val primaryTextColor = activity.getColorFromAttr(R.attr.primaryText)
 
@@ -251,7 +248,7 @@ class AwesomeBarView(
         val providersToAdd = mutableSetOf<AwesomeBar.SuggestionProvider>()
 
         if (state.showHistorySuggestions) {
-            if (activity.settings().historyMetadataFeature) {
+            if (activity.settings().historyMetadataUIFeature) {
                 providersToAdd.add(combinedHistoryProvider)
             } else {
                 providersToAdd.add(historyStorageProvider)
@@ -285,7 +282,7 @@ class AwesomeBarView(
         providersToRemove.add(shortcutsEnginePickerProvider)
 
         if (!state.showHistorySuggestions) {
-            if (activity.settings().historyMetadataFeature) {
+            if (activity.settings().historyMetadataUIFeature) {
                 providersToRemove.add(combinedHistoryProvider)
             } else {
                 providersToRemove.add(historyStorageProvider)

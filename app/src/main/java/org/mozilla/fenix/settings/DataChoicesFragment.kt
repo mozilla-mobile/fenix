@@ -5,17 +5,17 @@
 package org.mozilla.fenix.settings
 
 import android.os.Bundle
-import androidx.appcompat.app.AlertDialog
-import androidx.core.content.edit
+import androidx.navigation.findNavController
+import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.MetricServiceType
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getPreferenceKey
+import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
-import kotlin.system.exitProcess
 
 /**
  * Lets the user toggle telemetry on/off.
@@ -50,6 +50,7 @@ class DataChoicesFragment : PreferenceFragmentCompat() {
     override fun onResume() {
         super.onResume()
         showToolbar(getString(R.string.preferences_data_collection))
+        updateStudiesSection()
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -68,52 +69,22 @@ class DataChoicesFragment : PreferenceFragmentCompat() {
             isChecked = context.settings().isMarketingTelemetryEnabled
             onPreferenceChangeListener = SharedPreferenceUpdater()
         }
-
-        requirePreference<SwitchPreference>(R.string.pref_key_experimentation).apply {
-            isChecked = context.settings().isExperimentationEnabled
-
-            setOnPreferenceChangeListener<Boolean> { preference, enabled ->
-                val builder = AlertDialog.Builder(context)
-                    .setPositiveButton(
-                        R.string.top_sites_rename_dialog_ok
-                    ) { dialog, _ ->
-                        context.settings().preferences.edit {
-                            putBoolean(preference.key, enabled).commit()
-                        }
-                        context.components.analytics.experiments.globalUserParticipation = enabled
-                        dialog.dismiss()
-                        exitProcess(0)
-                    }
-                    .setNegativeButton(
-                        R.string.top_sites_rename_dialog_cancel
-                    ) { dialog, _ ->
-                        dialog.dismiss()
-                    }
-                    .setTitle(R.string.preference_experiments_2)
-                    .setMessage(getQuittingAppString())
-                    .setCancelable(false)
-                val alertDialog: AlertDialog = builder.create()
-                alertDialog.show()
-                false
-            }
-        }
     }
 
-    @Suppress("TooGenericExceptionCaught")
-    private fun getQuittingAppString(): String {
-        // Fix for #20919. As we are not able to get new strings on Beta and Release,
-        // We are using a string that it's already translated and taking some parts of it.
-        // To be specific "Firefox Account/Sync server modified. Quitting the application to apply changes…"
-        // We are interested on the phrase after the dot, that is generic and we can use for this case.
-        val rawString = getString(R.string.toast_override_fxa_sync_server_done)
-        return try {
-            rawString.split(".")[1]
-        } catch (e: ArrayIndexOutOfBoundsException) {
-            rawString
+    private fun updateStudiesSection() {
+        val studiesPreference = requirePreference<Preference>(R.string.pref_key_studies_section)
+        val settings = requireContext().settings()
+        val stringId = if (settings.isExperimentationEnabled) {
+            R.string.studies_on
+        } else {
+            R.string.studies_off
         }
-    }
+        studiesPreference.summary = getString(stringId)
 
-    companion object {
-        private const val OVERRIDE_EXIT_DELAY = 3000L
+        studiesPreference.setOnPreferenceClickListener {
+            val action = DataChoicesFragmentDirections.actionDataChoicesFragmentToStudiesFragment()
+            view?.findNavController()?.nav(R.id.dataChoicesFragment, action)
+            true
+        }
     }
 }

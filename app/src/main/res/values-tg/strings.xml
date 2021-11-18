@@ -22,7 +22,7 @@
     <!-- Message announced to the user when tab tray is selected with 1 tab -->
     <string name="open_tab_tray_single">1 варақаи кушодашуда. Барои гузариш байни варақаҳо зарба занед.</string>
     <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
-    <string name="open_tab_tray_plural">%1$s варақаи кушодашуда. Барои гузариш байни варақаҳо зарба занед.</string>
+    <string moz:removedIn="95" name="open_tab_tray_plural" tools:ignore="UnusedResources">%1$s варақаи кушодашуда. Барои гузариш байни варақаҳо зарба занед.</string>
     <!-- Tab tray multi select title in app bar. The first parameter is the number of tabs selected -->
     <string name="tab_tray_multi_select_title">%1$d интихоб шуд</string>
     <!-- Label of button in create collection dialog for creating a new collection  -->
@@ -50,7 +50,11 @@
 
     <!-- Home - Recently saved bookmarks -->
     <!-- Title for the home screen section with recently saved bookmarks. -->
-    <string name="recently_saved_bookmarks">Иловашудаи охирин</string>
+    <string moz:removedIn="94" name="recently_saved_bookmarks" tools:ignore="UnusedResources">Иловашудаи охирин</string>
+    <!-- Title for the home screen section with recently saved bookmarks. -->
+    <string moz:removedIn="94" name="recently_bookmarked" tools:ignore="UnusedResources">Хатбаракҳои иловашудаи охирин</string>
+    <!-- Title for the home screen section with recently saved bookmarks. -->
+    <string name="recent_bookmarks_title">Хатбаракҳои охирин</string>
     <!-- Content description for the recently saved bookmarks section on the home screen. -->
     <string name="recently_saved_bookmarks_content_description">Хатбаракҳои нигоҳдошташудаи охирин</string>
     <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
@@ -105,13 +109,27 @@
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">Нодида гузарондан</string>
 
+    <!-- Text for the banner message to tell users about our inactive tabs feature. -->
+    <string name="tab_tray_inactive_onboarding_message">Варақаҳое, ки шумо ду ҳафта такроран надидаед, ба ин ҷо интиқол дода мешаванд.</string>
+    <!-- Text for the action link to go to Settings for inactive tabs. -->
+    <string name="tab_tray_inactive_onboarding_button_text">Дар танзимот хомӯш кунед</string>
+
+    <!-- Text for title for the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_auto_close_title">Пас аз як моҳ ба таври худкор пӯшида шавад?</string>
+    <!-- Text for the body for the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_auto_close_body">Firefox метавонад варақаҳоеро, ки шумо дар давоми як моҳи охир надидаед, пӯшонад.</string>
+    <!-- Content description for close button in the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_auto_close_button_content_description">Пӯшидан</string>
+    <!-- Text for turn on auto close tabs button in the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_turn_on_auto_close_button">Фаъол кардани «Пӯшидани худкор»</string>
+
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
     <string name="home_screen_shortcut_open_new_tab_2">Варақаи нав</string>
     <!-- Shortcut action to open new private tab -->
     <string name="home_screen_shortcut_open_new_private_tab_2">Варақаи махфии нав</string>
     <!-- Heading for the Top Sites block -->
-    <string name="home_screen_top_sites_heading">Сомонаҳои беҳтарин</string>
+    <string moz:removedIn="95" name="home_screen_top_sites_heading" tools:ignore="UnusedResources">Сомонаҳои беҳтарин</string>
 
     <!-- Recent Tabs -->
     <!-- Header text for jumping back into the recent tab in the home screen -->
@@ -119,10 +137,32 @@
     <!-- Button text for showing all the tabs in the tabs tray -->
     <string name="recent_tabs_show_all">Ҳамаро намоиш додан</string>
 
+    <!-- Content description for the button which navigates the user to show all recent tabs in the tabs tray. -->
+    <string name="recent_tabs_show_all_content_description">Нишон додани тугмаи ҳамаи хатбаракҳои охирин</string>
+    <!-- Title for showing a group item in the 'Jump back in' section of the new tab
+        The first parameter is the search term that the user used. (for example: your search for "cat")-->
+    <string name="recent_tabs_search_term">Ҷустуҷӯи шумо барои \&quot;%1$s\&quot;</string>
+    <!-- Text for the number of tabs in a group in the 'Jump back in' section of the new tab
+        The first parameter is the count for number of sites in the group.  This number will always be more than one. -->
+    <string name="recent_tabs_search_term_count">Сомонаҳо: %1$s</string>
+
     <!-- History Metadata -->
     <!-- Header text for a section on the home screen that displays grouped highlights from the
          user's browsing history, such as topics they have researched or explored on the web -->
-    <string name="history_metadata_header">Таҳқиқоти гузашта</string>
+    <string moz:removedIn="94" name="history_metadata_header" tools:ignore="UnusedResources">Таҳқиқоти гузашта</string>
+
+    <!-- Header text for a section on the home screen that displays grouped highlights from the
+         user's browsing history, such as topics they have researched or explored on the web -->
+    <string moz:removedIn="94" name="history_metadata_header_2" tools:ignore="UnusedResources">Дидашудаи охирин</string>
+    <!-- Header text for a section on the home screen that displays grouped highlights from the
+         user's browsing history, such as topics they have researched or explored on the web -->
+    <string name="history_metadata_header_3">Ҷустуҷӯҳои охирин</string>
+    <!-- Text for the menu button to remove a grouped highlight from the user's browsing history
+         in the Recently visited section -->
+    <string name="recently_visited_menu_item_remove">Тоза кардан</string>
+
+    <!-- Content description for the button which navigates the user to show all of their history. -->
+    <string name="past_explorations_show_all_content_description">Нишон додани тугмаи ҳамаи тадқиқотҳои охирин</string>
 
     <!-- Browser Fragment -->
     <!-- Content description (not visible, for screen readers etc.): Navigate to open tabs -->
@@ -136,7 +176,7 @@
     <!-- Content description (not visible, for screen readers etc.): Stop loading current website -->
     <string name="browser_menu_stop">Истодан</string>
     <!-- Content description (not visible, for screen readers etc.): Bookmark the current page -->
-    <string name="browser_menu_bookmark">Хатбарак</string>
+    <string moz:removedIn="95" name="browser_menu_bookmark" tools:ignore="UnusedResources">Хатбарак</string>
     <!-- Content description (not visible, for screen readers etc.): Un-bookmark the current page -->
     <string name="browser_menu_edit_bookmark">Таҳрир кардани хатбарак</string>
     <!-- Browser menu button that opens the addon manager -->
@@ -199,6 +239,10 @@
     <!-- Browser menu label for editing a bookmark -->
     <string name="browser_menu_edit">Таҳрир кардан</string>
 
+    <!-- Browser menu button that opens the Customize menu -->
+    <string name="browser_menu_customize_home">Танзимоти асосӣ</string>
+    <!-- Button shown on the home page that opens the Customize home settings -->
+    <string name="browser_menu_customize_home_1">Танзимоти саҳифаи асосӣ</string>
     <!-- Browser Toolbar -->
     <!-- Content description for the Home screen button on the browser toolbar -->
     <string name="browser_toolbar_home">Экрани асосӣ</string>
@@ -243,6 +287,29 @@
     <string name="search_engine_suggestions_title">Ҷустуҷӯ дар %s</string>
     <!-- Search engine suggestion description text -->
     <string name="search_engine_suggestions_description">Ҷустуҷӯи бевосита аз навори нишонӣ</string>
+
+    <!-- Home onboarding -->
+    <!-- Onboarding home screen dialog title text. Firefox is intentionally hardcoded. -->
+    <string name="onboarding_home_screen_title_2">Дар Firefox чӣ нав аст</string>
+
+    <!-- Onboarding home screen dialog description text. -->
+    <string name="onboarding_home_screen_description_2">Акнун ба он сомонае, ки шумо ба қарибӣ тамошо кардаед, баргардонидан осонтар аст.</string>
+    <!-- Onboarding home screen dialog title text for the home section. Firefox is intentionally hardcoded. -->
+    <string name="onboarding_home_screen_section_home_title_2">Шахсисозии саҳифаи асосии Firefox</string>
+    <!-- Onboarding home screen dialog description text for the home section. -->
+    <string name="onboarding_home_screen_section_home_description_2">Ба варақаҳои кушода, хатбаракҳо ва таърихи тамошокунӣ гузаред.</string>
+    <!-- Onboarding home screen dialog description text for the tab tray section. -->
+    <string name="onboarding_home_screen_section_cleaner_tab_tray_title_2">Варакаҳои ботартиб ва соф</string>
+    <!-- Onboarding home screen dialog description text for the tab tray section. -->
+    <string name="onboarding_home_screen_section_cleaner_tab_tray_description_2">Ба тартиб даровардани варақаҳо тавассути тарҳбандии беҳтаршуда ва пӯшидани варақаҳо ба таври худкор.</string>
+    <!-- Onboarding home screen dialog description text for the history section. -->
+    <string name="onboarding_home_screen_section_useful_history_title_2">Ҷустуҷӯҳои охирин</string>
+
+    <!-- Onboarding home screen dialog description text for the history section. -->
+    <string name="onboarding_home_screen_section_useful_history_description_2">Ҷустуҷӯҳои охирини худро тавассути саҳифаи асосӣ ва варақаҳо боздид намоед.</string>
+
+    <!-- Onboarding home screen popup dialog, shown on top of the Jump back in section. Firefox is intentionally hardcoded. -->
+    <string name="onboarding_home_screen_jump_back_contextual_hint" tools:ignore="UnusedResources">Акнун саҳифаи асосии шахсишудаи шумо дар браузери Firefox бозгашти шуморо ба сомонаҳои охирин осон мекунад. Варақаҳо, хатбаракҳо ва натиҷаҳои ҷустуҷӯи охиринро ба даст оред.</string>
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
@@ -322,7 +389,9 @@
     <!-- Preference for changing default theme to dark or light mode -->
     <string name="preferences_theme">Мавзӯъ</string>
     <!-- Preference for customizing the home screen -->
-    <string name="preferences_home">Асосӣ</string>
+    <string moz:removedIn="94" name="preferences_home" tools:ignore="UnusedResources">Асосӣ</string>
+    <!-- Preference for customizing the home screen -->
+    <string name="preferences_home_2">Саҳифаи асосӣ</string>
     <!-- Preference for gestures based actions -->
     <string name="preferences_gestures">Ишораҳо</string>
     <!-- Preference for settings related to visual options -->
@@ -387,6 +456,24 @@
     <string name="customize_addon_collection_user_hint">Соҳиби маҷмӯа (ID-и корбар)</string>
     <!-- Toast shown after confirming the custom add-on collection configuration -->
     <string name="toast_customize_addon_collection_done">Маҷмӯаи ҷузъҳои иловагӣ тағйир ёфт. Барои татбиқ кардани тағйирот барнома бояд хомӯш карда шавад…</string>
+
+    <!-- Customize Home -->
+    <!-- Header text for jumping back into the recent tab in customize the home screen -->
+    <string name="customize_toggle_jump_back_in">Бозгашт ба</string>
+    <!-- Title for the customize home screen section with recently saved bookmarks. -->
+    <string moz:removedIn="94" name="customize_toggle_recently_saved_bookmarks" tools:ignore="UnusedResources">Иловашудаи охирин</string>
+    <!-- Title for the customize home screen section with recently saved bookmarks. -->
+    <string moz:removedIn="94" name="customize_toggle_recently_bookmarked" tools:ignore="UnusedResources">Хатбаракҳои иловашудаи охирин</string>
+    <!-- Title for the customize home screen section with recently saved bookmarks. -->
+    <string name="customize_toggle_recent_bookmarks">Хатбаракҳои охирин</string>
+    <!-- Title for the customize home screen section with recently visited. Recently visited is
+    a section where users see a list of tabs that they have visited in the past few days -->
+    <string moz:removedIn="94" name="customize_toggle_recently_visited" tools:ignore="UnusedResources">Дидашудаи охирин</string>
+    <!-- Title for the customize home screen settings section for recent searches. Recent searches
+     is a section where users see a list of groups of tabs that they have visited in the past few days -->
+    <string name="customize_toggle_recent_searches">Ҷустуҷӯҳои охирин</string>
+    <!-- Title for the customize home screen section with Pocket. -->
+    <string name="customize_toggle_pocket">Pocket</string>
 
     <!-- Add-on Installation from AMO-->
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
@@ -496,7 +583,7 @@
     <!-- Header of the Turn on Sync preference view -->
     <string name="preferences_sync">Фаъол кардани ҳамоҳангсозӣ</string>
     <!-- Preference for pairing -->
-    <string name="preferences_sync_pair">Рамзи ҷуфтро дар версияи Firefox-и мизи корӣ скан кунед</string>
+    <string moz:removedIn="95" name="preferences_sync_pair" tools:ignore="UnusedResources">Рамзи ҷуфтро дар версияи Firefox-и мизи корӣ скан кунед</string>
     <!-- Preference for account login -->
     <string name="preferences_sync_sign_in">Ворид шудан</string>
     <!-- Preference for reconnecting to FxA sync -->
@@ -573,6 +660,13 @@
     <!-- Content description (not visible, for screen readers etc.): "Close button for library settings" -->
     <string name="content_description_close_button">Пӯшидан</string>
 
+    <!-- Text to show users they have one site in the history group section of the History fragment.
+    %d is a placeholder for the number of sites in the group. -->
+    <string name="history_search_group_site">%d сомона</string>
+    <!-- Text to show users they have multiple sites in the history group section of the History fragment.
+    %d is a placeholder for the number of sites in the group. -->
+    <string name="history_search_group_sites">%d сомона</string>
+
     <!-- Option in library for Recently Closed Tabs -->
     <string name="library_recently_closed_tabs">Варақаҳои ба наздикӣ пӯшидашуда</string>
     <!-- Option in library to open Recently Closed Tabs page -->
@@ -596,6 +690,10 @@
     <string name="tab_view_list">Рӯйхат</string>
     <!-- Option for a grid tab view -->
     <string name="tab_view_grid">Тӯр</string>
+    <!-- Option for search term tab groups -->
+    <string name="tab_view_search_term_tab_groups">Гурӯҳҳои ҷустуҷӯ</string>
+    <!-- Summary text for search term tab groups -->
+    <string name="tab_view_search_term_tab_groups_summary">Сомонаҳои марбутро гурӯҳбандӣ кунед</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
     <string name="preferences_close_tabs">Пӯшидани варақаҳо</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
@@ -607,15 +705,26 @@
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">Пас аз як моҳ</string>
 
-    <!-- Start on Home -->
+    <!-- Title of preference that allows a user to specify the auto-close settings for open tabs -->
+    <string name="preference_auto_close_tabs" tools:ignore="UnusedResources">Пӯшидани варақаҳои кушода ба таври худкор</string>
+
+    <!-- Opening screen -->
     <!-- Title of a preference that allows a user to indicate after a specified amount of time when the app should start on the home screen -->
-    <string name="preferences_start_on_home">Оғоз дар экрани асосӣ</string>
+    <string moz:removedIn="94" name="preferences_start_on_home" tools:ignore="UnusedResources">Оғоз дар экрани асосӣ</string>
+    <!-- Title of a preference that allows a user to choose what screen to show after opening the app -->
+    <string name="preferences_opening_screen">Экрани ибтидоӣ</string>
     <!-- Option for starting on the home screen after after four hours or inactivity -->
-    <string name="start_on_home_after_four_hours">Пас аз чор соат</string>
+    <string moz:removedIn="94" name="start_on_home_after_four_hours" tools:ignore="UnusedResources">Пас аз чор соат</string>
+    <!-- Option for always opening the homepage when re-opening the app -->
+    <string name="opening_screen_homepage">Саҳифаи асосӣ</string>
     <!-- Option for always starting on the home screen -->
-    <string name="start_on_home_always">Ҳамеша</string>
+    <string moz:removedIn="94" name="start_on_home_always" tools:ignore="UnusedResources">Ҳамеша</string>
+    <!-- Option for always opening the user's last-open tab when re-opening the app -->
+    <string name="opening_screen_last_tab">Варақаи охирин</string>
     <!-- Option for never starting on the home screen -->
-    <string name="start_on_home_never">Ҳеҷ гоҳ</string>
+    <string moz:removedIn="94" name="start_on_home_never" tools:ignore="UnusedResources">Ҳеҷ гоҳ</string>
+    <!-- Option for always opening the homepage when re-opening the app after four hours of inactivity -->
+    <string name="opening_screen_after_four_hours_of_inactivity">Саҳифаи асосӣ пас аз чор соати беамалӣ</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
     <string name="close_tabs_manually_summary">Ба таври дастӣ пӯшидан</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
@@ -624,6 +733,12 @@
     <string name="close_tabs_after_one_week_summary">Пас аз як ҳафта пӯшидан</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one month-->
     <string name="close_tabs_after_one_month_summary">Пас аз як моҳ пӯшидан</string>
+
+    <!-- Inactive tabs -->
+    <!-- Category header of a preference that allows a user to enable or disable the inactive tabs feature -->
+    <string name="preferences_inactive_tabs">Варақаҳои куҳнаро ба ғайрифаъол интиқол диҳед</string>
+    <!-- Title of inactive tabs preference -->
+    <string name="preferences_inactive_tabs_title">Варақаҳое, ки шумо ду ҳафта такроран надидаед, ба қисмати ғайрифаъол интиқол дода мешаванд.</string>
 
     <!-- Studies -->
     <!-- Title of the remove studies button -->
@@ -668,13 +783,13 @@
     <!-- Text shown in the menu for saving tabs to a collection -->
     <string name="tab_tray_menu_item_save">Нигоҳ доштан дар маҷмӯа</string>
     <!-- Text shown in the menu for the collection selector -->
-    <string name="tab_tray_menu_select">Интихоб кардан</string>
+    <string moz:removedIn="95" name="tab_tray_menu_select" tools:ignore="UnusedResources">Интихоб кардан</string>
     <!-- Text shown in the menu for sharing all tabs -->
     <string name="tab_tray_menu_item_share">Мубодила кардани ҳамаи варақаҳо</string>
     <!-- Text shown in the menu to view recently closed tabs -->
     <string name="tab_tray_menu_recently_closed">Варақаҳои ба наздикӣ пӯшидашуда</string>
     <!-- Text shown in the tabs tray inactive tabs section -->
-    <string name="tab_tray_inactive_recently_closed">Пӯшидашудаи охирин</string>
+    <string name="tab_tray_inactive_recently_closed" tools:ignore="UnusedResources">Пӯшидашудаи охирин</string>
     <!-- Text shown in the menu to view account settings -->
     <string name="tab_tray_menu_account_settings">Танзимоти ҳисоб</string>
     <!-- Text shown in the menu to view tab settings -->
@@ -744,6 +859,12 @@
     <!-- Button in the current tab tray header in multiselect mode. Saved the selected tabs to a collection when pressed. -->
     <string name="tab_tray_save_to_collection">Нигоҳ доштан</string>
 
+    <!-- Title text for the normal tabs header in the tabs tray which are not part of any tab grouping. -->
+    <string moz:removedIn="94" name="tab_tray_header_title" tools:ignore="UnusedResources">Дигар</string>
+
+    <!-- Title text for the normal tabs header in the tabs tray which are not part of any tab grouping. -->
+    <string name="tab_tray_header_title_1">Варақаҳои дигар</string>
+
     <!-- History -->
     <!-- Text for the button to clear all history -->
     <string name="history_delete_all">Нест кардани таърих</string>
@@ -756,15 +877,15 @@
     <!-- Text for positive action to delete history in deleting history dialog -->
     <string name="history_clear_dialog">Пок кардан</string>
     <!-- History overflow menu copy button -->
-    <string name="history_menu_copy_button">Нусха бардоштан</string>
+    <string moz:removedIn="94" name="history_menu_copy_button" tools:ignore="UnusedResources">Нусха бардоштан</string>
     <!-- History overflow menu share button -->
-    <string name="history_menu_share_button">Мубодила кардан</string>
+    <string moz:removedIn="94" name="history_menu_share_button" tools:ignore="UnusedResources">Мубодила кардан</string>
     <!-- History overflow menu open in new tab button -->
-    <string name="history_menu_open_in_new_tab_button">Кушодан дар варақаи нав</string>
+    <string moz:removedIn="94" name="history_menu_open_in_new_tab_button" tools:ignore="UnusedResources">Кушодан дар варақаи нав</string>
     <!-- History overflow menu open in private tab button -->
-    <string name="history_menu_open_in_private_tab_button">Кушодан дар варақаи махфӣ</string>
+    <string moz:removedIn="94" name="history_menu_open_in_private_tab_button" tools:ignore="UnusedResources">Кушодан дар варақаи махфӣ</string>
     <!-- Text for the button to delete a single history item -->
-    <string name="history_delete_item">Нест кардан</string>
+    <string moz:removedIn="94" name="history_delete_item" tools:ignore="UnusedResources">Нест кардан</string>
     <!-- History multi select title in app bar
     The first parameter is the number of bookmarks selected -->
     <string name="history_multi_select_title">%1$d интихоб шуд</string>
@@ -787,10 +908,6 @@
     <string name="history_empty_message">Ягон таърих нест</string>
 
     <!-- Downloads -->
-    <!-- Text for the button to clear all downloads -->
-    <string name="download_delete_all">Нест кардани богириҳо</string>
-    <!-- Text for the dialog to confirm clearing all downloads -->
-    <string name="download_delete_all_dialog">Шумо мутмаин ҳастед, ки мехоҳед боргириҳои худро нест намоед?</string>
     <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
     <string name="download_delete_multiple_items_snackbar_1">Боргириҳо тоза шуданд</string>
     <!-- Text for the snackbar to confirm that a single download item has been removed. The first parameter is the name of the download item. -->
@@ -833,7 +950,7 @@
     <!-- Content description for bookmarks library menu -->
     <string name="bookmark_menu_content_description">Менюи хатбаракҳо</string>
     <!-- Screen title for editing bookmarks -->
-    <string name="bookmark_edit">Таҳрир кардани хатбарак</string>
+    <string moz:removedIn="95" name="bookmark_edit" tools:ignore="UnusedResources">Таҳрир кардани хатбарак</string>
     <!-- Screen title for selecting a bookmarks folder -->
     <string name="bookmark_select_folder">Интихоб кардани ҷузвадон</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete the selected folder -->
@@ -1246,12 +1363,12 @@
     <!-- text for the Firefox Accounts section header -->
     <string name="onboarding_fxa_section_header">Аллакай ҳисобе доред?</string>
     <!-- text for the "What's New" onboarding card header -->
-    <string name="onboarding_whats_new_header1">Бинед, ки чӣ нав аст</string>
+    <string moz:removedIn="94" name="onboarding_whats_new_header1" tools:ignore="UnusedResources">Бинед, ки чӣ нав аст</string>
     <!-- text for the "what's new" onboarding card description
     The first parameter is the short name of the app (e.g. Firefox) -->
-    <string name="onboarding_whats_new_description">Оид ба тарҳи нави %s савол доред? Мехоҳед донед, ки чӣ тағйир ёфтааст?</string>
+    <string moz:removedIn="94" name="onboarding_whats_new_description" tools:ignore="UnusedResources">Оид ба тарҳи нави %s савол доред? Мехоҳед донед, ки чӣ тағйир ёфтааст?</string>
     <!-- text for underlined clickable link that is part of "what's new" onboarding card description that links to an FAQ -->
-    <string name="onboarding_whats_new_description_linktext">Ҷавобҳоро дар ин ҷо гиред</string>
+    <string moz:removedIn="94" name="onboarding_whats_new_description_linktext" tools:ignore="UnusedResources">Ҷавобҳоро дар ин ҷо гиред</string>
     <!-- text for the Firefox account onboarding sign in card header. The word "Firefox" should not be translated -->
     <string name="onboarding_account_sign_in_header_1">Firefox-ро байни дастгоҳҳо ҳамоҳанг кунед</string>
     <!-- Text for the button to learn more about signing in to your Firefox account -->
@@ -1291,14 +1408,14 @@
     <!-- text for the toolbar position card description -->
     <string name="onboarding_toolbar_placement_description_1">Навори абзорҳоро барои дастрасии осон дар наздикӣ ҷойгир намоед. Онро дар поён нигоҳ доред ё ба боло гузоред.</string>
     <!-- text for the private browsing onboarding card header -->
-    <string name="onboarding_private_browsing_header">Реҷаи тамошокунии махфӣ</string>
+    <string moz:removedIn="94" name="onboarding_private_browsing_header" tools:ignore="UnusedResources">Реҷаи тамошокунии махфӣ</string>
     <!-- text for the private browsing onboarding card description
     The first parameter is an icon that represents private browsing -->
-    <string name="onboarding_private_browsing_description1">Варақаи махфиро як бор кушоед: Ба нишонии %s зарба занед.</string>
+    <string moz:removedIn="94" name="onboarding_private_browsing_description1" tools:ignore="UnusedResources">Варақаи махфиро як бор кушоед: Ба нишонии %s зарба занед.</string>
     <!-- text for the private browsing onboarding card description, explaining how to always using private browsing -->
-    <string name="onboarding_private_browsing_always_description">Варақаҳои махфиро ҳар вақт кушоед: Танзимоти тамошокунии махфии худро навсозӣ кунед.</string>
+    <string moz:removedIn="94" name="onboarding_private_browsing_always_description" tools:ignore="UnusedResources">Варақаҳои махфиро ҳар вақт кушоед: Танзимоти тамошокунии махфии худро навсозӣ кунед.</string>
     <!-- text for the private browsing onbording card button, that launches settings -->
-    <string name="onboarding_private_browsing_button">Кушодани танзимот</string>
+    <string moz:removedIn="94" name="onboarding_private_browsing_button" tools:ignore="UnusedResources">Кушодани танзимот</string>
     <!-- text for the privacy notice onboarding card header -->
     <string name="onboarding_privacy_notice_header">Махфияти шумо</string>
     <!-- text for the privacy notice onboarding card description
@@ -1462,6 +1579,12 @@
     <!-- Description of redirect tracker cookies that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_redirect_trackers_description">Кукиҳоеро, ки тавассути восоити интиқолдиҳӣ ба сомонаҳои пайгирикунандаи маъруф насб шудаанд, тоза мекунад.</string>
 
+    <!-- Description of the SmartBlock Enhanced Tracking Protection feature. The * symbol is intentionally hardcoded here,
+         as we use it on the UI to indicate which trackers have been partially unblocked.  -->
+    <string name="preference_etp_smartblock_description">Баъзеи васоити пайгирии дар зер зикршуда дар ин саҳифа кушода шудаанд, зеро ки шумо аз онҳо истифода кардед*.</string>
+    <!-- Text displayed that links to website about enhanced tracking protection SmartBlock -->
+    <string name="preference_etp_smartblock_learn_more">Маълумоти бештар</string>
+
     <!-- About page link text to open support link -->
     <string name="about_support">Дастгирӣ</string>
     <!-- About page link text to list of past crashes (like about:crashes on desktop) -->
@@ -1528,6 +1651,9 @@
     <!-- Description for the preference for autofilling logins from Fenix in other apps (e.g. autofilling the Twitter app) -->
     <string name="preferences_android_autofill_description">Номи корбарон ва ниҳонвожаҳоро дар барномаҳои дигари дастгоҳи худ пур кунед.</string>
 
+    <!-- Preference option for adding a login -->
+    <string name="preferences_logins_add_login">Илова кардани воридшавӣ</string>
+
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">Воридшавиҳои ҳамоҳангшуда</string>
     <!-- Preference for syncing saved logins in Fenix, when not signed in-->
@@ -1590,6 +1716,8 @@
     <string name="saved_login_copy_username">Нусха бардоштани номи корбар</string>
     <!-- Content Description (for screenreaders etc) read for the button to clear a username while editing a login -->
     <string name="saved_login_clear_username">Пок кардани номи корбар</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear the hostname field while creating a login -->
+    <string name="saved_login_clear_hostname">Пок кардани номи мизбон</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a site in logins -->
     <string name="saved_login_copy_site">Нусха бардоштани сомона</string>
     <!-- Content Description (for screenreaders etc) read for the button to open a site in logins -->
@@ -1758,9 +1886,13 @@
     <string name="phone_feature_blocked_step_feature"><![CDATA[3. <b>%1$s</b> ба ФАЪОЛ иваз намоед]]></string>
 
     <!-- Label that indicates a site is using a secure connection -->
-    <string name="quick_settings_sheet_secure_connection">Пайвасти боэътимод</string>
+    <string name="quick_settings_sheet_secure_connection_2">Пайвастшавӣ бехатар аст</string>
     <!-- Label that indicates a site is using a insecure connection -->
-    <string name="quick_settings_sheet_insecure_connection">Пайвасти беэътимод</string>
+    <string name="quick_settings_sheet_insecure_connection_2">Пайвастшавӣ бехатар нест</string>
+    <!-- Label that indicates a site is using a secure connection -->
+    <string moz:removedIn="94" name="quick_settings_sheet_secure_connection" tools:ignore="UnusedResources">Пайвасти боэътимод</string>
+    <!-- Label that indicates a site is using a insecure connection -->
+    <string moz:removedIn="94" name="quick_settings_sheet_insecure_connection" tools:ignore="UnusedResources">Пайвасти беэътимод</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete all the permissions for all sites-->
     <string name="confirm_clear_permissions_on_all_sites">Шумо мутмаин ҳастед, ки мехоҳед ҳамаи иҷозатҳоро дар ҳамаи сомонаҳо тоза намоед?</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete all the permissions for a site-->
@@ -1801,8 +1933,14 @@
     <!--  The page title for editing a saved login. -->
     <string name="edit">Таҳрир кардан</string>
 
-    <!--  The error message in edit login view when password field is blank. -->
+    <!--  The page title for adding new login. -->
+    <string name="add_login">Илова кардани воридшавии нав</string>
+    <!--  The error message in add/edit login view when password field is blank. -->
     <string name="saved_login_password_required">Ниҳонвожа лозим аст</string>
+    <!--  The error message in add login view when username field is blank. -->
+    <string name="saved_login_username_required">Номи корбар лозим аст</string>
+    <!--  The error message in add login view when hostname field is blank. -->
+    <string name="saved_login_hostname_required" tools:ignore="UnusedResources">Номи сервер лозим аст</string>
     <!-- Voice search button content description  -->
     <string name="voice_search_content_description">Ҷустуҷӯи овозӣ</string>
     <!-- Voice search prompt description displayed after the user presses the voice search button -->
@@ -1810,6 +1948,15 @@
 
     <!--  The error message in edit login view when a duplicate username exists. -->
     <string name="saved_login_duplicate">Воридшавӣ бо ин номи корбар аллакай вуҷуд дорад</string>
+
+    <!-- This is the hint text that is shown inline on the hostname field of the create new login page. 'https://www.example.com' intentionally hardcoded here -->
+    <string name="add_login_hostname_hint_text">https://www.example.com</string>
+    <!-- This is an error message shown below the hostname field of the add login page when a hostname does not contain http or https. -->
+    <string moz:removedIn="94" name="add_login_hostname_invalid_text_1" tools:ignore="UnusedResources">Нишонии сомона бояд \“https://\“ ё \“http://\“-ро дар бар гирад</string>
+    <!-- This is an error message shown below the hostname field of the add login page when a hostname does not contain http or https. -->
+    <string name="add_login_hostname_invalid_text_3">Нишонии сомона бояд &quot;https://&quot; ё &quot;http://&quot;-ро дар бар гирад</string>
+    <!-- This is an error message shown below the hostname field of the add login page when a hostname is invalid. -->
+    <string name="add_login_hostname_invalid_text_2">Номи сервери дуруст лозим аст</string>
 
     <!-- Synced Tabs -->
     <!-- Text displayed to ask user to connect another device as no devices found with account -->
@@ -1836,8 +1983,12 @@
     <!-- Confirmation dialog button text when top sites limit is reached. -->
     <string name="top_sites_max_limit_confirmation_button">Хуб, фаҳмидам</string>
 
+    <!-- Label for the preference to show the most visited top sites on the homepage -->
+    <string name="top_sites_toggle_top_recent_sites_3">Сомонаҳои дидашудаи роиҷ</string>
+    <!-- Label for the show most visited top sites preference -->
+    <string moz:removedIn="94" name="top_sites_toggle_top_frecent_sites_2" tools:ignore="UnusedResources">Намоиш додани сомонаҳои дидашудаи роиҷ</string>
     <!-- Label for the show most visited sites preference -->
-    <string name="top_sites_toggle_top_frecent_sites">Намоиш додани сомонаҳои роиҷ</string>
+    <string moz:removedIn="93" name="top_sites_toggle_top_frecent_sites" tools:ignore="UnusedResources">Намоиш додани сомонаҳои роиҷ</string>
 
     <!-- Title text displayed in the rename top site dialog. -->
 	<string name="top_sites_rename_dialog_title">Ном</string>
@@ -1848,15 +1999,42 @@
 	<!-- Dialog button text for canceling the rename top site prompt. -->
 	<string name="top_sites_rename_dialog_cancel">Бекор кардан</string>
 
-    <!-- In-activate tabs in the tabs tray -->
-    <!-- Title text displayed in the tabs tray when a tab has been unused for 4 days. -->
+    <!-- Inactive tabs in the tabs tray -->
+    <!-- Title text displayed in the tabs tray when a tab has been unused for 14 days. -->
     <string name="inactive_tabs_title">Варақаҳои ғайрифаъол</string>
+    <!-- Content description for closing all inactive tabs -->
+    <string name="inactive_tabs_delete_all">Пӯшидани ҳамаи варақаҳои ғайрифаъол</string>
     <!-- A description below the section of "inactive" tabs to notify the user when those tabs will be closed, if appropriate. See strings inactive_tabs_30_days and inactive_tabs_7_days for placeholders options. -->
-    <string name="inactive_tabs_description">Варақаҳо дар ин ҷо ба муддати %s дастрас мешаванд. Баъд аз ин вақт, варақаҳо ба таври худкор пӯшида мешаванд.</string>
+    <string moz:removedIn="93" name="inactive_tabs_description" tools:ignore="UnusedResources">Варақаҳо дар ин ҷо ба муддати %s дастрас мешаванд. Баъд аз ин вақт, варақаҳо ба таври худкор пӯшида мешаванд.</string>
     <!-- The amount of time until a tab in the "inactive" section of the tabs tray will be closed. See string inactive_tabs_description as well -->
-    <string name="inactive_tabs_30_days">30 рӯз</string>
+    <string moz:removedIn="93" name="inactive_tabs_30_days" tools:ignore="UnusedResources">30 рӯз</string>
     <!-- The amount of time until a tab in the "inactive" section of the tabs tray will be closed. See string inactive_tabs_description as well -->
-    <string name="inactive_tabs_7_days">1 ҳафта</string>
+    <string moz:removedIn="93" name="inactive_tabs_7_days" tools:ignore="UnusedResources">1 ҳафта</string>
+
+    <!-- Inactive tabs auto-close message in the tabs tray -->
+    <!-- The header text of the auto-close message when the user is asked if they want to turn on the auto-closing of inactive tabs. -->
+    <string name="inactive_tabs_auto_close_message_header" tools:ignore="UnusedResources">Пас аз як моҳ ба таври худкор пӯшида шавад?</string>
+
+    <!-- A description below the header to notify the user what the inactive tabs auto-close feature is. -->
+    <string name="inactive_tabs_auto_close_message_description" tools:ignore="UnusedResources">Firefox метавонад варақаҳоеро, ки шумо дар давоми як моҳи охир надидаед, пӯшонад.</string>
+    <!-- A call to action below the description to allow the user to turn on the auto closing of inactive tabs. -->
+    <string name="inactive_tabs_auto_close_message_action" tools:ignore="UnusedResources">ФАЪОЛ КАРДАНИ ПӮШИШИ ХУДКОР</string>
+
+    <!-- Inactive tabs survey -->
+    <!-- Header text for the inactive tabs survey asking for feedback to improve the inactive tabs feature. -->
+    <string name="inactive_tabs_survey_header" tools:ignore="UnusedResources">Лутфан, ба мо барои такмилсозии браузер кумак кунед</string>
+    <!-- Content text for the inactive tabs survey asking the primary survey feedback question. -->
+    <string name="inactive_tabs_survey_content" tools:ignore="UnusedResources">Чаро шумо варақаҳои ғайрифаъолро хомӯш кардед?</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string name="inactive_tabs_survey_not_interested_option" tools:ignore="UnusedResources">Ба ин хусусият таваҷҷуҳ надорам</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string name="inactive_tabs_survey_time_too_long_option" tools:ignore="UnusedResources">Вақти ғайрифаъолсозӣ хеле дароз аст</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string name="inactive_tabs_survey_time_too_short_option" tools:ignore="UnusedResources">Вақти ғайрифаъолсозӣ хеле кутоҳ аст</string>
+    <!-- Confirmation button text to submit the feedback for the inactive tabs survey. -->
+    <string name="inactive_tabs_survey_send_button" tools:ignore="UnusedResources">Фиристодан</string>
+    <!-- Content description for inactive tabs survey close button -->
+    <string name="inactive_tabs_survey_close_button_content_description" tools:ignore="UnusedResources">Пӯшидааст</string>
 
     <!-- Default browser experiment -->
     <string name="default_browser_experiment_card_text">Пайванҳоеро, танзим кунед, ки онҳо аз сомонаҳо, почтаи электронӣ ва паёмҳо дар браузери Firefox ба таври худкор кушода шаванд.</string>
@@ -1873,4 +2051,19 @@
     <!-- Content description for privacy content close button -->
     <string name="privacy_content_close_button_content_description">Пӯшидан</string>
 
+    <!-- Pocket recommended stories -->
+    <!-- Header text for a section on the home screen. -->
+    <string moz:removedIn="94" name="pocket_stories_header" tools:ignore="UnusedResources">Ҳикояҳои андешаангез</string>
+    <!-- Header text for a section on the home screen. -->
+    <string name="pocket_stories_header_1">Ҳикояҳои андешаангез</string>
+    <!-- Header text for a section on the home screen. -->
+    <string name="pocket_stories_categories_header">Ҳикояҳо аз рӯи мавзӯъ</string>
+    <!-- Text of a button allowing users to access an external url for more Pocket recommendations. -->
+    <string name="pocket_stories_placeholder_text">Бештар омӯзед</string>
+    <!-- Title of an app feature. Smaller than a heading.-->
+    <string name="pocket_stories_feature_title">Дар асоси Pocket кор мекунад.</string>
+    <!-- Caption for describing a certain feature. The placeholder is for a clickable text (eg: Learn more) which will load an url in a new tab when clicked.  -->
+    <string name="pocket_stories_feature_caption">Қисми оилаи Firefox.%s</string>
+    <!-- Clickable text for opening an external link for more information about Pocket. -->
+    <string name="pocket_stories_feature_learn_more">Маълумоти бештар</string>
 </resources>

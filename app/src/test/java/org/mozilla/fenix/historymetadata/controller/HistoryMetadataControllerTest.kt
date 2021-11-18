@@ -5,29 +5,33 @@
 package org.mozilla.fenix.historymetadata.controller
 
 import androidx.navigation.NavController
+import androidx.navigation.NavDirections
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.TestCoroutineScope
+import mozilla.components.browser.state.action.HistoryMetadataAction
+import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.storage.DocumentType
 import mozilla.components.concept.storage.HistoryMetadata
 import mozilla.components.concept.storage.HistoryMetadataKey
-import mozilla.components.feature.tabs.TabsUseCases.SelectOrAddUseCase
+import mozilla.components.concept.storage.HistoryMetadataStorage
 import mozilla.components.support.test.rule.MainCoroutineRule
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mozilla.fenix.BrowserDirection
-import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.historymetadata.HistoryMetadataGroup
 import org.mozilla.fenix.home.HomeFragmentAction
 import org.mozilla.fenix.home.HomeFragmentDirections
 import org.mozilla.fenix.home.HomeFragmentStore
-import org.mozilla.fenix.utils.Settings
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class HistoryMetadataControllerTest {
@@ -37,11 +41,13 @@ class HistoryMetadataControllerTest {
     @get:Rule
     val coroutinesTestRule = MainCoroutineRule(testDispatcher)
 
-    private val activity: HomeActivity = mockk(relaxed = true)
-    private val settings: Settings = mockk(relaxed = true)
-    private val homeFragmentStore: HomeFragmentStore = mockk(relaxed = true)
-    private val selectOrAddUseCase: SelectOrAddUseCase = mockk(relaxed = true)
     private val navController = mockk<NavController>(relaxed = true)
+    private val metrics: MetricController = mockk(relaxed = true)
+
+    private lateinit var storage: HistoryMetadataStorage
+    private lateinit var homeFragmentStore: HomeFragmentStore
+    private lateinit var store: BrowserStore
+    private val scope = TestCoroutineScope()
 
     private lateinit var controller: DefaultHistoryMetadataController
 
@@ -50,40 +56,25 @@ class HistoryMetadataControllerTest {
         every { navController.currentDestination } returns mockk {
             every { id } returns R.id.homeFragment
         }
+        storage = mockk(relaxed = true)
+        homeFragmentStore = mockk(relaxed = true)
+        store = mockk(relaxed = true)
 
         controller = spyk(
             DefaultHistoryMetadataController(
-                activity = activity,
-                settings = settings,
-                homeFragmentStore = homeFragmentStore,
-                selectOrAddUseCase = selectOrAddUseCase,
-                navController = navController
+                homeStore = homeFragmentStore,
+                store = store,
+                navController = navController,
+                scope = scope,
+                storage = storage,
+                metrics = metrics
             )
         )
     }
 
     @After
     fun cleanUp() {
-        testDispatcher.cleanupTestCoroutines()
-    }
-
-    @Test
-    fun handleHistoryMetadataItemClicked() {
-        val historyEntry = HistoryMetadata(
-            key = HistoryMetadataKey("http://www.mozilla.com", "mozilla", null),
-            title = "mozilla",
-            createdAt = System.currentTimeMillis(),
-            updatedAt = System.currentTimeMillis(),
-            totalViewTime = 10,
-            documentType = DocumentType.Regular
-        )
-
-        controller.handleHistoryMetadataItemClicked(historyEntry.key.url, historyEntry.key)
-
-        verify {
-            selectOrAddUseCase.invoke(historyEntry.key.url, historyEntry.key)
-            activity.openToBrowser(BrowserDirection.FromHome)
-        }
+        scope.cleanupTestCoroutines()
     }
 
     @Test
@@ -99,28 +90,64 @@ class HistoryMetadataControllerTest {
     }
 
     @Test
-    fun handleToggleHistoryMetadataGroupExpanded() {
+    fun handleToggleHistoryMetadataGroupClicked() {
         val historyEntry = HistoryMetadata(
             key = HistoryMetadataKey("http://www.mozilla.com", "mozilla", null),
             title = "mozilla",
             createdAt = System.currentTimeMillis(),
             updatedAt = System.currentTimeMillis(),
             totalViewTime = 10,
-            documentType = DocumentType.Regular
+            documentType = DocumentType.Regular,
+            previewImageUrl = null
         )
         val historyGroup = HistoryMetadataGroup(
             title = "mozilla",
             historyMetadata = listOf(historyEntry)
         )
 
-        controller.handleToggleHistoryMetadataGroupExpanded(historyGroup)
+        controller.handleHistoryMetadataGroupClicked(historyGroup)
 
         verify {
-            homeFragmentStore.dispatch(
-                HomeFragmentAction.HistoryMetadataExpanded(
-                    historyGroup
+            navController.navigate(
+                match<NavDirections> { it.actionId == R.id.action_global_history_metadata_group }
+            )
+        }
+    }
+
+    @Test
+    fun handleItemRemoved() {
+        val historyMetadataKey = HistoryMetadataKey(
+            "http://www.mozilla.com",
+            "mozilla",
+            null
+        )
+
+        val historyGroup = HistoryMetadataGroup(
+            title = "mozilla",
+            historyMetadata = listOf(
+                HistoryMetadata(
+                    key = historyMetadataKey,
+                    title = "mozilla",
+                    createdAt = System.currentTimeMillis(),
+                    updatedAt = System.currentTimeMillis(),
+                    totalViewTime = 10,
+                    documentType = DocumentType.Regular,
+                    previewImageUrl = null
                 )
             )
+        )
+
+        controller.handleRemoveGroup(historyGroup.title)
+
+        testDispatcher.advanceUntilIdle()
+        verify {
+            store.dispatch(HistoryMetadataAction.DisbandSearchGroupAction(searchTerm = historyGroup.title))
+            homeFragmentStore.dispatch(HomeFragmentAction.DisbandSearchGroupAction(searchTerm = historyGroup.title))
+            metrics.track(Event.RecentSearchesGroupDeleted)
+        }
+
+        coVerify {
+            storage.deleteHistoryMetadata(historyGroup.title)
         }
     }
 }

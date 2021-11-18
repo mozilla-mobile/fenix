@@ -35,18 +35,17 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import kotlinx.android.synthetic.main.fragment_search_dialog.*
-import kotlinx.android.synthetic.main.fragment_search_dialog.view.*
-import kotlinx.android.synthetic.main.search_suggestions_hint.view.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import mozilla.components.browser.toolbar.BrowserToolbar
+import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.storage.HistoryStorage
 import mozilla.components.feature.qr.QrFeature
 import mozilla.components.lib.state.ext.consumeFlow
 import mozilla.components.lib.state.ext.consumeFrom
+import mozilla.components.support.base.coroutines.Dispatchers
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.ktx.android.content.getColorFromAttr
@@ -62,6 +61,8 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
+import org.mozilla.fenix.databinding.FragmentSearchDialogBinding
+import org.mozilla.fenix.databinding.SearchSuggestionsHintBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
@@ -74,6 +75,9 @@ typealias SearchDialogFragmentStore = SearchFragmentStore
 
 @SuppressWarnings("LargeClass", "TooManyFunctions")
 class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
+    private var _binding: FragmentSearchDialogBinding? = null
+    private val binding get() = _binding!!
+
     private var voiceSearchButtonAlreadyAdded: Boolean = false
     private lateinit var interactor: SearchDialogInteractor
     private lateinit var store: SearchDialogFragmentStore
@@ -134,9 +138,9 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val args by navArgs<SearchDialogFragmentArgs>()
-        val view = inflater.inflate(R.layout.fragment_search_dialog, container, false)
+        _binding = FragmentSearchDialogBinding.inflate(inflater, container, false)
         val activity = requireActivity() as HomeActivity
         val isPrivate = activity.browsingModeManager.mode.isPrivate
 
@@ -187,13 +191,12 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             interactor,
             historyStorageProvider(),
             isPrivate,
-            view.toolbar,
+            binding.toolbar,
             requireComponents.core.engine,
             fromHomeFragment
         )
 
-        val awesomeBar = view.awesome_bar
-        awesomeBar.customizeForBottomToolbar = requireContext().settings().shouldUseBottomToolbar
+        val awesomeBar = binding.awesomeBar
 
         awesomeBarView = AwesomeBarView(
             activity,
@@ -202,8 +205,8 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             fromHomeFragment
         )
 
-        view.awesome_bar.setOnTouchListener { _, _ ->
-            view.hideKeyboard()
+        binding.awesomeBar.setOnTouchListener { _, _ ->
+            binding.root.hideKeyboard()
             false
         }
 
@@ -217,14 +220,14 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
 
         if (fromHomeFragment) {
             // When displayed above home, dispatches the touch events to scrim area to the HomeFragment
-            view.search_wrapper.background = ColorDrawable(Color.TRANSPARENT)
+            binding.searchWrapper.background = ColorDrawable(Color.TRANSPARENT)
             dialog?.window?.decorView?.setOnTouchListener { _, event ->
                 requireActivity().dispatchTouchEvent(event)
                 false
             }
         }
 
-        return view
+        return binding.root
     }
 
     @ExperimentalCoroutinesApi
@@ -244,13 +247,13 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
 
         // When displayed above browser, dismisses dialog on clicking scrim area
         if (findNavController().previousBackStackEntry?.destination?.id == R.id.browserFragment) {
-            search_wrapper.setOnClickListener {
+            binding.searchWrapper.setOnClickListener {
                 it.hideKeyboard()
                 dismissAllowingStateLoss()
             }
         }
 
-        view.search_engines_shortcut_button.setOnClickListener {
+        binding.searchEnginesShortcutButton.setOnClickListener {
             interactor.onSearchShortcutsButtonClicked()
         }
 
@@ -260,18 +263,18 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             view = view
         )
 
-        qr_scan_button.visibility = if (context?.hasCamera() == true) View.VISIBLE else View.GONE
+        binding.qrScanButton.visibility = if (context?.hasCamera() == true) View.VISIBLE else View.GONE
 
-        qr_scan_button.setOnClickListener {
+        binding.qrScanButton.setOnClickListener {
             if (!requireContext().hasCamera()) { return@setOnClickListener }
             view.hideKeyboard()
             toolbarView.view.clearFocus()
 
             if (requireContext().settings().shouldShowCameraPermissionPrompt) {
-                qrFeature.get()?.scan(R.id.search_wrapper)
+                qrFeature.get()?.scan(binding.searchWrapper.id)
             } else {
                 if (requireContext().isPermissionGranted(Manifest.permission.CAMERA)) {
-                    qrFeature.get()?.scan(R.id.search_wrapper)
+                    qrFeature.get()?.scan(binding.searchWrapper.id)
                 } else {
                     interactor.onCameraPermissionsNeeded()
                     resetFocus()
@@ -282,7 +285,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             requireContext().settings().setCameraPermissionNeededState = false
         }
 
-        fill_link_from_clipboard.setOnClickListener {
+        binding.fillLinkFromClipboard.setOnClickListener {
             requireComponents.analytics.metrics.track(Event.ClipboardSuggestionClicked)
             view.hideKeyboard()
             toolbarView.view.clearFocus()
@@ -295,7 +298,9 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         }
 
         val stubListener = ViewStub.OnInflateListener { _, inflated ->
-            inflated.learn_more.setOnClickListener {
+            val searchSuggestionHintBinding = SearchSuggestionsHintBinding.bind(inflated)
+
+            searchSuggestionHintBinding.learnMore.setOnClickListener {
                 (activity as HomeActivity)
                     .openToBrowserAndLoad(
                         searchTermOrURL = SupportUtils.getGenericSumoURLForTopic(
@@ -306,7 +311,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                     )
             }
 
-            inflated.allow.setOnClickListener {
+            searchSuggestionHintBinding.allow.setOnClickListener {
                 inflated.visibility = View.GONE
                 requireContext().settings().also {
                     it.shouldShowSearchSuggestionsInPrivate = true
@@ -316,7 +321,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                 store.dispatch(SearchFragmentAction.AllowSearchSuggestionsInPrivateModePrompt(false))
             }
 
-            inflated.dismiss.setOnClickListener {
+            searchSuggestionHintBinding.dismiss.setOnClickListener {
                 inflated.visibility = View.GONE
                 requireContext().settings().also {
                     it.shouldShowSearchSuggestionsInPrivate = false
@@ -324,14 +329,14 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                 }
             }
 
-            inflated.text.text =
+            searchSuggestionHintBinding.text.text =
                 getString(R.string.search_suggestions_onboarding_text, getString(R.string.app_name))
 
-            inflated.title.text =
+            searchSuggestionHintBinding.title.text =
                 getString(R.string.search_suggestions_onboarding_title)
         }
 
-        view.search_suggestions_hint.setOnInflateListener((stubListener))
+        binding.searchSuggestionsHint.setOnInflateListener((stubListener))
         if (view.context.settings().accessibilityServicesEnabled) {
             updateAccessibilityTraversalOrder()
         }
@@ -343,9 +348,9 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             *  query as consumeFrom may run several times on fragment start due to state updates.
             * */
             if (it.url != it.query) firstUpdate = false
-            awesome_bar?.visibility = if (shouldShowAwesomebar(it)) View.VISIBLE else View.INVISIBLE
+            binding.awesomeBar.visibility = if (shouldShowAwesomebar(it)) View.VISIBLE else View.INVISIBLE
             updateSearchSuggestionsHintVisibility(it)
-            updateClipboardSuggestion(it, requireContext().components.clipboardHandler.url)
+            updateClipboardSuggestion(it)
             updateToolbarContentDescription(it)
             updateSearchShortcutsIcon(it)
             toolbarView.update(it)
@@ -358,14 +363,28 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         !firstUpdate && searchFragmentState.query.isNotBlank() || searchFragmentState.showSearchShortcuts
 
     private fun updateAccessibilityTraversalOrder() {
-        val searchWrapperId = search_wrapper.id
+        val searchWrapperId = binding.searchWrapper.id
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
-            qr_scan_button.accessibilityTraversalAfter = searchWrapperId
-            search_engines_shortcut_button.accessibilityTraversalAfter = searchWrapperId
-            fill_link_from_clipboard.accessibilityTraversalAfter = searchWrapperId
+            binding.qrScanButton.accessibilityTraversalAfter = searchWrapperId
+            binding.searchEnginesShortcutButton.accessibilityTraversalAfter = searchWrapperId
+            binding.fillLinkFromClipboard.accessibilityTraversalAfter = searchWrapperId
         } else {
             viewLifecycleOwner.lifecycleScope.launch {
-                search_wrapper.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED)
+                binding.searchWrapper.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED)
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        view?.post {
+            // We delay querying the clipboard by posting this code to the main thread message queue,
+            // because ClipboardManager will return null if the does app not have input focus yet.
+            lifecycleScope.launch(Dispatchers.Cached) {
+                context?.components?.clipboardHandler?.url?.let { clipboardUrl ->
+                    store.dispatch(SearchFragmentAction.UpdateClipboardUrl(clipboardUrl))
+                }
             }
         }
     }
@@ -373,6 +392,12 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
     override fun onPause() {
         super.onPause()
         view?.hideKeyboard()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+
+        _binding = null
     }
 
     /*
@@ -410,7 +435,10 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                 true
             }
             else -> {
-                if (FeatureFlags.showHomeBehindSearch) {
+                // In case we're displaying search results, we wouldn't have navigated to home, and
+                // so we don't need to navigate "back to" browser fragment.
+                // See mirror of this logic in BrowserToolbarController#handleToolbarClick.
+                if (FeatureFlags.showHomeBehindSearch && store.state.searchTerms.isBlank()) {
                     val args by navArgs<SearchDialogFragmentArgs>()
                     args.sessionId?.let {
                         findNavController().navigate(
@@ -441,7 +469,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                 requestPermissions(permissions, REQUEST_CODE_CAMERA_PERMISSIONS)
             },
             onScanResult = { result ->
-                qr_scan_button.isChecked = false
+                binding.qrScanButton.isChecked = false
                 activity?.let {
                     AlertDialog.Builder(it).apply {
                         val spannable = resources.getSpanned(
@@ -457,7 +485,8 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                             (activity as? HomeActivity)?.openToBrowserAndLoad(
                                 searchTermOrURL = result,
                                 newTab = store.state.tabId == null,
-                                from = BrowserDirection.FromSearchDialog
+                                from = BrowserDirection.FromSearchDialog,
+                                flags = EngineSession.LoadUrlFlags.external()
                             )
                             dialog.dismiss()
                         }
@@ -486,7 +515,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
     }
 
     private fun resetFocus() {
-        qr_scan_button.isChecked = false
+        binding.qrScanButton.isChecked = false
         toolbarView.view.edit.focus()
         toolbarView.view.requestFocus()
     }
@@ -494,31 +523,31 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
     private fun setupConstraints(view: View) {
         if (view.context.settings().toolbarPosition == ToolbarPosition.BOTTOM) {
             ConstraintSet().apply {
-                clone(search_wrapper)
+                clone(binding.searchWrapper)
 
-                clear(toolbar.id, TOP)
-                connect(toolbar.id, BOTTOM, PARENT_ID, BOTTOM)
+                clear(binding.toolbar.id, TOP)
+                connect(binding.toolbar.id, BOTTOM, PARENT_ID, BOTTOM)
 
-                clear(pill_wrapper.id, BOTTOM)
-                connect(pill_wrapper.id, BOTTOM, toolbar.id, TOP)
+                clear(binding.pillWrapper.id, BOTTOM)
+                connect(binding.pillWrapper.id, BOTTOM, binding.toolbar.id, TOP)
 
-                clear(awesome_bar.id, TOP)
-                clear(awesome_bar.id, BOTTOM)
-                connect(awesome_bar.id, TOP, search_suggestions_hint.id, BOTTOM)
-                connect(awesome_bar.id, BOTTOM, pill_wrapper.id, TOP)
+                clear(binding.awesomeBar.id, TOP)
+                clear(binding.awesomeBar.id, BOTTOM)
+                connect(binding.awesomeBar.id, TOP, binding.searchSuggestionsHint.id, BOTTOM)
+                connect(binding.awesomeBar.id, BOTTOM, binding.pillWrapper.id, TOP)
 
-                clear(search_suggestions_hint.id, TOP)
-                clear(search_suggestions_hint.id, BOTTOM)
-                connect(search_suggestions_hint.id, TOP, PARENT_ID, TOP)
-                connect(search_suggestions_hint.id, BOTTOM, search_hint_bottom_barrier.id, TOP)
+                clear(binding.searchSuggestionsHint.id, TOP)
+                clear(binding.searchSuggestionsHint.id, BOTTOM)
+                connect(binding.searchSuggestionsHint.id, TOP, PARENT_ID, TOP)
+                connect(binding.searchSuggestionsHint.id, BOTTOM, binding.searchHintBottomBarrier.id, TOP)
 
-                clear(fill_link_from_clipboard.id, TOP)
-                connect(fill_link_from_clipboard.id, BOTTOM, pill_wrapper.id, TOP)
+                clear(binding.fillLinkFromClipboard.id, TOP)
+                connect(binding.fillLinkFromClipboard.id, BOTTOM, binding.pillWrapper.id, TOP)
 
-                clear(fill_link_divider.id, TOP)
-                connect(fill_link_divider.id, BOTTOM, fill_link_from_clipboard.id, TOP)
+                clear(binding.fillLinkDivider.id, TOP)
+                connect(binding.fillLinkDivider.id, BOTTOM, binding.fillLinkFromClipboard.id, TOP)
 
-                applyTo(search_wrapper)
+                applyTo(binding.searchWrapper)
             }
         }
     }
@@ -529,8 +558,8 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                 !state.showSearchShortcuts &&
                 state.url != state.query
 
-            findViewById<View>(R.id.search_suggestions_hint)?.isVisible = showHint
-            search_suggestions_hint_divider?.isVisible = showHint
+            binding.searchSuggestionsHint.isVisible = showHint
+            binding.searchSuggestionsHintDivider.isVisible = showHint
         }
     }
 
@@ -575,25 +604,26 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
 
     private fun isSpeechAvailable(): Boolean = speechIntent.resolveActivity(requireContext().packageManager) != null
 
-    private fun updateClipboardSuggestion(searchState: SearchFragmentState, clipboardUrl: String?) {
+    private fun updateClipboardSuggestion(searchState: SearchFragmentState) {
         val shouldShowView = searchState.showClipboardSuggestions &&
             searchState.query.isEmpty() &&
-            !clipboardUrl.isNullOrEmpty() && !searchState.showSearchShortcuts
+            !searchState.clipboardUrl.isNullOrEmpty() && !searchState.showSearchShortcuts
 
-        fill_link_from_clipboard.isVisible = shouldShowView
-        fill_link_divider.isVisible = shouldShowView
-        pill_wrapper_divider.isVisible =
+        binding.fillLinkFromClipboard.isVisible = shouldShowView
+        binding.fillLinkDivider.isVisible = shouldShowView
+        binding.pillWrapperDivider.isVisible =
             !(shouldShowView && requireComponents.settings.shouldUseBottomToolbar)
-        clipboard_url.isVisible = shouldShowView
-        clipboard_title.isVisible = shouldShowView
-        link_icon.isVisible = shouldShowView
+        binding.clipboardUrl.isVisible = shouldShowView
+        binding.clipboardTitle.isVisible = shouldShowView
+        binding.linkIcon.isVisible = shouldShowView
 
-        clipboard_url.text = clipboardUrl
+        binding.clipboardUrl.text = searchState.clipboardUrl
 
-        fill_link_from_clipboard.contentDescription = "${clipboard_title.text}, ${clipboard_url.text}."
+        binding.fillLinkFromClipboard.contentDescription =
+            "${binding.clipboardTitle.text}, ${binding.clipboardUrl.text}."
 
-        if (clipboardUrl != null && !((activity as HomeActivity).browsingModeManager.mode.isPrivate)) {
-            requireComponents.core.engine.speculativeConnect(clipboardUrl)
+        if (searchState.clipboardUrl != null && !((activity as HomeActivity).browsingModeManager.mode.isPrivate)) {
+            requireComponents.core.engine.speculativeConnect(searchState.clipboardUrl)
         }
     }
 
@@ -610,13 +640,13 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
 
     private fun updateSearchShortcutsIcon(searchState: SearchFragmentState) {
         view?.apply {
-            search_engines_shortcut_button.isVisible = searchState.areShortcutsAvailable
+            binding.searchEnginesShortcutButton.isVisible = searchState.areShortcutsAvailable
 
             val showShortcuts = searchState.showSearchShortcuts
-            search_engines_shortcut_button.isChecked = showShortcuts
+            binding.searchEnginesShortcutButton.isChecked = showShortcuts
 
             val color = if (showShortcuts) R.attr.contrastText else R.attr.primaryText
-            search_engines_shortcut_button.compoundDrawables[0]?.setTint(
+            binding.searchEnginesShortcutButton.compoundDrawables[0]?.setTint(
                 requireContext().getColorFromAttr(color)
             )
         }
