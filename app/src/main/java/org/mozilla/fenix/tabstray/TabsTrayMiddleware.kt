@@ -9,18 +9,18 @@ import mozilla.components.lib.state.Middleware
 import mozilla.components.lib.state.MiddlewareContext
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
-import org.mozilla.fenix.utils.Settings
 
 /**
  * [Middleware] that reacts to various [TabsTrayAction]s.
  *
- * @property settings reference to the application [Settings].
  * @property metrics reference to the configured [MetricController] to record general page load events.
  */
 class TabsTrayMiddleware(
-    private val settings: Settings,
     private val metrics: MetricController
 ) : Middleware<TabsTrayState, TabsTrayAction> {
+
+    private var shouldReportInactiveTabMetrics: Boolean = true
+    private var shouldReportSearchGroupMetrics: Boolean = true
 
     override fun invoke(
         context: MiddlewareContext<TabsTrayState, TabsTrayAction>,
@@ -30,22 +30,28 @@ class TabsTrayMiddleware(
         next(action)
 
         when (action) {
-            is TabsTrayAction.ReportTabMetrics -> {
-                metrics.track(Event.InactiveTabsCountUpdate(action.inactiveTabsCount))
-
-                if (settings.inactiveTabsAreEnabled) {
-                    metrics.track(Event.TabsTrayHasInactiveTabs(action.inactiveTabsCount))
+            is TabsTrayAction.UpdateInactiveTabs -> {
+                if (shouldReportInactiveTabMetrics) {
+                    shouldReportInactiveTabMetrics = false
+                    metrics.track(Event.InactiveTabsCountUpdate(action.tabs.size))
+                    metrics.track(Event.TabsTrayHasInactiveTabs(action.tabs.size))
                 }
+            }
+            is TabsTrayAction.UpdateSearchGroupTabs -> {
+                if (shouldReportSearchGroupMetrics) {
+                    shouldReportSearchGroupMetrics = false
 
-                if (action.tabGroups.isNotEmpty()) {
-                    val tabsPerGroup = action.tabGroups.map { it.tabs.size }
-                    val averageTabsPerGroup = tabsPerGroup.average()
-                    metrics.track(Event.AverageTabsPerSearchTermGroup(averageTabsPerGroup))
+                    metrics.track(Event.SearchTermGroupCount(action.groups.size))
 
-                    val tabGroupSizeMapping = tabsPerGroup.map { generateTabGroupSizeMappedValue(it) }
-                    metrics.track(Event.SearchTermGroupSizeDistribution(tabGroupSizeMapping))
+                    if (action.groups.isNotEmpty()) {
+                        val tabsPerGroup = action.groups.map { it.tabs.size }
+                        val averageTabsPerGroup = tabsPerGroup.average()
+                        metrics.track(Event.AverageTabsPerSearchTermGroup(averageTabsPerGroup))
+
+                        val tabGroupSizeMapping = tabsPerGroup.map { generateTabGroupSizeMappedValue(it) }
+                        metrics.track(Event.SearchTermGroupSizeDistribution(tabGroupSizeMapping))
+                    }
                 }
-                metrics.track(Event.SearchTermGroupCount(action.tabGroups.size))
             }
             else -> {}
         }
@@ -53,8 +59,9 @@ class TabsTrayMiddleware(
 
     @Suppress("MagicNumber")
     @VisibleForTesting
-    // This follows the logic outlined in metrics.yaml for
-    // "search_terms.group_size_distribution"
+    /**
+     * This follows the logic outlined in metrics.yaml for "search_terms.group_size_distribution"
+     */
     internal fun generateTabGroupSizeMappedValue(size: Int): Long =
         when (size) {
             2 -> 1L

@@ -23,7 +23,6 @@ class TabSorter(
     private val settings: Settings,
     private val tabsTrayStore: TabsTrayStore? = null
 ) : TabsTray {
-    private var shouldReportMetrics: Boolean = true
     private val groupsSet = mutableSetOf<String>()
 
     override fun updateTabs(tabs: List<TabSessionState>, selectedTabId: String?) {
@@ -49,16 +48,6 @@ class TabSorter(
         // Normal tabs.
         val totalNormalTabs = (normalTabs + remainderTabs)
         tabsTrayStore?.dispatch(TabsTrayAction.UpdateNormalTabs(totalNormalTabs))
-
-        if (shouldReportMetrics) {
-            shouldReportMetrics = false
-            tabsTrayStore?.dispatch(
-                TabsTrayAction.ReportTabMetrics(
-                    inactiveTabs.size,
-                    groups
-                )
-            )
-        }
     }
 }
 

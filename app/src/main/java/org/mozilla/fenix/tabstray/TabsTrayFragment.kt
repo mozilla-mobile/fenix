@@ -132,7 +132,6 @@ class TabsTrayFragment : AppCompatDialogFragment() {
                 ),
                 middlewares = listOf(
                     TabsTrayMiddleware(
-                        settings = requireContext().settings(),
                         metrics = requireContext().metrics
                     )
                 )

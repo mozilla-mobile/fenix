@@ -14,21 +14,17 @@ import org.junit.Test
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.tabstray.browser.TabGroup
-import org.mozilla.fenix.utils.Settings
 
 class TabsTrayMiddlewareTest {
 
     private lateinit var store: TabsTrayStore
-    private lateinit var settings: Settings
     private lateinit var tabsTrayMiddleware: TabsTrayMiddleware
     private lateinit var metrics: MetricController
 
     @Before
     fun setUp() {
-        settings = mockk(relaxed = true)
         metrics = mockk(relaxed = true)
         tabsTrayMiddleware = TabsTrayMiddleware(
-            settings,
             metrics
         )
         store = TabsTrayStore(
@@ -38,32 +34,31 @@ class TabsTrayMiddlewareTest {
     }
 
     @Test
-    fun `WHEN metrics are reported AND the inactive tabs feature is enabled THEN report the count of inactive tabs`() {
-        every { settings.inactiveTabsAreEnabled } returns true
-        store.dispatch(TabsTrayAction.ReportTabMetrics(10, emptyList()))
-        store.waitUntilIdle()
-        verify { metrics.track(Event.TabsTrayHasInactiveTabs(10)) }
-    }
-
-    @Test
-    fun `WHEN metrics are reported AND there are search term tab groups THEN report the average tabs per group`() {
-        store.dispatch(TabsTrayAction.ReportTabMetrics(0, generateSearchTermTabGroupsForAverage()))
+    fun `WHEN search term groups are updated AND there is at least one group THEN report the average tabs per group`() {
+        store.dispatch(TabsTrayAction.UpdateSearchGroupTabs(generateSearchTermTabGroupsForAverage()))
         store.waitUntilIdle()
         verify { metrics.track(Event.AverageTabsPerSearchTermGroup(5.0)) }
     }
 
     @Test
-    fun `WHEN metrics are reported AND there are search term tab groups THEN report the distribution of tab sizes`() {
-        store.dispatch(TabsTrayAction.ReportTabMetrics(0, generateSearchTermTabGroupsForDistribution()))
+    fun `WHEN search term groups are updated AND there is at least one group THEN report the distribution of tab sizes`() {
+        store.dispatch(TabsTrayAction.UpdateSearchGroupTabs(generateSearchTermTabGroupsForDistribution()))
         store.waitUntilIdle()
         verify { metrics.track(Event.SearchTermGroupSizeDistribution(listOf(3L, 2L, 1L, 4L))) }
     }
 
     @Test
-    fun `WHEN metrics are reported THEN report the count of search term tab groups AND the count of inactive tabs`() {
-        store.dispatch(TabsTrayAction.ReportTabMetrics(0, emptyList()))
+    fun `WHEN search term groups are updated THEN report the count of search term tab groups`() {
+        store.dispatch(TabsTrayAction.UpdateSearchGroupTabs(emptyList()))
         store.waitUntilIdle()
         verify { metrics.track(Event.SearchTermGroupCount(0)) }
+    }
+
+    @Test
+    fun `WHEN inactive tabs are updated THEN report the count of inactive tabs`() {
+        store.dispatch(TabsTrayAction.UpdateInactiveTabs(emptyList()))
+        store.waitUntilIdle()
+        verify { metrics.track(Event.TabsTrayHasInactiveTabs(0)) }
         verify { metrics.track(Event.InactiveTabsCountUpdate(0)) }
     }
 
