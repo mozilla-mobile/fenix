@@ -90,7 +90,7 @@ class DefaultBrowserNotificationWorker(
             val channel = NotificationChannel(
                 NOTIFICATION_CHANNEL_ID,
                 applicationContext.getString(R.string.notification_marketing_channel_name),
-                NotificationManager.IMPORTANCE_DEFAULT
+                NotificationManager.IMPORTANCE_LOW
             )
 
             notificationManager.createNotificationChannel(channel)
