@@ -966,8 +966,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             ) {
                 metrics.track(Event.ChangedToDefaultBrowser)
             }
-
-            DefaultBrowserNotificationWorker.setDefaultBrowserNotificationIfNeeded(applicationContext)
         }
     }
 
