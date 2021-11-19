@@ -88,7 +88,6 @@ import org.mozilla.fenix.components.accounts.AccountState
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.tips.FenixTipManager
 import org.mozilla.fenix.components.tips.Tip
-import org.mozilla.fenix.components.tips.providers.MasterPasswordTipProvider
 import org.mozilla.fenix.components.toolbar.FenixTabCounterMenu
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.databinding.FragmentHomeBinding
@@ -239,13 +238,7 @@ class HomeFragment : Fragment() {
                     topSites = components.core.topSitesStorage.cachedTopSites,
                     tip = components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
                         FenixTipManager(
-                            listOf(
-                                MasterPasswordTipProvider(
-                                    requireContext(),
-                                    ::navToSavedLogins,
-                                    ::dismissTip
-                                )
-                            )
+                            emptyList()
                         ).getTip()
                     },
                     recentBookmarks = emptyList(),
@@ -685,13 +678,7 @@ class HomeFragment : Fragment() {
                 topSites = components.core.topSitesStorage.cachedTopSites,
                 tip = components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
                     FenixTipManager(
-                        listOf(
-                            MasterPasswordTipProvider(
-                                requireContext(),
-                                ::navToSavedLogins,
-                                ::dismissTip
-                            )
-                        )
+                        emptyList()
                     ).getTip()
                 },
                 showCollectionPlaceholder = components.settings.showCollectionsPlaceholderOnHome,

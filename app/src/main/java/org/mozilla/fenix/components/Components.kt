@@ -19,7 +19,6 @@ import mozilla.components.feature.addons.update.AddonUpdater
 import mozilla.components.feature.addons.update.DefaultAddonUpdater
 import mozilla.components.feature.autofill.AutofillConfiguration
 import mozilla.components.lib.publicsuffixlist.PublicSuffixList
-import mozilla.components.support.migration.state.MigrationStore
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.HomeActivity
@@ -88,7 +87,6 @@ class Components(private val context: Context) {
             useCases.searchUseCases,
             core.relationChecker,
             core.customTabsStore,
-            migrationStore,
             core.webAppManifestStorage
         )
     }
@@ -146,7 +144,6 @@ class Components(private val context: Context) {
     val analytics by lazyMonitored { Analytics(context) }
     val publicSuffixList by lazyMonitored { PublicSuffixList(context) }
     val clipboardHandler by lazyMonitored { ClipboardHandler(context) }
-    val migrationStore by lazyMonitored { MigrationStore() }
     val performance by lazyMonitored { PerformanceComponent() }
     val push by lazyMonitored { Push(context, analytics.crashReporter) }
     val wifiConnectionMonitor by lazyMonitored { WifiConnectionMonitor(context as Application) }

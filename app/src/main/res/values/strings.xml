@@ -1296,31 +1296,31 @@
 
     <!-- Tips -->
     <!-- text for firefox preview moving tip header "Firefox Preview" and "Firefox Nightly" are intentionally hardcoded -->
-    <string name="tip_firefox_preview_moved_header">Firefox Preview is now Firefox Nightly</string>
+    <string name="tip_firefox_preview_moved_header" moz:removedIn="96" tools:ignore="UnusedResources">Firefox Preview is now Firefox Nightly</string>
     <!-- text for firefox preview moving tip description -->
-    <string name="tip_firefox_preview_moved_description">
+    <string name="tip_firefox_preview_moved_description" moz:removedIn="96" tools:ignore="UnusedResources">
         Firefox Nightly gets updated every night and has experimental new features.
         However, it may be less stable. Download our beta browser for a more stable experience.</string>
     <!-- text for firefox preview moving tip button. "Firefox for Android Beta" is intentionally hardcoded -->
-    <string name="tip_firefox_preview_moved_button_2">Get Firefox for Android Beta</string>
+    <string name="tip_firefox_preview_moved_button_2" moz:removedIn="96" tools:ignore="UnusedResources">Get Firefox for Android Beta</string>
 
     <!-- text for firefox preview moving tip header. "Firefox Nightly" is intentionally hardcoded -->
-    <string name="tip_firefox_preview_moved_header_preview_installed">Firefox Nightly has moved</string>
+    <string name="tip_firefox_preview_moved_header_preview_installed" moz:removedIn="96" tools:ignore="UnusedResources">Firefox Nightly has moved</string>
     <!-- text for firefox preview moving tip description -->
-    <string name="tip_firefox_preview_moved_description_preview_installed">
+    <string name="tip_firefox_preview_moved_description_preview_installed" moz:removedIn="96" tools:ignore="UnusedResources">
         This app will no longer receive security updates. Stop using this app and switch to the new Nightly.
         \n\nTo transfer your bookmarks, logins, and history to another app, create a Firefox account.</string>
     <!-- text for firefox preview moving tip button  -->
-    <string name="tip_firefox_preview_moved_button_preview_installed">Switch to the new Nightly</string>
+    <string name="tip_firefox_preview_moved_button_preview_installed" moz:removedIn="96" tools:ignore="UnusedResources">Switch to the new Nightly</string>
 
     <!-- text for firefox preview moving tip header. "Firefox Nightly" is intentionally hardcoded -->
-    <string name="tip_firefox_preview_moved_header_preview_not_installed">Firefox Nightly has moved</string>
+    <string name="tip_firefox_preview_moved_header_preview_not_installed" moz:removedIn="96" tools:ignore="UnusedResources">Firefox Nightly has moved</string>
     <!-- text for firefox preview moving tip description -->
-    <string name="tip_firefox_preview_moved_description_preview_not_installed">
+    <string name="tip_firefox_preview_moved_description_preview_not_installed" moz:removedIn="96" tools:ignore="UnusedResources">
         This app will no longer receive security updates. Get the new Nightly and stop using this app.
         \n\nTo transfer your bookmarks, logins, and history to another app, create a Firefox account.</string>
     <!-- text for firefox preview moving tip button  -->
-    <string name="tip_firefox_preview_moved_button_preview_not_installed">Get the new Nightly</string>
+    <string name="tip_firefox_preview_moved_button_preview_not_installed" moz:removedIn="96" tools:ignore="UnusedResources">Get the new Nightly</string>
 
     <!-- Onboarding -->
     <!-- Text for onboarding welcome message
@@ -1817,17 +1817,17 @@
     <string name="search_delete_search_engine_success_message">Deleted %s</string>
 
     <!-- Title text shown for the migration screen to the new browser. Placeholder replaced with app name -->
-    <string name="migration_title">Welcome to an all-new %s</string>
+    <string name="migration_title" moz:removedIn="96" tools:ignore="UnusedResources">Welcome to an all-new %s</string>
     <!-- Description text followed by a list of things migrating (e.g. Bookmarks, History). Placeholder replaced with app name-->
-    <string name="migration_description">A completely redesigned browser awaits, with improved performance and features to help you do more online.\n\nPlease wait while we update %s with your</string>
+    <string name="migration_description" moz:removedIn="96" tools:ignore="UnusedResources">A completely redesigned browser awaits, with improved performance and features to help you do more online.\n\nPlease wait while we update %s with your</string>
     <!-- Text on the disabled button while in progress. Placeholder replaced with app name -->
-    <string name="migration_updating_app_button_text">Updating %s…</string>
+    <string name="migration_updating_app_button_text" moz:removedIn="96" tools:ignore="UnusedResources">Updating %s…</string>
     <!-- Text on the enabled button. Placeholder replaced with app name-->
-    <string name="migration_update_app_button">Start %s</string>
+    <string name="migration_update_app_button" moz:removedIn="96" tools:ignore="UnusedResources">Start %s</string>
     <!-- Accessibility description text for a completed migration item -->
-    <string name="migration_icon_description">Migration completed</string>
+    <string name="migration_icon_description" moz:removedIn="96" tools:ignore="UnusedResources">Migration completed</string>
     <!--Text on list of migrated items (e.g. Settings, History, etc.)-->
-    <string name="migration_text_passwords">Passwords</string>
+    <string name="migration_text_passwords" moz:removedIn="96" tools:ignore="UnusedResources">Passwords</string>
 
     <!-- Heading for the instructions to allow a permission -->
     <string name="phone_feature_blocked_intro">To allow it:</string>
