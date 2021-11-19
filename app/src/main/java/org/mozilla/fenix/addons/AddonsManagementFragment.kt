@@ -23,9 +23,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.android.synthetic.main.fragment_add_ons_management.addonProgressOverlay
-import kotlinx.android.synthetic.main.fragment_add_ons_management.view.add_ons_empty_message
-import kotlinx.android.synthetic.main.fragment_add_ons_management.view.add_ons_list
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
@@ -134,15 +131,11 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
         adapter?.updateAddons(searchedAddons)
 
         if (searchedAddons.isEmpty()) {
-            view?.let { view ->
-                view.add_ons_empty_message.visibility = View.VISIBLE
-                view.add_ons_list.visibility = View.GONE
-            }
+            binding?.addOnsEmptyMessage?.visibility = View.VISIBLE
+            binding?.addOnsList?.visibility = View.GONE
         } else {
-            view?.let { view ->
-                view.add_ons_empty_message.visibility = View.GONE
-                view.add_ons_list.visibility = View.VISIBLE
-            }
+            binding?.addOnsEmptyMessage?.visibility = View.GONE
+            binding?.addOnsList?.visibility = View.VISIBLE
         }
     }
 

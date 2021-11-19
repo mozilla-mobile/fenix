@@ -5,8 +5,6 @@
 package com.google.android.gms.ads.identifier;
 
 import android.content.Context;
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
 
 
 public class AdvertisingIdClient {
@@ -34,7 +32,7 @@ public class AdvertisingIdClient {
 
     }
 
-    public static Info getAdvertisingIdInfo(Context context) throws GooglePlayServicesNotAvailableException, GooglePlayServicesRepairableException {
+    public static Info getAdvertisingIdInfo(Context context) {
         return new Info();
     }
 
