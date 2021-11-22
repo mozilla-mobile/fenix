@@ -984,20 +984,16 @@ class SmokeTest {
 
     @Test
     fun emptyTabsTrayViewPrivateBrowsingTest() {
-        homeScreen {
-        }.dismissOnboarding()
-
-        homeScreen {
-        }.openTabDrawer {
+        navigationToolbar {
+        }.openTabTray {
         }.toggleToPrivateTabs() {
-            verifyPrivateModeSelected()
-            verifyNormalBrowsingButtonIsDisplayed()
-            verifyNoTabsOpened()
+            verifyNormalBrowsingButtonIsSelected(false)
+            verifyPrivateBrowsingButtonIsSelected(true)
+            verifySyncedTabsButtonIsSelected(false)
+            verifyNoOpenTabsInPrivateBrowsing()
+            verifyPrivateBrowsingNewTabButton()
             verifyTabTrayOverflowMenu(true)
-            verifyNewTabButton()
-        }.openTabsListThreeDotMenu {
-            verifyTabSettingsButton()
-            verifyRecentlyClosedTabsButton()
+            verifyEmptyTabsTrayMenuButtons()
         }
     }
 
@@ -1013,14 +1009,19 @@ class SmokeTest {
         }.enterURLAndEnterToBrowser(website.url) {
             mDevice.waitForIdle()
         }.openTabDrawer {
-            verifyPrivateModeSelected()
-            verifyNormalBrowsingButtonIsDisplayed()
-            verifyExistingTabList()
-            verifyExistingOpenTabs("Test_Page_1")
-            verifyCloseTabsButton("Test_Page_1")
-            verifyOpenedTabThumbnail()
+            verifyNormalBrowsingButtonIsSelected(false)
+            verifyPrivateBrowsingButtonIsSelected(true)
+            verifySyncedTabsButtonIsSelected(false)
             verifyTabTrayOverflowMenu(true)
-            verifyNewTabButton()
+            verifyTabsTrayCounter()
+            verifyExistingTabList()
+            verifyExistingOpenTabs(website.title)
+            verifyCloseTabsButton(website.title)
+            verifyOpenedTabThumbnail()
+            verifyPrivateBrowsingNewTabButton()
+        }.openTab(website.title) {
+            verifyUrl(website.url.toString())
+            verifyTabCounter("1")
         }
     }
 
@@ -1128,7 +1129,7 @@ class SmokeTest {
         }.openTabCrashReporter {
         }.clickTabCrashedCloseButton {
         }.openTabDrawer {
-            verifyNoTabsOpened()
+            verifyNoOpenTabsInNormalBrowsing()
         }
     }
 
