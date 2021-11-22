@@ -10,10 +10,6 @@ import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.service.pocket.PocketRecommendedStory
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.tips.Tip
-import org.mozilla.fenix.historymetadata.RecentlyVisitedItem.RecentHistoryGroup
-import org.mozilla.fenix.historymetadata.RecentlyVisitedItem.RecentHistoryHighlight
-import org.mozilla.fenix.historymetadata.controller.HistoryMetadataController
-import org.mozilla.fenix.historymetadata.interactor.HistoryMetadataInteractor
 import org.mozilla.fenix.home.HomeFragmentState
 import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesCategory
 import org.mozilla.fenix.home.pocket.PocketStoriesController
@@ -23,6 +19,10 @@ import org.mozilla.fenix.home.recentbookmarks.controller.RecentBookmarksControll
 import org.mozilla.fenix.home.recentbookmarks.interactor.RecentBookmarksInteractor
 import org.mozilla.fenix.home.recenttabs.controller.RecentTabController
 import org.mozilla.fenix.home.recenttabs.interactor.RecentTabInteractor
+import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem.RecentHistoryGroup
+import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem.RecentHistoryHighlight
+import org.mozilla.fenix.home.recentvisits.controller.RecentVisitsController
+import org.mozilla.fenix.home.recentvisits.interactor.RecentVisitsInteractor
 
 /**
  * Interface for tab related actions in the [SessionControlInteractor].
@@ -243,7 +243,7 @@ class SessionControlInteractor(
     private val controller: SessionControlController,
     private val recentTabController: RecentTabController,
     private val recentBookmarksController: RecentBookmarksController,
-    private val historyMetadataController: HistoryMetadataController,
+    private val recentVisitsController: RecentVisitsController,
     private val pocketStoriesController: PocketStoriesController
 ) : CollectionInteractor,
     OnboardingInteractor,
@@ -254,7 +254,7 @@ class SessionControlInteractor(
     ExperimentCardInteractor,
     RecentTabInteractor,
     RecentBookmarksInteractor,
-    HistoryMetadataInteractor,
+    RecentVisitsInteractor,
     CustomizeHomeIteractor,
     PocketStoriesInteractor {
 
@@ -383,25 +383,25 @@ class SessionControlInteractor(
     }
 
     override fun onHistoryShowAllClicked() {
-        historyMetadataController.handleHistoryShowAllClicked()
+        recentVisitsController.handleHistoryShowAllClicked()
     }
 
     override fun onRecentHistoryGroupClicked(recentHistoryGroup: RecentHistoryGroup) {
-        historyMetadataController.handleRecentHistoryGroupClicked(
+        recentVisitsController.handleRecentHistoryGroupClicked(
             recentHistoryGroup
         )
     }
 
-    override fun onRemoveRecentHistoryGroup(searchTerm: String) {
-        historyMetadataController.handleRemoveRecentHistoryGroup(searchTerm)
+    override fun onRemoveRecentHistoryGroup(groupTitle: String) {
+        recentVisitsController.handleRemoveRecentHistoryGroup(groupTitle)
     }
 
     override fun onRecentHistoryHighlightClicked(recentHistoryHighlight: RecentHistoryHighlight) {
-        historyMetadataController.handleRecentHistoryHighlightClicked(recentHistoryHighlight)
+        recentVisitsController.handleRecentHistoryHighlightClicked(recentHistoryHighlight)
     }
 
-    override fun onRemoveRecentHistoryHighlight(url: String) {
-        historyMetadataController.handleRemoveRecentHistoryHighlight(url)
+    override fun onRemoveRecentHistoryHighlight(highlightUrl: String) {
+        recentVisitsController.handleRemoveRecentHistoryHighlight(highlightUrl)
     }
 
     override fun openCustomizeHomePage() {

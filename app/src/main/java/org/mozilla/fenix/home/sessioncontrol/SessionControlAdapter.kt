@@ -19,8 +19,6 @@ import mozilla.components.feature.top.sites.TopSite.Type.FRECENT
 import mozilla.components.ui.widgets.WidgetSiteItemView
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.components.tips.Tip
-import org.mozilla.fenix.historymetadata.view.HistoryMetadataHeaderViewHolder
-import org.mozilla.fenix.historymetadata.view.RecentlyVisitedViewHolder
 import org.mozilla.fenix.home.HomeFragmentStore
 import org.mozilla.fenix.home.TopPlaceholderViewHolder
 import org.mozilla.fenix.home.pocket.PocketStoriesViewHolder
@@ -28,6 +26,8 @@ import org.mozilla.fenix.home.recentbookmarks.view.RecentBookmarksHeaderViewHold
 import org.mozilla.fenix.home.recentbookmarks.view.RecentBookmarksViewHolder
 import org.mozilla.fenix.home.recenttabs.view.RecentTabViewHolder
 import org.mozilla.fenix.home.recenttabs.view.RecentTabsHeaderViewHolder
+import org.mozilla.fenix.home.recentvisits.view.RecentVisitsHeaderViewHolder
+import org.mozilla.fenix.home.recentvisits.view.RecentlyVisitedViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.CollectionHeaderViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.CollectionViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.CustomizeHomeButtonViewHolder
@@ -159,8 +159,8 @@ sealed class AdapterItem(@LayoutRes val viewType: Int) {
     object RecentTabsHeader : AdapterItem(RecentTabsHeaderViewHolder.LAYOUT_ID)
     object RecentTabItem : AdapterItem(RecentTabViewHolder.LAYOUT_ID)
 
-    object HistoryMetadataHeader : AdapterItem(HistoryMetadataHeaderViewHolder.LAYOUT_ID)
-    object HistoryMetadataGroup : AdapterItem(RecentlyVisitedViewHolder.LAYOUT_ID)
+    object RecentVisitsHeader : AdapterItem(RecentVisitsHeaderViewHolder.LAYOUT_ID)
+    object RecentVisitsItems : AdapterItem(RecentlyVisitedViewHolder.LAYOUT_ID)
 
     object RecentBookmarksHeader : AdapterItem(RecentBookmarksHeaderViewHolder.LAYOUT_ID)
     object RecentBookmarks : AdapterItem(RecentBookmarksViewHolder.LAYOUT_ID)
@@ -274,7 +274,7 @@ class SessionControlAdapter(
             ExperimentDefaultBrowserCardViewHolder.LAYOUT_ID -> ExperimentDefaultBrowserCardViewHolder(view, interactor)
             RecentTabsHeaderViewHolder.LAYOUT_ID -> RecentTabsHeaderViewHolder(view, interactor)
             RecentBookmarksHeaderViewHolder.LAYOUT_ID -> RecentBookmarksHeaderViewHolder(view, interactor)
-            HistoryMetadataHeaderViewHolder.LAYOUT_ID -> HistoryMetadataHeaderViewHolder(
+            RecentVisitsHeaderViewHolder.LAYOUT_ID -> RecentVisitsHeaderViewHolder(
                 view,
                 interactor
             )

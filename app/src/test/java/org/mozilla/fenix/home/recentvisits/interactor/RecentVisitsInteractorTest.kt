@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.fenix.historymetadata.interactor
+package org.mozilla.fenix.home.recentvisits.interactor
 
 import io.mockk.mockk
 import io.mockk.verify
@@ -11,22 +11,22 @@ import mozilla.components.concept.storage.HistoryMetadata
 import mozilla.components.concept.storage.HistoryMetadataKey
 import org.junit.Before
 import org.junit.Test
-import org.mozilla.fenix.historymetadata.RecentlyVisitedItem.RecentHistoryGroup
-import org.mozilla.fenix.historymetadata.RecentlyVisitedItem.RecentHistoryHighlight
-import org.mozilla.fenix.historymetadata.controller.HistoryMetadataController
 import org.mozilla.fenix.home.pocket.PocketStoriesController
 import org.mozilla.fenix.home.recentbookmarks.controller.RecentBookmarksController
 import org.mozilla.fenix.home.recenttabs.controller.RecentTabController
+import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem.RecentHistoryGroup
+import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem.RecentHistoryHighlight
+import org.mozilla.fenix.home.recentvisits.controller.RecentVisitsController
 import org.mozilla.fenix.home.sessioncontrol.DefaultSessionControlController
 import org.mozilla.fenix.home.sessioncontrol.SessionControlInteractor
 
-class HistoryMetadataInteractorTest {
+class RecentVisitsInteractorTest {
     private val defaultSessionControlController: DefaultSessionControlController =
         mockk(relaxed = true)
     private val recentTabController: RecentTabController = mockk(relaxed = true)
     private val recentBookmarksController: RecentBookmarksController = mockk(relaxed = true)
     private val pocketStoriesController: PocketStoriesController = mockk(relaxed = true)
-    private val historyMetadataController: HistoryMetadataController = mockk(relaxed = true)
+    private val recentVisitsController: RecentVisitsController = mockk(relaxed = true)
 
     private lateinit var interactor: SessionControlInteractor
 
@@ -36,7 +36,7 @@ class HistoryMetadataInteractorTest {
             defaultSessionControlController,
             recentTabController,
             recentBookmarksController,
-            historyMetadataController,
+            recentVisitsController,
             pocketStoriesController
         )
     }
@@ -61,14 +61,14 @@ class HistoryMetadataInteractorTest {
 
         interactor.onRecentHistoryGroupClicked(historyGroup)
         verify {
-            historyMetadataController.handleRecentHistoryGroupClicked(historyGroup)
+            recentVisitsController.handleRecentHistoryGroupClicked(historyGroup)
         }
     }
 
     @Test
     fun handleHistoryShowAllClicked() {
         interactor.onHistoryShowAllClicked()
-        verify { historyMetadataController.handleHistoryShowAllClicked() }
+        verify { recentVisitsController.handleHistoryShowAllClicked() }
     }
 
     @Test
@@ -98,7 +98,7 @@ class HistoryMetadataInteractorTest {
         interactor.onRemoveRecentHistoryGroup(historyGroup.title)
 
         verify {
-            historyMetadataController.handleRemoveRecentHistoryGroup(historyGroup.title)
+            recentVisitsController.handleRemoveRecentHistoryGroup(historyGroup.title)
         }
     }
 
@@ -108,13 +108,13 @@ class HistoryMetadataInteractorTest {
 
         interactor.onRecentHistoryHighlightClicked(historyHighlight)
 
-        verify { historyMetadataController.handleRecentHistoryHighlightClicked(historyHighlight) }
+        verify { recentVisitsController.handleRecentHistoryHighlightClicked(historyHighlight) }
     }
 
     @Test
     fun onRemoveRecentHistoryHighlight() {
         interactor.onRemoveRecentHistoryHighlight("url")
 
-        verify { historyMetadataController.handleRemoveRecentHistoryHighlight("url") }
+        verify { recentVisitsController.handleRemoveRecentHistoryHighlight("url") }
     }
 }

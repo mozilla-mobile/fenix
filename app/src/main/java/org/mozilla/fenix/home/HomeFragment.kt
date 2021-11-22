@@ -103,8 +103,6 @@ import org.mozilla.fenix.ext.recordExposureEvent
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.historymetadata.HistoryMetadataFeature
-import org.mozilla.fenix.historymetadata.controller.DefaultHistoryMetadataController
 import org.mozilla.fenix.home.mozonline.showPrivacyPopWindow
 import org.mozilla.fenix.home.pocket.DefaultPocketStoriesController
 import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesCategory
@@ -113,6 +111,8 @@ import org.mozilla.fenix.home.recentbookmarks.controller.DefaultRecentBookmarksC
 import org.mozilla.fenix.home.recenttabs.RecentTab
 import org.mozilla.fenix.home.recenttabs.RecentTabsListFeature
 import org.mozilla.fenix.home.recenttabs.controller.DefaultRecentTabsController
+import org.mozilla.fenix.home.recentvisits.RecentVisitsFeature
+import org.mozilla.fenix.home.recentvisits.controller.DefaultRecentVisitsController
 import org.mozilla.fenix.home.sessioncontrol.DefaultSessionControlController
 import org.mozilla.fenix.home.sessioncontrol.SessionControlInteractor
 import org.mozilla.fenix.home.sessioncontrol.SessionControlView
@@ -179,7 +179,7 @@ class HomeFragment : Fragment() {
     private val topSitesFeature = ViewBoundFeatureWrapper<TopSitesFeature>()
     private val recentTabsListFeature = ViewBoundFeatureWrapper<RecentTabsListFeature>()
     private val recentBookmarksFeature = ViewBoundFeatureWrapper<RecentBookmarksFeature>()
-    private val historyMetadataFeature = ViewBoundFeatureWrapper<HistoryMetadataFeature>()
+    private val historyMetadataFeature = ViewBoundFeatureWrapper<RecentVisitsFeature>()
 
     @VisibleForTesting
     internal var getMenuButton: () -> MenuButton? = { binding.menuButton }
@@ -316,7 +316,7 @@ class HomeFragment : Fragment() {
 
         if (requireContext().settings().historyMetadataUIFeature) {
             historyMetadataFeature.set(
-                feature = HistoryMetadataFeature(
+                feature = RecentVisitsFeature(
                     homeStore = homeFragmentStore,
                     historyMetadataStorage = components.core.historyStorage,
                     historyHighlightsStorage = components.core.lazyHistoryStorage,
@@ -357,7 +357,7 @@ class HomeFragment : Fragment() {
                 activity = activity,
                 navController = findNavController()
             ),
-            historyMetadataController = DefaultHistoryMetadataController(
+            recentVisitsController = DefaultRecentVisitsController(
                 navController = findNavController(),
                 homeStore = homeFragmentStore,
                 selectOrAddTabUseCase = components.useCases.tabsUseCases.selectOrAddTab,

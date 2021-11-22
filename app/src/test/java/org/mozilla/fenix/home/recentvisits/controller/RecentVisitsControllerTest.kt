@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.fenix.historymetadata.controller
+package org.mozilla.fenix.home.recentvisits.controller
 
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
@@ -31,15 +31,15 @@ import org.junit.Test
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
-import org.mozilla.fenix.historymetadata.RecentlyVisitedItem.RecentHistoryGroup
-import org.mozilla.fenix.historymetadata.RecentlyVisitedItem.RecentHistoryHighlight
 import org.mozilla.fenix.home.HomeFragmentAction
 import org.mozilla.fenix.home.HomeFragmentAction.RemoveRecentHistoryHighlight
 import org.mozilla.fenix.home.HomeFragmentDirections
 import org.mozilla.fenix.home.HomeFragmentStore
+import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem.RecentHistoryGroup
+import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem.RecentHistoryHighlight
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class HistoryMetadataControllerTest {
+class RecentVisitsControllerTest {
 
     private val testDispatcher = TestCoroutineDispatcher()
 
@@ -55,7 +55,7 @@ class HistoryMetadataControllerTest {
     private lateinit var store: BrowserStore
     private val scope = TestCoroutineScope()
 
-    private lateinit var controller: DefaultHistoryMetadataController
+    private lateinit var controller: DefaultRecentVisitsController
 
     @Before
     fun setup() {
@@ -67,7 +67,7 @@ class HistoryMetadataControllerTest {
         store = mockk(relaxed = true)
 
         controller = spyk(
-            DefaultHistoryMetadataController(
+            DefaultRecentVisitsController(
                 homeStore = homeFragmentStore,
                 store = store,
                 selectOrAddTabUseCase = selectOrAddTabUseCase,

@@ -2,10 +2,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.fenix.historymetadata
+package org.mozilla.fenix.home.recentvisits
 
 import mozilla.components.concept.storage.HistoryMetadata
-import org.mozilla.fenix.historymetadata.RecentlyVisitedItem.RecentHistoryGroup
+import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem.RecentHistoryGroup
 
 /**
  * History items as individual or groups of previously accessed webpages.

@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.fenix.historymetadata
+package org.mozilla.fenix.home.recentvisits
 
 import androidx.annotation.VisibleForTesting
 import kotlinx.coroutines.CoroutineDispatcher
@@ -17,13 +17,13 @@ import mozilla.components.concept.storage.HistoryHighlightWeights
 import mozilla.components.concept.storage.HistoryMetadata
 import mozilla.components.concept.storage.HistoryMetadataStorage
 import mozilla.components.support.base.feature.LifecycleAwareFeature
-import org.mozilla.fenix.historymetadata.RecentlyVisitedItemInternal.HistoryGroupInternal
-import org.mozilla.fenix.historymetadata.RecentlyVisitedItemInternal.HistoryHighlightInternal
-import org.mozilla.fenix.historymetadata.RecentlyVisitedItem.RecentHistoryGroup
-import org.mozilla.fenix.historymetadata.RecentlyVisitedItem.RecentHistoryHighlight
 import org.mozilla.fenix.home.HomeFragment
 import org.mozilla.fenix.home.HomeFragmentAction
 import org.mozilla.fenix.home.HomeFragmentStore
+import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem.RecentHistoryGroup
+import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem.RecentHistoryHighlight
+import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItemInternal.HistoryGroupInternal
+import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItemInternal.HistoryHighlightInternal
 import kotlin.math.max
 
 @VisibleForTesting internal const val MAX_RESULTS_TOTAL = 9
@@ -31,16 +31,18 @@ import kotlin.math.max
 @VisibleForTesting internal const val MIN_FREQUENCY_OF_HIGHLIGHT = 4.0
 
 /**
- * View-bound feature that retrieves a list of history metadata and dispatches updates to the
- * [HomeFragmentStore].
+ * View-bound feature that retrieves a list of [HistoryHighlight]s and [HistoryMetadata] items
+ * which will be mapped to [RecentlyVisitedItem]s and then dispatched to [HomeFragmentStore]
+ * to be displayed on the homescreen.
  *
  * @param homeStore The [HomeFragmentStore] that holds the state of the [HomeFragment].
  * @param historyMetadataStorage The storage that manages [HistoryMetadata].
- * @param historyHighlightsStorage The storage that manages PlacesHistoryStorage.
- * @param scope The [CoroutineScope] used to retrieve a list of history metadata.
+ * @param historyHighlightsStorage The storage that manages [PlacesHistoryStorage].
+ * @param scope The [CoroutineScope] used for IO operations related to querying history
+ * and then for dispatching updates.
  * @param ioDispatcher The [CoroutineDispatcher] for performing read/write operations.
  */
-class HistoryMetadataFeature(
+class RecentVisitsFeature(
     private val homeStore: HomeFragmentStore,
     private val historyMetadataStorage: HistoryMetadataStorage,
     private val historyHighlightsStorage: Lazy<PlacesHistoryStorage>,

@@ -18,10 +18,10 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
-import org.mozilla.fenix.historymetadata.RecentlyVisitedItem.RecentHistoryGroup
 import org.mozilla.fenix.home.HomeFragmentState
 import org.mozilla.fenix.home.recentbookmarks.RecentBookmark
 import org.mozilla.fenix.home.recenttabs.RecentTab
+import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem.RecentHistoryGroup
 import org.mozilla.fenix.utils.Settings
 
 @RunWith(FenixRobolectricTestRunner::class)
@@ -210,8 +210,8 @@ class SessionControlViewTest {
         )
 
         assertTrue(results[0] is AdapterItem.TopPlaceholderItem)
-        assertTrue(results[1] is AdapterItem.HistoryMetadataHeader)
-        assertTrue(results[2] is AdapterItem.HistoryMetadataGroup)
+        assertTrue(results[1] is AdapterItem.RecentVisitsHeader)
+        assertTrue(results[2] is AdapterItem.RecentVisitsItems)
         assertTrue(results[3] is AdapterItem.CustomizeHomeButton)
     }
 

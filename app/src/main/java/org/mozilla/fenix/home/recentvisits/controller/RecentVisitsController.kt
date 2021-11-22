@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.fenix.historymetadata.controller
+package org.mozilla.fenix.home.recentvisits.controller
 
 import androidx.annotation.VisibleForTesting
 import androidx.annotation.VisibleForTesting.PRIVATE
@@ -16,50 +16,57 @@ import mozilla.components.feature.tabs.TabsUseCases.SelectOrAddUseCase
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
-import org.mozilla.fenix.historymetadata.RecentlyVisitedItem.RecentHistoryGroup
-import org.mozilla.fenix.historymetadata.RecentlyVisitedItem.RecentHistoryHighlight
-import org.mozilla.fenix.historymetadata.interactor.HistoryMetadataInteractor
 import org.mozilla.fenix.home.HomeFragmentAction
 import org.mozilla.fenix.home.HomeFragmentAction.RemoveRecentHistoryHighlight
 import org.mozilla.fenix.home.HomeFragmentDirections
 import org.mozilla.fenix.home.HomeFragmentStore
+import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem.RecentHistoryGroup
+import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem.RecentHistoryHighlight
 import org.mozilla.fenix.library.history.toHistoryMetadata
 
 /**
- * An interface that handles the view manipulation of the history metadata in the Home screen.
+ * All possible updates following user interactions with the "Recent visits" section from the Home screen.
  */
-interface HistoryMetadataController {
+interface RecentVisitsController {
 
     /**
-     * @see [HistoryMetadataInteractor.onHistoryShowAllClicked]
+     * Callback for when the "Show all" link is clicked.
      */
     fun handleHistoryShowAllClicked()
 
     /**
-     * @see [HistoryMetadataInteractor.onRecentHistoryGroupClicked]
+     * Callback for when the user clicks on a specific [RecentHistoryGroup].
+     *
+     * @param recentHistoryGroup The just clicked [RecentHistoryGroup].
      */
     fun handleRecentHistoryGroupClicked(recentHistoryGroup: RecentHistoryGroup)
 
     /**
-     * @see [HistoryMetadataInteractor.onRemoveRecentHistoryGroup]
+     * Callback for when the user removes a certain [RecentHistoryGroup].
+     *
+     * @param groupTitle Title of the [RecentHistoryGroup] to remove.
      */
-    fun handleRemoveRecentHistoryGroup(searchTerm: String)
+    fun handleRemoveRecentHistoryGroup(groupTitle: String)
 
     /**
-     * @see [HistoryMetadataInteractor.onRecentHistoryHighlightClicked]
+     * Callback for when the user clicks on a specific [RecentHistoryHighlight].
+     *
+     * @param recentHistoryHighlight The just clicked [RecentHistoryHighlight].
      */
     fun handleRecentHistoryHighlightClicked(recentHistoryHighlight: RecentHistoryHighlight)
 
     /**
-     * @see [HistoryMetadataInteractor.onRemoveRecentHistoryHighlight]
+     * Callback for when the user removes a certain [RecentHistoryHighlight].
+     *
+     * @param highlightUrl Url of the [RecentHistoryHighlight] to remove.
      */
-    fun handleRemoveRecentHistoryHighlight(url: String)
+    fun handleRemoveRecentHistoryHighlight(highlightUrl: String)
 }
 
 /**
- * The default implementation of [HistoryMetadataController].
+ * The default implementation of [RecentVisitsController].
  */
-class DefaultHistoryMetadataController(
+class DefaultRecentVisitsController(
     private val store: BrowserStore,
     private val homeStore: HomeFragmentStore,
     private val selectOrAddTabUseCase: SelectOrAddUseCase,
@@ -67,8 +74,11 @@ class DefaultHistoryMetadataController(
     private val storage: HistoryMetadataStorage,
     private val scope: CoroutineScope,
     private val metrics: MetricController
-) : HistoryMetadataController {
+) : RecentVisitsController {
 
+    /**
+     * Shows the history fragment.
+     */
     override fun handleHistoryShowAllClicked() {
         dismissSearchDialogIfDisplayed()
         navController.navigate(
@@ -76,6 +86,11 @@ class DefaultHistoryMetadataController(
         )
     }
 
+    /**
+     * Navigates to the history metadata group fragment to display the group.
+     *
+     * @param recentHistoryGroup The [RecentHistoryGroup] to which to navigate to.
+     */
     override fun handleRecentHistoryGroupClicked(recentHistoryGroup: RecentHistoryGroup) {
         navController.navigate(
             HomeFragmentDirections.actionGlobalHistoryMetadataGroup(
@@ -86,28 +101,44 @@ class DefaultHistoryMetadataController(
         )
     }
 
-    override fun handleRemoveRecentHistoryGroup(searchTerm: String) {
+    /**
+     * Removes a [RecentHistoryGroup] with the given title from the homescreen.
+     *
+     * @param groupTitle The title of the [RecentHistoryGroup] to be removed.
+     */
+    override fun handleRemoveRecentHistoryGroup(groupTitle: String) {
         // We want to update the UI right away in response to user action without waiting for the IO.
         // First, dispatch actions that will clean up search groups in the two stores that have
         // metadata-related state.
-        store.dispatch(HistoryMetadataAction.DisbandSearchGroupAction(searchTerm = searchTerm))
-        homeStore.dispatch(HomeFragmentAction.DisbandSearchGroupAction(searchTerm = searchTerm))
+        store.dispatch(HistoryMetadataAction.DisbandSearchGroupAction(searchTerm = groupTitle))
+        homeStore.dispatch(HomeFragmentAction.DisbandSearchGroupAction(searchTerm = groupTitle))
         // Then, perform the expensive IO work of removing search groups from storage.
         scope.launch {
-            storage.deleteHistoryMetadata(searchTerm)
+            storage.deleteHistoryMetadata(groupTitle)
         }
         metrics.track(Event.RecentSearchesGroupDeleted)
     }
 
+    /**
+     * Switch to an already open tab for [recentHistoryHighlight] if one exists or
+     * create a new tab in which to load this item's URL.
+     *
+     * @param recentHistoryHighlight the just clicked [RecentHistoryHighlight] to open in browser.
+     */
     override fun handleRecentHistoryHighlightClicked(recentHistoryHighlight: RecentHistoryHighlight) {
         selectOrAddTabUseCase.invoke(recentHistoryHighlight.url)
         navController.navigate(R.id.browserFragment)
     }
 
-    override fun handleRemoveRecentHistoryHighlight(url: String) {
-        homeStore.dispatch(RemoveRecentHistoryHighlight(url))
+    /**
+     * Removes a [RecentHistoryHighlight] with the given title from the homescreen.
+     *
+     * @param highlightUrl The title of the [RecentHistoryHighlight] to be removed.
+     */
+    override fun handleRemoveRecentHistoryHighlight(highlightUrl: String) {
+        homeStore.dispatch(RemoveRecentHistoryHighlight(highlightUrl))
         scope.launch {
-            storage.deleteHistoryMetadataForUrl(url)
+            storage.deleteHistoryMetadataForUrl(highlightUrl)
         }
     }
 

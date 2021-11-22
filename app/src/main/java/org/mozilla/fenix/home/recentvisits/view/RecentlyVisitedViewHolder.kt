@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.fenix.historymetadata.view
+package org.mozilla.fenix.home.recentvisits.view
 
 import android.view.View
 import androidx.compose.ui.platform.ComposeView
@@ -12,25 +12,26 @@ import mozilla.components.lib.state.ext.observeAsComposableState
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
-import org.mozilla.fenix.historymetadata.RecentlyVisitedItem.RecentHistoryGroup
-import org.mozilla.fenix.historymetadata.RecentlyVisitedItem.RecentHistoryHighlight
-import org.mozilla.fenix.historymetadata.interactor.HistoryMetadataInteractor
 import org.mozilla.fenix.home.HomeFragmentStore
+import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem
+import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem.RecentHistoryGroup
+import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem.RecentHistoryHighlight
+import org.mozilla.fenix.home.recentvisits.interactor.RecentVisitsInteractor
 import org.mozilla.fenix.theme.FirefoxTheme
 import org.mozilla.fenix.utils.view.ViewHolder
 
 /**
- * View holder for a history metadata group item.
+ * View holder for [RecentlyVisitedItem]s.
  *
  * @param composeView [ComposeView] which will be populated with Jetpack Compose UI content.
- * @param store [HomeFragmentStore] containing the list of history metadata groups to be displayed.
- * @property interactor [HistoryMetadataInteractor] which will have delegated to all user interactions.
+ * @param store [HomeFragmentStore] containing the list of [RecentlyVisitedItem] to be displayed.
+ * @property interactor [RecentVisitsInteractor] which will have delegated to all user interactions.
  * @property metrics [MetricController] that handles telemetry events.
  */
 class RecentlyVisitedViewHolder(
     val composeView: ComposeView,
     private val store: HomeFragmentStore,
-    private val interactor: HistoryMetadataInteractor,
+    private val interactor: RecentVisitsInteractor,
     private val metrics: MetricController
 ) : ViewHolder(composeView) {
 
