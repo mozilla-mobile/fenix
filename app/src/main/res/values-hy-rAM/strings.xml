@@ -51,7 +51,11 @@
 
     <!-- Home - Recently saved bookmarks -->
     <!-- Title for the home screen section with recently saved bookmarks. -->
-    <string name="recently_saved_bookmarks">Վերջերս պահպանված</string>
+    <string moz:removedIn="94" name="recently_saved_bookmarks" tools:ignore="UnusedResources">Վերջերս պահպանված</string>
+    <!-- Title for the home screen section with recently saved bookmarks. -->
+    <string moz:removedIn="94" name="recently_bookmarked" tools:ignore="UnusedResources">Վերջերս էջանշված</string>
+    <!-- Title for the home screen section with recently saved bookmarks. -->
+    <string name="recent_bookmarks_title">Վերջին Էջանիշերը</string>
     <!-- Content description for the recently saved bookmarks section on the home screen. -->
     <string name="recently_saved_bookmarks_content_description">Վերջերս պահպանված էջանիշները</string>
     <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
@@ -103,6 +107,11 @@
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">Բաց թողնել</string>
 
+    <!-- Text for the banner message to tell users about our inactive tabs feature. -->
+    <string name="tab_tray_inactive_onboarding_message" tools:ignore="UnusedResources">Երկու շաբաթ չնայած էջանիշերը տեղափոխվում են այստեղ:</string>
+    <!-- Text for the action link to go to Settings for inactive tabs. -->
+    <string name="tab_tray_inactive_onboarding_button_text" tools:ignore="UnusedResources">Անջատել կարգավորումներում</string>
+
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
     <string name="home_screen_shortcut_open_new_tab_2">Նոր ներդիր</string>
@@ -119,10 +128,32 @@
     <!-- Button text for showing all the tabs in the tabs tray -->
     <string name="recent_tabs_show_all">Ցուցադրել բոլորը</string>
 
+    <!-- Content description for the button which navigates the user to show all recent tabs in the tabs tray. -->
+    <string name="recent_tabs_show_all_content_description">Ցույց տալ բոլոր վերջին ներդիրների կոճակը</string>
+    <!-- Title for showing a group item in the 'Jump back in' section of the new tab
+        The first parameter is the search term that the user used. (for example: your search for "cat")-->
+    <string name="recent_tabs_search_term">Ձեր որոնումը \&quot;%1$s\&quot;-ի համար</string>
+    <!-- Text for the number of tabs in a group in the 'Jump back in' section of the new tab
+        The first parameter is the count for number of sites in the group.  This number will always be more than one. -->
+    <string name="recent_tabs_search_term_count">Կայքեր՝ %1$s</string>
+
     <!-- History Metadata -->
     <!-- Header text for a section on the home screen that displays grouped highlights from the
          user's browsing history, such as topics they have researched or explored on the web -->
-    <string name="history_metadata_header">Անցյալ հետազոտություններ</string>
+    <string moz:removedIn="94" name="history_metadata_header" tools:ignore="UnusedResources">Անցյալ հետազոտություններ</string>
+
+    <!-- Header text for a section on the home screen that displays grouped highlights from the
+         user's browsing history, such as topics they have researched or explored on the web -->
+    <string moz:removedIn="94" name="history_metadata_header_2" tools:ignore="UnusedResources">Վերջերս այցելած</string>
+    <!-- Header text for a section on the home screen that displays grouped highlights from the
+         user's browsing history, such as topics they have researched or explored on the web -->
+    <string name="history_metadata_header_3">Վերջին որոնումները</string>
+    <!-- Text for the menu button to remove a grouped highlight from the user's browsing history
+         in the Recently visited section -->
+    <string name="recently_visited_menu_item_remove">Հեռացնել</string>
+
+    <!-- Content description for the button which navigates the user to show all of their history. -->
+    <string name="past_explorations_show_all_content_description">Ցույց տալ բոլոր անցած հետազոտությունների կոճակը</string>
 
     <!-- Browser Fragment -->
     <!-- Content description (not visible, for screen readers etc.): Navigate to open tabs -->
@@ -199,6 +230,10 @@
     <!-- Browser menu label for editing a bookmark -->
     <string name="browser_menu_edit">Խմբագրել</string>
 
+    <!-- Browser menu button that opens the Customize menu -->
+    <string name="browser_menu_customize_home">Հարմարեցնել տնայինը</string>
+    <!-- Button shown on the home page that opens the Customize home settings -->
+    <string name="browser_menu_customize_home_1">Հարմարեցնել տնայինը</string>
     <!-- Browser Toolbar -->
     <!-- Content description for the Home screen button on the browser toolbar -->
     <string name="browser_toolbar_home">Հիմնական էկրան</string>
@@ -243,6 +278,27 @@
     <string name="search_engine_suggestions_title">Որոնել %s</string>
     <!-- Search engine suggestion description text -->
     <string name="search_engine_suggestions_description">Որոնել ուղղակիրոեն հասցեագոտուց</string>
+
+    <!-- Home onboarding -->
+    <!-- Onboarding home screen dialog title text. Firefox is intentionally hardcoded. -->
+    <string name="onboarding_home_screen_title_2">Ինչն է նոր Firefox-ում</string>
+    <!-- Onboarding home screen dialog description text. -->
+    <string name="onboarding_home_screen_description_2">Այժմ ավելի հեշտ է շարունակել այն տեղից, որտեղ կանգ եք առել:</string>
+    <!-- Onboarding home screen dialog title text for the home section. Firefox is intentionally hardcoded. -->
+    <string name="onboarding_home_screen_section_home_title_2">Անհատականացված Firefox-ի տնային էջ</string>
+    <!-- Onboarding home screen dialog description text for the home section. -->
+    <string name="onboarding_home_screen_section_home_description_2">Անցեք ձեր բաց ներդիրներին, էջանիշերին և զննման պատմությանը:</string>
+    <!-- Onboarding home screen dialog description text for the tab tray section. -->
+    <string name="onboarding_home_screen_section_cleaner_tab_tray_title_2">Մաքուր, կազմակերպված ներդիրներ</string>
+    <!-- Onboarding home screen dialog description text for the tab tray section. -->
+    <string name="onboarding_home_screen_section_cleaner_tab_tray_description_2">Կարգի բերեք ներդիրները դասավորությունը լավարկելու և ինքնափակելու միջոցով:</string>
+    <!-- Onboarding home screen dialog description text for the history section. -->
+    <string name="onboarding_home_screen_section_useful_history_title_2">Վերջին որոնումները</string>
+    <!-- Onboarding home screen dialog description text for the history section. -->
+    <string name="onboarding_home_screen_section_useful_history_description_2">Վերանայեք ձեր վերջին որոնումները ձեր տնային էջից և ներդիրներից:</string>
+
+    <!-- Onboarding home screen popup dialog, shown on top of the Jump back in section. Firefox is intentionally hardcoded. -->
+    <string name="onboarding_home_screen_jump_back_contextual_hint" tools:ignore="UnusedResources">Ձեր անհատականացված Firefox-ի տնային էջը այժմ հեշտացնում է աշխատանքը շարունակելու այն կետից, որում կանգնել եք: Գտեք ձեր վերջին ներդիրները, էջանիշերը և որոնման արդյունքները:</string>
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
@@ -390,6 +446,24 @@
     <string name="customize_addon_collection_user_hint">Հավաքածուի սեփականատեր (օգտվողի ID)</string>
     <!-- Toast shown after confirming the custom add-on collection configuration -->
     <string name="toast_customize_addon_collection_done">Հավելումների հավաքածուն փոփոխվել է: Հավելվածը փակելիս փոփոխությունները կգործադրվեն:</string>
+
+    <!-- Customize Home -->
+    <!-- Header text for jumping back into the recent tab in customize the home screen -->
+    <string name="customize_toggle_jump_back_in">Վերադառնալ հետ</string>
+    <!-- Title for the customize home screen section with recently saved bookmarks. -->
+    <string moz:removedIn="94" name="customize_toggle_recently_saved_bookmarks" tools:ignore="UnusedResources">Վերջերս պահված</string>
+    <!-- Title for the customize home screen section with recently saved bookmarks. -->
+    <string moz:removedIn="94" name="customize_toggle_recently_bookmarked" tools:ignore="UnusedResources">Վերջերս էջանշված</string>
+    <!-- Title for the customize home screen section with recently saved bookmarks. -->
+    <string name="customize_toggle_recent_bookmarks">Վերջին Էջանիշերը</string>
+    <!-- Title for the customize home screen section with recently visited. Recently visited is
+    a section where users see a list of tabs that they have visited in the past few days -->
+    <string moz:removedIn="94" name="customize_toggle_recently_visited" tools:ignore="UnusedResources">Վերջերս այցելած</string>
+    <!-- Title for the customize home screen settings section for recent searches. Recent searches
+     is a section where users see a list of groups of tabs that they have visited in the past few days -->
+    <string name="customize_toggle_recent_searches">Վերջին որոնումները</string>
+    <!-- Title for the customize home screen section with Pocket. -->
+    <string name="customize_toggle_pocket">Pocket</string>
 
     <!-- Add-on Installation from AMO-->
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
@@ -575,6 +649,13 @@
     <!-- Content description (not visible, for screen readers etc.): "Close button for library settings" -->
     <string name="content_description_close_button">Փակել</string>
 
+    <!-- Text to show users they have one site in the history group section of the History fragment.
+    %d is a placeholder for the number of sites in the group. -->
+    <string name="history_search_group_site">%d կայք</string>
+    <!-- Text to show users they have multiple sites in the history group section of the History fragment.
+    %d is a placeholder for the number of sites in the group. -->
+    <string name="history_search_group_sites">%d կայքեր</string>
+
     <!-- Option in library for Recently Closed Tabs -->
     <string name="library_recently_closed_tabs">Վերջերս փակված ներդիրներ</string>
     <!-- Option in library to open Recently Closed Tabs page -->
@@ -597,6 +678,10 @@
     <string name="tab_view_list">Ցանկ</string>
     <!-- Option for a grid tab view -->
     <string name="tab_view_grid">Ցանց</string>
+    <!-- Option for search term tab groups -->
+    <string name="tab_view_search_term_tab_groups">Որոնել խմբեր</string>
+    <!-- Summary text for search term tab groups -->
+    <string name="tab_view_search_term_tab_groups_summary">Խմբավորել առնչվող կայքերը միասին</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
     <string name="preferences_close_tabs">Փակել ներդիրները</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
@@ -607,6 +692,9 @@
     <string name="close_tabs_after_one_week">Մեկ շաբաթ անց</string>
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">Մեկ ամիս անց</string>
+
+    <!-- Title of preference that allows a user to specify the auto-close settings for open tabs -->
+    <string name="preference_auto_close_tabs" tools:ignore="UnusedResources">Ինքնափակել բաց ներդիրները</string>
 
     <!-- Start on Home -->
     <!-- Title of a preference that allows a user to indicate after a specified amount of time when the app should start on the home screen -->
@@ -625,6 +713,12 @@
     <string name="close_tabs_after_one_week_summary">Փակել մեկ շաբաթ անց</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one month-->
     <string name="close_tabs_after_one_month_summary">Փակել մեկ ամիս անց</string>
+
+    <!-- Inactive tabs -->
+    <!-- Category header of a preference that allows a user to enable or disable the inactive tabs feature -->
+    <string name="preferences_inactive_tabs">Տեղափոխել հին ներդիրները անգործուն</string>
+    <!-- Title of inactive tabs preference -->
+    <string name="preferences_inactive_tabs_title">Ներդիրները, որոնք չեք դիտել երկու շաբաթ, տեղափոխվել են անգործուն հատված:</string>
 
     <!-- Studies -->
     <!-- Title of the remove studies button -->
@@ -745,6 +839,12 @@
     <!-- Button in the current tab tray header in multiselect mode. Saved the selected tabs to a collection when pressed. -->
     <string name="tab_tray_save_to_collection">Պահպանել</string>
 
+    <!-- Title text for the normal tabs header in the tabs tray which are not part of any tab grouping. -->
+    <string moz:removedIn="94" name="tab_tray_header_title" tools:ignore="UnusedResources">Այլ</string>
+
+    <!-- Title text for the normal tabs header in the tabs tray which are not part of any tab grouping. -->
+    <string name="tab_tray_header_title_1">Այլ ներդիրներ</string>
+
     <!-- History -->
     <!-- Text for the button to clear all history -->
     <string name="history_delete_all">Ջնջել պատմությունը</string>
@@ -757,15 +857,15 @@
     <!-- Text for positive action to delete history in deleting history dialog -->
     <string name="history_clear_dialog">Մաքրել</string>
     <!-- History overflow menu copy button -->
-    <string name="history_menu_copy_button">Պատճենել</string>
+    <string moz:removedIn="94" name="history_menu_copy_button" tools:ignore="UnusedResources">Պատճենել</string>
     <!-- History overflow menu share button -->
-    <string name="history_menu_share_button">Համօգտագործել</string>
+    <string moz:removedIn="94" name="history_menu_share_button" tools:ignore="UnusedResources">Համօգտագործել</string>
     <!-- History overflow menu open in new tab button -->
-    <string name="history_menu_open_in_new_tab_button">Բացել նոր ներդիրում</string>
+    <string moz:removedIn="94" name="history_menu_open_in_new_tab_button" tools:ignore="UnusedResources">Բացել նոր ներդիրում</string>
     <!-- History overflow menu open in private tab button -->
-    <string name="history_menu_open_in_private_tab_button">Բացել Գաղտնի ներդիրում</string>
+    <string moz:removedIn="94" name="history_menu_open_in_private_tab_button" tools:ignore="UnusedResources">Բացել Գաղտնի ներդիրում</string>
     <!-- Text for the button to delete a single history item -->
-    <string name="history_delete_item">Ջնջել</string>
+    <string moz:removedIn="94" name="history_delete_item" tools:ignore="UnusedResources">Ջնջել</string>
     <!-- History multi select title in app bar
     The first parameter is the number of bookmarks selected -->
     <string name="history_multi_select_title">Ընտրված է %1$d-ը</string>
@@ -1239,13 +1339,13 @@
     <!-- text for the Firefox Accounts section header -->
     <string name="onboarding_fxa_section_header">Արդեն ունե՞ք հաշիվ</string>
     <!-- text for the "What's New" onboarding card header -->
-    <string name="onboarding_whats_new_header1">Տեսեք, թե ինչն է նոր</string>
+    <string moz:removedIn="94" name="onboarding_whats_new_header1" tools:ignore="UnusedResources">Տեսեք, թե ինչն է նոր</string>
     <!-- text for the "what's new" onboarding card description
     The first parameter is the short name of the app (e.g. Firefox) -->
-    <string name="onboarding_whats_new_description">Հարցեր ունեք վերափոխված %s-ի հետ: Ցանկանո՞ւմ եք իմանալ, թե ինչ է փոխվել:</string>
+    <string moz:removedIn="94" name="onboarding_whats_new_description" tools:ignore="UnusedResources">Հարցեր ունեք վերափոխված %s-ի հետ: Ցանկանո՞ւմ եք իմանալ, թե ինչ է փոխվել:</string>
 
     <!-- text for underlined clickable link that is part of "what's new" onboarding card description that links to an FAQ -->
-    <string name="onboarding_whats_new_description_linktext">Ստացեք պատասխանները այստեղ</string>
+    <string moz:removedIn="94" name="onboarding_whats_new_description_linktext" tools:ignore="UnusedResources">Ստացեք պատասխանները այստեղ</string>
     <!-- text for the Firefox account onboarding sign in card header. The word "Firefox" should not be translated -->
     <string name="onboarding_account_sign_in_header_1">Համաժամեցնել Firefox-ը</string>
     <!-- Text for the button to learn more about signing in to your Firefox account -->
@@ -1285,14 +1385,14 @@
     <!-- text for the toolbar position card description -->
     <string name="onboarding_toolbar_placement_description_1">Գործիքագոտին դրեք հեշտ հասանելի տեղ: Պահեք այն ներքևում կամ տեղափոխեք վերև:</string>
     <!-- text for the private browsing onboarding card header -->
-    <string name="onboarding_private_browsing_header">Դիտարկել գաղտնի</string>
+    <string moz:removedIn="94" name="onboarding_private_browsing_header" tools:ignore="UnusedResources">Դիտարկել գաղտնի</string>
     <!-- text for the private browsing onboarding card description
     The first parameter is an icon that represents private browsing -->
-    <string name="onboarding_private_browsing_description1">Ցանկանում եք բացել գաղտնի ներդիր, հպեք %s պատկերակին:</string>
+    <string moz:removedIn="94" name="onboarding_private_browsing_description1" tools:ignore="UnusedResources">Ցանկանում եք բացել գաղտնի ներդիր, հպեք %s պատկերակին:</string>
     <!-- text for the private browsing onboarding card description, explaining how to always using private browsing -->
-    <string name="onboarding_private_browsing_always_description">Ցանկանում եք ամեն անգամ բացել գաղտնի ներդիրները. Թարմացրեք գաղտնի դիտարկման կարգավորումները:</string>
+    <string moz:removedIn="94" name="onboarding_private_browsing_always_description" tools:ignore="UnusedResources">Ցանկանում եք ամեն անգամ բացել գաղտնի ներդիրները. Թարմացրեք գաղտնի դիտարկման կարգավորումները:</string>
     <!-- text for the private browsing onbording card button, that launches settings -->
-    <string name="onboarding_private_browsing_button">Բացել կարգավորումները</string>
+    <string moz:removedIn="94" name="onboarding_private_browsing_button" tools:ignore="UnusedResources">Բացել կարգավորումները</string>
     <!-- text for the privacy notice onboarding card header -->
     <string name="onboarding_privacy_notice_header">Ձեր գաղտնիությունը</string>
 
@@ -1459,6 +1559,12 @@
     <!-- Description of redirect tracker cookies that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_redirect_trackers_description">Վերաուղղորդմամբ կայված՝ մաքրում է թխուկները հայտնի հետագծիչ կայքերից:</string>
 
+    <!-- Description of the SmartBlock Enhanced Tracking Protection feature. The * symbol is intentionally hardcoded here,
+         as we use it on the UI to indicate which trackers have been partially unblocked.  -->
+    <string name="preference_etp_smartblock_description">Ստորև նշված որոշ հետագծիչներ մասնակի ապակողպվել են, քանի որ դուք առնչվել եք դրանց հետ *:</string>
+    <!-- Text displayed that links to website about enhanced tracking protection SmartBlock -->
+    <string name="preference_etp_smartblock_learn_more">Իմանալ ավելին</string>
+
     <!-- About page link text to open support link -->
     <string name="about_support">Աջակցում</string>
     <!-- About page link text to list of past crashes (like about:crashes on desktop) -->
@@ -1525,6 +1631,9 @@
     <!-- Description for the preference for autofilling logins from Fenix in other apps (e.g. autofilling the Twitter app) -->
     <string name="preferences_android_autofill_description">Լցրեք օգտվողի անուններն ու գաղտնաբառերը ձեր սարքի այլ հավելվածներում:</string>
 
+    <!-- Preference option for adding a login -->
+    <string name="preferences_logins_add_login">Ավելացնել մուտքագրում</string>
+
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">Համաժամեցնել մուտքանունները</string>
     <!-- Preference for syncing saved logins in Fenix, when not signed in-->
@@ -1588,6 +1697,8 @@
     <string name="saved_login_copy_username">Պատճենել օգտվողի անունը</string>
     <!-- Content Description (for screenreaders etc) read for the button to clear a username while editing a login -->
     <string name="saved_login_clear_username">Մաքրել օգտվողի անունը</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear the hostname field while creating a login -->
+    <string name="saved_login_clear_hostname">Մաքրել հոսթի անունը</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a site in logins -->
     <string name="saved_login_copy_site">Պատճենել կայքը</string>
     <!-- Content Description (for screenreaders etc) read for the button to open a site in logins -->
@@ -1755,9 +1866,13 @@
     <string name="phone_feature_blocked_step_feature"><![CDATA[3. Փոխարկեք <b>%1$s</b>-ը Միաց.]]></string>
 
     <!-- Label that indicates a site is using a secure connection -->
-    <string name="quick_settings_sheet_secure_connection">Անվտանգ կապակցում</string>
+    <string name="quick_settings_sheet_secure_connection_2">Կապակցումն անվտանգ է</string>
     <!-- Label that indicates a site is using a insecure connection -->
-    <string name="quick_settings_sheet_insecure_connection">Ոչ անվտանգ կապակցում</string>
+    <string name="quick_settings_sheet_insecure_connection_2">Կապակցումն անվտանգ չէ</string>
+    <!-- Label that indicates a site is using a secure connection -->
+    <string moz:removedIn="94" name="quick_settings_sheet_secure_connection" tools:ignore="UnusedResources">Անվտանգ կապակցում</string>
+    <!-- Label that indicates a site is using a insecure connection -->
+    <string moz:removedIn="94" name="quick_settings_sheet_insecure_connection" tools:ignore="UnusedResources">Ոչ անվտանգ կապակցում</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete all the permissions for all sites-->
     <string name="confirm_clear_permissions_on_all_sites">Համոզվա՞ծ եք, որ ցանկանում եք մաքրել բոլոր թույլտվությունները բոլոր կայքերում:</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete all the permissions for a site-->
@@ -1797,8 +1912,14 @@
     <string name="discard_changes">Հրաժարվել փոփոխություններից</string>
     <!--  The page title for editing a saved login. -->
     <string name="edit">Խմբագրել</string>
-    <!--  The error message in edit login view when password field is blank. -->
+    <!--  The page title for adding new login. -->
+    <string name="add_login">Հավելել նոր մուտքագրում</string>
+    <!--  The error message in add/edit login view when password field is blank. -->
     <string name="saved_login_password_required">Գաղտնաբառ է պահանջվում</string>
+    <!--  The error message in add login view when username field is blank. -->
+    <string name="saved_login_username_required">Օգտվողի անունը պարտադիր է</string>
+    <!--  The error message in add login view when hostname field is blank. -->
+    <string name="saved_login_hostname_required" tools:ignore="UnusedResources">Հոսթի անունը պարտադիր է</string>
     <!-- Voice search button content description  -->
     <string name="voice_search_content_description">Ձայնային որոնում</string>
     <!-- Voice search prompt description displayed after the user presses the voice search button -->
@@ -1806,6 +1927,15 @@
 
     <!--  The error message in edit login view when a duplicate username exists. -->
     <string name="saved_login_duplicate">Այդ անունով մուտքանուն արդեն գոյություն ունի</string>
+
+    <!-- This is the hint text that is shown inline on the hostname field of the create new login page. 'https://www.example.com' intentionally hardcoded here -->
+    <string name="add_login_hostname_hint_text">https://www.example.com</string>
+    <!-- This is an error message shown below the hostname field of the add login page when a hostname does not contain http or https. -->
+    <string moz:removedIn="94" name="add_login_hostname_invalid_text_1" tools:ignore="UnusedResources">Վեբ հասցեն պետք է պարունակի &quot;https://&quot; կամ &quot;http://&quot;</string>
+    <!-- This is an error message shown below the hostname field of the add login page when a hostname does not contain http or https. -->
+    <string name="add_login_hostname_invalid_text_3">Վեբ հասցեն պետք է պարունակի &quot;https://&quot; կամ &quot;http://&quot;</string>
+    <!-- This is an error message shown below the hostname field of the add login page when a hostname is invalid. -->
+    <string name="add_login_hostname_invalid_text_2">Վավեր հոսթի անուն է պահանջվում</string>
 
     <!-- Synced Tabs -->
     <!-- Text displayed to ask user to connect another device as no devices found with account -->
@@ -1833,8 +1963,10 @@
     <!-- Confirmation dialog button text when top sites limit is reached. -->
     <string name="top_sites_max_limit_confirmation_button">Հասկանալի է</string>
 
+    <!-- Label for the show most visited top sites preference -->
+    <string name="top_sites_toggle_top_frecent_sites_2">Ցուցադրել ամենաշատ այցելված կայքերը</string>
     <!-- Label for the show most visited sites preference -->
-    <string name="top_sites_toggle_top_frecent_sites">Ցուցադրել ամենաշատ այցելվող կայքերը</string>
+    <string moz:removedIn="93" name="top_sites_toggle_top_frecent_sites" tools:ignore="UnusedResources">Ցուցադրել ամենաշատ այցելվող կայքերը</string>
 
     <!-- Title text displayed in the rename top site dialog. -->
 	<string name="top_sites_rename_dialog_title">Անուն</string>
@@ -1845,15 +1977,41 @@
 	<!-- Dialog button text for canceling the rename top site prompt. -->
 	<string name="top_sites_rename_dialog_cancel">Չեղարկել</string>
 
-    <!-- In-activate tabs in the tabs tray -->
-    <!-- Title text displayed in the tabs tray when a tab has been unused for 4 days. -->
+    <!-- Inactive tabs in the tabs tray -->
+    <!-- Title text displayed in the tabs tray when a tab has been unused for 14 days. -->
     <string name="inactive_tabs_title">Ոչ ակտիվ ներդիրներ</string>
+    <!-- Content description for closing all inactive tabs -->
+    <string name="inactive_tabs_delete_all">Փակել բոլոր անգործուն ներդիրները</string>
     <!-- A description below the section of "inactive" tabs to notify the user when those tabs will be closed, if appropriate. See strings inactive_tabs_30_days and inactive_tabs_7_days for placeholders options. -->
     <string name="inactive_tabs_description">Ներդիրներն այստեղ հասանելի են %s: Այդ ժամանակից հետո ներդիրներն ինքնաբար կփակվեն:</string>
     <!-- The amount of time until a tab in the "inactive" section of the tabs tray will be closed. See string inactive_tabs_description as well -->
     <string name="inactive_tabs_30_days">30 օր</string>
     <!-- The amount of time until a tab in the "inactive" section of the tabs tray will be closed. See string inactive_tabs_description as well -->
     <string name="inactive_tabs_7_days">1 շաբաթ</string>
+
+    <!-- Inactive tabs auto-close message in the tabs tray -->
+    <!-- The header text of the auto-close message when the user is asked if they want to turn on the auto-closing of inactive tabs. -->
+    <string name="inactive_tabs_auto_close_message_header" tools:ignore="UnusedResources">Ինքնափակե՞լ մեկ ամսից:</string>
+    <!-- A description below the header to notify the user what the inactive tabs auto-close feature is. -->
+    <string name="inactive_tabs_auto_close_message_description" tools:ignore="UnusedResources">Firefox-ը կարող է փակել ներդիրները, որոնք չեք դիտել վերջին ամսում:</string>
+    <!-- A call to action below the description to allow the user to turn on the auto closing of inactive tabs. -->
+    <string name="inactive_tabs_auto_close_message_action" tools:ignore="UnusedResources">ՄԻԱՑՆԵԼ ԻՆՔՆԱՓԱԿՈՒՄԸ</string>
+
+    <!-- Inactive tabs survey -->
+    <!-- Header text for the inactive tabs survey asking for feedback to improve the inactive tabs feature. -->
+    <string name="inactive_tabs_survey_header" tools:ignore="UnusedResources">Օգնեք մեզ բարելավել</string>
+    <!-- Content text for the inactive tabs survey asking the primary survey feedback question. -->
+    <string name="inactive_tabs_survey_content" tools:ignore="UnusedResources">Ինչու՞ եք անջատել անգործուն ներդիրները:</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string name="inactive_tabs_survey_not_interested_option" tools:ignore="UnusedResources">Հետաքրքրված չեմ</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string name="inactive_tabs_survey_time_too_long_option" tools:ignore="UnusedResources">Անգործունության ժամանակը երկար է</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string name="inactive_tabs_survey_time_too_short_option" tools:ignore="UnusedResources">Անգործունության ժամանակը կարճ է</string>
+    <!-- Confirmation button text to submit the feedback for the inactive tabs survey. -->
+    <string name="inactive_tabs_survey_send_button" tools:ignore="UnusedResources">Ուղարկել</string>
+    <!-- Content description for inactive tabs survey close button -->
+    <string name="inactive_tabs_survey_close_button_content_description" tools:ignore="UnusedResources">Փակել</string>
 
     <!-- Default browser experiment -->
     <string name="default_browser_experiment_card_text">Կայեք հղումներ կայքերից, էլ. նամակներից և հաղորդագրություններից, որոնք ինքնաբար կերպով կբացվեն Firefox-ում:</string>
@@ -1870,4 +2028,19 @@
     <!-- Content description for privacy content close button -->
     <string name="privacy_content_close_button_content_description">Փակել</string>
 
+    <!-- Pocket recommended stories -->
+    <!-- Header text for a section on the home screen. -->
+    <string moz:removedIn="94" name="pocket_stories_header" tools:ignore="UnusedResources">Մտահանգման պատմություններ</string>
+    <!-- Header text for a section on the home screen. -->
+    <string name="pocket_stories_header_1">Մտահանգման պատմություններով</string>
+    <!-- Header text for a section on the home screen. -->
+    <string name="pocket_stories_categories_header">Պատմություններ ըստ թեմայի</string>
+    <!-- Text of a button allowing users to access an external url for more Pocket recommendations. -->
+    <string name="pocket_stories_placeholder_text">Բացահայտի՛ր ավելին</string>
+    <!-- Title of an app feature. Smaller than a heading.-->
+    <string name="pocket_stories_feature_title">Pocket-ի կողմից:</string>
+    <!-- Caption for describing a certain feature. The placeholder is for a clickable text (eg: Learn more) which will load an url in a new tab when clicked.  -->
+    <string name="pocket_stories_feature_caption">Firefox ընտանիքի մի մասը: %s</string>
+    <!-- Clickable text for opening an external link for more information about Pocket. -->
+    <string name="pocket_stories_feature_learn_more">Իմանալ ավելին</string>
 </resources>

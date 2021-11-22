@@ -10,6 +10,7 @@ import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.EditTextPreference
+import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
 import org.mozilla.fenix.FeatureFlags
@@ -151,7 +152,31 @@ class CustomizationFragment : PreferenceFragmentCompat() {
     private fun setupHomeCategory() {
         requirePreference<SwitchPreference>(R.string.pref_key_enable_top_frecent_sites).apply {
             isChecked = context.settings().showTopFrecentSites
-            onPreferenceChangeListener = SharedPreferenceUpdater()
+            onPreferenceChangeListener = CustomizeHomeMetricsUpdater()
+        }
+
+        requirePreference<SwitchPreference>(R.string.pref_key_recent_tabs).apply {
+            isVisible = FeatureFlags.showRecentTabsFeature
+            isChecked = context.settings().showRecentTabsFeature
+            onPreferenceChangeListener = CustomizeHomeMetricsUpdater()
+        }
+
+        requirePreference<SwitchPreference>(R.string.pref_key_recent_bookmarks).apply {
+            isVisible = FeatureFlags.recentBookmarksFeature
+            isChecked = context.settings().showRecentBookmarksFeature
+            onPreferenceChangeListener = CustomizeHomeMetricsUpdater()
+        }
+
+        requirePreference<SwitchPreference>(R.string.pref_key_pocket_homescreen_recommendations).apply {
+            isVisible = FeatureFlags.isPocketRecommendationsFeatureEnabled(context)
+            isChecked = context.settings().showPocketRecommendationsFeature
+            onPreferenceChangeListener = CustomizeHomeMetricsUpdater()
+        }
+
+        requirePreference<SwitchPreference>(R.string.pref_key_history_metadata_feature).apply {
+            isVisible = FeatureFlags.historyMetadataUIFeature
+            isChecked = context.settings().historyMetadataUIFeature
+            onPreferenceChangeListener = CustomizeHomeMetricsUpdater()
         }
     }
 
@@ -187,6 +212,24 @@ class CustomizationFragment : PreferenceFragmentCompat() {
         requirePreference<SwitchPreference>(R.string.pref_key_relinquish_memory_under_pressure).apply {
             isChecked = context.settings().shouldRelinquishMemoryUnderPressure
             onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
+    }
+    
+    class CustomizeHomeMetricsUpdater : SharedPreferenceUpdater() {
+        override fun onPreferenceChange(preference: Preference, newValue: Any?): Boolean {
+            try {
+                val context = preference.context
+                context.components.analytics.metrics.track(
+                    Event.CustomizeHomePreferenceToggled(
+                        preference.key,
+                        newValue as Boolean,
+                        context
+                    )
+                )
+            } catch (e: IllegalArgumentException) {
+                // The event is not tracked
+            }
+            return super.onPreferenceChange(preference, newValue)
         }
     }
 }

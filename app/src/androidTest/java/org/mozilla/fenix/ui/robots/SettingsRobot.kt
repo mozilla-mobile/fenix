@@ -6,7 +6,6 @@
 
 package org.mozilla.fenix.ui.robots
 
-import android.content.pm.PackageManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.ViewInteraction
@@ -34,6 +33,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.Constants.PackageName.GOOGLE_PLAY_SERVICES
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestHelper.appName
+import org.mozilla.fenix.helpers.TestHelper.isPackageInstalled
 import org.mozilla.fenix.helpers.TestHelper.scrollToElementByText
 import org.mozilla.fenix.helpers.assertIsEnabled
 import org.mozilla.fenix.helpers.click
@@ -272,6 +272,11 @@ class SettingsRobot {
     }
 }
 
+fun settingsScreen(interact: SettingsRobot.() -> Unit): SettingsRobot.Transition {
+    SettingsRobot().interact()
+    return SettingsRobot.Transition()
+}
+
 private fun assertSettingsView() {
     // verify that we are in the correct library view
     assertGeneralHeading()
@@ -490,15 +495,6 @@ private fun assertGooglePlayRedirect() {
         intended(toPackage(GOOGLE_PLAY_SERVICES))
     } else {
         BrowserRobot().verifyRateOnGooglePlayURL()
-    }
-}
-
-fun isPackageInstalled(packageName: String): Boolean {
-    return try {
-        val packageManager = InstrumentationRegistry.getInstrumentation().context.packageManager
-        packageManager.getApplicationInfo(packageName, 0).enabled
-    } catch (exception: PackageManager.NameNotFoundException) {
-        false
     }
 }
 

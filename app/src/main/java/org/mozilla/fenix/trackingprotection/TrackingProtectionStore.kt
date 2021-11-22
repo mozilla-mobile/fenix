@@ -34,8 +34,6 @@ sealed class TrackingProtectionAction : Action {
 
     data class UrlChange(val url: String) : TrackingProtectionAction()
     data class TrackerLogChange(val listTrackers: List<TrackerLog>) : TrackingProtectionAction()
-    data class TrackerBlockingChanged(val isTrackingProtectionEnabled: Boolean) :
-        TrackingProtectionAction()
 
     object ExitDetailsMode : TrackingProtectionAction()
     data class EnterDetailsMode(
@@ -47,12 +45,14 @@ sealed class TrackingProtectionAction : Action {
 
 /**
  * The state for the Tracking Protection Panel
+ * @property tab Current session to display
  * @property url Current URL to display
- * @property isTrackingProtectionEnabled Current status of tracking protection for this session (ie is an exception)
+ * @property isTrackingProtectionEnabled Current status of tracking protection for this session
+ * (ie is an exception)
  * @property listTrackers Current Tracker Log list of blocked and loaded tracker categories
  * @property mode Current Mode of TrackingProtection
  * @property lastAccessedCategory Remembers the last accessed details category, used to move
- *           accessibly focus after returning from details_moode
+ * accessibly focus after returning from details_mode
  */
 data class TrackingProtectionState(
     val tab: SessionState?,
@@ -132,7 +132,5 @@ fun trackingProtectionStateReducer(
             ),
             lastAccessedCategory = action.category.name
         )
-        is TrackingProtectionAction.TrackerBlockingChanged ->
-            state.copy(isTrackingProtectionEnabled = action.isTrackingProtectionEnabled)
     }
 }

@@ -26,7 +26,6 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.espresso.matcher.ViewMatchers.withResourceName
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
@@ -39,7 +38,6 @@ import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.mediasession.MediaSession
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.containsString
-import org.hamcrest.Matchers.not
 import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.mozilla.fenix.R
@@ -164,15 +162,9 @@ class BrowserRobot {
 
     fun verifyEnhancedTrackingProtectionSwitch() = assertEnhancedTrackingProtectionSwitch()
 
-    fun clickEnhancedTrackingProtectionSwitchOffOn() =
-        onView(withResourceName("switch_widget")).click()
-
-    fun verifyProtectionSettingsButton() = assertProtectionSettingsButton()
-
     fun verifyEnhancedTrackingOptions() {
-        clickEnhancedTrackingProtectionPanel()
+        onView(withId(R.id.mozac_browser_toolbar_security_indicator)).click()
         verifyEnhancedTrackingProtectionSwitch()
-        verifyProtectionSettingsButton()
     }
 
     fun verifyMenuButton() = assertMenuButton()
@@ -213,11 +205,6 @@ class BrowserRobot {
             .check(matches(isDisplayed()))
             .perform(ViewActions.pressBack())
     }
-
-    fun clickEnhancedTrackingProtectionPanel() = enhancedTrackingProtectionIndicator().click()
-
-    fun verifyEnhancedTrackingProtectionPanelNotVisible() =
-        assertEnhancedTrackingProtectionIndicatorNotVisible()
 
     fun clickContextOpenLinkInNewTab() {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
@@ -419,7 +406,9 @@ class BrowserRobot {
                 .className(EditText::class.java)
         )
         passwordField.waitForExists(waitingTime)
-        passwordField.setText(password)
+        passwordField.click()
+        passwordField.clearTextField()
+        passwordField.text = password
         // wait until the password is hidden
         assertTrue(mDevice.findObject(UiSelector().text(password)).waitUntilGone(waitingTime))
     }
@@ -461,10 +450,10 @@ class BrowserRobot {
     fun swipeNavBarRight(tabUrl: String) {
         // failing to swipe on Firebase sometimes, so it tries again
         try {
-            navURLBar().perform(ViewActions.swipeRight())
+            navURLBar().swipeRight(2)
             assertTrue(mDevice.findObject(UiSelector().text(tabUrl)).waitUntilGone(waitingTime))
         } catch (e: AssertionError) {
-            navURLBar().perform(ViewActions.swipeRight())
+            navURLBar().swipeRight(2)
             assertTrue(mDevice.findObject(UiSelector().text(tabUrl)).waitUntilGone(waitingTime))
         }
     }
@@ -472,10 +461,10 @@ class BrowserRobot {
     fun swipeNavBarLeft(tabUrl: String) {
         // failing to swipe on Firebase sometimes, so it tries again
         try {
-            navURLBar().perform(ViewActions.swipeLeft())
+            navURLBar().swipeLeft(2)
             assertTrue(mDevice.findObject(UiSelector().text(tabUrl)).waitUntilGone(waitingTime))
         } catch (e: AssertionError) {
-            navURLBar().perform(ViewActions.swipeLeft())
+            navURLBar().swipeLeft(2)
             assertTrue(mDevice.findObject(UiSelector().text(tabUrl)).waitUntilGone(waitingTime))
         }
     }
@@ -499,7 +488,8 @@ class BrowserRobot {
         }
 
         fun openNavigationToolbar(interact: NavigationToolbarRobot.() -> Unit): NavigationToolbarRobot.Transition {
-            mDevice.waitForIdle(waitingTime)
+            mDevice.findObject(UiSelector().resourceId("$packageName:id/toolbar"))
+                .waitForExists(waitingTime)
             navURLBar().click()
 
             NavigationToolbarRobot().interact()
@@ -507,23 +497,17 @@ class BrowserRobot {
         }
 
         fun openTabDrawer(interact: TabDrawerRobot.() -> Unit): TabDrawerRobot.Transition {
-            mDevice.waitForIdle(waitingTime)
+            mDevice.waitNotNull(Until.findObject(By.desc("Tabs")))
             tabsCounter().click()
-            mDevice.waitNotNull(
-                Until.findObject(By.res("$packageName:id/tab_layout")),
-                waitingTime
-            )
+            mDevice.waitNotNull(Until.findObject(By.res("$packageName:id/tab_layout")))
 
             TabDrawerRobot().interact()
             return TabDrawerRobot.Transition()
         }
 
         fun openTabButtonShortcutsMenu(interact: NavigationToolbarRobot.() -> Unit): NavigationToolbarRobot.Transition {
-            mDevice.waitForIdle(waitingTime)
-
-            tabsCounter().perform(
-                ViewActions.longClick()
-            )
+            mDevice.waitNotNull(Until.findObject(By.desc("Tabs")))
+            tabsCounter().click(LONG_CLICK_DURATION)
 
             NavigationToolbarRobot().interact()
             return NavigationToolbarRobot.Transition()
@@ -540,6 +524,14 @@ class BrowserRobot {
             onView(withContentDescription("Home screen"))
                 .check(matches(isDisplayed()))
                 .click()
+            mDevice.waitForIdle()
+
+            HomeScreenRobot().interact()
+            return HomeScreenRobot.Transition()
+        }
+
+        fun goBack(interact: HomeScreenRobot.() -> Unit): HomeScreenRobot.Transition {
+            mDevice.pressBack()
 
             HomeScreenRobot().interact()
             return HomeScreenRobot.Transition()
@@ -566,27 +558,11 @@ fun browserScreen(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
     return BrowserRobot.Transition()
 }
 
-private fun dismissOnboardingButton() = onView(withId(R.id.close_onboarding))
+fun navURLBar() = mDevice.findObject(UiSelector().resourceId("$packageName:id/toolbar"))
 
-fun dismissTrackingOnboarding() {
-    mDevice.wait(Until.findObject(By.res("close_onboarding")), waitingTime)
-    dismissOnboardingButton().click()
-}
+private fun assertNavURLBar() = assertTrue(navURLBar().waitForExists(waitingTime))
 
-fun navURLBar() = onView(withId(R.id.toolbar))
-
-private fun assertNavURLBar() = navURLBar()
-    .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-
-private fun assertNavURLBarHidden() = navURLBar()
-    .check(matches(not(isDisplayed())))
-
-fun enhancedTrackingProtectionIndicator() =
-    onView(withId(R.id.mozac_browser_toolbar_tracking_protection_indicator))
-
-private fun assertEnhancedTrackingProtectionIndicatorNotVisible() {
-    enhancedTrackingProtectionIndicator().check(matches(not(isDisplayed())))
-}
+private fun assertNavURLBarHidden() = assertTrue(navURLBar().waitUntilGone(waitingTime))
 
 private fun assertEnhancedTrackingProtectionSwitch() {
     withText(R.id.trackingProtectionSwitch)
@@ -610,7 +586,7 @@ private fun assertMenuButton() {
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
-private fun tabsCounter() = onView(withId(R.id.counter_box))
+private fun tabsCounter() = mDevice.findObject(By.desc("Tabs"))
 
 private fun mediaPlayerPlayButton() =
     mDevice.findObject(

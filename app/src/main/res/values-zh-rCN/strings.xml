@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:moz="http://mozac.org/tools">
 
 
     <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
@@ -27,7 +27,7 @@
     <!-- Message announced to the user when tab tray is selected with 1 tab -->
     <string name="open_tab_tray_single">打开了 1 个标签页，点击即可切换。</string>
     <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
-    <string name="open_tab_tray_plural">打开了 %1$s 个标签页，点击即可切换。</string>
+    <string moz:removedIn="95" name="open_tab_tray_plural" tools:ignore="UnusedResources">打开了 %1$s 个标签页，点击即可切换。</string>
 
     <!-- Tab tray multi select title in app bar. The first parameter is the number of tabs selected -->
     <string name="tab_tray_multi_select_title">已选择 %1$d 个标签页</string>
@@ -56,7 +56,11 @@
 
     <!-- Home - Recently saved bookmarks -->
     <!-- Title for the home screen section with recently saved bookmarks. -->
-    <string name="recently_saved_bookmarks">最近保存</string>
+    <string moz:removedIn="94" name="recently_saved_bookmarks" tools:ignore="UnusedResources">最近保存</string>
+    <!-- Title for the home screen section with recently saved bookmarks. -->
+    <string moz:removedIn="94" name="recently_bookmarked" tools:ignore="UnusedResources">最近的书签</string>
+    <!-- Title for the home screen section with recently saved bookmarks. -->
+    <string name="recent_bookmarks_title">最近的书签</string>
     <!-- Content description for the recently saved bookmarks section on the home screen. -->
     <string name="recently_saved_bookmarks_content_description">最近保存的书签</string>
     <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
@@ -108,6 +112,21 @@
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">知道了</string>
 
+    <!-- Text for the banner message to tell users about our inactive tabs feature. -->
+    <string name="tab_tray_inactive_onboarding_message">两周内未查看的标签页将移至此处。</string>
+    <!-- Text for the action link to go to Settings for inactive tabs. -->
+    <string name="tab_tray_inactive_onboarding_button_text">在设置中关闭</string>
+
+    <!-- Text for title for the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_auto_close_title">要一个月后自动关闭吗？</string>
+    <!-- Text for the body for the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_auto_close_body">Firefox 可自动关闭您一个月内未查看的标签页。</string>
+    <!-- Content description for close button in the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_auto_close_button_content_description">关闭</string>
+
+    <!-- Text for turn on auto close tabs button in the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_turn_on_auto_close_button">开启“自动关闭”功能</string>
+
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
     <string name="home_screen_shortcut_open_new_tab_2">新建标签页</string>
@@ -115,7 +134,7 @@
     <string name="home_screen_shortcut_open_new_private_tab_2">新建隐私标签页</string>
 
     <!-- Heading for the Top Sites block -->
-    <string name="home_screen_top_sites_heading">常用网站</string>
+    <string moz:removedIn="95" name="home_screen_top_sites_heading" tools:ignore="UnusedResources">常用网站</string>
 
     <!-- Recent Tabs -->
     <!-- Header text for jumping back into the recent tab in the home screen -->
@@ -123,10 +142,32 @@
     <!-- Button text for showing all the tabs in the tabs tray -->
     <string name="recent_tabs_show_all">显示全部</string>
 
+    <!-- Content description for the button which navigates the user to show all recent tabs in the tabs tray. -->
+    <string name="recent_tabs_show_all_content_description">显示所有近期标签页按钮</string>
+    <!-- Title for showing a group item in the 'Jump back in' section of the new tab
+        The first parameter is the search term that the user used. (for example: your search for "cat")-->
+    <string name="recent_tabs_search_term">“%1$s”的搜索结果</string>
+    <!-- Text for the number of tabs in a group in the 'Jump back in' section of the new tab
+        The first parameter is the count for number of sites in the group.  This number will always be more than one. -->
+    <string name="recent_tabs_search_term_count">%1$s 个网站</string>
+
     <!-- History Metadata -->
     <!-- Header text for a section on the home screen that displays grouped highlights from the
          user's browsing history, such as topics they have researched or explored on the web -->
-    <string name="history_metadata_header">过去探索内容</string>
+    <string moz:removedIn="94" name="history_metadata_header" tools:ignore="UnusedResources">过去探索内容</string>
+
+    <!-- Header text for a section on the home screen that displays grouped highlights from the
+         user's browsing history, such as topics they have researched or explored on the web -->
+    <string moz:removedIn="94" name="history_metadata_header_2" tools:ignore="UnusedResources">最近访问</string>
+    <!-- Header text for a section on the home screen that displays grouped highlights from the
+         user's browsing history, such as topics they have researched or explored on the web -->
+    <string name="history_metadata_header_3">最近的搜索</string>
+    <!-- Text for the menu button to remove a grouped highlight from the user's browsing history
+         in the Recently visited section -->
+    <string name="recently_visited_menu_item_remove">移除</string>
+
+    <!-- Content description for the button which navigates the user to show all of their history. -->
+    <string name="past_explorations_show_all_content_description">显示所有过去探索按钮</string>
 
     <!-- Browser Fragment -->
     <!-- Content description (not visible, for screen readers etc.): Navigate to open tabs -->
@@ -140,7 +181,7 @@
     <!-- Content description (not visible, for screen readers etc.): Stop loading current website -->
     <string name="browser_menu_stop">停止</string>
     <!-- Content description (not visible, for screen readers etc.): Bookmark the current page -->
-    <string name="browser_menu_bookmark">书签</string>
+    <string moz:removedIn="95" name="browser_menu_bookmark" tools:ignore="UnusedResources">书签</string>
     <!-- Content description (not visible, for screen readers etc.): Un-bookmark the current page -->
     <string name="browser_menu_edit_bookmark">编辑书签</string>
     <!-- Browser menu button that opens the addon manager -->
@@ -206,6 +247,10 @@
     <!-- Browser menu label for editing a bookmark -->
     <string name="browser_menu_edit">编辑</string>
 
+    <!-- Browser menu button that opens the Customize menu -->
+    <string name="browser_menu_customize_home">定制主页</string>
+    <!-- Button shown on the home page that opens the Customize home settings -->
+    <string name="browser_menu_customize_home_1">定制主页</string>
     <!-- Browser Toolbar -->
     <!-- Content description for the Home screen button on the browser toolbar -->
     <string name="browser_toolbar_home">主屏幕</string>
@@ -253,6 +298,29 @@
 
     <!-- Search engine suggestion description text -->
     <string name="search_engine_suggestions_description">直接从地址栏搜索</string>
+
+    <!-- Home onboarding -->
+    <!-- Onboarding home screen dialog title text. Firefox is intentionally hardcoded. -->
+    <string name="onboarding_home_screen_title_2">Firefox 的新变化</string>
+    <!-- Onboarding home screen dialog description text. -->
+    <string name="onboarding_home_screen_description_2">现在可以更轻松地从上次中断的地方继续浏览。</string>
+    <!-- Onboarding home screen dialog title text for the home section. Firefox is intentionally hardcoded. -->
+    <string name="onboarding_home_screen_section_home_title_2">个性化的 Firefox 主页</string>
+
+    <!-- Onboarding home screen dialog description text for the home section. -->
+    <string name="onboarding_home_screen_section_home_description_2">跳转到您打开的标签页、书签和浏览历史。</string>
+
+    <!-- Onboarding home screen dialog description text for the tab tray section. -->
+    <string name="onboarding_home_screen_section_cleaner_tab_tray_title_2">简洁有序的标签页</string>
+    <!-- Onboarding home screen dialog description text for the tab tray section. -->
+    <string name="onboarding_home_screen_section_cleaner_tab_tray_description_2">改进的布局和自动关闭标签页，消除标签页混乱。</string>
+    <!-- Onboarding home screen dialog description text for the history section. -->
+    <string name="onboarding_home_screen_section_useful_history_title_2">最近的搜索</string>
+    <!-- Onboarding home screen dialog description text for the history section. -->
+    <string name="onboarding_home_screen_section_useful_history_description_2">从主页和标签页快速访问您的上次搜索。</string>
+
+    <!-- Onboarding home screen popup dialog, shown on top of the Jump back in section. Firefox is intentionally hardcoded. -->
+    <string name="onboarding_home_screen_jump_back_contextual_hint" tools:ignore="UnusedResources">个性化的 Firefox 主页，让您可以更轻松地从上次中断的地方继续浏览。快速找到您最近打开的标签页、书签和搜索结果。</string>
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
@@ -333,7 +401,9 @@
     <!-- Preference for changing default theme to dark or light mode -->
     <string name="preferences_theme">主题</string>
     <!-- Preference for customizing the home screen -->
-    <string name="preferences_home">主页</string>
+    <string moz:removedIn="94" name="preferences_home" tools:ignore="UnusedResources">主页</string>
+    <!-- Preference for customizing the home screen -->
+    <string name="preferences_home_2">主页</string>
     <!-- Preference for gestures based actions -->
     <string name="preferences_gestures">手势</string>
     <!-- Preference for settings related to visual options -->
@@ -401,6 +471,24 @@
     <string name="customize_addon_collection_user_hint">收藏集所有者（用户 ID）</string>
     <!-- Toast shown after confirming the custom add-on collection configuration -->
     <string name="toast_customize_addon_collection_done">已更改附加组件收藏集设置。退出应用程序以应用更改…</string>
+
+    <!-- Customize Home -->
+    <!-- Header text for jumping back into the recent tab in customize the home screen -->
+    <string name="customize_toggle_jump_back_in">回到先前页面</string>
+    <!-- Title for the customize home screen section with recently saved bookmarks. -->
+    <string moz:removedIn="94" name="customize_toggle_recently_saved_bookmarks" tools:ignore="UnusedResources">最近保存</string>
+    <!-- Title for the customize home screen section with recently saved bookmarks. -->
+    <string moz:removedIn="94" name="customize_toggle_recently_bookmarked" tools:ignore="UnusedResources">最近的书签</string>
+    <!-- Title for the customize home screen section with recently saved bookmarks. -->
+    <string name="customize_toggle_recent_bookmarks">最近的书签</string>
+    <!-- Title for the customize home screen section with recently visited. Recently visited is
+    a section where users see a list of tabs that they have visited in the past few days -->
+    <string moz:removedIn="94" name="customize_toggle_recently_visited" tools:ignore="UnusedResources">最近访问</string>
+    <!-- Title for the customize home screen settings section for recent searches. Recent searches
+     is a section where users see a list of groups of tabs that they have visited in the past few days -->
+    <string name="customize_toggle_recent_searches">最近的搜索</string>
+    <!-- Title for the customize home screen section with Pocket. -->
+    <string name="customize_toggle_pocket">Pocket</string>
 
     <!-- Add-on Installation from AMO-->
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
@@ -514,7 +602,7 @@
     <!-- Header of the Turn on Sync preference view -->
     <string name="preferences_sync">开启同步</string>
     <!-- Preference for pairing -->
-    <string name="preferences_sync_pair">扫描桌面 Firefox 中的配对二维码</string>
+    <string moz:removedIn="95" name="preferences_sync_pair" tools:ignore="UnusedResources">扫描桌面 Firefox 中的配对二维码</string>
     <!-- Preference for account login -->
     <string name="preferences_sync_sign_in">登录</string>
 
@@ -594,6 +682,13 @@
     <!-- Content description (not visible, for screen readers etc.): "Close button for library settings" -->
     <string name="content_description_close_button">关闭</string>
 
+    <!-- Text to show users they have one site in the history group section of the History fragment.
+    %d is a placeholder for the number of sites in the group. -->
+    <string name="history_search_group_site">%d 个网站</string>
+    <!-- Text to show users they have multiple sites in the history group section of the History fragment.
+    %d is a placeholder for the number of sites in the group. -->
+    <string name="history_search_group_sites">%d 个网站</string>
+
     <!-- Option in library for Recently Closed Tabs -->
     <string name="library_recently_closed_tabs">最近关闭的标签页</string>
     <!-- Option in library to open Recently Closed Tabs page -->
@@ -616,6 +711,10 @@
     <string name="tab_view_list">列表</string>
     <!-- Option for a grid tab view -->
     <string name="tab_view_grid">网格</string>
+    <!-- Option for search term tab groups -->
+    <string name="tab_view_search_term_tab_groups">搜索分组</string>
+    <!-- Summary text for search term tab groups -->
+    <string name="tab_view_search_term_tab_groups_summary">将有关联的网站分组归并</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
     <string name="preferences_close_tabs">关闭标签页</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
@@ -627,15 +726,26 @@
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">1 个月后</string>
 
-    <!-- Start on Home -->
+    <!-- Title of preference that allows a user to specify the auto-close settings for open tabs -->
+    <string name="preference_auto_close_tabs" tools:ignore="UnusedResources">自动关闭打开的标签页</string>
+
+    <!-- Opening screen -->
     <!-- Title of a preference that allows a user to indicate after a specified amount of time when the app should start on the home screen -->
-    <string name="preferences_start_on_home">启动后进入主屏幕</string>
+    <string moz:removedIn="94" name="preferences_start_on_home" tools:ignore="UnusedResources">启动后进入主屏幕</string>
+    <!-- Title of a preference that allows a user to choose what screen to show after opening the app -->
+    <string name="preferences_opening_screen">启动页</string>
     <!-- Option for starting on the home screen after after four hours or inactivity -->
-    <string name="start_on_home_after_four_hours">4 小时后</string>
+    <string moz:removedIn="94" name="start_on_home_after_four_hours" tools:ignore="UnusedResources">4 小时后</string>
+    <!-- Option for always opening the homepage when re-opening the app -->
+    <string name="opening_screen_homepage">主页</string>
     <!-- Option for always starting on the home screen -->
-    <string name="start_on_home_always">总是</string>
+    <string moz:removedIn="94" name="start_on_home_always" tools:ignore="UnusedResources">总是</string>
+    <!-- Option for always opening the user's last-open tab when re-opening the app -->
+    <string name="opening_screen_last_tab">最后打开的标签页</string>
     <!-- Option for never starting on the home screen -->
-    <string name="start_on_home_never">永不</string>
+    <string moz:removedIn="94" name="start_on_home_never" tools:ignore="UnusedResources">永不</string>
+    <!-- Option for always opening the homepage when re-opening the app after four hours of inactivity -->
+    <string name="opening_screen_after_four_hours_of_inactivity">四小时未使用即回到主页</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
     <string name="close_tabs_manually_summary">手动关闭</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
@@ -644,6 +754,13 @@
     <string name="close_tabs_after_one_week_summary">1 周后关闭</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one month-->
     <string name="close_tabs_after_one_month_summary">1 个月后关闭</string>
+
+    <!-- Inactive tabs -->
+    <!-- Category header of a preference that allows a user to enable or disable the inactive tabs feature -->
+    <string name="preferences_inactive_tabs">将旧标签页切换至休眠状态</string>
+
+    <!-- Title of inactive tabs preference -->
+    <string name="preferences_inactive_tabs_title">两周内未查看的标签页将进入休眠状态。</string>
 
     <!-- Studies -->
     <!-- Title of the remove studies button -->
@@ -663,7 +780,7 @@
     <string name="studies_restart_dialog_cancel">取消</string>
 
     <!-- Toast shown after turning on/off studies preferences -->
-    <string name="studies_toast_quit_application">退出应用程序以应用更改...</string>
+    <string name="studies_toast_quit_application" tools:ignore="UnusedResources">退出应用程序以应用更改...</string>
 
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
@@ -687,13 +804,13 @@
     <!-- Text shown in the menu for saving tabs to a collection -->
     <string name="tab_tray_menu_item_save">保存到收藏集</string>
     <!-- Text shown in the menu for the collection selector -->
-    <string name="tab_tray_menu_select">选择</string>
+    <string moz:removedIn="95" name="tab_tray_menu_select" tools:ignore="UnusedResources">选择</string>
     <!-- Text shown in the menu for sharing all tabs -->
     <string name="tab_tray_menu_item_share">分享所有标签页</string>
     <!-- Text shown in the menu to view recently closed tabs -->
     <string name="tab_tray_menu_recently_closed">最近关闭的标签页</string>
     <!-- Text shown in the tabs tray inactive tabs section -->
-    <string name="tab_tray_inactive_recently_closed">最近关闭</string>
+    <string name="tab_tray_inactive_recently_closed" tools:ignore="UnusedResources">最近关闭</string>
     <!-- Text shown in the menu to view account settings -->
     <string name="tab_tray_menu_account_settings">账户设置</string>
     <!-- Text shown in the menu to view tab settings -->
@@ -767,6 +884,12 @@
     <!-- Button in the current tab tray header in multiselect mode. Saved the selected tabs to a collection when pressed. -->
     <string name="tab_tray_save_to_collection">保存</string>
 
+    <!-- Title text for the normal tabs header in the tabs tray which are not part of any tab grouping. -->
+    <string moz:removedIn="94" name="tab_tray_header_title" tools:ignore="UnusedResources">其他</string>
+
+    <!-- Title text for the normal tabs header in the tabs tray which are not part of any tab grouping. -->
+    <string name="tab_tray_header_title_1">其他标签页</string>
+
     <!-- History -->
     <!-- Text for the button to clear all history -->
     <string name="history_delete_all">删除历史记录</string>
@@ -779,15 +902,15 @@
     <!-- Text for positive action to delete history in deleting history dialog -->
     <string name="history_clear_dialog">清除</string>
     <!-- History overflow menu copy button -->
-    <string name="history_menu_copy_button">复制</string>
+    <string moz:removedIn="94" name="history_menu_copy_button" tools:ignore="UnusedResources">复制</string>
     <!-- History overflow menu share button -->
-    <string name="history_menu_share_button">分享</string>
+    <string moz:removedIn="94" name="history_menu_share_button" tools:ignore="UnusedResources">分享</string>
     <!-- History overflow menu open in new tab button -->
-    <string name="history_menu_open_in_new_tab_button">新建标签页打开</string>
+    <string moz:removedIn="94" name="history_menu_open_in_new_tab_button" tools:ignore="UnusedResources">新建标签页打开</string>
     <!-- History overflow menu open in private tab button -->
-    <string name="history_menu_open_in_private_tab_button">新建隐私标签页打开</string>
+    <string moz:removedIn="94" name="history_menu_open_in_private_tab_button" tools:ignore="UnusedResources">新建隐私标签页打开</string>
     <!-- Text for the button to delete a single history item -->
-    <string name="history_delete_item">删除</string>
+    <string moz:removedIn="94" name="history_delete_item" tools:ignore="UnusedResources">删除</string>
     <!-- History multi select title in app bar
     The first parameter is the number of bookmarks selected -->
     <string name="history_multi_select_title">已选择 %1$d 条书签</string>
@@ -795,9 +918,9 @@
         is a digit showing the number of items you have selected -->
     <string name="history_delete_some">删除 %1$d 个项目</string>
     <!-- Text for the header that groups the history for today -->
-    <string name="history_today">本日</string>
+    <string name="history_today">今天</string>
     <!-- Text for the header that groups the history for yesterday -->
-    <string name="history_yesterday">昨日</string>
+    <string name="history_yesterday">昨天</string>
     <!-- Text for the header that groups the history for last 24 hours -->
     <string name="history_24_hours">过去 24 小时</string>
     <!-- Text for the header that groups the history the past 7 days -->
@@ -811,10 +934,6 @@
     <string name="history_empty_message">无历史记录</string>
 
     <!-- Downloads -->
-    <!-- Text for the button to clear all downloads -->
-    <string name="download_delete_all">清空下载记录</string>
-    <!-- Text for the dialog to confirm clearing all downloads -->
-    <string name="download_delete_all_dialog">您确定要清空下载记录吗？</string>
     <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
     <string name="download_delete_multiple_items_snackbar_1">下载记录已清除</string>
     <!-- Text for the snackbar to confirm that a single download item has been removed. The first parameter is the name of the download item. -->
@@ -856,7 +975,7 @@
     <!-- Content description for bookmarks library menu -->
     <string name="bookmark_menu_content_description">书签菜单</string>
     <!-- Screen title for editing bookmarks -->
-    <string name="bookmark_edit">编辑书签</string>
+    <string moz:removedIn="95" name="bookmark_edit" tools:ignore="UnusedResources">编辑书签</string>
     <!-- Screen title for selecting a bookmarks folder -->
     <string name="bookmark_select_folder">选择文件夹</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete the selected folder -->
@@ -917,7 +1036,7 @@
     <string name="bookmarks_empty_message">此处无书签</string>
     <!-- Bookmark snackbar message on deletion
      The first parameter is the host part of the URL of the bookmark deleted, if any -->
-    <string name="bookmark_deletion_snackbar_message">已删除 %1$s 条书签</string>
+    <string name="bookmark_deletion_snackbar_message">已删除书签 %1$s</string>
     <!-- Bookmark snackbar message on deleting multiple bookmarks not including folders-->
     <string name="bookmark_deletion_multiple_snackbar_message_2">书签已删除</string>
     <!-- Bookmark snackbar message on deleting multiple bookmarks including folders-->
@@ -1015,7 +1134,7 @@
     <string name="create_collection_select_collection">选择收藏集</string>
 
     <!-- Title for the "name collection" step of the collection creator -->
-    <string name="create_collection_name_collection">给收藏集起名</string>
+    <string name="create_collection_name_collection">命名收藏集</string>
 
     <!-- Button to add new collection for the "select collection" step of the collection creator -->
     <string name="create_collection_add_new_collection">新建收藏集</string>
@@ -1177,7 +1296,7 @@
     <!-- Tab collection deletion prompt dialog option to delete the collection -->
     <string name="tab_collection_dialog_positive">删除</string>
     <!-- Tab collection deletion prompt dialog option to cancel deleting the collection -->
-    <string name="tab_collection_dialog_negative" tools:ignore="UnusedResources">取消</string>
+    <string moz:removedIn="93" name="tab_collection_dialog_negative" tools:ignore="UnusedResources">取消</string>
     <!-- Text displayed in a notification when the user enters full screen mode -->
     <string name="full_screen_notification">进入全屏模式</string>
 
@@ -1285,12 +1404,12 @@
     <!-- text for the Firefox Accounts section header -->
     <string name="onboarding_fxa_section_header">已有账户？</string>
     <!-- text for the "What's New" onboarding card header -->
-    <string name="onboarding_whats_new_header1">了解新动向</string>
+    <string moz:removedIn="94" name="onboarding_whats_new_header1" tools:ignore="UnusedResources">了解新动向</string>
     <!-- text for the "what's new" onboarding card description
     The first parameter is the short name of the app (e.g. Firefox) -->
-    <string name="onboarding_whats_new_description">对重新设计的 %s 有好奇的地方吗？想知道哪里变得不一样了？</string>
+    <string moz:removedIn="94" name="onboarding_whats_new_description" tools:ignore="UnusedResources">对重新设计的 %s 有好奇的地方吗？想知道哪里变得不一样了？</string>
     <!-- text for underlined clickable link that is part of "what's new" onboarding card description that links to an FAQ -->
-    <string name="onboarding_whats_new_description_linktext">在此寻找答案</string>
+    <string moz:removedIn="94" name="onboarding_whats_new_description_linktext" tools:ignore="UnusedResources">在此寻找答案</string>
     <!-- text for the Firefox account onboarding sign in card header. The word "Firefox" should not be translated -->
     <string name="onboarding_account_sign_in_header_1">在设备之间同步 Firefox</string>
     <!-- Text for the button to learn more about signing in to your Firefox account -->
@@ -1330,14 +1449,14 @@
     <!-- text for the toolbar position card description -->
     <string name="onboarding_toolbar_placement_description_1">将工具栏放在顺手的位置。可以留在底部，或移到顶部。</string>
     <!-- text for the private browsing onboarding card header -->
-    <string name="onboarding_private_browsing_header">上网冲浪也私密</string>
+    <string moz:removedIn="94" name="onboarding_private_browsing_header" tools:ignore="UnusedResources">上网冲浪也私密</string>
     <!-- text for the private browsing onboarding card description
     The first parameter is an icon that represents private browsing -->
-    <string name="onboarding_private_browsing_description1">临时开启隐私浏览：点击 %s 图标。</string>
+    <string moz:removedIn="94" name="onboarding_private_browsing_description1" tools:ignore="UnusedResources">临时开启隐私浏览：点击 %s 图标。</string>
     <!-- text for the private browsing onboarding card description, explaining how to always using private browsing -->
-    <string name="onboarding_private_browsing_always_description">始终使用隐私浏览：请调整您的隐私浏览设置。</string>
+    <string moz:removedIn="94" name="onboarding_private_browsing_always_description" tools:ignore="UnusedResources">始终使用隐私浏览：请调整您的隐私浏览设置。</string>
     <!-- text for the private browsing onbording card button, that launches settings -->
-    <string name="onboarding_private_browsing_button">打开设置</string>
+    <string moz:removedIn="94" name="onboarding_private_browsing_button" tools:ignore="UnusedResources">打开设置</string>
     <!-- text for the privacy notice onboarding card header -->
     <string name="onboarding_privacy_notice_header">您的隐私权</string>
     <!-- text for the privacy notice onboarding card description
@@ -1347,14 +1466,14 @@
     <string name="onboarding_privacy_notice_read_button">阅读我们的隐私声明</string>
 
     <!-- Content description (not visible, for screen readers etc.): Close onboarding screen -->
-    <string name="onboarding_close" tools:ignore="UnusedResources">关闭</string>
+    <string moz:removedIn="93" name="onboarding_close" tools:ignore="UnusedResources">关闭</string>
 
     <!-- text for the button to finish onboarding -->
     <string name="onboarding_finish">开始上网</string>
 
     <!-- Onboarding theme -->
     <!-- text for the theme picker onboarding card header -->
-    <string name="onboarding_theme_picker_header">选择您的主题</string>
+    <string name="onboarding_theme_picker_header">选择主题</string>
     <!-- text for the theme picker onboarding card description -->
     <string name="onboarding_theme_picker_description_2">启用深色模式，既省电又护眼。</string>
     <!-- Automatic theme setting (will follow device setting) -->
@@ -1477,11 +1596,11 @@
     <!-- Description of tracking content that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_tracking_content_description">停止加载包含跟踪代码的广告、视频和其他内容。可能会影响某些网站功能。</string>
     <!-- Enhanced Tracking Protection Onboarding Message shown in a dialog above the toolbar. The first parameter is the name of the application (For example: Fenix) -->
-    <string name="etp_onboarding_cfr_message" tools:ignore="UnusedResources">盾牌变成紫色时，代表 %s 拦截了该网站的跟踪器。点按以获取更多信息。</string>
+    <string moz:removedIn="93" name="etp_onboarding_cfr_message" tools:ignore="UnusedResources">盾牌变成紫色时，代表 %s 拦截了该网站的跟踪器。点按以获取更多信息。</string>
     <!-- Enhanced Tracking Protection message that protection is currently on for this site -->
-    <string name="etp_panel_on">对此网站已开启保护</string>
+    <string name="etp_panel_on">已开启此网站的跟踪保护</string>
     <!-- Enhanced Tracking Protection message that protection is currently off for this site -->
-    <string name="etp_panel_off">对此网站已关闭保护</string>
+    <string name="etp_panel_off">已关闭此网站的跟踪保护</string>
     <!-- Header for exceptions list for which sites enhanced tracking protection is always off -->
     <string name="enhanced_tracking_protection_exceptions">对下列网站已关闭增强型跟踪保护</string>
     <!-- Content description (not visible, for screen readers etc.): Navigate
@@ -1501,6 +1620,12 @@
     <string name="etp_redirect_trackers_title">重定向跟踪器</string>
     <!-- Description of redirect tracker cookies that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_redirect_trackers_description">清除通过重定向设置到已知跟踪网站的 Cookie。</string>
+
+    <!-- Description of the SmartBlock Enhanced Tracking Protection feature. The * symbol is intentionally hardcoded here,
+         as we use it on the UI to indicate which trackers have been partially unblocked.  -->
+    <string name="preference_etp_smartblock_description">由于您已与此页面上的部分跟踪器交互过，已取消拦截下列标记的跟踪器 *。</string>
+    <!-- Text displayed that links to website about enhanced tracking protection SmartBlock -->
+    <string name="preference_etp_smartblock_learn_more">详细了解</string>
 
     <!-- About page link text to open support link -->
     <string name="about_support">用户支持</string>
@@ -1559,7 +1684,7 @@
     <!-- Preference option for never saving passwords in Fenix -->
     <string name="preferences_passwords_save_logins_never_save">总不保存</string>
     <!-- Preference for autofilling saved logins in Fenix -->
-    <string name="preferences_passwords_autofill" tools:ignore="UnusedResources">自动填写</string>
+    <string moz:removedIn="93" name="preferences_passwords_autofill" tools:ignore="UnusedResources">自动填写</string>
 
     <!-- Preference for autofilling saved logins in Firefox (in web content), %1$s will be replaced with the app name -->
     <string name="preferences_passwords_autofill2">在 %1$s 中自动填充</string>
@@ -1570,6 +1695,9 @@
     <string name="preferences_android_autofill">在其他应用程序中自动填充</string>
     <!-- Description for the preference for autofilling logins from Fenix in other apps (e.g. autofilling the Twitter app) -->
     <string name="preferences_android_autofill_description">在您设备上的其他应用程序中填充用户名和密码。</string>
+
+    <!-- Preference option for adding a login -->
+    <string name="preferences_logins_add_login">添加登录信息</string>
 
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">同步登录信息</string>
@@ -1633,6 +1761,8 @@
     <string name="saved_login_copy_username">复制用户名</string>
     <!-- Content Description (for screenreaders etc) read for the button to clear a username while editing a login -->
     <string name="saved_login_clear_username">清除用户名</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear the hostname field while creating a login -->
+    <string name="saved_login_clear_hostname">清除主机名</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a site in logins -->
     <string name="saved_login_copy_site">复制网站</string>
     <!-- Content Description (for screenreaders etc) read for the button to open a site in logins -->
@@ -1802,9 +1932,13 @@
     <string name="phone_feature_blocked_step_feature"><![CDATA[3. 开启<b>%1$s</b>权限]]></string>
 
     <!-- Label that indicates a site is using a secure connection -->
-    <string name="quick_settings_sheet_secure_connection">安全连接</string>
+    <string name="quick_settings_sheet_secure_connection_2">连接安全</string>
     <!-- Label that indicates a site is using a insecure connection -->
-    <string name="quick_settings_sheet_insecure_connection">不安全连接</string>
+    <string name="quick_settings_sheet_insecure_connection_2">连接不安全</string>
+    <!-- Label that indicates a site is using a secure connection -->
+    <string moz:removedIn="94" name="quick_settings_sheet_secure_connection" tools:ignore="UnusedResources">安全连接</string>
+    <!-- Label that indicates a site is using a insecure connection -->
+    <string moz:removedIn="94" name="quick_settings_sheet_insecure_connection" tools:ignore="UnusedResources">不安全连接</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete all the permissions for all sites-->
     <string name="confirm_clear_permissions_on_all_sites">您确定要清除所有网站的所有权限吗？</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete all the permissions for a site-->
@@ -1844,8 +1978,14 @@
     <string name="discard_changes">放弃更改</string>
     <!--  The page title for editing a saved login. -->
     <string name="edit">编辑</string>
-    <!--  The error message in edit login view when password field is blank. -->
+    <!--  The page title for adding new login. -->
+    <string name="add_login">新建登录信息</string>
+    <!--  The error message in add/edit login view when password field is blank. -->
     <string name="saved_login_password_required">需要密码</string>
+    <!--  The error message in add login view when username field is blank. -->
+    <string name="saved_login_username_required">用户名不能为空</string>
+    <!--  The error message in add login view when hostname field is blank. -->
+    <string name="saved_login_hostname_required" tools:ignore="UnusedResources">主机名不能为空</string>
     <!-- Voice search button content description  -->
     <string name="voice_search_content_description">语音搜索</string>
     <!-- Voice search prompt description displayed after the user presses the voice search button -->
@@ -1853,6 +1993,15 @@
 
     <!--  The error message in edit login view when a duplicate username exists. -->
     <string name="saved_login_duplicate">已有同用户名的登录信息存在</string>
+
+    <!-- This is the hint text that is shown inline on the hostname field of the create new login page. 'https://www.example.com' intentionally hardcoded here -->
+    <string name="add_login_hostname_hint_text">https://www.example.com</string>
+    <!-- This is an error message shown below the hostname field of the add login page when a hostname does not contain http or https. -->
+    <string moz:removedIn="94" name="add_login_hostname_invalid_text_1" tools:ignore="UnusedResources">网址须包含\“https://\”或\“http://\”</string>
+    <!-- This is an error message shown below the hostname field of the add login page when a hostname does not contain http or https. -->
+    <string name="add_login_hostname_invalid_text_3">网址须包含“https://”或“http://”</string>
+    <!-- This is an error message shown below the hostname field of the add login page when a hostname is invalid. -->
+    <string name="add_login_hostname_invalid_text_2">需为有效的主机名</string>
 
     <!-- Synced Tabs -->
     <!-- Text displayed to ask user to connect another device as no devices found with account -->
@@ -1879,8 +2028,12 @@
     <!-- Confirmation dialog button text when top sites limit is reached. -->
     <string name="top_sites_max_limit_confirmation_button">我知道了</string>
 
+    <!-- Label for the preference to show the most visited top sites on the homepage -->
+    <string name="top_sites_toggle_top_recent_sites_3">最常访问的网站</string>
+    <!-- Label for the show most visited top sites preference -->
+    <string moz:removedIn="94" name="top_sites_toggle_top_frecent_sites_2" tools:ignore="UnusedResources">显示最常访问的网站</string>
     <!-- Label for the show most visited sites preference -->
-    <string name="top_sites_toggle_top_frecent_sites">显示最常访问的网站</string>
+    <string moz:removedIn="93" name="top_sites_toggle_top_frecent_sites" tools:ignore="UnusedResources">显示最常访问的网站</string>
 
     <!-- Title text displayed in the rename top site dialog. -->
 	<string name="top_sites_rename_dialog_title">名称</string>
@@ -1891,15 +2044,41 @@
 	<!-- Dialog button text for canceling the rename top site prompt. -->
 	<string name="top_sites_rename_dialog_cancel">取消</string>
 
-    <!-- In-activate tabs in the tabs tray -->
-    <!-- Title text displayed in the tabs tray when a tab has been unused for 4 days. -->
-    <string name="inactive_tabs_title">非活动标签页</string>
+    <!-- Inactive tabs in the tabs tray -->
+    <!-- Title text displayed in the tabs tray when a tab has been unused for 14 days. -->
+    <string name="inactive_tabs_title">休眠标签页</string>
+    <!-- Content description for closing all inactive tabs -->
+    <string name="inactive_tabs_delete_all">关闭所有休眠标签页</string>
     <!-- A description below the section of "inactive" tabs to notify the user when those tabs will be closed, if appropriate. See strings inactive_tabs_30_days and inactive_tabs_7_days for placeholders options. -->
-    <string name="inactive_tabs_description">标签页将在此处保留 %s，之后将自动关闭。</string>
+    <string moz:removedIn="93" name="inactive_tabs_description" tools:ignore="UnusedResources">标签页将在此处保留 %s，之后将自动关闭。</string>
     <!-- The amount of time until a tab in the "inactive" section of the tabs tray will be closed. See string inactive_tabs_description as well -->
-    <string name="inactive_tabs_30_days">30 天</string>
+    <string moz:removedIn="93" name="inactive_tabs_30_days" tools:ignore="UnusedResources">30 天</string>
     <!-- The amount of time until a tab in the "inactive" section of the tabs tray will be closed. See string inactive_tabs_description as well -->
-    <string name="inactive_tabs_7_days">1 周</string>
+    <string moz:removedIn="93" name="inactive_tabs_7_days" tools:ignore="UnusedResources">1 周</string>
+
+    <!-- Inactive tabs auto-close message in the tabs tray -->
+    <!-- The header text of the auto-close message when the user is asked if they want to turn on the auto-closing of inactive tabs. -->
+    <string name="inactive_tabs_auto_close_message_header" tools:ignore="UnusedResources">要一个月后自动关闭吗？</string>
+    <!-- A description below the header to notify the user what the inactive tabs auto-close feature is. -->
+    <string name="inactive_tabs_auto_close_message_description" tools:ignore="UnusedResources">Firefox 可自动关闭您一个月内未查看的标签页。</string>
+    <!-- A call to action below the description to allow the user to turn on the auto closing of inactive tabs. -->
+    <string name="inactive_tabs_auto_close_message_action" tools:ignore="UnusedResources">启用自动关闭标签页功能</string>
+
+    <!-- Inactive tabs survey -->
+    <!-- Header text for the inactive tabs survey asking for feedback to improve the inactive tabs feature. -->
+    <string name="inactive_tabs_survey_header" tools:ignore="UnusedResources">请帮助我们改进</string>
+    <!-- Content text for the inactive tabs survey asking the primary survey feedback question. -->
+    <string name="inactive_tabs_survey_content" tools:ignore="UnusedResources">您为何想要关闭“休眠标签页”功能？</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string name="inactive_tabs_survey_not_interested_option" tools:ignore="UnusedResources">对该功能不感兴趣</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string name="inactive_tabs_survey_time_too_long_option" tools:ignore="UnusedResources">进入休眠状态时间过长</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string name="inactive_tabs_survey_time_too_short_option" tools:ignore="UnusedResources">进入休眠状态时间过短</string>
+    <!-- Confirmation button text to submit the feedback for the inactive tabs survey. -->
+    <string name="inactive_tabs_survey_send_button" tools:ignore="UnusedResources">发送</string>
+    <!-- Content description for inactive tabs survey close button -->
+    <string name="inactive_tabs_survey_close_button_content_description" tools:ignore="UnusedResources">关闭</string>
 
     <!-- Default browser experiment -->
     <string name="default_browser_experiment_card_text">将网站、电子邮件及聊天工具中的链接设为在 Firefox 中自动打开。</string>
@@ -1916,4 +2095,19 @@
     <!-- Content description for privacy content close button -->
     <string name="privacy_content_close_button_content_description">关闭</string>
 
+    <!-- Pocket recommended stories -->
+    <!-- Header text for a section on the home screen. -->
+    <string moz:removedIn="94" name="pocket_stories_header" tools:ignore="UnusedResources">精选文章</string>
+    <!-- Header text for a section on the home screen. -->
+    <string name="pocket_stories_header_1">精选文章</string>
+    <!-- Header text for a section on the home screen. -->
+    <string name="pocket_stories_categories_header">热门主题</string>
+    <!-- Text of a button allowing users to access an external url for more Pocket recommendations. -->
+    <string name="pocket_stories_placeholder_text">探索更多</string>
+    <!-- Title of an app feature. Smaller than a heading.-->
+    <string name="pocket_stories_feature_title">由 Pocket 提供</string>
+    <!-- Caption for describing a certain feature. The placeholder is for a clickable text (eg: Learn more) which will load an url in a new tab when clicked.  -->
+    <string name="pocket_stories_feature_caption">Firefox 系列产品。%s</string>
+    <!-- Clickable text for opening an external link for more information about Pocket. -->
+    <string name="pocket_stories_feature_learn_more">详细了解</string>
 </resources>

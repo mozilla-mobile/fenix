@@ -4,8 +4,6 @@
 
 package org.mozilla.fenix.library.recentlyclosed
 
-import android.content.ClipboardManager
-import android.content.Context
 import android.os.Bundle
 import android.text.SpannableString
 import android.view.LayoutInflater
@@ -15,7 +13,6 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
-import kotlinx.android.synthetic.main.fragment_recently_closed_tabs.view.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
@@ -28,9 +25,8 @@ import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
-import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.StoreProvider
-import org.mozilla.fenix.ext.getRootView
+import org.mozilla.fenix.databinding.FragmentRecentlyClosedTabsBinding
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.setTextColor
 import org.mozilla.fenix.ext.showToolbar
@@ -100,8 +96,8 @@ class RecentlyClosedFragment : LibraryPageFragment<RecoverableTab>(), UserIntera
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_recently_closed_tabs, container, false)
+    ): View {
+        val binding = FragmentRecentlyClosedTabsBinding.inflate(inflater, container, false)
         recentlyClosedFragmentStore = StoreProvider.get(this) {
             RecentlyClosedFragmentStore(
                 RecentlyClosedFragmentState(
@@ -116,20 +112,14 @@ class RecentlyClosedFragment : LibraryPageFragment<RecoverableTab>(), UserIntera
             recentlyClosedStore = recentlyClosedFragmentStore,
             activity = activity as HomeActivity,
             tabsUseCases = requireComponents.useCases.tabsUseCases,
-            resources = requireContext().resources,
-            snackbar = FenixSnackbar.make(
-                view = requireActivity().getRootView()!!,
-                isDisplayedWithBrowserToolbar = true
-            ),
-            clipboardManager = activity?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager,
             openToBrowser = ::openItem
         )
         recentlyClosedInteractor = RecentlyClosedFragmentInteractor(recentlyClosedController)
         _recentlyClosedFragmentView = RecentlyClosedFragmentView(
-            view.recentlyClosedLayout,
+            binding.recentlyClosedLayout,
             recentlyClosedInteractor
         )
-        return view
+        return binding.root
     }
 
     override fun onDestroyView() {

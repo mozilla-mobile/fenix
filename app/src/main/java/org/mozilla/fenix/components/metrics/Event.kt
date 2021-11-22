@@ -17,10 +17,14 @@ import org.mozilla.fenix.GleanMetrics.ContextMenu
 import org.mozilla.fenix.GleanMetrics.CrashReporter
 import org.mozilla.fenix.GleanMetrics.ErrorPage
 import org.mozilla.fenix.GleanMetrics.Events
+import org.mozilla.fenix.GleanMetrics.History
 import org.mozilla.fenix.GleanMetrics.Logins
 import org.mozilla.fenix.GleanMetrics.Onboarding
+import org.mozilla.fenix.GleanMetrics.Pocket
+import org.mozilla.fenix.GleanMetrics.Preferences
 import org.mozilla.fenix.GleanMetrics.ProgressiveWebApp
 import org.mozilla.fenix.GleanMetrics.SearchShortcuts
+import org.mozilla.fenix.GleanMetrics.TabsTray
 import org.mozilla.fenix.GleanMetrics.ToolbarSettings
 import org.mozilla.fenix.GleanMetrics.TopSites
 import org.mozilla.fenix.GleanMetrics.TrackingProtection
@@ -78,6 +82,9 @@ sealed class Event {
     object HistoryOpenedInPrivateTabs : Event()
     object HistoryItemRemoved : Event()
     object HistoryAllItemsRemoved : Event()
+    data class HistoryRecentSearchesTapped(val source: String) : Event() {
+        override val extras = mapOf(History.recentSearchesTappedKeys.pageNumber to source)
+    }
     object ReaderModeAvailable : Event()
     object ReaderModeOpened : Event()
     object ReaderModeClosed : Event()
@@ -105,11 +112,14 @@ sealed class Event {
     object NotificationMediaPause : Event()
     object TopSiteOpenDefault : Event()
     object TopSiteOpenGoogle : Event()
+    object TopSiteOpenBaidu : Event()
     object TopSiteOpenFrecent : Event()
     object TopSiteOpenPinned : Event()
     object TopSiteOpenInNewTab : Event()
     object TopSiteOpenInPrivateTab : Event()
     object TopSiteRemoved : Event()
+    object GoogleTopSiteRemoved : Event()
+    object BaiduTopSiteRemoved : Event()
     object TrackingProtectionTrackerList : Event()
     object TrackingProtectionIconPressed : Event()
     object TrackingProtectionSettingsPanel : Event()
@@ -125,14 +135,43 @@ sealed class Event {
     object WhatsNewTapped : Event()
     object PocketTopSiteClicked : Event()
     object PocketTopSiteRemoved : Event()
+    object PocketHomeRecsShown : Event()
+    object PocketHomeRecsDiscoverMoreClicked : Event()
+    object PocketHomeRecsLearnMoreClicked : Event()
+    data class PocketHomeRecsStoryClicked(
+        val timesShown: Long,
+        val storyPosition: Pair<Int, Int>,
+    ) : Event() {
+        override val extras: Map<Pocket.homeRecsStoryClickedKeys, String>
+            get() = mapOf(
+                Pocket.homeRecsStoryClickedKeys.timesShown to timesShown.toString(),
+                Pocket.homeRecsStoryClickedKeys.position to "${storyPosition.first}x${storyPosition.second}"
+            )
+    }
+
+    data class PocketHomeRecsCategoryClicked(
+        val categoryname: String,
+        val previousSelectedCategoriesTotal: Int,
+        val isSelectedNextState: Boolean
+    ) : Event() {
+        override val extras: Map<Pocket.homeRecsCategoryClickedKeys, String>
+            get() = mapOf(
+                Pocket.homeRecsCategoryClickedKeys.categoryName to categoryname,
+                Pocket.homeRecsCategoryClickedKeys.selectedTotal to previousSelectedCategoriesTotal.toString(),
+                Pocket.homeRecsCategoryClickedKeys.newState to when (isSelectedNextState) {
+                    true -> "selected"
+                    false -> "deselected"
+                }
+            )
+    }
     object FennecToFenixMigrated : Event()
     object AddonsOpenInSettings : Event()
+    object StudiesSettings : Event()
     object VoiceSearchTapped : Event()
     object SearchWidgetInstalled : Event()
     object OnboardingAutoSignIn : Event()
     object OnboardingManualSignIn : Event()
     object OnboardingPrivacyNotice : Event()
-    object OnboardingPrivateBrowsing : Event()
     object OnboardingFinish : Event()
     object ChangedToDefaultBrowser : Event()
     object DefaultBrowserNotifTapped : Event()
@@ -142,16 +181,15 @@ sealed class Event {
     object LoginDialogPromptSave : Event()
     object LoginDialogPromptNeverSave : Event()
 
-    object ContextualHintETPDisplayed : Event()
-    object ContextualHintETPDismissed : Event()
-    object ContextualHintETPOutsideTap : Event()
-    object ContextualHintETPInsideTap : Event()
-
     // Tab tray
     object TabsTrayOpened : Event()
     object TabsTrayClosed : Event()
-    object OpenedExistingTab : Event()
-    object ClosedExistingTab : Event()
+    data class OpenedExistingTab(val source: String) : Event() {
+        override val extras = mapOf(TabsTray.openedExistingTabKeys.source to source)
+    }
+    data class ClosedExistingTab(val source: String) : Event() {
+        override val extras = mapOf(TabsTray.closedExistingTabKeys.source to source)
+    }
     object TabsTrayPrivateModeTapped : Event()
     object TabsTrayNormalModeTapped : Event()
     object TabsTraySyncedModeTapped : Event()
@@ -161,6 +199,24 @@ sealed class Event {
     object TabsTraySaveToCollectionPressed : Event()
     object TabsTrayShareAllTabsPressed : Event()
     object TabsTrayCloseAllTabsPressed : Event()
+    object TabsTrayRecentlyClosedPressed : Event()
+    object TabsTrayInactiveTabsExpanded : Event()
+    object TabsTrayInactiveTabsCollapsed : Event()
+    object TabsTrayAutoCloseDialogSeen : Event()
+    object TabsTrayAutoCloseDialogTurnOnClicked : Event()
+    object TabsTrayAutoCloseDialogDismissed : Event()
+    data class TabsTrayHasInactiveTabs(val count: Int) : Event() {
+        override val extras = mapOf(TabsTray.hasInactiveTabsKeys.inactiveTabsCount to count.toString())
+    }
+    object TabsTrayCloseAllInactiveTabs : Event()
+    data class TabsTrayCloseInactiveTab(val amountClosed: Int = 1) : Event()
+    object TabsTrayOpenInactiveTab : Event()
+
+    object InactiveTabsSurveyOpened : Event()
+    data class InactiveTabsOffSurvey(val feedback: String) : Event() {
+        override val extras: Map<Preferences.turnOffInactiveTabsSurveyKeys, String>
+            get() = mapOf(Preferences.turnOffInactiveTabsSurveyKeys.feedback to feedback.lowercase(Locale.ROOT))
+    }
 
     object ProgressiveWebAppOpenFromHomescreenTap : Event()
     object ProgressiveWebAppInstallAsShortcut : Event()
@@ -198,6 +254,7 @@ sealed class Event {
     // Home menu interaction
     object HomeMenuSettingsItemClicked : Event()
     object HomeScreenDisplayed : Event()
+    object HomeScreenCustomizedHomeClicked : Event()
 
     // Browser Toolbar
     object BrowserToolbarHomeButtonClicked : Event()
@@ -210,6 +267,17 @@ sealed class Event {
     object ShowAllRecentTabs : Event()
     object OpenRecentTab : Event()
     object OpenInProgressMediaTab : Event()
+    object RecentTabsSectionIsVisible : Event()
+    object RecentTabsSectionIsNotVisible : Event()
+
+    // Recent bookmarks
+    object BookmarkClicked : Event()
+    object ShowAllBookmarks : Event()
+    object RecentBookmarksShown : Event()
+    data class RecentBookmarkCount(val count: Int) : Event()
+
+    // Recently visited/Recent searches
+    object RecentSearchesGroupDeleted : Event()
 
     // Android Autofill
     object AndroidAutofillUnlockSuccessful : Event()
@@ -220,6 +288,18 @@ sealed class Event {
     object AndroidAutofillConfirmationCanceled : Event()
     object AndroidAutofillRequestWithLogins : Event()
     object AndroidAutofillRequestWithoutLogins : Event()
+
+    // Credit cards
+    object CreditCardSaved : Event()
+    object CreditCardDeleted : Event()
+    object CreditCardModified : Event()
+    object CreditCardFormDetected : Event()
+    object CreditCardAutofilled : Event()
+    object CreditCardAutofillPromptShown : Event()
+    object CreditCardAutofillPromptExpanded : Event()
+    object CreditCardAutofillPromptDismissed : Event()
+    object CreditCardManagementAddTapped : Event()
+    object CreditCardManagementCardTapped : Event()
 
     // Interaction events with extras
 
@@ -314,6 +394,31 @@ sealed class Event {
         init {
             // If the event is not in the allow list, we don't want to track it
             require(booleanPreferenceTelemetryAllowList.contains(preferenceKey))
+        }
+    }
+
+    data class CustomizeHomePreferenceToggled(
+        val preferenceKey: String,
+        val enabled: Boolean,
+        val context: Context
+    ) : Event() {
+        private val telemetryAllowMap = mapOf(
+            context.getString(R.string.pref_key_enable_top_frecent_sites) to "most_visited_sites",
+            context.getString(R.string.pref_key_recent_tabs) to "jump_back_in",
+            context.getString(R.string.pref_key_recent_bookmarks) to "recently_saved",
+            context.getString(R.string.pref_key_history_metadata_feature) to "recently_visited",
+            context.getString(R.string.pref_key_pocket_homescreen_recommendations) to "pocket",
+        )
+
+        override val extras: Map<Events.preferenceToggledKeys, String>
+            get() = mapOf(
+                Events.preferenceToggledKeys.preferenceKey to (telemetryAllowMap[preferenceKey] ?: ""),
+                Events.preferenceToggledKeys.enabled to enabled.toString()
+            )
+
+        init {
+            // If the event is not in the allow list, we don't want to track it
+            require(telemetryAllowMap.contains(preferenceKey))
         }
     }
 

@@ -5,7 +5,6 @@
 package org.mozilla.fenix.settings.quicksettings
 
 import android.content.Context
-import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import mozilla.components.concept.engine.permission.SitePermissions
@@ -15,6 +14,7 @@ import mozilla.components.feature.sitepermissions.SitePermissionsRules.AutoplayA
 import mozilla.components.lib.state.State
 import org.mozilla.fenix.R
 import org.mozilla.fenix.settings.PhoneFeature
+import org.mozilla.fenix.trackingprotection.TrackingProtectionState
 import org.mozilla.fenix.utils.Settings
 
 /**
@@ -24,7 +24,8 @@ import org.mozilla.fenix.utils.Settings
  */
 data class QuickSettingsFragmentState(
     val webInfoState: WebsiteInfoState,
-    val websitePermissionsState: WebsitePermissionsState
+    val websitePermissionsState: WebsitePermissionsState,
+    val trackingProtectionState: TrackingProtectionState
 ) : State
 
 /**
@@ -39,22 +40,43 @@ data class WebsiteInfoState(
     val websiteTitle: String,
     val websiteSecurityUiValues: WebsiteSecurityUiValues,
     val certificateName: String
-) : State
+) : State {
+
+    companion object {
+        /**
+         * Construct an initial [WebsiteInfoState]
+         * based on the current website's status and connection.
+         * While being displayed users have no way of modifying it.
+         *
+         * @param websiteUrl [String] the URL of the current web page.
+         * @param websiteTitle [String] the title of the current web page.
+         * @param isSecured [Boolean] whether the connection is secured (TLS) or not.
+         * @param certificateName [String] the certificate name of the current web  page.
+         */
+        fun createWebsiteInfoState(
+            websiteUrl: String,
+            websiteTitle: String,
+            isSecured: Boolean,
+            certificateName: String
+        ): WebsiteInfoState {
+            val uiValues =
+                if (isSecured) WebsiteSecurityUiValues.SECURE else WebsiteSecurityUiValues.INSECURE
+            return WebsiteInfoState(websiteUrl, websiteTitle, uiValues, certificateName)
+        }
+    }
+}
 
 enum class WebsiteSecurityUiValues(
     @StringRes val securityInfoRes: Int,
-    @DrawableRes val iconRes: Int,
-    @ColorRes val iconTintRes: Int
+    @DrawableRes val iconRes: Int
 ) {
     SECURE(
-        R.string.quick_settings_sheet_secure_connection,
-        R.drawable.mozac_ic_lock,
-        R.color.photonGreen50
+        R.string.quick_settings_sheet_secure_connection_2,
+        R.drawable.ic_lock
     ),
     INSECURE(
-        R.string.quick_settings_sheet_insecure_connection,
-        R.drawable.mozac_ic_globe,
-        R.color.photonRed50
+        R.string.quick_settings_sheet_insecure_connection_2,
+        R.drawable.mozac_ic_broken_lock
     )
 }
 

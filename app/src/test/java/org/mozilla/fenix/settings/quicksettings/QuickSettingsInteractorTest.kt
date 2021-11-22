@@ -53,4 +53,33 @@ class QuickSettingsInteractorTest {
         assertTrue(permission.isCaptured)
         assertEquals(websitePermission, permission.captured)
     }
+
+    @Test
+    fun `onTrackingProtectionToggled should delegate the controller`() {
+        val isEnabled = true
+
+        interactor.onTrackingProtectionToggled(isEnabled)
+
+        verify {
+            controller.handleTrackingProtectionToggled(isEnabled)
+        }
+    }
+
+    @Test
+    fun `onBlockedItemsClicked should delegate the controller`() {
+        interactor.onDetailsClicked()
+
+        verify {
+            controller.handleDetailsClicked()
+        }
+    }
+
+    @Test
+    fun `WHEN calling onConnectionDetailsClicked THEN delegate to the controller`() {
+        interactor.onConnectionDetailsClicked()
+
+        verify {
+            controller.handleConnectionDetailsClicked()
+        }
+    }
 }

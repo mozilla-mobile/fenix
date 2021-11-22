@@ -26,7 +26,7 @@
     <!-- Message announced to the user when tab tray is selected with 1 tab -->
     <string name="open_tab_tray_single">1 открытая вкладка. Нажмите, чтобы переключить вкладки.</string>
     <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
-    <string name="open_tab_tray_plural">Открытых вкладок: %1$s. Нажмите, чтобы переключить вкладки.</string>
+    <string moz:removedIn="95" name="open_tab_tray_plural" tools:ignore="UnusedResources">Открытых вкладок: %1$s. Нажмите, чтобы переключить вкладки.</string>
 
     <!-- Tab tray multi select title in app bar. The first parameter is the number of tabs selected -->
     <string name="tab_tray_multi_select_title">Выбрано: %1$d</string>
@@ -54,7 +54,11 @@
 
     <!-- Home - Recently saved bookmarks -->
     <!-- Title for the home screen section with recently saved bookmarks. -->
-    <string name="recently_saved_bookmarks">Недавно добавленные</string>
+    <string moz:removedIn="94" name="recently_saved_bookmarks" tools:ignore="UnusedResources">Недавно добавленные</string>
+    <!-- Title for the home screen section with recently saved bookmarks. -->
+    <string moz:removedIn="94" name="recently_bookmarked" tools:ignore="UnusedResources">Недавно добавленные</string>
+    <!-- Title for the home screen section with recently saved bookmarks. -->
+    <string name="recent_bookmarks_title">Недавние закладки</string>
     <!-- Content description for the recently saved bookmarks section on the home screen. -->
     <string name="recently_saved_bookmarks_content_description">Недавно добавленные закладки</string>
     <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
@@ -79,7 +83,7 @@
 
     <!-- Private mode shortcut "contextual feature recommendation" (CFR) -->
     <!-- Text for the main message -->
-    <string name="cfr_message">Добавьте ярлык, чтобы открывать приватные вкладки с главного экрана.</string>
+    <string name="cfr_message">Добавьте ярлык, чтобы открывать приватные вкладки с домашнего экрана.</string>
     <!-- Text for the positive button -->
     <string name="cfr_pos_button_text">Добавить ярлык</string>
     <!-- Text for the negative button -->
@@ -110,6 +114,20 @@
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">Пропустить</string>
 
+    <!-- Text for the banner message to tell users about our inactive tabs feature. -->
+    <string name="tab_tray_inactive_onboarding_message">Вкладки, к которым вы не обращались в течение двух недель, перемещаются сюда.</string>
+    <!-- Text for the action link to go to Settings for inactive tabs. -->
+    <string name="tab_tray_inactive_onboarding_button_text">Отключить в настройках</string>
+    <!-- Text for title for the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_auto_close_title">Автоматически закрывать через месяц?</string>
+    <!-- Text for the body for the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_auto_close_body">Firefox может закрывать вкладки, к которым вы не обращались за последний месяц.</string>
+    <!-- Content description for close button in the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_auto_close_button_content_description">Закрыть</string>
+
+    <!-- Text for turn on auto close tabs button in the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_turn_on_auto_close_button">Включить автоматическое закрытие</string>
+
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
     <string name="home_screen_shortcut_open_new_tab_2">Новая вкладка</string>
@@ -117,7 +135,7 @@
     <string name="home_screen_shortcut_open_new_private_tab_2">Новая приватная вкладка</string>
 
     <!-- Heading for the Top Sites block -->
-    <string name="home_screen_top_sites_heading">Топ сайтов</string>
+    <string moz:removedIn="95" name="home_screen_top_sites_heading" tools:ignore="UnusedResources">Топ сайтов</string>
 
     <!-- Recent Tabs -->
     <!-- Header text for jumping back into the recent tab in the home screen -->
@@ -125,10 +143,32 @@
     <!-- Button text for showing all the tabs in the tabs tray -->
     <string name="recent_tabs_show_all">Показать все</string>
 
+    <!-- Content description for the button which navigates the user to show all recent tabs in the tabs tray. -->
+    <string name="recent_tabs_show_all_content_description">Показать кнопку всех недавних вкладок</string>
+    <!-- Title for showing a group item in the 'Jump back in' section of the new tab
+        The first parameter is the search term that the user used. (for example: your search for "cat")-->
+    <string name="recent_tabs_search_term">Ваш поиск \&quot;%1$s\&quot;</string>
+    <!-- Text for the number of tabs in a group in the 'Jump back in' section of the new tab
+        The first parameter is the count for number of sites in the group.  This number will always be more than one. -->
+    <string name="recent_tabs_search_term_count">Сайты: %1$s</string>
+
     <!-- History Metadata -->
     <!-- Header text for a section on the home screen that displays grouped highlights from the
          user's browsing history, such as topics they have researched or explored on the web -->
-    <string name="history_metadata_header">Прошлые исследования</string>
+    <string moz:removedIn="94" name="history_metadata_header" tools:ignore="UnusedResources">Прошлые исследования</string>
+
+    <!-- Header text for a section on the home screen that displays grouped highlights from the
+         user's browsing history, such as topics they have researched or explored on the web -->
+    <string moz:removedIn="94" name="history_metadata_header_2" tools:ignore="UnusedResources">Недавно посещённые</string>
+    <!-- Header text for a section on the home screen that displays grouped highlights from the
+         user's browsing history, such as topics they have researched or explored on the web -->
+    <string name="history_metadata_header_3">Недавние поиски</string>
+    <!-- Text for the menu button to remove a grouped highlight from the user's browsing history
+         in the Recently visited section -->
+    <string name="recently_visited_menu_item_remove">Удалить</string>
+
+    <!-- Content description for the button which navigates the user to show all of their history. -->
+    <string name="past_explorations_show_all_content_description">Показать кнопку отображения всей истории</string>
 
     <!-- Browser Fragment -->
     <!-- Content description (not visible, for screen readers etc.): Navigate to open tabs -->
@@ -144,7 +184,7 @@
 
 
     <!-- Content description (not visible, for screen readers etc.): Bookmark the current page -->
-    <string name="browser_menu_bookmark">Добавить в закладки</string>
+    <string moz:removedIn="95" name="browser_menu_bookmark" tools:ignore="UnusedResources">Добавить в закладки</string>
     <!-- Content description (not visible, for screen readers etc.): Un-bookmark the current page -->
     <string name="browser_menu_edit_bookmark">Изменить закладку</string>
     <!-- Browser menu button that opens the addon manager -->
@@ -162,7 +202,7 @@
     <!-- Browser menu button that opens a user's library -->
     <string name="browser_menu_library">Библиотека</string>
     <!-- Browser menu toggle that requests a desktop site -->
-    <string name="browser_menu_desktop_site">Версия для ПК</string>
+    <string name="browser_menu_desktop_site">Версия для компьютера</string>
     <!-- Browser menu toggle that adds a shortcut to the site on the device home screen. -->
     <string name="browser_menu_add_to_homescreen">На домашний экран</string>
     <!-- Browser menu toggle that installs a Progressive Web App shortcut to the site on the device home screen. -->
@@ -208,6 +248,10 @@
     <!-- Browser menu label for editing a bookmark -->
     <string name="browser_menu_edit">Изменить</string>
 
+    <!-- Browser menu button that opens the Customize menu -->
+    <string name="browser_menu_customize_home">Настроить домашний экран</string>
+    <!-- Button shown on the home page that opens the Customize home settings -->
+    <string name="browser_menu_customize_home_1">Настроить домашнюю страницу</string>
     <!-- Browser Toolbar -->
     <!-- Content description for the Home screen button on the browser toolbar -->
     <string name="browser_toolbar_home">Домашний экран</string>
@@ -253,6 +297,28 @@
     <string name="search_engine_suggestions_title">Поиск в %s</string>
     <!-- Search engine suggestion description text -->
     <string name="search_engine_suggestions_description">Поиск прямо из адресной строки</string>
+
+    <!-- Home onboarding -->
+    <!-- Onboarding home screen dialog title text. Firefox is intentionally hardcoded. -->
+    <string name="onboarding_home_screen_title_2">Что нового в Firefox</string>
+    <!-- Onboarding home screen dialog description text. -->
+    <string name="onboarding_home_screen_description_2">Теперь легче продолжить с того места, где вы остановились.</string>
+    <!-- Onboarding home screen dialog title text for the home section. Firefox is intentionally hardcoded. -->
+    <string name="onboarding_home_screen_section_home_title_2">Настраиваемая домашняя страница Firefox</string>
+    <!-- Onboarding home screen dialog description text for the home section. -->
+    <string name="onboarding_home_screen_section_home_description_2">Переходите к открытым вкладкам, закладкам и истории просмотра.</string>
+    <!-- Onboarding home screen dialog description text for the tab tray section. -->
+    <string name="onboarding_home_screen_section_cleaner_tab_tray_title_2">Лучшая организация вкладок</string>
+
+    <!-- Onboarding home screen dialog description text for the tab tray section. -->
+    <string name="onboarding_home_screen_section_cleaner_tab_tray_description_2">Вкладки стали более организованы с использованием улучшенного размещения и автоматического закрытия.</string>
+    <!-- Onboarding home screen dialog description text for the history section. -->
+    <string name="onboarding_home_screen_section_useful_history_title_2">Недавние поиски</string>
+    <!-- Onboarding home screen dialog description text for the history section. -->
+    <string name="onboarding_home_screen_section_useful_history_description_2">Вернитесь к последним поисковым запросам с домашней страницы и вкладок.</string>
+
+    <!-- Onboarding home screen popup dialog, shown on top of the Jump back in section. Firefox is intentionally hardcoded. -->
+    <string name="onboarding_home_screen_jump_back_contextual_hint" tools:ignore="UnusedResources">На настроенной вами домашней странице Firefox теперь легче продолжить с того места, где вы остановились. Найдите свои недавние вкладки, закладки и результаты поиска.</string>
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
@@ -333,7 +399,9 @@
     <!-- Preference for changing default theme to dark or light mode -->
     <string name="preferences_theme">Тема</string>
     <!-- Preference for customizing the home screen -->
-    <string name="preferences_home">Домой</string>
+    <string moz:removedIn="94" name="preferences_home" tools:ignore="UnusedResources">Домой</string>
+    <!-- Preference for customizing the home screen -->
+    <string name="preferences_home_2">Домашняя страница</string>
     <!-- Preference for gestures based actions -->
     <string name="preferences_gestures">Жесты</string>
     <!-- Preference for settings related to visual options -->
@@ -401,6 +469,24 @@
     <string name="customize_addon_collection_user_hint">Владелец коллекции (ID пользователя)</string>
     <!-- Toast shown after confirming the custom add-on collection configuration -->
     <string name="toast_customize_addon_collection_done">Коллекция дополнений была изменена. Закрываем приложение, чтобы применить изменения…</string>
+
+    <!-- Customize Home -->
+    <!-- Header text for jumping back into the recent tab in customize the home screen -->
+    <string name="customize_toggle_jump_back_in">Перейти обратно в</string>
+    <!-- Title for the customize home screen section with recently saved bookmarks. -->
+    <string moz:removedIn="94" name="customize_toggle_recently_saved_bookmarks" tools:ignore="UnusedResources">Недавно добавленные</string>
+    <!-- Title for the customize home screen section with recently saved bookmarks. -->
+    <string moz:removedIn="94" name="customize_toggle_recently_bookmarked" tools:ignore="UnusedResources">Недавно добавленные</string>
+    <!-- Title for the customize home screen section with recently saved bookmarks. -->
+    <string name="customize_toggle_recent_bookmarks">Недавние закладки</string>
+    <!-- Title for the customize home screen section with recently visited. Recently visited is
+    a section where users see a list of tabs that they have visited in the past few days -->
+    <string moz:removedIn="94" name="customize_toggle_recently_visited" tools:ignore="UnusedResources">Недавно посещённые</string>
+    <!-- Title for the customize home screen settings section for recent searches. Recent searches
+     is a section where users see a list of groups of tabs that they have visited in the past few days -->
+    <string name="customize_toggle_recent_searches">Недавние поиски</string>
+    <!-- Title for the customize home screen section with Pocket. -->
+    <string name="customize_toggle_pocket">Pocket</string>
 
     <!-- Add-on Installation from AMO-->
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
@@ -511,7 +597,7 @@
     <!-- Header of the Turn on Sync preference view -->
     <string name="preferences_sync">Включить синхронизацию</string>
     <!-- Preference for pairing -->
-    <string name="preferences_sync_pair">Отсканируйте код сопряжения в компьютерном Firefox</string>
+    <string moz:removedIn="95" name="preferences_sync_pair" tools:ignore="UnusedResources">Отсканируйте код сопряжения в компьютерном Firefox</string>
     <!-- Preference for account login -->
     <string name="preferences_sync_sign_in">Войти</string>
 
@@ -588,6 +674,13 @@
     <!-- Content description (not visible, for screen readers etc.): "Close button for library settings" -->
     <string name="content_description_close_button">Закрыть</string>
 
+    <!-- Text to show users they have one site in the history group section of the History fragment.
+    %d is a placeholder for the number of sites in the group. -->
+    <string name="history_search_group_site">%d сайт</string>
+    <!-- Text to show users they have multiple sites in the history group section of the History fragment.
+    %d is a placeholder for the number of sites in the group. -->
+    <string name="history_search_group_sites">%d сайта</string>
+
     <!-- Option in library for Recently Closed Tabs -->
     <string name="library_recently_closed_tabs">Недавно закрытые вкладки</string>
     <!-- Option in library to open Recently Closed Tabs page -->
@@ -611,6 +704,10 @@
     <string name="tab_view_list">Списком</string>
     <!-- Option for a grid tab view -->
     <string name="tab_view_grid">Сеткой</string>
+    <!-- Option for search term tab groups -->
+    <string name="tab_view_search_term_tab_groups">Поисковые группы</string>
+    <!-- Summary text for search term tab groups -->
+    <string name="tab_view_search_term_tab_groups_summary">Группируйте связанные сайты</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
     <string name="preferences_close_tabs">Закрывать вкладки</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
@@ -622,15 +719,26 @@
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">Через месяц</string>
 
-    <!-- Start on Home -->
+    <!-- Title of preference that allows a user to specify the auto-close settings for open tabs -->
+    <string name="preference_auto_close_tabs" tools:ignore="UnusedResources">Автозакрывать открытые вкладки</string>
+
+    <!-- Opening screen -->
     <!-- Title of a preference that allows a user to indicate after a specified amount of time when the app should start on the home screen -->
-    <string name="preferences_start_on_home">Запускать на домашнем экране </string>
+    <string moz:removedIn="94" name="preferences_start_on_home" tools:ignore="UnusedResources">Запускать на домашнем экране </string>
+    <!-- Title of a preference that allows a user to choose what screen to show after opening the app -->
+    <string name="preferences_opening_screen">Начальный экран</string>
     <!-- Option for starting on the home screen after after four hours or inactivity -->
-    <string name="start_on_home_after_four_hours">Через четыре часа</string>
+    <string moz:removedIn="94" name="start_on_home_after_four_hours" tools:ignore="UnusedResources">Через четыре часа</string>
+    <!-- Option for always opening the homepage when re-opening the app -->
+    <string name="opening_screen_homepage">Домашняя страница</string>
     <!-- Option for always starting on the home screen -->
-    <string name="start_on_home_always">Всегда</string>
+    <string moz:removedIn="94" name="start_on_home_always" tools:ignore="UnusedResources">Всегда</string>
+    <!-- Option for always opening the user's last-open tab when re-opening the app -->
+    <string name="opening_screen_last_tab">Последняя вкладка</string>
     <!-- Option for never starting on the home screen -->
-    <string name="start_on_home_never">Никогда</string>
+    <string moz:removedIn="94" name="start_on_home_never" tools:ignore="UnusedResources">Никогда</string>
+    <!-- Option for always opening the homepage when re-opening the app after four hours of inactivity -->
+    <string name="opening_screen_after_four_hours_of_inactivity">Домашняя страница после четырех часов бездействия</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
     <string name="close_tabs_manually_summary">Закрывать вручную</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
@@ -639,6 +747,12 @@
     <string name="close_tabs_after_one_week_summary">Закрывать через неделю</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one month-->
     <string name="close_tabs_after_one_month_summary">Закрывать через месяц</string>
+
+    <!-- Inactive tabs -->
+    <!-- Category header of a preference that allows a user to enable or disable the inactive tabs feature -->
+    <string name="preferences_inactive_tabs">Перемещать старые вкладки в неактивные</string>
+    <!-- Title of inactive tabs preference -->
+    <string name="preferences_inactive_tabs_title">Вкладки, к которым вы не обращались в течение двух недель, перемещаются в неактивные.</string>
 
     <!-- Studies -->
     <!-- Title of the remove studies button -->
@@ -680,13 +794,13 @@
     <!-- Text shown in the menu for saving tabs to a collection -->
     <string name="tab_tray_menu_item_save">Сохранить в коллекцию</string>
     <!-- Text shown in the menu for the collection selector -->
-    <string name="tab_tray_menu_select">Выбрать</string>
+    <string moz:removedIn="95" name="tab_tray_menu_select" tools:ignore="UnusedResources">Выбрать</string>
     <!-- Text shown in the menu for sharing all tabs -->
     <string name="tab_tray_menu_item_share">Поделиться всеми вкладками</string>
     <!-- Text shown in the menu to view recently closed tabs -->
     <string name="tab_tray_menu_recently_closed">Недавно закрытые вкладки</string>
     <!-- Text shown in the tabs tray inactive tabs section -->
-    <string name="tab_tray_inactive_recently_closed">Недавно закрытые</string>
+    <string name="tab_tray_inactive_recently_closed" tools:ignore="UnusedResources">Недавно закрытые</string>
     <!-- Text shown in the menu to view account settings -->
     <string name="tab_tray_menu_account_settings">Настройки Аккаунта</string>
     <!-- Text shown in the menu to view tab settings -->
@@ -696,7 +810,7 @@
     <!-- Shortcut action to open new tab -->
     <string name="tab_tray_menu_open_new_tab">Новая вкладка</string>
     <!-- Shortcut action to open the home screen -->
-    <string name="tab_tray_menu_home">На главную</string>
+    <string name="tab_tray_menu_home">На домашний</string>
     <!-- Shortcut action to toggle private mode -->
     <string name="tab_tray_menu_toggle">Переключить режим просмотра</string>
     <!-- Text shown in the multiselect menu for bookmarking selected tabs. -->
@@ -760,6 +874,12 @@
     <!-- Button in the current tab tray header in multiselect mode. Saved the selected tabs to a collection when pressed. -->
     <string name="tab_tray_save_to_collection">Сохранить</string>
 
+    <!-- Title text for the normal tabs header in the tabs tray which are not part of any tab grouping. -->
+    <string moz:removedIn="94" name="tab_tray_header_title" tools:ignore="UnusedResources">Другие</string>
+
+    <!-- Title text for the normal tabs header in the tabs tray which are not part of any tab grouping. -->
+    <string name="tab_tray_header_title_1">Другие вкладки</string>
+
     <!-- History -->
     <!-- Text for the button to clear all history -->
     <string name="history_delete_all">Удалить историю</string>
@@ -772,15 +892,15 @@
     <!-- Text for positive action to delete history in deleting history dialog -->
     <string name="history_clear_dialog">Удалить</string>
     <!-- History overflow menu copy button -->
-    <string name="history_menu_copy_button">Копировать</string>
+    <string moz:removedIn="94" name="history_menu_copy_button" tools:ignore="UnusedResources">Копировать</string>
     <!-- History overflow menu share button -->
-    <string name="history_menu_share_button">Поделиться</string>
+    <string moz:removedIn="94" name="history_menu_share_button" tools:ignore="UnusedResources">Поделиться</string>
     <!-- History overflow menu open in new tab button -->
-    <string name="history_menu_open_in_new_tab_button">Открыть в новой вкладке</string>
+    <string moz:removedIn="94" name="history_menu_open_in_new_tab_button" tools:ignore="UnusedResources">Открыть в новой вкладке</string>
     <!-- History overflow menu open in private tab button -->
-    <string name="history_menu_open_in_private_tab_button">Открыть в приватной вкладке</string>
+    <string moz:removedIn="94" name="history_menu_open_in_private_tab_button" tools:ignore="UnusedResources">Открыть в приватной вкладке</string>
     <!-- Text for the button to delete a single history item -->
-    <string name="history_delete_item">Удалить</string>
+    <string moz:removedIn="94" name="history_delete_item" tools:ignore="UnusedResources">Удалить</string>
     <!-- History multi select title in app bar
     The first parameter is the number of bookmarks selected -->
     <string name="history_multi_select_title">Выбрано: %1$d</string>
@@ -804,10 +924,6 @@
     <string name="history_empty_message">История отсутствует</string>
 
     <!-- Downloads -->
-    <!-- Text for the button to clear all downloads -->
-    <string name="download_delete_all">Удалить загрузки</string>
-    <!-- Text for the dialog to confirm clearing all downloads -->
-    <string name="download_delete_all_dialog">Вы уверены, что хотите удалить свои загрузки?</string>
     <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
     <string name="download_delete_multiple_items_snackbar_1">Загрузки удалены</string>
     <!-- Text for the snackbar to confirm that a single download item has been removed. The first parameter is the name of the download item. -->
@@ -849,7 +965,7 @@
     <!-- Content description for bookmarks library menu -->
     <string name="bookmark_menu_content_description">Меню закладок</string>
     <!-- Screen title for editing bookmarks -->
-    <string name="bookmark_edit">Изменить закладку</string>
+    <string moz:removedIn="95" name="bookmark_edit" tools:ignore="UnusedResources">Изменить закладку</string>
     <!-- Screen title for selecting a bookmarks folder -->
     <string name="bookmark_select_folder">Выбрать папку</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete the selected folder -->
@@ -1274,12 +1390,12 @@
     <!-- text for the Firefox Accounts section header -->
     <string name="onboarding_fxa_section_header">Уже есть аккаунт?</string>
     <!-- text for the "What's New" onboarding card header -->
-    <string name="onboarding_whats_new_header1">Посмотрите, что нового</string>
+    <string moz:removedIn="94" name="onboarding_whats_new_header1" tools:ignore="UnusedResources">Посмотрите, что нового</string>
     <!-- text for the "what's new" onboarding card description
     The first parameter is the short name of the app (e.g. Firefox) -->
-    <string name="onboarding_whats_new_description">Есть вопросы о переработанном %s? Хотите узнать, что изменилось?</string>
+    <string moz:removedIn="94" name="onboarding_whats_new_description" tools:ignore="UnusedResources">Есть вопросы о переработанном %s? Хотите узнать, что изменилось?</string>
     <!-- text for underlined clickable link that is part of "what's new" onboarding card description that links to an FAQ -->
-    <string name="onboarding_whats_new_description_linktext">Получите ответы здесь</string>
+    <string moz:removedIn="94" name="onboarding_whats_new_description_linktext" tools:ignore="UnusedResources">Получите ответы здесь</string>
     <!-- text for the Firefox account onboarding sign in card header. The word "Firefox" should not be translated -->
     <string name="onboarding_account_sign_in_header_1">Синхронизация Firefox между устройствами</string>
     <!-- Text for the button to learn more about signing in to your Firefox account -->
@@ -1319,14 +1435,14 @@
     <!-- text for the toolbar position card description -->
     <string name="onboarding_toolbar_placement_description_1">Обеспечьте удобный доступ к панели инструментов. Оставьте её внизу или переместите вверх.</string>
     <!-- text for the private browsing onboarding card header -->
-    <string name="onboarding_private_browsing_header">Приватный режим</string>
+    <string moz:removedIn="94" name="onboarding_private_browsing_header" tools:ignore="UnusedResources">Приватный режим</string>
     <!-- text for the private browsing onboarding card description
     The first parameter is an icon that represents private browsing -->
-    <string name="onboarding_private_browsing_description1">Хотите открыть приватную вкладку один раз: Нажмите на значок %s.</string>
+    <string moz:removedIn="94" name="onboarding_private_browsing_description1" tools:ignore="UnusedResources">Хотите открыть приватную вкладку один раз: Нажмите на значок %s.</string>
     <!-- text for the private browsing onboarding card description, explaining how to always using private browsing -->
-    <string name="onboarding_private_browsing_always_description">Хотите открывать приватные вкладки каждый раз: Измените настройки приватного просмотра.</string>
+    <string moz:removedIn="94" name="onboarding_private_browsing_always_description" tools:ignore="UnusedResources">Хотите открывать приватные вкладки каждый раз: Измените настройки приватного просмотра.</string>
     <!-- text for the private browsing onbording card button, that launches settings -->
-    <string name="onboarding_private_browsing_button">Открыть настройки</string>
+    <string moz:removedIn="94" name="onboarding_private_browsing_button" tools:ignore="UnusedResources">Открыть настройки</string>
     <!-- text for the privacy notice onboarding card header -->
     <string name="onboarding_privacy_notice_header">Ваша приватность</string>
 
@@ -1491,6 +1607,12 @@
     <!-- Description of redirect tracker cookies that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_redirect_trackers_description">Удаляет куки, установленные в ходе перенаправлений на известные веб-сайты с отслеживанием.</string>
 
+    <!-- Description of the SmartBlock Enhanced Tracking Protection feature. The * symbol is intentionally hardcoded here,
+         as we use it on the UI to indicate which trackers have been partially unblocked.  -->
+    <string name="preference_etp_smartblock_description">Некоторые отмеченные ниже трекеры были частично разблокированы на этой странице, так как вы с ними взаимодействовали *.</string>
+    <!-- Text displayed that links to website about enhanced tracking protection SmartBlock -->
+    <string name="preference_etp_smartblock_learn_more">Подробнее</string>
+
     <!-- About page link text to open support link -->
     <string name="about_support">Поддержка</string>
     <!-- About page link text to list of past crashes (like about:crashes on desktop) -->
@@ -1558,6 +1680,9 @@
     <!-- Description for the preference for autofilling logins from Fenix in other apps (e.g. autofilling the Twitter app) -->
     <string name="preferences_android_autofill_description">Заполнять имена пользователей и пароли в других приложениях на вашем устройстве.</string>
 
+    <!-- Preference option for adding a login -->
+    <string name="preferences_logins_add_login">Добавить логин</string>
+
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">Синхронизация логинов</string>
     <!-- Preference for syncing saved logins in Fenix, when not signed in-->
@@ -1620,6 +1745,8 @@
     <string name="saved_login_copy_username">Копировать имя пользователя</string>
     <!-- Content Description (for screenreaders etc) read for the button to clear a username while editing a login -->
     <string name="saved_login_clear_username">Очистить имя пользователя</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear the hostname field while creating a login -->
+    <string name="saved_login_clear_hostname">Очистить имя сервера</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a site in logins -->
     <string name="saved_login_copy_site">Копировать сайт</string>
     <!-- Content Description (for screenreaders etc) read for the button to open a site in logins -->
@@ -1786,9 +1913,13 @@
     <string name="phone_feature_blocked_step_feature"><![CDATA[3. Переключите <b>%1$s</b> в состояние РАЗРЕШЕНО]]></string>
 
     <!-- Label that indicates a site is using a secure connection -->
-    <string name="quick_settings_sheet_secure_connection">Защищённое соединение</string>
+    <string name="quick_settings_sheet_secure_connection_2">Соединение защищено</string>
     <!-- Label that indicates a site is using a insecure connection -->
-    <string name="quick_settings_sheet_insecure_connection">Незащищённое соединение</string>
+    <string name="quick_settings_sheet_insecure_connection_2">Соединение не защищено</string>
+    <!-- Label that indicates a site is using a secure connection -->
+    <string moz:removedIn="94" name="quick_settings_sheet_secure_connection" tools:ignore="UnusedResources">Защищённое соединение</string>
+    <!-- Label that indicates a site is using a insecure connection -->
+    <string moz:removedIn="94" name="quick_settings_sheet_insecure_connection" tools:ignore="UnusedResources">Незащищённое соединение</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete all the permissions for all sites-->
     <string name="confirm_clear_permissions_on_all_sites">Вы уверены, что хотите удалить все разрешения для всех сайтов?</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete all the permissions for a site-->
@@ -1828,8 +1959,14 @@
     <string name="discard_changes">Отменить изменения</string>
     <!--  The page title for editing a saved login. -->
     <string name="edit">Редактирование</string>
-    <!--  The error message in edit login view when password field is blank. -->
+    <!--  The page title for adding new login. -->
+    <string name="add_login">Добавить новый логин</string>
+    <!--  The error message in add/edit login view when password field is blank. -->
     <string name="saved_login_password_required">Требуется пароль</string>
+    <!--  The error message in add login view when username field is blank. -->
+    <string name="saved_login_username_required">Требуется имя пользователя</string>
+    <!--  The error message in add login view when hostname field is blank. -->
+    <string name="saved_login_hostname_required" tools:ignore="UnusedResources">Введите имя сервера</string>
     <!-- Voice search button content description  -->
     <string name="voice_search_content_description">Голосовой поиск</string>
     <!-- Voice search prompt description displayed after the user presses the voice search button -->
@@ -1837,6 +1974,15 @@
 
     <!--  The error message in edit login view when a duplicate username exists. -->
     <string name="saved_login_duplicate">Логин с таким именем пользователя уже существует</string>
+
+    <!-- This is the hint text that is shown inline on the hostname field of the create new login page. 'https://www.example.com' intentionally hardcoded here -->
+    <string name="add_login_hostname_hint_text">https://www.example.com</string>
+    <!-- This is an error message shown below the hostname field of the add login page when a hostname does not contain http or https. -->
+    <string moz:removedIn="94" name="add_login_hostname_invalid_text_1" tools:ignore="UnusedResources">Веб-адрес должен содержать \“https://\“ или \“http://\“</string>
+    <!-- This is an error message shown below the hostname field of the add login page when a hostname does not contain http or https. -->
+    <string name="add_login_hostname_invalid_text_3">Веб-адрес должен содержать &quot;https://&quot; or &quot;http://&quot;</string>
+    <!-- This is an error message shown below the hostname field of the add login page when a hostname is invalid. -->
+    <string name="add_login_hostname_invalid_text_2">Введите корректное имя сервера</string>
 
     <!-- Synced Tabs -->
     <!-- Text displayed to ask user to connect another device as no devices found with account -->
@@ -1863,8 +2009,12 @@
     <!-- Confirmation dialog button text when top sites limit is reached. -->
     <string name="top_sites_max_limit_confirmation_button">OK, понятно</string>
 
+    <!-- Label for the preference to show the most visited top sites on the homepage -->
+    <string name="top_sites_toggle_top_recent_sites_3">Самые посещаемые топ-сайты</string>
+    <!-- Label for the show most visited top sites preference -->
+    <string moz:removedIn="94" name="top_sites_toggle_top_frecent_sites_2" tools:ignore="UnusedResources">Показывать самые посещаемые из топа сайтов</string>
     <!-- Label for the show most visited sites preference -->
-    <string name="top_sites_toggle_top_frecent_sites">Показывать самые посещаемые сайты</string>
+    <string moz:removedIn="93" name="top_sites_toggle_top_frecent_sites" tools:ignore="UnusedResources">Показывать самые посещаемые сайты</string>
 
     <!-- Title text displayed in the rename top site dialog. -->
 	<string name="top_sites_rename_dialog_title">Имя</string>
@@ -1875,15 +2025,42 @@
 	<!-- Dialog button text for canceling the rename top site prompt. -->
 	<string name="top_sites_rename_dialog_cancel">Отмена</string>
 
-    <!-- In-activate tabs in the tabs tray -->
-    <!-- Title text displayed in the tabs tray when a tab has been unused for 4 days. -->
+    <!-- Inactive tabs in the tabs tray -->
+    <!-- Title text displayed in the tabs tray when a tab has been unused for 14 days. -->
     <string name="inactive_tabs_title">Неактивные вкладки</string>
+    <!-- Content description for closing all inactive tabs -->
+    <string name="inactive_tabs_delete_all">Закрыть все неактивные вкладки</string>
     <!-- A description below the section of "inactive" tabs to notify the user when those tabs will be closed, if appropriate. See strings inactive_tabs_30_days and inactive_tabs_7_days for placeholders options. -->
-    <string name="inactive_tabs_description">Вкладки доступны здесь в течение %s дней. По истечении этого времени вкладки будут автоматически закрыты.</string>
+    <string moz:removedIn="93" name="inactive_tabs_description" tools:ignore="UnusedResources">Вкладки доступны здесь в течение %s дней. По истечении этого времени вкладки будут автоматически закрыты.</string>
     <!-- The amount of time until a tab in the "inactive" section of the tabs tray will be closed. See string inactive_tabs_description as well -->
-    <string name="inactive_tabs_30_days">30 дней</string>
+    <string moz:removedIn="93" name="inactive_tabs_30_days" tools:ignore="UnusedResources">30 дней</string>
     <!-- The amount of time until a tab in the "inactive" section of the tabs tray will be closed. See string inactive_tabs_description as well -->
-    <string name="inactive_tabs_7_days">1 неделя</string>
+    <string moz:removedIn="93" name="inactive_tabs_7_days" tools:ignore="UnusedResources">1 неделя</string>
+
+    <!-- Inactive tabs auto-close message in the tabs tray -->
+    <!-- The header text of the auto-close message when the user is asked if they want to turn on the auto-closing of inactive tabs. -->
+    <string name="inactive_tabs_auto_close_message_header" tools:ignore="UnusedResources">Автоматически закрывать через месяц?</string>
+
+    <!-- A description below the header to notify the user what the inactive tabs auto-close feature is. -->
+    <string name="inactive_tabs_auto_close_message_description" tools:ignore="UnusedResources">Firefox может закрывать вкладки, к которым вы не обращались за последний месяц.</string>
+    <!-- A call to action below the description to allow the user to turn on the auto closing of inactive tabs. -->
+    <string name="inactive_tabs_auto_close_message_action" tools:ignore="UnusedResources">ВКЛЮЧИТЬ АВТОЗАКРЫТИЕ</string>
+
+    <!-- Inactive tabs survey -->
+    <!-- Header text for the inactive tabs survey asking for feedback to improve the inactive tabs feature. -->
+    <string name="inactive_tabs_survey_header" tools:ignore="UnusedResources">Пожалуйста, помогите нам это улучшить</string>
+    <!-- Content text for the inactive tabs survey asking the primary survey feedback question. -->
+    <string name="inactive_tabs_survey_content" tools:ignore="UnusedResources">Почему вы отключили неактивные вкладки?</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string name="inactive_tabs_survey_not_interested_option" tools:ignore="UnusedResources">Функция не интересует</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string name="inactive_tabs_survey_time_too_long_option" tools:ignore="UnusedResources">Слишком большое время неактивности</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string name="inactive_tabs_survey_time_too_short_option" tools:ignore="UnusedResources">Слишком малое время неактивности</string>
+    <!-- Confirmation button text to submit the feedback for the inactive tabs survey. -->
+    <string name="inactive_tabs_survey_send_button" tools:ignore="UnusedResources">Отправить</string>
+    <!-- Content description for inactive tabs survey close button -->
+    <string name="inactive_tabs_survey_close_button_content_description" tools:ignore="UnusedResources">Закрыть</string>
 
     <!-- Default browser experiment -->
     <string name="default_browser_experiment_card_text">Настройте автоматическое открытие ссылок с веб-сайтов, из электронных писем и сообщений в Firefox.</string>
@@ -1900,4 +2077,19 @@
     <!-- Content description for privacy content close button -->
     <string name="privacy_content_close_button_content_description">Закрыть</string>
 
+    <!-- Pocket recommended stories -->
+    <!-- Header text for a section on the home screen. -->
+    <string moz:removedIn="94" name="pocket_stories_header" tools:ignore="UnusedResources">Истории, наводящие на размышления</string>
+    <!-- Header text for a section on the home screen. -->
+    <string name="pocket_stories_header_1">Истории, наводящие на размышления</string>
+    <!-- Header text for a section on the home screen. -->
+    <string name="pocket_stories_categories_header">Истории по темам</string>
+    <!-- Text of a button allowing users to access an external url for more Pocket recommendations. -->
+    <string name="pocket_stories_placeholder_text">Узнайте больше</string>
+    <!-- Title of an app feature. Smaller than a heading.-->
+    <string name="pocket_stories_feature_title">С использованием Pocket.</string>
+    <!-- Caption for describing a certain feature. The placeholder is for a clickable text (eg: Learn more) which will load an url in a new tab when clicked.  -->
+    <string name="pocket_stories_feature_caption">Является частью семейства Firefox. %s</string>
+    <!-- Clickable text for opening an external link for more information about Pocket. -->
+    <string name="pocket_stories_feature_learn_more">Узнать больше</string>
 </resources>

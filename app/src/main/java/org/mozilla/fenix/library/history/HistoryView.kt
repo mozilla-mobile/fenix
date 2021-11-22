@@ -5,86 +5,16 @@
 package org.mozilla.fenix.library.history
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
-import kotlinx.android.synthetic.main.component_history.*
-import kotlinx.android.synthetic.main.component_history.view.*
-import kotlinx.android.synthetic.main.recently_closed_nav_item.*
 import mozilla.components.support.base.feature.UserInteractionHandler
 import org.mozilla.fenix.R
+import org.mozilla.fenix.databinding.ComponentHistoryBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.library.LibraryPageView
-import org.mozilla.fenix.selection.SelectionInteractor
 import org.mozilla.fenix.theme.ThemeManager
-
-/**
- * Interface for the HistoryViewInteractor. This interface is implemented by objects that want
- * to respond to user interaction on the HistoryView
- */
-interface HistoryViewInteractor : SelectionInteractor<HistoryItem> {
-
-    /**
-     * Called on backpressed to exit edit mode
-     */
-    fun onBackPressed(): Boolean
-
-    /**
-     * Called when the mode is switched so we can invalidate the menu
-     */
-    fun onModeSwitched()
-
-    /**
-     * Copies the URL of a history item to the copy-paste buffer.
-     *
-     * @param item the history item to copy the URL from
-     */
-    fun onCopyPressed(item: HistoryItem)
-
-    /**
-     * Opens the share sheet for a history item.
-     *
-     * @param item the history item to share
-     */
-    fun onSharePressed(item: HistoryItem)
-
-    /**
-     * Opens a history item in a new tab.
-     *
-     * @param item the history item to open in a new tab
-     */
-    fun onOpenInNormalTab(item: HistoryItem)
-
-    /**
-     * Opens a history item in a private tab.
-     *
-     * @param item the history item to open in a private tab
-     */
-    fun onOpenInPrivateTab(item: HistoryItem)
-
-    /**
-     * Called when delete all is tapped
-     */
-    fun onDeleteAll()
-
-    /**
-     * Called when multiple history items are deleted
-     * @param items the history items to delete
-     */
-    fun onDeleteSome(items: Set<HistoryItem>)
-
-    /**
-     * Called when the user requests a sync of the history
-     */
-    fun onRequestSync()
-
-    /**
-     * Called when the user clicks on recently closed tab button.
-     */
-    fun onRecentlyClosedClicked()
-}
 
 /**
  * View that contains and configures the History List
@@ -94,8 +24,9 @@ class HistoryView(
     val interactor: HistoryInteractor
 ) : LibraryPageView(container), UserInteractionHandler {
 
-    val view: View = LayoutInflater.from(container.context)
-        .inflate(R.layout.component_history, container, true)
+    val binding = ComponentHistoryBinding.inflate(
+        LayoutInflater.from(container.context), container, true
+    )
 
     var mode: HistoryFragmentState.Mode = HistoryFragmentState.Mode.Normal
         private set
@@ -104,7 +35,7 @@ class HistoryView(
     private val layoutManager = LinearLayoutManager(container.context)
 
     init {
-        view.history_list.apply {
+        binding.historyList.apply {
             layoutManager = this@HistoryView.layoutManager
             adapter = historyAdapter
             (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
@@ -112,19 +43,19 @@ class HistoryView(
 
         val primaryTextColor =
             ThemeManager.resolveAttribute(R.attr.primaryText, context)
-        view.swipe_refresh.setColorSchemeColors(primaryTextColor)
-        view.swipe_refresh.setOnRefreshListener {
+        binding.swipeRefresh.setColorSchemeColors(primaryTextColor)
+        binding.swipeRefresh.setOnRefreshListener {
             interactor.onRequestSync()
-            view.history_list.scrollToPosition(0)
+            binding.historyList.scrollToPosition(0)
         }
     }
 
     fun update(state: HistoryFragmentState) {
         val oldMode = mode
 
-        view.progress_bar.isVisible = state.isDeletingItems
-        view.swipe_refresh.isRefreshing = state.mode === HistoryFragmentState.Mode.Syncing
-        view.swipe_refresh.isEnabled =
+        binding.progressBar.isVisible = state.isDeletingItems
+        binding.swipeRefresh.isRefreshing = state.mode === HistoryFragmentState.Mode.Syncing
+        binding.swipeRefresh.isEnabled =
             state.mode === HistoryFragmentState.Mode.Normal || state.mode === HistoryFragmentState.Mode.Syncing
         mode = state.mode
 
@@ -164,24 +95,24 @@ class HistoryView(
     }
 
     fun updateEmptyState(userHasHistory: Boolean) {
-        history_list.isVisible = userHasHistory
-        history_empty_view.isVisible = !userHasHistory
-        recently_closed_nav_empty.apply {
-            setOnClickListener {
+        binding.historyList.isVisible = userHasHistory
+        binding.historyEmptyView.isVisible = !userHasHistory
+        with(binding.recentlyClosedNavEmpty) {
+            recentlyClosedNav.setOnClickListener {
                 interactor.onRecentlyClosedClicked()
             }
-            val numRecentTabs = view.context.components.core.store.state.closedTabs.size
-            recently_closed_tabs_description.text = String.format(
-                view.context.getString(
+            val numRecentTabs = recentlyClosedNav.context.components.core.store.state.closedTabs.size
+            recentlyClosedTabsDescription.text = String.format(
+                context.getString(
                     if (numRecentTabs == 1)
                         R.string.recently_closed_tab else R.string.recently_closed_tabs
                 ),
                 numRecentTabs
             )
-            isVisible = !userHasHistory
+            recentlyClosedNav.isVisible = !userHasHistory
         }
         if (!userHasHistory) {
-            history_empty_view.announceForAccessibility(context.getString(R.string.history_empty_message))
+            binding.historyEmptyView.announceForAccessibility(context.getString(R.string.history_empty_message))
         }
     }
 

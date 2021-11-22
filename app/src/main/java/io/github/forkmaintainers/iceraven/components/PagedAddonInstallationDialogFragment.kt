@@ -27,13 +27,13 @@ import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.appcompat.widget.AppCompatCheckBox
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
-import kotlinx.android.synthetic.main.mozac_feature_addons_fragment_dialog_addon_installed.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import mozilla.components.feature.addons.Addon
 import mozilla.components.feature.addons.R
+import mozilla.components.feature.addons.databinding.MozacFeatureAddonsFragmentDialogAddonInstalledBinding
 import mozilla.components.feature.addons.ui.translateName
 import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.ktx.android.content.appName
@@ -154,6 +154,8 @@ class PagedAddonInstallationDialogFragment : AppCompatDialogFragment() {
             null,
             false
         )
+        
+        val binding = MozacFeatureAddonsFragmentDialogAddonInstalledBinding.bind(rootView)
 
         rootView.findViewById<TextView>(R.id.title).text =
             requireContext().getString(
@@ -164,9 +166,9 @@ class PagedAddonInstallationDialogFragment : AppCompatDialogFragment() {
 
         val icon = safeArguments.getParcelable<Bitmap>(KEY_ICON)
         if (icon != null) {
-            rootView.icon.setImageDrawable(BitmapDrawable(resources, icon))
+            binding.icon.setImageDrawable(BitmapDrawable(resources, icon))
         } else {
-            iconJob = fetchIcon(addon, rootView.icon)
+            iconJob = fetchIcon(addon, binding.icon)
         }
 
         val allowedInPrivateBrowsing = rootView.findViewById<AppCompatCheckBox>(R.id.allow_in_private_browsing)
@@ -182,7 +184,7 @@ class PagedAddonInstallationDialogFragment : AppCompatDialogFragment() {
 
         if (confirmButtonBackgroundColor != DEFAULT_VALUE) {
             val backgroundTintList =
-                    ContextCompat.getColorStateList(requireContext(), confirmButtonBackgroundColor)
+                ContextCompat.getColorStateList(requireContext(), confirmButtonBackgroundColor)
             confirmButton.backgroundTintList = backgroundTintList
         }
 
@@ -223,7 +225,9 @@ class PagedAddonInstallationDialogFragment : AppCompatDialogFragment() {
                     val context = iconView.context
                     val att = context.theme.resolveAttribute(android.R.attr.textColorPrimary)
                     iconView.setColorFilter(ContextCompat.getColor(context, att))
-                    iconView.setImageDrawable(context.getDrawable(R.drawable.mozac_ic_extensions))
+                    iconView.setImageDrawable(
+                        ContextCompat.getDrawable(context, R.drawable.mozac_ic_extensions)
+                    )
                 }
                 logger.error("Attempt to fetch the ${addon.id} icon failed", e)
             }

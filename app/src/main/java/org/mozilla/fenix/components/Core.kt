@@ -59,6 +59,9 @@ import mozilla.components.service.digitalassetlinks.local.StatementApi
 import mozilla.components.service.digitalassetlinks.local.StatementRelationChecker
 import mozilla.components.service.location.LocationService
 import mozilla.components.service.location.MozillaLocationService
+import mozilla.components.service.pocket.Frequency
+import mozilla.components.service.pocket.PocketStoriesConfig
+import mozilla.components.service.pocket.PocketStoriesService
 import mozilla.components.service.sync.autofill.AutofillCreditCardsAddressesStorage
 import mozilla.components.service.sync.logins.SyncableLoginsStorage
 import mozilla.components.support.locale.LocaleManager
@@ -84,6 +87,8 @@ import org.mozilla.fenix.telemetry.TelemetryMiddleware
 import org.mozilla.fenix.utils.Mockable
 import org.mozilla.fenix.utils.getUndoDelay
 import org.mozilla.geckoview.GeckoRuntime
+import java.lang.IllegalStateException
+import java.util.concurrent.TimeUnit
 
 /**
  * Component group for all core browser functionality.
@@ -208,12 +213,9 @@ class Core(
                 RecordingDevicesMiddleware(context),
                 PromptMiddleware(),
                 AdsTelemetryMiddleware(adsTelemetry),
-                LastMediaAccessMiddleware()
+                LastMediaAccessMiddleware(),
+                HistoryMetadataMiddleware(historyMetadataService)
             )
-
-        if (context.settings().historyMetadataFeature) {
-            middlewareList += HistoryMetadataMiddleware(historyMetadataService)
-        }
 
         BrowserStore(
             middleware = middlewareList + EngineMiddleware.create(engine)
@@ -252,9 +254,7 @@ class Core(
      * The [HistoryMetadataService] is used to record history metadata.
      */
     val historyMetadataService: HistoryMetadataService by lazyMonitored {
-        DefaultHistoryMetadataService(storage = historyStorage).apply {
-            cleanup(System.currentTimeMillis() - HISTORY_METADATA_MAX_AGE_IN_MS)
-        }
+        DefaultHistoryMetadataService(storage = historyStorage)
     }
 
     /**
@@ -322,6 +322,12 @@ class Core(
 
     val pinnedSiteStorage by lazyMonitored { PinnedSiteStorage(context) }
 
+    @Suppress("MagicNumber")
+    val pocketStoriesConfig by lazyMonitored {
+        PocketStoriesConfig(client, Frequency(4, TimeUnit.HOURS))
+    }
+    val pocketStoriesService by lazyMonitored { PocketStoriesService(context, pocketStoriesConfig) }
+
     val topSitesStorage by lazyMonitored {
         val defaultTopSites = mutableListOf<Pair<String, String>>()
 
@@ -346,6 +352,13 @@ class Core(
                         Pair(
                             context.getString(R.string.default_top_site_pdd),
                             SupportUtils.PDD_URL
+                        )
+                    )
+
+                    defaultTopSites.add(
+                        Pair(
+                            context.getString(R.string.default_top_site_tc),
+                            SupportUtils.TC_URL
                         )
                     )
                 } else {
@@ -444,6 +457,6 @@ class Core(
         private const val KEY_STORAGE_NAME = "core_prefs"
         private const val PASSWORDS_KEY = "passwords"
         private const val RECENTLY_CLOSED_MAX = 10
-        private const val HISTORY_METADATA_MAX_AGE_IN_MS = 14 * 24 * 60 * 60 * 1000 // 14 days
+        const val HISTORY_METADATA_MAX_AGE_IN_MS = 14 * 24 * 60 * 60 * 1000 // 14 days
     }
 }

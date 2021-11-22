@@ -23,6 +23,7 @@ import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.support.ktx.android.content.getColorFromAttr
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.accounts.AccountState
 import org.mozilla.fenix.components.accounts.FenixAccountManager
@@ -49,6 +50,7 @@ class HomeMenu(
         data class SyncAccount(val accountState: AccountState) : Item()
         object WhatsNew : Item()
         object Help : Item()
+        object CustomizeHome : Item()
         object Settings : Item()
         object Quit : Item()
         object ReconnectSync : Item()
@@ -161,17 +163,25 @@ class HomeMenu(
 
         val helpItem = BrowserMenuImageText(
             context.getString(R.string.browser_menu_help),
-            R.drawable.ic_help,
+            R.drawable.mozac_ic_help,
             primaryTextColor
         ) {
             onItemTapped.invoke(Item.Help)
+        }
+
+        val customizeHomeItem = BrowserMenuImageText(
+            context.getString(R.string.browser_menu_customize_home),
+            R.drawable.ic_customize,
+            primaryTextColor
+        ) {
+            onItemTapped.invoke(Item.CustomizeHome)
         }
 
         // Use nimbus to set the icon and title.
         val variables = experiments.getVariables(FeatureId.NIMBUS_VALIDATION)
         val settingsItem = BrowserMenuImageText(
             variables.getText("settings-title") ?: context.getString(R.string.browser_menu_settings),
-            variables.getDrawableResource("settings-icon") ?: R.drawable.ic_settings,
+            variables.getDrawableResource("settings-icon") ?: R.drawable.mozac_ic_settings,
             primaryTextColor
         ) {
             onItemTapped.invoke(Item.Settings)
@@ -200,6 +210,7 @@ class HomeMenu(
             BrowserMenuDivider(),
             whatsNewItem,
             helpItem,
+            if (FeatureFlags.customizeHome) customizeHomeItem else null,
             settingsItem,
             if (settings.shouldDeleteBrowsingDataOnQuit) quitItem else null
         ).also { items ->

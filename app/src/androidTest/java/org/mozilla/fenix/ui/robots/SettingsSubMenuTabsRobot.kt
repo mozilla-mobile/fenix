@@ -16,6 +16,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import org.hamcrest.CoreMatchers.allOf
+import org.mozilla.fenix.helpers.TestHelper.scrollToElementByText
 import org.mozilla.fenix.helpers.click
 
 /**
@@ -23,11 +24,16 @@ import org.mozilla.fenix.helpers.click
  */
 class SettingsSubMenuTabsRobot {
 
-    fun verifyOptions() = assertOptions()
+    fun verifyTabViewOptions() = assertTabViewOptions()
+
+    fun verifyCloseTabsOptions() = assertCloseTabsOptions()
 
     fun verifyStartOnHomeOptions() = assertStartOnHomeOptions()
 
-    fun clickAlwaysStartOnHomeToggle() = alwaysStartOnHomeToggle().click()
+    fun clickAlwaysStartOnHomeToggle() {
+        scrollToElementByText("Move old tabs to inactive")
+        alwaysStartOnHomeToggle().click()
+    }
 
     class Transition {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
@@ -42,10 +48,21 @@ class SettingsSubMenuTabsRobot {
     }
 }
 
-private fun assertOptions() {
+private fun assertTabViewOptions() {
+    tabViewHeading()
+        .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+    listToggle()
+        .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+    gridToggle()
+        .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+    searchTermTabGroupsToggle()
+        .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+}
+
+private fun assertCloseTabsOptions() {
+    closeTabsHeading()
+        .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
     afterOneDayToggle()
-        .check(ViewAssertions.matches(ViewMatchers.withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
-    manualToggle()
         .check(ViewAssertions.matches(ViewMatchers.withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
     afterOneWeekToggle()
         .check(ViewAssertions.matches(ViewMatchers.withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
@@ -54,17 +71,27 @@ private fun assertOptions() {
 }
 
 private fun assertStartOnHomeOptions() {
+    // Scroll to ensure all the items are visible.
+    scrollToElementByText("Never")
     startOnHomeHeading()
         .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
     afterFourHoursToggle()
         .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
     alwaysStartOnHomeToggle()
         .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
-    neverStartOnHomeToggle()
-        .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
 }
 
-private fun manualToggle() = onView(withText("Manually"))
+private fun tabViewHeading() = onView(withText("Tab view"))
+
+private fun listToggle() = onView(withText("List"))
+
+private fun gridToggle() = onView(withText("Grid"))
+
+private fun searchTermTabGroupsToggle() = onView(withText("Search groups"))
+
+private fun closeTabsHeading() = onView(withText("Close tabs"))
+
+private fun manuallyToggle() = onView(withText("Manually"))
 
 private fun afterOneDayToggle() = onView(withText("After one day"))
 

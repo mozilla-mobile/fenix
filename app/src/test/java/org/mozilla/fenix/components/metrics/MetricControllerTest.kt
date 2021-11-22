@@ -10,7 +10,14 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.verify
 import io.mockk.verifyAll
+import mozilla.components.feature.awesomebar.facts.AwesomeBarFacts
+import mozilla.components.feature.customtabs.CustomTabsFacts
+import mozilla.components.feature.prompts.dialog.LoginDialogFacts
+import mozilla.components.feature.prompts.facts.CreditCardAutofillDialogFacts
+import mozilla.components.feature.pwa.ProgressiveWebAppFacts
+import mozilla.components.feature.syncedtabs.facts.SyncedTabsFacts
 import mozilla.components.feature.top.sites.facts.TopSitesFacts
+import mozilla.components.lib.dataprotect.SecurePrefsReliabilityExperiment
 import mozilla.components.support.base.Component
 import mozilla.components.support.base.facts.Action
 import mozilla.components.support.base.facts.Fact
@@ -369,5 +376,138 @@ class MetricControllerTest {
         assertEquals(settings.installedAddonsList, "test1,test2,test3,test4")
         assertEquals(settings.enabledAddonsCount, 2)
         assertEquals(settings.enabledAddonsList, "test2,test4")
+    }
+
+    @Test
+    fun `credit card fact should trigger event`() {
+        val enabled = true
+        val settings: Settings = mockk(relaxed = true)
+        val controller = ReleaseMetricController(
+            services = listOf(dataService1),
+            isDataTelemetryEnabled = { enabled },
+            isMarketingDataTelemetryEnabled = { enabled },
+            settings
+        )
+
+        var fact = Fact(
+            Component.FEATURE_PROMPTS,
+            Action.INTERACTION,
+            CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_FORM_DETECTED
+        )
+
+        var event = controller.factToEvent(fact)
+        assertEquals(event, Event.CreditCardFormDetected)
+
+        fact = Fact(
+            Component.FEATURE_PROMPTS,
+            Action.INTERACTION,
+            CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_SUCCESS
+        )
+
+        event = controller.factToEvent(fact)
+        assertEquals(event, Event.CreditCardAutofilled)
+
+        fact = Fact(
+            Component.FEATURE_PROMPTS,
+            Action.INTERACTION,
+            CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_PROMPT_SHOWN
+        )
+
+        event = controller.factToEvent(fact)
+        assertEquals(event, Event.CreditCardAutofillPromptShown)
+
+        fact = Fact(
+            Component.FEATURE_PROMPTS,
+            Action.INTERACTION,
+            CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_PROMPT_EXPANDED
+        )
+
+        event = controller.factToEvent(fact)
+        assertEquals(event, Event.CreditCardAutofillPromptExpanded)
+
+        fact = Fact(
+            Component.FEATURE_PROMPTS,
+            Action.INTERACTION,
+            CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_PROMPT_DISMISSED
+        )
+
+        event = controller.factToEvent(fact)
+        assertEquals(event, Event.CreditCardAutofillPromptDismissed)
+    }
+
+    @Test
+    fun `credit card events should be sent to enabled service`() {
+        val controller = ReleaseMetricController(
+            listOf(dataService1),
+            isDataTelemetryEnabled = { true },
+            isMarketingDataTelemetryEnabled = { true },
+            mockk()
+        )
+        every { dataService1.shouldTrack(Event.CreditCardSaved) } returns true
+        every { dataService1.shouldTrack(Event.CreditCardDeleted) } returns true
+        every { dataService1.shouldTrack(Event.CreditCardModified) } returns true
+        every { dataService1.shouldTrack(Event.CreditCardFormDetected) } returns true
+        every { dataService1.shouldTrack(Event.CreditCardAutofilled) } returns true
+        every { dataService1.shouldTrack(Event.CreditCardAutofillPromptShown) } returns true
+        every { dataService1.shouldTrack(Event.CreditCardAutofillPromptExpanded) } returns true
+        every { dataService1.shouldTrack(Event.CreditCardAutofillPromptDismissed) } returns true
+        every { dataService1.shouldTrack(Event.CreditCardManagementAddTapped) } returns true
+        every { dataService1.shouldTrack(Event.CreditCardManagementCardTapped) } returns true
+
+        controller.start(MetricServiceType.Data)
+
+        controller.track(Event.CreditCardSaved)
+        controller.track(Event.CreditCardDeleted)
+        controller.track(Event.CreditCardModified)
+        controller.track(Event.CreditCardFormDetected)
+        controller.track(Event.CreditCardAutofilled)
+        controller.track(Event.CreditCardAutofillPromptShown)
+        controller.track(Event.CreditCardAutofillPromptExpanded)
+        controller.track(Event.CreditCardAutofillPromptDismissed)
+        controller.track(Event.CreditCardManagementAddTapped)
+        controller.track(Event.CreditCardManagementCardTapped)
+
+        verify { dataService1.track(Event.CreditCardSaved) }
+        verify { dataService1.track(Event.CreditCardDeleted) }
+        verify { dataService1.track(Event.CreditCardModified) }
+        verify { dataService1.track(Event.CreditCardFormDetected) }
+        verify { dataService1.track(Event.CreditCardAutofilled) }
+        verify { dataService1.track(Event.CreditCardAutofillPromptShown) }
+        verify { dataService1.track(Event.CreditCardAutofillPromptExpanded) }
+        verify { dataService1.track(Event.CreditCardAutofillPromptDismissed) }
+        verify { dataService1.track(Event.CreditCardManagementAddTapped) }
+        verify { dataService1.track(Event.CreditCardManagementCardTapped) }
+    }
+
+    @Test
+    fun `WHEN changing Fact(component, item) without additional vals to events THEN it returns the right event`() {
+        // This naive test was added for a refactoring. It only covers the comparisons that were easy to add.
+        val controller = ReleaseMetricController(emptyList(), { true }, { true }, mockk())
+
+        val simpleMappings = listOf(
+            Triple(Component.FEATURE_PROMPTS, LoginDialogFacts.Items.DISPLAY, Event.LoginDialogPromptDisplayed),
+            Triple(Component.FEATURE_PROMPTS, LoginDialogFacts.Items.CANCEL, Event.LoginDialogPromptCancelled),
+            Triple(Component.FEATURE_PROMPTS, LoginDialogFacts.Items.NEVER_SAVE, Event.LoginDialogPromptNeverSave),
+            Triple(Component.FEATURE_PROMPTS, LoginDialogFacts.Items.SAVE, Event.LoginDialogPromptSave),
+            // CreditCardAutofillDialogFacts.Items is already tested.
+            Triple(Component.FEATURE_CUSTOMTABS, CustomTabsFacts.Items.CLOSE, Event.CustomTabsClosed),
+            Triple(Component.FEATURE_CUSTOMTABS, CustomTabsFacts.Items.ACTION_BUTTON, Event.CustomTabsActionTapped),
+            Triple(Component.FEATURE_PWA, ProgressiveWebAppFacts.Items.HOMESCREEN_ICON_TAP, Event.ProgressiveWebAppOpenFromHomescreenTap),
+            Triple(Component.FEATURE_PWA, ProgressiveWebAppFacts.Items.INSTALL_SHORTCUT, Event.ProgressiveWebAppInstallAsShortcut),
+            Triple(Component.FEATURE_SYNCEDTABS, SyncedTabsFacts.Items.SYNCED_TABS_SUGGESTION_CLICKED, Event.SyncedTabSuggestionClicked),
+            Triple(Component.FEATURE_AWESOMEBAR, AwesomeBarFacts.Items.BOOKMARK_SUGGESTION_CLICKED, Event.BookmarkSuggestionClicked),
+            Triple(Component.FEATURE_AWESOMEBAR, AwesomeBarFacts.Items.CLIPBOARD_SUGGESTION_CLICKED, Event.ClipboardSuggestionClicked),
+            Triple(Component.FEATURE_AWESOMEBAR, AwesomeBarFacts.Items.HISTORY_SUGGESTION_CLICKED, Event.HistorySuggestionClicked),
+            Triple(Component.FEATURE_AWESOMEBAR, AwesomeBarFacts.Items.SEARCH_ACTION_CLICKED, Event.SearchActionClicked),
+            Triple(Component.FEATURE_AWESOMEBAR, AwesomeBarFacts.Items.SEARCH_SUGGESTION_CLICKED, Event.SearchSuggestionClicked),
+            Triple(Component.FEATURE_AWESOMEBAR, AwesomeBarFacts.Items.OPENED_TAB_SUGGESTION_CLICKED, Event.OpenedTabSuggestionClicked),
+            Triple(Component.LIB_DATAPROTECT, SecurePrefsReliabilityExperiment.Companion.Actions.RESET, Event.SecurePrefsReset),
+        )
+
+        simpleMappings.forEach { (component, item, expectedEvent) ->
+            val fact = Fact(component, Action.CANCEL, item)
+            val message = "$expectedEvent $component $item"
+            assertEquals(message, expectedEvent, controller.factToEvent(fact))
+        }
     }
 }

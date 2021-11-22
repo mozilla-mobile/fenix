@@ -9,19 +9,26 @@ import android.util.AttributeSet
 import androidx.recyclerview.widget.ConcatAdapter
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.tabstray.TabViewHolder
+import mozilla.components.concept.tabstray.Tab
+import mozilla.components.concept.tabstray.TabsTray
 import mozilla.components.feature.tabs.tabstray.TabsFeature
-import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.tabstray.TrayPagerAdapter.Companion.TABS_TRAY_FEATURE_NAME
 import org.mozilla.fenix.tabstray.ext.browserAdapter
 import org.mozilla.fenix.tabstray.ext.inactiveTabsAdapter
-import org.mozilla.fenix.tabstray.ext.isNormalTabActive
 import org.mozilla.fenix.tabstray.ext.isNormalTabInactive
 import java.util.concurrent.TimeUnit
 
 /**
  * The time until which a tab is considered in-active (in days).
  */
-const val DEFAULT_ACTIVE_DAYS = 4L
+const val DEFAULT_ACTIVE_DAYS = 14L
+
+/**
+ * The maximum time from when a tab was created or accessed until it is considered "inactive".
+ */
+val maxActiveTime = TimeUnit.DAYS.toMillis(DEFAULT_ACTIVE_DAYS)
 
 class NormalBrowserTrayList @JvmOverloads constructor(
     context: Context,
@@ -29,55 +36,54 @@ class NormalBrowserTrayList @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : AbstractBrowserTrayList(context, attrs, defStyleAttr) {
 
-    /**
-     * The maximum time from when a tab was created or accessed until it is considered "inactive".
-     */
-    var maxActiveTime = TimeUnit.DAYS.toMillis(DEFAULT_ACTIVE_DAYS)
-
+    private val swipeDelegate = SwipeToDeleteDelegate()
     private val concatAdapter by lazy { adapter as ConcatAdapter }
+    private val tabSorter by lazy {
+        TabSorter(
+            context,
+            context.settings(),
+            context.components.analytics.metrics,
+            concatAdapter,
+            context.components.core.store
+        )
+    }
+    private val inactiveTabsFilter: (TabSessionState) -> Boolean = filter@{
+        if (!context.settings().inactiveTabsAreEnabled) {
+            return@filter false
+        }
+        it.isNormalTabInactive(maxActiveTime)
+    }
 
-    override val tabsFeature by lazy {
-        val tabsAdapter = concatAdapter.browserAdapter
-
-        TabsFeature(
-            tabsAdapter,
-            context.components.core.store,
-            selectTabUseCase,
-            removeTabUseCase,
-            { state ->
-                if (!FeatureFlags.inactiveTabs) {
-                    return@TabsFeature !state.content.private
-                }
-                state.isNormalTabActive(maxActiveTime)
-            },
-            {}
+    private val inactiveTabsInteractor by lazy {
+        DefaultInactiveTabsInteractor(
+            InactiveTabsController(
+                context.components.core.store,
+                inactiveTabsFilter,
+                concatAdapter.inactiveTabsAdapter,
+                context.components.analytics.metrics
+            )
         )
     }
 
-    /**
-     * NB: The setup for this feature is a bit complicated without a better dependency injection
-     * solution to scope it down to just this view.
-     */
-    private val inactiveFeature by lazy {
-        val store = context.components.core.store
-        val tabFilter: (TabSessionState) -> Boolean = filter@{
-            if (!FeatureFlags.inactiveTabs) {
-                return@filter false
-            }
-            it.isNormalTabInactive(maxActiveTime)
-        }
-        val tabsAdapter = concatAdapter.inactiveTabsAdapter.apply {
-            inactiveTabsInteractor = DefaultInactiveTabsInteractor(
-                InactiveTabsController(store, tabFilter, this)
+    private val inactiveTabsAutoCloseInteractor by lazy {
+        DefaultInactiveTabsAutoCloseDialogInteractor(
+            InactiveTabsAutoCloseDialogController(
+                context.components.core.store,
+                context.settings(),
+                inactiveTabsFilter,
+                concatAdapter.inactiveTabsAdapter,
+                context.components.analytics.metrics
             )
-        }
+        )
+    }
 
+    override val tabsFeature by lazy {
         TabsFeature(
-            tabsAdapter,
-            store,
+            tabSorter,
+            context.components.core.store,
             selectTabUseCase,
             removeTabUseCase,
-            tabFilter,
+            { !it.content.private },
             {}
         )
     }
@@ -95,8 +101,12 @@ class NormalBrowserTrayList @JvmOverloads constructor(
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
 
+        concatAdapter.inactiveTabsAdapter.inactiveTabsInteractor = inactiveTabsInteractor
+        concatAdapter.inactiveTabsAdapter.inactiveTabsAutoCloseDialogInteractor = inactiveTabsAutoCloseInteractor
+
         tabsFeature.start()
-        inactiveFeature.start()
+
+        concatAdapter.browserAdapter.register(swipeDelegate)
 
         touchHelper.attachToRecyclerView(this)
     }
@@ -105,8 +115,22 @@ class NormalBrowserTrayList @JvmOverloads constructor(
         super.onDetachedFromWindow()
 
         tabsFeature.stop()
-        inactiveFeature.stop()
+
+        concatAdapter.browserAdapter.unregister(swipeDelegate)
 
         touchHelper.attachToRecyclerView(null)
+    }
+
+    /**
+     * A delegate for handling open/selected events from swipe-to-delete gestures.
+     */
+    inner class SwipeToDeleteDelegate : TabsTray.Observer {
+        override fun onTabClosed(tab: Tab) {
+            removeTabUseCase.invoke(tab.id, TABS_TRAY_FEATURE_NAME)
+        }
+
+        override fun onTabSelected(tab: Tab) {
+            selectTabUseCase.invoke(tab.id)
+        }
     }
 }

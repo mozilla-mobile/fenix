@@ -51,7 +51,6 @@ import org.mozilla.fenix.GleanMetrics.PerfStartup
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.components.metrics.MetricServiceType
 import org.mozilla.fenix.components.metrics.SecurePrefsTelemetry
-import org.mozilla.fenix.ext.measureNoInline
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.perf.ProfilerMarkerFactProcessor
 import org.mozilla.fenix.perf.StartupTimeline
@@ -65,17 +64,24 @@ import org.mozilla.fenix.telemetry.TelemetryLifecycleObserver
 import org.mozilla.fenix.utils.BrowsersCache
 import java.util.concurrent.TimeUnit
 import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.concept.storage.FrecencyThresholdOption
 import mozilla.components.feature.autofill.AutofillUseCases
 import mozilla.components.feature.search.ext.buildSearchUrl
 import mozilla.components.feature.search.ext.waitForSelectedOrDefaultSearchEngine
 import mozilla.components.service.fxa.manager.SyncEnginesStorage
+import org.mozilla.experiments.nimbus.NimbusInterface
+import org.mozilla.experiments.nimbus.internal.EnrolledExperiment
 import org.mozilla.fenix.GleanMetrics.Addons
 import org.mozilla.fenix.GleanMetrics.AndroidAutofill
+import org.mozilla.fenix.GleanMetrics.CustomizeHome
 import org.mozilla.fenix.GleanMetrics.Preferences
 import org.mozilla.fenix.GleanMetrics.SearchDefaultEngine
+import org.mozilla.fenix.components.Core
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MozillaProductDetector
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
+import org.mozilla.fenix.perf.MarkersLifecycleCallbacks
+import org.mozilla.fenix.tabstray.ext.inactiveTabs
 import org.mozilla.fenix.utils.Settings
 
 /**
@@ -98,7 +104,6 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
     override fun onCreate() {
         // We use start/stop instead of measure so we don't measure outside the main process.
         val completeMethodDurationTimerId = PerfStartup.applicationOnCreate.start() // DO NOT MOVE ANYTHING ABOVE HERE.
-        val subsectionThroughGleanTimerId = PerfStartup.appOnCreateToGleanInit.start()
 
         super.onCreate()
 
@@ -119,8 +124,6 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             // user's choice from Fennec.
             initializeGlean()
         }
-
-        PerfStartup.appOnCreateToGleanInit.stopAndAccumulate(subsectionThroughGleanTimerId)
 
         setupInMainProcessOnly()
 
@@ -163,54 +166,51 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
 
     @CallSuper
     open fun setupInMainProcessOnly() {
-        PerfStartup.appOnCreateToMegazordInit.measureNoInline {
-            ProfilerMarkerFactProcessor.create { components.core.engine.profiler }.register()
+        ProfilerMarkerFactProcessor.create { components.core.engine.profiler }.register()
 
-            run {
-                // Attention: Do not invoke any code from a-s in this scope.
-                val megazordSetup = setupMegazord()
+        run {
+            // Attention: Do not invoke any code from a-s in this scope.
+            val megazordSetup = setupMegazord()
 
-                setDayNightTheme()
-                components.strictMode.enableStrictMode(true)
-                warmBrowsersCache()
+            setDayNightTheme()
+            components.strictMode.enableStrictMode(true)
+            warmBrowsersCache()
 
-                // Make sure the engine is initialized and ready to use.
-                components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
-                    components.core.engine.warmUp()
-                }
-                initializeWebExtensionSupport()
-                restoreBrowserState()
-                restoreDownloads()
+            // Make sure the engine is initialized and ready to use.
+            components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
+                components.core.engine.warmUp()
+            }
+            initializeWebExtensionSupport()
+            restoreBrowserState()
+            restoreDownloads()
 
-                // Just to make sure it is impossible for any application-services pieces
-                // to invoke parts of itself that require complete megazord initialization
-                // before that process completes, we wait here, if necessary.
-                if (!megazordSetup.isCompleted) {
-                    runBlockingIncrement { megazordSetup.await() }
-                }
+            // Just to make sure it is impossible for any application-services pieces
+            // to invoke parts of itself that require complete megazord initialization
+            // before that process completes, we wait here, if necessary.
+            if (!megazordSetup.isCompleted) {
+                runBlockingIncrement { megazordSetup.await() }
             }
         }
 
-        PerfStartup.appOnCreateToSetupInMain.measureNoInline {
-            setupLeakCanary()
-            startMetricsIfEnabled()
-            setupPush()
+        setupLeakCanary()
+        startMetricsIfEnabled()
+        setupPush()
 
-            visibilityLifecycleCallback = VisibilityLifecycleCallback(getSystemService())
-            registerActivityLifecycleCallbacks(visibilityLifecycleCallback)
+        visibilityLifecycleCallback = VisibilityLifecycleCallback(getSystemService())
+        registerActivityLifecycleCallbacks(visibilityLifecycleCallback)
+        registerActivityLifecycleCallbacks(MarkersLifecycleCallbacks(components.core.engine))
 
-            // Storage maintenance disabled, for now, as it was interfering with background migrations.
-            // See https://github.com/mozilla-mobile/fenix/issues/7227 for context.
-            // if ((System.currentTimeMillis() - settings().lastPlacesStorageMaintenance) > ONE_DAY_MILLIS) {
-            //    runStorageMaintenance()
-            // }
+        // Storage maintenance disabled, for now, as it was interfering with background migrations.
+        // See https://github.com/mozilla-mobile/fenix/issues/7227 for context.
+        // if ((System.currentTimeMillis() - settings().lastPlacesStorageMaintenance) > ONE_DAY_MILLIS) {
+        //    runStorageMaintenance()
+        // }
 
-            components.appStartReasonProvider.registerInAppOnCreate(this)
-            components.startupActivityLog.registerInAppOnCreate(this)
-            initVisualCompletenessQueueAndQueueTasks()
+        components.appStartReasonProvider.registerInAppOnCreate(this)
+        components.startupActivityLog.registerInAppOnCreate(this)
+        initVisualCompletenessQueueAndQueueTasks()
 
-            ProcessLifecycleOwner.get().lifecycle.addObserver(TelemetryLifecycleObserver(components.core.store))
-        }
+        ProcessLifecycleOwner.get().lifecycle.addObserver(TelemetryLifecycleObserver(components.core.store))
     }
 
     @OptIn(DelicateCoroutinesApi::class) // GlobalScope usage
@@ -249,6 +249,27 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                         components.core.bookmarksStorage.warmUp()
                         components.core.passwordsStorage.warmUp()
                         components.core.autofillStorage.warmUp()
+
+                        // Populate the top site cache to improve initial load experience
+                        // of the home fragment when the app is launched to a tab. The actual
+                        // database call is not expensive. However, the additional context
+                        // switches delay rendering top sites when the cache is empty, which
+                        // we can prevent with this.
+                        components.core.topSitesStorage.getTopSites(
+                            components.settings.topSitesMaxLimit,
+                            if (components.settings.showTopFrecentSites)
+                                FrecencyThresholdOption.SKIP_ONE_TIME_PAGES
+                            else
+                                null
+                        )
+
+                        // This service uses `historyStorage`, and so we can only touch it when we know
+                        // it's safe to touch `historyStorage. By 'safe', we mainly mean that underlying
+                        // places library will be able to load, which requires first running Megazord.init().
+                        // The visual completeness tasks are scheduled after the Megazord.init() call.
+                        components.core.historyMetadataService.cleanup(
+                            System.currentTimeMillis() - Core.HISTORY_METADATA_MAX_AGE_IN_MS
+                        )
                     }
 
                     SecurePrefsTelemetry(this@FenixApplication, components.analytics.experiments).startTests()
@@ -621,6 +642,15 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
 
             tabViewSetting.set(settings.getTabViewPingString())
             closeTabSetting.set(settings.getTabTimeoutPingString())
+            inactiveTabsCount.set(browserStore.state.inactiveTabs.size.toLong())
+
+            val installSourcePackage = if (SDK_INT >= Build.VERSION_CODES.R) {
+                packageManager.getInstallSourceInfo(packageName).installingPackageName
+            } else {
+                @Suppress("DEPRECATION")
+                packageManager.getInstallerPackageName(packageName)
+            }
+            installSource.set(installSourcePackage.orEmpty())
         }
 
         with(AndroidAutofill) {
@@ -647,6 +677,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         with(Preferences) {
             searchSuggestionsEnabled.set(settings.shouldShowSearchSuggestions)
             remoteDebuggingEnabled.set(settings.isRemoteDebuggingEnabled)
+            studiesEnabled.set(settings.isExperimentationEnabled)
             telemetryEnabled.set(settings.isTelemetryEnabled)
             browsingHistorySuggestion.set(settings.shouldShowHistorySuggestions)
             bookmarksSuggestion.set(settings.shouldShowBookmarkSuggestions)
@@ -700,7 +731,23 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                     else -> ""
                 }
             )
+
+            inactiveTabsEnabled.set(settings.inactiveTabsAreEnabled)
         }
+        reportHomeScreenMetrics(settings)
+    }
+
+    @VisibleForTesting
+    internal fun reportHomeScreenMetrics(settings: Settings) {
+        components.analytics.experiments.register(object : NimbusInterface.Observer {
+            override fun onUpdatesApplied(updated: List<EnrolledExperiment>) {
+                CustomizeHome.jumpBackIn.set(settings.showRecentTabsFeature)
+                CustomizeHome.recentlySaved.set(settings.showRecentBookmarksFeature)
+                CustomizeHome.mostVisitedSites.set(settings.showTopFrecentSites)
+                CustomizeHome.recentlyVisited.set(settings.historyMetadataUIFeature)
+                CustomizeHome.pocket.set(settings.showPocketRecommendationsFeature)
+            }
+        })
     }
 
     protected fun recordOnInit() {

@@ -11,10 +11,11 @@ import mozilla.components.concept.storage.HistoryMetadata
  *
  * @property title The title of the group.
  * @property historyMetadata A list of [HistoryMetadata] records that matches the title.
- * @property expanded Whether or not the group is expanded.
  */
 data class HistoryMetadataGroup(
     val title: String,
-    val historyMetadata: List<HistoryMetadata>,
-    val expanded: Boolean = false
+    val historyMetadata: List<HistoryMetadata> = emptyList()
 )
+
+// The last updated time of the group is based on the most recently updated item in the group
+fun HistoryMetadataGroup.lastUpdated(): Long = historyMetadata.maxOf { it.updatedAt }

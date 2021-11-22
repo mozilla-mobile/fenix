@@ -8,8 +8,6 @@ import android.content.Context
 import android.util.Base64
 import androidx.annotation.VisibleForTesting
 import com.google.android.gms.ads.identifier.AdvertisingIdClient
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException
-import com.google.android.gms.common.GooglePlayServicesRepairableException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import mozilla.components.browser.state.search.SearchEngine
@@ -90,12 +88,6 @@ object MetricsUtils {
     internal fun getAdvertisingID(context: Context): String? {
         return try {
             AdvertisingIdClient.getAdvertisingIdInfo(context).id
-        } catch (e: GooglePlayServicesNotAvailableException) {
-            Logger.debug("ActivationPing - Google Play not installed on the device")
-            null
-        } catch (e: GooglePlayServicesRepairableException) {
-            Logger.debug("ActivationPing - recoverable error connecting to Google Play Services")
-            null
         } catch (e: IllegalStateException) {
             // This is unlikely to happen, as this should be running off the main thread.
             Logger.debug("ActivationPing - AdvertisingIdClient must be called off the main thread")

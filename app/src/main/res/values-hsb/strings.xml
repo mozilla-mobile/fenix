@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:moz="http://mozac.org/tools">
     <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
     <string name="app_name_private_5">Priwatny %s</string>
     <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
@@ -23,7 +23,7 @@
     <!-- Message announced to the user when tab tray is selected with 1 tab -->
     <string name="open_tab_tray_single">Wočinjene rajtarki: %1$s. Podótkńće so, zo byšće rajtarki přepinał.</string>
     <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
-    <string name="open_tab_tray_plural">Wočinjene rajtarki: %1$s. Podótkńće so, zo byšće rajtarki přepinał.</string>
+    <string moz:removedIn="95" name="open_tab_tray_plural" tools:ignore="UnusedResources">Wočinjene rajtarki: %1$s. Podótkńće so, zo byšće rajtarki přepinał.</string>
 
     <!-- Tab tray multi select title in app bar. The first parameter is the number of tabs selected -->
     <string name="tab_tray_multi_select_title">Wubrane: %1$d</string>
@@ -50,7 +50,11 @@
 
     <!-- Home - Recently saved bookmarks -->
     <!-- Title for the home screen section with recently saved bookmarks. -->
-    <string name="recently_saved_bookmarks">Njedawno składowane</string>
+    <string moz:removedIn="94" name="recently_saved_bookmarks" tools:ignore="UnusedResources">Njedawno składowane</string>
+    <!-- Title for the home screen section with recently saved bookmarks. -->
+    <string moz:removedIn="94" name="recently_bookmarked" tools:ignore="UnusedResources">Njedawno jako zapołožka wotpołoženy</string>
+    <!-- Title for the home screen section with recently saved bookmarks. -->
+    <string name="recent_bookmarks_title">Najnowše zapołožki</string>
     <!-- Content description for the recently saved bookmarks section on the home screen. -->
     <string name="recently_saved_bookmarks_content_description">Njedawno składowane zapołožki</string>
     <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
@@ -105,6 +109,20 @@
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">Zaćisnyć</string>
 
+    <!-- Text for the banner message to tell users about our inactive tabs feature. -->
+    <string name="tab_tray_inactive_onboarding_message">Rajtarki, kotrež njejsće sej dwě njedźeli wobhladał, so sem přesunu.</string>
+    <!-- Text for the action link to go to Settings for inactive tabs. -->
+    <string name="tab_tray_inactive_onboarding_button_text">W nastajenjach znjemóžnić</string>
+
+    <!-- Text for title for the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_auto_close_title">Po jednym měsacu awtomatisce začinić?</string>
+    <!-- Text for the body for the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_auto_close_body">Firefox móže rajtarki začinić, kotrež njejsće sej zańdźeny měsac wobhladał.</string>
+    <!-- Content description for close button in the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_auto_close_button_content_description">Začinić</string>
+    <!-- Text for turn on auto close tabs button in the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_turn_on_auto_close_button">Awtomatiske začinjenje zmóžnić</string>
+
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
     <string name="home_screen_shortcut_open_new_tab_2">Nowy rajtark</string>
@@ -112,7 +130,7 @@
     <string name="home_screen_shortcut_open_new_private_tab_2">Nowy priwatny rajtark</string>
 
     <!-- Heading for the Top Sites block -->
-    <string name="home_screen_top_sites_heading">Najhusćišo wopytane sydła</string>
+    <string moz:removedIn="95" name="home_screen_top_sites_heading" tools:ignore="UnusedResources">Najhusćišo wopytane sydła</string>
 
     <!-- Recent Tabs -->
     <!-- Header text for jumping back into the recent tab in the home screen -->
@@ -120,10 +138,32 @@
     <!-- Button text for showing all the tabs in the tabs tray -->
     <string name="recent_tabs_show_all">Wšě pokazać</string>
 
+    <!-- Content description for the button which navigates the user to show all recent tabs in the tabs tray. -->
+    <string name="recent_tabs_show_all_content_description">Tłóčatko „Njedawno wočinjene rajtarki“ pokazać</string>
+    <!-- Title for showing a group item in the 'Jump back in' section of the new tab
+        The first parameter is the search term that the user used. (for example: your search for "cat")-->
+    <string name="recent_tabs_search_term">Waše pytanje za \&quot;%1$s\&quot;</string>
+    <!-- Text for the number of tabs in a group in the 'Jump back in' section of the new tab
+        The first parameter is the count for number of sites in the group.  This number will always be more than one. -->
+    <string name="recent_tabs_search_term_count">Sydła: %1$s</string>
+
     <!-- History Metadata -->
     <!-- Header text for a section on the home screen that displays grouped highlights from the
          user's browsing history, such as topics they have researched or explored on the web -->
-    <string name="history_metadata_header">Zańdźene wuslědźenja</string>
+    <string moz:removedIn="94" name="history_metadata_header" tools:ignore="UnusedResources">Zańdźene wuslědźenja</string>
+
+    <!-- Header text for a section on the home screen that displays grouped highlights from the
+         user's browsing history, such as topics they have researched or explored on the web -->
+    <string moz:removedIn="94" name="history_metadata_header_2" tools:ignore="UnusedResources">Njedawno wopytane</string>
+    <!-- Header text for a section on the home screen that displays grouped highlights from the
+         user's browsing history, such as topics they have researched or explored on the web -->
+    <string name="history_metadata_header_3">Najnowše pytanja</string>
+    <!-- Text for the menu button to remove a grouped highlight from the user's browsing history
+         in the Recently visited section -->
+    <string name="recently_visited_menu_item_remove">Wotstronić</string>
+
+    <!-- Content description for the button which navigates the user to show all of their history. -->
+    <string name="past_explorations_show_all_content_description">Tłóčatko „Wšě zańdźene wuslědźenja“ pokazać</string>
 
     <!-- Browser Fragment -->
     <!-- Content description (not visible, for screen readers etc.): Navigate to open tabs -->
@@ -137,7 +177,7 @@
     <!-- Content description (not visible, for screen readers etc.): Stop loading current website -->
     <string name="browser_menu_stop">Zastajić</string>
     <!-- Content description (not visible, for screen readers etc.): Bookmark the current page -->
-    <string name="browser_menu_bookmark">Zapołožkam přidać</string>
+    <string moz:removedIn="95" name="browser_menu_bookmark" tools:ignore="UnusedResources">Zapołožkam přidać</string>
     <!-- Content description (not visible, for screen readers etc.): Un-bookmark the current page -->
     <string name="browser_menu_edit_bookmark">Zapołožku wobdźěłać</string>
     <!-- Browser menu button that opens the addon manager -->
@@ -199,6 +239,10 @@
     <!-- Browser menu label for editing a bookmark -->
     <string name="browser_menu_edit">Wobdźěłać</string>
 
+    <!-- Browser menu button that opens the Customize menu -->
+    <string name="browser_menu_customize_home">Startowu wobrazowku přiměrić</string>
+    <!-- Button shown on the home page that opens the Customize home settings -->
+    <string name="browser_menu_customize_home_1">Startowu stronu přiměrić</string>
     <!-- Browser Toolbar -->
     <!-- Content description for the Home screen button on the browser toolbar -->
     <string name="browser_toolbar_home">Startowa wobrazowka</string>
@@ -243,6 +287,28 @@
     <string name="search_engine_suggestions_title">Z %s pytać</string>
     <!-- Search engine suggestion description text -->
     <string name="search_engine_suggestions_description">Direktnje z adresoweho pola pytać</string>
+
+    <!-- Home onboarding -->
+    <!-- Onboarding home screen dialog title text. Firefox is intentionally hardcoded. -->
+    <string name="onboarding_home_screen_title_2">Nowe funkcije a změny we Firefox</string>
+    <!-- Onboarding home screen dialog description text. -->
+    <string name="onboarding_home_screen_description_2">Je nětko lóšo tam pokročować, hdźež sće přestał.</string>
+    <!-- Onboarding home screen dialog title text for the home section. Firefox is intentionally hardcoded. -->
+    <string name="onboarding_home_screen_section_home_title_2">Personalizowana startowa strona Firefox</string>
+    <!-- Onboarding home screen dialog description text for the home section. -->
+    <string name="onboarding_home_screen_section_home_description_2">Přeńdźće k swojim wočinjenym rajtarkam, zapołožkam a přehladowanskej historiji.</string>
+    <!-- Onboarding home screen dialog description text for the tab tray section. -->
+    <string name="onboarding_home_screen_section_cleaner_tab_tray_title_2">Přehladne, organizowane rajtarki</string>
+    <!-- Onboarding home screen dialog description text for the tab tray section. -->
+    <string name="onboarding_home_screen_section_cleaner_tab_tray_description_2">Wotstrońće rajtarkowu šmjatańcu přez polěpšene wuhotowanje a awtomatisce začinjace rajtarki.</string>
+    <!-- Onboarding home screen dialog description text for the history section. -->
+    <string name="onboarding_home_screen_section_useful_history_title_2">Najnowše pytanja</string>
+
+    <!-- Onboarding home screen dialog description text for the history section. -->
+    <string name="onboarding_home_screen_section_useful_history_description_2">Wotwołće znowa swoje najnowše pytanja ze swojeje startoweje strony a rajtarkow.</string>
+
+    <!-- Onboarding home screen popup dialog, shown on top of the Jump back in section. Firefox is intentionally hardcoded. -->
+    <string name="onboarding_home_screen_jump_back_contextual_hint" tools:ignore="UnusedResources">Waša personalizowana startowa strona Firefox nětko wosnadnja tam pokročować, hdźež sće přestał. Namakajće swoje najnowše rajtarki, zapołožki a pytanske wuslědki.</string>
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
@@ -323,7 +389,9 @@
     <!-- Preference for changing default theme to dark or light mode -->
     <string name="preferences_theme">Drasta</string>
     <!-- Preference for customizing the home screen -->
-    <string name="preferences_home">Startowa strona</string>
+    <string moz:removedIn="94" name="preferences_home" tools:ignore="UnusedResources">Startowa strona</string>
+    <!-- Preference for customizing the home screen -->
+    <string name="preferences_home_2">Startowa strona</string>
     <!-- Preference for gestures based actions -->
     <string name="preferences_gestures">Gesty</string>
     <!-- Preference for settings related to visual options -->
@@ -390,6 +458,24 @@
     <string name="customize_addon_collection_user_hint">Wobsedźer zběrki (wužiwarski ID)</string>
     <!-- Toast shown after confirming the custom add-on collection configuration -->
     <string name="toast_customize_addon_collection_done">Přidatkowa zběrka je so změniła. Nałoženje so kónči, zo bychu so změny nałožili…</string>
+
+    <!-- Customize Home -->
+    <!-- Header text for jumping back into the recent tab in customize the home screen -->
+    <string name="customize_toggle_jump_back_in">Wróćo skočić</string>
+    <!-- Title for the customize home screen section with recently saved bookmarks. -->
+    <string moz:removedIn="94" name="customize_toggle_recently_saved_bookmarks" tools:ignore="UnusedResources">Njedawno składowane</string>
+    <!-- Title for the customize home screen section with recently saved bookmarks. -->
+    <string moz:removedIn="94" name="customize_toggle_recently_bookmarked" tools:ignore="UnusedResources">Njedawno jako zapołožka wotpołoženy</string>
+    <!-- Title for the customize home screen section with recently saved bookmarks. -->
+    <string name="customize_toggle_recent_bookmarks">Najnowše zapołožki</string>
+    <!-- Title for the customize home screen section with recently visited. Recently visited is
+    a section where users see a list of tabs that they have visited in the past few days -->
+    <string moz:removedIn="94" name="customize_toggle_recently_visited" tools:ignore="UnusedResources">Njedawno wopytane</string>
+    <!-- Title for the customize home screen settings section for recent searches. Recent searches
+     is a section where users see a list of groups of tabs that they have visited in the past few days -->
+    <string name="customize_toggle_recent_searches">Najnowše pytanja</string>
+    <!-- Title for the customize home screen section with Pocket. -->
+    <string name="customize_toggle_pocket">Pocket</string>
 
     <!-- Add-on Installation from AMO-->
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
@@ -500,7 +586,7 @@
     <!-- Header of the Turn on Sync preference view -->
     <string name="preferences_sync">Synchronizaciju zmóžnić</string>
     <!-- Preference for pairing -->
-    <string name="preferences_sync_pair">Porowanski kod w desktopowym Firefox skenować</string>
+    <string moz:removedIn="95" name="preferences_sync_pair" tools:ignore="UnusedResources">Porowanski kod w desktopowym Firefox skenować</string>
     <!-- Preference for account login -->
     <string name="preferences_sync_sign_in">Přizjewić</string>
     <!-- Preference for reconnecting to FxA sync -->
@@ -577,6 +663,13 @@
     <!-- Content description (not visible, for screen readers etc.): "Close button for library settings" -->
     <string name="content_description_close_button">Začinić</string>
 
+    <!-- Text to show users they have one site in the history group section of the History fragment.
+    %d is a placeholder for the number of sites in the group. -->
+    <string name="history_search_group_site">%d sydło</string>
+    <!-- Text to show users they have multiple sites in the history group section of the History fragment.
+    %d is a placeholder for the number of sites in the group. -->
+    <string name="history_search_group_sites">%d sydłow</string>
+
     <!-- Option in library for Recently Closed Tabs -->
     <string name="library_recently_closed_tabs">Runje začinjene rajtarki</string>
     <!-- Option in library to open Recently Closed Tabs page -->
@@ -600,6 +693,10 @@
     <string name="tab_view_list">Lisćina</string>
     <!-- Option for a grid tab view -->
     <string name="tab_view_grid">Lěsyca</string>
+    <!-- Option for search term tab groups -->
+    <string name="tab_view_search_term_tab_groups">Pytanske skupiny</string>
+    <!-- Summary text for search term tab groups -->
+    <string name="tab_view_search_term_tab_groups_summary">Přiwuzne sydła zeskupić</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
     <string name="preferences_close_tabs">Rajtarki začinić</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
@@ -611,15 +708,26 @@
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">Po jednym měsacu</string>
 
-    <!-- Start on Home -->
+    <!-- Title of preference that allows a user to specify the auto-close settings for open tabs -->
+    <string name="preference_auto_close_tabs" tools:ignore="UnusedResources">Wočinjene rajtarki awtomatisce začinić</string>
+
+    <!-- Opening screen -->
     <!-- Title of a preference that allows a user to indicate after a specified amount of time when the app should start on the home screen -->
-    <string name="preferences_start_on_home">Na startowej wobrazowce započeć</string>
+    <string moz:removedIn="94" name="preferences_start_on_home" tools:ignore="UnusedResources">Na startowej wobrazowce započeć</string>
+    <!-- Title of a preference that allows a user to choose what screen to show after opening the app -->
+    <string name="preferences_opening_screen">Startowa wobrazowka</string>
     <!-- Option for starting on the home screen after after four hours or inactivity -->
-    <string name="start_on_home_after_four_hours">Po štyrjoch hodźinach</string>
+    <string moz:removedIn="94" name="start_on_home_after_four_hours" tools:ignore="UnusedResources">Po štyrjoch hodźinach</string>
+    <!-- Option for always opening the homepage when re-opening the app -->
+    <string name="opening_screen_homepage">Startowa strona</string>
     <!-- Option for always starting on the home screen -->
-    <string name="start_on_home_always">Přeco</string>
+    <string moz:removedIn="94" name="start_on_home_always" tools:ignore="UnusedResources">Přeco</string>
+    <!-- Option for always opening the user's last-open tab when re-opening the app -->
+    <string name="opening_screen_last_tab">Posledni rajtark</string>
     <!-- Option for never starting on the home screen -->
-    <string name="start_on_home_never">Ženje</string>
+    <string moz:removedIn="94" name="start_on_home_never" tools:ignore="UnusedResources">Ženje</string>
+    <!-- Option for always opening the homepage when re-opening the app after four hours of inactivity -->
+    <string name="opening_screen_after_four_hours_of_inactivity">Startowa strona po štyrjoch hodźinach inaktiwnosće</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
     <string name="close_tabs_manually_summary">Manuelnje začinić</string>
 
@@ -629,6 +737,13 @@
     <string name="close_tabs_after_one_week_summary">Po jednym tydźenju začinić</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one month-->
     <string name="close_tabs_after_one_month_summary">Po jednym měsacu začinić</string>
+
+    <!-- Inactive tabs -->
+    <!-- Category header of a preference that allows a user to enable or disable the inactive tabs feature -->
+    <string name="preferences_inactive_tabs">Stare rajtarki do „inaktiwne“ přesunyć</string>
+
+    <!-- Title of inactive tabs preference -->
+    <string name="preferences_inactive_tabs_title">Rajtarki, kotrež njejsće sej dwě njedźeli wobhladał, so do inaktiwneho wotrězka přesunu.</string>
 
     <!-- Studies -->
     <!-- Title of the remove studies button -->
@@ -648,7 +763,7 @@
     <string name="studies_restart_dialog_cancel">Přetorhnyć</string>
 
     <!-- Toast shown after turning on/off studies preferences -->
-    <string name="studies_toast_quit_application">Nałoženje so kónči, zo bychu so změny wuskutkowali …</string>
+    <string name="studies_toast_quit_application" tools:ignore="UnusedResources">Nałoženje so kónči, zo bychu so změny wuskutkowali …</string>
 
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
@@ -672,13 +787,13 @@
     <!-- Text shown in the menu for saving tabs to a collection -->
     <string name="tab_tray_menu_item_save">Do zběrki składować</string>
     <!-- Text shown in the menu for the collection selector -->
-    <string name="tab_tray_menu_select">Wubrać</string>
+    <string moz:removedIn="95" name="tab_tray_menu_select" tools:ignore="UnusedResources">Wubrać</string>
     <!-- Text shown in the menu for sharing all tabs -->
     <string name="tab_tray_menu_item_share">Wšě rajtarki dźělić</string>
     <!-- Text shown in the menu to view recently closed tabs -->
     <string name="tab_tray_menu_recently_closed">Runje začinjene rajtarki</string>
     <!-- Text shown in the tabs tray inactive tabs section -->
-    <string name="tab_tray_inactive_recently_closed"></string>
+    <string name="tab_tray_inactive_recently_closed" tools:ignore="UnusedResources"></string>
     <!-- Text shown in the menu to view account settings -->
     <string name="tab_tray_menu_account_settings">Kontowe nastajenja</string>
     <!-- Text shown in the menu to view tab settings -->
@@ -752,6 +867,12 @@
     <!-- Button in the current tab tray header in multiselect mode. Saved the selected tabs to a collection when pressed. -->
     <string name="tab_tray_save_to_collection">Składować</string>
 
+    <!-- Title text for the normal tabs header in the tabs tray which are not part of any tab grouping. -->
+    <string moz:removedIn="94" name="tab_tray_header_title" tools:ignore="UnusedResources">Druhe</string>
+
+    <!-- Title text for the normal tabs header in the tabs tray which are not part of any tab grouping. -->
+    <string name="tab_tray_header_title_1">Druhe rajtarki</string>
+
     <!-- History -->
     <!-- Text for the button to clear all history -->
     <string name="history_delete_all">Historiju zhašeć</string>
@@ -764,15 +885,15 @@
     <!-- Text for positive action to delete history in deleting history dialog -->
     <string name="history_clear_dialog">Wuprózdnić</string>
     <!-- History overflow menu copy button -->
-    <string name="history_menu_copy_button">Kopěrować</string>
+    <string moz:removedIn="94" name="history_menu_copy_button" tools:ignore="UnusedResources">Kopěrować</string>
     <!-- History overflow menu share button -->
-    <string name="history_menu_share_button">Dźělić</string>
+    <string moz:removedIn="94" name="history_menu_share_button" tools:ignore="UnusedResources">Dźělić</string>
     <!-- History overflow menu open in new tab button -->
-    <string name="history_menu_open_in_new_tab_button">W nowym rajtarku wočinić</string>
+    <string moz:removedIn="94" name="history_menu_open_in_new_tab_button" tools:ignore="UnusedResources">W nowym rajtarku wočinić</string>
     <!-- History overflow menu open in private tab button -->
-    <string name="history_menu_open_in_private_tab_button">W priwatnym rajtarku wočinić</string>
+    <string moz:removedIn="94" name="history_menu_open_in_private_tab_button" tools:ignore="UnusedResources">W priwatnym rajtarku wočinić</string>
     <!-- Text for the button to delete a single history item -->
-    <string name="history_delete_item">Zhašeć</string>
+    <string moz:removedIn="94" name="history_delete_item" tools:ignore="UnusedResources">Zhašeć</string>
     <!-- History multi select title in app bar
     The first parameter is the number of bookmarks selected -->
     <string name="history_multi_select_title">Wubrane: %1$d</string>
@@ -795,10 +916,6 @@
     <string name="history_empty_message">Tu žana historija njeje</string>
 
     <!-- Downloads -->
-    <!-- Text for the button to clear all downloads -->
-    <string name="download_delete_all">Sćehnjenja zhašeć</string>
-    <!-- Text for the dialog to confirm clearing all downloads -->
-    <string name="download_delete_all_dialog">Chceće woprawdźe swoje sćehnjenja zhašeć?</string>
     <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
     <string name="download_delete_multiple_items_snackbar_1">Sćehnjenja wotstronjene</string>
     <!-- Text for the snackbar to confirm that a single download item has been removed. The first parameter is the name of the download item. -->
@@ -839,7 +956,7 @@
     <!-- Content description for bookmarks library menu -->
     <string name="bookmark_menu_content_description">Meni zapołožkow</string>
     <!-- Screen title for editing bookmarks -->
-    <string name="bookmark_edit">Zapołožku wobdźěłać</string>
+    <string moz:removedIn="95" name="bookmark_edit" tools:ignore="UnusedResources">Zapołožku wobdźěłać</string>
     <!-- Screen title for selecting a bookmarks folder -->
     <string name="bookmark_select_folder">Rjadowak wubrać</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete the selected folder -->
@@ -1141,7 +1258,7 @@
     <!-- Tab collection deletion prompt dialog option to delete the collection -->
     <string name="tab_collection_dialog_positive">Zhašeć</string>
     <!-- Tab collection deletion prompt dialog option to cancel deleting the collection -->
-    <string name="tab_collection_dialog_negative" tools:ignore="UnusedResources">Přetorhnyć</string>
+    <string moz:removedIn="93" name="tab_collection_dialog_negative" tools:ignore="UnusedResources">Přetorhnyć</string>
     <!-- Text displayed in a notification when the user enters full screen mode -->
     <string name="full_screen_notification">Połna wobrazowka so pokazuje</string>
     <!-- Message for copying the URL via long press on the toolbar -->
@@ -1245,12 +1362,12 @@
     <string name="onboarding_fxa_section_header">Maće hižo konto?</string>
 
     <!-- text for the "What's New" onboarding card header -->
-    <string name="onboarding_whats_new_header1">Čitajće, štož je nowe</string>
+    <string moz:removedIn="94" name="onboarding_whats_new_header1" tools:ignore="UnusedResources">Čitajće, štož je nowe</string>
     <!-- text for the "what's new" onboarding card description
     The first parameter is the short name of the app (e.g. Firefox) -->
-    <string name="onboarding_whats_new_description">Maće prašenja wo nowo wuhotowanym %s? Chceće wědźeć, štož je so změniło?</string>
+    <string moz:removedIn="94" name="onboarding_whats_new_description" tools:ignore="UnusedResources">Maće prašenja wo nowo wuhotowanym %s? Chceće wědźeć, štož je so změniło?</string>
     <!-- text for underlined clickable link that is part of "what's new" onboarding card description that links to an FAQ -->
-    <string name="onboarding_whats_new_description_linktext">Tu dóstanjeće wotmołwy</string>
+    <string moz:removedIn="94" name="onboarding_whats_new_description_linktext" tools:ignore="UnusedResources">Tu dóstanjeće wotmołwy</string>
     <!-- text for the Firefox account onboarding sign in card header. The word "Firefox" should not be translated -->
     <string name="onboarding_account_sign_in_header_1">Firefox mjez gratami synchronizować</string>
     <!-- Text for the button to learn more about signing in to your Firefox account -->
@@ -1290,14 +1407,14 @@
     <!-- text for the toolbar position card description -->
     <string name="onboarding_toolbar_placement_description_1">Pozicioněrujće symbolowu lajstu, zo móžeće ju lochko dosahnyć. Wobchowajće ju deleka abo přesuńće ju horje.</string>
     <!-- text for the private browsing onboarding card header -->
-    <string name="onboarding_private_browsing_header">Priwatnje přehladować</string>
+    <string moz:removedIn="94" name="onboarding_private_browsing_header" tools:ignore="UnusedResources">Priwatnje přehladować</string>
     <!-- text for the private browsing onboarding card description
     The first parameter is an icon that represents private browsing -->
-    <string name="onboarding_private_browsing_description1">Wočińće priwatny rajtark jedyn raz: Podótkńće so symbola %s.</string>
+    <string moz:removedIn="94" name="onboarding_private_browsing_description1" tools:ignore="UnusedResources">Wočińće priwatny rajtark jedyn raz: Podótkńće so symbola %s.</string>
     <!-- text for the private browsing onboarding card description, explaining how to always using private browsing -->
-    <string name="onboarding_private_browsing_always_description">Wočińće priwatne rajtarki kóždy raz: Aktualizujće nastajenja priwatneho modusa.</string>
+    <string moz:removedIn="94" name="onboarding_private_browsing_always_description" tools:ignore="UnusedResources">Wočińće priwatne rajtarki kóždy raz: Aktualizujće nastajenja priwatneho modusa.</string>
     <!-- text for the private browsing onbording card button, that launches settings -->
-    <string name="onboarding_private_browsing_button">Nastajenja wočinić</string>
+    <string moz:removedIn="94" name="onboarding_private_browsing_button" tools:ignore="UnusedResources">Nastajenja wočinić</string>
     <!-- text for the privacy notice onboarding card header -->
     <string name="onboarding_privacy_notice_header">Waša priwatnosć</string>
     <!-- text for the privacy notice onboarding card description
@@ -1307,7 +1424,7 @@
     <string name="onboarding_privacy_notice_read_button">Čitajće naš zdźělenku priwatnosće</string>
 
     <!-- Content description (not visible, for screen readers etc.): Close onboarding screen -->
-    <string name="onboarding_close" tools:ignore="UnusedResources">Začinić</string>
+    <string moz:removedIn="93" name="onboarding_close" tools:ignore="UnusedResources">Začinić</string>
 
     <!-- text for the button to finish onboarding -->
     <string name="onboarding_finish">Přehladowanje započeć</string>
@@ -1437,7 +1554,7 @@
     <!-- Description of tracking content that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_tracking_content_description">Zadźěwa začitanju wabjenja, widejow a druheho wobsaha, kotrež slědowanski kod wobsahuja. Móže někotrym funkcijam websydłow wadźić.</string>
     <!-- Enhanced Tracking Protection Onboarding Message shown in a dialog above the toolbar. The first parameter is the name of the application (For example: Fenix) -->
-    <string name="etp_onboarding_cfr_message" tools:ignore="UnusedResources">Kóždy raz, hdyž tarč je wioletna, je %s přesćěhowaki na sydle zablokował. Podótkńće za dalše informacije.</string>
+    <string moz:removedIn="93" name="etp_onboarding_cfr_message" tools:ignore="UnusedResources">Kóždy raz, hdyž tarč je wioletna, je %s přesćěhowaki na sydle zablokował. Podótkńće za dalše informacije.</string>
     <!-- Enhanced Tracking Protection message that protection is currently on for this site -->
     <string name="etp_panel_on">Škit je zmóžnjeny za tute sydło</string>
     <!-- Enhanced Tracking Protection message that protection is currently off for this site -->
@@ -1461,6 +1578,12 @@
     <string name="etp_redirect_trackers_title">Sposrědkowanske přesćěhowaki</string>
     <!-- Description of redirect tracker cookies that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_redirect_trackers_description">Zhaša placki, kotrež su so přez dalesposrědkowanja k znatym slědowacym websydłam stajili.</string>
+
+    <!-- Description of the SmartBlock Enhanced Tracking Protection feature. The * symbol is intentionally hardcoded here,
+         as we use it on the UI to indicate which trackers have been partially unblocked.  -->
+    <string name="preference_etp_smartblock_description">Blokowanje někotrych deleka markěrowanych přesćěhowakow je so zdźěla na tutej stronje zběhnyło, dokelž sće z nimi interagěrował *.</string>
+    <!-- Text displayed that links to website about enhanced tracking protection SmartBlock -->
+    <string name="preference_etp_smartblock_learn_more">Dalše informacije</string>
 
     <!-- About page link text to open support link -->
     <string name="about_support">Pomoc</string>
@@ -1519,7 +1642,7 @@
     <!-- Preference option for never saving passwords in Fenix -->
     <string name="preferences_passwords_save_logins_never_save">Ženje njeskładować</string>
     <!-- Preference for autofilling saved logins in Fenix -->
-    <string name="preferences_passwords_autofill" tools:ignore="UnusedResources">Awtomatisce wupjelnić</string>
+    <string moz:removedIn="93" name="preferences_passwords_autofill" tools:ignore="UnusedResources">Awtomatisce wupjelnić</string>
     <!-- Preference for autofilling saved logins in Firefox (in web content), %1$s will be replaced with the app name -->
     <string name="preferences_passwords_autofill2">W %1$s awtomatisce wupjelnić</string>
     <!-- Description for the preference for autofilling saved logins in Firefox (in web content), %1$s will be replaced with the app name -->
@@ -1529,6 +1652,9 @@
 
     <!-- Description for the preference for autofilling logins from Fenix in other apps (e.g. autofilling the Twitter app) -->
     <string name="preferences_android_autofill_description">Wužiwarske mjena a hesła w druhich nałoženjach na wašim graće zasadźić.</string>
+
+    <!-- Preference option for adding a login -->
+    <string name="preferences_logins_add_login">Přizjewjenje přidać</string>
 
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">Přizjewjenja synchronizować</string>
@@ -1592,6 +1718,8 @@
     <string name="saved_login_copy_username">Wužiwarske mjeno kopěrować</string>
     <!-- Content Description (for screenreaders etc) read for the button to clear a username while editing a login -->
     <string name="saved_login_clear_username">Wužiwarske mjeno zhašeć</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear the hostname field while creating a login -->
+    <string name="saved_login_clear_hostname">Hostmjeno zhašeć</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a site in logins -->
     <string name="saved_login_copy_site">Sydło kopěrować</string>
     <!-- Content Description (for screenreaders etc) read for the button to open a site in logins -->
@@ -1763,9 +1891,13 @@
     <string name="phone_feature_blocked_step_feature"><![CDATA[3. ZAPINAJĆE <b>%1$s</b>]]></string>
 
     <!-- Label that indicates a site is using a secure connection -->
-    <string name="quick_settings_sheet_secure_connection">Wěsty zwisk</string>
+    <string name="quick_settings_sheet_secure_connection_2">Zwisk je wěsty</string>
     <!-- Label that indicates a site is using a insecure connection -->
-    <string name="quick_settings_sheet_insecure_connection">Njewěsty zwisk</string>
+    <string name="quick_settings_sheet_insecure_connection_2">Zwisk wěsty njeje</string>
+    <!-- Label that indicates a site is using a secure connection -->
+    <string moz:removedIn="94" name="quick_settings_sheet_secure_connection" tools:ignore="UnusedResources">Wěsty zwisk</string>
+    <!-- Label that indicates a site is using a insecure connection -->
+    <string moz:removedIn="94" name="quick_settings_sheet_insecure_connection" tools:ignore="UnusedResources">Njewěsty zwisk</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete all the permissions for all sites-->
     <string name="confirm_clear_permissions_on_all_sites">Chceće woprawdźe wšě prawa za wšě sydła zhašeć?</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete all the permissions for a site-->
@@ -1805,8 +1937,14 @@
     <string name="discard_changes">Změny zaćisnyć</string>
     <!--  The page title for editing a saved login. -->
     <string name="edit">Wobdźěłać</string>
-    <!--  The error message in edit login view when password field is blank. -->
+    <!--  The page title for adding new login. -->
+    <string name="add_login">Nowe přizjewjenje přidać</string>
+    <!--  The error message in add/edit login view when password field is blank. -->
     <string name="saved_login_password_required">Hesło trěbne</string>
+    <!--  The error message in add login view when username field is blank. -->
+    <string name="saved_login_username_required">Wužiwarske mjeno trěbne</string>
+    <!--  The error message in add login view when hostname field is blank. -->
+    <string name="saved_login_hostname_required" tools:ignore="UnusedResources">Hostmjeno trěbne</string>
     <!-- Voice search button content description  -->
     <string name="voice_search_content_description">Rěčenske pytanje</string>
     <!-- Voice search prompt description displayed after the user presses the voice search button -->
@@ -1814,6 +1952,15 @@
 
     <!--  The error message in edit login view when a duplicate username exists. -->
     <string name="saved_login_duplicate">Přizjewjenje z tym wužiwarskim mjenom hižo eksistuje.</string>
+
+    <!-- This is the hint text that is shown inline on the hostname field of the create new login page. 'https://www.example.com' intentionally hardcoded here -->
+    <string name="add_login_hostname_hint_text">https://www.example.com</string>
+    <!-- This is an error message shown below the hostname field of the add login page when a hostname does not contain http or https. -->
+    <string moz:removedIn="94" name="add_login_hostname_invalid_text_1" tools:ignore="UnusedResources">Webadresa dyrbi \„https://\“ abo \„http://\“ wobsahować</string>
+    <!-- This is an error message shown below the hostname field of the add login page when a hostname does not contain http or https. -->
+    <string name="add_login_hostname_invalid_text_3">Webadresa dyrbi „https://“ abo „http://“ wobsahować</string>
+    <!-- This is an error message shown below the hostname field of the add login page when a hostname is invalid. -->
+    <string name="add_login_hostname_invalid_text_2">Płaćiwe hostmjeno trěbne</string>
 
     <!-- Synced Tabs -->
     <!-- Text displayed to ask user to connect another device as no devices found with account -->
@@ -1840,8 +1987,12 @@
     <!-- Confirmation dialog button text when top sites limit is reached. -->
     <string name="top_sites_max_limit_confirmation_button">W porjadku, sym zrozumił</string>
 
+    <!-- Label for the preference to show the most visited top sites on the homepage -->
+    <string name="top_sites_toggle_top_recent_sites_3">Najhusćišo wopytane sydła pokazać</string>
+    <!-- Label for the show most visited top sites preference -->
+    <string moz:removedIn="94" name="top_sites_toggle_top_frecent_sites_2" tools:ignore="UnusedResources">Najhusćišo wopytowane sydła pokazać</string>
     <!-- Label for the show most visited sites preference -->
-    <string name="top_sites_toggle_top_frecent_sites">Najhusćišo wopytane sydła pokazać</string>
+    <string moz:removedIn="93" name="top_sites_toggle_top_frecent_sites" tools:ignore="UnusedResources">Najhusćišo wopytane sydła pokazać</string>
 
     <!-- Title text displayed in the rename top site dialog. -->
 	<string name="top_sites_rename_dialog_title">Mjeno</string>
@@ -1852,15 +2003,42 @@
 	<!-- Dialog button text for canceling the rename top site prompt. -->
 	<string name="top_sites_rename_dialog_cancel">Přetorhnyć</string>
 
-    <!-- In-activate tabs in the tabs tray -->
-    <!-- Title text displayed in the tabs tray when a tab has been unused for 4 days. -->
+    <!-- Inactive tabs in the tabs tray -->
+    <!-- Title text displayed in the tabs tray when a tab has been unused for 14 days. -->
     <string name="inactive_tabs_title">Inaktiwne rajtarki</string>
+    <!-- Content description for closing all inactive tabs -->
+    <string name="inactive_tabs_delete_all">Wšě inaktiwne rajtarki začinić</string>
     <!-- A description below the section of "inactive" tabs to notify the user when those tabs will be closed, if appropriate. See strings inactive_tabs_30_days and inactive_tabs_7_days for placeholders options. -->
-    <string name="inactive_tabs_description">Rajtarki su tu za %s k dispoziciji. Po tutym času so rajtarki awtomatisce začinja.</string>
+    <string moz:removedIn="93" name="inactive_tabs_description" tools:ignore="UnusedResources">Rajtarki su tu za %s k dispoziciji. Po tutym času so rajtarki awtomatisce začinja.</string>
     <!-- The amount of time until a tab in the "inactive" section of the tabs tray will be closed. See string inactive_tabs_description as well -->
-    <string name="inactive_tabs_30_days">30 dnjow</string>
+    <string moz:removedIn="93" name="inactive_tabs_30_days" tools:ignore="UnusedResources">30 dnjow</string>
     <!-- The amount of time until a tab in the "inactive" section of the tabs tray will be closed. See string inactive_tabs_description as well -->
-    <string name="inactive_tabs_7_days">1 tydźeń</string>
+    <string moz:removedIn="93" name="inactive_tabs_7_days" tools:ignore="UnusedResources">1 tydźeń</string>
+
+    <!-- Inactive tabs auto-close message in the tabs tray -->
+    <!-- The header text of the auto-close message when the user is asked if they want to turn on the auto-closing of inactive tabs. -->
+    <string name="inactive_tabs_auto_close_message_header" tools:ignore="UnusedResources">Po jednym měsacu awtomatisce začinić?</string>
+    <!-- A description below the header to notify the user what the inactive tabs auto-close feature is. -->
+    <string name="inactive_tabs_auto_close_message_description" tools:ignore="UnusedResources">Firefox móže rajtarki začinić, kotrež njejsće sej zańdźeny měsac wobhladał.</string>
+    <!-- A call to action below the description to allow the user to turn on the auto closing of inactive tabs. -->
+    <string name="inactive_tabs_auto_close_message_action" tools:ignore="UnusedResources">AWTOMATISKE ZAČINJENJE ZMÓŽNIĆ</string>
+
+    <!-- Inactive tabs survey -->
+    <!-- Header text for the inactive tabs survey asking for feedback to improve the inactive tabs feature. -->
+    <string name="inactive_tabs_survey_header" tools:ignore="UnusedResources">Prošu pomhajće nam, zo bychmy so polěpšili</string>
+    <!-- Content text for the inactive tabs survey asking the primary survey feedback question. -->
+    <string name="inactive_tabs_survey_content" tools:ignore="UnusedResources">Čehodla sće inaktiwne rajtarki znjemóžnił?</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string name="inactive_tabs_survey_not_interested_option" tools:ignore="UnusedResources">Žadyn zajim na tutej funkciji</string>
+
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string name="inactive_tabs_survey_time_too_long_option" tools:ignore="UnusedResources">Čas do „inaktiwny“ je předołhi</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string name="inactive_tabs_survey_time_too_short_option" tools:ignore="UnusedResources">Čas do „inaktiwny“ je překrótki</string>
+    <!-- Confirmation button text to submit the feedback for the inactive tabs survey. -->
+    <string name="inactive_tabs_survey_send_button" tools:ignore="UnusedResources">Pósłać</string>
+    <!-- Content description for inactive tabs survey close button -->
+    <string name="inactive_tabs_survey_close_button_content_description" tools:ignore="UnusedResources">Začinić</string>
 
     <!-- Default browser experiment -->
     <string name="default_browser_experiment_card_text">Nastajće wotkazy z websydłow, mejlkow a powěsćow, zo bychu so awtomatisce we Firefox wočinili.</string>
@@ -1877,4 +2055,19 @@
     <!-- Content description for privacy content close button -->
     <string name="privacy_content_close_button_content_description">Začinić</string>
 
+    <!-- Pocket recommended stories -->
+    <!-- Header text for a section on the home screen. -->
+    <string moz:removedIn="94" name="pocket_stories_header" tools:ignore="UnusedResources">Stawiznički, kotrež k přemyslowanju pohonjeja</string>
+    <!-- Header text for a section on the home screen. -->
+    <string name="pocket_stories_header_1">Stawiznički, kotrež k přemyslowanju pohonjeja</string>
+    <!-- Header text for a section on the home screen. -->
+    <string name="pocket_stories_categories_header">Stawiznički po temje</string>
+    <!-- Text of a button allowing users to access an external url for more Pocket recommendations. -->
+    <string name="pocket_stories_placeholder_text">Wjace wotkryć</string>
+    <!-- Title of an app feature. Smaller than a heading.-->
+    <string name="pocket_stories_feature_title">Wot Pocket spěchowany</string>
+    <!-- Caption for describing a certain feature. The placeholder is for a clickable text (eg: Learn more) which will load an url in a new tab when clicked.  -->
+    <string name="pocket_stories_feature_caption">Dźěl swójby Firefox. %s</string>
+    <!-- Clickable text for opening an external link for more information about Pocket. -->
+    <string name="pocket_stories_feature_learn_more">Dalše informacije</string>
 </resources>

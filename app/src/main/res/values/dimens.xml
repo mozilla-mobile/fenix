@@ -86,9 +86,6 @@
     <dimen name="sign_in_button_margin_top">32dp</dimen>
     <dimen name="sign_in_button_margin">16dp</dimen>
 
-    <!-- ETP Onboarding Popup -->
-    <dimen name="etp_onboarding_popup_width">256dp</dimen>
-
     <!-- Bookmark Edit Fragment  -->
     <dimen name="bookmark_edit_text_height">48dp</dimen>
     <dimen name="bookmark_select_folder_indent">10dp</dimen>
@@ -96,13 +93,19 @@
     <!-- Home Fragment -->
     <dimen name="home_fragment_top_toolbar_header_margin">60dp</dimen>
     <dimen name="home_item_elevation">5dp</dimen>
+    <dimen name="home_item_horizontal_margin">16dp</dimen>
 
     <!-- Home - Recently saved bookmarks -->
-    <dimen name="recent_bookmark_item_height">128dp</dimen>
-    <dimen name="recent_bookmark_item_width">152dp</dimen>
-    <dimen name="recent_bookmark_item_favicon_height">72dp</dimen>
+    <dimen name="recent_bookmark_header_margin_top">40dp</dimen>
+    <dimen name="recent_bookmark_item_width">164dp</dimen>
+    <dimen name="recent_bookmark_item_card_width">156dp</dimen>
+    <dimen name="recent_bookmark_item_card_padding_top">16dp</dimen>
+    <dimen name="recent_bookmark_item_card_padding_bottom">8dp</dimen>
+    <dimen name="recent_bookmark_item_card_elevation">6dp</dimen>
+    <dimen name="recent_bookmark_item_favicon_height">96dp</dimen>
     <dimen name="recent_bookmark_item_favicon_elevation">0dp</dimen>
-    <dimen name="recent_bookmark_item_favicon_corner_size">4dp</dimen>
+    <dimen name="recent_bookmark_item_favicon_corner_size">8dp</dimen>
+    <dimen name="recent_bookmark_item_text_padding_horizontal">4dp</dimen>
 
     <!-- Browser Fragment -->
     <!--The size of the gap between the tab preview and content layout.-->
@@ -177,6 +180,9 @@
     <dimen name="onboarding_dual_pane_radio_button_translation_x">-7dp</dimen>
     <dimen name="onboarding_dual_pane_radio_button_translation_y">-8dp</dimen>
 
+    <!--Onboarding home dialog-->
+    <dimen name="oboarding_home_dialog_margin_horizontal">24dp</dimen>
+
     <!-- Addon Details Fragment -->
     <dimen name="addon_details_rating_view_margin_start">6dp</dimen>
     <dimen name="addon_details_rating_view_margin_end">6dp</dimen>
@@ -196,8 +202,8 @@
     <dimen name="tab_tray_multiselect_handle_top_margin">0dp</dimen>
     <dimen name="tab_tray_new_collection_padding_start">24dp</dimen>
     <dimen name="tab_tray_new_collection_drawable_padding">28dp</dimen>
-    <!--  Keeps FAB from covering last item in list. Fab 64dp, top & bottom margins 16dp each.  -->
-    <dimen name="tab_tray_list_bottom_padding">96dp</dimen>
+    <!--  Keeps FAB and snackbar from covering last item in list -->
+    <dimen name="tab_tray_list_bottom_padding">190dp</dimen>
 
     <!-- Saved Logins Fragment -->
     <dimen name="saved_logins_sort_menu_dropdown_chevron_icon_margin_start">24dp</dimen>
@@ -228,10 +234,6 @@
     <dimen name="top_sites_card_elevation">6dp</dimen>
     <dimen name="top_sites_card_radius">8dp</dimen>
     <dimen name="top_sites_card_stroke_width">1dp</dimen>
-
-    <!-- Recent tabs -->
-    <dimen name="recent_tabs_icon_elevation">0dp</dimen>
-    <dimen name="recent_tabs_icon_corner_size">4dp</dimen>
 
     <!-- Credit Cards Fragment -->
     <dimen name="credit_cards_saved_cards_item_margin_start">16dp</dimen>

@@ -24,7 +24,7 @@
     <!-- Message announced to the user when tab tray is selected with 1 tab -->
     <string name="open_tab_tray_single">1 nyitott lap. Koppintson a lapváltáshoz.</string>
     <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
-    <string name="open_tab_tray_plural">%1$s nyitott lap. Koppintson a lapváltáshoz.</string>
+    <string moz:removedIn="95" name="open_tab_tray_plural" tools:ignore="UnusedResources">%1$s nyitott lap. Koppintson a lapváltáshoz.</string>
 
     <!-- Tab tray multi select title in app bar. The first parameter is the number of tabs selected -->
     <string name="tab_tray_multi_select_title">%1$d kiválasztva</string>
@@ -51,7 +51,11 @@
 
     <!-- Home - Recently saved bookmarks -->
     <!-- Title for the home screen section with recently saved bookmarks. -->
-    <string name="recently_saved_bookmarks">Nemrég mentett</string>
+    <string moz:removedIn="94" name="recently_saved_bookmarks" tools:ignore="UnusedResources">Nemrég mentett</string>
+    <!-- Title for the home screen section with recently saved bookmarks. -->
+    <string moz:removedIn="94" name="recently_bookmarked" tools:ignore="UnusedResources">Nemrég könyvjelzőzött</string>
+    <!-- Title for the home screen section with recently saved bookmarks. -->
+    <string name="recent_bookmarks_title">Friss könyvjelzők</string>
     <!-- Content description for the recently saved bookmarks section on the home screen. -->
     <string name="recently_saved_bookmarks_content_description">Legutóbb mentett könyvjelzők</string>
     <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
@@ -104,6 +108,20 @@
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">Eltüntetés</string>
 
+    <!-- Text for the banner message to tell users about our inactive tabs feature. -->
+    <string name="tab_tray_inactive_onboarding_message">Azok a lapok, melyeket két hete nem nézett meg, ide kerülnek.</string>
+    <!-- Text for the action link to go to Settings for inactive tabs. -->
+    <string name="tab_tray_inactive_onboarding_button_text">Kikapcsolás a beállításokban</string>
+
+    <!-- Text for title for the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_auto_close_title">Automatikus bezárás egy hónap után?</string>
+    <!-- Text for the body for the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_auto_close_body">A Firefox bezárhatja azokat a lapokat, amelyeket az elmúlt hónapban nem nézett meg.</string>
+    <!-- Content description for close button in the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_auto_close_button_content_description">Bezárás</string>
+    <!-- Text for turn on auto close tabs button in the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_turn_on_auto_close_button">Automatikus bezárás bekapcsolása</string>
+
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
     <string name="home_screen_shortcut_open_new_tab_2">Új lap</string>
@@ -111,7 +129,7 @@
     <string name="home_screen_shortcut_open_new_private_tab_2">Új privát lap</string>
 
     <!-- Heading for the Top Sites block -->
-    <string name="home_screen_top_sites_heading">Kedvenc oldalak</string>
+    <string moz:removedIn="95" name="home_screen_top_sites_heading" tools:ignore="UnusedResources">Kedvenc oldalak</string>
 
     <!-- Recent Tabs -->
     <!-- Header text for jumping back into the recent tab in the home screen -->
@@ -119,10 +137,32 @@
     <!-- Button text for showing all the tabs in the tabs tray -->
     <string name="recent_tabs_show_all">Összes megjelenítése</string>
 
+    <!-- Content description for the button which navigates the user to show all recent tabs in the tabs tray. -->
+    <string name="recent_tabs_show_all_content_description">Az összes legutóbbi lap megjelenítése gomb</string>
+    <!-- Title for showing a group item in the 'Jump back in' section of the new tab
+        The first parameter is the search term that the user used. (for example: your search for "cat")-->
+    <string name="recent_tabs_search_term">Az Ön keresése erre: „%1$s”</string>
+    <!-- Text for the number of tabs in a group in the 'Jump back in' section of the new tab
+        The first parameter is the count for number of sites in the group.  This number will always be more than one. -->
+    <string name="recent_tabs_search_term_count">Webhelyek: %1$s</string>
+
     <!-- History Metadata -->
     <!-- Header text for a section on the home screen that displays grouped highlights from the
          user's browsing history, such as topics they have researched or explored on the web -->
-    <string name="history_metadata_header">Korábbi felfedezések</string>
+    <string moz:removedIn="94" name="history_metadata_header" tools:ignore="UnusedResources">Korábbi felfedezések</string>
+
+    <!-- Header text for a section on the home screen that displays grouped highlights from the
+         user's browsing history, such as topics they have researched or explored on the web -->
+    <string moz:removedIn="94" name="history_metadata_header_2" tools:ignore="UnusedResources">Nemrég felkeresett</string>
+    <!-- Header text for a section on the home screen that displays grouped highlights from the
+         user's browsing history, such as topics they have researched or explored on the web -->
+    <string name="history_metadata_header_3">Legutóbbi keresések</string>
+    <!-- Text for the menu button to remove a grouped highlight from the user's browsing history
+         in the Recently visited section -->
+    <string name="recently_visited_menu_item_remove">Eltávolítás</string>
+
+    <!-- Content description for the button which navigates the user to show all of their history. -->
+    <string name="past_explorations_show_all_content_description">Az összes korábbi felfedezés megjelenítése gomb</string>
 
     <!-- Browser Fragment -->
     <!-- Content description (not visible, for screen readers etc.): Navigate to open tabs -->
@@ -136,7 +176,7 @@
     <!-- Content description (not visible, for screen readers etc.): Stop loading current website -->
     <string name="browser_menu_stop">Leállítás</string>
     <!-- Content description (not visible, for screen readers etc.): Bookmark the current page -->
-    <string name="browser_menu_bookmark">Könyvjelzőzés</string>
+    <string moz:removedIn="95" name="browser_menu_bookmark" tools:ignore="UnusedResources">Könyvjelzőzés</string>
     <!-- Content description (not visible, for screen readers etc.): Un-bookmark the current page -->
     <string name="browser_menu_edit_bookmark">Könyvjelző szerkesztése</string>
     <!-- Browser menu button that opens the addon manager -->
@@ -200,6 +240,10 @@
     <!-- Browser menu label for editing a bookmark -->
     <string name="browser_menu_edit">Szerkesztés</string>
 
+    <!-- Browser menu button that opens the Customize menu -->
+    <string name="browser_menu_customize_home">Kezdőoldal testreszabása</string>
+    <!-- Button shown on the home page that opens the Customize home settings -->
+    <string name="browser_menu_customize_home_1">Kezdőoldal testreszabása</string>
     <!-- Browser Toolbar -->
     <!-- Content description for the Home screen button on the browser toolbar -->
     <string name="browser_toolbar_home">Kezdőképernyő</string>
@@ -245,6 +289,29 @@
     <string name="search_engine_suggestions_title">%s keresés</string>
     <!-- Search engine suggestion description text -->
     <string name="search_engine_suggestions_description">Keresés közvetlenül a címsávból</string>
+
+    <!-- Home onboarding -->
+    <!-- Onboarding home screen dialog title text. Firefox is intentionally hardcoded. -->
+    <string name="onboarding_home_screen_title_2">Újdonságok a Firefoxban</string>
+
+    <!-- Onboarding home screen dialog description text. -->
+    <string name="onboarding_home_screen_description_2">Mostantól könnyebb ott folytatni, ahol abbahagyta.</string>
+    <!-- Onboarding home screen dialog title text for the home section. Firefox is intentionally hardcoded. -->
+    <string name="onboarding_home_screen_section_home_title_2">Személyre szabott Firefox kezdőoldal</string>
+    <!-- Onboarding home screen dialog description text for the home section. -->
+    <string name="onboarding_home_screen_section_home_description_2">Ugrás a megnyitott lapokra, könyvjelzőkre és az előzményekre.</string>
+    <!-- Onboarding home screen dialog description text for the tab tray section. -->
+    <string name="onboarding_home_screen_section_cleaner_tab_tray_title_2">Tiszta, rendszerezett lapok</string>
+    <!-- Onboarding home screen dialog description text for the tab tray section. -->
+    <string name="onboarding_home_screen_section_cleaner_tab_tray_description_2">Számoljon le a lapok rendezetlenségével a jobb elrendezés és az automatikusan bezáródó lapok segítségével.</string>
+    <!-- Onboarding home screen dialog description text for the history section. -->
+    <string name="onboarding_home_screen_section_useful_history_title_2">Legutóbbi keresések</string>
+
+    <!-- Onboarding home screen dialog description text for the history section. -->
+    <string name="onboarding_home_screen_section_useful_history_description_2">Tekintse meg újra a legutóbbi kereséseit a kezdőlapról és a lapokról.</string>
+
+    <!-- Onboarding home screen popup dialog, shown on top of the Jump back in section. Firefox is intentionally hardcoded. -->
+    <string name="onboarding_home_screen_jump_back_contextual_hint" tools:ignore="UnusedResources">A személyre szabott Firefox kezdőlapja megkönnyíti, hogy ott folytassa, ahol abbahagyta. Találja meg a legutóbbi lapjait, könyvjelzőit és keresési találatait.</string>
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
@@ -324,7 +391,9 @@
     <!-- Preference for changing default theme to dark or light mode -->
     <string name="preferences_theme">Téma</string>
     <!-- Preference for customizing the home screen -->
-    <string name="preferences_home">Kezdőlap</string>
+    <string moz:removedIn="94" name="preferences_home" tools:ignore="UnusedResources">Kezdőlap</string>
+    <!-- Preference for customizing the home screen -->
+    <string name="preferences_home_2">Kezdőlap</string>
     <!-- Preference for gestures based actions -->
     <string name="preferences_gestures">Kézmozdulatok</string>
     <!-- Preference for settings related to visual options -->
@@ -392,6 +461,24 @@
     <string name="customize_addon_collection_user_hint">Gyűjtemény tulajdonosa (felhasználói azonosító)</string>
     <!-- Toast shown after confirming the custom add-on collection configuration -->
     <string name="toast_customize_addon_collection_done">A kiegészítőgyűjtemény módosítva. Kilépés az alkalmazásból a változások érvényesítéséhez…</string>
+
+    <!-- Customize Home -->
+    <!-- Header text for jumping back into the recent tab in customize the home screen -->
+    <string name="customize_toggle_jump_back_in">Ugrás vissza</string>
+    <!-- Title for the customize home screen section with recently saved bookmarks. -->
+    <string moz:removedIn="94" name="customize_toggle_recently_saved_bookmarks" tools:ignore="UnusedResources">Nemrég mentett</string>
+    <!-- Title for the customize home screen section with recently saved bookmarks. -->
+    <string moz:removedIn="94" name="customize_toggle_recently_bookmarked" tools:ignore="UnusedResources">Nemrég könyvjelzőzött</string>
+    <!-- Title for the customize home screen section with recently saved bookmarks. -->
+    <string name="customize_toggle_recent_bookmarks">Friss könyvjelzők</string>
+    <!-- Title for the customize home screen section with recently visited. Recently visited is
+    a section where users see a list of tabs that they have visited in the past few days -->
+    <string moz:removedIn="94" name="customize_toggle_recently_visited" tools:ignore="UnusedResources">Nemrég felkeresett</string>
+    <!-- Title for the customize home screen settings section for recent searches. Recent searches
+     is a section where users see a list of groups of tabs that they have visited in the past few days -->
+    <string name="customize_toggle_recent_searches">Legutóbbi keresések</string>
+    <!-- Title for the customize home screen section with Pocket. -->
+    <string name="customize_toggle_pocket">Pocket</string>
 
     <!-- Add-on Installation from AMO-->
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
@@ -500,7 +587,7 @@
     <!-- Header of the Turn on Sync preference view -->
     <string name="preferences_sync">Sync bekapcsolása</string>
     <!-- Preference for pairing -->
-    <string name="preferences_sync_pair">Olvassa le a párosítási kódot az asztali Firefoxban</string>
+    <string moz:removedIn="95" name="preferences_sync_pair" tools:ignore="UnusedResources">Olvassa le a párosítási kódot az asztali Firefoxban</string>
     <!-- Preference for account login -->
     <string name="preferences_sync_sign_in">Bejelentkezés</string>
     <!-- Preference for reconnecting to FxA sync -->
@@ -580,6 +667,13 @@
     <!-- Content description (not visible, for screen readers etc.): "Close button for library settings" -->
     <string name="content_description_close_button">Bezárás</string>
 
+    <!-- Text to show users they have one site in the history group section of the History fragment.
+    %d is a placeholder for the number of sites in the group. -->
+    <string name="history_search_group_site">%d webhely</string>
+    <!-- Text to show users they have multiple sites in the history group section of the History fragment.
+    %d is a placeholder for the number of sites in the group. -->
+    <string name="history_search_group_sites">%d webhely</string>
+
     <!-- Option in library for Recently Closed Tabs -->
     <string name="library_recently_closed_tabs">Nemrég bezárt lapok</string>
     <!-- Option in library to open Recently Closed Tabs page -->
@@ -602,6 +696,10 @@
     <string name="tab_view_list">Lista</string>
     <!-- Option for a grid tab view -->
     <string name="tab_view_grid">Rács</string>
+    <!-- Option for search term tab groups -->
+    <string name="tab_view_search_term_tab_groups">Keresési csoportok</string>
+    <!-- Summary text for search term tab groups -->
+    <string name="tab_view_search_term_tab_groups_summary">Kapcsolódó webhelyek csoportosítása</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
     <string name="preferences_close_tabs">Lapok bezárása</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
@@ -613,15 +711,26 @@
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">Egy hónap után</string>
 
-    <!-- Start on Home -->
+    <!-- Title of preference that allows a user to specify the auto-close settings for open tabs -->
+    <string name="preference_auto_close_tabs" tools:ignore="UnusedResources">Nyitott lapok automatikus bezárása</string>
+
+    <!-- Opening screen -->
     <!-- Title of a preference that allows a user to indicate after a specified amount of time when the app should start on the home screen -->
-    <string name="preferences_start_on_home">Kezdés a kezdőképernyőn</string>
+    <string moz:removedIn="94" name="preferences_start_on_home" tools:ignore="UnusedResources">Kezdés a kezdőképernyőn</string>
+    <!-- Title of a preference that allows a user to choose what screen to show after opening the app -->
+    <string name="preferences_opening_screen">Nyitóképernyő</string>
     <!-- Option for starting on the home screen after after four hours or inactivity -->
-    <string name="start_on_home_after_four_hours">Négy óra után</string>
+    <string moz:removedIn="94" name="start_on_home_after_four_hours" tools:ignore="UnusedResources">Négy óra után</string>
+    <!-- Option for always opening the homepage when re-opening the app -->
+    <string name="opening_screen_homepage">Kezdőlap</string>
     <!-- Option for always starting on the home screen -->
-    <string name="start_on_home_always">Mindig</string>
+    <string moz:removedIn="94" name="start_on_home_always" tools:ignore="UnusedResources">Mindig</string>
+    <!-- Option for always opening the user's last-open tab when re-opening the app -->
+    <string name="opening_screen_last_tab">Legutóbbi lap</string>
     <!-- Option for never starting on the home screen -->
-    <string name="start_on_home_never">Soha</string>
+    <string moz:removedIn="94" name="start_on_home_never" tools:ignore="UnusedResources">Soha</string>
+    <!-- Option for always opening the homepage when re-opening the app after four hours of inactivity -->
+    <string name="opening_screen_after_four_hours_of_inactivity">Kezdőlap négy óra tétlenség után</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
     <string name="close_tabs_manually_summary">Bezárás kézzel</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
@@ -630,6 +739,12 @@
     <string name="close_tabs_after_one_week_summary">Bezárás egy hét után</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one month-->
     <string name="close_tabs_after_one_month_summary">Bezárás egy hónap után</string>
+
+    <!-- Inactive tabs -->
+    <!-- Category header of a preference that allows a user to enable or disable the inactive tabs feature -->
+    <string name="preferences_inactive_tabs">Régi lapok áthelyezése az inaktívak közé</string>
+    <!-- Title of inactive tabs preference -->
+    <string name="preferences_inactive_tabs_title">Azok a lapok, melyeket két hete nem nézett meg, átkerülnek az inaktív részbe.</string>
 
     <!-- Studies -->
     <!-- Title of the remove studies button -->
@@ -673,13 +788,13 @@
     <!-- Text shown in the menu for saving tabs to a collection -->
     <string name="tab_tray_menu_item_save">Gyűjteménybe mentés</string>
     <!-- Text shown in the menu for the collection selector -->
-    <string name="tab_tray_menu_select">Kijelölés</string>
+    <string moz:removedIn="95" name="tab_tray_menu_select" tools:ignore="UnusedResources">Kijelölés</string>
     <!-- Text shown in the menu for sharing all tabs -->
     <string name="tab_tray_menu_item_share">Az összes lap megosztása</string>
     <!-- Text shown in the menu to view recently closed tabs -->
     <string name="tab_tray_menu_recently_closed">Nemrég bezárt lapok</string>
     <!-- Text shown in the tabs tray inactive tabs section -->
-    <string name="tab_tray_inactive_recently_closed">Nemrég bezárt</string>
+    <string name="tab_tray_inactive_recently_closed" tools:ignore="UnusedResources">Nemrég bezárt</string>
     <!-- Text shown in the menu to view account settings -->
     <string name="tab_tray_menu_account_settings">Fiókbeállítások</string>
     <!-- Text shown in the menu to view tab settings -->
@@ -753,6 +868,12 @@
     <!-- Button in the current tab tray header in multiselect mode. Saved the selected tabs to a collection when pressed. -->
     <string name="tab_tray_save_to_collection">Mentés</string>
 
+    <!-- Title text for the normal tabs header in the tabs tray which are not part of any tab grouping. -->
+    <string moz:removedIn="94" name="tab_tray_header_title" tools:ignore="UnusedResources">Egyéb</string>
+
+    <!-- Title text for the normal tabs header in the tabs tray which are not part of any tab grouping. -->
+    <string name="tab_tray_header_title_1">Más lapok</string>
+
     <!-- History -->
     <!-- Text for the button to clear all history -->
     <string name="history_delete_all">Előzmények törlése</string>
@@ -765,15 +886,15 @@
     <!-- Text for positive action to delete history in deleting history dialog -->
     <string name="history_clear_dialog">Törlés</string>
     <!-- History overflow menu copy button -->
-    <string name="history_menu_copy_button">Másolás</string>
+    <string moz:removedIn="94" name="history_menu_copy_button" tools:ignore="UnusedResources">Másolás</string>
     <!-- History overflow menu share button -->
-    <string name="history_menu_share_button">Megosztás</string>
+    <string moz:removedIn="94" name="history_menu_share_button" tools:ignore="UnusedResources">Megosztás</string>
     <!-- History overflow menu open in new tab button -->
-    <string name="history_menu_open_in_new_tab_button">Megnyitás új lapon</string>
+    <string moz:removedIn="94" name="history_menu_open_in_new_tab_button" tools:ignore="UnusedResources">Megnyitás új lapon</string>
     <!-- History overflow menu open in private tab button -->
-    <string name="history_menu_open_in_private_tab_button">Megnyitás privát lapon</string>
+    <string moz:removedIn="94" name="history_menu_open_in_private_tab_button" tools:ignore="UnusedResources">Megnyitás privát lapon</string>
     <!-- Text for the button to delete a single history item -->
-    <string name="history_delete_item">Törlés</string>
+    <string moz:removedIn="94" name="history_delete_item" tools:ignore="UnusedResources">Törlés</string>
     <!-- History multi select title in app bar
     The first parameter is the number of bookmarks selected -->
     <string name="history_multi_select_title">%1$d kiválasztva</string>
@@ -796,10 +917,6 @@
     <string name="history_empty_message">Nincsenek előzmények</string>
 
     <!-- Downloads -->
-    <!-- Text for the button to clear all downloads -->
-    <string name="download_delete_all">Letöltések törlése</string>
-    <!-- Text for the dialog to confirm clearing all downloads -->
-    <string name="download_delete_all_dialog">Biztos, hogy törli a letöltéseket?</string>
     <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
     <string name="download_delete_multiple_items_snackbar_1">Letöltések eltávolítva</string>
     <!-- Text for the snackbar to confirm that a single download item has been removed. The first parameter is the name of the download item. -->
@@ -840,7 +957,7 @@
     <!-- Content description for bookmarks library menu -->
     <string name="bookmark_menu_content_description">Könyvjelző menü</string>
     <!-- Screen title for editing bookmarks -->
-    <string name="bookmark_edit">Könyvjelző szerkesztése</string>
+    <string moz:removedIn="95" name="bookmark_edit" tools:ignore="UnusedResources">Könyvjelző szerkesztése</string>
     <!-- Screen title for selecting a bookmarks folder -->
     <string name="bookmark_select_folder">Válasszon mappát</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete the selected folder -->
@@ -1251,12 +1368,12 @@
     <!-- text for the Firefox Accounts section header -->
     <string name="onboarding_fxa_section_header">Van felhasználói fiókja?</string>
     <!-- text for the "What's New" onboarding card header -->
-    <string name="onboarding_whats_new_header1">Nézze meg az újdonságokat</string>
+    <string moz:removedIn="94" name="onboarding_whats_new_header1" tools:ignore="UnusedResources">Nézze meg az újdonságokat</string>
     <!-- text for the "what's new" onboarding card description
     The first parameter is the short name of the app (e.g. Firefox) -->
-    <string name="onboarding_whats_new_description">Kérdése van az újratervezett %s böngészőről? Tudni akarja, hogy mi változott?</string>
+    <string moz:removedIn="94" name="onboarding_whats_new_description" tools:ignore="UnusedResources">Kérdése van az újratervezett %s böngészőről? Tudni akarja, hogy mi változott?</string>
     <!-- text for underlined clickable link that is part of "what's new" onboarding card description that links to an FAQ -->
-    <string name="onboarding_whats_new_description_linktext">Itt kaphat válaszokat</string>
+    <string moz:removedIn="94" name="onboarding_whats_new_description_linktext" tools:ignore="UnusedResources">Itt kaphat válaszokat</string>
     <!-- text for the Firefox account onboarding sign in card header. The word "Firefox" should not be translated -->
     <string name="onboarding_account_sign_in_header_1">A Firefox szinkronizálása az eszközök közt</string>
     <!-- Text for the button to learn more about signing in to your Firefox account -->
@@ -1296,14 +1413,14 @@
     <!-- text for the toolbar position card description -->
     <string name="onboarding_toolbar_placement_description_1">Helyezze az eszköztárat könnyen elérhető helyre. Tartsa az alján, vagy mozgassa a tetejére.</string>
     <!-- text for the private browsing onboarding card header -->
-    <string name="onboarding_private_browsing_header">Böngésszen privát módon</string>
+    <string moz:removedIn="94" name="onboarding_private_browsing_header" tools:ignore="UnusedResources">Böngésszen privát módon</string>
     <!-- text for the private browsing onboarding card description
     The first parameter is an icon that represents private browsing -->
-    <string name="onboarding_private_browsing_description1">Nyisson egy privát lapot: Koppintson a %s ikonra.</string>
+    <string moz:removedIn="94" name="onboarding_private_browsing_description1" tools:ignore="UnusedResources">Nyisson egy privát lapot: Koppintson a %s ikonra.</string>
     <!-- text for the private browsing onboarding card description, explaining how to always using private browsing -->
-    <string name="onboarding_private_browsing_always_description">Nyisson mindig privát lapokat: Frissítse a privát böngészési beállításait.</string>
+    <string moz:removedIn="94" name="onboarding_private_browsing_always_description" tools:ignore="UnusedResources">Nyisson mindig privát lapokat: Frissítse a privát böngészési beállításait.</string>
     <!-- text for the private browsing onbording card button, that launches settings -->
-    <string name="onboarding_private_browsing_button">Beállítások megnyitása</string>
+    <string moz:removedIn="94" name="onboarding_private_browsing_button" tools:ignore="UnusedResources">Beállítások megnyitása</string>
     <!-- text for the privacy notice onboarding card header -->
     <string name="onboarding_privacy_notice_header">Adatvédelem</string>
     <!-- text for the privacy notice onboarding card description
@@ -1471,6 +1588,12 @@
     <!-- Description of redirect tracker cookies that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_redirect_trackers_description">Törli az ismert nyomkövető webhelyekre történő átirányítással beállított sütiket.</string>
 
+    <!-- Description of the SmartBlock Enhanced Tracking Protection feature. The * symbol is intentionally hardcoded here,
+         as we use it on the UI to indicate which trackers have been partially unblocked.  -->
+    <string name="preference_etp_smartblock_description">Egyes lent jelzett nyomkövetők részleges feloldásra kerültek, mert interakcióba lépett velük *.</string>
+    <!-- Text displayed that links to website about enhanced tracking protection SmartBlock -->
+    <string name="preference_etp_smartblock_learn_more">További tudnivalók</string>
+
     <!-- About page link text to open support link -->
     <string name="about_support">Támogatás</string>
     <!-- About page link text to list of past crashes (like about:crashes on desktop) -->
@@ -1538,6 +1661,9 @@
     <!-- Description for the preference for autofilling logins from Fenix in other apps (e.g. autofilling the Twitter app) -->
     <string name="preferences_android_autofill_description">Felhasználónevek és jelszavak kitöltése más alkalmazásokban az eszközén.</string>
 
+    <!-- Preference option for adding a login -->
+    <string name="preferences_logins_add_login">Bejelentkezés hozzáadása</string>
+
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">Bejelentkezések szinkronizálása</string>
     <!-- Preference for syncing saved logins in Fenix, when not signed in-->
@@ -1600,6 +1726,8 @@
     <string name="saved_login_copy_username">Felhasználónév másolása</string>
     <!-- Content Description (for screenreaders etc) read for the button to clear a username while editing a login -->
     <string name="saved_login_clear_username">Felhasználónév törlése</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear the hostname field while creating a login -->
+    <string name="saved_login_clear_hostname">Gépnév törlése</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a site in logins -->
     <string name="saved_login_copy_site">Oldal másolása</string>
     <!-- Content Description (for screenreaders etc) read for the button to open a site in logins -->
@@ -1769,9 +1897,13 @@
     <string name="phone_feature_blocked_step_feature"><![CDATA[3. Kapcsolja BE a következőt: <b>%1$s</b>]]></string>
 
     <!-- Label that indicates a site is using a secure connection -->
-    <string name="quick_settings_sheet_secure_connection">Biztonságos kapcsolat</string>
+    <string name="quick_settings_sheet_secure_connection_2">A kapcsolat biztonságos</string>
     <!-- Label that indicates a site is using a insecure connection -->
-    <string name="quick_settings_sheet_insecure_connection">Nem biztonságos kapcsolat</string>
+    <string name="quick_settings_sheet_insecure_connection_2">A kapcsolat nem biztonságos</string>
+    <!-- Label that indicates a site is using a secure connection -->
+    <string moz:removedIn="94" name="quick_settings_sheet_secure_connection" tools:ignore="UnusedResources">Biztonságos kapcsolat</string>
+    <!-- Label that indicates a site is using a insecure connection -->
+    <string moz:removedIn="94" name="quick_settings_sheet_insecure_connection" tools:ignore="UnusedResources">Nem biztonságos kapcsolat</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete all the permissions for all sites-->
     <string name="confirm_clear_permissions_on_all_sites">Biztos benne, hogy törli az összes engedélyt az összes webhelyen?</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete all the permissions for a site-->
@@ -1811,8 +1943,14 @@
     <string name="discard_changes">Módosítások elvetése</string>
     <!--  The page title for editing a saved login. -->
     <string name="edit">Szerkesztés</string>
-    <!--  The error message in edit login view when password field is blank. -->
+    <!--  The page title for adding new login. -->
+    <string name="add_login">Új bejelentkezés hozzáadása</string>
+    <!--  The error message in add/edit login view when password field is blank. -->
     <string name="saved_login_password_required">Jelszó szükséges</string>
+    <!--  The error message in add login view when username field is blank. -->
+    <string name="saved_login_username_required">Felhasználónév szükséges</string>
+    <!--  The error message in add login view when hostname field is blank. -->
+    <string name="saved_login_hostname_required" tools:ignore="UnusedResources">Gépnév szükséges</string>
     <!-- Voice search button content description  -->
     <string name="voice_search_content_description">Hangalapú keresés</string>
     <!-- Voice search prompt description displayed after the user presses the voice search button -->
@@ -1820,6 +1958,15 @@
 
     <!--  The error message in edit login view when a duplicate username exists. -->
     <string name="saved_login_duplicate">Már létezik bejelentkezés ezzel a felhasználónévvel.</string>
+
+    <!-- This is the hint text that is shown inline on the hostname field of the create new login page. 'https://www.example.com' intentionally hardcoded here -->
+    <string name="add_login_hostname_hint_text">https://www.example.com</string>
+    <!-- This is an error message shown below the hostname field of the add login page when a hostname does not contain http or https. -->
+    <string moz:removedIn="94" name="add_login_hostname_invalid_text_1" tools:ignore="UnusedResources">A webcímnek tartalmaznia kell ezek egyikét: „https:” vagy „http://”</string>
+    <!-- This is an error message shown below the hostname field of the add login page when a hostname does not contain http or https. -->
+    <string name="add_login_hostname_invalid_text_3">A webcímnek tartalmaznia kell ezek egyikét: „https:” vagy „http://”</string>
+    <!-- This is an error message shown below the hostname field of the add login page when a hostname is invalid. -->
+    <string name="add_login_hostname_invalid_text_2">Érvényes gépnév szükséges</string>
 
     <!-- Synced Tabs -->
     <!-- Text displayed to ask user to connect another device as no devices found with account -->
@@ -1847,8 +1994,12 @@
     <!-- Confirmation dialog button text when top sites limit is reached. -->
     <string name="top_sites_max_limit_confirmation_button">Rendben, értem</string>
 
+    <!-- Label for the preference to show the most visited top sites on the homepage -->
+    <string name="top_sites_toggle_top_recent_sites_3">Leglátogatottabb oldalak megjelenítése</string>
+    <!-- Label for the show most visited top sites preference -->
+    <string moz:removedIn="94" name="top_sites_toggle_top_frecent_sites_2" tools:ignore="UnusedResources">A leglátogatottabb oldalak megjelenítése</string>
     <!-- Label for the show most visited sites preference -->
-    <string name="top_sites_toggle_top_frecent_sites">A leglátogatottabb oldalak megjelenítése</string>
+    <string moz:removedIn="93" name="top_sites_toggle_top_frecent_sites" tools:ignore="UnusedResources">A leglátogatottabb oldalak megjelenítése</string>
 
     <!-- Title text displayed in the rename top site dialog. -->
 	<string name="top_sites_rename_dialog_title">Név</string>
@@ -1859,15 +2010,41 @@
 	<!-- Dialog button text for canceling the rename top site prompt. -->
 	<string name="top_sites_rename_dialog_cancel">Mégse</string>
 
-    <!-- In-activate tabs in the tabs tray -->
-    <!-- Title text displayed in the tabs tray when a tab has been unused for 4 days. -->
+    <!-- Inactive tabs in the tabs tray -->
+    <!-- Title text displayed in the tabs tray when a tab has been unused for 14 days. -->
     <string name="inactive_tabs_title">Inaktív lapok</string>
+    <!-- Content description for closing all inactive tabs -->
+    <string name="inactive_tabs_delete_all">Összes inaktív lap bezárása</string>
     <!-- A description below the section of "inactive" tabs to notify the user when those tabs will be closed, if appropriate. See strings inactive_tabs_30_days and inactive_tabs_7_days for placeholders options. -->
-    <string name="inactive_tabs_description">A lapok %s állnak itt rendelkezésre. Ezután a lapok automatikusan bezárásra kerülnek.</string>
+    <string moz:removedIn="93" name="inactive_tabs_description" tools:ignore="UnusedResources">A lapok %s állnak itt rendelkezésre. Ezután a lapok automatikusan bezárásra kerülnek.</string>
     <!-- The amount of time until a tab in the "inactive" section of the tabs tray will be closed. See string inactive_tabs_description as well -->
-    <string name="inactive_tabs_30_days">30 napig</string>
+    <string moz:removedIn="93" name="inactive_tabs_30_days" tools:ignore="UnusedResources">30 napig</string>
     <!-- The amount of time until a tab in the "inactive" section of the tabs tray will be closed. See string inactive_tabs_description as well -->
-    <string name="inactive_tabs_7_days">1 hétig</string>
+    <string moz:removedIn="93" name="inactive_tabs_7_days" tools:ignore="UnusedResources">1 hétig</string>
+
+    <!-- Inactive tabs auto-close message in the tabs tray -->
+    <!-- The header text of the auto-close message when the user is asked if they want to turn on the auto-closing of inactive tabs. -->
+    <string name="inactive_tabs_auto_close_message_header" tools:ignore="UnusedResources">Automatikus bezárás egy hónap után?</string>
+    <!-- A description below the header to notify the user what the inactive tabs auto-close feature is. -->
+    <string name="inactive_tabs_auto_close_message_description" tools:ignore="UnusedResources">A Firefox bezárhatja azokat a lapokat, amelyeket az elmúlt hónapban nem nézett meg.</string>
+    <!-- A call to action below the description to allow the user to turn on the auto closing of inactive tabs. -->
+    <string name="inactive_tabs_auto_close_message_action" tools:ignore="UnusedResources">AUTOMATIKUS BEZÁRÁS BEKAPCSOLÁSA</string>
+
+    <!-- Inactive tabs survey -->
+    <!-- Header text for the inactive tabs survey asking for feedback to improve the inactive tabs feature. -->
+    <string name="inactive_tabs_survey_header" tools:ignore="UnusedResources">Segítsen nekünk a fejlesztésben</string>
+    <!-- Content text for the inactive tabs survey asking the primary survey feedback question. -->
+    <string name="inactive_tabs_survey_content" tools:ignore="UnusedResources">Miért tiltotta le az inaktív lapokat?</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string name="inactive_tabs_survey_not_interested_option" tools:ignore="UnusedResources">Nem érdekli a funkció</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string name="inactive_tabs_survey_time_too_long_option" tools:ignore="UnusedResources">Az inaktívvá tétel túl sokáig tart</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string name="inactive_tabs_survey_time_too_short_option" tools:ignore="UnusedResources">Az inaktívvá tétel túl rövid ideig tart</string>
+    <!-- Confirmation button text to submit the feedback for the inactive tabs survey. -->
+    <string name="inactive_tabs_survey_send_button" tools:ignore="UnusedResources">Küldés</string>
+    <!-- Content description for inactive tabs survey close button -->
+    <string name="inactive_tabs_survey_close_button_content_description" tools:ignore="UnusedResources">Bezárás</string>
 
     <!-- Default browser experiment -->
     <string name="default_browser_experiment_card_text">Állítsa be a webhelyek, e-mailek és üzenetek hivatkozásait, hogy azok automatikusan a Firefoxban nyíljanak meg.</string>
@@ -1884,4 +2061,19 @@
     <!-- Content description for privacy content close button -->
     <string name="privacy_content_close_button_content_description">Bezárás</string>
 
+    <!-- Pocket recommended stories -->
+    <!-- Header text for a section on the home screen. -->
+    <string moz:removedIn="94" name="pocket_stories_header" tools:ignore="UnusedResources">Elgondolkodtató történetek</string>
+    <!-- Header text for a section on the home screen. -->
+    <string name="pocket_stories_header_1">Elgondolkodtató történetek</string>
+    <!-- Header text for a section on the home screen. -->
+    <string name="pocket_stories_categories_header">Történetek téma szerint</string>
+    <!-- Text of a button allowing users to access an external url for more Pocket recommendations. -->
+    <string name="pocket_stories_placeholder_text">Folytassa a felfedezést</string>
+    <!-- Title of an app feature. Smaller than a heading.-->
+    <string name="pocket_stories_feature_title">A motorháztető alatt: Pocket.</string>
+    <!-- Caption for describing a certain feature. The placeholder is for a clickable text (eg: Learn more) which will load an url in a new tab when clicked.  -->
+    <string name="pocket_stories_feature_caption">A Firefox család tagja. %s</string>
+    <!-- Clickable text for opening an external link for more information about Pocket. -->
+    <string name="pocket_stories_feature_learn_more">További tudnivalók</string>
 </resources>

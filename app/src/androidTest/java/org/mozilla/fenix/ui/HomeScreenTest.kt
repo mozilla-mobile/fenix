@@ -4,15 +4,16 @@
 
 package org.mozilla.fenix.ui
 
-import androidx.test.uiautomator.UiDevice
-import org.junit.Rule
-import org.junit.Test
-import org.mozilla.fenix.helpers.HomeActivityTestRule
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
+import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
-import org.mozilla.fenix.helpers.ext.waitNotNull
+import org.junit.Rule
+import org.junit.Test
+import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
+import org.mozilla.fenix.helpers.ext.waitNotNull
 import org.mozilla.fenix.ui.robots.homeScreen
 
 /**
@@ -83,6 +84,59 @@ class HomeScreenTest {
             verifyPrivateSessionMessage()
             verifyHomeToolbar()
             verifyHomeComponent()
+        }
+    }
+
+    @Test
+    fun dismissOnboardingUsingSettingsTest() {
+        homeScreen {
+            verifyWelcomeHeader()
+        }.openThreeDotMenu {
+        }.openSettings {
+            verifyBasicsHeading()
+        }.goBack {
+            verifyExistingTopSitesList()
+        }
+    }
+
+    @Test
+    fun dismissOnboardingUsingBookmarksTest() {
+        homeScreen {
+            verifyWelcomeHeader()
+        }.openThreeDotMenu {
+        }.openBookmarks {
+            verifyBookmarksMenuView()
+            navigateUp()
+        }
+        homeScreen {
+            verifyExistingTopSitesList()
+        }
+    }
+
+    @Test
+    fun dismissOnboardingUsingHelpTest() {
+        val settings = activityTestRule.activity.applicationContext.settings()
+        settings.shouldShowJumpBackInCFR = false
+        homeScreen {
+            verifyWelcomeHeader()
+        }.openThreeDotMenu {
+        }.openHelp {
+            verifyHelpUrl()
+        }.goBack {
+            verifyExistingTopSitesList()
+        }
+    }
+
+    @Test
+    fun toolbarTapDoesntDismissOnboardingTest() {
+        homeScreen {
+            verifyWelcomeHeader()
+        }.openSearch {
+            verifyScanButton()
+            verifySearchEngineButton()
+            verifyKeyboardVisibility()
+        }.dismissSearchBar {
+            verifyWelcomeHeader()
         }
     }
 }

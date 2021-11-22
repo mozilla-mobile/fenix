@@ -7,17 +7,20 @@ package org.mozilla.fenix.historymetadata.controller
 import androidx.annotation.VisibleForTesting
 import androidx.annotation.VisibleForTesting.PRIVATE
 import androidx.navigation.NavController
-import mozilla.components.concept.storage.HistoryMetadataKey
-import mozilla.components.feature.tabs.TabsUseCases
-import org.mozilla.fenix.BrowserDirection
-import org.mozilla.fenix.HomeActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import mozilla.components.browser.state.action.HistoryMetadataAction
+import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.concept.storage.HistoryMetadataStorage
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.historymetadata.HistoryMetadataGroup
 import org.mozilla.fenix.historymetadata.interactor.HistoryMetadataInteractor
 import org.mozilla.fenix.home.HomeFragmentAction
 import org.mozilla.fenix.home.HomeFragmentDirections
 import org.mozilla.fenix.home.HomeFragmentStore
-import org.mozilla.fenix.utils.Settings
+import org.mozilla.fenix.library.history.toHistoryMetadata
 
 /**
  * An interface that handles the view manipulation of the history metadata in the Home screen.
@@ -25,47 +28,32 @@ import org.mozilla.fenix.utils.Settings
 interface HistoryMetadataController {
 
     /**
-     * @see [HistoryMetadataInteractor.onHistoryMetadataItemClicked]
-     */
-    fun handleHistoryMetadataItemClicked(url: String, historyMetadata: HistoryMetadataKey)
-
-    /**
      * @see [HistoryMetadataInteractor.onHistoryMetadataShowAllClicked]
      */
     fun handleHistoryShowAllClicked()
 
     /**
-     * @see [HistoryMetadataInteractor.onToggleHistoryMetadataGroupExpanded]
+     * @see [HistoryMetadataInteractor.onHistoryMetadataGroupClicked]
      */
-    fun handleToggleHistoryMetadataGroupExpanded(historyMetadataGroup: HistoryMetadataGroup)
+    fun handleHistoryMetadataGroupClicked(historyMetadataGroup: HistoryMetadataGroup)
+
+    /**
+     * @see [HistoryMetadataInteractor.onRemoveGroup]
+     */
+    fun handleRemoveGroup(searchTerm: String)
 }
 
 /**
  * The default implementation of [HistoryMetadataController].
  */
 class DefaultHistoryMetadataController(
-    private val activity: HomeActivity,
-    private val settings: Settings,
-    private val homeFragmentStore: HomeFragmentStore,
-    private val selectOrAddUseCase: TabsUseCases.SelectOrAddUseCase,
-    private val navController: NavController
+    private val store: BrowserStore,
+    private val homeStore: HomeFragmentStore,
+    private val navController: NavController,
+    private val storage: HistoryMetadataStorage,
+    private val scope: CoroutineScope,
+    private val metrics: MetricController
 ) : HistoryMetadataController {
-
-    override fun handleHistoryMetadataItemClicked(
-        url: String,
-        historyMetadata: HistoryMetadataKey
-    ) {
-        val tabId = selectOrAddUseCase.invoke(
-            url = url,
-            historyMetadata = historyMetadata
-        )
-
-        if (settings.openNextTabInDesktopMode) {
-            activity.handleRequestDesktopMode(tabId)
-        }
-
-        activity.openToBrowser(BrowserDirection.FromHome)
-    }
 
     override fun handleHistoryShowAllClicked() {
         dismissSearchDialogIfDisplayed()
@@ -74,12 +62,27 @@ class DefaultHistoryMetadataController(
         )
     }
 
-    override fun handleToggleHistoryMetadataGroupExpanded(historyMetadataGroup: HistoryMetadataGroup) {
-        homeFragmentStore.dispatch(
-            HomeFragmentAction.HistoryMetadataExpanded(
-                historyMetadataGroup
+    override fun handleHistoryMetadataGroupClicked(historyMetadataGroup: HistoryMetadataGroup) {
+        navController.navigate(
+            HomeFragmentDirections.actionGlobalHistoryMetadataGroup(
+                title = historyMetadataGroup.title,
+                historyMetadataItems = historyMetadataGroup.historyMetadata
+                    .map { it.toHistoryMetadata() }.toTypedArray()
             )
         )
+    }
+
+    override fun handleRemoveGroup(searchTerm: String) {
+        // We want to update the UI right away in response to user action without waiting for the IO.
+        // First, dispatch actions that will clean up search groups in the two stores that have
+        // metadata-related state.
+        store.dispatch(HistoryMetadataAction.DisbandSearchGroupAction(searchTerm = searchTerm))
+        homeStore.dispatch(HomeFragmentAction.DisbandSearchGroupAction(searchTerm = searchTerm))
+        // Then, perform the expensive IO work of removing search groups from storage.
+        scope.launch {
+            storage.deleteHistoryMetadata(searchTerm)
+        }
+        metrics.track(Event.RecentSearchesGroupDeleted)
     }
 
     @VisibleForTesting(otherwise = PRIVATE)

@@ -5,8 +5,12 @@
 package org.mozilla.fenix
 
 import androidx.test.core.app.ApplicationProvider
+import io.mockk.Runs
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.spyk
 import io.mockk.verify
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.webextension.DisabledFlags
@@ -16,20 +20,18 @@ import mozilla.components.feature.addons.migration.DefaultSupportedAddonsChecker
 import mozilla.components.service.glean.testing.GleanTestRule
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.GleanMetrics.Addons
 import org.mozilla.fenix.GleanMetrics.Metrics
-import org.mozilla.fenix.GleanMetrics.PerfStartup
 import org.mozilla.fenix.GleanMetrics.Preferences
 import org.mozilla.fenix.GleanMetrics.SearchDefaultEngine
 import org.mozilla.fenix.components.metrics.MozillaProductDetector
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
+import org.mozilla.fenix.tabstray.ext.inactiveTabs
 import org.mozilla.fenix.utils.BrowsersCache
 import org.mozilla.fenix.utils.Settings
 
@@ -49,14 +51,6 @@ class FenixApplicationTest {
         browsersCache = mockk(relaxed = true)
         mozillaProductDetector = mockk(relaxed = true)
         browserStore = BrowserStore()
-    }
-
-    @Ignore("See https://github.com/mozilla-mobile/fenix/issues/18102")
-    @Test
-    fun `GIVEN onCreate is called THEN the duration is measured`() {
-        // application.onCreate is called before the test as part of test set up:
-        // https://robolectric.blogspot.com/2013/04/the-test-lifecycle-in-20.html
-        assertTrue(PerfStartup.applicationOnCreate.testHasValue())
     }
 
     @Test
@@ -91,6 +85,8 @@ class FenixApplicationTest {
     fun `WHEN setStartupMetrics is called THEN sets some base metrics`() {
         val expectedAppName = "org.mozilla.fenix"
         val settings: Settings = mockk()
+        val application = spyk(application)
+
         every { browsersCache.all(any()).isDefaultBrowser } returns true
         every { mozillaProductDetector.getMozillaBrowserDefault(any()) } returns expectedAppName
         every { mozillaProductDetector.getInstalledMozillaProducts(any()) } returns listOf(expectedAppName)
@@ -114,6 +110,7 @@ class FenixApplicationTest {
         every { settings.shouldUseTrackingProtection } returns true
         every { settings.isRemoteDebuggingEnabled } returns true
         every { settings.isTelemetryEnabled } returns true
+        every { settings.isExperimentationEnabled } returns true
         every { settings.shouldShowHistorySuggestions } returns true
         every { settings.shouldShowBookmarkSuggestions } returns true
         every { settings.shouldShowClipboardSuggestions } returns true
@@ -128,8 +125,21 @@ class FenixApplicationTest {
         every { settings.touchExplorationIsEnabled } returns true
         every { settings.shouldUseLightTheme } returns true
         every { settings.signedInFxaAccount } returns true
+        every { settings.showRecentTabsFeature } returns true
+        every { settings.showRecentBookmarksFeature } returns true
+        every { settings.showTopFrecentSites } returns true
+        every { settings.historyMetadataUIFeature } returns true
+        every { settings.showPocketRecommendationsFeature } returns true
+        every { settings.showPocketRecommendationsFeature } returns true
+        every { application.reportHomeScreenMetrics(settings) } just Runs
+        every { settings.inactiveTabsAreEnabled } returns true
+        mockkStatic("org.mozilla.fenix.tabstray.ext.TabSelectorsKt") {
+            every { browserStore.state.inactiveTabs } returns listOf(mockk(), mockk())
 
-        application.setStartupMetrics(browserStore, settings, browsersCache, mozillaProductDetector)
+            application.setStartupMetrics(browserStore, settings, browsersCache, mozillaProductDetector)
+
+            assertEquals(2, Metrics.inactiveTabsCount.testGetValue())
+        }
 
         // Verify that browser defaults metrics are set.
         assertEquals("Mozilla", Metrics.distributionId.testGetValue())
@@ -152,6 +162,7 @@ class FenixApplicationTest {
         assertEquals(true, Preferences.searchSuggestionsEnabled.testGetValue())
         assertEquals(true, Preferences.remoteDebuggingEnabled.testGetValue())
         assertEquals(true, Preferences.telemetryEnabled.testGetValue())
+        assertEquals(true, Preferences.studiesEnabled.testGetValue())
         assertEquals(true, Preferences.browsingHistorySuggestion.testGetValue())
         assertEquals(true, Preferences.bookmarksSuggestion.testGetValue())
         assertEquals(true, Preferences.clipboardSuggestionsEnabled.testGetValue())
@@ -163,7 +174,7 @@ class FenixApplicationTest {
         assertEquals("fixed_top", Preferences.toolbarPositionSetting.testGetValue())
         assertEquals("standard", Preferences.enhancedTrackingProtection.testGetValue())
         assertEquals(listOf("switch", "touch exploration"), Preferences.accessibilityServices.testGetValue())
-        assertEquals("light", Preferences.userTheme.testGetValue())
+        assertEquals(true, Preferences.inactiveTabsEnabled.testGetValue())
 
         // Verify that search engine defaults are NOT set. This test does
         // not mock most of the objects telemetry is collected from.

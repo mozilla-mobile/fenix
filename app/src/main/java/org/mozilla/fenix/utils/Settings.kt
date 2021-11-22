@@ -32,6 +32,7 @@ import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.metrics.MozillaProductDetector
 import org.mozilla.fenix.components.settings.counterPreference
 import org.mozilla.fenix.components.settings.featureFlagPreference
+import org.mozilla.fenix.components.settings.lazyFeatureFlagPreference
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.experiments.ExperimentBranch
 import org.mozilla.fenix.experiments.FeatureId
@@ -66,6 +67,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         private const val CFR_COUNT_CONDITION_FOCUS_INSTALLED = 1
         private const val CFR_COUNT_CONDITION_FOCUS_NOT_INSTALLED = 3
         private const val APP_LAUNCHES_TO_SHOW_DEFAULT_BROWSER_CARD = 3
+        private const val INACTIVE_TAB_MINIMUM_TO_SHOW_AUTO_CLOSE_DIALOG = 20
 
         const val FOUR_HOURS_MS = 60 * 60 * 4 * 1000L
         const val ONE_DAY_MS = 60 * 60 * 24 * 1000L
@@ -107,9 +109,10 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     override val preferences: SharedPreferences =
         appContext.getSharedPreferences(FENIX_PREFERENCES, MODE_PRIVATE)
 
-    var showTopFrecentSites by booleanPreference(
+    var showTopFrecentSites by lazyFeatureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_enable_top_frecent_sites),
-        default = true
+        featureFlag = true,
+        default = { appContext.components.analytics.features.homeScreen.isTopSitesActive() }
     )
 
     var numberOfAppLaunches by intPreference(
@@ -237,15 +240,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = false
     )
 
-    private var trackingProtectionOnboardingShownThisSession = false
     var isOverrideTPPopupsForPerformanceTest = false
-
-    val shouldShowTrackingProtectionCfr: Boolean
-        get() = !isOverrideTPPopupsForPerformanceTest && canShowCfr &&
-            (
-                trackingProtectionOnboardingCount.underMaxCount() &&
-                    !trackingProtectionOnboardingShownThisSession
-                )
 
     var showSecretDebugMenuThisSession = false
 
@@ -360,6 +355,19 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = false
     )
 
+    val isFirstRun: Boolean =
+        if (!preferences.contains(appContext.getPreferenceKey(R.string.pref_key_is_first_run))) {
+            preferences.edit()
+                .putBoolean(
+                    appContext.getPreferenceKey(R.string.pref_key_is_first_run),
+                    false
+                )
+                .apply()
+            true
+        } else {
+            false
+        }
+
     /**
      * Indicates the last time when the user was interacting with the [BrowserFragment],
      * This is useful to determine if the user has to start on the [HomeFragment]
@@ -406,6 +414,24 @@ class Settings(private val appContext: Context) : PreferencesHolder {
             else -> false
         }
     }
+
+    /**
+     * Indicates if the user has enabled the inactive tabs feature.
+     */
+    var inactiveTabsAreEnabled by featureFlagPreference(
+        appContext.getPreferenceKey(R.string.pref_key_inactive_tabs),
+        default = FeatureFlags.inactiveTabs,
+        featureFlag = FeatureFlags.inactiveTabs
+    )
+
+    /**
+     * Indicates if the user has enabled the search term tab groups feature.
+     */
+    var searchTermTabGroupsAreEnabled by featureFlagPreference(
+        appContext.getPreferenceKey(R.string.pref_key_search_term_tab_groups),
+        default = FeatureFlags.tabGroupFeature,
+        featureFlag = FeatureFlags.tabGroupFeature
+    )
 
     @VisibleForTesting
     internal fun timeNowInMillis(): Long = System.currentTimeMillis()
@@ -762,6 +788,14 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = false
     )
 
+    /**
+     * Indicates if the home onboarding dialog has already shown before.
+     */
+    var hasShownHomeOnboardingDialog by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_has_shown_home_onboarding),
+        default = false
+    )
+
     fun incrementVisitedInstallableCount() = pwaInstallableVisitCount.increment()
 
     @VisibleForTesting(otherwise = PRIVATE)
@@ -809,16 +843,46 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = true
     )
 
-    @VisibleForTesting(otherwise = PRIVATE)
-    internal val trackingProtectionOnboardingCount = counterPreference(
-        appContext.getPreferenceKey(R.string.pref_key_tracking_protection_onboarding),
-        maxCount = 1
+    var shouldShowInactiveTabsOnboardingPopup by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_should_show_inactive_tabs_popup),
+        default = true
     )
 
-    fun incrementTrackingProtectionOnboardingCount() {
-        trackingProtectionOnboardingShownThisSession = true
-        trackingProtectionOnboardingCount.increment()
+    /**
+     * Indicates if the auto-close dialog for inactive tabs has been dismissed before.
+     */
+    var hasInactiveTabsAutoCloseDialogBeenDismissed by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_has_inactive_tabs_auto_close_dialog_dismissed),
+        default = false
+    )
+
+    /**
+     * Indicates if the auto-close dialog should be visible based on
+     * if the user has dismissed it before [hasInactiveTabsAutoCloseDialogBeenDismissed],
+     * if the minimum number of tabs has been accumulated [numbersOfTabs]
+     * and if the auto-close setting is already set to [closeTabsAfterOneMonth].
+     */
+    fun shouldShowInactiveTabsAutoCloseDialog(numbersOfTabs: Int): Boolean {
+        return !hasInactiveTabsAutoCloseDialogBeenDismissed &&
+            numbersOfTabs >= INACTIVE_TAB_MINIMUM_TO_SHOW_AUTO_CLOSE_DIALOG &&
+            !closeTabsAfterOneMonth
     }
+
+    /**
+     * Indicates if the jump back in CRF should be shown.
+     */
+    var shouldShowJumpBackInCFR by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_should_show_jump_back_in_tabs_popup),
+        default = true
+    )
+
+    /**
+     * Should we display a feedback request to the user when he turns off the Inactive Tabs feature
+     */
+    var shouldShowInactiveTabsTurnOffSurvey by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_should_show_inactive_tabs_turn_off_survey),
+        default = true
+    )
 
     fun getSitePermissionsPhoneFeatureAction(
         feature: PhoneFeature,
@@ -1140,10 +1204,30 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = false
     )
 
-    var historyMetadataFeature by featureFlagPreference(
+    var historyMetadataUIFeature by lazyFeatureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_history_metadata_feature),
-        default = FeatureFlags.historyMetadataFeature,
-        featureFlag = FeatureFlags.historyMetadataFeature || isHistoryMetadataEnabled
+        default = { appContext.components.analytics.features.homeScreen.isRecentExplorationsActive() },
+        featureFlag = FeatureFlags.historyMetadataUIFeature || isHistoryMetadataEnabled
+    )
+
+    /**
+     * Indicates if the recent tabs functionality should be visible.
+     * Returns true if the [FeatureFlags.showRecentTabsFeature] and [R.string.pref_key_recent_tabs] are true.
+     */
+    var showRecentTabsFeature by lazyFeatureFlagPreference(
+        appContext.getPreferenceKey(R.string.pref_key_recent_tabs),
+        featureFlag = FeatureFlags.showRecentTabsFeature,
+        default = { appContext.components.analytics.features.homeScreen.isRecentlyTabsActive() }
+    )
+
+    /**
+     * Indicates if the recent saved bookmarks functionality should be visible.
+     * Returns true if the [FeatureFlags.showRecentTabsFeature] and [R.string.pref_key_recent_bookmarks] are true.
+     */
+    var showRecentBookmarksFeature by lazyFeatureFlagPreference(
+        appContext.getPreferenceKey(R.string.pref_key_recent_bookmarks),
+        default = { appContext.components.analytics.features.homeScreen.isRecentlySavedActive() },
+        featureFlag = FeatureFlags.recentBookmarksFeature
     )
 
     /**
@@ -1169,5 +1253,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var shouldAutofillCreditCardDetails by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_credit_cards_save_and_autofill_cards),
         default = true
+    )
+
+    var showPocketRecommendationsFeature by lazyFeatureFlagPreference(
+        appContext.getPreferenceKey(R.string.pref_key_pocket_homescreen_recommendations),
+        featureFlag = FeatureFlags.isPocketRecommendationsFeatureEnabled(appContext),
+        default = { appContext.components.analytics.features.homeScreen.isPocketRecommendationsActive() },
     )
 }
