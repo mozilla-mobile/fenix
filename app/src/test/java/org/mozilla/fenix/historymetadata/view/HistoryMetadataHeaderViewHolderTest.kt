@@ -33,6 +33,6 @@ class HistoryMetadataHeaderViewHolderTest {
 
         binding.showAllButton.performClick()
 
-        verify { interactor.onHistoryMetadataShowAllClicked() }
+        verify { interactor.onHistoryShowAllClicked() }
     }
 }

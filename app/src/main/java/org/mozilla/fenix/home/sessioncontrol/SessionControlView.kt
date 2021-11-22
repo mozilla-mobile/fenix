@@ -16,7 +16,7 @@ import mozilla.components.service.pocket.PocketRecommendedStory
 import org.mozilla.fenix.components.tips.Tip
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.historymetadata.HistoryMetadataGroup
+import org.mozilla.fenix.historymetadata.RecentlyVisitedItem
 import org.mozilla.fenix.home.HomeFragmentState
 import org.mozilla.fenix.home.HomeFragmentStore
 import org.mozilla.fenix.home.Mode
@@ -39,7 +39,7 @@ internal fun normalModeAdapterItems(
     showCollectionsPlaceholder: Boolean,
     showSetAsDefaultBrowserCard: Boolean,
     recentTabs: List<RecentTab>,
-    historyMetadata: List<HistoryMetadataGroup>,
+    historyMetadata: List<RecentlyVisitedItem>,
     pocketStories: List<PocketRecommendedStory>
 ): List<AdapterItem> {
     val items = mutableListOf<AdapterItem>()
@@ -157,7 +157,7 @@ private fun HomeFragmentState.toAdapterList(): List<AdapterItem> = when (mode) {
         showCollectionPlaceholder,
         showSetAsDefaultBrowserCard,
         recentTabs,
-        historyMetadata,
+        recentHistory,
         pocketStories
     )
     is Mode.Private -> privateModeAdapterItems()
@@ -167,7 +167,7 @@ private fun HomeFragmentState.toAdapterList(): List<AdapterItem> = when (mode) {
 @VisibleForTesting
 internal fun HomeFragmentState.shouldShowHomeOnboardingDialog(settings: Settings): Boolean {
     val isAnySectionsVisible = recentTabs.isNotEmpty() || recentBookmarks.isNotEmpty() ||
-        historyMetadata.isNotEmpty() || pocketStories.isNotEmpty()
+        recentHistory.isNotEmpty() || pocketStories.isNotEmpty()
     return isAnySectionsVisible && !settings.hasShownHomeOnboardingDialog
 }
 

@@ -12,6 +12,8 @@ import mozilla.components.lib.state.ext.observeAsComposableState
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
+import org.mozilla.fenix.historymetadata.RecentlyVisitedItem.RecentHistoryGroup
+import org.mozilla.fenix.historymetadata.RecentlyVisitedItem.RecentHistoryHighlight
 import org.mozilla.fenix.historymetadata.interactor.HistoryMetadataInteractor
 import org.mozilla.fenix.home.HomeFragmentStore
 import org.mozilla.fenix.theme.FirefoxTheme
@@ -25,7 +27,7 @@ import org.mozilla.fenix.utils.view.ViewHolder
  * @property interactor [HistoryMetadataInteractor] which will have delegated to all user interactions.
  * @property metrics [MetricController] that handles telemetry events.
  */
-class HistoryMetadataGroupViewHolder(
+class RecentlyVisitedViewHolder(
     val composeView: ComposeView,
     private val store: HomeFragmentStore,
     private val interactor: HistoryMetadataInteractor,
@@ -40,7 +42,7 @@ class HistoryMetadataGroupViewHolder(
             ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed
         )
         composeView.setContent {
-            val recentVisits = store.observeAsComposableState { state -> state.historyMetadata }
+            val recentVisits = store.observeAsComposableState { state -> state.recentHistory }
 
             FirefoxTheme {
                 RecentlyVisited(
@@ -48,14 +50,24 @@ class HistoryMetadataGroupViewHolder(
                     menuItems = listOfNotNull(
                         RecentVisitMenuItem(
                             title = stringResource(R.string.recently_visited_menu_item_remove),
-                            onClick = { group ->
-                                interactor.onRemoveGroup(group.title)
+                            onClick = { visit ->
+                                when (visit) {
+                                    is RecentHistoryGroup -> interactor.onRemoveRecentHistoryGroup(visit.title)
+                                    is RecentHistoryHighlight -> interactor.onRemoveRecentHistoryHighlight(visit.url)
+                                }
                             }
                         )
                     ),
-                    onRecentVisitClick = { historyMetadataGroup, pageNumber ->
-                        metrics.track(Event.HistoryRecentSearchesTapped(pageNumber.toString()))
-                        interactor.onHistoryMetadataGroupClicked(historyMetadataGroup)
+                    onRecentVisitClick = { recentlyVisitedItem, pageNumber ->
+                        when (recentlyVisitedItem) {
+                            is RecentHistoryHighlight -> {
+                                interactor.onRecentHistoryHighlightClicked(recentlyVisitedItem)
+                            }
+                            is RecentHistoryGroup -> {
+                                metrics.track(Event.HistoryRecentSearchesTapped(pageNumber.toString()))
+                                interactor.onRecentHistoryGroupClicked(recentlyVisitedItem)
+                            }
+                        }
                     }
                 )
             }

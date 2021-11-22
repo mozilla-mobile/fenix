@@ -4,7 +4,7 @@
 
 package org.mozilla.fenix.historymetadata.view
 
-import org.mozilla.fenix.historymetadata.HistoryMetadataGroup
+import org.mozilla.fenix.historymetadata.RecentlyVisitedItem
 
 /**
  * A menu item in the recent visit dropdown menu.
@@ -14,5 +14,5 @@ import org.mozilla.fenix.historymetadata.HistoryMetadataGroup
  */
 data class RecentVisitMenuItem(
     val title: String,
-    val onClick: (HistoryMetadataGroup) -> Unit
+    val onClick: (RecentlyVisitedItem) -> Unit
 )

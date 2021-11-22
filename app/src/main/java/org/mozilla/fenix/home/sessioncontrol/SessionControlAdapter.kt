@@ -19,8 +19,8 @@ import mozilla.components.feature.top.sites.TopSite.Type.FRECENT
 import mozilla.components.ui.widgets.WidgetSiteItemView
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.components.tips.Tip
-import org.mozilla.fenix.historymetadata.view.HistoryMetadataGroupViewHolder
 import org.mozilla.fenix.historymetadata.view.HistoryMetadataHeaderViewHolder
+import org.mozilla.fenix.historymetadata.view.RecentlyVisitedViewHolder
 import org.mozilla.fenix.home.HomeFragmentStore
 import org.mozilla.fenix.home.TopPlaceholderViewHolder
 import org.mozilla.fenix.home.pocket.PocketStoriesViewHolder
@@ -160,7 +160,7 @@ sealed class AdapterItem(@LayoutRes val viewType: Int) {
     object RecentTabItem : AdapterItem(RecentTabViewHolder.LAYOUT_ID)
 
     object HistoryMetadataHeader : AdapterItem(HistoryMetadataHeaderViewHolder.LAYOUT_ID)
-    object HistoryMetadataGroup : AdapterItem(HistoryMetadataGroupViewHolder.LAYOUT_ID)
+    object HistoryMetadataGroup : AdapterItem(RecentlyVisitedViewHolder.LAYOUT_ID)
 
     object RecentBookmarksHeader : AdapterItem(RecentBookmarksHeaderViewHolder.LAYOUT_ID)
     object RecentBookmarks : AdapterItem(RecentBookmarksViewHolder.LAYOUT_ID)
@@ -226,7 +226,7 @@ class SessionControlAdapter(
                 store = store,
                 interactor = interactor
             )
-            HistoryMetadataGroupViewHolder.LAYOUT_ID -> return HistoryMetadataGroupViewHolder(
+            RecentlyVisitedViewHolder.LAYOUT_ID -> return RecentlyVisitedViewHolder(
                 composeView = ComposeView(parent.context),
                 store = store,
                 interactor = interactor,
@@ -285,7 +285,7 @@ class SessionControlAdapter(
     override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
         when (holder) {
             is CustomizeHomeButtonViewHolder,
-            is HistoryMetadataGroupViewHolder,
+            is RecentlyVisitedViewHolder,
             is RecentBookmarksViewHolder,
             is RecentTabViewHolder,
             is PocketStoriesViewHolder -> {
@@ -346,7 +346,7 @@ class SessionControlAdapter(
                 (item as AdapterItem.OnboardingSectionHeader).labelBuilder
             )
             is OnboardingManualSignInViewHolder -> holder.bind()
-            is HistoryMetadataGroupViewHolder,
+            is RecentlyVisitedViewHolder,
             is RecentBookmarksViewHolder,
             is RecentTabViewHolder,
             is PocketStoriesViewHolder -> {

@@ -24,7 +24,7 @@ class HistoryMetadataHeaderViewHolder(
     init {
         val binding = HistoryMetadataHeaderBinding.bind(view)
         binding.showAllButton.setOnClickListener {
-            interactor.onHistoryMetadataShowAllClicked()
+            interactor.onHistoryShowAllClicked()
         }
     }
 

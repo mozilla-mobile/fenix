@@ -12,12 +12,15 @@ import kotlinx.coroutines.launch
 import mozilla.components.browser.state.action.HistoryMetadataAction
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.storage.HistoryMetadataStorage
+import mozilla.components.feature.tabs.TabsUseCases.SelectOrAddUseCase
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
-import org.mozilla.fenix.historymetadata.HistoryMetadataGroup
+import org.mozilla.fenix.historymetadata.RecentlyVisitedItem.RecentHistoryGroup
+import org.mozilla.fenix.historymetadata.RecentlyVisitedItem.RecentHistoryHighlight
 import org.mozilla.fenix.historymetadata.interactor.HistoryMetadataInteractor
 import org.mozilla.fenix.home.HomeFragmentAction
+import org.mozilla.fenix.home.HomeFragmentAction.RemoveRecentHistoryHighlight
 import org.mozilla.fenix.home.HomeFragmentDirections
 import org.mozilla.fenix.home.HomeFragmentStore
 import org.mozilla.fenix.library.history.toHistoryMetadata
@@ -28,19 +31,29 @@ import org.mozilla.fenix.library.history.toHistoryMetadata
 interface HistoryMetadataController {
 
     /**
-     * @see [HistoryMetadataInteractor.onHistoryMetadataShowAllClicked]
+     * @see [HistoryMetadataInteractor.onHistoryShowAllClicked]
      */
     fun handleHistoryShowAllClicked()
 
     /**
-     * @see [HistoryMetadataInteractor.onHistoryMetadataGroupClicked]
+     * @see [HistoryMetadataInteractor.onRecentHistoryGroupClicked]
      */
-    fun handleHistoryMetadataGroupClicked(historyMetadataGroup: HistoryMetadataGroup)
+    fun handleRecentHistoryGroupClicked(recentHistoryGroup: RecentHistoryGroup)
 
     /**
-     * @see [HistoryMetadataInteractor.onRemoveGroup]
+     * @see [HistoryMetadataInteractor.onRemoveRecentHistoryGroup]
      */
-    fun handleRemoveGroup(searchTerm: String)
+    fun handleRemoveRecentHistoryGroup(searchTerm: String)
+
+    /**
+     * @see [HistoryMetadataInteractor.onRecentHistoryHighlightClicked]
+     */
+    fun handleRecentHistoryHighlightClicked(recentHistoryHighlight: RecentHistoryHighlight)
+
+    /**
+     * @see [HistoryMetadataInteractor.onRemoveRecentHistoryHighlight]
+     */
+    fun handleRemoveRecentHistoryHighlight(url: String)
 }
 
 /**
@@ -49,6 +62,7 @@ interface HistoryMetadataController {
 class DefaultHistoryMetadataController(
     private val store: BrowserStore,
     private val homeStore: HomeFragmentStore,
+    private val selectOrAddTabUseCase: SelectOrAddUseCase,
     private val navController: NavController,
     private val storage: HistoryMetadataStorage,
     private val scope: CoroutineScope,
@@ -62,17 +76,17 @@ class DefaultHistoryMetadataController(
         )
     }
 
-    override fun handleHistoryMetadataGroupClicked(historyMetadataGroup: HistoryMetadataGroup) {
+    override fun handleRecentHistoryGroupClicked(recentHistoryGroup: RecentHistoryGroup) {
         navController.navigate(
             HomeFragmentDirections.actionGlobalHistoryMetadataGroup(
-                title = historyMetadataGroup.title,
-                historyMetadataItems = historyMetadataGroup.historyMetadata
+                title = recentHistoryGroup.title,
+                historyMetadataItems = recentHistoryGroup.historyMetadata
                     .map { it.toHistoryMetadata() }.toTypedArray()
             )
         )
     }
 
-    override fun handleRemoveGroup(searchTerm: String) {
+    override fun handleRemoveRecentHistoryGroup(searchTerm: String) {
         // We want to update the UI right away in response to user action without waiting for the IO.
         // First, dispatch actions that will clean up search groups in the two stores that have
         // metadata-related state.
@@ -83,6 +97,18 @@ class DefaultHistoryMetadataController(
             storage.deleteHistoryMetadata(searchTerm)
         }
         metrics.track(Event.RecentSearchesGroupDeleted)
+    }
+
+    override fun handleRecentHistoryHighlightClicked(recentHistoryHighlight: RecentHistoryHighlight) {
+        selectOrAddTabUseCase.invoke(recentHistoryHighlight.url)
+        navController.navigate(R.id.browserFragment)
+    }
+
+    override fun handleRemoveRecentHistoryHighlight(url: String) {
+        homeStore.dispatch(RemoveRecentHistoryHighlight(url))
+        scope.launch {
+            storage.deleteHistoryMetadataForUrl(url)
+        }
     }
 
     @VisibleForTesting(otherwise = PRIVATE)

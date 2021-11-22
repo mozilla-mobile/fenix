@@ -10,7 +10,8 @@ import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.service.pocket.PocketRecommendedStory
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.tips.Tip
-import org.mozilla.fenix.historymetadata.HistoryMetadataGroup
+import org.mozilla.fenix.historymetadata.RecentlyVisitedItem.RecentHistoryGroup
+import org.mozilla.fenix.historymetadata.RecentlyVisitedItem.RecentHistoryHighlight
 import org.mozilla.fenix.historymetadata.controller.HistoryMetadataController
 import org.mozilla.fenix.historymetadata.interactor.HistoryMetadataInteractor
 import org.mozilla.fenix.home.HomeFragmentState
@@ -381,18 +382,26 @@ class SessionControlInteractor(
         recentBookmarksController.handleShowAllBookmarksClicked()
     }
 
-    override fun onHistoryMetadataShowAllClicked() {
+    override fun onHistoryShowAllClicked() {
         historyMetadataController.handleHistoryShowAllClicked()
     }
 
-    override fun onHistoryMetadataGroupClicked(historyMetadataGroup: HistoryMetadataGroup) {
-        historyMetadataController.handleHistoryMetadataGroupClicked(
-            historyMetadataGroup
+    override fun onRecentHistoryGroupClicked(recentHistoryGroup: RecentHistoryGroup) {
+        historyMetadataController.handleRecentHistoryGroupClicked(
+            recentHistoryGroup
         )
     }
 
-    override fun onRemoveGroup(searchTerm: String) {
-        historyMetadataController.handleRemoveGroup(searchTerm)
+    override fun onRemoveRecentHistoryGroup(searchTerm: String) {
+        historyMetadataController.handleRemoveRecentHistoryGroup(searchTerm)
+    }
+
+    override fun onRecentHistoryHighlightClicked(recentHistoryHighlight: RecentHistoryHighlight) {
+        historyMetadataController.handleRecentHistoryHighlightClicked(recentHistoryHighlight)
+    }
+
+    override fun onRemoveRecentHistoryHighlight(url: String) {
+        historyMetadataController.handleRemoveRecentHistoryHighlight(url)
     }
 
     override fun openCustomizeHomePage() {

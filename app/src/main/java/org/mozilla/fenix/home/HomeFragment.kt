@@ -255,7 +255,7 @@ class HomeFragment : Fragment() {
                     //  This will otherwise cause a visual jump as the section gets rendered from no state
                     //  to some state.
                     recentTabs = getRecentTabs(components),
-                    historyMetadata = emptyList()
+                    recentHistory = emptyList()
                 ),
                 listOf(
                     PocketUpdatesMiddleware(
@@ -319,6 +319,7 @@ class HomeFragment : Fragment() {
                 feature = HistoryMetadataFeature(
                     homeStore = homeFragmentStore,
                     historyMetadataStorage = components.core.historyStorage,
+                    historyHighlightsStorage = components.core.lazyHistoryStorage,
                     scope = viewLifecycleOwner.lifecycleScope
                 ),
                 owner = viewLifecycleOwner,
@@ -359,6 +360,7 @@ class HomeFragment : Fragment() {
             historyMetadataController = DefaultHistoryMetadataController(
                 navController = findNavController(),
                 homeStore = homeFragmentStore,
+                selectOrAddTabUseCase = components.useCases.tabsUseCases.selectOrAddTab,
                 storage = components.core.historyStorage,
                 scope = viewLifecycleOwner.lifecycleScope,
                 store = components.core.store,
@@ -700,7 +702,7 @@ class HomeFragment : Fragment() {
                 //  to some state.
                 recentTabs = getRecentTabs(components),
                 recentBookmarks = emptyList(),
-                historyMetadata = emptyList()
+                recentHistory = emptyList()
             )
         )
 
