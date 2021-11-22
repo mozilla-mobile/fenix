@@ -315,6 +315,15 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.HistorySearchTermGroupTapped -> EventWrapper<NoExtraKeys>(
             { History.searchTermGroupTapped.record(it) }
         )
+        is Event.HistorySearchTermGroupOpenTab -> EventWrapper<NoExtraKeys>(
+            { History.searchTermGroupOpenTab.record(it) }
+        )
+        is Event.HistorySearchTermGroupRemoveTab -> EventWrapper<NoExtraKeys>(
+            { History.searchTermGroupRemoveTab.record(it) }
+        )
+        is Event.HistorySearchTermGroupRemoveAll -> EventWrapper<NoExtraKeys>(
+            { History.searchTermGroupRemoveAll.record(it) }
+        )
         is Event.CollectionRenamed -> EventWrapper<NoExtraKeys>(
             { Collections.renamed.record(it) }
         )
@@ -643,6 +652,18 @@ private val Event.wrapper: EventWrapper<*>?
             { Preferences.turnOffInactiveTabsSurvey.record(it) },
             { Preferences.turnOffInactiveTabsSurveyKeys.valueOf(it) }
         )
+        is Event.InactiveTabsCountUpdate -> EventWrapper<NoExtraKeys>(
+            { Metrics.inactiveTabsCount.set(this.count.toLong()) },
+        )
+        is Event.TabsTrayInactiveTabsCFRGotoSettings -> EventWrapper<NoExtraKeys>(
+            { TabsTray.inactiveTabsCfrSettings.record(it) }
+        )
+        is Event.TabsTrayInactiveTabsCFRDismissed -> EventWrapper<NoExtraKeys>(
+            { TabsTray.inactiveTabsCfrDismissed.record(it) }
+        )
+        is Event.TabsTrayInactiveTabsCFRIsVisible -> EventWrapper<NoExtraKeys>(
+            { TabsTray.inactiveTabsCfrVisible.record(it) }
+        )
         is Event.AutoPlaySettingVisited -> EventWrapper<NoExtraKeys>(
             { Autoplay.visitedSetting.record(it) }
         )
@@ -757,6 +778,9 @@ private val Event.wrapper: EventWrapper<*>?
         )
         is Event.HomeScreenDisplayed -> EventWrapper<NoExtraKeys>(
             { HomeScreen.homeScreenDisplayed.record(it) }
+        )
+        is Event.HomeScreenViewCount -> EventWrapper<NoExtraKeys>(
+            { HomeScreen.homeScreenViewCount.add() }
         )
         is Event.HomeScreenCustomizedHomeClicked -> EventWrapper<NoExtraKeys>(
             { HomeScreen.customizeHomeClicked.record(it) }
