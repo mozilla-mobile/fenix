@@ -22,6 +22,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.IntentReceiverActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
@@ -37,7 +38,6 @@ import org.mozilla.fenix.helpers.TestHelper.assertExternalAppOpens
 import org.mozilla.fenix.helpers.TestHelper.createCustomTabIntent
 import org.mozilla.fenix.helpers.TestHelper.deleteDownloadFromStorage
 import org.mozilla.fenix.helpers.TestHelper.isPackageInstalled
-import org.mozilla.fenix.helpers.TestHelper.restartApp
 import org.mozilla.fenix.helpers.TestHelper.returnToBrowser
 import org.mozilla.fenix.helpers.TestHelper.scrollToElementByText
 import org.mozilla.fenix.helpers.ViewVisibilityIdlingResource
@@ -59,10 +59,13 @@ import org.mozilla.fenix.ui.util.ROMANIAN_LANGUAGE_HEADER
 import org.mozilla.fenix.ui.util.STRING_ONBOARDING_TRACKING_PROTECTION_HEADER
 
 /**
- * Test Suite that contains tests defined as part of the Smoke and Sanity check defined in Test rail.
+ * Test Suite that contains a part of the Smoke and Sanity tests defined in TestRail:
+ * https://testrail.stage.mozaws.net/index.php?/suites/view/3192
+ * Other smoke tests have been marked with the @SmokeTest annotation throughout the ui package in order to limit this class expansion.
  * These tests will verify different functionalities of the app as a way to quickly detect regressions in main areas
  */
 @Suppress("ForbiddenComment")
+@SmokeTest
 class SmokeTest {
     private val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
     private lateinit var mockWebServer: MockWebServer
@@ -74,18 +77,7 @@ class SmokeTest {
     private var bookmarksListIdlingResource: RecyclerViewIdlingResource? = null
     private var localeListIdlingResource: RecyclerViewIdlingResource? = null
     private val customMenuItem = "TestMenuItem"
-
-    // This finds the dialog fragment child of the homeFragment, otherwise the awesomeBar would return null
-    private fun getAwesomebarView(): View? {
-        val homeFragment = activityTestRule.activity.supportFragmentManager.primaryNavigationFragment
-        val searchDialogFragment = homeFragment?.childFragmentManager?.fragments?.first {
-            it.javaClass.simpleName == "SearchDialogFragment"
-        }
-        return searchDialogFragment?.view?.findViewById(R.id.awesome_bar)
-    }
-
     private lateinit var browserStore: BrowserStore
-
     private val featureSettingsHelper = FeatureSettingsHelper()
 
     @get:Rule
@@ -355,6 +347,8 @@ class SmokeTest {
             clickAddShortcutButton()
             clickAddAutomaticallyButton()
         }.openHomeScreenShortcut("Test Page") {
+            verifyUrl(website.url.toString())
+            verifyTabCounter("1")
         }
     }
 
@@ -476,79 +470,48 @@ class SmokeTest {
 
     @Test
     // Verifies changing the default engine from the Search Shortcut menu
-    fun verifySearchEngineCanBeChangedTemporarilyUsingShortcuts() {
-        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+    fun selectSearchEnginesShortcutTest() {
+        val enginesList = listOf("DuckDuckGo", "Google", "Amazon.com", "Wikipedia", "Bing", "eBay")
 
-        homeScreen {
-        }.openSearch {
-            verifyKeyboardVisibility()
-            clickSearchEngineShortcutButton()
-            verifySearchEngineList(activityTestRule)
-            changeDefaultSearchEngine(activityTestRule, "Amazon.com")
-            verifySearchEngineIcon("Amazon.com")
-        }.goToSearchEngine {
-            mDevice.waitForIdle()
-        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-        }.openTabDrawer {
-        }.openNewTab {
-            clickSearchEngineShortcutButton()
-            mDevice.waitForIdle()
-            changeDefaultSearchEngine(activityTestRule, "Bing")
-            verifySearchEngineIcon("Bing")
-        }.goToSearchEngine {
-            mDevice.waitForIdle()
-        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-        }.openTabDrawer {
-        }.openNewTab {
-            clickSearchEngineShortcutButton()
-            mDevice.waitForIdle()
-            changeDefaultSearchEngine(activityTestRule, "DuckDuckGo")
-            verifySearchEngineIcon("DuckDuckGo")
-        }.goToSearchEngine {
-            mDevice.waitForIdle()
-        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-        }.openTabDrawer {
-        }.openNewTab {
-            clickSearchEngineShortcutButton()
-            changeDefaultSearchEngine(activityTestRule, "Wikipedia")
-            verifySearchEngineIcon("Wikipedia")
-        }.goToSearchEngine {
-            mDevice.waitForIdle()
-        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-        }.openTabDrawer {
-            // Checking whether the next search will be with default or not
-        }.openNewTab {
-        }.goToSearchEngine {
-            mDevice.waitForIdle()
-        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-        }.openNavigationToolbar {
-        }.clickUrlbar {
-            verifyDefaultSearchEngine("Google")
+        for (searchEngine in enginesList) {
+            homeScreen {
+            }.openSearch {
+                verifyKeyboardVisibility()
+                clickSearchEngineShortcutButton()
+                verifySearchEngineList(activityTestRule)
+                changeDefaultSearchEngine(activityTestRule, searchEngine)
+                verifySearchEngineIcon(searchEngine)
+            }.submitQuery("mozilla ") {
+                verifyUrl(searchEngine)
+            }.goToHomescreen { }
         }
     }
 
     @Test
     // Ads a new search engine from the list of custom engines
     fun addPredefinedSearchEngineTest() {
+        val searchEngine = "Reddit"
+
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
         }.openSearchSubMenu {
             openAddSearchEngineMenu()
             verifyAddSearchEngineList()
-            addNewSearchEngine("YouTube")
-            verifyEngineListContains("YouTube")
+            addNewSearchEngine(searchEngine)
+            verifyEngineListContains(searchEngine)
         }.goBack {
         }.goBack {
         }.openSearch {
             verifyKeyboardVisibility()
             clickSearchEngineShortcutButton()
-            activityTestRule.waitForIdle()
-            verifyEnginesListShortcutContains(activityTestRule, "YouTube")
+            verifyEnginesListShortcutContains(activityTestRule, searchEngine)
+            changeDefaultSearchEngine(activityTestRule, searchEngine)
+        }.submitQuery("mozilla ") {
+            verifyUrl(searchEngine)
         }
     }
 
-    @Ignore("Failing intermittently https://github.com/mozilla-mobile/fenix/issues/22256")
     @Test
     // Verifies setting as default a customized search engine name and URL
     fun editCustomSearchEngineTest() {
@@ -1021,20 +984,16 @@ class SmokeTest {
 
     @Test
     fun emptyTabsTrayViewPrivateBrowsingTest() {
-        homeScreen {
-        }.dismissOnboarding()
-
-        homeScreen {
-        }.openTabDrawer {
+        navigationToolbar {
+        }.openTabTray {
         }.toggleToPrivateTabs() {
-            verifyPrivateModeSelected()
-            verifyNormalBrowsingButtonIsDisplayed()
-            verifyNoTabsOpened()
+            verifyNormalBrowsingButtonIsSelected(false)
+            verifyPrivateBrowsingButtonIsSelected(true)
+            verifySyncedTabsButtonIsSelected(false)
+            verifyNoOpenTabsInPrivateBrowsing()
+            verifyPrivateBrowsingNewTabButton()
             verifyTabTrayOverflowMenu(true)
-            verifyNewTabButton()
-        }.openTabsListThreeDotMenu {
-            verifyTabSettingsButton()
-            verifyRecentlyClosedTabsButton()
+            verifyEmptyTabsTrayMenuButtons()
         }
     }
 
@@ -1050,14 +1009,19 @@ class SmokeTest {
         }.enterURLAndEnterToBrowser(website.url) {
             mDevice.waitForIdle()
         }.openTabDrawer {
-            verifyPrivateModeSelected()
-            verifyNormalBrowsingButtonIsDisplayed()
-            verifyExistingTabList()
-            verifyExistingOpenTabs("Test_Page_1")
-            verifyCloseTabsButton("Test_Page_1")
-            verifyOpenedTabThumbnail()
+            verifyNormalBrowsingButtonIsSelected(false)
+            verifyPrivateBrowsingButtonIsSelected(true)
+            verifySyncedTabsButtonIsSelected(false)
             verifyTabTrayOverflowMenu(true)
-            verifyNewTabButton()
+            verifyTabsTrayCounter()
+            verifyExistingTabList()
+            verifyExistingOpenTabs(website.title)
+            verifyCloseTabsButton(website.title)
+            verifyOpenedTabThumbnail()
+            verifyPrivateBrowsingNewTabButton()
+        }.openTab(website.title) {
+            verifyUrl(website.url.toString())
+            verifyTabCounter("1")
         }
     }
 
@@ -1165,7 +1129,7 @@ class SmokeTest {
         }.openTabCrashReporter {
         }.clickTabCrashedCloseButton {
         }.openTabDrawer {
-            verifyNoTabsOpened()
+            verifyNoOpenTabsInNormalBrowsing()
         }
     }
 
@@ -1430,26 +1394,6 @@ class SmokeTest {
             verifyTabViewOptions()
             verifyCloseTabsOptions()
             verifyMoveOldTabsToInactiveOptions()
-        }
-    }
-
-    @Test
-    fun startOnHomepageTest() {
-        val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(genericURL.url) {
-            mDevice.waitForIdle()
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openHomepageSubMenu {
-            clickStartOnHomepageButton()
-        }
-
-        restartApp(activityTestRule.activityRule)
-
-        homeScreen {
-            verifyHomeScreen()
         }
     }
 }

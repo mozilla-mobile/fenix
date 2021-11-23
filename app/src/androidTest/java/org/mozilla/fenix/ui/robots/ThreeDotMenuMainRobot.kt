@@ -44,11 +44,10 @@ import org.mozilla.fenix.share.ShareFragment
  */
 @Suppress("ForbiddenComment")
 class ThreeDotMenuMainRobot {
-    fun verifyTabSettingsButton() = assertTabSettingsButton()
-    fun verifyRecentlyClosedTabsButton() = assertRecentlyClosedTabsButton()
     fun verifyShareAllTabsButton() = assertShareAllTabsButton()
     fun clickShareAllTabsButton() = shareAllTabsButton().click()
     fun verifySettingsButton() = assertSettingsButton()
+    fun verifyCustomizeHomeButton() = assertCustomizeHomeButton()
     fun verifyAddOnsButton() = assertAddOnsButton()
     fun verifyHistoryButton() = assertHistoryButton()
     fun verifyBookmarksButton() = assertBookmarksButton()
@@ -87,7 +86,7 @@ class ThreeDotMenuMainRobot {
     fun verifyDownloadsButton() = assertDownloadsButton()
     fun verifyShareTabsOverlay() = assertShareTabsOverlay()
     fun verifySignInToSyncButton() = assertSignInToSyncButton()
-    fun verifyNewTabButton() = assertNewTabButton()
+    fun verifyNewTabButton() = assertNormalBrowsingNewTabButton()
     fun verifyReportSiteIssueButton() = assertReportSiteIssueButton()
 
     fun verifyDesktopSiteModeEnabled(state: Boolean) {
@@ -200,6 +199,26 @@ class ThreeDotMenuMainRobot {
 
             BrowserRobot().interact()
             return BrowserRobot.Transition()
+        }
+
+        fun openCustomizeHome(interact: SettingsSubMenuHomepageRobot.() -> Unit): SettingsSubMenuHomepageRobot.Transition {
+
+            mDevice.wait(
+                Until
+                    .findObject(
+                        By.textContains("$packageName:id/browser_menu_customize_home")
+                    ),
+                waitingTime
+            )
+
+            customizeHomeButton().click()
+
+            mDevice.findObject(
+                UiSelector().resourceId("$packageName:id/recycler_view")
+            ).waitForExists(waitingTime)
+
+            SettingsSubMenuHomepageRobot().interact()
+            return SettingsSubMenuHomepageRobot.Transition()
         }
 
         fun goForward(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
@@ -356,6 +375,17 @@ private fun threeDotMenuRecyclerViewExists() {
 
 private fun settingsButton() = mDevice.findObject(UiSelector().text("Settings"))
 private fun assertSettingsButton() = assertTrue(settingsButton().waitForExists(waitingTime))
+
+private fun customizeHomeButton() =
+    onView(
+        allOf(
+            withId(R.id.text),
+            withText(R.string.browser_menu_customize_home)
+        )
+    )
+
+private fun assertCustomizeHomeButton() =
+    customizeHomeButton().check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 private fun addOnsButton() = onView(allOf(withText("Add-ons")))
 private fun assertAddOnsButton() {
@@ -523,26 +553,6 @@ private fun clickAddonsManagerButton() {
     addOnsButton().check(matches(isCompletelyDisplayed())).click()
 }
 
-private fun tabSettingsButton() =
-    onView(allOf(withText("Tab settings"))).inRoot(RootMatchers.isPlatformPopup())
-
-private fun assertTabSettingsButton() {
-    tabSettingsButton()
-        .check(
-            matches(isDisplayed())
-        )
-}
-
-private fun recentlyClosedTabsButton() =
-    onView(allOf(withText("Recently closed tabs"))).inRoot(RootMatchers.isPlatformPopup())
-
-private fun assertRecentlyClosedTabsButton() {
-    recentlyClosedTabsButton()
-        .check(
-            matches(isDisplayed())
-        )
-}
-
 private fun shareAllTabsButton() =
     onView(allOf(withText("Share all tabs"))).inRoot(RootMatchers.isPlatformPopup())
 
@@ -553,4 +563,4 @@ private fun assertShareAllTabsButton() {
         )
 }
 
-private fun assertNewTabButton() = onView(withText("New tab")).check(matches(isDisplayed()))
+private fun assertNormalBrowsingNewTabButton() = onView(withText("New tab")).check(matches(isDisplayed()))

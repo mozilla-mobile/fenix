@@ -86,6 +86,9 @@ sealed class Event {
         override val extras = mapOf(History.recentSearchesTappedKeys.pageNumber to source)
     }
     object HistorySearchTermGroupTapped : Event()
+    object HistorySearchTermGroupOpenTab : Event()
+    object HistorySearchTermGroupRemoveTab : Event()
+    object HistorySearchTermGroupRemoveAll : Event()
     object ReaderModeAvailable : Event()
     object ReaderModeOpened : Event()
     object ReaderModeClosed : Event()
@@ -212,12 +215,16 @@ sealed class Event {
     object TabsTrayCloseAllInactiveTabs : Event()
     data class TabsTrayCloseInactiveTab(val amountClosed: Int = 1) : Event()
     object TabsTrayOpenInactiveTab : Event()
+    object TabsTrayInactiveTabsCFRGotoSettings : Event()
+    object TabsTrayInactiveTabsCFRDismissed : Event()
+    object TabsTrayInactiveTabsCFRIsVisible : Event()
 
     object InactiveTabsSurveyOpened : Event()
     data class InactiveTabsOffSurvey(val feedback: String) : Event() {
         override val extras: Map<Preferences.turnOffInactiveTabsSurveyKeys, String>
             get() = mapOf(Preferences.turnOffInactiveTabsSurveyKeys.feedback to feedback.lowercase(Locale.ROOT))
     }
+    data class InactiveTabsCountUpdate(val count: Int) : Event()
 
     object ProgressiveWebAppOpenFromHomescreenTap : Event()
     object ProgressiveWebAppInstallAsShortcut : Event()
@@ -255,6 +262,7 @@ sealed class Event {
     // Home menu interaction
     object HomeMenuSettingsItemClicked : Event()
     object HomeScreenDisplayed : Event()
+    object HomeScreenViewCount : Event()
     object HomeScreenCustomizedHomeClicked : Event()
 
     // Browser Toolbar
