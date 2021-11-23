@@ -82,6 +82,8 @@ abstract class AbstractBrowserTabViewHolder(
     override var tab: TabSessionState? = null
     internal var beingDragged: Boolean = false
 
+    private var touchStartPoint: PointF? = null
+
     /**
      * Displays the data of the given session and notifies the given observable about events.
      */
@@ -214,6 +216,7 @@ abstract class AbstractBrowserTabViewHolder(
         interactor: BrowserTrayInteractor
     ) {
         itemView.setOnClickListener {
+            touchStartPoint = null
             val selected = holder.selectedItems
             when {
                 selected.isEmpty() && trayStore.state.mode.isSelect().not() -> {
@@ -226,6 +229,7 @@ abstract class AbstractBrowserTabViewHolder(
 
         itemView.setOnLongClickListener {
             if (holder.selectedItems.isEmpty()) {
+                touchStartPoint = null
                 metrics.track(Event.CollectionTabLongPressed)
                 interactor.select(item)
                 true
@@ -242,17 +246,26 @@ abstract class AbstractBrowserTabViewHolder(
                     if (parent?.context?.settings()?.searchTermTabGroupsAreEnabled == false &&
                         holder.selectedItems.contains(item) && holder.selectedItems.size == 1
                     ) {
-                        interactor.deselect(item) // Exit selection mode
-                        val shadow = BlankDragShadowBuilder()
-                        val dragOffset = PointF(motionEvent.x, motionEvent.y)
-                        // startDragAndDrop is the non-deprecated version, but requires API 24
-                        @Suppress("DEPRECATION")
-                        view.startDrag(null, shadow, TabDragData(item, dragOffset), 0)
-                    } else view.onTouchEvent(motionEvent)
+                        if (touchStartPoint == null) {
+                            touchStartPoint = PointF(motionEvent.x, motionEvent.y)
+                        }
+                        val motionOffset = PointF(
+                            touchStartPoint!!.x - motionEvent.x,
+                            touchStartPoint!!.y - motionEvent.y
+                        )
+                        if (PointF.length(motionOffset.x, motionOffset.y) > 10) {
+                            val dragOffset = PointF(motionEvent.x, motionEvent.y)
+                            interactor.deselect(item) // Exit selection mode
+                            val shadow = BlankDragShadowBuilder()
+                            // startDragAndDrop is the non-deprecated version, but requires API 24
+                            @Suppress("DEPRECATION")
+                            view.startDrag(null, shadow, TabDragData(item, dragOffset), 0)
+                        }
+                        return@setOnTouchListener true
+                    }
                 }
-                else -> view.onTouchEvent(motionEvent)
             }
-            true
+            view.onTouchEvent(motionEvent)
         }
     }
 
