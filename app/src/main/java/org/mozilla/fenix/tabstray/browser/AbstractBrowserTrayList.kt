@@ -176,7 +176,7 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
                         // Deal with https://issuetracker.google.com/issues/37018279
                         // See also https://stackoverflow.com/questions/27992427
                         (layoutManager as? ItemTouchHelper.ViewDropHandler)?.prepareForDrop(
-                            sourceView, targetView, dragOffset.x.toInt(), dragOffset.y.toInt()
+                            sourceView, targetView, sourceView.left, sourceView.top
                         )
                     }
                 }
