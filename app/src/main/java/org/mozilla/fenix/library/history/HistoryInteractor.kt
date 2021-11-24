@@ -42,6 +42,12 @@ interface HistoryInteractor : SelectionInteractor<History> {
      * Called when the user clicks on recently closed tab button.
      */
     fun onRecentlyClosedClicked()
+
+    /**
+     * Called when the user clicks on show all button.
+     * @param historyItemTimeGroup the associated history item time group.
+     */
+    fun onShowAllClicked(historyItemTimeGroup: HistoryItemTimeGroup)
 }
 
 /**
@@ -86,5 +92,9 @@ class DefaultHistoryInteractor(
 
     override fun onRecentlyClosedClicked() {
         historyController.handleEnterRecentlyClosed()
+    }
+
+    override fun onShowAllClicked(historyItemTimeGroup: HistoryItemTimeGroup) {
+        historyController.handleShowAllClicked(historyItemTimeGroup)
     }
 }

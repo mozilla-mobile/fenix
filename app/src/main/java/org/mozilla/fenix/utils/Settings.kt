@@ -1192,6 +1192,15 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     /**
+     * Indicates if the user has enabled the history highlights feature.
+     */
+    var showHistoryHighlights by featureFlagPreference(
+        appContext.getPreferenceKey(R.string.pref_key_history_highlights_feature),
+        default = FeatureFlags.showHistoryHighlight,
+        featureFlag = FeatureFlags.showHistoryHighlight
+    )
+
+    /**
      * Indicates if the recent tabs functionality should be visible.
      * Returns true if the [FeatureFlags.showRecentTabsFeature] and [R.string.pref_key_recent_tabs] are true.
      */

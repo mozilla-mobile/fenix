@@ -4,12 +4,15 @@
 
 package org.mozilla.fenix.library.history
 
+import android.text.format.DateUtils
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import org.mozilla.fenix.components.history.PagedHistoryProvider
+import java.util.Calendar
+import java.util.Date
 
 class HistoryViewModel(historyProvider: PagedHistoryProvider) : ViewModel() {
     var history: LiveData<PagedList<History>>
@@ -35,5 +38,37 @@ class HistoryViewModel(historyProvider: PagedHistoryProvider) : ViewModel() {
 
     companion object {
         private const val PAGE_SIZE = 25
+        private const val zeroDays = 0
+        private const val oneDay = 1
+        private const val sevenDays = 7
+        private const val thirtyDays = 30
+        private val zeroDaysAgo = getDaysAgo(zeroDays).time
+        private val oneDayAgo = getDaysAgo(oneDay).time
+        private val sevenDaysAgo = getDaysAgo(sevenDays).time
+        private val thirtyDaysAgo = getDaysAgo(thirtyDays).time
+        private val yesterdayRange = LongRange(oneDayAgo, zeroDaysAgo)
+        private val lastWeekRange = LongRange(sevenDaysAgo, oneDayAgo)
+        private val lastMonthRange = LongRange(thirtyDaysAgo, sevenDaysAgo)
+
+        private fun getDaysAgo(daysAgo: Int): Date {
+            val calendar = Calendar.getInstance()
+            calendar.add(Calendar.DAY_OF_YEAR, -daysAgo)
+
+            return calendar.time
+        }
+
+        fun timeGroupForHistoryItem(item: History): HistoryItemTimeGroup {
+            return timeGroupForTimestamp(item.visitedAt)
+        }
+
+        fun timeGroupForTimestamp(timestamp: Long): HistoryItemTimeGroup {
+            return when {
+                DateUtils.isToday(timestamp) -> HistoryItemTimeGroup.Today
+                yesterdayRange.contains(timestamp) -> HistoryItemTimeGroup.Yesterday
+                lastWeekRange.contains(timestamp) -> HistoryItemTimeGroup.ThisWeek
+                lastMonthRange.contains(timestamp) -> HistoryItemTimeGroup.ThisMonth
+                else -> HistoryItemTimeGroup.Older
+            }
+        }
     }
 }

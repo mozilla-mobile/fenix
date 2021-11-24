@@ -23,6 +23,7 @@ interface HistoryController {
     fun handleDeleteSome(items: Set<History>)
     fun handleRequestSync()
     fun handleEnterRecentlyClosed()
+    fun handleShowAllClicked(historyItemTimeGroup: HistoryItemTimeGroup)
 }
 
 @Suppress("TooManyFunctions")
@@ -35,6 +36,7 @@ class DefaultHistoryController(
     private val invalidateOptionsMenu: () -> Unit,
     private val deleteHistoryItems: (Set<History>) -> Unit,
     private val syncHistory: suspend () -> Unit,
+    private val showAll: (historyItemTimeGroup: HistoryItemTimeGroup) -> Unit,
     private val metrics: MetricController
 ) : HistoryController {
 
@@ -102,5 +104,9 @@ class DefaultHistoryController(
             NavOptions.Builder().setPopUpTo(R.id.recentlyClosedFragment, true).build()
         )
         metrics.track(Event.RecentlyClosedTabsOpened)
+    }
+
+    override fun handleShowAllClicked(historyItemTimeGroup: HistoryItemTimeGroup) {
+        showAll.invoke(historyItemTimeGroup)
     }
 }

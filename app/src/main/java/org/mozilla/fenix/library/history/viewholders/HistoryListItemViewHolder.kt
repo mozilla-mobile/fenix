@@ -8,6 +8,7 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.history.PagedHistoryProvider
 import org.mozilla.fenix.databinding.HistoryListItemBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.hideAndDisable
@@ -18,11 +19,13 @@ import org.mozilla.fenix.library.history.HistoryInteractor
 import org.mozilla.fenix.library.history.HistoryItemTimeGroup
 import org.mozilla.fenix.selection.SelectionHolder
 import org.mozilla.fenix.utils.Do
+import org.mozilla.fenix.utils.Settings
 
 class HistoryListItemViewHolder(
     view: View,
     private val historyInteractor: HistoryInteractor,
     private val selectionHolder: SelectionHolder<History>,
+    private val settings: Settings
 ) : RecyclerView.ViewHolder(view) {
 
     private var item: History? = null
@@ -43,12 +46,14 @@ class HistoryListItemViewHolder(
         }
     }
 
+    @Suppress("LongParameterList")
     fun bind(
         item: History,
+        pagedHistoryProvider: PagedHistoryProvider,
         timeGroup: HistoryItemTimeGroup?,
         showTopContent: Boolean,
         mode: HistoryFragmentState.Mode,
-        isPendingDeletion: Boolean = false,
+        isPendingDeletion: Boolean = false
     ) {
         if (isPendingDeletion) {
             binding.historyLayout.visibility = View.GONE
@@ -74,8 +79,7 @@ class HistoryListItemViewHolder(
 
         toggleTopContent(showTopContent, mode === HistoryFragmentState.Mode.Normal)
 
-        val headerText = timeGroup?.humanReadable(itemView.context)
-        toggleHeader(headerText)
+        toggleHeader(timeGroup, pagedHistoryProvider)
 
         binding.historyLayout.setSelectionInteractor(item, selectionHolder, historyInteractor)
         binding.historyLayout.changeSelected(item in selectionHolder.selectedItems)
@@ -97,12 +101,30 @@ class HistoryListItemViewHolder(
         this.item = item
     }
 
-    private fun toggleHeader(headerText: String?) {
+    private fun toggleHeader(
+        historyItemTimeGroup: HistoryItemTimeGroup?,
+        pagedHistoryProvider: PagedHistoryProvider
+    ) {
+        val headerText = historyItemTimeGroup?.humanReadable(itemView.context)
         if (headerText != null) {
+            binding.header.visibility = View.VISIBLE
             binding.headerTitle.visibility = View.VISIBLE
             binding.headerTitle.text = headerText
+            binding.headerLine.visibility = View.VISIBLE
+
+            if (settings.showHistoryHighlights && !pagedHistoryProvider.isShowAllGroupSet(historyItemTimeGroup)) {
+                binding.showAllButton.visibility = View.VISIBLE
+                binding.showAllButton.setOnClickListener {
+                    historyInteractor.onShowAllClicked(historyItemTimeGroup)
+                    binding.showAllButton.visibility = View.GONE
+                }
+            } else {
+                binding.showAllButton.visibility = View.GONE
+            }
         } else {
+            binding.header.visibility = View.GONE
             binding.headerTitle.visibility = View.GONE
+            binding.headerLine.visibility = View.GONE
         }
     }
 

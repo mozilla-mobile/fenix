@@ -17,21 +17,25 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.mozilla.fenix.library.history.History
+import org.mozilla.fenix.utils.Settings
 
 class PagedHistoryProviderTest {
 
     private lateinit var storage: PlacesHistoryStorage
+    private lateinit var settings: Settings
 
     @Before
     fun setup() {
         storage = mockk()
+        settings = mockk(relaxed = true)
     }
 
     @Test
     fun `getHistory uses getVisitsPaginated`() {
         val provider = DefaultPagedHistoryProvider(
             historyStorage = storage,
-            showHistorySearchGroups = true
+            showHistorySearchGroups = true,
+            settings = settings
         )
 
         val visitInfo1 = VisitInfo(
@@ -91,6 +95,7 @@ class PagedHistoryProviderTest {
         coEvery { storage.getVisitsPaginated(any(), any(), any()) } returns listOf(visitInfo1, visitInfo2, visitInfo3)
         coEvery { storage.getDetailedVisits(any(), any(), any()) } returns emptyList()
         coEvery { storage.getHistoryMetadataSince(any()) } returns listOf(historyEntry1, historyEntry2, historyEntry3)
+        coEvery { storage.getHistoryHighlights(any(), any()) } returns emptyList()
 
         var actualResults: List<History>? = null
         provider.getHistory(10L, 5) {
@@ -152,7 +157,8 @@ class PagedHistoryProviderTest {
     fun `history metadata matching lower bound`() {
         val provider = DefaultPagedHistoryProvider(
             historyStorage = storage,
-            showHistorySearchGroups = true
+            showHistorySearchGroups = true,
+            settings = settings
         )
         // Oldest history visit on the page is 15 seconds (buffer time) newer than matching
         // metadata record.
@@ -178,6 +184,7 @@ class PagedHistoryProviderTest {
         coEvery { storage.getVisitsPaginated(any(), any(), any()) } returns listOf(visitInfo1)
         coEvery { storage.getDetailedVisits(any(), any(), any()) } returns emptyList()
         coEvery { storage.getHistoryMetadataSince(any()) } returns listOf(historyEntry1)
+        coEvery { storage.getHistoryHighlights(any(), any()) } returns emptyList()
 
         var actualResults: List<History>? = null
         provider.getHistory(0L, 5) {
@@ -226,7 +233,8 @@ class PagedHistoryProviderTest {
     fun `history metadata matching upper bound`() {
         val provider = DefaultPagedHistoryProvider(
             historyStorage = storage,
-            showHistorySearchGroups = true
+            showHistorySearchGroups = true,
+            settings = settings
         )
         // Newest history visit on the page is 15 seconds (buffer time) older than matching
         // metadata record.
@@ -252,6 +260,7 @@ class PagedHistoryProviderTest {
         coEvery { storage.getVisitsPaginated(any(), any(), any()) } returns listOf(visitInfo1)
         coEvery { storage.getDetailedVisits(any(), any(), any()) } returns emptyList()
         coEvery { storage.getHistoryMetadataSince(any()) } returns listOf(historyEntry1)
+        coEvery { storage.getHistoryHighlights(any(), any()) } returns emptyList()
 
         var actualResults: List<History>? = null
         provider.getHistory(0L, 5) {
@@ -300,7 +309,8 @@ class PagedHistoryProviderTest {
     fun `redirects are filtered out from history metadata groups`() {
         val provider = DefaultPagedHistoryProvider(
             historyStorage = storage,
-            showHistorySearchGroups = true
+            showHistorySearchGroups = true,
+            settings = settings
         )
 
         val visitInfo1 = VisitInfo(
@@ -403,6 +413,7 @@ class PagedHistoryProviderTest {
         } returns listOf(visitInfo3, visitInfo4)
 
         coEvery { storage.getHistoryMetadataSince(any()) } returns listOf(historyEntry1, historyEntry2, historyEntry3, historyEntry4)
+        coEvery { storage.getHistoryHighlights(any(), any()) } returns emptyList()
 
         var actualResults: List<History>? = null
         provider.getHistory(10L, 5) {

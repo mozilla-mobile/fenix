@@ -888,6 +888,10 @@
     <string name="history_older">Older</string>
     <!-- Text shown when no history exists -->
     <string name="history_empty_message">No history here</string>
+    <!-- Button text for showing all the history of the group-->
+    <string name="history_show_all">Show all</string>
+    <!-- Content description for the button which navigates the user to show all of their history. -->
+    <string name="history_show_all_content_description">Show all history button</string>
 
     <!-- Downloads -->
     <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->

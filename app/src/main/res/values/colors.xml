@@ -255,4 +255,7 @@
 
     <!-- Toolbar menu icon colors -->
     <color name="toolbar_menu_transparent">@android:color/transparent</color>
+
+    <!-- History icon colors -->
+    <color name="history_show_all_button_text">@color/photonViolet70</color>
 </resources>

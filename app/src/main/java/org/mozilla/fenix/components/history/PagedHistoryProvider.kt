@@ -6,13 +6,17 @@ package org.mozilla.fenix.components.history
 
 import androidx.annotation.VisibleForTesting
 import mozilla.components.browser.storage.sync.PlacesHistoryStorage
+import mozilla.components.concept.storage.HistoryHighlightWeights
 import mozilla.components.concept.storage.VisitInfo
 import mozilla.components.concept.storage.VisitType
 import mozilla.components.support.ktx.kotlin.tryGetHostFromUrl
 import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.library.history.History
+import org.mozilla.fenix.library.history.HistoryItemTimeGroup
+import org.mozilla.fenix.library.history.HistoryViewModel.Companion.timeGroupForTimestamp
 import org.mozilla.fenix.library.history.toHistoryMetadata
 import org.mozilla.fenix.perf.runBlockingIncrement
+import org.mozilla.fenix.utils.Settings
 import kotlin.math.abs
 
 private const val BUFFER_TIME = 15000 /* 15 seconds in ms */
@@ -29,6 +33,20 @@ interface PagedHistoryProvider {
      * @param onComplete A callback that returns the list of [History]
      */
     fun getHistory(offset: Long, numberOfItems: Long, onComplete: (List<History>) -> Unit)
+
+    /**
+     * Set a history group to show all.
+     *
+     * @param historyItemTimeGroup set [HistoryItemTimeGroup] to show all
+     */
+    fun setShowAllGroup(historyItemTimeGroup: HistoryItemTimeGroup)
+
+    /**
+     * check if a history group is showing all.
+     *
+     * @param historyItemTimeGroup check if [HistoryItemTimeGroup] is set to show all
+     */
+    fun isShowAllGroupSet(historyItemTimeGroup: HistoryItemTimeGroup): Boolean
 }
 
 /**
@@ -37,6 +55,7 @@ interface PagedHistoryProvider {
 class DefaultPagedHistoryProvider(
     private val historyStorage: PlacesHistoryStorage,
     private val showHistorySearchGroups: Boolean = FeatureFlags.showHistorySearchGroups,
+    private val settings: Settings
 ) : PagedHistoryProvider {
     /**
      * Types of visits we currently do not display in the History UI.
@@ -60,6 +79,8 @@ class DefaultPagedHistoryProvider(
     }
 
     @Volatile private var historyGroups: List<History.Group>? = null
+    private var showAllGroupSet: MutableSet<HistoryItemTimeGroup> =
+        mutableSetOf(HistoryItemTimeGroup.ThisMonth, HistoryItemTimeGroup.Older)
 
     @Suppress("LongMethod")
     override fun getHistory(
@@ -143,7 +164,7 @@ class DefaultPagedHistoryProvider(
     @Suppress("MagicNumber")
     private suspend fun getHistoryAndSearchGroups(
         offset: Long,
-        numberOfItems: Long,
+        numberOfItems: Long
     ): List<History> {
         val result = mutableListOf<History>()
         val history: List<History.Regular> = historyStorage
@@ -189,9 +210,19 @@ class DefaultPagedHistoryProvider(
         }
         val historyMetadata = historyGroupsInOffset.flatMap { it.items }
 
+        val historyHighlights =
+            historyStorage.getHistoryHighlights(
+                HistoryHighlightWeights(HISTORY_HIGHLIGHT_VIEW_TIME, HISTORY_HIGHLIGHT_FREQUENCY),
+                HISTORY_HIGHLIGHT_LIMIT
+            ).map { it.url }.toSet()
+
         // Add all history items that are not in a group filtering out any matches with a history
         // metadata item.
-        result.addAll(history.filter { item -> historyMetadata.find { it.url == item.url } == null })
+        result.addAll(
+            history.filter { item -> historyMetadata.find { it.url == item.url } == null }
+                /* filter for only highlights */
+                .filter { shouldShowUrl(historyHighlights, it.url, it.visitedAt) }
+        )
 
         // Filter history metadata items with no view time and dedupe by url.
         // Note that distinctBy is sufficient here as it keeps the order of the source
@@ -208,6 +239,26 @@ class DefaultPagedHistoryProvider(
             .sortedByDescending { it.visitedAt }
     }
 
+    /**
+     * Set a history group to show all.
+     */
+    override fun setShowAllGroup(historyItemTimeGroup: HistoryItemTimeGroup) {
+        showAllGroupSet.add(historyItemTimeGroup)
+    }
+
+    override fun isShowAllGroupSet(historyItemTimeGroup: HistoryItemTimeGroup): Boolean {
+        return showAllGroupSet.contains(historyItemTimeGroup)
+    }
+
+    fun shouldShowUrl(historyHighlights: Set<String>, url: String, visitedAt: Long): Boolean {
+        return when {
+            !settings.showHistoryHighlights -> true
+            historyHighlights.contains(url) -> true
+            showAllGroupSet.contains(timeGroupForTimestamp(visitedAt)) -> true
+            else -> false
+        }
+    }
+
     private fun transformVisitInfoToHistoryItem(offset: Int): (id: Int, visit: VisitInfo) -> History.Regular {
         return { id, visit ->
             val title = visit.title
@@ -221,6 +272,12 @@ class DefaultPagedHistoryProvider(
                 visitedAt = visit.visitTime
             )
         }
+    }
+
+    companion object {
+        private const val HISTORY_HIGHLIGHT_VIEW_TIME = 10.0
+        private const val HISTORY_HIGHLIGHT_FREQUENCY = 4.0
+        private const val HISTORY_HIGHLIGHT_LIMIT = 100
     }
 }
 

@@ -89,14 +89,17 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
             invalidateOptionsMenu = ::invalidateOptionsMenu,
             deleteHistoryItems = ::deleteHistoryItems,
             syncHistory = ::syncHistory,
+            showAll = ::showAll,
             metrics = requireComponents.analytics.metrics
         )
         historyInteractor = DefaultHistoryInteractor(
             historyController
         )
         _historyView = HistoryView(
-            binding.historyLayout,
-            historyInteractor
+            container = binding.historyLayout,
+            interactor = historyInteractor,
+            pagedHistoryProvider = historyProvider,
+            settings = requireComponents.settings
         )
 
         return view
@@ -121,7 +124,10 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        historyProvider = DefaultPagedHistoryProvider(requireComponents.core.historyStorage)
+        historyProvider = DefaultPagedHistoryProvider(
+            historyStorage = requireComponents.core.historyStorage,
+            settings = requireComponents.settings
+        )
 
         requireComponents.analytics.metrics.track(Event.HistoryOpened)
 
@@ -401,6 +407,11 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
     private suspend fun syncHistory() {
         val accountManager = requireComponents.backgroundServices.accountManager
         accountManager.syncNow(SyncReason.User)
+        viewModel.invalidate()
+    }
+
+    private fun showAll(historyItemTimeGroup: HistoryItemTimeGroup) {
+        historyProvider.setShowAllGroup(historyItemTimeGroup)
         viewModel.invalidate()
     }
 }

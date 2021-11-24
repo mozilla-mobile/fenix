@@ -11,6 +11,7 @@
     <dimen name="mozac_browser_menu_width_max" tools:ignore="UnusedResources">314dp</dimen>
     <dimen name="mozac_browser_menu_corner_radius">8dp</dimen>
     <dimen name="mozac_browser_menu2_corner_radius">8dp</dimen>
+    <dimen name="library_header_height">36dp</dimen>
     <dimen name="library_item_height">56dp</dimen>
     <dimen name="library_item_icon_margin_horizontal">16dp</dimen>
     <dimen name="history_favicon_width_height">40dp</dimen>

@@ -76,6 +76,12 @@ class SecretSettingsFragment : PreferenceFragmentCompat() {
             isChecked = context.settings().nimbusUsePreview
             onPreferenceChangeListener = SharedPreferenceUpdater()
         }
+
+        requirePreference<SwitchPreference>(R.string.pref_key_history_highlights_feature).apply {
+            isVisible = FeatureFlags.showHistoryHighlight
+            isChecked = context.settings().showHistoryHighlights
+            onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
     }
 
     companion object {

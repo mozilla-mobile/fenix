@@ -5,16 +5,15 @@
 package org.mozilla.fenix.library.history
 
 import android.content.Context
-import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.history.PagedHistoryProvider
 import org.mozilla.fenix.selection.SelectionHolder
 import org.mozilla.fenix.library.history.viewholders.HistoryListItemViewHolder
-import java.util.Calendar
-import java.util.Date
+import org.mozilla.fenix.utils.Settings
 
 enum class HistoryItemTimeGroup {
     Today, Yesterday, ThisWeek, ThisMonth, Older;
@@ -30,20 +29,21 @@ enum class HistoryItemTimeGroup {
 
 class HistoryAdapter(
     private val historyInteractor: HistoryInteractor,
+    private val pagedHistoryProvider: PagedHistoryProvider,
+    private val settings: Settings
 ) : PagedListAdapter<History, HistoryListItemViewHolder>(historyDiffCallback),
     SelectionHolder<History> {
 
     private var mode: HistoryFragmentState.Mode = HistoryFragmentState.Mode.Normal
     override val selectedItems get() = mode.selectedItems
     var pendingDeletionIds = emptySet<Long>()
-    private val itemsWithHeaders: MutableMap<HistoryItemTimeGroup, Int> = mutableMapOf()
 
     override fun getItemViewType(position: Int): Int = HistoryListItemViewHolder.LAYOUT_ID
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryListItemViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
 
-        return HistoryListItemViewHolder(view, historyInteractor, this)
+        return HistoryListItemViewHolder(view, historyInteractor, this, settings)
     }
 
     fun updateMode(mode: HistoryFragmentState.Mode) {
@@ -54,28 +54,24 @@ class HistoryAdapter(
 
     override fun onBindViewHolder(holder: HistoryListItemViewHolder, position: Int) {
         val current = getItem(position) ?: return
-        val headerForCurrentItem = timeGroupForHistoryItem(current)
+        val historyItemTimeGroup = HistoryViewModel.timeGroupForHistoryItem(current)
         val isPendingDeletion = pendingDeletionIds.contains(current.visitedAt)
-        var timeGroup: HistoryItemTimeGroup? = null
 
-        // Add or remove the header and position to the map depending on it's deletion status
-        if (itemsWithHeaders.containsKey(headerForCurrentItem)) {
-            if (isPendingDeletion && itemsWithHeaders[headerForCurrentItem] == position) {
-                itemsWithHeaders.remove(headerForCurrentItem)
-            } else if (isPendingDeletion && itemsWithHeaders[headerForCurrentItem] != position) {
-                // do nothing
-            } else {
-                if (position <= itemsWithHeaders[headerForCurrentItem] as Int) {
-                    itemsWithHeaders[headerForCurrentItem] = position
-                    timeGroup = headerForCurrentItem
+        val timeGroup: HistoryItemTimeGroup? = when {
+            position == 0 -> historyItemTimeGroup
+            isPendingDeletion -> null
+            else -> {
+                val previous = getItem(position - 1) ?: return
+                val headerForPreviousItem = HistoryViewModel.timeGroupForHistoryItem(previous)
+                if (historyItemTimeGroup != headerForPreviousItem) {
+                    historyItemTimeGroup
+                } else {
+                    null
                 }
             }
-        } else if (!isPendingDeletion) {
-            itemsWithHeaders[headerForCurrentItem] = position
-            timeGroup = headerForCurrentItem
         }
 
-        holder.bind(current, timeGroup, position == 0, mode, isPendingDeletion)
+        holder.bind(current, pagedHistoryProvider, timeGroup, position == 0, mode, isPendingDeletion)
     }
 
     fun updatePendingDeletionIds(pendingDeletionIds: Set<Long>) {
@@ -83,35 +79,6 @@ class HistoryAdapter(
     }
 
     companion object {
-        private const val zeroDays = 0
-        private const val oneDay = 1
-        private const val sevenDays = 7
-        private const val thirtyDays = 30
-        private val zeroDaysAgo = getDaysAgo(zeroDays).time
-        private val oneDayAgo = getDaysAgo(oneDay).time
-        private val sevenDaysAgo = getDaysAgo(sevenDays).time
-        private val thirtyDaysAgo = getDaysAgo(thirtyDays).time
-        private val yesterdayRange = LongRange(oneDayAgo, zeroDaysAgo)
-        private val lastWeekRange = LongRange(sevenDaysAgo, oneDayAgo)
-        private val lastMonthRange = LongRange(thirtyDaysAgo, sevenDaysAgo)
-
-        private fun getDaysAgo(daysAgo: Int): Date {
-            val calendar = Calendar.getInstance()
-            calendar.add(Calendar.DAY_OF_YEAR, -daysAgo)
-
-            return calendar.time
-        }
-
-        private fun timeGroupForHistoryItem(item: History): HistoryItemTimeGroup {
-            return when {
-                DateUtils.isToday(item.visitedAt) -> HistoryItemTimeGroup.Today
-                yesterdayRange.contains(item.visitedAt) -> HistoryItemTimeGroup.Yesterday
-                lastWeekRange.contains(item.visitedAt) -> HistoryItemTimeGroup.ThisWeek
-                lastMonthRange.contains(item.visitedAt) -> HistoryItemTimeGroup.ThisMonth
-                else -> HistoryItemTimeGroup.Older
-            }
-        }
-
         private val historyDiffCallback = object : DiffUtil.ItemCallback<History>() {
             override fun areItemsTheSame(oldItem: History, newItem: History): Boolean {
                 return oldItem == newItem

@@ -164,6 +164,7 @@ class HistoryControllerTest {
         displayDeleteAll: () -> Unit = {},
         invalidateOptionsMenu: () -> Unit = {},
         deleteHistoryItems: (Set<History>) -> Unit = { _ -> },
+        showAll: (historyItemTimeGroup: HistoryItemTimeGroup) -> Unit = { _ -> },
         syncHistory: suspend () -> Unit = {}
     ): HistoryController {
         return DefaultHistoryController(
@@ -175,6 +176,7 @@ class HistoryControllerTest {
             invalidateOptionsMenu,
             deleteHistoryItems,
             syncHistory,
+            showAll,
             metrics
         )
     }

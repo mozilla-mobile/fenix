@@ -91,4 +91,9 @@ object FeatureFlags {
      * Enables showing the homescreen onboarding card.
      */
     const val showHomeOnboarding = false
+
+    /**
+     * Enables history highlights
+     */
+    val showHistoryHighlight = Config.channel.isNightlyOrDebug
 }

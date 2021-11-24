@@ -11,17 +11,21 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import mozilla.components.support.base.feature.UserInteractionHandler
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.history.PagedHistoryProvider
 import org.mozilla.fenix.databinding.ComponentHistoryBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.library.LibraryPageView
 import org.mozilla.fenix.theme.ThemeManager
+import org.mozilla.fenix.utils.Settings
 
 /**
  * View that contains and configures the History List
  */
 class HistoryView(
     container: ViewGroup,
-    val interactor: HistoryInteractor
+    val interactor: HistoryInteractor,
+    pagedHistoryProvider: PagedHistoryProvider,
+    val settings: Settings
 ) : LibraryPageView(container), UserInteractionHandler {
 
     val binding = ComponentHistoryBinding.inflate(
@@ -31,7 +35,7 @@ class HistoryView(
     var mode: HistoryFragmentState.Mode = HistoryFragmentState.Mode.Normal
         private set
 
-    val historyAdapter = HistoryAdapter(interactor)
+    val historyAdapter = HistoryAdapter(interactor, pagedHistoryProvider, settings)
     private val layoutManager = LinearLayoutManager(container.context)
 
     init {

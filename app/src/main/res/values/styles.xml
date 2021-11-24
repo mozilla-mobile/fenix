@@ -435,6 +435,12 @@
         <item name="android:textAllCaps">false</item>
     </style>
 
+    <style name="Button12TextStyle" parent="TextAppearance.MaterialComponents.Button">
+        <item name="android:textSize">12sp</item>
+        <item name="fontFamily">@font/metropolis</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
     <style name="Subtitle12TextStyle" parent="TextAppearance.MaterialComponents.Body1">
         <item name="android:textColor">?secondaryText</item>
         <item name="android:textSize">12sp</item>
