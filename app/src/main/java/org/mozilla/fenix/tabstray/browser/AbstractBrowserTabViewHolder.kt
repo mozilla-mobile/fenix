@@ -216,7 +216,6 @@ abstract class AbstractBrowserTabViewHolder(
         interactor: BrowserTrayInteractor
     ) {
         itemView.setOnClickListener {
-            touchStartPoint = null
             val selected = holder.selectedItems
             when {
                 selected.isEmpty() && trayStore.state.mode.isSelect().not() -> {
@@ -229,7 +228,6 @@ abstract class AbstractBrowserTabViewHolder(
 
         itemView.setOnLongClickListener {
             if (holder.selectedItems.isEmpty()) {
-                touchStartPoint = null
                 metrics.track(Event.CollectionTabLongPressed)
                 interactor.select(item)
                 true
@@ -241,21 +239,30 @@ abstract class AbstractBrowserTabViewHolder(
         // The ClickableViewAccessibility warning isn't useful
         itemView.setOnTouchListener { view, motionEvent ->
             when (motionEvent.actionMasked) {
+                MotionEvent.ACTION_DOWN -> {
+                    touchStartPoint = PointF(
+                        motionEvent.x,
+                        motionEvent.y
+                    )
+                }
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    touchStartPoint = null
+                }
                 MotionEvent.ACTION_MOVE -> {
                     val parent = itemView.parent as? AbstractBrowserTrayList
+                    val touchStart = touchStartPoint
                     if (parent?.context?.settings()?.searchTermTabGroupsAreEnabled == false &&
-                        holder.selectedItems.contains(item) && holder.selectedItems.size == 1
+                        holder.selectedItems.contains(item) && holder.selectedItems.size == 1 &&
+                        touchStart != null
                     ) {
-                        if (touchStartPoint == null) {
-                            touchStartPoint = PointF(motionEvent.x, motionEvent.y)
-                        }
-                        val motionOffset = PointF(
-                            touchStartPoint!!.x - motionEvent.x,
-                            touchStartPoint!!.y - motionEvent.y
+                        val dist = PointF.length(
+                            touchStart.x - motionEvent.x,
+                            touchStart.y - motionEvent.y
                         )
-                        if (PointF.length(motionOffset.x, motionOffset.y) > 10) {
+                        if (dist > MINIMUM_DRAG_DISTANCE) {
                             val dragOffset = PointF(motionEvent.x, motionEvent.y)
                             interactor.deselect(item) // Exit selection mode
+                            touchStartPoint = null
                             val shadow = BlankDragShadowBuilder()
                             // startDragAndDrop is the non-deprecated version, but requires API 24
                             @Suppress("DEPRECATION")
@@ -272,5 +279,6 @@ abstract class AbstractBrowserTabViewHolder(
     companion object {
         internal const val PLAY_PAUSE_BUTTON_EXTRA_DPS = 24
         internal const val GRID_ITEM_CLOSE_BUTTON_EXTRA_DPS = 24
+        internal const val MINIMUM_DRAG_DISTANCE = 30
     }
 }
