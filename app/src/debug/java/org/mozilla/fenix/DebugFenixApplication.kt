@@ -6,8 +6,6 @@ package org.mozilla.fenix
 
 import android.os.StrictMode
 import androidx.preference.PreferenceManager
-import leakcanary.AppWatcher
-import leakcanary.LeakCanary
 import org.mozilla.fenix.ext.getPreferenceKey
 
 class DebugFenixApplication : FenixApplication() {
@@ -21,7 +19,8 @@ class DebugFenixApplication : FenixApplication() {
     }
 
     override fun updateLeakCanaryState(isEnabled: Boolean) {
-        AppWatcher.config = AppWatcher.config.copy(enabled = isEnabled)
-        LeakCanary.config = LeakCanary.config.copy(dumpHeap = isEnabled)
+        // AppWatcher.config = AppWatcher.config.copy(enabled = isEnabled)
+        // LeakCanary.config = LeakCanary.config.copy(dumpHeap = isEnabled)
+        println(isEnabled)
     }
 }

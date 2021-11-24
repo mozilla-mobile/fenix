@@ -4,7 +4,7 @@
 
     <application>
 
-        <service android:name=".customtabs.CustomTabsService">
+        <service android:name=".customtabs.CustomTabsService" android:exported="false">
             <!-- Trusted Web Activities are currently only supported in nightly. -->
             <intent-filter tools:node="removeAll" />
             <intent-filter>

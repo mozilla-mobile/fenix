@@ -12,7 +12,7 @@ object Versions {
     const val android_lint_api = "30.0.0"
 
     const val sentry = "1.7.10"
-    const val leakcanary = "2.4"
+    const val leakcanary = "2.7"
     const val osslicenses_plugin = "0.10.4"
     const val detekt = "1.17.1"
     const val jna = "5.6.0"
@@ -34,7 +34,7 @@ object Versions {
     const val androidx_core = "1.3.2"
     const val androidx_paging = "2.1.2"
     const val androidx_transition = "1.4.0"
-    const val androidx_work = "2.5.0"
+    const val androidx_work = "2.7.0"
     const val androidx_datastore = "1.0.0"
     const val google_material = "1.2.1"
 
