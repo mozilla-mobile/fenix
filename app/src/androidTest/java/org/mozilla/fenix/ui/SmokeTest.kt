@@ -841,8 +841,8 @@ class SmokeTest {
             verifyCollectionIcon()
         }.expandCollection(collectionName) {
             verifyTabSavedInCollection(webPage.title)
-            verifyCollectionTabLogo()
-            verifyCollectionTabUrl()
+            verifyCollectionTabLogo(true)
+            verifyCollectionTabUrl(true)
             verifyShareCollectionButtonIsVisible(true)
             verifyCollectionMenuIsVisible(true)
             verifyCollectionItemRemoveButtonIsVisible(webPage.title, true)
@@ -852,6 +852,28 @@ class SmokeTest {
             verifyTabSavedInCollection(webPage.title, false)
             verifyShareCollectionButtonIsVisible(false)
             verifyCollectionMenuIsVisible(false)
+            verifyCollectionTabLogo(false)
+            verifyCollectionTabUrl(false)
+            verifyCollectionItemRemoveButtonIsVisible(webPage.title, false)
+        }
+
+        homeScreen {
+        }.expandCollection(collectionName) {
+            verifyTabSavedInCollection(webPage.title)
+            verifyCollectionTabLogo(true)
+            verifyCollectionTabUrl(true)
+            verifyShareCollectionButtonIsVisible(true)
+            verifyCollectionMenuIsVisible(true)
+            verifyCollectionItemRemoveButtonIsVisible(webPage.title, true)
+        }.collapseCollection(collectionName) {}
+
+        collectionRobot {
+            verifyTabSavedInCollection(webPage.title, false)
+            verifyShareCollectionButtonIsVisible(false)
+            verifyCollectionMenuIsVisible(false)
+            verifyCollectionTabLogo(false)
+            verifyCollectionTabUrl(false)
+            verifyCollectionItemRemoveButtonIsVisible(webPage.title, false)
         }
     }
 
