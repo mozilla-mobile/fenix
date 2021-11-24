@@ -251,18 +251,22 @@ abstract class AbstractBrowserTabViewHolder(
                 MotionEvent.ACTION_MOVE -> {
                     val parent = itemView.parent as? AbstractBrowserTrayList
                     val touchStart = touchStartPoint
+                    val selected = holder.selectedItems
+                    val selectsOnlyThis = (selected.size == 1 && selected.contains(item))
                     if (parent?.context?.settings()?.searchTermTabGroupsAreEnabled == false &&
-                        holder.selectedItems.contains(item) && holder.selectedItems.size == 1 &&
-                        touchStart != null
+                        selectsOnlyThis && touchStart != null
                     ) {
+                        // Prevent scrolling if the user tries to start drag vertically
+                        parent.requestDisallowInterceptTouchEvent(true)
+                        // Only start deselect+drag if the user drags far enough
                         val dist = PointF.length(
                             touchStart.x - motionEvent.x,
                             touchStart.y - motionEvent.y
                         )
                         if (dist > MINIMUM_DRAG_DISTANCE) {
-                            val dragOffset = PointF(motionEvent.x, motionEvent.y)
                             interactor.deselect(item) // Exit selection mode
                             touchStartPoint = null
+                            val dragOffset = PointF(motionEvent.x, motionEvent.y)
                             val shadow = BlankDragShadowBuilder()
                             // startDragAndDrop is the non-deprecated version, but requires API 24
                             @Suppress("DEPRECATION")
