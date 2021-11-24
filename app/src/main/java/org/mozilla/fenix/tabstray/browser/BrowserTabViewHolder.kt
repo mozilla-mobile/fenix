@@ -38,7 +38,7 @@ sealed class BrowserTabViewHolder(itemView: View) : RecyclerView.ViewHolder(item
         store: TabsTrayStore,
         selectionHolder: SelectionHolder<TabSessionState>? = null,
         itemView: View,
-        featureName: String,
+        featureName: String
     ) : AbstractBrowserTabViewHolder(itemView, imageLoader, store, selectionHolder, featureName) {
 
         private val closeButton: AppCompatImageButton = itemView.findViewById(R.id.mozac_browser_tabstray_close)

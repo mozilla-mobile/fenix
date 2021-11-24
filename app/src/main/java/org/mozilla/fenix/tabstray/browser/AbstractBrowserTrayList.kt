@@ -174,6 +174,7 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
                     if (sourceView != targetView) {
                         interactor.onTabsMove(tab.id, targetId, placeAfter)
                         // Deal with https://issuetracker.google.com/issues/37018279
+                        // See also https://stackoverflow.com/questions/27992427
                         (layoutManager as? ItemTouchHelper.ViewDropHandler)?.prepareForDrop(
                             sourceView, targetView, dragOffset.x.toInt(), dragOffset.y.toInt()
                         )
@@ -186,6 +187,7 @@ abstract class AbstractBrowserTrayList @JvmOverloads constructor(
             if (pos.y > height - SCROLL_AREA) scroll = SCROLL_SPEED
             scrollBy(0, scroll)
 
+            // Repeats forever, until lastDragPos/Data are null
             handler.postDelayed(this, DRAG_UPDATE_PERIOD_MS)
         }
     }

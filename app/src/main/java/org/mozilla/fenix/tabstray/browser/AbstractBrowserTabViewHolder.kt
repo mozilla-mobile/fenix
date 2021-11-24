@@ -80,8 +80,8 @@ abstract class AbstractBrowserTabViewHolder(
     abstract val thumbnailSize: Int
 
     override var tab: TabSessionState? = null
-    internal var beingDragged: Boolean = false
 
+    internal var beingDragged: Boolean = false
     private var touchStartPoint: PointF? = null
 
     /**
