@@ -152,12 +152,7 @@ interface ToolbarInteractor {
 /**
  * Interface for onboarding related actions in the [SessionControlInteractor].
  */
-interface OnboardingInteractor {
-    /**
-     * Hides the onboarding and navigates to Search. Called when a user clicks on the "Start Browsing" button.
-     */
-    fun onStartBrowsingClicked()
-
+interface HomeOnboardingInteractor {
     /**
      * Opens a custom tab to privacy notice url. Called when a user clicks on the "read our privacy notice" button.
      */
@@ -261,7 +256,7 @@ class SessionControlInteractor(
     private val recentVisitsController: RecentVisitsController,
     private val pocketStoriesController: PocketStoriesController
 ) : CollectionInteractor,
-    OnboardingInteractor,
+    HomeOnboardingInteractor,
     TopSiteInteractor,
     TabSessionInteractor,
     ToolbarInteractor,
@@ -323,10 +318,6 @@ class SessionControlInteractor(
 
     override fun onSponsorPrivacyClicked() {
         controller.handleSponsorPrivacyClicked()
-    }
-
-    override fun onStartBrowsingClicked() {
-        controller.handleStartBrowsingClicked()
     }
 
     override fun onReadPrivacyNoticeClicked() {

@@ -11,7 +11,6 @@ import android.content.res.Configuration
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.os.StrictMode
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -119,7 +118,6 @@ import org.mozilla.fenix.home.sessioncontrol.SessionControlView
 import org.mozilla.fenix.home.sessioncontrol.viewholders.CollectionViewHolder
 import org.mozilla.fenix.home.topsites.DefaultTopSitesView
 import org.mozilla.fenix.nimbus.FxNimbus
-import org.mozilla.fenix.onboarding.FenixOnboarding
 import org.mozilla.fenix.perf.MarkersFragmentLifecycleCallbacks
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.settings.SupportUtils.SumoTopic.HELP
@@ -166,12 +164,6 @@ class HomeFragment : Fragment() {
     private val store: BrowserStore
         get() = requireComponents.core.store
 
-    private val onboarding by lazy {
-        requireComponents.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
-            FenixOnboarding(requireContext())
-        }
-    }
-
     private val syncedTabFeature by lazy {
         RecentSyncedTabFeature(
             store = requireComponents.appStore,
@@ -188,7 +180,6 @@ class HomeFragment : Fragment() {
 
     private var sessionControlView: SessionControlView? = null
     private var appBarLayout: AppBarLayout? = null
-    private lateinit var currentMode: CurrentMode
 
     private val topSitesFeature = ViewBoundFeatureWrapper<TopSitesFeature>()
     private val messagingFeature = ViewBoundFeatureWrapper<MessagingFeature>()
@@ -208,10 +199,7 @@ class HomeFragment : Fragment() {
 
         bundleArgs = args.toBundle()
 
-        if (!onboarding.userHasBeenOnboarded() &&
-            requireContext().settings().shouldShowPrivacyPopWindow &&
-            Config.channel.isMozillaOnline
-        ) {
+        if (requireContext().settings().shouldShowPrivacyPopWindow && Config.channel.isMozillaOnline) {
             showPrivacyPopWindow(requireContext(), requireActivity())
         }
 
@@ -233,15 +221,6 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val activity = activity as HomeActivity
         val components = requireComponents
-
-        currentMode = CurrentMode(
-            requireContext(),
-            onboarding,
-            browsingModeManager,
-            ::dispatchModeChanges
-        )
-
-        components.appStore.dispatch(AppAction.ModeChange(currentMode.getCurrentMode()))
 
         lifecycleScope.launch(IO) {
             if (requireContext().settings().showPocketRecommendationsFeature) {
@@ -345,7 +324,6 @@ class HomeFragment : Fragment() {
                 appStore = components.appStore,
                 navController = findNavController(),
                 viewLifecycleScope = viewLifecycleOwner.lifecycleScope,
-                hideOnboarding = ::hideOnboardingAndOpenSearch,
                 registerCollectionStorageObserver = ::registerCollectionStorageObserver,
                 removeCollectionWithUndo = ::removeCollectionWithUndo,
                 showTabTray = ::openTabsTray
@@ -529,7 +507,7 @@ class HomeFragment : Fragment() {
         PrivateBrowsingButtonView(binding.privateBrowsingButton, browsingModeManager) { newMode ->
             sessionControlInteractor.onPrivateModeButtonClicked(
                 newMode,
-                onboarding.userHasBeenOnboarded()
+                true
             )
         }
 
@@ -691,10 +669,6 @@ class HomeFragment : Fragment() {
             }
 
             requireComponents.backgroundServices.accountManager.register(
-                currentMode,
-                owner = this@HomeFragment.viewLifecycleOwner
-            )
-            requireComponents.backgroundServices.accountManager.register(
                 object : AccountObserver {
                     override fun onAuthenticated(account: OAuthAccount, authType: AuthType) {
                         if (authType != AuthType.Existing) {
@@ -747,12 +721,6 @@ class HomeFragment : Fragment() {
                     newWallpaper = newWallpaper
                 )
             }
-        }
-    }
-
-    private fun dispatchModeChanges(mode: Mode) {
-        if (mode != Mode.fromBrowsingMode(browsingModeManager.mode)) {
-            requireContext().components.appStore.dispatch(AppAction.ModeChange(mode))
         }
     }
 
@@ -870,23 +838,6 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun hideOnboardingIfNeeded() {
-        if (!onboarding.userHasBeenOnboarded()) {
-            onboarding.finish()
-            requireContext().components.appStore.dispatch(
-                AppAction.ModeChange(
-                    mode = currentMode.getCurrentMode()
-                )
-            )
-        }
-    }
-
-    private fun hideOnboardingAndOpenSearch() {
-        hideOnboardingIfNeeded()
-        appBarLayout?.setExpanded(true, true)
-        navigateToSearch()
-    }
-
     @VisibleForTesting
     internal fun navigateToSearch() {
         val directions =
@@ -905,10 +856,6 @@ class HomeFragment : Fragment() {
             this.viewLifecycleOwner,
             context,
             onItemTapped = {
-                if (it !is HomeMenu.Item.DesktopMode) {
-                    hideOnboardingIfNeeded()
-                }
-
                 when (it) {
                     HomeMenu.Item.Settings -> {
                         nav(
@@ -1208,7 +1155,6 @@ class HomeFragment : Fragment() {
         val settings = localContext.settings()
 
         return shouldEnableWallpaper() && settings.shouldAnimateFirefoxLogo &&
-            onboarding.userHasBeenOnboarded() &&
             settings.numberOfAppLaunches >= 3
     }
 

@@ -18,7 +18,6 @@ import org.mozilla.fenix.gleanplumb.Message
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.Mode
-import org.mozilla.fenix.home.OnboardingState
 import org.mozilla.fenix.home.recentbookmarks.RecentBookmark
 import org.mozilla.fenix.home.recenttabs.RecentTab
 import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem
@@ -116,39 +115,6 @@ private fun showCollections(
 
 private fun privateModeAdapterItems() = listOf(AdapterItem.PrivateBrowsingDescription)
 
-private fun onboardingAdapterItems(onboardingState: OnboardingState): List<AdapterItem> {
-    val items: MutableList<AdapterItem> = mutableListOf(AdapterItem.OnboardingHeader)
-
-    items.addAll(
-        listOf(
-            AdapterItem.OnboardingThemePicker,
-            AdapterItem.OnboardingToolbarPositionPicker,
-            AdapterItem.OnboardingTrackingProtection
-        )
-    )
-    // Customize FxA items based on where we are with the account state:
-    items.addAll(
-        when (onboardingState) {
-            OnboardingState.SignedOutNoAutoSignIn -> {
-                listOf(
-                    AdapterItem.OnboardingManualSignIn
-                )
-            }
-            OnboardingState.SignedIn -> listOf()
-        }
-    )
-
-    items.addAll(
-        listOf(
-            AdapterItem.OnboardingPrivacyNotice,
-            AdapterItem.OnboardingFinish,
-            AdapterItem.BottomSpacer
-        )
-    )
-
-    return items
-}
-
 private fun AppState.toAdapterList(settings: Settings): List<AdapterItem> = when (mode) {
     is Mode.Normal -> normalModeAdapterItems(
         settings,
@@ -163,7 +129,6 @@ private fun AppState.toAdapterList(settings: Settings): List<AdapterItem> = when
         pocketStories
     )
     is Mode.Private -> privateModeAdapterItems()
-    is Mode.Onboarding -> onboardingAdapterItems(mode.state)
 }
 
 @VisibleForTesting

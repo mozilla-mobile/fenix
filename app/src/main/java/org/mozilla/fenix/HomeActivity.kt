@@ -241,7 +241,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         // Unless the activity is recreated, navigate to home first (without rendering it)
         // to add it to the back stack.
         if (savedInstanceState == null) {
-            navigateToHome()
+//            navigateToHome()
+            navHost.navController.navigate(NavGraphDirections.actionStartupOnboarding())
         }
 
         if (!shouldStartOnHome() && shouldNavigateToBrowserOnColdStart(savedInstanceState)) {

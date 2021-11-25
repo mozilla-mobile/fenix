@@ -139,11 +139,6 @@ interface SessionControlController {
     fun handleSponsorPrivacyClicked()
 
     /**
-     * @see [OnboardingInteractor.onStartBrowsingClicked]
-     */
-    fun handleStartBrowsingClicked()
-
-    /**
      * @see [OnboardingInteractor.onReadPrivacyNoticeClicked]
      */
     fun handleReadPrivacyNoticeClicked()
@@ -229,7 +224,6 @@ class DefaultSessionControlController(
     private val appStore: AppStore,
     private val navController: NavController,
     private val viewLifecycleScope: CoroutineScope,
-    private val hideOnboarding: () -> Unit,
     private val registerCollectionStorageObserver: () -> Unit,
     private val removeCollectionWithUndo: (tabCollection: TabCollection) -> Unit,
     private val showTabTray: () -> Unit
@@ -500,10 +494,6 @@ class DefaultSessionControlController(
         if (navController.currentDestination?.id == R.id.searchDialogFragment) {
             navController.navigateUp()
         }
-    }
-
-    override fun handleStartBrowsingClicked() {
-        hideOnboarding()
     }
 
     override fun handleCustomizeHomeTapped() {
