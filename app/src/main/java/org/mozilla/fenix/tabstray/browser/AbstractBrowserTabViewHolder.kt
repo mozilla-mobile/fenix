@@ -14,6 +14,7 @@ import android.widget.TextView
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.AppCompatImageButton
+import androidx.core.view.ViewCompat
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import mozilla.components.browser.state.selector.findTabOrCustomTab
@@ -249,11 +250,11 @@ abstract class AbstractBrowserTabViewHolder(
                     touchStartPoint = null
                 }
                 MotionEvent.ACTION_MOVE -> {
-                    val parent = itemView.parent as? AbstractBrowserTrayList
+                    val parent = itemView.parent as AbstractBrowserTrayList
                     val touchStart = touchStartPoint
                     val selected = holder.selectedItems
                     val selectsOnlyThis = (selected.size == 1 && selected.contains(item))
-                    if (parent?.context?.settings()?.searchTermTabGroupsAreEnabled == false &&
+                    if (!parent.context.settings().searchTermTabGroupsAreEnabled &&
                         selectsOnlyThis && touchStart != null
                     ) {
                         // Prevent scrolling if the user tries to start drag vertically
@@ -268,9 +269,7 @@ abstract class AbstractBrowserTabViewHolder(
                             touchStartPoint = null
                             val dragOffset = PointF(motionEvent.x, motionEvent.y)
                             val shadow = BlankDragShadowBuilder()
-                            // startDragAndDrop is the non-deprecated version, but requires API 24
-                            @Suppress("DEPRECATION")
-                            view.startDrag(null, shadow, TabDragData(item, dragOffset), 0)
+                            ViewCompat.startDragAndDrop(itemView, null, shadow, TabDragData(item, dragOffset), 0)
                         }
                         return@setOnTouchListener true
                     }
