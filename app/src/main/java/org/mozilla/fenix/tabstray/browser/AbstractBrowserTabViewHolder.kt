@@ -8,6 +8,7 @@ import android.annotation.SuppressLint
 import android.graphics.PointF
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewConfiguration
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
@@ -264,7 +265,7 @@ abstract class AbstractBrowserTabViewHolder(
                             touchStart.x - motionEvent.x,
                             touchStart.y - motionEvent.y
                         )
-                        if (dist > MINIMUM_DRAG_DISTANCE) {
+                        if (dist > ViewConfiguration.get(parent.context).scaledTouchSlop) {
                             interactor.deselect(item) // Exit selection mode
                             touchStartPoint = null
                             val dragOffset = PointF(motionEvent.x, motionEvent.y)
@@ -282,6 +283,5 @@ abstract class AbstractBrowserTabViewHolder(
     companion object {
         internal const val PLAY_PAUSE_BUTTON_EXTRA_DPS = 24
         internal const val GRID_ITEM_CLOSE_BUTTON_EXTRA_DPS = 24
-        internal const val MINIMUM_DRAG_DISTANCE = 30
     }
 }
