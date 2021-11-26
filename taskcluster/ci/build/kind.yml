@@ -22,7 +22,7 @@ job-defaults:
         type: file
         name: public/build/{abi}/target.apk
         github-name: 'fenix-{version}-{abi}.apk'
-        path: '/builds/worker/checkouts/src/app/build/outputs/apk/{gradle_build_type}/{fileName}'
+        path: '/builds/worker/checkouts/vcs/app/build/outputs/apk/{gradle_build_type}/{fileName}'
     description: Build Fenix from source code.
     fetches:
         toolchain:
@@ -51,6 +51,7 @@ jobs:
         run-on-tasks-for: [github-pull-request, github-push]
         run:
             gradle-build-type: debug
+            track-apk-size: true
         treeherder:
             symbol: debug(B)
 
@@ -80,7 +81,7 @@ jobs:
             gradle-build-type: androidTest
         apk-artifact-template:
             # 2 differences here: "androidTest/" is added and "{gradle_build_type}" is forced to "debug"
-            path: '/builds/worker/checkouts/src/app/build/outputs/apk/androidTest/debug/{fileName}'
+            path: '/builds/worker/checkouts/vcs/app/build/outputs/apk/androidTest/debug/{fileName}'
         treeherder:
             symbol: debug(Bat)
 
@@ -98,7 +99,7 @@ jobs:
             # 2 differences here:
             #  * "androidTest/" is added
             #  * "{gradle_build_type}" is forced to "debug"
-            path: '/builds/worker/checkouts/src/app/build/outputs/apk/androidTest/nightly/app-nightly-androidTest.apk'
+            path: '/builds/worker/checkouts/vcs/app/build/outputs/apk/androidTest/nightly/app-nightly-androidTest.apk'
         disable-optimization: true
         run:
             gradle-build-type: androidTest
@@ -113,7 +114,7 @@ jobs:
             #  * "androidTest/" is added
             #  * "{gradle_build_type}" is forced to "beta"
             #  * "{fileName}" is forced to "app-beta-androidTest.apk"
-            path: '/builds/worker/checkouts/src/app/build/outputs/apk/androidTest/beta/app-beta-androidTest.apk'
+            path: '/builds/worker/checkouts/vcs/app/build/outputs/apk/androidTest/beta/app-beta-androidTest.apk'
         disable-optimization: true
         run:
             gradle-build-type: androidTest
@@ -128,7 +129,7 @@ jobs:
             #  * "androidTest/" is added
             #  * "{gradle_build_type}" is forced to "beta"
             #  * "{fileName}" is forced to "app-beta-androidTest.apk"
-            path: '/builds/worker/checkouts/src/app/build/outputs/apk/androidTest/beta/app-beta-androidTest.apk'
+            path: '/builds/worker/checkouts/vcs/app/build/outputs/apk/androidTest/beta/app-beta-androidTest.apk'
         disable-optimization: true
         run:
             gradle-build-type: androidTest
@@ -157,6 +158,7 @@ jobs:
         include-shippable-secrets: true
         run:
             gradle-build-type: nightly
+            track-apk-size: true
         run-on-tasks-for: []
         treeherder:
             symbol: nightly(B)
@@ -169,6 +171,7 @@ jobs:
         filter-incomplete-translations: true
         run:
             gradle-build-type: beta
+            track-apk-size: true
         treeherder:
             symbol: beta(B)
 
@@ -195,6 +198,7 @@ jobs:
         filter-incomplete-translations: true
         run:
             gradle-build-type: release
+            track-apk-size: true
         treeherder:
             symbol: release(B)
 
