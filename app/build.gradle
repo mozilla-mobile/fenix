@@ -1,3 +1,5 @@
+import org.mozilla.fenix.gradle.tasks.ApkSizeTask
+
 plugins {
     id "com.jetbrains.python.envs" version "0.0.26"
     id "com.google.protobuf" version "0.8.17"
@@ -42,6 +44,7 @@ android {
         testInstrumentationRunnerArguments clearPackageData: 'true'
         resValue "bool", "IS_DEBUG", "false"
         buildConfigField "boolean", "USE_RELEASE_VERSIONING", "false"
+        buildConfigField "String", "GIT_HASH", "\"\"" // see override in release builds for why it's blank.
         // This should be the "public" base URL of AMO.
         buildConfigField "String", "AMO_BASE_URL", "\"https://addons.mozilla.org\""
         buildConfigField "String", "AMO_COLLECTION_NAME", "\"7dfae8669acc4312a65e8ba5553036\""
@@ -81,6 +84,10 @@ android {
         minifyEnabled !project.hasProperty("disableOptimization")
         proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         matchingFallbacks = ['release'] // Use on the "release" build type in dependencies (AARs)
+
+        // Changing the build config can cause files that depend on BuildConfig.java to recompile
+        // so we only set the git hash in release builds to avoid possible recompilation in debug builds.
+        buildConfigField "String", "GIT_HASH", "\"${Config.getGitHash()}\""
 
         if (gradle.hasProperty("localProperties.autosignReleaseWithDebugKey")) {
             signingConfig signingConfigs.debug
@@ -227,6 +234,7 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = Versions.androidx_compose
     }
+
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -400,6 +408,12 @@ configurations {
     // correct runtime classpath when invoked with Android Studio's built-in JUnit test runner.
     // Success!
     jnaForTest
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+    kotlinOptions {
+        freeCompilerArgs += "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
+    }
 }
 
 dependencies {
@@ -593,8 +607,14 @@ dependencies {
 }
 
 protobuf {
+    // Mac M1 workaround until we can bump the version. Dependent on A-S.
+    // See https://github.com/mozilla-mobile/fenix/issues/22321
     protoc {
-        artifact = Deps.protobuf_compiler
+        if (osdetector.os == "osx") {
+            artifact = "${Deps.protobuf_compiler}:osx-x86_64"
+        } else {
+            artifact = Deps.protobuf_compiler
+        }
     }
 
     // Generates the java Protobuf-lite code for the Protobufs in this project. See
@@ -781,5 +801,13 @@ ext.updateExtensionVersion = { task, extDir ->
         def values = ['version': AndroidComponents.VERSION + "." + new Date().format('MMddHHmmss')]
         inputs.properties(values)
         expand(values)
+    }
+}
+
+android.applicationVariants.all { variant ->
+    tasks.register("apkSize${variant.name.capitalize()}", ApkSizeTask) {
+        variantName = variant.name
+        apks = variant.outputs.collect { output -> output.outputFile.name }
+        dependsOn "package${variant.name.capitalize()}"
     }
 }

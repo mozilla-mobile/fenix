@@ -35,7 +35,6 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -214,7 +213,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        binding.root.profilerProvider = { components.core.engine.profiler }
         ProfilerMarkers.addListenerForOnGlobalLayout(components.core.engine, this, binding.root)
 
         // Must be after we set the content view
@@ -232,7 +230,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         }
 
         if (!shouldStartOnHome() &&
-            shouldNavigateBrowserFragmentOnCouldStart(savedInstanceState)
+            shouldNavigateBrowserFragmentOnColdStart(savedInstanceState)
         ) {
             navigateToBrowserOnColdStart()
         } else if (FeatureFlags.showStartOnHomeSettings) {
@@ -917,7 +915,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         }
     }
 
-    fun updateSecureWindowFlags(mode: BrowsingMode = browsingModeManager.mode) {
+    private fun updateSecureWindowFlags(mode: BrowsingMode = browsingModeManager.mode) {
         if (mode == BrowsingMode.Private && !settings().allowScreenshotsInPrivateMode) {
             window.addFlags(FLAG_SECURE)
         } else {
@@ -945,7 +943,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         isVisuallyComplete = true
     }
 
-    private fun captureSnapshotTelemetryMetrics() = CoroutineScope(Dispatchers.IO).launch {
+    private fun captureSnapshotTelemetryMetrics() = CoroutineScope(IO).launch {
         // PWA
         val recentlyUsedPwaCount = components.core.webAppShortcutManager.recentlyUsedWebAppsCount(
             activeThresholdMs = PWA_RECENTLY_USED_THRESHOLD
@@ -1003,7 +1001,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     @VisibleForTesting
     internal fun getSettings(): Settings = settings()
 
-    private fun shouldNavigateBrowserFragmentOnCouldStart(savedInstanceState: Bundle?): Boolean {
+    private fun shouldNavigateBrowserFragmentOnColdStart(savedInstanceState: Bundle?): Boolean {
         return isActivityColdStarted(intent, savedInstanceState) &&
             !externalSourceIntentProcessors.any {
                 it.process(

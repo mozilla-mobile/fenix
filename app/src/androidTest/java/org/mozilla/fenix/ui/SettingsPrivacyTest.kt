@@ -11,6 +11,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
@@ -449,10 +450,11 @@ class SettingsPrivacyTest {
             confirmDeletionAndAssertSnackbar()
         }
         settingsScreen {
-            verifyBasicsHeading()
+            verifyGeneralHeading()
         }
     }
 
+    @SmokeTest
     @Test
     fun deleteTabsDataTest() {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -472,16 +474,17 @@ class SettingsPrivacyTest {
             confirmDeletionAndAssertSnackbar()
         }
         settingsScreen {
-            verifyBasicsHeading()
+            verifyGeneralHeading()
         }.openSettingsSubMenuDeleteBrowsingData {
             verifyOpenTabsDetails("0")
         }.goBack {
         }.goBack {
         }.openTabDrawer {
-            verifyNoTabsOpened()
+            verifyNoOpenTabsInNormalBrowsing()
         }
     }
 
+    @SmokeTest
     @Test
     fun deleteDeleteBrowsingHistoryDataTest() {
         val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -505,7 +508,7 @@ class SettingsPrivacyTest {
             confirmDeletionAndAssertSnackbar()
             verifyBrowsingHistoryDetails("0")
         }.goBack {
-            verifyBasicsHeading()
+            verifyGeneralHeading()
         }.goBack {
         }
         navigationToolbar {

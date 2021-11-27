@@ -11,6 +11,7 @@ import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.ComposeTestRule
+import androidx.compose.ui.test.junit4.android.ComposeNotIdleException
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithTag
@@ -56,7 +57,7 @@ class SearchRobot {
     fun verifySearchView() = assertSearchView()
     fun verifyBrowserToolbar() = assertBrowserToolbarEditView()
     fun verifyScanButton() = assertScanButton()
-    fun verifySearchEngineButton() = assertSearchEngineButton()
+    fun verifySearchEngineButton() = assertSearchButton()
     fun verifySearchWithText() = assertSearchWithText()
     fun verifySearchEngineResults(rule: ComposeTestRule, searchEngineName: String, count: Int) =
         assertSearchEngineResults(rule, searchEngineName, count)
@@ -213,7 +214,7 @@ class SearchRobot {
 
         fun submitQuery(query: String, interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
             sessionLoadedIdlingResource = SessionLoadedIdlingResource()
-            mDevice.waitForIdle()
+            searchWrapper().waitForExists(waitingTime)
             browserToolbarEditView().setText(query)
             mDevice.pressEnter()
 
@@ -322,7 +323,7 @@ private fun assertScanButton() =
         ).waitForExists(waitingTime)
     )
 
-private fun assertSearchEngineButton() =
+private fun assertSearchButton() =
     assertTrue(
         mDevice.findObject(
             UiSelector().resourceId("$packageName:id/search_engines_shortcut_button")
@@ -351,16 +352,13 @@ fun searchScreen(interact: SearchRobot.() -> Unit): SearchRobot.Transition {
     return SearchRobot.Transition()
 }
 
-private fun assertKeyboardVisibility(isExpectedToBeVisible: Boolean) = {
-    mDevice.waitNotNull(
-        Until.findObject(
-            By.text("Search Engine")
-        ),
-        waitingTime
-    )
+private fun assertKeyboardVisibility(isExpectedToBeVisible: Boolean): () -> Unit = {
+    searchWrapper().waitForExists(waitingTime)
+
     assertEquals(
+        "Keyboard not shown",
         isExpectedToBeVisible,
-        UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+        mDevice
             .executeShellCommand("dumpsys input_method | grep mInputShown")
             .contains("mInputShown=true")
     )
@@ -388,25 +386,35 @@ private fun ComposeTestRule.assertSearchEngineList() {
     onNodeWithText("Wikipedia")
         .assertExists()
         .assertIsDisplayed()
+
+    onNodeWithText("eBay")
+        .assertExists()
+        .assertIsDisplayed()
 }
 
 @OptIn(ExperimentalTestApi::class)
 private fun assertEngineListShortcutContains(rule: ComposeTestRule, searchEngineName: String) {
-    rule.waitForIdle()
-
-    mDevice.waitForObjects(
+    try {
+        rule.waitForIdle()
+    } catch (e: ComposeNotIdleException) {
+        mDevice.pressBack()
+        navigationToolbar {
+        }.clickUrlbar {
+            clickSearchEngineShortcutButton()
+        }
+    } finally {
         mDevice.findObject(
             UiSelector().textContains("Google")
-        )
-    )
+        ).waitForExists(waitingTime)
 
-    rule.onNodeWithTag("mozac.awesomebar.suggestions")
-        .performScrollToIndex(5)
+        rule.onNodeWithTag("mozac.awesomebar.suggestions")
+            .performScrollToIndex(5)
 
-    rule.onNodeWithText(searchEngineName)
-        .assertExists()
-        .assertIsDisplayed()
-        .assertHasClickAction()
+        rule.onNodeWithText(searchEngineName)
+            .assertExists()
+            .assertIsDisplayed()
+            .assertHasClickAction()
+    }
 }
 
 private fun ComposeTestRule.selectDefaultSearchEngine(searchEngine: String) {
@@ -439,5 +447,3 @@ private fun assertPastedToolbarText(expectedText: String) {
         )
     ).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
 }
-
-private fun goBackButton() = onView(allOf(withContentDescription("Navigate up")))

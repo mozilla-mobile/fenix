@@ -31,15 +31,16 @@ import androidx.constraintlayout.widget.ConstraintProperties.BOTTOM
 import androidx.constraintlayout.widget.ConstraintProperties.PARENT_ID
 import androidx.constraintlayout.widget.ConstraintProperties.TOP
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import mozilla.components.browser.toolbar.BrowserToolbar
+import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.storage.HistoryStorage
 import mozilla.components.feature.qr.QrFeature
 import mozilla.components.lib.state.ext.consumeFlow
@@ -51,7 +52,9 @@ import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.support.ktx.android.content.hasCamera
 import mozilla.components.support.ktx.android.content.isPermissionGranted
 import mozilla.components.support.ktx.android.content.res.getSpanned
+import mozilla.components.support.ktx.android.net.isHttpOrHttps
 import mozilla.components.support.ktx.android.view.hideKeyboard
+import mozilla.components.support.ktx.kotlin.toNormalizedUrl
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifAnyChanged
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import mozilla.components.ui.autocomplete.InlineAutocompleteEditText
@@ -230,7 +233,6 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
     }
 
     @SuppressWarnings("LongMethod")
-    @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -286,14 +288,22 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
 
         binding.fillLinkFromClipboard.setOnClickListener {
             requireComponents.analytics.metrics.track(Event.ClipboardSuggestionClicked)
-            view.hideKeyboard()
-            toolbarView.view.clearFocus()
-            (activity as HomeActivity)
-                .openToBrowserAndLoad(
-                    searchTermOrURL = requireContext().components.clipboardHandler.url ?: "",
-                    newTab = store.state.tabId == null,
-                    from = BrowserDirection.FromSearchDialog
-                )
+            val clipboardUrl = requireContext().components.clipboardHandler.extractURL() ?: ""
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                toolbarView.view.edit.updateUrl(clipboardUrl)
+                hideClipboardSection()
+                inlineAutocompleteEditText.setSelection(clipboardUrl.length)
+            } else {
+                view.hideKeyboard()
+                toolbarView.view.clearFocus()
+                (activity as HomeActivity)
+                    .openToBrowserAndLoad(
+                        searchTermOrURL = clipboardUrl,
+                        newTab = store.state.tabId == null,
+                        from = BrowserDirection.FromSearchDialog
+                    )
+            }
         }
 
         val stubListener = ViewStub.OnInflateListener { _, inflated ->
@@ -354,20 +364,26 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         }
     }
 
-    @ExperimentalCoroutinesApi
+    private fun hideClipboardSection() {
+        binding.fillLinkFromClipboard.isVisible = false
+        binding.fillLinkDivider.isVisible = false
+        binding.pillWrapperDivider.isVisible = false
+        binding.clipboardUrl.isVisible = false
+        binding.clipboardTitle.isVisible = false
+        binding.linkIcon.isVisible = false
+    }
+
     private fun observeSuggestionProvidersState() = consumeFlow(store) { flow ->
         flow.map { state -> state.toSearchProviderState() }
             .ifChanged()
             .collect { state -> awesomeBarView.updateSuggestionProvidersVisibility(state) }
     }
 
-    @ExperimentalCoroutinesApi
     private fun observeShortcutsState() = consumeFlow(store) { flow ->
         flow.ifAnyChanged { state -> arrayOf(state.areShortcutsAvailable, state.showSearchShortcuts) }
             .collect { state -> updateSearchShortcutsIcon(state.areShortcutsAvailable, state.showSearchShortcuts) }
     }
 
-    @ExperimentalCoroutinesApi
     private fun observeAwesomeBarState() = consumeFlow(store) { flow ->
         /*
          * firstUpdate is used to make sure we keep the awesomebar hidden on the first run
@@ -386,17 +402,16 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             }
     }
 
-    @ExperimentalCoroutinesApi
     private fun observeClipboardState() = consumeFlow(store) { flow ->
         flow.map { state ->
             val shouldShowView = state.showClipboardSuggestions &&
                 state.query.isEmpty() &&
-                !state.clipboardUrl.isNullOrEmpty() && !state.showSearchShortcuts
-            Pair(shouldShowView, state.clipboardUrl)
+                state.clipboardHasUrl && !state.showSearchShortcuts
+            Pair(shouldShowView, state.clipboardHasUrl)
         }
             .ifChanged()
-            .collect { (shouldShowView, clipboardUrl) ->
-                updateClipboardSuggestion(shouldShowView, clipboardUrl)
+            .collect { (shouldShowView) ->
+                updateClipboardSuggestion(shouldShowView)
             }
     }
 
@@ -420,9 +435,8 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             // We delay querying the clipboard by posting this code to the main thread message queue,
             // because ClipboardManager will return null if the does app not have input focus yet.
             lifecycleScope.launch(Dispatchers.Cached) {
-                context?.components?.clipboardHandler?.url?.let { clipboardUrl ->
-                    store.dispatch(SearchFragmentAction.UpdateClipboardUrl(clipboardUrl))
-                }
+                val hasUrl = context?.components?.clipboardHandler?.containsURL() ?: false
+                store.dispatch(SearchFragmentAction.UpdateClipboardHasUrl(hasUrl))
             }
         }
     }
@@ -508,28 +522,42 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                 requestPermissions(permissions, REQUEST_CODE_CAMERA_PERMISSIONS)
             },
             onScanResult = { result ->
-                binding.qrScanButton.isChecked = false
-                activity?.let {
-                    AlertDialog.Builder(it).apply {
-                        val spannable = resources.getSpanned(
-                            R.string.qr_scanner_confirmation_dialog_message,
-                            getString(R.string.app_name) to StyleSpan(Typeface.BOLD),
-                            result to StyleSpan(Typeface.ITALIC)
-                        )
-                        setMessage(spannable)
-                        setNegativeButton(R.string.qr_scanner_dialog_negative) { dialog: DialogInterface, _ ->
-                            dialog.cancel()
-                        }
-                        setPositiveButton(R.string.qr_scanner_dialog_positive) { dialog: DialogInterface, _ ->
-                            (activity as? HomeActivity)?.openToBrowserAndLoad(
-                                searchTermOrURL = result,
-                                newTab = store.state.tabId == null,
-                                from = BrowserDirection.FromSearchDialog
+                val normalizedUrl = result.toNormalizedUrl()
+                if (!normalizedUrl.toUri().isHttpOrHttps) {
+                    activity?.let {
+                        AlertDialog.Builder(it).apply {
+                            setMessage(R.string.qr_scanner_dialog_invalid)
+                            setPositiveButton(R.string.qr_scanner_dialog_invalid_ok) { dialog: DialogInterface, _ ->
+                                dialog.dismiss()
+                            }
+                            create()
+                        }.show()
+                    }
+                } else {
+                    binding.qrScanButton.isChecked = false
+                    activity?.let {
+                        AlertDialog.Builder(it).apply {
+                            val spannable = resources.getSpanned(
+                                R.string.qr_scanner_confirmation_dialog_message,
+                                getString(R.string.app_name) to StyleSpan(Typeface.BOLD),
+                                normalizedUrl to StyleSpan(Typeface.ITALIC)
                             )
-                            dialog.dismiss()
-                        }
-                        create()
-                    }.show()
+                            setMessage(spannable)
+                            setNegativeButton(R.string.qr_scanner_dialog_negative) { dialog: DialogInterface, _ ->
+                                dialog.cancel()
+                            }
+                            setPositiveButton(R.string.qr_scanner_dialog_positive) { dialog: DialogInterface, _ ->
+                                (activity as? HomeActivity)?.openToBrowserAndLoad(
+                                    searchTermOrURL = normalizedUrl,
+                                    newTab = store.state.tabId == null,
+                                    from = BrowserDirection.FromSearchDialog,
+                                    flags = EngineSession.LoadUrlFlags.external()
+                                )
+                                dialog.dismiss()
+                            }
+                            create()
+                        }.show()
+                    }
                 }
             }
         )
@@ -643,25 +671,29 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
     private fun isSpeechAvailable(): Boolean = speechIntent.resolveActivity(requireContext().packageManager) != null
 
     private fun updateClipboardSuggestion(
-        shouldShowView: Boolean,
-        clipboardUrl: String?
+        shouldShowView: Boolean
     ) {
         binding.fillLinkFromClipboard.isVisible = shouldShowView
         binding.fillLinkDivider.isVisible = shouldShowView
         binding.pillWrapperDivider.isVisible =
             !(shouldShowView && requireComponents.settings.shouldUseBottomToolbar)
-        binding.clipboardUrl.isVisible = shouldShowView
         binding.clipboardTitle.isVisible = shouldShowView
         binding.linkIcon.isVisible = shouldShowView
 
-        binding.clipboardUrl.text = clipboardUrl
+        val contentDescription = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            "${binding.clipboardTitle.text}."
+        } else {
+            val clipboardUrl = context?.components?.clipboardHandler?.extractURL()
 
-        binding.fillLinkFromClipboard.contentDescription =
+            if (clipboardUrl != null && !((activity as HomeActivity).browsingModeManager.mode.isPrivate)) {
+                requireComponents.core.engine.speculativeConnect(clipboardUrl)
+            }
+            binding.clipboardUrl.text = clipboardUrl
+            binding.clipboardUrl.isVisible = shouldShowView
             "${binding.clipboardTitle.text}, ${binding.clipboardUrl.text}."
-
-        if (clipboardUrl != null && !((activity as HomeActivity).browsingModeManager.mode.isPrivate)) {
-            requireComponents.core.engine.speculativeConnect(clipboardUrl)
         }
+
+        binding.fillLinkFromClipboard.contentDescription = contentDescription
     }
 
     private fun updateToolbarContentDescription(source: SearchEngineSource) {

@@ -22,20 +22,22 @@ import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.IntentReceiverActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.Constants.PackageName.YOUTUBE_APP
+import org.mozilla.fenix.helpers.FeatureSettingsHelper
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.RecyclerViewIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper
+import org.mozilla.fenix.helpers.TestAssetHelper.downloadFileName
 import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.helpers.TestHelper.appName
 import org.mozilla.fenix.helpers.TestHelper.assertExternalAppOpens
 import org.mozilla.fenix.helpers.TestHelper.createCustomTabIntent
 import org.mozilla.fenix.helpers.TestHelper.deleteDownloadFromStorage
 import org.mozilla.fenix.helpers.TestHelper.isPackageInstalled
-import org.mozilla.fenix.helpers.TestHelper.restartApp
 import org.mozilla.fenix.helpers.TestHelper.returnToBrowser
 import org.mozilla.fenix.helpers.TestHelper.scrollToElementByText
 import org.mozilla.fenix.helpers.ViewVisibilityIdlingResource
@@ -57,10 +59,13 @@ import org.mozilla.fenix.ui.util.ROMANIAN_LANGUAGE_HEADER
 import org.mozilla.fenix.ui.util.STRING_ONBOARDING_TRACKING_PROTECTION_HEADER
 
 /**
- * Test Suite that contains tests defined as part of the Smoke and Sanity check defined in Test rail.
+ * Test Suite that contains a part of the Smoke and Sanity tests defined in TestRail:
+ * https://testrail.stage.mozaws.net/index.php?/suites/view/3192
+ * Other smoke tests have been marked with the @SmokeTest annotation throughout the ui package in order to limit this class expansion.
  * These tests will verify different functionalities of the app as a way to quickly detect regressions in main areas
  */
 @Suppress("ForbiddenComment")
+@SmokeTest
 class SmokeTest {
     private val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
     private lateinit var mockWebServer: MockWebServer
@@ -68,22 +73,12 @@ class SmokeTest {
     private var addonsListIdlingResource: RecyclerViewIdlingResource? = null
     private var recentlyClosedTabsListIdlingResource: RecyclerViewIdlingResource? = null
     private var readerViewNotification: ViewVisibilityIdlingResource? = null
-    private val downloadFileName = "Globe.svg"
     private val collectionName = "First Collection"
     private var bookmarksListIdlingResource: RecyclerViewIdlingResource? = null
     private var localeListIdlingResource: RecyclerViewIdlingResource? = null
     private val customMenuItem = "TestMenuItem"
-
-    // This finds the dialog fragment child of the homeFragment, otherwise the awesomeBar would return null
-    private fun getAwesomebarView(): View? {
-        val homeFragment = activityTestRule.activity.supportFragmentManager.primaryNavigationFragment
-        val searchDialogFragment = homeFragment?.childFragmentManager?.fragments?.first {
-            it.javaClass.simpleName == "SearchDialogFragment"
-        }
-        return searchDialogFragment?.view?.findViewById(R.id.awesome_bar)
-    }
-
     private lateinit var browserStore: BrowserStore
+    private val featureSettingsHelper = FeatureSettingsHelper()
 
     @get:Rule
     val activityTestRule = AndroidComposeTestRule(
@@ -108,7 +103,9 @@ class SmokeTest {
         // So we are initializing this here instead of in all related tests.
         browserStore = activityTestRule.activity.components.core.store
 
-        activityTestRule.activity.applicationContext.settings().shouldShowJumpBackInCFR = false
+        // disabling the new homepage pop-up that interferes with the tests.
+        featureSettingsHelper.setJumpBackCFREnabled(false)
+
         mockWebServer = MockWebServer().apply {
             dispatcher = AndroidAssetDispatcher()
             start()
@@ -144,6 +141,9 @@ class SmokeTest {
         if (localeListIdlingResource != null) {
             IdlingRegistry.getInstance().unregister(localeListIdlingResource)
         }
+
+        // resetting modified features enabled setting to default
+        featureSettingsHelper.resetAllFeatureFlags()
     }
 
     // Verifies the first run onboarding screen
@@ -311,9 +311,6 @@ class SmokeTest {
     @Test
     // Verifies the Add to top sites option in a tab's 3 dot menu
     fun openMainMenuAddTopSiteTest() {
-        val settings = activityTestRule.activity.applicationContext.settings()
-        settings.shouldShowJumpBackInCFR = false
-
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         navigationToolbar {
@@ -350,6 +347,8 @@ class SmokeTest {
             clickAddShortcutButton()
             clickAddAutomaticallyButton()
         }.openHomeScreenShortcut("Test Page") {
+            verifyUrl(website.url.toString())
+            verifyTabCounter("1")
         }
     }
 
@@ -418,8 +417,10 @@ class SmokeTest {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
         }.openThreeDotMenu {
-        }.sharePage {
-            verifyShareAppsLayout()
+        }.clickShareButton {
+            verifyShareTabLayout()
+            verifySendToDeviceTitle()
+            verifyShareALinkTitle()
         }
     }
 
@@ -471,76 +472,45 @@ class SmokeTest {
 
     @Test
     // Verifies changing the default engine from the Search Shortcut menu
-    fun verifySearchEngineCanBeChangedTemporarilyUsingShortcuts() {
-        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+    fun selectSearchEnginesShortcutTest() {
+        val enginesList = listOf("DuckDuckGo", "Google", "Amazon.com", "Wikipedia", "Bing", "eBay")
 
-        homeScreen {
-        }.openSearch {
-            verifyKeyboardVisibility()
-            clickSearchEngineShortcutButton()
-            verifySearchEngineList(activityTestRule)
-            changeDefaultSearchEngine(activityTestRule, "Amazon.com")
-            verifySearchEngineIcon("Amazon.com")
-        }.goToSearchEngine {
-            mDevice.waitForIdle()
-        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-        }.openTabDrawer {
-        }.openNewTab {
-            clickSearchEngineShortcutButton()
-            mDevice.waitForIdle()
-            changeDefaultSearchEngine(activityTestRule, "Bing")
-            verifySearchEngineIcon("Bing")
-        }.goToSearchEngine {
-            mDevice.waitForIdle()
-        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-        }.openTabDrawer {
-        }.openNewTab {
-            clickSearchEngineShortcutButton()
-            mDevice.waitForIdle()
-            changeDefaultSearchEngine(activityTestRule, "DuckDuckGo")
-            verifySearchEngineIcon("DuckDuckGo")
-        }.goToSearchEngine {
-            mDevice.waitForIdle()
-        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-        }.openTabDrawer {
-        }.openNewTab {
-            clickSearchEngineShortcutButton()
-            changeDefaultSearchEngine(activityTestRule, "Wikipedia")
-            verifySearchEngineIcon("Wikipedia")
-        }.goToSearchEngine {
-            mDevice.waitForIdle()
-        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-        }.openTabDrawer {
-            // Checking whether the next search will be with default or not
-        }.openNewTab {
-        }.goToSearchEngine {
-            mDevice.waitForIdle()
-        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-        }.openNavigationToolbar {
-        }.clickUrlbar {
-            verifyDefaultSearchEngine("Google")
+        for (searchEngine in enginesList) {
+            homeScreen {
+            }.openSearch {
+                verifyKeyboardVisibility()
+                clickSearchEngineShortcutButton()
+                verifySearchEngineList(activityTestRule)
+                changeDefaultSearchEngine(activityTestRule, searchEngine)
+                verifySearchEngineIcon(searchEngine)
+            }.submitQuery("mozilla ") {
+                verifyUrl(searchEngine)
+            }.goToHomescreen { }
         }
     }
 
     @Test
     // Ads a new search engine from the list of custom engines
     fun addPredefinedSearchEngineTest() {
+        val searchEngine = "Reddit"
+
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
         }.openSearchSubMenu {
             openAddSearchEngineMenu()
             verifyAddSearchEngineList()
-            addNewSearchEngine("YouTube")
-            verifyEngineListContains("YouTube")
+            addNewSearchEngine(searchEngine)
+            verifyEngineListContains(searchEngine)
         }.goBack {
         }.goBack {
         }.openSearch {
             verifyKeyboardVisibility()
             clickSearchEngineShortcutButton()
-            mDevice.waitForIdle()
-            activityTestRule.waitForIdle()
-            verifyEnginesListShortcutContains(activityTestRule, "YouTube")
+            verifyEnginesListShortcutContains(activityTestRule, searchEngine)
+            changeDefaultSearchEngine(activityTestRule, searchEngine)
+        }.submitQuery("mozilla ") {
+            verifyUrl(searchEngine)
         }
     }
 
@@ -819,10 +789,11 @@ class SmokeTest {
     }
 
     @Test
-    @Ignore("https://github.com/mozilla-mobile/fenix/issues/21397")
     fun createFirstCollectionTest() {
-        val settings = activityTestRule.activity.applicationContext.settings()
-        settings.shouldShowJumpBackInCFR = false
+        // disabling these features to have better visibility of Collections
+        featureSettingsHelper.setRecentTabsFeatureEnabled(false)
+        featureSettingsHelper.setPocketEnabled(false)
+
         val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
         val secondWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 2)
 
@@ -853,10 +824,11 @@ class SmokeTest {
     }
 
     @Test
-    @Ignore("https://github.com/mozilla-mobile/fenix/issues/21397")
     fun verifyExpandedCollectionItemsTest() {
-        val settings = activityTestRule.activity.applicationContext.settings()
-        settings.shouldShowJumpBackInCFR = false
+        // disabling these features to have better visibility of Collections
+        featureSettingsHelper.setRecentTabsFeatureEnabled(false)
+        featureSettingsHelper.setPocketEnabled(false)
+
         val webPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         navigationToolbar {
@@ -871,8 +843,8 @@ class SmokeTest {
             verifyCollectionIcon()
         }.expandCollection(collectionName) {
             verifyTabSavedInCollection(webPage.title)
-            verifyCollectionTabLogo()
-            verifyCollectionTabUrl()
+            verifyCollectionTabLogo(true)
+            verifyCollectionTabUrl(true)
             verifyShareCollectionButtonIsVisible(true)
             verifyCollectionMenuIsVisible(true)
             verifyCollectionItemRemoveButtonIsVisible(webPage.title, true)
@@ -882,6 +854,28 @@ class SmokeTest {
             verifyTabSavedInCollection(webPage.title, false)
             verifyShareCollectionButtonIsVisible(false)
             verifyCollectionMenuIsVisible(false)
+            verifyCollectionTabLogo(false)
+            verifyCollectionTabUrl(false)
+            verifyCollectionItemRemoveButtonIsVisible(webPage.title, false)
+        }
+
+        homeScreen {
+        }.expandCollection(collectionName) {
+            verifyTabSavedInCollection(webPage.title)
+            verifyCollectionTabLogo(true)
+            verifyCollectionTabUrl(true)
+            verifyShareCollectionButtonIsVisible(true)
+            verifyCollectionMenuIsVisible(true)
+            verifyCollectionItemRemoveButtonIsVisible(webPage.title, true)
+        }.collapseCollection(collectionName) {}
+
+        collectionRobot {
+            verifyTabSavedInCollection(webPage.title, false)
+            verifyShareCollectionButtonIsVisible(false)
+            verifyCollectionMenuIsVisible(false)
+            verifyCollectionTabLogo(false)
+            verifyCollectionTabUrl(false)
+            verifyCollectionItemRemoveButtonIsVisible(webPage.title, false)
         }
     }
 
@@ -909,25 +903,28 @@ class SmokeTest {
 
     @Test
     fun shareCollectionTest() {
-        val settings = activityTestRule.activity.applicationContext.settings()
-        settings.shouldShowJumpBackInCFR = false
-
-        val webPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+        val firstWebsite = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+        val secondWebsite = TestAssetHelper.getGenericAsset(mockWebServer, 2)
+        val sharingApp = "Gmail"
+        val urlString = "${secondWebsite.url}\n\n${firstWebsite.url}"
 
         navigationToolbar {
-        }.enterURLAndEnterToBrowser(webPage.url) {
+        }.enterURLAndEnterToBrowser(firstWebsite.url) {
+            verifyPageContent(firstWebsite.content)
         }.openTabDrawer {
-            createCollection(webPage.title, collectionName)
-            snackBarButtonClick("VIEW")
-        }
-
-        homeScreen {
+            createCollection(firstWebsite.title, collectionName)
+        }.openNewTab {
+        }.submitQuery(secondWebsite.url.toString()) {
+            verifyPageContent(secondWebsite.content)
+        }.openThreeDotMenu {
+        }.openSaveToCollection {
+        }.selectExistingCollection(collectionName) {
+        }.goToHomescreen {
         }.expandCollection(collectionName) {
-            clickShareCollectionButton()
-        }
-
-        homeScreen {
-            verifyShareTabsOverlay()
+        }.clickShareCollectionButton {
+            verifyShareTabsOverlay(firstWebsite.title, secondWebsite.title)
+            selectAppToShareWith(sharingApp)
+            verifySharedTabsIntent(urlString, collectionName)
         }
     }
 
@@ -935,8 +932,6 @@ class SmokeTest {
     // Test running on beta/release builds in CI:
     // caution when making changes to it, so they don't block the builds
     fun deleteCollectionTest() {
-        val settings = activityTestRule.activity.applicationContext.settings()
-        settings.shouldShowJumpBackInCFR = false
         val webPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         navigationToolbar {
@@ -999,40 +994,48 @@ class SmokeTest {
 
     @Test
     fun shareTabsFromTabsTrayTest() {
-        val website = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+        val firstWebsite = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+        val secondWebsite = TestAssetHelper.getGenericAsset(mockWebServer, 2)
+        val firstWebsiteTitle = firstWebsite.title
+        val secondWebsiteTitle = secondWebsite.title
+        val sharingApp = "Gmail"
+        val sharedUrlsString = "${firstWebsite.url}\n\n${secondWebsite.url}"
 
         homeScreen {
         }.openNavigationToolbar {
-        }.enterURLAndEnterToBrowser(website.url) {
-            mDevice.waitForIdle()
+        }.enterURLAndEnterToBrowser(firstWebsite.url) {
+            verifyPageContent(firstWebsite.content)
         }.openTabDrawer {
-            verifyNormalModeSelected()
-            verifyExistingTabList()
+        }.openNewTab {
+        }.submitQuery(secondWebsite.url.toString()) {
+            verifyPageContent(secondWebsite.content)
+        }.openTabDrawer {
             verifyExistingOpenTabs("Test_Page_1")
-            verifyTabTrayOverflowMenu(true)
+            verifyExistingOpenTabs("Test_Page_2")
         }.openTabsListThreeDotMenu {
             verifyShareAllTabsButton()
-            clickShareAllTabsButton()
-            verifyShareTabsOverlay()
+        }.clickShareAllTabsButton {
+            verifyShareTabsOverlay(firstWebsiteTitle, secondWebsiteTitle)
+            selectAppToShareWith(sharingApp)
+            verifySharedTabsIntent(
+                sharedUrlsString,
+                "$firstWebsiteTitle, $secondWebsiteTitle"
+            )
         }
     }
 
     @Test
     fun emptyTabsTrayViewPrivateBrowsingTest() {
-        homeScreen {
-        }.dismissOnboarding()
-
-        homeScreen {
-        }.openTabDrawer {
+        navigationToolbar {
+        }.openTabTray {
         }.toggleToPrivateTabs() {
-            verifyPrivateModeSelected()
-            verifyNormalBrowsingButtonIsDisplayed()
-            verifyNoTabsOpened()
+            verifyNormalBrowsingButtonIsSelected(false)
+            verifyPrivateBrowsingButtonIsSelected(true)
+            verifySyncedTabsButtonIsSelected(false)
+            verifyNoOpenTabsInPrivateBrowsing()
+            verifyPrivateBrowsingNewTabButton()
             verifyTabTrayOverflowMenu(true)
-            verifyNewTabButton()
-        }.openTabsListThreeDotMenu {
-            verifyTabSettingsButton()
-            verifyRecentlyClosedTabsButton()
+            verifyEmptyTabsTrayMenuButtons()
         }
     }
 
@@ -1048,14 +1051,19 @@ class SmokeTest {
         }.enterURLAndEnterToBrowser(website.url) {
             mDevice.waitForIdle()
         }.openTabDrawer {
-            verifyPrivateModeSelected()
-            verifyNormalBrowsingButtonIsDisplayed()
-            verifyExistingTabList()
-            verifyExistingOpenTabs("Test_Page_1")
-            verifyCloseTabsButton("Test_Page_1")
-            verifyOpenedTabThumbnail()
+            verifyNormalBrowsingButtonIsSelected(false)
+            verifyPrivateBrowsingButtonIsSelected(true)
+            verifySyncedTabsButtonIsSelected(false)
             verifyTabTrayOverflowMenu(true)
-            verifyNewTabButton()
+            verifyTabsTrayCounter()
+            verifyExistingTabList()
+            verifyExistingOpenTabs(website.title)
+            verifyCloseTabsButton(website.title)
+            verifyOpenedTabThumbnail()
+            verifyPrivateBrowsingNewTabButton()
+        }.openTab(website.title) {
+            verifyUrl(website.url.toString())
+            verifyTabCounter("1")
         }
     }
 
@@ -1163,7 +1171,7 @@ class SmokeTest {
         }.openTabCrashReporter {
         }.clickTabCrashedCloseButton {
         }.openTabDrawer {
-            verifyNoTabsOpened()
+            verifyNoOpenTabsInNormalBrowsing()
         }
     }
 
@@ -1354,8 +1362,6 @@ class SmokeTest {
 
     @Test
     fun goToHomeScreenBottomToolbarTest() {
-        val settings = activityTestRule.activity.applicationContext.settings()
-        settings.shouldShowJumpBackInCFR = false
         val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         navigationToolbar {
@@ -1368,9 +1374,6 @@ class SmokeTest {
 
     @Test
     fun goToHomeScreenTopToolbarTest() {
-        val settings = activityTestRule.activity.applicationContext.settings()
-        settings.shouldShowJumpBackInCFR = false
-
         val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         homeScreen {
@@ -1433,29 +1436,6 @@ class SmokeTest {
             verifyTabViewOptions()
             verifyCloseTabsOptions()
             verifyMoveOldTabsToInactiveOptions()
-        }
-    }
-
-    @Ignore // to be fixed here https://github.com/mozilla-mobile/fenix/issues/21747
-    @Test
-    fun alwaysStartOnHomeTest() {
-        val settings = activityTestRule.activity.applicationContext.settings()
-        settings.shouldShowJumpBackInCFR = false
-        val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(genericURL.url) {
-            mDevice.waitForIdle()
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openTabsSubMenu {
-            clickAlwaysStartOnHomeToggle()
-        }
-
-        restartApp(activityTestRule.activityRule)
-
-        homeScreen {
-            verifyHomeScreen()
         }
     }
 }

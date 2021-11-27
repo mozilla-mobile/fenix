@@ -19,7 +19,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import org.mozilla.fenix.R
@@ -42,7 +41,6 @@ import org.mozilla.fenix.settings.logins.togglePasswordReveal
 /**
  * Displays the editable saved login information for a single website
  */
-@ExperimentalCoroutinesApi
 @Suppress("TooManyFunctions", "NestedBlockDepth", "ForbiddenComment")
 class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
 
@@ -235,7 +233,7 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
                 layout.setErrorIconDrawable(R.drawable.mozac_ic_warning_with_bottom_padding)
                 layout.setErrorIconTintList(
                     ColorStateList.valueOf(
-                        ContextCompat.getColor(requireContext(), R.color.design_error)
+                        ContextCompat.getColor(requireContext(), R.color.destructive_normal_theme)
                     )
                 )
                 clearButton.isVisible = false
@@ -252,7 +250,7 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
             layout.setErrorIconDrawable(R.drawable.mozac_ic_warning_with_bottom_padding)
             layout.setErrorIconTintList(
                 ColorStateList.valueOf(
-                    ContextCompat.getColor(requireContext(), R.color.design_error)
+                    ContextCompat.getColor(requireContext(), R.color.destructive_normal_theme)
                 )
             )
         }

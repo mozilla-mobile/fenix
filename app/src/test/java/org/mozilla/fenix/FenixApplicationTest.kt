@@ -4,6 +4,8 @@
 
 package org.mozilla.fenix
 
+import android.content.pm.PackageManager
+import android.os.Build
 import androidx.test.core.app.ApplicationProvider
 import io.mockk.Runs
 import io.mockk.every
@@ -32,6 +34,7 @@ import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.utils.BrowsersCache
 import org.mozilla.fenix.utils.Settings
+import org.robolectric.annotation.Config
 
 @RunWith(FenixRobolectricTestRunner::class)
 class FenixApplicationTest {
@@ -80,11 +83,17 @@ class FenixApplicationTest {
     }
 
     @Test
+    @Config(sdk = [Build.VERSION_CODES.O])
     fun `WHEN setStartupMetrics is called THEN sets some base metrics`() {
         val expectedAppName = "org.mozilla.fenix"
+        val expectedAppInstallSource = "org.mozilla.install.source"
         val settings: Settings = mockk()
         val application = spyk(application)
+        val packageManager: PackageManager = mockk()
 
+        every { application.packageManager } returns packageManager
+        @Suppress("DEPRECATION")
+        every { packageManager.getInstallerPackageName(any()) } returns expectedAppInstallSource
         every { browsersCache.all(any()).isDefaultBrowser } returns true
         every { mozillaProductDetector.getMozillaBrowserDefault(any()) } returns expectedAppName
         every { mozillaProductDetector.getInstalledMozillaProducts(any()) } returns listOf(expectedAppName)
@@ -108,6 +117,7 @@ class FenixApplicationTest {
         every { settings.shouldUseTrackingProtection } returns true
         every { settings.isRemoteDebuggingEnabled } returns true
         every { settings.isTelemetryEnabled } returns true
+        every { settings.isExperimentationEnabled } returns true
         every { settings.shouldShowHistorySuggestions } returns true
         every { settings.shouldShowBookmarkSuggestions } returns true
         every { settings.shouldShowClipboardSuggestions } returns true
@@ -128,6 +138,7 @@ class FenixApplicationTest {
         every { settings.historyMetadataUIFeature } returns true
         every { settings.showPocketRecommendationsFeature } returns true
         every { settings.showPocketRecommendationsFeature } returns true
+        every { settings.searchTermTabGroupsAreEnabled } returns true
         every { application.reportHomeScreenMetrics(settings) } just Runs
         every { settings.inactiveTabsAreEnabled } returns true
 
@@ -154,6 +165,7 @@ class FenixApplicationTest {
         assertEquals(true, Preferences.searchSuggestionsEnabled.testGetValue())
         assertEquals(true, Preferences.remoteDebuggingEnabled.testGetValue())
         assertEquals(true, Preferences.telemetryEnabled.testGetValue())
+        assertEquals(true, Preferences.studiesEnabled.testGetValue())
         assertEquals(true, Preferences.browsingHistorySuggestion.testGetValue())
         assertEquals(true, Preferences.bookmarksSuggestion.testGetValue())
         assertEquals(true, Preferences.clipboardSuggestionsEnabled.testGetValue())
@@ -161,11 +173,13 @@ class FenixApplicationTest {
         assertEquals(true, Preferences.voiceSearchEnabled.testGetValue())
         assertEquals(true, Preferences.openLinksInAppEnabled.testGetValue())
         assertEquals(true, Preferences.signedInSync.testGetValue())
+        assertEquals(true, Preferences.searchTermGroupsEnabled.testGetValue())
         assertEquals(emptyList<String>(), Preferences.syncItems.testGetValue())
         assertEquals("fixed_top", Preferences.toolbarPositionSetting.testGetValue())
         assertEquals("standard", Preferences.enhancedTrackingProtection.testGetValue())
         assertEquals(listOf("switch", "touch exploration"), Preferences.accessibilityServices.testGetValue())
         assertEquals(true, Preferences.inactiveTabsEnabled.testGetValue())
+        assertEquals(expectedAppInstallSource, Metrics.installSource.testGetValue())
 
         // Verify that search engine defaults are NOT set. This test does
         // not mock most of the objects telemetry is collected from.

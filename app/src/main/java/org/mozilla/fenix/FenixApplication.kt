@@ -626,6 +626,14 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
 
             tabViewSetting.set(settings.getTabViewPingString())
             closeTabSetting.set(settings.getTabTimeoutPingString())
+
+            val installSourcePackage = if (SDK_INT >= Build.VERSION_CODES.R) {
+                packageManager.getInstallSourceInfo(packageName).installingPackageName
+            } else {
+                @Suppress("DEPRECATION")
+                packageManager.getInstallerPackageName(packageName)
+            }
+            installSource.set(installSourcePackage.orEmpty())
         }
 
         with(AndroidAutofill) {
@@ -652,6 +660,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         with(Preferences) {
             searchSuggestionsEnabled.set(settings.shouldShowSearchSuggestions)
             remoteDebuggingEnabled.set(settings.isRemoteDebuggingEnabled)
+            studiesEnabled.set(settings.isExperimentationEnabled)
             telemetryEnabled.set(settings.isTelemetryEnabled)
             browsingHistorySuggestion.set(settings.shouldShowHistorySuggestions)
             bookmarksSuggestion.set(settings.shouldShowBookmarkSuggestions)
@@ -660,6 +669,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             voiceSearchEnabled.set(settings.shouldShowVoiceSearch)
             openLinksInAppEnabled.set(settings.openLinksInExternalApp)
             signedInSync.set(settings.signedInFxaAccount)
+            searchTermGroupsEnabled.set(settings.searchTermTabGroupsAreEnabled)
 
             val syncedItems = SyncEnginesStorage(applicationContext).getStatus().entries.filter {
                 it.value
@@ -713,6 +723,14 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
 
     @VisibleForTesting
     internal fun reportHomeScreenMetrics(settings: Settings) {
+        CustomizeHome.openingScreen.set(
+            when {
+                settings.alwaysOpenTheHomepageWhenOpeningTheApp -> "homepage"
+                settings.alwaysOpenTheLastTabWhenOpeningTheApp -> "last tab"
+                settings.openHomepageAfterFourHoursOfInactivity -> "homepage after four hours"
+                else -> ""
+            }
+        )
         components.analytics.experiments.register(object : NimbusInterface.Observer {
             override fun onUpdatesApplied(updated: List<EnrolledExperiment>) {
                 CustomizeHome.jumpBackIn.set(settings.showRecentTabsFeature)

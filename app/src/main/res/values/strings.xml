@@ -117,7 +117,11 @@
     <!-- Content description for close button in the auto-close dialog of the inactive tabs. -->
     <string name="tab_tray_inactive_auto_close_button_content_description">Close</string>
     <!-- Text for turn on auto close tabs button in the auto-close dialog of the inactive tabs. -->
-    <string name="tab_tray_inactive_turn_on_auto_close_button">Turn on auto close</string>
+    <string name="tab_tray_inactive_turn_on_auto_close_button" moz:removedIn="95" tools:ignore="UnusedResources">Turn on auto close</string>
+
+    <!-- Text for turn on auto close tabs button in the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_turn_on_auto_close_button_2">Turn on auto-close</string>
+
 
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
@@ -138,8 +142,11 @@
         The first parameter is the search term that the user used. (for example: your search for "cat")-->
     <string name="recent_tabs_search_term">Your search for \"%1$s\"</string>
     <!-- Text for the number of tabs in a group in the 'Jump back in' section of the new tab
-        The first parameter is the count for number of sites in the group.  This number will always be more than one. -->
-    <string name="recent_tabs_search_term_count">Sites: %1$s</string>
+    The first parameter is the count for number of sites in the group.  This number will always be more than one. -->
+    <string name="recent_tabs_search_term_count" moz:removedIn="96" tools:ignore="UnusedResources">Sites: %1$s</string>
+    <!-- Text for the number of tabs in a group in the 'Jump back in' section of the new tab
+        %d is a placeholder for the number of sites in the group. This number will always be more than one. -->
+    <string name="recent_tabs_search_term_count_2">%d sites</string>
 
     <!-- History Metadata -->
     <!-- Header text for a section on the home screen that displays grouped highlights from the
@@ -859,8 +866,8 @@
     <string name="history_menu_open_in_new_tab_button" moz:removedIn="94" tools:ignore="UnusedResources">Open in new tab</string>
     <!-- History overflow menu open in private tab button -->
     <string name="history_menu_open_in_private_tab_button" moz:removedIn="94" tools:ignore="UnusedResources">Open in private tab</string>
-    <!-- Text for the button to delete a single history item -->
-    <string name="history_delete_item" moz:removedIn="94" tools:ignore="UnusedResources">Delete</string>
+    <!-- Context description text for the button to delete a single history item -->
+    <string name="history_delete_item">Delete</string>
     <!-- History multi select title in app bar
     The first parameter is the number of bookmarks selected -->
     <string name="history_multi_select_title">%1$d selected</string>
@@ -1208,6 +1215,10 @@
     <string name="qr_scanner_dialog_positive">ALLOW</string>
     <!-- QR code scanner prompt dialog positive option to deny navigation to scanned link -->
     <string name="qr_scanner_dialog_negative">DENY</string>
+    <!-- QR code scanner prompt dialog error message shown when a hostname does not contain http or https. -->
+    <string name="qr_scanner_dialog_invalid">Web address not valid.</string>
+    <!-- QR code scanner prompt dialog positive option when there is an error -->
+    <string name="qr_scanner_dialog_invalid_ok">OK</string>
     <!-- Tab collection deletion prompt dialog message. Placeholder will be replaced with the collection name -->
     <string name="tab_collection_dialog_message">Are you sure you want to delete %1$s?</string>
     <!-- Collection and tab deletion prompt dialog message. This will show when the last tab from a collection is deleted -->
@@ -1334,11 +1345,11 @@
     <!-- text for the firefox account onboarding card header when we detect you're already signed in to
         another Firefox browser. (The word `Firefox` should not be translated)
         The first parameter is the email of the detected user's account -->
-    <string name="onboarding_firefox_account_auto_signin_header_3">You are signed in as %s on another Firefox browser on this device. Would you like to sign in with this account?</string>
+    <string name="onboarding_firefox_account_auto_signin_header_3" moz:removedIn="96" tools:ignore="UnusedResources">You are signed in as %s on another Firefox browser on this device. Would you like to sign in with this account?</string>
     <!-- text for the button to confirm automatic sign-in -->
-    <string name="onboarding_firefox_account_auto_signin_confirm">Yes, sign me in</string>
+    <string name="onboarding_firefox_account_auto_signin_confirm" moz:removedIn="96" tools:ignore="UnusedResources">Yes, sign me in</string>
     <!-- text for the automatic sign-in button while signing in is in process -->
-    <string name="onboarding_firefox_account_signing_in">Signing in&#8230;</string>
+    <string name="onboarding_firefox_account_signing_in" moz:removedIn="96" tools:ignore="UnusedResources">Signing in&#8230;</string>
     <!-- text for the button to manually sign into Firefox account. -->
     <string name="onboarding_firefox_account_sign_in_1">Sign up</string>
     <!-- text for the button to stay signed out when presented with an option to automatically sign-in. -->
@@ -1346,7 +1357,7 @@
     <!-- text to display in the snackbar once account is signed-in -->
     <string name="onboarding_firefox_account_sync_is_on">Sync is on</string>
     <!-- text to display in the snackbar if automatic sign-in fails. user may try again -->
-    <string name="onboarding_firefox_account_automatic_signin_failed">Failed to sign-in</string>
+    <string name="onboarding_firefox_account_automatic_signin_failed" moz:removedIn="96" tools:ignore="UnusedResources">Failed to sign-in</string>
     <!-- text for the tracking protection onboarding card header -->
     <string name="onboarding_tracking_protection_header_3">Always-on privacy</string>
     <!-- text for the tracking protection card description. 'Firefox' intentionally hardcoded here -->
@@ -1944,11 +1955,11 @@
     <!-- Content description for closing all inactive tabs -->
     <string name="inactive_tabs_delete_all">Close all inactive tabs</string>
     <!-- A description below the section of "inactive" tabs to notify the user when those tabs will be closed, if appropriate. See strings inactive_tabs_30_days and inactive_tabs_7_days for placeholders options. -->
-    <string name="inactive_tabs_description" moz:removedIn="93" tools:ignore="UnusedResources">Tabs are available here for %s. After that time, tabs will be automatically closed.</string>
+    <string name="inactive_tabs_description" moz:removedIn="95" tools:ignore="UnusedResources">Tabs are available here for %s. After that time, tabs will be automatically closed.</string>
     <!-- The amount of time until a tab in the "inactive" section of the tabs tray will be closed. See string inactive_tabs_description as well -->
-    <string name="inactive_tabs_30_days" moz:removedIn="93" tools:ignore="UnusedResources">30 days</string>
+    <string name="inactive_tabs_30_days" moz:removedIn="95" tools:ignore="UnusedResources">30 days</string>
     <!-- The amount of time until a tab in the "inactive" section of the tabs tray will be closed. See string inactive_tabs_description as well -->
-    <string name="inactive_tabs_7_days" moz:removedIn="93" tools:ignore="UnusedResources">1 week</string>
+    <string name="inactive_tabs_7_days" moz:removedIn="95" tools:ignore="UnusedResources">1 week</string>
 
     <!-- Inactive tabs auto-close message in the tabs tray -->
     <!-- The header text of the auto-close message when the user is asked if they want to turn on the auto-closing of inactive tabs. -->
@@ -1957,22 +1968,33 @@
     <string name="inactive_tabs_auto_close_message_description" tools:ignore="UnusedResources">Firefox can close tabs you haven’t viewed over the past month.</string>
     <!-- A call to action below the description to allow the user to turn on the auto closing of inactive tabs. -->
     <string name="inactive_tabs_auto_close_message_action" tools:ignore="UnusedResources">TURN ON AUTO CLOSE</string>
+    <!-- Text for the snackbar to confirm auto-close is enabled for inactive tabs -->
+    <string name="inactive_tabs_auto_close_message_snackbar">Auto-close enabled</string>
 
     <!-- Inactive tabs survey -->
     <!-- Header text for the inactive tabs survey asking for feedback to improve the inactive tabs feature. -->
-    <string name="inactive_tabs_survey_header" tools:ignore="UnusedResources">Please help us to improve</string>
+    <string name="inactive_tabs_survey_header" moz:removedIn="95" tools:ignore="UnusedResources">Help improve Firefox</string>
+    <!-- Header text for the inactive tabs survey asking for feedback to improve the inactive tabs feature. -->
+    <string name="inactive_tabs_survey_header_1">Help improve Firefox</string>
+
     <!-- Content text for the inactive tabs survey asking the primary survey feedback question. -->
-    <string name="inactive_tabs_survey_content" tools:ignore="UnusedResources">Why did you disable inactive tabs?</string>
+    <string name="inactive_tabs_survey_content">Why did you disable inactive tabs?</string>
     <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string name="inactive_tabs_survey_not_interested_option" tools:ignore="UnusedResources">Not interested in the feature</string>
+    <string name="inactive_tabs_survey_do_not_understand">I don’t understand how it works</string>
     <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string name="inactive_tabs_survey_time_too_long_option" tools:ignore="UnusedResources">Time to inactive is too long</string>
+    <string name="inactive_tabs_survey_do_it_myself">I like to clear out old tabs myself</string>
     <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string name="inactive_tabs_survey_time_too_short_option" tools:ignore="UnusedResources">Time to inactive is too short</string>
+    <string name="inactive_tabs_survey_time_too_long_option" moz:removedIn="95" tools:ignore="UnusedResources">The two-week time period is too long</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string name="inactive_tabs_survey_time_too_long_option_1">The two-week time period is too long</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string name="inactive_tabs_survey_time_too_short_option" moz:removedIn="95" tools:ignore="UnusedResources">The two-week time period is too short</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string name="inactive_tabs_survey_time_too_short_option_1">The two-week time period is too short</string>
     <!-- Confirmation button text to submit the feedback for the inactive tabs survey. -->
-    <string name="inactive_tabs_survey_send_button" tools:ignore="UnusedResources">Send</string>
+    <string name="inactive_tabs_survey_send_button">Send</string>
     <!-- Content description for inactive tabs survey close button -->
-    <string name="inactive_tabs_survey_close_button_content_description" tools:ignore="UnusedResources">Close</string>
+    <string name="inactive_tabs_survey_close_button_content_description">Close</string>
 
     <!-- Default browser experiment -->
     <string name="default_browser_experiment_card_text">Set links from websites, emails, and messages to open automatically in Firefox.</string>

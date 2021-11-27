@@ -22,7 +22,6 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import org.mozilla.fenix.R
@@ -30,19 +29,18 @@ import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.databinding.FragmentAddLoginBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.redirectToReAuth
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.ext.toEditable
-import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.settings.logins.controller.SavedLoginsStorageController
-import org.mozilla.fenix.settings.logins.interactor.AddLoginInteractor
 import org.mozilla.fenix.settings.logins.LoginsFragmentStore
 import org.mozilla.fenix.settings.logins.SavedLogin
+import org.mozilla.fenix.settings.logins.controller.SavedLoginsStorageController
 import org.mozilla.fenix.settings.logins.createInitialLoginsListState
+import org.mozilla.fenix.settings.logins.interactor.AddLoginInteractor
 
 /**
  * Displays the editable new login information for a single website
  */
-@ExperimentalCoroutinesApi
 @Suppress("TooManyFunctions", "NestedBlockDepth", "ForbiddenComment")
 class AddLoginFragment : Fragment(R.layout.fragment_add_login) {
 
@@ -258,7 +256,7 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login) {
                 layout.setErrorIconDrawable(R.drawable.mozac_ic_warning_with_bottom_padding)
                 layout.setErrorIconTintList(
                     ColorStateList.valueOf(
-                        ContextCompat.getColor(requireContext(), R.color.design_error)
+                        ContextCompat.getColor(requireContext(), R.color.destructive_normal_theme)
                     )
                 )
             }
@@ -269,7 +267,7 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login) {
                 layout.setErrorIconDrawable(R.drawable.mozac_ic_warning_with_bottom_padding)
                 layout.setErrorIconTintList(
                     ColorStateList.valueOf(
-                        ContextCompat.getColor(requireContext(), R.color.design_error)
+                        ContextCompat.getColor(requireContext(), R.color.destructive_normal_theme)
                     )
                 )
             }
@@ -292,7 +290,7 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login) {
             layout.setErrorIconDrawable(R.drawable.mozac_ic_warning_with_bottom_padding)
             layout.setErrorIconTintList(
                 ColorStateList.valueOf(
-                    ContextCompat.getColor(requireContext(), R.color.design_error)
+                    ContextCompat.getColor(requireContext(), R.color.destructive_normal_theme)
                 )
             )
         }
@@ -305,7 +303,7 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login) {
             layout.setErrorIconDrawable(R.drawable.mozac_ic_warning_with_bottom_padding)
             layout.setErrorIconTintList(
                 ColorStateList.valueOf(
-                    ContextCompat.getColor(requireContext(), R.color.design_error)
+                    ContextCompat.getColor(requireContext(), R.color.destructive_normal_theme)
                 )
             )
         }

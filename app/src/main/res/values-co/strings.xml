@@ -85,13 +85,13 @@
     <!-- Text for the main message -->
     <string name="cfr_message">Aghjunghjite un accurtatoghju per apre unghjette private da u vostru screnu d’accolta.</string>
     <!-- Text for the positive button -->
-    <string name="cfr_pos_button_text">Aghjunghje un accurtatoghjiu</string>
+    <string name="cfr_pos_button_text">Aghjunghje un accurtatoghju</string>
     <!-- Text for the negative button -->
     <string name="cfr_neg_button_text">Innò, vi ringraziu</string>
 
     <!-- Open in App "contextual feature recommendation" (CFR) -->
     <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
-    <string name="open_in_app_cfr_info_message">Pudete cunfigurà Firefox per apre autumaticamente e leie in d’altre appiecazioni.</string>
+    <string name="open_in_app_cfr_info_message">Pudete cunfigurà Firefox per apre autumaticamente i liami in d’altre appiecazioni.</string>
     <!-- Text for the positive action button -->
     <string name="open_in_app_cfr_positive_button_text">Apre e preferenze</string>
     <!-- Text for the negative action button -->
@@ -123,7 +123,11 @@
     <!-- Content description for close button in the auto-close dialog of the inactive tabs. -->
     <string name="tab_tray_inactive_auto_close_button_content_description">Chjode</string>
     <!-- Text for turn on auto close tabs button in the auto-close dialog of the inactive tabs. -->
-    <string name="tab_tray_inactive_turn_on_auto_close_button">Attivà a chjusura autumatica</string>
+    <string moz:removedIn="95" name="tab_tray_inactive_turn_on_auto_close_button" tools:ignore="UnusedResources">Attivà a chjusura autumatica</string>
+
+    <!-- Text for turn on auto close tabs button in the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_turn_on_auto_close_button_2">Attivà a chjusura autumatica</string>
+
 
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
@@ -374,7 +378,7 @@
     <!-- Will inform the user of the risk of activating Allow screenshots in private browsing option -->
     <string name="preferences_screenshots_in_private_mode_disclaimer">S’ella hè permessa, l’unghjette private seranu ancu videvule quandu parechje appiecazioni sò aperte</string>
     <!-- Preference for adding private browsing shortcut -->
-    <string name="preferences_add_private_browsing_shortcut">Aghjunghje un accurtatoghjiu per a navigazione privata</string>
+    <string name="preferences_add_private_browsing_shortcut">Aghjunghje un accurtatoghju per a navigazione privata</string>
     <!-- Preference for accessibility -->
     <string name="preferences_accessibility">Accessibilità</string>
     <!-- Preference to override the Firefox Account server -->
@@ -1156,7 +1160,7 @@
         "Share" button. Opens the share menu when pressed. -->
     <string name="share_button_content_description">Sparte</string>
     <!-- Sub-header in the dialog to share a link to another app -->
-    <string name="share_link_subheader">Sparte una leia</string>
+    <string name="share_link_subheader">Sparte un liame</string>
     <!-- Sub-header in the dialog to share a link to another sync device -->
     <string name="share_device_subheader">Mandà à l’apparechju</string>
     <!-- Sub-header in the dialog to share a link to an app from the full list -->
@@ -1254,6 +1258,10 @@
     <string name="qr_scanner_dialog_positive">PERMETTE</string>
     <!-- QR code scanner prompt dialog positive option to deny navigation to scanned link -->
     <string name="qr_scanner_dialog_negative">RICUSÀ</string>
+    <!-- QR code scanner prompt dialog error message shown when a hostname does not contain http or https. -->
+    <string name="qr_scanner_dialog_invalid">L’indirizzi web ùn sò micca accettevule.</string>
+    <!-- QR code scanner prompt dialog positive option when there is an error -->
+    <string name="qr_scanner_dialog_invalid_ok">Vai</string>
     <!-- Tab collection deletion prompt dialog message. Placeholder will be replaced with the collection name -->
     <string name="tab_collection_dialog_message">Site sicuru di vulè squassà %1$s ?</string>
     <!-- Collection and tab deletion prompt dialog message. This will show when the last tab from a collection is deleted -->
@@ -1625,7 +1633,7 @@
     <!-- Paste the text in the clipboard -->
     <string name="browser_toolbar_long_press_popup_paste">Incullà</string>
     <!-- Snackbar message shown after an URL has been copied to clipboard. -->
-    <string name="browser_toolbar_url_copied_to_clipboard_snackbar">Indirizzu cupiatu ver di u preme’papei</string>
+    <string name="browser_toolbar_url_copied_to_clipboard_snackbar">Indirizzu cupiatu in u preme’papei</string>
 
     <!-- Title text for the Add To Homescreen dialog -->
     <string name="add_to_homescreen_title">Aghjunghje à u screnu d’accolta</string>
@@ -1715,11 +1723,11 @@
     <!-- Negative confirmation that Fenix should not save the new or updated login -->
     <string name="logins_doorhanger_save_dont_save">Ùn arregistrà micca</string>
     <!-- Shown in snackbar to tell user that the password has been copied -->
-    <string name="logins_password_copied">Parolla d’intesa cupiata ver di u preme’papei</string>
+    <string name="logins_password_copied">Parolla d’intesa cupiata in u preme’papei</string>
     <!-- Shown in snackbar to tell user that the username has been copied -->
-    <string name="logins_username_copied">Nome d’utilizatore cupiatu ver di u preme’papei</string>
+    <string name="logins_username_copied">Nome d’utilizatore cupiatu in u preme’papei</string>
     <!-- Shown in snackbar to tell user that the site has been copied -->
-    <string name="logins_site_copied">Situ cupiatu ver di u preme’papei</string>
+    <string name="logins_site_copied">Situ cupiatu in u preme’papei</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a password in logins-->
     <string name="saved_logins_copy_password">Cupià a parolla d’intesa</string>
     <!-- Content Description (for screenreaders etc) read for the button to clear a password while editing a login-->
@@ -1856,7 +1864,7 @@
     <!-- Accessibility description for the form in which details about the custom search engine are entered -->
     <string name="search_add_custom_engine_form_description">Detaglii di u mutore di ricerca persunalizatu</string>
     <!-- Accessibility description for the 'Learn more' link -->
-    <string name="search_add_custom_engine_learn_more_description">Leia per sapene di più</string>
+    <string name="search_add_custom_engine_learn_more_description">Liame per sapene di più</string>
 
     <!-- Text shown when a user leaves the name field empty -->
     <string name="search_add_custom_engine_error_empty_name">Scrivite u nome di u mutore di ricerca</string>
@@ -2021,11 +2029,11 @@
     <!-- Content description for closing all inactive tabs -->
     <string name="inactive_tabs_delete_all">Chjode tutte l’unghjette inattive</string>
     <!-- A description below the section of "inactive" tabs to notify the user when those tabs will be closed, if appropriate. See strings inactive_tabs_30_days and inactive_tabs_7_days for placeholders options. -->
-    <string moz:removedIn="93" name="inactive_tabs_description" tools:ignore="UnusedResources">L’unghjette sò dispunibule quì durante %s. Dopu à stu tempu, seranu chjose autumaticamente.</string>
+    <string moz:removedIn="95" name="inactive_tabs_description" tools:ignore="UnusedResources">L’unghjette sò dispunibule quì durante %s. Dopu à stu tempu, seranu chjose autumaticamente.</string>
     <!-- The amount of time until a tab in the "inactive" section of the tabs tray will be closed. See string inactive_tabs_description as well -->
-    <string moz:removedIn="93" name="inactive_tabs_30_days" tools:ignore="UnusedResources">30 ghjorni</string>
+    <string moz:removedIn="95" name="inactive_tabs_30_days" tools:ignore="UnusedResources">30 ghjorni</string>
     <!-- The amount of time until a tab in the "inactive" section of the tabs tray will be closed. See string inactive_tabs_description as well -->
-    <string moz:removedIn="93" name="inactive_tabs_7_days" tools:ignore="UnusedResources">1 settimana</string>
+    <string moz:removedIn="95" name="inactive_tabs_7_days" tools:ignore="UnusedResources">1 settimana</string>
 
     <!-- Inactive tabs auto-close message in the tabs tray -->
     <!-- The header text of the auto-close message when the user is asked if they want to turn on the auto-closing of inactive tabs. -->
@@ -2035,25 +2043,37 @@
     <!-- A call to action below the description to allow the user to turn on the auto closing of inactive tabs. -->
     <string name="inactive_tabs_auto_close_message_action" tools:ignore="UnusedResources">ATTIVÀ A CHJUSURA AUTUMATICA</string>
 
+    <!-- Text for the snackbar to confirm auto-close is enabled for inactive tabs -->
+    <string name="inactive_tabs_auto_close_message_snackbar">Chjusura autumatica attivata</string>
+
     <!-- Inactive tabs survey -->
     <!-- Header text for the inactive tabs survey asking for feedback to improve the inactive tabs feature. -->
-    <string name="inactive_tabs_survey_header" tools:ignore="UnusedResources">Per piacè, aiutateci à amendacci</string>
+    <string moz:removedIn="95" name="inactive_tabs_survey_header" tools:ignore="UnusedResources">Per piacè, aiutateci à amendacci</string>
+    <!-- Header text for the inactive tabs survey asking for feedback to improve the inactive tabs feature. -->
+    <string name="inactive_tabs_survey_header_1">Aiutate à amendà Firefox</string>
+
     <!-- Content text for the inactive tabs survey asking the primary survey feedback question. -->
-    <string name="inactive_tabs_survey_content" tools:ignore="UnusedResources">Perchè vo avete disattivatu l’unghjette inattive ?</string>
-    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string name="inactive_tabs_survey_not_interested_option" tools:ignore="UnusedResources">Sta funzione ùn mi garba</string>
+    <string name="inactive_tabs_survey_content">Perchè vo avete disattivatu l’unghjette inattive ?</string>
 
     <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string name="inactive_tabs_survey_time_too_long_option" tools:ignore="UnusedResources">U tempu d’inattività hè troppu longu</string>
+    <string name="inactive_tabs_survey_do_not_understand">Ùn capiscu micca cumu què funzione</string>
     <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string name="inactive_tabs_survey_time_too_short_option" tools:ignore="UnusedResources">U tempu d’inattività hè troppu cortu</string>
+    <string name="inactive_tabs_survey_do_it_myself">Vogliu spurgulà e vechje unghjette dapermè</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string moz:removedIn="95" name="inactive_tabs_survey_time_too_long_option" tools:ignore="UnusedResources">U tempu d’inattività hè troppu longu</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string name="inactive_tabs_survey_time_too_long_option_1">A durata di duie settimane hè troppu longa</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string moz:removedIn="95" name="inactive_tabs_survey_time_too_short_option" tools:ignore="UnusedResources">U tempu d’inattività hè troppu cortu</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string name="inactive_tabs_survey_time_too_short_option_1">A durata di duie settimane hè troppu corta</string>
     <!-- Confirmation button text to submit the feedback for the inactive tabs survey. -->
-    <string name="inactive_tabs_survey_send_button" tools:ignore="UnusedResources">Mandà</string>
+    <string name="inactive_tabs_survey_send_button">Mandà</string>
     <!-- Content description for inactive tabs survey close button -->
-    <string name="inactive_tabs_survey_close_button_content_description" tools:ignore="UnusedResources">Chjode</string>
+    <string name="inactive_tabs_survey_close_button_content_description">Chjode</string>
 
     <!-- Default browser experiment -->
-    <string name="default_browser_experiment_card_text">Definisce chì e leie di i siti web, i currieri elettronichi è i messaghji s’aprinu autumaticamente in Firefox.</string>
+    <string name="default_browser_experiment_card_text">Definisce chì i liami di i siti web, i currieri elettronichi è i messaghji s’aprinu autumaticamente in Firefox.</string>
 
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">Caccià</string>

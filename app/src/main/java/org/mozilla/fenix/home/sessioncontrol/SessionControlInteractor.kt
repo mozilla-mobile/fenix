@@ -4,7 +4,6 @@
 
 package org.mozilla.fenix.home.sessioncontrol
 
-import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.feature.tab.collections.Tab
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
@@ -14,13 +13,15 @@ import org.mozilla.fenix.components.tips.Tip
 import org.mozilla.fenix.historymetadata.HistoryMetadataGroup
 import org.mozilla.fenix.historymetadata.controller.HistoryMetadataController
 import org.mozilla.fenix.historymetadata.interactor.HistoryMetadataInteractor
+import org.mozilla.fenix.home.HomeFragmentState
+import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesCategory
+import org.mozilla.fenix.home.pocket.PocketStoriesController
+import org.mozilla.fenix.home.pocket.PocketStoriesInteractor
+import org.mozilla.fenix.home.recentbookmarks.RecentBookmark
 import org.mozilla.fenix.home.recentbookmarks.controller.RecentBookmarksController
 import org.mozilla.fenix.home.recentbookmarks.interactor.RecentBookmarksInteractor
 import org.mozilla.fenix.home.recenttabs.controller.RecentTabController
 import org.mozilla.fenix.home.recenttabs.interactor.RecentTabInteractor
-import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesCategory
-import org.mozilla.fenix.home.pocket.PocketStoriesController
-import org.mozilla.fenix.home.pocket.PocketStoriesInteractor
 
 /**
  * Interface for tab related actions in the [SessionControlInteractor].
@@ -36,6 +37,13 @@ interface TabSessionInteractor {
      * Called when a user clicks on the Private Mode button on the homescreen.
      */
     fun onPrivateModeButtonClicked(newMode: BrowsingMode, userHasBeenOnboarded: Boolean)
+
+    /**
+     * Called when there is an update to the session state and updated metrics need to be reported
+     *
+     * * @param state The state the homepage from which to report desired metrics.
+     */
+    fun reportSessionMetrics(state: HomeFragmentState)
 }
 
 /**
@@ -365,7 +373,7 @@ class SessionControlInteractor(
         recentTabController.handleRecentTabShowAllClicked()
     }
 
-    override fun onRecentBookmarkClicked(bookmark: BookmarkNode) {
+    override fun onRecentBookmarkClicked(bookmark: RecentBookmark) {
         recentBookmarksController.handleBookmarkClicked(bookmark)
     }
 
@@ -409,5 +417,9 @@ class SessionControlInteractor(
 
     override fun onDiscoverMoreClicked(link: String) {
         pocketStoriesController.handleDiscoverMoreClicked(link)
+    }
+
+    override fun reportSessionMetrics(state: HomeFragmentState) {
+        controller.handleReportSessionMetrics(state)
     }
 }
