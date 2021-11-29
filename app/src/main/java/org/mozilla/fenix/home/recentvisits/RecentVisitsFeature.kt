@@ -138,7 +138,7 @@ class RecentVisitsFeature(
     }
 
     /**
-     * Perform an in-memory mapping of a history highlight to metadata records to compute it's last access time.
+     * Perform an in-memory mapping of a history highlight to metadata records to compute its last access time.
      *
      * - If a `highlight` cannot be mapped to a corresponding `metadata` record, its lastAccessTime will be set to 0.
      * - If a `highlight` maps to multiple metadata records, its lastAccessTime will be set to the most recently
