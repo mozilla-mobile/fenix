@@ -142,8 +142,11 @@
         The first parameter is the search term that the user used. (for example: your search for "cat")-->
     <string name="recent_tabs_search_term">Your search for \"%1$s\"</string>
     <!-- Text for the number of tabs in a group in the 'Jump back in' section of the new tab
-        The first parameter is the count for number of sites in the group.  This number will always be more than one. -->
-    <string name="recent_tabs_search_term_count">Sites: %1$s</string>
+    The first parameter is the count for number of sites in the group.  This number will always be more than one. -->
+    <string name="recent_tabs_search_term_count" moz:removedIn="96" tools:ignore="UnusedResources">Sites: %1$s</string>
+    <!-- Text for the number of tabs in a group in the 'Jump back in' section of the new tab
+        %d is a placeholder for the number of sites in the group. This number will always be more than one. -->
+    <string name="recent_tabs_search_term_count_2">%d sites</string>
 
     <!-- History Metadata -->
     <!-- Header text for a section on the home screen that displays grouped highlights from the
@@ -1342,11 +1345,11 @@
     <!-- text for the firefox account onboarding card header when we detect you're already signed in to
         another Firefox browser. (The word `Firefox` should not be translated)
         The first parameter is the email of the detected user's account -->
-    <string name="onboarding_firefox_account_auto_signin_header_3">You are signed in as %s on another Firefox browser on this device. Would you like to sign in with this account?</string>
+    <string name="onboarding_firefox_account_auto_signin_header_3" moz:removedIn="96" tools:ignore="UnusedResources">You are signed in as %s on another Firefox browser on this device. Would you like to sign in with this account?</string>
     <!-- text for the button to confirm automatic sign-in -->
-    <string name="onboarding_firefox_account_auto_signin_confirm">Yes, sign me in</string>
+    <string name="onboarding_firefox_account_auto_signin_confirm" moz:removedIn="96" tools:ignore="UnusedResources">Yes, sign me in</string>
     <!-- text for the automatic sign-in button while signing in is in process -->
-    <string name="onboarding_firefox_account_signing_in">Signing in&#8230;</string>
+    <string name="onboarding_firefox_account_signing_in" moz:removedIn="96" tools:ignore="UnusedResources">Signing in&#8230;</string>
     <!-- text for the button to manually sign into Firefox account. -->
     <string name="onboarding_firefox_account_sign_in_1">Sign up</string>
     <!-- text for the button to stay signed out when presented with an option to automatically sign-in. -->
@@ -1354,7 +1357,7 @@
     <!-- text to display in the snackbar once account is signed-in -->
     <string name="onboarding_firefox_account_sync_is_on">Sync is on</string>
     <!-- text to display in the snackbar if automatic sign-in fails. user may try again -->
-    <string name="onboarding_firefox_account_automatic_signin_failed">Failed to sign-in</string>
+    <string name="onboarding_firefox_account_automatic_signin_failed" moz:removedIn="96" tools:ignore="UnusedResources">Failed to sign-in</string>
     <!-- text for the tracking protection onboarding card header -->
     <string name="onboarding_tracking_protection_header_3">Always-on privacy</string>
     <!-- text for the tracking protection card description. 'Firefox' intentionally hardcoded here -->

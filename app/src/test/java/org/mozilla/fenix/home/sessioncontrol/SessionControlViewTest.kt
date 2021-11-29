@@ -8,20 +8,19 @@ import androidx.recyclerview.widget.RecyclerView
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import mozilla.components.concept.storage.BookmarkNode
-import mozilla.components.concept.storage.BookmarkNodeType
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.service.pocket.PocketRecommendedStory
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.historymetadata.HistoryMetadataGroup
 import org.mozilla.fenix.home.HomeFragmentState
+import org.mozilla.fenix.home.recentbookmarks.RecentBookmark
 import org.mozilla.fenix.home.recenttabs.RecentTab
 import org.mozilla.fenix.utils.Settings
 
@@ -30,8 +29,7 @@ class SessionControlViewTest {
 
     @Test
     fun `GIVEN recent Bookmarks WHEN calling shouldShowHomeOnboardingDialog THEN show the dialog `() {
-        val recentBookmarks =
-            listOf(BookmarkNode(BookmarkNodeType.ITEM, "guid", null, null, null, null, 0, null))
+        val recentBookmarks = listOf(RecentBookmark())
         val settings: Settings = mockk()
 
         every { settings.hasShownHomeOnboardingDialog } returns false
@@ -135,8 +133,7 @@ class SessionControlViewTest {
         val topSites = emptyList<TopSite>()
         val collections = emptyList<TabCollection>()
         val expandedCollections = emptySet<Long>()
-        val recentBookmarks =
-            listOf(BookmarkNode(BookmarkNodeType.ITEM, "guid", null, null, null, null, 0, null))
+        val recentBookmarks = listOf(RecentBookmark())
         val recentTabs = emptyList<RecentTab.Tab>()
         val historyMetadata = emptyList<HistoryMetadataGroup>()
         val pocketArticles = emptyList<PocketRecommendedStory>()
@@ -155,8 +152,9 @@ class SessionControlViewTest {
         )
 
         assertTrue(results[0] is AdapterItem.TopPlaceholderItem)
-        assertTrue(results[1] is AdapterItem.RecentBookmarks)
-        assertTrue(results[2] is AdapterItem.CustomizeHomeButton)
+        assertTrue(results[1] is AdapterItem.RecentBookmarksHeader)
+        assertTrue(results[2] is AdapterItem.RecentBookmarks)
+        assertTrue(results[3] is AdapterItem.CustomizeHomeButton)
     }
 
     @Test
@@ -164,7 +162,7 @@ class SessionControlViewTest {
         val topSites = emptyList<TopSite>()
         val collections = emptyList<TabCollection>()
         val expandedCollections = emptySet<Long>()
-        val recentBookmarks = listOf<BookmarkNode>()
+        val recentBookmarks = listOf<RecentBookmark>()
         val recentTabs = listOf<RecentTab.Tab>(mockk())
         val historyMetadata = emptyList<HistoryMetadataGroup>()
         val pocketArticles = emptyList<PocketRecommendedStory>()
@@ -193,7 +191,7 @@ class SessionControlViewTest {
         val topSites = emptyList<TopSite>()
         val collections = emptyList<TabCollection>()
         val expandedCollections = emptySet<Long>()
-        val recentBookmarks = listOf<BookmarkNode>()
+        val recentBookmarks = listOf<RecentBookmark>()
         val recentTabs = emptyList<RecentTab.Tab>()
         val historyMetadata = listOf(HistoryMetadataGroup("title", emptyList()))
         val pocketArticles = emptyList<PocketRecommendedStory>()
@@ -222,7 +220,7 @@ class SessionControlViewTest {
         val topSites = emptyList<TopSite>()
         val collections = emptyList<TabCollection>()
         val expandedCollections = emptySet<Long>()
-        val recentBookmarks = listOf<BookmarkNode>()
+        val recentBookmarks = listOf<RecentBookmark>()
         val recentTabs = emptyList<RecentTab.Tab>()
         val historyMetadata = emptyList<HistoryMetadataGroup>()
         val pocketArticles = listOf(PocketRecommendedStory("", "", "", "", "", 1, 1))
@@ -250,7 +248,7 @@ class SessionControlViewTest {
         val topSites = emptyList<TopSite>()
         val collections = emptyList<TabCollection>()
         val expandedCollections = emptySet<Long>()
-        val recentBookmarks = listOf<BookmarkNode>()
+        val recentBookmarks = listOf<RecentBookmark>()
         val recentTabs = emptyList<RecentTab.Tab>()
         val historyMetadata = emptyList<HistoryMetadataGroup>()
         val pocketArticles = emptyList<PocketRecommendedStory>()
@@ -279,7 +277,7 @@ class SessionControlViewTest {
         val topSites = listOf<TopSite>(mockk())
         val collections = listOf(collection)
         val expandedCollections = emptySet<Long>()
-        val recentBookmarks = listOf<BookmarkNode>(mockk())
+        val recentBookmarks = listOf<RecentBookmark>(mockk())
         val recentTabs = listOf<RecentTab.Tab>(mockk())
         val historyMetadata = listOf<HistoryMetadataGroup>(mockk())
         val pocketArticles = listOf<PocketRecommendedStory>(mockk())

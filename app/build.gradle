@@ -1,3 +1,5 @@
+import org.mozilla.fenix.gradle.tasks.ApkSizeTask
+
 plugins {
     id "com.jetbrains.python.envs" version "0.0.26"
     id "com.google.protobuf" version "0.8.17"
@@ -605,8 +607,14 @@ dependencies {
 }
 
 protobuf {
+    // Mac M1 workaround until we can bump the version. Dependent on A-S.
+    // See https://github.com/mozilla-mobile/fenix/issues/22321
     protoc {
-        artifact = Deps.protobuf_compiler
+        if (osdetector.os == "osx") {
+            artifact = "${Deps.protobuf_compiler}:osx-x86_64"
+        } else {
+            artifact = Deps.protobuf_compiler
+        }
     }
 
     // Generates the java Protobuf-lite code for the Protobufs in this project. See
@@ -793,5 +801,13 @@ ext.updateExtensionVersion = { task, extDir ->
         def values = ['version': AndroidComponents.VERSION + "." + new Date().format('MMddHHmmss')]
         inputs.properties(values)
         expand(values)
+    }
+}
+
+android.applicationVariants.all { variant ->
+    tasks.register("apkSize${variant.name.capitalize()}", ApkSizeTask) {
+        variantName = variant.name
+        apks = variant.outputs.collect { output -> output.outputFile.name }
+        dependsOn "package${variant.name.capitalize()}"
     }
 }
