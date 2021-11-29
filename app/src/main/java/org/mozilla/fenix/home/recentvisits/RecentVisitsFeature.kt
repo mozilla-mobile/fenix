@@ -212,7 +212,7 @@ class RecentVisitsFeature(
 
     /**
      * Maps the internal highlights and search groups to the final objects to be returned.
-     * Items will be sorted by their last accessed date so that the most recent wil be first.
+     * Items will be sorted by their last accessed date so that the most recent will be first.
      */
     @VisibleForTesting
     internal fun getSortedHistory(
