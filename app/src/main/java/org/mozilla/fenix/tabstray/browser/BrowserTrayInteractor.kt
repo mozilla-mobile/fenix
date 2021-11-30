@@ -35,8 +35,9 @@ interface BrowserTrayInteractor : SelectionInteractor<TabSessionState>, UserInte
      *
      * @param tab [TabSessionState] to close.
      * @param source app feature from which the [tab] was closed.
+     * @param cancelPrivateDownloadsAccepted user confirmed private downloads cancellation
      */
-    fun close(tab: TabSessionState, source: String? = null)
+    fun close(tab: TabSessionState, source: String? = null, cancelPrivateDownloadsAccepted: Boolean = false)
 
     /**
      * TabTray's Floating Action Button clicked.
@@ -67,13 +68,6 @@ class DefaultBrowserTrayInteractor(
         }
     }
 
-    private val removeTabWrapper by lazy {
-        RemoveTabUseCaseWrapper(metrics) {
-            // Handle removal from the interactor where we can also handle "undo" visuals.
-            trayInteractor.onDeleteTab(it)
-        }
-    }
-
     /**
      * See [SelectionInteractor.open]
      */
@@ -91,8 +85,8 @@ class DefaultBrowserTrayInteractor(
     /**
      * See [BrowserTrayInteractor.close].
      */
-    override fun close(tab: TabSessionState, source: String?) {
-        closeTab(tab, source)
+    override fun close(tab: TabSessionState, source: String?, cancelPrivateDownloadsAccepted: Boolean) {
+        closeTab(tab, source, cancelPrivateDownloadsAccepted)
     }
 
     /**
@@ -148,7 +142,7 @@ class DefaultBrowserTrayInteractor(
         selectTabWrapper.invoke(tab.id, source)
     }
 
-    private fun closeTab(tab: TabSessionState, source: String? = null) {
-        removeTabWrapper.invoke(tab.id, source)
+    private fun closeTab(tab: TabSessionState, source: String?, cancelPrivateDownloadsAccepted: Boolean = false) {
+        trayInteractor.onDeleteTab(tab.id, source, cancelPrivateDownloadsAccepted)
     }
 }

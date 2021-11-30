@@ -155,6 +155,35 @@
             app:nullable="true"
             android:defaultValue="@null"
             app:argType="string" />
+        <action
+            android:id="@+id/action_tabsTrayFragment_to_cancelDownloadFragment"
+            app:destination="@id/cancelDownloadFragment" />
+    </dialog>
+
+    <dialog
+        android:id="@+id/cancelDownloadFragment"
+        android:name="org.mozilla.fenix.tabstray.CancelDownloadFragment"
+        tools:layout="@layout/fragment_cancel_download">
+        <argument
+            android:name="downloadCount"
+            android:defaultValue="-1"
+            app:argType="integer" />
+        <argument
+            android:name="trigger"
+            app:argType="org.mozilla.fenix.tabstray.Trigger" />
+        <argument
+            android:name="tabId"
+            app:argType="string"
+            android:defaultValue="@null"
+            app:nullable="true" />
+        <argument
+            android:name="source"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="private"
+            app:argType="boolean"/>
     </dialog>
 
     <fragment

@@ -40,7 +40,7 @@ import org.mozilla.fenix.databinding.FragmentTabTrayDialogBinding
 import org.mozilla.fenix.databinding.TabsTrayTabCounter2Binding
 import org.mozilla.fenix.databinding.TabstrayMultiselectItemsBinding
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.metrics
+import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.HomeScreenViewModel
@@ -129,11 +129,6 @@ class TabsTrayFragment : AppCompatDialogFragment() {
                 initialState = TabsTrayState(
                     mode = initialMode,
                     focusGroupTabId = args.focusGroupTabId
-                ),
-                middlewares = listOf(
-                    TabsTrayMiddleware(
-                        metrics = requireContext().metrics
-                    )
                 )
             )
         }
@@ -173,6 +168,7 @@ class TabsTrayFragment : AppCompatDialogFragment() {
                 collectionStorage = requireComponents.core.tabCollectionStorage,
                 showCollectionSnackbar = ::showCollectionSnackbar,
                 showBookmarkSnackbar = ::showBookmarkSnackbar,
+                showCancelledDownloadWarning = ::showCancelledDownloadWarning,
                 accountManager = requireComponents.backgroundServices.accountManager,
                 ioDispatcher = Dispatchers.IO
             )
@@ -189,7 +185,8 @@ class TabsTrayFragment : AppCompatDialogFragment() {
             tabsUseCases = requireComponents.useCases.tabsUseCases,
             selectTabPosition = ::selectTabPosition,
             dismissTray = ::dismissTabsTray,
-            showUndoSnackbarForTab = ::showUndoSnackbarForTab
+            showUndoSnackbarForTab = ::showUndoSnackbarForTab,
+            showCancelledDownloadWarning = ::showCancelledDownloadWarning
         )
 
         tabsTrayInteractor = DefaultTabsTrayInteractor(tabsTrayController)
@@ -358,6 +355,21 @@ class TabsTrayFragment : AppCompatDialogFragment() {
         setFragmentResultListener(ShareFragment.RESULT_KEY) { _, _ ->
             dismissTabsTray()
         }
+
+        setFragmentResultListener(CancelDownloadFragment.RESULT_KEY) { _, bundle ->
+            if (bundle.getBoolean(CancelDownloadFragment.ACCEPT_KEY)) {
+                if (bundle.containsKey(CancelDownloadFragment.TAB_KEY)) {
+                    val tabId = bundle.getString(CancelDownloadFragment.TAB_KEY)!!
+                    val source = bundle.getString(CancelDownloadFragment.SOURCE_KEY)
+                    tabsTrayInteractor.onDeleteTab(tabId, source, cancelPrivateDownloadsAccepted = true)
+                } else if (bundle.containsKey(CancelDownloadFragment.PRIVATE_KEY)) {
+                    navigationInteractor.onCloseAllTabsClicked(
+                        private = true,
+                        cancelPrivateDownloadsAccepted = true
+                    )
+                }
+            }
+        }
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -368,6 +380,18 @@ class TabsTrayFragment : AppCompatDialogFragment() {
         if (requireContext().settings().gridTabView) {
             tabsTrayBinding.tabsTray.adapter?.notifyDataSetChanged()
         }
+    }
+
+    @VisibleForTesting
+    internal fun showCancelledDownloadWarning(arg: CancelDownloadFragmentArguments) {
+        val directions = TabsTrayFragmentDirections.actionTabsTrayFragmentToCancelDownloadFragment(
+            arg.downloadCount,
+            arg.trigger,
+            arg.tabId,
+            arg.source,
+            arg.private
+        )
+        findNavController().nav(R.id.tabsTrayFragment, directions)
     }
 
     @VisibleForTesting

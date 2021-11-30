@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cancel_download_fragment"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?foundation"
+    android:padding="8dp">
+
+    <TextView
+        android:id="@+id/cancel_download_message"
+        style="@style/QuickSettingsText.Icon"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="@string/cancel_active_download_warning_content_description"
+        android:textSize="16sp"
+        app:drawableStartCompat="@drawable/ic_info"
+        android:drawablePadding="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/cancel_download_deny"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:letterSpacing="0"
+        android:padding="10dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:scrollbars="none"
+        android:text="@string/cancel_active_download_accept"
+        android:textAllCaps="false"
+        android:textColor="?primaryText"
+        android:textStyle="bold"
+        app:fontFamily="@font/metropolis_semibold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/cancel_download_accept"
+        app:layout_constraintTop_toBottomOf="@id/cancel_download_message" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/cancel_download_accept"
+        style="@style/PositiveButton"
+        android:layout_width="wrap_content"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/cancel_active_download_deny"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cancel_download_message" />
+</androidx.constraintlayout.widget.ConstraintLayout>

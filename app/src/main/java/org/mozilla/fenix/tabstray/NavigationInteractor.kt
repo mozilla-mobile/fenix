@@ -60,8 +60,10 @@ interface NavigationInteractor {
 
     /**
      * Called when clicking the close all tabs button.
+     * @param private indicates if tabs are private
+     * @param cancelPrivateDownloadsAccepted user confirmed private downloads cancellation
      */
-    fun onCloseAllTabsClicked(private: Boolean)
+    fun onCloseAllTabsClicked(private: Boolean, cancelPrivateDownloadsAccepted: Boolean = false)
 
     /**
      * Called when opening the recently closed tabs menu button.
@@ -95,7 +97,7 @@ class DefaultNavigationInteractor(
     private val navController: NavController,
     private val metrics: MetricController,
     private val dismissTabTray: () -> Unit,
-    private val dismissTabTrayAndNavigateHome: (String) -> Unit,
+    private val dismissTabTrayAndNavigateHome: (sessionId: String) -> Unit,
     private val bookmarksUseCase: BookmarksUseCase,
     private val tabsTrayStore: TabsTrayStore,
     private val collectionStorage: TabCollectionStorage,
@@ -105,6 +107,7 @@ class DefaultNavigationInteractor(
         collectionToSelect: Long?
     ) -> Unit,
     private val showBookmarkSnackbar: (tabSize: Int) -> Unit,
+    private val showCancelledDownloadWarning: (args: CancelDownloadFragmentArguments) -> Unit,
     private val accountManager: FxaAccountManager,
     private val ioDispatcher: CoroutineContext
 ) : NavigationInteractor {
@@ -160,13 +163,26 @@ class DefaultNavigationInteractor(
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override fun onCloseAllTabsClicked(private: Boolean) {
+    override fun onCloseAllTabsClicked(private: Boolean, cancelPrivateDownloadsAccepted: Boolean) {
         val sessionsToClose = if (private) {
             HomeFragment.ALL_PRIVATE_TABS
         } else {
             HomeFragment.ALL_NORMAL_TABS
         }
 
+        if (private) {
+            val privateDownloads = browserStore.state.downloads.filter { it.value.private }
+            if (privateDownloads.isNotEmpty() && !cancelPrivateDownloadsAccepted) {
+                showCancelledDownloadWarning(
+                    CancelDownloadFragmentArguments(
+                        privateDownloads.size,
+                        Trigger.CLOSE_ALL,
+                        private = private
+                    )
+                )
+                return
+            }
+        }
         dismissTabTrayAndNavigateHome(sessionsToClose)
     }
 

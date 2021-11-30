@@ -46,6 +46,12 @@
     <string name="tab_tray_enter_multiselect_content_description">Entered multiselect mode, select tabs to save to a collection</string>
     <!-- Content description on checkmark while tab is selected in multiselect mode in tab tray -->
     <string name="tab_tray_multiselect_selected_content_description">Selected</string>
+    <!-- Text shown in confirmation dialog when closing tabs leads to cancelled downloads -->
+    <string name="cancel_active_download_warning_content_description">If you close all Private Browsing windows now, %1$s download will be canceled. Are you sure you want to leave Private Browsing?</string>
+    <!-- Option to, while closing private tab or tabs, cancel active private downloads -->
+    <string name="cancel_active_download_accept">Stay in private browsing</string>
+    <!-- Option to keep private downloads, cancelling tab or tabs closure -->
+    <string name="cancel_active_download_deny">Cancel downloads</string>
 
     <!-- Home - Recently saved bookmarks -->
     <!-- Title for the home screen section with recently saved bookmarks. -->
