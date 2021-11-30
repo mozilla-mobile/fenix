@@ -22,6 +22,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import mozilla.components.browser.state.action.EngineAction
+import mozilla.components.browser.state.action.HistoryMetadataAction
 import mozilla.components.browser.state.action.RecentlyClosedAction
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.prompt.ShareData
@@ -355,26 +356,17 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
                     for (item in items) {
                         analytics.metrics.track(Event.HistoryItemRemoved)
 
-                        if (item is History.Regular) {
-                            core.historyStorage.deleteVisit(
-                                url = item.url,
-                                timestamp = item.visitedAt
-                            )
-                        } else if (item is History.Group) {
-                            for (historyMetadata in item.items) {
-                                historyProvider.getMatchingHistory(historyMetadata)?.let {
-                                    core.historyStorage.deleteVisit(
-                                        url = it.url,
-                                        timestamp = it.visitTime
-                                    )
-                                }
+                        when (item) {
+                            is History.Regular -> core.historyStorage.deleteVisit(item.url, item.visitedAt)
+                            is History.Group -> {
+                                // NB: If we have non-search groups, this logic needs to be updated.
+                                historyProvider.deleteMetadataSearchGroup(item)
+                                core.store.dispatch(
+                                    HistoryMetadataAction.DisbandSearchGroupAction(searchTerm = item.title)
+                                )
                             }
-
-                            core.historyStorage.deleteHistoryMetadata(
-                                searchTerm = item.title
-                            )
-
-                            historyProvider.clearHistoryGroups()
+                            // We won't encounter individual metadata entries outside of groups.
+                            is History.Metadata -> {}
                         }
                     }
                 }

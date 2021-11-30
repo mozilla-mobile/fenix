@@ -10,14 +10,15 @@ import android.graphics.Bitmap
 import android.widget.EditText
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.NoMatchingViewException
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions.actionOnItem
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.Visibility
 import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
+import androidx.test.espresso.matcher.ViewMatchers.hasSibling
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withHint
@@ -25,7 +26,6 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
-import androidx.test.uiautomator.By.text
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiObject
 import androidx.test.uiautomator.UiScrollable
@@ -116,6 +116,11 @@ class HomeScreenRobot {
     fun verifyExistingTopSitesTabs(title: String) = assertExistingTopSitesTabs(title)
     fun verifyTopSiteContextMenuItems() = assertTopSiteContextMenuItems()
 
+    fun verifyJumpBackInSectionIsDisplayed() = assertJumpBackInSectionIsDisplayed()
+    fun verifyJumpBackInSectionIsNotDisplayed() = assertJumpBackInSectionIsNotDisplayed()
+    fun verifyRecentBookmarksSectionIsDisplayed() = assertRecentBookmarksSectionIsDisplayed()
+    fun verifyRecentBookmarksSectionIsNotDisplayed() = assertRecentBookmarksSectionIsNotDisplayed()
+
     // Collections elements
     fun verifyCollectionIsDisplayed(title: String, collectionExists: Boolean = true) {
         if (collectionExists) {
@@ -128,8 +133,6 @@ class HomeScreenRobot {
     }
 
     fun verifyCollectionIcon() = onView(withId(R.id.collection_icon)).check(matches(isDisplayed()))
-
-    fun verifyShareTabsOverlay() = assertShareTabsOverlay()
 
     fun togglePrivateBrowsingModeOnOff() {
         onView(ViewMatchers.withResourceName("privateBrowsingButton"))
@@ -146,10 +149,13 @@ class HomeScreenRobot {
         mDevice.waitNotNull(findObject(By.text(expectedText)), waitingTime)
     }
 
-    fun snackBarButtonClick(expectedText: String) {
-        onView(allOf(withId(R.id.snackbar_btn), withText(expectedText))).check(
-            matches(withEffectiveVisibility(Visibility.VISIBLE))
-        ).perform(click())
+    fun clickUndoCollectionDeletion(expectedText: String) {
+        onView(
+            allOf(
+                withId(R.id.snackbar_btn),
+                withText(expectedText)
+            )
+        ).click()
     }
 
     class Transition {
@@ -316,13 +322,13 @@ class HomeScreenRobot {
         }
 
         fun expandCollection(title: String, interact: CollectionRobot.() -> Unit): CollectionRobot.Transition {
-            try {
-                mDevice.waitNotNull(findObject(text(title)), waitingTime)
-                collectionTitle(title).click()
-            } catch (e: NoMatchingViewException) {
-                scrollToElementByText(title)
-                collectionTitle(title).click()
-            }
+            // Depending on the screen dimensions collections might report as visible on screen
+            // but actually have the bottom toolbar above so interactions with collections might fail.
+            // As a quick solution we'll try scrolling to the element below collection on the homescreen
+            // so that they are displayed above in their entirety.
+            scrollToElementByText(appContext.getString(R.string.pocket_stories_header_1))
+
+            collectionTitle(title).click()
 
             CollectionRobot().interact()
             return CollectionRobot.Transition()
@@ -577,18 +583,37 @@ private fun assertTopSiteContextMenuItems() {
     )
 }
 
-private fun assertShareTabsOverlay() {
-    onView(withId(R.id.shared_site_list)).check(matches(isDisplayed()))
-    onView(withId(R.id.share_tab_title)).check(matches(isDisplayed()))
-    onView(withId(R.id.share_tab_favicon)).check(matches(isDisplayed()))
-    onView(withId(R.id.share_tab_url)).check(matches(isDisplayed()))
-}
+private fun assertJumpBackInSectionIsDisplayed() = jumpBackInSection().check(matches(isDisplayed()))
+
+private fun assertJumpBackInSectionIsNotDisplayed() = jumpBackInSection().check(doesNotExist())
+
+private fun assertRecentBookmarksSectionIsDisplayed() =
+    recentBookmarksSection().check(matches(isDisplayed()))
+
+private fun assertRecentBookmarksSectionIsNotDisplayed() =
+    recentBookmarksSection().check(doesNotExist())
 
 private fun privateBrowsingButton() = onView(withId(R.id.privateBrowsingButton))
 
 private fun saveTabsToCollectionButton() = onView(withId(R.id.add_tabs_to_collections_button))
 
 private fun tabsCounter() = onView(withId(R.id.tab_button))
+
+private fun jumpBackInSection() =
+    onView(
+        allOf(
+            withText(R.string.recent_tabs_header),
+            hasSibling(withText(R.string.recent_tabs_show_all))
+        )
+    )
+
+private fun recentBookmarksSection() =
+    onView(
+        allOf(
+            withText(R.string.recent_bookmarks_title),
+            hasSibling(withText(R.string.recently_saved_show_all))
+        )
+    )
 
 private fun startBrowsingButton(): UiObject {
     val startBrowsingButton = mDevice.findObject(UiSelector().resourceId("$packageName:id/finish_button"))

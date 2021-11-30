@@ -74,9 +74,9 @@ import org.mozilla.fenix.downloads.DownloadService
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.gecko.GeckoProvider
-import org.mozilla.fenix.historymetadata.DefaultHistoryMetadataService
-import org.mozilla.fenix.historymetadata.HistoryMetadataMiddleware
-import org.mozilla.fenix.historymetadata.HistoryMetadataService
+import org.mozilla.fenix.home.recentvisits.DefaultHistoryMetadataService
+import org.mozilla.fenix.home.recentvisits.HistoryMetadataMiddleware
+import org.mozilla.fenix.home.recentvisits.HistoryMetadataService
 import org.mozilla.fenix.media.MediaSessionService
 import org.mozilla.fenix.perf.StrictModeManager
 import org.mozilla.fenix.perf.lazyMonitored
@@ -216,7 +216,15 @@ class Core(
             )
 
         BrowserStore(
-            middleware = middlewareList + EngineMiddleware.create(engine)
+            middleware = middlewareList + EngineMiddleware.create(
+                engine,
+                // We are disabling automatic suspending of engine sessions under memory pressure
+                // in Nightly as a test. Instead we solely rely on GeckoView and the Android system
+                // to reclaim memory when needed.
+                // https://github.com/mozilla-mobile/fenix/issues/12731
+                // https://github.com/mozilla-mobile/android-components/issues/11300
+                trimMemoryAutomatically = Config.channel.isReleaseOrBeta
+            )
         ).apply {
             // Install the "icons" WebExtension to automatically load icons for every visited website.
             icons.install(engine, this)

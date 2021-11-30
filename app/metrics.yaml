@@ -1255,9 +1255,9 @@ metrics:
     expires: "2022-02-01"
   inactive_tabs_count:
     type: quantity
-    lifetime: application
     description: |
-      How many inactive tabs does the user have.
+      How many inactive tabs does the user have, checked when the user opens
+      the tabs tray.
       Value will be 0 if the feature is disabled.
     send_in_pings:
       - metrics
@@ -2641,12 +2641,12 @@ history:
   recent_searches_tapped:
     type: event
     description: |
-      User has tapped on a recent searches card in home.
+      User has tapped on an item in the "Recently visited" section on home.
     extra_keys:
       page_number:
         description: |
-          The page number in the homescreen carousel that the recent searches
-          card was on.
+          The page number in the homescreen carousel that the recently visited
+          item was on.
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/22172
     data_reviews:
@@ -2664,6 +2664,45 @@ history:
       - https://github.com/mozilla-mobile/fenix/issues/22299
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/22300
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2022-11-01"
+  search_term_group_open_tab:
+    type: event
+    description: |
+      A user opens a tab from the search term group in history.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/22147
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/22368#issuecomment-964223263
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2022-11-01"
+  search_term_group_remove_tab:
+    type: event
+    description: |
+      A user closes a single tab in the search term group in history.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/22147
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/22368#issuecomment-964223263
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2022-11-01"
+  search_term_group_remove_all:
+    type: event
+    description: |
+      A user closes all tabs in the search term group in history.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/22147
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/22368#issuecomment-964223263
     data_sensitivity:
       - interaction
     notification_emails:
@@ -5600,6 +5639,19 @@ home_screen:
     notification_emails:
       - android-probes@mozilla.com
     expires: "2022-04-01"
+  home_screen_view_count:
+    type: counter
+    description: |
+      The number of times the home screen was displayed to the user.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/22146
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/22377
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2022-11-01"
   customize_home_clicked:
     type: event
     description: A user clicked on Customize home from the home screen menu.
@@ -5928,7 +5980,7 @@ recent_searches:
     type: event
     description: |
       A user has deleted a search term group from the
-      "Recent searches" section on the homescreen using
+      "Recently visited" section on the homescreen using
       the long-press menu "Remove" option. This removes
       the item from the homescreen, but does not delete
       the item from history.
@@ -6124,3 +6176,31 @@ search_terms:
     notification_emails:
       - android-probes@mozilla.com
     expires: "2022-11-01"
+  group_size_distribution:
+    type: custom_distribution
+    description: |
+      The distribution of search term tab group sizes. Rather than reporting
+      individual sizes directly as integers, it is currently desired to
+      report the sizes according to certain size ranges.
+      The "buckets" for reporting group sizes will be mapped as follows:
+      * 2 tabs -> 1
+      * 3-5 tabs -> 2
+      * 6-10 tabs -> 3
+      * 11+ tabs -> 4
+      Where the reported number will be 1, 2, 3, or 4, accordingly.
+      As an example, say a user has three groups of sizes 3, 6, and 15. The
+      app will report 2, 3, and 4 when this metric is tracked.
+    range_min: 1
+    range_max: 4
+    bucket_count: 5
+    histogram_type: linear
+    unit: tab_group_size_code
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/22410
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/22479
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2022-12-01"
