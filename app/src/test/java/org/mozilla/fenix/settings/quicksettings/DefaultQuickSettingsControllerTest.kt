@@ -15,6 +15,7 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
 import mozilla.components.browser.state.state.BrowserState
@@ -27,6 +28,7 @@ import mozilla.components.concept.engine.permission.SitePermissions.Status.NO_DE
 import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.feature.session.TrackingProtectionUseCases
 import mozilla.components.feature.tabs.TabsUseCases
+import mozilla.components.lib.publicsuffixlist.PublicSuffixList
 import mozilla.components.support.test.mock
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.After
@@ -74,6 +76,9 @@ class DefaultQuickSettingsControllerTest {
 
     @MockK(relaxed = true)
     private lateinit var engine: Engine
+
+    @MockK(relaxed = true)
+    private lateinit var publicSuffixList : PublicSuffixList
 
     @MockK(relaxed = true)
     private lateinit var reload: SessionUseCases.ReloadUrlUseCase
@@ -391,6 +396,10 @@ class DefaultQuickSettingsControllerTest {
     @Test
     fun `WHEN handleClearSiteData THEN call clearSite`() {
         every { context.components.core.engine } returns engine
+
+        val mockPublicSuffixResponse : String? = "mozilla.org"
+        every { publicSuffixList.getPublicSuffixPlusOne(any()) } returns CompletableDeferred(mockPublicSuffixResponse)
+        every { context.components.publicSuffixList } returns publicSuffixList
 
         val state = WebsiteInfoState.createWebsiteInfoState(
             websiteUrl = tab.content.url,

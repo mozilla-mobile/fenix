@@ -236,7 +236,7 @@ class DefaultQuickSettingsController(
     }
 
     override fun handleClearSiteDataClicked() {
-        val domain = quickSettingsStore.state.webInfoState.baseDomain()
+        val domain = quickSettingsStore.state.webInfoState.baseDomain(context.components.publicSuffixList)
         if (domain.isNullOrEmpty()) {
             return
         }

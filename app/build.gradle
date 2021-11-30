@@ -541,7 +541,6 @@ dependencies {
     implementation Deps.androidx_datastore
     implementation Deps.protobuf_javalite
     implementation Deps.google_material
-    implementation Deps.google_guava
 
     implementation Deps.adjust
     implementation Deps.installreferrer // Required by Adjust

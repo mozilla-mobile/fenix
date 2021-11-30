@@ -8,11 +8,12 @@ import android.content.Context
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.core.net.toUri
-import com.google.common.net.InternetDomainName
+import kotlinx.coroutines.runBlocking
 import mozilla.components.concept.engine.permission.SitePermissions
 import mozilla.components.concept.engine.permission.SitePermissions.AutoplayStatus
 import mozilla.components.feature.sitepermissions.SitePermissionsRules
 import mozilla.components.feature.sitepermissions.SitePermissionsRules.AutoplayAction
+import mozilla.components.lib.publicsuffixlist.PublicSuffixList
 import mozilla.components.lib.state.State
 import org.mozilla.fenix.R
 import org.mozilla.fenix.settings.PhoneFeature
@@ -66,13 +67,15 @@ data class WebsiteInfoState(
         }
     }
 
-    @Suppress("UnstableApiUsage")
-    fun baseDomain(): String {
+    fun baseDomain(publicSuffixList: PublicSuffixList): String = runBlocking {
         val host = websiteUrl.toUri().host.toString()
-        if (!InternetDomainName.isValid(host)) {
-            return host
+        val domain = publicSuffixList.getPublicSuffixPlusOne(host).await()
+
+        if (domain.isNullOrEmpty()) {
+            host
+        } else {
+            domain.toString()
         }
-        return InternetDomainName.from(host).topPrivateDomain().toString()
     }
 }
 

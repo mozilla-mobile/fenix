@@ -14,6 +14,7 @@ import androidx.core.view.isVisible
 import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.QuicksettingsClearSiteDataBinding
+import org.mozilla.fenix.ext.components
 
 /**
  * Contract declaring all possible user interactions with [ClearSiteDataView].
@@ -56,7 +57,7 @@ class ClearSiteDataView(
         }
 
         // TODO: Hide if there are no cookies for current host.
-        baseDomain = webInfoState.baseDomain()
+        baseDomain = webInfoState.baseDomain(context.components.publicSuffixList)
 
         setVisibility(true)
         binding.clearSiteData.setOnClickListener {
