@@ -116,8 +116,20 @@
     <!-- Text for the action link to go to Settings for inactive tabs. -->
     <string name="tab_tray_inactive_onboarding_button_text">Slå av i innstillingar</string>
 
+    <!-- Text for title for the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_auto_close_title">Late att automatisk etter ein månad?</string>
+    <!-- Text for the body for the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_auto_close_body">Firefox kan late att faner du ikkje har sett den siste månaden.</string>
     <!-- Content description for close button in the auto-close dialog of the inactive tabs. -->
     <string name="tab_tray_inactive_auto_close_button_content_description">Lat att</string>
+
+
+    <!-- Text for turn on auto close tabs button in the auto-close dialog of the inactive tabs. -->
+    <string moz:removedIn="95" name="tab_tray_inactive_turn_on_auto_close_button" tools:ignore="UnusedResources">Slå på auto-attlating</string>
+
+
+    <!-- Text for turn on auto close tabs button in the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_turn_on_auto_close_button_2">Slå på auto-attlating</string>
 
 
     <!-- Home screen icons - Long press shortcuts -->
@@ -306,6 +318,9 @@
     <!-- Onboarding home screen dialog description text for the history section. -->
     <string name="onboarding_home_screen_section_useful_history_description_2">Gå tilbake til dei siste søka dine frå startsida og fanene.</string>
 
+    <!-- Onboarding home screen popup dialog, shown on top of the Jump back in section. Firefox is intentionally hardcoded. -->
+    <string name="onboarding_home_screen_jump_back_contextual_hint" tools:ignore="UnusedResources">Den personlege Firefox-startsida di gjer det no lettare å fortsetje der du slutta. Finn dei siste fanene, bokmerka og søkjeresultata.</string>
+
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
     <string name="search_widget_content_description">Opne ei ny Firefox-fane</string>
@@ -387,6 +402,8 @@
     <string name="preferences_theme">Tema</string>
     <!-- Preference for customizing the home screen -->
     <string moz:removedIn="94" name="preferences_home" tools:ignore="UnusedResources">Heim</string>
+    <!-- Preference for customizing the home screen -->
+    <string name="preferences_home_2">Startside</string>
     <!-- Preference for gestures based actions -->
     <string name="preferences_gestures">Rørsler</string>
     <!-- Preference for settings related to visual options -->
@@ -692,6 +709,8 @@
     <string name="tab_view_grid">Rutenett</string>
     <!-- Option for search term tab groups -->
     <string name="tab_view_search_term_tab_groups">Søkjegrupper</string>
+    <!-- Summary text for search term tab groups -->
+    <string name="tab_view_search_term_tab_groups_summary">Grupper relaterte nettstadar saman</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
     <string name="preferences_close_tabs">Lat att faner</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
@@ -709,12 +728,20 @@
     <!-- Opening screen -->
     <!-- Title of a preference that allows a user to indicate after a specified amount of time when the app should start on the home screen -->
     <string moz:removedIn="94" name="preferences_start_on_home" tools:ignore="UnusedResources">Start på starskjerm</string>
+    <!-- Title of a preference that allows a user to choose what screen to show after opening the app -->
+    <string name="preferences_opening_screen">Opningsskjerm</string>
     <!-- Option for starting on the home screen after after four hours or inactivity -->
     <string moz:removedIn="94" name="start_on_home_after_four_hours" tools:ignore="UnusedResources">Etter fire timar</string>
+    <!-- Option for always opening the homepage when re-opening the app -->
+    <string name="opening_screen_homepage">Startside</string>
     <!-- Option for always starting on the home screen -->
     <string moz:removedIn="94" name="start_on_home_always" tools:ignore="UnusedResources">Alltid</string>
+    <!-- Option for always opening the user's last-open tab when re-opening the app -->
+    <string name="opening_screen_last_tab">Siste fane</string>
     <!-- Option for never starting on the home screen -->
     <string moz:removedIn="94" name="start_on_home_never" tools:ignore="UnusedResources">Aldri</string>
+    <!-- Option for always opening the homepage when re-opening the app after four hours of inactivity -->
+    <string name="opening_screen_after_four_hours_of_inactivity">Startside etter fire timar inaktivitet</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
     <string name="close_tabs_manually_summary">Lat att manuelt</string>
 
@@ -724,6 +751,12 @@
     <string name="close_tabs_after_one_week_summary">Lat att etter ei veke</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one month-->
     <string name="close_tabs_after_one_month_summary">Lat att etter ein månad</string>
+
+    <!-- Inactive tabs -->
+    <!-- Category header of a preference that allows a user to enable or disable the inactive tabs feature -->
+    <string name="preferences_inactive_tabs">Flytt gamle faner til inaktive</string>
+    <!-- Title of inactive tabs preference -->
+    <string name="preferences_inactive_tabs_title">Faner du ikkje har vist på to veker, vert flytta til den inaktive delen.</string>
 
     <!-- Studies -->
     <!-- Title of the remove studies button -->
@@ -871,8 +904,8 @@
     <string moz:removedIn="94" name="history_menu_open_in_new_tab_button" tools:ignore="UnusedResources">Opne i ny fane</string>
     <!-- History overflow menu open in private tab button -->
     <string moz:removedIn="94" name="history_menu_open_in_private_tab_button" tools:ignore="UnusedResources">Opne i privat fane</string>
-    <!-- Text for the button to delete a single history item -->
-    <string moz:removedIn="94" name="history_delete_item" tools:ignore="UnusedResources">Slett</string>
+    <!-- Context description text for the button to delete a single history item -->
+    <string name="history_delete_item">Slett</string>
     <!-- History multi select title in app bar
     The first parameter is the number of bookmarks selected -->
     <string name="history_multi_select_title">%1$d valde</string>
@@ -1232,6 +1265,10 @@
     <string name="qr_scanner_dialog_positive">TILLAT</string>
     <!-- QR code scanner prompt dialog positive option to deny navigation to scanned link -->
     <string name="qr_scanner_dialog_negative">AVSLÅ</string>
+    <!-- QR code scanner prompt dialog error message shown when a hostname does not contain http or https. -->
+    <string name="qr_scanner_dialog_invalid">Nettadressa er ikkje gyldig.</string>
+    <!-- QR code scanner prompt dialog positive option when there is an error -->
+    <string name="qr_scanner_dialog_invalid_ok">OK</string>
     <!-- Tab collection deletion prompt dialog message. Placeholder will be replaced with the collection name -->
     <string name="tab_collection_dialog_message">Er du sikker på at du vil slette %1$s?</string>
     <!-- Collection and tab deletion prompt dialog message. This will show when the last tab from a collection is deleted -->
@@ -1247,7 +1284,7 @@
     <!-- Message for copying the URL via long press on the toolbar -->
     <string name="url_copied">URL kopiert</string>
     <!-- Sample text for accessibility font size -->
-    <string name="accessibility_text_size_sample_text_1">Dette er eksempeltekst. Han er her for å vise korleis tekst vil visast når du aukear eller reduserer storleiken med denne innstillinga.</string>
+    <string name="accessibility_text_size_sample_text_1">Dette er eksempeltekst. Han er her for å vise korleis tekst vil visast når du aukar eller reduserer storleiken med denne innstillinga.</string>
     <!-- Summary for Accessibility Text Size Scaling Preference -->
     <string name="preference_accessibility_text_size_summary">Gjer tekst på nettstadar større eller mindre</string>
     <!-- Title for Accessibility Text Size Scaling Preference -->
@@ -1566,6 +1603,9 @@
     <!-- Description of redirect tracker cookies that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_redirect_trackers_description">Fjernar infokapslar stilte inn av omdirigeringar til kjende sporingsnettstadar.</string>
 
+    <!-- Description of the SmartBlock Enhanced Tracking Protection feature. The * symbol is intentionally hardcoded here,
+         as we use it on the UI to indicate which trackers have been partially unblocked.  -->
+    <string name="preference_etp_smartblock_description">Nokre sporarar som er merkte nedanfor, er delvis blitt avblokkert på denne sida fordi du samhandla med dei *.</string>
     <!-- Text displayed that links to website about enhanced tracking protection SmartBlock -->
     <string name="preference_etp_smartblock_learn_more">Les meir</string>
 
@@ -1942,6 +1982,13 @@
     <!-- This is the hint text that is shown inline on the hostname field of the create new login page. 'https://www.example.com' intentionally hardcoded here -->
     <string name="add_login_hostname_hint_text">https://www.example.com</string>
 
+    <!-- This is an error message shown below the hostname field of the add login page when a hostname does not contain http or https. -->
+    <string moz:removedIn="94" name="add_login_hostname_invalid_text_1" tools:ignore="UnusedResources">Nettadressa må innehalde &quot;https://&quot; eller &quot;http://&quot;</string>
+    <!-- This is an error message shown below the hostname field of the add login page when a hostname does not contain http or https. -->
+    <string name="add_login_hostname_invalid_text_3">Nettadressa må innehalde &quot;https://&quot; eller &quot;http://&quot;</string>
+    <!-- This is an error message shown below the hostname field of the add login page when a hostname is invalid. -->
+    <string name="add_login_hostname_invalid_text_2">Gyldig servernamn påkravd</string>
+
     <!-- Synced Tabs -->
     <!-- Text displayed to ask user to connect another device as no devices found with account -->
     <string name="synced_tabs_connect_another_device">Kople til ei anna eining.</string>
@@ -1967,6 +2014,10 @@
     <!-- Confirmation dialog button text when top sites limit is reached. -->
     <string name="top_sites_max_limit_confirmation_button">OK, eg forstår det</string>
 
+    <!-- Label for the preference to show the most visited top sites on the homepage -->
+    <string name="top_sites_toggle_top_recent_sites_3">Mest besøkte nettstadar</string>
+    <!-- Label for the show most visited top sites preference -->
+    <string moz:removedIn="94" name="top_sites_toggle_top_frecent_sites_2" tools:ignore="UnusedResources">Vis mest besøkte nettstadar</string>
     <!-- Label for the show most visited sites preference -->
     <string moz:removedIn="93" name="top_sites_toggle_top_frecent_sites" tools:ignore="UnusedResources">Vis mest besøkte nettstadar</string>
 
@@ -1983,6 +2034,8 @@
     <!-- Inactive tabs in the tabs tray -->
     <!-- Title text displayed in the tabs tray when a tab has been unused for 14 days. -->
     <string name="inactive_tabs_title">Inaktive faner</string>
+    <!-- Content description for closing all inactive tabs -->
+    <string name="inactive_tabs_delete_all">Lat att alle inaktive faner</string>
     <!-- A description below the section of "inactive" tabs to notify the user when those tabs will be closed, if appropriate. See strings inactive_tabs_30_days and inactive_tabs_7_days for placeholders options. -->
     <string moz:removedIn="95" name="inactive_tabs_description" tools:ignore="UnusedResources">Faner er tilgjengelege her i %s. Etter det vert fanene automatisk attlatne.</string>
     <!-- The amount of time until a tab in the "inactive" section of the tabs tray will be closed. See string inactive_tabs_description as well -->
@@ -1990,6 +2043,38 @@
     <!-- The amount of time until a tab in the "inactive" section of the tabs tray will be closed. See string inactive_tabs_description as well -->
     <string moz:removedIn="95" name="inactive_tabs_7_days" tools:ignore="UnusedResources">1 veke</string>
 
+    <!-- Inactive tabs auto-close message in the tabs tray -->
+    <!-- The header text of the auto-close message when the user is asked if they want to turn on the auto-closing of inactive tabs. -->
+    <string name="inactive_tabs_auto_close_message_header" tools:ignore="UnusedResources">Late att automatisk etter ein måned?</string>
+
+    <!-- A description below the header to notify the user what the inactive tabs auto-close feature is. -->
+    <string name="inactive_tabs_auto_close_message_description" tools:ignore="UnusedResources">Firefox kan late att faner du ikkje har sett den siste månaden.</string>
+    <!-- A call to action below the description to allow the user to turn on the auto closing of inactive tabs. -->
+    <string name="inactive_tabs_auto_close_message_action" tools:ignore="UnusedResources">SLÅ PÅ AUTO-ATTLATING</string>
+    <!-- Text for the snackbar to confirm auto-close is enabled for inactive tabs -->
+    <string name="inactive_tabs_auto_close_message_snackbar">Automatisk attlating aktivert</string>
+
+    <!-- Inactive tabs survey -->
+    <!-- Header text for the inactive tabs survey asking for feedback to improve the inactive tabs feature. -->
+    <string moz:removedIn="95" name="inactive_tabs_survey_header" tools:ignore="UnusedResources">Hjelp oss med å forbetre</string>
+
+    <!-- Header text for the inactive tabs survey asking for feedback to improve the inactive tabs feature. -->
+    <string name="inactive_tabs_survey_header_1">Hjelp til med å forbetre Firefox</string>
+
+    <!-- Content text for the inactive tabs survey asking the primary survey feedback question. -->
+    <string name="inactive_tabs_survey_content">Kvifor deaktiverte du inaktive faner?</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string name="inactive_tabs_survey_do_not_understand">Eg forstår ikkje korleis det fungerer</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string name="inactive_tabs_survey_do_it_myself">Eg likar å rydde ut gamle faner sjølv</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string moz:removedIn="95" name="inactive_tabs_survey_time_too_long_option" tools:ignore="UnusedResources">Tida til inaktiv er for lang</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string name="inactive_tabs_survey_time_too_long_option_1">Tidsperioden på to veker er for lang</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string moz:removedIn="95" name="inactive_tabs_survey_time_too_short_option" tools:ignore="UnusedResources">Tida til inaktiv er for kort</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string name="inactive_tabs_survey_time_too_short_option_1">Tidsperioden på to veker er for kort</string>
     <!-- Confirmation button text to submit the feedback for the inactive tabs survey. -->
     <string name="inactive_tabs_survey_send_button">Send</string>
     <!-- Content description for inactive tabs survey close button -->
@@ -2010,6 +2095,11 @@
     <!-- Content description for privacy content close button -->
     <string name="privacy_content_close_button_content_description">Lat att</string>
 
+    <!-- Pocket recommended stories -->
+    <!-- Header text for a section on the home screen. -->
+    <string moz:removedIn="94" name="pocket_stories_header" tools:ignore="UnusedResources">Tankevekkjande artiklar</string>
+    <!-- Header text for a section on the home screen. -->
+    <string name="pocket_stories_header_1">Tankevekkjande artiklar</string>
     <!-- Header text for a section on the home screen. -->
     <string name="pocket_stories_categories_header">Artiklar etter emne</string>
     <!-- Text of a button allowing users to access an external url for more Pocket recommendations. -->
