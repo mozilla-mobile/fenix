@@ -1102,7 +1102,7 @@
     <!-- Content description (not visible, for screen readers etc.): Opens the collection menu when pressed -->
     <string name="collection_menu_button_content_description">Dewislen casgliadau</string>
     <!-- Label to describe what collections are to a new user without any collections -->
-    <string name="no_collections_description2">Casglwch y pethau sydd o bwys i chi.\nCrynhowch ynghyd chwiliadau, gwefannau a thabiau tebyg i gael mynediad cyflym yn hwyrach.</string>
+    <string name="no_collections_description2">Casglwch y pethau sydd o bwys i chi.\nCasglwch ynghyd chwiliadau, gwefannau a thabiau tebyg i gael mynediad cyflym yn nes ymlaen.</string>
     <!-- Title for the "select tabs" step of the collection creator -->
     <string name="create_collection_select_tabs">Dewis Tabiau</string>
     <!-- Title for the "select collection" step of the collection creator -->
@@ -1248,6 +1248,10 @@
     <string name="qr_scanner_dialog_positive">CANIATÁU</string>
     <!-- QR code scanner prompt dialog positive option to deny navigation to scanned link -->
     <string name="qr_scanner_dialog_negative">GWRTHOD</string>
+    <!-- QR code scanner prompt dialog error message shown when a hostname does not contain http or https. -->
+    <string name="qr_scanner_dialog_invalid">Nid yw’r cyfeiriad gwe’n ddilys</string>
+    <!-- QR code scanner prompt dialog positive option when there is an error -->
+    <string name="qr_scanner_dialog_invalid_ok">Iawn</string>
     <!-- Tab collection deletion prompt dialog message. Placeholder will be replaced with the collection name -->
     <string name="tab_collection_dialog_message">Ydych chi’n siŵr eich bod am ddileu %1$s?</string>
     <!-- Collection and tab deletion prompt dialog message. This will show when the last tab from a collection is deleted -->
@@ -1431,7 +1435,7 @@ Fodd bynnag, gall fod yn llai sefydlog. Llwythwch ein porwr Beta i gael profiad 
 
     <!-- Onboarding theme -->
     <!-- text for the theme picker onboarding card header -->
-    <string name="onboarding_theme_picker_header">Dewis eich thema</string>
+    <string name="onboarding_theme_picker_header">Dewiswch eich thema</string>
     <!-- text for the theme picker onboarding card description -->
     <string name="onboarding_theme_picker_description_2">Arbedwch ychydig o fatri a’ch golwg trwy alluogi’r modd tywyll.</string>
     <!-- Automatic theme setting (will follow device setting) -->
