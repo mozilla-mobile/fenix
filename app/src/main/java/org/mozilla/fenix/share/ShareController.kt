@@ -212,7 +212,7 @@ class DefaultShareController(
     @VisibleForTesting
     fun getShareText() = shareData.joinToString("\n\n") { data ->
         val url = data.url.orEmpty()
-        if (url.isExtensionUrl()) {
+        val parsedUrl = if (url.isExtensionUrl()) {
             // Sharing moz-extension:// URLs is not practical in general, as
             // they will only work on the current device.
 
@@ -225,6 +225,7 @@ class DefaultShareController(
         } else {
             url
         }
+        listOfNotNull(data.text, parsedUrl).joinToString("\n")
     }
 
     @VisibleForTesting

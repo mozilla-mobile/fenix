@@ -52,8 +52,8 @@ class ShareControllerTest {
     private val context: Context = spyk(testContext)
     private val shareSubject = "shareSubject"
     private val shareData = listOf(
-        ShareData(url = "url0", title = "title0"),
-        ShareData(url = "url1", title = "title1"),
+        ShareData(url = "url0", title = "title0", text = "text0"),
+        ShareData(url = "url1", title = "title1", text = "text1")
     )
 
     // Navigation between app fragments uses ShareTab as arguments. SendTabUseCases uses TabData.
@@ -61,7 +61,7 @@ class ShareControllerTest {
         TabData("title0", "url0"),
         TabData("title1", "url1"),
     )
-    private val textToShare = "${shareData[0].url}\n\n${shareData[1].url}"
+    private val textToShare = "${shareData[0].text}\n${shareData[0].url}\n\n${shareData[1].text}\n${shareData[1].url}"
     private val sendTabUseCases = mockk<SendTabUseCases>(relaxed = true)
     private val saveToPdfUseCase = mockk<SessionUseCases.SaveToPdfUseCase>(relaxed = true)
     private val snackbar = mockk<FenixSnackbar>(relaxed = true)
