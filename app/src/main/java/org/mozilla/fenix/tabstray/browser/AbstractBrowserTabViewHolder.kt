@@ -29,6 +29,7 @@ import mozilla.components.browser.toolbar.MAX_URI_LENGTH
 import mozilla.components.concept.base.images.ImageLoadRequest
 import mozilla.components.concept.base.images.ImageLoader
 import mozilla.components.concept.engine.mediasession.MediaSession
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
@@ -211,7 +212,6 @@ abstract class AbstractBrowserTabViewHolder(
         imageLoader.loadIntoView(thumbnailView, ImageLoadRequest(id, thumbnailSize))
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     private fun setSelectionInteractor(
         item: TabSessionState,
         holder: SelectionHolder<TabSessionState>,
@@ -237,15 +237,21 @@ abstract class AbstractBrowserTabViewHolder(
                 false
             }
         }
+        setDragInteractor(item, holder, interactor)
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun setDragInteractor(
+        item: TabSessionState,
+        holder: SelectionHolder<TabSessionState>,
+        interactor: BrowserTrayInteractor
+    ) {
         // Since I immediately pass the event to onTouchEvent if it's not a move
         // The ClickableViewAccessibility warning isn't useful
         itemView.setOnTouchListener { view, motionEvent ->
             when (motionEvent.actionMasked) {
                 MotionEvent.ACTION_DOWN -> {
-                    touchStartPoint = PointF(
-                        motionEvent.x,
-                        motionEvent.y
-                    )
+                    touchStartPoint = PointF(motionEvent.x, motionEvent.y)
                 }
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                     touchStartPoint = null
@@ -255,16 +261,13 @@ abstract class AbstractBrowserTabViewHolder(
                     val touchStart = touchStartPoint
                     val selected = holder.selectedItems
                     val selectsOnlyThis = (selected.size == 1 && selected.contains(item))
-                    if (!parent.context.settings().searchTermTabGroupsAreEnabled &&
-                        selectsOnlyThis && touchStart != null
-                    ) {
+                    val featureEnabled = FeatureFlags.tabReorderingFeature &&
+                        !parent.context.settings().searchTermTabGroupsAreEnabled
+                    if (featureEnabled && selectsOnlyThis && touchStart != null) {
                         // Prevent scrolling if the user tries to start drag vertically
                         parent.requestDisallowInterceptTouchEvent(true)
                         // Only start deselect+drag if the user drags far enough
-                        val dist = PointF.length(
-                            touchStart.x - motionEvent.x,
-                            touchStart.y - motionEvent.y
-                        )
+                        val dist = PointF.length(touchStart.x - motionEvent.x, touchStart.y - motionEvent.y)
                         if (dist > ViewConfiguration.get(parent.context).scaledTouchSlop) {
                             interactor.deselect(item) // Exit selection mode
                             touchStartPoint = null
