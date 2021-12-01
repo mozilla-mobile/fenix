@@ -417,8 +417,10 @@ class SmokeTest {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
         }.openThreeDotMenu {
-        }.sharePage {
-            verifyShareAppsLayout()
+        }.clickShareButton {
+            verifyShareTabLayout()
+            verifySendToDeviceTitle()
+            verifyShareALinkTitle()
         }
     }
 
@@ -803,6 +805,7 @@ class SmokeTest {
         }.submitQuery(secondWebPage.url.toString()) {
             mDevice.waitForIdle()
         }.goToHomescreen {
+            swipeToBottom()
         }.clickSaveTabsToCollectionButton {
             longClickTab(firstWebPage.title)
             selectTab(secondWebPage.title)
@@ -841,8 +844,8 @@ class SmokeTest {
             verifyCollectionIcon()
         }.expandCollection(collectionName) {
             verifyTabSavedInCollection(webPage.title)
-            verifyCollectionTabLogo()
-            verifyCollectionTabUrl()
+            verifyCollectionTabLogo(true)
+            verifyCollectionTabUrl(true)
             verifyShareCollectionButtonIsVisible(true)
             verifyCollectionMenuIsVisible(true)
             verifyCollectionItemRemoveButtonIsVisible(webPage.title, true)
@@ -852,6 +855,28 @@ class SmokeTest {
             verifyTabSavedInCollection(webPage.title, false)
             verifyShareCollectionButtonIsVisible(false)
             verifyCollectionMenuIsVisible(false)
+            verifyCollectionTabLogo(false)
+            verifyCollectionTabUrl(false)
+            verifyCollectionItemRemoveButtonIsVisible(webPage.title, false)
+        }
+
+        homeScreen {
+        }.expandCollection(collectionName) {
+            verifyTabSavedInCollection(webPage.title)
+            verifyCollectionTabLogo(true)
+            verifyCollectionTabUrl(true)
+            verifyShareCollectionButtonIsVisible(true)
+            verifyCollectionMenuIsVisible(true)
+            verifyCollectionItemRemoveButtonIsVisible(webPage.title, true)
+        }.collapseCollection(collectionName) {}
+
+        collectionRobot {
+            verifyTabSavedInCollection(webPage.title, false)
+            verifyShareCollectionButtonIsVisible(false)
+            verifyCollectionMenuIsVisible(false)
+            verifyCollectionTabLogo(false)
+            verifyCollectionTabUrl(false)
+            verifyCollectionItemRemoveButtonIsVisible(webPage.title, false)
         }
     }
 
@@ -879,22 +904,28 @@ class SmokeTest {
 
     @Test
     fun shareCollectionTest() {
-        val webPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+        val firstWebsite = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+        val secondWebsite = TestAssetHelper.getGenericAsset(mockWebServer, 2)
+        val sharingApp = "Gmail"
+        val urlString = "${secondWebsite.url}\n\n${firstWebsite.url}"
 
         navigationToolbar {
-        }.enterURLAndEnterToBrowser(webPage.url) {
+        }.enterURLAndEnterToBrowser(firstWebsite.url) {
+            verifyPageContent(firstWebsite.content)
         }.openTabDrawer {
-            createCollection(webPage.title, collectionName)
-            snackBarButtonClick("VIEW")
-        }
-
-        homeScreen {
+            createCollection(firstWebsite.title, collectionName)
+        }.openNewTab {
+        }.submitQuery(secondWebsite.url.toString()) {
+            verifyPageContent(secondWebsite.content)
+        }.openThreeDotMenu {
+        }.openSaveToCollection {
+        }.selectExistingCollection(collectionName) {
+        }.goToHomescreen {
         }.expandCollection(collectionName) {
-            clickShareCollectionButton()
-        }
-
-        homeScreen {
-            verifyShareTabsOverlay()
+        }.clickShareCollectionButton {
+            verifyShareTabsOverlay(firstWebsite.title, secondWebsite.title)
+            selectAppToShareWith(sharingApp)
+            verifySharedTabsIntent(urlString, collectionName)
         }
     }
 
@@ -964,21 +995,33 @@ class SmokeTest {
 
     @Test
     fun shareTabsFromTabsTrayTest() {
-        val website = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+        val firstWebsite = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+        val secondWebsite = TestAssetHelper.getGenericAsset(mockWebServer, 2)
+        val firstWebsiteTitle = firstWebsite.title
+        val secondWebsiteTitle = secondWebsite.title
+        val sharingApp = "Gmail"
+        val sharedUrlsString = "${firstWebsite.url}\n\n${secondWebsite.url}"
 
         homeScreen {
         }.openNavigationToolbar {
-        }.enterURLAndEnterToBrowser(website.url) {
-            mDevice.waitForIdle()
+        }.enterURLAndEnterToBrowser(firstWebsite.url) {
+            verifyPageContent(firstWebsite.content)
         }.openTabDrawer {
-            verifyNormalModeSelected()
-            verifyExistingTabList()
+        }.openNewTab {
+        }.submitQuery(secondWebsite.url.toString()) {
+            verifyPageContent(secondWebsite.content)
+        }.openTabDrawer {
             verifyExistingOpenTabs("Test_Page_1")
-            verifyTabTrayOverflowMenu(true)
+            verifyExistingOpenTabs("Test_Page_2")
         }.openTabsListThreeDotMenu {
             verifyShareAllTabsButton()
-            clickShareAllTabsButton()
-            verifyShareTabsOverlay()
+        }.clickShareAllTabsButton {
+            verifyShareTabsOverlay(firstWebsiteTitle, secondWebsiteTitle)
+            selectAppToShareWith(sharingApp)
+            verifySharedTabsIntent(
+                sharedUrlsString,
+                "$firstWebsiteTitle, $secondWebsiteTitle"
+            )
         }
     }
 
