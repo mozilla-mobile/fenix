@@ -107,7 +107,7 @@ jobs:
 
   run-ui:
     runs-on: macos-11
-    if: github.event.pull_request.head.repo.full_name != github.repository && github.actor != 'MickeyMoz'
+    if: ${{ false }} # disable for now due to INSTALL_FAILED_INSUFFICIENT_STORAGE error
 
     timeout-minutes: 60
     strategy:
