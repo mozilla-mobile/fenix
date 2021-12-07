@@ -50,7 +50,7 @@
     <!-- Warning text -->
     <color name="fx_mobile_text_color_warning" tools:ignore="UnusedResources">@color/photonRed40</color>
     <!-- Text link -->
-    <color name="fx_mobile_text_color_action" tools:ignore="UnusedResources">@color/photonViolet40</color>
+    <color name="fx_mobile_text_color_action">@color/photonViolet40</color>
     <!-- Small heading -->
     <color name="fx_mobile_text_color_accent" tools:ignore="UnusedResources">@color/photonViolet40</color>
     <!-- Text/Icon inverted (on color) -->
@@ -66,7 +66,7 @@
     <!-- Icon inverted (on color) -->
     <color name="fx_mobile_icon_color_inverted" tools:ignore="UnusedResources">@color/photonWhite</color>
     <!-- New -->
-    <color name="fx_mobile_icon_color_notice" tools:ignore="UnusedResources">@color/photonBlue30</color>
+    <color name="fx_mobile_icon_color_notice">@color/photonBlue30</color>
     <!-- Icon button -->
     <color name="fx_mobile_icon_color_button" tools:ignore="UnusedResources">@color/photonLightGrey05</color>
     <color name="fx_mobile_icon_color_warning" tools:ignore="UnusedResources">@color/photonRed40</color>
@@ -116,7 +116,6 @@
     <color name="toolbar_end_gradient_normal_theme">@color/foundation_normal_theme</color>
     <color name="toolbar_divider_color_normal_theme">@color/photonDarkGrey10</color>
     <color name="fill_link_from_clipboard_normal_theme">@color/accent_on_dark_background_normal_theme</color>
-    <color name="menu_category_normal_theme">@color/primary_text_normal_theme</color>
     <color name="sync_disconnected_icon_fill_normal_theme">#FFF36E</color>
     <color name="sync_disconnected_background_normal_theme">#5B5846</color>
     <color name="swipe_delete_background_normal_theme">@color/photonDarkGrey20</color>
@@ -165,18 +164,12 @@
     <color name="top_site_pin_icon_color">@color/foundation_light_theme</color>
     <color name="top_sites_border_color">@color/photonDarkGrey90</color>
 
-    <!-- Synced tabs colors-->
-    <color name="synced_tabs_separator">@color/photonDarkGrey10</color>
-
     <!-- Collection icons-->
     <color name="collection_icon_color_violet">@color/photonViolet40</color>
     <color name="collection_icon_color_blue">@color/photonBlue30</color>
     <color name="collection_icon_color_pink">@color/photonPink30</color>
     <color name="collection_icon_color_green">#88FFD1</color>
     <color name="collection_icon_color_yellow">#FFDE67</color>
-
-    <!-- Home screen -->
-    <color name="home_show_all_button_text">@color/photonViolet40</color>
 
     <!-- Search Widget -->
     <color name="search_widget_background">@color/inset_normal_theme</color>

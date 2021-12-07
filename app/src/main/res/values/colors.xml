@@ -50,7 +50,7 @@
     <!-- Warning text -->
     <color name="fx_mobile_text_color_warning" tools:ignore="UnusedResources">@color/photonRed80</color>
     <!-- Text link -->
-    <color name="fx_mobile_text_color_action" tools:ignore="UnusedResources">@color/photonViolet70</color>
+    <color name="fx_mobile_text_color_action">@color/photonViolet70</color>
     <!-- Small heading -->
     <color name="fx_mobile_text_color_accent" tools:ignore="UnusedResources">@color/photonViolet90</color>
     <!-- Text/Icon inverted (on color) -->
@@ -66,7 +66,7 @@
     <!-- Icon inverted (on color) -->
     <color name="fx_mobile_icon_color_inverted" tools:ignore="UnusedResources">@color/photonWhite</color>
     <!-- New -->
-    <color name="fx_mobile_icon_color_notice" tools:ignore="UnusedResources">@color/photonBlue30</color>
+    <color name="fx_mobile_icon_color_notice">@color/photonBlue30</color>
     <!-- Icon button -->
     <color name="fx_mobile_icon_color_button" tools:ignore="UnusedResources">@color/photonViolet90</color>
     <color name="fx_mobile_icon_color_warning" tools:ignore="UnusedResources">@color/photonRed80</color>
@@ -148,7 +148,6 @@
     <color name="toolbar_end_gradient_private_theme">#383372</color>
     <color name="toolbar_divider_color_private_theme">@color/photonDarkGrey10</color>
     <color name="fill_link_from_clipboard_private_theme">@color/accent_on_dark_background_private_theme</color>
-    <color name="menu_category_private_theme">@color/primary_text_private_theme</color>
     <color name="sync_disconnected_icon_fill_private_theme">@color/photonYellow70</color>
     <color name="sync_disconnected_background_private_theme">#5B5846</color>
     <color name="swipe_delete_background_private_theme">@color/accent_light_theme</color>
@@ -197,7 +196,6 @@
     <color name="toolbar_end_gradient_normal_theme">@color/foundation_light_theme</color>
     <color name="toolbar_divider_color_normal_theme">@color/photonLightGrey50</color>
     <color name="fill_link_from_clipboard_normal_theme">@color/accent_light_theme</color>
-    <color name="menu_category_normal_theme">@color/accent_light_theme</color>
     <color name="sync_disconnected_icon_fill_normal_theme">@color/photonYellow70</color>
     <color name="sync_disconnected_background_normal_theme">#FFFDE2</color>
     <color name="swipe_delete_background_normal_theme">@color/photonLightGrey30</color>
@@ -245,9 +243,6 @@
     <color name="top_site_pin_icon_color">@color/photonDarkGrey80</color>
     <color name="top_sites_border_color">@color/photonLightGrey30</color>
 
-    <!-- Synced tabs colors-->
-    <color name="synced_tabs_separator">@color/photonLightGrey30</color>
-
     <!-- Collection icons-->
     <color name="collection_icon_color_violet">@color/photonViolet60</color>
     <color name="collection_icon_color_blue">@color/photonBlue60</color>
@@ -262,11 +257,7 @@
         <item>@color/collection_icon_color_yellow</item>
     </array>
 
-    <!-- Home screen -->
-    <color name="home_show_all_button_text">@color/photonViolet70</color>
-
     <!-- Quick action buttons-->
-
     <color name="quick_action_reader_appearance_icon">#482166</color>
 
     <!-- Toggle Colors -->
@@ -313,9 +304,6 @@
 
     <!-- Private Browsing Mode Persistent Notification -->
     <color name="pbm_notification_color">@color/photonViolet70</color>
-
-    <!-- Notification Color -->
-    <color name="whats_new_notification_color">@color/photonBlue30</color>
 
     <!-- Static Shortcut Background Color -->
     <color name="static_shortcut_background">#F5F5F5</color>
