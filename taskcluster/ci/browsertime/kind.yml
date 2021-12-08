@@ -74,7 +74,6 @@ job-defaults:
               type: directory
     run-visual-metrics: True
     chimera: True
-    web-render-only: True
     run:
         using: run-task
         checkout: false
@@ -93,6 +92,7 @@ job-defaults:
             - '--browsertime-ffmpeg=$MOZ_FETCHES_DIR/ffmpeg-4.1.4-i686-static/bin/ffmpeg'
             - '--browsertime-browsertimejs=$MOZ_FETCHES_DIR/browsertime/node_modules/browsertime/bin/browsertime.js'
             - '--conditioned-profile=settled'
+            - '--enable-webrender'
     fetches:
         toolchain:
             - browsertime
@@ -126,7 +126,6 @@ jobs:
             - [google-search-restaurants, gsearch-r]
 
     tp6m-hv:
-        web-render-only: False
         page-load-tests:
             - google
             - [amazon-search, amazon-s]

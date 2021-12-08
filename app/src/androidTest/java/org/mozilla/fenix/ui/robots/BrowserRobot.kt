@@ -160,18 +160,9 @@ class BrowserRobot {
         )
     }
 
-    fun verifyNavURLBar() = assertNavURLBar()
-
     fun verifyNavURLBarHidden() = assertNavURLBarHidden()
 
     fun verifySecureConnectionLockIcon() = assertSecureConnectionLockIcon()
-
-    fun verifyEnhancedTrackingProtectionSwitch() = assertEnhancedTrackingProtectionSwitch()
-
-    fun verifyEnhancedTrackingOptions() {
-        onView(withId(R.id.mozac_browser_toolbar_security_indicator)).click()
-        verifyEnhancedTrackingProtectionSwitch()
-    }
 
     fun verifyMenuButton() = assertMenuButton()
 
@@ -403,6 +394,37 @@ class BrowserRobot {
         }
     }
 
+    fun longClickAndSearchText(searchButton: String, expectedText: String) {
+        var currentTries = 0
+        while (currentTries++ < 3) {
+            try {
+                // Long click desired text
+                mDevice.waitForWindowUpdate(packageName, waitingTime)
+                mDevice.findObject(UiSelector().resourceId("$packageName:id/engineView"))
+                    .waitForExists(waitingTime)
+                mDevice.findObject(UiSelector().textContains(expectedText)).waitForExists(waitingTime)
+                val link = mDevice.findObject(By.textContains(expectedText))
+                link.click(LONG_CLICK_DURATION)
+
+                // Click search from the text selection toolbar
+                mDevice.findObject(UiSelector().textContains(searchButton)).waitForExists(waitingTime)
+                val searchText = mDevice.findObject(By.textContains(searchButton))
+                searchText.click()
+
+                break
+            } catch (e: NullPointerException) {
+                println("Failed to long click desired text: ${e.localizedMessage}")
+
+                // Refresh the page in case the first long click didn't succeed
+                navigationToolbar {
+                }.openThreeDotMenu {
+                }.refreshPage {
+                    mDevice.waitForIdle()
+                }
+            }
+        }
+    }
+
     fun snackBarButtonClick() {
         val switchButton =
             mDevice.findObject(
@@ -583,10 +605,19 @@ class BrowserRobot {
         }
 
         fun goToHomescreen(interact: HomeScreenRobot.() -> Unit): HomeScreenRobot.Transition {
+            assertTrue(
+                mDevice.findObject(UiSelector().description("Home screen"))
+                    .waitForExists(waitingTime)
+            )
+
             onView(withContentDescription("Home screen"))
                 .check(matches(isDisplayed()))
                 .click()
-            mDevice.waitForIdle()
+
+            assertTrue(
+                mDevice.findObject(UiSelector().resourceId("$packageName:id/homeLayout"))
+                    .waitForExists(waitingTime)
+            )
 
             HomeScreenRobot().interact()
             return HomeScreenRobot.Transition()
@@ -612,6 +643,14 @@ class BrowserRobot {
             HomeScreenRobot().interact()
             return HomeScreenRobot.Transition()
         }
+
+        fun clickShareSelectedText(interact: ShareOverlayRobot.() -> Unit): ShareOverlayRobot.Transition {
+            val shareTextButton = org.mozilla.fenix.ui.robots.mDevice.findObject(By.textContains("Share"))
+            shareTextButton.click()
+
+            ShareOverlayRobot().interact()
+            return ShareOverlayRobot.Transition()
+        }
     }
 }
 
@@ -634,16 +673,6 @@ private fun assertSearchBar() = searchBar().check(matches(withEffectiveVisibilit
 private fun assertNavURLBar() = assertTrue(navURLBar().waitForExists(waitingTime))
 
 private fun assertNavURLBarHidden() = assertTrue(navURLBar().waitUntilGone(waitingTime))
-
-private fun assertEnhancedTrackingProtectionSwitch() {
-    withText(R.id.trackingProtectionSwitch)
-        .matches(withEffectiveVisibility(Visibility.VISIBLE))
-}
-
-private fun assertProtectionSettingsButton() {
-    onView(withId(R.id.protection_settings))
-        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-}
 
 private fun assertSecureConnectionLockIcon() {
     onView(withId(R.id.mozac_browser_toolbar_security_indicator))

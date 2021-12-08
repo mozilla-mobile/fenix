@@ -103,8 +103,6 @@ import org.mozilla.fenix.ext.recordExposureEvent
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.historymetadata.HistoryMetadataFeature
-import org.mozilla.fenix.historymetadata.controller.DefaultHistoryMetadataController
 import org.mozilla.fenix.home.mozonline.showPrivacyPopWindow
 import org.mozilla.fenix.home.pocket.DefaultPocketStoriesController
 import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesCategory
@@ -113,6 +111,8 @@ import org.mozilla.fenix.home.recentbookmarks.controller.DefaultRecentBookmarksC
 import org.mozilla.fenix.home.recenttabs.RecentTab
 import org.mozilla.fenix.home.recenttabs.RecentTabsListFeature
 import org.mozilla.fenix.home.recenttabs.controller.DefaultRecentTabsController
+import org.mozilla.fenix.home.recentvisits.RecentVisitsFeature
+import org.mozilla.fenix.home.recentvisits.controller.DefaultRecentVisitsController
 import org.mozilla.fenix.home.sessioncontrol.DefaultSessionControlController
 import org.mozilla.fenix.home.sessioncontrol.SessionControlInteractor
 import org.mozilla.fenix.home.sessioncontrol.SessionControlView
@@ -179,7 +179,7 @@ class HomeFragment : Fragment() {
     private val topSitesFeature = ViewBoundFeatureWrapper<TopSitesFeature>()
     private val recentTabsListFeature = ViewBoundFeatureWrapper<RecentTabsListFeature>()
     private val recentBookmarksFeature = ViewBoundFeatureWrapper<RecentBookmarksFeature>()
-    private val historyMetadataFeature = ViewBoundFeatureWrapper<HistoryMetadataFeature>()
+    private val historyMetadataFeature = ViewBoundFeatureWrapper<RecentVisitsFeature>()
 
     @VisibleForTesting
     internal var getMenuButton: () -> MenuButton? = { binding.menuButton }
@@ -255,7 +255,7 @@ class HomeFragment : Fragment() {
                     //  This will otherwise cause a visual jump as the section gets rendered from no state
                     //  to some state.
                     recentTabs = getRecentTabs(components),
-                    historyMetadata = emptyList()
+                    recentHistory = emptyList()
                 ),
                 listOf(
                     PocketUpdatesMiddleware(
@@ -316,9 +316,10 @@ class HomeFragment : Fragment() {
 
         if (requireContext().settings().historyMetadataUIFeature) {
             historyMetadataFeature.set(
-                feature = HistoryMetadataFeature(
+                feature = RecentVisitsFeature(
                     homeStore = homeFragmentStore,
                     historyMetadataStorage = components.core.historyStorage,
+                    historyHighlightsStorage = components.core.lazyHistoryStorage,
                     scope = viewLifecycleOwner.lifecycleScope
                 ),
                 owner = viewLifecycleOwner,
@@ -356,9 +357,10 @@ class HomeFragment : Fragment() {
                 activity = activity,
                 navController = findNavController()
             ),
-            historyMetadataController = DefaultHistoryMetadataController(
+            recentVisitsController = DefaultRecentVisitsController(
                 navController = findNavController(),
                 homeStore = homeFragmentStore,
+                selectOrAddTabUseCase = components.useCases.tabsUseCases.selectOrAddTab,
                 storage = components.core.historyStorage,
                 scope = viewLifecycleOwner.lifecycleScope,
                 store = components.core.store,
@@ -700,7 +702,7 @@ class HomeFragment : Fragment() {
                 //  to some state.
                 recentTabs = getRecentTabs(components),
                 recentBookmarks = emptyList(),
-                historyMetadata = emptyList()
+                recentHistory = emptyList()
             )
         )
 
@@ -875,20 +877,6 @@ class HomeFragment : Fragment() {
     }
 
     private fun navigateToSearch() {
-        // Dismisses the search dialog when the home content is scrolled
-        val recyclerView = sessionControlView!!.view
-        val listener = object : RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-                if (newState == RecyclerView.SCROLL_STATE_DRAGGING || newState == RecyclerView.SCROLL_STATE_SETTLING) {
-                    findNavController().navigateUp()
-                    recyclerView.removeOnScrollListener(this)
-                }
-            }
-        }
-
-        recyclerView.addOnScrollListener(listener)
-
         val directions =
             HomeFragmentDirections.actionGlobalSearchDialog(
                 sessionId = null
@@ -903,9 +891,12 @@ class HomeFragment : Fragment() {
             this.viewLifecycleOwner,
             context,
             onItemTapped = {
+                if (it !is HomeMenu.Item.DesktopMode) {
+                    hideOnboardingIfNeeded()
+                }
+
                 when (it) {
                     HomeMenu.Item.Settings -> {
-                        hideOnboardingIfNeeded()
                         nav(
                             R.id.homeFragment,
                             HomeFragmentDirections.actionGlobalSettingsFragment()
@@ -914,14 +905,12 @@ class HomeFragment : Fragment() {
                     }
                     HomeMenu.Item.CustomizeHome -> {
                         context.metrics.track(Event.HomeScreenCustomizedHomeClicked)
-                        hideOnboardingIfNeeded()
                         nav(
                             R.id.homeFragment,
                             HomeFragmentDirections.actionGlobalHomeSettingsFragment()
                         )
                     }
                     is HomeMenu.Item.SyncAccount -> {
-                        hideOnboardingIfNeeded()
                         val directions = when (it.accountState) {
                             AccountState.AUTHENTICATED ->
                                 BrowserFragmentDirections.actionGlobalAccountSettingsFragment()
@@ -936,30 +925,24 @@ class HomeFragment : Fragment() {
                         )
                     }
                     HomeMenu.Item.Bookmarks -> {
-                        hideOnboardingIfNeeded()
                         nav(
                             R.id.homeFragment,
                             HomeFragmentDirections.actionGlobalBookmarkFragment(BookmarkRoot.Mobile.id)
                         )
                     }
                     HomeMenu.Item.History -> {
-                        hideOnboardingIfNeeded()
                         nav(
                             R.id.homeFragment,
                             HomeFragmentDirections.actionGlobalHistoryFragment()
                         )
                     }
-
                     HomeMenu.Item.Downloads -> {
-                        hideOnboardingIfNeeded()
                         nav(
                             R.id.homeFragment,
                             HomeFragmentDirections.actionGlobalDownloadsFragment()
                         )
                     }
-
                     HomeMenu.Item.Help -> {
-                        hideOnboardingIfNeeded()
                         (activity as HomeActivity).openToBrowserAndLoad(
                             searchTermOrURL = SupportUtils.getSumoURLForTopic(context, HELP),
                             newTab = true,
@@ -967,7 +950,6 @@ class HomeFragment : Fragment() {
                         )
                     }
                     HomeMenu.Item.WhatsNew -> {
-                        hideOnboardingIfNeeded()
                         WhatsNew.userViewedWhatsNew(context)
                         context.metrics.track(Event.WhatsNewTapped)
                         (activity as HomeActivity).openToBrowserAndLoad(
@@ -992,7 +974,6 @@ class HomeFragment : Fragment() {
                         )
                     }
                     HomeMenu.Item.ReconnectSync -> {
-                        hideOnboardingIfNeeded()
                         nav(
                             R.id.homeFragment,
                             HomeFragmentDirections.actionGlobalAccountProblemFragment()

@@ -417,8 +417,10 @@ class SmokeTest {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
         }.openThreeDotMenu {
-        }.sharePage {
-            verifyShareAppsLayout()
+        }.clickShareButton {
+            verifyShareTabLayout()
+            verifySendToDeviceTitle()
+            verifyShareALinkTitle()
         }
     }
 
@@ -446,7 +448,7 @@ class SmokeTest {
         }.openThreeDotMenu {
         }.openSettings {
         }.openEnhancedTrackingProtectionSubMenu {
-            verifyEnhancedTrackingProtectionOptions()
+            verifyEnhancedTrackingProtectionOptionsEnabled()
             selectTrackingProtectionOption("Custom")
             verifyCustomTrackingProtectionSettings()
         }.goBackToHomeScreen {}
@@ -679,8 +681,8 @@ class SmokeTest {
     }
 
     @Test
-    // This test verifies the Recently Closed Tabs List and items
-    fun verifyRecentlyClosedTabsListTest() {
+    // Verifies that a recently closed item is properly opened
+    fun openRecentlyClosedItemTest() {
         val website = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         homeScreen {
@@ -697,39 +699,13 @@ class SmokeTest {
             IdlingRegistry.getInstance().register(recentlyClosedTabsListIdlingResource!!)
             verifyRecentlyClosedTabsMenuView()
             IdlingRegistry.getInstance().unregister(recentlyClosedTabsListIdlingResource!!)
-            verifyRecentlyClosedTabsPageTitle("Test_Page_1")
-            verifyRecentlyClosedTabsUrl(website.url)
-        }
-    }
-
-    @Test
-    // Verifies the Open in a new tab option from the Recently Closed Tabs overflow menu
-    fun openRecentlyClosedTabsInNewTabTest() {
-        val website = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        homeScreen {
-        }.openNavigationToolbar {
-        }.enterURLAndEnterToBrowser(website.url) {
-            mDevice.waitForIdle()
-        }.openTabDrawer {
-            closeTab()
-        }.openTabDrawer {
-        }.openRecentlyClosedTabs {
-            waitForListToExist()
-            recentlyClosedTabsListIdlingResource =
-                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.recently_closed_list), 1)
-            IdlingRegistry.getInstance().register(recentlyClosedTabsListIdlingResource!!)
-            verifyRecentlyClosedTabsMenuView()
-            IdlingRegistry.getInstance().unregister(recentlyClosedTabsListIdlingResource!!)
-        }.clickOpenInNewTab {
+        }.clickRecentlyClosedItem("Test_Page_1") {
             verifyUrl(website.url.toString())
-        }.openTabDrawer {
-            verifyNormalModeSelected()
         }
     }
 
     @Test
-    // Verifies the delete button from the Recently Closed Tabs
+    // Verifies that tapping the "x" button removes a recently closed item from the list
     fun deleteRecentlyClosedTabsItemTest() {
         val website = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
@@ -803,6 +779,7 @@ class SmokeTest {
         }.submitQuery(secondWebPage.url.toString()) {
             mDevice.waitForIdle()
         }.goToHomescreen {
+            swipeToBottom()
         }.clickSaveTabsToCollectionButton {
             longClickTab(firstWebPage.title)
             selectTab(secondWebPage.title)
@@ -841,8 +818,8 @@ class SmokeTest {
             verifyCollectionIcon()
         }.expandCollection(collectionName) {
             verifyTabSavedInCollection(webPage.title)
-            verifyCollectionTabLogo()
-            verifyCollectionTabUrl()
+            verifyCollectionTabLogo(true)
+            verifyCollectionTabUrl(true)
             verifyShareCollectionButtonIsVisible(true)
             verifyCollectionMenuIsVisible(true)
             verifyCollectionItemRemoveButtonIsVisible(webPage.title, true)
@@ -852,6 +829,28 @@ class SmokeTest {
             verifyTabSavedInCollection(webPage.title, false)
             verifyShareCollectionButtonIsVisible(false)
             verifyCollectionMenuIsVisible(false)
+            verifyCollectionTabLogo(false)
+            verifyCollectionTabUrl(false)
+            verifyCollectionItemRemoveButtonIsVisible(webPage.title, false)
+        }
+
+        homeScreen {
+        }.expandCollection(collectionName) {
+            verifyTabSavedInCollection(webPage.title)
+            verifyCollectionTabLogo(true)
+            verifyCollectionTabUrl(true)
+            verifyShareCollectionButtonIsVisible(true)
+            verifyCollectionMenuIsVisible(true)
+            verifyCollectionItemRemoveButtonIsVisible(webPage.title, true)
+        }.collapseCollection(collectionName) {}
+
+        collectionRobot {
+            verifyTabSavedInCollection(webPage.title, false)
+            verifyShareCollectionButtonIsVisible(false)
+            verifyCollectionMenuIsVisible(false)
+            verifyCollectionTabLogo(false)
+            verifyCollectionTabUrl(false)
+            verifyCollectionItemRemoveButtonIsVisible(webPage.title, false)
         }
     }
 
@@ -879,22 +878,28 @@ class SmokeTest {
 
     @Test
     fun shareCollectionTest() {
-        val webPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+        val firstWebsite = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+        val secondWebsite = TestAssetHelper.getGenericAsset(mockWebServer, 2)
+        val sharingApp = "Gmail"
+        val urlString = "${secondWebsite.url}\n\n${firstWebsite.url}"
 
         navigationToolbar {
-        }.enterURLAndEnterToBrowser(webPage.url) {
+        }.enterURLAndEnterToBrowser(firstWebsite.url) {
+            verifyPageContent(firstWebsite.content)
         }.openTabDrawer {
-            createCollection(webPage.title, collectionName)
-            snackBarButtonClick("VIEW")
-        }
-
-        homeScreen {
+            createCollection(firstWebsite.title, collectionName)
+        }.openNewTab {
+        }.submitQuery(secondWebsite.url.toString()) {
+            verifyPageContent(secondWebsite.content)
+        }.openThreeDotMenu {
+        }.openSaveToCollection {
+        }.selectExistingCollection(collectionName) {
+        }.goToHomescreen {
         }.expandCollection(collectionName) {
-            clickShareCollectionButton()
-        }
-
-        homeScreen {
-            verifyShareTabsOverlay()
+        }.clickShareCollectionButton {
+            verifyShareTabsOverlay(firstWebsite.title, secondWebsite.title)
+            selectAppToShareWith(sharingApp)
+            verifySharedTabsIntent(urlString, collectionName)
         }
     }
 
@@ -945,6 +950,18 @@ class SmokeTest {
             selectFolder("My Folder")
             navigateUp()
             saveEditBookmark()
+            createFolder("My Folder 2")
+            bookmarksListIdlingResource =
+                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.bookmark_list), 1)
+            IdlingRegistry.getInstance().register(bookmarksListIdlingResource!!)
+            verifyFolderTitle("My Folder 2")
+            IdlingRegistry.getInstance().unregister(bookmarksListIdlingResource!!)
+        }.openThreeDotMenu("My Folder 2") {
+        }.clickEdit {
+            clickParentFolderSelector()
+            selectFolder("My Folder")
+            navigateUp()
+            saveEditBookmark()
         }.openThreeDotMenu("My Folder") {
         }.clickDelete {
             cancelFolderDeletion()
@@ -953,32 +970,47 @@ class SmokeTest {
         }.clickDelete {
             confirmDeletion()
             verifyDeleteSnackBarText()
+            verifyBookmarkIsDeleted("My Folder")
+            verifyBookmarkIsDeleted("My Folder 2")
+            verifyBookmarkIsDeleted("Test_Page_1")
             navigateUp()
         }
 
         browserScreen {
         }.openThreeDotMenu {
-            verifyBookmarksButton()
+            verifyAddBookmarkButton()
         }
     }
 
     @Test
     fun shareTabsFromTabsTrayTest() {
-        val website = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+        val firstWebsite = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+        val secondWebsite = TestAssetHelper.getGenericAsset(mockWebServer, 2)
+        val firstWebsiteTitle = firstWebsite.title
+        val secondWebsiteTitle = secondWebsite.title
+        val sharingApp = "Gmail"
+        val sharedUrlsString = "${firstWebsite.url}\n\n${secondWebsite.url}"
 
         homeScreen {
         }.openNavigationToolbar {
-        }.enterURLAndEnterToBrowser(website.url) {
-            mDevice.waitForIdle()
+        }.enterURLAndEnterToBrowser(firstWebsite.url) {
+            verifyPageContent(firstWebsite.content)
         }.openTabDrawer {
-            verifyNormalModeSelected()
-            verifyExistingTabList()
+        }.openNewTab {
+        }.submitQuery(secondWebsite.url.toString()) {
+            verifyPageContent(secondWebsite.content)
+        }.openTabDrawer {
             verifyExistingOpenTabs("Test_Page_1")
-            verifyTabTrayOverflowMenu(true)
+            verifyExistingOpenTabs("Test_Page_2")
         }.openTabsListThreeDotMenu {
             verifyShareAllTabsButton()
-            clickShareAllTabsButton()
-            verifyShareTabsOverlay()
+        }.clickShareAllTabsButton {
+            verifyShareTabsOverlay(firstWebsiteTitle, secondWebsiteTitle)
+            selectAppToShareWith(sharingApp)
+            verifySharedTabsIntent(
+                sharedUrlsString,
+                "$firstWebsiteTitle, $secondWebsiteTitle"
+            )
         }
     }
 

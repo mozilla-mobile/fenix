@@ -65,7 +65,6 @@
         <item name="toolbarEndGradient">@color/toolbar_end_gradient_normal_theme</item>
         <item name="toolbarDivider">@color/toolbar_divider_color_normal_theme</item>
         <item name="fillLinkFromClipboard">@color/fill_link_from_clipboard_normal_theme</item>
-        <item name="menuCategoryText">@color/menu_category_normal_theme</item>
         <item name="syncDisconnected">@color/sync_disconnected_icon_fill_normal_theme</item>
         <item name="syncDisconnectedBackground">@color/sync_disconnected_background_normal_theme</item>
         <item name="swipeDeleteBackground">@color/swipe_delete_background_normal_theme</item>
@@ -78,7 +77,6 @@
         <item name="mozacPromptLoginEditTextCursorColor">@color/prompt_login_edit_text_cursor_color_normal_theme</item>
         <item name="readerModeStartGradient">@color/readermode_start_gradient_normal_theme</item>
         <item name="readerModeEndGradient">@color/readermode_end_gradient_normal_theme</item>
-        <item name="syncedTabsSeparator">@color/synced_tabs_separator</item>
         <item name="awesomeBarIndicatorColor">@color/search_suggestion_indicator_icon_color_normal_theme</item>
         <item name="awesomeBarIndicatorBookmarkColor">@color/search_suggestion_indicator_icon_bookmark_color_normal_theme</item>
         <item name="selectLoginHeaderTextColor">@color/select_login_header_normal_theme</item>
@@ -255,7 +253,6 @@
         <item name="toolbarEndGradient">@color/toolbar_end_gradient_private_theme</item>
         <item name="toolbarDivider">@color/toolbar_divider_color_private_theme</item>
         <item name="fillLinkFromClipboard">@color/fill_link_from_clipboard_private_theme</item>
-        <item name="menuCategoryText">@color/menu_category_private_theme</item>
         <item name="syncDisconnected">@color/sync_disconnected_icon_fill_private_theme</item>
         <item name="syncDisconnectedBackground">@color/sync_disconnected_background_private_theme</item>
         <item name="swipeDeleteBackground">@color/swipe_delete_background_private_theme</item>
@@ -507,7 +504,7 @@
         <item name="android:padding">16dp</item>
     </style>
 
-    <style name="OnboardingCardDark" parent="OnboardingCardLightWithPadding">
+    <style name="OnboardingCardDark" parent="OnboardingCardLightWithPadding" tools:ignore="UnusedResources">
         <item name="android:background">@drawable/onboarding_card_background_dark</item>
         <item name="android:elevation">0dp</item>
     </style>
@@ -657,29 +654,6 @@
         <item name="cornerFamily">rounded</item>
         <item name="elevation">@dimen/top_sites_favicon_elevation</item>
         <item name="cornerSize">@dimen/top_sites_favicon_corner_size</item>
-    </style>
-
-    <style name="recentBookmarkFavicon">
-        <item name="android:layout_width">@dimen/recent_bookmark_item_width</item>
-        <item name="android:layout_height">@dimen/recent_bookmark_item_favicon_height</item>
-        <item name="android:scaleType">fitStart</item>
-        <item name="android:layout_gravity">start|top</item>
-        <item name="shapeAppearanceOverlay">@style/recentBookmarkFaviconShape</item>
-    </style>
-
-    <style name="recentBookmarkFaviconShape">
-        <item name="cornerFamily">rounded</item>
-        <item name="elevation">@dimen/recent_bookmark_item_favicon_elevation</item>
-        <item name="cornerSize">@dimen/recent_bookmark_item_favicon_corner_size</item>
-    </style>
-
-    <style name="recentBookmarkItemSubTitleText" parent="Body12TextStyle">
-        <item name="android:gravity">start</item>
-        <item name="android:textColor">?primaryText</item>
-        <item name="android:textAlignment">gravity</item>
-        <item name="android:singleLine">true</item>
-        <item name="android:ellipsize">end</item>
-        <item name="android:maxLines">1</item>
     </style>
 
     <style name="TabTrayFab" parent="Widget.MaterialComponents.ExtendedFloatingActionButton">

@@ -5,6 +5,7 @@
 package org.mozilla.fenix.home
 
 import android.graphics.Bitmap
+import androidx.annotation.VisibleForTesting
 import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
@@ -15,11 +16,16 @@ import mozilla.components.lib.state.Store
 import mozilla.components.service.pocket.PocketRecommendedStory
 import org.mozilla.fenix.components.tips.Tip
 import org.mozilla.fenix.ext.getFilteredStories
-import org.mozilla.fenix.historymetadata.HistoryMetadataGroup
-import org.mozilla.fenix.home.recenttabs.RecentTab
+import org.mozilla.fenix.ext.recentSearchGroup
 import org.mozilla.fenix.home.pocket.POCKET_STORIES_TO_SHOW_COUNT
 import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesCategory
 import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesSelectedCategory
+import org.mozilla.fenix.home.recentbookmarks.RecentBookmark
+import org.mozilla.fenix.home.recenttabs.RecentTab
+import org.mozilla.fenix.home.recenttabs.RecentTab.SearchGroup
+import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem
+import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem.RecentHistoryGroup
+import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem.RecentHistoryHighlight
 
 /**
  * The [Store] for holding the [HomeFragmentState] and applying [HomeFragmentAction]s.
@@ -53,7 +59,7 @@ data class Tab(
  * @property showSetAsDefaultBrowserCard If true, shows the default browser card
  * @property recentTabs The list of recent [RecentTab] in the [HomeFragment].
  * @property recentBookmarks The list of recently saved [BookmarkNode]s to show on the [HomeFragment].
- * @property historyMetadata The list of [HistoryMetadataGroup].
+ * @property recentHistory The list of [RecentlyVisitedItem]s.
  * @property pocketStories The list of currently shown [PocketRecommendedStory]s.
  * @property pocketStoriesCategories All [PocketRecommendedStory] categories.
  * Also serves as an in memory cache of all stories mapped by category allowing for quick stories filtering.
@@ -67,8 +73,8 @@ data class HomeFragmentState(
     val showCollectionPlaceholder: Boolean = false,
     val showSetAsDefaultBrowserCard: Boolean = false,
     val recentTabs: List<RecentTab> = emptyList(),
-    val recentBookmarks: List<BookmarkNode> = emptyList(),
-    val historyMetadata: List<HistoryMetadataGroup> = emptyList(),
+    val recentBookmarks: List<RecentBookmark> = emptyList(),
+    val recentHistory: List<RecentlyVisitedItem> = emptyList(),
     val pocketStories: List<PocketRecommendedStory> = emptyList(),
     val pocketStoriesCategories: List<PocketRecommendedStoriesCategory> = emptyList(),
     val pocketStoriesCategoriesSelections: List<PocketRecommendedStoriesSelectedCategory> = emptyList()
@@ -82,8 +88,8 @@ sealed class HomeFragmentAction : Action {
         val tip: Tip? = null,
         val showCollectionPlaceholder: Boolean,
         val recentTabs: List<RecentTab>,
-        val recentBookmarks: List<BookmarkNode>,
-        val historyMetadata: List<HistoryMetadataGroup>
+        val recentBookmarks: List<RecentBookmark>,
+        val recentHistory: List<RecentlyVisitedItem>
     ) :
         HomeFragmentAction()
 
@@ -95,8 +101,9 @@ sealed class HomeFragmentAction : Action {
     data class TopSitesChange(val topSites: List<TopSite>) : HomeFragmentAction()
     data class RemoveTip(val tip: Tip) : HomeFragmentAction()
     data class RecentTabsChange(val recentTabs: List<RecentTab>) : HomeFragmentAction()
-    data class RecentBookmarksChange(val recentBookmarks: List<BookmarkNode>) : HomeFragmentAction()
-    data class HistoryMetadataChange(val historyMetadata: List<HistoryMetadataGroup>) : HomeFragmentAction()
+    data class RecentBookmarksChange(val recentBookmarks: List<RecentBookmark>) : HomeFragmentAction()
+    data class RecentHistoryChange(val recentHistory: List<RecentlyVisitedItem>) : HomeFragmentAction()
+    data class RemoveRecentHistoryHighlight(val highlightUrl: String) : HomeFragmentAction()
     data class DisbandSearchGroupAction(val searchTerm: String) : HomeFragmentAction()
     data class SelectPocketStoriesCategory(val categoryName: String) : HomeFragmentAction()
     data class DeselectPocketStoriesCategory(val categoryName: String) : HomeFragmentAction()
@@ -125,7 +132,12 @@ private fun homeFragmentStateReducer(
             tip = action.tip,
             recentBookmarks = action.recentBookmarks,
             recentTabs = action.recentTabs,
-            historyMetadata = action.historyMetadata
+            recentHistory = if (action.recentHistory.isNotEmpty() && action.recentTabs.isNotEmpty()) {
+                val recentSearchGroup = action.recentTabs.find { it is SearchGroup } as SearchGroup?
+                action.recentHistory.filterOut(recentSearchGroup?.searchTerm)
+            } else {
+                action.recentHistory
+            }
         )
         is HomeFragmentAction.CollectionExpanded -> {
             val newExpandedCollection = state.expandedCollections.toMutableSet()
@@ -148,11 +160,29 @@ private fun homeFragmentStateReducer(
             state.copy(showCollectionPlaceholder = false)
         }
         is HomeFragmentAction.RemoveSetDefaultBrowserCard -> state.copy(showSetAsDefaultBrowserCard = false)
-        is HomeFragmentAction.RecentTabsChange -> state.copy(recentTabs = action.recentTabs)
+        is HomeFragmentAction.RecentTabsChange -> {
+            val recentSearchGroup = action.recentTabs.find { it is SearchGroup } as SearchGroup?
+            state.copy(
+                recentTabs = action.recentTabs,
+                recentHistory = state.recentHistory.filterOut(recentSearchGroup?.searchTerm)
+            )
+        }
         is HomeFragmentAction.RecentBookmarksChange -> state.copy(recentBookmarks = action.recentBookmarks)
-        is HomeFragmentAction.HistoryMetadataChange -> state.copy(historyMetadata = action.historyMetadata)
+        is HomeFragmentAction.RecentHistoryChange -> state.copy(
+            recentHistory = action.recentHistory.filterOut(state.recentSearchGroup?.searchTerm)
+        )
+        is HomeFragmentAction.RemoveRecentHistoryHighlight -> state.copy(
+            recentHistory = state.recentHistory.filterNot {
+                it is RecentHistoryHighlight && it.url == action.highlightUrl
+            }
+        )
         is HomeFragmentAction.DisbandSearchGroupAction -> state.copy(
-            historyMetadata = state.historyMetadata.filter { it.title.lowercase() != action.searchTerm.lowercase() }
+            recentHistory = state.recentHistory.filterNot {
+                it is RecentHistoryGroup && (
+                    it.title.equals(action.searchTerm, true) ||
+                        it.title.equals(state.recentSearchGroup?.searchTerm, true)
+                    )
+            }
         )
         is HomeFragmentAction.SelectPocketStoriesCategory -> {
             val updatedCategoriesState = state.copy(
@@ -219,5 +249,18 @@ private fun homeFragmentStateReducer(
 
             state.copy(pocketStoriesCategories = updatedCategories)
         }
+    }
+}
+
+/**
+ * Removes a [RecentHistoryGroup] identified by [groupTitle] if it exists in the current list.
+ *
+ * @param groupTitle [RecentHistoryGroup.title] of the item that should be removed.
+ */
+@VisibleForTesting
+internal fun List<RecentlyVisitedItem>.filterOut(groupTitle: String?): List<RecentlyVisitedItem> {
+    return when (groupTitle != null) {
+        true -> filterNot { it is RecentHistoryGroup && it.title.equals(groupTitle, true) }
+        false -> this
     }
 }
