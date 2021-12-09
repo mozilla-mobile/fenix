@@ -160,18 +160,9 @@ class BrowserRobot {
         )
     }
 
-    fun verifyNavURLBar() = assertNavURLBar()
-
     fun verifyNavURLBarHidden() = assertNavURLBarHidden()
 
     fun verifySecureConnectionLockIcon() = assertSecureConnectionLockIcon()
-
-    fun verifyEnhancedTrackingProtectionSwitch() = assertEnhancedTrackingProtectionSwitch()
-
-    fun verifyEnhancedTrackingOptions() {
-        onView(withId(R.id.mozac_browser_toolbar_security_indicator)).click()
-        verifyEnhancedTrackingProtectionSwitch()
-    }
 
     fun verifyMenuButton() = assertMenuButton()
 
@@ -614,10 +605,19 @@ class BrowserRobot {
         }
 
         fun goToHomescreen(interact: HomeScreenRobot.() -> Unit): HomeScreenRobot.Transition {
+            assertTrue(
+                mDevice.findObject(UiSelector().description("Home screen"))
+                    .waitForExists(waitingTime)
+            )
+
             onView(withContentDescription("Home screen"))
                 .check(matches(isDisplayed()))
                 .click()
-            mDevice.waitForIdle()
+
+            assertTrue(
+                mDevice.findObject(UiSelector().resourceId("$packageName:id/homeLayout"))
+                    .waitForExists(waitingTime)
+            )
 
             HomeScreenRobot().interact()
             return HomeScreenRobot.Transition()
@@ -673,16 +673,6 @@ private fun assertSearchBar() = searchBar().check(matches(withEffectiveVisibilit
 private fun assertNavURLBar() = assertTrue(navURLBar().waitForExists(waitingTime))
 
 private fun assertNavURLBarHidden() = assertTrue(navURLBar().waitUntilGone(waitingTime))
-
-private fun assertEnhancedTrackingProtectionSwitch() {
-    withText(R.id.trackingProtectionSwitch)
-        .matches(withEffectiveVisibility(Visibility.VISIBLE))
-}
-
-private fun assertProtectionSettingsButton() {
-    onView(withId(R.id.protection_settings))
-        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-}
 
 private fun assertSecureConnectionLockIcon() {
     onView(withId(R.id.mozac_browser_toolbar_security_indicator))
