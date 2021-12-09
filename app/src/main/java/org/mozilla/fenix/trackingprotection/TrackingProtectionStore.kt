@@ -83,8 +83,8 @@ enum class TrackingProtectionCategory(
         R.string.etp_social_media_trackers_description
     ),
     CROSS_SITE_TRACKING_COOKIES(
-        R.string.etp_cookies_title,
-        R.string.etp_cookies_description
+        R.string.etp_cookies_title_2,
+        R.string.etp_cookies_description_2
     ),
     CRYPTOMINERS(
         R.string.etp_cryptominers_title,

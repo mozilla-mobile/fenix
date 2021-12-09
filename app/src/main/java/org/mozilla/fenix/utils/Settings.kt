@@ -596,7 +596,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
 
     val blockCookiesSelectionInCustomTrackingProtection by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_tracking_protection_custom_cookies_select),
-        appContext.getString(R.string.social)
+        appContext.getString(R.string.total_protection)
     )
 
     val blockTrackingContentInCustomTrackingProtection by booleanPreference(

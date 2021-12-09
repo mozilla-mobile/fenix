@@ -62,7 +62,7 @@
             style="@style/QuickSettingsLargeText.Icon"
             android:layout_width="match_parent"
             android:layout_height="@dimen/tracking_protection_item_height"
-            android:text="@string/etp_cookies_title"
+            android:text="@string/etp_cookies_title_2"
             android:visibility="gone"
             app:layout_constraintTop_toBottomOf="@id/blocking_header" />
 
@@ -129,7 +129,7 @@
             style="@style/QuickSettingsLargeText.Icon"
             android:layout_width="match_parent"
             android:layout_height="@dimen/tracking_protection_item_height"
-            android:text="@string/etp_cookies_title"
+            android:text="@string/etp_cookies_title_2"
             android:visibility="gone"
             app:layout_constraintTop_toBottomOf="@id/not_blocking_header" />
 

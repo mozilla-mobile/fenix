@@ -40,8 +40,8 @@
             android:background="?android:attr/selectableItemBackground"
             android:clickable="true"
             android:focusable="true"
-            app:categoryItemDescription="@string/etp_cookies_description"
-            app:categoryItemTitle="@string/etp_cookies_title" />
+            app:categoryItemDescription="@string/etp_cookies_description_2"
+            app:categoryItemTitle="@string/etp_cookies_title_2" />
 
         <org.mozilla.fenix.trackingprotection.TrackingProtectionCategoryItem
             android:id="@+id/category_cryptominers"

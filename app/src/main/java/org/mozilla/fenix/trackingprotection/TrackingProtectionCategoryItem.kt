@@ -32,13 +32,13 @@ class TrackingProtectionCategoryItem @JvmOverloads constructor(
             binding.trackingProtectionCategoryTitle.text = resources.getString(
                 getResourceId(
                     R.styleable.TrackingProtectionCategory_categoryItemTitle,
-                    R.string.etp_cookies_title
+                    R.string.etp_cookies_title_2
                 )
             )
             binding.trackingProtectionCategoryItemDescription.text = resources.getString(
                 getResourceId(
                     R.styleable.TrackingProtectionCategory_categoryItemDescription,
-                    R.string.etp_cookies_description
+                    R.string.etp_cookies_description_2
                 )
             )
         }
