@@ -52,11 +52,10 @@
         <item name="tabRing">@color/tab_ring_normal_theme</item>
         <item name="neutral">@color/neutral_normal_theme</item>
         <item name="neutralFaded">@color/neutral_faded_normal_theme</item>
-        <item name="shadow">@color/shadow_normal_theme</item>
         <item name="destructive">@color/destructive_normal_theme</item>
         <item name="disabled">@color/disabled_normal_theme</item>
-        <item name="scrimStart">@color/scrimStart_normal_theme</item>
-        <item name="scrimEnd">@color/scrimEnd_normal_theme</item>
+        <item name="scrimStart">@color/fx_mobile_layer_color_scrim_start</item>
+        <item name="scrimEnd">@color/fx_mobile_layer_color_scrim_end</item>
         <item name="snackbar">@color/snackbar_normal_theme</item>
         <item name="accentUsedOnDarkBackground">@color/accent_on_dark_background_normal_theme</item>
         <item name="toolbarStartGradient">@color/toolbar_start_gradient_normal_theme</item>
@@ -90,9 +89,6 @@
         <item name="mozac_widget_favicon_background_color">@color/mozac_widget_favicon_background_normal_theme</item>
         <item name="mozac_widget_favicon_border_color">@color/mozac_widget_favicon_border_normal_theme</item>
 
-        <item name="tabTrayItemBackground">@color/tab_tray_item_background_normal_theme</item>
-        <item name="tabTrayItemSelectedBackground">@color/tab_tray_item_selected_background_normal_theme</item>
-        <item name="tabTrayToolbarBackground">@color/tab_tray_toolbar_background_normal_theme</item>
         <item name="tabTrayItemMediaBackground">@color/tab_tray_item_media_background_normal_theme</item>
         <item name="tabTrayHeadingIcon">@color/tab_tray_heading_icon_normal_theme</item>
         <item name="tabTrayHeadingIconInactive">@color/tab_tray_heading_icon_inactive_normal_theme</item>
@@ -240,7 +236,6 @@
         <item name="tabRing">@color/tab_ring_private_theme</item>
         <item name="neutral">@color/neutral_private_theme</item>
         <item name="neutralFaded">@color/neutral_faded_private_theme</item>
-        <item name="shadow">@color/shadow_private_theme</item>
         <item name="destructive">@color/destructive_private_theme</item>
         <item name="disabled">@color/disabled_private_theme</item>
         <item name="scrimStart">@color/scrimStart_private_theme</item>
@@ -276,9 +271,6 @@
         <item name="mozac_widget_favicon_border_color">@color/mozac_widget_favicon_border_private_theme</item>
 
         <!-- Tab Tray -->
-        <item name="tabTrayItemBackground">@color/tab_tray_item_background_normal_theme</item>
-        <item name="tabTrayItemSelectedBackground">@color/tab_tray_item_selected_background_private_theme</item>
-        <item name="tabTrayToolbarBackground">@color/tab_tray_toolbar_background_private_theme</item>
         <item name="tabTrayItemMediaBackground">@color/tab_tray_item_media_background_private_theme</item>
         <item name="tabTrayHeadingIcon">@color/tab_tray_heading_icon_dark_theme</item>
         <item name="tabTrayHeadingIconInactive">@color/tab_tray_heading_icon_inactive_dark_theme</item>
