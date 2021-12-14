@@ -587,6 +587,8 @@
     <string name="preference_top_toolbar">Top</string>
     <!-- Preference for using bottom toolbar -->
     <string name="preference_bottom_toolbar">Bottom</string>
+    <!-- Preference for home button on toolbar -->
+    <string name="preference_home_button_toolbar">Home Button</string>
 
     <!-- Theme Preferences -->
     <!-- Preference for using light theme -->

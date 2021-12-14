@@ -71,17 +71,18 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
             )
         }
 
-        val homeAction = BrowserToolbar.Button(
-            imageDrawable = AppCompatResources.getDrawable(
-                context,
-                R.drawable.mozac_ic_home
-            )!!,
-            contentDescription = context.getString(R.string.browser_toolbar_home),
-            iconTintColorResource = ThemeManager.resolveAttribute(R.attr.primaryText, context),
-            listener = browserToolbarInteractor::onHomeButtonClicked
-        )
-
-        browserToolbarView.view.addNavigationAction(homeAction)
+        if (context.settings().isHomeButtonToolbarEnabled) {
+            val homeAction = BrowserToolbar.Button(
+                imageDrawable = AppCompatResources.getDrawable(
+                    context,
+                    R.drawable.mozac_ic_home
+                )!!,
+                contentDescription = context.getString(R.string.browser_toolbar_home),
+                iconTintColorResource = ThemeManager.resolveAttribute(R.attr.primaryText, context),
+                listener = browserToolbarInteractor::onHomeButtonClicked
+            )
+            browserToolbarView.view.addNavigationAction(homeAction)
+        }
 
         if (resources.getBoolean(R.bool.tablet)) {
             val enableTint = ThemeManager.resolveAttribute(R.attr.primaryText, context)

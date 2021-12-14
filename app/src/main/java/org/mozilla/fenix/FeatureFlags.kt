@@ -101,4 +101,9 @@ object FeatureFlags {
      * Enables history improvement features.
      */
     val historyImprovementFeatures = Config.channel.isNightlyOrDebug
+
+    /**
+     * Enables turning on/off the home button of the toolbar.
+     */
+    val showHomeButtonToolbar = Config.channel.isNightlyOrDebug
 }

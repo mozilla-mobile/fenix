@@ -136,6 +136,12 @@ class CustomizationFragment : PreferenceFragmentCompat() {
         bottomPreference.setCheckedWithoutClickListener(toolbarPosition == ToolbarPosition.BOTTOM)
 
         addToRadioGroup(topPreference, bottomPreference)
+
+        requirePreference<SwitchPreference>(R.string.pref_key_toolbar_home_button).apply {
+            isVisible = FeatureFlags.showHomeButtonToolbar
+            isChecked = context.settings().isHomeButtonToolbarEnabled
+            onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
     }
 
     private fun setupGesturesCategory() {

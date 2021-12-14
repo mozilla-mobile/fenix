@@ -41,6 +41,10 @@
         <org.mozilla.fenix.settings.RadioButtonPreference
             android:key="@string/pref_key_toolbar_bottom"
             android:title="@string/preference_bottom_toolbar" />
+        <androidx.preference.SwitchPreference
+            android:key="@string/pref_key_toolbar_home_button"
+            android:title="@string/preference_home_button_toolbar"
+            app:isPreferenceVisible="false"/>
     </androidx.preference.PreferenceCategory>
 
     <androidx.preference.PreferenceCategory

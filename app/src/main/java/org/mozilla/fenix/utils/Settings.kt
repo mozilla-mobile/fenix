@@ -1166,6 +1166,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
             }
         }
 
+    var isHomeButtonToolbarEnabled by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_toolbar_home_button),
+        default = true
+    )
+
     var isPullToRefreshEnabledInBrowser by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_website_pull_to_refresh),
         default = true
