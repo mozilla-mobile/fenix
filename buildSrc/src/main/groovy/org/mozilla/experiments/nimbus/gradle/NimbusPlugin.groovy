@@ -167,7 +167,7 @@ class NimbusPlugin implements Plugin<Project> {
         // We don't spend much time looking it up now because:
         // a) this plugin is going to live in the AS repo (eventually)
         // b) the nimbus-fml tooling is currently being built on a branch
-        return "87.1.0"
+        return "87.2.0"
     }
 
     // Try one or more hosts to download the given file.
@@ -210,12 +210,8 @@ class NimbusPlugin implements Plugin<Project> {
             // release of AS, then we have to start somewhere.
             def asVersion = getApplicationServiceVersion()
             def successfulHost = tryDownload(archive.getParentFile(), archive.getName(),
-                    // The version tied to this plugin
-                    "https://github.com/mozilla/application-services/releases/download/v$asVersion",
                     // …the latest one from github.
-                    "https://github.com/mozilla/application-services/releases/latest/download",
-                    // …or the first one ever.
-                    "https://123611-129966583-gh.circle-artifacts.com/0"
+                    "https://github.com/mozilla/application-services/releases/latest/download"
             )
 
             if (successfulHost == null) {
