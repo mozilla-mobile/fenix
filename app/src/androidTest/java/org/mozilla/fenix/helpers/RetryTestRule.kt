@@ -3,6 +3,7 @@ package org.mozilla.fenix.helpers
 import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
+import java.lang.AssertionError
 
 class RetryTestRule(private val retryCount: Int = 5) : TestRule {
 
@@ -12,7 +13,7 @@ class RetryTestRule(private val retryCount: Int = 5) : TestRule {
                 try {
                     base.evaluate()
                     break
-                } catch (t: Throwable) {
+                } catch (t: AssertionError) {
                     if (i == retryCount) {
                         throw t
                     }
