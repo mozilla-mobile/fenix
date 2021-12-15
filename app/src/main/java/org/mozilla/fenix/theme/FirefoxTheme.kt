@@ -47,10 +47,10 @@ private val darkColorPalette = FirefoxColors(
     layerAccent = PhotonColors.Violet40,
     layerNonOpaque = PhotonColors.Violet40A12,
     scrim = PhotonColors.DarkGrey05A45,
-    scrimAccentStart = PhotonColors.DarkGrey90,
-    scrimAccentEnd = PhotonColors.DarkGrey30,
-    gradientStart = PhotonColors.Violet40,
-    gradientEnd = PhotonColors.Violet70,
+    scrimAccentStart = PhotonColors.Ink80A96,
+    scrimAccentEnd = PhotonColors.DarkGrey90A96,
+    gradientStart = PhotonColors.Violet70,
+    gradientEnd = PhotonColors.Violet40,
     actionPrimary = PhotonColors.Violet60,
     actionSecondary = PhotonColors.DarkGrey50,
     actionTertiary = PhotonColors.LightGrey40,
@@ -77,6 +77,8 @@ private val darkColorPalette = FirefoxColors(
     iconAccentPink = PhotonColors.Pink20,
     iconAccentGreen = PhotonColors.Green20,
     iconAccentYellow = PhotonColors.Yellow20,
+    iconGradientStart = PhotonColors.Violet20,
+    iconGradientEnd = PhotonColors.Blue20,
     borderDefault = PhotonColors.LightGrey05,
     borderSelected = PhotonColors.Violet40,
     borderDisabled = PhotonColors.LightGrey70,
@@ -91,10 +93,10 @@ private val lightColorPalette = FirefoxColors(
     layerAccent = PhotonColors.Violet90,
     layerNonOpaque = PhotonColors.Violet90A20,
     scrim = PhotonColors.DarkGrey05A45,
-    scrimAccentStart = PhotonColors.DarkGrey90,
-    scrimAccentEnd = PhotonColors.DarkGrey30,
-    gradientStart = PhotonColors.Violet40,
-    gradientEnd = PhotonColors.Violet70,
+    scrimAccentStart = PhotonColors.DarkGrey90A96,
+    scrimAccentEnd = PhotonColors.DarkGrey30A96,
+    gradientStart = PhotonColors.Violet70,
+    gradientEnd = PhotonColors.Violet40,
     actionPrimary = PhotonColors.Violet90,
     actionSecondary = PhotonColors.LightGrey40,
     actionTertiary = PhotonColors.DarkGrey05,
@@ -121,6 +123,8 @@ private val lightColorPalette = FirefoxColors(
     iconAccentPink = PhotonColors.Pink60,
     iconAccentGreen = PhotonColors.Green60,
     iconAccentYellow = PhotonColors.Yellow60,
+    iconGradientStart = PhotonColors.Violet50,
+    iconGradientEnd = PhotonColors.Blue60,
     borderDefault = PhotonColors.DarkGrey90,
     borderSelected = PhotonColors.Violet90,
     borderDisabled = PhotonColors.LightGrey70,
@@ -170,6 +174,8 @@ class FirefoxColors(
     iconAccentPink: Color,
     iconAccentGreen: Color,
     iconAccentYellow: Color,
+    iconGradientStart: Color,
+    iconGradientEnd: Color,
     borderDefault: Color,
     borderSelected: Color,
     borderDisabled: Color,
@@ -286,6 +292,12 @@ class FirefoxColors(
         private set
     var iconAccentYellow by mutableStateOf(iconAccentYellow)
         private set
+    // Reader, ETP Shield
+    var iconGradientStart by mutableStateOf(iconGradientStart)
+        private set
+    // Reader, ETP Shield
+    var iconGradientEnd by mutableStateOf(iconGradientEnd)
+        private set
 
     // Border
 
@@ -341,6 +353,8 @@ class FirefoxColors(
         iconAccentPink = other.iconAccentPink
         iconAccentGreen = other.iconAccentGreen
         iconAccentYellow = other.iconAccentYellow
+        iconGradientStart = other.iconGradientStart
+        iconGradientEnd = other.iconGradientEnd
         borderDefault = other.borderDefault
         borderSelected = other.borderSelected
         borderDisabled = other.borderDisabled
@@ -385,6 +399,8 @@ class FirefoxColors(
         iconAccentPink = iconAccentPink,
         iconAccentGreen = iconAccentGreen,
         iconAccentYellow = iconAccentYellow,
+        iconGradientStart = iconGradientStart,
+        iconGradientEnd = iconGradientEnd,
         borderDefault = borderDefault,
         borderSelected = borderSelected,
         borderDisabled = borderDisabled,

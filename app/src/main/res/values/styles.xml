@@ -45,7 +45,6 @@
         <item name="contrastText">@color/contrast_text_normal_theme</item>
         <item name="accent">@color/accent_normal_theme</item>
         <item name="accentBright">@color/accent_bright_normal_theme</item>
-        <item name="aboutLink">@color/about_link_normal_theme</item>
         <item name="accentHighContrast">@color/accent_high_contrast_normal_theme</item>
         <item name="foundation">@color/foundation_normal_theme</item>
         <item name="above">@color/above_normal_theme</item>
@@ -53,11 +52,10 @@
         <item name="tabRing">@color/tab_ring_normal_theme</item>
         <item name="neutral">@color/neutral_normal_theme</item>
         <item name="neutralFaded">@color/neutral_faded_normal_theme</item>
-        <item name="shadow">@color/shadow_normal_theme</item>
         <item name="destructive">@color/destructive_normal_theme</item>
         <item name="disabled">@color/disabled_normal_theme</item>
-        <item name="scrimStart">@color/scrimStart_normal_theme</item>
-        <item name="scrimEnd">@color/scrimEnd_normal_theme</item>
+        <item name="scrimStart">@color/fx_mobile_layer_color_scrim_start</item>
+        <item name="scrimEnd">@color/fx_mobile_layer_color_scrim_end</item>
         <item name="snackbar">@color/snackbar_normal_theme</item>
         <item name="accentUsedOnDarkBackground">@color/accent_on_dark_background_normal_theme</item>
         <item name="toolbarStartGradient">@color/toolbar_start_gradient_normal_theme</item>
@@ -75,8 +73,6 @@
         <item name="addOnPrivateBrowsingExteriorCircleBackground">@color/add_on_private_browsing_exterior_circle_background_normal_theme</item>
         <item name="addOnPrivateBrowsingInteriorIconBackground">@color/add_on_private_browsing_interior_icon_background_normal_theme</item>
         <item name="mozacPromptLoginEditTextCursorColor">@color/prompt_login_edit_text_cursor_color_normal_theme</item>
-        <item name="readerModeStartGradient">@color/readermode_start_gradient_normal_theme</item>
-        <item name="readerModeEndGradient">@color/readermode_end_gradient_normal_theme</item>
         <item name="awesomeBarIndicatorColor">@color/search_suggestion_indicator_icon_color_normal_theme</item>
         <item name="awesomeBarIndicatorBookmarkColor">@color/search_suggestion_indicator_icon_bookmark_color_normal_theme</item>
         <item name="selectLoginHeaderTextColor">@color/select_login_header_normal_theme</item>
@@ -91,12 +87,7 @@
         <item name="mozac_widget_favicon_background_color">@color/mozac_widget_favicon_background_normal_theme</item>
         <item name="mozac_widget_favicon_border_color">@color/mozac_widget_favicon_border_normal_theme</item>
 
-        <item name="tabTrayItemBackground">@color/tab_tray_item_background_normal_theme</item>
-        <item name="tabTrayItemSelectedBackground">@color/tab_tray_item_selected_background_normal_theme</item>
-        <item name="tabTrayToolbarBackground">@color/tab_tray_toolbar_background_normal_theme</item>
         <item name="tabTrayItemMediaBackground">@color/tab_tray_item_media_background_normal_theme</item>
-        <item name="tabTrayHeadingIcon">@color/tab_tray_heading_icon_normal_theme</item>
-        <item name="tabTrayHeadingIconInactive">@color/tab_tray_heading_icon_inactive_normal_theme</item>
         <item name="tabTrayThumbnailItemBackground">@color/tab_tray_item_thumbnail_background_normal_theme</item>
         <item name="tabTrayThumbnailIcon">@color/tab_tray_item_thumbnail_icon_normal_theme</item>
 
@@ -203,7 +194,7 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowBackground">@color/foundation_private_theme</item>
         <item name="android:colorEdgeEffect">@color/accent_private_theme</item>
-        <item name="android:colorAccent">@color/primary_text_private_theme</item>
+        <item name="android:colorAccent">@color/fx_mobile_private_text_color_primary</item>
         <item name="colorControlActivated">@color/accent_high_contrast_private_theme</item>
         <item name="android:textColorPrimary">@color/state_list_text_color</item>
         <item name="android:textColorSecondary">@color/secondary_state_list_text_color</item>
@@ -225,10 +216,10 @@
         <!-- Inactive track color(30% transparency) -->
         <item name="android:colorForeground">@color/toggle_off_track_dark_theme</item>
         <!-- sets the toolbar back button color, radio buttons/ unselected checkboxes -->
-        <item name="colorControlNormal">@color/primary_text_private_theme</item>
+        <item name="colorControlNormal">@color/fx_mobile_private_text_color_primary</item>
 
         <!-- Updated color attributes -->
-        <item name="primaryText">@color/primary_text_private_theme</item>
+        <item name="primaryText">@color/fx_mobile_private_text_color_primary</item>
         <item name="secondaryText">@color/secondary_text_private_theme</item>
         <item name="contrastText">@color/contrast_text_private_theme</item>
         <item name="accent">@color/accent_private_theme</item>
@@ -241,7 +232,6 @@
         <item name="tabRing">@color/tab_ring_private_theme</item>
         <item name="neutral">@color/neutral_private_theme</item>
         <item name="neutralFaded">@color/neutral_faded_private_theme</item>
-        <item name="shadow">@color/shadow_private_theme</item>
         <item name="destructive">@color/destructive_private_theme</item>
         <item name="disabled">@color/disabled_private_theme</item>
         <item name="scrimStart">@color/scrimStart_private_theme</item>
@@ -271,18 +261,13 @@
         <item name="menuItemButtonTintColor">@color/accent_high_contrast_private_theme</item>
 
         <!-- Shared widget colors -->
-        <item name="mozac_primary_text_color">@color/primary_text_private_theme</item>
+        <item name="mozac_primary_text_color">@color/fx_mobile_private_text_color_primary</item>
         <item name="mozac_caption_text_color">@color/caption_text_private_theme</item>
         <item name="mozac_widget_favicon_background_color">@color/mozac_widget_favicon_background_private_theme</item>
         <item name="mozac_widget_favicon_border_color">@color/mozac_widget_favicon_border_private_theme</item>
 
         <!-- Tab Tray -->
-        <item name="tabTrayItemBackground">@color/tab_tray_item_background_normal_theme</item>
-        <item name="tabTrayItemSelectedBackground">@color/tab_tray_item_selected_background_private_theme</item>
-        <item name="tabTrayToolbarBackground">@color/tab_tray_toolbar_background_private_theme</item>
         <item name="tabTrayItemMediaBackground">@color/tab_tray_item_media_background_private_theme</item>
-        <item name="tabTrayHeadingIcon">@color/tab_tray_heading_icon_dark_theme</item>
-        <item name="tabTrayHeadingIconInactive">@color/tab_tray_heading_icon_inactive_dark_theme</item>
         <item name="tabTrayThumbnailItemBackground">@color/tab_tray_item_thumbnail_background_normal_theme</item>
         <item name="tabTrayThumbnailIcon">@color/tab_tray_item_thumbnail_icon_normal_theme</item>
 
@@ -294,7 +279,7 @@
         <item name="homeBackground">@drawable/private_home_background_gradient</item>
         <item name="bottomBarBackground">@drawable/private_home_bottom_bar_background_gradient</item>
         <item name="bottomBarBackgroundTop">@drawable/private_home_bottom_bar_background_gradient_top</item>
-        <item name="privateBrowsingButtonBackground">@color/primary_text_private_theme</item>
+        <item name="privateBrowsingButtonBackground">@color/fx_mobile_private_text_color_primary</item>
         <item name="privateBrowsingButtonAccent">@color/above_private_theme</item>
     </style>
 
@@ -552,7 +537,7 @@
     <style name="ShareDialogStyle" parent="DialogStyleBase"/>
 
     <style name="AboutItemText" parent="TextAppearance.MaterialComponents.Body2">
-        <item name="android:textColor">?aboutLink</item>
+        <item name="android:textColor">@color/fx_mobile_text_color_action</item>
         <item name="android:textSize">@dimen/about_items_text_size</item>
         <item name="android:paddingStart">@dimen/about_list_item_text_padding</item>
         <item name="android:paddingEnd">@dimen/about_list_item_text_padding</item>

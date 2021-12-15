@@ -268,7 +268,7 @@ class SessionControlViewTest {
             historyMetadata,
             pocketArticles
         )
-        assertEquals(results.size, 1)
+        assertEquals(results.size, 2)
         assertTrue(results[0] is AdapterItem.TopPlaceholderItem)
     }
 

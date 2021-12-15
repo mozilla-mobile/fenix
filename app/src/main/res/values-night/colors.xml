@@ -17,12 +17,12 @@
     <!-- Selected tab -->
     <color name="fx_mobile_layer_color_accent_nonopaque" tools:ignore="UnusedResources">@color/photonViolet40A12</color>
     <color name="fx_mobile_layer_color_scrim" tools:ignore="UnusedResources">@color/photonDarkGrey05A45</color>
-    <color name="fx_mobile_layer_color_scrim_start" tools:ignore="UnusedResources">@color/photonDarkGrey90</color>
-    <color name="fx_mobile_layer_color_scrim_end" tools:ignore="UnusedResources">@color/photonDarkGrey30</color>
+    <color name="fx_mobile_layer_color_scrim_start">@color/photonInk80A96</color>
+    <color name="fx_mobile_layer_color_scrim_end">@color/photonDarkGrey90A96</color>
     <!-- Tooltip -->
-    <color name="fx_mobile_layer_color_gradient_start" tools:ignore="UnusedResources">@color/photonViolet40</color>
+    <color name="fx_mobile_layer_color_gradient_start" tools:ignore="UnusedResources">@color/photonViolet70</color>
     <!-- Tooltip -->
-    <color name="fx_mobile_layer_color_gradient_end" tools:ignore="UnusedResources">@color/photonViolet70</color>
+    <color name="fx_mobile_layer_color_gradient_end" tools:ignore="UnusedResources">@color/photonViolet40</color>
 
     <!-- Action -->
     <!-- Primary button, Snackbar, Floating action button, Controls -->
@@ -65,8 +65,8 @@
     <color name="fx_mobile_icon_color_disabled" tools:ignore="UnusedResources">@color/photonLightGrey70</color>
     <!-- Icon inverted (on color) -->
     <color name="fx_mobile_icon_color_inverted" tools:ignore="UnusedResources">@color/photonWhite</color>
-    <!-- New -->
-    <color name="fx_mobile_icon_color_notice">@color/photonBlue30</color>
+    <!-- Information -->
+    <color name="fx_mobile_icon_color_information">@color/photonBlue30</color>
     <!-- Icon button -->
     <color name="fx_mobile_icon_color_button" tools:ignore="UnusedResources">@color/photonLightGrey05</color>
     <color name="fx_mobile_icon_color_warning" tools:ignore="UnusedResources">@color/photonRed40</color>
@@ -75,6 +75,10 @@
     <color name="fx_mobile_icon_color_accent_pink" tools:ignore="UnusedResources">@color/photonPink20</color>
     <color name="fx_mobile_icon_color_accent_green" tools:ignore="UnusedResources">@color/photonGreen20</color>
     <color name="fx_mobile_icon_color_accent_yellow" tools:ignore="UnusedResources">@color/photonYellow20</color>
+    <!-- Reader, ETP Shield -->
+    <color name="fx_mobile_icon_color_gradient_start">@color/photonViolet20</color>
+    <!-- Reader, ETP Shield -->
+    <color name="fx_mobile_icon_color_gradient_end">@color/photonBlue20</color>
 
     <!-- Border -->
     <!-- Form parts -->
@@ -98,15 +102,11 @@
     <color name="accent_normal_theme">@color/photonViolet50</color>
     <color name="accent_bright_normal_theme">@color/accent_bright_dark_theme</color>
     <color name="accent_high_contrast_normal_theme">@color/accent_high_contrast_dark_theme</color>
-    <color name="about_link_normal_theme">@color/photonViolet40</color>
     <color name="tab_ring_normal_theme">@color/accent_normal_theme</color>
     <color name="neutral_normal_theme">@color/photonGrey20</color>
     <color name="neutral_faded_normal_theme">#1FFBFBFE</color>
-    <color name="shadow_normal_theme">#050505</color>
     <color name="destructive_normal_theme">@color/photonRed40</color>
     <color name="disabled_normal_theme">#66FBFBFE</color>
-    <color name="scrimStart_normal_theme">#F520123A</color>
-    <color name="scrimEnd_normal_theme">#F515141A</color>
     <color name="toggle_off_knob_normal_theme">@color/toggle_off_knob_dark_theme</color>
     <color name="toggle_off_track_normal_theme">@color/toggle_off_track_dark_theme</color>
     <color name="snackbar_normal_theme">@color/accent_bright_dark_theme</color>
@@ -126,8 +126,6 @@
     <color name="add_on_private_browsing_exterior_circle_background_normal_theme">@color/accent_normal_theme</color>
     <color name="add_on_private_browsing_interior_icon_background_normal_theme">@color/photonWhite</color>
     <color name="prompt_login_edit_text_cursor_color_normal_theme">@color/photonViolet50</color>
-    <color name="readermode_start_gradient_normal_theme">@color/photonViolet30</color>
-    <color name="readermode_end_gradient_normal_theme">@color/photonBlue30</color>
     <color name="search_suggestion_indicator_icon_color_normal_theme">@color/photonGreen60</color>
     <color name="search_suggestion_indicator_icon_bookmark_color_normal_theme">@color/photonBlue40</color>
     <color name="select_login_header_normal_theme">@color/accent_high_contrast_dark_theme</color>
@@ -145,11 +143,10 @@
     <color name="tab_tray_item_url_normal_theme">@color/photonLightGrey60</color>
     <color name="tab_tray_item_background_normal_theme">@color/photonDarkGrey80</color>
     <color name="tab_tray_item_selected_background_normal_theme">@color/tab_tray_item_selected_background_dark_theme</color>
-    <color name="tab_tray_toolbar_background_normal_theme">@color/photonDarkGrey50</color>
     <color name="tab_tray_item_divider_normal_theme">@color/photonDarkGrey10</color>
     <color name="tab_tray_item_media_background_normal_theme">@color/photonViolet50</color>
-    <color name="tab_tray_heading_icon_normal_theme">@color/tab_tray_heading_icon_dark_theme</color>
-    <color name="tab_tray_heading_icon_inactive_normal_theme">@color/tab_tray_heading_icon_inactive_dark_theme</color>
+    <color name="tab_tray_heading_icon_normal_theme">@color/photonViolet50</color>
+    <color name="tab_tray_heading_icon_inactive_normal_theme">@color/photonLightGrey05</color>
     <color name="tab_tray_heading_icon_menu_normal_theme">@color/photonLightGrey05</color>
     <color name="tab_tray_item_thumbnail_background_normal_theme">@color/photonDarkGrey50</color>
     <color name="tab_tray_item_thumbnail_icon_normal_theme">@color/photonDarkGrey05</color>

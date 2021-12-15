@@ -11,6 +11,7 @@ from datetime import datetime
 
 import jsone
 
+from ..release_promotion import read_version_file
 from taskgraph.util.memoize import memoize
 from taskgraph.util.schema import resolve_keyed_by
 from taskgraph.util.taskcluster import get_artifact_prefix
@@ -176,7 +177,7 @@ def generate_beetmover_artifact_map(config, job, **kwargs):
         "s3_bucket_paths",
         job["label"],
         **{
-            "release-type": config.params['release_type'],
+            "build-type": job["attributes"]["build-type"]
         }
     )
 
@@ -221,15 +222,13 @@ def generate_beetmover_artifact_map(config, job, **kwargs):
                     file_config,
                     field,
                     job["label"],
-                    locale=locale,
-                    path_platform=platform,
-                    version=config.params["version"],
+                    locale=locale
                 )
 
             # This format string should ideally be in the configuration file,
             # but this would mean keeping variable names in sync between code + config.
             destinations = [
-                "{s3_bucket_path}/{dest_path}/{locale_prefix}/{filename}".format(
+                "{s3_bucket_path}/{dest_path}/{filename}".format(
                     s3_bucket_path=bucket_path,
                     dest_path=dest_path,
                     locale_prefix=file_config["locale_prefix"],
@@ -270,17 +269,19 @@ def generate_beetmover_artifact_map(config, job, **kwargs):
             for key in platforms.keys():
                 resolve_keyed_by(platforms, key, job["label"], platform=platform)
 
+        version = read_version_file()
         upload_date = datetime.fromtimestamp(config.params["build_date"])
+        
+        if job["attributes"]["build-type"] == "nightly":
+            folder_prefix = upload_date.strftime("%Y/%m/%Y-%m-%d-%H-%M-%S-")
+        else:
+            folder_prefix = f"{version}/android/"
 
         kwargs.update(
             {
                 "locale": locale,
-                "version": config.params["version"],
-                "branch": config.params["project"],
-                "build_number": config.params["build_date"],
-                "year": upload_date.year,
-                "month": upload_date.strftime("%m"),  # zero-pad the month
-                "upload_date": upload_date.strftime("%Y-%m-%d-%H-%M-%S"),
+                "version": version,
+                "folder_prefix": folder_prefix
             }
         )
         kwargs.update(**platforms)
