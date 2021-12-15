@@ -76,9 +76,9 @@
     <color name="fx_mobile_icon_color_accent_green" tools:ignore="UnusedResources">@color/photonGreen60</color>
     <color name="fx_mobile_icon_color_accent_yellow" tools:ignore="UnusedResources">@color/photonYellow60</color>
     <!-- Reader, ETP Shield -->
-    <color name="fx_mobile_icon_color_gradient_start" tools:ignore="UnusedResources">@color/photonViolet50</color>
+    <color name="fx_mobile_icon_color_gradient_start">@color/photonViolet50</color>
     <!-- Reader, ETP Shield -->
-    <color name="fx_mobile_icon_color_gradient_end" tools:ignore="UnusedResources">@color/photonBlue60</color>
+    <color name="fx_mobile_icon_color_gradient_end">@color/photonBlue60</color>
 
     <!-- Border -->
     <!-- Form parts -->
@@ -110,7 +110,7 @@
     <color name="fx_mobile_private_action_color_control_accent" tools:ignore="UnusedResources">@color/photonViolet40A30</color>
 
     <!-- Text -->
-    <color name="fx_mobile_private_text_color_primary" tools:ignore="UnusedResources">@color/photonLightGrey05</color>
+    <color name="fx_mobile_private_text_color_primary">@color/photonLightGrey05</color>
     <color name="fx_mobile_private_text_color_secondary" tools:ignore="UnusedResources">@color/photonLightGrey40</color>
     <color name="fx_mobile_private_text_color_tertiary" tools:ignore="UnusedResources">@color/photonViolet40</color>
     <color name="fx_mobile_private_text_color_disabled" tools:ignore="UnusedResources">@color/photonLightGrey05A40</color>
@@ -136,15 +136,10 @@
     <color name="accent_bright_light_theme">@color/photonViolet70</color>
     <color name="dark_grey_90_gradient_start">@color/photonDarkGrey90</color>
     <color name="dark_grey_90_gradient_end">#0015141A</color>
-    <color name="readermode_start_gradient_normal_theme">@color/photonViolet50</color>
-    <color name="readermode_end_gradient_normal_theme">@color/photonBlue60</color>
     <color name="preference_section_header_normal_theme">@color/accent_bright_light_theme</color>
 
     <color name="mozac_widget_favicon_background_light_theme">@color/photonWhite</color>
     <color name="mozac_widget_favicon_border_light_theme">@color/photonLightGrey30</color>
-
-    <!-- Tab Tray -->
-    <color name="tab_tray_item_media_stroke">@color/photonWhite</color>
 
     <!-- Dark theme color palette -->
     <color name="above_dark_theme">@color/photonDarkGrey50</color>
@@ -156,13 +151,10 @@
 
     <!-- Tab Tray -->
     <color name="tab_tray_item_selected_background_dark_theme">#412E69</color>
-    <color name="tab_tray_heading_icon_dark_theme">@color/photonViolet50</color>
-    <color name="tab_tray_heading_icon_inactive_dark_theme">@color/photonLightGrey05</color>
 
     <!-- Private theme color palette -->
-    <color name="primary_text_private_theme">@color/photonLightGrey05</color>
     <color name="secondary_text_private_theme">#A7A2B7</color>
-    <color name="contrast_text_private_theme">@color/primary_text_private_theme</color>
+    <color name="contrast_text_private_theme">@color/photonLightGrey05</color>
     <color name="caption_text_private_theme">@color/photonLightGrey70</color>
     <color name="foundation_private_theme">#261E4B</color>
     <color name="inset_private_theme">@color/photonInk50</color>
