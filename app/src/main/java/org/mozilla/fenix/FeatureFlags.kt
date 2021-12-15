@@ -74,6 +74,11 @@ object FeatureFlags {
     val tabGroupFeature = Config.channel.isNightlyOrDebug
 
     /**
+     * Allows tabs to be dragged around as long as tab groups are disabled
+     */
+    val tabReorderingFeature = Config.channel.isNightlyOrDebug
+
+    /**
      * Enables showing search groupings in the History.
      */
     const val showHistorySearchGroups = true
@@ -91,4 +96,14 @@ object FeatureFlags {
      * Enables showing the homescreen onboarding card.
      */
     const val showHomeOnboarding = false
+
+    /**
+     * Enables showing the option to clear site data.
+     */
+    val showClearSiteData = Config.channel.isNightlyOrDebug
+
+    /**
+     * Enables showing the wallpaper functionality.
+     */
+    const val showWallpapers = false
 }

@@ -320,6 +320,7 @@ abstract class BaseBrowserFragment :
             engineView = binding.engineView,
             homeViewModel = homeViewModel,
             customTabSessionId = customTabSessionId,
+            browserAnimator = browserAnimator,
             onTabCounterClicked = {
                 thumbnailsFeature.get()?.requestScreenshot()
                 findNavController().nav(
@@ -378,8 +379,9 @@ abstract class BaseBrowserFragment :
         )
 
         _browserToolbarView = BrowserToolbarView(
+            context = context,
             container = binding.browserLayout,
-            toolbarPosition = context.settings().toolbarPosition,
+            settings = context.settings(),
             interactor = browserToolbarInteractor,
             customTabSession = customTabSessionId?.let { store.state.findCustomTab(it) },
             lifecycleOwner = viewLifecycleOwner

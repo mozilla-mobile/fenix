@@ -74,16 +74,15 @@ import org.mozilla.fenix.downloads.DownloadService
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.gecko.GeckoProvider
-import org.mozilla.fenix.home.recentvisits.DefaultHistoryMetadataService
-import org.mozilla.fenix.home.recentvisits.HistoryMetadataMiddleware
-import org.mozilla.fenix.home.recentvisits.HistoryMetadataService
+import org.mozilla.fenix.historymetadata.DefaultHistoryMetadataService
+import org.mozilla.fenix.historymetadata.HistoryMetadataMiddleware
+import org.mozilla.fenix.historymetadata.HistoryMetadataService
 import org.mozilla.fenix.media.MediaSessionService
 import org.mozilla.fenix.perf.StrictModeManager
 import org.mozilla.fenix.perf.lazyMonitored
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.settings.advanced.getSelectedLocale
 import org.mozilla.fenix.telemetry.TelemetryMiddleware
-import org.mozilla.fenix.utils.Mockable
 import org.mozilla.fenix.utils.getUndoDelay
 import org.mozilla.geckoview.GeckoRuntime
 import java.util.concurrent.TimeUnit
@@ -91,7 +90,6 @@ import java.util.concurrent.TimeUnit
 /**
  * Component group for all core browser functionality.
  */
-@Mockable
 @Suppress("LargeClass")
 class Core(
     private val context: Context,
@@ -424,7 +422,8 @@ class Core(
 
     // Temporary. See https://github.com/mozilla-mobile/fenix/issues/19155
     private val lazySecurePrefs = lazyMonitored { getSecureAbove22Preferences() }
-    val trackingProtectionPolicyFactory = TrackingProtectionPolicyFactory(context.settings())
+    val trackingProtectionPolicyFactory =
+        TrackingProtectionPolicyFactory(context.settings(), context.resources)
 
     /**
      * Sets Preferred Color scheme based on Dark/Light Theme Settings or Current Configuration

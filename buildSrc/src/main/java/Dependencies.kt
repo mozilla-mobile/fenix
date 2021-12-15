@@ -33,7 +33,7 @@ object Versions {
     const val androidx_lifecycle = "2.2.0"
     const val androidx_fragment = "1.3.4"
     const val androidx_navigation = "2.3.3"
-    const val androidx_recyclerview = "1.2.0-beta01"
+    const val androidx_recyclerview = "1.2.1"
     const val androidx_core = "1.3.2"
     const val androidx_paging = "2.1.2"
     const val androidx_transition = "1.4.0"
@@ -72,7 +72,6 @@ object Deps {
     const val kotlin_coroutines_test = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.coroutines}"
     const val kotlin_coroutines_android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.coroutines}"
 
-    const val allopen = "org.jetbrains.kotlin:kotlin-allopen:${Versions.kotlin}"
     const val osslicenses_plugin = "com.google.android.gms:oss-licenses-plugin:${Versions.osslicenses_plugin}"
 
     const val mozilla_compose_awesomebar = "org.mozilla.components:compose-awesomebar:${Versions.mozilla_android_components}"

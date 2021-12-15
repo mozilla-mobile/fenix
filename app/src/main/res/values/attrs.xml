@@ -19,13 +19,11 @@
     <attr name="inset" format="reference" />
     <attr name="neutral" format="reference" />
     <attr name="neutralFaded" format="reference" />
-    <attr name="shadow" format="reference" />
     <attr name="destructive" format="reference"/>
     <attr name="disabled" format="reference" />
     <attr name="scrimStart" format="reference"/>
     <attr name="scrimEnd" format="reference"/>
     <attr name="toolbarDivider" format="reference"/>
-    <attr name="menuCategoryText" format="reference"/>
     <attr name="preferenceSectionHeader" format="reference"/>
     <attr name="recentlyUsedShareMenu" format="reference" />
 
@@ -53,22 +51,13 @@
     <attr name="onboardingDeselected" format="reference"/>
     <attr name="addOnPrivateBrowsingExteriorCircleBackground" format="reference"/>
     <attr name="addOnPrivateBrowsingInteriorIconBackground" format="reference"/>
-    <attr name="readerModeStartGradient" format="reference"/>
-    <attr name="readerModeEndGradient" format="reference"/>
-    <attr name="syncedTabsSeparator" format="reference"/>
     <attr name="awesomeBarIndicatorColor" format="reference|color"/>
     <attr name="awesomeBarIndicatorBookmarkColor" format="reference|color"/>
 
     <!-- Tab tray -->
     <attr name="tabTrayItemMediaBackground" format="reference" />
-    <attr name="tabTrayHeadingIcon" format="reference" />
-    <attr name="tabTrayHeadingIconInactive" format="reference" />
     <attr name="tabTrayThumbnailItemBackground" format="reference" />
     <attr name="tabTrayThumbnailIcon" format="reference" />
-    <!-- Note - these are currently unused, but they are for if/when we add private UI to tabs tray -->
-    <attr name="tabTrayItemBackground" format="reference" />
-    <attr name="tabTrayItemSelectedBackground" format="reference" />
-    <attr name="tabTrayToolbarBackground" format="reference" />
 
     <!-- Tab History -->
     <attr name="tabHistoryItemSelectedBackground" format="reference" />
