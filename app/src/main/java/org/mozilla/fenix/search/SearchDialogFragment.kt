@@ -17,7 +17,9 @@ import android.os.Build
 import android.os.Bundle
 import android.speech.RecognizerIntent
 import android.text.style.StyleSpan
+import android.view.GestureDetector
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewStub
@@ -32,10 +34,13 @@ import androidx.constraintlayout.widget.ConstraintProperties.PARENT_ID
 import androidx.constraintlayout.widget.ConstraintProperties.TOP
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.net.toUri
+import androidx.core.view.GestureDetectorCompat
+import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -250,10 +255,35 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         // When displayed above browser or home screen, dismisses keyboard when touching scrim area
         when (findNavController().previousBackStackEntry?.destination?.id) {
             R.id.browserFragment, R.id.homeFragment -> {
-                binding.searchWrapper.setOnTouchListener { _, _ ->
-                    binding.searchWrapper.hideKeyboard()
-                    toolbarView.view.clearFocus()
-                    false
+
+                val gestureListener = object : GestureDetector.SimpleOnGestureListener() {
+                    override fun onSingleTapUp(e: MotionEvent?): Boolean {
+                        dismissAllowingStateLoss()
+                        return true
+                    }
+
+                    override fun onScroll(
+                        e1: MotionEvent?,
+                        e2: MotionEvent?,
+                        x: Float,
+                        y: Float
+                    ): Boolean {
+                        dismissAllowingStateLoss()
+                        activity?.window?.decorView?.rootView
+                            ?.findViewById<RecyclerView>(R.id.sessionControlRecyclerView)
+                            ?.apply {
+                                startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL, ViewCompat.TYPE_NON_TOUCH)
+                                nestedScrollBy(x.toInt(), y.toInt())
+                                stopNestedScroll()
+                            }
+
+                        return false
+                    }
+                }
+                val gestureDetector = GestureDetectorCompat(context, gestureListener)
+                binding.searchWrapper.setOnTouchListener { _, event ->
+                    gestureDetector.onTouchEvent(event)
+                    true
                 }
             }
             else -> {}
