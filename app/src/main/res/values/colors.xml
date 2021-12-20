@@ -253,6 +253,8 @@
     <color name="tab_tray_item_thumbnail_background_normal_theme">@color/photonLightGrey10</color>
     <color name="tab_tray_item_thumbnail_icon_normal_theme">@color/photonLightGrey60</color>
     <color name="tab_tray_selected_mask_normal_theme">@color/photonViolet70A12</color>
+    <color name="tab_tray_group_title_normal_theme">@color/photonInk80</color>
+
 
     <!-- Tab History -->
     <color name="tab_history_item_selected_background_normal_theme">@color/tab_tray_item_selected_background_normal_theme</color>

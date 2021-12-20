@@ -18,6 +18,7 @@
     android:gravity="start"
     android:maxLines="1"
     android:text="@string/tab_tray_header_title_1"
+    android:textColor="@color/tab_tray_group_title_normal_theme"
     android:textAppearance="@style/Header16TextStyle"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintStart_toStartOf="parent"
