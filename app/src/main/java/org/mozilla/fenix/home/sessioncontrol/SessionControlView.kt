@@ -202,6 +202,8 @@ class SessionControlView(
                 override fun onLayoutCompleted(state: RecyclerView.State?) {
                     super.onLayoutCompleted(state)
 
+                    // scroll to top placeholder
+                    view.scrollToPosition(0)
                     JumpBackInCFRDialog(view).showIfNeeded()
                 }
             }
