@@ -10,6 +10,7 @@ import logging
 
 from six import text_type, ensure_text
 
+from taskgraph.util.schema import optionally_keyed_by, resolve_keyed_by
 from taskgraph.transforms.base import TransformSequence
 from taskgraph.transforms.task import task_description_schema
 from voluptuous import Any, Optional, Required, Schema
@@ -28,6 +29,7 @@ beetmover_description_schema = Schema(
         Optional("attributes"): task_description_schema["attributes"],
         Optional("dependencies"): task_description_schema["dependencies"],
         Optional("run-on-tasks-for"): [text_type],
+        Optional("bucket-scope"): optionally_keyed_by("level", "build-type", str),
     }
 )
 
@@ -50,14 +52,24 @@ def make_task_description(config, tasks):
         if task.get("locale"):
             attributes["locale"] = task["locale"]
 
+        resolve_keyed_by(
+            task, 
+            "bucket-scope",
+            item_name=task['name'],
+            **{
+                'build-type': task['attributes']['build-type'],
+                'level': config.params["level"]
+            }
+        )
+        bucket_scope = task.pop('bucket-scope')
+
         task = {
             "label": label,
             "description": description,
             "worker-type": "beetmover",
             "worker": task["worker"],
             "scopes": [
-                # TODO: Adjust scope
-                "project:mobile:fenix:releng:beetmover:bucket:dep",
+                bucket_scope,
                 "project:mobile:fenix:releng:beetmover:action:direct-push-to-bucket",
             ],
             "dependencies": task["dependencies"],
