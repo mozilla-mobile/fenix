@@ -4,6 +4,6 @@
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="?above" />
+    <solid android:color="@color/above_normal_theme" />
     <corners android:bottomLeftRadius="@dimen/tab_corner_radius" android:bottomRightRadius="@dimen/tab_corner_radius" />
 </shape>
