@@ -93,6 +93,8 @@ internal fun normalModeAdapterItems(
         items.add(AdapterItem.CustomizeHomeButton)
     }
 
+    items.add(AdapterItem.BottomSpacer)
+
     return items
 }
 
@@ -140,7 +142,8 @@ private fun onboardingAdapterItems(onboardingState: OnboardingState): List<Adapt
     items.addAll(
         listOf(
             AdapterItem.OnboardingPrivacyNotice,
-            AdapterItem.OnboardingFinish
+            AdapterItem.OnboardingFinish,
+            AdapterItem.BottomSpacer
         )
     )
 

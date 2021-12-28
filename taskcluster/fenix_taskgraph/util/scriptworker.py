@@ -177,12 +177,9 @@ def generate_beetmover_artifact_map(config, job, **kwargs):
         "s3_bucket_paths",
         job["label"],
         **{
-            "build-type": job['attributes']['build-type']
+            "build-type": job["attributes"]["build-type"]
         }
     )
-
-
-    
 
     for locale, dep in sorted(itertools.product(locales, dependencies)):
         paths = dict()
@@ -274,13 +271,19 @@ def generate_beetmover_artifact_map(config, job, **kwargs):
 
         version = read_version_file()
         upload_date = datetime.fromtimestamp(config.params["build_date"])
-        dated_path = upload_date.strftime("%Y/%m/%Y-%m-%d-%H-%M-%S")
+        
+        if job["attributes"]["build-type"] == "nightly":
+            folder_prefix = upload_date.strftime("%Y/%m/%Y-%m-%d-%H-%M-%S-")
+            # TODO: Remove this when version.txt has versioning fixed
+            version = version.split('-')[0]
+        else:
+            folder_prefix = f"{version}/android/"
 
         kwargs.update(
             {
                 "locale": locale,
                 "version": version,
-                "dated_path": dated_path
+                "folder_prefix": folder_prefix
             }
         )
         kwargs.update(**platforms)

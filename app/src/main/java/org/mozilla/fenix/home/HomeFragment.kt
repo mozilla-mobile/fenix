@@ -394,6 +394,12 @@ class HomeFragment : Fragment() {
         requireComponents.core.engine.profiler?.addMarker(
             MarkersFragmentLifecycleCallbacks.MARKER_NAME, profilerStartTime, "HomeFragment.onCreateView",
         )
+
+        if (shouldEnableWallpaper()) {
+            val wallpaperManger = requireComponents.wallpaperManager
+            wallpaperManger.updateWallpaper(binding.homeLayout, wallpaperManger.currentWallpaper)
+        }
+
         return binding.root
     }
 
@@ -593,7 +599,7 @@ class HomeFragment : Fragment() {
             requireContext(),
             onItemTapped,
             iconColor = if (mode == BrowsingMode.Private) {
-                ContextCompat.getColor(requireContext(), R.color.primary_text_private_theme)
+                ContextCompat.getColor(requireContext(), R.color.fx_mobile_private_text_color_primary)
             } else {
                 null
             }
@@ -750,6 +756,16 @@ class HomeFragment : Fragment() {
 
         lifecycleScope.launch(IO) {
             requireComponents.reviewPromptController.promptReview(requireActivity())
+        }
+
+        if (shouldEnableWallpaper()) {
+            binding.wordmark.setOnClickListener {
+                val manager = requireComponents.wallpaperManager
+                manager.updateWallpaper(
+                    wallpaperContainer = binding.homeLayout,
+                    newWallpaper = manager.switchToNextWallpaper()
+                )
+            }
         }
     }
 
@@ -1178,6 +1194,9 @@ class HomeFragment : Fragment() {
             emptyList()
         }
     }
+
+    private fun shouldEnableWallpaper() =
+        FeatureFlags.showWallpapers && !(activity as HomeActivity).themeManager.currentTheme.isPrivate
 
     companion object {
         const val ALL_NORMAL_TABS = "all_normal"
