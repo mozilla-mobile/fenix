@@ -10,9 +10,9 @@
     <color name="fx_mobile_layer_color_1" tools:ignore="UnusedResources">@color/photonLightGrey20</color>
     <!-- Card background, Menu background -->
     <color name="fx_mobile_layer_color_2" tools:ignore="UnusedResources">@color/photonWhite</color>
-    <!-- App Bar Top, App Bar Bottom, Toolbar background, Frontlayer header -->
+    <!-- App Bar Top, App Bar Bottom, Frontlayer header -->
     <color name="fx_mobile_layer_color_3" tools:ignore="UnusedResources">@color/photonLightGrey10</color>
-    <!-- Frontlayer header (edit), Header (edit) -->
+    <!-- App Bar Top (edit), Header (edit) -->
     <color name="fx_mobile_layer_color_accent" tools:ignore="UnusedResources">@color/photonViolet90</color>
     <!-- Selected tab -->
     <color name="fx_mobile_layer_color_accent_nonopaque" tools:ignore="UnusedResources">@color/photonViolet90A20</color>
@@ -27,18 +27,24 @@
     <!-- Action -->
     <!-- Primary button, Snackbar, Floating action button, Controls -->
     <color name="fx_mobile_action_color_primary" tools:ignore="UnusedResources">@color/photonViolet90</color>
-    <!-- Secondary button, Pill button -->
+    <!-- Secondary button, Chip -->
     <color name="fx_mobile_action_color_secondary" tools:ignore="UnusedResources">@color/photonLightGrey40</color>
-    <!-- Checkbox enabled, Radio enabled -->
-    <color name="fx_mobile_action_color_tertiary" tools:ignore="UnusedResources">@color/photonDarkGrey05</color>
+    <!-- Checkbox default, Radio button default -->
+    <color name="fx_mobile_action_color_form_default" tools:ignore="UnusedResources">@color/photonDarkGrey90</color>
+    <!-- Checkbox selected, Radio button selected -->
+    <color name="fx_mobile_action_color_form_selected" tools:ignore="UnusedResources">@color/photonViolet90</color>
+    <!-- Switch background OFF, Switch background ON -->
+    <color name="fx_mobile_action_color_form_surface" tools:ignore="UnusedResources">@color/photonLightGrey50</color>
     <!-- Checkbox disabled, Radio disabled -->
-    <color name="fx_mobile_action_color_disabled" tools:ignore="UnusedResources">@color/photonLightGrey50</color>
-    <!-- Switch background OFF, Indicator OFF -->
-    <color name="fx_mobile_action_color_control" tools:ignore="UnusedResources">@color/photonLightGrey30</color>
-    <!-- Switch background ON -->
-    <color name="fx_mobile_action_color_control_dark" tools:ignore="UnusedResources">@color/photonViolet40A30</color>
-    <!-- Indicator active -->
-    <color name="fx_mobile_action_color_control_active" tools:ignore="UnusedResources">@color/photonLightGrey50</color>
+    <color name="fx_mobile_action_color_form_disabled" tools:ignore="UnusedResources">@color/photonLightGrey50</color>
+    <!-- Switch thumb ON -->
+    <color name="fx_mobile_action_color_form_on" tools:ignore="UnusedResources">@color/photonViolet90</color>
+    <!-- Switch thumb OFF -->
+    <color name="fx_mobile_action_color_form_off" tools:ignore="UnusedResources">@color/photonLightGrey05</color>
+    <!-- Scroll indicator active -->
+    <color name="fx_mobile_action_color_indicator_active" tools:ignore="UnusedResources">@color/photonLightGrey50</color>
+    <!-- Scroll indicator inactive -->
+    <color name="fx_mobile_action_color_indicator_inactive" tools:ignore="UnusedResources">@color/photonLightGrey30</color>
 
     <!-- Text -->
     <!-- Primary text -->
@@ -53,7 +59,7 @@
     <color name="fx_mobile_text_color_action">@color/photonViolet70</color>
     <!-- Small heading -->
     <color name="fx_mobile_text_color_accent" tools:ignore="UnusedResources">@color/photonViolet90</color>
-    <!-- Text/Icon inverted (on color) -->
+    <!-- Text Inverted/On Color -->
     <color name="fx_mobile_text_color_inverted" tools:ignore="UnusedResources">@color/photonWhite</color>
 
     <!-- Icon -->
@@ -130,7 +136,6 @@
 
     <!-- Light theme color palette -->
     <color name="primary_text_light_theme">@color/photonInk80</color>
-    <color name="contrast_text_light_theme">@color/photonLightGrey05</color>
     <color name="foundation_light_theme">@color/photonLightGrey20</color>
     <color name="accent_light_theme">@color/photonInk20</color>
     <color name="accent_bright_light_theme">@color/photonViolet70</color>
@@ -143,7 +148,6 @@
     <color name="mozac_widget_favicon_border_light_theme">@color/photonLightGrey30</color>
 
     <!-- Dark theme color palette -->
-    <color name="above_dark_theme">@color/photonDarkGrey50</color>
     <color name="accent_bright_dark_theme">@color/photonViolet70</color>
     <color name="accent_high_contrast_dark_theme">@color/photonViolet40</color>
 
@@ -201,7 +205,7 @@
     <!-- Normal theme colors for light mode -->
     <color name="primary_text_normal_theme">@color/primary_text_light_theme</color>
     <color name="secondary_text_normal_theme">@color/photonGrey50</color>
-    <color name="contrast_text_normal_theme">@color/contrast_text_light_theme</color>
+    <color name="contrast_text_normal_theme">@color/photonLightGrey05</color>
     <color name="caption_text_normal_theme">@color/photonLightGrey90</color>
     <color name="foundation_normal_theme">@color/foundation_light_theme</color>
     <color name="above_normal_theme">@color/photonWhite</color>
@@ -318,7 +322,6 @@
 
     <!-- Button Colors -->
     <color name="grey_button_color">@color/photonLightGrey30</color>
-    <color name="destructive_button_text_color">@color/destructive_normal_theme</color>
     <color name="button_text_color">@color/photonInk20</color>
 
     <!-- Search Widget -->
