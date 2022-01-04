@@ -42,9 +42,9 @@ class TrackingProtectionPolicyFactory(
             }
 
         return when {
-            normalMode && privateMode -> trackingProtectionPolicy.adaptPolicyToChannel()
-            normalMode && !privateMode -> trackingProtectionPolicy.adaptPolicyToChannel().forRegularSessionsOnly()
-            !normalMode && privateMode -> trackingProtectionPolicy.adaptPolicyToChannel().forPrivateSessionsOnly()
+            normalMode && privateMode -> trackingProtectionPolicy
+            normalMode && !privateMode -> trackingProtectionPolicy.forRegularSessionsOnly()
+            !normalMode && privateMode -> trackingProtectionPolicy.forPrivateSessionsOnly()
             else -> TrackingProtectionPolicy.none()
         }
     }

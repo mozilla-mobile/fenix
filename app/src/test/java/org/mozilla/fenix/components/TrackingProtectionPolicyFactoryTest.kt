@@ -133,25 +133,6 @@ class TrackingProtectionPolicyFactoryTest {
     }
 
     @Test
-    fun `adaptPolicyToChannel MUST only update properties that have changed per given channel`() {
-        mockkObject(Config)
-
-        val policies = arrayOf(
-            TrackingProtectionPolicy.strict(), TrackingProtectionPolicy.recommended(),
-            TrackingProtectionPolicy.select()
-        )
-
-        for (channel in ReleaseChannel.values()) {
-            every { Config.channel } returns channel
-
-            for (policy in policies) {
-                val adaptedPolicy = policy.adaptPolicyToChannel()
-                policy.assertPolicyEquals(adaptedPolicy, checkPrivacy = false)
-            }
-        }
-    }
-
-    @Test
     fun `GIVEN custom policy WHEN cookie policy social THEN tracking policy should have cookie policy allow non-trackers`() {
         val expected = TrackingProtectionPolicy.select(
             cookiePolicy = TrackingProtectionPolicy.CookiePolicy.ACCEPT_NON_TRACKERS,
