@@ -15,7 +15,7 @@
     <!-- App Bar Top (edit), Header (edit) -->
     <color name="fx_mobile_layer_color_accent" tools:ignore="UnusedResources">@color/photonViolet90</color>
     <!-- Selected tab -->
-    <color name="fx_mobile_layer_color_accent_nonopaque" tools:ignore="UnusedResources">@color/photonViolet90A20</color>
+    <color name="fx_mobile_layer_color_accent_nonopaque" tools:ignore="UnusedResources">@color/photonViolet70A12</color>
     <color name="fx_mobile_layer_color_scrim" tools:ignore="UnusedResources">@color/photonDarkGrey05A45</color>
     <color name="fx_mobile_layer_color_scrim_start">@color/photonDarkGrey90A96</color>
     <color name="fx_mobile_layer_color_scrim_end">@color/photonDarkGrey30A96</color>
@@ -26,7 +26,7 @@
 
     <!-- Action -->
     <!-- Primary button, Snackbar, Floating action button, Controls -->
-    <color name="fx_mobile_action_color_primary" tools:ignore="UnusedResources">@color/photonViolet90</color>
+    <color name="fx_mobile_action_color_primary" tools:ignore="UnusedResources">@color/photonInk20</color>
     <!-- Secondary button, Chip -->
     <color name="fx_mobile_action_color_secondary" tools:ignore="UnusedResources">@color/photonLightGrey40</color>
     <!-- Checkbox default, Radio button default -->
@@ -55,10 +55,8 @@
     <color name="fx_mobile_text_color_disabled" tools:ignore="UnusedResources">@color/photonDarkGrey90A40</color>
     <!-- Warning text -->
     <color name="fx_mobile_text_color_warning" tools:ignore="UnusedResources">@color/photonRed80</color>
-    <!-- Text link -->
-    <color name="fx_mobile_text_color_action">@color/photonViolet70</color>
-    <!-- Small heading -->
-    <color name="fx_mobile_text_color_accent" tools:ignore="UnusedResources">@color/photonViolet90</color>
+    <!-- Small heading, Text link -->
+    <color name="fx_mobile_text_color_accent">@color/photonViolet70</color>
     <!-- Text Inverted/On Color -->
     <color name="fx_mobile_text_color_inverted" tools:ignore="UnusedResources">@color/photonWhite</color>
 
