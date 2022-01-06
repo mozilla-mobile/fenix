@@ -196,6 +196,11 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
         }
     }
 
+    override fun navToSitePermissionsFragment() {
+        val directions = ExternalAppBrowserFragmentDirections.actionGlobalSitePermissionsFragment()
+        nav(R.id.browserFragment, directions)
+    }
+
     override fun getContextMenuCandidates(
         context: Context,
         view: View

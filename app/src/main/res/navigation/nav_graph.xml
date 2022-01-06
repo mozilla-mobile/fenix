@@ -129,6 +129,9 @@
         android:id="@+id/action_global_quickSettingsSheetDialogFragment"
         app:destination="@id/quickSettingsSheetDialogFragment" />
     <action
+        android:id="@+id/action_global_sitePermissionsFragment"
+        app:destination="@id/sitePermissionsFragment" />
+    <action
         android:id="@+id/action_global_connectionDetailsDialogFragment"
         app:destination="@id/connectionPanelDialogFragment" />
     <action
@@ -240,6 +243,9 @@
         <action
             android:id="@+id/action_browserFragment_to_quickSettingsSheetDialogFragment"
             app:destination="@id/quickSettingsSheetDialogFragment" />
+        <action
+            android:id="@+id/action_browserFragment_to_sitePermissionsFragment"
+            app:destination="@id/sitePermissionsFragment" />
     </fragment>
 
     <fragment

@@ -413,6 +413,10 @@ abstract class BaseBrowserFragment :
             showQuickSettingsDialog()
         }
 
+        browserToolbarView.view.display.setOnSiteSecurityLongClickListener {
+            navToSitePermissionsFragment()
+        }
+
         contextMenuFeature.set(
             feature = ContextMenuFeature(
                 fragmentManager = parentFragmentManager,
@@ -1165,6 +1169,8 @@ abstract class BaseBrowserFragment :
         tab: SessionState,
         sitePermissions: SitePermissions?
     )
+
+    protected abstract fun navToSitePermissionsFragment()
 
     /**
      * Returns the layout [android.view.Gravity] for the quick settings and ETP dialog.

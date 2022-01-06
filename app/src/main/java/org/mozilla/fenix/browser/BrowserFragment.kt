@@ -319,6 +319,11 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
         }
     }
 
+    override fun navToSitePermissionsFragment() {
+        val directions = BrowserFragmentDirections.actionBrowserFragmentToSitePermissionsFragment()
+        nav(R.id.browserFragment, directions)
+    }
+
     private val collectionStorageObserver = object : TabCollectionStorage.Observer {
         override fun onCollectionCreated(
             title: String,
