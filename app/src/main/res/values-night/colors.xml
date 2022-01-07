@@ -7,15 +7,15 @@
 
     <!-- Layers -->
     <!-- Default Screen, Search, Frontlayer background -->
-    <color name="fx_mobile_layer_color_1" tools:ignore="UnusedResources">@color/photonDarkGrey80</color>
+    <color name="fx_mobile_layer_color_1">@color/photonDarkGrey80</color>
     <!-- Card background, Menu background -->
     <color name="fx_mobile_layer_color_2" tools:ignore="UnusedResources">@color/photonDarkGrey50</color>
-    <!-- App Bar Top, App Bar Bottom, Toolbar background, Frontlayer header -->
+    <!-- App Bar Top, App Bar Bottom, Frontlayer header -->
     <color name="fx_mobile_layer_color_3" tools:ignore="UnusedResources">@color/photonDarkGrey60</color>
-    <!-- Frontlayer header (edit), Header (edit) -->
+    <!-- App Bar Top (edit), Header (edit) -->
     <color name="fx_mobile_layer_color_accent" tools:ignore="UnusedResources">@color/photonViolet40</color>
     <!-- Selected tab -->
-    <color name="fx_mobile_layer_color_accent_nonopaque" tools:ignore="UnusedResources">@color/photonViolet40A12</color>
+    <color name="fx_mobile_layer_color_accent_nonopaque">@color/photonViolet50A32</color>
     <color name="fx_mobile_layer_color_scrim" tools:ignore="UnusedResources">@color/photonDarkGrey05A45</color>
     <color name="fx_mobile_layer_color_scrim_start">@color/photonInk80A96</color>
     <color name="fx_mobile_layer_color_scrim_end">@color/photonDarkGrey90A96</color>
@@ -26,19 +26,25 @@
 
     <!-- Action -->
     <!-- Primary button, Snackbar, Floating action button, Controls -->
-    <color name="fx_mobile_action_color_primary" tools:ignore="UnusedResources">@color/photonViolet60</color>
-    <!-- Secondary button, Pill button -->
+    <color name="fx_mobile_action_color_primary" tools:ignore="UnusedResources">@color/photonViolet70</color>
+    <!-- Secondary button, Chip -->
     <color name="fx_mobile_action_color_secondary" tools:ignore="UnusedResources">@color/photonDarkGrey50</color>
-    <!-- Checkbox enabled, Radio enabled -->
-    <color name="fx_mobile_action_color_tertiary" tools:ignore="UnusedResources">@color/photonLightGrey40</color>
+    <!-- Checkbox default, Radio button default -->
+    <color name="fx_mobile_action_color_form_default" tools:ignore="UnusedResources">@color/photonLightGrey05</color>
+    <!-- Checkbox selected, Radio button selected -->
+    <color name="fx_mobile_action_color_form_selected" tools:ignore="UnusedResources">@color/photonViolet40</color>
+    <!-- Switch background OFF, Switch background ON -->
+    <color name="fx_mobile_action_color_form_surface" tools:ignore="UnusedResources">@color/photonDarkGrey05</color>
     <!-- Checkbox disabled, Radio disabled -->
-    <color name="fx_mobile_action_color_disabled" tools:ignore="UnusedResources">@color/photonDarkGrey05</color>
-    <!-- Switch background OFF, Indicator OFF -->
-    <color name="fx_mobile_action_color_control" tools:ignore="UnusedResources">@color/photonDarkGrey05</color>
-    <!-- Switch background ON -->
-    <color name="fx_mobile_action_color_control_dark" tools:ignore="UnusedResources">@color/photonViolet40A30</color>
-    <!-- Indicator active -->
-    <color name="fx_mobile_action_color_control_active" tools:ignore="UnusedResources">@color/photonLightGrey90</color>
+    <color name="fx_mobile_action_color_form_disabled" tools:ignore="UnusedResources">@color/photonDarkGrey05</color>
+    <!-- Switch thumb ON -->
+    <color name="fx_mobile_action_color_form_on" tools:ignore="UnusedResources">@color/photonViolet40</color>
+    <!-- Switch thumb OFF -->
+    <color name="fx_mobile_action_color_form_off" tools:ignore="UnusedResources">@color/photonLightGrey05</color>
+    <!-- Scroll indicator active -->
+    <color name="fx_mobile_action_color_indicator_active" tools:ignore="UnusedResources">@color/photonLightGrey90</color>
+    <!-- Scroll indicator inactive -->
+    <color name="fx_mobile_action_color_indicator_inactive" tools:ignore="UnusedResources">@color/photonDarkGrey05</color>
 
     <!-- Text -->
     <!-- Primary text -->
@@ -49,11 +55,9 @@
     <color name="fx_mobile_text_color_disabled" tools:ignore="UnusedResources">@color/photonLightGrey05A40</color>
     <!-- Warning text -->
     <color name="fx_mobile_text_color_warning" tools:ignore="UnusedResources">@color/photonRed40</color>
-    <!-- Text link -->
-    <color name="fx_mobile_text_color_action">@color/photonViolet40</color>
-    <!-- Small heading -->
-    <color name="fx_mobile_text_color_accent" tools:ignore="UnusedResources">@color/photonViolet40</color>
-    <!-- Text/Icon inverted (on color) -->
+    <!-- Small heading, Text link -->
+    <color name="fx_mobile_text_color_accent">@color/photonViolet40</color>
+    <!-- Text Inverted/On Color -->
     <color name="fx_mobile_text_color_inverted" tools:ignore="UnusedResources">@color/photonWhite</color>
 
     <!-- Icon -->
@@ -96,8 +100,7 @@
     <color name="secondary_text_normal_theme">#A7A2B7</color>
     <color name="contrast_text_normal_theme">@color/primary_text_normal_theme</color>
     <color name="caption_text_normal_theme">@color/photonLightGrey70</color>
-    <color name="foundation_normal_theme">@color/photonDarkGrey80</color>
-    <color name="above_normal_theme">@color/above_dark_theme</color>
+    <color name="above_normal_theme">@color/photonDarkGrey50</color>
     <color name="inset_normal_theme">@color/photonDarkGrey50</color>
     <color name="accent_normal_theme">@color/photonViolet50</color>
     <color name="accent_bright_normal_theme">@color/accent_bright_dark_theme</color>
@@ -111,9 +114,9 @@
     <color name="toggle_off_track_normal_theme">@color/toggle_off_track_dark_theme</color>
     <color name="snackbar_normal_theme">@color/accent_bright_dark_theme</color>
     <color name="accent_on_dark_background_normal_theme">@color/accent_high_contrast_dark_theme</color>
-    <color name="toolbar_start_gradient_normal_theme">@color/foundation_normal_theme</color>
-    <color name="toolbar_center_gradient_normal_theme">@color/foundation_normal_theme</color>
-    <color name="toolbar_end_gradient_normal_theme">@color/foundation_normal_theme</color>
+    <color name="toolbar_start_gradient_normal_theme">@color/fx_mobile_layer_color_1</color>
+    <color name="toolbar_center_gradient_normal_theme">@color/fx_mobile_layer_color_1</color>
+    <color name="toolbar_end_gradient_normal_theme">@color/fx_mobile_layer_color_1</color>
     <color name="toolbar_divider_color_normal_theme">@color/photonDarkGrey10</color>
     <color name="fill_link_from_clipboard_normal_theme">@color/accent_on_dark_background_normal_theme</color>
     <color name="sync_disconnected_icon_fill_normal_theme">#FFF36E</color>
@@ -150,7 +153,6 @@
     <color name="tab_tray_heading_icon_menu_normal_theme">@color/photonLightGrey05</color>
     <color name="tab_tray_item_thumbnail_background_normal_theme">@color/photonDarkGrey50</color>
     <color name="tab_tray_item_thumbnail_icon_normal_theme">@color/photonDarkGrey05</color>
-    <color name="tab_tray_selected_mask_normal_theme">@color/photonViolet50A32</color>
 
     <!-- Tab History -->
     <color name="tab_history_item_selected_background_normal_theme">@color/tab_tray_item_selected_background_dark_theme</color>
@@ -158,7 +160,7 @@
     <!--Top site colors -->
     <color name="top_site_pager_dot">@color/photonDarkGrey40</color>
     <color name="top_site_pager_dot_selected">@color/photonDarkGrey05</color>
-    <color name="top_site_pin_icon_color">@color/foundation_light_theme</color>
+    <color name="top_site_pin_icon_color">@color/photonLightGrey20</color>
     <color name="top_sites_border_color">@color/photonDarkGrey90</color>
 
     <!-- Collection icons-->

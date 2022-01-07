@@ -45,24 +45,26 @@ private val darkColorPalette = FirefoxColors(
     layer2 = PhotonColors.DarkGrey50,
     layer3 = PhotonColors.DarkGrey60,
     layerAccent = PhotonColors.Violet40,
-    layerNonOpaque = PhotonColors.Violet40A12,
+    layerNonOpaque = PhotonColors.Violet50A32,
     scrim = PhotonColors.DarkGrey05A45,
     scrimAccentStart = PhotonColors.Ink80A96,
     scrimAccentEnd = PhotonColors.DarkGrey90A96,
     gradientStart = PhotonColors.Violet70,
     gradientEnd = PhotonColors.Violet40,
-    actionPrimary = PhotonColors.Violet60,
+    actionPrimary = PhotonColors.Violet70,
     actionSecondary = PhotonColors.DarkGrey50,
-    actionTertiary = PhotonColors.LightGrey40,
-    actionDisabled = PhotonColors.DarkGrey05,
-    control = PhotonColors.DarkGrey05,
-    controlDark = PhotonColors.Violet40A30,
-    controlActive = PhotonColors.LightGrey90,
+    formDefault = PhotonColors.LightGrey05,
+    formSelected = PhotonColors.Violet40,
+    formSurface = PhotonColors.DarkGrey05,
+    formDisabled = PhotonColors.DarkGrey05,
+    formOn = PhotonColors.Violet40,
+    formOff = PhotonColors.LightGrey05,
+    indicatorActive = PhotonColors.LightGrey90,
+    indicatorInactive = PhotonColors.DarkGrey05,
     textPrimary = PhotonColors.LightGrey05,
     textSecondary = PhotonColors.LightGrey40,
     textDisabled = PhotonColors.LightGrey05A40,
     textWarning = PhotonColors.Red40,
-    textLink = PhotonColors.Violet40,
     textAccent = PhotonColors.Violet40,
     textInverted = PhotonColors.White,
     iconPrimary = PhotonColors.LightGrey05,
@@ -91,25 +93,27 @@ private val lightColorPalette = FirefoxColors(
     layer2 = PhotonColors.White,
     layer3 = PhotonColors.LightGrey10,
     layerAccent = PhotonColors.Violet90,
-    layerNonOpaque = PhotonColors.Violet90A20,
+    layerNonOpaque = PhotonColors.Violet70A12,
     scrim = PhotonColors.DarkGrey05A45,
     scrimAccentStart = PhotonColors.DarkGrey90A96,
     scrimAccentEnd = PhotonColors.DarkGrey30A96,
     gradientStart = PhotonColors.Violet70,
     gradientEnd = PhotonColors.Violet40,
-    actionPrimary = PhotonColors.Violet90,
+    actionPrimary = PhotonColors.Ink20,
     actionSecondary = PhotonColors.LightGrey40,
-    actionTertiary = PhotonColors.DarkGrey05,
-    actionDisabled = PhotonColors.LightGrey50,
-    control = PhotonColors.LightGrey30,
-    controlDark = PhotonColors.Violet40A30,
-    controlActive = PhotonColors.LightGrey50,
+    formDefault = PhotonColors.DarkGrey90,
+    formSelected = PhotonColors.Violet90,
+    formSurface = PhotonColors.LightGrey50,
+    formDisabled = PhotonColors.LightGrey50,
+    formOn = PhotonColors.Violet90,
+    formOff = PhotonColors.LightGrey05,
+    indicatorActive = PhotonColors.LightGrey50,
+    indicatorInactive = PhotonColors.LightGrey30,
     textPrimary = PhotonColors.DarkGrey90,
     textSecondary = PhotonColors.DarkGrey05,
     textDisabled = PhotonColors.DarkGrey90A40,
     textWarning = PhotonColors.Red80,
-    textLink = PhotonColors.Violet70,
-    textAccent = PhotonColors.Violet90,
+    textAccent = PhotonColors.Violet70,
     textInverted = PhotonColors.White,
     iconPrimary = PhotonColors.DarkGrey90,
     iconSecondary = PhotonColors.DarkGrey05,
@@ -150,16 +154,18 @@ class FirefoxColors(
     gradientEnd: Color,
     actionPrimary: Color,
     actionSecondary: Color,
-    actionTertiary: Color,
-    actionDisabled: Color,
-    control: Color,
-    controlDark: Color,
-    controlActive: Color,
+    formDefault: Color,
+    formSelected: Color,
+    formSurface: Color,
+    formDisabled: Color,
+    formOn: Color,
+    formOff: Color,
+    indicatorActive: Color,
+    indicatorInactive: Color,
     textPrimary: Color,
     textSecondary: Color,
     textDisabled: Color,
     textWarning: Color,
-    textLink: Color,
     textAccent: Color,
     textInverted: Color,
     iconPrimary: Color,
@@ -190,10 +196,10 @@ class FirefoxColors(
     // Card background, Menu background
     var layer2 by mutableStateOf(layer2)
         private set
-    // App Bar Top, App Bar Bottom, Toolbar background, Frontlayer header
+    // App Bar Top, App Bar Bottom, Frontlayer header
     var layer3 by mutableStateOf(layer3)
         private set
-    // Frontlayer header (edit), Header (edit)
+    // App Bar Top (edit), Header (edit)
     var layerAccent by mutableStateOf(layerAccent)
         private set
     // Selected tab
@@ -217,23 +223,32 @@ class FirefoxColors(
     // Primary button, Snackbar, Floating action button, Controls
     var actionPrimary by mutableStateOf(actionPrimary)
         private set
-    // Secondary button, Pill button
+    // Secondary button, Chip
     var actionSecondary by mutableStateOf(actionSecondary)
         private set
-    // Checkbox enabled, Radio enabled
-    var actionTertiary by mutableStateOf(actionTertiary)
+    // Checkbox default, Radio button default
+    var formDefault by mutableStateOf(formDefault)
+        private set
+    // Checkbox selected, Radio button selected
+    var formSelected by mutableStateOf(formSelected)
+        private set
+    // Switch background OFF, Switch background ON
+    var formSurface by mutableStateOf(formSurface)
         private set
     // Checkbox disabled, Radio disabled
-    var actionDisabled by mutableStateOf(actionDisabled)
+    var formDisabled by mutableStateOf(formDisabled)
         private set
-    // Switch background OFF, Indicator OFF
-    var control by mutableStateOf(control)
+    // Switch thumb ON
+    var formOn by mutableStateOf(formOn)
         private set
-    // Switch background ON
-    var controlDark by mutableStateOf(controlDark)
+    // Switch thumb OFF
+    var formOff by mutableStateOf(formOff)
         private set
-    // Indicator active
-    var controlActive by mutableStateOf(controlActive)
+    // Scroll indicator active
+    var indicatorActive by mutableStateOf(indicatorActive)
+        private set
+    // Scroll indicator inactive
+    var indicatorInactive by mutableStateOf(indicatorInactive)
         private set
 
     // Text
@@ -250,13 +265,10 @@ class FirefoxColors(
     // Warning text
     var textWarning by mutableStateOf(textWarning)
         private set
-    // Text link
-    var textLink by mutableStateOf(textLink)
-        private set
-    // Small heading
+    // Small heading, Text link
     var textAccent by mutableStateOf(textAccent)
         private set
-    // Text/Icon inverted (on color)
+    // Text Inverted/On Color
     var textInverted by mutableStateOf(textInverted)
         private set
 
@@ -329,16 +341,18 @@ class FirefoxColors(
         gradientEnd = other.gradientEnd
         actionPrimary = other.actionPrimary
         actionSecondary = other.actionSecondary
-        actionTertiary = other.actionTertiary
-        actionDisabled = other.actionDisabled
-        control = other.control
-        controlDark = other.controlDark
-        controlActive = other.controlActive
+        formDefault = other.formDefault
+        formSelected = other.formSelected
+        formSurface = other.formSurface
+        formDisabled = other.formDisabled
+        formOn = other.formOn
+        formOff = other.formOff
+        indicatorActive = other.indicatorActive
+        indicatorInactive = other.indicatorInactive
         textPrimary = other.textPrimary
         textSecondary = other.textSecondary
         textDisabled = other.textDisabled
         textWarning = other.textWarning
-        textLink = other.textLink
         textAccent = other.textAccent
         textInverted = other.textInverted
         iconPrimary = other.iconPrimary
@@ -375,16 +389,18 @@ class FirefoxColors(
         gradientEnd = gradientEnd,
         actionPrimary = actionPrimary,
         actionSecondary = actionSecondary,
-        actionTertiary = actionTertiary,
-        actionDisabled = actionDisabled,
-        control = control,
-        controlDark = controlDark,
-        controlActive = controlActive,
+        formDefault = formDefault,
+        formSelected = formSelected,
+        formSurface = formSurface,
+        formDisabled = formDisabled,
+        formOn = formOn,
+        formOff = formOff,
+        indicatorActive = indicatorActive,
+        indicatorInactive = indicatorInactive,
         textPrimary = textPrimary,
         textSecondary = textSecondary,
         textDisabled = textDisabled,
         textWarning = textWarning,
-        textLink = textLink,
         textAccent = textAccent,
         textInverted = textInverted,
         iconPrimary = iconPrimary,
