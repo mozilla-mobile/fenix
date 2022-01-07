@@ -79,12 +79,14 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BrowserAnimator.Companion.getToolbarNavOptions
 import org.mozilla.fenix.browser.BrowserFragmentDirections
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
+import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.PrivateShortcutCreateManager
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.accounts.AccountState
+import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.tips.FenixTipManager
 import org.mozilla.fenix.components.tips.Tip
@@ -160,6 +162,9 @@ class HomeFragment : Fragment() {
 
     private val store: BrowserStore
         get() = requireComponents.core.store
+
+    private val appStore: AppStore
+        get() = requireComponents.appStore
 
     private val onboarding by lazy {
         requireComponents.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
@@ -395,11 +400,6 @@ class HomeFragment : Fragment() {
             MarkersFragmentLifecycleCallbacks.MARKER_NAME, profilerStartTime, "HomeFragment.onCreateView",
         )
 
-        if (shouldEnableWallpaper()) {
-            val wallpaperManger = requireComponents.wallpaperManager
-            wallpaperManger.updateWallpaper(binding.homeLayout, wallpaperManger.currentWallpaper)
-        }
-
         return binding.root
     }
 
@@ -490,6 +490,12 @@ class HomeFragment : Fragment() {
         context?.metrics?.apply {
             track(Event.HomeScreenDisplayed)
             track(Event.HomeScreenViewCount)
+        }
+
+        consumeFrom(appStore) {
+            if (shouldEnableWallpaper()) {
+                it.wallpaper.applyToView(binding.homeLayout)
+            }
         }
 
         observeSearchEngineChanges()
@@ -760,11 +766,7 @@ class HomeFragment : Fragment() {
 
         if (shouldEnableWallpaper()) {
             binding.wordmark.setOnClickListener {
-                val manager = requireComponents.wallpaperManager
-                manager.updateWallpaper(
-                    wallpaperContainer = binding.homeLayout,
-                    newWallpaper = manager.switchToNextWallpaper()
-                )
+                appStore.dispatch(AppAction.SwitchToNextWallpaper)
             }
         }
     }

@@ -5,6 +5,7 @@
 package org.mozilla.fenix.settings
 
 import android.os.Bundle
+import androidx.navigation.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
@@ -60,6 +61,16 @@ class HomeSettingsFragment : PreferenceFragmentCompat() {
             isVisible = FeatureFlags.historyMetadataUIFeature
             isChecked = context.settings().historyMetadataUIFeature
             onPreferenceChangeListener = CustomizeHomeMetricsUpdater()
+        }
+
+        requirePreference<Preference>(R.string.pref_key_wallpapers).apply {
+            setOnPreferenceClickListener {
+                view?.findNavController()?.navigate(
+                    HomeSettingsFragmentDirections.actionHomeSettingsFragmentToWallpaperSettingsFragment()
+                )
+                true
+            }
+            isVisible = FeatureFlags.showWallpapers
         }
 
         val openingScreenRadioHomepage =

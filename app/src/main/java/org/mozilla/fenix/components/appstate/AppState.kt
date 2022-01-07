@@ -5,6 +5,7 @@
 package org.mozilla.fenix.components.appstate
 
 import mozilla.components.lib.state.State
+import org.mozilla.fenix.wallpapers.Wallpaper
 
 /**
  * Value type that represents the state of the tabs tray.
@@ -13,5 +14,6 @@ import mozilla.components.lib.state.State
  * should be expanded when the tray is opened.
  */
 data class AppState(
-    val inactiveTabsExpanded: Boolean = false
+    val inactiveTabsExpanded: Boolean = false,
+    val wallpaper: Wallpaper = Wallpaper.NONE,
 ) : State

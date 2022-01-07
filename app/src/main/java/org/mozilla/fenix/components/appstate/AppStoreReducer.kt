@@ -11,7 +11,12 @@ import org.mozilla.fenix.components.AppStore
  */
 internal object AppStoreReducer {
     fun reduce(state: AppState, action: AppAction): AppState = when (action) {
+        is AppAction.InitAction -> state
         is AppAction.UpdateInactiveExpanded ->
             state.copy(inactiveTabsExpanded = action.expanded)
+        is AppAction.SwitchToNextWallpaper ->
+            state.copy(wallpaper = state.wallpaper.nextWallpaper)
+        is AppAction.UpdateWallpaper ->
+            state.copy(wallpaper = action.wallpaper)
     }
 }

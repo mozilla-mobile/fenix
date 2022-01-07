@@ -36,7 +36,7 @@ import org.mozilla.fenix.perf.StrictModeManager
 import org.mozilla.fenix.perf.lazyMonitored
 import org.mozilla.fenix.utils.ClipboardHandler
 import org.mozilla.fenix.utils.Settings
-import org.mozilla.fenix.wallpapers.WallpaperManager
+import org.mozilla.fenix.wallpapers.WallpaperMiddleware
 import org.mozilla.fenix.wifi.WifiConnectionMonitor
 import java.util.concurrent.TimeUnit
 
@@ -143,10 +143,6 @@ class Components(private val context: Context) {
         AddonManager(core.store, core.engine, addonCollectionProvider, addonUpdater)
     }
 
-    val wallpaperManager by lazyMonitored {
-        WallpaperManager(settings)
-    }
-
     val analytics by lazyMonitored { Analytics(context) }
     val publicSuffixList by lazyMonitored { PublicSuffixList(context) }
     val clipboardHandler by lazyMonitored { ClipboardHandler(context) }
@@ -180,7 +176,7 @@ class Components(private val context: Context) {
     val appStartReasonProvider by lazyMonitored { AppStartReasonProvider() }
     val startupActivityLog by lazyMonitored { StartupActivityLog() }
     val startupStateProvider by lazyMonitored { StartupStateProvider(startupActivityLog, appStartReasonProvider) }
-    val appStore by lazyMonitored { AppStore() }
+    val appStore by lazyMonitored { AppStore(middlewares = listOf(WallpaperMiddleware(settings))) }
 }
 
 /**
