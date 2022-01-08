@@ -251,7 +251,7 @@ naming:
     active: true
     classPattern: '[A-Z$][a-zA-Z0-9$]*'
   ConstructorParameterNaming:
-    active: true
+    active: false
     parameterPattern: '[a-z][A-Za-z0-9]*'
     privateParameterPattern: '[a-z][A-Za-z0-9]*'
     excludeClassPattern: '$^'
@@ -276,7 +276,7 @@ naming:
     ignoreOverridden: true
     ignoreAnnotated: ['Composable']
   FunctionParameterNaming:
-    active: true
+    active: false
     parameterPattern: '[a-z][A-Za-z0-9]*'
     excludeClassPattern: '$^'
     ignoreOverridden: true
@@ -359,7 +359,7 @@ potential-bugs:
     restrictToAnnotatedMethods: true
     returnValueAnnotations: ['*.CheckReturnValue', '*.CheckResult']
   ImplicitDefaultLocale:
-    active: true
+    active: false
   ImplicitUnitReturnType:
     active: false
     allowExplicitReturnType: true
@@ -592,7 +592,7 @@ style:
   UtilityClassWithPublicConstructor:
     active: false
   VarCouldBeVal:
-    active: true
+    active: false
   WildcardImport:
     active: true
     excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**']
