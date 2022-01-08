@@ -23,9 +23,6 @@ console-reports:
   #  - 'NotificationReport'
   #  - 'FindingsReport'
   #  - 'BuildFailureReport'
-  #  - 'HtmlOutputReport'
-    - 'PlainOutputReport'
-    - 'XmlOutputReport'
 
 comments:
   active: true
