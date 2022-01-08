@@ -461,6 +461,12 @@
     <!-- Title for the customize home screen section with Pocket. -->
     <string name="customize_toggle_pocket">Pocket</string>
 
+    <!-- Wallpapers -->
+    <!-- Title for preference to open wallpapers -->
+    <string name="customize_wallpapers">Wallpapers</string>
+    <!-- Content description for various wallpapers -->
+    <string name="content_description_wallpaper_name">Wallpaper Item: %1$s</string>
+
     <!-- Add-on Installation from AMO-->
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
     <string name="addon_not_supported_error">Add-on is not supported</string>

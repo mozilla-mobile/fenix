@@ -9,37 +9,61 @@ import android.view.View
 import androidx.appcompat.app.AppCompatDelegate
 import mozilla.components.support.ktx.android.content.getColorFromAttr
 import org.mozilla.fenix.ext.asActivity
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import org.mozilla.fenix.utils.Settings
 
 /**
  * Provides access to available wallpapers and manages their states.
  */
 class WallpaperManager(private val settings: Settings) {
+    val wallpapers = Wallpaper.values()
 
-    var currentWallpaper: Wallpaper = getCurrentWallpaperFromSettings()
-        set(value) {
-            settings.currentWallpaper = value.name
-            field = value
+    private var _currentWallpaper = MutableStateFlow(Wallpaper.valueOf(settings.currentWallpaper))
+    var currentWallpaper: StateFlow<Wallpaper> = _currentWallpaper
+
+    /**
+     * Switch the selected wallpaper. This change will be persisted to disk.
+     *
+     * @param wallpaper The wallpaper to switch to.
+     */
+    fun updateWallpaperSelection(wallpaper: Wallpaper) {
+        settings.currentWallpaper = wallpaper.name
+        _currentWallpaper.value = wallpaper
+    }
+
+    /**
+     * Update the selected wallpaper to be the next wallpaper, as enumerated by [Wallpaper].
+     * This change will be persisted to disk.
+     */
+    fun switchToNextWallpaper() {
+        val current = _currentWallpaper.value
+        val wallpapers = Wallpaper.values()
+        val nextIndex = wallpapers.indexOf(current) + 1
+        val nextWallpaper = if (nextIndex >= wallpapers.size) {
+            wallpapers.first()
+        } else {
+            wallpapers[nextIndex]
         }
+        updateWallpaperSelection(nextWallpaper)
+    }
 
     /**
      * Apply the [newWallpaper] into the [wallpaperContainer] and update the [currentWallpaper].
      */
-    fun updateWallpaper(wallpaperContainer: View, newWallpaper: Wallpaper) {
+    fun applyToView(wallpaperContainer: View, newWallpaper: Wallpaper) {
         if (newWallpaper == Wallpaper.NONE) {
             val context = wallpaperContainer.context
-            wallpaperContainer.setBackgroundColor(context.getColorFromAttr(newWallpaper.drawable))
+            wallpaperContainer.setBackgroundColor(context.getColorFromAttr(newWallpaper.resource))
         } else {
-            wallpaperContainer.setBackgroundResource(newWallpaper.drawable)
+            wallpaperContainer.setBackgroundResource(newWallpaper.resource)
         }
-        currentWallpaper = newWallpaper
 
-        adjustTheme(wallpaperContainer.context)
+        adjustTheme(wallpaperContainer.context, newWallpaper)
     }
-
-    private fun adjustTheme(context: Context) {
-        val mode = if (currentWallpaper != Wallpaper.NONE) {
-            if (currentWallpaper.isDark) {
+    private fun adjustTheme(context: Context, newWallpaper: Wallpaper) {
+        val mode = if (newWallpaper != Wallpaper.NONE) {
+            if (newWallpaper.isDark) {
                 updateThemePreference(useDarkTheme = true)
                 AppCompatDelegate.MODE_NIGHT_YES
             } else {
@@ -65,29 +89,5 @@ class WallpaperManager(private val settings: Settings) {
         settings.shouldUseDarkTheme = useDarkTheme
         settings.shouldUseLightTheme = useLightTheme
         settings.shouldFollowDeviceTheme = followDeviceTheme
-    }
-
-    /**
-     * Returns the next available [Wallpaper], the [currentWallpaper] is the last one then
-     * the first available [Wallpaper] will be returned.
-     */
-    fun switchToNextWallpaper(): Wallpaper {
-        val values = Wallpaper.values()
-        val index = values.indexOf(currentWallpaper) + 1
-
-        return if (index >= values.size) {
-            values.first()
-        } else {
-            values[index]
-        }
-    }
-
-    private fun getCurrentWallpaperFromSettings(): Wallpaper {
-        val currentWallpaper = settings.currentWallpaper
-        return if (currentWallpaper.isEmpty()) {
-            Wallpaper.NONE
-        } else {
-            Wallpaper.valueOf(currentWallpaper)
-        }
     }
 }

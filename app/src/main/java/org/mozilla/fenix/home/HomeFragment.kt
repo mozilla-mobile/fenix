@@ -34,8 +34,10 @@ import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -271,9 +273,18 @@ class HomeFragment : Fragment() {
             if (requireContext().settings().showPocketRecommendationsFeature) {
                 val categories = components.core.pocketStoriesService.getStories()
                     .groupBy { story -> story.category }
-                    .map { (category, stories) -> PocketRecommendedStoriesCategory(category, stories) }
+                    .map { (category, stories) ->
+                        PocketRecommendedStoriesCategory(
+                            category,
+                            stories
+                        )
+                    }
 
-                homeFragmentStore.dispatch(HomeFragmentAction.PocketStoriesCategoriesChange(categories))
+                homeFragmentStore.dispatch(
+                    HomeFragmentAction.PocketStoriesCategoriesChange(
+                        categories
+                    )
+                )
             } else {
                 homeFragmentStore.dispatch(HomeFragmentAction.PocketStoriesChange(emptyList()))
             }
@@ -392,14 +403,21 @@ class HomeFragment : Fragment() {
 
         // DO NOT MOVE ANYTHING BELOW THIS addMarker CALL!
         requireComponents.core.engine.profiler?.addMarker(
-            MarkersFragmentLifecycleCallbacks.MARKER_NAME, profilerStartTime, "HomeFragment.onCreateView",
+            MarkersFragmentLifecycleCallbacks.MARKER_NAME,
+            profilerStartTime,
+            "HomeFragment.onCreateView",
         )
 
         if (shouldEnableWallpaper()) {
-            val wallpaperManger = requireComponents.wallpaperManager
-            wallpaperManger.updateWallpaper(binding.homeLayout, wallpaperManger.currentWallpaper)
+            lifecycleScope.launch {
+                repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    val wallpaperManager = requireComponents.wallpaperManager
+                    wallpaperManager.currentWallpaper.collect { wallpaper ->
+                        wallpaperManager.applyToView(binding.homeLayout, wallpaper)
+                    }
+                }
+            }
         }
-
         return binding.root
     }
 
@@ -761,10 +779,7 @@ class HomeFragment : Fragment() {
         if (shouldEnableWallpaper()) {
             binding.wordmark.setOnClickListener {
                 val manager = requireComponents.wallpaperManager
-                manager.updateWallpaper(
-                    wallpaperContainer = binding.homeLayout,
-                    newWallpaper = manager.switchToNextWallpaper()
-                )
+                manager.switchToNextWallpaper()
             }
         }
     }

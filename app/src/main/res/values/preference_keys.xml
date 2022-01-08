@@ -187,10 +187,11 @@
     <string name="pref_key_adjust_adgroup" translatable="false">pref_key_adjust_adgroup</string>
     <string name="pref_key_adjust_creative" translatable="false">pref_key_adjust_creative</string>
 
-    <!-- Wallpaper Settings -->
-    <string name="pref_key_current_wallpaper" translatable="false">pref_key_current_wallpaper</string>
-
     <string name="pref_key_encryption_key_generated" translatable="false">pref_key_encryption_key_generated</string>
+
+    <!-- Wallpaper Settings -->
+    <string name="pref_key_wallpapers" translatable="false">pref_key_wallpapers</string>
+    <string name="pref_key_current_wallpaper" translatable="false">pref_key_current_wallpaper</string>
 
     <!-- Top Sites -->
     <string name="default_top_sites_added" translatable="false">pref_key_pocket_top_site_added</string>
