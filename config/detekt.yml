@@ -22,6 +22,7 @@ console-reports:
   #  - 'ComplexityReport'
   #  - 'NotificationReport'
   #  - 'FindingsReport'
+  #  - 'FileBasedFindingsReport'
 
 comments:
   active: true
