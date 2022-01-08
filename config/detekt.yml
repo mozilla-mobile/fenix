@@ -22,7 +22,6 @@ console-reports:
   #  - 'ComplexityReport'
   #  - 'NotificationReport'
   #  - 'FindingsReport'
-  #  - 'BuildFailureReport'
 
 comments:
   active: true
