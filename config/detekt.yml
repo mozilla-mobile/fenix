@@ -201,9 +201,6 @@ exceptions:
      - Throwable
      - RuntimeException
 
-formatting:
-  autoCorrect: true
-
 naming:
   active: true
   ClassNaming:
