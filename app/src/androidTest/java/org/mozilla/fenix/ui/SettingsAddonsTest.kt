@@ -1,8 +1,8 @@
-package org.mozilla.fenix.ui
-
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+package org.mozilla.fenix.ui
 
 import android.view.View
 import androidx.test.espresso.IdlingRegistry
@@ -66,7 +66,10 @@ class SettingsAddonsTest {
             verifyAddons()
         }.openAddonsManagerMenu {
             addonsListIdlingResource =
-                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.add_ons_list), 1)
+                RecyclerViewIdlingResource(
+                    activityTestRule.activity.findViewById(R.id.add_ons_list),
+                    1
+                )
             IdlingRegistry.getInstance().register(addonsListIdlingResource!!)
             verifyAddonsItems()
         }
@@ -110,7 +113,10 @@ class SettingsAddonsTest {
             verifyAddons()
         }.openAddonsManagerMenu {
             addonsListIdlingResource =
-                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.add_ons_list), 1)
+                RecyclerViewIdlingResource(
+                    activityTestRule.activity.findViewById(R.id.add_ons_list),
+                    1
+                )
             IdlingRegistry.getInstance().register(addonsListIdlingResource!!)
             clickInstallAddon(addonName)
             acceptInstallAddon()
