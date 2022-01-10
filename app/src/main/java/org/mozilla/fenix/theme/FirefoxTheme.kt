@@ -45,14 +45,14 @@ private val darkColorPalette = FirefoxColors(
     layer2 = PhotonColors.DarkGrey50,
     layer3 = PhotonColors.DarkGrey60,
     layerAccent = PhotonColors.Violet40,
-    layerNonOpaque = PhotonColors.Violet40A12,
+    layerNonOpaque = PhotonColors.Violet50A32,
     scrim = PhotonColors.DarkGrey05A45,
     scrimAccentStart = PhotonColors.Ink80A96,
     scrimAccentEnd = PhotonColors.DarkGrey90A96,
     gradientStart = PhotonColors.Violet70,
     gradientEnd = PhotonColors.Violet40,
     actionPrimary = PhotonColors.Violet60,
-    actionSecondary = PhotonColors.DarkGrey50,
+    actionSecondary = PhotonColors.DarkGrey10,
     formDefault = PhotonColors.LightGrey05,
     formSelected = PhotonColors.Violet40,
     formSurface = PhotonColors.DarkGrey05,
@@ -65,7 +65,6 @@ private val darkColorPalette = FirefoxColors(
     textSecondary = PhotonColors.LightGrey40,
     textDisabled = PhotonColors.LightGrey05A40,
     textWarning = PhotonColors.Red40,
-    textLink = PhotonColors.Violet40,
     textAccent = PhotonColors.Violet40,
     textInverted = PhotonColors.White,
     iconPrimary = PhotonColors.LightGrey05,
@@ -82,31 +81,32 @@ private val darkColorPalette = FirefoxColors(
     iconAccentYellow = PhotonColors.Yellow20,
     iconGradientStart = PhotonColors.Violet20,
     iconGradientEnd = PhotonColors.Blue20,
-    borderDefault = PhotonColors.LightGrey05,
-    borderSelected = PhotonColors.Violet40,
+    borderDefault = PhotonColors.DarkGrey05,
+    borderInverted = PhotonColors.LightGrey30,
+    borderFormDefault = PhotonColors.LightGrey05,
+    borderAccent = PhotonColors.Violet40,
     borderDisabled = PhotonColors.LightGrey70,
-    borderWarning = PhotonColors.Red40,
-    borderDivider = PhotonColors.DarkGrey05
+    borderWarning = PhotonColors.Red40
 )
 
 private val lightColorPalette = FirefoxColors(
     layer1 = PhotonColors.LightGrey20,
     layer2 = PhotonColors.White,
     layer3 = PhotonColors.LightGrey10,
-    layerAccent = PhotonColors.Violet90,
-    layerNonOpaque = PhotonColors.Violet90A20,
+    layerAccent = PhotonColors.Ink20,
+    layerNonOpaque = PhotonColors.Violet70A12,
     scrim = PhotonColors.DarkGrey05A45,
     scrimAccentStart = PhotonColors.DarkGrey90A96,
     scrimAccentEnd = PhotonColors.DarkGrey30A96,
     gradientStart = PhotonColors.Violet70,
     gradientEnd = PhotonColors.Violet40,
-    actionPrimary = PhotonColors.Violet90,
+    actionPrimary = PhotonColors.Ink20,
     actionSecondary = PhotonColors.LightGrey40,
     formDefault = PhotonColors.DarkGrey90,
-    formSelected = PhotonColors.Violet90,
+    formSelected = PhotonColors.Ink20,
     formSurface = PhotonColors.LightGrey50,
     formDisabled = PhotonColors.LightGrey50,
-    formOn = PhotonColors.Violet90,
+    formOn = PhotonColors.Ink20,
     formOff = PhotonColors.LightGrey05,
     indicatorActive = PhotonColors.LightGrey50,
     indicatorInactive = PhotonColors.LightGrey30,
@@ -114,15 +114,14 @@ private val lightColorPalette = FirefoxColors(
     textSecondary = PhotonColors.DarkGrey05,
     textDisabled = PhotonColors.DarkGrey90A40,
     textWarning = PhotonColors.Red80,
-    textLink = PhotonColors.Violet70,
-    textAccent = PhotonColors.Violet90,
+    textAccent = PhotonColors.Violet70,
     textInverted = PhotonColors.White,
     iconPrimary = PhotonColors.DarkGrey90,
     iconSecondary = PhotonColors.DarkGrey05,
     iconDisabled = PhotonColors.LightGrey70,
     iconInverted = PhotonColors.White,
     iconNotice = PhotonColors.Blue30,
-    iconButton = PhotonColors.Violet90,
+    iconButton = PhotonColors.Ink20,
     iconWarning = PhotonColors.Red80,
     iconAccentViolet = PhotonColors.Violet60,
     iconAccentBlue = PhotonColors.Blue60,
@@ -131,11 +130,12 @@ private val lightColorPalette = FirefoxColors(
     iconAccentYellow = PhotonColors.Yellow60,
     iconGradientStart = PhotonColors.Violet50,
     iconGradientEnd = PhotonColors.Blue60,
-    borderDefault = PhotonColors.DarkGrey90,
-    borderSelected = PhotonColors.Violet90,
+    borderDefault = PhotonColors.LightGrey30,
+    borderInverted = PhotonColors.DarkGrey05,
+    borderFormDefault = PhotonColors.DarkGrey90,
+    borderAccent = PhotonColors.Ink20,
     borderDisabled = PhotonColors.LightGrey70,
-    borderWarning = PhotonColors.Red80,
-    borderDivider = PhotonColors.LightGrey40,
+    borderWarning = PhotonColors.Red80
 )
 
 /**
@@ -168,7 +168,6 @@ class FirefoxColors(
     textSecondary: Color,
     textDisabled: Color,
     textWarning: Color,
-    textLink: Color,
     textAccent: Color,
     textInverted: Color,
     iconPrimary: Color,
@@ -186,10 +185,11 @@ class FirefoxColors(
     iconGradientStart: Color,
     iconGradientEnd: Color,
     borderDefault: Color,
-    borderSelected: Color,
+    borderInverted: Color,
+    borderFormDefault: Color,
+    borderAccent: Color,
     borderDisabled: Color,
-    borderWarning: Color,
-    borderDivider: Color
+    borderWarning: Color
 ) {
     // Layers
 
@@ -223,7 +223,7 @@ class FirefoxColors(
 
     // Actions
 
-    // Primary button, Snackbar, Floating action button, Controls
+    // Primary button, Snackbar, Floating action button, Chip selected
     var actionPrimary by mutableStateOf(actionPrimary)
         private set
     // Secondary button, Chip
@@ -268,10 +268,7 @@ class FirefoxColors(
     // Warning text
     var textWarning by mutableStateOf(textWarning)
         private set
-    // Text link
-    var textLink by mutableStateOf(textLink)
-        private set
-    // Small heading
+    // Small heading, Text link
     var textAccent by mutableStateOf(textAccent)
         private set
     // Text Inverted/On Color
@@ -319,19 +316,23 @@ class FirefoxColors(
 
     // Border
 
-    // Form parts
+    // Default, Divider, Dotted
     var borderDefault by mutableStateOf(borderDefault)
         private set
-    // Selected tab
-    var borderSelected by mutableStateOf(borderSelected)
+    // Onboarding
+    var borderInverted by mutableStateOf(borderInverted)
+        private set
+    // Form parts
+    var borderFormDefault by mutableStateOf(borderFormDefault)
+        private set
+    // Active tab (Nav), Selected tab, Active form
+    var borderAccent by mutableStateOf(borderAccent)
         private set
     // Form parts
     var borderDisabled by mutableStateOf(borderDisabled)
         private set
     // Form parts
     var borderWarning by mutableStateOf(borderWarning)
-        private set
-    var borderDivider by mutableStateOf(borderDivider)
         private set
 
     fun update(other: FirefoxColors) {
@@ -359,7 +360,6 @@ class FirefoxColors(
         textSecondary = other.textSecondary
         textDisabled = other.textDisabled
         textWarning = other.textWarning
-        textLink = other.textLink
         textAccent = other.textAccent
         textInverted = other.textInverted
         iconPrimary = other.iconPrimary
@@ -377,10 +377,11 @@ class FirefoxColors(
         iconGradientStart = other.iconGradientStart
         iconGradientEnd = other.iconGradientEnd
         borderDefault = other.borderDefault
-        borderSelected = other.borderSelected
+        borderInverted = other.borderInverted
+        borderFormDefault = other.borderFormDefault
+        borderAccent = other.borderAccent
         borderDisabled = other.borderDisabled
         borderWarning = other.borderWarning
-        borderDivider = other.borderDivider
     }
 
     fun copy(): FirefoxColors = FirefoxColors(
@@ -408,7 +409,6 @@ class FirefoxColors(
         textSecondary = textSecondary,
         textDisabled = textDisabled,
         textWarning = textWarning,
-        textLink = textLink,
         textAccent = textAccent,
         textInverted = textInverted,
         iconPrimary = iconPrimary,
@@ -426,10 +426,11 @@ class FirefoxColors(
         iconGradientStart = iconGradientStart,
         iconGradientEnd = iconGradientEnd,
         borderDefault = borderDefault,
-        borderSelected = borderSelected,
+        borderInverted = borderInverted,
+        borderFormDefault = borderFormDefault,
+        borderAccent = borderAccent,
         borderDisabled = borderDisabled,
-        borderWarning = borderWarning,
-        borderDivider = borderDivider
+        borderWarning = borderWarning
     )
 }
 

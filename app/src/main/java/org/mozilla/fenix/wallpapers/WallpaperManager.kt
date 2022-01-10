@@ -4,8 +4,11 @@
 
 package org.mozilla.fenix.wallpapers
 
+import android.content.Context
 import android.view.View
+import androidx.appcompat.app.AppCompatDelegate
 import mozilla.components.support.ktx.android.content.getColorFromAttr
+import org.mozilla.fenix.ext.asActivity
 import org.mozilla.fenix.utils.Settings
 
 /**
@@ -30,6 +33,38 @@ class WallpaperManager(private val settings: Settings) {
             wallpaperContainer.setBackgroundResource(newWallpaper.drawable)
         }
         currentWallpaper = newWallpaper
+
+        adjustTheme(wallpaperContainer.context)
+    }
+
+    private fun adjustTheme(context: Context) {
+        val mode = if (currentWallpaper != Wallpaper.NONE) {
+            if (currentWallpaper.isDark) {
+                updateThemePreference(useDarkTheme = true)
+                AppCompatDelegate.MODE_NIGHT_YES
+            } else {
+                updateThemePreference(useLightTheme = true)
+                AppCompatDelegate.MODE_NIGHT_NO
+            }
+        } else {
+            // For the default wallpaper, there is not need to adjust the theme,
+            // as we want to allow users decide which theme they want to have.
+            // The default wallpaper adapts to whichever theme the user has.
+            return
+        }
+
+        if (AppCompatDelegate.getDefaultNightMode() != mode) {
+            AppCompatDelegate.setDefaultNightMode(mode)
+            context.asActivity()?.recreate()
+        }
+    }
+
+    private fun updateThemePreference(
+        useDarkTheme: Boolean = false,
+        useLightTheme: Boolean = false
+    ) {
+        settings.shouldUseDarkTheme = useDarkTheme
+        settings.shouldUseLightTheme = useLightTheme
     }
 
     /**
