@@ -52,10 +52,12 @@ class WallpaperManager(private val settings: Settings) {
                 AppCompatDelegate.MODE_NIGHT_NO
             }
         } else {
-            // For the default wallpaper, there is not need to adjust the theme,
-            // as we want to allow users decide which theme they want to have.
-            // The default wallpaper adapts to whichever theme the user has.
-            return
+            when {
+                settings.shouldUseLightTheme -> AppCompatDelegate.MODE_NIGHT_NO
+                settings.shouldUseDarkTheme -> AppCompatDelegate.MODE_NIGHT_YES
+                settings.shouldFollowDeviceTheme -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+                else -> AppCompatDelegate.MODE_NIGHT_UNSPECIFIED
+            }
         }
 
         if (AppCompatDelegate.getDefaultNightMode() != mode) {
@@ -63,14 +65,6 @@ class WallpaperManager(private val settings: Settings) {
             logger.info("theme updated activity recreated")
             context.asActivity()?.recreate()
         }
-    }
-
-    private fun updateThemePreference(
-        useDarkTheme: Boolean = false,
-        useLightTheme: Boolean = false
-    ) {
-        settings.shouldUseDarkTheme = useDarkTheme
-        settings.shouldUseLightTheme = useLightTheme
     }
 
     /**
