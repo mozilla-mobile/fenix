@@ -7,10 +7,8 @@ package org.mozilla.fenix.settings.wallpaper
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,7 +20,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -33,23 +30,23 @@ import org.mozilla.fenix.theme.FirefoxTheme
 import org.mozilla.fenix.wallpapers.Wallpaper
 
 /**
- * A grid of selectable wallpaper thumbnails.
+ * The screen for controlling settings around Wallpapers.
  *
- * @param wallpapers Wallpapers to add to grid
- * @param selectedWallpaper The currently selected wallpaper
- * @param onWallpaperSelected Action to take when a new wallpaper is selected.
+ * @param wallpapers Wallpapers to add to grid.
+ * @param selectedWallpaper The currently selected wallpaper.
+ * @param onSelectWallpaper Action to take when a new wallpaper is selected.
  */
 @Composable
 fun WallpaperSettings(
     wallpapers: List<Wallpaper>,
     selectedWallpaper: Wallpaper,
-    onWallpaperSelected: (Wallpaper) -> Unit,
+    onSelectWallpaper: (Wallpaper) -> Unit,
 ) {
     Surface(color = FirefoxTheme.colors.layer2) {
         WallpaperThumbnails(
             wallpapers = wallpapers,
             selectedWallpaper = selectedWallpaper,
-            onWallpaperSelected = onWallpaperSelected
+            onSelectWallpaper = onSelectWallpaper
         )
     }
 }
@@ -57,10 +54,10 @@ fun WallpaperSettings(
 /**
  * A grid of selectable wallpaper thumbnails.
  *
- * @param wallpapers Wallpapers to add to grid
- * @param selectedWallpaper The currently selected wallpaper
+ * @param wallpapers Wallpapers to add to grid.
+ * @param selectedWallpaper The currently selected wallpaper.
  * @param numColumns The number of columns that will occupy the grid.
- * @param onWallpaperSelected Action to take when a new wallpaper is selected.
+ * @param onSelectWallpaper Action to take when a new wallpaper is selected.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -68,7 +65,7 @@ private fun WallpaperThumbnails(
     wallpapers: List<Wallpaper>,
     selectedWallpaper: Wallpaper,
     numColumns: Int = 3,
-    onWallpaperSelected: (Wallpaper) -> Unit,
+    onSelectWallpaper: (Wallpaper) -> Unit,
 ) {
     LazyVerticalGrid(
         cells = GridCells.Fixed(numColumns),
@@ -78,7 +75,7 @@ private fun WallpaperThumbnails(
             WallpaperThumbnailItem(
                 wallpaper = wallpaper,
                 isSelected = selectedWallpaper == wallpaper,
-                onSelected = onWallpaperSelected
+                onSelect = onSelectWallpaper
             )
         }
     }
@@ -89,15 +86,15 @@ private fun WallpaperThumbnails(
  *
  * @param wallpaper The wallpaper to display.
  * @param isSelected Whether the wallpaper is currently selected.
- * @param aspectRatio The ratio of height to width of the thumbnail
- * @param onSelected Action to take when this wallpaper is selected.
+ * @param aspectRatio The ratio of height to width of the thumbnail.
+ * @param onSelect Action to take when this wallpaper is selected.
  */
 @Composable
 private fun WallpaperThumbnailItem(
     wallpaper: Wallpaper,
     isSelected: Boolean,
     aspectRatio: Float = 1.1f,
-    onSelected: (Wallpaper) -> Unit
+    onSelect: (Wallpaper) -> Unit
 ) {
     val thumbnailShape = RoundedCornerShape(8.dp)
     val border = if (isSelected) {
@@ -106,26 +103,19 @@ private fun WallpaperThumbnailItem(
             thumbnailShape
         )
     } else {
-        Modifier.border(
-            BorderStroke(width = 1.dp, color = FirefoxTheme.colors.borderDefault),
-            thumbnailShape
-        )
-    }
-    val background = if (wallpaper == Wallpaper.NONE) {
-        Modifier.background(color = FirefoxTheme.colors.layer1)
-    } else {
         Modifier
     }
 
-    Box(
+    Surface(
+        elevation = 4.dp,
+        shape = thumbnailShape,
+        color = FirefoxTheme.colors.layer1,
         modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(aspectRatio)
             .padding(4.dp)
-            .clip(thumbnailShape)
-            .then(background)
             .then(border)
-            .clickable { onSelected(wallpaper) }
+            .clickable { onSelect(wallpaper) }
     ) {
         if (wallpaper != Wallpaper.NONE) {
             val contentDescription = stringResource(
@@ -146,7 +136,7 @@ private fun WallpaperThumbnailItem(
 private fun WallpaperThumbnailsPreview() {
     WallpaperSettings(
         wallpapers = Wallpaper.values().toList(),
-        onWallpaperSelected = {},
+        onSelectWallpaper = {},
         selectedWallpaper = Wallpaper.NONE
     )
 }
