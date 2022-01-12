@@ -15,7 +15,7 @@ object Versions {
     const val android_lint_api = "30.0.0"
 
     const val sentry = "1.7.10"
-    const val leakcanary = "2.4"
+    const val leakcanary = "2.8.1"
     const val osslicenses_plugin = "0.10.4"
     const val detekt = "1.17.1"
     const val jna = "5.6.0"
@@ -37,7 +37,7 @@ object Versions {
     const val androidx_core = "1.3.2"
     const val androidx_paging = "2.1.2"
     const val androidx_transition = "1.4.0"
-    const val androidx_work = "2.5.0"
+    const val androidx_work = "2.7.1"
     const val androidx_datastore = "1.0.0"
     const val google_material = "1.2.1"
 
@@ -172,7 +172,7 @@ object Deps {
     const val mozilla_support_locale = "org.mozilla.components:support-locale:${Versions.mozilla_android_components}"
 
     const val sentry = "io.sentry:sentry-android:${Versions.sentry}"
-    const val leakcanary = "com.squareup.leakcanary:leakcanary-android:${Versions.leakcanary}"
+    const val leakcanary = "com.squareup.leakcanary:leakcanary-android-core:${Versions.leakcanary}"
 
     const val androidx_compose_ui = "androidx.compose.ui:ui:${Versions.androidx_compose}"
     const val androidx_compose_ui_test = "androidx.compose.ui:ui-test-junit4:${Versions.androidx_compose}"
