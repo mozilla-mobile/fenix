@@ -157,6 +157,11 @@
     <color name="tab_tray_item_thumbnail_background_normal_theme">@color/photonDarkGrey50</color>
     <color name="tab_tray_item_thumbnail_icon_normal_theme">@color/photonDarkGrey05</color>
 
+    <!-- Grid View -->
+    <color name="grid_view_tab_background_color">@color/photonDarkGrey50</color>
+    <color name="grid_view_tab_outline_color">@color/photonDarkGrey10</color>
+    <color name="grid_view_tab_selected_outline_color">@color/photonViolet40</color>
+
     <!-- Tab History -->
     <color name="tab_history_item_selected_background_normal_theme">@color/tab_tray_item_selected_background_dark_theme</color>
 
