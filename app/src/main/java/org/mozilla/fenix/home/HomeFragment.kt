@@ -765,6 +765,7 @@ class HomeFragment : Fragment() {
                     wallpaperContainer = binding.homeLayout,
                     newWallpaper = manager.switchToNextWallpaper()
                 )
+                requireActivity().recreate()
             }
         }
     }

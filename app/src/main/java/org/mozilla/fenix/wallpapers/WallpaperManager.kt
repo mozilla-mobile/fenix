@@ -8,7 +8,6 @@ import android.content.Context
 import android.view.View
 import androidx.appcompat.app.AppCompatDelegate
 import mozilla.components.support.ktx.android.content.getColorFromAttr
-import org.mozilla.fenix.ext.asActivity
 import org.mozilla.fenix.utils.Settings
 
 /**
@@ -34,10 +33,10 @@ class WallpaperManager(private val settings: Settings) {
         }
         currentWallpaper = newWallpaper
 
-        adjustTheme(wallpaperContainer.context)
+        adjustTheme()
     }
 
-    private fun adjustTheme(context: Context) {
+    private fun adjustTheme() {
         val mode = if (currentWallpaper != Wallpaper.NONE) {
             if (currentWallpaper.isDark) {
                 updateThemePreference(useDarkTheme = true)
@@ -55,7 +54,6 @@ class WallpaperManager(private val settings: Settings) {
 
         if (AppCompatDelegate.getDefaultNightMode() != mode) {
             AppCompatDelegate.setDefaultNightMode(mode)
-            context.asActivity()?.recreate()
         }
     }
 
