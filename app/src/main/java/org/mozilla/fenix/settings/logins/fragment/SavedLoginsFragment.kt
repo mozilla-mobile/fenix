@@ -10,10 +10,8 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.lifecycleScope
@@ -28,6 +26,7 @@ import org.mozilla.fenix.SecureFragment
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.databinding.FragmentSavedLoginsBinding
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.configureSearchViewInMenu
 import org.mozilla.fenix.ext.redirectToReAuth
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
@@ -111,26 +110,11 @@ class SavedLoginsFragment : SecureFragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.login_list, menu)
-        val searchItem = menu.findItem(R.id.search)
-        val searchView: SearchView = searchItem.actionView as SearchView
-        searchView.imeOptions = EditorInfo.IME_ACTION_DONE
-        searchView.queryHint = getString(R.string.preferences_passwords_saved_logins_search)
-        searchView.maxWidth = Int.MAX_VALUE
-
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                savedLoginsStore.dispatch(
-                    LoginsAction.FilterLogins(
-                        newText
-                    )
-                )
-                return false
-            }
-        })
+        configureSearchViewInMenu(
+            menu = menu,
+            queryHint = getString(R.string.preferences_passwords_saved_logins_search),
+            onQueryTextChange = { _, newQuery -> savedLoginsStore.dispatch(LoginsAction.FilterLogins(newQuery)) }
+        )
     }
 
     /**

@@ -33,39 +33,7 @@ class BookmarkAdapter(private val emptyView: View, private val interactor: Bookm
     }
 
     fun updateData(tree: BookmarkNode?, mode: BookmarkFragmentState.Mode) {
-        val allNodes = tree?.children.orEmpty()
-        val folders: MutableList<BookmarkNode> = mutableListOf()
-        val notFolders: MutableList<BookmarkNode> = mutableListOf()
-        val separators: MutableList<BookmarkNode> = mutableListOf()
-        allNodes.forEach {
-            when (it.type) {
-                BookmarkNodeType.SEPARATOR -> separators.add(it)
-                BookmarkNodeType.FOLDER -> folders.add(it)
-                else -> notFolders.add(it)
-            }
-        }
-        // Display folders above all other bookmarks. Exclude separators.
-        // For separator removal, see discussion in https://github.com/mozilla-mobile/fenix/issues/15214
-        val newTree = folders + notFolders - separators
-
-        val diffUtil = DiffUtil.calculateDiff(
-            BookmarkDiffUtil(
-                this.tree,
-                newTree,
-                this.mode,
-                mode
-            )
-        )
-
-        this.tree = newTree
-
-        isFirstRun = if (isFirstRun) false else {
-            emptyView.isVisible = this.tree.isEmpty()
-            false
-        }
-        this.mode = mode
-
-        diffUtil.dispatchUpdatesTo(this)
+        updateData(tree?.children.orEmpty(), mode)
     }
 
     @VisibleForTesting

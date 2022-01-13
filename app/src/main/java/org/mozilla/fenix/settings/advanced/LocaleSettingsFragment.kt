@@ -10,8 +10,6 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
-import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.support.ktx.android.view.hideKeyboard
@@ -20,6 +18,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.databinding.FragmentLocaleSettingsBinding
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.configureSearchViewInMenu
 import org.mozilla.fenix.ext.showToolbar
 
 class LocaleSettingsFragment : Fragment() {
@@ -65,22 +64,11 @@ class LocaleSettingsFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.languages_list, menu)
-        val searchItem = menu.findItem(R.id.search)
-        val searchView: SearchView = searchItem.actionView as SearchView
-        searchView.imeOptions = EditorInfo.IME_ACTION_DONE
-        searchView.queryHint = getString(R.string.locale_search_hint)
-        searchView.maxWidth = Int.MAX_VALUE
-
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String): Boolean {
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String): Boolean {
-                interactor.onSearchQueryTyped(newText)
-                return false
-            }
-        })
+        configureSearchViewInMenu(
+            menu = menu,
+            queryHint = getString(R.string.locale_search_hint),
+            onQueryTextChange = { _, newQuery -> interactor.onSearchQueryTyped(newQuery) }
+        )
     }
 
     override fun onResume() {
