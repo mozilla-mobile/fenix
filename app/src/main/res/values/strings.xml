@@ -907,6 +907,8 @@
     <string name="bookmark_delete_multiple_folders_confirmation_dialog">%s will delete the selected items.</string>
     <!-- Snackbar title shown after a folder has been deleted. This first parameter is the name of the deleted folder -->
     <string name="bookmark_delete_folder_snackbar" moz:removedIn="96" tools:ignore="UnusedResources">Deleted %1$s</string>
+    <!-- Placeholder text shown as a hint in the bookmarks search bar before the user enters text -->
+    <string name="bookmark_search_hint">Search bookmarks</string>
     <!-- Screen title for adding a bookmarks folder -->
     <string name="bookmark_add_folder">Add folder</string>
     <!-- Snackbar title shown after a bookmark has been created. -->

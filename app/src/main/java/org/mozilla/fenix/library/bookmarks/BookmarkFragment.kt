@@ -44,6 +44,7 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.databinding.FragmentBookmarkBinding
 import org.mozilla.fenix.ext.bookmarkStorage
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.configureSearchViewInMenu
 import org.mozilla.fenix.ext.minus
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
@@ -95,6 +96,7 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
                 sharedViewModel = sharedViewModel,
                 tabsUseCases = activity?.components?.useCases?.tabsUseCases,
                 loadBookmarkNode = ::loadBookmarkNode,
+                bookmarksStorage = activity?.bookmarkStorage,
                 showSnackbar = ::showSnackBarWithText,
                 deleteBookmarkNodes = ::deleteMulti,
                 deleteBookmarkFolder = ::showRemoveFolderDialog,
@@ -153,13 +155,15 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
 
         (activity as NavHostActivity).getSupportActionBarAndInflateIfNecessary().show()
 
-        // Reload bookmarks when returning to this fragment in case they have been edited
-        val args by navArgs<BookmarkFragmentArgs>()
-        val currentGuid = bookmarkStore.state.tree?.guid
-            ?: args.currentRoot.ifEmpty {
-                BookmarkRoot.Mobile.id
-            }
-        loadInitialBookmarkFolder(currentGuid)
+        if (bookmarkStore.state.mode !is BookmarkFragmentState.Mode.Searching) {
+            // Reload bookmarks when returning to this fragment in case they have been edited
+            val args by navArgs<BookmarkFragmentArgs>()
+            val currentGuid = bookmarkStore.state.tree?.guid
+                ?: args.currentRoot.ifEmpty {
+                    BookmarkRoot.Mobile.id
+                }
+            loadInitialBookmarkFolder(currentGuid)
+        }
     }
 
     private fun loadInitialBookmarkFolder(currentGuid: String) {
@@ -177,6 +181,12 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
             is BookmarkFragmentState.Mode.Normal -> {
                 if (mode.showMenu) {
                     inflater.inflate(R.menu.bookmarks_menu, menu)
+                    configureSearchViewInMenu(
+                        menu = menu,
+                        queryHint = getString(R.string.bookmark_search_hint),
+                        onQueryTextChange = bookmarkInteractor::onQueryText,
+                        onSearchEnded = bookmarkInteractor::onSearchEnded
+                    )
                 }
             }
             is BookmarkFragmentState.Mode.Selecting -> {

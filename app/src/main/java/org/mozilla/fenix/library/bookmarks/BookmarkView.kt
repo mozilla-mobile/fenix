@@ -97,6 +97,16 @@ interface BookmarkViewInteractor : SelectionInteractor<BookmarkNode> {
      *
      */
     fun onRequestSync()
+
+    /**
+     * Handles a new bookmark query.
+     */
+    fun onQueryText(previousQuery: String, newQuery: String)
+
+    /**
+     * Handles ending a bookmarks query.
+     */
+    fun onSearchEnded()
 }
 
 class BookmarkView(
@@ -135,7 +145,10 @@ class BookmarkView(
             }
         }
 
-        bookmarkAdapter.updateData(state.tree, mode)
+        when (mode) {
+            is BookmarkFragmentState.Mode.Searching -> bookmarkAdapter.updateData(state.queriedItems, mode)
+            else -> bookmarkAdapter.updateData(state.tree, mode)
+        }
 
         when (mode) {
             is BookmarkFragmentState.Mode.Normal -> {

@@ -5,11 +5,20 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/search_bookmarks"
+        android:contentDescription="@string/locale_search_hint"
+        android:icon="@drawable/ic_search"
+        android:title="@string/bookmark_search_hint"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        app:iconTint="?primaryText"
+        app:showAsAction="ifRoom|collapseActionView" />
+
+    <item
         android:id="@+id/add_bookmark_folder"
         android:icon="@drawable/ic_folder_new"
         app:iconTint="?primaryText"
         android:title="@string/bookmark_add_folder"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom|collapseActionView" />
 
     <item
         android:id="@+id/close_bookmarks"

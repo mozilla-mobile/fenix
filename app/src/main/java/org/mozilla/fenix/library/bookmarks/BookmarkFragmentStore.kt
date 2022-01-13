@@ -23,12 +23,14 @@ class BookmarkFragmentStore(
  * @property mode The current bookmark multi-selection mode
  * @property guidBackstack A set of guids for bookmark nodes we have visited. Used to traverse back
  *                  up the tree after a sync.
+ * @property queriedItems List of the currently filtered nodes based on the user query while in [Mode.Searching].
  * @property isLoading true if bookmarks are still being loaded from disk
  */
 data class BookmarkFragmentState(
     val tree: BookmarkNode?,
     val mode: Mode = Mode.Normal(),
     val guidBackstack: List<String> = emptyList(),
+    val queriedItems: List<BookmarkNode> = emptyList(),
     val isLoading: Boolean = true
 ) : State {
     sealed class Mode : SelectionHolder<BookmarkNode> {
@@ -36,6 +38,7 @@ data class BookmarkFragmentState(
 
         data class Normal(val showMenu: Boolean = true) : Mode()
         data class Selecting(override val selectedItems: Set<BookmarkNode>) : Mode()
+        data class Searching(val searchableNodes: List<BookmarkNode>) : Mode()
         object Syncing : Mode()
     }
 }
@@ -47,6 +50,9 @@ sealed class BookmarkFragmentAction : Action {
     data class Change(val tree: BookmarkNode) : BookmarkFragmentAction()
     data class Select(val item: BookmarkNode) : BookmarkFragmentAction()
     data class Deselect(val item: BookmarkNode) : BookmarkFragmentAction()
+    data class SearchStarted(val searchableNodes: List<BookmarkNode>) : BookmarkFragmentAction()
+    data class UpdateQueriedItems(val filteredNodes: List<BookmarkNode>) : BookmarkFragmentAction()
+    object SearchEnded : BookmarkFragmentAction()
     object DeselectAll : BookmarkFragmentAction()
     object StartSync : BookmarkFragmentAction()
     object FinishSync : BookmarkFragmentAction()
@@ -117,6 +123,17 @@ private fun bookmarkFragmentStateReducer(
             mode = BookmarkFragmentState.Mode.Normal(
                 showMenu = shouldShowMenu(state.tree?.guid)
             )
+        )
+        is BookmarkFragmentAction.SearchStarted -> state.copy(
+            mode = BookmarkFragmentState.Mode.Searching(action.searchableNodes),
+            queriedItems = action.searchableNodes
+        )
+        is BookmarkFragmentAction.SearchEnded -> state.copy(
+            mode = BookmarkFragmentState.Mode.Normal(),
+            queriedItems = emptyList()
+        )
+        is BookmarkFragmentAction.UpdateQueriedItems -> state.copy(
+            queriedItems = action.filteredNodes
         )
     }
 }

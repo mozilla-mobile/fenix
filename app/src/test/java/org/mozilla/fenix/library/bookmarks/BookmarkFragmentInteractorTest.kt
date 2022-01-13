@@ -206,4 +206,18 @@ class BookmarkFragmentInteractorTest {
             bookmarkController.handleRequestSync()
         }
     }
+
+    @Test
+    fun `GIVEN a BookmarkController WHEN onSearchEnded is called THEN delegate the controller`() {
+        interactor.onSearchEnded()
+
+        verify { bookmarkController.handleSearchEnded() }
+    }
+
+    @Test
+    fun `GIVEN a BookmarkController WHEN onQueryText is called THEN delegate the controller`() {
+        interactor.onQueryText("t", "test")
+
+        verify { bookmarkController.handleQuery("t", "test") }
+    }
 }

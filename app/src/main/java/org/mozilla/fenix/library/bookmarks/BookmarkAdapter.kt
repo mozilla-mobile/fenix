@@ -21,9 +21,16 @@ import org.mozilla.fenix.library.bookmarks.viewholders.BookmarkSeparatorViewHold
 class BookmarkAdapter(private val emptyView: View, private val interactor: BookmarkViewInteractor) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    @VisibleForTesting var tree: List<BookmarkNode> = listOf()
-    private var mode: BookmarkFragmentState.Mode = BookmarkFragmentState.Mode.Normal()
+    @VisibleForTesting
+    internal var tree: List<BookmarkNode> = listOf()
+    @VisibleForTesting
+    internal var mode: BookmarkFragmentState.Mode = BookmarkFragmentState.Mode.Normal()
     private var isFirstRun = true
+
+    fun updateData(nodes: List<BookmarkNode>, mode: BookmarkFragmentState.Mode) {
+        val formattedNodes = formatNodesList(nodes)
+        updateDisplayedData(formattedNodes, mode)
+    }
 
     fun updateData(tree: BookmarkNode?, mode: BookmarkFragmentState.Mode) {
         val allNodes = tree?.children.orEmpty()
@@ -57,6 +64,46 @@ class BookmarkAdapter(private val emptyView: View, private val interactor: Bookm
             false
         }
         this.mode = mode
+
+        diffUtil.dispatchUpdatesTo(this)
+    }
+
+    @VisibleForTesting
+    internal fun formatNodesList(nodes: List<BookmarkNode>): List<BookmarkNode> {
+        val folders: MutableList<BookmarkNode> = mutableListOf()
+        val notFolders: MutableList<BookmarkNode> = mutableListOf()
+        val separators: MutableList<BookmarkNode> = mutableListOf()
+
+        nodes
+            .forEach {
+                when (it.type) {
+                    BookmarkNodeType.SEPARATOR -> separators.add(it)
+                    BookmarkNodeType.FOLDER -> folders.add(it)
+                    else -> notFolders.add(it)
+                }
+            }
+        // Display folders above all other bookmarks. Exclude separators.
+        // For separator removal, see discussion in https://github.com/mozilla-mobile/fenix/issues/15214
+        return folders + notFolders - separators
+    }
+
+    @VisibleForTesting
+    internal fun updateDisplayedData(nodes: List<BookmarkNode>, mode: BookmarkFragmentState.Mode) {
+        val diffUtil = DiffUtil.calculateDiff(
+            BookmarkDiffUtil(
+                this.tree,
+                nodes,
+                this.mode,
+                mode
+            )
+        )
+
+        this.tree = nodes
+        this.mode = mode
+        isFirstRun = if (isFirstRun) false else {
+            emptyView.isVisible = this.tree.isEmpty()
+            false
+        }
 
         diffUtil.dispatchUpdatesTo(this)
     }

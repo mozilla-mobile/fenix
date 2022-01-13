@@ -4,8 +4,13 @@
 
 package org.mozilla.fenix.library.bookmarks
 
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.DiffUtil.DiffResult
+import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import io.mockk.spyk
+import io.mockk.verify
 import io.mockk.verifyOrder
 import mozilla.components.concept.storage.BookmarkNode
 import org.junit.Assert.assertEquals
@@ -50,6 +55,53 @@ internal class BookmarkAdapterTest {
     }
 
     @Test
+    fun `update adapter from empty list of bookmark will have all removed from display`() {
+        val nodes = listOf(
+            testBookmarkItem("someFolder", "http://mozilla.org"),
+            testSeparator("123"),
+            testBookmarkItem("123", "https://www.mozilla.org/en-US/firefox/")
+        )
+        bookmarkAdapter.updateData(nodes, BookmarkFragmentState.Mode.Normal())
+        bookmarkAdapter.updateData(emptyList(), BookmarkFragmentState.Mode.Normal())
+        verifyOrder {
+            bookmarkAdapter.updateData(nodes, BookmarkFragmentState.Mode.Normal())
+            bookmarkAdapter.notifyItemRangeInserted(0, 2)
+            bookmarkAdapter.updateData(emptyList(), BookmarkFragmentState.Mode.Normal())
+            bookmarkAdapter.notifyItemRangeRemoved(0, 2)
+        }
+    }
+
+    @Test
+    fun `formatNodesList excludes separators`() {
+        val sep1 = testSeparator("123")
+        val sep2 = testSeparator("123")
+        val item1 = testBookmarkItem("123", "http://mozilla.org")
+        val item2 = testBookmarkItem("123", "https://www.mozilla.org/en-US/firefox/")
+        val nodes = listOf(item1, sep1, item2, sep2)
+
+        val formattedNodes = bookmarkAdapter.formatNodesList(nodes)
+
+        assertEquals(listOf(item1, item2), formattedNodes)
+    }
+
+    @Test
+    fun `formatNodesList moves folders to the top`() {
+        val sep1 = testSeparator("123")
+        val item1 = testBookmarkItem("123", "http://mozilla.org")
+        val item2 = testBookmarkItem("123", "https://www.mozilla.org/en-US/firefox/")
+        val item3 = testBookmarkItem("123", "https://www.mozilla.org/en-US/firefox/2")
+        val item4 = testBookmarkItem("125", "https://www.mozilla.org/en-US/firefox/3")
+        val folder2 = testFolder("124", "123", title = "Mobile 2", children = emptyList())
+        val folder3 = testFolder("125", "123", title = "Mobile 3", children = listOf(item4))
+        val folder4 = testFolder("126", "123", title = "Mobile 3", children = emptyList())
+        val nodes = listOf(folder4, item1, sep1, item2, folder2, folder3, item3)
+
+        val formattedNodes = bookmarkAdapter.formatNodesList(nodes)
+
+        assertEquals(listOf(folder4, folder2, folder3, item1, item2, item3), formattedNodes)
+    }
+
+    @Test
     fun `update adapter from tree of bookmark nodes, separators are excluded`() {
         val sep1 = testSeparator("123")
         val sep2 = testSeparator("123")
@@ -62,6 +114,21 @@ internal class BookmarkAdapterTest {
             bookmarkAdapter.notifyItemRangeInserted(0, 2)
         }
 
+        assertEquals(2, bookmarkAdapter.itemCount)
+        assertEquals(listOf(item1, item2), bookmarkAdapter.tree)
+    }
+
+    @Test
+    fun `update adapter from list of bookmark nodes, separators are excluded`() {
+        val sep1 = testSeparator("123")
+        val sep2 = testSeparator("123")
+        val item1 = testBookmarkItem("123", "http://mozilla.org")
+        val item2 = testBookmarkItem("123", "https://www.mozilla.org/en-US/firefox/")
+        val nodes = listOf(item1, sep1, item2, sep2)
+
+        bookmarkAdapter.updateData(nodes, BookmarkFragmentState.Mode.Normal())
+
+        verify { bookmarkAdapter.notifyItemRangeInserted(0, 2) }
         assertEquals(2, bookmarkAdapter.itemCount)
         assertEquals(listOf(item1, item2), bookmarkAdapter.tree)
     }
@@ -88,6 +155,25 @@ internal class BookmarkAdapterTest {
             bookmarkAdapter.notifyItemRangeInserted(0, 6)
         }
 
+        assertEquals(6, bookmarkAdapter.itemCount)
+        assertEquals(listOf(folder4, folder2, folder3, item1, item2, item3), bookmarkAdapter.tree)
+    }
+
+    @Test
+    fun `update adapter from list of bookmark nodes, folders are moved to the top`() {
+        val sep1 = testSeparator("123")
+        val item1 = testBookmarkItem("123", "http://mozilla.org")
+        val item2 = testBookmarkItem("123", "https://www.mozilla.org/en-US/firefox/")
+        val item3 = testBookmarkItem("123", "https://www.mozilla.org/en-US/firefox/2")
+        val item4 = testBookmarkItem("125", "https://www.mozilla.org/en-US/firefox/3")
+        val folder2 = testFolder("124", "123", title = "Mobile 2", children = emptyList())
+        val folder3 = testFolder("125", "123", title = "Mobile 3", children = listOf(item4))
+        val folder4 = testFolder("126", "123", title = "Mobile 3", children = emptyList())
+        val nodes = listOf(folder4, item1, sep1, item2, folder2, folder3, item3)
+
+        bookmarkAdapter.updateData(nodes, BookmarkFragmentState.Mode.Normal())
+
+        verify { bookmarkAdapter.notifyItemRangeInserted(0, 6) }
         assertEquals(6, bookmarkAdapter.itemCount)
         assertEquals(listOf(folder4, folder2, folder3, item1, item2, item3), bookmarkAdapter.tree)
     }
@@ -149,6 +235,27 @@ internal class BookmarkAdapterTest {
                 newMode = BookmarkFragmentState.Mode.Selecting(setOf(item))
             ).areContentsTheSame(0, 0)
         )
+    }
+
+    @Test
+    fun `updateDisplayedData dispatches the changes delta to the adapter and updates the in-memory data`() {
+        val item1 = testBookmarkItem("123", "http://mozilla.org")
+        val item2 = testBookmarkItem("123", "https://www.mozilla.org/en-US/firefox/")
+        val folder1 = testFolder("124", "123", title = "Mobile 1", children = emptyList())
+        val folder2 = testFolder("125", "123", title = "Mobile 2", children = listOf(item2))
+        val nodes = listOf(folder1, item1, folder2, item2)
+        val mode = BookmarkFragmentState.Mode.Searching(emptyList())
+
+        mockkStatic(DiffUtil::class, DiffResult::class) {
+            val diffUtil: DiffResult = mockk(relaxed = true)
+            every { DiffUtil.calculateDiff(any()) } returns diffUtil
+
+            bookmarkAdapter.updateDisplayedData(nodes, mode)
+
+            verify { diffUtil.dispatchUpdatesTo(bookmarkAdapter) }
+            assertEquals(nodes, bookmarkAdapter.tree)
+            assertEquals(mode, bookmarkAdapter.mode)
+        }
     }
 
     private fun createSingleItemDiffUtil(

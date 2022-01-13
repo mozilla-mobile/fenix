@@ -21,14 +21,18 @@ import io.mockk.slot
 import io.mockk.spyk
 import io.mockk.verify
 import io.mockk.verifyOrder
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestCoroutineScope
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.concept.storage.BookmarkNodeType
+import mozilla.components.concept.storage.BookmarkNodeType.FOLDER
+import mozilla.components.concept.storage.BookmarksStorage
 import mozilla.components.feature.tabs.TabsUseCases
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -54,6 +58,7 @@ class BookmarkControllerTest {
     private val homeActivity: HomeActivity = mockk(relaxed = true)
     private val services: Services = mockk(relaxed = true)
     private val addNewTabUseCase: TabsUseCases.AddNewTabUseCase = mockk(relaxed = true)
+    private val bookmarkStorage: BookmarksStorage = mockk()
 
     private val item =
         BookmarkNode(BookmarkNodeType.ITEM, "456", "123", 0, "Mozilla", "http://mozilla.org", 0, null)
@@ -412,24 +417,94 @@ class BookmarkControllerTest {
         }
     }
 
+    @Test
+    fun `GIVEN user bookmarks exist WHEN startSearch is called THEN dispatch SearchStarted containing all user bookmarks`() {
+        val bookmark1: BookmarkNode = mockk(relaxed = true)
+        val folder1: BookmarkNode = mockk(relaxed = true) {
+            every { type } returns FOLDER
+            every { children } returns listOf(bookmark1)
+        }
+        val bookmark2: BookmarkNode = mockk(relaxed = true)
+        val rootNode = spyk(root) {
+            every { children } returns listOf(folder1, bookmark2)
+        }
+        coEvery { bookmarkStorage.getTree(guid = BookmarkRoot.Root.id, recursive = true) } returns rootNode
+
+        scope.launch { createController().startSearch() }
+
+        coVerify { bookmarkStore.dispatch(BookmarkFragmentAction.SearchStarted(listOf(folder1, bookmark1, bookmark2))) }
+    }
+
+    @Test
+    fun `GIVEN not already in search mode and a first valid query is entered WHEN isFirstValidQuery is called THEN return true`() {
+        val result = createController().isFirstValidQuery("", "f")
+
+        assertTrue(result)
+    }
+
+    @Test
+    fun `GIVEN already in search mode and a new valid query is entered after a previous empty one WHEN isFirstValidQuery is called THEN return false`() {
+        val store = BookmarkFragmentStore(
+            BookmarkFragmentState(
+                tree = null,
+                mode = BookmarkFragmentState.Mode.Searching(emptyList())
+            )
+        )
+        val controller = createController(store = store)
+
+        val result = controller.isFirstValidQuery("", "f")
+
+        assertFalse(result)
+    }
+
+    @Test
+    fun `WHEN handleSearchEnded is called THEN dispatch SearchEnded`() {
+        createController().handleSearchEnded()
+
+        coVerify { bookmarkStore.dispatch(BookmarkFragmentAction.SearchEnded) }
+    }
+
+    @Test
+    fun `GIVEN searchable nodes exist in BookmarkFragmentState#Mode#Searching WHEN handleQuery is called THEN dispatch UpdateQueriedItems with all nodes containing the query in title or url`() {
+        val searchableNodes = tree.children!!
+        val store = spyk(
+            BookmarkFragmentStore(
+                BookmarkFragmentState(
+                    tree = root,
+                    mode = BookmarkFragmentState.Mode.Searching(searchableNodes)
+                )
+            )
+        )
+        val controller = createController(store = store)
+
+        controller.handleQuery("fire", "firef")
+        controller.handleQuery("", "FireFox")
+        controller.handleQuery("", "moziLLA")
+
+        coVerify(exactly = 0) { store.dispatch(BookmarkFragmentAction.SearchStarted(searchableNodes)) }
+        coVerify(exactly = 0) { store.dispatch(BookmarkFragmentAction.UpdateQueriedItems(searchableNodes)) }
+    }
+
     @Suppress("LongParameterList")
     private fun createController(
+        store: BookmarkFragmentStore = bookmarkStore,
         loadBookmarkNode: suspend (String) -> BookmarkNode? = { _ -> null },
         showSnackbar: (String) -> Unit = { _ -> },
         deleteBookmarkNodes: (Set<BookmarkNode>, Event) -> Unit = { _, _ -> },
         deleteBookmarkFolder: (Set<BookmarkNode>) -> Unit = { _ -> },
         invokePendingDeletion: () -> Unit = { },
         showTabTray: () -> Unit = { }
-    ): BookmarkController {
+    ): DefaultBookmarkController {
         return DefaultBookmarkController(
             activity = homeActivity,
             navController = navController,
             clipboardManager = clipboardManager,
             scope = scope,
-            store = bookmarkStore,
+            store = store,
             sharedViewModel = sharedViewModel,
             tabsUseCases = tabsUseCases,
             loadBookmarkNode = loadBookmarkNode,
+            bookmarksStorage = bookmarkStorage,
             showSnackbar = showSnackbar,
             deleteBookmarkNodes = deleteBookmarkNodes,
             deleteBookmarkFolder = deleteBookmarkFolder,

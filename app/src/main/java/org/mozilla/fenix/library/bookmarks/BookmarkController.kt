@@ -7,6 +7,7 @@ package org.mozilla.fenix.library.bookmarks
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.res.Resources
+import androidx.annotation.VisibleForTesting
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import kotlinx.coroutines.CoroutineScope
@@ -15,6 +16,7 @@ import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.concept.storage.BookmarkNode
+import mozilla.components.concept.storage.BookmarksStorage
 import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.service.fxa.sync.SyncReason
 import org.mozilla.fenix.BrowserDirection
@@ -47,6 +49,8 @@ interface BookmarkController {
     fun handleBookmarkFolderDeletion(nodes: Set<BookmarkNode>)
     fun handleRequestSync()
     fun handleBackPressed()
+    fun handleQuery(previousQuery: String, newQuery: String)
+    fun handleSearchEnded()
 }
 
 @Suppress("TooManyFunctions")
@@ -59,6 +63,7 @@ class DefaultBookmarkController(
     private val sharedViewModel: BookmarksSharedViewModel,
     private val tabsUseCases: TabsUseCases?,
     private val loadBookmarkNode: suspend (String) -> BookmarkNode?,
+    private val bookmarksStorage: BookmarksStorage?,
     private val showSnackbar: (String) -> Unit,
     private val deleteBookmarkNodes: (Set<BookmarkNode>, Event) -> Unit,
     private val deleteBookmarkFolder: (Set<BookmarkNode>) -> Unit,
@@ -179,6 +184,59 @@ class DefaultBookmarkController(
                 handleBookmarkExpand(parent)
             }
         }
+    }
+
+    override fun handleSearchEnded() {
+        store.dispatch(BookmarkFragmentAction.SearchEnded)
+    }
+
+    override fun handleQuery(previousQuery: String, newQuery: String) {
+        scope.launch {
+            if (isFirstValidQuery(previousQuery, newQuery)) {
+                startSearch()
+            }
+
+            println("state is ${store.state}")
+            (store.state.mode as? BookmarkFragmentState.Mode.Searching)?.let { searchingMode ->
+                scope.launch {
+                    val filteredNodes = searchingMode.searchableNodes.filter {
+                        it.title?.contains(newQuery, true) == true ||
+                            it.url?.contains(newQuery, true) == true
+                    }
+                    store.dispatch(BookmarkFragmentAction.UpdateQueriedItems(filteredNodes))
+                }
+            }
+        }
+    }
+
+    /**
+     * Computes all the available nodes for query and updated the store with this list.
+     */
+    @VisibleForTesting
+    internal suspend fun startSearch() {
+        val allUserNodes = bookmarksStorage
+            ?.getTree(guid = BookmarkRoot.Root.id, recursive = true)
+            ?.let {
+                DesktopFolders(
+                    context = activity,
+                    showMobileRoot = true
+                ).withOptionalDesktopFolders(it)
+            }
+            ?.flattenAllNodes()
+            // Important to strip all default nodes like the desktop toolbar after all children are flattened.
+            ?.filterNot { node -> BookmarkRoot.values().any { it.id == node.guid } }
+
+        store.dispatch(BookmarkFragmentAction.SearchStarted(allUserNodes ?: emptyList()))
+    }
+
+    /**
+     * Returns `true` if [newQuery] only for the first valid query entered in this search session.
+     * A `valid` query is one not being empty or consisting solely of whitespace characters.
+     */
+    @VisibleForTesting
+    internal fun isFirstValidQuery(previousQuery: String, newQuery: String): Boolean {
+        return store.state.mode !is BookmarkFragmentState.Mode.Searching &&
+            previousQuery.isBlank() && newQuery.isNotBlank()
     }
 
     private fun openInNewTabAndShow(

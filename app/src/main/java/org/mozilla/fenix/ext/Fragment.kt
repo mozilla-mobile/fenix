@@ -2,12 +2,20 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+@file:Suppress("TooManyFunctions")
+
 package org.mozilla.fenix.ext
 
+import android.view.Menu
+import android.view.MenuItem
 import android.view.WindowManager
+import android.view.inputmethod.EditorInfo
 import androidx.annotation.IdRes
 import androidx.annotation.StringRes
+import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
+import androidx.core.view.size
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavDirections
 import androidx.navigation.NavOptions
@@ -126,4 +134,91 @@ fun Fragment.removeSecure() {
     this.activity?.window?.clearFlags(
         WindowManager.LayoutParams.FLAG_SECURE
     )
+}
+
+/**
+ * Configure the [SearchView] in a [Menu] handling automatically hiding all other menu options when
+ * the [SearchView] is opened and showing them again when the [SearchView] is closed and informing callers
+ * of all important events related to the state of the [SearchView].
+ *
+ * Calling this method for a [Menu] containing no [SearchView] has no effect.
+ *
+ * @param menu [Menu] containing a [SearchView] and optionally other [MenuItem]s.
+ * @param queryHint The hint shown to the user in [SearchView] when no other text is entered.
+ * @param onQueryTextChange Callback for when the currently entered text is updated.
+ * Contains two arguments: the previous query (starting as empty) and the current query.
+ * @param onQueryTextSubmit Callback for when the user presses the "Done" button on the keyboard.
+ * @param onSearchStarted Callback for when [SearchView] is opened
+ * (and all other [MenuItem]s are hidden from toolbar).
+ * @param onSearchEnded Callback for when [SearchView] is closed
+ * (and all [MenuItem]s hidden when the [SearchView] was opened are again shown).
+ */
+@Suppress("LongParameterList")
+fun Fragment.configureSearchViewInMenu(
+    menu: Menu,
+    queryHint: String,
+    onQueryTextChange: (String, String) -> Unit = { _, _ -> },
+    onQueryTextSubmit: (String) -> Unit = { },
+    onSearchStarted: () -> Unit = { },
+    onSearchEnded: () -> Unit = { }
+) {
+    val (searchViewItem: MenuItem?, otherVisibleItems: List<MenuItem>) = menu.splitSearchViewItem()
+    if (searchViewItem == null) {
+        return
+    }
+
+    val searchView = searchViewItem.actionView as SearchView
+    searchView.queryHint = queryHint
+    searchView.imeOptions = EditorInfo.IME_ACTION_DONE
+    searchView.maxWidth = Int.MAX_VALUE
+
+    var previousQuery = ""
+
+    searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        override fun onQueryTextSubmit(query: String): Boolean {
+            onQueryTextSubmit(query)
+            return false
+        }
+
+        override fun onQueryTextChange(query: String): Boolean {
+            onQueryTextChange(previousQuery, query)
+            previousQuery = query
+            return false
+        }
+    })
+
+    if (otherVisibleItems.isNotEmpty()) {
+        searchViewItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+            override fun onMenuItemActionExpand(searchViewMenuItem: MenuItem): Boolean {
+                onSearchStarted()
+                otherVisibleItems.forEach { it.isVisible = false }
+                return true
+            }
+
+            override fun onMenuItemActionCollapse(searchViewMenuItem: MenuItem): Boolean {
+                onSearchEnded()
+                activity?.invalidateOptionsMenu()
+                return true
+            }
+        })
+    }
+}
+
+/**
+ * Helper method for separating a [SearchView] [MenuItem] from all others shown in this [Menu].
+ *
+ * @return Pair of the [MenuItem] containing a [SearchView] and the list of all other [MenuItem]s.
+ */
+@VisibleForTesting
+internal fun Menu.splitSearchViewItem(): Pair<MenuItem?, List<MenuItem>> {
+    var searchViewItem: MenuItem? = null
+    val otherItems = mutableListOf<MenuItem>()
+
+    for (i in 0 until size) {
+        val item = getItem(i)
+        if (item.actionView is SearchView) searchViewItem = item
+        else if (item.isVisible) otherItems.add(item)
+    }
+
+    return searchViewItem to otherItems
 }

@@ -120,4 +120,12 @@ class BookmarkFragmentInteractor(
     override fun onRequestSync() {
         bookmarksController.handleRequestSync()
     }
+
+    override fun onSearchEnded() {
+        bookmarksController.handleSearchEnded()
+    }
+
+    override fun onQueryText(previousQuery: String, newQuery: String) {
+        bookmarksController.handleQuery(previousQuery, newQuery)
+    }
 }

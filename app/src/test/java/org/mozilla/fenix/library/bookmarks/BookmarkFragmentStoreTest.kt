@@ -214,6 +214,59 @@ class BookmarkFragmentStoreTest {
         assertEquals(BookmarkFragmentState.Mode.Syncing, store.state.mode)
     }
 
+    @Test
+    fun `WHEN SearchStarted THEN the mode is set the Searching and queried items list is updated`() = runBlocking {
+        val allNodesToBeSearched = listOf(newTree)
+        val store = BookmarkFragmentStore(BookmarkFragmentState(tree))
+
+        store.dispatch(BookmarkFragmentAction.SearchStarted(allNodesToBeSearched)).join()
+
+        assertEquals(
+            allNodesToBeSearched,
+            (store.state.mode as BookmarkFragmentState.Mode.Searching).searchableNodes
+        )
+        assertEquals(allNodesToBeSearched, store.state.queriedItems)
+    }
+
+    @Test
+    fun `GIVEN a backstack of bookmarks WHEN SearchStarted THEN the bookmarks tree and the backstack are not updated`() = runBlocking {
+        val allNodesToBeSearched = listOf(newTree)
+        val backstackEntries = listOf("test")
+        val store = BookmarkFragmentStore(BookmarkFragmentState(tree = tree, guidBackstack = backstackEntries))
+
+        store.dispatch(BookmarkFragmentAction.SearchStarted(allNodesToBeSearched)).join()
+
+        assertEquals(tree, store.state.tree)
+        assertEquals(backstackEntries, store.state.guidBackstack)
+    }
+
+    @Test
+    fun `WHEN SearchEnded THEN mode is set to Normal and the queried items list is reset`() = runBlocking {
+        val allNodesToBeSearched = listOf(newTree)
+        val store = BookmarkFragmentStore(
+            BookmarkFragmentState(
+                tree = tree,
+                mode = BookmarkFragmentState.Mode.Searching(allNodesToBeSearched),
+                queriedItems = allNodesToBeSearched
+            )
+        )
+
+        store.dispatch(BookmarkFragmentAction.SearchEnded).join()
+
+        assertTrue(store.state.mode is BookmarkFragmentState.Mode.Normal)
+        assertTrue(store.state.queriedItems.isEmpty())
+    }
+
+    @Test
+    fun `WHEN UpdateQueriedItems THEN update the list of queried items to the new value`() = runBlocking {
+        val updatedQueriedItems = listOf(newTree)
+        val store = BookmarkFragmentStore(BookmarkFragmentState(tree = tree, queriedItems = emptyList()))
+
+        store.dispatch(BookmarkFragmentAction.UpdateQueriedItems(updatedQueriedItems))
+
+        assertEquals(updatedQueriedItems, store.state.queriedItems)
+    }
+
     private val item = BookmarkNode(BookmarkNodeType.ITEM, "456", "123", 0, "Mozilla", "http://mozilla.org", 0, null)
     private val separator = BookmarkNode(BookmarkNodeType.SEPARATOR, "789", "123", 1, null, null, 0, null)
     private val subfolder = BookmarkNode(BookmarkNodeType.FOLDER, "987", "123", 0, "Subfolder", null, 0, listOf())

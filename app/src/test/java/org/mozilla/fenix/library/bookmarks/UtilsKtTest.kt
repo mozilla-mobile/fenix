@@ -80,6 +80,18 @@ class UtilsKtTest {
             rootWithChildren.flatNodeList(excludeSubtreeRoot = "folder2")
         )
     }
+
+    @Test
+    fun `GIVEN a BookmarkNode WHEN flattenAllNodes is used THEN do a depth first traversal to flatten all nodes`() {
+        val nodeA11 = testBookmarkItem(parentGuid = "nodeA1", url = "nodeA1")
+        val nodeA1 = testFolder(parentGuid = "root", guid = "nodeA1", children = listOf(nodeA11))
+        val nodeB1 = testBookmarkItem(parentGuid = "root", url = "nodeB1")
+        val root = testFolder(guid = "root", parentGuid = null, children = listOf(nodeA1, nodeB1))
+
+        val result = root.flattenAllNodes()
+
+        assertEquals(listOf(root, nodeA1, nodeA11, nodeB1), result)
+    }
 }
 
 internal fun testBookmarkItem(parentGuid: String, url: String, title: String = "Item for $url") = BookmarkNode(

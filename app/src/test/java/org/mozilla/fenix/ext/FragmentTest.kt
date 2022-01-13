@@ -4,7 +4,13 @@
 
 package org.mozilla.fenix.ext
 
+import android.view.Menu
+import android.view.MenuItem
+import android.view.inputmethod.EditorInfo
+import androidx.appcompat.widget.SearchView
+import androidx.core.view.size
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDirections
@@ -17,13 +23,19 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import io.mockk.slot
 import io.mockk.spyk
 import io.mockk.verify
 import mozilla.components.support.test.robolectric.testContext
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
+import org.robolectric.fakes.RoboMenuItem
 
 @RunWith(FenixRobolectricTestRunner::class)
 class FragmentTest {
@@ -64,5 +76,118 @@ class FragmentTest {
         verify { (NavHostFragment.findNavController(mockFragment).currentDestination) }
         verify { (NavHostFragment.findNavController(mockFragment).navigate(navDirections, mockOptions)) }
         confirmVerified(mockFragment)
+    }
+
+    @Test
+    fun `GIVEN a Menu not containing a SearchView WHEN splitSearchViewItem is called THEN return a null for first value`() {
+        val menuItems = listOf(RoboMenuItem(), RoboMenuItem())
+        val menuItemPositionSlot = slot<Int>()
+        val menu: Menu = mockk {
+            every { size } returns menuItems.size
+            every { getItem(capture(menuItemPositionSlot)) } answers { menuItems[menuItemPositionSlot.captured] }
+        }
+
+        val result = menu.splitSearchViewItem()
+
+        assertNull(result.first)
+        assertEquals(menuItems, result.second)
+    }
+
+    @Test
+    fun `GIVEN a Menu containing a SearchView WHEN splitSearchViewItem is called THEN return the item with SearchView for first value`() {
+        val actionViewMenuItem = RoboMenuItem().apply {
+            actionView = mockk<SearchView>()
+        }
+        val otherVisibleMenuItems = listOf(RoboMenuItem(), RoboMenuItem())
+        val menuItems = otherVisibleMenuItems + actionViewMenuItem
+        val menuItemPositionSlot = slot<Int>()
+        val menu: Menu = mockk {
+            every { size } returns menuItems.size
+            every { getItem(capture(menuItemPositionSlot)) } answers { menuItems[menuItemPositionSlot.captured] }
+        }
+
+        val result = menu.splitSearchViewItem()
+
+        assertEquals(actionViewMenuItem, result.first)
+        assertEquals(otherVisibleMenuItems, result.second)
+    }
+
+    @Test
+    fun `Given a Menu containing both visible and invisible items WHEN splitSearchViewItem is called THEN return only the visible items for the second value`() {
+        val visibleMenuItems = listOf(RoboMenuItem(), RoboMenuItem())
+        val notVisibleMenuItems = listOf(
+            RoboMenuItem().setVisible(false),
+            RoboMenuItem().setVisible(false)
+        )
+        val menuItems = visibleMenuItems.zip(notVisibleMenuItems).flatMap { listOf(it.first, it.second) }
+        val menuItemPositionSlot = slot<Int>()
+        val menu: Menu = mockk {
+            every { size } returns menuItems.size
+            every { getItem(capture(menuItemPositionSlot)) } answers { menuItems[menuItemPositionSlot.captured] }
+        }
+
+        val result = menu.splitSearchViewItem()
+
+        assertEquals(visibleMenuItems, result.second)
+    }
+
+    @Test
+    fun `Given a Menu containing a SearchView WHEN configureSearchViewInMenu is called THEN properly configure the menu`() {
+        val searchView = spyk(SearchView(testContext))
+        val actionViewMenuItem = spyk(RoboMenuItem()).apply {
+            actionView = searchView
+        }
+        val otherVisibleMenuItems = listOf(RoboMenuItem(), RoboMenuItem())
+        val menuItems = otherVisibleMenuItems + actionViewMenuItem
+        val menuItemPositionSlot = slot<Int>()
+        val menu: Menu = mockk {
+            every { size } returns menuItems.size
+            every { getItem(capture(menuItemPositionSlot)) } answers { menuItems[menuItemPositionSlot.captured] }
+        }
+        var previousQuery = ""
+        var queryTextChange = ""
+        var queryTextSubmit = ""
+        var searchStarted = false
+        var searchEnded = false
+        val containerActivity: FragmentActivity = mockk(relaxed = true)
+        val fragment: Fragment = mockk {
+            every { activity } returns containerActivity
+        }
+
+        fragment.configureSearchViewInMenu(
+            menu = menu,
+            queryHint = "queryHint",
+            onQueryTextChange = { previous, new -> previousQuery = previous; queryTextChange = new },
+            onQueryTextSubmit = { queryTextSubmit = it },
+            onSearchStarted = { searchStarted = true },
+            onSearchEnded = { searchEnded = true }
+        )
+        assertEquals("queryHint", searchView.queryHint)
+        assertEquals(EditorInfo.IME_ACTION_DONE, searchView.imeOptions)
+        assertEquals(Int.MAX_VALUE, searchView.maxWidth)
+
+        val textListenerCaptor = slot<SearchView.OnQueryTextListener>()
+        val actionExpandListenerCaptor = slot<MenuItem.OnActionExpandListener>()
+        verify { searchView.setOnQueryTextListener(capture(textListenerCaptor)) }
+        verify { actionViewMenuItem.setOnActionExpandListener(capture(actionExpandListenerCaptor)) }
+
+        textListenerCaptor.captured.onQueryTextChange("testChange")
+        assertEquals("", previousQuery)
+        assertEquals("testChange", queryTextChange)
+
+        textListenerCaptor.captured.onQueryTextChange("newTestChange")
+        assertEquals("testChange", previousQuery)
+        assertEquals("newTestChange", queryTextChange)
+
+        textListenerCaptor.captured.onQueryTextSubmit("testSubmit")
+        assertEquals("testSubmit", queryTextSubmit)
+
+        actionExpandListenerCaptor.captured.onMenuItemActionExpand(actionViewMenuItem)
+        otherVisibleMenuItems.forEach { assertFalse(it.isVisible) }
+        assertTrue(searchStarted)
+
+        actionExpandListenerCaptor.captured.onMenuItemActionCollapse(actionViewMenuItem)
+        verify { containerActivity.invalidateOptionsMenu() }
+        assertTrue(searchEnded)
     }
 }

@@ -39,6 +39,10 @@ fun friendlyRootTitle(
 
 data class BookmarkNodeWithDepth(val depth: Int, val node: BookmarkNode, val parent: String?)
 
+/**
+ * Get a depth first flat list of all nodes of type [BookmarkNodeType.FOLDER] optionally excluding
+ * the node having [excludeSubtreeRoot] as `guid`.
+ */
 fun BookmarkNode.flatNodeList(excludeSubtreeRoot: String?, depth: Int = 0): List<BookmarkNodeWithDepth> {
     if (this.type != BookmarkNodeType.FOLDER || this.guid == excludeSubtreeRoot) {
         return emptyList()
@@ -48,4 +52,14 @@ fun BookmarkNode.flatNodeList(excludeSubtreeRoot: String?, depth: Int = 0): List
         ?.filter { it.type == BookmarkNodeType.FOLDER }
         ?.flatMap { it.flatNodeList(excludeSubtreeRoot = excludeSubtreeRoot, depth = depth + 1) }
         .orEmpty()
+}
+
+/**
+ * Get a depth first flat list of all nodes starting from the current one.
+ */
+fun BookmarkNode.flattenAllNodes(): List<BookmarkNode> {
+    val childrenTree = children
+        ?.flatMap { it.flattenAllNodes() }
+        .orEmpty()
+    return listOf(this) + childrenTree
 }
