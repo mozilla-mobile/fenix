@@ -1,6 +1,6 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.settings.logins
 
@@ -43,12 +43,10 @@ class SavedLoginsInteractorTest {
     @Test
     fun `GIVEN a change in sorting strategy, WHEN the interactor is called for it, THEN it should just delegate the controller`() {
         every { testContext.components.publicSuffixList } returns PublicSuffixList(testContext)
-        val sortingStrategy = SortingStrategy.Alphabetically(testContext.components.publicSuffixList)
-
-        interactor.onSortingStrategyChanged(sortingStrategy)
+        interactor.onSortingStrategyChanged(SortingStrategy.Alphabetically)
 
         verifyAll {
-            listController.handleSort(sortingStrategy)
+            listController.handleSort(SortingStrategy.Alphabetically)
         }
     }
 

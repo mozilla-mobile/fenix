@@ -51,8 +51,8 @@ private val darkColorPalette = FirefoxColors(
     scrimAccentEnd = PhotonColors.DarkGrey90A96,
     gradientStart = PhotonColors.Violet70,
     gradientEnd = PhotonColors.Violet40,
-    actionPrimary = PhotonColors.Violet70,
-    actionSecondary = PhotonColors.DarkGrey50,
+    actionPrimary = PhotonColors.Violet60,
+    actionSecondary = PhotonColors.DarkGrey10,
     formDefault = PhotonColors.LightGrey05,
     formSelected = PhotonColors.Violet40,
     formSurface = PhotonColors.DarkGrey05,
@@ -81,18 +81,19 @@ private val darkColorPalette = FirefoxColors(
     iconAccentYellow = PhotonColors.Yellow20,
     iconGradientStart = PhotonColors.Violet20,
     iconGradientEnd = PhotonColors.Blue20,
-    borderDefault = PhotonColors.LightGrey05,
-    borderSelected = PhotonColors.Violet40,
+    borderDefault = PhotonColors.DarkGrey05,
+    borderInverted = PhotonColors.LightGrey30,
+    borderFormDefault = PhotonColors.LightGrey05,
+    borderAccent = PhotonColors.Violet40,
     borderDisabled = PhotonColors.LightGrey70,
-    borderWarning = PhotonColors.Red40,
-    borderDivider = PhotonColors.DarkGrey05
+    borderWarning = PhotonColors.Red40
 )
 
 private val lightColorPalette = FirefoxColors(
     layer1 = PhotonColors.LightGrey20,
     layer2 = PhotonColors.White,
     layer3 = PhotonColors.LightGrey10,
-    layerAccent = PhotonColors.Violet90,
+    layerAccent = PhotonColors.Ink20,
     layerNonOpaque = PhotonColors.Violet70A12,
     scrim = PhotonColors.DarkGrey05A45,
     scrimAccentStart = PhotonColors.DarkGrey90A96,
@@ -102,10 +103,10 @@ private val lightColorPalette = FirefoxColors(
     actionPrimary = PhotonColors.Ink20,
     actionSecondary = PhotonColors.LightGrey40,
     formDefault = PhotonColors.DarkGrey90,
-    formSelected = PhotonColors.Violet90,
+    formSelected = PhotonColors.Ink20,
     formSurface = PhotonColors.LightGrey50,
     formDisabled = PhotonColors.LightGrey50,
-    formOn = PhotonColors.Violet90,
+    formOn = PhotonColors.Ink20,
     formOff = PhotonColors.LightGrey05,
     indicatorActive = PhotonColors.LightGrey50,
     indicatorInactive = PhotonColors.LightGrey30,
@@ -120,7 +121,7 @@ private val lightColorPalette = FirefoxColors(
     iconDisabled = PhotonColors.LightGrey70,
     iconInverted = PhotonColors.White,
     iconNotice = PhotonColors.Blue30,
-    iconButton = PhotonColors.Violet90,
+    iconButton = PhotonColors.Ink20,
     iconWarning = PhotonColors.Red80,
     iconAccentViolet = PhotonColors.Violet60,
     iconAccentBlue = PhotonColors.Blue60,
@@ -129,11 +130,12 @@ private val lightColorPalette = FirefoxColors(
     iconAccentYellow = PhotonColors.Yellow60,
     iconGradientStart = PhotonColors.Violet50,
     iconGradientEnd = PhotonColors.Blue60,
-    borderDefault = PhotonColors.DarkGrey90,
-    borderSelected = PhotonColors.Violet90,
+    borderDefault = PhotonColors.LightGrey30,
+    borderInverted = PhotonColors.DarkGrey05,
+    borderFormDefault = PhotonColors.DarkGrey90,
+    borderAccent = PhotonColors.Ink20,
     borderDisabled = PhotonColors.LightGrey70,
-    borderWarning = PhotonColors.Red80,
-    borderDivider = PhotonColors.LightGrey40,
+    borderWarning = PhotonColors.Red80
 )
 
 /**
@@ -183,10 +185,11 @@ class FirefoxColors(
     iconGradientStart: Color,
     iconGradientEnd: Color,
     borderDefault: Color,
-    borderSelected: Color,
+    borderInverted: Color,
+    borderFormDefault: Color,
+    borderAccent: Color,
     borderDisabled: Color,
-    borderWarning: Color,
-    borderDivider: Color
+    borderWarning: Color
 ) {
     // Layers
 
@@ -220,7 +223,7 @@ class FirefoxColors(
 
     // Actions
 
-    // Primary button, Snackbar, Floating action button, Controls
+    // Primary button, Snackbar, Floating action button, Chip selected
     var actionPrimary by mutableStateOf(actionPrimary)
         private set
     // Secondary button, Chip
@@ -313,19 +316,23 @@ class FirefoxColors(
 
     // Border
 
-    // Form parts
+    // Default, Divider, Dotted
     var borderDefault by mutableStateOf(borderDefault)
         private set
-    // Selected tab
-    var borderSelected by mutableStateOf(borderSelected)
+    // Onboarding
+    var borderInverted by mutableStateOf(borderInverted)
+        private set
+    // Form parts
+    var borderFormDefault by mutableStateOf(borderFormDefault)
+        private set
+    // Active tab (Nav), Selected tab, Active form
+    var borderAccent by mutableStateOf(borderAccent)
         private set
     // Form parts
     var borderDisabled by mutableStateOf(borderDisabled)
         private set
     // Form parts
     var borderWarning by mutableStateOf(borderWarning)
-        private set
-    var borderDivider by mutableStateOf(borderDivider)
         private set
 
     fun update(other: FirefoxColors) {
@@ -370,10 +377,11 @@ class FirefoxColors(
         iconGradientStart = other.iconGradientStart
         iconGradientEnd = other.iconGradientEnd
         borderDefault = other.borderDefault
-        borderSelected = other.borderSelected
+        borderInverted = other.borderInverted
+        borderFormDefault = other.borderFormDefault
+        borderAccent = other.borderAccent
         borderDisabled = other.borderDisabled
         borderWarning = other.borderWarning
-        borderDivider = other.borderDivider
     }
 
     fun copy(): FirefoxColors = FirefoxColors(
@@ -418,10 +426,11 @@ class FirefoxColors(
         iconGradientStart = iconGradientStart,
         iconGradientEnd = iconGradientEnd,
         borderDefault = borderDefault,
-        borderSelected = borderSelected,
+        borderInverted = borderInverted,
+        borderFormDefault = borderFormDefault,
+        borderAccent = borderAccent,
         borderDisabled = borderDisabled,
-        borderWarning = borderWarning,
-        borderDivider = borderDivider
+        borderWarning = borderWarning
     )
 }
 

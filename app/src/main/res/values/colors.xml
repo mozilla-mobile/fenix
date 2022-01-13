@@ -13,9 +13,9 @@
     <!-- App Bar Top, App Bar Bottom, Frontlayer header -->
     <color name="fx_mobile_layer_color_3" tools:ignore="UnusedResources">@color/photonLightGrey10</color>
     <!-- App Bar Top (edit), Header (edit) -->
-    <color name="fx_mobile_layer_color_accent" tools:ignore="UnusedResources">@color/photonViolet90</color>
+    <color name="fx_mobile_layer_color_accent" tools:ignore="UnusedResources">@color/photonInk20</color>
     <!-- Selected tab -->
-    <color name="fx_mobile_layer_color_accent_nonopaque" tools:ignore="UnusedResources">@color/photonViolet70A12</color>
+    <color name="fx_mobile_layer_color_accent_nonopaque">@color/photonViolet70A12</color>
     <color name="fx_mobile_layer_color_scrim" tools:ignore="UnusedResources">@color/photonDarkGrey05A45</color>
     <color name="fx_mobile_layer_color_scrim_start">@color/photonDarkGrey90A96</color>
     <color name="fx_mobile_layer_color_scrim_end">@color/photonDarkGrey30A96</color>
@@ -25,20 +25,20 @@
     <color name="fx_mobile_layer_color_gradient_end" tools:ignore="UnusedResources">@color/photonViolet40</color>
 
     <!-- Action -->
-    <!-- Primary button, Snackbar, Floating action button, Controls -->
+    <!-- Primary button, Snackbar, Floating action button, Chip selected -->
     <color name="fx_mobile_action_color_primary" tools:ignore="UnusedResources">@color/photonInk20</color>
     <!-- Secondary button, Chip -->
     <color name="fx_mobile_action_color_secondary" tools:ignore="UnusedResources">@color/photonLightGrey40</color>
     <!-- Checkbox default, Radio button default -->
     <color name="fx_mobile_action_color_form_default" tools:ignore="UnusedResources">@color/photonDarkGrey90</color>
     <!-- Checkbox selected, Radio button selected -->
-    <color name="fx_mobile_action_color_form_selected" tools:ignore="UnusedResources">@color/photonViolet90</color>
+    <color name="fx_mobile_action_color_form_selected" tools:ignore="UnusedResources">@color/photonInk20</color>
     <!-- Switch background OFF, Switch background ON -->
     <color name="fx_mobile_action_color_form_surface" tools:ignore="UnusedResources">@color/photonLightGrey50</color>
     <!-- Checkbox disabled, Radio disabled -->
     <color name="fx_mobile_action_color_form_disabled" tools:ignore="UnusedResources">@color/photonLightGrey50</color>
     <!-- Switch thumb ON -->
-    <color name="fx_mobile_action_color_form_on" tools:ignore="UnusedResources">@color/photonViolet90</color>
+    <color name="fx_mobile_action_color_form_on" tools:ignore="UnusedResources">@color/photonInk20</color>
     <!-- Switch thumb OFF -->
     <color name="fx_mobile_action_color_form_off" tools:ignore="UnusedResources">@color/photonLightGrey05</color>
     <!-- Scroll indicator active -->
@@ -72,28 +72,31 @@
     <!-- Information -->
     <color name="fx_mobile_icon_color_information">@color/photonBlue30</color>
     <!-- Icon button -->
-    <color name="fx_mobile_icon_color_button" tools:ignore="UnusedResources">@color/photonViolet90</color>
+    <color name="fx_mobile_icon_color_button" tools:ignore="UnusedResources">@color/photonInk20</color>
     <color name="fx_mobile_icon_color_warning" tools:ignore="UnusedResources">@color/photonRed80</color>
-    <color name="fx_mobile_icon_color_accent_violet" tools:ignore="UnusedResources">@color/photonViolet60</color>
-    <color name="fx_mobile_icon_color_accent_blue" tools:ignore="UnusedResources">@color/photonBlue60</color>
-    <color name="fx_mobile_icon_color_accent_pink" tools:ignore="UnusedResources">@color/photonPink60</color>
-    <color name="fx_mobile_icon_color_accent_green" tools:ignore="UnusedResources">@color/photonGreen60</color>
-    <color name="fx_mobile_icon_color_accent_yellow" tools:ignore="UnusedResources">@color/photonYellow60</color>
+    <color name="fx_mobile_icon_color_accent_violet">@color/photonViolet60</color>
+    <color name="fx_mobile_icon_color_accent_blue">@color/photonBlue60</color>
+    <color name="fx_mobile_icon_color_accent_pink">@color/photonPink60</color>
+    <color name="fx_mobile_icon_color_accent_green">@color/photonGreen60</color>
+    <color name="fx_mobile_icon_color_accent_yellow">@color/photonYellow60</color>
     <!-- Reader, ETP Shield -->
     <color name="fx_mobile_icon_color_gradient_start">@color/photonViolet50</color>
     <!-- Reader, ETP Shield -->
     <color name="fx_mobile_icon_color_gradient_end">@color/photonBlue60</color>
 
     <!-- Border -->
+    <!-- Default, Divider, Dotted -->
+    <color name="fx_mobile_border_color_default" tools:ignore="UnusedResources">@color/photonLightGrey30</color>
+    <!-- Onboarding -->
+    <color name="fx_mobile_border_color_inverted" tools:ignore="UnusedResources">@color/photonDarkGrey05</color>
     <!-- Form parts -->
-    <color name="fx_mobile_border_color_default" tools:ignore="UnusedResources">@color/photonDarkGrey90</color>
-    <!-- Selected tab -->
-    <color name="fx_mobile_border_color_selected" tools:ignore="UnusedResources">@color/photonViolet90</color>
+    <color name="fx_mobile_border_color_form_default" tools:ignore="UnusedResources">@color/photonDarkGrey90</color>
+    <!-- Active tab (Nav), Selected tab, Active form -->
+    <color name="fx_mobile_border_color_accent" tools:ignore="UnusedResources">@color/photonInk20</color>
     <!-- Form parts -->
     <color name="fx_mobile_border_color_disabled" tools:ignore="UnusedResources">@color/photonLightGrey70</color>
     <!-- Form parts -->
     <color name="fx_mobile_border_color_warning" tools:ignore="UnusedResources">@color/photonRed80</color>
-    <color name="fx_mobile_border_color_divider" tools:ignore="UnusedResources">@color/photonLightGrey40</color>
 
     <!-- Private theme color variables -->
 
@@ -118,7 +121,7 @@
     <color name="fx_mobile_private_text_color_secondary" tools:ignore="UnusedResources">@color/photonLightGrey40</color>
     <color name="fx_mobile_private_text_color_tertiary" tools:ignore="UnusedResources">@color/photonViolet40</color>
     <color name="fx_mobile_private_text_color_disabled" tools:ignore="UnusedResources">@color/photonLightGrey05A40</color>
-    <color name="fx_mobile_private_text_color_action" tools:ignore="UnusedResources">@color/photonViolet40</color>
+    <color name="fx_mobile_private_text_color_accent">@color/photonViolet40</color>
     <color name="fx_mobile_private_text_color_warning_light" tools:ignore="UnusedResources">@color/photonRed80</color>
     <color name="fx_mobile_private_text_color_warning_dark" tools:ignore="UnusedResources">@color/photonRed40</color>
 
@@ -136,20 +139,13 @@
     <color name="primary_text_light_theme">@color/photonInk80</color>
     <color name="accent_light_theme">@color/photonInk20</color>
     <color name="accent_bright_light_theme">@color/photonViolet70</color>
-    <color name="about_link_normal_theme">@color/photonViolet70</color>
     <color name="dark_grey_90_gradient_start">@color/photonDarkGrey90</color>
     <color name="dark_grey_90_gradient_end">#0015141A</color>
     <color name="preference_section_header_normal_theme">@color/accent_bright_light_theme</color>
 
-    <color name="mozac_widget_favicon_background_light_theme">@color/photonWhite</color>
-    <color name="mozac_widget_favicon_border_light_theme">@color/photonLightGrey30</color>
-
     <!-- Dark theme color palette -->
     <color name="accent_bright_dark_theme">@color/photonViolet70</color>
     <color name="accent_high_contrast_dark_theme">@color/photonViolet40</color>
-
-    <color name="mozac_widget_favicon_background_dark_theme">@color/photonDarkGrey50</color>
-    <color name="mozac_widget_favicon_border_dark_theme">@color/photonDarkGrey10</color>
 
     <!-- Tab Tray -->
     <color name="tab_tray_item_selected_background_dark_theme">#412E69</color>
@@ -163,7 +159,6 @@
     <color name="above_private_theme">@color/photonInk50</color>
     <color name="accent_private_theme">@color/photonViolet50</color>
     <color name="accent_bright_private_theme">@color/photonViolet70</color>
-    <color name="about_link_private_theme">@color/photonViolet40</color>
     <color name="accent_high_contrast_private_theme">#AA71FF</color>
     <color name="tab_ring_private_theme">#F565FF</color>
     <color name="neutral_private_theme">@color/photonGrey20</color>
@@ -189,9 +184,6 @@
     <color name="add_on_private_browsing_exterior_circle_background_private_theme">@color/accent_private_theme</color>
     <color name="add_on_private_browsing_interior_icon_background_private_theme">@color/photonWhite</color>
     <color name="prompt_login_edit_text_cursor_color_private_theme">@color/photonViolet50</color>
-
-    <color name="mozac_widget_favicon_background_private_theme">@color/photonInk50</color>
-    <color name="mozac_widget_favicon_border_private_theme">@color/photonInk50</color>
 
     <!-- Tab Tray -->
     <color name="tab_tray_item_media_background_private_theme">@color/photonViolet50</color>
@@ -235,8 +227,8 @@
     <color name="search_suggestion_indicator_icon_bookmark_color_normal_theme">@color/photonBlue50</color>
     <color name="select_login_header_normal_theme">@color/accent_bright_light_theme</color>
     <color name="select_credit_card_header_normal_theme">@color/accent_bright_light_theme</color>
-    <color name="mozac_widget_favicon_background_normal_theme">@color/mozac_widget_favicon_background_light_theme</color>
-    <color name="mozac_widget_favicon_border_normal_theme">@color/mozac_widget_favicon_border_light_theme</color>
+    <color name="mozac_widget_favicon_background_normal_theme">@color/photonWhite</color>
+    <color name="mozac_widget_favicon_border_normal_theme">@color/photonLightGrey30</color>
     <color name="notification_accent_color_normal_theme">@color/accent_bright_light_theme</color>
     <color name="menu_item_button_normal_theme">@color/accent_bright_light_theme</color>
     <color name="recently_used_share_theme">@color/photonLightGrey30</color>
@@ -253,7 +245,6 @@
     <color name="tab_tray_heading_icon_menu_normal_theme">@color/accent_normal_theme</color>
     <color name="tab_tray_item_thumbnail_background_normal_theme">@color/photonLightGrey10</color>
     <color name="tab_tray_item_thumbnail_icon_normal_theme">@color/photonLightGrey60</color>
-    <color name="tab_tray_selected_mask_normal_theme">@color/photonViolet70A12</color>
 
     <!-- Tab History -->
     <color name="tab_history_item_selected_background_normal_theme">@color/tab_tray_item_selected_background_normal_theme</color>
@@ -268,17 +259,12 @@
     <color name="top_sites_border_color">@color/photonLightGrey30</color>
 
     <!-- Collection icons-->
-    <color name="collection_icon_color_violet">@color/photonViolet60</color>
-    <color name="collection_icon_color_blue">@color/photonBlue60</color>
-    <color name="collection_icon_color_pink">@color/photonPink60</color>
-    <color name="collection_icon_color_green">@color/photonGreen60</color>
-    <color name="collection_icon_color_yellow">@color/photonYellow60</color>
     <array name="collection_icon_colors">
-        <item>@color/collection_icon_color_violet</item>
-        <item>@color/collection_icon_color_blue</item>
-        <item>@color/collection_icon_color_pink</item>
-        <item>@color/collection_icon_color_green</item>
-        <item>@color/collection_icon_color_yellow</item>
+        <item>@color/fx_mobile_icon_color_accent_violet</item>
+        <item>@color/fx_mobile_icon_color_accent_blue</item>
+        <item>@color/fx_mobile_icon_color_accent_pink</item>
+        <item>@color/fx_mobile_icon_color_accent_green</item>
+        <item>@color/fx_mobile_icon_color_accent_yellow</item>
     </array>
 
     <!-- Quick action buttons-->
