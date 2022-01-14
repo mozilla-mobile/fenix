@@ -124,7 +124,7 @@ class BookmarkControllerTest {
         verify {
             homeActivity.openToBrowserAndLoad(
                 item.url!!,
-                true,
+                false,
                 BrowserDirection.FromBookmarks,
                 flags = flags
             )
@@ -290,7 +290,7 @@ class BookmarkControllerTest {
         verify {
             homeActivity.openToBrowserAndLoad(
                 item.url!!,
-                true,
+                false,
                 BrowserDirection.FromBookmarks,
                 flags = flags
             )
