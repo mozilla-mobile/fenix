@@ -9,7 +9,7 @@
     <!-- Default Screen, Search, Frontlayer background -->
     <color name="fx_mobile_layer_color_1">@color/photonDarkGrey80</color>
     <!-- Card background, Menu background -->
-    <color name="fx_mobile_layer_color_2" tools:ignore="UnusedResources">@color/photonDarkGrey50</color>
+    <color name="fx_mobile_layer_color_2">@color/photonDarkGrey50</color>
     <!-- App Bar Top, App Bar Bottom, Frontlayer header -->
     <color name="fx_mobile_layer_color_3" tools:ignore="UnusedResources">@color/photonDarkGrey60</color>
     <!-- App Bar Top (edit), Header (edit) -->
@@ -103,7 +103,6 @@
     <color name="secondary_text_normal_theme">#A7A2B7</color>
     <color name="contrast_text_normal_theme">@color/primary_text_normal_theme</color>
     <color name="caption_text_normal_theme">@color/photonLightGrey70</color>
-    <color name="above_normal_theme">@color/photonDarkGrey50</color>
     <color name="inset_normal_theme">@color/photonDarkGrey50</color>
     <color name="accent_normal_theme">@color/photonViolet50</color>
     <color name="accent_bright_normal_theme">@color/accent_bright_dark_theme</color>
@@ -112,7 +111,7 @@
     <color name="neutral_normal_theme">@color/photonGrey20</color>
     <color name="neutral_faded_normal_theme">#1FFBFBFE</color>
     <color name="destructive_normal_theme">@color/photonRed40</color>
-    <color name="disabled_normal_theme">#66FBFBFE</color>
+    <color name="disabled_normal_theme">@color/photonLightGrey05A40</color>
     <color name="toggle_off_knob_normal_theme">@color/toggle_off_knob_dark_theme</color>
     <color name="toggle_off_track_normal_theme">@color/toggle_off_track_dark_theme</color>
     <color name="accent_on_dark_background_normal_theme">@color/accent_high_contrast_dark_theme</color>
@@ -135,8 +134,6 @@
     <color name="search_suggestion_indicator_icon_bookmark_color_normal_theme">@color/photonBlue40</color>
     <color name="select_login_header_normal_theme">@color/accent_high_contrast_dark_theme</color>
     <color name="select_credit_card_header_normal_theme">@color/accent_high_contrast_dark_theme</color>
-    <color name="preference_section_header_normal_theme">@color/accent_high_contrast_dark_theme</color>
-    <color name="notification_accent_color_normal_theme">@color/accent_high_contrast_dark_theme</color>
     <color name="menu_item_button_normal_theme">@color/accent_high_contrast_dark_theme</color>
     <color name="recently_used_share_theme">@color/photonDarkGrey10</color>
 
