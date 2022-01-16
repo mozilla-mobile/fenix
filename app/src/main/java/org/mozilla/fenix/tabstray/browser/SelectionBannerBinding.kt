@@ -123,7 +123,7 @@ class SelectionBannerBinding(
             val colorResource = if (isSelectMode) {
                 R.color.fx_mobile_layer_color_accent
             } else {
-                R.color.fx_mobile_layer_color_1
+                R.color.fx_mobile_layer_color_3
             }
 
             val color = ContextCompat.getColor(backgroundView.context, colorResource)
