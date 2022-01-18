@@ -148,7 +148,6 @@
     <color name="caption_text_private_theme">@color/photonLightGrey70</color>
     <color name="foundation_private_theme">#261E4B</color>
     <color name="accent_private_theme">@color/photonViolet50</color>
-    <color name="accent_bright_private_theme">@color/photonViolet70</color>
     <color name="accent_high_contrast_private_theme">#AA71FF</color>
     <color name="tab_ring_private_theme">#F565FF</color>
     <color name="neutral_private_theme">@color/photonGrey20</color>
@@ -164,18 +163,11 @@
     <color name="sync_disconnected_icon_fill_private_theme">@color/photonYellow70</color>
     <color name="sync_disconnected_background_private_theme">#5B5846</color>
     <color name="swipe_delete_background_private_theme">@color/photonInk20</color>
-    <color name="onboarding_card_background_start_gradient_private_theme">@color/photonViolet60</color>
-    <color name="onboarding_card_background_end_gradient_private_theme">@color/photonPurple50</color>
     <color name="onboarding_illustration_deselected_private_theme">#99FBFBFE</color>
-    <color name="add_on_private_browsing_exterior_circle_background_private_theme">@color/accent_private_theme</color>
-    <color name="add_on_private_browsing_interior_icon_background_private_theme">@color/photonWhite</color>
     <color name="prompt_login_edit_text_cursor_color_private_theme">@color/photonViolet50</color>
 
     <!-- Tab Tray -->
     <color name="tab_tray_item_media_background_private_theme">@color/photonViolet50</color>
-
-    <!-- Tab History -->
-    <color name="tab_history_item_selected_background_private_theme">@color/tab_tray_item_selected_background_dark_theme</color>
 
     <!-- Normal theme colors for light mode -->
     <color name="primary_text_normal_theme">@color/primary_text_light_theme</color>
@@ -184,7 +176,6 @@
     <color name="caption_text_normal_theme">@color/photonLightGrey90</color>
     <color name="inset_normal_theme">@color/photonLightGrey30</color>
     <color name="accent_normal_theme">@color/photonInk20</color>
-    <color name="accent_bright_normal_theme">@color/photonViolet70</color>
     <color name="accent_high_contrast_normal_theme">@color/photonInk20</color>
     <color name="tab_ring_normal_theme">@color/photonInk20</color>
     <color name="neutral_normal_theme">@color/photonGrey30</color>
@@ -197,12 +188,9 @@
     <color name="sync_disconnected_icon_fill_normal_theme">@color/photonYellow70</color>
     <color name="sync_disconnected_background_normal_theme">#FFFDE2</color>
     <color name="swipe_delete_background_normal_theme">@color/photonLightGrey30</color>
-    <color name="onboarding_card_background_start_gradient_normal_theme">@color/photonViolet70</color>
-    <color name="onboarding_card_background_end_gradient_normal_theme">@color/photonViolet40</color>
     <color name="onboarding_illustration_selected_normal_theme">@color/photonViolet70</color>
     <color name="onboarding_illustration_deselected_normal_theme">#9915141A</color>
     <color name="add_on_private_browsing_exterior_circle_background_normal_theme">@color/photonViolet70</color>
-    <color name="add_on_private_browsing_interior_icon_background_normal_theme">@color/photonWhite</color>
     <color name="prompt_login_edit_text_cursor_color_normal_theme">@color/photonInk20</color>
     <color name="search_suggestion_indicator_icon_color_normal_theme">@color/photonGreen70</color>
     <color name="search_suggestion_indicator_icon_bookmark_color_normal_theme">@color/photonBlue50</color>
@@ -211,7 +199,6 @@
     <color name="recently_used_share_theme">@color/photonLightGrey30</color>
 
     <!-- Tab tray -->
-    <color name="tab_tray_item_text_normal_theme">@color/primary_text_normal_theme</color>
     <color name="tab_tray_item_url_normal_theme">@color/photonDarkGrey05</color>
     <color name="tab_tray_item_background_normal_theme">@color/photonLightGrey10</color>
     <color name="tab_tray_item_selected_background_normal_theme">#E5DFF4</color>
@@ -272,8 +259,6 @@
     <color name="device_foreground">@color/photonInk80</color>
 
     <!-- Launcher Icon colors -->
-    <color name="nightly_launcher_background">#220033</color>
-    <color name="debug_launcher_background">@color/photonInk20</color>
     <color name="ic_launcher_background">#FDFDFD</color>
 
     <!-- Button Colors -->
