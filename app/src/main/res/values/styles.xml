@@ -28,8 +28,8 @@
             tools:ignore="UnusedResources">@color/destructive_normal_theme</item>
         <item name="mozacInputLayoutErrorIconColor"
             tools:ignore="UnusedResources">@color/destructive_normal_theme</item>
-        <item name="mozacLoginSelectHeaderTextStyle" tools:ignore="UnusedResources">@style/SelectLoginHeaderTextStyle</item>
-        <item name="mozacSelectCreditCardHeaderTextStyle" tools:ignore="UnusedResources">@style/SelectCreditCardHeaderTextStyle</item>
+        <item name="mozacLoginSelectHeaderTextStyle" tools:ignore="UnusedResources">@style/SelectPromptHeaderTextStyle</item>
+        <item name="mozacSelectCreditCardHeaderTextStyle" tools:ignore="UnusedResources">@style/SelectPromptHeaderTextStyle</item>
 
         <!-- Design system color attributes -->
         <!-- Small heading, Text link -->
@@ -49,10 +49,10 @@
         <item name="secondaryText">@color/secondary_text_normal_theme</item>
         <item name="contrastText">@color/contrast_text_normal_theme</item>
         <item name="accent">@color/accent_normal_theme</item>
-        <item name="accentBright">@color/accent_bright_normal_theme</item>
+        <item name="accentBright">@color/photonViolet70</item>
         <item name="accentHighContrast">@color/accent_high_contrast_normal_theme</item>
         <item name="foundation">@color/fx_mobile_layer_color_1</item>
-        <item name="above">@color/above_normal_theme</item>
+        <item name="above">@color/fx_mobile_layer_color_2</item>
         <item name="inset">@color/inset_normal_theme</item>
         <item name="tabRing">@color/tab_ring_normal_theme</item>
         <item name="neutral">@color/neutral_normal_theme</item>
@@ -61,29 +61,28 @@
         <item name="disabled">@color/disabled_normal_theme</item>
         <item name="scrimStart">@color/fx_mobile_layer_color_scrim_start</item>
         <item name="scrimEnd">@color/fx_mobile_layer_color_scrim_end</item>
-        <item name="snackbar">@color/snackbar_normal_theme</item>
+        <item name="snackbar">@color/fx_mobile_action_color_primary</item>
         <item name="accentUsedOnDarkBackground">@color/accent_on_dark_background_normal_theme</item>
-        <item name="toolbarStartGradient">@color/toolbar_start_gradient_normal_theme</item>
-        <item name="toolbarCenterGradient">@color/toolbar_center_gradient_normal_theme</item>
-        <item name="toolbarEndGradient">@color/toolbar_end_gradient_normal_theme</item>
+        <item name="toolbarStartGradient">@color/fx_mobile_layer_color_1</item>
+        <item name="toolbarCenterGradient">@color/fx_mobile_layer_color_1</item>
+        <item name="toolbarEndGradient">@color/fx_mobile_layer_color_1</item>
         <item name="toolbarDivider">@color/toolbar_divider_color_normal_theme</item>
         <item name="fillLinkFromClipboard">@color/fill_link_from_clipboard_normal_theme</item>
         <item name="syncDisconnected">@color/sync_disconnected_icon_fill_normal_theme</item>
         <item name="syncDisconnectedBackground">@color/sync_disconnected_background_normal_theme</item>
         <item name="swipeDeleteBackground">@color/swipe_delete_background_normal_theme</item>
-        <item name="onboardingDarkGradientStartBackground">@color/onboarding_card_background_start_gradient_normal_theme</item>
-        <item name="onboardingDarkGradientEndBackground">@color/onboarding_card_background_end_gradient_normal_theme</item>
+        <item name="onboardingDarkGradientStartBackground">@color/photonViolet70</item>
+        <item name="onboardingDarkGradientEndBackground">@color/photonViolet40</item>
         <item name="onboardingSelected">@color/onboarding_illustration_selected_normal_theme</item>
         <item name="onboardingDeselected">@color/onboarding_illustration_deselected_normal_theme</item>
         <item name="addOnPrivateBrowsingExteriorCircleBackground">@color/add_on_private_browsing_exterior_circle_background_normal_theme</item>
-        <item name="addOnPrivateBrowsingInteriorIconBackground">@color/add_on_private_browsing_interior_icon_background_normal_theme</item>
+        <item name="addOnPrivateBrowsingInteriorIconBackground">@color/photonWhite</item>
         <item name="mozacPromptLoginEditTextCursorColor">@color/prompt_login_edit_text_cursor_color_normal_theme</item>
         <item name="awesomeBarIndicatorColor">@color/search_suggestion_indicator_icon_color_normal_theme</item>
         <item name="awesomeBarIndicatorBookmarkColor">@color/search_suggestion_indicator_icon_bookmark_color_normal_theme</item>
-        <item name="selectLoginHeaderTextColor">@color/select_login_header_normal_theme</item>
-        <item name="selectCreditCardHeaderTextColor">@color/select_credit_card_header_normal_theme</item>
-        <item name="preferenceSectionHeader">@color/preference_section_header_normal_theme</item>
-        <item name="menuItemButtonTintColor">@color/menu_item_button_normal_theme</item>
+        <item name="preferenceSectionHeader">@color/fx_mobile_text_color_accent</item>
+        <item name="selectPromptHeaderTextColor">@color/fx_mobile_text_color_accent</item>
+        <item name="menuItemButtonTintColor">@color/fx_mobile_text_color_accent</item>
         <item name="recentlyUsedShareMenu">@color/recently_used_share_theme</item>
 
         <!-- Shared widget colors -->
@@ -155,13 +154,8 @@
         <item name="buttonBarPositiveButtonStyle">@style/DialogButtonStyleLight</item>
     </style>
 
-    <style name="SelectLoginHeaderTextStyle" parent="Header16TextStyle">
-        <item name="android:textColor">?selectLoginHeaderTextColor</item>
-        <item name="drawableTint">?accentHighContrast</item>
-    </style>
-
-    <style name="SelectCreditCardHeaderTextStyle" parent="Header16TextStyle">
-        <item name="android:textColor">?selectCreditCardHeaderTextColor</item>
+    <style name="SelectPromptHeaderTextStyle" parent="Header16TextStyle">
+        <item name="android:textColor">?selectPromptHeaderTextColor</item>
         <item name="drawableTint">?accentHighContrast</item>
     </style>
 
@@ -210,11 +204,11 @@
         <item name="bottomSheetDialogTheme">@style/BottomSheetPrivate</item>
 
         <item name="mozacInputLayoutErrorTextColor"
-            tools:ignore="UnusedResources">@color/destructive_private_theme</item>
+            tools:ignore="UnusedResources">@color/fx_mobile_private_text_color_warning_dark</item>
         <item name="mozacInputLayoutErrorIconColor"
-            tools:ignore="UnusedResources">@color/destructive_private_theme</item>
-        <item name="mozacLoginSelectHeaderTextStyle" tools:ignore="UnusedResources">@style/SelectLoginHeaderTextStyle</item>
-        <item name="mozacSelectCreditCardHeaderTextStyle" tools:ignore="UnusedResources">@style/SelectCreditCardHeaderTextStyle</item>
+            tools:ignore="UnusedResources">@color/fx_mobile_private_text_color_warning_dark</item>
+        <item name="mozacLoginSelectHeaderTextStyle" tools:ignore="UnusedResources">@style/SelectPromptHeaderTextStyle</item>
+        <item name="mozacSelectCreditCardHeaderTextStyle" tools:ignore="UnusedResources">@style/SelectPromptHeaderTextStyle</item>
 
         <!-- Design system color attributes -->
         <!-- Small heading, Text link -->
@@ -230,42 +224,41 @@
         <!-- Updated color attributes -->
         <item name="primaryText">@color/fx_mobile_private_text_color_primary</item>
         <item name="secondaryText">@color/secondary_text_private_theme</item>
-        <item name="contrastText">@color/contrast_text_private_theme</item>
+        <item name="contrastText">@color/fx_mobile_private_text_color_primary</item>
         <item name="accent">@color/accent_private_theme</item>
-        <item name="accentBright">@color/accent_bright_private_theme</item>
+        <item name="accentBright">@color/photonViolet70</item>
         <item name="accentHighContrast">@color/accent_high_contrast_private_theme</item>
         <item name="foundation">@color/foundation_private_theme</item>
-        <item name="above">@color/above_private_theme</item>
-        <item name="inset">@color/inset_private_theme</item>
+        <item name="above">@color/fx_mobile_private_layer_color_1</item>
+        <item name="inset">@color/fx_mobile_private_layer_color_1</item>
         <item name="tabRing">@color/tab_ring_private_theme</item>
         <item name="neutral">@color/neutral_private_theme</item>
         <item name="neutralFaded">@color/neutral_faded_private_theme</item>
-        <item name="destructive">@color/destructive_private_theme</item>
+        <item name="destructive">@color/fx_mobile_private_text_color_warning_dark</item>
         <item name="disabled">@color/disabled_private_theme</item>
         <item name="scrimStart">@color/scrimStart_private_theme</item>
         <item name="scrimEnd">@color/scrimEnd_private_theme</item>
         <item name="snackbar">@color/snackbar_private_theme</item>
-        <item name="accentUsedOnDarkBackground">@color/accent_on_dark_background_private_theme</item>
+        <item name="accentUsedOnDarkBackground">@color/accent_high_contrast_private_theme</item>
         <item name="toolbarStartGradient">@color/toolbar_start_gradient_private_theme</item>
         <item name="toolbarCenterGradient">@color/toolbar_center_gradient_private_theme</item>
         <item name="toolbarEndGradient">@color/toolbar_end_gradient_private_theme</item>
         <item name="toolbarDivider">@color/toolbar_divider_color_private_theme</item>
-        <item name="fillLinkFromClipboard">@color/fill_link_from_clipboard_private_theme</item>
+        <item name="fillLinkFromClipboard">@color/accent_high_contrast_private_theme</item>
         <item name="syncDisconnected">@color/sync_disconnected_icon_fill_private_theme</item>
         <item name="syncDisconnectedBackground">@color/sync_disconnected_background_private_theme</item>
         <item name="swipeDeleteBackground">@color/swipe_delete_background_private_theme</item>
-        <item name="onboardingDarkGradientStartBackground">@color/onboarding_card_background_start_gradient_private_theme</item>
-        <item name="onboardingDarkGradientEndBackground">@color/onboarding_card_background_end_gradient_private_theme</item>
-        <item name="onboardingSelected">@color/onboarding_illustration_selected_private_theme</item>
+        <item name="onboardingDarkGradientStartBackground">@color/photonViolet60</item>
+        <item name="onboardingDarkGradientEndBackground">@color/photonPurple50</item>
+        <item name="onboardingSelected">@color/accent_private_theme</item>
         <item name="onboardingDeselected">@color/onboarding_illustration_deselected_private_theme</item>
-        <item name="addOnPrivateBrowsingExteriorCircleBackground">@color/add_on_private_browsing_exterior_circle_background_private_theme</item>
-        <item name="addOnPrivateBrowsingInteriorIconBackground">@color/add_on_private_browsing_interior_icon_background_private_theme</item>
+        <item name="addOnPrivateBrowsingExteriorCircleBackground">@color/accent_private_theme</item>
+        <item name="addOnPrivateBrowsingInteriorIconBackground">@color/photonWhite</item>
         <item name="mozacPromptLoginEditTextCursorColor">@color/prompt_login_edit_text_cursor_color_private_theme</item>
         <item name="awesomeBarIndicatorColor">@color/photonGreen60</item>
         <item name="awesomeBarIndicatorBookmarkColor">@color/photonBlue40</item>
-        <item name="selectLoginHeaderTextColor">@color/accent_high_contrast_private_theme</item>
-        <item name="selectCreditCardHeaderTextColor">@color/accent_high_contrast_private_theme</item>
-        <item name="preferenceSectionHeader">@color/accent_high_contrast_dark_theme</item>
+        <item name="selectPromptHeaderTextColor">@color/accent_high_contrast_private_theme</item>
+        <item name="preferenceSectionHeader">@color/photonViolet40</item>
         <item name="menuItemButtonTintColor">@color/accent_high_contrast_private_theme</item>
 
         <!-- Shared widget colors -->
@@ -280,7 +273,7 @@
         <item name="tabTrayThumbnailIcon">@color/tab_tray_item_thumbnail_icon_normal_theme</item>
 
         <!-- Tab History -->
-        <item name="tabHistoryItemSelectedBackground">@color/tab_history_item_selected_background_private_theme</item>
+        <item name="tabHistoryItemSelectedBackground">@color/tab_tray_item_selected_background_dark_theme</item>
 
         <!-- Drawables -->
         <item name="fenixLogo">@drawable/ic_logo_wordmark_private</item>
@@ -288,7 +281,7 @@
         <item name="bottomBarBackground">@drawable/private_home_bottom_bar_background_gradient</item>
         <item name="bottomBarBackgroundTop">@drawable/private_home_bottom_bar_background_gradient_top</item>
         <item name="privateBrowsingButtonBackground">@color/fx_mobile_private_text_color_primary</item>
-        <item name="privateBrowsingButtonAccent">@color/above_private_theme</item>
+        <item name="privateBrowsingButtonAccent">@color/fx_mobile_private_layer_color_1</item>
     </style>
 
     <style name="Mozac.Browser.Menu" parent="" tools:ignore="UnusedResources">
