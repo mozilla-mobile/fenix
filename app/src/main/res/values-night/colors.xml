@@ -105,7 +105,6 @@
     <color name="caption_text_normal_theme">@color/photonLightGrey70</color>
     <color name="inset_normal_theme">@color/photonDarkGrey50</color>
     <color name="accent_normal_theme">@color/photonViolet50</color>
-    <color name="accent_bright_normal_theme">@color/photonViolet70</color>
     <color name="accent_high_contrast_normal_theme">@color/photonViolet40</color>
     <color name="tab_ring_normal_theme">@color/accent_normal_theme</color>
     <color name="neutral_normal_theme">@color/photonGrey20</color>
@@ -120,12 +119,9 @@
     <color name="sync_disconnected_icon_fill_normal_theme">#FFF36E</color>
     <color name="sync_disconnected_background_normal_theme">#5B5846</color>
     <color name="swipe_delete_background_normal_theme">@color/photonDarkGrey20</color>
-    <color name="onboarding_card_background_start_gradient_normal_theme">@color/photonViolet70</color>
-    <color name="onboarding_card_background_end_gradient_normal_theme">@color/photonViolet40</color>
     <color name="onboarding_illustration_selected_normal_theme">@color/accent_normal_theme</color>
     <color name="onboarding_illustration_deselected_normal_theme">#99FBFBFE</color>
     <color name="add_on_private_browsing_exterior_circle_background_normal_theme">@color/accent_normal_theme</color>
-    <color name="add_on_private_browsing_interior_icon_background_normal_theme">@color/photonWhite</color>
     <color name="prompt_login_edit_text_cursor_color_normal_theme">@color/photonViolet50</color>
     <color name="search_suggestion_indicator_icon_color_normal_theme">@color/photonGreen60</color>
     <color name="search_suggestion_indicator_icon_bookmark_color_normal_theme">@color/photonBlue40</color>
@@ -135,7 +131,6 @@
     <color name="mozac_widget_favicon_border_normal_theme">@color/photonDarkGrey10</color>
 
     <!-- Tab tray -->
-    <color name="tab_tray_item_text_normal_theme">@color/primary_text_normal_theme</color>
     <color name="tab_tray_item_url_normal_theme">@color/photonLightGrey60</color>
     <color name="tab_tray_item_background_normal_theme">@color/photonDarkGrey80</color>
     <color name="tab_tray_item_selected_background_normal_theme">@color/tab_tray_item_selected_background_dark_theme</color>
