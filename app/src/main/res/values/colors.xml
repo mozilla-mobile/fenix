@@ -63,8 +63,12 @@
     <!-- Icon -->
     <!-- Primary icon -->
     <color name="fx_mobile_icon_color_primary" tools:ignore="UnusedResources">@color/photonDarkGrey90</color>
+    <!-- Inactive tab -->
+    <color name="fx_mobile_icon_color_primary_inactive" tools:ignore="UnusedResources">@color/photonDarkGrey90A60</color>
     <!-- Secondary icon -->
     <color name="fx_mobile_icon_color_secondary" tools:ignore="UnusedResources">@color/photonDarkGrey05</color>
+    <!-- Active tab -->
+    <color name="fx_mobile_icon_color_active" tools:ignore="UnusedResources">@color/photonInk20</color>
     <!-- Disabled icon -->
     <color name="fx_mobile_icon_color_disabled" tools:ignore="UnusedResources">@color/photonLightGrey70</color>
     <!-- Icon inverted (on color) -->
@@ -181,7 +185,6 @@
     <color name="neutral_faded_normal_theme">@color/photonGrey20</color>
     <color name="destructive_normal_theme">@color/photonRed70</color>
     <color name="disabled_normal_theme">#6620123A</color>
-    <color name="accent_on_dark_background_normal_theme">@color/photonViolet70</color>
     <color name="toolbar_divider_color_normal_theme">@color/photonLightGrey50</color>
     <color name="fill_link_from_clipboard_normal_theme">@color/photonInk20</color>
     <color name="sync_disconnected_icon_fill_normal_theme">@color/photonYellow70</color>
