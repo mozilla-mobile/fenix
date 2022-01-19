@@ -91,4 +91,14 @@ object FeatureFlags {
      * Enables showing the wallpaper functionality.
      */
     val showWallpapers = Config.channel.isNightlyOrDebug
+
+    /**
+     * Enables the Contile top sites.
+     */
+    const val contileFeature = false
+
+    /**
+     * Enables history improvement features.
+     */
+    val historyImprovementFeatures = Config.channel.isNightlyOrDebug
 }

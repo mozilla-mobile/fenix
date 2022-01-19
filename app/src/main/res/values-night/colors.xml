@@ -13,7 +13,7 @@
     <!-- App Bar Top, App Bar Bottom, Frontlayer header -->
     <color name="fx_mobile_layer_color_3" tools:ignore="UnusedResources">@color/photonDarkGrey60</color>
     <!-- App Bar Top (edit), Header (edit) -->
-    <color name="fx_mobile_layer_color_accent" tools:ignore="UnusedResources">@color/photonViolet40</color>
+    <color name="fx_mobile_layer_color_accent">@color/photonViolet40</color>
     <!-- Selected tab -->
     <color name="fx_mobile_layer_color_accent_nonopaque">@color/photonViolet50A32</color>
     <color name="fx_mobile_layer_color_scrim" tools:ignore="UnusedResources">@color/photonDarkGrey05A45</color>
@@ -113,9 +113,8 @@
     <color name="disabled_normal_theme">@color/photonLightGrey05A40</color>
     <color name="toggle_off_knob_normal_theme">@color/toggle_off_knob_dark_theme</color>
     <color name="toggle_off_track_normal_theme">@color/toggle_off_track_dark_theme</color>
-    <color name="accent_on_dark_background_normal_theme">@color/photonViolet40</color>
     <color name="toolbar_divider_color_normal_theme">@color/photonDarkGrey10</color>
-    <color name="fill_link_from_clipboard_normal_theme">@color/accent_on_dark_background_normal_theme</color>
+    <color name="fill_link_from_clipboard_normal_theme">@color/photonViolet40</color>
     <color name="sync_disconnected_icon_fill_normal_theme">#FFF36E</color>
     <color name="sync_disconnected_background_normal_theme">#5B5846</color>
     <color name="swipe_delete_background_normal_theme">@color/photonDarkGrey20</color>
@@ -135,8 +134,6 @@
     <color name="tab_tray_item_background_normal_theme">@color/photonDarkGrey80</color>
     <color name="tab_tray_item_selected_background_normal_theme">@color/tab_tray_item_selected_background_dark_theme</color>
     <color name="tab_tray_item_divider_normal_theme">@color/photonDarkGrey10</color>
-    <color name="tab_tray_item_media_background_normal_theme">@color/photonViolet50</color>
-    <color name="tab_tray_heading_icon_normal_theme">@color/photonViolet50</color>
     <color name="tab_tray_heading_icon_inactive_normal_theme">@color/photonLightGrey05</color>
     <color name="tab_tray_heading_icon_menu_normal_theme">@color/photonLightGrey05</color>
     <color name="tab_tray_item_thumbnail_background_normal_theme">@color/photonDarkGrey50</color>

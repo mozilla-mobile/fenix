@@ -62,7 +62,7 @@
         <item name="scrimStart">@color/fx_mobile_layer_color_scrim_start</item>
         <item name="scrimEnd">@color/fx_mobile_layer_color_scrim_end</item>
         <item name="snackbar">@color/fx_mobile_action_color_primary</item>
-        <item name="accentUsedOnDarkBackground">@color/accent_on_dark_background_normal_theme</item>
+        <item name="accentUsedOnDarkBackground">@color/fx_mobile_text_color_accent</item>
         <item name="toolbarStartGradient">@color/fx_mobile_layer_color_1</item>
         <item name="toolbarCenterGradient">@color/fx_mobile_layer_color_1</item>
         <item name="toolbarEndGradient">@color/fx_mobile_layer_color_1</item>
@@ -91,7 +91,7 @@
         <item name="mozac_widget_favicon_background_color">@color/mozac_widget_favicon_background_normal_theme</item>
         <item name="mozac_widget_favicon_border_color">@color/mozac_widget_favicon_border_normal_theme</item>
 
-        <item name="tabTrayItemMediaBackground">@color/tab_tray_item_media_background_normal_theme</item>
+        <item name="tabTrayItemMediaBackground">@color/accent_normal_theme</item>
         <item name="tabTrayThumbnailItemBackground">@color/tab_tray_item_thumbnail_background_normal_theme</item>
         <item name="tabTrayThumbnailIcon">@color/tab_tray_item_thumbnail_icon_normal_theme</item>
 
@@ -235,7 +235,7 @@
         <item name="neutral">@color/neutral_private_theme</item>
         <item name="neutralFaded">@color/neutral_faded_private_theme</item>
         <item name="destructive">@color/fx_mobile_private_text_color_warning_dark</item>
-        <item name="disabled">@color/disabled_private_theme</item>
+        <item name="disabled">@color/fx_mobile_private_text_color_disabled</item>
         <item name="scrimStart">@color/scrimStart_private_theme</item>
         <item name="scrimEnd">@color/scrimEnd_private_theme</item>
         <item name="snackbar">@color/snackbar_private_theme</item>
