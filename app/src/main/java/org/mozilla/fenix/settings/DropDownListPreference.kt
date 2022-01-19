@@ -16,10 +16,6 @@ class DropDownListPreference @JvmOverloads constructor(
     attrs: AttributeSet? = null
 ) : DropDownPreference(context, attrs) {
 
-    init {
-        layoutResource = R.layout.dropdown_preference_etp
-    }
-
     override fun createAdapter(): ArrayAdapter<Any> {
         return ArrayAdapter(context, R.layout.etp_dropdown_item)
     }

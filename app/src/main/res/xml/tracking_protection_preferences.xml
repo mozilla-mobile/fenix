@@ -44,6 +44,7 @@
         android:entries="@array/cookies_options_entries"
         android:entryValues="@array/cookies_options_entry_values"
         android:key="@string/pref_key_tracking_protection_custom_cookies_select"
+        android:layout="@layout/dropdown_preference_etp"
         app:useSimpleSummaryProvider="true" />
     <CheckBoxPreference
         android:defaultValue="true"
@@ -57,6 +58,7 @@
         android:entries="@array/tracking_content_options_entries"
         android:entryValues="@array/tracking_content_options_entry_values"
         android:key="@string/pref_key_tracking_protection_custom_tracking_content_select"
+        android:layout="@layout/dropdown_preference_etp"
         app:useSimpleSummaryProvider="true" />
     <CheckBoxPreference
         android:defaultValue="true"
