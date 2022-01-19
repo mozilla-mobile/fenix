@@ -42,15 +42,15 @@
     <!-- Switch thumb OFF -->
     <color name="fx_mobile_action_color_form_off" tools:ignore="UnusedResources">@color/photonLightGrey05</color>
     <!-- Scroll indicator active -->
-    <color name="fx_mobile_action_color_indicator_active" tools:ignore="UnusedResources">@color/photonLightGrey90</color>
+    <color name="fx_mobile_action_color_indicator_active">@color/photonLightGrey90</color>
     <!-- Scroll indicator inactive -->
-    <color name="fx_mobile_action_color_indicator_inactive" tools:ignore="UnusedResources">@color/photonDarkGrey05</color>
+    <color name="fx_mobile_action_color_indicator_inactive">@color/photonDarkGrey05</color>
 
     <!-- Text -->
     <!-- Primary text -->
     <color name="fx_mobile_text_color_primary">@color/photonLightGrey05</color>
     <!-- Secondary text -->
-    <color name="fx_mobile_text_color_secondary" tools:ignore="UnusedResources">@color/photonLightGrey40</color>
+    <color name="fx_mobile_text_color_secondary">@color/photonLightGrey40</color>
     <!-- Disabled text -->
     <color name="fx_mobile_text_color_disabled" tools:ignore="UnusedResources">@color/photonLightGrey05A40</color>
     <!-- Warning text -->
@@ -63,8 +63,12 @@
     <!-- Icon -->
     <!-- Primary icon -->
     <color name="fx_mobile_icon_color_primary" tools:ignore="UnusedResources">@color/photonLightGrey05</color>
+    <!-- Inactive tab -->
+    <color name="fx_mobile_icon_color_primary_inactive" tools:ignore="UnusedResources">@color/photonLightGrey05A60</color>
     <!-- Secondary icon -->
     <color name="fx_mobile_icon_color_secondary" tools:ignore="UnusedResources">@color/photonLightGrey40</color>
+    <!-- Active tab -->
+    <color name="fx_mobile_icon_color_active" tools:ignore="UnusedResources">@color/photonViolet40</color>
     <!-- Disabled icon -->
     <color name="fx_mobile_icon_color_disabled" tools:ignore="UnusedResources">@color/photonLightGrey70</color>
     <!-- Icon inverted (on color) -->
@@ -113,9 +117,8 @@
     <color name="disabled_normal_theme">@color/photonLightGrey05A40</color>
     <color name="toggle_off_knob_normal_theme">@color/toggle_off_knob_dark_theme</color>
     <color name="toggle_off_track_normal_theme">@color/toggle_off_track_dark_theme</color>
-    <color name="accent_on_dark_background_normal_theme">@color/photonViolet40</color>
     <color name="toolbar_divider_color_normal_theme">@color/photonDarkGrey10</color>
-    <color name="fill_link_from_clipboard_normal_theme">@color/accent_on_dark_background_normal_theme</color>
+    <color name="fill_link_from_clipboard_normal_theme">@color/photonViolet40</color>
     <color name="sync_disconnected_icon_fill_normal_theme">#FFF36E</color>
     <color name="sync_disconnected_background_normal_theme">#5B5846</color>
     <color name="swipe_delete_background_normal_theme">@color/photonDarkGrey20</color>
@@ -131,7 +134,6 @@
     <color name="mozac_widget_favicon_border_normal_theme">@color/photonDarkGrey10</color>
 
     <!-- Tab tray -->
-    <color name="tab_tray_item_url_normal_theme">@color/photonLightGrey60</color>
     <color name="tab_tray_item_background_normal_theme">@color/photonDarkGrey80</color>
     <color name="tab_tray_item_selected_background_normal_theme">@color/tab_tray_item_selected_background_dark_theme</color>
     <color name="tab_tray_heading_icon_inactive_normal_theme">@color/photonLightGrey05</color>
@@ -143,8 +145,6 @@
     <color name="tab_history_item_selected_background_normal_theme">@color/tab_tray_item_selected_background_dark_theme</color>
 
     <!--Top site colors -->
-    <color name="top_site_pager_dot">@color/photonDarkGrey40</color>
-    <color name="top_site_pager_dot_selected">@color/photonDarkGrey05</color>
     <color name="top_site_pin_icon_color">@color/photonLightGrey20</color>
     <color name="top_sites_border_color">@color/photonDarkGrey90</color>
 
