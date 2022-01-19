@@ -31,6 +31,16 @@
         <item>@string/private_string</item>
     </string-array>
 
+    <string-array name="https_only_options_entries">
+        <item>@string/preference_https_only_content_1</item>
+        <item>@string/preference_https_only_content_2</item>
+    </string-array>
+
+    <string-array name="https_only_options_entry_values">
+        <item>@string/all</item>
+        <item>@string/private_string</item>
+    </string-array>
+
     <string name="resource_scheme">"resource://"</string>
     <string name="chrome_scheme">"chrome://</string>
     <string name="about_scheme">"about:"</string>

@@ -156,6 +156,10 @@
     <string name="pref_key_tracking_protection_custom_fingerprinters" translatable="false">pref_key_tracking_protection_custom_fingerprinters</string>
     <string name="pref_key_tracking_protection_redirect_trackers" translatable="false">pref_key_tracking_protection_redirect_trackers</string>
 
+    <!-- Https only Settings -->
+    <string name="pref_key_https_only_enabled" translatable="false">pref_key_https_only</string>
+    <string name="pref_key_https_only_enabled_mode" translatable="false">pref_key_https_only_enabled_mode</string>
+
     <!-- Logins Settings -->
     <string name="pref_key_save_logins_settings" translatable="false">pref_key_save_logins_settings</string>
     <string name="pref_key_save_logins" translatable="false">pref_key_save_logins</string>

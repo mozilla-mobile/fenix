@@ -25,6 +25,7 @@ import mozilla.components.browser.thumbnails.storage.ThumbnailStorage
 import mozilla.components.concept.base.crash.CrashReporting
 import mozilla.components.concept.engine.DefaultSettings
 import mozilla.components.concept.engine.Engine
+import mozilla.components.concept.engine.Engine.HttpsOnlyMode
 import mozilla.components.concept.engine.mediaquery.PreferredColorScheme
 import mozilla.components.concept.fetch.Client
 import mozilla.components.feature.customtabs.store.CustomTabsServiceStore
@@ -119,7 +120,8 @@ class Core(
             clearColor = ContextCompat.getColor(
                 context,
                 R.color.fx_mobile_layer_color_1
-            )
+            ),
+            httpsOnlyMode = getHttpsOnlyMode()
         )
 
         GeckoEngine(
@@ -446,6 +448,27 @@ class Core(
             context.settings().shouldUseLightTheme -> PreferredColorScheme.Light
             inDark -> PreferredColorScheme.Dark
             else -> PreferredColorScheme.Light
+        }
+    }
+
+    /**
+     * Get the current HttpsOnlyMode based on user preferences.
+     *
+     * @param enabled Optional [Boolean] overriding the current user preference for whether https-only mode
+     * is enabled or not, used when computing the result.
+     * @param mode Optional [String] overriding the current user preference for the mode in https-only mode
+     * is enabled (for all tabs / just for private tabs), used when computing the result.
+     */
+    fun getHttpsOnlyMode(
+        enabled: Boolean = context.settings().shouldUseHttpOnly,
+        mode: String = context.settings().shouldUseHttpOnlyMode
+    ): HttpsOnlyMode {
+        return if (!enabled) {
+            HttpsOnlyMode.DISABLED
+        } else if (mode == context.getString(R.string.all)) {
+            HttpsOnlyMode.ENABLED
+        } else {
+            HttpsOnlyMode.ENABLED_PRIVATE_ONLY
         }
     }
 

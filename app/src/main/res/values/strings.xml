@@ -424,6 +424,16 @@
     <string name="preferences_addons">Add-ons</string>
     <!-- Preference for notifications -->
     <string name="preferences_notifications">Notifications</string>
+    <!-- Title of the preference to enable "HTTPS-Only" mode -->
+    <string name="preference_https_only_title">HTTPS-Only Mode</string>
+    <!-- Description of the preference to enable "HTTPS-Only" mode. %1$s will get replaced with the name of the app. -->
+    <string name="preference_https_only_summary">HTTPS provides a secure, encrypted connection between %1$s and the websites you visit. Most websites support HTTPS, and if HTTPS-Only Mode is enabled, then %1$s will upgrade all connections to HTTPS.</string>
+    <!-- Text displayed that links to website about "HTTP-Only" Mode -->
+    <string name="preference_http_only_learn_more">Learn more</string>
+    <!-- Option for for the https only setting-->
+    <string name="preference_https_only_content_1">In all tabs</string>
+    <!-- Option for for the https only setting-->
+    <string name="preference_https_only_content_2">Only in Private tabs</string>
 
     <!-- Add-on Preferences -->
     <!-- Preference to customize the configured AMO (addons.mozilla.org) collection -->

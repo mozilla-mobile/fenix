@@ -18,6 +18,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.settings.PhoneFeature
 import org.mozilla.fenix.settings.deletebrowsingdata.DeleteBrowsingDataOnQuitType
@@ -799,5 +800,17 @@ class SettingsTest {
         every { settings.hasInactiveTabsAutoCloseDialogBeenDismissed } returns false
 
         assertTrue(settings.shouldShowInactiveTabsAutoCloseDialog(20))
+    }
+
+    @Test
+    fun `WHEN shouldUseHttpOnly is called THEN return false as the default`() {
+        assertFalse(settings.shouldUseHttpOnly)
+    }
+
+    @Test
+    fun `WHEN shouldUseHttpOnlyMode is called THEN return all as the default`() {
+        val result = settings.shouldUseHttpOnlyMode
+
+        assertEquals(testContext.getString(R.string.all), result)
     }
 }

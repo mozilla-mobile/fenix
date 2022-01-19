@@ -22,6 +22,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.preference.DropDownPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
@@ -466,6 +467,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         setupAmoCollectionOverridePreference(requireContext().settings())
         setupAllowDomesticChinaFxaServerPreference()
+        setupHttpsOnlyPreferences()
     }
 
     /**
@@ -603,6 +605,51 @@ class SettingsFragment : PreferenceFragmentCompat() {
                         FXA_SYNC_OVERRIDE_EXIT_DELAY
                     )
                 }
+        }
+    }
+
+    @VisibleForTesting
+    internal fun setupHttpsOnlyPreferences() {
+        val httpsOnlyPreference = findPreference<LearnMoreSwitchPreference>(
+            getPreferenceKey(R.string.pref_key_https_only_enabled)
+        )
+        val httpOnlyModePreference = findPreference<DropDownPreference>(
+            getPreferenceKey(R.string.pref_key_https_only_enabled_mode)
+        )
+
+        httpsOnlyPreference?.apply {
+            summary = getString(
+                R.string.preference_https_only_summary,
+                context.getString(R.string.app_name)
+            )
+            onLearnMoreClicked = {
+                (activity as HomeActivity).openToBrowserAndLoad(
+                    // To be replaced with a SUMO link when available. This is the desktop link.
+                    // See https://bugzilla.mozilla.org/show_bug.cgi?id=1749353.
+                    searchTermOrURL = "https://support.mozilla.org/en-US/kb/https-only-prefs",
+                    newTab = true,
+                    from = BrowserDirection.FromSettings
+                )
+            }
+            setOnPreferenceChangeListener { _, newValue: Boolean ->
+                with(requireComponents) {
+                    core.engine.settings.httpsOnlyMode = core.getHttpsOnlyMode(enabled = newValue)
+                }
+                context.settings().shouldUseHttpOnly = newValue
+                httpOnlyModePreference?.isVisible = newValue
+                true
+            }
+        }
+
+        httpOnlyModePreference?.apply {
+            isVisible = httpsOnlyPreference?.isChecked == true
+            setOnPreferenceChangeListener { _, newValue: String ->
+                with(requireComponents) {
+                    core.engine.settings.httpsOnlyMode = core.getHttpsOnlyMode(mode = newValue)
+                }
+                context.settings().shouldUseHttpOnlyMode = newValue
+                true
+            }
         }
     }
 

@@ -12,6 +12,7 @@ import io.mockk.mockkObject
 import mozilla.components.concept.fetch.Client
 import mozilla.components.support.test.robolectric.testContext
 import mozilla.components.support.test.rule.MainCoroutineRule
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
@@ -24,6 +25,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.ReleaseChannel
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getPreferenceKey
+import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.utils.Settings
 import org.robolectric.Robolectric
@@ -35,6 +37,7 @@ class SettingsFragmentTest {
     @get:Rule
     val coroutinesTestRule = MainCoroutineRule()
     private val testDispatcher = coroutinesTestRule.testDispatcher
+    private val settingsFragment = SettingsFragment()
 
     @Before
     fun setup() {
@@ -49,19 +52,16 @@ class SettingsFragmentTest {
 
         mockkObject(Config)
         every { Config.channel } returns ReleaseChannel.Nightly
+
+        val activity = Robolectric.buildActivity(FragmentActivity::class.java).create().get()
+        activity.supportFragmentManager.beginTransaction()
+            .add(settingsFragment, "test")
+            .commitNow()
+        testDispatcher.advanceUntilIdle()
     }
 
     @Test
     fun `Add-on collection override pref is visible if debug menu active`() {
-        val settingsFragment = SettingsFragment()
-        val activity = Robolectric.buildActivity(FragmentActivity::class.java).create().get()
-
-        activity.supportFragmentManager.beginTransaction()
-            .add(settingsFragment, "test")
-            .commitNow()
-
-        testDispatcher.advanceUntilIdle()
-
         val preferenceAmoCollectionOverride = settingsFragment.findPreference<Preference>(
             settingsFragment.getPreferenceKey(R.string.pref_key_override_amo_collection)
         )
@@ -78,15 +78,6 @@ class SettingsFragmentTest {
 
     @Test
     fun `Add-on collection override pref is visible if already configured`() {
-        val settingsFragment = SettingsFragment()
-        val activity = Robolectric.buildActivity(FragmentActivity::class.java).create().get()
-
-        activity.supportFragmentManager.beginTransaction()
-            .add(settingsFragment, "test")
-            .commitNow()
-
-        testDispatcher.advanceUntilIdle()
-
         val preferenceAmoCollectionOverride = settingsFragment.findPreference<Preference>(
             settingsFragment.getPreferenceKey(R.string.pref_key_override_amo_collection)
         )
@@ -105,5 +96,34 @@ class SettingsFragmentTest {
         every { settings.amoCollectionOverrideConfigured() } returns true
         settingsFragment.setupAmoCollectionOverridePreference(settings)
         assertTrue(preferenceAmoCollectionOverride.isVisible)
+    }
+
+    @Test
+    fun `GIVEN the HttpsOnly preference is used WHEN setupHttpsOnlyPreferences is called THEN set the appropriate summary`() {
+        val httpsOnlyPreference = settingsFragment.findPreference<Preference>(
+            settingsFragment.getPreferenceKey(R.string.pref_key_https_only_enabled)
+        )!!
+        assertTrue(httpsOnlyPreference.summary.isNullOrEmpty())
+        val summary = testContext.getString(
+            R.string.preference_https_only_summary,
+            testContext.getString(R.string.app_name)
+        )
+
+        settingsFragment.setupHttpsOnlyPreferences()
+
+        assertEquals(summary, httpsOnlyPreference.summary)
+    }
+
+    @Test
+    fun `GIVEN the HttpsOnly preference is disabled WHEN setupHttpsOnlyPreferences is called THEN hide the HttpsOnly dropdown preference`() {
+        settingsFragment.requireComponents.settings.shouldUseHttpOnly = false
+        val httpsOnlyModePreference = settingsFragment.findPreference<Preference>(
+            settingsFragment.getPreferenceKey(R.string.pref_key_https_only_enabled_mode)
+        )!!
+        assertTrue(httpsOnlyModePreference.isVisible)
+
+        settingsFragment.setupHttpsOnlyPreferences()
+
+        assertFalse(httpsOnlyModePreference.isVisible)
     }
 }

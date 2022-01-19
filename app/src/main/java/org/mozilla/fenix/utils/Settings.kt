@@ -506,6 +506,22 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     /**
+     * Whether "Https-only mode" is enabled or not.
+     */
+    var shouldUseHttpOnly by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_https_only_enabled),
+        default = false
+    )
+
+    /**
+     * The tabs for which the "Https-only mode" is enabled - for all tabs or just the private ones.
+     */
+    var shouldUseHttpOnlyMode by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_https_only_enabled_mode),
+        default = appContext.getString(R.string.all)
+    )
+
+    /**
      * Declared as a function for performance purposes. This could be declared as a variable using
      * booleanPreference like other members of this class. However, doing so will make it so it will
      * be initialized once Settings.kt is first called, which in turn will call `isDefaultBrowserBlocking()`.
