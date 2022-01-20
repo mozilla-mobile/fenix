@@ -1105,7 +1105,7 @@ class SmokeTest {
         }.openThreeDotMenu {
         }.clickInstall {
             clickAddAutomaticallyButton()
-        }.openHomeScreenShortcut("yay app") {
+        }.openHomeScreenShortcut("TEST_APP") {
             mDevice.waitForIdle()
             verifyNavURLBarHidden()
         }
