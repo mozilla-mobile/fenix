@@ -368,6 +368,15 @@ android.applicationVariants.all { variant ->
     }
 
 // -------------------------------------------------------------------------------------------------
+// CI Build environment
+// -------------------------------------------------------------------------------------------------
+    println("Build environment")
+
+    println("os.name         ${System.getProperty('os.name')}")
+    println("os.arch         ${System.getProperty('os.arch')}")
+    println("os.version      ${System.getProperty('os.version')}")
+
+// -------------------------------------------------------------------------------------------------
 // BuildConfig: Set flag for official builds; similar to MOZILLA_OFFICIAL in mozilla-central.
 // -------------------------------------------------------------------------------------------------
 
