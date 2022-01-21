@@ -306,6 +306,15 @@ class BrowserRobot {
         }.bookmarkPage { }
     }
 
+    fun clickLinkMatchingText(expectedText: String) {
+        mDevice.findObject(UiSelector().resourceId("$packageName:id/engineView"))
+            .waitForExists(waitingTime)
+        mDevice.findObject(UiSelector().textContains(expectedText)).waitForExists(waitingTime)
+
+        val element = mDevice.findObject(UiSelector().textContains(expectedText))
+        element.click()
+    }
+
     fun longClickMatchingText(expectedText: String) {
         try {
             mDevice.waitForWindowUpdate(packageName, waitingTime)
@@ -562,6 +571,32 @@ class BrowserRobot {
 
         submitLoginButton.click()
         mDevice.waitForIdle()
+    }
+
+    fun verifyPrefilledLoginCredentials(userName: String, shortcutTitle: String) {
+        mDevice.waitForIdle(waitingTime)
+
+        var currentTries = 0
+        while (currentTries++ < 3) {
+            try {
+                assertTrue(submitLoginButton.waitForExists(waitingTime))
+                submitLoginButton.click()
+                assertTrue(userNameTextBox.text.equals(userName))
+                break
+            } catch (e: AssertionError) {
+                addToHomeScreen {
+                }.searchAndOpenHomeScreenShortcut(shortcutTitle) {}
+            }
+        }
+    }
+
+    fun verifySaveLoginPromptIsDisplayed() {
+        assertTrue(
+            mDevice.findObject(
+                UiSelector()
+                    .resourceId("$packageName:id/feature_prompt_login_fragment")
+            ).waitForExists(waitingTime)
+        )
     }
 
     class Transition {
