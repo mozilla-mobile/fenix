@@ -43,6 +43,7 @@ import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.ext.waitNotNull
 import org.mozilla.fenix.helpers.idlingresource.NetworkConnectionIdlingResource
 import org.mozilla.fenix.ui.robots.mDevice
+import org.mozilla.fenix.utils.IntentUtils
 
 object TestHelper {
 
@@ -168,7 +169,7 @@ object TestHelper {
         val appContext = InstrumentationRegistry.getInstrumentation()
             .targetContext
             .applicationContext
-        val pendingIntent = PendingIntent.getActivity(appContext, 0, Intent(), 0)
+        val pendingIntent = PendingIntent.getActivity(appContext, 0, Intent(), IntentUtils.defaultIntentPendingFlags)
         val customTabsIntent = CustomTabsIntent.Builder()
             .addMenuItem(customMenuItemLabel, pendingIntent)
             .setShareState(CustomTabsIntent.SHARE_STATE_ON)

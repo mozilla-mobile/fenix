@@ -26,6 +26,7 @@ import org.mozilla.fenix.experiments.NimbusFeatures
 import org.mozilla.fenix.experiments.createNimbus
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.perf.lazyMonitored
+import org.mozilla.fenix.utils.IntentUtils
 import org.mozilla.geckoview.BuildConfig.MOZ_APP_BUILDID
 import org.mozilla.geckoview.BuildConfig.MOZ_APP_VENDOR
 import org.mozilla.geckoview.BuildConfig.MOZ_APP_VERSION
@@ -74,7 +75,7 @@ class Analytics(
             context,
             0,
             intent,
-            0
+            IntentUtils.defaultIntentPendingFlags
         )
 
         CrashReporter(
