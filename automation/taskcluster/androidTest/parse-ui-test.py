@@ -49,7 +49,9 @@ def main():
     print = args.output_md.write
 
     print("# Devices\n")
-    print(yaml.safe_dump(android_args["gcloud"]["device"]))
+    #print(yaml.safe_dump(android_args["gcloud"]["device"]))
+    for k, v in android_args["gcloud"]["device"].items():
+        print("* " + k.capitalize() + ":", v)
 
     print("# Results\n")
     print("| matrix | result | logs | details \n")
