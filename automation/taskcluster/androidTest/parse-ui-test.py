@@ -57,8 +57,10 @@ def main():
     for matrix, matrix_result in matrix_ids.items():
         print("| {matrixId} | {outcome} | [logs]({webLink}) | {axes[0][details]}\n".format(**matrix_result))
     print("---\n")
-    print("[mozila-mobile Shared Documentation](https://github.com/mozilla-mobile/shared-docs) | " 
-          "[Mobile Test Engineering](https://mana.mozilla.org/wiki/display/MTE/Mobile+Test+Engineering)")
+    print("# References & Documentation\n")
+    print("* [Automated UI Testing Documentation](https://github.com/mozilla-mobile/shared-docs/blob/main/android/ui-testing.md)")
+    print("* [Mobile Test Engineering on Mana](https://mana.mozilla.org/wiki/display/MTE/Mobile+Test+Engineering)")
+    print("* [Mobile Test Engineering on Slack](https://mozilla.slack.com/archives/C02KDDS9QM9)")
 
 
 if __name__ == "__main__":
