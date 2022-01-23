@@ -103,7 +103,7 @@ class HomeMenu(
     }
 
     val desktopItem = BrowserMenuImageSwitch(
-        imageResource = R.drawable.ic_desktop,
+        imageResource = R.drawable.mozac_ic_device_desktop,
         label = context.getString(R.string.browser_menu_desktop_site),
         initialState = { context.settings().openNextTabInDesktopMode }
     ) { checked ->
@@ -133,7 +133,7 @@ class HomeMenu(
 
         val downloadsItem = BrowserMenuImageText(
             context.getString(R.string.library_downloads),
-            R.drawable.ic_download,
+            R.drawable.mozac_ic_download,
             primaryTextColor
         ) {
             onItemTapped.invoke(Item.Downloads)
@@ -141,7 +141,7 @@ class HomeMenu(
 
         val extensionsItem = BrowserMenuImageText(
             context.getString(R.string.browser_menu_add_ons),
-            R.drawable.ic_addons_extensions,
+            R.drawable.mozac_ic_extensions,
             primaryTextColor
         ) {
             onItemTapped.invoke(Item.Extensions)

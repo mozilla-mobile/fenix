@@ -62,7 +62,7 @@
         <item name="scrimStart">@color/fx_mobile_layer_color_scrim_start</item>
         <item name="scrimEnd">@color/fx_mobile_layer_color_scrim_end</item>
         <item name="snackbar">@color/fx_mobile_action_color_primary</item>
-        <item name="accentUsedOnDarkBackground">@color/accent_on_dark_background_normal_theme</item>
+        <item name="accentUsedOnDarkBackground">@color/fx_mobile_text_color_accent</item>
         <item name="toolbarStartGradient">@color/fx_mobile_layer_color_1</item>
         <item name="toolbarCenterGradient">@color/fx_mobile_layer_color_1</item>
         <item name="toolbarEndGradient">@color/fx_mobile_layer_color_1</item>
@@ -76,7 +76,6 @@
         <item name="onboardingSelected">@color/onboarding_illustration_selected_normal_theme</item>
         <item name="onboardingDeselected">@color/onboarding_illustration_deselected_normal_theme</item>
         <item name="addOnPrivateBrowsingExteriorCircleBackground">@color/add_on_private_browsing_exterior_circle_background_normal_theme</item>
-        <item name="addOnPrivateBrowsingInteriorIconBackground">@color/photonWhite</item>
         <item name="mozacPromptLoginEditTextCursorColor">@color/prompt_login_edit_text_cursor_color_normal_theme</item>
         <item name="awesomeBarIndicatorColor">@color/search_suggestion_indicator_icon_color_normal_theme</item>
         <item name="awesomeBarIndicatorBookmarkColor">@color/search_suggestion_indicator_icon_bookmark_color_normal_theme</item>
@@ -88,8 +87,8 @@
         <!-- Shared widget colors -->
         <item name="mozac_primary_text_color">@color/primary_text_normal_theme</item>
         <item name="mozac_caption_text_color">@color/caption_text_normal_theme</item>
-        <item name="mozac_widget_favicon_background_color">@color/mozac_widget_favicon_background_normal_theme</item>
-        <item name="mozac_widget_favicon_border_color">@color/mozac_widget_favicon_border_normal_theme</item>
+        <item name="mozac_widget_favicon_background_color">@color/fx_mobile_layer_color_2</item>
+        <item name="mozac_widget_favicon_border_color">@color/fx_mobile_border_color_default</item>
 
         <item name="tabTrayItemMediaBackground">@color/accent_normal_theme</item>
         <item name="tabTrayThumbnailItemBackground">@color/tab_tray_item_thumbnail_background_normal_theme</item>
@@ -253,7 +252,6 @@
         <item name="onboardingSelected">@color/accent_private_theme</item>
         <item name="onboardingDeselected">@color/onboarding_illustration_deselected_private_theme</item>
         <item name="addOnPrivateBrowsingExteriorCircleBackground">@color/accent_private_theme</item>
-        <item name="addOnPrivateBrowsingInteriorIconBackground">@color/photonWhite</item>
         <item name="mozacPromptLoginEditTextCursorColor">@color/prompt_login_edit_text_cursor_color_private_theme</item>
         <item name="awesomeBarIndicatorColor">@color/photonGreen60</item>
         <item name="awesomeBarIndicatorBookmarkColor">@color/photonBlue40</item>
@@ -465,7 +463,7 @@
 
     <style name="QuickSettingsLargeText.Icon">
         <item name="android:drawablePadding">8dp</item>
-        <item name="drawableEndCompat">@drawable/ic_arrowhead_right</item>
+        <item name="drawableEndCompat">@drawable/mozac_ic_arrowhead_right</item>
     </style>
 
     <style name="QuickSettingsText.Icon">
