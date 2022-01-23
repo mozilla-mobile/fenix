@@ -1340,7 +1340,7 @@
     <string name="preferences_delete_browsing_data_snackbar">Данные веб-сёрфинга удалены</string>
 
     <!-- Text for the snackbar to show the user that the deletion of browsing data is in progress -->
-    <string name="deleting_browsing_data_in_progress">Удаляем данных веб-сёрфинга…</string>
+    <string name="deleting_browsing_data_in_progress">Удаляем данные веб-сёрфинга…</string>
 
     <!-- Tips -->
     <!-- text for firefox preview moving tip header "Firefox Preview" and "Firefox Nightly" are intentionally hardcoded -->
