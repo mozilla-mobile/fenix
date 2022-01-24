@@ -37,6 +37,8 @@ jobs:
           PREVIOUS_RELEASE_TAG=$(git tag --list iceraven-* --sort=-creatordate | tail -n+2 | head -n 1)
 
           echo "## Automated release of version ${{ github.event.ref }} browser" >>temp_changelog.md
+          echo "<details>" >>temp_changelog.md
+          echo "<summary>Click to expand</summary>" >>temp_changelog.md
           echo " " >>temp_changelog.md
           echo "This is an automated release, consisting of the following changes:" >>temp_changelog.md
           echo "### Change log (commit history since previous release)" >>temp_changelog.md
@@ -44,6 +46,7 @@ jobs:
           git log ${{ github.event.ref }}...$PREVIOUS_RELEASE_TAG --pretty='format:%C(auto)%h (%as) %s' >>temp_changelog.md
           echo " " >>temp_changelog.md
           echo " " >>temp_changelog.md
+          echo "</details>" >>temp_changelog.md
           echo "**NOTE**: @fork-maintainers, you can edit these auto-generated release notes with a more user-friendly summary of the key changes, if needed." >>temp_changelog.md
           echo " " >>temp_changelog.md
 
