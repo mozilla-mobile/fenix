@@ -49,7 +49,7 @@ open class SavedLoginsStorageController(
             }
             deleteLoginJob?.await()
             withContext(Dispatchers.Main) {
-                navController.popBackStack(R.id.savedLoginsFragment, false)
+                navController.navigate(R.id.action_loginDetailFragment_to_savedLoginsFragment)
             }
         }
         deleteJob.invokeOnCompletion {

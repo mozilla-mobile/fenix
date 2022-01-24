@@ -418,6 +418,11 @@
             app:destination="@id/editLoginFragment"
             app:popUpTo="@id/editLoginFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_loginDetailFragment_to_savedLoginsFragment"
+            app:destination="@id/savedLoginsFragment"
+            app:popUpTo="@id/savedLoginsFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
