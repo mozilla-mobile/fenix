@@ -90,7 +90,8 @@ class SearchWidgetProvider : AppWidgetProvider() {
     private fun createTextSearchIntent(context: Context): PendingIntent {
         return Intent(context, IntentReceiverActivity::class.java)
             .let { intent ->
-                val createTextSearchIntentFlags = IntentUtils.defaultIntentPendingFlags or PendingIntent.FLAG_UPDATE_CURRENT
+                val createTextSearchIntentFlags = IntentUtils.defaultIntentPendingFlags or
+                    PendingIntent.FLAG_UPDATE_CURRENT
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 intent.putExtra(HomeActivity.OPEN_TO_SEARCH, StartSearchIntentProcessor.SEARCH_WIDGET)
                 PendingIntent.getActivity(
