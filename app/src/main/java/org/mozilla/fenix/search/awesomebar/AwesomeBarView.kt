@@ -61,7 +61,7 @@ class AwesomeBarView(
             flags: EngineSession.LoadUrlFlags,
             additionalHeaders: Map<String, String>?
         ) {
-            interactor.onUrlTapped(url)
+            interactor.onUrlTapped(url, flags)
         }
     }
 
@@ -148,7 +148,7 @@ class AwesomeBarView(
                 )
             )
 
-        val searchBitmap = getDrawable(activity, R.drawable.ic_search)!!.apply {
+        val searchBitmap = getDrawable(activity, R.drawable.mozac_ic_search)!!.apply {
             colorFilter = createBlendModeColorFilterCompat(primaryTextColor, SRC_IN)
         }.toBitmap()
 
@@ -335,7 +335,7 @@ class AwesomeBarView(
             val components = activity.components
             val primaryTextColor = activity.getColorFromAttr(R.attr.primaryText)
 
-            val searchBitmap = getDrawable(activity, R.drawable.ic_search)!!.apply {
+            val searchBitmap = getDrawable(activity, R.drawable.mozac_ic_search)!!.apply {
                 colorFilter = createBlendModeColorFilterCompat(primaryTextColor, SRC_IN)
             }.toBitmap()
 

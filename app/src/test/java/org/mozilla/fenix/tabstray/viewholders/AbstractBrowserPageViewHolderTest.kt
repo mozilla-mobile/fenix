@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.TextView
+import io.mockk.every
 import io.mockk.mockk
 import mozilla.components.browser.state.state.createTab
 import mozilla.components.browser.state.store.BrowserStore
@@ -16,6 +17,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.tabstray.TabsTrayInteractor
 import org.mozilla.fenix.tabstray.TabsTrayStore
@@ -29,6 +31,10 @@ class AbstractBrowserPageViewHolderTest {
     val browserStore = BrowserStore()
     val interactor = mockk<TabsTrayInteractor>(relaxed = true)
     val browserTrayInteractor = mockk<BrowserTrayInteractor>(relaxed = true)
+    init {
+        every { testContext.components.core.thumbnailStorage } returns mockk()
+        every { testContext.components.settings } returns mockk(relaxed = true)
+    }
     val adapter = BrowserTabsAdapter(testContext, browserTrayInteractor, tabsTrayStore, "Test")
 
     @Test
@@ -42,7 +48,7 @@ class AbstractBrowserPageViewHolderTest {
         viewHolder.bind(adapter)
         viewHolder.attachedToWindow()
 
-        adapter.updateTabs(listOf(createTab(url = "url", id = "tab1")), "tab1")
+        adapter.updateTabs(listOf(createTab(url = "url", id = "tab1")), null, "tab1")
 
         assertTrue(trayList.visibility == VISIBLE)
         assertTrue(emptyList.visibility == GONE)
@@ -59,7 +65,7 @@ class AbstractBrowserPageViewHolderTest {
         viewHolder.bind(adapter)
         viewHolder.attachedToWindow()
 
-        adapter.updateTabs(emptyList(), "")
+        adapter.updateTabs(emptyList(), null, "")
 
         assertTrue(trayList.visibility == GONE)
         assertTrue(emptyList.visibility == VISIBLE)

@@ -4,18 +4,19 @@
 
 package org.mozilla.fenix.ext
 
+import mozilla.components.browser.state.selector.findTab
 import mozilla.components.browser.state.selector.normalTabs
 import mozilla.components.browser.state.selector.selectedNormalTab
 import mozilla.components.browser.state.state.BrowserState
+import mozilla.components.browser.state.state.TabGroup
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.feature.tabs.ext.hasMediaPlayed
 import org.mozilla.fenix.home.recenttabs.RecentTab
-import org.mozilla.fenix.tabstray.browser.TabGroup
-import org.mozilla.fenix.tabstray.ext.isNormalTabActiveWithSearchTerm
+import org.mozilla.fenix.tabstray.SEARCH_TERM_TAB_GROUPS
+import org.mozilla.fenix.tabstray.SEARCH_TERM_TAB_GROUPS_MIN_SIZE
 import org.mozilla.fenix.tabstray.ext.isNormalTabInactive
 import org.mozilla.fenix.utils.Settings
 import java.util.concurrent.TimeUnit
-import kotlin.math.max
 
 /**
  * The time until which a tab is considered in-active (in days).
@@ -30,16 +31,24 @@ val maxActiveTime = TimeUnit.DAYS.toMillis(DEFAULT_ACTIVE_DAYS)
 /**
  * Get the last opened normal tab, last tab with in progress media and last search term group, if available.
  *
- * @return A list of the last opened tab, last tab with in progress media and last search term group
- * if distinct and available or an empty list.
+ * @return A list of the last opened tab not part of the last active search group and
+ * the last active search group if these are available or an empty list.
  */
 fun BrowserState.asRecentTabs(): List<RecentTab> {
     return mutableListOf<RecentTab>().apply {
-        val lastOpenedNormalTab = lastOpenedNormalTab
+        val mostRecentTabsGroup = lastSearchGroup
+        val mostRecentTabNotInGroup = if (mostRecentTabsGroup == null) {
+            lastOpenedNormalTab
+        } else {
+            listOf(selectedNormalTab)
+                .plus(normalTabs.sortedByDescending { it.lastAccess })
+                .filterNot { lastTabGroup?.tabIds?.contains(it?.id) ?: false }
+                .firstOrNull()
+        }
 
-        lastOpenedNormalTab?.let { add(RecentTab.Tab(it)) }
+        mostRecentTabNotInGroup?.let { add(RecentTab.Tab(it)) }
 
-        lastSearchGroup?.let { add(it) }
+        mostRecentTabsGroup?.let { add(it) }
     }
 }
 
@@ -68,59 +77,30 @@ val BrowserState.inProgressMediaTab: TabSessionState?
         .maxByOrNull { it.lastMediaAccessState.lastMediaAccess }
 
 /**
+ * Get the most recently accessed [TabGroup].
+ * Result will be `null` if the currently open normal tabs are not part of a search group.
+ */
+val BrowserState.lastTabGroup: TabGroup?
+    get() = tabPartitions[SEARCH_TERM_TAB_GROUPS]?.tabGroups
+        ?.lastOrNull { it.tabIds.size >= SEARCH_TERM_TAB_GROUPS_MIN_SIZE }
+
+/**
  * Get the most recent search term group.
  */
 val BrowserState.lastSearchGroup: RecentTab.SearchGroup?
     get() {
-        val tabGroup = normalTabs.toSearchGroup().first.lastOrNull() ?: return null
-        val firstTab = tabGroup.tabs.firstOrNull() ?: return null
+        val tabGroup = lastTabGroup ?: return null
+        val firstTabId = tabGroup.tabIds.firstOrNull() ?: return null
+        val firstTab = findTab(firstTabId) ?: return null
 
         return RecentTab.SearchGroup(
-            tabGroup.searchTerm,
-            firstTab.id,
+            tabGroup.id,
+            firstTabId,
             firstTab.content.url,
             firstTab.content.thumbnail,
-            tabGroup.tabs.count()
+            tabGroup.tabIds.size
         )
     }
-
-/**
- * Returns a pair containing a list of search term groups sorted by last access time, and "remainder" tabs that have
- * search terms but should not be in groups (because the group is of size one).
- */
-fun List<TabSessionState>.toSearchGroup(
-    groupSet: Set<String> = emptySet()
-): Pair<List<TabGroup>, List<TabSessionState>> {
-    val data = filter {
-        it.isNormalTabActiveWithSearchTerm(maxActiveTime)
-    }.groupBy {
-        when {
-            it.content.searchTerms.isNotBlank() -> it.content.searchTerms
-            else -> it.historyMetadata?.searchTerm ?: ""
-        }.lowercase()
-    }
-
-    val groupings = data.map { mapEntry ->
-        val searchTerm = mapEntry.key.replaceFirstChar(Char::uppercase)
-        val groupTabs = mapEntry.value
-        val groupMax = groupTabs.fold(0L) { acc, tab ->
-            max(tab.lastAccess, acc)
-        }
-
-        TabGroup(
-            searchTerm = searchTerm,
-            tabs = groupTabs,
-            lastAccess = groupMax
-        )
-    }
-
-    val groups = groupings
-        .filter { it.tabs.size > 1 || groupSet.contains(it.searchTerm) }
-        .sortedBy { it.lastAccess }
-    val remainderTabs = (groupings - groups).flatMap { it.tabs }
-
-    return groups to remainderTabs
-}
 
 /**
  * List of all inactive tabs based on [maxActiveTime].

@@ -27,6 +27,7 @@ import mozilla.components.support.ktx.android.content.stringPreference
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.FeatureFlags
+import org.mozilla.fenix.FeatureFlags.historyImprovementFeatures
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.metrics.MozillaProductDetector
@@ -46,6 +47,7 @@ import org.mozilla.fenix.settings.logins.SortingStrategy
 import org.mozilla.fenix.settings.registerOnSharedPreferenceChangeListener
 import org.mozilla.fenix.settings.sitepermissions.AUTOPLAY_BLOCK_ALL
 import org.mozilla.fenix.settings.sitepermissions.AUTOPLAY_BLOCK_AUDIBLE
+import org.mozilla.fenix.wallpapers.WallpaperManager
 import java.security.InvalidParameterException
 
 private const val AUTOPLAY_USER_SETTING = "AUTOPLAY_USER_SETTING"
@@ -74,6 +76,12 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         const val THREE_DAYS_MS = 3 * ONE_DAY_MS
         const val ONE_WEEK_MS = 60 * 60 * 24 * 7 * 1000L
         const val ONE_MONTH_MS = (60 * 60 * 24 * 365 * 1000L) / 12
+
+        /**
+         * The minimum number a search groups should contain.
+         * Filtering is applied depending on the [historyImprovementFeatures] flag value.
+         */
+        const val SEARCH_GROUP_MINIMUM_SITES: Int = 2
 
         private fun Action.toInt() = when (this) {
             Action.BLOCKED -> BLOCKED_INT
@@ -156,6 +164,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var adjustCreative by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_adjust_creative),
         default = ""
+    )
+
+    var currentWallpaper by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_current_wallpaper),
+        default = WallpaperManager.defaultWallpaper.name
     )
 
     var openLinksInAPrivateTab by booleanPreference(
@@ -484,7 +497,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         }
     }
 
-    val shouldUseDarkTheme by booleanPreference(
+    var shouldUseDarkTheme by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_dark_theme),
         default = false
     )
@@ -576,7 +589,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
 
     val blockCookiesSelectionInCustomTrackingProtection by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_tracking_protection_custom_cookies_select),
-        "social"
+        appContext.getString(R.string.social)
     )
 
     val blockTrackingContentInCustomTrackingProtection by booleanPreference(
@@ -586,7 +599,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
 
     val blockTrackingContentSelectionInCustomTrackingProtection by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_tracking_protection_custom_tracking_content_select),
-        "all"
+        appContext.getString(R.string.all)
     )
 
     val blockCryptominersInCustomTrackingProtection by booleanPreference(
@@ -872,7 +885,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
      */
     var shouldShowInactiveTabsTurnOffSurvey by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_should_show_inactive_tabs_turn_off_survey),
-        default = true
+        default = false
     )
 
     fun getSitePermissionsPhoneFeatureAction(
@@ -934,6 +947,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
                 default = AutoplayAction.ALLOWED
             ),
             persistentStorage = getSitePermissionsPhoneFeatureAction(PhoneFeature.PERSISTENT_STORAGE),
+            crossOriginStorageAccess = getSitePermissionsPhoneFeatureAction(PhoneFeature.CROSS_ORIGIN_STORAGE_ACCESS),
             mediaKeySystemAccess = getSitePermissionsPhoneFeatureAction(PhoneFeature.MEDIA_KEY_SYSTEM_ACCESS)
         )
     }
@@ -947,6 +961,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
             PhoneFeature.AUTOPLAY_AUDIBLE,
             PhoneFeature.AUTOPLAY_INAUDIBLE,
             PhoneFeature.PERSISTENT_STORAGE,
+            PhoneFeature.CROSS_ORIGIN_STORAGE_ACCESS,
             PhoneFeature.MEDIA_KEY_SYSTEM_ACCESS
         ).map { it.getPreferenceKey(appContext) }
 
@@ -1145,8 +1160,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var savedLoginsSortingStrategy: SortingStrategy
         get() {
             return when (savedLoginsMenuHighlightedItem) {
-                SavedLoginsSortingStrategyMenu.Item.AlphabeticallySort ->
-                    SortingStrategy.Alphabetically(appContext.components.publicSuffixList)
+                SavedLoginsSortingStrategyMenu.Item.AlphabeticallySort -> SortingStrategy.Alphabetically
                 SavedLoginsSortingStrategyMenu.Item.LastUsedSort -> SortingStrategy.LastUsed
             }
         }
@@ -1240,5 +1254,14 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         appContext.getPreferenceKey(R.string.pref_key_pocket_homescreen_recommendations),
         featureFlag = FeatureFlags.isPocketRecommendationsFeatureEnabled(appContext),
         default = { appContext.components.analytics.features.homeScreen.isPocketRecommendationsActive() },
+    )
+
+    /**
+     * Indicates if the Contile functionality should be visible.
+     */
+    var showContileFeature by featureFlagPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_enable_contile),
+        default = false,
+        featureFlag = FeatureFlags.contileFeature,
     )
 }

@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.ui
 
+import androidx.core.net.toUri
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
@@ -216,7 +217,7 @@ class SettingsPrivacyTest {
             verifySecurityPromptForLogins()
             tapSetupLater()
             // Verify that the login appears correctly
-            verifySavedLoginFromPrompt()
+            verifySavedLoginFromPrompt("test@example.com")
         }
     }
 
@@ -255,6 +256,30 @@ class SettingsPrivacyTest {
         }.openLoginsAndPasswordSubMenu {
         }.saveLoginsAndPasswordsOptions {
             verifySaveLoginsOptionsView()
+        }
+    }
+
+    @SmokeTest
+    @Test
+    fun openWebsiteForSavedLoginTest() {
+        val loginPage = "https://mozilla-mobile.github.io/testapp/loginForm"
+        val originWebsite = "mozilla-mobile.github.io"
+        val userName = "test"
+        val password = "pass"
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(loginPage.toUri()) {
+            fillAndSubmitLoginCredentials(userName, password)
+            saveLoginFromPrompt("Save")
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openLoginsAndPasswordSubMenu {
+        }.openSavedLogins {
+            verifySecurityPromptForLogins()
+            tapSetupLater()
+            viewSavedLoginDetails(userName)
+        }.goToSavedWebsite {
+            verifyUrl(originWebsite)
         }
     }
 
@@ -480,7 +505,7 @@ class SettingsPrivacyTest {
         }.goBack {
         }.goBack {
         }.openTabDrawer {
-            verifyNoTabsOpened()
+            verifyNoOpenTabsInNormalBrowsing()
         }
     }
 
@@ -515,6 +540,42 @@ class SettingsPrivacyTest {
         }.openThreeDotMenu {
         }.openHistory {
             verifyEmptyHistoryView()
+        }
+    }
+
+    @SmokeTest
+    @Test
+    fun saveLoginsInPWATest() {
+        val pwaPage = "https://mozilla-mobile.github.io/testapp/loginForm"
+        val shortcutTitle = "TEST_APP"
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(pwaPage.toUri()) {
+            verifyNotificationDotOnMainMenu()
+        }.openThreeDotMenu {
+        }.clickInstall {
+            clickAddAutomaticallyButton()
+        }.openHomeScreenShortcut(shortcutTitle) {
+            mDevice.waitForIdle()
+            fillAndSubmitLoginCredentials("mozilla", "firefox")
+            verifySaveLoginPromptIsDisplayed()
+            saveLoginFromPrompt("Save")
+            openAppFromExternalLink(pwaPage)
+
+            browserScreen {
+            }.openThreeDotMenu {
+            }.openSettings {
+            }.openLoginsAndPasswordSubMenu {
+            }.openSavedLogins {
+                verifySecurityPromptForLogins()
+                tapSetupLater()
+                verifySavedLoginFromPrompt("mozilla")
+            }
+
+            addToHomeScreen {
+            }.searchAndOpenHomeScreenShortcut(shortcutTitle) {
+                verifyPrefilledLoginCredentials("mozilla", shortcutTitle)
+            }
         }
     }
 }

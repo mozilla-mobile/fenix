@@ -17,45 +17,50 @@ import mozilla.components.support.ktx.kotlin.tryGetHostFromUrl
  * Class representing a history entry.
  */
 sealed class History : Parcelable {
-    abstract val id: Int
+    abstract val position: Int
     abstract val title: String
     abstract val visitedAt: Long
+    abstract val historyTimeGroup: HistoryItemTimeGroup
     abstract val selected: Boolean
 
     /**
      * A regular history item.
      *
-     * @property id Unique id of the history item.
+     * @property position Position of this item in a result list of other [History] items.
      * @property title Title of the history item.
      * @property url URL of the history item.
      * @property visitedAt Timestamp of when this history item was visited.
+     * @property historyTimeGroup [HistoryItemTimeGroup] of the history item.
      * @property selected Whether or not the history item is selected.
      */
     @Parcelize data class Regular(
-        override val id: Int,
+        override val position: Int,
         override val title: String,
         val url: String,
         override val visitedAt: Long,
+        override val historyTimeGroup: HistoryItemTimeGroup,
         override val selected: Boolean = false
     ) : History()
 
     /**
      * A history metadata item.
      *
-     * @property id Unique id of the history metadata item.
+     * @property position Position of this item in a result list of other [History] items.
      * @property title Title of the history metadata item.
      * @property url URL of the history metadata item.
      * @property visitedAt Timestamp of when this history metadata item was visited.
+     * @property historyTimeGroup [HistoryItemTimeGroup] of the history item.
      * @property totalViewTime Total time the user viewed the page associated with this record.
      * @property historyMetadataKey The [HistoryMetadataKey] of the new tab in case this tab
      * was opened from history.
      * @property selected Whether or not the history metadata item is selected.
      */
     @Parcelize data class Metadata(
-        override val id: Int,
+        override val position: Int,
         override val title: String,
         val url: String,
         override val visitedAt: Long,
+        override val historyTimeGroup: HistoryItemTimeGroup,
         val totalViewTime: Int,
         val historyMetadataKey: HistoryMetadataKey,
         override val selected: Boolean = false
@@ -64,16 +69,18 @@ sealed class History : Parcelable {
     /**
      * A history metadata group.
      *
-     * @property id Unique id of the history metadata group.
+     * @property position Position of this item in a result list of other [History] items.
      * @property title Title of the history metadata group.
      * @property visitedAt Timestamp of when this history metadata group was visited.
+     * @property historyTimeGroup [HistoryItemTimeGroup] of the history item.
      * @property items List of history metadata items associated with the group.
      * @property selected Whether or not the history group is selected.
      */
     @Parcelize data class Group(
-        override val id: Int,
+        override val position: Int,
         override val title: String,
         override val visitedAt: Long,
+        override val historyTimeGroup: HistoryItemTimeGroup,
         val items: List<Metadata>,
         override val selected: Boolean = false
     ) : History()
@@ -82,13 +89,14 @@ sealed class History : Parcelable {
 /**
  * Extension function for converting a [HistoryMetadata] into a [History.Metadata].
  */
-fun HistoryMetadata.toHistoryMetadata(): History.Metadata {
+fun HistoryMetadata.toHistoryMetadata(position: Int): History.Metadata {
     return History.Metadata(
-        id = createdAt.toInt(),
+        position = position,
         title = title?.takeIf(String::isNotEmpty)
             ?: key.url.tryGetHostFromUrl(),
         url = key.url,
         visitedAt = createdAt,
+        historyTimeGroup = HistoryItemTimeGroup.timeGroupForTimestamp(createdAt),
         totalViewTime = totalViewTime,
         historyMetadataKey = key
     )

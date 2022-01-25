@@ -190,6 +190,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
 
         toolbarView = ToolbarView(
             requireContext(),
+            requireContext().settings(),
             interactor,
             historyStorageProvider(),
             isPrivate,
@@ -246,12 +247,15 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
 
         setupConstraints(view)
 
-        // When displayed above browser, dismisses dialog on clicking scrim area
-        if (findNavController().previousBackStackEntry?.destination?.id == R.id.browserFragment) {
-            binding.searchWrapper.setOnClickListener {
-                it.hideKeyboard()
-                dismissAllowingStateLoss()
+        // When displayed above browser or home screen, dismisses keyboard when touching scrim area
+        when (findNavController().previousBackStackEntry?.destination?.id) {
+            R.id.browserFragment, R.id.homeFragment -> {
+                binding.searchWrapper.setOnTouchListener { _, _ ->
+                    binding.searchWrapper.hideKeyboard()
+                    false
+                }
             }
+            else -> {}
         }
 
         binding.searchEnginesShortcutButton.setOnClickListener {
@@ -461,8 +465,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         if (!dialogHandledAction) {
             val imm =
                 requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            @Suppress("DEPRECATION")
-            imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
+            imm.hideSoftInputFromWindow(view?.windowToken, InputMethodManager.HIDE_IMPLICIT_ONLY)
         }
     }
 

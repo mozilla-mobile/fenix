@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.ui.robots
 
 import androidx.test.espresso.Espresso.onView
@@ -29,7 +33,10 @@ class SettingsSubMenuHomepageRobot {
         assertHomepageAfterFourHoursButton()
     }
 
+    fun clickJumpBackInButton() = jumpBackInButton().click()
+    fun clickRecentBookmarksButton() = recentBookmarksButton().click()
     fun clickStartOnHomepageButton() = homepageButton().click()
+    fun clickStartOnLastTabButton() = lastTabButton().click()
 
     class Transition {
 
@@ -43,7 +50,7 @@ class SettingsSubMenuHomepageRobot {
 }
 
 private fun mostVisitedTopSitesButton() =
-    onView(allOf(withText(R.string.top_sites_toggle_top_recent_sites_3)))
+    onView(allOf(withText(R.string.top_sites_toggle_top_recent_sites_4)))
 
 private fun jumpBackInButton() =
     onView(allOf(withText(R.string.customize_toggle_jump_back_in)))
@@ -52,7 +59,7 @@ private fun recentBookmarksButton() =
     onView(allOf(withText(R.string.customize_toggle_recent_bookmarks)))
 
 private fun recentSearchesButton() =
-    onView(allOf(withText(R.string.customize_toggle_recent_searches)))
+    onView(allOf(withText(R.string.customize_toggle_recently_visited)))
 
 private fun pocketButton() =
     onView(allOf(withText(R.string.customize_toggle_pocket)))

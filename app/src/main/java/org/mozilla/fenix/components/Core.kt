@@ -53,6 +53,7 @@ import mozilla.components.feature.webcompat.WebCompatFeature
 import mozilla.components.feature.webcompat.reporter.WebCompatReporterFeature
 import mozilla.components.feature.webnotifications.WebNotificationFeature
 import mozilla.components.lib.dataprotect.SecureAbove22Preferences
+import mozilla.components.service.contile.ContileTopSitesProvider
 import mozilla.components.service.digitalassetlinks.RelationChecker
 import mozilla.components.service.digitalassetlinks.local.StatementApi
 import mozilla.components.service.digitalassetlinks.local.StatementRelationChecker
@@ -82,8 +83,8 @@ import org.mozilla.fenix.perf.StrictModeManager
 import org.mozilla.fenix.perf.lazyMonitored
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.settings.advanced.getSelectedLocale
+import org.mozilla.fenix.tabstray.SearchTermTabGroupMiddleware
 import org.mozilla.fenix.telemetry.TelemetryMiddleware
-import org.mozilla.fenix.utils.Mockable
 import org.mozilla.fenix.utils.getUndoDelay
 import org.mozilla.geckoview.GeckoRuntime
 import java.util.concurrent.TimeUnit
@@ -91,7 +92,6 @@ import java.util.concurrent.TimeUnit
 /**
  * Component group for all core browser functionality.
  */
-@Mockable
 @Suppress("LargeClass")
 class Core(
     private val context: Context,
@@ -119,7 +119,7 @@ class Core(
             enterpriseRootsEnabled = context.settings().allowThirdPartyRootCerts,
             clearColor = ContextCompat.getColor(
                 context,
-                R.color.foundation_normal_theme
+                R.color.fx_mobile_layer_color_1
             )
         )
 
@@ -212,11 +212,20 @@ class Core(
                 PromptMiddleware(),
                 AdsTelemetryMiddleware(adsTelemetry),
                 LastMediaAccessMiddleware(),
-                HistoryMetadataMiddleware(historyMetadataService)
+                HistoryMetadataMiddleware(historyMetadataService),
+                SearchTermTabGroupMiddleware()
             )
 
         BrowserStore(
-            middleware = middlewareList + EngineMiddleware.create(engine)
+            middleware = middlewareList + EngineMiddleware.create(
+                engine,
+                // We are disabling automatic suspending of engine sessions under memory pressure
+                // in Nightly as a test. Instead we solely rely on GeckoView and the Android system
+                // to reclaim memory when needed.
+                // https://github.com/mozilla-mobile/fenix/issues/12731
+                // https://github.com/mozilla-mobile/android-components/issues/11300
+                trimMemoryAutomatically = Config.channel.isReleaseOrBeta
+            )
         ).apply {
             // Install the "icons" WebExtension to automatically load icons for every visited website.
             icons.install(engine, this)
@@ -326,6 +335,8 @@ class Core(
     }
     val pocketStoriesService by lazyMonitored { PocketStoriesService(context, pocketStoriesConfig) }
 
+    val contileTopSitesProvider by lazyMonitored { ContileTopSitesProvider(client) }
+
     val topSitesStorage by lazyMonitored {
         val defaultTopSites = mutableListOf<Pair<String, String>>()
 
@@ -359,6 +370,13 @@ class Core(
                             SupportUtils.TC_URL
                         )
                     )
+
+                    defaultTopSites.add(
+                        Pair(
+                            context.getString(R.string.default_top_site_meituan),
+                            SupportUtils.MEITUAN_URL
+                        )
+                    )
                 } else {
                     defaultTopSites.add(
                         Pair(
@@ -389,9 +407,10 @@ class Core(
         }
 
         DefaultTopSitesStorage(
-            pinnedSiteStorage,
-            historyStorage,
-            defaultTopSites
+            pinnedSitesStorage = pinnedSiteStorage,
+            historyStorage = historyStorage,
+            topSitesProvider = if (context.settings().showContileFeature) contileTopSitesProvider else null,
+            defaultTopSites = defaultTopSites
         )
     }
 
@@ -416,7 +435,8 @@ class Core(
 
     // Temporary. See https://github.com/mozilla-mobile/fenix/issues/19155
     private val lazySecurePrefs = lazyMonitored { getSecureAbove22Preferences() }
-    val trackingProtectionPolicyFactory = TrackingProtectionPolicyFactory(context.settings())
+    val trackingProtectionPolicyFactory =
+        TrackingProtectionPolicyFactory(context.settings(), context.resources)
 
     /**
      * Sets Preferred Color scheme based on Dark/Light Theme Settings or Current Configuration

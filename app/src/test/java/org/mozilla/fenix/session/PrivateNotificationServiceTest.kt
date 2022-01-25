@@ -8,14 +8,13 @@ import android.content.ComponentName
 import android.content.Intent
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.test.TestCoroutineDispatcher
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.createTab
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.feature.privatemode.notification.AbstractPrivateNotificationService.Companion.ACTION_ERASE
+import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.support.test.robolectric.testContext
 import mozilla.components.support.test.rule.MainCoroutineRule
-import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
@@ -37,25 +36,20 @@ class PrivateNotificationServiceTest {
     private lateinit var controller: ServiceController<PrivateNotificationService>
     private lateinit var store: BrowserStore
 
-    private val testDispatcher = TestCoroutineDispatcher()
-
     @get:Rule
-    val coroutinesTestRule = MainCoroutineRule(testDispatcher)
+    val coroutinesTestRule = MainCoroutineRule()
 
     @Before
     fun setup() {
-        store = testContext.components.core.store
+        store = mockk()
         every { store.dispatch(any()) } returns mockk()
+        every { testContext.components.core.store } returns store
+        every { testContext.components.useCases.tabsUseCases } returns TabsUseCases(store)
 
         controller = Robolectric.buildService(
             PrivateNotificationService::class.java,
             Intent(ACTION_ERASE)
         )
-    }
-
-    @After
-    fun cleanUp() {
-        testDispatcher.cleanupTestCoroutines()
     }
 
     @Test

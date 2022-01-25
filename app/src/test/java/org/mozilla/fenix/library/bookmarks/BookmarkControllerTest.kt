@@ -23,6 +23,7 @@ import io.mockk.verify
 import io.mockk.verifyOrder
 import kotlinx.coroutines.test.TestCoroutineScope
 import mozilla.appservices.places.BookmarkRoot
+import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.concept.storage.BookmarkNodeType
 import mozilla.components.feature.tabs.TabsUseCases
@@ -55,14 +56,14 @@ class BookmarkControllerTest {
     private val addNewTabUseCase: TabsUseCases.AddNewTabUseCase = mockk(relaxed = true)
 
     private val item =
-        BookmarkNode(BookmarkNodeType.ITEM, "456", "123", 0, "Mozilla", "http://mozilla.org", 0, null)
+        BookmarkNode(BookmarkNodeType.ITEM, "456", "123", 0u, "Mozilla", "http://mozilla.org", 0, null)
     private val subfolder =
-        BookmarkNode(BookmarkNodeType.FOLDER, "987", "123", 0, "Subfolder", null, 0, listOf())
+        BookmarkNode(BookmarkNodeType.FOLDER, "987", "123", 0u, "Subfolder", null, 0, listOf())
     private val childItem = BookmarkNode(
         BookmarkNodeType.ITEM,
         "987",
         "123",
-        2,
+        2u,
         "Firefox",
         "https://www.mozilla.org/en-US/firefox/",
         0,
@@ -72,14 +73,14 @@ class BookmarkControllerTest {
         BookmarkNodeType.FOLDER,
         "123",
         null,
-        0,
+        0u,
         "Mobile",
         null,
         0,
         listOf(item, item, childItem, subfolder)
     )
     private val root = BookmarkNode(
-        BookmarkNodeType.FOLDER, BookmarkRoot.Root.id, null, 0, BookmarkRoot.Root.name, null, 0, null
+        BookmarkNodeType.FOLDER, BookmarkRoot.Root.id, null, 0u, BookmarkRoot.Root.name, null, 0, null
     )
 
     @Before
@@ -111,6 +112,8 @@ class BookmarkControllerTest {
     @Test
     fun `handleBookmarkTapped should load the bookmark in a new tab`() {
         var invokePendingDeletionInvoked = false
+        val flags = EngineSession.LoadUrlFlags.select(EngineSession.LoadUrlFlags.ALLOW_JAVASCRIPT_URL)
+
         createController(
             invokePendingDeletion = {
                 invokePendingDeletionInvoked = true
@@ -119,7 +122,12 @@ class BookmarkControllerTest {
 
         assertTrue(invokePendingDeletionInvoked)
         verify {
-            homeActivity.openToBrowserAndLoad(item.url!!, true, BrowserDirection.FromBookmarks)
+            homeActivity.openToBrowserAndLoad(
+                item.url!!,
+                true,
+                BrowserDirection.FromBookmarks,
+                flags = flags
+            )
         }
     }
 
@@ -269,6 +277,9 @@ class BookmarkControllerTest {
     @Test
     fun `handleBookmarkTapped should open the bookmark`() {
         var invokePendingDeletionInvoked = false
+        val flags =
+            EngineSession.LoadUrlFlags.select(EngineSession.LoadUrlFlags.ALLOW_JAVASCRIPT_URL)
+
         createController(
             invokePendingDeletion = {
                 invokePendingDeletionInvoked = true
@@ -277,7 +288,12 @@ class BookmarkControllerTest {
 
         assertTrue(invokePendingDeletionInvoked)
         verify {
-            homeActivity.openToBrowserAndLoad(item.url!!, true, BrowserDirection.FromBookmarks)
+            homeActivity.openToBrowserAndLoad(
+                item.url!!,
+                true,
+                BrowserDirection.FromBookmarks,
+                flags = flags
+            )
         }
     }
 

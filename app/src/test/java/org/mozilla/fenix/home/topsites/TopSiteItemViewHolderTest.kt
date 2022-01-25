@@ -5,8 +5,10 @@
 package org.mozilla.fenix.home.topsites
 
 import android.view.LayoutInflater
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import mozilla.components.browser.icons.BrowserIcons
 import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert.assertNotNull
@@ -15,6 +17,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.databinding.TopSiteItemBinding
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.home.sessioncontrol.TopSiteInteractor
 
@@ -23,18 +26,18 @@ class TopSiteItemViewHolderTest {
 
     private lateinit var binding: TopSiteItemBinding
     private lateinit var interactor: TopSiteInteractor
-    private val pocket = TopSite(
+    private val pocket = TopSite.Default(
         id = 1L,
         title = "Pocket",
         url = "https://getpocket.com",
-        createdAt = 0,
-        type = TopSite.Type.DEFAULT
+        createdAt = 0
     )
 
     @Before
     fun setup() {
         binding = TopSiteItemBinding.inflate(LayoutInflater.from(testContext))
         interactor = mockk(relaxed = true)
+        every { testContext.components.core.icons } returns BrowserIcons(testContext, mockk(relaxed = true))
     }
 
     @Test
@@ -42,11 +45,12 @@ class TopSiteItemViewHolderTest {
         TopSiteItemViewHolder(binding.root, interactor).bind(pocket)
 
         binding.topSiteItem.performClick()
-        verify { interactor.onSelectTopSite("https://getpocket.com", TopSite.Type.DEFAULT) }
+        verify { interactor.onSelectTopSite(pocket) }
     }
 
     @Test
     fun `calls interactor on long click`() {
+        every { testContext.components.analytics } returns mockk(relaxed = true)
         TopSiteItemViewHolder(binding.root, interactor).bind(pocket)
 
         binding.topSiteItem.performLongClick()
@@ -55,12 +59,11 @@ class TopSiteItemViewHolderTest {
 
     @Test
     fun `GIVEN a default top site WHEN bind is called THEN the title has a pin indicator`() {
-        val defaultTopSite = TopSite(
+        val defaultTopSite = TopSite.Default(
             id = 1L,
             title = "Pocket",
             url = "https://getpocket.com",
-            createdAt = 0,
-            type = TopSite.Type.DEFAULT
+            createdAt = 0
         )
 
         TopSiteItemViewHolder(binding.root, interactor).bind(defaultTopSite)
@@ -71,12 +74,11 @@ class TopSiteItemViewHolderTest {
 
     @Test
     fun `GIVEN a pinned top site WHEN bind is called THEN the title has a pin indicator`() {
-        val pinnedTopSite = TopSite(
+        val pinnedTopSite = TopSite.Pinned(
             id = 1L,
             title = "Mozilla",
             url = "https://www.mozilla.org",
-            createdAt = 0,
-            type = TopSite.Type.PINNED
+            createdAt = 0
         )
 
         TopSiteItemViewHolder(binding.root, interactor).bind(pinnedTopSite)
@@ -87,12 +89,11 @@ class TopSiteItemViewHolderTest {
 
     @Test
     fun `GIVEN a frecent top site WHEN bind is called THEN the title does not have a pin indicator`() {
-        val frecentTopSite = TopSite(
+        val frecentTopSite = TopSite.Frecent(
             id = 1L,
             title = "Mozilla",
             url = "https://www.mozilla.org",
-            createdAt = 0,
-            type = TopSite.Type.FRECENT
+            createdAt = 0
         )
 
         TopSiteItemViewHolder(binding.root, interactor).bind(frecentTopSite)

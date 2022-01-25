@@ -14,6 +14,7 @@ import io.mockk.verify
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.browser.tabstray.TabsTray
+import mozilla.components.support.test.libstate.ext.waitUntilIdle
 import org.junit.Assert.assertEquals
 import mozilla.components.browser.state.state.createTab as createTabState
 import org.junit.Test
@@ -47,7 +48,9 @@ class InactiveTabsControllerTest {
 
         controller.updateCardExpansion(true)
 
-        verify { tray.updateTabs(capture(tabsSlot), any()) }
+        appStore.waitUntilIdle()
+
+        verify { tray.updateTabs(capture(tabsSlot), null, any()) }
 
         assertEquals(2, tabsSlot.captured.size)
         assertEquals("1", tabsSlot.captured.first().id)

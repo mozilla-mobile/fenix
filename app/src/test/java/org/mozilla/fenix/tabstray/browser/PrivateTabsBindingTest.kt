@@ -1,9 +1,6 @@
-/*
- * This Source Code Form is subject to the terms of the Mozilla Public
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/.
- *
- */
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.tabstray.browser
 
@@ -52,7 +49,7 @@ class PrivateTabsBindingTest {
 
         assertTrue(store.state.privateTabs.isNotEmpty())
 
-        verify { tray.updateTabs(capture(slotTabs), "1") }
+        verify { tray.updateTabs(capture(slotTabs), null, "1") }
         assertEquals(expectedTabs, slotTabs.captured)
     }
 
@@ -67,6 +64,6 @@ class PrivateTabsBindingTest {
 
         assertTrue(store.state.privateTabs.isEmpty())
 
-        verify { tray.updateTabs(emptyList(), "1") }
+        verify { tray.updateTabs(emptyList(), null, "1") }
     }
 }

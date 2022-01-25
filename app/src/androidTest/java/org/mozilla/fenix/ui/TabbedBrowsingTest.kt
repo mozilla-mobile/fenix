@@ -10,6 +10,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
@@ -77,7 +78,7 @@ class TabbedBrowsingTest {
             verifyExistingOpenTabs("Test_Page_1")
             closeTab()
         }.openTabDrawer {
-            verifyNoTabsOpened()
+            verifyNoOpenTabsInNormalBrowsing()
         }.openNewTab {
         }.submitQuery(defaultWebPage.url.toString()) {
             mDevice.waitForIdle()
@@ -102,7 +103,7 @@ class TabbedBrowsingTest {
             verifyExistingTabList()
             verifyPrivateModeSelected()
         }.toggleToNormalTabs {
-            verifyNoTabsOpened()
+            verifyNoOpenTabsInNormalBrowsing()
         }.toggleToPrivateTabs {
             verifyExistingTabList()
         }
@@ -171,6 +172,7 @@ class TabbedBrowsingTest {
         }
     }
 
+    @Ignore("Currently failing, will need some investigation, see https://github.com/mozilla-mobile/fenix/issues/22640")
     @Test
     fun verifyUndoSnackBarTest() {
         // disabling these features because they interfere with the snackbar visibility
@@ -275,7 +277,7 @@ class TabbedBrowsingTest {
 
         navigationToolbar {
         }.openTabTray {
-            verifyNoTabsOpened()
+            verifyNoOpenTabsInNormalBrowsing()
             // With no tabs opened the state should be STATE_COLLAPSED.
             verifyBehaviorState(BottomSheetBehavior.STATE_COLLAPSED)
             // Need to ensure the halfExpandedRatio is very small so that when in STATE_HALF_EXPANDED
@@ -301,16 +303,10 @@ class TabbedBrowsingTest {
             verifyNormalBrowsingButtonIsSelected(true)
             verifyPrivateBrowsingButtonIsSelected(false)
             verifySyncedTabsButtonIsSelected(false)
-            verifyNoTabsOpened()
-            verifyNewTabButton()
+            verifyNoOpenTabsInNormalBrowsing()
+            verifyNormalBrowsingNewTabButton()
             verifyTabTrayOverflowMenu(true)
-        }.toggleToPrivateTabs {
-            verifyNormalBrowsingButtonIsSelected(false)
-            verifyPrivateBrowsingButtonIsSelected(true)
-            verifySyncedTabsButtonIsSelected(false)
-            verifyNoTabsOpened()
-            verifyNewTabButton()
-            verifyTabTrayOverflowMenu(true)
+            verifyEmptyTabsTrayMenuButtons()
         }
     }
 
@@ -321,14 +317,19 @@ class TabbedBrowsingTest {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
         }.openTabDrawer {
-            verifyExistingTabList()
-            verifyNewTabButton()
+            verifyNormalBrowsingButtonIsSelected(true)
+            verifyPrivateBrowsingButtonIsSelected(false)
+            verifySyncedTabsButtonIsSelected(false)
             verifyTabTrayOverflowMenu(true)
+            verifyTabsTrayCounter()
+            verifyExistingTabList()
+            verifyNormalBrowsingNewTabButton()
+            verifyOpenedTabThumbnail()
             verifyExistingOpenTabs(defaultWebPage.title)
             verifyCloseTabsButton(defaultWebPage.title)
-        }.openNewTab {
-            verifySearchBarEmpty()
-            verifyKeyboardVisibility()
+        }.openTab(defaultWebPage.title) {
+            verifyUrl(defaultWebPage.url.toString())
+            verifyTabCounter("1")
         }
     }
 

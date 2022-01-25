@@ -29,6 +29,7 @@ import org.mozilla.fenix.GleanMetrics.ToolbarSettings
 import org.mozilla.fenix.GleanMetrics.TopSites
 import org.mozilla.fenix.GleanMetrics.TrackingProtection
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ext.name
 import java.util.Locale
 
 sealed class Event {
@@ -203,7 +204,6 @@ sealed class Event {
     object TabsTraySaveToCollectionPressed : Event()
     object TabsTrayShareAllTabsPressed : Event()
     object TabsTrayCloseAllTabsPressed : Event()
-    object TabsTrayRecentlyClosedPressed : Event()
     object TabsTrayInactiveTabsExpanded : Event()
     object TabsTrayInactiveTabsCollapsed : Event()
     object TabsTrayAutoCloseDialogSeen : Event()
@@ -224,6 +224,7 @@ sealed class Event {
         override val extras: Map<Preferences.turnOffInactiveTabsSurveyKeys, String>
             get() = mapOf(Preferences.turnOffInactiveTabsSurveyKeys.feedback to feedback.lowercase(Locale.ROOT))
     }
+    data class InactiveTabsCountUpdate(val count: Int) : Event()
 
     object ProgressiveWebAppOpenFromHomescreenTap : Event()
     object ProgressiveWebAppInstallAsShortcut : Event()
@@ -261,6 +262,7 @@ sealed class Event {
     // Home menu interaction
     object HomeMenuSettingsItemClicked : Event()
     object HomeScreenDisplayed : Event()
+    object HomeScreenViewCount : Event()
     object HomeScreenCustomizedHomeClicked : Event()
 
     // Browser Toolbar
@@ -334,9 +336,9 @@ sealed class Event {
     object SecurePrefsWriteSuccess : Event()
     object SecurePrefsReset : Event()
 
-    data class TopSiteLongPress(val type: TopSite.Type) : Event() {
+    data class TopSiteLongPress(val topSite: TopSite) : Event() {
         override val extras: Map<TopSites.longPressKeys, String>?
-            get() = hashMapOf(TopSites.longPressKeys.type to type.name)
+            get() = hashMapOf(TopSites.longPressKeys.type to topSite.name())
     }
 
     data class ProgressiveWebAppForeground(val timeForegrounded: Long) : Event() {
@@ -631,7 +633,7 @@ sealed class Event {
         enum class Item {
             SETTINGS, HELP, DESKTOP_VIEW_ON, DESKTOP_VIEW_OFF, FIND_IN_PAGE, NEW_TAB,
             NEW_PRIVATE_TAB, SHARE, BACK, FORWARD, RELOAD, STOP, OPEN_IN_FENIX,
-            SAVE_TO_COLLECTION, ADD_TO_TOP_SITES, ADD_TO_HOMESCREEN, QUIT, READER_MODE_ON,
+            SAVE_TO_COLLECTION, ADD_TO_TOP_SITES, REMOVE_FROM_TOP_SITES, ADD_TO_HOMESCREEN, QUIT, READER_MODE_ON,
             READER_MODE_OFF, OPEN_IN_APP, BOOKMARK, READER_MODE_APPEARANCE, ADDONS_MANAGER,
             BOOKMARKS, HISTORY, SYNC_TABS, DOWNLOADS, SET_DEFAULT_BROWSER, SYNC_ACCOUNT
         }
@@ -667,6 +669,8 @@ sealed class Event {
         override val extras: Map<SearchTerms.averageTabsPerGroupKeys, String>
             get() = hashMapOf(SearchTerms.averageTabsPerGroupKeys.count to averageSize.toString())
     }
+
+    data class SearchTermGroupSizeDistribution(val groupSizes: List<Long>) : Event()
 
     object JumpBackInGroupTapped : Event()
 

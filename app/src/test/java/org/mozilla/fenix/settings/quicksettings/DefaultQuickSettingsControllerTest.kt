@@ -21,6 +21,7 @@ import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.state.state.createTab
 import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.concept.engine.Engine
 import mozilla.components.concept.engine.permission.SitePermissions
 import mozilla.components.concept.engine.permission.SitePermissions.Status.NO_DECISION
 import mozilla.components.feature.session.SessionUseCases
@@ -72,6 +73,9 @@ class DefaultQuickSettingsControllerTest {
     private lateinit var permissionStorage: PermissionStorage
 
     @MockK(relaxed = true)
+    private lateinit var engine: Engine
+
+    @MockK(relaxed = true)
     private lateinit var reload: SessionUseCases.ReloadUrlUseCase
 
     @MockK(relaxed = true)
@@ -97,13 +101,14 @@ class DefaultQuickSettingsControllerTest {
                 browserStore = browserStore,
                 sessionId = tab.id,
                 ioScope = coroutinesScope,
-                navController = { navController },
+                navController = navController,
                 sitePermissions = sitePermissions,
                 settings = appSettings,
                 permissionStorage = permissionStorage,
                 reload = reload,
                 addNewTab = addNewTab,
                 requestRuntimePermissions = requestPermissions,
+                engine = engine,
                 displayPermissions = {},
                 dismiss = {}
             )
@@ -117,6 +122,7 @@ class DefaultQuickSettingsControllerTest {
 
     @Test
     fun `handlePermissionsShown should delegate to an injected parameter`() {
+        every { testContext.components.core.engine } returns mockk(relaxed = true)
         var displayPermissionsInvoked = false
         createController(
             displayPermissions = {
@@ -167,13 +173,14 @@ class DefaultQuickSettingsControllerTest {
 
     @Test
     fun `handlePermissionToggled blocked by user should navigate to site permission manager`() {
+        every { testContext.components.core.engine } returns mockk(relaxed = true)
         val websitePermission = mockk<WebsitePermission>()
         val invalidSitePermissionsController = DefaultQuickSettingsController(
             context = context,
             quickSettingsStore = store,
             browserStore = BrowserStore(),
             ioScope = coroutinesScope,
-            navController = { navController },
+            navController = navController,
             sessionId = "123",
             sitePermissions = null,
             settings = appSettings,
@@ -260,6 +267,7 @@ class DefaultQuickSettingsControllerTest {
 
     @Test
     fun `handleAndroidPermissionRequest should request from the injected callback`() {
+        every { testContext.components.core.engine } returns mockk(relaxed = true)
         val testPermissions = arrayOf("TestPermission")
 
         var requestRuntimePermissionsInvoked = false
@@ -384,6 +392,21 @@ class DefaultQuickSettingsControllerTest {
         }
     }
 
+    @Test
+    fun `WHEN handleClearSiteData THEN call clearSite`() {
+        controller.handleClearSiteDataClicked("mozilla.org")
+
+        verify {
+            engine.clearData(
+                host = "mozilla.org",
+                data = Engine.BrowsingData.select(
+                    Engine.BrowsingData.AUTH_SESSIONS,
+                    Engine.BrowsingData.ALL_SITE_DATA,
+                )
+            )
+        }
+    }
+
     private fun createController(
         requestPermissions: (Array<String>) -> Unit = { _ -> },
         displayPermissions: () -> Unit = { },
@@ -396,7 +419,7 @@ class DefaultQuickSettingsControllerTest {
                 browserStore = browserStore,
                 sessionId = tab.id,
                 ioScope = coroutinesScope,
-                navController = { navController },
+                navController = navController,
                 sitePermissions = sitePermissions,
                 settings = appSettings,
                 permissionStorage = permissionStorage,

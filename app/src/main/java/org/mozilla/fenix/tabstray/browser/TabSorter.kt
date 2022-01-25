@@ -4,18 +4,16 @@
 
 package org.mozilla.fenix.tabstray.browser
 
+import mozilla.components.browser.state.state.TabGroup
+import mozilla.components.browser.state.state.TabPartition
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.tabstray.TabsTray
 import mozilla.components.feature.tabs.tabstray.TabsFeature
-import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.maxActiveTime
-import org.mozilla.fenix.ext.toSearchGroup
+import org.mozilla.fenix.tabstray.SEARCH_TERM_TAB_GROUPS_MIN_SIZE
 import org.mozilla.fenix.tabstray.TabsTrayAction
 import org.mozilla.fenix.tabstray.TabsTrayStore
-import org.mozilla.fenix.tabstray.ext.hasSearchTerm
 import org.mozilla.fenix.tabstray.ext.isActive
-import org.mozilla.fenix.tabstray.ext.isNormalTabActiveWithSearchTerm
 import org.mozilla.fenix.utils.Settings
 
 /**
@@ -23,18 +21,18 @@ import org.mozilla.fenix.utils.Settings
  */
 class TabSorter(
     private val settings: Settings,
-    private val metrics: MetricController,
     private val tabsTrayStore: TabsTrayStore? = null
 ) : TabsTray {
-    private var shouldReportMetrics: Boolean = true
     private val groupsSet = mutableSetOf<String>()
 
-    override fun updateTabs(tabs: List<TabSessionState>, selectedTabId: String?) {
+    override fun updateTabs(tabs: List<TabSessionState>, tabPartition: TabPartition?, selectedTabId: String?) {
         val privateTabs = tabs.filter { it.content.private }
         val allNormalTabs = tabs - privateTabs
         val inactiveTabs = allNormalTabs.getInactiveTabs(settings)
-        val searchTermTabs = allNormalTabs.getSearchGroupTabs(settings)
-        val normalTabs = allNormalTabs - inactiveTabs - searchTermTabs
+        val tabGroups = tabPartition?.getTabGroups(settings, groupsSet) ?: emptyList()
+        val tabGroupTabIds = tabGroups.flatMap { it.tabIds }
+        val normalTabs = (allNormalTabs - inactiveTabs).filterNot { tabGroupTabIds.contains(it.id) }
+        val minTabPartition = tabPartition?.let { TabPartition(tabPartition.id, tabGroups) }
 
         // Private tabs
         tabsTrayStore?.dispatch(TabsTrayAction.UpdatePrivateTabs(privateTabs))
@@ -42,31 +40,14 @@ class TabSorter(
         // Inactive tabs
         tabsTrayStore?.dispatch(TabsTrayAction.UpdateInactiveTabs(inactiveTabs))
 
-        // Tab groups
-        val (groups, remainderTabs) = searchTermTabs.toSearchGroup(groupsSet)
+        // Normal tabs
+        tabsTrayStore?.dispatch(TabsTrayAction.UpdateNormalTabs(normalTabs))
+
+        // Search term tabs
+        tabsTrayStore?.dispatch(TabsTrayAction.UpdateTabPartitions(minTabPartition))
 
         groupsSet.clear()
-        groupsSet.addAll(groups.map { it.searchTerm })
-        tabsTrayStore?.dispatch(TabsTrayAction.UpdateSearchGroupTabs(groups))
-
-        // Normal tabs.
-        val totalNormalTabs = (normalTabs + remainderTabs)
-        tabsTrayStore?.dispatch(TabsTrayAction.UpdateNormalTabs(totalNormalTabs))
-
-        // TODO move this to a middleware in the TabsTrayStore.
-        if (shouldReportMetrics) {
-            shouldReportMetrics = false
-
-            if (settings.inactiveTabsAreEnabled) {
-                metrics.track(Event.TabsTrayHasInactiveTabs(inactiveTabs.size))
-            }
-
-            if (groups.isNotEmpty()) {
-                val averageTabsPerGroup = groups.map { it.tabs.size }.average()
-                metrics.track(Event.AverageTabsPerSearchTermGroup(averageTabsPerGroup))
-            }
-            metrics.track(Event.SearchTermGroupCount(groups.size))
-        }
+        groupsSet.addAll(tabGroups.map { it.id })
     }
 }
 
@@ -83,18 +64,14 @@ private fun List<TabSessionState>.getInactiveTabs(settings: Settings): List<TabS
 }
 
 /**
- * Returns a list of search term tabs based on our preferences.
+ * Returns a list of tab groups based on our preferences.
  */
-private fun List<TabSessionState>.getSearchGroupTabs(settings: Settings): List<TabSessionState> {
-    val inactiveTabsEnabled = settings.inactiveTabsAreEnabled
-    val tabGroupsEnabled = settings.searchTermTabGroupsAreEnabled
-    return when {
-        tabGroupsEnabled && inactiveTabsEnabled ->
-            filter { it.isNormalTabActiveWithSearchTerm(maxActiveTime) }
-
-        tabGroupsEnabled ->
-            filter { it.hasSearchTerm() }
-
-        else -> emptyList()
+private fun TabPartition.getTabGroups(settings: Settings, groupsSet: Set<String>): List<TabGroup> {
+    return if (settings.searchTermTabGroupsAreEnabled) {
+        tabGroups.filter {
+            it.tabIds.size >= SEARCH_TERM_TAB_GROUPS_MIN_SIZE || groupsSet.contains(it.id)
+        }
+    } else {
+        emptyList()
     }
 }

@@ -5,7 +5,9 @@ package org.mozilla.fenix.library.historymetadata.view
 
 import android.view.LayoutInflater
 import androidx.navigation.Navigation
+import io.mockk.every
 import io.mockk.mockk
+import mozilla.components.browser.icons.BrowserIcons
 import mozilla.components.concept.storage.HistoryMetadataKey
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert.assertEquals
@@ -13,8 +15,10 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.databinding.HistoryMetadataGroupListItemBinding
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.library.history.History
+import org.mozilla.fenix.library.history.HistoryItemTimeGroup
 import org.mozilla.fenix.library.historymetadata.interactor.HistoryMetadataGroupInteractor
 import org.mozilla.fenix.selection.SelectionHolder
 
@@ -26,10 +30,11 @@ class HistoryMetadataGroupItemViewHolderTest {
     private lateinit var selectionHolder: SelectionHolder<History.Metadata>
 
     private val item = History.Metadata(
-        id = 0,
+        position = 1,
         title = "Mozilla",
         url = "mozilla.org",
         visitedAt = 0,
+        historyTimeGroup = HistoryItemTimeGroup.timeGroupForTimestamp(0),
         totalViewTime = 0,
         historyMetadataKey = HistoryMetadataKey("http://www.mozilla.com", "mozilla", null)
     )
@@ -44,6 +49,7 @@ class HistoryMetadataGroupItemViewHolderTest {
 
     @Test
     fun `GIVEN a history metadata item on bind THEN set the title and url text`() {
+        every { testContext.components.core.icons } returns BrowserIcons(testContext, mockk(relaxed = true))
         HistoryMetadataGroupItemViewHolder(binding.root, interactor, selectionHolder).bind(item)
 
         assertEquals(item.title, binding.historyLayout.titleView.text)

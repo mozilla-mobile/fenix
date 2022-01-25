@@ -24,16 +24,6 @@ object FeatureFlags {
     val addressesFeature = Config.channel.isNightlyOrDebug
 
     /**
-     * Enables WebAuthn support.
-     */
-    const val webAuthFeature = true
-
-    /**
-     * Enables the Home button in the browser toolbar to navigate back to the home screen.
-     */
-    const val showHomeButtonFeature = true
-
-    /**
      * Enables the Start On Home feature in the settings page.
      */
     const val showStartOnHomeSettings = true
@@ -64,19 +54,14 @@ object FeatureFlags {
     const val showHomeBehindSearch = true
 
     /**
-     * Enables customizing the home screen
-     */
-    const val customizeHome = true
-
-    /**
      * Identifies and separates the tabs list with a group containing search term tabs.
      */
     val tabGroupFeature = Config.channel.isNightlyOrDebug
 
     /**
-     * Enables showing search groupings in the History.
+     * Allows tabs to be dragged around as long as tab groups are disabled
      */
-    const val showHistorySearchGroups = true
+    val tabReorderingFeature = Config.channel.isNightlyOrDebug
 
     /**
      * Show Pocket recommended stories on home.
@@ -91,4 +76,24 @@ object FeatureFlags {
      * Enables showing the homescreen onboarding card.
      */
     const val showHomeOnboarding = false
+
+    /**
+     * Enables showing the option to clear site data.
+     */
+    val showClearSiteData = Config.channel.isNightlyOrDebug
+
+    /**
+     * Enables showing the wallpaper functionality.
+     */
+    val showWallpapers = Config.channel.isNightlyOrDebug
+
+    /**
+     * Enables the Contile top sites.
+     */
+    val contileFeature = Config.channel.isDebug
+
+    /**
+     * Enables history improvement features.
+     */
+    val historyImprovementFeatures = Config.channel.isNightlyOrDebug
 }

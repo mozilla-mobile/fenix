@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.helpers
 
 import android.content.Context
@@ -12,6 +16,7 @@ class FeatureSettingsHelper {
     private var isPocketEnabled: Boolean = settings.showPocketRecommendationsFeature
     private var isJumpBackInCFREnabled: Boolean = settings.shouldShowJumpBackInCFR
     private var isRecentTabsFeatureEnabled: Boolean = settings.showRecentTabsFeature
+    private var isUserKnowsAboutPwasTrue: Boolean = settings.userKnowsAboutPwas
 
     fun setPocketEnabled(enabled: Boolean) {
         settings.showPocketRecommendationsFeature = enabled
@@ -25,6 +30,14 @@ class FeatureSettingsHelper {
         settings.showRecentTabsFeature = enabled
     }
 
+    fun setStrictETPEnabled() {
+        settings.setStrictETP()
+    }
+
+    fun disablePwaCFR(disable: Boolean) {
+        settings.userKnowsAboutPwas = disable
+    }
+
     // Important:
     // Use this after each test if you have modified these feature settings
     // to make sure the app goes back to the default state
@@ -32,5 +45,6 @@ class FeatureSettingsHelper {
         settings.showPocketRecommendationsFeature = isPocketEnabled
         settings.shouldShowJumpBackInCFR = isJumpBackInCFREnabled
         settings.showRecentTabsFeature = isRecentTabsFeatureEnabled
+        settings.userKnowsAboutPwas = isUserKnowsAboutPwasTrue
     }
 }

@@ -12,6 +12,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.mozilla.fenix.library.history.History
+import org.mozilla.fenix.library.history.HistoryItemTimeGroup
 
 class HistoryMetadataGroupFragmentStoreTest {
 
@@ -19,18 +20,20 @@ class HistoryMetadataGroupFragmentStoreTest {
     private lateinit var store: HistoryMetadataGroupFragmentStore
 
     private val mozillaHistoryMetadataItem = History.Metadata(
-        id = 0,
+        position = 1,
         title = "Mozilla",
         url = "mozilla.org",
         visitedAt = 0,
+        historyTimeGroup = HistoryItemTimeGroup.timeGroupForTimestamp(0),
         totalViewTime = 0,
         historyMetadataKey = HistoryMetadataKey("http://www.mozilla.com", "mozilla", null)
     )
     private val firefoxHistoryMetadataItem = History.Metadata(
-        id = 0,
+        position = 1,
         title = "Firefox",
         url = "firefox.com",
         visitedAt = 0,
+        historyTimeGroup = HistoryItemTimeGroup.timeGroupForTimestamp(0),
         totalViewTime = 0,
         historyMetadataKey = HistoryMetadataKey("http://www.firefox.com", "mozilla", null)
     )

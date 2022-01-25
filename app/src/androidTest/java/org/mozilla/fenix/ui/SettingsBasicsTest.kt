@@ -13,12 +13,14 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.FenixApplication
+import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.FeatureSettingsHelper
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper.getGenericAsset
 import org.mozilla.fenix.helpers.TestAssetHelper.getLoremIpsumAsset
 import org.mozilla.fenix.helpers.TestHelper.restartApp
+import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.checkTextSizeOnWebsite
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
@@ -186,6 +188,45 @@ class SettingsBasicsTest {
         }
     }
 
+    @SmokeTest
+    @Test
+    fun jumpBackInOptionTest() {
+        val genericURL = getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(genericURL.url) {
+            mDevice.waitForIdle()
+        }.goToHomescreen {
+            verifyJumpBackInSectionIsDisplayed()
+        }.openThreeDotMenu {
+        }.openCustomizeHome {
+            clickJumpBackInButton()
+        }.goBack {
+            verifyJumpBackInSectionIsNotDisplayed()
+        }
+    }
+
+    @SmokeTest
+    @Test
+    fun recentBookmarksOptionTest() {
+        val genericURL = getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(genericURL.url) {
+            mDevice.waitForIdle()
+        }.openThreeDotMenu {
+        }.bookmarkPage {
+        }.goToHomescreen {
+            verifyRecentBookmarksSectionIsDisplayed()
+        }.openThreeDotMenu {
+        }.openCustomizeHome {
+            clickRecentBookmarksButton()
+        }.goBack {
+            verifyRecentBookmarksSectionIsNotDisplayed()
+        }
+    }
+
+    @SmokeTest
     @Test
     fun startOnHomepageTest() {
         val genericURL = getGenericAsset(mockWebServer, 1)
@@ -203,6 +244,40 @@ class SettingsBasicsTest {
 
         homeScreen {
             verifyHomeScreen()
+        }
+    }
+
+    @SmokeTest
+    @Test
+    fun startOnLastTabTest() {
+        val firstWebPage = getGenericAsset(mockWebServer, 1)
+
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openHomepageSubMenu {
+            clickStartOnHomepageButton()
+        }
+
+        restartApp(activityIntentTestRule)
+
+        homeScreen {
+            verifyHomeScreen()
+        }
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(firstWebPage.url) {
+            mDevice.waitForIdle()
+        }.goToHomescreen {
+        }.openThreeDotMenu {
+        }.openCustomizeHome {
+            clickStartOnLastTabButton()
+        }
+
+        restartApp(activityIntentTestRule)
+
+        browserScreen {
+            verifyUrl(firstWebPage.url.toString())
         }
     }
 }

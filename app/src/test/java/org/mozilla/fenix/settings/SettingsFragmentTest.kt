@@ -9,10 +9,9 @@ import androidx.preference.Preference
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
-import kotlinx.coroutines.test.TestCoroutineDispatcher
+import mozilla.components.concept.fetch.Client
 import mozilla.components.support.test.robolectric.testContext
 import mozilla.components.support.test.rule.MainCoroutineRule
-import org.junit.After
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
@@ -33,24 +32,23 @@ import java.io.IOException
 @RunWith(FenixRobolectricTestRunner::class)
 class SettingsFragmentTest {
 
-    private val testDispatcher = TestCoroutineDispatcher()
-
     @get:Rule
-    val coroutinesTestRule = MainCoroutineRule(testDispatcher)
+    val coroutinesTestRule = MainCoroutineRule()
+    private val testDispatcher = coroutinesTestRule.testDispatcher
 
     @Before
     fun setup() {
         // Mock client for fetching account avatar
-        val client = testContext.components.core.client
+        val client = mockk<Client>()
         every { client.fetch(any()) } throws IOException("test")
+
+        every { testContext.components.core.client } returns client
+        every { testContext.components.settings } returns mockk(relaxed = true)
+        every { testContext.components.analytics } returns mockk(relaxed = true)
+        every { testContext.components.backgroundServices } returns mockk(relaxed = true)
 
         mockkObject(Config)
         every { Config.channel } returns ReleaseChannel.Nightly
-    }
-
-    @After
-    fun cleanUp() {
-        testDispatcher.cleanupTestCoroutines()
     }
 
     @Test

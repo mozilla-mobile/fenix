@@ -614,9 +614,6 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.TabsTrayCloseAllTabsPressed -> EventWrapper<NoExtraKeys>(
             { TabsTray.closeAllTabs.record(it) }
         )
-        is Event.TabsTrayRecentlyClosedPressed -> EventWrapper<NoExtraKeys>(
-            { TabsTray.inactiveTabsRecentlyClosed.record(it) }
-        )
         is Event.TabsTrayInactiveTabsExpanded -> EventWrapper<NoExtraKeys>(
             { TabsTray.inactiveTabsExpanded.record(it) }
         )
@@ -651,6 +648,9 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.InactiveTabsOffSurvey -> EventWrapper(
             { Preferences.turnOffInactiveTabsSurvey.record(it) },
             { Preferences.turnOffInactiveTabsSurveyKeys.valueOf(it) }
+        )
+        is Event.InactiveTabsCountUpdate -> EventWrapper<NoExtraKeys>(
+            { Metrics.inactiveTabsCount.set(this.count.toLong()) },
         )
         is Event.TabsTrayInactiveTabsCFRGotoSettings -> EventWrapper<NoExtraKeys>(
             { TabsTray.inactiveTabsCfrSettings.record(it) }
@@ -776,6 +776,9 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.HomeScreenDisplayed -> EventWrapper<NoExtraKeys>(
             { HomeScreen.homeScreenDisplayed.record(it) }
         )
+        is Event.HomeScreenViewCount -> EventWrapper<NoExtraKeys>(
+            { HomeScreen.homeScreenViewCount.add() }
+        )
         is Event.HomeScreenCustomizedHomeClicked -> EventWrapper<NoExtraKeys>(
             { HomeScreen.customizeHomeClicked.record(it) }
         )
@@ -897,6 +900,9 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.AverageTabsPerSearchTermGroup -> EventWrapper(
             { SearchTerms.averageTabsPerGroup.record(it) },
             { SearchTerms.averageTabsPerGroupKeys.valueOf(it) }
+        )
+        is Event.SearchTermGroupSizeDistribution -> EventWrapper<NoExtraKeys>(
+            { SearchTerms.groupSizeDistribution.accumulateSamples(this.groupSizes.toLongArray()) },
         )
         is Event.JumpBackInGroupTapped -> EventWrapper<NoExtraKeys>(
             { SearchTerms.jumpBackInGroupTapped.record(it) }

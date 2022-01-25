@@ -35,8 +35,9 @@ import org.mozilla.fenix.perf.StartupStateProvider
 import org.mozilla.fenix.perf.StrictModeManager
 import org.mozilla.fenix.perf.lazyMonitored
 import org.mozilla.fenix.utils.ClipboardHandler
-import org.mozilla.fenix.utils.Mockable
 import org.mozilla.fenix.utils.Settings
+import org.mozilla.fenix.wallpapers.WallpaperManager
+import org.mozilla.fenix.wallpapers.WallpapersAssetsStorage
 import org.mozilla.fenix.wifi.WifiConnectionMonitor
 import java.util.concurrent.TimeUnit
 
@@ -49,7 +50,6 @@ private const val AMO_COLLECTION_MAX_CACHE_AGE = 2 * 24 * 60L // Two days in min
  * Note: these aren't just "components" from "android-components": they're any "component" that
  * can be considered a building block of our app.
  */
-@Mockable
 class Components(private val context: Context) {
     val backgroundServices by lazyMonitored {
         BackgroundServices(
@@ -74,7 +74,8 @@ class Components(private val context: Context) {
             core.store,
             core.webAppShortcutManager,
             core.topSitesStorage,
-            core.bookmarksStorage
+            core.bookmarksStorage,
+            core.historyStorage
         )
     }
 
@@ -141,6 +142,10 @@ class Components(private val context: Context) {
 
     val addonManager by lazyMonitored {
         AddonManager(core.store, core.engine, addonCollectionProvider, addonUpdater)
+    }
+
+    val wallpaperManager by lazyMonitored {
+        WallpaperManager(settings, WallpapersAssetsStorage(context))
     }
 
     val analytics by lazyMonitored { Analytics(context) }

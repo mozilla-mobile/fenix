@@ -320,6 +320,7 @@ abstract class BaseBrowserFragment :
             engineView = binding.engineView,
             homeViewModel = homeViewModel,
             customTabSessionId = customTabSessionId,
+            browserAnimator = browserAnimator,
             onTabCounterClicked = {
                 thumbnailsFeature.get()?.requestScreenshot()
                 findNavController().nav(
@@ -369,6 +370,7 @@ abstract class BaseBrowserFragment :
             scope = viewLifecycleOwner.lifecycleScope,
             tabCollectionStorage = requireComponents.core.tabCollectionStorage,
             topSitesStorage = requireComponents.core.topSitesStorage,
+            pinnedSiteStorage = requireComponents.core.pinnedSiteStorage,
             browserStore = store
         )
 
@@ -378,8 +380,9 @@ abstract class BaseBrowserFragment :
         )
 
         _browserToolbarView = BrowserToolbarView(
+            context = context,
             container = binding.browserLayout,
-            toolbarPosition = context.settings().toolbarPosition,
+            settings = context.settings(),
             interactor = browserToolbarInteractor,
             customTabSession = customTabSessionId?.let { store.state.findCustomTab(it) },
             lifecycleOwner = viewLifecycleOwner
@@ -692,7 +695,7 @@ abstract class BaseBrowserFragment :
         )
 
         // This component feature only works on Fenix when built on Mozilla infrastructure.
-        if (FeatureFlags.webAuthFeature && BuildConfig.MOZILLA_OFFICIAL) {
+        if (BuildConfig.MOZILLA_OFFICIAL) {
             webAuthnFeature.set(
                 feature = WebAuthnFeature(
                     engine = requireComponents.core.engine,

@@ -26,7 +26,6 @@ import org.mozilla.fenix.experiments.NimbusFeatures
 import org.mozilla.fenix.experiments.createNimbus
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.perf.lazyMonitored
-import org.mozilla.fenix.utils.Mockable
 import org.mozilla.geckoview.BuildConfig.MOZ_APP_BUILDID
 import org.mozilla.geckoview.BuildConfig.MOZ_APP_VENDOR
 import org.mozilla.geckoview.BuildConfig.MOZ_APP_VERSION
@@ -35,12 +34,15 @@ import org.mozilla.geckoview.BuildConfig.MOZ_UPDATE_CHANNEL
 /**
  * Component group for all functionality related to analytics e.g. crash reporting and telemetry.
  */
-@Mockable
 class Analytics(
     private val context: Context
 ) {
     val crashReporter: CrashReporter by lazyMonitored {
         val services = mutableListOf<CrashReporterService>()
+        val distributionId = when (Config.channel.isMozillaOnline) {
+            true -> "MozillaOnline"
+            false -> "Mozilla"
+        }
 
         if (isSentryEnabled()) {
             val sentryService = SentryService(
@@ -60,7 +62,7 @@ class Analytics(
         val socorroService = MozillaSocorroService(
             context, appName = "Fenix",
             version = MOZ_APP_VERSION, buildId = MOZ_APP_BUILDID, vendor = MOZ_APP_VENDOR,
-            releaseChannel = MOZ_UPDATE_CHANNEL
+            releaseChannel = MOZ_UPDATE_CHANNEL, distributionId = distributionId
         )
         services.add(socorroService)
 

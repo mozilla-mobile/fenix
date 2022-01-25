@@ -23,7 +23,6 @@ import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.support.ktx.android.content.getColorFromAttr
-import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.accounts.AccountState
 import org.mozilla.fenix.components.accounts.FenixAccountManager
@@ -85,7 +84,7 @@ class HomeMenu(
     private val quitItem by lazy {
         BrowserMenuImageText(
             context.getString(R.string.delete_browsing_data_on_quit_action),
-            R.drawable.ic_exit,
+            R.drawable.mozac_ic_quit,
             primaryTextColor
         ) {
             onItemTapped.invoke(Item.Quit)
@@ -104,7 +103,7 @@ class HomeMenu(
     }
 
     val desktopItem = BrowserMenuImageSwitch(
-        imageResource = R.drawable.ic_desktop,
+        imageResource = R.drawable.mozac_ic_device_desktop,
         label = context.getString(R.string.browser_menu_desktop_site),
         initialState = { context.settings().openNextTabInDesktopMode }
     ) { checked ->
@@ -134,7 +133,7 @@ class HomeMenu(
 
         val downloadsItem = BrowserMenuImageText(
             context.getString(R.string.library_downloads),
-            R.drawable.ic_download,
+            R.drawable.mozac_ic_download,
             primaryTextColor
         ) {
             onItemTapped.invoke(Item.Downloads)
@@ -142,7 +141,7 @@ class HomeMenu(
 
         val extensionsItem = BrowserMenuImageText(
             context.getString(R.string.browser_menu_add_ons),
-            R.drawable.ic_addons_extensions,
+            R.drawable.mozac_ic_extensions,
             primaryTextColor
         ) {
             onItemTapped.invoke(Item.Extensions)
@@ -153,7 +152,7 @@ class HomeMenu(
             R.drawable.ic_whats_new,
             iconTintColorResource = primaryTextColor,
             highlight = BrowserMenuHighlight.LowPriority(
-                notificationTint = getColor(context, R.color.whats_new_notification_color)
+                notificationTint = getColor(context, R.color.fx_mobile_icon_color_information)
             ),
             isHighlighted = { WhatsNew.shouldHighlightWhatsNew(context) }
         ) {
@@ -209,7 +208,7 @@ class HomeMenu(
             BrowserMenuDivider(),
             whatsNewItem,
             helpItem,
-            if (FeatureFlags.customizeHome) customizeHomeItem else null,
+            customizeHomeItem,
             settingsItem,
             if (settings.shouldDeleteBrowsingDataOnQuit) quitItem else null
         ).also { items ->

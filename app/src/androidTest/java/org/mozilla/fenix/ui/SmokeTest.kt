@@ -26,27 +26,21 @@ import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
-import org.mozilla.fenix.helpers.Constants.PackageName.YOUTUBE_APP
+import org.mozilla.fenix.helpers.Constants
 import org.mozilla.fenix.helpers.FeatureSettingsHelper
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.RecyclerViewIdlingResource
+import org.mozilla.fenix.helpers.RetryTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
-import org.mozilla.fenix.helpers.TestAssetHelper.downloadFileName
 import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.helpers.TestHelper.appName
-import org.mozilla.fenix.helpers.TestHelper.assertExternalAppOpens
+import org.mozilla.fenix.helpers.TestHelper.assertNativeAppOpens
 import org.mozilla.fenix.helpers.TestHelper.createCustomTabIntent
-import org.mozilla.fenix.helpers.TestHelper.deleteDownloadFromStorage
-import org.mozilla.fenix.helpers.TestHelper.isPackageInstalled
-import org.mozilla.fenix.helpers.TestHelper.restartApp
-import org.mozilla.fenix.helpers.TestHelper.returnToBrowser
 import org.mozilla.fenix.helpers.TestHelper.scrollToElementByText
 import org.mozilla.fenix.helpers.ViewVisibilityIdlingResource
 import org.mozilla.fenix.ui.robots.browserScreen
-import org.mozilla.fenix.ui.robots.clickTabCrashedRestoreButton
 import org.mozilla.fenix.ui.robots.collectionRobot
 import org.mozilla.fenix.ui.robots.customTabScreen
-import org.mozilla.fenix.ui.robots.downloadRobot
 import org.mozilla.fenix.ui.robots.enhancedTrackingProtection
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
@@ -98,6 +92,10 @@ class SmokeTest {
         android.Manifest.permission.READ_EXTERNAL_STORAGE
     )
 
+    @Rule
+    @JvmField
+    val retryTestRule = RetryTestRule(3)
+
     @Before
     fun setUp() {
         // Initializing this as part of class construction, below the rule would throw a NPE
@@ -128,8 +126,6 @@ class SmokeTest {
         if (recentlyClosedTabsListIdlingResource != null) {
             IdlingRegistry.getInstance().unregister(recentlyClosedTabsListIdlingResource!!)
         }
-
-        deleteDownloadFromStorage(downloadFileName)
 
         if (bookmarksListIdlingResource != null) {
             IdlingRegistry.getInstance().unregister(bookmarksListIdlingResource!!)
@@ -348,6 +344,8 @@ class SmokeTest {
             clickAddShortcutButton()
             clickAddAutomaticallyButton()
         }.openHomeScreenShortcut("Test Page") {
+            verifyUrl(website.url.toString())
+            verifyTabCounter("1")
         }
     }
 
@@ -380,17 +378,14 @@ class SmokeTest {
     @Test
     // Verifies the Open in app button when an app is installed
     fun mainMenuOpenInAppTest() {
-        val youtubeUrl = "m.youtube.com"
-        if (isPackageInstalled(YOUTUBE_APP)) {
-            navigationToolbar {
-            }.enterURLAndEnterToBrowser(youtubeUrl.toUri()) {
-                verifyNotificationDotOnMainMenu()
-            }.openThreeDotMenu {
-            }.clickOpenInApp {
-                assertExternalAppOpens(YOUTUBE_APP)
-                returnToBrowser()
-                verifyUrl(youtubeUrl)
-            }
+        val playStoreUrl = "play.google.com/store/apps/details?id=org.mozilla.fenix"
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(playStoreUrl.toUri()) {
+            verifyNotificationDotOnMainMenu()
+        }.openThreeDotMenu {
+        }.clickOpenInApp {
+            assertNativeAppOpens(Constants.PackageName.GOOGLE_PLAY_SERVICES, playStoreUrl)
         }
     }
 
@@ -416,8 +411,10 @@ class SmokeTest {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
         }.openThreeDotMenu {
-        }.sharePage {
-            verifyShareAppsLayout()
+        }.clickShareButton {
+            verifyShareTabLayout()
+            verifySendToDeviceTitle()
+            verifyShareALinkTitle()
         }
     }
 
@@ -445,7 +442,7 @@ class SmokeTest {
         }.openThreeDotMenu {
         }.openSettings {
         }.openEnhancedTrackingProtectionSubMenu {
-            verifyEnhancedTrackingProtectionOptions()
+            verifyEnhancedTrackingProtectionOptionsEnabled()
             selectTrackingProtectionOption("Custom")
             verifyCustomTrackingProtectionSettings()
         }.goBackToHomeScreen {}
@@ -469,80 +466,51 @@ class SmokeTest {
 
     @Test
     // Verifies changing the default engine from the Search Shortcut menu
-    fun verifySearchEngineCanBeChangedTemporarilyUsingShortcuts() {
-        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+    fun selectSearchEnginesShortcutTest() {
+        val enginesList = listOf("DuckDuckGo", "Google", "Amazon.com", "Wikipedia", "Bing", "eBay")
 
-        homeScreen {
-        }.openSearch {
-            verifyKeyboardVisibility()
-            clickSearchEngineShortcutButton()
-            verifySearchEngineList(activityTestRule)
-            changeDefaultSearchEngine(activityTestRule, "Amazon.com")
-            verifySearchEngineIcon("Amazon.com")
-        }.goToSearchEngine {
-            mDevice.waitForIdle()
-        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-        }.openTabDrawer {
-        }.openNewTab {
-            clickSearchEngineShortcutButton()
-            mDevice.waitForIdle()
-            changeDefaultSearchEngine(activityTestRule, "Bing")
-            verifySearchEngineIcon("Bing")
-        }.goToSearchEngine {
-            mDevice.waitForIdle()
-        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-        }.openTabDrawer {
-        }.openNewTab {
-            clickSearchEngineShortcutButton()
-            mDevice.waitForIdle()
-            changeDefaultSearchEngine(activityTestRule, "DuckDuckGo")
-            verifySearchEngineIcon("DuckDuckGo")
-        }.goToSearchEngine {
-            mDevice.waitForIdle()
-        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-        }.openTabDrawer {
-        }.openNewTab {
-            clickSearchEngineShortcutButton()
-            changeDefaultSearchEngine(activityTestRule, "Wikipedia")
-            verifySearchEngineIcon("Wikipedia")
-        }.goToSearchEngine {
-            mDevice.waitForIdle()
-        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-        }.openTabDrawer {
-            // Checking whether the next search will be with default or not
-        }.openNewTab {
-        }.goToSearchEngine {
-            mDevice.waitForIdle()
-        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-        }.openNavigationToolbar {
-        }.clickUrlbar {
-            verifyDefaultSearchEngine("Google")
+        for (searchEngine in enginesList) {
+            homeScreen {
+            }.openSearch {
+                verifyKeyboardVisibility()
+                clickSearchEngineShortcutButton()
+                verifySearchEngineList(activityTestRule)
+                changeDefaultSearchEngine(activityTestRule, searchEngine)
+                verifySearchEngineIcon(searchEngine)
+            }.submitQuery("mozilla ") {
+                verifyUrl(searchEngine)
+            }.goToHomescreen { }
         }
     }
 
     @Test
     // Ads a new search engine from the list of custom engines
     fun addPredefinedSearchEngineTest() {
+        val searchEngine = "Reddit"
+
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
         }.openSearchSubMenu {
             openAddSearchEngineMenu()
             verifyAddSearchEngineList()
-            addNewSearchEngine("YouTube")
-            verifyEngineListContains("YouTube")
+            addNewSearchEngine(searchEngine)
+            verifyEngineListContains(searchEngine)
         }.goBack {
         }.goBack {
         }.openSearch {
             verifyKeyboardVisibility()
             clickSearchEngineShortcutButton()
-            activityTestRule.waitForIdle()
-            verifyEnginesListShortcutContains(activityTestRule, "YouTube")
+            verifyEnginesListShortcutContains(activityTestRule, searchEngine)
+            changeDefaultSearchEngine(activityTestRule, searchEngine)
+        }.submitQuery("mozilla ") {
+            verifyUrl(searchEngine)
         }
     }
 
     @Test
     // Verifies setting as default a customized search engine name and URL
+    @Ignore("Failing intermittently https://github.com/mozilla-mobile/fenix/issues/22256")
     fun editCustomSearchEngineTest() {
         val searchEngine = object {
             var title = "Elefant"
@@ -638,8 +606,8 @@ class SmokeTest {
             verifySecurityPromptForLogins()
             tapSetupLater()
             // Verify that the login appears correctly
-            verifySavedLoginFromPrompt()
-            viewSavedLoginDetails()
+            verifySavedLoginFromPrompt("test@example.com")
+            viewSavedLoginDetails("test@example.com")
             revealPassword()
             verifyPasswordSaved("test") // failing here locally
         }
@@ -708,8 +676,8 @@ class SmokeTest {
     }
 
     @Test
-    // This test verifies the Recently Closed Tabs List and items
-    fun verifyRecentlyClosedTabsListTest() {
+    // Verifies that a recently closed item is properly opened
+    fun openRecentlyClosedItemTest() {
         val website = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         homeScreen {
@@ -726,39 +694,13 @@ class SmokeTest {
             IdlingRegistry.getInstance().register(recentlyClosedTabsListIdlingResource!!)
             verifyRecentlyClosedTabsMenuView()
             IdlingRegistry.getInstance().unregister(recentlyClosedTabsListIdlingResource!!)
-            verifyRecentlyClosedTabsPageTitle("Test_Page_1")
-            verifyRecentlyClosedTabsUrl(website.url)
-        }
-    }
-
-    @Test
-    // Verifies the Open in a new tab option from the Recently Closed Tabs overflow menu
-    fun openRecentlyClosedTabsInNewTabTest() {
-        val website = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        homeScreen {
-        }.openNavigationToolbar {
-        }.enterURLAndEnterToBrowser(website.url) {
-            mDevice.waitForIdle()
-        }.openTabDrawer {
-            closeTab()
-        }.openTabDrawer {
-        }.openRecentlyClosedTabs {
-            waitForListToExist()
-            recentlyClosedTabsListIdlingResource =
-                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.recently_closed_list), 1)
-            IdlingRegistry.getInstance().register(recentlyClosedTabsListIdlingResource!!)
-            verifyRecentlyClosedTabsMenuView()
-            IdlingRegistry.getInstance().unregister(recentlyClosedTabsListIdlingResource!!)
-        }.clickOpenInNewTab {
+        }.clickRecentlyClosedItem("Test_Page_1") {
             verifyUrl(website.url.toString())
-        }.openTabDrawer {
-            verifyNormalModeSelected()
         }
     }
 
     @Test
-    // Verifies the delete button from the Recently Closed Tabs
+    // Verifies that tapping the "x" button removes a recently closed item from the list
     fun deleteRecentlyClosedTabsItemTest() {
         val website = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
@@ -782,40 +724,6 @@ class SmokeTest {
     }
 
     @Test
-    /* Verifies downloads in the Downloads Menu:
-      - downloads appear in the list
-      - deleting a download from device storage, removes it from the Downloads Menu too
-    */
-    fun manageDownloadsInDownloadsMenuTest() {
-        val downloadWebPage = TestAssetHelper.getDownloadAsset(mockWebServer)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(downloadWebPage.url) {
-            mDevice.waitForIdle()
-        }
-
-        downloadRobot {
-            verifyDownloadPrompt()
-        }.clickDownload {
-            mDevice.waitForIdle()
-            verifyDownloadNotificationPopup()
-        }
-
-        browserScreen {
-        }.openThreeDotMenu {
-        }.openDownloadsManager {
-            waitForDownloadsListToExist()
-            verifyDownloadedFileName(downloadFileName)
-            verifyDownloadedFileIcon()
-            deleteDownloadFromStorage(downloadFileName)
-        }.exitDownloadsManagerToBrowser {
-        }.openThreeDotMenu {
-        }.openDownloadsManager {
-            verifyEmptyDownloadsList()
-        }
-    }
-
-    @Test
     fun createFirstCollectionTest() {
         // disabling these features to have better visibility of Collections
         featureSettingsHelper.setRecentTabsFeatureEnabled(false)
@@ -832,6 +740,7 @@ class SmokeTest {
         }.submitQuery(secondWebPage.url.toString()) {
             mDevice.waitForIdle()
         }.goToHomescreen {
+            swipeToBottom()
         }.clickSaveTabsToCollectionButton {
             longClickTab(firstWebPage.title)
             selectTab(secondWebPage.title)
@@ -870,8 +779,8 @@ class SmokeTest {
             verifyCollectionIcon()
         }.expandCollection(collectionName) {
             verifyTabSavedInCollection(webPage.title)
-            verifyCollectionTabLogo()
-            verifyCollectionTabUrl()
+            verifyCollectionTabLogo(true)
+            verifyCollectionTabUrl(true)
             verifyShareCollectionButtonIsVisible(true)
             verifyCollectionMenuIsVisible(true)
             verifyCollectionItemRemoveButtonIsVisible(webPage.title, true)
@@ -881,6 +790,28 @@ class SmokeTest {
             verifyTabSavedInCollection(webPage.title, false)
             verifyShareCollectionButtonIsVisible(false)
             verifyCollectionMenuIsVisible(false)
+            verifyCollectionTabLogo(false)
+            verifyCollectionTabUrl(false)
+            verifyCollectionItemRemoveButtonIsVisible(webPage.title, false)
+        }
+
+        homeScreen {
+        }.expandCollection(collectionName) {
+            verifyTabSavedInCollection(webPage.title)
+            verifyCollectionTabLogo(true)
+            verifyCollectionTabUrl(true)
+            verifyShareCollectionButtonIsVisible(true)
+            verifyCollectionMenuIsVisible(true)
+            verifyCollectionItemRemoveButtonIsVisible(webPage.title, true)
+        }.collapseCollection(collectionName) {}
+
+        collectionRobot {
+            verifyTabSavedInCollection(webPage.title, false)
+            verifyShareCollectionButtonIsVisible(false)
+            verifyCollectionMenuIsVisible(false)
+            verifyCollectionTabLogo(false)
+            verifyCollectionTabUrl(false)
+            verifyCollectionItemRemoveButtonIsVisible(webPage.title, false)
         }
     }
 
@@ -908,22 +839,28 @@ class SmokeTest {
 
     @Test
     fun shareCollectionTest() {
-        val webPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+        val firstWebsite = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+        val secondWebsite = TestAssetHelper.getGenericAsset(mockWebServer, 2)
+        val sharingApp = "Gmail"
+        val urlString = "${secondWebsite.url}\n\n${firstWebsite.url}"
 
         navigationToolbar {
-        }.enterURLAndEnterToBrowser(webPage.url) {
+        }.enterURLAndEnterToBrowser(firstWebsite.url) {
+            verifyPageContent(firstWebsite.content)
         }.openTabDrawer {
-            createCollection(webPage.title, collectionName)
-            snackBarButtonClick("VIEW")
-        }
-
-        homeScreen {
+            createCollection(firstWebsite.title, collectionName)
+        }.openNewTab {
+        }.submitQuery(secondWebsite.url.toString()) {
+            verifyPageContent(secondWebsite.content)
+        }.openThreeDotMenu {
+        }.openSaveToCollection {
+        }.selectExistingCollection(collectionName) {
+        }.goToHomescreen {
         }.expandCollection(collectionName) {
-            clickShareCollectionButton()
-        }
-
-        homeScreen {
-            verifyShareTabsOverlay()
+        }.clickShareCollectionButton {
+            verifyShareTabsOverlay(firstWebsite.title, secondWebsite.title)
+            selectAppToShareWith(sharingApp)
+            verifySharedTabsIntent(urlString, collectionName)
         }
     }
 
@@ -974,6 +911,18 @@ class SmokeTest {
             selectFolder("My Folder")
             navigateUp()
             saveEditBookmark()
+            createFolder("My Folder 2")
+            bookmarksListIdlingResource =
+                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.bookmark_list), 1)
+            IdlingRegistry.getInstance().register(bookmarksListIdlingResource!!)
+            verifyFolderTitle("My Folder 2")
+            IdlingRegistry.getInstance().unregister(bookmarksListIdlingResource!!)
+        }.openThreeDotMenu("My Folder 2") {
+        }.clickEdit {
+            clickParentFolderSelector()
+            selectFolder("My Folder")
+            navigateUp()
+            saveEditBookmark()
         }.openThreeDotMenu("My Folder") {
         }.clickDelete {
             cancelFolderDeletion()
@@ -982,51 +931,62 @@ class SmokeTest {
         }.clickDelete {
             confirmDeletion()
             verifyDeleteSnackBarText()
+            verifyBookmarkIsDeleted("My Folder")
+            verifyBookmarkIsDeleted("My Folder 2")
+            verifyBookmarkIsDeleted("Test_Page_1")
             navigateUp()
         }
 
         browserScreen {
         }.openThreeDotMenu {
-            verifyBookmarksButton()
+            verifyAddBookmarkButton()
         }
     }
 
     @Test
     fun shareTabsFromTabsTrayTest() {
-        val website = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+        val firstWebsite = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+        val secondWebsite = TestAssetHelper.getGenericAsset(mockWebServer, 2)
+        val firstWebsiteTitle = firstWebsite.title
+        val secondWebsiteTitle = secondWebsite.title
+        val sharingApp = "Gmail"
+        val sharedUrlsString = "${firstWebsite.url}\n\n${secondWebsite.url}"
 
         homeScreen {
         }.openNavigationToolbar {
-        }.enterURLAndEnterToBrowser(website.url) {
-            mDevice.waitForIdle()
+        }.enterURLAndEnterToBrowser(firstWebsite.url) {
+            verifyPageContent(firstWebsite.content)
         }.openTabDrawer {
-            verifyNormalModeSelected()
-            verifyExistingTabList()
+        }.openNewTab {
+        }.submitQuery(secondWebsite.url.toString()) {
+            verifyPageContent(secondWebsite.content)
+        }.openTabDrawer {
             verifyExistingOpenTabs("Test_Page_1")
-            verifyTabTrayOverflowMenu(true)
+            verifyExistingOpenTabs("Test_Page_2")
         }.openTabsListThreeDotMenu {
             verifyShareAllTabsButton()
-            clickShareAllTabsButton()
-            verifyShareTabsOverlay()
+        }.clickShareAllTabsButton {
+            verifyShareTabsOverlay(firstWebsiteTitle, secondWebsiteTitle)
+            selectAppToShareWith(sharingApp)
+            verifySharedTabsIntent(
+                sharedUrlsString,
+                "$firstWebsiteTitle, $secondWebsiteTitle"
+            )
         }
     }
 
     @Test
     fun emptyTabsTrayViewPrivateBrowsingTest() {
-        homeScreen {
-        }.dismissOnboarding()
-
-        homeScreen {
-        }.openTabDrawer {
+        navigationToolbar {
+        }.openTabTray {
         }.toggleToPrivateTabs() {
-            verifyPrivateModeSelected()
-            verifyNormalBrowsingButtonIsDisplayed()
-            verifyNoTabsOpened()
+            verifyNormalBrowsingButtonIsSelected(false)
+            verifyPrivateBrowsingButtonIsSelected(true)
+            verifySyncedTabsButtonIsSelected(false)
+            verifyNoOpenTabsInPrivateBrowsing()
+            verifyPrivateBrowsingNewTabButton()
             verifyTabTrayOverflowMenu(true)
-            verifyNewTabButton()
-        }.openTabsListThreeDotMenu {
-            verifyTabSettingsButton()
-            verifyRecentlyClosedTabsButton()
+            verifyEmptyTabsTrayMenuButtons()
         }
     }
 
@@ -1042,14 +1002,19 @@ class SmokeTest {
         }.enterURLAndEnterToBrowser(website.url) {
             mDevice.waitForIdle()
         }.openTabDrawer {
-            verifyPrivateModeSelected()
-            verifyNormalBrowsingButtonIsDisplayed()
-            verifyExistingTabList()
-            verifyExistingOpenTabs("Test_Page_1")
-            verifyCloseTabsButton("Test_Page_1")
-            verifyOpenedTabThumbnail()
+            verifyNormalBrowsingButtonIsSelected(false)
+            verifyPrivateBrowsingButtonIsSelected(true)
+            verifySyncedTabsButtonIsSelected(false)
             verifyTabTrayOverflowMenu(true)
-            verifyNewTabButton()
+            verifyTabsTrayCounter()
+            verifyExistingTabList()
+            verifyExistingOpenTabs(website.title)
+            verifyCloseTabsButton(website.title)
+            verifyOpenedTabThumbnail()
+            verifyPrivateBrowsingNewTabButton()
+        }.openTab(website.title) {
+            verifyUrl(website.url.toString())
+            verifyTabCounter("1")
         }
     }
 
@@ -1101,7 +1066,7 @@ class SmokeTest {
         }.openThreeDotMenu {
         }.clickInstall {
             clickAddAutomaticallyButton()
-        }.openHomeScreenShortcut("yay app") {
+        }.openHomeScreenShortcut("TEST_APP") {
             mDevice.waitForIdle()
             verifyNavURLBarHidden()
         }
@@ -1157,7 +1122,7 @@ class SmokeTest {
         }.openTabCrashReporter {
         }.clickTabCrashedCloseButton {
         }.openTabDrawer {
-            verifyNoTabsOpened()
+            verifyNoOpenTabsInNormalBrowsing()
         }
     }
 
@@ -1233,7 +1198,7 @@ class SmokeTest {
             assertPlaybackState(browserStore, MediaSession.PlaybackState.PLAYING)
         }.openNotificationShade {
             verifySystemNotificationExists(audioTestPage.title)
-            clickMediaSystemNotificationControlButton("Pause")
+            clickSystemNotificationControlButton("Pause")
             verifyMediaSystemNotificationButtonState("Play")
         }
 
@@ -1422,26 +1387,6 @@ class SmokeTest {
             verifyTabViewOptions()
             verifyCloseTabsOptions()
             verifyMoveOldTabsToInactiveOptions()
-        }
-    }
-
-    @Test
-    fun startOnHomepageTest() {
-        val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(genericURL.url) {
-            mDevice.waitForIdle()
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openHomepageSubMenu {
-            clickStartOnHomepageButton()
-        }
-
-        restartApp(activityTestRule.activityRule)
-
-        homeScreen {
-            verifyHomeScreen()
         }
     }
 }

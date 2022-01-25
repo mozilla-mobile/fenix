@@ -9,7 +9,6 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
 import mozilla.components.browser.storage.sync.PlacesHistoryStorage
@@ -32,6 +31,7 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.directionsEq
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.library.history.History
+import org.mozilla.fenix.library.history.HistoryItemTimeGroup
 import org.mozilla.fenix.library.historymetadata.HistoryMetadataGroupFragmentAction
 import org.mozilla.fenix.library.historymetadata.HistoryMetadataGroupFragmentDirections
 import org.mozilla.fenix.library.historymetadata.HistoryMetadataGroupFragmentStore
@@ -39,11 +39,10 @@ import org.mozilla.fenix.library.historymetadata.HistoryMetadataGroupFragmentSto
 @RunWith(FenixRobolectricTestRunner::class)
 class HistoryMetadataGroupControllerTest {
 
-    private val testDispatcher = TestCoroutineDispatcher()
-    private val scope = TestCoroutineScope()
-
     @get:Rule
-    val coroutinesTestRule = MainCoroutineRule(testDispatcher)
+    val coroutinesTestRule = MainCoroutineRule()
+    private val testDispatcher = coroutinesTestRule.testDispatcher
+    private val scope = TestCoroutineScope(testDispatcher)
 
     private val activity: HomeActivity = mockk(relaxed = true)
     private val store: HistoryMetadataGroupFragmentStore = mockk(relaxed = true)
@@ -55,18 +54,20 @@ class HistoryMetadataGroupControllerTest {
     private val searchTerm = "mozilla"
     private val historyMetadataKey = HistoryMetadataKey("http://www.mozilla.com", searchTerm, null)
     private val mozillaHistoryMetadataItem = History.Metadata(
-        id = 0,
+        position = 1,
         title = "Mozilla",
         url = "mozilla.org",
         visitedAt = 0,
+        historyTimeGroup = HistoryItemTimeGroup.timeGroupForTimestamp(0),
         totalViewTime = 1,
         historyMetadataKey = historyMetadataKey
     )
     private val firefoxHistoryMetadataItem = History.Metadata(
-        id = 0,
+        position = 1,
         title = "Firefox",
         url = "firefox.com",
         visitedAt = 0,
+        historyTimeGroup = HistoryItemTimeGroup.timeGroupForTimestamp(0),
         totalViewTime = 1,
         historyMetadataKey = historyMetadataKey
     )
