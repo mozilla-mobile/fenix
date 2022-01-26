@@ -6,13 +6,13 @@
     <!-- Design system color variables -->
 
     <!-- Layers -->
-    <!-- Default Screen, Search, Frontlayer background -->
-    <color name="fx_mobile_layer_color_1">@color/photonLightGrey20</color>
-    <!-- Card background, Menu background -->
+    <!-- Default Screen background, Frontlayer background, App Bar Top, App Bar Bottom, Frontlayer header -->
+    <color name="fx_mobile_layer_color_1">@color/photonLightGrey10</color>
+    <!-- Card background, Menu background, Dialog, Banner -->
     <color name="fx_mobile_layer_color_2">@color/photonWhite</color>
-    <!-- App Bar Top, App Bar Bottom, Frontlayer header -->
-    <color name="fx_mobile_layer_color_3" tools:ignore="UnusedResources">@color/photonLightGrey10</color>
-    <!-- App Bar Top (edit), Header (edit) -->
+    <!-- Search -->
+    <color name="fx_mobile_layer_color_3" tools:ignore="UnusedResources">@color/photonLightGrey20</color>
+    <!-- App Bar Top (edit), Text Cursor, Selected Tab Check -->
     <color name="fx_mobile_layer_color_accent">@color/photonInk20</color>
     <!-- Selected tab -->
     <color name="fx_mobile_layer_color_accent_nonopaque">@color/photonViolet70A12</color>
@@ -27,8 +27,12 @@
     <!-- Action -->
     <!-- Primary button, Snackbar, Floating action button, Chip selected -->
     <color name="fx_mobile_action_color_primary">@color/photonInk20</color>
-    <!-- Secondary button, Chip -->
+    <!-- Secondary button -->
     <color name="fx_mobile_action_color_secondary" tools:ignore="UnusedResources">@color/photonLightGrey40</color>
+    <!-- Filter -->
+    <color name="fx_mobile_action_color_tertiary" tools:ignore="UnusedResources">@color/photonLightGrey40</color>
+    <!-- Chip -->
+    <color name="fx_mobile_action_quarternary" tools:ignore="UnusedResources">@color/photonLightGrey10</color>
     <!-- Checkbox default, Radio button default -->
     <color name="fx_mobile_action_color_form_default" tools:ignore="UnusedResources">@color/photonDarkGrey90</color>
     <!-- Checkbox selected, Radio button selected -->
@@ -58,7 +62,15 @@
     <!-- Small heading, Text link -->
     <color name="fx_mobile_text_color_accent">@color/photonViolet70</color>
     <!-- Text Inverted/On Color -->
-    <color name="fx_mobile_text_color_inverted" tools:ignore="UnusedResources">@color/photonWhite</color>
+    <color name="fx_mobile_text_color_oncolor" tools:ignore="UnusedResources">@color/photonLightGrey05</color>
+    <!-- Action Primary text -->
+    <color name="fx_mobile_text_color_action_primary" tools:ignore="UnusedResources">@color/photonLightGrey05</color>
+    <!-- Action Secondary text -->
+    <color name="fx_mobile_text_color_action_secondary" tools:ignore="UnusedResources">@color/photonDarkGrey90</color>
+    <!-- Action Tertiary text -->
+    <color name="fx_mobile_text_color_action_tertiary" tools:ignore="UnusedResources">@color/photonDarkGrey90</color>
+    <!-- Action Tertiary Active text -->
+    <color name="fx_mobile_text_color_action_tertiary_active" tools:ignore="UnusedResources">@color/photonLightGrey05</color>
 
     <!-- Icon -->
     <!-- Primary icon -->
@@ -70,9 +82,9 @@
     <!-- Active tab -->
     <color name="fx_mobile_icon_color_active">@color/photonInk20</color>
     <!-- Disabled icon -->
-    <color name="fx_mobile_icon_color_disabled" tools:ignore="UnusedResources">@color/photonLightGrey70</color>
+    <color name="fx_mobile_icon_color_disabled" tools:ignore="UnusedResources">@color/photonDarkGrey90A40</color>
     <!-- Icon inverted (on color) -->
-    <color name="fx_mobile_icon_color_inverted" tools:ignore="UnusedResources">@color/photonWhite</color>
+    <color name="fx_mobile_icon_color_oncolor" tools:ignore="UnusedResources">@color/photonLightGrey05</color>
     <!-- Information -->
     <color name="fx_mobile_icon_color_information">@color/photonBlue30</color>
     <!-- Icon button -->
@@ -98,7 +110,7 @@
     <!-- Active tab (Nav), Selected tab, Active form -->
     <color name="fx_mobile_border_color_accent">@color/photonInk20</color>
     <!-- Form parts -->
-    <color name="fx_mobile_border_color_disabled" tools:ignore="UnusedResources">@color/photonLightGrey70</color>
+    <color name="fx_mobile_border_color_disabled" tools:ignore="UnusedResources">@color/photonDarkGrey90A40</color>
     <!-- Form parts -->
     <color name="fx_mobile_border_color_warning" tools:ignore="UnusedResources">@color/photonRed80</color>
 

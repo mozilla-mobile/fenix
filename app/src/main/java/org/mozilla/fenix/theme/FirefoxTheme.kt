@@ -41,9 +41,9 @@ object FirefoxTheme {
 }
 
 private val darkColorPalette = FirefoxColors(
-    layer1 = PhotonColors.DarkGrey80,
-    layer2 = PhotonColors.DarkGrey50,
-    layer3 = PhotonColors.DarkGrey60,
+    layer1 = PhotonColors.DarkGrey60,
+    layer2 = PhotonColors.DarkGrey30,
+    layer3 = PhotonColors.DarkGrey30,
     layerAccent = PhotonColors.Violet40,
     layerNonOpaque = PhotonColors.Violet50A32,
     scrim = PhotonColors.DarkGrey05A45,
@@ -52,7 +52,9 @@ private val darkColorPalette = FirefoxColors(
     gradientStart = PhotonColors.Violet70,
     gradientEnd = PhotonColors.Violet40,
     actionPrimary = PhotonColors.Violet60,
-    actionSecondary = PhotonColors.DarkGrey10,
+    actionSecondary = PhotonColors.LightGrey05,
+    actionTertiary = PhotonColors.DarkGrey10,
+    actionQuarternary = PhotonColors.DarkGrey80,
     formDefault = PhotonColors.LightGrey05,
     formSelected = PhotonColors.Violet40,
     formSurface = PhotonColors.DarkGrey05,
@@ -64,18 +66,22 @@ private val darkColorPalette = FirefoxColors(
     textPrimary = PhotonColors.LightGrey05,
     textSecondary = PhotonColors.LightGrey40,
     textDisabled = PhotonColors.LightGrey05A40,
-    textWarning = PhotonColors.Red40,
-    textAccent = PhotonColors.Violet40,
-    textInverted = PhotonColors.White,
+    textWarning = PhotonColors.Red20,
+    textAccent = PhotonColors.Violet20,
+    textOnColor = PhotonColors.LightGrey05,
+    textActionPrimary = PhotonColors.LightGrey05,
+    textActionSecondary = PhotonColors.DarkGrey90,
+    textActionTertiary = PhotonColors.LightGrey05,
+    textActionTertiaryActive = PhotonColors.LightGrey05,
     iconPrimary = PhotonColors.LightGrey05,
     iconPrimaryInactive = PhotonColors.LightGrey05A60,
     iconSecondary = PhotonColors.LightGrey40,
     iconActive = PhotonColors.Violet40,
-    iconDisabled = PhotonColors.LightGrey70,
-    iconInverted = PhotonColors.White,
+    iconDisabled = PhotonColors.LightGrey05A40,
+    iconOnColor = PhotonColors.LightGrey05,
     iconNotice = PhotonColors.Blue30,
     iconButton = PhotonColors.LightGrey05,
-    iconWarning = PhotonColors.Red40,
+    iconWarning = PhotonColors.Red20,
     iconAccentViolet = PhotonColors.Violet20,
     iconAccentBlue = PhotonColors.Blue20,
     iconAccentPink = PhotonColors.Pink20,
@@ -87,14 +93,14 @@ private val darkColorPalette = FirefoxColors(
     borderInverted = PhotonColors.LightGrey30,
     borderFormDefault = PhotonColors.LightGrey05,
     borderAccent = PhotonColors.Violet40,
-    borderDisabled = PhotonColors.LightGrey70,
+    borderDisabled = PhotonColors.LightGrey05A40,
     borderWarning = PhotonColors.Red40
 )
 
 private val lightColorPalette = FirefoxColors(
-    layer1 = PhotonColors.LightGrey20,
+    layer1 = PhotonColors.LightGrey10,
     layer2 = PhotonColors.White,
-    layer3 = PhotonColors.LightGrey10,
+    layer3 = PhotonColors.LightGrey20,
     layerAccent = PhotonColors.Ink20,
     layerNonOpaque = PhotonColors.Violet70A12,
     scrim = PhotonColors.DarkGrey05A45,
@@ -104,6 +110,8 @@ private val lightColorPalette = FirefoxColors(
     gradientEnd = PhotonColors.Violet40,
     actionPrimary = PhotonColors.Ink20,
     actionSecondary = PhotonColors.LightGrey40,
+    actionTertiary = PhotonColors.LightGrey40,
+    actionQuarternary = PhotonColors.LightGrey10,
     formDefault = PhotonColors.DarkGrey90,
     formSelected = PhotonColors.Ink20,
     formSurface = PhotonColors.LightGrey50,
@@ -117,13 +125,17 @@ private val lightColorPalette = FirefoxColors(
     textDisabled = PhotonColors.DarkGrey90A40,
     textWarning = PhotonColors.Red80,
     textAccent = PhotonColors.Violet70,
-    textInverted = PhotonColors.White,
+    textOnColor = PhotonColors.LightGrey05,
+    textActionPrimary = PhotonColors.LightGrey05,
+    textActionSecondary = PhotonColors.DarkGrey90,
+    textActionTertiary = PhotonColors.DarkGrey90,
+    textActionTertiaryActive = PhotonColors.LightGrey05,
     iconPrimary = PhotonColors.DarkGrey90,
     iconPrimaryInactive = PhotonColors.DarkGrey90A60,
     iconSecondary = PhotonColors.DarkGrey05,
     iconActive = PhotonColors.Ink20,
-    iconDisabled = PhotonColors.LightGrey70,
-    iconInverted = PhotonColors.White,
+    iconDisabled = PhotonColors.DarkGrey90A40,
+    iconOnColor = PhotonColors.LightGrey05,
     iconNotice = PhotonColors.Blue30,
     iconButton = PhotonColors.Ink20,
     iconWarning = PhotonColors.Red80,
@@ -138,7 +150,7 @@ private val lightColorPalette = FirefoxColors(
     borderInverted = PhotonColors.DarkGrey05,
     borderFormDefault = PhotonColors.DarkGrey90,
     borderAccent = PhotonColors.Ink20,
-    borderDisabled = PhotonColors.LightGrey70,
+    borderDisabled = PhotonColors.DarkGrey90A40,
     borderWarning = PhotonColors.Red80
 )
 
@@ -160,6 +172,8 @@ class FirefoxColors(
     gradientEnd: Color,
     actionPrimary: Color,
     actionSecondary: Color,
+    actionTertiary: Color,
+    actionQuarternary: Color,
     formDefault: Color,
     formSelected: Color,
     formSurface: Color,
@@ -173,13 +187,17 @@ class FirefoxColors(
     textDisabled: Color,
     textWarning: Color,
     textAccent: Color,
-    textInverted: Color,
+    textOnColor: Color,
+    textActionPrimary: Color,
+    textActionSecondary: Color,
+    textActionTertiary: Color,
+    textActionTertiaryActive: Color,
     iconPrimary: Color,
     iconPrimaryInactive: Color,
     iconSecondary: Color,
     iconActive: Color,
     iconDisabled: Color,
-    iconInverted: Color,
+    iconOnColor: Color,
     iconNotice: Color,
     iconButton: Color,
     iconWarning: Color,
@@ -199,16 +217,16 @@ class FirefoxColors(
 ) {
     // Layers
 
-    // Default Screen, Search, Frontlayer background
+    // Default Screen background, Frontlayer background, App Bar Top, App Bar Bottom, Frontlayer header
     var layer1 by mutableStateOf(layer1)
         private set
-    // Card background, Menu background
+    // Card background, Menu background, Dialog, Banner
     var layer2 by mutableStateOf(layer2)
         private set
-    // App Bar Top, App Bar Bottom, Frontlayer header
+    // Search
     var layer3 by mutableStateOf(layer3)
         private set
-    // App Bar Top (edit), Header (edit)
+    // App Bar Top (edit), Text Cursor, Selected Tab Check
     var layerAccent by mutableStateOf(layerAccent)
         private set
     // Selected tab
@@ -232,8 +250,14 @@ class FirefoxColors(
     // Primary button, Snackbar, Floating action button, Chip selected
     var actionPrimary by mutableStateOf(actionPrimary)
         private set
-    // Secondary button, Chip
+    // Secondary button
     var actionSecondary by mutableStateOf(actionSecondary)
+        private set
+    // Filter
+    var actionTertiary by mutableStateOf(actionTertiary)
+        private set
+    // Chip
+    var actionQuarternary by mutableStateOf(actionQuarternary)
         private set
     // Checkbox default, Radio button default
     var formDefault by mutableStateOf(formDefault)
@@ -278,7 +302,19 @@ class FirefoxColors(
     var textAccent by mutableStateOf(textAccent)
         private set
     // Text Inverted/On Color
-    var textInverted by mutableStateOf(textInverted)
+    var textOnColor by mutableStateOf(textOnColor)
+        private set
+    // Action Primary text
+    var textActionPrimary by mutableStateOf(textActionPrimary)
+        private set
+    // Action Secondary text
+    var textActionSecondary by mutableStateOf(textActionSecondary)
+        private set
+    // Action Tertiary text
+    var textActionTertiary by mutableStateOf(textActionTertiary)
+        private set
+    // Action Tertiary Active text
+    var textActionTertiaryActive by mutableStateOf(textActionTertiaryActive)
         private set
 
     // Icon
@@ -299,7 +335,7 @@ class FirefoxColors(
     var iconDisabled by mutableStateOf(iconDisabled)
         private set
     // Icon inverted (on color)
-    var iconInverted by mutableStateOf(iconInverted)
+    var iconOnColor by mutableStateOf(iconOnColor)
         private set
     // New
     var iconNotice by mutableStateOf(iconNotice)
@@ -360,6 +396,8 @@ class FirefoxColors(
         gradientEnd = other.gradientEnd
         actionPrimary = other.actionPrimary
         actionSecondary = other.actionSecondary
+        actionTertiary = other.actionTertiary
+        actionQuarternary = other.actionQuarternary
         formDefault = other.formDefault
         formSelected = other.formSelected
         formSurface = other.formSurface
@@ -373,13 +411,17 @@ class FirefoxColors(
         textDisabled = other.textDisabled
         textWarning = other.textWarning
         textAccent = other.textAccent
-        textInverted = other.textInverted
+        textOnColor = other.textOnColor
+        textActionPrimary = other.textActionPrimary
+        textActionSecondary = other.textSecondary
+        textActionTertiary = other.textActionTertiary
+        textActionTertiaryActive = other.textActionTertiaryActive
         iconPrimary = other.iconPrimary
         iconPrimaryInactive = other.iconPrimaryInactive
         iconSecondary = other.iconSecondary
         iconActive = other.iconActive
         iconDisabled = other.iconDisabled
-        iconInverted = other.iconInverted
+        iconOnColor = other.iconOnColor
         iconNotice = other.iconNotice
         iconButton = other.iconButton
         iconWarning = other.iconWarning
@@ -411,6 +453,8 @@ class FirefoxColors(
         gradientEnd = gradientEnd,
         actionPrimary = actionPrimary,
         actionSecondary = actionSecondary,
+        actionTertiary = actionTertiary,
+        actionQuarternary = actionQuarternary,
         formDefault = formDefault,
         formSelected = formSelected,
         formSurface = formSurface,
@@ -424,13 +468,17 @@ class FirefoxColors(
         textDisabled = textDisabled,
         textWarning = textWarning,
         textAccent = textAccent,
-        textInverted = textInverted,
+        textOnColor = textOnColor,
+        textActionPrimary = textActionPrimary,
+        textActionSecondary = textActionSecondary,
+        textActionTertiary = textActionTertiary,
+        textActionTertiaryActive = textActionTertiaryActive,
         iconPrimary = iconPrimary,
         iconPrimaryInactive = iconPrimaryInactive,
         iconSecondary = iconSecondary,
         iconActive = iconActive,
         iconDisabled = iconDisabled,
-        iconInverted = iconInverted,
+        iconOnColor = iconOnColor,
         iconNotice = iconNotice,
         iconButton = iconButton,
         iconWarning = iconWarning,
