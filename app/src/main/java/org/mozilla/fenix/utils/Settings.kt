@@ -35,13 +35,11 @@ import org.mozilla.fenix.components.settings.counterPreference
 import org.mozilla.fenix.components.settings.featureFlagPreference
 import org.mozilla.fenix.components.settings.lazyFeatureFlagPreference
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
-import org.mozilla.fenix.experiments.ExperimentBranch
-import org.mozilla.fenix.experiments.FeatureId
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getPreferenceKey
-import org.mozilla.fenix.ext.withExperiment
 import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.nimbus.HomeScreenSection
+import org.mozilla.fenix.nimbus.MessageSurfaceId
 import org.mozilla.fenix.settings.PhoneFeature
 import org.mozilla.fenix.settings.deletebrowsingdata.DeleteBrowsingDataOnQuitType
 import org.mozilla.fenix.settings.logins.SavedLoginsSortingStrategyMenu
@@ -329,12 +327,9 @@ class Settings(private val appContext: Context) : PreferencesHolder {
      */
     fun shouldShowSetAsDefaultBrowserCard(): Boolean {
         val browsers = BrowsersCache.all(appContext)
-        val experiments = appContext.components.analytics.experiments
-        val isExperimentBranch =
-            experiments.withExperiment(FeatureId.DEFAULT_BROWSER) { experimentBranch ->
-                (experimentBranch == ExperimentBranch.DEFAULT_BROWSER_NEW_TAB_BANNER)
-            }
-        return isExperimentBranch == true &&
+        val feature = FxNimbus.features.defaultBrowserMessage.value()
+        val isExperimentBranch = feature.messageLocation == MessageSurfaceId.HOMESCREEN_BANNER
+        return isExperimentBranch &&
             !userDismissedExperimentCard &&
             !browsers.isFirefoxDefaultBrowser &&
             numberOfAppLaunches > APP_LAUNCHES_TO_SHOW_DEFAULT_BROWSER_CARD
