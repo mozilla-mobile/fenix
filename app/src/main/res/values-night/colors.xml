@@ -161,6 +161,9 @@
     <color name="search_widget_mic_fill_color">@color/photonLightGrey05</color>
     <color name="search_widget_text">@color/fx_mobile_text_color_primary</color>
 
+    <!-- Mozilla Android Component color variable overrides -->
+    <color name="mozac_ui_icons_fill" tools:ignore="UnusedResources">@color/fx_mobile_text_color_primary</color>
+
     <!-- Reader View colors -->
     <color name="mozac_feature_readerview_text_color">@color/fx_mobile_text_color_primary</color>
 
