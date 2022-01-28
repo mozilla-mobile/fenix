@@ -16,12 +16,12 @@ object FeatureFlags {
      * Pull-to-refresh allows you to pull the web content down far enough to have the page to
      * reload.
      */
-    val pullToRefreshEnabled = Config.channel.isNightlyOrDebug
+    const val pullToRefreshEnabled = false
 
     /**
      * Enables the Addresses autofill feature.
      */
-    val addressesFeature = Config.channel.isNightlyOrDebug
+    const val addressesFeature = false
 
     /**
      * Enables WebAuthn support.
@@ -31,52 +31,52 @@ object FeatureFlags {
     /**
      * Enables the Home button in the browser toolbar to navigate back to the home screen.
      */
-    const val showHomeButtonFeature = true
+    const val showHomeButtonFeature = false
 
     /**
      * Enables the Start On Home feature in the settings page.
      */
-    const val showStartOnHomeSettings = true
+    const val showStartOnHomeSettings = false
 
     /**
      * Enables the "recent" tabs feature in the home screen.
      */
-    const val showRecentTabsFeature = true
+    const val showRecentTabsFeature = false
 
     /**
      * Enables UI features based on history metadata.
      */
-    const val historyMetadataUIFeature = true
+    const val historyMetadataUIFeature = false
 
     /**
      * Enables the recently saved bookmarks feature in the home screen.
      */
-    const val recentBookmarksFeature = true
+    const val recentBookmarksFeature = false
 
     /**
      * Identifies and separates the tabs list with a secondary section containing least used tabs.
      */
-    const val inactiveTabs = true
+    const val inactiveTabs = false
 
     /**
      * Enables showing the home screen behind the search dialog
      */
-    const val showHomeBehindSearch = true
+    const val showHomeBehindSearch = false
 
     /**
      * Enables customizing the home screen
      */
-    const val customizeHome = true
+    const val customizeHome = false
 
     /**
      * Identifies and separates the tabs list with a group containing search term tabs.
      */
-    val tabGroupFeature = Config.channel.isNightlyOrDebug
+    const val tabGroupFeature = false
 
     /**
      * Enables showing search groupings in the History.
      */
-    const val showHistorySearchGroups = true
+    const val showHistorySearchGroups = false
 
     /**
      * Show Pocket recommended stories on home.
@@ -84,7 +84,7 @@ object FeatureFlags {
     fun isPocketRecommendationsFeatureEnabled(context: Context): Boolean {
         val langTag = LocaleManager.getCurrentLocale(context)
             ?.toLanguageTag() ?: getSystemDefault().toLanguageTag()
-        return listOf("en-US", "en-CA").contains(langTag)
+        return listOf("nothing").contains(langTag)
     }
 
     /**

@@ -1,0 +1,35 @@
+name: Android build
+on:
+  workflow_dispatch:
+jobs:
+  run-build:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Create version name
+        run: echo "VERSION_NAME=custom.96.0" >> $GITHUB_ENV
+      - name: 'Assemble Release'
+        uses: eskatos/gradle-command-action@v1
+        with:
+          wrapper-cache-enabled: true
+          dependencies-cache-enabled: true
+          configuration-cache-enabled: true
+          arguments: assembleRelease -PversionName=${{ env.VERSION_NAME }}
+      - name: Create signed APKs
+        uses: abhijitvalluri/sign-apks@v0.8
+        with:
+          releaseDirectory: app/build/outputs/apk/release/
+          signingKeyBase64: ${{ secrets.DEBUG_SIGNING_KEY }}
+          alias: ${{ secrets.DEBUG_ALIAS }}
+          keyStorePassword: ${{ secrets.DEBUG_KEY_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.DEBUG_KEY_PASSWORD }}
+      - name: Archive apk
+        uses: actions/upload-artifact@v2
+        with:
+          name: firefox-${{ env.VERSION_NAME }}-arm64-v8a-release-signed.apk
+          path: ${{ env.SIGNED_RELEASE_FILE }}

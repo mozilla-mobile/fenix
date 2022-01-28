@@ -47,8 +47,8 @@ android {
         buildConfigField "String", "GIT_HASH", "\"\"" // see override in release builds for why it's blank.
         // This should be the "public" base URL of AMO.
         buildConfigField "String", "AMO_BASE_URL", "\"https://addons.mozilla.org\""
-        buildConfigField "String", "AMO_COLLECTION_NAME", "\"7dfae8669acc4312a65e8ba5553036\""
-        buildConfigField "String", "AMO_COLLECTION_USER", "\"mozilla\""
+        buildConfigField "String", "AMO_COLLECTION_NAME", "\"addons-mobile\""
+        buildConfigField "String", "AMO_COLLECTION_USER", "\"16366570\""
         // These add-ons should be excluded for Mozilla Online builds.
         buildConfigField "String[]", "MOZILLA_ONLINE_ADDON_EXCLUSIONS",
                 "{" +
@@ -99,12 +99,29 @@ android {
     }
 
     buildTypes {
-        debug {
-            shrinkResources false
-            minifyEnabled false
-            applicationIdSuffix ".fenix.debug"
-            resValue "bool", "IS_DEBUG", "true"
-            pseudoLocalesEnabled true
+        // debug {
+        //     shrinkResources false
+        //     minifyEnabled false
+        //     applicationIdSuffix ".fenix.debug"
+        //     resValue "bool", "IS_DEBUG", "true"
+        //     pseudoLocalesEnabled true
+        // }
+        debug releaseTemplate >> {
+            buildConfigField "boolean", "USE_RELEASE_VERSIONING", "true"
+            applicationIdSuffix ".firefox"
+            def deepLinkSchemeValue = "fenix"
+            buildConfigField "String", "DEEP_LINK_SCHEME", "\"$deepLinkSchemeValue\""
+            manifestPlaceholders = [
+                    // This release type is meant to replace Firefox (Release channel) and therefore needs to inherit
+                    // its sharedUserId for all eternity. See:
+                    // https://searchfox.org/mozilla-central/search?q=moz_android_shared_id&case=false&regexp=false&path=
+                    // Shipping an app update without sharedUserId can have
+                    // fatal consequences. For example see:
+                    //  - https://issuetracker.google.com/issues/36924841
+                    //  - https://issuetracker.google.com/issues/36905922
+                    "sharedUserId": "org.mozilla.firefox.sharedID",
+                    "deepLinkScheme": deepLinkSchemeValue
+            ]
         }
         nightly releaseTemplate >> {
             applicationIdSuffix ".fenix"
@@ -193,7 +210,7 @@ android {
 
             reset()
 
-            include "x86", "armeabi-v7a", "arm64-v8a", "x86_64"
+            include "arm64-v8a"
         }
     }
 
@@ -235,18 +252,6 @@ android {
         kotlinCompilerExtensionVersion = Versions.androidx_compose
     }
 
-}
-
-// -------------------------------------------------------------------------------------------------
-// Set up kotlin-allopen plugin for writing tests
-// -------------------------------------------------------------------------------------------------
-
-boolean hasTest = gradle.startParameter.taskNames.find { it.contains("test") || it.contains("Test") } != null
-if (hasTest) {
-    apply plugin: 'kotlin-allopen'
-    allOpen {
-        annotation("org.mozilla.fenix.utils.OpenClass")
-    }
 }
 
 android.applicationVariants.all { variant ->
@@ -490,6 +495,7 @@ dependencies {
     implementation Deps.mozilla_feature_webcompat_reporter
     implementation Deps.mozilla_service_pocket
 
+    implementation Deps.mozilla_service_contile
     implementation Deps.mozilla_service_digitalassetlinks
     implementation Deps.mozilla_service_sync_autofill
     implementation Deps.mozilla_service_sync_logins
