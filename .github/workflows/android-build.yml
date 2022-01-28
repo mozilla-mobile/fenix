@@ -12,7 +12,7 @@ jobs:
         with:
           java-version: 11
       - name: Create version name
-        run: echo "VERSION_NAME=custom.96.0" >> $GITHUB_ENV
+        run: echo "VERSION_NAME=custom.96.3.1" >> $GITHUB_ENV
       - name: 'Assemble Release'
         uses: eskatos/gradle-command-action@v1
         with:
