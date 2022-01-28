@@ -98,7 +98,10 @@ class BrowserRobot {
         )
 
         runWithIdleRes(sessionLoadedIdlingResource) {
-            assertTrue(mDevice.findObject(UiSelector().textContains(expectedText)).waitForExists(waitingTime))
+            assertTrue(
+                "Page didn't load or doesn't contain the expected text",
+                mDevice.findObject(UiSelector().textContains(expectedText)).waitForExists(waitingTime)
+            )
         }
     }
 
@@ -562,6 +565,15 @@ class BrowserRobot {
         tabCrashRestoreButton.click()
     }
 
+    fun fillAndSubmitGoogleSearchQuery(searchString: String) {
+        mDevice.findObject(
+            UiSelector().resourceId("$packageName:id/engineView")
+        ).waitForExists(waitingTime)
+        googleSearchBox.setText(searchString)
+        mDevice.pressEnter()
+        mDevice.waitForIdle(waitingTime)
+    }
+
     fun fillAndSubmitLoginCredentials(userName: String, password: String) {
         userNameTextBox.click()
         userNameTextBox.setText(userName)
@@ -571,6 +583,32 @@ class BrowserRobot {
 
         submitLoginButton.click()
         mDevice.waitForIdle()
+    }
+
+    fun verifyPrefilledLoginCredentials(userName: String, shortcutTitle: String) {
+        mDevice.waitForIdle(waitingTime)
+
+        var currentTries = 0
+        while (currentTries++ < 3) {
+            try {
+                assertTrue(submitLoginButton.waitForExists(waitingTime))
+                submitLoginButton.click()
+                assertTrue(userNameTextBox.text.equals(userName))
+                break
+            } catch (e: AssertionError) {
+                addToHomeScreen {
+                }.searchAndOpenHomeScreenShortcut(shortcutTitle) {}
+            }
+        }
+    }
+
+    fun verifySaveLoginPromptIsDisplayed() {
+        assertTrue(
+            mDevice.findObject(
+                UiSelector()
+                    .resourceId("$packageName:id/feature_prompt_login_fragment")
+            ).waitForExists(waitingTime)
+        )
     }
 
     class Transition {
@@ -818,6 +856,15 @@ val passwordTextBox =
         UiSelector()
             .index(1)
             .resourceId("password")
+            .className("android.widget.EditText")
+            .packageName("$packageName")
+    )
+
+val googleSearchBox =
+    mDevice.findObject(
+        UiSelector()
+            .index(0)
+            .resourceId("mib")
             .className("android.widget.EditText")
             .packageName("$packageName")
     )

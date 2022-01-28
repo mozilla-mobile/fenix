@@ -38,6 +38,7 @@ import androidx.test.uiautomator.UiObject
 import androidx.test.uiautomator.UiScrollable
 import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
+import java.io.File
 import kotlinx.coroutines.runBlocking
 import mozilla.components.support.ktx.android.content.appName
 import org.hamcrest.CoreMatchers
@@ -50,7 +51,7 @@ import org.mozilla.fenix.helpers.ext.waitNotNull
 import org.mozilla.fenix.helpers.idlingresource.NetworkConnectionIdlingResource
 import org.mozilla.fenix.ui.robots.BrowserRobot
 import org.mozilla.fenix.ui.robots.mDevice
-import java.io.File
+import org.mozilla.fenix.utils.IntentUtils
 
 object TestHelper {
 
@@ -112,7 +113,7 @@ object TestHelper {
         val intent = Intent().apply {
             action = Intent.ACTION_VIEW
             data = Uri.parse(url)
-            `package` = "org.mozilla.fenix.debug"
+            `package` = packageName
             flags = Intent.FLAG_ACTIVITY_NEW_TASK
         }
         try {
@@ -176,7 +177,7 @@ object TestHelper {
         val appContext = InstrumentationRegistry.getInstrumentation()
             .targetContext
             .applicationContext
-        val pendingIntent = PendingIntent.getActivity(appContext, 0, Intent(), 0)
+        val pendingIntent = PendingIntent.getActivity(appContext, 0, Intent(), IntentUtils.defaultIntentPendingFlags)
         val customTabsIntent = CustomTabsIntent.Builder()
             .addMenuItem(customMenuItemLabel, pendingIntent)
             .setShareState(CustomTabsIntent.SHARE_STATE_ON)
@@ -249,4 +250,6 @@ object TestHelper {
             )
         )
     }
+
+    fun getStringResource(id: Int) = appContext.resources.getString(id, appName)
 }
