@@ -557,9 +557,18 @@ search_shortcuts:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Search
+        - Shortcuts
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
 
 experiments_default_browser:
   toolbar_menu_clicked:
@@ -593,11 +602,20 @@ toolbar_settings:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+      - erichards@mozilla.com
+    expires: never
+    metadata:
+      tags:
+        - Toolbar
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
 
 context_menu:
   item_tapped:
@@ -642,11 +660,19 @@ login_dialog:
       - https://github.com/mozilla-mobile/fenix/pull/13050
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Logins
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   cancelled:
     type: event
     description: |
@@ -657,11 +683,19 @@ login_dialog:
       - https://github.com/mozilla-mobile/fenix/pull/13050
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Logins
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   saved:
     type: event
     description: |
@@ -672,11 +706,19 @@ login_dialog:
       - https://github.com/mozilla-mobile/fenix/pull/13050
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Logins
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   never_save:
     type: event
     description: |
@@ -687,11 +729,19 @@ login_dialog:
       - https://github.com/mozilla-mobile/fenix/pull/13050
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Logins
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
 
 metrics:
   default_browser:
@@ -818,11 +868,19 @@ metrics:
       - https://github.com/mozilla-mobile/fenix/pull/16942#issuecomment-742794701
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Bookmarks
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   top_sites_count:
     type: counter
     lifetime: application
@@ -891,11 +949,19 @@ metrics:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - PWA
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   has_recent_pwas:
     type: boolean
     lifetime: application
@@ -911,11 +977,19 @@ metrics:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - PWA
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   search_count:
     type: labeled_counter
     description: |
@@ -967,12 +1041,20 @@ metrics:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - technical
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Settings
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   default_moz_browser:
     type: string
     lifetime: application
@@ -989,12 +1071,20 @@ metrics:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - technical
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Settings
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   adjust_campaign:
     type: string
     lifetime: application
@@ -1012,11 +1102,19 @@ metrics:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - technical
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Telemetry
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   adjust_ad_group:
     type: string
     lifetime: application
@@ -1034,11 +1132,19 @@ metrics:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Telemetry
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   adjust_creative:
     type: string
     lifetime: application
@@ -1056,11 +1162,19 @@ metrics:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Telemetry
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   adjust_network:
     type: string
     lifetime: application
@@ -1078,11 +1192,19 @@ metrics:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Telemetry
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   toolbar_position:
     type: string
     lifetime: application
@@ -1097,11 +1219,19 @@ metrics:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Toolbar
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   close_tab_setting:
     type: string
     lifetime: application
@@ -1116,11 +1246,19 @@ metrics:
       - https://github.com/mozilla-mobile/fenix/pull/15811#issuecomment-706402952
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Tabs
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   tab_view_setting:
     type: string
     lifetime: application
@@ -1135,11 +1273,19 @@ metrics:
       - https://github.com/mozilla-mobile/fenix/pull/15811#issuecomment-706402952
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Tabs
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   search_widget_installed:
     type: boolean
     lifetime: application
@@ -1154,11 +1300,20 @@ metrics:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Discovery
+        - Search
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   tabs_open_count:
     type: counter
     lifetime: application
@@ -1198,11 +1353,19 @@ metrics:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Tabs
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   start_reason_process_error:
     type: boolean
     description: |
@@ -1248,11 +1411,13 @@ metrics:
       - https://github.com/mozilla-mobile/fenix/issues/22138
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/22224#issuecomment-956749994
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - technical
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+      - erichards@mozilla.com
+    expires: never
   inactive_tabs_count:
     type: quantity
     description: |
@@ -1265,11 +1430,12 @@ metrics:
       - https://github.com/mozilla-mobile/fenix/issues/22155
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/22163#issuecomment-957636802
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+    expires: "2023-02-01"
     unit: integer
 
 customize_home:
@@ -1442,11 +1608,21 @@ preferences:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+      - erichards@mozilla.com
+    expires: never
+    metadata:
+      tags:
+        - Search
+        - Settings
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   remote_debugging_enabled:
     type: boolean
     description: |
@@ -1461,11 +1637,19 @@ preferences:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Settings
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   telemetry_enabled:
     type: boolean
     description: |
@@ -1482,11 +1666,21 @@ preferences:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+      - erichards@mozilla.com
+    expires: never
+    metadata:
+      tags:
+        - Telemetry
+        - Settings
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   enhanced_tracking_protection:
     type: string
     description: |
@@ -1502,11 +1696,20 @@ preferences:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - TrackingProtection
+        - Settings
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   bookmarks_suggestion:
     type: boolean
     description: |
@@ -1521,11 +1724,19 @@ preferences:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Settings
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   browsing_history_suggestion:
     type: boolean
     description: |
@@ -1540,11 +1751,19 @@ preferences:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Settings
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   clipboard_suggestions_enabled:
     type: boolean
     description: |
@@ -1559,11 +1778,19 @@ preferences:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Settings
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   search_shortcuts_enabled:
     type: boolean
     description: |
@@ -1578,11 +1805,21 @@ preferences:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+      - erichards@mozilla.com
+    expires: never
+    metadata:
+      tags:
+        - Search
+        - Settings
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   signed_in_sync:
     type: boolean
     description: |
@@ -1597,11 +1834,20 @@ preferences:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Sync
+        - Settings
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   sync_items:
     type: string_list
     description: |
@@ -1618,11 +1864,19 @@ preferences:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Settings
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   voice_search_enabled:
     type: boolean
     description: |
@@ -1637,11 +1891,21 @@ preferences:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Search
+        - Voice
+        - Settings
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   toolbar_position_setting:
     type: string
     description: |
@@ -1656,11 +1920,21 @@ preferences:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+      - erichards@mozilla.com
+    expires: never
+    metadata:
+      tags:
+        - Toolbar
+        - Settings
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   accessibility_services:
     type: string_list
     description: |
@@ -1676,11 +1950,20 @@ preferences:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+      - erichards@mozilla.com
+    expires: never
+    metadata:
+      tags:
+        - Settings
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   open_links_in_app_enabled:
     type: boolean
     description: |
@@ -1695,11 +1978,20 @@ preferences:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+      - erichards@mozilla.com
+    expires: never
+    metadata:
+      tags:
+        - Settings
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   user_theme:
     type: string
     description: |
@@ -1714,11 +2006,21 @@ preferences:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+      - erichards@mozilla.com
+    expires: never
+    metadata:
+      tags:
+        - Themes
+        - Settings
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   inactive_tabs_enabled:
     type: boolean
     description: |
@@ -1744,11 +2046,12 @@ preferences:
       - https://github.com/mozilla-mobile/fenix/issues/21732
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/21862#issuecomment-949598042
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+    expires: "2023-02-01"
   turn_off_inactive_tabs_survey:
     type: event
     description: >
@@ -1762,11 +2065,12 @@ preferences:
       - https://github.com/mozilla-mobile/fenix/issues/21732
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/21862#issuecomment-946977614
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+    expires: "2023-02-01"
   search_term_groups_enabled:
     type: boolean
     description: |
@@ -1854,12 +2158,13 @@ search.default_engine:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - technical
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+    expires: "2023-02-01"
 
 bookmarks_management:
   open:
@@ -2245,11 +2550,20 @@ sync_auth:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Toolbar
+        - Sync
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   closed:
     type: event
     description: |
@@ -2261,11 +2575,20 @@ sync_auth:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Toolbar
+        - Sync
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   use_email:
     type: event
     description: |
@@ -2278,11 +2601,19 @@ sync_auth:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Sync
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   use_email_problem:
     type: event
     description: |
@@ -2294,11 +2625,19 @@ sync_auth:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Sync
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   sign_in:
     type: event
     description: |
@@ -2368,12 +2707,20 @@ sync_auth:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - technical
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Accounts
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   recovered:
     type: event
     description: |
@@ -2386,12 +2733,20 @@ sync_auth:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - technical
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Accounts
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   other_external:
     type: event
     description: |
@@ -2404,12 +2759,20 @@ sync_auth:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - technical
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Accounts
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   scan_pairing:
     type: event
     description: |
@@ -2421,11 +2784,19 @@ sync_auth:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Sync
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
 
 sync_account:
   opened:
@@ -2439,11 +2810,20 @@ sync_account:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Toolbar
+        - Sync
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   sync_now:
     type: event
     description: |
@@ -2455,11 +2835,20 @@ sync_account:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Toolbar
+        - Sync
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   send_tab:
     type: event
     description: |
@@ -2471,11 +2860,19 @@ sync_account:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - SendTab
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   sign_in_to_send_tab:
     type: event
     description: |
@@ -2487,11 +2884,19 @@ sync_account:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - SendTab
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
 
 history:
   opened:
@@ -2505,11 +2910,19 @@ history:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - History
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   removed:
     type: event
     description: |
@@ -2521,11 +2934,19 @@ history:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - History
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   removed_all:
     type: event
     description: |
@@ -2537,11 +2958,19 @@ history:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - History
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   shared:
     type: event
     description: |
@@ -2553,11 +2982,19 @@ history:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - History
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   opened_item:
     type: event
     description: |
@@ -3482,11 +3919,19 @@ search_widget:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Search
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   voice_button:
     type: event
     description: |
@@ -3498,11 +3943,19 @@ search_widget:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Search
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
 
 tracking_protection:
   exception_added:
@@ -3517,11 +3970,19 @@ tracking_protection:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - TrackingProtection
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   panel_settings:
     type: event
     description: |
@@ -3533,11 +3994,19 @@ tracking_protection:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - TrackingProtection
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   etp_shield:
     type: event
     description: |
@@ -3549,11 +4018,19 @@ tracking_protection:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - TrackingProtection
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   etp_tracker_list:
     type: event
     description: |
@@ -3566,11 +4043,19 @@ tracking_protection:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - TrackingProtection
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   etp_settings:
     type: event
     description: |
@@ -3582,11 +4067,19 @@ tracking_protection:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - TrackingProtection
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   etp_setting_changed:
     type: event
     description: |
@@ -3604,11 +4097,12 @@ tracking_protection:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+    expires: "2023-02-01"
 
 tab:
   media_play:
@@ -3622,11 +4116,12 @@ tab:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+    expires: "2023-02-01"
     no_lint:
       - COMMON_PREFIX
   media_pause:
@@ -3640,11 +4135,19 @@ tab:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Media
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
 
 media_notification:
   play:
@@ -3658,11 +4161,19 @@ media_notification:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Media
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   pause:
     type: event
     description: |
@@ -3674,11 +4185,19 @@ media_notification:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Media
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
 
 media_state:
   play:
@@ -3692,11 +4211,19 @@ media_state:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Media
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   pause:
     type: event
     description: |
@@ -3708,11 +4235,19 @@ media_state:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Media
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   stop:
     type: event
     description: |
@@ -3724,11 +4259,19 @@ media_state:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Media
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   fullscreen:
     type: event
     description: |
@@ -3739,11 +4282,19 @@ media_state:
       - https://github.com/mozilla-mobile/fenix/pull/16833
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Media
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   picture_in_picture:
     type: event
     description: |
@@ -3754,11 +4305,19 @@ media_state:
       - https://github.com/mozilla-mobile/fenix/pull/16833
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Media
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
 
 logins:
   open_logins:
@@ -3790,11 +4349,19 @@ logins:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Logins
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   copy_login:
     type: event
     description: |
@@ -3806,11 +4373,19 @@ logins:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Logins
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   view_password_login:
     type: event
     description: |
@@ -3822,11 +4397,19 @@ logins:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Logins
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   save_logins_setting_changed:
     type: event
     description: |
@@ -3843,11 +4426,19 @@ logins:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Logins
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   open_login_editor:
     type: event
     description: |
@@ -3859,11 +4450,19 @@ logins:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Logins
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   delete_saved_login:
     type: event
     description: |
@@ -3875,11 +4474,19 @@ logins:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Logins
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   save_edited_login:
     type: event
     description: |
@@ -3891,11 +4498,19 @@ logins:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Logins
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
 
 voice_search:
   tapped:
@@ -3909,12 +4524,21 @@ voice_search:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
 
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Search
+        - Voice
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
 top_sites:
   open_default:
     type: event
@@ -3959,11 +4583,20 @@ top_sites:
       - https://github.com/mozilla-mobile/fenix/issues/19490
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/20705
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - Search
+        - TopSites
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   open_frecency:
     type: event
     description: |
@@ -4106,11 +4739,12 @@ top_sites:
       - https://github.com/mozilla-mobile/fenix/issues/21841
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/21845#issuecomment-944608568
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+    expires: "2023-02-01"
   baidu_top_site_removed:
     type: event
     description: |
@@ -4119,11 +4753,12 @@ top_sites:
       - https://github.com/mozilla-mobile/fenix/issues/21841
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/21845#issuecomment-944608568
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+    expires: "2023-02-01"
 
 app_theme:
   dark_theme_selected:
@@ -4182,11 +4817,20 @@ pocket:
       - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - PocketIntegration
+        - TopSites
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   home_recs_shown:
     type: event
     description: |
@@ -4946,11 +5590,19 @@ autoplay:
       - https://github.com/mozilla-mobile/fenix/pull/13041#issuecomment-665777411
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - SitePermissions
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
   setting_changed:
     type: event
     description: |
@@ -4967,12 +5619,20 @@ autoplay:
       - https://github.com/mozilla-mobile/fenix/pull/13041#issuecomment-665777411
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
 
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - SitePermissions
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
 storage.stats:
   query_stats_duration:
     send_in_pings:
@@ -5354,11 +6014,19 @@ synced_tabs:
       - https://github.com/mozilla-mobile/fenix/pull/18172
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
+<<<<<<< HEAD
     expires: "2022-02-01"
+=======
+    expires: "2023-02-01"
+    metadata:
+      tags:
+        - SyncTabs
+>>>>>>> 6798f6500 (For #22870: Renew/remove metrics set to expire in February (#23453))
 
 awesomebar:
   bookmark_suggestion_clicked:
@@ -5951,11 +6619,12 @@ recent_bookmarks:
       - https://github.com/mozilla-mobile/fenix/issues/19931
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/20316#issuecomment-888291843
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+    expires: "2023-02-01"
   show_all_bookmarks:
     type: counter
     lifetime: application
@@ -5969,11 +6638,12 @@ recent_bookmarks:
       - https://github.com/mozilla-mobile/fenix/issues/19931
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/20316#issuecomment-888291843
+      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-02-01"
+    expires: "2023-02-01"
   recent_bookmarks_count:
     type: quantity
     description: |
