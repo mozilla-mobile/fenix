@@ -59,9 +59,7 @@ def main():
     print("---\n")
     print("# References & Documentation\n")
     print("* [Automated UI Testing Documentation](https://github.com/mozilla-mobile/shared-docs/blob/main/android/ui-testing.md)\n")
-    print("* [Mobile Test Engineering on Mana](https://mana.mozilla.org/wiki/display/MTE/Mobile+Test+Engineering)\n")
-    print("* [Mobile Test Engineering Team Channel on Slack](https://mozilla.slack.com/archives/C02KDDS9QM9)\n")
-    print("* [Mobile Test Alerts on Slack](https://mozilla.slack.com/archives/C0134KJ4JHL)\n")
+    print("* Mobile Test Engineering on [Mana](https://mana.mozilla.org/wiki/display/MTE/Mobile+Test+Engineering) | [Slack](https://mozilla.slack.com/archives/C02KDDS9QM9) | [Alerts](https://mozilla.slack.com/archives/C0134KJ4JHL)(\n")
 
 
 if __name__ == "__main__":
