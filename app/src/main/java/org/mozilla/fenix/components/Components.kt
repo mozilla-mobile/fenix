@@ -36,6 +36,7 @@ import org.mozilla.fenix.perf.StrictModeManager
 import org.mozilla.fenix.perf.lazyMonitored
 import org.mozilla.fenix.utils.ClipboardHandler
 import org.mozilla.fenix.utils.Settings
+import org.mozilla.fenix.wallpapers.WallpaperDownloader
 import org.mozilla.fenix.wallpapers.WallpaperManager
 import org.mozilla.fenix.wallpapers.WallpapersAssetsStorage
 import org.mozilla.fenix.wifi.WifiConnectionMonitor
@@ -145,7 +146,11 @@ class Components(private val context: Context) {
     }
 
     val wallpaperManager by lazyMonitored {
-        WallpaperManager(settings, WallpapersAssetsStorage(context))
+        WallpaperManager(
+            settings,
+            WallpapersAssetsStorage(context),
+            WallpaperDownloader(context, core.client)
+        )
     }
 
     val analytics by lazyMonitored { Analytics(context) }

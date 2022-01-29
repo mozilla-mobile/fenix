@@ -4,6 +4,9 @@
 
 package org.mozilla.fenix.wallpapers
 
+import android.content.Context
+import android.content.res.Configuration
+
 /**
  * A class that represents an available wallpaper and its state.
  * @property name Indicates the name of this wallpaper.
@@ -24,6 +27,57 @@ data class Wallpaper(
  * A type hierarchy representing the different theme collections [Wallpaper]s belong to.
  */
 sealed class WallpaperThemeCollection {
-    object None : WallpaperThemeCollection()
-    object Firefox : WallpaperThemeCollection()
+    abstract val origin: WallpaperOrigin
+    object None : WallpaperThemeCollection() {
+        override val origin: WallpaperOrigin = WallpaperOrigin.Local
+    }
+    object Firefox : WallpaperThemeCollection() {
+        override val origin: WallpaperOrigin = WallpaperOrigin.Local
+    }
+    object Focus : WallpaperThemeCollection() {
+        override val origin: WallpaperOrigin = WallpaperOrigin.Remote
+    }
+}
+
+/**
+ * Get the parent directory name for a remote wallpaper asset.
+ */
+fun WallpaperThemeCollection.directoryName(): String = when (this) {
+    WallpaperThemeCollection.None,
+    WallpaperThemeCollection.Firefox -> ""
+    WallpaperThemeCollection.Focus -> "focus"
+}
+
+/**
+ * Types defining whether a [Wallpaper] is delivered through a remote source or is included locally
+ * in the APK.
+ */
+sealed class WallpaperOrigin {
+    object Local : WallpaperOrigin()
+    object Remote : WallpaperOrigin()
+}
+
+/**
+ * Get the expected local path on disk for a wallpaper. This will differ depending
+ * on orientation and app theme.
+ */
+fun Wallpaper.getLocalPathFromContext(context: Context): String {
+    val orientation = if (context.isLandscape()) "landscape" else "portrait"
+    val theme = if (context.isDark()) "dark" else "light"
+    return getLocalPath(orientation, theme)
+}
+
+/**
+ * Get the expected local path on disk for a wallpaper if orientation and app theme are known.
+ */
+fun Wallpaper.getLocalPath(orientation: String, theme: String): String =
+    "$orientation/$theme/${themeCollection.directoryName()}/$name.png"
+
+private fun Context.isLandscape(): Boolean {
+    return resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+}
+
+private fun Context.isDark(): Boolean {
+    return resources.configuration.uiMode and
+        Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
 }
