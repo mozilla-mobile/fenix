@@ -7,21 +7,20 @@ package org.mozilla.fenix.home
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import mozilla.components.concept.storage.BookmarkNode
-import mozilla.components.concept.storage.BookmarkNodeType
 import mozilla.components.feature.tab.collections.Tab
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.service.pocket.PocketRecommendedStory
 import org.junit.Before
 import org.junit.Test
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
-import org.mozilla.fenix.historymetadata.controller.HistoryMetadataController
+import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesCategory
+import org.mozilla.fenix.home.pocket.PocketStoriesController
+import org.mozilla.fenix.home.recentbookmarks.RecentBookmark
 import org.mozilla.fenix.home.recentbookmarks.controller.RecentBookmarksController
 import org.mozilla.fenix.home.recenttabs.controller.RecentTabController
+import org.mozilla.fenix.home.recentvisits.controller.RecentVisitsController
 import org.mozilla.fenix.home.sessioncontrol.DefaultSessionControlController
 import org.mozilla.fenix.home.sessioncontrol.SessionControlInteractor
-import org.mozilla.fenix.home.sessioncontrol.viewholders.pocket.PocketRecommendedStoriesCategory
-import org.mozilla.fenix.home.sessioncontrol.viewholders.pocket.PocketStoriesController
 
 class SessionControlInteractorTest {
 
@@ -30,8 +29,8 @@ class SessionControlInteractorTest {
     private val recentBookmarksController: RecentBookmarksController = mockk(relaxed = true)
     private val pocketStoriesController: PocketStoriesController = mockk(relaxed = true)
 
-    // Note: the historyMetadata tests are handled in [HistoryMetadataInteractorTest] and [HistoryMetadataControllerTest]
-    private val historyMetadataController: HistoryMetadataController = mockk(relaxed = true)
+    // Note: the recent visits tests are handled in [RecentVisitsInteractorTest] and [RecentVisitsControllerTest]
+    private val recentVisitsController: RecentVisitsController = mockk(relaxed = true)
 
     private lateinit var interactor: SessionControlInteractor
 
@@ -41,7 +40,7 @@ class SessionControlInteractorTest {
             controller,
             recentTabController,
             recentBookmarksController,
-            historyMetadataController,
+            recentVisitsController,
             pocketStoriesController
         )
     }
@@ -173,16 +172,7 @@ class SessionControlInteractorTest {
 
     @Test
     fun `WHEN a recently saved bookmark is clicked THEN the selected bookmark is handled`() {
-        val bookmark = BookmarkNode(
-            type = BookmarkNodeType.ITEM,
-            guid = "guid#${Math.random() * 1000}",
-            parentGuid = null,
-            position = null,
-            title = null,
-            url = null,
-            dateAdded = 0,
-            children = null
-        )
+        val bookmark = RecentBookmark()
 
         interactor.onRecentBookmarkClicked(bookmark)
         verify { recentBookmarksController.handleBookmarkClicked(bookmark) }

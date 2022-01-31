@@ -214,8 +214,7 @@ class DefaultSessionControlController(
     private val hideOnboarding: () -> Unit,
     private val registerCollectionStorageObserver: () -> Unit,
     private val removeCollectionWithUndo: (tabCollection: TabCollection) -> Unit,
-    private val showTabTray: () -> Unit,
-    private val handleSwipedItemDeletionCancel: () -> Unit
+    private val showTabTray: () -> Unit
 ) : SessionControlController {
 
     override fun handleCollectionAddTabTapped(collection: TabCollection) {
@@ -457,7 +456,7 @@ class DefaultSessionControlController(
     }
 
     override fun handleCustomizeHomeTapped() {
-        val directions = HomeFragmentDirections.actionGlobalCustomizationFragment()
+        val directions = HomeFragmentDirections.actionGlobalHomeSettingsFragment()
         navController.nav(R.id.homeFragment, directions)
         metrics.track(Event.HomeScreenCustomizedHomeClicked)
     }

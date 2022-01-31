@@ -119,7 +119,11 @@
     <!-- Content description for close button in the auto-close dialog of the inactive tabs. -->
     <string name="tab_tray_inactive_auto_close_button_content_description">Užverti</string>
     <!-- Text for turn on auto close tabs button in the auto-close dialog of the inactive tabs. -->
-    <string name="tab_tray_inactive_turn_on_auto_close_button">Įjungti automatinį užvėrimą</string>
+    <string moz:removedIn="95" name="tab_tray_inactive_turn_on_auto_close_button" tools:ignore="UnusedResources">Įjungti automatinį užvėrimą</string>
+
+    <!-- Text for turn on auto close tabs button in the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_turn_on_auto_close_button_2">Įjungti automatinį užvėrimą</string>
+
 
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
@@ -143,8 +147,12 @@
         The first parameter is the search term that the user used. (for example: your search for "cat")-->
     <string name="recent_tabs_search_term">Jūsų paieška „%1$s“</string>
     <!-- Text for the number of tabs in a group in the 'Jump back in' section of the new tab
-        The first parameter is the count for number of sites in the group.  This number will always be more than one. -->
-    <string name="recent_tabs_search_term_count">Svetainės: %1$s</string>
+    The first parameter is the count for number of sites in the group.  This number will always be more than one. -->
+    <string moz:removedIn="96" name="recent_tabs_search_term_count" tools:ignore="UnusedResources">Svetainės: %1$s</string>
+
+    <!-- Text for the number of tabs in a group in the 'Jump back in' section of the new tab
+        %d is a placeholder for the number of sites in the group. This number will always be more than one. -->
+    <string name="recent_tabs_search_term_count_2">Svetainių: %d</string>
 
     <!-- History Metadata -->
     <!-- Header text for a section on the home screen that displays grouped highlights from the
@@ -153,10 +161,10 @@
 
     <!-- Header text for a section on the home screen that displays grouped highlights from the
          user's browsing history, such as topics they have researched or explored on the web -->
-    <string moz:removedIn="94" name="history_metadata_header_2" tools:ignore="UnusedResources">Paskiausiai lankyta</string>
+    <string name="history_metadata_header_2">Paskiausiai lankyta</string>
     <!-- Header text for a section on the home screen that displays grouped highlights from the
          user's browsing history, such as topics they have researched or explored on the web -->
-    <string name="history_metadata_header_3">Paskiausios paieškos</string>
+    <string moz:removedIn="96" name="history_metadata_header_3" tools:ignore="UnusedResources">Paskiausios paieškos</string>
     <!-- Text for the menu button to remove a grouped highlight from the user's browsing history
          in the Recently visited section -->
     <string name="recently_visited_menu_item_remove">Pašalinti</string>
@@ -467,10 +475,10 @@
     <string name="customize_toggle_recent_bookmarks">Paskiausi adresyno įrašai</string>
     <!-- Title for the customize home screen section with recently visited. Recently visited is
     a section where users see a list of tabs that they have visited in the past few days -->
-    <string moz:removedIn="94" name="customize_toggle_recently_visited" tools:ignore="UnusedResources">Paskiausiai lankyta</string>
+    <string name="customize_toggle_recently_visited">Paskiausiai lankyta</string>
     <!-- Title for the customize home screen settings section for recent searches. Recent searches
      is a section where users see a list of groups of tabs that they have visited in the past few days -->
-    <string name="customize_toggle_recent_searches">Paskiausios paieškos</string>
+    <string moz:removedIn="96" name="customize_toggle_recent_searches" tools:ignore="UnusedResources">Paskiausios paieškos</string>
     <!-- Title for the customize home screen section with Pocket. -->
     <string name="customize_toggle_pocket">Pocket</string>
 
@@ -885,8 +893,8 @@
     <string moz:removedIn="94" name="history_menu_open_in_new_tab_button" tools:ignore="UnusedResources">Atverti naujoje kortelėje</string>
     <!-- History overflow menu open in private tab button -->
     <string moz:removedIn="94" name="history_menu_open_in_private_tab_button" tools:ignore="UnusedResources">Atverti privačiojoje kortelėje</string>
-    <!-- Text for the button to delete a single history item -->
-    <string moz:removedIn="94" name="history_delete_item" tools:ignore="UnusedResources">Pašalinti</string>
+    <!-- Context description text for the button to delete a single history item -->
+    <string name="history_delete_item">Pašalinti</string>
     <!-- History multi select title in app bar
     The first parameter is the number of bookmarks selected -->
     <string name="history_multi_select_title">Pasirinkta: %1$d</string>
@@ -1244,6 +1252,10 @@
     <string name="qr_scanner_dialog_positive">Leisti</string>
     <!-- QR code scanner prompt dialog positive option to deny navigation to scanned link -->
     <string name="qr_scanner_dialog_negative">Drausti</string>
+    <!-- QR code scanner prompt dialog error message shown when a hostname does not contain http or https. -->
+    <string name="qr_scanner_dialog_invalid">Neteisingas saityno adresas.</string>
+    <!-- QR code scanner prompt dialog positive option when there is an error -->
+    <string name="qr_scanner_dialog_invalid_ok">Gerai</string>
     <!-- Tab collection deletion prompt dialog message. Placeholder will be replaced with the collection name -->
     <string name="tab_collection_dialog_message">Ar tikrai norite pašalinti „%1$s“?</string>
     <!-- Collection and tab deletion prompt dialog message. This will show when the last tab from a collection is deleted -->
@@ -1372,11 +1384,11 @@
     <!-- text for the firefox account onboarding card header when we detect you're already signed in to
         another Firefox browser. (The word `Firefox` should not be translated)
         The first parameter is the email of the detected user's account -->
-    <string name="onboarding_firefox_account_auto_signin_header_3">Esate prisijungę kaip %s kitoje „Firefox“ naršyklėje šiame įrenginyje. Ar norėtumėte prisijungti su šia paskyra?</string>
+    <string moz:removedIn="96" name="onboarding_firefox_account_auto_signin_header_3" tools:ignore="UnusedResources">Esate prisijungę kaip %s kitoje „Firefox“ naršyklėje šiame įrenginyje. Ar norėtumėte prisijungti su šia paskyra?</string>
     <!-- text for the button to confirm automatic sign-in -->
-    <string name="onboarding_firefox_account_auto_signin_confirm">Taip, prisijungti</string>
+    <string moz:removedIn="96" name="onboarding_firefox_account_auto_signin_confirm" tools:ignore="UnusedResources">Taip, prisijungti</string>
     <!-- text for the automatic sign-in button while signing in is in process -->
-    <string name="onboarding_firefox_account_signing_in">Prisijungiama…</string>
+    <string moz:removedIn="96" name="onboarding_firefox_account_signing_in" tools:ignore="UnusedResources">Prisijungiama…</string>
     <!-- text for the button to manually sign into Firefox account. -->
     <string name="onboarding_firefox_account_sign_in_1">Kurti paskyrą</string>
     <!-- text for the button to stay signed out when presented with an option to automatically sign-in. -->
@@ -1384,7 +1396,7 @@
     <!-- text to display in the snackbar once account is signed-in -->
     <string name="onboarding_firefox_account_sync_is_on">„Sync“ įjungta</string>
     <!-- text to display in the snackbar if automatic sign-in fails. user may try again -->
-    <string name="onboarding_firefox_account_automatic_signin_failed">Nepavyko prisijungti</string>
+    <string moz:removedIn="96" name="onboarding_firefox_account_automatic_signin_failed" tools:ignore="UnusedResources">Nepavyko prisijungti</string>
 
     <!-- text for the tracking protection onboarding card header -->
     <string name="onboarding_tracking_protection_header_3">Visada veikiantis privatumas</string>
@@ -2013,11 +2025,11 @@
     <!-- Content description for closing all inactive tabs -->
     <string name="inactive_tabs_delete_all">Užverti visas neaktyvias korteles</string>
     <!-- A description below the section of "inactive" tabs to notify the user when those tabs will be closed, if appropriate. See strings inactive_tabs_30_days and inactive_tabs_7_days for placeholders options. -->
-    <string moz:removedIn="93" name="inactive_tabs_description" tools:ignore="UnusedResources">Kortelės čia bus laikomos %s. Po šio laiko jos bus automatiškai užvertos.</string>
+    <string moz:removedIn="95" name="inactive_tabs_description" tools:ignore="UnusedResources">Kortelės čia bus laikomos %s. Po šio laiko jos bus automatiškai užvertos.</string>
     <!-- The amount of time until a tab in the "inactive" section of the tabs tray will be closed. See string inactive_tabs_description as well -->
-    <string moz:removedIn="93" name="inactive_tabs_30_days" tools:ignore="UnusedResources">30 dienų</string>
+    <string moz:removedIn="95" name="inactive_tabs_30_days" tools:ignore="UnusedResources">30 dienų</string>
     <!-- The amount of time until a tab in the "inactive" section of the tabs tray will be closed. See string inactive_tabs_description as well -->
-    <string moz:removedIn="93" name="inactive_tabs_7_days" tools:ignore="UnusedResources">1 savaitę</string>
+    <string moz:removedIn="95" name="inactive_tabs_7_days" tools:ignore="UnusedResources">1 savaitę</string>
 
     <!-- Inactive tabs auto-close message in the tabs tray -->
     <!-- The header text of the auto-close message when the user is asked if they want to turn on the auto-closing of inactive tabs. -->
@@ -2027,21 +2039,33 @@
     <!-- A call to action below the description to allow the user to turn on the auto closing of inactive tabs. -->
     <string name="inactive_tabs_auto_close_message_action" tools:ignore="UnusedResources">ĮJUNGTI AUTOMATINĮ UŽVĖRIMĄ</string>
 
+    <!-- Text for the snackbar to confirm auto-close is enabled for inactive tabs -->
+    <string name="inactive_tabs_auto_close_message_snackbar">Automatinis užvėrimas įjungtas</string>
+
     <!-- Inactive tabs survey -->
     <!-- Header text for the inactive tabs survey asking for feedback to improve the inactive tabs feature. -->
-    <string name="inactive_tabs_survey_header" tools:ignore="UnusedResources">Padėkite mums tobulėti</string>
+    <string moz:removedIn="95" name="inactive_tabs_survey_header" tools:ignore="UnusedResources">Padėkite mums tobulėti</string>
+    <!-- Header text for the inactive tabs survey asking for feedback to improve the inactive tabs feature. -->
+    <string name="inactive_tabs_survey_header_1">Padėkite tobulinti „Firefox“</string>
+
     <!-- Content text for the inactive tabs survey asking the primary survey feedback question. -->
-    <string name="inactive_tabs_survey_content" tools:ignore="UnusedResources">Kodėl išjungėte neaktyvias korteles?</string>
+    <string name="inactive_tabs_survey_content">Kodėl išjungėte neaktyvias korteles?</string>
     <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string name="inactive_tabs_survey_not_interested_option" tools:ignore="UnusedResources">Ši funkcija nereikalinga</string>
+    <string name="inactive_tabs_survey_do_not_understand">Aš nesuprantu, kaip tai veikia</string>
     <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string name="inactive_tabs_survey_time_too_long_option" tools:ignore="UnusedResources">Per ilgas laikas iki perkėlimo prie neaktyvių</string>
+    <string name="inactive_tabs_survey_do_it_myself">Aš noriu pats užverti senas korteles</string>
     <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string name="inactive_tabs_survey_time_too_short_option" tools:ignore="UnusedResources">Per trumpas laikas iki perkėlimo prie neaktyvių</string>
+    <string moz:removedIn="95" name="inactive_tabs_survey_time_too_long_option" tools:ignore="UnusedResources">Per ilgas laikas iki perkėlimo prie neaktyvių</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string name="inactive_tabs_survey_time_too_long_option_1">Dviejų savaičių laikotarpis yra per ilgas</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string moz:removedIn="95" name="inactive_tabs_survey_time_too_short_option" tools:ignore="UnusedResources">Per trumpas laikas iki perkėlimo prie neaktyvių</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string name="inactive_tabs_survey_time_too_short_option_1">Dviejų savaičių laikotarpis yra per trumpas</string>
     <!-- Confirmation button text to submit the feedback for the inactive tabs survey. -->
-    <string name="inactive_tabs_survey_send_button" tools:ignore="UnusedResources">Siųsti</string>
+    <string name="inactive_tabs_survey_send_button">Siųsti</string>
     <!-- Content description for inactive tabs survey close button -->
-    <string name="inactive_tabs_survey_close_button_content_description" tools:ignore="UnusedResources">Užverti</string>
+    <string name="inactive_tabs_survey_close_button_content_description">Užverti</string>
 
     <!-- Default browser experiment -->
     <string name="default_browser_experiment_card_text">Leiskite saitams iš svetainių, el. laiškų, ir žinučių būti automatiškai atvertiems per „Firefox“.</string>

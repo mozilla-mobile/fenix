@@ -8,9 +8,7 @@ package org.mozilla.fenix.ui.robots
 
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions.clearText
 import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers
@@ -23,6 +21,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withParent
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import org.hamcrest.CoreMatchers
@@ -30,12 +29,14 @@ import org.hamcrest.Matchers.allOf
 import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
+import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.click
 
 /**
  * Implementation of Robot Pattern for the settings search sub menu.
  */
 class SettingsSubMenuSearchRobot {
+    fun verifySearchToolbar() = assertSearchToolbar()
     fun verifyDefaultSearchEngineHeader() = assertDefaultSearchEngineHeader()
     fun verifySearchEngineList() = assertSearchEngineList()
     fun verifyShowSearchSuggestions() = assertShowSearchSuggestions()
@@ -73,12 +74,56 @@ class SettingsSubMenuSearchRobot {
     fun selectAddCustomSearchEngine() = onView(withText("Other")).click()
 
     fun typeCustomEngineDetails(engineName: String, engineURL: String) {
-        onView(withId(R.id.edit_engine_name))
-            .perform(clearText())
-            .perform(typeText(engineName))
-        onView(withId(R.id.edit_search_string))
-            .perform(clearText())
-            .perform(typeText(engineURL))
+        mDevice.findObject(By.res("$packageName:id/edit_engine_name")).clear()
+        mDevice.findObject(By.res("$packageName:id/edit_engine_name")).setText(engineName)
+        mDevice.findObject(By.res("$packageName:id/edit_search_string")).clear()
+        mDevice.findObject(By.res("$packageName:id/edit_search_string")).setText(engineURL)
+
+        try {
+            assertTrue(
+                mDevice.findObject(
+                    UiSelector()
+                        .resourceId("$packageName:id/edit_engine_name")
+                        .text(engineName)
+                ).waitForExists(waitingTime)
+            )
+
+            assertTrue(
+                mDevice.findObject(
+                    UiSelector()
+                        .resourceId("$packageName:id/edit_search_string")
+                        .text(engineURL)
+                ).waitForExists(waitingTime)
+            )
+        } catch (e: AssertionError) {
+            println("The name or the search string were not set properly")
+
+            // Lets again set both name and search string
+            goBackButton().click()
+            openAddSearchEngineMenu()
+            selectAddCustomSearchEngine()
+
+            mDevice.findObject(By.res("$packageName:id/edit_engine_name")).clear()
+            mDevice.findObject(By.res("$packageName:id/edit_engine_name")).setText(engineName)
+            mDevice.findObject(By.res("$packageName:id/edit_search_string")).clear()
+            mDevice.findObject(By.res("$packageName:id/edit_search_string")).setText(engineURL)
+
+            assertTrue(
+                mDevice.findObject(
+                    UiSelector()
+                        .resourceId("$packageName:id/edit_engine_name")
+                        .text(engineName)
+                ).waitForExists(waitingTime)
+            )
+
+            assertTrue(
+                mDevice.findObject(
+                    UiSelector()
+                        .resourceId("$packageName:id/edit_search_string")
+                        .text(engineURL)
+                ).waitForExists(waitingTime)
+            )
+        }
     }
 
     fun openEngineOverflowMenu(searchEngineName: String) {
@@ -111,6 +156,15 @@ class SettingsSubMenuSearchRobot {
         }
     }
 }
+
+private fun assertSearchToolbar() =
+    onView(
+        allOf(
+            withId(R.id.navigationToolbar),
+            hasDescendant(withContentDescription(R.string.action_bar_up_description)),
+            hasDescendant(withText(R.string.preferences_search))
+        )
+    ).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
 
 private fun assertDefaultSearchEngineHeader() =
     onView(withText("Default search engine"))

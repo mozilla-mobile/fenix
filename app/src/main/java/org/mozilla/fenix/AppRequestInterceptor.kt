@@ -149,6 +149,7 @@ class AppRequestInterceptor(
         ErrorType.ERROR_NO_INTERNET,
         ErrorType.ERROR_UNKNOWN_PROTOCOL -> RiskLevel.Low
 
+        ErrorType.ERROR_HTTPS_ONLY,
         ErrorType.ERROR_SECURITY_BAD_CERT,
         ErrorType.ERROR_SECURITY_SSL,
         ErrorType.ERROR_PORT_BLOCKED -> RiskLevel.Medium

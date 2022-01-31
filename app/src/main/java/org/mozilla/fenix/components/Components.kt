@@ -74,7 +74,8 @@ class Components(private val context: Context) {
             core.store,
             core.webAppShortcutManager,
             core.topSitesStorage,
-            core.bookmarksStorage
+            core.bookmarksStorage,
+            core.historyStorage
         )
     }
 
@@ -179,6 +180,7 @@ class Components(private val context: Context) {
     val appStartReasonProvider by lazyMonitored { AppStartReasonProvider() }
     val startupActivityLog by lazyMonitored { StartupActivityLog() }
     val startupStateProvider by lazyMonitored { StartupStateProvider(startupActivityLog, appStartReasonProvider) }
+    val appStore by lazyMonitored { AppStore() }
 }
 
 /**

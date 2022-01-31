@@ -115,8 +115,18 @@
 
     <!-- Text for title for the auto-close dialog of the inactive tabs. -->
     <string name="tab_tray_inactive_auto_close_title">ᱢᱤᱫ ᱪᱟᱸᱫᱚ ᱛᱟᱭᱚᱢ ᱟᱡ ᱛᱮ ᱵᱚᱸᱫᱽ ᱟᱢ ᱥᱮ?</string>
+    <!-- Text for the body for the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_auto_close_body">ᱛᱤᱱᱟᱹᱜ ᱜᱟᱱ ᱪᱟᱸᱫᱚ ᱨᱮ ᱵᱟᱝ ᱠᱷᱩᱞᱟᱹ ᱠᱟᱱ ᱴᱮᱵ ᱠᱚ Firefox ᱵᱚᱸᱫ ᱫᱟᱲᱮᱭᱟᱜᱼᱟᱭ᱾</string>
     <!-- Content description for close button in the auto-close dialog of the inactive tabs. -->
     <string name="tab_tray_inactive_auto_close_button_content_description">ᱵᱚᱸᱫᱚᱭ ᱢᱮ</string>
+
+
+    <!-- Text for turn on auto close tabs button in the auto-close dialog of the inactive tabs. -->
+    <string moz:removedIn="95" name="tab_tray_inactive_turn_on_auto_close_button" tools:ignore="UnusedResources">ᱟᱡᱛᱮ ᱵᱚᱸᱫ ᱮᱢ ᱪᱷᱚᱭ ᱢᱮ</string>
+
+    <!-- Text for turn on auto close tabs button in the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_turn_on_auto_close_button_2">ᱟᱡᱛᱮ-ᱵᱚᱸᱫ ᱮᱢ ᱪᱷᱚᱭ ᱢᱮ</string>
+
 
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
@@ -139,8 +149,12 @@
         The first parameter is the search term that the user used. (for example: your search for "cat")-->
     <string name="recent_tabs_search_term">\&quot;%1$s\&quot; ᱞᱟᱹᱜᱤᱜ ᱟᱢᱟᱜ ᱥᱮᱸᱫᱽᱨᱟ</string>
     <!-- Text for the number of tabs in a group in the 'Jump back in' section of the new tab
-        The first parameter is the count for number of sites in the group.  This number will always be more than one. -->
-    <string name="recent_tabs_search_term_count">ᱥᱟᱭᱤᱴᱮ: %1$s</string>
+    The first parameter is the count for number of sites in the group.  This number will always be more than one. -->
+    <string moz:removedIn="96" name="recent_tabs_search_term_count" tools:ignore="UnusedResources">ᱥᱟᱭᱤᱴᱮ: %1$s</string>
+
+    <!-- Text for the number of tabs in a group in the 'Jump back in' section of the new tab
+        %d is a placeholder for the number of sites in the group. This number will always be more than one. -->
+    <string name="recent_tabs_search_term_count_2">%d ᱥᱟᱭᱤᱴ ᱠᱚ</string>
 
     <!-- History Metadata -->
     <!-- Header text for a section on the home screen that displays grouped highlights from the
@@ -149,7 +163,10 @@
 
     <!-- Header text for a section on the home screen that displays grouped highlights from the
          user's browsing history, such as topics they have researched or explored on the web -->
-    <string moz:removedIn="94" name="history_metadata_header_2" tools:ignore="UnusedResources">ᱱᱤᱛᱚᱜᱟᱜ ᱦᱤᱨᱤᱭᱟᱜ</string>
+    <string name="history_metadata_header_2">ᱱᱤᱛᱚᱜᱟᱜ ᱦᱤᱨᱤᱭᱟᱜ</string>
+    <!-- Header text for a section on the home screen that displays grouped highlights from the
+         user's browsing history, such as topics they have researched or explored on the web -->
+    <string moz:removedIn="96" name="history_metadata_header_3" tools:ignore="UnusedResources">ᱱᱤᱛᱚᱜᱟᱜ ᱥᱮᱸᱫᱽᱨᱟ ᱠᱚ</string>
     <!-- Text for the menu button to remove a grouped highlight from the user's browsing history
          in the Recently visited section -->
     <string name="recently_visited_menu_item_remove">ᱚᱪᱚᱜᱽ ᱢᱮ</string>
@@ -234,6 +251,8 @@
 
     <!-- Browser menu button that opens the Customize menu -->
     <string name="browser_menu_customize_home">ᱚᱲᱟᱜ ᱠᱚᱥᱴᱚᱢᱟᱭᱮᱡᱽ ᱢᱮ</string>
+    <!-- Button shown on the home page that opens the Customize home settings -->
+    <string name="browser_menu_customize_home_1">ᱚᱲᱟᱜᱥᱟᱦᱴᱟ ᱠᱩᱥᱤᱛᱮ ᱫᱚᱦᱚᱭ ᱢᱮ</string>
     <!-- Browser Toolbar -->
     <!-- Content description for the Home screen button on the browser toolbar -->
     <string name="browser_toolbar_home">ᱚᱲᱟᱜ ᱥᱠᱨᱤᱱ</string>
@@ -284,6 +303,22 @@
     <!-- Home onboarding -->
     <!-- Onboarding home screen dialog title text. Firefox is intentionally hardcoded. -->
     <string name="onboarding_home_screen_title_2">%s ᱨᱮ ᱪᱮᱫ ᱱᱟᱶᱟ ᱢᱮᱱᱟᱜ-ᱟ</string>
+
+    <!-- Onboarding home screen dialog description text. -->
+    <string name="onboarding_home_screen_description_2">ᱱᱤᱛᱚᱜ ᱫᱚ ᱡᱟᱦᱟᱸ ᱨᱮ ᱢᱟᱲᱟᱝ ᱛᱟᱦᱮᱸ ᱠᱟᱱᱟᱢ ᱱᱚᱰᱮ ᱠᱷᱚᱱ ᱥᱟᱵ ᱫᱟᱲᱮᱭᱟᱜᱼᱟᱢ᱾</string>
+    <!-- Onboarding home screen dialog title text for the home section. Firefox is intentionally hardcoded. -->
+    <string name="onboarding_home_screen_section_home_title_2">ᱱᱤᱡᱮ ᱛᱮ ᱛᱮᱭᱟᱨ Firefox ᱚᱲᱟᱜ ᱥᱟᱦᱴᱟ</string>
+    <!-- Onboarding home screen dialog description text for the home section. -->
+    <string name="onboarding_home_screen_section_home_description_2">ᱠᱷᱩᱞᱟᱹ ᱠᱟᱱ ᱴᱮᱵᱽ, ᱵᱩᱠᱢᱟᱨᱠ ᱠᱚ, ᱟᱨ ᱦᱤᱛᱟᱹᱞ ᱵᱨᱟᱩᱡᱽ ᱛᱮ ᱪᱟᱞᱟᱜ ᱢᱮ᱾</string>
+    <!-- Onboarding home screen dialog description text for the tab tray section. -->
+    <string name="onboarding_home_screen_section_cleaner_tab_tray_title_2">ᱥᱟᱯᱷᱟ, ᱴᱮᱵᱽ ᱠᱚ ᱵᱮᱵᱚᱥᱛᱷᱟᱭ ᱢᱮ</string>
+    <!-- Onboarding home screen dialog description text for the tab tray section. -->
+    <string name="onboarding_home_screen_section_cleaner_tab_tray_description_2">ᱴᱮᱵᱽ ᱵᱷᱤᱲ ᱠᱚ ᱥᱩᱫᱷᱨᱟᱹᱣ ᱠᱟᱱ ᱞᱮᱭᱟᱩᱴ ᱟᱨ ᱟᱡ ᱛᱮ ᱵᱚᱸᱫᱚᱜ ᱠᱟᱱ ᱴᱮᱵᱽ ᱠᱚ ᱢᱮᱴᱟᱣᱟᱭ᱾</string>
+    <!-- Onboarding home screen dialog description text for the history section. -->
+    <string name="onboarding_home_screen_section_useful_history_title_2">ᱱᱤᱛᱚᱜᱟᱜ ᱥᱮᱸᱫᱽᱨᱟ ᱠᱚ</string>
+
+    <!-- Onboarding home screen dialog description text for the history section. -->
+    <string name="onboarding_home_screen_section_useful_history_description_2">ᱟᱢᱟᱜ ᱚᱲᱟᱜ ᱥᱟᱦᱴᱟ ᱟᱨ ᱴᱮᱵ ᱠᱷᱚᱱ ᱱᱤᱛᱚᱜᱟᱜ ᱥᱮᱸᱫᱽᱨᱟ ᱛᱮ ᱫᱩᱦᱲᱟᱹ ᱪᱟᱞᱟᱜ ᱞᱟᱹᱜᱤᱫ ᱾</string>
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
@@ -363,6 +398,8 @@
     <string name="preferences_theme">ᱩᱭᱦᱟᱹᱨ</string>
     <!-- Preference for customizing the home screen -->
     <string moz:removedIn="94" name="preferences_home" tools:ignore="UnusedResources">ᱚᱲᱟᱜ</string>
+    <!-- Preference for customizing the home screen -->
+    <string name="preferences_home_2">ᱚᱲᱟᱜ ᱥᱟᱦᱴᱟ</string>
     <!-- Preference for gestures based actions -->
     <string name="preferences_gestures">ᱪᱤᱱᱦᱟᱹ ᱠᱚ</string>
     <!-- Preference for settings related to visual options -->
@@ -436,9 +473,14 @@
     <string moz:removedIn="94" name="customize_toggle_recently_saved_bookmarks" tools:ignore="UnusedResources">ᱱᱤᱛᱜᱮ ᱥᱟᱺᱪᱟᱣ ᱟᱠᱟᱱᱟ</string>
     <!-- Title for the customize home screen section with recently saved bookmarks. -->
     <string moz:removedIn="94" name="customize_toggle_recently_bookmarked" tools:ignore="UnusedResources">ᱱᱤᱛᱚᱜᱼᱟᱜ ᱵᱩᱠᱢᱟᱨᱠ ᱠᱚ</string>
+    <!-- Title for the customize home screen section with recently saved bookmarks. -->
+    <string name="customize_toggle_recent_bookmarks">ᱱᱤᱛᱚᱜᱼᱟᱜ ᱵᱩᱠᱢᱟᱨᱠ ᱠᱚ</string>
     <!-- Title for the customize home screen section with recently visited. Recently visited is
     a section where users see a list of tabs that they have visited in the past few days -->
-    <string moz:removedIn="94" name="customize_toggle_recently_visited" tools:ignore="UnusedResources">ᱱᱤᱛᱚᱜᱟᱜ ᱦᱤᱨᱤᱭᱟᱜ</string>
+    <string name="customize_toggle_recently_visited">ᱱᱤᱛᱚᱜᱟᱜ ᱦᱤᱨᱤᱭᱟᱜ</string>
+    <!-- Title for the customize home screen settings section for recent searches. Recent searches
+     is a section where users see a list of groups of tabs that they have visited in the past few days -->
+    <string moz:removedIn="96" name="customize_toggle_recent_searches" tools:ignore="UnusedResources">ᱱᱤᱛᱚᱜᱟᱜ ᱥᱮᱸᱫᱽᱨᱟ ᱠᱚ</string>
     <!-- Title for the customize home screen section with Pocket. -->
     <string name="customize_toggle_pocket">ᱯᱚᱠᱮᱴ</string>
 
@@ -659,6 +701,8 @@
     <string name="tab_view_list">ᱞᱤᱥᱴᱤ</string>
     <!-- Option for a grid tab view -->
     <string name="tab_view_grid">ᱡᱟᱸᱜᱞᱟ</string>
+    <!-- Option for search term tab groups -->
+    <string name="tab_view_search_term_tab_groups">ᱥᱮᱸᱫᱽᱨᱟ ᱫᱳᱞ ᱠᱚ</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
     <string name="preferences_close_tabs">ᱴᱮᱵᱽ ᱠᱚ ᱵᱚᱸᱫᱚᱭ ᱢᱮ</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
@@ -676,6 +720,8 @@
     <string moz:removedIn="94" name="preferences_start_on_home" tools:ignore="UnusedResources">ᱚᱲᱟᱜ ᱠᱷᱚᱱ ᱮᱦᱚᱵᱽ ᱢᱮ</string>
     <!-- Option for starting on the home screen after after four hours or inactivity -->
     <string moz:removedIn="94" name="start_on_home_after_four_hours" tools:ignore="UnusedResources">ᱯᱩᱱ ᱴᱟᱲᱟᱝ ᱛᱟᱭᱚᱢ</string>
+    <!-- Option for always opening the homepage when re-opening the app -->
+    <string name="opening_screen_homepage">ᱚᱲᱟᱜ ᱥᱟᱦᱴᱟ</string>
     <!-- Option for always starting on the home screen -->
     <string moz:removedIn="94" name="start_on_home_always" tools:ignore="UnusedResources">ᱡᱟᱣᱜᱮ</string>
     <!-- Option for never starting on the home screen -->
@@ -833,8 +879,8 @@
     <string moz:removedIn="94" name="history_menu_open_in_new_tab_button" tools:ignore="UnusedResources">ᱱᱟᱶᱟ ᱴᱮᱵᱽ ᱨᱮ ᱡᱷᱤᱡᱽ ᱢᱮ</string>
     <!-- History overflow menu open in private tab button -->
     <string moz:removedIn="94" name="history_menu_open_in_private_tab_button" tools:ignore="UnusedResources">ᱱᱤᱡᱮᱨᱟᱜ ᱴᱮᱵᱽ ᱨᱮ ᱡᱷᱤᱡᱽ ᱢᱮ</string>
-    <!-- Text for the button to delete a single history item -->
-    <string moz:removedIn="94" name="history_delete_item" tools:ignore="UnusedResources">ᱢᱮᱴᱟᱣ ᱢᱮ</string>
+    <!-- Context description text for the button to delete a single history item -->
+    <string name="history_delete_item">ᱢᱮᱴᱟᱣ ᱢᱮ</string>
     <!-- History multi select title in app bar
     The first parameter is the number of bookmarks selected -->
     <string name="history_multi_select_title">%1$d ᱵᱟᱪᱷᱟᱣᱮᱱᱟ</string>
@@ -1192,6 +1238,10 @@
     <string name="qr_scanner_dialog_positive">ᱢᱟᱹᱱᱡᱩᱨ</string>
     <!-- QR code scanner prompt dialog positive option to deny navigation to scanned link -->
     <string name="qr_scanner_dialog_negative">ᱵᱟᱹᱰ</string>
+    <!-- QR code scanner prompt dialog error message shown when a hostname does not contain http or https. -->
+    <string name="qr_scanner_dialog_invalid">ᱣᱮᱵᱽ ᱴᱷᱤᱠᱬᱟᱹ ᱵᱟᱭ ᱴᱷᱤᱠ ᱟ᱾</string>
+    <!-- QR code scanner prompt dialog positive option when there is an error -->
+    <string name="qr_scanner_dialog_invalid_ok">ᱴᱷᱤᱠ</string>
     <!-- Tab collection deletion prompt dialog message. Placeholder will be replaced with the collection name -->
     <string name="tab_collection_dialog_message">%1$s ᱢᱮᱴᱟᱣ ᱞᱟᱹᱜᱤᱛ ᱛᱮ ᱪᱮᱫ ᱟᱢ ᱜᱚᱴᱟ ᱛᱮ ᱢᱮᱱᱟᱢ-ᱟ?</string>
     <!-- Collection and tab deletion prompt dialog message. This will show when the last tab from a collection is deleted -->
@@ -1321,11 +1371,11 @@
     <!-- text for the firefox account onboarding card header when we detect you're already signed in to
         another Firefox browser. (The word `Firefox` should not be translated)
         The first parameter is the email of the detected user's account -->
-    <string name="onboarding_firefox_account_auto_signin_header_3">ᱟᱢ %s ᱞᱮᱠᱷᱟᱛᱮ ᱚᱞᱜᱟ Firefox ᱵᱨᱟᱩᱡᱟᱹᱨ ᱨᱮ ᱟᱢᱟᱜ ᱥᱟᱫᱷᱚᱱ ᱛᱮ ᱵᱚᱞᱚ ᱟᱠᱟᱱᱟᱢ ᱾ ᱟᱢ ᱪᱮᱫ ᱱᱚᱶᱟ ᱠᱷᱟᱛᱟ ᱨᱮ ᱵᱚᱞᱚ ᱥᱟᱱᱟᱢ ᱠᱟᱱᱟ?</string>
+    <string moz:removedIn="96" name="onboarding_firefox_account_auto_signin_header_3" tools:ignore="UnusedResources">ᱟᱢ %s ᱞᱮᱠᱷᱟᱛᱮ ᱚᱞᱜᱟ Firefox ᱵᱨᱟᱩᱡᱟᱹᱨ ᱨᱮ ᱟᱢᱟᱜ ᱥᱟᱫᱷᱚᱱ ᱛᱮ ᱵᱚᱞᱚ ᱟᱠᱟᱱᱟᱢ ᱾ ᱟᱢ ᱪᱮᱫ ᱱᱚᱶᱟ ᱠᱷᱟᱛᱟ ᱨᱮ ᱵᱚᱞᱚ ᱥᱟᱱᱟᱢ ᱠᱟᱱᱟ?</string>
     <!-- text for the button to confirm automatic sign-in -->
-    <string name="onboarding_firefox_account_auto_signin_confirm">ᱦᱮᱸ, ᱵᱚᱞᱚ ᱪᱷᱚᱭᱤᱧ ᱢᱮ</string>
+    <string moz:removedIn="96" name="onboarding_firefox_account_auto_signin_confirm" tools:ignore="UnusedResources">ᱦᱮᱸ, ᱵᱚᱞᱚ ᱪᱷᱚᱭᱤᱧ ᱢᱮ</string>
     <!-- text for the automatic sign-in button while signing in is in process -->
-    <string name="onboarding_firefox_account_signing_in">ᱵᱚᱞᱚᱱᱟ ᱠᱟᱹᱱᱟᱹᱧ…</string>
+    <string moz:removedIn="96" name="onboarding_firefox_account_signing_in" tools:ignore="UnusedResources">ᱵᱚᱞᱚᱱᱟ ᱠᱟᱹᱱᱟᱹᱧ…</string>
     <!-- text for the button to manually sign into Firefox account. -->
     <string name="onboarding_firefox_account_sign_in_1">ᱥᱩᱦᱤ ᱮᱡ ᱪᱷᱚ</string>
     <!-- text for the button to stay signed out when presented with an option to automatically sign-in. -->
@@ -1333,7 +1383,7 @@
     <!-- text to display in the snackbar once account is signed-in -->
     <string name="onboarding_firefox_account_sync_is_on">ᱥᱭᱸᱠ ᱪᱟᱹᱞᱩ ᱢᱮᱱᱟᱜ-ᱟ</string>
     <!-- text to display in the snackbar if automatic sign-in fails. user may try again -->
-    <string name="onboarding_firefox_account_automatic_signin_failed">ᱵᱚᱞᱚᱱ ᱥᱩᱦᱤ ᱰᱤᱜᱟᱹᱣᱮᱱᱟ</string>
+    <string moz:removedIn="96" name="onboarding_firefox_account_automatic_signin_failed" tools:ignore="UnusedResources">ᱵᱚᱞᱚᱱ ᱥᱩᱦᱤ ᱰᱤᱜᱟᱹᱣᱮᱱᱟ</string>
     <!-- text for the tracking protection onboarding card header -->
     <string name="onboarding_tracking_protection_header_3">ᱯᱨᱟᱭᱣᱮᱥᱭ ᱡᱷᱚᱛᱚ ᱵᱮᱲᱟ ᱮᱢ ᱪᱷᱚᱭ ᱢᱮ</string>
     <!-- text for the tracking protection card description. 'Firefox' intentionally hardcoded here -->
@@ -1779,7 +1829,7 @@
     <!-- Text for the button to create a custom search engine on the Add search engine screen -->
     <string name="search_add_custom_engine_label_other">ᱮᱴᱟᱜ-ᱟᱜ</string>
     <!-- Placeholder text shown in the Search Engine Name TextField before a user enters text -->
-    <string name="search_add_custom_engine_name_hint">ᱭᱩᱛᱩᱢ</string>
+    <string name="search_add_custom_engine_name_hint">ᱧᱩᱛᱩᱢ</string>
 
     <!-- Placeholder text shown in the Search String TextField before a user enters text -->
     <string name="search_add_custom_engine_search_string_hint">ᱵᱮᱵᱷᱟᱨ ᱞᱟᱹᱜᱤᱫ ᱥᱴᱨᱭᱸᱜ ᱥᱮᱸᱫᱽᱨᱟᱭ ᱢᱮ</string>
@@ -1927,6 +1977,8 @@
     <string name="top_sites_max_limit_content_2">ᱱᱟᱶᱟ ᱴᱟᱹᱯ ᱥᱟᱭᱤᱴ ᱥᱮᱞᱮᱫᱽ ᱞᱟᱹᱜᱤᱫ, ᱢᱤᱫᱴᱟᱹᱝ ᱚᱰᱚᱠ ᱢᱮ ᱾ ᱥᱟᱭᱤᱴ ᱴᱤᱯᱟᱹᱣ ᱟᱨ ᱚᱛᱟ ᱛᱷᱤᱨ ᱠᱟᱛᱮ ᱵᱟᱪᱷᱟᱣ ᱢᱮ ᱟᱨ ᱚᱰᱚᱠ ᱢᱮ ᱾</string>
     <!-- Confirmation dialog button text when top sites limit is reached. -->
     <string name="top_sites_max_limit_confirmation_button">ᱴᱷᱤᱠ, ᱵᱟᱰᱟᱭ ᱠᱮᱜᱼᱟᱹᱧ</string>
+    <!-- Label for the preference to show the most visited top sites on the homepage -->
+    <string name="top_sites_toggle_top_recent_sites_3">ᱡᱟᱹᱥᱛᱤ ᱦᱤᱨᱤ ᱟᱠᱟᱱ ᱥᱟᱭᱤᱴ ᱫᱮᱠᱷᱟᱣᱢᱮ</string>
     <!-- Label for the show most visited top sites preference -->
     <string moz:removedIn="94" name="top_sites_toggle_top_frecent_sites_2" tools:ignore="UnusedResources">ᱡᱟᱹᱥᱛᱤ ᱦᱤᱨᱤ ᱟᱠᱟᱱ ᱥᱟᱭᱤᱴ ᱫᱮᱠᱷᱟᱣᱢᱮ</string>
     <!-- Label for the show most visited sites preference -->
@@ -1947,19 +1999,22 @@
     <!-- Content description for closing all inactive tabs -->
     <string name="inactive_tabs_delete_all">ᱵᱟᱝ ᱮᱠᱴᱤᱵᱷ ᱴᱮᱵᱽ ᱠᱚ ᱵᱚᱸᱫᱚᱭ ᱢᱮ</string>
     <!-- A description below the section of "inactive" tabs to notify the user when those tabs will be closed, if appropriate. See strings inactive_tabs_30_days and inactive_tabs_7_days for placeholders options. -->
-    <string moz:removedIn="93" name="inactive_tabs_description" tools:ignore="UnusedResources">%s ᱞᱟᱹᱜᱤᱫ ᱱᱚᱰᱮ ᱴᱮᱵᱽ ᱢᱮᱱᱟᱜᱼᱟ ᱾ ᱚᱱᱟ ᱚᱠᱛᱚ ᱛᱟᱭᱚᱢ, ᱴᱮᱵᱽ ᱠᱚ ᱟᱡ ᱛᱮᱜᱮ ᱵᱚᱸᱫᱚᱜᱼᱟ ᱾</string>
+    <string moz:removedIn="95" name="inactive_tabs_description" tools:ignore="UnusedResources">%s ᱞᱟᱹᱜᱤᱫ ᱱᱚᱰᱮ ᱴᱮᱵᱽ ᱢᱮᱱᱟᱜᱼᱟ ᱾ ᱚᱱᱟ ᱚᱠᱛᱚ ᱛᱟᱭᱚᱢ, ᱴᱮᱵᱽ ᱠᱚ ᱟᱡ ᱛᱮᱜᱮ ᱵᱚᱸᱫᱚᱜᱼᱟ ᱾</string>
     <!-- The amount of time until a tab in the "inactive" section of the tabs tray will be closed. See string inactive_tabs_description as well -->
-    <string moz:removedIn="93" name="inactive_tabs_30_days" tools:ignore="UnusedResources">30 ᱫᱤᱱ</string>
+    <string moz:removedIn="95" name="inactive_tabs_30_days" tools:ignore="UnusedResources">30 ᱫᱤᱱ</string>
     <!-- The amount of time until a tab in the "inactive" section of the tabs tray will be closed. See string inactive_tabs_description as well -->
-    <string moz:removedIn="93" name="inactive_tabs_7_days" tools:ignore="UnusedResources">1 ᱦᱟᱴ</string>
+    <string moz:removedIn="95" name="inactive_tabs_7_days" tools:ignore="UnusedResources">1 ᱦᱟᱴ</string>
 
+    <!-- Inactive tabs auto-close message in the tabs tray -->
+    <!-- The header text of the auto-close message when the user is asked if they want to turn on the auto-closing of inactive tabs. -->
+    <string name="inactive_tabs_auto_close_message_header" tools:ignore="UnusedResources">ᱢᱤᱫ ᱪᱟᱸᱫᱚ ᱛᱟᱭᱚᱢ ᱟᱡ ᱛᱮ ᱵᱚᱸᱫᱽ ᱟᱢ ᱥᱮ?</string>
     <!-- A call to action below the description to allow the user to turn on the auto closing of inactive tabs. -->
     <string name="inactive_tabs_auto_close_message_action" tools:ignore="UnusedResources">ᱟᱡ ᱛᱮ ᱵᱚᱸᱫ ᱮᱢ ᱪᱷᱚᱭ ᱢᱮ</string>
 
     <!-- Confirmation button text to submit the feedback for the inactive tabs survey. -->
-    <string name="inactive_tabs_survey_send_button" tools:ignore="UnusedResources">ᱠᱩᱞ ᱢᱮ</string>
+    <string name="inactive_tabs_survey_send_button">ᱠᱩᱞ ᱢᱮ</string>
     <!-- Content description for inactive tabs survey close button -->
-    <string name="inactive_tabs_survey_close_button_content_description" tools:ignore="UnusedResources">ᱵᱚᱸᱫᱚᱭ ᱢᱮ</string>
+    <string name="inactive_tabs_survey_close_button_content_description">ᱵᱚᱸᱫᱚᱭ ᱢᱮ</string>
 
     <!-- Default browser experiment -->
     <string name="default_browser_experiment_card_text">Firefox ᱟᱡ ᱛᱮ ᱠᱷᱩᱞᱟᱹ ᱪᱷᱚ ᱞᱟᱹᱜᱤᱫ ᱣᱮᱵᱥᱟᱭᱤᱴ, ᱤᱢᱮᱞ, ᱟᱨ ᱢᱮᱥᱮᱡᱽ ᱨᱮᱭᱟᱜ ᱞᱤᱝᱠ ᱥᱮᱴ ᱢᱮ ᱾ </string>
@@ -1976,6 +2031,12 @@
     <!-- Content description for privacy content close button -->
     <string name="privacy_content_close_button_content_description">ᱵᱚᱸᱫ</string>
 
+    <!-- Text of a button allowing users to access an external url for more Pocket recommendations. -->
+    <string name="pocket_stories_placeholder_text">ᱟᱨᱦᱚᱸ ᱯᱟᱱᱛᱮ ᱧᱟᱢ ᱢᱮ</string>
+    <!-- Title of an app feature. Smaller than a heading.-->
+    <string name="pocket_stories_feature_title">ᱜᱚᱲᱚᱤᱭᱟᱹ Pocket</string>
+    <!-- Caption for describing a certain feature. The placeholder is for a clickable text (eg: Learn more) which will load an url in a new tab when clicked.  -->
+    <string name="pocket_stories_feature_caption">Firefox  ᱜᱷᱟᱨᱚᱧᱡᱽ ᱨᱤᱱᱤᱡ ᱦᱟᱹᱴᱤᱧ ᱾ %s</string>
     <!-- Clickable text for opening an external link for more information about Pocket. -->
     <string name="pocket_stories_feature_learn_more">ᱰᱷᱮᱨ ᱥᱮᱬᱟᱭ ᱢᱮ</string>
 </resources>

@@ -8,7 +8,6 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import mozilla.components.browser.state.search.RegionState
 import mozilla.components.browser.state.search.SearchEngine
@@ -32,7 +31,6 @@ import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.components.metrics.Event.PerformedSearch.SearchAccessPoint
 import org.mozilla.fenix.utils.Settings
 
-@ExperimentalCoroutinesApi
 class SearchFragmentStoreTest {
 
     @MockK private lateinit var searchEngine: SearchEngine
@@ -205,16 +203,13 @@ class SearchFragmentStoreTest {
         val initialState = emptyDefaultState()
         val store = SearchFragmentStore(initialState)
 
-        assertNull(store.state.clipboardUrl)
+        assertFalse(store.state.clipboardHasUrl)
 
         store.dispatch(
-            SearchFragmentAction.UpdateClipboardUrl("https://www.mozilla.org")
+            SearchFragmentAction.UpdateClipboardHasUrl(true)
         ).joinBlocking()
 
-        assertEquals(
-            "https://www.mozilla.org",
-            store.state.clipboardUrl
-        )
+        assertTrue(store.state.clipboardHasUrl)
     }
 
     @Test

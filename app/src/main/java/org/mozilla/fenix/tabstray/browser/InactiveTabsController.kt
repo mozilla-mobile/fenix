@@ -4,25 +4,32 @@
 
 package org.mozilla.fenix.tabstray.browser
 
-import mozilla.components.browser.state.state.TabSessionState
-import mozilla.components.browser.state.store.BrowserStore
-import mozilla.components.concept.tabstray.TabsTray
-import mozilla.components.feature.tabs.ext.toTabs
+import androidx.annotation.VisibleForTesting
+import mozilla.components.browser.tabstray.TabsTray
+import org.mozilla.fenix.components.AppStore
+import org.mozilla.fenix.components.appstate.AppAction.UpdateInactiveExpanded
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.tabstray.TabsTrayStore
+import org.mozilla.fenix.utils.Settings
 
 class InactiveTabsController(
-    private val browserStore: BrowserStore,
-    private val tabFilter: (TabSessionState) -> Boolean,
+    private val tabsTrayStore: TabsTrayStore,
+    private val appStore: AppStore,
     private val tray: TabsTray,
-    private val metrics: MetricController
+    private val metrics: MetricController,
+    private val settings: Settings
 ) {
     /**
      * Updates the inactive card to be expanded to display all the tabs, or collapsed with only
      * the title showing.
      */
     fun updateCardExpansion(isExpanded: Boolean) {
-        InactiveTabsState.isExpanded = isExpanded
+        appStore.dispatch(UpdateInactiveExpanded(isExpanded)).invokeOnCompletion {
+            // To avoid racing, we read the list of inactive tabs only after we have updated
+            // the expanded state.
+            refreshInactiveTabsSection()
+        }
 
         metrics.track(
             when (isExpanded) {
@@ -30,9 +37,40 @@ class InactiveTabsController(
                 false -> Event.TabsTrayInactiveTabsCollapsed
             }
         )
+    }
 
-        val tabs = browserStore.state.toTabs { tabFilter.invoke(it) }
+    /**
+     * Dismiss the auto-close dialog.
+     */
+    fun close() {
+        markDialogAsShown()
+        refreshInactiveTabsSection()
+        metrics.track(Event.TabsTrayAutoCloseDialogDismissed)
+    }
 
-        tray.updateTabs(tabs)
+    /**
+     * Enable the auto-close feature with the after a month setting.
+     */
+    fun enableAutoClosed() {
+        markDialogAsShown()
+        settings.closeTabsAfterOneMonth = true
+        settings.closeTabsAfterOneWeek = false
+        settings.closeTabsAfterOneDay = false
+        settings.manuallyCloseTabs = false
+        refreshInactiveTabsSection()
+        metrics.track(Event.TabsTrayAutoCloseDialogTurnOnClicked)
+    }
+
+    /**
+     * Marks the dialog as shown and to not be displayed again.
+     */
+    private fun markDialogAsShown() {
+        settings.hasInactiveTabsAutoCloseDialogBeenDismissed = true
+    }
+
+    @VisibleForTesting
+    internal fun refreshInactiveTabsSection() {
+        val tabs = tabsTrayStore.state.inactiveTabs
+        tray.updateTabs(tabs, null)
     }
 }

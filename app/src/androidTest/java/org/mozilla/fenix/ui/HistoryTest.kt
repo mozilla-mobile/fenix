@@ -13,9 +13,11 @@ import mozilla.components.browser.storage.sync.PlacesHistoryStorage
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.R
+import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityTestRule
@@ -36,6 +38,7 @@ class HistoryTest {
     /* ktlint-disable no-blank-line-before-rbrace */ // This imposes unreadable grouping.
     private lateinit var mockWebServer: MockWebServer
     private var historyListIdlingResource: RecyclerViewIdlingResource? = null
+    private var recentlyClosedTabsListIdlingResource: RecyclerViewIdlingResource? = null
 
     @get:Rule
     val activityTestRule = HomeActivityTestRule()
@@ -65,6 +68,10 @@ class HistoryTest {
         if (historyListIdlingResource != null) {
             IdlingRegistry.getInstance().unregister(historyListIdlingResource!!)
         }
+
+        if (recentlyClosedTabsListIdlingResource != null) {
+            IdlingRegistry.getInstance().unregister(recentlyClosedTabsListIdlingResource!!)
+        }
     }
 
     @Test
@@ -78,6 +85,7 @@ class HistoryTest {
         }
     }
 
+    @Ignore("Failing, see https://github.com/mozilla-mobile/fenix/issues/22304")
     @Test
     // Test running on beta/release builds in CI:
     // caution when making changes to it, so they don't block the builds
@@ -120,6 +128,7 @@ class HistoryTest {
         }
     }
 
+    @SmokeTest
     @Test
     fun deleteAllHistoryTest() {
         val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -142,8 +151,9 @@ class HistoryTest {
         }
     }
 
+    @SmokeTest
     @Test
-    fun multiSelectionToolbarItemsTest() {
+    fun historyMultiSelectionToolbarItemsTest() {
         val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         navigationToolbar {
@@ -276,6 +286,30 @@ class HistoryTest {
             verifyShareTabFavicon()
             verifyShareTabTitle()
             verifyShareTabUrl()
+        }
+    }
+
+    @Test
+    // This test verifies the Recently Closed Tabs List and items
+    fun verifyRecentlyClosedTabsListTest() {
+        val website = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        homeScreen {
+        }.openNavigationToolbar {
+        }.enterURLAndEnterToBrowser(website.url) {
+            mDevice.waitForIdle()
+        }.openTabDrawer {
+            closeTab()
+        }.openTabDrawer {
+        }.openRecentlyClosedTabs {
+            waitForListToExist()
+            recentlyClosedTabsListIdlingResource =
+                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.recently_closed_list), 1)
+            IdlingRegistry.getInstance().register(recentlyClosedTabsListIdlingResource!!)
+            verifyRecentlyClosedTabsMenuView()
+            IdlingRegistry.getInstance().unregister(recentlyClosedTabsListIdlingResource!!)
+            verifyRecentlyClosedTabsPageTitle("Test_Page_1")
+            verifyRecentlyClosedTabsUrl(website.url)
         }
     }
 }

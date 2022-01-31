@@ -37,9 +37,6 @@ class TabsSettingsFragment : PreferenceFragmentCompat() {
     private lateinit var radioOneDay: RadioButtonPreference
     private lateinit var radioOneWeek: RadioButtonPreference
     private lateinit var radioOneMonth: RadioButtonPreference
-    private lateinit var startOnHomeRadioFourHours: RadioButtonPreference
-    private lateinit var startOnHomeRadioAlways: RadioButtonPreference
-    private lateinit var startOnHomeRadioNever: RadioButtonPreference
     private lateinit var inactiveTabsCategory: PreferenceCategory
     private lateinit var inactiveTabs: SwitchPreference
     private lateinit var searchTermTabGroups: SwitchPreference
@@ -81,13 +78,6 @@ class TabsSettingsFragment : PreferenceFragmentCompat() {
         radioOneMonth = requirePreference(R.string.pref_key_close_tabs_after_one_month)
         radioOneWeek = requirePreference(R.string.pref_key_close_tabs_after_one_week)
         radioOneDay = requirePreference(R.string.pref_key_close_tabs_after_one_day)
-
-        startOnHomeRadioFourHours = requirePreference(R.string.pref_key_start_on_home_after_four_hours)
-        startOnHomeRadioAlways = requirePreference(R.string.pref_key_start_on_home_always)
-        startOnHomeRadioNever = requirePreference(R.string.pref_key_start_on_home_never)
-
-        requirePreference<PreferenceCategory>(R.string.pref_key_start_on_home_category).isVisible =
-            FeatureFlags.showStartOnHomeSettings
 
         inactiveTabs = requirePreference<SwitchPreference>(R.string.pref_key_inactive_tabs).also {
             it.isChecked = requireContext().settings().inactiveTabsAreEnabled
@@ -142,8 +132,8 @@ class TabsSettingsFragment : PreferenceFragmentCompat() {
         val radioButtonsMap: Map<Int, Int> = mapOf(
             R.id.rb_do_not_understand to R.string.inactive_tabs_survey_do_not_understand,
             R.id.rb_do_it_myself to R.string.inactive_tabs_survey_do_it_myself,
-            R.id.rb_time_too_long to R.string.inactive_tabs_survey_time_too_long_option,
-            R.id.rb_time_too_short to R.string.inactive_tabs_survey_time_too_short_option,
+            R.id.rb_time_too_long to R.string.inactive_tabs_survey_time_too_long_option_1,
+            R.id.rb_time_too_short to R.string.inactive_tabs_survey_time_too_short_option_1,
         )
 
         // Sets the Radio buttons' text
@@ -198,12 +188,6 @@ class TabsSettingsFragment : PreferenceFragmentCompat() {
             radioOneDay,
             radioOneMonth,
             radioOneWeek
-        )
-
-        addToRadioGroup(
-            startOnHomeRadioFourHours,
-            startOnHomeRadioAlways,
-            startOnHomeRadioNever
         )
     }
 
