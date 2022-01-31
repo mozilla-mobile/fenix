@@ -63,7 +63,6 @@ class HomeMenu(
     private val syncDisconnectedBackgroundColor =
         context.getColorFromAttr(R.attr.syncDisconnectedBackground)
 
-    private val shouldUseBottomToolbar = context.settings().shouldUseBottomToolbar
     private val accountManager = FenixAccountManager(context)
 
     // 'Reconnect' and 'Quit' items aren't needed most of the time, so we'll only create the if necessary.
@@ -154,7 +153,7 @@ class HomeMenu(
             R.drawable.ic_whats_new,
             iconTintColorResource = primaryTextColor,
             highlight = BrowserMenuHighlight.LowPriority(
-                notificationTint = getColor(context, R.color.whats_new_notification_color)
+                notificationTint = getColor(context, R.color.fx_mobile_icon_color_notice)
             ),
             isHighlighted = { WhatsNew.shouldHighlightWhatsNew(context) }
         ) {

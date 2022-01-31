@@ -7,6 +7,7 @@
 package org.mozilla.fenix.ui.robots
 
 import android.net.Uri
+import android.os.Build
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.IdlingRegistry
@@ -150,25 +151,6 @@ class NavigationToolbarRobot {
             return TabDrawerRobot.Transition()
         }
 
-        fun openNewTabAndEnterToBrowser(
-            url: Uri,
-            interact: BrowserRobot.() -> Unit
-        ): BrowserRobot.Transition {
-            sessionLoadedIdlingResource = SessionLoadedIdlingResource()
-            mDevice.waitNotNull(Until.findObject(By.res("$packageName:id/toolbar")), waitingTime)
-            urlBar().click()
-            awesomeBar().setText(url.toString())
-            mDevice.pressEnter()
-
-            runWithIdleRes(sessionLoadedIdlingResource) {
-                onView(ViewMatchers.withResourceName("browserLayout"))
-                    .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
-            }
-
-            BrowserRobot().interact()
-            return BrowserRobot.Transition()
-        }
-
         fun visitLinkFromClipboard(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
             mDevice.waitNotNull(
                 Until.findObject(By.res("org.mozilla.fenix.debug:id/mozac_browser_toolbar_clear_view")),
@@ -181,10 +163,15 @@ class NavigationToolbarRobot {
                 waitingTime
             )
 
-            mDevice.waitNotNull(
-                Until.findObject(By.res("org.mozilla.fenix.debug:id/clipboard_url")),
-                waitingTime
-            )
+            // On Android 12 or above we don't SHOW the URL unless the user requests to do so.
+            // See for mor information https://github.com/mozilla-mobile/fenix/issues/22271
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+                mDevice.waitNotNull(
+                    Until.findObject(By.res("org.mozilla.fenix.debug:id/clipboard_url")),
+                    waitingTime
+                )
+            }
+
             fillLinkButton().click()
 
             BrowserRobot().interact()

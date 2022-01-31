@@ -80,8 +80,7 @@ import org.mozilla.fenix.components.Core
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MozillaProductDetector
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
-import org.mozilla.fenix.perf.MarkersLifecycleCallbacks
-import org.mozilla.fenix.tabstray.ext.inactiveTabs
+import org.mozilla.fenix.perf.MarkersActivityLifecycleCallbacks
 import org.mozilla.fenix.utils.Settings
 
 /**
@@ -198,7 +197,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
 
         visibilityLifecycleCallback = VisibilityLifecycleCallback(getSystemService())
         registerActivityLifecycleCallbacks(visibilityLifecycleCallback)
-        registerActivityLifecycleCallbacks(MarkersLifecycleCallbacks(components.core.engine))
+        registerActivityLifecycleCallbacks(MarkersActivityLifecycleCallbacks(components.core.engine))
 
         // Storage maintenance disabled, for now, as it was interfering with background migrations.
         // See https://github.com/mozilla-mobile/fenix/issues/7227 for context.
@@ -642,7 +641,6 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
 
             tabViewSetting.set(settings.getTabViewPingString())
             closeTabSetting.set(settings.getTabTimeoutPingString())
-            inactiveTabsCount.set(browserStore.state.inactiveTabs.size.toLong())
 
             val installSourcePackage = if (SDK_INT >= Build.VERSION_CODES.R) {
                 packageManager.getInstallSourceInfo(packageName).installingPackageName
@@ -686,6 +684,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             voiceSearchEnabled.set(settings.shouldShowVoiceSearch)
             openLinksInAppEnabled.set(settings.openLinksInExternalApp)
             signedInSync.set(settings.signedInFxaAccount)
+            searchTermGroupsEnabled.set(settings.searchTermTabGroupsAreEnabled)
 
             val syncedItems = SyncEnginesStorage(applicationContext).getStatus().entries.filter {
                 it.value
@@ -739,6 +738,14 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
 
     @VisibleForTesting
     internal fun reportHomeScreenMetrics(settings: Settings) {
+        CustomizeHome.openingScreen.set(
+            when {
+                settings.alwaysOpenTheHomepageWhenOpeningTheApp -> "homepage"
+                settings.alwaysOpenTheLastTabWhenOpeningTheApp -> "last tab"
+                settings.openHomepageAfterFourHoursOfInactivity -> "homepage after four hours"
+                else -> ""
+            }
+        )
         components.analytics.experiments.register(object : NimbusInterface.Observer {
             override fun onUpdatesApplied(updated: List<EnrolledExperiment>) {
                 CustomizeHome.jumpBackIn.set(settings.showRecentTabsFeature)

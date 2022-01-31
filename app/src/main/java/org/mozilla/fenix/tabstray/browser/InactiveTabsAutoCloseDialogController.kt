@@ -7,8 +7,7 @@ package org.mozilla.fenix.tabstray.browser
 import androidx.annotation.VisibleForTesting
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.state.store.BrowserStore
-import mozilla.components.concept.tabstray.TabsTray
-import mozilla.components.feature.tabs.ext.toTabs
+import mozilla.components.browser.tabstray.TabsTray
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.utils.Settings
@@ -24,8 +23,8 @@ class InactiveTabsAutoCloseDialogController(
      * Dismiss the auto-close dialog.
      */
     fun close() {
-        settings.hasInactiveTabsAutoCloseDialogBeenDismissed = true
-        refeshInactiveTabsSecion()
+        markDialogAsShown()
+        refreshInactiveTabsSection()
         metrics.track(Event.TabsTrayAutoCloseDialogDismissed)
     }
 
@@ -33,17 +32,25 @@ class InactiveTabsAutoCloseDialogController(
      * Enable the auto-close feature with the after a month setting.
      */
     fun enableAutoClosed() {
+        markDialogAsShown()
         settings.closeTabsAfterOneMonth = true
         settings.closeTabsAfterOneWeek = false
         settings.closeTabsAfterOneDay = false
         settings.manuallyCloseTabs = false
-        refeshInactiveTabsSecion()
+        refreshInactiveTabsSection()
         metrics.track(Event.TabsTrayAutoCloseDialogTurnOnClicked)
     }
 
+    /**
+     * Marks the dialog as shown and to not be displayed again.
+     */
+    private fun markDialogAsShown() {
+        settings.hasInactiveTabsAutoCloseDialogBeenDismissed = true
+    }
+
     @VisibleForTesting
-    internal fun refeshInactiveTabsSecion() {
-        val tabs = browserStore.state.toTabs { tabFilter.invoke(it) }
-        tray.updateTabs(tabs)
+    internal fun refreshInactiveTabsSection() {
+        val tabs = browserStore.state.tabs.filter(tabFilter)
+        tray.updateTabs(tabs, browserStore.state.selectedTabId)
     }
 }

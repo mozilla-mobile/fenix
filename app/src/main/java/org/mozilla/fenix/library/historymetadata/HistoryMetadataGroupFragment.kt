@@ -15,7 +15,6 @@ import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.support.base.feature.UserInteractionHandler
 import org.mozilla.fenix.HomeActivity
@@ -24,6 +23,7 @@ import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.databinding.FragmentHistoryMetadataGroupBinding
 import org.mozilla.fenix.ext.nav
+import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.setTextColor
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.library.LibraryPageFragment
@@ -74,6 +74,7 @@ class HistoryMetadataGroupFragment :
             controller = DefaultHistoryMetadataGroupController(
                 activity = activity as HomeActivity,
                 store = historyMetadataGroupStore,
+                metrics = requireComponents.analytics.metrics,
                 navController = findNavController(),
                 scope = lifecycleScope,
                 searchTerm = args.title
@@ -89,7 +90,6 @@ class HistoryMetadataGroupFragment :
         return binding.root
     }
 
-    @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         consumeFrom(historyMetadataGroupStore) { state ->
             historyMetadataGroupView.update(state)

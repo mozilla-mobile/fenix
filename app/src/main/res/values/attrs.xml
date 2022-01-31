@@ -25,7 +25,6 @@
     <attr name="scrimStart" format="reference"/>
     <attr name="scrimEnd" format="reference"/>
     <attr name="toolbarDivider" format="reference"/>
-    <attr name="menuCategoryText" format="reference"/>
     <attr name="preferenceSectionHeader" format="reference"/>
     <attr name="recentlyUsedShareMenu" format="reference" />
 
@@ -55,7 +54,6 @@
     <attr name="addOnPrivateBrowsingInteriorIconBackground" format="reference"/>
     <attr name="readerModeStartGradient" format="reference"/>
     <attr name="readerModeEndGradient" format="reference"/>
-    <attr name="syncedTabsSeparator" format="reference"/>
     <attr name="awesomeBarIndicatorColor" format="reference|color"/>
     <attr name="awesomeBarIndicatorBookmarkColor" format="reference|color"/>
 

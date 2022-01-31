@@ -11,7 +11,6 @@ import androidx.annotation.VisibleForTesting.PRIVATE
 import androidx.core.content.ContextCompat.getColor
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.mapNotNull
@@ -54,7 +53,6 @@ import org.mozilla.fenix.utils.BrowsersCache
  * @param bookmarksStorage Used to check if a page is bookmarked.
  */
 @Suppress("LargeClass", "LongParameterList", "TooManyFunctions")
-@ExperimentalCoroutinesApi
 open class DefaultToolbarMenu(
     private val context: Context,
     private val store: BrowserStore,
@@ -183,7 +181,7 @@ open class DefaultToolbarMenu(
         iconTintColorResource = primaryTextColor(),
         highlight = BrowserMenuHighlight.LowPriority(
             label = context.getString(R.string.browser_menu_install_on_homescreen),
-            notificationTint = getColor(context, R.color.whats_new_notification_color)
+            notificationTint = getColor(context, R.color.fx_mobile_icon_color_notice)
         ),
         isHighlighted = {
             !context.settings().installPwaOpened
@@ -252,7 +250,7 @@ open class DefaultToolbarMenu(
         iconTintColorResource = primaryTextColor(),
         highlight = BrowserMenuHighlight.LowPriority(
             label = context.getString(R.string.browser_menu_open_app_link),
-            notificationTint = getColor(context, R.color.whats_new_notification_color)
+            notificationTint = getColor(context, R.color.fx_mobile_icon_color_notice)
         ),
         isHighlighted = { !context.settings().openInAppOpened }
     ) {

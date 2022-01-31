@@ -61,15 +61,14 @@ class TrackingProtectionExceptionsInteractorTest {
                 onResult(results)
             }
 
-            override fun removeAll(activeSessions: List<EngineSession>?) {
+            override fun removeAll(activeSessions: List<EngineSession>?, onRemove: () -> Unit) {
                 removedAll = true
             }
 
-            override fun add(session: EngineSession) = Unit
+            override fun add(session: EngineSession, persistInPrivateMode: Boolean) = Unit
             override fun contains(session: EngineSession, onResult: (Boolean) -> Unit) = Unit
             override fun remove(session: EngineSession) = Unit
             override fun remove(exception: TrackingProtectionException) = Unit
-            override fun restore() = Unit
         }
     private val exceptionsItem: (String) -> TrackingProtectionException = {
         object : TrackingProtectionException {

@@ -15,6 +15,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.R
+import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.ext.bookmarkStorage
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
@@ -166,9 +167,11 @@ class BookmarksTest {
             addNewFolderName(bookmarksFolderName)
             navigateUp()
             verifyKeyboardHidden()
+            verifyBookmarkFolderIsNotCreated(bookmarksFolderName)
         }
     }
 
+    @SmokeTest
     @Test
     fun editBookmarkTest() {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -277,6 +280,7 @@ class BookmarksTest {
         }
     }
 
+    @SmokeTest
     @Test
     fun deleteBookmarkTest() {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -296,6 +300,7 @@ class BookmarksTest {
         }
     }
 
+    @SmokeTest
     @Test
     fun undoDeleteBookmarkTest() {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -320,8 +325,9 @@ class BookmarksTest {
         }
     }
 
+    @SmokeTest
     @Test
-    fun multiSelectionToolbarItemsTest() {
+    fun bookmarksMultiSelectionToolbarItemsTest() {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         browserScreen {
@@ -345,6 +351,7 @@ class BookmarksTest {
         }
     }
 
+    @SmokeTest
     @Test
     fun openSelectionInNewTabTest() {
         val settings = activityTestRule.activity.applicationContext.settings()
@@ -375,6 +382,7 @@ class BookmarksTest {
         }
     }
 
+    @SmokeTest
     @Test
     fun openSelectionInPrivateTabTest() {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -398,6 +406,7 @@ class BookmarksTest {
         }
     }
 
+    @SmokeTest
     @Test
     fun deleteMultipleSelectionTest() {
         val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -427,6 +436,7 @@ class BookmarksTest {
         }
     }
 
+    @SmokeTest
     @Test
     fun undoDeleteMultipleSelectionTest() {
         val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -515,6 +525,7 @@ class BookmarksTest {
         }
     }
 
+    @SmokeTest
     @Test
     fun changeBookmarkParentFolderTest() {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -609,8 +620,37 @@ class BookmarksTest {
             IdlingRegistry.getInstance().unregister(bookmarksListIdlingResource!!)
         }.clickEdit {
             clickDeleteInEditModeButton()
+            cancelDeletion()
+            clickDeleteInEditModeButton()
             confirmDeletion()
             verifyDeleteSnackBarText()
+            verifyBookmarkIsDeleted("Test_Page_1")
+        }
+    }
+
+    @SmokeTest
+    @Test
+    fun undoDeleteBookmarkFolderTest() {
+
+        browserScreen {
+        }.openThreeDotMenu {
+        }.openBookmarks {
+            bookmarksListIdlingResource =
+                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.bookmark_list), 1)
+            IdlingRegistry.getInstance().register(bookmarksListIdlingResource!!)
+            createFolder("My Folder")
+            verifyFolderTitle("My Folder")
+            IdlingRegistry.getInstance().unregister(bookmarksListIdlingResource!!)
+        }.openThreeDotMenu("My Folder") {
+        }.clickDelete {
+            cancelFolderDeletion()
+            verifyFolderTitle("My Folder")
+        }.openThreeDotMenu("My Folder") {
+        }.clickDelete {
+            confirmDeletion()
+            verifyDeleteSnackBarText()
+            clickUndoDeleteButton()
+            verifyFolderTitle("My Folder")
         }
     }
 }

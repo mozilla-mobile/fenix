@@ -13,7 +13,6 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import mozilla.components.browser.state.state.recover.RecoverableTab
@@ -36,7 +35,7 @@ import org.mozilla.fenix.library.LibraryPageFragment
 class RecentlyClosedFragment : LibraryPageFragment<RecoverableTab>(), UserInteractionHandler {
     private lateinit var recentlyClosedFragmentStore: RecentlyClosedFragmentStore
     private var _recentlyClosedFragmentView: RecentlyClosedFragmentView? = null
-    protected val recentlyClosedFragmentView: RecentlyClosedFragmentView
+    private val recentlyClosedFragmentView: RecentlyClosedFragmentView
         get() = _recentlyClosedFragmentView!!
 
     private lateinit var recentlyClosedInteractor: RecentlyClosedFragmentInteractor
@@ -137,7 +136,6 @@ class RecentlyClosedFragment : LibraryPageFragment<RecoverableTab>(), UserIntera
         )
     }
 
-    @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         consumeFrom(recentlyClosedFragmentStore) { state ->
             recentlyClosedFragmentView.update(state)

@@ -9,7 +9,9 @@ package org.mozilla.fenix.ui.robots
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers
+import androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
@@ -19,6 +21,7 @@ import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
 import junit.framework.TestCase.assertTrue
 import org.hamcrest.Matchers.containsString
+import org.hamcrest.Matchers.not
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestHelper.packageName
@@ -38,6 +41,8 @@ class EnhancedTrackingProtectionRobot {
 
     fun verifyEnhancedTrackingProtectionDetailsStatus(status: String) =
         assertEnhancedTrackingProtectionDetailsStatus(status)
+
+    fun verifyETPSwitchVisibility(visible: Boolean) = assertETPSwitchVisibility(visible)
 
     fun verifyTrackingCookiesBlocked() = assertTrackingCookiesBlocked()
 
@@ -69,6 +74,7 @@ class EnhancedTrackingProtectionRobot {
         fun openEnhancedTrackingProtectionSheet(interact: EnhancedTrackingProtectionRobot.() -> Unit): Transition {
             openEnhancedTrackingProtectionSheet().waitForExists(waitingTime)
             openEnhancedTrackingProtectionSheet().click()
+            assertSecuritySheetIsCompletelyDisplayed()
 
             EnhancedTrackingProtectionRobot().interact()
             return Transition()
@@ -83,7 +89,7 @@ class EnhancedTrackingProtectionRobot {
         }
 
         fun disableEnhancedTrackingProtectionFromSheet(interact: EnhancedTrackingProtectionRobot.() -> Unit): Transition {
-            disableEnhancedTrackingProtection().click()
+            enhancedTrackingProtectionSwitch().click()
 
             EnhancedTrackingProtectionRobot().interact()
             return Transition()
@@ -113,6 +119,16 @@ fun enhancedTrackingProtection(interact: EnhancedTrackingProtectionRobot.() -> U
     return EnhancedTrackingProtectionRobot.Transition()
 }
 
+private fun assertETPSwitchVisibility(visible: Boolean) {
+    if (visible) {
+        enhancedTrackingProtectionSwitch()
+            .check(matches(isDisplayed()))
+    } else {
+        enhancedTrackingProtectionSwitch()
+            .check(matches(not(isDisplayed())))
+    }
+}
+
 private fun assertEnhancedTrackingProtectionSheetStatus(status: String, state: Boolean) {
     mDevice.waitNotNull(Until.findObjects(By.textContains(status)))
     onView(ViewMatchers.withResourceName("switch_widget")).check(
@@ -131,7 +147,7 @@ private fun assertEnhancedTrackingProtectionDetailsStatus(status: String) {
 private fun openEnhancedTrackingProtectionSheet() =
     mDevice.findObject(UiSelector().resourceId("$packageName:id/mozac_browser_toolbar_security_indicator"))
 
-private fun disableEnhancedTrackingProtection() =
+private fun enhancedTrackingProtectionSwitch() =
     onView(ViewMatchers.withResourceName("switch_widget"))
 
 private fun trackingProtectionSettingsButton() =
@@ -169,3 +185,10 @@ private fun assertTrackingContentBlocked() {
 }
 
 private fun trackingContentBlockListButton() = onView(withId(R.id.tracking_content))
+
+private fun assertSecuritySheetIsCompletelyDisplayed() {
+    mDevice.findObject(UiSelector().description("Quick settings sheet"))
+        .waitForExists(waitingTime)
+    onView(withContentDescription("Quick settings sheet"))
+        .check(matches(isCompletelyDisplayed()))
+}

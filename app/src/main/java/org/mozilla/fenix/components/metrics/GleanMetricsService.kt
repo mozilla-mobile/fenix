@@ -19,7 +19,6 @@ import org.mozilla.fenix.GleanMetrics.BrowserSearch
 import org.mozilla.fenix.GleanMetrics.Collections
 import org.mozilla.fenix.GleanMetrics.ContextMenu
 import org.mozilla.fenix.GleanMetrics.ContextualMenu
-import org.mozilla.fenix.GleanMetrics.CrashReporter
 import org.mozilla.fenix.GleanMetrics.CreditCards
 import org.mozilla.fenix.GleanMetrics.CustomTab
 import org.mozilla.fenix.GleanMetrics.CustomizeHome
@@ -44,6 +43,7 @@ import org.mozilla.fenix.GleanMetrics.RecentBookmarks
 import org.mozilla.fenix.GleanMetrics.RecentSearches
 import org.mozilla.fenix.GleanMetrics.RecentTabs
 import org.mozilla.fenix.GleanMetrics.SearchShortcuts
+import org.mozilla.fenix.GleanMetrics.SearchTerms
 import org.mozilla.fenix.GleanMetrics.SearchWidget
 import org.mozilla.fenix.GleanMetrics.SetDefaultNewtabExperiment
 import org.mozilla.fenix.GleanMetrics.SetDefaultSettingExperiment
@@ -156,13 +156,6 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.ContextMenuItemTapped -> EventWrapper(
             { ContextMenu.itemTapped.record(it) },
             { ContextMenu.itemTappedKeys.valueOf(it) }
-        )
-        is Event.CrashReporterOpened -> EventWrapper<NoExtraKeys>(
-            { CrashReporter.opened.record(it) }
-        )
-        is Event.CrashReporterClosed -> EventWrapper(
-            { CrashReporter.closed.record(it) },
-            { CrashReporter.closedKeys.valueOf(it) }
         )
         is Event.BrowserMenuItemTapped -> EventWrapper(
             { Events.browserMenuAction.record(it) },
@@ -318,6 +311,18 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.HistoryRecentSearchesTapped -> EventWrapper(
             { History.recentSearchesTapped.record(it) },
             { History.recentSearchesTappedKeys.valueOf(it) }
+        )
+        is Event.HistorySearchTermGroupTapped -> EventWrapper<NoExtraKeys>(
+            { History.searchTermGroupTapped.record(it) }
+        )
+        is Event.HistorySearchTermGroupOpenTab -> EventWrapper<NoExtraKeys>(
+            { History.searchTermGroupOpenTab.record(it) }
+        )
+        is Event.HistorySearchTermGroupRemoveTab -> EventWrapper<NoExtraKeys>(
+            { History.searchTermGroupRemoveTab.record(it) }
+        )
+        is Event.HistorySearchTermGroupRemoveAll -> EventWrapper<NoExtraKeys>(
+            { History.searchTermGroupRemoveAll.record(it) }
         )
         is Event.CollectionRenamed -> EventWrapper<NoExtraKeys>(
             { Collections.renamed.record(it) }
@@ -543,10 +548,6 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.VoiceSearchTapped -> EventWrapper<NoExtraKeys>(
             { VoiceSearch.tapped.record(it) }
         )
-        is Event.TabCounterMenuItemTapped -> EventWrapper(
-            { Events.tabCounterMenuAction.record(it) },
-            { Events.tabCounterMenuActionKeys.valueOf(it) }
-        )
         is Event.OnboardingPrivacyNotice -> EventWrapper<NoExtraKeys>(
             { Onboarding.privacyNotice.record(it) }
         )
@@ -650,6 +651,18 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.InactiveTabsOffSurvey -> EventWrapper(
             { Preferences.turnOffInactiveTabsSurvey.record(it) },
             { Preferences.turnOffInactiveTabsSurveyKeys.valueOf(it) }
+        )
+        is Event.InactiveTabsCountUpdate -> EventWrapper<NoExtraKeys>(
+            { Metrics.inactiveTabsCount.set(this.count.toLong()) },
+        )
+        is Event.TabsTrayInactiveTabsCFRGotoSettings -> EventWrapper<NoExtraKeys>(
+            { TabsTray.inactiveTabsCfrSettings.record(it) }
+        )
+        is Event.TabsTrayInactiveTabsCFRDismissed -> EventWrapper<NoExtraKeys>(
+            { TabsTray.inactiveTabsCfrDismissed.record(it) }
+        )
+        is Event.TabsTrayInactiveTabsCFRIsVisible -> EventWrapper<NoExtraKeys>(
+            { TabsTray.inactiveTabsCfrVisible.record(it) }
         )
         is Event.AutoPlaySettingVisited -> EventWrapper<NoExtraKeys>(
             { Autoplay.visitedSetting.record(it) }
@@ -766,6 +779,9 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.HomeScreenDisplayed -> EventWrapper<NoExtraKeys>(
             { HomeScreen.homeScreenDisplayed.record(it) }
         )
+        is Event.HomeScreenViewCount -> EventWrapper<NoExtraKeys>(
+            { HomeScreen.homeScreenViewCount.add() }
+        )
         is Event.HomeScreenCustomizedHomeClicked -> EventWrapper<NoExtraKeys>(
             { HomeScreen.customizeHomeClicked.record(it) }
         )
@@ -880,6 +896,20 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.CreditCardManagementCardTapped -> EventWrapper<NoExtraKeys>(
             { CreditCards.managementCardTapped.record(it) }
         )
+        is Event.SearchTermGroupCount -> EventWrapper(
+            { SearchTerms.numberOfSearchTermGroup.record(it) },
+            { SearchTerms.numberOfSearchTermGroupKeys.valueOf(it) }
+        )
+        is Event.AverageTabsPerSearchTermGroup -> EventWrapper(
+            { SearchTerms.averageTabsPerGroup.record(it) },
+            { SearchTerms.averageTabsPerGroupKeys.valueOf(it) }
+        )
+        is Event.SearchTermGroupSizeDistribution -> EventWrapper<NoExtraKeys>(
+            { SearchTerms.groupSizeDistribution.accumulateSamples(this.groupSizes.toLongArray()) },
+        )
+        is Event.JumpBackInGroupTapped -> EventWrapper<NoExtraKeys>(
+            { SearchTerms.jumpBackInGroupTapped.record(it) }
+        )
 
         // Don't record other events in Glean:
         is Event.AddBookmark -> null
@@ -941,9 +971,4 @@ class GleanMetricsService(
     override fun shouldTrack(event: Event): Boolean {
         return event.wrapper != null
     }
-}
-
-// Helper function for making our booleans fit into the string list formatting
-fun Boolean.toStringList(): List<String> {
-    return listOf(this.toString())
 }

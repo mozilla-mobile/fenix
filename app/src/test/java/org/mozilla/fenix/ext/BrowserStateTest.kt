@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.ext
 
+import io.mockk.every
 import io.mockk.mockk
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.LastMediaAccessState
@@ -11,8 +12,11 @@ import mozilla.components.browser.state.state.createTab
 import mozilla.components.concept.storage.HistoryMetadataKey
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.mozilla.fenix.home.recenttabs.RecentTab
+import org.mozilla.fenix.tabstray.browser.TabGroup
+import org.mozilla.fenix.utils.Settings
 
 class BrowserStateTest {
 
@@ -155,7 +159,7 @@ class BrowserStateTest {
     }
 
     @Test
-    fun `GIVEN a tab group exists WHEN recentTabs is called THEN return a tab group`() {
+    fun `GIVEN only normal tabs from a search group are open WHEN recentTabs is called THEN return only the tab group`() {
         val searchGroupTab = createTab(
             url = "https://www.mozilla.org",
             id = "1",
@@ -172,8 +176,36 @@ class BrowserStateTest {
 
         val result = browserState.asRecentTabs()
 
+        assertEquals(1, result.size)
+        assert(result[0] is RecentTab.SearchGroup)
+        assertEquals(searchGroupTab.historyMetadata?.searchTerm, (result[0] as RecentTab.SearchGroup).searchTerm)
+        assertEquals(searchGroupTab.id, (result[0] as RecentTab.SearchGroup).tabId)
+        assertEquals(searchGroupTab.content.url, (result[0] as RecentTab.SearchGroup).url)
+        assertEquals(searchGroupTab.content.thumbnail, (result[0] as RecentTab.SearchGroup).thumbnail)
+        assertEquals(2, (result[0] as RecentTab.SearchGroup).count)
+    }
+
+    @Test
+    fun `GIVEN tabs with different search terms are opened WHEN recentTabs is called THEN return the most recent tab and tab group`() {
+        val searchGroupTab = createTab(
+            url = "https://www.mozilla.org",
+            id = "1",
+            historyMetadata = HistoryMetadataKey(
+                url = "https://www.mozilla.org",
+                searchTerm = "Test",
+                referrerUrl = "https://www.mozilla.org"
+            )
+        )
+        val otherTab = createTab(url = "https://www.mozilla.org/firefox", id = "2")
+        val browserState = BrowserState(
+            tabs = listOf(searchGroupTab, otherTab, searchGroupTab),
+            selectedTabId = searchGroupTab.id
+        )
+
+        val result = browserState.asRecentTabs()
+
         assertEquals(2, result.size)
-        assertEquals(searchGroupTab, (result[0] as RecentTab.Tab).state)
+        assertEquals(otherTab, (result[0] as RecentTab.Tab).state)
         assert(result[1] is RecentTab.SearchGroup)
         assertEquals(searchGroupTab.historyMetadata?.searchTerm, (result[1] as RecentTab.SearchGroup).searchTerm)
         assertEquals(searchGroupTab.id, (result[1] as RecentTab.SearchGroup).tabId)
@@ -317,5 +349,126 @@ class BrowserStateTest {
             tabs = listOf(normalTab1, normalTab2, normalTab3, normalTab4),
         )
         assertEquals(normalTab3.id, browserState.secondToLastOpenedNormalTab!!.id)
+    }
+
+    @Test
+    fun `GIVEN a list of tabs WHEN potentialInactiveTabs is called THEN return the normal tabs which haven't been active lately`() {
+        // An inactive tab is one created or accessed more than [maxActiveTime] ago
+        // checked against [System.currentTimeMillis]
+        //
+        // createTab() sets the [createdTime] property to [System.currentTimeMillis] this meaning
+        // that the default tab is considered active.
+
+        val normalTab1 = createTab(url = "url1", id = "1", createdAt = 1)
+        val normalTab2 = createTab(url = "url2", id = "2")
+        val normalTab3 = createTab(url = "url3", id = "3", createdAt = 1)
+        val normalTab4 = createTab(url = "url4", id = "4")
+        val privateTab1 = createTab(url = "url1", id = "6", private = true)
+        val privateTab2 = createTab(url = "url2", id = "7", private = true, createdAt = 1)
+        val privateTab3 = createTab(url = "url3", id = "8", private = true)
+        val privateTab4 = createTab(url = "url4", id = "9", private = true, createdAt = 1)
+        val browserState = BrowserState(
+            tabs = listOf(
+                normalTab1, normalTab2, normalTab3, normalTab4,
+                privateTab1, privateTab2, privateTab3, privateTab4
+            )
+        )
+
+        val result = browserState.potentialInactiveTabs
+
+        assertEquals(2, result.size)
+        assertTrue(result.containsAll(listOf(normalTab1, normalTab3)))
+    }
+
+    @Test
+    fun `GIVEN inactiveTabs feature is disabled WHEN actualInactiveTabs is called THEN return an empty result`() {
+        // An inactive tab is one created or accessed more than [maxActiveTime] ago
+        // checked against [System.currentTimeMillis]
+        //
+        // createTab() sets the [createdTime] property to [System.currentTimeMillis] this meaning
+        // that the default tab is considered active.
+
+        val normalTab1 = createTab(url = "url1", id = "1", createdAt = 1)
+        val normalTab2 = createTab(url = "url2", id = "2")
+        val normalTab3 = createTab(url = "url3", id = "3", createdAt = 1)
+        val normalTab4 = createTab(url = "url4", id = "4")
+        val privateTab1 = createTab(url = "url1", id = "6", private = true)
+        val privateTab2 = createTab(url = "url2", id = "7", private = true, createdAt = 1)
+        val privateTab3 = createTab(url = "url3", id = "8", private = true)
+        val privateTab4 = createTab(url = "url4", id = "9", private = true, createdAt = 1)
+        val browserState = BrowserState(
+            tabs = listOf(
+                normalTab1, normalTab2, normalTab3, normalTab4,
+                privateTab1, privateTab2, privateTab3, privateTab4
+            )
+        )
+        val settings: Settings = mockk() {
+            every { inactiveTabsAreEnabled } returns false
+        }
+
+        val result = browserState.actualInactiveTabs(settings)
+
+        assertTrue(result.isEmpty())
+    }
+
+    @Test
+    fun `GIVEN inactiveTabs feature is enabled WHEN actualInactiveTabs is called THEN return the normal tabs which haven't been active lately`() {
+        // An inactive tab is one created or accessed more than [maxActiveTime] ago
+        // checked against [System.currentTimeMillis]
+        //
+        // createTab() sets the [createdTime] property to [System.currentTimeMillis] this meaning
+        // that the default tab is considered active.
+
+        val normalTab1 = createTab(url = "url1", id = "1", createdAt = 1)
+        val normalTab2 = createTab(url = "url2", id = "2")
+        val normalTab3 = createTab(url = "url3", id = "3", createdAt = 1)
+        val normalTab4 = createTab(url = "url4", id = "4")
+        val privateTab1 = createTab(url = "url1", id = "6", private = true)
+        val privateTab2 = createTab(url = "url2", id = "7", private = true, createdAt = 1)
+        val privateTab3 = createTab(url = "url3", id = "8", private = true)
+        val privateTab4 = createTab(url = "url4", id = "9", private = true, createdAt = 1)
+        val browserState = BrowserState(
+            tabs = listOf(
+                normalTab1, normalTab2, normalTab3, normalTab4,
+                privateTab1, privateTab2, privateTab3, privateTab4
+            )
+        )
+        val settings: Settings = mockk() {
+            every { inactiveTabsAreEnabled } returns true
+        }
+
+        val result = browserState.actualInactiveTabs(settings)
+
+        assertEquals(2, result.size)
+        assertTrue(result.containsAll(listOf(normalTab1, normalTab3)))
+    }
+
+    @Test
+    fun `GIVEN tabs exist with search terms WHEN lastTabGroup is called THEN return the last accessed TabGroup`() {
+        val tab1 = createTab(url = "url1", id = "id1", searchTerms = "test1", lastAccess = 10)
+        val tab2 = createTab(url = "url2", id = "id2", searchTerms = "test1", lastAccess = 11)
+        val tab3 = createTab(url = "url3", id = "id3", searchTerms = "test3", lastAccess = 1000)
+        val tab4 = createTab(url = "url4", id = "id4", searchTerms = "test3", lastAccess = 1111)
+        val tab5 = createTab(url = "url5", id = "id5", searchTerms = "test5", lastAccess = 100)
+        val tab6 = createTab(url = "url6", id = "id6", searchTerms = "test5", lastAccess = 111)
+        val browserState = BrowserState(
+            tabs = listOf(tab1, tab2, tab3, tab4, tab5, tab6)
+        )
+        val expected = TabGroup("Test3", listOf(tab3, tab4), tab4.lastAccess)
+
+        val result = browserState.lastTabGroup
+
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun `GIVEN no tabs exist with search terms WHEN lastTabGroup is called THEN return the last accessed TabGroup`() {
+        val tab1 = createTab(url = "url1", id = "id1", lastAccess = 10)
+        val tab2 = createTab(url = "url2", id = "id2", lastAccess = 11)
+        val browserState = BrowserState(tabs = listOf(tab1, tab2))
+
+        val result = browserState.lastTabGroup
+
+        assertNull(result)
     }
 }

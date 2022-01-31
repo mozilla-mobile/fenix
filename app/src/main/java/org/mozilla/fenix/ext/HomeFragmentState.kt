@@ -7,8 +7,9 @@ package org.mozilla.fenix.ext
 import androidx.annotation.VisibleForTesting
 import mozilla.components.service.pocket.PocketRecommendedStory
 import org.mozilla.fenix.home.HomeFragmentState
-import org.mozilla.fenix.home.sessioncontrol.viewholders.pocket.POCKET_STORIES_DEFAULT_CATEGORY_NAME
-import org.mozilla.fenix.home.sessioncontrol.viewholders.pocket.PocketRecommendedStoriesCategory
+import org.mozilla.fenix.home.pocket.POCKET_STORIES_DEFAULT_CATEGORY_NAME
+import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesCategory
+import org.mozilla.fenix.home.recenttabs.RecentTab.SearchGroup
 
 /**
  * Get the list of stories to be displayed based on the user selected categories.
@@ -86,9 +87,16 @@ internal fun getFilteredStoriesCount(
             }
         }
         false -> {
-            return selectedCategories.map { it.name to it.stories.size }.toMap()
+            return selectedCategories.associate { it.name to it.stories.size }
         }
     }
 
     return emptyMap()
 }
+
+/**
+ * Get the [SearchGroup] shown in the "Jump back in" section.
+ * May be null if no search group is shown.
+ */
+internal val HomeFragmentState.recentSearchGroup: SearchGroup?
+    get() = recentTabs.find { it is SearchGroup } as SearchGroup?
