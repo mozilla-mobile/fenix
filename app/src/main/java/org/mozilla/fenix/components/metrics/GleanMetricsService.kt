@@ -58,6 +58,7 @@ import org.mozilla.fenix.GleanMetrics.ToolbarSettings
 import org.mozilla.fenix.GleanMetrics.TopSites
 import org.mozilla.fenix.GleanMetrics.TrackingProtection
 import org.mozilla.fenix.GleanMetrics.VoiceSearch
+import org.mozilla.fenix.GleanMetrics.Wallpapers
 import org.mozilla.fenix.ext.components
 
 private class EventWrapper<T : Enum<T>>(
@@ -906,6 +907,38 @@ private val Event.wrapper: EventWrapper<*>?
         )
         is Event.JumpBackInGroupTapped -> EventWrapper<NoExtraKeys>(
             { SearchTerms.jumpBackInGroupTapped.record(it) }
+        )
+        is Event.WallpaperSettingsOpened -> EventWrapper<NoExtraKeys>(
+            { Wallpapers.wallpaperSettingsOpened.record() }
+        )
+        is Event.WallpaperSelected -> EventWrapper<NoExtraKeys>(
+            {
+                Wallpapers.wallpaperSelected.record(
+                    Wallpapers.WallpaperSelectedExtra(
+                        name = this.wallpaper.name,
+                        themeCollection = this.wallpaper.themeCollection::class.simpleName,
+                    ),
+                )
+            }
+        )
+        is Event.WallpaperSwitched -> EventWrapper<NoExtraKeys>(
+            {
+                Wallpapers.wallpaperSwitched.record(
+                    Wallpapers.WallpaperSwitchedExtra(
+                        name = this.wallpaper.name,
+                        themeCollection = this.wallpaper.themeCollection::class.simpleName,
+                    ),
+                )
+            }
+        )
+        is Event.ChangeWallpaperWithLogoToggled -> EventWrapper<NoExtraKeys>(
+            {
+                Wallpapers.changeWallpaperLogoToggled.record(
+                    Wallpapers.ChangeWallpaperLogoToggledExtra(
+                        checked = this.checked,
+                    ),
+                )
+            }
         )
 
         // Don't record other events in Glean:

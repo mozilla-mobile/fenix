@@ -8,6 +8,7 @@ import android.app.Application
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import mozilla.components.lib.crash.CrashReporter
 import mozilla.components.lib.crash.service.CrashReporterService
 import mozilla.components.lib.crash.service.GleanCrashReporterService
@@ -22,9 +23,9 @@ import org.mozilla.fenix.ReleaseChannel
 import org.mozilla.fenix.components.metrics.AdjustMetricsService
 import org.mozilla.fenix.components.metrics.GleanMetricsService
 import org.mozilla.fenix.components.metrics.MetricController
-import org.mozilla.fenix.experiments.NimbusFeatures
 import org.mozilla.fenix.experiments.createNimbus
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.perf.lazyMonitored
 import org.mozilla.geckoview.BuildConfig.MOZ_APP_BUILDID
 import org.mozilla.geckoview.BuildConfig.MOZ_APP_VENDOR
@@ -69,12 +70,16 @@ class Analytics(
         val intent = Intent(context, HomeActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
         }
-
+        val crashReportingIntentFlags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PendingIntent.FLAG_MUTABLE
+        } else {
+            0 // No flags. Default behavior.
+        }
         val pendingIntent = PendingIntent.getActivity(
             context,
             0,
             intent,
-            0
+            crashReportingIntentFlags
         )
 
         CrashReporter(
@@ -104,11 +109,9 @@ class Analytics(
     }
 
     val experiments: NimbusApi by lazyMonitored {
-        createNimbus(context, BuildConfig.NIMBUS_ENDPOINT)
-    }
-
-    val features: NimbusFeatures by lazyMonitored {
-        NimbusFeatures(context)
+        createNimbus(context, BuildConfig.NIMBUS_ENDPOINT).also { api ->
+            FxNimbus.api = api
+        }
     }
 }
 

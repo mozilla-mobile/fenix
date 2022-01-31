@@ -35,19 +35,19 @@ import org.mozilla.fenix.components.settings.counterPreference
 import org.mozilla.fenix.components.settings.featureFlagPreference
 import org.mozilla.fenix.components.settings.lazyFeatureFlagPreference
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
-import org.mozilla.fenix.experiments.ExperimentBranch
-import org.mozilla.fenix.experiments.FeatureId
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getPreferenceKey
-import org.mozilla.fenix.ext.withExperiment
+import org.mozilla.fenix.nimbus.FxNimbus
+import org.mozilla.fenix.nimbus.HomeScreenSection
+import org.mozilla.fenix.nimbus.MessageSurfaceId
 import org.mozilla.fenix.settings.PhoneFeature
-import org.mozilla.fenix.wallpapers.Wallpaper
 import org.mozilla.fenix.settings.deletebrowsingdata.DeleteBrowsingDataOnQuitType
 import org.mozilla.fenix.settings.logins.SavedLoginsSortingStrategyMenu
 import org.mozilla.fenix.settings.logins.SortingStrategy
 import org.mozilla.fenix.settings.registerOnSharedPreferenceChangeListener
 import org.mozilla.fenix.settings.sitepermissions.AUTOPLAY_BLOCK_ALL
 import org.mozilla.fenix.settings.sitepermissions.AUTOPLAY_BLOCK_AUDIBLE
+import org.mozilla.fenix.wallpapers.WallpaperManager
 import java.security.InvalidParameterException
 
 private const val AUTOPLAY_USER_SETTING = "AUTOPLAY_USER_SETTING"
@@ -120,7 +120,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var showTopFrecentSites by lazyFeatureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_enable_top_frecent_sites),
         featureFlag = true,
-        default = { appContext.components.analytics.features.homeScreen.isTopSitesActive() }
+        default = { homescreenSections[HomeScreenSection.TOP_SITES] == true },
     )
 
     var numberOfAppLaunches by intPreference(
@@ -168,7 +168,12 @@ class Settings(private val appContext: Context) : PreferencesHolder {
 
     var currentWallpaper by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_current_wallpaper),
-        default = Wallpaper.NONE.name
+        default = WallpaperManager.defaultWallpaper.name
+    )
+
+    var wallpapersSwitchedByLogoTap by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_wallpapers_switched_by_logo_tap),
+        default = true
     )
 
     var openLinksInAPrivateTab by booleanPreference(
@@ -322,12 +327,9 @@ class Settings(private val appContext: Context) : PreferencesHolder {
      */
     fun shouldShowSetAsDefaultBrowserCard(): Boolean {
         val browsers = BrowsersCache.all(appContext)
-        val experiments = appContext.components.analytics.experiments
-        val isExperimentBranch =
-            experiments.withExperiment(FeatureId.DEFAULT_BROWSER) { experimentBranch ->
-                (experimentBranch == ExperimentBranch.DEFAULT_BROWSER_NEW_TAB_BANNER)
-            }
-        return isExperimentBranch == true &&
+        val feature = FxNimbus.features.defaultBrowserMessage.value()
+        val isExperimentBranch = feature.messageLocation == MessageSurfaceId.HOMESCREEN_BANNER
+        return isExperimentBranch &&
             !userDismissedExperimentCard &&
             !browsers.isFirefoxDefaultBrowser &&
             numberOfAppLaunches > APP_LAUNCHES_TO_SHOW_DEFAULT_BROWSER_CARD
@@ -436,6 +438,16 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         appContext.getPreferenceKey(R.string.pref_key_inactive_tabs),
         default = FeatureFlags.inactiveTabs,
         featureFlag = FeatureFlags.inactiveTabs
+    )
+
+    /**
+     * Indicates if the Firefox logo on the home screen should be animated,
+     * to show users that they can change the wallpaper by tapping on the Firefox logo.
+     */
+    var shouldAnimateFirefoxLogo by featureFlagPreference(
+        appContext.getPreferenceKey(R.string.pref_key_show_logo_animation),
+        default = FeatureFlags.showWallpapers,
+        featureFlag = FeatureFlags.showWallpapers
     )
 
     /**
@@ -1199,9 +1211,13 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = false
     )
 
+    private val homescreenSections: Map<HomeScreenSection, Boolean> by lazy {
+        FxNimbus.features.homescreen.value().sectionsEnabled
+    }
+
     var historyMetadataUIFeature by lazyFeatureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_history_metadata_feature),
-        default = { appContext.components.analytics.features.homeScreen.isRecentExplorationsActive() },
+        default = { homescreenSections[HomeScreenSection.RECENT_EXPLORATIONS] == true },
         featureFlag = FeatureFlags.historyMetadataUIFeature || isHistoryMetadataEnabled
     )
 
@@ -1212,7 +1228,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var showRecentTabsFeature by lazyFeatureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_recent_tabs),
         featureFlag = FeatureFlags.showRecentTabsFeature,
-        default = { appContext.components.analytics.features.homeScreen.isRecentlyTabsActive() }
+        default = { homescreenSections[HomeScreenSection.JUMP_BACK_IN] == true },
     )
 
     /**
@@ -1221,7 +1237,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
      */
     var showRecentBookmarksFeature by lazyFeatureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_recent_bookmarks),
-        default = { appContext.components.analytics.features.homeScreen.isRecentlySavedActive() },
+        default = { homescreenSections[HomeScreenSection.RECENTLY_SAVED] == true },
         featureFlag = FeatureFlags.recentBookmarksFeature
     )
 
@@ -1253,7 +1269,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var showPocketRecommendationsFeature by lazyFeatureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_pocket_homescreen_recommendations),
         featureFlag = FeatureFlags.isPocketRecommendationsFeatureEnabled(appContext),
-        default = { appContext.components.analytics.features.homeScreen.isPocketRecommendationsActive() },
+        default = { homescreenSections[HomeScreenSection.POCKET] == true },
     )
 
     /**
