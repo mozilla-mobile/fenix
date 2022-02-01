@@ -228,15 +228,14 @@ private fun WallpaperThumbnailItem(
             .then(border)
             .clickable { onSelect(wallpaper) }
     ) {
-        val contentDescription = stringResource(
-            R.string.wallpapers_item_name_content_description, wallpaper.name
-        )
         if (bitmap != null) {
             Image(
                 bitmap = bitmap.asImageBitmap(),
                 contentScale = ContentScale.FillBounds,
-                contentDescription = contentDescription,
-                modifier = Modifier.fillMaxSize()
+                contentDescription = stringResource(
+                    R.string.wallpapers_item_name_content_description, wallpaper.name
+                ),
+                modifier = Modifier.fillMaxSize(),
             )
         }
     }
@@ -291,7 +290,7 @@ private fun WallpaperThumbnailsPreview() {
         WallpaperSettings(
             defaultWallpaper = WallpaperManager.defaultWallpaper,
             loadWallpaperResource = {
-                wallpaperManager.loadWallpaperFromAssets(it, context)
+                wallpaperManager.loadSavedWallpaper(context, it)
             },
             wallpapers = wallpaperManager.availableWallpapers,
             selectedWallpaper = wallpaperManager.currentWallpaper,

@@ -26,35 +26,28 @@ data class Wallpaper(
 /**
  * A type hierarchy representing the different theme collections [Wallpaper]s belong to.
  */
-sealed class WallpaperThemeCollection {
-    abstract val origin: WallpaperOrigin
-    object None : WallpaperThemeCollection() {
-        override val origin: WallpaperOrigin = WallpaperOrigin.Local
-    }
-    object Firefox : WallpaperThemeCollection() {
-        override val origin: WallpaperOrigin = WallpaperOrigin.Local
-    }
-    object Focus : WallpaperThemeCollection() {
-        override val origin: WallpaperOrigin = WallpaperOrigin.Remote
-    }
+enum class WallpaperThemeCollection(val origin: WallpaperOrigin) {
+    NONE(WallpaperOrigin.LOCAL),
+    FIREFOX(WallpaperOrigin.LOCAL),
+    FOCUS(WallpaperOrigin.REMOTE),
 }
 
 /**
  * Get the parent directory name for a remote wallpaper asset.
  */
 fun WallpaperThemeCollection.directoryName(): String = when (this) {
-    WallpaperThemeCollection.None,
-    WallpaperThemeCollection.Firefox -> ""
-    WallpaperThemeCollection.Focus -> "focus"
+    WallpaperThemeCollection.NONE,
+    WallpaperThemeCollection.FIREFOX -> ""
+    WallpaperThemeCollection.FOCUS -> "focus"
 }
 
 /**
  * Types defining whether a [Wallpaper] is delivered through a remote source or is included locally
  * in the APK.
  */
-sealed class WallpaperOrigin {
-    object Local : WallpaperOrigin()
-    object Remote : WallpaperOrigin()
+enum class WallpaperOrigin {
+    LOCAL,
+    REMOTE,
 }
 
 /**

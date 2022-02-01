@@ -16,6 +16,7 @@ import android.os.Looper
 import android.view.View
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import mozilla.components.lib.crash.CrashReporter
 import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.ktx.android.content.getColorFromAttr
 import org.mozilla.fenix.R
@@ -31,6 +32,7 @@ class WallpaperManager(
     private val settings: Settings,
     private val wallpaperStorage: WallpaperStorage,
     private val downloader: WallpaperDownloader,
+    private val crashReporter: CrashReporter,
 ) {
     val logger = Logger("WallpaperManager")
     private val remoteWallpapers = listOf(
@@ -39,7 +41,7 @@ class WallpaperManager(
             portraitPath = "",
             landscapePath = "",
             isDark = false,
-            themeCollection = WallpaperThemeCollection.Focus
+            themeCollection = WallpaperThemeCollection.FOCUS
         ),
     )
     var availableWallpapers: List<Wallpaper> = loadWallpapers() + remoteWallpapers
@@ -60,13 +62,11 @@ class WallpaperManager(
             wallpaperContainer.setBackgroundColor(context.getColorFromAttr(DEFAULT_RESOURCE))
             logger.info("Wallpaper update to default background")
         } else {
-            val bitmap = if (newWallpaper.themeCollection.origin == WallpaperOrigin.Local) {
-                loadWallpaperFromAssets(newWallpaper, context)
-            } else {
-                loadWallpaperFromDisk(context, newWallpaper)
-            }
+            val bitmap = loadSavedWallpaper(context, newWallpaper)
             if (bitmap == null) {
-                logger.error("Could not load wallpaper bitmap. Resetting to default")
+                val message = "Could not load wallpaper bitmap. Resetting to default."
+                logger.error(message)
+                crashReporter.submitCaughtException(NullPointerException(message))
                 wallpaperContainer.setBackgroundColor(context.getColorFromAttr(DEFAULT_RESOURCE))
                 currentWallpaper = defaultWallpaper
             } else {
@@ -109,7 +109,17 @@ class WallpaperManager(
         }
     }
 
-    fun loadWallpaperFromAssets(wallpaper: Wallpaper, context: Context): Bitmap? = Result.runCatching {
+    /**
+     * Load a wallpaper that is saved locally.
+     */
+    fun loadSavedWallpaper(context: Context, wallpaper: Wallpaper): Bitmap? =
+        if (wallpaper.themeCollection.origin == WallpaperOrigin.LOCAL) {
+            loadWallpaperFromAssets(context, wallpaper)
+        } else {
+            loadWallpaperFromDisk(context, wallpaper)
+        }
+
+    private fun loadWallpaperFromAssets(context: Context, wallpaper: Wallpaper): Bitmap? = Result.runCatching {
         val path = if (isLandscape(context)) {
             wallpaper.landscapePath
         } else {
@@ -120,10 +130,7 @@ class WallpaperManager(
         }
     }.getOrNull()
 
-    /**
-     * Load a wallpaper from app-specific storage.
-     */
-    fun loadWallpaperFromDisk(context: Context, wallpaper: Wallpaper): Bitmap? = Result.runCatching {
+    private fun loadWallpaperFromDisk(context: Context, wallpaper: Wallpaper): Bitmap? = Result.runCatching {
         val path = wallpaper.getLocalPathFromContext(context)
         runBlockingIncrement {
             withContext(Dispatchers.IO) {
@@ -186,7 +193,7 @@ class WallpaperManager(
             portraitPath = "",
             landscapePath = "",
             isDark = false,
-            themeCollection = WallpaperThemeCollection.None
+            themeCollection = WallpaperThemeCollection.NONE
         )
         private const val ANIMATION_DELAY_MS = 1500L
     }

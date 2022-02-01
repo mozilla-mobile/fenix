@@ -149,7 +149,8 @@ class Components(private val context: Context) {
         WallpaperManager(
             settings,
             WallpapersAssetsStorage(context),
-            WallpaperDownloader(context, core.client)
+            WallpaperDownloader(context, core.client),
+            analytics.crashReporter,
         )
     }
 

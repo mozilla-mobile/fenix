@@ -12,6 +12,7 @@ import mozilla.components.concept.fetch.Request
 import mozilla.components.concept.fetch.isSuccess
 import mozilla.components.support.base.log.logger.Logger
 import org.mozilla.fenix.BuildConfig
+import org.mozilla.fenix.ext.components
 import java.io.File
 
 /**
@@ -45,7 +46,7 @@ class WallpaperDownloader(
                 client.fetch(request)
             }.onSuccess {
                 if (!it.isSuccess) {
-                    logger.error("download response failure code: ${it.status}")
+                    logger.error("Download response failure code: ${it.status}")
                     return@withContext
                 }
                 File(localFile.path.substringBeforeLast("/")).mkdirs()
@@ -53,7 +54,8 @@ class WallpaperDownloader(
                     input.copyTo(localFile.outputStream())
                 }
             }.onFailure {
-                logger.error(it.message ?: "download failed: no throwable message", it)
+                logger.error(it.message ?: "Download failed: no throwable message included.", it)
+                context.components.analytics.crashReporter.submitCaughtException(it)
             }
         }
     }
@@ -61,8 +63,8 @@ class WallpaperDownloader(
     private data class WallpaperMetadata(val remotePath: String, val localPath: String)
 
     private fun Wallpaper.toMetadata(): List<WallpaperMetadata> = when (themeCollection.origin) {
-        is WallpaperOrigin.Local -> listOf()
-        is WallpaperOrigin.Remote -> {
+        WallpaperOrigin.LOCAL -> listOf()
+        WallpaperOrigin.REMOTE -> {
             listOf("landscape", "portrait").flatMap { orientation ->
                 listOf("light", "dark").map { theme ->
                     val basePath = getLocalPath(orientation, theme)
