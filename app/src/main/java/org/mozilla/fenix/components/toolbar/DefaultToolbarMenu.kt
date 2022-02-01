@@ -212,7 +212,7 @@ open class DefaultToolbarMenu(
 
     val downloadsItem = BrowserMenuImageText(
         context.getString(R.string.library_downloads),
-        R.drawable.mozac_ic_download,
+        R.drawable.ic_download,
         primaryTextColor()
     ) {
         onItemTapped.invoke(ToolbarMenu.Item.Downloads)
