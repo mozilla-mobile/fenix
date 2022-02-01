@@ -1971,4 +1971,5 @@
     <string name="pocket_stories_feature_caption">Part of the Firefox family. %s</string>
     <!-- Clickable text for opening an external link for more information about Pocket. -->
     <string name="pocket_stories_feature_learn_more">Learn more</string>
+    <string name="experiments_snackbar">Studies must be turn on in settings in order to access Nimbus experiments</string>
 </resources>
