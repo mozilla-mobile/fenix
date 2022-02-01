@@ -16,6 +16,7 @@ import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -23,6 +24,7 @@ import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.GleanMetrics.StorageStats as Metrics
 
 @RunWith(FenixRobolectricTestRunner::class) // gleanTestRule
+@Ignore("Temporarily ignoring tests until telemetry is renewed on v96+")
 class StorageStatsMetricsTest {
 
     @get:Rule
