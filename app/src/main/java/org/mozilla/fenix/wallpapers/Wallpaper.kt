@@ -33,9 +33,10 @@ enum class WallpaperThemeCollection(val origin: WallpaperOrigin) {
 }
 
 /**
- * Get the parent directory name for a remote wallpaper asset.
+ * The parent directory name of a wallpaper. Since wallpapers that are [WallpaperOrigin.LOCAL] are
+ * stored in drawables, this extension is not applicable to them.
  */
-fun WallpaperThemeCollection.directoryName(): String = when (this) {
+val WallpaperThemeCollection.directoryName: String get() = when (this) {
     WallpaperThemeCollection.NONE,
     WallpaperThemeCollection.FIREFOX -> ""
     WallpaperThemeCollection.FOCUS -> "focus"
@@ -64,7 +65,7 @@ fun Wallpaper.getLocalPathFromContext(context: Context): String {
  * Get the expected local path on disk for a wallpaper if orientation and app theme are known.
  */
 fun Wallpaper.getLocalPath(orientation: String, theme: String): String =
-    "$orientation/$theme/${themeCollection.directoryName()}/$name.png"
+    "$orientation/$theme/${themeCollection.directoryName}/$name.png"
 
 private fun Context.isLandscape(): Boolean {
     return resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
