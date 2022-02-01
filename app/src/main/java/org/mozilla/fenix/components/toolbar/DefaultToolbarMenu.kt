@@ -196,7 +196,7 @@ open class DefaultToolbarMenu(
 
     val newTabItem = BrowserMenuImageText(
         context.getString(R.string.library_new_tab),
-        R.drawable.mozac_ic_new,
+        R.drawable.ic_new,
         primaryTextColor()
     ) {
         onItemTapped.invoke(ToolbarMenu.Item.NewTab)
