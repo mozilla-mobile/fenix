@@ -47,6 +47,7 @@ class NimbusBranchesFragment : Fragment() {
         }
 
         controller = NimbusBranchesController(
+            context = requireContext(),
             nimbusBranchesStore = nimbusBranchesStore,
             experiments = requireContext().components.analytics.experiments,
             experimentId = args.experimentId

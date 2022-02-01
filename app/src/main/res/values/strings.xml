@@ -1763,4 +1763,7 @@
     <string name="pocket_stories_feature_caption">Part of the Firefox family. %s</string>
     <!-- Clickable text for opening an external link for more information about Pocket. -->
     <string name="pocket_stories_feature_learn_more">Learn more</string>
+
+    <!-- Snackbar message for enrolling in a Nimbus experiment from the secret settings when Studies preference is Off.-->
+    <string name="experiments_snackbar">Study enrollment change successful, but no data will be sent. Enable Studies and telemetry to send data.</string>
 </resources>
