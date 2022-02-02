@@ -542,42 +542,6 @@ class SettingsPrivacyTest {
             verifyEmptyHistoryView()
         }
     }
-
-    @SmokeTest
-    @Test
-    fun saveLoginsInPWATest() {
-        val pwaPage = "https://mozilla-mobile.github.io/testapp/loginForm"
-        val shortcutTitle = "TEST_APP"
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(pwaPage.toUri()) {
-            verifyNotificationDotOnMainMenu()
-        }.openThreeDotMenu {
-        }.clickInstall {
-            clickAddAutomaticallyButton()
-        }.openHomeScreenShortcut(shortcutTitle) {
-            mDevice.waitForIdle()
-            fillAndSubmitLoginCredentials("mozilla", "firefox")
-            verifySaveLoginPromptIsDisplayed()
-            saveLoginFromPrompt("Save")
-            openAppFromExternalLink(pwaPage)
-
-            browserScreen {
-            }.openThreeDotMenu {
-            }.openSettings {
-            }.openLoginsAndPasswordSubMenu {
-            }.openSavedLogins {
-                verifySecurityPromptForLogins()
-                tapSetupLater()
-                verifySavedLoginFromPrompt("mozilla")
-            }
-
-            addToHomeScreen {
-            }.searchAndOpenHomeScreenShortcut(shortcutTitle) {
-                verifyPrefilledLoginCredentials("mozilla", shortcutTitle)
-            }
-        }
-    }
 }
 
 private fun setOpenLinksInPrivateOn() {

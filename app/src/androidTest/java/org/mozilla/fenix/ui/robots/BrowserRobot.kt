@@ -565,11 +565,11 @@ class BrowserRobot {
         tabCrashRestoreButton.click()
     }
 
-    fun fillAndSubmitGoogleSearchQuery(searchString: String) {
+    fun fillAndSubmitDuckDuckGoSearchQuery(searchString: String) {
         mDevice.findObject(
             UiSelector().resourceId("$packageName:id/engineView")
         ).waitForExists(waitingTime)
-        googleSearchBox.setText(searchString)
+        duckDuckGoSearchBox.setText(searchString)
         mDevice.pressEnter()
         mDevice.waitForIdle(waitingTime)
     }
@@ -860,11 +860,11 @@ val passwordTextBox =
             .packageName("$packageName")
     )
 
-val googleSearchBox =
+val duckDuckGoSearchBox =
     mDevice.findObject(
         UiSelector()
             .index(0)
-            .resourceId("mib")
+            .resourceId("search_form_input_homepage")
             .className("android.widget.EditText")
             .packageName("$packageName")
     )

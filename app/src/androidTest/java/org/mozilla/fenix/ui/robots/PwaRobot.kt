@@ -1,6 +1,5 @@
 package org.mozilla.fenix.ui.robots
 
-import android.util.Log
 import android.widget.TimePicker
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.contrib.PickerActions
@@ -94,8 +93,6 @@ class PwaRobot {
                 .textContains("Submit date")
                 .resourceId("submitDate")
         ).waitForExists(waitingTime)
-
-        Log.i("Andi", "Selected time is: $hour:$minute")
 
         assertTrue(
             mDevice.findObject(
