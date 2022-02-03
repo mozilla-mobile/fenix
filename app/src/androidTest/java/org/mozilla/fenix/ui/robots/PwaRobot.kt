@@ -8,25 +8,29 @@ import androidx.test.uiautomator.UiSelector
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
-import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.helpers.TestHelper.packageName
 import java.time.LocalDate
 
 class PwaRobot {
 
-    fun clickForm(formType: String, calendarForm: Boolean = false) {
+    fun clickForm(formType: String, calendarForm: Boolean = false, clockForm: Boolean = false) {
         mDevice.findObject(UiSelector().resourceId("$packageName:id/engineView"))
             .waitForExists(waitingTime)
         mDevice.findObject(UiSelector().textContains(formType)).waitForExists(waitingTime)
 
         if (calendarForm) {
             calendarBox.click()
-        } else {
+            mDevice.waitForIdle(waitingTime)
+        } else if (clockForm) {
             clockBox.click()
+            mDevice.waitForIdle(waitingTime)
+        } else {
+            colorBox.click()
+            mDevice.waitForIdle(waitingTime)
         }
     }
 
-    fun clickClockAndCalendarViewButton(button: String) {
+    fun clickFormViewButton(button: String) {
         val clockAndCalendarButton = mDevice.findObject(UiSelector().textContains(button))
         clockAndCalendarButton.click()
     }
@@ -47,6 +51,22 @@ class PwaRobot {
     fun selectTime(hour: Int, minute: Int) =
         onView(isAssignableFrom(TimePicker::class.java)).perform(PickerActions.setTime(hour, minute))
 
+    fun selectColor(hexValue: String) {
+        mDevice.findObject(
+            UiSelector()
+                .textContains("Choose a color")
+                .resourceId("$packageName:id/alertTitle")
+        ).waitForExists(waitingTime)
+
+        val colorSelection =
+            mDevice.findObject(
+                UiSelector()
+                    .resourceId("$packageName:id/color_item")
+                    .descriptionContains(hexValue)
+            )
+        colorSelection.click()
+    }
+
     fun clickSubmitDateButton() {
         submitDateButton.waitForExists(waitingTime)
         submitDateButton.click()
@@ -55,6 +75,11 @@ class PwaRobot {
     fun clickSubmitTimeButton() {
         submitTimeButton.waitForExists(waitingTime)
         submitTimeButton.click()
+    }
+
+    fun clickSubmitColorButton() {
+        submitColorButton.waitForExists(waitingTime)
+        submitColorButton.click()
     }
 
     fun verifySelectedDate() {
@@ -102,6 +127,21 @@ class PwaRobot {
         )
     }
 
+    fun verifySelectedColor(hexValue: String) {
+        mDevice.findObject(
+            UiSelector()
+                .textContains("Submit color")
+                .resourceId("submitColor")
+        ).waitForExists(waitingTime)
+
+        assertTrue(
+            mDevice.findObject(
+                UiSelector()
+                    .text("Selected color is: $hexValue")
+            ).waitForExists(waitingTime)
+        )
+    }
+
     fun verifyNoTimeIsSelected(hour: Int, minute: Int) {
         mDevice.findObject(
             UiSelector()
@@ -113,6 +153,21 @@ class PwaRobot {
             mDevice.findObject(
                 UiSelector()
                     .text("Selected date is: $hour:$minute")
+            ).waitForExists(waitingTime)
+        )
+    }
+
+    fun verifyColorIsNotSelected(hexValue: String) {
+        mDevice.findObject(
+            UiSelector()
+                .textContains("Submit color")
+                .resourceId("submitColor")
+        ).waitForExists(waitingTime)
+
+        assertFalse(
+            mDevice.findObject(
+                UiSelector()
+                    .text("Selected date is: $hexValue")
             ).waitForExists(waitingTime)
         )
     }
@@ -131,7 +186,7 @@ val calendarBox =
             .index(0)
             .resourceId("calendar")
             .className("android.widget.Spinner")
-            .packageName("${TestHelper.packageName}")
+            .packageName("$packageName")
     )
 
 val clockBox =
@@ -140,7 +195,16 @@ val clockBox =
             .index(0)
             .resourceId("clock")
             .className("android.view.View")
-            .packageName("${TestHelper.packageName}")
+            .packageName("$packageName")
+    )
+
+val colorBox =
+    mDevice.findObject(
+        UiSelector()
+            .index(0)
+            .resourceId("colorPicker")
+            .className("android.widget.Button")
+            .packageName("$packageName")
     )
 
 val currentDate = LocalDate.now()
@@ -168,4 +232,11 @@ val amClockButton =
             .index(0)
             .textContains("AM")
             .className("android.widget.RadioButton")
+    )
+
+val submitColorButton =
+    mDevice.findObject(
+        UiSelector()
+            .textContains("Submit color")
+            .resourceId("submitColor")
     )

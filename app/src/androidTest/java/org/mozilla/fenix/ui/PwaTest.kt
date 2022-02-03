@@ -27,6 +27,7 @@ class PwaTest {
     private val shortcutTitle = "TEST_APP"
     private val hour = 10
     private val minute = 10
+    private val colorHexValue = "#5b2067"
 
     @get:Rule
     val activityTestRule = HomeActivityIntentTestRule()
@@ -138,7 +139,7 @@ class PwaTest {
         }
         pwaScreen {
             clickForm("Calendar Form", true)
-            clickClockAndCalendarViewButton("CANCEL")
+            clickFormViewButton("CANCEL")
             clickSubmitDateButton()
             verifyNoDateIsSelected()
         }
@@ -158,11 +159,11 @@ class PwaTest {
         pwaScreen {
             clickForm("Calendar Form", true)
             selectDate()
-            clickClockAndCalendarViewButton("OK")
+            clickFormViewButton("OK")
             clickSubmitDateButton()
             verifySelectedDate()
             clickForm("Calendar Form", true)
-            clickClockAndCalendarViewButton("CLEAR")
+            clickFormViewButton("CLEAR")
             clickSubmitDateButton()
             verifyNoDateIsSelected()
         }
@@ -181,7 +182,7 @@ class PwaTest {
         }
         pwaScreen {
             clickForm("Clock Form", false)
-            clickClockAndCalendarViewButton("CANCEL")
+            clickFormViewButton("CANCEL")
             clickSubmitTimeButton()
             verifyNoTimeIsSelected(hour, minute)
         }
@@ -199,15 +200,55 @@ class PwaTest {
         }.openHomeScreenShortcut(shortcutTitle) {
         }
         pwaScreen {
-            clickForm("Clock Form", false)
+            clickForm("Clock Form", clockForm = true)
             selectTime(hour, minute)
-            clickClockAndCalendarViewButton("OK")
+            clickFormViewButton("OK")
             clickSubmitTimeButton()
             verifySelectedTime(hour, minute)
-            clickForm("Clock Form", false)
-            clickClockAndCalendarViewButton("CLEAR")
+            clickForm("Clock Form", clockForm = true)
+            clickFormViewButton("CLEAR")
             clickSubmitTimeButton()
             verifyNoTimeIsSelected(hour, minute)
+        }
+    }
+
+    @SmokeTest
+    @Test
+    fun cancelColorFormPWATest() {
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(htmlControlsPWAPage.toUri()) {
+        }.openThreeDotMenu {
+        }.clickInstall {
+            clickAddAutomaticallyButton()
+        }.openHomeScreenShortcut(shortcutTitle) {
+        }
+        pwaScreen {
+            clickForm("Color Form")
+            selectColor(colorHexValue)
+            clickFormViewButton("CANCEL")
+            clickSubmitColorButton()
+            verifyColorIsNotSelected(colorHexValue)
+        }
+    }
+
+    @SmokeTest
+    @Test
+    fun setColorFormPWATest() {
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(htmlControlsPWAPage.toUri()) {
+        }.openThreeDotMenu {
+        }.clickInstall {
+            clickAddAutomaticallyButton()
+        }.openHomeScreenShortcut(shortcutTitle) {
+        }
+        pwaScreen {
+            clickForm("Color Form")
+            selectColor(colorHexValue)
+            clickFormViewButton("SET")
+            clickSubmitColorButton()
+            verifySelectedColor(colorHexValue)
         }
     }
 }
