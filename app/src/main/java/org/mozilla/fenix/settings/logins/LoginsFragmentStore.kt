@@ -163,14 +163,18 @@ private fun filterItems(
             filteredItems = sortingStrategy(state.loginList)
         )
     } else {
+        val searchedForTextLC = searchedForText.lowercase()
         state.copy(
             isLoading = false,
             sortingStrategy = sortingStrategy,
             highlightedItem = sortingStrategyToMenuItem(sortingStrategy),
             searchedForText = searchedForText,
             filteredItems = sortingStrategy(state.loginList).filter {
-                it.origin.contains(
-                    searchedForText
+                it.origin.lowercase().contains(
+                    searchedForTextLC
+                ) ||
+                it.username.lowercase().contains(
+                    searchedForTextLC
                 )
             }
         )
