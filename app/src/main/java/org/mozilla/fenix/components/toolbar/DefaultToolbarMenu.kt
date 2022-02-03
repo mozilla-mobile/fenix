@@ -446,10 +446,13 @@ open class DefaultToolbarMenu(
         }
     }
 
-    private fun getSetDefaultBrowserItem(): BrowserMenuImageText? =
-        if (BrowsersCache.all(context).isFirefoxDefaultBrowser) {
-            null
-        } else if (FxNimbus.features.defaultBrowserMessage.value().messageLocation == MessageSurfaceId.APP_MENU_ITEM) {
+    private fun getSetDefaultBrowserItem(): BrowserMenuImageText? {
+        val browsers = BrowsersCache.all(context)
+        val config = FxNimbus.features.defaultBrowserMessage.value()
+        return if (
+            config.messageLocation == MessageSurfaceId.APP_MENU_ITEM &&
+            !browsers.isFirefoxDefaultBrowser
+        ) {
             BrowserMenuImageText(
                 label = context.getString(R.string.preferences_set_as_default_browser),
                 imageResource = R.mipmap.ic_launcher
@@ -459,4 +462,5 @@ open class DefaultToolbarMenu(
         } else {
             null
         }
+    }
 }

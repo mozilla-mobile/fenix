@@ -1,4 +1,15 @@
 {
+  "default-browser-message": {
+    "description": "A small feature allowing experiments on the placement of a default browser message.",
+    "hasExposure": true,
+    "exposureDescription": "",
+    "variables": {
+      "message-location": {
+        "description": "Where is the message to be put.",
+        "type": "string"
+      }
+    }
+  },
   "search-term-groups": {
     "description": "A feature allowing the grouping of URLs around the search term that it came from.",
     "hasExposure": true,
@@ -7,22 +18,6 @@
       "enabled": {
         "description": "If true, the feature shows up on the homescreen and on the new tab screen.",
         "type": "boolean"
-      }
-    }
-  },
-  "default-browser-message": {
-    "description": "A small feature allowing experiments on the placement of a default browser message.",
-    "hasExposure": true,
-    "exposureDescription": "",
-    "variables": {
-      "message-location": {
-        "description": "Where is the message to be put.",
-        "enum": [
-          "homescreen-banner",
-          "settings",
-          "app-menu-item"
-        ],
-        "type": "string"
       }
     }
   },
