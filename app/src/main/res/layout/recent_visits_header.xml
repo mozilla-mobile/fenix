@@ -8,8 +8,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="@dimen/home_item_horizontal_margin"
-    android:layout_marginTop="40dp"
-    android:layout_marginBottom="16dp">
+    android:layout_marginTop="32dp"
+    android:layout_marginBottom="8dp">
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/header"
@@ -19,7 +19,8 @@
         android:maxLines="2"
         android:text="@string/history_metadata_header_2"
         android:gravity="top"
-        android:paddingTop="1dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/show_all_button"
         app:layout_constraintTop_toTopOf="parent" />
@@ -35,6 +36,7 @@
         android:paddingStart="16dp"
         android:paddingEnd="0dp"
         android:maxLines="1"
+        android:paddingVertical="8dp"
         android:nestedScrollingEnabled="false"
         android:text="@string/recent_tabs_show_all"
         android:textColor="@color/fx_mobile_text_color_accent"
