@@ -95,7 +95,7 @@ class TabsTrayFragmentTest {
             every { fragment.context } returns testContext // needed for getString()
             every { any<CoroutineScope>().allowUndo(any(), any(), any(), any(), any(), any(), any(), any()) } just Runs
 
-            fragment.showUndoSnackbarForTab(true)
+            fragment.showUndoSnackbarForTab(true, true)
 
             verify {
                 lifecycleScope.allowUndo(
@@ -125,7 +125,7 @@ class TabsTrayFragmentTest {
             every { fragment.context } returns testContext // needed for getString()
             every { any<CoroutineScope>().allowUndo(any(), any(), any(), any(), any(), any(), any(), any()) } just Runs
 
-            fragment.showUndoSnackbarForTab(true)
+            fragment.showUndoSnackbarForTab(true, true)
 
             verify {
                 lifecycleScope.allowUndo(
@@ -156,7 +156,7 @@ class TabsTrayFragmentTest {
             every { fragment.context } returns testContext // needed for getString()
             every { any<CoroutineScope>().allowUndo(any(), any(), any(), any(), any(), any(), any(), any()) } just Runs
 
-            fragment.showUndoSnackbarForTab(false)
+            fragment.showUndoSnackbarForTab(false, true)
 
             verify {
                 lifecycleScope.allowUndo(
@@ -186,7 +186,7 @@ class TabsTrayFragmentTest {
             every { fragment.context } returns testContext // needed for getString()
             every { any<CoroutineScope>().allowUndo(any(), any(), any(), any(), any(), any(), any(), any()) } just Runs
 
-            fragment.showUndoSnackbarForTab(false)
+            fragment.showUndoSnackbarForTab(false, true)
 
             verify {
                 lifecycleScope.allowUndo(
