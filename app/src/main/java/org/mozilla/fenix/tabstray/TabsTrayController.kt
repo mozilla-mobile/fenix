@@ -20,9 +20,9 @@ import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
-import org.mozilla.fenix.home.HomeFragment
 import org.mozilla.fenix.ext.DEFAULT_ACTIVE_DAYS
 import org.mozilla.fenix.ext.potentialInactiveTabs
+import org.mozilla.fenix.home.HomeFragment
 import org.mozilla.fenix.tabstray.ext.isActiveDownload
 import java.util.concurrent.TimeUnit
 
@@ -117,7 +117,7 @@ class DefaultTabsTrayController(
     private val tabsUseCases: TabsUseCases,
     private val selectTabPosition: (Int, Boolean) -> Unit,
     private val dismissTray: () -> Unit,
-    private val showUndoSnackbarForTab: (Boolean) -> Unit,
+    private val showUndoSnackbarForTab: (Boolean, Boolean) -> Unit,
     @VisibleForTesting
     internal val showCancelledDownloadWarning: (downloadCount: Int, tabId: String?, source: String?) -> Unit,
 
@@ -177,7 +177,7 @@ class DefaultTabsTrayController(
             val isLastTab = browserStore.state.getNormalOrPrivateTabs(it.content.private).size == 1
             if (!isLastTab) {
                 tabsUseCases.removeTab(tabId)
-                showUndoSnackbarForTab(it.content.private)
+                showUndoSnackbarForTab(it.content.private, true)
             } else {
                 val privateDownloads = browserStore.state.downloads.filter { map ->
                     map.value.private && map.value.isActiveDownload()
@@ -212,7 +212,11 @@ class DefaultTabsTrayController(
                 tabsUseCases.removeTabs(it)
             }
         }
-        showUndoSnackbarForTab(isPrivate)
+        if (tabs.size > 1) {
+            showUndoSnackbarForTab(isPrivate, false)
+        } else {
+            showUndoSnackbarForTab(isPrivate, true)
+        }
     }
 
     /**
@@ -280,6 +284,6 @@ class DefaultTabsTrayController(
         browserStore.state.potentialInactiveTabs.map { it.id }.let {
             tabsUseCases.removeTabs(it)
         }
-        showUndoSnackbarForTab(false)
+        showUndoSnackbarForTab(false, false)
     }
 }

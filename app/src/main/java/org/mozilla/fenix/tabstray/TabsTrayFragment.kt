@@ -420,11 +420,12 @@ class TabsTrayFragment : AppCompatDialogFragment() {
     }
 
     @VisibleForTesting
-    internal fun showUndoSnackbarForTab(isPrivate: Boolean) {
+    internal fun showUndoSnackbarForTab(isPrivate: Boolean, isSingleTab: Boolean) {
         val snackbarMessage =
-            when (isPrivate) {
-                true -> getString(R.string.snackbar_private_tab_closed)
-                false -> getString(R.string.snackbar_tab_closed)
+            when {
+                isPrivate -> getString(R.string.snackbar_private_tab_closed)
+                isSingleTab -> getString(R.string.snackbar_tab_closed)
+                else -> getString(R.string.snackbar_tabs_closed)
             }
 
         lifecycleScope.allowUndo(
