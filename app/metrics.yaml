@@ -358,6 +358,7 @@ events:
     description: |
       An event that indicates that the user
       has accessed recently closed tabs list.
+      Deprecated in favor of "recently_closed_tabs.opened"
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/15366
       - https://github.com/mozilla-mobile/fenix/issues/19923
@@ -1390,12 +1391,13 @@ metrics:
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/18632#issue-600193452
       - https://github.com/mozilla-mobile/fenix/pull/20623#issue-701630599
+      - https://github.com/mozilla-mobile/fenix/pull/23506
     data_sensitivity:
       - technical
     notification_emails:
       - perf-android-fe@mozilla.com
       - mcomella@mozilla.com
-    expires: "2022-02-01"
+    expires: never
     metadata:
       tags:
         - Performance
@@ -1411,12 +1413,13 @@ metrics:
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/18632#issue-600193452
       - https://github.com/mozilla-mobile/fenix/pull/20623#issue-701630599
+      - https://github.com/mozilla-mobile/fenix/pull/23506
     data_sensitivity:
       - technical
     notification_emails:
       - perf-android-fe@mozilla.com
       - mcomella@mozilla.com
-    expires: "2022-02-01"
+    expires: never
     metadata:
       tags:
         - Performance
@@ -3121,6 +3124,165 @@ history:
     notification_emails:
       - android-probes@mozilla.com
     expires: "2022-11-01"
+
+recently_closed_tabs:
+  opened:
+    type: event
+    description: |
+      User opened the "Recently closed tabs" screen.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/21009
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/22588#issuecomment-1024352995
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2023-01-31"
+  closed:
+    type: event
+    description: |
+      User closed the "Recently closed tabs" screen.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/21009
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/22588#issuecomment-1024352995
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2023-01-31"
+  show_full_history:
+    type: event
+    description: |
+      User tapped "Show full history" to see all history.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/21009
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/22588#issuecomment-1024352995
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2023-01-31"
+  open_tab:
+    type: event
+    description: |
+      User tapped on a tab item to be opened.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/21009
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/22588#issuecomment-1024352995
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2023-01-31"
+  delete_tab:
+    type: event
+    description: |
+      User tapped the delete button of a tab item.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/21009
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/22588#issuecomment-1024352995
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2023-01-31"
+  menu_close:
+    type: event
+    description: |
+      User tapped the close button - "X" to return to the previous screen.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/21009
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/22588#issuecomment-1024352995
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2023-01-31"
+  menu_share:
+    type: event
+    description: |
+      User tapped the share menu option for multi selected tabs.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/21009
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/22588#issuecomment-1024352995
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2023-01-31"
+  menu_delete:
+    type: event
+    description: |
+      User tapped the delete menu option for multi selected tabs.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/21009
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/22588#issuecomment-1024352995
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2023-01-31"
+  menu_open_in_normal_tab:
+    type: event
+    description: |
+      User tapped the "Open in new tab" menu option for multi selected tabs.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/21009
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/22588#issuecomment-1024352995
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2023-01-31"
+  menu_open_in_private_tab:
+    type: event
+    description: |
+      User tapped the "Open in private tab" menu option for multi selected tabs.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/21009
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/22588#issuecomment-1024352995
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2023-01-31"
+  enter_multiselect:
+    type: event
+    description: |
+      User tapped on a tab item to enter multi select mode.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/21009
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/22588#issuecomment-1024352995
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2023-01-31"
+  exit_multiselect:
+    type: event
+    description: |
+      User pressed back or tapped the last selected tab item to exit
+      multiselect.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/21009
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/22588#issuecomment-1024352995
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: "2023-01-31"
 
 reader_mode:
   available:
@@ -5336,12 +5498,13 @@ perf.startup:
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/18632#issue-600193452
       - https://github.com/mozilla-mobile/fenix/pull/20623#issue-701630599
+      - https://github.com/mozilla-mobile/fenix/pull/23506
     data_sensitivity:
       - technical
     notification_emails:
       - perf-android-fe@mozilla.com
       - mcomella@mozilla.com
-    expires: "2022-02-01"
+    expires: never
   cold_view_app_to_first_frame:
     type: timing_distribution
     time_unit: millisecond
@@ -5364,12 +5527,13 @@ perf.startup:
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/18632#issue-600193452
       - https://github.com/mozilla-mobile/fenix/pull/20623#issue-701630599
+      - https://github.com/mozilla-mobile/fenix/pull/23506
     data_sensitivity:
       - technical
     notification_emails:
       - perf-android-fe@mozilla.com
       - mcomella@mozilla.com
-    expires: "2022-02-01"
+    expires: never
   cold_unknwn_app_to_first_frame:
     type: timing_distribution
     time_unit: millisecond
@@ -5390,12 +5554,13 @@ perf.startup:
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/18632#issue-600193452
       - https://github.com/mozilla-mobile/fenix/pull/20623#issue-701630599
+      - https://github.com/mozilla-mobile/fenix/pull/23506
     data_sensitivity:
       - technical
     notification_emails:
       - perf-android-fe@mozilla.com
       - mcomella@mozilla.com
-    expires: "2022-02-01"
+    expires: never
   application_on_create:
     type: timing_distribution
     time_unit: millisecond
@@ -5408,12 +5573,13 @@ perf.startup:
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/17973#issue-572183889
       - https://github.com/mozilla-mobile/fenix/pull/20623#issue-701630599
+      - https://github.com/mozilla-mobile/fenix/pull/23506
     data_sensitivity:
       - technical
     notification_emails:
       - perf-android-fe@mozilla.com
       - mcomella@mozilla.com
-    expires: "2022-02-01"
+    expires: never
   startup_type:
     type: labeled_counter
     description: |
@@ -5694,6 +5860,7 @@ storage.stats:
       - https://github.com/mozilla-mobile/fenix/pull/17704#issue-564299127
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20623#issue-701630599
+      - https://github.com/mozilla-mobile/fenix/pull/23506
     data_sensitivity:
       - technical
       - interaction
@@ -5701,7 +5868,7 @@ storage.stats:
       - android-probes@mozilla.com
       - perf-android-fe@mozilla.com
       - mcomella@mozilla.com
-    expires: "2022-02-01"
+    expires: never
   app_bytes:
     send_in_pings:
       - metrics
@@ -5721,6 +5888,7 @@ storage.stats:
       - https://github.com/mozilla-mobile/fenix/pull/17704#issue-564299127
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20623#issue-701630599
+      - https://github.com/mozilla-mobile/fenix/pull/23506
     data_sensitivity:
       - technical
       - interaction
@@ -5728,7 +5896,7 @@ storage.stats:
       - android-probes@mozilla.com
       - perf-android-fe@mozilla.com
       - mcomella@mozilla.com
-    expires: "2022-02-01"
+    expires: never
   cache_bytes:
     send_in_pings:
       - metrics
@@ -5745,6 +5913,7 @@ storage.stats:
       - https://github.com/mozilla-mobile/fenix/pull/17704#issue-564299127
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20623#issue-701630599
+      - https://github.com/mozilla-mobile/fenix/pull/23506
     data_sensitivity:
       - technical
       - interaction
@@ -5752,7 +5921,7 @@ storage.stats:
       - android-probes@mozilla.com
       - perf-android-fe@mozilla.com
       - mcomella@mozilla.com
-    expires: "2022-02-01"
+    expires: never
   data_dir_bytes:
     send_in_pings:
       - metrics
@@ -5771,6 +5940,7 @@ storage.stats:
       - https://github.com/mozilla-mobile/fenix/pull/17704#issue-564299127
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/20623#issue-701630599
+      - https://github.com/mozilla-mobile/fenix/pull/23506
     data_sensitivity:
       - technical
       - interaction
@@ -5778,7 +5948,7 @@ storage.stats:
       - android-probes@mozilla.com
       - perf-android-fe@mozilla.com
       - mcomella@mozilla.com
-    expires: "2022-02-01"
+    expires: never
 
 progressive_web_app:
   homescreen_tap:
