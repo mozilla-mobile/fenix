@@ -14,7 +14,9 @@ import org.mozilla.fenix.selection.SelectionHolder
 import org.mozilla.fenix.library.downloads.DownloadInteractor
 import org.mozilla.fenix.library.downloads.DownloadItem
 import org.mozilla.fenix.ext.getIcon
+import org.mozilla.fenix.ext.hideAndDisable
 import org.mozilla.fenix.ext.showAndEnable
+import org.mozilla.fenix.library.downloads.DownloadFragmentState
 import org.mozilla.fenix.library.downloads.DownloadItemMenu
 
 class DownloadsListItemViewHolder(
@@ -33,6 +35,7 @@ class DownloadsListItemViewHolder(
 
     fun bind(
         item: DownloadItem,
+        mode: DownloadFragmentState.Mode,
         isPendingDeletion: Boolean = false
     ) {
         binding.downloadLayout.visibility = if (isPendingDeletion) {
@@ -56,6 +59,11 @@ class DownloadsListItemViewHolder(
             downloadInteractor.onDeleteSome(setOf(item))
         }
 
+        if (mode is DownloadFragmentState.Mode.Editing) {
+            binding.downloadLayout.overflowView.hideAndDisable()
+        } else {
+            binding.downloadLayout.overflowView.showAndEnable()
+        }
         this.item = item
     }
 
