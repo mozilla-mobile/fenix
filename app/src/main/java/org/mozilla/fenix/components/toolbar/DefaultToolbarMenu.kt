@@ -447,11 +447,9 @@ open class DefaultToolbarMenu(
     }
 
     private fun getSetDefaultBrowserItem(): BrowserMenuImageText? {
-        val browsers = BrowsersCache.all(context)
-        val config = FxNimbus.features.defaultBrowserMessage.value()
+        val settings = context.components.settings
         return if (
-            config.messageLocation == MessageSurfaceId.APP_MENU_ITEM &&
-            !browsers.isFirefoxDefaultBrowser
+            settings.isDefaultBrowserMessageLocation(MessageSurfaceId.APP_MENU_ITEM)
         ) {
             BrowserMenuImageText(
                 label = context.getString(R.string.preferences_set_as_default_browser),
