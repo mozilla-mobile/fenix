@@ -61,6 +61,7 @@ import mozilla.components.support.ktx.android.arch.lifecycle.addObservers
 import mozilla.components.support.ktx.android.content.call
 import mozilla.components.support.ktx.android.content.email
 import mozilla.components.support.ktx.android.content.share
+import mozilla.components.support.ktx.android.view.exitImmersiveModeIfNeeded
 import mozilla.components.support.ktx.kotlin.isUrl
 import mozilla.components.support.ktx.kotlin.toNormalizedUrl
 import mozilla.components.support.locale.LocaleAwareAppCompatActivity
@@ -294,6 +295,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             // Exit PiP mode
             moveTaskToBack(false)
             startActivity(Intent(this, this::class.java).setFlags(FLAG_ACTIVITY_REORDER_TO_FRONT))
+            exitImmersiveModeIfNeeded()
         }
     }
 
