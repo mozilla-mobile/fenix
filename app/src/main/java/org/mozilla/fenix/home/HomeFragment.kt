@@ -391,14 +391,7 @@ class HomeFragment : Fragment() {
 
         FxNimbus.features.homescreen.recordExposure()
 
-        if (shouldEnableWallpaper()) {
-            val wallpaperManger = requireComponents.wallpaperManager
-            // We only want to update the wallpaper when it's different from the default one
-            // as the default is applied already on xml by default.
-            if (wallpaperManger.currentWallpaper != WallpaperManager.defaultWallpaper) {
-                wallpaperManger.updateWallpaper(binding.homeLayout, wallpaperManger.currentWallpaper)
-            }
-        }
+        displayWallpaperIfEnabled()
 
         // DO NOT MOVE ANYTHING BELOW THIS addMarker CALL!
         requireComponents.core.engine.profiler?.addMarker(
@@ -412,6 +405,7 @@ class HomeFragment : Fragment() {
         super.onConfigurationChanged(newConfig)
 
         getMenuButton()?.dismissMenu()
+        displayWallpaperIfEnabled()
     }
 
     private fun dismissTip(tip: Tip) {
@@ -765,12 +759,14 @@ class HomeFragment : Fragment() {
         }
 
         if (shouldEnableWallpaper() && context.settings().wallpapersSwitchedByLogoTap) {
+            binding.wordmark.contentDescription =
+                context.getString(R.string.wallpaper_logo_content_description)
             binding.wordmark.setOnClickListener {
                 val manager = requireComponents.wallpaperManager
                 val newWallpaper = manager.switchToNextWallpaper()
                 requireComponents.analytics.metrics.track(Event.WallpaperSwitched(newWallpaper))
                 manager.updateWallpaper(
-                    wallpaperContainer = binding.homeLayout,
+                    wallpaperContainer = binding.wallpaperImageView,
                     newWallpaper = newWallpaper
                 )
             }
@@ -1222,6 +1218,17 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private fun displayWallpaperIfEnabled() {
+        if (shouldEnableWallpaper()) {
+            val wallpaperManger = requireComponents.wallpaperManager
+            // We only want to update the wallpaper when it's different from the default one
+            // as the default is applied already on xml by default.
+            if (wallpaperManger.currentWallpaper != WallpaperManager.defaultWallpaper) {
+                wallpaperManger.updateWallpaper(binding.wallpaperImageView, wallpaperManger.currentWallpaper)
+            }
+        }
+    }
+
     // We want to show the animation in a time when the user less distracted
     // The Heuristics are:
     // 1) The animation hasn't shown before.
@@ -1240,7 +1247,8 @@ class HomeFragment : Fragment() {
     }
 
     private fun shouldEnableWallpaper() =
-        FeatureFlags.showWallpapers && !(activity as HomeActivity).themeManager.currentTheme.isPrivate
+        FeatureFlags.showWallpapers &&
+            (activity as? HomeActivity)?.themeManager?.currentTheme?.isPrivate?.not() ?: false
 
     companion object {
         const val ALL_NORMAL_TABS = "all_normal"
