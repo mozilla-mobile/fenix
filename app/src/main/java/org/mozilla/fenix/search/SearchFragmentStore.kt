@@ -62,6 +62,7 @@ sealed class SearchEngineSource {
  * @property showBookmarkSuggestions Whether or not to show the bookmark suggestion in the AwesomeBar
  * @property pastedText The text pasted from the long press toolbar menu
  * @property clipboardHasUrl Indicates if the clipboard contains an URL.
+ * @property showPillButtons Whether or not to show qr and search engine pill buttons above the toolbar.
  */
 data class SearchFragmentState(
     val query: String,
@@ -81,7 +82,8 @@ data class SearchFragmentState(
     val tabId: String?,
     val pastedText: String? = null,
     val searchAccessPoint: Event.PerformedSearch.SearchAccessPoint?,
-    val clipboardHasUrl: Boolean = false
+    val clipboardHasUrl: Boolean = false,
+    val showPillButtons: Boolean = true
 ) : State
 
 fun createInitialSearchFragmentState(
@@ -132,6 +134,7 @@ sealed class SearchFragmentAction : Action {
     data class AllowSearchSuggestionsInPrivateModePrompt(val show: Boolean) : SearchFragmentAction()
     data class UpdateQuery(val query: String) : SearchFragmentAction()
     data class UpdateClipboardHasUrl(val hasUrl: Boolean) : SearchFragmentAction()
+    data class ShowPillButtons(val show: Boolean) : SearchFragmentAction()
 
     /**
      * Updates the local `SearchFragmentState` from the global `SearchState` in `BrowserStore`.
@@ -153,6 +156,8 @@ private fun searchStateReducer(state: SearchFragmentState, action: SearchFragmen
             state.copy(showSearchShortcuts = action.show && state.areShortcutsAvailable)
         is SearchFragmentAction.UpdateQuery ->
             state.copy(query = action.query)
+        is SearchFragmentAction.ShowPillButtons ->
+            state.copy(showPillButtons = action.show)
         is SearchFragmentAction.AllowSearchSuggestionsInPrivateModePrompt ->
             state.copy(showSearchSuggestionsHint = action.show)
         is SearchFragmentAction.SetShowSearchSuggestions ->

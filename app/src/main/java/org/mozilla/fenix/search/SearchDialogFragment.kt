@@ -226,8 +226,12 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             binding.searchWrapper.background = ColorDrawable(Color.TRANSPARENT)
             dialog?.window?.decorView?.setOnTouchListener { _, event ->
                 requireActivity().dispatchTouchEvent(event)
+                store.dispatch(SearchFragmentAction.ShowPillButtons(false))
                 false
             }
+        }
+        binding.toolbar.edit.setOnEditFocusChangeListener {
+            store.dispatch(SearchFragmentAction.ShowPillButtons(true))
         }
 
         return binding.root
@@ -355,6 +359,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         }
 
         observeClipboardState()
+        observePillButtonsState()
         observeAwesomeBarState()
         observeShortcutsState()
         observeSuggestionProvidersState()
@@ -388,6 +393,25 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             .collect { state -> updateSearchShortcutsIcon(state.areShortcutsAvailable, state.showSearchShortcuts) }
     }
 
+    private fun observePillButtonsState() = consumeFlow(store) { flow ->
+        flow.ifChanged { state -> state.showPillButtons }
+            .collect { state ->
+                // Hide the QR scan and search engine buttons
+                binding.pillWrapper.isVisible = state.showPillButtons
+                binding.qrScanButton.isVisible = state.showPillButtons
+                binding.pillWrapper.isVisible = state.showPillButtons
+                if (!state.showPillButtons) {
+                    toolbarView.view.clearFocus()
+                    binding.searchEnginesShortcutButton.isVisible = state.showPillButtons
+                } else {
+                    updateSearchShortcutsIcon(
+                        state.areShortcutsAvailable,
+                        state.showSearchShortcuts
+                    )
+                }
+            }
+    }
+
     private fun observeAwesomeBarState() = consumeFlow(store) { flow ->
         /*
          * firstUpdate is used to make sure we keep the awesomebar hidden on the first run
@@ -410,7 +434,8 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         flow.map { state ->
             val shouldShowView = state.showClipboardSuggestions &&
                 state.query.isEmpty() &&
-                state.clipboardHasUrl && !state.showSearchShortcuts
+                state.clipboardHasUrl && !state.showSearchShortcuts &&
+                state.showPillButtons
             Pair(shouldShowView, state.clipboardHasUrl)
         }
             .ifChanged()
