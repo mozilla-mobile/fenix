@@ -466,7 +466,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
      */
     var searchTermTabGroupsAreEnabled by lazyFeatureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_search_term_tab_groups),
-        default = { FxNimbus.features.searchTermGroups.value().enabled },
+        default = { FxNimbus.features.searchTermGroups.value(appContext).enabled },
         featureFlag = FeatureFlags.tabGroupFeature
     )
 
