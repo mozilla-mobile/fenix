@@ -166,7 +166,7 @@ class HomeMenu(
         }
 
         val customizeHomeItem = BrowserMenuImageText(
-            context.getString(R.string.browser_menu_customize_home),
+            context.getString(R.string.browser_menu_customize_home_1),
             R.drawable.ic_customize,
             primaryTextColor
         ) {
@@ -175,14 +175,9 @@ class HomeMenu(
 
         // Use nimbus to set the icon and title.
         val nimbusValidation = FxNimbus.features.nimbusValidation.value()
-        val settingsIcon = context.resources.getIdentifier(
-            nimbusValidation.settingsIcon,
-            "drawable",
-            context.packageName
-        )
         val settingsItem = BrowserMenuImageText(
             nimbusValidation.settingsTitle,
-            settingsIcon,
+            R.drawable.mozac_ic_settings,
             primaryTextColor
         ) {
             onItemTapped.invoke(Item.Settings)

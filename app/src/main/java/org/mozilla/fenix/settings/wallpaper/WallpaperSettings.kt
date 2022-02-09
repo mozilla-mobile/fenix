@@ -87,7 +87,7 @@ fun WallpaperSettings(
             SnackbarHost(hostState = hostState) {
                 WallpaperSnackbar(onViewWallpaper)
             }
-        }
+        },
     ) {
         Column {
             WallpaperThumbnails(
@@ -275,7 +275,7 @@ private fun WallpaperLogoSwitch(
             color = FirefoxTheme.colors.textDisabled,
             fontSize = 12.sp,
             fontFamily = FontFamily(Font(R.font.metropolis_semibold)),
-            modifier = Modifier.padding(start = 8.dp, top = 16.dp)
+            modifier = Modifier.padding(start = 8.dp, end = 42.dp, top = 16.dp)
         )
     }
 }
@@ -292,7 +292,7 @@ private fun WallpaperThumbnailsPreview() {
             loadWallpaperResource = {
                 wallpaperManager.loadSavedWallpaper(context, it)
             },
-            wallpapers = wallpaperManager.availableWallpapers,
+            wallpapers = wallpaperManager.wallpapers,
             selectedWallpaper = wallpaperManager.currentWallpaper,
             onSelectWallpaper = {},
             onViewWallpaper = {},

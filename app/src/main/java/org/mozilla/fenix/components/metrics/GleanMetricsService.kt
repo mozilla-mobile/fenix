@@ -42,6 +42,7 @@ import org.mozilla.fenix.GleanMetrics.ReaderMode
 import org.mozilla.fenix.GleanMetrics.RecentBookmarks
 import org.mozilla.fenix.GleanMetrics.RecentSearches
 import org.mozilla.fenix.GleanMetrics.RecentTabs
+import org.mozilla.fenix.GleanMetrics.RecentlyClosedTabs
 import org.mozilla.fenix.GleanMetrics.SearchShortcuts
 import org.mozilla.fenix.GleanMetrics.SearchTerms
 import org.mozilla.fenix.GleanMetrics.SearchWidget
@@ -325,6 +326,42 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.HistorySearchTermGroupRemoveAll -> EventWrapper<NoExtraKeys>(
             { History.searchTermGroupRemoveAll.record(it) }
         )
+        is Event.RecentlyClosedTabsOpened -> EventWrapper<NoExtraKeys>(
+            { RecentlyClosedTabs.opened.record(it) }
+        )
+        is Event.RecentlyClosedTabsClosed -> EventWrapper<NoExtraKeys>(
+            { RecentlyClosedTabs.closed.record(it) }
+        )
+        is Event.RecentlyClosedTabsShowFullHistory -> EventWrapper<NoExtraKeys>(
+            { RecentlyClosedTabs.showFullHistory.record(it) }
+        )
+        is Event.RecentlyClosedTabsOpenTab -> EventWrapper<NoExtraKeys>(
+            { RecentlyClosedTabs.openTab.record(it) }
+        )
+        is Event.RecentlyClosedTabsDeleteTab -> EventWrapper<NoExtraKeys>(
+            { RecentlyClosedTabs.deleteTab.record(it) }
+        )
+        is Event.RecentlyClosedTabsMenuClose -> EventWrapper<NoExtraKeys>(
+            { RecentlyClosedTabs.menuClose.record(it) }
+        )
+        is Event.RecentlyClosedTabsMenuShare -> EventWrapper<NoExtraKeys>(
+            { RecentlyClosedTabs.menuShare.record(it) }
+        )
+        is Event.RecentlyClosedTabsMenuDelete -> EventWrapper<NoExtraKeys>(
+            { RecentlyClosedTabs.menuDelete.record(it) }
+        )
+        is Event.RecentlyClosedTabsMenuOpenInNormalTab -> EventWrapper<NoExtraKeys>(
+            { RecentlyClosedTabs.menuOpenInNormalTab.record(it) }
+        )
+        is Event.RecentlyClosedTabsMenuOpenInPrivateTab -> EventWrapper<NoExtraKeys>(
+            { RecentlyClosedTabs.menuOpenInPrivateTab.record(it) }
+        )
+        is Event.RecentlyClosedTabsEnterMultiselect -> EventWrapper<NoExtraKeys>(
+            { RecentlyClosedTabs.enterMultiselect.record(it) }
+        )
+        is Event.RecentlyClosedTabsExitMultiselect -> EventWrapper<NoExtraKeys>(
+            { RecentlyClosedTabs.exitMultiselect.record(it) }
+        )
         is Event.CollectionRenamed -> EventWrapper<NoExtraKeys>(
             { Collections.renamed.record(it) }
         )
@@ -482,14 +519,26 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.TopSiteOpenPinned -> EventWrapper<NoExtraKeys>(
             { TopSites.openPinned.record(it) }
         )
+        is Event.TopSiteOpenProvided -> EventWrapper<NoExtraKeys>(
+            { TopSites.openContileTopSite.record(it) }
+        )
         is Event.TopSiteOpenInNewTab -> EventWrapper<NoExtraKeys>(
             { TopSites.openInNewTab.record(it) }
         )
         is Event.TopSiteOpenInPrivateTab -> EventWrapper<NoExtraKeys>(
             { TopSites.openInPrivateTab.record(it) }
         )
+        is Event.TopSiteOpenContileInPrivateTab -> EventWrapper<NoExtraKeys>(
+            { TopSites.openContileInPrivateTab.record(it) }
+        )
         is Event.TopSiteRemoved -> EventWrapper<NoExtraKeys>(
             { TopSites.remove.record(it) }
+        )
+        is Event.TopSiteContileSettings -> EventWrapper<NoExtraKeys>(
+            { TopSites.contileSettings.record(it) }
+        )
+        is Event.TopSiteContilePrivacy -> EventWrapper<NoExtraKeys>(
+            { TopSites.contileSponsorsAndPrivacy.record(it) }
         )
         is Event.GoogleTopSiteRemoved -> EventWrapper<NoExtraKeys>(
             { TopSites.googleTopSiteRemoved.record(it) }
@@ -691,7 +740,7 @@ private val Event.wrapper: EventWrapper<*>?
             { Events.syncedTabOpened.record(it) }
         )
 
-        is Event.RecentlyClosedTabsOpened -> EventWrapper<NoExtraKeys>(
+        is Event.RecentlyClosedTabsOpenedOld -> EventWrapper<NoExtraKeys>(
             { Events.recentlyClosedTabsOpened.record(it) }
         )
 
@@ -916,7 +965,7 @@ private val Event.wrapper: EventWrapper<*>?
                 Wallpapers.wallpaperSelected.record(
                     Wallpapers.WallpaperSelectedExtra(
                         name = this.wallpaper.name,
-                        themeCollection = this.wallpaper.themeCollection::class.simpleName,
+                        themeCollection = this.wallpaper::class.simpleName,
                     ),
                 )
             }
@@ -926,7 +975,7 @@ private val Event.wrapper: EventWrapper<*>?
                 Wallpapers.wallpaperSwitched.record(
                     Wallpapers.WallpaperSwitchedExtra(
                         name = this.wallpaper.name,
-                        themeCollection = this.wallpaper.themeCollection::class.simpleName,
+                        themeCollection = this.wallpaper::class.simpleName,
                     ),
                 )
             }
