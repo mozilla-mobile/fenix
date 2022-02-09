@@ -32,6 +32,8 @@
         <item name="mozacSelectCreditCardHeaderTextStyle" tools:ignore="UnusedResources">@style/SelectPromptHeaderTextStyle</item>
 
         <!-- Design system color attributes -->
+        <!-- Search -->
+        <item name="layer3">@color/fx_mobile_layer_color_3</item>
         <!-- Small heading, Text link -->
         <item name="textAccent">@color/fx_mobile_text_color_accent</item>
 
@@ -88,7 +90,7 @@
         <item name="mozac_primary_text_color">@color/primary_text_normal_theme</item>
         <item name="mozac_caption_text_color">@color/caption_text_normal_theme</item>
         <item name="mozac_widget_favicon_background_color">@color/fx_mobile_layer_color_2</item>
-        <item name="mozac_widget_favicon_border_color">@color/fx_mobile_border_color_default</item>
+        <item name="mozac_widget_favicon_border_color">@color/fx_mobile_border_color_primary</item>
 
         <item name="tabTrayItemMediaBackground">@color/accent_normal_theme</item>
         <item name="tabTrayThumbnailItemBackground">@color/tab_tray_item_thumbnail_background_normal_theme</item>
@@ -210,6 +212,8 @@
         <item name="mozacSelectCreditCardHeaderTextStyle" tools:ignore="UnusedResources">@style/SelectPromptHeaderTextStyle</item>
 
         <!-- Design system color attributes -->
+        <!-- Search -->
+        <item name="layer3">@color/fx_mobile_private_layer_color_3</item>
         <!-- Small heading, Text link -->
         <item name="textAccent">@color/fx_mobile_private_text_color_accent</item>
 
@@ -463,7 +467,7 @@
 
     <style name="QuickSettingsLargeText.Icon">
         <item name="android:drawablePadding">8dp</item>
-        <item name="drawableEndCompat">@drawable/mozac_ic_arrowhead_right</item>
+        <item name="drawableEndCompat">@drawable/ic_arrowhead_right</item>
     </style>
 
     <style name="QuickSettingsText.Icon">
@@ -622,8 +626,6 @@
         <item name="cardBackgroundColor">?mozac_widget_favicon_background_color</item>
         <item name="cardCornerRadius">@dimen/top_sites_card_radius</item>
         <item name="cardElevation">@dimen/top_sites_card_elevation</item>
-        <item name="strokeColor">@color/top_sites_border_color</item>
-        <item name="strokeWidth">@dimen/top_sites_card_stroke_width</item>
     </style>
 
     <style name="topSiteFavicon">

@@ -90,6 +90,18 @@ sealed class Event {
     object HistorySearchTermGroupOpenTab : Event()
     object HistorySearchTermGroupRemoveTab : Event()
     object HistorySearchTermGroupRemoveAll : Event()
+    object RecentlyClosedTabsOpened : Event()
+    object RecentlyClosedTabsClosed : Event()
+    object RecentlyClosedTabsShowFullHistory : Event()
+    object RecentlyClosedTabsOpenTab : Event()
+    object RecentlyClosedTabsDeleteTab : Event()
+    object RecentlyClosedTabsMenuClose : Event()
+    object RecentlyClosedTabsMenuShare : Event()
+    object RecentlyClosedTabsMenuDelete : Event()
+    object RecentlyClosedTabsMenuOpenInNormalTab : Event()
+    object RecentlyClosedTabsMenuOpenInPrivateTab : Event()
+    object RecentlyClosedTabsEnterMultiselect : Event()
+    object RecentlyClosedTabsExitMultiselect : Event()
     object ReaderModeAvailable : Event()
     object ReaderModeOpened : Event()
     object ReaderModeClosed : Event()
@@ -120,9 +132,13 @@ sealed class Event {
     object TopSiteOpenBaidu : Event()
     object TopSiteOpenFrecent : Event()
     object TopSiteOpenPinned : Event()
+    object TopSiteOpenProvided : Event()
     object TopSiteOpenInNewTab : Event()
     object TopSiteOpenInPrivateTab : Event()
+    object TopSiteOpenContileInPrivateTab : Event()
     object TopSiteRemoved : Event()
+    object TopSiteContileSettings : Event()
+    object TopSiteContilePrivacy : Event()
     object GoogleTopSiteRemoved : Event()
     object BaiduTopSiteRemoved : Event()
     object TrackingProtectionTrackerList : Event()
@@ -235,7 +251,7 @@ sealed class Event {
 
     object SyncedTabOpened : Event()
 
-    object RecentlyClosedTabsOpened : Event()
+    object RecentlyClosedTabsOpenedOld : Event()
     object HaveOpenTabs : Event()
     object HaveNoOpenTabs : Event()
 
@@ -675,6 +691,11 @@ sealed class Event {
     object JumpBackInGroupTapped : Event()
 
     sealed class Search
+
+    object WallpaperSettingsOpened : Event()
+    data class WallpaperSelected(val wallpaper: org.mozilla.fenix.wallpapers.Wallpaper) : Event()
+    data class WallpaperSwitched(val wallpaper: org.mozilla.fenix.wallpapers.Wallpaper) : Event()
+    data class ChangeWallpaperWithLogoToggled(val checked: Boolean) : Event()
 
     internal open val extras: Map<*, String>?
         get() = null

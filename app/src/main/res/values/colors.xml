@@ -11,7 +11,7 @@
     <!-- Card background, Menu background, Dialog, Banner -->
     <color name="fx_mobile_layer_color_2">@color/photonWhite</color>
     <!-- Search -->
-    <color name="fx_mobile_layer_color_3" tools:ignore="UnusedResources">@color/photonLightGrey20</color>
+    <color name="fx_mobile_layer_color_3">@color/photonLightGrey20</color>
     <!-- App Bar Top (edit), Text Cursor, Selected Tab Check -->
     <color name="fx_mobile_layer_color_accent">@color/photonInk20</color>
     <!-- Selected tab -->
@@ -61,6 +61,8 @@
     <color name="fx_mobile_text_color_warning" tools:ignore="UnusedResources">@color/photonRed80</color>
     <!-- Small heading, Text link -->
     <color name="fx_mobile_text_color_accent">@color/photonViolet70</color>
+    <!-- Small heading, Text link -->
+    <color name="fx_mobile_text_color_accent_disabled" tools:ignore="UnusedResources">@color/photonViolet70A80</color>
     <!-- Text Inverted/On Color -->
     <color name="fx_mobile_text_color_oncolor" tools:ignore="UnusedResources">@color/photonLightGrey05</color>
     <!-- Action Primary text -->
@@ -102,7 +104,7 @@
 
     <!-- Border -->
     <!-- Default, Divider, Dotted -->
-    <color name="fx_mobile_border_color_default">@color/photonLightGrey30</color>
+    <color name="fx_mobile_border_color_primary">@color/photonLightGrey30</color>
     <!-- Onboarding -->
     <color name="fx_mobile_border_color_inverted" tools:ignore="UnusedResources">@color/photonDarkGrey05</color>
     <!-- Form parts -->
@@ -117,8 +119,12 @@
     <!-- Private theme color variables -->
 
     <!-- Layers -->
-    <!-- Default Background, Search Background, Menu Background, App Bar Top, App Bar Bottom, Dialogs -->
+    <!-- Default Screen background, Frontlayer background, App Bar Top, App Bar Bottom, Frontlayer header -->
     <color name="fx_mobile_private_layer_color_1">@color/photonInk50</color>
+    <!-- Card background, Menu background, Dialog, Banner -->
+    <color name="fx_mobile_private_layer_color_2" tools:ignore="UnusedResources">@color/photonInk50</color>
+    <!-- Search -->
+    <color name="fx_mobile_private_layer_color_3">@color/photonInk50</color>
 
     <!-- Action -->
     <!-- Primary Button -->
@@ -224,7 +230,6 @@
 
     <!-- Top site colors -->
     <color name="top_site_pin_icon_color">@color/photonDarkGrey80</color>
-    <color name="top_sites_border_color">@color/photonLightGrey30</color>
 
     <!-- Quick action buttons-->
     <color name="quick_action_reader_appearance_icon">#482166</color>
@@ -244,6 +249,10 @@
     <color name="sync_error_text_color">@color/photonYellow90</color>
     <color name="bottom_bar_shadow">#1A000000</color>
     <color name="snackbar_error_color">#B52645</color>
+
+    <!-- Reader View colors -->
+    <color name="mozac_feature_readerview_text_color" tools:ignore="UnusedResources">@color/primary_text_light_theme</color>
+    <color name="mozac_feature_readerview_selected">@color/photonViolet40</color>
 
     <!-- Share UI -->
     <color name="default_share_background">#E3E2E3</color>
@@ -272,18 +281,13 @@
     <!-- SearchView Hint Color -->
     <color name="search_view_hint_color">@color/photonDarkGrey05</color>
 
+    <!-- Tab Counter colors -->
+    <color name="mozac_ui_tabcounter_default_tint" tools:ignore="UnusedResources">@color/primary_text_light_theme</color>
+    <color name="mozac_ui_tabcounter_default_text" tools:ignore="UnusedResources">@color/primary_text_light_theme</color>
+
     <!-- App Spinners colors -->
     <color name="spinner_selected_item">#1415141A</color>
 
     <!-- Toolbar menu icon colors -->
     <color name="toolbar_menu_transparent">@android:color/transparent</color>
-
-    <!-- Mozilla Android Component color variable overrides -->
-    <color name="mozac_ui_icons_fill" tools:ignore="UnusedResources">?primaryText</color>
-    <!-- Tab Counter colors -->
-    <color name="mozac_ui_tabcounter_default_tint" tools:ignore="UnusedResources">@color/primary_text_light_theme</color>
-    <color name="mozac_ui_tabcounter_default_text" tools:ignore="UnusedResources">@color/primary_text_light_theme</color>
-    <!-- Reader View colors -->
-    <color name="mozac_feature_readerview_text_color" tools:ignore="UnusedResources">@color/primary_text_light_theme</color>
-    <color name="mozac_feature_readerview_selected">@color/photonViolet40</color>
 </resources>

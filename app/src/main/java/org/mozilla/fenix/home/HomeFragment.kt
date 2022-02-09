@@ -17,6 +17,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.AccessibilityDelegate
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.view.accessibility.AccessibilityEvent
 import android.widget.Button
 import android.widget.LinearLayout
@@ -93,13 +94,11 @@ import org.mozilla.fenix.components.toolbar.FenixTabCounterMenu
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.databinding.FragmentHomeBinding
 import org.mozilla.fenix.datastore.pocketStoriesSelectedCategoriesDataStore
-import org.mozilla.fenix.experiments.FeatureId
 import org.mozilla.fenix.ext.asRecentTabs
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.hideToolbar
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
-import org.mozilla.fenix.ext.recordExposureEvent
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.settings
@@ -118,6 +117,7 @@ import org.mozilla.fenix.home.sessioncontrol.SessionControlInteractor
 import org.mozilla.fenix.home.sessioncontrol.SessionControlView
 import org.mozilla.fenix.home.sessioncontrol.viewholders.CollectionViewHolder
 import org.mozilla.fenix.home.topsites.DefaultTopSitesView
+import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.onboarding.FenixOnboarding
 import org.mozilla.fenix.perf.MarkersFragmentLifecycleCallbacks
 import org.mozilla.fenix.settings.SupportUtils
@@ -389,16 +389,9 @@ class HomeFragment : Fragment() {
 
         activity.themeManager.applyStatusBarTheme(activity)
 
-        requireContext().components.analytics.experiments.recordExposureEvent(FeatureId.HOME_PAGE)
+        FxNimbus.features.homescreen.recordExposure()
 
-        if (shouldEnableWallpaper()) {
-            val wallpaperManger = requireComponents.wallpaperManager
-            // We only want to update the wallpaper when it's different from the default one
-            // as the default is applied already on xml by default.
-            if (wallpaperManger.currentWallpaper != WallpaperManager.defaultWallpaper) {
-                wallpaperManger.updateWallpaper(binding.homeLayout, wallpaperManger.currentWallpaper)
-            }
-        }
+        displayWallpaperIfEnabled()
 
         // DO NOT MOVE ANYTHING BELOW THIS addMarker CALL!
         requireComponents.core.engine.profiler?.addMarker(
@@ -412,6 +405,7 @@ class HomeFragment : Fragment() {
         super.onConfigurationChanged(newConfig)
 
         getMenuButton()?.dismissMenu()
+        displayWallpaperIfEnabled()
     }
 
     private fun dismissTip(tip: Tip) {
@@ -765,11 +759,15 @@ class HomeFragment : Fragment() {
         }
 
         if (shouldEnableWallpaper() && context.settings().wallpapersSwitchedByLogoTap) {
+            binding.wordmark.contentDescription =
+                context.getString(R.string.wallpaper_logo_content_description)
             binding.wordmark.setOnClickListener {
                 val manager = requireComponents.wallpaperManager
+                val newWallpaper = manager.switchToNextWallpaper()
+                requireComponents.analytics.metrics.track(Event.WallpaperSwitched(newWallpaper))
                 manager.updateWallpaper(
-                    wallpaperContainer = binding.homeLayout,
-                    newWallpaper = manager.switchToNextWallpaper()
+                    wallpaperContainer = binding.wallpaperImageView,
+                    newWallpaper = newWallpaper
                 )
             }
         }
@@ -822,6 +820,25 @@ class HomeFragment : Fragment() {
         // triggered to cause an automatic update on warm start (no tab selection occurs). So we
         // update it manually here.
         requireComponents.useCases.sessionUseCases.updateLastAccess()
+        if (shouldAnimateLogoForWallpaper()) {
+            _binding?.sessionControlRecyclerView?.viewTreeObserver?.addOnGlobalLayoutListener(
+                homeLayoutListenerForLogoAnimation
+            )
+        }
+    }
+
+    // To try to find a good time to show the logo animation, we are waiting until all
+    // the sub-recyclerviews (recentBookmarks, collections, recentTabs,recentVisits
+    // and pocketStories) on the home screen have been layout.
+    private val homeLayoutListenerForLogoAnimation = object : ViewTreeObserver.OnGlobalLayoutListener {
+        override fun onGlobalLayout() {
+            _binding?.let { safeBindings ->
+                requireComponents.wallpaperManager.animateLogoIfNeeded(safeBindings.wordmark)
+                safeBindings.sessionControlRecyclerView.viewTreeObserver.removeOnGlobalLayoutListener(
+                    this
+                )
+            }
+        }
     }
 
     override fun onPause() {
@@ -1201,8 +1218,37 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private fun displayWallpaperIfEnabled() {
+        if (shouldEnableWallpaper()) {
+            val wallpaperManger = requireComponents.wallpaperManager
+            // We only want to update the wallpaper when it's different from the default one
+            // as the default is applied already on xml by default.
+            if (wallpaperManger.currentWallpaper != WallpaperManager.defaultWallpaper) {
+                wallpaperManger.updateWallpaper(binding.wallpaperImageView, wallpaperManger.currentWallpaper)
+            }
+        }
+    }
+
+    // We want to show the animation in a time when the user less distracted
+    // The Heuristics are:
+    // 1) The animation hasn't shown before.
+    // 2) The user has onboarded.
+    // 3) It's the third time the user enters the app.
+    // 4) The user is part of the right audience.
+    @Suppress("MagicNumber")
+    private fun shouldAnimateLogoForWallpaper(): Boolean {
+        val localContext = context ?: return false
+        val settings = localContext.settings()
+
+        return shouldEnableWallpaper() && settings.shouldAnimateFirefoxLogo &&
+            onboarding.userHasBeenOnboarded() &&
+            settings.numberOfAppLaunches >= 3 &&
+            FeatureFlags.isThemedWallpapersFeatureEnabled(localContext)
+    }
+
     private fun shouldEnableWallpaper() =
-        FeatureFlags.showWallpapers && !(activity as HomeActivity).themeManager.currentTheme.isPrivate
+        FeatureFlags.showWallpapers &&
+            (activity as? HomeActivity)?.themeManager?.currentTheme?.isPrivate?.not() ?: false
 
     companion object {
         const val ALL_NORMAL_TABS = "all_normal"

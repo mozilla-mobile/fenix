@@ -15,6 +15,8 @@ import junit.framework.TestCase.assertTrue
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestHelper.appName
+import org.mozilla.fenix.helpers.TestHelper.packageName
+import org.mozilla.fenix.helpers.TestHelper.waitForObjects
 
 /**
  *  Implementation of the robot pattern for Custom tabs
@@ -52,6 +54,24 @@ class CustomTabRobot {
 
     fun verifyCustomTabCloseButton() {
         closeButton().check(matches(isDisplayed()))
+    }
+
+    fun verifyCustomTabToolbarTitle(title: String) {
+        mDevice.waitForObjects(
+            mDevice.findObject(
+                UiSelector()
+                    .resourceId("$packageName:id/mozac_browser_toolbar_title_view")
+                    .textContains(title)
+            )
+        )
+
+        assertTrue(
+            mDevice.findObject(
+                UiSelector()
+                    .resourceId("$packageName:id/mozac_browser_toolbar_title_view")
+                    .textContains(title)
+            ).waitForExists(waitingTime)
+        )
     }
 
     class Transition {

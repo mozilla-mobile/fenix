@@ -98,7 +98,10 @@ class BrowserRobot {
         )
 
         runWithIdleRes(sessionLoadedIdlingResource) {
-            assertTrue(mDevice.findObject(UiSelector().textContains(expectedText)).waitForExists(waitingTime))
+            assertTrue(
+                "Page didn't load or doesn't contain the expected text",
+                mDevice.findObject(UiSelector().textContains(expectedText)).waitForExists(waitingTime)
+            )
         }
     }
 
@@ -453,6 +456,11 @@ class BrowserRobot {
     }
 
     fun saveLoginFromPrompt(optionToSaveLogin: String) {
+        mDevice.waitForObjects(
+            mDevice.findObject(
+                UiSelector().resourceId("$packageName:id/feature_prompt_login_fragment")
+            )
+        )
         mDevice.findObject(text(optionToSaveLogin)).click()
     }
 
@@ -562,18 +570,72 @@ class BrowserRobot {
         tabCrashRestoreButton.click()
     }
 
-    fun fillAndSubmitLoginCredentials(userName: String, password: String) {
-        userNameTextBox.click()
-        userNameTextBox.setText(userName)
+    fun fillAndSubmitGoogleSearchQuery(searchString: String) {
+        mDevice.findObject(
+            UiSelector().resourceId("$packageName:id/engineView")
+        ).waitForExists(waitingTime)
+        googleSearchBox.setText(searchString)
+        mDevice.pressEnter()
+        mDevice.waitForIdle(waitingTime)
+    }
 
-        passwordTextBox.click()
+    fun fillAndSubmitLoginCredentials(userName: String, password: String) {
+        userNameTextBox.setText(userName)
         passwordTextBox.setText(password)
 
         submitLoginButton.click()
-        mDevice.waitForIdle()
+
+        mDevice.waitForObjects(mDevice.findObject(UiSelector().resourceId("$packageName:id/save_confirm")))
     }
 
-    fun verifyPrefilledLoginCredentials(userName: String, shortcutTitle: String) {
+    fun clearUserNameLoginCredential() {
+        mDevice.waitForObjects(userNameTextBox)
+        userNameTextBox.clearTextField()
+        mDevice.waitForIdle(waitingTime)
+    }
+
+    fun clickSuggestedLoginsButton() {
+        var currentTries = 0
+        while (currentTries++ < 3) {
+            try {
+                mDevice.waitForObjects(suggestedLogins)
+                suggestedLogins.click()
+                mDevice.waitForObjects(suggestedLogins)
+                break
+            } catch (e: UiObjectNotFoundException) {
+                userNameTextBox.click()
+            }
+        }
+    }
+
+    fun clickLoginSuggestion(userName: String) {
+        val loginSuggestion =
+            mDevice.findObject(
+                UiSelector()
+                    .textContains(userName)
+                    .resourceId("$packageName:id/username")
+            )
+
+        loginSuggestion.click()
+    }
+
+    fun verifySuggestedUserName(userName: String) {
+        mDevice.findObject(
+            UiSelector()
+                .resourceId("$packageName:id/mozac_feature_login_multiselect_expand")
+        ).waitForExists(waitingTime)
+
+        assertTrue(
+            mDevice.findObject(UiSelector().textContains(userName)).waitForExists(waitingTime)
+        )
+    }
+
+    fun verifyPrefilledLoginCredentials(userName: String) {
+        mDevice.waitForObjects(userNameTextBox)
+        assertTrue(userNameTextBox.text.equals(userName))
+    }
+
+    fun verifyPrefilledPWALoginCredentials(userName: String, shortcutTitle: String) {
         mDevice.waitForIdle(waitingTime)
 
         var currentTries = 0
@@ -806,6 +868,8 @@ private var progressBar =
         UiSelector().resourceId("$packageName:id/mozac_browser_toolbar_progress")
     )
 
+private val suggestedLogins = mDevice.findObject(UiSelector().resourceId("$packageName:id/loginSelectBar"))
+
 // Permissions test page elements & prompts
 // Test page used located at https://mozilla-mobile.github.io/testapp/permissions
 private val cameraButton = mDevice.findObject(UiSelector().text("Open camera"))
@@ -844,6 +908,15 @@ val passwordTextBox =
         UiSelector()
             .index(1)
             .resourceId("password")
+            .className("android.widget.EditText")
+            .packageName("$packageName")
+    )
+
+val googleSearchBox =
+    mDevice.findObject(
+        UiSelector()
+            .index(0)
+            .resourceId("mib")
             .className("android.widget.EditText")
             .packageName("$packageName")
     )

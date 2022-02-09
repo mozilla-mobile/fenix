@@ -38,6 +38,7 @@ import androidx.test.uiautomator.UiObject
 import androidx.test.uiautomator.UiScrollable
 import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
+import java.io.File
 import kotlinx.coroutines.runBlocking
 import mozilla.components.support.ktx.android.content.appName
 import org.hamcrest.CoreMatchers
@@ -46,12 +47,12 @@ import org.hamcrest.Matcher
 import org.junit.Assert
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
+import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
 import org.mozilla.fenix.helpers.ext.waitNotNull
 import org.mozilla.fenix.helpers.idlingresource.NetworkConnectionIdlingResource
 import org.mozilla.fenix.ui.robots.BrowserRobot
 import org.mozilla.fenix.ui.robots.mDevice
 import org.mozilla.fenix.utils.IntentUtils
-import java.io.File
 
 object TestHelper {
 
@@ -113,7 +114,7 @@ object TestHelper {
         val intent = Intent().apply {
             action = Intent.ACTION_VIEW
             data = Uri.parse(url)
-            `package` = "org.mozilla.fenix.debug"
+            `package` = packageName
             flags = Intent.FLAG_ACTIVITY_NEW_TASK
         }
         try {
@@ -226,14 +227,13 @@ object TestHelper {
         }
     }
 
-    fun returnToBrowser() {
-        val urlBar =
-            mDevice.findObject(UiSelector().resourceId("$packageName:id/mozac_browser_toolbar_url_view"))
-        do {
+    // exit from Menus to home screen or browser
+    fun exitMenu() {
+        val toolbar =
+            mDevice.findObject(UiSelector().resourceId("$packageName:id/toolbar"))
+        while (!toolbar.waitForExists(waitingTimeShort)) {
             mDevice.pressBack()
-        } while (
-            !urlBar.waitForExists(waitingTime)
-        )
+        }
     }
 
     fun UiDevice.waitForObjects(obj: UiObject, waitingTime: Long = TestAssetHelper.waitingTime) {
@@ -250,4 +250,6 @@ object TestHelper {
             )
         )
     }
+
+    fun getStringResource(id: Int) = appContext.resources.getString(id, appName)
 }

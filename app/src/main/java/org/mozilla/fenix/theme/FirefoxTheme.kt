@@ -68,6 +68,7 @@ private val darkColorPalette = FirefoxColors(
     textDisabled = PhotonColors.LightGrey05A40,
     textWarning = PhotonColors.Red20,
     textAccent = PhotonColors.Violet20,
+    textAccentDisabled = PhotonColors.Violet20A60,
     textOnColor = PhotonColors.LightGrey05,
     textActionPrimary = PhotonColors.LightGrey05,
     textActionSecondary = PhotonColors.DarkGrey90,
@@ -89,7 +90,7 @@ private val darkColorPalette = FirefoxColors(
     iconAccentYellow = PhotonColors.Yellow20,
     iconGradientStart = PhotonColors.Violet20,
     iconGradientEnd = PhotonColors.Blue20,
-    borderDefault = PhotonColors.DarkGrey05,
+    borderPrimary = PhotonColors.DarkGrey05,
     borderInverted = PhotonColors.LightGrey30,
     borderFormDefault = PhotonColors.LightGrey05,
     borderAccent = PhotonColors.Violet40,
@@ -125,6 +126,7 @@ private val lightColorPalette = FirefoxColors(
     textDisabled = PhotonColors.DarkGrey90A40,
     textWarning = PhotonColors.Red80,
     textAccent = PhotonColors.Violet70,
+    textAccentDisabled = PhotonColors.Violet70A80,
     textOnColor = PhotonColors.LightGrey05,
     textActionPrimary = PhotonColors.LightGrey05,
     textActionSecondary = PhotonColors.DarkGrey90,
@@ -146,7 +148,7 @@ private val lightColorPalette = FirefoxColors(
     iconAccentYellow = PhotonColors.Yellow60,
     iconGradientStart = PhotonColors.Violet50,
     iconGradientEnd = PhotonColors.Blue60,
-    borderDefault = PhotonColors.LightGrey30,
+    borderPrimary = PhotonColors.LightGrey30,
     borderInverted = PhotonColors.DarkGrey05,
     borderFormDefault = PhotonColors.DarkGrey90,
     borderAccent = PhotonColors.Ink20,
@@ -187,6 +189,7 @@ class FirefoxColors(
     textDisabled: Color,
     textWarning: Color,
     textAccent: Color,
+    textAccentDisabled: Color,
     textOnColor: Color,
     textActionPrimary: Color,
     textActionSecondary: Color,
@@ -208,7 +211,7 @@ class FirefoxColors(
     iconAccentYellow: Color,
     iconGradientStart: Color,
     iconGradientEnd: Color,
-    borderDefault: Color,
+    borderPrimary: Color,
     borderInverted: Color,
     borderFormDefault: Color,
     borderAccent: Color,
@@ -301,6 +304,9 @@ class FirefoxColors(
     // Small heading, Text link
     var textAccent by mutableStateOf(textAccent)
         private set
+    // Small heading, Text link
+    var textAccentDisabled by mutableStateOf(textAccentDisabled)
+        private set
     // Text Inverted/On Color
     var textOnColor by mutableStateOf(textOnColor)
         private set
@@ -365,7 +371,7 @@ class FirefoxColors(
     // Border
 
     // Default, Divider, Dotted
-    var borderDefault by mutableStateOf(borderDefault)
+    var borderPrimary by mutableStateOf(borderPrimary)
         private set
     // Onboarding
     var borderInverted by mutableStateOf(borderInverted)
@@ -411,6 +417,7 @@ class FirefoxColors(
         textDisabled = other.textDisabled
         textWarning = other.textWarning
         textAccent = other.textAccent
+        textAccentDisabled = other.textAccentDisabled
         textOnColor = other.textOnColor
         textActionPrimary = other.textActionPrimary
         textActionSecondary = other.textSecondary
@@ -432,7 +439,7 @@ class FirefoxColors(
         iconAccentYellow = other.iconAccentYellow
         iconGradientStart = other.iconGradientStart
         iconGradientEnd = other.iconGradientEnd
-        borderDefault = other.borderDefault
+        borderPrimary = other.borderPrimary
         borderInverted = other.borderInverted
         borderFormDefault = other.borderFormDefault
         borderAccent = other.borderAccent
@@ -468,6 +475,7 @@ class FirefoxColors(
         textDisabled = textDisabled,
         textWarning = textWarning,
         textAccent = textAccent,
+        textAccentDisabled = textAccentDisabled,
         textOnColor = textOnColor,
         textActionPrimary = textActionPrimary,
         textActionSecondary = textActionSecondary,
@@ -489,7 +497,7 @@ class FirefoxColors(
         iconAccentYellow = iconAccentYellow,
         iconGradientStart = iconGradientStart,
         iconGradientEnd = iconGradientEnd,
-        borderDefault = borderDefault,
+        borderPrimary = borderPrimary,
         borderInverted = borderInverted,
         borderFormDefault = borderFormDefault,
         borderAccent = borderAccent,
