@@ -281,7 +281,7 @@ private fun WallpaperLogoSwitch(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = stringResource(R.string.wallpaper_tap_to_change_switch_label),
+                text = stringResource(R.string.wallpaper_tap_to_change_switch_label_1),
                 color = FirefoxTheme.colors.textPrimary,
                 fontSize = 18.sp,
                 modifier = Modifier.padding(start = 4.dp)
@@ -296,14 +296,6 @@ private fun WallpaperLogoSwitch(
                 )
             )
         }
-
-        Text(
-            text = stringResource(R.string.wallpaper_tap_to_change_switch_description),
-            color = FirefoxTheme.colors.textDisabled,
-            fontSize = 12.sp,
-            fontFamily = FontFamily(Font(R.font.metropolis_semibold)),
-            modifier = Modifier.padding(start = 8.dp, end = 42.dp, top = 16.dp)
-        )
     }
 }
 
