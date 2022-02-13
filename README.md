@@ -6,6 +6,8 @@
 Fenix (internal codename) is the all-new Firefox for Android browser, based on [GeckoView](https://mozilla.github.io/geckoview/) and [Mozilla Android Components](https://mozac.org/).
 
 <a href="https://play.google.com/store/apps/details?id=org.mozilla.firefox" target="_blank"><img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" alt="Get it on Google Play" height="90"/></a>
+<a href="https://galaxystore.samsung.com/detail/org.mozilla.firefox" target="_blank"><img src="https://d3unf4s5rp9dfh.cloudfront.net/SDP/GalaxyStore_English.png" alt="Available on Galaxy Store" height="90"/></a>
+
 
 ## Getting Involved
 
