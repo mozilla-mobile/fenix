@@ -212,7 +212,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
             }
 
             share(shareTabs)
-
+            historyStore.dispatch(HistoryFragmentAction.ExitEditMode)
             true
         }
         R.id.delete_history_multi_select -> {
@@ -227,6 +227,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
             }
 
             showTabTray()
+            historyStore.dispatch(HistoryFragmentAction.ExitEditMode)
             true
         }
         R.id.open_history_in_private_tabs_multi_select -> {
@@ -241,6 +242,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
             }
 
             showTabTray()
+            historyStore.dispatch(HistoryFragmentAction.ExitEditMode)
             true
         }
         R.id.history_search -> {
