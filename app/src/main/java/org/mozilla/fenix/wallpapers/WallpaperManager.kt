@@ -239,7 +239,14 @@ class WallpaperManager(
             Wallpaper.Local.Firefox("cerulean", R.drawable.cerulean),
             Wallpaper.Local.Firefox("sunrise", R.drawable.sunrise),
         )
-        private val remoteWallpapers: List<Wallpaper.Remote> = emptyList()
+        private val remoteWallpapers: List<Wallpaper.Remote> = listOf(
+            Wallpaper.Remote.House(
+                "panda",
+            ),
+            Wallpaper.Remote.House(
+                "mei",
+            ),
+        )
         private val availableWallpapers = listOf(defaultWallpaper) + localWallpapers + remoteWallpapers
         private const val ANIMATION_DELAY_MS = 1500L
     }
