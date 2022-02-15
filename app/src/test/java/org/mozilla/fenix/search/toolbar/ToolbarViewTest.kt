@@ -13,6 +13,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
+import kotlinx.coroutines.test.TestScope
 import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.browser.toolbar.edit.EditToolbar
 import mozilla.components.concept.engine.Engine
@@ -161,6 +162,7 @@ class ToolbarViewTest {
         isPrivate = isPrivate,
         view = toolbar,
         engine = engine,
-        fromHomeFragment = false
+        fromHomeFragment = false,
+        TestScope()
     )
 }

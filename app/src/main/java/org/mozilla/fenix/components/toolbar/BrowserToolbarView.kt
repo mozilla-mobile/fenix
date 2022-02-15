@@ -15,6 +15,8 @@ import androidx.annotation.VisibleForTesting
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.coroutineScope
+import kotlinx.coroutines.launch
 import mozilla.components.browser.domains.autocomplete.ShippedDomainsProvider
 import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.browser.state.state.CustomTabSessionState
@@ -175,7 +177,11 @@ class BrowserToolbarView(
                     this,
                     view,
                     menuToolbar,
-                    ShippedDomainsProvider().also { it.initialize(this) },
+                    ShippedDomainsProvider().also {
+                        lifecycleOwner.lifecycle.coroutineScope.launch {
+                            it.initialize(this@with)
+                        }
+                    },
                     components.core.historyStorage,
                     lifecycleOwner,
                     sessionId = null,

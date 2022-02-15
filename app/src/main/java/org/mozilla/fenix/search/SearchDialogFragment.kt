@@ -196,7 +196,8 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             isPrivate,
             binding.toolbar,
             requireComponents.core.engine,
-            fromHomeFragment
+            fromHomeFragment,
+            lifecycleScope
         ).also {
             inlineAutocompleteEditText = it.view.findViewById(R.id.mozac_browser_toolbar_edit_url_view)
         }

@@ -10,6 +10,8 @@ import android.graphics.drawable.BitmapDrawable
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import mozilla.components.browser.domains.autocomplete.ShippedDomainsProvider
 import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.concept.engine.Engine
@@ -59,7 +61,8 @@ class ToolbarView(
     private val isPrivate: Boolean,
     val view: BrowserToolbar,
     engine: Engine,
-    fromHomeFragment: Boolean
+    fromHomeFragment: Boolean,
+    lifecycleScope: CoroutineScope
 ) {
 
     @VisibleForTesting
@@ -121,7 +124,9 @@ class ToolbarView(
                 view,
                 engineForSpeculativeConnects
             ).apply {
-                addDomainProvider(ShippedDomainsProvider().also { it.initialize(view.context) })
+                addDomainProvider(ShippedDomainsProvider().also {
+                    lifecycleScope.launch { it.initialize(view.context) } }
+                )
                 historyStorage?.also(::addHistoryStorageProvider)
             }
         }

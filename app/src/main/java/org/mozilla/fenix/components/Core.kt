@@ -340,7 +340,7 @@ class Core(
     }
     val pocketStoriesService by lazyMonitored { PocketStoriesService(context, pocketStoriesConfig) }
 
-    val contileTopSitesProvider by lazyMonitored { ContileTopSitesProvider(client) }
+    val contileTopSitesProvider by lazyMonitored { ContileTopSitesProvider(context, client) }
 
     val topSitesStorage by lazyMonitored {
         val defaultTopSites = mutableListOf<Pair<String, String>>()
