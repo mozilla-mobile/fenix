@@ -36,6 +36,7 @@ import org.mozilla.fenix.NavHostActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.addons.showSnackBar
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
+import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.history.DefaultPagedHistoryProvider
 import org.mozilla.fenix.components.metrics.Event
@@ -57,6 +58,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
 
     private var undoScope: CoroutineScope? = null
     private var pendingHistoryDeletionJob: (suspend () -> Unit)? = null
+    private var snackbar: FenixSnackbar? = null
 
     private var _historyView: HistoryView? = null
     private val historyView: HistoryView
@@ -132,7 +134,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
     private fun deleteHistoryItems(items: Set<History>) {
         updatePendingHistoryToDelete(items)
         undoScope = CoroutineScope(IO)
-        undoScope?.allowUndo(
+        snackbar = undoScope?.allowUndo(
             requireView(),
             getMultiSelectSnackBarMessage(items),
             getString(R.string.bookmark_undo_deletion),
@@ -281,6 +283,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
 
     override fun onPause() {
         invokePendingDeletion()
+        snackbar?.dismiss()
         super.onPause()
     }
 

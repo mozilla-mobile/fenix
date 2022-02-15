@@ -44,6 +44,8 @@ fun Context.getUndoDelay(): Long {
  * @param onCancel A suspend block to execute in case of cancellation.
  * @param operation A suspend block to execute if user doesn't cancel via the displayed [FenixSnackbar].
  * @param anchorView A [View] to which [FenixSnackbar] should be anchored.
+ *
+ * @return The [FenixSnackbar] created, used to dismiss it before the delay
  */
 @Suppress("LongParameterList")
 fun CoroutineScope.allowUndo(
@@ -55,13 +57,13 @@ fun CoroutineScope.allowUndo(
     anchorView: View? = null,
     elevation: Float? = null,
     paddedForBottomToolbar: Boolean = false
-) {
+): FenixSnackbar {
     // By using an AtomicBoolean, we achieve memory effects of reading and
     // writing a volatile variable.
     val requestedUndo = AtomicBoolean(false)
 
     @Suppress("ComplexCondition")
-    fun showUndoSnackbar() {
+    fun showUndoSnackbar(): FenixSnackbar {
         val snackbar = FenixSnackbar
             .make(
                 view = view,
@@ -114,7 +116,8 @@ fun CoroutineScope.allowUndo(
                 operation.invoke()
             }
         }
+        return snackbar
     }
 
-    showUndoSnackbar()
+    return showUndoSnackbar()
 }

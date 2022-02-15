@@ -41,6 +41,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.databinding.ComponentTabstray2Binding
@@ -93,7 +94,7 @@ class TabsTrayFragmentTest {
             every { any<LifecycleOwner>().lifecycleScope } returns lifecycleScope
             fabButtonBinding.newTabButton.isVisible = true
             every { fragment.context } returns testContext // needed for getString()
-            every { any<CoroutineScope>().allowUndo(any(), any(), any(), any(), any(), any(), any(), any()) } just Runs
+            every { any<CoroutineScope>().allowUndo(any(), any(), any(), any(), any(), any(), any(), any()) } returns mockk()
 
             fragment.showUndoSnackbarForTab(true)
 
@@ -123,7 +124,7 @@ class TabsTrayFragmentTest {
             val lifecycleScope: LifecycleCoroutineScope = mockk(relaxed = true)
             every { any<LifecycleOwner>().lifecycleScope } returns lifecycleScope
             every { fragment.context } returns testContext // needed for getString()
-            every { any<CoroutineScope>().allowUndo(any(), any(), any(), any(), any(), any(), any(), any()) } just Runs
+            every { any<CoroutineScope>().allowUndo(any(), any(), any(), any(), any(), any(), any(), any()) } returns mockk()
 
             fragment.showUndoSnackbarForTab(true)
 
@@ -154,7 +155,7 @@ class TabsTrayFragmentTest {
             every { any<LifecycleOwner>().lifecycleScope } returns lifecycleScope
             fabButtonBinding.newTabButton.isVisible = true
             every { fragment.context } returns testContext // needed for getString()
-            every { any<CoroutineScope>().allowUndo(any(), any(), any(), any(), any(), any(), any(), any()) } just Runs
+            every { any<CoroutineScope>().allowUndo(any(), any(), any(), any(), any(), any(), any(), any()) } returns mockk()
 
             fragment.showUndoSnackbarForTab(false)
 
@@ -182,9 +183,10 @@ class TabsTrayFragmentTest {
             mockkStatic("org.mozilla.fenix.utils.UndoKt")
             mockkStatic("androidx.lifecycle.LifecycleOwnerKt")
             val lifecycleScope: LifecycleCoroutineScope = mockk(relaxed = true)
+            val snackbar: FenixSnackbar = mockk(relaxed = true)
             every { any<LifecycleOwner>().lifecycleScope } returns lifecycleScope
             every { fragment.context } returns testContext // needed for getString()
-            every { any<CoroutineScope>().allowUndo(any(), any(), any(), any(), any(), any(), any(), any()) } just Runs
+            every { any<CoroutineScope>().allowUndo(any(), any(), any(), any(), any(), any(), any(), any()) } returns snackbar
 
             fragment.showUndoSnackbarForTab(false)
 

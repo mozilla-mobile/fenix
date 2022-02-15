@@ -67,6 +67,7 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
     private val sharedViewModel: BookmarksSharedViewModel by activityViewModels()
     private val desktopFolders by lazy { DesktopFolders(requireContext(), showMobileRoot = false) }
 
+    private var snackbar: FenixSnackbar? = null
     private var pendingBookmarkDeletionJob: (suspend () -> Unit)? = null
     private var pendingBookmarksToDelete: MutableSet<BookmarkNode> = mutableSetOf()
 
@@ -283,6 +284,7 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
 
     override fun onPause() {
         invokePendingDeletion()
+        snackbar?.dismiss()
         super.onPause()
     }
 
@@ -321,7 +323,7 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
             else -> throw IllegalStateException("Illegal event type in onDeleteSome")
         }
 
-        viewLifecycleOwner.lifecycleScope.allowUndo(
+        snackbar = viewLifecycleOwner.lifecycleScope.allowUndo(
             requireView(), message,
             getString(R.string.bookmark_undo_deletion),
             {
@@ -379,7 +381,7 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
                     dialog.dismiss()
                     val snackbarMessage = getRemoveBookmarksSnackBarMessage(selected, containsFolders = true)
                     // Use fragment's lifecycle; the view may be gone by the time dialog is interacted with.
-                    lifecycleScope.allowUndo(
+                    snackbar = lifecycleScope.allowUndo(
                         requireView(),
                         snackbarMessage,
                         getString(R.string.bookmark_undo_deletion),

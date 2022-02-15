@@ -26,6 +26,7 @@ import mozilla.components.support.base.feature.UserInteractionHandler
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
+import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.databinding.FragmentDownloadsBinding
 import org.mozilla.fenix.ext.components
@@ -44,6 +45,7 @@ class DownloadFragment : LibraryPageFragment<DownloadItem>(), UserInteractionHan
     private var undoScope: CoroutineScope? = null
     private var pendingDownloadDeletionJob: (suspend () -> Unit)? = null
     private lateinit var downloadsUseCases: DownloadsUseCases
+    private var snackbar: FenixSnackbar? = null
 
     private var _binding: FragmentDownloadsBinding? = null
     private val binding get() = _binding!!
@@ -129,7 +131,7 @@ class DownloadFragment : LibraryPageFragment<DownloadItem>(), UserInteractionHan
     private fun deleteDownloadItems(items: Set<DownloadItem>) {
         updatePendingDownloadToDelete(items)
         undoScope = CoroutineScope(IO)
-        undoScope?.allowUndo(
+        snackbar = undoScope?.allowUndo(
             requireView(),
             getMultiSelectSnackBarMessage(items),
             getString(R.string.bookmark_undo_deletion),
@@ -205,6 +207,7 @@ class DownloadFragment : LibraryPageFragment<DownloadItem>(), UserInteractionHan
 
     override fun onPause() {
         invokePendingDeletion()
+        snackbar?.dismiss()
         super.onPause()
     }
 
