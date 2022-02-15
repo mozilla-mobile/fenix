@@ -5,6 +5,7 @@
 package org.mozilla.fenix.wallpapers
 
 import androidx.annotation.DrawableRes
+import java.util.Calendar
 import java.util.Date
 
 /**
@@ -49,6 +50,16 @@ sealed class Wallpaper {
         abstract val remoteParentDirName: String
         data class Focus(override val name: String, override val expirationDate: Date? = null) : Remote() {
             override val remoteParentDirName: String = "focus"
+        }
+        @Suppress("MagicNumber")
+        data class House(
+            override val name: String,
+            override val expirationDate: Date? = Calendar.getInstance().run {
+                set(2022, Calendar.APRIL, 30)
+                time
+            }
+        ) : Remote() {
+            override val remoteParentDirName: String = "house"
         }
     }
 

@@ -103,7 +103,6 @@ object FeatureFlags {
     fun isThemedWallpapersFeatureEnabled(context: Context): Boolean {
         val langTag = LocaleManager.getCurrentLocale(context)
             ?.toLanguageTag() ?: getSystemDefault().toLanguageTag()
-        return Config.channel.isNightlyOrDebug &&
-            listOf("en-US", "es-US").contains(langTag)
+        return listOf("en-US", "es-US").contains(langTag)
     }
 }
