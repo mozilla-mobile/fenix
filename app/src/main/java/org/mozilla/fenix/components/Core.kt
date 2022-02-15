@@ -38,6 +38,7 @@ import mozilla.components.feature.pwa.ManifestStorage
 import mozilla.components.feature.pwa.WebAppShortcutManager
 import mozilla.components.feature.readerview.ReaderViewMiddleware
 import mozilla.components.feature.recentlyclosed.RecentlyClosedMiddleware
+import mozilla.components.feature.recentlyclosed.RecentlyClosedTabsStorage
 import mozilla.components.feature.search.middleware.AdsTelemetryMiddleware
 import mozilla.components.feature.search.middleware.SearchMiddleware
 import mozilla.components.feature.search.region.RegionMiddleware
@@ -193,7 +194,7 @@ class Core(
         val middlewareList =
             mutableListOf(
                 LastAccessMiddleware(),
-                RecentlyClosedMiddleware(context, RECENTLY_CLOSED_MAX, engine),
+                RecentlyClosedMiddleware(recentlyClosedTabsStorage, RECENTLY_CLOSED_MAX),
                 DownloadMiddleware(context, DownloadService::class.java),
                 ReaderViewMiddleware(),
                 TelemetryMiddleware(
@@ -311,6 +312,8 @@ class Core(
      */
     val lazyRemoteTabsStorage = lazyMonitored { RemoteTabsStorage() }
 
+    val recentlyClosedTabsStorage = lazyMonitored { RecentlyClosedTabsStorage(context, engine, crashReporter) }
+
     // For most other application code (non-startup), these wrappers are perfectly fine and more ergonomic.
     val historyStorage: PlacesHistoryStorage get() = lazyHistoryStorage.value
     val bookmarksStorage: PlacesBookmarksStorage get() = lazyBookmarksStorage.value
@@ -337,7 +340,13 @@ class Core(
     }
     val pocketStoriesService by lazyMonitored { PocketStoriesService(context, pocketStoriesConfig) }
 
-    val contileTopSitesProvider by lazyMonitored { ContileTopSitesProvider(client) }
+    val contileTopSitesProvider by lazyMonitored {
+        ContileTopSitesProvider(
+            context = context,
+            client = client,
+            maxCacheAgeInMinutes = CONTILE_MAX_CACHE_AGE
+        )
+    }
 
     val topSitesStorage by lazyMonitored {
         val defaultTopSites = mutableListOf<Pair<String, String>>()
@@ -456,10 +465,9 @@ class Core(
     }
 
     companion object {
-        private const val KEY_STRENGTH = 256
         private const val KEY_STORAGE_NAME = "core_prefs"
-        private const val PASSWORDS_KEY = "passwords"
         private const val RECENTLY_CLOSED_MAX = 10
         const val HISTORY_METADATA_MAX_AGE_IN_MS = 14 * 24 * 60 * 60 * 1000 // 14 days
+        private const val CONTILE_MAX_CACHE_AGE = 60L // 60 minutes
     }
 }
