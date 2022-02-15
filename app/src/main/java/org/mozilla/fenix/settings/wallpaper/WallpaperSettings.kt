@@ -11,17 +11,18 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.LazyVerticalGrid
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Snackbar
 import androidx.compose.material.SnackbarDuration
@@ -33,10 +34,16 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
@@ -60,6 +67,9 @@ import java.util.Locale
  *
  * @param wallpapers Wallpapers to add to grid.
  * @param selectedWallpaper The currently selected wallpaper.
+ * @param defaultWallpaper The default wallpaper
+ * @param loadWallpaperResource Callback to handle loading a wallpaper bitmap. Only optional in the
+ *   default case.
  * @param onSelectWallpaper Callback for when a new wallpaper is selected.
  * @param onViewWallpaper Callback for when the view action is clicked from snackbar.
  * @param tapLogoSwitchChecked Enabled state for switch controlling taps to change wallpaper.
@@ -89,7 +99,7 @@ fun WallpaperSettings(
             }
         },
     ) {
-        Column {
+        Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
             WallpaperThumbnails(
                 wallpapers = wallpapers,
                 defaultWallpaper = defaultWallpaper,
@@ -153,6 +163,9 @@ private fun WallpaperSnackbar(
  * A grid of selectable wallpaper thumbnails.
  *
  * @param wallpapers Wallpapers to add to grid.
+ * @param defaultWallpaper The default wallpaper
+ * @param loadWallpaperResource Callback to handle loading a wallpaper bitmap. Only optional in the
+ *   default case.
  * @param selectedWallpaper The currently selected wallpaper.
  * @param numColumns The number of columns that will occupy the grid.
  * @param onSelectWallpaper Action to take when a new wallpaper is selected.
@@ -169,18 +182,29 @@ private fun WallpaperThumbnails(
     onSelectWallpaper: (Wallpaper) -> Unit,
 ) {
     Surface(color = FirefoxTheme.colors.layer2) {
-        LazyVerticalGrid(
-            cells = GridCells.Fixed(numColumns),
-            modifier = Modifier.padding(vertical = 30.dp, horizontal = 20.dp)
-        ) {
-            items(wallpapers) { wallpaper ->
-                WallpaperThumbnailItem(
-                    wallpaper = wallpaper,
-                    defaultWallpaper = defaultWallpaper,
-                    loadWallpaperResource = loadWallpaperResource,
-                    isSelected = selectedWallpaper == wallpaper,
-                    onSelect = onSelectWallpaper
-                )
+        Column(modifier = Modifier.padding(vertical = 30.dp, horizontal = 20.dp)) {
+            val numRows = (wallpapers.size + numColumns - 1) / numColumns
+            for (rowIndex in 0 until numRows) {
+                Row {
+                    for (columnIndex in 0 until numColumns) {
+                        val itemIndex = rowIndex * numColumns + columnIndex
+                        if (itemIndex < wallpapers.size) {
+                            Box(
+                                modifier = Modifier.weight(1f, fill = true).padding(4.dp),
+                            ) {
+                                WallpaperThumbnailItem(
+                                    wallpaper = wallpapers[itemIndex],
+                                    defaultWallpaper = defaultWallpaper,
+                                    loadWallpaperResource = loadWallpaperResource,
+                                    isSelected = selectedWallpaper == wallpapers[itemIndex],
+                                    onSelect = onSelectWallpaper
+                                )
+                            }
+                        } else {
+                            Spacer(Modifier.weight(1f))
+                        }
+                    }
+                }
             }
         }
     }
@@ -204,6 +228,10 @@ private fun WallpaperThumbnailItem(
     aspectRatio: Float = 1.1f,
     onSelect: (Wallpaper) -> Unit
 ) {
+    var bitmap by remember { mutableStateOf(loadWallpaperResource(wallpaper)) }
+    DisposableEffect(LocalConfiguration.current.orientation) {
+        onDispose { bitmap = loadWallpaperResource(wallpaper) }
+    }
     val thumbnailShape = RoundedCornerShape(8.dp)
     val border = if (isSelected) {
         Modifier.border(
@@ -214,9 +242,9 @@ private fun WallpaperThumbnailItem(
         Modifier
     }
 
-    val bitmap = loadWallpaperResource(wallpaper)
     // Completely avoid drawing the item if a bitmap cannot be loaded and is required
     if (bitmap == null && wallpaper != defaultWallpaper) return
+
     Surface(
         elevation = 4.dp,
         shape = thumbnailShape,
@@ -224,13 +252,12 @@ private fun WallpaperThumbnailItem(
         modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(aspectRatio)
-            .padding(4.dp)
             .then(border)
             .clickable { onSelect(wallpaper) }
     ) {
-        if (bitmap != null) {
+        bitmap?.let {
             Image(
-                bitmap = bitmap.asImageBitmap(),
+                bitmap = it.asImageBitmap(),
                 contentScale = ContentScale.FillBounds,
                 contentDescription = stringResource(
                     R.string.wallpapers_item_name_content_description, wallpaper.name
@@ -254,7 +281,7 @@ private fun WallpaperLogoSwitch(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = stringResource(R.string.wallpaper_tap_to_change_switch_label),
+                text = stringResource(R.string.wallpaper_tap_to_change_switch_label_1),
                 color = FirefoxTheme.colors.textPrimary,
                 fontSize = 18.sp,
                 modifier = Modifier.padding(start = 4.dp)
@@ -269,14 +296,6 @@ private fun WallpaperLogoSwitch(
                 )
             )
         }
-
-        Text(
-            text = stringResource(R.string.wallpaper_tap_to_change_switch_description),
-            color = FirefoxTheme.colors.textDisabled,
-            fontSize = 12.sp,
-            fontFamily = FontFamily(Font(R.font.metropolis_semibold)),
-            modifier = Modifier.padding(start = 8.dp, end = 42.dp, top = 16.dp)
-        )
     }
 }
 

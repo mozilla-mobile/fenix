@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.home.sessioncontrol
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.widget.EditText
 import androidx.annotation.VisibleForTesting
@@ -307,7 +308,13 @@ class DefaultSessionControlController(
     }
 
     override fun handleOpenInPrivateTabClicked(topSite: TopSite) {
-        metrics.track(Event.TopSiteOpenInPrivateTab)
+        metrics.track(
+            if (topSite is TopSite.Provided) {
+                Event.TopSiteOpenContileInPrivateTab
+            } else {
+                Event.TopSiteOpenInPrivateTab
+            }
+        )
         with(activity) {
             browsingModeManager.mode = BrowsingMode.Private
             openToBrowserAndLoad(
@@ -327,6 +334,7 @@ class DefaultSessionControlController(
         )
     }
 
+    @SuppressLint("InflateParams")
     override fun handleRenameTopSiteClicked(topSite: TopSite) {
         activity.let {
             val customLayout =
@@ -388,11 +396,14 @@ class DefaultSessionControlController(
 
         metrics.track(Event.TopSiteOpenInNewTab)
 
-        when (topSite) {
-            is TopSite.Default -> metrics.track(Event.TopSiteOpenDefault)
-            is TopSite.Frecent -> metrics.track(Event.TopSiteOpenFrecent)
-            is TopSite.Pinned -> metrics.track(Event.TopSiteOpenPinned)
-        }
+        metrics.track(
+            when (topSite) {
+                is TopSite.Default -> Event.TopSiteOpenDefault
+                is TopSite.Frecent -> Event.TopSiteOpenFrecent
+                is TopSite.Pinned -> Event.TopSiteOpenPinned
+                is TopSite.Provided -> Event.TopSiteOpenProvided
+            }
+        )
 
         when (topSite.url) {
             SupportUtils.GOOGLE_URL -> metrics.track(Event.TopSiteOpenGoogle)
@@ -425,6 +436,7 @@ class DefaultSessionControlController(
     }
 
     override fun handleTopSiteSettingsClicked() {
+        metrics.track(Event.TopSiteContileSettings)
         navController.nav(
             R.id.homeFragment,
             HomeFragmentDirections.actionGlobalHomeSettingsFragment()
@@ -432,6 +444,7 @@ class DefaultSessionControlController(
     }
 
     override fun handleSponsorPrivacyClicked() {
+        metrics.track(Event.TopSiteContilePrivacy)
         activity.openToBrowserAndLoad(
             searchTermOrURL = SupportUtils.getGenericSumoURLForTopic(SupportUtils.SumoTopic.SPONSOR_PRIVACY),
             newTab = true,

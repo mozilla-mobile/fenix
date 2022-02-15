@@ -25,6 +25,7 @@ import mozilla.components.browser.state.state.ReaderState
 import mozilla.components.browser.state.state.SearchState
 import mozilla.components.browser.state.state.createTab
 import mozilla.components.browser.state.state.recover.RecoverableTab
+import mozilla.components.browser.state.state.recover.TabState
 import mozilla.components.browser.state.state.selectedOrDefaultSearchEngine
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.Engine
@@ -212,22 +213,24 @@ class DefaultSessionControlControllerTest {
     @Test
     fun `handleCollectionOpenTabClicked with existing selected tab`() {
         val recoverableTab = RecoverableTab(
-            id = "test",
-            parentId = null,
-            url = "https://www.mozilla.org",
-            title = "Mozilla",
-            state = null,
-            contextId = null,
-            readerState = ReaderState(),
-            lastAccess = 0,
-            private = false
+            engineSessionState = null,
+            state = TabState(
+                id = "test",
+                parentId = null,
+                url = "https://www.mozilla.org",
+                title = "Mozilla",
+                contextId = null,
+                readerState = ReaderState(),
+                lastAccess = 0,
+                private = false
+            )
         )
 
         val tab = mockk<ComponentTab> {
             every { restore(activity, engine, restoreSessionId = false) } returns recoverableTab
         }
 
-        val restoredTab = createTab(id = recoverableTab.id, url = recoverableTab.url)
+        val restoredTab = createTab(id = recoverableTab.state.id, url = recoverableTab.state.url)
         val otherTab = createTab(id = "otherTab", url = "https://mozilla.org")
         store.dispatch(TabListAction.AddTabAction(otherTab)).joinBlocking()
         store.dispatch(TabListAction.SelectTabAction(otherTab.id)).joinBlocking()
@@ -243,22 +246,24 @@ class DefaultSessionControlControllerTest {
     @Test
     fun `handleCollectionOpenTabClicked without existing selected tab`() {
         val recoverableTab = RecoverableTab(
-            id = "test",
-            parentId = null,
-            url = "https://www.mozilla.org",
-            title = "Mozilla",
-            state = null,
-            contextId = null,
-            readerState = ReaderState(),
-            lastAccess = 0,
-            private = false
+            engineSessionState = null,
+            state = TabState(
+                id = "test",
+                parentId = null,
+                url = "https://www.mozilla.org",
+                title = "Mozilla",
+                contextId = null,
+                readerState = ReaderState(),
+                lastAccess = 0,
+                private = false
+            )
         )
 
         val tab = mockk<ComponentTab> {
             every { restore(activity, engine, restoreSessionId = false) } returns recoverableTab
         }
 
-        val restoredTab = createTab(id = recoverableTab.id, url = recoverableTab.url)
+        val restoredTab = createTab(id = recoverableTab.state.id, url = recoverableTab.state.url)
         store.dispatch(TabListAction.AddTabAction(restoredTab)).joinBlocking()
 
         createController().handleCollectionOpenTabClicked(tab)
@@ -680,6 +685,35 @@ class DefaultSessionControlControllerTest {
     }
 
     @Test
+    fun handleSelectProvidedTopSite() {
+        val topSite = TopSite.Provided(
+            id = 1L,
+            title = "Mozilla",
+            url = "mozilla.org",
+            clickUrl = "",
+            imageUrl = "",
+            impressionUrl = "",
+            createdAt = 0
+        )
+        val controller = spyk(createController())
+
+        every { controller.getAvailableSearchEngines() } returns listOf(searchEngine)
+
+        controller.handleSelectTopSite(topSite)
+
+        verify { metrics.track(Event.TopSiteOpenInNewTab) }
+        verify { metrics.track(Event.TopSiteOpenProvided) }
+        verify {
+            tabsUseCases.addTab.invoke(
+                url = topSite.url,
+                selectTab = true,
+                startLoading = true
+            )
+        }
+        verify { activity.openToBrowser(BrowserDirection.FromHome) }
+    }
+
+    @Test
     fun handleStartBrowsingClicked() {
         var hideOnboardingInvoked = false
         createController(hideOnboarding = { hideOnboardingInvoked = true }).handleStartBrowsingClicked()
@@ -932,9 +966,12 @@ class DefaultSessionControlControllerTest {
     }
 
     @Test
-    fun `WHEN handleTopSiteSettingsClicked is called THEN navigate to the HomeSettingsFragment`() {
+    fun `WHEN handleTopSiteSettingsClicked is called THEN navigate to the HomeSettingsFragment AND report the interaction`() {
         createController().handleTopSiteSettingsClicked()
 
+        verify {
+            metrics.track(Event.TopSiteContileSettings)
+        }
         verify {
             navController.navigate(
                 match<NavDirections> {
@@ -946,15 +983,66 @@ class DefaultSessionControlControllerTest {
     }
 
     @Test
-    fun `WHEN handleSponsorPrivacyClicked is called THEN `() {
+    fun `WHEN handleSponsorPrivacyClicked is called THEN navigate to the privacy webpage AND report the interaction`() {
         createController().handleSponsorPrivacyClicked()
 
+        verify {
+            metrics.track(Event.TopSiteContilePrivacy)
+        }
         verify {
             activity.openToBrowserAndLoad(
                 searchTermOrURL = SupportUtils.getGenericSumoURLForTopic(SupportUtils.SumoTopic.SPONSOR_PRIVACY),
                 newTab = true,
                 from = BrowserDirection.FromHome
             )
+        }
+    }
+
+    @Test
+    fun `WHEN handleOpenInPrivateTabClicked is called with a TopSite#Provided site THEN Event#TopSiteOpenContileInPrivateTab is reported`() {
+        val topSite = TopSite.Provided(
+            id = 1L,
+            title = "Mozilla",
+            url = "mozilla.org",
+            clickUrl = "",
+            imageUrl = "",
+            impressionUrl = "",
+            createdAt = 0
+        )
+        createController().handleOpenInPrivateTabClicked(topSite)
+
+        verify {
+            metrics.track(Event.TopSiteOpenContileInPrivateTab)
+        }
+    }
+
+    @Test
+    fun `WHEN handleOpenInPrivateTabClicked is called with a Default, Pinned, or Frecent top site THEN TopSiteOpenInPrivateTab event is reported`() {
+        val controller = createController()
+        val topSite1 = TopSite.Default(
+            id = 1L,
+            title = "Mozilla",
+            url = "mozilla.org",
+            createdAt = 0
+        )
+        val topSite2 = TopSite.Pinned(
+            id = 1L,
+            title = "Mozilla",
+            url = "mozilla.org",
+            createdAt = 0
+        )
+        val topSite3 = TopSite.Frecent(
+            id = 1L,
+            title = "Mozilla",
+            url = "mozilla.org",
+            createdAt = 0
+        )
+        controller.handleOpenInPrivateTabClicked(topSite1)
+        controller.handleOpenInPrivateTabClicked(topSite2)
+        controller.handleOpenInPrivateTabClicked(topSite3)
+
+        verify(exactly = 3) {
+            metrics.track(Event.TopSiteOpenInPrivateTab)
         }
     }
 
