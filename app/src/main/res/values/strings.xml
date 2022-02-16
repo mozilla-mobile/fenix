@@ -165,7 +165,7 @@
     <!-- Browser menu toggle that installs a Progressive Web App shortcut to the site on the device home screen. -->
     <string name="browser_menu_install_on_homescreen">Install</string>
     <!-- Menu option on the toolbar that takes you to synced tabs page-->
-    <string name="synced_tabs">Synced tabs</string>
+    <string name="synced_tabs" moz:removedIn="98" tools:ignore="UnusedResources">Synced tabs</string>
     <!-- Content description (not visible, for screen readers etc.) for the Resync tabs button -->
     <string name="resync_button_content_description">Resync</string>
     <!-- Browser menu button that opens the find in page menu -->
@@ -706,7 +706,9 @@
 
     <!-- History -->
     <!-- Text for the button to search all history -->
-    <string name="history_search">Enter search terms</string>
+    <string name="history_search" moz:removedIn="99" tools:ignore="UnusedResources">Enter search term</string>
+    <!-- Text for the button to search all history -->
+    <string name="history_search_1">Enter search terms</string>
     <!-- Text for the button to clear all history -->
     <string name="history_delete_all">Delete history</string>
     <!-- Text for the snackbar to confirm that multiple browsing history items has been deleted -->
