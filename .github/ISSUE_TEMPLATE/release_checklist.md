@@ -11,17 +11,17 @@ The [Firefox for Android release schedule](https://docs.google.com/spreadsheets/
 - Sentry access
 
 ## Firefox for Android Release
-There are two releases this covers: the current changes in the Fenix Nightly channel that is going out to Beta, and the previous Beta that is going to Production.
+There are two releases this covers: the current changes in the Fenix Nightly channel that is going out to Beta, and the current Beta that is going to Production.
 
 ## Cutting a Beta
 
 - [ ] Review [FeatureFlags](https://github.com/mozilla-mobile/fenix/blob/main/app/src/main/java/org/mozilla/fenix/FeatureFlags.kt) to determine if there are features that need to be enabled (or disabled) for Beta and Production release of Fenix. This will be a discussion with PO, PMs, EMs.
 - [ ] Make a new Beta: Follow instructions [here](https://github.com/mozilla-mobile/fenix/wiki/Creating-a-release-branch) and notify the Release Management team (slack: #releaseduty-mobile). QA team is notified that a Beta release has been captured and they will run tests for Beta release sign-off
 - [ ] Once there is GREEN QA signoff, the Release Management team (slack: #releaseduty-mobile) pushes the Beta version in the [Google Play Console](https://play.google.com/console/)
-- [ ] Check Sentry each day for issues on [Firefox Beta](https://sentry.prod.mozaws.net/operations/firefox-beta/) and if nothing concerning, Release Management team bumps releases(5%, 25%, 100%)
+- [ ] Check Sentry each day for issues on [Firefox Beta](https://sentry.prod.mozaws.net/operations/firefox-beta/) and if nothing concerning, Release Management team bumps releases to 25%. Subsequent Beta builds are bumped to 100% assuming no blocking issues arise.
 ### Bugfix uplifts / Beta Product Integrity 
 - [ ] If bugs are considered release blocker then find someone to fix them on main and the milestone branch (cherry-pick / uplift)
-    - [ ] Add the uplift request to the appropriate row in the [Uplifts document](https://docs.google.com/spreadsheets/d/1qIvHpcQ3BqJtlzV5T4M1MhbWVxkNiG-ToeYnWEBW4-I/edit#gid=0). Ask for approval of uplift from release owner and then notify Release Management team (slack: #releaseduty-mobile) of the uplift changes
+    - [ ] Add the uplift request to the appropriate row in the [Uplifts document](https://docs.google.com/spreadsheets/d/1qIvHpcQ3BqJtlzV5T4M1MhbWVxkNiG-ToeYnWEBW4-I/edit#gid=0). Ask for approval of uplift from Release Owner [amedyne](https://github.com/amedyne) and then notify Release Management team (slack: #releaseduty-mobile) of the uplift changes
 - Note: Beta release versions are captured at least once a week during the Beta cycle.
 
 
