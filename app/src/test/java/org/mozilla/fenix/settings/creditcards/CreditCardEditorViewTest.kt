@@ -165,8 +165,10 @@ class CreditCardEditorViewTest {
 
         assertFalse(creditCardEditorView.validateForm())
         assertNotNull(fragmentCreditCardEditorBinding.cardNumberLayout.error)
-        assertEquals(fragmentCreditCardEditorBinding.cardNumberLayout.errorCurrentTextColors,
-            fragmentCreditCardEditorBinding.root.context.getColorFromAttr(R.attr.destructive))
+        assertEquals(
+            fragmentCreditCardEditorBinding.cardNumberLayout.errorCurrentTextColors,
+            fragmentCreditCardEditorBinding.root.context.getColorFromAttr(R.attr.destructive)
+        )
 
         verify(exactly = 0) {
             interactor.onSaveCreditCard(
@@ -188,8 +190,10 @@ class CreditCardEditorViewTest {
 
         assertFalse(creditCardEditorView.validateForm())
         assertNotNull(fragmentCreditCardEditorBinding.cardNumberLayout.error)
-        assertEquals(fragmentCreditCardEditorBinding.cardNumberLayout.errorCurrentTextColors,
-            fragmentCreditCardEditorBinding.root.context.getColorFromAttr(R.attr.destructive))
+        assertEquals(
+            fragmentCreditCardEditorBinding.cardNumberLayout.errorCurrentTextColors,
+            fragmentCreditCardEditorBinding.root.context.getColorFromAttr(R.attr.destructive)
+        )
 
         verify(exactly = 0) {
             interactor.onSaveCreditCard(
@@ -228,8 +232,10 @@ class CreditCardEditorViewTest {
 
         assertFalse(creditCardEditorView.validateForm())
         assertNotNull(fragmentCreditCardEditorBinding.nameOnCardLayout.error)
-        assertEquals(fragmentCreditCardEditorBinding.nameOnCardLayout.errorCurrentTextColors,
-            fragmentCreditCardEditorBinding.root.context.getColorFromAttr(R.attr.destructive))
+        assertEquals(
+            fragmentCreditCardEditorBinding.nameOnCardLayout.errorCurrentTextColors,
+            fragmentCreditCardEditorBinding.root.context.getColorFromAttr(R.attr.destructive)
+        )
 
         verify(exactly = 0) {
             interactor.onSaveCreditCard(
