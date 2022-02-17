@@ -148,7 +148,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
      * Note: Changing Settings screen before experiment is over requires changing all layouts.
      */
     private fun getPreferenceLayoutId() =
-        if (isDefaultBrowserExperimentBranch() && !isFirefoxDefaultBrowser()) {
+        if (isDefaultBrowserExperimentBranch()) {
             R.xml.preferences_default_browser_experiment
         } else {
             R.xml.preferences
@@ -227,6 +227,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         updateMakeDefaultBrowserPreference()
     }
 
+    @SuppressLint("InflateParams")
     @Suppress("ComplexMethod", "LongMethod")
     override fun onPreferenceTreeClick(preference: Preference): Boolean {
         // Hide the scrollbar so the animation looks smoother
@@ -473,9 +474,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
      */
     private fun getClickListenerForMakeDefaultBrowser(): Preference.OnPreferenceClickListener {
         return Preference.OnPreferenceClickListener {
-            if (isDefaultBrowserExperimentBranch() && !isFirefoxDefaultBrowser()) {
-                requireContext().metrics.track(Event.SetDefaultBrowserSettingsScreenClicked)
-            }
             activity?.openSetDefaultBrowserOption()
             true
         }
@@ -605,7 +603,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun isDefaultBrowserExperimentBranch(): Boolean =
-        FxNimbus.features.defaultBrowserMessage.value().messageLocation == MessageSurfaceId.SETTINGS
+        requireContext().settings().isDefaultBrowserMessageLocation(MessageSurfaceId.SETTINGS)
 
     private fun isFirefoxDefaultBrowser(): Boolean {
         val browsers = BrowsersCache.all(requireContext())

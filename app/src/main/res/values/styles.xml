@@ -14,7 +14,7 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowBackground">@color/fx_mobile_layer_color_1</item>
         <item name="android:colorEdgeEffect">@color/accent_normal_theme</item>
-        <item name="android:colorAccent">@color/primary_text_normal_theme</item>
+        <item name="android:colorAccent">@color/fx_mobile_text_color_primary</item>
         <item name="android:textColorPrimary">@color/state_list_text_color</item>
         <item name="android:textColorSecondary">@color/secondary_state_list_text_color</item>
         <item name="alertDialogStyle">@style/DialogStyleNormal</item>
@@ -25,9 +25,9 @@
         <item name="android:textColorLink">@color/fx_mobile_text_color_accent</item>
 
         <item name="mozacInputLayoutErrorTextColor"
-            tools:ignore="UnusedResources">@color/destructive_normal_theme</item>
+            tools:ignore="UnusedResources">@color/fx_mobile_text_color_warning</item>
         <item name="mozacInputLayoutErrorIconColor"
-            tools:ignore="UnusedResources">@color/destructive_normal_theme</item>
+            tools:ignore="UnusedResources">@color/fx_mobile_text_color_warning</item>
         <item name="mozacLoginSelectHeaderTextStyle" tools:ignore="UnusedResources">@style/SelectPromptHeaderTextStyle</item>
         <item name="mozacSelectCreditCardHeaderTextStyle" tools:ignore="UnusedResources">@style/SelectPromptHeaderTextStyle</item>
 
@@ -44,11 +44,11 @@
         <!-- Inactive track color(30% transparency) -->
         <item name="android:colorForeground">@color/toggle_off_track_normal_theme</item>
         <!-- sets the toolbar back button color, radio buttons / unselected checkboxes -->
-        <item name="colorControlNormal">@color/primary_text_normal_theme</item>
+        <item name="colorControlNormal">@color/fx_mobile_text_color_primary</item>
 
         <!-- Updated color attributes -->
-        <item name="primaryText">@color/primary_text_normal_theme</item>
-        <item name="secondaryText">@color/secondary_text_normal_theme</item>
+        <item name="primaryText">@color/fx_mobile_text_color_primary</item>
+        <item name="secondaryText">@color/fx_mobile_text_color_secondary</item>
         <item name="contrastText">@color/contrast_text_normal_theme</item>
         <item name="accent">@color/accent_normal_theme</item>
         <item name="accentBright">@color/photonViolet70</item>
@@ -59,8 +59,8 @@
         <item name="tabRing">@color/tab_ring_normal_theme</item>
         <item name="neutral">@color/neutral_normal_theme</item>
         <item name="neutralFaded">@color/neutral_faded_normal_theme</item>
-        <item name="destructive">@color/destructive_normal_theme</item>
-        <item name="disabled">@color/disabled_normal_theme</item>
+        <item name="destructive">@color/fx_mobile_text_color_warning</item>
+        <item name="disabled">@color/fx_mobile_text_color_disabled</item>
         <item name="scrimStart">@color/fx_mobile_layer_color_scrim_start</item>
         <item name="scrimEnd">@color/fx_mobile_layer_color_scrim_end</item>
         <item name="snackbar">@color/fx_mobile_action_color_primary</item>
@@ -68,7 +68,7 @@
         <item name="toolbarStartGradient">@color/fx_mobile_layer_color_1</item>
         <item name="toolbarCenterGradient">@color/fx_mobile_layer_color_1</item>
         <item name="toolbarEndGradient">@color/fx_mobile_layer_color_1</item>
-        <item name="toolbarDivider">@color/toolbar_divider_color_normal_theme</item>
+        <item name="toolbarDivider">@color/fx_mobile_border_color_primary</item>
         <item name="fillLinkFromClipboard">@color/fill_link_from_clipboard_normal_theme</item>
         <item name="syncDisconnected">@color/sync_disconnected_icon_fill_normal_theme</item>
         <item name="syncDisconnectedBackground">@color/sync_disconnected_background_normal_theme</item>
@@ -87,7 +87,7 @@
         <item name="recentlyUsedShareMenu">@color/recently_used_share_theme</item>
 
         <!-- Shared widget colors -->
-        <item name="mozac_primary_text_color">@color/primary_text_normal_theme</item>
+        <item name="mozac_primary_text_color">@color/fx_mobile_text_color_primary</item>
         <item name="mozac_caption_text_color">@color/caption_text_normal_theme</item>
         <item name="mozac_widget_favicon_background_color">@color/fx_mobile_layer_color_2</item>
         <item name="mozac_widget_favicon_border_color">@color/fx_mobile_border_color_primary</item>
@@ -105,7 +105,7 @@
         <item name="bottomBarBackground">@drawable/home_bottom_bar_background</item>
         <item name="bottomBarBackgroundTop">@drawable/home_bottom_bar_background_top</item>
         <item name="privateBrowsingButtonBackground">@android:color/transparent</item>
-        <item name="privateBrowsingButtonAccent">@color/primary_text_normal_theme</item>
+        <item name="privateBrowsingButtonAccent">@color/fx_mobile_text_color_primary</item>
 
         <item name="tabCounterTintColor">?primaryText</item>
     </style>
@@ -327,8 +327,8 @@
     </style>
 
     <style name="DestructiveButton" parent="NeutralButton">
-        <item name="iconTint">@color/destructive_normal_theme</item>
-        <item name="android:textColor">@color/destructive_normal_theme</item>
+        <item name="iconTint">@color/fx_mobile_text_color_warning</item>
+        <item name="android:textColor">@color/fx_mobile_text_color_warning</item>
     </style>
 
     <style name="PositiveButton" parent="NeutralButton">
@@ -467,7 +467,7 @@
 
     <style name="QuickSettingsLargeText.Icon">
         <item name="android:drawablePadding">8dp</item>
-        <item name="drawableEndCompat">@drawable/mozac_ic_arrowhead_right</item>
+        <item name="drawableEndCompat">@drawable/ic_arrowhead_right</item>
     </style>
 
     <style name="QuickSettingsText.Icon">
@@ -531,7 +531,7 @@
     <style name="ShareHeaderTextStyle">
         <item name="android:singleLine">true</item>
         <item name="android:textAllCaps">true</item>
-        <item name="android:textColor">@color/photonDarkGrey10</item>
+        <item name="android:textColor">?secondaryText</item>
         <item name="android:textSize">@dimen/share_header_text_size</item>
         <item name="android:textStyle">bold</item>
         <item name="fontFamily">@font/metropolis_semibold</item>
@@ -626,8 +626,6 @@
         <item name="cardBackgroundColor">?mozac_widget_favicon_background_color</item>
         <item name="cardCornerRadius">@dimen/top_sites_card_radius</item>
         <item name="cardElevation">@dimen/top_sites_card_elevation</item>
-        <item name="strokeColor">@color/top_sites_border_color</item>
-        <item name="strokeWidth">@dimen/top_sites_card_stroke_width</item>
     </style>
 
     <style name="topSiteFavicon">

@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.components.tips.providers
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
@@ -68,9 +69,10 @@ class MasterPasswordTipProvider(
             title = context.getString(R.string.mp_homescreen_tip_title),
             description = context.getString(R.string.mp_homescreen_tip_message),
             learnMoreURL = null,
-            titleDrawable = AppCompatResources.getDrawable(context, R.drawable.mozac_ic_login)
+            titleDrawable = AppCompatResources.getDrawable(context, R.drawable.ic_login)
         )
 
+    @SuppressLint("InflateParams")
     private fun showMasterPasswordMigration() {
         val dialogView = LayoutInflater.from(context).inflate(R.layout.mp_migration_dialog, null)
 
@@ -159,6 +161,7 @@ class MasterPasswordTipProvider(
         }
     }
 
+    @SuppressLint("InflateParams")
     private fun showFailureDialog() {
         val dialogView =
             LayoutInflater.from(context).inflate(R.layout.mp_migration_done_dialog, null)
@@ -214,6 +217,7 @@ class MasterPasswordTipProvider(
         }
     }
 
+    @SuppressLint("InflateParams")
     private fun showSuccessDialog() {
         dismissMPTip()
 

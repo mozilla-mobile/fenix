@@ -44,7 +44,7 @@ class FloatingActionButtonBinding(
                     shrink()
                     show()
                     contentDescription = context.getString(R.string.add_tab)
-                    setIconResource(R.drawable.mozac_ic_new)
+                    setIconResource(R.drawable.ic_new)
                     setOnClickListener {
                         browserTrayInteractor.onFabClicked(false)
                     }
@@ -56,7 +56,7 @@ class FloatingActionButtonBinding(
                     extend()
                     show()
                     contentDescription = context.getString(R.string.add_private_tab)
-                    setIconResource(R.drawable.mozac_ic_new)
+                    setIconResource(R.drawable.ic_new)
                     setOnClickListener {
                         browserTrayInteractor.onFabClicked(true)
                     }
@@ -70,6 +70,7 @@ class FloatingActionButtonBinding(
                             false -> R.string.tab_drawer_fab_sync
                         }
                     )
+                    contentDescription = context.getString(R.string.resync_button_content_description)
                     extend()
                     show()
                     setIconResource(R.drawable.ic_fab_sync)

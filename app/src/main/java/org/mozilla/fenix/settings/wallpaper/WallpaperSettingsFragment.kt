@@ -19,6 +19,7 @@ import androidx.navigation.fragment.findNavController
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.requireComponents
+import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.theme.FirefoxTheme
 import org.mozilla.fenix.wallpapers.Wallpaper
 import org.mozilla.fenix.wallpapers.WallpaperManager
@@ -49,10 +50,10 @@ class WallpaperSettingsFragment : Fragment() {
                     var currentWallpaper by remember { mutableStateOf(wallpaperManager.currentWallpaper) }
                     var wallpapersSwitchedByLogo by remember { mutableStateOf(settings.wallpapersSwitchedByLogoTap) }
                     WallpaperSettings(
-                        wallpapers = wallpaperManager.availableWallpapers,
+                        wallpapers = wallpaperManager.wallpapers,
                         defaultWallpaper = WallpaperManager.defaultWallpaper,
                         loadWallpaperResource = {
-                            wallpaperManager.loadWallpaperFromAssets(it, requireContext())
+                            wallpaperManager.loadSavedWallpaper(requireContext(), it)
                         },
                         selectedWallpaper = currentWallpaper,
                         onSelectWallpaper = { selectedWallpaper: Wallpaper ->
@@ -71,5 +72,9 @@ class WallpaperSettingsFragment : Fragment() {
                 }
             }
         }
+    }
+    override fun onResume() {
+        super.onResume()
+        showToolbar(getString(R.string.customize_wallpapers))
     }
 }

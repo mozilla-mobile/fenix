@@ -5,18 +5,17 @@
 package org.mozilla.fenix.home.topsites
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.view.MotionEvent
 import android.view.View
 import android.widget.PopupWindow
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
-import kotlinx.coroutines.CoroutineScope
+import androidx.core.view.isVisible
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import mozilla.components.browser.menu.BrowserMenuBuilder
-import mozilla.components.browser.menu.item.SimpleBrowserMenuItem
 import mozilla.components.feature.top.sites.TopSite
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
@@ -30,6 +29,7 @@ import org.mozilla.fenix.utils.view.ViewHolder
 
 class TopSiteItemViewHolder(
     view: View,
+    private val viewLifecycleOwner: LifecycleOwner,
     private val interactor: TopSiteInteractor
 ) : ViewHolder(view) {
     private lateinit var topSite: TopSite
@@ -46,7 +46,7 @@ class TopSiteItemViewHolder(
 
             val topSiteMenu = TopSiteItemMenu(
                 context = view.context,
-                isPinnedSite = topSite is TopSite.Pinned || topSite is TopSite.Default
+                topSite = topSite
             ) { item ->
                 when (item) {
                     is TopSiteItemMenu.Item.OpenInPrivateTab -> interactor.onOpenInPrivateTabClicked(
@@ -58,12 +58,16 @@ class TopSiteItemViewHolder(
                     is TopSiteItemMenu.Item.RemoveTopSite -> interactor.onRemoveTopSiteClicked(
                         topSite
                     )
+                    is TopSiteItemMenu.Item.Settings -> interactor.onSettingsClicked()
+                    is TopSiteItemMenu.Item.SponsorPrivacy -> interactor.onSponsorPrivacyClicked()
                 }
             }
             val menu = topSiteMenu.menuBuilder.build(view.context).show(anchor = it)
+
             it.setOnTouchListener @SuppressLint("ClickableViewAccessibility") { v, event ->
                 onTouchEvent(v, event, menu)
             }
+
             true
         }
     }
@@ -79,7 +83,9 @@ class TopSiteItemViewHolder(
         }
 
         if (topSite is TopSite.Provided) {
-            CoroutineScope(IO).launch {
+            binding.topSiteSubtitle.isVisible = true
+
+            viewLifecycleOwner.lifecycleScope.launch(IO) {
                 itemView.context.components.core.client.bitmapForUrl(topSite.imageUrl)?.let { bitmap ->
                     withContext(Main) {
                         binding.faviconImage.setImageBitmap(bitmap)
@@ -128,43 +134,5 @@ class TopSiteItemViewHolder(
 
     companion object {
         const val LAYOUT_ID = R.layout.top_site_item
-    }
-}
-
-class TopSiteItemMenu(
-    private val context: Context,
-    private val isPinnedSite: Boolean,
-    private val onItemTapped: (Item) -> Unit = {}
-) {
-    sealed class Item {
-        object OpenInPrivateTab : Item()
-        object RenameTopSite : Item()
-        object RemoveTopSite : Item()
-    }
-
-    val menuBuilder by lazy { BrowserMenuBuilder(menuItems) }
-
-    private val menuItems by lazy {
-        listOfNotNull(
-            SimpleBrowserMenuItem(
-                context.getString(R.string.bookmark_menu_open_in_private_tab_button)
-            ) {
-                onItemTapped.invoke(Item.OpenInPrivateTab)
-            },
-            if (isPinnedSite) SimpleBrowserMenuItem(
-                context.getString(R.string.rename_top_site)
-            ) {
-                onItemTapped.invoke(Item.RenameTopSite)
-            } else null,
-            SimpleBrowserMenuItem(
-                if (isPinnedSite) {
-                    context.getString(R.string.remove_top_site)
-                } else {
-                    context.getString(R.string.delete_from_history)
-                }
-            ) {
-                onItemTapped.invoke(Item.RemoveTopSite)
-            }
-        )
     }
 }

@@ -66,6 +66,7 @@ import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSitesConfig
 import mozilla.components.feature.top.sites.TopSitesFeature
+import mozilla.components.feature.top.sites.TopSitesProviderConfig
 import mozilla.components.lib.state.ext.consumeFlow
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
@@ -102,6 +103,7 @@ import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.ext.sort
 import org.mozilla.fenix.home.mozonline.showPrivacyPopWindow
 import org.mozilla.fenix.home.pocket.DefaultPocketStoriesController
 import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesCategory
@@ -124,6 +126,7 @@ import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.settings.SupportUtils.SumoTopic.HELP
 import org.mozilla.fenix.settings.deletebrowsingdata.deleteAndQuit
 import org.mozilla.fenix.theme.ThemeManager
+import org.mozilla.fenix.utils.Settings.Companion.TOP_SITES_PROVIDER_MAX_THRESHOLD
 import org.mozilla.fenix.utils.ToolbarPopupWindow
 import org.mozilla.fenix.utils.allowUndo
 import org.mozilla.fenix.wallpapers.WallpaperManager
@@ -237,7 +240,7 @@ class HomeFragment : Fragment() {
                     collections = components.core.tabCollectionStorage.cachedTabCollections,
                     expandedCollections = emptySet(),
                     mode = currentMode.getCurrentMode(),
-                    topSites = components.core.topSitesStorage.cachedTopSites,
+                    topSites = components.core.topSitesStorage.cachedTopSites.sort(),
                     tip = components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
                         FenixTipManager(
                             listOf(
@@ -282,7 +285,10 @@ class HomeFragment : Fragment() {
 
         topSitesFeature.set(
             feature = TopSitesFeature(
-                view = DefaultTopSitesView(homeFragmentStore),
+                view = DefaultTopSitesView(
+                    store = homeFragmentStore,
+                    settings = components.settings
+                ),
                 storage = components.core.topSitesStorage,
                 config = ::getTopSitesConfig
             ),
@@ -391,14 +397,7 @@ class HomeFragment : Fragment() {
 
         FxNimbus.features.homescreen.recordExposure()
 
-        if (shouldEnableWallpaper()) {
-            val wallpaperManger = requireComponents.wallpaperManager
-            // We only want to update the wallpaper when it's different from the default one
-            // as the default is applied already on xml by default.
-            if (wallpaperManger.currentWallpaper != WallpaperManager.defaultWallpaper) {
-                wallpaperManger.updateWallpaper(binding.homeLayout, wallpaperManger.currentWallpaper)
-            }
-        }
+        displayWallpaperIfEnabled()
 
         // DO NOT MOVE ANYTHING BELOW THIS addMarker CALL!
         requireComponents.core.engine.profiler?.addMarker(
@@ -412,6 +411,7 @@ class HomeFragment : Fragment() {
         super.onConfigurationChanged(newConfig)
 
         getMenuButton()?.dismissMenu()
+        displayWallpaperIfEnabled()
     }
 
     private fun dismissTip(tip: Tip) {
@@ -427,8 +427,11 @@ class HomeFragment : Fragment() {
         val settings = requireContext().settings()
         return TopSitesConfig(
             totalSites = settings.topSitesMaxLimit,
-            fetchProvidedTopSites = settings.showContileFeature,
-            frecencyConfig = if (settings.showTopFrecentSites) FrecencyThresholdOption.SKIP_ONE_TIME_PAGES else null
+            frecencyConfig = if (settings.showTopFrecentSites) FrecencyThresholdOption.SKIP_ONE_TIME_PAGES else null,
+            providerConfig = TopSitesProviderConfig(
+                showProviderTopSites = settings.showContileFeature,
+                maxThreshold = TOP_SITES_PROVIDER_MAX_THRESHOLD
+            )
         )
     }
 
@@ -696,7 +699,7 @@ class HomeFragment : Fragment() {
             HomeFragmentAction.Change(
                 collections = components.core.tabCollectionStorage.cachedTabCollections,
                 mode = currentMode.getCurrentMode(),
-                topSites = components.core.topSitesStorage.cachedTopSites,
+                topSites = components.core.topSitesStorage.cachedTopSites.sort(),
                 tip = components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
                     FenixTipManager(
                         listOf(
@@ -765,12 +768,14 @@ class HomeFragment : Fragment() {
         }
 
         if (shouldEnableWallpaper() && context.settings().wallpapersSwitchedByLogoTap) {
+            binding.wordmark.contentDescription =
+                context.getString(R.string.wallpaper_logo_content_description)
             binding.wordmark.setOnClickListener {
                 val manager = requireComponents.wallpaperManager
                 val newWallpaper = manager.switchToNextWallpaper()
                 requireComponents.analytics.metrics.track(Event.WallpaperSwitched(newWallpaper))
                 manager.updateWallpaper(
-                    wallpaperContainer = binding.homeLayout,
+                    wallpaperContainer = binding.wallpaperImageView,
                     newWallpaper = newWallpaper
                 )
             }
@@ -863,6 +868,7 @@ class HomeFragment : Fragment() {
         requireComponents.useCases.sessionUseCases.updateLastAccess()
     }
 
+    @SuppressLint("InflateParams")
     private fun recommendPrivateBrowsingShortcut() {
         context?.let { context ->
             val layout = LayoutInflater.from(context)
@@ -1222,6 +1228,17 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private fun displayWallpaperIfEnabled() {
+        if (shouldEnableWallpaper()) {
+            val wallpaperManger = requireComponents.wallpaperManager
+            // We only want to update the wallpaper when it's different from the default one
+            // as the default is applied already on xml by default.
+            if (wallpaperManger.currentWallpaper != WallpaperManager.defaultWallpaper) {
+                wallpaperManger.updateWallpaper(binding.wallpaperImageView, wallpaperManger.currentWallpaper)
+            }
+        }
+    }
+
     // We want to show the animation in a time when the user less distracted
     // The Heuristics are:
     // 1) The animation hasn't shown before.
@@ -1240,7 +1257,8 @@ class HomeFragment : Fragment() {
     }
 
     private fun shouldEnableWallpaper() =
-        FeatureFlags.showWallpapers && !(activity as HomeActivity).themeManager.currentTheme.isPrivate
+        FeatureFlags.showWallpapers &&
+            (activity as? HomeActivity)?.themeManager?.currentTheme?.isPrivate?.not() ?: false
 
     companion object {
         const val ALL_NORMAL_TABS = "all_normal"

@@ -10,7 +10,6 @@ import mozilla.components.service.glean.private.NoExtraKeys
 import mozilla.components.support.base.log.logger.Logger
 import org.mozilla.fenix.GleanMetrics.Addons
 import org.mozilla.fenix.GleanMetrics.AndroidAutofill
-import org.mozilla.fenix.GleanMetrics.AndroidKeystoreExperiment
 import org.mozilla.fenix.GleanMetrics.AppTheme
 import org.mozilla.fenix.GleanMetrics.Autoplay
 import org.mozilla.fenix.GleanMetrics.Awesomebar
@@ -42,11 +41,10 @@ import org.mozilla.fenix.GleanMetrics.ReaderMode
 import org.mozilla.fenix.GleanMetrics.RecentBookmarks
 import org.mozilla.fenix.GleanMetrics.RecentSearches
 import org.mozilla.fenix.GleanMetrics.RecentTabs
+import org.mozilla.fenix.GleanMetrics.RecentlyClosedTabs
 import org.mozilla.fenix.GleanMetrics.SearchShortcuts
 import org.mozilla.fenix.GleanMetrics.SearchTerms
 import org.mozilla.fenix.GleanMetrics.SearchWidget
-import org.mozilla.fenix.GleanMetrics.SetDefaultNewtabExperiment
-import org.mozilla.fenix.GleanMetrics.SetDefaultSettingExperiment
 import org.mozilla.fenix.GleanMetrics.StartOnHome
 import org.mozilla.fenix.GleanMetrics.SyncAccount
 import org.mozilla.fenix.GleanMetrics.SyncAuth
@@ -325,6 +323,48 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.HistorySearchTermGroupRemoveAll -> EventWrapper<NoExtraKeys>(
             { History.searchTermGroupRemoveAll.record(it) }
         )
+        is Event.HistorySearchIconTapped -> EventWrapper<NoExtraKeys>(
+            { History.searchIconTapped.record(it) }
+        )
+        is Event.HistorySearchResultTapped -> EventWrapper<NoExtraKeys>(
+            { History.searchResultTapped.record(it) }
+        )
+        is Event.RecentlyClosedTabsOpened -> EventWrapper<NoExtraKeys>(
+            { RecentlyClosedTabs.opened.record(it) }
+        )
+        is Event.RecentlyClosedTabsClosed -> EventWrapper<NoExtraKeys>(
+            { RecentlyClosedTabs.closed.record(it) }
+        )
+        is Event.RecentlyClosedTabsShowFullHistory -> EventWrapper<NoExtraKeys>(
+            { RecentlyClosedTabs.showFullHistory.record(it) }
+        )
+        is Event.RecentlyClosedTabsOpenTab -> EventWrapper<NoExtraKeys>(
+            { RecentlyClosedTabs.openTab.record(it) }
+        )
+        is Event.RecentlyClosedTabsDeleteTab -> EventWrapper<NoExtraKeys>(
+            { RecentlyClosedTabs.deleteTab.record(it) }
+        )
+        is Event.RecentlyClosedTabsMenuClose -> EventWrapper<NoExtraKeys>(
+            { RecentlyClosedTabs.menuClose.record(it) }
+        )
+        is Event.RecentlyClosedTabsMenuShare -> EventWrapper<NoExtraKeys>(
+            { RecentlyClosedTabs.menuShare.record(it) }
+        )
+        is Event.RecentlyClosedTabsMenuDelete -> EventWrapper<NoExtraKeys>(
+            { RecentlyClosedTabs.menuDelete.record(it) }
+        )
+        is Event.RecentlyClosedTabsMenuOpenInNormalTab -> EventWrapper<NoExtraKeys>(
+            { RecentlyClosedTabs.menuOpenInNormalTab.record(it) }
+        )
+        is Event.RecentlyClosedTabsMenuOpenInPrivateTab -> EventWrapper<NoExtraKeys>(
+            { RecentlyClosedTabs.menuOpenInPrivateTab.record(it) }
+        )
+        is Event.RecentlyClosedTabsEnterMultiselect -> EventWrapper<NoExtraKeys>(
+            { RecentlyClosedTabs.enterMultiselect.record(it) }
+        )
+        is Event.RecentlyClosedTabsExitMultiselect -> EventWrapper<NoExtraKeys>(
+            { RecentlyClosedTabs.exitMultiselect.record(it) }
+        )
         is Event.CollectionRenamed -> EventWrapper<NoExtraKeys>(
             { Collections.renamed.record(it) }
         )
@@ -482,14 +522,26 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.TopSiteOpenPinned -> EventWrapper<NoExtraKeys>(
             { TopSites.openPinned.record(it) }
         )
+        is Event.TopSiteOpenProvided -> EventWrapper<NoExtraKeys>(
+            { TopSites.openContileTopSite.record(it) }
+        )
         is Event.TopSiteOpenInNewTab -> EventWrapper<NoExtraKeys>(
             { TopSites.openInNewTab.record(it) }
         )
         is Event.TopSiteOpenInPrivateTab -> EventWrapper<NoExtraKeys>(
             { TopSites.openInPrivateTab.record(it) }
         )
+        is Event.TopSiteOpenContileInPrivateTab -> EventWrapper<NoExtraKeys>(
+            { TopSites.openContileInPrivateTab.record(it) }
+        )
         is Event.TopSiteRemoved -> EventWrapper<NoExtraKeys>(
             { TopSites.remove.record(it) }
+        )
+        is Event.TopSiteContileSettings -> EventWrapper<NoExtraKeys>(
+            { TopSites.contileSettings.record(it) }
+        )
+        is Event.TopSiteContilePrivacy -> EventWrapper<NoExtraKeys>(
+            { TopSites.contileSponsorsAndPrivacy.record(it) }
         )
         is Event.GoogleTopSiteRemoved -> EventWrapper<NoExtraKeys>(
             { TopSites.googleTopSiteRemoved.record(it) }
@@ -675,14 +727,6 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.ProgressiveWebAppInstallAsShortcut -> EventWrapper<NoExtraKeys>(
             { ProgressiveWebApp.installTap.record(it) }
         )
-        is Event.ProgressiveWebAppForeground -> EventWrapper(
-            { ProgressiveWebApp.foreground.record(it) },
-            { ProgressiveWebApp.foregroundKeys.valueOf(it) }
-        )
-        is Event.ProgressiveWebAppBackground -> EventWrapper(
-            { ProgressiveWebApp.background.record(it) },
-            { ProgressiveWebApp.backgroundKeys.valueOf(it) }
-        )
         is Event.CopyUrlUsed -> EventWrapper<NoExtraKeys>(
             { Events.copyUrlTapped.record(it) }
         )
@@ -691,7 +735,7 @@ private val Event.wrapper: EventWrapper<*>?
             { Events.syncedTabOpened.record(it) }
         )
 
-        is Event.RecentlyClosedTabsOpened -> EventWrapper<NoExtraKeys>(
+        is Event.RecentlyClosedTabsOpenedOld -> EventWrapper<NoExtraKeys>(
             { Events.recentlyClosedTabsOpened.record(it) }
         )
 
@@ -739,41 +783,10 @@ private val Event.wrapper: EventWrapper<*>?
             { Awesomebar.openedTabSuggestionClicked.record(it) }
         )
 
-        is Event.SecurePrefsExperimentFailure -> EventWrapper(
-            { AndroidKeystoreExperiment.experimentFailure.record(it) },
-            { AndroidKeystoreExperiment.experimentFailureKeys.valueOf(it) }
-        )
-        is Event.SecurePrefsGetFailure -> EventWrapper(
-            { AndroidKeystoreExperiment.getFailure.record(it) },
-            { AndroidKeystoreExperiment.getFailureKeys.valueOf(it) }
-        )
-        is Event.SecurePrefsGetSuccess -> EventWrapper(
-            { AndroidKeystoreExperiment.getResult.record(it) },
-            { AndroidKeystoreExperiment.getResultKeys.valueOf(it) }
-        )
-        is Event.SecurePrefsWriteFailure -> EventWrapper(
-            { AndroidKeystoreExperiment.writeFailure.record(it) },
-            { AndroidKeystoreExperiment.writeFailureKeys.valueOf(it) }
-        )
-        is Event.SecurePrefsWriteSuccess -> EventWrapper<NoExtraKeys>(
-            { AndroidKeystoreExperiment.writeSuccess.record(it) }
-        )
-        is Event.SecurePrefsReset -> EventWrapper<NoExtraKeys>(
-            { AndroidKeystoreExperiment.reset.record(it) }
-        )
         is Event.HomeMenuSettingsItemClicked -> EventWrapper<NoExtraKeys>(
             { HomeMenu.settingsItemClicked.record(it) }
         )
 
-        is Event.CloseExperimentCardClicked -> EventWrapper<NoExtraKeys>(
-            { SetDefaultNewtabExperiment.closeExperimentCardClicked.record(it) }
-        )
-        is Event.SetDefaultBrowserNewTabClicked -> EventWrapper<NoExtraKeys>(
-            { SetDefaultNewtabExperiment.setDefaultBrowserClicked.record(it) }
-        )
-        is Event.SetDefaultBrowserSettingsScreenClicked -> EventWrapper<NoExtraKeys>(
-            { SetDefaultSettingExperiment.setDefaultBrowserClicked.record(it) }
-        )
         is Event.HomeScreenDisplayed -> EventWrapper<NoExtraKeys>(
             { HomeScreen.homeScreenDisplayed.record(it) }
         )
@@ -916,7 +929,7 @@ private val Event.wrapper: EventWrapper<*>?
                 Wallpapers.wallpaperSelected.record(
                     Wallpapers.WallpaperSelectedExtra(
                         name = this.wallpaper.name,
-                        themeCollection = this.wallpaper.themeCollection::class.simpleName,
+                        themeCollection = this.wallpaper::class.simpleName,
                     ),
                 )
             }
@@ -926,7 +939,7 @@ private val Event.wrapper: EventWrapper<*>?
                 Wallpapers.wallpaperSwitched.record(
                     Wallpapers.WallpaperSwitchedExtra(
                         name = this.wallpaper.name,
-                        themeCollection = this.wallpaper.themeCollection::class.simpleName,
+                        themeCollection = this.wallpaper::class.simpleName,
                     ),
                 )
             }
