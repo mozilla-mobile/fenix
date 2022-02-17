@@ -61,9 +61,15 @@ class CreditCardEditorView(
         binding.nameOnCardInput.text = state.billingName.toEditable()
 
         binding.cardNumberLayout.setErrorTextColor(
-            ColorStateList.valueOf(binding.root.context.getColorFromAttr(R.attr.destructive)))
+            ColorStateList.valueOf(
+                binding.root.context.getColorFromAttr(R.attr.destructive)
+            )
+        )
         binding.nameOnCardLayout.setErrorTextColor(
-            ColorStateList.valueOf(binding.root.context.getColorFromAttr(R.attr.destructive)))
+            ColorStateList.valueOf(
+                binding.root.context.getColorFromAttr(R.attr.destructive)
+            )
+        )
 
         bindExpiryMonthDropDown(state.expiryMonth)
         bindExpiryYearDropDown(state.expiryYears)
