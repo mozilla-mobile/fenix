@@ -68,8 +68,7 @@ import java.util.Locale
  * @param wallpapers Wallpapers to add to grid.
  * @param selectedWallpaper The currently selected wallpaper.
  * @param defaultWallpaper The default wallpaper
- * @param loadWallpaperResource Callback to handle loading a wallpaper bitmap. Only optional in the
- *   default case.
+ * @param loadWallpaperResource Callback to handle loading a wallpaper bitmap. Only optional in the default case.
  * @param onSelectWallpaper Callback for when a new wallpaper is selected.
  * @param onViewWallpaper Callback for when the view action is clicked from snackbar.
  * @param tapLogoSwitchChecked Enabled state for switch controlling taps to change wallpaper.
@@ -134,7 +133,7 @@ private fun WallpaperSnackbar(
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp),
                 text = stringResource(R.string.wallpaper_updated_snackbar_message),
                 textAlign = TextAlign.Start,
-                color = FirefoxTheme.colors.textOnColor,
+                color = FirefoxTheme.colors.textOnColorPrimary,
                 fontFamily = FontFamily(Font(R.font.metropolis_semibold)),
                 fontSize = 18.sp,
                 overflow = TextOverflow.Ellipsis,
@@ -150,7 +149,7 @@ private fun WallpaperSnackbar(
                     text = stringResource(R.string.wallpaper_updated_snackbar_action).uppercase(
                         Locale.getDefault()
                     ),
-                    color = FirefoxTheme.colors.textOnColor,
+                    color = FirefoxTheme.colors.textOnColorPrimary,
                     fontFamily = FontFamily(Font(R.font.metropolis_medium)),
                     fontSize = 14.sp,
                 )
@@ -164,8 +163,7 @@ private fun WallpaperSnackbar(
  *
  * @param wallpapers Wallpapers to add to grid.
  * @param defaultWallpaper The default wallpaper
- * @param loadWallpaperResource Callback to handle loading a wallpaper bitmap. Only optional in the
- *   default case.
+ * @param loadWallpaperResource Callback to handle loading a wallpaper bitmap. Only optional in the default case.
  * @param selectedWallpaper The currently selected wallpaper.
  * @param numColumns The number of columns that will occupy the grid.
  * @param onSelectWallpaper Action to take when a new wallpaper is selected.
@@ -269,33 +267,34 @@ private fun WallpaperThumbnailItem(
 }
 
 @Composable
+@Suppress("MagicNumber")
 private fun WallpaperLogoSwitch(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit
 ) {
-    Column(
-        modifier = Modifier.padding(horizontal = 12.dp, vertical = 16.dp),
+    Row(
+        modifier = Modifier
+            .padding(horizontal = 16.dp, vertical = 16.dp)
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(
-                text = stringResource(R.string.wallpaper_tap_to_change_switch_label_1),
-                color = FirefoxTheme.colors.textPrimary,
-                fontSize = 18.sp,
-                modifier = Modifier.padding(start = 4.dp)
+        Text(
+            text = stringResource(R.string.wallpaper_tap_to_change_switch_label_1),
+            color = FirefoxTheme.colors.textPrimary,
+            fontSize = 18.sp,
+            modifier = Modifier
+                .weight(0.8f)
+        )
+
+        Switch(
+            checked = checked,
+            onCheckedChange = onCheckedChange,
+            colors = SwitchDefaults.colors(
+                checkedThumbColor = FirefoxTheme.colors.formSelected,
+                checkedTrackColor = FirefoxTheme.colors.formSurface,
+                uncheckedTrackColor = FirefoxTheme.colors.formSurface
             )
-            Switch(
-                checked = checked,
-                onCheckedChange = onCheckedChange,
-                colors = SwitchDefaults.colors(
-                    checkedThumbColor = FirefoxTheme.colors.formSelected,
-                    checkedTrackColor = FirefoxTheme.colors.formSurface,
-                    uncheckedTrackColor = FirefoxTheme.colors.formSurface
-                )
-            )
-        }
+        )
     }
 }
 
