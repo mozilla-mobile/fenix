@@ -16,12 +16,10 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.perf.lazyMonitored
 import org.mozilla.fenix.settings.SupportUtils
-import org.mozilla.fenix.utils.Mockable
 
 /**
  * Component group which encapsulates foreground-friendly services.
  */
-@Mockable
 class Services(
     private val context: Context,
     private val accountManager: FxaAccountManager
@@ -41,7 +39,8 @@ class Services(
             interceptLinkClicks = true,
             launchInApp = {
                 PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
-                    context.getPreferenceKey(R.string.pref_key_open_links_in_external_app), false)
+                    context.getPreferenceKey(R.string.pref_key_open_links_in_external_app), false
+                )
             }
         )
     }

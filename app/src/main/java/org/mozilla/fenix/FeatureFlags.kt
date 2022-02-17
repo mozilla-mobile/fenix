@@ -4,6 +4,12 @@
 
 package org.mozilla.fenix
 
+import android.content.Context
+import android.os.StrictMode
+import mozilla.components.support.locale.LocaleManager
+import mozilla.components.support.locale.LocaleManager.getSystemDefault
+import org.mozilla.fenix.ext.components
+
 /**
  * A single source for setting feature flags that are mostly based on build type.
  */
@@ -15,42 +21,93 @@ object FeatureFlags {
     val pullToRefreshEnabled = Config.channel.isNightlyOrDebug
 
     /**
-     * Shows Synced Tabs in the tabs tray.
-     *
-     * Tracking issue: https://github.com/mozilla-mobile/fenix/issues/13892
+     * Enables the Addresses autofill feature.
      */
-    val syncedTabsInTabsTray = Config.channel.isNightlyOrDebug
+    val addressesFeature = Config.channel.isNightlyOrDebug
 
     /**
-     * Enables downloads with external download managers.
+     * Enables the Start On Home feature in the settings page.
      */
-    const val externalDownloadManager = true
+    const val showStartOnHomeSettings = true
 
     /**
-     * Enables ETP cookie purging
+     * Enables the "recent" tabs feature in the home screen.
      */
-    val etpCookiePurging = Config.channel.isNightlyOrDebug
+    const val showRecentTabsFeature = true
 
     /**
-     * Enables the Nimbus experiments library, especially the settings toggle to opt-out of
-     * all experiments.
+     * Enables UI features based on history metadata.
      */
-    // IMPORTANT: Only turn this back on once the following issues are resolved:
-    // - https://github.com/mozilla-mobile/fenix/issues/17086: Calls to
-    // getExperimentBranch seem to block on updateExperiments causing a
-    // large performance regression loading the home screen.
-    // - https://github.com/mozilla-mobile/fenix/issues/17143: Despite
-    // having wrapped getExperimentBranch/withExperiments in a catch-all
-    // users are still experiencing crashes.
-    const val nimbusExperiments = false
+    const val historyMetadataUIFeature = true
 
     /**
-     * Enables the new MediaSession API.
+     * Enables the recently saved bookmarks feature in the home screen.
      */
-    val newMediaSessionApi = Config.channel.isNightlyOrDebug
+    const val recentBookmarksFeature = true
 
     /**
-     * Enabled showing site permission indicators in the toolbars.
+     * Identifies and separates the tabs list with a secondary section containing least used tabs.
      */
-    val permissionIndicatorsToolbar = Config.channel.isNightlyOrDebug
+    const val inactiveTabs = true
+
+    /**
+     * Enables showing the home screen behind the search dialog
+     */
+    const val showHomeBehindSearch = true
+
+    /**
+     * Identifies and separates the tabs list with a group containing search term tabs.
+     */
+    val tabGroupFeature = Config.channel.isNightlyOrDebug
+
+    /**
+     * Allows tabs to be dragged around as long as tab groups are disabled
+     */
+    val tabReorderingFeature = Config.channel.isNightlyOrDebug
+
+    /**
+     * Show Pocket recommended stories on home.
+     */
+    fun isPocketRecommendationsFeatureEnabled(context: Context): Boolean {
+        val langTag = LocaleManager.getCurrentLocale(context)
+            ?.toLanguageTag() ?: getSystemDefault().toLanguageTag()
+        return listOf("en-US", "en-CA").contains(langTag)
+    }
+
+    /**
+     * Enables showing the homescreen onboarding card.
+     */
+    const val showHomeOnboarding = false
+
+    /**
+     * Enables showing the option to clear site data.
+     */
+    val showClearSiteData = Config.channel.isNightlyOrDebug
+
+    /**
+     * Enables showing the wallpaper functionality.
+     */
+    val showWallpapers = Config.channel.isNightlyOrDebug
+
+    /**
+     * Enables the Contile top sites.
+     */
+    val contileFeature = Config.channel.isDebug
+
+    /**
+     * Enables history improvement features.
+     */
+    val historyImprovementFeatures = Config.channel.isNightlyOrDebug
+
+    /**
+     * Enables themed wallpapers feature.
+     */
+    fun isThemedWallpapersFeatureEnabled(context: Context): Boolean {
+        val strictMode = context.components.strictMode
+        return strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
+            val langTag = LocaleManager.getCurrentLocale(context)
+                ?.toLanguageTag() ?: getSystemDefault().toLanguageTag()
+            listOf("en-US", "es-US").contains(langTag) && Config.channel.isNightlyOrDebug
+        }
+    }
 }

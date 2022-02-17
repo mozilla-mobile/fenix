@@ -4,8 +4,8 @@
 
 package org.mozilla.fenix.search
 
-import mozilla.components.browser.session.Session
 import mozilla.components.browser.state.search.SearchEngine
+import mozilla.components.concept.engine.EngineSession.LoadUrlFlags
 import org.mozilla.fenix.search.awesomebar.AwesomeBarInteractor
 import org.mozilla.fenix.search.toolbar.ToolbarInteractor
 
@@ -18,8 +18,8 @@ class SearchDialogInteractor(
     private val searchController: SearchDialogController
 ) : AwesomeBarInteractor, ToolbarInteractor {
 
-    override fun onUrlCommitted(url: String) {
-        searchController.handleUrlCommitted(url)
+    override fun onUrlCommitted(url: String, fromHomeScreen: Boolean) {
+        searchController.handleUrlCommitted(url, fromHomeScreen)
     }
 
     override fun onEditingCanceled() {
@@ -30,12 +30,16 @@ class SearchDialogInteractor(
         searchController.handleTextChanged(text)
     }
 
-    override fun onUrlTapped(url: String) {
-        searchController.handleUrlTapped(url)
+    override fun onUrlTapped(url: String, flags: LoadUrlFlags) {
+        searchController.handleUrlTapped(url, flags)
     }
 
     override fun onSearchTermsTapped(searchTerms: String) {
         searchController.handleSearchTermsTapped(searchTerms)
+    }
+
+    override fun onSearchEngineSuggestionSelected(searchEngine: SearchEngine) {
+        searchController.handleSearchEngineSuggestionClicked(searchEngine)
     }
 
     override fun onSearchShortcutEngineSelected(searchEngine: SearchEngine) {
@@ -48,10 +52,6 @@ class SearchDialogInteractor(
 
     override fun onClickSearchEngineSettings() {
         searchController.handleClickSearchEngineSettings()
-    }
-
-    override fun onExistingSessionSelected(session: Session) {
-        searchController.handleExistingSessionSelected(session)
     }
 
     override fun onExistingSessionSelected(tabId: String) {

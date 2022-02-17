@@ -12,9 +12,6 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import kotlinx.android.synthetic.main.activity_home.*
-import kotlinx.android.synthetic.main.fragment_tab_history_dialog.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.mapNotNull
 import mozilla.components.browser.state.selector.findCustomTabOrSelectedTab
@@ -22,7 +19,7 @@ import mozilla.components.lib.state.ext.flowScoped
 import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import org.mozilla.fenix.R
-import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.databinding.FragmentTabHistoryDialogBinding
 import org.mozilla.fenix.ext.requireComponents
 
 class TabHistoryDialogFragment : BottomSheetDialogFragment() {
@@ -35,9 +32,10 @@ class TabHistoryDialogFragment : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View? = inflater.inflate(R.layout.fragment_tab_history_dialog, container, false)
 
-    @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val binding = FragmentTabHistoryDialogBinding.bind(view)
 
         view.setBackgroundColor(view.context.getColorFromAttr(R.attr.foundation))
 
@@ -46,11 +44,10 @@ class TabHistoryDialogFragment : BottomSheetDialogFragment() {
         val controller = DefaultTabHistoryController(
             navController = findNavController(),
             goToHistoryIndexUseCase = requireComponents.useCases.sessionUseCases.goToHistoryIndex,
-            customTabId = customTabSessionId,
-            sessionManager = container.requireContext().components.core.sessionManager
+            customTabId = customTabSessionId
         )
         val tabHistoryView = TabHistoryView(
-            container = tabHistoryLayout,
+            container = binding.tabHistoryLayout,
             expandDialog = ::expand,
             interactor = TabHistoryInteractor(controller)
         )

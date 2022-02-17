@@ -4,8 +4,7 @@
 
 package org.mozilla.fenix.library.recentlyclosed
 
-import mozilla.components.browser.state.state.ClosedTab
-import org.mozilla.fenix.browser.browsingmode.BrowsingMode
+import mozilla.components.browser.state.state.recover.TabState
 
 /**
  * Interactor for the recently closed screen
@@ -14,31 +13,24 @@ import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 class RecentlyClosedFragmentInteractor(
     private val recentlyClosedController: RecentlyClosedController
 ) : RecentlyClosedInteractor {
-    override fun restore(item: ClosedTab) {
-        recentlyClosedController.handleRestore(item)
-    }
 
-    override fun onCopyPressed(item: ClosedTab) {
-        recentlyClosedController.handleCopyUrl(item)
-    }
-
-    override fun onSharePressed(item: ClosedTab) {
-        recentlyClosedController.handleShare(item)
-    }
-
-    override fun onOpenInNormalTab(item: ClosedTab) {
-        recentlyClosedController.handleOpen(item, BrowsingMode.Normal)
-    }
-
-    override fun onOpenInPrivateTab(item: ClosedTab) {
-        recentlyClosedController.handleOpen(item, BrowsingMode.Private)
-    }
-
-    override fun onDeleteOne(tab: ClosedTab) {
-        recentlyClosedController.handleDeleteOne(tab)
+    override fun onDelete(tab: TabState) {
+        recentlyClosedController.handleDelete(tab)
     }
 
     override fun onNavigateToHistory() {
         recentlyClosedController.handleNavigateToHistory()
+    }
+
+    override fun open(item: TabState) {
+        recentlyClosedController.handleRestore(item)
+    }
+
+    override fun select(item: TabState) {
+        recentlyClosedController.handleSelect(item)
+    }
+
+    override fun deselect(item: TabState) {
+        recentlyClosedController.handleDeselect(item)
     }
 }

@@ -9,13 +9,14 @@
         android:id="@+id/onboarding_card"
         style="@style/OnboardingCardLightWithPadding"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/home_item_horizontal_margin">
     <TextView
             android:id="@+id/header_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/onboarding_privacy_notice_header"
-            tools:drawableStart="@drawable/ic_onboarding_privacy_notice"
+            tools:drawableStart="@drawable/ic_info"
             android:drawablePadding="12dp"
             android:textAppearance="@style/HeaderTextStyle"
             android:gravity="center_vertical"
@@ -29,7 +30,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="@style/Body14TextStyle"
             android:layout_marginTop="14dp"
-            tools:text="@string/onboarding_privacy_notice_description"
+            tools:text="@string/onboarding_privacy_notice_description2"
             app:layout_constraintTop_toBottomOf="@id/header_text"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />

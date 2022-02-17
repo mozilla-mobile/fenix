@@ -4,10 +4,10 @@
 
 package org.mozilla.fenix.shortcut
 
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.mapNotNull
@@ -24,7 +24,6 @@ import org.mozilla.fenix.utils.Settings
 /**
  * Displays the [PwaOnboardingDialogFragment] info dialog when a PWA is opened in the browser for the third time.
  */
-@ExperimentalCoroutinesApi
 class PwaOnboardingObserver(
     private val store: BrowserStore,
     private val lifecycleOwner: LifecycleOwner,
@@ -40,25 +39,31 @@ class PwaOnboardingObserver(
             flow.mapNotNull { state ->
                 state.selectedTab
             }
-            .ifChanged {
-                it.content.webAppManifest
-            }
-            .collect {
-                if (webAppUseCases.isInstallable() && !settings.userKnowsAboutPwas) {
-                    settings.incrementVisitedInstallableCount()
-                    if (settings.shouldShowPwaCfr) {
-                        val directions =
-                            BrowserFragmentDirections.actionBrowserFragmentToPwaOnboardingDialogFragment()
-                        navController.nav(R.id.browserFragment, directions)
-                        settings.lastCfrShownTimeInMillis = System.currentTimeMillis()
-                        settings.userKnowsAboutPwas = true
+                .ifChanged {
+                    it.content.webAppManifest
+                }
+                .collect {
+                    if (webAppUseCases.isInstallable() && !settings.userKnowsAboutPwas) {
+                        settings.incrementVisitedInstallableCount()
+                        if (settings.shouldShowPwaCfr) {
+                            navigateToPwaOnboarding()
+                            settings.lastCfrShownTimeInMillis = System.currentTimeMillis()
+                            settings.userKnowsAboutPwas = true
+                        }
                     }
                 }
-            }
         }
     }
 
     fun stop() {
         scope?.cancel()
+    }
+
+    @VisibleForTesting
+    internal fun navigateToPwaOnboarding() {
+        navController.nav(
+            R.id.browserFragment,
+            BrowserFragmentDirections.actionBrowserFragmentToPwaOnboardingDialogFragment()
+        )
     }
 }

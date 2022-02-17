@@ -5,36 +5,36 @@
 package org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding
 
 import android.view.LayoutInflater
-import android.view.View
 import androidx.appcompat.view.ContextThemeWrapper
-import kotlinx.android.synthetic.main.onboarding_tracking_protection.view.*
+import io.mockk.every
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.R
+import org.mozilla.fenix.databinding.OnboardingTrackingProtectionBinding
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
+import org.mozilla.fenix.utils.Settings
 
 @RunWith(FenixRobolectricTestRunner::class)
 class OnboardingTrackingProtectionViewHolderTest {
 
-    private lateinit var view: View
+    private lateinit var binding: OnboardingTrackingProtectionBinding
 
     @Before
     fun setup() {
         val context = ContextThemeWrapper(testContext, R.style.NormalTheme)
-        view = LayoutInflater.from(context)
-            .inflate(OnboardingTrackingProtectionViewHolder.LAYOUT_ID, null)
+        binding = OnboardingTrackingProtectionBinding.inflate(LayoutInflater.from(context))
     }
 
     @Test
     fun `sets description text`() {
-        OnboardingTrackingProtectionViewHolder(view)
+        every { testContext.components.settings } returns Settings(testContext)
+        OnboardingTrackingProtectionViewHolder(binding.root)
 
-        assertEquals(
-            "Privacy and security settings block trackers, malware, and companies that follow you.",
-            view.description_text.text
-        )
+        val string = testContext.getString(R.string.onboarding_tracking_protection_description_3)
+        assertEquals(string, binding.descriptionText.text)
     }
 }

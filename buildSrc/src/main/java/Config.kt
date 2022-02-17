@@ -1,21 +1,19 @@
-import org.gradle.api.Project
-import java.lang.RuntimeException
-
-import java.text.SimpleDateFormat
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.util.Date
-import java.util.Locale
-
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+import org.gradle.api.Project
+import org.mozilla.fenix.gradle.ext.execReadStandardOutOrThrow
+import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.util.Date
+import java.util.Locale
+
 object Config {
     // Synchronized build configuration for all modules
-    const val compileSdkVersion = 29
+    const val compileSdkVersion = 31
     const val minSdkVersion = 21
-    const val targetSdkVersion = 29
+    const val targetSdkVersion = 30
 
     @JvmStatic
     private fun generateDebugVersionName(): String {
@@ -37,11 +35,19 @@ object Config {
     }
 
     @JvmStatic
-    fun generateBuildDate(): String {
-        val dateTime = LocalDateTime.now()
-        val timeFormatter = DateTimeFormatter.ofPattern("h:mm a")
+    fun nightlyVersionName(): String {
+        // Nightly versions use the Gecko/A-C major version and append "0.a1", e.g. with A-C 90.0.20210426143115
+        // the Nightly version will be 90.0a1
+        val majorVersion = AndroidComponents.VERSION.split(".")[0]
+        return "$majorVersion.0a1"
+    }
 
-        return "${dateTime.dayOfWeek.toString().toLowerCase().capitalize()} ${dateTime.monthValue}/${dateTime.dayOfMonth} @ ${timeFormatter.format(dateTime)}"
+    /**
+     * Generate a build date that follows the ISO-8601 format
+     */
+    @JvmStatic
+    fun generateBuildDate(): String {
+        return LocalDateTime.now().toString()
     }
 
     private val fennecBaseVersionCode by lazy {
@@ -140,5 +146,23 @@ object Config {
         version = version or (1 shl 0)
 
         return version
+    }
+
+    /**
+     * Returns the git hash of the currently checked out revision. If there are uncommitted changes,
+     * a "+" will be appended to the hash, e.g. "c8ba05ad0+".
+     */
+    @JvmStatic
+    fun getGitHash(): String {
+        val revisionCmd = arrayOf("git", "rev-parse", "--short", "HEAD")
+        val revision = Runtime.getRuntime().execReadStandardOutOrThrow(revisionCmd)
+
+        // Append "+" if there are uncommitted changes in the working directory.
+        val statusCmd = arrayOf("git", "status", "--porcelain=v2")
+        val status = Runtime.getRuntime().execReadStandardOutOrThrow(statusCmd)
+        val hasUnstagedChanges = status.isNotBlank()
+        val statusSuffix = if (hasUnstagedChanges) "+" else ""
+
+        return "${revision}${statusSuffix}"
     }
 }

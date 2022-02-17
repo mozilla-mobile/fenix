@@ -1,6 +1,6 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.settings.account
 
@@ -25,7 +25,7 @@ class AccountSettingsInteractorTest {
         val interactor = AccountSettingsInteractor(
             mockk(),
             { ranSyncNow = true },
-            mockk(),
+            { false },
             mockk()
         )
 
@@ -37,11 +37,12 @@ class AccountSettingsInteractorTest {
     @Test
     fun onChangeDeviceName() {
         val store: AccountSettingsFragmentStore = mockk(relaxed = true)
-        val invalidNameResponse = mockk<() -> Unit>(relaxed = true)
+        var invalidResponseInvoked = false
+        val invalidNameResponse = { invalidResponseInvoked = true }
 
         val interactor = AccountSettingsInteractor(
             mockk(),
-            mockk(),
+            { },
             { true },
             store
         )
@@ -49,17 +50,18 @@ class AccountSettingsInteractorTest {
         assertTrue(interactor.onChangeDeviceName("New Name", invalidNameResponse))
 
         verify { store.dispatch(AccountSettingsFragmentAction.UpdateDeviceName("New Name")) }
-        verify { invalidNameResponse wasNot Called }
+        assertFalse(invalidResponseInvoked)
     }
 
     @Test
     fun onChangeDeviceNameSyncFalse() {
         val store: AccountSettingsFragmentStore = mockk(relaxed = true)
-        val invalidNameResponse = mockk<() -> Unit>(relaxed = true)
+        var invalidResponseInvoked = false
+        val invalidNameResponse = { invalidResponseInvoked = true }
 
         val interactor = AccountSettingsInteractor(
             mockk(),
-            mockk(),
+            { },
             { false },
             store
         )
@@ -67,7 +69,7 @@ class AccountSettingsInteractorTest {
         assertFalse(interactor.onChangeDeviceName("New Name", invalidNameResponse))
 
         verify { store wasNot Called }
-        verify { invalidNameResponse() }
+        assertTrue(invalidResponseInvoked)
     }
 
     @Test
@@ -77,8 +79,8 @@ class AccountSettingsInteractorTest {
 
         val interactor = AccountSettingsInteractor(
             navController,
-            mockk(),
-            mockk(),
+            { },
+            { false },
             mockk()
         )
 

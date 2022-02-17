@@ -4,21 +4,13 @@
 
 package org.mozilla.fenix.ext
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
+import android.text.Editable
 import android.util.Patterns
 import android.webkit.URLUtil
 import androidx.core.net.toUri
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import mozilla.components.concept.fetch.Client
-import mozilla.components.concept.fetch.Request
 import mozilla.components.lib.publicsuffixlist.PublicSuffixList
-import mozilla.components.lib.publicsuffixlist.ext.urlToTrimmedHost
 import mozilla.components.support.ktx.android.net.hostWithoutCommonPrefixes
-import org.mozilla.fenix.perf.runBlockingIncrement
-import java.io.IOException
 import java.net.IDN
 import java.util.Locale
 
@@ -74,12 +66,13 @@ fun String.toShortUrl(publicSuffixList: PublicSuffixList): String {
 
     return inputString
         .stripUserInfo()
-        .toLowerCase(Locale.getDefault())
+        .lowercase(Locale.getDefault())
         .stripPrefixes()
         .toUnicode()
 }
 
 // impl via FFTV https://searchfox.org/mozilla-mobile/source/firefox-echo-show/app/src/main/java/org/mozilla/focus/utils/FormattedDomain.java#129
+@Suppress("DEPRECATION")
 fun String.isIpv4(): Boolean = Patterns.IP_ADDRESS.matcher(this).matches()
 
 // impl via FFiOS: https://github.com/mozilla-mobile/firefox-ios/blob/deb9736c905cdf06822ecc4a20152df7b342925d/Shared/Extensions/NSURLExtensions.swift#L292
@@ -88,14 +81,6 @@ private fun Uri.isIpv6(): Boolean {
     val host = this.host ?: return false
     return host.isNotEmpty() && host.contains(":")
 }
-
-/**
- * Trim a host's prefix and suffix
- */
-fun String.urlToTrimmedHost(publicSuffixList: PublicSuffixList): String =
-    runBlockingIncrement {
-        urlToTrimmedHost(publicSuffixList).await()
-    }
 
 /**
  * Trims a URL string of its scheme and common prefixes.
@@ -114,13 +99,7 @@ fun String.simplifiedUrl(): String {
     return afterScheme
 }
 
-suspend fun bitmapForUrl(url: String, client: Client): Bitmap? = withContext(Dispatchers.IO) {
-    // Code below will cache it in Gecko's cache, which ensures that as long as we've fetched it once,
-    // we will be able to display this avatar as long as the cache isn't purged (e.g. via 'clear user data').
-    val body = try {
-        client.fetch(Request(url, useCaches = true)).body
-    } catch (e: IOException) {
-        return@withContext null
-    }
-    body.useStream { BitmapFactory.decodeStream(it) }
-}
+/**
+ * Returns an [Editable] for the provided string.
+ */
+fun String.toEditable(): Editable = Editable.Factory.getInstance().newEditable(this)

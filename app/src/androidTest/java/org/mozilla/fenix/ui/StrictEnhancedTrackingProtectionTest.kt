@@ -4,17 +4,16 @@
 
 package org.mozilla.fenix.ui
 
-import androidx.test.platform.app.InstrumentationRegistry
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
+import org.mozilla.fenix.helpers.FeatureSettingsHelper
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
-import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.ui.robots.enhancedTrackingProtection
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
@@ -35,6 +34,7 @@ import org.mozilla.fenix.ui.robots.settingsSubMenuEnhancedTrackingProtection
 
 class StrictEnhancedTrackingProtectionTest {
     private lateinit var mockWebServer: MockWebServer
+    private val featureSettingsHelper = FeatureSettingsHelper()
 
     @get:Rule
     val activityTestRule = HomeActivityTestRule()
@@ -45,19 +45,14 @@ class StrictEnhancedTrackingProtectionTest {
             dispatcher = AndroidAssetDispatcher()
             start()
         }
-
-        activityTestRule.activity.settings().setStrictETP()
-
-        // Reset on-boarding notification for each test
-        TestHelper.setPreference(
-            InstrumentationRegistry.getInstrumentation().context,
-            "pref_key_tracking_protection_onboarding", 0
-        )
+        featureSettingsHelper.setStrictETPEnabled()
+        featureSettingsHelper.setJumpBackCFREnabled(false)
     }
 
     @After
     fun tearDown() {
         mockWebServer.shutdown()
+        featureSettingsHelper.resetAllFeatureFlags()
     }
 
     @Test
@@ -69,120 +64,96 @@ class StrictEnhancedTrackingProtectionTest {
             verifyEnhancedTrackingProtectionValue("On")
         }.openEnhancedTrackingProtectionSubMenu {
             verifyEnhancedTrackingProtectionHeader()
-            verifyEnhancedTrackingProtectionOptions()
-            verifyEnhancedTrackingProtectionDefaults()
+            verifyEnhancedTrackingProtectionOptionsEnabled()
+            verifyTrackingProtectionSwitchEnabled()
         }.openExceptions {
             verifyDefault()
         }
     }
 
+    @SmokeTest
     @Test
-    fun testStrictVisitContentNotification() {
-        val trackingProtectionTest =
-            TestAssetHelper.getEnhancedTrackingProtectionAsset(mockWebServer)
+    fun testETPOffGlobally() {
+        val genericPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openEnhancedTrackingProtectionSubMenu {
+            switchEnhancedTrackingProtectionToggle()
+            verifyEnhancedTrackingProtectionOptionsEnabled(false)
+        }.goBack {
+        }.goBack { }
 
         navigationToolbar {
-        }.enterURLAndEnterToBrowser(trackingProtectionTest.url) {}
-
+        }.enterURLAndEnterToBrowser(genericPage.url) { }
         enhancedTrackingProtection {
-            verifyEnhancedTrackingProtectionNotice()
-        }.closeNotificationPopup {}
-    }
-
-    @Test
-    fun testStrictVisitContentShield() {
-        val trackingProtectionTest =
-            TestAssetHelper.getEnhancedTrackingProtectionAsset(mockWebServer)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(trackingProtectionTest.url) {}
-
+        }.openEnhancedTrackingProtectionSheet {
+            verifyETPSwitchVisibility(false)
+        }.closeEnhancedTrackingProtectionSheet {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openEnhancedTrackingProtectionSubMenu {
+            switchEnhancedTrackingProtectionToggle()
+            verifyEnhancedTrackingProtectionOptionsEnabled(true)
+        }.goBack {
+        }.goBackToBrowser { }
         enhancedTrackingProtection {
-            verifyEnhancedTrackingProtectionNotice()
-        }.closeNotificationPopup {}
-
-        enhancedTrackingProtection {
-            verifyEnhancedTrackingProtectionShield()
+        }.openEnhancedTrackingProtectionSheet {
+            verifyETPSwitchVisibility(true)
         }
     }
 
     @Test
     fun testStrictVisitProtectionSheet() {
+        val genericPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
         val trackingProtectionTest =
             TestAssetHelper.getEnhancedTrackingProtectionAsset(mockWebServer)
 
+        // browsing a generic page to allow GV to load on a fresh run
         navigationToolbar {
-        }.enterURLAndEnterToBrowser(trackingProtectionTest.url) {}
-
-        enhancedTrackingProtection {
-            verifyEnhancedTrackingProtectionNotice()
-        }.closeNotificationPopup {}
-
-        enhancedTrackingProtection {
-            verifyEnhancedTrackingProtectionShield()
-        }.openEnhancedTrackingProtectionSheet {
-            verifyEnhancedTrackingProtectionSheetStatus("ON", true)
+        }.enterURLAndEnterToBrowser(genericPage.url) {
+        }.openTabDrawer {
+            closeTab()
         }
-    }
-
-    @Test
-    fun testStrictVisitDisable() {
-        val trackingProtectionTest =
-            TestAssetHelper.getEnhancedTrackingProtectionAsset(mockWebServer)
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(trackingProtectionTest.url) {}
-
         enhancedTrackingProtection {
-            verifyEnhancedTrackingProtectionNotice()
-        }.closeNotificationPopup {}
-
-        enhancedTrackingProtection {
-            verifyEnhancedTrackingProtectionShield()
         }.openEnhancedTrackingProtectionSheet {
             verifyEnhancedTrackingProtectionSheetStatus("ON", true)
-        }.disableEnhancedTrackingProtectionFromSheet {
-            verifyEnhancedTrackingProtectionSheetStatus("OFF", false)
-        }.closeEnhancedTrackingProtectionSheet {}
-
-        // Verify that Enhanced Tracking Protection remains globally enabled
-        navigationToolbar {
-        }.openThreeDotMenu {
-            verifyThreeDotMenuExists()
-            verifySettingsButton()
-        }.openSettings {
-            verifyEnhancedTrackingProtectionButton()
-            verifyEnhancedTrackingProtectionValue("On")
         }
     }
 
     @Test
     fun testStrictVisitDisableExceptionToggle() {
+        val genericPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
         val trackingProtectionTest =
             TestAssetHelper.getEnhancedTrackingProtectionAsset(mockWebServer)
 
+        // browsing a generic page to allow GV to load on a fresh run
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(genericPage.url) {
+        }.openTabDrawer {
+            closeTab()
+        }
+
         navigationToolbar {
         }.enterURLAndEnterToBrowser(trackingProtectionTest.url) {}
-
         enhancedTrackingProtection {
-            verifyEnhancedTrackingProtectionNotice()
-        }.closeNotificationPopup {}
-
-        enhancedTrackingProtection {
-            verifyEnhancedTrackingProtectionShield()
         }.openEnhancedTrackingProtectionSheet {
             verifyEnhancedTrackingProtectionSheetStatus("ON", true)
         }.disableEnhancedTrackingProtectionFromSheet {
             verifyEnhancedTrackingProtectionSheetStatus("OFF", false)
         }.openProtectionSettings {
             verifyEnhancedTrackingProtectionHeader()
-            verifyEnhancedTrackingProtectionOptions()
-            verifyEnhancedTrackingProtectionDefaults()
+            verifyEnhancedTrackingProtectionOptionsEnabled()
+            verifyTrackingProtectionSwitchEnabled()
         }
 
         settingsSubMenuEnhancedTrackingProtection {
         }.openExceptions {
-            verifyListedURL(trackingProtectionTest.url.toString())
+            verifyListedURL(trackingProtectionTest.url.host.toString())
         }.disableExceptions {
             verifyDefault()
         }
@@ -190,22 +161,29 @@ class StrictEnhancedTrackingProtectionTest {
 
     @Test
     fun testStrictVisitSheetDetails() {
+        val genericPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
         val trackingProtectionTest =
             TestAssetHelper.getEnhancedTrackingProtectionAsset(mockWebServer)
 
+        // browsing a generic page to allow GV to load on a fresh run
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(genericPage.url) {
+        }.openTabDrawer {
+            closeTab()
+        }
+
         navigationToolbar {
         }.enterURLAndEnterToBrowser(trackingProtectionTest.url) {}
-
         enhancedTrackingProtection {
-            verifyEnhancedTrackingProtectionNotice()
-        }.closeNotificationPopup {}
-
-        enhancedTrackingProtection {
-            verifyEnhancedTrackingProtectionShield()
         }.openEnhancedTrackingProtectionSheet {
             verifyEnhancedTrackingProtectionSheetStatus("ON", true)
         }.openDetails {
             verifyEnhancedTrackingProtectionDetailsStatus("Blocked")
+            verifyTrackingCookiesBlocked()
+            verifyCryptominersBlocked()
+            verifyFingerprintersBlocked()
+            verifyTrackingContentBlocked()
+            viewTrackingContentBlockList()
         }
     }
 }

@@ -10,17 +10,11 @@ from taskgraph.target_tasks import _target_task
 @_target_task('release')
 def target_tasks_default(full_task_graph, parameters, graph_config):
 
-    # TODO Use shipping-phase once we retire github-releases
+    # TODO Use shipping-phase
     def filter(task, parameters):
-        # Mark-as-shipped is always red on github-release and it confuses people.
-        # This task cannot be green if we kick off a release through github-releases, so
-        # let's exlude that task there.
-        if task.kind == "mark-as-shipped" and parameters["tasks_for"] == "github-release":
-            return False
-
         return task.attributes.get("release-type", "") == parameters["release_type"]
 
-    return [l for l, t in full_task_graph.tasks.iteritems() if filter(t, parameters)]
+    return [l for l, t in full_task_graph.tasks.items() if filter(t, parameters)]
 
 
 @_target_task("nightly")
@@ -28,27 +22,9 @@ def target_tasks_nightly(full_task_graph, parameters, graph_config):
     """Select the set of tasks required for a nightly build."""
 
     def filter(task, parameters):
-        # We don't want to ship nightly while Google Play is still behind manual review.
-        # See bug 1628413 for more context.
-        return task.attributes.get("nightly", False) and task.kind != "push-apk"
+        return task.attributes.get("nightly", False)
 
-    return [l for l, t in full_task_graph.tasks.iteritems() if filter(t, parameters)]
-
-
-@_target_task("nightly-on-google-play")
-def target_tasks_nightly_on_google_play(full_task_graph, parameters, graph_config):
-    """Select the set of tasks required for a nightly build that goes on Google Play."""
-
-    def filter(task, parameters):
-        return (
-            task.attributes.get("nightly", False) and
-            # This target_task is temporary while Google Play processes APKs slower than usually
-            # (bug 1628413). So we want this target task to be only about shipping APKs to GP and
-            # not doing any other miscellaneous tasks like performance testing
-            task.kind not in ("browsertime", "visual-metrics", "raptor")
-        )
-
-    return [l for l, t in full_task_graph.tasks.iteritems() if filter(t, parameters)]
+    return [l for l, t in full_task_graph.tasks.items() if filter(t, parameters)]
 
 
 def _filter_fennec(fennec_type, task, parameters):
@@ -59,7 +35,7 @@ def _filter_fennec(fennec_type, task, parameters):
 def target_tasks_fennec_nightly(full_task_graph, parameters, graph_config):
     """Select the set of tasks required for a production build signed with the fennec key."""
 
-    return [l for l, t in full_task_graph.tasks.iteritems() if _filter_fennec("production", t, parameters)]
+    return [l for l, t in full_task_graph.tasks.items() if _filter_fennec("production", t, parameters)]
 
 
 @_target_task("bump_android_components")
@@ -69,7 +45,7 @@ def target_tasks_bump_android_components(full_task_graph, parameters, graph_conf
     def filter(task, parameters):
         return task.attributes.get("bump-type", "") == "android-components"
 
-    return [l for l, t in full_task_graph.tasks.iteritems() if filter(t, parameters)]
+    return [l for l, t in full_task_graph.tasks.items() if filter(t, parameters)]
 
 
 @_target_task("screenshots")
@@ -79,4 +55,4 @@ def target_tasks_screnshots(full_task_graph, parameters, graph_config):
     def filter(task, parameters):
         return task.attributes.get("screenshots", False)
 
-    return [l for l, t in full_task_graph.tasks.iteritems() if filter(t, parameters)]
+    return [l for l, t in full_task_graph.tasks.items() if filter(t, parameters)]

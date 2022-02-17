@@ -6,60 +6,57 @@ package org.mozilla.fenix.library.recentlyclosed
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.history_list_item.view.*
-import mozilla.components.browser.state.state.ClosedTab
+import mozilla.components.browser.state.state.recover.TabState
 import org.mozilla.fenix.R
-import org.mozilla.fenix.library.history.HistoryItemMenu
-import org.mozilla.fenix.utils.Do
+import org.mozilla.fenix.databinding.HistoryListItemBinding
+import org.mozilla.fenix.ext.hideAndDisable
+import org.mozilla.fenix.ext.showAndEnable
+import org.mozilla.fenix.selection.SelectionHolder
 
 class RecentlyClosedItemViewHolder(
     view: View,
-    private val recentlyClosedFragmentInteractor: RecentlyClosedFragmentInteractor
+    private val recentlyClosedFragmentInteractor: RecentlyClosedFragmentInteractor,
+    private val selectionHolder: SelectionHolder<TabState>,
 ) : RecyclerView.ViewHolder(view) {
 
-    private var item: ClosedTab? = null
+    private val binding = HistoryListItemBinding.bind(view)
+
+    private var item: TabState? = null
 
     init {
-        setupMenu()
+        binding.historyLayout.overflowView.apply {
+            setImageResource(R.drawable.ic_close)
+            contentDescription = view.context.getString(R.string.history_delete_item)
+            setOnClickListener {
+                val item = item ?: return@setOnClickListener
+                recentlyClosedFragmentInteractor.onDelete(item)
+            }
+        }
     }
 
-    fun bind(
-        item: ClosedTab
-    ) {
-        itemView.history_layout.titleView.text =
-            if (item.title.isNotEmpty()) item.title else item.url
-        itemView.history_layout.urlView.text = item.url
+    fun bind(item: TabState) {
+        binding.historyLayout.titleView.text =
+            item.title.ifEmpty { item.url }
+        binding.historyLayout.urlView.text = item.url
+
+        binding.historyLayout.setSelectionInteractor(
+            item,
+            selectionHolder,
+            recentlyClosedFragmentInteractor
+        )
+        binding.historyLayout.changeSelected(item in selectionHolder.selectedItems)
 
         if (this.item?.url != item.url) {
-            itemView.history_layout.loadFavicon(item.url)
+            binding.historyLayout.loadFavicon(item.url)
         }
 
-        itemView.setOnClickListener {
-            recentlyClosedFragmentInteractor.restore(item)
+        if (selectionHolder.selectedItems.isEmpty()) {
+            binding.historyLayout.overflowView.showAndEnable()
+        } else {
+            binding.historyLayout.overflowView.hideAndDisable()
         }
 
         this.item = item
-    }
-
-    private fun setupMenu() {
-        val historyMenu = HistoryItemMenu(itemView.context) {
-            val item = this.item ?: return@HistoryItemMenu
-            Do exhaustive when (it) {
-                HistoryItemMenu.Item.Copy -> recentlyClosedFragmentInteractor.onCopyPressed(item)
-                HistoryItemMenu.Item.Share -> recentlyClosedFragmentInteractor.onSharePressed(item)
-                HistoryItemMenu.Item.OpenInNewTab -> recentlyClosedFragmentInteractor.onOpenInNormalTab(
-                    item
-                )
-                HistoryItemMenu.Item.OpenInPrivateTab -> recentlyClosedFragmentInteractor.onOpenInPrivateTab(
-                    item
-                )
-                HistoryItemMenu.Item.Delete -> recentlyClosedFragmentInteractor.onDeleteOne(
-                    item
-                )
-            }
-        }
-
-        itemView.history_layout.attachMenu(historyMenu.menuController)
     }
 
     companion object {

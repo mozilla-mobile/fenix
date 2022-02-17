@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.ui.robots
 
 import androidx.test.espresso.Espresso
@@ -44,19 +48,19 @@ private fun deviceName() = Espresso.onView(CoreMatchers.allOf(ViewMatchers.withT
 private fun disconnectButton() = Espresso.onView(CoreMatchers.allOf(ViewMatchers.withId(R.id.signOutDisconnect)))
 
 private fun assertBookmarksCheckbox() = bookmarksCheckbox().check(
-        ViewAssertions.matches(
-                ViewMatchers.withEffectiveVisibility(
-                        ViewMatchers.Visibility.VISIBLE
-                )
+    ViewAssertions.matches(
+        ViewMatchers.withEffectiveVisibility(
+            ViewMatchers.Visibility.VISIBLE
         )
+    )
 )
 
 private fun assertHistoryCheckbox() = historyCheckbox().check(
-        ViewAssertions.matches(
-                ViewMatchers.withEffectiveVisibility(
-                        ViewMatchers.Visibility.VISIBLE
-                )
+    ViewAssertions.matches(
+        ViewMatchers.withEffectiveVisibility(
+            ViewMatchers.Visibility.VISIBLE
         )
+    )
 )
 
 private fun assertSignOutButton() = signOutButton().check(ViewAssertions.matches(ViewMatchers.withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))

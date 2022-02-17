@@ -38,7 +38,7 @@ class SitePermissionsFragment : PreferenceFragmentCompat() {
 
     private fun bindExceptions() {
         val keyExceptions = getPreferenceKey(R.string.pref_key_show_site_exceptions)
-        val exceptionsCategory = requireNotNull<Preference>(findPreference(keyExceptions))
+        val exceptionsCategory = requireNotNull(findPreference(keyExceptions))
 
         exceptionsCategory.onPreferenceClickListener = OnPreferenceClickListener {
             val directions = SitePermissionsFragmentDirections.actionSitePermissionsToExceptions()
@@ -59,17 +59,8 @@ class SitePermissionsFragment : PreferenceFragmentCompat() {
         val context = requireContext()
         val settings = context.settings()
 
-        val summary = phoneFeature.getActionLabel(context, settings = settings)
-        // Remove autoplaySummary after https://bugzilla.mozilla.org/show_bug.cgi?id=1621825 is fixed
-        val autoplaySummary =
-            if (summary == context.getString(R.string.preference_option_autoplay_allowed2)) {
-                context.getString(R.string.preference_option_autoplay_allowed_wifi_only2)
-            } else {
-                null
-            }
-
         val cameraPhoneFeatures = requirePreference<Preference>(phoneFeature.getPreferenceId())
-        cameraPhoneFeatures.summary = autoplaySummary ?: summary
+        cameraPhoneFeatures.summary = phoneFeature.getActionLabel(context, settings = settings)
 
         cameraPhoneFeatures.onPreferenceClickListener = OnPreferenceClickListener {
             navigateToPhoneFeature(phoneFeature)

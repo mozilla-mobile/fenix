@@ -13,7 +13,7 @@ export REPO="fenix"
 git config --global user.email "$EMAIL"
 git config --global user.name "$GITHUB_USER"
 
-COMPONENT_TO_WATCH='browser-engine-gecko-nightly'
+COMPONENT_TO_WATCH='browser-engine-gecko'
 MAVEN_URL="https://nightly.maven.mozilla.org/maven2/org/mozilla/components/$COMPONENT_TO_WATCH"
 
 # Fetch latest version
@@ -59,7 +59,7 @@ if [[ $(hub pr list --head "$GITHUB_USER:$BRANCH") ]]; then
     echo "There's already an open PR."
 else
     echo "No PR found. Opening new PR."
-    hub pull-request --base master --head "$GITHUB_USER:$BRANCH" --no-edit -m "Update Android Components version"
+    hub pull-request --base main --head "$GITHUB_USER:$BRANCH" --no-edit -m "Update Android Components version"
 fi
 
 unset GITHUB_TOKEN

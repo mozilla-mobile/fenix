@@ -5,17 +5,16 @@
 package org.mozilla.fenix.collections
 
 import io.mockk.MockKAnnotations
+import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.verify
 import io.mockk.verifyAll
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
 import mozilla.components.browser.state.action.TabListAction
-import mozilla.components.browser.state.state.MediaState
 import mozilla.components.browser.state.state.createTab
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.feature.tab.collections.TabCollection
@@ -23,6 +22,7 @@ import mozilla.components.support.test.ext.joinBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.mozilla.fenix.components.TabCollectionStorage
@@ -30,15 +30,14 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.home.Tab
 
-@ExperimentalCoroutinesApi
 class DefaultCollectionCreationControllerTest {
 
     private val testCoroutineScope = TestCoroutineScope()
     private lateinit var state: CollectionCreationState
     private lateinit var controller: DefaultCollectionCreationController
+    private var dismissed = false
 
     @MockK(relaxed = true) private lateinit var store: CollectionCreationStore
-    @MockK(relaxed = true) private lateinit var dismiss: () -> Unit
     @MockK(relaxUnitFun = true) private lateinit var metrics: MetricController
     @MockK(relaxUnitFun = true) private lateinit var tabCollectionStorage: TabCollectionStorage
     private lateinit var browserStore: BrowserStore
@@ -55,10 +54,13 @@ class DefaultCollectionCreationControllerTest {
 
         browserStore = BrowserStore()
 
+        dismissed = false
         controller = DefaultCollectionCreationController(
             store,
             browserStore,
-            dismiss,
+            dismiss = {
+                dismissed = true
+            },
             metrics,
             tabCollectionStorage,
             testCoroutineScope
@@ -79,14 +81,17 @@ class DefaultCollectionCreationControllerTest {
             TabListAction.AddMultipleTabsAction(listOf(tab1, tab2))
         ).joinBlocking()
 
+        coEvery { tabCollectionStorage.addTabsToCollection(any(), any()) } returns 1L
+        coEvery { tabCollectionStorage.createCollection(any(), any()) } returns 1L
+
         val tabs = listOf(
-            Tab("session-1", "", "", "", mediaState = MediaState.State.NONE),
-            Tab("null-session", "", "", "", mediaState = MediaState.State.NONE)
+            Tab("session-1", "", "", ""),
+            Tab("null-session", "", "", "")
         )
 
         controller.saveCollectionName(tabs, "name")
 
-        verify { dismiss() }
+        assertTrue(dismissed)
         coVerify { tabCollectionStorage.createCollection("name", listOf(tab1)) }
         verify { metrics.track(Event.CollectionSaved(2, 1)) }
     }
@@ -103,7 +108,7 @@ class DefaultCollectionCreationControllerTest {
 
         state = state.copy(tabCollections = emptyList(), tabs = listOf(mockk()))
         controller.backPressed(SaveCollectionStep.NameCollection)
-        verify { dismiss() }
+        assertTrue(dismissed)
     }
 
     @Test
@@ -114,16 +119,16 @@ class DefaultCollectionCreationControllerTest {
 
         state = state.copy(tabCollections = emptyList(), tabs = listOf(mockk()))
         controller.backPressed(SaveCollectionStep.SelectCollection)
-        verify { dismiss() }
+        assertTrue(dismissed)
     }
 
     @Test
     fun `GIVEN last step WHEN backPressed is called THEN dismiss should be called`() {
         controller.backPressed(SaveCollectionStep.SelectTabs)
-        verify { dismiss() }
+        assertTrue(dismissed)
 
         controller.backPressed(SaveCollectionStep.RenameCollection)
-        verify { dismiss() }
+        assertTrue(dismissed)
     }
 
     @Test
@@ -133,8 +138,8 @@ class DefaultCollectionCreationControllerTest {
         controller.renameCollection(collection, "name")
         advanceUntilIdle()
 
+        assertTrue(dismissed)
         verifyAll {
-            dismiss()
             metrics.track(Event.CollectionRenamed)
         }
         coVerify { tabCollectionStorage.renameCollection(collection, "name") }
@@ -149,7 +154,7 @@ class DefaultCollectionCreationControllerTest {
         verify { store.dispatch(CollectionCreationAction.RemoveAllTabs) }
 
         controller.close()
-        verify { dismiss() }
+        assertTrue(dismissed)
     }
 
     @Test
@@ -167,19 +172,20 @@ class DefaultCollectionCreationControllerTest {
     fun `WHEN selectCollection is called THEN add tabs should be added to collection`() {
         val tab1 = createTab("https://www.mozilla.org", id = "session-1")
         val tab2 = createTab("https://www.mozilla.org", id = "session-2")
-
         browserStore.dispatch(
             TabListAction.AddMultipleTabsAction(listOf(tab1, tab2))
         ).joinBlocking()
 
         val tabs = listOf(
-            Tab("session-1", "", "", "", mediaState = MediaState.State.NONE)
+            Tab("session-1", "", "", "")
         )
         val collection = mockk<TabCollection>()
+        coEvery { tabCollectionStorage.addTabsToCollection(any(), any()) } returns 1L
+        coEvery { tabCollectionStorage.createCollection(any(), any()) } returns 1L
 
         controller.selectCollection(collection, tabs)
 
-        verify { dismiss() }
+        assertTrue(dismissed)
         coVerify { tabCollectionStorage.addTabsToCollection(collection, listOf(tab1)) }
         verify { metrics.track(Event.CollectionTabsAdded(2, 1)) }
     }
@@ -244,14 +250,16 @@ class DefaultCollectionCreationControllerTest {
 
     @Test
     fun `GIVEN list of collections WHEN saving tabs to collection THEN dispatch NameCollection step changed`() {
-        state = state.copy(tabCollections = listOf(
-            mockk {
-                every { title } returns "Collection 1"
-            },
-            mockk {
-                every { title } returns "Random Collection"
-            }
-        ))
+        state = state.copy(
+            tabCollections = listOf(
+                mockk {
+                    every { title } returns "Collection 1"
+                },
+                mockk {
+                    every { title } returns "Random Collection"
+                }
+            )
+        )
 
         controller.saveTabsToCollection(ArrayList())
 

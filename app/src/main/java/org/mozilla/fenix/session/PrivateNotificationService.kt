@@ -13,9 +13,8 @@ import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.feature.privatemode.notification.AbstractPrivateNotificationService
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
-import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.metrics
+import java.util.Locale
 
 /**
  * Manages notifications for private tabs.
@@ -33,9 +32,28 @@ class PrivateNotificationService : AbstractPrivateNotificationService() {
 
     override fun NotificationCompat.Builder.buildNotification() {
         setSmallIcon(R.drawable.ic_private_browsing)
-        setContentTitle(getString(R.string.app_name_private_4, getString(R.string.app_name)))
-        setContentText(getString(R.string.notification_pbm_delete_text_2))
-        color = ContextCompat.getColor(this@PrivateNotificationService, R.color.pbm_notification_color)
+        setContentTitle(
+            applicationContext.getString(
+                R.string.app_name_private_4,
+                getString(R.string.app_name)
+            )
+        )
+        setContentText(
+            applicationContext.getString(
+                R.string.notification_pbm_delete_text_2
+            )
+        )
+        color = ContextCompat.getColor(
+            this@PrivateNotificationService,
+            R.color.pbm_notification_color
+        )
+    }
+
+    /**
+     * Update the existing notification when the [Locale] has been changed.
+     */
+    override fun notifyLocaleChanged() {
+        super.refreshNotification()
     }
 
     @SuppressLint("MissingSuperCall")
@@ -45,8 +63,6 @@ class PrivateNotificationService : AbstractPrivateNotificationService() {
         // Trigger use case directly for now (instead of calling super.erasePrivateTabs)
         // as otherwise SessionManager and the store will be out of sync.
         components.useCases.tabsUseCases.removePrivateTabs()
-
-        metrics.track(Event.PrivateBrowsingNotificationTapped)
 
         // If the app is in private mode we launch to the private mode home screen as a
         // confirmation that all private tabs have been deleted. If we don't do this the user

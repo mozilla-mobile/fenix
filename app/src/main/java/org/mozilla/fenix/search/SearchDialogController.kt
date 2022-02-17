@@ -12,10 +12,10 @@ import android.text.SpannableString
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AlertDialog
 import androidx.navigation.NavController
-import mozilla.components.browser.session.Session
-import mozilla.components.browser.session.SessionManager
 import mozilla.components.browser.state.search.SearchEngine
 import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.concept.engine.EngineSession.LoadUrlFlags
+import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.support.ktx.kotlin.isUrl
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
@@ -25,6 +25,7 @@ import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.components.metrics.MetricsUtils
 import org.mozilla.fenix.crashes.CrashListActivity
 import org.mozilla.fenix.ext.navigateSafe
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.utils.Settings
 
@@ -33,34 +34,35 @@ import org.mozilla.fenix.utils.Settings
  */
 @Suppress("TooManyFunctions")
 interface SearchController {
-    fun handleUrlCommitted(url: String)
+    fun handleUrlCommitted(url: String, fromHomeScreen: Boolean = false)
     fun handleEditingCancelled()
     fun handleTextChanged(text: String)
-    fun handleUrlTapped(url: String)
+    fun handleUrlTapped(url: String, flags: LoadUrlFlags = LoadUrlFlags.none())
     fun handleSearchTermsTapped(searchTerms: String)
     fun handleSearchShortcutEngineSelected(searchEngine: SearchEngine)
     fun handleClickSearchEngineSettings()
-    fun handleExistingSessionSelected(session: Session)
     fun handleExistingSessionSelected(tabId: String)
     fun handleSearchShortcutsButtonClicked()
     fun handleCameraPermissionsNeeded()
+    fun handleSearchEngineSuggestionClicked(searchEngine: SearchEngine)
 }
 
 @Suppress("TooManyFunctions", "LongParameterList")
 class SearchDialogController(
     private val activity: HomeActivity,
-    private val sessionManager: SessionManager,
     private val store: BrowserStore,
+    private val tabsUseCases: TabsUseCases,
     private val fragmentStore: SearchFragmentStore,
     private val navController: NavController,
     private val settings: Settings,
     private val metrics: MetricController,
     private val dismissDialog: () -> Unit,
     private val clearToolbarFocus: () -> Unit,
-    private val focusToolbar: () -> Unit
+    private val focusToolbar: () -> Unit,
+    private val clearToolbar: () -> Unit
 ) : SearchController {
 
-    override fun handleUrlCommitted(url: String) {
+    override fun handleUrlCommitted(url: String, fromHomeScreen: Boolean) {
         when (url) {
             "about:crashes" -> {
                 // The list of past crashes can be accessed via "settings > about", but desktop and
@@ -73,16 +75,19 @@ class SearchDialogController(
                     SearchDialogFragmentDirections.actionGlobalAddonsManagementFragment()
                 navController.navigateSafe(R.id.searchDialogFragment, directions)
             }
-            "moz://a" -> openSearchOrUrl(SupportUtils.getMozillaPageUrl(SupportUtils.MozillaPage.MANIFESTO))
-            else -> if (url.isNotBlank()) {
-                openSearchOrUrl(url)
-            } else {
-                dismissDialog()
-            }
+            "moz://a" -> openSearchOrUrl(
+                SupportUtils.getMozillaPageUrl(SupportUtils.MozillaPage.MANIFESTO),
+                fromHomeScreen
+            )
+            else ->
+                if (url.isNotBlank()) {
+                    openSearchOrUrl(url, fromHomeScreen)
+                }
         }
+        dismissDialog()
     }
 
-    private fun openSearchOrUrl(url: String) {
+    private fun openSearchOrUrl(url: String, fromHomeScreen: Boolean) {
         clearToolbarFocus()
 
         val searchEngine = fragmentStore.state.searchEngineSource.searchEngine
@@ -91,7 +96,8 @@ class SearchDialogController(
             searchTermOrURL = url,
             newTab = fragmentStore.state.tabId == null,
             from = BrowserDirection.FromSearchDialog,
-            engine = searchEngine
+            engine = searchEngine,
+            requestDesktopMode = fromHomeScreen && activity.settings().openNextTabInDesktopMode
         )
 
         val event = if (url.isUrl() || searchEngine == null) {
@@ -116,6 +122,7 @@ class SearchDialogController(
 
     override fun handleEditingCancelled() {
         clearToolbarFocus()
+        dismissDialog()
     }
 
     override fun handleTextChanged(text: String) {
@@ -127,26 +134,27 @@ class SearchDialogController(
         fragmentStore.dispatch(
             SearchFragmentAction.ShowSearchShortcutEnginePicker(
                 (textMatchesCurrentUrl || textMatchesCurrentSearch || text.isEmpty()) &&
-                        settings.shouldShowSearchShortcuts
+                    settings.shouldShowSearchShortcuts
             )
         )
         fragmentStore.dispatch(
             SearchFragmentAction.AllowSearchSuggestionsInPrivateModePrompt(
                 text.isNotEmpty() &&
-                        activity.browsingModeManager.mode.isPrivate &&
-                        !settings.shouldShowSearchSuggestionsInPrivate &&
-                        !settings.showSearchSuggestionsInPrivateOnboardingFinished
+                    activity.browsingModeManager.mode.isPrivate &&
+                    !settings.shouldShowSearchSuggestionsInPrivate &&
+                    !settings.showSearchSuggestionsInPrivateOnboardingFinished
             )
         )
     }
 
-    override fun handleUrlTapped(url: String) {
+    override fun handleUrlTapped(url: String, flags: LoadUrlFlags) {
         clearToolbarFocus()
 
         activity.openToBrowserAndLoad(
             searchTermOrURL = url,
             newTab = fragmentStore.state.tabId == null,
-            from = BrowserDirection.FromSearchDialog
+            from = BrowserDirection.FromSearchDialog,
+            flags = flags
         )
 
         metrics.track(Event.EnteredUrl(false))
@@ -199,19 +207,14 @@ class SearchDialogController(
         navController.navigateSafe(R.id.searchDialogFragment, directions)
     }
 
-    override fun handleExistingSessionSelected(session: Session) {
+    override fun handleExistingSessionSelected(tabId: String) {
         clearToolbarFocus()
-        sessionManager.select(session)
+
+        tabsUseCases.selectTab(tabId)
+
         activity.openToBrowser(
             from = BrowserDirection.FromSearchDialog
         )
-    }
-
-    override fun handleExistingSessionSelected(tabId: String) {
-        val session = sessionManager.findSessionById(tabId)
-        if (session != null) {
-            handleExistingSessionSelected(session)
-        }
     }
 
     /**
@@ -228,6 +231,11 @@ class SearchDialogController(
         dialog.show()
     }
 
+    override fun handleSearchEngineSuggestionClicked(searchEngine: SearchEngine) {
+        clearToolbar()
+        handleSearchShortcutEngineSelected(searchEngine)
+    }
+
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     fun buildDialog(): AlertDialog.Builder {
         return AlertDialog.Builder(activity).apply {
@@ -239,7 +247,7 @@ class SearchDialogController(
                 dismissDialog()
             }
             setPositiveButton(R.string.camera_permissions_needed_positive_button_text) {
-                    dialog: DialogInterface, _ ->
+                dialog: DialogInterface, _ ->
                 val intent: Intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                 } else {

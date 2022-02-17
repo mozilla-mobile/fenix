@@ -14,8 +14,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.TestCoroutineDispatcher
 import mozilla.components.browser.state.action.ContentAction
 import mozilla.components.browser.state.action.RestoreCompleteAction
 import mozilla.components.browser.state.action.TabListAction
@@ -25,9 +23,10 @@ import mozilla.components.browser.state.state.SessionState
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.state.state.createTab
 import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.support.test.ext.joinBlocking
 import mozilla.components.support.test.rule.MainCoroutineRule
-import org.junit.After
+import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -36,13 +35,14 @@ import org.mozilla.fenix.FenixApplication
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.toolbar.BrowserToolbarView
+import org.mozilla.fenix.components.toolbar.ToolbarIntegration
 import org.mozilla.fenix.ext.application
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.onboarding.FenixOnboarding
+import org.mozilla.fenix.utils.Settings
 
-@ExperimentalCoroutinesApi
 @RunWith(FenixRobolectricTestRunner::class)
 class BrowserFragmentTest {
 
@@ -57,10 +57,8 @@ class BrowserFragmentTest {
     private lateinit var navController: NavController
     private lateinit var onboarding: FenixOnboarding
 
-    private val testDispatcher = TestCoroutineDispatcher()
-
     @get:Rule
-    val coroutinesTestRule = MainCoroutineRule(testDispatcher)
+    val coroutinesTestRule = MainCoroutineRule()
 
     @Before
     fun setup() {
@@ -83,18 +81,13 @@ class BrowserFragmentTest {
         every { browserFragment.onboarding } returns onboarding
 
         every { browserFragment.requireContext() } returns context
-        every { browserFragment.initializeUI(any()) } returns mockk()
+        every { browserFragment.initializeUI(any(), any()) } returns mockk()
         every { browserFragment.fullScreenChanged(any()) } returns Unit
-        every { browserFragment.resumeDownloadDialogState(any(), any(), any(), any(), any()) } returns Unit
+        every { browserFragment.resumeDownloadDialogState(any(), any(), any(), any()) } returns Unit
 
+        testTab = createTab(url = "https://mozilla.org")
         store = BrowserStore()
         every { context.components.core.store } returns store
-        testTab = createTab(url = "https://mozilla.org")
-    }
-
-    @After
-    fun cleanUp() {
-        testDispatcher.cleanupTestCoroutines()
     }
 
     @Test
@@ -118,10 +111,10 @@ class BrowserFragmentTest {
     @Test
     fun `GIVEN browser UI is not initialized WHEN selected tab changes THEN browser UI is initialized`() {
         browserFragment.observeTabSelection(store)
-        verify(exactly = 0) { browserFragment.initializeUI(view) }
+        verify(exactly = 0) { browserFragment.initializeUI(view, testTab) }
 
         addAndSelectTab(testTab)
-        verify(exactly = 1) { browserFragment.initializeUI(view) }
+        verify(exactly = 1) { browserFragment.initializeUI(view, testTab) }
     }
 
     @Test
@@ -155,7 +148,7 @@ class BrowserFragmentTest {
         val newSelectedTab = createTab("https://firefox.com")
         addAndSelectTab(newSelectedTab)
         verify(exactly = 1) {
-            browserFragment.resumeDownloadDialogState(newSelectedTab.id, store, view, context, any())
+            browserFragment.resumeDownloadDialogState(newSelectedTab.id, store, context, any())
         }
     }
 
@@ -179,9 +172,11 @@ class BrowserFragmentTest {
         val toolbar: BrowserToolbarView = mockk(relaxed = true)
         every { browserFragment.browserToolbarView } returns toolbar
 
-        store.dispatch(ContentAction.UpdateLoadRequestAction(
-            testTab.id,
-            LoadRequestState("https://firefox.com", false, true))
+        store.dispatch(
+            ContentAction.UpdateLoadRequestAction(
+                testTab.id,
+                LoadRequestState("https://firefox.com", false, true)
+            )
         ).joinBlocking()
         verify(exactly = 1) { toolbar.expand() }
     }
@@ -254,13 +249,10 @@ class BrowserFragmentTest {
 
         browserFragment.observeTabSource(store)
 
-        val newSelectedTab1: TabSessionState = mockk(relaxed = true)
-        val newSelectedTab2: TabSessionState = mockk(relaxed = true)
-        val newSelectedTab3: TabSessionState = mockk(relaxed = true)
-
-        every { newSelectedTab1.source } returns SessionState.Source.ACTION_SEARCH
-        every { newSelectedTab2.source } returns SessionState.Source.ACTION_SEND
-        every { newSelectedTab3.source } returns SessionState.Source.ACTION_VIEW
+        val newSelectedTab1 = createTab("any-tab-1.org", source = SessionState.Source.External.ActionSearch(mockk()))
+        val newSelectedTab2 = createTab("any-tab-2.org", source = SessionState.Source.External.ActionView(mockk()))
+        val newSelectedTab3 = createTab("any-tab-3.org", source = SessionState.Source.External.ActionSend(mockk()))
+        val newSelectedTab4 = createTab("any-tab-4.org", source = SessionState.Source.External.CustomTab(mockk()))
 
         addAndSelectTab(newSelectedTab1)
         verify(exactly = 0) { onboarding.finish() }
@@ -269,6 +261,9 @@ class BrowserFragmentTest {
         verify(exactly = 0) { onboarding.finish() }
 
         addAndSelectTab(newSelectedTab3)
+        verify(exactly = 0) { onboarding.finish() }
+
+        addAndSelectTab(newSelectedTab4)
         verify(exactly = 0) { onboarding.finish() }
     }
 
@@ -287,22 +282,70 @@ class BrowserFragmentTest {
 
     @Test
     fun `WHEN isPullToRefreshEnabledInBrowser is disabled THEN pull down refresh is disabled`() {
-        every { homeActivity.isImmersive } returns false
         every { context.settings().isPullToRefreshEnabledInBrowser } returns true
-        assert(browserFragment.shouldPullToRefreshBeEnabled())
+        assert(browserFragment.shouldPullToRefreshBeEnabled(false))
 
         every { context.settings().isPullToRefreshEnabledInBrowser } returns false
-        assert(!browserFragment.shouldPullToRefreshBeEnabled())
+        assert(!browserFragment.shouldPullToRefreshBeEnabled(false))
     }
 
     @Test
-    fun `WHEN in immersive mode THEN pull down refresh is disabled`() {
-        every { homeActivity.isImmersive } returns false
+    fun `WHEN in fullscreen THEN pull down refresh is disabled`() {
         every { context.settings().isPullToRefreshEnabledInBrowser } returns true
-        assert(browserFragment.shouldPullToRefreshBeEnabled())
+        assert(browserFragment.shouldPullToRefreshBeEnabled(false))
+        assert(!browserFragment.shouldPullToRefreshBeEnabled(true))
+    }
 
-        every { homeActivity.isImmersive } returns true
-        assert(!browserFragment.shouldPullToRefreshBeEnabled())
+    @Test
+    fun `WHEN fragment is not attached THEN toolbar invalidation does nothing`() {
+        val browserToolbarView: BrowserToolbarView = mockk(relaxed = true)
+        val browserToolbar: BrowserToolbar = mockk(relaxed = true)
+        val toolbarIntegration: ToolbarIntegration = mockk(relaxed = true)
+        every { browserToolbarView.view } returns browserToolbar
+        every { browserToolbarView.toolbarIntegration } returns toolbarIntegration
+        every { browserFragment.context } returns null
+        browserFragment._browserToolbarView = browserToolbarView
+        browserFragment.safeInvalidateBrowserToolbarView()
+
+        verify(exactly = 0) { browserToolbar.invalidateActions() }
+        verify(exactly = 0) { toolbarIntegration.invalidateMenu() }
+    }
+
+    @Test
+    @Suppress("TooGenericExceptionCaught")
+    fun `WHEN fragment is attached and toolbar view is null THEN toolbar invalidation is safe`() {
+        every { browserFragment.context } returns mockk(relaxed = true)
+        try {
+            browserFragment.safeInvalidateBrowserToolbarView()
+        } catch (e: Exception) {
+            fail("Exception thrown when invalidating toolbar")
+        }
+    }
+
+    @Test
+    fun `WHEN fragment and view are attached THEN toolbar invalidation is triggered`() {
+        val browserToolbarView: BrowserToolbarView = mockk(relaxed = true)
+        val browserToolbar: BrowserToolbar = mockk(relaxed = true)
+        val toolbarIntegration: ToolbarIntegration = mockk(relaxed = true)
+        every { browserToolbarView.view } returns browserToolbar
+        every { browserToolbarView.toolbarIntegration } returns toolbarIntegration
+        every { browserFragment.context } returns mockk(relaxed = true)
+        browserFragment._browserToolbarView = browserToolbarView
+        browserFragment.safeInvalidateBrowserToolbarView()
+
+        verify(exactly = 1) { browserToolbar.invalidateActions() }
+        verify(exactly = 1) { toolbarIntegration.invalidateMenu() }
+    }
+
+    @Test
+    fun `WHEN fragment configuration changed THEN menu is dismissed`() {
+        val browserToolbarView: BrowserToolbarView = mockk(relaxed = true)
+        every { browserFragment.context } returns null
+        browserFragment._browserToolbarView = browserToolbarView
+
+        browserFragment.onConfigurationChanged(mockk(relaxed = true))
+
+        verify(exactly = 1) { browserToolbarView.dismissMenu() }
     }
 
     private fun addAndSelectTab(tab: TabSessionState) {
@@ -316,5 +359,17 @@ class BrowserFragmentTest {
         }
 
         override fun getLifecycle(): Lifecycle = lifecycleRegistry
+    }
+
+    @Test
+    fun `WHEN updating the last browse activity THEN update the associated preference`() {
+        val settings: Settings = mockk(relaxed = true)
+
+        every { browserFragment.context } returns context
+        every { context.settings() } returns settings
+
+        browserFragment.updateLastBrowseActivity()
+
+        verify(exactly = 1) { settings.lastBrowseActivity = any() }
     }
 }

@@ -4,7 +4,7 @@
 
 package org.mozilla.fenix.library.recentlyclosed
 
-import mozilla.components.browser.state.state.ClosedTab
+import mozilla.components.browser.state.state.recover.TabState
 import mozilla.components.lib.state.Action
 import mozilla.components.lib.state.State
 import mozilla.components.lib.state.Store
@@ -23,14 +23,20 @@ class RecentlyClosedFragmentStore(initialState: RecentlyClosedFragmentState) :
  * `RecentlyClosedFragmentState` through the reducer.
  */
 sealed class RecentlyClosedFragmentAction : Action {
-    data class Change(val list: List<ClosedTab>) : RecentlyClosedFragmentAction()
+    data class Change(val list: List<TabState>) : RecentlyClosedFragmentAction()
+    data class Select(val tab: TabState) : RecentlyClosedFragmentAction()
+    data class Deselect(val tab: TabState) : RecentlyClosedFragmentAction()
+    object DeselectAll : RecentlyClosedFragmentAction()
 }
 
 /**
  * The state for the Recently Closed Screen
  * @property items List of recently closed tabs to display
  */
-data class RecentlyClosedFragmentState(val items: List<ClosedTab> = emptyList()) : State
+data class RecentlyClosedFragmentState(
+    val items: List<TabState> = emptyList(),
+    val selectedTabs: Set<TabState>
+) : State
 
 /**
  * The RecentlyClosedFragmentState Reducer.
@@ -41,5 +47,12 @@ private fun recentlyClosedStateReducer(
 ): RecentlyClosedFragmentState {
     return when (action) {
         is RecentlyClosedFragmentAction.Change -> state.copy(items = action.list)
+        is RecentlyClosedFragmentAction.Select -> {
+            state.copy(selectedTabs = state.selectedTabs + action.tab)
+        }
+        is RecentlyClosedFragmentAction.Deselect -> {
+            state.copy(selectedTabs = state.selectedTabs - action.tab)
+        }
+        RecentlyClosedFragmentAction.DeselectAll -> state.copy(selectedTabs = emptySet())
     }
 }

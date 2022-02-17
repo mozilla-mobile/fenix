@@ -23,6 +23,7 @@ import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
 import org.hamcrest.Matchers.allOf
 import org.mozilla.fenix.helpers.TestAssetHelper
+import org.mozilla.fenix.helpers.TestHelper.packageName
 
 /*
  * Implementation of Robot Pattern for the multiple selection toolbar of History and Bookmarks menus.
@@ -57,7 +58,8 @@ class LibrarySubMenusMultipleSelectionToolbarRobot {
         mDevice.waitNotNull(
             Until.findObject(
                 By.text("ALL ACTIONS")
-            ), waitingTime
+            ),
+            waitingTime
         )
     }
 
@@ -67,7 +69,8 @@ class LibrarySubMenusMultipleSelectionToolbarRobot {
         mDevice.waitNotNull(
             Until.findObject(
                 By.text("ALL ACTIONS")
-            ), waitingTime
+            ),
+            waitingTime
         )
     }
 
@@ -99,7 +102,7 @@ class LibrarySubMenusMultipleSelectionToolbarRobot {
         fun clickOpenNewTab(interact: TabDrawerRobot.() -> Unit): TabDrawerRobot.Transition {
             openInNewTabButton().click()
             mDevice.waitNotNull(
-                Until.findObject(By.res("org.mozilla.fenix.debug:id/tab_layout")),
+                Until.findObject(By.res("$packageName:id/tab_layout")),
                 waitingTime
             )
 
@@ -110,7 +113,7 @@ class LibrarySubMenusMultipleSelectionToolbarRobot {
         fun clickOpenPrivateTab(interact: TabDrawerRobot.() -> Unit): TabDrawerRobot.Transition {
             openInPrivateTabButton().click()
             mDevice.waitNotNull(
-                Until.findObject(By.res("org.mozilla.fenix.debug:id/tab_layout")),
+                Until.findObject(By.res("$packageName:id/tab_layout")),
                 waitingTime
             )
 

@@ -60,6 +60,53 @@ def build_scriptworker_signing_payload(config, task, task_def):
 
 
 @payload_builder(
+    "scriptworker-beetmover",
+    schema={
+        Required("action"): text_type,
+        Required("version"): text_type,
+        Required("artifact-map"): [{
+            Required("paths"): {
+                Any(text_type): {
+                    Required("destinations"): [text_type],
+                },
+            },
+            Required("taskId"): taskref_or_string,
+        }],
+        Required("beetmover-application-name"): text_type,
+        Required("bucket"): text_type,
+        Required("upstream-artifacts"): [{
+            Required("taskId"): taskref_or_string,
+            Required("taskType"): text_type,
+            Required("paths"): [text_type],
+        }],
+    },
+)
+def build_scriptworker_beetmover_payload(config, task, task_def):
+    worker = task["worker"]
+
+    task_def["tags"]["worker-implementation"] = "scriptworker"
+
+    # Needed by beetmover-scriptworker
+    for map_ in worker["artifact-map"]:
+        map_["locale"] = "multi"
+        for path_config in map_["paths"].values():
+            path_config["checksums_path"] = ""
+
+    task_def["payload"] = {
+        "artifactMap": worker["artifact-map"],
+        "releaseProperties": {"appName": worker.pop("beetmover-application-name")},
+        "upstreamArtifacts": worker["upstream-artifacts"],
+        "version": worker["version"]
+    }
+
+    scope_prefix = config.graph_config["scriptworker"]["scope-prefix"]
+    task_def["scopes"].extend([
+        "{}:beetmover:action:{}".format(scope_prefix, worker["action"]),
+        "{}:beetmover:bucket:{}".format(scope_prefix, worker["bucket"]),
+    ])
+
+
+@payload_builder(
     "scriptworker-pushapk",
     schema={
         Required("upstream-artifacts"): [
@@ -74,6 +121,7 @@ def build_scriptworker_signing_payload(config, task, task_def):
         Required("commit"): bool,
         Required("product"): text_type,
         Required("dep"): bool,
+        Optional("google-play-track"): text_type,
     },
 )
 def build_push_apk_payload(config, task, task_def):
@@ -87,6 +135,8 @@ def build_push_apk_payload(config, task, task_def):
         "commit": worker["commit"],
         "upstreamArtifacts": worker["upstream-artifacts"],
     }
+    if worker.get("google-play-track"):
+        task_def["payload"]["google_play_track"] = worker["google-play-track"]
 
     scope_prefix = config.graph_config["scriptworker"]["scope-prefix"]
     task_def["scopes"].append(

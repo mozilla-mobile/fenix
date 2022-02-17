@@ -20,6 +20,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import mozilla.components.concept.engine.prompt.ShareData
@@ -141,6 +142,7 @@ class DefaultShareController(
         dismiss(ShareController.Result.DISMISSED)
     }
 
+    @OptIn(DelicateCoroutinesApi::class) // GlobalScope usage
     private fun shareToDevicesWithRetry(shareOperation: () -> Deferred<Boolean>) {
         // Use GlobalScope to allow the continuation of this method even if the share fragment is closed.
         GlobalScope.launch(Dispatchers.Main) {
@@ -202,7 +204,9 @@ class DefaultShareController(
     }
 
     @VisibleForTesting
-    internal fun getShareSubject() = shareSubject ?: shareData.map { it.title }.joinToString(", ")
+    internal fun getShareSubject() =
+        shareSubject ?: shareData.filterNot { it.title.isNullOrEmpty() }
+            .joinToString(", ") { it.title.toString() }
 
     // Navigation between app fragments uses ShareTab as arguments. SendTabUseCases uses TabData.
     @VisibleForTesting

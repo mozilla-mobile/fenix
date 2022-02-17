@@ -4,10 +4,12 @@
 
 package org.mozilla.fenix.settings.quicksettings
 
+import org.mozilla.fenix.trackingprotection.TrackingProtectionState
+
 /**
  * Parent Reducer for all [QuickSettingsFragmentState]s of all Views shown in this Fragment.
  */
-fun quickSettingsFragmentReducer(
+internal fun quickSettingsFragmentReducer(
     state: QuickSettingsFragmentState,
     action: QuickSettingsFragmentAction
 ): QuickSettingsFragmentState {
@@ -24,6 +26,12 @@ fun quickSettingsFragmentReducer(
                 action
             )
         )
+        is TrackingProtectionAction -> state.copy(
+            trackingProtectionState = TrackingProtectionStateReducer.reduce(
+                state = state.trackingProtectionState,
+                action = action
+            )
+        )
     }
 }
 
@@ -35,16 +43,42 @@ object WebsitePermissionsStateReducer {
         state: WebsitePermissionsState,
         action: WebsitePermissionAction
     ): WebsitePermissionsState {
+        val key = action.updatedFeature
+        val value = state.getValue(key)
+
         return when (action) {
             is WebsitePermissionAction.TogglePermission -> {
-                val key = action.updatedFeature
-                val newWebsitePermission = state.getValue(key).copy(
+                val toggleable = value as WebsitePermission.Toggleable
+                val newWebsitePermission = toggleable.copy(
                     status = action.updatedStatus,
                     isEnabled = action.updatedEnabledStatus
                 )
 
                 state + Pair(key, newWebsitePermission)
             }
+            is WebsitePermissionAction.ChangeAutoplay -> {
+                val autoplay = value as WebsitePermission.Autoplay
+                val newWebsitePermission = autoplay.copy(
+                    autoplayValue = action.autoplayValue
+                )
+                state + Pair(key, newWebsitePermission)
+            }
+        }
+    }
+}
+
+object TrackingProtectionStateReducer {
+    /**
+     * Handles creating a new [TrackingProtectionState] based on the specific
+     * [TrackingProtectionAction].
+     */
+    fun reduce(
+        state: TrackingProtectionState,
+        action: TrackingProtectionAction
+    ): TrackingProtectionState {
+        return when (action) {
+            is TrackingProtectionAction.ToggleTrackingProtectionEnabled ->
+                state.copy(isTrackingProtectionEnabled = action.isTrackingProtectionEnabled)
         }
     }
 }

@@ -1,0 +1,52 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+package org.mozilla.fenix.settings.creditcards.interactor
+
+import mozilla.components.concept.storage.CreditCard
+import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.components.metrics.MetricController
+import org.mozilla.fenix.settings.creditcards.controller.CreditCardsManagementController
+
+/**
+ * Interface for the credit cards management Interactor.
+ */
+interface CreditCardsManagementInteractor {
+
+    /**
+     * Navigates to the credit card editor to edit the selected credit card. Called when a user
+     * taps on a credit card item.
+     *
+     * @param creditCard The selected [CreditCard] to edit.
+     */
+    fun onSelectCreditCard(creditCard: CreditCard)
+
+    /**
+     * Navigates to the credit card editor to add a new credit card. Called when a user
+     * taps on 'Add credit card' button.
+     */
+    fun onAddCreditCardClick()
+}
+
+/**
+ * The default implementation of [CreditCardsManagementInteractor].
+ *
+ * @param controller An instance of [CreditCardsManagementController] which will be delegated for
+ * all user interactions.
+ */
+class DefaultCreditCardsManagementInteractor(
+    private val controller: CreditCardsManagementController,
+    private val metrics: MetricController
+) : CreditCardsManagementInteractor {
+
+    override fun onSelectCreditCard(creditCard: CreditCard) {
+        controller.handleCreditCardClicked(creditCard)
+        metrics.track(Event.CreditCardManagementCardTapped)
+    }
+
+    override fun onAddCreditCardClick() {
+        controller.handleAddCreditCardClicked()
+        metrics.track(Event.CreditCardManagementAddTapped)
+    }
+}

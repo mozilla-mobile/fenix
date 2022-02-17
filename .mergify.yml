@@ -1,3 +1,7 @@
+queue_rules:
+  - name: default
+    conditions:
+      - status-success=pr-complete
 pull_request_rules:
   - name: Resolve conflict
     conditions:
@@ -14,21 +18,23 @@ pull_request_rules:
       review:
         type: APPROVE
         message: MickeyMoz 💪
-      merge:
+      queue:
         method: rebase
-        strict: smart
+        name: default
+        rebase_fallback: none
   - name: L10N - Auto Merge
     conditions:
       - author=mozilla-l10n-automation-bot
       - status-success=pr-complete
-      - files~=(strings.xml)
+      - files~=(strings.xml|l10n.toml)
     actions:
       review:
         type: APPROVE
         message: LGTM 😎
-      merge:
+      queue:
         method: rebase
-        strict: smart
+        name: default
+        rebase_fallback: none
   - name: Release automation (Old)
     conditions:
       - base~=releases[_/].*
@@ -51,9 +57,10 @@ pull_request_rules:
       review:
         type: APPROVE
         message: 🚢
-      merge:
+      queue:
         method: rebase
-        strict: smart
+        name: default
+        rebase_fallback: none
       delete_head_branch:
         force: false
   - name: Release automation (New)
@@ -74,13 +81,41 @@ pull_request_rules:
       - check-success=signing-beta-firebase
       - check-success=signing-nightly-simulation
       - check-success=test-debug
+      - check-success=ui-test-x86-beta
       - files~=(AndroidComponents.kt)
     actions:
       review:
         type: APPROVE
         message: 🚢
-      merge:
+      queue:
         method: rebase
-        strict: smart
+        name: default
+        rebase_fallback: none
       delete_head_branch:
         force: false
+  - name: Needs landing - Rebase
+    conditions:
+      - check-success=pr-complete
+      - label=pr:needs-landing
+      - "#approved-reviews-by>=1"
+      - -draft
+      - label!=pr:work-in-progress
+      - label!=pr:do-not-land
+    actions:
+      queue:
+        method: rebase
+        name: default
+        rebase_fallback: none
+  - name: Needs landing - Squash
+    conditions:
+      - check-success=pr-complete
+      - label=pr:needs-landing-squashed 
+      - "#approved-reviews-by>=1"
+      - -draft
+      - label!=pr:work-in-progress
+      - label!=pr:do-not-land
+    actions:
+      queue:
+        method: squash
+        name: default
+        rebase_fallback: none

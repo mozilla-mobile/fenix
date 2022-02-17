@@ -1,13 +1,17 @@
+import org.mozilla.fenix.gradle.tasks.ApkSizeTask
+
 plugins {
     id "com.jetbrains.python.envs" version "0.0.26"
+    id "com.google.protobuf" version "0.8.17"
 }
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-parcelize'
 apply plugin: 'jacoco'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
 apply plugin: 'com.google.android.gms.oss-licenses-plugin'
+apply plugin: 'androidx.benchmark'
 
 
 import com.android.build.OutputFile
@@ -17,9 +21,12 @@ import org.gradle.internal.logging.text.StyledTextOutputFactory
 
 import static org.gradle.api.tasks.testing.TestResult.ResultType
 
+apply from: 'benchmark.gradle'
+
 android {
     compileSdkVersion Config.compileSdkVersion
 
+    project.maybeConfigForJetpackBenchmark(it)
     if (project.hasProperty("testBuildType")) {
         // Allowing to configure the test build type via command line flag (./gradlew -PtestBuildType=beta ..)
         // in order to run UI tests against other build variants than debug in automation.
@@ -37,7 +44,25 @@ android {
         testInstrumentationRunnerArguments clearPackageData: 'true'
         resValue "bool", "IS_DEBUG", "false"
         buildConfigField "boolean", "USE_RELEASE_VERSIONING", "false"
-        buildConfigField "String", "AMO_COLLECTION", "\"7dfae8669acc4312a65e8ba5553036\""
+        buildConfigField "String", "GIT_HASH", "\"\"" // see override in release builds for why it's blank.
+        // This should be the "public" base URL of AMO.
+        buildConfigField "String", "AMO_BASE_URL", "\"https://addons.mozilla.org\""
+        buildConfigField "String", "AMO_COLLECTION_NAME", "\"7dfae8669acc4312a65e8ba5553036\""
+        buildConfigField "String", "AMO_COLLECTION_USER", "\"mozilla\""
+        // These add-ons should be excluded for Mozilla Online builds.
+        buildConfigField "String[]", "MOZILLA_ONLINE_ADDON_EXCLUSIONS",
+                "{" +
+                        "\"uBlock0@raymondhill.net\"," +
+                        "\"firefox@ghostery.com\"," +
+                        "\"jid1-MnnxcxisBPnSXQ@jetpack\"," +
+                        "\"adguardadblocker@adguard.com\"," +
+                        "\"foxyproxy@eric.h.jung\"," +
+                        "\"{73a6fe31-595d-460b-a920-fcc0f8843232}\"," +
+                        "\"jid1-BoFifL9Vbdl2zQ@jetpack\"," +
+                        "\"woop-NoopscooPsnSXQ@jetpack\"" +
+                "}"
+        // This should be the base URL used to call the AMO API.
+        buildConfigField "String", "AMO_SERVER_URL", "\"https://services.addons.mozilla.org\""
         def deepLinkSchemeValue = "fenix-dev"
         buildConfigField "String", "DEEP_LINK_SCHEME", "\"$deepLinkSchemeValue\""
         manifestPlaceholders = [
@@ -57,8 +82,12 @@ android {
         // in automation for UI testing non-debug builds.
         shrinkResources !project.hasProperty("disableOptimization")
         minifyEnabled !project.hasProperty("disableOptimization")
-        proguardFiles 'proguard-android-optimize-3.5.0-modified.txt', 'proguard-rules.pro'
+        proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         matchingFallbacks = ['release'] // Use on the "release" build type in dependencies (AARs)
+
+        // Changing the build config can cause files that depend on BuildConfig.java to recompile
+        // so we only set the git hash in release builds to avoid possible recompilation in debug builds.
+        buildConfigField "String", "GIT_HASH", "\"${Config.getGitHash()}\""
 
         if (gradle.hasProperty("localProperties.autosignReleaseWithDebugKey")) {
             signingConfig signingConfigs.debug
@@ -120,6 +149,10 @@ android {
         }
     }
 
+    buildFeatures {
+        viewBinding true
+    }
+
     aaptOptions {
         // All JavaScript code used internally by GeckoView is packaged in a
         // file called omni.ja. If this file is compressed in the APK,
@@ -144,18 +177,12 @@ android {
         androidTest {
             resources.srcDirs += ['src/androidTest/resources']
         }
-        debug {
-            java.srcDirs = ['src/geckoNightly/java']
-        }
-        nightly {
-            java.srcDirs = ['src/geckoNightly/java']
-        }
         beta {
-            java.srcDirs = ['src/migration/java', 'src/geckoBeta/java']
+            java.srcDirs = ['src/migration/java']
             manifest.srcFile "src/migration/AndroidManifest.xml"
         }
         release {
-            java.srcDirs = ['src/migration/java', 'src/geckoRelease/java']
+            java.srcDirs = ['src/migration/java']
             manifest.srcFile "src/migration/AndroidManifest.xml"
         }
     }
@@ -182,6 +209,8 @@ android {
 
     packagingOptions {
         exclude 'META-INF/atomicfu.kotlin_module'
+        exclude 'META-INF/AL2.0'
+        exclude 'META-INF/LGPL2.1'
     }
 
     testOptions {
@@ -192,27 +221,23 @@ android {
             // reserve more memory and also create a new process after every 80 test classes. This
             // is a band-aid solution and eventually we should try to find and fix the leaks
             // instead. :)
-            maxParallelForks = 2
             forkEvery = 80
-            maxHeapSize = "2048m"
+            maxHeapSize = "3072m"
             minHeapSize = "1024m"
         }
     }
+
+    buildFeatures {
+        compose true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = Versions.androidx_compose
+    }
+
 }
 
 android.applicationVariants.all { variant ->
-
-// -------------------------------------------------------------------------------------------------
-// Set up kotlin-allopen plugin for writing tests
-// -------------------------------------------------------------------------------------------------
-
-    boolean hasTest = gradle.startParameter.taskNames.find { it.contains("test") || it.contains("Test") } != null
-    if (hasTest) {
-        apply plugin: 'kotlin-allopen'
-        allOpen {
-            annotation("org.mozilla.fenix.utils.OpenClass")
-        }
-    }
 
 // -------------------------------------------------------------------------------------------------
 // Generate version codes for builds
@@ -220,7 +245,7 @@ android.applicationVariants.all { variant ->
 
     def isDebug = variant.buildType.resValues['IS_DEBUG']?.value ?: false
     def useReleaseVersioning = variant.buildType.buildConfigFields['USE_RELEASE_VERSIONING']?.value ?: false
-    def versionName = Config.releaseVersionName(project)
+    def versionName = variant.buildType.name == 'nightly' ? Config.nightlyVersionName() : Config.releaseVersionName(project)
 
     println("----------------------------------------------")
     println("Variant name:      " + variant.name)
@@ -234,13 +259,18 @@ android.applicationVariants.all { variant ->
         // same version code. Therefore we need to have different version codes for our ARM and x86
         // builds.
 
+        println("versionName override: $versionName")
+
         variant.outputs.each { output ->
+            def isMozillaOnline = project.hasProperty("mozillaOnline") || gradle.hasProperty("localProperties.mozillaOnline")
             def abi = output.getFilter(OutputFile.ABI)
+            // If it is a Mozilla Online build, use a unified version code of armeabi-v7a
+            def arch = (isMozillaOnline) ? "armeabi-v7a" : abi
             // We use the same version code generator, that we inherited from Fennec, across all channels - even on
             // channels that never shipped a Fennec build.
-            def versionCodeOverride = Config.generateFennecVersionCode(abi)
+            def versionCodeOverride = Config.generateFennecVersionCode(arch)
 
-            println("versionCode for $abi = $versionCodeOverride")
+            println("versionCode for $abi = $versionCodeOverride, isMozillaOnline = $isMozillaOnline")
 
             output.versionNameOverride = versionName
             output.versionCodeOverride = versionCodeOverride
@@ -299,25 +329,6 @@ android.applicationVariants.all { variant ->
     }
 
 // -------------------------------------------------------------------------------------------------
-// Leanplum: Read token from local file if it exists
-// -------------------------------------------------------------------------------------------------
-
-    print("Leanplum token: ")
-
-    try {
-        def parts = new File("${rootDir}/.leanplum_token").text.trim().split(":")
-        def id = parts[0]
-        def key = parts[1]
-        buildConfigField 'String', 'LEANPLUM_ID', '"' + id + '"'
-        buildConfigField 'String', 'LEANPLUM_TOKEN', '"' + key + '"'
-        println "(Added from .leanplum_token file)"
-    } catch (FileNotFoundException ignored) {
-        buildConfigField 'String', 'LEANPLUM_ID', 'null'
-        buildConfigField 'String', 'LEANPLUM_TOKEN', 'null'
-        println("X_X")
-    }
-
-// -------------------------------------------------------------------------------------------------
 // MLS: Read token from local file if it exists
 // -------------------------------------------------------------------------------------------------
 
@@ -355,17 +366,57 @@ android.applicationVariants.all { variant ->
         buildConfigField 'String', 'NIMBUS_ENDPOINT', 'null'
         println("--")
     }
+
+// -------------------------------------------------------------------------------------------------
+// BuildConfig: Set flag for official builds; similar to MOZILLA_OFFICIAL in mozilla-central.
+// -------------------------------------------------------------------------------------------------
+
+    if (project.hasProperty("official") || gradle.hasProperty("localProperties.official")) {
+        buildConfigField 'Boolean', 'MOZILLA_OFFICIAL', 'true'
+    } else {
+        buildConfigField 'Boolean', 'MOZILLA_OFFICIAL', 'false'
+    }
+
+// -------------------------------------------------------------------------------------------------
+// BuildConfig: Set remote wallpaper URL using local file if it exists
+// -------------------------------------------------------------------------------------------------
+
+    print("Wallpaper URL: ")
+
+    try {
+        def token = new File("${rootDir}/.wallpaper_url").text.trim()
+        buildConfigField 'String', 'WALLPAPER_URL', '"' + token + '"'
+        println "(Added from .wallpaper_url file)"
+    } catch (FileNotFoundException ignored) {
+        buildConfigField 'String', 'WALLPAPER_URL', '""'
+        println("--")
+    }
 }
 
-androidExtensions {
-    experimental = true
-}
-
-// Generate Kotlin code and markdown docs for the Fenix Glean metrics.
-ext.gleanGenerateMarkdownDocs = true
-ext.gleanDocsDirectory = "$rootDir/docs"
+// Generate Kotlin code for the Fenix Glean metrics.
 apply plugin: "org.mozilla.telemetry.glean-gradle-plugin"
+apply plugin: "org.mozilla.components.nimbus-gradle-plugin"
 
+nimbus {
+    // The path to the Nimbus feature manifest file
+    manifestFile = "nimbus.fml.yaml"
+    // The fully qualified class name for the generated features.
+    // If the classname begins with a '.' this is taken as a suffix to the app's package name
+    destinationClass = ".nimbus.FxNimbus"
+    // Map from the variant name to the channel as experimenter and nimbus understand it.
+    // If nimbus's channels were accurately set up well for this project, then this
+    // shouldn't be needed.
+    channels = [
+            debug: "developer",
+            nightly: "nightly",
+            beta: "beta",
+            release: "release",
+    ]
+    // This is generated by the FML and should be checked into git.
+    // It will be fetched by Experimenter (the Nimbus experiment website)
+    // and used to inform experiment configuration.
+    experimenterManifest = ".experimenter.json"
+}
 configurations {
     // There's an interaction between Gradle's resolution of dependencies with different types
     // (@jar, @aar) for `implementation` and `testImplementation` and with Android Studio's built-in
@@ -381,21 +432,19 @@ configurations {
     // correct runtime classpath when invoked with Android Studio's built-in JUnit test runner.
     // Success!
     jnaForTest
-    // Robolectric, through `com.google.android.apps.common.testing.accessibility.framework`
-    // depends on an old version of protobuf that conflict with the Application Services one.
-    // See: https://github.com/mozilla/application-services/issues/2952
-    all*.exclude group: 'com.google.protobuf', module: 'protobuf-java'
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+    kotlinOptions {
+        freeCompilerArgs += "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
+    }
 }
 
 dependencies {
     jnaForTest Deps.jna
     testImplementation files(configurations.jnaForTest.copyRecursive().files)
 
-    debugImplementation Deps.mozilla_browser_engine_gecko_nightly
-
-    nightlyImplementation Deps.mozilla_browser_engine_gecko_nightly
-    betaImplementation Deps.mozilla_browser_engine_gecko_beta
-    releaseImplementation Deps.mozilla_browser_engine_gecko_release
+    implementation  Deps.mozilla_browser_engine_gecko
 
     implementation Deps.kotlin_stdlib
     implementation Deps.kotlin_coroutines
@@ -407,9 +456,9 @@ dependencies {
 
     implementation Deps.sentry
 
-    implementation Deps.leanplum_core
-    implementation Deps.leanplum_fcm
+    implementation Deps.mozilla_compose_awesomebar
 
+    implementation Deps.mozilla_concept_awesomebar
     implementation Deps.mozilla_concept_base
     implementation Deps.mozilla_concept_engine
     implementation Deps.mozilla_concept_menu
@@ -419,25 +468,21 @@ dependencies {
     implementation Deps.mozilla_concept_toolbar
     implementation Deps.mozilla_concept_tabstray
 
-    implementation Deps.mozilla_browser_awesomebar
-    implementation Deps.mozilla_feature_downloads
     implementation Deps.mozilla_browser_domains
     implementation Deps.mozilla_browser_icons
     implementation Deps.mozilla_browser_menu
     implementation Deps.mozilla_browser_menu2
-    implementation Deps.mozilla_browser_search
-    implementation Deps.mozilla_browser_session
+    implementation Deps.mozilla_browser_session_storage
     implementation Deps.mozilla_browser_state
     implementation Deps.mozilla_browser_storage_sync
     implementation Deps.mozilla_browser_tabstray
     implementation Deps.mozilla_browser_thumbnails
     implementation Deps.mozilla_browser_toolbar
 
-    implementation Deps.mozilla_support_extensions
     implementation Deps.mozilla_feature_addons
-
     implementation Deps.mozilla_feature_accounts
     implementation Deps.mozilla_feature_app_links
+    implementation Deps.mozilla_feature_autofill
     implementation Deps.mozilla_feature_awesomebar
     implementation Deps.mozilla_feature_contextmenu
     implementation Deps.mozilla_feature_customtabs
@@ -463,24 +508,28 @@ dependencies {
     implementation Deps.mozilla_feature_top_sites
     implementation Deps.mozilla_feature_share
     implementation Deps.mozilla_feature_accounts_push
+    implementation Deps.mozilla_feature_webauthn
     implementation Deps.mozilla_feature_webcompat
     implementation Deps.mozilla_feature_webnotifications
     implementation Deps.mozilla_feature_webcompat_reporter
+    implementation Deps.mozilla_service_pocket
 
+    implementation Deps.mozilla_service_contile
     implementation Deps.mozilla_service_digitalassetlinks
+    implementation Deps.mozilla_service_sync_autofill
     implementation Deps.mozilla_service_sync_logins
     implementation Deps.mozilla_service_firefox_accounts
-    implementation Deps.mozilla_service_glean
+    implementation(Deps.mozilla_service_glean)
     implementation Deps.mozilla_service_location
     implementation Deps.mozilla_service_nimbus
 
+    implementation Deps.mozilla_support_extensions
     implementation Deps.mozilla_support_base
     implementation Deps.mozilla_support_images
     implementation Deps.mozilla_support_ktx
     implementation Deps.mozilla_support_rustlog
     implementation Deps.mozilla_support_utils
     implementation Deps.mozilla_support_locale
-
     implementation Deps.mozilla_support_migration
 
     implementation Deps.mozilla_ui_colors
@@ -491,9 +540,14 @@ dependencies {
 
     implementation Deps.mozilla_lib_crash
     implementation Deps.mozilla_lib_push_firebase
+    implementation Deps.mozilla_lib_state
     implementation Deps.mozilla_lib_dataprotect
     debugImplementation Deps.leakcanary
 
+    implementation Deps.androidx_compose_ui
+    implementation Deps.androidx_compose_ui_tooling
+    implementation Deps.androidx_compose_foundation
+    implementation Deps.androidx_compose_material
     implementation Deps.androidx_legacy
     implementation Deps.androidx_biometric
     implementation Deps.androidx_paging
@@ -502,13 +556,17 @@ dependencies {
     implementation Deps.androidx_navigation_fragment
     implementation Deps.androidx_navigation_ui
     implementation Deps.androidx_recyclerview
+    implementation Deps.androidx_lifecycle_common
     implementation Deps.androidx_lifecycle_livedata
+    implementation Deps.androidx_lifecycle_process
     implementation Deps.androidx_lifecycle_runtime
     implementation Deps.androidx_lifecycle_viewmodel
     implementation Deps.androidx_core
     implementation Deps.androidx_core_ktx
     implementation Deps.androidx_transition
     implementation Deps.androidx_work_ktx
+    implementation Deps.androidx_datastore
+    implementation Deps.protobuf_javalite
     implementation Deps.google_material
 
     implementation Deps.adjust
@@ -519,9 +577,11 @@ dependencies {
     implementation Deps.google_play_store // Required for in-app reviews
 
     androidTestImplementation Deps.uiautomator
-// Removed pending AndroidX fixes
     androidTestImplementation "tools.fastlane:screengrab:2.0.0"
-//    androidTestImplementation "br.com.concretesolutions:kappuccino:1.2.1"
+    // This Falcon version is added to maven central now required for Screengrab
+    implementation 'com.jraska:falcon:2.2.0'
+
+    androidTestImplementation Deps.androidx_compose_ui_test
 
     androidTestImplementation Deps.espresso_core, {
         exclude group: 'com.android.support', module: 'support-annotations'
@@ -549,8 +609,8 @@ dependencies {
 
     androidTestImplementation Deps.androidx_junit
     androidTestImplementation Deps.androidx_work_testing
+    androidTestImplementation Deps.androidx_benchmark_junit4
     androidTestImplementation Deps.mockwebserver
-
     testImplementation Deps.mozilla_support_test
     testImplementation Deps.mozilla_support_test_libstate
     testImplementation Deps.androidx_junit
@@ -566,14 +626,44 @@ dependencies {
 
     // For the initial release of Glean 19, we require consumer applications to
     // depend on a separate library for unit tests. This will be removed in future releases.
-    testImplementation "org.mozilla.telemetry:glean-forUnitTests:${project.ext.glean_version}"
+    testImplementation "org.mozilla.telemetry:glean-native-forUnitTests:${project.ext.glean_version}"
 
     lintChecks project(":mozilla-lint-rules")
+}
+
+protobuf {
+    // Mac M1 workaround until we can bump the version. Dependent on A-S.
+    // See https://github.com/mozilla-mobile/fenix/issues/22321
+    protoc {
+        if (osdetector.os == "osx") {
+            artifact = "${Deps.protobuf_compiler}:osx-x86_64"
+        } else {
+            artifact = Deps.protobuf_compiler
+        }
+    }
+
+    // Generates the java Protobuf-lite code for the Protobufs in this project. See
+    // https://github.com/google/protobuf-gradle-plugin#customizing-protobuf-compilation
+    // for more information.
+    generateProtoTasks {
+        all().each { task ->
+            task.builtins {
+                java {
+                    option 'lite'
+                }
+            }
+        }
+    }
 }
 
 if (project.hasProperty("coverage")) {
     tasks.withType(Test).configureEach {
         jacoco.includeNoLocationClasses = true
+        jacoco.excludes = ['jdk.internal.*']
+    }
+
+    jacoco {
+        toolVersion = "0.8.7"
     }
 
     android.applicationVariants.all { variant ->
@@ -739,13 +829,10 @@ ext.updateExtensionVersion = { task, extDir ->
     }
 }
 
-tasks.register("updateAdsExtensionVersion", Copy) { task ->
-    updateExtensionVersion(task, 'src/main/assets/extensions/ads')
+android.applicationVariants.all { variant ->
+    tasks.register("apkSize${variant.name.capitalize()}", ApkSizeTask) {
+        variantName = variant.name
+        apks = variant.outputs.collect { output -> output.outputFile.name }
+        dependsOn "package${variant.name.capitalize()}"
+    }
 }
-
-tasks.register("updateCookiesExtensionVersion", Copy) { task ->
-    updateExtensionVersion(task, 'src/main/assets/extensions/cookies')
-}
-
-preBuild.dependsOn "updateAdsExtensionVersion"
-preBuild.dependsOn "updateCookiesExtensionVersion"

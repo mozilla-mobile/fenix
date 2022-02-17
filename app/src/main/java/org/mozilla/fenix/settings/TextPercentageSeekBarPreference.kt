@@ -40,6 +40,8 @@ import org.mozilla.fenix.R
 
 import java.text.NumberFormat
 import kotlin.math.PI
+import kotlin.math.abs
+import kotlin.math.min
 import kotlin.math.roundToInt
 
 /**
@@ -182,7 +184,7 @@ class TextPercentageSeekBarPreference @JvmOverloads constructor(
          */
         set(seekBarIncrement) {
             if (seekBarIncrement != mSeekBarIncrement) {
-                mSeekBarIncrement = Math.min(mMax - mMin, Math.abs(seekBarIncrement))
+                mSeekBarIncrement = min(mMax - mMin, abs(seekBarIncrement))
                 notifyChanged()
             }
         }
@@ -353,23 +355,23 @@ class TextPercentageSeekBarPreference @JvmOverloads constructor(
         }
 
         mSeekBar?.setAccessibilityDelegate(object :
-            View.AccessibilityDelegate() {
-            override fun onInitializeAccessibilityNodeInfo(
-                host: View?,
-                info: AccessibilityNodeInfo?
-            ) {
-                super.onInitializeAccessibilityNodeInfo(host, info)
-                val initialInfo = info?.rangeInfo
-                info?.rangeInfo = initialInfo?.let {
-                    AccessibilityNodeInfo.RangeInfo.obtain(
-                        RANGE_TYPE_PERCENT,
-                        MIN_VALUE.toFloat(),
-                        SEEK_BAR_MAX.toFloat(),
-                        convertCurrentValue(it.current)
-                    )
+                View.AccessibilityDelegate() {
+                override fun onInitializeAccessibilityNodeInfo(
+                    host: View?,
+                    info: AccessibilityNodeInfo?
+                ) {
+                    super.onInitializeAccessibilityNodeInfo(host, info)
+                    val initialInfo = info?.rangeInfo
+                    info?.rangeInfo = initialInfo?.let {
+                        AccessibilityNodeInfo.RangeInfo.obtain(
+                            RANGE_TYPE_PERCENT,
+                            MIN_VALUE.toFloat(),
+                            SEEK_BAR_MAX.toFloat(),
+                            convertCurrentValue(it.current)
+                        )
+                    }
                 }
-            }
-        })
+            })
     }
 
     /**

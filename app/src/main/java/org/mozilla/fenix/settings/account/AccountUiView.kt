@@ -26,7 +26,8 @@ class AccountUiView(
     private val scope: CoroutineScope,
     private val accountManager: FxaAccountManager,
     private val httpClient: Client,
-    private val updateFxASyncOverrideMenu: () -> Unit
+    private val updateFxASyncOverrideMenu: () -> Unit,
+    private val updateFxAAllowDomesticChinaServerMenu: () -> Unit
 ) {
 
     private val preferenceSignIn =
@@ -48,6 +49,7 @@ class AccountUiView(
         val account = accountManager.authenticatedAccount()
 
         updateFxASyncOverrideMenu()
+        updateFxAAllowDomesticChinaServerMenu()
 
         // Signed-in, no problems.
         if (account != null && !accountManager.accountNeedsReauth()) {
@@ -112,7 +114,7 @@ class AccountUiView(
     private suspend fun toRoundedDrawable(
         url: String,
         context: Context
-    ) = bitmapForUrl(url, httpClient)?.let { bitmap ->
+    ) = httpClient.bitmapForUrl(url)?.let { bitmap ->
         RoundedBitmapDrawableFactory.create(context.resources, bitmap).apply {
             isCircular = true
             setAntiAlias(true)

@@ -15,21 +15,19 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.fragment_login_detail.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.ObsoleteCoroutinesApi
 import mozilla.components.lib.state.ext.consumeFrom
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.SecureFragment
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.databinding.FragmentLoginDetailBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.ext.redirectToReAuth
@@ -43,22 +41,24 @@ import org.mozilla.fenix.settings.logins.controller.SavedLoginsStorageController
 import org.mozilla.fenix.settings.logins.createInitialLoginsListState
 import org.mozilla.fenix.settings.logins.interactor.LoginDetailInteractor
 import org.mozilla.fenix.settings.logins.togglePasswordReveal
-import org.mozilla.fenix.settings.logins.view.LoginDetailView
+import org.mozilla.fenix.settings.logins.view.LoginDetailsBindingDelegate
 
 /**
  * Displays saved login information for a single website.
  */
 @Suppress("TooManyFunctions", "ForbiddenComment")
-@ExperimentalCoroutinesApi
-class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
+class LoginDetailFragment : SecureFragment(R.layout.fragment_login_detail) {
 
     private val args by navArgs<LoginDetailFragmentArgs>()
     private var login: SavedLogin? = null
     private lateinit var savedLoginsStore: LoginsFragmentStore
-    private lateinit var loginDetailView: LoginDetailView
+    private lateinit var loginDetailsBindingDelegate: LoginDetailsBindingDelegate
     private lateinit var interactor: LoginDetailInteractor
     private lateinit var menu: Menu
     private var deleteDialog: AlertDialog? = null
+
+    private var _binding: FragmentLoginDetailBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -66,20 +66,17 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_login_detail, container, false)
+        _binding = FragmentLoginDetailBinding.bind(view)
         savedLoginsStore = StoreProvider.get(this) {
             LoginsFragmentStore(
                 createInitialLoginsListState(requireContext().settings())
             )
         }
-        loginDetailView = LoginDetailView(
-            view.findViewById(R.id.loginDetailLayout)
-        )
+        loginDetailsBindingDelegate = LoginDetailsBindingDelegate(binding)
 
         return view
     }
 
-    @ObsoleteCoroutinesApi
-    @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -94,7 +91,7 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
         interactor.onFetchLoginList(args.savedLoginId)
 
         consumeFrom(savedLoginsStore) {
-            loginDetailView.update(it)
+            loginDetailsBindingDelegate.update(it)
             login = savedLoginsStore.state.currentItem
             setUpCopyButtons()
             showToolbar(
@@ -103,7 +100,7 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
             )
             setUpPasswordReveal()
         }
-        togglePasswordReveal(passwordText, revealPasswordButton)
+        togglePasswordReveal(binding.passwordText, binding.revealPasswordButton)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -121,40 +118,41 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
         menu.close()
         redirectToReAuth(
             listOf(R.id.editLoginFragment, R.id.savedLoginsFragment),
-            findNavController().currentDestination?.id
+            findNavController().currentDestination?.id,
+            R.id.loginDetailFragment
         )
         super.onPause()
     }
 
     private fun setUpPasswordReveal() {
-        passwordText.inputType =
+        binding.passwordText.inputType =
             InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-        revealPasswordButton.increaseTapArea(BUTTON_INCREASE_DPS)
-        revealPasswordButton.setOnClickListener {
-            togglePasswordReveal(passwordText, revealPasswordButton)
+        binding.revealPasswordButton.increaseTapArea(BUTTON_INCREASE_DPS)
+        binding.revealPasswordButton.setOnClickListener {
+            togglePasswordReveal(binding.passwordText, binding.revealPasswordButton)
         }
-        passwordText.setOnClickListener {
-            togglePasswordReveal(passwordText, revealPasswordButton)
+        binding.passwordText.setOnClickListener {
+            togglePasswordReveal(binding.passwordText, binding.revealPasswordButton)
         }
     }
 
     private fun setUpCopyButtons() {
-        webAddressText.text = login?.origin
-        openWebAddress.increaseTapArea(BUTTON_INCREASE_DPS)
-        copyUsername.increaseTapArea(BUTTON_INCREASE_DPS)
-        copyPassword.increaseTapArea(BUTTON_INCREASE_DPS)
+        binding.webAddressText.text = login?.origin
+        binding.openWebAddress.increaseTapArea(BUTTON_INCREASE_DPS)
+        binding.copyUsername.increaseTapArea(BUTTON_INCREASE_DPS)
+        binding.copyPassword.increaseTapArea(BUTTON_INCREASE_DPS)
 
-        openWebAddress.setOnClickListener {
+        binding.openWebAddress.setOnClickListener {
             navigateToBrowser(requireNotNull(login?.origin))
         }
 
-        usernameText.text = login?.username
-        copyUsername.setOnClickListener(
+        binding.usernameText.text = login?.username
+        binding.copyUsername.setOnClickListener(
             CopyButtonListener(login?.username, R.string.logins_username_copied)
         )
 
-        passwordText.text = login?.password
-        copyPassword.setOnClickListener(
+        binding.passwordText.text = login?.password
+        binding.copyPassword.setOnClickListener(
             CopyButtonListener(login?.password, R.string.logins_password_copied)
         )
     }
@@ -235,6 +233,11 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
                 ).setText(copiedItem).show()
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private companion object {

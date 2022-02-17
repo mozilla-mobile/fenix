@@ -5,48 +5,42 @@
 package org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import io.mockk.Runs
 import io.mockk.every
-import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import io.mockk.verify
-import kotlinx.android.synthetic.main.onboarding_manual_signin.view.*
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mozilla.fenix.R
+import org.mozilla.fenix.databinding.OnboardingManualSigninBinding
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.home.HomeFragmentDirections
-import org.mozilla.fenix.onboarding.OnboardingInteractor
 
 @RunWith(FenixRobolectricTestRunner::class)
 class OnboardingManualSignInViewHolderTest {
 
-    private lateinit var view: View
+    private lateinit var binding: OnboardingManualSigninBinding
     private lateinit var navController: NavController
-    private lateinit var interactor: OnboardingInteractor
     private lateinit var itemView: ViewGroup
 
     @Before
     fun setup() {
-        view = LayoutInflater.from(testContext)
-            .inflate(OnboardingManualSignInViewHolder.LAYOUT_ID, null)
+        binding = OnboardingManualSigninBinding.inflate(LayoutInflater.from(testContext))
         navController = mockk(relaxed = true)
-        interactor = mockk(relaxUnitFun = true)
         itemView = mockk(relaxed = true)
 
         mockkStatic(Navigation::class)
         every { itemView.context } returns testContext
-        every { interactor.onLearnMoreClicked() } just Runs
-        every { Navigation.findNavController(view) } returns navController
+        every { Navigation.findNavController(binding.root) } returns navController
     }
 
     @After
@@ -56,18 +50,19 @@ class OnboardingManualSignInViewHolderTest {
 
     @Test
     fun `bind header text`() {
-        OnboardingManualSignInViewHolder(view).bind()
-
+        OnboardingManualSignInViewHolder(binding.root).bind()
+        val string = testContext.getString(R.string.onboarding_account_sign_in_header_1)
         assertEquals(
-            "Start syncing bookmarks, passwords, and more with your Firefox account.",
-            view.header_text.text
+            string,
+            binding.headerText.text
         )
     }
 
     @Test
     fun `navigate on click`() {
-        OnboardingManualSignInViewHolder(view)
-        view.fxa_sign_in_button.performClick()
+        every { testContext.components.analytics } returns mockk(relaxed = true)
+        OnboardingManualSignInViewHolder(binding.root)
+        binding.fxaSignInButton.performClick()
 
         verify { navController.navigate(HomeFragmentDirections.actionGlobalTurnOnSync()) }
     }

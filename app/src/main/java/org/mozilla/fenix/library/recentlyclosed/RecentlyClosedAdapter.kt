@@ -8,29 +8,43 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import mozilla.components.browser.state.state.ClosedTab
+import mozilla.components.browser.state.state.recover.TabState
+import org.mozilla.fenix.selection.SelectionHolder
 
 class RecentlyClosedAdapter(
     private val interactor: RecentlyClosedFragmentInteractor
-) : ListAdapter<ClosedTab, RecentlyClosedItemViewHolder>(DiffCallback) {
+) : ListAdapter<TabState, RecentlyClosedItemViewHolder>(DiffCallback),
+    SelectionHolder<TabState> {
+
+    private var selectedTabs: Set<TabState> = emptySet()
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): RecentlyClosedItemViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(RecentlyClosedItemViewHolder.LAYOUT_ID, parent, false)
-        return RecentlyClosedItemViewHolder(view, interactor)
+        return RecentlyClosedItemViewHolder(view, interactor, this)
     }
 
     override fun onBindViewHolder(holder: RecentlyClosedItemViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
-    private object DiffCallback : DiffUtil.ItemCallback<ClosedTab>() {
-        override fun areItemsTheSame(oldItem: ClosedTab, newItem: ClosedTab) =
+    override val selectedItems: Set<TabState>
+        get() = selectedTabs
+
+    fun updateData(tabs: List<TabState>, selectedTabs: Set<TabState>) {
+        this.selectedTabs = selectedTabs
+        notifyItemRangeChanged(0, tabs.size)
+        submitList(tabs)
+    }
+
+    private object DiffCallback : DiffUtil.ItemCallback<TabState>() {
+        override fun areItemsTheSame(oldItem: TabState, newItem: TabState) =
             oldItem.id == newItem.id
 
-        override fun areContentsTheSame(oldItem: ClosedTab, newItem: ClosedTab) =
-            oldItem.id == newItem.id
+        override fun areContentsTheSame(oldItem: TabState, newItem: TabState) =
+            oldItem == newItem
     }
 }

@@ -6,6 +6,7 @@
 
 package org.mozilla.fenix.ui.robots
 
+import android.content.Context
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -16,6 +17,7 @@ import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
 import org.hamcrest.CoreMatchers
+import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
@@ -26,7 +28,7 @@ import org.mozilla.fenix.helpers.ext.waitNotNull
 class SettingsSubMenuLoginsAndPasswordRobot {
 
     fun verifyDefaultView() {
-        mDevice.waitNotNull(Until.findObjects(By.text("Sync logins")), TestAssetHelper.waitingTime)
+        mDevice.waitNotNull(Until.findObjects(By.text("Sync logins across devices")), TestAssetHelper.waitingTime)
         assertDefaultView()
     }
 
@@ -40,9 +42,7 @@ class SettingsSubMenuLoginsAndPasswordRobot {
 
     fun verifyDefaultValueExceptions() = assertDefaultValueExceptions()
 
-    fun verifyDefaultValueAutofillLogins() = assertDefaultValueAutofillLogins()
-
-    fun verifyDefaultValueSyncLogins() = assertDefaultValueSyncLogins()
+    fun verifyDefaultValueAutofillLogins(context: Context) = assertDefaultValueAutofillLogins(context)
 
     class Transition {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
@@ -71,7 +71,7 @@ class SettingsSubMenuLoginsAndPasswordRobot {
         }
 
         fun openSyncLogins(interact: SettingsTurnOnSyncRobot.() -> Unit): SettingsTurnOnSyncRobot.Transition {
-            fun syncLoginsButton() = onView(ViewMatchers.withText("Sync logins"))
+            fun syncLoginsButton() = onView(ViewMatchers.withText("Sync logins across devices"))
             syncLoginsButton().click()
 
             SettingsTurnOnSyncRobot().interact()
@@ -94,16 +94,23 @@ fun settingsSubMenuLoginsAndPassword(interact: SettingsSubMenuLoginsAndPasswordR
 }
 
 private fun goBackButton() =
-        onView(CoreMatchers.allOf(ViewMatchers.withContentDescription("Navigate up")))
+    onView(CoreMatchers.allOf(ViewMatchers.withContentDescription("Navigate up")))
 
-private fun assertDefaultView() = onView(ViewMatchers.withText("Sync logins"))
-        .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+private fun assertDefaultView() = onView(ViewMatchers.withText("Sync logins across devices"))
+    .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
 
-private fun assertDefaultValueAutofillLogins() = onView(ViewMatchers.withText("Autofill"))
+private fun assertDefaultValueAutofillLogins(context: Context) = onView(
+    ViewMatchers.withText(
+        context.getString(
+            R.string.preferences_passwords_autofill2,
+            context.getString(R.string.app_name)
+        )
+    )
+)
     .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
 
 private fun assertDefaultValueExceptions() = onView(ViewMatchers.withText("Exceptions"))
     .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
 
 private fun assertDefaultValueSyncLogins() = onView(ViewMatchers.withText("Sign in to Sync"))
-        .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+    .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))

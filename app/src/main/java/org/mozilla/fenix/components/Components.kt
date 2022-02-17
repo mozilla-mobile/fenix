@@ -7,29 +7,42 @@ package org.mozilla.fenix.components
 import android.app.Application
 import android.content.Context
 import android.content.Intent
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.net.toUri
+import com.google.android.play.core.review.ReviewManagerFactory
 import mozilla.components.feature.addons.AddonManager
 import mozilla.components.feature.addons.amo.AddonCollectionProvider
 import mozilla.components.feature.addons.migration.DefaultSupportedAddonsChecker
 import mozilla.components.feature.addons.migration.SupportedAddonsChecker
 import mozilla.components.feature.addons.update.AddonUpdater
 import mozilla.components.feature.addons.update.DefaultAddonUpdater
+import mozilla.components.feature.autofill.AutofillConfiguration
 import mozilla.components.lib.publicsuffixlist.PublicSuffixList
 import mozilla.components.support.migration.state.MigrationStore
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.HomeActivity
-import org.mozilla.fenix.perf.StrictModeManager
-import org.mozilla.fenix.components.metrics.AppStartupTelemetry
+import org.mozilla.fenix.R
+import org.mozilla.fenix.autofill.AutofillConfirmActivity
+import org.mozilla.fenix.autofill.AutofillSearchActivity
+import org.mozilla.fenix.autofill.AutofillUnlockActivity
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.perf.AppStartReasonProvider
+import org.mozilla.fenix.perf.StartupActivityLog
+import org.mozilla.fenix.perf.StartupStateProvider
+import org.mozilla.fenix.perf.StrictModeManager
 import org.mozilla.fenix.perf.lazyMonitored
 import org.mozilla.fenix.utils.ClipboardHandler
-import org.mozilla.fenix.utils.Mockable
 import org.mozilla.fenix.utils.Settings
+import org.mozilla.fenix.wallpapers.WallpaperFileManager
+import org.mozilla.fenix.wallpapers.WallpaperDownloader
+import org.mozilla.fenix.wallpapers.WallpaperManager
 import org.mozilla.fenix.wifi.WifiConnectionMonitor
 import java.util.concurrent.TimeUnit
 
-private const val DAY_IN_MINUTES = 24 * 60L
+private const val AMO_COLLECTION_MAX_CACHE_AGE = 2 * 24 * 60L // Two days in minutes
 
 /**
  * Provides access to all components. This class is an implementation of the Service Locator
@@ -38,7 +51,6 @@ private const val DAY_IN_MINUTES = 24 * 60L
  * Note: these aren't just "components" from "android-components": they're any "component" that
  * can be considered a building block of our app.
  */
-@Mockable
 class Components(private val context: Context) {
     val backgroundServices by lazyMonitored {
         BackgroundServices(
@@ -49,28 +61,32 @@ class Components(private val context: Context) {
             core.lazyBookmarksStorage,
             core.lazyPasswordsStorage,
             core.lazyRemoteTabsStorage,
+            core.lazyAutofillStorage,
             strictMode
         )
     }
     val services by lazyMonitored { Services(context, backgroundServices.accountManager) }
     val core by lazyMonitored { Core(context, analytics.crashReporter, strictMode) }
+    @Suppress("Deprecation")
     val useCases by lazyMonitored {
         UseCases(
             context,
             core.engine,
-            core.sessionManager,
             core.store,
             core.webAppShortcutManager,
-            core.topSitesStorage
+            core.topSitesStorage,
+            core.bookmarksStorage,
+            core.historyStorage
         )
     }
+
     val intentProcessors by lazyMonitored {
         IntentProcessors(
             context,
-            core.sessionManager,
             core.store,
             useCases.sessionUseCases,
             useCases.tabsUseCases,
+            useCases.customTabsUseCases,
             useCases.searchUseCases,
             core.relationChecker,
             core.customTabsStore,
@@ -90,21 +106,23 @@ class Components(private val context: Context) {
             )
         }
         // Use build config otherwise
-        else if (!BuildConfig.AMO_COLLECTION.isNullOrEmpty()) {
+        else if (!BuildConfig.AMO_COLLECTION_USER.isNullOrEmpty() &&
+            !BuildConfig.AMO_COLLECTION_NAME.isNullOrEmpty()
+        ) {
             AddonCollectionProvider(
                 context,
                 core.client,
-                collectionName = BuildConfig.AMO_COLLECTION,
-                maxCacheAgeInMinutes = DAY_IN_MINUTES
+                serverURL = BuildConfig.AMO_SERVER_URL,
+                collectionUser = BuildConfig.AMO_COLLECTION_USER,
+                collectionName = BuildConfig.AMO_COLLECTION_NAME,
+                maxCacheAgeInMinutes = AMO_COLLECTION_MAX_CACHE_AGE
             )
         }
         // Fall back to defaults
         else {
-            AddonCollectionProvider(context, core.client, maxCacheAgeInMinutes = DAY_IN_MINUTES)
+            AddonCollectionProvider(context, core.client, maxCacheAgeInMinutes = AMO_COLLECTION_MAX_CACHE_AGE)
         }
     }
-
-    val appStartupTelemetry by lazyMonitored { AppStartupTelemetry(analytics.metrics) }
 
     @Suppress("MagicNumber")
     val addonUpdater by lazyMonitored {
@@ -113,17 +131,27 @@ class Components(private val context: Context) {
 
     @Suppress("MagicNumber")
     val supportedAddonsChecker by lazyMonitored {
-        DefaultSupportedAddonsChecker(context, SupportedAddonsChecker.Frequency(12, TimeUnit.HOURS),
+        DefaultSupportedAddonsChecker(
+            context, SupportedAddonsChecker.Frequency(12, TimeUnit.HOURS),
             onNotificationClickIntent = Intent(context, HomeActivity::class.java).apply {
                 action = Intent.ACTION_VIEW
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                data = "fenix://settings_addon_manager".toUri()
+                data = "${BuildConfig.DEEP_LINK_SCHEME}://settings_addon_manager".toUri()
             }
         )
     }
 
     val addonManager by lazyMonitored {
         AddonManager(core.store, core.engine, addonCollectionProvider, addonUpdater)
+    }
+
+    val wallpaperManager by lazyMonitored {
+        WallpaperManager(
+            settings,
+            WallpaperDownloader(context, core.client, analytics.crashReporter),
+            WallpaperFileManager(context.filesDir),
+            analytics.crashReporter,
+        )
     }
 
     val analytics by lazyMonitored { Analytics(context) }
@@ -139,8 +167,32 @@ class Components(private val context: Context) {
 
     val reviewPromptController by lazyMonitored {
         ReviewPromptController(
-            context,
-            FenixReviewSettings(settings)
+            manager = ReviewManagerFactory.create(context),
+            reviewSettings = FenixReviewSettings(settings)
         )
     }
+
+    val autofillConfiguration by lazyMonitored {
+        AutofillConfiguration(
+            storage = core.passwordsStorage,
+            publicSuffixList = publicSuffixList,
+            unlockActivity = AutofillUnlockActivity::class.java,
+            confirmActivity = AutofillConfirmActivity::class.java,
+            searchActivity = AutofillSearchActivity::class.java,
+            applicationName = context.getString(R.string.app_name),
+            httpClient = core.client
+        )
+    }
+
+    val appStartReasonProvider by lazyMonitored { AppStartReasonProvider() }
+    val startupActivityLog by lazyMonitored { StartupActivityLog() }
+    val startupStateProvider by lazyMonitored { StartupStateProvider(startupActivityLog, appStartReasonProvider) }
+    val appStore by lazyMonitored { AppStore() }
 }
+
+/**
+ * Returns the [Components] object from within a [Composable].
+ */
+val components: Components
+    @Composable
+    get() = LocalContext.current.components

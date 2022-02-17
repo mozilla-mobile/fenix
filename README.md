@@ -1,13 +1,11 @@
 # Firefox for Android
 
-[![Task Status](https://github.taskcluster.net/v1/repository/mozilla-mobile/fenix/master/badge.svg)](https://github.taskcluster.net/v1/repository/mozilla-mobile/fenix/master/latest)
-[![codecov](https://codecov.io/gh/mozilla-mobile/fenix/branch/master/graph/badge.svg)](https://codecov.io/gh/mozilla-mobile/fenix)
+[![Task Status](https://firefox-ci-tc.services.mozilla.com/api/github/v1/repository/mozilla-mobile/fenix/main/badge.svg)](https://firefox-ci-tc.services.mozilla.com/api/github/v1/repository/mozilla-mobile/fenix/main/latest)
+[![codecov](https://codecov.io/gh/mozilla-mobile/fenix/branch/main/graph/badge.svg)](https://codecov.io/gh/mozilla-mobile/fenix)
 
 Fenix (internal codename) is the all-new Firefox for Android browser, based on [GeckoView](https://mozilla.github.io/geckoview/) and [Mozilla Android Components](https://mozac.org/).
 
 <a href="https://play.google.com/store/apps/details?id=org.mozilla.firefox" target="_blank"><img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" alt="Get it on Google Play" height="90"/></a>
-
-** Note: The team is currently experiencing heavy triage and review load, so when triaging issues, we will mainly be looking to identify [S1 (high severity)](https://github.com/mozilla-mobile/fenix/labels/S1) issues. See our triage process [here](https://github.com/mozilla-mobile/fenix/wiki/Triage-Process). Please be patient if you don't hear back from us immediately on your issue! **
 
 ## Getting Involved
 
@@ -92,6 +90,8 @@ Pre-requisites:
 
 3. Make sure to select the correct build variant in Android Studio. See the next section.
 
+4. Make sure to select "Default APK" under Installation Options inside Run/Debug configuration: see [this bug](https://bugzilla.mozilla.org/show_bug.cgi?id=1529082).
+
 ### Build Variants
 For general development, we recommend the **debug** build variant. Here's an explanation of each variant:
 
@@ -120,7 +120,6 @@ Before you can install any release builds, **You will need to sign production bu
 Some features are disabled by default when Fenix is built locally. This can be problematic at times for checking performance since you might want to know how your code behaves with those features.
 The known features that are disabled by default are:
 - Sentry
-- Leanplum
 - Adjust
 - Mozilla Location Services (also known as MLS)
 - Firebase Push Services
@@ -156,7 +155,7 @@ git push <remote> --no-verify
 
 Note: If while pushing you encounter this error "Could not initialize class org.codehaus.groovy.runtime.InvokerHelper" and are currently on Java14 then downgrading your Java version to Java13 or lower can resolve the issue
 
-Steps to downgrade Java Version on Mac with Brew: 
+Steps to downgrade Java Version on Mac with Brew:
 1. Install Homebrew (https://brew.sh/)
 2. run ```brew update```
 3. To uninstall your current java version, run ```sudo rm -fr /Library/Java/JavaVirtualMachines/<jdk-version>```
@@ -210,7 +209,7 @@ See a [demo of auto-publication workflow in action](https://www.youtube.com/watc
 
 In order to build successfully, you need to check out a commit in the dependency repository that has no breaking changes. The two best ways to do this are:
 - Run the `<android-components>/tools/list_compatible_dependency_versions.py` script to output a compatible commit
-- Check out the latest commit from master in this repository and the dependency repository. However, this may fail if there were breaking changes added recently to the dependency.
+- Check out the latest commit from main in this repository and the dependency repository. However, this may fail if there were breaking changes added recently to the dependency.
 
 ### Using Nimbus servers during local development
 If you're working with the Nimbus experiments platform, by default for local development Fenix configures Nimbus to not use a server.

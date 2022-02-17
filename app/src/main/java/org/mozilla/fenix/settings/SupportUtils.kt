@@ -6,6 +6,7 @@ package org.mozilla.fenix.settings
 
 import android.content.Context
 import android.content.Intent
+import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.net.toUri
 import mozilla.components.support.ktx.android.content.appVersionName
@@ -28,9 +29,15 @@ object SupportUtils {
     const val GOOGLE_URL = "https://www.google.com/"
     const val BAIDU_URL = "https://m.baidu.com/?from=1000969a"
     const val JD_URL = "https://union-click.jd.com/jdc" +
-            "?e=&p=AyIGZRprFDJWWA1FBCVbV0IUWVALHFRBEwQAQB1AWQkFVUVXfFkAF14lRFRbJXstVWR3WQ1rJ08AZnhS" +
-            "HDJBYh4LZR9eEAMUBlccWCUBEQZRGFoXCxc3ZRteJUl8BmUZWhQ" +
-            "AEwdRGF0cMhIAVB5ZFAETBVAaXRwyFQdcKydLSUpaCEtYFAIXN2UrWCUyIgdVK1slXVZaCCtZFAMWDg%3D%3D"
+        "?e=&p=AyIGZRprFDJWWA1FBCVbV0IUWVALHFRBEwQAQB1AWQkFVUVXfFkAF14lRFRbJXstVWR3WQ1rJ08AZnhS" +
+        "HDJBYh4LZR9eEAMUBlccWCUBEQZRGFoXCxc3ZRteJUl8BmUZWhQ" +
+        "AEwdRGF0cMhIAVB5ZFAETBVAaXRwyFQdcKydLSUpaCEtYFAIXN2UrWCUyIgdVK1slXVZaCCtZFAMWDg%3D%3D"
+    const val PDD_URL = "https://mobile.yangkeduo.com/duo_cms_mall.html?pid=13289095_194240604&" +
+        "cpsSign=CM_210309_13289095_194240604_8bcfd56d5db3c43d983014d2658ec26e&duoduo_type=2"
+    const val TC_URL = "https://jumpluna.58.com/i/29HU"
+    const val MEITUAN_URL = "https://tb.j5k6.com/6ZSOp"
+    const val GOOGLE_US_URL = "https://www.google.com/webhp?client=firefox-b-1-m&channel=ts"
+    const val GOOGLE_XX_URL = "https://www.google.com/webhp?client=firefox-b-m&channel=ts"
 
     enum class SumoTopic(internal val topicStr: String) {
         FENIX_MOVING("sync-delist"),
@@ -39,12 +46,15 @@ object SupportUtils {
         YOUR_RIGHTS("your-rights"),
         TRACKING_PROTECTION("tracking-protection-firefox-android"),
         WHATS_NEW("whats-new-firefox-preview"),
+        OPT_OUT_STUDIES("how-opt-out-studies-firefox-android"),
         SEND_TABS("send-tab-preview"),
         SET_AS_DEFAULT_BROWSER("set-firefox-preview-default"),
         SEARCH_SUGGESTION("how-search-firefox-preview"),
         CUSTOM_SEARCH_ENGINES("custom-search-engines"),
         SYNC_SETUP("how-set-firefox-sync-firefox-android"),
-        QR_CAMERA_ACCESS("qr-camera-access")
+        QR_CAMERA_ACCESS("qr-camera-access"),
+        SMARTBLOCK("smartblock-enhanced-tracking-protection"),
+        SPONSOR_PRIVACY("sponsor-privacy")
     }
 
     enum class MozillaPage(internal val path: String) {
@@ -92,7 +102,9 @@ object SupportUtils {
 
     fun createCustomTabIntent(context: Context, url: String): Intent = CustomTabsIntent.Builder()
         .setInstantAppsEnabled(false)
-        .setToolbarColor(context.getColorFromAttr(R.attr.foundation))
+        .setDefaultColorSchemeParams(
+            CustomTabColorSchemeParams.Builder().setToolbarColor(context.getColorFromAttr(R.attr.foundation)).build()
+        )
         .build()
         .intent
         .setData(url.toUri())

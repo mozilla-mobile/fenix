@@ -45,15 +45,6 @@
 
     <androidx.preference.PreferenceCategory
         android:layout="@layout/preference_cat_style"
-        android:title="@string/preferences_home"
-        app:iconSpaceReserved="false">
-        <androidx.preference.SwitchPreference
-            android:key="@string/pref_key_enable_top_frecent_sites"
-            android:title="@string/top_sites_toggle_top_frecent_sites" />
-    </androidx.preference.PreferenceCategory>
-
-    <androidx.preference.PreferenceCategory
-        android:layout="@layout/preference_cat_style"
         android:title="@string/preferences_gestures"
         app:iconSpaceReserved="false">
         <androidx.preference.SwitchPreference

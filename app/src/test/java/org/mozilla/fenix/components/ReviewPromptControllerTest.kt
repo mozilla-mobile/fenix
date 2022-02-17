@@ -4,13 +4,15 @@
 
 package org.mozilla.fenix.components
 
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import com.google.android.play.core.review.ReviewManager
+import com.google.android.play.core.review.ReviewManagerFactory
 import kotlinx.coroutines.test.runBlockingTest
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Test
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Assert.assertFalse
+import org.junit.Before
 import org.junit.runner.RunWith
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
@@ -24,9 +26,16 @@ class TestReviewSettings(
         get() = isDefault
 }
 
-@ExperimentalCoroutinesApi
 @RunWith(FenixRobolectricTestRunner::class)
 class ReviewPromptControllerTest {
+
+    private lateinit var reviewManager: ReviewManager
+
+    @Before
+    fun setUp() {
+        reviewManager = ReviewManagerFactory.create(testContext)
+    }
+
     @Test
     fun promptReviewDoesNotSetMillis() = runBlockingTest {
         var promptWasCalled = false
@@ -37,7 +46,7 @@ class ReviewPromptControllerTest {
         )
 
         val controller = ReviewPromptController(
-            testContext,
+            reviewManager,
             settings,
             { 100L },
             { promptWasCalled = true }
@@ -60,7 +69,7 @@ class ReviewPromptControllerTest {
         )
 
         val controller = ReviewPromptController(
-            testContext,
+            reviewManager,
             settings,
             { 100L },
             { promptWasCalled = true }
@@ -82,7 +91,7 @@ class ReviewPromptControllerTest {
         )
 
         val controller = ReviewPromptController(
-            testContext,
+            reviewManager,
             settings,
             { 100L },
             { promptWasCalled = true }
@@ -102,7 +111,7 @@ class ReviewPromptControllerTest {
         )
 
         val controller = ReviewPromptController(
-            testContext,
+            reviewManager,
             settings,
             { 100L },
             { promptWasCalled = true }
@@ -126,7 +135,7 @@ class ReviewPromptControllerTest {
         )
 
         val controller = ReviewPromptController(
-            testContext,
+            reviewManager,
             settings,
             { 0L }
         )
@@ -149,7 +158,7 @@ class ReviewPromptControllerTest {
         )
 
         val controller = ReviewPromptController(
-            testContext,
+            reviewManager,
             settings,
             { TEST_TIME_NOW }
         )

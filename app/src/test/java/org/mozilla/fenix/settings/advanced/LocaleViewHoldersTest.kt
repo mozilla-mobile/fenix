@@ -13,7 +13,6 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.verify
-import kotlinx.android.synthetic.main.locale_settings_item.view.*
 import mozilla.components.support.locale.LocaleManager
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert.assertEquals
@@ -23,6 +22,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.R
+import org.mozilla.fenix.databinding.LocaleSettingsItemBinding
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import java.util.Locale
 
@@ -34,6 +34,7 @@ class LocaleViewHoldersTest {
     private lateinit var interactor: LocaleSettingsViewInteractor
     private lateinit var localeViewHolder: LocaleViewHolder
     private lateinit var systemLocaleViewHolder: SystemLocaleViewHolder
+    private lateinit var localeSettingsItemBinding: LocaleSettingsItemBinding
 
     @Before
     fun setup() {
@@ -42,6 +43,8 @@ class LocaleViewHoldersTest {
 
         view = LayoutInflater.from(testContext)
             .inflate(R.layout.locale_settings_item, null)
+
+        localeSettingsItemBinding = LocaleSettingsItemBinding.bind(view)
         interactor = mockk()
 
         localeViewHolder = LocaleViewHolder(view, selectedLocale, interactor)
@@ -52,9 +55,9 @@ class LocaleViewHoldersTest {
     fun `bind LocaleViewHolder`() {
         localeViewHolder.bind(selectedLocale)
 
-        assertEquals("English (United States)", view.locale_title_text.text)
-        assertEquals("English (United States)", view.locale_subtitle_text.text)
-        assertFalse(view.locale_selected_icon.isVisible)
+        assertEquals("English (United States)", localeSettingsItemBinding.localeTitleText.text)
+        assertEquals("English (United States)", localeSettingsItemBinding.localeSubtitleText.text)
+        assertFalse(localeSettingsItemBinding.localeSelectedIcon.isVisible)
     }
 
     @Test
@@ -67,12 +70,35 @@ class LocaleViewHoldersTest {
     }
 
     @Test
+    // Note that after we can run tests on SDK 30 the result of the locale.getDisplayName(locale) could differ and this test will fail
+    fun `GIVEN a locale is not properly identified in Android WHEN we bind locale THEN the title and subtitle are set from locale maps`() {
+
+        val otherLocale = Locale("vec")
+
+        localeViewHolder.bind(otherLocale)
+
+        assertEquals("Vèneto", localeSettingsItemBinding.localeTitleText.text)
+        assertEquals("Venetian", localeSettingsItemBinding.localeSubtitleText.text)
+    }
+
+    @Test
+    fun `GIVEN a locale is not properly identified in Android and it is not mapped  WHEN we bind locale THEN the text is the capitalised code`() {
+
+        val otherLocale = Locale("yyy")
+
+        localeViewHolder.bind(otherLocale)
+
+        assertEquals("Yyy", localeSettingsItemBinding.localeTitleText.text)
+        assertEquals("Yyy", localeSettingsItemBinding.localeSubtitleText.text)
+    }
+
+    @Test
     fun `bind SystemLocaleViewHolder`() {
         systemLocaleViewHolder.bind(selectedLocale)
 
-        assertEquals("Follow device language", view.locale_title_text.text)
-        assertEquals("English (United States)", view.locale_subtitle_text.text)
-        assertTrue(view.locale_selected_icon.isVisible)
+        assertEquals("Follow device language", localeSettingsItemBinding.localeTitleText.text)
+        assertEquals("English (United States)", localeSettingsItemBinding.localeSubtitleText.text)
+        assertTrue(localeSettingsItemBinding.localeSelectedIcon.isVisible)
     }
 
     @Test

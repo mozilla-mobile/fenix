@@ -15,7 +15,9 @@ import android.speech.RecognizerIntent.EXTRA_RESULTS
 import android.speech.RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
 import androidx.appcompat.app.AppCompatActivity.RESULT_OK
 import androidx.test.core.app.ApplicationProvider
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import io.mockk.every
+import io.mockk.mockk
+import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -26,7 +28,9 @@ import org.junit.runner.RunWith
 import org.mozilla.fenix.FenixApplication
 import org.mozilla.fenix.HomeActivity.Companion.OPEN_TO_BROWSER_AND_LOAD
 import org.mozilla.fenix.IntentReceiverActivity
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
+import org.mozilla.fenix.helpers.perf.TestStrictModeManager
 import org.mozilla.fenix.widget.VoiceSearchActivity.Companion.PREVIOUS_INTENT
 import org.mozilla.fenix.widget.VoiceSearchActivity.Companion.SPEECH_PROCESSING
 import org.mozilla.fenix.widget.VoiceSearchActivity.Companion.SPEECH_REQUEST_CODE
@@ -35,7 +39,6 @@ import org.robolectric.Shadows.shadowOf
 import org.robolectric.android.controller.ActivityController
 import org.robolectric.shadows.ShadowActivity
 
-@ExperimentalCoroutinesApi
 @RunWith(FenixRobolectricTestRunner::class)
 class VoiceSearchActivityTest {
 
@@ -60,11 +63,14 @@ class VoiceSearchActivityTest {
         shadowPackageManager.addActivityIfNotPresent(component)
         shadowPackageManager.addIntentFilterForActivity(
             component,
-            IntentFilter(ACTION_RECOGNIZE_SPEECH).apply { addCategory(Intent.CATEGORY_DEFAULT) })
+            IntentFilter(ACTION_RECOGNIZE_SPEECH).apply { addCategory(Intent.CATEGORY_DEFAULT) }
+        )
     }
 
     @Test
     fun `process intent with speech processing set to true`() {
+        every { testContext.components.analytics } returns mockk(relaxed = true)
+        every { testContext.components.strictMode } returns TestStrictModeManager()
         allowVoiceIntentToResolveActivity()
         controller.create()
 
@@ -136,6 +142,8 @@ class VoiceSearchActivityTest {
 
     @Test
     fun `handle speech result`() {
+        every { testContext.components.analytics } returns mockk(relaxed = true)
+        every { testContext.components.strictMode } returns TestStrictModeManager()
         allowVoiceIntentToResolveActivity()
         controller.create()
 
@@ -161,6 +169,8 @@ class VoiceSearchActivityTest {
 
     @Test
     fun `handle invalid result code`() {
+        every { testContext.components.analytics } returns mockk(relaxed = true)
+        every { testContext.components.strictMode } returns TestStrictModeManager()
         allowVoiceIntentToResolveActivity()
         controller.create()
 

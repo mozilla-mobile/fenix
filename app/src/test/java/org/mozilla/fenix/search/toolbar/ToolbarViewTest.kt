@@ -8,18 +8,14 @@ import android.content.Context
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.graphics.drawable.toBitmap
 import io.mockk.MockKAnnotations
-import io.mockk.Runs
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import io.mockk.just
 import io.mockk.mockk
-import io.mockk.slot
 import io.mockk.spyk
 import io.mockk.verify
 import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.browser.toolbar.edit.EditToolbar
 import mozilla.components.concept.engine.Engine
-import mozilla.components.concept.toolbar.Toolbar
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -32,6 +28,7 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.search.SearchEngineSource
 import org.mozilla.fenix.search.SearchFragmentState
+import org.mozilla.fenix.utils.Settings
 
 @RunWith(FenixRobolectricTestRunner::class)
 class ToolbarViewTest {
@@ -44,10 +41,12 @@ class ToolbarViewTest {
         url = "",
         searchTerms = "",
         query = "",
-        searchEngineSource = SearchEngineSource.Default(mockk {
-            every { name } returns "Search Engine"
-            every { icon } returns testContext.getDrawable(R.drawable.ic_search)!!.toBitmap()
-        }),
+        searchEngineSource = SearchEngineSource.Default(
+            mockk {
+                every { name } returns "Search Engine"
+                every { icon } returns testContext.getDrawable(R.drawable.ic_search)!!.toBitmap()
+            }
+        ),
         defaultEngine = null,
         showSearchShortcutsSetting = false,
         showSearchSuggestionsHint = false,
@@ -66,25 +65,6 @@ class ToolbarViewTest {
         MockKAnnotations.init(this)
         context = ContextThemeWrapper(testContext, R.style.NormalTheme)
         toolbar = spyk(BrowserToolbar(context))
-    }
-
-    @Test
-    fun `sets up interactor listeners`() {
-        val urlCommitListener = slot<(String) -> Boolean>()
-        val editListener = slot<Toolbar.OnEditListener>()
-        every { toolbar.setOnUrlCommitListener(capture(urlCommitListener)) } just Runs
-        every { toolbar.setOnEditListener(capture(editListener)) } just Runs
-
-        buildToolbarView(isPrivate = false)
-
-        assertFalse(urlCommitListener.captured("test"))
-        verify { interactor.onUrlCommitted("test") }
-
-        assertFalse(editListener.captured.onCancelEditing())
-        verify { interactor.onEditingCanceled() }
-
-        editListener.captured.onTextChanged("https://example.com")
-        verify { interactor.onTextChanged("https://example.com") }
     }
 
     @Test
@@ -175,10 +155,12 @@ class ToolbarViewTest {
 
     private fun buildToolbarView(isPrivate: Boolean) = ToolbarView(
         context,
+        Settings(context),
         interactor,
         historyStorage = null,
         isPrivate = isPrivate,
         view = toolbar,
-        engine = engine
+        engine = engine,
+        fromHomeFragment = false
     )
 }

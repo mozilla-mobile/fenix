@@ -6,13 +6,10 @@ package org.mozilla.fenix.library.bookmarks.selectfolder
 
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.content.ContextCompat
 import androidx.core.view.updatePaddingRelative
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.extensions.LayoutContainer
 import mozilla.components.concept.storage.BookmarkNode
 import org.mozilla.fenix.R
 import org.mozilla.fenix.library.LibrarySiteItemView
@@ -61,9 +58,7 @@ class SelectBookmarkFolderAdapter(private val sharedViewModel: BookmarksSharedVi
 
     class BookmarkFolderViewHolder(
         val view: LibrarySiteItemView
-    ) : RecyclerView.ViewHolder(view), LayoutContainer {
-
-        override val containerView get() = view
+    ) : RecyclerView.ViewHolder(view) {
 
         init {
             view.displayAs(LibrarySiteItemView.ItemType.FOLDER)
@@ -72,15 +67,7 @@ class SelectBookmarkFolderAdapter(private val sharedViewModel: BookmarksSharedVi
 
         fun bind(folder: BookmarkNodeWithDepth, selected: Boolean, onSelect: (BookmarkNode) -> Unit) {
             view.changeSelected(selected)
-            view.iconView.setImageDrawable(
-                AppCompatResources.getDrawable(
-                    containerView.context,
-                    R.drawable.ic_folder_icon
-                )?.apply {
-                    setTint(ContextCompat.getColor(containerView.context,
-                        R.color.primary_text_light_theme))
-                }
-            )
+            view.iconView.setImageResource(R.drawable.ic_folder_icon)
             view.titleView.text = folder.node.title
             view.setOnClickListener {
                 onSelect(folder.node)

@@ -5,58 +5,43 @@
 package org.mozilla.fenix.components
 
 import android.content.Context
+import androidx.annotation.VisibleForTesting
 import androidx.paging.DataSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import mozilla.components.feature.sitepermissions.SitePermissions
-import mozilla.components.feature.sitepermissions.SitePermissions.Status
-import mozilla.components.feature.sitepermissions.SitePermissionsStorage
+import mozilla.components.concept.engine.permission.SitePermissions
+import mozilla.components.concept.engine.permission.SitePermissionsStorage
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.utils.Mockable
+import kotlin.coroutines.CoroutineContext
 
-@Mockable
-class PermissionStorage(private val context: Context) {
+class PermissionStorage(
+    private val context: Context,
+    @VisibleForTesting internal val dispatcher: CoroutineContext = Dispatchers.IO,
+    @VisibleForTesting internal val permissionsStorage: SitePermissionsStorage =
+        context.components.core.geckoSitePermissionsStorage
+) {
 
-    val permissionsStorage by lazy {
-        SitePermissionsStorage(context, context.components.core.engine)
-    }
-
-    fun addSitePermissionException(
-        origin: String,
-        location: Status,
-        notification: Status,
-        microphone: Status,
-        camera: Status
-    ): SitePermissions {
-        val sitePermissions = SitePermissions(
-            origin = origin,
-            location = location,
-            camera = camera,
-            microphone = microphone,
-            notification = notification,
-            savedAt = System.currentTimeMillis()
-        )
+    suspend fun add(sitePermissions: SitePermissions) = withContext(dispatcher) {
         permissionsStorage.save(sitePermissions)
-        return sitePermissions
     }
 
-    suspend fun findSitePermissionsBy(origin: String): SitePermissions? = withContext(Dispatchers.IO) {
+    suspend fun findSitePermissionsBy(origin: String): SitePermissions? = withContext(dispatcher) {
         permissionsStorage.findSitePermissionsBy(origin)
     }
 
-    suspend fun updateSitePermissions(sitePermissions: SitePermissions) = withContext(Dispatchers.IO) {
+    suspend fun updateSitePermissions(sitePermissions: SitePermissions) = withContext(dispatcher) {
         permissionsStorage.update(sitePermissions)
     }
 
-    fun getSitePermissionsPaged(): DataSource.Factory<Int, SitePermissions> {
+    suspend fun getSitePermissionsPaged(): DataSource.Factory<Int, SitePermissions> {
         return permissionsStorage.getSitePermissionsPaged()
     }
 
-    suspend fun deleteSitePermissions(sitePermissions: SitePermissions) = withContext(Dispatchers.IO) {
+    suspend fun deleteSitePermissions(sitePermissions: SitePermissions) = withContext(dispatcher) {
         permissionsStorage.remove(sitePermissions)
     }
 
-    suspend fun deleteAllSitePermissions() = withContext(Dispatchers.IO) {
+    suspend fun deleteAllSitePermissions() = withContext(dispatcher) {
         permissionsStorage.removeAll()
     }
 }

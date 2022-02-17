@@ -26,6 +26,7 @@ class ModeTest {
     private lateinit var browsingModeManager: BrowsingModeManager
     private lateinit var currentMode: CurrentMode
     private lateinit var dispatchModeChanges: (mode: Mode) -> Unit
+    private var dispatchModeChangesResult: Mode? = null
 
     @Before
     fun setup() {
@@ -33,7 +34,11 @@ class ModeTest {
         accountManager = mockk(relaxed = true)
         onboarding = mockk(relaxed = true)
         browsingModeManager = mockk(relaxed = true)
-        dispatchModeChanges = mockk(relaxed = true)
+
+        dispatchModeChangesResult = null
+        dispatchModeChanges = {
+            dispatchModeChangesResult = it
+        }
 
         every { context.components.backgroundServices.accountManager } returns accountManager
 
@@ -78,20 +83,6 @@ class ModeTest {
         assertEquals(Mode.Onboarding(OnboardingState.SignedOutNoAutoSignIn), currentMode.getCurrentMode())
     }
 
-    // Temporarily disabled. See #6521
-    // @Test
-    // fun `get current onboarding mode when can auto sign in`() {
-    //     val shareableAccount: ShareableAccount = mockk()
-    //     every { onboarding.userHasBeenOnboarded() } returns false
-    //     every { accountManager.authenticatedAccount() } returns null
-    //     every { accountManager.shareableAccounts(context) } returns listOf(shareableAccount)
-    //
-    //     assertEquals(
-    //         Mode.Onboarding(OnboardingState.SignedOutCanAutoSignIn(shareableAccount)),
-    //         currentMode.getCurrentMode()
-    //     )
-    // }
-
     @Test
     fun `emit mode change`() {
         every { onboarding.userHasBeenOnboarded() } returns true
@@ -99,7 +90,7 @@ class ModeTest {
 
         currentMode.emitModeChanges()
 
-        verify { dispatchModeChanges(Mode.Normal) }
+        assertEquals(Mode.Normal, dispatchModeChangesResult)
     }
 
     @Test

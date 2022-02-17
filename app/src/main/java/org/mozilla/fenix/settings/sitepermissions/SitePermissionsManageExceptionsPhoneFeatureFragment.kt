@@ -14,21 +14,27 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.RadioButton
+import androidx.annotation.IdRes
+import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
-import mozilla.components.feature.sitepermissions.SitePermissions
-import mozilla.components.feature.sitepermissions.SitePermissions.Status.ALLOWED
-import mozilla.components.feature.sitepermissions.SitePermissions.Status.BLOCKED
+import mozilla.components.concept.engine.permission.SitePermissions
+import mozilla.components.concept.engine.permission.SitePermissions.Status.ALLOWED
+import mozilla.components.concept.engine.permission.SitePermissions.Status.BLOCKED
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.settings.PhoneFeature
+import org.mozilla.fenix.settings.quicksettings.AutoplayValue
 import org.mozilla.fenix.settings.setStartCheckedIndicator
 import org.mozilla.fenix.settings.update
+import org.mozilla.fenix.utils.Settings
 
 @SuppressWarnings("TooManyFunctions")
 class SitePermissionsManageExceptionsPhoneFeatureFragment : Fragment() {
@@ -36,34 +42,72 @@ class SitePermissionsManageExceptionsPhoneFeatureFragment : Fragment() {
     private lateinit var radioAllow: RadioButton
     private lateinit var radioBlock: RadioButton
     private lateinit var blockedByAndroidView: View
+    @VisibleForTesting
+    internal lateinit var rootView: View
     private val args by navArgs<SitePermissionsManageExceptionsPhoneFeatureFragmentArgs>()
-    val settings by lazy { requireContext().settings() }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        showToolbar(args.phoneFeature.getLabel(requireContext()))
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val rootView =
+        rootView =
             inflater.inflate(R.layout.fragment_manage_site_permissions_exceptions_feature_phone, container, false)
 
-        initAskToAllowRadio(rootView)
-        initBlockRadio(rootView)
-        bindBlockedByAndroidContainer(rootView)
-        initClearPermissionsButton(rootView)
+        if (getFeature() == PhoneFeature.AUTOPLAY) {
+            initAutoplay(getSitePermission())
+        } else {
+            initNormalFeature()
+        }
 
+        bindBlockedByAndroidContainer()
+        initClearPermissionsButton()
         return rootView
+    }
+
+    @VisibleForTesting
+    internal fun getFeature(): PhoneFeature = args.phoneFeature
+
+    @VisibleForTesting
+    internal fun getSitePermission(): SitePermissions = args.sitePermissions
+
+    @VisibleForTesting
+    internal fun getSettings(): Settings = requireContext().settings()
+
+    fun initAutoplay(sitePermissions: SitePermissions? = null) {
+        val context = requireContext()
+        val autoplayValues = AutoplayValue.values(context, getSettings(), sitePermissions)
+        val allowAudioAndVideo =
+            requireNotNull(autoplayValues.find { it is AutoplayValue.AllowAll })
+        val blockAll = requireNotNull(autoplayValues.find { it is AutoplayValue.BlockAll })
+        val blockAudible = requireNotNull(autoplayValues.find { it is AutoplayValue.BlockAudible })
+
+        initAutoplayOption(R.id.ask_to_allow_radio, allowAudioAndVideo)
+        initAutoplayOption(R.id.block_radio, blockAll)
+        initAutoplayOption(R.id.optional_radio, blockAudible)
+    }
+
+    fun initNormalFeature() {
+        initAskToAllowRadio(rootView)
+        initBlockRadio()
     }
 
     override fun onResume() {
         super.onResume()
-        initBlockedByAndroidView(args.phoneFeature, blockedByAndroidView)
+        showToolbar(getFeature().getLabel(requireContext()))
+        initBlockedByAndroidView(getFeature(), blockedByAndroidView)
+    }
+
+    @VisibleForTesting
+    internal fun initAutoplayOption(@IdRes viewId: Int, value: AutoplayValue) {
+        val radio = rootView.findViewById<RadioButton>(viewId)
+        radio.isVisible = true
+        radio.text = value.label
+
+        radio.setOnClickListener {
+            updatedSitePermissions(value)
+        }
+        radio.restoreState(value)
     }
 
     private fun initAskToAllowRadio(rootView: View) {
@@ -79,13 +123,22 @@ class SitePermissionsManageExceptionsPhoneFeatureFragment : Fragment() {
     }
 
     private fun RadioButton.restoreState(status: SitePermissions.Status) {
-        if (args.phoneFeature.getStatus(args.sitePermissions) == status) {
+        val permissionsStatus = getFeature().getStatus(getSitePermission())
+        if (permissionsStatus != SitePermissions.Status.NO_DECISION && permissionsStatus == status) {
             this.isChecked = true
             this.setStartCheckedIndicator()
         }
     }
 
-    private fun initBlockRadio(rootView: View) {
+    @VisibleForTesting
+    internal fun RadioButton.restoreState(autoplayValue: AutoplayValue) {
+        if (autoplayValue.isSelected()) {
+            this.isChecked = true
+            this.setStartCheckedIndicator()
+        }
+    }
+
+    private fun initBlockRadio() {
         radioBlock = rootView.findViewById(R.id.block_radio)
         radioBlock.setOnClickListener {
             updatedSitePermissions(BLOCKED)
@@ -93,24 +146,51 @@ class SitePermissionsManageExceptionsPhoneFeatureFragment : Fragment() {
         radioBlock.restoreState(BLOCKED)
     }
 
-    private fun initClearPermissionsButton(rootView: View) {
+    @VisibleForTesting
+    internal fun initClearPermissionsButton() {
         val button = rootView.findViewById<Button>(R.id.reset_permission)
         button.setText(R.string.clear_permission)
         button.setOnClickListener {
             AlertDialog.Builder(requireContext()).apply {
                 setMessage(R.string.confirm_clear_permission_site)
                 setTitle(R.string.clear_permission)
-                setPositiveButton(android.R.string.yes) { dialog: DialogInterface, _ ->
-                    val defaultStatus = args.phoneFeature.getStatus(settings = settings)
-                    updatedSitePermissions(defaultStatus)
-                    resetRadioButtonsStatus(defaultStatus)
+                setPositiveButton(android.R.string.ok) { dialog: DialogInterface, _ ->
+                    clearPermissions()
                     dialog.dismiss()
                 }
-                setNegativeButton(android.R.string.no) { dialog: DialogInterface, _ ->
+                setNegativeButton(android.R.string.cancel) { dialog: DialogInterface, _ ->
                     dialog.cancel()
                 }
             }.show()
         }
+    }
+
+    private fun clearPermissions() {
+        if (getFeature() == PhoneFeature.AUTOPLAY) {
+            clearAutoplayPermissions()
+        } else {
+            clearNormalPermissions()
+        }
+    }
+
+    private fun clearAutoplayPermissions() {
+        val context = requireContext()
+        val settings = context.settings()
+        val defaultValue =
+            AutoplayValue.values(context, settings, null).firstOrNull { it.isSelected() }
+                ?: AutoplayValue.getFallbackValue(
+                    context,
+                    settings,
+                    null
+                )
+        updatedSitePermissions(defaultValue)
+        initAutoplay()
+    }
+
+    private fun clearNormalPermissions() {
+        val defaultStatus = getFeature().getStatus(settings = getSettings())
+        updatedSitePermissions(defaultStatus)
+        resetRadioButtonsStatus(defaultStatus)
     }
 
     private fun resetRadioButtonsStatus(defaultStatus: SitePermissions.Status) {
@@ -120,8 +200,9 @@ class SitePermissionsManageExceptionsPhoneFeatureFragment : Fragment() {
         radioBlock.restoreState(defaultStatus)
     }
 
-    private fun bindBlockedByAndroidContainer(rootView: View) {
-        blockedByAndroidView = rootView.findViewById<View>(R.id.permissions_blocked_container)
+    @VisibleForTesting
+    internal fun bindBlockedByAndroidContainer() {
+        blockedByAndroidView = rootView.findViewById(R.id.permissions_blocked_container)
         initSettingsButton(blockedByAndroidView)
     }
 
@@ -140,7 +221,16 @@ class SitePermissionsManageExceptionsPhoneFeatureFragment : Fragment() {
     }
 
     private fun updatedSitePermissions(status: SitePermissions.Status) {
-        val updatedSitePermissions = args.sitePermissions.update(args.phoneFeature, status)
+        val updatedSitePermissions = getSitePermission().update(getFeature(), status)
+        viewLifecycleOwner.lifecycleScope.launch(Main) {
+            requireComponents.core.permissionStorage.updateSitePermissions(updatedSitePermissions)
+            requireComponents.tryReloadTabBy(updatedSitePermissions.origin)
+        }
+    }
+
+    @VisibleForTesting
+    internal fun updatedSitePermissions(autoplayValue: AutoplayValue) {
+        val updatedSitePermissions = autoplayValue.updateSitePermissions(getSitePermission())
         viewLifecycleOwner.lifecycleScope.launch(Main) {
             requireComponents.core.permissionStorage.updateSitePermissions(updatedSitePermissions)
             requireComponents.tryReloadTabBy(updatedSitePermissions.origin)

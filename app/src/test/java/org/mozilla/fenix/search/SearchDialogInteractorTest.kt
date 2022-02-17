@@ -6,14 +6,11 @@ package org.mozilla.fenix.search
 
 import io.mockk.mockk
 import io.mockk.verify
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
-import mozilla.components.browser.session.Session
 import mozilla.components.browser.state.search.SearchEngine
 import org.junit.Before
 import org.junit.Test
 
-@ExperimentalCoroutinesApi
 class SearchDialogInteractorTest {
 
     lateinit var searchController: SearchDialogController
@@ -98,12 +95,12 @@ class SearchDialogInteractorTest {
 
     @Test
     fun onExistingSessionSelected() {
-        val session = Session("http://mozilla.org", false)
+        val sessionId = "mozilla"
 
-        interactor.onExistingSessionSelected(session)
+        interactor.onExistingSessionSelected(sessionId)
 
         verify {
-            searchController.handleExistingSessionSelected(session)
+            searchController.handleExistingSessionSelected(sessionId)
         }
     }
 

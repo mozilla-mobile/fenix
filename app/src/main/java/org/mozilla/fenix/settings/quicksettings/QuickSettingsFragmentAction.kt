@@ -6,6 +6,7 @@ package org.mozilla.fenix.settings.quicksettings
 
 import mozilla.components.lib.state.Action
 import org.mozilla.fenix.settings.PhoneFeature
+import org.mozilla.fenix.trackingprotection.TrackingProtectionState
 
 /**
  * Parent [Action] for all the [QuickSettingsFragmentState] changes.
@@ -20,7 +21,7 @@ sealed class WebsiteInfoAction : QuickSettingsFragmentAction()
 /**
  * All possible [WebsitePermissionsState] changes as result of user / system interactions.
  */
-sealed class WebsitePermissionAction : QuickSettingsFragmentAction() {
+sealed class WebsitePermissionAction(open val updatedFeature: PhoneFeature) : QuickSettingsFragmentAction() {
     /**
      * Change resulting from toggling a specific [WebsitePermission] for the current website.
      *
@@ -31,8 +32,31 @@ sealed class WebsitePermissionAction : QuickSettingsFragmentAction() {
      * @param updatedEnabledStatus [Boolean] the new [WebsitePermission#enabled] which will be shown to the user.
      */
     class TogglePermission(
-        val updatedFeature: PhoneFeature,
+        override val updatedFeature: PhoneFeature,
         val updatedStatus: String,
         val updatedEnabledStatus: Boolean
-    ) : WebsitePermissionAction()
+    ) : WebsitePermissionAction(updatedFeature)
+
+    /**
+     * Change resulting from changing a specific [WebsitePermission.Autoplay] for the current website.
+     *
+     * @param autoplayValue [AutoplayValue] backing a certain [WebsitePermission.Autoplay].
+     * Allows to easily identify which permission changed
+     */
+    class ChangeAutoplay(
+        val autoplayValue: AutoplayValue
+    ) : WebsitePermissionAction(PhoneFeature.AUTOPLAY)
+}
+
+/**
+ * All possible [TrackingProtectionState] changes as a result oof user / system interactions.
+ */
+sealed class TrackingProtectionAction : QuickSettingsFragmentAction() {
+    /**
+     * Toggles the enabled state of tracking protection.
+     *
+     * @param isTrackingProtectionEnabled Whether or not tracking protection is enabled.
+     */
+    data class ToggleTrackingProtectionEnabled(val isTrackingProtectionEnabled: Boolean) :
+        TrackingProtectionAction()
 }

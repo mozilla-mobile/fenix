@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.ext
 
+import mozilla.components.lib.publicsuffixlist.PublicSuffixList
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -19,14 +20,7 @@ const val IDN = "台灣"
 @RunWith(FenixRobolectricTestRunner::class)
 class StringTest {
 
-    private val publicSuffixList = testContext.components.publicSuffixList
-
-    @Test
-    fun `Url To Trimmed Host`() {
-        val urlTest = "http://www.example.com:1080/docs/resource1.html"
-        val new = urlTest.urlToTrimmedHost(publicSuffixList)
-        assertEquals(new, "example")
-    }
+    private val publicSuffixList = PublicSuffixList(testContext)
 
     @Test
     fun `Simplified Url`() {

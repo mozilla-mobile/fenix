@@ -4,14 +4,18 @@
 
 package org.mozilla.fenix.home.sessioncontrol
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.widget.EditText
+import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AlertDialog
 import androidx.navigation.NavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import mozilla.components.browser.session.SessionManager
+import mozilla.components.browser.state.selector.getNormalOrPrivateTabs
+import mozilla.components.browser.state.state.availableSearchEngines
+import mozilla.components.browser.state.state.searchEngines
 import mozilla.components.browser.state.state.selectedOrDefaultSearchEngine
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.Engine
@@ -24,8 +28,10 @@ import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.support.ktx.android.view.showKeyboard
 import mozilla.components.support.ktx.kotlin.isUrl
 import org.mozilla.fenix.BrowserDirection
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.browser.BrowserFragmentDirections
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.collections.SaveCollectionStep
 import org.mozilla.fenix.components.TabCollectionStorage
@@ -36,12 +42,16 @@ import org.mozilla.fenix.components.tips.Tip
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
-import org.mozilla.fenix.ext.sessionsOfType
+import org.mozilla.fenix.ext.openSetDefaultBrowserOption
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.HomeFragment
 import org.mozilla.fenix.home.HomeFragmentAction
 import org.mozilla.fenix.home.HomeFragmentDirections
+import org.mozilla.fenix.home.HomeFragmentState
 import org.mozilla.fenix.home.HomeFragmentStore
+import org.mozilla.fenix.home.Mode
 import org.mozilla.fenix.settings.SupportUtils
+import org.mozilla.fenix.settings.SupportUtils.SumoTopic.PRIVATE_BROWSING_MYTHS
 import org.mozilla.fenix.utils.Settings
 import mozilla.components.feature.tab.collections.Tab as ComponentTab
 
@@ -109,22 +119,22 @@ interface SessionControlController {
     /**
      * @see [TopSiteInteractor.onSelectTopSite]
      */
-    fun handleSelectTopSite(url: String, type: TopSite.Type)
+    fun handleSelectTopSite(topSite: TopSite)
+
+    /**
+     * @see [TopSiteInteractor.onSettingsClicked]
+     */
+    fun handleTopSiteSettingsClicked()
+
+    /**
+     * @see [TopSiteInteractor.onSponsorPrivacyClicked]
+     */
+    fun handleSponsorPrivacyClicked()
 
     /**
      * @see [OnboardingInteractor.onStartBrowsingClicked]
      */
     fun handleStartBrowsingClicked()
-
-    /**
-     * @see [OnboardingInteractor.onOpenSettingsClicked]
-     */
-    fun handleOpenSettingsClicked()
-
-    /**
-     * @see [OnboardingInteractor.onWhatsNewGetAnswersClicked]
-     */
-    fun handleWhatsNewGetAnswersClicked()
 
     /**
      * @see [OnboardingInteractor.onReadPrivacyNoticeClicked]
@@ -165,6 +175,36 @@ interface SessionControlController {
      * @see [CollectionInteractor.onCollectionMenuOpened] and [TopSiteInteractor.onTopSiteMenuOpened]
      */
     fun handleMenuOpened()
+
+    /**
+     * @see [ExperimentCardInteractor.onSetDefaultBrowserClicked]
+     */
+    fun handleSetDefaultBrowser()
+
+    /**
+     * @see [ExperimentCardInteractor.onCloseExperimentCardClicked]
+     */
+    fun handleCloseExperimentCard()
+
+    /**
+     * @see [TabSessionInteractor.onPrivateModeButtonClicked]
+     */
+    fun handlePrivateModeButtonClicked(newMode: BrowsingMode, userHasBeenOnboarded: Boolean)
+
+    /**
+     * @see [CustomizeHomeIteractor.openCustomizeHomePage]
+     */
+    fun handleCustomizeHomeTapped()
+
+    /**
+     * @see [OnboardingInteractor.showOnboardingDialog]
+     */
+    fun handleShowOnboardingDialog()
+
+    /**
+     * @see [SessionControlInteractor.reportSessionMetrics]
+     */
+    fun handleReportSessionMetrics(state: HomeFragmentState)
 }
 
 @Suppress("TooManyFunctions", "LargeClass")
@@ -173,26 +213,19 @@ class DefaultSessionControlController(
     private val settings: Settings,
     private val engine: Engine,
     private val metrics: MetricController,
-    private val sessionManager: SessionManager,
     private val store: BrowserStore,
     private val tabCollectionStorage: TabCollectionStorage,
     private val addTabUseCase: TabsUseCases.AddNewTabUseCase,
     private val restoreUseCase: TabsUseCases.RestoreUseCase,
     private val reloadUrlUseCase: SessionUseCases.ReloadUrlUseCase,
+    private val selectTabUseCase: TabsUseCases.SelectTabUseCase,
     private val fragmentStore: HomeFragmentStore,
     private val navController: NavController,
     private val viewLifecycleScope: CoroutineScope,
     private val hideOnboarding: () -> Unit,
     private val registerCollectionStorageObserver: () -> Unit,
-    private val showDeleteCollectionPrompt: (
-        tabCollection: TabCollection,
-        title: String?,
-        message: String,
-        wasSwiped: Boolean,
-        handleSwipedItemDeletionCancel: () -> Unit
-    ) -> Unit,
-    private val showTabTray: () -> Unit,
-    private val handleSwipedItemDeletionCancel: () -> Unit
+    private val removeCollectionWithUndo: (tabCollection: TabCollection) -> Unit,
+    private val showTabTray: () -> Unit
 ) : SessionControlController {
 
     override fun handleCollectionAddTabTapped(collection: TabCollection) {
@@ -216,7 +249,8 @@ class DefaultSessionControlController(
             tab,
             onTabRestored = {
                 activity.openToBrowser(BrowserDirection.FromHome)
-                reloadUrlUseCase.invoke(sessionManager.selectedSession)
+                selectTabUseCase.invoke(it)
+                reloadUrlUseCase.invoke(it)
             },
             onFailure = {
                 activity.openToBrowserAndLoad(
@@ -252,19 +286,7 @@ class DefaultSessionControlController(
         metrics.track(Event.CollectionTabRemoved)
 
         if (collection.tabs.size == 1) {
-            val title = activity.resources.getString(
-                R.string.delete_tab_and_collection_dialog_title,
-                collection.title
-            )
-            val message =
-                activity.resources.getString(R.string.delete_tab_and_collection_dialog_message)
-            showDeleteCollectionPrompt(
-                collection,
-                title,
-                message,
-                wasSwiped,
-                handleSwipedItemDeletionCancel
-            )
+            removeCollectionWithUndo(collection)
         } else {
             viewLifecycleScope.launch {
                 tabCollectionStorage.removeTabFromCollection(collection, tab)
@@ -282,13 +304,17 @@ class DefaultSessionControlController(
     }
 
     override fun handleDeleteCollectionTapped(collection: TabCollection) {
-        val message =
-            activity.resources.getString(R.string.tab_collection_dialog_message, collection.title)
-        showDeleteCollectionPrompt(collection, null, message, false, handleSwipedItemDeletionCancel)
+        removeCollectionWithUndo(collection)
     }
 
     override fun handleOpenInPrivateTabClicked(topSite: TopSite) {
-        metrics.track(Event.TopSiteOpenInPrivateTab)
+        metrics.track(
+            if (topSite is TopSite.Provided) {
+                Event.TopSiteOpenContileInPrivateTab
+            } else {
+                Event.TopSiteOpenInPrivateTab
+            }
+        )
         with(activity) {
             browsingModeManager.mode = BrowsingMode.Private
             openToBrowserAndLoad(
@@ -302,13 +328,13 @@ class DefaultSessionControlController(
     override fun handlePrivateBrowsingLearnMoreClicked() {
         dismissSearchDialogIfDisplayed()
         activity.openToBrowserAndLoad(
-            searchTermOrURL = SupportUtils.getGenericSumoURLForTopic
-                (SupportUtils.SumoTopic.PRIVATE_BROWSING_MYTHS),
+            searchTermOrURL = SupportUtils.getGenericSumoURLForTopic(PRIVATE_BROWSING_MYTHS),
             newTab = true,
             from = BrowserDirection.FromHome
         )
     }
 
+    @SuppressLint("InflateParams")
     override fun handleRenameTopSiteClicked(topSite: TopSite) {
         activity.let {
             val customLayout =
@@ -321,12 +347,13 @@ class DefaultSessionControlController(
                 setTitle(R.string.rename_top_site)
                 setView(customLayout)
                 setPositiveButton(R.string.top_sites_rename_dialog_ok) { dialog, _ ->
-                    val newTitle = topSiteLabelEditText.text.toString()
-                    if (newTitle.isNotBlank()) {
-                        viewLifecycleScope.launch(Dispatchers.IO) {
-                            with(activity.components.useCases.topSitesUseCase) {
-                                renameTopSites(topSite, newTitle)
-                            }
+                    viewLifecycleScope.launch(Dispatchers.IO) {
+                        with(activity.components.useCases.topSitesUseCase) {
+                            updateTopSites(
+                                topSite,
+                                topSiteLabelEditText.text.toString(),
+                                topSite.url
+                            )
                         }
                     }
                     dialog.dismiss()
@@ -343,8 +370,10 @@ class DefaultSessionControlController(
 
     override fun handleRemoveTopSiteClicked(topSite: TopSite) {
         metrics.track(Event.TopSiteRemoved)
-        if (topSite.url == SupportUtils.POCKET_TRENDING_URL) {
-            metrics.track(Event.PocketTopSiteRemoved)
+        when (topSite.url) {
+            SupportUtils.POCKET_TRENDING_URL -> metrics.track(Event.PocketTopSiteRemoved)
+            SupportUtils.GOOGLE_URL -> metrics.track(Event.GoogleTopSiteRemoved)
+            SupportUtils.BAIDU_URL -> metrics.track(Event.BaiduTopSiteRemoved)
         }
 
         viewLifecycleScope.launch(Dispatchers.IO) {
@@ -362,24 +391,87 @@ class DefaultSessionControlController(
         metrics.track(Event.CollectionRenamePressed)
     }
 
-    override fun handleSelectTopSite(url: String, type: TopSite.Type) {
+    override fun handleSelectTopSite(topSite: TopSite) {
         dismissSearchDialogIfDisplayed()
+
         metrics.track(Event.TopSiteOpenInNewTab)
-        when (type) {
-            TopSite.Type.DEFAULT -> metrics.track(Event.TopSiteOpenDefault)
-            TopSite.Type.FRECENT -> metrics.track(Event.TopSiteOpenFrecent)
-            TopSite.Type.PINNED -> metrics.track(Event.TopSiteOpenPinned)
+
+        metrics.track(
+            when (topSite) {
+                is TopSite.Default -> Event.TopSiteOpenDefault
+                is TopSite.Frecent -> Event.TopSiteOpenFrecent
+                is TopSite.Pinned -> Event.TopSiteOpenPinned
+                is TopSite.Provided -> Event.TopSiteOpenProvided
+            }
+        )
+
+        when (topSite.url) {
+            SupportUtils.GOOGLE_URL -> metrics.track(Event.TopSiteOpenGoogle)
+            SupportUtils.BAIDU_URL -> metrics.track(Event.TopSiteOpenBaidu)
+            SupportUtils.POCKET_TRENDING_URL -> metrics.track(Event.PocketTopSiteClicked)
         }
 
-        if (url == SupportUtils.POCKET_TRENDING_URL) {
-            metrics.track(Event.PocketTopSiteClicked)
-        }
-        addTabUseCase.invoke(
-            url = url,
+        val availableEngines = getAvailableSearchEngines()
+        val searchAccessPoint = Event.PerformedSearch.SearchAccessPoint.TOPSITE
+        val event =
+            availableEngines.firstOrNull { engine ->
+                engine.resultUrls.firstOrNull { it.contains(topSite.url) } != null
+            }?.let { searchEngine ->
+                searchAccessPoint.let { sap ->
+                    MetricsUtils.createSearchEvent(searchEngine, store, sap)
+                }
+            }
+        event?.let { activity.metrics.track(it) }
+
+        val tabId = addTabUseCase.invoke(
+            url = appendSearchAttributionToUrlIfNeeded(topSite.url),
             selectTab = true,
             startLoading = true
         )
+
+        if (settings.openNextTabInDesktopMode) {
+            activity.handleRequestDesktopMode(tabId)
+        }
         activity.openToBrowser(BrowserDirection.FromHome)
+    }
+
+    override fun handleTopSiteSettingsClicked() {
+        metrics.track(Event.TopSiteContileSettings)
+        navController.nav(
+            R.id.homeFragment,
+            HomeFragmentDirections.actionGlobalHomeSettingsFragment()
+        )
+    }
+
+    override fun handleSponsorPrivacyClicked() {
+        metrics.track(Event.TopSiteContilePrivacy)
+        activity.openToBrowserAndLoad(
+            searchTermOrURL = SupportUtils.getGenericSumoURLForTopic(SupportUtils.SumoTopic.SPONSOR_PRIVACY),
+            newTab = true,
+            from = BrowserDirection.FromHome
+        )
+    }
+
+    @VisibleForTesting
+    internal fun getAvailableSearchEngines() =
+        activity.components.core.store.state.search.searchEngines +
+            activity.components.core.store.state.search.availableSearchEngines
+
+    /**
+     * Append a search attribution query to any provided search engine URL based on the
+     * user's current region.
+     */
+    private fun appendSearchAttributionToUrlIfNeeded(url: String): String {
+        if (url == SupportUtils.GOOGLE_URL) {
+            store.state.search.region?.let { region ->
+                return when (region.current) {
+                    "US" -> SupportUtils.GOOGLE_US_URL
+                    else -> SupportUtils.GOOGLE_XX_URL
+                }
+            }
+        }
+
+        return url
     }
 
     private fun dismissSearchDialogIfDisplayed() {
@@ -392,17 +484,19 @@ class DefaultSessionControlController(
         hideOnboarding()
     }
 
-    override fun handleOpenSettingsClicked() {
-        val directions = HomeFragmentDirections.actionGlobalPrivateBrowsingFragment()
-        navController.nav(R.id.homeFragment, directions)
+    override fun handleCustomizeHomeTapped() {
+        val directions = HomeFragmentDirections.actionGlobalHomeSettingsFragment()
+        navController.nav(navController.currentDestination?.id, directions)
+        metrics.track(Event.HomeScreenCustomizedHomeClicked)
     }
 
-    override fun handleWhatsNewGetAnswersClicked() {
-        activity.openToBrowserAndLoad(
-            searchTermOrURL = SupportUtils.getWhatsNewUrl(activity),
-            newTab = true,
-            from = BrowserDirection.FromHome
-        )
+    override fun handleShowOnboardingDialog() {
+        if (FeatureFlags.showHomeOnboarding) {
+            navController.nav(
+                R.id.homeFragment,
+                HomeFragmentDirections.actionGlobalHomeOnboardingDialog()
+            )
+        }
     }
 
     override fun handleReadPrivacyNoticeClicked() {
@@ -422,7 +516,7 @@ class DefaultSessionControlController(
     }
 
     private fun showTabTrayCollectionCreation() {
-        val directions = HomeFragmentDirections.actionGlobalTabTrayDialogFragment(
+        val directions = HomeFragmentDirections.actionGlobalTabsTrayFragment(
             enterMultiselect = true
         )
         navController.nav(R.id.homeFragment, directions)
@@ -438,8 +532,8 @@ class DefaultSessionControlController(
         // Only register the observer right before moving to collection creation
         registerCollectionStorageObserver()
 
-        val tabIds = sessionManager
-            .sessionsOfType(private = activity.browsingModeManager.mode.isPrivate)
+        val tabIds = store.state
+            .getNormalOrPrivateTabs(private = activity.browsingModeManager.mode.isPrivate)
             .map { session -> session.id }
             .toList()
             .toTypedArray()
@@ -501,5 +595,49 @@ class DefaultSessionControlController(
             pastedText = clipboardText
         )
         navController.nav(R.id.homeFragment, directions)
+    }
+
+    override fun handleSetDefaultBrowser() {
+        settings.userDismissedExperimentCard = true
+        activity.openSetDefaultBrowserOption()
+    }
+
+    override fun handleCloseExperimentCard() {
+        settings.userDismissedExperimentCard = true
+        fragmentStore.dispatch(HomeFragmentAction.RemoveSetDefaultBrowserCard)
+    }
+
+    override fun handlePrivateModeButtonClicked(
+        newMode: BrowsingMode,
+        userHasBeenOnboarded: Boolean
+    ) {
+        if (newMode == BrowsingMode.Private) {
+            activity.settings().incrementNumTimesPrivateModeOpened()
+        }
+
+        if (userHasBeenOnboarded) {
+            fragmentStore.dispatch(
+                HomeFragmentAction.ModeChange(Mode.fromBrowsingMode(newMode))
+            )
+
+            if (navController.currentDestination?.id == R.id.searchDialogFragment) {
+                navController.navigate(
+                    BrowserFragmentDirections.actionGlobalSearchDialog(
+                        sessionId = null
+                    )
+                )
+            }
+        }
+    }
+
+    override fun handleReportSessionMetrics(state: HomeFragmentState) {
+        with(metrics) {
+            track(
+                if (state.recentTabs.isEmpty()) Event.RecentTabsSectionIsNotVisible
+                else Event.RecentTabsSectionIsVisible
+            )
+
+            track(Event.RecentBookmarkCount(state.recentBookmarks.size))
+        }
     }
 }

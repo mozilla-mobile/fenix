@@ -9,7 +9,7 @@ import androidx.annotation.StringRes
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import mozilla.components.feature.sitepermissions.SitePermissions
+import mozilla.components.concept.engine.permission.SitePermissions
 import mozilla.components.support.ktx.android.content.res.resolveAttribute
 import mozilla.components.support.ktx.android.view.putCompoundDrawablesRelative
 import org.mozilla.fenix.ext.getPreferenceKey
@@ -19,25 +19,36 @@ fun SitePermissions.toggle(featurePhone: PhoneFeature): SitePermissions {
 }
 
 fun SitePermissions.get(field: PhoneFeature) = when (field) {
+    PhoneFeature.AUTOPLAY ->
+        throw IllegalAccessException(
+            "AUTOPLAY can't be accessed via get try " +
+                "using AUTOPLAY_AUDIBLE and AUTOPLAY_INAUDIBLE"
+        )
     PhoneFeature.CAMERA -> camera
     PhoneFeature.LOCATION -> location
     PhoneFeature.MICROPHONE -> microphone
     PhoneFeature.NOTIFICATION -> notification
-    PhoneFeature.AUTOPLAY_AUDIBLE -> autoplayAudible
-    PhoneFeature.AUTOPLAY_INAUDIBLE -> autoplayInaudible
+    PhoneFeature.AUTOPLAY_AUDIBLE -> autoplayAudible.toStatus()
+    PhoneFeature.AUTOPLAY_INAUDIBLE -> autoplayInaudible.toStatus()
     PhoneFeature.PERSISTENT_STORAGE -> localStorage
     PhoneFeature.MEDIA_KEY_SYSTEM_ACCESS -> mediaKeySystemAccess
+    PhoneFeature.CROSS_ORIGIN_STORAGE_ACCESS -> crossOriginStorageAccess
 }
 
 fun SitePermissions.update(field: PhoneFeature, value: SitePermissions.Status) = when (field) {
+    PhoneFeature.AUTOPLAY -> throw IllegalAccessException(
+        "AUTOPLAY can't be accessed via update " +
+            "try using AUTOPLAY_AUDIBLE and AUTOPLAY_INAUDIBLE"
+    )
     PhoneFeature.CAMERA -> copy(camera = value)
     PhoneFeature.LOCATION -> copy(location = value)
     PhoneFeature.MICROPHONE -> copy(microphone = value)
     PhoneFeature.NOTIFICATION -> copy(notification = value)
-    PhoneFeature.AUTOPLAY_AUDIBLE -> copy(autoplayAudible = value)
-    PhoneFeature.AUTOPLAY_INAUDIBLE -> copy(autoplayInaudible = value)
+    PhoneFeature.AUTOPLAY_AUDIBLE -> copy(autoplayAudible = value.toAutoplayStatus())
+    PhoneFeature.AUTOPLAY_INAUDIBLE -> copy(autoplayInaudible = value.toAutoplayStatus())
     PhoneFeature.PERSISTENT_STORAGE -> copy(localStorage = value)
     PhoneFeature.MEDIA_KEY_SYSTEM_ACCESS -> copy(mediaKeySystemAccess = value)
+    PhoneFeature.CROSS_ORIGIN_STORAGE_ACCESS -> copy(crossOriginStorageAccess = value)
 }
 
 /**

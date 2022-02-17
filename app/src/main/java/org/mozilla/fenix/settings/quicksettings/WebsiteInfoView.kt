@@ -4,15 +4,15 @@
 
 package org.mozilla.fenix.settings.quicksettings
 
+import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat.getColor
-import androidx.core.view.isVisible
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.quicksettings_website_info.*
-import mozilla.components.support.ktx.android.content.getDrawableWithTint
-import org.mozilla.fenix.R
+import androidx.annotation.VisibleForTesting
+import mozilla.components.browser.icons.BrowserIcons
+import mozilla.components.support.ktx.kotlin.tryGetHostFromUrl
+import org.mozilla.fenix.databinding.QuicksettingsWebsiteInfoBinding
+import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.loadIntoView
 
 /**
  * MVI View that knows to display a whether the current website uses a secure connection or not.
@@ -20,13 +20,17 @@ import org.mozilla.fenix.R
  * Currently it does not support any user interaction.
  *
  * @param container [ViewGroup] in which this View will inflate itself.
+ * @param icons Icons component for loading, caching and processing website icons.
+ * @param interactor [WebSiteInfoInteractor] which will have delegated to all user interactions.
  */
 class WebsiteInfoView(
-    container: ViewGroup
-) : LayoutContainer {
-
-    override val containerView: View = LayoutInflater.from(container.context)
-        .inflate(R.layout.quicksettings_website_info, container, true)
+    container: ViewGroup,
+    private val icons: BrowserIcons = container.context.components.core.icons,
+    val interactor: WebSiteInfoInteractor,
+) {
+    val binding = QuicksettingsWebsiteInfoBinding.inflate(
+        LayoutInflater.from(container.context), container, true
+    )
 
     /**
      * Allows changing what this View displays.
@@ -34,31 +38,28 @@ class WebsiteInfoView(
      * @param state [WebsiteInfoState] to be rendered.
      */
     fun update(state: WebsiteInfoState) {
+        icons.loadIntoView(binding.faviconImage, state.websiteUrl)
         bindUrl(state.websiteUrl)
-        bindTitle(state.websiteTitle)
         bindSecurityInfo(state.websiteSecurityUiValues)
-        bindCertificateName(state.certificateName)
     }
 
     private fun bindUrl(websiteUrl: String) {
-        url.text = websiteUrl
-    }
-
-    private fun bindTitle(websiteTitle: String) {
-        title.text = websiteTitle
-    }
-
-    private fun bindCertificateName(cert: String) {
-        val certificateLabel = containerView.context.getString(R.string.certificate_info_verified_by, cert)
-        certificateInfo.text = certificateLabel
-        certificateInfo.isVisible = cert.isNotEmpty()
+        binding.url.text = websiteUrl.tryGetHostFromUrl()
     }
 
     private fun bindSecurityInfo(uiValues: WebsiteSecurityUiValues) {
-        val tint = getColor(containerView.context, uiValues.iconTintRes)
-        securityInfo.setText(uiValues.securityInfoRes)
-        securityInfoIcon.setImageDrawable(
-            containerView.context.getDrawableWithTint(uiValues.iconRes, tint)
-        )
+        binding.securityInfo.setText(uiValues.securityInfoRes)
+        bindConnectionDetailsListener()
+        binding.securityInfoIcon.setImageResource(uiValues.iconRes)
     }
+
+    @VisibleForTesting
+    internal fun bindConnectionDetailsListener() {
+        binding.securityInfo.setOnClickListener {
+            interactor.onConnectionDetailsClicked()
+        }
+    }
+
+    @VisibleForTesting
+    internal fun provideContext(): Context = binding.root.context
 }

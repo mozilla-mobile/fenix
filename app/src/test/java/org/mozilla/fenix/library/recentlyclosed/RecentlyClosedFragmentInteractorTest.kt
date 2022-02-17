@@ -6,10 +6,9 @@ package org.mozilla.fenix.library.recentlyclosed
 
 import io.mockk.mockk
 import io.mockk.verify
-import mozilla.components.browser.state.state.ClosedTab
+import mozilla.components.browser.state.state.recover.TabState
 import org.junit.Before
 import org.junit.Test
-import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 
 class RecentlyClosedFragmentInteractorTest {
 
@@ -26,62 +25,12 @@ class RecentlyClosedFragmentInteractorTest {
     }
 
     @Test
-    fun open() {
-        val tab = ClosedTab(id = "tab-id", title = "Mozilla", url = "mozilla.org", createdAt = 1L)
-        interactor.restore(tab)
+    fun onDelete() {
+        val tab = TabState(id = "tab-id", title = "Mozilla", url = "mozilla.org", lastAccess = 1L)
+        interactor.onDelete(tab)
 
         verify {
-            defaultRecentlyClosedController.handleRestore(tab)
-        }
-    }
-
-    @Test
-    fun onCopyPressed() {
-        val tab = ClosedTab(id = "tab-id", title = "Mozilla", url = "mozilla.org", createdAt = 1L)
-        interactor.onCopyPressed(tab)
-
-        verify {
-            defaultRecentlyClosedController.handleCopyUrl(tab)
-        }
-    }
-
-    @Test
-    fun onSharePressed() {
-        val tab = ClosedTab(id = "tab-id", title = "Mozilla", url = "mozilla.org", createdAt = 1L)
-        interactor.onSharePressed(tab)
-
-        verify {
-            defaultRecentlyClosedController.handleShare(tab)
-        }
-    }
-
-    @Test
-    fun onOpenInNormalTab() {
-        val tab = ClosedTab(id = "tab-id", title = "Mozilla", url = "mozilla.org", createdAt = 1L)
-        interactor.onOpenInNormalTab(tab)
-
-        verify {
-            defaultRecentlyClosedController.handleOpen(tab, mode = BrowsingMode.Normal)
-        }
-    }
-
-    @Test
-    fun onOpenInPrivateTab() {
-        val tab = ClosedTab(id = "tab-id", title = "Mozilla", url = "mozilla.org", createdAt = 1L)
-        interactor.onOpenInPrivateTab(tab)
-
-        verify {
-            defaultRecentlyClosedController.handleOpen(tab, mode = BrowsingMode.Private)
-        }
-    }
-
-    @Test
-    fun onDeleteOne() {
-        val tab = ClosedTab(id = "tab-id", title = "Mozilla", url = "mozilla.org", createdAt = 1L)
-        interactor.onDeleteOne(tab)
-
-        verify {
-            defaultRecentlyClosedController.handleDeleteOne(tab)
+            defaultRecentlyClosedController.handleDelete(tab)
         }
     }
 

@@ -7,11 +7,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:minHeight="48dp"
     android:background="?android:selectableItemBackground"
     android:clickable="true"
     android:focusable="true"
     android:gravity="center_vertical"
-    android:layout_marginStart="@dimen/custom_checkbox_alignment_margin">
+    android:paddingStart="@dimen/custom_checkbox_alignment_margin">
 
     <LinearLayout
         android:id="@android:id/widget_frame"

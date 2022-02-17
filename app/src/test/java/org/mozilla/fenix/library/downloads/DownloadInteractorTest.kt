@@ -1,6 +1,6 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.library.downloads
 
@@ -12,7 +12,15 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class DownloadInteractorTest {
-    private val downloadItem = DownloadItem("0", "title", "url", "5.6 mb", "png", DownloadState.Status.COMPLETED)
+    private val downloadItem = DownloadItem(
+        id = "0",
+        url = "url",
+        fileName = "title",
+        filePath = "filePath",
+        size = "5.6 mb",
+        contentType = "png",
+        status = DownloadState.Status.COMPLETED
+    )
     val controller: DownloadController = mockk(relaxed = true)
     val interactor = DownloadInteractor(controller)
 
@@ -63,15 +71,6 @@ class DownloadInteractorTest {
 
         verifyAll {
             controller.handleModeSwitched()
-        }
-    }
-
-    @Test
-    fun onDeleteAll() {
-        interactor.onDeleteAll()
-
-        verifyAll {
-            controller.handleDeleteAll()
         }
     }
 

@@ -39,18 +39,20 @@ class BookmarkNodeViewHolderTest {
         type = BookmarkNodeType.ITEM,
         guid = "456",
         parentGuid = "123",
-        position = 0,
+        position = 0u,
         title = "Mozilla",
         url = "https://www.mozilla.org",
+        dateAdded = 0,
         children = listOf()
     )
     private val folder = BookmarkNode(
         type = BookmarkNodeType.FOLDER,
         guid = "456",
         parentGuid = "123",
-        position = 0,
+        position = 0u,
         title = "Folder",
         url = null,
+        dateAdded = 0,
         children = listOf()
     )
 

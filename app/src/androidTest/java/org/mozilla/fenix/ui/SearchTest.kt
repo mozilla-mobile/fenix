@@ -4,9 +4,11 @@
 
 package org.mozilla.fenix.ui
 
+import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
+import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.ui.robots.homeScreen
 
@@ -23,7 +25,10 @@ import org.mozilla.fenix.ui.robots.homeScreen
 class SearchTest {
     /* ktlint-disable no-blank-line-before-rbrace */ // This imposes unreadable grouping.
     @get:Rule
-    val activityTestRule = HomeActivityTestRule()
+    val activityTestRule = AndroidComposeTestRule(
+        HomeActivityTestRule(),
+        { it.activity }
+    )
 
     @Test
     fun searchScreenItemsTest() {
@@ -32,9 +37,11 @@ class SearchTest {
             verifySearchView()
             verifyBrowserToolbar()
             verifyScanButton()
+            verifySearchEngineButton()
         }
     }
 
+    @SmokeTest
     @Ignore("This test cannot run on virtual devices due to camera permissions being required")
     @Test
     fun scanButtonTest() {
@@ -57,11 +64,11 @@ class SearchTest {
         }.goBack {
         }.goBack {
         }.openSearch {
-//            verifySearchWithText()
-            clickSearchEngineButton("DuckDuckGo")
+            verifySearchBarEmpty()
+            clickSearchEngineButton(activityTestRule, "DuckDuckGo")
             typeSearch("mozilla")
-            verifySearchEngineResults("DuckDuckGo")
-            clickSearchEngineResult("DuckDuckGo")
+            verifySearchEngineResults(activityTestRule, "DuckDuckGo", 4)
+            clickSearchEngineResult(activityTestRule, "DuckDuckGo")
             verifySearchEngineURL("DuckDuckGo")
         }
     }
@@ -76,8 +83,8 @@ class SearchTest {
         }.goBack {
         }.goBack {
         }.openSearch {
-            scrollToSearchEngineSettings()
-            clickSearchEngineSettings()
+            scrollToSearchEngineSettings(activityTestRule)
+            clickSearchEngineSettings(activityTestRule)
             verifySearchSettings()
         }
     }

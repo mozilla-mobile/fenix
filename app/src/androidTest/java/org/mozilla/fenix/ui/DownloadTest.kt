@@ -4,43 +4,45 @@
 
 package org.mozilla.fenix.ui
 
-import android.os.Environment
+import androidx.core.net.toUri
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import androidx.test.uiautomator.UiDevice
-import kotlinx.coroutines.runBlocking
-import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
-import org.mozilla.fenix.helpers.AndroidAssetDispatcher
-import org.mozilla.fenix.helpers.HomeActivityTestRule
-import org.mozilla.fenix.helpers.TestAssetHelper
+import org.mozilla.fenix.customannotations.SmokeTest
+import org.mozilla.fenix.helpers.FeatureSettingsHelper
+import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
+import org.mozilla.fenix.helpers.RetryTestRule
+import org.mozilla.fenix.helpers.TestHelper.deleteDownloadFromStorage
+import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.downloadRobot
-import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
 import org.mozilla.fenix.ui.robots.notificationShade
-import java.io.File
 
 /**
- *  Tests for verifying basic functionality of download prompt UI
+ *  Tests for verifying basic functionality of download
  *
  *  - Initiates a download
  *  - Verifies download prompt
- *  - Verifies download notification
+ *  - Verifies download notification and actions
+ *  - Verifies managing downloads inside the Downloads listing.
  **/
-
 class DownloadTest {
-
     private val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+    private val featureSettingsHelper = FeatureSettingsHelper()
+    /* Remote test page managed by Mozilla Mobile QA team at https://github.com/mozilla-mobile/testapp */
+    private val downloadTestPage = "https://storage.googleapis.com/mobile_test_assets/test_app/downloads.html"
+    private var downloadFile: String = ""
 
-    private lateinit var mockWebServer: MockWebServer
-
-    /* ktlint-disable no-blank-line-before-rbrace */ // This imposes unreadable grouping.
     @get:Rule
-    val activityTestRule = HomeActivityTestRule()
+    val activityTestRule = HomeActivityIntentTestRule()
+
+    @Rule
+    @JvmField
+    val retryTestRule = RetryTestRule(3)
 
     @get:Rule
     var mGrantPermissions = GrantPermissionRule.grant(
@@ -50,69 +52,122 @@ class DownloadTest {
 
     @Before
     fun setUp() {
-        mockWebServer = MockWebServer().apply {
-            dispatcher = AndroidAssetDispatcher()
-            start()
-        }
+        // disabling the jump-back-in pop-up that interferes with the tests.
+        featureSettingsHelper.setJumpBackCFREnabled(false)
+        // disabling the PWA CFR on 3rd visit
+        featureSettingsHelper.disablePwaCFR(true)
     }
 
-    @Suppress("Deprecation")
     @After
     fun tearDown() {
-        mockWebServer.shutdown()
-
-        // Clear Download
-        runBlocking {
-            val downloadedFile = File(
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-                "Globe.svg.html"
-            )
-
-            if (downloadedFile.exists()) {
-                downloadedFile.delete()
-            }
-        }
+        deleteDownloadFromStorage(downloadFile)
+        featureSettingsHelper.resetAllFeatureFlags()
     }
 
     @Test
-    @Ignore("Temp disable flaky test - see: https://github.com/mozilla-mobile/fenix/issues/10798")
     fun testDownloadPrompt() {
-        homeScreen { }.dismissOnboarding()
-
-        val defaultWebPage = TestAssetHelper.getDownloadAsset(mockWebServer)
+        downloadFile = "web_icon.png"
 
         navigationToolbar {
-        }.openNewTabAndEnterToBrowser(defaultWebPage.url) {
-            mDevice.waitForIdle()
-            clickLinkMatchingText(defaultWebPage.content)
-        }
-
+        }.enterURLAndEnterToBrowser(downloadTestPage.toUri()) {
+        }.clickDownloadLink(downloadFile) {
+            verifyDownloadPrompt(downloadFile)
+        }.clickDownload {
+            verifyDownloadNotificationPopup()
+        }.clickOpen("image/png") {}
         downloadRobot {
-            verifyDownloadPrompt()
-        }.closePrompt {}
+            verifyPhotosAppOpens()
+        }
     }
 
     @Test
-    fun testDownloadNotification() {
-        val defaultWebPage = TestAssetHelper.getDownloadAsset(mockWebServer)
+    fun testCloseDownloadPrompt() {
+        downloadFile = "smallZip.zip"
 
         navigationToolbar {
-        }.openNewTabAndEnterToBrowser(defaultWebPage.url) {
-            mDevice.waitForIdle()
-            clickLinkMatchingText(defaultWebPage.content)
+        }.enterURLAndEnterToBrowser(downloadTestPage.toUri()) {
+        }.clickDownloadLink(downloadFile) {
+            verifyDownloadPrompt(downloadFile)
+        }.closePrompt {
+        }.openThreeDotMenu {
+        }.openDownloadsManager {
+            verifyEmptyDownloadsList()
         }
+    }
 
-        downloadRobot {
-            verifyDownloadPrompt()
+    @Test
+    fun testDownloadCompleteNotification() {
+        downloadFile = "smallZip.zip"
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(downloadTestPage.toUri()) {
+        }.clickDownloadLink(downloadFile) {
+            verifyDownloadPrompt(downloadFile)
         }.clickDownload {
             verifyDownloadNotificationPopup()
         }
-
         mDevice.openNotification()
         notificationShade {
             verifySystemNotificationExists("Download completed")
         }
-        // close notification shade before the next test
-        mDevice.pressBack()
+    }
+
+    @SmokeTest
+    @Test
+    fun pauseResumeCancelDownloadTest() {
+        downloadFile = "1GB.zip"
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(downloadTestPage.toUri()) {
+        }.clickDownloadLink(downloadFile) {
+            verifyDownloadPrompt(downloadFile)
+        }.clickDownload {}
+        mDevice.openNotification()
+        notificationShade {
+            expandNotificationMessage()
+            clickSystemNotificationControlButton("Pause")
+            clickSystemNotificationControlButton("Resume")
+            clickSystemNotificationControlButton("Cancel")
+            mDevice.pressBack()
+        }
+        browserScreen {
+        }.openThreeDotMenu {
+        }.openDownloadsManager {
+            verifyEmptyDownloadsList()
+        }
+    }
+
+    @SmokeTest
+    @Test
+        /* Verifies downloads in the Downloads Menu:
+          - downloads appear in the list
+          - deleting a download from device storage, removes it from the Downloads Menu too
+        */
+    fun manageDownloadsInDownloadsMenuTest() {
+        // a long filename to verify it's correctly displayed on the prompt and in the Downloads menu
+        downloadFile = "tAJwqaWjJsXS8AhzSninBMCfIZbHBGgcc001lx5DIdDwIcfEgQ6vE5Gb5VgAled17DFZ2A7ZDOHA0NpQPHXXFt.svg"
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(downloadTestPage.toUri()) {
+        }.clickDownloadLink(downloadFile) {
+            verifyDownloadPrompt(downloadFile)
+        }.clickDownload {
+            verifyDownloadNotificationPopup()
+        }
+        browserScreen {
+        }.openThreeDotMenu {
+        }.openDownloadsManager {
+            waitForDownloadsListToExist()
+            verifyDownloadedFileName(downloadFile)
+            verifyDownloadedFileIcon()
+            openDownloadedFile(downloadFile)
+            verifyPhotosAppOpens()
+            mDevice.pressBack()
+            deleteDownloadFromStorage(downloadFile)
+        }.exitDownloadsManagerToBrowser {
+        }.openThreeDotMenu {
+        }.openDownloadsManager {
+            verifyEmptyDownloadsList()
+        }
     }
 }

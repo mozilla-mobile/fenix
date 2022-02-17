@@ -4,40 +4,37 @@
 
 package org.mozilla.fenix.settings.quicksettings
 
-import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager.PERMISSION_GRANTED
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
-import android.view.Gravity.BOTTOM
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
-import android.widget.LinearLayout
-import androidx.appcompat.app.AppCompatDialogFragment
-import androidx.appcompat.view.ContextThemeWrapper
+import androidx.annotation.VisibleForTesting
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import kotlinx.android.synthetic.main.fragment_quick_settings_dialog_sheet.*
-import kotlinx.android.synthetic.main.fragment_quick_settings_dialog_sheet.view.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.plus
+import mozilla.components.browser.state.selector.findTabOrCustomTab
+import mozilla.components.browser.state.state.SessionState
+import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.lib.state.ext.consumeFlow
 import mozilla.components.lib.state.ext.consumeFrom
+import mozilla.components.support.base.log.logger.Logger
+import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifAnyChanged
 import org.mozilla.fenix.BuildConfig
-import org.mozilla.fenix.HomeActivity
-import org.mozilla.fenix.IntentReceiverActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.android.FenixDialogFragment
+import org.mozilla.fenix.databinding.FragmentQuickSettingsDialogSheetBinding
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.requireComponents
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.settings.PhoneFeature
-import com.google.android.material.R as MaterialR
 
 /**
  * Dialog that presents the user with information about
@@ -45,16 +42,31 @@ import com.google.android.material.R as MaterialR
  * - website tracking protection.
  * - website permission.
  */
-class QuickSettingsSheetDialogFragment : AppCompatDialogFragment() {
+@Suppress("TooManyFunctions")
+class QuickSettingsSheetDialogFragment : FenixDialogFragment() {
 
     private lateinit var quickSettingsStore: QuickSettingsFragmentStore
     private lateinit var quickSettingsController: QuickSettingsController
     private lateinit var websiteInfoView: WebsiteInfoView
     private lateinit var websitePermissionsView: WebsitePermissionsView
+    private lateinit var clearSiteDataView: ClearSiteDataView
+
+    @VisibleForTesting
+    internal lateinit var trackingProtectionView: TrackingProtectionView
+
     private lateinit var interactor: QuickSettingsInteractor
+
     private var tryToRequestPermissions: Boolean = false
     private val args by navArgs<QuickSettingsSheetDialogFragmentArgs>()
 
+    private var _binding: FragmentQuickSettingsDialogSheetBinding? = null
+    // This property is only valid between onCreateView and onDestroyView.
+    private val binding get() = _binding!!
+    override val gravity: Int get() = args.gravity
+    override val layoutId: Int = R.layout.fragment_quick_settings_dialog_sheet
+
+    @Suppress("DEPRECATION")
+    // https://github.com/mozilla-mobile/fenix/issues/19920
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -62,8 +74,11 @@ class QuickSettingsSheetDialogFragment : AppCompatDialogFragment() {
     ): View {
         val context = requireContext()
         val components = context.components
-        val rootView = inflateRootView(container)
 
+        val rootView = inflateRootView(container)
+        _binding = FragmentQuickSettingsDialogSheetBinding.bind(rootView)
+
+        val navController = findNavController()
         quickSettingsStore = QuickSettingsFragmentStore.createStore(
             context = context,
             websiteUrl = args.url,
@@ -71,15 +86,19 @@ class QuickSettingsSheetDialogFragment : AppCompatDialogFragment() {
             isSecured = args.isSecured,
             permissions = args.sitePermissions,
             settings = components.settings,
-            certificateName = args.certificateName
+            certificateName = args.certificateName,
+            permissionHighlights = args.permissionHighlights,
+            sessionId = args.sessionId,
+            isTrackingProtectionEnabled = args.isTrackingProtectionEnabled
         )
 
         quickSettingsController = DefaultQuickSettingsController(
             context = context,
             quickSettingsStore = quickSettingsStore,
+            browserStore = components.core.store,
             ioScope = viewLifecycleOwner.lifecycleScope + Dispatchers.IO,
-            navController = findNavController(),
-            session = components.core.sessionManager.findSessionById(args.sessionId),
+            navController = navController,
+            sessionId = args.sessionId,
             sitePermissions = args.sitePermissions,
             settings = components.settings,
             permissionStorage = components.core.permissionStorage,
@@ -94,49 +113,38 @@ class QuickSettingsSheetDialogFragment : AppCompatDialogFragment() {
         )
 
         interactor = QuickSettingsInteractor(quickSettingsController)
-
-        websiteInfoView = WebsiteInfoView(rootView.websiteInfoLayout)
+        websiteInfoView = WebsiteInfoView(binding.websiteInfoLayout, interactor = interactor)
         websitePermissionsView =
-            WebsitePermissionsView(rootView.websitePermissionsLayout, interactor)
+            WebsitePermissionsView(binding.websitePermissionsLayout, interactor)
+        trackingProtectionView =
+            TrackingProtectionView(binding.trackingProtectionLayout, interactor, context.settings())
+        clearSiteDataView = ClearSiteDataView(
+            context = context,
+            ioScope = viewLifecycleOwner.lifecycleScope + Dispatchers.IO,
+            containerView = binding.clearSiteDataLayout,
+            containerDivider = binding.clearSiteDataDivider,
+            interactor = interactor,
+            navController = navController
+        )
 
         return rootView
     }
 
-    private fun inflateRootView(container: ViewGroup? = null): View {
-        val contextThemeWrapper = ContextThemeWrapper(
-            activity,
-            (activity as HomeActivity).themeManager.currentThemeResource
-        )
-        return LayoutInflater.from(contextThemeWrapper).inflate(
-            R.layout.fragment_quick_settings_dialog_sheet,
-            container,
-            false
-        )
-    }
-
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return if (args.gravity == BOTTOM) {
-            BottomSheetDialog(requireContext(), this.theme).apply {
-                setOnShowListener {
-                    val bottomSheet =
-                        findViewById<View>(MaterialR.id.design_bottom_sheet) as FrameLayout
-                    val behavior = BottomSheetBehavior.from(bottomSheet)
-                    behavior.state = BottomSheetBehavior.STATE_EXPANDED
-                }
-            }
-        } else {
-            Dialog(requireContext()).applyCustomizationsForTopDialog(inflateRootView())
-        }
-    }
-
-    @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        observeTrackersChange(requireComponents.core.store)
         consumeFrom(quickSettingsStore) {
             websiteInfoView.update(it.webInfoState)
             websitePermissionsView.update(it.websitePermissionsState)
+            trackingProtectionView.update(it.trackingProtectionState)
+            clearSiteDataView.update(it.webInfoState)
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+
+        _binding = null
     }
 
     override fun onRequestPermissionsResult(
@@ -149,7 +157,8 @@ class QuickSettingsSheetDialogFragment : AppCompatDialogFragment() {
                 quickSettingsController.handleAndroidPermissionGranted(it)
             }
         } else {
-            val shouldShowRequestPermissionRationale = permissions.all { shouldShowRequestPermissionRationale(it) }
+            val shouldShowRequestPermissionRationale =
+                permissions.all { shouldShowRequestPermissionRationale(it) }
 
             if (!shouldShowRequestPermissionRationale && tryToRequestPermissions) {
                 // The user has permanently blocked these permissions and he/she is trying to enabling them.
@@ -162,45 +171,56 @@ class QuickSettingsSheetDialogFragment : AppCompatDialogFragment() {
         tryToRequestPermissions = false
     }
 
-    private fun Dialog.applyCustomizationsForTopDialog(rootView: View): Dialog {
-        addContentView(
-            rootView,
-            LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT
-            )
-        )
-
-        window?.apply {
-            setGravity(args.gravity)
-            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-            // This must be called after addContentView, or it won't fully fill to the edge.
-            setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        }
-        return this
-    }
-
     private fun arePermissionsGranted(requestCode: Int, grantResults: IntArray) =
         requestCode == REQUEST_CODE_QUICK_SETTINGS_PERMISSIONS && grantResults.all { it == PERMISSION_GRANTED }
 
     private fun showPermissionsView() {
-        websitePermissionsGroup.isVisible = true
-    }
-
-    private fun launchIntentReceiver() {
-        context?.let { context ->
-            val intent = Intent(context, IntentReceiverActivity::class.java)
-            intent.action = Intent.ACTION_VIEW
-            context.startActivity(intent)
-        }
+        binding.websitePermissionsGroup.isVisible = true
     }
 
     private fun openSystemSettings() {
-        startActivity(Intent().apply {
-            action = android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-            data = Uri.fromParts("package", BuildConfig.APPLICATION_ID, null)
-        })
+        startActivity(
+            Intent().apply {
+                action = android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                data = Uri.fromParts("package", BuildConfig.APPLICATION_ID, null)
+            }
+        )
     }
+
+    @VisibleForTesting
+    internal fun provideTabId(): String = args.sessionId
+
+    @VisibleForTesting
+    internal fun observeTrackersChange(store: BrowserStore) {
+        consumeFlow(store) { flow ->
+            flow.mapNotNull { state ->
+                state.findTabOrCustomTab(provideTabId())
+            }.ifAnyChanged { tab ->
+                arrayOf(
+                    tab.trackingProtection.blockedTrackers,
+                    tab.trackingProtection.loadedTrackers
+                )
+            }.collect {
+                updateTrackers(it)
+            }
+        }
+    }
+
+    @VisibleForTesting
+    internal fun updateTrackers(tab: SessionState) {
+        provideTrackingProtectionUseCases().fetchTrackingLogs(
+            tab.id,
+            onSuccess = { trackers ->
+                trackingProtectionView.updateDetailsSection(trackers.isNotEmpty())
+            },
+            onError = {
+                Logger.error("QuickSettingsSheetDialogFragment - fetchTrackingLogs onError", it)
+            }
+        )
+    }
+
+    @VisibleForTesting
+    internal fun provideTrackingProtectionUseCases() = requireComponents.useCases.trackingProtectionUseCases
 
     private companion object {
         const val REQUEST_CODE_QUICK_SETTINGS_PERMISSIONS = 4

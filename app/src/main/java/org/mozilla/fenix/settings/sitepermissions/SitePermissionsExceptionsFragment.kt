@@ -16,17 +16,18 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LivePagedListBuilder
-import androidx.paging.PagedList
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
-import mozilla.components.feature.sitepermissions.SitePermissions
+import kotlinx.coroutines.withContext
+import mozilla.components.concept.engine.permission.SitePermissions
+import mozilla.components.support.ktx.kotlin.stripDefaultPort
 import org.mozilla.fenix.NavHostActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
@@ -57,20 +58,27 @@ class SitePermissionsExceptionsFragment :
         recyclerView = rootView.findViewById(R.id.exceptions)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        val sitePermissionsPaged = requireContext().components.core.permissionStorage.getSitePermissionsPaged()
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+            val sitePermissionsPaged = requireContext().components.core.permissionStorage.getSitePermissionsPaged()
 
-        val adapter = ExceptionsAdapter(this)
-        val liveData = LivePagedListBuilder(sitePermissionsPaged, MAX_ITEMS_PER_PAGE).build()
+            withContext(Main) {
+                val adapter = ExceptionsAdapter(this@SitePermissionsExceptionsFragment)
+                val liveData = LivePagedListBuilder(sitePermissionsPaged, MAX_ITEMS_PER_PAGE).build()
 
-        liveData.observe(viewLifecycleOwner, Observer<PagedList<SitePermissions>> {
-            if (it.isEmpty()) {
-                showEmptyListMessage()
-            } else {
-                hideEmptyListMessage()
-                adapter.submitList(it)
-                recyclerView.adapter = adapter
+                liveData.observe(
+                    viewLifecycleOwner,
+                    {
+                        if (it.isEmpty()) {
+                            showEmptyListMessage()
+                        } else {
+                            hideEmptyListMessage()
+                            adapter.submitList(it)
+                            recyclerView.adapter = adapter
+                        }
+                    }
+                )
             }
-        })
+        }
     }
 
     private fun hideEmptyListMessage() {
@@ -86,7 +94,7 @@ class SitePermissionsExceptionsFragment :
     }
 
     private fun bindEmptyContainerMess(rootView: View) {
-        emptyContainerMessage = rootView.findViewById<View>(R.id.empty_exception_container)
+        emptyContainerMessage = rootView.findViewById(R.id.empty_exception_container)
     }
 
     private fun bindClearButton(rootView: View) {
@@ -95,11 +103,11 @@ class SitePermissionsExceptionsFragment :
             AlertDialog.Builder(requireContext()).apply {
                 setMessage(R.string.confirm_clear_permissions_on_all_sites)
                 setTitle(R.string.clear_permissions)
-                setPositiveButton(android.R.string.yes) { dialog: DialogInterface, _ ->
+                setPositiveButton(android.R.string.ok) { dialog: DialogInterface, _ ->
                     deleteAllSitePermissions()
                     dialog.dismiss()
                 }
-                setNegativeButton(android.R.string.no) { dialog: DialogInterface, _ ->
+                setNegativeButton(android.R.string.cancel) { dialog: DialogInterface, _ ->
                     dialog.cancel()
                 }
             }.show()
@@ -142,9 +150,8 @@ class ExceptionsAdapter(private val clickListener: View.OnClickListener) :
     override fun onBindViewHolder(holder: SitePermissionsViewHolder, position: Int) {
         val sitePermissions = requireNotNull(getItem(position))
         val context = holder.view.context
-
-        context.components.core.icons.loadIntoView(holder.iconView, "https://${sitePermissions.origin}/")
-        holder.siteTextView.text = sitePermissions.origin
+        context.components.core.icons.loadIntoView(holder.iconView, sitePermissions.origin)
+        holder.siteTextView.text = sitePermissions.origin.stripDefaultPort()
         holder.view.tag = sitePermissions
         holder.view.setOnClickListener(clickListener)
     }

@@ -13,22 +13,29 @@ import mozilla.components.feature.addons.ui.translateName
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.databinding.FragmentAddOnPermissionsBinding
 import org.mozilla.fenix.ext.showToolbar
 
 /**
  * A fragment to show the permissions of an add-on.
  */
-class AddonPermissionsDetailsFragment : Fragment(R.layout.fragment_add_on_permissions),
+class AddonPermissionsDetailsFragment :
+    Fragment(R.layout.fragment_add_on_permissions),
     AddonPermissionsDetailsInteractor {
 
     private val args by navArgs<AddonPermissionsDetailsFragmentArgs>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val binding = FragmentAddOnPermissionsBinding.bind(view)
+        AddonPermissionDetailsBindingDelegate(binding, interactor = this).bind(args.addon)
+    }
+
+    override fun onResume() {
+        super.onResume()
         context?.let {
-            showToolbar(args.addon.translateName(it))
+            showToolbar(title = args.addon.translateName(it))
         }
-        AddonPermissionsDetailsView(view, interactor = this).bind(args.addon)
     }
 
     override fun openWebsite(addonSiteUrl: Uri) {

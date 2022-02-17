@@ -6,15 +6,20 @@ package org.mozilla.fenix.settings.quicksettings
 
 import android.content.Context
 import androidx.annotation.VisibleForTesting
-import mozilla.components.feature.sitepermissions.SitePermissions
+import mozilla.components.browser.state.selector.findTabOrCustomTab
+import mozilla.components.browser.state.state.content.PermissionHighlightsState
+import mozilla.components.concept.engine.permission.SitePermissions
 import mozilla.components.lib.state.Action
 import mozilla.components.lib.state.Reducer
 import mozilla.components.lib.state.State
 import mozilla.components.lib.state.Store
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.settings.PhoneFeature
 import org.mozilla.fenix.settings.quicksettings.QuickSettingsFragmentStore.Companion.createStore
+import org.mozilla.fenix.settings.quicksettings.WebsiteInfoState.Companion.createWebsiteInfoState
 import org.mozilla.fenix.settings.quicksettings.ext.shouldBeEnabled
 import org.mozilla.fenix.settings.quicksettings.ext.shouldBeVisible
+import org.mozilla.fenix.trackingprotection.TrackingProtectionState
 import org.mozilla.fenix.utils.Settings
 import java.util.EnumMap
 
@@ -47,7 +52,10 @@ class QuickSettingsFragmentStore(
          * @param isSecured [Boolean] whether the connection is secured (TLS) or not.
          * @param permissions [SitePermissions]? list of website permissions and their status.
          * @param settings [Settings] application settings.
-         * @param certificateName [String] the certificate name of the current web  page.
+         * @param certificateName [String] the certificate name of the current web page.
+         * @param sessionId [String] The current session ID.
+         * @param isTrackingProtectionEnabled [Boolean] Current status of tracking protection
+         * for this session.
          */
         @Suppress("LongParameterList")
         fun createStore(
@@ -57,40 +65,36 @@ class QuickSettingsFragmentStore(
             certificateName: String,
             isSecured: Boolean,
             permissions: SitePermissions?,
-            settings: Settings
+            permissionHighlights: PermissionHighlightsState,
+            settings: Settings,
+            sessionId: String,
+            isTrackingProtectionEnabled: Boolean
         ) = QuickSettingsFragmentStore(
             QuickSettingsFragmentState(
-                webInfoState = createWebsiteInfoState(websiteUrl, websiteTitle, isSecured, certificateName),
+                webInfoState = createWebsiteInfoState(
+                    websiteUrl,
+                    websiteTitle,
+                    isSecured,
+                    certificateName
+                ),
                 websitePermissionsState = createWebsitePermissionState(
                     context,
                     permissions,
+                    permissionHighlights,
                     settings
+                ),
+                trackingProtectionState = createTrackingProtectionState(
+                    context,
+                    sessionId,
+                    websiteUrl,
+                    isTrackingProtectionEnabled
                 )
             )
         )
 
         /**
-         * Construct an initial [WebsiteInfoState] to be rendered by [WebsiteInfoView]
-         * based on the current website's status and connection.
-         *
-         * While being displayed users have no way of modifying it.
-         *
-         * @param websiteUrl [String] the URL of the current web page.
-         * @param isSecured [Boolean] whether the connection is secured (TLS) or not.
-         */
-        @VisibleForTesting
-        fun createWebsiteInfoState(
-            websiteUrl: String,
-            websiteTitle: String,
-            isSecured: Boolean,
-            certificateName: String
-        ): WebsiteInfoState {
-            val uiValues = if (isSecured) WebsiteSecurityUiValues.SECURE else WebsiteSecurityUiValues.INSECURE
-            return WebsiteInfoState(websiteUrl, websiteTitle, uiValues, certificateName)
-        }
-
-        /**
-         * Construct an initial [WebsitePermissionsState] to be rendered by [WebsitePermissionsView]
+         * Construct an initial [WebsitePermissions
+         * State] to be rendered by [WebsitePermissionsView]
          * containing the permissions requested by the current website.
          *
          * Users can modify the returned [WebsitePermissionsState] after it is initially displayed.
@@ -103,13 +107,46 @@ class QuickSettingsFragmentStore(
         fun createWebsitePermissionState(
             context: Context,
             permissions: SitePermissions?,
+            permissionHighlights: PermissionHighlightsState,
             settings: Settings
         ): WebsitePermissionsState {
             val state = EnumMap<PhoneFeature, WebsitePermission>(PhoneFeature::class.java)
             for (feature in PhoneFeature.values()) {
-                state[feature] = feature.toWebsitePermission(context, permissions, settings)
+                state[feature] = feature.toWebsitePermission(
+                    context,
+                    permissions,
+                    permissionHighlights,
+                    settings
+                )
             }
             return state
+        }
+
+        /**
+         * Construct an initial [TrackingProtectionState] to be rendered by
+         * [TrackingProtectionView].
+         *
+         * @param context [Context] used for various Android interactions.
+         * @param sessionId [String] The current session ID.
+         * @param websiteUrl [String] the URL of the current web page.
+         * @param isTrackingProtectionEnabled [Boolean] Current status of tracking protection
+         * for this session.
+         */
+        @VisibleForTesting
+        fun createTrackingProtectionState(
+            context: Context,
+            sessionId: String,
+            websiteUrl: String,
+            isTrackingProtectionEnabled: Boolean
+        ): TrackingProtectionState {
+            return TrackingProtectionState(
+                tab = context.components.core.store.state.findTabOrCustomTab(sessionId),
+                url = websiteUrl,
+                isTrackingProtectionEnabled = isTrackingProtectionEnabled,
+                listTrackers = listOf(),
+                mode = TrackingProtectionState.Mode.Normal,
+                lastAccessedCategory = ""
+            )
         }
 
         /**
@@ -119,15 +156,31 @@ class QuickSettingsFragmentStore(
         fun PhoneFeature.toWebsitePermission(
             context: Context,
             permissions: SitePermissions?,
+            permissionHighlights: PermissionHighlightsState,
             settings: Settings
         ): WebsitePermission {
-            return WebsitePermission(
-                phoneFeature = this,
-                status = getActionLabel(context, permissions, settings),
-                isVisible = shouldBeVisible(permissions, settings),
-                isEnabled = shouldBeEnabled(context, permissions, settings),
-                isBlockedByAndroid = !isAndroidPermissionGranted(context)
-            )
+            return if (this == PhoneFeature.AUTOPLAY) {
+                val autoplayValues = AutoplayValue.values(context, settings, permissions)
+                val selected =
+                    autoplayValues.firstOrNull { it.isSelected() } ?: AutoplayValue.getFallbackValue(
+                        context,
+                        settings,
+                        permissions
+                    )
+                WebsitePermission.Autoplay(
+                    autoplayValue = selected,
+                    options = autoplayValues,
+                    isVisible = permissionHighlights.isAutoPlayBlocking || permissions !== null
+                )
+            } else {
+                WebsitePermission.Toggleable(
+                    phoneFeature = this,
+                    status = getActionLabel(context, permissions, settings),
+                    isVisible = shouldBeVisible(permissions, settings),
+                    isEnabled = shouldBeEnabled(context, permissions, settings),
+                    isBlockedByAndroid = !isAndroidPermissionGranted(context)
+                )
+            }
         }
     }
 }

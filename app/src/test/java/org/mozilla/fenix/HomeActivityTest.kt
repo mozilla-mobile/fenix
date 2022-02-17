@@ -6,10 +6,12 @@ package org.mozilla.fenix
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.test.core.app.ApplicationProvider
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
+import mozilla.components.service.glean.testing.GleanTestRule
 import mozilla.components.support.test.robolectric.testContext
 import mozilla.components.support.utils.toSafeIntent
 import org.junit.Assert.assertEquals
@@ -18,6 +20,7 @@ import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.HomeActivity.Companion.PRIVATE_BROWSING_MODE
@@ -27,10 +30,13 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
+import org.mozilla.fenix.helpers.perf.TestStrictModeManager
 import org.mozilla.fenix.utils.Settings
 
 @RunWith(FenixRobolectricTestRunner::class)
 class HomeActivityTest {
+
+    @get:Rule val gleanTestRule = GleanTestRule(ApplicationProvider.getApplicationContext())
 
     private lateinit var activity: HomeActivity
 
@@ -55,6 +61,7 @@ class HomeActivityTest {
 
     @Test
     fun `getModeFromIntentOrLastKnown returns mode from settings when intent does not set`() {
+        every { testContext.settings() } returns Settings(testContext)
         every { activity.applicationContext } returns testContext
         testContext.settings().lastKnownMode = BrowsingMode.Private
 
@@ -63,6 +70,7 @@ class HomeActivityTest {
 
     @Test
     fun `getModeFromIntentOrLastKnown returns mode from intent when set`() {
+        every { testContext.settings() } returns Settings(testContext)
         testContext.settings().lastKnownMode = BrowsingMode.Normal
 
         val intent = Intent()
@@ -130,5 +138,34 @@ class HomeActivityTest {
         }
 
         assertFalse(activity.isActivityColdStarted(startingIntent, Bundle()))
+    }
+
+    @Test
+    fun `GIVEN the user has been away for a long time WHEN the user opens the app THEN do start on home`() {
+        every { testContext.components.strictMode } returns TestStrictModeManager()
+        val settings: Settings = mockk()
+        val startingIntent = Intent().apply {
+            action = Intent.ACTION_MAIN
+        }
+        every { activity.applicationContext } returns testContext
+
+        every { settings.shouldStartOnHome() } returns true
+        every { activity.getSettings() } returns settings
+
+        assertTrue(activity.shouldStartOnHome(startingIntent))
+    }
+
+    @Test
+    fun `GIVEN the user has been away for a long time WHEN opening a link THEN do not start on home`() {
+        every { testContext.components.strictMode } returns TestStrictModeManager()
+        val settings: Settings = mockk()
+        val startingIntent = Intent().apply {
+            action = Intent.ACTION_VIEW
+        }
+        every { settings.shouldStartOnHome() } returns true
+        every { activity.getSettings() } returns settings
+        every { activity.applicationContext } returns testContext
+
+        assertFalse(activity.shouldStartOnHome(startingIntent))
     }
 }

@@ -6,6 +6,7 @@ package org.mozilla.fenix.browser
 
 import android.content.Context
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
@@ -14,23 +15,25 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.TestCoroutineDispatcher
 import mozilla.components.browser.state.action.ContentAction
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.createTab
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.feature.app.links.AppLinksUseCases
 import mozilla.components.support.test.ext.joinBlocking
+import mozilla.components.support.test.robolectric.testContext
 import mozilla.components.support.test.rule.MainCoroutineRule
+import org.junit.After
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mozilla.fenix.browser.infobanner.DynamicInfoBanner
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.utils.Settings
 
-@ExperimentalCoroutinesApi
 @RunWith(FenixRobolectricTestRunner::class)
 class OpenInAppOnboardingObserverTest {
 
@@ -42,12 +45,10 @@ class OpenInAppOnboardingObserverTest {
     private lateinit var appLinksUseCases: AppLinksUseCases
     private lateinit var context: Context
     private lateinit var container: ViewGroup
-    private lateinit var infoBanner: InfoBanner
-
-    private val testDispatcher = TestCoroutineDispatcher()
+    private lateinit var infoBanner: DynamicInfoBanner
 
     @get:Rule
-    val coroutinesTestRule = MainCoroutineRule(testDispatcher)
+    val coroutinesTestRule = MainCoroutineRule()
 
     @Before
     fun setUp() {
@@ -55,7 +56,8 @@ class OpenInAppOnboardingObserverTest {
             BrowserState(
                 tabs = listOf(
                     createTab(url = "https://www.mozilla.org", id = "1")
-                ), selectedTabId = "1"
+                ),
+                selectedTabId = "1"
             )
         )
         lifecycleOwner = MockedLifecycleOwner(Lifecycle.State.STARTED)
@@ -65,16 +67,24 @@ class OpenInAppOnboardingObserverTest {
         container = mockk(relaxed = true)
         context = mockk(relaxed = true)
         infoBanner = mockk(relaxed = true)
-        openInAppOnboardingObserver = spyk(OpenInAppOnboardingObserver(
-            context = context,
-            store = store,
-            lifecycleOwner = lifecycleOwner,
-            navController = navigationController,
-            settings = settings,
-            appLinksUseCases = appLinksUseCases,
-            container = container
-        ))
+        openInAppOnboardingObserver = spyk(
+            OpenInAppOnboardingObserver(
+                context = context,
+                store = store,
+                lifecycleOwner = lifecycleOwner,
+                navController = navigationController,
+                settings = settings,
+                appLinksUseCases = appLinksUseCases,
+                container = container,
+                shouldScrollWithTopToolbar = true
+            )
+        )
         every { openInAppOnboardingObserver.createInfoBanner() } returns infoBanner
+    }
+
+    @After
+    fun teardown() {
+        openInAppOnboardingObserver.stop()
     }
 
     @Test
@@ -132,6 +142,7 @@ class OpenInAppOnboardingObserverTest {
         every { settings.openLinksInExternalApp } returns false
         every { settings.shouldShowOpenInAppCfr } returns true
         every { appLinksUseCases.appLinkRedirect.invoke(any()).hasExternalApp() } returns true
+
         store.dispatch(ContentAction.UpdateLoadingStateAction("1", true)).joinBlocking()
 
         openInAppOnboardingObserver.start()
@@ -145,6 +156,28 @@ class OpenInAppOnboardingObserverTest {
 
         store.dispatch(ContentAction.UpdateUrlAction("1", "https://www.firefox.com")).joinBlocking()
         verify(exactly = 1) { infoBanner.dismiss() }
+    }
+
+    @Test
+    fun `GIVEN a observer WHEN createInfoBanner() THEN the scrollWithTopToolbar is passed to the DynamicInfoBanner`() {
+        // Mockk currently doesn't support verifying constructor parameters
+        // But we can check the values found in the constructed objects
+
+        openInAppOnboardingObserver = spyk(
+            OpenInAppOnboardingObserver(
+                testContext, mockk(), mockk(), mockk(), mockk(), mockk(), FrameLayout(testContext), shouldScrollWithTopToolbar = true
+            )
+        )
+        val banner1 = openInAppOnboardingObserver.createInfoBanner()
+        assertTrue(banner1.shouldScrollWithTopToolbar)
+
+        openInAppOnboardingObserver = spyk(
+            OpenInAppOnboardingObserver(
+                testContext, mockk(), mockk(), mockk(), mockk(), mockk(), FrameLayout(testContext), shouldScrollWithTopToolbar = false
+            )
+        )
+        val banner2 = openInAppOnboardingObserver.createInfoBanner()
+        assertFalse(banner2.shouldScrollWithTopToolbar)
     }
 
     internal class MockedLifecycleOwner(initialState: Lifecycle.State) : LifecycleOwner {

@@ -5,18 +5,16 @@
 package org.mozilla.fenix.library.downloads.viewholders
 
 import android.view.View
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.download_list_item.view.*
-import kotlinx.android.synthetic.main.library_site_item.view.*
 import mozilla.components.feature.downloads.toMegabyteOrKilobyteString
 import org.mozilla.fenix.R
-import org.mozilla.fenix.library.SelectionHolder
+import org.mozilla.fenix.databinding.DownloadListItemBinding
+import org.mozilla.fenix.databinding.LibrarySiteItemBinding
+import org.mozilla.fenix.selection.SelectionHolder
 import org.mozilla.fenix.library.downloads.DownloadInteractor
 import org.mozilla.fenix.library.downloads.DownloadItem
 import org.mozilla.fenix.ext.getIcon
 import org.mozilla.fenix.ext.showAndEnable
-import org.mozilla.fenix.library.downloads.DownloadFragmentState
 import org.mozilla.fenix.library.downloads.DownloadItemMenu
 
 class DownloadsListItemViewHolder(
@@ -26,68 +24,39 @@ class DownloadsListItemViewHolder(
 ) : RecyclerView.ViewHolder(view) {
 
     private var item: DownloadItem? = null
+    private val binding = DownloadListItemBinding.bind(view)
+    private val librarySiteItemBinding = LibrarySiteItemBinding.bind(binding.downloadLayout)
 
     init {
         setupMenu()
-
-        itemView.delete_downloads_button.setOnClickListener {
-            val selected = selectionHolder.selectedItems
-            if (selected.isEmpty()) {
-                downloadInteractor.onDeleteAll()
-            } else {
-                downloadInteractor.onDeleteSome(selected)
-            }
-        }
     }
 
     fun bind(
         item: DownloadItem,
-        mode: DownloadFragmentState.Mode,
         isPendingDeletion: Boolean = false
     ) {
-        itemView.download_layout.visibility = if (isPendingDeletion) {
+        binding.downloadLayout.visibility = if (isPendingDeletion) {
             View.GONE
         } else {
             View.VISIBLE
         }
-        itemView.download_layout.titleView.text = item.fileName
-        itemView.download_layout.urlView.text = item.size.toLong().toMegabyteOrKilobyteString()
+        binding.downloadLayout.titleView.text = item.fileName
+        binding.downloadLayout.urlView.text = item.size.toLong().toMegabyteOrKilobyteString()
 
-        toggleTopContent(false, mode == DownloadFragmentState.Mode.Normal)
+        binding.downloadLayout.setSelectionInteractor(item, selectionHolder, downloadInteractor)
+        binding.downloadLayout.changeSelected(item in selectionHolder.selectedItems)
 
-        itemView.download_layout.setSelectionInteractor(item, selectionHolder, downloadInteractor)
-        itemView.download_layout.changeSelected(item in selectionHolder.selectedItems)
+        librarySiteItemBinding.favicon.setImageResource(item.getIcon())
 
-        itemView.favicon.setImageResource(item.getIcon())
+        librarySiteItemBinding.overflowMenu.setImageResource(R.drawable.ic_delete)
 
-        itemView.overflow_menu.setImageResource(R.drawable.ic_delete)
+        librarySiteItemBinding.overflowMenu.showAndEnable()
 
-        itemView.overflow_menu.showAndEnable()
-
-        itemView.overflow_menu.setOnClickListener {
+        librarySiteItemBinding.overflowMenu.setOnClickListener {
             downloadInteractor.onDeleteSome(setOf(item))
         }
 
         this.item = item
-    }
-
-    private fun toggleTopContent(
-        showTopContent: Boolean,
-        isNormalMode: Boolean
-    ) {
-        itemView.delete_downloads_button.isVisible = showTopContent
-
-        if (showTopContent) {
-            itemView.delete_downloads_button.run {
-                if (isNormalMode) {
-                    isEnabled = true
-                    alpha = 1f
-                } else {
-                    isEnabled = false
-                    alpha = DELETE_BUTTON_DISABLED_ALPHA
-                }
-            }
-        }
     }
 
     private fun setupMenu() {
@@ -98,11 +67,10 @@ class DownloadsListItemViewHolder(
                 downloadInteractor.onDeleteSome(setOf(item))
             }
         }
-        itemView.download_layout.attachMenu(downloadMenu.menuController)
+        binding.downloadLayout.attachMenu(downloadMenu.menuController)
     }
 
     companion object {
-        const val DELETE_BUTTON_DISABLED_ALPHA = 0.4f
         const val LAYOUT_ID = R.layout.download_list_item
     }
 }

@@ -14,8 +14,6 @@ import android.widget.PopupWindow
 import androidx.annotation.VisibleForTesting
 import androidx.core.view.isVisible
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.browser_toolbar_popup_window.view.*
-import mozilla.components.browser.session.Session
 import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.browser.state.store.BrowserStore
 import org.mozilla.fenix.R
@@ -23,25 +21,26 @@ import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import java.lang.ref.WeakReference
+import mozilla.components.browser.state.selector.findCustomTab
+import org.mozilla.fenix.databinding.BrowserToolbarPopupWindowBinding
 
 object ToolbarPopupWindow {
     fun show(
         view: WeakReference<View>,
-        customTabSession: Session? = null,
+        customTabId: String? = null,
         handlePasteAndGo: (String) -> Unit,
         handlePaste: (String) -> Unit,
         copyVisible: Boolean = true
     ) {
         val context = view.get()?.context ?: return
         val clipboard = context.components.clipboardHandler
-        if (!copyVisible && clipboard.text.isNullOrEmpty()) return
+        if (!copyVisible && !clipboard.containsURL()) return
 
-        val isCustomTabSession = customTabSession != null
+        val isCustomTabSession = customTabId != null
 
-        val customView = LayoutInflater.from(context)
-            .inflate(R.layout.browser_toolbar_popup_window, null)
+        val binding = BrowserToolbarPopupWindowBinding.inflate(LayoutInflater.from(context))
         val popupWindow = PopupWindow(
-            customView,
+            binding.root,
             LinearLayout.LayoutParams.WRAP_CONTENT,
             context.resources.getDimensionPixelSize(R.dimen.context_menu_height),
             true
@@ -53,17 +52,17 @@ object ToolbarPopupWindow {
         // See: https://github.com/mozilla-mobile/fenix/issues/10027
         popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        customView.copy.isVisible = copyVisible
+        binding.copy.isVisible = copyVisible
 
-        customView.paste.isVisible = !clipboard.text.isNullOrEmpty() && !isCustomTabSession
-        customView.paste_and_go.isVisible =
-            !clipboard.text.isNullOrEmpty() && !isCustomTabSession
+        binding.paste.isVisible = clipboard.containsURL() && !isCustomTabSession
+        binding.pasteAndGo.isVisible =
+            clipboard.containsURL() && !isCustomTabSession
 
-        customView.copy.setOnClickListener {
+        binding.copy.setOnClickListener {
             popupWindow.dismiss()
             clipboard.text = getUrlForClipboard(
                 it.context.components.core.store,
-                customTabSession
+                customTabId
             )
 
             view.get()?.let {
@@ -78,12 +77,12 @@ object ToolbarPopupWindow {
             context.components.analytics.metrics.track(Event.CopyUrlUsed)
         }
 
-        customView.paste.setOnClickListener {
+        binding.paste.setOnClickListener {
             popupWindow.dismiss()
             handlePaste(clipboard.text!!)
         }
 
-        customView.paste_and_go.setOnClickListener {
+        binding.pasteAndGo.setOnClickListener {
             popupWindow.dismiss()
             handlePasteAndGo(clipboard.text!!)
         }
@@ -101,10 +100,11 @@ object ToolbarPopupWindow {
     @VisibleForTesting
     internal fun getUrlForClipboard(
         store: BrowserStore,
-        customTabSession: Session? = null
+        customTabId: String? = null
     ): String? {
-        return if (customTabSession != null) {
-            customTabSession.url
+        return if (customTabId != null) {
+            val customTab = store.state.findCustomTab(customTabId)
+            customTab?.content?.url
         } else {
             val selectedTab = store.state.selectedTab
             selectedTab?.readerState?.activeUrl ?: selectedTab?.content?.url

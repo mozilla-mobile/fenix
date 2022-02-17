@@ -23,18 +23,20 @@ import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withParent
 import androidx.test.espresso.matcher.ViewMatchers.withText
-import androidx.test.uiautomator.By
-import androidx.test.uiautomator.Until
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.uiautomator.By
 import androidx.test.uiautomator.By.res
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
+import androidx.test.uiautomator.Until
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.containsString
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
+import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
 
@@ -51,7 +53,11 @@ class BookmarksRobot {
         assertBookmarksView()
     }
 
-    fun verifyEmptyBookmarksList() = assertEmptyBookmarksList()
+    fun verifyAddFolderButton() = assertAddFolderButton()
+
+    fun verifyCloseButton() = assertCloseButton()
+
+    fun verifyDeleteMultipleBookmarksSnackBar() = assertSnackBarText("Bookmarks deleted")
 
     fun verifyBookmarkFavicon(forUrl: Uri) = assertBookmarkFavicon(forUrl)
 
@@ -62,10 +68,14 @@ class BookmarksRobot {
         assertFolderTitle(title)
     }
 
+    fun verifyBookmarkFolderIsNotCreated(title: String) = assertBookmarkFolderIsNotCreated(title)
+
     fun verifyBookmarkTitle(title: String) {
         mDevice.findObject(UiSelector().text(title)).waitForExists(waitingTime)
         assertBookmarkTitle(title)
     }
+
+    fun verifyBookmarkIsDeleted(expectedTitle: String) = assertBookmarkIsDeleted(expectedTitle)
 
     fun verifyDeleteSnackBarText() = assertSnackBarText("Deleted")
 
@@ -104,6 +114,12 @@ class BookmarksRobot {
     fun verifySelectDefaultFolderSnackBarText() = assertSnackBarText("Can’t edit default folders")
 
     fun verifyCurrentFolderTitle(title: String) {
+        mDevice.findObject(
+            UiSelector().resourceId("$packageName:id/navigationToolbar")
+                .textContains(title)
+        )
+            .waitForExists(waitingTime)
+
         onView(
             allOf(
                 withText(title),
@@ -113,10 +129,27 @@ class BookmarksRobot {
             .check(matches(isDisplayed()))
     }
 
+    fun waitForBookmarksFolderContentToExist(parentFolderName: String, childFolderName: String) {
+        mDevice.findObject(
+            UiSelector().resourceId("$packageName:id/navigationToolbar")
+                .textContains(parentFolderName)
+        )
+            .waitForExists(waitingTime)
+
+        mDevice.waitNotNull(Until.findObject(By.text(childFolderName)), waitingTime)
+    }
+
     fun verifySignInToSyncButton() =
         signInToSyncButton().check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
 
     fun verifyDeleteFolderConfirmationMessage() = assertDeleteFolderConfirmationMessage()
+
+    fun cancelFolderDeletion() {
+        onView(withText("CANCEL"))
+            .inRoot(RootMatchers.isDialog())
+            .check(matches(isDisplayed()))
+            .click()
+    }
 
     fun createFolder(name: String) {
         clickAddFolderButton()
@@ -173,12 +206,20 @@ class BookmarksRobot {
 
     fun longTapDesktopFolder(title: String) = onView(withText(title)).perform(longClick())
 
-    fun confirmFolderDeletion() {
+    fun cancelDeletion() {
+        val cancelButton = mDevice.findObject(UiSelector().textContains("CANCEL"))
+        cancelButton.waitForExists(waitingTime)
+        cancelButton.click()
+    }
+
+    fun confirmDeletion() {
         onView(withText(R.string.delete_browsing_data_prompt_allow))
             .inRoot(RootMatchers.isDialog())
             .check(matches(isDisplayed()))
             .click()
     }
+
+    fun clickDeleteInEditModeButton() = deleteInEditModeButton().click()
 
     class Transition {
         fun closeMenu(interact: HomeScreenRobot.() -> Unit): Transition {
@@ -189,7 +230,7 @@ class BookmarksRobot {
         }
 
         fun openThreeDotMenu(bookmarkTitle: String, interact: ThreeDotMenuBookmarksRobot.() -> Unit): ThreeDotMenuBookmarksRobot.Transition {
-            mDevice.waitNotNull(Until.findObject(res("org.mozilla.fenix.debug:id/overflow_menu")))
+            mDevice.waitNotNull(Until.findObject(res("$packageName:id/overflow_menu")))
             threeDotMenu(bookmarkTitle).click()
 
             ThreeDotMenuBookmarksRobot().interact()
@@ -266,6 +307,8 @@ private fun bookmarkURLEditBox() = onView(withId(R.id.bookmarkUrlEdit))
 
 private fun saveBookmarkButton() = onView(withId(R.id.save_bookmark_button))
 
+private fun deleteInEditModeButton() = onView(withId(R.id.delete_bookmark_button))
+
 private fun signInToSyncButton() = onView(withId(R.id.bookmark_folders_sign_in))
 
 private fun assertBookmarksView() {
@@ -278,8 +321,27 @@ private fun assertBookmarksView() {
         .check(matches(isDisplayed()))
 }
 
+private fun assertAddFolderButton() =
+    addFolderButton().check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+
+private fun assertCloseButton() = closeButton().check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+
 private fun assertEmptyBookmarksList() =
     onView(withId(R.id.bookmarks_empty_view)).check(matches(withText("No bookmarks here")))
+
+private fun assertBookmarkFolderIsNotCreated(title: String) {
+    mDevice.findObject(
+        UiSelector()
+            .resourceId("$packageName:id/bookmarks_wrapper")
+    ).waitForExists(waitingTime)
+
+    assertFalse(
+        mDevice.findObject(
+            UiSelector()
+                .textContains(title)
+        ).waitForExists(waitingTime)
+    )
+}
 
 private fun assertBookmarkFavicon(forUrl: Uri) = bookmarkFavicon(forUrl.toString()).check(
     matches(
@@ -298,6 +360,20 @@ private fun assertFolderTitle(expectedTitle: String) =
 private fun assertBookmarkTitle(expectedTitle: String) =
     onView(withText(expectedTitle)).check(matches(isDisplayed()))
 
+private fun assertBookmarkIsDeleted(expectedTitle: String) {
+    mDevice.findObject(
+        UiSelector()
+            .resourceId("$packageName:id/bookmarks_wrapper")
+    ).waitForExists(waitingTime)
+
+    assertFalse(
+        mDevice.findObject(
+            UiSelector()
+                .resourceId("$packageName:id/title")
+                .textContains(expectedTitle)
+        ).waitForExists(waitingTime)
+    )
+}
 private fun assertUndoDeleteSnackBarButton() =
     snackBarUndoButton().check(matches(withText("UNDO")))
 

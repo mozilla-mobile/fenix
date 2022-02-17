@@ -6,33 +6,33 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/tracking_protection_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <Switch
+    <org.mozilla.fenix.trackingprotection.SwitchWithDescription
         android:id="@+id/trackingProtectionSwitch"
-        style="@style/QuickSettingsText.Icon"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/quicksettings_item_height"
-        android:paddingEnd="24dp"
-        android:text="@string/preferences_tracking_protection"
-        app:layout_constraintBottom_toTopOf="@id/trackingProtectionAction"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/tracking_protection_item_height"
+        android:text="@string/preference_enhanced_tracking_protection"
+        app:layout_constraintBottom_toTopOf="@id/trackingProtectionDetails"
         app:layout_constraintTop_toTopOf="parent"
-        tools:drawableStart="@drawable/ic_tracking_protection" />
+        app:switchDescription="@string/etp_panel_on"
+        app:switchIcon="@drawable/ic_tracking_protection"
+        app:switchTitle="@string/preference_enhanced_tracking_protection" />
 
     <TextView
-        android:id="@+id/trackingProtectionAction"
+        android:id="@+id/trackingProtectionDetails"
         style="@style/QuickSettingsText.Icon"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="@dimen/quicksettings_item_height"
-        android:gravity="top"
-        android:paddingStart="48dp"
-        android:paddingEnd="0dp"
-        android:text="@string/preferences_tracking_protection_turned_off_globally"
-        android:textColor="?accentBright"
+        android:gravity="end|center_vertical"
+        android:layout_alignParentEnd="true"
+        android:text="@string/enhanced_tracking_protection_details"
         android:visibility="gone"
-        tools:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:drawableEndCompat="@drawable/ic_arrowhead_right"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

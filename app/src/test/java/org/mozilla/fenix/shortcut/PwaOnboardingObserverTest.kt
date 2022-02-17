@@ -11,8 +11,6 @@ import androidx.navigation.NavController
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.TestCoroutineDispatcher
 import mozilla.components.browser.state.action.ContentAction
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.createTab
@@ -20,15 +18,15 @@ import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.feature.pwa.WebAppUseCases
 import mozilla.components.support.test.ext.joinBlocking
 import mozilla.components.support.test.rule.MainCoroutineRule
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mozilla.fenix.R
-import org.mozilla.fenix.browser.BrowserFragmentDirections
-import org.mozilla.fenix.ext.nav
+import org.junit.runner.RunWith
+import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.utils.Settings
 
-@ExperimentalCoroutinesApi
+@RunWith(FenixRobolectricTestRunner::class)
 class PwaOnboardingObserverTest {
 
     private lateinit var store: BrowserStore
@@ -38,10 +36,8 @@ class PwaOnboardingObserverTest {
     private lateinit var settings: Settings
     private lateinit var webAppUseCases: WebAppUseCases
 
-    private val testDispatcher = TestCoroutineDispatcher()
-
     @get:Rule
-    val coroutinesTestRule = MainCoroutineRule(testDispatcher)
+    val coroutinesTestRule = MainCoroutineRule()
 
     @Before
     fun setUp() {
@@ -49,10 +45,12 @@ class PwaOnboardingObserverTest {
             BrowserState(
                 tabs = listOf(
                     createTab(url = "https://firefox.com", id = "1")
-                ), selectedTabId = "1"
+                ),
+                selectedTabId = "1"
             )
         )
         lifecycleOwner = MockedLifecycleOwner(Lifecycle.State.STARTED)
+
         navigationController = mockk(relaxed = true)
         settings = mockk(relaxed = true)
         webAppUseCases = mockk(relaxed = true)
@@ -64,6 +62,12 @@ class PwaOnboardingObserverTest {
             settings = settings,
             webAppUseCases = webAppUseCases
         )
+        every { pwaOnboardingObserver.navigateToPwaOnboarding() } returns Unit
+    }
+
+    @After
+    fun teardown() {
+        pwaOnboardingObserver.stop()
     }
 
     @Test
@@ -75,10 +79,7 @@ class PwaOnboardingObserverTest {
 
         store.dispatch(ContentAction.UpdateWebAppManifestAction("1", mockk())).joinBlocking()
         verify { settings.incrementVisitedInstallableCount() }
-        verify(exactly = 0) { navigationController.nav(
-            R.id.browserFragment,
-            BrowserFragmentDirections.actionBrowserFragmentToPwaOnboardingDialogFragment())
-        }
+        verify(exactly = 0) { pwaOnboardingObserver.navigateToPwaOnboarding() }
     }
 
     @Test
@@ -90,10 +91,7 @@ class PwaOnboardingObserverTest {
 
         store.dispatch(ContentAction.UpdateWebAppManifestAction("1", mockk())).joinBlocking()
         verify { settings.incrementVisitedInstallableCount() }
-        verify { navigationController.nav(
-            R.id.browserFragment,
-            BrowserFragmentDirections.actionBrowserFragmentToPwaOnboardingDialogFragment())
-        }
+        verify { pwaOnboardingObserver.navigateToPwaOnboarding() }
     }
 
     @Test
@@ -105,10 +103,7 @@ class PwaOnboardingObserverTest {
 
         store.dispatch(ContentAction.UpdateWebAppManifestAction("1", mockk())).joinBlocking()
         verify(exactly = 0) { settings.incrementVisitedInstallableCount() }
-        verify(exactly = 0) { navigationController.nav(
-            R.id.browserFragment,
-            BrowserFragmentDirections.actionBrowserFragmentToPwaOnboardingDialogFragment())
-        }
+        verify(exactly = 0) { pwaOnboardingObserver.navigateToPwaOnboarding() }
     }
 
     internal class MockedLifecycleOwner(initialState: Lifecycle.State) : LifecycleOwner {

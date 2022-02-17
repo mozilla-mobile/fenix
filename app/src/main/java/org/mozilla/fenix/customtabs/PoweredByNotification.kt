@@ -15,9 +15,8 @@ import androidx.core.app.NotificationCompat.BADGE_ICON_NONE
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import mozilla.components.browser.state.selector.findCustomTab
 import mozilla.components.browser.state.state.ExternalAppType
 import mozilla.components.browser.state.store.BrowserStore
@@ -32,18 +31,16 @@ class PoweredByNotification(
     private val applicationContext: Context,
     private val store: BrowserStore,
     private val customTabId: String
-) : LifecycleObserver {
+) : DefaultLifecycleObserver {
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-    fun onResume() {
+    override fun onResume(owner: LifecycleOwner) {
         if (store.state.findCustomTab(customTabId)?.config?.externalAppType === ExternalAppType.TRUSTED_WEB_ACTIVITY) {
             NotificationManagerCompat.from(applicationContext)
                 .notify(applicationContext, NOTIFICATION_TAG, buildNotification())
         }
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-    fun onPause() {
+    override fun onPause(owner: LifecycleOwner) {
         NotificationManagerCompat.from(applicationContext)
             .cancel(applicationContext, NOTIFICATION_TAG)
     }
@@ -58,7 +55,7 @@ class PoweredByNotification(
             val appName = getString(R.string.app_name)
             return NotificationCompat.Builder(this, channelId)
                 .setSmallIcon(R.drawable.ic_status_logo)
-                .setContentTitle(getString(R.string.browser_menu_powered_by2, appName))
+                .setContentTitle(applicationContext.getString(R.string.browser_menu_powered_by2, appName))
                 .setBadgeIconType(BADGE_ICON_NONE)
                 .setColor(ContextCompat.getColor(this, R.color.primary_text_light_theme))
                 .setPriority(NotificationCompat.PRIORITY_MIN)

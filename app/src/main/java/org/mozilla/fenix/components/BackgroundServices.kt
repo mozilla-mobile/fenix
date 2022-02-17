@@ -32,9 +32,11 @@ import mozilla.components.service.fxa.manager.SCOPE_SESSION
 import mozilla.components.service.fxa.manager.SCOPE_SYNC
 import mozilla.components.service.fxa.manager.SyncEnginesStorage
 import mozilla.components.service.fxa.sync.GlobalSyncableStoreProvider
+import mozilla.components.service.sync.autofill.AutofillCreditCardsAddressesStorage
 import mozilla.components.service.sync.logins.SyncableLoginsStorage
 import mozilla.components.support.utils.RunWhenReadyQueue
 import org.mozilla.fenix.Config
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.perf.StrictModeManager
 import org.mozilla.fenix.components.metrics.Event
@@ -43,14 +45,12 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.perf.lazyMonitored
 import org.mozilla.fenix.sync.SyncedTabsIntegration
-import org.mozilla.fenix.utils.Mockable
 import org.mozilla.fenix.utils.Settings
 
 /**
  * Component group for background services. These are the components that need to be accessed from within a
  * background worker.
  */
-@Mockable
 @Suppress("LongParameterList")
 class BackgroundServices(
     private val context: Context,
@@ -60,6 +60,7 @@ class BackgroundServices(
     bookmarkStorage: Lazy<PlacesBookmarksStorage>,
     passwordsStorage: Lazy<SyncableLoginsStorage>,
     remoteTabsStorage: Lazy<RemoteTabsStorage>,
+    creditCardsStorage: Lazy<AutofillCreditCardsAddressesStorage>,
     strictMode: StrictModeManager
 ) {
     // Allows executing tasks which depend on the account manager, but do not need to eagerly initialize it.
@@ -91,16 +92,37 @@ class BackgroundServices(
 
     @VisibleForTesting
     val supportedEngines =
-        setOf(SyncEngine.History, SyncEngine.Bookmarks, SyncEngine.Passwords, SyncEngine.Tabs)
-    private val syncConfig = SyncConfig(supportedEngines, PeriodicSyncConfig(periodMinutes = 240)) // four hours
+        setOfNotNull(
+            SyncEngine.History,
+            SyncEngine.Bookmarks,
+            SyncEngine.Passwords,
+            SyncEngine.Tabs,
+            SyncEngine.CreditCards,
+            if (FeatureFlags.addressesFeature) SyncEngine.Addresses else null
+        )
+    private val syncConfig =
+        SyncConfig(supportedEngines, PeriodicSyncConfig(periodMinutes = 240)) // four hours
+
+    private val creditCardKeyProvider by lazyMonitored { creditCardsStorage.value.crypto }
+    private val passwordKeyProvider by lazyMonitored { passwordsStorage.value.crypto }
 
     init {
-        /* Make the "history", "bookmark", "passwords", and "tabs" stores accessible to workers
-           spawned by the sync manager. */
+        // Make the "history", "bookmark", "passwords", "tabs", "credit cards" stores
+        // accessible to workers spawned by the sync manager.
         GlobalSyncableStoreProvider.configureStore(SyncEngine.History to historyStorage)
         GlobalSyncableStoreProvider.configureStore(SyncEngine.Bookmarks to bookmarkStorage)
-        GlobalSyncableStoreProvider.configureStore(SyncEngine.Passwords to passwordsStorage)
+        GlobalSyncableStoreProvider.configureStore(
+            storePair = SyncEngine.Passwords to passwordsStorage,
+            keyProvider = lazy { passwordKeyProvider }
+        )
         GlobalSyncableStoreProvider.configureStore(SyncEngine.Tabs to remoteTabsStorage)
+        GlobalSyncableStoreProvider.configureStore(
+            storePair = SyncEngine.CreditCards to creditCardsStorage,
+            keyProvider = lazy { creditCardKeyProvider }
+        )
+        if (FeatureFlags.addressesFeature) {
+            GlobalSyncableStoreProvider.configureStore(SyncEngine.Addresses to creditCardsStorage)
+        }
     }
 
     private val telemetryAccountObserver = TelemetryAccountObserver(
@@ -188,6 +210,7 @@ internal class TelemetryAccountObserver(
     private val metricController: MetricController
 ) : AccountObserver {
     override fun onAuthenticated(account: OAuthAccount, authType: AuthType) {
+        settings.signedInFxaAccount = true
         when (authType) {
             // User signed-in into an existing FxA account.
             AuthType.Signin -> Event.SyncAuthSignIn
@@ -216,14 +239,10 @@ internal class TelemetryAccountObserver(
         }?.let {
             metricController.track(it)
         }
-
-        // Used by Leanplum as a context variable.
-        settings.fxaSignedIn = true
     }
 
     override fun onLoggedOut() {
         metricController.track(Event.SyncAuthSignOut)
-        // Used by Leanplum as a context variable.
-        settings.fxaSignedIn = false
+        settings.signedInFxaAccount = false
     }
 }

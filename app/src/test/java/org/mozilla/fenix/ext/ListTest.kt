@@ -7,12 +7,9 @@ package org.mozilla.fenix.ext
 import mozilla.components.browser.state.state.content.DownloadState
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.library.downloads.DownloadItem
 import java.io.File
 
-@RunWith(FenixRobolectricTestRunner::class)
 class ListTest {
 
     @Test
@@ -20,16 +17,40 @@ class ListTest {
         val filePath1 = "filepath.txt"
         val filePath3 = "filepath3.txt"
 
-        var file1 = File(filePath1)
-        var file3 = File(filePath3)
+        val file1 = File(filePath1)
+        val file3 = File(filePath3)
 
         // Create files
         file1.createNewFile()
         file3.createNewFile()
 
-        val item1 = DownloadItem("71", "filepath.txt", filePath1, "71 Mb", "Image/png", DownloadState.Status.COMPLETED)
-        val item2 = DownloadItem("71", "filepath2.txt", "filepath2.txt", "71 Mb", "Image/png", DownloadState.Status.COMPLETED)
-        val item3 = DownloadItem("71", "filepath3.txt", filePath3, "71 Mb", "Image/png", DownloadState.Status.COMPLETED)
+        val item1 = DownloadItem(
+            id = "71",
+            url = "url",
+            fileName = "filepath.txt",
+            filePath = filePath1,
+            size = "71 Mb",
+            contentType = "Image/png",
+            status = DownloadState.Status.COMPLETED
+        )
+        val item2 = DownloadItem(
+            id = "71",
+            url = "url",
+            fileName = "filepath2.txt",
+            filePath = "filepath2.txt",
+            size = "71 Mb",
+            contentType = "Image/png",
+            status = DownloadState.Status.COMPLETED
+        )
+        val item3 = DownloadItem(
+            id = "71",
+            url = "url",
+            fileName = "filepath3.txt",
+            filePath = filePath3,
+            size = "71 Mb",
+            contentType = "Image/png",
+            status = DownloadState.Status.COMPLETED
+        )
 
         val testList = mutableListOf(item1, item2, item3)
         val comparisonList: MutableList<DownloadItem> = mutableListOf(item1, item3)
@@ -49,18 +70,42 @@ class ListTest {
         val filePath2 = "filepath.txt"
         val filePath3 = "filepath3.txt"
 
-        var file1 = File(filePath1)
-        var file2 = File(filePath2)
-        var file3 = File(filePath3)
+        val file1 = File(filePath1)
+        val file2 = File(filePath2)
+        val file3 = File(filePath3)
 
         // Create files
         file1.createNewFile()
         file2.createNewFile()
         file3.createNewFile()
 
-        val item1 = DownloadItem("71", "filepath.txt", filePath1, "71 Mb", "text/plain", DownloadState.Status.COMPLETED)
-        val item2 = DownloadItem("72", "filepath2.txt", filePath2, "71 Mb", "text/plain", DownloadState.Status.COMPLETED)
-        val item3 = DownloadItem("73", "filepath3.txt", filePath3, "71 Mb", "text/plain", DownloadState.Status.COMPLETED)
+        val item1 = DownloadItem(
+            id = "71",
+            url = "url",
+            fileName = "filepath.txt",
+            filePath = filePath1,
+            size = "71 Mb",
+            contentType = "text/plain",
+            status = DownloadState.Status.COMPLETED
+        )
+        val item2 = DownloadItem(
+            id = "72",
+            url = "url",
+            fileName = "filepath2.txt",
+            filePath = filePath2,
+            size = "71 Mb",
+            contentType = "text/plain",
+            status = DownloadState.Status.COMPLETED
+        )
+        val item3 = DownloadItem(
+            id = "73",
+            url = "url",
+            fileName = "filepath3.txt",
+            filePath = filePath3,
+            size = "71 Mb",
+            contentType = "text/plain",
+            status = DownloadState.Status.COMPLETED
+        )
 
         val testList = mutableListOf(item1, item2, item3)
         val comparisonList: MutableList<DownloadItem> = mutableListOf(item1, item2, item3)

@@ -53,7 +53,9 @@
             android:layout_height="match_parent"
             android:contentDescription="@string/mozac_browser_tabstray_open_tab" />
 
-        <include layout="@layout/checkbox_item" />
+        <include
+            android:id="@+id/checkbox_include"
+            layout="@layout/checkbox_item" />
 
     </androidx.cardview.widget.CardView>
 
@@ -65,9 +67,8 @@
         android:layout_marginTop="24dp"
         android:layout_marginStart="12dp"
         android:ellipsize="end"
-        android:textColor="@color/tab_tray_item_text_normal_theme"
+        android:textColor="@color/fx_mobile_text_color_primary"
         android:textSize="16sp"
-        android:lineSpacingExtra="4sp"
         android:maxLines="2"
         tools:text="Firefox"
         app:layout_constraintEnd_toStartOf="@id/mozac_browser_tabstray_close"
@@ -81,12 +82,11 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="4dp"
         android:layout_marginBottom="24dp"
         android:layout_marginStart="12dp"
         android:ellipsize="end"
         android:lines="1"
-        android:textColor="@color/tab_tray_item_url_normal_theme"
+        android:textColor="@color/fx_mobile_text_color_secondary"
         android:textSize="14sp"
         tools:text="firefox.com"
         app:layout_constraintEnd_toStartOf="@id/mozac_browser_tabstray_close"
@@ -103,7 +103,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/mozac_ic_close"
-        app:tint="@color/tab_tray_item_text_normal_theme" />
+        app:srcCompat="@drawable/ic_close"
+        app:tint="@color/fx_mobile_icon_color_primary" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

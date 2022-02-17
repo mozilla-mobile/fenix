@@ -25,6 +25,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
+import org.mozilla.fenix.helpers.TestHelper.appName
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.isEnabled
 
@@ -46,7 +47,21 @@ class SettingsSubMenuPrivateBrowsingRobot {
 
     fun verifyPrivateBrowsingShortcutIcon() = assertPrivateBrowsingShortcutIcon()
 
+    fun clickPrivateModeScreenshotsSwitch() = screenshotsInPrivateModeSwitch().click()
+
     fun clickOpenLinksInPrivateTabSwitch() = openLinksInPrivateTabSwitch().click()
+
+    fun cancelPrivateShortcutAddition() {
+        mDevice.wait(
+            Until.findObject(text("Add private browsing shortcut")),
+            waitingTime
+        )
+        addPrivateBrowsingShortcutButton().click()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mDevice.wait(Until.findObject(By.textContains("CANCEL")), waitingTime)
+            cancelShortcutAdditionButton().click()
+        }
+    }
 
     fun addPrivateShortcutToHomescreen() {
         mDevice.wait(
@@ -92,6 +107,9 @@ private fun assertNavigationToolBarHeader() {
 private fun openLinksInPrivateTabSwitch() =
     onView(withText("Open links in a private tab"))
 
+private fun screenshotsInPrivateModeSwitch() =
+    onView(withText("Allow screenshots in private browsing"))
+
 private fun addPrivateBrowsingShortcutButton() = onView(withText("Add private browsing shortcut"))
 
 private fun goBackButton() = onView(withContentDescription("Navigate up"))
@@ -99,7 +117,10 @@ private fun goBackButton() = onView(withContentDescription("Navigate up"))
 private fun addAutomaticallyButton() =
     mDevice.findObject(UiSelector().textStartsWith("add automatically"))
 
-private fun privateBrowsingShortcutIcon() = mDevice.findObject(text("Private Firefox Preview"))
+private fun cancelShortcutAdditionButton() =
+    mDevice.findObject(UiSelector().textContains("CANCEL"))
+
+private fun privateBrowsingShortcutIcon() = mDevice.findObject(text("Private $appName"))
 
 private fun assertAddPrivateBrowsingShortcutButton() {
     mDevice.wait(
@@ -125,9 +146,6 @@ private fun assertOpenLinksInPrivateTabOff() {
 }
 
 private fun assertPrivateBrowsingShortcutIcon() {
-    mDevice.wait(
-        Until.findObject(text("Private Firefox Preview")),
-        waitingTime
-    )
-    assertTrue(mDevice.hasObject(text("Private Firefox Preview")))
+    mDevice.wait(Until.findObject(text("Private $appName")), waitingTime)
+    assertTrue(mDevice.hasObject(text("Private $appName")))
 }

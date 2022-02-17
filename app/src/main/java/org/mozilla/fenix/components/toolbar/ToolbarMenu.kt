@@ -6,6 +6,7 @@ package org.mozilla.fenix.components.toolbar
 
 import mozilla.components.browser.menu.BrowserMenuBuilder
 import mozilla.components.browser.menu.item.BrowserMenuItemToolbar
+import org.mozilla.fenix.components.accounts.AccountState
 
 interface ToolbarMenu {
     sealed class Item {
@@ -20,17 +21,20 @@ interface ToolbarMenu {
         object OpenInFenix : Item()
         object SaveToCollection : Item()
         object AddToTopSites : Item()
-        object InstallToHomeScreen : Item()
+        object RemoveFromTopSites : Item()
+        object InstallPwaToHomeScreen : Item()
         object AddToHomeScreen : Item()
-        object SyncedTabs : Item()
+        data class SyncAccount(val accountState: AccountState) : Item()
         object AddonsManager : Item()
         object Quit : Item()
         object OpenInApp : Item()
+        object SetDefaultBrowser : Item()
         object Bookmark : Item()
-        object ReaderModeAppearance : Item()
+        object CustomizeReaderView : Item()
         object Bookmarks : Item()
         object History : Item()
         object Downloads : Item()
+        object NewTab : Item()
     }
 
     val menuBuilder: BrowserMenuBuilder

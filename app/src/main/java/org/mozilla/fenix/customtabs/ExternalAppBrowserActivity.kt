@@ -8,8 +8,6 @@ import android.content.Intent
 import androidx.annotation.VisibleForTesting
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDirections
-import kotlinx.android.synthetic.main.activity_home.*
-import mozilla.components.browser.session.runWithSession
 import mozilla.components.browser.state.selector.findCustomTab
 import mozilla.components.browser.state.state.SessionState
 import mozilla.components.concept.engine.manifest.WebAppManifestParser
@@ -49,21 +47,13 @@ open class ExternalAppBrowserActivity : HomeActivity() {
 
     final override fun getIntentSource(intent: SafeIntent) = Event.OpenedApp.Source.CUSTOM_TAB
 
-    final override fun getIntentAllSource(intent: SafeIntent) = Event.AppReceivedIntent.Source.CUSTOM_TAB
-
     final override fun getIntentSessionId(intent: SafeIntent) = intent.getSessionId()
 
-    override fun startupTelemetryOnCreateCalled(safeIntent: SafeIntent, hasSavedInstanceState: Boolean) {
-        components.appStartupTelemetry.onExternalAppBrowserOnCreate(
-            safeIntent,
-            hasSavedInstanceState,
-            // HomeActivity is init before ExternalAppBrowserActivity so we use that time.
-            homeActivityInitTimeStampNanoSeconds,
-            rootContainer
-        )
+    override fun navigateToBrowserOnColdStart() {
+        // No-op for external app
     }
 
-    override fun navigateToBrowserOnColdStart() {
+    override fun navigateToHome() {
         // No-op for external app
     }
 
@@ -102,12 +92,10 @@ open class ExternalAppBrowserActivity : HomeActivity() {
             // When this activity finishes, the process is staying around and the session still
             // exists then remove it now to free all its resources. Once this activity is finished
             // then there's no way to get back to it other than relaunching it.
-            components.core.sessionManager.runWithSession(getExternalTabId()) { session ->
-                // If the custom tag config has been removed we are opening this in normal browsing
-                if (session.customTabConfig != null) {
-                    remove(session)
-                }
-                true
+            val tabId = getExternalTabId()
+            val customTab = tabId?.let { components.core.store.state.findCustomTab(it) }
+            if (tabId != null && customTab != null) {
+                components.useCases.customTabsUseCases.remove(tabId)
             }
         }
     }

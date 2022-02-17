@@ -4,6 +4,8 @@
 
 package org.mozilla.fenix.utils
 
+import io.mockk.every
+import io.mockk.spyk
 import mozilla.components.feature.sitepermissions.SitePermissionsRules
 import mozilla.components.feature.sitepermissions.SitePermissionsRules.Action.ALLOWED
 import mozilla.components.feature.sitepermissions.SitePermissionsRules.Action.ASK_TO_ALLOW
@@ -19,6 +21,7 @@ import org.junit.runner.RunWith
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.settings.PhoneFeature
 import org.mozilla.fenix.settings.deletebrowsingdata.DeleteBrowsingDataOnQuitType
+import java.util.Calendar
 
 @RunWith(FenixRobolectricTestRunner::class)
 class SettingsTest {
@@ -31,9 +34,10 @@ class SettingsTest {
         microphone = ASK_TO_ALLOW,
         notification = ASK_TO_ALLOW,
         autoplayAudible = AutoplayAction.BLOCKED,
-        autoplayInaudible = AutoplayAction.BLOCKED,
+        autoplayInaudible = AutoplayAction.ALLOWED,
         persistentStorage = ASK_TO_ALLOW,
-        mediaKeySystemAccess = ASK_TO_ALLOW
+        mediaKeySystemAccess = ASK_TO_ALLOW,
+        crossOriginStorageAccess = ASK_TO_ALLOW,
     )
 
     @Before
@@ -183,13 +187,13 @@ class SettingsTest {
     fun showLoginsDialogWarning() {
         // When just created
         // Then
-        assertEquals(0, settings.loginsSecureWarningCount.value)
+        assertEquals(0, settings.secureWarningCount.value)
 
         // When
-        settings.incrementShowLoginsSecureWarningCount()
+        settings.incrementSecureWarningCount()
 
         // Then
-        assertEquals(1, settings.loginsSecureWarningCount.value)
+        assertEquals(1, settings.secureWarningCount.value)
     }
 
     @Test
@@ -199,7 +203,7 @@ class SettingsTest {
         assertTrue(settings.shouldShowSecurityPinWarning)
 
         // When
-        settings.incrementShowLoginsSecureWarningCount()
+        settings.incrementSecureWarningCount()
 
         // Then
         assertFalse(settings.shouldShowSecurityPinWarning)
@@ -228,7 +232,7 @@ class SettingsTest {
         settings.manuallyCloseTabs = false
 
         // Then
-        assertFalse(settings.shouldUseLightTheme)
+        assertFalse(settings.manuallyCloseTabs)
     }
 
     @Test
@@ -236,27 +240,28 @@ class SettingsTest {
         // When just created
         // Then
         assertTrue(settings.manuallyCloseTabs)
+        assertEquals(Long.MAX_VALUE, settings.getTabTimeout())
 
         // When
         settings.manuallyCloseTabs = false
         settings.closeTabsAfterOneDay = true
 
         // Then
-        assertEquals(settings.getTabTimeout(), Settings.ONE_DAY_MS)
+        assertEquals(Settings.ONE_DAY_MS, settings.getTabTimeout())
 
         // When
         settings.closeTabsAfterOneDay = false
         settings.closeTabsAfterOneWeek = true
 
         // Then
-        assertEquals(settings.getTabTimeout(), Settings.ONE_WEEK_MS)
+        assertEquals(Settings.ONE_WEEK_MS, settings.getTabTimeout())
 
         // When
         settings.closeTabsAfterOneWeek = false
         settings.closeTabsAfterOneMonth = true
 
         // Then
-        assertEquals(settings.getTabTimeout(), Settings.ONE_MONTH_MS)
+        assertEquals(Settings.ONE_MONTH_MS, settings.getTabTimeout())
     }
 
     @Test
@@ -577,7 +582,7 @@ class SettingsTest {
         settings.setSitePermissionsPhoneFeatureAction(PhoneFeature.AUTOPLAY_AUDIBLE, ALLOWED)
 
         assertEquals(
-            defaultPermissions.copy(autoplayAudible = ALLOWED),
+            defaultPermissions.copy(autoplayAudible = AutoplayAction.ALLOWED),
             settings.getSitePermissionsCustomSettingsRules()
         )
     }
@@ -587,8 +592,23 @@ class SettingsTest {
         settings.setSitePermissionsPhoneFeatureAction(PhoneFeature.AUTOPLAY_INAUDIBLE, ALLOWED)
 
         assertEquals(
-            defaultPermissions.copy(autoplayInaudible = ALLOWED),
+            defaultPermissions.copy(autoplayInaudible = AutoplayAction.ALLOWED),
             settings.getSitePermissionsCustomSettingsRules()
+        )
+    }
+
+    @Test
+    fun getSitePermissionsCustomSettingsRules_autoplay_defaults() {
+        val settings = Settings(testContext)
+
+        assertEquals(
+            AutoplayAction.BLOCKED,
+            settings.getSitePermissionsCustomSettingsRules().autoplayAudible
+        )
+
+        assertEquals(
+            AutoplayAction.ALLOWED,
+            settings.getSitePermissionsCustomSettingsRules().autoplayInaudible
         )
     }
 
@@ -605,6 +625,22 @@ class SettingsTest {
 
         assertEquals(
             defaultPermissions.copy(persistentStorage = BLOCKED),
+            settings.getSitePermissionsCustomSettingsRules()
+        )
+    }
+    @Test
+    fun getSitePermissionsCustomSettingsRules_crossOriginStorageAccess() {
+        settings.setSitePermissionsPhoneFeatureAction(PhoneFeature.CROSS_ORIGIN_STORAGE_ACCESS, ALLOWED)
+
+        assertEquals(
+            defaultPermissions.copy(crossOriginStorageAccess = ALLOWED),
+            settings.getSitePermissionsCustomSettingsRules()
+        )
+
+        settings.setSitePermissionsPhoneFeatureAction(PhoneFeature.CROSS_ORIGIN_STORAGE_ACCESS, BLOCKED)
+
+        assertEquals(
+            defaultPermissions.copy(crossOriginStorageAccess = BLOCKED),
             settings.getSitePermissionsCustomSettingsRules()
         )
     }
@@ -654,5 +690,114 @@ class SettingsTest {
         // Then
         assertEquals("testAmoUser", settings.overrideAmoUser)
         assertTrue(settings.amoCollectionOverrideConfigured())
+    }
+
+    @Test
+    fun `GIVEN startOnHomeAlways is selected WHEN calling shouldStartOnHome THEN return true`() {
+        settings.alwaysOpenTheHomepageWhenOpeningTheApp = true
+        settings.alwaysOpenTheLastTabWhenOpeningTheApp = false
+        settings.openHomepageAfterFourHoursOfInactivity = false
+
+        assertTrue(settings.shouldStartOnHome())
+    }
+
+    @Test
+    fun `GIVEN startOnHomeNever is selected WHEN calling shouldStartOnHome THEN return be false`() {
+        settings.alwaysOpenTheLastTabWhenOpeningTheApp = true
+        settings.alwaysOpenTheHomepageWhenOpeningTheApp = false
+        settings.openHomepageAfterFourHoursOfInactivity = false
+
+        assertFalse(settings.shouldStartOnHome())
+    }
+
+    @Test
+    fun `GIVEN startOnHomeAfterFourHours is selected after four hours of inactivity WHEN calling shouldStartOnHome THEN return true`() {
+        val localSetting = spyk(settings)
+        val now = Calendar.getInstance()
+
+        localSetting.openHomepageAfterFourHoursOfInactivity = true
+        localSetting.alwaysOpenTheLastTabWhenOpeningTheApp = false
+        localSetting.alwaysOpenTheHomepageWhenOpeningTheApp = false
+
+        now.timeInMillis = System.currentTimeMillis()
+        localSetting.lastBrowseActivity = now.timeInMillis
+        now.add(Calendar.HOUR, 4)
+
+        every { localSetting.timeNowInMillis() } returns now.timeInMillis
+
+        assertTrue(localSetting.shouldStartOnHome())
+    }
+
+    @Test
+    fun `GIVEN startOnHomeAfterFourHours is selected and with recent activity WHEN calling shouldStartOnHome THEN return false`() {
+        val localSetting = spyk(settings)
+        val now = System.currentTimeMillis()
+
+        localSetting.openHomepageAfterFourHoursOfInactivity = true
+        localSetting.alwaysOpenTheLastTabWhenOpeningTheApp = false
+        localSetting.alwaysOpenTheHomepageWhenOpeningTheApp = false
+
+        localSetting.lastBrowseActivity = now
+
+        every { localSetting.timeNowInMillis() } returns now
+
+        assertFalse(localSetting.shouldStartOnHome())
+    }
+
+    @Test
+    fun `GIVEN shownDefaultBrowserNotification and isDefaultBrowser WHEN calling shouldShowDefaultBrowserNotification THEN return correct value`() {
+        val localSetting = spyk(settings)
+        every { localSetting.isDefaultBrowserBlocking() } returns false
+
+        localSetting.defaultBrowserNotificationDisplayed = false
+        assert(localSetting.shouldShowDefaultBrowserNotification())
+
+        localSetting.defaultBrowserNotificationDisplayed = true
+        assertFalse(localSetting.shouldShowDefaultBrowserNotification())
+
+        every { localSetting.isDefaultBrowserBlocking() } returns true
+
+        localSetting.defaultBrowserNotificationDisplayed = false
+        assertFalse(localSetting.shouldShowDefaultBrowserNotification())
+
+        localSetting.defaultBrowserNotificationDisplayed = true
+        assertFalse(localSetting.shouldShowDefaultBrowserNotification())
+    }
+
+    @Test
+    fun inactiveTabsAreEnabled() {
+        // When just created
+        // Then
+        assertTrue(settings.inactiveTabsAreEnabled)
+    }
+
+    @Test
+    fun `GIVEN shouldShowInactiveTabsAutoCloseDialog WHEN the dialog has been dismissed before THEN no show the dialog`() {
+        val settings = spyk(settings)
+        every { settings.hasInactiveTabsAutoCloseDialogBeenDismissed } returns true
+
+        assertFalse(settings.shouldShowInactiveTabsAutoCloseDialog(20))
+    }
+
+    @Test
+    fun `GIVEN shouldShowInactiveTabsAutoCloseDialog WHEN the inactive tabs are less than the minimum THEN no show the dialog`() {
+        assertFalse(settings.shouldShowInactiveTabsAutoCloseDialog(19))
+    }
+
+    @Test
+    fun `GIVEN shouldShowInactiveTabsAutoCloseDialog WHEN closeTabsAfterOneMonth is already selected THEN no show the dialog`() {
+        val settings = spyk(settings)
+        every { settings.closeTabsAfterOneMonth } returns true
+
+        assertFalse(settings.shouldShowInactiveTabsAutoCloseDialog(19))
+    }
+
+    @Test
+    fun `GIVEN shouldShowInactiveTabsAutoCloseDialog WHEN the dialog has not been dismissed, with more inactive tabs than the queried and closeTabsAfterOneMonth not set THEN show the dialog`() {
+        val settings = spyk(settings)
+        every { settings.closeTabsAfterOneMonth } returns false
+        every { settings.hasInactiveTabsAutoCloseDialogBeenDismissed } returns false
+
+        assertTrue(settings.shouldShowInactiveTabsAutoCloseDialog(20))
     }
 }

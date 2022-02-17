@@ -8,6 +8,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
+import androidx.compose.ui.platform.ComposeView
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -17,36 +18,55 @@ import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.ui.widgets.WidgetSiteItemView
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.components.tips.Tip
-import org.mozilla.fenix.home.OnboardingState
+import org.mozilla.fenix.home.BottomSpacerViewHolder
+import org.mozilla.fenix.home.HomeFragmentStore
+import org.mozilla.fenix.home.TopPlaceholderViewHolder
+import org.mozilla.fenix.home.pocket.PocketStoriesViewHolder
+import org.mozilla.fenix.home.recentbookmarks.view.RecentBookmarksHeaderViewHolder
+import org.mozilla.fenix.home.pocket.PocketCategoriesViewHolder
+import org.mozilla.fenix.home.pocket.PocketRecommendationsHeaderViewHolder
+import org.mozilla.fenix.home.recentbookmarks.view.RecentBookmarksViewHolder
+import org.mozilla.fenix.home.recenttabs.view.RecentTabViewHolder
+import org.mozilla.fenix.home.recenttabs.view.RecentTabsHeaderViewHolder
+import org.mozilla.fenix.home.recentvisits.view.RecentVisitsHeaderViewHolder
+import org.mozilla.fenix.home.recentvisits.view.RecentlyVisitedViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.CollectionHeaderViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.CollectionViewHolder
+import org.mozilla.fenix.home.sessioncontrol.viewholders.CustomizeHomeButtonViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.NoCollectionsMessageViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.PrivateBrowsingDescriptionViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.TabInCollectionViewHolder
-import org.mozilla.fenix.home.sessioncontrol.viewholders.TopSitePagerViewHolder
-import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingAutomaticSignInViewHolder
+import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.ExperimentDefaultBrowserCardViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingFinishViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingHeaderViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingManualSignInViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingPrivacyNoticeViewHolder
-import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingPrivateBrowsingViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingSectionHeaderViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingThemePickerViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingToolbarPositionPickerViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingTrackingProtectionViewHolder
-import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingWhatsNewViewHolder
 import org.mozilla.fenix.home.tips.ButtonTipViewHolder
+import org.mozilla.fenix.home.topsites.TopSitePagerViewHolder
 import mozilla.components.feature.tab.collections.Tab as ComponentTab
 
 sealed class AdapterItem(@LayoutRes val viewType: Int) {
+    object TopPlaceholderItem : AdapterItem(TopPlaceholderViewHolder.LAYOUT_ID)
     data class TipItem(val tip: Tip) : AdapterItem(
         ButtonTipViewHolder.LAYOUT_ID
     )
 
-    data class TopSitePager(val topSites: List<TopSite>) : AdapterItem(TopSitePagerViewHolder.LAYOUT_ID) {
+    /**
+     * Contains a set of [Pair]s where [Pair.first] is the index of the changed [TopSite] and
+     * [Pair.second] is the new [TopSite].
+     */
+    data class TopSitePagerPayload(
+        val changed: Set<Pair<Int, TopSite>>
+    )
+
+    data class TopSitePager(val topSites: List<TopSite>) :
+        AdapterItem(TopSitePagerViewHolder.LAYOUT_ID) {
         override fun sameAs(other: AdapterItem): Boolean {
-            val newTopSites = (other as? TopSitePager) ?: return false
-            return newTopSites.topSites.size == this.topSites.size
+            return other is TopSitePager
         }
 
         override fun contentsSameAs(other: AdapterItem): Boolean {
@@ -55,6 +75,36 @@ sealed class AdapterItem(@LayoutRes val viewType: Int) {
             val newSitesSequence = newTopSites.topSites.asSequence()
             val oldTopSites = this.topSites.asSequence()
             return newSitesSequence.zip(oldTopSites).all { (new, old) -> new == old }
+        }
+
+        /**
+         * Returns a payload if there's been a change, or null if not, but adds a "dummy" item for
+         * each deleted [TopSite]. This is done in order to more easily identify the actual views
+         * that need to be removed in [TopSitesPagerAdapter.update].
+         *
+         * See https://github.com/mozilla-mobile/fenix/pull/20189#issuecomment-877124730
+         */
+        override fun getChangePayload(newItem: AdapterItem): Any? {
+            val newTopSites = (newItem as? TopSitePager)
+            val oldTopSites = (this as? TopSitePager)
+
+            if (newTopSites == null || oldTopSites == null ||
+                (newTopSites.topSites.size > TopSitePagerViewHolder.TOP_SITES_PER_PAGE)
+                != (oldTopSites.topSites.size > TopSitePagerViewHolder.TOP_SITES_PER_PAGE)
+            ) {
+                return null
+            }
+
+            val changed = mutableSetOf<Pair<Int, TopSite>>()
+
+            for ((index, item) in oldTopSites.topSites.withIndex()) {
+                val changedItem =
+                    newTopSites.topSites.getOrNull(index) ?: TopSite.Frecent(-1, "REMOVED", "", 0)
+                if (changedItem != item) {
+                    changed.add((Pair(index, changedItem)))
+                }
+            }
+            return if (changed.isNotEmpty()) TopSitePagerPayload(changed) else null
         }
     }
 
@@ -94,21 +144,34 @@ sealed class AdapterItem(@LayoutRes val viewType: Int) {
     }
 
     object OnboardingManualSignIn : AdapterItem(OnboardingManualSignInViewHolder.LAYOUT_ID)
-    data class OnboardingAutomaticSignIn(
-        val state: OnboardingState.SignedOutCanAutoSignIn
-    ) : AdapterItem(OnboardingAutomaticSignInViewHolder.LAYOUT_ID)
+
+    object ExperimentDefaultBrowserCard : AdapterItem(ExperimentDefaultBrowserCardViewHolder.LAYOUT_ID)
 
     object OnboardingThemePicker : AdapterItem(OnboardingThemePickerViewHolder.LAYOUT_ID)
     object OnboardingTrackingProtection :
         AdapterItem(OnboardingTrackingProtectionViewHolder.LAYOUT_ID)
 
-    object OnboardingPrivateBrowsing : AdapterItem(OnboardingPrivateBrowsingViewHolder.LAYOUT_ID)
     object OnboardingPrivacyNotice : AdapterItem(OnboardingPrivacyNoticeViewHolder.LAYOUT_ID)
     object OnboardingFinish : AdapterItem(OnboardingFinishViewHolder.LAYOUT_ID)
     object OnboardingToolbarPositionPicker :
         AdapterItem(OnboardingToolbarPositionPickerViewHolder.LAYOUT_ID)
 
-    object OnboardingWhatsNew : AdapterItem(OnboardingWhatsNewViewHolder.LAYOUT_ID)
+    object CustomizeHomeButton : AdapterItem(CustomizeHomeButtonViewHolder.LAYOUT_ID)
+
+    object RecentTabsHeader : AdapterItem(RecentTabsHeaderViewHolder.LAYOUT_ID)
+    object RecentTabItem : AdapterItem(RecentTabViewHolder.LAYOUT_ID)
+
+    object RecentVisitsHeader : AdapterItem(RecentVisitsHeaderViewHolder.LAYOUT_ID)
+    object RecentVisitsItems : AdapterItem(RecentlyVisitedViewHolder.LAYOUT_ID)
+
+    object RecentBookmarksHeader : AdapterItem(RecentBookmarksHeaderViewHolder.LAYOUT_ID)
+    object RecentBookmarks : AdapterItem(RecentBookmarksViewHolder.LAYOUT_ID)
+
+    object PocketStoriesItem : AdapterItem(PocketStoriesViewHolder.LAYOUT_ID)
+    object PocketCategoriesItem : AdapterItem(PocketCategoriesViewHolder.LAYOUT_ID)
+    object PocketRecommendationsFooterItem : AdapterItem(PocketRecommendationsHeaderViewHolder.LAYOUT_ID)
+
+    object BottomSpacer : AdapterItem(BottomSpacerViewHolder.LAYOUT_ID)
 
     /**
      * True if this item represents the same value as other. Used by [AdapterItemDiffCallback].
@@ -136,19 +199,67 @@ class AdapterItemDiffCallback : DiffUtil.ItemCallback<AdapterItem>() {
     }
 }
 
+@Suppress("LongParameterList")
 class SessionControlAdapter(
+    private val store: HomeFragmentStore,
     private val interactor: SessionControlInteractor,
     private val viewLifecycleOwner: LifecycleOwner,
     private val components: Components
 ) : ListAdapter<AdapterItem, RecyclerView.ViewHolder>(AdapterItemDiffCallback()) {
 
     // This method triggers the ComplexMethod lint error when in fact it's quite simple.
-    @SuppressWarnings("ComplexMethod")
+    @SuppressWarnings("ComplexMethod", "LongMethod", "ReturnCount")
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        when (viewType) {
+            CustomizeHomeButtonViewHolder.LAYOUT_ID -> return CustomizeHomeButtonViewHolder(
+                composeView = ComposeView(parent.context),
+                viewLifecycleOwner,
+                interactor = interactor
+            )
+            PocketStoriesViewHolder.LAYOUT_ID -> return PocketStoriesViewHolder(
+                composeView = ComposeView(parent.context),
+                viewLifecycleOwner = viewLifecycleOwner,
+                store = store,
+                interactor = interactor
+            )
+            PocketCategoriesViewHolder.LAYOUT_ID -> return PocketCategoriesViewHolder(
+                composeView = ComposeView(parent.context),
+                viewLifecycleOwner = viewLifecycleOwner,
+                store = store,
+                interactor = interactor
+            )
+            PocketRecommendationsHeaderViewHolder.LAYOUT_ID -> return PocketRecommendationsHeaderViewHolder(
+                composeView = ComposeView(parent.context),
+                viewLifecycleOwner = viewLifecycleOwner,
+                interactor = interactor
+            )
+            RecentBookmarksViewHolder.LAYOUT_ID -> return RecentBookmarksViewHolder(
+                composeView = ComposeView(parent.context),
+                viewLifecycleOwner,
+                store = store,
+                interactor = interactor,
+                metrics = components.analytics.metrics
+            )
+            RecentTabViewHolder.LAYOUT_ID -> return RecentTabViewHolder(
+                composeView = ComposeView(parent.context),
+                viewLifecycleOwner,
+                store = store,
+                interactor = interactor
+            )
+            RecentlyVisitedViewHolder.LAYOUT_ID -> return RecentlyVisitedViewHolder(
+                composeView = ComposeView(parent.context),
+                viewLifecycleOwner,
+                store = store,
+                interactor = interactor,
+                metrics = components.analytics.metrics
+            )
+        }
+
         val view = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
         return when (viewType) {
+            TopPlaceholderViewHolder.LAYOUT_ID -> TopPlaceholderViewHolder(view)
             ButtonTipViewHolder.LAYOUT_ID -> ButtonTipViewHolder(view, interactor)
-            TopSitePagerViewHolder.LAYOUT_ID -> TopSitePagerViewHolder(view, interactor)
+            TopSitePagerViewHolder.LAYOUT_ID -> TopSitePagerViewHolder(view, viewLifecycleOwner, interactor)
             PrivateBrowsingDescriptionViewHolder.LAYOUT_ID -> PrivateBrowsingDescriptionViewHolder(
                 view,
                 interactor
@@ -168,32 +279,70 @@ class SessionControlAdapter(
             )
             OnboardingHeaderViewHolder.LAYOUT_ID -> OnboardingHeaderViewHolder(view)
             OnboardingSectionHeaderViewHolder.LAYOUT_ID -> OnboardingSectionHeaderViewHolder(view)
-            OnboardingAutomaticSignInViewHolder.LAYOUT_ID -> OnboardingAutomaticSignInViewHolder(
-                view
-            )
             OnboardingManualSignInViewHolder.LAYOUT_ID -> OnboardingManualSignInViewHolder(view)
             OnboardingThemePickerViewHolder.LAYOUT_ID -> OnboardingThemePickerViewHolder(view)
             OnboardingTrackingProtectionViewHolder.LAYOUT_ID -> OnboardingTrackingProtectionViewHolder(
                 view
-            )
-            OnboardingPrivateBrowsingViewHolder.LAYOUT_ID -> OnboardingPrivateBrowsingViewHolder(
-                view,
-                interactor
             )
             OnboardingPrivacyNoticeViewHolder.LAYOUT_ID -> OnboardingPrivacyNoticeViewHolder(
                 view,
                 interactor
             )
             OnboardingFinishViewHolder.LAYOUT_ID -> OnboardingFinishViewHolder(view, interactor)
-            OnboardingWhatsNewViewHolder.LAYOUT_ID -> OnboardingWhatsNewViewHolder(view, interactor)
             OnboardingToolbarPositionPickerViewHolder.LAYOUT_ID -> OnboardingToolbarPositionPickerViewHolder(
                 view
             )
+            ExperimentDefaultBrowserCardViewHolder.LAYOUT_ID -> ExperimentDefaultBrowserCardViewHolder(view, interactor)
+            RecentTabsHeaderViewHolder.LAYOUT_ID -> RecentTabsHeaderViewHolder(view, interactor)
+            RecentBookmarksHeaderViewHolder.LAYOUT_ID -> RecentBookmarksHeaderViewHolder(view, interactor)
+            RecentVisitsHeaderViewHolder.LAYOUT_ID -> RecentVisitsHeaderViewHolder(
+                view,
+                interactor
+            )
+            BottomSpacerViewHolder.LAYOUT_ID -> BottomSpacerViewHolder(view)
             else -> throw IllegalStateException()
         }
     }
 
+    override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
+        when (holder) {
+            is CustomizeHomeButtonViewHolder,
+            is RecentlyVisitedViewHolder,
+            is RecentBookmarksViewHolder,
+            is RecentTabViewHolder,
+            is PocketCategoriesViewHolder,
+            is PocketRecommendationsHeaderViewHolder,
+            is PocketStoriesViewHolder -> {
+                // no op
+                // This previously called "composeView.disposeComposition" which would have the
+                // entire Composable destroyed and recreated when this View is scrolled off or on screen again.
+                // This View already listens and maps store updates. Avoid creating and binding new Views.
+                // The composition will live until the ViewTreeLifecycleOwner to which it's attached to is destroyed.
+            }
+            else -> super.onViewRecycled(holder)
+        }
+    }
+
     override fun getItemViewType(position: Int) = getItem(position).viewType
+
+    override fun onBindViewHolder(
+        holder: RecyclerView.ViewHolder,
+        position: Int,
+        payloads: MutableList<Any>
+    ) {
+        if (payloads.isNullOrEmpty()) {
+            onBindViewHolder(holder, position)
+        } else {
+            when (holder) {
+                is TopSitePagerViewHolder -> {
+                    if (payloads[0] is AdapterItem.TopSitePagerPayload) {
+                        val payload = payloads[0] as AdapterItem.TopSitePagerPayload
+                        holder.update(payload)
+                    }
+                }
+            }
+        }
+    }
 
     @SuppressWarnings("ComplexMethod")
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -202,6 +351,9 @@ class SessionControlAdapter(
             is ButtonTipViewHolder -> {
                 val tipItem = item as AdapterItem.TipItem
                 holder.bind(tipItem.tip)
+            }
+            is TopPlaceholderViewHolder -> {
+                holder.bind()
             }
             is TopSitePagerViewHolder -> {
                 holder.bind((item as AdapterItem.TopSitePager).topSites)
@@ -218,9 +370,13 @@ class SessionControlAdapter(
                 (item as AdapterItem.OnboardingSectionHeader).labelBuilder
             )
             is OnboardingManualSignInViewHolder -> holder.bind()
-            is OnboardingAutomaticSignInViewHolder -> holder.bind(
-                (item as AdapterItem.OnboardingAutomaticSignIn).state.withAccount
-            )
+            is RecentlyVisitedViewHolder,
+            is RecentBookmarksViewHolder,
+            is RecentTabViewHolder,
+            is PocketStoriesViewHolder -> {
+                // no-op. This ViewHolder receives the HomeStore as argument and will observe that
+                // without the need for us to manually update from here the data to be displayed.
+            }
         }
     }
 }

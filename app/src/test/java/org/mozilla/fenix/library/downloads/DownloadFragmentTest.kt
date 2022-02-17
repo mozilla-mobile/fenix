@@ -1,6 +1,6 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.library.downloads
 
@@ -45,28 +45,31 @@ class DownloadFragmentTest {
 
         val expectedList = listOf(
             DownloadItem(
-                "3",
-                "3.pdf",
-                downloadedFile3.path,
-                "0",
-                null,
-                DownloadState.Status.COMPLETED
+                id = "3",
+                url = "url",
+                fileName = "3.pdf",
+                filePath = downloadedFile3.path,
+                size = "0",
+                contentType = null,
+                status = DownloadState.Status.COMPLETED
             ),
             DownloadItem(
-                "2",
-                "2.pdf",
-                downloadedFile2.path,
-                "0",
-                null,
-                DownloadState.Status.COMPLETED
+                id = "2",
+                url = "url",
+                fileName = "2.pdf",
+                filePath = downloadedFile2.path,
+                size = "0",
+                contentType = null,
+                status = DownloadState.Status.COMPLETED
             ),
             DownloadItem(
-                "1",
-                "1.pdf",
-                downloadedFile1.path,
-                "0",
-                null,
-                DownloadState.Status.COMPLETED
+                id = "1",
+                url = "url",
+                fileName = "1.pdf",
+                filePath = downloadedFile1.path,
+                size = "0",
+                contentType = null,
+                status = DownloadState.Status.COMPLETED
             )
         )
 
@@ -118,12 +121,13 @@ class DownloadFragmentTest {
 
         val expectedList = listOf(
             DownloadItem(
-                "1",
-                "1.pdf",
-                downloadedFile0.path,
-                "0",
-                null,
-                DownloadState.Status.COMPLETED
+                id = "1",
+                url = "url",
+                fileName = "1.pdf",
+                filePath = downloadedFile0.path,
+                size = "0",
+                contentType = null,
+                status = DownloadState.Status.COMPLETED
             )
         )
 

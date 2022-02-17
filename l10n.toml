@@ -3,9 +3,11 @@ basepath = "."
 
 locales = [
   "an",
+  "ann",
   "ar",
   "ast",
   "az",
+  "ban",
   "be",
   "bg",
   "bn",
@@ -13,6 +15,8 @@ locales = [
   "bs",
   "ca",
   "cak",
+  "ceb",
+  "ckb",
   "co",
   "cs",
   "cy",
@@ -42,10 +46,12 @@ locales = [
   "gu-IN",
   "he",
   "hi-IN",
+  "hil",
   "hr",
   "hsb",
   "hu",
   "hy-AM",
+  "ia",
   "id",
   "is",
   "it",
@@ -53,6 +59,7 @@ locales = [
   "ka",
   "kab",
   "kk",
+  "kmr",
   "kn",
   "ko",
   "lij",
@@ -69,6 +76,7 @@ locales = [
   "nn-NO",
   "nv",
   "oc",
+  "or",
   "pa-IN",
   "pl",
   "pt-BR",
@@ -83,6 +91,7 @@ locales = [
   "sr",
   "su",
   "sv-SE",
+  "szl",
   "ta",
   "te",
   "tg",
@@ -90,11 +99,14 @@ locales = [
   "tl",
   "tr",
   "trs",
+  "tt",
+  "tzm",
   "uk",
   "ur",
   "uz",
   "vec",
   "vi",
+  "yo",
   "zh-CN",
   "zh-TW",
 ]
@@ -102,7 +114,7 @@ locales = [
 # Expose the following branches to localization
 # Changes to this list should be announced to the l10n team ahead of time.
 branches = [
-    "master",
+    "main",
 ]
 
 [env]

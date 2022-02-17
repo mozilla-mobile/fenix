@@ -41,6 +41,7 @@ linux64-android-gradle-dependencies:
         script: android-gradle-dependencies.sh
         sparse-profile: null
         resources:
+            - build.gradle
             - taskcluster/scripts/toolchain/android-gradle-dependencies.sh
             - taskcluster/scripts/toolchain/android-gradle-dependencies/**
             - buildSrc/src/main/java/Dependencies.kt
@@ -59,4 +60,4 @@ linux64-android-gradle-dependencies:
             - type: directory
               name: public/logs/nexus
               path: /opt/sonatype/nexus/logs
-    worker-type: b-android-large
+    worker-type: b-android-xlarge

@@ -9,6 +9,7 @@ import androidx.navigation.NavController
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import io.mockk.MockKAnnotations
 import io.mockk.Runs
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
@@ -24,10 +25,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import mozilla.appservices.places.BookmarkRoot
-import mozilla.components.browser.session.Session
-import mozilla.components.browser.session.SessionManager
+import mozilla.components.browser.state.action.CustomTabListAction
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.ReaderState
+import mozilla.components.browser.state.state.TabSessionState
+import mozilla.components.browser.state.state.createCustomTab
 import mozilla.components.browser.state.state.createTab
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.EngineSession
@@ -36,11 +38,17 @@ import mozilla.components.feature.search.SearchUseCases
 import mozilla.components.feature.session.SessionFeature
 import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.feature.tab.collections.TabCollection
+import mozilla.components.feature.tabs.CustomTabsUseCases
 import mozilla.components.feature.top.sites.DefaultTopSitesStorage
+import mozilla.components.feature.top.sites.PinnedSiteStorage
+import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.feature.top.sites.TopSitesUseCases
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
+import mozilla.components.support.test.ext.joinBlocking
 import mozilla.components.support.test.rule.MainCoroutineRule
 import org.junit.After
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -54,6 +62,7 @@ import org.mozilla.fenix.browser.readermode.ReaderModeController
 import org.mozilla.fenix.collections.SaveCollectionStep
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.TabCollectionStorage
+import org.mozilla.fenix.components.accounts.AccountState
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.components
@@ -72,15 +81,12 @@ class DefaultBrowserToolbarMenuControllerTest {
     @MockK private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     @RelaxedMockK private lateinit var activity: HomeActivity
     @RelaxedMockK private lateinit var navController: NavController
-    @RelaxedMockK private lateinit var findInPageLauncher: () -> Unit
-    @RelaxedMockK private lateinit var bookmarkTapped: (String, String) -> Unit
-    @RelaxedMockK private lateinit var sessionManager: SessionManager
-    @RelaxedMockK private lateinit var currentSession: Session
     @RelaxedMockK private lateinit var openInFenixIntent: Intent
     @RelaxedMockK private lateinit var metrics: MetricController
     @RelaxedMockK private lateinit var settings: Settings
     @RelaxedMockK private lateinit var searchUseCases: SearchUseCases
     @RelaxedMockK private lateinit var sessionUseCases: SessionUseCases
+    @RelaxedMockK private lateinit var customTabUseCases: CustomTabsUseCases
     @RelaxedMockK private lateinit var browserAnimator: BrowserAnimator
     @RelaxedMockK private lateinit var snackbar: FenixSnackbar
     @RelaxedMockK private lateinit var tabCollectionStorage: TabCollectionStorage
@@ -89,7 +95,10 @@ class DefaultBrowserToolbarMenuControllerTest {
     @MockK private lateinit var sessionFeatureWrapper: ViewBoundFeatureWrapper<SessionFeature>
     @RelaxedMockK private lateinit var sessionFeature: SessionFeature
     @RelaxedMockK private lateinit var topSitesStorage: DefaultTopSitesStorage
-    @RelaxedMockK private lateinit var browserStore: BrowserStore
+    @RelaxedMockK private lateinit var pinnedSiteStorage: PinnedSiteStorage
+
+    private lateinit var browserStore: BrowserStore
+    private lateinit var selectedTab: TabSessionState
 
     @Before
     fun setUp() {
@@ -104,18 +113,25 @@ class DefaultBrowserToolbarMenuControllerTest {
         every { FenixSnackbar.make(any(), any(), any(), any()) } returns snackbar
 
         every { activity.components.useCases.sessionUseCases } returns sessionUseCases
+        every { activity.components.useCases.customTabsUseCases } returns customTabUseCases
         every { activity.components.useCases.searchUseCases } returns searchUseCases
         every { activity.components.useCases.topSitesUseCase } returns topSitesUseCase
-        every { sessionManager.selectedSession } returns currentSession
         every { sessionFeatureWrapper.get() } returns sessionFeature
         every { navController.currentDestination } returns mockk {
             every { id } returns R.id.browserFragment
         }
-        every { currentSession.id } returns "1"
         every { settings.topSitesMaxLimit } returns 16
 
-        val onComplete = slot<() -> Unit>()
-        every { browserAnimator.captureEngineViewAndDrawStatically(capture(onComplete)) } answers { onComplete.captured.invoke() }
+        val onComplete = slot<(Boolean) -> Unit>()
+        every { browserAnimator.captureEngineViewAndDrawStatically(any(), capture(onComplete)) } answers { onComplete.captured.invoke(true) }
+
+        selectedTab = createTab("https://www.mozilla.org", id = "1")
+        browserStore = BrowserStore(
+            initialState = BrowserState(
+                tabs = listOf(selectedTab),
+                selectedTabId = selectedTab.id
+            )
+        )
     }
 
     @After
@@ -125,21 +141,123 @@ class DefaultBrowserToolbarMenuControllerTest {
     }
 
     @Test
-    fun handleToolbarBackPress() = runBlockingTest {
+    fun handleToolbarBookmarkPressWithReaderModeInactive() = runBlockingTest {
+        val item = ToolbarMenu.Item.Bookmark
+
+        val expectedTitle = "Mozilla"
+        val expectedUrl = "https://mozilla.org"
+        val regularTab = createTab(
+            url = expectedUrl,
+            readerState = ReaderState(active = false, activeUrl = "https://1234.org"),
+            title = expectedTitle
+        )
+        val store =
+            BrowserStore(BrowserState(tabs = listOf(regularTab), selectedTabId = regularTab.id))
+
+        var bookmarkTappedInvoked = false
+        val controller = createController(
+            scope = this, store = store,
+            bookmarkTapped = { url, title ->
+                assertEquals(expectedTitle, title)
+                assertEquals(expectedUrl, url)
+                bookmarkTappedInvoked = true
+            }
+        )
+        controller.handleToolbarItemInteraction(item)
+
+        verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.BOOKMARK)) }
+        assertTrue(bookmarkTappedInvoked)
+    }
+
+    @Test
+    fun `IF reader mode is active WHEN bookmark menu item is pressed THEN menu item is handled`() = runBlockingTest {
+        val item = ToolbarMenu.Item.Bookmark
+        val expectedTitle = "Mozilla"
+        val readerUrl = "moz-extension://1234"
+        val readerTab = createTab(
+            url = readerUrl,
+            readerState = ReaderState(active = true, activeUrl = "https://mozilla.org"),
+            title = expectedTitle
+        )
+        browserStore =
+            BrowserStore(BrowserState(tabs = listOf(readerTab), selectedTabId = readerTab.id))
+
+        var bookmarkTappedInvoked = false
+        val controller = createController(
+            scope = this, store = browserStore,
+            bookmarkTapped = { url, title ->
+                assertEquals(expectedTitle, title)
+                assertEquals(readerTab.readerState.activeUrl, url)
+                bookmarkTappedInvoked = true
+            }
+        )
+        controller.handleToolbarItemInteraction(item)
+
+        verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.BOOKMARK)) }
+        assertTrue(bookmarkTappedInvoked)
+    }
+
+    @Test
+    fun `WHEN open in Fenix menu item is pressed THEN menu item is handled correctly`() = runBlockingTest {
+        val customTab = createCustomTab("https://mozilla.org")
+        browserStore.dispatch(CustomTabListAction.AddCustomTabAction(customTab)).joinBlocking()
+        val controller = createController(
+            scope = this,
+            store = browserStore,
+            customTabSessionId = customTab.id
+        )
+
+        val item = ToolbarMenu.Item.OpenInFenix
+
+        every { activity.startActivity(any()) } just Runs
+        controller.handleToolbarItemInteraction(item)
+
+        verify { sessionFeature.release() }
+        verify { customTabUseCases.migrate(customTab.id, true) }
+        verify { activity.startActivity(openInFenixIntent) }
+        verify { activity.finishAndRemoveTask() }
+    }
+
+    @Test
+    fun `WHEN reader mode menu item is pressed THEN handle appearance change`() = runBlockingTest {
+        val item = ToolbarMenu.Item.CustomizeReaderView
+
+        val controller = createController(scope = this, store = browserStore)
+
+        controller.handleToolbarItemInteraction(item)
+
+        verify { readerModeController.showControls() }
+        verify { metrics.track(Event.ReaderModeAppearanceOpened) }
+    }
+
+    @Test
+    fun `WHEN quit menu item is pressed THEN menu item is handled correctly`() = runBlockingTest {
+        val item = ToolbarMenu.Item.Quit
+        val testScope = this
+
+        val controller = createController(scope = this, store = browserStore)
+
+        controller.handleToolbarItemInteraction(item)
+
+        verify { deleteAndQuit(activity, testScope, null) }
+    }
+
+    @Test
+    fun `WHEN backwards nav menu item is pressed THEN the session navigates back with active session`() = runBlockingTest {
         val item = ToolbarMenu.Item.Back(false)
 
-        val controller = createController(scope = this)
+        val controller = createController(scope = this, store = browserStore)
         controller.handleToolbarItemInteraction(item)
 
         verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.BACK)) }
-        verify { sessionUseCases.goBack(currentSession) }
+        verify { sessionUseCases.goBack(browserStore.state.selectedTabId!!) }
     }
 
     @Test
-    fun handleToolbarBackLongPress() = runBlockingTest {
+    fun `WHEN backwards nav menu item is long pressed THEN the session navigates back with no active session`() = runBlockingTest {
         val item = ToolbarMenu.Item.Back(true)
 
-        val controller = createController(scope = this)
+        val controller = createController(scope = this, store = browserStore)
         controller.handleToolbarItemInteraction(item)
 
         val directions = BrowserFragmentDirections.actionGlobalTabHistoryDialogFragment(null)
@@ -149,21 +267,21 @@ class DefaultBrowserToolbarMenuControllerTest {
     }
 
     @Test
-    fun handleToolbarForwardPress() = runBlockingTest {
+    fun `WHEN forward nav menu item is pressed THEN the session navigates forward to active session`() = runBlockingTest {
         val item = ToolbarMenu.Item.Forward(false)
 
-        val controller = createController(scope = this)
+        val controller = createController(scope = this, store = browserStore)
         controller.handleToolbarItemInteraction(item)
 
         verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.FORWARD)) }
-        verify { sessionUseCases.goForward(currentSession) }
+        verify { sessionUseCases.goForward(selectedTab.id) }
     }
 
     @Test
-    fun handleToolbarForwardLongPress() = runBlockingTest {
+    fun `WHEN forward nav menu item is long pressed THEN the browser navigates forward with no active session`() = runBlockingTest {
         val item = ToolbarMenu.Item.Forward(true)
 
-        val controller = createController(scope = this)
+        val controller = createController(scope = this, store = browserStore)
         controller.handleToolbarItemInteraction(item)
 
         val directions = BrowserFragmentDirections.actionGlobalTabHistoryDialogFragment(null)
@@ -173,48 +291,48 @@ class DefaultBrowserToolbarMenuControllerTest {
     }
 
     @Test
-    fun handleToolbarReloadPress() = runBlockingTest {
+    fun `WHEN reload nav menu item is pressed THEN the session reloads from cache`() = runBlockingTest {
         val item = ToolbarMenu.Item.Reload(false)
 
-        val controller = createController(scope = this)
+        val controller = createController(scope = this, store = browserStore)
         controller.handleToolbarItemInteraction(item)
 
         verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.RELOAD)) }
-        verify { sessionUseCases.reload(currentSession) }
+        verify { sessionUseCases.reload(selectedTab.id) }
     }
 
     @Test
-    fun handleToolbarReloadLongPress() = runBlockingTest {
+    fun `WHEN reload nav menu item is long pressed THEN the session reloads with no cache`() = runBlockingTest {
         val item = ToolbarMenu.Item.Reload(true)
 
-        val controller = createController(scope = this)
+        val controller = createController(scope = this, store = browserStore)
         controller.handleToolbarItemInteraction(item)
 
         verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.RELOAD)) }
         verify {
             sessionUseCases.reload(
-                currentSession,
+                selectedTab.id,
                 EngineSession.LoadUrlFlags.select(EngineSession.LoadUrlFlags.BYPASS_CACHE)
             )
         }
     }
 
     @Test
-    fun handleToolbarStopPress() = runBlockingTest {
+    fun `WHEN stop nav menu item is pressed THEN the session stops loading`() = runBlockingTest {
         val item = ToolbarMenu.Item.Stop
 
-        val controller = createController(scope = this)
+        val controller = createController(scope = this, store = browserStore)
         controller.handleToolbarItemInteraction(item)
 
         verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.STOP)) }
-        verify { sessionUseCases.stopLoading(currentSession) }
+        verify { sessionUseCases.stopLoading(selectedTab.id) }
     }
 
     @Test
-    fun handleToolbarSettingsPress() = runBlockingTest {
+    fun `WHEN settings menu item is pressed THEN menu item is handled`() = runBlockingTest {
         val item = ToolbarMenu.Item.Settings
 
-        val controller = createController(scope = this)
+        val controller = createController(scope = this, store = browserStore)
         controller.handleToolbarItemInteraction(item)
 
         val directions = BrowserFragmentDirections.actionBrowserFragmentToSettingsFragment()
@@ -224,55 +342,10 @@ class DefaultBrowserToolbarMenuControllerTest {
     }
 
     @Test
-    fun handleToolbarBookmarkPressWithReaderModeInactive() = runBlockingTest {
-        val item = ToolbarMenu.Item.Bookmark
-        val title = "Mozilla"
-        val readerUrl = "moz-extension://1234"
-        val readerTab = createTab(
-            url = readerUrl,
-            readerState = ReaderState(active = false, activeUrl = "https://1234.org"),
-            title = title
-        )
-        browserStore =
-            BrowserStore(BrowserState(tabs = listOf(readerTab), selectedTabId = readerTab.id))
-        every { currentSession.id } returns readerTab.id
-        every { currentSession.title } returns title
-        every { currentSession.url } returns "https://mozilla.org"
-
-        val controller = createController(scope = this)
-        controller.handleToolbarItemInteraction(item)
-
-        verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.BOOKMARK)) }
-        verify { bookmarkTapped("https://mozilla.org", title) }
-    }
-
-    @Test
-    fun handleToolbarBookmarkPressWithReaderModeActive() = runBlockingTest {
-        val item = ToolbarMenu.Item.Bookmark
-        val title = "Mozilla"
-        val readerUrl = "moz-extension://1234"
-        val readerTab = createTab(
-            url = readerUrl,
-            readerState = ReaderState(active = true, activeUrl = "https://mozilla.org"),
-            title = title
-        )
-        browserStore = BrowserStore(BrowserState(tabs = listOf(readerTab), selectedTabId = readerTab.id))
-        every { currentSession.id } returns readerTab.id
-        every { currentSession.title } returns title
-        every { currentSession.url } returns readerUrl
-
-        val controller = createController(scope = this)
-        controller.handleToolbarItemInteraction(item)
-
-        verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.BOOKMARK)) }
-        verify { bookmarkTapped("https://mozilla.org", title) }
-    }
-
-    @Test
-    fun handleToolbarBookmarksPress() = runBlockingTest {
+    fun `WHEN bookmark menu item is pressed THEN navigate to bookmarks page`() = runBlockingTest {
         val item = ToolbarMenu.Item.Bookmarks
 
-        val controller = createController(scope = this)
+        val controller = createController(scope = this, store = browserStore)
         controller.handleToolbarItemInteraction(item)
 
         val directions = BrowserFragmentDirections.actionGlobalBookmarkFragment(BookmarkRoot.Mobile.id)
@@ -282,10 +355,10 @@ class DefaultBrowserToolbarMenuControllerTest {
     }
 
     @Test
-    fun handleToolbarHistoryPress() = runBlockingTest {
+    fun `WHEN history menu item is pressed THEN navigate to history page`() = runBlockingTest {
         val item = ToolbarMenu.Item.History
 
-        val controller = createController(scope = this)
+        val controller = createController(scope = this, store = browserStore)
         controller.handleToolbarItemInteraction(item)
 
         val directions = BrowserFragmentDirections.actionGlobalHistoryFragment()
@@ -295,47 +368,47 @@ class DefaultBrowserToolbarMenuControllerTest {
     }
 
     @Test
-    fun handleToolbarRequestDesktopOnPress() = runBlockingTest {
+    fun `WHEN request desktop menu item is toggled On THEN desktop site is requested for the session`() = runBlockingTest {
         val requestDesktopSiteUseCase: SessionUseCases.RequestDesktopSiteUseCase =
             mockk(relaxed = true)
         val item = ToolbarMenu.Item.RequestDesktop(true)
 
         every { sessionUseCases.requestDesktopSite } returns requestDesktopSiteUseCase
 
-        val controller = createController(scope = this)
+        val controller = createController(scope = this, store = browserStore)
         controller.handleToolbarItemInteraction(item)
 
         verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.DESKTOP_VIEW_ON)) }
         verify {
             requestDesktopSiteUseCase.invoke(
                 true,
-                currentSession
+                selectedTab.id
             )
         }
     }
 
     @Test
-    fun handleToolbarRequestDesktopOffPress() = runBlockingTest {
+    fun `WHEN request desktop menu item is toggled Off THEN mobile site is requested for the session`() = runBlockingTest {
         val requestDesktopSiteUseCase: SessionUseCases.RequestDesktopSiteUseCase =
             mockk(relaxed = true)
         val item = ToolbarMenu.Item.RequestDesktop(false)
 
         every { sessionUseCases.requestDesktopSite } returns requestDesktopSiteUseCase
 
-        val controller = createController(scope = this)
+        val controller = createController(scope = this, store = browserStore)
         controller.handleToolbarItemInteraction(item)
 
         verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.DESKTOP_VIEW_OFF)) }
         verify {
             requestDesktopSiteUseCase.invoke(
                 false,
-                currentSession
+                selectedTab.id
             )
         }
     }
 
     @Test
-    fun handleToolbarAddToTopSitesPressed() = runBlockingTest {
+    fun `WHEN Add To Top Sites menu item is pressed THEN add site AND show snackbar`() = runBlockingTest {
         val item = ToolbarMenu.Item.AddToTopSites
         val addPinnedSiteUseCase: TopSitesUseCases.AddPinnedSiteUseCase = mockk(relaxed = true)
 
@@ -344,50 +417,68 @@ class DefaultBrowserToolbarMenuControllerTest {
             swipeRefreshLayout.context.getString(R.string.snackbar_added_to_top_sites)
         } returns "Added to top sites!"
 
-        val controller = createController(scope = this)
+        val controller = createController(scope = this, store = browserStore)
         controller.handleToolbarItemInteraction(item)
 
-        verify { addPinnedSiteUseCase.invoke(currentSession.title, currentSession.url) }
+        verify { addPinnedSiteUseCase.invoke(selectedTab.content.title, selectedTab.content.url) }
         verify { snackbar.setText("Added to top sites!") }
         verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.ADD_TO_TOP_SITES)) }
     }
 
     @Test
-    fun handleToolbarAddonsManagerPress() = runBlockingTest {
+    fun `GIVEN a top site page is open WHEN Remove from top sites is pressed THEN show snackbar`() = runBlockingTest {
+        val snackbarMessage = "Site removed"
+        val item = ToolbarMenu.Item.RemoveFromTopSites
+        val removePinnedSiteUseCase: TopSitesUseCases.RemoveTopSiteUseCase =
+            mockk(relaxed = true)
+        val topSite: TopSite = mockk()
+        every { topSite.url } returns selectedTab.content.url
+        coEvery { pinnedSiteStorage.getPinnedSites() } returns listOf(topSite)
+        every { topSitesUseCase.removeTopSites } returns removePinnedSiteUseCase
+        every {
+            swipeRefreshLayout.context.getString(R.string.snackbar_top_site_removed)
+        } returns snackbarMessage
+
+        val controller = createController(scope = this, store = browserStore)
+        controller.handleToolbarItemInteraction(item)
+
+        verify { snackbar.setText(snackbarMessage) }
+        verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.REMOVE_FROM_TOP_SITES)) }
+        verify { removePinnedSiteUseCase.invoke(topSite) }
+    }
+
+    @Test
+    fun `WHEN addon extensions menu item is pressed THEN navigate to addons manager`() = runBlockingTest {
         val item = ToolbarMenu.Item.AddonsManager
 
-        val controller = createController(scope = this)
+        val controller = createController(scope = this, store = browserStore)
         controller.handleToolbarItemInteraction(item)
 
         verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.ADDONS_MANAGER)) }
     }
 
     @Test
-    fun handleToolbarAddToHomeScreenPress() = runBlockingTest {
+    fun `WHEN Add To Home Screen menu item is pressed THEN add site`() = runBlockingTest {
         val item = ToolbarMenu.Item.AddToHomeScreen
 
-        val controller = createController(scope = this)
+        val controller = createController(scope = this, store = browserStore)
         controller.handleToolbarItemInteraction(item)
 
         verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.ADD_TO_HOMESCREEN)) }
     }
 
     @Test
-    fun handleToolbarSharePressWithReaderModeInactive() = runBlockingTest {
+    fun `IF reader mode is inactive WHEN share menu item is pressed THEN navigate to share screen`() = runBlockingTest {
         val item = ToolbarMenu.Item.Share
         val title = "Mozilla"
-        val readerUrl = "moz-extension://1234"
-        val readerTab = createTab(
-            url = readerUrl,
+        val url = "https://mozilla.org"
+        val regularTab = createTab(
+            url = url,
             readerState = ReaderState(active = false, activeUrl = "https://1234.org"),
             title = title
         )
-        browserStore = BrowserStore(BrowserState(tabs = listOf(readerTab), selectedTabId = readerTab.id))
-        every { currentSession.id } returns readerTab.id
-        every { currentSession.title } returns title
-        every { currentSession.url } returns "https://mozilla.org"
-
-        val controller = createController(scope = this)
+        browserStore = BrowserStore(BrowserState(tabs = listOf(regularTab), selectedTabId = regularTab.id))
+        val controller = createController(scope = this, store = browserStore)
         controller.handleToolbarItemInteraction(item)
 
         verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.SHARE)) }
@@ -404,7 +495,7 @@ class DefaultBrowserToolbarMenuControllerTest {
     }
 
     @Test
-    fun handleToolbarSharePressWithReaderModeActive() = runBlockingTest {
+    fun `IF reader mode is active WHEN share menu item is pressed THEN navigate to share screen`() = runBlockingTest {
         val item = ToolbarMenu.Item.Share
         val title = "Mozilla"
         val readerUrl = "moz-extension://1234"
@@ -414,11 +505,7 @@ class DefaultBrowserToolbarMenuControllerTest {
             title = title
         )
         browserStore = BrowserStore(BrowserState(tabs = listOf(readerTab), selectedTabId = readerTab.id))
-        every { currentSession.id } returns readerTab.id
-        every { currentSession.title } returns title
-        every { currentSession.url } returns readerUrl
-
-        val controller = createController(scope = this)
+        val controller = createController(scope = this, store = browserStore)
         controller.handleToolbarItemInteraction(item)
 
         verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.SHARE)) }
@@ -435,23 +522,28 @@ class DefaultBrowserToolbarMenuControllerTest {
     }
 
     @Test
-    fun handleToolbarFindInPagePress() = runBlockingTest {
+    fun `WHEN Find In Page menu item is pressed THEN launch finder`() = runBlockingTest {
         val item = ToolbarMenu.Item.FindInPage
 
-        val controller = createController(scope = this)
+        var launcherInvoked = false
+        val controller = createController(
+            scope = this, store = browserStore,
+            findInPageLauncher = {
+                launcherInvoked = true
+            }
+        )
         controller.handleToolbarItemInteraction(item)
 
-        verify { findInPageLauncher() }
-        verify { metrics.track(Event.FindInPageOpened) }
+        assertTrue(launcherInvoked)
     }
 
     @Test
-    fun handleToolbarSaveToCollectionPressWhenAtLeastOneCollectionExists() = runBlockingTest {
+    fun `IF one or more collection exists WHEN Save To Collection menu item is pressed THEN navigate to save collection page`() = runBlockingTest {
         val item = ToolbarMenu.Item.SaveToCollection
         val cachedTabCollections: List<TabCollection> = mockk(relaxed = true)
         every { tabCollectionStorage.cachedTabCollections } returns cachedTabCollections
 
-        val controller = createController(scope = this)
+        val controller = createController(scope = this, store = browserStore)
         controller.handleToolbarItemInteraction(item)
 
         verify {
@@ -467,19 +559,19 @@ class DefaultBrowserToolbarMenuControllerTest {
 
         val directions = BrowserFragmentDirections.actionGlobalCollectionCreationFragment(
             saveCollectionStep = SaveCollectionStep.SelectCollection,
-            tabIds = arrayOf(currentSession.id),
-            selectedTabIds = arrayOf(currentSession.id)
+            tabIds = arrayOf(selectedTab.id),
+            selectedTabIds = arrayOf(selectedTab.id)
         )
         verify { navController.navigate(directionsEq(directions), null) }
     }
 
     @Test
-    fun handleToolbarSaveToCollectionPressWhenNoCollectionsExists() = runBlockingTest {
+    fun `IF no collection exists WHEN Save To Collection menu item is pressed THEN navigate to create collection page`() = runBlockingTest {
         val item = ToolbarMenu.Item.SaveToCollection
         val cachedTabCollectionsEmpty: List<TabCollection> = emptyList()
         every { tabCollectionStorage.cachedTabCollections } returns cachedTabCollectionsEmpty
 
-        val controller = createController(scope = this)
+        val controller = createController(scope = this, store = browserStore)
         controller.handleToolbarItemInteraction(item)
 
         verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.SAVE_TO_COLLECTION)) }
@@ -492,86 +584,90 @@ class DefaultBrowserToolbarMenuControllerTest {
         }
         val directions = BrowserFragmentDirections.actionGlobalCollectionCreationFragment(
             saveCollectionStep = SaveCollectionStep.NameCollection,
-            tabIds = arrayOf(currentSession.id),
-            selectedTabIds = arrayOf(currentSession.id)
+            tabIds = arrayOf(selectedTab.id),
+            selectedTabIds = arrayOf(selectedTab.id)
         )
         verify { navController.navigate(directionsEq(directions), null) }
     }
 
     @Test
-    fun handleToolbarOpenInFenixPress() = runBlockingTest {
-        val controller = createController(scope = this, customTabSession = currentSession)
+    fun `WHEN New Tab menu item is pressed THEN navigate to a new tab home`() = runBlockingTest {
+        val item = ToolbarMenu.Item.NewTab
 
-        val item = ToolbarMenu.Item.OpenInFenix
-
-        every { currentSession.customTabConfig } returns mockk()
-        every { activity.startActivity(any()) } just Runs
+        val controller = createController(scope = this, store = browserStore)
 
         controller.handleToolbarItemInteraction(item)
 
-        verify { sessionFeature.release() }
-        verify { currentSession.customTabConfig = null }
-        verify { sessionManager.select(currentSession) }
-        verify { activity.startActivity(openInFenixIntent) }
-        verify { activity.finishAndRemoveTask() }
+        verify {
+            navController.navigate(
+                directionsEq(
+                    NavGraphDirections.actionGlobalHome(
+                        focusOnAddressBar = true
+                    )
+                )
+            )
+        }
     }
 
     @Test
-    fun handleToolbarQuitPress() = runBlockingTest {
-        val item = ToolbarMenu.Item.Quit
-        val testScope = this
-
-        val controller = createController(scope = testScope)
+    fun `GIVEN account exists and the user is signed in WHEN sign in to sync menu item is pressed THEN navigate to account settings`() = runBlockingTest {
+        val item = ToolbarMenu.Item.SyncAccount(AccountState.AUTHENTICATED)
+        val accountSettingsDirections = BrowserFragmentDirections.actionGlobalAccountSettingsFragment()
+        val controller = createController(scope = this, store = browserStore)
 
         controller.handleToolbarItemInteraction(item)
 
-        verify { deleteAndQuit(activity, testScope, null) }
+        verify { navController.navigate(accountSettingsDirections, null) }
     }
 
     @Test
-    fun handleToolbarReaderModeAppearancePress() = runBlockingTest {
-        val item = ToolbarMenu.Item.ReaderModeAppearance
-
-        val controller = createController(scope = this)
+    fun `GIVEN account exists and the user is not signed in WHEN sign in to sync menu item is pressed THEN navigate to account problem fragment`() = runBlockingTest {
+        val item = ToolbarMenu.Item.SyncAccount(AccountState.NEEDS_REAUTHENTICATION)
+        val accountProblemDirections = BrowserFragmentDirections.actionGlobalAccountProblemFragment()
+        val controller = createController(scope = this, store = browserStore)
 
         controller.handleToolbarItemInteraction(item)
 
-        verify { readerModeController.showControls() }
-        verify { metrics.track(Event.ReaderModeAppearanceOpened) }
+        verify { navController.navigate(accountProblemDirections, null) }
     }
 
     @Test
-    fun handleToolbarOpenInAppPress() = runBlockingTest {
-        val item = ToolbarMenu.Item.OpenInApp
-
-        val controller = createController(scope = this)
+    fun `GIVEN account doesn't exist WHEN sign in to sync menu item is pressed THEN navigate to sign in`() = runBlockingTest {
+        val item = ToolbarMenu.Item.SyncAccount(AccountState.NO_ACCOUNT)
+        val turnOnSyncDirections = BrowserFragmentDirections.actionGlobalTurnOnSync()
+        val controller = createController(scope = this, store = browserStore)
 
         controller.handleToolbarItemInteraction(item)
 
-        verify { settings.openInAppOpened = true }
+        verify { navController.navigate(turnOnSyncDirections, null) }
     }
 
+    @Suppress("LongParameterList")
     private fun createController(
         scope: CoroutineScope,
+        store: BrowserStore,
         activity: HomeActivity = this.activity,
-        customTabSession: Session? = null
+        customTabSessionId: String? = null,
+        findInPageLauncher: () -> Unit = { },
+        bookmarkTapped: (String, String) -> Unit = { _, _ -> }
     ) = DefaultBrowserToolbarMenuController(
+        store = store,
         activity = activity,
         navController = navController,
         metrics = metrics,
         settings = settings,
         findInPageLauncher = findInPageLauncher,
         browserAnimator = browserAnimator,
-        customTabSession = customTabSession,
+        customTabSessionId = customTabSessionId,
         openInFenixIntent = openInFenixIntent,
         scope = scope,
         swipeRefresh = swipeRefreshLayout,
         tabCollectionStorage = tabCollectionStorage,
         bookmarkTapped = bookmarkTapped,
         readerModeController = readerModeController,
-        sessionManager = sessionManager,
         sessionFeature = sessionFeatureWrapper,
         topSitesStorage = topSitesStorage,
+        pinnedSiteStorage = pinnedSiteStorage,
         browserStore = browserStore
     ).apply {
         ioScope = scope

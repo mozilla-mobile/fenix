@@ -9,7 +9,7 @@ import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.lib.state.Action
 import mozilla.components.lib.state.State
 import mozilla.components.lib.state.Store
-import org.mozilla.fenix.library.SelectionHolder
+import org.mozilla.fenix.selection.SelectionHolder
 
 class BookmarkFragmentStore(
     initialState: BookmarkFragmentState
@@ -89,8 +89,8 @@ private fun bookmarkFragmentStateReducer(
             )
         }
         is BookmarkFragmentAction.Select -> state.copy(
-                mode = BookmarkFragmentState.Mode.Selecting(state.mode.selectedItems + action.item)
-            )
+            mode = BookmarkFragmentState.Mode.Selecting(state.mode.selectedItems + action.item)
+        )
         is BookmarkFragmentAction.Deselect -> {
             val items = state.mode.selectedItems - action.item
             val mode = if (items.isEmpty()) {

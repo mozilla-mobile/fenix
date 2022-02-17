@@ -50,7 +50,6 @@ class CustomizationFragment : PreferenceFragmentCompat() {
         bindAutoBatteryTheme()
         setupRadioGroups()
         setupToolbarCategory()
-        setupHomeCategory()
         setupGesturesCategory()
     }
 
@@ -116,16 +115,20 @@ class CustomizationFragment : PreferenceFragmentCompat() {
     private fun setupToolbarCategory() {
         val topPreference = requirePreference<RadioButtonPreference>(R.string.pref_key_toolbar_top)
         topPreference.onClickListener {
-            requireContext().components.analytics.metrics.track(Event.ToolbarPositionChanged(
-                Event.ToolbarPositionChanged.Position.TOP
-            ))
+            requireContext().components.analytics.metrics.track(
+                Event.ToolbarPositionChanged(
+                    Event.ToolbarPositionChanged.Position.TOP
+                )
+            )
         }
 
         val bottomPreference = requirePreference<RadioButtonPreference>(R.string.pref_key_toolbar_bottom)
         bottomPreference.onClickListener {
-            requireContext().components.analytics.metrics.track(Event.ToolbarPositionChanged(
-                Event.ToolbarPositionChanged.Position.BOTTOM
-            ))
+            requireContext().components.analytics.metrics.track(
+                Event.ToolbarPositionChanged(
+                    Event.ToolbarPositionChanged.Position.BOTTOM
+                )
+            )
         }
 
         val toolbarPosition = requireContext().settings().toolbarPosition
@@ -133,13 +136,6 @@ class CustomizationFragment : PreferenceFragmentCompat() {
         bottomPreference.setCheckedWithoutClickListener(toolbarPosition == ToolbarPosition.BOTTOM)
 
         addToRadioGroup(topPreference, bottomPreference)
-    }
-
-    private fun setupHomeCategory() {
-        requirePreference<SwitchPreference>(R.string.pref_key_enable_top_frecent_sites).apply {
-            isChecked = context.settings().showTopFrecentSites
-            onPreferenceChangeListener = SharedPreferenceUpdater()
-        }
     }
 
     private fun setupGesturesCategory() {

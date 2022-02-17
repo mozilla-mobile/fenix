@@ -99,7 +99,7 @@ class DeepLinkTest {
     @Test
     fun openSettings() {
         robot.openSettings {
-            verifyBasicsHeading()
+            verifyGeneralHeading()
             verifyAdvancedHeading()
         }
     }
@@ -108,8 +108,7 @@ class DeepLinkTest {
     fun openSettingsLogins() {
         robot.openSettingsLogins {
             verifyDefaultView()
-            verifyDefaultValueSyncLogins()
-            verifyDefaultValueAutofillLogins()
+            verifyDefaultValueAutofillLogins(InstrumentationRegistry.getInstrumentation().targetContext)
         }
     }
 

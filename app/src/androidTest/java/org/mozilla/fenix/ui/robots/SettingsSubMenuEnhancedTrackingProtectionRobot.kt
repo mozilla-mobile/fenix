@@ -10,9 +10,10 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
+import androidx.test.espresso.matcher.ViewMatchers.Visibility
 import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
 import androidx.test.espresso.matcher.ViewMatchers.hasSibling
-import androidx.test.espresso.matcher.ViewMatchers.Visibility
+import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withChild
 import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
@@ -24,7 +25,8 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import org.hamcrest.CoreMatchers.allOf
-import org.hamcrest.CoreMatchers.not
+import org.mozilla.fenix.helpers.TestHelper.appName
+import org.mozilla.fenix.helpers.TestHelper.scrollToElementByText
 import org.mozilla.fenix.helpers.assertIsChecked
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.isChecked
@@ -45,13 +47,11 @@ class SettingsSubMenuEnhancedTrackingProtectionRobot {
 
     fun verifyEnhancedTrackingProtectionTextWithSwitchWidget() = assertEnhancedTrackingProtectionTextWithSwitchWidget()
 
-    fun verifyEnhancedTrackingProtectionOptions() = assertEnhancedTrackingProtectionOptions()
+    fun verifyEnhancedTrackingProtectionOptionsEnabled(enabled: Boolean = true) = assertEnhancedTrackingProtectionOptionsState(enabled)
 
-    fun verifyEnhancedTrackingProtectionOptionsGrayedOut() = assertEnhancedTrackingProtectionOptionsGrayedOut()
+    fun verifyTrackingProtectionSwitchEnabled() = assertTrackingProtectionSwitchEnabled()
 
-    fun verifyEnhancedTrackingProtectionDefaults() = assertEnhancedTrackingProtectionDefaults()
-
-    fun clickEnhancedTrackingProtectionDefaults() = onView(withResourceName("switch_widget")).click()
+    fun switchEnhancedTrackingProtectionToggle() = onView(withResourceName("switch_widget")).click()
 
     fun verifyRadioButtonDefaults() = assertRadioButtonDefaults()
 
@@ -60,10 +60,14 @@ class SettingsSubMenuEnhancedTrackingProtectionRobot {
         verifyEnhancedTrackingProtectionHeaderDescription()
         verifyLearnMoreText()
         verifyEnhancedTrackingProtectionTextWithSwitchWidget()
-        verifyEnhancedTrackingProtectionDefaults()
+        verifyTrackingProtectionSwitchEnabled()
         verifyRadioButtonDefaults()
-        verifyEnhancedTrackingProtectionOptions()
+        verifyEnhancedTrackingProtectionOptionsEnabled()
     }
+
+    fun verifyCustomTrackingProtectionSettings() = assertCustomTrackingProtectionSettings()
+
+    fun selectTrackingProtectionOption(option: String) = onView(withText(option)).click()
 
     class Transition {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())!!
@@ -104,8 +108,12 @@ class SettingsSubMenuEnhancedTrackingProtectionRobot {
 }
 
 private fun assertNavigationToolBarHeader() {
-    onView(allOf(withParent(withId(org.mozilla.fenix.R.id.navigationToolbar)),
-        withText("Enhanced Tracking Protection")))
+    onView(
+        allOf(
+            withParent(withId(org.mozilla.fenix.R.id.navigationToolbar)),
+            withText("Enhanced Tracking Protection")
+        )
+    )
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
@@ -115,75 +123,56 @@ private fun assertEnhancedTrackingProtectionHeader() {
 }
 
 private fun assertEnhancedTrackingProtectionHeaderDescription() {
-    onView(allOf(withParent(withParentIndex(0)),
-        withText("Keep your data to yourself. Firefox Preview protects you from many of the most common trackers that follow what you do online.")))
+    onView(
+        allOf(
+            withParent(withParentIndex(0)),
+            withText("Keep your data to yourself. $appName protects you from many of the most common trackers that follow what you do online.")
+        )
+    )
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
 private fun assertLearnMoreText() {
-    onView(allOf(withParent(withParentIndex(0)),
-        withText("Learn more")))
+    onView(
+        allOf(
+            withParent(withParentIndex(0)),
+            withText("Learn more")
+        )
+    )
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
 private fun assertEnhancedTrackingProtectionTextWithSwitchWidget() {
-    onView(allOf(
+    onView(
+        allOf(
             withParentIndex(1),
-            withChild(withText("Enhanced Tracking Protection"))))
+            withChild(withText("Enhanced Tracking Protection"))
+        )
+    )
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
-private fun assertEnhancedTrackingProtectionOptions() {
+private fun assertEnhancedTrackingProtectionOptionsState(enabled: Boolean) {
     onView(withText("Standard (default)"))
-        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+        .check(matches(isEnabled(enabled)))
 
-    val stdText = "Blocks fewer trackers. Pages will load normally."
-    onView(withText(stdText))
-        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+    onView(withText(org.mozilla.fenix.R.string.preference_enhanced_tracking_protection_standard_description_4))
+        .check(matches(isEnabled(enabled)))
 
     onView(withText("Strict"))
-        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+        .check(matches(isEnabled(enabled)))
 
-    val strictText =
-        "Blocks more trackers, ads, and popups. Pages load faster, but some functionality might not work."
-    onView(withText(strictText))
-        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+    onView(withText(org.mozilla.fenix.R.string.preference_enhanced_tracking_protection_strict_description_3))
+        .check(matches(isEnabled(enabled)))
 
     onView(withText("Custom"))
-        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+        .check(matches(isEnabled(enabled)))
 
-    val customText =
-        "Choose which trackers and scripts to block."
-    onView(withText(customText))
-        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+    onView(withText(org.mozilla.fenix.R.string.preference_enhanced_tracking_protection_custom_description_2))
+        .check(matches(isEnabled(enabled)))
 }
 
-private fun assertEnhancedTrackingProtectionOptionsGrayedOut() {
-    onView(withText("Standard (default)"))
-        .check(matches(not(isEnabled(true))))
-
-    val stdText = "Blocks fewer trackers. Pages will load normally."
-    onView(withText(stdText))
-        .check(matches(not(isEnabled(true))))
-
-    onView(withText("Strict"))
-        .check(matches(not(isEnabled(true))))
-
-    val strictText =
-        "Blocks more trackers, ads, and popups. Pages load faster, but some functionality might not work."
-    onView(withText(strictText))
-        .check(matches(not(isEnabled(true))))
-
-    onView(withText("Custom"))
-        .check(matches(not(isEnabled(true))))
-
-    val customText =
-        "Choose which trackers and scripts to block."
-    onView(withText(customText))
-        .check(matches(not(isEnabled(true))))
-}
-
-private fun assertEnhancedTrackingProtectionDefaults() {
+private fun assertTrackingProtectionSwitchEnabled() {
     onView(withResourceName("switch_widget")).check(
         matches(
             isChecked(
@@ -194,7 +183,8 @@ private fun assertEnhancedTrackingProtectionDefaults() {
 }
 
 private fun assertRadioButtonDefaults() {
-    onView(withText("Strict")
+    onView(
+        withText("Strict")
     ).assertIsChecked(false)
 
     onView(
@@ -204,7 +194,8 @@ private fun assertRadioButtonDefaults() {
         )
     ).assertIsChecked(true)
 
-    onView(withText("Custom")
+    onView(
+        withText("Custom")
     ).assertIsChecked(false)
 }
 
@@ -218,3 +209,28 @@ private fun goBackButton() =
 
 private fun openExceptions() =
     onView(allOf(withText("Exceptions")))
+
+private fun assertCustomTrackingProtectionSettings() {
+    scrollToElementByText("Redirect Trackers")
+    cookiesCheckbox().check(matches(isDisplayed()))
+    cookiesDropDownMenuDefault().check(matches(isDisplayed()))
+    trackingContentCheckbox().check(matches(isDisplayed()))
+    trackingcontentDropDownDefault().check(matches(isDisplayed()))
+    cryptominersCheckbox().check(matches(isDisplayed()))
+    fingerprintersCheckbox().check(matches(isDisplayed()))
+    redirectTrackersCheckbox().check(matches(isDisplayed()))
+}
+
+private fun cookiesCheckbox() = onView(withText("Cookies"))
+
+private fun cookiesDropDownMenuDefault() = onView(withText("Cross-site and social media trackers"))
+
+private fun trackingContentCheckbox() = onView(withText("Tracking content"))
+
+private fun trackingcontentDropDownDefault() = onView(withText("In all tabs"))
+
+private fun cryptominersCheckbox() = onView(withText("Cryptominers"))
+
+private fun fingerprintersCheckbox() = onView(withText("Fingerprinters"))
+
+private fun redirectTrackersCheckbox() = onView(withText("Redirect Trackers"))

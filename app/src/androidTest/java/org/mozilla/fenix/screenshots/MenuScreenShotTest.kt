@@ -11,8 +11,6 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.rule.ActivityTestRule
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.Until
-import tools.fastlane.screengrab.Screengrab
-import tools.fastlane.screengrab.locale.LocaleTestRule
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
@@ -25,11 +23,13 @@ import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
-import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.bookmarksMenu
+import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.mDevice
 import org.mozilla.fenix.ui.robots.navigationToolbar
 import org.mozilla.fenix.ui.robots.swipeToBottom
+import tools.fastlane.screengrab.Screengrab
+import tools.fastlane.screengrab.locale.LocaleTestRule
 
 class MenuScreenShotTest : ScreenshotTest() {
     private lateinit var mockWebServer: MockWebServer
@@ -68,47 +68,38 @@ class MenuScreenShotTest : ScreenshotTest() {
         }.openThreeDotMenu {
         }.openSettings {
             Screengrab.screenshot("SettingsRobot_settings-menu")
-            settingsAccountPreferences()
+        }.openTurnOnSyncMenu {
             Screengrab.screenshot("AccountSettingsRobot_settings-account")
-            mDevice.pressBack()
-
-            settingsSearch()
+        }.goBack {
+        }.openSearchSubMenu {
             Screengrab.screenshot("SettingsSubMenuSearchRobot_settings-search")
-            mDevice.pressBack()
-
-            settingsTheme()
+        }.goBack {
+        }.openCustomizeSubMenu {
             Screengrab.screenshot("SettingsSubMenuThemeRobot_settings-theme")
-            mDevice.pressBack()
-
-            settingsAccessibility()
+        }.goBack {
+        }.openAccessibilitySubMenu {
             Screengrab.screenshot("SettingsSubMenuAccessibilityRobot_settings-accessibility")
-            mDevice.pressBack()
-
-            settingsLanguage()
+        }.goBack {
+        }.openLanguageSubMenu {
             Screengrab.screenshot("SettingsSubMenuAccessibilityRobot_settings-language")
-            mDevice.pressBack()
-
-            settingDefaultBrowser()
+        }.goBack {
+            // From about here we need to scroll up to ensure all settings options are visible.
+        }.openSetDefaultBrowserSubMenu {
             Screengrab.screenshot("SettingsSubMenuDefaultBrowserRobot_settings-default-browser")
-            mDevice.pressBack()
-
+        }.goBack {
             // Disabled for Pixel 2
-            // settingsTP()
-            // Screengrab.screenshot("settings-enhanced-tp")
-            // mDevice.pressBack()
-
-            loginsAndPassword()
+            // }.openEnhancedTrackingProtectionSubMenu {
+            //     Screengrab.screenshot("settings-enhanced-tp")
+            // }.goBack {
+        }.openLoginsAndPasswordSubMenu {
             Screengrab.screenshot("SettingsSubMenuLoginsAndPasswords-settings-logins-passwords")
-            mDevice.pressBack()
-
+        }.goBack {
             swipeToBottom()
             Screengrab.screenshot("SettingsRobot_settings-scroll-to-bottom")
-
-            settingsTelemetry()
+        }.openSettingsSubMenuDataCollection {
             Screengrab.screenshot("settings-telemetry")
-            mDevice.pressBack()
-
-            addOns()
+        }.goBack {
+        }.openAddonsManagerMenu {
             Screengrab.screenshot("settings-addons")
         }
     }
@@ -142,8 +133,8 @@ class MenuScreenShotTest : ScreenshotTest() {
         editBookmarkFolder()
         Screengrab.screenshot("ThreeDotMenuBookmarksRobot_edit-bookmark-folder-menu")
         // It may be needed to wait here to have the screenshot
-        mDevice.pressBack()
         bookmarksMenu {
+            navigateUp()
         }.openThreeDotMenu("test") {
             deleteBookmarkFolder()
             Screengrab.screenshot("ThreeDotMenuBookmarksRobot_delete-bookmark-folder-menu")
@@ -185,7 +176,7 @@ class MenuScreenShotTest : ScreenshotTest() {
     @Test
     fun saveLoginPromptTest() {
         val saveLoginTest =
-                TestAssetHelper.getSaveLoginAsset(mockWebServer)
+            TestAssetHelper.getSaveLoginAsset(mockWebServer)
         navigationToolbar {
         }.enterURLAndEnterToBrowser(saveLoginTest.url) {
             verifySaveLoginPromptIsShownNotSave()
@@ -202,8 +193,6 @@ fun openBookmarksThreeDotMenu() = onView(withText(R.string.library_bookmarks)).c
 fun editBookmarkFolder() = onView(withText(R.string.bookmark_menu_edit_button)).click()
 
 fun deleteBookmarkFolder() = onView(withText(R.string.bookmark_menu_delete_button)).click()
-
-fun saveToCollectionButton() = onView(withId(R.id.save_tab_group_button)).click()
 
 fun tapOnTabCounter() = onView(withId(R.id.counter_text)).click()
 

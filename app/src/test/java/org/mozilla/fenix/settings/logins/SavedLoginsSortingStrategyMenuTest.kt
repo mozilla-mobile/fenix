@@ -20,7 +20,6 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.R
-import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.settings.logins.SavedLoginsSortingStrategyMenu.Item
 import org.mozilla.fenix.settings.logins.interactor.SavedLoginsInteractor
@@ -73,9 +72,7 @@ class SavedLoginsSortingStrategyMenuTest {
 
         name.onClick()
         verify {
-            interactor.onSortingStrategyChanged(
-                SortingStrategy.Alphabetically(context.components.publicSuffixList)
-            )
+            interactor.onSortingStrategyChanged(SortingStrategy.Alphabetically)
         }
 
         lastUsed.onClick()

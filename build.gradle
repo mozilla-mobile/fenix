@@ -13,6 +13,7 @@ buildscript {
                 includeGroupByRegex RepoMatching.mozilla
             }
         }
+
         maven {
             name "Mozilla"
             url "https://maven.mozilla.org/maven2"
@@ -21,9 +22,11 @@ buildscript {
                 includeGroupByRegex RepoMatching.mozilla
             }
         }
+
         if (project.hasProperty("googleRepo")) {
             maven {
                 name "Google"
+                allowInsecureProtocol true // Local Nexus in CI uses HTTP
                 url project.property("googleRepo")
             }
         } else {
@@ -33,18 +36,20 @@ buildscript {
                     includeGroupByRegex RepoMatching.androidx
                     includeGroupByRegex RepoMatching.comGoogleAndroid
                     includeGroupByRegex RepoMatching.comGoogleFirebase
+                    includeGroupByRegex RepoMatching.comGoogleTesting
                     includeGroupByRegex RepoMatching.comAndroid
                 }
             }
         }
 
-        if (project.hasProperty("jcenterRepo")) {
+        if (project.hasProperty("centralRepo")) {
             maven {
-                name "BintrayJCenter"
-                url project.property("jcenterRepo")
+                name "MavenCentral"
+                url project.property("centralRepo")
+                allowInsecureProtocol true // Local Nexus in CI uses HTTP
             }
         } else {
-            jcenter() {
+            mavenCentral() {
                 content {
                     // Improve security: don't search deps with known repos.
                     excludeGroupByRegex RepoMatching.mozilla
@@ -60,11 +65,12 @@ buildscript {
     dependencies {
         classpath Deps.tools_androidgradle
         classpath Deps.tools_kotlingradle
+        classpath Deps.tools_benchmarkgradle
         classpath Deps.androidx_safeargs
-        classpath Deps.allopen
         classpath Deps.osslicenses_plugin
 
         classpath "org.mozilla.components:tooling-glean-gradle:${Versions.mozilla_android_components}"
+        classpath "org.mozilla.components:tooling-nimbus-gradle:${Versions.mozilla_android_components}"
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -72,7 +78,7 @@ buildscript {
 }
 
 plugins {
-    id("io.gitlab.arturbosch.detekt").version("1.9.1")
+    id("io.gitlab.arturbosch.detekt").version("1.17.1")
 }
 
 allprojects {
@@ -86,6 +92,7 @@ allprojects {
                 includeGroupByRegex RepoMatching.mozilla
             }
         }
+
         maven {
             name "Mozilla"
             url "https://maven.mozilla.org/maven2"
@@ -94,10 +101,12 @@ allprojects {
                 includeGroupByRegex RepoMatching.mozilla
             }
         }
+
         if (project.hasProperty("googleRepo")) {
             maven {
                 name "Google"
                 url project.property("googleRepo")
+                allowInsecureProtocol true // Local Nexus in CI uses HTTP
             }
         } else {
             google() {
@@ -110,13 +119,15 @@ allprojects {
                 }
             }
         }
-        if (project.hasProperty("jcenterRepo")) {
+
+        if (project.hasProperty("centralRepo")) {
             maven {
-                name "BintrayJCenter"
-                url project.property("jcenterRepo")
+                name "MavenCentral"
+                url project.property("centralRepo")
+                allowInsecureProtocol true // Local Nexus in CI uses HTTP
             }
         } else {
-            jcenter() {
+            mavenCentral() {
                 content {
                     // Improve security: don't search deps with known repos.
                     excludeGroupByRegex RepoMatching.mozilla
@@ -133,7 +144,7 @@ allprojects {
         kotlinOptions.jvmTarget = "1.8"
         kotlinOptions.allWarningsAsErrors = true
         kotlinOptions.freeCompilerArgs += [
-            "-Xuse-experimental=kotlin.Experimental"
+            "-Xopt-in=kotlin.RequiresOptIn"
         ]
     }
 }
@@ -144,7 +155,7 @@ tasks.register('clean', Delete) {
 
 detekt {
     // The version number is duplicated, please refer to plugins block for more details
-    version = "1.9.1"
+    version = "1.17.1"
     input = files("$projectDir/app/src")
     config = files("$projectDir/config/detekt.yml")
 
@@ -164,7 +175,12 @@ configurations {
 }
 
 dependencies {
-    ktlint "com.pinterest:ktlint:0.34.2"
+    ktlint("com.pinterest:ktlint:0.41.0") {
+        attributes {
+            attribute(Bundling.BUNDLING_ATTRIBUTE, getObjects().named(Bundling, Bundling.EXTERNAL))
+        }
+    }
+
     detekt project(":mozilla-detekt-rules")
     detekt "io.gitlab.arturbosch.detekt:detekt-cli:${Versions.detekt}"
 }
@@ -174,7 +190,14 @@ tasks.register('ktlint', JavaExec) {
     description = "Check Kotlin code style."
     classpath = configurations.ktlint
     main = "com.pinterest.ktlint.Main"
-    args "app/src/**/*.kt"
+    args "app/src/**/*.kt", "!**/build/**/*.kt"
+}
+
+task ktlintFormat(type: JavaExec, group: "formatting") {
+    description = "Fix Kotlin code style deviations."
+    classpath = configurations.ktlint
+    main = "com.pinterest.ktlint.Main"
+    args "-F", "app/src/**/*.kt", "!**/build/**/*.kt"
 }
 
 tasks.withType(io.gitlab.arturbosch.detekt.Detekt.class).configureEach {

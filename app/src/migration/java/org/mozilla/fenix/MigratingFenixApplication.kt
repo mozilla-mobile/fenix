@@ -22,16 +22,18 @@ class MigratingFenixApplication : FenixApplication() {
         }
     }
 
+    val fxaExpectChinaServers = Config.channel.isMozillaOnline
+
     val migrator by lazy {
         FennecMigrator.Builder(this, this.components.analytics.crashReporter)
-            .migrateOpenTabs(this.components.core.sessionManager)
+            .migrateOpenTabs(this.components.useCases.tabsUseCases)
             .migrateHistory(this.components.core.lazyHistoryStorage)
             .migrateBookmarks(
                 this.components.core.lazyBookmarksStorage,
                 this.components.core.pinnedSiteStorage
             )
             .migrateLogins(this.components.core.lazyPasswordsStorage)
-            .migrateFxa(lazy { this.components.backgroundServices.accountManager })
+            .migrateFxa(lazy { this.components.backgroundServices.accountManager }, fxaExpectChinaServers)
             .migrateAddons(
                 this.components.core.engine,
                 this.components.addonCollectionProvider,

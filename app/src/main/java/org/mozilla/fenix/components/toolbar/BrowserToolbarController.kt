@@ -5,24 +5,29 @@
 package org.mozilla.fenix.components.toolbar
 
 import androidx.navigation.NavController
-import mozilla.components.browser.session.Session
-import mozilla.components.browser.session.SessionManager
 import mozilla.components.browser.state.action.ContentAction
+import mozilla.components.browser.state.selector.findCustomTabOrSelectedTab
+import mozilla.components.browser.state.selector.getNormalOrPrivateTabs
+import mozilla.components.browser.state.selector.selectedTab
+import mozilla.components.browser.state.state.SessionState
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.EngineView
+import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.support.ktx.kotlin.isUrl
 import mozilla.components.ui.tabcounter.TabCounterMenu
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.browser.BrowserAnimator
 import org.mozilla.fenix.browser.BrowserAnimator.Companion.getToolbarNavOptions
 import org.mozilla.fenix.browser.BrowserFragmentDirections
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.readermode.ReaderModeController
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
+import org.mozilla.fenix.components.toolbar.interactor.BrowserToolbarInteractor
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
-import org.mozilla.fenix.ext.sessionsOfType
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.HomeScreenViewModel
 
@@ -37,24 +42,30 @@ interface BrowserToolbarController {
     fun handleTabCounterClick()
     fun handleTabCounterItemInteraction(item: TabCounterMenu.Item)
     fun handleReaderModePressed(enabled: Boolean)
+
+    /**
+     * @see [BrowserToolbarInteractor.onHomeButtonClicked]
+     */
+    fun handleHomeButtonClick()
 }
 
 class DefaultBrowserToolbarController(
     private val store: BrowserStore,
+    private val tabsUseCases: TabsUseCases,
     private val activity: HomeActivity,
     private val navController: NavController,
     private val metrics: MetricController,
     private val readerModeController: ReaderModeController,
-    private val sessionManager: SessionManager,
     private val engineView: EngineView,
     private val homeViewModel: HomeScreenViewModel,
-    private val customTabSession: Session?,
+    private val customTabSessionId: String?,
+    private val browserAnimator: BrowserAnimator,
     private val onTabCounterClicked: () -> Unit,
-    private val onCloseTab: (Session) -> Unit
+    private val onCloseTab: (SessionState) -> Unit
 ) : BrowserToolbarController {
 
     private val currentSession
-        get() = customTabSession ?: sessionManager.selectedSession
+        get() = store.state.findCustomTabOrSelectedTab(customTabSessionId)
 
     override fun handleToolbarPaste(text: String) {
         navController.nav(
@@ -77,19 +88,36 @@ class DefaultBrowserToolbarController(
         store.updateSearchTermsOfSelectedSession(text)
         activity.components.useCases.searchUseCases.defaultSearch.invoke(
             text,
-            sessionId = sessionManager.selectedSession?.id
+            sessionId = store.state.selectedTabId
         )
     }
 
     override fun handleToolbarClick() {
         metrics.track(Event.SearchBarTapped(Event.SearchBarTapped.Source.BROWSER))
-        navController.nav(
-            R.id.browserFragment,
-            BrowserFragmentDirections.actionGlobalSearchDialog(
-                currentSession?.id
-            ),
-            getToolbarNavOptions(activity)
-        )
+        // If we're displaying awesomebar search results, Home screen will not be visible (it's
+        // covered up with the search results). So, skip the navigation event in that case.
+        // If we don't, there's a visual flickr as we navigate to Home and then display search
+        // results on top it.
+        if (FeatureFlags.showHomeBehindSearch && currentSession?.content?.searchTerms.isNullOrBlank()) {
+            browserAnimator.captureEngineViewAndDrawStatically {
+                navController.navigate(
+                    BrowserFragmentDirections.actionGlobalHome()
+                )
+                navController.navigate(
+                    BrowserFragmentDirections.actionGlobalSearchDialog(
+                        currentSession?.id
+                    ),
+                    getToolbarNavOptions(activity)
+                )
+            }
+        } else {
+            navController.navigate(
+                BrowserFragmentDirections.actionGlobalSearchDialog(
+                    currentSession?.id
+                ),
+                getToolbarNavOptions(activity)
+            )
+        }
     }
 
     override fun handleTabCounterClick() {
@@ -109,39 +137,26 @@ class DefaultBrowserToolbarController(
     override fun handleTabCounterItemInteraction(item: TabCounterMenu.Item) {
         when (item) {
             is TabCounterMenu.Item.CloseTab -> {
-                metrics.track(
-                    Event.TabCounterMenuItemTapped(Event.TabCounterMenuItemTapped.Item.CLOSE_TAB)
-                )
-                sessionManager.selectedSession?.let {
+                store.state.selectedTab?.let {
                     // When closing the last tab we must show the undo snackbar in the home fragment
-                    if (sessionManager.sessionsOfType(it.private).count() == 1) {
+                    if (store.state.getNormalOrPrivateTabs(it.content.private).count() == 1) {
                         homeViewModel.sessionToDelete = it.id
                         navController.navigate(
                             BrowserFragmentDirections.actionGlobalHome()
                         )
                     } else {
                         onCloseTab.invoke(it)
-                        // The removeTab use case does not currently select a parent session, so
-                        // we are using sessionManager.remove
-                        sessionManager.remove(it, selectParentIfExists = true)
+                        tabsUseCases.removeTab(it.id, selectParentIfExists = true)
                     }
                 }
             }
             is TabCounterMenu.Item.NewTab -> {
-                metrics.track(
-                    Event.TabCounterMenuItemTapped(Event.TabCounterMenuItemTapped.Item.NEW_TAB)
-                )
                 activity.browsingModeManager.mode = BrowsingMode.Normal
                 navController.navigate(
                     BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = true)
                 )
             }
             is TabCounterMenu.Item.NewPrivateTab -> {
-                metrics.track(
-                    Event.TabCounterMenuItemTapped(
-                        Event.TabCounterMenuItemTapped.Item.NEW_PRIVATE_TAB
-                    )
-                )
                 activity.browsingModeManager.mode = BrowsingMode.Private
                 navController.navigate(
                     BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = true)
@@ -156,6 +171,16 @@ class DefaultBrowserToolbarController(
         }
     }
 
+    override fun handleHomeButtonClick() {
+        metrics.track(Event.BrowserToolbarHomeButtonClicked)
+
+        browserAnimator.captureEngineViewAndDrawStatically {
+            navController.navigate(
+                BrowserFragmentDirections.actionGlobalHome()
+            )
+        }
+    }
+
     companion object {
         internal const val TELEMETRY_BROWSER_IDENTIFIER = "browserMenu"
     }
@@ -166,8 +191,10 @@ private fun BrowserStore.updateSearchTermsOfSelectedSession(
 ) {
     val selectedTabId = state.selectedTabId ?: return
 
-    dispatch(ContentAction.UpdateSearchTermsAction(
-        selectedTabId,
-        searchTerms
-    ))
+    dispatch(
+        ContentAction.UpdateSearchTermsAction(
+            selectedTabId,
+            searchTerms
+        )
+    )
 }

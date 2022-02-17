@@ -7,61 +7,27 @@ package org.mozilla.fenix.library.recentlyclosed
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.component_recently_closed.*
-import mozilla.components.browser.state.state.ClosedTab
+import androidx.recyclerview.widget.SimpleItemAnimator
+import mozilla.components.browser.state.state.recover.TabState
 import org.mozilla.fenix.R
+import org.mozilla.fenix.databinding.ComponentRecentlyClosedBinding
+import org.mozilla.fenix.library.LibraryPageView
+import org.mozilla.fenix.selection.SelectionInteractor
 
-interface RecentlyClosedInteractor {
-    /**
-     * Called when an item is tapped to restore it.
-     *
-     * @param item the tapped item to restore.
-     */
-    fun restore(item: ClosedTab)
-
+interface RecentlyClosedInteractor : SelectionInteractor<TabState> {
     /**
      * Called when the view more history option is tapped.
      */
     fun onNavigateToHistory()
 
     /**
-     * Copies the URL of a recently closed tab item to the copy-paste buffer.
+     * Called when recently closed tab is selected for deletion.
      *
-     * @param item the recently closed tab item to copy the URL from
+     * @param tab the recently closed tab to delete.
      */
-    fun onCopyPressed(item: ClosedTab)
-
-    /**
-     * Opens the share sheet for a recently closed tab item.
-     *
-     * @param item the recently closed tab item to share
-     */
-    fun onSharePressed(item: ClosedTab)
-
-    /**
-     * Opens a recently closed tab item in a new tab.
-     *
-     * @param item the recently closed tab item to open in a new tab
-     */
-    fun onOpenInNormalTab(item: ClosedTab)
-
-    /**
-     * Opens a recently closed tab item in a private tab.
-     *
-     * @param item the recently closed tab item to open in a private tab
-     */
-    fun onOpenInPrivateTab(item: ClosedTab)
-
-    /**
-     * Deletes one recently closed tab item.
-     *
-     * @param item the recently closed tab item to delete.
-     */
-    fun onDeleteOne(tab: ClosedTab)
+    fun onDelete(tab: TabState)
 }
 
 /**
@@ -70,21 +36,22 @@ interface RecentlyClosedInteractor {
 class RecentlyClosedFragmentView(
     container: ViewGroup,
     private val interactor: RecentlyClosedFragmentInteractor
-) : LayoutContainer {
+) : LibraryPageView(container) {
 
-    override val containerView: ConstraintLayout = LayoutInflater.from(container.context)
-        .inflate(R.layout.component_recently_closed, container, true)
-        .findViewById(R.id.recently_closed_wrapper)
+    private val binding = ComponentRecentlyClosedBinding.inflate(
+        LayoutInflater.from(container.context), container, true
+    )
 
     private val recentlyClosedAdapter: RecentlyClosedAdapter = RecentlyClosedAdapter(interactor)
 
     init {
-        recently_closed_list.apply {
+        binding.recentlyClosedList.apply {
             layoutManager = LinearLayoutManager(containerView.context)
             adapter = recentlyClosedAdapter
+            (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
         }
 
-        view_more_history.apply {
+        binding.viewMoreHistory.apply {
             titleView.text =
                 containerView.context.getString(R.string.recently_closed_show_full_history)
             urlView.isVisible = false
@@ -102,9 +69,20 @@ class RecentlyClosedFragmentView(
         }
     }
 
-    fun update(items: List<ClosedTab>) {
-        recently_closed_empty_view.isVisible = items.isEmpty()
-        recently_closed_list.isVisible = items.isNotEmpty()
-        recentlyClosedAdapter.submitList(items)
+    fun update(state: RecentlyClosedFragmentState) {
+        state.apply {
+            binding.recentlyClosedEmptyView.isVisible = items.isEmpty()
+            binding.recentlyClosedList.isVisible = items.isNotEmpty()
+
+            recentlyClosedAdapter.updateData(items, selectedTabs)
+
+            if (selectedTabs.isEmpty()) {
+                setUiForNormalMode(context.getString(R.string.library_recently_closed_tabs))
+            } else {
+                setUiForSelectingMode(
+                    context.getString(R.string.history_multi_select_title, selectedTabs.size)
+                )
+            }
+        }
     }
 }

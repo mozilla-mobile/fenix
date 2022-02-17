@@ -14,30 +14,40 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.whenStarted
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import kotlinx.android.synthetic.main.fragment_tracking_protection.view.*
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
-import mozilla.components.browser.session.Session
-import mozilla.components.concept.engine.content.blocking.Tracker
+import mozilla.components.browser.state.selector.findTabOrCustomTab
+import mozilla.components.browser.state.state.SessionState
+import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.feature.session.TrackingProtectionUseCases
+import mozilla.components.lib.state.ext.consumeFlow
 import mozilla.components.lib.state.ext.observe
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.log.logger.Logger
+import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifAnyChanged
+import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
+import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.databinding.FragmentTrackingProtectionBinding
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
+import org.mozilla.fenix.settings.SupportUtils
 
+@Suppress("TooManyFunctions")
 class TrackingProtectionPanelDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
 
     private val args by navArgs<TrackingProtectionPanelDialogFragmentArgs>()
@@ -54,7 +64,8 @@ class TrackingProtectionPanelDialogFragment : AppCompatDialogFragment(), UserInt
         )
     }
 
-    private lateinit var trackingProtectionStore: TrackingProtectionStore
+    @VisibleForTesting
+    internal lateinit var trackingProtectionStore: TrackingProtectionStore
     private lateinit var trackingProtectionView: TrackingProtectionPanelView
     private lateinit var trackingProtectionInteractor: TrackingProtectionPanelInteractor
     private lateinit var trackingProtectionUseCases: TrackingProtectionUseCases
@@ -68,20 +79,17 @@ class TrackingProtectionPanelDialogFragment : AppCompatDialogFragment(), UserInt
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
+        val store = requireComponents.core.store
         val view = inflateRootView(container)
-        val session = requireComponents.core.sessionManager.findSessionById(args.sessionId)
-
-        @Suppress("DEPRECATION")
-        // TODO Use browser store instead of session observer: https://github.com/mozilla-mobile/fenix/issues/16944
-        session?.register(sessionObserver, view = view)
+        val tab = store.state.findTabOrCustomTab(provideCurrentTabId())
 
         trackingProtectionStore = StoreProvider.get(this) {
             TrackingProtectionStore(
                 TrackingProtectionState(
-                    session,
-                    args.url,
-                    args.trackingProtectionEnabled,
+                    tab = tab,
+                    url = args.url,
+                    isTrackingProtectionEnabled = args.trackingProtectionEnabled,
                     listTrackers = listOf(),
                     mode = TrackingProtectionState.Mode.Normal,
                     lastAccessedCategory = ""
@@ -89,33 +97,27 @@ class TrackingProtectionPanelDialogFragment : AppCompatDialogFragment(), UserInt
             )
         }
         trackingProtectionInteractor = TrackingProtectionPanelInteractor(
-            trackingProtectionStore,
-            ::toggleTrackingProtection,
-            ::openTrackingProtectionSettings
+            context = requireContext(),
+            fragment = this,
+            store = trackingProtectionStore,
+            navController = { findNavController() },
+            openTrackingProtectionSettings = ::openTrackingProtectionSettings,
+            openLearnMoreLink = ::handleLearnMoreClicked,
+            sitePermissions = args.sitePermissions,
+            gravity = args.gravity,
+            getCurrentTab = ::getCurrentTab
         )
+        val binding = FragmentTrackingProtectionBinding.bind(view)
         trackingProtectionView =
-            TrackingProtectionPanelView(view.fragment_tp, trackingProtectionInteractor)
-        session?.let { updateTrackers(it) }
+            TrackingProtectionPanelView(binding.fragmentTp, trackingProtectionInteractor)
+        tab?.let { updateTrackers(it) }
         return view
     }
 
-    private val sessionObserver = object : Session.Observer {
-        override fun onUrlChanged(session: Session, url: String) {
-            trackingProtectionStore.dispatch(TrackingProtectionAction.UrlChange(url))
-        }
-
-        override fun onTrackerBlocked(session: Session, tracker: Tracker, all: List<Tracker>) {
-            updateTrackers(session)
-        }
-
-        override fun onTrackerLoaded(session: Session, tracker: Tracker, all: List<Tracker>) {
-            updateTrackers(session)
-        }
-    }
-
-    private fun updateTrackers(session: Session) {
+    @VisibleForTesting
+    internal fun updateTrackers(tab: SessionState) {
         trackingProtectionUseCases.fetchTrackingLogs(
-            session.id,
+            tab.id,
             onSuccess = {
                 trackingProtectionStore.dispatch(TrackingProtectionAction.TrackerLogChange(it))
             },
@@ -127,7 +129,10 @@ class TrackingProtectionPanelDialogFragment : AppCompatDialogFragment(), UserInt
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val store = requireComponents.core.store
 
+        observeUrlChange(store)
+        observeTrackersChange(store)
         trackingProtectionStore.observe(view) {
             viewLifecycleOwner.lifecycleScope.launch {
                 whenStarted {
@@ -145,23 +150,14 @@ class TrackingProtectionPanelDialogFragment : AppCompatDialogFragment(), UserInt
         )
     }
 
-    private fun toggleTrackingProtection(isEnabled: Boolean) {
-        context?.let { context ->
-            val session = context.components.core.sessionManager.findSessionById(args.sessionId)
-            session?.let {
-                if (isEnabled) {
-                    trackingProtectionUseCases.removeException(it.id)
-                } else {
-                    context.metrics.track(Event.TrackingProtectionException)
-                    trackingProtectionUseCases.addException(it.id)
-                }
-
-                with(context.components) {
-                    useCases.sessionUseCases.reload.invoke(session)
-                }
-            }
-        }
-        trackingProtectionStore.dispatch(TrackingProtectionAction.TrackerBlockingChanged(isEnabled))
+    private fun handleLearnMoreClicked() {
+        (activity as HomeActivity).openToBrowserAndLoad(
+            searchTermOrURL = SupportUtils.getGenericSumoURLForTopic(
+                SupportUtils.SumoTopic.SMARTBLOCK
+            ),
+            newTab = true,
+            from = BrowserDirection.FromTrackingProtectionDialog
+        )
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -210,5 +206,40 @@ class TrackingProtectionPanelDialogFragment : AppCompatDialogFragment(), UserInt
             dismiss()
         }
         return true
+    }
+
+    @VisibleForTesting
+    internal fun observeUrlChange(store: BrowserStore) {
+        consumeFlow(store) { flow ->
+            flow.mapNotNull { state ->
+                state.findTabOrCustomTab(provideCurrentTabId())
+            }.ifChanged { tab -> tab.content.url }
+                .collect {
+                    trackingProtectionStore.dispatch(TrackingProtectionAction.UrlChange(it.content.url))
+                }
+        }
+    }
+
+    @VisibleForTesting
+    internal fun provideCurrentTabId(): String = args.sessionId
+
+    @VisibleForTesting
+    internal fun observeTrackersChange(store: BrowserStore) {
+        consumeFlow(store) { flow ->
+            flow.mapNotNull { state ->
+                state.findTabOrCustomTab(provideCurrentTabId())
+            }.ifAnyChanged { tab ->
+                arrayOf(
+                    tab.trackingProtection.blockedTrackers,
+                    tab.trackingProtection.loadedTrackers
+                )
+            }.collect {
+                updateTrackers(it)
+            }
+        }
+    }
+
+    private fun getCurrentTab(): SessionState? {
+        return requireComponents.core.store.state.findTabOrCustomTab(args.sessionId)
     }
 }

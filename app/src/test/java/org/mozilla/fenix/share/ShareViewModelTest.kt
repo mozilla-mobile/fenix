@@ -19,7 +19,6 @@ import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.spyk
 import io.mockk.verify
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.runBlockingTest
@@ -39,9 +38,9 @@ import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.share.ShareViewModel.Companion.RECENT_APPS_LIMIT
 import org.mozilla.fenix.share.listadapters.AppShareOption
 import org.mozilla.fenix.share.listadapters.SyncShareOption
+import org.robolectric.shadows.ShadowLooper
 
 @RunWith(FenixRobolectricTestRunner::class)
-@ExperimentalCoroutinesApi
 class ShareViewModelTest {
 
     private val packageName = "org.mozilla.fenix"
@@ -68,8 +67,11 @@ class ShareViewModelTest {
         every { application.getSystemService<ConnectivityManager>() } returns connectivityManager
         every { application.components.backgroundServices.accountManager } returns fxaAccountManager
 
-        viewModel = spyk(ShareViewModel(application))
-        viewModel.ioDispatcher = testIoDispatcher
+        viewModel = spyk(
+            ShareViewModel(application).apply {
+                this.ioDispatcher = testIoDispatcher
+            }
+        )
     }
 
     @After
@@ -84,7 +86,7 @@ class ShareViewModelTest {
     }
 
     @Test
-    fun `test loadDevicesAndApps`() = runBlockingTest {
+    fun `loadDevicesAndApps`() = runBlockingTest {
         val appOptions = listOf(
             AppShareOption("Label", mockk(), "Package", "Activity")
         )
@@ -99,6 +101,7 @@ class ShareViewModelTest {
         viewModel.recentAppsStorage = storage
 
         viewModel.loadDevicesAndApps()
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
 
         verify {
             connectivityManager.registerNetworkCallback(
@@ -106,6 +109,7 @@ class ShareViewModelTest {
                 any<ConnectivityManager.NetworkCallback>()
             )
         }
+
         assertEquals(1, viewModel.recentAppsList.asFlow().first().size)
         assertEquals(0, viewModel.appsList.asFlow().first().size)
     }

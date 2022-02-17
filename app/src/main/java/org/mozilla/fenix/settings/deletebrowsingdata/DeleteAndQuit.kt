@@ -24,6 +24,7 @@ fun deleteAndQuit(activity: Activity, coroutineScope: CoroutineScope, snackbar: 
         val settings = activity.settings()
         val controller = DefaultDeleteBrowsingDataController(
             activity.components.useCases.tabsUseCases.removeAllTabs,
+            activity.components.useCases.downloadUseCases.removeAllDownloads,
             activity.components.core.historyStorage,
             activity.components.core.permissionStorage,
             activity.components.core.store,
@@ -48,7 +49,7 @@ fun deleteAndQuit(activity: Activity, coroutineScope: CoroutineScope, snackbar: 
 
         snackbar?.dismiss()
 
-        activity.finish()
+        activity.finishAndRemoveTask()
     }
 }
 
@@ -61,5 +62,6 @@ private suspend fun DeleteBrowsingDataController.deleteType(type: DeleteBrowsing
         DeleteBrowsingDataOnQuitType.PERMISSIONS -> withContext(IO) {
             deleteSitePermissions()
         }
+        DeleteBrowsingDataOnQuitType.DOWNLOADS -> deleteDownloads()
     }
 }

@@ -6,7 +6,11 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28"
+        tools:ignore="ScopedStorage"
+        />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.CAMERA" />
@@ -18,12 +22,16 @@
     <!-- Needed to prompt the user to give permission to install a downloaded apk -->
     <uses-permission-sdk-23 android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
+    <!-- Needed to interact with all apps installed on a device -->
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
+        tools:ignore="QueryAllPackagesPermission" />
+
     <application
         android:name=".FenixApplication"
         android:allowBackup="false"
+        android:extractNativeLibs="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/NormalTheme"
@@ -119,6 +127,9 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".home.mozonline.PrivacyContentDisplayActivity"
+                android:exported="false"/>
+
         <activity
             android:name=".customtabs.ExternalAppBrowserActivity"
             android:autoRemoveFromRecents="false"
@@ -139,6 +150,15 @@
             android:exported="true"
             android:excludeFromRecents="true" >
 
+            <!--
+              Respond to `Intent.makeMainSelectorActivity(Intent.ACTION_MAIN, Intent.CATEGORY_APP_BROWSER)`
+            -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.APP_BROWSER"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -147,6 +167,15 @@
                 <category android:name="mozilla.components.pwa.category.SHORTCUT" />
                 <data android:scheme="http" />
                 <data android:scheme="https" />
+            </intent-filter>
+
+            <!--Exposed specific deep links for third-party apps to open wallpaper settings.-->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="${deepLinkScheme}"
+                    android:host="settings_wallpapers"/>
             </intent-filter>
 
             <intent-filter>
@@ -229,8 +258,29 @@
         <activity android:name=".settings.account.AuthIntentReceiverActivity"
             android:exported="false" />
 
-        <service android:name=".media.MediaService"
-            android:exported="false" />
+        <activity android:name=".autofill.AutofillUnlockActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.Translucent" />
+
+        <activity android:name=".autofill.AutofillConfirmActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.Translucent" />
+
+        <activity android:name=".autofill.AutofillSearchActivity"
+            android:exported="false"
+            android:theme="@style/DialogActivityTheme" />
+
+        <service
+            android:name=".autofill.AutofillService"
+            android:label="@string/app_name"
+            android:permission="android.permission.BIND_AUTOFILL_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.autofill.AutofillService"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.autofill"
+                android:resource="@xml/autofill_configuration" />
+        </service>
 
         <service android:name=".media.MediaSessionService"
             android:exported="false" />
@@ -278,9 +328,15 @@
             android:value="true" />
         <!-- Removes the default Workmanager  initialization so that we can use on-demand initializer. -->
         <provider
-            android:name="androidx.work.impl.WorkManagerInitializer"
-            android:authorities="${applicationId}.workmanager-init"
-            tools:node="remove" />
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge" >
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+        </provider>
     </application>
 
 </manifest>

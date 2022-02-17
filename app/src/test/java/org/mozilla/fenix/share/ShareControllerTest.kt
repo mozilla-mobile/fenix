@@ -18,9 +18,7 @@ import io.mockk.slot
 import io.mockk.spyk
 import io.mockk.verify
 import io.mockk.verifyOrder
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.TestCoroutineScope
 import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.concept.sync.Device
@@ -48,7 +46,6 @@ import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.share.listadapters.AppShareOption
 
 @RunWith(FenixRobolectricTestRunner::class)
-@ExperimentalCoroutinesApi
 class ShareControllerTest {
     // Need a valid context to retrieve Strings for example, but we also need it to return our "metrics"
     private val context: Context = spyk(testContext)
@@ -65,20 +62,20 @@ class ShareControllerTest {
         TabData("title1", "url1")
     )
     private val textToShare = "${shareData[0].url}\n\n${shareData[1].url}"
-    private val testDispatcher = TestCoroutineDispatcher()
-    private val testCoroutineScope = TestCoroutineScope()
     private val sendTabUseCases = mockk<SendTabUseCases>(relaxed = true)
     private val snackbar = mockk<FenixSnackbar>(relaxed = true)
     private val navController = mockk<NavController>(relaxed = true)
     private val dismiss = mockk<(ShareController.Result) -> Unit>(relaxed = true)
     private val recentAppStorage = mockk<RecentAppsStorage>(relaxed = true)
+
+    @get:Rule
+    val coroutinesTestRule = MainCoroutineRule()
+    private val testDispatcher = coroutinesTestRule.testDispatcher
+    private val testCoroutineScope = TestCoroutineScope(testDispatcher)
     private val controller = DefaultShareController(
         context, shareSubject, shareData, sendTabUseCases, snackbar, navController,
         recentAppStorage, testCoroutineScope, testDispatcher, dismiss
     )
-
-    @get:Rule
-    val coroutinesTestRule = MainCoroutineRule(testDispatcher)
 
     @Before
     fun setUp() {
@@ -188,6 +185,73 @@ class ShareControllerTest {
             snackbar.show()
             dismiss(ShareController.Result.SHARE_ERROR)
         }
+    }
+
+    @Test
+    fun `getShareSubject should return the shareSubject when shareSubject is not null`() {
+        val activityContext: Context = mockk<Activity>()
+        val testController = DefaultShareController(
+            activityContext, shareSubject, shareData, mockk(),
+            mockk(), mockk(), recentAppStorage, testCoroutineScope, testDispatcher, dismiss
+        )
+
+        assertEquals(shareSubject, testController.getShareSubject())
+    }
+
+    @Test
+    fun `getShareSubject should return a combination of non-null titles when shareSubject is null`() {
+        val activityContext: Context = mockk<Activity>()
+        val testController = DefaultShareController(
+            activityContext, null, shareData, mockk(),
+            mockk(), mockk(), recentAppStorage, testCoroutineScope, testDispatcher, dismiss
+        )
+
+        assertEquals("title0, title1", testController.getShareSubject())
+    }
+
+    @Test
+    fun `getShareSubject should return just the not null titles string when shareSubject is  null`() {
+        val activityContext: Context = mockk<Activity>()
+        val partialTitlesShareData = listOf(
+            ShareData(url = "url0", title = null),
+            ShareData(url = "url1", title = "title1")
+        )
+        val testController = DefaultShareController(
+            activityContext, null, partialTitlesShareData, mockk(),
+            mockk(), mockk(), recentAppStorage, testCoroutineScope, testDispatcher, dismiss
+        )
+
+        assertEquals("title1", testController.getShareSubject())
+    }
+
+    @Test
+    fun `getShareSubject should return empty string when shareSubject and all titles are null`() {
+        val activityContext: Context = mockk<Activity>()
+        val noTitleShareData = listOf(
+            ShareData(url = "url0", title = null),
+            ShareData(url = "url1", title = null)
+        )
+        val testController = DefaultShareController(
+            activityContext, null, noTitleShareData, mockk(),
+            mockk(), mockk(), recentAppStorage, testCoroutineScope, testDispatcher, dismiss
+        )
+
+        assertEquals("", testController.getShareSubject())
+    }
+
+    @Test
+    fun `getShareSubject should return empty string when shareSubject is null and and all titles are empty`() {
+        val activityContext: Context = mockk<Activity>()
+        val noTitleShareData = listOf(
+            ShareData(url = "url0", title = ""),
+            ShareData(url = "url1", title = "")
+        )
+        val testController = DefaultShareController(
+            activityContext, null, noTitleShareData, mockk(),
+            mockk(), mockk(), recentAppStorage, testCoroutineScope, testDispatcher, dismiss
+        )
+
+        assertEquals("", testController.getShareSubject())
     }
 
     @Test
@@ -361,12 +425,12 @@ class ShareControllerTest {
     }
 
     @Test
-    fun `getShareSubject will return "shareSubject" if that is non null`() {
+    fun `getShareSubject will return 'shareSubject' if that is non null`() {
         assertEquals(shareSubject, controller.getShareSubject())
     }
 
     @Test
-    fun `getShareSubject will return a concatenation of tab titles if "shareSubject" is null`() {
+    fun `getShareSubject will return a concatenation of tab titles if 'shareSubject' is null`() {
         val controller = DefaultShareController(
             context, null, shareData, sendTabUseCases, snackbar, navController,
             recentAppStorage, testCoroutineScope, testDispatcher, dismiss

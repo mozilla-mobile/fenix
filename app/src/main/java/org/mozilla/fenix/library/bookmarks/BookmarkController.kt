@@ -12,8 +12,10 @@ import androidx.navigation.NavDirections
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import mozilla.appservices.places.BookmarkRoot
+import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.concept.storage.BookmarkNode
+import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.service.fxa.sync.SyncReason
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
@@ -55,11 +57,13 @@ class DefaultBookmarkController(
     private val scope: CoroutineScope,
     private val store: BookmarkFragmentStore,
     private val sharedViewModel: BookmarksSharedViewModel,
+    private val tabsUseCases: TabsUseCases?,
     private val loadBookmarkNode: suspend (String) -> BookmarkNode?,
     private val showSnackbar: (String) -> Unit,
     private val deleteBookmarkNodes: (Set<BookmarkNode>, Event) -> Unit,
     private val deleteBookmarkFolder: (Set<BookmarkNode>) -> Unit,
-    private val invokePendingDeletion: () -> Unit
+    private val invokePendingDeletion: () -> Unit,
+    private val showTabTray: () -> Unit
 ) : BookmarkController {
 
     private val resources: Resources = activity.resources
@@ -70,7 +74,14 @@ class DefaultBookmarkController(
     }
 
     override fun handleBookmarkTapped(item: BookmarkNode) {
-        openInNewTab(item.url!!, true, BrowserDirection.FromBookmarks, activity.browsingModeManager.mode)
+        val flags = EngineSession.LoadUrlFlags.select(EngineSession.LoadUrlFlags.ALLOW_JAVASCRIPT_URL)
+        openInNewTabAndShow(
+            item.url!!,
+            false,
+            BrowserDirection.FromBookmarks,
+            activity.browsingModeManager.mode,
+            flags
+        )
     }
 
     override fun handleBookmarkExpand(folder: BookmarkNode) {
@@ -88,7 +99,7 @@ class DefaultBookmarkController(
     }
 
     override fun handleBookmarkEdit(node: BookmarkNode) {
-        navigate(BookmarkFragmentDirections.actionBookmarkFragmentToBookmarkEditFragment(node.guid))
+        navigateToGivenDirection(BookmarkFragmentDirections.actionBookmarkFragmentToBookmarkEditFragment(node.guid))
     }
 
     override fun handleBookmarkSelected(node: BookmarkNode) {
@@ -118,7 +129,7 @@ class DefaultBookmarkController(
     }
 
     override fun handleBookmarkSharing(item: BookmarkNode) {
-        navigate(
+        navigateToGivenDirection(
             BookmarkFragmentDirections.actionGlobalShareFragment(
                 data = arrayOf(ShareData(url = item.url, title = item.title))
             )
@@ -126,7 +137,8 @@ class DefaultBookmarkController(
     }
 
     override fun handleOpeningBookmark(item: BookmarkNode, mode: BrowsingMode) {
-        openInNewTab(item.url!!, true, BrowserDirection.FromBookmarks, mode)
+        openInNewTab(item.url!!, mode)
+        showTabTray()
     }
 
     override fun handleBookmarkDeletion(nodes: Set<BookmarkNode>, eventType: Event) {
@@ -169,20 +181,30 @@ class DefaultBookmarkController(
         }
     }
 
-    private fun openInNewTab(
+    private fun openInNewTabAndShow(
         searchTermOrURL: String,
         newTab: Boolean,
         from: BrowserDirection,
-        mode: BrowsingMode
+        mode: BrowsingMode,
+        flags: EngineSession.LoadUrlFlags = EngineSession.LoadUrlFlags.none()
     ) {
         invokePendingDeletion.invoke()
         with(activity) {
             browsingModeManager.mode = mode
-            openToBrowserAndLoad(searchTermOrURL, newTab, from)
+            openToBrowserAndLoad(searchTermOrURL, newTab, from, flags = flags)
         }
     }
 
-    private fun navigate(directions: NavDirections) {
+    private fun openInNewTab(
+        url: String,
+        mode: BrowsingMode
+    ) {
+        invokePendingDeletion.invoke()
+        activity.browsingModeManager.mode = BrowsingMode.fromBoolean(mode == BrowsingMode.Private)
+        tabsUseCases?.addTab?.invoke(url, private = (mode == BrowsingMode.Private))
+    }
+
+    private fun navigateToGivenDirection(directions: NavDirections) {
         invokePendingDeletion.invoke()
         navController.nav(R.id.bookmarkFragment, directions)
     }

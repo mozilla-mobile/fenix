@@ -7,47 +7,90 @@
 A script to set up startup profiling with the Firefox Profiler. See
 https://profiler.firefox.com/docs/#/./guide-remote-profiling?id=startup-profiling
 for more information.
-
-TODO: This script is a little janky and could be improved. For example, we
-should probably avoid having a separate config directory.
 """
 
+import argparse
 import os
-import pathlib
-import sys
+import tempfile
 from subprocess import run
 
-SCRIPT_NAME=os.path.basename(__file__)
-SCRIPT_DIR=pathlib.Path(__file__).parent.absolute()
-CONFIG_DIR=os.path.join(SCRIPT_DIR, 'startup-profiling-configs')
+PATH_PREFIX = '/data/local/tmp'
 
-PATH_PREFIX='/data/local/tmp'
+PROD_FENIX = 'fenix'
+PROD_GVE = 'geckoview_example'
+PRODUCTS = [PROD_FENIX, PROD_GVE]
 
-def print_usage_and_exit():
-    print('USAGE: ./{} [push|remove] <app-id>'.format(SCRIPT_NAME), file=sys.stderr)
-    print('example: ./{} push org.mozilla.fenix'.format(SCRIPT_NAME), file=sys.stderr)
-    sys.exit(1)
+GV_CONFIG = b'''env:
+  MOZ_PROFILER_STARTUP: 1
+  MOZ_PROFILER_STARTUP_INTERVAL: 5
+  MOZ_PROFILER_STARTUP_FEATURES: js,stackwalk,leaf,screenshots,ipcmessages,java,cpu
+  MOZ_PROFILER_STARTUP_FILTERS: GeckoMain,Compositor,Renderer,IPDL Background
+'''
+
+
+def parse_args():
+    p = argparse.ArgumentParser(
+            description=("Easily enable start up profiling using the Firefox Profiler. Finish capturing the profile in "
+                         "about:debugging on desktop. See "
+                         "https://profiler.firefox.com/docs/#/./guide-remote-profiling?id=startup-profiling for "
+                         "details."))
+    p.add_argument('command', choices=['activate', 'deactivate'], help=("whether to activate or deactive start up "
+                   "profiling for the given release channel"))
+    p.add_argument('release_channel', choices=['nightly', 'beta', 'release', 'debug'], help=("the release channel to "
+                   "change the startup profiling state of the command on"))
+
+    p.add_argument('-p', '--product', choices=PRODUCTS, default=PROD_FENIX, help="which product to work on")
+    return p.parse_args()
+
 
 def push(id, filename):
-    run(['adb', 'push', os.path.join(CONFIG_DIR, filename), PATH_PREFIX])
-    run(['adb', 'shell', 'am', 'set-debug-app', '--persistent', id])
-    print('Startup profiling enabled on all future start ups, possibly even after reinstall. Call script with `remove` to disable it.')
+    config = tempfile.NamedTemporaryFile(delete=False)
+    try:
+        # I think the file needs to be closed to save its contents for adb push to
+        # work correctly so we close it here and later delete it manually.
+        with config.file as f:
+            f.write(GV_CONFIG)
+
+        print('Pushing {} to device.'.format(filename))
+        run(['adb', 'push', config.name, os.path.join(PATH_PREFIX, filename)])
+        run(['adb', 'shell', 'am', 'set-debug-app', '--persistent', id])
+        print('\nStartup profiling enabled on all future start ups, possibly even after reinstall.')
+        print('Call script with `deactivate` to disable it.')
+        print('DON\'T FORGET TO ENABLE \'Remote debugging via USB\' IN THE APP SETTINGS!')
+    finally:
+        os.remove(config.name)
+
 
 def remove(filename):
+    print('Removing {} from device.'.format(filename))
     run(['adb', 'shell', 'rm', PATH_PREFIX + '/' + filename])
     run(['adb', 'shell', 'am', 'clear-debug-app'])
 
-try:
-    cmd = sys.argv[1]
-    id = sys.argv[2]
-except IndexError as e:
-    print_usage_and_exit()
 
-filename = id + '-geckoview-config.yaml'
+def convert_channel_to_id(product, channel):
+    if product == PROD_FENIX:
+        mapping = {
+            'release': 'org.mozilla.firefox',
+            'beta': 'org.mozilla.firefox_beta',
+            'nightly': 'org.mozilla.fenix',
+            'debug': 'org.mozilla.fenix.debug'
+        }
+        return mapping[channel]
+    elif product == PROD_GVE:
+        return 'org.mozilla.geckoview_example'
 
-if cmd == 'push':
-    push(id, filename)
-elif cmd == 'remove':
-    remove(filename)
-else:
-    print_usage_and_exit()
+
+def main():
+    args = parse_args()
+
+    id = convert_channel_to_id(args.product, args.release_channel)
+    filename = id + '-geckoview-config.yaml'
+
+    if args.command == 'activate':
+        push(id, filename)
+    elif args.command == 'deactivate':
+        remove(filename)
+
+
+if __name__ == '__main__':
+    main()

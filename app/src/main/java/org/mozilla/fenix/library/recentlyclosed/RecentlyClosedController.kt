@@ -4,83 +4,131 @@
 
 package org.mozilla.fenix.library.recentlyclosed
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.res.Resources
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
-import mozilla.components.browser.session.SessionManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import mozilla.components.browser.state.action.RecentlyClosedAction
-import mozilla.components.browser.state.state.ClosedTab
+import mozilla.components.browser.state.state.recover.TabState
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.prompt.ShareData
-import mozilla.components.feature.recentlyclosed.ext.restoreTab
+import mozilla.components.feature.recentlyclosed.RecentlyClosedTabsStorage
+import mozilla.components.feature.tabs.TabsUseCases
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
-import org.mozilla.fenix.components.FenixSnackbar
+import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.components.metrics.MetricController
 
+@Suppress("TooManyFunctions")
 interface RecentlyClosedController {
-    fun handleOpen(item: ClosedTab, mode: BrowsingMode? = null)
-    fun handleDeleteOne(tab: ClosedTab)
-    fun handleCopyUrl(item: ClosedTab)
-    fun handleShare(item: ClosedTab)
+    fun handleOpen(tab: TabState, mode: BrowsingMode? = null)
+    fun handleOpen(tabs: Set<TabState>, mode: BrowsingMode? = null)
+    fun handleDelete(tab: TabState)
+    fun handleDelete(tabs: Set<TabState>)
+    fun handleShare(tabs: Set<TabState>)
     fun handleNavigateToHistory()
-    fun handleRestore(item: ClosedTab)
+    fun handleRestore(item: TabState)
+    fun handleSelect(tab: TabState)
+    fun handleDeselect(tab: TabState)
+    fun handleBackPressed(): Boolean
 }
 
+@Suppress("TooManyFunctions")
 class DefaultRecentlyClosedController(
     private val navController: NavController,
-    private val store: BrowserStore,
-    private val sessionManager: SessionManager,
-    private val resources: Resources,
-    private val snackbar: FenixSnackbar,
-    private val clipboardManager: ClipboardManager,
+    private val browserStore: BrowserStore,
+    private val recentlyClosedStore: RecentlyClosedFragmentStore,
+    private val recentlyClosedTabsStorage: RecentlyClosedTabsStorage,
+    private val tabsUseCases: TabsUseCases,
     private val activity: HomeActivity,
-    private val openToBrowser: (item: ClosedTab, mode: BrowsingMode?) -> Unit
+    private val metrics: MetricController,
+    private val lifecycleScope: CoroutineScope,
+    private val openToBrowser: (url: String, mode: BrowsingMode?) -> Unit
 ) : RecentlyClosedController {
-    override fun handleOpen(item: ClosedTab, mode: BrowsingMode?) {
-        openToBrowser(item, mode)
+    override fun handleOpen(tab: TabState, mode: BrowsingMode?) {
+        openToBrowser(tab.url, mode)
     }
 
-    override fun handleDeleteOne(tab: ClosedTab) {
-        store.dispatch(RecentlyClosedAction.RemoveClosedTabAction(tab))
+    override fun handleOpen(tabs: Set<TabState>, mode: BrowsingMode?) {
+        if (mode == BrowsingMode.Normal) {
+            metrics.track(Event.RecentlyClosedTabsMenuOpenInNormalTab)
+        } else if (mode == BrowsingMode.Private) {
+            metrics.track(Event.RecentlyClosedTabsMenuOpenInPrivateTab)
+        }
+        recentlyClosedStore.dispatch(RecentlyClosedFragmentAction.DeselectAll)
+        tabs.forEach { tab -> handleOpen(tab, mode) }
+    }
+
+    override fun handleSelect(tab: TabState) {
+        if (recentlyClosedStore.state.selectedTabs.isEmpty()) {
+            metrics.track(Event.RecentlyClosedTabsEnterMultiselect)
+        }
+        recentlyClosedStore.dispatch(RecentlyClosedFragmentAction.Select(tab))
+    }
+
+    override fun handleDeselect(tab: TabState) {
+        if (recentlyClosedStore.state.selectedTabs.size == 1) {
+            metrics.track(Event.RecentlyClosedTabsExitMultiselect)
+        }
+        recentlyClosedStore.dispatch(RecentlyClosedFragmentAction.Deselect(tab))
+    }
+
+    override fun handleDelete(tab: TabState) {
+        metrics.track(Event.RecentlyClosedTabsDeleteTab)
+        browserStore.dispatch(RecentlyClosedAction.RemoveClosedTabAction(tab))
+    }
+
+    override fun handleDelete(tabs: Set<TabState>) {
+        metrics.track(Event.RecentlyClosedTabsMenuDelete)
+        recentlyClosedStore.dispatch(RecentlyClosedFragmentAction.DeselectAll)
+        tabs.forEach { tab ->
+            browserStore.dispatch(RecentlyClosedAction.RemoveClosedTabAction(tab))
+        }
     }
 
     override fun handleNavigateToHistory() {
+        metrics.track(Event.RecentlyClosedTabsShowFullHistory)
         navController.navigate(
             RecentlyClosedFragmentDirections.actionGlobalHistoryFragment(),
             NavOptions.Builder().setPopUpTo(R.id.historyFragment, true).build()
         )
     }
 
-    override fun handleCopyUrl(item: ClosedTab) {
-        val urlClipData = ClipData.newPlainText(item.url, item.url)
-        clipboardManager.setPrimaryClip(urlClipData)
-        with(snackbar) {
-            setText(resources.getString(R.string.url_copied))
-            show()
-        }
-    }
-
-    override fun handleShare(item: ClosedTab) {
+    override fun handleShare(tabs: Set<TabState>) {
+        metrics.track(Event.RecentlyClosedTabsMenuShare)
+        val shareData = tabs.map { ShareData(url = it.url, title = it.title) }
         navController.navigate(
             RecentlyClosedFragmentDirections.actionGlobalShareFragment(
-                data = arrayOf(ShareData(url = item.url, title = item.title))
+                data = shareData.toTypedArray()
             )
         )
     }
 
-    override fun handleRestore(item: ClosedTab) {
-        item.restoreTab(
-            store,
-            sessionManager,
-            onTabRestored = {
-                activity.openToBrowser(
-                    from = BrowserDirection.FromRecentlyClosed
-                )
-            }
-        )
+    override fun handleRestore(item: TabState) {
+        lifecycleScope.launch {
+            metrics.track(Event.RecentlyClosedTabsOpenTab)
+            tabsUseCases.restore(item, recentlyClosedTabsStorage.engineStateStorage())
+
+            browserStore.dispatch(
+                RecentlyClosedAction.RemoveClosedTabAction(item)
+            )
+
+            activity.openToBrowser(
+                from = BrowserDirection.FromRecentlyClosed
+            )
+        }
+    }
+
+    override fun handleBackPressed(): Boolean {
+        return if (recentlyClosedStore.state.selectedTabs.isNotEmpty()) {
+            metrics.track(Event.RecentlyClosedTabsExitMultiselect)
+            recentlyClosedStore.dispatch(RecentlyClosedFragmentAction.DeselectAll)
+            true
+        } else {
+            metrics.track(Event.RecentlyClosedTabsClosed)
+            false
+        }
     }
 }

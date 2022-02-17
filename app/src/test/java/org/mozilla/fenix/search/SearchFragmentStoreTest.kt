@@ -8,7 +8,6 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import mozilla.components.browser.state.search.RegionState
 import mozilla.components.browser.state.search.SearchEngine
@@ -16,6 +15,7 @@ import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.ContentState
 import mozilla.components.browser.state.state.SearchState
 import mozilla.components.browser.state.state.TabSessionState
+import mozilla.components.support.test.ext.joinBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -31,7 +31,6 @@ import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.components.metrics.Event.PerformedSearch.SearchAccessPoint
 import org.mozilla.fenix.utils.Settings
 
-@ExperimentalCoroutinesApi
 class SearchFragmentStoreTest {
 
     @MockK private lateinit var searchEngine: SearchEngine
@@ -200,13 +199,29 @@ class SearchFragmentStoreTest {
     }
 
     @Test
+    fun updatingClipboardUrl() {
+        val initialState = emptyDefaultState()
+        val store = SearchFragmentStore(initialState)
+
+        assertFalse(store.state.clipboardHasUrl)
+
+        store.dispatch(
+            SearchFragmentAction.UpdateClipboardHasUrl(true)
+        ).joinBlocking()
+
+        assertTrue(store.state.clipboardHasUrl)
+    }
+
+    @Test
     fun `Updating SearchFragmentState from SearchState`() = runBlocking {
-        val store = SearchFragmentStore(emptyDefaultState(
-            searchEngineSource = SearchEngineSource.None,
-            areShortcutsAvailable = false,
-            defaultEngine = null,
-            showSearchShortcutsSetting = true
-        ))
+        val store = SearchFragmentStore(
+            emptyDefaultState(
+                searchEngineSource = SearchEngineSource.None,
+                areShortcutsAvailable = false,
+                defaultEngine = null,
+                showSearchShortcutsSetting = true
+            )
+        )
 
         assertNull(store.state.defaultEngine)
         assertFalse(store.state.areShortcutsAvailable)
@@ -256,12 +271,14 @@ class SearchFragmentStoreTest {
 
     @Test
     fun `Updating SearchFragmentState from SearchState - shortcuts disabled`() = runBlocking {
-        val store = SearchFragmentStore(emptyDefaultState(
-            searchEngineSource = SearchEngineSource.None,
-            areShortcutsAvailable = false,
-            defaultEngine = null,
-            showSearchShortcutsSetting = false
-        ))
+        val store = SearchFragmentStore(
+            emptyDefaultState(
+                searchEngineSource = SearchEngineSource.None,
+                areShortcutsAvailable = false,
+                defaultEngine = null,
+                showSearchShortcutsSetting = false
+            )
+        )
 
         assertNull(store.state.defaultEngine)
         assertFalse(store.state.areShortcutsAvailable)

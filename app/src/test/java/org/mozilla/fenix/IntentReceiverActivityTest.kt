@@ -7,6 +7,7 @@ package org.mozilla.fenix
 import android.app.Activity
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY
+import android.net.Uri
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -14,10 +15,8 @@ import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import io.mockk.verify
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import mozilla.components.feature.intent.processing.IntentProcessor
-import mozilla.components.support.test.robolectric.testContext
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -29,12 +28,12 @@ import org.mozilla.fenix.customtabs.ExternalAppBrowserActivity
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
+import org.mozilla.fenix.helpers.perf.TestStrictModeManager
 import org.mozilla.fenix.shortcut.NewTabShortcutIntentProcessor
 import org.mozilla.fenix.utils.Settings
 import org.robolectric.Robolectric
 import org.robolectric.Shadows.shadowOf
 
-@ExperimentalCoroutinesApi
 @RunWith(FenixRobolectricTestRunner::class)
 class IntentReceiverActivityTest {
 
@@ -55,6 +54,7 @@ class IntentReceiverActivityTest {
         every { intentProcessors.externalAppIntentProcessors } returns emptyList()
         every { intentProcessors.fennecPageShortcutIntentProcessor } returns mockIntentProcessor()
         every { intentProcessors.migrationIntentProcessor } returns mockIntentProcessor()
+        every { intentProcessors.externalDeepLinkIntentProcessor } returns mockIntentProcessor()
 
         coEvery { intentProcessors.intentProcessor.process(any()) } returns true
     }
@@ -79,6 +79,26 @@ class IntentReceiverActivityTest {
         assertEquals(HomeActivity::class.java.name, actualIntent.component?.className)
         assertEquals(true, actualIntent.flags == FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY)
     }
+
+    @Test
+    fun `GIVEN a deeplink intent WHEN processing the intent THEN add the className HomeActivity`() =
+        runBlockingTest {
+            val uri = Uri.parse(BuildConfig.DEEP_LINK_SCHEME + "://settings_wallpapers")
+            val intent = Intent("", uri)
+
+            coEvery { intentProcessors.intentProcessor.process(any()) } returns false
+            coEvery { intentProcessors.externalDeepLinkIntentProcessor.process(any()) } returns true
+
+            val activity =
+                Robolectric.buildActivity(IntentReceiverActivity::class.java, intent).get()
+            attachMocks(activity)
+            activity.processIntent(intent)
+
+            val shadow = shadowOf(activity)
+            val actualIntent = shadow.peekNextStartedActivity()
+
+            assertEquals(HomeActivity::class.java.name, actualIntent.component?.className)
+        }
 
     @Test
     fun `process intent with action OPEN_PRIVATE_TAB`() = runBlockingTest {
@@ -203,10 +223,7 @@ class IntentReceiverActivityTest {
         every { activity.settings() } returns settings
         every { activity.components.analytics } returns mockk(relaxed = true)
         every { activity.components.intentProcessors } returns intentProcessors
-
-        // For some reason, activity.components doesn't return application.components, which is the
-        // globally defined TestComponents, so we redirect it.
-        every { activity.components.strictMode } returns testContext.components.strictMode
+        every { activity.components.strictMode } returns TestStrictModeManager()
     }
 
     private inline fun <reified T : IntentProcessor> mockIntentProcessor(): T {

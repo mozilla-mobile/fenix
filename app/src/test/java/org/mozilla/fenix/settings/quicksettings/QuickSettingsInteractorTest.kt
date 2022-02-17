@@ -38,4 +38,57 @@ class QuickSettingsInteractorTest {
         assertTrue(permission.isCaptured)
         assertEquals(websitePermission, permission.captured)
     }
+
+    @Test
+    fun `onAutoplayChanged should delegate the controller`() {
+        val websitePermission = mockk<AutoplayValue>()
+        val permission = slot<AutoplayValue>()
+
+        interactor.onAutoplayChanged(websitePermission)
+
+        verify {
+            controller.handleAutoplayChanged(capture(permission))
+        }
+
+        assertTrue(permission.isCaptured)
+        assertEquals(websitePermission, permission.captured)
+    }
+
+    @Test
+    fun `onTrackingProtectionToggled should delegate the controller`() {
+        val isEnabled = true
+
+        interactor.onTrackingProtectionToggled(isEnabled)
+
+        verify {
+            controller.handleTrackingProtectionToggled(isEnabled)
+        }
+    }
+
+    @Test
+    fun `onBlockedItemsClicked should delegate the controller`() {
+        interactor.onDetailsClicked()
+
+        verify {
+            controller.handleDetailsClicked()
+        }
+    }
+
+    @Test
+    fun `WHEN calling onConnectionDetailsClicked THEN delegate to the controller`() {
+        interactor.onConnectionDetailsClicked()
+
+        verify {
+            controller.handleConnectionDetailsClicked()
+        }
+    }
+
+    @Test
+    fun `WHEN calling onClearSiteDataClicked THEN delegate to the controller`() {
+        interactor.onClearSiteDataClicked("baseDomain")
+
+        verify {
+            controller.handleClearSiteDataClicked("baseDomain")
+        }
+    }
 }

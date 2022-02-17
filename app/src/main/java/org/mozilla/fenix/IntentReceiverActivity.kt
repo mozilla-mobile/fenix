@@ -6,16 +6,21 @@ package org.mozilla.fenix
 
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
 import androidx.annotation.VisibleForTesting
 import mozilla.components.feature.intent.processing.IntentProcessor
+import mozilla.components.support.utils.EXTRA_ACTIVITY_REFERRER_CATEGORY
+import mozilla.components.support.utils.EXTRA_ACTIVITY_REFERRER_PACKAGE
 import org.mozilla.fenix.HomeActivity.Companion.PRIVATE_BROWSING_MODE
 import org.mozilla.fenix.components.IntentProcessorType
 import org.mozilla.fenix.components.getType
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.perf.MarkersActivityLifecycleCallbacks
 import org.mozilla.fenix.perf.StartupTimeline
 import org.mozilla.fenix.shortcut.NewTabShortcutIntentProcessor
 
@@ -26,6 +31,9 @@ class IntentReceiverActivity : Activity() {
 
     @VisibleForTesting
     override fun onCreate(savedInstanceState: Bundle?) {
+        // DO NOT MOVE ANYTHING ABOVE THIS getProfilerTime CALL.
+        val startTimeProfiler = components.core.engine.profiler?.getProfilerTime()
+
         // StrictMode violation on certain devices such as Samsung
         components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
             super.onCreate(savedInstanceState)
@@ -38,6 +46,9 @@ class IntentReceiverActivity : Activity() {
         intent.stripUnwantedFlags()
         processIntent(intent)
 
+        components.core.engine.profiler?.addMarker(
+            MarkersActivityLifecycleCallbacks.MARKER_NAME, startTimeProfiler, "IntentReceiverActivity.onCreate"
+        )
         StartupTimeline.onActivityCreateEndIntentReceiver() // DO NOT MOVE ANYTHING BELOW HERE.
     }
 
@@ -50,6 +61,8 @@ class IntentReceiverActivity : Activity() {
         } else {
             components.analytics.metrics.track(Event.OpenedLink(Event.OpenedLink.Mode.NORMAL))
         }
+
+        addReferrerInformation(intent)
 
         val processor = getIntentProcessors(private).firstOrNull { it.process(intent) }
         val intentProcessorType = components.intentProcessors.getType(processor)
@@ -90,8 +103,31 @@ class IntentReceiverActivity : Activity() {
         return listOf(components.intentProcessors.migrationIntentProcessor) +
             components.intentProcessors.externalAppIntentProcessors +
             components.intentProcessors.fennecPageShortcutIntentProcessor +
+            components.intentProcessors.externalDeepLinkIntentProcessor +
             modeDependentProcessors +
             NewTabShortcutIntentProcessor()
+    }
+
+    private fun addReferrerInformation(intent: Intent) {
+        // Pass along referrer information when possible.
+        // Referrer is supported for API>=22.
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP_MR1) {
+            return
+        }
+        // NB: referrer can be spoofed by the calling application. Use with caution.
+        val r = referrer ?: return
+        intent.putExtra(EXTRA_ACTIVITY_REFERRER_PACKAGE, r.host)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // Category is supported for API>=26.
+            r.host?.let { host ->
+                try {
+                    val category = packageManager.getApplicationInfo(host, 0).category
+                    intent.putExtra(EXTRA_ACTIVITY_REFERRER_CATEGORY, category)
+                } catch (e: PackageManager.NameNotFoundException) {
+                    // At least we tried.
+                }
+            }
+        }
     }
 }
 

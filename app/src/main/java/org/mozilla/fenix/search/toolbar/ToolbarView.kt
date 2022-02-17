@@ -19,8 +19,8 @@ import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.support.ktx.android.content.res.resolveAttribute
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import org.mozilla.fenix.R
-import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.search.SearchFragmentState
+import org.mozilla.fenix.utils.Settings
 
 /**
  * Interface for the Toolbar Interactor. This interface is implemented by objects that want
@@ -31,8 +31,9 @@ interface ToolbarInteractor {
     /**
      * Called when a user hits the return key while [ToolbarView] has focus.
      * @param url the text inside the [ToolbarView] when committed
+     * @param fromHomeScreen true if the toolbar has been opened from home screen
      */
-    fun onUrlCommitted(url: String)
+    fun onUrlCommitted(url: String, fromHomeScreen: Boolean = false)
 
     /**
      * Called when a user removes focus from the [ToolbarView]
@@ -49,13 +50,16 @@ interface ToolbarInteractor {
 /**
  * View that contains and configures the BrowserToolbar to only be used in its editing mode.
  */
+@Suppress("LongParameterList")
 class ToolbarView(
     private val context: Context,
+    settings: Settings,
     private val interactor: ToolbarInteractor,
     private val historyStorage: HistoryStorage?,
     private val isPrivate: Boolean,
     val view: BrowserToolbar,
-    engine: Engine
+    engine: Engine,
+    fromHomeFragment: Boolean
 ) {
 
     @VisibleForTesting
@@ -70,7 +74,7 @@ class ToolbarView(
                 // from resizing in case the BrowserFragment is being displayed before the
                 // keyboard is gone: https://github.com/mozilla-mobile/fenix/issues/8399
                 hideKeyboard()
-                interactor.onUrlCommitted(it)
+                interactor.onUrlCommitted(it, fromHomeFragment)
                 false
             }
 
@@ -112,7 +116,7 @@ class ToolbarView(
 
         val engineForSpeculativeConnects = if (!isPrivate) engine else null
 
-        if (context.settings().shouldAutocompleteInAwesomebar) {
+        if (settings.shouldAutocompleteInAwesomebar) {
             ToolbarAutocompleteFeature(
                 view,
                 engineForSpeculativeConnects
@@ -132,9 +136,7 @@ class ToolbarView(
             if (searchState.pastedText.isNullOrEmpty()) {
                 // If we're in edit mode, setting the search term will update the toolbar,
                 // so we make sure we have the correct term/query to show.
-                val termOrQuery = if (searchState.searchTerms.isNotEmpty()) {
-                    searchState.searchTerms
-                } else {
+                val termOrQuery = searchState.searchTerms.ifEmpty {
                     searchState.query
                 }
                 view.setSearchTerms(termOrQuery)

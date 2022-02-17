@@ -4,8 +4,8 @@
 
 package org.mozilla.fenix.search.awesomebar
 
-import mozilla.components.browser.session.Session
 import mozilla.components.browser.state.search.SearchEngine
+import mozilla.components.concept.engine.EngineSession.LoadUrlFlags
 
 /**
  * Interface for the AwesomeBarView Interactor. This interface is implemented by objects that want
@@ -17,7 +17,7 @@ interface AwesomeBarInteractor {
      * Called whenever a suggestion containing a URL is tapped
      * @param url the url the suggestion was providing
      */
-    fun onUrlTapped(url: String)
+    fun onUrlTapped(url: String, flags: LoadUrlFlags = LoadUrlFlags.none())
 
     /**
      * Called whenever a search engine suggestion is tapped
@@ -39,15 +39,15 @@ interface AwesomeBarInteractor {
     /**
      * Called whenever an existing session is selected from the sessionSuggestionProvider
      */
-    fun onExistingSessionSelected(session: Session)
-
-    /**
-     * Called whenever an existing session is selected from the sessionSuggestionProvider
-     */
     fun onExistingSessionSelected(tabId: String)
 
     /**
      * Called whenever the Shortcuts button is clicked
      */
     fun onSearchShortcutsButtonClicked()
+
+    /**
+     * Called whenever search engine suggestion is tapped
+     */
+    fun onSearchEngineSuggestionSelected(searchEngine: SearchEngine)
 }

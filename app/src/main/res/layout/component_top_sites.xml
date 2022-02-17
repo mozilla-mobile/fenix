@@ -19,12 +19,11 @@ to keep layout_width="match_parent"-->
         android:minWidth="448dp"
         android:layout_height="match_parent"
         android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="8dp"
         android:clipChildren="false"
         android:clipToPadding="false"
         android:overScrollMode="never"
         android:nestedScrollingEnabled="false"
-        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        app:spanCount="4"
+        tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        tools:spanCount="4"
         tools:listitem="@layout/top_site_item" />
 </LinearLayout>

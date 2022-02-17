@@ -4,7 +4,6 @@ treeherder:
     group-names:
         'beta': 'Beta-related tasks with same APK configuration as Fennec'
         'Btime': 'Raptor-Browsertime tests'
-        'Btime-wr': 'Raptor-Browsertime tests with webrender enabled'
         'bump': 'Bump dependencies'
         'debug': 'Builds made for testing'
         'Fetch': 'Fetch and store content'
@@ -17,7 +16,15 @@ treeherder:
         'Rap-P': 'Raptor power tests'
         'TL': 'Toolchain builds for Linux 64-bits'
 
-task-priority: highest
+task-priority:
+    by-project:
+        "fenix": highest
+        "staging-fenix": low
+        # This handles cases where a fork may end up not being named
+        # as one of the explicit names above. Ideally anything forked
+        # from "fenix" would inherit its setting, but "low" is the
+        # safer default
+        default: low
 
 taskgraph:
     register: fenix_taskgraph:register
@@ -39,6 +46,17 @@ workers:
             implementation: docker-worker
             os: linux
             worker-type: b-linux-large
+        b-android-xlarge:
+            provisioner: 'mobile-{level}'
+            implementation: docker-worker
+            os: linux
+            worker-type: b-linux-xlarge
+        beetmover:
+            provisioner: scriptworker-k8s
+            implementation: scriptworker-beetmover
+            os: scriptworker
+            # Note: if dep bucket is wanted, *temporarily* switch to 'mobile-1-beetmover-dev'
+            worker-type: 'mobile-{level}-beetmover'
         dep-signing:
             provisioner: scriptworker-k8s
             implementation: scriptworker-signing

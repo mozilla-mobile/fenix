@@ -28,7 +28,6 @@ import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.ext.toUri
 import org.mozilla.fenix.helpers.ext.waitNotNull
 import org.mozilla.fenix.ui.robots.accountSettings
-import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
 import org.mozilla.fenix.ui.robots.settingsSubMenuLoginsAndPassword
@@ -141,10 +140,7 @@ class SyncIntegrationTest {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(defaultWebPage) {
         }.openThreeDotMenu {
-            verifyAddBookmarkButton()
-            clickAddBookmarkButton()
-        }
-        browserScreen {
+        }.bookmarkPage {
         }.openThreeDotMenu {
         }.openSettings {
         }.openTurnOnSyncMenu {
@@ -177,9 +173,11 @@ class SyncIntegrationTest {
 
     // Useful functions for the tests
     fun typeEmail() {
-        val emailInput = mDevice.findObject(UiSelector()
+        val emailInput = mDevice.findObject(
+            UiSelector()
                 .instance(0)
-                .className(EditText::class.java))
+                .className(EditText::class.java)
+        )
         emailInput.waitForExists(TestAssetHelper.waitingTime)
 
         val emailAddress = javaClass.classLoader!!.getResource("email.txt").readText()
@@ -192,9 +190,11 @@ class SyncIntegrationTest {
     }
 
     fun typePassword() {
-        val passwordInput = mDevice.findObject(UiSelector()
+        val passwordInput = mDevice.findObject(
+            UiSelector()
                 .instance(0)
-                .className(EditText::class.java))
+                .className(EditText::class.java)
+        )
 
         val passwordValue = javaClass.classLoader!!.getResource("password.txt").readText()
         passwordInput.setText(passwordValue)

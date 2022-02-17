@@ -14,7 +14,6 @@ import androidx.core.content.pm.PackageInfoCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
-import kotlinx.android.synthetic.main.fragment_about.*
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
@@ -22,8 +21,10 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.crashes.CrashListActivity
+import org.mozilla.fenix.databinding.FragmentAboutBinding
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.settings.about.AboutItemType.LICENSING_INFO
 import org.mozilla.fenix.settings.about.AboutItemType.PRIVACY_NOTICE
@@ -42,19 +43,21 @@ class AboutFragment : Fragment(), AboutPageListener {
     private lateinit var headerAppName: String
     private lateinit var appName: String
     private var aboutPageAdapter: AboutPageAdapter? = AboutPageAdapter(this)
+    private var _binding: FragmentAboutBinding? = null
+
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val rootView = inflater.inflate(R.layout.fragment_about, container, false)
+    ): View {
+        _binding = FragmentAboutBinding.inflate(inflater, container, false)
         appName = getString(R.string.app_name)
         headerAppName =
             if (Config.channel.isRelease) getString(R.string.daylight_app_name) else appName
-        activity?.title = getString(R.string.preferences_about, appName)
 
-        return rootView
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -62,7 +65,7 @@ class AboutFragment : Fragment(), AboutPageListener {
             aboutPageAdapter = AboutPageAdapter(this)
         }
 
-        about_list.run {
+        binding.aboutList.run {
             adapter = aboutPageAdapter
             addItemDecoration(
                 DividerItemDecoration(
@@ -74,7 +77,7 @@ class AboutFragment : Fragment(), AboutPageListener {
 
         lifecycle.addObserver(
             SecretDebugMenuTrigger(
-                logoView = wordmark,
+                logoView = binding.wordmark,
                 settings = view.context.settings()
             )
         )
@@ -83,9 +86,15 @@ class AboutFragment : Fragment(), AboutPageListener {
         aboutPageAdapter?.submitList(populateAboutList())
     }
 
+    override fun onResume() {
+        super.onResume()
+        showToolbar(getString(R.string.preferences_about, appName))
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         aboutPageAdapter = null
+        _binding = null
     }
 
     private fun populateAboutHeader() {
@@ -93,6 +102,7 @@ class AboutFragment : Fragment(), AboutPageListener {
             val packageInfo =
                 requireContext().packageManager.getPackageInfo(requireContext().packageName, 0)
             val versionCode = PackageInfoCompat.getLongVersionCode(packageInfo).toString()
+            val maybeFenixGitHash = if (BuildConfig.GIT_HASH.isNotBlank()) ", ${BuildConfig.GIT_HASH}" else ""
             val componentsAbbreviation = getString(R.string.components_abbreviation)
             val componentsVersion =
                 mozilla.components.Build.version + ", " + mozilla.components.Build.gitHash
@@ -103,9 +113,10 @@ class AboutFragment : Fragment(), AboutPageListener {
             val appServicesVersion = mozilla.components.Build.applicationServicesVersion
 
             String.format(
-                "%s (Build #%s)\n%s: %s\n%s: %s\n%s: %s",
+                "%s (Build #%s)%s\n%s: %s\n%s: %s\n%s: %s",
                 packageInfo.versionName,
                 versionCode,
+                maybeFenixGitHash,
                 componentsAbbreviation,
                 componentsVersion,
                 maybeGecko,
@@ -120,9 +131,9 @@ class AboutFragment : Fragment(), AboutPageListener {
         val content = getString(R.string.about_content, headerAppName)
         val buildDate = BuildConfig.BUILD_DATE
 
-        about_text.text = aboutText
-        about_content.text = content
-        build_date.text = buildDate
+        binding.aboutText.text = aboutText
+        binding.aboutContent.text = content
+        binding.buildDate.text = buildDate
     }
 
     private fun populateAboutList(): List<AboutPageItem> {
@@ -133,13 +144,15 @@ class AboutFragment : Fragment(), AboutPageListener {
                 AboutItem.ExternalLink(
                     WHATS_NEW,
                     SupportUtils.getWhatsNewUrl(context)
-                ), getString(R.string.about_whats_new, getString(R.string.app_name))
+                ),
+                getString(R.string.about_whats_new, getString(R.string.app_name))
             ),
             AboutPageItem(
                 AboutItem.ExternalLink(
                     SUPPORT,
                     SupportUtils.getSumoURLForTopic(context, SupportUtils.SumoTopic.HELP)
-                ), getString(R.string.about_support)
+                ),
+                getString(R.string.about_support)
             ),
             AboutPageItem(
                 AboutItem.Crashes,
@@ -149,13 +162,15 @@ class AboutFragment : Fragment(), AboutPageListener {
                 AboutItem.ExternalLink(
                     PRIVACY_NOTICE,
                     SupportUtils.getMozillaPageUrl(SupportUtils.MozillaPage.PRIVATE_NOTICE)
-                ), getString(R.string.about_privacy_notice)
+                ),
+                getString(R.string.about_privacy_notice)
             ),
             AboutPageItem(
                 AboutItem.ExternalLink(
                     RIGHTS,
                     SupportUtils.getSumoURLForTopic(context, SupportUtils.SumoTopic.YOUR_RIGHTS)
-                ), getString(R.string.about_know_your_rights)
+                ),
+                getString(R.string.about_know_your_rights)
             ),
             AboutPageItem(
                 AboutItem.ExternalLink(LICENSING_INFO, ABOUT_LICENSE_URL),
@@ -189,13 +204,7 @@ class AboutFragment : Fragment(), AboutPageListener {
                         WhatsNew.userViewedWhatsNew(requireContext())
                         requireComponents.analytics.metrics.track(Event.WhatsNewTapped)
                     }
-                    SUPPORT -> {
-                        requireComponents.analytics.metrics.track(Event.SupportTapped)
-                    }
-                    PRIVACY_NOTICE -> {
-                        requireComponents.analytics.metrics.track(Event.PrivacyNoticeTapped)
-                    }
-                    LICENSING_INFO, RIGHTS -> {} // no telemetry needed
+                    SUPPORT, PRIVACY_NOTICE, LICENSING_INFO, RIGHTS -> {} // no telemetry needed
                 }
 
                 openLinkInNormalTab(item.url)
