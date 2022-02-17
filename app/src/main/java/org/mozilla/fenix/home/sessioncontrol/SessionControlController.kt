@@ -586,13 +586,11 @@ class DefaultSessionControlController(
 
     override fun handleSetDefaultBrowser() {
         settings.userDismissedExperimentCard = true
-        metrics.track(Event.SetDefaultBrowserNewTabClicked)
         activity.openSetDefaultBrowserOption()
     }
 
     override fun handleCloseExperimentCard() {
         settings.userDismissedExperimentCard = true
-        metrics.track(Event.CloseExperimentCardClicked)
         fragmentStore.dispatch(HomeFragmentAction.RemoveSetDefaultBrowserCard)
     }
 
