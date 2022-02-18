@@ -17,9 +17,11 @@ import mozilla.components.support.base.observer.Observable
 import mozilla.components.support.base.observer.ObserverRegistry
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.tabstray.FloatingActionButtonBinding
 import org.mozilla.fenix.tabstray.TabsTrayAction
 import org.mozilla.fenix.tabstray.TabsTrayStore
+import org.mozilla.fenix.tabstray.ext.toComposeList
 
 /**
  * TabsTrayFragment delegate to handle all layout updates needed to display synced tabs and any errors.
@@ -89,7 +91,13 @@ class SyncedTabsIntegration(
     }
 
     override fun displaySyncedTabs(syncedTabs: List<SyncedDeviceTabs>) {
-        store.dispatch(TabsTrayAction.UpdateSyncedTabs(syncedTabs.toComposeList()))
+        store.dispatch(
+            TabsTrayAction.UpdateSyncedTabs(
+                syncedTabs.toComposeList(
+                    context.settings().enableTaskContinuityEnhancements
+                )
+            )
+        )
     }
 
     /**
@@ -111,7 +119,10 @@ class SyncedTabsIntegration(
 
         SyncedTabsView.ErrorType.SYNC_UNAVAILABLE ->
             SyncedTabsListItem.Error(
-                errorText = context.getString(R.string.synced_tabs_no_tabs),
+                errorText = context.getString(
+                    R.string.synced_tabs_no_tabs_2,
+                    context.getString(R.string.app_name)
+                ),
                 errorButton = SyncedTabsListItem.ErrorButton(
                     buttonText = context.getString(R.string.synced_tabs_sign_in_button)
                 ) {

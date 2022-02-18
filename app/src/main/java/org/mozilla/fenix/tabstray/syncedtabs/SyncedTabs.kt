@@ -9,6 +9,7 @@ package org.mozilla.fenix.tabstray.syncedtabs
 import android.content.res.Configuration
 import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -45,9 +46,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import mozilla.components.browser.storage.sync.SyncedDeviceTabs
 import mozilla.components.browser.storage.sync.TabEntry
-import mozilla.components.browser.toolbar.MAX_URI_LENGTH
 import mozilla.components.feature.syncedtabs.view.SyncedTabsView
 import org.mozilla.fenix.R
 import org.mozilla.fenix.compose.PrimaryText
@@ -61,28 +60,67 @@ import mozilla.components.browser.storage.sync.Tab as SyncTab
  * @param syncedTabs The tab UI items to be displayed.
  * @param onTabClick The lambda for handling clicks on synced tabs.
  */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun SyncedTabsList(syncedTabs: List<SyncedTabsListItem>, onTabClick: (SyncTab) -> Unit) {
+fun SyncedTabsList(
+    syncedTabs: List<SyncedTabsListItem>,
+    taskContinuityEnabled: Boolean,
+    onTabClick: (SyncTab) -> Unit,
+) {
     val listState = rememberLazyListState()
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         state = listState,
     ) {
-        items(syncedTabs) { syncedTabItem ->
-            when (syncedTabItem) {
-                is SyncedTabsListItem.Device -> SyncedTabsDeviceItem(deviceName = syncedTabItem.displayName)
-                is SyncedTabsListItem.Error -> SyncedTabsErrorItem(
-                    errorText = syncedTabItem.errorText,
-                    errorButton = syncedTabItem.errorButton
-                )
-                is SyncedTabsListItem.NoTabs -> SyncedTabsNoTabsItem()
-                is SyncedTabsListItem.Tab -> {
-                    SyncedTabsTabItem(
-                        tabTitleText = syncedTabItem.displayTitle,
-                        url = syncedTabItem.displayURL,
-                    ) {
-                        onTabClick(syncedTabItem.tab)
+        if (taskContinuityEnabled) {
+            syncedTabs.forEach { syncedTabItem ->
+                when (syncedTabItem) {
+                    is SyncedTabsListItem.DeviceSection -> {
+                        stickyHeader {
+                            SyncedTabsDeviceItem(deviceName = syncedTabItem.displayName)
+                        }
+
+                        if (syncedTabItem.tabs.isNotEmpty()) {
+                            items(syncedTabItem.tabs) { syncedTab ->
+                                SyncedTabsTabItem(
+                                    tabTitleText = syncedTab.displayTitle,
+                                    url = syncedTab.displayURL,
+                                ) {
+                                    onTabClick(syncedTab.tab)
+                                }
+                            }
+                        } else {
+                            item { SyncedTabsNoTabsItem() }
+                        }
+                    }
+
+                    is SyncedTabsListItem.Error -> {
+                        item {
+                            SyncedTabsErrorItem(
+                                errorText = syncedTabItem.errorText,
+                                errorButton = syncedTabItem.errorButton
+                            )
+                        }
+                    }
+                }
+            }
+        } else {
+            items(syncedTabs) { syncedTabItem ->
+                when (syncedTabItem) {
+                    is SyncedTabsListItem.Device -> SyncedTabsDeviceItem(deviceName = syncedTabItem.displayName)
+                    is SyncedTabsListItem.Error -> SyncedTabsErrorItem(
+                        errorText = syncedTabItem.errorText,
+                        errorButton = syncedTabItem.errorButton
+                    )
+                    is SyncedTabsListItem.NoTabs -> SyncedTabsNoTabsItem()
+                    is SyncedTabsListItem.Tab -> {
+                        SyncedTabsTabItem(
+                            tabTitleText = syncedTabItem.displayTitle,
+                            url = syncedTabItem.displayURL,
+                        ) {
+                            onTabClick(syncedTabItem.tab)
+                        }
                     }
                 }
             }
@@ -103,7 +141,11 @@ fun SyncedTabsList(syncedTabs: List<SyncedTabsListItem>, onTabClick: (SyncTab) -
  */
 @Composable
 fun SyncedTabsDeviceItem(deviceName: String) {
-    Column(Modifier.fillMaxWidth()) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(FirefoxTheme.colors.layer1)
+    ) {
         PrimaryText(
             text = deviceName,
             modifier = Modifier
@@ -282,7 +324,10 @@ private fun SyncedTabsErrorPreview() {
     FirefoxTheme {
         Box(Modifier.background(FirefoxTheme.colors.layer1)) {
             SyncedTabsErrorItem(
-                errorText = stringResource(R.string.synced_tabs_no_tabs),
+                errorText = stringResource(
+                    R.string.synced_tabs_no_tabs_2,
+                    stringResource(R.string.app_name)
+                ),
                 errorButton = SyncedTabsListItem.ErrorButton(
                     buttonText = stringResource(R.string.synced_tabs_sign_in_button)
                 ) {
@@ -299,7 +344,8 @@ private fun SyncedTabsListPreview() {
     FirefoxTheme {
         Box(Modifier.background(FirefoxTheme.colors.layer1)) {
             SyncedTabsList(
-                getFakeSyncedTabList(),
+                syncedTabs = getFakeSyncedTabList(),
+                taskContinuityEnabled = true,
             ) {
                 println("Tab clicked")
             }
@@ -308,34 +354,18 @@ private fun SyncedTabsListPreview() {
 }
 
 /**
- * Converts a list of [SyncedDeviceTabs] into a list of [SyncedTabsListItem].
- */
-fun List<SyncedDeviceTabs>.toComposeList() = asSequence().flatMap { (device, tabs) ->
-    // Transform to sticky headers data here https://github.com/mozilla-mobile/fenix/issues/19942
-    val deviceTabs = if (tabs.isEmpty()) {
-        sequenceOf(SyncedTabsListItem.NoTabs)
-    } else {
-        tabs.asSequence().map {
-            val url = it.active().url
-            val titleText = it.active().title.ifEmpty { url.take(MAX_URI_LENGTH) }
-            SyncedTabsListItem.Tab(titleText, url, it)
-        }
-    }
-
-    sequenceOf(SyncedTabsListItem.Device(device.displayName)) + deviceTabs
-}.toList()
-
-/**
  * Helper function to create a List of [SyncedTabsListItem] for previewing.
  */
 @VisibleForTesting internal fun getFakeSyncedTabList(): List<SyncedTabsListItem> = listOf(
-    SyncedTabsListItem.Device("Device 1"),
-    generateFakeTab("Mozilla", "www.mozilla.org"),
-    generateFakeTab("Google", "www.google.com"),
-    generateFakeTab("", "www.google.com"),
-    SyncedTabsListItem.Device("Device 2"),
-    SyncedTabsListItem.NoTabs,
-    SyncedTabsListItem.Device("Device 3"),
+    SyncedTabsListItem.DeviceSection(
+        displayName = "Device 1",
+        tabs = listOf(
+            generateFakeTab("Mozilla", "www.mozilla.org"),
+            generateFakeTab("Google", "www.google.com"),
+            generateFakeTab("", "www.google.com"),
+        )
+    ),
+    SyncedTabsListItem.DeviceSection("Device 2", emptyList()),
     SyncedTabsListItem.Error("Please re-authenticate"),
 )
 
