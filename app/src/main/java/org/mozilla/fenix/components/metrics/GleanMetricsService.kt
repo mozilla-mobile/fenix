@@ -10,7 +10,6 @@ import mozilla.components.service.glean.private.NoExtraKeys
 import mozilla.components.support.base.log.logger.Logger
 import org.mozilla.fenix.GleanMetrics.Addons
 import org.mozilla.fenix.GleanMetrics.AndroidAutofill
-import org.mozilla.fenix.GleanMetrics.AndroidKeystoreExperiment
 import org.mozilla.fenix.GleanMetrics.AppTheme
 import org.mozilla.fenix.GleanMetrics.Autoplay
 import org.mozilla.fenix.GleanMetrics.Awesomebar
@@ -46,8 +45,6 @@ import org.mozilla.fenix.GleanMetrics.RecentlyClosedTabs
 import org.mozilla.fenix.GleanMetrics.SearchShortcuts
 import org.mozilla.fenix.GleanMetrics.SearchTerms
 import org.mozilla.fenix.GleanMetrics.SearchWidget
-import org.mozilla.fenix.GleanMetrics.SetDefaultNewtabExperiment
-import org.mozilla.fenix.GleanMetrics.SetDefaultSettingExperiment
 import org.mozilla.fenix.GleanMetrics.StartOnHome
 import org.mozilla.fenix.GleanMetrics.SyncAccount
 import org.mozilla.fenix.GleanMetrics.SyncAuth
@@ -730,14 +727,6 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.ProgressiveWebAppInstallAsShortcut -> EventWrapper<NoExtraKeys>(
             { ProgressiveWebApp.installTap.record(it) }
         )
-        is Event.ProgressiveWebAppForeground -> EventWrapper(
-            { ProgressiveWebApp.foreground.record(it) },
-            { ProgressiveWebApp.foregroundKeys.valueOf(it) }
-        )
-        is Event.ProgressiveWebAppBackground -> EventWrapper(
-            { ProgressiveWebApp.background.record(it) },
-            { ProgressiveWebApp.backgroundKeys.valueOf(it) }
-        )
         is Event.CopyUrlUsed -> EventWrapper<NoExtraKeys>(
             { Events.copyUrlTapped.record(it) }
         )
@@ -794,41 +783,10 @@ private val Event.wrapper: EventWrapper<*>?
             { Awesomebar.openedTabSuggestionClicked.record(it) }
         )
 
-        is Event.SecurePrefsExperimentFailure -> EventWrapper(
-            { AndroidKeystoreExperiment.experimentFailure.record(it) },
-            { AndroidKeystoreExperiment.experimentFailureKeys.valueOf(it) }
-        )
-        is Event.SecurePrefsGetFailure -> EventWrapper(
-            { AndroidKeystoreExperiment.getFailure.record(it) },
-            { AndroidKeystoreExperiment.getFailureKeys.valueOf(it) }
-        )
-        is Event.SecurePrefsGetSuccess -> EventWrapper(
-            { AndroidKeystoreExperiment.getResult.record(it) },
-            { AndroidKeystoreExperiment.getResultKeys.valueOf(it) }
-        )
-        is Event.SecurePrefsWriteFailure -> EventWrapper(
-            { AndroidKeystoreExperiment.writeFailure.record(it) },
-            { AndroidKeystoreExperiment.writeFailureKeys.valueOf(it) }
-        )
-        is Event.SecurePrefsWriteSuccess -> EventWrapper<NoExtraKeys>(
-            { AndroidKeystoreExperiment.writeSuccess.record(it) }
-        )
-        is Event.SecurePrefsReset -> EventWrapper<NoExtraKeys>(
-            { AndroidKeystoreExperiment.reset.record(it) }
-        )
         is Event.HomeMenuSettingsItemClicked -> EventWrapper<NoExtraKeys>(
             { HomeMenu.settingsItemClicked.record(it) }
         )
 
-        is Event.CloseExperimentCardClicked -> EventWrapper<NoExtraKeys>(
-            { SetDefaultNewtabExperiment.closeExperimentCardClicked.record(it) }
-        )
-        is Event.SetDefaultBrowserNewTabClicked -> EventWrapper<NoExtraKeys>(
-            { SetDefaultNewtabExperiment.setDefaultBrowserClicked.record(it) }
-        )
-        is Event.SetDefaultBrowserSettingsScreenClicked -> EventWrapper<NoExtraKeys>(
-            { SetDefaultSettingExperiment.setDefaultBrowserClicked.record(it) }
-        )
         is Event.HomeScreenDisplayed -> EventWrapper<NoExtraKeys>(
             { HomeScreen.homeScreenDisplayed.record(it) }
         )
