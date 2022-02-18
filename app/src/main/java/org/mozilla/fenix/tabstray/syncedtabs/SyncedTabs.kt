@@ -48,7 +48,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import mozilla.components.browser.storage.sync.TabEntry
 import mozilla.components.feature.syncedtabs.view.SyncedTabsView
-import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.compose.PrimaryText
 import org.mozilla.fenix.compose.SecondaryText
@@ -63,14 +62,18 @@ import mozilla.components.browser.storage.sync.Tab as SyncTab
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun SyncedTabsList(syncedTabs: List<SyncedTabsListItem>, onTabClick: (SyncTab) -> Unit) {
+fun SyncedTabsList(
+    syncedTabs: List<SyncedTabsListItem>,
+    taskContinuityEnabled: Boolean,
+    onTabClick: (SyncTab) -> Unit,
+) {
     val listState = rememberLazyListState()
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         state = listState,
     ) {
-        if (FeatureFlags.taskContinuityFeature) {
+        if (taskContinuityEnabled) {
             syncedTabs.forEach { syncedTabItem ->
                 when (syncedTabItem) {
                     is SyncedTabsListItem.DeviceSection -> {
@@ -321,7 +324,10 @@ private fun SyncedTabsErrorPreview() {
     FirefoxTheme {
         Box(Modifier.background(FirefoxTheme.colors.layer1)) {
             SyncedTabsErrorItem(
-                errorText = stringResource(R.string.synced_tabs_no_tabs),
+                errorText = stringResource(
+                    R.string.synced_tabs_no_tabs_2,
+                    stringResource(R.string.app_name)
+                ),
                 errorButton = SyncedTabsListItem.ErrorButton(
                     buttonText = stringResource(R.string.synced_tabs_sign_in_button)
                 ) {
@@ -338,7 +344,8 @@ private fun SyncedTabsListPreview() {
     FirefoxTheme {
         Box(Modifier.background(FirefoxTheme.colors.layer1)) {
             SyncedTabsList(
-                getFakeSyncedTabList(),
+                syncedTabs = getFakeSyncedTabList(),
+                taskContinuityEnabled = true,
             ) {
                 println("Tab clicked")
             }
