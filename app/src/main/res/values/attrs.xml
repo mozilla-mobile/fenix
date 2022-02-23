@@ -19,7 +19,6 @@
     <attr name="accentBright" format="reference" />
     <attr name="accentHighContrast" format="reference" />
     <attr name="accentUsedOnDarkBackground" format="reference" />
-    <attr name="tabRing" format="reference" />
     <attr name="snackbar" format="reference" />
     <attr name="foundation" format="reference" />
     <attr name="above" format="reference" />
@@ -61,7 +60,6 @@
     <attr name="awesomeBarIndicatorBookmarkColor" format="reference|color"/>
 
     <!-- Tab tray -->
-    <attr name="tabTrayItemMediaBackground" format="reference" />
     <attr name="tabTrayThumbnailItemBackground" format="reference" />
     <attr name="tabTrayThumbnailIcon" format="reference" />
 

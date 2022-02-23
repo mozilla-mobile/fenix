@@ -58,7 +58,6 @@
         <item name="foundation">@color/fx_mobile_layer_color_1</item>
         <item name="above">@color/fx_mobile_layer_color_2</item>
         <item name="inset">@color/inset_normal_theme</item>
-        <item name="tabRing">@color/tab_ring_normal_theme</item>
         <item name="neutral">@color/neutral_normal_theme</item>
         <item name="neutralFaded">@color/neutral_faded_normal_theme</item>
         <item name="destructive">@color/fx_mobile_text_color_warning</item>
@@ -94,7 +93,6 @@
         <item name="mozac_widget_favicon_background_color">@color/fx_mobile_layer_color_2</item>
         <item name="mozac_widget_favicon_border_color">@color/fx_mobile_border_color_primary</item>
 
-        <item name="tabTrayItemMediaBackground">@color/accent_normal_theme</item>
         <item name="tabTrayThumbnailItemBackground">@color/tab_tray_item_thumbnail_background_normal_theme</item>
         <item name="tabTrayThumbnailIcon">@color/tab_tray_item_thumbnail_icon_normal_theme</item>
 
@@ -238,7 +236,6 @@
         <item name="foundation">@color/foundation_private_theme</item>
         <item name="above">@color/fx_mobile_private_layer_color_1</item>
         <item name="inset">@color/fx_mobile_private_layer_color_1</item>
-        <item name="tabRing">@color/tab_ring_private_theme</item>
         <item name="neutral">@color/neutral_private_theme</item>
         <item name="neutralFaded">@color/neutral_faded_private_theme</item>
         <item name="destructive">@color/fx_mobile_private_text_color_warning</item>
@@ -274,7 +271,6 @@
         <item name="mozac_widget_favicon_border_color">@color/photonInk50</item>
 
         <!-- Tab Tray -->
-        <item name="tabTrayItemMediaBackground">@color/tab_tray_item_media_background_private_theme</item>
         <item name="tabTrayThumbnailItemBackground">@color/tab_tray_item_thumbnail_background_normal_theme</item>
         <item name="tabTrayThumbnailIcon">@color/tab_tray_item_thumbnail_icon_normal_theme</item>
 
