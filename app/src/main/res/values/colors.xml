@@ -259,7 +259,6 @@
     <color name="foundation_private_theme">#261E4B</color>
     <color name="accent_private_theme">@color/photonViolet50</color>
     <color name="accent_high_contrast_private_theme">#AA71FF</color>
-    <color name="tab_ring_private_theme">#F565FF</color>
     <color name="neutral_private_theme">@color/photonGrey20</color>
     <color name="neutral_faded_private_theme">#1FFBFBFE</color>
     <color name="scrimStart_private_theme">@color/photonInk80A96</color>
@@ -280,7 +279,6 @@
     <color name="inset_normal_theme">@color/photonLightGrey30</color>
     <color name="accent_normal_theme">@color/photonInk20</color>
     <color name="accent_high_contrast_normal_theme">@color/photonInk20</color>
-    <color name="tab_ring_normal_theme">@color/photonInk20</color>
     <color name="neutral_normal_theme">@color/photonGrey30</color>
     <color name="neutral_faded_normal_theme">@color/photonGrey20</color>
     <color name="fill_link_from_clipboard_normal_theme">@color/photonInk20</color>
@@ -318,7 +316,6 @@
 
     <!-- Misc colors applied universally-->
     <color name="suggestion_highlight_color">#5C592ACB</color>
-    <color name="white_color">@color/photonLightGrey05</color>
     <color name="text_scale_example_text_color">#232749</color>
     <color name="sync_error_background_color">#FFF36E</color>
     <color name="sync_error_text_color">@color/photonYellow90</color>
@@ -326,7 +323,7 @@
     <color name="snackbar_error_color">#B52645</color>
 
     <!-- Reader View colors -->
-    <color name="mozac_feature_readerview_text_color" tools:ignore="UnusedResources">@color/primary_text_light_theme</color>
+    <color name="mozac_feature_readerview_text_color" tools:ignore="UnusedResources">@color/fx_mobile_icon_color_primary</color>
     <color name="mozac_feature_readerview_selected">@color/photonViolet40</color>
 
     <!-- Share UI -->
@@ -352,8 +349,8 @@
     <color name="search_view_hint_color">@color/photonDarkGrey05</color>
 
     <!-- Tab Counter colors -->
-    <color name="mozac_ui_tabcounter_default_tint" tools:ignore="UnusedResources">@color/primary_text_light_theme</color>
-    <color name="mozac_ui_tabcounter_default_text" tools:ignore="UnusedResources">@color/primary_text_light_theme</color>
+    <color name="mozac_ui_tabcounter_default_tint" tools:ignore="UnusedResources">@color/fx_mobile_icon_color_primary</color>
+    <color name="mozac_ui_tabcounter_default_text" tools:ignore="UnusedResources">@color/fx_mobile_text_color_primary</color>
 
     <!-- App Spinners colors -->
     <color name="spinner_selected_item">#1415141A</color>
