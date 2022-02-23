@@ -132,11 +132,11 @@
     <!-- Search -->
     <color name="fx_mobile_private_layer_color_3">@color/photonInk50</color>
     <!-- Homescreen background, Toolbar -->
-    <color name="fx_mobile_private_layer_color_4_start" tools:ignore="UnusedResources">@color/photonPurple70</color>
+    <color name="fx_mobile_private_layer_color_4_start">@color/photonPurple70</color>
     <!-- Homescreen background, Toolbar -->
-    <color name="fx_mobile_private_layer_color_4_center" tools:ignore="UnusedResources">@color/photonViolet80</color>
+    <color name="fx_mobile_private_layer_color_4_center">@color/photonViolet80</color>
     <!-- Homescreen background, Toolbar -->
-    <color name="fx_mobile_private_layer_color_4_end" tools:ignore="UnusedResources">@color/photonInk05</color>
+    <color name="fx_mobile_private_layer_color_4_end">@color/photonInk05</color>
     <!-- App Bar Top (edit), Text Cursor, Selected Tab Check -->
     <color name="fx_mobile_private_layer_color_accent" tools:ignore="UnusedResources">@color/photonViolet40</color>
     <!-- Selected tab -->
@@ -209,7 +209,7 @@
     <!-- Secondary icon -->
     <color name="fx_mobile_private_icon_color_secondary" tools:ignore="UnusedResources">@color/photonLightGrey40</color>
     <!-- Active tab -->
-    <color name="fx_mobile_private_icon_color_active" tools:ignore="UnusedResources">@color/photonViolet40</color>
+    <color name="fx_mobile_private_icon_color_active">@color/photonViolet40</color>
     <!-- Disabled icon -->
     <color name="fx_mobile_private_icon_color_disabled" tools:ignore="UnusedResources">@color/photonLightGrey05A40</color>
     <!-- Icon inverted (on color) -->
@@ -264,18 +264,12 @@
     <color name="scrimStart_private_theme">@color/photonInk80A96</color>
     <color name="scrimEnd_private_theme">@color/photonDarkGrey90A96</color>
     <color name="snackbar_private_theme">@color/photonInk20</color>
-    <color name="toolbar_start_gradient_private_theme">#7529A7</color>
-    <color name="toolbar_center_gradient_private_theme">#492E85</color>
-    <color name="toolbar_end_gradient_private_theme">#383372</color>
     <color name="toolbar_divider_color_private_theme">@color/photonDarkGrey10</color>
     <color name="sync_disconnected_icon_fill_private_theme">@color/photonYellow70</color>
     <color name="sync_disconnected_background_private_theme">#5B5846</color>
     <color name="swipe_delete_background_private_theme">@color/photonInk20</color>
     <color name="onboarding_illustration_deselected_private_theme">#99FBFBFE</color>
     <color name="prompt_login_edit_text_cursor_color_private_theme">@color/photonViolet50</color>
-
-    <!-- Tab Tray -->
-    <color name="tab_tray_item_media_background_private_theme">@color/photonViolet50</color>
 
     <!-- Normal theme colors for light mode -->
     <color name="caption_text_normal_theme">@color/photonLightGrey90</color>
@@ -294,7 +288,6 @@
     <color name="prompt_login_edit_text_cursor_color_normal_theme">@color/photonInk20</color>
     <color name="search_suggestion_indicator_icon_color_normal_theme">@color/photonGreen70</color>
     <color name="search_suggestion_indicator_icon_bookmark_color_normal_theme">@color/photonBlue50</color>
-    <color name="recently_used_share_theme">@color/photonLightGrey30</color>
 
     <!-- Tab tray -->
     <color name="tab_tray_item_background_normal_theme">@color/photonLightGrey10</color>
@@ -357,7 +350,4 @@
 
     <!-- App Spinners colors -->
     <color name="spinner_selected_item">#1415141A</color>
-
-    <!-- Toolbar menu icon colors -->
-    <color name="toolbar_menu_transparent">@android:color/transparent</color>
 </resources>
