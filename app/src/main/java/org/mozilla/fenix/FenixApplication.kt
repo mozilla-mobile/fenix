@@ -790,9 +790,10 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
 
     @OptIn(DelicateCoroutinesApi::class)
     private fun downloadWallpapers() {
+        val wallpaperManager = components.wallpaperManager
         if (FeatureFlags.showWallpapers) {
             GlobalScope.launch {
-                components.wallpaperManager.downloadAllRemoteWallpapers()
+                wallpaperManager.downloadAllRemoteWallpapers()
             }
         }
     }
