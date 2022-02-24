@@ -67,6 +67,7 @@
     <string name="pref_key_should_show_default_browser_notification" translatable="false">pref_key_should_show_default_browser_notification</string>
     <string name="pref_key_is_first_run" translatable="false">pref_key_is_first_run</string>
     <string name="pref_key_has_shown_home_onboarding" translatable="false">pref_key_has_shown_home_onboarding</string>
+    <string name="pref_key_home_blocklist">pref_key_home_blocklist</string>
 
     <!-- Data Choices -->
     <string name="pref_key_telemetry" translatable="false">pref_key_telemetry</string>
@@ -204,6 +205,8 @@
     <string name="pref_key_enable_top_frecent_sites" translatable="false">pref_key_top_frecent_sites</string>
     <!-- Whether or not the sponsored shortcuts are shown along with the top recent sites shortcuts -->
     <string name="pref_key_enable_contile" translatable="false">pref_key_enable_contile</string>
+    <!-- Whether or not the Task Continuity enhancements are shown -->
+    <string name="pref_key_enable_task_continuity" translatable="false">pref_key_enable_task_continuity</string>
 
     <!-- A value  of `true` means the PWA dialog has been showed or user already has PWAs installed -->
     <string name="pref_key_user_knows_about_pwa" translatable="false">pref_key_user_knows_about_pwa</string>

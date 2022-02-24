@@ -157,7 +157,7 @@ events:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-12-01"
+    expires: 108
   default_browser_changed:
     type: event
     description: |
@@ -190,7 +190,7 @@ events:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-08-01"
+    expires: 104
   toolbar_menu_visible:
     type: event
     description: |
@@ -201,11 +201,13 @@ events:
       - https://github.com/mozilla-mobile/fenix/pull/18982#pullrequestreview-635098629
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/21076#issuecomment-909237275
+      - https://github.com/mozilla-mobile/fenix/pull/23802#issuecomment-1043255381
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-04-01"
+      - kbrosnan@mozilla.com
+    expires: never
     metadata:
       tags:
         - Toolbar
@@ -304,7 +306,7 @@ events:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-12-01"
+    expires: 108
   opened_link:
     type: event
     description: |
@@ -411,7 +413,7 @@ events:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-12-10"
+    expires: 108
   tab_view_changed:
     type: event
     description: |
@@ -431,7 +433,7 @@ events:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-05-10"
+    expires: 101
 
 onboarding:
   fxa_auto_signin:
@@ -622,7 +624,7 @@ search_shortcuts:
       - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Search
@@ -644,7 +646,7 @@ experiments_default_browser:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-03-31"
+    expires: 112
 toolbar_settings:
   changed_position:
     type: event
@@ -724,7 +726,7 @@ login_dialog:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Logins
@@ -743,7 +745,7 @@ login_dialog:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Logins
@@ -762,7 +764,7 @@ login_dialog:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Logins
@@ -781,7 +783,7 @@ login_dialog:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Logins
@@ -931,7 +933,7 @@ metrics:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Bookmarks
@@ -1014,7 +1016,7 @@ metrics:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - PWA
@@ -1038,7 +1040,7 @@ metrics:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - PWA
@@ -1102,7 +1104,7 @@ metrics:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Settings
@@ -1128,7 +1130,7 @@ metrics:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Settings
@@ -1154,7 +1156,7 @@ metrics:
       - technical
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Telemetry
@@ -1180,7 +1182,7 @@ metrics:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Telemetry
@@ -1206,7 +1208,7 @@ metrics:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Telemetry
@@ -1232,7 +1234,7 @@ metrics:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Telemetry
@@ -1255,7 +1257,7 @@ metrics:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Toolbar
@@ -1278,7 +1280,7 @@ metrics:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Tabs
@@ -1301,7 +1303,7 @@ metrics:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Tabs
@@ -1324,7 +1326,7 @@ metrics:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Discovery
@@ -1376,7 +1378,7 @@ metrics:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Tabs
@@ -1457,7 +1459,7 @@ metrics:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     unit: integer
 
 customize_home:
@@ -1477,7 +1479,7 @@ customize_home:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-09-20"
+    expires: 105
   jump_back_in:
     type: boolean
     description: |
@@ -1494,7 +1496,7 @@ customize_home:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-09-20"
+    expires: 105
   recently_saved:
     type: boolean
     description: |
@@ -1511,7 +1513,7 @@ customize_home:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-09-20"
+    expires: 105
   recently_visited:
     type: boolean
     description: |
@@ -1528,7 +1530,7 @@ customize_home:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-09-20"
+    expires: 105
   pocket:
     type: boolean
     description: |
@@ -1544,7 +1546,7 @@ customize_home:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-09-20"
+    expires: 105
   preference_toggled:
     type: event
     description: |
@@ -1568,7 +1570,7 @@ customize_home:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-09-20"
+    expires: 105
   opening_screen:
     type: string
     description: |
@@ -1584,7 +1586,7 @@ customize_home:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-11-01"
+    expires: 107
 
 preferences:
   studies_enabled:
@@ -1602,7 +1604,7 @@ preferences:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-11-01"
+    expires: 107
   studies_preference_enabled:
     type: event
     description: >
@@ -1615,7 +1617,7 @@ preferences:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-11-01"
+    expires: 107
   search_suggestions_enabled:
     type: boolean
     description: |
@@ -1660,7 +1662,7 @@ preferences:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Settings
@@ -1711,7 +1713,7 @@ preferences:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - TrackingProtection
@@ -1735,7 +1737,7 @@ preferences:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Settings
@@ -1758,7 +1760,7 @@ preferences:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Settings
@@ -1781,7 +1783,7 @@ preferences:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Settings
@@ -1829,7 +1831,7 @@ preferences:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Sync
@@ -1855,7 +1857,7 @@ preferences:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Settings
@@ -1878,7 +1880,7 @@ preferences:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Search
@@ -1998,7 +2000,7 @@ preferences:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-11-01"
+    expires: 107
   inactive_tabs_survey_opened:
     type: event
     description: >
@@ -2013,7 +2015,7 @@ preferences:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
   turn_off_inactive_tabs_survey:
     type: event
     description: >
@@ -2032,7 +2034,7 @@ preferences:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
   search_term_groups_enabled:
     type: boolean
     description: |
@@ -2045,7 +2047,7 @@ preferences:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-11-01"
+    expires: 107
 
 search.default_engine:
   code:
@@ -2126,7 +2128,7 @@ search.default_engine:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
 
 bookmarks_management:
   open:
@@ -2142,7 +2144,7 @@ bookmarks_management:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-08-01"
+    expires: 104
     metadata:
       tags:
         - Bookmarks
@@ -2427,7 +2429,7 @@ custom_tab:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-06-01"
+    expires: 102
     metadata:
       tags:
         - CustomTabs
@@ -2448,7 +2450,7 @@ custom_tab:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-06-01"
+    expires: 102
     metadata:
       tags:
         - CustomTabs
@@ -2469,7 +2471,7 @@ custom_tab:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-06-01"
+    expires: 102
     metadata:
       tags:
         - CustomTabs
@@ -2552,7 +2554,7 @@ error_page:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-12-01"
+    expires: 108
     metadata:
       tags:
         - ErrorMessages
@@ -2574,7 +2576,7 @@ sync_auth:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Toolbar
@@ -2595,7 +2597,7 @@ sync_auth:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Toolbar
@@ -2617,7 +2619,7 @@ sync_auth:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Sync
@@ -2637,7 +2639,7 @@ sync_auth:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Sync
@@ -2725,7 +2727,7 @@ sync_auth:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Accounts
@@ -2747,7 +2749,7 @@ sync_auth:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Accounts
@@ -2769,7 +2771,7 @@ sync_auth:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Accounts
@@ -2789,7 +2791,7 @@ sync_auth:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Sync
@@ -2811,7 +2813,7 @@ sync_account:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Toolbar
@@ -2832,7 +2834,7 @@ sync_account:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Toolbar
@@ -2853,7 +2855,7 @@ sync_account:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - SendTab
@@ -2873,7 +2875,7 @@ sync_account:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - SendTab
@@ -2895,7 +2897,7 @@ history:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - History
@@ -2915,7 +2917,7 @@ history:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - History
@@ -2935,7 +2937,7 @@ history:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - History
@@ -2955,7 +2957,7 @@ history:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - History
@@ -3072,7 +3074,7 @@ history:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-11-01"
+    expires: 107
   search_term_group_tapped:
     type: event
     description: |
@@ -3085,7 +3087,7 @@ history:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-11-01"
+    expires: 107
   search_term_group_open_tab:
     type: event
     description: |
@@ -3098,7 +3100,7 @@ history:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-11-01"
+    expires: 107
   search_term_group_remove_tab:
     type: event
     description: |
@@ -3111,7 +3113,7 @@ history:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-11-01"
+    expires: 107
   search_term_group_remove_all:
     type: event
     description: |
@@ -3124,7 +3126,7 @@ history:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-11-01"
+    expires: 107
   search_icon_tapped:
     type: event
     description: |
@@ -3137,7 +3139,7 @@ history:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-03-31"
+    expires: 112
   search_result_tapped:
     type: event
     description: |
@@ -3150,7 +3152,7 @@ history:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-03-31"
+    expires: 112
 
 recently_closed_tabs:
   opened:
@@ -3165,7 +3167,7 @@ recently_closed_tabs:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-01-31"
+    expires: 109
   closed:
     type: event
     description: |
@@ -3178,7 +3180,7 @@ recently_closed_tabs:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-01-31"
+    expires: 109
   show_full_history:
     type: event
     description: |
@@ -3191,7 +3193,7 @@ recently_closed_tabs:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-01-31"
+    expires: 109
   open_tab:
     type: event
     description: |
@@ -3204,7 +3206,7 @@ recently_closed_tabs:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-01-31"
+    expires: 109
   delete_tab:
     type: event
     description: |
@@ -3217,7 +3219,7 @@ recently_closed_tabs:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-01-31"
+    expires: 109
   menu_close:
     type: event
     description: |
@@ -3230,7 +3232,7 @@ recently_closed_tabs:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-01-31"
+    expires: 109
   menu_share:
     type: event
     description: |
@@ -3243,7 +3245,7 @@ recently_closed_tabs:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-01-31"
+    expires: 109
   menu_delete:
     type: event
     description: |
@@ -3256,7 +3258,7 @@ recently_closed_tabs:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-01-31"
+    expires: 109
   menu_open_in_normal_tab:
     type: event
     description: |
@@ -3269,7 +3271,7 @@ recently_closed_tabs:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-01-31"
+    expires: 109
   menu_open_in_private_tab:
     type: event
     description: |
@@ -3282,7 +3284,7 @@ recently_closed_tabs:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-01-31"
+    expires: 109
   enter_multiselect:
     type: event
     description: |
@@ -3295,7 +3297,7 @@ recently_closed_tabs:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-01-31"
+    expires: 109
   exit_multiselect:
     type: event
     description: |
@@ -3309,7 +3311,7 @@ recently_closed_tabs:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-01-31"
+    expires: 109
 
 reader_mode:
   available:
@@ -3698,7 +3700,7 @@ tabs_tray:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-08-01"
+    expires: 104
     metadata:
       tags:
         - Tabs
@@ -3715,7 +3717,7 @@ tabs_tray:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-08-01"
+    expires: 104
     metadata:
       tags:
         - Tabs
@@ -3735,7 +3737,7 @@ tabs_tray:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-11-01"
+    expires: 107
   close_all_inactive_tabs:
     type: event
     description: |
@@ -3748,7 +3750,7 @@ tabs_tray:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-11-01"
+    expires: 107
   auto_close_seen:
     type: event
     description: |
@@ -3761,7 +3763,7 @@ tabs_tray:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-11-01"
+    expires: 107
   auto_close_turn_on_clicked:
     type: event
     description: |
@@ -3774,7 +3776,7 @@ tabs_tray:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-11-01"
+    expires: 107
   auto_close_dimissed:
     type: event
     description: |
@@ -3787,7 +3789,7 @@ tabs_tray:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-11-01"
+    expires: 107
   close_inactive_tab:
     type: counter
     description: |
@@ -3800,7 +3802,7 @@ tabs_tray:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-11-01"
+    expires: 107
   open_inactive_tab:
     type: counter
     description: |
@@ -3813,7 +3815,7 @@ tabs_tray:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-11-01"
+    expires: 107
   inactive_tabs_cfr_settings:
     type: event
     description: |
@@ -3826,7 +3828,7 @@ tabs_tray:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-11-01"
+    expires: 107
   inactive_tabs_cfr_dismissed:
     type: event
     description: |
@@ -3839,7 +3841,7 @@ tabs_tray:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-11-01"
+    expires: 107
   inactive_tabs_cfr_visible:
     type: event
     description: |
@@ -3852,7 +3854,7 @@ tabs_tray:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-11-01"
+    expires: 107
 
 collections:
   renamed:
@@ -4187,7 +4189,7 @@ search_widget:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Search
@@ -4207,7 +4209,7 @@ search_widget:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Search
@@ -4230,7 +4232,7 @@ tracking_protection:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - TrackingProtection
@@ -4250,7 +4252,7 @@ tracking_protection:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - TrackingProtection
@@ -4270,7 +4272,7 @@ tracking_protection:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - TrackingProtection
@@ -4291,7 +4293,7 @@ tracking_protection:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - TrackingProtection
@@ -4311,7 +4313,7 @@ tracking_protection:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - TrackingProtection
@@ -4337,7 +4339,7 @@ tracking_protection:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
 
     metadata:
       tags:
@@ -4359,7 +4361,7 @@ tab:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     no_lint:
       - COMMON_PREFIX
     metadata:
@@ -4381,7 +4383,7 @@ tab:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Media
@@ -4403,7 +4405,7 @@ media_notification:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Media
@@ -4423,7 +4425,7 @@ media_notification:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Media
@@ -4445,7 +4447,7 @@ media_state:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Media
@@ -4465,7 +4467,7 @@ media_state:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Media
@@ -4485,7 +4487,7 @@ media_state:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Media
@@ -4504,7 +4506,7 @@ media_state:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Media
@@ -4523,7 +4525,7 @@ media_state:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Media
@@ -4566,7 +4568,7 @@ logins:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Logins
@@ -4586,7 +4588,7 @@ logins:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Logins
@@ -4606,7 +4608,7 @@ logins:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Logins
@@ -4631,7 +4633,7 @@ logins:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Logins
@@ -4651,7 +4653,7 @@ logins:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Logins
@@ -4671,7 +4673,7 @@ logins:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Logins
@@ -4691,7 +4693,7 @@ logins:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Logins
@@ -4713,7 +4715,7 @@ voice_search:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Search
@@ -4774,7 +4776,7 @@ top_sites:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - Search
@@ -4950,7 +4952,7 @@ top_sites:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
   baidu_top_site_removed:
     type: event
     description: |
@@ -4964,7 +4966,7 @@ top_sites:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
   open_contile_top_site:
     type: event
     description: |
@@ -4977,7 +4979,7 @@ top_sites:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
   open_contile_in_private_tab:
     type: event
     description: |
@@ -4991,7 +4993,7 @@ top_sites:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
   contile_settings:
     type: event
     description: |
@@ -5005,7 +5007,7 @@ top_sites:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
   contile_sponsors_and_privacy:
     type: event
     description: |
@@ -5019,7 +5021,7 @@ top_sites:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
 
 app_theme:
   dark_theme_selected:
@@ -5044,7 +5046,7 @@ app_theme:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-12-01"
+    expires: 108
 
     metadata:
       tags:
@@ -5090,7 +5092,7 @@ pocket:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - PocketIntegration
@@ -5107,7 +5109,7 @@ pocket:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-10-01"
+    expires: 106
   home_recs_story_clicked:
     type: event
     description: |
@@ -5128,7 +5130,7 @@ pocket:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-10-01"
+    expires: 106
   home_recs_category_clicked:
     type: event
     description: |
@@ -5152,7 +5154,7 @@ pocket:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-10-01"
+    expires: 106
   home_recs_discover_clicked:
     type: event
     description: |
@@ -5166,7 +5168,7 @@ pocket:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-10-01"
+    expires: 106
   home_recs_learn_more_clicked:
     type: event
     description: |
@@ -5179,7 +5181,7 @@ pocket:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-10-01"
+    expires: 106
 
 first_session:
   campaign:
@@ -5404,7 +5406,7 @@ addons:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-08-01"
+    expires: 104
     metadata:
       tags:
         - WebExtensions
@@ -5429,7 +5431,7 @@ addons:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-08-01"
+    expires: 104
     metadata:
       tags:
         - WebExtensions
@@ -5450,7 +5452,7 @@ addons:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-08-01"
+    expires: 104
     metadata:
       tags:
         - WebExtensions
@@ -5545,7 +5547,7 @@ addons:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-08-01"
+    expires: 104
 
     metadata:
       tags:
@@ -5735,12 +5737,13 @@ perf.startup:
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/19028
       - https://github.com/mozilla-mobile/fenix/pull/21076#issuecomment-909237275
+      - https://github.com/mozilla-mobile/fenix/pull/23802#issuecomment-1043255381
     data_sensitivity:
       - interaction
     notification_emails:
       - perf-android-fe@mozilla.com
-      - mcomella@mozilla.com
-    expires: "2022-04-01"
+      - mleclair@mozilla.com
+    expires: never
 
 perf.awesomebar:
   history_suggestions:
@@ -5762,7 +5765,7 @@ perf.awesomebar:
     notification_emails:
       - android-probes@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2022-11-15"
+    expires: 107
   bookmark_suggestions:
     send_in_pings:
       - metrics
@@ -5782,7 +5785,7 @@ perf.awesomebar:
     notification_emails:
       - android-probes@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2022-11-15"
+    expires: 107
   search_engine_suggestions:
     send_in_pings:
       - metrics
@@ -5802,7 +5805,7 @@ perf.awesomebar:
     notification_emails:
       - android-probes@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2022-11-15"
+    expires: 107
   session_suggestions:
     send_in_pings:
       - metrics
@@ -5822,7 +5825,7 @@ perf.awesomebar:
     notification_emails:
       - android-probes@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2022-11-15"
+    expires: 107
   synced_tabs_suggestions:
     send_in_pings:
       - metrics
@@ -5842,7 +5845,7 @@ perf.awesomebar:
     notification_emails:
       - android-probes@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2022-11-15"
+    expires: 107
   clipboard_suggestions:
     send_in_pings:
       - metrics
@@ -5862,7 +5865,7 @@ perf.awesomebar:
     notification_emails:
       - android-probes@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2022-11-15"
+    expires: 107
   shortcuts_suggestions:
     send_in_pings:
       - metrics
@@ -5882,7 +5885,7 @@ perf.awesomebar:
     notification_emails:
       - android-probes@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2022-11-15"
+    expires: 107
 
 autoplay:
   visited_setting:
@@ -5899,7 +5902,7 @@ autoplay:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - SitePermissions
@@ -5924,7 +5927,7 @@ autoplay:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - SitePermissions
@@ -6052,7 +6055,7 @@ progressive_web_app:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-03-31"
+    expires: 112
     metadata:
       tags:
         - PWA
@@ -6072,7 +6075,7 @@ progressive_web_app:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-03-31"
+    expires: 112
     metadata:
       tags:
         - PWA
@@ -6205,7 +6208,7 @@ engine_tab:
     notification_emails:
       - android-probes@mozilla.com
       - skaspari@mozilla.com
-    expires: "2022-07-01"
+    expires: 103
     metadata:
       tags:
         - Performance
@@ -6226,7 +6229,7 @@ engine_tab:
     notification_emails:
       - android-probes@mozilla.com
       - skaspari@mozilla.com
-    expires: "2022-07-01"
+    expires: 103
     metadata:
       tags:
         - Performance
@@ -6247,7 +6250,7 @@ engine_tab:
     notification_emails:
       - android-probes@mozilla.com
       - skaspari@mozilla.com
-    expires: "2022-07-01"
+    expires: 103
     metadata:
       tags:
         - Performance
@@ -6267,7 +6270,7 @@ engine_tab:
     notification_emails:
       - android-probes@mozilla.com
       - skaspari@mozilla.com
-    expires: "2022-07-01"
+    expires: 103
     extra_keys:
       background_active_tabs:
         description: |
@@ -6313,7 +6316,7 @@ synced_tabs:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
     metadata:
       tags:
         - SyncTabs
@@ -6456,7 +6459,7 @@ android_autofill:
     notification_emails:
       - android-probes@mozilla.com
       - skaspari@mozilla.com
-    expires: "2023-01-31"
+    expires: 109
   enabled:
     type: boolean
     description: |
@@ -6472,7 +6475,7 @@ android_autofill:
     notification_emails:
       - android-probes@mozilla.com
       - skaspari@mozilla.com
-    expires: "2023-01-31"
+    expires: 109
   request_matching_logins:
     type: event
     description: |
@@ -6488,7 +6491,7 @@ android_autofill:
     notification_emails:
       - android-probes@mozilla.com
       - skaspari@mozilla.com
-    expires: "2023-01-31"
+    expires: 109
   request_no_matching_logins:
     type: event
     description: |
@@ -6504,7 +6507,7 @@ android_autofill:
     notification_emails:
       - android-probes@mozilla.com
       - skaspari@mozilla.com
-    expires: "2023-01-31"
+    expires: 109
   search_displayed:
     type: event
     description: |
@@ -6520,7 +6523,7 @@ android_autofill:
     notification_emails:
       - android-probes@mozilla.com
       - skaspari@mozilla.com
-    expires: "2023-01-31"
+    expires: 109
   search_item_selected:
     type: event
     description: |
@@ -6535,7 +6538,7 @@ android_autofill:
     notification_emails:
       - android-probes@mozilla.com
       - skaspari@mozilla.com
-    expires: "2023-01-31"
+    expires: 109
   unlock_cancelled:
     type: event
     description: |
@@ -6551,7 +6554,7 @@ android_autofill:
     notification_emails:
       - android-probes@mozilla.com
       - skaspari@mozilla.com
-    expires: "2023-01-31"
+    expires: 109
   unlock_successful:
     type: event
     description: |
@@ -6566,7 +6569,7 @@ android_autofill:
     notification_emails:
       - android-probes@mozilla.com
       - skaspari@mozilla.com
-    expires: "2023-01-31"
+    expires: 109
   confirm_cancelled:
     type: event
     description: |
@@ -6582,7 +6585,7 @@ android_autofill:
     notification_emails:
       - android-probes@mozilla.com
       - skaspari@mozilla.com
-    expires: "2023-01-31"
+    expires: 109
   confirm_successful:
     type: event
     description: |
@@ -6597,7 +6600,7 @@ android_autofill:
     notification_emails:
       - android-probes@mozilla.com
       - skaspari@mozilla.com
-    expires: "2023-01-31"
+    expires: 109
 
 home_menu:
   settings_item_clicked:
@@ -6614,7 +6617,7 @@ home_menu:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-03-31"
+    expires: 112
     metadata:
       tags:
         - Settings
@@ -6635,7 +6638,7 @@ home_screen:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-03-31"
+    expires: 112
     metadata:
       tags:
         - HomeScreen
@@ -6651,7 +6654,7 @@ home_screen:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-11-01"
+    expires: 107
   customize_home_clicked:
     type: event
     description: A user clicked on Customize home from the home screen menu.
@@ -6664,120 +6667,7 @@ home_screen:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-09-20"
-
-android_keystore_experiment:
-  experiment_failure:
-    type: event
-    description: |
-      Records an instance of an unexpected failure during the experiment
-    extra_keys:
-      failure_exception:
-        description: |
-          Exception class associated with an unexpected failure of this
-          experiment, not caught by the other failure handlers.
-    bugs:
-      - https://github.com/mozilla-mobile/fenix/issues/17869
-    data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/18333#pullrequestreview-612447395
-      - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
-      - https://github.com/mozilla-mobile/fenix/pull/21076#issuecomment-909237275
-    data_sensitivity:
-      - technical
-    notification_emails:
-      - android-probes@mozilla.com
-    expires: "2022-03-01"
-  get_failure:
-    type: event
-    description: |
-      Unexpected failure when trying to read from secure prefs.
-    extra_keys:
-      failure_exception:
-        description: |
-          Exception class associated with an unexpected failure of this
-          experiment.
-    bugs:
-      - https://github.com/mozilla-mobile/fenix/issues/17869
-    data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/18333#pullrequestreview-612447395
-      - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
-      - https://github.com/mozilla-mobile/fenix/pull/21076#issuecomment-909237275
-    data_sensitivity:
-      - technical
-    notification_emails:
-      - android-probes@mozilla.com
-    expires: "2022-03-01"
-  get_result:
-    type: event
-    description: |
-      Success when trying to read from secure prefs.
-    extra_keys:
-      result:
-        description: |
-          Result code identifying whether the read operation returned the
-          expected value or not.
-    bugs:
-      - https://github.com/mozilla-mobile/fenix/issues/17869
-    data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/18333#pullrequestreview-612447395
-      - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
-      - https://github.com/mozilla-mobile/fenix/pull/21076#issuecomment-909237275
-    data_sensitivity:
-      - technical
-    notification_emails:
-      - android-probes@mozilla.com
-    expires: "2022-03-01"
-  write_failure:
-    type: event
-    description: |
-      Unexpected failure when trying to write to secure prefs.
-    extra_keys:
-      failure_exception:
-        description: |
-          Exception class associated with an unexpected failure of this
-          experiment.
-    bugs:
-      - https://github.com/mozilla-mobile/fenix/issues/17869
-    data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/18333#pullrequestreview-612447395
-      - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
-      - https://github.com/mozilla-mobile/fenix/pull/21076#issuecomment-909237275
-    data_sensitivity:
-      - technical
-    notification_emails:
-      - android-probes@mozilla.com
-    expires: "2022-03-01"
-  write_success:
-    type: event
-    description: |
-      Success in writing to secure prefs.
-    bugs:
-      - https://github.com/mozilla-mobile/fenix/issues/17869
-    data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/18333#pullrequestreview-612447395
-      - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
-      - https://github.com/mozilla-mobile/fenix/pull/21076#issuecomment-909237275
-    data_sensitivity:
-      - technical
-    notification_emails:
-      - android-probes@mozilla.com
-    expires: "2022-03-01"
-  reset:
-    type: event
-    description: |
-      An experiment failed, and was reset to run again in the future from a
-      blank state.
-    bugs:
-      - https://github.com/mozilla-mobile/fenix/issues/17869
-    data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/18333#pullrequestreview-612447395
-      - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
-      - https://github.com/mozilla-mobile/fenix/pull/21076#issuecomment-909237275
-    data_sensitivity:
-      - technical
-    notification_emails:
-      - android-probes@mozilla.com
-    expires: "2022-03-01"
+    expires: 105
 
 start_on_home:
   enter_home_screen:
@@ -6792,7 +6682,7 @@ start_on_home:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-06-16"
+    expires: 102
     metadata:
       tags:
         - HomeScreen
@@ -6808,7 +6698,7 @@ start_on_home:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-06-16"
+    expires: 102
     metadata:
       tags:
         - HomeScreen
@@ -6826,7 +6716,7 @@ recent_tabs:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-06-23"
+    expires: 102
     metadata:
       tags:
         - RecentTabs
@@ -6842,7 +6732,7 @@ recent_tabs:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-06-23"
+    expires: 102
     metadata:
       tags:
         - RecentTabs
@@ -6858,7 +6748,7 @@ recent_tabs:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-06-23"
+    expires: 102
     metadata:
       tags:
         - RecentTabs
@@ -6875,7 +6765,7 @@ recent_tabs:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-11-01"
+    expires: 107
 
 recent_bookmarks:
   shown:
@@ -6890,7 +6780,7 @@ recent_bookmarks:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-11-01"
+    expires: 107
   bookmark_clicked:
     type: counter
     lifetime: application
@@ -6909,7 +6799,7 @@ recent_bookmarks:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
   show_all_bookmarks:
     type: counter
     lifetime: application
@@ -6928,7 +6818,7 @@ recent_bookmarks:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-02-01"
+    expires: 111
   recent_bookmarks_count:
     type: quantity
     description: |
@@ -6942,7 +6832,7 @@ recent_bookmarks:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-11-01"
+    expires: 107
     unit: integer
 
 recent_searches:
@@ -6963,7 +6853,7 @@ recent_searches:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2023-03-31"
+    expires: 112
 
 credit_cards:
   saved:
@@ -6979,7 +6869,7 @@ credit_cards:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-09-01"
+    expires: 105
     metadata:
       tags:
         - Autofill
@@ -6996,7 +6886,7 @@ credit_cards:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-09-01"
+    expires: 105
     metadata:
       tags:
         - Autofill
@@ -7012,7 +6902,7 @@ credit_cards:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-09-01"
+    expires: 105
     metadata:
       tags:
         - Autofill
@@ -7028,7 +6918,7 @@ credit_cards:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-09-01"
+    expires: 105
     metadata:
       tags:
         - Autofill
@@ -7044,7 +6934,7 @@ credit_cards:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-09-01"
+    expires: 105
     metadata:
       tags:
         - Autofill
@@ -7060,7 +6950,7 @@ credit_cards:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-09-01"
+    expires: 105
     metadata:
       tags:
         - Autofill
@@ -7076,7 +6966,7 @@ credit_cards:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-09-01"
+    expires: 105
     metadata:
       tags:
         - Autofill
@@ -7092,7 +6982,7 @@ credit_cards:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-09-01"
+    expires: 105
     metadata:
       tags:
         - Autofill
@@ -7108,7 +6998,7 @@ credit_cards:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-09-01"
+    expires: 105
     metadata:
       tags:
         - Autofill
@@ -7124,7 +7014,7 @@ credit_cards:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-09-01"
+    expires: 105
     metadata:
       tags:
         - Autofill
@@ -7146,7 +7036,7 @@ search_terms:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-11-01"
+    expires: 107
   average_tabs_per_group:
     type: event
     description: |
@@ -7163,7 +7053,7 @@ search_terms:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-11-01"
+    expires: 107
   jump_back_in_group_tapped:
     type: event
     description: |
@@ -7176,7 +7066,7 @@ search_terms:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-11-01"
+    expires: 107
   group_size_distribution:
     type: custom_distribution
     description: |
@@ -7204,7 +7094,7 @@ search_terms:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: "2022-12-01"
+    expires: 108
 
 wallpapers:
   wallpaper_settings_opened:
@@ -7219,7 +7109,7 @@ wallpapers:
       - android-probes@mozilla.com
     data_sensitivity:
       - interaction
-    expires: "2023-05-01"
+    expires: 114
   wallpaper_selected:
     type: event
     description: |
@@ -7239,7 +7129,7 @@ wallpapers:
       - android-probes@mozilla.com
     data_sensitivity:
       - interaction
-    expires: "2023-05-01"
+    expires: 114
   wallpaper_switched:
     type: event
     description: |
@@ -7259,7 +7149,7 @@ wallpapers:
       - android-probes@mozilla.com
     data_sensitivity:
       - interaction
-    expires: "2023-05-01"
+    expires: 114
   change_wallpaper_logo_toggled:
     type: event
     description: |
@@ -7277,7 +7167,7 @@ wallpapers:
       - android-probes@mozilla.com
     data_sensitivity:
       - interaction
-    expires: "2023-05-01"
+    expires: 114
 
 recently_visited_homepage:
   history_highlight_opened:
@@ -7292,7 +7182,7 @@ recently_visited_homepage:
       - android-probes@mozilla.com
     data_sensitivity:
       - interaction
-    expires: "2023-05-01"
+    expires: 114
   search_group_opened:
     type: event
     description: |
@@ -7305,4 +7195,4 @@ recently_visited_homepage:
       - android-probes@mozilla.com
     data_sensitivity:
       - interaction
-    expires: "2023-05-01"
+    expires: 114
