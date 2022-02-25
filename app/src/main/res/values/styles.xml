@@ -36,6 +36,10 @@
         <item name="layer3">@color/fx_mobile_layer_color_3</item>
         <!-- Small heading, Text link -->
         <item name="textAccent">@color/fx_mobile_text_color_accent</item>
+        <!-- Active tab -->
+        <item name="iconActive">@color/fx_mobile_icon_color_active</item>
+        <!-- Default, Divider, Dotted -->
+        <item name="borderPrimary">@color/fx_mobile_border_color_primary</item>
 
         <!-- Active thumb color & Active track color (30% transparency) -->
         <item name="colorControlActivated">@color/accent_high_contrast_normal_theme</item>
@@ -49,14 +53,13 @@
         <!-- Updated color attributes -->
         <item name="primaryText">@color/fx_mobile_text_color_primary</item>
         <item name="secondaryText">@color/fx_mobile_text_color_secondary</item>
-        <item name="contrastText">@color/contrast_text_normal_theme</item>
+        <item name="contrastText">@color/fx_mobile_text_color_oncolor_primary</item>
         <item name="accent">@color/accent_normal_theme</item>
         <item name="accentBright">@color/photonViolet70</item>
         <item name="accentHighContrast">@color/accent_high_contrast_normal_theme</item>
         <item name="foundation">@color/fx_mobile_layer_color_1</item>
         <item name="above">@color/fx_mobile_layer_color_2</item>
         <item name="inset">@color/inset_normal_theme</item>
-        <item name="tabRing">@color/tab_ring_normal_theme</item>
         <item name="neutral">@color/neutral_normal_theme</item>
         <item name="neutralFaded">@color/neutral_faded_normal_theme</item>
         <item name="destructive">@color/fx_mobile_text_color_warning</item>
@@ -68,7 +71,6 @@
         <item name="toolbarStartGradient">@color/fx_mobile_layer_color_1</item>
         <item name="toolbarCenterGradient">@color/fx_mobile_layer_color_1</item>
         <item name="toolbarEndGradient">@color/fx_mobile_layer_color_1</item>
-        <item name="toolbarDivider">@color/fx_mobile_border_color_primary</item>
         <item name="fillLinkFromClipboard">@color/fill_link_from_clipboard_normal_theme</item>
         <item name="syncDisconnected">@color/sync_disconnected_icon_fill_normal_theme</item>
         <item name="syncDisconnectedBackground">@color/sync_disconnected_background_normal_theme</item>
@@ -84,7 +86,6 @@
         <item name="preferenceSectionHeader">@color/fx_mobile_text_color_accent</item>
         <item name="selectPromptHeaderTextColor">@color/fx_mobile_text_color_accent</item>
         <item name="menuItemButtonTintColor">@color/fx_mobile_text_color_accent</item>
-        <item name="recentlyUsedShareMenu">@color/recently_used_share_theme</item>
 
         <!-- Shared widget colors -->
         <item name="mozac_primary_text_color">@color/fx_mobile_text_color_primary</item>
@@ -92,7 +93,6 @@
         <item name="mozac_widget_favicon_background_color">@color/fx_mobile_layer_color_2</item>
         <item name="mozac_widget_favicon_border_color">@color/fx_mobile_border_color_primary</item>
 
-        <item name="tabTrayItemMediaBackground">@color/accent_normal_theme</item>
         <item name="tabTrayThumbnailItemBackground">@color/tab_tray_item_thumbnail_background_normal_theme</item>
         <item name="tabTrayThumbnailIcon">@color/tab_tray_item_thumbnail_icon_normal_theme</item>
 
@@ -205,9 +205,9 @@
         <item name="bottomSheetDialogTheme">@style/BottomSheetPrivate</item>
 
         <item name="mozacInputLayoutErrorTextColor"
-            tools:ignore="UnusedResources">@color/fx_mobile_private_text_color_warning_dark</item>
+            tools:ignore="UnusedResources">@color/fx_mobile_private_text_color_warning</item>
         <item name="mozacInputLayoutErrorIconColor"
-            tools:ignore="UnusedResources">@color/fx_mobile_private_text_color_warning_dark</item>
+            tools:ignore="UnusedResources">@color/fx_mobile_private_text_color_warning</item>
         <item name="mozacLoginSelectHeaderTextStyle" tools:ignore="UnusedResources">@style/SelectPromptHeaderTextStyle</item>
         <item name="mozacSelectCreditCardHeaderTextStyle" tools:ignore="UnusedResources">@style/SelectPromptHeaderTextStyle</item>
 
@@ -216,6 +216,10 @@
         <item name="layer3">@color/fx_mobile_private_layer_color_3</item>
         <!-- Small heading, Text link -->
         <item name="textAccent">@color/fx_mobile_private_text_color_accent</item>
+        <!-- Active tab -->
+        <item name="iconActive">@color/fx_mobile_private_icon_color_active</item>
+        <!-- Default, Divider, Dotted -->
+        <item name="borderPrimary">@color/fx_mobile_private_border_color_primary</item>
 
         <!-- Inactive thumb color -->
         <item name="colorSwitchThumbNormal">@color/toggle_off_knob_dark_theme</item>
@@ -234,19 +238,17 @@
         <item name="foundation">@color/foundation_private_theme</item>
         <item name="above">@color/fx_mobile_private_layer_color_1</item>
         <item name="inset">@color/fx_mobile_private_layer_color_1</item>
-        <item name="tabRing">@color/tab_ring_private_theme</item>
         <item name="neutral">@color/neutral_private_theme</item>
         <item name="neutralFaded">@color/neutral_faded_private_theme</item>
-        <item name="destructive">@color/fx_mobile_private_text_color_warning_dark</item>
+        <item name="destructive">@color/fx_mobile_private_text_color_warning</item>
         <item name="disabled">@color/fx_mobile_private_text_color_disabled</item>
         <item name="scrimStart">@color/scrimStart_private_theme</item>
         <item name="scrimEnd">@color/scrimEnd_private_theme</item>
         <item name="snackbar">@color/snackbar_private_theme</item>
         <item name="accentUsedOnDarkBackground">@color/accent_high_contrast_private_theme</item>
-        <item name="toolbarStartGradient">@color/toolbar_start_gradient_private_theme</item>
-        <item name="toolbarCenterGradient">@color/toolbar_center_gradient_private_theme</item>
-        <item name="toolbarEndGradient">@color/toolbar_end_gradient_private_theme</item>
-        <item name="toolbarDivider">@color/toolbar_divider_color_private_theme</item>
+        <item name="toolbarStartGradient">@color/fx_mobile_private_layer_color_4_start</item>
+        <item name="toolbarCenterGradient">@color/fx_mobile_private_layer_color_4_center</item>
+        <item name="toolbarEndGradient">@color/fx_mobile_private_layer_color_4_end</item>
         <item name="fillLinkFromClipboard">@color/accent_high_contrast_private_theme</item>
         <item name="syncDisconnected">@color/sync_disconnected_icon_fill_private_theme</item>
         <item name="syncDisconnectedBackground">@color/sync_disconnected_background_private_theme</item>
@@ -270,7 +272,6 @@
         <item name="mozac_widget_favicon_border_color">@color/photonInk50</item>
 
         <!-- Tab Tray -->
-        <item name="tabTrayItemMediaBackground">@color/tab_tray_item_media_background_private_theme</item>
         <item name="tabTrayThumbnailItemBackground">@color/tab_tray_item_thumbnail_background_normal_theme</item>
         <item name="tabTrayThumbnailIcon">@color/tab_tray_item_thumbnail_icon_normal_theme</item>
 
