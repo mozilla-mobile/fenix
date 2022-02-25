@@ -15,10 +15,9 @@ import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.spyk
 import io.mockk.verify
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.TestCoroutineScope
 import mozilla.components.service.nimbus.NimbusApi
+import mozilla.components.support.test.mock
 import mozilla.components.support.test.robolectric.testContext
 import mozilla.components.support.test.rule.MainCoroutineRule
 import org.junit.After
@@ -27,16 +26,12 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.experiments.nimbus.internal.EnrolledExperiment
-import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.databinding.SettingsStudiesBinding
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.utils.Settings
 
-@ExperimentalCoroutinesApi
 @RunWith(FenixRobolectricTestRunner::class)
 class StudiesViewTest {
-    @RelaxedMockK
-    private lateinit var activity: HomeActivity
 
     @RelaxedMockK
     private lateinit var experiments: NimbusApi
@@ -50,12 +45,11 @@ class StudiesViewTest {
     @RelaxedMockK
     private lateinit var settings: Settings
 
-    private val testCoroutineScope = TestCoroutineScope()
-    private val testDispatcher = TestCoroutineDispatcher()
     private lateinit var view: StudiesView
 
     @get:Rule
-    val coroutinesTestRule = MainCoroutineRule(testDispatcher)
+    val coroutinesTestRule = MainCoroutineRule()
+    private val testCoroutineScope = TestCoroutineScope(coroutinesTestRule.testDispatcher)
 
     @Before
     fun setup() {
@@ -67,15 +61,16 @@ class StudiesViewTest {
                 binding,
                 interactor,
                 settings,
-                experiments
-            ) { true }
+                experiments,
+                isAttached = { true },
+                metrics = mock()
+            )
         )
     }
 
     @After
     fun cleanUp() {
         testCoroutineScope.cleanupTestCoroutines()
-        testDispatcher.cleanupTestCoroutines()
     }
 
     @Test

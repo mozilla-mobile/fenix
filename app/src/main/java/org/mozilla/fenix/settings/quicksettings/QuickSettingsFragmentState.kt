@@ -41,7 +41,6 @@ data class WebsiteInfoState(
     val websiteSecurityUiValues: WebsiteSecurityUiValues,
     val certificateName: String
 ) : State {
-
     companion object {
         /**
          * Construct an initial [WebsiteInfoState]
@@ -71,12 +70,12 @@ enum class WebsiteSecurityUiValues(
     @DrawableRes val iconRes: Int
 ) {
     SECURE(
-        R.string.quick_settings_sheet_secure_connection,
+        R.string.quick_settings_sheet_secure_connection_2,
         R.drawable.ic_lock
     ),
     INSECURE(
-        R.string.quick_settings_sheet_insecure_connection,
-        R.drawable.ic_broken_lock
+        R.string.quick_settings_sheet_insecure_connection_2,
+        R.drawable.mozac_ic_broken_lock
     )
 }
 

@@ -13,7 +13,10 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.inProgressMediaTab
+import org.mozilla.fenix.home.HomeFragmentAction
 import org.mozilla.fenix.home.HomeFragmentDirections
+import org.mozilla.fenix.home.HomeFragmentStore
+import org.mozilla.fenix.home.recenttabs.RecentTab
 import org.mozilla.fenix.home.recenttabs.interactor.RecentTabInteractor
 
 /**
@@ -27,9 +30,19 @@ interface RecentTabController {
     fun handleRecentTabClicked(tabId: String)
 
     /**
+     * @see [RecentTabInteractor.onRecentSearchGroupClicked]
+     */
+    fun handleRecentSearchGroupClicked(tabId: String)
+
+    /**
      * @see [RecentTabInteractor.onRecentTabShowAllClicked]
      */
     fun handleRecentTabShowAllClicked()
+
+    /**
+     * @see [RecentTabInteractor.onRemoveRecentTab]
+     */
+    fun handleRecentTabRemoved(tab: RecentTab.Tab)
 }
 
 /**
@@ -42,7 +55,8 @@ class DefaultRecentTabsController(
     private val selectTabUseCase: SelectTabUseCase,
     private val navController: NavController,
     private val metrics: MetricController,
-    private val store: BrowserStore
+    private val store: BrowserStore,
+    private val homeStore: HomeFragmentStore,
 ) : RecentTabController {
 
     override fun handleRecentTabClicked(tabId: String) {
@@ -60,6 +74,19 @@ class DefaultRecentTabsController(
         dismissSearchDialogIfDisplayed()
         metrics.track(Event.ShowAllRecentTabs)
         navController.navigate(HomeFragmentDirections.actionGlobalTabsTrayFragment())
+    }
+
+    override fun handleRecentSearchGroupClicked(tabId: String) {
+        metrics.track(Event.JumpBackInGroupTapped)
+        navController.navigate(
+            HomeFragmentDirections.actionGlobalTabsTrayFragment(
+                focusGroupTabId = tabId
+            )
+        )
+    }
+
+    override fun handleRecentTabRemoved(tab: RecentTab.Tab) {
+        homeStore.dispatch(HomeFragmentAction.RemoveRecentTab(tab))
     }
 
     @VisibleForTesting(otherwise = PRIVATE)

@@ -50,7 +50,6 @@ class CustomizationFragment : PreferenceFragmentCompat() {
         bindAutoBatteryTheme()
         setupRadioGroups()
         setupToolbarCategory()
-        setupHomeCategory()
         setupGesturesCategory()
     }
 
@@ -137,13 +136,6 @@ class CustomizationFragment : PreferenceFragmentCompat() {
         bottomPreference.setCheckedWithoutClickListener(toolbarPosition == ToolbarPosition.BOTTOM)
 
         addToRadioGroup(topPreference, bottomPreference)
-    }
-
-    private fun setupHomeCategory() {
-        requirePreference<SwitchPreference>(R.string.pref_key_enable_top_frecent_sites).apply {
-            isChecked = context.settings().showTopFrecentSites
-            onPreferenceChangeListener = SharedPreferenceUpdater()
-        }
     }
 
     private fun setupGesturesCategory() {

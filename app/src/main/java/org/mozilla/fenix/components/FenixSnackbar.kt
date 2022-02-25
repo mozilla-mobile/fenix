@@ -22,9 +22,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.FenixSnackbarBinding
 import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.utils.Mockable
 
-@Mockable
 class FenixSnackbar private constructor(
     parent: ViewGroup,
     private val binding: FenixSnackbarBinding,
@@ -78,7 +76,7 @@ class FenixSnackbar private constructor(
     companion object {
         const val LENGTH_LONG = Snackbar.LENGTH_LONG
         const val LENGTH_SHORT = Snackbar.LENGTH_SHORT
-        const val LENGTH_ACCESSIBLE = 15000 /* 15 seconds in ms */
+        private const val LENGTH_ACCESSIBLE = 15000 /* 15 seconds in ms */
         const val LENGTH_INDEFINITE = Snackbar.LENGTH_INDEFINITE
 
         private const val minTextSize = 12

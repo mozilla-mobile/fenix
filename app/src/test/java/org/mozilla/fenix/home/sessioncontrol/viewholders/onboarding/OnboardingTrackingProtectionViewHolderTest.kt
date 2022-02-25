@@ -6,6 +6,7 @@ package org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding
 
 import android.view.LayoutInflater
 import androidx.appcompat.view.ContextThemeWrapper
+import io.mockk.every
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -13,7 +14,9 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.OnboardingTrackingProtectionBinding
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
+import org.mozilla.fenix.utils.Settings
 
 @RunWith(FenixRobolectricTestRunner::class)
 class OnboardingTrackingProtectionViewHolderTest {
@@ -28,9 +31,12 @@ class OnboardingTrackingProtectionViewHolderTest {
 
     @Test
     fun `sets description text`() {
+        every { testContext.components.settings } returns Settings(testContext)
         OnboardingTrackingProtectionViewHolder(binding.root)
 
-        val string = testContext.getString(R.string.onboarding_tracking_protection_description_3)
+        val appName = testContext.getString(R.string.app_name)
+        val string =
+            testContext.getString(R.string.onboarding_tracking_protection_description_4, appName)
         assertEquals(string, binding.descriptionText.text)
     }
 }

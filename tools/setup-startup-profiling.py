@@ -9,27 +9,38 @@ https://profiler.firefox.com/docs/#/./guide-remote-profiling?id=startup-profilin
 for more information.
 """
 
+import argparse
 import os
-import sys
 import tempfile
 from subprocess import run
 
-SCRIPT_NAME = os.path.basename(__file__)
-
 PATH_PREFIX = '/data/local/tmp'
+
+PROD_FENIX = 'fenix'
+PROD_GVE = 'geckoview_example'
+PRODUCTS = [PROD_FENIX, PROD_GVE]
 
 GV_CONFIG = b'''env:
   MOZ_PROFILER_STARTUP: 1
   MOZ_PROFILER_STARTUP_INTERVAL: 5
-  MOZ_PROFILER_STARTUP_FEATURES: threads,js,stackwalk,leaf,screenshots,ipcmessages,java,cpu
+  MOZ_PROFILER_STARTUP_FEATURES: js,stackwalk,leaf,screenshots,ipcmessages,java,cpu
   MOZ_PROFILER_STARTUP_FILTERS: GeckoMain,Compositor,Renderer,IPDL Background
 '''
 
 
-def print_usage_and_exit():
-    print('USAGE: ./{} [activate|deactivate] [nightly|beta|release|debug]'.format(SCRIPT_NAME), file=sys.stderr)
-    print('example: ./{} activate nightly'.format(SCRIPT_NAME), file=sys.stderr)
-    sys.exit(1)
+def parse_args():
+    p = argparse.ArgumentParser(
+            description=("Easily enable start up profiling using the Firefox Profiler. Finish capturing the profile in "
+                         "about:debugging on desktop. See "
+                         "https://profiler.firefox.com/docs/#/./guide-remote-profiling?id=startup-profiling for "
+                         "details."))
+    p.add_argument('command', choices=['activate', 'deactivate'], help=("whether to activate or deactive start up "
+                   "profiling for the given release channel"))
+    p.add_argument('release_channel', choices=['nightly', 'beta', 'release', 'debug'], help=("the release channel to "
+                   "change the startup profiling state of the command on"))
+
+    p.add_argument('-p', '--product', choices=PRODUCTS, default=PROD_FENIX, help="which product to work on")
+    return p.parse_args()
 
 
 def push(id, filename):
@@ -56,34 +67,29 @@ def remove(filename):
     run(['adb', 'shell', 'am', 'clear-debug-app'])
 
 
-def convert_channel_to_id(channel):
-    # Users might want to use custom app IDs in the future
-    # but we don't know that's a need yet: let's add it if it is.
-    mapping = {
-        'release': 'org.mozilla.firefox',
-        'beta': 'org.mozilla.firefox_beta',
-        'nightly': 'org.mozilla.fenix',
-        'debug': 'org.mozilla.fenix.debug'
-    }
-    return mapping[channel]
+def convert_channel_to_id(product, channel):
+    if product == PROD_FENIX:
+        mapping = {
+            'release': 'org.mozilla.firefox',
+            'beta': 'org.mozilla.firefox_beta',
+            'nightly': 'org.mozilla.fenix',
+            'debug': 'org.mozilla.fenix.debug'
+        }
+        return mapping[channel]
+    elif product == PROD_GVE:
+        return 'org.mozilla.geckoview_example'
 
 
 def main():
-    try:
-        cmd = sys.argv[1]
-        channel = sys.argv[2]
-        id = convert_channel_to_id(channel)
-    except (IndexError, KeyError) as e:
-        print_usage_and_exit()
+    args = parse_args()
 
+    id = convert_channel_to_id(args.product, args.release_channel)
     filename = id + '-geckoview-config.yaml'
 
-    if cmd == 'activate':
+    if args.command == 'activate':
         push(id, filename)
-    elif cmd == 'deactivate':
+    elif args.command == 'deactivate':
         remove(filename)
-    else:
-        print_usage_and_exit()
 
 
 if __name__ == '__main__':

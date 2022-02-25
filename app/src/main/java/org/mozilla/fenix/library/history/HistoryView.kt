@@ -76,7 +76,7 @@ class HistoryView(
             val unselectedItems = oldMode.selectedItems - state.mode.selectedItems
 
             state.mode.selectedItems.union(unselectedItems).forEach { item ->
-                historyAdapter.notifyItemChanged(item.id)
+                historyAdapter.notifyItemChanged(item.position)
             }
         }
 
@@ -90,6 +90,9 @@ class HistoryView(
                 setUiForSelectingMode(
                     context.getString(R.string.history_multi_select_title, mode.selectedItems.size)
                 )
+            }
+            else -> {
+                // no-op
             }
         }
     }

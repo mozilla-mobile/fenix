@@ -14,11 +14,10 @@ import com.google.android.play.core.review.ReviewManagerFactory
 import mozilla.components.feature.addons.AddonManager
 import mozilla.components.feature.addons.amo.AddonCollectionProvider
 import mozilla.components.feature.addons.migration.DefaultSupportedAddonsChecker
-import mozilla.components.feature.addons.migration.SupportedAddonsChecker
-import mozilla.components.feature.addons.update.AddonUpdater
 import mozilla.components.feature.addons.update.DefaultAddonUpdater
 import mozilla.components.feature.autofill.AutofillConfiguration
 import mozilla.components.lib.publicsuffixlist.PublicSuffixList
+import mozilla.components.support.base.worker.Frequency
 import mozilla.components.support.migration.state.MigrationStore
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
@@ -35,8 +34,10 @@ import org.mozilla.fenix.perf.StartupStateProvider
 import org.mozilla.fenix.perf.StrictModeManager
 import org.mozilla.fenix.perf.lazyMonitored
 import org.mozilla.fenix.utils.ClipboardHandler
-import org.mozilla.fenix.utils.Mockable
 import org.mozilla.fenix.utils.Settings
+import org.mozilla.fenix.wallpapers.WallpaperFileManager
+import org.mozilla.fenix.wallpapers.WallpaperDownloader
+import org.mozilla.fenix.wallpapers.WallpaperManager
 import org.mozilla.fenix.wifi.WifiConnectionMonitor
 import java.util.concurrent.TimeUnit
 
@@ -49,7 +50,6 @@ private const val AMO_COLLECTION_MAX_CACHE_AGE = 2 * 24 * 60L // Two days in min
  * Note: these aren't just "components" from "android-components": they're any "component" that
  * can be considered a building block of our app.
  */
-@Mockable
 class Components(private val context: Context) {
     val backgroundServices by lazyMonitored {
         BackgroundServices(
@@ -74,7 +74,8 @@ class Components(private val context: Context) {
             core.store,
             core.webAppShortcutManager,
             core.topSitesStorage,
-            core.bookmarksStorage
+            core.bookmarksStorage,
+            core.historyStorage
         )
     }
 
@@ -124,13 +125,13 @@ class Components(private val context: Context) {
 
     @Suppress("MagicNumber")
     val addonUpdater by lazyMonitored {
-        DefaultAddonUpdater(context, AddonUpdater.Frequency(12, TimeUnit.HOURS))
+        DefaultAddonUpdater(context, Frequency(12, TimeUnit.HOURS))
     }
 
     @Suppress("MagicNumber")
     val supportedAddonsChecker by lazyMonitored {
         DefaultSupportedAddonsChecker(
-            context, SupportedAddonsChecker.Frequency(12, TimeUnit.HOURS),
+            context, Frequency(12, TimeUnit.HOURS),
             onNotificationClickIntent = Intent(context, HomeActivity::class.java).apply {
                 action = Intent.ACTION_VIEW
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -141,6 +142,15 @@ class Components(private val context: Context) {
 
     val addonManager by lazyMonitored {
         AddonManager(core.store, core.engine, addonCollectionProvider, addonUpdater)
+    }
+
+    val wallpaperManager by lazyMonitored {
+        WallpaperManager(
+            settings,
+            WallpaperDownloader(context, core.client),
+            WallpaperFileManager(context.filesDir),
+            analytics.crashReporter,
+        )
     }
 
     val analytics by lazyMonitored { Analytics(context) }
@@ -176,6 +186,7 @@ class Components(private val context: Context) {
     val appStartReasonProvider by lazyMonitored { AppStartReasonProvider() }
     val startupActivityLog by lazyMonitored { StartupActivityLog() }
     val startupStateProvider by lazyMonitored { StartupStateProvider(startupActivityLog, appStartReasonProvider) }
+    val appStore by lazyMonitored { AppStore() }
 }
 
 /**

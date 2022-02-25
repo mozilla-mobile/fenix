@@ -18,6 +18,7 @@ import mozilla.components.ui.tabcounter.TabCounterMenu
 import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.browser.BrowserAnimator
 import org.mozilla.fenix.browser.BrowserAnimator.Companion.getToolbarNavOptions
 import org.mozilla.fenix.browser.BrowserFragmentDirections
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
@@ -58,6 +59,7 @@ class DefaultBrowserToolbarController(
     private val engineView: EngineView,
     private val homeViewModel: HomeScreenViewModel,
     private val customTabSessionId: String?,
+    private val browserAnimator: BrowserAnimator,
     private val onTabCounterClicked: () -> Unit,
     private val onCloseTab: (SessionState) -> Unit
 ) : BrowserToolbarController {
@@ -92,17 +94,30 @@ class DefaultBrowserToolbarController(
 
     override fun handleToolbarClick() {
         metrics.track(Event.SearchBarTapped(Event.SearchBarTapped.Source.BROWSER))
-        if (FeatureFlags.showHomeBehindSearch) {
+        // If we're displaying awesomebar search results, Home screen will not be visible (it's
+        // covered up with the search results). So, skip the navigation event in that case.
+        // If we don't, there's a visual flickr as we navigate to Home and then display search
+        // results on top it.
+        if (FeatureFlags.showHomeBehindSearch && currentSession?.content?.searchTerms.isNullOrBlank()) {
+            browserAnimator.captureEngineViewAndDrawStatically {
+                navController.navigate(
+                    BrowserFragmentDirections.actionGlobalHome()
+                )
+                navController.navigate(
+                    BrowserFragmentDirections.actionGlobalSearchDialog(
+                        currentSession?.id
+                    ),
+                    getToolbarNavOptions(activity)
+                )
+            }
+        } else {
             navController.navigate(
-                BrowserFragmentDirections.actionGlobalHome()
+                BrowserFragmentDirections.actionGlobalSearchDialog(
+                    currentSession?.id
+                ),
+                getToolbarNavOptions(activity)
             )
         }
-        navController.navigate(
-            BrowserFragmentDirections.actionGlobalSearchDialog(
-                currentSession?.id
-            ),
-            getToolbarNavOptions(activity)
-        )
     }
 
     override fun handleTabCounterClick() {
@@ -122,9 +137,6 @@ class DefaultBrowserToolbarController(
     override fun handleTabCounterItemInteraction(item: TabCounterMenu.Item) {
         when (item) {
             is TabCounterMenu.Item.CloseTab -> {
-                metrics.track(
-                    Event.TabCounterMenuItemTapped(Event.TabCounterMenuItemTapped.Item.CLOSE_TAB)
-                )
                 store.state.selectedTab?.let {
                     // When closing the last tab we must show the undo snackbar in the home fragment
                     if (store.state.getNormalOrPrivateTabs(it.content.private).count() == 1) {
@@ -139,20 +151,12 @@ class DefaultBrowserToolbarController(
                 }
             }
             is TabCounterMenu.Item.NewTab -> {
-                metrics.track(
-                    Event.TabCounterMenuItemTapped(Event.TabCounterMenuItemTapped.Item.NEW_TAB)
-                )
                 activity.browsingModeManager.mode = BrowsingMode.Normal
                 navController.navigate(
                     BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = true)
                 )
             }
             is TabCounterMenu.Item.NewPrivateTab -> {
-                metrics.track(
-                    Event.TabCounterMenuItemTapped(
-                        Event.TabCounterMenuItemTapped.Item.NEW_PRIVATE_TAB
-                    )
-                )
                 activity.browsingModeManager.mode = BrowsingMode.Private
                 navController.navigate(
                     BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = true)
@@ -170,9 +174,11 @@ class DefaultBrowserToolbarController(
     override fun handleHomeButtonClick() {
         metrics.track(Event.BrowserToolbarHomeButtonClicked)
 
-        navController.navigate(
-            BrowserFragmentDirections.actionGlobalHome()
-        )
+        browserAnimator.captureEngineViewAndDrawStatically {
+            navController.navigate(
+                BrowserFragmentDirections.actionGlobalHome()
+            )
+        }
     }
 
     companion object {

@@ -12,10 +12,16 @@ import android.view.View
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import mozilla.components.support.ktx.android.view.hideKeyboard
+import mozilla.components.support.ktx.android.view.showKeyboard
 import org.mozilla.fenix.R
 import org.mozilla.fenix.SecureFragment
 import org.mozilla.fenix.databinding.FragmentCreditCardEditorBinding
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.placeCursorAtEnd
 import org.mozilla.fenix.ext.redirectToReAuth
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.settings.creditcards.controller.DefaultCreditCardEditorController
@@ -47,34 +53,49 @@ class CreditCardEditorFragment : SecureFragment(R.layout.fragment_credit_card_ed
 
         setHasOptionsMenu(true)
 
-        if (!isEditing) {
-            showToolbar(getString(R.string.credit_cards_add_card))
-        } else {
-            showToolbar(getString(R.string.credit_cards_edit_card))
-        }
-
         val storage = requireContext().components.core.autofillStorage
         interactor = DefaultCreditCardEditorInteractor(
             controller = DefaultCreditCardEditorController(
                 storage = storage,
                 lifecycleScope = lifecycleScope,
-                navController = findNavController()
+                navController = findNavController(),
+                requireContext().components.analytics.metrics
             )
         )
 
         val binding = FragmentCreditCardEditorBinding.bind(view)
 
-        creditCardEditorState =
-            args.creditCard?.toCreditCardEditorState(storage) ?: getInitialCreditCardEditorState()
-        creditCardEditorView = CreditCardEditorView(binding, interactor)
-        creditCardEditorView.bind(creditCardEditorState)
+        lifecycleScope.launch(Dispatchers.Main) {
+            creditCardEditorState = withContext(Dispatchers.IO) {
+                args.creditCard?.toCreditCardEditorState(storage)
+                    ?: getInitialCreditCardEditorState()
+            }
+            creditCardEditorView = CreditCardEditorView(binding, interactor)
+            creditCardEditorView.bind(creditCardEditorState)
+
+            binding.cardNumberInput.apply {
+                requestFocus()
+                placeCursorAtEnd()
+                showKeyboard()
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (!isEditing) {
+            showToolbar(getString(R.string.credit_cards_add_card))
+        } else {
+            showToolbar(getString(R.string.credit_cards_edit_card))
+        }
     }
 
     /**
-     * Close any open dialogs or menus and reauthenticate if the fragment is paused and
-     * the user is not navigating to [CreditCardsManagementFragment].
+     * Close the keyboard, any open dialogs or menus and then reauthenticate if the
+     * fragment is paused and the user is not navigating to [CreditCardsManagementFragment].
      */
     override fun onPause() {
+        view?.hideKeyboard()
         menu.close()
 
         redirectToReAuth(

@@ -12,6 +12,7 @@ import androidx.navigation.NavDirections
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import mozilla.appservices.places.BookmarkRoot
+import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.feature.tabs.TabsUseCases
@@ -73,7 +74,17 @@ class DefaultBookmarkController(
     }
 
     override fun handleBookmarkTapped(item: BookmarkNode) {
-        openInNewTabAndShow(item.url!!, true, BrowserDirection.FromBookmarks, activity.browsingModeManager.mode)
+        val fromHomeFragment =
+            navController.previousBackStackEntry?.destination?.id == R.id.homeFragment
+        val isPrivate = activity.browsingModeManager.mode == BrowsingMode.Private
+        val flags = EngineSession.LoadUrlFlags.select(EngineSession.LoadUrlFlags.ALLOW_JAVASCRIPT_URL)
+        openInNewTabAndShow(
+            item.url!!,
+            isPrivate || fromHomeFragment,
+            BrowserDirection.FromBookmarks,
+            activity.browsingModeManager.mode,
+            flags
+        )
     }
 
     override fun handleBookmarkExpand(folder: BookmarkNode) {
@@ -177,12 +188,13 @@ class DefaultBookmarkController(
         searchTermOrURL: String,
         newTab: Boolean,
         from: BrowserDirection,
-        mode: BrowsingMode
+        mode: BrowsingMode,
+        flags: EngineSession.LoadUrlFlags = EngineSession.LoadUrlFlags.none()
     ) {
         invokePendingDeletion.invoke()
         with(activity) {
             browsingModeManager.mode = mode
-            openToBrowserAndLoad(searchTermOrURL, newTab, from)
+            openToBrowserAndLoad(searchTermOrURL, newTab, from, flags = flags)
         }
     }
 

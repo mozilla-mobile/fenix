@@ -7,9 +7,9 @@ package org.mozilla.fenix.settings.creditcards
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavController
 import androidx.preference.Preference
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import mozilla.components.concept.storage.CreditCard
 import mozilla.components.support.test.robolectric.testContext
@@ -20,11 +20,11 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.robolectric.Robolectric
 
-@ExperimentalCoroutinesApi
 @RunWith(FenixRobolectricTestRunner::class)
 class CreditCardsSettingFragmentTest {
 
@@ -34,6 +34,8 @@ class CreditCardsSettingFragmentTest {
 
     @Before
     fun setUp() {
+        every { testContext.components.settings } returns mockk(relaxed = true)
+
         creditCardsSettingFragment = CreditCardsSettingFragment()
 
         val activity = Robolectric.buildActivity(FragmentActivity::class.java).create().get()

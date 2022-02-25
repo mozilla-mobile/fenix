@@ -11,9 +11,12 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
+import org.mozilla.fenix.helpers.FeatureSettingsHelper
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
+import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
 
@@ -29,6 +32,7 @@ import org.mozilla.fenix.ui.robots.navigationToolbar
 class TopSitesTest {
     private val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
     private lateinit var mockWebServer: MockWebServer
+    private val featureSettingsHelper = FeatureSettingsHelper()
 
     @get:Rule
     val activityIntentTestRule = HomeActivityIntentTestRule()
@@ -39,11 +43,14 @@ class TopSitesTest {
             dispatcher = AndroidAssetDispatcher()
             start()
         }
+
+        featureSettingsHelper.setJumpBackCFREnabled(false)
     }
 
     @After
     fun tearDown() {
         mockWebServer.shutdown()
+        featureSettingsHelper.resetAllFeatureFlags()
     }
 
     @Test
@@ -58,9 +65,7 @@ class TopSitesTest {
             verifyAddToTopSitesButton()
         }.addToFirefoxHome {
             verifySnackBarText("Added to top sites!")
-        }.openTabDrawer {
-        }.openNewTab {
-        }.dismissSearchBar {
+        }.goToHomescreen {
             verifyExistingTopSitesList()
             verifyExistingTopSitesTabs(defaultWebPageTitle)
         }
@@ -78,16 +83,12 @@ class TopSitesTest {
             verifyAddToTopSitesButton()
         }.addToFirefoxHome {
             verifySnackBarText("Added to top sites!")
-        }.openTabDrawer {
-        }.openNewTab {
-        }.dismissSearchBar {
+        }.goToHomescreen {
             verifyExistingTopSitesList()
             verifyExistingTopSitesTabs(defaultWebPageTitle)
         }.openTopSiteTabWithTitle(title = defaultWebPageTitle) {
             verifyUrl(defaultWebPage.url.toString().replace("http://", ""))
-        }.openTabDrawer {
-        }.openNewTab {
-        }.dismissSearchBar {
+        }.goToHomescreen {
             verifyExistingTopSitesList()
             verifyExistingTopSitesTabs(defaultWebPageTitle)
         }.openContextMenuOnTopSitesWithTitle(defaultWebPageTitle) {
@@ -110,9 +111,7 @@ class TopSitesTest {
             verifyAddToTopSitesButton()
         }.addToFirefoxHome {
             verifySnackBarText("Added to top sites!")
-        }.openTabDrawer {
-        }.openNewTab {
-        }.dismissSearchBar {
+        }.goToHomescreen {
             verifyExistingTopSitesList()
             verifyExistingTopSitesTabs(defaultWebPageTitle)
         }.openContextMenuOnTopSitesWithTitle(defaultWebPageTitle) {
@@ -135,9 +134,7 @@ class TopSitesTest {
             verifyAddToTopSitesButton()
         }.addToFirefoxHome {
             verifySnackBarText("Added to top sites!")
-        }.openTabDrawer {
-        }.openNewTab {
-        }.dismissSearchBar {
+        }.goToHomescreen {
             verifyExistingTopSitesList()
             verifyExistingTopSitesTabs(defaultWebPageTitle)
         }.openContextMenuOnTopSitesWithTitle(defaultWebPageTitle) {
@@ -160,9 +157,7 @@ class TopSitesTest {
             verifyAddToTopSitesButton()
         }.addToFirefoxHome {
             verifySnackBarText("Added to top sites!")
-        }.openTabDrawer {
-        }.openNewTab {
-        }.dismissSearchBar {
+        }.goToHomescreen {
             verifyExistingTopSitesList()
             verifyExistingTopSitesTabs(defaultWebPageTitle)
         }.openContextMenuOnTopSitesWithTitle(defaultWebPageTitle) {
@@ -188,6 +183,31 @@ class TopSitesTest {
             defaultTopSites.forEach { item ->
                 verifyExistingTopSitesTabs(item)
             }
+        }
+    }
+
+    @SmokeTest
+    @Test
+    fun addAndRemoveMostViewedTopSiteTest() {
+        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        for (i in 0..1) {
+            navigationToolbar {
+            }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+                mDevice.waitForIdle()
+                waitForPageToLoad()
+            }
+        }
+
+        browserScreen {
+        }.goToHomescreen {
+            verifyExistingTopSitesList()
+            verifyExistingTopSitesTabs(defaultWebPage.title)
+        }.openContextMenuOnTopSitesWithTitle(defaultWebPage.title) {
+        }.deleteTopSiteFromHistory {
+        }.openThreeDotMenu {
+        }.openHistory {
+            verifyEmptyHistoryView()
         }
     }
 }

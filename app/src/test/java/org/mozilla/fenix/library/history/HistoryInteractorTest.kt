@@ -1,6 +1,6 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.library.history
 
@@ -9,10 +9,9 @@ import io.mockk.mockk
 import io.mockk.verifyAll
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 
 class HistoryInteractorTest {
-    private val historyItem = HistoryItem(0, "title", "url", 0.toLong())
+    private val historyItem = History.Regular(0, "title", "url", 0.toLong(), HistoryItemTimeGroup.timeGroupForTimestamp(0))
     val controller: HistoryController = mockk(relaxed = true)
     val interactor = DefaultHistoryInteractor(controller)
 
@@ -67,38 +66,11 @@ class HistoryInteractorTest {
     }
 
     @Test
-    fun onCopyPressed() {
-        interactor.onCopyPressed(historyItem)
+    fun onSearch() {
+        interactor.onSearch()
 
         verifyAll {
-            controller.handleCopyUrl(historyItem)
-        }
-    }
-
-    @Test
-    fun onSharePressed() {
-        interactor.onSharePressed(historyItem)
-
-        verifyAll {
-            controller.handleShare(historyItem)
-        }
-    }
-
-    @Test
-    fun onOpenInNormalTab() {
-        interactor.onOpenInNormalTab(historyItem)
-
-        verifyAll {
-            controller.handleOpenInNewTab(historyItem, BrowsingMode.Normal)
-        }
-    }
-
-    @Test
-    fun onOpenInPrivateTab() {
-        interactor.onOpenInPrivateTab(historyItem)
-
-        verifyAll {
-            controller.handleOpenInNewTab(historyItem, BrowsingMode.Private)
+            controller.handleSearch()
         }
     }
 
@@ -116,6 +88,7 @@ class HistoryInteractorTest {
         val items = setOf(historyItem)
 
         interactor.onDeleteSome(items)
+
         verifyAll {
             controller.handleDeleteSome(items)
         }
@@ -124,6 +97,7 @@ class HistoryInteractorTest {
     @Test
     fun onRequestSync() {
         interactor.onRequestSync()
+
         verifyAll {
             controller.handleRequestSync()
         }

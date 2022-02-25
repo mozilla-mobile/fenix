@@ -4,8 +4,6 @@
 
 package org.mozilla.fenix.library.recentlyclosed
 
-import android.content.ClipboardManager
-import android.content.Context
 import android.os.Bundle
 import android.text.SpannableString
 import android.view.LayoutInflater
@@ -14,8 +12,8 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import mozilla.components.browser.state.state.recover.RecoverableTab
@@ -27,10 +25,10 @@ import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
-import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.StoreProvider
+import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.databinding.FragmentRecentlyClosedTabsBinding
-import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.setTextColor
 import org.mozilla.fenix.ext.showToolbar
@@ -40,11 +38,13 @@ import org.mozilla.fenix.library.LibraryPageFragment
 class RecentlyClosedFragment : LibraryPageFragment<RecoverableTab>(), UserInteractionHandler {
     private lateinit var recentlyClosedFragmentStore: RecentlyClosedFragmentStore
     private var _recentlyClosedFragmentView: RecentlyClosedFragmentView? = null
-    protected val recentlyClosedFragmentView: RecentlyClosedFragmentView
+    private val recentlyClosedFragmentView: RecentlyClosedFragmentView
         get() = _recentlyClosedFragmentView!!
 
     private lateinit var recentlyClosedInteractor: RecentlyClosedFragmentInteractor
     private lateinit var recentlyClosedController: RecentlyClosedController
+
+    private lateinit var metrics: MetricController
 
     override fun onResume() {
         super.onResume()
@@ -69,6 +69,7 @@ class RecentlyClosedFragment : LibraryPageFragment<RecoverableTab>(), UserIntera
         return when (item.itemId) {
             R.id.close_history -> {
                 close()
+                metrics.track(Event.RecentlyClosedTabsMenuClose)
                 true
             }
             R.id.share_history_multi_select -> {
@@ -94,6 +95,9 @@ class RecentlyClosedFragment : LibraryPageFragment<RecoverableTab>(), UserIntera
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+        metrics = requireComponents.analytics.metrics.also {
+            it.track(Event.RecentlyClosedTabsOpened)
+        }
     }
 
     override fun onCreateView(
@@ -116,12 +120,9 @@ class RecentlyClosedFragment : LibraryPageFragment<RecoverableTab>(), UserIntera
             recentlyClosedStore = recentlyClosedFragmentStore,
             activity = activity as HomeActivity,
             tabsUseCases = requireComponents.useCases.tabsUseCases,
-            resources = requireContext().resources,
-            snackbar = FenixSnackbar.make(
-                view = requireActivity().getRootView()!!,
-                isDisplayedWithBrowserToolbar = true
-            ),
-            clipboardManager = activity?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager,
+            metrics = metrics,
+            recentlyClosedTabsStorage = requireComponents.core.recentlyClosedTabsStorage.value,
+            lifecycleScope = lifecycleScope,
             openToBrowser = ::openItem
         )
         recentlyClosedInteractor = RecentlyClosedFragmentInteractor(recentlyClosedController)
@@ -137,17 +138,16 @@ class RecentlyClosedFragment : LibraryPageFragment<RecoverableTab>(), UserIntera
         _recentlyClosedFragmentView = null
     }
 
-    private fun openItem(tab: RecoverableTab, mode: BrowsingMode? = null) {
+    private fun openItem(url: String, mode: BrowsingMode? = null) {
         mode?.let { (activity as HomeActivity).browsingModeManager.mode = it }
 
         (activity as HomeActivity).openToBrowserAndLoad(
-            searchTermOrURL = tab.url,
+            searchTermOrURL = url,
             newTab = true,
             from = BrowserDirection.FromRecentlyClosed
         )
     }
 
-    @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         consumeFrom(recentlyClosedFragmentStore) { state ->
             recentlyClosedFragmentView.update(state)

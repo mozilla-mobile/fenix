@@ -21,6 +21,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.OnboardingManualSigninBinding
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.home.HomeFragmentDirections
 
@@ -50,7 +51,8 @@ class OnboardingManualSignInViewHolderTest {
     @Test
     fun `bind header text`() {
         OnboardingManualSignInViewHolder(binding.root).bind()
-        val string = testContext.getString(R.string.onboarding_account_sign_in_header_1)
+        val appName = testContext.getString(R.string.app_name)
+        val string = testContext.getString(R.string.onboarding_account_sign_in_header_2, appName)
         assertEquals(
             string,
             binding.headerText.text
@@ -59,6 +61,7 @@ class OnboardingManualSignInViewHolderTest {
 
     @Test
     fun `navigate on click`() {
+        every { testContext.components.analytics } returns mockk(relaxed = true)
         OnboardingManualSignInViewHolder(binding.root)
         binding.fxaSignInButton.performClick()
 

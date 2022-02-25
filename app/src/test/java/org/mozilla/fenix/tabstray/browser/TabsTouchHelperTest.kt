@@ -4,7 +4,7 @@
 
 package org.mozilla.fenix.tabstray.browser
 
-import android.widget.FrameLayout
+import androidx.compose.ui.platform.ComposeView
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ItemTouchHelper.ACTION_STATE_IDLE
 import androidx.recyclerview.widget.ItemTouchHelper.Callback.makeMovementFlags
@@ -20,12 +20,17 @@ import org.mozilla.fenix.tabstray.viewholders.SyncedTabsPageViewHolder
 @RunWith(FenixRobolectricTestRunner::class)
 class TabsTouchHelperTest {
 
+    private val featureName = object : FeatureNameHolder {
+        override val featureName: String
+            get() = "featureName"
+    }
+
     @Test
     fun `movement flags remain unchanged if onSwipeToDelete is true`() {
         val recyclerView = RecyclerView(testContext)
-        val layout = FrameLayout(testContext)
-        val viewHolder = SyncedTabsPageViewHolder(layout, mockk())
-        val callback = TouchCallback(mockk(), { true }, { false })
+        val layout = ComposeView(testContext)
+        val viewHolder = SyncedTabsPageViewHolder(layout, mockk(), mockk())
+        val callback = TouchCallback(mockk(), { true }, { false }, featureName)
 
         assertEquals(0, callback.getDragDirs(recyclerView, viewHolder))
         assertEquals(
@@ -42,9 +47,9 @@ class TabsTouchHelperTest {
     @Test
     fun `movement flags remain unchanged if onSwipeToDelete is false`() {
         val recyclerView = RecyclerView(testContext)
-        val layout = FrameLayout(testContext)
-        val viewHolder = SyncedTabsPageViewHolder(layout, mockk())
-        val callback = TouchCallback(mockk(), { false }, { false })
+        val layout = ComposeView(testContext)
+        val viewHolder = SyncedTabsPageViewHolder(layout, mockk(), mockk())
+        val callback = TouchCallback(mockk(), { false }, { false }, featureName)
 
         assertEquals(0, callback.getDragDirs(recyclerView, viewHolder))
         assertEquals(

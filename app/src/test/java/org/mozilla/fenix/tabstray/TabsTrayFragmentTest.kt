@@ -32,11 +32,11 @@ import kotlinx.coroutines.CoroutineScope
 import mozilla.components.browser.menu.BrowserMenu
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.support.test.robolectric.testContext
-import org.junit.Assert
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertSame
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.NavGraphDirections
@@ -49,6 +49,7 @@ import org.mozilla.fenix.databinding.FragmentTabTrayDialogBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
+import org.mozilla.fenix.helpers.MockkRetryTestRule
 import org.mozilla.fenix.home.HomeScreenViewModel
 import org.mozilla.fenix.tabstray.browser.BrowserTrayInteractor
 import org.mozilla.fenix.tabstray.ext.showWithTheme
@@ -62,6 +63,9 @@ class TabsTrayFragmentTest {
     private lateinit var tabsTrayBinding: ComponentTabstray2Binding
     private lateinit var tabsTrayDialogBinding: FragmentTabTrayDialogBinding
     private lateinit var fabButtonBinding: ComponentTabstrayFabBinding
+
+    @get:Rule
+    val mockkRule = MockkRetryTestRule()
 
     @Before
     fun setup() {
@@ -217,7 +221,7 @@ class TabsTrayFragmentTest {
 
         val adapter = (tabsTrayBinding.tabsTray.adapter as TrayPagerAdapter)
         assertSame(context, adapter.context)
-        assertSame(store, adapter.store)
+        assertSame(store, adapter.tabsTrayStore)
         assertSame(trayInteractor, adapter.interactor)
         assertSame(browserInteractor, adapter.browserInteractor)
         assertSame(navigationInteractor, adapter.navInteractor)
@@ -367,8 +371,8 @@ class TabsTrayFragmentTest {
         )
         val behavior = BottomSheetBehavior.from(tabsTrayBinding.tabWrapper)
 
-        Assert.assertFalse(behavior.isFitToContents)
-        Assert.assertFalse(behavior.skipCollapsed)
+        assertFalse(behavior.isFitToContents)
+        assertFalse(behavior.skipCollapsed)
         assert(behavior.halfExpandedRatio <= 0.001f)
     }
 

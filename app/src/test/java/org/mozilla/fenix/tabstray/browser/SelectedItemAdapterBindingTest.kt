@@ -8,7 +8,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.TestCoroutineDispatcher
 import mozilla.components.browser.tabstray.TabsAdapter.Companion.PAYLOAD_DONT_HIGHLIGHT_SELECTED_ITEM
 import mozilla.components.browser.tabstray.TabsAdapter.Companion.PAYLOAD_HIGHLIGHT_SELECTED_ITEM
 import mozilla.components.support.test.libstate.ext.waitUntilIdle
@@ -23,25 +22,13 @@ class SelectedItemAdapterBindingTest {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @get:Rule
-    val coroutinesTestRule = MainCoroutineRule(TestCoroutineDispatcher())
+    val coroutinesTestRule = MainCoroutineRule()
 
     private val adapter = mockk<BrowserTabsAdapter>(relaxed = true)
 
     @Before
     fun setup() {
         every { adapter.itemCount }.answers { 1 }
-    }
-
-    @Test
-    fun `WHEN observing on start THEN ignore the initial state update`() {
-        val store = TabsTrayStore()
-        val binding = SelectedItemAdapterBinding(store, adapter)
-
-        binding.start()
-
-        verify(exactly = 0) {
-            adapter.notifyItemRangeChanged(any(), any(), any())
-        }
     }
 
     @Test

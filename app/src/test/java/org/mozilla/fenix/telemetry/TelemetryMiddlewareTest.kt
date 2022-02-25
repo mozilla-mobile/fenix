@@ -7,14 +7,14 @@ package org.mozilla.fenix.telemetry
 import androidx.test.core.app.ApplicationProvider
 import io.mockk.mockk
 import io.mockk.verify
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import mozilla.components.browser.state.engine.EngineMiddleware
 import mozilla.components.browser.state.action.ContentAction
 import mozilla.components.browser.state.action.EngineAction
 import mozilla.components.browser.state.action.TabListAction
+import mozilla.components.browser.state.engine.EngineMiddleware
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.createTab
+import mozilla.components.browser.state.state.recover.RecoverableTab
+import mozilla.components.browser.state.state.recover.TabState
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.service.glean.testing.GleanTestRule
 import mozilla.components.support.base.android.Clock
@@ -37,17 +37,15 @@ import org.mozilla.fenix.utils.Settings
 import org.mozilla.fenix.GleanMetrics.EngineTab as EngineMetrics
 
 @RunWith(FenixRobolectricTestRunner::class)
-@ExperimentalCoroutinesApi
 class TelemetryMiddlewareTest {
 
     private lateinit var store: BrowserStore
     private lateinit var settings: Settings
     private lateinit var telemetryMiddleware: TelemetryMiddleware
     private lateinit var metrics: MetricController
-    private val testDispatcher = TestCoroutineDispatcher()
 
     @get:Rule
-    val coroutinesTestRule = MainCoroutineRule(testDispatcher)
+    val coroutinesTestRule = MainCoroutineRule()
 
     @get:Rule
     val gleanRule = GleanTestRule(ApplicationProvider.getApplicationContext())
@@ -168,11 +166,16 @@ class TelemetryMiddlewareTest {
     fun `WHEN tabs are restored THEN the open tab count is updated`() {
         assertEquals(0, settings.openTabsCount)
         val tabsToRestore = listOf(
-            createTab("https://mozilla.org"),
-            createTab("https://firefox.com")
+            RecoverableTab(null, TabState(url = "https://mozilla.org", id = "1")),
+            RecoverableTab(null, TabState(url = "https://firefox.com", id = "2"))
         )
 
-        store.dispatch(TabListAction.RestoreAction(tabsToRestore)).joinBlocking()
+        store.dispatch(
+            TabListAction.RestoreAction(
+                tabs = tabsToRestore,
+                restoreLocation = TabListAction.RestoreAction.RestoreLocation.BEGINNING
+            )
+        ).joinBlocking()
         assertEquals(2, settings.openTabsCount)
         verify(exactly = 1) { metrics.track(Event.HaveOpenTabs) }
     }
@@ -204,11 +207,12 @@ class TelemetryMiddlewareTest {
         store.dispatch(
             TabListAction.RestoreAction(
                 listOf(
-                    createTab("https://www.mozilla.org", id = "foreground"),
-                    createTab("https://getpocket.com", id = "background_pocket"),
-                    createTab("https://theverge.com", id = "background_verge")
+                    RecoverableTab(null, TabState(url = "https://www.mozilla.org", id = "foreground")),
+                    RecoverableTab(null, TabState(url = "https://getpocket.com", id = "background_pocket")),
+                    RecoverableTab(null, TabState(url = "https://theverge.com", id = "background_verge"))
                 ),
-                selectedTabId = "foreground"
+                selectedTabId = "foreground",
+                restoreLocation = TabListAction.RestoreAction.RestoreLocation.BEGINNING
             )
         ).joinBlocking()
 
@@ -227,11 +231,12 @@ class TelemetryMiddlewareTest {
         store.dispatch(
             TabListAction.RestoreAction(
                 listOf(
-                    createTab("https://www.mozilla.org", id = "foreground"),
-                    createTab("https://getpocket.com", id = "background_pocket"),
-                    createTab("https://theverge.com", id = "background_verge")
+                    RecoverableTab(null, TabState(url = "https://www.mozilla.org", id = "foreground")),
+                    RecoverableTab(null, TabState(url = "https://getpocket.com", id = "background_pocket")),
+                    RecoverableTab(null, TabState(url = "https://theverge.com", id = "background_verge"))
                 ),
-                selectedTabId = "foreground"
+                selectedTabId = "foreground",
+                restoreLocation = TabListAction.RestoreAction.RestoreLocation.BEGINNING
             )
         ).joinBlocking()
 
@@ -260,11 +265,12 @@ class TelemetryMiddlewareTest {
         store.dispatch(
             TabListAction.RestoreAction(
                 listOf(
-                    createTab("https://www.mozilla.org", id = "foreground"),
-                    createTab("https://getpocket.com", id = "background_pocket"),
-                    createTab("https://theverge.com", id = "background_verge")
+                    RecoverableTab(null, TabState(url = "https://www.mozilla.org", id = "foreground")),
+                    RecoverableTab(null, TabState(url = "https://getpocket.com", id = "background_pocket")),
+                    RecoverableTab(null, TabState(url = "https://theverge.com", id = "background_verge"))
                 ),
-                selectedTabId = "foreground"
+                selectedTabId = "foreground",
+                restoreLocation = TabListAction.RestoreAction.RestoreLocation.BEGINNING
             )
         ).joinBlocking()
 
@@ -296,11 +302,12 @@ class TelemetryMiddlewareTest {
         store.dispatch(
             TabListAction.RestoreAction(
                 listOf(
-                    createTab("https://www.mozilla.org", id = "foreground"),
-                    createTab("https://getpocket.com", id = "background_pocket"),
-                    createTab("https://theverge.com", id = "background_verge")
+                    RecoverableTab(null, TabState(url = "https://www.mozilla.org", id = "foreground")),
+                    RecoverableTab(null, TabState(url = "https://getpocket.com", id = "background_pocket")),
+                    RecoverableTab(null, TabState(url = "https://theverge.com", id = "background_verge"))
                 ),
-                selectedTabId = "foreground"
+                selectedTabId = "foreground",
+                restoreLocation = TabListAction.RestoreAction.RestoreLocation.BEGINNING
             )
         ).joinBlocking()
 

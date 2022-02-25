@@ -26,10 +26,9 @@ import mozilla.components.support.ktx.android.content.getColorFromAttr
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.accounts.AccountState
 import org.mozilla.fenix.components.accounts.FenixAccountManager
-import org.mozilla.fenix.experiments.FeatureId
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.getVariables
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.whatsnew.WhatsNew
 
@@ -49,6 +48,7 @@ class HomeMenu(
         data class SyncAccount(val accountState: AccountState) : Item()
         object WhatsNew : Item()
         object Help : Item()
+        object CustomizeHome : Item()
         object Settings : Item()
         object Quit : Item()
         object ReconnectSync : Item()
@@ -61,7 +61,6 @@ class HomeMenu(
     private val syncDisconnectedBackgroundColor =
         context.getColorFromAttr(R.attr.syncDisconnectedBackground)
 
-    private val shouldUseBottomToolbar = context.settings().shouldUseBottomToolbar
     private val accountManager = FenixAccountManager(context)
 
     // 'Reconnect' and 'Quit' items aren't needed most of the time, so we'll only create the if necessary.
@@ -84,7 +83,7 @@ class HomeMenu(
     private val quitItem by lazy {
         BrowserMenuImageText(
             context.getString(R.string.delete_browsing_data_on_quit_action),
-            R.drawable.ic_exit,
+            R.drawable.mozac_ic_quit,
             primaryTextColor
         ) {
             onItemTapped.invoke(Item.Quit)
@@ -112,7 +111,6 @@ class HomeMenu(
 
     @Suppress("ComplexMethod")
     private fun coreMenuItems(): List<BrowserMenuItem> {
-        val experiments = context.components.analytics.experiments
         val settings = context.components.settings
 
         val bookmarksItem = BrowserMenuImageText(
@@ -152,7 +150,7 @@ class HomeMenu(
             R.drawable.ic_whats_new,
             iconTintColorResource = primaryTextColor,
             highlight = BrowserMenuHighlight.LowPriority(
-                notificationTint = getColor(context, R.color.whats_new_notification_color)
+                notificationTint = getColor(context, R.color.fx_mobile_icon_color_information)
             ),
             isHighlighted = { WhatsNew.shouldHighlightWhatsNew(context) }
         ) {
@@ -167,11 +165,19 @@ class HomeMenu(
             onItemTapped.invoke(Item.Help)
         }
 
+        val customizeHomeItem = BrowserMenuImageText(
+            context.getString(R.string.browser_menu_customize_home_1),
+            R.drawable.ic_customize,
+            primaryTextColor
+        ) {
+            onItemTapped.invoke(Item.CustomizeHome)
+        }
+
         // Use nimbus to set the icon and title.
-        val variables = experiments.getVariables(FeatureId.NIMBUS_VALIDATION)
+        val nimbusValidation = FxNimbus.features.nimbusValidation.value()
         val settingsItem = BrowserMenuImageText(
-            variables.getText("settings-title") ?: context.getString(R.string.browser_menu_settings),
-            variables.getDrawableResource("settings-icon") ?: R.drawable.mozac_ic_settings,
+            nimbusValidation.settingsTitle,
+            R.drawable.mozac_ic_settings,
             primaryTextColor
         ) {
             onItemTapped.invoke(Item.Settings)
@@ -200,6 +206,7 @@ class HomeMenu(
             BrowserMenuDivider(),
             whatsNewItem,
             helpItem,
+            customizeHomeItem,
             settingsItem,
             if (settings.shouldDeleteBrowsingDataOnQuit) quitItem else null
         ).also { items ->

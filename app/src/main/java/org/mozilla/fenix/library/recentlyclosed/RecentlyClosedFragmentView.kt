@@ -10,59 +10,24 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
-import mozilla.components.browser.state.state.recover.RecoverableTab
+import mozilla.components.browser.state.state.recover.TabState
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.ComponentRecentlyClosedBinding
 import org.mozilla.fenix.library.LibraryPageView
 import org.mozilla.fenix.selection.SelectionInteractor
 
-interface RecentlyClosedInteractor : SelectionInteractor<RecoverableTab> {
-    /**
-     * Called when an item is tapped to restore it.
-     *
-     * @param item the tapped item to restore.
-     */
-    fun restore(item: RecoverableTab)
-
+interface RecentlyClosedInteractor : SelectionInteractor<TabState> {
     /**
      * Called when the view more history option is tapped.
      */
     fun onNavigateToHistory()
 
     /**
-     * Copies the URL of a recently closed tab item to the copy-paste buffer.
-     *
-     * @param item the recently closed tab item to copy the URL from
-     */
-    fun onCopyPressed(item: RecoverableTab)
-
-    /**
-     * Opens the share sheet for a recently closed tab item.
-     *
-     * @param item the recently closed tab item to share
-     */
-    fun onSharePressed(item: RecoverableTab)
-
-    /**
-     * Opens a recently closed tab item in a new tab.
-     *
-     * @param item the recently closed tab item to open in a new tab
-     */
-    fun onOpenInNormalTab(item: RecoverableTab)
-
-    /**
-     * Opens a recently closed tab item in a private tab.
-     *
-     * @param item the recently closed tab item to open in a private tab
-     */
-    fun onOpenInPrivateTab(item: RecoverableTab)
-
-    /**
      * Called when recently closed tab is selected for deletion.
      *
      * @param tab the recently closed tab to delete.
      */
-    fun onDelete(tab: RecoverableTab)
+    fun onDelete(tab: TabState)
 }
 
 /**

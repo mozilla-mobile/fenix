@@ -4,7 +4,6 @@
 
 package org.mozilla.fenix.components.metrics
 
-import io.mockk.MockKAnnotations
 import mozilla.components.service.glean.testing.GleanTestRule
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert.assertEquals
@@ -17,6 +16,7 @@ import org.junit.runner.RunWith
 import org.mozilla.fenix.GleanMetrics.Addons
 import org.mozilla.fenix.GleanMetrics.Awesomebar
 import org.mozilla.fenix.GleanMetrics.BookmarksManagement
+import org.mozilla.fenix.GleanMetrics.CreditCards
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.History
 import org.mozilla.fenix.GleanMetrics.RecentBookmarks
@@ -33,8 +33,6 @@ class GleanMetricsServiceTest {
 
     @Before
     fun setup() {
-        MockKAnnotations.init(this)
-
         gleanService = GleanMetricsService(testContext)
     }
 
@@ -168,6 +166,37 @@ class GleanMetricsServiceTest {
         assertFalse(History.openedItemsInPrivateTabs.testHasValue())
         gleanService.track(Event.HistoryOpenedInPrivateTabs)
         assertTrue(History.openedItemsInPrivateTabs.testHasValue())
+
+        assertFalse(History.recentSearchesTapped.testHasValue())
+        gleanService.track(Event.HistoryRecentSearchesTapped("5"))
+        assertTrue(History.recentSearchesTapped.testHasValue())
+        val events = History.recentSearchesTapped.testGetValue()
+        assertEquals(1, events[0].extra!!.size)
+        assertEquals("5", events[0].extra!!["page_number"])
+
+        assertFalse(History.searchTermGroupTapped.testHasValue())
+        gleanService.track(Event.HistorySearchTermGroupTapped)
+        assertTrue(History.searchTermGroupTapped.testHasValue())
+
+        assertFalse(History.searchTermGroupOpenTab.testHasValue())
+        gleanService.track(Event.HistorySearchTermGroupOpenTab)
+        assertTrue(History.searchTermGroupOpenTab.testHasValue())
+
+        assertFalse(History.searchTermGroupRemoveTab.testHasValue())
+        gleanService.track(Event.HistorySearchTermGroupRemoveTab)
+        assertTrue(History.searchTermGroupRemoveTab.testHasValue())
+
+        assertFalse(History.searchTermGroupRemoveAll.testHasValue())
+        gleanService.track(Event.HistorySearchTermGroupRemoveAll)
+        assertTrue(History.searchTermGroupRemoveAll.testHasValue())
+
+        assertFalse(History.searchIconTapped.testHasValue())
+        gleanService.track(Event.HistorySearchIconTapped)
+        assertTrue(History.searchIconTapped.testHasValue())
+
+        assertFalse(History.searchResultTapped.testHasValue())
+        gleanService.track(Event.HistorySearchResultTapped)
+        assertTrue(History.searchResultTapped.testHasValue())
     }
 
     @Test
@@ -262,10 +291,6 @@ class GleanMetricsServiceTest {
         assertFalse(TabsTray.closeAllTabs.testHasValue())
         gleanService.track(Event.TabsTrayCloseAllTabsPressed)
         assertTrue(TabsTray.closeAllTabs.testHasValue())
-
-        assertFalse(TabsTray.inactiveTabsRecentlyClosed.testHasValue())
-        gleanService.track(Event.TabsTrayRecentlyClosedPressed)
-        assertTrue(TabsTray.inactiveTabsRecentlyClosed.testHasValue())
     }
 
     @Test
@@ -281,6 +306,10 @@ class GleanMetricsServiceTest {
 
     @Test
     fun `Home screen recent bookmarks events are correctly recorded`() {
+        assertFalse(RecentBookmarks.shown.testHasValue())
+        gleanService.track(Event.RecentBookmarksShown)
+        assertTrue(RecentBookmarks.shown.testHasValue())
+
         assertFalse(RecentBookmarks.bookmarkClicked.testHasValue())
         gleanService.track(Event.BookmarkClicked)
         assertTrue(RecentBookmarks.bookmarkClicked.testHasValue())
@@ -288,5 +317,48 @@ class GleanMetricsServiceTest {
         assertFalse(RecentBookmarks.showAllBookmarks.testHasValue())
         gleanService.track(Event.ShowAllBookmarks)
         assertTrue(RecentBookmarks.showAllBookmarks.testHasValue())
+    }
+
+    @Test
+    fun `credit card events are correctly recorded`() {
+        assertFalse(CreditCards.saved.testHasValue())
+        gleanService.track(Event.CreditCardSaved)
+        assertTrue(CreditCards.saved.testHasValue())
+
+        assertFalse(CreditCards.deleted.testHasValue())
+        gleanService.track(Event.CreditCardDeleted)
+        assertTrue(CreditCards.deleted.testHasValue())
+
+        assertFalse(CreditCards.modified.testHasValue())
+        gleanService.track(Event.CreditCardModified)
+        assertTrue(CreditCards.modified.testHasValue())
+
+        assertFalse(CreditCards.formDetected.testHasValue())
+        gleanService.track(Event.CreditCardFormDetected)
+        assertTrue(CreditCards.formDetected.testHasValue())
+
+        assertFalse(CreditCards.autofilled.testHasValue())
+        gleanService.track(Event.CreditCardAutofilled)
+        assertTrue(CreditCards.autofilled.testHasValue())
+
+        assertFalse(CreditCards.autofillPromptShown.testHasValue())
+        gleanService.track(Event.CreditCardAutofillPromptShown)
+        assertTrue(CreditCards.autofillPromptShown.testHasValue())
+
+        assertFalse(CreditCards.autofillPromptExpanded.testHasValue())
+        gleanService.track(Event.CreditCardAutofillPromptExpanded)
+        assertTrue(CreditCards.autofillPromptExpanded.testHasValue())
+
+        assertFalse(CreditCards.autofillPromptDismissed.testHasValue())
+        gleanService.track(Event.CreditCardAutofillPromptDismissed)
+        assertTrue(CreditCards.autofillPromptDismissed.testHasValue())
+
+        assertFalse(CreditCards.managementAddTapped.testHasValue())
+        gleanService.track(Event.CreditCardManagementAddTapped)
+        assertTrue(CreditCards.managementAddTapped.testHasValue())
+
+        assertFalse(CreditCards.managementCardTapped.testHasValue())
+        gleanService.track(Event.CreditCardManagementCardTapped)
+        assertTrue(CreditCards.managementCardTapped.testHasValue())
     }
 }

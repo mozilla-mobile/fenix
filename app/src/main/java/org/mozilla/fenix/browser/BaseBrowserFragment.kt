@@ -32,7 +32,6 @@ import androidx.preference.PreferenceManager
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
@@ -40,6 +39,7 @@ import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import mozilla.appservices.places.BookmarkRoot
+import mozilla.appservices.places.uniffi.PlacesException
 import mozilla.components.browser.state.action.ContentAction
 import mozilla.components.browser.state.selector.findCustomTab
 import mozilla.components.browser.state.selector.findCustomTabOrSelectedTab
@@ -132,8 +132,10 @@ import mozilla.components.support.ktx.android.view.enterToImmersiveMode
 import mozilla.components.support.ktx.kotlin.getOrigin
 import org.mozilla.fenix.components.toolbar.interactor.BrowserToolbarInteractor
 import org.mozilla.fenix.components.toolbar.interactor.DefaultBrowserToolbarInteractor
+import org.mozilla.fenix.crashes.CrashContentIntegration
 import org.mozilla.fenix.databinding.FragmentBrowserBinding
 import org.mozilla.fenix.ext.secure
+import org.mozilla.fenix.perf.MarkersFragmentLifecycleCallbacks
 import org.mozilla.fenix.settings.biometric.BiometricPromptFeature
 import mozilla.components.feature.session.behavior.ToolbarPosition as MozacToolbarPosition
 
@@ -142,7 +144,6 @@ import mozilla.components.feature.session.behavior.ToolbarPosition as MozacToolb
  * This class only contains shared code focused on the main browsing content.
  * UI code specific to the app or to custom tabs can be found in the subclasses.
  */
-@ExperimentalCoroutinesApi
 @Suppress("TooManyFunctions", "LargeClass")
 abstract class BaseBrowserFragment :
     Fragment(),
@@ -191,6 +192,7 @@ abstract class BaseBrowserFragment :
     private val searchFeature = ViewBoundFeatureWrapper<SearchFeature>()
     private val webAuthnFeature = ViewBoundFeatureWrapper<WebAuthnFeature>()
     private val biometricPromptFeature = ViewBoundFeatureWrapper<BiometricPromptFeature>()
+    private val crashContentIntegration = ViewBoundFeatureWrapper<CrashContentIntegration>()
     private var pipFeature: PictureInPictureFeature? = null
 
     var customTabSessionId: String? = null
@@ -212,6 +214,9 @@ abstract class BaseBrowserFragment :
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        // DO NOT ADD ANYTHING ABOVE THIS getProfilerTime CALL!
+        val profilerStartTime = requireComponents.core.engine.profiler?.getProfilerTime()
+
         customTabSessionId = requireArguments().getString(EXTRA_SESSION_ID)
 
         // Diagnostic breadcrumb for "Display already aquired" crash:
@@ -234,10 +239,17 @@ abstract class BaseBrowserFragment :
             )
         }
 
+        // DO NOT MOVE ANYTHING BELOW THIS addMarker CALL!
+        requireComponents.core.engine.profiler?.addMarker(
+            MarkersFragmentLifecycleCallbacks.MARKER_NAME, profilerStartTime, "BaseBrowserFragment.onCreateView",
+        )
         return binding.root
     }
 
     final override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        // DO NOT ADD ANYTHING ABOVE THIS getProfilerTime CALL!
+        val profilerStartTime = requireComponents.core.engine.profiler?.getProfilerTime()
+
         initializeUI(view)
 
         if (customTabSessionId == null) {
@@ -254,6 +266,11 @@ abstract class BaseBrowserFragment :
         }
 
         requireContext().accessibilityManager.addAccessibilityStateChangeListener(this)
+
+        // DO NOT MOVE ANYTHING BELOW THIS addMarker CALL!
+        requireComponents.core.engine.profiler?.addMarker(
+            MarkersFragmentLifecycleCallbacks.MARKER_NAME, profilerStartTime, "BaseBrowserFragment.onViewCreated",
+        )
     }
 
     private fun initializeUI(view: View) {
@@ -306,6 +323,7 @@ abstract class BaseBrowserFragment :
             engineView = binding.engineView,
             homeViewModel = homeViewModel,
             customTabSessionId = customTabSessionId,
+            browserAnimator = browserAnimator,
             onTabCounterClicked = {
                 thumbnailsFeature.get()?.requestScreenshot()
                 findNavController().nav(
@@ -355,6 +373,7 @@ abstract class BaseBrowserFragment :
             scope = viewLifecycleOwner.lifecycleScope,
             tabCollectionStorage = requireComponents.core.tabCollectionStorage,
             topSitesStorage = requireComponents.core.topSitesStorage,
+            pinnedSiteStorage = requireComponents.core.pinnedSiteStorage,
             browserStore = store
         )
 
@@ -364,8 +383,9 @@ abstract class BaseBrowserFragment :
         )
 
         _browserToolbarView = BrowserToolbarView(
+            context = context,
             container = binding.browserLayout,
-            toolbarPosition = context.settings().toolbarPosition,
+            settings = context.settings(),
             interactor = browserToolbarInteractor,
             customTabSession = customTabSessionId?.let { store.state.findCustomTab(it) },
             lifecycleOwner = viewLifecycleOwner
@@ -619,6 +639,22 @@ abstract class BaseBrowserFragment :
             view = view
         )
 
+        crashContentIntegration.set(
+            feature = CrashContentIntegration(
+                browserStore = requireComponents.core.store,
+                appStore = requireComponents.appStore,
+                toolbar = browserToolbarView.view,
+                isToolbarPlacedAtTop = !context.settings().shouldUseBottomToolbar,
+                crashReporterView = binding.crashReporterView,
+                components = requireComponents,
+                settings = context.settings(),
+                navController = findNavController(),
+                sessionId = customTabSessionId
+            ),
+            owner = this,
+            view = view
+        )
+
         searchFeature.set(
             feature = SearchFeature(store, customTabSessionId) { request, tabId ->
                 val parentSession = store.state.findTabOrCustomTab(tabId)
@@ -678,7 +714,7 @@ abstract class BaseBrowserFragment :
         )
 
         // This component feature only works on Fenix when built on Mozilla infrastructure.
-        if (FeatureFlags.webAuthFeature && BuildConfig.MOZILLA_OFFICIAL) {
+        if (BuildConfig.MOZILLA_OFFICIAL) {
             webAuthnFeature.set(
                 feature = WebAuthnFeature(
                     engine = requireComponents.core.engine,
@@ -1033,10 +1069,6 @@ abstract class BaseBrowserFragment :
             components.useCases.sessionUseCases.reload()
         }
         hideToolbar()
-
-        components.core.store.state.findTabOrCustomTabOrSelectedTab(customTabSessionId)?.let {
-            updateThemeForSession(it)
-        }
     }
 
     @CallSuper
@@ -1217,33 +1249,49 @@ abstract class BaseBrowserFragment :
             }
         } else {
             // Save bookmark, then go to edit fragment
-            val guid = bookmarksStorage.addItem(
-                BookmarkRoot.Mobile.id,
-                url = sessionUrl,
-                title = sessionTitle,
-                position = null
-            )
+            try {
+                val guid = bookmarksStorage.addItem(
+                    BookmarkRoot.Mobile.id,
+                    url = sessionUrl,
+                    title = sessionTitle,
+                    position = null
+                )
 
-            withContext(Main) {
-                requireComponents.analytics.metrics.track(Event.AddBookmark)
+                withContext(Main) {
+                    requireComponents.analytics.metrics.track(Event.AddBookmark)
 
-                view?.let {
-                    FenixSnackbar.make(
-                        view = binding.browserLayout,
-                        duration = FenixSnackbar.LENGTH_LONG,
-                        isDisplayedWithBrowserToolbar = true
-                    )
-                        .setText(getString(R.string.bookmark_saved_snackbar))
-                        .setAction(getString(R.string.edit_bookmark_snackbar_action)) {
-                            nav(
-                                R.id.browserFragment,
-                                BrowserFragmentDirections.actionGlobalBookmarkEditFragment(
-                                    guid,
-                                    true
+                    view?.let {
+                        FenixSnackbar.make(
+                            view = binding.browserLayout,
+                            duration = FenixSnackbar.LENGTH_LONG,
+                            isDisplayedWithBrowserToolbar = true
+                        )
+                            .setText(getString(R.string.bookmark_saved_snackbar))
+                            .setAction(getString(R.string.edit_bookmark_snackbar_action)) {
+                                nav(
+                                    R.id.browserFragment,
+                                    BrowserFragmentDirections.actionGlobalBookmarkEditFragment(
+                                        guid,
+                                        true
+                                    )
                                 )
-                            )
-                        }
-                        .show()
+                            }
+                            .show()
+                    }
+                }
+            } catch (e: PlacesException.UrlParseFailed) {
+                withContext(Main) {
+                    requireComponents.analytics.metrics.track(Event.AddBookmark)
+
+                    view?.let {
+                        FenixSnackbar.make(
+                            view = binding.browserLayout,
+                            duration = FenixSnackbar.LENGTH_LONG,
+                            isDisplayedWithBrowserToolbar = true
+                        )
+                            .setText(getString(R.string.bookmark_invalid_url_error))
+                            .show()
+                    }
                 }
             }
         }

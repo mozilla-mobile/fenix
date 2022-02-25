@@ -4,18 +4,21 @@
 
 package org.mozilla.fenix.home
 
+import android.graphics.Bitmap
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.TestCoroutineDispatcher
 import mozilla.components.browser.state.action.ContentAction.UpdateIconAction
 import mozilla.components.browser.state.action.ContentAction.UpdateTitleAction
 import mozilla.components.browser.state.action.MediaSessionAction
 import mozilla.components.browser.state.action.TabListAction
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.LastMediaAccessState
+import mozilla.components.browser.state.state.TabGroup
+import mozilla.components.browser.state.state.TabPartition
 import mozilla.components.browser.state.state.createTab
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.mediasession.MediaSession
+import mozilla.components.concept.storage.HistoryMetadataKey
 import mozilla.components.feature.media.middleware.LastMediaAccessMiddleware
 import mozilla.components.support.test.ext.joinBlocking
 import mozilla.components.support.test.libstate.ext.waitUntilIdle
@@ -27,10 +30,13 @@ import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.home.HomeFragmentAction.RecentTabsChange
+import org.mozilla.fenix.home.recenttabs.RecentTab
 import org.mozilla.fenix.home.recenttabs.RecentTabsListFeature
+import org.mozilla.fenix.tabstray.SEARCH_TERM_TAB_GROUPS
 
 class RecentTabsListFeatureTest {
 
@@ -39,7 +45,7 @@ class RecentTabsListFeatureTest {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @get:Rule
-    val coroutinesTestRule = MainCoroutineRule(TestCoroutineDispatcher())
+    val coroutinesTestRule = MainCoroutineRule()
 
     @Before
     fun setup() {
@@ -115,6 +121,7 @@ class RecentTabsListFeatureTest {
         assertEquals(1, homeStore.state.recentTabs.size)
     }
 
+    @Ignore("Disabled until we want to enable this feature. See #21670.")
     @Test
     fun `GIVEN a valid inProgressMediaTabId and another selected tab exists WHEN the feature starts THEN dispatch both as as a recent tabs list`() {
         val mediaTab = createTab(
@@ -137,10 +144,13 @@ class RecentTabsListFeatureTest {
         homeStore.waitUntilIdle()
 
         assertEquals(2, homeStore.state.recentTabs.size)
-        assertEquals(selectedTab, homeStore.state.recentTabs[0])
-        assertEquals(mediaTab, homeStore.state.recentTabs[1])
+        assertTrue(homeStore.state.recentTabs[0] is RecentTab.Tab)
+        assertEquals(selectedTab, (homeStore.state.recentTabs[0] as RecentTab.Tab).state)
+        assertTrue(homeStore.state.recentTabs[1] is RecentTab.Tab)
+        assertEquals(mediaTab, (homeStore.state.recentTabs[1] as RecentTab.Tab).state)
     }
 
+    @Ignore("Disabled until we want to enable this feature. See #21670.")
     @Test
     fun `GIVEN a valid inProgressMediaTabId exists and that is the selected tab WHEN the feature starts THEN dispatch just one tab as the recent tabs list`() {
         val selectedMediaTab = createTab(
@@ -162,7 +172,8 @@ class RecentTabsListFeatureTest {
         homeStore.waitUntilIdle()
 
         assertEquals(1, homeStore.state.recentTabs.size)
-        assertEquals(selectedMediaTab, homeStore.state.recentTabs[0])
+        assertTrue(homeStore.state.recentTabs[0] is RecentTab.Tab)
+        assertEquals(selectedMediaTab, (homeStore.state.recentTabs[0] as RecentTab.Tab).state)
     }
 
     @Test
@@ -192,16 +203,19 @@ class RecentTabsListFeatureTest {
         homeStore.waitUntilIdle()
 
         assertEquals(1, homeStore.state.recentTabs.size)
-        assertEquals(tab1, homeStore.state.recentTabs[0])
+        assertTrue(homeStore.state.recentTabs[0] is RecentTab.Tab)
+        assertEquals(tab1, (homeStore.state.recentTabs[0] as RecentTab.Tab).state)
 
         browserStore.dispatch(TabListAction.SelectTabAction(tab2.id)).joinBlocking()
 
         homeStore.waitUntilIdle()
 
         assertEquals(1, homeStore.state.recentTabs.size)
-        assertEquals(tab2, homeStore.state.recentTabs[0])
+        assertTrue(homeStore.state.recentTabs[0] is RecentTab.Tab)
+        assertEquals(tab2, (homeStore.state.recentTabs[0] as RecentTab.Tab).state)
     }
 
+    @Ignore("Disabled until we want to enable this feature. See #21670.")
     @Test
     fun `WHEN the browser state has an in progress media tab THEN dispatch the new recent tab list`() {
         val initialMediaTab = createTab(
@@ -226,23 +240,29 @@ class RecentTabsListFeatureTest {
 
         feature.start()
         homeStore.waitUntilIdle()
-        assertEquals(1, homeStore.state.recentTabs.size)
-        assertEquals(initialMediaTab, homeStore.state.recentTabs[0])
+        assertEquals(2, homeStore.state.recentTabs.size)
+        assertTrue(homeStore.state.recentTabs[0] is RecentTab.Tab)
+        assertEquals(initialMediaTab, (homeStore.state.recentTabs[0] as RecentTab.Tab).state)
 
         browserStore.dispatch(
             MediaSessionAction.UpdateMediaPlaybackStateAction("2", MediaSession.PlaybackState.PLAYING)
         ).joinBlocking()
         homeStore.waitUntilIdle()
         assertEquals(2, homeStore.state.recentTabs.size)
-        assertEquals(initialMediaTab, homeStore.state.recentTabs[0])
+        assertTrue(homeStore.state.recentTabs[0] is RecentTab.Tab)
+        assertEquals(initialMediaTab, (homeStore.state.recentTabs[0] as RecentTab.Tab).state)
         // UpdateMediaPlaybackStateAction would set the current timestamp as the new value for lastMediaAccess
-        val updatedLastMediaAccess = homeStore.state.recentTabs[1].lastMediaAccessState.lastMediaAccess
+        val updatedLastMediaAccess =
+            (homeStore.state.recentTabs[1] as RecentTab.Tab).state.lastMediaAccessState.lastMediaAccess
         assertTrue("expected lastMediaAccess ($updatedLastMediaAccess) > 100", updatedLastMediaAccess > 100)
-        assertEquals("http://mozilla.org", homeStore.state.recentTabs[1].lastMediaAccessState.lastMediaUrl)
+        assertEquals(
+            "http://mozilla.org",
+            (homeStore.state.recentTabs[1] as RecentTab.Tab).state.lastMediaAccessState.lastMediaUrl
+        )
         // Check that the media tab is updated ignoring just the lastMediaAccess property.
         assertEquals(
             newMediaTab,
-            homeStore.state.recentTabs[1].copy(
+            (homeStore.state.recentTabs[1] as RecentTab.Tab).state.copy(
                 lastMediaAccessState = LastMediaAccessState("https://mozilla.com", 100)
             )
         )
@@ -282,7 +302,8 @@ class RecentTabsListFeatureTest {
         homeStore.waitUntilIdle()
 
         assertEquals(1, homeStore.state.recentTabs.size)
-        assertEquals(selectedNormalTab, homeStore.state.recentTabs[0])
+        assertTrue(homeStore.state.recentTabs[0] is RecentTab.Tab)
+        assertEquals(selectedNormalTab, (homeStore.state.recentTabs[0] as RecentTab.Tab).state)
 
         browserStore.dispatch(TabListAction.SelectTabAction(privateTab.id)).joinBlocking()
 
@@ -290,7 +311,8 @@ class RecentTabsListFeatureTest {
 
         // If the selected tab is a private tab the feature should show the last accessed normal tab.
         assertEquals(1, homeStore.state.recentTabs.size)
-        assertEquals(lastAccessedNormalTab, homeStore.state.recentTabs[0])
+        assertTrue(homeStore.state.recentTabs[0] is RecentTab.Tab)
+        assertEquals(lastAccessedNormalTab, (homeStore.state.recentTabs[0] as RecentTab.Tab).state)
     }
 
     @Test
@@ -316,9 +338,9 @@ class RecentTabsListFeatureTest {
         homeStore.waitUntilIdle()
 
         middleware.assertLastAction(RecentTabsChange::class) {
-            val tab = it.recentTabs.first()
-            assertTrue(tab.content.title.isEmpty())
-            assertNull(tab.content.icon)
+            val tab = it.recentTabs.first() as RecentTab.Tab
+            assertTrue(tab.state.content.title.isEmpty())
+            assertNull(tab.state.content.icon)
         }
 
         browserStore.dispatch(UpdateTitleAction("1", "test")).joinBlocking()
@@ -326,9 +348,9 @@ class RecentTabsListFeatureTest {
         homeStore.waitUntilIdle()
 
         middleware.assertLastAction(RecentTabsChange::class) {
-            val tab = it.recentTabs.first()
-            assertEquals("test", tab.content.title)
-            assertNull(tab.content.icon)
+            val tab = it.recentTabs.first() as RecentTab.Tab
+            assertEquals("test", tab.state.content.title)
+            assertNull(tab.state.content.icon)
         }
 
         browserStore.dispatch(UpdateIconAction("1", "https://www.mozilla.org", mockk()))
@@ -337,9 +359,9 @@ class RecentTabsListFeatureTest {
         homeStore.waitUntilIdle()
 
         middleware.assertLastAction(RecentTabsChange::class) {
-            val tab = it.recentTabs.first()
-            assertEquals("test", tab.content.title)
-            assertNotNull(tab.content.icon)
+            val tab = it.recentTabs.first() as RecentTab.Tab
+            assertEquals("test", tab.state.content.title)
+            assertNotNull(tab.state.content.icon)
         }
     }
 
@@ -361,6 +383,248 @@ class RecentTabsListFeatureTest {
         homeStore.waitUntilIdle()
 
         assertEquals(1, homeStore.state.recentTabs.size)
-        assertEquals(selectedTab, homeStore.state.recentTabs[0])
+        assertTrue(homeStore.state.recentTabs[0] is RecentTab.Tab)
+        assertEquals(selectedTab, (homeStore.state.recentTabs[0] as RecentTab.Tab).state)
+    }
+
+    @Test
+    fun `GIVEN only tabs from a search group WHEN the feature starts THEN dispatch the selected tab group as a recent tab list`() {
+        val tab1 = createTab(
+            url = "https://www.mozilla.org",
+            id = "1",
+            historyMetadata = HistoryMetadataKey(
+                url = "https://www.mozilla.org",
+                searchTerm = "test search term",
+                referrerUrl = "https://www.mozilla.org"
+            )
+        )
+
+        val tab2 = createTab(
+            url = "https://www.mozilla.org",
+            id = "2",
+            historyMetadata = HistoryMetadataKey(
+                url = "https://www.mozilla.org",
+                searchTerm = "test search term",
+                referrerUrl = "https://www.mozilla.org"
+            )
+        )
+        val tabs = listOf(tab1, tab2)
+        val tabGroup = TabGroup("Test search term", "", listOf(tab1.id, tab2.id))
+        val browserStore = BrowserStore(
+            BrowserState(
+                tabs = tabs,
+                tabPartitions = mapOf(Pair(SEARCH_TERM_TAB_GROUPS, TabPartition(SEARCH_TERM_TAB_GROUPS, listOf(tabGroup)))),
+                selectedTabId = "1"
+            )
+        )
+        val feature = RecentTabsListFeature(
+            browserStore = browserStore,
+            homeStore = homeStore
+        )
+
+        feature.start()
+
+        homeStore.waitUntilIdle()
+
+        assertEquals(1, homeStore.state.recentTabs.size)
+        val searchGroup = (homeStore.state.recentTabs[0] as RecentTab.SearchGroup)
+        assertEquals(searchGroup.searchTerm, "Test search term")
+        assertEquals(searchGroup.tabId, "1")
+        assertEquals(searchGroup.url, "https://www.mozilla.org")
+        assertEquals(searchGroup.thumbnail, null)
+        assertEquals(searchGroup.count, 2)
+    }
+
+    @Test
+    fun `GIVEN tabs with different search terms are opened WHEN the feature starts THEN dispatch the last active tab and last active search group as recent tabs list`() {
+        val tab1 = createTab(
+            url = "https://www.mozilla.org",
+            id = "1",
+            historyMetadata = HistoryMetadataKey(
+                url = "https://www.mozilla.org",
+                searchTerm = "Test search term",
+                referrerUrl = "https://www.mozilla.org"
+            )
+        )
+
+        val tab2 = createTab(
+            url = "https://www.mozilla.org",
+            id = "2",
+            historyMetadata = HistoryMetadataKey(
+                url = "https://www.mozilla.org",
+                searchTerm = "Test search term",
+                referrerUrl = "https://www.mozilla.org"
+            )
+        )
+        val tab3 = createTab(url = "https://www.mozilla.org/firefox", id = "3")
+        val tabs = listOf(tab1, tab2, tab3)
+        val tabGroup = TabGroup("Test search term", "", listOf(tab1.id, tab2.id))
+        val browserStore = BrowserStore(
+            BrowserState(
+                tabs = tabs,
+                tabPartitions = mapOf(Pair(SEARCH_TERM_TAB_GROUPS, TabPartition(SEARCH_TERM_TAB_GROUPS, listOf(tabGroup)))),
+                selectedTabId = "1"
+            )
+        )
+        val feature = RecentTabsListFeature(
+            browserStore = browserStore,
+            homeStore = homeStore
+        )
+
+        feature.start()
+
+        homeStore.waitUntilIdle()
+
+        assertEquals(2, homeStore.state.recentTabs.size)
+        assertTrue(homeStore.state.recentTabs[0] is RecentTab.Tab)
+        assertEquals(tab3, (homeStore.state.recentTabs[0] as RecentTab.Tab).state)
+        val searchGroup = (homeStore.state.recentTabs[1] as RecentTab.SearchGroup)
+        assertEquals(searchGroup.searchTerm, "Test search term")
+        assertEquals(searchGroup.tabId, "1")
+        assertEquals(searchGroup.url, "https://www.mozilla.org")
+        assertEquals(searchGroup.thumbnail, null)
+        assertEquals(searchGroup.count, 2)
+    }
+
+    @Test
+    fun `GIVEN a tab group with one tab and a selected tab WHEN the feature starts THEN dispatch selected tab as a recent tab list`() {
+        val tab1 = createTab(
+            url = "https://www.mozilla.org",
+            id = "1"
+        )
+        val tab2 = createTab(
+            url = "https://www.mozilla.org",
+            id = "2",
+            historyMetadata = HistoryMetadataKey(
+                url = "https://www.mozilla.org",
+                searchTerm = "test search term",
+                referrerUrl = "https://www.mozilla.org"
+            )
+        )
+        val tabs = listOf(tab1, tab2)
+        val browserStore = BrowserStore(
+            BrowserState(
+                tabs = tabs,
+                selectedTabId = "1"
+            )
+        )
+        val feature = RecentTabsListFeature(
+            browserStore = browserStore,
+            homeStore = homeStore
+        )
+
+        feature.start()
+
+        homeStore.waitUntilIdle()
+
+        assertEquals(1, homeStore.state.recentTabs.size)
+        assertTrue(homeStore.state.recentTabs[0] is RecentTab.Tab)
+        assertEquals(tab1, (homeStore.state.recentTabs[0] as RecentTab.Tab).state)
+    }
+
+    @Test
+    fun `GIVEN a tab group with two tabs and a selected tab WHEN the feature starts THEN dispatch both the selected tab and the selected tab group as a recent tab list`() {
+        val tab1 = createTab(
+            url = "https://www.mozilla.org",
+            id = "1"
+        )
+        val tab2 = createTab(
+            url = "https://www.mozilla.org",
+            id = "2",
+            historyMetadata = HistoryMetadataKey(
+                url = "https://www.mozilla.org",
+                searchTerm = "test search term",
+                referrerUrl = "https://www.mozilla.org"
+            )
+        )
+
+        val tab3 = createTab(
+            url = "https://www.mozilla.org",
+            id = "3",
+            historyMetadata = HistoryMetadataKey(
+                url = "https://www.mozilla.org",
+                searchTerm = "test search term",
+                referrerUrl = "https://www.mozilla.org"
+            )
+        )
+        val tabs = listOf(tab1, tab2, tab3)
+        val tabGroup = TabGroup("test search term", "", listOf(tab2.id, tab3.id))
+        val browserStore = BrowserStore(
+            BrowserState(
+                tabs = tabs,
+                tabPartitions = mapOf(Pair(SEARCH_TERM_TAB_GROUPS, TabPartition(SEARCH_TERM_TAB_GROUPS, listOf(tabGroup)))),
+                selectedTabId = "1"
+            )
+        )
+        val feature = RecentTabsListFeature(
+            browserStore = browserStore,
+            homeStore = homeStore
+        )
+
+        feature.start()
+
+        homeStore.waitUntilIdle()
+
+        assertEquals(2, homeStore.state.recentTabs.size)
+        assertTrue(homeStore.state.recentTabs[0] is RecentTab.Tab)
+        assertEquals(tab1, (homeStore.state.recentTabs[0] as RecentTab.Tab).state)
+        val searchGroup = (homeStore.state.recentTabs[1] as RecentTab.SearchGroup)
+        assertEquals(searchGroup.searchTerm, "test search term")
+        assertEquals(searchGroup.tabId, "2")
+        assertEquals(searchGroup.url, "https://www.mozilla.org")
+        assertEquals(searchGroup.thumbnail, null)
+        assertEquals(searchGroup.count, 2)
+    }
+
+    @Test
+    fun `GIVEN a valid inProgressMediaTabId, selected tab and tab group exists WHEN the feature starts THEN dispatch all as as a recent tabs list`() {
+        val mediaTab = createTab(
+            url = "https://mozilla.com", id = "42",
+            lastMediaAccessState = LastMediaAccessState("https://mozilla.com", 123)
+        )
+        val selectedTab = createTab("https://mozilla.com", id = "43")
+        val historyMetadataKey = HistoryMetadataKey(
+            url = "https://www.mozilla.org",
+            searchTerm = "test search term",
+            referrerUrl = "https://www.mozilla.org"
+        )
+        val thumbnail = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
+        val searchTermTab1 = createTab(
+            url = "https://www.mozilla.org",
+            id = "44",
+            thumbnail = thumbnail,
+            historyMetadata = historyMetadataKey
+        )
+        val searchTermTab2 = createTab(
+            url = "https://www.mozilla.org",
+            id = "45",
+            thumbnail = thumbnail,
+            historyMetadata = historyMetadataKey
+        )
+        val searchTermTabGroup = TabGroup(historyMetadataKey.searchTerm!!, "", listOf(searchTermTab1.id, searchTermTab2.id))
+        val browserStore = BrowserStore(
+            BrowserState(
+                tabs = listOf(mediaTab, selectedTab, searchTermTab1, searchTermTab2),
+                tabPartitions = mapOf(Pair(SEARCH_TERM_TAB_GROUPS, TabPartition(SEARCH_TERM_TAB_GROUPS, listOf(searchTermTabGroup)))),
+                selectedTabId = "43"
+            )
+        )
+        val feature = RecentTabsListFeature(
+            browserStore = browserStore,
+            homeStore = homeStore
+        )
+
+        feature.start()
+        homeStore.waitUntilIdle()
+
+        assertEquals(2, homeStore.state.recentTabs.size)
+        assertTrue(homeStore.state.recentTabs[0] is RecentTab.Tab)
+        assertEquals(selectedTab, (homeStore.state.recentTabs[0] as RecentTab.Tab).state)
+        val searchGroup = (homeStore.state.recentTabs[1] as RecentTab.SearchGroup)
+        assertEquals(searchGroup.searchTerm, "test search term")
+        assertEquals(searchGroup.tabId, "44")
+        assertEquals(searchGroup.url, "https://www.mozilla.org")
+        assertEquals(searchGroup.thumbnail, thumbnail)
+        assertEquals(searchGroup.count, 2)
     }
 }

@@ -6,11 +6,12 @@ package org.mozilla.fenix.tabstray.browser
 
 import android.view.LayoutInflater
 import android.view.View
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.base.images.ImageLoader
-import mozilla.components.concept.tabstray.Tab
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -20,6 +21,9 @@ import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.selection.SelectionHolder
 import org.mozilla.fenix.tabstray.TabsTrayStore
+import mozilla.components.browser.state.state.createTab
+import mozilla.components.lib.publicsuffixlist.PublicSuffixList
+import org.mozilla.fenix.ext.components
 
 @RunWith(FenixRobolectricTestRunner::class)
 class AbstractBrowserTabViewHolderTest {
@@ -29,6 +33,7 @@ class AbstractBrowserTabViewHolderTest {
 
     @Test
     fun `WHEN itemView is clicked THEN interactor invokes open`() {
+        every { testContext.components.publicSuffixList } returns PublicSuffixList(testContext)
         val view = LayoutInflater.from(testContext).inflate(R.layout.tab_tray_item, null)
         val holder = TestTabTrayViewHolder(
             view,
@@ -40,15 +45,16 @@ class AbstractBrowserTabViewHolderTest {
             interactor
         )
 
-        holder.bind(createTab(), false, mockk(), mockk())
+        holder.bind(createTab(url = "url"), false, mockk(), mockk())
 
         holder.itemView.performClick()
 
-        verify { interactor.open(any(), holder.featureName) }
+        verify { interactor.onTabSelected(any(), holder.featureName) }
     }
 
     @Test
     fun `WHEN itemView is clicked with a selection holder THEN the select holder is invoked`() {
+        every { testContext.components.publicSuffixList } returns PublicSuffixList(testContext)
         val view = LayoutInflater.from(testContext).inflate(R.layout.tab_tray_item, null)
         val selectionHolder = TestSelectionHolder(emptySet())
         val holder = TestTabTrayViewHolder(
@@ -61,11 +67,11 @@ class AbstractBrowserTabViewHolderTest {
             interactor
         )
 
-        holder.bind(createTab(), false, mockk(), mockk())
+        holder.bind(createTab(url = "url"), false, mockk(), mockk())
 
         holder.itemView.performClick()
 
-        verify { interactor.open(any(), holder.featureName) }
+        verify { interactor.onTabSelected(any(), holder.featureName) }
         assertTrue(selectionHolder.invoked)
     }
 
@@ -74,7 +80,7 @@ class AbstractBrowserTabViewHolderTest {
         itemView: View,
         imageLoader: ImageLoader,
         trayStore: TabsTrayStore,
-        selectionHolder: SelectionHolder<Tab>?,
+        selectionHolder: SelectionHolder<TabSessionState>?,
         store: BrowserStore,
         metrics: MetricController,
         override val browserTrayInteractor: BrowserTrayInteractor,
@@ -89,9 +95,9 @@ class AbstractBrowserTabViewHolderTest {
     }
 
     class TestSelectionHolder(
-        private val testItems: Set<Tab>
-    ) : SelectionHolder<Tab> {
-        override val selectedItems: Set<Tab>
+        private val testItems: Set<TabSessionState>
+    ) : SelectionHolder<TabSessionState> {
+        override val selectedItems: Set<TabSessionState>
             get() {
                 invoked = true
                 return testItems

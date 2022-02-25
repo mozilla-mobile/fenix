@@ -1,12 +1,11 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.exceptions.login
 
 import io.mockk.mockk
 import io.mockk.verify
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
 import mozilla.components.feature.logins.exceptions.LoginException
@@ -15,7 +14,6 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
-@ExperimentalCoroutinesApi
 class LoginExceptionsInteractorTest {
 
     private lateinit var loginExceptionStorage: LoginExceptionStorage

@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:moz="http://mozac.org/tools">
+
+    <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
+    <string name="app_name_private_5">Privaatne %s</string>
+    <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
+    <string name="app_name_private_4">%s (privaatne)</string>
 
     <!-- Home Fragment -->
     <!-- Content description (not visible, for screen readers etc.): "Three dot" menu button. -->
@@ -14,13 +19,45 @@
     <!-- No Open Tabs Message Description -->
     <string name="no_open_tabs_description">Siin kuvatakse sinu avatud kaarte.</string>
 
-    <!-- Private Browsing -->
-    <!-- Title for private session option -->
-    <string name="private_browsing_title">Oled privaatses seansis</string>
+    <!-- No Private Tabs Message Description -->
+    <string name="no_private_tabs_description">Sinu privaatseid kaarte kuvatakse siin.</string>
+    <!-- Tab tray multi select title in app bar. The first parameter is the number of tabs selected -->
+    <string name="tab_tray_multi_select_title">%1$d kaarti valitud</string>
+    <!-- Label of button in create collection dialog for creating a new collection  -->
+    <string name="tab_tray_add_new_collection">Lisa uus kollektsioon</string>
+    <!-- Label of editable text in create collection dialog for naming a new collection  -->
+    <string name="tab_tray_add_new_collection_name">Nimi</string>
 
+    <!-- Label of button in save to collection dialog for selecting a current collection  -->
+    <string name="tab_tray_select_collection">Kollektsiooni valimine</string>
+    <!-- Content description for close button while in multiselect mode in tab tray -->
+    <string name="tab_tray_close_multiselect_content_description">Välju mitmikvaliku režiimist</string>
+    <!-- Content description for save to collection button while in multiselect mode in tab tray -->
+    <string name="tab_tray_collection_button_multiselect_content_description">Salvesta valitud kaardid kollektsiooni</string>
+    <!-- Content description on checkmark while tab is selected in multiselect mode in tab tray -->
+    <string name="tab_tray_multiselect_selected_content_description">Valitud</string>
+
+    <!-- Home - Recently saved bookmarks -->
+    <!-- Title for the home screen section with recently saved bookmarks. -->
+    <string name="recent_bookmarks_title">Hiljutised järjehoidjad</string>
+    <!-- Content description for the recently saved bookmarks section on the home screen. -->
+    <string name="recently_saved_bookmarks_content_description">Hiljuti salvestatud järjehoidjad</string>
+    <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
+    <string name="recently_saved_show_all">Kuva kõiki</string>
+    <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
+    <string name="recently_saved_show_all_content_description_2">Kuva kõiki järjehoidjaid</string>
+    <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
+    <string moz:removedIn="97" name="recently_saved_show_all_content_description" tools:ignore="UnusedResources">Kõigi salvestatud järjehoidjate kuvamise nupp</string>
+
+    <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
+    <string name="about_content">%1$s on Mozilla poolt toodetud.</string>
+
+    <!-- Private Browsing -->
+    <!-- Explanation for private browsing displayed to users on home view when they first enable private mode
+        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
+    <string name="private_browsing_placeholder_description_2">
+ %1$s kustutab privaatsete kaartide otsimise ja lehitsemise ajaloo, kui väljud rakendusest või sulged privaatsed kaardid. Kuigi see ei muuda sind külastatavate veebilehtede või internetiteenuse pakkuja ees anonüümseks, kaitseb see siiski sinu privaatsust teiste selle seadme kasutajate eest.</string>
     <string name="private_browsing_common_myths">Levinumad müüdid privaatse veebilehitsemise kohta</string>
-    <!-- Delete session button to erase your history in a private session -->
-    <string name="private_browsing_delete_session">Kustuta seanss</string>
 
     <!-- Private mode shortcut "contextual feature recommendation" (CFR) -->
     <!-- Text for the main message -->
@@ -30,15 +67,80 @@
     <!-- Text for the negative button -->
     <string name="cfr_neg_button_text">Tänan, ei soovi</string>
 
+
+    <!-- Open in App "contextual feature recommendation" (CFR) -->
+    <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
+    <string name="open_in_app_cfr_info_message">Saad seadistada Firefoxi linke avama teistes äppides.</string>
+    <!-- Text for the positive action button -->
+    <string name="open_in_app_cfr_positive_button_text">Mine sätetesse</string>
+    <!-- Text for the negative action button -->
+    <string name="open_in_app_cfr_negative_button_text">Peida</string>
+
+
+    <!-- Text for the info dialog when camera permissions have been denied but user tries to access a camera feature. -->
+    <string name="camera_permissions_needed_message">Vajalik on ligipääs kaamerale. Mine Androidi sätetesse, puuduta õigusi ja seejärel puuduta lubamise valikut.</string>
+    <!-- Text for the positive action button to go to Android Settings to grant permissions. -->
+    <string name="camera_permissions_needed_positive_button_text">Mine sätetesse</string>
+    <!-- Text for the negative action button to dismiss the dialog. -->
+    <string name="camera_permissions_needed_negative_button_text">Peida</string>
+
+    <!-- Text for the banner message to tell users about our auto close feature. -->
+    <string name="tab_tray_close_tabs_banner_message">Määra mitte vaadatud avatud kaardid sulguma päeva, nädala või kuu pärast.</string>
+    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
+    <string name="tab_tray_close_tabs_banner_positive_button_text">Vaata valikuid</string>
+    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
+    <string name="tab_tray_close_tabs_banner_negative_button_text">Peida</string>
+    <!-- Text for the banner message to tell users about our inactive tabs feature. -->
+    <string name="tab_tray_inactive_onboarding_message">Kaardid, mida sa pole vaadanud 2 nädalat, liigutatakse siia.</string>
+    <!-- Text for the action link to go to Settings for inactive tabs. -->
+    <string name="tab_tray_inactive_onboarding_button_text">Lülita see sätetes välja</string>
+    <!-- Text for title for the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_auto_close_title">Kas sulgeda automaatselt kuu aja pärast?</string>
+    <!-- Text for the body for the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_auto_close_body">Firefox saab sulgeda kaardid, mida sa pole viimase kuu jooksul vaadanud.</string>
+    <!-- Content description for close button in the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_auto_close_button_content_description">Sulge</string>
+
+    <!-- Text for turn on auto close tabs button in the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_turn_on_auto_close_button_2">Lülita automaatne sulgemine sisse</string>
+
+
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
     <string name="home_screen_shortcut_open_new_tab_2">Uus kaart</string>
     <!-- Shortcut action to open new private tab -->
     <string name="home_screen_shortcut_open_new_private_tab_2">Uus privaatne kaart</string>
 
+    <!-- Recent Tabs -->
+    <!-- Header text for jumping back into the recent tab in the home screen -->
+    <string name="recent_tabs_header">Hiljutised kaardid</string>
+    <!-- Button text for showing all the tabs in the tabs tray -->
+    <string name="recent_tabs_show_all">Kuva kõiki</string>
+    <!-- Content description for the button which navigates the user to show all recent tabs in the tabs tray. -->
+    <string name="recent_tabs_show_all_content_description_2">Kõigi hiljutiste kaartide kuvamise nupp</string>
+    <!-- Content description for the button which navigates the user to show all recent tabs in the tabs tray. -->
+    <string moz:removedIn="97" name="recent_tabs_show_all_content_description2" tools:ignore="UnusedResources">Kuva kõiki hiljutisi kaarte</string>
+
+    <!-- Title for showing a group item in the 'Jump back in' section of the new tab
+        The first parameter is the search term that the user used. (for example: your search for "cat")-->
+    <string name="recent_tabs_search_term">Sinu otsing fraasile \&quot;%1$s\&quot;</string>
+    <!-- Text for the number of tabs in a group in the 'Jump back in' section of the new tab
+        %d is a placeholder for the number of sites in the group. This number will always be more than one. -->
+    <string name="recent_tabs_search_term_count_2">%d saiti</string>
+
+    <!-- History Metadata -->
+    <!-- Header text for a section on the home screen that displays grouped highlights from the
+         user's browsing history, such as topics they have researched or explored on the web -->
+    <string name="history_metadata_header_2">Hiljuti külastatud</string>
+    <!-- Text for the menu button to remove a grouped highlight from the user's browsing history
+         in the Recently visited section -->
+    <string name="recently_visited_menu_item_remove">Eemalda</string>
+    <!-- Content description for the button which navigates the user to show all of their history. -->
+    <string name="past_explorations_show_all_content_description_2">Kuva varasemat ajalugu</string>
+    <!-- Content description for the button which navigates the user to show all of their history. -->
+    <string moz:removedIn="97" name="past_explorations_show_all_content_description" tools:ignore="UnusedResources">Varasema ajaloo kuvamise nupp</string>
+
     <!-- Browser Fragment -->
-    <!-- Content description (not visible, for screen readers etc.): Navigate to open tabs -->
-    <string name="browser_tabs_button">Avatud kaardid</string>
     <!-- Content description (not visible, for screen readers etc.): Navigate backward (browsing history) -->
     <string name="browser_menu_back">Tagasi</string>
     <!-- Content description (not visible, for screen readers etc.): Navigate forward (browsing history) -->
@@ -47,10 +149,6 @@
     <string name="browser_menu_refresh">Värskenda</string>
     <!-- Content description (not visible, for screen readers etc.): Stop loading current website -->
     <string name="browser_menu_stop">Peata</string>
-    <!-- Content description (not visible, for screen readers etc.): Bookmark the current page -->
-    <string name="browser_menu_bookmark">Lisa järjehoidjatesse</string>
-    <!-- Content description (not visible, for screen readers etc.): Un-bookmark the current page -->
-    <string name="browser_menu_edit_bookmark">Muuda järjehoidjat</string>
     <!-- Browser menu button that opens the addon manager -->
     <string name="browser_menu_add_ons">Lisad</string>
     <!-- Text displayed when there are no add-ons to be shown -->
@@ -71,17 +169,17 @@
     <!-- Browser menu toggle that installs a Progressive Web App shortcut to the site on the device home screen. -->
     <string name="browser_menu_install_on_homescreen">Lisa</string>
 
+    <!-- Menu option on the toolbar that takes you to synced tabs page-->
+    <string moz:removedIn="98" name="synced_tabs" tools:ignore="UnusedResources">Sünkroniseeritud kaardid</string>
+    <!-- Content description (not visible, for screen readers etc.) for the Resync tabs button -->
+    <string name="resync_button_content_description">Uuesti sünkroniseerimise nupp</string>
     <!-- Browser menu button that opens the find in page menu -->
     <string name="browser_menu_find_in_page">Otsi lehelt</string>
-    <!-- Browser menu button that creates a private tab -->
-    <string name="browser_menu_private_tab">Privaatne kaart</string>
 
     <!-- Browser menu button that saves the current tab to a collection -->
     <string name="browser_menu_save_to_collection_2">Salvesta kollektsiooni</string>
     <!-- Browser menu button that open a share menu to share the current site -->
     <string name="browser_menu_share">Jaga</string>
-    <!-- Share menu title, displayed when a user is sharing their current site -->
-    <string name="menu_share_with">Jaga…</string>
     <!-- Browser menu button shown in custom tabs that opens the current tab in Fenix
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
     <string name="browser_menu_open_in_fenix">Ava %1$sis</string>
@@ -93,19 +191,29 @@
     <string name="browser_menu_powered_by2">%1$si kaart</string>
     <!-- Browser menu button to put the current page in reader mode -->
     <string name="browser_menu_read">Lugemisvaade</string>
+    <!-- Browser menu button content description to close reader mode and return the user to the regular browser -->
+    <string name="browser_menu_read_close">Sulge lugemisvaade</string>
     <!-- Browser menu button to open the current page in an external app -->
     <string name="browser_menu_open_app_link">Ava äpis</string>
-    <!-- Browser menu button to configure reader mode appearance e.g. the used font type and size -->
-    <string name="browser_menu_read_appearance">Välimus</string>
 
+    <!-- Browser menu button to show reader view appearance controls e.g. the used font type and size -->
+    <string name="browser_menu_customize_reader_view">Kohanda lugemisvaadet</string>
     <!-- Browser menu label for adding a bookmark -->
     <string name="browser_menu_add">Lisa</string>
+
+    <!-- Browser menu label for editing a bookmark -->
+    <string name="browser_menu_edit">Muuda</string>
+    <!-- Browser menu button that opens the Customize menu -->
+    <string moz:removedIn="98" name="browser_menu_customize_home" tools:ignore="UnusedResources">Kohanda avalehte</string>
+    <!-- Button shown on the home page that opens the Customize home settings -->
+    <string name="browser_menu_customize_home_1">Kohanda avalehte</string>
+    <!-- Browser Toolbar -->
+    <!-- Content description for the Home screen button on the browser toolbar -->
+    <string name="browser_toolbar_home">Avaleht</string>
 
     <!-- Locale Settings Fragment -->
     <!-- Content description for tick mark on selected language -->
     <string name="a11y_selected_locale_content_description">Valitud keel</string>
-    <!-- Content description for search icon -->
-    <string name="a11y_search_icon_content_description">Otsi</string>
     <!-- Text for default locale item -->
     <string name="default_locale_text">Järgitakse seadme keelt</string>
     <!-- Placeholder text shown in the search bar before a user enters text -->
@@ -132,16 +240,47 @@
     <!-- Search suggestion onboarding hint Learn more link text -->
     <string name="search_suggestions_onboarding_learn_more_link">Rohkem teavet</string>
 
+    <!-- Search engine suggestion title text. The first parameter is the name of teh suggested engine-->
+    <string name="search_engine_suggestions_title">Otsi otsingumootoriga %s</string>
+    <!-- Search engine suggestion description text -->
+    <string name="search_engine_suggestions_description">Otsi otse aadressiribalt</string>
+
+    <!-- Home onboarding -->
+    <!-- Onboarding home screen dialog title text. Firefox is intentionally hardcoded. -->
+    <string name="onboarding_home_screen_title_2">Mis on uut Firefoxis</string>
+    <!-- Onboarding home screen dialog description text. -->
+    <string name="onboarding_home_screen_description_2">Nüüd on lihtsam jätkata sealt, kus pooleli jäi.</string>
+    <!-- Onboarding home screen dialog title text for the home section. Firefox is intentionally hardcoded. -->
+    <string name="onboarding_home_screen_section_home_title_2">Isikupärastatud Firefoxi avaleht</string>
+
+    <!-- Onboarding home screen dialog description text for the home section. -->
+    <string name="onboarding_home_screen_section_home_description_2">Liigu oma avatud kaartide, järjehoidjate ja lehitsemise ajaloo juurde.</string>
+    <!-- Onboarding home screen dialog description text for the tab tray section. -->
+    <string name="onboarding_home_screen_section_cleaner_tab_tray_title_2">Puhtad, korrastatud kaardid</string>
+    <!-- Onboarding home screen dialog description text for the tab tray section. -->
+    <string name="onboarding_home_screen_section_cleaner_tab_tray_description_2">Vabane kaartide segadusest täiustatud paigutuse ja automaatselt sulguvate kaartide abil.</string>
+    <!-- Onboarding home screen dialog description text for the history section. -->
+    <string name="onboarding_home_screen_section_useful_history_title_2">Hiljutised otsingud</string>
+    <!-- Onboarding home screen dialog description text for the history section. -->
+    <string name="onboarding_home_screen_section_useful_history_description_2">Külasta oma viimaseid otsinguid uuesti avalehelt või kaartidelt.</string>
+
+    <!-- Onboarding home screen popup dialog, shown on top of the Jump back in section. Firefox is intentionally hardcoded. -->
+    <string name="onboarding_home_screen_jump_back_contextual_hint" tools:ignore="UnusedResources">Isikupärastatud Firefoxi avaleht teeb lihtsamaks jätkamise sealt, kus pooleli jäi. Leia oma hiljutised kaardid, järjehoidjad ja otsingutulemused.</string>
+
+    <!-- Search Widget -->
+    <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
+    <string name="search_widget_content_description">Ava uus Firefoxi kaart</string>
     <!-- Text preview for smaller sized widgets -->
     <string name="search_widget_text_short">Otsi</string>
     <!-- Text preview for larger sized widgets -->
     <string name="search_widget_text_long">Otsi veebist</string>
 
+    <!-- Content description (not visible, for screen readers etc.): Voice search -->
+    <string name="search_widget_voice">Häälotsing</string>
+
     <!-- Preferences -->
     <!-- Title for the settings page-->
     <string name="settings">Sätted</string>
-    <!-- Preference category for basic settings -->
-    <string name="preferences_category_basics">Põhisätted</string>
     <!-- Preference category for general settings -->
     <string name="preferences_category_general">Üldine</string>
     <!-- Preference category for all links about Fenix -->
@@ -152,27 +291,15 @@
     <string name="preferences_search">Otsimine</string>
     <!-- Preference for settings related to Search address bar -->
     <string name="preferences_search_address_bar">Aadressiriba</string>
-    <!-- Preference linking to help about Fenix -->
-    <string name="preferences_help">Abi</string>
     <!-- Preference link to rating Fenix on the Play Store -->
     <string name="preferences_rate">Hinda Google Plays</string>
-    <!-- Preference for giving feedback about Fenix -->
-    <string name="preferences_feedback">Anna tagasisidet</string>
     <!-- Preference linking to about page for Fenix
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
     <string name="preferences_about">%1$sist</string>
-    <!-- Preference linking to the your rights SUMO page -->
-    <string name="preferences_your_rights">Sinu õigused</string>
-    <!-- Preference for settings related to saved passwords -->
-    <string name="preferences_passwords">Paroolid</string>
-    <!-- Preference for settings related to saved credit cards and addresses -->
-    <string name="preferences_credit_cards_addresses">Krediitkaardid ja aadressid</string>
     <!-- Preference for settings related to changing the default browser -->
     <string name="preferences_set_as_default_browser">Määra vaikebrauseriks</string>
     <!-- Preference category for advanced settings -->
     <string name="preferences_category_advanced">Muud</string>
-    <!-- Preference category for privacy settings -->
-    <string name="preferences_category_privacy">Privaatsus</string>
     <!-- Preference category for privacy and security settings -->
     <string name="preferences_category_privacy_security">Privaatsus ja turvalisus</string>
     <!-- Preference for advanced site permissions -->
@@ -182,19 +309,31 @@
 
     <!-- Preference for opening links in a private tab-->
     <string name="preferences_open_links_in_a_private_tab">Lingid avatakse privaatsel kaardil</string>
+    <!-- Preference for allowing screenshots to be taken while in a private tab-->
+    <string name="preferences_allow_screenshots_in_private_mode">Privaatse veebilehitsemise režiimis lubatakse ekraanipildid</string>
+    <!-- Will inform the user of the risk of activating Allow screenshots in private browsing option -->
+    <string name="preferences_screenshots_in_private_mode_disclaimer">Kui see on lubatud, siis on privaatsed kaardid nähtavad ka siis, kui mitu äppi on avatud</string>
     <!-- Preference for adding private browsing shortcut -->
     <string name="preferences_add_private_browsing_shortcut">Lisa privaatse lehitsemise otsetee</string>
 
     <!-- Preference for accessibility -->
     <string name="preferences_accessibility">Hõlbustus</string>
+    <!-- Preference to override the Firefox Account server -->
+    <string name="preferences_override_fxa_server">Kohandatud Firefoxi konto server</string>
+    <!-- Preference to override the Sync token server -->
+    <string name="preferences_override_sync_tokenserver">Kohandatud sünkroonimise server</string>
+    <!-- Toast shown after updating the FxA/Sync server override preferences -->
+    <string name="toast_override_fxa_sync_server_done">Firefoxi konto/sünkroniseerimise server muutus. Muudatuste rakendumiseks väljutakse äpist…</string>
     <!-- Preference category for account information -->
     <string name="preferences_category_account">Konto</string>
-    <!-- Preference shown on banner to sign into account -->
-    <string name="preferences_sign_in">Logi sisse</string>
     <!-- Preference for changing where the toolbar is positioned -->
     <string name="preferences_toolbar">Tööriistariba</string>
     <!-- Preference for changing default theme to dark or light mode -->
     <string name="preferences_theme">Teema</string>
+    <!-- Preference for customizing the home screen -->
+    <string name="preferences_home_2">Avaleht</string>
+    <!-- Preference for gestures based actions -->
+    <string name="preferences_gestures">Žestid</string>
     <!-- Preference for settings related to visual options -->
     <string name="preferences_customize">Kohanda</string>
     <!-- Preference description for banner about signing in -->
@@ -210,14 +349,14 @@
     <string name="preferences_data_choices">Saadetavad andmed</string>
     <!-- Preference for data collection -->
     <string name="preferences_data_collection">Andmete kogumine</string>
-    <!-- Preference linking to the privacy notice -->
-    <string name="preferences_privacy_link">Privaatsusreeglid</string>
-    <!-- Preference category for developer tools -->
-    <string name="developer_tools_category">Arendaja tööriistad</string>
     <!-- Preference for developers -->
     <string name="preferences_remote_debugging">Remote debugging via USB</string>
+    <!-- Preference title for switch preference to show search engines -->
+    <string name="preferences_show_search_engines">Kuvatakse otsingumootoreid</string>
     <!-- Preference title for switch preference to show search suggestions -->
     <string name="preferences_show_search_suggestions">Kuvatakse otsingu soovitusi</string>
+    <!-- Preference title for switch preference to show voice search button -->
+    <string name="preferences_show_voice_search">Kuvatakse häälotsing</string>
     <!-- Preference title for switch preference to show search suggestions also in private mode -->
     <string name="preferences_show_search_suggestions_in_private">Kuvatakse privaatses seansis</string>
     <!-- Preference title for switch preference to show a clipboard suggestion when searching -->
@@ -226,12 +365,74 @@
     <string name="preferences_search_browsing_history">Otsitakse lehitsemise ajaloost</string>
     <!-- Preference title for switch preference to suggest bookmarks when searching -->
     <string name="preferences_search_bookmarks">Otsitakse järjehoidjatest</string>
+    <!-- Preference title for switch preference to suggest synced tabs when searching -->
+    <string name="preferences_search_synced_tabs">Otsitakse sünkroniseeritud kaartide seast</string>
     <!-- Preference for account settings -->
     <string name="preferences_account_settings">Konto sätted</string>
+    <!-- Preference for enabling url autocomplete-->
+    <string name="preferences_enable_autocomplete_urls">URLid lõpetatakse automaatselt</string>
     <!-- Preference for open links in third party apps -->
     <string name="preferences_open_links_in_apps">Lingid avatakse äppides</string>
+    <!-- Preference for open download with an external download manager app -->
+    <string name="preferences_external_download_manager">Kasutatakse välist allalaadimishaldurit</string>
     <!-- Preference for add_ons -->
     <string name="preferences_addons">Lisad</string>
+
+    <!-- Preference for notifications -->
+    <string name="preferences_notifications">Teavitused</string>
+
+    <!-- Add-on Preferences -->
+    <!-- Preference to customize the configured AMO (addons.mozilla.org) collection -->
+    <string name="preferences_customize_amo_collection">Kohandatud lisade kollektsioon</string>
+    <!-- Button caption to confirm the add-on collection configuration -->
+    <string name="customize_addon_collection_ok">Olgu</string>
+
+    <!-- Button caption to abort the add-on collection configuration -->
+    <string name="customize_addon_collection_cancel">Loobu</string>
+    <!-- Hint displayed on input field for custom collection name -->
+    <string name="customize_addon_collection_hint">Kollektsiooni nimi</string>
+    <!-- Hint displayed on input field for custom collection user ID-->
+    <string name="customize_addon_collection_user_hint">Kollektsiooni omanik (kasutaja ID)</string>
+    <!-- Toast shown after confirming the custom add-on collection configuration -->
+    <string name="toast_customize_addon_collection_done">Lisade kollektsiooni on muudetud. Muudatuste rakendamiseks väljutakse äpist…</string>
+
+    <!-- Customize Home -->
+    <!-- Header text for jumping back into the recent tab in customize the home screen -->
+    <string name="customize_toggle_jump_back_in">Hiljutised kaardid</string>
+    <!-- Title for the customize home screen section with recently saved bookmarks. -->
+    <string name="customize_toggle_recent_bookmarks">Hiljutised järjehoidjad</string>
+    <!-- Title for the customize home screen section with recently visited. Recently visited is
+    a section where users see a list of tabs that they have visited in the past few days -->
+    <string name="customize_toggle_recently_visited">Hiljuti külastatud</string>
+    <!-- Title for the customize home screen section with Pocket. -->
+    <string name="customize_toggle_pocket">Pocket</string>
+    <!-- Title for the opening wallpaper settings screen -->
+    <string name="customize_wallpapers">Taustapildid</string>
+    <!-- Title for the customize home screen section with sponsored shortcuts. -->
+    <string name="customize_toggle_contile">Sponsitud otseteed</string>
+
+    <!-- Wallpapers -->
+    <!-- Content description for various wallpapers. The first parameter is the name of the wallpaper -->
+    <string name="wallpapers_item_name_content_description">Taustapilt: %1$s</string>
+    <!-- Snackbar message for when wallpaper is selected -->
+    <string name="wallpaper_updated_snackbar_message">Taustpilt uuendatud!</string>
+    <!-- Snackbar label for action to view selected wallpaper -->
+    <string name="wallpaper_updated_snackbar_action">Vaata</string>
+    <!-- Label for switch which toggles the "tap-to-switch" behavior on home screen logo -->
+    <string moz:removedIn="99" name="wallpaper_tap_to_change_switch_label" tools:ignore="UnusedResources">Taustapildi vahetamiseks puuduta logo</string>
+    <!-- Label for switch which toggles the "tap-to-switch" behavior on home screen logo -->
+    <string name="wallpaper_tap_to_change_switch_label_1">Taustapildi muutmiseks puuduta Firefoxi logo avalehel</string>
+    <!-- Description for switch which toggles the "tap-to-switch" behavior on home screen logo -->
+    <string moz:removedIn="99" name="wallpaper_tap_to_change_switch_description" tools:ignore="UnusedResources">Sirvi läbi ja uuenda pilti avalehelt lahkumata.</string>
+    <!-- This is the accessibility content description for the wallpapers functionality. Users are
+    able to tap on the app logo in the home screen and can switch to different wallpapers by tapping. -->
+    <string name="wallpaper_logo_content_description">Firefoxi logo - taustapildi muutmise nupp</string>
+
+    <!-- Add-on Installation from AMO-->
+    <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
+    <string name="addon_not_supported_error">Lisa pole toetatud</string>
+    <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is already installed -->
+    <string name="addon_already_installed">Lisa on juba paigaldatud</string>
 
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
@@ -244,6 +445,8 @@
     <string name="preferences_sync_bookmarks">Järjehoidjad</string>
     <!-- Preference for syncing logins -->
     <string name="preferences_sync_logins">Kasutajakontod</string>
+    <!-- Preference for syncing tabs -->
+    <string name="preferences_sync_tabs_2">Avatud kaardid</string>
     <!-- Preference for signing out -->
     <string name="preferences_sign_out">Logi välja</string>
     <!-- Preference displays and allows changing current FxA device name -->
@@ -261,6 +464,16 @@
     <!-- Label summary showing never synced -->
     <string name="sync_never_synced_summary">Viimane sünkroniseerimine: mitte kunagi</string>
 
+    <!-- Text for displaying the default device name.
+        The first parameter is the application name, the second is the device manufacturer name
+        and the third is the device model. -->
+    <string name="default_device_name_2">%1$s seadmes %2$s %3$s</string>
+    <!-- Preference for syncing credit cards -->
+    <string name="preferences_sync_credit_cards">Krediitkaardid</string>
+
+    <!-- Preference for syncing addresses -->
+    <string name="preferences_sync_address">Aadressid</string>
+
     <!-- Send Tab -->
     <!-- Name of the "receive tabs" notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="fxa_received_tab_channel_name">Vastuvõetud kaardid</string>
@@ -270,31 +483,18 @@
 
     <!--  The body for these is the URL of the tab received  -->
     <string name="fxa_tab_received_notification_name">Kaart on vastu võetud</string>
-    <!-- When multiple tabs have been received -->
-    <string name="fxa_tabs_received_notification_name">Kaardid on vastu võetud</string>
     <!-- %s is the device name -->
     <string name="fxa_tab_received_from_notification_name">Kaart seadmest %s</string>
 
     <!-- Advanced Preferences -->
-    <!-- Preference for tracking protection settings -->
-    <string name="preferences_tracking_protection_settings">Jälitamisvastane kaitse</string>
-    <!-- Preference switch for tracking protection -->
-    <string name="preferences_tracking_protection">Jälitamisvastane kaitse</string>
-    <!-- Preference switch description for tracking protection -->
-    <string name="preferences_tracking_protection_description">Blokitakse sinu tegevust jälitavad skriptid ja sisu</string>
     <!-- Preference for tracking protection exceptions -->
     <string name="preferences_tracking_protection_exceptions">Erandid</string>
-    <!-- Preference description for tracking protection exceptions -->
-    <string name="preferences_tracking_protection_exceptions_description">Jälitamisvastane kaitse on järgmistel saitidel välja lülitatud</string>
     <!-- Button in Exceptions Preference to turn on tracking protection for all sites (remove all exceptions) -->
     <string name="preferences_tracking_protection_exceptions_turn_on_for_all">Lülita kõigi saitide jaoks sisse</string>
     <!-- Text displayed when there are no exceptions -->
     <string name="exceptions_empty_message_description">Erandid võimaldavad valitud saitidel jälitamisvastase kaitse keelata.</string>
     <!-- Text displayed when there are no exceptions, with learn more link that brings users to a tracking protection SUMO page -->
     <string name="exceptions_empty_message_learn_more_link">Rohkem teavet</string>
-
-    <!-- Preference switch for Telemetry -->
-    <string name="preferences_telemetry">Telemeetria</string>
 
     <!-- Preference switch for usage and technical data collection -->
     <string name="preference_usage_data">Kasutamise ja tehnilised andmed</string>
@@ -304,36 +504,26 @@
     <!-- Preference switch for marketing data collection -->
     <string name="preferences_marketing_data">Turundusandmed</string>
 
-    <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
-    <string name="preferences_marketing_data_description">Jagab Leanplumile (meie mobiiliturunduse pakkuja) andmeid selle kohta, milliseid %1$si funktsioone sa kasutad.</string>
-    <!-- Title for experiments preferences -->
-    <string name="preference_experiments">Eksperimendid</string>
-    <!-- Summary for experiments preferences -->
-    <string name="preference_experiments_summary">Lubab Mozillal paigaldada ja koguda andmeid eksperimentaalsete funktsioonide kohta</string>
-    <!-- Preference switch for crash reporter -->
-    <string name="preferences_crash_reporter">Vearaportid</string>
-    <!-- Preference switch for Mozilla location service -->
-    <string name="preferences_mozilla_location_service">Mozilla asukohateenus</string>
-    <!-- Preference switch for app health report. The first parameter is the name of the application (For example: Fenix) -->
-    <string name="preferences_fenix_health_report">%si terviseraport</string>
+    <!-- Preference description for marketing data collection -->
+    <string name="preferences_marketing_data_description2">Jagab põhilisi kasutusandmeid meie mobiiliturunduse teenusepakkujaga Adjust</string>
+    <!-- Title for studies preferences -->
+    <string name="preference_experiments_2">Uuringud</string>
+
+    <!-- Summary for studies preferences -->
+    <string name="preference_experiments_summary_2">Võimaldab Mozillal paigaldada ja käivitada uuringuid</string>
 
     <!-- Turn On Sync Preferences -->
     <!-- Header of the Turn on Sync preference view -->
     <string name="preferences_sync">Lülita Sync sisse</string>
 
-    <!-- Preference for pairing -->
-    <string name="preferences_sync_pair">Skanni paaristamise koodi töölaua Firefoxist</string>
-    <!-- Preference for account login -->
-    <string name="preferences_sync_sign_in">Logi sisse</string>
     <!-- Preference for reconnecting to FxA sync -->
     <string name="preferences_sync_sign_in_to_reconnect">Uue ühenduse loomiseks logi sisse</string>
     <!-- Preference for removing FxA account -->
     <string name="preferences_sync_remove_account">Eemalda konto</string>
 
-    <!-- Button to open camera for pairing -->
-    <string name="pair_open_camera">Ava kaamera</string>
-    <!-- Button to cancel pairing -->
-    <string name="pair_cancel">Loobu</string>
+    <!-- Pairing Feature strings -->
+    <!-- Instructions on how to access pairing -->
+    <string name="pair_instructions_2"><![CDATA[Skanni aadressil <b>firefox.com/pair</b> kuvatav QR-kood]]></string>
 
     <!-- Toolbar Preferences -->
     <!-- Preference for using top toolbar -->
@@ -351,11 +541,18 @@
     <!-- Preference for using following device theme -->
     <string name="preference_follow_device_theme">Järgitakse seadme teemat</string>
 
+    <!-- Gestures Preferences-->
+    <!-- Preferences for using pull to refresh in a webpage -->
+    <string name="preference_gestures_website_pull_to_refresh">Allatõmbamisel leht värskendatakse</string>
+    <!-- Preference for using the dynamic toolbar -->
+    <string name="preference_gestures_dynamic_toolbar">Kerimisel tööriistariba peidetakse</string>
+
+    <!-- Preference for switching tabs by swiping horizontally on the toolbar -->
+    <string name="preference_gestures_swipe_toolbar_switch_tabs">Tööriistaribal küljele libistamisel vahetatakse kaarte</string>
+    <!-- Preference for showing the opened tabs by swiping up on the toolbar-->
+    <string name="preference_gestures_swipe_toolbar_show_tabs">Üles libistamisel avatakse kaarte</string>
+
     <!-- Library -->
-    <!-- Option in Library to open Sessions page -->
-    <string name="library_sessions">Seansid</string>
-    <!-- Option in Library to open Screenshots page -->
-    <string name="library_screenshots">Ekraanipildid</string>
     <!-- Option in Library to open Downloads page -->
     <string name="library_downloads">Allalaadimised</string>
     <!-- Option in library to open Bookmarks page -->
@@ -372,25 +569,79 @@
     <string name="library_history">Ajalugu</string>
     <!-- Option in Library to open a new tab -->
     <string name="library_new_tab">Uus kaart</string>
-    <!-- Option in Library to open Reading List -->
-    <string name="library_reading_list">Lugemisnimekiri</string>
-    <!-- Menu Item Label for Search in Library -->
-    <string name="library_search">Otsi</string>
     <!-- Settings Page Title -->
     <string name="settings_title">Sätted</string>
-    <!-- Content description (not visible, for screen readers etc.): "Menu icon for items on a history item" -->
-    <string name="content_description_history_menu">Ajaloo üksuse menüü</string>
     <!-- Content description (not visible, for screen readers etc.): "Close button for library settings" -->
     <string name="content_description_close_button">Sulge</string>
+
+    <!-- Text to show users they have one site in the history group section of the History fragment.
+    %d is a placeholder for the number of sites in the group. -->
+    <string name="history_search_group_site">%d sait</string>
+    <!-- Text to show users they have multiple sites in the history group section of the History fragment.
+    %d is a placeholder for the number of sites in the group. -->
+    <string name="history_search_group_sites">%d saiti</string>
 
     <!-- Option in library for Recently Closed Tabs -->
     <string name="library_recently_closed_tabs">Hiljuti suletud kaardid</string>
 
+    <!-- Option in library to open Recently Closed Tabs page -->
+    <string name="recently_closed_show_full_history">Kuva kogu ajalugu</string>
+    <!-- Text to show users they have multiple tabs saved in the Recently Closed Tabs section of history.
+    %d is a placeholder for the number of tabs selected. -->
+    <string name="recently_closed_tabs">%d kaarti</string>
+    <!-- Text to show users they have one tab saved in the Recently Closed Tabs section of history.
+    %d is a placeholder for the number of tabs selected. -->
+    <string name="recently_closed_tab">%d kaart</string>
+    <!-- Recently closed tabs screen message when there are no recently closed tabs -->
+    <string name="recently_closed_empty_message">Hiljuti suletud kaarte pole</string>
+
+    <!-- Tab Management -->
+    <!-- Title of preference for tabs management -->
+    <string name="preferences_tabs">Kaardid</string>
+    <!-- Title of preference that allows a user to specify the tab view -->
+    <string name="preferences_tab_view">Kaartide vaade</string>
+    <!-- Option for a list tab view -->
+    <string name="tab_view_list">Nimekiri</string>
+    <!-- Option for a grid tab view -->
+    <string name="tab_view_grid">Võre</string>
+    <!-- Option for search term tab groups -->
+    <string name="tab_view_search_term_tab_groups">Otsing grupeeritakse</string>
+    <!-- Summary text for search term tab groups -->
+    <string name="tab_view_search_term_tab_groups_summary">Seotud saidid grupeeritakse</string>
+    <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
+    <string name="preferences_close_tabs">Kaartide sulgemine</string>
+    <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
+    <string name="close_tabs_manually">Mitte kunagi</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one day -->
+    <string name="close_tabs_after_one_day">Ühe päeva pärast</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one week -->
+    <string name="close_tabs_after_one_week">Ühe nädala pärast</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one month -->
+    <string name="close_tabs_after_one_month">Ühe kuu pärast</string>
+    <!-- Title of preference that allows a user to specify the auto-close settings for open tabs -->
+    <string name="preference_auto_close_tabs" tools:ignore="UnusedResources">Kaartide automaatne sulgemine</string>
+
+    <!-- Opening screen -->
+    <!-- Title of a preference that allows a user to choose what screen to show after opening the app -->
+    <string name="preferences_opening_screen">Avatav vaade</string>
+    <!-- Option for always opening the homepage when re-opening the app -->
+    <string name="opening_screen_homepage">Avaleht</string>
+    <!-- Option for always opening the user's last-open tab when re-opening the app -->
+    <string name="opening_screen_last_tab">Viimane kaart</string>
+    <!-- Option for always opening the homepage when re-opening the app after four hours of inactivity -->
+    <string name="opening_screen_after_four_hours_of_inactivity">Avaleht pärast neljatunnist tegevusetust</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
+    <string name="close_tabs_manually_summary">Suletakse käsitsi</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
+    <string name="close_tabs_after_one_day_summary">Suletakse ühe päeva pärast</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one week-->
+    <string name="close_tabs_after_one_week_summary">Suletakse ühe nädala pärast</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one month-->
+    <string name="close_tabs_after_one_month_summary">Suletakse ühe kuu pärast</string>
+
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
     <string name="tab_header_label">Avatud kaardid</string>
-    <!-- Title for the list of tabs in the current private session -->
-    <string name="tabs_header_private_title">Privaatne seanss</string>
     <!-- Title for the list of tabs in the current private session -->
     <string name="tabs_header_private_tabs_title">Privaatsed kaardid</string>
     <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
@@ -408,32 +659,14 @@
     <string name="tab_tray_menu_tab_settings">Kaartide seaded</string>
     <!-- Text shown in the menu for closing all tabs -->
     <string name="tab_tray_menu_item_close">Sulge kõik kaardid</string>
-    <!-- Shortcut action to open new tab -->
-    <string name="tab_tray_menu_open_new_tab">Uus kaart</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab button. Closes the current session when pressed -->
     <string name="close_tab">Sulge kaart</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab <title> button. First parameter is tab title  -->
     <string name="close_tab_title">Sulge kaart %s</string>
     <!-- Content description (not visible, for screen readers etc.): Opens the open tabs menu when pressed -->
     <string name="open_tabs_menu">Ava kaartide menüü</string>
-    <!-- Open tabs menu item to close all tabs -->
-    <string name="tabs_menu_close_all_tabs">Sulge kõik kaardid</string>
-    <!-- Open tabs menu item to share all tabs -->
-    <string name="tabs_menu_share_tabs">Jaga kaarte</string>
     <!-- Content description (not visible, for screen readers etc.): Opens the tab menu when pressed -->
     <string name="tab_menu">Kaartide menüü</string>
-    <!-- Tab menu item to share the tab -->
-    <string name="tab_share">Jaga kaarti</string>
-    <!-- Button in the current session menu. Deletes the session when pressed -->
-    <string name="current_session_delete">Kustuta</string>
-    <!-- Button in the current session menu. Saves the session when pressed -->
-    <string name="current_session_save">Salvesta</string>
-    <!-- Button in the current session menu. Opens the share menu when pressed -->
-    <string name="current_session_share">Jaga</string>
-    <!-- Content description (not visible, for screen readers etc.): Title icon for current session menu -->
-    <string name="current_session_image">Praeguse seansi pilt</string>
-    <!-- Button to save the current set of tabs into a collection -->
-    <string name="save_to_collection">Salvesta kollektsiooni</string>
     <!-- Text for the menu button to delete a collection -->
     <string name="collection_delete">Kustuta kollektsioon</string>
     <!-- Text for the menu button to rename a collection -->
@@ -443,25 +676,13 @@
     <!-- Text for the menu button to remove a top site -->
 	<string name="remove_top_site">Eemalda</string>
 
-    <!-- History -->
     <!-- Text for the button to clear all history -->
     <string name="history_delete_all">Kustuta ajalugu</string>
-    <!-- Text for the dialog to confirm clearing all history -->
-    <string name="history_delete_all_dialog">Kas oled kindel, et soovid ajaloo kustutada?</string>
-    <!-- Text for positive action to delete history in deleting history dialog -->
-    <string name="history_clear_dialog">Kustuta</string>
-    <!-- History overflow menu open in new tab button -->
-    <string name="history_menu_open_in_new_tab_button">Ava uuel kaardil</string>
-    <!-- Text for the button to delete a single history item -->
+    <!-- Context description text for the button to delete a single history item -->
     <string name="history_delete_item">Kustuta</string>
     <!-- History multi select title in app bar
     The first parameter is the number of bookmarks selected -->
     <string name="history_multi_select_title">%1$d valitud</string>
-    <!-- Text for the button to clear selected history items. The first parameter
-        is a digit showing the number of items you have selected -->
-    <string name="history_delete_some">Kustuta %1$d asja</string>
-    <!-- Text for the header that groups the history for last 24 hours -->
-    <string name="history_24_hours">Viimased 24 tundi</string>
     <!-- Text for the header that groups the history the past 7 days -->
     <string name="history_7_days">Viimased 7 päeva</string>
     <!-- Text for the header that groups the history the past 30 days -->
@@ -476,8 +697,6 @@
     <!-- Title text displayed on the tab crash page. This first parameter is the name of the application (For example: Fenix) -->
     <string name="tab_crash_title_2">Vabandust. %1$sil pole selle lehe laadimine võimalik.</string>
 
-    <!-- Description text displayed on the tab crash page -->
-    <string name="tab_crash_description">Võid proovida seda kaarti taastada või sulgeda allpool.</string>
     <!-- Send crash report checkbox text on the tab crash page -->
     <string name="tab_crash_send_report">Mozillale saadetakse vearaport</string>
     <!-- Close tab button text on the tab crash page -->
@@ -485,19 +704,6 @@
     <!-- Restore tab button text on the tab crash page -->
     <string name="tab_crash_restore">Taasta kaart</string>
 
-    <!-- Content Description for session item menu button -->
-    <string name="content_description_session_menu">Seansi sätted</string>
-
-    <!-- Content Description for session item share button -->
-    <string name="content_description_session_share">Jaga seanssi</string>
-
-    <!-- Bookmarks -->
-    <!-- Content description for bookmarks library menu -->
-    <string name="bookmark_menu_content_description">Järjehoidjate menüü</string>
-    <!-- Screen title for editing bookmarks -->
-    <string name="bookmark_edit">Järjehoidja muutmine</string>
-    <!-- Screen title for selecting a bookmarks folder -->
-    <string name="bookmark_select_folder">Kausta valimine</string>
     <!-- Screen title for adding a bookmarks folder -->
     <string name="bookmark_add_folder">Kausta lisamine</string>
     <!-- Snackbar title shown after a bookmark has been created. -->
@@ -506,8 +712,6 @@
     <string name="edit_bookmark_snackbar_action">MUUDA</string>
     <!-- Bookmark overflow menu edit button -->
     <string name="bookmark_menu_edit_button">Muuda</string>
-    <!-- Bookmark overflow menu select button -->
-    <string name="bookmark_menu_select_button">Vali</string>
     <!-- Bookmark overflow menu copy button -->
     <string name="bookmark_menu_copy_button">Kopeeri</string>
     <!-- Bookmark overflow menu share button -->
@@ -552,9 +756,6 @@
     <string name="bookmark_undo_deletion">VÕTA TAGASI</string>
 
     <!-- Site Permissions -->
-    <!-- Site permissions preferences header -->
-    <string name="permissions_header">Õigused</string>
-
     <!-- Button label that take the user to the Android App setting -->
     <string name="phone_feature_go_to_settings">Mine sätetesse</string>
     <!-- Content description (not visible, for screen readers etc.): Quick settings sheet
@@ -563,8 +764,6 @@
     <string name="quick_settings_sheet">Kiirsätete leht</string>
     <!-- Label that indicates that this option it the recommended one -->
     <string name="phone_feature_recommended">Soovitatav</string>
-    <!-- button that allows editing site permissions settings -->
-    <string name="quick_settings_sheet_manage_site_permissions">Halda saidi õigusi</string>
 
     <!-- Button label for clearing all the information of site permissions-->
     <string name="clear_permissions">Tühista õigused</string>
@@ -653,14 +852,10 @@
 
     <!-- Share -->
     <!-- Share screen header -->
-    <string name="share_header">Saada ja jaga</string>
-    <!-- Share screen header -->
     <string name="share_header_2">Jaga</string>
     <!-- Content description (not visible, for screen readers etc.):
         "Share" button. Opens the share menu when pressed. -->
     <string name="share_button_content_description">Jaga</string>
-    <!-- Sub-header in the dialog to share a link to another app -->
-    <string name="share_link_subheader">Jaga linki</string>
     <!-- Sub-header in the dialog to share a link to another sync device -->
     <string name="share_device_subheader">Edasta seadmele</string>
     <!-- Sub-header in the dialog to share a link to an app from the full list -->
@@ -696,18 +891,8 @@
     <string name="sync_add_new_device_connect_button">Ühenda teine seade…</string>
 
     <!-- Notifications -->
-    <!-- The user visible name of the "notification channel" (Android 8+ feature) for the ongoing notification shown while a browsing session is active. -->
-    <string name="notification_pbm_channel_name">Privaatse veebilehitsemise seanss</string>
-    <!-- Text shown in the notification that pops up to remind the user that a private browsing session is active. -->
-    <string name="notification_pbm_delete_text">Kustuta privaatsed kaardid</string>
     <!-- Text shown in the notification that pops up to remind the user that a private browsing session is active. -->
     <string name="notification_pbm_delete_text_2">Sulge privaatsed kaardid</string>
-    <!-- Notification action to open Fenix and resume the current browsing session. -->
-    <string name="notification_pbm_action_open">Ava</string>
-    <!-- Notification action to delete all current private browsing sessions AND switch to Fenix (bring it to the foreground) -->
-    <string name="notification_pbm_action_delete_and_open">Kustuta ja ava</string>
-    <!-- Name of the "Powered by Fenix" notification channel. Displayed in the "App notifications" system settings for the app -->
-    <string name="notification_powered_by_channel_name">Powered by</string>
 
     <!-- Snackbar -->
     <!-- Text shown in snackbar when user deletes a collection -->
@@ -715,10 +900,6 @@
 
     <!-- Text shown in snackbar when user renames a collection -->
     <string name="snackbar_collection_renamed">Kollektsioon nimetati ümber</string>
-    <!-- Text shown in snackbar when user deletes a tab -->
-    <string name="snackbar_tab_deleted">Kaart kustutati</string>
-    <!-- Text shown in snackbar when user deletes all tabs -->
-    <string name="snackbar_tabs_deleted">Kaardid kustutati</string>
 
     <!-- Text shown in snackbar when user closes a tab -->
     <string name="snackbar_tab_closed">Kaart suleti</string>
@@ -730,16 +911,10 @@
     <string name="snackbar_private_tab_closed">Privaatne aken suleti</string>
     <!-- Text shown in snackbar when user closes all private tabs -->
     <string name="snackbar_private_tabs_closed">Privaatsed aknad suleti</string>
-    <!-- Text shown in snackbar when user deletes all private tabs -->
-    <string name="snackbar_private_tabs_deleted">Privaatsed aknad kustutati</string>
     <!-- Text shown in snackbar to undo deleting a tab, top site or collection -->
     <string name="snackbar_deleted_undo">VÕTA TAGASI</string>
     <!-- Text shown in snackbar when user removes a top site -->
     <string name="snackbar_top_site_removed">Sait eemaldatud</string>
-    <!-- Text for action to undo deleting a tab or collection shown in a11y dialog -->
-    <string name="a11y_dialog_deleted_undo">Võta tagasi</string>
-    <!-- Text for action to confirm deleting a tab or collection shown in a11y dialog -->
-    <string name="a11y_dialog_deleted_confirm">Kinnita</string>
     <!-- QR code scanner prompt which appears after scanning a code, but before navigating to it
         First parameter is the name of the app, second parameter is the URL or text scanned-->
     <string name="qr_scanner_confirmation_dialog_message">Luba %1$sil avada %2$s</string>
@@ -751,8 +926,6 @@
     <string name="tab_collection_dialog_message">Kas oled kindel, et soovid kustutada kollektsiooni %1$s?</string>
     <!-- Tab collection deletion prompt dialog option to delete the collection -->
     <string name="tab_collection_dialog_positive">Kustuta</string>
-    <!-- Tab collection deletion prompt dialog option to cancel deleting the collection -->
-    <string name="tab_collection_dialog_negative" tools:ignore="UnusedResources">Loobu</string>
     <!-- Text displayed in a notification when the user enters full screen mode -->
     <string name="full_screen_notification">Täisekraanirežiimi sisenemine</string>
     <!-- Message for copying the URL via long press on the toolbar -->
@@ -776,11 +949,6 @@
     <!-- Subtitle for the data and history items in delete browsing data, parameter will be replaced with the
         number of history items the user has -->
     <string name="preferences_delete_browsing_data_browsing_data_subtitle">%d aadressi</string>
-    <!-- Title for history items in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_browsing_history_title">Ajalugu</string>
-    <!-- Subtitle for the history items in delete browsing data, parameter will be replaced with the
-        number of history pages the user has -->
-    <string name="preferences_delete_browsing_data_browsing_history_subtitle">%d lehte</string>
     <!-- Title for the cookies item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_cookies">Küpsised</string>
     <!-- Subtitle for the cookies item in Delete browsing data -->
@@ -795,8 +963,6 @@
     <string name="preferences_delete_browsing_data_button">Kustuta lehitsemise andmed</string>
     <!-- Title for the Delete browsing data on quit preference -->
     <string name="preferences_delete_browsing_data_on_quit">Lehitsemisandmete kustutamine väljumisel</string>
-    <!-- Summary for the Delete browsing data on quit preference. "Quit" translation should match delete_browsing_data_on_quit_action translation. -->
-    <string name="preference_summary_delete_browsing_data_on_quit">Peamenüüst &quot;Välju&quot; valimisel kustutatakse lehitsemise ajalugu automaatselt</string>
     <!-- Summary for the Delete browsing data on quit preference. "Quit" translation should match delete_browsing_data_on_quit_action translation. -->
     <string name="preference_summary_delete_browsing_data_on_quit_2">Peamenüüst \Välju\&quot; valimisel kustutatakse lehitsemise ajalugu automaatselt</string>
     <!-- Action item in menu for the Delete browsing data on quit feature -->
@@ -820,38 +986,9 @@
     The first parameter is the name of the app (e.g. Firefox Preview) -->
     <string name="onboarding_header">Tere tulemast %si!</string>
 
-    <!-- text for the Firefox Accounts section header -->
-    <string name="onboarding_fxa_section_header">Sul on konto juba olemas?</string>
-    <!-- text for the "What's New" onboarding card header -->
-    <string name="onboarding_whats_new_header1">Vaata uuendusi</string>
-    <!-- text for the "what's new" onboarding card description
-    The first parameter is the short name of the app (e.g. Firefox) -->
-    <string name="onboarding_whats_new_description">Kas sul on küsimusi ümberkujundatud %si kohta? Kas soovid teada, mis on muutunud?</string>
-    <!-- text for underlined clickable link that is part of "what's new" onboarding card description that links to an FAQ -->
-    <string name="onboarding_whats_new_description_linktext">Vastused saad siit</string>
-    <!-- text for the button to confirm automatic sign-in -->
-    <string name="onboarding_firefox_account_auto_signin_confirm">Jah, logi sisse</string>
-    <!-- text for the automatic sign-in button while signing in is in process -->
-    <string name="onboarding_firefox_account_signing_in">Sisselogimine…</string>
-
-    <!-- text for the button to stay signed out when presented with an option to automatically sign-in. -->
-    <string name="onboarding_firefox_account_stay_signed_out">Jää väljalogituks</string>
     <!-- text to display in the snackbar once account is signed-in -->
     <string name="onboarding_firefox_account_sync_is_on">Sync on sisse lülitatud</string>
-    <!-- text to display in the snackbar if automatic sign-in fails. user may try again -->
-    <string name="onboarding_firefox_account_automatic_signin_failed">Sisselogimine ebaõnnestus</string>
-    <!-- text for tracking protection radio button option for strict level of blocking -->
-    <string name="onboarding_tracking_protection_strict_button">Range (soovitatav)</string>
 
-    <!-- text for the private browsing onboarding card header -->
-    <string name="onboarding_private_browsing_header">Lehitse veebi privaatselt</string>
-    <!-- text for the private browsing onboarding card description
-    The first parameter is an icon that represents private browsing -->
-    <string name="onboarding_private_browsing_description1">Privaatse kaardi ühekordseks avamiseks puuduta nuppu %s.</string>
-    <!-- text for the private browsing onboarding card description, explaining how to always using private browsing -->
-    <string name="onboarding_private_browsing_always_description">Privaatsete kaartide kasutamiseks kogu aeg, muuda oma privaatse veebilehitsemise sätteid.</string>
-    <!-- text for the private browsing onbording card button, that launches settings -->
-    <string name="onboarding_private_browsing_button">Ava sätted</string>
     <!-- text for the privacy notice onboarding card header -->
     <string name="onboarding_privacy_notice_header">Sinu privaatsus</string>
     <!-- Text for the button to read the privacy notice -->
@@ -891,8 +1028,6 @@
     <string name="sign_in_with_camera">Logi sisse oma kaameraga</string>
     <!-- Text shown for settings option for sign with email -->
     <string name="sign_in_with_email">Kasuta selle asemel e-posti aadressi</string>
-    <!-- Text shown in confirmation dialog to sign out of account -->
-    <string name="sign_out_confirmation_message">Firefox lõpetab sinu kontoga sünkroniseerimise, aga ei kustuta lehitsemise andmeid sellest seadmest.</string>
     <!-- Option to continue signing out of account shown in confirmation dialog to sign out of account -->
     <string name="sign_out_disconnect">Ühenda lahti</string>
     <!-- Option to cancel signing out shown in confirmation dialog to sign out of account -->
@@ -939,8 +1074,6 @@
     <string name="preference_enhanced_tracking_protection_custom_tracking_content_1">kõigil kaartidel</string>
     <!-- Option for enhanced tracking protection for the custom protection settings for tracking content-->
     <string name="preference_enhanced_tracking_protection_custom_tracking_content_2">ainult privaatsetel kaartidel</string>
-    <!-- Option for enhanced tracking protection for the custom protection settings for tracking content-->
-    <string name="preference_enhanced_tracking_protection_custom_tracking_content_3">ainult kohandatud kaartidel</string>
 
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
     <string name="preference_enhanced_tracking_protection_custom_cryptominers">Krüptorahakaevurid</string>
@@ -980,10 +1113,6 @@
     <!-- Content description (not visible, for screen readers etc.): Navigate
     back from ETP details (Ex: Tracking content) -->
     <string name="etp_back_button_content_description">Liigu tagasi</string>
-    <!-- About page Your rights link text -->
-    <string name="about_your_rights">Sinu õigused</string>
-    <!-- About page link text to open open source licenses screen -->
-    <string name="about_open_source_licenses">Kasutatavad avatud lähtekoodiga teegid</string>
     <!-- About page link text to open what's new link -->
     <string name="about_whats_new">Mis on uut %sis</string>
 
@@ -1001,11 +1130,6 @@
     <string name="about_licensing_information">Litsentsist</string>
     <!-- About page link text to open a screen with libraries that are used -->
     <string name="about_other_open_source_libraries">Kasutatavad teegid</string>
-
-    <!-- Content description of the tab counter toolbar button when one tab is open -->
-    <string name="tab_counter_content_description_one_tab">1 kaart</string>
-    <!-- Content description of the tab counter toolbar button when multiple tabs are open. First parameter will be replaced with the number of tabs (always more than one) -->
-    <string name="tab_counter_content_description_multi_tab">%d kaarti</string>
 
     <!-- Browser long press popup menu -->
     <!-- Copy the current url -->
@@ -1035,15 +1159,9 @@
     <string name="preferences_passwords_save_logins_ask_to_save">Pakutakse salvestamist</string>
     <!-- Preference option for never saving passwords in Fenix -->
     <string name="preferences_passwords_save_logins_never_save">Ei salvestata kunagi</string>
-    <!-- Preference for autofilling saved logins in Fenix -->
-    <string name="preferences_passwords_autofill" tools:ignore="UnusedResources">Automaatne täitmine</string>
 
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">Kasutajatunnuste sünkroniseerimine</string>
-    <!-- Syncing saved logins in Fenix needs reconnect to sync -->
-    <string name="preferences_passwords_sync_logins_reconnect">Ühenda uuesti</string>
-    <!-- Syncing saved logins in Fenix needs login -->
-    <string name="preferences_passwords_sync_logins_sign_in">Logi Synci sisse</string>
     <!-- Preference to access list of saved logins -->
     <string name="preferences_passwords_saved_logins">Salvestatud kasutajakontod</string>
     <!-- Description of empty list of saved passwords. Placeholder is replaced with app name.  -->
@@ -1058,43 +1176,21 @@
     <string name="preferences_passwords_exceptions_description">Järgmiste saitide kasutajatunnuseid ja paroole ei salvestata.</string>
     <!-- Hint for search box in logins list -->
     <string name="preferences_passwords_saved_logins_search">Otsi kasutajakontosid</string>
-    <!-- Option to sort logins list A-Z, alphabetically -->
-    <string name="preferences_passwords_saved_logins_alphabetically">Tähestikuliselt</string>
 
-    <!-- Option to sort logins list by most recently used -->
-    <string name="preferences_passwords_saved_logins_recently_used">Hiljuti kasutatud</string>
     <!-- The header for the site that a login is for -->
     <string name="preferences_passwords_saved_logins_site">Sait</string>
     <!-- The header for the username for a login -->
     <string name="preferences_passwords_saved_logins_username">Kasutajanimi</string>
     <!-- The header for the password for a login -->
     <string name="preferences_passwords_saved_logins_password">Parool</string>
-    <!-- Message displayed in security prompt to reenter a secret pin to access saved logins -->
-    <string name="preferences_passwords_saved_logins_enter_pin">Sisesta PIN uuesti</string>
-    <!-- Message displayed in security prompt to access saved logins -->
-    <string name="preferences_passwords_saved_logins_enter_pin_description">Salvestatud kasutajatunnuste vaatamiseks ava lukk</string>
-    <!-- Message displayed when a connection is insecure and we detect the user is entering a password -->
-    <string name="logins_insecure_connection_warning">See ühendus pole turvaline. Siia lehele sisestatavad kasutajakonto andmed võivad sattuda ohtu.</string>
-    <!-- Learn more link that will link to a page with more information displayed when a connection is insecure and we detect the user is entering a password -->
-    <string name="logins_insecure_connection_warning_learn_more">Rohkem teavet</string>
-    <!-- Prompt message displayed when Fenix detects a user has entered a password and user decides if Fenix should save it. The first parameter is the name of the application (For example: Fenix)  -->
-    <string name="logins_doorhanger_save">Kas soovid, et %s salvestaks need kasutajatunnused?</string>
-    <!-- Positive confirmation that Fenix should save the new or updated login -->
-    <string name="logins_doorhanger_save_confirmation">Salvesta</string>
-    <!-- Negative confirmation that Fenix should not save the new or updated login -->
-    <string name="logins_doorhanger_save_dont_save">Ära salvesta</string>
     <!-- Shown in snackbar to tell user that the password has been copied -->
     <string name="logins_password_copied">Parool kopeeriti vahemällu</string>
     <!-- Shown in snackbar to tell user that the username has been copied -->
     <string name="logins_username_copied">Kasutajanimi kopeeriti vahemällu</string>
-    <!-- Shown in snackbar to tell user that the site has been copied -->
-    <string name="logins_site_copied">Saidi aadress kopeeriti vahemällu</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a password in logins-->
     <string name="saved_logins_copy_password">Kopeeri parool</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a username in logins -->
     <string name="saved_login_copy_username">Kopeeri kasutajanimi</string>
-    <!-- Content Description (for screenreaders etc) read for the button to copy a site in logins -->
-    <string name="saved_login_copy_site">Kopeeri saidi aadress</string>
     <!-- Content Description (for screenreaders etc) read for the button to reveal a password in logins -->
     <string name="saved_login_reveal_password">Kuva parooli</string>
     <!-- Content Description (for screenreaders etc) read for the button to hide a password in logins -->
@@ -1138,17 +1234,11 @@
     <string name="search_add_custom_engine_search_string_hint">Kasutatav otsingustring</string>
     <!-- Description text for the Search String TextField. The %s is part of the string -->
     <string formatted="false" name="search_add_custom_engine_search_string_example">Päringu asendamiseks kasuta “%s”. Näiteks \nhttps://www.google.com/search?q=%s</string>
-    <!-- Text for the button to learn more about adding a custom search engine -->
-    <string name="search_add_custom_engine_learn_more_label">Rohkem teavet</string>
     <!-- Accessibility description for the form in which details about the custom search engine are entered -->
     <string name="search_add_custom_engine_form_description">Kohandatud otsingumootori üksikasjad</string>
-    <!-- Accessibility description for the 'Learn more' link -->
-    <string name="search_add_custom_engine_learn_more_description">Lisateabe link</string>
 
     <!-- Text shown when a user leaves the name field empty -->
     <string name="search_add_custom_engine_error_empty_name">Sisesta otsingumootorile nimi</string>
-    <!-- Text shown when a user tries to add a search engine that already exists -->
-    <string name="search_add_custom_engine_error_existing_name">Otsingumootor nimega “%s” on juba olemas.</string>
     <!-- Text shown when a user leaves the search string field empty -->
     <string name="search_add_custom_engine_error_empty_search_string">Sisesta otsingustring</string>
     <!-- Text shown when a user leaves out the required template string -->
@@ -1188,10 +1278,6 @@
     <!-- Third step for the allowing a permission (Fore example: Camera) -->
     <string name="phone_feature_blocked_step_feature"><![CDATA[3. Lülita <b>%1$s</b> olekusse SEES]]></string>
 
-    <!-- Label that indicates a site is using a secure connection -->
-    <string name="quick_settings_sheet_secure_connection">Turvaline ühendus</string>
-    <!-- Label that indicates a site is using a insecure connection -->
-    <string name="quick_settings_sheet_insecure_connection">Ebaturvaline ühendus</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete all the permissions for all sites-->
     <string name="confirm_clear_permissions_on_all_sites">Kas oled kindel, et soovid kõigi saitide kõik õigused tühistada?</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete all the permissions for a site-->
@@ -1200,8 +1286,6 @@
     <string name="confirm_clear_permission_site">Kas oled kindel, et soovid selle õiguse tühistada?</string>
     <!-- label shown when there are not site exceptions to show in the site exception settings -->
     <string name="no_site_exceptions">Saidil puuduvad erandid</string>
-    <!-- Label for the Pocket default top site -->
-    <string name="pocket_top_articles">Top artiklid</string>
     <!-- Bookmark deletion confirmation -->
     <string name="bookmark_deletion_confirmation">Kas oled kindel, et soovid selle järjehoidja kustutada?</string>
     <!-- Browser menu button that adds a top site to the home fragment -->

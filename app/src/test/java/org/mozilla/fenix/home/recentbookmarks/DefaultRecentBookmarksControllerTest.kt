@@ -12,13 +12,11 @@ import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.runBlockingTest
 import mozilla.appservices.places.BookmarkRoot
-import mozilla.components.concept.storage.BookmarkNode
-import mozilla.components.concept.storage.BookmarkNodeType
+import mozilla.components.concept.engine.EngineSession
+import mozilla.components.concept.engine.EngineSession.LoadUrlFlags.Companion.ALLOW_JAVASCRIPT_URL
 import mozilla.components.support.test.rule.MainCoroutineRule
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -29,19 +27,19 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.home.HomeFragmentDirections
+import org.mozilla.fenix.home.HomeFragmentStore
 import org.mozilla.fenix.home.recentbookmarks.controller.DefaultRecentBookmarksController
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class DefaultRecentBookmarksControllerTest {
 
-    private val testDispatcher = TestCoroutineDispatcher()
-
     @get:Rule
-    val coroutinesTestRule = MainCoroutineRule(testDispatcher)
+    val coroutinesTestRule = MainCoroutineRule()
 
     private val activity: HomeActivity = mockk(relaxed = true)
     private val navController: NavController = mockk(relaxUnitFun = true)
     private val metrics: MetricController = mockk(relaxed = true)
+    private val homeStore: HomeFragmentStore = mockk()
 
     private lateinit var controller: DefaultRecentBookmarksController
 
@@ -58,14 +56,10 @@ class DefaultRecentBookmarksControllerTest {
         controller = spyk(
             DefaultRecentBookmarksController(
                 activity = activity,
-                navController = navController
-            )
+                navController = navController,
+                homeStore = mockk()
+            ),
         )
-    }
-
-    @After
-    fun cleanUp() {
-        testDispatcher.cleanupTestCoroutines()
     }
 
     @Test
@@ -74,15 +68,9 @@ class DefaultRecentBookmarksControllerTest {
             every { id } returns R.id.homeFragment
         }
 
-        val bookmark = BookmarkNode(
-            type = BookmarkNodeType.ITEM,
-            guid = "guid#${Math.random() * 1000}",
-            parentGuid = null,
-            position = null,
+        val bookmark = RecentBookmark(
             title = null,
-            url = "https://www.example.com",
-            dateAdded = 0,
-            children = null
+            url = "https://www.example.com"
         )
 
         controller.handleBookmarkClicked(bookmark)
@@ -92,6 +80,7 @@ class DefaultRecentBookmarksControllerTest {
             activity.openToBrowserAndLoad(
                 searchTermOrURL = bookmark.url!!,
                 newTab = true,
+                flags = EngineSession.LoadUrlFlags.select(ALLOW_JAVASCRIPT_URL),
                 from = BrowserDirection.FromHome
             )
         }

@@ -9,10 +9,9 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
+import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.tabstray.TabsAdapter.Companion.PAYLOAD_DONT_HIGHLIGHT_SELECTED_ITEM
 import mozilla.components.browser.tabstray.TabsAdapter.Companion.PAYLOAD_HIGHLIGHT_SELECTED_ITEM
-import mozilla.components.concept.tabstray.Tab
-import mozilla.components.concept.tabstray.Tabs
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -20,6 +19,9 @@ import org.mozilla.fenix.databinding.TabTrayItemBinding
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.selection.SelectionHolder
 import org.mozilla.fenix.tabstray.TabsTrayStore
+import mozilla.components.browser.state.state.createTab
+import mozilla.components.browser.state.store.BrowserStore
+import org.mozilla.fenix.ext.components
 
 @RunWith(FenixRobolectricTestRunner::class)
 class BrowserTabsAdapterTest {
@@ -30,16 +32,16 @@ class BrowserTabsAdapterTest {
 
     @Test
     fun `WHEN bind with payloads is called THEN update the holder`() {
+        every { testContext.components.core.thumbnailStorage } returns mockk()
         val adapter = BrowserTabsAdapter(context, interactor, store, "Test")
         val holder = mockk<AbstractBrowserTabViewHolder>(relaxed = true)
 
         adapter.updateTabs(
-            Tabs(
-                list = listOf(
-                    createTab("tab1")
-                ),
-                selectedIndex = 0
-            )
+            listOf(
+                createTab(url = "url", id = "tab1")
+            ),
+            null,
+            selectedTabId = "tab1"
         )
 
         adapter.onBindViewHolder(holder, 0, listOf(PAYLOAD_HIGHLIGHT_SELECTED_ITEM))
@@ -53,10 +55,14 @@ class BrowserTabsAdapterTest {
 
     @Test
     fun `WHEN the selection holder is set THEN update the selected tab`() {
+        every { testContext.components.core.thumbnailStorage } returns mockk()
+        every { testContext.components.core.store } returns BrowserStore()
+        every { testContext.components.analytics } returns mockk(relaxed = true)
+        every { testContext.components.settings } returns mockk(relaxed = true)
         val adapter = BrowserTabsAdapter(context, interactor, store, "Test")
         val binding = TabTrayItemBinding.inflate(LayoutInflater.from(testContext))
         val holder = spyk(
-            BrowserTabListViewHolder(
+            BrowserTabViewHolder.ListViewHolder(
                 imageLoader = mockk(),
                 browserTrayInteractor = interactor,
                 store = store,
@@ -65,7 +71,7 @@ class BrowserTabsAdapterTest {
                 featureName = "Test"
             )
         )
-        val tab = createTab("tab1")
+        val tab = createTab(url = "url", id = "tab1")
 
         every { holder.tab }.answers { tab }
 
@@ -73,12 +79,9 @@ class BrowserTabsAdapterTest {
         adapter.selectionHolder = testSelectionHolder
 
         adapter.updateTabs(
-            Tabs(
-                list = listOf(
-                    tab
-                ),
-                selectedIndex = 0
-            )
+            listOf(tab),
+            null,
+            selectedTabId = "tab1"
         )
 
         adapter.onBindViewHolder(holder, 0, listOf(PAYLOAD_DONT_HIGHLIGHT_SELECTED_ITEM))
@@ -86,10 +89,10 @@ class BrowserTabsAdapterTest {
         verify { holder.showTabIsMultiSelectEnabled(any(), true) }
     }
 
-    private val testSelectionHolder = object : SelectionHolder<Tab> {
-        override val selectedItems: Set<Tab>
+    private val testSelectionHolder = object : SelectionHolder<TabSessionState> {
+        override val selectedItems: Set<TabSessionState>
             get() = internalState
 
-        val internalState = mutableSetOf<Tab>()
+        val internalState = mutableSetOf<TabSessionState>()
     }
 }

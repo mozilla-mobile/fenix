@@ -47,6 +47,7 @@ def add_shippable_secrets(config, tasks):
                 ('sentry_dsn', '.sentry_token'),
                 ('mls', '.mls_token'),
                 ('nimbus_url', '.nimbus'),
+                ('wallpaper_url', ".wallpaper_url")
             )])
         else:
             dummy_secrets.extend([{
@@ -71,6 +72,20 @@ def build_gradle_command(config, tasks):
             "clean",
             "assemble{}".format(variant_config["name"].capitalize()),
         ]
+
+        yield task
+
+@transforms.add
+def track_apk_size(config, tasks):
+    for task in tasks:
+        gradle_build_type = task["run"]["gradle-build-type"]
+        variant_config = get_variant(gradle_build_type)
+
+        should_track_apk_size = task["run"].pop("track-apk-size", False)
+        if should_track_apk_size:
+            task["run"]["gradlew"].append(
+                "apkSize{}".format(variant_config["name"].capitalize())
+            )
 
         yield task
 

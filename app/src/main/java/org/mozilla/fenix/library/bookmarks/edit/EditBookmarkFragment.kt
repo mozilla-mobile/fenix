@@ -27,7 +27,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import mozilla.appservices.places.UrlParseFailed
+import mozilla.appservices.places.uniffi.PlacesException
 import mozilla.components.concept.storage.BookmarkInfo
 import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.concept.storage.BookmarkNodeType
@@ -274,13 +274,13 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark) {
 
                     findNavController().popBackStack()
                 }
-            } catch (e: UrlParseFailed) {
+            } catch (e: PlacesException.UrlParseFailed) {
                 withContext(Main) {
                     binding.inputLayoutBookmarkUrl.error = getString(R.string.bookmark_invalid_url_error)
                     binding.inputLayoutBookmarkUrl.setErrorIconDrawable(R.drawable.mozac_ic_warning_with_bottom_padding)
                     binding.inputLayoutBookmarkUrl.setErrorIconTintList(
                         ColorStateList.valueOf(
-                            ContextCompat.getColor(requireContext(), R.color.design_error)
+                            ContextCompat.getColor(requireContext(), R.color.fx_mobile_text_color_warning)
                         )
                     )
                 }

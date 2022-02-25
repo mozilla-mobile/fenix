@@ -12,12 +12,11 @@ import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.spyk
 import io.mockk.unmockkStatic
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.TestCoroutineDispatcher
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.createTab
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.storage.BookmarksStorage
+import mozilla.components.feature.top.sites.PinnedSiteStorage
 import mozilla.components.support.test.rule.MainCoroutineRule
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -29,7 +28,6 @@ import org.junit.Test
 import org.mozilla.fenix.components.toolbar.DefaultToolbarMenu
 import org.mozilla.fenix.ext.settings
 
-@ExperimentalCoroutinesApi
 class DefaultToolbarMenuTest {
 
     private lateinit var store: BrowserStore
@@ -37,11 +35,10 @@ class DefaultToolbarMenuTest {
     private lateinit var toolbarMenu: DefaultToolbarMenu
     private lateinit var context: Context
     private lateinit var bookmarksStorage: BookmarksStorage
-
-    private val testDispatcher = TestCoroutineDispatcher()
+    private lateinit var pinnedSiteStorage: PinnedSiteStorage
 
     @get:Rule
-    val coroutinesTestRule = MainCoroutineRule(testDispatcher)
+    val coroutinesTestRule = MainCoroutineRule()
 
     @Before
     fun setUp() {
@@ -54,6 +51,7 @@ class DefaultToolbarMenuTest {
         every { context.theme } returns mockk(relaxed = true)
 
         bookmarksStorage = mockk(relaxed = true)
+        pinnedSiteStorage = mockk(relaxed = true)
         store = BrowserStore(
             BrowserState(
                 tabs = listOf(
@@ -78,6 +76,7 @@ class DefaultToolbarMenuTest {
                 hasAccountProblem = false,
                 onItemTapped = { },
                 lifecycleOwner = lifecycleOwner,
+                pinnedSiteStorage = pinnedSiteStorage,
                 bookmarksStorage = bookmarksStorage,
                 isPinningSupported = false
             )

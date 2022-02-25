@@ -3,31 +3,35 @@
    - License, v. 2.0. If a copy of the MPL was not distributed with this
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 <resources>
+    <!-- Design system color attributes -->
+    <!-- Search -->
+    <attr name="layer3" format="reference" />
+    <!-- Small heading, Text link -->
+    <attr name="textAccent" format="reference" />
+    <!-- Active tab -->
+    <attr name="iconActive" format="reference" />
+    <!-- Default, Divider, Dotted -->
+    <attr name="borderPrimary" format="reference" />
+
     <!-- Color palette attributes -->
     <attr name="primaryText" format="reference" />
     <attr name="secondaryText" format="reference" />
     <attr name="contrastText" format="reference" />
     <attr name="accent" format="reference" />
     <attr name="accentBright" format="reference" />
-    <attr name="aboutLink" format="reference" />
     <attr name="accentHighContrast" format="reference" />
     <attr name="accentUsedOnDarkBackground" format="reference" />
-    <attr name="tabRing" format="reference" />
     <attr name="snackbar" format="reference" />
     <attr name="foundation" format="reference" />
     <attr name="above" format="reference" />
     <attr name="inset" format="reference" />
     <attr name="neutral" format="reference" />
     <attr name="neutralFaded" format="reference" />
-    <attr name="shadow" format="reference" />
     <attr name="destructive" format="reference"/>
     <attr name="disabled" format="reference" />
     <attr name="scrimStart" format="reference"/>
     <attr name="scrimEnd" format="reference"/>
-    <attr name="toolbarDivider" format="reference"/>
-    <attr name="menuCategoryText" format="reference"/>
     <attr name="preferenceSectionHeader" format="reference"/>
-    <attr name="recentlyUsedShareMenu" format="reference" />
 
     <!-- Color used in DefaultToolbarMenu for buttons placed at the end of menu items -->
     <attr name="menuItemButtonTintColor" format="reference"/>
@@ -39,7 +43,6 @@
     <attr name="privateBrowsingButtonBackground" format="reference" />
     <attr name="privateBrowsingButtonAccent" format="reference" />
     <attr name="fenixLogo" format="reference" />
-    <attr name="fenixSnackbarBackground" format="reference" />
     <attr name="toolbarStartGradient" format="reference"/>
     <attr name="toolbarCenterGradient" format="reference"/>
     <attr name="toolbarEndGradient" format="reference"/>
@@ -52,23 +55,12 @@
     <attr name="onboardingSelected" format="reference"/>
     <attr name="onboardingDeselected" format="reference"/>
     <attr name="addOnPrivateBrowsingExteriorCircleBackground" format="reference"/>
-    <attr name="addOnPrivateBrowsingInteriorIconBackground" format="reference"/>
-    <attr name="readerModeStartGradient" format="reference"/>
-    <attr name="readerModeEndGradient" format="reference"/>
-    <attr name="syncedTabsSeparator" format="reference"/>
     <attr name="awesomeBarIndicatorColor" format="reference|color"/>
     <attr name="awesomeBarIndicatorBookmarkColor" format="reference|color"/>
 
     <!-- Tab tray -->
-    <attr name="tabTrayItemMediaBackground" format="reference" />
-    <attr name="tabTrayHeadingIcon" format="reference" />
-    <attr name="tabTrayHeadingIconInactive" format="reference" />
     <attr name="tabTrayThumbnailItemBackground" format="reference" />
     <attr name="tabTrayThumbnailIcon" format="reference" />
-    <!-- Note - these are currently unused, but they are for if/when we add private UI to tabs tray -->
-    <attr name="tabTrayItemBackground" format="reference" />
-    <attr name="tabTrayItemSelectedBackground" format="reference" />
-    <attr name="tabTrayToolbarBackground" format="reference" />
 
     <!-- Tab History -->
     <attr name="tabHistoryItemSelectedBackground" format="reference" />
@@ -96,8 +88,7 @@
         <attr name="onboardingKeyDescription" format="reference" />
     </declare-styleable>
 
-    <attr name="selectLoginHeaderTextColor" format="reference"/>
-    <attr name="selectCreditCardHeaderTextColor" format="reference"/>
+    <attr name="selectPromptHeaderTextColor" format="reference"/>
 
     <declare-styleable name="TextPercentageSeekBarPreference">
         <attr format="integer" name="min"/>

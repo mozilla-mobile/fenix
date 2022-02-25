@@ -20,10 +20,18 @@ import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
 import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withSubstring
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
+import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatterBuilder
+import java.time.temporal.ChronoField
+import java.util.Calendar
+import java.util.Date
 import org.hamcrest.CoreMatchers
+import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.containsString
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.R
@@ -31,12 +39,6 @@ import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.helpers.TestHelper.appName
 import org.mozilla.fenix.helpers.isVisibleForUser
 import org.mozilla.fenix.settings.SupportUtils
-import java.text.SimpleDateFormat
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatterBuilder
-import java.time.temporal.ChronoField
-import java.util.Calendar
-import java.util.Date
 
 /**
  * Implementation of Robot Pattern for the settings search sub menu.
@@ -65,12 +67,7 @@ private fun assertFirefoxPreviewPage() {
 }
 
 private fun navigateBackToAboutPage(itemToInteract: () -> Unit) {
-    browserScreen {
-    }.openTabDrawer {
-        closeTab()
-    }
-
-    homeScreen {
+    navigationToolbar {
     }.openThreeDotMenu {
     }.openSettings {
     }.openAboutFirefoxPreview {
@@ -79,13 +76,23 @@ private fun navigateBackToAboutPage(itemToInteract: () -> Unit) {
 }
 
 private fun verifyListElements() {
+    assertAboutToolbar()
     assertWhatIsNewInFirefoxPreview()
     navigateBackToAboutPage(::assertSupport)
+    assertCrashes()
     navigateBackToAboutPage(::assertPrivacyNotice)
     navigateBackToAboutPage(::assertKnowYourRights)
     navigateBackToAboutPage(::assertLicensingInformation)
     navigateBackToAboutPage(::assertLibrariesUsed)
 }
+
+private fun assertAboutToolbar() =
+    onView(
+        allOf(
+            withId(R.id.navigationToolbar),
+            hasDescendant(withText("About $appName"))
+        )
+    ).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
 
 private fun assertVersionNumber() {
     val context = InstrumentationRegistry.getInstrumentation().targetContext
@@ -130,16 +137,6 @@ private fun assertWhatIsNewInFirefoxPreview() {
     onView(withText("What’s new in $appName"))
         .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
         .perform(click())
-
-    // Commenting out since the Text to verify in the web site seems to be different now
-    /*
-    TestHelper.verifyUrl(
-         SupportUtils.SumoTopic.WHATS_NEW.topicStr,
-         "org.mozilla.fenix.debug:id/mozac_browser_toolbar_url_view",
-         R.id.mozac_browser_toolbar_url_view
-    )*/
-
-    Espresso.pressBack()
 }
 
 private fun assertSupport() {
@@ -156,8 +153,29 @@ private fun assertSupport() {
         "org.mozilla.fenix.debug:id/mozac_browser_toolbar_url_view",
         R.id.mozac_browser_toolbar_url_view
     )
+}
 
-    Espresso.pressBack()
+private fun assertCrashes() {
+    navigationToolbar {
+    }.openThreeDotMenu {
+    }.openSettings {
+    }.openAboutFirefoxPreview {
+    }
+
+    if (!onView(withText("Crashes")).isVisibleForUser()) {
+        onView(withId(R.id.about_layout)).perform(ViewActions.swipeUp())
+    }
+
+    onView(withText("Crashes"))
+        .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+        .perform(click())
+
+    onView(withSubstring("No crash reports have been submitted"))
+        .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+
+    for (i in 1..3) {
+        Espresso.pressBack()
+    }
 }
 
 private fun assertPrivacyNotice() {
@@ -174,8 +192,6 @@ private fun assertPrivacyNotice() {
         "org.mozilla.fenix.debug:id/mozac_browser_toolbar_url_view",
         R.id.mozac_browser_toolbar_url_view
     )
-
-    Espresso.pressBack()
 }
 
 private fun assertKnowYourRights() {
@@ -192,8 +208,6 @@ private fun assertKnowYourRights() {
         "org.mozilla.fenix.debug:id/mozac_browser_toolbar_url_view",
         R.id.mozac_browser_toolbar_url_view
     )
-
-    Espresso.pressBack()
 }
 
 private fun assertLicensingInformation() {
@@ -210,8 +224,6 @@ private fun assertLicensingInformation() {
         "org.mozilla.fenix.debug:id/mozac_browser_toolbar_url_view",
         R.id.mozac_browser_toolbar_url_view
     )
-
-    Espresso.pressBack()
 }
 
 private fun assertLibrariesUsed() {

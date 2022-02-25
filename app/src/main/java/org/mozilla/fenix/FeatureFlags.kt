@@ -4,6 +4,12 @@
 
 package org.mozilla.fenix
 
+import android.content.Context
+import android.os.StrictMode
+import mozilla.components.support.locale.LocaleManager
+import mozilla.components.support.locale.LocaleManager.getSystemDefault
+import org.mozilla.fenix.ext.components
+
 /**
  * A single source for setting feature flags that are mostly based on build type.
  */
@@ -20,42 +26,93 @@ object FeatureFlags {
     val addressesFeature = Config.channel.isNightlyOrDebug
 
     /**
-     * Enables WebAuthn support.
-     */
-    const val webAuthFeature = true
-
-    /**
-     * Enables the Home button in the browser toolbar to navigate back to the home screen.
-     */
-    val showHomeButtonFeature = Config.channel.isNightlyOrDebug
-
-    /**
      * Enables the Start On Home feature in the settings page.
      */
-    val showStartOnHomeSettings = Config.channel.isNightlyOrDebug
+    const val showStartOnHomeSettings = true
 
     /**
      * Enables the "recent" tabs feature in the home screen.
      */
-    val showRecentTabsFeature = Config.channel.isNightlyOrDebug
+    const val showRecentTabsFeature = true
 
     /**
      * Enables UI features based on history metadata.
      */
-    val historyMetadataUIFeature = Config.channel.isDebug
+    const val historyMetadataUIFeature = true
 
     /**
      * Enables the recently saved bookmarks feature in the home screen.
      */
-    val recentBookmarksFeature = Config.channel.isNightlyOrDebug
+    const val recentBookmarksFeature = true
 
     /**
      * Identifies and separates the tabs list with a secondary section containing least used tabs.
      */
-    val inactiveTabs = Config.channel.isNightlyOrDebug
+    const val inactiveTabs = true
 
     /**
      * Enables showing the home screen behind the search dialog
      */
-    val showHomeBehindSearch = Config.channel.isNightlyOrDebug
+    const val showHomeBehindSearch = true
+
+    /**
+     * Identifies and separates the tabs list with a group containing search term tabs.
+     */
+    val tabGroupFeature = Config.channel.isNightlyOrDebug
+
+    /**
+     * Allows tabs to be dragged around as long as tab groups are disabled
+     */
+    val tabReorderingFeature = Config.channel.isNightlyOrDebug
+
+    /**
+     * Show Pocket recommended stories on home.
+     */
+    fun isPocketRecommendationsFeatureEnabled(context: Context): Boolean {
+        val langTag = LocaleManager.getCurrentLocale(context)
+            ?.toLanguageTag() ?: getSystemDefault().toLanguageTag()
+        return listOf("en-US", "en-CA").contains(langTag)
+    }
+
+    /**
+     * Enables showing the homescreen onboarding card.
+     */
+    const val showHomeOnboarding = false
+
+    /**
+     * Enables showing the option to clear site data.
+     */
+    val showClearSiteData = Config.channel.isNightlyOrDebug
+
+    /**
+     * Enables showing the wallpaper functionality.
+     */
+    val showWallpapers = Config.channel.isNightlyOrDebug
+
+    /**
+     * Enables the Contile top sites.
+     */
+    val contileFeature = Config.channel.isDebug
+
+    /**
+     * Enables history improvement features.
+     */
+    val historyImprovementFeatures = Config.channel.isNightlyOrDebug
+
+    /**
+     * Enables themed wallpapers feature.
+     */
+    fun isThemedWallpapersFeatureEnabled(context: Context): Boolean {
+        val strictMode = context.components.strictMode
+        return strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
+            val langTag = LocaleManager.getCurrentLocale(context)
+                ?.toLanguageTag() ?: getSystemDefault().toLanguageTag()
+            listOf("en-US", "es-US").contains(langTag) && Config.channel.isNightlyOrDebug
+        }
+    }
+
+    /**
+     * Enables the Task Continuity enhancements.
+     */
+    val taskContinuityFeature = Config.channel.isDebug
 }

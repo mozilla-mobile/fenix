@@ -20,6 +20,7 @@ import org.mozilla.fenix.components.getType
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.perf.MarkersActivityLifecycleCallbacks
 import org.mozilla.fenix.perf.StartupTimeline
 import org.mozilla.fenix.shortcut.NewTabShortcutIntentProcessor
 
@@ -30,8 +31,8 @@ class IntentReceiverActivity : Activity() {
 
     @VisibleForTesting
     override fun onCreate(savedInstanceState: Bundle?) {
-        // DO NOT MOVE ANYTHING ABOVE THIS addMarker CALL.
-        components.core.engine.profiler?.addMarker("Activity.onCreate", "IntentReceiverActivity")
+        // DO NOT MOVE ANYTHING ABOVE THIS getProfilerTime CALL.
+        val startTimeProfiler = components.core.engine.profiler?.getProfilerTime()
 
         // StrictMode violation on certain devices such as Samsung
         components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
@@ -45,6 +46,9 @@ class IntentReceiverActivity : Activity() {
         intent.stripUnwantedFlags()
         processIntent(intent)
 
+        components.core.engine.profiler?.addMarker(
+            MarkersActivityLifecycleCallbacks.MARKER_NAME, startTimeProfiler, "IntentReceiverActivity.onCreate"
+        )
         StartupTimeline.onActivityCreateEndIntentReceiver() // DO NOT MOVE ANYTHING BELOW HERE.
     }
 
@@ -99,6 +103,7 @@ class IntentReceiverActivity : Activity() {
         return listOf(components.intentProcessors.migrationIntentProcessor) +
             components.intentProcessors.externalAppIntentProcessors +
             components.intentProcessors.fennecPageShortcutIntentProcessor +
+            components.intentProcessors.externalDeepLinkIntentProcessor +
             modeDependentProcessors +
             NewTabShortcutIntentProcessor()
     }

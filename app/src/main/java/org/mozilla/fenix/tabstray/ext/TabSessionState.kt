@@ -6,22 +6,50 @@ package org.mozilla.fenix.tabstray.ext
 
 import mozilla.components.browser.state.state.TabSessionState
 
-private fun TabSessionState.isActive(maxActiveTime: Long): Boolean {
+fun TabSessionState.isActive(maxActiveTime: Long): Boolean {
     val lastActiveTime = maxOf(lastAccess, createdAt)
     val now = System.currentTimeMillis()
     return (now - lastActiveTime <= maxActiveTime)
 }
 
 /**
- * Returns true if a [TabSessionState] is considered active based on the [maxActiveTime].
+ * Returns true if the [TabSessionState] has a search term.
+ */
+fun TabSessionState.hasSearchTerm(): Boolean {
+    return content.searchTerms.isNotEmpty() || !historyMetadata?.searchTerm.isNullOrBlank()
+}
+
+/**
+ * Returns true if the [TabSessionState] is considered active based on the [maxActiveTime].
  */
 internal fun TabSessionState.isNormalTabActive(maxActiveTime: Long): Boolean {
     return isActive(maxActiveTime) && !content.private
 }
 
 /**
- * Returns true if a [TabSessionState] is considered active based on the [maxActiveTime].
+ * Returns true if the [TabSessionState] have a search term.
+ */
+internal fun TabSessionState.isNormalTabActiveWithSearchTerm(maxActiveTime: Long): Boolean {
+    return isNormalTabActive(maxActiveTime) && hasSearchTerm()
+}
+
+/**
+ * Returns true if the [TabSessionState] has a search term but may or may not be active.
+ */
+internal fun TabSessionState.isNormalTabWithSearchTerm(): Boolean {
+    return hasSearchTerm() && !content.private
+}
+
+/**
+ * Returns true if the [TabSessionState] is considered active based on the [maxActiveTime].
  */
 internal fun TabSessionState.isNormalTabInactive(maxActiveTime: Long): Boolean {
     return !isActive(maxActiveTime) && !content.private
+}
+
+/**
+ * Returns true if the [TabSessionState] is not private.
+ */
+internal fun TabSessionState.isNormalTab(): Boolean {
+    return !content.private
 }

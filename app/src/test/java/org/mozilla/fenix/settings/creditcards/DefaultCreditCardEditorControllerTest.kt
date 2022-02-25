@@ -9,8 +9,6 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
 import mozilla.components.concept.storage.CreditCardNumber
@@ -23,21 +21,22 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.settings.creditcards.controller.DefaultCreditCardEditorController
 
-@ExperimentalCoroutinesApi
 class DefaultCreditCardEditorControllerTest {
 
     private val storage: AutofillCreditCardsAddressesStorage = mockk(relaxed = true)
     private val navController: NavController = mockk(relaxed = true)
-
-    private val testCoroutineScope = TestCoroutineScope()
-    private val testDispatcher = TestCoroutineDispatcher()
+    private val metrics: MetricController = mockk(relaxed = true)
 
     private lateinit var controller: DefaultCreditCardEditorController
 
     @get:Rule
-    val coroutinesTestRule = MainCoroutineRule(testDispatcher)
+    val coroutinesTestRule = MainCoroutineRule()
+    private val testDispatcher = coroutinesTestRule.testDispatcher
+    private val testCoroutineScope = TestCoroutineScope(testDispatcher)
 
     @Before
     fun setup() {
@@ -46,7 +45,8 @@ class DefaultCreditCardEditorControllerTest {
                 storage = storage,
                 lifecycleScope = testCoroutineScope,
                 navController = navController,
-                ioDispatcher = testDispatcher
+                ioDispatcher = testDispatcher,
+                metrics = metrics
             )
         )
     }
@@ -54,7 +54,6 @@ class DefaultCreditCardEditorControllerTest {
     @After
     fun cleanUp() {
         testCoroutineScope.cleanupTestCoroutines()
-        testDispatcher.cleanupTestCoroutines()
     }
 
     @Test
@@ -75,6 +74,7 @@ class DefaultCreditCardEditorControllerTest {
         coVerify {
             storage.deleteCreditCard(creditCardId)
             navController.popBackStack()
+            metrics.track(Event.CreditCardDeleted)
         }
     }
 
@@ -94,6 +94,7 @@ class DefaultCreditCardEditorControllerTest {
         coVerify {
             storage.addCreditCard(creditCardFields)
             navController.popBackStack()
+            metrics.track(Event.CreditCardSaved)
         }
     }
 
@@ -114,6 +115,7 @@ class DefaultCreditCardEditorControllerTest {
         coVerify {
             storage.updateCreditCard(creditCardId, creditCardFields)
             navController.popBackStack()
+            metrics.track(Event.CreditCardModified)
         }
     }
 }

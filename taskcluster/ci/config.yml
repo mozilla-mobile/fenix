@@ -46,6 +46,17 @@ workers:
             implementation: docker-worker
             os: linux
             worker-type: b-linux-large
+        b-android-xlarge:
+            provisioner: 'mobile-{level}'
+            implementation: docker-worker
+            os: linux
+            worker-type: b-linux-xlarge
+        beetmover:
+            provisioner: scriptworker-k8s
+            implementation: scriptworker-beetmover
+            os: scriptworker
+            # Note: if dep bucket is wanted, *temporarily* switch to 'mobile-1-beetmover-dev'
+            worker-type: 'mobile-{level}-beetmover'
         dep-signing:
             provisioner: scriptworker-k8s
             implementation: scriptworker-signing

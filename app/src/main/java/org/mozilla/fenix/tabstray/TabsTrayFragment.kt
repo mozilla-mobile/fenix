@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,12 +27,13 @@ import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.browser.state.selector.normalTabs
 import mozilla.components.browser.state.selector.privateTabs
 import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.feature.downloads.ui.DownloadCancelDialogFragment
+import mozilla.components.feature.tabs.tabstray.TabsFeature
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
-import org.mozilla.fenix.share.ShareFragment
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.databinding.ComponentTabstray2Binding
@@ -40,29 +42,37 @@ import org.mozilla.fenix.databinding.FragmentTabTrayDialogBinding
 import org.mozilla.fenix.databinding.TabsTrayTabCounter2Binding
 import org.mozilla.fenix.databinding.TabstrayMultiselectItemsBinding
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.requireComponents
+import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.HomeScreenViewModel
+import org.mozilla.fenix.share.ShareFragment
 import org.mozilla.fenix.tabstray.browser.BrowserTrayInteractor
 import org.mozilla.fenix.tabstray.browser.DefaultBrowserTrayInteractor
 import org.mozilla.fenix.tabstray.browser.SelectionBannerBinding
 import org.mozilla.fenix.tabstray.browser.SelectionBannerBinding.VisibilityModifier
 import org.mozilla.fenix.tabstray.browser.SelectionHandleBinding
+import org.mozilla.fenix.tabstray.browser.TabSorter
 import org.mozilla.fenix.tabstray.ext.anchorWithAction
 import org.mozilla.fenix.tabstray.ext.bookmarkMessage
 import org.mozilla.fenix.tabstray.ext.collectionMessage
 import org.mozilla.fenix.tabstray.ext.make
 import org.mozilla.fenix.tabstray.ext.orDefault
 import org.mozilla.fenix.tabstray.ext.showWithTheme
+import org.mozilla.fenix.theme.ThemeManager
+import org.mozilla.fenix.tabstray.syncedtabs.SyncedTabsIntegration
 import org.mozilla.fenix.utils.allowUndo
 import kotlin.math.max
 
 @Suppress("TooManyFunctions", "LargeClass")
 class TabsTrayFragment : AppCompatDialogFragment() {
+
     @VisibleForTesting internal lateinit var tabsTrayStore: TabsTrayStore
     private lateinit var browserTrayInteractor: BrowserTrayInteractor
     private lateinit var tabsTrayInteractor: TabsTrayInteractor
     private lateinit var tabsTrayController: DefaultTabsTrayController
+    private lateinit var navigationInteractor: DefaultNavigationInteractor
     @VisibleForTesting internal lateinit var trayBehaviorManager: TabSheetBehaviorManager
 
     private val tabLayoutMediator = ViewBoundFeatureWrapper<TabLayoutMediator>()
@@ -72,6 +82,9 @@ class TabsTrayFragment : AppCompatDialogFragment() {
     private val selectionHandleBinding = ViewBoundFeatureWrapper<SelectionHandleBinding>()
     private val tabsTrayCtaBinding = ViewBoundFeatureWrapper<TabsTrayInfoBannerBinding>()
     private val secureTabsTrayBinding = ViewBoundFeatureWrapper<SecureTabsTrayBinding>()
+    private val tabsFeature = ViewBoundFeatureWrapper<TabsFeature>()
+    private val tabsTrayInactiveTabsOnboardingBinding = ViewBoundFeatureWrapper<TabsTrayInactiveTabsOnboardingBinding>()
+    private val syncedTabsIntegration = ViewBoundFeatureWrapper<SyncedTabsIntegration>()
 
     @VisibleForTesting @Suppress("VariableNaming")
     internal var _tabsTrayBinding: ComponentTabstray2Binding? = null
@@ -122,12 +135,25 @@ class TabsTrayFragment : AppCompatDialogFragment() {
         tabsTrayStore = StoreProvider.get(this) {
             TabsTrayStore(
                 initialState = TabsTrayState(
-                    mode = initialMode
+                    mode = initialMode,
+                    focusGroupTabId = args.focusGroupTabId
+                ),
+                middlewares = listOf(
+                    TabsTrayMiddleware(
+                        metrics = requireContext().metrics
+                    )
                 )
             )
         }
 
         return tabsTrayDialogBinding.root
+    }
+
+    override fun onStart() {
+        super.onStart()
+        findPreviousDialogFragment()?.let { dialog ->
+            dialog.onAcceptClicked = ::onCancelDownloadWarningAccepted
+        }
     }
 
     override fun onDestroyView() {
@@ -148,7 +174,7 @@ class TabsTrayFragment : AppCompatDialogFragment() {
         }
         requireComponents.analytics.metrics.track(Event.TabsTrayOpened)
 
-        val navigationInteractor =
+        navigationInteractor =
             DefaultNavigationInteractor(
                 context = requireContext(),
                 activity = activity,
@@ -162,6 +188,7 @@ class TabsTrayFragment : AppCompatDialogFragment() {
                 collectionStorage = requireComponents.core.tabCollectionStorage,
                 showCollectionSnackbar = ::showCollectionSnackbar,
                 showBookmarkSnackbar = ::showBookmarkSnackbar,
+                showCancelledDownloadWarning = ::showCancelledDownloadWarning,
                 accountManager = requireComponents.backgroundServices.accountManager,
                 ioDispatcher = Dispatchers.IO
             )
@@ -178,7 +205,8 @@ class TabsTrayFragment : AppCompatDialogFragment() {
             tabsUseCases = requireComponents.useCases.tabsUseCases,
             selectTabPosition = ::selectTabPosition,
             dismissTray = ::dismissTabsTray,
-            showUndoSnackbarForTab = ::showUndoSnackbarForTab
+            showUndoSnackbarForTab = ::showUndoSnackbarForTab,
+            showCancelledDownloadWarning = ::showCancelledDownloadWarning
         )
 
         tabsTrayInteractor = DefaultTabsTrayInteractor(tabsTrayController)
@@ -221,6 +249,19 @@ class TabsTrayFragment : AppCompatDialogFragment() {
             displayMetrics = requireContext().resources.displayMetrics
         )
 
+        tabsFeature.set(
+            feature = TabsFeature(
+                tabsTray = TabSorter(
+                    requireContext().settings(),
+                    tabsTrayStore
+                ),
+                store = requireContext().components.core.store,
+                defaultTabPartitionsFilter = { tabPartitions -> tabPartitions[SEARCH_TERM_TAB_GROUPS] }
+            ),
+            owner = this,
+            view = view
+        )
+
         tabsTrayCtaBinding.set(
             feature = TabsTrayInfoBannerBinding(
                 context = view.context,
@@ -236,6 +277,7 @@ class TabsTrayFragment : AppCompatDialogFragment() {
         tabLayoutMediator.set(
             feature = TabLayoutMediator(
                 tabLayout = tabsTrayBinding.tabLayout,
+                tabPager = tabsTrayBinding.tabsTray,
                 interactor = tabsTrayInteractor,
                 browsingModeManager = activity.browsingModeManager,
                 tabsTrayStore = tabsTrayStore,
@@ -319,6 +361,31 @@ class TabsTrayFragment : AppCompatDialogFragment() {
             view = view
         )
 
+        tabsTrayInactiveTabsOnboardingBinding.set(
+            feature = TabsTrayInactiveTabsOnboardingBinding(
+                context = requireContext(),
+                store = requireComponents.core.store,
+                tabsTrayBinding = tabsTrayBinding,
+                settings = requireComponents.settings,
+                navigationInteractor = navigationInteractor
+            ),
+            owner = this,
+            view = view
+        )
+
+        syncedTabsIntegration.set(
+            feature = SyncedTabsIntegration(
+                store = tabsTrayStore,
+                context = requireContext(),
+                navController = findNavController(),
+                storage = requireComponents.backgroundServices.syncedTabsStorage,
+                accountManager = requireComponents.backgroundServices.accountManager,
+                lifecycleOwner = this
+            ),
+            owner = this,
+            view = view
+        )
+
         setFragmentResultListener(ShareFragment.RESULT_KEY) { _, _ ->
             dismissTabsTray()
         }
@@ -332,6 +399,40 @@ class TabsTrayFragment : AppCompatDialogFragment() {
         if (requireContext().settings().gridTabView) {
             tabsTrayBinding.tabsTray.adapter?.notifyDataSetChanged()
         }
+    }
+
+    @VisibleForTesting
+    internal fun onCancelDownloadWarningAccepted(tabId: String?, source: String?) {
+        if (tabId != null) {
+            tabsTrayInteractor.onDeletePrivateTabWarningAccepted(tabId, source)
+        } else {
+            navigationInteractor.onCloseAllPrivateTabsWarningConfirmed(private = true)
+        }
+    }
+
+    @VisibleForTesting
+    internal fun showCancelledDownloadWarning(downloadCount: Int, tabId: String?, source: String?) {
+        val dialog = DownloadCancelDialogFragment.newInstance(
+            downloadCount = downloadCount,
+            tabId = tabId,
+            source = source,
+            promptStyling = DownloadCancelDialogFragment.PromptStyling(
+                gravity = Gravity.BOTTOM,
+                shouldWidthMatchParent = true,
+                positiveButtonBackgroundColor = ThemeManager.resolveAttribute(
+                    R.attr.accent,
+                    requireContext()
+                ),
+                positiveButtonTextColor = ThemeManager.resolveAttribute(
+                    R.attr.contrastText,
+                    requireContext()
+                ),
+                positiveButtonRadius = (resources.getDimensionPixelSize(R.dimen.tab_corner_radius)).toFloat()
+            ),
+
+            onPositiveButtonClicked = ::onCancelDownloadWarningAccepted
+        )
+        dialog.show(parentFragmentManager, DOWNLOAD_CANCEL_DIALOG_FRAGMENT_TAG)
     }
 
     @VisibleForTesting
@@ -375,7 +476,8 @@ class TabsTrayFragment : AppCompatDialogFragment() {
                 browserInteractor,
                 navigationInteractor,
                 trayInteractor,
-                requireComponents.core.store
+                requireComponents.core.store,
+                requireComponents.appStore,
             )
             isUserInputEnabled = false
         }
@@ -448,18 +550,20 @@ class TabsTrayFragment : AppCompatDialogFragment() {
         isNewCollection: Boolean = false,
         collectionToSelect: Long?
     ) {
-        FenixSnackbar
-            .make(requireView())
-            .collectionMessage(tabSize, isNewCollection)
-            .anchorWithAction(getSnackbarAnchor()) {
-                findNavController().navigate(
-                    TabsTrayFragmentDirections.actionGlobalHome(
-                        focusOnAddressBar = false,
-                        focusOnCollection = collectionToSelect.orDefault()
+        runIfFragmentIsAttached {
+            FenixSnackbar
+                .make(requireView())
+                .collectionMessage(tabSize, isNewCollection)
+                .anchorWithAction(getSnackbarAnchor()) {
+                    findNavController().navigate(
+                        TabsTrayFragmentDirections.actionGlobalHome(
+                            focusOnAddressBar = false,
+                            focusOnCollection = collectionToSelect.orDefault()
+                        )
                     )
-                )
-                dismissTabsTray()
-            }.show()
+                    dismissTabsTray()
+                }.show()
+        }
     }
 
     @VisibleForTesting
@@ -478,6 +582,11 @@ class TabsTrayFragment : AppCompatDialogFragment() {
             .show()
     }
 
+    @Suppress("MaxLineLength")
+    private fun findPreviousDialogFragment(): DownloadCancelDialogFragment? {
+        return parentFragmentManager.findFragmentByTag(DOWNLOAD_CANCEL_DIALOG_FRAGMENT_TAG) as? DownloadCancelDialogFragment
+    }
+
     private fun getSnackbarAnchor(): View? {
         return if (requireComponents.settings.accessibilityServicesEnabled) {
             null
@@ -487,6 +596,8 @@ class TabsTrayFragment : AppCompatDialogFragment() {
     }
 
     companion object {
+        private const val DOWNLOAD_CANCEL_DIALOG_FRAGMENT_TAG = "DOWNLOAD_CANCEL_DIALOG_FRAGMENT_TAG"
+
         // Minimum number of list items for which to show the tabs tray as expanded.
         const val EXPAND_AT_LIST_SIZE = 4
 

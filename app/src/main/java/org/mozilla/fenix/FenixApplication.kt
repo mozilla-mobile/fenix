@@ -25,13 +25,20 @@ import kotlinx.coroutines.launch
 import mozilla.appservices.Megazord
 import mozilla.components.browser.state.action.SystemAction
 import mozilla.components.browser.state.selector.selectedTab
+import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.base.crash.Breadcrumb
 import mozilla.components.concept.engine.webextension.WebExtension
 import mozilla.components.concept.engine.webextension.isUnsupported
 import mozilla.components.concept.push.PushProcessor
+import mozilla.components.concept.storage.FrecencyThresholdOption
 import mozilla.components.feature.addons.migration.DefaultSupportedAddonsChecker
 import mozilla.components.feature.addons.update.GlobalAddonDependencyProvider
+import mozilla.components.feature.autofill.AutofillUseCases
+import mozilla.components.feature.search.ext.buildSearchUrl
+import mozilla.components.feature.search.ext.waitForSelectedOrDefaultSearchEngine
+import mozilla.components.feature.top.sites.TopSitesProviderConfig
 import mozilla.components.lib.crash.CrashReporter
+import mozilla.components.service.fxa.manager.SyncEnginesStorage
 import mozilla.components.service.glean.Glean
 import mozilla.components.service.glean.config.Configuration
 import mozilla.components.service.glean.net.ConceptFetchHttpUploader
@@ -45,13 +52,26 @@ import mozilla.components.support.rusthttp.RustHttpConfig
 import mozilla.components.support.rustlog.RustLog
 import mozilla.components.support.utils.logElapsedTime
 import mozilla.components.support.webextensions.WebExtensionSupport
+import org.mozilla.experiments.nimbus.NimbusInterface
+import org.mozilla.experiments.nimbus.internal.EnrolledExperiment
+import org.mozilla.fenix.GleanMetrics.Addons
+import org.mozilla.fenix.GleanMetrics.AndroidAutofill
+import org.mozilla.fenix.GleanMetrics.CustomizeHome
 import org.mozilla.fenix.GleanMetrics.GleanBuildInfo
 import org.mozilla.fenix.GleanMetrics.Metrics
 import org.mozilla.fenix.GleanMetrics.PerfStartup
+import org.mozilla.fenix.GleanMetrics.Preferences
+import org.mozilla.fenix.GleanMetrics.SearchDefaultEngine
 import org.mozilla.fenix.components.Components
+import org.mozilla.fenix.components.Core
+import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricServiceType
-import org.mozilla.fenix.components.metrics.SecurePrefsTelemetry
+import org.mozilla.fenix.components.metrics.MozillaProductDetector
+import org.mozilla.fenix.components.toolbar.ToolbarPosition
+import org.mozilla.fenix.ext.isCustomEngine
+import org.mozilla.fenix.ext.isKnownSearchDomain
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.perf.MarkersActivityLifecycleCallbacks
 import org.mozilla.fenix.perf.ProfilerMarkerFactProcessor
 import org.mozilla.fenix.perf.StartupTimeline
 import org.mozilla.fenix.perf.StorageStatsMetrics
@@ -62,21 +82,9 @@ import org.mozilla.fenix.session.PerformanceActivityLifecycleCallbacks
 import org.mozilla.fenix.session.VisibilityLifecycleCallback
 import org.mozilla.fenix.telemetry.TelemetryLifecycleObserver
 import org.mozilla.fenix.utils.BrowsersCache
-import java.util.concurrent.TimeUnit
-import mozilla.components.browser.state.store.BrowserStore
-import mozilla.components.feature.autofill.AutofillUseCases
-import mozilla.components.feature.search.ext.buildSearchUrl
-import mozilla.components.feature.search.ext.waitForSelectedOrDefaultSearchEngine
-import mozilla.components.service.fxa.manager.SyncEnginesStorage
-import org.mozilla.fenix.GleanMetrics.Addons
-import org.mozilla.fenix.GleanMetrics.AndroidAutofill
-import org.mozilla.fenix.GleanMetrics.Preferences
-import org.mozilla.fenix.GleanMetrics.SearchDefaultEngine
-import org.mozilla.fenix.components.Core
-import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.components.metrics.MozillaProductDetector
-import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.utils.Settings
+import org.mozilla.fenix.utils.Settings.Companion.TOP_SITES_PROVIDER_MAX_THRESHOLD
+import java.util.concurrent.TimeUnit
 
 /**
  *The main application class for Fenix. Records data to measure initialization performance.
@@ -121,6 +129,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
 
         setupInMainProcessOnly()
 
+        downloadWallpapers()
         // DO NOT MOVE ANYTHING BELOW THIS stop CALL.
         PerfStartup.applicationOnCreate.stopAndAccumulate(completeMethodDurationTimerId)
     }
@@ -192,6 +201,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
 
         visibilityLifecycleCallback = VisibilityLifecycleCallback(getSystemService())
         registerActivityLifecycleCallbacks(visibilityLifecycleCallback)
+        registerActivityLifecycleCallbacks(MarkersActivityLifecycleCallbacks(components.core.engine))
 
         // Storage maintenance disabled, for now, as it was interfering with background migrations.
         // See https://github.com/mozilla-mobile/fenix/issues/7227 for context.
@@ -243,6 +253,23 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                         components.core.passwordsStorage.warmUp()
                         components.core.autofillStorage.warmUp()
 
+                        // Populate the top site cache to improve initial load experience
+                        // of the home fragment when the app is launched to a tab. The actual
+                        // database call is not expensive. However, the additional context
+                        // switches delay rendering top sites when the cache is empty, which
+                        // we can prevent with this.
+                        components.core.topSitesStorage.getTopSites(
+                            totalSites = components.settings.topSitesMaxLimit,
+                            frecencyConfig = if (components.settings.showTopFrecentSites)
+                                FrecencyThresholdOption.SKIP_ONE_TIME_PAGES
+                            else
+                                null,
+                            providerConfig = TopSitesProviderConfig(
+                                showProviderTopSites = components.settings.showContileFeature,
+                                maxThreshold = TOP_SITES_PROVIDER_MAX_THRESHOLD
+                            )
+                        )
+
                         // This service uses `historyStorage`, and so we can only touch it when we know
                         // it's safe to touch `historyStorage. By 'safe', we mainly mean that underlying
                         // places library will be able to load, which requires first running Megazord.init().
@@ -251,8 +278,6 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                             System.currentTimeMillis() - Core.HISTORY_METADATA_MAX_AGE_IN_MS
                         )
                     }
-
-                    SecurePrefsTelemetry(this@FenixApplication, components.analytics.experiments).startTests()
                 }
                 // Account manager initialization needs to happen on the main thread.
                 GlobalScope.launch(Dispatchers.Main) {
@@ -607,6 +632,14 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
 
             tabViewSetting.set(settings.getTabViewPingString())
             closeTabSetting.set(settings.getTabTimeoutPingString())
+
+            val installSourcePackage = if (SDK_INT >= Build.VERSION_CODES.R) {
+                packageManager.getInstallSourceInfo(packageName).installingPackageName
+            } else {
+                @Suppress("DEPRECATION")
+                packageManager.getInstallerPackageName(packageName)
+            }
+            installSource.set(installSourcePackage.orEmpty())
         }
 
         with(AndroidAutofill) {
@@ -616,11 +649,20 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         }
 
         browserStore.waitForSelectedOrDefaultSearchEngine { searchEngine ->
-            if (searchEngine != null) {
-                SearchDefaultEngine.apply {
-                    code.set(searchEngine.id)
-                    name.set(searchEngine.name)
-                    submissionUrl.set(searchEngine.buildSearchUrl(""))
+            searchEngine?.let {
+                val sendSearchUrl =
+                    !searchEngine.isCustomEngine() || searchEngine.isKnownSearchDomain()
+                if (sendSearchUrl) {
+                    SearchDefaultEngine.apply {
+                        code.set(searchEngine.id)
+                        name.set(searchEngine.name)
+                        searchUrl.set(searchEngine.buildSearchUrl(""))
+                    }
+                } else {
+                    SearchDefaultEngine.apply {
+                        code.set(searchEngine.id)
+                        name.set("custom")
+                    }
                 }
             }
         }
@@ -633,6 +675,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         with(Preferences) {
             searchSuggestionsEnabled.set(settings.shouldShowSearchSuggestions)
             remoteDebuggingEnabled.set(settings.isRemoteDebuggingEnabled)
+            studiesEnabled.set(settings.isExperimentationEnabled)
             telemetryEnabled.set(settings.isTelemetryEnabled)
             browsingHistorySuggestion.set(settings.shouldShowHistorySuggestions)
             bookmarksSuggestion.set(settings.shouldShowBookmarkSuggestions)
@@ -641,6 +684,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             voiceSearchEnabled.set(settings.shouldShowVoiceSearch)
             openLinksInAppEnabled.set(settings.openLinksInExternalApp)
             signedInSync.set(settings.signedInFxaAccount)
+            searchTermGroupsEnabled.set(settings.searchTermTabGroupsAreEnabled)
 
             val syncedItems = SyncEnginesStorage(applicationContext).getStatus().entries.filter {
                 it.value
@@ -686,7 +730,31 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                     else -> ""
                 }
             )
+
+            inactiveTabsEnabled.set(settings.inactiveTabsAreEnabled)
         }
+        reportHomeScreenMetrics(settings)
+    }
+
+    @VisibleForTesting
+    internal fun reportHomeScreenMetrics(settings: Settings) {
+        CustomizeHome.openingScreen.set(
+            when {
+                settings.alwaysOpenTheHomepageWhenOpeningTheApp -> "homepage"
+                settings.alwaysOpenTheLastTabWhenOpeningTheApp -> "last tab"
+                settings.openHomepageAfterFourHoursOfInactivity -> "homepage after four hours"
+                else -> ""
+            }
+        )
+        components.analytics.experiments.register(object : NimbusInterface.Observer {
+            override fun onUpdatesApplied(updated: List<EnrolledExperiment>) {
+                CustomizeHome.jumpBackIn.set(settings.showRecentTabsFeature)
+                CustomizeHome.recentlySaved.set(settings.showRecentBookmarksFeature)
+                CustomizeHome.mostVisitedSites.set(settings.showTopFrecentSites)
+                CustomizeHome.recentlyVisited.set(settings.historyMetadataUIFeature)
+                CustomizeHome.pocket.set(settings.showPocketRecommendationsFeature)
+            }
+        })
     }
 
     protected fun recordOnInit() {
@@ -719,4 +787,13 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
     }
 
     override fun getWorkManagerConfiguration() = Builder().setMinimumLoggingLevel(INFO).build()
+
+    @OptIn(DelicateCoroutinesApi::class)
+    private fun downloadWallpapers() {
+        if (FeatureFlags.showWallpapers) {
+            GlobalScope.launch {
+                components.wallpaperManager.downloadAllRemoteWallpapers()
+            }
+        }
+    }
 }

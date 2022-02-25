@@ -1,6 +1,6 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.settings.quicksettings
 
@@ -13,8 +13,6 @@ import io.mockk.slot
 import io.mockk.spyk
 import io.mockk.verify
 import junit.framework.TestCase.assertNotSame
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.TestCoroutineDispatcher
 import mozilla.components.browser.state.action.TabListAction
 import mozilla.components.browser.state.action.TrackingProtectionAction.TrackerBlockedAction
 import mozilla.components.browser.state.action.TrackingProtectionAction.TrackerLoadedAction
@@ -26,21 +24,18 @@ import mozilla.components.concept.engine.content.blocking.TrackerLog
 import mozilla.components.feature.session.TrackingProtectionUseCases
 import mozilla.components.support.test.ext.joinBlocking
 import mozilla.components.support.test.rule.MainCoroutineRule
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 
-@ExperimentalCoroutinesApi
 @RunWith(FenixRobolectricTestRunner::class)
 class QuickSettingsSheetDialogFragmentTest {
 
-    private val testDispatcher = TestCoroutineDispatcher()
-
     @get:Rule
-    val coroutinesTestRule = MainCoroutineRule(testDispatcher)
+    val coroutinesTestRule = MainCoroutineRule()
+
     private lateinit var lifecycleOwner: MockedLifecycleOwner
     private lateinit var fragment: QuickSettingsSheetDialogFragment
     private lateinit var store: BrowserStore
@@ -54,11 +49,6 @@ class QuickSettingsSheetDialogFragmentTest {
         every { fragment.view } returns mockk(relaxed = true)
         every { fragment.lifecycle } returns lifecycleOwner.lifecycle
         every { fragment.activity } returns mockk(relaxed = true)
-    }
-
-    @After
-    fun cleanUp() {
-        testDispatcher.cleanupTestCoroutines()
     }
 
     @Test

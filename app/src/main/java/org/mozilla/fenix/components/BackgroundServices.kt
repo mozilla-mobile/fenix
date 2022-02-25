@@ -45,14 +45,12 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.perf.lazyMonitored
 import org.mozilla.fenix.sync.SyncedTabsIntegration
-import org.mozilla.fenix.utils.Mockable
 import org.mozilla.fenix.utils.Settings
 
 /**
  * Component group for background services. These are the components that need to be accessed from within a
  * background worker.
  */
-@Mockable
 @Suppress("LongParameterList")
 class BackgroundServices(
     private val context: Context,
@@ -106,13 +104,17 @@ class BackgroundServices(
         SyncConfig(supportedEngines, PeriodicSyncConfig(periodMinutes = 240)) // four hours
 
     private val creditCardKeyProvider by lazyMonitored { creditCardsStorage.value.crypto }
+    private val passwordKeyProvider by lazyMonitored { passwordsStorage.value.crypto }
 
     init {
         // Make the "history", "bookmark", "passwords", "tabs", "credit cards" stores
         // accessible to workers spawned by the sync manager.
         GlobalSyncableStoreProvider.configureStore(SyncEngine.History to historyStorage)
         GlobalSyncableStoreProvider.configureStore(SyncEngine.Bookmarks to bookmarkStorage)
-        GlobalSyncableStoreProvider.configureStore(SyncEngine.Passwords to passwordsStorage)
+        GlobalSyncableStoreProvider.configureStore(
+            storePair = SyncEngine.Passwords to passwordsStorage,
+            keyProvider = lazy { passwordKeyProvider }
+        )
         GlobalSyncableStoreProvider.configureStore(SyncEngine.Tabs to remoteTabsStorage)
         GlobalSyncableStoreProvider.configureStore(
             storePair = SyncEngine.CreditCards to creditCardsStorage,

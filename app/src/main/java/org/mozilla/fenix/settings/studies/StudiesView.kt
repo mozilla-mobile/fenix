@@ -24,6 +24,8 @@ import mozilla.components.service.nimbus.NimbusApi
 import mozilla.components.support.base.log.logger.Logger
 import org.mozilla.experiments.nimbus.internal.EnrolledExperiment
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.databinding.SettingsStudiesBinding
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.settings
@@ -40,7 +42,8 @@ class StudiesView(
     private val interactor: StudiesInteractor,
     private val settings: Settings,
     private val experiments: NimbusApi,
-    private val isAttached: () -> Boolean
+    private val isAttached: () -> Boolean,
+    private val metrics: MetricController
 ) : StudiesAdapterDelegate {
     private val logger = Logger("StudiesView")
 
@@ -53,6 +56,7 @@ class StudiesView(
         provideStudiesSwitch().isChecked = settings.isExperimentationEnabled
         provideStudiesSwitch().setOnClickListener {
             val isChecked = provideStudiesSwitch().isChecked
+            metrics.track(Event.StudiesSettings)
             provideStudiesTitle().text = getSwitchCheckedTitle()
             val builder = AlertDialog.Builder(context)
                 .setPositiveButton(
@@ -109,8 +113,9 @@ class StudiesView(
 
     @VisibleForTesting
     internal fun bindDescription() {
-        val sumoUrl = SupportUtils.getSumoURLForTopic(context, OPT_OUT_STUDIES)
-        val description = context.getString(R.string.studies_description)
+        val sumoUrl = SupportUtils.getGenericSumoURLForTopic(OPT_OUT_STUDIES)
+        val appName = context.getString(R.string.app_name)
+        val description = context.getString(R.string.studies_description_2, appName)
         val learnMore = context.getString(R.string.studies_learn_more)
         val rawText = "$description <a href=\"$sumoUrl\">$learnMore</a>"
         val text = HtmlCompat.fromHtml(rawText, HtmlCompat.FROM_HTML_MODE_COMPACT)

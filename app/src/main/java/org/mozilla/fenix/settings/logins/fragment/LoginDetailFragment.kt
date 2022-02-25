@@ -13,20 +13,17 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.ObsoleteCoroutinesApi
 import mozilla.components.lib.state.ext.consumeFrom
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.SecureFragment
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.metrics.Event
@@ -50,8 +47,7 @@ import org.mozilla.fenix.settings.logins.view.LoginDetailsBindingDelegate
  * Displays saved login information for a single website.
  */
 @Suppress("TooManyFunctions", "ForbiddenComment")
-@ExperimentalCoroutinesApi
-class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
+class LoginDetailFragment : SecureFragment(R.layout.fragment_login_detail) {
 
     private val args by navArgs<LoginDetailFragmentArgs>()
     private var login: SavedLogin? = null
@@ -81,8 +77,6 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
         return view
     }
 
-    @ObsoleteCoroutinesApi
-    @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -112,14 +106,6 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        activity?.window?.setFlags(
-            WindowManager.LayoutParams.FLAG_SECURE,
-            WindowManager.LayoutParams.FLAG_SECURE
-        )
     }
 
     /**

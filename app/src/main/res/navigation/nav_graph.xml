@@ -3,7 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/homeFragment">
+    app:startDestination="@id/startupFragment">
+
+    <action
+        android:id="@+id/action_startup_home"
+        app:destination="@id/homeFragment"
+        app:popUpTo="@id/startupFragment"
+        app:popUpToInclusive="true" />
 
     <action
         android:id="@+id/action_global_home"
@@ -24,6 +30,11 @@
         app:popUpToInclusive="false" />
 
     <action
+        android:id="@+id/action_global_home_onboarding_dialog"
+        app:destination="@id/homeOnboardingDialogFragment"
+        app:popUpTo="@id/homeFragment" />
+
+    <action
         android:id="@+id/action_global_search_dialog"
         app:destination="@id/searchDialogFragment"
         app:popUpTo="@id/searchDialogFragment"
@@ -34,11 +45,16 @@
         app:destination="@id/recentlyClosedFragment" />
 
     <action
+        android:id="@+id/action_global_history_metadata_group"
+        app:destination="@id/historyMetadataGroupFragment" />
+
+    <action
+        android:id="@+id/action_global_wallpaperSettingsFragment"
+        app:destination="@id/wallpaperSettingsFragment" />
+
+    <action
         android:id="@+id/action_global_shareFragment"
         app:destination="@id/shareFragment" />
-    <action
-        android:id="@+id/action_global_crash_reporter"
-        app:destination="@id/crashReporterFragment" />
     <action
         android:id="@+id/action_global_turn_on_sync"
         app:destination="@id/turnOnSyncFragment" />
@@ -57,6 +73,9 @@
     <action
         android:id="@+id/action_global_settingsFragment"
         app:destination="@id/settingsFragment" />
+    <action
+        android:id="@+id/action_global_homeSettingsFragment"
+        app:destination="@id/homeSettingsFragment" />
     <action
         android:id="@+id/action_global_privateBrowsingFragment"
         app:destination="@id/privateBrowsingFragment" />
@@ -138,7 +157,17 @@
             android:name="enterMultiselect"
             android:defaultValue="false"
             app:argType="boolean" />
+        <argument
+            android:name="focusGroupTabId"
+            app:nullable="true"
+            android:defaultValue="@null"
+            app:argType="string" />
     </dialog>
+
+    <fragment
+        android:id="@+id/startupFragment"
+        android:name="org.mozilla.fenix.StartupFragment">
+    </fragment>
 
     <fragment
         android:id="@+id/homeFragment"
@@ -153,6 +182,10 @@
             android:defaultValue="-1L"
             app:argType="long" />
     </fragment>
+    <dialog
+        android:id="@+id/homeOnboardingDialogFragment"
+        android:name="org.mozilla.fenix.onboarding.HomeOnboardingDialogFragment"
+        tools:layout="@layout/fragment_onboarding_home_dialog"/>
 
     <dialog
         android:id="@+id/searchDialogFragment"
@@ -228,7 +261,31 @@
         android:id="@+id/historyFragment"
         android:name="org.mozilla.fenix.library.history.HistoryFragment"
         android:label="@string/library_history"
-        tools:layout="@layout/fragment_history" />
+        tools:layout="@layout/fragment_history">
+
+        <action
+            android:id="@+id/action_global_history_search_dialog"
+            app:destination="@id/historySearchDialogFragment"
+            app:popUpTo="@id/historySearchDialogFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <dialog
+        android:id="@+id/historySearchDialogFragment"
+        android:name="org.mozilla.fenix.library.history.HistorySearchDialogFragment"
+        tools:layout="@layout/fragment_history_search_dialog">
+    </dialog>
+
+    <fragment
+        android:id="@+id/historyMetadataGroupFragment"
+        android:name="org.mozilla.fenix.library.historymetadata.HistoryMetadataGroupFragment">
+        <argument
+            android:name="title"
+            app:argType="string" />
+        <argument
+            android:name="historyMetadataItems"
+            app:argType="org.mozilla.fenix.library.history.History[]" />
+    </fragment>
 
     <fragment
         android:id="@+id/downloadsFragment"
@@ -345,6 +402,11 @@
             android:id="@+id/action_savedLoginsFragment_to_loginDetailFragment"
             app:destination="@id/loginDetailFragment" />
         <action
+            android:id="@+id/action_savedLoginsFragment_to_addLoginFragment"
+            app:destination="@id/addLoginFragment"
+            app:popUpTo="@id/addLoginFragment"
+            app:popUpToInclusive="true" />
+        <action
             android:id="@+id/action_savedLoginsFragment_to_browserFragment"
             app:destination="@id/browserFragment"
             app:popUpTo="@id/settingsFragment"
@@ -385,6 +447,18 @@
             android:id="@+id/action_editLoginFragment_to_loginDetailFragment"
             app:destination="@id/loginDetailFragment"
             app:popUpTo="@id/loginDetailFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/addLoginFragment"
+        android:name="org.mozilla.fenix.settings.logins.fragment.AddLoginFragment"
+        android:label="@string/add_login"
+        tools:layout="@layout/fragment_add_login">
+        <action
+            android:id="@+id/action_addLoginFragment_to_savedLoginsFragment"
+            app:destination="@id/savedLoginsFragment"
+            app:popUpTo="@id/savedLoginsFragment"
             app:popUpToInclusive="true" />
     </fragment>
 
@@ -545,11 +619,34 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_settingsFragment_to_homeSettingsFragment"
+            app:destination="@id/homeSettingsFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/tabsSettingsFragment"
         android:name="org.mozilla.fenix.settings.TabsSettingsFragment"
         android:label="@string/preferences_tabs" />
+    <fragment
+        android:id="@+id/homeSettingsFragment"
+        android:name="org.mozilla.fenix.settings.HomeSettingsFragment"
+        android:label="@string/preferences_home_2">
+        <action
+            android:id="@+id/action_homeSettingsFragment_to_wallpaperSettingsFragment"
+            app:destination="@id/wallpaperSettingsFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/wallpaperSettingsFragment"
+        android:name="org.mozilla.fenix.settings.wallpaper.WallpaperSettingsFragment"
+        android:label="@string/customize_wallpapers"/>
     <fragment
         android:id="@+id/dataChoicesFragment"
         android:name="org.mozilla.fenix.settings.DataChoicesFragment"
@@ -642,14 +739,6 @@
         android:id="@+id/secretInfoSettingsFragment"
         android:name="org.mozilla.fenix.settings.SecretDebugSettingsFragment"
         android:label="@string/preferences_debug_info" />
-    <fragment
-        android:id="@+id/crashReporterFragment"
-        android:name="org.mozilla.fenix.crashes.CrashReporterFragment"
-        tools:layout="@layout/fragment_crash_reporter">
-        <argument
-            android:name="crashIntent"
-            app:argType="android.content.Intent" />
-    </fragment>
     <fragment
         android:id="@+id/aboutLibrariesFragment"
         android:name="org.mozilla.fenix.settings.about.AboutLibrariesFragment"

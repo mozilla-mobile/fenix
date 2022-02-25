@@ -46,12 +46,6 @@ class SitePermissionsManageExceptionsPhoneFeatureFragment : Fragment() {
     internal lateinit var rootView: View
     private val args by navArgs<SitePermissionsManageExceptionsPhoneFeatureFragmentArgs>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        showToolbar(getFeature().getLabel(requireContext()))
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -100,6 +94,7 @@ class SitePermissionsManageExceptionsPhoneFeatureFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        showToolbar(getFeature().getLabel(requireContext()))
         initBlockedByAndroidView(getFeature(), blockedByAndroidView)
     }
 
@@ -207,7 +202,7 @@ class SitePermissionsManageExceptionsPhoneFeatureFragment : Fragment() {
 
     @VisibleForTesting
     internal fun bindBlockedByAndroidContainer() {
-        blockedByAndroidView = rootView.findViewById<View>(R.id.permissions_blocked_container)
+        blockedByAndroidView = rootView.findViewById(R.id.permissions_blocked_container)
         initSettingsButton(blockedByAndroidView)
     }
 

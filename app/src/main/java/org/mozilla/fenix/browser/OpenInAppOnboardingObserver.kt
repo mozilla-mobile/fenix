@@ -10,7 +10,6 @@ import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.mapNotNull
@@ -30,7 +29,6 @@ import org.mozilla.fenix.utils.Settings
 /**
  * Displays an [InfoBanner] when a user visits a website that can be opened in an installed native app.
  */
-@ExperimentalCoroutinesApi
 @Suppress("LongParameterList")
 class OpenInAppOnboardingObserver(
     private val context: Context,
@@ -95,9 +93,10 @@ class OpenInAppOnboardingObserver(
 
     @VisibleForTesting
     internal fun createInfoBanner(): DynamicInfoBanner {
+        val appName = context.getString(R.string.app_name)
         return DynamicInfoBanner(
             context = context,
-            message = context.getString(R.string.open_in_app_cfr_info_message),
+            message = context.getString(R.string.open_in_app_cfr_info_message_2, appName),
             dismissText = context.getString(R.string.open_in_app_cfr_negative_button_text),
             actionText = context.getString(R.string.open_in_app_cfr_positive_button_text),
             container = container,

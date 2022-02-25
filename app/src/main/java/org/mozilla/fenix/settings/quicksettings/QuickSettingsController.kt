@@ -11,6 +11,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import mozilla.components.browser.state.selector.findTabOrCustomTab
 import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.concept.engine.Engine
 import mozilla.components.concept.engine.permission.SitePermissions
 import mozilla.components.feature.session.SessionUseCases.ReloadUrlUseCase
 import mozilla.components.feature.tabs.TabsUseCases.AddNewTabUseCase
@@ -74,6 +75,12 @@ interface QuickSettingsController {
      * "Secured or Insecure Connection" section.
      */
     fun handleConnectionDetailsClicked()
+
+    /**
+     * Clears site data for the current website. Called when a user clicks
+     * on the section to clear site data.
+     */
+    fun handleClearSiteDataClicked(baseDomain: String)
 }
 
 /**
@@ -100,7 +107,7 @@ class DefaultQuickSettingsController(
     private val quickSettingsStore: QuickSettingsFragmentStore,
     private val browserStore: BrowserStore,
     private val ioScope: CoroutineScope,
-    private val navController: () -> NavController,
+    private val navController: NavController,
     @VisibleForTesting
     internal val sessionId: String,
     @VisibleForTesting
@@ -111,6 +118,7 @@ class DefaultQuickSettingsController(
     private val addNewTab: AddNewTabUseCase,
     private val requestRuntimePermissions: OnNeedToRequestPermissions = { },
     private val displayPermissions: () -> Unit,
+    private val engine: Engine = context.components.core.engine,
     private val dismiss: () -> Unit
 ) : QuickSettingsController {
     override fun handlePermissionsShown() {
@@ -193,11 +201,15 @@ class DefaultQuickSettingsController(
             sessionUseCases.reload.invoke(session.id)
         }
 
-        quickSettingsStore.dispatch(TrackingProtectionAction.ToggleTrackingProtectionEnabled(isEnabled))
+        quickSettingsStore.dispatch(
+            TrackingProtectionAction.ToggleTrackingProtectionEnabled(
+                isEnabled
+            )
+        )
     }
 
     override fun handleDetailsClicked() {
-        navController().popBackStack()
+        navController.popBackStack()
 
         val state = quickSettingsStore.state.trackingProtectionState
         val directions = NavGraphDirections
@@ -208,11 +220,11 @@ class DefaultQuickSettingsController(
                 gravity = context.components.settings.toolbarPosition.androidGravity,
                 sitePermissions = sitePermissions
             )
-        navController().navigate(directions)
+        navController.navigate(directions)
     }
 
     override fun handleConnectionDetailsClicked() {
-        navController().popBackStack()
+        navController.popBackStack()
 
         val state = quickSettingsStore.state.webInfoState
         val directions = ConnectionPanelDialogFragmentDirections
@@ -225,7 +237,17 @@ class DefaultQuickSettingsController(
                 gravity = context.components.settings.toolbarPosition.androidGravity,
                 sitePermissions = sitePermissions
             )
-        navController().navigate(directions)
+        navController.navigate(directions)
+    }
+
+    override fun handleClearSiteDataClicked(baseDomain: String) {
+        engine.clearData(
+            host = baseDomain,
+            data = Engine.BrowsingData.select(
+                Engine.BrowsingData.AUTH_SESSIONS,
+                Engine.BrowsingData.ALL_SITE_DATA,
+            ),
+        )
     }
 
     /**
@@ -270,6 +292,6 @@ class DefaultQuickSettingsController(
     private fun navigateToManagePhoneFeature(phoneFeature: PhoneFeature) {
         val directions = QuickSettingsSheetDialogFragmentDirections
             .actionGlobalSitePermissionsManagePhoneFeature(phoneFeature)
-        navController().navigate(directions)
+        navController.navigate(directions)
     }
 }

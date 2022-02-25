@@ -1,6 +1,6 @@
-/*  This Source Code Form is subject to the terms of the Mozilla Public
- *  License, v. 2.0. If a copy of the MPL was not distributed with this
- *  file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.search
 
@@ -15,13 +15,13 @@ import io.mockk.mockkObject
 import io.mockk.spyk
 import io.mockk.unmockkObject
 import io.mockk.verify
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import mozilla.components.browser.state.action.BrowserAction
 import mozilla.components.browser.state.action.TabListAction
 import mozilla.components.browser.state.search.SearchEngine
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.concept.engine.EngineSession
 import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.support.test.libstate.ext.waitUntilIdle
 import mozilla.components.support.test.middleware.CaptureActionsMiddleware
@@ -41,7 +41,6 @@ import org.mozilla.fenix.search.SearchDialogFragmentDirections.Companion.actionG
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.utils.Settings
 
-@ExperimentalCoroutinesApi
 class SearchDialogControllerTest {
 
     @MockK(relaxed = true) private lateinit var activity: HomeActivity
@@ -246,14 +245,17 @@ class SearchDialogControllerTest {
     @Test
     fun handleUrlTapped() {
         val url = "https://www.google.com/"
+        val flags = EngineSession.LoadUrlFlags.all()
 
+        createController().handleUrlTapped(url, flags)
         createController().handleUrlTapped(url)
 
         verify {
             activity.openToBrowserAndLoad(
                 searchTermOrURL = url,
                 newTab = false,
-                from = BrowserDirection.FromSearchDialog
+                from = BrowserDirection.FromSearchDialog,
+                flags = flags
             )
         }
         verify { metrics.track(Event.EnteredUrl(false)) }
