@@ -8,6 +8,10 @@
     <attr name="layer3" format="reference" />
     <!-- Small heading, Text link -->
     <attr name="textAccent" format="reference" />
+    <!-- Active tab -->
+    <attr name="iconActive" format="reference" />
+    <!-- Default, Divider, Dotted -->
+    <attr name="borderPrimary" format="reference" />
 
     <!-- Color palette attributes -->
     <attr name="primaryText" format="reference" />
@@ -17,7 +21,6 @@
     <attr name="accentBright" format="reference" />
     <attr name="accentHighContrast" format="reference" />
     <attr name="accentUsedOnDarkBackground" format="reference" />
-    <attr name="tabRing" format="reference" />
     <attr name="snackbar" format="reference" />
     <attr name="foundation" format="reference" />
     <attr name="above" format="reference" />
@@ -28,9 +31,7 @@
     <attr name="disabled" format="reference" />
     <attr name="scrimStart" format="reference"/>
     <attr name="scrimEnd" format="reference"/>
-    <attr name="toolbarDivider" format="reference"/>
     <attr name="preferenceSectionHeader" format="reference"/>
-    <attr name="recentlyUsedShareMenu" format="reference" />
 
     <!-- Color used in DefaultToolbarMenu for buttons placed at the end of menu items -->
     <attr name="menuItemButtonTintColor" format="reference"/>
@@ -42,7 +43,6 @@
     <attr name="privateBrowsingButtonBackground" format="reference" />
     <attr name="privateBrowsingButtonAccent" format="reference" />
     <attr name="fenixLogo" format="reference" />
-    <attr name="fenixSnackbarBackground" format="reference" />
     <attr name="toolbarStartGradient" format="reference"/>
     <attr name="toolbarCenterGradient" format="reference"/>
     <attr name="toolbarEndGradient" format="reference"/>
@@ -59,7 +59,6 @@
     <attr name="awesomeBarIndicatorBookmarkColor" format="reference|color"/>
 
     <!-- Tab tray -->
-    <attr name="tabTrayItemMediaBackground" format="reference" />
     <attr name="tabTrayThumbnailItemBackground" format="reference" />
     <attr name="tabTrayThumbnailIcon" format="reference" />
 
