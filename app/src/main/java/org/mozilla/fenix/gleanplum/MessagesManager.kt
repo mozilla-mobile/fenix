@@ -52,7 +52,10 @@ class MessagesManager(
 
         storage.updateMetadata(newMetadata)
         availableMessages.remove(message)
-        availableMessages.add(newMessage)
+
+        if (newMetadata.displayCount < message.data.maxDisplayCount) {
+            availableMessages.add(newMessage)
+        }
     }
 
     override fun initialize() {
