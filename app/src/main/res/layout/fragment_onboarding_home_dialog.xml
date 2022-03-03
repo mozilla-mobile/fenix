@@ -10,7 +10,7 @@
     android:overScrollMode="never"
     android:fitsSystemWindows="true"
     android:fillViewport="true"
-    android:background="@drawable/scrim_background"
+    android:background="?scrim"
     android:scrollbars="none">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -209,7 +209,6 @@
             android:layout_marginHorizontal="64dp"
             android:layout_marginTop="42dp"
             android:background="@drawable/onboarding_padded_background"
-            android:backgroundTint="?accent"
             android:text="@string/onboarding_finish"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
