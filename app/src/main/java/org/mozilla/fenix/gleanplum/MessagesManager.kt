@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.gleanplum
 
 import android.content.Context
@@ -16,6 +20,10 @@ class MessagesManager(
     private val availableMessages: SortedSet<Message> = sortedSetOf(
         Comparator { message1, message2 -> message2.style.priority.compareTo(message1.style.priority) }
     )
+
+    fun areMessagesAvailable(): Boolean {
+        return availableMessages.isNotEmpty()
+    }
 
     override fun getNextMessage(): Message? {
         return availableMessages.first()

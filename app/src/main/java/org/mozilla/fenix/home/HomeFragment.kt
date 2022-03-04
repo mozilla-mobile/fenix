@@ -258,7 +258,7 @@ class HomeFragment : Fragment() {
                     },
                     recentBookmarks = emptyList(),
                     showCollectionPlaceholder = components.settings.showCollectionsPlaceholderOnHome,
-                    showSetAsDefaultBrowserCard = components.settings.shouldShowSetAsDefaultBrowserCard(),
+                    showSetAsDefaultBrowserCard = components.messagesManager.areMessagesAvailable(),
                     // Provide an initial state for recent tabs to prevent re-rendering on the home screen.
                     //  This will otherwise cause a visual jump as the section gets rendered from no state
                     //  to some state.

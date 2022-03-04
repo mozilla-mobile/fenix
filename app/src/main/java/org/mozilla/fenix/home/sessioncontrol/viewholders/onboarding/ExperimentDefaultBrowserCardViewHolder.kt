@@ -8,7 +8,10 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.ExperimentDefaultBrowserBinding
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.increaseTapArea
+import org.mozilla.fenix.gleanplum.Message
+import org.mozilla.fenix.gleanplum.MessagesManager
 import org.mozilla.fenix.home.sessioncontrol.SessionControlInteractor
 
 class ExperimentDefaultBrowserCardViewHolder(
@@ -16,15 +19,39 @@ class ExperimentDefaultBrowserCardViewHolder(
     private val interactor: SessionControlInteractor
 ) : RecyclerView.ViewHolder(view) {
 
+    // TODO: Address !!
+    private val messagesManager: MessagesManager = view.context.components.messagesManager
+    private val message: Message = messagesManager.getNextMessage()!!
+
     init {
+
         val binding = ExperimentDefaultBrowserBinding.bind(view)
         binding.setDefaultBrowser.setOnClickListener {
+            // TODO: use interactor
+            messagesManager.onMessagePressed(message)
+
             interactor.onSetDefaultBrowserClicked()
+        }
+
+
+        binding.descriptionText.text = message.data.text
+
+
+        binding.close.apply {
+            increaseTapArea(CLOSE_BUTTON_EXTRA_DPS)
+            setOnClickListener {
+                // TODO: use interactor
+                messagesManager.onMessageDismissed(message)
+
+                interactor.onCloseExperimentCardClicked()
+            }
         }
 
         binding.close.apply {
             increaseTapArea(CLOSE_BUTTON_EXTRA_DPS)
             setOnClickListener {
+                // TODO: use interactor
+                messagesManager.onMessagePressed(message)
                 interactor.onCloseExperimentCardClicked()
             }
         }

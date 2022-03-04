@@ -186,6 +186,7 @@ features:
               "action": "OPEN_GDPR_SETTINGS",
               "text": "GDPR has you covered. Firefox has GDPR covered",
               "style": "irish-green",
+              "button-label": "Click me",
               "trigger": [
                   "new-user",
                   "ireland"
@@ -220,12 +221,12 @@ types:
           description: "The message text displayed to the user"
           # This should never be defaulted.
           default: empty_string
-          button-label:
-            type: Text?
-            description: >
-              The text on the button. If no text
-              is present, the whole message is clickable.
-            default: null
+        button-label:
+          type: Text
+          description: >
+            The text on the button. If no text
+            is present, the whole message is clickable.
+          default: empty_string
         style:
           type: String
           description: >
