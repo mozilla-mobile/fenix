@@ -1,15 +1,4 @@
 {
-  "homescreen": {
-    "description": "The homescreen that the user goes to when they press home or new tab.",
-    "hasExposure": true,
-    "exposureDescription": "",
-    "variables": {
-      "sections-enabled": {
-        "description": "This property provides a lookup table of whether or not the given section should be enabled. If the section is enabled, it should be toggleable in the settings screen, and on by default.",
-        "type": "json"
-      }
-    }
-  },
   "default-browser-message": {
     "description": "A small feature allowing experiments on the placement of a default browser message.",
     "hasExposure": true,
@@ -48,6 +37,17 @@
       "settings-title": {
         "description": "The title of displayed in the Settings screen and app menu.",
         "type": "string"
+      }
+    }
+  },
+  "homescreen": {
+    "description": "The homescreen that the user goes to when they press home or new tab.",
+    "hasExposure": true,
+    "exposureDescription": "",
+    "variables": {
+      "sections-enabled": {
+        "description": "This property provides a lookup table of whether or not the given section should be enabled. If the section is enabled, it should be toggleable in the settings screen, and on by default.",
+        "type": "json"
       }
     }
   }
