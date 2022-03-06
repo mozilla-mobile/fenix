@@ -53,6 +53,9 @@
     <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
     <string moz:removedIn="97" name="recently_saved_show_all_content_description" tools:ignore="UnusedResources">Κουμπί εμφάνισης όλων των αποθηκευμένων σελιδοδεικτών</string>
 
+    <!-- Text for the menu button to remove a recently saved bookmark from the user's home screen -->
+    <string name="recently_saved_menu_item_remove">Αφαίρεση</string>
+
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
     <string name="about_content">Το %1$s αναπτύσσεται από τη Mozilla.</string>
 
@@ -75,7 +78,9 @@
 
     <!-- Open in App "contextual feature recommendation" (CFR) -->
     <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
-    <string name="open_in_app_cfr_info_message">Μπορείτε να ρυθμίσετε το Firefox να ανοίγει αυτόματα συνδέσμους σε εφαρμογές.</string>
+    <string moz:RemovedIn="99" name="open_in_app_cfr_info_message" tools:ignore="UnusedResources">Μπορείτε να ρυθμίσετε το Firefox να ανοίγει αυτόματα συνδέσμους σε εφαρμογές.</string>
+    <!-- Text for the info message. The first parameter is the name of the application.-->
+    <string name="open_in_app_cfr_info_message_2">Μπορείτε να ρυθμίσετε το %1$s να ανοίγει αυτόματα συνδέσμους σε εφαρμογές.</string>
     <!-- Text for the positive action button -->
     <string name="open_in_app_cfr_positive_button_text">Μετάβαση στις ρυθμίσεις</string>
     <!-- Text for the negative action button -->
@@ -103,7 +108,10 @@
     <!-- Text for title for the auto-close dialog of the inactive tabs. -->
     <string name="tab_tray_inactive_auto_close_title">Αυτόματο κλείσιμο μετά από έναν μήνα;</string>
     <!-- Text for the body for the auto-close dialog of the inactive tabs. -->
-    <string name="tab_tray_inactive_auto_close_body">Το Firefox μπορεί να κλείσει τις καρτέλες που δεν έχετε προβάλει τον περασμένο μήνα.</string>
+    <string moz:RemovedIn="99" name="tab_tray_inactive_auto_close_body" tools:ignore="UnusedResources">Το Firefox μπορεί να κλείσει τις καρτέλες που δεν έχετε προβάλει τον περασμένο μήνα.</string>
+    <!-- Text for the body for the auto-close dialog of the inactive tabs.
+        The first parameter is the name of the application.-->
+    <string name="tab_tray_inactive_auto_close_body_2">Το %1$s μπορεί να κλείσει τις καρτέλες που δεν έχετε προβάλει τον περασμένο μήνα.</string>
     <!-- Content description for close button in the auto-close dialog of the inactive tabs. -->
     <string name="tab_tray_inactive_auto_close_button_content_description">Κλείσιμο</string>
 
@@ -134,6 +142,10 @@
     <!-- Text for the number of tabs in a group in the 'Jump back in' section of the new tab
         %d is a placeholder for the number of sites in the group. This number will always be more than one. -->
     <string name="recent_tabs_search_term_count_2">%d ιστότοποι</string>
+
+    <!-- Text for the menu button to remove a grouped highlight from the user's browsing history
+         in the Recently visited section -->
+    <string name="recent_tab_menu_item_remove">Αφαίρεση</string>
 
     <!-- History Metadata -->
     <!-- Header text for a section on the home screen that displays grouped highlights from the
@@ -253,11 +265,15 @@
 
     <!-- Home onboarding -->
     <!-- Onboarding home screen dialog title text. Firefox is intentionally hardcoded. -->
-    <string name="onboarding_home_screen_title_2">Τι νέο υπάρχει στο Firefox</string>
+    <string moz:removedIn="99" name="onboarding_home_screen_title_2" tools:ignore="UnusedResources">Τι νέο υπάρχει στο Firefox</string>
+    <!-- Onboarding home screen dialog title text. The first parameter is the name of the application.-->
+    <string name="onboarding_home_screen_title_3">Τι νέο υπάρχει στο %1$s</string>
     <!-- Onboarding home screen dialog description text. -->
     <string name="onboarding_home_screen_description_2">Τώρα είναι ευκολότερο να επιστρέψετε εκεί όπου σταματήσατε.</string>
     <!-- Onboarding home screen dialog title text for the home section. Firefox is intentionally hardcoded. -->
-    <string name="onboarding_home_screen_section_home_title_2">Εξατομικευμένη αρχική σελίδα Firefox</string>
+    <string moz:RemovedIn="99" name="onboarding_home_screen_section_home_title_2" tools:ignore="UnusedResources">Εξατομικευμένη αρχική σελίδα Firefox</string>
+    <!-- Onboarding home screen dialog title text for the home section. The first parameter is the name of the application.-->
+    <string name="onboarding_home_screen_section_home_title_3">Εξατομικευμένη αρχική σελίδα %1$s</string>
     <!-- Onboarding home screen dialog description text for the home section. -->
     <string name="onboarding_home_screen_section_home_description_2">Μεταβείτε στις ανοικτές καρτέλες, τους σελιδοδείκτες και το ιστορικό περιήγησής σας.</string>
     <!-- Onboarding home screen dialog description text for the tab tray section. -->
@@ -274,7 +290,9 @@
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
-    <string name="search_widget_content_description">Άνοιγμα νέας καρτέλας Firefox</string>
+    <string moz:RemovedIn="99" name="search_widget_content_description" tools:ignore="UnusedResources">Άνοιγμα νέας καρτέλας Firefox</string>
+    <!-- Content description for searching with a widget. The first parameter is the name of the application.-->
+    <string name="search_widget_content_description_2">Άνοιγμα νέας καρτέλας %1$s</string>
     <!-- Text preview for smaller sized widgets -->
     <string name="search_widget_text_short">Αναζήτηση</string>
 
@@ -654,7 +672,9 @@
     <!-- Title of the active section on the studies list -->
     <string name="studies_active">Ενεργές</string>
     <!-- Description for studies, it indicates why Firefox use studies -->
-    <string name="studies_description">Το Firefox ενδέχεται να εγκαθιστά και να εκτελεί περιστασιακά μελέτες.</string>
+    <string moz:RemovedIn="99" name="studies_description" tools:ignore="UnusedResources">Το Firefox ενδέχεται να εγκαθιστά και να εκτελεί περιστασιακά μελέτες.</string>
+    <!-- Description for studies, it indicates why Firefox use studies. The first parameter is the name of the application. -->
+    <string name="studies_description_2">Το %1$s ενδέχεται να εγκαθιστά και να εκτελεί περιστασιακά μελέτες.</string>
     <!-- Learn more link for studies, links to an article for more information about studies. -->
     <string name="studies_learn_more">Μάθετε περισσότερα</string>
 
@@ -1163,9 +1183,12 @@
     The first parameter is the name of the app (e.g. Firefox Preview) -->
     <string name="onboarding_header">Καλώς ορίσατε στο %s!</string>
     <!-- text for the Firefox account onboarding sign in card header. The word "Firefox" should not be translated -->
-    <string name="onboarding_account_sign_in_header_1">Συγχρονισμός Firefox μεταξύ συσκευών</string>
+    <string moz:RemovedIn="99" name="onboarding_account_sign_in_header_1" tools:ignore="UnusedResources">Συγχρονισμός Firefox μεταξύ συσκευών</string>
+    <!-- text for the Firefox account onboarding sign in card header. The first parameter is the name of the application.-->
+    <string name="onboarding_account_sign_in_header_2">Συγχρονισμός %1$s ανάμεσα σε συσκευές</string>
     <!-- Text for the button to learn more about signing in to your Firefox account -->
-    <string name="onboarding_manual_sign_in_description">Μεταφέρετε σελιδοδείκτες, ιστορικό και κωδικούς πρόσβασης στο Firefox αυτής της συσκευής.</string>
+    <!-- Text for the button to learn more about signing in to your Firefox account. The first parameter is the name of the application.-->
+    <string name="onboarding_manual_sign_in_description_2">Φέρτε σελιδοδείκτες, ιστορικό και κωδικούς πρόσβασης στο %1$s σε αυτήν τη συσκευή.</string>
     <!-- text for the button to manually sign into Firefox account. -->
     <string name="onboarding_firefox_account_sign_in_1">Εγγραφή</string>
     <!-- text to display in the snackbar once account is signed-in -->
@@ -1174,7 +1197,9 @@
     <!-- text for the tracking protection onboarding card header -->
     <string name="onboarding_tracking_protection_header_3">Μόνιμη προστασία απορρήτου</string>
     <!-- text for the tracking protection card description. 'Firefox' intentionally hardcoded here -->
-    <string name="onboarding_tracking_protection_description_3">Το Firefox εμποδίζει την καταγραφή της διαδικτυακής δραστηριότητάς σας από εταιρείες.</string>
+    <string moz:RemovedIn="99" name="onboarding_tracking_protection_description_3" tools:ignore="UnusedResources">Το Firefox εμποδίζει την καταγραφή της διαδικτυακής δραστηριότητάς σας από εταιρείες.</string>
+    <!-- text for the tracking protection card description. The first parameter is the name of the application.-->
+    <string name="onboarding_tracking_protection_description_4">Το %1$s εμποδίζει την καταγραφή της διαδικτυακής δραστηριότητάς σας από εταιρείες.</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
     <string name="onboarding_tracking_protection_standard_button_2">Τυπική (προεπιλογή)</string>
     <!-- text for standard blocking option button description -->
@@ -1517,11 +1542,15 @@
     <string name="credit_cards_menu_delete_card">Διαγραφή κάρτας</string>
     <!-- The text for the "Delete card" button for deleting a credit card -->
     <string name="credit_cards_delete_card_button">Διαγραφή κάρτας</string>
+    <!-- The text for the confirmation message of "Delete card" dialog -->
+    <string name="credit_cards_delete_dialog_confirmation">Θέλετε σίγουρα να διαγράψετε αυτήν την πιστωτική κάρτα;</string>
+    <!-- The text for the positive button on "Delete card" dialog -->
+    <string name="credit_cards_delete_dialog_button">Διαγραφή</string>
     <!-- The title for the "Save" menu item for saving a credit card -->
     <string name="credit_cards_menu_save">Αποθήκευση</string>
     <!-- The text for the "Save" button for saving a credit card -->
     <string name="credit_cards_save_button">Αποθήκευση</string>
-    <!-- The text for the "Cancel" button for cancelling adding or updating a credit card -->
+    <!-- The text for the "Cancel" button for cancelling adding, updating or deleting a credit card -->
     <string name="credit_cards_cancel_button">Ακύρωση</string>
 
     <!-- Title of the "Saved cards" screen -->
@@ -1690,7 +1719,9 @@
     <string name="synced_tabs_enable_tab_syncing">Παρακαλούμε ενεργοποιήστε το συγχρονισμό καρτελών.</string>
 
     <!-- Text displayed when user has no tabs that have been synced -->
-    <string name="synced_tabs_no_tabs">Δεν έχετε καμία άλλη καρτέλα ανοικτή στο Firefox σε άλλες σας συσκευές.</string>
+    <string moz:removedIn="99" name="synced_tabs_no_tabs" tools:ignore="UnusedResources">Δεν έχετε καμία άλλη καρτέλα ανοικτή στο Firefox σε άλλες σας συσκευές.</string>
+    <!-- Text displayed when user has no tabs that have been synced. The first parameter is the name of the application.-->
+    <string name="synced_tabs_no_tabs_2">Δεν έχετε καμία ανοικτή καρτέλα στο %1$s στις άλλες σας συσκευές.</string>
     <!-- Text displayed in the synced tabs screen when a user is not signed in to Firefox Sync describing Synced Tabs -->
     <string name="synced_tabs_sign_in_message">Δείτε μια λίστα καρτελών από τις άλλες συσκευές σας.</string>
     <!-- Text displayed on a button in the synced tabs screen to link users to sign in when a user is not signed in to Firefox Sync -->
@@ -1698,6 +1729,11 @@
 
     <!-- The text displayed when a synced device has no tabs to show in the list of Synced Tabs. -->
     <string name="synced_tabs_no_open_tabs">Καμία ανοικτή καρτέλα</string>
+
+    <!-- Content description for expanding a group of synced tabs. -->
+    <string name="synced_tabs_expand_group">Ανάπτυξη ομάδας συγχρονισμένων καρτελών</string>
+    <!-- Content description for collapsing a group of synced tabs. -->
+    <string name="synced_tabs_collapse_group">Σύμπτυξη ομάδας συγχρονισμένων καρτελών</string>
 
     <!-- Top Sites -->
     <!-- Title text displayed in the dialog when top sites limit is reached. -->
@@ -1747,22 +1783,22 @@
 
     <!-- Inactive tabs survey -->
     <!-- Header text for the inactive tabs survey asking for feedback to improve the inactive tabs feature. -->
-    <string name="inactive_tabs_survey_header_1">Βοηθήστε μας να βελτιώσουμε το Firefox</string>
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_header_1" tools:ignore="UnusedResources">Βοηθήστε μας να βελτιώσουμε το Firefox</string>
 
     <!-- Content text for the inactive tabs survey asking the primary survey feedback question. -->
-    <string name="inactive_tabs_survey_content">Γιατί απενεργοποιήσατε τις ανενεργές καρτέλες;</string>
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_content" tools:ignore="UnusedResources">Γιατί απενεργοποιήσατε τις ανενεργές καρτέλες;</string>
     <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string name="inactive_tabs_survey_do_not_understand">Δεν καταλαβαίνω πώς λειτουργεί</string>
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_do_not_understand" tools:ignore="UnusedResources">Δεν καταλαβαίνω πώς λειτουργεί</string>
     <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string name="inactive_tabs_survey_do_it_myself">Θέλω να κλείνω εγώ τις παλιές καρτέλες</string>
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_do_it_myself" tools:ignore="UnusedResources">Θέλω να κλείνω εγώ τις παλιές καρτέλες</string>
     <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string name="inactive_tabs_survey_time_too_long_option_1">Η χρονική περίοδος των δύο εβδομάδων είναι πολύ μεγάλη</string>
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_time_too_long_option_1" tools:ignore="UnusedResources">Η χρονική περίοδος των δύο εβδομάδων είναι πολύ μεγάλη</string>
     <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string name="inactive_tabs_survey_time_too_short_option_1">Η χρονική περίοδος των δύο εβδομάδων είναι πολύ μικρή</string>
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_time_too_short_option_1" tools:ignore="UnusedResources">Η χρονική περίοδος των δύο εβδομάδων είναι πολύ μικρή</string>
     <!-- Confirmation button text to submit the feedback for the inactive tabs survey. -->
-    <string name="inactive_tabs_survey_send_button">Αποστολή</string>
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_send_button" tools:ignore="UnusedResources">Αποστολή</string>
     <!-- Content description for inactive tabs survey close button -->
-    <string name="inactive_tabs_survey_close_button_content_description">Κλείσιμο</string>
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_close_button_content_description" tools:ignore="UnusedResources">Κλείσιμο</string>
 
     <!-- Default browser experiment -->
     <string name="default_browser_experiment_card_text">Αυτόματο άνοιγμα συνδέσμων από ιστοτόπους, email και μηνύματα στο Firefox.</string>

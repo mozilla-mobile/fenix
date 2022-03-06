@@ -537,9 +537,7 @@ class HomeFragment : Fragment() {
         }
 
         binding.tabButton.setOnClickListener {
-            if (FeatureFlags.showStartOnHomeSettings) {
-                requireComponents.analytics.metrics.track(Event.StartOnHomeOpenTabsTray)
-            }
+            requireComponents.analytics.metrics.track(Event.StartOnHomeOpenTabsTray)
             openTabsTray()
         }
 
@@ -864,7 +862,7 @@ class HomeFragment : Fragment() {
                 ColorDrawable(
                     ContextCompat.getColor(
                         requireContext(),
-                        R.color.foundation_private_theme
+                        R.color.fx_mobile_private_layer_color_1
                     )
                 )
             )

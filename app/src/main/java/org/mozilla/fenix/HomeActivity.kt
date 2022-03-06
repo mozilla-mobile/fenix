@@ -241,9 +241,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         if (!shouldStartOnHome() && shouldNavigateToBrowserOnColdStart(savedInstanceState)) {
             navigateToBrowserOnColdStart()
         } else {
-            if (FeatureFlags.showStartOnHomeSettings) {
-                components.analytics.metrics.track(Event.StartOnHomeEnterHomeScreen)
-            }
+            components.analytics.metrics.track(Event.StartOnHomeEnterHomeScreen)
         }
 
         Performance.processIntentIfPerformanceTest(intent, this)
@@ -340,7 +338,9 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
         lifecycleScope.launch(IO) {
             try {
-                components.core.contileTopSitesProvider.refreshTopSitesIfCacheExpired()
+                if (settings().showContileFeature) {
+                    components.core.contileTopSitesProvider.refreshTopSitesIfCacheExpired()
+                }
             } catch (e: Exception) {
                 Logger.error("Failed to refresh contile top sites", e)
             }
@@ -1009,9 +1009,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
      *  links from an external apps should always opened in the [BrowserFragment].
      */
     fun shouldStartOnHome(intent: Intent? = this.intent): Boolean {
-        if (!FeatureFlags.showStartOnHomeSettings) {
-            return false
-        }
         return components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
             // We only want to open on home when users tap the app,
             // we want to ignore other cases when the app gets open by users clicking on links.

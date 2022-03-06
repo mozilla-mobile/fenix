@@ -4,12 +4,31 @@
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 <resources>
     <!-- Design system color attributes -->
+
+    <!-- Layers -->
     <!-- Search -->
     <attr name="layer3" format="reference" />
+    <!-- Selected tab -->
+    <attr name="layerNonOpaque" format="reference" />
+    <attr name="scrim" format="reference" />
+
+    <!-- Action -->
+    <!-- Primary button, Snackbar, Floating action button, Chip selected -->
+    <attr name="actionPrimary" format="reference" />
+
+    <!-- Text -->
     <!-- Small heading, Text link -->
     <attr name="textAccent" format="reference" />
+    <!-- Action Primary text -->
+    <attr name="textActionPrimary" format="reference" />
+
+    <!-- Icon -->
     <!-- Active tab -->
     <attr name="iconActive" format="reference" />
+    <!-- Icon inverted (on color) -->
+    <attr name="iconOnColor" format="reference" />
+
+    <!-- Border -->
     <!-- Default, Divider, Dotted -->
     <attr name="borderPrimary" format="reference" />
 
@@ -24,13 +43,10 @@
     <attr name="snackbar" format="reference" />
     <attr name="foundation" format="reference" />
     <attr name="above" format="reference" />
-    <attr name="inset" format="reference" />
     <attr name="neutral" format="reference" />
     <attr name="neutralFaded" format="reference" />
     <attr name="destructive" format="reference"/>
     <attr name="disabled" format="reference" />
-    <attr name="scrimStart" format="reference"/>
-    <attr name="scrimEnd" format="reference"/>
     <attr name="preferenceSectionHeader" format="reference"/>
 
     <!-- Color used in DefaultToolbarMenu for buttons placed at the end of menu items -->
@@ -61,9 +77,6 @@
     <!-- Tab tray -->
     <attr name="tabTrayThumbnailItemBackground" format="reference" />
     <attr name="tabTrayThumbnailIcon" format="reference" />
-
-    <!-- Tab History -->
-    <attr name="tabHistoryItemSelectedBackground" format="reference" />
 
     <declare-styleable name="TrackingProtectionCategory">
         <attr name="categoryItemTitle" format="reference" />

@@ -176,6 +176,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = ""
     )
 
+    var contileContextId by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_contile_context_id),
+        default = ""
+    )
+
     var currentWallpaper by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_current_wallpaper),
         default = WallpaperManager.defaultWallpaper.name
@@ -912,14 +917,6 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = true
     )
 
-    /**
-     * Should we display a feedback request to the user when he turns off the Inactive Tabs feature
-     */
-    var shouldShowInactiveTabsTurnOffSurvey by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_should_show_inactive_tabs_turn_off_survey),
-        default = false
-    )
-
     fun getSitePermissionsPhoneFeatureAction(
         feature: PhoneFeature,
         default: Action = Action.ASK_TO_ALLOW
@@ -1295,9 +1292,9 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     /**
      * Indicates if the Contile functionality should be visible.
      */
-    var showContileFeature by featureFlagPreference(
+    var showContileFeature by lazyFeatureFlagPreference(
         key = appContext.getPreferenceKey(R.string.pref_key_enable_contile),
-        default = false,
+        default = { homescreenSections[HomeScreenSection.CONTILE_TOP_SITES] == true },
         featureFlag = FeatureFlags.contileFeature,
     )
 

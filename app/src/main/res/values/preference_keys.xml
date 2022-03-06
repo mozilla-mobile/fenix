@@ -188,6 +188,8 @@
     <string name="pref_key_adjust_adgroup" translatable="false">pref_key_adjust_adgroup</string>
     <string name="pref_key_adjust_creative" translatable="false">pref_key_adjust_creative</string>
 
+    <string name="pref_key_contile_context_id" translatable="false">pref_key_contile_context_id</string>
+
     <!-- Wallpaper Settings -->
     <string name="pref_key_wallpapers" translatable="false">pref_key_wallpapers</string>
     <string name="pref_key_current_wallpaper" translatable="false">pref_key_current_wallpaper</string>
@@ -223,10 +225,6 @@
     <string name="pref_key_has_inactive_tabs_auto_close_dialog_dismissed" translatable="false">pref_key_has_inactive_tabs_auto_close_dialog_dismissed</string>
     <!-- A value  of `true` means the jump back in onboarding popup has not been shown yet -->
     <string name="pref_key_should_show_jump_back_in_tabs_popup" translatable="false">pref_key_should_show_jump_back_in_tabs_popup</string>
-
-    <!-- A value  of `true` means the inactive tabs turn off - survey hasn't been shown yet-->
-    <string name="pref_key_should_show_inactive_tabs_turn_off_survey" translatable="false">pref_key_should_show_inactive_tabs_turn_off_survey</string>
-
 
     <string name="pref_key_migrating_from_fenix_nightly_tip" translatable="false">pref_key_migrating_from_fenix_nightly_tip</string>
     <string name="pref_key_migrating_from_firefox_nightly_tip" translatable="false">pref_key_migrating_from_firefox_nightly_tip</string>
@@ -268,7 +266,6 @@
     <string name="pref_key_start_on_home_after_four_hours" translatable="false">pref_key_start_on_home_after_four_hours</string>
     <string name="pref_key_start_on_home_always" translatable="false">pref_key_start_on_home_always</string>
     <string name="pref_key_start_on_home_never" translatable="false">pref_key_start_on_home_never</string>
-    <string name="pref_key_start_on_home_category" translatable="false">pref_key_start_on_home_category</string>
     <string name="pref_key_camera_permissions_needed" translatable="false">pref_key_camera_permissions_needed</string>
     <string name="pref_key_inactive_tabs_category" translatable="false">pref_key_inactive_tabs_category</string>
     <string name="pref_key_inactive_tabs" translatable="false">pref_key_inactive_tabs</string>

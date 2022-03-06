@@ -8,7 +8,7 @@
     android:id="@+id/createShortcutWrapper"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/scrim_background"
+    android:background="?scrim"
     android:fitsSystemWindows="true"
     tools:context="org.mozilla.fenix.shortcut.PwaOnboardingDialogFragment">
 
@@ -66,11 +66,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:backgroundTint="?accent"
             android:letterSpacing="0"
             android:text="@string/add_to_homescreen_title"
             android:textAllCaps="false"
-            android:textColor="?contrastText"
+            android:textColor="?textActionPrimary"
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@id/cancel_button"

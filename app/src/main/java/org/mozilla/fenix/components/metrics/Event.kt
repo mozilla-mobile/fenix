@@ -19,7 +19,6 @@ import org.mozilla.fenix.GleanMetrics.History
 import org.mozilla.fenix.GleanMetrics.Logins
 import org.mozilla.fenix.GleanMetrics.Onboarding
 import org.mozilla.fenix.GleanMetrics.Pocket
-import org.mozilla.fenix.GleanMetrics.Preferences
 import org.mozilla.fenix.GleanMetrics.SearchShortcuts
 import org.mozilla.fenix.GleanMetrics.SearchTerms
 import org.mozilla.fenix.GleanMetrics.TabsTray
@@ -84,6 +83,8 @@ sealed class Event {
     data class HistoryRecentSearchesTapped(val source: String) : Event() {
         override val extras = mapOf(History.recentSearchesTappedKeys.pageNumber to source)
     }
+    object HistoryHighlightOpened : Event()
+    object HistorySearchGroupOpened : Event()
     object HistorySearchTermGroupTapped : Event()
     object HistorySearchTermGroupOpenTab : Event()
     object HistorySearchTermGroupRemoveTab : Event()
@@ -235,11 +236,6 @@ sealed class Event {
     object TabsTrayInactiveTabsCFRDismissed : Event()
     object TabsTrayInactiveTabsCFRIsVisible : Event()
 
-    object InactiveTabsSurveyOpened : Event()
-    data class InactiveTabsOffSurvey(val feedback: String) : Event() {
-        override val extras: Map<Preferences.turnOffInactiveTabsSurveyKeys, String>
-            get() = mapOf(Preferences.turnOffInactiveTabsSurveyKeys.feedback to feedback.lowercase(Locale.ROOT))
-    }
     data class InactiveTabsCountUpdate(val count: Int) : Event()
 
     object ProgressiveWebAppOpenFromHomescreenTap : Event()
@@ -333,6 +329,14 @@ sealed class Event {
     data class TopSiteLongPress(val topSite: TopSite) : Event() {
         override val extras: Map<TopSites.longPressKeys, String>?
             get() = hashMapOf(TopSites.longPressKeys.type to topSite.name())
+    }
+
+    data class TopSiteContileImpression(val position: Int, val source: Source) : Event() {
+        enum class Source { NEWTAB }
+    }
+
+    data class TopSiteContileClick(val position: Int, val source: Source) : Event() {
+        enum class Source { NEWTAB }
     }
 
     data class OnboardingToolbarPosition(val position: Position) : Event() {

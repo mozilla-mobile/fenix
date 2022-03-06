@@ -5,10 +5,8 @@
 package org.mozilla.fenix
 
 import android.content.Context
-import android.os.StrictMode
 import mozilla.components.support.locale.LocaleManager
 import mozilla.components.support.locale.LocaleManager.getSystemDefault
-import org.mozilla.fenix.ext.components
 
 /**
  * A single source for setting feature flags that are mostly based on build type.
@@ -24,11 +22,6 @@ object FeatureFlags {
      * Enables the Addresses autofill feature.
      */
     val addressesFeature = Config.channel.isNightlyOrDebug
-
-    /**
-     * Enables the Start On Home feature in the settings page.
-     */
-    const val showStartOnHomeSettings = true
 
     /**
      * Enables the "recent" tabs feature in the home screen.
@@ -49,11 +42,6 @@ object FeatureFlags {
      * Identifies and separates the tabs list with a secondary section containing least used tabs.
      */
     const val inactiveTabs = true
-
-    /**
-     * Enables showing the home screen behind the search dialog
-     */
-    const val showHomeBehindSearch = true
 
     /**
      * Identifies and separates the tabs list with a group containing search term tabs.
@@ -87,7 +75,7 @@ object FeatureFlags {
     /**
      * Enables showing the wallpaper functionality.
      */
-    val showWallpapers = Config.channel.isNightlyOrDebug
+    const val showWallpapers = true
 
     /**
      * Enables the Contile top sites.
@@ -103,12 +91,9 @@ object FeatureFlags {
      * Enables themed wallpapers feature.
      */
     fun isThemedWallpapersFeatureEnabled(context: Context): Boolean {
-        val strictMode = context.components.strictMode
-        return strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
-            val langTag = LocaleManager.getCurrentLocale(context)
-                ?.toLanguageTag() ?: getSystemDefault().toLanguageTag()
-            listOf("en-US", "es-US").contains(langTag) && Config.channel.isNightlyOrDebug
-        }
+        val langTag = LocaleManager.getCurrentLocale(context)
+            ?.toLanguageTag() ?: getSystemDefault().toLanguageTag()
+        return listOf("en-US", "es-US").contains(langTag)
     }
 
     /**

@@ -32,12 +32,31 @@
         <item name="mozacSelectCreditCardHeaderTextStyle" tools:ignore="UnusedResources">@style/SelectPromptHeaderTextStyle</item>
 
         <!-- Design system color attributes -->
+
+        <!-- Layers -->
         <!-- Search -->
         <item name="layer3">@color/fx_mobile_layer_color_3</item>
+        <!-- Selected tab -->
+        <item name="layerNonOpaque">@color/fx_mobile_layer_color_accent_nonopaque</item>
+        <item name="scrim">@color/fx_mobile_layer_color_scrim</item>
+
+        <!-- Action -->
+        <!-- Primary button, Snackbar, Floating action button, Chip selected -->
+        <item name="actionPrimary">@color/fx_mobile_action_color_primary</item>
+
+        <!-- Text -->
         <!-- Small heading, Text link -->
         <item name="textAccent">@color/fx_mobile_text_color_accent</item>
+        <!-- Action Primary text -->
+        <item name="textActionPrimary">@color/fx_mobile_text_color_action_primary</item>
+
+        <!-- Icon -->
         <!-- Active tab -->
         <item name="iconActive">@color/fx_mobile_icon_color_active</item>
+        <!-- Icon inverted (on color) -->
+        <item name="iconOnColor">@color/fx_mobile_icon_color_oncolor</item>
+
+        <!-- Border -->
         <!-- Default, Divider, Dotted -->
         <item name="borderPrimary">@color/fx_mobile_border_color_primary</item>
 
@@ -59,14 +78,10 @@
         <item name="accentHighContrast">@color/accent_high_contrast_normal_theme</item>
         <item name="foundation">@color/fx_mobile_layer_color_1</item>
         <item name="above">@color/fx_mobile_layer_color_2</item>
-        <item name="inset">@color/inset_normal_theme</item>
         <item name="neutral">@color/neutral_normal_theme</item>
         <item name="neutralFaded">@color/neutral_faded_normal_theme</item>
         <item name="destructive">@color/fx_mobile_text_color_warning</item>
         <item name="disabled">@color/fx_mobile_text_color_disabled</item>
-        <item name="scrimStart">@color/fx_mobile_layer_color_scrim_start</item>
-        <item name="scrimEnd">@color/fx_mobile_layer_color_scrim_end</item>
-        <item name="snackbar">@color/fx_mobile_action_color_primary</item>
         <item name="accentUsedOnDarkBackground">@color/fx_mobile_text_color_accent</item>
         <item name="toolbarStartGradient">@color/fx_mobile_layer_color_1</item>
         <item name="toolbarCenterGradient">@color/fx_mobile_layer_color_1</item>
@@ -89,15 +104,12 @@
 
         <!-- Shared widget colors -->
         <item name="mozac_primary_text_color">@color/fx_mobile_text_color_primary</item>
-        <item name="mozac_caption_text_color">@color/caption_text_normal_theme</item>
+        <item name="mozac_caption_text_color">@color/fx_mobile_text_color_secondary</item>
         <item name="mozac_widget_favicon_background_color">@color/fx_mobile_layer_color_2</item>
         <item name="mozac_widget_favicon_border_color">@color/fx_mobile_border_color_primary</item>
 
         <item name="tabTrayThumbnailItemBackground">@color/tab_tray_item_thumbnail_background_normal_theme</item>
         <item name="tabTrayThumbnailIcon">@color/tab_tray_item_thumbnail_icon_normal_theme</item>
-
-        <!-- Tab History -->
-        <item name="tabHistoryItemSelectedBackground">@color/tab_history_item_selected_background_normal_theme</item>
 
         <!-- Drawables -->
         <item name="fenixLogo">@drawable/ic_logo_wordmark_normal</item>
@@ -192,7 +204,7 @@
         <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
         <item name="android:progressBarStyleHorizontal">@style/progressBarStyleHorizontal</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:windowBackground">@color/foundation_private_theme</item>
+        <item name="android:windowBackground">@color/fx_mobile_private_layer_color_1</item>
         <item name="android:colorEdgeEffect">@color/accent_private_theme</item>
         <item name="android:colorAccent">@color/fx_mobile_private_text_color_primary</item>
         <item name="colorControlActivated">@color/accent_high_contrast_private_theme</item>
@@ -212,12 +224,31 @@
         <item name="mozacSelectCreditCardHeaderTextStyle" tools:ignore="UnusedResources">@style/SelectPromptHeaderTextStyle</item>
 
         <!-- Design system color attributes -->
+
+        <!-- Layers -->
         <!-- Search -->
         <item name="layer3">@color/fx_mobile_private_layer_color_3</item>
+        <!-- Selected tab -->
+        <item name="layerNonOpaque">@color/fx_mobile_private_layer_color_accent_nonopaque</item>
+        <item name="scrim">@color/fx_mobile_private_layer_color_scrim</item>
+
+        <!-- Action -->
+        <!-- Primary button, Snackbar, Floating action button, Chip selected -->
+        <item name="actionPrimary">@color/fx_mobile_private_action_color_primary</item>
+
+        <!-- Text -->
         <!-- Small heading, Text link -->
         <item name="textAccent">@color/fx_mobile_private_text_color_accent</item>
+        <!-- Action Primary text -->
+        <item name="textActionPrimary">@color/fx_mobile_private_text_color_action_primary</item>
+
+        <!-- Icon -->
         <!-- Active tab -->
         <item name="iconActive">@color/fx_mobile_private_icon_color_active</item>
+        <!-- Icon inverted (on color) -->
+        <item name="iconOnColor">@color/fx_mobile_private_icon_color_oncolor</item>
+
+        <!-- Border -->
         <!-- Default, Divider, Dotted -->
         <item name="borderPrimary">@color/fx_mobile_private_border_color_primary</item>
 
@@ -230,21 +261,17 @@
 
         <!-- Updated color attributes -->
         <item name="primaryText">@color/fx_mobile_private_text_color_primary</item>
-        <item name="secondaryText">@color/secondary_text_private_theme</item>
+        <item name="secondaryText">@color/fx_mobile_private_text_color_secondary</item>
         <item name="contrastText">@color/fx_mobile_private_text_color_primary</item>
         <item name="accent">@color/accent_private_theme</item>
         <item name="accentBright">@color/photonViolet70</item>
         <item name="accentHighContrast">@color/accent_high_contrast_private_theme</item>
-        <item name="foundation">@color/foundation_private_theme</item>
+        <item name="foundation">@color/fx_mobile_private_layer_color_1</item>
         <item name="above">@color/fx_mobile_private_layer_color_1</item>
-        <item name="inset">@color/fx_mobile_private_layer_color_1</item>
         <item name="neutral">@color/neutral_private_theme</item>
         <item name="neutralFaded">@color/neutral_faded_private_theme</item>
         <item name="destructive">@color/fx_mobile_private_text_color_warning</item>
         <item name="disabled">@color/fx_mobile_private_text_color_disabled</item>
-        <item name="scrimStart">@color/scrimStart_private_theme</item>
-        <item name="scrimEnd">@color/scrimEnd_private_theme</item>
-        <item name="snackbar">@color/snackbar_private_theme</item>
         <item name="accentUsedOnDarkBackground">@color/accent_high_contrast_private_theme</item>
         <item name="toolbarStartGradient">@color/fx_mobile_private_layer_color_4_start</item>
         <item name="toolbarCenterGradient">@color/fx_mobile_private_layer_color_4_center</item>
@@ -267,16 +294,13 @@
 
         <!-- Shared widget colors -->
         <item name="mozac_primary_text_color">@color/fx_mobile_private_text_color_primary</item>
-        <item name="mozac_caption_text_color">@color/caption_text_private_theme</item>
+        <item name="mozac_caption_text_color">@color/fx_mobile_private_text_color_secondary</item>
         <item name="mozac_widget_favicon_background_color">@color/photonInk50</item>
         <item name="mozac_widget_favicon_border_color">@color/photonInk50</item>
 
         <!-- Tab Tray -->
         <item name="tabTrayThumbnailItemBackground">@color/tab_tray_item_thumbnail_background_normal_theme</item>
         <item name="tabTrayThumbnailIcon">@color/tab_tray_item_thumbnail_icon_normal_theme</item>
-
-        <!-- Tab History -->
-        <item name="tabHistoryItemSelectedBackground">@color/tab_tray_item_selected_background_dark_theme</item>
 
         <!-- Drawables -->
         <item name="fenixLogo">@drawable/ic_logo_wordmark_private</item>
@@ -333,9 +357,9 @@
     </style>
 
     <style name="PositiveButton" parent="NeutralButton">
-        <item name="backgroundTint">?accent</item>
-        <item name="iconTint">?contrastText</item>
-        <item name="android:textColor">?contrastText</item>
+        <item name="backgroundTint">?actionPrimary</item>
+        <item name="iconTint">?iconOnColor</item>
+        <item name="android:textColor">?textActionPrimary</item>
     </style>
 
     <style name="search_pill" parent="Widget.AppCompat.Button.Borderless">
@@ -409,7 +433,7 @@
         <item name="android:textColor">?primaryText</item>
     </style>
 
-    <style name="Body12TextStyle" parent="TextAppearance.MaterialComponents.Body1">
+    <style name="Body12TextStyle" parent="TextAppearance.MaterialComponents.Body1" tools:ignore="UnusedResources">
         <item name="android:textColor">?primaryText</item>
         <item name="android:textSize">12sp</item>
         <item name="android:textAllCaps">false</item>

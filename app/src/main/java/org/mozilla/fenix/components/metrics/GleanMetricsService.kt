@@ -42,6 +42,7 @@ import org.mozilla.fenix.GleanMetrics.RecentBookmarks
 import org.mozilla.fenix.GleanMetrics.RecentSearches
 import org.mozilla.fenix.GleanMetrics.RecentTabs
 import org.mozilla.fenix.GleanMetrics.RecentlyClosedTabs
+import org.mozilla.fenix.GleanMetrics.RecentlyVisitedHomepage
 import org.mozilla.fenix.GleanMetrics.SearchShortcuts
 import org.mozilla.fenix.GleanMetrics.SearchTerms
 import org.mozilla.fenix.GleanMetrics.SearchWidget
@@ -557,6 +558,26 @@ private val Event.wrapper: EventWrapper<*>?
             { TopSites.swipeCarousel.record(it) },
             { TopSites.swipeCarouselKeys.valueOf(it) }
         )
+        is Event.TopSiteContileImpression -> EventWrapper<NoExtraKeys>(
+            {
+                TopSites.contileImpression.record(
+                    TopSites.ContileImpressionExtra(
+                        position = this.position,
+                        source = this.source.name.lowercase()
+                    )
+                )
+            }
+        )
+        is Event.TopSiteContileClick -> EventWrapper<NoExtraKeys>(
+            {
+                TopSites.contileClick.record(
+                    TopSites.ContileClickExtra(
+                        position = this.position,
+                        source = this.source.name.lowercase()
+                    )
+                )
+            }
+        )
         is Event.PocketTopSiteClicked -> EventWrapper<NoExtraKeys>(
             { Pocket.pocketTopSiteClicked.record(it) }
         )
@@ -694,13 +715,6 @@ private val Event.wrapper: EventWrapper<*>?
         )
         is Event.TabsTrayOpenInactiveTab -> EventWrapper<NoExtraKeys>(
             { TabsTray.openInactiveTab.add() }
-        )
-        is Event.InactiveTabsSurveyOpened -> EventWrapper<NoExtraKeys>(
-            { Preferences.inactiveTabsSurveyOpened.record(it) }
-        )
-        is Event.InactiveTabsOffSurvey -> EventWrapper(
-            { Preferences.turnOffInactiveTabsSurvey.record(it) },
-            { Preferences.turnOffInactiveTabsSurveyKeys.valueOf(it) }
         )
         is Event.InactiveTabsCountUpdate -> EventWrapper<NoExtraKeys>(
             { Metrics.inactiveTabsCount.set(this.count.toLong()) },
@@ -952,6 +966,13 @@ private val Event.wrapper: EventWrapper<*>?
                     ),
                 )
             }
+        )
+
+        is Event.HistoryHighlightOpened -> EventWrapper<NoExtraKeys>(
+            { RecentlyVisitedHomepage.historyHighlightOpened.record() }
+        )
+        is Event.HistorySearchGroupOpened -> EventWrapper<NoExtraKeys>(
+            { RecentlyVisitedHomepage.searchGroupOpened.record() }
         )
 
         // Don't record other events in Glean:
