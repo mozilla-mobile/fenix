@@ -6,7 +6,6 @@ package org.mozilla.fenix.collections
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.view.isGone
 import androidx.core.view.isInvisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -45,9 +44,9 @@ class CollectionCreationTabListAdapter(
                 is CheckChanged -> {
                     val checkChanged = payloads[0] as CheckChanged
                     if (checkChanged.shouldBeChecked) {
-                        holder.bind(tabs[position],true,checkChanged.shouldHideCheckBox)
+                        holder.bind(tabs[position], true, checkChanged.shouldHideCheckBox)
                     } else if (checkChanged.shouldBeUnchecked) {
-                        holder.bind(tabs[position],false,checkChanged.shouldHideCheckBox)
+                        holder.bind(tabs[position], false, checkChanged.shouldHideCheckBox)
                     }
                 }
             }
