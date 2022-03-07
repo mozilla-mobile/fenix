@@ -46,10 +46,11 @@ class CollectionCreationTabListAdapter(
                     val checkChanged = payloads[0] as CheckChanged
                     if (checkChanged.shouldBeChecked) {
                         binding.tabSelectedCheckbox.isChecked = true
+                        holder.bind(tabs[position],true,checkChanged.shouldHideCheckBox)
                     } else if (checkChanged.shouldBeUnchecked) {
                         binding.tabSelectedCheckbox.isChecked = false
+                        holder.bind(tabs[position],false,checkChanged.shouldHideCheckBox)
                     }
-                    binding.tabSelectedCheckbox.isGone = checkChanged.shouldHideCheckBox
                 }
             }
         }
