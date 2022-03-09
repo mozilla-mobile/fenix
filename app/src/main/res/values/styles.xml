@@ -34,6 +34,8 @@
         <!-- Design system color attributes -->
 
         <!-- Layers -->
+        <!-- Card background, Menu background, Dialog, Banner -->
+        <item name="layer2">@color/fx_mobile_layer_color_2</item>
         <!-- Search -->
         <item name="layer3">@color/fx_mobile_layer_color_3</item>
         <!-- Selected tab -->
@@ -51,6 +53,8 @@
         <item name="textActionPrimary">@color/fx_mobile_text_color_action_primary</item>
 
         <!-- Icon -->
+        <!-- Secondary icon -->
+        <item name="iconSecondary">@color/fx_mobile_icon_color_secondary</item>
         <!-- Active tab -->
         <item name="iconActive">@color/fx_mobile_icon_color_active</item>
         <!-- Icon inverted (on color) -->
@@ -89,7 +93,6 @@
         <item name="fillLinkFromClipboard">@color/fill_link_from_clipboard_normal_theme</item>
         <item name="syncDisconnected">@color/sync_disconnected_icon_fill_normal_theme</item>
         <item name="syncDisconnectedBackground">@color/sync_disconnected_background_normal_theme</item>
-        <item name="swipeDeleteBackground">@color/swipe_delete_background_normal_theme</item>
         <item name="onboardingDarkGradientStartBackground">@color/photonViolet70</item>
         <item name="onboardingDarkGradientEndBackground">@color/photonViolet40</item>
         <item name="onboardingSelected">@color/onboarding_illustration_selected_normal_theme</item>
@@ -107,9 +110,6 @@
         <item name="mozac_caption_text_color">@color/fx_mobile_text_color_secondary</item>
         <item name="mozac_widget_favicon_background_color">@color/fx_mobile_layer_color_2</item>
         <item name="mozac_widget_favicon_border_color">@color/fx_mobile_border_color_primary</item>
-
-        <item name="tabTrayThumbnailItemBackground">@color/tab_tray_item_thumbnail_background_normal_theme</item>
-        <item name="tabTrayThumbnailIcon">@color/tab_tray_item_thumbnail_icon_normal_theme</item>
 
         <!-- Drawables -->
         <item name="fenixLogo">@drawable/ic_logo_wordmark_normal</item>
@@ -226,6 +226,8 @@
         <!-- Design system color attributes -->
 
         <!-- Layers -->
+        <!-- Card background, Menu background, Dialog, Banner -->
+        <item name="layer2">@color/fx_mobile_private_layer_color_2</item>
         <!-- Search -->
         <item name="layer3">@color/fx_mobile_private_layer_color_3</item>
         <!-- Selected tab -->
@@ -243,6 +245,8 @@
         <item name="textActionPrimary">@color/fx_mobile_private_text_color_action_primary</item>
 
         <!-- Icon -->
+        <!-- Secondary icon -->
+        <item name="iconSecondary">@color/fx_mobile_private_icon_color_secondary</item>
         <!-- Active tab -->
         <item name="iconActive">@color/fx_mobile_private_icon_color_active</item>
         <!-- Icon inverted (on color) -->
@@ -279,7 +283,6 @@
         <item name="fillLinkFromClipboard">@color/accent_high_contrast_private_theme</item>
         <item name="syncDisconnected">@color/sync_disconnected_icon_fill_private_theme</item>
         <item name="syncDisconnectedBackground">@color/sync_disconnected_background_private_theme</item>
-        <item name="swipeDeleteBackground">@color/swipe_delete_background_private_theme</item>
         <item name="onboardingDarkGradientStartBackground">@color/photonViolet60</item>
         <item name="onboardingDarkGradientEndBackground">@color/photonPurple50</item>
         <item name="onboardingSelected">@color/accent_private_theme</item>
@@ -297,10 +300,6 @@
         <item name="mozac_caption_text_color">@color/fx_mobile_private_text_color_secondary</item>
         <item name="mozac_widget_favicon_background_color">@color/photonInk50</item>
         <item name="mozac_widget_favicon_border_color">@color/photonInk50</item>
-
-        <!-- Tab Tray -->
-        <item name="tabTrayThumbnailItemBackground">@color/tab_tray_item_thumbnail_background_normal_theme</item>
-        <item name="tabTrayThumbnailIcon">@color/tab_tray_item_thumbnail_icon_normal_theme</item>
 
         <!-- Drawables -->
         <item name="fenixLogo">@drawable/ic_logo_wordmark_private</item>

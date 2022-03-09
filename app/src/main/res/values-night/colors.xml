@@ -84,7 +84,7 @@
     <!-- Inactive tab -->
     <color name="fx_mobile_icon_color_primary_inactive">@color/photonLightGrey05A60</color>
     <!-- Secondary icon -->
-    <color name="fx_mobile_icon_color_secondary" tools:ignore="UnusedResources">@color/photonLightGrey40</color>
+    <color name="fx_mobile_icon_color_secondary">@color/photonLightGrey40</color>
     <!-- Active tab -->
     <color name="fx_mobile_icon_color_active">@color/photonViolet40</color>
     <!-- Disabled icon -->
@@ -132,18 +132,12 @@
     <color name="fill_link_from_clipboard_normal_theme">@color/photonViolet40</color>
     <color name="sync_disconnected_icon_fill_normal_theme">#FFF36E</color>
     <color name="sync_disconnected_background_normal_theme">#5B5846</color>
-    <color name="swipe_delete_background_normal_theme">@color/photonDarkGrey20</color>
     <color name="onboarding_illustration_selected_normal_theme">@color/accent_normal_theme</color>
     <color name="onboarding_illustration_deselected_normal_theme">#99FBFBFE</color>
     <color name="add_on_private_browsing_exterior_circle_background_normal_theme">@color/accent_normal_theme</color>
     <color name="prompt_login_edit_text_cursor_color_normal_theme">@color/photonViolet50</color>
     <color name="search_suggestion_indicator_icon_color_normal_theme">@color/photonGreen60</color>
     <color name="search_suggestion_indicator_icon_bookmark_color_normal_theme">@color/photonBlue40</color>
-
-    <!-- Tab tray -->
-    <color name="tab_tray_item_background_normal_theme">@color/photonDarkGrey80</color>
-    <color name="tab_tray_item_thumbnail_background_normal_theme">@color/photonDarkGrey50</color>
-    <color name="tab_tray_item_thumbnail_icon_normal_theme">@color/photonDarkGrey05</color>
 
     <!-- Reader View colors -->
     <color name="mozac_feature_readerview_text_color">@color/fx_mobile_text_color_primary</color>

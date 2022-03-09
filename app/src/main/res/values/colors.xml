@@ -84,7 +84,7 @@
     <!-- Inactive tab -->
     <color name="fx_mobile_icon_color_primary_inactive">@color/photonDarkGrey90A60</color>
     <!-- Secondary icon -->
-    <color name="fx_mobile_icon_color_secondary" tools:ignore="UnusedResources">@color/photonDarkGrey05</color>
+    <color name="fx_mobile_icon_color_secondary">@color/photonDarkGrey05</color>
     <!-- Active tab -->
     <color name="fx_mobile_icon_color_active">@color/photonInk20</color>
     <!-- Disabled icon -->
@@ -209,7 +209,7 @@
     <!-- Inactive tab -->
     <color name="fx_mobile_private_icon_color_primary_inactive" tools:ignore="UnusedResources">@color/photonLightGrey05A60</color>
     <!-- Secondary icon -->
-    <color name="fx_mobile_private_icon_color_secondary" tools:ignore="UnusedResources">@color/photonLightGrey40</color>
+    <color name="fx_mobile_private_icon_color_secondary">@color/photonLightGrey40</color>
     <!-- Active tab -->
     <color name="fx_mobile_private_icon_color_active">@color/photonViolet40</color>
     <!-- Disabled icon -->
@@ -259,7 +259,6 @@
     <color name="neutral_faded_private_theme">#1FFBFBFE</color>
     <color name="sync_disconnected_icon_fill_private_theme">@color/photonYellow70</color>
     <color name="sync_disconnected_background_private_theme">#5B5846</color>
-    <color name="swipe_delete_background_private_theme">@color/photonInk20</color>
     <color name="onboarding_illustration_deselected_private_theme">#99FBFBFE</color>
     <color name="prompt_login_edit_text_cursor_color_private_theme">@color/photonViolet50</color>
 
@@ -271,18 +270,12 @@
     <color name="fill_link_from_clipboard_normal_theme">@color/photonInk20</color>
     <color name="sync_disconnected_icon_fill_normal_theme">@color/photonYellow70</color>
     <color name="sync_disconnected_background_normal_theme">#FFFDE2</color>
-    <color name="swipe_delete_background_normal_theme">@color/photonLightGrey30</color>
     <color name="onboarding_illustration_selected_normal_theme">@color/photonViolet70</color>
     <color name="onboarding_illustration_deselected_normal_theme">@color/photonDarkGrey90A60</color>
     <color name="add_on_private_browsing_exterior_circle_background_normal_theme">@color/photonViolet70</color>
     <color name="prompt_login_edit_text_cursor_color_normal_theme">@color/photonInk20</color>
     <color name="search_suggestion_indicator_icon_color_normal_theme">@color/photonGreen70</color>
     <color name="search_suggestion_indicator_icon_bookmark_color_normal_theme">@color/photonBlue50</color>
-
-    <!-- Tab tray -->
-    <color name="tab_tray_item_background_normal_theme">@color/photonLightGrey10</color>
-    <color name="tab_tray_item_thumbnail_background_normal_theme">@color/photonLightGrey10</color>
-    <color name="tab_tray_item_thumbnail_icon_normal_theme">@color/photonLightGrey60</color>
 
     <!-- Bookmark buttons -->
     <color name="bookmark_favicon_background">#DFDFE3</color>
