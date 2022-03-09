@@ -55,9 +55,10 @@ class RecentVisitsHeaderViewHolder(
         Column {
             Spacer(modifier = Modifier.height(40.dp))
 
-            RecentVisitsHeader(stringResource(R.string.history_metadata_header_2)) {
-                interactor.onHistoryShowAllClicked()
-            }
+            RecentVisitsHeader(
+                text = stringResource(R.string.history_metadata_header_2),
+                onShowAllClick = interactor::onHistoryShowAllClicked,
+            )
 
             Spacer(Modifier.height(16.dp))
         }
@@ -72,18 +73,13 @@ class RecentVisitsHeaderViewHolder(
  * Recent visits homepage header.
  *
  * @param text The header string.
- * @param onShowAllClick Action to take when show all is clicked.
+ * @param (optional) onShowAllClick Action to take when show all is clicked.
  */
 @Composable
 fun RecentVisitsHeader(
     text: String,
     onShowAllClick: () -> Unit = {}
 ) {
-    val annotatedText = AnnotatedString(
-        text = stringResource(id = R.string.recent_tabs_show_all)
-    )
-    val contentDescriptionShowAll = stringResource(id = R.string.recent_tabs_show_all)
-
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
@@ -95,10 +91,11 @@ fun RecentVisitsHeader(
                 .wrapContentHeight(align = Alignment.Top)
         )
 
+        val description = stringResource(id = R.string.recent_tabs_show_all)
         ClickableText(
-            text = annotatedText,
+            text = AnnotatedString(text = stringResource(id = R.string.recent_tabs_show_all)),
             modifier = Modifier.semantics {
-                contentDescription = contentDescriptionShowAll
+                contentDescription = description
             },
             style = TextStyle(
                 color = FirefoxTheme.colors.textAccent,
@@ -114,8 +111,7 @@ fun RecentVisitsHeader(
 private fun RecentVisitsHeaderViewHolderPreview() {
     FirefoxTheme {
         RecentVisitsHeader(
-            stringResource(R.string.history_metadata_header_2),
-            onShowAllClick = {}
+            stringResource(R.string.history_metadata_header_2)
         )
     }
 }
