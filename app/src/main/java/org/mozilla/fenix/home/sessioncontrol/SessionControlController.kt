@@ -44,6 +44,9 @@ import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.openSetDefaultBrowserOption
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.gleanplum.Message
+import org.mozilla.fenix.gleanplum.MessageController
+import org.mozilla.fenix.gleanplum.MessagesManager
 import org.mozilla.fenix.home.HomeFragment
 import org.mozilla.fenix.home.HomeFragmentAction
 import org.mozilla.fenix.home.HomeFragmentDirections
@@ -177,14 +180,19 @@ interface SessionControlController {
     fun handleMenuOpened()
 
     /**
-     * @see [ExperimentCardInteractor.onSetDefaultBrowserClicked]
+     * @see [MessageCardInteractor.onMessageClicked]
      */
-    fun handleSetDefaultBrowser()
+    fun handleMessageClicked(message: Message)
 
     /**
-     * @see [ExperimentCardInteractor.onCloseExperimentCardClicked]
+     * @see [MessageCardInteractor.onMessageClosedClicked]
      */
-    fun handleCloseExperimentCard()
+    fun handleMessageClosed(message: Message)
+
+    /**
+     * @see [MessageCardInteractor.onMessageDisplayed]
+     */
+    fun handleMessageDisplayed(message: Message)
 
     /**
      * @see [TabSessionInteractor.onPrivateModeButtonClicked]
@@ -213,6 +221,7 @@ class DefaultSessionControlController(
     private val settings: Settings,
     private val engine: Engine,
     private val metrics: MetricController,
+    private val messageController: MessageController,
     private val store: BrowserStore,
     private val tabCollectionStorage: TabCollectionStorage,
     private val addTabUseCase: TabsUseCases.AddNewTabUseCase,
@@ -597,14 +606,17 @@ class DefaultSessionControlController(
         navController.nav(R.id.homeFragment, directions)
     }
 
-    override fun handleSetDefaultBrowser() {
-        settings.userDismissedExperimentCard = true
-        activity.openSetDefaultBrowserOption()
+    override fun handleMessageClicked(message: Message) {
+        messageController.onMessagePressed(message)
     }
 
-    override fun handleCloseExperimentCard() {
-        settings.userDismissedExperimentCard = true
-        fragmentStore.dispatch(HomeFragmentAction.RemoveSetDefaultBrowserCard)
+    override fun handleMessageClosed(message: Message) {
+        messageController.onMessageDismissed(message)
+    }
+
+    override fun handleMessageDisplayed(message: Message) {
+        messageController.onMessageDismissed(message)
+     //   fragmentStore.dispatch(HomeFragmentAction.RemoveSetDefaultBrowserCard)
     }
 
     override fun handlePrivateModeButtonClicked(

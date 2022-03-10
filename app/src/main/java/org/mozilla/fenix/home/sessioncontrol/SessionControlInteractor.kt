@@ -10,6 +10,7 @@ import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.service.pocket.PocketRecommendedStory
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.tips.Tip
+import org.mozilla.fenix.gleanplum.Message
 import org.mozilla.fenix.home.HomeFragmentState
 import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesCategory
 import org.mozilla.fenix.home.pocket.PocketStoriesController
@@ -232,16 +233,21 @@ interface TopSiteInteractor {
     fun onTopSiteMenuOpened()
 }
 
-interface ExperimentCardInteractor {
+interface MessageCardInteractor {
     /**
-     * Called when set default browser button is clicked
+     * Called when a [Message]'s button is clicked
      */
-    fun onSetDefaultBrowserClicked()
+    fun onMessageClicked(message: Message)
 
     /**
-     * Called when close button on experiment card
+     * Called when close button on a [Message] card.
      */
-    fun onCloseExperimentCardClicked()
+    fun onMessageClosedClicked(message: Message)
+
+    /**
+     * Called when close button on a [Message] card.
+     */
+    fun onMessageDisplayed(message: Message)
 }
 
 /**
@@ -263,7 +269,7 @@ class SessionControlInteractor(
     TipInteractor,
     TabSessionInteractor,
     ToolbarInteractor,
-    ExperimentCardInteractor,
+    MessageCardInteractor,
     RecentTabInteractor,
     RecentBookmarksInteractor,
     RecentVisitsInteractor,
@@ -374,14 +380,6 @@ class SessionControlInteractor(
         controller.handleMenuOpened()
     }
 
-    override fun onSetDefaultBrowserClicked() {
-        controller.handleSetDefaultBrowser()
-    }
-
-    override fun onCloseExperimentCardClicked() {
-        controller.handleCloseExperimentCard()
-    }
-
     override fun onRecentTabClicked(tabId: String) {
         recentTabController.handleRecentTabClicked(tabId)
     }
@@ -458,5 +456,17 @@ class SessionControlInteractor(
 
     override fun reportSessionMetrics(state: HomeFragmentState) {
         controller.handleReportSessionMetrics(state)
+    }
+
+    override fun onMessageClicked(message: Message) {
+        controller.handleMessageClicked(message)
+    }
+
+    override fun onMessageClosedClicked(message: Message) {
+        controller.handleMessageClosed(message)
+    }
+
+    override fun onMessageDisplayed(message: Message) {
+        controller.handleMessageDisplayed(message)
     }
 }

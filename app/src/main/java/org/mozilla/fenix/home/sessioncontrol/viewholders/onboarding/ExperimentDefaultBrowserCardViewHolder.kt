@@ -18,41 +18,36 @@ class ExperimentDefaultBrowserCardViewHolder(
     view: View,
     private val interactor: SessionControlInteractor
 ) : RecyclerView.ViewHolder(view) {
-
-    // TODO: Address !!
     private val messagesManager: MessagesManager = view.context.components.messagesManager
-    private val message: Message = messagesManager.getNextMessage()!!
+    private val message: Message? = messagesManager.getNextMessage()
 
     init {
+        initialize(view)
+    }
 
+    private fun initialize(view: View) {
         val binding = ExperimentDefaultBrowserBinding.bind(view)
-        binding.setDefaultBrowser.setOnClickListener {
-            // TODO: use interactor
-            messagesManager.onMessagePressed(message)
+        val safeMessage = message ?: return
 
-            interactor.onSetDefaultBrowserClicked()
+        binding.setDefaultBrowser.setOnClickListener {
+            interactor.onMessageClicked(safeMessage)
+
         }
 
-
-        binding.descriptionText.text = message.data.text
-
+        binding.descriptionText.text = safeMessage.data.text
+        //TODO: Bind button text
 
         binding.close.apply {
             increaseTapArea(CLOSE_BUTTON_EXTRA_DPS)
             setOnClickListener {
-                // TODO: use interactor
-                messagesManager.onMessageDismissed(message)
-
-                interactor.onCloseExperimentCardClicked()
+                interactor.onMessageClosedClicked(safeMessage)
             }
         }
 
         binding.close.apply {
             increaseTapArea(CLOSE_BUTTON_EXTRA_DPS)
             setOnClickListener {
-                // TODO: use interactor
-                messagesManager.onMessagePressed(message)
-                interactor.onCloseExperimentCardClicked()
+                interactor.onMessageClosedClicked(safeMessage)
             }
         }
     }

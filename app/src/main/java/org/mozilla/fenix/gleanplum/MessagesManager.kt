@@ -5,17 +5,22 @@
 package org.mozilla.fenix.gleanplum
 
 import android.content.Context
+import androidx.core.net.toUri
 import org.mozilla.experiments.nimbus.internal.FeatureHolder
+import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.nimbus.Messaging
 import org.mozilla.fenix.nimbus.StyleData
 import java.util.SortedSet
 import kotlin.Comparator
 
+/**
+ * Handles all interactions messages from nimbus.
+ */
 class MessagesManager(
     private val context: Context,
     private val storage: MessageStorage,
     private val messagingFeature: FeatureHolder<Messaging>
-) : MessageController {
+) {
 
     private val availableMessages: SortedSet<Message> = sortedSetOf(
         Comparator { message1, message2 -> message2.style.priority.compareTo(message1.style.priority) }
@@ -25,12 +30,12 @@ class MessagesManager(
         return availableMessages.isNotEmpty()
     }
 
-    override fun getNextMessage(): Message? {
+    fun getNextMessage(): Message? {
         return availableMessages.first()
     }
 
-    override fun onMessagePressed(message: Message) {
-        // TODO: Report telemetry event
+    fun onMessagePressed(message: Message) {
+        // Update storage
         storage.updateMetadata(
             message.metadata.copy(
                 pressed = true
@@ -39,8 +44,7 @@ class MessagesManager(
         availableMessages.remove(message)
     }
 
-    override fun onMessageDismissed(message: Message) {
-        // TODO: Report telemetry event
+    fun onMessageDismissed(message: Message) {
         storage.updateMetadata(
             message.metadata.copy(
                 dismissed = true
@@ -49,8 +53,7 @@ class MessagesManager(
         availableMessages.remove(message)
     }
 
-    override fun onMessageDisplayed(message: Message) {
-        // TODO: Report telemetry event
+    fun onMessageDisplayed(message: Message) {
         val newMetadata = message.metadata.copy(
             displayCount = message.metadata.displayCount + 1
         )
@@ -66,10 +69,12 @@ class MessagesManager(
         }
     }
 
-    override fun initialize() {
-        val nimbusTriggers = messagingFeature.value().triggers
-        val nimbusStyles = messagingFeature.value().styles
-        val nimbusMessages = messagingFeature.value().messages
+    fun initialize() {
+        val nimbusFeature = messagingFeature.value()
+        val nimbusTriggers = nimbusFeature.triggers
+        val nimbusStyles = nimbusFeature.styles
+
+        val nimbusMessages = nimbusFeature.messages
         val defaultStyle = StyleData(context)
         val storageMetadata = storage.getMetadata().associateBy {
             it.id
