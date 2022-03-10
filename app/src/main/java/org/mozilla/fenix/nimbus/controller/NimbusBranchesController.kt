@@ -5,16 +5,16 @@
 package org.mozilla.fenix.nimbus.controller
 
 import android.content.Context
+import androidx.navigation.NavController
 import mozilla.components.service.nimbus.NimbusApi
 import mozilla.components.service.nimbus.ui.NimbusBranchesAdapterDelegate
 import org.mozilla.experiments.nimbus.Branch
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
-import org.mozilla.fenix.components.metrics.MetricServiceType
-import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.nimbus.NimbusBranchesAction
+import org.mozilla.fenix.nimbus.NimbusBranchesFragmentDirections
 import org.mozilla.fenix.nimbus.NimbusBranchesStore
 
 /**
@@ -28,6 +28,7 @@ import org.mozilla.fenix.nimbus.NimbusBranchesStore
  */
 class NimbusBranchesController(
     private val context: Context,
+    private val navController: NavController,
     private val nimbusBranchesStore: NimbusBranchesStore,
     private val experiments: NimbusApi,
     private val experimentId: String
@@ -39,9 +40,9 @@ class NimbusBranchesController(
 
         if (!telemetryEnabled && !experimentsEnabled) {
             updateOptInState(branch)
-            context.components.analytics.metrics.stop(MetricServiceType.Data)
 
             val snackbarText = context.getString(R.string.experiments_snackbar)
+            val buttonText = context.getString(R.string.experiments_snackbar_button)
             context.getRootView()?.let { v ->
                 FenixSnackbar.make(
                     view = v,
@@ -49,6 +50,12 @@ class NimbusBranchesController(
                     isDisplayedWithBrowserToolbar = false
                 )
                     .setText(snackbarText)
+                    .setAction(buttonText) {
+                        navController.navigate(
+                            NimbusBranchesFragmentDirections
+                                .actionNimbusBranchesFragmentToDataChoicesFragment()
+                        )
+                    }
                     .show()
             }
         } else {

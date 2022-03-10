@@ -9,6 +9,7 @@ import android.app.Activity
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.NavController
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
@@ -24,7 +25,6 @@ import org.mozilla.experiments.nimbus.Branch
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.metrics.MetricController
-import org.mozilla.fenix.components.metrics.MetricServiceType
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.ext.settings
@@ -39,6 +39,7 @@ class NimbusBranchesControllerTest {
     private val experimentId = "id"
 
     private lateinit var controller: NimbusBranchesController
+    private lateinit var navController: NavController
     private lateinit var nimbusBranchesStore: NimbusBranchesStore
     private lateinit var settings: Settings
     private lateinit var activity: Context
@@ -53,6 +54,7 @@ class NimbusBranchesControllerTest {
         settings = mockk(relaxed = true)
         metrics = mockk(relaxed = true)
         snackbar = mockk(relaxed = true)
+        navController = mockk(relaxed = true)
 
         rootView = mockk<ViewGroup>(relaxed = true)
         activity = mockk<Activity>(relaxed = true) {
@@ -66,9 +68,14 @@ class NimbusBranchesControllerTest {
         every { activity.settings() } returns settings
         every { activity.components.analytics.metrics } returns metrics
 
+        every { navController.currentDestination } returns mockk {
+            every { id } returns org.mozilla.fenix.R.id.nimbusBranchesFragment
+        }
+
         nimbusBranchesStore = NimbusBranchesStore(NimbusBranchesState(emptyList()))
         controller = NimbusBranchesController(
             activity,
+            navController,
             nimbusBranchesStore,
             experiments,
             experimentId
@@ -151,8 +158,6 @@ class NimbusBranchesControllerTest {
         controller.onBranchItemClicked(branch)
 
         nimbusBranchesStore.waitUntilIdle()
-
-        verify(exactly = 1) { metrics.stop(MetricServiceType.Data) }
 
         verifyAll {
             experiments.getExperimentBranch(experimentId)

@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -48,6 +49,7 @@ class NimbusBranchesFragment : Fragment() {
 
         controller = NimbusBranchesController(
             context = requireContext(),
+            navController = findNavController(),
             nimbusBranchesStore = nimbusBranchesStore,
             experiments = requireContext().components.analytics.experiments,
             experimentId = args.experimentId
