@@ -28,6 +28,9 @@ import org.mozilla.fenix.autofill.AutofillSearchActivity
 import org.mozilla.fenix.autofill.AutofillUnlockActivity
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.gleanplum.KeyPairMessageStorage
+import org.mozilla.fenix.gleanplum.MessagesManager
+import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.perf.AppStartReasonProvider
 import org.mozilla.fenix.perf.StartupActivityLog
 import org.mozilla.fenix.perf.StartupStateProvider
@@ -150,6 +153,19 @@ class Components(private val context: Context) {
             WallpaperDownloader(context, core.client),
             WallpaperFileManager(context.filesDir),
             analytics.crashReporter,
+        )
+    }
+
+    val messageStorage by lazyMonitored {
+        KeyPairMessageStorage()
+    }
+
+    val messagesManager by lazyMonitored {
+        MessagesManager(
+            context,
+            messageStorage,
+            analytics.experiments,
+            FxNimbus.features.messaging
         )
     }
 
