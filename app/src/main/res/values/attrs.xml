@@ -6,6 +6,8 @@
     <!-- Design system color attributes -->
 
     <!-- Layers -->
+    <!-- Default Screen background, Frontlayer background, App Bar Top, App Bar Bottom, Frontlayer header -->
+    <attr name="layer1" format="reference" />
     <!-- Card background, Menu background, Dialog, Banner -->
     <attr name="layer2" format="reference" />
     <!-- Search -->
@@ -19,8 +21,18 @@
     <attr name="actionPrimary" format="reference" />
 
     <!-- Text -->
+    <!-- Primary text -->
+    <attr name="textPrimary" format="reference" />
+    <!-- Secondary text -->
+    <attr name="textSecondary" format="reference" />
+    <!-- Disabled text -->
+    <attr name="textDisabled" format="reference" />
+    <!-- Warning text -->
+    <attr name="textWarning" format="reference"/>
     <!-- Small heading, Text link -->
     <attr name="textAccent" format="reference" />
+    <!-- Text Inverted/On Color -->
+    <attr name="textOnColorPrimary" format="reference" />
     <!-- Action Primary text -->
     <attr name="textActionPrimary" format="reference" />
 
@@ -37,20 +49,12 @@
     <attr name="borderPrimary" format="reference" />
 
     <!-- Color palette attributes -->
-    <attr name="primaryText" format="reference" />
-    <attr name="secondaryText" format="reference" />
-    <attr name="contrastText" format="reference" />
     <attr name="accent" format="reference" />
     <attr name="accentBright" format="reference" />
     <attr name="accentHighContrast" format="reference" />
     <attr name="accentUsedOnDarkBackground" format="reference" />
-    <attr name="snackbar" format="reference" />
-    <attr name="foundation" format="reference" />
-    <attr name="above" format="reference" />
     <attr name="neutral" format="reference" />
     <attr name="neutralFaded" format="reference" />
-    <attr name="destructive" format="reference"/>
-    <attr name="disabled" format="reference" />
     <attr name="preferenceSectionHeader" format="reference"/>
 
     <!-- Color used in DefaultToolbarMenu for buttons placed at the end of menu items -->
