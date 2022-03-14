@@ -57,6 +57,7 @@ class RecentVisitsHeaderViewHolder(
 
             RecentVisitsHeader(
                 text = stringResource(R.string.history_metadata_header_2),
+                description = stringResource(R.string.past_explorations_show_all_content_description_2),
                 onShowAllClick = interactor::onHistoryShowAllClicked,
             )
 
@@ -78,6 +79,7 @@ class RecentVisitsHeaderViewHolder(
 @Composable
 fun RecentVisitsHeader(
     text: String,
+    description: String,
     onShowAllClick: () -> Unit = {}
 ) {
     Row(
@@ -91,7 +93,6 @@ fun RecentVisitsHeader(
                 .wrapContentHeight(align = Alignment.Top)
         )
 
-        val description = stringResource(id = R.string.past_explorations_show_all_content_description_2)
         ClickableText(
             text = AnnotatedString(text = stringResource(id = R.string.recent_tabs_show_all)),
             modifier = Modifier.semantics {
@@ -111,7 +112,8 @@ fun RecentVisitsHeader(
 private fun RecentVisitsHeaderPreview() {
     FirefoxTheme {
         RecentVisitsHeader(
-            stringResource(R.string.history_metadata_header_2)
+            stringResource(R.string.history_metadata_header_2),
+            stringResource(R.string.past_explorations_show_all_content_description_2)
         )
     }
 }
