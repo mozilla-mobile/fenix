@@ -1663,7 +1663,7 @@
     <!-- Text displayed on a button in the synced tabs screen to link users to sign in when a user is not signed in to Firefox Sync -->
     <string name="synced_tabs_sign_in_button">Sign in to sync</string>
     <!-- The text displayed when a synced device has no tabs to show in the list of Synced Tabs. -->
-    <string name="synced_tabs_no_open_tabs">No open tabs</string>
+    <string name="synced_tabs_no_open_tabs" moz:RemovedIn="100" tools:ignore="UnusedResources">No open tabs</string>
     <!-- Content description for expanding a group of synced tabs. -->
     <string name="synced_tabs_expand_group">Expand group of synced tabs</string>
     <!-- Content description for collapsing a group of synced tabs. -->

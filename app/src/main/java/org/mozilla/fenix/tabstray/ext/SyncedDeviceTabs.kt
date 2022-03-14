@@ -15,26 +15,18 @@ fun List<SyncedDeviceTabs>.toComposeList(
     taskContinuityEnabled: Boolean,
 ): List<SyncedTabsListItem> = asSequence().flatMap { (device, tabs) ->
     if (taskContinuityEnabled) {
-        val deviceTabs = if (tabs.isEmpty()) {
-            emptyList()
-        } else {
-            tabs.map {
-                val url = it.active().url
-                val titleText = it.active().title.ifEmpty { url.take(MAX_URI_LENGTH) }
-                SyncedTabsListItem.Tab(titleText, url, it)
-            }
+        val deviceTabs = tabs.map {
+            val url = it.active().url
+            val titleText = it.active().title.ifEmpty { url.take(MAX_URI_LENGTH) }
+            SyncedTabsListItem.Tab(titleText, url, it)
         }
 
         sequenceOf(SyncedTabsListItem.DeviceSection(device.displayName, deviceTabs))
     } else {
-        val deviceTabs = if (tabs.isEmpty()) {
-            sequenceOf(SyncedTabsListItem.NoTabs)
-        } else {
-            tabs.asSequence().map {
-                val url = it.active().url
-                val titleText = it.active().title.ifEmpty { url.take(MAX_URI_LENGTH) }
-                SyncedTabsListItem.Tab(titleText, url, it)
-            }
+        val deviceTabs = tabs.asSequence().map {
+            val url = it.active().url
+            val titleText = it.active().title.ifEmpty { url.take(MAX_URI_LENGTH) }
+            SyncedTabsListItem.Tab(titleText, url, it)
         }
 
         sequenceOf(SyncedTabsListItem.Device(device.displayName)) + deviceTabs

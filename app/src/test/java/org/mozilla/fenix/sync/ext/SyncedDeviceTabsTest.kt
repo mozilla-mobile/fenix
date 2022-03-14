@@ -17,14 +17,6 @@ import org.mozilla.fenix.tabstray.ext.toComposeList
 import org.mozilla.fenix.tabstray.syncedtabs.SyncedTabsListItem
 
 class SyncedDeviceTabsTest {
-    private val noTabDevice = SyncedDeviceTabs(
-        device = mockk {
-            every { displayName } returns "Charcoal"
-            every { id } returns "123"
-            every { deviceType } returns DeviceType.DESKTOP
-        },
-        tabs = emptyList()
-    )
 
     private val oneTabDevice = SyncedDeviceTabs(
         device = mockk {
@@ -80,7 +72,7 @@ class SyncedDeviceTabsTest {
     )
 
     @Test
-    fun `GIVEN two synced devices WHEN the compose list is generated THEN two device section is returned`() {
+    fun `GIVEN two synced devices WHEN the compose list is generated THEN two device sections are returned`() {
         val syncedDeviceList = listOf(oneTabDevice, twoTabDevice)
         val listData = syncedDeviceList.toComposeList(taskContinuityEnabled = true)
 
@@ -89,15 +81,5 @@ class SyncedDeviceTabsTest {
         assertEquals(oneTabDevice.tabs.size, (listData[0] as SyncedTabsListItem.DeviceSection).tabs.size)
         assertTrue(listData[1] is SyncedTabsListItem.DeviceSection)
         assertEquals(twoTabDevice.tabs.size, (listData[1] as SyncedTabsListItem.DeviceSection).tabs.size)
-    }
-
-    @Test
-    fun `GIVEN one synced device with no tabs WHEN the compose list is generated THEN one device with an empty tabs list is returned`() {
-        val syncedDeviceList = listOf(noTabDevice)
-        val listData = syncedDeviceList.toComposeList(taskContinuityEnabled = true)
-
-        assertEquals(1, listData.count())
-        assertTrue(listData[0] is SyncedTabsListItem.DeviceSection)
-        assertEquals(0, (listData[0] as SyncedTabsListItem.DeviceSection).tabs.size)
     }
 }

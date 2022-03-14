@@ -95,17 +95,13 @@ fun SyncedTabsList(
                         }
 
                         if (sectionExpanded) {
-                            if (syncedTabItem.tabs.isNotEmpty()) {
-                                items(syncedTabItem.tabs) { syncedTab ->
-                                    SyncedTabsTabItem(
-                                        tabTitleText = syncedTab.displayTitle,
-                                        url = syncedTab.displayURL,
-                                    ) {
-                                        onTabClick(syncedTab.tab)
-                                    }
+                            items(syncedTabItem.tabs) { syncedTab ->
+                                SyncedTabsTabItem(
+                                    tabTitleText = syncedTab.displayTitle,
+                                    url = syncedTab.displayURL,
+                                ) {
+                                    onTabClick(syncedTab.tab)
                                 }
-                            } else {
-                                item { SyncedTabsNoTabsItem() }
                             }
                         }
                     }
@@ -128,7 +124,6 @@ fun SyncedTabsList(
                         errorText = syncedTabItem.errorText,
                         errorButton = syncedTabItem.errorButton
                     )
-                    is SyncedTabsListItem.NoTabs -> SyncedTabsNoTabsItem()
                     is SyncedTabsListItem.Tab -> {
                         SyncedTabsTabItem(
                             tabTitleText = syncedTabItem.displayTitle,
@@ -325,21 +320,6 @@ fun SyncedTabsErrorButton(buttonText: String, onClick: () -> Unit) {
     }
 }
 
-/**
- * UI to be displayed when a user's device has no synced tabs.
- */
-@Composable
-fun SyncedTabsNoTabsItem() {
-    SecondaryText(
-        text = stringResource(R.string.synced_tabs_no_open_tabs),
-        modifier = Modifier
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-            .fillMaxWidth(),
-        fontSize = 16.sp,
-        maxLines = 1
-    )
-}
-
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 private fun SyncedTabsListItemsPreview() {
@@ -363,8 +343,6 @@ private fun SyncedTabsListItemsPreview() {
             SyncedTabsErrorItem(errorText = stringResource(R.string.synced_tabs_reauth))
 
             Spacer(modifier = Modifier.height(16.dp))
-
-            SyncedTabsNoTabsItem()
 
             Spacer(modifier = Modifier.height(16.dp))
         }
