@@ -44,8 +44,9 @@
     <string name="recently_saved_show_all">Mussar tut</string>
     <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
     <string name="recently_saved_show_all_content_description_2">Mussar tut ils segnapaginas memorisads</string>
-    <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
-    <string moz:removedIn="97" name="recently_saved_show_all_content_description" tools:ignore="UnusedResources">Buttun per mussar tut ils segnapaginas memorisads</string>
+
+    <!-- Text for the menu button to remove a recently saved bookmark from the user's home screen -->
+    <string name="recently_saved_menu_item_remove">Allontanar</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
     <string name="about_content">%1$s vegn sviluppà da Mozilla.</string>
@@ -66,7 +67,9 @@
 
     <!-- Open in App "contextual feature recommendation" (CFR) -->
     <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
-    <string name="open_in_app_cfr_info_message">Ti pos configurar Firefox uschia che colliaziuns vegnan avertas automaticamain en apps.</string>
+    <string moz:RemovedIn="99" name="open_in_app_cfr_info_message" tools:ignore="UnusedResources">Ti pos configurar Firefox uschia che colliaziuns vegnan avertas automaticamain en apps.</string>
+    <!-- Text for the info message. The first parameter is the name of the application.-->
+    <string name="open_in_app_cfr_info_message_2">Ti pos configurar %1$s uschia che colliaziuns vegnan avertas automaticamain en apps.</string>
     <!-- Text for the positive action button -->
     <string name="open_in_app_cfr_positive_button_text">Ir als parameters</string>
     <!-- Text for the negative action button -->
@@ -94,7 +97,10 @@
     <!-- Text for title for the auto-close dialog of the inactive tabs. -->
     <string name="tab_tray_inactive_auto_close_title">Serrar automaticamain suenter in mais?</string>
     <!-- Text for the body for the auto-close dialog of the inactive tabs. -->
-    <string name="tab_tray_inactive_auto_close_body">Firefox po serrar tabs che ti n\'has betg consultà durant l\'ultim mais.</string>
+    <string moz:RemovedIn="99" name="tab_tray_inactive_auto_close_body" tools:ignore="UnusedResources">Firefox po serrar tabs che ti n\'has betg consultà durant l\'ultim mais.</string>
+    <!-- Text for the body for the auto-close dialog of the inactive tabs.
+        The first parameter is the name of the application.-->
+    <string name="tab_tray_inactive_auto_close_body_2">%1$s po serrar tabs che ti n\'has betg consultà durant l\'ultim mais.</string>
     <!-- Content description for close button in the auto-close dialog of the inactive tabs. -->
     <string name="tab_tray_inactive_auto_close_button_content_description">Serrar</string>
 
@@ -116,8 +122,6 @@
 
     <!-- Content description for the button which navigates the user to show all recent tabs in the tabs tray. -->
     <string name="recent_tabs_show_all_content_description_2">Buttun per mussar tut ils tabs averts dacurt</string>
-    <!-- Content description for the button which navigates the user to show all recent tabs in the tabs tray. -->
-    <string moz:removedIn="97" name="recent_tabs_show_all_content_description2" tools:ignore="UnusedResources">Mussar tut ils tabs averts dacurt</string>
     <!-- Title for showing a group item in the 'Jump back in' section of the new tab
         The first parameter is the search term that the user used. (for example: your search for "cat")-->
     <string name="recent_tabs_search_term">Tia tschertga da «%1$s»</string>
@@ -125,6 +129,10 @@
     <!-- Text for the number of tabs in a group in the 'Jump back in' section of the new tab
         %d is a placeholder for the number of sites in the group. This number will always be more than one. -->
     <string name="recent_tabs_search_term_count_2">%d websites</string>
+
+    <!-- Text for the menu button to remove a grouped highlight from the user's browsing history
+         in the Recently visited section -->
+    <string name="recent_tab_menu_item_remove">Allontanar</string>
 
     <!-- History Metadata -->
     <!-- Header text for a section on the home screen that displays grouped highlights from the
@@ -136,8 +144,6 @@
 
     <!-- Content description for the button which navigates the user to show all of their history. -->
     <string name="past_explorations_show_all_content_description_2">Mussar tut las navigaziuns vargadas</string>
-    <!-- Content description for the button which navigates the user to show all of their history. -->
-    <string moz:removedIn="97" name="past_explorations_show_all_content_description" tools:ignore="UnusedResources">Buttun per mussar ils artitgels gia visitads</string>
 
     <!-- Browser Fragment -->
     <!-- Content description (not visible, for screen readers etc.): Navigate backward (browsing history) -->
@@ -167,7 +173,7 @@
     <!-- Browser menu toggle that installs a Progressive Web App shortcut to the site on the device home screen. -->
     <string name="browser_menu_install_on_homescreen">Installar</string>
     <!-- Menu option on the toolbar that takes you to synced tabs page-->
-    <string name="synced_tabs">Tabs sincronisads</string>
+    <string moz:removedIn="98" name="synced_tabs" tools:ignore="UnusedResources">Tabs sincronisads</string>
     <!-- Content description (not visible, for screen readers etc.) for the Resync tabs button -->
     <string name="resync_button_content_description">Resincronisar</string>
     <!-- Browser menu button that opens the find in page menu -->
@@ -242,12 +248,16 @@
 
     <!-- Home onboarding -->
     <!-- Onboarding home screen dialog title text. Firefox is intentionally hardcoded. -->
-    <string name="onboarding_home_screen_title_2">Las novaziuns da Firefox</string>
+    <string moz:removedIn="99" name="onboarding_home_screen_title_2" tools:ignore="UnusedResources">Las novaziuns da Firefox</string>
 
+    <!-- Onboarding home screen dialog title text. The first parameter is the name of the application.-->
+    <string name="onboarding_home_screen_title_3">Las novaziuns en %1$s</string>
     <!-- Onboarding home screen dialog description text. -->
     <string name="onboarding_home_screen_description_2">Ussa èsi pli simpel da cuntinuar là nua che ti has chalà.</string>
     <!-- Onboarding home screen dialog title text for the home section. Firefox is intentionally hardcoded. -->
-    <string name="onboarding_home_screen_section_home_title_2">Pagina da partenza da Firefox persunalisada</string>
+    <string moz:RemovedIn="99" name="onboarding_home_screen_section_home_title_2" tools:ignore="UnusedResources">Pagina da partenza da Firefox persunalisada</string>
+    <!-- Onboarding home screen dialog title text for the home section. The first parameter is the name of the application.-->
+    <string name="onboarding_home_screen_section_home_title_3">Pagina da partenza da %1$s persunalisada</string>
     <!-- Onboarding home screen dialog description text for the home section. -->
     <string name="onboarding_home_screen_section_home_description_2">Siglir tar tes tabs averts, tes segnapaginas e tia cronologia da navigaziun.</string>
     <!-- Onboarding home screen dialog description text for the tab tray section. -->
@@ -265,7 +275,9 @@
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
-    <string name="search_widget_content_description">Avrir in nov tab da Firefox</string>
+    <string moz:RemovedIn="99" name="search_widget_content_description" tools:ignore="UnusedResources">Avrir in nov tab da Firefox</string>
+    <!-- Content description for searching with a widget. The first parameter is the name of the application.-->
+    <string name="search_widget_content_description_2">Avrir in nov tab da %1$s</string>
     <!-- Text preview for smaller sized widgets -->
     <string name="search_widget_text_short">Tschertgar</string>
     <!-- Text preview for larger sized widgets -->
@@ -413,9 +425,11 @@
     <!-- Snackbar label for action to view selected wallpaper -->
     <string name="wallpaper_updated_snackbar_action">Mussar</string>
     <!-- Label for switch which toggles the "tap-to-switch" behavior on home screen logo -->
-    <string name="wallpaper_tap_to_change_switch_label">Tutga il logo per midar il maletg dal fund davos</string>
+    <string moz:removedIn="99" name="wallpaper_tap_to_change_switch_label" tools:ignore="UnusedResources">Tutga il logo per midar il maletg dal fund davos</string>
+    <!-- Label for switch which toggles the "tap-to-switch" behavior on home screen logo -->
+    <string name="wallpaper_tap_to_change_switch_label_1">Mida il maletg dal fund davos cun tutgar il logo da Firefox sin la pagina da partenza</string>
     <!-- Description for switch which toggles the "tap-to-switch" behavior on home screen logo -->
-    <string name="wallpaper_tap_to_change_switch_description">Percurrer ed actualisar il maletg senza bandunar la pagina da partenza.</string>
+    <string moz:removedIn="99" name="wallpaper_tap_to_change_switch_description" tools:ignore="UnusedResources">Percurrer ed actualisar il maletg senza bandunar la pagina da partenza.</string>
 
     <!-- This is the accessibility content description for the wallpapers functionality. Users are
     able to tap on the app logo in the home screen and can switch to different wallpapers by tapping. -->
@@ -638,7 +652,9 @@
     <!-- Title of the active section on the studies list -->
     <string name="studies_active">Activs</string>
     <!-- Description for studies, it indicates why Firefox use studies -->
-    <string name="studies_description">Firefox po installar e lantschar studis da temp en temp.</string>
+    <string moz:RemovedIn="99" name="studies_description" tools:ignore="UnusedResources">Firefox po installar e lantschar studis da temp en temp.</string>
+    <!-- Description for studies, it indicates why Firefox use studies. The first parameter is the name of the application. -->
+    <string name="studies_description_2">%1$s po installar ed exequir studis da temp en temp.</string>
     <!-- Learn more link for studies, links to an article for more information about studies. -->
     <string name="studies_learn_more">Ulteriuras infurmaziuns</string>
     <!-- Dialog message shown after removing a study -->
@@ -722,7 +738,9 @@
 
     <!-- History -->
     <!-- Text for the button to search all history -->
-    <string name="history_search">Endatar in term da tschertga</string>
+    <string moz:removedIn="99" name="history_search" tools:ignore="UnusedResources">Endatar in term da tschertga</string>
+    <!-- Text for the button to search all history -->
+    <string name="history_search_1">Endatar terms da tschertga</string>
     <!-- Text for the button to clear all history -->
     <string name="history_delete_all">Stizzar la cronologia</string>
     <!-- Text for the snackbar to confirm that multiple browsing history items has been deleted -->
@@ -960,6 +978,10 @@
     <string name="share_link_all_apps_subheader">Tuttas acziuns</string>
     <!-- Sub-header in the dialog to share a link to an app from the most-recent sorted list -->
     <string name="share_link_recent_apps_subheader">Utilisà dacurt</string>
+    <!-- Text for the copy link action in the share screen. -->
+    <string name="share_copy_link_to_clipboard">Copiar en l\'archiv provisoric</string>
+    <!-- Toast shown after copying link to clipboard -->
+    <string name="toast_copy_link_to_clipboard">Copià en l\'archiv provisoric</string>
     <!-- An option from the three dot menu to into sync -->
     <string name="sync_menu_sign_in">S\'annunziar per sincronisar</string>
     <!-- An option from the share dialog to sign into sync -->
@@ -1138,8 +1160,10 @@
     <string name="onboarding_header">Bainvegni en %s!</string>
     <!-- text for the Firefox account onboarding sign in card header. The word "Firefox" should not be translated -->
     <string name="onboarding_account_sign_in_header_1">Sincronisescha Firefox sin differents apparats</string>
-    <!-- Text for the button to learn more about signing in to your Firefox account -->
-    <string name="onboarding_manual_sign_in_description">Importescha segnapaginas, la cronologia e pleds-clav en Firefox sin quest apparat.</string>
+    <!-- text for the Firefox account onboarding sign in card header. The first parameter is the name of the application.-->
+    <string moz:RemovedIn="100" name="onboarding_account_sign_in_header_2" tools:ignore="UnusedResources">Sincronisescha %1$s tranter apparats</string>
+    <!-- Text for the button to learn more about signing in to your Firefox account. The first parameter is the name of the application.-->
+    <string name="onboarding_manual_sign_in_description_2">Importescha segnapaginas, la cronologia e pleds-clav en %1$s sin quest apparat.</string>
     <!-- text for the button to manually sign into Firefox account. -->
     <string name="onboarding_firefox_account_sign_in_1">Sa registrar</string>
     <!-- text to display in the snackbar once account is signed-in -->
@@ -1148,7 +1172,9 @@
     <!-- text for the tracking protection onboarding card header -->
     <string name="onboarding_tracking_protection_header_3">Protecziun da datas franco fabrica</string>
     <!-- text for the tracking protection card description. 'Firefox' intentionally hardcoded here -->
-    <string name="onboarding_tracking_protection_description_3">Firefox impedescha automaticamain che interpresas ta persequiteschian a la zuppada en il web.</string>
+    <string moz:RemovedIn="99" name="onboarding_tracking_protection_description_3" tools:ignore="UnusedResources">Firefox impedescha automaticamain che interpresas ta persequiteschian a la zuppada en il web.</string>
+    <!-- text for the tracking protection card description. The first parameter is the name of the application.-->
+    <string name="onboarding_tracking_protection_description_4">%1$s impedescha automaticamain che interpresas ta persequiteschian a la zuppada en il web.</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
     <string name="onboarding_tracking_protection_standard_button_2">Standard (predefinì)</string>
     <!-- text for standard blocking option button description -->
@@ -1496,11 +1522,15 @@
     <string name="credit_cards_menu_delete_card">Stizzar la carta</string>
     <!-- The text for the "Delete card" button for deleting a credit card -->
     <string name="credit_cards_delete_card_button">Stizzar la carta</string>
+    <!-- The text for the confirmation message of "Delete card" dialog -->
+    <string name="credit_cards_delete_dialog_confirmation">Vuls ti propi stizzar questa carta da credit?</string>
+    <!-- The text for the positive button on "Delete card" dialog -->
+    <string name="credit_cards_delete_dialog_button">Stizzar</string>
     <!-- The title for the "Save" menu item for saving a credit card -->
     <string name="credit_cards_menu_save">Memorisar</string>
     <!-- The text for the "Save" button for saving a credit card -->
     <string name="credit_cards_save_button">Memorisar</string>
-    <!-- The text for the "Cancel" button for cancelling adding or updating a credit card -->
+    <!-- The text for the "Cancel" button for cancelling adding, updating or deleting a credit card -->
     <string name="credit_cards_cancel_button">Interrumper</string>
     <!-- Title of the "Saved cards" screen -->
     <string name="credit_cards_saved_cards">Cartas memorisadas</string>
@@ -1666,6 +1696,8 @@
     <string name="synced_tabs_enable_tab_syncing">Activescha p.pl. la sincronisaziun da tabs.</string>
     <!-- Text displayed when user has no tabs that have been synced -->
     <string name="synced_tabs_no_tabs">Ti n\'has nagins tabs da Firefox averts sin auters apparats.</string>
+    <!-- Text displayed when user has no tabs that have been synced. The first parameter is the name of the application.-->
+    <string moz:RemovedIn="100" name="synced_tabs_no_tabs_2" tools:ignore="UnusedResources">Ti n\'has nagins tabs averts en %1$s sin tes auters apparats.</string>
     <!-- Text displayed in the synced tabs screen when a user is not signed in to Firefox Sync describing Synced Tabs -->
     <string name="synced_tabs_sign_in_message">Mussar ina glista dals tabs da tes auters apparats.</string>
 
@@ -1674,6 +1706,11 @@
 
     <!-- The text displayed when a synced device has no tabs to show in the list of Synced Tabs. -->
     <string name="synced_tabs_no_open_tabs">Nagins tabs averts</string>
+
+    <!-- Content description for expanding a group of synced tabs. -->
+    <string name="synced_tabs_expand_group">Expander la gruppa da tabs sincronisads</string>
+    <!-- Content description for collapsing a group of synced tabs. -->
+    <string name="synced_tabs_collapse_group">Reducir la gruppa da tabs sincronisads</string>
 
     <!-- Top Sites -->
     <!-- Title text displayed in the dialog when top sites limit is reached. -->
@@ -1723,22 +1760,22 @@
 
     <!-- Inactive tabs survey -->
     <!-- Header text for the inactive tabs survey asking for feedback to improve the inactive tabs feature. -->
-    <string name="inactive_tabs_survey_header_1">Gida a meglierar Firefox</string>
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_header_1" tools:ignore="UnusedResources">Gida a meglierar Firefox</string>
 
     <!-- Content text for the inactive tabs survey asking the primary survey feedback question. -->
-    <string name="inactive_tabs_survey_content">Pertge has ti deactivà ils tabs inactivs?</string>
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_content" tools:ignore="UnusedResources">Pertge has ti deactivà ils tabs inactivs?</string>
     <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string name="inactive_tabs_survey_do_not_understand">Jau na chapesch betg co che quai funcaziuna</string>
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_do_not_understand" tools:ignore="UnusedResources">Jau na chapesch betg co che quai funcaziuna</string>
     <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string name="inactive_tabs_survey_do_it_myself">Jau preferesch da sez serrar tabs pli vegls</string>
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_do_it_myself" tools:ignore="UnusedResources">Jau preferesch da sez serrar tabs pli vegls</string>
     <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string name="inactive_tabs_survey_time_too_long_option_1">L\'interval da duas emnas è memia lung</string>
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_time_too_long_option_1" tools:ignore="UnusedResources">L\'interval da duas emnas è memia lung</string>
     <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string name="inactive_tabs_survey_time_too_short_option_1">L\'interval da duas emnas è memia curt</string>
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_time_too_short_option_1" tools:ignore="UnusedResources">L\'interval da duas emnas è memia curt</string>
     <!-- Confirmation button text to submit the feedback for the inactive tabs survey. -->
-    <string name="inactive_tabs_survey_send_button">Trametter</string>
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_send_button" tools:ignore="UnusedResources">Trametter</string>
     <!-- Content description for inactive tabs survey close button -->
-    <string name="inactive_tabs_survey_close_button_content_description">Serrar</string>
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_close_button_content_description" tools:ignore="UnusedResources">Serrar</string>
 
     <!-- Default browser experiment -->
     <string name="default_browser_experiment_card_text">Definescha che colliaziuns da websites, e-mails e messadis vegnan averts automaticamain en Firefox.</string>

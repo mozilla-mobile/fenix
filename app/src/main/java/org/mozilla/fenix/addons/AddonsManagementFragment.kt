@@ -184,9 +184,9 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
 
     private fun createAddonStyle(context: Context): AddonsManagerAdapter.Style {
         return AddonsManagerAdapter.Style(
-            sectionsTextColor = ThemeManager.resolveAttribute(R.attr.primaryText, context),
-            addonNameTextColor = ThemeManager.resolveAttribute(R.attr.primaryText, context),
-            addonSummaryTextColor = ThemeManager.resolveAttribute(R.attr.secondaryText, context),
+            sectionsTextColor = ThemeManager.resolveAttribute(R.attr.textPrimary, context),
+            addonNameTextColor = ThemeManager.resolveAttribute(R.attr.textPrimary, context),
+            addonSummaryTextColor = ThemeManager.resolveAttribute(R.attr.textSecondary, context),
             sectionsTypeFace = ResourcesCompat.getFont(context, R.font.metropolis_semibold),
             addonAllowPrivateBrowsingLabelDrawableRes = R.drawable.ic_add_on_private_browsing_label
         )
@@ -218,7 +218,7 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
                         requireContext()
                     ),
                     positiveButtonTextColor = ThemeManager.resolveAttribute(
-                        R.attr.contrastText,
+                        R.attr.textOnColorPrimary,
                         requireContext()
                     ),
                     positiveButtonRadius = (resources.getDimensionPixelSize(R.dimen.tab_corner_radius)).toFloat()
@@ -253,7 +253,7 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
                         requireContext()
                     ),
                     confirmButtonTextColor = ThemeManager.resolveAttribute(
-                        R.attr.contrastText,
+                        R.attr.textOnColorPrimary,
                         requireContext()
                     ),
                     confirmButtonRadius = (resources.getDimensionPixelSize(R.dimen.tab_corner_radius)).toFloat()

@@ -64,6 +64,7 @@ import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.feature.tab.collections.TabCollection
+import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.feature.top.sites.TopSitesConfig
 import mozilla.components.feature.top.sites.TopSitesFeature
 import mozilla.components.feature.top.sites.TopSitesProviderConfig
@@ -97,6 +98,7 @@ import org.mozilla.fenix.databinding.FragmentHomeBinding
 import org.mozilla.fenix.datastore.pocketStoriesSelectedCategoriesDataStore
 import org.mozilla.fenix.ext.asRecentTabs
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.filterState
 import org.mozilla.fenix.ext.hideToolbar
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
@@ -104,6 +106,8 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.sort
+import org.mozilla.fenix.home.blocklist.BlocklistHandler
+import org.mozilla.fenix.home.blocklist.BlocklistMiddleware
 import org.mozilla.fenix.home.mozonline.showPrivacyPopWindow
 import org.mozilla.fenix.home.pocket.DefaultPocketStoriesController
 import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesCategory
@@ -234,13 +238,14 @@ class HomeFragment : Fragment() {
             ::dispatchModeChanges
         )
 
+        val blocklistHandler = BlocklistHandler(components.settings)
         homeFragmentStore = StoreProvider.get(this) {
             HomeFragmentStore(
-                HomeFragmentState(
+                initialState = HomeFragmentState(
                     collections = components.core.tabCollectionStorage.cachedTabCollections,
                     expandedCollections = emptySet(),
                     mode = currentMode.getCurrentMode(),
-                    topSites = components.core.topSitesStorage.cachedTopSites.sort(),
+                    topSites = getTopSites(components),
                     tip = components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
                         FenixTipManager(
                             listOf(
@@ -260,8 +265,9 @@ class HomeFragment : Fragment() {
                     //  to some state.
                     recentTabs = getRecentTabs(components),
                     recentHistory = emptyList()
-                ),
-                listOf(
+                ).run { filterState(blocklistHandler) },
+                middlewares = listOf(
+                    BlocklistMiddleware(blocklistHandler),
                     PocketUpdatesMiddleware(
                         lifecycleScope,
                         requireComponents.core.pocketStoriesService,
@@ -283,18 +289,20 @@ class HomeFragment : Fragment() {
             }
         }
 
-        topSitesFeature.set(
-            feature = TopSitesFeature(
-                view = DefaultTopSitesView(
-                    store = homeFragmentStore,
-                    settings = components.settings
+        if (requireContext().settings().showTopSitesFeature) {
+            topSitesFeature.set(
+                feature = TopSitesFeature(
+                    view = DefaultTopSitesView(
+                        store = homeFragmentStore,
+                        settings = components.settings
+                    ),
+                    storage = components.core.topSitesStorage,
+                    config = ::getTopSitesConfig
                 ),
-                storage = components.core.topSitesStorage,
-                config = ::getTopSitesConfig
-            ),
-            owner = viewLifecycleOwner,
-            view = binding.root
-        )
+                owner = viewLifecycleOwner,
+                view = binding.root
+            )
+        }
 
         if (requireContext().settings().showRecentTabsFeature) {
             recentTabsListFeature.set(
@@ -358,11 +366,13 @@ class HomeFragment : Fragment() {
                 selectTabUseCase = components.useCases.tabsUseCases.selectTab,
                 navController = findNavController(),
                 metrics = requireComponents.analytics.metrics,
-                store = components.core.store
+                store = components.core.store,
+                homeStore = homeFragmentStore,
             ),
             recentBookmarksController = DefaultRecentBookmarksController(
                 activity = activity,
-                navController = findNavController()
+                navController = findNavController(),
+                homeStore = homeFragmentStore,
             ),
             recentVisitsController = DefaultRecentVisitsController(
                 navController = findNavController(),
@@ -427,7 +437,7 @@ class HomeFragment : Fragment() {
         val settings = requireContext().settings()
         return TopSitesConfig(
             totalSites = settings.topSitesMaxLimit,
-            frecencyConfig = if (settings.showTopFrecentSites) FrecencyThresholdOption.SKIP_ONE_TIME_PAGES else null,
+            frecencyConfig = FrecencyThresholdOption.SKIP_ONE_TIME_PAGES,
             providerConfig = TopSitesProviderConfig(
                 showProviderTopSites = settings.showContileFeature,
                 maxThreshold = TOP_SITES_PROVIDER_MAX_THRESHOLD
@@ -508,7 +518,7 @@ class HomeFragment : Fragment() {
         binding.menuButton.setColorFilter(
             ContextCompat.getColor(
                 requireContext(),
-                ThemeManager.resolveAttribute(R.attr.primaryText, requireContext())
+                ThemeManager.resolveAttribute(R.attr.textPrimary, requireContext())
             )
         )
 
@@ -530,9 +540,7 @@ class HomeFragment : Fragment() {
         }
 
         binding.tabButton.setOnClickListener {
-            if (FeatureFlags.showStartOnHomeSettings) {
-                requireComponents.analytics.metrics.track(Event.StartOnHomeOpenTabsTray)
-            }
+            requireComponents.analytics.metrics.track(Event.StartOnHomeOpenTabsTray)
             openTabsTray()
         }
 
@@ -699,7 +707,7 @@ class HomeFragment : Fragment() {
             HomeFragmentAction.Change(
                 collections = components.core.tabCollectionStorage.cachedTabCollections,
                 mode = currentMode.getCurrentMode(),
-                topSites = components.core.topSitesStorage.cachedTopSites.sort(),
+                topSites = getTopSites(components),
                 tip = components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
                     FenixTipManager(
                         listOf(
@@ -857,7 +865,7 @@ class HomeFragment : Fragment() {
                 ColorDrawable(
                     ContextCompat.getColor(
                         requireContext(),
-                        R.color.foundation_private_theme
+                        R.color.fx_mobile_private_layer_color_1
                     )
                 )
             )
@@ -1218,6 +1226,14 @@ class HomeFragment : Fragment() {
         // The add_tabs_to_collections_button is added at runtime. We need to search for it in the same way.
         sessionControlView?.view?.findViewById<MaterialButton>(R.id.add_tabs_to_collections_button)
             ?.isVisible = tabCount > 0
+    }
+
+    private fun getTopSites(components: Components): List<TopSite> {
+        return if (components.settings.showTopSitesFeature) {
+            components.core.topSitesStorage.cachedTopSites.sort()
+        } else {
+            emptyList()
+        }
     }
 
     private fun getRecentTabs(components: Components): List<RecentTab> {

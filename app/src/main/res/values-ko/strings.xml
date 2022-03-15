@@ -49,8 +49,9 @@
     <string name="recently_saved_show_all">모두 표시</string>
     <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
     <string name="recently_saved_show_all_content_description_2">저장된 북마크 모두 표시</string>
-    <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
-    <string moz:removedIn="97" name="recently_saved_show_all_content_description" tools:ignore="UnusedResources">저장된 북마크 모두 표시 버튼</string>
+
+    <!-- Text for the menu button to remove a recently saved bookmark from the user's home screen -->
+    <string name="recently_saved_menu_item_remove">삭제</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
     <string name="about_content">%1$s는 Mozilla에서 제작했습니다.</string>
@@ -74,7 +75,9 @@
 
     <!-- Open in App "contextual feature recommendation" (CFR) -->
     <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
-    <string name="open_in_app_cfr_info_message">앱에서 링크를 자동으로 열도록 Firefox를 설정할 수 있습니다.</string>
+    <string moz:RemovedIn="99" name="open_in_app_cfr_info_message" tools:ignore="UnusedResources">앱에서 링크를 자동으로 열도록 Firefox를 설정할 수 있습니다.</string>
+    <!-- Text for the info message. The first parameter is the name of the application.-->
+    <string name="open_in_app_cfr_info_message_2">앱에서 링크를 자동으로 열도록 %1$s를 설정할 수 있습니다.</string>
     <!-- Text for the positive action button -->
     <string name="open_in_app_cfr_positive_button_text">설정으로 이동</string>
     <!-- Text for the negative action button -->
@@ -102,7 +105,10 @@
     <!-- Text for title for the auto-close dialog of the inactive tabs. -->
     <string name="tab_tray_inactive_auto_close_title">한 달 후 자동 닫기를 하시겠습니까?</string>
     <!-- Text for the body for the auto-close dialog of the inactive tabs. -->
-    <string name="tab_tray_inactive_auto_close_body">Firefox는 지난 한 달 동안 보지 않은 탭을 닫을 수 있습니다.</string>
+    <string moz:RemovedIn="99" name="tab_tray_inactive_auto_close_body" tools:ignore="UnusedResources">Firefox는 지난 한 달 동안 보지 않은 탭을 닫을 수 있습니다.</string>
+    <!-- Text for the body for the auto-close dialog of the inactive tabs.
+        The first parameter is the name of the application.-->
+    <string name="tab_tray_inactive_auto_close_body_2">%1$s는 지난 한 달 동안 보지 않은 탭을 닫을 수 있습니다.</string>
     <!-- Content description for close button in the auto-close dialog of the inactive tabs. -->
     <string name="tab_tray_inactive_auto_close_button_content_description">닫기</string>
 
@@ -124,8 +130,6 @@
 
     <!-- Content description for the button which navigates the user to show all recent tabs in the tabs tray. -->
     <string name="recent_tabs_show_all_content_description_2">모든 최근 탭 표시 버튼</string>
-    <!-- Content description for the button which navigates the user to show all recent tabs in the tabs tray. -->
-    <string moz:removedIn="97" name="recent_tabs_show_all_content_description2" tools:ignore="UnusedResources">모든 최근 탭 표시</string>
     <!-- Title for showing a group item in the 'Jump back in' section of the new tab
         The first parameter is the search term that the user used. (for example: your search for "cat")-->
     <string name="recent_tabs_search_term">\&quot;%1$s\&quot;에 대한 검색</string>
@@ -133,6 +137,10 @@
     <!-- Text for the number of tabs in a group in the 'Jump back in' section of the new tab
         %d is a placeholder for the number of sites in the group. This number will always be more than one. -->
     <string name="recent_tabs_search_term_count_2">%d개 사이트</string>
+
+    <!-- Text for the menu button to remove a grouped highlight from the user's browsing history
+         in the Recently visited section -->
+    <string name="recent_tab_menu_item_remove">삭제</string>
 
     <!-- History Metadata -->
     <!-- Header text for a section on the home screen that displays grouped highlights from the
@@ -144,8 +152,6 @@
 
     <!-- Content description for the button which navigates the user to show all of their history. -->
     <string name="past_explorations_show_all_content_description_2">모든 지난 탐색 표시</string>
-    <!-- Content description for the button which navigates the user to show all of their history. -->
-    <string moz:removedIn="97" name="past_explorations_show_all_content_description" tools:ignore="UnusedResources">모든 지난 탐색 표시 버튼</string>
 
     <!-- Browser Fragment -->
     <!-- Content description (not visible, for screen readers etc.): Navigate backward (browsing history) -->
@@ -175,7 +181,7 @@
     <!-- Browser menu toggle that installs a Progressive Web App shortcut to the site on the device home screen. -->
     <string name="browser_menu_install_on_homescreen">설치</string>
     <!-- Menu option on the toolbar that takes you to synced tabs page-->
-    <string name="synced_tabs">동기화된 탭</string>
+    <string moz:removedIn="98" name="synced_tabs" tools:ignore="UnusedResources">동기화된 탭</string>
     <!-- Content description (not visible, for screen readers etc.) for the Resync tabs button -->
     <string name="resync_button_content_description">다시 동기화</string>
     <!-- Browser menu button that opens the find in page menu -->
@@ -253,11 +259,15 @@
 
     <!-- Home onboarding -->
     <!-- Onboarding home screen dialog title text. Firefox is intentionally hardcoded. -->
-    <string name="onboarding_home_screen_title_2">Firefox의 새 기능</string>
+    <string moz:removedIn="99" name="onboarding_home_screen_title_2" tools:ignore="UnusedResources">Firefox의 새 기능</string>
+    <!-- Onboarding home screen dialog title text. The first parameter is the name of the application.-->
+    <string name="onboarding_home_screen_title_3">%1$s의 새 기능</string>
     <!-- Onboarding home screen dialog description text. -->
     <string name="onboarding_home_screen_description_2">이제 이전에 사용하던 부분을 쉽게 찾을 수 있습니다.</string>
     <!-- Onboarding home screen dialog title text for the home section. Firefox is intentionally hardcoded. -->
-    <string name="onboarding_home_screen_section_home_title_2">개인화된 Firefox 홈페이지</string>
+    <string moz:RemovedIn="99" name="onboarding_home_screen_section_home_title_2" tools:ignore="UnusedResources">개인화된 Firefox 홈페이지</string>
+    <!-- Onboarding home screen dialog title text for the home section. The first parameter is the name of the application.-->
+    <string name="onboarding_home_screen_section_home_title_3">개인화된 %1$s 홈페이지</string>
     <!-- Onboarding home screen dialog description text for the home section. -->
     <string name="onboarding_home_screen_section_home_description_2">열린 탭, 북마크 및 방문 기록으로 이동합니다.</string>
     <!-- Onboarding home screen dialog description text for the tab tray section. -->
@@ -274,7 +284,9 @@
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
-    <string name="search_widget_content_description">새 Firefox 탭 열기</string>
+    <string moz:RemovedIn="99" name="search_widget_content_description" tools:ignore="UnusedResources">새 Firefox 탭 열기</string>
+    <!-- Content description for searching with a widget. The first parameter is the name of the application.-->
+    <string name="search_widget_content_description_2">새 %1$s 탭 열기</string>
     <!-- Text preview for smaller sized widgets -->
     <string name="search_widget_text_short">검색</string>
     <!-- Text preview for larger sized widgets -->
@@ -425,13 +437,15 @@
     <string name="wallpaper_updated_snackbar_action">보기</string>
 
     <!-- Label for switch which toggles the "tap-to-switch" behavior on home screen logo -->
-    <string name="wallpaper_tap_to_change_switch_label">배경 화면을 변경하려면 로고를 누르세요</string>
+    <string moz:removedIn="99" name="wallpaper_tap_to_change_switch_label" tools:ignore="UnusedResources">배경 화면을 변경하려면 로고를 누르세요</string>
+    <!-- Label for switch which toggles the "tap-to-switch" behavior on home screen logo -->
+    <string name="wallpaper_tap_to_change_switch_label_1">Firefox 홈페이지 로고를 눌러 배경 화면 변경</string>
     <!-- Description for switch which toggles the "tap-to-switch" behavior on home screen logo -->
-    <string name="wallpaper_tap_to_change_switch_description">홈페이지를 떠나지 않고 이미지를 순환하고 업데이트합니다.</string>
+    <string moz:removedIn="99" name="wallpaper_tap_to_change_switch_description" tools:ignore="UnusedResources">홈페이지를 떠나지 않고 이미지를 순환하고 업데이트합니다.</string>
 
     <!-- This is the accessibility content description for the wallpapers functionality. Users are
     able to tap on the app logo in the home screen and can switch to different wallpapers by tapping. -->
-    <string name="wallpaper_logo_content_description">Firefox 로고 - 배경화면 변경, 버튼</string>
+    <string name="wallpaper_logo_content_description">Firefox 로고 - 배경 화면 변경, 버튼</string>
 
     <!-- Add-on Installation from AMO-->
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
@@ -654,7 +668,9 @@
     <!-- Title of the active section on the studies list -->
     <string name="studies_active">활성화</string>
     <!-- Description for studies, it indicates why Firefox use studies -->
-    <string name="studies_description">Firefox는 때때로 연구를 설치하고 실행할 수 있습니다.</string>
+    <string moz:RemovedIn="99" name="studies_description" tools:ignore="UnusedResources">Firefox는 때때로 연구를 설치하고 실행할 수 있습니다.</string>
+    <!-- Description for studies, it indicates why Firefox use studies. The first parameter is the name of the application. -->
+    <string name="studies_description_2">%1$s는 때때로 연구를 설치하고 실행할 수 있습니다.</string>
     <!-- Learn more link for studies, links to an article for more information about studies. -->
     <string name="studies_learn_more">더 알아보기</string>
 
@@ -743,7 +759,9 @@
 
     <!-- History -->
     <!-- Text for the button to search all history -->
-    <string name="history_search">검색어를 입력하세요</string>
+    <string moz:removedIn="99" name="history_search" tools:ignore="UnusedResources">검색어를 입력하세요</string>
+    <!-- Text for the button to search all history -->
+    <string name="history_search_1">검색어 입력</string>
     <!-- Text for the button to clear all history -->
     <string name="history_delete_all">기록 삭제</string>
     <!-- Text for the snackbar to confirm that multiple browsing history items has been deleted -->
@@ -1001,6 +1019,10 @@
     <string name="share_link_all_apps_subheader">모든 동작</string>
     <!-- Sub-header in the dialog to share a link to an app from the most-recent sorted list -->
     <string name="share_link_recent_apps_subheader">최근 사용</string>
+    <!-- Text for the copy link action in the share screen. -->
+    <string name="share_copy_link_to_clipboard">클립보드에 복사</string>
+    <!-- Toast shown after copying link to clipboard -->
+    <string name="toast_copy_link_to_clipboard">클립보드에 복사됨</string>
     <!-- An option from the three dot menu to into sync -->
     <string name="sync_menu_sign_in">Sync에 로그인</string>
     <!-- An option from the share dialog to sign into sync -->
@@ -1186,8 +1208,10 @@
     <string name="onboarding_header">%s에 오신걸 환영합니다!</string>
     <!-- text for the Firefox account onboarding sign in card header. The word "Firefox" should not be translated -->
     <string name="onboarding_account_sign_in_header_1">기기 간에 Firefox 동기화</string>
-    <!-- Text for the button to learn more about signing in to your Firefox account -->
-    <string name="onboarding_manual_sign_in_description">이 기기의 Firefox에 북마크, 기록 및 비밀번호를 가져오세요.</string>
+    <!-- text for the Firefox account onboarding sign in card header. The first parameter is the name of the application.-->
+    <string moz:RemovedIn="100" name="onboarding_account_sign_in_header_2" tools:ignore="UnusedResources">기기 간에 %1$s 동기화</string>
+    <!-- Text for the button to learn more about signing in to your Firefox account. The first parameter is the name of the application.-->
+    <string name="onboarding_manual_sign_in_description_2">이 기기의 %1$s에 북마크, 기록 및 비밀번호를 가져오세요.</string>
     <!-- text for the button to manually sign into Firefox account. -->
     <string name="onboarding_firefox_account_sign_in_1">가입하기</string>
     <!-- text to display in the snackbar once account is signed-in -->
@@ -1196,7 +1220,9 @@
     <!-- text for the tracking protection onboarding card header -->
     <string name="onboarding_tracking_protection_header_3">상시 개인 정보 보호</string>
     <!-- text for the tracking protection card description. 'Firefox' intentionally hardcoded here -->
-    <string name="onboarding_tracking_protection_description_3">Firefox는 회사가 웹에서 사용자를 몰래 따라 다니는 것을 자동으로 중지합니다.</string>
+    <string moz:RemovedIn="99" name="onboarding_tracking_protection_description_3" tools:ignore="UnusedResources">Firefox는 회사가 웹에서 사용자를 몰래 따라 다니는 것을 자동으로 중지합니다.</string>
+    <!-- text for the tracking protection card description. The first parameter is the name of the application.-->
+    <string name="onboarding_tracking_protection_description_4">%1$s는 회사가 웹에서 사용자를 몰래 따라 다니는 것을 자동으로 중지합니다.</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
     <string name="onboarding_tracking_protection_standard_button_2">표준 (기본값)</string>
     <!-- text for standard blocking option button description -->
@@ -1538,11 +1564,15 @@
     <string name="credit_cards_menu_delete_card">카드 삭제</string>
     <!-- The text for the "Delete card" button for deleting a credit card -->
     <string name="credit_cards_delete_card_button">카드 삭제</string>
+    <!-- The text for the confirmation message of "Delete card" dialog -->
+    <string name="credit_cards_delete_dialog_confirmation">이 신용 카드를 삭제하시겠습니까?</string>
+    <!-- The text for the positive button on "Delete card" dialog -->
+    <string name="credit_cards_delete_dialog_button">삭제</string>
     <!-- The title for the "Save" menu item for saving a credit card -->
     <string name="credit_cards_menu_save">저장</string>
     <!-- The text for the "Save" button for saving a credit card -->
     <string name="credit_cards_save_button">저장</string>
-    <!-- The text for the "Cancel" button for cancelling adding or updating a credit card -->
+    <!-- The text for the "Cancel" button for cancelling adding, updating or deleting a credit card -->
     <string name="credit_cards_cancel_button">취소</string>
 
     <!-- Title of the "Saved cards" screen -->
@@ -1711,6 +1741,8 @@
 
     <!-- Text displayed when user has no tabs that have been synced -->
     <string name="synced_tabs_no_tabs">다른 기기의 Firefox에서 열린 탭이 없습니다.</string>
+    <!-- Text displayed when user has no tabs that have been synced. The first parameter is the name of the application.-->
+    <string moz:RemovedIn="100" name="synced_tabs_no_tabs_2" tools:ignore="UnusedResources">다른 기기의 %1$s에서 열린 탭이 없습니다.</string>
     <!-- Text displayed in the synced tabs screen when a user is not signed in to Firefox Sync describing Synced Tabs -->
     <string name="synced_tabs_sign_in_message">다른 기기의 탭 목록을 봅니다.</string>
     <!-- Text displayed on a button in the synced tabs screen to link users to sign in when a user is not signed in to Firefox Sync -->
@@ -1718,6 +1750,11 @@
 
     <!-- The text displayed when a synced device has no tabs to show in the list of Synced Tabs. -->
     <string name="synced_tabs_no_open_tabs">열린 탭이 없음</string>
+
+    <!-- Content description for expanding a group of synced tabs. -->
+    <string name="synced_tabs_expand_group">동기화된 탭 그룹 펼치기</string>
+    <!-- Content description for collapsing a group of synced tabs. -->
+    <string name="synced_tabs_collapse_group">동기화된 탭 그룹 접기</string>
 
     <!-- Top Sites -->
     <!-- Title text displayed in the dialog when top sites limit is reached. -->
@@ -1768,22 +1805,22 @@
 
     <!-- Inactive tabs survey -->
     <!-- Header text for the inactive tabs survey asking for feedback to improve the inactive tabs feature. -->
-    <string name="inactive_tabs_survey_header_1">Firefox 개선에 도움주기</string>
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_header_1" tools:ignore="UnusedResources">Firefox 개선에 도움주기</string>
 
     <!-- Content text for the inactive tabs survey asking the primary survey feedback question. -->
-    <string name="inactive_tabs_survey_content">비활성 탭 기능을 사용 안하시는 이유는 무엇입니까?</string>
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_content" tools:ignore="UnusedResources">비활성 탭 기능을 사용 안하시는 이유는 무엇입니까?</string>
     <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string name="inactive_tabs_survey_do_not_understand">어떻게 작동하는지 이해하지 못하겠습니다</string>
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_do_not_understand" tools:ignore="UnusedResources">어떻게 작동하는지 이해하지 못하겠습니다</string>
     <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string name="inactive_tabs_survey_do_it_myself">오래된 탭을 직접 지우는 것이 좋습니다</string>
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_do_it_myself" tools:ignore="UnusedResources">오래된 탭을 직접 지우는 것이 좋습니다</string>
     <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string name="inactive_tabs_survey_time_too_long_option_1">2주라는 시간이 너무 깁니다</string>
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_time_too_long_option_1" tools:ignore="UnusedResources">2주라는 시간이 너무 깁니다</string>
     <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string name="inactive_tabs_survey_time_too_short_option_1">2주라는 시간이 너무 짧습니다</string>
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_time_too_short_option_1" tools:ignore="UnusedResources">2주라는 시간이 너무 짧습니다</string>
     <!-- Confirmation button text to submit the feedback for the inactive tabs survey. -->
-    <string name="inactive_tabs_survey_send_button">보내기</string>
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_send_button" tools:ignore="UnusedResources">보내기</string>
     <!-- Content description for inactive tabs survey close button -->
-    <string name="inactive_tabs_survey_close_button_content_description">닫기</string>
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_close_button_content_description" tools:ignore="UnusedResources">닫기</string>
 
     <!-- Default browser experiment -->
     <string name="default_browser_experiment_card_text">Firefox에서 자동으로 열리도록 웹 사이트, 이메일 및 메시지의 링크를 설정합니다.</string>

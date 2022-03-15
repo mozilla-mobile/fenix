@@ -4,7 +4,6 @@
 
 package org.mozilla.fenix.home
 
-import android.graphics.Bitmap
 import androidx.annotation.VisibleForTesting
 import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.feature.tab.collections.TabCollection
@@ -15,6 +14,7 @@ import mozilla.components.lib.state.State
 import mozilla.components.lib.state.Store
 import mozilla.components.service.pocket.PocketRecommendedStory
 import org.mozilla.fenix.components.tips.Tip
+import org.mozilla.fenix.ext.filterOutTab
 import org.mozilla.fenix.ext.getFilteredStories
 import org.mozilla.fenix.ext.recentSearchGroup
 import org.mozilla.fenix.home.pocket.POCKET_STORIES_TO_SHOW_COUNT
@@ -35,15 +35,6 @@ class HomeFragmentStore(
     middlewares: List<Middleware<HomeFragmentState, HomeFragmentAction>> = emptyList()
 ) : Store<HomeFragmentState, HomeFragmentAction>(
     initialState, ::homeFragmentStateReducer, middlewares
-)
-
-data class Tab(
-    val sessionId: String,
-    val url: String,
-    val hostname: String,
-    val title: String,
-    val selected: Boolean? = null,
-    val icon: Bitmap? = null
 )
 
 /**
@@ -101,7 +92,9 @@ sealed class HomeFragmentAction : Action {
     data class TopSitesChange(val topSites: List<TopSite>) : HomeFragmentAction()
     data class RemoveTip(val tip: Tip) : HomeFragmentAction()
     data class RecentTabsChange(val recentTabs: List<RecentTab>) : HomeFragmentAction()
+    data class RemoveRecentTab(val recentTab: RecentTab) : HomeFragmentAction()
     data class RecentBookmarksChange(val recentBookmarks: List<RecentBookmark>) : HomeFragmentAction()
+    data class RemoveRecentBookmark(val recentBookmark: RecentBookmark) : HomeFragmentAction()
     data class RecentHistoryChange(val recentHistory: List<RecentlyVisitedItem>) : HomeFragmentAction()
     data class RemoveRecentHistoryHighlight(val highlightUrl: String) : HomeFragmentAction()
     data class DisbandSearchGroupAction(val searchTerm: String) : HomeFragmentAction()
@@ -167,7 +160,15 @@ private fun homeFragmentStateReducer(
                 recentHistory = state.recentHistory.filterOut(recentSearchGroup?.searchTerm)
             )
         }
+        is HomeFragmentAction.RemoveRecentTab -> {
+            state.copy(
+                recentTabs = state.recentTabs.filterOutTab(action.recentTab)
+            )
+        }
         is HomeFragmentAction.RecentBookmarksChange -> state.copy(recentBookmarks = action.recentBookmarks)
+        is HomeFragmentAction.RemoveRecentBookmark -> {
+            state.copy(recentBookmarks = state.recentBookmarks.filterNot { it.url == action.recentBookmark.url })
+        }
         is HomeFragmentAction.RecentHistoryChange -> state.copy(
             recentHistory = action.recentHistory.filterOut(state.recentSearchGroup?.searchTerm)
         )

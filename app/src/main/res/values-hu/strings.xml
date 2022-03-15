@@ -45,8 +45,9 @@
     <string name="recently_saved_show_all">Összes megjelenítése</string>
     <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
     <string name="recently_saved_show_all_content_description_2">Összes mentett könyvjelző megjelenítése</string>
-    <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
-    <string moz:removedIn="97" name="recently_saved_show_all_content_description" tools:ignore="UnusedResources">Az összes mentett könyvjelző megjelenítése gomb</string>
+
+    <!-- Text for the menu button to remove a recently saved bookmark from the user's home screen -->
+    <string name="recently_saved_menu_item_remove">Eltávolítás</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
     <string name="about_content">A %1$s a Mozilla terméke.</string>
@@ -69,7 +70,9 @@
 
     <!-- Open in App "contextual feature recommendation" (CFR) -->
     <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
-    <string name="open_in_app_cfr_info_message">Beállíthatja, hogy a Firefox automatikusan alkalmazásokban nyisson meg hivatkozásokat.</string>
+    <string moz:RemovedIn="99" name="open_in_app_cfr_info_message" tools:ignore="UnusedResources">Beállíthatja, hogy a Firefox automatikusan alkalmazásokban nyisson meg hivatkozásokat.</string>
+    <!-- Text for the info message. The first parameter is the name of the application.-->
+    <string name="open_in_app_cfr_info_message_2">Beállíthatja, hogy a %1$s automatikusan alkalmazásokban nyisson meg hivatkozásokat.</string>
     <!-- Text for the positive action button -->
     <string name="open_in_app_cfr_positive_button_text">Ugrás a beállításokhoz</string>
     <!-- Text for the negative action button -->
@@ -97,7 +100,10 @@
     <!-- Text for title for the auto-close dialog of the inactive tabs. -->
     <string name="tab_tray_inactive_auto_close_title">Automatikus bezárás egy hónap után?</string>
     <!-- Text for the body for the auto-close dialog of the inactive tabs. -->
-    <string name="tab_tray_inactive_auto_close_body">A Firefox bezárhatja azokat a lapokat, amelyeket az elmúlt hónapban nem nézett meg.</string>
+    <string moz:RemovedIn="99" name="tab_tray_inactive_auto_close_body" tools:ignore="UnusedResources">A Firefox bezárhatja azokat a lapokat, amelyeket az elmúlt hónapban nem nézett meg.</string>
+    <!-- Text for the body for the auto-close dialog of the inactive tabs.
+        The first parameter is the name of the application.-->
+    <string name="tab_tray_inactive_auto_close_body_2">A %1$s bezárhatja azokat a lapokat, amelyeket az elmúlt hónapban nem nézett meg.</string>
     <!-- Content description for close button in the auto-close dialog of the inactive tabs. -->
     <string name="tab_tray_inactive_auto_close_button_content_description">Bezárás</string>
 
@@ -119,8 +125,6 @@
 
     <!-- Content description for the button which navigates the user to show all recent tabs in the tabs tray. -->
     <string name="recent_tabs_show_all_content_description_2">Öösszes legutóbbi lap megjelenítése gomb</string>
-    <!-- Content description for the button which navigates the user to show all recent tabs in the tabs tray. -->
-    <string moz:removedIn="97" name="recent_tabs_show_all_content_description2" tools:ignore="UnusedResources">Összes legutóbbi lap megjelenítése</string>
     <!-- Title for showing a group item in the 'Jump back in' section of the new tab
         The first parameter is the search term that the user used. (for example: your search for "cat")-->
     <string name="recent_tabs_search_term">Az Ön keresése erre: „%1$s”</string>
@@ -128,6 +132,10 @@
     <!-- Text for the number of tabs in a group in the 'Jump back in' section of the new tab
         %d is a placeholder for the number of sites in the group. This number will always be more than one. -->
     <string name="recent_tabs_search_term_count_2">%d webhely</string>
+
+    <!-- Text for the menu button to remove a grouped highlight from the user's browsing history
+         in the Recently visited section -->
+    <string name="recent_tab_menu_item_remove">Eltávolítás</string>
 
     <!-- History Metadata -->
     <!-- Header text for a section on the home screen that displays grouped highlights from the
@@ -139,8 +147,6 @@
 
     <!-- Content description for the button which navigates the user to show all of their history. -->
     <string name="past_explorations_show_all_content_description_2">Összes korábbi felfedezés megjelenítése</string>
-    <!-- Content description for the button which navigates the user to show all of their history. -->
-    <string moz:removedIn="97" name="past_explorations_show_all_content_description" tools:ignore="UnusedResources">Az összes korábbi felfedezés megjelenítése gomb</string>
 
     <!-- Browser Fragment -->
     <!-- Content description (not visible, for screen readers etc.): Navigate backward (browsing history) -->
@@ -170,7 +176,7 @@
     <!-- Browser menu toggle that installs a Progressive Web App shortcut to the site on the device home screen. -->
     <string name="browser_menu_install_on_homescreen">Telepítés</string>
     <!-- Menu option on the toolbar that takes you to synced tabs page-->
-    <string name="synced_tabs">Szinkronizált lapok</string>
+    <string moz:removedIn="98" name="synced_tabs" tools:ignore="UnusedResources">Szinkronizált lapok</string>
     <!-- Content description (not visible, for screen readers etc.) for the Resync tabs button -->
     <string name="resync_button_content_description">Újraszinkronizálás</string>
     <!-- Browser menu button that opens the find in page menu -->
@@ -248,12 +254,16 @@
 
     <!-- Home onboarding -->
     <!-- Onboarding home screen dialog title text. Firefox is intentionally hardcoded. -->
-    <string name="onboarding_home_screen_title_2">Újdonságok a Firefoxban</string>
+    <string moz:removedIn="99" name="onboarding_home_screen_title_2" tools:ignore="UnusedResources">Újdonságok a Firefoxban</string>
 
+    <!-- Onboarding home screen dialog title text. The first parameter is the name of the application.-->
+    <string name="onboarding_home_screen_title_3">A %s újdonságai</string>
     <!-- Onboarding home screen dialog description text. -->
     <string name="onboarding_home_screen_description_2">Mostantól könnyebb ott folytatni, ahol abbahagyta.</string>
     <!-- Onboarding home screen dialog title text for the home section. Firefox is intentionally hardcoded. -->
-    <string name="onboarding_home_screen_section_home_title_2">Személyre szabott Firefox kezdőoldal</string>
+    <string moz:RemovedIn="99" name="onboarding_home_screen_section_home_title_2" tools:ignore="UnusedResources">Személyre szabott Firefox kezdőoldal</string>
+    <!-- Onboarding home screen dialog title text for the home section. The first parameter is the name of the application.-->
+    <string name="onboarding_home_screen_section_home_title_3">Személyre szabott %1$s kezdőoldal</string>
     <!-- Onboarding home screen dialog description text for the home section. -->
     <string name="onboarding_home_screen_section_home_description_2">Ugrás a megnyitott lapokra, könyvjelzőkre és az előzményekre.</string>
     <!-- Onboarding home screen dialog description text for the tab tray section. -->
@@ -271,7 +281,9 @@
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
-    <string name="search_widget_content_description">Új Firefox-lap megnyitása</string>
+    <string moz:RemovedIn="99" name="search_widget_content_description" tools:ignore="UnusedResources">Új Firefox-lap megnyitása</string>
+    <!-- Content description for searching with a widget. The first parameter is the name of the application.-->
+    <string name="search_widget_content_description_2">Új %1$s lap megnyitása</string>
     <!-- Text preview for smaller sized widgets -->
     <string name="search_widget_text_short">Keresés</string>
     <!-- Text preview for larger sized widgets -->
@@ -421,9 +433,11 @@
     <string name="wallpaper_updated_snackbar_action">Nézet</string>
 
     <!-- Label for switch which toggles the "tap-to-switch" behavior on home screen logo -->
-    <string name="wallpaper_tap_to_change_switch_label">Koppintson a logóra a háttérkép megváltoztatásához</string>
+    <string moz:removedIn="99" name="wallpaper_tap_to_change_switch_label" tools:ignore="UnusedResources">Koppintson a logóra a háttérkép megváltoztatásához</string>
+    <!-- Label for switch which toggles the "tap-to-switch" behavior on home screen logo -->
+    <string name="wallpaper_tap_to_change_switch_label_1">A háttérkép módosításához koppintson a Firefox kezdőlap logójára</string>
     <!-- Description for switch which toggles the "tap-to-switch" behavior on home screen logo -->
-    <string name="wallpaper_tap_to_change_switch_description">Végigléptetés és a kép frissítése a kezdőképernyő elhagyása nélkül.</string>
+    <string moz:removedIn="99" name="wallpaper_tap_to_change_switch_description" tools:ignore="UnusedResources">Végigléptetés és a kép frissítése a kezdőképernyő elhagyása nélkül.</string>
 
     <!-- This is the accessibility content description for the wallpapers functionality. Users are
     able to tap on the app logo in the home screen and can switch to different wallpapers by tapping. -->
@@ -649,7 +663,9 @@
     <!-- Title of the active section on the studies list -->
     <string name="studies_active">Aktív</string>
     <!-- Description for studies, it indicates why Firefox use studies -->
-    <string name="studies_description">A Firefox időről időre tanulmányokat telepíthet és futtathat.</string>
+    <string moz:RemovedIn="99" name="studies_description" tools:ignore="UnusedResources">A Firefox időről időre tanulmányokat telepíthet és futtathat.</string>
+    <!-- Description for studies, it indicates why Firefox use studies. The first parameter is the name of the application. -->
+    <string name="studies_description_2">A %1$s időről időre tanulmányokat telepíthet és futtathat.</string>
     <!-- Learn more link for studies, links to an article for more information about studies. -->
     <string name="studies_learn_more">További tudnivalók</string>
 
@@ -737,7 +753,9 @@
 
     <!-- History -->
     <!-- Text for the button to search all history -->
-    <string name="history_search">Adja meg a keresési kifejezést</string>
+    <string moz:removedIn="99" name="history_search" tools:ignore="UnusedResources">Adja meg a keresési kifejezést</string>
+    <!-- Text for the button to search all history -->
+    <string name="history_search_1">Adja meg a keresési kifejezéseket</string>
     <!-- Text for the button to clear all history -->
     <string name="history_delete_all">Előzmények törlése</string>
     <!-- Text for the snackbar to confirm that multiple browsing history items has been deleted -->
@@ -977,6 +995,10 @@
     <string name="share_link_all_apps_subheader">Összes művelet</string>
     <!-- Sub-header in the dialog to share a link to an app from the most-recent sorted list -->
     <string name="share_link_recent_apps_subheader">Nemrég használt</string>
+    <!-- Text for the copy link action in the share screen. -->
+    <string name="share_copy_link_to_clipboard">Vágólapra másolás</string>
+    <!-- Toast shown after copying link to clipboard -->
+    <string name="toast_copy_link_to_clipboard">Vágólapra másolva</string>
     <!-- An option from the three dot menu to into sync -->
     <string name="sync_menu_sign_in">Jelentkezzen be a szinkronizálásba</string>
     <!-- An option from the share dialog to sign into sync -->
@@ -1157,8 +1179,10 @@
     <string name="onboarding_header">Üdvözli a %s!</string>
     <!-- text for the Firefox account onboarding sign in card header. The word "Firefox" should not be translated -->
     <string name="onboarding_account_sign_in_header_1">A Firefox szinkronizálása az eszközök közt</string>
-    <!-- Text for the button to learn more about signing in to your Firefox account -->
-    <string name="onboarding_manual_sign_in_description">Adjon hozzá könyvjelzőket, előzményeket és jelszavakat a Firefoxhoz ezen az eszközön.</string>
+    <!-- text for the Firefox account onboarding sign in card header. The first parameter is the name of the application.-->
+    <string moz:RemovedIn="100" name="onboarding_account_sign_in_header_2" tools:ignore="UnusedResources">%1$s szinkronizálása az eszközök közt</string>
+    <!-- Text for the button to learn more about signing in to your Firefox account. The first parameter is the name of the application.-->
+    <string name="onboarding_manual_sign_in_description_2">Adjon hozzá könyvjelzőket, előzményeket és jelszavakat a %1$shoz ezen az eszközön.</string>
     <!-- text for the button to manually sign into Firefox account. -->
     <string name="onboarding_firefox_account_sign_in_1">Regisztráció</string>
     <!-- text to display in the snackbar once account is signed-in -->
@@ -1166,7 +1190,9 @@
     <!-- text for the tracking protection onboarding card header -->
     <string name="onboarding_tracking_protection_header_3">Mindig bekapcsolt adatvédelem</string>
     <!-- text for the tracking protection card description. 'Firefox' intentionally hardcoded here -->
-    <string name="onboarding_tracking_protection_description_3">A Firefox automatikusan megakadályozza, hogy a cégek titokban kövessék Önt a weben.</string>
+    <string moz:RemovedIn="99" name="onboarding_tracking_protection_description_3" tools:ignore="UnusedResources">A Firefox automatikusan megakadályozza, hogy a cégek titokban kövessék Önt a weben.</string>
+    <!-- text for the tracking protection card description. The first parameter is the name of the application.-->
+    <string name="onboarding_tracking_protection_description_4">A %1$s automatikusan megakadályozza, hogy a cégek titokban kövessék Önt a weben.</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
     <string name="onboarding_tracking_protection_standard_button_2">Normál (alapértelmezett)</string>
     <!-- text for standard blocking option button description -->
@@ -1506,11 +1532,15 @@
     <string name="credit_cards_menu_delete_card">Kártya törlése</string>
     <!-- The text for the "Delete card" button for deleting a credit card -->
     <string name="credit_cards_delete_card_button">Kártya törlése</string>
+    <!-- The text for the confirmation message of "Delete card" dialog -->
+    <string name="credit_cards_delete_dialog_confirmation">Biztos, hogy törli ezt a bankkártyát?</string>
+    <!-- The text for the positive button on "Delete card" dialog -->
+    <string name="credit_cards_delete_dialog_button">Törlés</string>
     <!-- The title for the "Save" menu item for saving a credit card -->
     <string name="credit_cards_menu_save">Mentés</string>
     <!-- The text for the "Save" button for saving a credit card -->
     <string name="credit_cards_save_button">Mentés</string>
-    <!-- The text for the "Cancel" button for cancelling adding or updating a credit card -->
+    <!-- The text for the "Cancel" button for cancelling adding, updating or deleting a credit card -->
     <string name="credit_cards_cancel_button">Mégse</string>
 
     <!-- Title of the "Saved cards" screen -->
@@ -1678,6 +1708,8 @@
     <!-- Text displayed when user has no tabs that have been synced -->
     <string name="synced_tabs_no_tabs">Nincs egyetlen lap sem nyitva a Firefoxban a többi eszközén.</string>
 
+    <!-- Text displayed when user has no tabs that have been synced. The first parameter is the name of the application.-->
+    <string moz:RemovedIn="100" name="synced_tabs_no_tabs_2" tools:ignore="UnusedResources">Nincs egyetlen lap sem nyitva a %1$sban a többi eszközén.</string>
     <!-- Text displayed in the synced tabs screen when a user is not signed in to Firefox Sync describing Synced Tabs -->
     <string name="synced_tabs_sign_in_message">Tekintse meg a más eszközökről származó lapok listáját.</string>
     <!-- Text displayed on a button in the synced tabs screen to link users to sign in when a user is not signed in to Firefox Sync -->
@@ -1685,6 +1717,11 @@
 
     <!-- The text displayed when a synced device has no tabs to show in the list of Synced Tabs. -->
     <string name="synced_tabs_no_open_tabs">Nincsenek nyitott lapok</string>
+
+    <!-- Content description for expanding a group of synced tabs. -->
+    <string name="synced_tabs_expand_group">Szinkronizált lapok csoportjának kibontása</string>
+    <!-- Content description for collapsing a group of synced tabs. -->
+    <string name="synced_tabs_collapse_group">Szinkronizált lapok csoportjának összecsukása</string>
 
     <!-- Top Sites -->
     <!-- Title text displayed in the dialog when top sites limit is reached. -->
@@ -1734,22 +1771,22 @@
 
     <!-- Inactive tabs survey -->
     <!-- Header text for the inactive tabs survey asking for feedback to improve the inactive tabs feature. -->
-    <string name="inactive_tabs_survey_header_1">Segítsen a Firefox tökéletesítésében</string>
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_header_1" tools:ignore="UnusedResources">Segítsen a Firefox tökéletesítésében</string>
 
     <!-- Content text for the inactive tabs survey asking the primary survey feedback question. -->
-    <string name="inactive_tabs_survey_content">Miért tiltotta le az inaktív lapokat?</string>
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_content" tools:ignore="UnusedResources">Miért tiltotta le az inaktív lapokat?</string>
     <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string name="inactive_tabs_survey_do_not_understand">Nem értem, hogyan működik</string>
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_do_not_understand" tools:ignore="UnusedResources">Nem értem, hogyan működik</string>
     <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string name="inactive_tabs_survey_do_it_myself">Én magam szeretem kitörölni a régi lapokat</string>
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_do_it_myself" tools:ignore="UnusedResources">Én magam szeretem kitörölni a régi lapokat</string>
     <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string name="inactive_tabs_survey_time_too_long_option_1">A kéthetes időszak túl hosszú</string>
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_time_too_long_option_1" tools:ignore="UnusedResources">A kéthetes időszak túl hosszú</string>
     <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string name="inactive_tabs_survey_time_too_short_option_1">A kéthetes időszak túl rövid</string>
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_time_too_short_option_1" tools:ignore="UnusedResources">A kéthetes időszak túl rövid</string>
     <!-- Confirmation button text to submit the feedback for the inactive tabs survey. -->
-    <string name="inactive_tabs_survey_send_button">Küldés</string>
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_send_button" tools:ignore="UnusedResources">Küldés</string>
     <!-- Content description for inactive tabs survey close button -->
-    <string name="inactive_tabs_survey_close_button_content_description">Bezárás</string>
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_close_button_content_description" tools:ignore="UnusedResources">Bezárás</string>
 
     <!-- Default browser experiment -->
     <string name="default_browser_experiment_card_text">Állítsa be a webhelyek, e-mailek és üzenetek hivatkozásait, hogy azok automatikusan a Firefoxban nyíljanak meg.</string>

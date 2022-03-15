@@ -5,10 +5,9 @@
 package org.mozilla.fenix.settings
 
 import android.os.Bundle
-import androidx.preference.CheckBoxPreference
 import androidx.navigation.findNavController
+import androidx.preference.CheckBoxPreference
 import androidx.preference.Preference
-import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
 import org.mozilla.fenix.FeatureFlags
@@ -35,8 +34,8 @@ class HomeSettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun setupPreferences() {
-        requirePreference<SwitchPreference>(R.string.pref_key_enable_top_frecent_sites).apply {
-            isChecked = context.settings().showTopFrecentSites
+        requirePreference<SwitchPreference>(R.string.pref_key_show_top_sites).apply {
+            isChecked = context.settings().showTopSitesFeature
             onPreferenceChangeListener = CustomizeHomeMetricsUpdater()
         }
 
@@ -86,9 +85,6 @@ class HomeSettingsFragment : PreferenceFragmentCompat() {
             }
             isVisible = FeatureFlags.showWallpapers
         }
-
-        requirePreference<PreferenceCategory>(R.string.pref_key_start_on_home_category).isVisible =
-            FeatureFlags.showStartOnHomeSettings
 
         addToRadioGroup(
             openingScreenRadioHomepage,

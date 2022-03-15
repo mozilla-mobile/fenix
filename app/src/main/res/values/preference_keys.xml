@@ -67,6 +67,7 @@
     <string name="pref_key_should_show_default_browser_notification" translatable="false">pref_key_should_show_default_browser_notification</string>
     <string name="pref_key_is_first_run" translatable="false">pref_key_is_first_run</string>
     <string name="pref_key_has_shown_home_onboarding" translatable="false">pref_key_has_shown_home_onboarding</string>
+    <string name="pref_key_home_blocklist">pref_key_home_blocklist</string>
 
     <!-- Data Choices -->
     <string name="pref_key_telemetry" translatable="false">pref_key_telemetry</string>
@@ -187,6 +188,8 @@
     <string name="pref_key_adjust_adgroup" translatable="false">pref_key_adjust_adgroup</string>
     <string name="pref_key_adjust_creative" translatable="false">pref_key_adjust_creative</string>
 
+    <string name="pref_key_contile_context_id" translatable="false">pref_key_contile_context_id</string>
+
     <!-- Wallpaper Settings -->
     <string name="pref_key_wallpapers" translatable="false">pref_key_wallpapers</string>
     <string name="pref_key_current_wallpaper" translatable="false">pref_key_current_wallpaper</string>
@@ -200,8 +203,8 @@
     <string name="pref_key_top_sites_size" translatable="false">pref_key_top_sites_size</string>
     <!-- Maximum number of top sites to display -->
     <string name="pref_key_top_sites_max_limit" translatable="false">pref_key_top_sites_max_limit</string>
-    <!-- Whether or not the top frecent sites are shown along with pinned top sites -->
-    <string name="pref_key_enable_top_frecent_sites" translatable="false">pref_key_top_frecent_sites</string>
+    <!-- Whether or not the top sites section is shown on the home screen -->
+    <string name="pref_key_show_top_sites" translatable="false">pref_key_show_top_sites</string>
     <!-- Whether or not the sponsored shortcuts are shown along with the top recent sites shortcuts -->
     <string name="pref_key_enable_contile" translatable="false">pref_key_enable_contile</string>
     <!-- Whether or not the Task Continuity enhancements are shown -->
@@ -222,10 +225,6 @@
     <string name="pref_key_has_inactive_tabs_auto_close_dialog_dismissed" translatable="false">pref_key_has_inactive_tabs_auto_close_dialog_dismissed</string>
     <!-- A value  of `true` means the jump back in onboarding popup has not been shown yet -->
     <string name="pref_key_should_show_jump_back_in_tabs_popup" translatable="false">pref_key_should_show_jump_back_in_tabs_popup</string>
-
-    <!-- A value  of `true` means the inactive tabs turn off - survey hasn't been shown yet-->
-    <string name="pref_key_should_show_inactive_tabs_turn_off_survey" translatable="false">pref_key_should_show_inactive_tabs_turn_off_survey</string>
-
 
     <string name="pref_key_migrating_from_fenix_nightly_tip" translatable="false">pref_key_migrating_from_fenix_nightly_tip</string>
     <string name="pref_key_migrating_from_firefox_nightly_tip" translatable="false">pref_key_migrating_from_firefox_nightly_tip</string>
@@ -267,7 +266,6 @@
     <string name="pref_key_start_on_home_after_four_hours" translatable="false">pref_key_start_on_home_after_four_hours</string>
     <string name="pref_key_start_on_home_always" translatable="false">pref_key_start_on_home_always</string>
     <string name="pref_key_start_on_home_never" translatable="false">pref_key_start_on_home_never</string>
-    <string name="pref_key_start_on_home_category" translatable="false">pref_key_start_on_home_category</string>
     <string name="pref_key_camera_permissions_needed" translatable="false">pref_key_camera_permissions_needed</string>
     <string name="pref_key_inactive_tabs_category" translatable="false">pref_key_inactive_tabs_category</string>
     <string name="pref_key_inactive_tabs" translatable="false">pref_key_inactive_tabs</string>
