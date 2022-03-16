@@ -45,7 +45,7 @@ object FirefoxTheme {
 private val darkColorPalette = FirefoxColors(
     layer1 = PhotonColors.DarkGrey60,
     layer2 = PhotonColors.DarkGrey30,
-    layer3 = PhotonColors.DarkGrey30,
+    layer3 = PhotonColors.DarkGrey80,
     layerAccent = PhotonColors.Violet40,
     layerAccentNonOpaque = PhotonColors.Violet50A32,
     layerAccentOpaque = Color(0xFF423262),
@@ -92,6 +92,8 @@ private val darkColorPalette = FirefoxColors(
     iconAccentPink = PhotonColors.Pink20,
     iconAccentGreen = PhotonColors.Green20,
     iconAccentYellow = PhotonColors.Yellow20,
+    iconActionPrimary = PhotonColors.LightGrey05,
+    iconActionSecondary = PhotonColors.DarkGrey90,
     iconGradientStart = PhotonColors.Violet20,
     iconGradientEnd = PhotonColors.Blue20,
     borderPrimary = PhotonColors.DarkGrey05,
@@ -152,6 +154,8 @@ private val lightColorPalette = FirefoxColors(
     iconAccentPink = PhotonColors.Pink60,
     iconAccentGreen = PhotonColors.Green60,
     iconAccentYellow = PhotonColors.Yellow60,
+    iconActionPrimary = PhotonColors.LightGrey05,
+    iconActionSecondary = PhotonColors.DarkGrey90,
     iconGradientStart = PhotonColors.Violet50,
     iconGradientEnd = PhotonColors.Blue60,
     borderPrimary = PhotonColors.LightGrey30,
@@ -217,6 +221,8 @@ class FirefoxColors(
     iconAccentPink: Color,
     iconAccentGreen: Color,
     iconAccentYellow: Color,
+    iconActionPrimary: Color,
+    iconActionSecondary: Color,
     iconGradientStart: Color,
     iconGradientEnd: Color,
     borderPrimary: Color,
@@ -377,6 +383,12 @@ class FirefoxColors(
         private set
     var iconAccentYellow by mutableStateOf(iconAccentYellow)
         private set
+    // Action primary icon
+    var iconActionPrimary by mutableStateOf(iconActionPrimary)
+        private set
+    // Action secondary icon
+    var iconActionSecondary by mutableStateOf(iconActionSecondary)
+        private set
     // Reader, ETP Shield
     var iconGradientStart by mutableStateOf(iconGradientStart)
         private set
@@ -455,6 +467,8 @@ class FirefoxColors(
         iconAccentPink = other.iconAccentPink
         iconAccentGreen = other.iconAccentGreen
         iconAccentYellow = other.iconAccentYellow
+        iconActionPrimary = other.iconActionPrimary
+        iconActionSecondary = other.iconActionSecondary
         iconGradientStart = other.iconGradientStart
         iconGradientEnd = other.iconGradientEnd
         borderPrimary = other.borderPrimary
@@ -515,6 +529,8 @@ class FirefoxColors(
         iconAccentPink = iconAccentPink,
         iconAccentGreen = iconAccentGreen,
         iconAccentYellow = iconAccentYellow,
+        iconActionPrimary = iconActionPrimary,
+        iconActionSecondary = iconActionSecondary,
         iconGradientStart = iconGradientStart,
         iconGradientEnd = iconGradientEnd,
         borderPrimary = borderPrimary,

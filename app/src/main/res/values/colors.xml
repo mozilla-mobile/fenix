@@ -28,7 +28,7 @@
     <!-- Primary button, Snackbar, Floating action button, Chip selected -->
     <color name="fx_mobile_action_color_primary">@color/photonInk20</color>
     <!-- Secondary button -->
-    <color name="fx_mobile_action_color_secondary" tools:ignore="UnusedResources">@color/photonLightGrey30</color>
+    <color name="fx_mobile_action_color_secondary">@color/photonLightGrey30</color>
     <!-- Filter -->
     <color name="fx_mobile_action_color_tertiary" tools:ignore="UnusedResources">@color/photonLightGrey40</color>
     <!-- Chip -->
@@ -72,7 +72,7 @@
     <!-- Action Primary text -->
     <color name="fx_mobile_text_color_action_primary">@color/photonLightGrey05</color>
     <!-- Action Secondary text -->
-    <color name="fx_mobile_text_color_action_secondary" tools:ignore="UnusedResources">@color/photonDarkGrey90</color>
+    <color name="fx_mobile_text_color_action_secondary">@color/photonDarkGrey90</color>
     <!-- Action Tertiary text -->
     <color name="fx_mobile_text_color_action_tertiary" tools:ignore="UnusedResources">@color/photonDarkGrey90</color>
     <!-- Action Tertiary Active text -->
@@ -103,6 +103,10 @@
     <color name="fx_mobile_icon_color_accent_pink">@color/photonPink60</color>
     <color name="fx_mobile_icon_color_accent_green">@color/photonGreen60</color>
     <color name="fx_mobile_icon_color_accent_yellow">@color/photonYellow60</color>
+    <!-- Action Primary Icon -->
+    <color name="fx_mobile_icon_color_action_primary" tools:ignore="UnusedResources">@color/photonLightGrey05</color>
+    <!-- Action Secondary Icon -->
+    <color name="fx_mobile_icon_color_action_secondary">@color/photonDarkGrey90</color>
     <!-- Reader, ETP Shield -->
     <color name="fx_mobile_icon_color_gradient_start">@color/photonViolet50</color>
     <!-- Reader, ETP Shield -->
@@ -128,7 +132,7 @@
     <!-- Default Screen background, Frontlayer background, App Bar Top, App Bar Bottom, Frontlayer header -->
     <color name="fx_mobile_private_layer_color_1">@color/photonInk50</color>
     <!-- Card background, Menu background, Dialog, Banner -->
-    <color name="fx_mobile_private_layer_color_2" tools:ignore="UnusedResources">@color/photonInk50</color>
+    <color name="fx_mobile_private_layer_color_2">@color/photonInk50</color>
     <!-- Search -->
     <color name="fx_mobile_private_layer_color_3">@color/photonInk50</color>
     <!-- Homescreen background, Toolbar -->
@@ -191,7 +195,7 @@
     <!-- Small heading, Text link -->
     <color name="fx_mobile_private_text_color_accent_disabled" tools:ignore="UnusedResources">@color/photonViolet20A60</color>
     <!-- Text Inverted/On Color -->
-    <color name="fx_mobile_private_text_color_oncolor_primary" tools:ignore="UnusedResources">@color/photonLightGrey05</color>
+    <color name="fx_mobile_private_text_color_oncolor_primary">@color/photonLightGrey05</color>
     <!-- Text Inverted/On Color -->
     <color name="fx_mobile_private_text_color_oncolor_secondary" tools:ignore="UnusedResources">@color/photonLightGrey40</color>
     <!-- Action Primary text -->
@@ -309,10 +313,6 @@
 
     <!-- Launcher Icon colors -->
     <color name="ic_launcher_background">#FDFDFD</color>
-
-    <!-- Button Colors -->
-    <color name="grey_button_color">@color/photonLightGrey30</color>
-    <color name="button_text_color">@color/photonInk20</color>
 
     <!-- Private Browsing Mode Persistent Notification -->
     <color name="pbm_notification_color">@color/photonViolet70</color>

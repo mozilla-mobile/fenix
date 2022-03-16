@@ -4,7 +4,6 @@
 
 package org.mozilla.fenix.home
 
-import android.graphics.Bitmap
 import androidx.annotation.VisibleForTesting
 import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.feature.tab.collections.TabCollection
@@ -14,7 +13,6 @@ import mozilla.components.lib.state.Middleware
 import mozilla.components.lib.state.State
 import mozilla.components.lib.state.Store
 import mozilla.components.service.pocket.PocketRecommendedStory
-import org.mozilla.fenix.components.tips.Tip
 import org.mozilla.fenix.ext.filterOutTab
 import org.mozilla.fenix.ext.getFilteredStories
 import org.mozilla.fenix.ext.recentSearchGroup
@@ -38,15 +36,6 @@ class HomeFragmentStore(
     initialState, ::homeFragmentStateReducer, middlewares
 )
 
-data class Tab(
-    val sessionId: String,
-    val url: String,
-    val hostname: String,
-    val title: String,
-    val selected: Boolean? = null,
-    val icon: Bitmap? = null
-)
-
 /**
  * The state for the [HomeFragment].
  *
@@ -55,7 +44,6 @@ data class Tab(
  *                               in the [HomeFragment].
  * @property mode The state of the [HomeFragment] UI.
  * @property topSites The list of [TopSite] in the [HomeFragment].
- * @property tip The current [Tip] to show on the [HomeFragment].
  * @property showCollectionPlaceholder If true, shows a placeholder when there are no collections.
  * @property showSetAsDefaultBrowserCard If true, shows the default browser card
  * @property recentTabs The list of recent [RecentTab] in the [HomeFragment].
@@ -70,7 +58,6 @@ data class HomeFragmentState(
     val expandedCollections: Set<Long> = emptySet(),
     val mode: Mode = Mode.Normal,
     val topSites: List<TopSite> = emptyList(),
-    val tip: Tip? = null,
     val showCollectionPlaceholder: Boolean = false,
     val showSetAsDefaultBrowserCard: Boolean = false,
     val recentTabs: List<RecentTab> = emptyList(),
@@ -86,7 +73,6 @@ sealed class HomeFragmentAction : Action {
         val topSites: List<TopSite>,
         val mode: Mode,
         val collections: List<TabCollection>,
-        val tip: Tip? = null,
         val showCollectionPlaceholder: Boolean,
         val recentTabs: List<RecentTab>,
         val recentBookmarks: List<RecentBookmark>,
@@ -100,7 +86,6 @@ sealed class HomeFragmentAction : Action {
     data class CollectionsChange(val collections: List<TabCollection>) : HomeFragmentAction()
     data class ModeChange(val mode: Mode) : HomeFragmentAction()
     data class TopSitesChange(val topSites: List<TopSite>) : HomeFragmentAction()
-    data class RemoveTip(val tip: Tip) : HomeFragmentAction()
     data class RecentTabsChange(val recentTabs: List<RecentTab>) : HomeFragmentAction()
     data class RemoveRecentTab(val recentTab: RecentTab) : HomeFragmentAction()
     data class RecentBookmarksChange(val recentBookmarks: List<RecentBookmark>) : HomeFragmentAction()
@@ -132,7 +117,6 @@ private fun homeFragmentStateReducer(
             collections = action.collections,
             mode = action.mode,
             topSites = action.topSites,
-            tip = action.tip,
             recentBookmarks = action.recentBookmarks,
             recentTabs = action.recentTabs,
             recentHistory = if (action.recentHistory.isNotEmpty() && action.recentTabs.isNotEmpty()) {
@@ -156,9 +140,6 @@ private fun homeFragmentStateReducer(
         is HomeFragmentAction.CollectionsChange -> state.copy(collections = action.collections)
         is HomeFragmentAction.ModeChange -> state.copy(mode = action.mode)
         is HomeFragmentAction.TopSitesChange -> state.copy(topSites = action.topSites)
-        is HomeFragmentAction.RemoveTip -> {
-            state.copy(tip = null)
-        }
         is HomeFragmentAction.RemoveCollectionsPlaceholder -> {
             state.copy(showCollectionPlaceholder = false)
         }

@@ -10,7 +10,7 @@
     android:id="@+id/website_info_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?foundation"
+    android:background="?attr/layer1"
     android:orientation="horizontal">
 
     <ImageView
@@ -19,7 +19,7 @@
         android:layout_height="@dimen/quicksettings_item_height"
         android:scaleType="center"
         android:contentDescription="@string/etp_back_button_content_description"
-        app:tint="?attr/primaryText"
+        app:tint="?attr/textPrimary"
         app:srcCompat="@drawable/mozac_ic_back" />
 
     <LinearLayout
