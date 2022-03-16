@@ -5,11 +5,22 @@
 package org.mozilla.fenix.home.recenttabs.view
 
 import android.view.View
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.findNavController
 import org.mozilla.fenix.R
-import org.mozilla.fenix.databinding.RecentTabsHeaderBinding
+import org.mozilla.fenix.compose.ComposeViewHolder
 import org.mozilla.fenix.home.recenttabs.interactor.RecentTabInteractor
-import org.mozilla.fenix.utils.view.ViewHolder
+import org.mozilla.fenix.home.recentvisits.view.RecentVisitsHeader
+import org.mozilla.fenix.theme.FirefoxTheme
 
 /**
  * View holder for the recent tabs header and "Show all" button.
@@ -17,26 +28,52 @@ import org.mozilla.fenix.utils.view.ViewHolder
  * @param interactor [RecentTabInteractor] which will have delegated to all user interactions.
  */
 class RecentTabsHeaderViewHolder(
-    view: View,
+    composeView: ComposeView,
+    viewLifecycleOwner: LifecycleOwner,
     private val interactor: RecentTabInteractor
-) : ViewHolder(view) {
+) : ComposeViewHolder(composeView, viewLifecycleOwner) {
 
     init {
-        val binding = RecentTabsHeaderBinding.bind(view)
-        binding.showAllButton.setOnClickListener {
-            dismissSearchDialogIfDisplayed()
-            interactor.onRecentTabShowAllClicked()
-        }
+        val horizontalPadding =
+            composeView.resources.getDimensionPixelSize(R.dimen.home_item_horizontal_margin)
+        composeView.setPadding(horizontalPadding, 0, horizontalPadding, 0)
     }
 
-    private fun dismissSearchDialogIfDisplayed() {
+    private fun dismissSearchDialogIfDisplayedAndShowAllClicked() {
         val navController = itemView.findNavController()
         if (navController.currentDestination?.id == R.id.searchDialogFragment) {
             navController.navigateUp()
         }
+        interactor.onRecentTabShowAllClicked()
+    }
+
+    @Composable
+    override fun Content() {
+        Column {
+            Spacer(modifier = Modifier.height(40.dp))
+
+            RecentVisitsHeader(
+                text = stringResource(R.string.recent_tabs_header),
+                description = stringResource(id = R.string.recent_tabs_show_all_content_description_2),
+                onShowAllClick = { dismissSearchDialogIfDisplayedAndShowAllClicked() },
+            )
+
+            Spacer(Modifier.height(16.dp))
+        }
     }
 
     companion object {
-        const val LAYOUT_ID = R.layout.recent_tabs_header
+        val LAYOUT_ID = View.generateViewId()
+    }
+}
+
+@Composable
+@Preview
+private fun RecentTabsHeaderPreview() {
+    FirefoxTheme {
+        RecentVisitsHeader(
+            stringResource(R.string.recent_tabs_header),
+            stringResource(id = R.string.recent_tabs_show_all_content_description_2),
+        )
     }
 }
