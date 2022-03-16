@@ -89,9 +89,6 @@ import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.accounts.AccountState
 import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.components.tips.FenixTipManager
-import org.mozilla.fenix.components.tips.Tip
-import org.mozilla.fenix.components.tips.providers.MasterPasswordTipProvider
 import org.mozilla.fenix.components.toolbar.FenixTabCounterMenu
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.databinding.FragmentHomeBinding
@@ -246,17 +243,6 @@ class HomeFragment : Fragment() {
                     expandedCollections = emptySet(),
                     mode = currentMode.getCurrentMode(),
                     topSites = getTopSites(components),
-                    tip = components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
-                        FenixTipManager(
-                            listOf(
-                                MasterPasswordTipProvider(
-                                    requireContext(),
-                                    ::navToSavedLogins,
-                                    ::dismissTip
-                                )
-                            )
-                        ).getTip()
-                    },
                     recentBookmarks = emptyList(),
                     showCollectionPlaceholder = components.settings.showCollectionsPlaceholderOnHome,
                     showSetAsDefaultBrowserCard = components.settings.shouldShowSetAsDefaultBrowserCard(),
@@ -422,10 +408,6 @@ class HomeFragment : Fragment() {
 
         getMenuButton()?.dismissMenu()
         displayWallpaperIfEnabled()
-    }
-
-    private fun dismissTip(tip: Tip) {
-        sessionControlInteractor.onCloseTip(tip)
     }
 
     /**
@@ -708,17 +690,6 @@ class HomeFragment : Fragment() {
                 collections = components.core.tabCollectionStorage.cachedTabCollections,
                 mode = currentMode.getCurrentMode(),
                 topSites = getTopSites(components),
-                tip = components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
-                    FenixTipManager(
-                        listOf(
-                            MasterPasswordTipProvider(
-                                requireContext(),
-                                ::navToSavedLogins,
-                                ::dismissTip
-                            )
-                        )
-                    ).getTip()
-                },
                 showCollectionPlaceholder = components.settings.showCollectionsPlaceholderOnHome,
                 // Provide an initial state for recent tabs to prevent re-rendering on the home screen.
                 //  This will otherwise cause a visual jump as the section gets rendered from no state
@@ -788,12 +759,6 @@ class HomeFragment : Fragment() {
                 )
             }
         }
-    }
-
-    private fun navToSavedLogins() {
-        findNavController().navigate(
-            HomeFragmentDirections.actionGlobalSavedLoginsAuthFragment()
-        )
     }
 
     private fun dispatchModeChanges(mode: Mode) {
