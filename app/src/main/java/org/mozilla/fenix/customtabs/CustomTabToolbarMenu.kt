@@ -60,7 +60,7 @@ class CustomTabToolbarMenu(
                 session?.content?.canGoBack ?: true
             },
             secondaryImageTintResource = ThemeManager.resolveAttribute(
-                R.attr.disabled,
+                R.attr.textDisabled,
                 context
             ),
             disableInSecondaryState = true,
@@ -77,7 +77,7 @@ class CustomTabToolbarMenu(
                 session?.content?.canGoForward ?: true
             },
             secondaryImageTintResource = ThemeManager.resolveAttribute(
-                R.attr.disabled,
+                R.attr.textDisabled,
                 context
             ),
             disableInSecondaryState = true,
@@ -177,7 +177,7 @@ class CustomTabToolbarMenu(
     )
 
     @ColorRes
-    private fun primaryTextColor() = ThemeManager.resolveAttribute(R.attr.primaryText, context)
+    private fun primaryTextColor() = ThemeManager.resolveAttribute(R.attr.textPrimary, context)
 
     companion object {
         private const val CAPTION_TEXT_SIZE = 12f

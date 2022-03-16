@@ -204,30 +204,10 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = false
     )
 
-    var shouldDisplayMasterPasswordMigrationTip by booleanPreference(
-        appContext.getString(R.string.pref_key_master_password_tip),
-        true
-    )
-
     var shouldReturnToBrowser by booleanPreference(
         appContext.getString(R.string.pref_key_return_to_browser),
         false
     )
-
-    // If any of the prefs have been modified, quit displaying the fenix moved tip
-    fun shouldDisplayFenixMovingTip(): Boolean =
-        preferences.getBoolean(
-            appContext.getString(R.string.pref_key_migrating_from_fenix_nightly_tip),
-            true
-        ) &&
-            preferences.getBoolean(
-                appContext.getString(R.string.pref_key_migrating_from_firefox_nightly_tip),
-                true
-            ) &&
-            preferences.getBoolean(
-                appContext.getString(R.string.pref_key_migrating_from_fenix_tip),
-                true
-            )
 
     var defaultSearchEngineName by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_search_engine),
