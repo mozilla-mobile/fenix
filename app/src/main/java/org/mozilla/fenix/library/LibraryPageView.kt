@@ -24,8 +24,8 @@ open class LibraryPageView(
     ) {
         updateToolbar(
             title = title,
-            foregroundColor = context.getColorFromAttr(R.attr.primaryText),
-            backgroundColor = context.getColorFromAttr(R.attr.foundation)
+            foregroundColor = context.getColorFromAttr(R.attr.textPrimary),
+            backgroundColor = context.getColorFromAttr(R.attr.layer1)
         )
     }
 
