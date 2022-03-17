@@ -9,6 +9,7 @@ import androidx.navigation.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
+import mozilla.components.service.glean.Glean
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.MetricServiceType
 import org.mozilla.fenix.ext.components
@@ -29,9 +30,9 @@ class DataChoicesFragment : PreferenceFragmentCompat() {
         preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(this) { _, key ->
             if (key == getPreferenceKey(R.string.pref_key_telemetry)) {
                 if (context.settings().isTelemetryEnabled) {
-                    context.components.analytics.metrics.start(MetricServiceType.Data)
+                    Glean.setUploadEnabled(true)
                 } else {
-                    context.components.analytics.metrics.stop(MetricServiceType.Data)
+                    Glean.setUploadEnabled(false)
                 }
                 // Reset experiment identifiers on both opt-in and opt-out; it's likely
                 // that in future we will need to pass in the new telemetry client_id
