@@ -100,4 +100,9 @@ object FeatureFlags {
      * Enables the Task Continuity enhancements.
      */
     val taskContinuityFeature = Config.channel.isDebug
+
+    /**
+     * Enables the Unified Search feature.
+     */
+    val unifiedSearchFeature = Config.channel.isNightlyOrDebug
 }
