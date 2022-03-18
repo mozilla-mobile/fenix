@@ -19,7 +19,7 @@ import androidx.navigation.findNavController
 import org.mozilla.fenix.R
 import org.mozilla.fenix.compose.ComposeViewHolder
 import org.mozilla.fenix.home.recentbookmarks.interactor.RecentBookmarksInteractor
-import org.mozilla.fenix.home.recentvisits.view.RecentVisitsHeader
+import org.mozilla.fenix.home.recentvisits.view.HomeSectionHeader
 import org.mozilla.fenix.theme.FirefoxTheme
 
 /**
@@ -53,7 +53,7 @@ class RecentBookmarksHeaderViewHolder(
         Column {
             Spacer(modifier = Modifier.height(40.dp))
 
-            RecentVisitsHeader(
+            HomeSectionHeader(
                 text = stringResource(R.string.recent_bookmarks_title),
                 description = stringResource(id = R.string.recently_saved_show_all_content_description_2),
                 onShowAllClick = { dismissSearchDialogIfDisplayedAndShowAllClicked() },
@@ -72,7 +72,7 @@ class RecentBookmarksHeaderViewHolder(
 @Preview
 private fun RecentBookmarksHeaderPreview() {
     FirefoxTheme {
-        RecentVisitsHeader(
+        HomeSectionHeader(
             stringResource(R.string.recent_bookmarks_title),
             stringResource(id = R.string.recently_saved_show_all_content_description_2),
         )

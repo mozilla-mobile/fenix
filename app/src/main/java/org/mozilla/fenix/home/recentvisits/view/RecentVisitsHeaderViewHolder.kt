@@ -55,7 +55,7 @@ class RecentVisitsHeaderViewHolder(
         Column {
             Spacer(modifier = Modifier.height(40.dp))
 
-            RecentVisitsHeader(
+            HomeSectionHeader(
                 text = stringResource(R.string.history_metadata_header_2),
                 description = stringResource(R.string.past_explorations_show_all_content_description_2),
                 onShowAllClick = interactor::onHistoryShowAllClicked,
@@ -77,7 +77,7 @@ class RecentVisitsHeaderViewHolder(
  * @param (optional) onShowAllClick Action to take when show all is clicked.
  */
 @Composable
-fun RecentVisitsHeader(
+fun HomeSectionHeader(
     text: String,
     description: String,
     onShowAllClick: () -> Unit = {}
@@ -111,7 +111,7 @@ fun RecentVisitsHeader(
 @Preview
 private fun RecentVisitsHeaderPreview() {
     FirefoxTheme {
-        RecentVisitsHeader(
+        HomeSectionHeader(
             stringResource(R.string.history_metadata_header_2),
             stringResource(R.string.past_explorations_show_all_content_description_2)
         )

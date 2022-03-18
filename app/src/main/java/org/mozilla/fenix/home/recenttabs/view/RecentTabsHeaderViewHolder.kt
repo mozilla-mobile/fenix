@@ -19,7 +19,7 @@ import androidx.navigation.findNavController
 import org.mozilla.fenix.R
 import org.mozilla.fenix.compose.ComposeViewHolder
 import org.mozilla.fenix.home.recenttabs.interactor.RecentTabInteractor
-import org.mozilla.fenix.home.recentvisits.view.RecentVisitsHeader
+import org.mozilla.fenix.home.recentvisits.view.HomeSectionHeader
 import org.mozilla.fenix.theme.FirefoxTheme
 
 /**
@@ -52,7 +52,7 @@ class RecentTabsHeaderViewHolder(
         Column {
             Spacer(modifier = Modifier.height(40.dp))
 
-            RecentVisitsHeader(
+            HomeSectionHeader(
                 text = stringResource(R.string.recent_tabs_header),
                 description = stringResource(id = R.string.recent_tabs_show_all_content_description_2),
                 onShowAllClick = { dismissSearchDialogIfDisplayedAndShowAllClicked() },
@@ -71,7 +71,7 @@ class RecentTabsHeaderViewHolder(
 @Preview
 private fun RecentTabsHeaderPreview() {
     FirefoxTheme {
-        RecentVisitsHeader(
+        HomeSectionHeader(
             stringResource(R.string.recent_tabs_header),
             stringResource(id = R.string.recent_tabs_show_all_content_description_2),
         )
