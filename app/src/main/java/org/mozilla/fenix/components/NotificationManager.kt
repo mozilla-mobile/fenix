@@ -136,7 +136,7 @@ class NotificationManager(private val context: Context) {
 
 internal fun isValidTabSchema(tab: TabData): Boolean {
     // We don't sync certain schemas, about|resource|chrome|file|blob|moz-extension
-    // See https://searchfox.org/mozilla-central/source/modules/libpref/init/all.js#4372
+    // See https://searchfox.org/mozilla-central/rev/7d379061bd56251df911728686c378c5820513d8/modules/libpref/init/all.js#4356
     val filteredSchemas = arrayOf("about:", "resource:", "chrome:", "file:", "blob:", "moz-extension:")
     return filteredSchemas.none({ tab.url.startsWith(it) })
 }
