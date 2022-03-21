@@ -17,6 +17,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import org.mozilla.fenix.R
 import org.mozilla.fenix.compose.SectionHeader
@@ -25,12 +26,14 @@ import org.mozilla.fenix.theme.FirefoxTheme
 /**
  * Homepage header.
  *
- * @param text The header string.
+ * @param headerText The header string.
+ * @param description The description for click action
+ * @param navController to dismiss search dialog
  * @param (optional) onShowAllClick Action to take when show all is clicked.
  */
 @Composable
 fun HomeSectionHeader(
-    text: String,
+    headerText: String,
     description: String,
     onShowAllClick: () -> Unit = {}
 ) {
@@ -39,7 +42,7 @@ fun HomeSectionHeader(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         SectionHeader(
-            text = text,
+            text = headerText,
             modifier = Modifier
                 .weight(1f)
                 .wrapContentHeight(align = Alignment.Top)
@@ -54,7 +57,20 @@ fun HomeSectionHeader(
                 color = FirefoxTheme.colors.textAccent,
                 fontSize = 14.sp
             ),
-            onClick = { onShowAllClick() }
+            onClick = {
+                onShowAllClick()
+            }
+        )
+    }
+}
+
+@Composable
+@Preview
+private fun HomeSectionsHeaderPreview() {
+    FirefoxTheme {
+        HomeSectionHeader(
+            stringResource(R.string.recent_bookmarks_title),
+            stringResource(id = R.string.recently_saved_show_all_content_description_2),
         )
     }
 }

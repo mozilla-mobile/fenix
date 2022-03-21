@@ -247,13 +247,18 @@ class SessionControlAdapter(
             )
             RecentVisitsHeaderViewHolder.LAYOUT_ID -> return RecentVisitsHeaderViewHolder(
                 composeView = ComposeView(parent.context),
-                viewLifecycleOwner,
-                interactor
+                viewLifecycleOwner = viewLifecycleOwner,
+                interactor = interactor
             )
             RecentBookmarksHeaderViewHolder.LAYOUT_ID -> return RecentBookmarksHeaderViewHolder(
                 composeView = ComposeView(parent.context),
-                viewLifecycleOwner,
-                interactor
+                viewLifecycleOwner = viewLifecycleOwner,
+                interactor = interactor
+            )
+            RecentTabsHeaderViewHolder.LAYOUT_ID -> return RecentTabsHeaderViewHolder(
+                composeView = ComposeView(parent.context),
+                viewLifecycleOwner = viewLifecycleOwner,
+                interactor = interactor
             )
         }
 
@@ -294,7 +299,6 @@ class SessionControlAdapter(
                 view
             )
             ExperimentDefaultBrowserCardViewHolder.LAYOUT_ID -> ExperimentDefaultBrowserCardViewHolder(view, interactor)
-            RecentTabsHeaderViewHolder.LAYOUT_ID -> RecentTabsHeaderViewHolder(view, interactor)
             BottomSpacerViewHolder.LAYOUT_ID -> BottomSpacerViewHolder(view)
             else -> throw IllegalStateException()
         }

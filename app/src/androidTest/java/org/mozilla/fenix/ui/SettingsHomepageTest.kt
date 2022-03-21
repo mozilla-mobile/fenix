@@ -50,6 +50,7 @@ class SettingsHomepageTest {
 
     @SmokeTest
     @Test
+    @Ignore("This test will be addressed on https://github.com/mozilla-mobile/fenix/issues/24315")
     fun jumpBackInOptionTest() {
         val genericURL = getGenericAsset(mockWebServer, 1)
 

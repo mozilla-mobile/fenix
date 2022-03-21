@@ -12,18 +12,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LifecycleOwner
 import org.mozilla.fenix.R
 import org.mozilla.fenix.compose.ComposeViewHolder
 import org.mozilla.fenix.compose.home.HomeSectionHeader
 import org.mozilla.fenix.home.recentvisits.interactor.RecentVisitsInteractor
-import org.mozilla.fenix.theme.FirefoxTheme
 
 /**
  * View holder for the "Recent visits" section header with the "Show all" button.
  *
+ * @param composeView [ComposeView] which will be populated with Jetpack Compose UI content.
  * @property interactor [RecentVisitsInteractor] which will have delegated to all user
  * interactions.
  */
@@ -45,7 +44,7 @@ class RecentVisitsHeaderViewHolder(
             Spacer(modifier = Modifier.height(40.dp))
 
             HomeSectionHeader(
-                text = stringResource(R.string.history_metadata_header_2),
+                headerText = stringResource(R.string.history_metadata_header_2),
                 description = stringResource(R.string.past_explorations_show_all_content_description_2),
                 onShowAllClick = interactor::onHistoryShowAllClicked,
             )
@@ -56,16 +55,5 @@ class RecentVisitsHeaderViewHolder(
 
     companion object {
         val LAYOUT_ID = View.generateViewId()
-    }
-}
-
-@Composable
-@Preview
-private fun RecentVisitsHeaderPreview() {
-    FirefoxTheme {
-        HomeSectionHeader(
-            stringResource(R.string.history_metadata_header_2),
-            stringResource(R.string.past_explorations_show_all_content_description_2)
-        )
     }
 }

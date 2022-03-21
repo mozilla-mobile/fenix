@@ -12,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.findNavController
@@ -20,12 +19,11 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.compose.ComposeViewHolder
 import org.mozilla.fenix.compose.home.HomeSectionHeader
 import org.mozilla.fenix.home.recentbookmarks.interactor.RecentBookmarksInteractor
-import org.mozilla.fenix.theme.FirefoxTheme
 
 /**
  * View holder for the recent bookmarks header and "Show all" button.
  *
- * @param view The container [View] for this view holder.
+ * @param composeView [ComposeView] which will be populated with Jetpack Compose UI content.
  * @param interactor [RecentBookmarksInteractor] which will have delegated to all user interactions.
  */
 class RecentBookmarksHeaderViewHolder(
@@ -40,12 +38,11 @@ class RecentBookmarksHeaderViewHolder(
         composeView.setPadding(horizontalPadding, 0, horizontalPadding, 0)
     }
 
-    private fun dismissSearchDialogIfDisplayedAndShowAllClicked() {
+    private fun dismissSearchDialogIfDisplayed() {
         val navController = itemView.findNavController()
         if (navController.currentDestination?.id == R.id.searchDialogFragment) {
             navController.navigateUp()
         }
-        interactor.onShowAllBookmarksClicked()
     }
 
     @Composable
@@ -54,9 +51,12 @@ class RecentBookmarksHeaderViewHolder(
             Spacer(modifier = Modifier.height(40.dp))
 
             HomeSectionHeader(
-                text = stringResource(R.string.recent_bookmarks_title),
+                headerText = stringResource(R.string.recent_bookmarks_title),
                 description = stringResource(id = R.string.recently_saved_show_all_content_description_2),
-                onShowAllClick = { dismissSearchDialogIfDisplayedAndShowAllClicked() },
+                onShowAllClick = {
+                    dismissSearchDialogIfDisplayed()
+                    interactor.onShowAllBookmarksClicked()
+                }
             )
 
             Spacer(Modifier.height(16.dp))
@@ -65,16 +65,5 @@ class RecentBookmarksHeaderViewHolder(
 
     companion object {
         val LAYOUT_ID = View.generateViewId()
-    }
-}
-
-@Composable
-@Preview
-private fun RecentBookmarksHeaderPreview() {
-    FirefoxTheme {
-        HomeSectionHeader(
-            stringResource(R.string.recent_bookmarks_title),
-            stringResource(id = R.string.recently_saved_show_all_content_description_2),
-        )
     }
 }
