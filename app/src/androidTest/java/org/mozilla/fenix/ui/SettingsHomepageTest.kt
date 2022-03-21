@@ -7,6 +7,7 @@ package org.mozilla.fenix.ui
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
@@ -66,6 +67,7 @@ class SettingsHomepageTest {
 
     @SmokeTest
     @Test
+    @Ignore("This test will be addressed on https://github.com/mozilla-mobile/fenix/issues/24315")
     fun recentBookmarksOptionTest() {
         val genericURL = getGenericAsset(mockWebServer, 1)
 
