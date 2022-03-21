@@ -18,8 +18,8 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.findNavController
 import org.mozilla.fenix.R
 import org.mozilla.fenix.compose.ComposeViewHolder
+import org.mozilla.fenix.compose.home.HomeSectionHeader
 import org.mozilla.fenix.home.recenttabs.interactor.RecentTabInteractor
-import org.mozilla.fenix.home.recentvisits.view.HomeSectionHeader
 import org.mozilla.fenix.theme.FirefoxTheme
 
 /**
