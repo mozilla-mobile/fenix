@@ -64,7 +64,6 @@ import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.feature.tab.collections.TabCollection
-import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.feature.top.sites.TopSitesConfig
 import mozilla.components.feature.top.sites.TopSitesFeature
 import mozilla.components.feature.top.sites.TopSitesProviderConfig
@@ -82,35 +81,27 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BrowserAnimator.Companion.getToolbarNavOptions
 import org.mozilla.fenix.browser.BrowserFragmentDirections
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
-import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.PrivateShortcutCreateManager
-import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.accounts.AccountState
+import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.toolbar.FenixTabCounterMenu
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.databinding.FragmentHomeBinding
-import org.mozilla.fenix.datastore.pocketStoriesSelectedCategoriesDataStore
-import org.mozilla.fenix.ext.asRecentTabs
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.filterState
 import org.mozilla.fenix.ext.hideToolbar
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.ext.sort
-import org.mozilla.fenix.home.blocklist.BlocklistHandler
-import org.mozilla.fenix.home.blocklist.BlocklistMiddleware
 import org.mozilla.fenix.home.mozonline.showPrivacyPopWindow
 import org.mozilla.fenix.home.pocket.DefaultPocketStoriesController
 import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesCategory
 import org.mozilla.fenix.home.recentbookmarks.RecentBookmarksFeature
 import org.mozilla.fenix.home.recentbookmarks.controller.DefaultRecentBookmarksController
-import org.mozilla.fenix.home.recenttabs.RecentTab
 import org.mozilla.fenix.home.recenttabs.RecentTabsListFeature
 import org.mozilla.fenix.home.recenttabs.controller.DefaultRecentTabsController
 import org.mozilla.fenix.home.recentvisits.RecentVisitsFeature
@@ -172,7 +163,6 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private lateinit var homeFragmentStore: HomeFragmentStore
     private var _sessionControlInteractor: SessionControlInteractor? = null
     private val sessionControlInteractor: SessionControlInteractor
         get() = _sessionControlInteractor!!
@@ -235,33 +225,7 @@ class HomeFragment : Fragment() {
             ::dispatchModeChanges
         )
 
-        val blocklistHandler = BlocklistHandler(components.settings)
-        homeFragmentStore = StoreProvider.get(this) {
-            HomeFragmentStore(
-                initialState = HomeFragmentState(
-                    collections = components.core.tabCollectionStorage.cachedTabCollections,
-                    expandedCollections = emptySet(),
-                    mode = currentMode.getCurrentMode(),
-                    topSites = getTopSites(components),
-                    recentBookmarks = emptyList(),
-                    showCollectionPlaceholder = components.settings.showCollectionsPlaceholderOnHome,
-                    showSetAsDefaultBrowserCard = components.settings.shouldShowSetAsDefaultBrowserCard(),
-                    // Provide an initial state for recent tabs to prevent re-rendering on the home screen.
-                    //  This will otherwise cause a visual jump as the section gets rendered from no state
-                    //  to some state.
-                    recentTabs = getRecentTabs(components),
-                    recentHistory = emptyList()
-                ).run { filterState(blocklistHandler) },
-                middlewares = listOf(
-                    BlocklistMiddleware(blocklistHandler),
-                    PocketUpdatesMiddleware(
-                        lifecycleScope,
-                        requireComponents.core.pocketStoriesService,
-                        requireContext().pocketStoriesSelectedCategoriesDataStore
-                    )
-                )
-            )
-        }
+        components.appStore.dispatch(AppAction.ModeChange(currentMode.getCurrentMode()))
 
         lifecycleScope.launch(IO) {
             if (requireContext().settings().showPocketRecommendationsFeature) {
@@ -269,9 +233,9 @@ class HomeFragment : Fragment() {
                     .groupBy { story -> story.category }
                     .map { (category, stories) -> PocketRecommendedStoriesCategory(category, stories) }
 
-                homeFragmentStore.dispatch(HomeFragmentAction.PocketStoriesCategoriesChange(categories))
+                components.appStore.dispatch(AppAction.PocketStoriesCategoriesChange(categories))
             } else {
-                homeFragmentStore.dispatch(HomeFragmentAction.PocketStoriesChange(emptyList()))
+                components.appStore.dispatch(AppAction.PocketStoriesChange(emptyList()))
             }
         }
 
@@ -279,7 +243,7 @@ class HomeFragment : Fragment() {
             topSitesFeature.set(
                 feature = TopSitesFeature(
                     view = DefaultTopSitesView(
-                        store = homeFragmentStore,
+                        store = components.appStore,
                         settings = components.settings
                     ),
                     storage = components.core.topSitesStorage,
@@ -294,7 +258,7 @@ class HomeFragment : Fragment() {
             recentTabsListFeature.set(
                 feature = RecentTabsListFeature(
                     browserStore = components.core.store,
-                    homeStore = homeFragmentStore
+                    appStore = components.appStore
                 ),
                 owner = viewLifecycleOwner,
                 view = binding.root
@@ -304,7 +268,7 @@ class HomeFragment : Fragment() {
         if (requireContext().settings().showRecentBookmarksFeature) {
             recentBookmarksFeature.set(
                 feature = RecentBookmarksFeature(
-                    homeStore = homeFragmentStore,
+                    appStore = components.appStore,
                     bookmarksUseCase = run {
                         requireContext().components.useCases.bookmarksUseCases
                     },
@@ -318,7 +282,7 @@ class HomeFragment : Fragment() {
         if (requireContext().settings().historyMetadataUIFeature) {
             historyMetadataFeature.set(
                 feature = RecentVisitsFeature(
-                    homeStore = homeFragmentStore,
+                    appStore = components.appStore,
                     historyMetadataStorage = components.core.historyStorage,
                     historyHighlightsStorage = components.core.lazyHistoryStorage,
                     scope = viewLifecycleOwner.lifecycleScope
@@ -340,7 +304,7 @@ class HomeFragment : Fragment() {
                 restoreUseCase = components.useCases.tabsUseCases.restore,
                 reloadUrlUseCase = components.useCases.sessionUseCases.reload,
                 selectTabUseCase = components.useCases.tabsUseCases.selectTab,
-                fragmentStore = homeFragmentStore,
+                appStore = components.appStore,
                 navController = findNavController(),
                 viewLifecycleScope = viewLifecycleOwner.lifecycleScope,
                 hideOnboarding = ::hideOnboardingAndOpenSearch,
@@ -353,16 +317,16 @@ class HomeFragment : Fragment() {
                 navController = findNavController(),
                 metrics = requireComponents.analytics.metrics,
                 store = components.core.store,
-                homeStore = homeFragmentStore,
+                appStore = components.appStore,
             ),
             recentBookmarksController = DefaultRecentBookmarksController(
                 activity = activity,
                 navController = findNavController(),
-                homeStore = homeFragmentStore,
+                appStore = components.appStore,
             ),
             recentVisitsController = DefaultRecentVisitsController(
                 navController = findNavController(),
-                homeStore = homeFragmentStore,
+                appStore = components.appStore,
                 selectOrAddTabUseCase = components.useCases.tabsUseCases.selectOrAddTab,
                 storage = components.core.historyStorage,
                 scope = viewLifecycleOwner.lifecycleScope,
@@ -371,7 +335,7 @@ class HomeFragment : Fragment() {
             ),
             pocketStoriesController = DefaultPocketStoriesController(
                 homeActivity = activity,
-                homeStore = homeFragmentStore,
+                appStore = components.appStore,
                 navController = findNavController(),
                 metrics = requireComponents.analytics.metrics
             )
@@ -379,7 +343,7 @@ class HomeFragment : Fragment() {
 
         updateLayout(binding.root)
         sessionControlView = SessionControlView(
-            homeFragmentStore,
+            components.appStore,
             binding.sessionControlRecyclerView,
             viewLifecycleOwner,
             sessionControlInteractor
@@ -435,13 +399,13 @@ class HomeFragment : Fragment() {
      */
     private fun updateSessionControlView() {
         if (browsingModeManager.mode == BrowsingMode.Private) {
-            binding.root.consumeFrom(homeFragmentStore, viewLifecycleOwner) {
+            binding.root.consumeFrom(requireContext().components.appStore, viewLifecycleOwner) {
                 sessionControlView?.update(it)
             }
         } else {
-            sessionControlView?.update(homeFragmentStore.state)
+            sessionControlView?.update(requireContext().components.appStore.state)
 
-            binding.root.consumeFrom(homeFragmentStore, viewLifecycleOwner) {
+            binding.root.consumeFrom(requireContext().components.appStore, viewLifecycleOwner) {
                 sessionControlView?.update(it, shouldReportMetrics = true)
             }
         }
@@ -683,22 +647,6 @@ class HomeFragment : Fragment() {
         subscribeToTabCollections()
 
         val context = requireContext()
-        val components = context.components
-
-        homeFragmentStore.dispatch(
-            HomeFragmentAction.Change(
-                collections = components.core.tabCollectionStorage.cachedTabCollections,
-                mode = currentMode.getCurrentMode(),
-                topSites = getTopSites(components),
-                showCollectionPlaceholder = components.settings.showCollectionsPlaceholderOnHome,
-                // Provide an initial state for recent tabs to prevent re-rendering on the home screen.
-                //  This will otherwise cause a visual jump as the section gets rendered from no state
-                //  to some state.
-                recentTabs = getRecentTabs(components),
-                recentBookmarks = emptyList(),
-                recentHistory = emptyList()
-            )
-        )
 
         requireComponents.backgroundServices.accountManagerAvailableQueue.runIfReadyOrQueue {
             // By the time this code runs, we may not be attached to a context or have a view lifecycle owner.
@@ -763,7 +711,7 @@ class HomeFragment : Fragment() {
 
     private fun dispatchModeChanges(mode: Mode) {
         if (mode != Mode.fromBrowsingMode(browsingModeManager.mode)) {
-            homeFragmentStore.dispatch(HomeFragmentAction.ModeChange(mode))
+            requireContext().components.appStore.dispatch(AppAction.ModeChange(mode))
         }
     }
 
@@ -884,8 +832,8 @@ class HomeFragment : Fragment() {
     private fun hideOnboardingIfNeeded() {
         if (!onboarding.userHasBeenOnboarded()) {
             onboarding.finish()
-            homeFragmentStore.dispatch(
-                HomeFragmentAction.ModeChange(
+            requireContext().components.appStore.dispatch(
+                AppAction.ModeChange(
                     mode = currentMode.getCurrentMode()
                 )
             )
@@ -1019,7 +967,7 @@ class HomeFragment : Fragment() {
     private fun subscribeToTabCollections(): Observer<List<TabCollection>> {
         return Observer<List<TabCollection>> {
             requireComponents.core.tabCollectionStorage.cachedTabCollections = it
-            homeFragmentStore.dispatch(HomeFragmentAction.CollectionsChange(it))
+            requireComponents.appStore.dispatch(AppAction.CollectionsChange(it))
         }.also { observer ->
             requireComponents.core.tabCollectionStorage.getCollections().observe(this, observer)
         }
@@ -1191,22 +1139,6 @@ class HomeFragment : Fragment() {
         // The add_tabs_to_collections_button is added at runtime. We need to search for it in the same way.
         sessionControlView?.view?.findViewById<MaterialButton>(R.id.add_tabs_to_collections_button)
             ?.isVisible = tabCount > 0
-    }
-
-    private fun getTopSites(components: Components): List<TopSite> {
-        return if (components.settings.showTopSitesFeature) {
-            components.core.topSitesStorage.cachedTopSites.sort()
-        } else {
-            emptyList()
-        }
-    }
-
-    private fun getRecentTabs(components: Components): List<RecentTab> {
-        return if (components.settings.showRecentTabsFeature) {
-            components.core.store.state.asRecentTabs()
-        } else {
-            emptyList()
-        }
     }
 
     private fun displayWallpaperIfEnabled() {
