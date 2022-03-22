@@ -38,9 +38,9 @@ class NimbusBranchesController(
         val telemetryEnabled = context.settings().isTelemetryEnabled
         val experimentsEnabled = context.settings().isExperimentationEnabled
 
-        if (!telemetryEnabled && !experimentsEnabled) {
-            updateOptInState(branch)
+        updateOptInState(branch)
 
+        if (!telemetryEnabled && !experimentsEnabled) {
             val snackbarText = context.getString(R.string.experiments_snackbar)
             val buttonText = context.getString(R.string.experiments_snackbar_button)
             context.getRootView()?.let { v ->
@@ -58,8 +58,6 @@ class NimbusBranchesController(
                     }
                     .show()
             }
-        } else {
-            updateOptInState(branch)
         }
     }
 

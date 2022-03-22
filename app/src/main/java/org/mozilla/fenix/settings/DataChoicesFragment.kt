@@ -18,33 +18,30 @@ import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 
 /**
- * Settings screen that allows the user to configure their data collection and experimentation
- * preferences.
+ * Lets the user toggle telemetry on/off.
  */
 class DataChoicesFragment : PreferenceFragmentCompat() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val settings = requireContext().settings()
-        val analytics = requireContext().components.analytics
-
+        val context = requireContext()
         preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(this) { _, key ->
             if (key == getPreferenceKey(R.string.pref_key_telemetry)) {
-                if (settings.isTelemetryEnabled) {
-                    analytics.metrics.start(MetricServiceType.Data)
+                if (context.settings().isTelemetryEnabled) {
+                    context.components.analytics.metrics.start(MetricServiceType.Data)
                 } else {
-                    analytics.metrics.stop(MetricServiceType.Data)
+                    context.components.analytics.metrics.stop(MetricServiceType.Data)
                 }
                 // Reset experiment identifiers on both opt-in and opt-out; it's likely
                 // that in future we will need to pass in the new telemetry client_id
                 // to this method when the user opts back in.
-                analytics.experiments.resetTelemetryIdentifiers()
+                context.components.analytics.experiments.resetTelemetryIdentifiers()
             } else if (key == getPreferenceKey(R.string.pref_key_marketing_telemetry)) {
-                if (settings.isMarketingTelemetryEnabled) {
-                    analytics.metrics.start(MetricServiceType.Marketing)
+                if (context.settings().isMarketingTelemetryEnabled) {
+                    context.components.analytics.metrics.start(MetricServiceType.Marketing)
                 } else {
-                    analytics.metrics.stop(MetricServiceType.Marketing)
+                    context.components.analytics.metrics.stop(MetricServiceType.Marketing)
                 }
             }
         }
