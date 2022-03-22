@@ -20,8 +20,10 @@ import org.mozilla.fenix.GleanMetrics.CreditCards
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.History
 import org.mozilla.fenix.GleanMetrics.RecentBookmarks
+import org.mozilla.fenix.GleanMetrics.RecentlyVisitedHomepage
 import org.mozilla.fenix.GleanMetrics.SyncedTabs
 import org.mozilla.fenix.GleanMetrics.TabsTray
+import org.mozilla.fenix.GleanMetrics.TopSites
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 
 @RunWith(FenixRobolectricTestRunner::class)
@@ -189,6 +191,14 @@ class GleanMetricsServiceTest {
         assertFalse(History.searchTermGroupRemoveAll.testHasValue())
         gleanService.track(Event.HistorySearchTermGroupRemoveAll)
         assertTrue(History.searchTermGroupRemoveAll.testHasValue())
+
+        assertFalse(History.searchIconTapped.testHasValue())
+        gleanService.track(Event.HistorySearchIconTapped)
+        assertTrue(History.searchIconTapped.testHasValue())
+
+        assertFalse(History.searchResultTapped.testHasValue())
+        gleanService.track(Event.HistorySearchResultTapped)
+        assertTrue(History.searchResultTapped.testHasValue())
     }
 
     @Test
@@ -312,6 +322,17 @@ class GleanMetricsServiceTest {
     }
 
     @Test
+    fun `Home screen recently visited events are correctly recorded`() {
+        assertFalse(RecentlyVisitedHomepage.historyHighlightOpened.testHasValue())
+        gleanService.track(Event.HistoryHighlightOpened)
+        assertTrue(RecentlyVisitedHomepage.historyHighlightOpened.testHasValue())
+
+        assertFalse(RecentlyVisitedHomepage.searchGroupOpened.testHasValue())
+        gleanService.track(Event.HistorySearchGroupOpened)
+        assertTrue(RecentlyVisitedHomepage.searchGroupOpened.testHasValue())
+    }
+
+    @Test
     fun `credit card events are correctly recorded`() {
         assertFalse(CreditCards.saved.testHasValue())
         gleanService.track(Event.CreditCardSaved)
@@ -352,5 +373,46 @@ class GleanMetricsServiceTest {
         assertFalse(CreditCards.managementCardTapped.testHasValue())
         gleanService.track(Event.CreditCardManagementCardTapped)
         assertTrue(CreditCards.managementCardTapped.testHasValue())
+    }
+
+    @Test
+    fun `GIVEN contile top site events WHEN the event is track THEN verify the event is correctly recorded`() {
+        assertFalse(TopSites.contileImpression.testHasValue())
+
+        gleanService.track(
+            Event.TopSiteContileImpression(
+                position = 1,
+                source = Event.TopSiteContileImpression.Source.NEWTAB
+            )
+        )
+
+        assertTrue(TopSites.contileImpression.testHasValue())
+
+        var event = TopSites.contileImpression.testGetValue()
+
+        assertEquals(1, event.size)
+        assertEquals("top_sites", event[0].category)
+        assertEquals("contile_impression", event[0].name)
+        assertEquals("1", event[0].extra!!["position"])
+        assertEquals("newtab", event[0].extra!!["source"])
+
+        assertFalse(TopSites.contileClick.testHasValue())
+
+        gleanService.track(
+            Event.TopSiteContileClick(
+                position = 2,
+                source = Event.TopSiteContileClick.Source.NEWTAB
+            )
+        )
+
+        assertTrue(TopSites.contileClick.testHasValue())
+
+        event = TopSites.contileClick.testGetValue()
+
+        assertEquals(1, event.size)
+        assertEquals("top_sites", event[0].category)
+        assertEquals("contile_click", event[0].name)
+        assertEquals("2", event[0].extra!!["position"])
+        assertEquals("newtab", event[0].extra!!["source"])
     }
 }

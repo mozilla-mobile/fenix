@@ -165,8 +165,8 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark) {
         val actionBar = (activity as NavHostActivity).getSupportActionBarAndInflateIfNecessary()
         val toolbar = activity.findViewById<Toolbar>(R.id.navigationToolbar)
         toolbar?.setToolbarColors(
-            foreground = activity.getColorFromAttr(R.attr.primaryText),
-            background = activity.getColorFromAttr(R.attr.foundation)
+            foreground = activity.getColorFromAttr(R.attr.textPrimary),
+            background = activity.getColorFromAttr(R.attr.layer1)
         )
         actionBar.show()
     }
@@ -201,7 +201,7 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark) {
         activity?.let { activity ->
             AlertDialog.Builder(activity).apply {
                 setMessage(R.string.bookmark_deletion_confirmation)
-                setNegativeButton(android.R.string.cancel) { dialog: DialogInterface, _ ->
+                setNegativeButton(R.string.bookmark_delete_negative) { dialog: DialogInterface, _ ->
                     dialog.cancel()
                 }
                 setPositiveButton(R.string.tab_collection_dialog_positive) { dialog: DialogInterface, _ ->
@@ -280,7 +280,7 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark) {
                     binding.inputLayoutBookmarkUrl.setErrorIconDrawable(R.drawable.mozac_ic_warning_with_bottom_padding)
                     binding.inputLayoutBookmarkUrl.setErrorIconTintList(
                         ColorStateList.valueOf(
-                            ContextCompat.getColor(requireContext(), R.color.destructive_normal_theme)
+                            ContextCompat.getColor(requireContext(), R.color.fx_mobile_text_color_warning)
                         )
                     )
                 }

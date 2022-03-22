@@ -12,6 +12,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
@@ -25,6 +26,8 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.StoreProvider
+import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.databinding.FragmentRecentlyClosedTabsBinding
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.setTextColor
@@ -41,6 +44,8 @@ class RecentlyClosedFragment : LibraryPageFragment<RecoverableTab>(), UserIntera
     private lateinit var recentlyClosedInteractor: RecentlyClosedFragmentInteractor
     private lateinit var recentlyClosedController: RecentlyClosedController
 
+    private lateinit var metrics: MetricController
+
     override fun onResume() {
         super.onResume()
         showToolbar(getString(R.string.library_recently_closed_tabs))
@@ -51,7 +56,7 @@ class RecentlyClosedFragment : LibraryPageFragment<RecoverableTab>(), UserIntera
             inflater.inflate(R.menu.history_select_multi, menu)
             menu.findItem(R.id.delete_history_multi_select)?.let { deleteItem ->
                 deleteItem.title = SpannableString(deleteItem.title)
-                    .apply { setTextColor(requireContext(), R.attr.destructive) }
+                    .apply { setTextColor(requireContext(), R.attr.textWarning) }
             }
         } else {
             inflater.inflate(R.menu.library_menu, menu)
@@ -64,6 +69,7 @@ class RecentlyClosedFragment : LibraryPageFragment<RecoverableTab>(), UserIntera
         return when (item.itemId) {
             R.id.close_history -> {
                 close()
+                metrics.track(Event.RecentlyClosedTabsMenuClose)
                 true
             }
             R.id.share_history_multi_select -> {
@@ -89,6 +95,9 @@ class RecentlyClosedFragment : LibraryPageFragment<RecoverableTab>(), UserIntera
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+        metrics = requireComponents.analytics.metrics.also {
+            it.track(Event.RecentlyClosedTabsOpened)
+        }
     }
 
     override fun onCreateView(
@@ -111,6 +120,9 @@ class RecentlyClosedFragment : LibraryPageFragment<RecoverableTab>(), UserIntera
             recentlyClosedStore = recentlyClosedFragmentStore,
             activity = activity as HomeActivity,
             tabsUseCases = requireComponents.useCases.tabsUseCases,
+            metrics = metrics,
+            recentlyClosedTabsStorage = requireComponents.core.recentlyClosedTabsStorage.value,
+            lifecycleScope = lifecycleScope,
             openToBrowser = ::openItem
         )
         recentlyClosedInteractor = RecentlyClosedFragmentInteractor(recentlyClosedController)
@@ -126,11 +138,11 @@ class RecentlyClosedFragment : LibraryPageFragment<RecoverableTab>(), UserIntera
         _recentlyClosedFragmentView = null
     }
 
-    private fun openItem(tab: RecoverableTab, mode: BrowsingMode? = null) {
+    private fun openItem(url: String, mode: BrowsingMode? = null) {
         mode?.let { (activity as HomeActivity).browsingModeManager.mode = it }
 
         (activity as HomeActivity).openToBrowserAndLoad(
-            searchTermOrURL = tab.url,
+            searchTermOrURL = url,
             newTab = true,
             from = BrowserDirection.FromRecentlyClosed
         )

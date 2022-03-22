@@ -13,7 +13,7 @@ import mozilla.components.lib.crash.CrashReporter
 import mozilla.components.lib.crash.service.CrashReporterService
 import mozilla.components.lib.crash.service.GleanCrashReporterService
 import mozilla.components.lib.crash.service.MozillaSocorroService
-import mozilla.components.lib.crash.service.SentryService
+import mozilla.components.lib.crash.sentry.SentryService
 import mozilla.components.service.nimbus.NimbusApi
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
@@ -49,7 +49,10 @@ class Analytics(
             val sentryService = SentryService(
                 context,
                 BuildConfig.SENTRY_TOKEN,
-                tags = mapOf("geckoview" to "$MOZ_APP_VERSION-$MOZ_APP_BUILDID"),
+                tags = mapOf(
+                    "geckoview" to "$MOZ_APP_VERSION-$MOZ_APP_BUILDID",
+                    "fenix.git" to BuildConfig.GIT_HASH,
+                ),
                 environment = BuildConfig.BUILD_TYPE,
                 sendEventForNativeCrashes = false, // Do not send native crashes to Sentry
                 sentryProjectUrl = getSentryProjectUrl()

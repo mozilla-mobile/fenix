@@ -61,11 +61,13 @@ import org.mozilla.fenix.tabstray.ext.make
 import org.mozilla.fenix.tabstray.ext.orDefault
 import org.mozilla.fenix.tabstray.ext.showWithTheme
 import org.mozilla.fenix.theme.ThemeManager
+import org.mozilla.fenix.tabstray.syncedtabs.SyncedTabsIntegration
 import org.mozilla.fenix.utils.allowUndo
 import kotlin.math.max
 
 @Suppress("TooManyFunctions", "LargeClass")
 class TabsTrayFragment : AppCompatDialogFragment() {
+
     @VisibleForTesting internal lateinit var tabsTrayStore: TabsTrayStore
     private lateinit var browserTrayInteractor: BrowserTrayInteractor
     private lateinit var tabsTrayInteractor: TabsTrayInteractor
@@ -82,6 +84,7 @@ class TabsTrayFragment : AppCompatDialogFragment() {
     private val secureTabsTrayBinding = ViewBoundFeatureWrapper<SecureTabsTrayBinding>()
     private val tabsFeature = ViewBoundFeatureWrapper<TabsFeature>()
     private val tabsTrayInactiveTabsOnboardingBinding = ViewBoundFeatureWrapper<TabsTrayInactiveTabsOnboardingBinding>()
+    private val syncedTabsIntegration = ViewBoundFeatureWrapper<SyncedTabsIntegration>()
 
     @VisibleForTesting @Suppress("VariableNaming")
     internal var _tabsTrayBinding: ComponentTabstray2Binding? = null
@@ -128,10 +131,12 @@ class TabsTrayFragment : AppCompatDialogFragment() {
         } else {
             TabsTrayState.Mode.Normal
         }
+        val initialPage = args.page
 
         tabsTrayStore = StoreProvider.get(this) {
             TabsTrayStore(
                 initialState = TabsTrayState(
+                    selectedPage = initialPage,
                     mode = initialMode,
                     focusGroupTabId = args.focusGroupTabId
                 ),
@@ -370,6 +375,19 @@ class TabsTrayFragment : AppCompatDialogFragment() {
             view = view
         )
 
+        syncedTabsIntegration.set(
+            feature = SyncedTabsIntegration(
+                store = tabsTrayStore,
+                context = requireContext(),
+                navController = findNavController(),
+                storage = requireComponents.backgroundServices.syncedTabsStorage,
+                accountManager = requireComponents.backgroundServices.accountManager,
+                lifecycleOwner = this
+            ),
+            owner = this,
+            view = view
+        )
+
         setFragmentResultListener(ShareFragment.RESULT_KEY) { _, _ ->
             dismissTabsTray()
         }
@@ -408,7 +426,7 @@ class TabsTrayFragment : AppCompatDialogFragment() {
                     requireContext()
                 ),
                 positiveButtonTextColor = ThemeManager.resolveAttribute(
-                    R.attr.contrastText,
+                    R.attr.textOnColorPrimary,
                     requireContext()
                 ),
                 positiveButtonRadius = (resources.getDimensionPixelSize(R.dimen.tab_corner_radius)).toFloat()
@@ -461,7 +479,7 @@ class TabsTrayFragment : AppCompatDialogFragment() {
                 navigationInteractor,
                 trayInteractor,
                 requireComponents.core.store,
-                requireComponents.appStore
+                requireComponents.appStore,
             )
             isUserInputEnabled = false
         }

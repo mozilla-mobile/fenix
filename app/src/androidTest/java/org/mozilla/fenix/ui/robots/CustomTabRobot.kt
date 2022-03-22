@@ -10,9 +10,12 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
+import androidx.test.uiautomator.By
+import androidx.test.uiautomator.UiObjectNotFoundException
 import androidx.test.uiautomator.UiSelector
 import junit.framework.TestCase.assertTrue
 import org.mozilla.fenix.R
+import org.mozilla.fenix.helpers.Constants.LONG_CLICK_DURATION
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestHelper.appName
 import org.mozilla.fenix.helpers.TestHelper.packageName
@@ -64,8 +67,67 @@ class CustomTabRobot {
                     .textContains(title)
             )
         )
-        assertTrue(customTabToolbarTitle().text.equals(title))
+
+        assertTrue(
+            mDevice.findObject(
+                UiSelector()
+                    .resourceId("$packageName:id/mozac_browser_toolbar_title_view")
+                    .textContains(title)
+            ).waitForExists(waitingTime)
+        )
     }
+
+    fun longCLickAndCopyToolbarUrl() {
+        mDevice.waitForObjects(mDevice.findObject(UiSelector().resourceId("$packageName:id/toolbar")))
+        customTabToolbar().click(LONG_CLICK_DURATION)
+        mDevice.findObject(UiSelector().textContains("Copy")).waitForExists(waitingTime)
+        val copyText = mDevice.findObject(By.textContains("Copy"))
+        copyText.click()
+    }
+
+    fun fillAndSubmitLoginCredentials(userName: String, password: String) {
+        var currentTries = 0
+        while (currentTries++ < 3) {
+            try {
+                mDevice.waitForIdle(waitingTime)
+                userNameTextBox.setText(userName)
+                passwordTextBox.setText(password)
+                submitLoginButton.click()
+                mDevice.waitForObjects(mDevice.findObject(UiSelector().resourceId("$packageName:id/save_confirm")))
+                break
+            } catch (e: UiObjectNotFoundException) {
+                customTabScreen {
+                }.openMainMenu {
+                    refreshButton().click()
+                    waitForPageToLoad()
+                }
+            }
+        }
+    }
+
+    fun clickLinkMatchingText(expectedText: String) {
+        var currentTries = 0
+        while (currentTries++ < 3) {
+            try {
+                mDevice.findObject(UiSelector().resourceId("$packageName:id/engineView"))
+                    .waitForExists(waitingTime)
+                mDevice.findObject(UiSelector().textContains(expectedText))
+                    .waitForExists(waitingTime)
+
+                val element = mDevice.findObject(UiSelector().textContains(expectedText))
+                element.click()
+                break
+            } catch (e: UiObjectNotFoundException) {
+                customTabScreen {
+                }.openMainMenu {
+                    refreshButton().click()
+                    waitForPageToLoad()
+                }
+            }
+        }
+    }
+
+    fun waitForPageToLoad() = progressBar.waitUntilGone(waitingTime)
 
     class Transition {
         fun openMainMenu(interact: CustomTabRobot.() -> Unit): Transition {
@@ -106,5 +168,19 @@ private fun backButton() = mDevice.findObject(UiSelector().description("Back"))
 
 private fun closeButton() = onView(withContentDescription("Return to previous app"))
 
-private fun customTabToolbarTitle() =
-    mDevice.findObject(UiSelector().resourceId("$packageName:id/mozac_browser_toolbar_title_view"))
+private fun customTabToolbar() = mDevice.findObject(By.res("$packageName:id/toolbar"))
+
+private val progressBar =
+    mDevice.findObject(
+        UiSelector().resourceId("$packageName:id/mozac_browser_toolbar_progress")
+    )
+
+private val submitLoginButton =
+    mDevice.findObject(
+        UiSelector()
+            .index(2)
+            .resourceId("submit")
+            .textContains("Submit Query")
+            .className("android.widget.Button")
+            .packageName("$packageName")
+    )

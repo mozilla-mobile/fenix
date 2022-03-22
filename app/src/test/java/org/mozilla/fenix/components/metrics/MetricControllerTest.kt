@@ -17,7 +17,6 @@ import mozilla.components.feature.prompts.facts.CreditCardAutofillDialogFacts
 import mozilla.components.feature.pwa.ProgressiveWebAppFacts
 import mozilla.components.feature.syncedtabs.facts.SyncedTabsFacts
 import mozilla.components.feature.top.sites.facts.TopSitesFacts
-import mozilla.components.lib.dataprotect.SecurePrefsReliabilityExperiment
 import mozilla.components.support.base.Component
 import mozilla.components.support.base.facts.Action
 import mozilla.components.support.base.facts.Fact
@@ -340,6 +339,8 @@ class MetricControllerTest {
         every { marketingService1.shouldTrack(Event.HistorySearchTermGroupOpenTab) } returns true
         every { marketingService1.shouldTrack(Event.HistorySearchTermGroupRemoveTab) } returns true
         every { marketingService1.shouldTrack(Event.HistorySearchTermGroupRemoveAll) } returns true
+        every { marketingService1.shouldTrack(Event.HistorySearchIconTapped) } returns true
+        every { marketingService1.shouldTrack(Event.HistorySearchResultTapped) } returns true
 
         controller.start(MetricServiceType.Marketing)
 
@@ -354,6 +355,8 @@ class MetricControllerTest {
         controller.track(Event.HistorySearchTermGroupOpenTab)
         controller.track(Event.HistorySearchTermGroupRemoveTab)
         controller.track(Event.HistorySearchTermGroupRemoveAll)
+        controller.track(Event.HistorySearchIconTapped)
+        controller.track(Event.HistorySearchResultTapped)
 
         verify { marketingService1.track(Event.HistoryOpenedInNewTab) }
         verify { marketingService1.track(Event.HistoryOpenedInNewTabs) }
@@ -366,6 +369,8 @@ class MetricControllerTest {
         verify { marketingService1.track(Event.HistorySearchTermGroupOpenTab) }
         verify { marketingService1.track(Event.HistorySearchTermGroupRemoveTab) }
         verify { marketingService1.track(Event.HistorySearchTermGroupRemoveAll) }
+        verify { marketingService1.track(Event.HistorySearchIconTapped) }
+        verify { marketingService1.track(Event.HistorySearchResultTapped) }
     }
 
     @Test
@@ -522,7 +527,6 @@ class MetricControllerTest {
             Triple(Component.FEATURE_AWESOMEBAR, AwesomeBarFacts.Items.SEARCH_ACTION_CLICKED, Event.SearchActionClicked),
             Triple(Component.FEATURE_AWESOMEBAR, AwesomeBarFacts.Items.SEARCH_SUGGESTION_CLICKED, Event.SearchSuggestionClicked),
             Triple(Component.FEATURE_AWESOMEBAR, AwesomeBarFacts.Items.OPENED_TAB_SUGGESTION_CLICKED, Event.OpenedTabSuggestionClicked),
-            Triple(Component.LIB_DATAPROTECT, SecurePrefsReliabilityExperiment.Companion.Actions.RESET, Event.SecurePrefsReset),
         )
 
         simpleMappings.forEach { (component, item, expectedEvent) ->

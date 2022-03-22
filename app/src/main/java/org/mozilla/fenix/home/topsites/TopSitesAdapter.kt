@@ -6,6 +6,7 @@ package org.mozilla.fenix.home.topsites
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import mozilla.components.feature.top.sites.TopSite
@@ -13,17 +14,18 @@ import org.mozilla.fenix.home.sessioncontrol.TopSiteInteractor
 import org.mozilla.fenix.perf.StartupTimeline
 
 class TopSitesAdapter(
+    private val viewLifecycleOwner: LifecycleOwner,
     private val interactor: TopSiteInteractor
 ) : ListAdapter<TopSite, TopSiteItemViewHolder>(TopSitesDiffCallback) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TopSiteItemViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(TopSiteItemViewHolder.LAYOUT_ID, parent, false)
-        return TopSiteItemViewHolder(view, interactor)
+        return TopSiteItemViewHolder(view, viewLifecycleOwner, interactor)
     }
 
     override fun onBindViewHolder(holder: TopSiteItemViewHolder, position: Int) {
         StartupTimeline.onTopSitesItemBound(holder)
-        holder.bind(getItem(position))
+        holder.bind(getItem(position), position)
     }
 
     override fun onBindViewHolder(
@@ -36,7 +38,7 @@ class TopSitesAdapter(
         } else {
             when (payloads[0]) {
                 is TopSite -> {
-                    holder.bind((payloads[0] as TopSite))
+                    holder.bind((payloads[0] as TopSite), position)
                 }
             }
         }

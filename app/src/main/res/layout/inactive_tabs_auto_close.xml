@@ -8,12 +8,12 @@
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="16dp"
     android:paddingHorizontal="1dp"
-    android:background="@color/photonLightGrey30">
+    android:background="?borderPrimary">
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?above"
+        android:background="?attr/layer2"
         android:clickable="false"
         android:clipToPadding="false"
         android:focusable="true"
@@ -48,14 +48,14 @@
                 android:contentDescription="@string/tab_tray_inactive_auto_close_button_content_description"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/mozac_ic_close" />
+                app:srcCompat="@drawable/ic_close" />
 
             <TextView
                 android:id="@+id/message"
                 android:layout_height="wrap_content"
                 android:layout_width="0dp"
                 android:padding="8dp"
-                android:text="@string/tab_tray_inactive_auto_close_body"
+                android:text="@string/tab_tray_inactive_auto_close_body_2"
                 android:textAppearance="@style/Body14TextStyle"
                 app:layout_constraintTop_toBottomOf="@id/banner_info_message"
                 app:layout_constraintStart_toStartOf="parent" />

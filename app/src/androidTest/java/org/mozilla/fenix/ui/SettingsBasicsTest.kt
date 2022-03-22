@@ -5,35 +5,25 @@
 package org.mozilla.fenix.ui
 
 import android.content.res.Configuration
-import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.FenixApplication
-import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.FeatureSettingsHelper
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
-import org.mozilla.fenix.helpers.TestAssetHelper.getGenericAsset
 import org.mozilla.fenix.helpers.TestAssetHelper.getLoremIpsumAsset
-import org.mozilla.fenix.helpers.TestHelper.restartApp
-import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.checkTextSizeOnWebsite
 import org.mozilla.fenix.ui.robots.homeScreen
-import org.mozilla.fenix.ui.robots.navigationToolbar
 
 /**
- *  Tests for verifying the main three dot menu options
+ *  Tests for verifying the General section of the Settings menu
  *
  */
-
 class SettingsBasicsTest {
     /* ktlint-disable no-blank-line-before-rbrace */ // This imposes unreadable grouping.
-
-    private val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
     private lateinit var mockWebServer: MockWebServer
     private val featureSettingsHelper = FeatureSettingsHelper()
 
@@ -89,61 +79,6 @@ class SettingsBasicsTest {
     }
 
     @Test
-    fun searchSettingsItemsTest() {
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openSearchSubMenu {
-            verifySearchToolbar()
-            verifyDefaultSearchEngineHeader()
-            verifySearchEngineList()
-        }
-    }
-
-    @Test
-    fun selectNewDefaultSearchEngine() {
-        // Goes through the settings and changes the default search engine, then verifies it has changed.
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openSearchSubMenu {
-            changeDefaultSearchEngine("DuckDuckGo")
-        }.goBack {
-        }.goBack {
-            verifyDefaultSearchEngine("DuckDuckGo")
-        }
-    }
-
-    @Test
-    fun toggleShowVisitedSitesAndBookmarks() {
-        // Bookmarks a few websites, toggles the history and bookmarks setting to off, then verifies if the visited and bookmarked websites do not show in the suggestions.
-        val page1 = getGenericAsset(mockWebServer, 1)
-        val page2 = getGenericAsset(mockWebServer, 2)
-        val page3 = getGenericAsset(mockWebServer, 3)
-
-        homeScreen {
-        }.openNavigationToolbar {
-        }.enterURLAndEnterToBrowser(page1.url) {
-        }.openThreeDotMenu {
-        }.bookmarkPage { }
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(page2.url) {
-            verifyUrl(page2.url.toString())
-        }.openThreeDotMenu {
-        }.bookmarkPage { }
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(page3.url) {
-            mDevice.waitForIdle()
-        }
-
-        navigationToolbar {
-            verifyNoHistoryBookmarks()
-        }
-    }
-
-    @Test
     fun changeThemeSetting() {
         // Goes through the settings and changes the default search engine, then verifies it changes.
         homeScreen {
@@ -185,99 +120,6 @@ class SettingsBasicsTest {
         }.openAccessibilitySubMenu {
             clickFontSizingSwitch()
             verifyMenuItemsAreDisabled()
-        }
-    }
-
-    @SmokeTest
-    @Test
-    fun jumpBackInOptionTest() {
-        val genericURL = getGenericAsset(mockWebServer, 1)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(genericURL.url) {
-            mDevice.waitForIdle()
-        }.goToHomescreen {
-            verifyJumpBackInSectionIsDisplayed()
-        }.openThreeDotMenu {
-        }.openCustomizeHome {
-            clickJumpBackInButton()
-        }.goBack {
-            verifyJumpBackInSectionIsNotDisplayed()
-        }
-    }
-
-    @SmokeTest
-    @Test
-    fun recentBookmarksOptionTest() {
-        val genericURL = getGenericAsset(mockWebServer, 1)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(genericURL.url) {
-            mDevice.waitForIdle()
-        }.openThreeDotMenu {
-        }.bookmarkPage {
-        }.goToHomescreen {
-            verifyRecentBookmarksSectionIsDisplayed()
-        }.openThreeDotMenu {
-        }.openCustomizeHome {
-            clickRecentBookmarksButton()
-        }.goBack {
-            verifyRecentBookmarksSectionIsNotDisplayed()
-        }
-    }
-
-    @SmokeTest
-    @Test
-    fun startOnHomepageTest() {
-        val genericURL = getGenericAsset(mockWebServer, 1)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(genericURL.url) {
-            mDevice.waitForIdle()
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openHomepageSubMenu {
-            clickStartOnHomepageButton()
-        }
-
-        restartApp(activityIntentTestRule)
-
-        homeScreen {
-            verifyHomeScreen()
-        }
-    }
-
-    @SmokeTest
-    @Test
-    fun startOnLastTabTest() {
-        val firstWebPage = getGenericAsset(mockWebServer, 1)
-
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openHomepageSubMenu {
-            clickStartOnHomepageButton()
-        }
-
-        restartApp(activityIntentTestRule)
-
-        homeScreen {
-            verifyHomeScreen()
-        }
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(firstWebPage.url) {
-            mDevice.waitForIdle()
-        }.goToHomescreen {
-        }.openThreeDotMenu {
-        }.openCustomizeHome {
-            clickStartOnLastTabButton()
-        }
-
-        restartApp(activityIntentTestRule)
-
-        browserScreen {
-            verifyUrl(firstWebPage.url.toString())
         }
     }
 }

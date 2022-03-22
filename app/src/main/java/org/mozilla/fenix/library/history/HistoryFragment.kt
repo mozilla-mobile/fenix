@@ -30,6 +30,7 @@ import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.service.fxa.sync.SyncReason
 import mozilla.components.support.base.feature.UserInteractionHandler
 import org.mozilla.fenix.BrowserDirection
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.NavHostActivity
 import org.mozilla.fenix.R
@@ -176,10 +177,14 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
             menu.findItem(R.id.share_history_multi_select)?.isVisible = true
             menu.findItem(R.id.delete_history_multi_select)?.title =
                 SpannableString(getString(R.string.bookmark_menu_delete_button)).apply {
-                    setTextColor(requireContext(), R.attr.destructive)
+                    setTextColor(requireContext(), R.attr.textWarning)
                 }
         } else {
             inflater.inflate(R.menu.history_menu, menu)
+        }
+
+        if (!FeatureFlags.historyImprovementFeatures) {
+            menu.findItem(R.id.history_search)?.isVisible = false
         }
     }
 
@@ -236,6 +241,11 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
             }
 
             showTabTray()
+            true
+        }
+        R.id.history_search -> {
+            requireComponents.analytics.metrics.track(Event.HistorySearchIconTapped)
+            historyInteractor.onSearch()
             true
         }
         R.id.history_delete_all -> {

@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.home.sessioncontrol
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.widget.EditText
 import androidx.annotation.VisibleForTesting
@@ -28,26 +29,27 @@ import mozilla.components.support.ktx.android.view.showKeyboard
 import mozilla.components.support.ktx.kotlin.isUrl
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.FeatureFlags
+import org.mozilla.fenix.GleanMetrics.Pings
+import org.mozilla.fenix.GleanMetrics.TopSites
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BrowserFragmentDirections
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.collections.SaveCollectionStep
+import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.TabCollectionStorage
+import org.mozilla.fenix.components.appstate.AppAction
+import org.mozilla.fenix.components.appstate.AppState
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.components.metrics.MetricsUtils
-import org.mozilla.fenix.components.tips.Tip
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.openSetDefaultBrowserOption
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.HomeFragment
-import org.mozilla.fenix.home.HomeFragmentAction
 import org.mozilla.fenix.home.HomeFragmentDirections
-import org.mozilla.fenix.home.HomeFragmentState
-import org.mozilla.fenix.home.HomeFragmentStore
 import org.mozilla.fenix.home.Mode
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.settings.SupportUtils.SumoTopic.PRIVATE_BROWSING_MYTHS
@@ -118,7 +120,7 @@ interface SessionControlController {
     /**
      * @see [TopSiteInteractor.onSelectTopSite]
      */
-    fun handleSelectTopSite(topSite: TopSite)
+    fun handleSelectTopSite(topSite: TopSite, position: Int)
 
     /**
      * @see [TopSiteInteractor.onSettingsClicked]
@@ -144,11 +146,6 @@ interface SessionControlController {
      * @see [CollectionInteractor.onToggleCollectionExpanded]
      */
     fun handleToggleCollectionExpanded(collection: TabCollection, expand: Boolean)
-
-    /**
-     * @see [TipInteractor.onCloseTip]
-     */
-    fun handleCloseTip(tip: Tip)
 
     /**
      * @see [ToolbarInteractor.onPasteAndGo]
@@ -203,7 +200,7 @@ interface SessionControlController {
     /**
      * @see [SessionControlInteractor.reportSessionMetrics]
      */
-    fun handleReportSessionMetrics(state: HomeFragmentState)
+    fun handleReportSessionMetrics(state: AppState)
 }
 
 @Suppress("TooManyFunctions", "LargeClass")
@@ -218,7 +215,7 @@ class DefaultSessionControlController(
     private val restoreUseCase: TabsUseCases.RestoreUseCase,
     private val reloadUrlUseCase: SessionUseCases.ReloadUrlUseCase,
     private val selectTabUseCase: TabsUseCases.SelectTabUseCase,
-    private val fragmentStore: HomeFragmentStore,
+    private val appStore: AppStore,
     private val navController: NavController,
     private val viewLifecycleScope: CoroutineScope,
     private val hideOnboarding: () -> Unit,
@@ -307,7 +304,13 @@ class DefaultSessionControlController(
     }
 
     override fun handleOpenInPrivateTabClicked(topSite: TopSite) {
-        metrics.track(Event.TopSiteOpenInPrivateTab)
+        metrics.track(
+            if (topSite is TopSite.Provided) {
+                Event.TopSiteOpenContileInPrivateTab
+            } else {
+                Event.TopSiteOpenInPrivateTab
+            }
+        )
         with(activity) {
             browsingModeManager.mode = BrowsingMode.Private
             openToBrowserAndLoad(
@@ -327,6 +330,7 @@ class DefaultSessionControlController(
         )
     }
 
+    @SuppressLint("InflateParams")
     override fun handleRenameTopSiteClicked(topSite: TopSite) {
         activity.let {
             val customLayout =
@@ -383,16 +387,21 @@ class DefaultSessionControlController(
         metrics.track(Event.CollectionRenamePressed)
     }
 
-    override fun handleSelectTopSite(topSite: TopSite) {
+    override fun handleSelectTopSite(topSite: TopSite, position: Int) {
         dismissSearchDialogIfDisplayed()
 
         metrics.track(Event.TopSiteOpenInNewTab)
 
-        when (topSite) {
-            is TopSite.Default -> metrics.track(Event.TopSiteOpenDefault)
-            is TopSite.Frecent -> metrics.track(Event.TopSiteOpenFrecent)
-            is TopSite.Pinned -> metrics.track(Event.TopSiteOpenPinned)
-        }
+        metrics.track(
+            when (topSite) {
+                is TopSite.Default -> Event.TopSiteOpenDefault
+                is TopSite.Frecent -> Event.TopSiteOpenFrecent
+                is TopSite.Pinned -> Event.TopSiteOpenPinned
+                is TopSite.Provided -> Event.TopSiteOpenProvided.also {
+                    submitTopSitesImpressionPing(topSite, position)
+                }
+            }
+        )
 
         when (topSite.url) {
             SupportUtils.GOOGLE_URL -> metrics.track(Event.TopSiteOpenGoogle)
@@ -424,7 +433,23 @@ class DefaultSessionControlController(
         activity.openToBrowser(BrowserDirection.FromHome)
     }
 
+    @VisibleForTesting
+    internal fun submitTopSitesImpressionPing(topSite: TopSite.Provided, position: Int) {
+        metrics.track(
+            Event.TopSiteContileClick(
+                position = position + 1,
+                source = Event.TopSiteContileClick.Source.NEWTAB
+            )
+        )
+
+        topSite.id?.let { TopSites.contileTileId.set(it) }
+        topSite.title?.let { TopSites.contileAdvertiser.set(it.lowercase()) }
+        TopSites.contileReportingUrl.set(topSite.clickUrl)
+        Pings.topsitesImpression.submit()
+    }
+
     override fun handleTopSiteSettingsClicked() {
+        metrics.track(Event.TopSiteContileSettings)
         navController.nav(
             R.id.homeFragment,
             HomeFragmentDirections.actionGlobalHomeSettingsFragment()
@@ -432,6 +457,7 @@ class DefaultSessionControlController(
     }
 
     override fun handleSponsorPrivacyClicked() {
+        metrics.track(Event.TopSiteContilePrivacy)
         activity.openToBrowserAndLoad(
             searchTermOrURL = SupportUtils.getGenericSumoURLForTopic(SupportUtils.SumoTopic.SPONSOR_PRIVACY),
             newTab = true,
@@ -495,11 +521,7 @@ class DefaultSessionControlController(
     }
 
     override fun handleToggleCollectionExpanded(collection: TabCollection, expand: Boolean) {
-        fragmentStore.dispatch(HomeFragmentAction.CollectionExpanded(collection, expand))
-    }
-
-    override fun handleCloseTip(tip: Tip) {
-        fragmentStore.dispatch(HomeFragmentAction.RemoveTip(tip))
+        appStore.dispatch(AppAction.CollectionExpanded(collection, expand))
     }
 
     private fun showTabTrayCollectionCreation() {
@@ -539,7 +561,7 @@ class DefaultSessionControlController(
 
     override fun handleRemoveCollectionsPlaceholder() {
         settings.showCollectionsPlaceholderOnHome = false
-        fragmentStore.dispatch(HomeFragmentAction.RemoveCollectionsPlaceholder)
+        appStore.dispatch(AppAction.RemoveCollectionsPlaceholder)
     }
 
     private fun showShareFragment(shareSubject: String, data: List<ShareData>) {
@@ -586,14 +608,12 @@ class DefaultSessionControlController(
 
     override fun handleSetDefaultBrowser() {
         settings.userDismissedExperimentCard = true
-        metrics.track(Event.SetDefaultBrowserNewTabClicked)
         activity.openSetDefaultBrowserOption()
     }
 
     override fun handleCloseExperimentCard() {
         settings.userDismissedExperimentCard = true
-        metrics.track(Event.CloseExperimentCardClicked)
-        fragmentStore.dispatch(HomeFragmentAction.RemoveSetDefaultBrowserCard)
+        appStore.dispatch(AppAction.RemoveSetDefaultBrowserCard)
     }
 
     override fun handlePrivateModeButtonClicked(
@@ -605,8 +625,8 @@ class DefaultSessionControlController(
         }
 
         if (userHasBeenOnboarded) {
-            fragmentStore.dispatch(
-                HomeFragmentAction.ModeChange(Mode.fromBrowsingMode(newMode))
+            appStore.dispatch(
+                AppAction.ModeChange(Mode.fromBrowsingMode(newMode))
             )
 
             if (navController.currentDestination?.id == R.id.searchDialogFragment) {
@@ -619,7 +639,7 @@ class DefaultSessionControlController(
         }
     }
 
-    override fun handleReportSessionMetrics(state: HomeFragmentState) {
+    override fun handleReportSessionMetrics(state: AppState) {
         with(metrics) {
             track(
                 if (state.recentTabs.isEmpty()) Event.RecentTabsSectionIsNotVisible

@@ -39,10 +39,8 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.components.accounts.FenixAccountManager
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.nimbus.MessageSurfaceId
 import org.mozilla.fenix.theme.ThemeManager
-import org.mozilla.fenix.utils.BrowsersCache
 
 /**
  * Builds the toolbar object used with the 3-dot menu in the browser fragment.
@@ -84,7 +82,7 @@ open class DefaultToolbarMenu(
             store = store,
             style = WebExtensionBrowserMenuBuilder.Style(
                 webExtIconTintColorResource = primaryTextColor(),
-                addonsManagerMenuItemDrawableRes = R.drawable.mozac_ic_extensions
+                addonsManagerMenuItemDrawableRes = R.drawable.ic_addons_extensions
             ),
             onAddonsManagerTapped = {
                 onItemTapped.invoke(ToolbarMenu.Item.AddonsManager)
@@ -101,7 +99,7 @@ open class DefaultToolbarMenu(
             isInPrimaryState = {
                 selectedSession?.content?.canGoBack ?: true
             },
-            secondaryImageTintResource = ThemeManager.resolveAttribute(R.attr.disabled, context),
+            secondaryImageTintResource = ThemeManager.resolveAttribute(R.attr.textDisabled, context),
             disableInSecondaryState = true,
             longClickListener = { onItemTapped.invoke(ToolbarMenu.Item.Back(viewHistory = true)) }
         ) {
@@ -115,7 +113,7 @@ open class DefaultToolbarMenu(
             isInPrimaryState = {
                 selectedSession?.content?.canGoForward ?: true
             },
-            secondaryImageTintResource = ThemeManager.resolveAttribute(R.attr.disabled, context),
+            secondaryImageTintResource = ThemeManager.resolveAttribute(R.attr.textDisabled, context),
             disableInSecondaryState = true,
             longClickListener = { onItemTapped.invoke(ToolbarMenu.Item.Forward(viewHistory = true)) }
         ) {
@@ -143,7 +141,7 @@ open class DefaultToolbarMenu(
         }
 
         val share = BrowserMenuItemToolbar.Button(
-            imageResource = R.drawable.mozac_ic_share,
+            imageResource = R.drawable.ic_share,
             contentDescription = context.getString(R.string.browser_menu_share),
             iconTintColorResource = primaryTextColor(),
             listener = {
@@ -196,7 +194,7 @@ open class DefaultToolbarMenu(
 
     val newTabItem = BrowserMenuImageText(
         context.getString(R.string.library_new_tab),
-        R.drawable.mozac_ic_new,
+        R.drawable.ic_new,
         primaryTextColor()
     ) {
         onItemTapped.invoke(ToolbarMenu.Item.NewTab)
@@ -212,7 +210,7 @@ open class DefaultToolbarMenu(
 
     val downloadsItem = BrowserMenuImageText(
         context.getString(R.string.library_downloads),
-        R.drawable.mozac_ic_download,
+        R.drawable.ic_download,
         primaryTextColor()
     ) {
         onItemTapped.invoke(ToolbarMenu.Item.Downloads)
@@ -231,7 +229,7 @@ open class DefaultToolbarMenu(
     }
 
     val desktopSiteItem = BrowserMenuImageSwitch(
-        imageResource = R.drawable.mozac_ic_device_desktop,
+        imageResource = R.drawable.ic_desktop,
         label = context.getString(R.string.browser_menu_desktop_site),
         initialState = {
             selectedSession?.content?.desktopMode ?: false
@@ -278,8 +276,8 @@ open class DefaultToolbarMenu(
     val addRemoveTopSitesItem = TwoStateBrowserMenuImageText(
         primaryLabel = context.getString(R.string.browser_menu_add_to_top_sites),
         secondaryLabel = context.getString(R.string.browser_menu_remove_from_top_sites),
-        primaryStateIconResource = R.drawable.mozac_ic_pin,
-        secondaryStateIconResource = R.drawable.mozac_ic_pin,
+        primaryStateIconResource = R.drawable.ic_top_sites,
+        secondaryStateIconResource = R.drawable.ic_top_sites,
         iconTintColorResource = primaryTextColor(),
         isInPrimaryState = { !isCurrentUrlPinned },
         isInSecondaryState = { isCurrentUrlPinned },
@@ -308,7 +306,7 @@ open class DefaultToolbarMenu(
             ThemeManager.resolveAttribute(R.attr.syncDisconnected, context) else
             primaryTextColor(),
         textColorResource = if (hasAccountProblem)
-            ThemeManager.resolveAttribute(R.attr.primaryText, context) else
+            ThemeManager.resolveAttribute(R.attr.textPrimary, context) else
             primaryTextColor(),
         highlight = BrowserMenuHighlight.HighPriority(
             endImageResource = R.drawable.ic_sync_disconnected,
@@ -401,7 +399,7 @@ open class DefaultToolbarMenu(
 
     @ColorRes
     @VisibleForTesting
-    internal fun primaryTextColor() = ThemeManager.resolveAttribute(R.attr.primaryText, context)
+    internal fun primaryTextColor() = ThemeManager.resolveAttribute(R.attr.textPrimary, context)
 
     @ColorRes
     @VisibleForTesting
@@ -446,10 +444,11 @@ open class DefaultToolbarMenu(
         }
     }
 
-    private fun getSetDefaultBrowserItem(): BrowserMenuImageText? =
-        if (BrowsersCache.all(context).isFirefoxDefaultBrowser) {
-            null
-        } else if (FxNimbus.features.defaultBrowserMessage.value().messageLocation == MessageSurfaceId.APP_MENU_ITEM) {
+    private fun getSetDefaultBrowserItem(): BrowserMenuImageText? {
+        val settings = context.components.settings
+        return if (
+            settings.isDefaultBrowserMessageLocation(MessageSurfaceId.APP_MENU_ITEM)
+        ) {
             BrowserMenuImageText(
                 label = context.getString(R.string.preferences_set_as_default_browser),
                 imageResource = R.mipmap.ic_launcher
@@ -459,4 +458,5 @@ open class DefaultToolbarMenu(
         } else {
             null
         }
+    }
 }

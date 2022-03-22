@@ -6,8 +6,8 @@
         xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/share_bookmark_multi_select"
-        android:icon="@drawable/mozac_ic_share"
-        app:iconTint="@color/white_color"
+        android:icon="@drawable/ic_share"
+        app:iconTint="@color/fx_mobile_icon_color_oncolor"
         android:title="@string/browser_menu_share"
         app:showAsAction="ifRoom" />
     <item

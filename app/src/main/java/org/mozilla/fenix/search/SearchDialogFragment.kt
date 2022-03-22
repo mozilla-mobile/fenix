@@ -59,7 +59,6 @@ import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifAnyChanged
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import mozilla.components.ui.autocomplete.InlineAutocompleteEditText
 import org.mozilla.fenix.BrowserDirection
-import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
@@ -96,19 +95,13 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
     override fun onStart() {
         super.onStart()
 
-        if (FeatureFlags.showHomeBehindSearch) {
-            // This will need to be handled for the update to R. We need to resize here in order to
-            // see the whole homescreen behind the search dialog.
-            @Suppress("DEPRECATION")
-            requireActivity().window.setSoftInputMode(
-                WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
-            )
-        } else {
-            // https://github.com/mozilla-mobile/fenix/issues/14279
-            // To prevent GeckoView from resizing we're going to change the softInputMode to not adjust
-            // the size of the window.
-            requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
-        }
+        // This will need to be handled for the update to R. We need to resize here in order to
+        // see the whole homescreen behind the search dialog.
+        @Suppress("DEPRECATION")
+        requireActivity().window.setSoftInputMode(
+            WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
+        )
+
         // Refocus the toolbar editing and show keyboard if the QR fragment isn't showing
         if (childFragmentManager.findFragmentByTag(QR_FRAGMENT_TAG) == null) {
             toolbarView.view.edit.focus()
@@ -226,6 +219,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             binding.searchWrapper.background = ColorDrawable(Color.TRANSPARENT)
             dialog?.window?.decorView?.setOnTouchListener { _, event ->
                 requireActivity().dispatchTouchEvent(event)
+                // toolbarView.view.displayMode()
                 false
             }
         }
@@ -494,7 +488,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                 // In case we're displaying search results, we wouldn't have navigated to home, and
                 // so we don't need to navigate "back to" browser fragment.
                 // See mirror of this logic in BrowserToolbarController#handleToolbarClick.
-                if (FeatureFlags.showHomeBehindSearch && store.state.searchTerms.isBlank()) {
+                if (store.state.searchTerms.isBlank()) {
                     val args by navArgs<SearchDialogFragmentArgs>()
                     args.sessionId?.let {
                         findNavController().navigate(
@@ -683,20 +677,22 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         binding.clipboardTitle.isVisible = shouldShowView
         binding.linkIcon.isVisible = shouldShowView
 
-        val contentDescription = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            "${binding.clipboardTitle.text}."
-        } else {
-            val clipboardUrl = context?.components?.clipboardHandler?.extractURL()
+        if (shouldShowView) {
+            val contentDescription = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                "${binding.clipboardTitle.text}."
+            } else {
+                val clipboardUrl = context?.components?.clipboardHandler?.extractURL()
 
-            if (clipboardUrl != null && !((activity as HomeActivity).browsingModeManager.mode.isPrivate)) {
-                requireComponents.core.engine.speculativeConnect(clipboardUrl)
+                if (clipboardUrl != null && !((activity as HomeActivity).browsingModeManager.mode.isPrivate)) {
+                    requireComponents.core.engine.speculativeConnect(clipboardUrl)
+                }
+                binding.clipboardUrl.text = clipboardUrl
+                binding.clipboardUrl.isVisible = shouldShowView
+                "${binding.clipboardTitle.text}, ${binding.clipboardUrl.text}."
             }
-            binding.clipboardUrl.text = clipboardUrl
-            binding.clipboardUrl.isVisible = shouldShowView
-            "${binding.clipboardTitle.text}, ${binding.clipboardUrl.text}."
-        }
 
-        binding.fillLinkFromClipboard.contentDescription = contentDescription
+            binding.fillLinkFromClipboard.contentDescription = contentDescription
+        }
     }
 
     private fun updateToolbarContentDescription(source: SearchEngineSource) {
@@ -715,7 +711,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             binding.searchEnginesShortcutButton.isVisible = areShortcutsAvailable
             binding.searchEnginesShortcutButton.isChecked = showShortcuts
 
-            val color = if (showShortcuts) R.attr.contrastText else R.attr.primaryText
+            val color = if (showShortcuts) R.attr.textOnColorPrimary else R.attr.textPrimary
             binding.searchEnginesShortcutButton.compoundDrawables[0]?.setTint(
                 requireContext().getColorFromAttr(color)
             )

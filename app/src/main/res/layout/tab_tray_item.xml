@@ -33,8 +33,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
-        android:backgroundTint="?tabTrayThumbnailItemBackground"
-        app:cardBackgroundColor="@color/photonWhite"
+        app:cardBackgroundColor="?layer2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -45,7 +44,7 @@
             android:importantForAccessibility="no"
             android:padding="22dp"
             app:srcCompat="@drawable/mozac_ic_globe"
-            app:tint="?tabTrayThumbnailIcon" />
+            app:tint="?iconSecondary" />
 
         <mozilla.components.browser.tabstray.thumbnail.TabThumbnailView
             android:id="@+id/mozac_browser_tabstray_thumbnail"
@@ -67,7 +66,7 @@
         android:layout_marginTop="24dp"
         android:layout_marginStart="12dp"
         android:ellipsize="end"
-        android:textColor="@color/primary_text_normal_theme"
+        android:textColor="@color/fx_mobile_text_color_primary"
         android:textSize="16sp"
         android:maxLines="2"
         tools:text="Firefox"
@@ -103,7 +102,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/mozac_ic_close"
-        app:tint="@color/primary_text_normal_theme" />
+        app:srcCompat="@drawable/ic_close"
+        app:tint="@color/fx_mobile_icon_color_primary" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

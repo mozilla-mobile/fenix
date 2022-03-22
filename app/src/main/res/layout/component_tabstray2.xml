@@ -18,7 +18,7 @@
         android:layout_width="0dp"
         android:layout_height="@dimen/bottom_sheet_handle_height"
         android:layout_marginTop="@dimen/bottom_sheet_handle_top_margin"
-        android:background="@color/secondary_text_normal_theme"
+        android:background="@color/fx_mobile_text_color_secondary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -51,8 +51,8 @@
         app:layout_constraintBottom_toBottomOf="@+id/multiselect_title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/multiselect_title"
-        app:srcCompat="@drawable/mozac_ic_close"
-        app:tint="@color/contrast_text_normal_theme" />
+        app:srcCompat="@drawable/ic_close"
+        app:tint="@color/fx_mobile_icon_color_oncolor" />
 
     <TextView
         android:id="@+id/multiselect_title"
@@ -60,7 +60,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
         android:focusableInTouchMode="true"
-        android:textColor="@color/contrast_text_normal_theme"
+        android:textColor="@color/fx_mobile_text_color_oncolor_primary"
         android:textSize="20sp"
         android:importantForAccessibility="no"
         app:fontFamily="@font/metropolis_semibold"
@@ -84,7 +84,7 @@
         app:layout_constraintWidth_percent="0.5"
         app:tabGravity="fill"
         app:tabIconTint="@color/tab_icon"
-        app:tabIndicatorColor="@color/accent_normal_theme"
+        app:tabIndicatorColor="@color/fx_mobile_icon_color_active"
         app:tabMaxWidth="0dp"
         app:tabRippleColor="@android:color/transparent">
 
@@ -120,7 +120,7 @@
         app:layout_constraintBottom_toBottomOf="@id/tab_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/tab_layout"
-        app:srcCompat="@drawable/mozac_ic_menu"
+        app:srcCompat="@drawable/ic_menu"
         app:tint="@color/fx_mobile_icon_color_primary" />
 
     <View

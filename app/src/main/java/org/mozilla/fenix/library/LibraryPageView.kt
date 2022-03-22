@@ -24,8 +24,8 @@ open class LibraryPageView(
     ) {
         updateToolbar(
             title = title,
-            foregroundColor = context.getColorFromAttr(R.attr.primaryText),
-            backgroundColor = context.getColorFromAttr(R.attr.foundation)
+            foregroundColor = context.getColorFromAttr(R.attr.textPrimary),
+            backgroundColor = context.getColorFromAttr(R.attr.layer1)
         )
     }
 
@@ -34,7 +34,10 @@ open class LibraryPageView(
     ) {
         updateToolbar(
             title = title,
-            foregroundColor = ContextCompat.getColor(context, R.color.white_color),
+            foregroundColor = ContextCompat.getColor(
+                context,
+                R.color.fx_mobile_text_color_oncolor_primary
+            ),
             backgroundColor = context.getColorFromAttr(R.attr.accent)
         )
     }
@@ -43,7 +46,7 @@ open class LibraryPageView(
         activity?.title = title
         val toolbar = activity?.findViewById<Toolbar>(R.id.navigationToolbar)
         toolbar?.setToolbarColors(foregroundColor, backgroundColor)
-        toolbar?.setNavigationIcon(R.drawable.mozac_ic_back)
+        toolbar?.setNavigationIcon(R.drawable.ic_back_button)
         toolbar?.navigationIcon?.setTint(foregroundColor)
     }
 }

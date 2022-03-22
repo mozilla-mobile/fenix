@@ -35,6 +35,7 @@ import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.concept.storage.BookmarkNodeType
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.support.base.feature.UserInteractionHandler
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.NavHostActivity
 import org.mozilla.fenix.R
@@ -178,6 +179,10 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
                 if (mode.showMenu) {
                     inflater.inflate(R.menu.bookmarks_menu, menu)
                 }
+
+                if (!FeatureFlags.historyImprovementFeatures) {
+                    menu.findItem(R.id.bookmark_search)?.isVisible = false
+                }
             }
             is BookmarkFragmentState.Mode.Selecting -> {
                 if (mode.selectedItems.any { it.type != BookmarkNodeType.ITEM }) {
@@ -187,7 +192,7 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
 
                     menu.findItem(R.id.delete_bookmarks_multi_select).title =
                         SpannableString(getString(R.string.bookmark_menu_delete_button)).apply {
-                            setTextColor(requireContext(), R.attr.destructive)
+                            setTextColor(requireContext(), R.attr.textWarning)
                         }
                 }
             }
@@ -196,6 +201,10 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
+            R.id.bookmark_search -> {
+                bookmarkInteractor.onSearch()
+                true
+            }
             R.id.close_bookmarks -> {
                 invokePendingDeletion()
                 close()

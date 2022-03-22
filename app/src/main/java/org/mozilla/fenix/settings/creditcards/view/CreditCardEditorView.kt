@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.settings.creditcards.view
 
+import android.content.res.ColorStateList
 import android.view.View
 import android.widget.ArrayAdapter
 import androidx.annotation.VisibleForTesting
@@ -59,6 +60,17 @@ class CreditCardEditorView(
         binding.cardNumberInput.text = state.cardNumber.toEditable()
         binding.nameOnCardInput.text = state.billingName.toEditable()
 
+        binding.cardNumberLayout.setErrorTextColor(
+            ColorStateList.valueOf(
+                binding.root.context.getColorFromAttr(R.attr.textWarning)
+            )
+        )
+        binding.nameOnCardLayout.setErrorTextColor(
+            ColorStateList.valueOf(
+                binding.root.context.getColorFromAttr(R.attr.textWarning)
+            )
+        )
+
         bindExpiryMonthDropDown(state.expiryMonth)
         bindExpiryYearDropDown(state.expiryYears)
     }
@@ -110,24 +122,24 @@ class CreditCardEditorView(
 
         if (binding.cardNumberInput.text.toString().validateCreditCardNumber()) {
             binding.cardNumberLayout.error = null
-            binding.cardNumberTitle.setTextColor(binding.root.context.getColorFromAttr(R.attr.primaryText))
+            binding.cardNumberTitle.setTextColor(binding.root.context.getColorFromAttr(R.attr.textPrimary))
         } else {
             isValid = false
 
             binding.cardNumberLayout.error =
                 binding.root.context.getString(R.string.credit_cards_number_validation_error_message)
-            binding.cardNumberTitle.setTextColor(binding.root.context.getColorFromAttr(R.attr.destructive))
+            binding.cardNumberTitle.setTextColor(binding.root.context.getColorFromAttr(R.attr.textWarning))
         }
 
         if (binding.nameOnCardInput.text.toString().isNotBlank()) {
             binding.nameOnCardInput.error = null
-            binding.nameOnCardTitle.setTextColor(binding.root.context.getColorFromAttr(R.attr.primaryText))
+            binding.nameOnCardTitle.setTextColor(binding.root.context.getColorFromAttr(R.attr.textPrimary))
         } else {
             isValid = false
 
             binding.nameOnCardLayout.error =
                 binding.root.context.getString(R.string.credit_cards_name_on_card_validation_error_message)
-            binding.nameOnCardTitle.setTextColor(binding.root.context.getColorFromAttr(R.attr.destructive))
+            binding.nameOnCardTitle.setTextColor(binding.root.context.getColorFromAttr(R.attr.textWarning))
         }
 
         return isValid

@@ -36,6 +36,7 @@ import mozilla.components.feature.addons.update.GlobalAddonDependencyProvider
 import mozilla.components.feature.autofill.AutofillUseCases
 import mozilla.components.feature.search.ext.buildSearchUrl
 import mozilla.components.feature.search.ext.waitForSelectedOrDefaultSearchEngine
+import mozilla.components.feature.top.sites.TopSitesProviderConfig
 import mozilla.components.lib.crash.CrashReporter
 import mozilla.components.service.fxa.manager.SyncEnginesStorage
 import mozilla.components.service.glean.Glean
@@ -61,6 +62,7 @@ import org.mozilla.fenix.GleanMetrics.Metrics
 import org.mozilla.fenix.GleanMetrics.PerfStartup
 import org.mozilla.fenix.GleanMetrics.Preferences
 import org.mozilla.fenix.GleanMetrics.SearchDefaultEngine
+import org.mozilla.fenix.GleanMetrics.TopSites
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.components.Core
 import org.mozilla.fenix.components.metrics.Event
@@ -82,6 +84,8 @@ import org.mozilla.fenix.session.VisibilityLifecycleCallback
 import org.mozilla.fenix.telemetry.TelemetryLifecycleObserver
 import org.mozilla.fenix.utils.BrowsersCache
 import org.mozilla.fenix.utils.Settings
+import org.mozilla.fenix.utils.Settings.Companion.TOP_SITES_PROVIDER_MAX_THRESHOLD
+import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 /**
@@ -127,6 +131,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
 
         setupInMainProcessOnly()
 
+        downloadWallpapers()
         // DO NOT MOVE ANYTHING BELOW THIS stop CALL.
         PerfStartup.applicationOnCreate.stopAndAccumulate(completeMethodDurationTimerId)
     }
@@ -257,11 +262,11 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                         // we can prevent with this.
                         components.core.topSitesStorage.getTopSites(
                             totalSites = components.settings.topSitesMaxLimit,
-                            fetchProvidedTopSites = components.settings.showContileFeature,
-                            frecencyConfig = if (components.settings.showTopFrecentSites)
-                                FrecencyThresholdOption.SKIP_ONE_TIME_PAGES
-                            else
-                                null
+                            frecencyConfig = FrecencyThresholdOption.SKIP_ONE_TIME_PAGES,
+                            providerConfig = TopSitesProviderConfig(
+                                showProviderTopSites = components.settings.showContileFeature,
+                                maxThreshold = TOP_SITES_PROVIDER_MAX_THRESHOLD
+                            )
                         )
 
                         // This service uses `historyStorage`, and so we can only touch it when we know
@@ -572,6 +577,12 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                 defaultMozBrowser.set(it)
             }
 
+            if (settings.contileContextId.isEmpty()) {
+                settings.contileContextId = TopSites.contextId.generateAndSet().toString()
+            } else {
+                TopSites.contextId.set(UUID.fromString(settings.contileContextId))
+            }
+
             mozillaProducts.set(mozillaProductDetector.getInstalledMozillaProducts(applicationContext))
 
             adjustCampaign.set(settings.adjustCampaignId)
@@ -744,7 +755,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             override fun onUpdatesApplied(updated: List<EnrolledExperiment>) {
                 CustomizeHome.jumpBackIn.set(settings.showRecentTabsFeature)
                 CustomizeHome.recentlySaved.set(settings.showRecentBookmarksFeature)
-                CustomizeHome.mostVisitedSites.set(settings.showTopFrecentSites)
+                CustomizeHome.mostVisitedSites.set(settings.showTopSitesFeature)
                 CustomizeHome.recentlyVisited.set(settings.historyMetadataUIFeature)
                 CustomizeHome.pocket.set(settings.showPocketRecommendationsFeature)
             }
@@ -781,4 +792,13 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
     }
 
     override fun getWorkManagerConfiguration() = Builder().setMinimumLoggingLevel(INFO).build()
+
+    @OptIn(DelicateCoroutinesApi::class)
+    open fun downloadWallpapers() {
+        if (FeatureFlags.showWallpapers && FeatureFlags.isThemedWallpapersFeatureEnabled(this)) {
+            GlobalScope.launch {
+                components.wallpaperManager.downloadAllRemoteWallpapers()
+            }
+        }
+    }
 }

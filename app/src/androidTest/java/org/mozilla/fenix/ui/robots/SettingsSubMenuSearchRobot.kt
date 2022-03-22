@@ -49,7 +49,35 @@ class SettingsSubMenuSearchRobot {
         selectSearchEngine(searchEngineName)
 
     fun disableShowSearchSuggestions() = toggleShowSearchSuggestions()
+
     fun enableShowSearchShortcuts() = toggleShowSearchShortcuts()
+
+    fun toggleVoiceSearch() {
+        onView(withId(androidx.preference.R.id.recycler_view)).perform(
+            RecyclerViewActions.scrollTo<RecyclerView.ViewHolder>(
+                hasDescendant(withText("Show voice search"))
+            )
+        )
+        onView(withText("Show voice search")).perform(click())
+    }
+
+    fun switchSearchHistoryToggle() {
+        onView(withId(androidx.preference.R.id.recycler_view)).perform(
+            RecyclerViewActions.scrollTo<RecyclerView.ViewHolder>(
+                hasDescendant(withText("Search browsing history"))
+            )
+        )
+        searchHistoryToggle.click()
+    }
+
+    fun switchSearchBookmarksToggle() {
+        onView(withId(androidx.preference.R.id.recycler_view)).perform(
+            RecyclerViewActions.scrollTo<RecyclerView.ViewHolder>(
+                hasDescendant(withText("Search bookmarks"))
+            )
+        )
+        searchBookmarksToggle.click()
+    }
 
     fun openAddSearchEngineMenu() = addSearchEngineButton().click()
 
@@ -157,6 +185,11 @@ class SettingsSubMenuSearchRobot {
     }
 }
 
+fun searchSettingsScreen(interact: SettingsSubMenuSearchRobot.() -> Unit): SettingsSubMenuSearchRobot.Transition {
+    SettingsSubMenuSearchRobot().interact()
+    return SettingsSubMenuSearchRobot.Transition()
+}
+
 private fun assertSearchToolbar() =
     onView(
         allOf(
@@ -221,9 +254,11 @@ private fun assertSearchBrowsingHistory() {
             hasDescendant(withText("Search browsing history"))
         )
     )
-    onView(withText("Search browsing history"))
+    searchHistoryToggle
         .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
 }
+
+private val searchHistoryToggle = onView(withText("Search browsing history"))
 
 private fun assertSearchBookmarks() {
     onView(withId(androidx.preference.R.id.recycler_view)).perform(
@@ -231,9 +266,11 @@ private fun assertSearchBookmarks() {
             hasDescendant(withText("Search bookmarks"))
         )
     )
-    onView(withText("Search bookmarks"))
+    searchBookmarksToggle
         .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
 }
+
+private val searchBookmarksToggle = onView(withText("Search bookmarks"))
 
 private fun selectSearchEngine(searchEngine: String) {
     onView(withText(searchEngine))

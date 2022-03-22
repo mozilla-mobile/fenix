@@ -18,7 +18,8 @@ features:
             "jump-back-in": true,
             "recently-saved": true,
             "recent-explorations": true,
-            "pocket": true
+            "pocket": true,
+            "contile-top-sites": false,
           }
     defaults:
       - channel: nightly
@@ -28,7 +29,8 @@ features:
             "jump-back-in": true,
             "recently-saved": true,
             "recent-explorations": true,
-            "pocket": true
+            "pocket": true,
+            "contile-top-sites": false,
           }
         }
   nimbus-validation:
@@ -54,13 +56,20 @@ features:
         description: If true, the feature shows up on the homescreen and on the new tab screen.
         type: Boolean
         default: false
+    defaults:
+      - channel: nightly
+        value:
+          enabled: true
+      - channel: developer
+        value:
+          enabled: true
   default-browser-message:
     description: A small feature allowing experiments on the placement of a default browser message.
     variables:
       message-location:
         description: Where is the message to be put.
-        type: MessageSurfaceId
-        default: homescreen-banner
+        type: Option<MessageSurfaceId>
+        default: null
 types:
   objects: {}
   enums:
@@ -77,6 +86,8 @@ types:
             description: The tab groups
           pocket:
             description: The pocket section. This should only be available in the US.
+          contile-top-sites:
+            description: The sponsored shortcuts in the homescreen.
     MessageSurfaceId:
         description: The identity of a message surface, used in the default browser experiments
         variants:

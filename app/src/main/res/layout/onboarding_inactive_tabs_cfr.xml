@@ -16,7 +16,7 @@
         android:layout_marginEnd="@dimen/cfr_triangle_margin_edge"
         android:importantForAccessibility="no"
         app:srcCompat="@drawable/ic_cfr_triangle"
-        app:tint="#7542E5" />
+        app:tint="@color/fx_mobile_layer_color_gradient_start" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/banner_container"
@@ -54,7 +54,7 @@
             android:contentDescription="@string/content_description_close_button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/mozac_ic_close"
+            app:srcCompat="@drawable/ic_close"
             app:tint="@color/fx_mobile_private_text_color_primary" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

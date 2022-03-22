@@ -53,5 +53,17 @@ class SecretSettingsFragment : PreferenceFragmentCompat() {
             isChecked = context.settings().nimbusUsePreview
             onPreferenceChangeListener = SharedPreferenceUpdater()
         }
+
+        requirePreference<SwitchPreference>(R.string.pref_key_enable_task_continuity).apply {
+            isVisible = true
+            isChecked = context.settings().enableTaskContinuityEnhancements
+            onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
+
+        requirePreference<SwitchPreference>(R.string.pref_key_show_unified_search).apply {
+            isVisible = FeatureFlags.unifiedSearchFeature
+            isChecked = context.settings().showUnifiedSearchFeature
+            onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
     }
 }

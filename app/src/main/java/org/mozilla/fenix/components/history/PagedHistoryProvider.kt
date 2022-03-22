@@ -13,7 +13,6 @@ import mozilla.components.concept.storage.VisitType
 import mozilla.components.support.ktx.kotlin.tryGetHostFromUrl
 import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.library.history.History
-import org.mozilla.fenix.library.history.HistoryDataSource
 import org.mozilla.fenix.library.history.HistoryItemTimeGroup
 import org.mozilla.fenix.perf.runBlockingIncrement
 import org.mozilla.fenix.utils.Settings.Companion.SEARCH_GROUP_MINIMUM_SITES
@@ -90,8 +89,6 @@ class DefaultPagedHistoryProvider(
     private val historyImprovementFeatures: Boolean = FeatureFlags.historyImprovementFeatures,
 ) : PagedHistoryProvider {
 
-    val urlSet = Array<MutableSet<String>>(HistoryItemTimeGroup.values().size) { mutableSetOf() }
-
     /**
      * Types of visits we currently do not display in the History UI.
      */
@@ -121,10 +118,6 @@ class DefaultPagedHistoryProvider(
         numberOfItems: Int,
         onComplete: (List<HistoryDB>) -> Unit,
     ) {
-        if (offset == HistoryDataSource.INITIAL_OFFSET) {
-            urlSet.map { it.clear() }
-        }
-
         // A PagedList DataSource runs on a background thread automatically.
         // If we run this in our own coroutineScope it breaks the PagedList
         runBlockingIncrement {
@@ -223,8 +216,6 @@ class DefaultPagedHistoryProvider(
 
         if (historyImprovementFeatures) {
             history = history.distinctBy { Pair(it.historyTimeGroup, it.url) }
-                .filter { !urlSet[it.historyTimeGroup.ordinal].contains(it.url) }
-            history.map { urlSet[it.historyTimeGroup.ordinal].add(it.url) }
         }
 
         // Add all history items that are not in a group filtering out any matches with a history
