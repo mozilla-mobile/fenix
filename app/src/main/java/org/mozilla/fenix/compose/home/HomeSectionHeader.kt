@@ -28,8 +28,7 @@ import org.mozilla.fenix.theme.FirefoxTheme
  *
  * @param headerText The header string.
  * @param description The description for click action
- * @param navController to dismiss search dialog
- * @param (optional) onShowAllClick Action to take when show all is clicked.
+ * @param onShowAllButtonClick Invoked when "Show all" button is clicked.
  */
 @Composable
 fun HomeSectionHeader(
