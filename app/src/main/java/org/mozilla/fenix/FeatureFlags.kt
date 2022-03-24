@@ -26,11 +26,6 @@ object FeatureFlags {
     val addressesFeature = Config.channel.isNightlyOrDebug
 
     /**
-     * Enables the Start On Home feature in the settings page.
-     */
-    const val showStartOnHomeSettings = true
-
-    /**
      * Enables the "recent" tabs feature in the home screen.
      */
     const val showRecentTabsFeature = true
@@ -49,11 +44,6 @@ object FeatureFlags {
      * Identifies and separates the tabs list with a secondary section containing least used tabs.
      */
     const val inactiveTabs = true
-
-    /**
-     * Enables showing the home screen behind the search dialog
-     */
-    const val showHomeBehindSearch = true
 
     /**
      * Identifies and separates the tabs list with a group containing search term tabs.
@@ -87,12 +77,12 @@ object FeatureFlags {
     /**
      * Enables showing the wallpaper functionality.
      */
-    val showWallpapers = Config.channel.isNightlyOrDebug
+    const val showWallpapers = true
 
     /**
      * Enables the Contile top sites.
      */
-    val contileFeature = Config.channel.isDebug
+    val contileFeature = Config.channel.isNightlyOrDebug
 
     /**
      * Enables history improvement features.
@@ -103,11 +93,10 @@ object FeatureFlags {
      * Enables themed wallpapers feature.
      */
     fun isThemedWallpapersFeatureEnabled(context: Context): Boolean {
-        val strictMode = context.components.strictMode
-        return strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
+        return context.components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
             val langTag = LocaleManager.getCurrentLocale(context)
                 ?.toLanguageTag() ?: getSystemDefault().toLanguageTag()
-            listOf("en-US", "es-US").contains(langTag) && Config.channel.isNightlyOrDebug
+            listOf("en-US", "es-US").contains(langTag)
         }
     }
 
@@ -115,4 +104,9 @@ object FeatureFlags {
      * Enables the Task Continuity enhancements.
      */
     val taskContinuityFeature = Config.channel.isDebug
+
+    /**
+     * Enables the Unified Search feature.
+     */
+    val unifiedSearchFeature = Config.channel.isNightlyOrDebug
 }

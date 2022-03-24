@@ -12,12 +12,11 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -33,6 +32,8 @@ import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -49,15 +50,19 @@ import androidx.compose.ui.unit.sp
 import mozilla.components.browser.storage.sync.TabEntry
 import mozilla.components.feature.syncedtabs.view.SyncedTabsView
 import org.mozilla.fenix.R
+import org.mozilla.fenix.compose.Favicon
 import org.mozilla.fenix.compose.PrimaryText
 import org.mozilla.fenix.compose.SecondaryText
 import org.mozilla.fenix.theme.FirefoxTheme
 import mozilla.components.browser.storage.sync.Tab as SyncTab
 
+private const val EXPANDED_BY_DEFAULT = true
+
 /**
  * Top-level list UI for displaying Synced Tabs in the Tabs Tray.
  *
  * @param syncedTabs The tab UI items to be displayed.
+ * @param taskContinuityEnabled Indicates whether the Task Continuity enhancements should be visible for users.
  * @param onTabClick The lambda for handling clicks on synced tabs.
  */
 @OptIn(ExperimentalFoundationApi::class)
@@ -68,30 +73,40 @@ fun SyncedTabsList(
     onTabClick: (SyncTab) -> Unit,
 ) {
     val listState = rememberLazyListState()
+    val expandedState = remember(syncedTabs) { syncedTabs.map { EXPANDED_BY_DEFAULT }.toMutableStateList() }
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         state = listState,
     ) {
         if (taskContinuityEnabled) {
-            syncedTabs.forEach { syncedTabItem ->
+            syncedTabs.forEachIndexed { index, syncedTabItem ->
                 when (syncedTabItem) {
                     is SyncedTabsListItem.DeviceSection -> {
+                        val sectionExpanded = expandedState[index]
+
                         stickyHeader {
-                            SyncedTabsDeviceItem(deviceName = syncedTabItem.displayName)
+                            SyncedTabsSectionHeader(
+                                sectionText = syncedTabItem.displayName,
+                                expanded = sectionExpanded,
+                            ) {
+                                expandedState[index] = !sectionExpanded
+                            }
                         }
 
-                        if (syncedTabItem.tabs.isNotEmpty()) {
-                            items(syncedTabItem.tabs) { syncedTab ->
-                                SyncedTabsTabItem(
-                                    tabTitleText = syncedTab.displayTitle,
-                                    url = syncedTab.displayURL,
-                                ) {
-                                    onTabClick(syncedTab.tab)
+                        if (sectionExpanded) {
+                            if (syncedTabItem.tabs.isNotEmpty()) {
+                                items(syncedTabItem.tabs) { syncedTab ->
+                                    SyncedTabsTabItem(
+                                        tabTitleText = syncedTab.displayTitle,
+                                        url = syncedTab.displayURL,
+                                    ) {
+                                        onTabClick(syncedTab.tab)
+                                    }
                                 }
+                            } else {
+                                item { SyncedTabsNoTabsItem() }
                             }
-                        } else {
-                            item { SyncedTabsNoTabsItem() }
                         }
                     }
 
@@ -108,7 +123,7 @@ fun SyncedTabsList(
         } else {
             items(syncedTabs) { syncedTabItem ->
                 when (syncedTabItem) {
-                    is SyncedTabsListItem.Device -> SyncedTabsDeviceItem(deviceName = syncedTabItem.displayName)
+                    is SyncedTabsListItem.Device -> SyncedTabsSectionHeader(sectionText = syncedTabItem.displayName)
                     is SyncedTabsListItem.Error -> SyncedTabsErrorItem(
                         errorText = syncedTabItem.errorText,
                         errorButton = syncedTabItem.errorButton
@@ -129,32 +144,57 @@ fun SyncedTabsList(
         item {
             // The Spacer here is to act as a footer to add padding to the bottom of the list so
             // the FAB or any potential SnackBar doesn't overlap with the items at the end.
-            Spacer(Modifier.height(240.dp))
+            Spacer(modifier = Modifier.height(240.dp))
         }
     }
 }
 
 /**
- * Text header for sections of synced tabs
+ * Collapsible header for sections of synced tabs
  *
- * @param deviceName The name of the user's device connected that has synced tabs.
+ * @param sectionText The section title for a group of synced tabs.
+ * @param expanded Indicates whether the section of content is expanded. If null, the Icon will be hidden.
+ * @param onClick Optional lambda for handling section header clicks.
  */
 @Composable
-fun SyncedTabsDeviceItem(deviceName: String) {
+fun SyncedTabsSectionHeader(
+    sectionText: String,
+    expanded: Boolean? = null,
+    onClick: () -> Unit = {},
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .background(FirefoxTheme.colors.layer1)
+            .clickable(onClick = onClick)
     ) {
-        PrimaryText(
-            text = deviceName,
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 16.dp, top = 16.dp, end = 8.dp, bottom = 8.dp),
-            fontSize = 14.sp,
-            fontFamily = FontFamily(Font(R.font.metropolis_semibold)),
-            maxLines = 1
-        )
+                .padding(top = 16.dp, bottom = 8.dp, start = 16.dp, end = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            PrimaryText(
+                text = sectionText,
+                fontSize = 14.sp,
+                fontFamily = FontFamily(Font(R.font.metropolis_semibold)),
+                maxLines = 1,
+            )
+
+            expanded?.let {
+                Spacer(modifier = Modifier.width(8.dp))
+
+                Icon(
+                    painter = painterResource(
+                        if (expanded) R.drawable.ic_chevron_down else R.drawable.ic_chevron_up
+                    ),
+                    contentDescription = stringResource(
+                        if (expanded) R.string.synced_tabs_collapse_group else R.string.synced_tabs_expand_group,
+                    ),
+                    tint = FirefoxTheme.colors.textPrimary,
+                )
+            }
+        }
 
         Divider(color = FirefoxTheme.colors.borderPrimary)
     }
@@ -169,31 +209,37 @@ fun SyncedTabsDeviceItem(deviceName: String) {
  */
 @Composable
 fun SyncedTabsTabItem(tabTitleText: String, url: String, onClick: () -> Unit) {
-    Column(
+    Row(
         modifier = Modifier
             .clickable(
                 onClickLabel = tabTitleText,
                 onClick = onClick
             )
-            .padding(horizontal = 16.dp)
-            .defaultMinSize(minHeight = 56.dp),
-        verticalArrangement = Arrangement.Center,
+            .padding(horizontal = 16.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        PrimaryText(
-            text = tabTitleText,
-            modifier = Modifier.fillMaxWidth(),
-            fontSize = 16.sp,
-            maxLines = 1
+        Favicon(
+            url = url,
+            size = 24.dp,
         )
 
-        SecondaryText(
-            text = url,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 2.dp),
-            fontSize = 12.sp,
-            maxLines = 1
-        )
+        Spacer(modifier = Modifier.width(32.dp))
+
+        Column {
+            PrimaryText(
+                text = tabTitleText,
+                modifier = Modifier.fillMaxWidth(),
+                fontSize = 16.sp,
+                maxLines = 1,
+            )
+
+            SecondaryText(
+                text = url,
+                modifier = Modifier.fillMaxWidth(),
+                fontSize = 12.sp,
+                maxLines = 1,
+            )
+        }
     }
 }
 
@@ -266,7 +312,7 @@ fun SyncedTabsErrorButton(buttonText: String, onClick: () -> Unit) {
             tint = FirefoxTheme.colors.textOnColorPrimary,
         )
 
-        Spacer(Modifier.width(8.dp))
+        Spacer(modifier = Modifier.width(8.dp))
 
         Text(
             text = buttonText,
@@ -299,21 +345,28 @@ fun SyncedTabsNoTabsItem() {
 private fun SyncedTabsListItemsPreview() {
     FirefoxTheme {
         Column(Modifier.background(FirefoxTheme.colors.layer1)) {
-            SyncedTabsDeviceItem(deviceName = "Google Pixel Pro Max +Ultra 5000")
+            SyncedTabsSectionHeader(sectionText = "Google Pixel Pro Max +Ultra 5000")
 
-            Spacer(Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
+
+            SyncedTabsSectionHeader(
+                sectionText = "Collapsible Google Pixel Pro Max +Ultra 5000",
+                expanded = true,
+            ) { println("Clicked section header") }
+
+            Spacer(modifier = Modifier.height(16.dp))
 
             SyncedTabsTabItem(tabTitleText = "Mozilla", url = "www.mozilla.org") { println("Clicked tab") }
 
-            Spacer(Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             SyncedTabsErrorItem(errorText = stringResource(R.string.synced_tabs_reauth))
 
-            Spacer(Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             SyncedTabsNoTabsItem()
 
-            Spacer(Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
@@ -324,10 +377,7 @@ private fun SyncedTabsErrorPreview() {
     FirefoxTheme {
         Box(Modifier.background(FirefoxTheme.colors.layer1)) {
             SyncedTabsErrorItem(
-                errorText = stringResource(
-                    R.string.synced_tabs_no_tabs_2,
-                    stringResource(R.string.app_name)
-                ),
+                errorText = stringResource(R.string.synced_tabs_no_tabs),
                 errorButton = SyncedTabsListItem.ErrorButton(
                     buttonText = stringResource(R.string.synced_tabs_sign_in_button)
                 ) {

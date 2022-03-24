@@ -19,7 +19,6 @@ import org.mozilla.fenix.GleanMetrics.History
 import org.mozilla.fenix.GleanMetrics.Logins
 import org.mozilla.fenix.GleanMetrics.Onboarding
 import org.mozilla.fenix.GleanMetrics.Pocket
-import org.mozilla.fenix.GleanMetrics.Preferences
 import org.mozilla.fenix.GleanMetrics.SearchShortcuts
 import org.mozilla.fenix.GleanMetrics.SearchTerms
 import org.mozilla.fenix.GleanMetrics.TabsTray
@@ -84,6 +83,8 @@ sealed class Event {
     data class HistoryRecentSearchesTapped(val source: String) : Event() {
         override val extras = mapOf(History.recentSearchesTappedKeys.pageNumber to source)
     }
+    object HistoryHighlightOpened : Event()
+    object HistorySearchGroupOpened : Event()
     object HistorySearchTermGroupTapped : Event()
     object HistorySearchTermGroupOpenTab : Event()
     object HistorySearchTermGroupRemoveTab : Event()
@@ -235,11 +236,6 @@ sealed class Event {
     object TabsTrayInactiveTabsCFRDismissed : Event()
     object TabsTrayInactiveTabsCFRIsVisible : Event()
 
-    object InactiveTabsSurveyOpened : Event()
-    data class InactiveTabsOffSurvey(val feedback: String) : Event() {
-        override val extras: Map<Preferences.turnOffInactiveTabsSurveyKeys, String>
-            get() = mapOf(Preferences.turnOffInactiveTabsSurveyKeys.feedback to feedback.lowercase(Locale.ROOT))
-    }
     data class InactiveTabsCountUpdate(val count: Int) : Event()
 
     object ProgressiveWebAppOpenFromHomescreenTap : Event()
@@ -335,6 +331,14 @@ sealed class Event {
             get() = hashMapOf(TopSites.longPressKeys.type to topSite.name())
     }
 
+    data class TopSiteContileImpression(val position: Int, val source: Source) : Event() {
+        enum class Source { NEWTAB }
+    }
+
+    data class TopSiteContileClick(val position: Int, val source: Source) : Event() {
+        enum class Source { NEWTAB }
+    }
+
     data class OnboardingToolbarPosition(val position: Position) : Event() {
         enum class Position { TOP, BOTTOM }
 
@@ -396,7 +400,7 @@ sealed class Event {
         val context: Context
     ) : Event() {
         private val telemetryAllowMap = mapOf(
-            context.getString(R.string.pref_key_enable_top_frecent_sites) to "most_visited_sites",
+            context.getString(R.string.pref_key_show_top_sites) to "most_visited_sites",
             context.getString(R.string.pref_key_recent_tabs) to "jump_back_in",
             context.getString(R.string.pref_key_recent_bookmarks) to "recently_saved",
             context.getString(R.string.pref_key_history_metadata_feature) to "recently_visited",

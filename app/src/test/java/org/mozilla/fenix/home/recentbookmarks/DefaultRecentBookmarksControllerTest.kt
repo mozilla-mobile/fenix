@@ -54,8 +54,9 @@ class DefaultRecentBookmarksControllerTest {
         controller = spyk(
             DefaultRecentBookmarksController(
                 activity = activity,
-                navController = navController
-            )
+                navController = navController,
+                appStore = mockk()
+            ),
         )
     }
 

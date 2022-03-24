@@ -8,9 +8,9 @@
     android:layout_width="match_parent"
     android:layout_height="56dp"
     android:layout_gravity="bottom"
-    android:background="?foundation"
+    android:background="?attr/layer1"
     android:clickable="true"
     android:focusable="true"
-    app:findInPageNoMatchesTextColor="?attr/destructive"
-    app:findInPageButtonsTint="?primaryText"
-    app:findInPageResultCountTextColor="?primaryText" />
+    app:findInPageNoMatchesTextColor="?attr/textWarning"
+    app:findInPageButtonsTint="?attr/textPrimary"
+    app:findInPageResultCountTextColor="?attr/textPrimary" />

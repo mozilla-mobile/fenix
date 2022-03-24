@@ -25,6 +25,7 @@ import mozilla.components.support.ktx.android.content.floatPreference
 import mozilla.components.support.ktx.android.content.intPreference
 import mozilla.components.support.ktx.android.content.longPreference
 import mozilla.components.support.ktx.android.content.stringPreference
+import mozilla.components.support.ktx.android.content.stringSetPreference
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.FeatureFlags
@@ -126,8 +127,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     override val preferences: SharedPreferences =
         appContext.getSharedPreferences(FENIX_PREFERENCES, MODE_PRIVATE)
 
-    var showTopFrecentSites by lazyFeatureFlagPreference(
-        appContext.getPreferenceKey(R.string.pref_key_enable_top_frecent_sites),
+    /**
+     * Indicates whether or not top sites should be shown on the home screen.
+     */
+    var showTopSitesFeature by lazyFeatureFlagPreference(
+        appContext.getPreferenceKey(R.string.pref_key_show_top_sites),
         featureFlag = true,
         default = { homescreenSections[HomeScreenSection.TOP_SITES] == true },
     )
@@ -175,6 +179,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = ""
     )
 
+    var contileContextId by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_contile_context_id),
+        default = ""
+    )
+
     var currentWallpaper by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_current_wallpaper),
         default = WallpaperManager.defaultWallpaper.name
@@ -195,30 +204,10 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = false
     )
 
-    var shouldDisplayMasterPasswordMigrationTip by booleanPreference(
-        appContext.getString(R.string.pref_key_master_password_tip),
-        true
-    )
-
     var shouldReturnToBrowser by booleanPreference(
         appContext.getString(R.string.pref_key_return_to_browser),
         false
     )
-
-    // If any of the prefs have been modified, quit displaying the fenix moved tip
-    fun shouldDisplayFenixMovingTip(): Boolean =
-        preferences.getBoolean(
-            appContext.getString(R.string.pref_key_migrating_from_fenix_nightly_tip),
-            true
-        ) &&
-            preferences.getBoolean(
-                appContext.getString(R.string.pref_key_migrating_from_firefox_nightly_tip),
-                true
-            ) &&
-            preferences.getBoolean(
-                appContext.getString(R.string.pref_key_migrating_from_fenix_tip),
-                true
-            )
 
     var defaultSearchEngineName by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_search_engine),
@@ -911,14 +900,6 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = true
     )
 
-    /**
-     * Should we display a feedback request to the user when he turns off the Inactive Tabs feature
-     */
-    var shouldShowInactiveTabsTurnOffSurvey by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_should_show_inactive_tabs_turn_off_survey),
-        default = false
-    )
-
     fun getSitePermissionsPhoneFeatureAction(
         feature: PhoneFeature,
         default: Action = Action.ASK_TO_ALLOW
@@ -1294,9 +1275,9 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     /**
      * Indicates if the Contile functionality should be visible.
      */
-    var showContileFeature by featureFlagPreference(
+    var showContileFeature by lazyFeatureFlagPreference(
         key = appContext.getPreferenceKey(R.string.pref_key_enable_contile),
-        default = false,
+        default = { homescreenSections[HomeScreenSection.CONTILE_TOP_SITES] == true },
         featureFlag = FeatureFlags.contileFeature,
     )
 
@@ -1307,5 +1288,22 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         key = appContext.getPreferenceKey(R.string.pref_key_enable_task_continuity),
         default = false,
         featureFlag = FeatureFlags.taskContinuityFeature,
+    )
+
+    /**
+     * Indicates if the Unified Search feature should be visible.
+     */
+    var showUnifiedSearchFeature by featureFlagPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_show_unified_search),
+        default = false,
+        featureFlag = FeatureFlags.unifiedSearchFeature
+    )
+
+    /**
+     * Blocklist used to filter items from the home screen that have previously been removed.
+     */
+    var homescreenBlocklist by stringSetPreference(
+        appContext.getPreferenceKey(R.string.pref_key_home_blocklist),
+        default = setOf()
     )
 }

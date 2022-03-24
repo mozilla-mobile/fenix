@@ -9,14 +9,14 @@ import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.service.pocket.PocketRecommendedStory
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
-import org.mozilla.fenix.components.tips.Tip
-import org.mozilla.fenix.home.HomeFragmentState
+import org.mozilla.fenix.components.appstate.AppState
 import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesCategory
 import org.mozilla.fenix.home.pocket.PocketStoriesController
 import org.mozilla.fenix.home.pocket.PocketStoriesInteractor
 import org.mozilla.fenix.home.recentbookmarks.RecentBookmark
 import org.mozilla.fenix.home.recentbookmarks.controller.RecentBookmarksController
 import org.mozilla.fenix.home.recentbookmarks.interactor.RecentBookmarksInteractor
+import org.mozilla.fenix.home.recenttabs.RecentTab
 import org.mozilla.fenix.home.recenttabs.controller.RecentTabController
 import org.mozilla.fenix.home.recenttabs.interactor.RecentTabInteractor
 import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem.RecentHistoryGroup
@@ -44,7 +44,7 @@ interface TabSessionInteractor {
      *
      * * @param state The state the homepage from which to report desired metrics.
      */
-    fun reportSessionMetrics(state: HomeFragmentState)
+    fun reportSessionMetrics(state: AppState)
 }
 
 /**
@@ -166,13 +166,6 @@ interface OnboardingInteractor {
     fun showOnboardingDialog()
 }
 
-interface TipInteractor {
-    /**
-     * Dismisses the tip view adapter
-     */
-    fun onCloseTip(tip: Tip)
-}
-
 interface CustomizeHomeIteractor {
     /**
      * Opens the customize home settings page.
@@ -210,8 +203,9 @@ interface TopSiteInteractor {
      * Selects the given top site. Called when a user clicks on a top site.
      *
      * @param topSite The top site that was selected.
+     * @param position The position of the top site.
      */
-    fun onSelectTopSite(topSite: TopSite)
+    fun onSelectTopSite(topSite: TopSite, position: Int)
 
     /**
      * Navigates to the Homepage Settings. Called when an user clicks on the "Settings" top site
@@ -245,8 +239,8 @@ interface ExperimentCardInteractor {
 
 /**
  * Interactor for the Home screen. Provides implementations for the CollectionInteractor,
- * OnboardingInteractor, TopSiteInteractor, TipInteractor, TabSessionInteractor,
- * ToolbarInteractor, ExperimentCardInteractor, RecentTabInteractor, RecentBookmarksInteractor
+ * OnboardingInteractor, TopSiteInteractor, TabSessionInteractor, ToolbarInteractor,
+ * ExperimentCardInteractor, RecentTabInteractor, RecentBookmarksInteractor
  * and others.
  */
 @SuppressWarnings("TooManyFunctions")
@@ -259,7 +253,6 @@ class SessionControlInteractor(
 ) : CollectionInteractor,
     OnboardingInteractor,
     TopSiteInteractor,
-    TipInteractor,
     TabSessionInteractor,
     ToolbarInteractor,
     ExperimentCardInteractor,
@@ -309,8 +302,8 @@ class SessionControlInteractor(
         controller.handleRenameCollectionTapped(collection)
     }
 
-    override fun onSelectTopSite(topSite: TopSite) {
-        controller.handleSelectTopSite(topSite)
+    override fun onSelectTopSite(topSite: TopSite, position: Int) {
+        controller.handleSelectTopSite(topSite, position)
     }
 
     override fun onSettingsClicked() {
@@ -339,10 +332,6 @@ class SessionControlInteractor(
 
     override fun onAddTabsToCollectionTapped() {
         controller.handleCreateCollection()
-    }
-
-    override fun onCloseTip(tip: Tip) {
-        controller.handleCloseTip(tip)
     }
 
     override fun onPrivateBrowsingLearnMoreClicked() {
@@ -393,12 +382,20 @@ class SessionControlInteractor(
         recentTabController.handleRecentTabShowAllClicked()
     }
 
+    override fun onRemoveRecentTab(tab: RecentTab.Tab) {
+        recentTabController.handleRecentTabRemoved(tab)
+    }
+
     override fun onRecentBookmarkClicked(bookmark: RecentBookmark) {
         recentBookmarksController.handleBookmarkClicked(bookmark)
     }
 
     override fun onShowAllBookmarksClicked() {
         recentBookmarksController.handleShowAllBookmarksClicked()
+    }
+
+    override fun onRecentBookmarkRemoved(bookmark: RecentBookmark) {
+        recentBookmarksController.handleBookmarkRemoved(bookmark)
     }
 
     override fun onHistoryShowAllClicked() {
@@ -447,7 +444,7 @@ class SessionControlInteractor(
         pocketStoriesController.handleDiscoverMoreClicked(link)
     }
 
-    override fun reportSessionMetrics(state: HomeFragmentState) {
+    override fun reportSessionMetrics(state: AppState) {
         controller.handleReportSessionMetrics(state)
     }
 }

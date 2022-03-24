@@ -25,6 +25,7 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.bookmarkStorage
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
+import org.mozilla.fenix.ext.navigateSafe
 
 /**
  * [BookmarkFragment] controller.
@@ -47,6 +48,7 @@ interface BookmarkController {
     fun handleBookmarkFolderDeletion(nodes: Set<BookmarkNode>)
     fun handleRequestSync()
     fun handleBackPressed()
+    fun handleSearch()
 }
 
 @Suppress("TooManyFunctions")
@@ -74,10 +76,13 @@ class DefaultBookmarkController(
     }
 
     override fun handleBookmarkTapped(item: BookmarkNode) {
+        val fromHomeFragment =
+            navController.previousBackStackEntry?.destination?.id == R.id.homeFragment
+        val isPrivate = activity.browsingModeManager.mode == BrowsingMode.Private
         val flags = EngineSession.LoadUrlFlags.select(EngineSession.LoadUrlFlags.ALLOW_JAVASCRIPT_URL)
         openInNewTabAndShow(
             item.url!!,
-            false,
+            isPrivate || fromHomeFragment,
             BrowserDirection.FromBookmarks,
             activity.browsingModeManager.mode,
             flags
@@ -179,6 +184,12 @@ class DefaultBookmarkController(
                 handleBookmarkExpand(parent)
             }
         }
+    }
+
+    override fun handleSearch() {
+        val directions =
+            BookmarkFragmentDirections.actionBookmarkFragmentToBookmarkSearchDialogFragment()
+        navController.navigateSafe(R.id.bookmarkFragment, directions)
     }
 
     private fun openInNewTabAndShow(

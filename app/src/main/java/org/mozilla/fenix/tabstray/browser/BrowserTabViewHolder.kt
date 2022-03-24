@@ -16,9 +16,9 @@ import mozilla.components.concept.base.images.ImageLoader
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.TabTrayGridItemBinding
 import org.mozilla.fenix.ext.increaseTapArea
-import kotlin.math.max
 import org.mozilla.fenix.selection.SelectionHolder
 import org.mozilla.fenix.tabstray.TabsTrayStore
+import kotlin.math.max
 
 sealed class BrowserTabViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     /**
@@ -102,9 +102,9 @@ sealed class BrowserTabViewHolder(itemView: View) : RecyclerView.ViewHolder(item
 
         override fun updateSelectedTabIndicator(showAsSelected: Boolean) {
             val color = if (showAsSelected) {
-                R.color.tab_tray_item_selected_background_normal_theme
+                R.color.fx_mobile_layer_color_accent_opaque
             } else {
-                R.color.tab_tray_item_background_normal_theme
+                R.color.fx_mobile_layer_color_1
             }
             itemView.setBackgroundColor(
                 ContextCompat.getColor(

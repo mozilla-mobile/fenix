@@ -690,7 +690,7 @@ class BrowserRobot {
 
         fun openTabDrawer(interact: TabDrawerRobot.() -> Unit): TabDrawerRobot.Transition {
             mDevice.findObject(
-                UiSelector().descriptionContains("open tab. Tap to switch tabs.")
+                UiSelector().descriptionContains("Tap to switch tabs.")
             ).waitForExists(waitingTime)
 
             tabsCounter().click()
@@ -749,6 +749,8 @@ class BrowserRobot {
 
             val tabCrashedCloseButton = mDevice.findObject(text("Close tab"))
             tabCrashedCloseButton.click()
+
+            mDevice.waitForIdle()
 
             HomeScreenRobot().interact()
             return HomeScreenRobot.Transition()

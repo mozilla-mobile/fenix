@@ -131,10 +131,12 @@ class TabsTrayFragment : AppCompatDialogFragment() {
         } else {
             TabsTrayState.Mode.Normal
         }
+        val initialPage = args.page
 
         tabsTrayStore = StoreProvider.get(this) {
             TabsTrayStore(
                 initialState = TabsTrayState(
+                    selectedPage = initialPage,
                     mode = initialMode,
                     focusGroupTabId = args.focusGroupTabId
                 ),
@@ -424,7 +426,7 @@ class TabsTrayFragment : AppCompatDialogFragment() {
                     requireContext()
                 ),
                 positiveButtonTextColor = ThemeManager.resolveAttribute(
-                    R.attr.contrastText,
+                    R.attr.textOnColorPrimary,
                     requireContext()
                 ),
                 positiveButtonRadius = (resources.getDimensionPixelSize(R.dimen.tab_corner_radius)).toFloat()

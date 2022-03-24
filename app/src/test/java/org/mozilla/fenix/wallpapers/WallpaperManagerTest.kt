@@ -42,7 +42,7 @@ class WallpaperManagerTest {
 
         val updatedName = "new name"
         val updatedWallpaper = Wallpaper.Local.Firefox(updatedName, drawableId = 0)
-        val wallpaperManager = WallpaperManager(mockSettings, mockk(), mockFileManager, mockk(), listOf())
+        val wallpaperManager = WallpaperManager(mockSettings, mockk(), mockFileManager, listOf())
         wallpaperManager.currentWallpaper = updatedWallpaper
 
         assertEquals(updatedWallpaper.name, currentCaptureSlot.captured)
@@ -58,7 +58,6 @@ class WallpaperManagerTest {
             mockSettings,
             mockDownloader,
             mockFileManager,
-            mockk(),
             allWallpapers = fakeRemoteWallpapers
         )
         wallpaperManager.downloadAllRemoteWallpapers()
@@ -77,7 +76,6 @@ class WallpaperManagerTest {
             mockSettings,
             mockDownloader,
             mockFileManager,
-            mockk(),
             allWallpapers = listOf(expiredRemoteWallpaper, activeRemoteWallpaper)
         )
 
@@ -98,7 +96,6 @@ class WallpaperManagerTest {
             mockSettings,
             mockDownloader,
             mockFileManager,
-            mockk(),
             allWallpapers = listOf(expiredRemoteWallpaper)
         )
 
@@ -118,7 +115,6 @@ class WallpaperManagerTest {
             mockSettings,
             mockDownloader,
             mockFileManager,
-            mockk(),
             allWallpapers = listOf()
         )
 
@@ -145,6 +141,6 @@ class WallpaperManagerTest {
             TimeRelation.LATER -> fakeCalendar.add(Calendar.DATE, 5)
         }
         val relativeTime = fakeCalendar.time
-        return Wallpaper.Remote.Focus(name = name, expirationDate = relativeTime)
+        return Wallpaper.Remote.House(name = name, expirationDate = relativeTime)
     }
 }

@@ -16,15 +16,14 @@ import androidx.recyclerview.widget.RecyclerView
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.ui.widgets.WidgetSiteItemView
+import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.Components
-import org.mozilla.fenix.components.tips.Tip
 import org.mozilla.fenix.home.BottomSpacerViewHolder
-import org.mozilla.fenix.home.HomeFragmentStore
 import org.mozilla.fenix.home.TopPlaceholderViewHolder
-import org.mozilla.fenix.home.pocket.PocketStoriesViewHolder
-import org.mozilla.fenix.home.recentbookmarks.view.RecentBookmarksHeaderViewHolder
 import org.mozilla.fenix.home.pocket.PocketCategoriesViewHolder
 import org.mozilla.fenix.home.pocket.PocketRecommendationsHeaderViewHolder
+import org.mozilla.fenix.home.pocket.PocketStoriesViewHolder
+import org.mozilla.fenix.home.recentbookmarks.view.RecentBookmarksHeaderViewHolder
 import org.mozilla.fenix.home.recentbookmarks.view.RecentBookmarksViewHolder
 import org.mozilla.fenix.home.recenttabs.view.RecentTabViewHolder
 import org.mozilla.fenix.home.recenttabs.view.RecentTabsHeaderViewHolder
@@ -45,15 +44,11 @@ import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingSe
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingThemePickerViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingToolbarPositionPickerViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingTrackingProtectionViewHolder
-import org.mozilla.fenix.home.tips.ButtonTipViewHolder
 import org.mozilla.fenix.home.topsites.TopSitePagerViewHolder
 import mozilla.components.feature.tab.collections.Tab as ComponentTab
 
 sealed class AdapterItem(@LayoutRes val viewType: Int) {
     object TopPlaceholderItem : AdapterItem(TopPlaceholderViewHolder.LAYOUT_ID)
-    data class TipItem(val tip: Tip) : AdapterItem(
-        ButtonTipViewHolder.LAYOUT_ID
-    )
 
     /**
      * Contains a set of [Pair]s where [Pair.first] is the index of the changed [TopSite] and
@@ -84,11 +79,13 @@ sealed class AdapterItem(@LayoutRes val viewType: Int) {
          *
          * See https://github.com/mozilla-mobile/fenix/pull/20189#issuecomment-877124730
          */
+        @Suppress("ComplexCondition")
         override fun getChangePayload(newItem: AdapterItem): Any? {
             val newTopSites = (newItem as? TopSitePager)
             val oldTopSites = (this as? TopSitePager)
 
             if (newTopSites == null || oldTopSites == null ||
+                newTopSites.topSites.size > oldTopSites.topSites.size ||
                 (newTopSites.topSites.size > TopSitePagerViewHolder.TOP_SITES_PER_PAGE)
                 != (oldTopSites.topSites.size > TopSitePagerViewHolder.TOP_SITES_PER_PAGE)
             ) {
@@ -201,7 +198,7 @@ class AdapterItemDiffCallback : DiffUtil.ItemCallback<AdapterItem>() {
 
 @Suppress("LongParameterList")
 class SessionControlAdapter(
-    private val store: HomeFragmentStore,
+    private val store: AppStore,
     private val interactor: SessionControlInteractor,
     private val viewLifecycleOwner: LifecycleOwner,
     private val components: Components
@@ -219,13 +216,11 @@ class SessionControlAdapter(
             PocketStoriesViewHolder.LAYOUT_ID -> return PocketStoriesViewHolder(
                 composeView = ComposeView(parent.context),
                 viewLifecycleOwner = viewLifecycleOwner,
-                store = store,
                 interactor = interactor
             )
             PocketCategoriesViewHolder.LAYOUT_ID -> return PocketCategoriesViewHolder(
                 composeView = ComposeView(parent.context),
                 viewLifecycleOwner = viewLifecycleOwner,
-                store = store,
                 interactor = interactor
             )
             PocketRecommendationsHeaderViewHolder.LAYOUT_ID -> return PocketRecommendationsHeaderViewHolder(
@@ -236,20 +231,17 @@ class SessionControlAdapter(
             RecentBookmarksViewHolder.LAYOUT_ID -> return RecentBookmarksViewHolder(
                 composeView = ComposeView(parent.context),
                 viewLifecycleOwner,
-                store = store,
                 interactor = interactor,
                 metrics = components.analytics.metrics
             )
             RecentTabViewHolder.LAYOUT_ID -> return RecentTabViewHolder(
                 composeView = ComposeView(parent.context),
                 viewLifecycleOwner,
-                store = store,
                 interactor = interactor
             )
             RecentlyVisitedViewHolder.LAYOUT_ID -> return RecentlyVisitedViewHolder(
                 composeView = ComposeView(parent.context),
                 viewLifecycleOwner,
-                store = store,
                 interactor = interactor,
                 metrics = components.analytics.metrics
             )
@@ -258,7 +250,6 @@ class SessionControlAdapter(
         val view = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
         return when (viewType) {
             TopPlaceholderViewHolder.LAYOUT_ID -> TopPlaceholderViewHolder(view)
-            ButtonTipViewHolder.LAYOUT_ID -> ButtonTipViewHolder(view, interactor)
             TopSitePagerViewHolder.LAYOUT_ID -> TopSitePagerViewHolder(view, viewLifecycleOwner, interactor)
             PrivateBrowsingDescriptionViewHolder.LAYOUT_ID -> PrivateBrowsingDescriptionViewHolder(
                 view,
@@ -348,10 +339,6 @@ class SessionControlAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = getItem(position)
         when (holder) {
-            is ButtonTipViewHolder -> {
-                val tipItem = item as AdapterItem.TipItem
-                holder.bind(tipItem.tip)
-            }
             is TopPlaceholderViewHolder -> {
                 holder.bind()
             }

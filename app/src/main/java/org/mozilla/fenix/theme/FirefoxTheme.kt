@@ -2,6 +2,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+@file:Suppress("MagicNumber")
+
 package org.mozilla.fenix.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -43,12 +45,11 @@ object FirefoxTheme {
 private val darkColorPalette = FirefoxColors(
     layer1 = PhotonColors.DarkGrey60,
     layer2 = PhotonColors.DarkGrey30,
-    layer3 = PhotonColors.DarkGrey30,
+    layer3 = PhotonColors.DarkGrey80,
     layerAccent = PhotonColors.Violet40,
-    layerNonOpaque = PhotonColors.Violet50A32,
-    scrim = PhotonColors.DarkGrey05A45,
-    scrimAccentStart = PhotonColors.Ink80A96,
-    scrimAccentEnd = PhotonColors.DarkGrey90A96,
+    layerAccentNonOpaque = PhotonColors.Violet50A32,
+    layerAccentOpaque = Color(0xFF423262),
+    scrim = PhotonColors.DarkGrey90A95,
     gradientStart = PhotonColors.Violet70,
     gradientEnd = PhotonColors.Violet40,
     actionPrimary = PhotonColors.Violet60,
@@ -91,6 +92,8 @@ private val darkColorPalette = FirefoxColors(
     iconAccentPink = PhotonColors.Pink20,
     iconAccentGreen = PhotonColors.Green20,
     iconAccentYellow = PhotonColors.Yellow20,
+    iconActionPrimary = PhotonColors.LightGrey05,
+    iconActionSecondary = PhotonColors.DarkGrey90,
     iconGradientStart = PhotonColors.Violet20,
     iconGradientEnd = PhotonColors.Blue20,
     borderPrimary = PhotonColors.DarkGrey05,
@@ -106,10 +109,9 @@ private val lightColorPalette = FirefoxColors(
     layer2 = PhotonColors.White,
     layer3 = PhotonColors.LightGrey20,
     layerAccent = PhotonColors.Ink20,
-    layerNonOpaque = PhotonColors.Violet70A12,
-    scrim = PhotonColors.DarkGrey05A45,
-    scrimAccentStart = PhotonColors.DarkGrey90A96,
-    scrimAccentEnd = PhotonColors.DarkGrey30A96,
+    layerAccentNonOpaque = PhotonColors.Violet70A12,
+    layerAccentOpaque = Color(0xFFEAE4F9),
+    scrim = PhotonColors.DarkGrey30A95,
     gradientStart = PhotonColors.Violet70,
     gradientEnd = PhotonColors.Violet40,
     actionPrimary = PhotonColors.Ink20,
@@ -152,6 +154,8 @@ private val lightColorPalette = FirefoxColors(
     iconAccentPink = PhotonColors.Pink60,
     iconAccentGreen = PhotonColors.Green60,
     iconAccentYellow = PhotonColors.Yellow60,
+    iconActionPrimary = PhotonColors.LightGrey05,
+    iconActionSecondary = PhotonColors.DarkGrey90,
     iconGradientStart = PhotonColors.Violet50,
     iconGradientEnd = PhotonColors.Blue60,
     borderPrimary = PhotonColors.LightGrey30,
@@ -172,10 +176,9 @@ class FirefoxColors(
     layer2: Color,
     layer3: Color,
     layerAccent: Color,
-    layerNonOpaque: Color,
+    layerAccentNonOpaque: Color,
+    layerAccentOpaque: Color,
     scrim: Color,
-    scrimAccentStart: Color,
-    scrimAccentEnd: Color,
     gradientStart: Color,
     gradientEnd: Color,
     actionPrimary: Color,
@@ -218,6 +221,8 @@ class FirefoxColors(
     iconAccentPink: Color,
     iconAccentGreen: Color,
     iconAccentYellow: Color,
+    iconActionPrimary: Color,
+    iconActionSecondary: Color,
     iconGradientStart: Color,
     iconGradientEnd: Color,
     borderPrimary: Color,
@@ -242,13 +247,12 @@ class FirefoxColors(
     var layerAccent by mutableStateOf(layerAccent)
         private set
     // Selected tab
-    var layerNonOpaque by mutableStateOf(layerNonOpaque)
+    var layerAccentNonOpaque by mutableStateOf(layerAccentNonOpaque)
+        private set
+    // Selected tab
+    var layerAccentOpaque by mutableStateOf(layerAccentOpaque)
         private set
     var scrim by mutableStateOf(scrim)
-        private set
-    var scrimAccentStart by mutableStateOf(scrimAccentStart)
-        private set
-    var scrimAccentEnd by mutableStateOf(scrimAccentEnd)
         private set
     // Tooltip
     var gradientStart by mutableStateOf(gradientStart)
@@ -379,6 +383,12 @@ class FirefoxColors(
         private set
     var iconAccentYellow by mutableStateOf(iconAccentYellow)
         private set
+    // Action primary icon
+    var iconActionPrimary by mutableStateOf(iconActionPrimary)
+        private set
+    // Action secondary icon
+    var iconActionSecondary by mutableStateOf(iconActionSecondary)
+        private set
     // Reader, ETP Shield
     var iconGradientStart by mutableStateOf(iconGradientStart)
         private set
@@ -412,10 +422,9 @@ class FirefoxColors(
         layer2 = other.layer2
         layer3 = other.layer3
         layerAccent = other.layerAccent
-        layerNonOpaque = other.layerNonOpaque
+        layerAccentNonOpaque = other.layerAccentNonOpaque
+        layerAccentOpaque = other.layerAccentOpaque
         scrim = other.scrim
-        scrimAccentStart = other.scrimAccentStart
-        scrimAccentEnd = other.scrimAccentEnd
         gradientStart = other.gradientStart
         gradientEnd = other.gradientEnd
         actionPrimary = other.actionPrimary
@@ -458,6 +467,8 @@ class FirefoxColors(
         iconAccentPink = other.iconAccentPink
         iconAccentGreen = other.iconAccentGreen
         iconAccentYellow = other.iconAccentYellow
+        iconActionPrimary = other.iconActionPrimary
+        iconActionSecondary = other.iconActionSecondary
         iconGradientStart = other.iconGradientStart
         iconGradientEnd = other.iconGradientEnd
         borderPrimary = other.borderPrimary
@@ -473,10 +484,9 @@ class FirefoxColors(
         layer2 = layer2,
         layer3 = layer3,
         layerAccent = layerAccent,
-        layerNonOpaque = layerNonOpaque,
+        layerAccentNonOpaque = layerAccentNonOpaque,
+        layerAccentOpaque = layerAccentOpaque,
         scrim = scrim,
-        scrimAccentStart = scrimAccentStart,
-        scrimAccentEnd = scrimAccentEnd,
         gradientStart = gradientStart,
         gradientEnd = gradientEnd,
         actionPrimary = actionPrimary,
@@ -519,6 +529,8 @@ class FirefoxColors(
         iconAccentPink = iconAccentPink,
         iconAccentGreen = iconAccentGreen,
         iconAccentYellow = iconAccentYellow,
+        iconActionPrimary = iconActionPrimary,
+        iconActionSecondary = iconActionSecondary,
         iconGradientStart = iconGradientStart,
         iconGradientEnd = iconGradientEnd,
         borderPrimary = borderPrimary,

@@ -55,16 +55,17 @@ import mozilla.components.feature.webcompat.reporter.WebCompatReporterFeature
 import mozilla.components.feature.webnotifications.WebNotificationFeature
 import mozilla.components.lib.dataprotect.SecureAbove22Preferences
 import mozilla.components.service.contile.ContileTopSitesProvider
+import mozilla.components.service.contile.ContileTopSitesUpdater
 import mozilla.components.service.digitalassetlinks.RelationChecker
 import mozilla.components.service.digitalassetlinks.local.StatementApi
 import mozilla.components.service.digitalassetlinks.local.StatementRelationChecker
 import mozilla.components.service.location.LocationService
 import mozilla.components.service.location.MozillaLocationService
-import mozilla.components.service.pocket.Frequency
 import mozilla.components.service.pocket.PocketStoriesConfig
 import mozilla.components.service.pocket.PocketStoriesService
 import mozilla.components.service.sync.autofill.AutofillCreditCardsAddressesStorage
 import mozilla.components.service.sync.logins.SyncableLoginsStorage
+import mozilla.components.support.base.worker.Frequency
 import mozilla.components.support.locale.LocaleManager
 import org.mozilla.fenix.AppRequestInterceptor
 import org.mozilla.fenix.BuildConfig
@@ -345,6 +346,15 @@ class Core(
             context = context,
             client = client,
             maxCacheAgeInMinutes = CONTILE_MAX_CACHE_AGE
+        )
+    }
+
+    @Suppress("MagicNumber")
+    val contileTopSitesUpdater by lazyMonitored {
+        ContileTopSitesUpdater(
+            context = context,
+            provider = contileTopSitesProvider,
+            frequency = Frequency(3, TimeUnit.HOURS)
         )
     }
 
