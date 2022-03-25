@@ -335,6 +335,7 @@
         <item name="android:windowExitAnimation">@anim/fade_out</item>
     </style>
 
+    <!-- "NeutralButton" is a composable Button with this style pre-applied -->
     <!-- UI button styling -->
     <style name="NeutralButton" parent="Widget.MaterialComponents.Button.TextButton">
         <item name="iconTint">@color/fx_mobile_icon_color_action_secondary</item>
@@ -365,6 +366,7 @@
         <item name="android:textColor">@color/fx_mobile_text_color_warning</item>
     </style>
 
+    <!-- "PositiveButton" is a composable Button with this style pre-applied -->
     <style name="PositiveButton" parent="NeutralButton">
         <item name="backgroundTint">?actionPrimary</item>
         <item name="iconTint">?iconOnColor</item>

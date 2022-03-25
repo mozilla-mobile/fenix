@@ -20,6 +20,7 @@ import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.home.BottomSpacerViewHolder
 import org.mozilla.fenix.home.TopPlaceholderViewHolder
+import org.mozilla.fenix.home.collections.NoCollectionsMessageViewHolder
 import org.mozilla.fenix.home.pocket.PocketCategoriesViewHolder
 import org.mozilla.fenix.home.pocket.PocketRecommendationsHeaderViewHolder
 import org.mozilla.fenix.home.pocket.PocketStoriesViewHolder
@@ -32,7 +33,6 @@ import org.mozilla.fenix.home.recentvisits.view.RecentlyVisitedViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.CollectionHeaderViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.CollectionViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.CustomizeHomeButtonViewHolder
-import org.mozilla.fenix.home.sessioncontrol.viewholders.NoCollectionsMessageViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.PrivateBrowsingDescriptionViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.TabInCollectionViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.ExperimentDefaultBrowserCardViewHolder
@@ -245,6 +245,11 @@ class SessionControlAdapter(
                 interactor = interactor,
                 metrics = components.analytics.metrics
             )
+            NoCollectionsMessageViewHolder.LAYOUT_ID -> return NoCollectionsMessageViewHolder(
+                composeView = ComposeView(parent.context),
+                viewLifecycleOwner,
+                interactor = interactor
+            )
         }
 
         val view = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
@@ -255,13 +260,6 @@ class SessionControlAdapter(
                 view,
                 interactor
             )
-            NoCollectionsMessageViewHolder.LAYOUT_ID ->
-                NoCollectionsMessageViewHolder(
-                    view,
-                    viewLifecycleOwner,
-                    components.core.store,
-                    interactor
-                )
             CollectionHeaderViewHolder.LAYOUT_ID -> CollectionHeaderViewHolder(view)
             CollectionViewHolder.LAYOUT_ID -> CollectionViewHolder(view, interactor)
             TabInCollectionViewHolder.LAYOUT_ID -> TabInCollectionViewHolder(
@@ -297,6 +295,7 @@ class SessionControlAdapter(
 
     override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
         when (holder) {
+            is NoCollectionsMessageViewHolder,
             is CustomizeHomeButtonViewHolder,
             is RecentlyVisitedViewHolder,
             is RecentBookmarksViewHolder,
