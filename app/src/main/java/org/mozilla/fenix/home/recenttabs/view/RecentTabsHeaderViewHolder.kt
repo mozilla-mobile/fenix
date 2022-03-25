@@ -55,7 +55,7 @@ class RecentTabsHeaderViewHolder(
                 description = stringResource(id = R.string.recent_tabs_show_all_content_description_2),
                 onShowAllClick = {
                     dismissSearchDialogIfDisplayed()
-                    interactor::onRecentTabShowAllClicked
+                    interactor.onRecentTabShowAllClicked()
                 }
             )
 

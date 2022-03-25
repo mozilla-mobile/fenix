@@ -309,7 +309,10 @@ class SessionControlAdapter(
             is CustomizeHomeButtonViewHolder,
             is RecentlyVisitedViewHolder,
             is RecentBookmarksViewHolder,
+            is RecentBookmarksHeaderViewHolder,
             is RecentTabViewHolder,
+            is RecentTabsHeaderViewHolder,
+            is RecentVisitsHeaderViewHolder,
             is PocketCategoriesViewHolder,
             is PocketRecommendationsHeaderViewHolder,
             is PocketStoriesViewHolder -> {
