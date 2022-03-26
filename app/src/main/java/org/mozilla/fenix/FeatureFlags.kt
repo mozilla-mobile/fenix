@@ -5,8 +5,10 @@
 package org.mozilla.fenix
 
 import android.content.Context
+import android.os.StrictMode
 import mozilla.components.support.locale.LocaleManager
 import mozilla.components.support.locale.LocaleManager.getSystemDefault
+import org.mozilla.fenix.ext.components
 
 /**
  * A single source for setting feature flags that are mostly based on build type.
@@ -70,7 +72,7 @@ object FeatureFlags {
     /**
      * Enables showing the option to clear site data.
      */
-    val showClearSiteData = Config.channel.isNightlyOrDebug
+    const val showClearSiteData = true
 
     /**
      * Enables showing the wallpaper functionality.
@@ -91,13 +93,20 @@ object FeatureFlags {
      * Enables themed wallpapers feature.
      */
     fun isThemedWallpapersFeatureEnabled(context: Context): Boolean {
-        val langTag = LocaleManager.getCurrentLocale(context)
-            ?.toLanguageTag() ?: getSystemDefault().toLanguageTag()
-        return listOf("en-US", "es-US").contains(langTag)
+        return context.components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
+            val langTag = LocaleManager.getCurrentLocale(context)
+                ?.toLanguageTag() ?: getSystemDefault().toLanguageTag()
+            listOf("en-US", "es-US").contains(langTag)
+        }
     }
 
     /**
      * Enables the Task Continuity enhancements.
      */
     val taskContinuityFeature = Config.channel.isDebug
+
+    /**
+     * Enables the Unified Search feature.
+     */
+    val unifiedSearchFeature = Config.channel.isNightlyOrDebug
 }
