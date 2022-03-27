@@ -44,11 +44,11 @@ fun BrowserState.getNormalTrayTabs(
     val tabGroupsTabIds = getTabGroups()?.flatMap { it.tabIds } ?: emptyList()
     return normalTabs.run {
         if (searchTermTabGroupsAreEnabled && inactiveTabsEnabled) {
-            filter { it.isNormalTabActive(maxActiveTime) }.filter { tabGroupsTabIds.contains(it.id) }
+            filter { it.isNormalTabActive(maxActiveTime) && !tabGroupsTabIds.contains(it.id) }
         } else if (inactiveTabsEnabled) {
             filter { it.isNormalTabActive(maxActiveTime) }
         } else if (searchTermTabGroupsAreEnabled) {
-            filter { it.isNormalTab() }.filter { tabGroupsTabIds.contains(it.id) }
+            filter { !tabGroupsTabIds.contains(it.id) }
         } else {
             this
         }
