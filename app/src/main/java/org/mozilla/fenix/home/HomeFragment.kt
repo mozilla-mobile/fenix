@@ -104,6 +104,8 @@ import org.mozilla.fenix.home.pocket.DefaultPocketStoriesController
 import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesCategory
 import org.mozilla.fenix.home.recentbookmarks.RecentBookmarksFeature
 import org.mozilla.fenix.home.recentbookmarks.controller.DefaultRecentBookmarksController
+import org.mozilla.fenix.home.recentsyncedtabs.RecentSyncedTabFeature
+import org.mozilla.fenix.home.recentsyncedtabs.controller.DefaultRecentSyncedTabController
 import org.mozilla.fenix.home.recenttabs.RecentTabsListFeature
 import org.mozilla.fenix.home.recenttabs.controller.DefaultRecentTabsController
 import org.mozilla.fenix.home.recentvisits.RecentVisitsFeature
@@ -165,6 +167,16 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private val syncedTabFeature by lazy {
+        RecentSyncedTabFeature(
+            store = requireComponents.appStore,
+            context = requireContext(),
+            storage = requireComponents.backgroundServices.syncedTabsStorage,
+            accountManager = requireComponents.backgroundServices.accountManager,
+            lifecycleOwner = viewLifecycleOwner
+        )
+    }
+
     private var _sessionControlInteractor: SessionControlInteractor? = null
     private val sessionControlInteractor: SessionControlInteractor
         get() = _sessionControlInteractor!!
@@ -176,6 +188,7 @@ class HomeFragment : Fragment() {
     private val topSitesFeature = ViewBoundFeatureWrapper<TopSitesFeature>()
     private val messagingFeature = ViewBoundFeatureWrapper<MessagingFeature>()
     private val recentTabsListFeature = ViewBoundFeatureWrapper<RecentTabsListFeature>()
+    private val recentSyncedTabFeature = ViewBoundFeatureWrapper<RecentSyncedTabFeature>()
     private val recentBookmarksFeature = ViewBoundFeatureWrapper<RecentBookmarksFeature>()
     private val historyMetadataFeature = ViewBoundFeatureWrapper<RecentVisitsFeature>()
 
@@ -276,6 +289,14 @@ class HomeFragment : Fragment() {
                 owner = viewLifecycleOwner,
                 view = binding.root
             )
+
+            if (FeatureFlags.taskContinuityFeature) {
+                recentSyncedTabFeature.set(
+                    feature = syncedTabFeature,
+                    owner = viewLifecycleOwner,
+                    view = binding.root
+                )
+            }
         }
 
         if (requireContext().settings().showRecentBookmarksFeature) {
@@ -337,6 +358,10 @@ class HomeFragment : Fragment() {
                 metrics = requireComponents.analytics.metrics,
                 store = components.core.store,
                 appStore = components.appStore,
+            ),
+            recentSyncedTabController = DefaultRecentSyncedTabController(
+                addNewTabUseCase = requireComponents.useCases.tabsUseCases.addTab,
+                navController = findNavController(),
             ),
             recentBookmarksController = DefaultRecentBookmarksController(
                 activity = activity,
