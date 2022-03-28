@@ -1398,7 +1398,7 @@ metrics:
     data_sensitivity:
       - technical
     notification_emails:
-      - perf-android-fe@mozilla.com
+      - perf-telemetry-alerts@mozilla.com
       - mcomella@mozilla.com
     expires: never
     metadata:
@@ -1420,7 +1420,7 @@ metrics:
     data_sensitivity:
       - technical
     notification_emails:
-      - perf-android-fe@mozilla.com
+      - perf-telemetry-alerts@mozilla.com
       - mcomella@mozilla.com
     expires: never
     metadata:
@@ -3418,6 +3418,7 @@ tabs_tray:
       source:
         description: |
           From which app feature was an existing tab opened.
+        type: string
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/11273
     data_reviews:
@@ -3444,6 +3445,7 @@ tabs_tray:
       source:
         description: |
           From which app feature was an existing tab closed.
+        type: string
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/11273
     data_reviews:
@@ -3695,6 +3697,7 @@ tabs_tray:
       inactive_tabs_count:
         description:
           The number of inactive tabs the user currently has.
+        type: quantity
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/21903
     data_reviews:
@@ -4391,6 +4394,7 @@ tracking_protection:
     extra_keys:
       etp_setting:
         description: "The new setting for ETP: strict, standard, custom"
+        type: string
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/5312
       - https://github.com/mozilla-mobile/fenix/issues/11063
@@ -5790,7 +5794,7 @@ perf.startup:
     data_sensitivity:
       - technical
     notification_emails:
-      - perf-android-fe@mozilla.com
+      - perf-telemetry-alerts@mozilla.com
       - mcomella@mozilla.com
     expires: never
   cold_view_app_to_first_frame:
@@ -5819,7 +5823,7 @@ perf.startup:
     data_sensitivity:
       - technical
     notification_emails:
-      - perf-android-fe@mozilla.com
+      - perf-telemetry-alerts@mozilla.com
       - mcomella@mozilla.com
     expires: never
   cold_unknwn_app_to_first_frame:
@@ -5846,7 +5850,7 @@ perf.startup:
     data_sensitivity:
       - technical
     notification_emails:
-      - perf-android-fe@mozilla.com
+      - perf-telemetry-alerts@mozilla.com
       - mcomella@mozilla.com
     expires: never
   application_on_create:
@@ -5865,7 +5869,7 @@ perf.startup:
     data_sensitivity:
       - technical
     notification_emails:
-      - perf-android-fe@mozilla.com
+      - perf-telemetry-alerts@mozilla.com
       - mcomella@mozilla.com
     expires: never
   startup_type:
@@ -5942,7 +5946,7 @@ perf.startup:
     data_sensitivity:
       - interaction
     notification_emails:
-      - perf-android-fe@mozilla.com
+      - perf-telemetry-alerts@mozilla.com
       - mleclair@mozilla.com
     expires: never
 
@@ -6155,7 +6159,7 @@ storage.stats:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-      - perf-android-fe@mozilla.com
+      - perf-telemetry-alerts@mozilla.com
       - mcomella@mozilla.com
     expires: never
   app_bytes:
@@ -6183,7 +6187,7 @@ storage.stats:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-      - perf-android-fe@mozilla.com
+      - perf-telemetry-alerts@mozilla.com
       - mcomella@mozilla.com
     expires: never
   cache_bytes:
@@ -6208,7 +6212,7 @@ storage.stats:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-      - perf-android-fe@mozilla.com
+      - perf-telemetry-alerts@mozilla.com
       - mcomella@mozilla.com
     expires: never
   data_dir_bytes:
@@ -6235,7 +6239,7 @@ storage.stats:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-      - perf-android-fe@mozilla.com
+      - perf-telemetry-alerts@mozilla.com
       - mcomella@mozilla.com
     expires: never
 
@@ -7296,6 +7300,96 @@ search_terms:
     notification_emails:
       - android-probes@mozilla.com
     expires: 108
+
+messaging:
+  message_shown:
+    type: event
+    description: |
+      A message was shown to the user.
+    extra_keys:
+      message_key:
+        description: The id of the message
+        type: string
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/24224
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/issues/24224
+    notification_emails:
+      - android-probes@mozilla.com
+    data_sensitivity:
+      - interaction
+    expires: 114
+  message_dismissed:
+    type: event
+    description: |
+      A message was dismissed by the user.
+    extra_keys:
+      message_key:
+        description: The id of the message
+        type: string
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/24224
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/issues/24224
+    notification_emails:
+      - android-probes@mozilla.com
+    data_sensitivity:
+      - interaction
+    expires: 114
+  message_clicked:
+    type: event
+    description: |
+      A message was clicked by the user.
+    extra_keys:
+      message_key:
+        description: The id of the message
+        type: string
+      action_uuid:
+        description: The uuid of the action
+        type: string
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/24224
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/issues/24224
+    notification_emails:
+      - android-probes@mozilla.com
+    data_sensitivity:
+      - interaction
+    expires: 114
+  message_expired:
+    type: event
+    description: |
+      A message maxDisplayCount has been surpassed.
+    extra_keys:
+      message_key:
+        description: The id of the message
+        type: string
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/24224
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/issues/24224
+    notification_emails:
+      - android-probes@mozilla.com
+    data_sensitivity:
+      - interaction
+    expires: 114
+  malformed:
+    type: event
+    description: |
+      A message was malformed.
+    extra_keys:
+      message_key:
+        description: The id of the message
+        type: string
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/24224
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/issues/24224
+    notification_emails:
+      - android-probes@mozilla.com
+    data_sensitivity:
+      - interaction
+    expires: 114
 
 wallpapers:
   wallpaper_settings_opened:

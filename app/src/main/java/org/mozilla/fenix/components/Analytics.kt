@@ -21,10 +21,13 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ReleaseChannel
 import org.mozilla.fenix.components.metrics.AdjustMetricsService
+import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.GleanMetricsService
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.experiments.createNimbus
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.gleanplumb.KeyPairMessageMetadataStorage
+import org.mozilla.fenix.gleanplumb.NimbusMessagingStorage
 import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.perf.lazyMonitored
 import org.mozilla.geckoview.BuildConfig.MOZ_APP_BUILDID
@@ -115,6 +118,18 @@ class Analytics(
         createNimbus(context, BuildConfig.NIMBUS_ENDPOINT).also { api ->
             FxNimbus.api = api
         }
+    }
+
+    val messagingStorage by lazyMonitored {
+        NimbusMessagingStorage(
+            context = context,
+            metadataStorage = KeyPairMessageMetadataStorage(),
+            gleanPlumb = experiments,
+            reportMalformedMessage = {
+                metrics.track(Event.Messaging.MessageMalformed(it))
+            },
+            messagingFeature = FxNimbus.features.messaging,
+        )
     }
 }
 
