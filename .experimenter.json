@@ -1,34 +1,50 @@
 {
-  "homescreen": {
-    "description": "The homescreen that the user goes to when they press home or new tab.",
-    "hasExposure": true,
-    "exposureDescription": "",
-    "variables": {
-      "sections-enabled": {
-        "description": "This property provides a lookup table of whether or not the given section should be enabled. If the section is enabled, it should be toggleable in the settings screen, and on by default.",
-        "type": "json"
-      }
-    }
-  },
   "default-browser-message": {
     "description": "A small feature allowing experiments on the placement of a default browser message.",
     "hasExposure": true,
     "exposureDescription": "",
     "variables": {
       "message-location": {
-        "description": "Where is the message to be put.",
-        "type": "string"
+        "type": "string",
+        "description": "Where is the message to be put."
       }
     }
   },
-  "search-term-groups": {
-    "description": "A feature allowing the grouping of URLs around the search term that it came from.",
+  "homescreen": {
+    "description": "The homescreen that the user goes to when they press home or new tab.",
     "hasExposure": true,
     "exposureDescription": "",
     "variables": {
-      "enabled": {
-        "description": "If true, the feature shows up on the homescreen and on the new tab screen.",
-        "type": "boolean"
+      "sections-enabled": {
+        "type": "json",
+        "description": "This property provides a lookup table of whether or not the given section should be enabled. If the section is enabled, it should be toggleable in the settings screen, and on by default."
+      }
+    }
+  },
+  "messaging": {
+    "description": "Configuration for the messaging system.\n\nIn practice this is a set of growable lookup tables for the\nmessage controller to piece together.\n",
+    "hasExposure": true,
+    "exposureDescription": "",
+    "variables": {
+      "actions": {
+        "type": "json",
+        "description": "A growable map of action URLs."
+      },
+      "message-under-experiment": {
+        "type": "string",
+        "description": "Id or prefix of the message under experiment."
+      },
+      "messages": {
+        "type": "json",
+        "description": "A growable collection of messages"
+      },
+      "styles": {
+        "type": "json",
+        "description": "A map of styles to configure message appearance.\n"
+      },
+      "triggers": {
+        "type": "json",
+        "description": "A collection of out the box trigger expressions. Each entry maps to a valid JEXL expression.\n"
       }
     }
   },
@@ -38,16 +54,27 @@
     "exposureDescription": "",
     "variables": {
       "settings-icon": {
-        "description": "The drawable displayed in the app menu for Settings",
-        "type": "string"
+        "type": "string",
+        "description": "The drawable displayed in the app menu for Settings"
       },
       "settings-punctuation": {
-        "description": "The emoji displayed in the Settings screen title.",
-        "type": "string"
+        "type": "string",
+        "description": "The emoji displayed in the Settings screen title."
       },
       "settings-title": {
-        "description": "The title of displayed in the Settings screen and app menu.",
-        "type": "string"
+        "type": "string",
+        "description": "The title of displayed in the Settings screen and app menu."
+      }
+    }
+  },
+  "search-term-groups": {
+    "description": "A feature allowing the grouping of URLs around the search term that it came from.",
+    "hasExposure": true,
+    "exposureDescription": "",
+    "variables": {
+      "enabled": {
+        "type": "boolean",
+        "description": "If true, the feature shows up on the homescreen and on the new tab screen."
       }
     }
   }

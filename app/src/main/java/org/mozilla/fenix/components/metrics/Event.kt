@@ -20,10 +20,8 @@ import org.mozilla.fenix.GleanMetrics.Logins
 import org.mozilla.fenix.GleanMetrics.Pocket
 import org.mozilla.fenix.GleanMetrics.SearchShortcuts
 import org.mozilla.fenix.GleanMetrics.SearchTerms
-import org.mozilla.fenix.GleanMetrics.TabsTray
 import org.mozilla.fenix.GleanMetrics.ToolbarSettings
 import org.mozilla.fenix.GleanMetrics.TopSites
-import org.mozilla.fenix.GleanMetrics.TrackingProtection
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.name
 import java.util.Locale
@@ -141,11 +139,6 @@ sealed class Event {
     object TopSiteContilePrivacy : Event()
     object GoogleTopSiteRemoved : Event()
     object BaiduTopSiteRemoved : Event()
-    object TrackingProtectionTrackerList : Event()
-    object TrackingProtectionIconPressed : Event()
-    object TrackingProtectionSettingsPanel : Event()
-    object TrackingProtectionSettings : Event()
-    object TrackingProtectionException : Event()
     object OpenLogins : Event()
     object OpenOneLogin : Event()
     object CopyLogin : Event()
@@ -185,7 +178,6 @@ sealed class Event {
                 }
             )
     }
-    object FennecToFenixMigrated : Event()
     object AddonsOpenInSettings : Event()
     object StudiesSettings : Event()
     object VoiceSearchTapped : Event()
@@ -197,41 +189,6 @@ sealed class Event {
     object LoginDialogPromptCancelled : Event()
     object LoginDialogPromptSave : Event()
     object LoginDialogPromptNeverSave : Event()
-
-    // Tab tray
-    object TabsTrayOpened : Event()
-    object TabsTrayClosed : Event()
-    data class OpenedExistingTab(val source: String) : Event() {
-        override val extras = mapOf(TabsTray.openedExistingTabKeys.source to source)
-    }
-    data class ClosedExistingTab(val source: String) : Event() {
-        override val extras = mapOf(TabsTray.closedExistingTabKeys.source to source)
-    }
-    object TabsTrayPrivateModeTapped : Event()
-    object TabsTrayNormalModeTapped : Event()
-    object TabsTraySyncedModeTapped : Event()
-    object NewTabTapped : Event()
-    object NewPrivateTabTapped : Event()
-    object TabsTrayMenuOpened : Event()
-    object TabsTraySaveToCollectionPressed : Event()
-    object TabsTrayShareAllTabsPressed : Event()
-    object TabsTrayCloseAllTabsPressed : Event()
-    object TabsTrayInactiveTabsExpanded : Event()
-    object TabsTrayInactiveTabsCollapsed : Event()
-    object TabsTrayAutoCloseDialogSeen : Event()
-    object TabsTrayAutoCloseDialogTurnOnClicked : Event()
-    object TabsTrayAutoCloseDialogDismissed : Event()
-    data class TabsTrayHasInactiveTabs(val count: Int) : Event() {
-        override val extras = mapOf(TabsTray.hasInactiveTabsKeys.inactiveTabsCount to count.toString())
-    }
-    object TabsTrayCloseAllInactiveTabs : Event()
-    data class TabsTrayCloseInactiveTab(val amountClosed: Int = 1) : Event()
-    object TabsTrayOpenInactiveTab : Event()
-    object TabsTrayInactiveTabsCFRGotoSettings : Event()
-    object TabsTrayInactiveTabsCFRDismissed : Event()
-    object TabsTrayInactiveTabsCFRIsVisible : Event()
-
-    data class InactiveTabsCountUpdate(val count: Int) : Event()
 
     object ProgressiveWebAppOpenFromHomescreenTap : Event()
     object ProgressiveWebAppInstallAsShortcut : Event()
@@ -415,13 +372,6 @@ sealed class Event {
 
         override val extras: Map<Events.openedLinkKeys, String>?
             get() = hashMapOf(Events.openedLinkKeys.mode to mode.name)
-    }
-
-    data class TrackingProtectionSettingChanged(val setting: Setting) : Event() {
-        enum class Setting { STRICT, STANDARD, CUSTOM }
-
-        override val extras: Map<TrackingProtection.etpSettingChangedKeys, String>?
-            get() = hashMapOf(TrackingProtection.etpSettingChangedKeys.etpSetting to setting.name)
     }
 
     data class SaveLoginsSettingChanged(val setting: Setting) : Event() {
@@ -642,6 +592,15 @@ sealed class Event {
     data class WallpaperSelected(val wallpaper: org.mozilla.fenix.wallpapers.Wallpaper) : Event()
     data class WallpaperSwitched(val wallpaper: org.mozilla.fenix.wallpapers.Wallpaper) : Event()
     data class ChangeWallpaperWithLogoToggled(val checked: Boolean) : Event()
+
+    sealed class Messaging(open val messageId: String) : Event() {
+        data class MessageShown(override val messageId: String) : Messaging(messageId)
+        data class MessageDismissed(override val messageId: String) : Messaging(messageId)
+        data class MessageClicked(override val messageId: String, val uuid: String?) :
+            Messaging(messageId)
+        data class MessageMalformed(override val messageId: String) : Messaging(messageId)
+        data class MessageExpired(override val messageId: String) : Messaging(messageId)
+    }
 
     internal open val extras: Map<*, String>?
         get() = null

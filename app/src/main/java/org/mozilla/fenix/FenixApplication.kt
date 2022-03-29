@@ -65,6 +65,7 @@ import org.mozilla.fenix.GleanMetrics.SearchDefaultEngine
 import org.mozilla.fenix.GleanMetrics.TopSites
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.components.Core
+import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricServiceType
 import org.mozilla.fenix.components.metrics.MozillaProductDetector
@@ -158,6 +159,9 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         val store = components.core.store
         GlobalScope.launch(Dispatchers.IO) {
             setStartupMetrics(store, settings())
+        }
+        if (FeatureFlags.messagingFeature && settings().isExperimentationEnabled) {
+            components.appStore.dispatch(AppAction.MessagingAction.Restore)
         }
     }
 
@@ -338,16 +342,15 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
     // To re-enable this, we need to do so in a way that won't interfere with any startup operations
     // which acquire reserved+ sqlite lock. Currently, Fennec migrations need to write to storage
     // on startup, and since they run in a background service we can't simply order these operations.
-
-    @OptIn(DelicateCoroutinesApi::class) // GlobalScope usage
-    private fun runStorageMaintenance() {
-        GlobalScope.launch(Dispatchers.IO) {
-            // Bookmarks and history storage sit on top of the same db file so we only need to
-            // run maintenance on one - arbitrarily using bookmarks.
-            components.core.bookmarksStorage.runMaintenance()
-        }
-        settings().lastPlacesStorageMaintenance = System.currentTimeMillis()
-    }
+    // @OptIn(DelicateCoroutinesApi::class) // GlobalScope usage
+    // private fun runStorageMaintenance() {
+    //     GlobalScope.launch(Dispatchers.IO) {
+    //        // Bookmarks and history storage sit on top of the same db file so we only need to
+    //        // run maintenance on one - arbitrarily using bookmarks.
+    //        // components.core.bookmarksStorage.runMaintenance()
+    //     }
+    //     settings().lastPlacesStorageMaintenance = System.currentTimeMillis()
+    // }
 
     protected open fun setupLeakCanary() {
         // no-op, LeakCanary is disabled by default
