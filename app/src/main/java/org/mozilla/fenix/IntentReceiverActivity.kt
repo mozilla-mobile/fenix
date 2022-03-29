@@ -7,6 +7,7 @@ package org.mozilla.fenix
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.BadParcelableException
 import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
@@ -43,7 +44,7 @@ class IntentReceiverActivity : Activity() {
         // assumes it is not. If it's null, then we make a new one and open
         // the HomeActivity.
         val intent = intent?.let { Intent(it) } ?: Intent()
-        intent.stripUnwantedFlags()
+        intent.sanitize().stripUnwantedFlags()
         processIntent(intent)
 
         components.core.engine.profiler?.addMarker(
@@ -68,6 +69,25 @@ class IntentReceiverActivity : Activity() {
         val intentProcessorType = components.intentProcessors.getType(processor)
 
         launch(intent, intentProcessorType)
+    }
+
+    // Sanitizes the intent.  If the intent cannot be unparcelled, all extras is removed.
+    // https://developer.android.com/guide/components/activities/parcelables-and-bundles
+    @VisibleForTesting
+    @Suppress("TooGenericExceptionCaught")
+    internal fun Intent.sanitize(): Intent {
+        try {
+            this.getBooleanExtra("TriggerUnparcel", false)
+            return this
+        } catch (e: BadParcelableException) {
+            return this.replaceExtras(null)
+        } catch (e: RuntimeException) {
+            if (e.cause is ClassNotFoundException) {
+                return this.replaceExtras(null)
+            }
+
+            throw e
+        }
     }
 
     private fun launch(intent: Intent, intentProcessorType: IntentProcessorType) {

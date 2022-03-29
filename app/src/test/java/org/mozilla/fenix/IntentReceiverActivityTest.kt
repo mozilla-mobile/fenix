@@ -8,6 +8,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY
 import android.net.Uri
+import android.os.BadParcelableException
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -216,6 +217,53 @@ class IntentReceiverActivityTest {
 
         assertEquals(ExternalAppBrowserActivity::class.java.name, intent.component!!.className)
         assertTrue(intent.getBooleanExtra(HomeActivity.OPEN_TO_BROWSER, false))
+    }
+
+    @Test
+    fun `WHEN sanitize throw no exception THEN no extra is removed`() {
+        val intent: Intent = mockk(relaxed = true)
+        val activity = Robolectric.buildActivity(IntentReceiverActivity::class.java, intent).get()
+        every { intent.getBooleanExtra("TriggerUnparcel", false) } returns false
+
+        with(activity) {
+            intent.sanitize()
+            verify(exactly = 0) { intent.replaceExtras(null) }
+        }
+    }
+
+    @Test
+    fun `WHEN get extra throws BadParcelableException THEN clear all extras`() {
+        val intent: Intent = mockk(relaxed = true)
+        val activity = Robolectric.buildActivity(IntentReceiverActivity::class.java, intent).get()
+        every { intent.getBooleanExtra("TriggerUnparcel", false) } throws BadParcelableException("test")
+
+        with(activity) {
+            intent.sanitize()
+            verify { intent.replaceExtras(null) }
+        }
+    }
+
+    @Test
+    fun `WHEN get extra throws RuntimeException with ClassNotFoundException cause THEN clear all extras`() {
+        val intent: Intent = mockk(relaxed = true)
+        val activity = Robolectric.buildActivity(IntentReceiverActivity::class.java, intent).get()
+        every { intent.getBooleanExtra("TriggerUnparcel", false) } throws RuntimeException("test", ClassNotFoundException("test"))
+
+        with(activity) {
+            intent.sanitize()
+            verify { intent.replaceExtras(null) }
+        }
+    }
+
+    @Test(expected = RuntimeException::class)
+    fun `WHEN get extra throws RuntimeException THEN throws exception`() {
+        val intent: Intent = mockk(relaxed = true)
+        val activity = Robolectric.buildActivity(IntentReceiverActivity::class.java, intent).get()
+        every { intent.getBooleanExtra("TriggerUnparcel", false) } throws RuntimeException("test")
+
+        with(activity) {
+            intent.sanitize()
+        }
     }
 
     private fun attachMocks(activity: Activity) {
