@@ -507,6 +507,7 @@ onboarding:
       The toolbar position preference was chosen from the onboarding card.
     extra_keys:
       position:
+        type: string
         description: |
           A string that indicates the position of the toolbar TOP or BOTTOM.
           Default: BOTTOM
@@ -534,6 +535,7 @@ onboarding:
       The tracking protection preference was chosen from the onboarding card.
     extra_keys:
       setting:
+        type: string
         description: |
           A string that indicates the Tracking Protection policy STANDARD
           or STRICT. Default: Toggle ON, STANDARD
@@ -561,6 +563,7 @@ onboarding:
       The device theme was chosen using the theme picker onboarding card.
     extra_keys:
       theme:
+        type: string
         description: |
           A string that indicates the theme LIGHT, DARK, or FOLLOW DEVICE.
           Default: FOLLOW DEVICE
@@ -612,6 +615,7 @@ search_shortcuts:
       A user selected a search shortcut engine to use
     extra_keys:
       engine:
+        type: string
         description: |
           The name of the built-in search engine the user selected as a string
     bugs:
@@ -1398,7 +1402,7 @@ metrics:
     data_sensitivity:
       - technical
     notification_emails:
-      - perf-android-fe@mozilla.com
+      - perf-telemetry-alerts@mozilla.com
       - mcomella@mozilla.com
     expires: never
     metadata:
@@ -1420,7 +1424,7 @@ metrics:
     data_sensitivity:
       - technical
     notification_emails:
-      - perf-android-fe@mozilla.com
+      - perf-telemetry-alerts@mozilla.com
       - mcomella@mozilla.com
     expires: never
     metadata:
@@ -5809,7 +5813,7 @@ perf.startup:
     data_sensitivity:
       - technical
     notification_emails:
-      - perf-android-fe@mozilla.com
+      - perf-telemetry-alerts@mozilla.com
       - mcomella@mozilla.com
     expires: never
   cold_view_app_to_first_frame:
@@ -5838,7 +5842,7 @@ perf.startup:
     data_sensitivity:
       - technical
     notification_emails:
-      - perf-android-fe@mozilla.com
+      - perf-telemetry-alerts@mozilla.com
       - mcomella@mozilla.com
     expires: never
   cold_unknwn_app_to_first_frame:
@@ -5865,7 +5869,7 @@ perf.startup:
     data_sensitivity:
       - technical
     notification_emails:
-      - perf-android-fe@mozilla.com
+      - perf-telemetry-alerts@mozilla.com
       - mcomella@mozilla.com
     expires: never
   application_on_create:
@@ -5884,7 +5888,7 @@ perf.startup:
     data_sensitivity:
       - technical
     notification_emails:
-      - perf-android-fe@mozilla.com
+      - perf-telemetry-alerts@mozilla.com
       - mcomella@mozilla.com
     expires: never
   startup_type:
@@ -5961,7 +5965,7 @@ perf.startup:
     data_sensitivity:
       - interaction
     notification_emails:
-      - perf-android-fe@mozilla.com
+      - perf-telemetry-alerts@mozilla.com
       - mleclair@mozilla.com
     expires: never
 
@@ -6174,7 +6178,7 @@ storage.stats:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-      - perf-android-fe@mozilla.com
+      - perf-telemetry-alerts@mozilla.com
       - mcomella@mozilla.com
     expires: never
   app_bytes:
@@ -6202,7 +6206,7 @@ storage.stats:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-      - perf-android-fe@mozilla.com
+      - perf-telemetry-alerts@mozilla.com
       - mcomella@mozilla.com
     expires: never
   cache_bytes:
@@ -6227,7 +6231,7 @@ storage.stats:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-      - perf-android-fe@mozilla.com
+      - perf-telemetry-alerts@mozilla.com
       - mcomella@mozilla.com
     expires: never
   data_dir_bytes:
@@ -6254,7 +6258,7 @@ storage.stats:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-      - perf-android-fe@mozilla.com
+      - perf-telemetry-alerts@mozilla.com
       - mcomella@mozilla.com
     expires: never
 

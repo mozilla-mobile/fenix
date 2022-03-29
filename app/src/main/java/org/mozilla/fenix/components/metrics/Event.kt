@@ -17,9 +17,7 @@ import org.mozilla.fenix.GleanMetrics.ErrorPage
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.History
 import org.mozilla.fenix.GleanMetrics.Logins
-import org.mozilla.fenix.GleanMetrics.Onboarding
 import org.mozilla.fenix.GleanMetrics.Pocket
-import org.mozilla.fenix.GleanMetrics.SearchShortcuts
 import org.mozilla.fenix.GleanMetrics.SearchTerms
 import org.mozilla.fenix.GleanMetrics.ToolbarSettings
 import org.mozilla.fenix.GleanMetrics.TopSites
@@ -180,13 +178,8 @@ sealed class Event {
             )
     }
     object AddonsOpenInSettings : Event()
-    object StudiesSettings : Event()
     object VoiceSearchTapped : Event()
     object SearchWidgetInstalled : Event()
-    object OnboardingAutoSignIn : Event()
-    object OnboardingManualSignIn : Event()
-    object OnboardingPrivacyNotice : Event()
-    object OnboardingFinish : Event()
     object ChangedToDefaultBrowser : Event()
     object DefaultBrowserNotifTapped : Event()
 
@@ -294,27 +287,6 @@ sealed class Event {
 
     data class TopSiteContileClick(val position: Int, val source: Source) : Event() {
         enum class Source { NEWTAB }
-    }
-
-    data class OnboardingToolbarPosition(val position: Position) : Event() {
-        enum class Position { TOP, BOTTOM }
-
-        override val extras: Map<Onboarding.prefToggledToolbarPositionKeys, String>?
-            get() = hashMapOf(Onboarding.prefToggledToolbarPositionKeys.position to position.name)
-    }
-
-    data class OnboardingTrackingProtection(val setting: Setting) : Event() {
-        enum class Setting { STRICT, STANDARD }
-
-        override val extras: Map<Onboarding.prefToggledTrackingProtKeys, String>?
-            get() = hashMapOf(Onboarding.prefToggledTrackingProtKeys.setting to setting.name)
-    }
-
-    data class OnboardingThemePicker(val theme: Theme) : Event() {
-        enum class Theme { LIGHT, DARK, FOLLOW_DEVICE }
-
-        override val extras: Map<Onboarding.prefToggledThemePickerKeys, String>?
-            get() = mapOf(Onboarding.prefToggledThemePickerKeys.theme to theme.name)
     }
 
     data class PreferenceToggled(
@@ -515,12 +487,6 @@ sealed class Event {
 
         override val extras: Map<Events.performedSearchKeys, String>?
             get() = mapOf(Events.performedSearchKeys.source to eventSource.sourceLabel)
-    }
-
-    data class SearchShortcutSelected(val engine: SearchEngine, val isCustom: Boolean) : Event() {
-        private val engineName = if (isCustom) "custom" else engine.name
-        override val extras: Map<SearchShortcuts.selectedKeys, String>?
-            get() = mapOf(SearchShortcuts.selectedKeys.engine to engineName)
     }
 
     data class DarkThemeSelected(val source: Source) : Event() {

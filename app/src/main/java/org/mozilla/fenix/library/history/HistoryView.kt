@@ -7,6 +7,7 @@ package org.mozilla.fenix.library.history
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import mozilla.components.support.base.feature.UserInteractionHandler
@@ -21,7 +22,8 @@ import org.mozilla.fenix.theme.ThemeManager
  */
 class HistoryView(
     container: ViewGroup,
-    val interactor: HistoryInteractor
+    val interactor: HistoryInteractor,
+    val onZeroItemsLoaded: () -> Unit
 ) : LibraryPageView(container), UserInteractionHandler {
 
     val binding = ComponentHistoryBinding.inflate(
@@ -31,8 +33,24 @@ class HistoryView(
     var mode: HistoryFragmentState.Mode = HistoryFragmentState.Mode.Normal
         private set
 
-    val historyAdapter = HistoryAdapter(interactor)
+    val historyAdapter = HistoryAdapter(interactor).apply {
+        addLoadStateListener {
+            // First call will always have itemCount == 0, but we want to keep adapterItemCount
+            // as null until we can distinguish an empty list from populated, so updateEmptyState()
+            // could work correctly.
+            if (itemCount > 0) {
+                adapterItemCount = itemCount
+            } else if (it.source.refresh is LoadState.NotLoading &&
+                it.append.endOfPaginationReached &&
+                itemCount < 1
+            ) {
+                adapterItemCount = 0
+                onZeroItemsLoaded.invoke()
+            }
+        }
+    }
     private val layoutManager = LinearLayoutManager(container.context)
+    private var adapterItemCount: Int? = null
 
     init {
         binding.historyList.apply {
@@ -46,7 +64,6 @@ class HistoryView(
         binding.swipeRefresh.setColorSchemeColors(primaryTextColor)
         binding.swipeRefresh.setOnRefreshListener {
             interactor.onRequestSync()
-            binding.historyList.scrollToPosition(0)
         }
     }
 
@@ -61,7 +78,7 @@ class HistoryView(
 
         historyAdapter.updatePendingDeletionIds(state.pendingDeletionIds)
 
-        updateEmptyState(state.pendingDeletionIds.size != historyAdapter.currentList?.size)
+        updateEmptyState(state.pendingDeletionIds.size != adapterItemCount)
 
         historyAdapter.updateMode(state.mode)
         val first = layoutManager.findFirstVisibleItemPosition()
@@ -104,8 +121,11 @@ class HistoryView(
             val numRecentTabs = recentlyClosedNav.context.components.core.store.state.closedTabs.size
             recentlyClosedTabsDescription.text = String.format(
                 context.getString(
-                    if (numRecentTabs == 1)
-                        R.string.recently_closed_tab else R.string.recently_closed_tabs
+                    if (numRecentTabs == 1) {
+                        R.string.recently_closed_tab
+                    } else {
+                        R.string.recently_closed_tabs
+                    }
                 ),
                 numRecentTabs
             )
