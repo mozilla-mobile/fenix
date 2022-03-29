@@ -251,6 +251,21 @@ class SessionControlAdapter(
                 interactor = interactor,
                 metrics = components.analytics.metrics
             )
+            RecentVisitsHeaderViewHolder.LAYOUT_ID -> return RecentVisitsHeaderViewHolder(
+                composeView = ComposeView(parent.context),
+                viewLifecycleOwner = viewLifecycleOwner,
+                interactor = interactor
+            )
+            RecentBookmarksHeaderViewHolder.LAYOUT_ID -> return RecentBookmarksHeaderViewHolder(
+                composeView = ComposeView(parent.context),
+                viewLifecycleOwner = viewLifecycleOwner,
+                interactor = interactor
+            )
+            RecentTabsHeaderViewHolder.LAYOUT_ID -> return RecentTabsHeaderViewHolder(
+                composeView = ComposeView(parent.context),
+                viewLifecycleOwner = viewLifecycleOwner,
+                interactor = interactor
+            )
         }
 
         val view = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
@@ -290,12 +305,6 @@ class SessionControlAdapter(
                 view
             )
             MessageCardViewHolder.LAYOUT_ID -> MessageCardViewHolder(view, interactor)
-            RecentTabsHeaderViewHolder.LAYOUT_ID -> RecentTabsHeaderViewHolder(view, interactor)
-            RecentBookmarksHeaderViewHolder.LAYOUT_ID -> RecentBookmarksHeaderViewHolder(view, interactor)
-            RecentVisitsHeaderViewHolder.LAYOUT_ID -> RecentVisitsHeaderViewHolder(
-                view,
-                interactor
-            )
             BottomSpacerViewHolder.LAYOUT_ID -> BottomSpacerViewHolder(view)
             else -> throw IllegalStateException()
         }
@@ -305,8 +314,11 @@ class SessionControlAdapter(
         when (holder) {
             is CustomizeHomeButtonViewHolder,
             is RecentlyVisitedViewHolder,
+            is RecentVisitsHeaderViewHolder,
             is RecentBookmarksViewHolder,
+            is RecentBookmarksHeaderViewHolder,
             is RecentTabViewHolder,
+            is RecentTabsHeaderViewHolder,
             is PocketCategoriesViewHolder,
             is PocketRecommendationsHeaderViewHolder,
             is PocketStoriesViewHolder -> {
