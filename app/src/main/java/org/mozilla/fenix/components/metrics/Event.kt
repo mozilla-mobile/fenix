@@ -18,7 +18,6 @@ import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.History
 import org.mozilla.fenix.GleanMetrics.Logins
 import org.mozilla.fenix.GleanMetrics.Pocket
-import org.mozilla.fenix.GleanMetrics.SearchShortcuts
 import org.mozilla.fenix.GleanMetrics.SearchTerms
 import org.mozilla.fenix.GleanMetrics.TopSites
 import org.mozilla.fenix.R
@@ -178,7 +177,6 @@ sealed class Event {
             )
     }
     object AddonsOpenInSettings : Event()
-    object StudiesSettings : Event()
     object VoiceSearchTapped : Event()
     object SearchWidgetInstalled : Event()
     object ChangedToDefaultBrowser : Event()
@@ -335,6 +333,7 @@ sealed class Event {
             context.getString(R.string.pref_key_recent_bookmarks) to "recently_saved",
             context.getString(R.string.pref_key_history_metadata_feature) to "recently_visited",
             context.getString(R.string.pref_key_pocket_homescreen_recommendations) to "pocket",
+            context.getString(R.string.pref_key_enable_contile) to "contile",
         )
 
         override val extras: Map<Events.preferenceToggledKeys, String>
@@ -480,12 +479,6 @@ sealed class Event {
 
         override val extras: Map<Events.performedSearchKeys, String>?
             get() = mapOf(Events.performedSearchKeys.source to eventSource.sourceLabel)
-    }
-
-    data class SearchShortcutSelected(val engine: SearchEngine, val isCustom: Boolean) : Event() {
-        private val engineName = if (isCustom) "custom" else engine.name
-        override val extras: Map<SearchShortcuts.selectedKeys, String>?
-            get() = mapOf(SearchShortcuts.selectedKeys.engine to engineName)
     }
 
     data class DarkThemeSelected(val source: Source) : Event() {
