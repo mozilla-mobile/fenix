@@ -429,11 +429,12 @@ events:
       - https://github.com/mozilla-mobile/fenix/issues/19956
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/19959#issuecomment-882539619
+      - https://github.com/mozilla-mobile/fenix/pull/24409
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 101
+    expires: 113
 
 onboarding:
   fxa_auto_signin:
@@ -507,6 +508,7 @@ onboarding:
       The toolbar position preference was chosen from the onboarding card.
     extra_keys:
       position:
+        type: string
         description: |
           A string that indicates the position of the toolbar TOP or BOTTOM.
           Default: BOTTOM
@@ -534,6 +536,7 @@ onboarding:
       The tracking protection preference was chosen from the onboarding card.
     extra_keys:
       setting:
+        type: string
         description: |
           A string that indicates the Tracking Protection policy STANDARD
           or STRICT. Default: Toggle ON, STANDARD
@@ -561,6 +564,7 @@ onboarding:
       The device theme was chosen using the theme picker onboarding card.
     extra_keys:
       theme:
+        type: string
         description: |
           A string that indicates the theme LIGHT, DARK, or FOLLOW DEVICE.
           Default: FOLLOW DEVICE
@@ -612,6 +616,7 @@ search_shortcuts:
       A user selected a search shortcut engine to use
     extra_keys:
       engine:
+        type: string
         description: |
           The name of the built-in search engine the user selected as a string
     bugs:
@@ -654,6 +659,7 @@ toolbar_settings:
       The user selected a new position for the toolbar
     extra_keys:
       position:
+        type: string
         description: |
           A string that indicates the new position of the toolbar TOP or BOTTOM
     bugs:
@@ -1398,7 +1404,7 @@ metrics:
     data_sensitivity:
       - technical
     notification_emails:
-      - perf-android-fe@mozilla.com
+      - perf-telemetry-alerts@mozilla.com
       - mcomella@mozilla.com
     expires: never
     metadata:
@@ -1420,7 +1426,7 @@ metrics:
     data_sensitivity:
       - technical
     notification_emails:
-      - perf-android-fe@mozilla.com
+      - perf-telemetry-alerts@mozilla.com
       - mcomella@mozilla.com
     expires: never
     metadata:
@@ -1547,6 +1553,21 @@ customize_home:
     notification_emails:
       - android-probes@mozilla.com
     expires: 105
+  contile:
+    type: boolean
+    description: |
+      An indication of whether Contile is enabled to be displayed
+    send_in_pings:
+      - metrics
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/24467
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/24468
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: 112
   preference_toggled:
     type: event
     description: |
@@ -1558,7 +1579,7 @@ customize_home:
           toggled.
 
           We currently track: most_visited_sites, jump_back_in,
-          recently_visited, recently_saved, and pocket.
+          recently_visited, recently_saved, pocket, and contile.
       enabled:
         description: "Whether or not the preference is *now* enabled"
     bugs:
@@ -2506,6 +2527,7 @@ error_page:
       A user encountered an error page
     extra_keys:
       error_type:
+        type: string
         description: "The error type of the error page encountered"
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/1242
@@ -5794,7 +5816,7 @@ perf.startup:
     data_sensitivity:
       - technical
     notification_emails:
-      - perf-android-fe@mozilla.com
+      - perf-telemetry-alerts@mozilla.com
       - mcomella@mozilla.com
     expires: never
   cold_view_app_to_first_frame:
@@ -5823,7 +5845,7 @@ perf.startup:
     data_sensitivity:
       - technical
     notification_emails:
-      - perf-android-fe@mozilla.com
+      - perf-telemetry-alerts@mozilla.com
       - mcomella@mozilla.com
     expires: never
   cold_unknwn_app_to_first_frame:
@@ -5850,7 +5872,7 @@ perf.startup:
     data_sensitivity:
       - technical
     notification_emails:
-      - perf-android-fe@mozilla.com
+      - perf-telemetry-alerts@mozilla.com
       - mcomella@mozilla.com
     expires: never
   application_on_create:
@@ -5869,7 +5891,7 @@ perf.startup:
     data_sensitivity:
       - technical
     notification_emails:
-      - perf-android-fe@mozilla.com
+      - perf-telemetry-alerts@mozilla.com
       - mcomella@mozilla.com
     expires: never
   startup_type:
@@ -5946,7 +5968,7 @@ perf.startup:
     data_sensitivity:
       - interaction
     notification_emails:
-      - perf-android-fe@mozilla.com
+      - perf-telemetry-alerts@mozilla.com
       - mleclair@mozilla.com
     expires: never
 
@@ -6159,7 +6181,7 @@ storage.stats:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-      - perf-android-fe@mozilla.com
+      - perf-telemetry-alerts@mozilla.com
       - mcomella@mozilla.com
     expires: never
   app_bytes:
@@ -6187,7 +6209,7 @@ storage.stats:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-      - perf-android-fe@mozilla.com
+      - perf-telemetry-alerts@mozilla.com
       - mcomella@mozilla.com
     expires: never
   cache_bytes:
@@ -6212,7 +6234,7 @@ storage.stats:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-      - perf-android-fe@mozilla.com
+      - perf-telemetry-alerts@mozilla.com
       - mcomella@mozilla.com
     expires: never
   data_dir_bytes:
@@ -6239,7 +6261,7 @@ storage.stats:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-      - perf-android-fe@mozilla.com
+      - perf-telemetry-alerts@mozilla.com
       - mcomella@mozilla.com
     expires: never
 

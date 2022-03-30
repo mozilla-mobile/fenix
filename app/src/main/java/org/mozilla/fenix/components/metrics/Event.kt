@@ -5,7 +5,6 @@
 package org.mozilla.fenix.components.metrics
 
 import android.content.Context
-import mozilla.components.browser.errorpages.ErrorType
 import mozilla.components.browser.state.search.SearchEngine
 import mozilla.components.feature.top.sites.TopSite
 import org.mozilla.fenix.GleanMetrics.Addons
@@ -13,15 +12,11 @@ import org.mozilla.fenix.GleanMetrics.AppTheme
 import org.mozilla.fenix.GleanMetrics.Autoplay
 import org.mozilla.fenix.GleanMetrics.Collections
 import org.mozilla.fenix.GleanMetrics.ContextMenu
-import org.mozilla.fenix.GleanMetrics.ErrorPage
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.History
 import org.mozilla.fenix.GleanMetrics.Logins
-import org.mozilla.fenix.GleanMetrics.Onboarding
 import org.mozilla.fenix.GleanMetrics.Pocket
-import org.mozilla.fenix.GleanMetrics.SearchShortcuts
 import org.mozilla.fenix.GleanMetrics.SearchTerms
-import org.mozilla.fenix.GleanMetrics.ToolbarSettings
 import org.mozilla.fenix.GleanMetrics.TopSites
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.name
@@ -180,20 +175,10 @@ sealed class Event {
             )
     }
     object AddonsOpenInSettings : Event()
-    object StudiesSettings : Event()
     object VoiceSearchTapped : Event()
     object SearchWidgetInstalled : Event()
-    object OnboardingAutoSignIn : Event()
-    object OnboardingManualSignIn : Event()
-    object OnboardingPrivacyNotice : Event()
-    object OnboardingFinish : Event()
     object ChangedToDefaultBrowser : Event()
     object DefaultBrowserNotifTapped : Event()
-
-    object LoginDialogPromptDisplayed : Event()
-    object LoginDialogPromptCancelled : Event()
-    object LoginDialogPromptSave : Event()
-    object LoginDialogPromptNeverSave : Event()
 
     object ProgressiveWebAppOpenFromHomescreenTap : Event()
     object ProgressiveWebAppInstallAsShortcut : Event()
@@ -296,27 +281,6 @@ sealed class Event {
         enum class Source { NEWTAB }
     }
 
-    data class OnboardingToolbarPosition(val position: Position) : Event() {
-        enum class Position { TOP, BOTTOM }
-
-        override val extras: Map<Onboarding.prefToggledToolbarPositionKeys, String>?
-            get() = hashMapOf(Onboarding.prefToggledToolbarPositionKeys.position to position.name)
-    }
-
-    data class OnboardingTrackingProtection(val setting: Setting) : Event() {
-        enum class Setting { STRICT, STANDARD }
-
-        override val extras: Map<Onboarding.prefToggledTrackingProtKeys, String>?
-            get() = hashMapOf(Onboarding.prefToggledTrackingProtKeys.setting to setting.name)
-    }
-
-    data class OnboardingThemePicker(val theme: Theme) : Event() {
-        enum class Theme { LIGHT, DARK, FOLLOW_DEVICE }
-
-        override val extras: Map<Onboarding.prefToggledThemePickerKeys, String>?
-            get() = mapOf(Onboarding.prefToggledThemePickerKeys.theme to theme.name)
-    }
-
     data class PreferenceToggled(
         val preferenceKey: String,
         val enabled: Boolean,
@@ -362,6 +326,7 @@ sealed class Event {
             context.getString(R.string.pref_key_recent_bookmarks) to "recently_saved",
             context.getString(R.string.pref_key_history_metadata_feature) to "recently_visited",
             context.getString(R.string.pref_key_pocket_homescreen_recommendations) to "pocket",
+            context.getString(R.string.pref_key_enable_contile) to "contile",
         )
 
         override val extras: Map<Events.preferenceToggledKeys, String>
@@ -384,13 +349,6 @@ sealed class Event {
     data class AddonOpenSetting(val addonId: String) : Event() {
         override val extras: Map<Addons.openAddonSettingKeys, String>?
             get() = hashMapOf(Addons.openAddonSettingKeys.addonId to addonId)
-    }
-
-    data class ToolbarPositionChanged(val position: Position) : Event() {
-        enum class Position { TOP, BOTTOM }
-
-        override val extras: Map<ToolbarSettings.changedPositionKeys, String>?
-            get() = hashMapOf(ToolbarSettings.changedPositionKeys.position to position.name)
     }
 
     data class OpenedLink(val mode: Mode) : Event() {
@@ -433,11 +391,6 @@ sealed class Event {
                 Collections.tabsAddedKeys.tabsOpen to tabsOpenCount.toString(),
                 Collections.tabsAddedKeys.tabsSelected to tabsSelectedCount.toString()
             )
-    }
-
-    data class ErrorPageVisited(val errorType: ErrorType) : Event() {
-        override val extras: Map<ErrorPage.visitedErrorKeys, String>?
-            get() = mapOf(ErrorPage.visitedErrorKeys.errorType to errorType.name)
     }
 
     data class SearchBarTapped(val source: Source) : Event() {
@@ -514,12 +467,6 @@ sealed class Event {
 
         override val extras: Map<Events.performedSearchKeys, String>?
             get() = mapOf(Events.performedSearchKeys.source to eventSource.sourceLabel)
-    }
-
-    data class SearchShortcutSelected(val engine: SearchEngine, val isCustom: Boolean) : Event() {
-        private val engineName = if (isCustom) "custom" else engine.name
-        override val extras: Map<SearchShortcuts.selectedKeys, String>?
-            get() = mapOf(SearchShortcuts.selectedKeys.engine to engineName)
     }
 
     data class DarkThemeSelected(val source: Source) : Event() {
