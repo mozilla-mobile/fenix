@@ -110,8 +110,6 @@ sealed class Event {
     object CollectionTabLongPressed : Event()
     object CollectionAddTabPressed : Event()
     object CollectionRenamePressed : Event()
-    object SearchWidgetNewTabPressed : Event()
-    object SearchWidgetVoiceSearchPressed : Event()
     object TabMediaPlay : Event()
     object TabMediaPause : Event()
     object MediaPlayState : Event()
@@ -312,32 +310,6 @@ sealed class Event {
         init {
             // If the event is not in the allow list, we don't want to track it
             require(booleanPreferenceTelemetryAllowList.contains(preferenceKey))
-        }
-    }
-
-    data class CustomizeHomePreferenceToggled(
-        val preferenceKey: String,
-        val enabled: Boolean,
-        val context: Context
-    ) : Event() {
-        private val telemetryAllowMap = mapOf(
-            context.getString(R.string.pref_key_show_top_sites) to "most_visited_sites",
-            context.getString(R.string.pref_key_recent_tabs) to "jump_back_in",
-            context.getString(R.string.pref_key_recent_bookmarks) to "recently_saved",
-            context.getString(R.string.pref_key_history_metadata_feature) to "recently_visited",
-            context.getString(R.string.pref_key_pocket_homescreen_recommendations) to "pocket",
-            context.getString(R.string.pref_key_enable_contile) to "contile",
-        )
-
-        override val extras: Map<Events.preferenceToggledKeys, String>
-            get() = mapOf(
-                Events.preferenceToggledKeys.preferenceKey to (telemetryAllowMap[preferenceKey] ?: ""),
-                Events.preferenceToggledKeys.enabled to enabled.toString()
-            )
-
-        init {
-            // If the event is not in the allow list, we don't want to track it
-            require(telemetryAllowMap.contains(preferenceKey))
         }
     }
 
