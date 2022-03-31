@@ -17,7 +17,7 @@ object Versions {
     const val sentry = "5.6.2"
     const val leakcanary = "2.8.1"
     const val osslicenses_plugin = "0.10.4"
-    const val detekt = "1.17.1"
+    const val detekt = "1.19.0"
     const val jna = "5.6.0"
 
     const val androidx_activity_compose = "1.4.0"
@@ -35,7 +35,7 @@ object Versions {
     const val androidx_navigation = "2.3.3"
     const val androidx_recyclerview = "1.2.1"
     const val androidx_core = "1.3.2"
-    const val androidx_paging = "2.1.2"
+    const val androidx_paging = "3.1.1"
     const val androidx_transition = "1.4.0"
     const val androidx_work = "2.7.1"
     const val androidx_datastore = "1.0.0"
@@ -172,7 +172,6 @@ object Deps {
     const val mozilla_support_utils = "org.mozilla.components:support-utils:${Versions.mozilla_android_components}"
     const val mozilla_support_test = "org.mozilla.components:support-test:${Versions.mozilla_android_components}"
     const val mozilla_support_test_libstate = "org.mozilla.components:support-test-libstate:${Versions.mozilla_android_components}"
-    const val mozilla_support_migration = "org.mozilla.components:support-migration:${Versions.mozilla_android_components}"
     const val mozilla_support_locale = "org.mozilla.components:support-locale:${Versions.mozilla_android_components}"
 
     const val sentry = "io.sentry:sentry-android:${Versions.sentry}"

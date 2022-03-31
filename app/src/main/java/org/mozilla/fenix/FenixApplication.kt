@@ -65,7 +65,7 @@ import org.mozilla.fenix.GleanMetrics.SearchDefaultEngine
 import org.mozilla.fenix.GleanMetrics.TopSites
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.components.Core
-import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.metrics.MetricServiceType
 import org.mozilla.fenix.components.metrics.MozillaProductDetector
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
@@ -81,6 +81,7 @@ import org.mozilla.fenix.push.PushFxaIntegration
 import org.mozilla.fenix.push.WebPushEngineIntegration
 import org.mozilla.fenix.session.PerformanceActivityLifecycleCallbacks
 import org.mozilla.fenix.session.VisibilityLifecycleCallback
+import org.mozilla.fenix.settings.CustomizationFragment
 import org.mozilla.fenix.telemetry.TelemetryLifecycleObserver
 import org.mozilla.fenix.utils.BrowsersCache
 import org.mozilla.fenix.utils.Settings
@@ -338,16 +339,15 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
     // To re-enable this, we need to do so in a way that won't interfere with any startup operations
     // which acquire reserved+ sqlite lock. Currently, Fennec migrations need to write to storage
     // on startup, and since they run in a background service we can't simply order these operations.
-
-    @OptIn(DelicateCoroutinesApi::class) // GlobalScope usage
-    private fun runStorageMaintenance() {
-        GlobalScope.launch(Dispatchers.IO) {
-            // Bookmarks and history storage sit on top of the same db file so we only need to
-            // run maintenance on one - arbitrarily using bookmarks.
-            components.core.bookmarksStorage.runMaintenance()
-        }
-        settings().lastPlacesStorageMaintenance = System.currentTimeMillis()
-    }
+    // @OptIn(DelicateCoroutinesApi::class) // GlobalScope usage
+    // private fun runStorageMaintenance() {
+    //     GlobalScope.launch(Dispatchers.IO) {
+    //        // Bookmarks and history storage sit on top of the same db file so we only need to
+    //        // run maintenance on one - arbitrarily using bookmarks.
+    //        // components.core.bookmarksStorage.runMaintenance()
+    //     }
+    //     settings().lastPlacesStorageMaintenance = System.currentTimeMillis()
+    // }
 
     protected open fun setupLeakCanary() {
         // no-op, LeakCanary is disabled by default
@@ -630,8 +630,8 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
 
             toolbarPosition.set(
                 when (settings.toolbarPosition) {
-                    ToolbarPosition.BOTTOM -> Event.ToolbarPositionChanged.Position.BOTTOM.name
-                    ToolbarPosition.TOP -> Event.ToolbarPositionChanged.Position.TOP.name
+                    ToolbarPosition.BOTTOM -> CustomizationFragment.Companion.Position.BOTTOM.name
+                    ToolbarPosition.TOP -> CustomizationFragment.Companion.Position.TOP.name
                 }
             )
 
@@ -752,12 +752,18 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             }
         )
         components.analytics.experiments.register(object : NimbusInterface.Observer {
+            override fun onExperimentsFetched() {
+                if (FeatureFlags.messagingFeature && settings().isExperimentationEnabled) {
+                    components.appStore.dispatch(AppAction.MessagingAction.Restore)
+                }
+            }
             override fun onUpdatesApplied(updated: List<EnrolledExperiment>) {
                 CustomizeHome.jumpBackIn.set(settings.showRecentTabsFeature)
                 CustomizeHome.recentlySaved.set(settings.showRecentBookmarksFeature)
                 CustomizeHome.mostVisitedSites.set(settings.showTopSitesFeature)
                 CustomizeHome.recentlyVisited.set(settings.historyMetadataUIFeature)
                 CustomizeHome.pocket.set(settings.showPocketRecommendationsFeature)
+                CustomizeHome.contile.set(settings.showContileFeature)
             }
         })
     }

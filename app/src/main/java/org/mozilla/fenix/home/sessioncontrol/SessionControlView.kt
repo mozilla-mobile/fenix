@@ -13,10 +13,11 @@ import androidx.recyclerview.widget.RecyclerView
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.service.pocket.PocketRecommendedStory
+import org.mozilla.fenix.components.AppStore
+import org.mozilla.fenix.components.appstate.AppState
+import org.mozilla.fenix.gleanplumb.Message
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.home.HomeFragmentState
-import org.mozilla.fenix.home.HomeFragmentStore
 import org.mozilla.fenix.home.Mode
 import org.mozilla.fenix.home.OnboardingState
 import org.mozilla.fenix.home.recentbookmarks.RecentBookmark
@@ -30,12 +31,13 @@ import org.mozilla.fenix.utils.Settings
 @Suppress("ComplexMethod", "LongParameterList")
 @VisibleForTesting
 internal fun normalModeAdapterItems(
+    settings: Settings,
     topSites: List<TopSite>,
     collections: List<TabCollection>,
     expandedCollections: Set<Long>,
     recentBookmarks: List<RecentBookmark>,
     showCollectionsPlaceholder: Boolean,
-    showSetAsDefaultBrowserCard: Boolean,
+    nimbusMessageCard: Message? = null,
     recentTabs: List<RecentTab>,
     recentVisits: List<RecentlyVisitedItem>,
     pocketStories: List<PocketRecommendedStory>
@@ -46,27 +48,27 @@ internal fun normalModeAdapterItems(
     // Add a synchronous, unconditional and invisible placeholder so home is anchored to the top when created.
     items.add(AdapterItem.TopPlaceholderItem)
 
-    if (showSetAsDefaultBrowserCard) {
-        items.add(AdapterItem.ExperimentDefaultBrowserCard)
+    nimbusMessageCard?.let {
+        items.add(AdapterItem.NimbusMessageCard(it))
     }
 
-    if (topSites.isNotEmpty()) {
+    if (settings.showTopSitesFeature && topSites.isNotEmpty()) {
         items.add(AdapterItem.TopSitePager(topSites))
     }
 
-    if (recentTabs.isNotEmpty()) {
+    if (settings.showRecentTabsFeature && recentTabs.isNotEmpty()) {
         shouldShowCustomizeHome = true
         items.add(AdapterItem.RecentTabsHeader)
         items.add(AdapterItem.RecentTabItem)
     }
 
-    if (recentBookmarks.isNotEmpty()) {
+    if (settings.showRecentBookmarksFeature && recentBookmarks.isNotEmpty()) {
         shouldShowCustomizeHome = true
         items.add(AdapterItem.RecentBookmarksHeader)
         items.add(AdapterItem.RecentBookmarks)
     }
 
-    if (recentVisits.isNotEmpty()) {
+    if (settings.historyMetadataUIFeature && recentVisits.isNotEmpty()) {
         shouldShowCustomizeHome = true
         items.add(AdapterItem.RecentVisitsHeader)
         items.add(AdapterItem.RecentVisitsItems)
@@ -80,7 +82,7 @@ internal fun normalModeAdapterItems(
         showCollections(collections, expandedCollections, items)
     }
 
-    if (pocketStories.isNotEmpty()) {
+    if (settings.showPocketRecommendationsFeature && pocketStories.isNotEmpty()) {
         shouldShowCustomizeHome = true
         items.add(AdapterItem.PocketStoriesItem)
         items.add(AdapterItem.PocketCategoriesItem)
@@ -148,14 +150,15 @@ private fun onboardingAdapterItems(onboardingState: OnboardingState): List<Adapt
     return items
 }
 
-private fun HomeFragmentState.toAdapterList(): List<AdapterItem> = when (mode) {
+private fun AppState.toAdapterList(settings: Settings): List<AdapterItem> = when (mode) {
     is Mode.Normal -> normalModeAdapterItems(
+        settings,
         topSites,
         collections,
         expandedCollections,
         recentBookmarks,
         showCollectionPlaceholder,
-        showSetAsDefaultBrowserCard,
+        messaging.messageToShow,
         recentTabs,
         recentHistory,
         pocketStories
@@ -165,7 +168,7 @@ private fun HomeFragmentState.toAdapterList(): List<AdapterItem> = when (mode) {
 }
 
 @VisibleForTesting
-internal fun HomeFragmentState.shouldShowHomeOnboardingDialog(settings: Settings): Boolean {
+internal fun AppState.shouldShowHomeOnboardingDialog(settings: Settings): Boolean {
     val isAnySectionsVisible = recentTabs.isNotEmpty() || recentBookmarks.isNotEmpty() ||
         recentHistory.isNotEmpty() || pocketStories.isNotEmpty()
     return isAnySectionsVisible && !settings.hasShownHomeOnboardingDialog
@@ -177,7 +180,7 @@ private fun collectionTabItems(collection: TabCollection) =
     }
 
 class SessionControlView(
-    store: HomeFragmentStore,
+    store: AppStore,
     val containerView: View,
     viewLifecycleOwner: LifecycleOwner,
     internal val interactor: SessionControlInteractor
@@ -212,13 +215,13 @@ class SessionControlView(
         }
     }
 
-    fun update(state: HomeFragmentState, shouldReportMetrics: Boolean = false) {
+    fun update(state: AppState, shouldReportMetrics: Boolean = false) {
         if (state.shouldShowHomeOnboardingDialog(view.context.settings())) {
             interactor.showOnboardingDialog()
         }
 
         if (shouldReportMetrics) interactor.reportSessionMetrics(state)
 
-        sessionControlAdapter.submitList(state.toAdapterList())
+        sessionControlAdapter.submitList(state.toAdapterList(view.context.settings()))
     }
 }
