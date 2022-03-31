@@ -26,7 +26,7 @@ import org.mozilla.fenix.components.metrics.GleanMetricsService
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.experiments.createNimbus
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.gleanplumb.KeyPairMessageMetadataStorage
+import org.mozilla.fenix.gleanplumb.OnDiskMessageMetadataStorage
 import org.mozilla.fenix.gleanplumb.NimbusMessagingStorage
 import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.perf.lazyMonitored
@@ -49,6 +49,13 @@ class Analytics(
         }
 
         if (isSentryEnabled()) {
+            // We treat caught exceptions similar to debug logging.
+            // On the release channel volume of these is too high for our Sentry instances, and
+            // we get most value out of nightly/beta logging anyway.
+            val shouldSendCaughtExceptions = when (Config.channel) {
+                ReleaseChannel.Release -> false
+                else -> true
+            }
             val sentryService = SentryService(
                 context,
                 BuildConfig.SENTRY_TOKEN,
@@ -58,6 +65,7 @@ class Analytics(
                 ),
                 environment = BuildConfig.BUILD_TYPE,
                 sendEventForNativeCrashes = false, // Do not send native crashes to Sentry
+                sendCaughtExceptions = shouldSendCaughtExceptions,
                 sentryProjectUrl = getSentryProjectUrl()
             )
 
@@ -123,7 +131,7 @@ class Analytics(
     val messagingStorage by lazyMonitored {
         NimbusMessagingStorage(
             context = context,
-            metadataStorage = KeyPairMessageMetadataStorage(),
+            metadataStorage = OnDiskMessageMetadataStorage(context),
             gleanPlumb = experiments,
             reportMalformedMessage = {
                 metrics.track(Event.Messaging.MessageMalformed(it))
@@ -133,7 +141,7 @@ class Analytics(
     }
 }
 
-fun isSentryEnabled() = !BuildConfig.SENTRY_TOKEN.isNullOrEmpty()
+private fun isSentryEnabled() = !BuildConfig.SENTRY_TOKEN.isNullOrEmpty()
 
 private fun getSentryProjectUrl(): String? {
     val baseUrl = "https://sentry.prod.mozaws.net/operations"

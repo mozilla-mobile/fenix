@@ -20,22 +20,17 @@ import org.mozilla.fenix.GleanMetrics.ContextMenu
 import org.mozilla.fenix.GleanMetrics.ContextualMenu
 import org.mozilla.fenix.GleanMetrics.CreditCards
 import org.mozilla.fenix.GleanMetrics.CustomTab
-import org.mozilla.fenix.GleanMetrics.CustomizeHome
-import org.mozilla.fenix.GleanMetrics.ErrorPage
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.ExperimentsDefaultBrowser
 import org.mozilla.fenix.GleanMetrics.History
 import org.mozilla.fenix.GleanMetrics.HomeMenu
 import org.mozilla.fenix.GleanMetrics.HomeScreen
-import org.mozilla.fenix.GleanMetrics.LoginDialog
 import org.mozilla.fenix.GleanMetrics.Logins
 import org.mozilla.fenix.GleanMetrics.MediaNotification
 import org.mozilla.fenix.GleanMetrics.MediaState
 import org.mozilla.fenix.GleanMetrics.Metrics
-import org.mozilla.fenix.GleanMetrics.Onboarding
 import org.mozilla.fenix.GleanMetrics.Pings
 import org.mozilla.fenix.GleanMetrics.Pocket
-import org.mozilla.fenix.GleanMetrics.Preferences
 import org.mozilla.fenix.GleanMetrics.ProgressiveWebApp
 import org.mozilla.fenix.GleanMetrics.ReaderMode
 import org.mozilla.fenix.GleanMetrics.RecentBookmarks
@@ -43,16 +38,13 @@ import org.mozilla.fenix.GleanMetrics.RecentSearches
 import org.mozilla.fenix.GleanMetrics.RecentTabs
 import org.mozilla.fenix.GleanMetrics.RecentlyClosedTabs
 import org.mozilla.fenix.GleanMetrics.RecentlyVisitedHomepage
-import org.mozilla.fenix.GleanMetrics.SearchShortcuts
 import org.mozilla.fenix.GleanMetrics.SearchTerms
-import org.mozilla.fenix.GleanMetrics.SearchWidget
 import org.mozilla.fenix.GleanMetrics.StartOnHome
 import org.mozilla.fenix.GleanMetrics.SyncAccount
 import org.mozilla.fenix.GleanMetrics.SyncAuth
 import org.mozilla.fenix.GleanMetrics.SyncedTabs
 import org.mozilla.fenix.GleanMetrics.Tab
 import org.mozilla.fenix.GleanMetrics.Tabs
-import org.mozilla.fenix.GleanMetrics.ToolbarSettings
 import org.mozilla.fenix.GleanMetrics.TopSites
 import org.mozilla.fenix.GleanMetrics.VoiceSearch
 import org.mozilla.fenix.GleanMetrics.Wallpapers
@@ -136,22 +128,6 @@ private val Event.wrapper: EventWrapper<*>?
                 BrowserSearch.inContent[label].add(1)
             }
         )
-        is Event.SearchShortcutSelected -> EventWrapper(
-            { SearchShortcuts.selected.record(it) },
-            { SearchShortcuts.selectedKeys.valueOf(it) }
-        )
-        is Event.LoginDialogPromptDisplayed -> EventWrapper<NoExtraKeys>(
-            { LoginDialog.displayed.record(it) }
-        )
-        is Event.LoginDialogPromptCancelled -> EventWrapper<NoExtraKeys>(
-            { LoginDialog.cancelled.record(it) }
-        )
-        is Event.LoginDialogPromptSave -> EventWrapper<NoExtraKeys>(
-            { LoginDialog.saved.record(it) }
-        )
-        is Event.LoginDialogPromptNeverSave -> EventWrapper<NoExtraKeys>(
-            { LoginDialog.neverSave.record(it) }
-        )
         is Event.ContextMenuItemTapped -> EventWrapper(
             { ContextMenu.itemTapped.record(it) },
             { ContextMenu.itemTappedKeys.valueOf(it) }
@@ -223,10 +199,6 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.NormalAndPrivateUriOpened -> EventWrapper<NoExtraKeys>(
             { Events.normalAndPrivateUriCount.add(1) }
         )
-        is Event.ErrorPageVisited -> EventWrapper(
-            { ErrorPage.visitedError.record(it) },
-            { ErrorPage.visitedErrorKeys.valueOf(it) }
-        )
         is Event.SyncAuthOpened -> EventWrapper<NoExtraKeys>(
             { SyncAuth.opened.record(it) }
         )
@@ -275,10 +247,6 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.PreferenceToggled -> EventWrapper(
             { Events.preferenceToggled.record(it) },
             { Events.preferenceToggledKeys.valueOf(it) }
-        )
-        is Event.CustomizeHomePreferenceToggled -> EventWrapper(
-            { CustomizeHome.preferenceToggled.record(it) },
-            { CustomizeHome.preferenceToggledKeys.valueOf(it) }
         )
         is Event.HistoryOpened -> EventWrapper<NoExtraKeys>(
             { History.opened.record(it) }
@@ -419,12 +387,6 @@ private val Event.wrapper: EventWrapper<*>?
             { Collections.tabsAdded.record(it) },
             { Collections.tabsAddedKeys.valueOf(it) }
         )
-        is Event.SearchWidgetNewTabPressed -> EventWrapper<NoExtraKeys>(
-            { SearchWidget.newTabButton.record(it) }
-        )
-        is Event.SearchWidgetVoiceSearchPressed -> EventWrapper<NoExtraKeys>(
-            { SearchWidget.voiceButton.record(it) }
-        )
         is Event.WhatsNewTapped -> EventWrapper<NoExtraKeys>(
             { Events.whatsNewTapped.record(it) }
         )
@@ -480,10 +442,6 @@ private val Event.wrapper: EventWrapper<*>?
         )
         is Event.EditLoginSave -> EventWrapper<NoExtraKeys>(
             { Logins.saveEditedLogin.record(it) }
-        )
-        is Event.ToolbarPositionChanged -> EventWrapper(
-            { ToolbarSettings.changedPosition.record(it) },
-            { ToolbarSettings.changedPositionKeys.valueOf(it) }
         )
         is Event.SaveLoginsSettingChanged -> EventWrapper(
             { Logins.saveLoginsSettingChanged.record(it) },
@@ -589,9 +547,6 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.AddonsOpenInSettings -> EventWrapper<NoExtraKeys>(
             { Addons.openAddonsInSettings.record(it) }
         )
-        is Event.StudiesSettings -> EventWrapper<NoExtraKeys>(
-            { Preferences.studiesPreferenceEnabled.record(it) }
-        )
         is Event.AddonsOpenInToolbarMenu -> EventWrapper(
             { Addons.openAddonInToolbarMenu.record(it) },
             { Addons.openAddonInToolbarMenuKeys.valueOf(it) }
@@ -602,30 +557,6 @@ private val Event.wrapper: EventWrapper<*>?
         )
         is Event.VoiceSearchTapped -> EventWrapper<NoExtraKeys>(
             { VoiceSearch.tapped.record(it) }
-        )
-        is Event.OnboardingPrivacyNotice -> EventWrapper<NoExtraKeys>(
-            { Onboarding.privacyNotice.record(it) }
-        )
-        is Event.OnboardingManualSignIn -> EventWrapper<NoExtraKeys>(
-            { Onboarding.fxaManualSignin.record(it) }
-        )
-        is Event.OnboardingAutoSignIn -> EventWrapper<NoExtraKeys>(
-            { Onboarding.fxaAutoSignin.record(it) }
-        )
-        is Event.OnboardingFinish -> EventWrapper<NoExtraKeys>(
-            { Onboarding.finish.record(it) }
-        )
-        is Event.OnboardingTrackingProtection -> EventWrapper(
-            { Onboarding.prefToggledTrackingProt.record(it) },
-            { Onboarding.prefToggledTrackingProtKeys.valueOf(it) }
-        )
-        is Event.OnboardingThemePicker -> EventWrapper(
-            { Onboarding.prefToggledThemePicker.record(it) },
-            { Onboarding.prefToggledThemePickerKeys.valueOf(it) }
-        )
-        is Event.OnboardingToolbarPosition -> EventWrapper(
-            { Onboarding.prefToggledToolbarPosition.record(it) },
-            { Onboarding.prefToggledToolbarPositionKeys.valueOf(it) }
         )
 
         is Event.AutoPlaySettingVisited -> EventWrapper<NoExtraKeys>(

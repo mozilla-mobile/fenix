@@ -142,6 +142,7 @@ class SmokeTest {
         featureSettingsHelper.resetAllFeatureFlags()
     }
 
+    @Ignore("Failing, see: https://github.com/mozilla-mobile/fenix/issues/24381")
     // Verifies the first run onboarding screen
     @Test
     fun firstRunScreenTest() {
@@ -774,6 +775,7 @@ class SmokeTest {
         }
     }
 
+    @Ignore("Failing, see: https://github.com/mozilla-mobile/fenix/issues/23296")
     @Test
     // Test running on beta/release builds in CI:
     // caution when making changes to it, so they don't block the builds
@@ -947,6 +949,7 @@ class SmokeTest {
         }
     }
 
+    @Ignore("Failing, see: https://github.com/mozilla-mobile/fenix/issues/24508")
     @Test
     fun addPrivateBrowsingShortcutTest() {
         homeScreen {

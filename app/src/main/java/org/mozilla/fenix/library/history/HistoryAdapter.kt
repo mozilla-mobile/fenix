@@ -6,14 +6,17 @@ package org.mozilla.fenix.library.history
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.paging.PagedListAdapter
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import org.mozilla.fenix.selection.SelectionHolder
 import org.mozilla.fenix.library.history.viewholders.HistoryListItemViewHolder
 
+/**
+ * Adapter for the list of visited pages, that uses Paging 3 versions of the Paging library.
+ */
 class HistoryAdapter(
     private val historyInteractor: HistoryInteractor,
-) : PagedListAdapter<History, HistoryListItemViewHolder>(historyDiffCallback),
+) : PagingDataAdapter<History, HistoryListItemViewHolder>(historyDiffCallback),
     SelectionHolder<History> {
 
     private var mode: HistoryFragmentState.Mode = HistoryFragmentState.Mode.Normal
