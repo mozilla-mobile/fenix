@@ -15,6 +15,7 @@ import android.view.accessibility.AccessibilityManager
 import androidx.annotation.VisibleForTesting
 import androidx.annotation.VisibleForTesting.PRIVATE
 import androidx.lifecycle.LifecycleOwner
+import mozilla.components.concept.engine.Engine.HttpsOnlyMode
 import mozilla.components.feature.sitepermissions.SitePermissionsRules
 import mozilla.components.feature.sitepermissions.SitePermissionsRules.Action
 import mozilla.components.feature.sitepermissions.SitePermissionsRules.AutoplayAction
@@ -70,7 +71,6 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         private const val ALLOWED_INT = 2
         private const val CFR_COUNT_CONDITION_FOCUS_INSTALLED = 1
         private const val CFR_COUNT_CONDITION_FOCUS_NOT_INSTALLED = 3
-        private const val APP_LAUNCHES_TO_SHOW_DEFAULT_BROWSER_CARD = 3
         private const val INACTIVE_TAB_MINIMUM_TO_SHOW_AUTO_CLOSE_DIALOG = 20
 
         const val FOUR_HOURS_MS = 60 * 60 * 4 * 1000L
@@ -311,24 +311,6 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = false
     )
 
-    /**
-     * Shows if the user has chosen to close the set default browser experiment card
-     * on home screen or has clicked the set as default browser button.
-     */
-    var userDismissedExperimentCard by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_experiment_card_home),
-        default = false
-    )
-
-    /**
-     * Shows if the set default browser experiment card should be shown on home screen.
-     */
-    fun shouldShowSetAsDefaultBrowserCard(): Boolean {
-        return isDefaultBrowserMessageLocation(MessageSurfaceId.HOMESCREEN_BANNER) &&
-            !userDismissedExperimentCard &&
-            numberOfAppLaunches > APP_LAUNCHES_TO_SHOW_DEFAULT_BROWSER_CARD
-    }
-
     private val defaultBrowserFeature: DefaultBrowserMessage by lazy {
         FxNimbus.features.defaultBrowserMessage.value()
     }
@@ -524,6 +506,21 @@ class Settings(private val appContext: Context) : PreferencesHolder {
 
     var shouldFollowDeviceTheme by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_follow_device_theme),
+        default = false
+    )
+
+    var shouldUseHttpsOnly by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_https_only),
+        default = false
+    )
+
+    var shouldUseHttpsOnlyInAllTabs by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_https_only_in_all_tabs),
+        default = true
+    )
+
+    var shouldUseHttpsOnlyInPrivateTabsOnly by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_https_only_in_private_tabs),
         default = false
     )
 
@@ -1212,7 +1209,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     private val homescreenSections: Map<HomeScreenSection, Boolean> by lazy {
-        FxNimbus.features.homescreen.value().sectionsEnabled
+        FxNimbus.features.homescreen.value(appContext).sectionsEnabled
     }
 
     var historyMetadataUIFeature by lazyFeatureFlagPreference(
@@ -1306,4 +1303,17 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         appContext.getPreferenceKey(R.string.pref_key_home_blocklist),
         default = setOf()
     )
+
+    /**
+     * Get the current mode for how https-only is enabled.
+     */
+    fun getHttpsOnlyMode(): HttpsOnlyMode {
+        return if (!shouldUseHttpsOnly) {
+            HttpsOnlyMode.DISABLED
+        } else if (shouldUseHttpsOnlyInPrivateTabsOnly) {
+            HttpsOnlyMode.ENABLED_PRIVATE_ONLY
+        } else {
+            HttpsOnlyMode.ENABLED
+        }
+    }
 }

@@ -34,8 +34,10 @@ import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.concept.sync.Profile
 import mozilla.components.support.ktx.android.view.showKeyboard
+import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.Config
+import org.mozilla.fenix.GleanMetrics.TrackingProtection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
@@ -248,7 +250,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 SettingsFragmentDirections.actionSettingsFragmentToSearchEngineFragment()
             }
             resources.getString(R.string.pref_key_tracking_protection_settings) -> {
-                requireContext().metrics.track(Event.TrackingProtectionSettings)
+                TrackingProtection.etpSettings.record(NoExtras())
                 SettingsFragmentDirections.actionSettingsFragmentToTrackingProtectionFragment()
             }
             resources.getString(R.string.pref_key_site_permissions) -> {
@@ -256,6 +258,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
             }
             resources.getString(R.string.pref_key_private_browsing) -> {
                 SettingsFragmentDirections.actionSettingsFragmentToPrivateBrowsingFragment()
+            }
+            resources.getString(R.string.pref_key_https_only_settings) -> {
+                SettingsFragmentDirections.actionSettingsFragmentToHttpsOnlyFragment()
             }
             resources.getString(R.string.pref_key_accessibility) -> {
                 SettingsFragmentDirections.actionSettingsFragmentToAccessibilityFragment()
@@ -465,6 +470,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         setupAmoCollectionOverridePreference(requireContext().settings())
         setupAllowDomesticChinaFxaServerPreference()
+        setupHttpsOnlyPreferences()
     }
 
     /**
@@ -599,6 +605,19 @@ class SettingsFragment : PreferenceFragmentCompat() {
                         FXA_SYNC_OVERRIDE_EXIT_DELAY
                     )
                 }
+        }
+    }
+
+    @VisibleForTesting
+    internal fun setupHttpsOnlyPreferences() {
+        val httpsOnlyPreference =
+            requirePreference<Preference>(R.string.pref_key_https_only_settings)
+        httpsOnlyPreference.summary = context?.let {
+            if (it.settings().shouldUseHttpsOnly) {
+                getString(R.string.preferences_https_only_on)
+            } else {
+                getString(R.string.preferences_https_only_off)
+            }
         }
     }
 

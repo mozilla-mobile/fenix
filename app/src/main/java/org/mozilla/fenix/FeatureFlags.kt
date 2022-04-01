@@ -82,7 +82,7 @@ object FeatureFlags {
     /**
      * Enables the Contile top sites.
      */
-    val contileFeature = Config.channel.isNightlyOrDebug
+    const val contileFeature = true
 
     /**
      * Enables history improvement features.
@@ -109,4 +109,10 @@ object FeatureFlags {
      * Enables the Unified Search feature.
      */
     val unifiedSearchFeature = Config.channel.isNightlyOrDebug
+
+    /**
+     * Enables receiving from the messaging framework.
+     */
+    @Suppress("MayBeConst")
+    val messagingFeature = false
 }

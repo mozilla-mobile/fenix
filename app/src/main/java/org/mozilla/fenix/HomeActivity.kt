@@ -109,6 +109,7 @@ import org.mozilla.fenix.perf.StartupTimeline
 import org.mozilla.fenix.perf.StartupTypeTelemetry
 import org.mozilla.fenix.search.SearchDialogFragmentDirections
 import org.mozilla.fenix.session.PrivateNotificationService
+import org.mozilla.fenix.settings.HttpsOnlyFragmentDirections
 import org.mozilla.fenix.settings.SettingsFragmentDirections
 import org.mozilla.fenix.settings.TrackingProtectionFragmentDirections
 import org.mozilla.fenix.settings.about.AboutFragmentDirections
@@ -798,6 +799,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             HistoryMetadataGroupFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromTrackingProtectionExceptions ->
             TrackingProtectionExceptionsFragmentDirections.actionGlobalBrowser(customTabSessionId)
+        BrowserDirection.FromHttpsOnlyMode ->
+            HttpsOnlyFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromAbout ->
             AboutFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromTrackingProtection ->
@@ -1016,18 +1019,22 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         }
     }
 
+    fun processIntent(intent: Intent): Boolean {
+        return externalSourceIntentProcessors.any {
+            it.process(
+                intent,
+                navHost.navController,
+                this.intent
+            )
+        }
+    }
+
     @VisibleForTesting
     internal fun getSettings(): Settings = settings()
 
     private fun shouldNavigateToBrowserOnColdStart(savedInstanceState: Bundle?): Boolean {
         return isActivityColdStarted(intent, savedInstanceState) &&
-            !externalSourceIntentProcessors.any {
-                it.process(
-                    intent,
-                    navHost.navController,
-                    this.intent
-                )
-            }
+            !processIntent(intent)
     }
 
     companion object {

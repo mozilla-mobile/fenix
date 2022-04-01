@@ -14,14 +14,13 @@ import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.Engine
 import mozilla.components.concept.engine.permission.SitePermissions
 import mozilla.components.feature.session.SessionUseCases.ReloadUrlUseCase
-import mozilla.components.feature.tabs.TabsUseCases.AddNewTabUseCase
 import mozilla.components.support.base.feature.OnNeedToRequestPermissions
 import mozilla.components.support.ktx.kotlin.getOrigin
+import mozilla.telemetry.glean.private.NoExtras
+import org.mozilla.fenix.GleanMetrics.TrackingProtection
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.components.PermissionStorage
-import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.settings.PhoneFeature
 import org.mozilla.fenix.settings.quicksettings.ext.shouldBeEnabled
 import org.mozilla.fenix.settings.toggle
@@ -95,11 +94,9 @@ interface QuickSettingsController {
  * @param settings [Settings] application settings.
  * @param permissionStorage [PermissionStorage] app state for website permissions exception.
  * @param reload [ReloadUrlUseCase] callback allowing for reloading the current web page.
- * @param addNewTab [AddNewTabUseCase] callback allowing for loading a URL in a new tab.
  * @param requestRuntimePermissions [OnNeedToRequestPermissions] callback allowing for requesting
  * specific Android runtime permissions.
  * @param displayPermissions callback for when [WebsitePermissionsView] needs to be displayed.
- * @param dismiss callback allowing to request this entire Fragment to be dismissed.
  */
 @Suppress("TooManyFunctions")
 class DefaultQuickSettingsController(
@@ -115,11 +112,9 @@ class DefaultQuickSettingsController(
     private val settings: Settings,
     private val permissionStorage: PermissionStorage,
     private val reload: ReloadUrlUseCase,
-    private val addNewTab: AddNewTabUseCase,
     private val requestRuntimePermissions: OnNeedToRequestPermissions = { },
     private val displayPermissions: () -> Unit,
     private val engine: Engine = context.components.core.engine,
-    private val dismiss: () -> Unit
 ) : QuickSettingsController {
     override fun handlePermissionsShown() {
         displayPermissions()
@@ -194,7 +189,7 @@ class DefaultQuickSettingsController(
             if (isEnabled) {
                 trackingProtectionUseCases.removeException(session.id)
             } else {
-                context.metrics.track(Event.TrackingProtectionException)
+                TrackingProtection.exceptionAdded.record(NoExtras())
                 trackingProtectionUseCases.addException(session.id)
             }
 

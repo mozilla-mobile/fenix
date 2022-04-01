@@ -18,6 +18,7 @@ import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.ui.widgets.WidgetSiteItemView
 import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.Components
+import org.mozilla.fenix.gleanplumb.Message
 import org.mozilla.fenix.home.BottomSpacerViewHolder
 import org.mozilla.fenix.home.TopPlaceholderViewHolder
 import org.mozilla.fenix.home.pocket.PocketCategoriesViewHolder
@@ -35,7 +36,7 @@ import org.mozilla.fenix.home.sessioncontrol.viewholders.CustomizeHomeButtonView
 import org.mozilla.fenix.home.sessioncontrol.viewholders.NoCollectionsMessageViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.PrivateBrowsingDescriptionViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.TabInCollectionViewHolder
-import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.ExperimentDefaultBrowserCardViewHolder
+import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.MessageCardViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingFinishViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingHeaderViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingManualSignInViewHolder
@@ -142,7 +143,12 @@ sealed class AdapterItem(@LayoutRes val viewType: Int) {
 
     object OnboardingManualSignIn : AdapterItem(OnboardingManualSignInViewHolder.LAYOUT_ID)
 
-    object ExperimentDefaultBrowserCard : AdapterItem(ExperimentDefaultBrowserCardViewHolder.LAYOUT_ID)
+    data class NimbusMessageCard(
+        val message: Message
+    ) : AdapterItem(MessageCardViewHolder.LAYOUT_ID) {
+        override fun sameAs(other: AdapterItem) =
+            other is NimbusMessageCard && message.id == other.message.id
+    }
 
     object OnboardingThemePicker : AdapterItem(OnboardingThemePickerViewHolder.LAYOUT_ID)
     object OnboardingTrackingProtection :
@@ -210,7 +216,12 @@ class SessionControlAdapter(
         when (viewType) {
             CustomizeHomeButtonViewHolder.LAYOUT_ID -> return CustomizeHomeButtonViewHolder(
                 composeView = ComposeView(parent.context),
-                viewLifecycleOwner,
+                viewLifecycleOwner = viewLifecycleOwner,
+                interactor = interactor
+            )
+            PrivateBrowsingDescriptionViewHolder.LAYOUT_ID -> return PrivateBrowsingDescriptionViewHolder(
+                composeView = ComposeView(parent.context),
+                viewLifecycleOwner = viewLifecycleOwner,
                 interactor = interactor
             )
             PocketStoriesViewHolder.LAYOUT_ID -> return PocketStoriesViewHolder(
@@ -230,20 +241,39 @@ class SessionControlAdapter(
             )
             RecentBookmarksViewHolder.LAYOUT_ID -> return RecentBookmarksViewHolder(
                 composeView = ComposeView(parent.context),
-                viewLifecycleOwner,
+                viewLifecycleOwner = viewLifecycleOwner,
                 interactor = interactor,
                 metrics = components.analytics.metrics
             )
             RecentTabViewHolder.LAYOUT_ID -> return RecentTabViewHolder(
                 composeView = ComposeView(parent.context),
-                viewLifecycleOwner,
+                viewLifecycleOwner = viewLifecycleOwner,
                 interactor = interactor
             )
             RecentlyVisitedViewHolder.LAYOUT_ID -> return RecentlyVisitedViewHolder(
                 composeView = ComposeView(parent.context),
-                viewLifecycleOwner,
+                viewLifecycleOwner = viewLifecycleOwner,
                 interactor = interactor,
                 metrics = components.analytics.metrics
+            )
+            RecentVisitsHeaderViewHolder.LAYOUT_ID -> return RecentVisitsHeaderViewHolder(
+                composeView = ComposeView(parent.context),
+                viewLifecycleOwner = viewLifecycleOwner,
+                interactor = interactor
+            )
+            RecentBookmarksHeaderViewHolder.LAYOUT_ID -> return RecentBookmarksHeaderViewHolder(
+                composeView = ComposeView(parent.context),
+                viewLifecycleOwner = viewLifecycleOwner,
+                interactor = interactor
+            )
+            RecentTabsHeaderViewHolder.LAYOUT_ID -> return RecentTabsHeaderViewHolder(
+                composeView = ComposeView(parent.context),
+                viewLifecycleOwner = viewLifecycleOwner,
+                interactor = interactor
+            )
+            CollectionHeaderViewHolder.LAYOUT_ID -> return CollectionHeaderViewHolder(
+                composeView = ComposeView(parent.context),
+                viewLifecycleOwner = viewLifecycleOwner
             )
         }
 
@@ -251,10 +281,6 @@ class SessionControlAdapter(
         return when (viewType) {
             TopPlaceholderViewHolder.LAYOUT_ID -> TopPlaceholderViewHolder(view)
             TopSitePagerViewHolder.LAYOUT_ID -> TopSitePagerViewHolder(view, viewLifecycleOwner, interactor)
-            PrivateBrowsingDescriptionViewHolder.LAYOUT_ID -> PrivateBrowsingDescriptionViewHolder(
-                view,
-                interactor
-            )
             NoCollectionsMessageViewHolder.LAYOUT_ID ->
                 NoCollectionsMessageViewHolder(
                     view,
@@ -262,7 +288,6 @@ class SessionControlAdapter(
                     components.core.store,
                     interactor
                 )
-            CollectionHeaderViewHolder.LAYOUT_ID -> CollectionHeaderViewHolder(view)
             CollectionViewHolder.LAYOUT_ID -> CollectionViewHolder(view, interactor)
             TabInCollectionViewHolder.LAYOUT_ID -> TabInCollectionViewHolder(
                 view as WidgetSiteItemView,
@@ -283,13 +308,7 @@ class SessionControlAdapter(
             OnboardingToolbarPositionPickerViewHolder.LAYOUT_ID -> OnboardingToolbarPositionPickerViewHolder(
                 view
             )
-            ExperimentDefaultBrowserCardViewHolder.LAYOUT_ID -> ExperimentDefaultBrowserCardViewHolder(view, interactor)
-            RecentTabsHeaderViewHolder.LAYOUT_ID -> RecentTabsHeaderViewHolder(view, interactor)
-            RecentBookmarksHeaderViewHolder.LAYOUT_ID -> RecentBookmarksHeaderViewHolder(view, interactor)
-            RecentVisitsHeaderViewHolder.LAYOUT_ID -> RecentVisitsHeaderViewHolder(
-                view,
-                interactor
-            )
+            MessageCardViewHolder.LAYOUT_ID -> MessageCardViewHolder(view, interactor)
             BottomSpacerViewHolder.LAYOUT_ID -> BottomSpacerViewHolder(view)
             else -> throw IllegalStateException()
         }
@@ -297,10 +316,15 @@ class SessionControlAdapter(
 
     override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
         when (holder) {
+            is CollectionHeaderViewHolder,
             is CustomizeHomeButtonViewHolder,
             is RecentlyVisitedViewHolder,
+            is RecentVisitsHeaderViewHolder,
             is RecentBookmarksViewHolder,
+            is RecentBookmarksHeaderViewHolder,
             is RecentTabViewHolder,
+            is RecentTabsHeaderViewHolder,
+            is PrivateBrowsingDescriptionViewHolder,
             is PocketCategoriesViewHolder,
             is PocketRecommendationsHeaderViewHolder,
             is PocketStoriesViewHolder -> {
@@ -344,6 +368,9 @@ class SessionControlAdapter(
             }
             is TopSitePagerViewHolder -> {
                 holder.bind((item as AdapterItem.TopSitePager).topSites)
+            }
+            is MessageCardViewHolder -> {
+                holder.bind((item as AdapterItem.NimbusMessageCard).message)
             }
             is CollectionViewHolder -> {
                 val (collection, expanded) = item as AdapterItem.CollectionItem

@@ -12,7 +12,7 @@ import mozilla.components.browser.errorpages.ErrorPages
 import mozilla.components.browser.errorpages.ErrorType
 import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.engine.request.RequestInterceptor
-import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.GleanMetrics.ErrorPage
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.isOnline
 import java.lang.ref.WeakReference
@@ -63,13 +63,15 @@ class AppRequestInterceptor(
         val improvedErrorType = improveErrorType(errorType)
         val riskLevel = getRiskLevel(improvedErrorType)
 
-        context.components.analytics.metrics.track(Event.ErrorPageVisited(improvedErrorType))
+        ErrorPage.visitedError.record(ErrorPage.VisitedErrorExtra(improvedErrorType.name))
 
         val errorPageUri = ErrorPages.createUrlEncodedErrorPage(
             context = context,
             errorType = improvedErrorType,
             uri = uri,
-            htmlResource = riskLevel.htmlRes
+            htmlResource = riskLevel.htmlRes,
+            titleOverride = { type -> getErrorPageTitle(context, type) },
+            descriptionOverride = { type -> getErrorPageDescription(context, type) }
         )
 
         return RequestInterceptor.ErrorResponse(errorPageUri)
@@ -123,6 +125,7 @@ class AppRequestInterceptor(
 
         return when {
             errorType == ErrorType.ERROR_UNKNOWN_HOST && !isConnected -> ErrorType.ERROR_NO_INTERNET
+            errorType == ErrorType.ERROR_HTTPS_ONLY -> ErrorType.ERROR_HTTPS_ONLY
             else -> errorType
         }
     }
@@ -158,6 +161,25 @@ class AppRequestInterceptor(
         ErrorType.ERROR_SAFEBROWSING_MALWARE_URI,
         ErrorType.ERROR_SAFEBROWSING_PHISHING_URI,
         ErrorType.ERROR_SAFEBROWSING_UNWANTED_URI -> RiskLevel.High
+    }
+
+    private fun getErrorPageTitle(context: Context, type: ErrorType): String? {
+        return when (type) {
+            ErrorType.ERROR_HTTPS_ONLY -> context.getString(R.string.errorpage_httpsonly_title)
+            // Returning `null` will let the component use its default title for this error type
+            else -> null
+        }
+    }
+
+    private fun getErrorPageDescription(context: Context, type: ErrorType): String? {
+        return when (type) {
+            ErrorType.ERROR_HTTPS_ONLY ->
+                context.getString(R.string.errorpage_httpsonly_message_title) +
+                    "<br><br>" +
+                    context.getString(R.string.errorpage_httpsonly_message_summary)
+            // Returning `null` will let the component use its default description for this error type
+            else -> null
+        }
     }
 
     internal enum class RiskLevel(val htmlRes: String) {
