@@ -14,12 +14,10 @@ import org.mozilla.fenix.GleanMetrics.AppTheme
 import org.mozilla.fenix.GleanMetrics.Autoplay
 import org.mozilla.fenix.GleanMetrics.Awesomebar
 import org.mozilla.fenix.GleanMetrics.BrowserSearch
-import org.mozilla.fenix.GleanMetrics.Collections
 import org.mozilla.fenix.GleanMetrics.ContextMenu
 import org.mozilla.fenix.GleanMetrics.ContextualMenu
 import org.mozilla.fenix.GleanMetrics.CreditCards
 import org.mozilla.fenix.GleanMetrics.CustomTab
-import org.mozilla.fenix.GleanMetrics.CustomizeHome
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.ExperimentsDefaultBrowser
 import org.mozilla.fenix.GleanMetrics.History
@@ -39,7 +37,6 @@ import org.mozilla.fenix.GleanMetrics.RecentTabs
 import org.mozilla.fenix.GleanMetrics.RecentlyClosedTabs
 import org.mozilla.fenix.GleanMetrics.RecentlyVisitedHomepage
 import org.mozilla.fenix.GleanMetrics.SearchTerms
-import org.mozilla.fenix.GleanMetrics.SearchWidget
 import org.mozilla.fenix.GleanMetrics.StartOnHome
 import org.mozilla.fenix.GleanMetrics.SyncAccount
 import org.mozilla.fenix.GleanMetrics.SyncAuth
@@ -210,10 +207,6 @@ private val Event.wrapper: EventWrapper<*>?
             { Events.preferenceToggled.record(it) },
             { Events.preferenceToggledKeys.valueOf(it) }
         )
-        is Event.CustomizeHomePreferenceToggled -> EventWrapper(
-            { CustomizeHome.preferenceToggled.record(it) },
-            { CustomizeHome.preferenceToggledKeys.valueOf(it) }
-        )
         is Event.HistoryOpened -> EventWrapper<NoExtraKeys>(
             { History.opened.record(it) }
         )
@@ -299,27 +292,6 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.RecentlyClosedTabsExitMultiselect -> EventWrapper<NoExtraKeys>(
             { RecentlyClosedTabs.exitMultiselect.record(it) }
         )
-        is Event.CollectionRenamed -> EventWrapper<NoExtraKeys>(
-            { Collections.renamed.record(it) }
-        )
-        is Event.CollectionTabRestored -> EventWrapper<NoExtraKeys>(
-            { Collections.tabRestored.record(it) }
-        )
-        is Event.CollectionAllTabsRestored -> EventWrapper<NoExtraKeys>(
-            { Collections.allTabsRestored.record(it) }
-        )
-        is Event.CollectionTabRemoved -> EventWrapper<NoExtraKeys>(
-            { Collections.tabRemoved.record(it) }
-        )
-        is Event.CollectionShared -> EventWrapper<NoExtraKeys>(
-            { Collections.shared.record(it) }
-        )
-        is Event.CollectionRemoved -> EventWrapper<NoExtraKeys>(
-            { Collections.removed.record(it) }
-        )
-        is Event.CollectionTabSelectOpened -> EventWrapper<NoExtraKeys>(
-            { Collections.tabSelectOpened.record(it) }
-        )
         is Event.ReaderModeAvailable -> EventWrapper<NoExtraKeys>(
             { ReaderMode.available.record(it) }
         )
@@ -331,33 +303,6 @@ private val Event.wrapper: EventWrapper<*>?
         )
         is Event.ReaderModeAppearanceOpened -> EventWrapper<NoExtraKeys>(
             { ReaderMode.appearance.record(it) }
-        )
-        is Event.CollectionTabLongPressed -> EventWrapper<NoExtraKeys>(
-            { Collections.longPress.record(it) }
-        )
-        is Event.CollectionSaveButtonPressed -> EventWrapper(
-            { Collections.saveButton.record(it) },
-            { Collections.saveButtonKeys.valueOf(it) }
-        )
-        is Event.CollectionAddTabPressed -> EventWrapper<NoExtraKeys>(
-            { Collections.addTabButton.record(it) }
-        )
-        is Event.CollectionRenamePressed -> EventWrapper<NoExtraKeys>(
-            { Collections.renameButton.record(it) }
-        )
-        is Event.CollectionSaved -> EventWrapper(
-            { Collections.saved.record(it) },
-            { Collections.savedKeys.valueOf(it) }
-        )
-        is Event.CollectionTabsAdded -> EventWrapper(
-            { Collections.tabsAdded.record(it) },
-            { Collections.tabsAddedKeys.valueOf(it) }
-        )
-        is Event.SearchWidgetNewTabPressed -> EventWrapper<NoExtraKeys>(
-            { SearchWidget.newTabButton.record(it) }
-        )
-        is Event.SearchWidgetVoiceSearchPressed -> EventWrapper<NoExtraKeys>(
-            { SearchWidget.voiceButton.record(it) }
         )
         is Event.WhatsNewTapped -> EventWrapper<NoExtraKeys>(
             { Events.whatsNewTapped.record(it) }

@@ -10,7 +10,6 @@ import mozilla.components.feature.top.sites.TopSite
 import org.mozilla.fenix.GleanMetrics.Addons
 import org.mozilla.fenix.GleanMetrics.AppTheme
 import org.mozilla.fenix.GleanMetrics.Autoplay
-import org.mozilla.fenix.GleanMetrics.Collections
 import org.mozilla.fenix.GleanMetrics.ContextMenu
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.History
@@ -87,18 +86,6 @@ sealed class Event {
     object ReaderModeOpened : Event()
     object ReaderModeClosed : Event()
     object ReaderModeAppearanceOpened : Event()
-    object CollectionRenamed : Event()
-    object CollectionTabRestored : Event()
-    object CollectionAllTabsRestored : Event()
-    object CollectionTabRemoved : Event()
-    object CollectionShared : Event()
-    object CollectionRemoved : Event()
-    object CollectionTabSelectOpened : Event()
-    object CollectionTabLongPressed : Event()
-    object CollectionAddTabPressed : Event()
-    object CollectionRenamePressed : Event()
-    object SearchWidgetNewTabPressed : Event()
-    object SearchWidgetVoiceSearchPressed : Event()
     object TabMediaPlay : Event()
     object TabMediaPause : Event()
     object MediaPlayState : Event()
@@ -302,32 +289,6 @@ sealed class Event {
         }
     }
 
-    data class CustomizeHomePreferenceToggled(
-        val preferenceKey: String,
-        val enabled: Boolean,
-        val context: Context
-    ) : Event() {
-        private val telemetryAllowMap = mapOf(
-            context.getString(R.string.pref_key_show_top_sites) to "most_visited_sites",
-            context.getString(R.string.pref_key_recent_tabs) to "jump_back_in",
-            context.getString(R.string.pref_key_recent_bookmarks) to "recently_saved",
-            context.getString(R.string.pref_key_history_metadata_feature) to "recently_visited",
-            context.getString(R.string.pref_key_pocket_homescreen_recommendations) to "pocket",
-            context.getString(R.string.pref_key_enable_contile) to "contile",
-        )
-
-        override val extras: Map<Events.preferenceToggledKeys, String>
-            get() = mapOf(
-                Events.preferenceToggledKeys.preferenceKey to (telemetryAllowMap[preferenceKey] ?: ""),
-                Events.preferenceToggledKeys.enabled to enabled.toString()
-            )
-
-        init {
-            // If the event is not in the allow list, we don't want to track it
-            require(telemetryAllowMap.contains(preferenceKey))
-        }
-    }
-
     data class AddonsOpenInToolbarMenu(val addonId: String) : Event() {
         override val extras: Map<Addons.openAddonInToolbarMenuKeys, String>?
             get() = hashMapOf(Addons.openAddonInToolbarMenuKeys.addonId to addonId)
@@ -357,27 +318,6 @@ sealed class Event {
 
         override val extras: Map<Events.appOpenedKeys, String>?
             get() = hashMapOf(Events.appOpenedKeys.source to source.name)
-    }
-
-    data class CollectionSaveButtonPressed(val fromScreen: String) : Event() {
-        override val extras: Map<Collections.saveButtonKeys, String>?
-            get() = mapOf(Collections.saveButtonKeys.fromScreen to fromScreen)
-    }
-
-    data class CollectionSaved(val tabsOpenCount: Int, val tabsSelectedCount: Int) : Event() {
-        override val extras: Map<Collections.savedKeys, String>?
-            get() = mapOf(
-                Collections.savedKeys.tabsOpen to tabsOpenCount.toString(),
-                Collections.savedKeys.tabsSelected to tabsSelectedCount.toString()
-            )
-    }
-
-    data class CollectionTabsAdded(val tabsOpenCount: Int, val tabsSelectedCount: Int) : Event() {
-        override val extras: Map<Collections.tabsAddedKeys, String>?
-            get() = mapOf(
-                Collections.tabsAddedKeys.tabsOpen to tabsOpenCount.toString(),
-                Collections.tabsAddedKeys.tabsSelected to tabsSelectedCount.toString()
-            )
     }
 
     data class SearchBarTapped(val source: Source) : Event() {
