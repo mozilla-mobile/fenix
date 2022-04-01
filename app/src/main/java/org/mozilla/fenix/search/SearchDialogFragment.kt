@@ -71,7 +71,7 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.search.awesomebar.AwesomeBarView
 import org.mozilla.fenix.search.awesomebar.toSearchProviderState
-import org.mozilla.fenix.search.toolbar.IncreaseDpsAction
+import org.mozilla.fenix.search.toolbar.IncreasedTapAreaActionDecorator
 import org.mozilla.fenix.search.toolbar.ToolbarView
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.widget.VoiceSearchActivity
@@ -254,11 +254,9 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             else -> {}
         }
 
-        binding.searchEnginesShortcutButton.apply {
-            increaseTapArea(TAP_INCREASE_DPS)
-            setOnClickListener {
-                interactor.onSearchShortcutsButtonClicked()
-            }
+        binding.searchEnginesShortcutButton.increaseTapArea(TAP_INCREASE_DPS)
+        binding.searchEnginesShortcutButton.setOnClickListener {
+            interactor.onSearchShortcutsButtonClicked()
         }
 
         qrFeature.set(
@@ -649,7 +647,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                 listener = ::launchVoiceSearch
             )
             toolbarView.view.run {
-                addEditActionEnd(IncreaseDpsAction(voiceSearchAction))
+                addEditActionEnd(IncreasedTapAreaActionDecorator(voiceSearchAction))
                 invalidateActions()
             }
             voiceSearchButtonAlreadyAdded = true

@@ -1,10 +1,17 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.search.toolbar
 
 import android.view.View
 import mozilla.components.concept.toolbar.Toolbar
 import org.mozilla.fenix.ext.increaseTapArea
 
-class IncreaseDpsAction(
+/**
+ * A Decorator that accepts a [Toolbar.Action] and increases its tap area.
+ */
+class IncreasedTapAreaActionDecorator(
     private val action: Toolbar.Action
 ) : Toolbar.Action by action {
 
@@ -16,5 +23,4 @@ class IncreaseDpsAction(
     companion object {
         private const val TAP_INCREASE_DPS = 8
     }
-
 }
