@@ -1574,6 +1574,7 @@ customize_home:
       A user toggles the preference for the home screen items.
     extra_keys:
       preference_key:
+        type: string
         description: |
           The preference key for the boolean (true/false) preference the user
           toggled.
@@ -1581,6 +1582,7 @@ customize_home:
           We currently track: most_visited_sites, jump_back_in,
           recently_visited, recently_saved, pocket, and contile.
       enabled:
+        type: boolean
         description: "Whether or not the preference is *now* enabled"
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/21095
@@ -4093,8 +4095,10 @@ collections:
     extra_keys:
       tabs_open:
         description: "The number of tabs open in the current session"
+        type: string
       tabs_selected:
         description: "The number of tabs added to the collection"
+        type: string
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/969
       - https://github.com/mozilla-mobile/fenix/issues/19923
@@ -4121,8 +4125,10 @@ collections:
     extra_keys:
       tabs_open:
         description: The number of tabs open in the current session
+        type: string
       tabs_selected:
         description: The number of tabs added to the collection
+        type: string
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/969
       - https://github.com/mozilla-mobile/fenix/issues/19923
@@ -4236,6 +4242,7 @@ collections:
         description: |
           A string representing the screen from which the user pressed the save
           button. Currently one of: `browserMenu`, `homeMenu` or `home`
+        type: string
     metadata:
       tags:
         - Collections
