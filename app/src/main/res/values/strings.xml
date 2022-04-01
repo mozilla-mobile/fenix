@@ -39,7 +39,7 @@
     <!-- Title for the home screen section with recently saved bookmarks. -->
     <string name="recent_bookmarks_title">Recent bookmarks</string>
     <!-- Content description for the recently saved bookmarks section on the home screen. -->
-    <string name="recently_saved_bookmarks_content_description">Recently saved bookmarks</string>
+    <string moz:removedIn="100" name="recently_saved_bookmarks_content_description" tools:ignore="UnusedResources">Recently saved bookmarks</string>
     <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
     <string name="recently_saved_show_all">Show all</string>
     <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
@@ -127,6 +127,10 @@
     <!-- Text for the number of tabs in a group in the 'Jump back in' section of the new tab
         %d is a placeholder for the number of sites in the group. This number will always be more than one. -->
     <string name="recent_tabs_search_term_count_2">%d sites</string>
+    <!-- Text for button in synced tab card that opens synced tabs tray -->
+    <string name="recent_tabs_see_all_synced_tabs_button_text">See all synced tabs</string>
+    <!-- Accessibility description for device icon used for recent synced tab -->
+    <string name="recent_tabs_synced_device_icon_content_description">Synced device</string>
     <!-- Text for the menu button to remove a grouped highlight from the user's browsing history
          in the Recently visited section -->
     <string name="recent_tab_menu_item_remove">Remove</string>
@@ -233,7 +237,7 @@
     <!-- Search suggestion onboarding hint description text, first parameter is the name of the app defined in app_name (for example: Fenix)-->
     <string name="search_suggestions_onboarding_text">%s will share everything you type in the address bar with your default search engine.</string>
     <!-- Search suggestion onboarding hint Learn more link text -->
-    <string name="search_suggestions_onboarding_learn_more_link">Learn more</string>
+    <string name="search_suggestions_onboarding_learn_more_link" moz:RemovedIn="100" tools:ignore="UnusedResources">Learn more</string>
     <!-- Search engine suggestion title text. The first parameter is the name of teh suggested engine-->
     <string name="search_engine_suggestions_title">Search %s</string>
     <!-- Search engine suggestion description text -->
@@ -312,6 +316,26 @@
     <string name="preferences_screenshots_in_private_mode_disclaimer">If allowed, private tabs will also be visible when multiple apps are open</string>
     <!-- Preference for adding private browsing shortcut -->
     <string name="preferences_add_private_browsing_shortcut">Add private browsing shortcut</string>
+    <!-- Preference for enabling "HTTPS-Only" mode -->
+    <string name="preferences_https_only_title">HTTPS-Only Mode</string>
+    <!-- Description of the preference to enable "HTTPS-Only" mode. -->
+    <string name="preferences_https_only_summary">Automatically attempts to connect to sites using HTTPS encryption protocol for increased security.</string>
+    <!-- Summary of tracking protection preference if tracking protection is set to on -->
+    <string name="preferences_https_only_on">On</string>
+    <!-- Summary of tracking protection preference if tracking protection is set to off -->
+    <string name="preferences_https_only_off">Off</string>
+    <!-- Text displayed that links to website containing documentation about "HTTPS-Only" mode -->
+    <string name="preferences_http_only_learn_more">Learn more</string>
+    <!-- Option for the https only setting -->
+    <string name="preferences_https_only_in_all_tabs">Enable in all tabs</string>
+    <!-- Option for the https only setting -->
+    <string name="preferences_https_only_in_private_tabs">Enable only in private tabs</string>
+    <!-- Title shown in the error page for when trying to access a http website while https only mode is enabled. -->
+    <string name="errorpage_httpsonly_title">Secure site not available</string>
+    <!-- Message shown in the error page for when trying to access a http website while https only mode is enabled. The message has two paragraphs. This is the first. -->
+    <string name="errorpage_httpsonly_message_title">Most likely, the website simply does not support HTTPs.</string>
+    <!-- Message shown in the error page for when trying to access a http website while https only mode is enabled. The message has two paragraphs. This is the second. -->
+    <string name="errorpage_httpsonly_message_summary">However, it’s also possible that an attacker is involved. If you continue to the website, you should not enter any sensitive info. If you continue, HTTPS-Only mode will be turned off temporarily for the site.</string>
     <!-- Preference for accessibility -->
     <string name="preferences_accessibility">Accessibility</string>
     <!-- Preference to override the Firefox Account server -->
@@ -830,6 +854,8 @@
     <string name="bookmark_deletion_multiple_snackbar_message_3">Deleting selected folders</string>
     <!-- Bookmark undo button for deletion snackbar action -->
     <string name="bookmark_undo_deletion">UNDO</string>
+    <!-- Text for the button to search all bookmarks -->
+    <string name="bookmark_search">Enter search terms</string>
 
     <!-- Site Permissions -->
     <!-- Button label that take the user to the Android App setting -->
@@ -1114,31 +1140,31 @@
 
     <!-- Tips -->
     <!-- text for firefox preview moving tip header "Firefox Preview" and "Firefox Nightly" are intentionally hardcoded -->
-    <string name="tip_firefox_preview_moved_header">Firefox Preview is now Firefox Nightly</string>
+    <string name="tip_firefox_preview_moved_header" moz:RemovedIn="100" tools:ignore="UnusedResources">Firefox Preview is now Firefox Nightly</string>
     <!-- text for firefox preview moving tip description -->
-    <string name="tip_firefox_preview_moved_description">
+    <string name="tip_firefox_preview_moved_description" moz:RemovedIn="100" tools:ignore="UnusedResources">
         Firefox Nightly gets updated every night and has experimental new features.
         However, it may be less stable. Download our beta browser for a more stable experience.</string>
     <!-- text for firefox preview moving tip button. "Firefox for Android Beta" is intentionally hardcoded -->
-    <string name="tip_firefox_preview_moved_button_2">Get Firefox for Android Beta</string>
+    <string name="tip_firefox_preview_moved_button_2" moz:RemovedIn="100" tools:ignore="UnusedResources">Get Firefox for Android Beta</string>
 
     <!-- text for firefox preview moving tip header. "Firefox Nightly" is intentionally hardcoded -->
-    <string name="tip_firefox_preview_moved_header_preview_installed">Firefox Nightly has moved</string>
+    <string name="tip_firefox_preview_moved_header_preview_installed" moz:RemovedIn="100" tools:ignore="UnusedResources">Firefox Nightly has moved</string>
     <!-- text for firefox preview moving tip description -->
-    <string name="tip_firefox_preview_moved_description_preview_installed">
+    <string name="tip_firefox_preview_moved_description_preview_installed" moz:RemovedIn="100" tools:ignore="UnusedResources">
         This app will no longer receive security updates. Stop using this app and switch to the new Nightly.
         \n\nTo transfer your bookmarks, logins, and history to another app, create a Firefox account.</string>
     <!-- text for firefox preview moving tip button  -->
-    <string name="tip_firefox_preview_moved_button_preview_installed">Switch to the new Nightly</string>
+    <string name="tip_firefox_preview_moved_button_preview_installed" moz:RemovedIn="100" tools:ignore="UnusedResources">Switch to the new Nightly</string>
 
     <!-- text for firefox preview moving tip header. "Firefox Nightly" is intentionally hardcoded -->
-    <string name="tip_firefox_preview_moved_header_preview_not_installed">Firefox Nightly has moved</string>
+    <string name="tip_firefox_preview_moved_header_preview_not_installed" moz:RemovedIn="100" tools:ignore="UnusedResources">Firefox Nightly has moved</string>
     <!-- text for firefox preview moving tip description -->
-    <string name="tip_firefox_preview_moved_description_preview_not_installed">
+    <string name="tip_firefox_preview_moved_description_preview_not_installed" moz:RemovedIn="100" tools:ignore="UnusedResources">
         This app will no longer receive security updates. Get the new Nightly and stop using this app.
         \n\nTo transfer your bookmarks, logins, and history to another app, create a Firefox account.</string>
     <!-- text for firefox preview moving tip button  -->
-    <string name="tip_firefox_preview_moved_button_preview_not_installed">Get the new Nightly</string>
+    <string name="tip_firefox_preview_moved_button_preview_not_installed" moz:RemovedIn="100" tools:ignore="UnusedResources">Get the new Nightly</string>
 
     <!-- Onboarding -->
     <!-- Text for onboarding welcome message
@@ -1558,17 +1584,17 @@
     <string name="search_delete_search_engine_success_message">Deleted %s</string>
 
     <!-- Title text shown for the migration screen to the new browser. Placeholder replaced with app name -->
-    <string name="migration_title">Welcome to an all-new %s</string>
+    <string name="migration_title" moz:removedIn="100" tools:ignore="UnusedResources">Welcome to an all-new %s</string>
     <!-- Description text followed by a list of things migrating (e.g. Bookmarks, History). Placeholder replaced with app name-->
-    <string name="migration_description">A completely redesigned browser awaits, with improved performance and features to help you do more online.\n\nPlease wait while we update %s with your</string>
+    <string name="migration_description" moz:removedIn="100" tools:ignore="UnusedResources">A completely redesigned browser awaits, with improved performance and features to help you do more online.\n\nPlease wait while we update %s with your</string>
     <!-- Text on the disabled button while in progress. Placeholder replaced with app name -->
-    <string name="migration_updating_app_button_text">Updating %s…</string>
+    <string name="migration_updating_app_button_text" moz:removedIn="100" tools:ignore="UnusedResources">Updating %s…</string>
     <!-- Text on the enabled button. Placeholder replaced with app name-->
-    <string name="migration_update_app_button">Start %s</string>
+    <string name="migration_update_app_button" moz:removedIn="100" tools:ignore="UnusedResources">Start %s</string>
     <!-- Accessibility description text for a completed migration item -->
-    <string name="migration_icon_description">Migration completed</string>
+    <string name="migration_icon_description" moz:removedIn="100" tools:ignore="UnusedResources">Migration completed</string>
     <!--Text on list of migrated items (e.g. Settings, History, etc.)-->
-    <string name="migration_text_passwords">Passwords</string>
+    <string name="migration_text_passwords" moz:removedIn="100" tools:ignore="UnusedResources">Passwords</string>
 
     <!-- Heading for the instructions to allow a permission -->
     <string name="phone_feature_blocked_intro">To allow it:</string>
@@ -1757,4 +1783,9 @@
     <string name="pocket_stories_feature_caption">Part of the Firefox family. %s</string>
     <!-- Clickable text for opening an external link for more information about Pocket. -->
     <string name="pocket_stories_feature_learn_more">Learn more</string>
+
+    <!-- Snackbar message for enrolling in a Nimbus experiment from the secret settings when Studies preference is Off.-->
+    <string name="experiments_snackbar">Enable telemetry to send data.</string>
+    <!-- Snackbar button text to navigate to telemetry settings.-->
+    <string name="experiments_snackbar_button">Go to settings</string>
 </resources>

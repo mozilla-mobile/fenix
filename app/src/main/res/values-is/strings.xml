@@ -45,8 +45,6 @@
     <string name="recently_saved_show_all">Birta allt</string>
     <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
     <string name="recently_saved_show_all_content_description_2">Sýna öll vistuð bókamerki</string>
-    <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
-    <string moz:removedIn="97" name="recently_saved_show_all_content_description" tools:ignore="UnusedResources">Sýna hnapp fyrir öll vistuð bókamerki</string>
 
     <!-- Text for the menu button to remove a recently saved bookmark from the user's home screen -->
     <string name="recently_saved_menu_item_remove">Fjarlægja</string>
@@ -125,8 +123,6 @@
     <string name="recent_tabs_show_all">Birta allt</string>
     <!-- Content description for the button which navigates the user to show all recent tabs in the tabs tray. -->
     <string name="recent_tabs_show_all_content_description_2">Sýna hnapp fyrir alla nýlega flipa</string>
-    <!-- Content description for the button which navigates the user to show all recent tabs in the tabs tray. -->
-    <string moz:removedIn="97" name="recent_tabs_show_all_content_description2" tools:ignore="UnusedResources">Sýna alla nýlega flipa</string>
     <!-- Title for showing a group item in the 'Jump back in' section of the new tab
         The first parameter is the search term that the user used. (for example: your search for "cat")-->
     <string name="recent_tabs_search_term">Leitin þín að \&quot;%1$s\&quot;</string>
@@ -134,6 +130,10 @@
         %d is a placeholder for the number of sites in the group. This number will always be more than one. -->
     <string name="recent_tabs_search_term_count_2">%d vefsvæði</string>
 
+    <!-- Text for button in synced tab card that opens synced tabs tray -->
+    <string name="recent_tabs_see_all_synced_tabs_button_text">Sjá alla samstillta flipa</string>
+    <!-- Accessibility description for device icon used for recent synced tab -->
+    <string name="recent_tabs_synced_device_icon_content_description">Samstillt tæki</string>
     <!-- Text for the menu button to remove a grouped highlight from the user's browsing history
          in the Recently visited section -->
     <string name="recent_tab_menu_item_remove">Fjarlægja</string>
@@ -148,8 +148,6 @@
 
     <!-- Content description for the button which navigates the user to show all of their history. -->
     <string name="past_explorations_show_all_content_description_2">Sýna alla fyrri leiðangra</string>
-    <!-- Content description for the button which navigates the user to show all of their history. -->
-    <string moz:removedIn="97" name="past_explorations_show_all_content_description" tools:ignore="UnusedResources">Sýna hnapp fyrir alla fyrri leiðangra</string>
 
     <!-- Browser Fragment -->
     <!-- Content description (not visible, for screen readers etc.): Navigate backward (browsing history) -->
@@ -246,7 +244,7 @@
     <!-- Search suggestion onboarding hint description text, first parameter is the name of the app defined in app_name (for example: Fenix)-->
     <string name="search_suggestions_onboarding_text">%s mun deila öllu sem þú skrifar í leitarslánni með sjálfgefnu leitarvél þinni.</string>
     <!-- Search suggestion onboarding hint Learn more link text -->
-    <string name="search_suggestions_onboarding_learn_more_link">Fræðast meira</string>
+    <string moz:RemovedIn="100" name="search_suggestions_onboarding_learn_more_link" tools:ignore="UnusedResources">Fræðast meira</string>
 
     <!-- Search engine suggestion title text. The first parameter is the name of teh suggested engine-->
     <string name="search_engine_suggestions_title">Leita með %s</string>
@@ -805,6 +803,8 @@
     <string name="bookmark_delete_folder_confirmation_dialog">Ertu viss um að þú viljir eyða þessari möppu?</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete multiple items including folders. Parameter will be replaced by app name. -->
     <string name="bookmark_delete_multiple_folders_confirmation_dialog">%s mun eyða völdu atriðunum.</string>
+    <!-- Text for the cancel button on delete bookmark dialog -->
+    <string name="bookmark_delete_negative">Hætta við</string>
     <!-- Screen title for adding a bookmarks folder -->
     <string name="bookmark_add_folder">Bæta við möppu</string>
     <!-- Snackbar title shown after a bookmark has been created. -->
@@ -860,6 +860,9 @@
     <!-- Bookmark undo button for deletion snackbar action -->
     <string name="bookmark_undo_deletion">AFTURKALLA</string>
 
+    <!-- Text for the button to search all bookmarks -->
+    <string name="bookmark_search">Settu inn leitarorð</string>
+
     <!-- Site Permissions -->
     <!-- Button label that take the user to the Android App setting -->
     <string name="phone_feature_go_to_settings">Fara í stillingar</string>
@@ -872,8 +875,16 @@
     <string name="phone_feature_recommended">Mælt með</string>
     <!-- Button label for clearing all the information of site permissions-->
     <string name="clear_permissions">Hreinsa heimildir</string>
+    <!-- Text for the OK button on Clear permissions dialog -->
+    <string name="clear_permissions_positive">Í lagi</string>
+    <!-- Text for the cancel button on Clear permissions dialog -->
+    <string name="clear_permissions_negative">Hætta við</string>
     <!-- Button label for clearing a site permission-->
     <string name="clear_permission">Heinsa heimild</string>
+    <!-- Text for the OK button on Clear permission dialog -->
+    <string name="clear_permission_positive">Í lagi</string>
+    <!-- Text for the cancel button on Clear permission dialog -->
+    <string name="clear_permission_negative">Hætta við</string>
     <!-- Button label for clearing all the information on all sites-->
     <string name="clear_permissions_on_all_sites">Hreinsa heimildir á fyrir öll vefsvæði</string>
     <!-- Preference for altering video and audio autoplay for all websites -->
@@ -973,6 +984,11 @@
     <!-- Snackbar action to view the collection the user just created or updated -->
     <string name="create_collection_view">Skoða</string>
 
+    <!-- Text for the OK button from collection dialogs -->
+    <string name="create_collection_positive">Í lagi</string>
+    <!-- Text for the cancel button from collection dialogs -->
+    <string name="create_collection_negative">Hætta við</string>
+
     <!-- Default name for a new collection in "name new collection" step of the collection creator. %d is a placeholder for the number of collections-->
     <string name="create_collection_default_name">Safn %d</string>
 
@@ -988,6 +1004,10 @@
     <string name="share_link_all_apps_subheader">Allar aðgerðir</string>
     <!-- Sub-header in the dialog to share a link to an app from the most-recent sorted list -->
     <string name="share_link_recent_apps_subheader">Nýlega notað</string>
+    <!-- Text for the copy link action in the share screen. -->
+    <string name="share_copy_link_to_clipboard">Afrita á klippispjald</string>
+    <!-- Toast shown after copying link to clipboard -->
+    <string name="toast_copy_link_to_clipboard">Afritað á klippispjald</string>
     <!-- An option from the three dot menu to into sync -->
     <string name="sync_menu_sign_in">Skráðu þig inn til að samstilla</string>
     <!-- An option from the share dialog to sign into sync -->
@@ -1132,32 +1152,32 @@
 
     <!-- Tips -->
     <!-- text for firefox preview moving tip header "Firefox Preview" and "Firefox Nightly" are intentionally hardcoded -->
-    <string name="tip_firefox_preview_moved_header">Firefox Preview heitir nú Firefox Nightly</string>
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_header" tools:ignore="UnusedResources">Firefox Preview heitir nú Firefox Nightly</string>
     <!-- text for firefox preview moving tip description -->
-    <string name="tip_firefox_preview_moved_description">
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_description" tools:ignore="UnusedResources">
  · Firefox Nightly er uppfærður á hverju kvöldi og er með virkni sem verið er að prófa sig áfram með.
  · Hins vegar gæti hann verið óstöðugari fyrir vikið. Sæktu betu útgáfu af vafranum ef þú vilt stöðugri vafra.</string>
 
     <!-- text for firefox preview moving tip button. "Firefox for Android Beta" is intentionally hardcoded -->
-    <string name="tip_firefox_preview_moved_button_2">Sækja Firefox fyrir Android, beta útgáfu</string>
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_button_2" tools:ignore="UnusedResources">Sækja Firefox fyrir Android, beta útgáfu</string>
 
     <!-- text for firefox preview moving tip header. "Firefox Nightly" is intentionally hardcoded -->
-    <string name="tip_firefox_preview_moved_header_preview_installed">Firefox Nightly er kominn á nýjan stað</string>
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_header_preview_installed" tools:ignore="UnusedResources">Firefox Nightly er kominn á nýjan stað</string>
     <!-- text for firefox preview moving tip description -->
-    <string name="tip_firefox_preview_moved_description_preview_installed">
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_description_preview_installed" tools:ignore="UnusedResources">
  · Þetta forrit mun ekki lengur fá öryggisuppfærslur. Hættu að nota þetta forrit og skiptu yfir í nýja Nightly.
  · \n\nÞú ættir að búa til Firefox reikning til að búa til bókamerki, innskráningu og sögu í annað forrit.</string>
     <!-- text for firefox preview moving tip button  -->
-    <string name="tip_firefox_preview_moved_button_preview_installed">Skiptu yfir í nýja Nightly</string>
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_button_preview_installed" tools:ignore="UnusedResources">Skiptu yfir í nýja Nightly</string>
 
     <!-- text for firefox preview moving tip header. "Firefox Nightly" is intentionally hardcoded -->
-    <string name="tip_firefox_preview_moved_header_preview_not_installed">Firefox Nightly er kominn á nýjan stað</string>
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_header_preview_not_installed" tools:ignore="UnusedResources">Firefox Nightly er kominn á nýjan stað</string>
     <!-- text for firefox preview moving tip description -->
-    <string name="tip_firefox_preview_moved_description_preview_not_installed">
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_description_preview_not_installed" tools:ignore="UnusedResources">
  · Þetta forrit mun ekki lengur fá öryggisuppfærslur. Sæktu nýja Nightly og hættu að nota þetta forrit.
  · \n\nÞú ættir að búa til Firefox reikning til að búa til bókamerki, innskráningu og sögu í annað forrit.</string>
     <!-- text for firefox preview moving tip button  -->
-    <string name="tip_firefox_preview_moved_button_preview_not_installed">Sæktu nýja Nightly</string>
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_button_preview_not_installed" tools:ignore="UnusedResources">Sæktu nýja Nightly</string>
 
     <!-- Onboarding -->
     <!-- Text for onboarding welcome message
@@ -1165,10 +1185,9 @@
     <string name="onboarding_header">Velkomin í %s!</string>
 
     <!-- text for the Firefox account onboarding sign in card header. The word "Firefox" should not be translated -->
-    <string moz:RemovedIn="99" name="onboarding_account_sign_in_header_1" tools:ignore="UnusedResources">Samstilla Firefox á milli tækja</string>
+    <string name="onboarding_account_sign_in_header_1">Samstilla Firefox á milli tækja</string>
     <!-- text for the Firefox account onboarding sign in card header. The first parameter is the name of the application.-->
-    <string name="onboarding_account_sign_in_header_2">Samstilla %1$s á milli tækja</string>
-    <!-- Text for the button to learn more about signing in to your Firefox account -->
+    <string moz:RemovedIn="100" name="onboarding_account_sign_in_header_2" tools:ignore="UnusedResources">Samstilla %1$s á milli tækja</string>
     <!-- Text for the button to learn more about signing in to your Firefox account. The first parameter is the name of the application.-->
     <string name="onboarding_manual_sign_in_description_2">Komdu með bókamerki, feril og lykilorð yfir í %1$s á þessu tæki.</string>
     <!-- text for the button to manually sign into Firefox account. -->
@@ -1646,6 +1665,8 @@
     <string name="login_deletion_confirmation">Ertu viss um að þú viljir eyða þessari innskráningu?</string>
     <!-- Positive action of a dialog asking to delete  -->
     <string name="dialog_delete_positive">Eyða</string>
+    <!-- Negative action of a dialog asking to delete login -->
+    <string name="dialog_delete_negative">Hætta við</string>
     <!--  The saved login options menu description. -->
     <string name="login_options_menu">Innskráningarvalkostir</string>
     <!--  The editable text field for a login's web address. -->
@@ -1690,9 +1711,9 @@
     <!-- Text displayed when user has disabled tab syncing in Firefox Sync Account -->
     <string name="synced_tabs_enable_tab_syncing">Virkjaðu samstillingu flipa.</string>
     <!-- Text displayed when user has no tabs that have been synced -->
-    <string moz:removedIn="99" name="synced_tabs_no_tabs" tools:ignore="UnusedResources">Þú ert ekki með neina Firefox flipa opna á hinum tækjunum þínum.</string>
+    <string name="synced_tabs_no_tabs">Þú ert ekki með neina Firefox flipa opna á hinum tækjunum þínum.</string>
     <!-- Text displayed when user has no tabs that have been synced. The first parameter is the name of the application.-->
-    <string name="synced_tabs_no_tabs_2">Þú ert ekki með neina %1$s-flipa opna á hinum tækjunum þínum.</string>
+    <string moz:RemovedIn="100" name="synced_tabs_no_tabs_2" tools:ignore="UnusedResources">Þú ert ekki með neina %1$s-flipa opna á hinum tækjunum þínum.</string>
     <!-- Text displayed in the synced tabs screen when a user is not signed in to Firefox Sync describing Synced Tabs -->
     <string name="synced_tabs_sign_in_message">Skoða lista yfir flipa frá öðrum tækjum.</string>
     <!-- Text displayed on a button in the synced tabs screen to link users to sign in when a user is not signed in to Firefox Sync -->

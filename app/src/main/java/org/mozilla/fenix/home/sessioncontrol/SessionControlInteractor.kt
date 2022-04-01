@@ -9,8 +9,8 @@ import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.service.pocket.PocketRecommendedStory
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
-import org.mozilla.fenix.components.tips.Tip
-import org.mozilla.fenix.home.HomeFragmentState
+import org.mozilla.fenix.components.appstate.AppState
+import org.mozilla.fenix.gleanplumb.Message
 import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesCategory
 import org.mozilla.fenix.home.pocket.PocketStoriesController
 import org.mozilla.fenix.home.pocket.PocketStoriesInteractor
@@ -45,7 +45,7 @@ interface TabSessionInteractor {
      *
      * * @param state The state the homepage from which to report desired metrics.
      */
-    fun reportSessionMetrics(state: HomeFragmentState)
+    fun reportSessionMetrics(state: AppState)
 }
 
 /**
@@ -167,13 +167,6 @@ interface OnboardingInteractor {
     fun showOnboardingDialog()
 }
 
-interface TipInteractor {
-    /**
-     * Dismisses the tip view adapter
-     */
-    fun onCloseTip(tip: Tip)
-}
-
 interface CustomizeHomeIteractor {
     /**
      * Opens the customize home settings page.
@@ -233,22 +226,27 @@ interface TopSiteInteractor {
     fun onTopSiteMenuOpened()
 }
 
-interface ExperimentCardInteractor {
+interface MessageCardInteractor {
     /**
-     * Called when set default browser button is clicked
+     * Called when a [Message]'s button is clicked
      */
-    fun onSetDefaultBrowserClicked()
+    fun onMessageClicked(message: Message)
 
     /**
-     * Called when close button on experiment card
+     * Called when close button on a [Message] card.
      */
-    fun onCloseExperimentCardClicked()
+    fun onMessageClosedClicked(message: Message)
+
+    /**
+     * Called when close button on a [Message] card.
+     */
+    fun onMessageDisplayed(message: Message)
 }
 
 /**
  * Interactor for the Home screen. Provides implementations for the CollectionInteractor,
- * OnboardingInteractor, TopSiteInteractor, TipInteractor, TabSessionInteractor,
- * ToolbarInteractor, ExperimentCardInteractor, RecentTabInteractor, RecentBookmarksInteractor
+ * OnboardingInteractor, TopSiteInteractor, TabSessionInteractor, ToolbarInteractor,
+ * ExperimentCardInteractor, RecentTabInteractor, RecentBookmarksInteractor
  * and others.
  */
 @SuppressWarnings("TooManyFunctions")
@@ -261,10 +259,9 @@ class SessionControlInteractor(
 ) : CollectionInteractor,
     OnboardingInteractor,
     TopSiteInteractor,
-    TipInteractor,
     TabSessionInteractor,
     ToolbarInteractor,
-    ExperimentCardInteractor,
+    MessageCardInteractor,
     RecentTabInteractor,
     RecentBookmarksInteractor,
     RecentVisitsInteractor,
@@ -343,10 +340,6 @@ class SessionControlInteractor(
         controller.handleCreateCollection()
     }
 
-    override fun onCloseTip(tip: Tip) {
-        controller.handleCloseTip(tip)
-    }
-
     override fun onPrivateBrowsingLearnMoreClicked() {
         controller.handlePrivateBrowsingLearnMoreClicked()
     }
@@ -373,14 +366,6 @@ class SessionControlInteractor(
 
     override fun onTopSiteMenuOpened() {
         controller.handleMenuOpened()
-    }
-
-    override fun onSetDefaultBrowserClicked() {
-        controller.handleSetDefaultBrowser()
-    }
-
-    override fun onCloseExperimentCardClicked() {
-        controller.handleCloseExperimentCard()
     }
 
     override fun onRecentTabClicked(tabId: String) {
@@ -457,7 +442,19 @@ class SessionControlInteractor(
         pocketStoriesController.handleDiscoverMoreClicked(link)
     }
 
-    override fun reportSessionMetrics(state: HomeFragmentState) {
+    override fun reportSessionMetrics(state: AppState) {
         controller.handleReportSessionMetrics(state)
+    }
+
+    override fun onMessageClicked(message: Message) {
+        controller.handleMessageClicked(message)
+    }
+
+    override fun onMessageClosedClicked(message: Message) {
+        controller.handleMessageClosed(message)
+    }
+
+    override fun onMessageDisplayed(message: Message) {
+        controller.handleMessageDisplayed(message)
     }
 }

@@ -46,8 +46,6 @@
     <string name="recently_saved_show_all">Kuva kõiki</string>
     <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
     <string name="recently_saved_show_all_content_description_2">Kuva kõiki järjehoidjaid</string>
-    <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
-    <string moz:removedIn="97" name="recently_saved_show_all_content_description" tools:ignore="UnusedResources">Kõigi salvestatud järjehoidjate kuvamise nupp</string>
 
     <!-- Text for the menu button to remove a recently saved bookmark from the user's home screen -->
     <string name="recently_saved_menu_item_remove">Eemalda</string>
@@ -126,8 +124,6 @@
     <string name="recent_tabs_show_all">Kuva kõiki</string>
     <!-- Content description for the button which navigates the user to show all recent tabs in the tabs tray. -->
     <string name="recent_tabs_show_all_content_description_2">Kõigi hiljutiste kaartide kuvamise nupp</string>
-    <!-- Content description for the button which navigates the user to show all recent tabs in the tabs tray. -->
-    <string moz:removedIn="97" name="recent_tabs_show_all_content_description2" tools:ignore="UnusedResources">Kuva kõiki hiljutisi kaarte</string>
 
     <!-- Title for showing a group item in the 'Jump back in' section of the new tab
         The first parameter is the search term that the user used. (for example: your search for "cat")-->
@@ -136,6 +132,10 @@
         %d is a placeholder for the number of sites in the group. This number will always be more than one. -->
     <string name="recent_tabs_search_term_count_2">%d saiti</string>
 
+    <!-- Text for button in synced tab card that opens synced tabs tray -->
+    <string name="recent_tabs_see_all_synced_tabs_button_text">Kuva kõiki sünkroniseeritud kaarte</string>
+    <!-- Accessibility description for device icon used for recent synced tab -->
+    <string name="recent_tabs_synced_device_icon_content_description">Sünkroniseeritud seade</string>
     <!-- Text for the menu button to remove a grouped highlight from the user's browsing history
          in the Recently visited section -->
     <string name="recent_tab_menu_item_remove">Eemalda</string>
@@ -149,8 +149,6 @@
     <string name="recently_visited_menu_item_remove">Eemalda</string>
     <!-- Content description for the button which navigates the user to show all of their history. -->
     <string name="past_explorations_show_all_content_description_2">Kuva varasemat ajalugu</string>
-    <!-- Content description for the button which navigates the user to show all of their history. -->
-    <string moz:removedIn="97" name="past_explorations_show_all_content_description" tools:ignore="UnusedResources">Varasema ajaloo kuvamise nupp</string>
 
     <!-- Browser Fragment -->
     <!-- Content description (not visible, for screen readers etc.): Navigate backward (browsing history) -->
@@ -250,7 +248,7 @@
     <!-- Search suggestion onboarding hint description text, first parameter is the name of the app defined in app_name (for example: Fenix)-->
     <string name="search_suggestions_onboarding_text">%s jagab vaikeotsingumootoriga kõike, mida aadressiribale sisestad.</string>
     <!-- Search suggestion onboarding hint Learn more link text -->
-    <string name="search_suggestions_onboarding_learn_more_link">Rohkem teavet</string>
+    <string moz:RemovedIn="100" name="search_suggestions_onboarding_learn_more_link" tools:ignore="UnusedResources">Rohkem teavet</string>
 
     <!-- Search engine suggestion title text. The first parameter is the name of teh suggested engine-->
     <string name="search_engine_suggestions_title">Otsi otsingumootoriga %s</string>
@@ -813,6 +811,8 @@
     <string name="bookmark_delete_folder_confirmation_dialog">Kas oled kindel, et soovid selle kausta kustutada?</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete multiple items including folders. Parameter will be replaced by app name. -->
     <string name="bookmark_delete_multiple_folders_confirmation_dialog">%s kustutab valitud järjehoidjad ja/või kaustad.</string>
+    <!-- Text for the cancel button on delete bookmark dialog -->
+    <string name="bookmark_delete_negative">Loobu</string>
     <!-- Screen title for adding a bookmarks folder -->
     <string name="bookmark_add_folder">Kausta lisamine</string>
     <!-- Snackbar title shown after a bookmark has been created. -->
@@ -868,6 +868,9 @@
     <!-- Bookmark undo button for deletion snackbar action -->
     <string name="bookmark_undo_deletion">VÕTA TAGASI</string>
 
+    <!-- Text for the button to search all bookmarks -->
+    <string name="bookmark_search">Sisesta otsitav fraas</string>
+
     <!-- Site Permissions -->
     <!-- Button label that take the user to the Android App setting -->
     <string name="phone_feature_go_to_settings">Mine sätetesse</string>
@@ -881,8 +884,16 @@
     <!-- Button label for clearing all the information of site permissions-->
     <string name="clear_permissions">Tühista õigused</string>
 
+    <!-- Text for the OK button on Clear permissions dialog -->
+    <string name="clear_permissions_positive">Olgu</string>
+    <!-- Text for the cancel button on Clear permissions dialog -->
+    <string name="clear_permissions_negative">Loobu</string>
     <!-- Button label for clearing a site permission-->
     <string name="clear_permission">Tühista õigus</string>
+    <!-- Text for the OK button on Clear permission dialog -->
+    <string name="clear_permission_positive">Sobib</string>
+    <!-- Text for the cancel button on Clear permission dialog -->
+    <string name="clear_permission_negative">Loobu</string>
     <!-- Button label for clearing all the information on all sites-->
     <string name="clear_permissions_on_all_sites">Tühista kõikide saitide õigused</string>
     <!-- Preference for altering video and audio autoplay for all websites -->
@@ -984,6 +995,11 @@
     <!-- Snackbar action to view the collection the user just created or updated -->
     <string name="create_collection_view">Vaata</string>
 
+    <!-- Text for the OK button from collection dialogs -->
+    <string name="create_collection_positive">Olgu</string>
+    <!-- Text for the cancel button from collection dialogs -->
+    <string name="create_collection_negative">Loobu</string>
+
     <!-- Default name for a new collection in "name new collection" step of the collection creator. %d is a placeholder for the number of collections-->
     <string name="create_collection_default_name">Kollektsioon %d</string>
 
@@ -999,6 +1015,10 @@
     <string name="share_link_all_apps_subheader">Kõik toimingud</string>
     <!-- Sub-header in the dialog to share a link to an app from the most-recent sorted list -->
     <string name="share_link_recent_apps_subheader">Hiljuti kasutatud</string>
+    <!-- Text for the copy link action in the share screen. -->
+    <string name="share_copy_link_to_clipboard">Kopeeri vahemällu</string>
+    <!-- Toast shown after copying link to clipboard -->
+    <string name="toast_copy_link_to_clipboard">Kopeeriti vahemällu</string>
     <!-- An option from the three dot menu to into sync -->
     <string name="sync_menu_sign_in">Sünkimiseks logi sisse</string>
     <!-- An option from the share dialog to sign into sync -->
@@ -1145,32 +1165,32 @@
 
     <!-- Tips -->
     <!-- text for firefox preview moving tip header "Firefox Preview" and "Firefox Nightly" are intentionally hardcoded -->
-    <string name="tip_firefox_preview_moved_header">Firefox Preview on nüüd Firefox Nightly</string>
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_header" tools:ignore="UnusedResources">Firefox Preview on nüüd Firefox Nightly</string>
 
     <!-- text for firefox preview moving tip description -->
-    <string name="tip_firefox_preview_moved_description">
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_description" tools:ignore="UnusedResources">
 Firefox Nightlyt uuendatakse igal ööl ning see sisaldab uusi eksperimetaalseid funktsionaalsusi.
 Samas võib see olla vähem stabiilne. Stabiilsema kogemuse saamiseks võid alla laadida meie brauseri beeta versiooni.</string>
     <!-- text for firefox preview moving tip button. "Firefox for Android Beta" is intentionally hardcoded -->
-    <string name="tip_firefox_preview_moved_button_2">Hangi Firefox Androidile beeta</string>
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_button_2" tools:ignore="UnusedResources">Hangi Firefox Androidile beeta</string>
 
     <!-- text for firefox preview moving tip header. "Firefox Nightly" is intentionally hardcoded -->
-    <string name="tip_firefox_preview_moved_header_preview_installed">Firefox Nightly on liikunud</string>
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_header_preview_installed" tools:ignore="UnusedResources">Firefox Nightly on liikunud</string>
     <!-- text for firefox preview moving tip description -->
-    <string name="tip_firefox_preview_moved_description_preview_installed">
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_description_preview_installed" tools:ignore="UnusedResources">
         This app will no longer receive security updates. Stop using this app and switch to the new Nightly.
         \n\nTo transfer your bookmarks, logins, and history to another app, create a Firefox account.</string>
     <!-- text for firefox preview moving tip button  -->
-    <string name="tip_firefox_preview_moved_button_preview_installed">Lülitu uuele Nightlyle</string>
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_button_preview_installed" tools:ignore="UnusedResources">Lülitu uuele Nightlyle</string>
 
     <!-- text for firefox preview moving tip header. "Firefox Nightly" is intentionally hardcoded -->
-    <string name="tip_firefox_preview_moved_header_preview_not_installed">Firefox Nightly on liikunud</string>
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_header_preview_not_installed" tools:ignore="UnusedResources">Firefox Nightly on liikunud</string>
     <!-- text for firefox preview moving tip description -->
-    <string name="tip_firefox_preview_moved_description_preview_not_installed">
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_description_preview_not_installed" tools:ignore="UnusedResources">
 See äpp ei saa enam turvauuendusi. Hangi uus Nightly ja lõpeta selle äpi kasutamine.
 \n\nOma järjehoidjate, kasutajakontode ja ajaloo teise äppi liigutamiseks loo Firefoxi konto.</string>
     <!-- text for firefox preview moving tip button  -->
-    <string name="tip_firefox_preview_moved_button_preview_not_installed">Hangi uus Nightly</string>
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_button_preview_not_installed" tools:ignore="UnusedResources">Hangi uus Nightly</string>
 
     <!-- Onboarding -->
     <!-- Text for onboarding welcome message
@@ -1178,10 +1198,9 @@ See äpp ei saa enam turvauuendusi. Hangi uus Nightly ja lõpeta selle äpi kasu
     <string name="onboarding_header">Tere tulemast %si!</string>
 
     <!-- text for the Firefox account onboarding sign in card header. The word "Firefox" should not be translated -->
-    <string moz:RemovedIn="99" name="onboarding_account_sign_in_header_1" tools:ignore="UnusedResources">Sünkroniseeri Firefox seadmete vahel</string>
+    <string name="onboarding_account_sign_in_header_1">Sünkroniseeri Firefox seadmete vahel</string>
     <!-- text for the Firefox account onboarding sign in card header. The first parameter is the name of the application.-->
-    <string name="onboarding_account_sign_in_header_2">Sünkroniseeri %1$s seadmete vahel</string>
-    <!-- Text for the button to learn more about signing in to your Firefox account -->
+    <string moz:RemovedIn="100" name="onboarding_account_sign_in_header_2" tools:ignore="UnusedResources">Sünkroniseeri %1$s seadmete vahel</string>
     <!-- Text for the button to learn more about signing in to your Firefox account. The first parameter is the name of the application.-->
     <string name="onboarding_manual_sign_in_description_2">Too järjehoidjad, ajalugu ja paroolid %1$si selles seadmes.</string>
     <!-- text for the button to manually sign into Firefox account. -->
@@ -1667,6 +1686,8 @@ See äpp ei saa enam turvauuendusi. Hangi uus Nightly ja lõpeta selle äpi kasu
     <!-- Positive action of a dialog asking to delete  -->
     <string name="dialog_delete_positive">Kustuta</string>
 
+    <!-- Negative action of a dialog asking to delete login -->
+    <string name="dialog_delete_negative">Loobu</string>
     <!--  The saved login options menu description. -->
     <string name="login_options_menu">Kasutajakontode sätted</string>
     <!--  The editable text field for a login's web address. -->
@@ -1708,9 +1729,9 @@ See äpp ei saa enam turvauuendusi. Hangi uus Nightly ja lõpeta selle äpi kasu
     <!-- Text displayed when user has disabled tab syncing in Firefox Sync Account -->
     <string name="synced_tabs_enable_tab_syncing">Palun luba kaartide sünkroniseerimine.</string>
     <!-- Text displayed when user has no tabs that have been synced -->
-    <string moz:removedIn="99" name="synced_tabs_no_tabs" tools:ignore="UnusedResources">Sul pole teistes seadmetes olevates Firefoxides kaarte avatud.</string>
+    <string name="synced_tabs_no_tabs">Sul pole teistes seadmetes olevates Firefoxides kaarte avatud.</string>
     <!-- Text displayed when user has no tabs that have been synced. The first parameter is the name of the application.-->
-    <string name="synced_tabs_no_tabs_2">Sul pole teistes seadmetes olevates %1$sides kaarte avatud.</string>
+    <string moz:RemovedIn="100" name="synced_tabs_no_tabs_2" tools:ignore="UnusedResources">Sul pole teistes seadmetes olevates %1$sides kaarte avatud.</string>
     <!-- Text displayed in the synced tabs screen when a user is not signed in to Firefox Sync describing Synced Tabs -->
     <string name="synced_tabs_sign_in_message">Vaata teistes seadmetes avatud kaartide nimekirja.</string>
     <!-- Text displayed on a button in the synced tabs screen to link users to sign in when a user is not signed in to Firefox Sync -->

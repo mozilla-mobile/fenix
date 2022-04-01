@@ -33,7 +33,9 @@ import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.feature.top.sites.TopSite
+import mozilla.components.service.glean.testing.GleanTestRule
 import mozilla.components.support.test.ext.joinBlocking
+import mozilla.components.support.test.robolectric.testContext
 import mozilla.components.support.test.rule.MainCoroutineRule
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -42,7 +44,9 @@ import org.junit.Before
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.mozilla.fenix.BrowserDirection
+import org.mozilla.fenix.GleanMetrics.Collections
 import org.mozilla.fenix.GleanMetrics.Pings
 import org.mozilla.fenix.GleanMetrics.TopSites
 import org.mozilla.fenix.HomeActivity
@@ -50,13 +54,18 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BrowserFragmentDirections
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.Analytics
+import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.TabCollectionStorage
+import org.mozilla.fenix.components.appstate.AppAction
+import org.mozilla.fenix.components.appstate.AppState
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.Event.PerformedSearch.EngineSource
 import org.mozilla.fenix.components.metrics.MetricController
-import org.mozilla.fenix.components.tips.Tip
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.gleanplumb.Message
+import org.mozilla.fenix.gleanplumb.MessageController
+import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.home.recentbookmarks.RecentBookmark
 import org.mozilla.fenix.home.recenttabs.RecentTab
 import org.mozilla.fenix.home.sessioncontrol.DefaultSessionControlController
@@ -64,16 +73,20 @@ import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.utils.Settings
 import mozilla.components.feature.tab.collections.Tab as ComponentTab
 
+@RunWith(FenixRobolectricTestRunner::class) // For gleanTestRule
 @OptIn(ExperimentalCoroutinesApi::class)
 class DefaultSessionControlControllerTest {
 
     @get:Rule
     val coroutinesTestRule = MainCoroutineRule()
+    @get:Rule
+    val gleanTestRule = GleanTestRule(testContext)
 
     private val activity: HomeActivity = mockk(relaxed = true)
-    private val fragmentStore: HomeFragmentStore = mockk(relaxed = true)
+    private val appStore: AppStore = mockk(relaxed = true)
     private val navController: NavController = mockk(relaxed = true)
     private val metrics: MetricController = mockk(relaxed = true)
+    private val messageController: MessageController = mockk(relaxed = true)
     private val engine: Engine = mockk(relaxed = true)
     private val tabCollectionStorage: TabCollectionStorage = mockk(relaxed = true)
     private val tabsUseCases: TabsUseCases = mockk(relaxed = true)
@@ -109,7 +122,7 @@ class DefaultSessionControlControllerTest {
     )
 
     private lateinit var store: BrowserStore
-    private val homeFragmentState: HomeFragmentState = mockk(relaxed = true)
+    private val appState: AppState = mockk(relaxed = true)
 
     @Before
     fun setup() {
@@ -121,13 +134,12 @@ class DefaultSessionControlControllerTest {
             )
         )
 
-        every { fragmentStore.state } returns HomeFragmentState(
+        every { appStore.state } returns AppState(
             collections = emptyList(),
             expandedCollections = emptySet(),
             mode = Mode.Normal,
             topSites = emptyList(),
             showCollectionPlaceholder = true,
-            showSetAsDefaultBrowserCard = true,
             recentTabs = emptyList(),
             recentBookmarks = emptyList()
         )
@@ -153,7 +165,11 @@ class DefaultSessionControlControllerTest {
         }
         createController().handleCollectionAddTabTapped(collection)
 
-        verify { metrics.track(Event.CollectionAddTabPressed) }
+        assertTrue(Collections.addTabButton.testHasValue())
+        val recordedEvents = Collections.addTabButton.testGetValue()
+        assertEquals(1, recordedEvents.size)
+        assertEquals(null, recordedEvents.single().extra)
+
         verify {
             navController.navigate(
                 match<NavDirections> {
@@ -202,7 +218,11 @@ class DefaultSessionControlControllerTest {
         }
         createController().handleCollectionOpenTabClicked(tab)
 
-        verify { metrics.track(Event.CollectionTabRestored) }
+        assertTrue(Collections.tabRestored.testHasValue())
+        val recordedEvents = Collections.tabRestored.testGetValue()
+        assertEquals(1, recordedEvents.size)
+        assertEquals(null, recordedEvents.single().extra)
+
         verify {
             activity.openToBrowserAndLoad(
                 searchTermOrURL = "https://mozilla.org",
@@ -239,7 +259,12 @@ class DefaultSessionControlControllerTest {
         store.dispatch(TabListAction.AddTabAction(restoredTab)).joinBlocking()
 
         createController().handleCollectionOpenTabClicked(tab)
-        verify { metrics.track(Event.CollectionTabRestored) }
+
+        assertTrue(Collections.tabRestored.testHasValue())
+        val recordedEvents = Collections.tabRestored.testGetValue()
+        assertEquals(1, recordedEvents.size)
+        assertEquals(null, recordedEvents.single().extra)
+
         verify { activity.openToBrowser(BrowserDirection.FromHome) }
         verify { selectTabUseCase.selectTab.invoke(restoredTab.id) }
         verify { reloadUrlUseCase.reload.invoke(restoredTab.id) }
@@ -269,7 +294,12 @@ class DefaultSessionControlControllerTest {
         store.dispatch(TabListAction.AddTabAction(restoredTab)).joinBlocking()
 
         createController().handleCollectionOpenTabClicked(tab)
-        verify { metrics.track(Event.CollectionTabRestored) }
+
+        assertTrue(Collections.tabRestored.testHasValue())
+        val recordedEvents = Collections.tabRestored.testGetValue()
+        assertEquals(1, recordedEvents.size)
+        assertEquals(null, recordedEvents.single().extra)
+
         verify { activity.openToBrowser(BrowserDirection.FromHome) }
         verify { selectTabUseCase.selectTab.invoke(restoredTab.id) }
         verify { reloadUrlUseCase.reload.invoke(restoredTab.id) }
@@ -282,7 +312,10 @@ class DefaultSessionControlControllerTest {
         }
         createController().handleCollectionOpenTabsTapped(collection)
 
-        verify { metrics.track(Event.CollectionAllTabsRestored) }
+        assertTrue(Collections.allTabsRestored.testHasValue())
+        val recordedEvents = Collections.allTabsRestored.testGetValue()
+        assertEquals(1, recordedEvents.size)
+        assertEquals(null, recordedEvents.single().extra)
     }
 
     @Test
@@ -310,7 +343,10 @@ class DefaultSessionControlControllerTest {
             }
         ).handleCollectionRemoveTab(expectedCollection, tab, false)
 
-        verify { metrics.track(Event.CollectionTabRemoved) }
+        assertTrue(Collections.tabRemoved.testHasValue())
+        val recordedEvents = Collections.tabRemoved.testGetValue()
+        assertEquals(1, recordedEvents.size)
+        assertEquals(null, recordedEvents.single().extra)
 
         assertEquals(expectedCollection, actualCollection)
     }
@@ -320,7 +356,11 @@ class DefaultSessionControlControllerTest {
         val collection: TabCollection = mockk(relaxed = true)
         val tab: ComponentTab = mockk(relaxed = true)
         createController().handleCollectionRemoveTab(collection, tab, false)
-        verify { metrics.track(Event.CollectionTabRemoved) }
+
+        assertTrue(Collections.tabRemoved.testHasValue())
+        val recordedEvents = Collections.tabRemoved.testGetValue()
+        assertEquals(1, recordedEvents.size)
+        assertEquals(null, recordedEvents.single().extra)
     }
 
     @Test
@@ -331,7 +371,11 @@ class DefaultSessionControlControllerTest {
         }
         createController().handleCollectionShareTabsClicked(collection)
 
-        verify { metrics.track(Event.CollectionShared) }
+        assertTrue(Collections.shared.testHasValue())
+        val recordedEvents = Collections.shared.testGetValue()
+        assertEquals(1, recordedEvents.size)
+        assertEquals(null, recordedEvents.single().extra)
+
         verify {
             navController.navigate(
                 match<NavDirections> { it.actionId == R.id.action_global_shareFragment },
@@ -380,7 +424,11 @@ class DefaultSessionControlControllerTest {
         }
         createController().handleRenameCollectionTapped(collection)
 
-        verify { metrics.track(Event.CollectionRenamePressed) }
+        assertTrue(Collections.renameButton.testHasValue())
+        val recordedEvents = Collections.renameButton.testGetValue()
+        assertEquals(1, recordedEvents.size)
+        assertEquals(null, recordedEvents.single().extra)
+
         verify {
             navController.navigate(
                 match<NavDirections> { it.actionId == R.id.action_global_collectionCreationFragment },
@@ -772,14 +820,7 @@ class DefaultSessionControlControllerTest {
     fun handleToggleCollectionExpanded() {
         val collection = mockk<TabCollection>()
         createController().handleToggleCollectionExpanded(collection, true)
-        verify { fragmentStore.dispatch(HomeFragmentAction.CollectionExpanded(collection, true)) }
-    }
-
-    @Test
-    fun handleCloseTip() {
-        val tip = mockk<Tip>()
-        createController().handleCloseTip(tip)
-        verify { fragmentStore.dispatch(HomeFragmentAction.RemoveTip(tip)) }
+        verify { appStore.dispatch(AppAction.CollectionExpanded(collection, true)) }
     }
 
     @Test
@@ -838,7 +879,7 @@ class DefaultSessionControlControllerTest {
 
         verify {
             settings.showCollectionsPlaceholderOnHome = false
-            fragmentStore.dispatch(HomeFragmentAction.RemoveCollectionsPlaceholder)
+            appStore.dispatch(AppAction.RemoveCollectionsPlaceholder)
         }
     }
 
@@ -884,7 +925,7 @@ class DefaultSessionControlControllerTest {
 
         verify {
             settings.incrementNumTimesPrivateModeOpened()
-            HomeFragmentAction.ModeChange(Mode.fromBrowsingMode(newMode))
+            AppAction.ModeChange(Mode.fromBrowsingMode(newMode))
         }
     }
 
@@ -912,7 +953,7 @@ class DefaultSessionControlControllerTest {
 
         verify {
             settings.incrementNumTimesPrivateModeOpened()
-            HomeFragmentAction.ModeChange(Mode.fromBrowsingMode(newMode))
+            AppAction.ModeChange(Mode.fromBrowsingMode(newMode))
             navController.navigate(
                 BrowserFragmentDirections.actionGlobalSearchDialog(
                     sessionId = null
@@ -945,7 +986,7 @@ class DefaultSessionControlControllerTest {
             settings.incrementNumTimesPrivateModeOpened()
         }
         verify {
-            HomeFragmentAction.ModeChange(Mode.fromBrowsingMode(newMode))
+            AppAction.ModeChange(Mode.fromBrowsingMode(newMode))
             navController.navigate(
                 BrowserFragmentDirections.actionGlobalSearchDialog(
                     sessionId = null
@@ -956,8 +997,8 @@ class DefaultSessionControlControllerTest {
 
     @Test
     fun `WHEN handleReportSessionMetrics is called AND there are zero recent tabs THEN report Event#RecentTabsSectionIsNotVisible`() {
-        every { homeFragmentState.recentTabs } returns emptyList()
-        createController().handleReportSessionMetrics(homeFragmentState)
+        every { appState.recentTabs } returns emptyList()
+        createController().handleReportSessionMetrics(appState)
         verify(exactly = 0) {
             metrics.track(Event.RecentTabsSectionIsVisible)
         }
@@ -969,8 +1010,8 @@ class DefaultSessionControlControllerTest {
     @Test
     fun `WHEN handleReportSessionMetrics is called AND there is at least one recent tab THEN report Event#RecentTabsSectionIsVisible`() {
         val recentTab: RecentTab = mockk(relaxed = true)
-        every { homeFragmentState.recentTabs } returns listOf(recentTab)
-        createController().handleReportSessionMetrics(homeFragmentState)
+        every { appState.recentTabs } returns listOf(recentTab)
+        createController().handleReportSessionMetrics(appState)
         verify(exactly = 0) {
             metrics.track(Event.RecentTabsSectionIsNotVisible)
         }
@@ -981,9 +1022,9 @@ class DefaultSessionControlControllerTest {
 
     @Test
     fun `WHEN handleReportSessionMetrics is called AND there are zero recent bookmarks THEN report Event#RecentBookmarkCount(0)`() {
-        every { homeFragmentState.recentBookmarks } returns emptyList()
-        every { homeFragmentState.recentTabs } returns emptyList()
-        createController().handleReportSessionMetrics(homeFragmentState)
+        every { appState.recentBookmarks } returns emptyList()
+        every { appState.recentTabs } returns emptyList()
+        createController().handleReportSessionMetrics(appState)
         verify {
             metrics.track(Event.RecentBookmarkCount(0))
         }
@@ -992,9 +1033,9 @@ class DefaultSessionControlControllerTest {
     @Test
     fun `WHEN handleReportSessionMetrics is called AND there is at least one recent bookmark THEN report Event#RecentBookmarkCount(1)`() {
         val recentBookmark: RecentBookmark = mockk(relaxed = true)
-        every { homeFragmentState.recentBookmarks } returns listOf(recentBookmark)
-        every { homeFragmentState.recentTabs } returns emptyList()
-        createController().handleReportSessionMetrics(homeFragmentState)
+        every { appState.recentBookmarks } returns listOf(recentBookmark)
+        every { appState.recentTabs } returns emptyList()
+        createController().handleReportSessionMetrics(appState)
         verify {
             metrics.track(Event.RecentBookmarkCount(1))
         }
@@ -1081,6 +1122,26 @@ class DefaultSessionControlControllerTest {
         }
     }
 
+    @Test
+    fun `WHEN handleMessageClicked,handleMessageClosed and handleMessageDisplayed are called THEN delegate to messageController`() {
+        val controller = createController()
+        val message = mockk<Message>()
+
+        controller.handleMessageClicked(message)
+        controller.handleMessageClosed(message)
+        controller.handleMessageDisplayed(message)
+
+        verify {
+            messageController.onMessagePressed(message)
+        }
+        verify {
+            messageController.onMessageDismissed(message)
+        }
+        verify {
+            messageController.onMessageDisplayed(message)
+        }
+    }
+
     private fun createController(
         hideOnboarding: () -> Unit = { },
         registerCollectionStorageObserver: () -> Unit = { },
@@ -1093,12 +1154,13 @@ class DefaultSessionControlControllerTest {
             engine = engine,
             metrics = metrics,
             store = store,
+            messageController = messageController,
             tabCollectionStorage = tabCollectionStorage,
             addTabUseCase = tabsUseCases.addTab,
             restoreUseCase = mockk(relaxed = true),
             reloadUrlUseCase = reloadUrlUseCase.reload,
             selectTabUseCase = selectTabUseCase.selectTab,
-            fragmentStore = fragmentStore,
+            appStore = appStore,
             navController = navController,
             viewLifecycleScope = scope,
             hideOnboarding = hideOnboarding,

@@ -27,8 +27,10 @@ import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.support.ktx.android.view.showKeyboard
 import mozilla.components.support.ktx.kotlin.isUrl
+import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.FeatureFlags
+import org.mozilla.fenix.GleanMetrics.Collections
 import org.mozilla.fenix.GleanMetrics.Pings
 import org.mozilla.fenix.GleanMetrics.TopSites
 import org.mozilla.fenix.HomeActivity
@@ -36,21 +38,21 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BrowserFragmentDirections
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.collections.SaveCollectionStep
+import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.TabCollectionStorage
+import org.mozilla.fenix.components.appstate.AppAction
+import org.mozilla.fenix.components.appstate.AppState
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.components.metrics.MetricsUtils
-import org.mozilla.fenix.components.tips.Tip
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
-import org.mozilla.fenix.ext.openSetDefaultBrowserOption
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.gleanplumb.Message
+import org.mozilla.fenix.gleanplumb.MessageController
 import org.mozilla.fenix.home.HomeFragment
-import org.mozilla.fenix.home.HomeFragmentAction
 import org.mozilla.fenix.home.HomeFragmentDirections
-import org.mozilla.fenix.home.HomeFragmentState
-import org.mozilla.fenix.home.HomeFragmentStore
 import org.mozilla.fenix.home.Mode
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.settings.SupportUtils.SumoTopic.PRIVATE_BROWSING_MYTHS
@@ -149,11 +151,6 @@ interface SessionControlController {
     fun handleToggleCollectionExpanded(collection: TabCollection, expand: Boolean)
 
     /**
-     * @see [TipInteractor.onCloseTip]
-     */
-    fun handleCloseTip(tip: Tip)
-
-    /**
      * @see [ToolbarInteractor.onPasteAndGo]
      */
     fun handlePasteAndGo(clipboardText: String)
@@ -179,14 +176,19 @@ interface SessionControlController {
     fun handleMenuOpened()
 
     /**
-     * @see [ExperimentCardInteractor.onSetDefaultBrowserClicked]
+     * @see [MessageCardInteractor.onMessageClicked]
      */
-    fun handleSetDefaultBrowser()
+    fun handleMessageClicked(message: Message)
 
     /**
-     * @see [ExperimentCardInteractor.onCloseExperimentCardClicked]
+     * @see [MessageCardInteractor.onMessageClosedClicked]
      */
-    fun handleCloseExperimentCard()
+    fun handleMessageClosed(message: Message)
+
+    /**
+     * @see [MessageCardInteractor.onMessageDisplayed]
+     */
+    fun handleMessageDisplayed(message: Message)
 
     /**
      * @see [TabSessionInteractor.onPrivateModeButtonClicked]
@@ -206,7 +208,7 @@ interface SessionControlController {
     /**
      * @see [SessionControlInteractor.reportSessionMetrics]
      */
-    fun handleReportSessionMetrics(state: HomeFragmentState)
+    fun handleReportSessionMetrics(state: AppState)
 }
 
 @Suppress("TooManyFunctions", "LargeClass")
@@ -215,13 +217,14 @@ class DefaultSessionControlController(
     private val settings: Settings,
     private val engine: Engine,
     private val metrics: MetricController,
+    private val messageController: MessageController,
     private val store: BrowserStore,
     private val tabCollectionStorage: TabCollectionStorage,
     private val addTabUseCase: TabsUseCases.AddNewTabUseCase,
     private val restoreUseCase: TabsUseCases.RestoreUseCase,
     private val reloadUrlUseCase: SessionUseCases.ReloadUrlUseCase,
     private val selectTabUseCase: TabsUseCases.SelectTabUseCase,
-    private val fragmentStore: HomeFragmentStore,
+    private val appStore: AppStore,
     private val navController: NavController,
     private val viewLifecycleScope: CoroutineScope,
     private val hideOnboarding: () -> Unit,
@@ -231,7 +234,7 @@ class DefaultSessionControlController(
 ) : SessionControlController {
 
     override fun handleCollectionAddTabTapped(collection: TabCollection) {
-        metrics.track(Event.CollectionAddTabPressed)
+        Collections.addTabButton.record(NoExtras())
         showCollectionCreationFragment(
             step = SaveCollectionStep.SelectTabs,
             selectedTabCollectionId = collection.id
@@ -263,7 +266,7 @@ class DefaultSessionControlController(
             }
         )
 
-        metrics.track(Event.CollectionTabRestored)
+        Collections.tabRestored.record(NoExtras())
     }
 
     override fun handleCollectionOpenTabsTapped(collection: TabCollection) {
@@ -277,7 +280,7 @@ class DefaultSessionControlController(
         )
 
         showTabTray()
-        metrics.track(Event.CollectionAllTabsRestored)
+        Collections.allTabsRestored.record(NoExtras())
     }
 
     override fun handleCollectionRemoveTab(
@@ -285,7 +288,7 @@ class DefaultSessionControlController(
         tab: ComponentTab,
         wasSwiped: Boolean
     ) {
-        metrics.track(Event.CollectionTabRemoved)
+        Collections.tabRemoved.record(NoExtras())
 
         if (collection.tabs.size == 1) {
             removeCollectionWithUndo(collection)
@@ -302,7 +305,7 @@ class DefaultSessionControlController(
             collection.title,
             collection.tabs.map { ShareData(url = it.url, title = it.title) }
         )
-        metrics.track(Event.CollectionShared)
+        Collections.shared.record(NoExtras())
     }
 
     override fun handleDeleteCollectionTapped(collection: TabCollection) {
@@ -390,7 +393,7 @@ class DefaultSessionControlController(
             step = SaveCollectionStep.RenameCollection,
             selectedTabCollectionId = collection.id
         )
-        metrics.track(Event.CollectionRenamePressed)
+        Collections.renameButton.record(NoExtras())
     }
 
     override fun handleSelectTopSite(topSite: TopSite, position: Int) {
@@ -527,11 +530,7 @@ class DefaultSessionControlController(
     }
 
     override fun handleToggleCollectionExpanded(collection: TabCollection, expand: Boolean) {
-        fragmentStore.dispatch(HomeFragmentAction.CollectionExpanded(collection, expand))
-    }
-
-    override fun handleCloseTip(tip: Tip) {
-        fragmentStore.dispatch(HomeFragmentAction.RemoveTip(tip))
+        appStore.dispatch(AppAction.CollectionExpanded(collection, expand))
     }
 
     private fun showTabTrayCollectionCreation() {
@@ -571,7 +570,7 @@ class DefaultSessionControlController(
 
     override fun handleRemoveCollectionsPlaceholder() {
         settings.showCollectionsPlaceholderOnHome = false
-        fragmentStore.dispatch(HomeFragmentAction.RemoveCollectionsPlaceholder)
+        appStore.dispatch(AppAction.RemoveCollectionsPlaceholder)
     }
 
     private fun showShareFragment(shareSubject: String, data: List<ShareData>) {
@@ -616,14 +615,16 @@ class DefaultSessionControlController(
         navController.nav(R.id.homeFragment, directions)
     }
 
-    override fun handleSetDefaultBrowser() {
-        settings.userDismissedExperimentCard = true
-        activity.openSetDefaultBrowserOption()
+    override fun handleMessageClicked(message: Message) {
+        messageController.onMessagePressed(message)
     }
 
-    override fun handleCloseExperimentCard() {
-        settings.userDismissedExperimentCard = true
-        fragmentStore.dispatch(HomeFragmentAction.RemoveSetDefaultBrowserCard)
+    override fun handleMessageClosed(message: Message) {
+        messageController.onMessageDismissed(message)
+    }
+
+    override fun handleMessageDisplayed(message: Message) {
+        messageController.onMessageDisplayed(message)
     }
 
     override fun handlePrivateModeButtonClicked(
@@ -635,8 +636,8 @@ class DefaultSessionControlController(
         }
 
         if (userHasBeenOnboarded) {
-            fragmentStore.dispatch(
-                HomeFragmentAction.ModeChange(Mode.fromBrowsingMode(newMode))
+            appStore.dispatch(
+                AppAction.ModeChange(Mode.fromBrowsingMode(newMode))
             )
 
             if (navController.currentDestination?.id == R.id.searchDialogFragment) {
@@ -649,11 +650,14 @@ class DefaultSessionControlController(
         }
     }
 
-    override fun handleReportSessionMetrics(state: HomeFragmentState) {
+    override fun handleReportSessionMetrics(state: AppState) {
         with(metrics) {
             track(
-                if (state.recentTabs.isEmpty()) Event.RecentTabsSectionIsNotVisible
-                else Event.RecentTabsSectionIsVisible
+                if (state.recentTabs.isEmpty()) {
+                    Event.RecentTabsSectionIsNotVisible
+                } else {
+                    Event.RecentTabsSectionIsVisible
+                }
             )
 
             track(Event.RecentBookmarkCount(state.recentBookmarks.size))

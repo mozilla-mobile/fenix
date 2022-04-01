@@ -35,12 +35,14 @@ import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.concept.storage.BookmarkNodeType
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.support.base.feature.UserInteractionHandler
+import mozilla.telemetry.glean.private.NoExtras
+import org.mozilla.fenix.FeatureFlags
+import org.mozilla.fenix.GleanMetrics.BookmarksManagement
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.NavHostActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.StoreProvider
-import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.databinding.FragmentBookmarkBinding
 import org.mozilla.fenix.ext.bookmarkStorage
 import org.mozilla.fenix.ext.components
@@ -178,6 +180,10 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
                 if (mode.showMenu) {
                     inflater.inflate(R.menu.bookmarks_menu, menu)
                 }
+
+                if (!FeatureFlags.historyImprovementFeatures) {
+                    menu.findItem(R.id.bookmark_search)?.isVisible = false
+                }
             }
             is BookmarkFragmentState.Mode.Selecting -> {
                 if (mode.selectedItems.any { it.type != BookmarkNodeType.ITEM }) {
@@ -196,6 +202,10 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
+            R.id.bookmark_search -> {
+                bookmarkInteractor.onSearch()
+                true
+            }
             R.id.close_bookmarks -> {
                 invokePendingDeletion()
                 close()
@@ -212,14 +222,14 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
                 openItemsInNewTab { node -> node.url }
 
                 showTabTray()
-                metrics?.track(Event.OpenedBookmarksInNewTabs)
+                BookmarksManagement.openInNewTabs.record(NoExtras())
                 true
             }
             R.id.open_bookmarks_in_private_tabs_multi_select -> {
                 openItemsInNewTab(private = true) { node -> node.url }
 
                 showTabTray()
-                metrics?.track(Event.OpenedBookmarksInPrivateTabs)
+                BookmarksManagement.openInPrivateTabs.record(NoExtras())
                 true
             }
             R.id.share_bookmark_multi_select -> {
@@ -295,7 +305,7 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
         }
     }
 
-    private fun deleteMulti(selected: Set<BookmarkNode>, eventType: Event = Event.RemoveBookmarks) {
+    private fun deleteMulti(selected: Set<BookmarkNode>, eventType: BookmarkRemoveType = BookmarkRemoveType.MULTIPLE) {
         selected.iterator().forEach {
             if (it.type == BookmarkNodeType.FOLDER) {
                 showRemoveFolderDialog(selected)
@@ -307,18 +317,17 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
         pendingBookmarkDeletionJob = getDeleteOperation(eventType)
 
         val message = when (eventType) {
-            is Event.RemoveBookmarks -> {
+            BookmarkRemoveType.MULTIPLE -> {
                 getRemoveBookmarksSnackBarMessage(selected, containsFolders = false)
             }
-            is Event.RemoveBookmarkFolder,
-            is Event.RemoveBookmark -> {
+            BookmarkRemoveType.FOLDER,
+            BookmarkRemoveType.SINGLE -> {
                 val bookmarkNode = selected.first()
                 getString(
                     R.string.bookmark_deletion_snackbar_message,
                     bookmarkNode.url?.toShortUrl(requireContext().components.publicSuffixList) ?: bookmarkNode.title
                 )
             }
-            else -> throw IllegalStateException("Illegal event type in onDeleteSome")
         }
 
         viewLifecycleOwner.lifecycleScope.allowUndo(
@@ -375,7 +384,7 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
                 }
                 setPositiveButton(R.string.delete_browsing_data_prompt_allow) { dialog: DialogInterface, _ ->
                     updatePendingBookmarksToDelete(selected)
-                    pendingBookmarkDeletionJob = getDeleteOperation(Event.RemoveBookmarkFolder)
+                    pendingBookmarkDeletionJob = getDeleteOperation(BookmarkRemoveType.FOLDER)
                     dialog.dismiss()
                     val snackbarMessage = getRemoveBookmarksSnackBarMessage(selected, containsFolders = true)
                     // Use fragment's lifecycle; the view may be gone by the time dialog is interacted with.
@@ -386,7 +395,7 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
                         {
                             undoPendingDeletion(selected)
                         },
-                        operation = getDeleteOperation(Event.RemoveBookmarkFolder)
+                        operation = getDeleteOperation(BookmarkRemoveType.FOLDER)
                     )
                 }
                 create()
@@ -407,12 +416,18 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
         refreshBookmarks()
     }
 
-    private fun getDeleteOperation(event: Event): (suspend () -> Unit) {
+    private fun getDeleteOperation(event: BookmarkRemoveType): (suspend () -> Unit) {
         return {
             deleteSelectedBookmarks(pendingBookmarksToDelete)
             pendingBookmarkDeletionJob = null
-            // Since this runs in a coroutine, we can't depend upon the fragment still being attached
-            metrics?.track(event)
+            when (event) {
+                BookmarkRemoveType.FOLDER ->
+                    BookmarksManagement.folderRemove.record(NoExtras())
+                BookmarkRemoveType.MULTIPLE ->
+                    BookmarksManagement.multiRemoved.record(NoExtras())
+                BookmarkRemoveType.SINGLE ->
+                    BookmarksManagement.removed.record(NoExtras())
+            }
             refreshBookmarks()
         }
     }

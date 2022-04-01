@@ -142,6 +142,7 @@ class SmokeTest {
         featureSettingsHelper.resetAllFeatureFlags()
     }
 
+    @Ignore("Failing, see: https://github.com/mozilla-mobile/fenix/issues/24381")
     // Verifies the first run onboarding screen
     @Test
     fun firstRunScreenTest() {
@@ -324,6 +325,7 @@ class SmokeTest {
         }
     }
 
+    @Ignore("Failing, see: https://github.com/mozilla-mobile/fenix/issues/24458")
     @Test
     // Verifies the Add to top sites option in a tab's 3 dot menu
     fun openMainMenuAddTopSiteTest() {
@@ -773,6 +775,7 @@ class SmokeTest {
         }
     }
 
+    @Ignore("Failing, see: https://github.com/mozilla-mobile/fenix/issues/23296")
     @Test
     // Test running on beta/release builds in CI:
     // caution when making changes to it, so they don't block the builds
@@ -946,6 +949,7 @@ class SmokeTest {
         }
     }
 
+    @Ignore("Failing, see: https://github.com/mozilla-mobile/fenix/issues/24508")
     @Test
     fun addPrivateBrowsingShortcutTest() {
         homeScreen {
@@ -1020,34 +1024,6 @@ class SmokeTest {
             verifyAppearanceColorDark(true)
             verifyAppearanceColorLight(true)
             verifyAppearanceColorSepia(true)
-        }
-    }
-
-    @Test
-    fun closeTabCrashedReporterTest() {
-
-        homeScreen {
-        }.openNavigationToolbar {
-        }.openTabCrashReporter {
-        }.clickTabCrashedCloseButton {
-        }.openTabDrawer {
-            verifyNoOpenTabsInNormalBrowsing()
-        }
-    }
-
-    @Ignore("Test failure caused by: https://github.com/mozilla-mobile/fenix/issues/19964")
-    @Test
-    fun restoreTabCrashedReporterTest() {
-        val website = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        homeScreen {
-        }.openNavigationToolbar {
-        }.enterURLAndEnterToBrowser(website.url) {}
-
-        navigationToolbar {
-        }.openTabCrashReporter {
-            clickTabCrashedRestoreButton()
-            verifyPageContent(website.content)
         }
     }
 

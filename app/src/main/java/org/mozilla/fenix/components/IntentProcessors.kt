@@ -17,8 +17,6 @@ import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.feature.tabs.CustomTabsUseCases
 import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.service.digitalassetlinks.RelationChecker
-import mozilla.components.support.migration.MigrationIntentProcessor
-import mozilla.components.support.migration.state.MigrationStore
 import org.mozilla.fenix.customtabs.FennecWebAppIntentProcessor
 import org.mozilla.fenix.home.intent.FennecBookmarkShortcutsIntentProcessor
 import org.mozilla.fenix.intent.ExternalDeepLinkIntentProcessor
@@ -37,21 +35,20 @@ class IntentProcessors(
     private val searchUseCases: SearchUseCases,
     private val relationChecker: RelationChecker,
     private val customTabsStore: CustomTabsServiceStore,
-    private val migrationStore: MigrationStore,
     private val manifestStorage: ManifestStorage
 ) {
     /**
      * Provides intent processing functionality for ACTION_VIEW and ACTION_SEND intents.
      */
     val intentProcessor by lazyMonitored {
-        TabIntentProcessor(tabsUseCases, sessionUseCases.loadUrl, searchUseCases.newTabSearch, isPrivate = false)
+        TabIntentProcessor(tabsUseCases, searchUseCases.newTabSearch, isPrivate = false)
     }
 
     /**
      * Provides intent processing functionality for ACTION_VIEW and ACTION_SEND intents in private tabs.
      */
     val privateIntentProcessor by lazyMonitored {
-        TabIntentProcessor(tabsUseCases, sessionUseCases.loadUrl, searchUseCases.newTabSearch, isPrivate = true)
+        TabIntentProcessor(tabsUseCases, searchUseCases.newTabSearch, isPrivate = true)
     }
 
     val customTabIntentProcessor by lazyMonitored {
@@ -81,9 +78,5 @@ class IntentProcessors(
 
     val fennecPageShortcutIntentProcessor by lazyMonitored {
         FennecBookmarkShortcutsIntentProcessor(tabsUseCases.addTab)
-    }
-
-    val migrationIntentProcessor by lazyMonitored {
-        MigrationIntentProcessor(migrationStore)
     }
 }

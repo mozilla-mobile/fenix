@@ -5,38 +5,40 @@
 package org.mozilla.fenix.library.history
 
 import androidx.annotation.VisibleForTesting
-import androidx.paging.ItemKeyedDataSource
+import androidx.paging.PagingSource
+import androidx.paging.PagingState
 import org.mozilla.fenix.components.history.HistoryDB
 import org.mozilla.fenix.components.history.PagedHistoryProvider
 
+/**
+ * PagingSource of History items, used in History Screen. It is the data source for the
+ * Flow<PagingData>, that provides HistoryAdapter with items to display.
+ */
 class HistoryDataSource(
     private val historyProvider: PagedHistoryProvider
-) : ItemKeyedDataSource<Int, History>() {
+) : PagingSource<Int, History>() {
 
-    // Because the pagination is not based off of the key
-    // we want to start at 1, not 0 to be able to send the correct offset
-    // to the `historyProvider.getHistory` call.
-    override fun getKey(item: History): Int = item.position + 1
+    // The refresh key is set to null so that it will always reload the entire list for any data
+    // updates such as pull to refresh, and return the user to the start of the list.
+    override fun getRefreshKey(state: PagingState<Int, History>): Int? = null
 
-    override fun loadInitial(
-        params: LoadInitialParams<Int>,
-        callback: LoadInitialCallback<History>
-    ) {
-        historyProvider.getHistory(INITIAL_OFFSET, params.requestedLoadSize) { history ->
-            callback.onResult(history.positionWithOffset(INITIAL_OFFSET))
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, History> {
+        // Get the offset of the last loaded page or default to 0 when it is null on the initial
+        // load or a refresh.
+        val offset = params.key ?: 0
+        val historyItems = historyProvider.getHistory(offset, params.loadSize).run {
+            positionWithOffset(offset)
         }
-    }
-
-    override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<History>) {
-        historyProvider.getHistory(params.key, params.requestedLoadSize) { history ->
-            callback.onResult(history.positionWithOffset(params.key))
+        val nextOffset = if (historyItems.isEmpty()) {
+            null
+        } else {
+            historyItems.last().position + 1
         }
-    }
-
-    override fun loadBefore(params: LoadParams<Int>, callback: LoadCallback<History>) { /* noop */ }
-
-    companion object {
-        internal const val INITIAL_OFFSET = 0
+        return LoadResult.Page(
+            data = historyItems,
+            prevKey = null, // Only paging forward.
+            nextKey = nextOffset
+        )
     }
 }
 

@@ -7,6 +7,7 @@ package org.mozilla.fenix.components
 import android.app.Application
 import android.content.Context
 import android.content.Intent
+import android.os.StrictMode
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.net.toUri
@@ -18,7 +19,6 @@ import mozilla.components.feature.addons.update.DefaultAddonUpdater
 import mozilla.components.feature.autofill.AutofillConfiguration
 import mozilla.components.lib.publicsuffixlist.PublicSuffixList
 import mozilla.components.support.base.worker.Frequency
-import mozilla.components.support.migration.state.MigrationStore
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.HomeActivity
@@ -26,8 +26,17 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.autofill.AutofillConfirmActivity
 import org.mozilla.fenix.autofill.AutofillSearchActivity
 import org.mozilla.fenix.autofill.AutofillUnlockActivity
+import org.mozilla.fenix.components.appstate.AppState
+import org.mozilla.fenix.datastore.pocketStoriesSelectedCategoriesDataStore
+import org.mozilla.fenix.ext.asRecentTabs
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.filterState
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.gleanplumb.state.MessagingMiddleware
+import org.mozilla.fenix.ext.sort
+import org.mozilla.fenix.home.PocketUpdatesMiddleware
+import org.mozilla.fenix.home.blocklist.BlocklistHandler
+import org.mozilla.fenix.home.blocklist.BlocklistMiddleware
 import org.mozilla.fenix.perf.AppStartReasonProvider
 import org.mozilla.fenix.perf.StartupActivityLog
 import org.mozilla.fenix.perf.StartupStateProvider
@@ -35,8 +44,8 @@ import org.mozilla.fenix.perf.StrictModeManager
 import org.mozilla.fenix.perf.lazyMonitored
 import org.mozilla.fenix.utils.ClipboardHandler
 import org.mozilla.fenix.utils.Settings
-import org.mozilla.fenix.wallpapers.WallpaperFileManager
 import org.mozilla.fenix.wallpapers.WallpaperDownloader
+import org.mozilla.fenix.wallpapers.WallpaperFileManager
 import org.mozilla.fenix.wallpapers.WallpaperManager
 import org.mozilla.fenix.wifi.WifiConnectionMonitor
 import java.util.concurrent.TimeUnit
@@ -89,7 +98,6 @@ class Components(private val context: Context) {
             useCases.searchUseCases,
             core.relationChecker,
             core.customTabsStore,
-            migrationStore,
             core.webAppManifestStorage
         )
     }
@@ -144,23 +152,23 @@ class Components(private val context: Context) {
         AddonManager(core.store, core.engine, addonCollectionProvider, addonUpdater)
     }
 
-    val wallpaperManager by lazyMonitored {
-        WallpaperManager(
-            settings,
-            WallpaperDownloader(context, core.client),
-            WallpaperFileManager(context.filesDir),
-            analytics.crashReporter,
-        )
-    }
-
     val analytics by lazyMonitored { Analytics(context) }
     val publicSuffixList by lazyMonitored { PublicSuffixList(context) }
     val clipboardHandler by lazyMonitored { ClipboardHandler(context) }
-    val migrationStore by lazyMonitored { MigrationStore() }
     val performance by lazyMonitored { PerformanceComponent() }
     val push by lazyMonitored { Push(context, analytics.crashReporter) }
     val wifiConnectionMonitor by lazyMonitored { WifiConnectionMonitor(context as Application) }
     val strictMode by lazyMonitored { StrictModeManager(Config, this) }
+
+    val wallpaperManager by lazyMonitored {
+        strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
+            WallpaperManager(
+                settings,
+                WallpaperDownloader(context, core.client),
+                WallpaperFileManager(context.filesDir)
+            )
+        }
+    }
 
     val settings by lazyMonitored { Settings(context) }
 
@@ -186,7 +194,37 @@ class Components(private val context: Context) {
     val appStartReasonProvider by lazyMonitored { AppStartReasonProvider() }
     val startupActivityLog by lazyMonitored { StartupActivityLog() }
     val startupStateProvider by lazyMonitored { StartupStateProvider(startupActivityLog, appStartReasonProvider) }
-    val appStore by lazyMonitored { AppStore() }
+
+    val appStore by lazyMonitored {
+        val blocklistHandler = BlocklistHandler(settings)
+
+        AppStore(
+            initialState = AppState(
+                collections = core.tabCollectionStorage.cachedTabCollections,
+                expandedCollections = emptySet(),
+                topSites = core.topSitesStorage.cachedTopSites.sort(),
+                recentBookmarks = emptyList(),
+                showCollectionPlaceholder = settings.showCollectionsPlaceholderOnHome,
+                // Provide an initial state for recent tabs to prevent re-rendering on the home screen.
+                //  This will otherwise cause a visual jump as the section gets rendered from no state
+                //  to some state.
+                recentTabs = if (settings.showRecentTabsFeature) {
+                    core.store.state.asRecentTabs()
+                } else {
+                    emptyList()
+                },
+                recentHistory = emptyList()
+            ).run { filterState(blocklistHandler) },
+            middlewares = listOf(
+                BlocklistMiddleware(blocklistHandler),
+                PocketUpdatesMiddleware(
+                    core.pocketStoriesService,
+                    context.pocketStoriesSelectedCategoriesDataStore
+                ),
+                MessagingMiddleware(messagingStorage = analytics.messagingStorage)
+            )
+        )
+    }
 }
 
 /**
