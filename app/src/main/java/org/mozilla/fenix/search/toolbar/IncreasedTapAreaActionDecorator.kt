@@ -5,6 +5,7 @@
 package org.mozilla.fenix.search.toolbar
 
 import android.view.View
+import androidx.annotation.VisibleForTesting
 import mozilla.components.concept.toolbar.Toolbar
 import org.mozilla.fenix.ext.increaseTapArea
 
@@ -21,6 +22,7 @@ class IncreasedTapAreaActionDecorator(
     }
 
     companion object {
-        private const val TAP_INCREASE_DPS = 8
+        @VisibleForTesting
+        const val TAP_INCREASE_DPS = 8
     }
 }
