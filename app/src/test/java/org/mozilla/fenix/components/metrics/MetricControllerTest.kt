@@ -23,15 +23,21 @@ import mozilla.components.support.base.facts.Fact
 import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.test.robolectric.testContext
 import mozilla.components.support.webextensions.facts.WebExtensionFacts
+import mozilla.telemetry.glean.testing.GleanTestRule
 import org.junit.Assert.assertEquals
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mozilla.fenix.GleanMetrics.LoginDialog
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.utils.Settings
 
 @RunWith(FenixRobolectricTestRunner::class)
 class MetricControllerTest {
+
+    @get:Rule
+    val gleanTestRule = GleanTestRule(testContext)
 
     @MockK(relaxUnitFun = true) private lateinit var dataService1: MetricsService
     @MockK(relaxUnitFun = true) private lateinit var dataService2: MetricsService
@@ -265,62 +271,6 @@ class MetricControllerTest {
     }
 
     @Test
-    fun `tracking bookmark events should be sent to enabled service`() {
-        val controller = ReleaseMetricController(
-            listOf(marketingService1),
-            isDataTelemetryEnabled = { true },
-            isMarketingDataTelemetryEnabled = { true },
-            mockk()
-        )
-        every { marketingService1.shouldTrack(Event.AddBookmark) } returns true
-        every { marketingService1.shouldTrack(Event.RemoveBookmark) } returns true
-        every { marketingService1.shouldTrack(Event.OpenedBookmark) } returns true
-        every { marketingService1.shouldTrack(Event.OpenedBookmarkInNewTab) } returns true
-        every { marketingService1.shouldTrack(Event.OpenedBookmarksInNewTabs) } returns true
-        every { marketingService1.shouldTrack(Event.OpenedBookmarkInPrivateTab) } returns true
-        every { marketingService1.shouldTrack(Event.OpenedBookmarksInPrivateTabs) } returns true
-        every { marketingService1.shouldTrack(Event.EditedBookmark) } returns true
-        every { marketingService1.shouldTrack(Event.MovedBookmark) } returns true
-        every { marketingService1.shouldTrack(Event.ShareBookmark) } returns true
-        every { marketingService1.shouldTrack(Event.CopyBookmark) } returns true
-        every { marketingService1.shouldTrack(Event.AddBookmarkFolder) } returns true
-        every { marketingService1.shouldTrack(Event.RemoveBookmarkFolder) } returns true
-        every { marketingService1.shouldTrack(Event.RemoveBookmarks) } returns true
-
-        controller.start(MetricServiceType.Marketing)
-
-        controller.track(Event.AddBookmark)
-        controller.track(Event.RemoveBookmark)
-        controller.track(Event.OpenedBookmark)
-        controller.track(Event.OpenedBookmarkInNewTab)
-        controller.track(Event.OpenedBookmarksInNewTabs)
-        controller.track(Event.OpenedBookmarkInPrivateTab)
-        controller.track(Event.OpenedBookmarksInPrivateTabs)
-        controller.track(Event.EditedBookmark)
-        controller.track(Event.MovedBookmark)
-        controller.track(Event.ShareBookmark)
-        controller.track(Event.CopyBookmark)
-        controller.track(Event.AddBookmarkFolder)
-        controller.track(Event.RemoveBookmarkFolder)
-        controller.track(Event.RemoveBookmarks)
-
-        verify { marketingService1.track(Event.AddBookmark) }
-        verify { marketingService1.track(Event.RemoveBookmark) }
-        verify { marketingService1.track(Event.OpenedBookmark) }
-        verify { marketingService1.track(Event.OpenedBookmarkInNewTab) }
-        verify { marketingService1.track(Event.OpenedBookmarksInNewTabs) }
-        verify { marketingService1.track(Event.OpenedBookmarkInPrivateTab) }
-        verify { marketingService1.track(Event.OpenedBookmarksInPrivateTabs) }
-        verify { marketingService1.track(Event.EditedBookmark) }
-        verify { marketingService1.track(Event.MovedBookmark) }
-        verify { marketingService1.track(Event.ShareBookmark) }
-        verify { marketingService1.track(Event.CopyBookmark) }
-        verify { marketingService1.track(Event.AddBookmarkFolder) }
-        verify { marketingService1.track(Event.RemoveBookmarkFolder) }
-        verify { marketingService1.track(Event.RemoveBookmarks) }
-    }
-
-    @Test
     fun `history events should be sent to enabled service`() {
         val controller = ReleaseMetricController(
             listOf(marketingService1),
@@ -511,10 +461,6 @@ class MetricControllerTest {
         val controller = ReleaseMetricController(emptyList(), { true }, { true }, mockk())
 
         val simpleMappings = listOf(
-            Triple(Component.FEATURE_PROMPTS, LoginDialogFacts.Items.DISPLAY, Event.LoginDialogPromptDisplayed),
-            Triple(Component.FEATURE_PROMPTS, LoginDialogFacts.Items.CANCEL, Event.LoginDialogPromptCancelled),
-            Triple(Component.FEATURE_PROMPTS, LoginDialogFacts.Items.NEVER_SAVE, Event.LoginDialogPromptNeverSave),
-            Triple(Component.FEATURE_PROMPTS, LoginDialogFacts.Items.SAVE, Event.LoginDialogPromptSave),
             // CreditCardAutofillDialogFacts.Items is already tested.
             Triple(Component.FEATURE_CUSTOMTABS, CustomTabsFacts.Items.CLOSE, Event.CustomTabsClosed),
             Triple(Component.FEATURE_CUSTOMTABS, CustomTabsFacts.Items.ACTION_BUTTON, Event.CustomTabsActionTapped),
@@ -533,6 +479,29 @@ class MetricControllerTest {
             val fact = Fact(component, Action.CANCEL, item)
             val message = "$expectedEvent $component $item"
             assertEquals(message, expectedEvent, controller.factToEvent(fact))
+        }
+    }
+
+    @Test
+    fun `WHEN processing a fact with FEATURE_PROMPTS component THEN the right metric is recorded with no extras`() {
+        val controller = ReleaseMetricController(emptyList(), { true }, { true }, mockk())
+        val action = mockk<Action>(relaxed = true)
+        val itemsToEvents = listOf(
+            LoginDialogFacts.Items.DISPLAY to LoginDialog.displayed,
+            LoginDialogFacts.Items.CANCEL to LoginDialog.cancelled,
+            LoginDialogFacts.Items.NEVER_SAVE to LoginDialog.neverSave,
+            LoginDialogFacts.Items.SAVE to LoginDialog.saved,
+        )
+
+        itemsToEvents.forEach { (item, event) ->
+            val fact = Fact(Component.FEATURE_PROMPTS, action, item)
+            controller.run {
+                fact.process()
+            }
+
+            assertEquals(true, event.testHasValue())
+            assertEquals(1, event.testGetValue().size)
+            assertEquals(null, event.testGetValue().single().extra)
         }
     }
 

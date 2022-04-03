@@ -216,7 +216,12 @@ class SessionControlAdapter(
         when (viewType) {
             CustomizeHomeButtonViewHolder.LAYOUT_ID -> return CustomizeHomeButtonViewHolder(
                 composeView = ComposeView(parent.context),
-                viewLifecycleOwner,
+                viewLifecycleOwner = viewLifecycleOwner,
+                interactor = interactor
+            )
+            PrivateBrowsingDescriptionViewHolder.LAYOUT_ID -> return PrivateBrowsingDescriptionViewHolder(
+                composeView = ComposeView(parent.context),
+                viewLifecycleOwner = viewLifecycleOwner,
                 interactor = interactor
             )
             PocketStoriesViewHolder.LAYOUT_ID -> return PocketStoriesViewHolder(
@@ -236,20 +241,39 @@ class SessionControlAdapter(
             )
             RecentBookmarksViewHolder.LAYOUT_ID -> return RecentBookmarksViewHolder(
                 composeView = ComposeView(parent.context),
-                viewLifecycleOwner,
+                viewLifecycleOwner = viewLifecycleOwner,
                 interactor = interactor,
                 metrics = components.analytics.metrics
             )
             RecentTabViewHolder.LAYOUT_ID -> return RecentTabViewHolder(
                 composeView = ComposeView(parent.context),
-                viewLifecycleOwner,
+                viewLifecycleOwner = viewLifecycleOwner,
                 interactor = interactor
             )
             RecentlyVisitedViewHolder.LAYOUT_ID -> return RecentlyVisitedViewHolder(
                 composeView = ComposeView(parent.context),
-                viewLifecycleOwner,
+                viewLifecycleOwner = viewLifecycleOwner,
                 interactor = interactor,
                 metrics = components.analytics.metrics
+            )
+            RecentVisitsHeaderViewHolder.LAYOUT_ID -> return RecentVisitsHeaderViewHolder(
+                composeView = ComposeView(parent.context),
+                viewLifecycleOwner = viewLifecycleOwner,
+                interactor = interactor
+            )
+            RecentBookmarksHeaderViewHolder.LAYOUT_ID -> return RecentBookmarksHeaderViewHolder(
+                composeView = ComposeView(parent.context),
+                viewLifecycleOwner = viewLifecycleOwner,
+                interactor = interactor
+            )
+            RecentTabsHeaderViewHolder.LAYOUT_ID -> return RecentTabsHeaderViewHolder(
+                composeView = ComposeView(parent.context),
+                viewLifecycleOwner = viewLifecycleOwner,
+                interactor = interactor
+            )
+            CollectionHeaderViewHolder.LAYOUT_ID -> return CollectionHeaderViewHolder(
+                composeView = ComposeView(parent.context),
+                viewLifecycleOwner = viewLifecycleOwner
             )
         }
 
@@ -257,10 +281,6 @@ class SessionControlAdapter(
         return when (viewType) {
             TopPlaceholderViewHolder.LAYOUT_ID -> TopPlaceholderViewHolder(view)
             TopSitePagerViewHolder.LAYOUT_ID -> TopSitePagerViewHolder(view, viewLifecycleOwner, interactor)
-            PrivateBrowsingDescriptionViewHolder.LAYOUT_ID -> PrivateBrowsingDescriptionViewHolder(
-                view,
-                interactor
-            )
             NoCollectionsMessageViewHolder.LAYOUT_ID ->
                 NoCollectionsMessageViewHolder(
                     view,
@@ -268,7 +288,6 @@ class SessionControlAdapter(
                     components.core.store,
                     interactor
                 )
-            CollectionHeaderViewHolder.LAYOUT_ID -> CollectionHeaderViewHolder(view)
             CollectionViewHolder.LAYOUT_ID -> CollectionViewHolder(view, interactor)
             TabInCollectionViewHolder.LAYOUT_ID -> TabInCollectionViewHolder(
                 view as WidgetSiteItemView,
@@ -290,12 +309,6 @@ class SessionControlAdapter(
                 view
             )
             MessageCardViewHolder.LAYOUT_ID -> MessageCardViewHolder(view, interactor)
-            RecentTabsHeaderViewHolder.LAYOUT_ID -> RecentTabsHeaderViewHolder(view, interactor)
-            RecentBookmarksHeaderViewHolder.LAYOUT_ID -> RecentBookmarksHeaderViewHolder(view, interactor)
-            RecentVisitsHeaderViewHolder.LAYOUT_ID -> RecentVisitsHeaderViewHolder(
-                view,
-                interactor
-            )
             BottomSpacerViewHolder.LAYOUT_ID -> BottomSpacerViewHolder(view)
             else -> throw IllegalStateException()
         }
@@ -303,10 +316,15 @@ class SessionControlAdapter(
 
     override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
         when (holder) {
+            is CollectionHeaderViewHolder,
             is CustomizeHomeButtonViewHolder,
             is RecentlyVisitedViewHolder,
+            is RecentVisitsHeaderViewHolder,
             is RecentBookmarksViewHolder,
+            is RecentBookmarksHeaderViewHolder,
             is RecentTabViewHolder,
+            is RecentTabsHeaderViewHolder,
+            is PrivateBrowsingDescriptionViewHolder,
             is PocketCategoriesViewHolder,
             is PocketRecommendationsHeaderViewHolder,
             is PocketStoriesViewHolder -> {
