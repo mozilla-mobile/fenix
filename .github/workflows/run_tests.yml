@@ -1,9 +1,35 @@
-name: Android build PR
-on: [pull_request]
+name: Run tests
+
+on:
+  push:
+    branches:
+    - '**'
+  pull_request:
+    branches:
+    - main
+
 jobs:
+  check_duplicate_runs:
+    name: Check for duplicate runs
+    continue-on-error: true
+    runs-on: ubuntu-20.04
+    outputs:
+      should_skip: ${{ steps.skip_check.outputs.should_skip }}
+    steps:
+      - id: skip_check
+        uses: fkirc/skip-duplicate-actions@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          concurrent_skipping: same_content_newer
+          cancel_others: true
+          skip_after_successful_duplicate: false
+          paths_ignore: '["**/*.md"]'
+          do_not_skip: '["push"]'
+
   run-build:
     runs-on: ubuntu-20.04
-    if: github.event.pull_request.head.repo.full_name != github.repository && github.actor != 'MickeyMoz'
+    needs: check_duplicate_runs
+    if: ${{ needs.check_duplicate_runs.outputs.should_skip != 'true' && github.actor != 'MickeyMoz' }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -14,14 +40,15 @@ jobs:
       - name: "Clean & Assemble Debug"
         uses: eskatos/gradle-command-action@v1
         with:
-          wrapper-cache-enabled: true
+          distributions-cache-enabled: true
           dependencies-cache-enabled: true
           configuration-cache-enabled: true
           arguments: clean app:assembleDebug
 
   run-testDebugUnitTest:
     runs-on: ubuntu-20.04
-    if: github.event.pull_request.head.repo.full_name != github.repository && github.actor != 'MickeyMoz'
+    needs: check_duplicate_runs
+    if: ${{ needs.check_duplicate_runs.outputs.should_skip != 'true' && github.actor != 'MickeyMoz' }}
 
     steps:
       - name: Checkout repository
@@ -33,14 +60,15 @@ jobs:
       - name: "Test Debug Unit Tests"
         uses: eskatos/gradle-command-action@v1
         with:
-          wrapper-cache-enabled: true
+          distributions-cache-enabled: true
           dependencies-cache-enabled: true
           configuration-cache-enabled: true
           arguments: testDebugUnitTest
 
   run-detekt:
     runs-on: ubuntu-20.04
-    if: github.event.pull_request.head.repo.full_name != github.repository && github.actor != 'MickeyMoz'
+    needs: check_duplicate_runs
+    if: ${{ needs.check_duplicate_runs.outputs.should_skip != 'true' && github.actor != 'MickeyMoz' }}
 
     steps:
       - name: Checkout repository
@@ -52,7 +80,7 @@ jobs:
       - name: "Detekt"
         uses: eskatos/gradle-command-action@v1
         with:
-          wrapper-cache-enabled: true
+          distributions-cache-enabled: true
           dependencies-cache-enabled: true
           configuration-cache-enabled: true
           arguments: detekt
@@ -64,7 +92,8 @@ jobs:
 
   run-ktlint:
     runs-on: ubuntu-20.04
-    if: github.event.pull_request.head.repo.full_name != github.repository && github.actor != 'MickeyMoz'
+    needs: check_duplicate_runs
+    if: ${{ needs.check_duplicate_runs.outputs.should_skip != 'true' && github.actor != 'MickeyMoz' }}
 
     steps:
       - name: Checkout repository
@@ -76,14 +105,15 @@ jobs:
       - name: "Ktlint"
         uses: eskatos/gradle-command-action@v1
         with:
-          wrapper-cache-enabled: true
+          distributions-cache-enabled: true
           dependencies-cache-enabled: true
           configuration-cache-enabled: true
           arguments: ktlint
 
   run-lintDebug:
     runs-on: ubuntu-20.04
-    if: github.event.pull_request.head.repo.full_name != github.repository && github.actor != 'MickeyMoz'
+    needs: check_duplicate_runs
+    if: ${{ needs.check_duplicate_runs.outputs.should_skip != 'true' && github.actor != 'MickeyMoz' }}
 
     steps:
       - name: Checkout repository
@@ -95,7 +125,7 @@ jobs:
       - name: "Lint Debug"
         uses: eskatos/gradle-command-action@v1
         with:
-          wrapper-cache-enabled: true
+          distributions-cache-enabled: true
           dependencies-cache-enabled: true
           configuration-cache-enabled: true
           arguments: lintDebug
