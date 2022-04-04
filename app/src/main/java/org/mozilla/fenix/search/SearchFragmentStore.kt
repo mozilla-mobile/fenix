@@ -15,7 +15,7 @@ import mozilla.components.lib.state.Store
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.Components
-import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.components.metrics.MetricsUtils
 
 /**
  * The [Store] for holding the [SearchFragmentState] and applying [SearchFragmentAction]s.
@@ -80,16 +80,25 @@ data class SearchFragmentState(
     val showSyncedTabsSuggestions: Boolean,
     val tabId: String?,
     val pastedText: String? = null,
-    val searchAccessPoint: Event.PerformedSearch.SearchAccessPoint?,
+    val searchAccessPoint: MetricsUtils.SearchAccessPoint?,
     val clipboardHasUrl: Boolean = false
 ) : State
 
+/**
+ * Method used to create initial SearchFragment state
+ *
+ * @param activity Activity context of the state.
+ * @param components Reference to all components.
+ * @param tabId Id of the current tab.
+ * @param pastedText Text pasted from the toolbar menu.
+ * @param searchAccessPoint Search access point used to collect data about the search.
+ */
 fun createInitialSearchFragmentState(
     activity: HomeActivity,
     components: Components,
     tabId: String?,
     pastedText: String?,
-    searchAccessPoint: Event.PerformedSearch.SearchAccessPoint
+    searchAccessPoint: MetricsUtils.SearchAccessPoint
 ): SearchFragmentState {
     val settings = components.settings
     val tab = tabId?.let { components.core.store.state.findTab(it) }

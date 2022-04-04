@@ -18,7 +18,6 @@ import org.mozilla.fenix.GleanMetrics.ContextMenu
 import org.mozilla.fenix.GleanMetrics.ContextualMenu
 import org.mozilla.fenix.GleanMetrics.CreditCards
 import org.mozilla.fenix.GleanMetrics.CustomTab
-import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.ExperimentsDefaultBrowser
 import org.mozilla.fenix.GleanMetrics.HomeMenu
 import org.mozilla.fenix.GleanMetrics.HomeScreen
@@ -88,13 +87,6 @@ private class EventWrapper<T : Enum<T>>(
 // FIXME(#19967): Migrate to non-deprecated API.
 private val Event.wrapper: EventWrapper<*>?
     get() = when (this) {
-        is Event.PerformedSearch -> EventWrapper(
-            {
-                Metrics.searchCount[this.eventSource.countLabel].add(1)
-                Events.performedSearch.record(it)
-            },
-            { Events.performedSearchKeys.valueOf(it) }
-        )
         is Event.SearchWithAds -> EventWrapper<NoExtraKeys>(
             {
                 BrowserSearch.withAds[label].add(1)

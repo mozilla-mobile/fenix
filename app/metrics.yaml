@@ -100,6 +100,7 @@ events:
       A user performed a search
     extra_keys:
       source:
+        type: string
         description: |
           A string that tells us how the user performed the search. Possible
           values are:

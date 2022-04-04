@@ -61,7 +61,6 @@ import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.appstate.AppState
 import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.components.metrics.Event.PerformedSearch.EngineSource
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
@@ -560,8 +559,8 @@ class DefaultSessionControlControllerTest {
             url = SupportUtils.GOOGLE_URL,
             createdAt = 0
         )
-        val engineSource = EngineSource.Default(googleSearchEngine, false)
         val controller = spyk(createController())
+        assertFalse(Events.performedSearch.testHasValue())
 
         every { controller.getAvailableSearchEngines() } returns listOf(googleSearchEngine)
 
@@ -573,16 +572,14 @@ class DefaultSessionControlControllerTest {
             controller.handleSelectTopSite(topSite, position = 0)
 
             verify {
-                metrics.track(
-                    Event.PerformedSearch(
-                        Event.PerformedSearch.EventSource.TopSite(
-                            engineSource
-                        )
-                    )
-                )
                 metrics.track(Event.TopSiteOpenGoogle)
                 metrics.track(Event.TopSiteOpenDefault)
             }
+            assertTrue(Events.performedSearch.testHasValue())
+            assertEquals(
+                "default.topsite",
+                Events.performedSearch.testGetValue().last().extra?.get("source")
+            )
         } finally {
             unmockkStatic("mozilla.components.browser.state.state.SearchStateKt")
         }
@@ -596,8 +593,8 @@ class DefaultSessionControlControllerTest {
             url = "https://duckduckgo.com",
             createdAt = 0
         )
-        val engineSource = EngineSource.Shortcut(duckDuckGoSearchEngine, false)
         val controller = spyk(createController())
+        assertFalse(Events.performedSearch.testHasValue())
 
         every { controller.getAvailableSearchEngines() } returns listOf(googleSearchEngine, duckDuckGoSearchEngine)
 
@@ -609,16 +606,13 @@ class DefaultSessionControlControllerTest {
             controller.handleSelectTopSite(topSite, position = 0)
 
             verify {
-                metrics.track(
-                    Event.PerformedSearch(
-                        Event.PerformedSearch.EventSource.TopSite(
-                            engineSource
-                        )
-                    )
-                )
-
                 metrics.track(Event.TopSiteOpenPinned)
             }
+            assertTrue(Events.performedSearch.testHasValue())
+            assertEquals(
+                "shortcut.topsite",
+                Events.performedSearch.testGetValue().last().extra?.get("source")
+            )
         } finally {
             unmockkStatic("mozilla.components.browser.state.state.SearchStateKt")
         }
@@ -843,6 +837,7 @@ class DefaultSessionControlControllerTest {
 
     @Test
     fun handlePasteAndGo() {
+        assertFalse(Events.performedSearch.testHasValue())
         assertFalse(Events.enteredUrl.testHasValue())
 
         createController().handlePasteAndGo("text")
@@ -854,8 +849,12 @@ class DefaultSessionControlControllerTest {
                 from = BrowserDirection.FromHome,
                 engine = searchEngine
             )
-            metrics.track(any<Event.PerformedSearch>())
         }
+        assertTrue(Events.performedSearch.testHasValue())
+        assertEquals(
+            "default.action",
+            Events.performedSearch.testGetValue().last().extra?.get("source")
+        )
 
         createController().handlePasteAndGo("https://mozilla.org")
         verify {

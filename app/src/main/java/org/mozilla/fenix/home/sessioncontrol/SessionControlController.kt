@@ -421,16 +421,14 @@ class DefaultSessionControlController(
         }
 
         val availableEngines = getAvailableSearchEngines()
-        val searchAccessPoint = Event.PerformedSearch.SearchAccessPoint.TOPSITE
-        val event =
-            availableEngines.firstOrNull { engine ->
-                engine.resultUrls.firstOrNull { it.contains(topSite.url) } != null
-            }?.let { searchEngine ->
-                searchAccessPoint.let { sap ->
-                    MetricsUtils.createSearchEvent(searchEngine, store, sap)
-                }
+        val searchAccessPoint = MetricsUtils.SearchAccessPoint.TOPSITE
+        availableEngines.firstOrNull { engine ->
+            engine.resultUrls.firstOrNull { it.contains(topSite.url) } != null
+        }?.let { searchEngine ->
+            searchAccessPoint.let { sap ->
+                MetricsUtils.recordSearchEvent(searchEngine, store, sap)
             }
-        event?.let { activity.metrics.track(it) }
+        }
 
         val tabId = addTabUseCase.invoke(
             url = appendSearchAttributionToUrlIfNeeded(topSite.url),
@@ -596,15 +594,14 @@ class DefaultSessionControlController(
         if (clipboardText.isUrl() || searchEngine == null) {
             Events.enteredUrl.record(Events.EnteredUrlExtra(autocomplete = false))
         } else {
-            val searchAccessPoint = Event.PerformedSearch.SearchAccessPoint.ACTION
-            val event = searchAccessPoint.let { sap ->
-                MetricsUtils.createSearchEvent(
+            val searchAccessPoint = MetricsUtils.SearchAccessPoint.ACTION
+            searchAccessPoint.let { sap ->
+                MetricsUtils.recordSearchEvent(
                     searchEngine,
                     store,
                     sap
                 )
             }
-            event?.let { activity.metrics.track(it) }
         }
     }
 

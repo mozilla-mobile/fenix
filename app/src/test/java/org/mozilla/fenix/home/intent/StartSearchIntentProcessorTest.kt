@@ -13,6 +13,7 @@ import io.mockk.verify
 import mozilla.components.service.glean.testing.GleanTestRule
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -21,8 +22,7 @@ import org.mozilla.fenix.GleanMetrics.SearchWidget
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
-import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.components.metrics.MetricController
+import org.mozilla.fenix.components.metrics.MetricsUtils
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 
@@ -32,15 +32,14 @@ class StartSearchIntentProcessorTest {
     @get:Rule
     val gleanTestRule = GleanTestRule(testContext)
 
-    private val metrics: MetricController = mockk(relaxed = true)
     private val navController: NavController = mockk(relaxed = true)
     private val out: Intent = mockk(relaxed = true)
 
     @Test
     fun `do not process blank intents`() {
-        StartSearchIntentProcessor(metrics).process(Intent(), navController, out)
+        StartSearchIntentProcessor().process(Intent(), navController, out)
 
-        verify { metrics wasNot Called }
+        assertFalse(SearchWidget.newTabButton.testHasValue())
         verify { navController wasNot Called }
         verify { out wasNot Called }
     }
@@ -50,9 +49,9 @@ class StartSearchIntentProcessorTest {
         val intent = Intent().apply {
             removeExtra(HomeActivity.OPEN_TO_SEARCH)
         }
-        StartSearchIntentProcessor(metrics).process(intent, navController, out)
+        StartSearchIntentProcessor().process(intent, navController, out)
 
-        verify { metrics wasNot Called }
+        assertFalse(SearchWidget.newTabButton.testHasValue())
         verify { navController wasNot Called }
         verify { out wasNot Called }
     }
@@ -62,7 +61,7 @@ class StartSearchIntentProcessorTest {
         val intent = Intent().apply {
             putExtra(HomeActivity.OPEN_TO_SEARCH, StartSearchIntentProcessor.SEARCH_WIDGET)
         }
-        StartSearchIntentProcessor(metrics).process(intent, navController, out)
+        StartSearchIntentProcessor().process(intent, navController, out)
         val options = navOptions {
             popUpTo = R.id.homeFragment
         }
@@ -77,7 +76,7 @@ class StartSearchIntentProcessorTest {
                 null,
                 NavGraphDirections.actionGlobalSearchDialog(
                     sessionId = null,
-                    searchAccessPoint = Event.PerformedSearch.SearchAccessPoint.WIDGET
+                    searchAccessPoint = MetricsUtils.SearchAccessPoint.WIDGET
                 ),
                 options
             )

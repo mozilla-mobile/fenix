@@ -16,61 +16,59 @@ import mozilla.components.browser.state.search.SearchEngine
 import mozilla.components.browser.state.state.selectedOrDefaultSearchEngine
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.support.base.log.logger.Logger
-import org.mozilla.fenix.components.metrics.Event.PerformedSearch.SearchAccessPoint
+import org.mozilla.fenix.GleanMetrics.Events
+import org.mozilla.fenix.GleanMetrics.Metrics
 import java.io.IOException
 import java.security.NoSuchAlgorithmException
 import java.security.spec.InvalidKeySpecException
+import java.util.Locale
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.PBEKeySpec
 
 object MetricsUtils {
-    fun createSearchEvent(
+    /**
+     * Record a performed_search metric event
+     *
+     * @param engine [SearchEngine] that performed the search
+     * @param store The browser store
+     * @param searchAccessPoint Source of the search
+     */
+    fun recordSearchEvent(
         engine: SearchEngine,
         store: BrowserStore,
         searchAccessPoint: SearchAccessPoint
-    ): Event.PerformedSearch? {
-        val isShortcut = engine != store.state.search.selectedOrDefaultSearchEngine
-        val isCustom = engine.type == SearchEngine.Type.CUSTOM
-
-        val engineSource =
-            if (isShortcut) {
-                Event.PerformedSearch.EngineSource.Shortcut(engine, isCustom)
+    ) {
+        val countLabel =
+            if (engine.type == SearchEngine.Type.CUSTOM) {
+                "custom.${searchAccessPoint.label}"
             } else {
-                Event.PerformedSearch.EngineSource.Default(engine, isCustom)
+                "${engine.id.lowercase(Locale.getDefault())}.${searchAccessPoint.label}"
             }
 
-        return when (searchAccessPoint) {
-            SearchAccessPoint.SUGGESTION -> Event.PerformedSearch(
-                Event.PerformedSearch.EventSource.Suggestion(
-                    engineSource
-                )
-            )
-            SearchAccessPoint.ACTION -> Event.PerformedSearch(
-                Event.PerformedSearch.EventSource.Action(
-                    engineSource
-                )
-            )
-            SearchAccessPoint.WIDGET -> Event.PerformedSearch(
-                Event.PerformedSearch.EventSource.Widget(
-                    engineSource
-                )
-            )
-            SearchAccessPoint.SHORTCUT -> Event.PerformedSearch(
-                Event.PerformedSearch.EventSource.Shortcut(
-                    engineSource
-                )
-            )
-            SearchAccessPoint.TOPSITE -> Event.PerformedSearch(
-                Event.PerformedSearch.EventSource.TopSite(
-                    engineSource
-                )
-            )
-            SearchAccessPoint.NONE -> Event.PerformedSearch(
-                Event.PerformedSearch.EventSource.Other(
-                    engineSource
-                )
-            )
-        }
+        val engineType =
+            if (engine != store.state.search.selectedOrDefaultSearchEngine) {
+                "shortcut"
+            } else {
+                "default"
+            }
+        val sourceLabel = "$engineType.${searchAccessPoint.label}"
+
+        Metrics.searchCount[countLabel].add()
+        Events.performedSearch.record(Events.PerformedSearchExtra(sourceLabel))
+    }
+
+    /**
+     * Types of Search access points
+     *
+     * @param label SAP corresponding label
+     */
+    enum class SearchAccessPoint(val label: String) {
+        SUGGESTION("suggestion"),
+        ACTION("action"),
+        WIDGET("widget"),
+        SHORTCUT("shortcut"),
+        TOPSITE("topsite"),
+        NONE("other")
     }
 
     /**

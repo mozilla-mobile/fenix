@@ -12,17 +12,14 @@ import org.mozilla.fenix.GleanMetrics.SearchWidget
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
-import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.components.metrics.MetricController
+import org.mozilla.fenix.components.metrics.MetricsUtils
 import org.mozilla.fenix.ext.nav
 
 /**
  * When the search widget is tapped, Fenix should open to the search fragment.
  * Tapping the private browsing mode launcher icon should also open to the search fragment.
  */
-class StartSearchIntentProcessor(
-    private val metrics: MetricController
-) : HomeIntentProcessor {
+class StartSearchIntentProcessor : HomeIntentProcessor {
 
     override fun process(intent: Intent, navController: NavController, out: Intent): Boolean {
         val event = intent.extras?.getString(HomeActivity.OPEN_TO_SEARCH)
@@ -30,12 +27,12 @@ class StartSearchIntentProcessor(
             val source = when (event) {
                 SEARCH_WIDGET -> {
                     SearchWidget.newTabButton.record(NoExtras())
-                    Event.PerformedSearch.SearchAccessPoint.WIDGET
+                    MetricsUtils.SearchAccessPoint.WIDGET
                 }
                 STATIC_SHORTCUT_NEW_TAB,
                 STATIC_SHORTCUT_NEW_PRIVATE_TAB,
                 PRIVATE_BROWSING_PINNED_SHORTCUT -> {
-                    Event.PerformedSearch.SearchAccessPoint.SHORTCUT
+                    MetricsUtils.SearchAccessPoint.SHORTCUT
                 }
                 else -> null
             }

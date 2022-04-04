@@ -12,8 +12,6 @@ import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.feature.search.ext.waitForSelectedOrDefaultSearchEngine
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
-import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.components.metrics.MetricsUtils
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.widget.VoiceSearchActivity.Companion.SPEECH_PROCESSING
@@ -25,7 +23,6 @@ import org.mozilla.fenix.widget.VoiceSearchActivity.Companion.SPEECH_PROCESSING
 class SpeechProcessingIntentProcessor(
     private val activity: HomeActivity,
     private val store: BrowserStore,
-    private val metrics: MetricController
 ) : HomeIntentProcessor {
 
     override fun process(intent: Intent, navController: NavController, out: Intent): Boolean {
@@ -52,12 +49,11 @@ class SpeechProcessingIntentProcessor(
 
     private fun launchToBrowser(searchEngine: SearchEngine, text: String) {
         activity.components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
-            val searchEvent = MetricsUtils.createSearchEvent(
+            MetricsUtils.recordSearchEvent(
                 searchEngine,
                 store,
-                Event.PerformedSearch.SearchAccessPoint.WIDGET
+                MetricsUtils.SearchAccessPoint.WIDGET
             )
-            searchEvent?.let { metrics.track(it) }
         }
 
         activity.openToBrowserAndLoad(

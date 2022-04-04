@@ -22,7 +22,6 @@ import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.SearchShortcuts
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
-import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.components.metrics.MetricsUtils
 import org.mozilla.fenix.crashes.CrashListActivity
@@ -106,19 +105,16 @@ class SearchDialogController(
             Events.enteredUrl.record(Events.EnteredUrlExtra(autocomplete = false))
         } else {
             val searchAccessPoint = when (fragmentStore.state.searchAccessPoint) {
-                Event.PerformedSearch.SearchAccessPoint.NONE -> Event.PerformedSearch.SearchAccessPoint.ACTION
+                MetricsUtils.SearchAccessPoint.NONE -> MetricsUtils.SearchAccessPoint.ACTION
                 else -> fragmentStore.state.searchAccessPoint
             }
 
-            val event = searchAccessPoint?.let { sap ->
-                MetricsUtils.createSearchEvent(
+            searchAccessPoint?.let { sap ->
+                MetricsUtils.recordSearchEvent(
                     searchEngine,
                     store,
                     sap
                 )
-            }
-            event?.let {
-                metrics.track(it)
             }
         }
     }
@@ -176,17 +172,17 @@ class SearchDialogController(
         )
 
         val searchAccessPoint = when (fragmentStore.state.searchAccessPoint) {
-            Event.PerformedSearch.SearchAccessPoint.NONE -> Event.PerformedSearch.SearchAccessPoint.SUGGESTION
+            MetricsUtils.SearchAccessPoint.NONE -> MetricsUtils.SearchAccessPoint.SUGGESTION
             else -> fragmentStore.state.searchAccessPoint
         }
 
-        if (searchAccessPoint != null && searchEngine != null) {
-            MetricsUtils.createSearchEvent(
-                searchEngine,
-                store,
-                searchAccessPoint
-            )?.apply {
-                metrics.track(this)
+        searchAccessPoint?.let { sap ->
+            searchEngine?.let { engine ->
+                MetricsUtils.recordSearchEvent(
+                    engine,
+                    store,
+                    sap
+                )
             }
         }
     }
