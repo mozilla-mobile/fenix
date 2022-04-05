@@ -24,7 +24,6 @@ import org.mozilla.fenix.GleanMetrics.History
 import org.mozilla.fenix.GleanMetrics.HomeMenu
 import org.mozilla.fenix.GleanMetrics.HomeScreen
 import org.mozilla.fenix.GleanMetrics.Logins
-import org.mozilla.fenix.GleanMetrics.MediaNotification
 import org.mozilla.fenix.GleanMetrics.MediaState
 import org.mozilla.fenix.GleanMetrics.Metrics
 import org.mozilla.fenix.GleanMetrics.Pings
@@ -210,12 +209,6 @@ private val Event.wrapper: EventWrapper<*>?
         )
         is Event.MediaPictureInPictureState -> EventWrapper<NoExtraKeys>(
             { MediaState.pictureInPicture.record(it) }
-        )
-        is Event.NotificationMediaPlay -> EventWrapper<NoExtraKeys>(
-            { MediaNotification.play.record(it) }
-        )
-        is Event.NotificationMediaPause -> EventWrapper<NoExtraKeys>(
-            { MediaNotification.pause.record(it) }
         )
         is Event.OpenLogins -> EventWrapper<NoExtraKeys>(
             { Logins.openLogins.record(it) }
