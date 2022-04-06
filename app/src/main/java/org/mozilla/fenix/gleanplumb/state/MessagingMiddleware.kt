@@ -5,9 +5,6 @@
 package org.mozilla.fenix.gleanplumb.state
 
 import androidx.annotation.VisibleForTesting
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import mozilla.components.lib.state.Middleware
 import mozilla.components.lib.state.MiddlewareContext
 import org.mozilla.fenix.components.appstate.AppAction
@@ -26,8 +23,7 @@ import org.mozilla.fenix.gleanplumb.NimbusMessagingStorage
 typealias AppStoreMiddlewareContext = MiddlewareContext<AppState, AppAction>
 
 class MessagingMiddleware(
-    private val messagingStorage: NimbusMessagingStorage,
-    private val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO),
+    private val messagingStorage: NimbusMessagingStorage
 ) : Middleware<AppState, AppAction> {
 
     override fun invoke(
@@ -37,10 +33,9 @@ class MessagingMiddleware(
     ) {
         when (action) {
             is Restore -> {
-                coroutineScope.launch {
-                    val messages = messagingStorage.getMessages()
-                    context.store.dispatch(UpdateMessages(messages))
-                }
+                val messages = messagingStorage.getMessages()
+
+                context.dispatch(UpdateMessages(messages))
             }
 
             is Evaluate -> {
@@ -67,8 +62,7 @@ class MessagingMiddleware(
         context: AppStoreMiddlewareContext
     ) {
         val newMetadata = oldMessage.metadata.copy(
-            displayCount = oldMessage.metadata.displayCount + 1,
-            lastTimeShown = now()
+            displayCount = oldMessage.metadata.displayCount + 1
         )
         val newMessage = oldMessage.copy(
             metadata = newMetadata
@@ -80,9 +74,7 @@ class MessagingMiddleware(
             removeMessage(context, oldMessage)
         }
         context.dispatch(UpdateMessages(newMessages))
-        coroutineScope.launch {
-            messagingStorage.updateMetadata(newMetadata)
-        }
+        messagingStorage.updateMetadata(newMetadata)
     }
 
     @VisibleForTesting
@@ -91,12 +83,11 @@ class MessagingMiddleware(
         message: Message
     ) {
         val newMessages = removeMessage(context, message)
+        val updatedMetadata = message.metadata.copy(dismissed = true)
+
+        messagingStorage.updateMetadata(updatedMetadata)
         context.dispatch(UpdateMessages(newMessages))
         consumeMessageToShowIfNeeded(context, message)
-        coroutineScope.launch {
-            val updatedMetadata = message.metadata.copy(dismissed = true)
-            messagingStorage.updateMetadata(updatedMetadata)
-        }
     }
 
     @VisibleForTesting
@@ -105,10 +96,9 @@ class MessagingMiddleware(
         context: AppStoreMiddlewareContext
     ) {
         // Update Nimbus storage.
-        coroutineScope.launch {
-            val updatedMetadata = message.metadata.copy(pressed = true)
-            messagingStorage.updateMetadata(updatedMetadata)
-        }
+        val updatedMetadata = message.metadata.copy(pressed = true)
+        messagingStorage.updateMetadata(updatedMetadata)
+
         // Update app state.
         val newMessages = removeMessage(context, message)
         context.dispatch(UpdateMessages(newMessages))
@@ -146,7 +136,4 @@ class MessagingMiddleware(
         }
         return removeMessage(context, oldMessage) + updatedMessage
     }
-
-    @VisibleForTesting
-    internal fun now(): Long = System.currentTimeMillis()
 }

@@ -40,13 +40,11 @@ data class Message(
      * @param displayCount Indicates how many times a message is displayed.
      * @param pressed Indicates if a message has been clicked.
      * @param dismissed Indicates if a message has been closed.
-     * @param lastTimeShown A timestamp indicating when was the last time, the message was shown.
      */
     data class Metadata(
         val id: String,
         val displayCount: Int = 0,
         val pressed: Boolean = false,
-        val dismissed: Boolean = false,
-        val lastTimeShown: Long = 0L
+        val dismissed: Boolean = false
     )
 }
