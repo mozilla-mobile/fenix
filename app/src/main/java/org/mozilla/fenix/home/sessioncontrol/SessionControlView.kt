@@ -15,7 +15,6 @@ import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.service.pocket.PocketRecommendedStory
 import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.appstate.AppState
-import org.mozilla.fenix.gleanplumb.Message
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.Mode
@@ -37,7 +36,7 @@ internal fun normalModeAdapterItems(
     expandedCollections: Set<Long>,
     recentBookmarks: List<RecentBookmark>,
     showCollectionsPlaceholder: Boolean,
-    nimbusMessageCard: Message? = null,
+    showSetAsDefaultBrowserCard: Boolean,
     recentTabs: List<RecentTab>,
     recentVisits: List<RecentlyVisitedItem>,
     pocketStories: List<PocketRecommendedStory>
@@ -48,8 +47,8 @@ internal fun normalModeAdapterItems(
     // Add a synchronous, unconditional and invisible placeholder so home is anchored to the top when created.
     items.add(AdapterItem.TopPlaceholderItem)
 
-    nimbusMessageCard?.let {
-        items.add(AdapterItem.NimbusMessageCard(it))
+    if (showSetAsDefaultBrowserCard) {
+        items.add(AdapterItem.ExperimentDefaultBrowserCard)
     }
 
     if (settings.showTopSitesFeature && topSites.isNotEmpty()) {
@@ -158,7 +157,7 @@ private fun AppState.toAdapterList(settings: Settings): List<AdapterItem> = when
         expandedCollections,
         recentBookmarks,
         showCollectionPlaceholder,
-        messaging.messageToShow,
+        showSetAsDefaultBrowserCard,
         recentTabs,
         recentHistory,
         pocketStories
