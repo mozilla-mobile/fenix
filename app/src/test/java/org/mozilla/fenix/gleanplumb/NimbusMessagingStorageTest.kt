@@ -37,16 +37,12 @@ class NimbusMessagingStorageTest {
     private lateinit var gleanPlumb: GleanPlumbInterface
     private lateinit var messagingFeature: FeatureHolder<Messaging>
     private lateinit var messaging: Messaging
-    private var malformedWasReported = false
-    private val reportMalformedMessage: (String) -> Unit = {
-        malformedWasReported = true
-    }
 
     @Before
     fun setup() {
         gleanPlumb = mockk(relaxed = true)
         metadataStorage = mockk(relaxed = true)
-        malformedWasReported = false
+
         messagingFeature = createMessagingFeature()
 
         every { metadataStorage.getMetadata() } returns listOf(Message.Metadata(id = "message-1"))
@@ -54,7 +50,6 @@ class NimbusMessagingStorageTest {
         storage = NimbusMessagingStorage(
             testContext,
             metadataStorage,
-            reportMalformedMessage,
             gleanPlumb,
             messagingFeature
         )
@@ -91,7 +86,6 @@ class NimbusMessagingStorageTest {
         val storage = NimbusMessagingStorage(
             testContext,
             metadataStorage,
-            reportMalformedMessage,
             gleanPlumb,
             messagingFeature
         )
@@ -127,7 +121,6 @@ class NimbusMessagingStorageTest {
         val storage = NimbusMessagingStorage(
             testContext,
             metadataStorage,
-            reportMalformedMessage,
             gleanPlumb,
             messagingFeature
         )
@@ -162,7 +155,6 @@ class NimbusMessagingStorageTest {
         val storage = NimbusMessagingStorage(
             testContext,
             metadataStorage,
-            reportMalformedMessage,
             gleanPlumb,
             messagingFeature
         )
@@ -200,7 +192,6 @@ class NimbusMessagingStorageTest {
         val storage = NimbusMessagingStorage(
             testContext,
             metadataStorage,
-            reportMalformedMessage,
             gleanPlumb,
             messagingFeature
         )
@@ -219,21 +210,19 @@ class NimbusMessagingStorageTest {
         assertEquals("message-1", firstMessage.id)
         assertEquals("message-1", firstMessage.metadata.id)
         assertTrue(messages.size == 1)
-        assertTrue(malformedWasReported)
     }
 
     @Test
     fun `GIVEN a malformed action WHEN calling sanitizeAction THEN return null`() {
         val actionsMap = mapOf("action-1" to "action-1-url")
 
-        val notFoundAction = storage.sanitizeAction("messageId", "no-found-action", actionsMap)
-        val emptyAction = storage.sanitizeAction("messageId", "", actionsMap)
-        val blankAction = storage.sanitizeAction("messageId", " ", actionsMap)
+        val notFoundAction = storage.sanitizeAction("no-found-action", actionsMap)
+        val emptyAction = storage.sanitizeAction("", actionsMap)
+        val blankAction = storage.sanitizeAction(" ", actionsMap)
 
         assertNull(notFoundAction)
         assertNull(emptyAction)
         assertNull(blankAction)
-        assertTrue(malformedWasReported)
     }
 
     @Test
@@ -248,7 +237,7 @@ class NimbusMessagingStorageTest {
     fun `GIVEN a valid action WHEN calling sanitizeAction THEN return the action`() {
         val actionsMap = mapOf("action-1" to "action-1-url")
 
-        val validAction = storage.sanitizeAction("messageId", "action-1", actionsMap)
+        val validAction = storage.sanitizeAction("action-1", actionsMap)
 
         assertEquals("action-1-url", validAction)
     }
@@ -257,22 +246,20 @@ class NimbusMessagingStorageTest {
     fun `GIVEN a trigger action WHEN calling sanitizeTriggers THEN return null`() {
         val triggersMap = mapOf("trigger-1" to "trigger-1-expression")
 
-        val notFoundTrigger =
-            storage.sanitizeTriggers("messageId", listOf("no-found-trigger"), triggersMap)
-        val emptyTrigger = storage.sanitizeTriggers("messageId", listOf(""), triggersMap)
-        val blankTrigger = storage.sanitizeTriggers("messageId", listOf(" "), triggersMap)
+        val notFoundTrigger = storage.sanitizeTriggers(listOf("no-found-trigger"), triggersMap)
+        val emptyTrigger = storage.sanitizeTriggers(listOf(""), triggersMap)
+        val blankTrigger = storage.sanitizeTriggers(listOf(" "), triggersMap)
 
         assertNull(notFoundTrigger)
         assertNull(emptyTrigger)
         assertNull(blankTrigger)
-        assertTrue(malformedWasReported)
     }
 
     @Test
     fun `GIVEN a valid trigger WHEN calling sanitizeAction THEN return the trigger`() {
         val triggersMap = mapOf("trigger-1" to "trigger-1-expression")
 
-        val validTrigger = storage.sanitizeTriggers("messageId", listOf("trigger-1"), triggersMap)
+        val validTrigger = storage.sanitizeTriggers(listOf("trigger-1"), triggersMap)
 
         assertEquals(listOf("trigger-1-expression"), validTrigger)
     }

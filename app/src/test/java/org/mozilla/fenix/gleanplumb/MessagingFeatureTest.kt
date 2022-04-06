@@ -10,6 +10,8 @@ import io.mockk.spyk
 import io.mockk.unmockkObject
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import mozilla.components.support.test.libstate.ext.waitUntilIdle
+import mozilla.components.support.test.mock
 import mozilla.components.support.test.rule.MainCoroutineRule
 import org.junit.Rule
 import org.junit.Test
@@ -17,6 +19,7 @@ import org.mozilla.fenix.Config
 import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.appstate.AppAction.MessagingAction
+import org.mozilla.fenix.components.appstate.AppAction.MessagingAction.UpdateMessageToShow
 
 class MessagingFeatureTest {
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -32,6 +35,9 @@ class MessagingFeatureTest {
         every { FeatureFlags.messagingFeature } returns true
 
         binding.start()
+
+        store.dispatch(UpdateMessageToShow(mock()))
+        store.waitUntilIdle()
 
         verify { store.dispatch(MessagingAction.Evaluate) }
 

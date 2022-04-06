@@ -314,8 +314,7 @@ class HomeFragment : Fragment() {
                 messageController = DefaultMessageController(
                     appStore = components.appStore,
                     messagingStorage = components.analytics.messagingStorage,
-                    homeActivity = activity,
-                    metrics = components.analytics.metrics
+                    homeActivity = activity
                 ),
                 store = store,
                 tabCollectionStorage = components.core.tabCollectionStorage,
