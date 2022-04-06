@@ -89,18 +89,6 @@ private class EventWrapper<T : Enum<T>>(
 // FIXME(#19967): Migrate to non-deprecated API.
 private val Event.wrapper: EventWrapper<*>?
     get() = when (this) {
-        is Event.OpenedApp -> EventWrapper(
-            { Events.appOpened.record(it) },
-            { Events.appOpenedKeys.valueOf(it) }
-        )
-        is Event.SearchBarTapped -> EventWrapper(
-            { Events.searchBarTapped.record(it) },
-            { Events.searchBarTappedKeys.valueOf(it) }
-        )
-        is Event.EnteredUrl -> EventWrapper(
-            { Events.enteredUrl.record(it) },
-            { Events.enteredUrlKeys.valueOf(it) }
-        )
         is Event.PerformedSearch -> EventWrapper(
             {
                 Metrics.searchCount[this.eventSource.countLabel].add(1)
@@ -127,22 +115,11 @@ private val Event.wrapper: EventWrapper<*>?
             { ContextMenu.itemTapped.record(it) },
             { ContextMenu.itemTappedKeys.valueOf(it) }
         )
-        is Event.BrowserMenuItemTapped -> EventWrapper(
-            { Events.browserMenuAction.record(it) },
-            { Events.browserMenuActionKeys.valueOf(it) }
-        )
+
         is Event.SetDefaultBrowserToolbarMenuClicked -> EventWrapper<NoExtraKeys>(
             { ExperimentsDefaultBrowser.toolbarMenuClicked.record(it) }
         )
-        is Event.ToolbarMenuShown -> EventWrapper<NoExtraKeys>(
-            { Events.toolbarMenuVisible.record(it) }
-        )
-        is Event.ChangedToDefaultBrowser -> EventWrapper<NoExtraKeys>(
-            { Events.defaultBrowserChanged.record(it) }
-        )
-        is Event.DefaultBrowserNotifTapped -> EventWrapper<NoExtraKeys>(
-            { Events.defaultBrowserNotifTapped.record(it) }
-        )
+
         is Event.CustomTabsMenuOpened -> EventWrapper<NoExtraKeys>(
             { CustomTab.menu.record(it) }
         )
@@ -151,13 +128,6 @@ private val Event.wrapper: EventWrapper<*>?
         )
         is Event.CustomTabsClosed -> EventWrapper<NoExtraKeys>(
             { CustomTab.closed.record(it) }
-        )
-        is Event.NormalAndPrivateUriOpened -> EventWrapper<NoExtraKeys>(
-            { Events.normalAndPrivateUriCount.add(1) }
-        )
-        is Event.PreferenceToggled -> EventWrapper(
-            { Events.preferenceToggled.record(it) },
-            { Events.preferenceToggledKeys.valueOf(it) }
         )
         is Event.HistoryOpened -> EventWrapper<NoExtraKeys>(
             { History.opened.record(it) }
@@ -220,9 +190,6 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.ReaderModeAppearanceOpened -> EventWrapper<NoExtraKeys>(
             { ReaderMode.appearance.record(it) }
         )
-        is Event.WhatsNewTapped -> EventWrapper<NoExtraKeys>(
-            { Events.whatsNewTapped.record(it) }
-        )
         is Event.TabMediaPlay -> EventWrapper<NoExtraKeys>(
             { Tab.mediaPlay.record(it) }
         )
@@ -249,11 +216,6 @@ private val Event.wrapper: EventWrapper<*>?
         )
         is Event.NotificationMediaPause -> EventWrapper<NoExtraKeys>(
             { MediaNotification.pause.record(it) }
-        )
-
-        is Event.OpenedLink -> EventWrapper(
-            { Events.openedLink.record(it) },
-            { Events.openedLinkKeys.valueOf(it) }
         )
         is Event.OpenLogins -> EventWrapper<NoExtraKeys>(
             { Logins.openLogins.record(it) }
@@ -405,17 +367,6 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.ProgressiveWebAppInstallAsShortcut -> EventWrapper<NoExtraKeys>(
             { ProgressiveWebApp.installTap.record(it) }
         )
-        is Event.CopyUrlUsed -> EventWrapper<NoExtraKeys>(
-            { Events.copyUrlTapped.record(it) }
-        )
-
-        is Event.SyncedTabOpened -> EventWrapper<NoExtraKeys>(
-            { Events.syncedTabOpened.record(it) }
-        )
-
-        is Event.RecentlyClosedTabsOpenedOld -> EventWrapper<NoExtraKeys>(
-            { Events.recentlyClosedTabsOpened.record(it) }
-        )
 
         is Event.TabSettingsOpened -> EventWrapper<NoExtraKeys>(
             { Tabs.settingOpened.record(it) }
@@ -474,15 +425,6 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.HomeScreenCustomizedHomeClicked -> EventWrapper<NoExtraKeys>(
             { HomeScreen.customizeHomeClicked.record(it) }
         )
-        is Event.TabViewSettingChanged -> EventWrapper(
-            { Events.tabViewChanged.record(it) },
-            { Events.tabViewChangedKeys.valueOf(it) }
-        )
-
-        is Event.BrowserToolbarHomeButtonClicked -> EventWrapper<NoExtraKeys>(
-            { Events.browserToolbarHomeTapped.record(it) }
-        )
-
         is Event.StartOnHomeEnterHomeScreen -> EventWrapper<NoExtraKeys>(
             { StartOnHome.enterHomeScreen.record(it) }
         )
