@@ -71,6 +71,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         private const val ALLOWED_INT = 2
         private const val CFR_COUNT_CONDITION_FOCUS_INSTALLED = 1
         private const val CFR_COUNT_CONDITION_FOCUS_NOT_INSTALLED = 3
+        private const val APP_LAUNCHES_TO_SHOW_DEFAULT_BROWSER_CARD = 3
         private const val INACTIVE_TAB_MINIMUM_TO_SHOW_AUTO_CLOSE_DIALOG = 20
 
         const val FOUR_HOURS_MS = 60 * 60 * 4 * 1000L
@@ -310,6 +311,24 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         appContext.getPreferenceKey(R.string.pref_key_show_search_engine_shortcuts),
         default = false
     )
+
+    /**
+     * Shows if the user has chosen to close the set default browser experiment card
+     * on home screen or has clicked the set as default browser button.
+     */
+    var userDismissedExperimentCard by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_experiment_card_home),
+        default = false
+    )
+
+    /**
+     * Shows if the set default browser experiment card should be shown on home screen.
+     */
+    fun shouldShowSetAsDefaultBrowserCard(): Boolean {
+        return isDefaultBrowserMessageLocation(MessageSurfaceId.HOMESCREEN_BANNER) &&
+            !userDismissedExperimentCard &&
+            numberOfAppLaunches > APP_LAUNCHES_TO_SHOW_DEFAULT_BROWSER_CARD
+    }
 
     private val defaultBrowserFeature: DefaultBrowserMessage by lazy {
         FxNimbus.features.defaultBrowserMessage.value()
@@ -1209,7 +1228,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     private val homescreenSections: Map<HomeScreenSection, Boolean> by lazy {
-        FxNimbus.features.homescreen.value(appContext).sectionsEnabled
+        FxNimbus.features.homescreen.value().sectionsEnabled
     }
 
     var historyMetadataUIFeature by lazyFeatureFlagPreference(

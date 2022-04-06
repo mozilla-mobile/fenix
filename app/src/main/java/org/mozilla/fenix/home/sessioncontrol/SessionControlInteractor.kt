@@ -10,7 +10,6 @@ import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.service.pocket.PocketRecommendedStory
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.appstate.AppState
-import org.mozilla.fenix.gleanplumb.Message
 import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesCategory
 import org.mozilla.fenix.home.pocket.PocketStoriesController
 import org.mozilla.fenix.home.pocket.PocketStoriesInteractor
@@ -226,21 +225,19 @@ interface TopSiteInteractor {
     fun onTopSiteMenuOpened()
 }
 
-interface MessageCardInteractor {
+/**
+ * Interface for interactions with the default browser card.
+ */
+interface ExperimentCardInteractor {
     /**
-     * Called when a [Message]'s button is clicked
+     * Called when set default browser button is clicked
      */
-    fun onMessageClicked(message: Message)
+    fun onSetDefaultBrowserClicked()
 
     /**
-     * Called when close button on a [Message] card.
+     * Called when close button on experiment card
      */
-    fun onMessageClosedClicked(message: Message)
-
-    /**
-     * Called when close button on a [Message] card.
-     */
-    fun onMessageDisplayed(message: Message)
+    fun onCloseExperimentCardClicked()
 }
 
 /**
@@ -261,7 +258,7 @@ class SessionControlInteractor(
     TopSiteInteractor,
     TabSessionInteractor,
     ToolbarInteractor,
-    MessageCardInteractor,
+    ExperimentCardInteractor,
     RecentTabInteractor,
     RecentBookmarksInteractor,
     RecentVisitsInteractor,
@@ -368,6 +365,14 @@ class SessionControlInteractor(
         controller.handleMenuOpened()
     }
 
+    override fun onSetDefaultBrowserClicked() {
+        controller.handleSetDefaultBrowser()
+    }
+
+    override fun onCloseExperimentCardClicked() {
+        controller.handleCloseExperimentCard()
+    }
+
     override fun onRecentTabClicked(tabId: String) {
         recentTabController.handleRecentTabClicked(tabId)
     }
@@ -444,17 +449,5 @@ class SessionControlInteractor(
 
     override fun reportSessionMetrics(state: AppState) {
         controller.handleReportSessionMetrics(state)
-    }
-
-    override fun onMessageClicked(message: Message) {
-        controller.handleMessageClicked(message)
-    }
-
-    override fun onMessageClosedClicked(message: Message) {
-        controller.handleMessageClosed(message)
-    }
-
-    override fun onMessageDisplayed(message: Message) {
-        controller.handleMessageDisplayed(message)
     }
 }

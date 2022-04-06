@@ -48,9 +48,8 @@ import org.mozilla.fenix.components.metrics.MetricsUtils
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
+import org.mozilla.fenix.ext.openSetDefaultBrowserOption
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.gleanplumb.Message
-import org.mozilla.fenix.gleanplumb.MessageController
 import org.mozilla.fenix.home.HomeFragment
 import org.mozilla.fenix.home.HomeFragmentDirections
 import org.mozilla.fenix.home.Mode
@@ -176,19 +175,14 @@ interface SessionControlController {
     fun handleMenuOpened()
 
     /**
-     * @see [MessageCardInteractor.onMessageClicked]
+     * @see [ExperimentCardInteractor.onSetDefaultBrowserClicked]
      */
-    fun handleMessageClicked(message: Message)
+    fun handleSetDefaultBrowser()
 
     /**
-     * @see [MessageCardInteractor.onMessageClosedClicked]
+     * @see [ExperimentCardInteractor.onCloseExperimentCardClicked]
      */
-    fun handleMessageClosed(message: Message)
-
-    /**
-     * @see [MessageCardInteractor.onMessageDisplayed]
-     */
-    fun handleMessageDisplayed(message: Message)
+    fun handleCloseExperimentCard()
 
     /**
      * @see [TabSessionInteractor.onPrivateModeButtonClicked]
@@ -211,13 +205,12 @@ interface SessionControlController {
     fun handleReportSessionMetrics(state: AppState)
 }
 
-@Suppress("TooManyFunctions", "LargeClass")
+@Suppress("TooManyFunctions", "LargeClass", "LongParameterList")
 class DefaultSessionControlController(
     private val activity: HomeActivity,
     private val settings: Settings,
     private val engine: Engine,
     private val metrics: MetricController,
-    private val messageController: MessageController,
     private val store: BrowserStore,
     private val tabCollectionStorage: TabCollectionStorage,
     private val addTabUseCase: TabsUseCases.AddNewTabUseCase,
@@ -615,16 +608,14 @@ class DefaultSessionControlController(
         navController.nav(R.id.homeFragment, directions)
     }
 
-    override fun handleMessageClicked(message: Message) {
-        messageController.onMessagePressed(message)
+    override fun handleSetDefaultBrowser() {
+        settings.userDismissedExperimentCard = true
+        activity.openSetDefaultBrowserOption()
     }
 
-    override fun handleMessageClosed(message: Message) {
-        messageController.onMessageDismissed(message)
-    }
-
-    override fun handleMessageDisplayed(message: Message) {
-        messageController.onMessageDisplayed(message)
+    override fun handleCloseExperimentCard() {
+        settings.userDismissedExperimentCard = true
+        appStore.dispatch(AppAction.RemoveSetDefaultBrowserCard)
     }
 
     override fun handlePrivateModeButtonClicked(

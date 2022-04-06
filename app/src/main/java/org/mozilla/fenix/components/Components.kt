@@ -32,7 +32,6 @@ import org.mozilla.fenix.ext.asRecentTabs
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.filterState
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.gleanplumb.state.MessagingMiddleware
 import org.mozilla.fenix.ext.sort
 import org.mozilla.fenix.home.PocketUpdatesMiddleware
 import org.mozilla.fenix.home.blocklist.BlocklistHandler
@@ -194,7 +193,6 @@ class Components(private val context: Context) {
     val appStartReasonProvider by lazyMonitored { AppStartReasonProvider() }
     val startupActivityLog by lazyMonitored { StartupActivityLog() }
     val startupStateProvider by lazyMonitored { StartupStateProvider(startupActivityLog, appStartReasonProvider) }
-
     val appStore by lazyMonitored {
         val blocklistHandler = BlocklistHandler(settings)
 
@@ -205,6 +203,7 @@ class Components(private val context: Context) {
                 topSites = core.topSitesStorage.cachedTopSites.sort(),
                 recentBookmarks = emptyList(),
                 showCollectionPlaceholder = settings.showCollectionsPlaceholderOnHome,
+                showSetAsDefaultBrowserCard = settings.shouldShowSetAsDefaultBrowserCard(),
                 // Provide an initial state for recent tabs to prevent re-rendering on the home screen.
                 //  This will otherwise cause a visual jump as the section gets rendered from no state
                 //  to some state.
@@ -220,8 +219,7 @@ class Components(private val context: Context) {
                 PocketUpdatesMiddleware(
                     core.pocketStoriesService,
                     context.pocketStoriesSelectedCategoriesDataStore
-                ),
-                MessagingMiddleware(messagingStorage = analytics.messagingStorage)
+                )
             )
         )
     }
