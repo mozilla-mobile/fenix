@@ -95,11 +95,14 @@ class CreditCardsManagementFragment : SecureFragment() {
      * [CreditCardsFragmentStore] with the list of credit cards.
      */
     private fun loadCreditCards() {
-        lifecycleScope.launch(Dispatchers.IO) {
-            val creditCards = requireContext().components.core.autofillStorage.getAllCreditCards()
+        if (requireContext().components.core.autofillStorage.hasStorage()) {
+            lifecycleScope.launch(Dispatchers.IO) {
+                val creditCards =
+                    requireContext().components.core.autofillStorage.getAllCreditCards()
 
-            lifecycleScope.launch(Dispatchers.Main) {
-                creditCardsStore.dispatch(CreditCardsAction.UpdateCreditCards(creditCards))
+                lifecycleScope.launch(Dispatchers.Main) {
+                    creditCardsStore.dispatch(CreditCardsAction.UpdateCreditCards(creditCards))
+                }
             }
         }
     }

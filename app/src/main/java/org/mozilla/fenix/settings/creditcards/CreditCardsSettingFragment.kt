@@ -180,7 +180,7 @@ class CreditCardsSettingFragment : BiometricPromptPreferenceFragment() {
      * with the list of credit cards.
      */
     private fun loadCreditCards() {
-        if (isCreditCardsListLoaded) {
+        if (isCreditCardsListLoaded || !requireComponents.core.autofillStorage.hasStorage()) {
             return
         }
 
