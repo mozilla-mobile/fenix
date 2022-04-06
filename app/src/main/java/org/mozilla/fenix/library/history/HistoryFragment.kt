@@ -67,7 +67,8 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
         null
     ) {
         HistoryDataSource(
-            historyProvider = historyProvider
+            historyProvider = historyProvider,
+            isRemote = if (FeatureFlags.syncedHistoryFeature) false else null
         )
     }.flow
 

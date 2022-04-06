@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
+import org.mozilla.fenix.library.history.viewholders.BindingParams
 import org.mozilla.fenix.selection.SelectionHolder
 import org.mozilla.fenix.library.history.viewholders.HistoryListItemViewHolder
 
@@ -16,6 +17,7 @@ import org.mozilla.fenix.library.history.viewholders.HistoryListItemViewHolder
  */
 class HistoryAdapter(
     private val historyInteractor: HistoryInteractor,
+    private val syncedHistoryVisible: Boolean,
 ) : PagingDataAdapter<History, HistoryListItemViewHolder>(historyDiffCallback),
     SelectionHolder<History> {
 
@@ -60,7 +62,16 @@ class HistoryAdapter(
             timeGroup = current.historyTimeGroup
         }
 
-        holder.bind(current, timeGroup, position == 0, mode, isPendingDeletion)
+        holder.bind(
+            current,
+            BindingParams(
+                timeGroup,
+                position == 0,
+                mode,
+                isPendingDeletion,
+                syncedHistoryVisible
+            )
+        )
     }
 
     fun updatePendingDeletionIds(pendingDeletionIds: Set<Long>) {

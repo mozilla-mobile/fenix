@@ -33,6 +33,10 @@ class HistoryListItemViewHolder(
             historyInteractor.onRecentlyClosedClicked()
         }
 
+        binding.syncedHistoryNavEmpty.syncedHistoryNav.setOnClickListener {
+            historyInteractor.onSyncedHistoryClicked()
+        }
+
         binding.historyLayout.overflowView.apply {
             setImageResource(R.drawable.ic_close)
             contentDescription = view.context.getString(R.string.history_delete_item)
@@ -43,14 +47,12 @@ class HistoryListItemViewHolder(
         }
     }
 
+    @Suppress("UndocumentedPublicFunction")
     fun bind(
         item: History,
-        timeGroup: HistoryItemTimeGroup?,
-        showTopContent: Boolean,
-        mode: HistoryFragmentState.Mode,
-        isPendingDeletion: Boolean = false,
+        params: BindingParams,
     ) {
-        if (isPendingDeletion) {
+        if (params.isPendingDeletion) {
             binding.historyLayout.visibility = View.GONE
         } else {
             binding.historyLayout.visibility = View.VISIBLE
@@ -72,9 +74,13 @@ class HistoryListItemViewHolder(
             }
         }
 
-        toggleTopContent(showTopContent, mode === HistoryFragmentState.Mode.Normal)
+        toggleTopContent(
+            params.showTopContent,
+            params.mode === HistoryFragmentState.Mode.Normal,
+            params.syncedHistoryVisible
+        )
 
-        val headerText = timeGroup?.humanReadable(itemView.context)
+        val headerText = params.timeGroup?.humanReadable(itemView.context)
         toggleHeader(headerText)
 
         binding.historyLayout.setSelectionInteractor(item, selectionHolder, historyInteractor)
@@ -88,7 +94,7 @@ class HistoryListItemViewHolder(
             binding.historyLayout.iconView.setImageResource(R.drawable.ic_multiple_tabs)
         }
 
-        if (mode is HistoryFragmentState.Mode.Editing) {
+        if (params.mode is HistoryFragmentState.Mode.Editing) {
             binding.historyLayout.overflowView.hideAndDisable()
         } else {
             binding.historyLayout.overflowView.showAndEnable()
@@ -109,8 +115,10 @@ class HistoryListItemViewHolder(
     private fun toggleTopContent(
         showTopContent: Boolean,
         isNormalMode: Boolean,
+        syncedHistoryVisible: Boolean
     ) {
         binding.recentlyClosedNavEmpty.recentlyClosedNav.isVisible = showTopContent
+        binding.syncedHistoryNavEmpty.syncedHistoryNav.isVisible = showTopContent && syncedHistoryVisible
 
         if (showTopContent) {
             val numRecentTabs = itemView.context.components.core.store.state.closedTabs.size
@@ -133,6 +141,21 @@ class HistoryListItemViewHolder(
                     alpha = DISABLED_BUTTON_ALPHA
                 }
             }
+            if (syncedHistoryVisible) {
+                toggleTopContent(isNormalMode)
+            }
+        }
+    }
+
+    private fun toggleTopContent(isNormalMode: Boolean) {
+        binding.syncedHistoryNavEmpty.syncedHistoryNav.run {
+            if (isNormalMode) {
+                isEnabled = true
+                alpha = 1f
+            } else {
+                isEnabled = false
+                alpha = DISABLED_BUTTON_ALPHA
+            }
         }
     }
 
@@ -141,3 +164,12 @@ class HistoryListItemViewHolder(
         const val LAYOUT_ID = R.layout.history_list_item
     }
 }
+
+@Suppress("UndocumentedPublicClass")
+data class BindingParams(
+    val timeGroup: HistoryItemTimeGroup?,
+    val showTopContent: Boolean,
+    val mode: HistoryFragmentState.Mode,
+    val isPendingDeletion: Boolean,
+    val syncedHistoryVisible: Boolean
+)

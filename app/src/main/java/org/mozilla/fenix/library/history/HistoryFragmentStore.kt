@@ -105,7 +105,7 @@ fun HistoryMetadata.toHistoryMetadata(position: Int): History.Metadata {
 /**
  * The [Store] for holding the [HistoryFragmentState] and applying [HistoryFragmentAction]s.
  */
-class HistoryFragmentStore(initialState: HistoryFragmentState) :
+open class HistoryFragmentStore(initialState: HistoryFragmentState) :
     Store<HistoryFragmentState, HistoryFragmentAction>(initialState, ::historyStateReducer)
 
 /**

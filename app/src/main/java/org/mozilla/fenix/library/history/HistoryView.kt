@@ -11,6 +11,7 @@ import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import mozilla.components.support.base.feature.UserInteractionHandler
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.ComponentHistoryBinding
 import org.mozilla.fenix.ext.components
@@ -33,7 +34,10 @@ class HistoryView(
     var mode: HistoryFragmentState.Mode = HistoryFragmentState.Mode.Normal
         private set
 
-    val historyAdapter = HistoryAdapter(interactor).apply {
+    val historyAdapter = HistoryAdapter(
+        interactor,
+        syncedHistoryVisible = FeatureFlags.syncedHistoryFeature
+    ).apply {
         addLoadStateListener {
             // First call will always have itemCount == 0, but we want to keep adapterItemCount
             // as null until we can distinguish an empty list from populated, so updateEmptyState()
@@ -130,6 +134,13 @@ class HistoryView(
                 numRecentTabs
             )
             recentlyClosedNav.isVisible = !userHasHistory
+        }
+        with(binding.syncedHistoryNavEmpty) {
+            val syncedHistoryVisible = FeatureFlags.syncedHistoryFeature && !userHasHistory
+            syncedHistoryNav.setOnClickListener {
+                interactor.onSyncedHistoryClicked()
+            }
+            syncedHistoryNav.isVisible = syncedHistoryVisible
         }
         if (!userHasHistory) {
             binding.historyEmptyView.announceForAccessibility(context.getString(R.string.history_empty_message))
