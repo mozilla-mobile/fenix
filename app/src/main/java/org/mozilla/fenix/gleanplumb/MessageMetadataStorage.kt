@@ -8,16 +8,16 @@ interface MessageMetadataStorage {
     /**
      * Provide all the message metadata saved in the storage.
      */
-    suspend fun getMetadata(): Map<String, Message.Metadata>
+    fun getMetadata(): List<Message.Metadata>
 
     /**
      * Given a [metadata] add the message metadata on the storage.
      * @return the added message on the [MessageMetadataStorage]
      */
-    suspend fun addMetadata(metadata: Message.Metadata): Message.Metadata
+    fun addMetadata(metadata: Message.Metadata): Message.Metadata
 
     /**
      * Given a [metadata] update the message metadata on the storage.
      */
-    suspend fun updateMetadata(metadata: Message.Metadata)
+    fun updateMetadata(metadata: Message.Metadata)
 }
