@@ -16,8 +16,6 @@ import org.junit.runner.RunWith
 import org.mozilla.fenix.GleanMetrics.Addons
 import org.mozilla.fenix.GleanMetrics.Awesomebar
 import org.mozilla.fenix.GleanMetrics.CreditCards
-import org.mozilla.fenix.GleanMetrics.Events
-import org.mozilla.fenix.GleanMetrics.History
 import org.mozilla.fenix.GleanMetrics.RecentBookmarks
 import org.mozilla.fenix.GleanMetrics.RecentlyVisitedHomepage
 import org.mozilla.fenix.GleanMetrics.SyncedTabs
@@ -34,30 +32,6 @@ class GleanMetricsServiceTest {
     @Before
     fun setup() {
         gleanService = GleanMetricsService(testContext)
-    }
-
-    @Test
-    fun `the app_opened event is correctly recorded`() {
-        // Build the event wrapper used by Fenix.
-        val event = Event.OpenedApp(Event.OpenedApp.Source.APP_ICON)
-
-        // Feed the wrapped event in the Glean service.
-        gleanService.track(event)
-
-        // Use the testing API to verify that it's correctly recorded.
-        assertTrue(Events.appOpened.testHasValue())
-
-        // Get all the recorded events. We only expect 1 to be recorded.
-        val events = Events.appOpened.testGetValue()
-        assertEquals(1, events.size)
-
-        // Verify that we get the expected content out.
-        assertEquals("events", events[0].category)
-        assertEquals("app_opened", events[0].name)
-
-        // We only expect 1 extra key.
-        assertEquals(1, events[0].extra!!.size)
-        assertEquals("APP_ICON", events[0].extra!!["source"])
     }
 
     @Test
@@ -95,56 +69,6 @@ class GleanMetricsServiceTest {
     }
 
     @Test
-    fun `History events are correctly recorded`() {
-        assertFalse(History.openedItemInNewTab.testHasValue())
-        gleanService.track(Event.HistoryOpenedInNewTab)
-        assertTrue(History.openedItemInNewTab.testHasValue())
-
-        assertFalse(History.openedItemsInNewTabs.testHasValue())
-        gleanService.track(Event.HistoryOpenedInNewTabs)
-        assertTrue(History.openedItemsInNewTabs.testHasValue())
-
-        assertFalse(History.openedItemInPrivateTab.testHasValue())
-        gleanService.track(Event.HistoryOpenedInPrivateTab)
-        assertTrue(History.openedItemInPrivateTab.testHasValue())
-
-        assertFalse(History.openedItemsInPrivateTabs.testHasValue())
-        gleanService.track(Event.HistoryOpenedInPrivateTabs)
-        assertTrue(History.openedItemsInPrivateTabs.testHasValue())
-
-        assertFalse(History.recentSearchesTapped.testHasValue())
-        gleanService.track(Event.HistoryRecentSearchesTapped("5"))
-        assertTrue(History.recentSearchesTapped.testHasValue())
-        val events = History.recentSearchesTapped.testGetValue()
-        assertEquals(1, events[0].extra!!.size)
-        assertEquals("5", events[0].extra!!["page_number"])
-
-        assertFalse(History.searchTermGroupTapped.testHasValue())
-        gleanService.track(Event.HistorySearchTermGroupTapped)
-        assertTrue(History.searchTermGroupTapped.testHasValue())
-
-        assertFalse(History.searchTermGroupOpenTab.testHasValue())
-        gleanService.track(Event.HistorySearchTermGroupOpenTab)
-        assertTrue(History.searchTermGroupOpenTab.testHasValue())
-
-        assertFalse(History.searchTermGroupRemoveTab.testHasValue())
-        gleanService.track(Event.HistorySearchTermGroupRemoveTab)
-        assertTrue(History.searchTermGroupRemoveTab.testHasValue())
-
-        assertFalse(History.searchTermGroupRemoveAll.testHasValue())
-        gleanService.track(Event.HistorySearchTermGroupRemoveAll)
-        assertTrue(History.searchTermGroupRemoveAll.testHasValue())
-
-        assertFalse(History.searchIconTapped.testHasValue())
-        gleanService.track(Event.HistorySearchIconTapped)
-        assertTrue(History.searchIconTapped.testHasValue())
-
-        assertFalse(History.searchResultTapped.testHasValue())
-        gleanService.track(Event.HistorySearchResultTapped)
-        assertTrue(History.searchResultTapped.testHasValue())
-    }
-
-    @Test
     fun `Addon events are correctly recorded`() {
         assertFalse(Addons.openAddonsInSettings.testHasValue())
         gleanService.track(Event.AddonsOpenInSettings)
@@ -169,17 +93,6 @@ class GleanMetricsServiceTest {
         assertEquals("open_addon_setting", events[0].name)
         assertEquals(1, events[0].extra!!.size)
         assertEquals("123", events[0].extra!!["addon_id"])
-    }
-
-    @Test
-    fun `default browser events are correctly recorded`() {
-        assertFalse(Events.defaultBrowserChanged.testHasValue())
-        gleanService.track(Event.ChangedToDefaultBrowser)
-        assertTrue(Events.defaultBrowserChanged.testHasValue())
-
-        assertFalse(Events.defaultBrowserNotifTapped.testHasValue())
-        gleanService.track(Event.DefaultBrowserNotifTapped)
-        assertTrue(Events.defaultBrowserNotifTapped.testHasValue())
     }
 
     @Test

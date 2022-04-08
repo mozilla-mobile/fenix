@@ -10,8 +10,10 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.verify
 import io.mockk.verifyAll
+import mozilla.components.browser.toolbar.facts.ToolbarFacts
 import mozilla.components.feature.awesomebar.facts.AwesomeBarFacts
 import mozilla.components.feature.customtabs.CustomTabsFacts
+import mozilla.components.feature.media.facts.MediaFacts
 import mozilla.components.feature.prompts.dialog.LoginDialogFacts
 import mozilla.components.feature.prompts.facts.CreditCardAutofillDialogFacts
 import mozilla.components.feature.pwa.ProgressiveWebAppFacts
@@ -29,7 +31,9 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mozilla.fenix.GleanMetrics.CustomTab
 import org.mozilla.fenix.GleanMetrics.LoginDialog
+import org.mozilla.fenix.GleanMetrics.MediaNotification
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.utils.Settings
 
@@ -271,59 +275,6 @@ class MetricControllerTest {
     }
 
     @Test
-    fun `history events should be sent to enabled service`() {
-        val controller = ReleaseMetricController(
-            listOf(marketingService1),
-            isDataTelemetryEnabled = { true },
-            isMarketingDataTelemetryEnabled = { true },
-            mockk()
-        )
-        every { marketingService1.shouldTrack(Event.HistoryOpenedInNewTab) } returns true
-        every { marketingService1.shouldTrack(Event.HistoryOpenedInNewTabs) } returns true
-        every { marketingService1.shouldTrack(Event.HistoryOpenedInPrivateTab) } returns true
-        every { marketingService1.shouldTrack(Event.HistoryOpenedInPrivateTabs) } returns true
-        every { marketingService1.shouldTrack(Event.HistoryItemRemoved) } returns true
-        every { marketingService1.shouldTrack(Event.HistoryAllItemsRemoved) } returns true
-        every { marketingService1.shouldTrack(Event.HistoryRecentSearchesTapped("2")) } returns true
-        every { marketingService1.shouldTrack(Event.HistorySearchTermGroupTapped) } returns true
-        every { marketingService1.shouldTrack(Event.HistorySearchTermGroupOpenTab) } returns true
-        every { marketingService1.shouldTrack(Event.HistorySearchTermGroupRemoveTab) } returns true
-        every { marketingService1.shouldTrack(Event.HistorySearchTermGroupRemoveAll) } returns true
-        every { marketingService1.shouldTrack(Event.HistorySearchIconTapped) } returns true
-        every { marketingService1.shouldTrack(Event.HistorySearchResultTapped) } returns true
-
-        controller.start(MetricServiceType.Marketing)
-
-        controller.track(Event.HistoryOpenedInNewTab)
-        controller.track(Event.HistoryOpenedInNewTabs)
-        controller.track(Event.HistoryOpenedInPrivateTab)
-        controller.track(Event.HistoryOpenedInPrivateTabs)
-        controller.track(Event.HistoryItemRemoved)
-        controller.track(Event.HistoryAllItemsRemoved)
-        controller.track(Event.HistoryRecentSearchesTapped("2"))
-        controller.track(Event.HistorySearchTermGroupTapped)
-        controller.track(Event.HistorySearchTermGroupOpenTab)
-        controller.track(Event.HistorySearchTermGroupRemoveTab)
-        controller.track(Event.HistorySearchTermGroupRemoveAll)
-        controller.track(Event.HistorySearchIconTapped)
-        controller.track(Event.HistorySearchResultTapped)
-
-        verify { marketingService1.track(Event.HistoryOpenedInNewTab) }
-        verify { marketingService1.track(Event.HistoryOpenedInNewTabs) }
-        verify { marketingService1.track(Event.HistoryOpenedInPrivateTab) }
-        verify { marketingService1.track(Event.HistoryOpenedInPrivateTabs) }
-        verify { marketingService1.track(Event.HistoryItemRemoved) }
-        verify { marketingService1.track(Event.HistoryAllItemsRemoved) }
-        verify { marketingService1.track(Event.HistoryRecentSearchesTapped("2")) }
-        verify { marketingService1.track(Event.HistorySearchTermGroupTapped) }
-        verify { marketingService1.track(Event.HistorySearchTermGroupOpenTab) }
-        verify { marketingService1.track(Event.HistorySearchTermGroupRemoveTab) }
-        verify { marketingService1.track(Event.HistorySearchTermGroupRemoveAll) }
-        verify { marketingService1.track(Event.HistorySearchIconTapped) }
-        verify { marketingService1.track(Event.HistorySearchResultTapped) }
-    }
-
-    @Test
     fun `web extension fact should set value in SharedPreference`() {
         val enabled = true
         val settings = Settings(testContext)
@@ -462,8 +413,6 @@ class MetricControllerTest {
 
         val simpleMappings = listOf(
             // CreditCardAutofillDialogFacts.Items is already tested.
-            Triple(Component.FEATURE_CUSTOMTABS, CustomTabsFacts.Items.CLOSE, Event.CustomTabsClosed),
-            Triple(Component.FEATURE_CUSTOMTABS, CustomTabsFacts.Items.ACTION_BUTTON, Event.CustomTabsActionTapped),
             Triple(Component.FEATURE_PWA, ProgressiveWebAppFacts.Items.HOMESCREEN_ICON_TAP, Event.ProgressiveWebAppOpenFromHomescreenTap),
             Triple(Component.FEATURE_PWA, ProgressiveWebAppFacts.Items.INSTALL_SHORTCUT, Event.ProgressiveWebAppInstallAsShortcut),
             Triple(Component.FEATURE_SYNCEDTABS, SyncedTabsFacts.Items.SYNCED_TABS_SUGGESTION_CLICKED, Event.SyncedTabSuggestionClicked),
@@ -502,6 +451,61 @@ class MetricControllerTest {
             assertEquals(true, event.testHasValue())
             assertEquals(1, event.testGetValue().size)
             assertEquals(null, event.testGetValue().single().extra)
+        }
+    }
+
+    @Test
+    fun `WHEN processing a FEATURE_MEDIA NOTIFICATION fact THEN the right metric is recorded`() {
+        val controller = ReleaseMetricController(emptyList(), { true }, { true }, mockk())
+        val itemsToEvents = listOf(
+            Action.PLAY to MediaNotification.play,
+            Action.PAUSE to MediaNotification.pause,
+        )
+
+        itemsToEvents.forEach { (action, event) ->
+            val fact = Fact(Component.FEATURE_MEDIA, action, MediaFacts.Items.NOTIFICATION)
+            controller.run {
+                fact.process()
+            }
+
+            assertEquals(true, event.testHasValue())
+            assertEquals(1, event.testGetValue().size)
+            assertEquals(null, event.testGetValue().single().extra)
+        }
+    }
+
+    @Test
+    fun `WHEN processing a CustomTab fact THEN the right metric is recorded`() {
+        val controller = ReleaseMetricController(emptyList(), { true }, { true }, mockk())
+        val action = mockk<Action>(relaxed = true)
+        var fact: Fact
+
+        with(controller) {
+            fact = Fact(
+                Component.BROWSER_TOOLBAR,
+                action,
+                ToolbarFacts.Items.MENU,
+                metadata = mapOf("customTab" to true)
+            )
+            fact.process()
+
+            assertEquals(true, CustomTab.menu.testHasValue())
+            assertEquals(1, CustomTab.menu.testGetValue().size)
+            assertEquals(null, CustomTab.menu.testGetValue().single().extra)
+
+            fact = Fact(Component.FEATURE_CUSTOMTABS, action, CustomTabsFacts.Items.ACTION_BUTTON)
+            fact.process()
+
+            assertEquals(true, CustomTab.actionButton.testHasValue())
+            assertEquals(1, CustomTab.actionButton.testGetValue().size)
+            assertEquals(null, CustomTab.actionButton.testGetValue().single().extra)
+
+            fact = Fact(Component.FEATURE_CUSTOMTABS, action, CustomTabsFacts.Items.CLOSE)
+            fact.process()
+
+            assertEquals(true, CustomTab.closed.testHasValue())
+            assertEquals(1, CustomTab.closed.testGetValue().size)
+            assertEquals(null, CustomTab.closed.testGetValue().single().extra)
         }
     }
 
