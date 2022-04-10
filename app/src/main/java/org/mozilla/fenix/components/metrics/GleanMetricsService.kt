@@ -17,19 +17,15 @@ import org.mozilla.fenix.GleanMetrics.BrowserSearch
 import org.mozilla.fenix.GleanMetrics.ContextMenu
 import org.mozilla.fenix.GleanMetrics.ContextualMenu
 import org.mozilla.fenix.GleanMetrics.CreditCards
-import org.mozilla.fenix.GleanMetrics.CustomTab
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.ExperimentsDefaultBrowser
 import org.mozilla.fenix.GleanMetrics.HomeMenu
 import org.mozilla.fenix.GleanMetrics.HomeScreen
-import org.mozilla.fenix.GleanMetrics.Logins
-import org.mozilla.fenix.GleanMetrics.MediaNotification
 import org.mozilla.fenix.GleanMetrics.MediaState
 import org.mozilla.fenix.GleanMetrics.Metrics
 import org.mozilla.fenix.GleanMetrics.Pings
 import org.mozilla.fenix.GleanMetrics.Pocket
 import org.mozilla.fenix.GleanMetrics.ProgressiveWebApp
-import org.mozilla.fenix.GleanMetrics.ReaderMode
 import org.mozilla.fenix.GleanMetrics.RecentBookmarks
 import org.mozilla.fenix.GleanMetrics.RecentSearches
 import org.mozilla.fenix.GleanMetrics.RecentTabs
@@ -37,10 +33,8 @@ import org.mozilla.fenix.GleanMetrics.RecentlyVisitedHomepage
 import org.mozilla.fenix.GleanMetrics.SearchTerms
 import org.mozilla.fenix.GleanMetrics.StartOnHome
 import org.mozilla.fenix.GleanMetrics.SyncedTabs
-import org.mozilla.fenix.GleanMetrics.Tab
 import org.mozilla.fenix.GleanMetrics.Tabs
 import org.mozilla.fenix.GleanMetrics.TopSites
-import org.mozilla.fenix.GleanMetrics.VoiceSearch
 import org.mozilla.fenix.GleanMetrics.Wallpapers
 import org.mozilla.fenix.GleanMetrics.Messaging
 import org.mozilla.fenix.ext.components
@@ -118,34 +112,6 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.SetDefaultBrowserToolbarMenuClicked -> EventWrapper<NoExtraKeys>(
             { ExperimentsDefaultBrowser.toolbarMenuClicked.record(it) }
         )
-
-        is Event.CustomTabsMenuOpened -> EventWrapper<NoExtraKeys>(
-            { CustomTab.menu.record(it) }
-        )
-        is Event.CustomTabsActionTapped -> EventWrapper<NoExtraKeys>(
-            { CustomTab.actionButton.record(it) }
-        )
-        is Event.CustomTabsClosed -> EventWrapper<NoExtraKeys>(
-            { CustomTab.closed.record(it) }
-        )
-        is Event.ReaderModeAvailable -> EventWrapper<NoExtraKeys>(
-            { ReaderMode.available.record(it) }
-        )
-        is Event.ReaderModeOpened -> EventWrapper<NoExtraKeys>(
-            { ReaderMode.opened.record(it) }
-        )
-        is Event.ReaderModeClosed -> EventWrapper<NoExtraKeys>(
-            { ReaderMode.closed.record(it) }
-        )
-        is Event.ReaderModeAppearanceOpened -> EventWrapper<NoExtraKeys>(
-            { ReaderMode.appearance.record(it) }
-        )
-        is Event.TabMediaPlay -> EventWrapper<NoExtraKeys>(
-            { Tab.mediaPlay.record(it) }
-        )
-        is Event.TabMediaPause -> EventWrapper<NoExtraKeys>(
-            { Tab.mediaPause.record(it) }
-        )
         is Event.MediaPlayState -> EventWrapper<NoExtraKeys>(
             { MediaState.play.record(it) }
         )
@@ -160,37 +126,6 @@ private val Event.wrapper: EventWrapper<*>?
         )
         is Event.MediaPictureInPictureState -> EventWrapper<NoExtraKeys>(
             { MediaState.pictureInPicture.record(it) }
-        )
-        is Event.NotificationMediaPlay -> EventWrapper<NoExtraKeys>(
-            { MediaNotification.play.record(it) }
-        )
-        is Event.NotificationMediaPause -> EventWrapper<NoExtraKeys>(
-            { MediaNotification.pause.record(it) }
-        )
-        is Event.OpenLogins -> EventWrapper<NoExtraKeys>(
-            { Logins.openLogins.record(it) }
-        )
-        is Event.OpenOneLogin -> EventWrapper<NoExtraKeys>(
-            { Logins.openIndividualLogin.record(it) }
-        )
-        is Event.CopyLogin -> EventWrapper<NoExtraKeys>(
-            { Logins.copyLogin.record(it) }
-        )
-        is Event.ViewLoginPassword -> EventWrapper<NoExtraKeys>(
-            { Logins.viewPasswordLogin.record(it) }
-        )
-        is Event.DeleteLogin -> EventWrapper<NoExtraKeys>(
-            { Logins.deleteSavedLogin.record(it) }
-        )
-        is Event.EditLogin -> EventWrapper<NoExtraKeys>(
-            { Logins.openLoginEditor.record(it) }
-        )
-        is Event.EditLoginSave -> EventWrapper<NoExtraKeys>(
-            { Logins.saveEditedLogin.record(it) }
-        )
-        is Event.SaveLoginsSettingChanged -> EventWrapper(
-            { Logins.saveLoginsSettingChanged.record(it) },
-            { Logins.saveLoginsSettingChangedKeys.valueOf(it) }
         )
         is Event.TopSiteOpenDefault -> EventWrapper<NoExtraKeys>(
             { TopSites.openDefault.record(it) }
@@ -300,10 +235,6 @@ private val Event.wrapper: EventWrapper<*>?
             { Addons.openAddonSetting.record(it) },
             { Addons.openAddonSettingKeys.valueOf(it) }
         )
-        is Event.VoiceSearchTapped -> EventWrapper<NoExtraKeys>(
-            { VoiceSearch.tapped.record(it) }
-        )
-
         is Event.AutoPlaySettingVisited -> EventWrapper<NoExtraKeys>(
             { Autoplay.visitedSetting.record(it) }
         )

@@ -10,8 +10,10 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.verify
 import io.mockk.verifyAll
+import mozilla.components.browser.toolbar.facts.ToolbarFacts
 import mozilla.components.feature.awesomebar.facts.AwesomeBarFacts
 import mozilla.components.feature.customtabs.CustomTabsFacts
+import mozilla.components.feature.media.facts.MediaFacts
 import mozilla.components.feature.prompts.dialog.LoginDialogFacts
 import mozilla.components.feature.prompts.facts.CreditCardAutofillDialogFacts
 import mozilla.components.feature.pwa.ProgressiveWebAppFacts
@@ -29,7 +31,9 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mozilla.fenix.GleanMetrics.CustomTab
 import org.mozilla.fenix.GleanMetrics.LoginDialog
+import org.mozilla.fenix.GleanMetrics.MediaNotification
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.utils.Settings
 
@@ -160,41 +164,6 @@ class MetricControllerTest {
             dataService2.start()
             dataService2.stop()
         }
-    }
-
-    @Test
-    fun `tracking events should be sent to matching service`() {
-        val controller = ReleaseMetricController(
-            listOf(dataService1, marketingService1),
-            isDataTelemetryEnabled = { true },
-            isMarketingDataTelemetryEnabled = { true },
-            mockk()
-        )
-        every { dataService1.shouldTrack(Event.TabMediaPause) } returns false
-        every { marketingService1.shouldTrack(Event.TabMediaPause) } returns true
-
-        controller.start(MetricServiceType.Marketing)
-        controller.track(Event.TabMediaPause)
-        verify { marketingService1.track(Event.TabMediaPause) }
-    }
-
-    @Test
-    fun `tracking events should be sent to enabled service`() {
-        var enabled = true
-        val controller = ReleaseMetricController(
-            listOf(dataService1, marketingService1),
-            isDataTelemetryEnabled = { enabled },
-            isMarketingDataTelemetryEnabled = { true },
-            mockk()
-        )
-        every { dataService1.shouldTrack(Event.TabMediaPause) } returns true
-        every { marketingService1.shouldTrack(Event.TabMediaPause) } returns true
-
-        controller.start(MetricServiceType.Marketing)
-        enabled = false
-
-        controller.track(Event.TabMediaPause)
-        verify { marketingService1.track(Event.TabMediaPause) }
     }
 
     @Test
@@ -409,8 +378,6 @@ class MetricControllerTest {
 
         val simpleMappings = listOf(
             // CreditCardAutofillDialogFacts.Items is already tested.
-            Triple(Component.FEATURE_CUSTOMTABS, CustomTabsFacts.Items.CLOSE, Event.CustomTabsClosed),
-            Triple(Component.FEATURE_CUSTOMTABS, CustomTabsFacts.Items.ACTION_BUTTON, Event.CustomTabsActionTapped),
             Triple(Component.FEATURE_PWA, ProgressiveWebAppFacts.Items.HOMESCREEN_ICON_TAP, Event.ProgressiveWebAppOpenFromHomescreenTap),
             Triple(Component.FEATURE_PWA, ProgressiveWebAppFacts.Items.INSTALL_SHORTCUT, Event.ProgressiveWebAppInstallAsShortcut),
             Triple(Component.FEATURE_SYNCEDTABS, SyncedTabsFacts.Items.SYNCED_TABS_SUGGESTION_CLICKED, Event.SyncedTabSuggestionClicked),
@@ -449,6 +416,61 @@ class MetricControllerTest {
             assertEquals(true, event.testHasValue())
             assertEquals(1, event.testGetValue().size)
             assertEquals(null, event.testGetValue().single().extra)
+        }
+    }
+
+    @Test
+    fun `WHEN processing a FEATURE_MEDIA NOTIFICATION fact THEN the right metric is recorded`() {
+        val controller = ReleaseMetricController(emptyList(), { true }, { true }, mockk())
+        val itemsToEvents = listOf(
+            Action.PLAY to MediaNotification.play,
+            Action.PAUSE to MediaNotification.pause,
+        )
+
+        itemsToEvents.forEach { (action, event) ->
+            val fact = Fact(Component.FEATURE_MEDIA, action, MediaFacts.Items.NOTIFICATION)
+            controller.run {
+                fact.process()
+            }
+
+            assertEquals(true, event.testHasValue())
+            assertEquals(1, event.testGetValue().size)
+            assertEquals(null, event.testGetValue().single().extra)
+        }
+    }
+
+    @Test
+    fun `WHEN processing a CustomTab fact THEN the right metric is recorded`() {
+        val controller = ReleaseMetricController(emptyList(), { true }, { true }, mockk())
+        val action = mockk<Action>(relaxed = true)
+        var fact: Fact
+
+        with(controller) {
+            fact = Fact(
+                Component.BROWSER_TOOLBAR,
+                action,
+                ToolbarFacts.Items.MENU,
+                metadata = mapOf("customTab" to true)
+            )
+            fact.process()
+
+            assertEquals(true, CustomTab.menu.testHasValue())
+            assertEquals(1, CustomTab.menu.testGetValue().size)
+            assertEquals(null, CustomTab.menu.testGetValue().single().extra)
+
+            fact = Fact(Component.FEATURE_CUSTOMTABS, action, CustomTabsFacts.Items.ACTION_BUTTON)
+            fact.process()
+
+            assertEquals(true, CustomTab.actionButton.testHasValue())
+            assertEquals(1, CustomTab.actionButton.testGetValue().size)
+            assertEquals(null, CustomTab.actionButton.testGetValue().single().extra)
+
+            fact = Fact(Component.FEATURE_CUSTOMTABS, action, CustomTabsFacts.Items.CLOSE)
+            fact.process()
+
+            assertEquals(true, CustomTab.closed.testHasValue())
+            assertEquals(1, CustomTab.closed.testGetValue().size)
+            assertEquals(null, CustomTab.closed.testGetValue().single().extra)
         }
     }
 
