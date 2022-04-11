@@ -105,7 +105,7 @@
             android:layout_height="match_parent"
             android:contentDescription="@string/tabs_header_synced_tabs_title"
             android:foregroundTint="@color/photonWhite"
-            android:icon="@drawable/ic_synced" />
+            android:icon="@drawable/ic_synced_tabs" />
 
     </com.google.android.material.tabs.TabLayout>
 

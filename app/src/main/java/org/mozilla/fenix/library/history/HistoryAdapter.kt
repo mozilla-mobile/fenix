@@ -60,13 +60,7 @@ class HistoryAdapter(
             timeGroup = current.historyTimeGroup
         }
 
-        holder.bind(
-            current,
-            timeGroup,
-            position == 0,
-            mode,
-            isPendingDeletion,
-        )
+        holder.bind(current, timeGroup, position == 0, mode, isPendingDeletion)
     }
 
     fun updatePendingDeletionIds(pendingDeletionIds: Set<Long>) {

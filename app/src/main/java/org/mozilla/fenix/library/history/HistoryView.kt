@@ -34,9 +34,7 @@ class HistoryView(
     var mode: HistoryFragmentState.Mode = HistoryFragmentState.Mode.Normal
         private set
 
-    val historyAdapter = HistoryAdapter(
-        interactor
-    ).apply {
+    val historyAdapter = HistoryAdapter(interactor).apply {
         addLoadStateListener {
             // First call will always have itemCount == 0, but we want to keep adapterItemCount
             // as null until we can distinguish an empty list from populated, so updateEmptyState()

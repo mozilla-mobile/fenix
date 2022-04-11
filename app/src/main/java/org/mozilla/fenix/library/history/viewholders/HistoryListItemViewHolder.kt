@@ -54,7 +54,7 @@ class HistoryListItemViewHolder(
         timeGroup: HistoryItemTimeGroup?,
         showTopContent: Boolean,
         mode: HistoryFragmentState.Mode,
-        isPendingDeletion: Boolean,
+        isPendingDeletion: Boolean
     ) {
         if (isPendingDeletion) {
             binding.historyLayout.visibility = View.GONE
@@ -78,10 +78,7 @@ class HistoryListItemViewHolder(
             }
         }
 
-        toggleTopContent(
-            showTopContent,
-            mode === HistoryFragmentState.Mode.Normal
-        )
+        toggleTopContent(showTopContent, mode === HistoryFragmentState.Mode.Normal)
 
         val headerText = timeGroup?.humanReadable(itemView.context)
         toggleHeader(headerText)
