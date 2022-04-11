@@ -71,6 +71,9 @@ class SettingsPrivacyTest {
         }.openPrivateBrowsingSubMenu {
             verifyNavigationToolBarHeader()
         }.goBack {
+            // HTTPS-Only Mode
+            verifyHTTPSOnlyModeButton()
+            verifyHTTPSOnlyModeState("Off")
 
             // ENHANCED TRACKING PROTECTION
             verifyEnhancedTrackingProtectionButton()

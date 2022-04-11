@@ -43,6 +43,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.Constants.PackageName.GOOGLE_PLAY_SERVICES
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestHelper.appName
+import org.mozilla.fenix.helpers.TestHelper.getStringResource
 import org.mozilla.fenix.helpers.TestHelper.hasCousin
 import org.mozilla.fenix.helpers.TestHelper.isPackageInstalled
 import org.mozilla.fenix.helpers.TestHelper.packageName
@@ -74,6 +75,8 @@ class SettingsRobot {
     // PRIVACY SECTION
     fun verifyPrivacyHeading() = assertPrivacyHeading()
 
+    fun verifyHTTPSOnlyModeButton() = assertHTTPSOnlyModeButton()
+    fun verifyHTTPSOnlyModeState(state: String) = assertHTTPSOnlyModeState(state)
     fun verifyEnhancedTrackingProtectionButton() = assertEnhancedTrackingProtectionButton()
     fun verifyLoginsAndPasswordsButton() = assertLoginsAndPasswordsButton()
     fun verifyEnhancedTrackingProtectionValue(state: String) =
@@ -382,6 +385,22 @@ private fun assertPrivacyHeading() {
     scrollToElementByText("Privacy and security")
     onView(withText("Privacy and security"))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
+
+private fun assertHTTPSOnlyModeButton() {
+    scrollToElementByText(getStringResource(R.string.preferences_https_only_title))
+    onView(
+        withText(R.string.preferences_https_only_title)
+    ).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
+
+private fun assertHTTPSOnlyModeState(state: String) {
+    onView(
+        allOf(
+            withText(R.string.preferences_https_only_title),
+            hasSibling(withText(state))
+        )
+    ).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
 private fun assertEnhancedTrackingProtectionButton() {
