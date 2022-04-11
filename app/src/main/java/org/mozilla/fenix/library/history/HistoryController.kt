@@ -34,7 +34,7 @@ interface HistoryController {
 }
 
 @Suppress("TooManyFunctions")
-open class DefaultHistoryController(
+class DefaultHistoryController(
     private val store: HistoryFragmentStore,
     private val navController: NavController,
     private val scope: CoroutineScope,

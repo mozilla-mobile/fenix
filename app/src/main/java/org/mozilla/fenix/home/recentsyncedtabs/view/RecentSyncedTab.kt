@@ -106,7 +106,7 @@ fun RecentSyncedTab(
                             )
                         } else {
                             Image(
-                                painter = painterResource(R.drawable.ic_synced_tabs),
+                                painter = painterResource(R.drawable.ic_synced),
                                 contentDescription = stringResource(
                                     R.string.recent_tabs_synced_device_icon_content_description
                                 ),

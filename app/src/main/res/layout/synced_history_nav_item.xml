@@ -26,7 +26,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_synced_history" />
+        app:srcCompat="@drawable/ic_synced" />
 
     <TextView
         android:id="@+id/synced_history_header"
@@ -35,7 +35,7 @@
         android:layout_marginStart="12dp"
         android:ellipsize="end"
         android:singleLine="true"
-        android:text="@string/library_synced_history"
+        android:text="@string/history_synced_from_other_devices"
         android:textAlignment="viewStart"
         android:textColor="?attr/textPrimary"
         android:textSize="18sp"

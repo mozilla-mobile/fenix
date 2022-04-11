@@ -35,8 +35,7 @@ class HistoryView(
         private set
 
     val historyAdapter = HistoryAdapter(
-        interactor,
-        syncedHistoryVisible = FeatureFlags.syncedHistoryFeature
+        interactor
     ).apply {
         addLoadStateListener {
             // First call will always have itemCount == 0, but we want to keep adapterItemCount
@@ -118,6 +117,7 @@ class HistoryView(
     fun updateEmptyState(userHasHistory: Boolean) {
         binding.historyList.isVisible = userHasHistory
         binding.historyEmptyView.isVisible = !userHasHistory
+
         with(binding.recentlyClosedNavEmpty) {
             recentlyClosedNav.setOnClickListener {
                 interactor.onRecentlyClosedClicked()
@@ -135,13 +135,15 @@ class HistoryView(
             )
             recentlyClosedNav.isVisible = !userHasHistory
         }
+
         with(binding.syncedHistoryNavEmpty) {
-            val syncedHistoryVisible = FeatureFlags.syncedHistoryFeature && !userHasHistory
+            val syncedHistoryVisible = FeatureFlags.showSyncedHistory && !userHasHistory
             syncedHistoryNav.setOnClickListener {
                 interactor.onSyncedHistoryClicked()
             }
             syncedHistoryNav.isVisible = syncedHistoryVisible
         }
+
         if (!userHasHistory) {
             binding.historyEmptyView.announceForAccessibility(context.getString(R.string.history_empty_message))
         }

@@ -95,7 +95,7 @@ class HomeMenu(
 
     private val syncSignInMenuItem = BrowserMenuImageText(
         getSyncItemTitle(),
-        R.drawable.ic_synced_tabs,
+        R.drawable.ic_synced,
         primaryTextColor
     ) {
         onItemTapped.invoke(Item.SyncAccount(accountManager.accountState))

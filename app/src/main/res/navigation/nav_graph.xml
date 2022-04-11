@@ -299,7 +299,7 @@
     <fragment
         android:id="@+id/syncedHistoryFragment"
         android:name="org.mozilla.fenix.library.syncedhistory.SyncedHistoryFragment"
-        android:label="@string/synced_history"
+        android:label="@string/history_from_other_devices"
         tools:layout="@layout/fragment_synced_history">
         <action
             android:id="@+id/action_global_history_search_dialog"

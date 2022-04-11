@@ -7,6 +7,7 @@ package org.mozilla.fenix.library.history.viewholders
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.HistoryListItemBinding
 import org.mozilla.fenix.ext.components
@@ -50,9 +51,12 @@ class HistoryListItemViewHolder(
     @Suppress("UndocumentedPublicFunction")
     fun bind(
         item: History,
-        params: BindingParams,
+        timeGroup: HistoryItemTimeGroup?,
+        showTopContent: Boolean,
+        mode: HistoryFragmentState.Mode,
+        isPendingDeletion: Boolean,
     ) {
-        if (params.isPendingDeletion) {
+        if (isPendingDeletion) {
             binding.historyLayout.visibility = View.GONE
         } else {
             binding.historyLayout.visibility = View.VISIBLE
@@ -75,12 +79,11 @@ class HistoryListItemViewHolder(
         }
 
         toggleTopContent(
-            params.showTopContent,
-            params.mode === HistoryFragmentState.Mode.Normal,
-            params.syncedHistoryVisible
+            showTopContent,
+            mode === HistoryFragmentState.Mode.Normal
         )
 
-        val headerText = params.timeGroup?.humanReadable(itemView.context)
+        val headerText = timeGroup?.humanReadable(itemView.context)
         toggleHeader(headerText)
 
         binding.historyLayout.setSelectionInteractor(item, selectionHolder, historyInteractor)
@@ -94,7 +97,7 @@ class HistoryListItemViewHolder(
             binding.historyLayout.iconView.setImageResource(R.drawable.ic_multiple_tabs)
         }
 
-        if (params.mode is HistoryFragmentState.Mode.Editing) {
+        if (mode is HistoryFragmentState.Mode.Editing) {
             binding.historyLayout.overflowView.hideAndDisable()
         } else {
             binding.historyLayout.overflowView.showAndEnable()
@@ -112,13 +115,13 @@ class HistoryListItemViewHolder(
         }
     }
 
+    @Suppress("NestedBlockDepth")
     private fun toggleTopContent(
         showTopContent: Boolean,
         isNormalMode: Boolean,
-        syncedHistoryVisible: Boolean
     ) {
         binding.recentlyClosedNavEmpty.recentlyClosedNav.isVisible = showTopContent
-        binding.syncedHistoryNavEmpty.syncedHistoryNav.isVisible = showTopContent && syncedHistoryVisible
+        binding.syncedHistoryNavEmpty.syncedHistoryNav.isVisible = showTopContent && FeatureFlags.showSyncedHistory
 
         if (showTopContent) {
             val numRecentTabs = itemView.context.components.core.store.state.closedTabs.size
@@ -132,6 +135,7 @@ class HistoryListItemViewHolder(
                 ),
                 numRecentTabs
             )
+
             binding.recentlyClosedNavEmpty.recentlyClosedNav.run {
                 if (isNormalMode) {
                     isEnabled = true
@@ -141,20 +145,17 @@ class HistoryListItemViewHolder(
                     alpha = DISABLED_BUTTON_ALPHA
                 }
             }
-            if (syncedHistoryVisible) {
-                toggleTopContent(isNormalMode)
-            }
-        }
-    }
 
-    private fun toggleTopContent(isNormalMode: Boolean) {
-        binding.syncedHistoryNavEmpty.syncedHistoryNav.run {
-            if (isNormalMode) {
-                isEnabled = true
-                alpha = 1f
-            } else {
-                isEnabled = false
-                alpha = DISABLED_BUTTON_ALPHA
+            if (FeatureFlags.showSyncedHistory) {
+                binding.syncedHistoryNavEmpty.syncedHistoryNav.run {
+                    if (isNormalMode) {
+                        isEnabled = true
+                        alpha = 1f
+                    } else {
+                        isEnabled = false
+                        alpha = DISABLED_BUTTON_ALPHA
+                    }
+                }
             }
         }
     }
@@ -164,12 +165,3 @@ class HistoryListItemViewHolder(
         const val LAYOUT_ID = R.layout.history_list_item
     }
 }
-
-@Suppress("UndocumentedPublicClass")
-data class BindingParams(
-    val timeGroup: HistoryItemTimeGroup?,
-    val showTopContent: Boolean,
-    val mode: HistoryFragmentState.Mode,
-    val isPendingDeletion: Boolean,
-    val syncedHistoryVisible: Boolean
-)

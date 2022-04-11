@@ -92,7 +92,7 @@ object FeatureFlags {
     /**
      * Separates history into local and synced from other sources.
      */
-    val syncedHistoryFeature = Config.channel.isNightlyOrDebug
+    val showSyncedHistory = Config.channel.isDebug
 
     /**
      * Enables themed wallpapers feature.

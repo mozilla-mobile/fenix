@@ -75,6 +75,7 @@ interface PagedHistoryProvider {
      *
      * @param offset How much to offset the list by
      * @param numberOfItems How many items to fetch
+     * @param isRemote Are items local or synced from other devices
      * @return list of [HistoryDB]
      */
     suspend fun getHistory(offset: Int, numberOfItems: Int, isRemote: Boolean? = null): List<HistoryDB>
