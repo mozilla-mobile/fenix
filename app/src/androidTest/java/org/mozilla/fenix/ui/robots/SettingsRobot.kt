@@ -18,6 +18,7 @@ import androidx.test.espresso.intent.matcher.IntentMatchers.toPackage
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.Visibility
 import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
+import androidx.test.espresso.matcher.ViewMatchers.hasSibling
 import androidx.test.espresso.matcher.ViewMatchers.isChecked
 import androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
@@ -429,8 +430,12 @@ private fun assertDeleteBrowsingDataOnQuitButton() {
 }
 
 private fun assertDeleteBrowsingDataValue(state: String) {
-    mDevice.wait(Until.findObject(By.text("Delete browsing data on quit")), waitingTime)
-    onView(withText(state)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+    onView(
+        allOf(
+            withText(R.string.preferences_delete_browsing_data_on_quit),
+            hasSibling(withText(state))
+        )
+    ).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
 private fun assertNotificationsButton() {

@@ -10,7 +10,6 @@ import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
@@ -59,10 +58,6 @@ class SettingsPrivacyTest {
     }
 
     @Test
-    @Ignore(
-        "New https-only setting was added. Test needs refactoring. " +
-            "See https://github.com/mozilla-mobile/fenix/issues/24495"
-    )
     // Walks through settings privacy menu and sub-menus to ensure all items are present
     fun settingsPrivacyItemsTest() {
         homeScreen {
