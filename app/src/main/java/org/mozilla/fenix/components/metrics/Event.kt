@@ -6,7 +6,6 @@ package org.mozilla.fenix.components.metrics
 
 import mozilla.components.browser.state.search.SearchEngine
 import org.mozilla.fenix.GleanMetrics.Addons
-import org.mozilla.fenix.GleanMetrics.AppTheme
 import org.mozilla.fenix.GleanMetrics.Autoplay
 import org.mozilla.fenix.GleanMetrics.ContextMenu
 import org.mozilla.fenix.GleanMetrics.Events
@@ -209,13 +208,6 @@ sealed class Event {
 
         override val extras: Map<Events.performedSearchKeys, String>?
             get() = mapOf(Events.performedSearchKeys.source to eventSource.sourceLabel)
-    }
-
-    data class DarkThemeSelected(val source: Source) : Event() {
-        enum class Source { SETTINGS }
-
-        override val extras: Map<AppTheme.darkThemeSelectedKeys, String>?
-            get() = mapOf(AppTheme.darkThemeSelectedKeys.source to source.name)
     }
 
     data class SearchWithAds(val providerName: String) : Event() {
