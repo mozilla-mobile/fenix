@@ -77,7 +77,7 @@ class SettingsPrivacyTest {
 
             // ENHANCED TRACKING PROTECTION
             verifyEnhancedTrackingProtectionButton()
-            verifyEnhancedTrackingProtectionValue("On")
+            verifyEnhancedTrackingProtectionState("On")
         }.openEnhancedTrackingProtectionSubMenu {
             verifyNavigationToolBarHeader()
             verifyEnhancedTrackingProtectionProtectionSubMenuItems()
@@ -150,7 +150,7 @@ class SettingsPrivacyTest {
 
             // DELETE BROWSING DATA ON QUIT
             verifyDeleteBrowsingDataOnQuitButton()
-            verifyDeleteBrowsingDataOnQuitValue("Off")
+            verifyDeleteBrowsingDataOnQuitState("Off")
         }.openSettingsSubMenuDeleteBrowsingDataOnQuit {
             verifyNavigationToolBarHeader()
             verifyDeleteBrowsingDataOnQuitSubMenuItems()

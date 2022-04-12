@@ -79,14 +79,14 @@ class SettingsRobot {
     fun verifyHTTPSOnlyModeState(state: String) = assertHTTPSOnlyModeState(state)
     fun verifyEnhancedTrackingProtectionButton() = assertEnhancedTrackingProtectionButton()
     fun verifyLoginsAndPasswordsButton() = assertLoginsAndPasswordsButton()
-    fun verifyEnhancedTrackingProtectionValue(state: String) =
-        assertEnhancedTrackingProtectionValue(state)
+    fun verifyEnhancedTrackingProtectionState(state: String) =
+        assertEnhancedTrackingProtectionState(state)
     fun verifyPrivateBrowsingButton() = assertPrivateBrowsingButton()
     fun verifySitePermissionsButton() = assertSitePermissionsButton()
     fun verifyDeleteBrowsingDataButton() = assertDeleteBrowsingDataButton()
     fun verifyDeleteBrowsingDataOnQuitButton() = assertDeleteBrowsingDataOnQuitButton()
-    fun verifyDeleteBrowsingDataOnQuitValue(state: String) =
-        assertDeleteBrowsingDataValue(state)
+    fun verifyDeleteBrowsingDataOnQuitState(state: String) =
+        assertDeleteBrowsingDataState(state)
     fun verifyNotificationsButton() = assertNotificationsButton()
     fun verifyDataCollectionButton() = assertDataCollectionButton()
     fun verifyOpenLinksInAppsButton() = assertOpenLinksInAppsButton()
@@ -412,7 +412,7 @@ private fun assertEnhancedTrackingProtectionButton() {
     ).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
-private fun assertEnhancedTrackingProtectionValue(state: String) {
+private fun assertEnhancedTrackingProtectionState(state: String) {
     mDevice.wait(Until.findObject(By.text("Enhanced Tracking Protection")), waitingTime)
     onView(withText(state)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
@@ -448,7 +448,7 @@ private fun assertDeleteBrowsingDataOnQuitButton() {
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
-private fun assertDeleteBrowsingDataValue(state: String) {
+private fun assertDeleteBrowsingDataState(state: String) {
     onView(
         allOf(
             withText(R.string.preferences_delete_browsing_data_on_quit),
