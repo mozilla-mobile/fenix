@@ -118,6 +118,8 @@ class HistoryListItemViewHolder(
         isNormalMode: Boolean,
     ) {
         binding.recentlyClosedNavEmpty.recentlyClosedNav.isVisible = showTopContent
+        binding.topDivider.isVisible = showTopContent
+        binding.bottomDivider.isVisible = showTopContent
         binding.syncedHistoryNavEmpty.syncedHistoryNav.isVisible = showTopContent && FeatureFlags.showSyncedHistory
 
         if (showTopContent) {

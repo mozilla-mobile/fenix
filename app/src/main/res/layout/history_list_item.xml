@@ -9,18 +9,23 @@
     android:importantForAccessibility="no"
     android:orientation="vertical">
 
+    <View
+        android:id="@+id/top_divider"
+        android:layout_width="match_parent"
+        android:layout_height="8dp" />
+
     <include
         android:id="@+id/recently_closed_nav_empty"
-        layout="@layout/recently_closed_nav_item"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="visible"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="0dp" />
+        layout="@layout/recently_closed_nav_item" />
 
     <include
         android:id="@+id/synced_history_nav_empty"
         layout="@layout/synced_history_nav_item" />
+
+    <View
+        android:id="@+id/bottom_divider"
+        android:layout_width="match_parent"
+        android:layout_height="32dp" />
 
     <TextView
         android:id="@+id/header_title"

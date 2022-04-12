@@ -115,6 +115,7 @@ class HistoryView(
     fun updateEmptyState(userHasHistory: Boolean) {
         binding.historyList.isVisible = userHasHistory
         binding.historyEmptyView.isVisible = !userHasHistory
+        binding.topDivider.isVisible = !userHasHistory
 
         with(binding.recentlyClosedNavEmpty) {
             recentlyClosedNav.setOnClickListener {
