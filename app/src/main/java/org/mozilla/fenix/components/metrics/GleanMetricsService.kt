@@ -16,12 +16,10 @@ import org.mozilla.fenix.GleanMetrics.ContextMenu
 import org.mozilla.fenix.GleanMetrics.ContextualMenu
 import org.mozilla.fenix.GleanMetrics.CreditCards
 import org.mozilla.fenix.GleanMetrics.Events
-import org.mozilla.fenix.GleanMetrics.ExperimentsDefaultBrowser
 import org.mozilla.fenix.GleanMetrics.HomeMenu
 import org.mozilla.fenix.GleanMetrics.HomeScreen
 import org.mozilla.fenix.GleanMetrics.Metrics
 import org.mozilla.fenix.GleanMetrics.Pings
-import org.mozilla.fenix.GleanMetrics.Pocket
 import org.mozilla.fenix.GleanMetrics.ProgressiveWebApp
 import org.mozilla.fenix.GleanMetrics.RecentBookmarks
 import org.mozilla.fenix.GleanMetrics.RecentSearches
@@ -31,7 +29,6 @@ import org.mozilla.fenix.GleanMetrics.SearchTerms
 import org.mozilla.fenix.GleanMetrics.StartOnHome
 import org.mozilla.fenix.GleanMetrics.SyncedTabs
 import org.mozilla.fenix.GleanMetrics.Tabs
-import org.mozilla.fenix.GleanMetrics.Wallpapers
 import org.mozilla.fenix.GleanMetrics.Messaging
 import org.mozilla.fenix.ext.components
 
@@ -105,32 +102,6 @@ private val Event.wrapper: EventWrapper<*>?
             { ContextMenu.itemTappedKeys.valueOf(it) }
         )
 
-        is Event.SetDefaultBrowserToolbarMenuClicked -> EventWrapper<NoExtraKeys>(
-            { ExperimentsDefaultBrowser.toolbarMenuClicked.record(it) }
-        )
-        is Event.PocketTopSiteClicked -> EventWrapper<NoExtraKeys>(
-            { Pocket.pocketTopSiteClicked.record(it) }
-        )
-        is Event.PocketTopSiteRemoved -> EventWrapper<NoExtraKeys>(
-            { Pocket.pocketTopSiteRemoved.record(it) }
-        )
-        is Event.PocketHomeRecsShown -> EventWrapper<NoExtraKeys>(
-            { Pocket.homeRecsShown.record(it) }
-        )
-        is Event.PocketHomeRecsLearnMoreClicked -> EventWrapper<NoExtraKeys>(
-            { Pocket.homeRecsLearnMoreClicked.record(it) }
-        )
-        is Event.PocketHomeRecsDiscoverMoreClicked -> EventWrapper<NoExtraKeys>(
-            { Pocket.homeRecsDiscoverClicked.record(it) }
-        )
-        is Event.PocketHomeRecsStoryClicked -> EventWrapper(
-            { Pocket.homeRecsStoryClicked.record(it) },
-            { Pocket.homeRecsStoryClickedKeys.valueOf(it) }
-        )
-        is Event.PocketHomeRecsCategoryClicked -> EventWrapper(
-            { Pocket.homeRecsCategoryClicked.record(it) },
-            { Pocket.homeRecsCategoryClickedKeys.valueOf(it) }
-        )
         is Event.AutoPlaySettingVisited -> EventWrapper<NoExtraKeys>(
             { Autoplay.visitedSetting.record(it) }
         )
@@ -361,38 +332,6 @@ private val Event.wrapper: EventWrapper<*>?
                     Messaging.MessageExpiredExtra(
                         messageKey = this.messageId
                     )
-                )
-            }
-        )
-        is Event.WallpaperSettingsOpened -> EventWrapper<NoExtraKeys>(
-            { Wallpapers.wallpaperSettingsOpened.record() }
-        )
-        is Event.WallpaperSelected -> EventWrapper<NoExtraKeys>(
-            {
-                Wallpapers.wallpaperSelected.record(
-                    Wallpapers.WallpaperSelectedExtra(
-                        name = this.wallpaper.name,
-                        themeCollection = this.wallpaper::class.simpleName,
-                    ),
-                )
-            }
-        )
-        is Event.WallpaperSwitched -> EventWrapper<NoExtraKeys>(
-            {
-                Wallpapers.wallpaperSwitched.record(
-                    Wallpapers.WallpaperSwitchedExtra(
-                        name = this.wallpaper.name,
-                        themeCollection = this.wallpaper::class.simpleName,
-                    ),
-                )
-            }
-        )
-        is Event.ChangeWallpaperWithLogoToggled -> EventWrapper<NoExtraKeys>(
-            {
-                Wallpapers.changeWallpaperLogoToggled.record(
-                    Wallpapers.ChangeWallpaperLogoToggledExtra(
-                        checked = this.checked,
-                    ),
                 )
             }
         )
