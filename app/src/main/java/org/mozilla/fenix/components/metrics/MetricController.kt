@@ -35,10 +35,12 @@ import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.webextensions.facts.WebExtensionFacts
 import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.BuildConfig
+import org.mozilla.fenix.GleanMetrics.Addons
+import org.mozilla.fenix.GleanMetrics.CustomTab
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.LoginDialog
 import org.mozilla.fenix.GleanMetrics.MediaNotification
-import org.mozilla.fenix.GleanMetrics.CustomTab
+import org.mozilla.fenix.GleanMetrics.MediaState
 import org.mozilla.fenix.GleanMetrics.PerfAwesomebar
 import org.mozilla.fenix.search.awesomebar.ShortcutsSuggestionProvider
 import org.mozilla.fenix.utils.Settings
@@ -117,6 +119,14 @@ internal class ReleaseMetricController(
         Component.FEATURE_PROMPTS to LoginDialogFacts.Items.SAVE -> {
             LoginDialog.saved.record(NoExtras())
         }
+        Component.FEATURE_MEDIA to MediaFacts.Items.STATE -> {
+            when (action) {
+                Action.PLAY -> MediaState.play.record(NoExtras())
+                Action.PAUSE -> MediaState.pause.record(NoExtras())
+                Action.STOP -> MediaState.stop.record(NoExtras())
+                else -> Unit
+            }
+        }
         Component.FEATURE_MEDIA to MediaFacts.Items.NOTIFICATION -> {
             when (action) {
                 Action.PLAY -> MediaNotification.play.record(NoExtras())
@@ -134,6 +144,14 @@ internal class ReleaseMetricController(
         Component.FEATURE_CUSTOMTABS to CustomTabsFacts.Items.CLOSE -> {
             CustomTab.closed.record(NoExtras())
         }
+
+        Component.BROWSER_MENU to BrowserMenuFacts.Items.WEB_EXTENSION_MENU_ITEM -> {
+            metadata?.get("id")?.let {
+                Addons.openAddonInToolbarMenu.record(Addons.OpenAddonInToolbarMenuExtra(it.toString()))
+            }
+            Unit
+        }
+
         else -> {
             this.toEvent()?.also {
                 track(it)
@@ -224,18 +242,6 @@ internal class ReleaseMetricController(
             }
         }
 
-        Component.BROWSER_MENU == component && BrowserMenuFacts.Items.WEB_EXTENSION_MENU_ITEM == item -> {
-            metadata?.get("id")?.let { Event.AddonsOpenInToolbarMenu(it.toString()) }
-        }
-
-        Component.FEATURE_MEDIA == component && MediaFacts.Items.STATE == item -> {
-            when (action) {
-                Action.PLAY -> Event.MediaPlayState
-                Action.PAUSE -> Event.MediaPauseState
-                Action.STOP -> Event.MediaStopState
-                else -> null
-            }
-        }
         Component.SUPPORT_WEBEXTENSIONS == component && WebExtensionFacts.Items.WEB_EXTENSIONS_INITIALIZED == item -> {
             metadata?.get("installed")?.let { installedAddons ->
                 if (installedAddons is List<*>) {

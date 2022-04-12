@@ -8,7 +8,6 @@ import android.content.Context
 import mozilla.components.service.glean.Glean
 import mozilla.components.service.glean.private.NoExtraKeys
 import mozilla.components.support.base.log.logger.Logger
-import org.mozilla.fenix.GleanMetrics.Addons
 import org.mozilla.fenix.GleanMetrics.AndroidAutofill
 import org.mozilla.fenix.GleanMetrics.Autoplay
 import org.mozilla.fenix.GleanMetrics.Awesomebar
@@ -17,10 +16,8 @@ import org.mozilla.fenix.GleanMetrics.ContextMenu
 import org.mozilla.fenix.GleanMetrics.ContextualMenu
 import org.mozilla.fenix.GleanMetrics.CreditCards
 import org.mozilla.fenix.GleanMetrics.Events
-import org.mozilla.fenix.GleanMetrics.ExperimentsDefaultBrowser
 import org.mozilla.fenix.GleanMetrics.HomeMenu
 import org.mozilla.fenix.GleanMetrics.HomeScreen
-import org.mozilla.fenix.GleanMetrics.MediaState
 import org.mozilla.fenix.GleanMetrics.Metrics
 import org.mozilla.fenix.GleanMetrics.Pings
 import org.mozilla.fenix.GleanMetrics.Pocket
@@ -106,24 +103,6 @@ private val Event.wrapper: EventWrapper<*>?
             { ContextMenu.itemTappedKeys.valueOf(it) }
         )
 
-        is Event.SetDefaultBrowserToolbarMenuClicked -> EventWrapper<NoExtraKeys>(
-            { ExperimentsDefaultBrowser.toolbarMenuClicked.record(it) }
-        )
-        is Event.MediaPlayState -> EventWrapper<NoExtraKeys>(
-            { MediaState.play.record(it) }
-        )
-        is Event.MediaPauseState -> EventWrapper<NoExtraKeys>(
-            { MediaState.pause.record(it) }
-        )
-        is Event.MediaStopState -> EventWrapper<NoExtraKeys>(
-            { MediaState.stop.record(it) }
-        )
-        is Event.MediaFullscreenState -> EventWrapper<NoExtraKeys>(
-            { MediaState.fullscreen.record(it) }
-        )
-        is Event.MediaPictureInPictureState -> EventWrapper<NoExtraKeys>(
-            { MediaState.pictureInPicture.record(it) }
-        )
         is Event.PocketTopSiteClicked -> EventWrapper<NoExtraKeys>(
             { Pocket.pocketTopSiteClicked.record(it) }
         )
@@ -146,17 +125,6 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.PocketHomeRecsCategoryClicked -> EventWrapper(
             { Pocket.homeRecsCategoryClicked.record(it) },
             { Pocket.homeRecsCategoryClickedKeys.valueOf(it) }
-        )
-        is Event.AddonsOpenInSettings -> EventWrapper<NoExtraKeys>(
-            { Addons.openAddonsInSettings.record(it) }
-        )
-        is Event.AddonsOpenInToolbarMenu -> EventWrapper(
-            { Addons.openAddonInToolbarMenu.record(it) },
-            { Addons.openAddonInToolbarMenuKeys.valueOf(it) }
-        )
-        is Event.AddonOpenSetting -> EventWrapper(
-            { Addons.openAddonSetting.record(it) },
-            { Addons.openAddonSettingKeys.valueOf(it) }
         )
         is Event.AutoPlaySettingVisited -> EventWrapper<NoExtraKeys>(
             { Autoplay.visitedSetting.record(it) }
@@ -405,7 +373,6 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.InteractWithSearchURLArea -> null
         is Event.ClearedPrivateData -> null
         is Event.DismissedOnboarding -> null
-        is Event.AddonInstalled -> null
         is Event.SearchWidgetInstalled -> null
     }
 
