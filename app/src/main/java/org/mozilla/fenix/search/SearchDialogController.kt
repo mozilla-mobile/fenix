@@ -13,6 +13,7 @@ import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AlertDialog
 import androidx.navigation.NavController
 import mozilla.components.browser.state.search.SearchEngine
+import mozilla.components.browser.state.state.selectedOrDefaultSearchEngine
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.EngineSession.LoadUrlFlags
 import mozilla.components.feature.tabs.TabsUseCases
@@ -22,12 +23,12 @@ import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.SearchShortcuts
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
-import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.components.metrics.MetricsUtils
 import org.mozilla.fenix.crashes.CrashListActivity
 import org.mozilla.fenix.ext.navigateSafe
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.search.toolbar.SearchSelectorMenu
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.utils.Settings
 
@@ -47,6 +48,11 @@ interface SearchController {
     fun handleSearchShortcutsButtonClicked()
     fun handleCameraPermissionsNeeded()
     fun handleSearchEngineSuggestionClicked(searchEngine: SearchEngine)
+
+    /**
+     * @see [ToolbarInteractor.onMenuItemTapped]
+     */
+    fun handleMenuItemTapped(item: SearchSelectorMenu.Item)
 }
 
 @Suppress("TooManyFunctions", "LongParameterList")
@@ -106,20 +112,15 @@ class SearchDialogController(
             Events.enteredUrl.record(Events.EnteredUrlExtra(autocomplete = false))
         } else {
             val searchAccessPoint = when (fragmentStore.state.searchAccessPoint) {
-                Event.PerformedSearch.SearchAccessPoint.NONE -> Event.PerformedSearch.SearchAccessPoint.ACTION
+                MetricsUtils.Source.NONE -> MetricsUtils.Source.ACTION
                 else -> fragmentStore.state.searchAccessPoint
             }
 
-            val event = searchAccessPoint?.let { sap ->
-                MetricsUtils.createSearchEvent(
-                    searchEngine,
-                    store,
-                    sap
-                )
-            }
-            event?.let {
-                metrics.track(it)
-            }
+            MetricsUtils.recordSearchMetrics(
+                searchEngine,
+                searchEngine == store.state.search.selectedOrDefaultSearchEngine,
+                searchAccessPoint
+            )
         }
     }
 
@@ -176,18 +177,16 @@ class SearchDialogController(
         )
 
         val searchAccessPoint = when (fragmentStore.state.searchAccessPoint) {
-            Event.PerformedSearch.SearchAccessPoint.NONE -> Event.PerformedSearch.SearchAccessPoint.SUGGESTION
+            MetricsUtils.Source.NONE -> MetricsUtils.Source.SUGGESTION
             else -> fragmentStore.state.searchAccessPoint
         }
 
-        if (searchAccessPoint != null && searchEngine != null) {
-            MetricsUtils.createSearchEvent(
+        if (searchEngine != null) {
+            MetricsUtils.recordSearchMetrics(
                 searchEngine,
-                store,
+                searchEngine == store.state.search.selectedOrDefaultSearchEngine,
                 searchAccessPoint
-            )?.apply {
-                metrics.track(this)
-            }
+            )
         }
     }
 
@@ -239,6 +238,13 @@ class SearchDialogController(
     override fun handleSearchEngineSuggestionClicked(searchEngine: SearchEngine) {
         clearToolbar()
         handleSearchShortcutEngineSelected(searchEngine)
+    }
+
+    override fun handleMenuItemTapped(item: SearchSelectorMenu.Item) {
+        when (item) {
+            SearchSelectorMenu.Item.SearchSettings -> handleClickSearchEngineSettings()
+            is SearchSelectorMenu.Item.SearchEngine -> handleSearchShortcutEngineSelected(item.searchEngine)
+        }
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
