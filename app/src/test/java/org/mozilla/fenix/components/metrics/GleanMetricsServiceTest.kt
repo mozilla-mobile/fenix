@@ -6,20 +6,17 @@ package org.mozilla.fenix.components.metrics
 
 import mozilla.components.service.glean.testing.GleanTestRule
 import mozilla.components.support.test.robolectric.testContext
-import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mozilla.fenix.GleanMetrics.Addons
 import org.mozilla.fenix.GleanMetrics.Awesomebar
 import org.mozilla.fenix.GleanMetrics.CreditCards
 import org.mozilla.fenix.GleanMetrics.RecentBookmarks
 import org.mozilla.fenix.GleanMetrics.RecentlyVisitedHomepage
 import org.mozilla.fenix.GleanMetrics.SyncedTabs
-import org.mozilla.fenix.GleanMetrics.TopSites
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 
 @RunWith(FenixRobolectricTestRunner::class)
@@ -66,33 +63,6 @@ class GleanMetricsServiceTest {
         assertFalse(Awesomebar.openedTabSuggestionClicked.testHasValue())
         gleanService.track(Event.OpenedTabSuggestionClicked)
         assertTrue(Awesomebar.openedTabSuggestionClicked.testHasValue())
-    }
-
-    @Test
-    fun `Addon events are correctly recorded`() {
-        assertFalse(Addons.openAddonsInSettings.testHasValue())
-        gleanService.track(Event.AddonsOpenInSettings)
-        assertTrue(Addons.openAddonsInSettings.testHasValue())
-
-        assertFalse(Addons.openAddonInToolbarMenu.testHasValue())
-        gleanService.track(Event.AddonsOpenInToolbarMenu("123"))
-        assertTrue(Addons.openAddonInToolbarMenu.testHasValue())
-        var events = Addons.openAddonInToolbarMenu.testGetValue()
-        assertEquals(1, events.size)
-        assertEquals("addons", events[0].category)
-        assertEquals("open_addon_in_toolbar_menu", events[0].name)
-        assertEquals(1, events[0].extra!!.size)
-        assertEquals("123", events[0].extra!!["addon_id"])
-
-        assertFalse(Addons.openAddonSetting.testHasValue())
-        gleanService.track(Event.AddonOpenSetting("123"))
-        assertTrue(Addons.openAddonSetting.testHasValue())
-        events = Addons.openAddonSetting.testGetValue()
-        assertEquals(1, events.size)
-        assertEquals("addons", events[0].category)
-        assertEquals("open_addon_setting", events[0].name)
-        assertEquals(1, events[0].extra!!.size)
-        assertEquals("123", events[0].extra!!["addon_id"])
     }
 
     @Test
@@ -162,46 +132,5 @@ class GleanMetricsServiceTest {
         assertFalse(CreditCards.managementCardTapped.testHasValue())
         gleanService.track(Event.CreditCardManagementCardTapped)
         assertTrue(CreditCards.managementCardTapped.testHasValue())
-    }
-
-    @Test
-    fun `GIVEN contile top site events WHEN the event is track THEN verify the event is correctly recorded`() {
-        assertFalse(TopSites.contileImpression.testHasValue())
-
-        gleanService.track(
-            Event.TopSiteContileImpression(
-                position = 1,
-                source = Event.TopSiteContileImpression.Source.NEWTAB
-            )
-        )
-
-        assertTrue(TopSites.contileImpression.testHasValue())
-
-        var event = TopSites.contileImpression.testGetValue()
-
-        assertEquals(1, event.size)
-        assertEquals("top_sites", event[0].category)
-        assertEquals("contile_impression", event[0].name)
-        assertEquals("1", event[0].extra!!["position"])
-        assertEquals("newtab", event[0].extra!!["source"])
-
-        assertFalse(TopSites.contileClick.testHasValue())
-
-        gleanService.track(
-            Event.TopSiteContileClick(
-                position = 2,
-                source = Event.TopSiteContileClick.Source.NEWTAB
-            )
-        )
-
-        assertTrue(TopSites.contileClick.testHasValue())
-
-        event = TopSites.contileClick.testGetValue()
-
-        assertEquals(1, event.size)
-        assertEquals("top_sites", event[0].category)
-        assertEquals("contile_click", event[0].name)
-        assertEquals("2", event[0].extra!!["position"])
-        assertEquals("newtab", event[0].extra!!["source"])
     }
 }

@@ -78,6 +78,7 @@ import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.GleanMetrics.Events
+import org.mozilla.fenix.GleanMetrics.Wallpapers
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BrowserAnimator.Companion.getToolbarNavOptions
@@ -123,6 +124,7 @@ import org.mozilla.fenix.perf.MarkersFragmentLifecycleCallbacks
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.settings.SupportUtils.SumoTopic.HELP
 import org.mozilla.fenix.settings.deletebrowsingdata.deleteAndQuit
+import org.mozilla.fenix.tabstray.TabsTrayAccessPoint
 import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.utils.Settings.Companion.TOP_SITES_PROVIDER_MAX_THRESHOLD
 import org.mozilla.fenix.utils.ToolbarPopupWindow
@@ -175,7 +177,7 @@ class HomeFragment : Fragment() {
             context = requireContext(),
             storage = requireComponents.backgroundServices.syncedTabsStorage,
             accountManager = requireComponents.backgroundServices.accountManager,
-            lifecycleOwner = viewLifecycleOwner
+            lifecycleOwner = viewLifecycleOwner,
         )
     }
 
@@ -364,6 +366,7 @@ class HomeFragment : Fragment() {
             recentSyncedTabController = DefaultRecentSyncedTabController(
                 addNewTabUseCase = requireComponents.useCases.tabsUseCases.addTab,
                 navController = findNavController(),
+                accessPoint = TabsTrayAccessPoint.HomeRecentSyncedTab,
             ),
             recentBookmarksController = DefaultRecentBookmarksController(
                 activity = activity,
@@ -383,7 +386,6 @@ class HomeFragment : Fragment() {
                 homeActivity = activity,
                 appStore = components.appStore,
                 navController = findNavController(),
-                metrics = requireComponents.analytics.metrics
             )
         )
 
@@ -745,7 +747,12 @@ class HomeFragment : Fragment() {
             binding.wordmark.setOnClickListener {
                 val manager = requireComponents.wallpaperManager
                 val newWallpaper = manager.switchToNextWallpaper()
-                requireComponents.analytics.metrics.track(Event.WallpaperSwitched(newWallpaper))
+                Wallpapers.wallpaperSwitched.record(
+                    Wallpapers.WallpaperSwitchedExtra(
+                        name = newWallpaper.name,
+                        themeCollection = newWallpaper::class.simpleName
+                    )
+                )
                 manager.updateWallpaper(
                     wallpaperContainer = binding.wallpaperImageView,
                     newWallpaper = newWallpaper
