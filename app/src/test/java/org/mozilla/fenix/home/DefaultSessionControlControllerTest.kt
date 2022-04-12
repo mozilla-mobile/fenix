@@ -40,6 +40,7 @@ import mozilla.components.support.test.rule.MainCoroutineRule
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Ignore
@@ -61,7 +62,6 @@ import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.appstate.AppState
 import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.components.metrics.Event.PerformedSearch.EngineSource
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
@@ -457,8 +457,14 @@ class DefaultSessionControlControllerTest {
 
         controller.handleSelectTopSite(topSite, position = 0)
 
-        verify { metrics.track(Event.TopSiteOpenInNewTab) }
-        verify { metrics.track(Event.TopSiteOpenDefault) }
+        assertTrue(TopSites.openInNewTab.testHasValue())
+        assertEquals(1, TopSites.openInNewTab.testGetValue().size)
+        assertNull(TopSites.openInNewTab.testGetValue().single().extra)
+
+        assertTrue(TopSites.openDefault.testHasValue())
+        assertEquals(1, TopSites.openDefault.testGetValue().size)
+        assertNull(TopSites.openDefault.testGetValue().single().extra)
+
         verify {
             tabsUseCases.addTab.invoke(
                 url = topSite.url,
@@ -483,7 +489,10 @@ class DefaultSessionControlControllerTest {
 
         controller.handleSelectTopSite(topSite, position = 0)
 
-        verify { metrics.track(Event.TopSiteOpenInNewTab) }
+        assertTrue(TopSites.openInNewTab.testHasValue())
+        assertEquals(1, TopSites.openInNewTab.testGetValue().size)
+        assertNull(TopSites.openInNewTab.testGetValue().single().extra)
+
         verify {
             tabsUseCases.addTab.invoke(
                 url = topSite.url,
@@ -510,9 +519,18 @@ class DefaultSessionControlControllerTest {
 
         controller.handleSelectTopSite(topSite, position = 0)
 
-        verify { metrics.track(Event.TopSiteOpenInNewTab) }
-        verify { metrics.track(Event.TopSiteOpenDefault) }
-        verify { metrics.track(Event.TopSiteOpenGoogle) }
+        assertTrue(TopSites.openInNewTab.testHasValue())
+        assertEquals(1, TopSites.openInNewTab.testGetValue().size)
+        assertNull(TopSites.openInNewTab.testGetValue().single().extra)
+
+        assertTrue(TopSites.openDefault.testHasValue())
+        assertEquals(1, TopSites.openDefault.testGetValue().size)
+        assertNull(TopSites.openDefault.testGetValue().single().extra)
+
+        assertTrue(TopSites.openGoogleSearchAttribution.testHasValue())
+        assertEquals(1, TopSites.openGoogleSearchAttribution.testGetValue().size)
+        assertNull(TopSites.openGoogleSearchAttribution.testGetValue().single().extra)
+
         verify {
             tabsUseCases.addTab.invoke(
                 url = SupportUtils.GOOGLE_US_URL,
@@ -539,9 +557,18 @@ class DefaultSessionControlControllerTest {
 
         controller.handleSelectTopSite(topSite, position = 0)
 
-        verify { metrics.track(Event.TopSiteOpenInNewTab) }
-        verify { metrics.track(Event.TopSiteOpenDefault) }
-        verify { metrics.track(Event.TopSiteOpenGoogle) }
+        assertTrue(TopSites.openInNewTab.testHasValue())
+        assertEquals(1, TopSites.openInNewTab.testGetValue().size)
+        assertNull(TopSites.openInNewTab.testGetValue().single().extra)
+
+        assertTrue(TopSites.openDefault.testHasValue())
+        assertEquals(1, TopSites.openDefault.testGetValue().size)
+        assertNull(TopSites.openDefault.testGetValue().single().extra)
+
+        assertTrue(TopSites.openGoogleSearchAttribution.testHasValue())
+        assertEquals(1, TopSites.openGoogleSearchAttribution.testGetValue().size)
+        assertNull(TopSites.openGoogleSearchAttribution.testGetValue().single().extra)
+
         verify {
             tabsUseCases.addTab.invoke(
                 SupportUtils.GOOGLE_XX_URL,
@@ -554,13 +581,14 @@ class DefaultSessionControlControllerTest {
 
     @Test
     fun handleSelectGoogleDefaultTopSite_EventPerformedSearchTopSite() {
+        assertFalse(Events.performedSearch.testHasValue())
+
         val topSite = TopSite.Default(
             id = 1L,
             title = "Google",
             url = SupportUtils.GOOGLE_URL,
             createdAt = 0
         )
-        val engineSource = EngineSource.Default(googleSearchEngine, false)
         val controller = spyk(createController())
 
         every { controller.getAvailableSearchEngines() } returns listOf(googleSearchEngine)
@@ -572,17 +600,15 @@ class DefaultSessionControlControllerTest {
 
             controller.handleSelectTopSite(topSite, position = 0)
 
-            verify {
-                metrics.track(
-                    Event.PerformedSearch(
-                        Event.PerformedSearch.EventSource.TopSite(
-                            engineSource
-                        )
-                    )
-                )
-                metrics.track(Event.TopSiteOpenGoogle)
-                metrics.track(Event.TopSiteOpenDefault)
-            }
+            assertTrue(Events.performedSearch.testHasValue())
+
+            assertTrue(TopSites.openDefault.testHasValue())
+            assertEquals(1, TopSites.openDefault.testGetValue().size)
+            assertNull(TopSites.openDefault.testGetValue().single().extra)
+
+            assertTrue(TopSites.openGoogleSearchAttribution.testHasValue())
+            assertEquals(1, TopSites.openGoogleSearchAttribution.testGetValue().size)
+            assertNull(TopSites.openGoogleSearchAttribution.testGetValue().single().extra)
         } finally {
             unmockkStatic("mozilla.components.browser.state.state.SearchStateKt")
         }
@@ -590,13 +616,14 @@ class DefaultSessionControlControllerTest {
 
     @Test
     fun handleSelectDuckDuckGoTopSite_EventPerformedSearchTopSite() {
+        assertFalse(Events.performedSearch.testHasValue())
+
         val topSite = TopSite.Pinned(
             id = 1L,
             title = "DuckDuckGo",
             url = "https://duckduckgo.com",
             createdAt = 0
         )
-        val engineSource = EngineSource.Shortcut(duckDuckGoSearchEngine, false)
         val controller = spyk(createController())
 
         every { controller.getAvailableSearchEngines() } returns listOf(googleSearchEngine, duckDuckGoSearchEngine)
@@ -608,17 +635,7 @@ class DefaultSessionControlControllerTest {
 
             controller.handleSelectTopSite(topSite, position = 0)
 
-            verify {
-                metrics.track(
-                    Event.PerformedSearch(
-                        Event.PerformedSearch.EventSource.TopSite(
-                            engineSource
-                        )
-                    )
-                )
-
-                metrics.track(Event.TopSiteOpenPinned)
-            }
+            assertTrue(Events.performedSearch.testHasValue())
         } finally {
             unmockkStatic("mozilla.components.browser.state.state.SearchStateKt")
         }
@@ -640,9 +657,18 @@ class DefaultSessionControlControllerTest {
 
         controller.handleSelectTopSite(topSite, position = 0)
 
-        verify { metrics.track(Event.TopSiteOpenInNewTab) }
-        verify { metrics.track(Event.TopSiteOpenPinned) }
-        verify { metrics.track(Event.TopSiteOpenGoogle) }
+        assertTrue(TopSites.openInNewTab.testHasValue())
+        assertEquals(1, TopSites.openInNewTab.testGetValue().size)
+        assertNull(TopSites.openInNewTab.testGetValue().single().extra)
+
+        assertTrue(TopSites.openPinned.testHasValue())
+        assertEquals(1, TopSites.openPinned.testGetValue().size)
+        assertNull(TopSites.openPinned.testGetValue().single().extra)
+
+        assertTrue(TopSites.openGoogleSearchAttribution.testHasValue())
+        assertEquals(1, TopSites.openGoogleSearchAttribution.testGetValue().size)
+        assertNull(TopSites.openGoogleSearchAttribution.testGetValue().single().extra)
+
         verify {
             tabsUseCases.addTab.invoke(
                 SupportUtils.GOOGLE_US_URL,
@@ -669,9 +695,18 @@ class DefaultSessionControlControllerTest {
 
         controller.handleSelectTopSite(topSite, position = 0)
 
-        verify { metrics.track(Event.TopSiteOpenInNewTab) }
-        verify { metrics.track(Event.TopSiteOpenPinned) }
-        verify { metrics.track(Event.TopSiteOpenGoogle) }
+        assertTrue(TopSites.openInNewTab.testHasValue())
+        assertEquals(1, TopSites.openInNewTab.testGetValue().size)
+        assertNull(TopSites.openInNewTab.testGetValue().single().extra)
+
+        assertTrue(TopSites.openPinned.testHasValue())
+        assertEquals(1, TopSites.openPinned.testGetValue().size)
+        assertNull(TopSites.openPinned.testGetValue().single().extra)
+
+        assertTrue(TopSites.openGoogleSearchAttribution.testHasValue())
+        assertEquals(1, TopSites.openGoogleSearchAttribution.testGetValue().size)
+        assertNull(TopSites.openGoogleSearchAttribution.testGetValue().single().extra)
+
         verify {
             tabsUseCases.addTab.invoke(
                 SupportUtils.GOOGLE_XX_URL,
@@ -698,9 +733,18 @@ class DefaultSessionControlControllerTest {
 
         controller.handleSelectTopSite(topSite, position = 0)
 
-        verify { metrics.track(Event.TopSiteOpenInNewTab) }
-        verify { metrics.track(Event.TopSiteOpenFrecent) }
-        verify { metrics.track(Event.TopSiteOpenGoogle) }
+        assertTrue(TopSites.openInNewTab.testHasValue())
+        assertEquals(1, TopSites.openInNewTab.testGetValue().size)
+        assertNull(TopSites.openInNewTab.testGetValue().single().extra)
+
+        assertTrue(TopSites.openFrecency.testHasValue())
+        assertEquals(1, TopSites.openFrecency.testGetValue().size)
+        assertNull(TopSites.openFrecency.testGetValue().single().extra)
+
+        assertTrue(TopSites.openGoogleSearchAttribution.testHasValue())
+        assertEquals(1, TopSites.openGoogleSearchAttribution.testGetValue().size)
+        assertNull(TopSites.openGoogleSearchAttribution.testGetValue().single().extra)
+
         verify {
             tabsUseCases.addTab.invoke(
                 SupportUtils.GOOGLE_US_URL,
@@ -727,9 +771,18 @@ class DefaultSessionControlControllerTest {
 
         controller.handleSelectTopSite(topSite, position = 0)
 
-        verify { metrics.track(Event.TopSiteOpenInNewTab) }
-        verify { metrics.track(Event.TopSiteOpenFrecent) }
-        verify { metrics.track(Event.TopSiteOpenGoogle) }
+        assertTrue(TopSites.openInNewTab.testHasValue())
+        assertEquals(1, TopSites.openInNewTab.testGetValue().size)
+        assertNull(TopSites.openInNewTab.testGetValue().single().extra)
+
+        assertTrue(TopSites.openFrecency.testHasValue())
+        assertEquals(1, TopSites.openFrecency.testGetValue().size)
+        assertNull(TopSites.openFrecency.testGetValue().single().extra)
+
+        assertTrue(TopSites.openGoogleSearchAttribution.testHasValue())
+        assertEquals(1, TopSites.openGoogleSearchAttribution.testGetValue().size)
+        assertNull(TopSites.openGoogleSearchAttribution.testGetValue().single().extra)
+
         verify {
             tabsUseCases.addTab.invoke(
                 SupportUtils.GOOGLE_XX_URL,
@@ -758,8 +811,14 @@ class DefaultSessionControlControllerTest {
 
         controller.handleSelectTopSite(topSite, position)
 
-        verify { metrics.track(Event.TopSiteOpenInNewTab) }
-        verify { metrics.track(Event.TopSiteOpenProvided) }
+        assertTrue(TopSites.openInNewTab.testHasValue())
+        assertEquals(1, TopSites.openInNewTab.testGetValue().size)
+        assertNull(TopSites.openInNewTab.testGetValue().single().extra)
+
+        assertTrue(TopSites.openContileTopSite.testHasValue())
+        assertEquals(1, TopSites.openContileTopSite.testGetValue().size)
+        assertNull(TopSites.openContileTopSite.testGetValue().single().extra)
+
         verify {
             tabsUseCases.addTab.invoke(
                 url = topSite.url,
@@ -784,22 +843,58 @@ class DefaultSessionControlControllerTest {
             createdAt = 3
         )
         val position = 0
+        assertFalse(TopSites.contileImpression.testHasValue())
+
+        var topSiteImpressionPinged = false
+        Pings.topsitesImpression.testBeforeNextSubmit {
+            assertTrue(TopSites.contileTileId.testHasValue())
+            assertEquals(3, TopSites.contileTileId.testGetValue())
+
+            assertTrue(TopSites.contileAdvertiser.testHasValue())
+            assertEquals("mozilla", TopSites.contileAdvertiser.testGetValue())
+
+            assertTrue(TopSites.contileReportingUrl.testHasValue())
+            assertEquals(topSite.clickUrl, TopSites.contileReportingUrl.testGetValue())
+
+            topSiteImpressionPinged = true
+        }
 
         controller.submitTopSitesImpressionPing(topSite, position)
 
-        verify {
-            metrics.track(
-                Event.TopSiteContileClick(
-                    position = position + 1,
-                    source = Event.TopSiteContileClick.Source.NEWTAB
-                )
-            )
+        assertTrue(TopSites.contileClick.testHasValue())
 
-            TopSites.contileTileId.set(3)
-            TopSites.contileAdvertiser.set("mozilla")
-            TopSites.contileReportingUrl.set(topSite.clickUrl)
-            Pings.topsitesImpression.submit()
-        }
+        val event = TopSites.contileClick.testGetValue()
+
+        assertEquals(1, event.size)
+        assertEquals("top_sites", event[0].category)
+        assertEquals("contile_click", event[0].name)
+        assertEquals("1", event[0].extra!!["position"])
+        assertEquals("newtab", event[0].extra!!["source"])
+
+        assertTrue(topSiteImpressionPinged)
+    }
+
+    @Test
+    fun `WHEN the default Google top site is removed THEN the correct metric is recorded`() {
+        val controller = spyk(createController())
+        val topSite = TopSite.Default(
+            id = 1L,
+            title = "Google",
+            url = SupportUtils.GOOGLE_URL,
+            createdAt = 0
+        )
+        assertFalse(TopSites.remove.testHasValue())
+        assertFalse(TopSites.googleTopSiteRemoved.testHasValue())
+
+        controller.handleRemoveTopSiteClicked(topSite)
+
+        assertTrue(TopSites.googleTopSiteRemoved.testHasValue())
+        assertEquals(1, TopSites.googleTopSiteRemoved.testGetValue().size)
+        assertNull(TopSites.googleTopSiteRemoved.testGetValue().single().extra)
+
+        assertTrue(TopSites.remove.testHasValue())
+        assertEquals(1, TopSites.remove.testGetValue().size)
+        assertNull(TopSites.remove.testGetValue().single().extra)
     }
 
     @Test
@@ -844,6 +939,7 @@ class DefaultSessionControlControllerTest {
     @Test
     fun handlePasteAndGo() {
         assertFalse(Events.enteredUrl.testHasValue())
+        assertFalse(Events.performedSearch.testHasValue())
 
         createController().handlePasteAndGo("text")
 
@@ -854,8 +950,9 @@ class DefaultSessionControlControllerTest {
                 from = BrowserDirection.FromHome,
                 engine = searchEngine
             )
-            metrics.track(any<Event.PerformedSearch>())
         }
+
+        assertTrue(Events.performedSearch.testHasValue())
 
         createController().handlePasteAndGo("https://mozilla.org")
         verify {
@@ -1053,9 +1150,9 @@ class DefaultSessionControlControllerTest {
     fun `WHEN handleTopSiteSettingsClicked is called THEN navigate to the HomeSettingsFragment AND report the interaction`() {
         createController().handleTopSiteSettingsClicked()
 
-        verify {
-            metrics.track(Event.TopSiteContileSettings)
-        }
+        assertTrue(TopSites.contileSettings.testHasValue())
+        assertEquals(1, TopSites.contileSettings.testGetValue().size)
+        assertNull(TopSites.contileSettings.testGetValue().single().extra)
         verify {
             navController.navigate(
                 match<NavDirections> {
@@ -1070,9 +1167,9 @@ class DefaultSessionControlControllerTest {
     fun `WHEN handleSponsorPrivacyClicked is called THEN navigate to the privacy webpage AND report the interaction`() {
         createController().handleSponsorPrivacyClicked()
 
-        verify {
-            metrics.track(Event.TopSiteContilePrivacy)
-        }
+        assertTrue(TopSites.contileSponsorsAndPrivacy.testHasValue())
+        assertEquals(1, TopSites.contileSponsorsAndPrivacy.testGetValue().size)
+        assertNull(TopSites.contileSponsorsAndPrivacy.testGetValue().single().extra)
         verify {
             activity.openToBrowserAndLoad(
                 searchTermOrURL = SupportUtils.getGenericSumoURLForTopic(SupportUtils.SumoTopic.SPONSOR_PRIVACY),
@@ -1095,13 +1192,13 @@ class DefaultSessionControlControllerTest {
         )
         createController().handleOpenInPrivateTabClicked(topSite)
 
-        verify {
-            metrics.track(Event.TopSiteOpenContileInPrivateTab)
-        }
+        assertTrue(TopSites.openContileInPrivateTab.testHasValue())
+        assertEquals(1, TopSites.openContileInPrivateTab.testGetValue().size)
+        assertNull(TopSites.openContileInPrivateTab.testGetValue().single().extra)
     }
 
     @Test
-    fun `WHEN handleOpenInPrivateTabClicked is called with a Default, Pinned, or Frecent top site THEN TopSiteOpenInPrivateTab event is reported`() {
+    fun `WHEN handleOpenInPrivateTabClicked is called with a Default, Pinned, or Frecent top site THEN openInPrivateTab event is recorded`() {
         val controller = createController()
         val topSite1 = TopSite.Default(
             id = 1L,
@@ -1121,12 +1218,16 @@ class DefaultSessionControlControllerTest {
             url = "mozilla.org",
             createdAt = 0
         )
+        assertFalse(TopSites.openInPrivateTab.testHasValue())
+
         controller.handleOpenInPrivateTabClicked(topSite1)
         controller.handleOpenInPrivateTabClicked(topSite2)
         controller.handleOpenInPrivateTabClicked(topSite3)
 
-        verify(exactly = 3) {
-            metrics.track(Event.TopSiteOpenInPrivateTab)
+        assertTrue(TopSites.openInPrivateTab.testHasValue())
+        assertEquals(3, TopSites.openInPrivateTab.testGetValue().size)
+        for (event in TopSites.openInPrivateTab.testGetValue()) {
+            assertNull(event.extra)
         }
     }
 

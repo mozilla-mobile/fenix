@@ -8,23 +8,16 @@ import android.content.Context
 import mozilla.components.service.glean.Glean
 import mozilla.components.service.glean.private.NoExtraKeys
 import mozilla.components.support.base.log.logger.Logger
-import org.mozilla.fenix.GleanMetrics.Addons
 import org.mozilla.fenix.GleanMetrics.AndroidAutofill
-import org.mozilla.fenix.GleanMetrics.AppTheme
 import org.mozilla.fenix.GleanMetrics.Autoplay
 import org.mozilla.fenix.GleanMetrics.Awesomebar
 import org.mozilla.fenix.GleanMetrics.BrowserSearch
 import org.mozilla.fenix.GleanMetrics.ContextMenu
 import org.mozilla.fenix.GleanMetrics.ContextualMenu
 import org.mozilla.fenix.GleanMetrics.CreditCards
-import org.mozilla.fenix.GleanMetrics.Events
-import org.mozilla.fenix.GleanMetrics.ExperimentsDefaultBrowser
 import org.mozilla.fenix.GleanMetrics.HomeMenu
 import org.mozilla.fenix.GleanMetrics.HomeScreen
-import org.mozilla.fenix.GleanMetrics.MediaState
-import org.mozilla.fenix.GleanMetrics.Metrics
 import org.mozilla.fenix.GleanMetrics.Pings
-import org.mozilla.fenix.GleanMetrics.Pocket
 import org.mozilla.fenix.GleanMetrics.ProgressiveWebApp
 import org.mozilla.fenix.GleanMetrics.RecentBookmarks
 import org.mozilla.fenix.GleanMetrics.RecentSearches
@@ -34,8 +27,6 @@ import org.mozilla.fenix.GleanMetrics.SearchTerms
 import org.mozilla.fenix.GleanMetrics.StartOnHome
 import org.mozilla.fenix.GleanMetrics.SyncedTabs
 import org.mozilla.fenix.GleanMetrics.Tabs
-import org.mozilla.fenix.GleanMetrics.TopSites
-import org.mozilla.fenix.GleanMetrics.Wallpapers
 import org.mozilla.fenix.GleanMetrics.Messaging
 import org.mozilla.fenix.ext.components
 
@@ -82,13 +73,6 @@ private class EventWrapper<T : Enum<T>>(
 // FIXME(#19967): Migrate to non-deprecated API.
 private val Event.wrapper: EventWrapper<*>?
     get() = when (this) {
-        is Event.PerformedSearch -> EventWrapper(
-            {
-                Metrics.searchCount[this.eventSource.countLabel].add(1)
-                Events.performedSearch.record(it)
-            },
-            { Events.performedSearchKeys.valueOf(it) }
-        )
         is Event.SearchWithAds -> EventWrapper<NoExtraKeys>(
             {
                 BrowserSearch.withAds[label].add(1)
@@ -109,132 +93,6 @@ private val Event.wrapper: EventWrapper<*>?
             { ContextMenu.itemTappedKeys.valueOf(it) }
         )
 
-        is Event.SetDefaultBrowserToolbarMenuClicked -> EventWrapper<NoExtraKeys>(
-            { ExperimentsDefaultBrowser.toolbarMenuClicked.record(it) }
-        )
-        is Event.MediaPlayState -> EventWrapper<NoExtraKeys>(
-            { MediaState.play.record(it) }
-        )
-        is Event.MediaPauseState -> EventWrapper<NoExtraKeys>(
-            { MediaState.pause.record(it) }
-        )
-        is Event.MediaStopState -> EventWrapper<NoExtraKeys>(
-            { MediaState.stop.record(it) }
-        )
-        is Event.MediaFullscreenState -> EventWrapper<NoExtraKeys>(
-            { MediaState.fullscreen.record(it) }
-        )
-        is Event.MediaPictureInPictureState -> EventWrapper<NoExtraKeys>(
-            { MediaState.pictureInPicture.record(it) }
-        )
-        is Event.TopSiteOpenDefault -> EventWrapper<NoExtraKeys>(
-            { TopSites.openDefault.record(it) }
-        )
-        is Event.TopSiteOpenGoogle -> EventWrapper<NoExtraKeys>(
-            { TopSites.openGoogleSearchAttribution.record(it) }
-        )
-        is Event.TopSiteOpenBaidu -> EventWrapper<NoExtraKeys>(
-            { TopSites.openBaiduSearchAttribution.record(it) }
-        )
-        is Event.TopSiteOpenFrecent -> EventWrapper<NoExtraKeys>(
-            { TopSites.openFrecency.record(it) }
-        )
-        is Event.TopSiteOpenPinned -> EventWrapper<NoExtraKeys>(
-            { TopSites.openPinned.record(it) }
-        )
-        is Event.TopSiteOpenProvided -> EventWrapper<NoExtraKeys>(
-            { TopSites.openContileTopSite.record(it) }
-        )
-        is Event.TopSiteOpenInNewTab -> EventWrapper<NoExtraKeys>(
-            { TopSites.openInNewTab.record(it) }
-        )
-        is Event.TopSiteOpenInPrivateTab -> EventWrapper<NoExtraKeys>(
-            { TopSites.openInPrivateTab.record(it) }
-        )
-        is Event.TopSiteOpenContileInPrivateTab -> EventWrapper<NoExtraKeys>(
-            { TopSites.openContileInPrivateTab.record(it) }
-        )
-        is Event.TopSiteRemoved -> EventWrapper<NoExtraKeys>(
-            { TopSites.remove.record(it) }
-        )
-        is Event.TopSiteContileSettings -> EventWrapper<NoExtraKeys>(
-            { TopSites.contileSettings.record(it) }
-        )
-        is Event.TopSiteContilePrivacy -> EventWrapper<NoExtraKeys>(
-            { TopSites.contileSponsorsAndPrivacy.record(it) }
-        )
-        is Event.GoogleTopSiteRemoved -> EventWrapper<NoExtraKeys>(
-            { TopSites.googleTopSiteRemoved.record(it) }
-        )
-        is Event.BaiduTopSiteRemoved -> EventWrapper<NoExtraKeys>(
-            { TopSites.baiduTopSiteRemoved.record(it) }
-        )
-        is Event.TopSiteLongPress -> EventWrapper(
-            { TopSites.longPress.record(it) },
-            { TopSites.longPressKeys.valueOf(it) }
-        )
-        is Event.TopSiteSwipeCarousel -> EventWrapper(
-            { TopSites.swipeCarousel.record(it) },
-            { TopSites.swipeCarouselKeys.valueOf(it) }
-        )
-        is Event.TopSiteContileImpression -> EventWrapper<NoExtraKeys>(
-            {
-                TopSites.contileImpression.record(
-                    TopSites.ContileImpressionExtra(
-                        position = this.position,
-                        source = this.source.name.lowercase()
-                    )
-                )
-            }
-        )
-        is Event.TopSiteContileClick -> EventWrapper<NoExtraKeys>(
-            {
-                TopSites.contileClick.record(
-                    TopSites.ContileClickExtra(
-                        position = this.position,
-                        source = this.source.name.lowercase()
-                    )
-                )
-            }
-        )
-        is Event.PocketTopSiteClicked -> EventWrapper<NoExtraKeys>(
-            { Pocket.pocketTopSiteClicked.record(it) }
-        )
-        is Event.PocketTopSiteRemoved -> EventWrapper<NoExtraKeys>(
-            { Pocket.pocketTopSiteRemoved.record(it) }
-        )
-        is Event.PocketHomeRecsShown -> EventWrapper<NoExtraKeys>(
-            { Pocket.homeRecsShown.record(it) }
-        )
-        is Event.PocketHomeRecsLearnMoreClicked -> EventWrapper<NoExtraKeys>(
-            { Pocket.homeRecsLearnMoreClicked.record(it) }
-        )
-        is Event.PocketHomeRecsDiscoverMoreClicked -> EventWrapper<NoExtraKeys>(
-            { Pocket.homeRecsDiscoverClicked.record(it) }
-        )
-        is Event.PocketHomeRecsStoryClicked -> EventWrapper(
-            { Pocket.homeRecsStoryClicked.record(it) },
-            { Pocket.homeRecsStoryClickedKeys.valueOf(it) }
-        )
-        is Event.PocketHomeRecsCategoryClicked -> EventWrapper(
-            { Pocket.homeRecsCategoryClicked.record(it) },
-            { Pocket.homeRecsCategoryClickedKeys.valueOf(it) }
-        )
-        is Event.DarkThemeSelected -> EventWrapper(
-            { AppTheme.darkThemeSelected.record(it) },
-            { AppTheme.darkThemeSelectedKeys.valueOf(it) }
-        )
-        is Event.AddonsOpenInSettings -> EventWrapper<NoExtraKeys>(
-            { Addons.openAddonsInSettings.record(it) }
-        )
-        is Event.AddonsOpenInToolbarMenu -> EventWrapper(
-            { Addons.openAddonInToolbarMenu.record(it) },
-            { Addons.openAddonInToolbarMenuKeys.valueOf(it) }
-        )
-        is Event.AddonOpenSetting -> EventWrapper(
-            { Addons.openAddonSetting.record(it) },
-            { Addons.openAddonSettingKeys.valueOf(it) }
-        )
         is Event.AutoPlaySettingVisited -> EventWrapper<NoExtraKeys>(
             { Autoplay.visitedSetting.record(it) }
         )
@@ -263,12 +121,6 @@ private val Event.wrapper: EventWrapper<*>?
         )
         is Event.ContextMenuShareTapped -> EventWrapper<NoExtraKeys>(
             { ContextualMenu.shareTapped.record(it) }
-        )
-        Event.HaveOpenTabs -> EventWrapper<NoExtraKeys>(
-            { Metrics.hasOpenTabs.set(true) }
-        )
-        Event.HaveNoOpenTabs -> EventWrapper<NoExtraKeys>(
-            { Metrics.hasOpenTabs.set(false) }
         )
         is Event.SyncedTabSuggestionClicked -> EventWrapper<NoExtraKeys>(
             { SyncedTabs.syncedTabsSuggestionClicked.record(it) }
@@ -468,38 +320,6 @@ private val Event.wrapper: EventWrapper<*>?
                 )
             }
         )
-        is Event.WallpaperSettingsOpened -> EventWrapper<NoExtraKeys>(
-            { Wallpapers.wallpaperSettingsOpened.record() }
-        )
-        is Event.WallpaperSelected -> EventWrapper<NoExtraKeys>(
-            {
-                Wallpapers.wallpaperSelected.record(
-                    Wallpapers.WallpaperSelectedExtra(
-                        name = this.wallpaper.name,
-                        themeCollection = this.wallpaper::class.simpleName,
-                    ),
-                )
-            }
-        )
-        is Event.WallpaperSwitched -> EventWrapper<NoExtraKeys>(
-            {
-                Wallpapers.wallpaperSwitched.record(
-                    Wallpapers.WallpaperSwitchedExtra(
-                        name = this.wallpaper.name,
-                        themeCollection = this.wallpaper::class.simpleName,
-                    ),
-                )
-            }
-        )
-        is Event.ChangeWallpaperWithLogoToggled -> EventWrapper<NoExtraKeys>(
-            {
-                Wallpapers.changeWallpaperLogoToggled.record(
-                    Wallpapers.ChangeWallpaperLogoToggledExtra(
-                        checked = this.checked,
-                    ),
-                )
-            }
-        )
 
         is Event.HistoryHighlightOpened -> EventWrapper<NoExtraKeys>(
             { RecentlyVisitedHomepage.historyHighlightOpened.record() }
@@ -514,7 +334,6 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.InteractWithSearchURLArea -> null
         is Event.ClearedPrivateData -> null
         is Event.DismissedOnboarding -> null
-        is Event.AddonInstalled -> null
         is Event.SearchWidgetInstalled -> null
     }
 
