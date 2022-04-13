@@ -36,6 +36,8 @@ import mozilla.components.support.webextensions.facts.WebExtensionFacts
 import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.GleanMetrics.Addons
+import org.mozilla.fenix.GleanMetrics.ContextMenu
+import org.mozilla.fenix.GleanMetrics.AndroidAutofill
 import org.mozilla.fenix.GleanMetrics.CustomTab
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.LoginDialog
@@ -106,6 +108,7 @@ internal class ReleaseMetricController(
     }
 
     @VisibleForTesting
+    @Suppress("LongMethod")
     internal fun Fact.process(): Unit = when (component to item) {
         Component.FEATURE_PROMPTS to LoginDialogFacts.Items.DISPLAY -> {
             LoginDialog.displayed.record(NoExtras())
@@ -145,11 +148,50 @@ internal class ReleaseMetricController(
             CustomTab.closed.record(NoExtras())
         }
 
+        Component.FEATURE_CONTEXTMENU to ContextMenuFacts.Items.ITEM -> {
+            metadata?.get("item")?.let {
+                contextMenuAllowList[item]?.let {
+                    ContextMenu.itemTapped.record(ContextMenu.ItemTappedExtra(it))
+                }
+            }
+            Unit
+        }
+
         Component.BROWSER_MENU to BrowserMenuFacts.Items.WEB_EXTENSION_MENU_ITEM -> {
             metadata?.get("id")?.let {
                 Addons.openAddonInToolbarMenu.record(Addons.OpenAddonInToolbarMenuExtra(it.toString()))
             }
             Unit
+        }
+
+        Component.FEATURE_AUTOFILL to AutofillFacts.Items.AUTOFILL_REQUEST -> {
+            val hasMatchingLogins = metadata?.get(AutofillFacts.Metadata.HAS_MATCHING_LOGINS) as Boolean?
+            if (hasMatchingLogins == true) {
+                AndroidAutofill.requestMatchingLogins.record(NoExtras())
+            } else {
+                AndroidAutofill.requestNoMatchingLogins.record(NoExtras())
+            }
+        }
+        Component.FEATURE_AUTOFILL to AutofillFacts.Items.AUTOFILL_SEARCH -> {
+            if (action == Action.SELECT) {
+                AndroidAutofill.searchItemSelected.record(NoExtras())
+            } else {
+                AndroidAutofill.searchDisplayed.record(NoExtras())
+            }
+        }
+        Component.FEATURE_AUTOFILL to AutofillFacts.Items.AUTOFILL_CONFIRMATION -> {
+            if (action == Action.CONFIRM) {
+                AndroidAutofill.confirmSuccessful.record(NoExtras())
+            } else {
+                AndroidAutofill.confirmCancelled.record(NoExtras())
+            }
+        }
+        Component.FEATURE_AUTOFILL to AutofillFacts.Items.AUTOFILL_LOCK -> {
+            if (action == Action.CONFIRM) {
+                AndroidAutofill.unlockSuccessful.record(NoExtras())
+            } else {
+                AndroidAutofill.unlockCancelled.record(NoExtras())
+            }
         }
 
         else -> {
@@ -229,9 +271,6 @@ internal class ReleaseMetricController(
         Component.FEATURE_PROMPTS == component && CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_PROMPT_DISMISSED == item ->
             Event.CreditCardAutofillPromptDismissed
 
-        Component.FEATURE_CONTEXTMENU == component && ContextMenuFacts.Items.ITEM == item -> {
-            metadata?.get("item")?.let { Event.ContextMenuItemTapped.create(it.toString()) }
-        }
         Component.FEATURE_CONTEXTMENU == component && ContextMenuFacts.Items.TEXT_SELECTION_OPTION == item -> {
             when (metadata?.get("textSelectionOption")?.toString()) {
                 CONTEXT_MENU_COPY -> Event.ContextMenuCopyTapped
@@ -327,35 +366,6 @@ internal class ReleaseMetricController(
         Component.FEATURE_SEARCH == component && InContentTelemetry.IN_CONTENT_SEARCH == item -> {
             Event.SearchInContent(value!!)
         }
-        Component.FEATURE_AUTOFILL == component && AutofillFacts.Items.AUTOFILL_REQUEST == item -> {
-            val hasMatchingLogins = metadata?.get(AutofillFacts.Metadata.HAS_MATCHING_LOGINS) as Boolean?
-            if (hasMatchingLogins == true) {
-                Event.AndroidAutofillRequestWithLogins
-            } else {
-                Event.AndroidAutofillRequestWithoutLogins
-            }
-        }
-        Component.FEATURE_AUTOFILL == component && AutofillFacts.Items.AUTOFILL_SEARCH == item -> {
-            if (action == Action.SELECT) {
-                Event.AndroidAutofillSearchItemSelected
-            } else {
-                Event.AndroidAutofillSearchDisplayed
-            }
-        }
-        Component.FEATURE_AUTOFILL == component && AutofillFacts.Items.AUTOFILL_LOCK == item -> {
-            if (action == Action.CONFIRM) {
-                Event.AndroidAutofillUnlockSuccessful
-            } else {
-                Event.AndroidAutofillUnlockCanceled
-            }
-        }
-        Component.FEATURE_AUTOFILL == component && AutofillFacts.Items.AUTOFILL_CONFIRMATION == item -> {
-            if (action == Action.CONFIRM) {
-                Event.AndroidAutofillConfirmationSuccessful
-            } else {
-                Event.AndroidAutofillConfirmationCanceled
-            }
-        }
         else -> null
     }
 
@@ -368,5 +378,19 @@ internal class ReleaseMetricController(
         const val CONTEXT_MENU_SEARCH_PRIVATELY = "CUSTOM_CONTEXT_MENU_SEARCH_PRIVATELY"
         const val CONTEXT_MENU_SELECT_ALL = "org.mozilla.geckoview.SELECT_ALL"
         const val CONTEXT_MENU_SHARE = "CUSTOM_CONTEXT_MENU_SHARE"
+
+        /**
+         * Non - Text selection long press context menu items to be tracked.
+         */
+        private val contextMenuAllowList = mapOf(
+            "mozac.feature.contextmenu.open_in_new_tab" to "open_in_new_tab",
+            "mozac.feature.contextmenu.open_in_private_tab" to "open_in_private_tab",
+            "mozac.feature.contextmenu.open_image_in_new_tab" to "open_image_in_new_tab",
+            "mozac.feature.contextmenu.save_image" to "save_image",
+            "mozac.feature.contextmenu.share_link" to "share_link",
+            "mozac.feature.contextmenu.copy_link" to "copy_link",
+            "mozac.feature.contextmenu.copy_image_location" to "copy_image_location",
+            "mozac.feature.contextmenu.share_image" to "share_image"
+        )
     }
 }
