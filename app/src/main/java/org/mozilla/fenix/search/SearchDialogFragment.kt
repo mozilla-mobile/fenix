@@ -539,7 +539,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             },
             onScanResult = { result ->
                 val normalizedUrl = result.toNormalizedUrl()
-                if (!normalizedUrl.toUri().isHttpOrHttps) {
+                if (!normalizedUrl.lowercase().toUri().isHttpOrHttps) {
                     activity?.let {
                         AlertDialog.Builder(it).apply {
                             setMessage(R.string.qr_scanner_dialog_invalid)
