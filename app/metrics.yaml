@@ -5656,6 +5656,19 @@ browser.search:
       - erichards@mozilla.com
     expires: never
 
+test_metric:
+  labeled_counter:
+    type: labeled_counter
+    description: >
+      Counts something
+    bugs:
+      - https://
+    data_reviews:
+      - https://
+    notification_emails:
+      - me@mozilla.com
+    expires: 167
+
 addons:
   open_addons_in_settings:
     type: event

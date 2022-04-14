@@ -36,11 +36,13 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.GleanMetrics.AndroidAutofill
+import org.mozilla.fenix.GleanMetrics.BrowserSearch
 import org.mozilla.fenix.GleanMetrics.ContextualMenu
 import org.mozilla.fenix.GleanMetrics.CreditCards
 import org.mozilla.fenix.GleanMetrics.CustomTab
 import org.mozilla.fenix.GleanMetrics.LoginDialog
 import org.mozilla.fenix.GleanMetrics.MediaNotification
+import org.mozilla.fenix.GleanMetrics.TestMetric
 import org.mozilla.fenix.components.metrics.ReleaseMetricController.Companion
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.utils.Settings
@@ -522,5 +524,106 @@ class MetricControllerTest {
             assertEquals(1, event.testGetValue().size)
             assertEquals(null, event.testGetValue().single().extra)
         }
+    }
+
+    @Test
+    fun `direct calls test with addProvider`() {
+        assertFalse(BrowserSearch.inContent["addProvider"].testHasValue())
+
+        BrowserSearch.inContent["addProvider"].add()
+
+        assertTrue(BrowserSearch.inContent["addProvider"].testHasValue())
+
+        // this should fail but it does not
+        assertTrue(BrowserSearch.inContent["445"].testHasValue())
+
+        assertEquals(1, BrowserSearch.inContent["addProvider"].testGetValue())
+    }
+
+    @Test
+    fun `direct calls test with addProvider 2`() {
+        assertFalse(BrowserSearch.inContent["addProvider1"].testHasValue())
+
+        BrowserSearch.inContent["addProvider1"].add()
+
+        assertTrue(BrowserSearch.inContent["addProvider1"].testHasValue())
+
+        // this should fail but it does not
+        assertTrue(BrowserSearch.inContent["addProvider"].testHasValue())
+
+        assertEquals(1, BrowserSearch.inContent["addProvider1"].testGetValue())
+
+        // ??
+        assertEquals(1, BrowserSearch.inContent["addProvider"].testGetValue())
+    }
+
+    @Test
+    fun `direct calls test with testCase`() {
+        assertFalse(BrowserSearch.inContent["testCase"].testHasValue())
+
+        BrowserSearch.inContent["testCase"].add()
+
+        assertTrue(BrowserSearch.inContent["testCase"].testHasValue())
+
+        // this should fail but it does not
+        assertTrue(BrowserSearch.inContent["445"].testHasValue())
+
+        assertEquals(1, BrowserSearch.inContent["testCase"].testGetValue())
+    }
+
+    @Test
+    fun `direct calls test with no snake case`() {
+        assertFalse(BrowserSearch.inContent["testcase"].testHasValue())
+
+        BrowserSearch.inContent["testcase"].add()
+
+        assertTrue(BrowserSearch.inContent["testcase"].testHasValue())
+
+        // this should not fail
+        assertFalse(BrowserSearch.inContent["445"].testHasValue())
+
+        assertEquals(1, BrowserSearch.inContent["testcase"].testGetValue())
+    }
+
+    @Test
+    fun `direct calls test with new metric no snake case`() {
+        assertFalse(TestMetric.labeledCounter["testcase"].testHasValue())
+
+        TestMetric.labeledCounter["testcase"].add()
+
+        assertTrue(TestMetric.labeledCounter["testcase"].testHasValue())
+
+        // this should not fail
+        assertFalse(TestMetric.labeledCounter["445"].testHasValue())
+
+        assertEquals(1, TestMetric.labeledCounter["testcase"].testGetValue())
+    }
+
+    @Test
+    fun `direct calls test with new metric addProvider with number`() {
+        assertFalse(TestMetric.labeledCounter["addProvider"].testHasValue())
+
+        TestMetric.labeledCounter["addProvider"].add()
+
+        assertTrue(TestMetric.labeledCounter["addProvider"].testHasValue())
+
+        // this should fail but it does not
+        assertTrue(TestMetric.labeledCounter["445"].testHasValue())
+
+        assertEquals(1, TestMetric.labeledCounter["addProvider"].testGetValue())
+    }
+
+    @Test
+    fun `direct calls test with new metric addProvider with string`() {
+        assertFalse(TestMetric.labeledCounter["addProvider"].testHasValue())
+
+        TestMetric.labeledCounter["addProvider"].add()
+
+        assertTrue(TestMetric.labeledCounter["addProvider"].testHasValue())
+
+        // this should not fail
+        assertFalse(TestMetric.labeledCounter["string"].testHasValue())
+
+        assertEquals(1, TestMetric.labeledCounter["addProvider"].testGetValue())
     }
 }
