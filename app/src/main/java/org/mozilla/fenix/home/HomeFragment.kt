@@ -294,7 +294,7 @@ class HomeFragment : Fragment() {
                 view = binding.root
             )
 
-            if (FeatureFlags.taskContinuityFeature) {
+            if (requireContext().settings().enableTaskContinuityEnhancements) {
                 recentSyncedTabFeature.set(
                     feature = syncedTabFeature,
                     owner = viewLifecycleOwner,
