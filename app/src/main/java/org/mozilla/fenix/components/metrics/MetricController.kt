@@ -38,12 +38,15 @@ import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.GleanMetrics.Addons
 import org.mozilla.fenix.GleanMetrics.ContextMenu
 import org.mozilla.fenix.GleanMetrics.AndroidAutofill
+import org.mozilla.fenix.GleanMetrics.ContextualMenu
+import org.mozilla.fenix.GleanMetrics.CreditCards
 import org.mozilla.fenix.GleanMetrics.CustomTab
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.LoginDialog
 import org.mozilla.fenix.GleanMetrics.MediaNotification
 import org.mozilla.fenix.GleanMetrics.MediaState
 import org.mozilla.fenix.GleanMetrics.PerfAwesomebar
+import org.mozilla.fenix.GleanMetrics.ProgressiveWebApp
 import org.mozilla.fenix.search.awesomebar.ShortcutsSuggestionProvider
 import org.mozilla.fenix.utils.Settings
 
@@ -149,9 +152,9 @@ internal class ReleaseMetricController(
         }
 
         Component.FEATURE_CONTEXTMENU to ContextMenuFacts.Items.ITEM -> {
-            metadata?.get("item")?.let {
-                contextMenuAllowList[item]?.let {
-                    ContextMenu.itemTapped.record(ContextMenu.ItemTappedExtra(it))
+            metadata?.get("item")?.let { item ->
+                contextMenuAllowList[item]?.let { extraKey ->
+                    ContextMenu.itemTapped.record(ContextMenu.ItemTappedExtra(extraKey))
                 }
             }
             Unit
@@ -163,6 +166,16 @@ internal class ReleaseMetricController(
             }
             Unit
         }
+        Component.FEATURE_PROMPTS to CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_FORM_DETECTED ->
+            CreditCards.formDetected.record(NoExtras())
+        Component.FEATURE_PROMPTS to CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_SUCCESS ->
+            CreditCards.autofilled.record(NoExtras())
+        Component.FEATURE_PROMPTS to CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_PROMPT_SHOWN ->
+            CreditCards.autofillPromptShown.record(NoExtras())
+        Component.FEATURE_PROMPTS to CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_PROMPT_EXPANDED ->
+            CreditCards.autofillPromptExpanded.record(NoExtras())
+        Component.FEATURE_PROMPTS to CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_PROMPT_DISMISSED ->
+            CreditCards.autofillPromptDismissed.record(NoExtras())
 
         Component.FEATURE_AUTOFILL to AutofillFacts.Items.AUTOFILL_REQUEST -> {
             val hasMatchingLogins = metadata?.get(AutofillFacts.Metadata.HAS_MATCHING_LOGINS) as Boolean?
@@ -192,6 +205,23 @@ internal class ReleaseMetricController(
             } else {
                 AndroidAutofill.unlockCancelled.record(NoExtras())
             }
+        }
+        Component.FEATURE_CONTEXTMENU to ContextMenuFacts.Items.TEXT_SELECTION_OPTION -> {
+            when (metadata?.get("textSelectionOption")?.toString()) {
+                CONTEXT_MENU_COPY -> ContextualMenu.copyTapped.record(NoExtras())
+                CONTEXT_MENU_SEARCH,
+                CONTEXT_MENU_SEARCH_PRIVATELY -> ContextualMenu.searchTapped.record(NoExtras())
+                CONTEXT_MENU_SELECT_ALL -> ContextualMenu.selectAllTapped.record(NoExtras())
+                CONTEXT_MENU_SHARE -> ContextualMenu.shareTapped.record(NoExtras())
+                else -> Unit
+            }
+        }
+
+        Component.FEATURE_PWA to ProgressiveWebAppFacts.Items.HOMESCREEN_ICON_TAP -> {
+            ProgressiveWebApp.homescreenTap.record(NoExtras())
+        }
+        Component.FEATURE_PWA to ProgressiveWebAppFacts.Items.INSTALL_SHORTCUT -> {
+            ProgressiveWebApp.installTap.record(NoExtras())
         }
 
         else -> {
@@ -260,27 +290,6 @@ internal class ReleaseMetricController(
 
     @Suppress("LongMethod", "MaxLineLength")
     private fun Fact.toEvent(): Event? = when {
-        Component.FEATURE_PROMPTS == component && CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_FORM_DETECTED == item ->
-            Event.CreditCardFormDetected
-        Component.FEATURE_PROMPTS == component && CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_SUCCESS == item ->
-            Event.CreditCardAutofilled
-        Component.FEATURE_PROMPTS == component && CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_PROMPT_SHOWN == item ->
-            Event.CreditCardAutofillPromptShown
-        Component.FEATURE_PROMPTS == component && CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_PROMPT_EXPANDED == item ->
-            Event.CreditCardAutofillPromptExpanded
-        Component.FEATURE_PROMPTS == component && CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_PROMPT_DISMISSED == item ->
-            Event.CreditCardAutofillPromptDismissed
-
-        Component.FEATURE_CONTEXTMENU == component && ContextMenuFacts.Items.TEXT_SELECTION_OPTION == item -> {
-            when (metadata?.get("textSelectionOption")?.toString()) {
-                CONTEXT_MENU_COPY -> Event.ContextMenuCopyTapped
-                CONTEXT_MENU_SEARCH, CONTEXT_MENU_SEARCH_PRIVATELY -> Event.ContextMenuSearchTapped
-                CONTEXT_MENU_SELECT_ALL -> Event.ContextMenuSelectAllTapped
-                CONTEXT_MENU_SHARE -> Event.ContextMenuShareTapped
-                else -> null
-            }
-        }
-
         Component.SUPPORT_WEBEXTENSIONS == component && WebExtensionFacts.Items.WEB_EXTENSIONS_INITIALIZED == item -> {
             metadata?.get("installed")?.let { installedAddons ->
                 if (installedAddons is List<*>) {
@@ -317,12 +326,7 @@ internal class ReleaseMetricController(
             }
             null
         }
-        Component.FEATURE_PWA == component && ProgressiveWebAppFacts.Items.HOMESCREEN_ICON_TAP == item -> {
-            Event.ProgressiveWebAppOpenFromHomescreenTap
-        }
-        Component.FEATURE_PWA == component && ProgressiveWebAppFacts.Items.INSTALL_SHORTCUT == item -> {
-            Event.ProgressiveWebAppInstallAsShortcut
-        }
+
         Component.FEATURE_TOP_SITES == component && TopSitesFacts.Items.COUNT == item -> {
             value?.let {
                 var count = 0

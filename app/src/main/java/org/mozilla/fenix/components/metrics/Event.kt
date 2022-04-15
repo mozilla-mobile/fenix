@@ -4,10 +4,6 @@
 
 package org.mozilla.fenix.components.metrics
 
-import org.mozilla.fenix.GleanMetrics.Autoplay
-import org.mozilla.fenix.GleanMetrics.SearchTerms
-import java.util.Locale
-
 sealed class Event {
 
     // Interaction Events
@@ -20,15 +16,7 @@ sealed class Event {
     object HistorySearchGroupOpened : Event()
     object SearchWidgetInstalled : Event()
 
-    object ProgressiveWebAppOpenFromHomescreenTap : Event()
-    object ProgressiveWebAppInstallAsShortcut : Event()
-
     object TabSettingsOpened : Event()
-
-    object ContextMenuCopyTapped : Event()
-    object ContextMenuSearchTapped : Event()
-    object ContextMenuSelectAllTapped : Event()
-    object ContextMenuShareTapped : Event()
 
     object SyncedTabSuggestionClicked : Event()
     object BookmarkSuggestionClicked : Event()
@@ -37,44 +25,6 @@ sealed class Event {
     object SearchActionClicked : Event()
     object SearchSuggestionClicked : Event()
     object OpenedTabSuggestionClicked : Event()
-
-    // Home menu interaction
-    object HomeMenuSettingsItemClicked : Event()
-    object HomeScreenDisplayed : Event()
-    object HomeScreenViewCount : Event()
-    object HomeScreenCustomizedHomeClicked : Event()
-
-    // Start on Home
-    object StartOnHomeEnterHomeScreen : Event()
-    object StartOnHomeOpenTabsTray : Event()
-
-    // Recent tabs
-    object ShowAllRecentTabs : Event()
-    object OpenRecentTab : Event()
-    object OpenInProgressMediaTab : Event()
-    object RecentTabsSectionIsVisible : Event()
-    object RecentTabsSectionIsNotVisible : Event()
-
-    // Recent bookmarks
-    object BookmarkClicked : Event()
-    object ShowAllBookmarks : Event()
-    object RecentBookmarksShown : Event()
-    data class RecentBookmarkCount(val count: Int) : Event()
-
-    // Recently visited/Recent searches
-    object RecentSearchesGroupDeleted : Event()
-
-    // Credit cards
-    object CreditCardSaved : Event()
-    object CreditCardDeleted : Event()
-    object CreditCardModified : Event()
-    object CreditCardFormDetected : Event()
-    object CreditCardAutofilled : Event()
-    object CreditCardAutofillPromptShown : Event()
-    object CreditCardAutofillPromptExpanded : Event()
-    object CreditCardAutofillPromptDismissed : Event()
-    object CreditCardManagementAddTapped : Event()
-    object CreditCardManagementCardTapped : Event()
 
     // Interaction events with extras
 
@@ -92,31 +42,6 @@ sealed class Event {
         val label: String
             get() = keyName
     }
-
-    object AutoPlaySettingVisited : Event()
-
-    data class AutoPlaySettingChanged(val setting: AutoplaySetting) : Event() {
-        enum class AutoplaySetting {
-            BLOCK_CELLULAR, BLOCK_AUDIO, BLOCK_ALL, ALLOW_ALL
-        }
-
-        override val extras: Map<Autoplay.settingChangedKeys, String>?
-            get() = mapOf(Autoplay.settingChangedKeys.autoplaySetting to setting.toString().lowercase(Locale.ROOT))
-    }
-
-    data class SearchTermGroupCount(val count: Int) : Event() {
-        override val extras: Map<SearchTerms.numberOfSearchTermGroupKeys, String>
-            get() = hashMapOf(SearchTerms.numberOfSearchTermGroupKeys.count to count.toString())
-    }
-
-    data class AverageTabsPerSearchTermGroup(val averageSize: Double) : Event() {
-        override val extras: Map<SearchTerms.averageTabsPerGroupKeys, String>
-            get() = hashMapOf(SearchTerms.averageTabsPerGroupKeys.count to averageSize.toString())
-    }
-
-    data class SearchTermGroupSizeDistribution(val groupSizes: List<Long>) : Event()
-
-    object JumpBackInGroupTapped : Event()
 
     sealed class Search
 

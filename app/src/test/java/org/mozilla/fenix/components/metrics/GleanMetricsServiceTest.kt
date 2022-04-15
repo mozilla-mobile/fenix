@@ -13,8 +13,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.GleanMetrics.Awesomebar
-import org.mozilla.fenix.GleanMetrics.CreditCards
-import org.mozilla.fenix.GleanMetrics.RecentBookmarks
 import org.mozilla.fenix.GleanMetrics.RecentlyVisitedHomepage
 import org.mozilla.fenix.GleanMetrics.SyncedTabs
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
@@ -66,21 +64,6 @@ class GleanMetricsServiceTest {
     }
 
     @Test
-    fun `Home screen recent bookmarks events are correctly recorded`() {
-        assertFalse(RecentBookmarks.shown.testHasValue())
-        gleanService.track(Event.RecentBookmarksShown)
-        assertTrue(RecentBookmarks.shown.testHasValue())
-
-        assertFalse(RecentBookmarks.bookmarkClicked.testHasValue())
-        gleanService.track(Event.BookmarkClicked)
-        assertTrue(RecentBookmarks.bookmarkClicked.testHasValue())
-
-        assertFalse(RecentBookmarks.showAllBookmarks.testHasValue())
-        gleanService.track(Event.ShowAllBookmarks)
-        assertTrue(RecentBookmarks.showAllBookmarks.testHasValue())
-    }
-
-    @Test
     fun `Home screen recently visited events are correctly recorded`() {
         assertFalse(RecentlyVisitedHomepage.historyHighlightOpened.testHasValue())
         gleanService.track(Event.HistoryHighlightOpened)
@@ -89,48 +72,5 @@ class GleanMetricsServiceTest {
         assertFalse(RecentlyVisitedHomepage.searchGroupOpened.testHasValue())
         gleanService.track(Event.HistorySearchGroupOpened)
         assertTrue(RecentlyVisitedHomepage.searchGroupOpened.testHasValue())
-    }
-
-    @Test
-    fun `credit card events are correctly recorded`() {
-        assertFalse(CreditCards.saved.testHasValue())
-        gleanService.track(Event.CreditCardSaved)
-        assertTrue(CreditCards.saved.testHasValue())
-
-        assertFalse(CreditCards.deleted.testHasValue())
-        gleanService.track(Event.CreditCardDeleted)
-        assertTrue(CreditCards.deleted.testHasValue())
-
-        assertFalse(CreditCards.modified.testHasValue())
-        gleanService.track(Event.CreditCardModified)
-        assertTrue(CreditCards.modified.testHasValue())
-
-        assertFalse(CreditCards.formDetected.testHasValue())
-        gleanService.track(Event.CreditCardFormDetected)
-        assertTrue(CreditCards.formDetected.testHasValue())
-
-        assertFalse(CreditCards.autofilled.testHasValue())
-        gleanService.track(Event.CreditCardAutofilled)
-        assertTrue(CreditCards.autofilled.testHasValue())
-
-        assertFalse(CreditCards.autofillPromptShown.testHasValue())
-        gleanService.track(Event.CreditCardAutofillPromptShown)
-        assertTrue(CreditCards.autofillPromptShown.testHasValue())
-
-        assertFalse(CreditCards.autofillPromptExpanded.testHasValue())
-        gleanService.track(Event.CreditCardAutofillPromptExpanded)
-        assertTrue(CreditCards.autofillPromptExpanded.testHasValue())
-
-        assertFalse(CreditCards.autofillPromptDismissed.testHasValue())
-        gleanService.track(Event.CreditCardAutofillPromptDismissed)
-        assertTrue(CreditCards.autofillPromptDismissed.testHasValue())
-
-        assertFalse(CreditCards.managementAddTapped.testHasValue())
-        gleanService.track(Event.CreditCardManagementAddTapped)
-        assertTrue(CreditCards.managementAddTapped.testHasValue())
-
-        assertFalse(CreditCards.managementCardTapped.testHasValue())
-        gleanService.track(Event.CreditCardManagementCardTapped)
-        assertTrue(CreditCards.managementCardTapped.testHasValue())
     }
 }
