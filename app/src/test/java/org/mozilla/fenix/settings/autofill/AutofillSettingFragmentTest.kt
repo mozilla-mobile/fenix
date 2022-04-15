@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.fenix.settings.creditcards
+package org.mozilla.fenix.settings.autofill
 
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavController
@@ -23,25 +23,27 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
+import org.mozilla.fenix.settings.creditcards.CreditCardsFragmentStore
+import org.mozilla.fenix.settings.creditcards.CreditCardsListState
 import org.robolectric.Robolectric
 
 @RunWith(FenixRobolectricTestRunner::class)
-class CreditCardsSettingFragmentTest {
+class AutofillSettingFragmentTest {
 
     private val testDispatcher = TestCoroutineDispatcher()
-    private lateinit var creditCardsSettingFragment: CreditCardsSettingFragment
+    private lateinit var autofillSettingFragment: AutofillSettingFragment
     private val navController: NavController = mockk(relaxed = true)
 
     @Before
     fun setUp() {
         every { testContext.components.settings } returns mockk(relaxed = true)
 
-        creditCardsSettingFragment = CreditCardsSettingFragment()
+        autofillSettingFragment = AutofillSettingFragment()
 
         val activity = Robolectric.buildActivity(FragmentActivity::class.java).create().get()
 
         activity.supportFragmentManager.beginTransaction()
-            .add(creditCardsSettingFragment, "CreditCardsSettingFragmentTest")
+            .add(autofillSettingFragment, "CreditCardsSettingFragmentTest")
             .commitNow()
         testDispatcher.advanceUntilIdle()
     }
@@ -50,8 +52,8 @@ class CreditCardsSettingFragmentTest {
     fun `GIVEN the list of credit cards is not empty, WHEN fragment is displayed THEN the manage credit cards pref is 'Manage saved cards'`() {
         val preferenceTitle =
             testContext.getString(R.string.preferences_credit_cards_manage_saved_cards)
-        val manageCardsPreference = creditCardsSettingFragment.findPreference<Preference>(
-            creditCardsSettingFragment.getPreferenceKey(R.string.pref_key_credit_cards_manage_cards)
+        val manageCardsPreference = autofillSettingFragment.findPreference<Preference>(
+            autofillSettingFragment.getPreferenceKey(R.string.pref_key_credit_cards_manage_cards)
         )
 
         val creditCards: List<CreditCard> = listOf(mockk(), mockk())
@@ -59,7 +61,7 @@ class CreditCardsSettingFragmentTest {
         val creditCardsState = CreditCardsListState(creditCards = creditCards)
         val creditCardsStore = CreditCardsFragmentStore(creditCardsState)
 
-        creditCardsSettingFragment.updateCardManagementPreference(
+        autofillSettingFragment.updateCardManagementPreference(
             creditCardsStore.state.creditCards.isNotEmpty(),
             navController
         )
@@ -72,18 +74,18 @@ class CreditCardsSettingFragmentTest {
     fun `GIVEN the list of credit cards is empty, WHEN fragment is displayed THEN the manage credit cards pref is 'Add card'`() {
         val preferenceTitle =
             testContext.getString(R.string.preferences_credit_cards_add_credit_card)
-        val manageCardsPreference = creditCardsSettingFragment.findPreference<Preference>(
-            creditCardsSettingFragment.getPreferenceKey(R.string.pref_key_credit_cards_manage_cards)
+        val manageCardsPreference = autofillSettingFragment.findPreference<Preference>(
+            autofillSettingFragment.getPreferenceKey(R.string.pref_key_credit_cards_manage_cards)
         )
 
         val directions =
-            CreditCardsSettingFragmentDirections
-                .actionCreditCardsSettingFragmentToCreditCardEditorFragment()
+            AutofillSettingFragmentDirections
+                .actionAutofillSettingFragmentToCreditCardEditorFragment()
 
         val creditCardsState = CreditCardsListState(creditCards = emptyList())
         val creditCardsStore = CreditCardsFragmentStore(creditCardsState)
 
-        creditCardsSettingFragment.updateCardManagementPreference(
+        autofillSettingFragment.updateCardManagementPreference(
             creditCardsStore.state.creditCards.isNotEmpty(),
             navController
         )
