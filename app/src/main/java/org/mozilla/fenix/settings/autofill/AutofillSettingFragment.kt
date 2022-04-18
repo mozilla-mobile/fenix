@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.fenix.settings.creditcards
+package org.mozilla.fenix.settings.autofill
 
 import android.app.KeyguardManager
 import android.content.Context
@@ -35,17 +35,18 @@ import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.settings.SharedPreferenceUpdater
 import org.mozilla.fenix.settings.SyncPreferenceView
-import org.mozilla.fenix.settings.biometric.BiometricPromptFeature
 import org.mozilla.fenix.settings.biometric.BiometricPromptPreferenceFragment
+import org.mozilla.fenix.settings.creditcards.CreditCardsAction
+import org.mozilla.fenix.settings.creditcards.CreditCardsFragmentStore
+import org.mozilla.fenix.settings.creditcards.CreditCardsListState
 import org.mozilla.fenix.settings.requirePreference
 
 /**
- * "Credit cards" settings fragment displays a list of settings related to autofilling, adding and
- * syncing credit cards. Authentication for saved credit cards uses [BiometricPromptFeature]
- * or [KeyguardManager].
+ * Autofill settings fragment displays a list of settings related to autofilling, adding and
+ * syncing credit cards and addresses.
  */
 @SuppressWarnings("TooManyFunctions")
-class CreditCardsSettingFragment : BiometricPromptPreferenceFragment() {
+class AutofillSettingFragment : BiometricPromptPreferenceFragment() {
 
     private lateinit var creditCardsStore: CreditCardsFragmentStore
     private var isCreditCardsListLoaded: Boolean = false
@@ -115,7 +116,11 @@ class CreditCardsSettingFragment : BiometricPromptPreferenceFragment() {
     override fun onResume() {
         super.onResume()
 
-        showToolbar(getString(R.string.preferences_credit_cards))
+        if (requireComponents.settings.addressFeature) {
+            showToolbar(getString(R.string.preferences_autofill))
+        } else {
+            showToolbar(getString(R.string.preferences_credit_cards))
+        }
 
         SyncPreferenceView(
             syncPreference = requirePreference(R.string.pref_key_credit_cards_sync_cards_across_devices),
@@ -133,7 +138,7 @@ class CreditCardsSettingFragment : BiometricPromptPreferenceFragment() {
             },
             onReconnectClicked = {
                 findNavController().navigate(
-                    CreditCardsSettingFragmentDirections.actionGlobalAccountProblemFragment()
+                    AutofillSettingFragmentDirections.actionGlobalAccountProblemFragment()
                 )
             }
         )
@@ -167,8 +172,8 @@ class CreditCardsSettingFragment : BiometricPromptPreferenceFragment() {
                 verifyCredentialsOrShowSetupWarning(requireContext(), creditCardPreferences)
             } else {
                 navController.navigate(
-                    CreditCardsSettingFragmentDirections
-                        .actionCreditCardsSettingFragmentToCreditCardEditorFragment()
+                    AutofillSettingFragmentDirections
+                        .actionAutofillSettingFragmentToCreditCardEditorFragment()
                 )
             }
             super.onPreferenceTreeClick(it)
@@ -235,8 +240,8 @@ class CreditCardsSettingFragment : BiometricPromptPreferenceFragment() {
 
     private fun navigateToCreditCardManagementFragment() {
         val directions =
-            CreditCardsSettingFragmentDirections
-                .actionCreditCardsSettingFragmentToCreditCardsManagementFragment()
+            AutofillSettingFragmentDirections
+                .actionAutofillSettingFragmentToCreditCardsManagementFragment()
         findNavController().navigate(directions)
     }
 

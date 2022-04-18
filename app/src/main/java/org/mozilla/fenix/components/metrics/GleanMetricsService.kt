@@ -8,23 +8,11 @@ import android.content.Context
 import mozilla.components.service.glean.Glean
 import mozilla.components.service.glean.private.NoExtraKeys
 import mozilla.components.support.base.log.logger.Logger
-import org.mozilla.fenix.GleanMetrics.Autoplay
 import org.mozilla.fenix.GleanMetrics.Awesomebar
 import org.mozilla.fenix.GleanMetrics.BrowserSearch
-import org.mozilla.fenix.GleanMetrics.ContextualMenu
-import org.mozilla.fenix.GleanMetrics.CreditCards
-import org.mozilla.fenix.GleanMetrics.HomeMenu
-import org.mozilla.fenix.GleanMetrics.HomeScreen
 import org.mozilla.fenix.GleanMetrics.Pings
-import org.mozilla.fenix.GleanMetrics.ProgressiveWebApp
-import org.mozilla.fenix.GleanMetrics.RecentBookmarks
-import org.mozilla.fenix.GleanMetrics.RecentSearches
-import org.mozilla.fenix.GleanMetrics.RecentTabs
 import org.mozilla.fenix.GleanMetrics.RecentlyVisitedHomepage
-import org.mozilla.fenix.GleanMetrics.SearchTerms
-import org.mozilla.fenix.GleanMetrics.StartOnHome
 import org.mozilla.fenix.GleanMetrics.SyncedTabs
-import org.mozilla.fenix.GleanMetrics.Tabs
 import org.mozilla.fenix.GleanMetrics.Messaging
 import org.mozilla.fenix.ext.components
 
@@ -87,35 +75,6 @@ private val Event.wrapper: EventWrapper<*>?
             }
         )
 
-        is Event.AutoPlaySettingVisited -> EventWrapper<NoExtraKeys>(
-            { Autoplay.visitedSetting.record(it) }
-        )
-        is Event.AutoPlaySettingChanged -> EventWrapper(
-            { Autoplay.settingChanged.record(it) },
-            { Autoplay.settingChangedKeys.valueOf(it) }
-        )
-        is Event.ProgressiveWebAppOpenFromHomescreenTap -> EventWrapper<NoExtraKeys>(
-            { ProgressiveWebApp.homescreenTap.record(it) }
-        )
-        is Event.ProgressiveWebAppInstallAsShortcut -> EventWrapper<NoExtraKeys>(
-            { ProgressiveWebApp.installTap.record(it) }
-        )
-
-        is Event.TabSettingsOpened -> EventWrapper<NoExtraKeys>(
-            { Tabs.settingOpened.record(it) }
-        )
-        Event.ContextMenuCopyTapped -> EventWrapper<NoExtraKeys>(
-            { ContextualMenu.copyTapped.record(it) }
-        )
-        is Event.ContextMenuSearchTapped -> EventWrapper<NoExtraKeys>(
-            { ContextualMenu.searchTapped.record(it) }
-        )
-        is Event.ContextMenuSelectAllTapped -> EventWrapper<NoExtraKeys>(
-            { ContextualMenu.selectAllTapped.record(it) }
-        )
-        is Event.ContextMenuShareTapped -> EventWrapper<NoExtraKeys>(
-            { ContextualMenu.shareTapped.record(it) }
-        )
         is Event.SyncedTabSuggestionClicked -> EventWrapper<NoExtraKeys>(
             { SyncedTabs.syncedTabsSuggestionClicked.record(it) }
         )
@@ -139,110 +98,6 @@ private val Event.wrapper: EventWrapper<*>?
             { Awesomebar.openedTabSuggestionClicked.record(it) }
         )
 
-        is Event.HomeMenuSettingsItemClicked -> EventWrapper<NoExtraKeys>(
-            { HomeMenu.settingsItemClicked.record(it) }
-        )
-
-        is Event.HomeScreenDisplayed -> EventWrapper<NoExtraKeys>(
-            { HomeScreen.homeScreenDisplayed.record(it) }
-        )
-        is Event.HomeScreenViewCount -> EventWrapper<NoExtraKeys>(
-            { HomeScreen.homeScreenViewCount.add() }
-        )
-        is Event.HomeScreenCustomizedHomeClicked -> EventWrapper<NoExtraKeys>(
-            { HomeScreen.customizeHomeClicked.record(it) }
-        )
-        is Event.StartOnHomeEnterHomeScreen -> EventWrapper<NoExtraKeys>(
-            { StartOnHome.enterHomeScreen.record(it) }
-        )
-
-        is Event.StartOnHomeOpenTabsTray -> EventWrapper<NoExtraKeys>(
-            { StartOnHome.openTabsTray.record(it) }
-        )
-
-        is Event.OpenRecentTab -> EventWrapper<NoExtraKeys>(
-            { RecentTabs.recentTabOpened.record(it) }
-        )
-
-        is Event.OpenInProgressMediaTab -> EventWrapper<NoExtraKeys>(
-            { RecentTabs.inProgressMediaTabOpened.record(it) }
-        )
-
-        is Event.ShowAllRecentTabs -> EventWrapper<NoExtraKeys>(
-            { RecentTabs.showAllClicked.record(it) }
-        )
-
-        is Event.RecentTabsSectionIsVisible -> EventWrapper<NoExtraKeys>(
-            { RecentTabs.sectionVisible.set(true) }
-        )
-
-        is Event.RecentTabsSectionIsNotVisible -> EventWrapper<NoExtraKeys>(
-            { RecentTabs.sectionVisible.set(false) }
-        )
-
-        is Event.BookmarkClicked -> EventWrapper<NoExtraKeys>(
-            { RecentBookmarks.bookmarkClicked.add() }
-        )
-
-        is Event.ShowAllBookmarks -> EventWrapper<NoExtraKeys>(
-            { RecentBookmarks.showAllBookmarks.add() }
-        )
-
-        is Event.RecentSearchesGroupDeleted -> EventWrapper<NoExtraKeys>(
-            { RecentSearches.groupDeleted.record(it) }
-        )
-
-        is Event.RecentBookmarksShown -> EventWrapper<NoExtraKeys>(
-            { RecentBookmarks.shown.record(it) }
-        )
-
-        is Event.RecentBookmarkCount -> EventWrapper<NoExtraKeys>(
-            { RecentBookmarks.recentBookmarksCount.set(this.count.toLong()) },
-        )
-        is Event.CreditCardSaved -> EventWrapper<NoExtraKeys>(
-            { CreditCards.saved.add() }
-        )
-        is Event.CreditCardDeleted -> EventWrapper<NoExtraKeys>(
-            { CreditCards.deleted.add() }
-        )
-        is Event.CreditCardModified -> EventWrapper<NoExtraKeys>(
-            { CreditCards.modified.record(it) }
-        )
-        is Event.CreditCardFormDetected -> EventWrapper<NoExtraKeys>(
-            { CreditCards.formDetected.record(it) }
-        )
-        is Event.CreditCardAutofillPromptShown -> EventWrapper<NoExtraKeys>(
-            { CreditCards.autofillPromptShown.record(it) }
-        )
-        is Event.CreditCardAutofillPromptExpanded -> EventWrapper<NoExtraKeys>(
-            { CreditCards.autofillPromptExpanded.record(it) }
-        )
-        is Event.CreditCardAutofillPromptDismissed -> EventWrapper<NoExtraKeys>(
-            { CreditCards.autofillPromptDismissed.record(it) }
-        )
-        is Event.CreditCardAutofilled -> EventWrapper<NoExtraKeys>(
-            { CreditCards.autofilled.record(it) }
-        )
-        is Event.CreditCardManagementAddTapped -> EventWrapper<NoExtraKeys>(
-            { CreditCards.managementAddTapped.record(it) }
-        )
-        is Event.CreditCardManagementCardTapped -> EventWrapper<NoExtraKeys>(
-            { CreditCards.managementCardTapped.record(it) }
-        )
-        is Event.SearchTermGroupCount -> EventWrapper(
-            { SearchTerms.numberOfSearchTermGroup.record(it) },
-            { SearchTerms.numberOfSearchTermGroupKeys.valueOf(it) }
-        )
-        is Event.AverageTabsPerSearchTermGroup -> EventWrapper(
-            { SearchTerms.averageTabsPerGroup.record(it) },
-            { SearchTerms.averageTabsPerGroupKeys.valueOf(it) }
-        )
-        is Event.SearchTermGroupSizeDistribution -> EventWrapper<NoExtraKeys>(
-            { SearchTerms.groupSizeDistribution.accumulateSamples(this.groupSizes.toLongArray()) },
-        )
-        is Event.JumpBackInGroupTapped -> EventWrapper<NoExtraKeys>(
-            { SearchTerms.jumpBackInGroupTapped.record(it) }
-        )
         is Event.Messaging.MessageShown -> EventWrapper<NoExtraKeys>(
             {
                 Messaging.messageShown.record(
