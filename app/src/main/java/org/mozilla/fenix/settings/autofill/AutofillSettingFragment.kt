@@ -36,9 +36,6 @@ import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.settings.SharedPreferenceUpdater
 import org.mozilla.fenix.settings.SyncPreferenceView
 import org.mozilla.fenix.settings.biometric.BiometricPromptPreferenceFragment
-import org.mozilla.fenix.settings.creditcards.CreditCardsAction
-import org.mozilla.fenix.settings.creditcards.CreditCardsFragmentStore
-import org.mozilla.fenix.settings.creditcards.CreditCardsListState
 import org.mozilla.fenix.settings.requirePreference
 
 /**
@@ -48,7 +45,7 @@ import org.mozilla.fenix.settings.requirePreference
 @SuppressWarnings("TooManyFunctions")
 class AutofillSettingFragment : BiometricPromptPreferenceFragment() {
 
-    private lateinit var creditCardsStore: CreditCardsFragmentStore
+    private lateinit var store: AutofillFragmentStore
     private var isCreditCardsListLoaded: Boolean = false
 
     /**
@@ -75,8 +72,8 @@ class AutofillSettingFragment : BiometricPromptPreferenceFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        creditCardsStore = StoreProvider.get(this) {
-            CreditCardsFragmentStore(CreditCardsListState(creditCards = emptyList()))
+        store = StoreProvider.get(this) {
+            AutofillFragmentStore(AutofillFragmentState(creditCards = emptyList()))
         }
         loadCreditCards()
     }
@@ -108,7 +105,7 @@ class AutofillSettingFragment : BiometricPromptPreferenceFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        consumeFrom(creditCardsStore) { state ->
+        consumeFrom(store) { state ->
             updateCardManagementPreference(state.creditCards.isNotEmpty(), findNavController())
         }
 
@@ -188,7 +185,7 @@ class AutofillSettingFragment : BiometricPromptPreferenceFragment() {
     }
 
     /**
-     * Fetches all the credit cards from autofillStorage and updates the [CreditCardsListState]
+     * Fetches all the credit cards from autofillStorage and updates the [AutofillFragmentState]
      * with the list of credit cards.
      */
     private fun loadCreditCards() {
@@ -199,7 +196,7 @@ class AutofillSettingFragment : BiometricPromptPreferenceFragment() {
         lifecycleScope.launch(Dispatchers.IO) {
             val creditCards = requireComponents.core.autofillStorage.getAllCreditCards()
             lifecycleScope.launch(Dispatchers.Main) {
-                creditCardsStore.dispatch(CreditCardsAction.UpdateCreditCards(creditCards))
+                store.dispatch(AutofillAction.UpdateCreditCards(creditCards))
             }
         }
 
