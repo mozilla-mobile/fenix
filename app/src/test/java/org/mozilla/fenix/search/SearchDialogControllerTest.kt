@@ -8,8 +8,10 @@ import androidx.appcompat.app.AlertDialog
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import io.mockk.MockKAnnotations
+import io.mockk.Runs
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.spyk
@@ -29,6 +31,7 @@ import mozilla.components.support.test.middleware.CaptureActionsMiddleware
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -36,23 +39,21 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.BrowserDirection
+import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.SearchShortcuts
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
-import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.components.metrics.MetricsUtils
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.search.SearchDialogFragmentDirections.Companion.actionGlobalAddonsManagementFragment
 import org.mozilla.fenix.search.SearchDialogFragmentDirections.Companion.actionGlobalSearchEngineFragment
+import org.mozilla.fenix.search.toolbar.SearchSelectorMenu
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.utils.Settings
 
-@RunWith(FenixRobolectricTestRunner::class) // For gleanTestRule
+@RunWith(FenixRobolectricTestRunner::class) // for gleanTestRule
 class SearchDialogControllerTest {
-
-    @get:Rule
-    val gleanTestRule = GleanTestRule(testContext)
 
     @MockK(relaxed = true) private lateinit var activity: HomeActivity
     @MockK(relaxed = true) private lateinit var store: SearchDialogFragmentStore
@@ -63,6 +64,9 @@ class SearchDialogControllerTest {
 
     private lateinit var middleware: CaptureActionsMiddleware<BrowserState, BrowserAction>
     private lateinit var browserStore: BrowserStore
+
+    @get:Rule
+    val gleanTestRule = GleanTestRule(testContext)
 
     @Before
     fun setUp() {
@@ -77,7 +81,7 @@ class SearchDialogControllerTest {
         every { navController.currentDestination } returns mockk {
             every { id } returns R.id.searchDialogFragment
         }
-        every { MetricsUtils.createSearchEvent(searchEngine, browserStore, any()) } returns null
+        every { MetricsUtils.recordSearchMetrics(searchEngine, any(), any()) } just Runs
     }
 
     @After
@@ -88,6 +92,7 @@ class SearchDialogControllerTest {
     @Test
     fun handleUrlCommitted() {
         val url = "https://www.google.com/"
+        assertFalse(Events.enteredUrl.testHasValue())
 
         createController().handleUrlCommitted(url)
 
@@ -99,7 +104,11 @@ class SearchDialogControllerTest {
                 engine = searchEngine
             )
         }
-        verify { metrics.track(Event.EnteredUrl(false)) }
+
+        assertTrue(Events.enteredUrl.testHasValue())
+        val snapshot = Events.enteredUrl.testGetValue()
+        assertEquals(1, snapshot.size)
+        assertEquals("false", snapshot.single().extra?.getValue("autocomplete"))
     }
 
     @Test
@@ -157,6 +166,7 @@ class SearchDialogControllerTest {
     @Test
     fun handleMozillaUrlCommitted() {
         val url = "moz://a"
+        assertFalse(Events.enteredUrl.testHasValue())
 
         createController().handleUrlCommitted(url)
 
@@ -168,7 +178,11 @@ class SearchDialogControllerTest {
                 engine = searchEngine
             )
         }
-        verify { metrics.track(Event.EnteredUrl(false)) }
+
+        assertTrue(Events.enteredUrl.testHasValue())
+        val snapshot = Events.enteredUrl.testGetValue()
+        assertEquals(1, snapshot.size)
+        assertEquals("false", snapshot.single().extra?.getValue("autocomplete"))
     }
 
     @Test
@@ -257,6 +271,7 @@ class SearchDialogControllerTest {
     fun handleUrlTapped() {
         val url = "https://www.google.com/"
         val flags = EngineSession.LoadUrlFlags.all()
+        assertFalse(Events.enteredUrl.testHasValue())
 
         createController().handleUrlTapped(url, flags)
         createController().handleUrlTapped(url)
@@ -269,7 +284,12 @@ class SearchDialogControllerTest {
                 flags = flags
             )
         }
-        verify { metrics.track(Event.EnteredUrl(false)) }
+
+        assertTrue(Events.enteredUrl.testHasValue())
+        val snapshot = Events.enteredUrl.testGetValue()
+        assertEquals(2, snapshot.size)
+        assertEquals("false", snapshot.first().extra?.getValue("autocomplete"))
+        assertEquals("false", snapshot[1].extra?.getValue("autocomplete"))
     }
 
     @Test
@@ -374,6 +394,15 @@ class SearchDialogControllerTest {
         spyController.handleCameraPermissionsNeeded()
 
         verify { dialogBuilder.show() }
+    }
+
+    @Test
+    fun `GIVEN search settings menu item WHEN search selector menu item is tapped THEN show search engine settings`() {
+        val controller = spyk(createController())
+
+        controller.handleMenuItemTapped(SearchSelectorMenu.Item.SearchSettings)
+
+        verify { controller.handleClickSearchEngineSettings() }
     }
 
     private fun createController(

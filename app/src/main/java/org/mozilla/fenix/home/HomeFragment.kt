@@ -69,6 +69,7 @@ import mozilla.components.feature.top.sites.TopSitesFeature
 import mozilla.components.feature.top.sites.TopSitesProviderConfig
 import mozilla.components.lib.state.ext.consumeFlow
 import mozilla.components.lib.state.ext.consumeFrom
+import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.ktx.android.content.res.resolveAttribute
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
@@ -76,6 +77,10 @@ import mozilla.components.ui.tabcounter.TabCounterMenu
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.FeatureFlags
+import org.mozilla.fenix.GleanMetrics.Events
+import org.mozilla.fenix.GleanMetrics.HomeScreen
+import org.mozilla.fenix.GleanMetrics.StartOnHome
+import org.mozilla.fenix.GleanMetrics.Wallpapers
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BrowserAnimator.Companion.getToolbarNavOptions
@@ -86,13 +91,11 @@ import org.mozilla.fenix.components.PrivateShortcutCreateManager
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.accounts.AccountState
 import org.mozilla.fenix.components.appstate.AppAction
-import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.toolbar.FenixTabCounterMenu
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.databinding.FragmentHomeBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.hideToolbar
-import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
@@ -104,6 +107,8 @@ import org.mozilla.fenix.home.pocket.DefaultPocketStoriesController
 import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesCategory
 import org.mozilla.fenix.home.recentbookmarks.RecentBookmarksFeature
 import org.mozilla.fenix.home.recentbookmarks.controller.DefaultRecentBookmarksController
+import org.mozilla.fenix.home.recentsyncedtabs.RecentSyncedTabFeature
+import org.mozilla.fenix.home.recentsyncedtabs.controller.DefaultRecentSyncedTabController
 import org.mozilla.fenix.home.recenttabs.RecentTabsListFeature
 import org.mozilla.fenix.home.recenttabs.controller.DefaultRecentTabsController
 import org.mozilla.fenix.home.recentvisits.RecentVisitsFeature
@@ -119,6 +124,7 @@ import org.mozilla.fenix.perf.MarkersFragmentLifecycleCallbacks
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.settings.SupportUtils.SumoTopic.HELP
 import org.mozilla.fenix.settings.deletebrowsingdata.deleteAndQuit
+import org.mozilla.fenix.tabstray.TabsTrayAccessPoint
 import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.utils.Settings.Companion.TOP_SITES_PROVIDER_MAX_THRESHOLD
 import org.mozilla.fenix.utils.ToolbarPopupWindow
@@ -127,6 +133,7 @@ import org.mozilla.fenix.wallpapers.WallpaperManager
 import org.mozilla.fenix.whatsnew.WhatsNew
 import java.lang.ref.WeakReference
 import kotlin.math.min
+import org.mozilla.fenix.GleanMetrics.HomeMenu as HomeMenuMetrics
 
 @Suppress("TooManyFunctions", "LargeClass")
 class HomeFragment : Fragment() {
@@ -165,6 +172,16 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private val syncedTabFeature by lazy {
+        RecentSyncedTabFeature(
+            store = requireComponents.appStore,
+            context = requireContext(),
+            storage = requireComponents.backgroundServices.syncedTabsStorage,
+            accountManager = requireComponents.backgroundServices.accountManager,
+            lifecycleOwner = viewLifecycleOwner,
+        )
+    }
+
     private var _sessionControlInteractor: SessionControlInteractor? = null
     private val sessionControlInteractor: SessionControlInteractor
         get() = _sessionControlInteractor!!
@@ -176,6 +193,7 @@ class HomeFragment : Fragment() {
     private val topSitesFeature = ViewBoundFeatureWrapper<TopSitesFeature>()
     private val messagingFeature = ViewBoundFeatureWrapper<MessagingFeature>()
     private val recentTabsListFeature = ViewBoundFeatureWrapper<RecentTabsListFeature>()
+    private val recentSyncedTabFeature = ViewBoundFeatureWrapper<RecentSyncedTabFeature>()
     private val recentBookmarksFeature = ViewBoundFeatureWrapper<RecentBookmarksFeature>()
     private val historyMetadataFeature = ViewBoundFeatureWrapper<RecentVisitsFeature>()
 
@@ -189,11 +207,6 @@ class HomeFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         bundleArgs = args.toBundle()
-        lifecycleScope.launch(IO) {
-            if (!onboarding.userHasBeenOnboarded()) {
-                requireComponents.analytics.metrics.track(Event.OpenedAppFirstRun)
-            }
-        }
 
         if (!onboarding.userHasBeenOnboarded() &&
             requireContext().settings().shouldShowPrivacyPopWindow &&
@@ -276,6 +289,14 @@ class HomeFragment : Fragment() {
                 owner = viewLifecycleOwner,
                 view = binding.root
             )
+
+            if (FeatureFlags.taskContinuityFeature) {
+                recentSyncedTabFeature.set(
+                    feature = syncedTabFeature,
+                    owner = viewLifecycleOwner,
+                    view = binding.root
+                )
+            }
         }
 
         if (requireContext().settings().showRecentBookmarksFeature) {
@@ -310,12 +331,10 @@ class HomeFragment : Fragment() {
                 activity = activity,
                 settings = components.settings,
                 engine = components.core.engine,
-                metrics = components.analytics.metrics,
                 messageController = DefaultMessageController(
                     appStore = components.appStore,
                     messagingStorage = components.analytics.messagingStorage,
                     homeActivity = activity,
-                    metrics = components.analytics.metrics
                 ),
                 store = store,
                 tabCollectionStorage = components.core.tabCollectionStorage,
@@ -334,9 +353,13 @@ class HomeFragment : Fragment() {
             recentTabController = DefaultRecentTabsController(
                 selectTabUseCase = components.useCases.tabsUseCases.selectTab,
                 navController = findNavController(),
-                metrics = requireComponents.analytics.metrics,
                 store = components.core.store,
                 appStore = components.appStore,
+            ),
+            recentSyncedTabController = DefaultRecentSyncedTabController(
+                addNewTabUseCase = requireComponents.useCases.tabsUseCases.addTab,
+                navController = findNavController(),
+                accessPoint = TabsTrayAccessPoint.HomeRecentSyncedTab,
             ),
             recentBookmarksController = DefaultRecentBookmarksController(
                 activity = activity,
@@ -350,19 +373,16 @@ class HomeFragment : Fragment() {
                 storage = components.core.historyStorage,
                 scope = viewLifecycleOwner.lifecycleScope,
                 store = components.core.store,
-                metrics = requireComponents.analytics.metrics
             ),
             pocketStoriesController = DefaultPocketStoriesController(
                 homeActivity = activity,
                 appStore = components.appStore,
                 navController = findNavController(),
-                metrics = requireComponents.analytics.metrics
             )
         )
 
         updateLayout(binding.root)
         sessionControlView = SessionControlView(
-            components.appStore,
             binding.sessionControlRecyclerView,
             viewLifecycleOwner,
             sessionControlInteractor
@@ -471,10 +491,8 @@ class HomeFragment : Fragment() {
         val profilerStartTime = requireComponents.core.engine.profiler?.getProfilerTime()
 
         super.onViewCreated(view, savedInstanceState)
-        context?.metrics?.apply {
-            track(Event.HomeScreenDisplayed)
-            track(Event.HomeScreenViewCount)
-        }
+        HomeScreen.homeScreenDisplayed.record(NoExtras())
+        HomeScreen.homeScreenViewCount.add()
 
         observeSearchEngineChanges()
         createHomeMenu(requireContext(), WeakReference(binding.menuButton))
@@ -491,7 +509,6 @@ class HomeFragment : Fragment() {
             view.resources.getDimensionPixelSize(R.dimen.search_bar_search_engine_icon_padding)
         binding.toolbarWrapper.setOnClickListener {
             navigateToSearch()
-            requireComponents.analytics.metrics.track(Event.SearchBarTapped(Event.SearchBarTapped.Source.HOME))
         }
 
         binding.toolbarWrapper.setOnLongClickListener {
@@ -505,7 +522,7 @@ class HomeFragment : Fragment() {
         }
 
         binding.tabButton.setOnClickListener {
-            requireComponents.analytics.metrics.track(Event.StartOnHomeOpenTabsTray)
+            StartOnHome.openTabsTray.record(NoExtras())
             openTabsTray()
         }
 
@@ -719,7 +736,12 @@ class HomeFragment : Fragment() {
             binding.wordmark.setOnClickListener {
                 val manager = requireComponents.wallpaperManager
                 val newWallpaper = manager.switchToNextWallpaper()
-                requireComponents.analytics.metrics.track(Event.WallpaperSwitched(newWallpaper))
+                Wallpapers.wallpaperSwitched.record(
+                    Wallpapers.WallpaperSwitchedExtra(
+                        name = newWallpaper.name,
+                        themeCollection = newWallpaper::class.simpleName
+                    )
+                )
                 manager.updateWallpaper(
                     wallpaperContainer = binding.wallpaperImageView,
                     newWallpaper = newWallpaper
@@ -865,13 +887,16 @@ class HomeFragment : Fragment() {
         navigateToSearch()
     }
 
-    private fun navigateToSearch() {
+    @VisibleForTesting
+    internal fun navigateToSearch() {
         val directions =
             HomeFragmentDirections.actionGlobalSearchDialog(
                 sessionId = null
             )
 
         nav(R.id.homeFragment, directions, getToolbarNavOptions(requireContext()))
+
+        Events.searchBarTapped.record(Events.SearchBarTappedExtra("HOME"))
     }
 
     @SuppressWarnings("ComplexMethod", "LongMethod")
@@ -890,10 +915,10 @@ class HomeFragment : Fragment() {
                             R.id.homeFragment,
                             HomeFragmentDirections.actionGlobalSettingsFragment()
                         )
-                        requireComponents.analytics.metrics.track(Event.HomeMenuSettingsItemClicked)
+                        HomeMenuMetrics.settingsItemClicked.record(NoExtras())
                     }
                     HomeMenu.Item.CustomizeHome -> {
-                        context.metrics.track(Event.HomeScreenCustomizedHomeClicked)
+                        HomeScreen.customizeHomeClicked.record(NoExtras())
                         nav(
                             R.id.homeFragment,
                             HomeFragmentDirections.actionGlobalHomeSettingsFragment()
@@ -940,7 +965,7 @@ class HomeFragment : Fragment() {
                     }
                     HomeMenu.Item.WhatsNew -> {
                         WhatsNew.userViewedWhatsNew(context)
-                        context.metrics.track(Event.WhatsNewTapped)
+                        Events.whatsNewTapped.record(NoExtras())
                         (activity as HomeActivity).openToBrowserAndLoad(
                             searchTermOrURL = SupportUtils.getWhatsNewUrl(context),
                             newTab = true,

@@ -66,7 +66,6 @@ import org.mozilla.fenix.GleanMetrics.TopSites
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.components.Core
 import org.mozilla.fenix.components.appstate.AppAction
-import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricServiceType
 import org.mozilla.fenix.components.metrics.MozillaProductDetector
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
@@ -82,6 +81,7 @@ import org.mozilla.fenix.push.PushFxaIntegration
 import org.mozilla.fenix.push.WebPushEngineIntegration
 import org.mozilla.fenix.session.PerformanceActivityLifecycleCallbacks
 import org.mozilla.fenix.session.VisibilityLifecycleCallback
+import org.mozilla.fenix.settings.CustomizationFragment
 import org.mozilla.fenix.telemetry.TelemetryLifecycleObserver
 import org.mozilla.fenix.utils.BrowsersCache
 import org.mozilla.fenix.utils.Settings
@@ -122,13 +122,8 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             return
         }
 
-        if (Config.channel.isFenix) {
-            // We need to always initialize Glean and do it early here.
-            // Note that we are only initializing Glean here for "fenix" builds. "fennec" builds
-            // will initialize in MigratingFenixApplication because we first need to migrate the
-            // user's choice from Fennec.
-            initializeGlean()
-        }
+        // We need to always initialize Glean and do it early here.
+        initializeGlean()
 
         setupInMainProcessOnly()
 
@@ -141,7 +136,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
     protected open fun initializeGlean() {
         val telemetryEnabled = settings().isTelemetryEnabled
 
-        logger.debug("Initializing Glean (uploadEnabled=$telemetryEnabled, isFennec=${Config.channel.isFennec})")
+        logger.debug("Initializing Glean (uploadEnabled=$telemetryEnabled})")
 
         Glean.initialize(
             applicationContext = this,
@@ -159,9 +154,6 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         val store = components.core.store
         GlobalScope.launch(Dispatchers.IO) {
             setStartupMetrics(store, settings())
-        }
-        if (FeatureFlags.messagingFeature && settings().isExperimentationEnabled) {
-            components.appStore.dispatch(AppAction.MessagingAction.Restore)
         }
     }
 
@@ -633,8 +625,8 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
 
             toolbarPosition.set(
                 when (settings.toolbarPosition) {
-                    ToolbarPosition.BOTTOM -> Event.ToolbarPositionChanged.Position.BOTTOM.name
-                    ToolbarPosition.TOP -> Event.ToolbarPositionChanged.Position.TOP.name
+                    ToolbarPosition.BOTTOM -> CustomizationFragment.Companion.Position.BOTTOM.name
+                    ToolbarPosition.TOP -> CustomizationFragment.Companion.Position.TOP.name
                 }
             )
 
@@ -755,6 +747,11 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             }
         )
         components.analytics.experiments.register(object : NimbusInterface.Observer {
+            override fun onExperimentsFetched() {
+                if (FeatureFlags.messagingFeature && settings().isExperimentationEnabled) {
+                    components.appStore.dispatch(AppAction.MessagingAction.Restore)
+                }
+            }
             override fun onUpdatesApplied(updated: List<EnrolledExperiment>) {
                 CustomizeHome.jumpBackIn.set(settings.showRecentTabsFeature)
                 CustomizeHome.recentlySaved.set(settings.showRecentBookmarksFeature)

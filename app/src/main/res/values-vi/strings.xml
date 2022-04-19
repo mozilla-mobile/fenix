@@ -40,9 +40,9 @@
     <!-- Title for the home screen section with recently saved bookmarks. -->
     <string name="recent_bookmarks_title">Dấu trang gần đây</string>
     <!-- Content description for the recently saved bookmarks section on the home screen. -->
-    <string name="recently_saved_bookmarks_content_description">Dấu trang đã lưu gần đây</string>
+    <string moz:removedIn="100" name="recently_saved_bookmarks_content_description" tools:ignore="UnusedResources">Dấu trang đã lưu gần đây</string>
     <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
-    <string name="recently_saved_show_all">Hiển thị tất cả</string>
+    <string moz:removedIn="101" name="recently_saved_show_all" tools:ignore="UnusedResources">Hiển thị tất cả</string>
     <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
     <string name="recently_saved_show_all_content_description_2">Hiển thị tất cả các dấu trang đã lưu</string>
 
@@ -179,8 +179,6 @@
     <string name="browser_menu_add_to_homescreen">Thêm vào màn hình chính</string>
     <!-- Browser menu toggle that installs a Progressive Web App shortcut to the site on the device home screen. -->
     <string name="browser_menu_install_on_homescreen">Cài đặt</string>
-    <!-- Menu option on the toolbar that takes you to synced tabs page-->
-    <string moz:removedIn="98" name="synced_tabs" tools:ignore="UnusedResources">Các thẻ đã đồng bộ</string>
     <!-- Content description (not visible, for screen readers etc.) for the Resync tabs button -->
     <string name="resync_button_content_description">Đồng bộ hóa lại</string>
     <!-- Browser menu button that opens the find in page menu -->
@@ -212,8 +210,6 @@
     <!-- Browser menu label for editing a bookmark -->
     <string name="browser_menu_edit">Chỉnh sửa</string>
 
-    <!-- Browser menu button that opens the Customize menu -->
-    <string moz:removedIn="98" name="browser_menu_customize_home" tools:ignore="UnusedResources">Tùy chỉnh trang chủ</string>
     <!-- Button shown on the home page that opens the Customize home settings -->
     <string name="browser_menu_customize_home_1">Tùy chỉnh trang chủ</string>
     <!-- Browser Toolbar -->
@@ -327,6 +323,26 @@
     <string name="preferences_screenshots_in_private_mode_disclaimer">Nếu được phép, các thẻ riêng tư cũng sẽ hiển thị khi nhiều ứng dụng đang mở</string>
     <!-- Preference for adding private browsing shortcut -->
     <string name="preferences_add_private_browsing_shortcut">Thêm lối tắt duyệt web riêng tư</string>
+    <!-- Preference for enabling "HTTPS-Only" mode -->
+    <string name="preferences_https_only_title">Chế độ chỉ HTTPS</string>
+    <!-- Description of the preference to enable "HTTPS-Only" mode. -->
+    <string name="preferences_https_only_summary">Tự động cố gắng kết nối với các trang web bằng giao thức mã hóa HTTPS để tăng cường bảo mật.</string>
+    <!-- Summary of tracking protection preference if tracking protection is set to on -->
+    <string name="preferences_https_only_on">Bật</string>
+    <!-- Summary of tracking protection preference if tracking protection is set to off -->
+    <string name="preferences_https_only_off">Tắt</string>
+    <!-- Text displayed that links to website containing documentation about "HTTPS-Only" mode -->
+    <string name="preferences_http_only_learn_more">Tìm hiểu thêm</string>
+    <!-- Option for the https only setting -->
+    <string name="preferences_https_only_in_all_tabs">Bật trong tất cả các thẻ</string>
+    <!-- Option for the https only setting -->
+    <string name="preferences_https_only_in_private_tabs">Chỉ bật trong thẻ riêng tư</string>
+    <!-- Title shown in the error page for when trying to access a http website while https only mode is enabled. -->
+    <string name="errorpage_httpsonly_title">Trang web an toàn không có sẵn</string>
+    <!-- Message shown in the error page for when trying to access a http website while https only mode is enabled. The message has two paragraphs. This is the first. -->
+    <string name="errorpage_httpsonly_message_title">Rất có thể, trang web chỉ đơn giản là không hỗ trợ HTTPs.</string>
+    <!-- Message shown in the error page for when trying to access a http website while https only mode is enabled. The message has two paragraphs. This is the second. -->
+    <string name="errorpage_httpsonly_message_summary">Tuy nhiên, cũng có thể có kẻ tấn công tham gia. Nếu bạn tiếp tục vào trang web, bạn không nên nhập bất kỳ thông tin nhạy cảm nào. Nếu bạn tiếp tục, chế độ chỉ HTTPS sẽ tạm thời bị tắt cho trang web.</string>
     <!-- Preference for accessibility -->
     <string name="preferences_accessibility">Khả năng truy cập</string>
     <!-- Preference to override the Firefox Account server -->
@@ -1059,7 +1075,9 @@
     <!-- Text shown in snackbar when user bookmarks a list of tabs -->
     <string name="snackbar_message_bookmarks_saved">Đã lưu dấu trang!</string>
     <!-- Text shown in snackbar when user adds a site to top sites -->
-    <string name="snackbar_added_to_top_sites">Đã thêm vào trang web hàng đầu!</string>
+    <string moz:RemovedIn="101" name="snackbar_added_to_top_sites" tools:ignore="UnusedResources">Đã thêm vào trang web hàng đầu!</string>
+    <!-- Text shown in snackbar when user adds a site to shortcuts -->
+    <string name="snackbar_added_to_shortcuts">Đã thêm vào lối tắt!</string>
     <!-- Text shown in snackbar when user closes a private tab -->
     <string name="snackbar_private_tab_closed">Đã đóng thẻ riêng tư</string>
     <!-- Text shown in snackbar when user closes all private tabs -->
@@ -1604,17 +1622,17 @@
     <string name="search_delete_search_engine_success_message">Đã xóa %s</string>
 
     <!-- Title text shown for the migration screen to the new browser. Placeholder replaced with app name -->
-    <string name="migration_title">Chào mừng bạn đến với %s hoàn toàn mới</string>
+    <string moz:removedIn="100" name="migration_title" tools:ignore="UnusedResources">Chào mừng bạn đến với %s hoàn toàn mới</string>
     <!-- Description text followed by a list of things migrating (e.g. Bookmarks, History). Placeholder replaced with app name-->
-    <string name="migration_description">Một trình duyệt được thiết kế lại hoàn toàn mới, với hiệu suất và tính năng được cải thiện để giúp bạn làm việc trực tuyến nhiều hơn.\n\nHãy đợi trong khi chúng tôi cập nhật %s cho bạn</string>
+    <string moz:removedIn="100" name="migration_description" tools:ignore="UnusedResources">Một trình duyệt được thiết kế lại hoàn toàn mới, với hiệu suất và tính năng được cải thiện để giúp bạn làm việc trực tuyến nhiều hơn.\n\nHãy đợi trong khi chúng tôi cập nhật %s cho bạn</string>
     <!-- Text on the disabled button while in progress. Placeholder replaced with app name -->
-    <string name="migration_updating_app_button_text">Đang cập nhật %s…</string>
+    <string moz:removedIn="100" name="migration_updating_app_button_text" tools:ignore="UnusedResources">Đang cập nhật %s…</string>
     <!-- Text on the enabled button. Placeholder replaced with app name-->
-    <string name="migration_update_app_button">Bắt đầu %s</string>
+    <string moz:removedIn="100" name="migration_update_app_button" tools:ignore="UnusedResources">Bắt đầu %s</string>
     <!-- Accessibility description text for a completed migration item -->
-    <string name="migration_icon_description">Đã hoàn thành di chuyển dữ liệu</string>
+    <string moz:removedIn="100" name="migration_icon_description" tools:ignore="UnusedResources">Đã hoàn thành di chuyển dữ liệu</string>
     <!--Text on list of migrated items (e.g. Settings, History, etc.)-->
-    <string name="migration_text_passwords">Mật khẩu</string>
+    <string moz:removedIn="100" name="migration_text_passwords" tools:ignore="UnusedResources">Mật khẩu</string>
 
     <!-- Heading for the instructions to allow a permission -->
     <string name="phone_feature_blocked_intro">Để cho phép nó:</string>
@@ -1644,9 +1662,13 @@
     <!-- Bookmark deletion confirmation -->
     <string name="bookmark_deletion_confirmation">Bạn có chắc chắn muốn xóa dấu trang này?</string>
     <!-- Browser menu button that adds a top site to the home fragment -->
-    <string name="browser_menu_add_to_top_sites">Thêm vào trang web hàng đầu</string>
+    <string moz:RemovedIn="101" name="browser_menu_add_to_top_sites" tools:ignore="UnusedResources">Thêm vào trang web hàng đầu</string>
     <!-- Browser menu button that removes a top site from the home fragment -->
-    <string name="browser_menu_remove_from_top_sites">Xóa khỏi các trang web hàng đầu</string>
+    <string moz:RemovedIn="101" name="browser_menu_remove_from_top_sites" tools:ignore="UnusedResources">Xóa khỏi các trang web hàng đầu</string>
+    <!-- Browser menu button that adds a shortcut to the home fragment -->
+    <string name="browser_menu_add_to_shortcuts">Thêm vào lối tắt</string>
+    <!-- Browser menu button that removes a shortcut from the home fragment -->
+    <string name="browser_menu_remove_from_shortcuts">Xóa khỏi lối tắt</string>
     <!-- text shown before the issuer name to indicate who its verified by, parameter is the name of
      the certificate authority that verified the ticket-->
     <string name="certificate_info_verified_by">Được xác minh bởi: %1$s </string>
@@ -1721,21 +1743,24 @@
 
     <!-- Top Sites -->
     <!-- Title text displayed in the dialog when top sites limit is reached. -->
-    <string name="top_sites_max_limit_title">Đã đạt đến giới hạn trang web hàng đầu</string>
+    <string moz:RemovedIn="101" name="top_sites_max_limit_title" tools:ignore="UnusedResources">Đã đạt đến giới hạn trang web hàng đầu</string>
+    <!-- Title text displayed in the dialog when shortcuts limit is reached. -->
+    <string name="shortcut_max_limit_title">Đã đạt đến giới hạn lối tắt</string>
     <!-- Content description text displayed in the dialog when top sites limit is reached. -->
-    <string name="top_sites_max_limit_content_2">Để thêm một trang web hàng đầu mới, loại bỏ một cái cũ trước. Chạm và giữ trang web và chọn xóa.</string>
+    <string moz:RemovedIn="101" name="top_sites_max_limit_content_2" tools:ignore="UnusedResources">Để thêm một trang web hàng đầu mới, loại bỏ một cái cũ trước. Chạm và giữ trang web và chọn xóa.</string>
+    <!-- Content description text displayed in the dialog when shortcut limit is reached. -->
+    <string name="shortcut_max_limit_content">Để thêm một lối tắt mới, hãy xóa một lối tắt. Nhấn và giữ trang web và chọn xóa.</string>
     <!-- Confirmation dialog button text when top sites limit is reached. -->
     <string name="top_sites_max_limit_confirmation_button">OK, đã hiểu</string>
-
-    <!-- Label for the preference to show the shortcuts for the most visited top sites on the homepage -->
-    <string moz:removedIn="98" name="top_sites_toggle_top_recent_sites_3" tools:ignore="UnusedResources">Trang web hàng đầu được truy cập nhiều nhất</string>
 
     <!-- Label for the preference to show the shortcuts for the most visited top sites on the homepage -->
     <string name="top_sites_toggle_top_recent_sites_4">Lối tắt</string>
 	<!-- Title text displayed in the rename top site dialog. -->
 	<string name="top_sites_rename_dialog_title">Tên</string>
 	<!-- Hint for renaming title of a top site -->
-	<string name="top_site_name_hint">Tên trang web hàng đầu</string>
+	<string moz:RemovedIn="101" name="top_site_name_hint" tools:ignore="UnusedResources">Tên trang web hàng đầu</string>
+    <!-- Hint for renaming title of a shortcut -->
+    <string name="shortcut_name_hint">Tên lối tắt</string>
 	<!-- Button caption to confirm the renaming of the top site. -->
 	<string name="top_sites_rename_dialog_ok">OK</string>
 	<!-- Dialog button text for canceling the rename top site prompt. -->
@@ -1812,4 +1837,9 @@
     <string name="pocket_stories_feature_caption">Một phần của gia đình Firefox. %s</string>
     <!-- Clickable text for opening an external link for more information about Pocket. -->
     <string name="pocket_stories_feature_learn_more">Tìm hiểu thêm</string>
+
+    <!-- Snackbar message for enrolling in a Nimbus experiment from the secret settings when Studies preference is Off.-->
+    <string name="experiments_snackbar">Bật telemetry để gửi dữ liệu.</string>
+    <!-- Snackbar button text to navigate to telemetry settings.-->
+    <string name="experiments_snackbar_button">Đi đến cài đặt</string>
 </resources>

@@ -12,14 +12,12 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions.actionOnItem
 import androidx.test.espresso.matcher.RootMatchers
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.Visibility
 import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
-import androidx.test.espresso.matcher.ViewMatchers.hasSibling
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withHint
@@ -48,6 +46,7 @@ import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
 import org.mozilla.fenix.helpers.TestHelper.appContext
 import org.mozilla.fenix.helpers.TestHelper.appName
+import org.mozilla.fenix.helpers.TestHelper.getStringResource
 import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.TestHelper.scrollToElementByText
 import org.mozilla.fenix.helpers.click
@@ -375,8 +374,12 @@ class HomeScreenRobot {
         }
 
         fun openCommonMythsLink(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
-            onView(withId(R.id.private_session_common_myths))
-                .perform(click())
+            mDevice.findObject(
+                UiSelector()
+                    .textContains(
+                        getStringResource(R.string.private_browsing_common_myths)
+                    )
+            ).also { it.click() }
 
             BrowserRobot().interact()
             return BrowserRobot.Transition()
@@ -505,8 +508,13 @@ private fun verifySearchEngineIcon(searchEngineName: String) {
 
 // First Run elements
 private fun assertWelcomeHeader() =
-    onView(allOf(withText("Welcome to $appName!")))
-        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+    assertTrue(
+        mDevice.findObject(
+            UiSelector().textContains(
+                getStringResource(R.string.onboarding_header)
+            )
+        ).waitForExists(waitingTime)
+    )
 
 private fun assertStartSyncHeader() {
     scrollToElementByText(STRING_ONBOARDING_ACCOUNT_SIGN_IN_HEADER)
@@ -629,8 +637,14 @@ private fun assertTakePlacementBottomRadioButton() {
 }
 
 private fun assertPrivateSessionMessage() =
-    onView(withId(R.id.private_session_description))
-        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+    assertTrue(
+        mDevice.findObject(
+            UiSelector()
+                .textContains(
+                    getStringResource(R.string.private_browsing_common_myths)
+                )
+        ).waitForExists(waitingTime)
+    )
 
 private fun collectionTitle(title: String) =
     onView(allOf(withId(R.id.collection_title), withText(title)))
@@ -668,15 +682,15 @@ private fun assertTopSiteContextMenuItems() {
     )
 }
 
-private fun assertJumpBackInSectionIsDisplayed() = jumpBackInSection().check(matches(isDisplayed()))
+private fun assertJumpBackInSectionIsDisplayed() = assertTrue(jumpBackInSection().waitForExists(waitingTime))
 
-private fun assertJumpBackInSectionIsNotDisplayed() = jumpBackInSection().check(doesNotExist())
+private fun assertJumpBackInSectionIsNotDisplayed() = assertFalse(jumpBackInSection().waitForExists(waitingTimeShort))
 
 private fun assertRecentBookmarksSectionIsDisplayed() =
-    recentBookmarksSection().check(matches(isDisplayed()))
+    assertTrue(recentBookmarksSection().waitForExists(waitingTime))
 
 private fun assertRecentBookmarksSectionIsNotDisplayed() =
-    recentBookmarksSection().check(doesNotExist())
+    assertFalse(recentBookmarksSection().waitForExists(waitingTimeShort))
 
 private fun privateBrowsingButton() = onView(withId(R.id.privateBrowsingButton))
 
@@ -685,20 +699,10 @@ private fun saveTabsToCollectionButton() = onView(withId(R.id.add_tabs_to_collec
 private fun tabsCounter() = onView(withId(R.id.tab_button))
 
 private fun jumpBackInSection() =
-    onView(
-        allOf(
-            withText(R.string.recent_tabs_header),
-            hasSibling(withText(R.string.recent_tabs_show_all))
-        )
-    )
+    mDevice.findObject(UiSelector().textContains(getStringResource(R.string.recent_tabs_header)))
 
 private fun recentBookmarksSection() =
-    onView(
-        allOf(
-            withText(R.string.recent_bookmarks_title),
-            hasSibling(withText(R.string.recently_saved_show_all))
-        )
-    )
+    mDevice.findObject(UiSelector().textContains(getStringResource(R.string.recent_bookmarks_title)))
 
 private fun startBrowsingButton(): UiObject {
     val startBrowsingButton = mDevice.findObject(UiSelector().resourceId("$packageName:id/finish_button"))

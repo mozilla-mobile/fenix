@@ -6,7 +6,7 @@
 // FORCE REBUILD 2021-11-24
 
 object Versions {
-    const val kotlin = "1.5.31"
+    const val kotlin = "1.6.10"
     const val coroutines = "1.5.2"
 
     // These versions are linked: lint should be X+23.Y.Z of gradle_plugin version, according to:
@@ -18,10 +18,9 @@ object Versions {
     const val leakcanary = "2.8.1"
     const val osslicenses_plugin = "0.10.4"
     const val detekt = "1.19.0"
-    const val jna = "5.6.0"
+    const val jna = "5.8.0"
 
-    const val androidx_activity_compose = "1.4.0"
-    const val androidx_compose = "1.0.5"
+    const val androidx_compose = "1.1.1"
     const val androidx_appcompat = "1.3.0"
     const val androidx_benchmark = "1.0.0"
     const val androidx_biometric = "1.1.0"
@@ -135,8 +134,8 @@ object Deps {
     const val mozilla_feature_webcompat = "org.mozilla.components:feature-webcompat:${Versions.mozilla_android_components}"
     const val mozilla_feature_webnotifications = "org.mozilla.components:feature-webnotifications:${Versions.mozilla_android_components}"
     const val mozilla_feature_webcompat_reporter = "org.mozilla.components:feature-webcompat-reporter:${Versions.mozilla_android_components}"
-    const val mozilla_service_pocket = "org.mozilla.components:service-pocket:${Versions.mozilla_android_components}"
 
+    const val mozilla_service_pocket = "org.mozilla.components:service-pocket:${Versions.mozilla_android_components}"
     const val mozilla_service_contile =
         "org.mozilla.components:service-contile:${Versions.mozilla_android_components}"
     const val mozilla_service_digitalassetlinks =

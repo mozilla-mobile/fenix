@@ -82,12 +82,12 @@ object FeatureFlags {
     /**
      * Enables the Contile top sites.
      */
-    val contileFeature = Config.channel.isNightlyOrDebug
+    const val contileFeature = true
 
     /**
      * Enables history improvement features.
      */
-    val historyImprovementFeatures = Config.channel.isNightlyOrDebug
+    const val historyImprovementFeatures = true
 
     /**
      * Enables themed wallpapers feature.
@@ -113,6 +113,5 @@ object FeatureFlags {
     /**
      * Enables receiving from the messaging framework.
      */
-    @Suppress("MayBeConst")
-    val messagingFeature = false
+    val messagingFeature = Config.channel.isNightlyOrDebug
 }

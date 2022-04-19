@@ -17,6 +17,7 @@ events:
         description: |
           The method used to open Fenix. Possible values are: `app_icon`,
           `custom_tab` or `link`
+        type: string
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/968
       - https://github.com/mozilla-mobile/fenix/issues/10616
@@ -46,6 +47,7 @@ events:
         description: |
           The view the user was on when they initiated the search (For example:
           `Home` or `Browser`)
+        type: string
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/959
       - https://github.com/mozilla-mobile/fenix/issues/19923
@@ -73,6 +75,7 @@ events:
         description: |
           A boolean that tells us whether the URL was autofilled by an
           Autocomplete suggestion
+        type: boolean
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/959
       - https://github.com/mozilla-mobile/fenix/issues/19923
@@ -105,6 +108,7 @@ events:
           * default.suggestion
           * shortcut.action
           * shortcut.suggestion
+        type: string
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/959
       - https://github.com/mozilla-mobile/fenix/issues/19923
@@ -142,6 +146,7 @@ events:
           reader_mode_off, reader_mode_on, reload, remove_from_top_sites,
           save_to_collection, set_default_browser, settings, share, stop,
           sync_account, and sync_tabs.
+        type: string
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/1024
       - https://github.com/mozilla-mobile/fenix/issues/19923
@@ -254,8 +259,10 @@ events:
           pref_key_sync_logins, pref_key_sync_bookmarks, pref_key_sync_history,
           pref_key_show_voice_search,
           and pref_key_show_search_suggestions_in_private.
+        type: string
       enabled:
         description: "Whether or not the preference is *now* enabled"
+        type: boolean
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/975
       - https://github.com/mozilla-mobile/fenix/issues/5094
@@ -317,6 +324,7 @@ events:
           The mode the link was opened in. Either 'PRIVATE' or 'NORMAL'. N.B.:
           this probe may be incorrectly implemented: see
           https://github.com/mozilla-mobile/fenix/issues/14133
+        type: string
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/5737
       - https://github.com/mozilla-mobile/fenix/issues/19923
@@ -425,15 +433,17 @@ events:
         description: |
           A string containing the name of the tab view the user tapped.
           These items include: list or grid.
+        type: string
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/19956
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/19959#issuecomment-882539619
+      - https://github.com/mozilla-mobile/fenix/pull/24409
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 101
+    expires: 113
 
 onboarding:
   fxa_auto_signin:
@@ -658,6 +668,7 @@ toolbar_settings:
       The user selected a new position for the toolbar
     extra_keys:
       position:
+        type: string
         description: |
           A string that indicates the new position of the toolbar TOP or BOTTOM
     bugs:
@@ -692,6 +703,7 @@ context_menu:
           open_in_new_tab, open_in_private_tab, open_image_in_new_tab,
           save_image, share_link, copy_link, copy_image_location, share_image
           ```
+        type: string
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/957
       - https://github.com/mozilla-mobile/fenix/issues/16076
@@ -1572,6 +1584,7 @@ customize_home:
       A user toggles the preference for the home screen items.
     extra_keys:
       preference_key:
+        type: string
         description: |
           The preference key for the boolean (true/false) preference the user
           toggled.
@@ -1579,6 +1592,7 @@ customize_home:
           We currently track: most_visited_sites, jump_back_in,
           recently_visited, recently_saved, pocket, and contile.
       enabled:
+        type: boolean
         description: "Whether or not the preference is *now* enabled"
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/21095
@@ -2525,6 +2539,7 @@ error_page:
       A user encountered an error page
     extra_keys:
       error_type:
+        type: string
         description: "The error type of the error page encountered"
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/1242
@@ -3048,6 +3063,7 @@ history:
       User has tapped on an item in the "Recently visited" section on home.
     extra_keys:
       page_number:
+        type: string
         description: |
           The page number in the homescreen carousel that the recently visited
           item was on.
@@ -3943,6 +3959,20 @@ tabs_tray:
       tab_count:
         description: The number of selected tabs added to colelction.
         type: quantity
+  access_point:
+    type: labeled_counter
+    description: |
+      The area that the tabs tray was accessed from.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/24549
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/24671
+    notification_emails:
+      - android-probes@mozilla.com
+    data_sensitivity:
+      - interaction
+    expires: 114
+
 
 collections:
   renamed:
@@ -4090,8 +4120,10 @@ collections:
     extra_keys:
       tabs_open:
         description: "The number of tabs open in the current session"
+        type: string
       tabs_selected:
         description: "The number of tabs added to the collection"
+        type: string
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/969
       - https://github.com/mozilla-mobile/fenix/issues/19923
@@ -4118,8 +4150,10 @@ collections:
     extra_keys:
       tabs_open:
         description: The number of tabs open in the current session
+        type: string
       tabs_selected:
         description: The number of tabs added to the collection
+        type: string
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/969
       - https://github.com/mozilla-mobile/fenix/issues/19923
@@ -4233,6 +4267,7 @@ collections:
         description: |
           A string representing the screen from which the user pressed the save
           button. Currently one of: `browserMenu`, `homeMenu` or `home`
+        type: string
     metadata:
       tags:
         - Collections
@@ -4707,6 +4742,7 @@ logins:
       A user changed their setting for asking to save logins
     extra_keys:
       setting:
+        type: string
         description: |
           The new setting for saving logins the user selected. Either
           `ask_to_save` or `never_save`
@@ -4919,6 +4955,7 @@ top_sites:
       A user swiped to change the page of the top sites carousel
     extra_keys:
       page:
+        type: string
         description: |
           The page number the carousel is now on
     bugs:
@@ -4944,6 +4981,7 @@ top_sites:
       A user long pressed on a top site
     extra_keys:
       type:
+        type: string
         description: |
           The type of top site. Options are: "FRECENCY", "DEFAULT",
           "PINNED", or "PROVIDED"
@@ -5255,6 +5293,7 @@ app_theme:
       A user selected Dark Theme
     extra_keys:
       source:
+        type: string
         description: |
           The source from where dark theme was selected. The source can be
           'SETTINGS' or 'ONBOARDING'
@@ -5340,9 +5379,11 @@ pocket:
       User tapped a Pocket recommended story to be opened.
     extra_keys:
       times_shown:
+        type: string
         description: |
           How many times was this story shown, including current.
       position:
+        type: string
         description: |
           Position of the clicked story in the list shown.
           Uses the [row x column] matrix notation.
@@ -5361,12 +5402,15 @@ pocket:
       User tapped a Pocket stories category to filter stories.
     extra_keys:
       category_name:
+        type: string
         description: |
           Pocket set topic name representing the just clicked category.
       selected_total:
+        type: string
         description: |
           How many categories were selected before this being tapped.
       new_state:
+        type: string
         description: |
           Category's new state after being tapped.
           Possible values: [selected], [deselected].
@@ -5642,6 +5686,7 @@ addons:
       addon_id:
         description: |
           The id of the add-on that was interacted with in the toolbar menu
+        type: string
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/6174
       - https://github.com/mozilla-mobile/fenix/issues/19923
@@ -5667,6 +5712,7 @@ addons:
       addon_id:
         description: |
           The id of the add-on that was interacted with
+        type: string
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/17644
     data_reviews:
@@ -6139,7 +6185,8 @@ autoplay:
       autoplay_setting:
         description: |
           The new setting for autoplay: block_cellular,
-          block_audio, or block_all.
+          block_audio, allow_all or block_all.
+        type: string
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/11579
     data_reviews:
@@ -7250,6 +7297,7 @@ search_terms:
       Number of search term group when tabs tray is opened.
     extra_keys:
       count:
+        type: string
         description: |
           The number of tabs per search group
     bugs:
@@ -7267,6 +7315,7 @@ search_terms:
       Number of search term tabs per group when tabs tray is opened.
     extra_keys:
       count:
+        type: string
         description: |
           The average number of tabs per search group
     bugs:
@@ -7550,3 +7599,74 @@ downloads:
     metadata:
       tags:
         - Download
+
+recent_synced_tabs:
+  recent_synced_tab_shown:
+    type: labeled_counter
+    description: |
+      Counts impressions of a recent synced tab on the homepage, labeled by the
+      device type the tab originates from.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/24549
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/24671
+    notification_emails:
+      - android-probes@mozilla.com
+    data_sensitivity:
+      - interaction
+    expires: 114
+  recent_synced_tab_time_to_load:
+    type: timing_distribution
+    time_unit: millisecond
+    description: |
+      Measures the amount of time between the beginning of a sync and the end.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/24549
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/24671
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: 114
+  recent_synced_tab_opened:
+    type: labeled_counter
+    description: |
+      Counts the number of times a recent synced tab is opened, labeled by the
+      device type the tab originates from.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/24549
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/24671
+    notification_emails:
+      - android-probes@mozilla.com
+    data_sensitivity:
+      - interaction
+    expires: 114
+  show_all_synced_tabs_clicked:
+    type: counter
+    description: |
+      Counts how many times "show all synced tabs" button has been clicked.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/24549
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/24671
+    notification_emails:
+      - android-probes@mozilla.com
+    data_sensitivity:
+      - interaction
+    expires: 114
+  latest_synced_tab_is_stale:
+    type: counter
+    description: |
+      Counts how often the loading placeholder is shown and the resulting tab
+      is the same as it was before the load.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/24549
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/24671
+    notification_emails:
+      - android-probes@mozilla.com
+    data_sensitivity:
+      - interaction
+    expires: 114

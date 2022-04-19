@@ -142,7 +142,6 @@ class SmokeTest {
         featureSettingsHelper.resetAllFeatureFlags()
     }
 
-    @Ignore("Failing, see: https://github.com/mozilla-mobile/fenix/issues/24381")
     // Verifies the first run onboarding screen
     @Test
     fun firstRunScreenTest() {
@@ -325,23 +324,6 @@ class SmokeTest {
         }
     }
 
-    @Ignore("Failing, see: https://github.com/mozilla-mobile/fenix/issues/24458")
-    @Test
-    // Verifies the Add to top sites option in a tab's 3 dot menu
-    fun openMainMenuAddTopSiteTest() {
-        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-        }.openThreeDotMenu {
-            expandMenu()
-        }.addToFirefoxHome {
-            verifySnackBarText("Added to top sites!")
-        }.goToHomescreen {
-            verifyExistingTopSitesTabs(defaultWebPage.title)
-        }
-    }
-
     @Test
     // Verifies the Add to home screen option in a tab's 3 dot menu
     fun mainMenuAddToHomeScreenTest() {
@@ -485,6 +467,7 @@ class SmokeTest {
         }
     }
 
+    @Ignore("Flaky. See https://github.com/mozilla-mobile/fenix/issues/23136")
     @Test
     // Verifies changing the default engine from the Search Shortcut menu
     fun selectSearchEnginesShortcutTest() {
@@ -775,6 +758,7 @@ class SmokeTest {
         }
     }
 
+    @Ignore("Failing, see: https://github.com/mozilla-mobile/fenix/issues/23296")
     @Test
     // Test running on beta/release builds in CI:
     // caution when making changes to it, so they don't block the builds

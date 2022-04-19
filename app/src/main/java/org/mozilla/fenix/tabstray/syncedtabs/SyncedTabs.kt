@@ -8,7 +8,6 @@ package org.mozilla.fenix.tabstray.syncedtabs
 
 import android.content.res.Configuration
 import androidx.annotation.VisibleForTesting
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -37,9 +36,6 @@ import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.graphics.PathEffect
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
@@ -53,8 +49,10 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.compose.Favicon
 import org.mozilla.fenix.compose.PrimaryText
 import org.mozilla.fenix.compose.SecondaryText
+import org.mozilla.fenix.compose.ext.dashedBorder
 import org.mozilla.fenix.compose.list.ExpandableListHeader
 import org.mozilla.fenix.theme.FirefoxTheme
+import org.mozilla.fenix.theme.Theme
 import mozilla.components.browser.storage.sync.Tab as SyncTab
 
 private const val EXPANDED_BY_DEFAULT = true
@@ -66,6 +64,7 @@ private const val EXPANDED_BY_DEFAULT = true
  * @param taskContinuityEnabled Indicates whether the Task Continuity enhancements should be visible for users.
  * @param onTabClick The lambda for handling clicks on synced tabs.
  */
+@SuppressWarnings("LongMethod")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SyncedTabsList(
@@ -74,7 +73,8 @@ fun SyncedTabsList(
     onTabClick: (SyncTab) -> Unit,
 ) {
     val listState = rememberLazyListState()
-    val expandedState = remember(syncedTabs) { syncedTabs.map { EXPANDED_BY_DEFAULT }.toMutableStateList() }
+    val expandedState =
+        remember(syncedTabs) { syncedTabs.map { EXPANDED_BY_DEFAULT }.toMutableStateList() }
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -119,6 +119,9 @@ fun SyncedTabsList(
                             )
                         }
                     }
+                    else -> {
+                        // no-op
+                    }
                 }
             }
         } else {
@@ -137,6 +140,9 @@ fun SyncedTabsList(
                         ) {
                             onTabClick(syncedTabItem.tab)
                         }
+                    }
+                    else -> {
+                        // no-op
                     }
                 }
             }
@@ -188,7 +194,11 @@ fun SyncedTabsSectionHeader(
  * @param onClick The click handler when this synced tab is clicked.
  */
 @Composable
-fun SyncedTabsTabItem(tabTitleText: String, url: String, onClick: () -> Unit) {
+fun SyncedTabsTabItem(
+    tabTitleText: String,
+    url: String,
+    onClick: () -> Unit
+) {
     Row(
         modifier = Modifier
             .clickable(
@@ -230,28 +240,21 @@ fun SyncedTabsTabItem(tabTitleText: String, url: String, onClick: () -> Unit) {
  * @param errorButton Optional class to set up and handle any clicks in the Error UI.
  */
 @Composable
-fun SyncedTabsErrorItem(errorText: String, errorButton: SyncedTabsListItem.ErrorButton? = null) {
+fun SyncedTabsErrorItem(
+    errorText: String,
+    errorButton: SyncedTabsListItem.ErrorButton? = null
+) {
     Box(
         Modifier
-            .padding(all = 16.dp)
+            .padding(all = 8.dp)
             .height(IntrinsicSize.Min)
-    ) {
-        val dashColor = FirefoxTheme.colors.borderPrimary
-
-        Canvas(Modifier.fillMaxSize()) {
-            drawRoundRect(
-                color = dashColor,
-                style = Stroke(
-                    width = 2.dp.toPx(),
-                    pathEffect = PathEffect.dashPathEffect(floatArrayOf(4.dp.toPx(), 4.dp.toPx()), 0f)
-                ),
-                cornerRadius = CornerRadius(
-                    x = 8.dp.toPx(),
-                    y = 8.dp.toPx()
-                ),
+            .dashedBorder(
+                color = FirefoxTheme.colors.borderPrimary,
+                cornerRadius = 8.dp,
+                dashHeight = 2.dp,
+                dashWidth = 4.dp
             )
-        }
-
+    ) {
         Column(
             Modifier
                 .padding(all = 16.dp)
@@ -279,10 +282,15 @@ fun SyncedTabsErrorItem(errorText: String, errorButton: SyncedTabsListItem.Error
  * @param onClick The lambda called when the button is clicked.
  */
 @Composable
-fun SyncedTabsErrorButton(buttonText: String, onClick: () -> Unit) {
+fun SyncedTabsErrorButton(
+    buttonText: String,
+    onClick: () -> Unit
+) {
     Button(
         onClick = onClick,
-        modifier = Modifier.clip(RoundedCornerShape(size = 4.dp)),
+        modifier = Modifier
+            .clip(RoundedCornerShape(size = 4.dp))
+            .fillMaxWidth(),
         elevation = ButtonDefaults.elevation(defaultElevation = 0.dp, pressedElevation = 0.dp),
         colors = ButtonDefaults.outlinedButtonColors(backgroundColor = FirefoxTheme.colors.actionPrimary),
     ) {
@@ -323,7 +331,7 @@ fun SyncedTabsNoTabsItem() {
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 private fun SyncedTabsListItemsPreview() {
-    FirefoxTheme {
+    FirefoxTheme(theme = Theme.getTheme(isPrivate = false)) {
         Column(Modifier.background(FirefoxTheme.colors.layer1)) {
             SyncedTabsSectionHeader(headerText = "Google Pixel Pro Max +Ultra 5000")
 
@@ -336,7 +344,10 @@ private fun SyncedTabsListItemsPreview() {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            SyncedTabsTabItem(tabTitleText = "Mozilla", url = "www.mozilla.org") { println("Clicked tab") }
+            SyncedTabsTabItem(
+                tabTitleText = "Mozilla",
+                url = "www.mozilla.org"
+            ) { println("Clicked tab") }
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -354,7 +365,7 @@ private fun SyncedTabsListItemsPreview() {
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 private fun SyncedTabsErrorPreview() {
-    FirefoxTheme {
+    FirefoxTheme(theme = Theme.getTheme(isPrivate = false)) {
         Box(Modifier.background(FirefoxTheme.colors.layer1)) {
             SyncedTabsErrorItem(
                 errorText = stringResource(R.string.synced_tabs_no_tabs),
@@ -371,7 +382,7 @@ private fun SyncedTabsErrorPreview() {
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 private fun SyncedTabsListPreview() {
-    FirefoxTheme {
+    FirefoxTheme(theme = Theme.getTheme(isPrivate = false)) {
         Box(Modifier.background(FirefoxTheme.colors.layer1)) {
             SyncedTabsList(
                 syncedTabs = getFakeSyncedTabList(),
@@ -386,7 +397,8 @@ private fun SyncedTabsListPreview() {
 /**
  * Helper function to create a List of [SyncedTabsListItem] for previewing.
  */
-@VisibleForTesting internal fun getFakeSyncedTabList(): List<SyncedTabsListItem> = listOf(
+@VisibleForTesting
+internal fun getFakeSyncedTabList(): List<SyncedTabsListItem> = listOf(
     SyncedTabsListItem.DeviceSection(
         displayName = "Device 1",
         tabs = listOf(
@@ -402,12 +414,13 @@ private fun SyncedTabsListPreview() {
 /**
  * Helper function to create a [SyncedTabsListItem.Tab] for previewing.
  */
-private fun generateFakeTab(tabName: String, tabUrl: String): SyncedTabsListItem.Tab = SyncedTabsListItem.Tab(
-    tabName.ifEmpty { tabUrl },
-    tabUrl,
-    SyncTab(
-        history = listOf(TabEntry(tabName, tabUrl, null)),
-        active = 0,
-        lastUsed = 0L,
+private fun generateFakeTab(tabName: String, tabUrl: String): SyncedTabsListItem.Tab =
+    SyncedTabsListItem.Tab(
+        tabName.ifEmpty { tabUrl },
+        tabUrl,
+        SyncTab(
+            history = listOf(TabEntry(tabName, tabUrl, null)),
+            active = 0,
+            lastUsed = 0L,
+        )
     )
-)
