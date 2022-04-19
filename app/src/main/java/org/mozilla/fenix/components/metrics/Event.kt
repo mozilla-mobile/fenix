@@ -6,10 +6,6 @@ package org.mozilla.fenix.components.metrics
 
 sealed class Event {
 
-    // Interaction Events
-    object HistoryHighlightOpened : Event()
-    object HistorySearchGroupOpened : Event()
-
     // Interaction events with extras
 
     data class SearchWithAds(val providerName: String) : Event() {
@@ -28,15 +24,6 @@ sealed class Event {
     }
 
     sealed class Search
-
-    sealed class Messaging(open val messageId: String) : Event() {
-        data class MessageShown(override val messageId: String) : Messaging(messageId)
-        data class MessageDismissed(override val messageId: String) : Messaging(messageId)
-        data class MessageClicked(override val messageId: String, val uuid: String?) :
-            Messaging(messageId)
-        data class MessageMalformed(override val messageId: String) : Messaging(messageId)
-        data class MessageExpired(override val messageId: String) : Messaging(messageId)
-    }
 
     internal open val extras: Map<*, String>?
         get() = null
