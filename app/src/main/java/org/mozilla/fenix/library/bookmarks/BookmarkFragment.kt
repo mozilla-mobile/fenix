@@ -22,15 +22,15 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.concept.storage.BookmarkNode
@@ -46,14 +46,14 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.databinding.FragmentBookmarkBinding
+import org.mozilla.fenix.ext.bookmarkStorage
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.getRootView
+import org.mozilla.fenix.ext.minus
+import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.setTextColor
-import org.mozilla.fenix.ext.nav
-import org.mozilla.fenix.ext.bookmarkStorage
-import org.mozilla.fenix.ext.minus
 import org.mozilla.fenix.ext.toShortUrl
-import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.library.LibraryPageFragment
 import org.mozilla.fenix.utils.allowUndo
 
@@ -82,7 +82,11 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
 
     override val selectedItems get() = bookmarkStore.state.mode.selectedItems
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentBookmarkBinding.inflate(inflater, container, false)
 
         bookmarkStore = StoreProvider.get(this) {
@@ -288,7 +292,10 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
             }
     }
 
-    private fun deleteMulti(selected: Set<BookmarkNode>, eventType: BookmarkRemoveType = BookmarkRemoveType.MULTIPLE) {
+    private fun deleteMulti(
+        selected: Set<BookmarkNode>,
+        eventType: BookmarkRemoveType = BookmarkRemoveType.MULTIPLE
+    ) {
         selected.iterator().forEach {
             if (it.type == BookmarkNodeType.FOLDER) {
                 showRemoveFolderDialog(selected)
@@ -306,7 +313,8 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
                 val bookmarkNode = selected.first()
                 getString(
                     R.string.bookmark_deletion_snackbar_message,
-                    bookmarkNode.url?.toShortUrl(requireContext().components.publicSuffixList) ?: bookmarkNode.title
+                    bookmarkNode.url?.toShortUrl(requireContext().components.publicSuffixList)
+                        ?: bookmarkNode.title
                 )
             }
         }
@@ -344,7 +352,10 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
 
     private fun getDialogConfirmationMessage(selected: Set<BookmarkNode>): String {
         return if (selected.size > 1) {
-            getString(R.string.bookmark_delete_multiple_folders_confirmation_dialog, getString(R.string.app_name))
+            getString(
+                R.string.bookmark_delete_multiple_folders_confirmation_dialog,
+                getString(R.string.app_name)
+            )
         } else {
             getString(R.string.bookmark_delete_folder_confirmation_dialog)
         }
@@ -367,7 +378,8 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
                 setPositiveButton(R.string.delete_browsing_data_prompt_allow) { dialog: DialogInterface, _ ->
                     updatePendingBookmarksToDelete(selected)
                     dialog.dismiss()
-                    val snackbarMessage = getRemoveBookmarksSnackBarMessage(selected, containsFolders = true)
+                    val snackbarMessage =
+                        getRemoveBookmarksSnackBarMessage(selected, containsFolders = true)
                     // Use fragment's lifecycle; the view may be gone by the time dialog is interacted with.
                     MainScope().allowUndo(
                         requireActivity().getRootView()!!,
