@@ -17,6 +17,7 @@ class FeatureSettingsHelper {
     private var isJumpBackInCFREnabled: Boolean = settings.shouldShowJumpBackInCFR
     private var isRecentTabsFeatureEnabled: Boolean = settings.showRecentTabsFeature
     private var isUserKnowsAboutPwasTrue: Boolean = settings.userKnowsAboutPwas
+    private var isContileEnabled: Boolean = settings.showContileFeature
 
     fun setPocketEnabled(enabled: Boolean) {
         settings.showPocketRecommendationsFeature = enabled
@@ -34,6 +35,10 @@ class FeatureSettingsHelper {
         settings.setStrictETP()
     }
 
+    fun setContileEnabled(enabled: Boolean) {
+        settings.showContileFeature = enabled
+    }
+
     fun disablePwaCFR(disable: Boolean) {
         settings.userKnowsAboutPwas = disable
     }
@@ -46,5 +51,6 @@ class FeatureSettingsHelper {
         settings.shouldShowJumpBackInCFR = isJumpBackInCFREnabled
         settings.showRecentTabsFeature = isRecentTabsFeatureEnabled
         settings.userKnowsAboutPwas = isUserKnowsAboutPwasTrue
+        settings.showContileFeature = isContileEnabled
     }
 }

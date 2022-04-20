@@ -19,7 +19,7 @@ features:
             "recently-saved": true,
             "recent-explorations": true,
             "pocket": true,
-            "contile-top-sites": false,
+            "contile-top-sites": true,
           }
     defaults:
       - channel: nightly
@@ -30,7 +30,7 @@ features:
             "recently-saved": true,
             "recent-explorations": true,
             "pocket": true,
-            "contile-top-sites": false,
+            "contile-top-sites": true,
           }
         }
   nimbus-validation:

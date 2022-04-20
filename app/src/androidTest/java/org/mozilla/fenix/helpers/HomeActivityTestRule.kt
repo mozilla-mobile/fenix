@@ -49,19 +49,21 @@ class HomeActivityTestRule(
  * @param initialTouchMode See [IntentsTestRule]
  * @param launchActivity See [IntentsTestRule]
  */
-
 class HomeActivityIntentTestRule(
     initialTouchMode: Boolean = false,
     launchActivity: Boolean = true,
-    private val skipOnboarding: Boolean = false
+    private val skipOnboarding: Boolean = false,
+    private val showContileFeature: Boolean = false
 ) :
     IntentsTestRule<HomeActivity>(HomeActivity::class.java, initialTouchMode, launchActivity) {
     private val longTapUserPreference = getLongPressTimeout()
+    private val featureSettingsHelper = FeatureSettingsHelper()
 
     override fun beforeActivityLaunched() {
         super.beforeActivityLaunched()
         setLongTapTimeout(3000)
         if (skipOnboarding) { skipOnboardingBeforeLaunch() }
+        if (!showContileFeature) { featureSettingsHelper.setContileEnabled(showContileFeature) }
     }
 
     override fun afterActivityFinished() {
