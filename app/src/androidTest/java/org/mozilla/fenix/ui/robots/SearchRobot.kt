@@ -300,11 +300,12 @@ private fun assertSearchEngineResults(minCount: Int) {
 
 private fun assertSearchEngineSuggestionResults(rule: ComposeTestRule, searchResult: String) {
     rule.waitForIdle()
-
-    assertTrue(
-        mDevice.findObject(UiSelector().textContains(searchResult))
-            .waitForExists(waitingTime)
-    )
+    rule.onNodeWithTag("mozac.awesomebar.suggestions")
+        .assertExists()
+        .assertIsDisplayed()
+    rule.onNodeWithText(searchResult)
+        .assertExists()
+        .assertIsDisplayed()
 }
 
 private fun assertNoSuggestionsAreDisplayed(rule: ComposeTestRule, searchTerm: String) {
