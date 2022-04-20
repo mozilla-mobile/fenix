@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.fenix.settings.creditcards
+package org.mozilla.fenix.settings.autofill
 
 import android.app.KeyguardManager
 import android.content.Context
@@ -25,6 +25,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.service.fxa.SyncEngine
+import mozilla.components.service.sync.autofill.AutofillCreditCardsAddressesStorage
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.StoreProvider
@@ -35,20 +36,19 @@ import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.settings.SharedPreferenceUpdater
 import org.mozilla.fenix.settings.SyncPreferenceView
-import org.mozilla.fenix.settings.biometric.BiometricPromptFeature
 import org.mozilla.fenix.settings.biometric.BiometricPromptPreferenceFragment
 import org.mozilla.fenix.settings.requirePreference
 
 /**
- * "Credit cards" settings fragment displays a list of settings related to autofilling, adding and
- * syncing credit cards. Authentication for saved credit cards uses [BiometricPromptFeature]
- * or [KeyguardManager].
+ * Autofill settings fragment displays a list of settings related to autofilling, adding and
+ * syncing credit cards and addresses.
  */
 @SuppressWarnings("TooManyFunctions")
-class CreditCardsSettingFragment : BiometricPromptPreferenceFragment() {
+class AutofillSettingFragment : BiometricPromptPreferenceFragment() {
 
-    private lateinit var creditCardsStore: CreditCardsFragmentStore
-    private var isCreditCardsListLoaded: Boolean = false
+    private lateinit var store: AutofillFragmentStore
+
+    private var isAutofillStateLoaded: Boolean = false
 
     /**
      * List of preferences to be enabled or disabled during authentication.
@@ -74,14 +74,21 @@ class CreditCardsSettingFragment : BiometricPromptPreferenceFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        creditCardsStore = StoreProvider.get(this) {
-            CreditCardsFragmentStore(CreditCardsListState(creditCards = emptyList()))
+        store = StoreProvider.get(this) {
+            AutofillFragmentStore(AutofillFragmentState())
         }
-        loadCreditCards()
+        loadAutofillState()
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        setPreferencesFromResource(R.xml.credit_cards_preferences, rootKey)
+        setPreferencesFromResource(
+            if (requireComponents.settings.addressFeature) {
+                R.xml.autofill_preferences
+            } else {
+                R.xml.credit_cards_preferences
+            },
+            rootKey
+        )
 
         requirePreference<SwitchPreference>(R.string.pref_key_credit_cards_save_and_autofill_cards).apply {
             isChecked = context.settings().shouldAutofillCreditCardDetails
@@ -94,13 +101,17 @@ class CreditCardsSettingFragment : BiometricPromptPreferenceFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        loadCreditCards()
+        loadAutofillState()
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        consumeFrom(creditCardsStore) { state ->
+
+        consumeFrom(store) { state ->
+            if (requireComponents.settings.addressFeature) {
+                updateAddressPreference(state.addresses.isNotEmpty())
+            }
             updateCardManagementPreference(state.creditCards.isNotEmpty(), findNavController())
         }
 
@@ -109,13 +120,17 @@ class CreditCardsSettingFragment : BiometricPromptPreferenceFragment() {
 
     override fun onPause() {
         super.onPause()
-        isCreditCardsListLoaded = false
+        isAutofillStateLoaded = false
     }
 
     override fun onResume() {
         super.onResume()
 
-        showToolbar(getString(R.string.preferences_credit_cards))
+        if (requireComponents.settings.addressFeature) {
+            showToolbar(getString(R.string.preferences_autofill))
+        } else {
+            showToolbar(getString(R.string.preferences_credit_cards))
+        }
 
         SyncPreferenceView(
             syncPreference = requirePreference(R.string.pref_key_credit_cards_sync_cards_across_devices),
@@ -133,12 +148,31 @@ class CreditCardsSettingFragment : BiometricPromptPreferenceFragment() {
             },
             onReconnectClicked = {
                 findNavController().navigate(
-                    CreditCardsSettingFragmentDirections.actionGlobalAccountProblemFragment()
+                    AutofillSettingFragmentDirections.actionGlobalAccountProblemFragment()
                 )
             }
         )
 
         togglePrefsEnabled(creditCardPreferences, true)
+    }
+
+    /**
+     * Updates preferences visibility depending on addresses being already saved or not.
+     */
+    @VisibleForTesting
+    internal fun updateAddressPreference(hasAddresses: Boolean) {
+        val manageAddressesPreference =
+            requirePreference<Preference>(R.string.pref_key_addresses_manage_addresses)
+
+        if (hasAddresses) {
+            manageAddressesPreference.icon = null
+            manageAddressesPreference.title =
+                getString(R.string.preferences_addresses_manage_addresses)
+        } else {
+            manageAddressesPreference.setIcon(R.drawable.ic_new)
+            manageAddressesPreference.title =
+                getString(R.string.preferences_addresses_add_address)
+        }
     }
 
     /**
@@ -167,8 +201,8 @@ class CreditCardsSettingFragment : BiometricPromptPreferenceFragment() {
                 verifyCredentialsOrShowSetupWarning(requireContext(), creditCardPreferences)
             } else {
                 navController.navigate(
-                    CreditCardsSettingFragmentDirections
-                        .actionCreditCardsSettingFragmentToCreditCardEditorFragment()
+                    AutofillSettingFragmentDirections
+                        .actionAutofillSettingFragmentToCreditCardEditorFragment()
                 )
             }
             super.onPreferenceTreeClick(it)
@@ -176,22 +210,25 @@ class CreditCardsSettingFragment : BiometricPromptPreferenceFragment() {
     }
 
     /**
-     * Fetches all the credit cards from autofillStorage and updates the [CreditCardsListState]
-     * with the list of credit cards.
+     * Fetches all the addresses and credit cards from [AutofillCreditCardsAddressesStorage] and
+     * updates the [AutofillFragmentState].
      */
-    private fun loadCreditCards() {
-        if (isCreditCardsListLoaded) {
+    private fun loadAutofillState() {
+        if (isAutofillStateLoaded) {
             return
         }
 
         lifecycleScope.launch(Dispatchers.IO) {
+            val addresses = requireComponents.core.autofillStorage.getAllAddresses()
             val creditCards = requireComponents.core.autofillStorage.getAllCreditCards()
+
             lifecycleScope.launch(Dispatchers.Main) {
-                creditCardsStore.dispatch(CreditCardsAction.UpdateCreditCards(creditCards))
+                store.dispatch(AutofillAction.UpdateAddresses(addresses))
+                store.dispatch(AutofillAction.UpdateCreditCards(creditCards))
             }
         }
 
-        isCreditCardsListLoaded = true
+        isAutofillStateLoaded = true
     }
 
     /**
@@ -235,8 +272,8 @@ class CreditCardsSettingFragment : BiometricPromptPreferenceFragment() {
 
     private fun navigateToCreditCardManagementFragment() {
         val directions =
-            CreditCardsSettingFragmentDirections
-                .actionCreditCardsSettingFragmentToCreditCardsManagementFragment()
+            AutofillSettingFragmentDirections
+                .actionAutofillSettingFragmentToCreditCardsManagementFragment()
         findNavController().navigate(directions)
     }
 

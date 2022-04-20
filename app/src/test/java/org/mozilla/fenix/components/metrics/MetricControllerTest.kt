@@ -11,7 +11,9 @@ import io.mockk.mockk
 import io.mockk.verify
 import io.mockk.verifyAll
 import mozilla.components.browser.toolbar.facts.ToolbarFacts
+import mozilla.components.feature.autofill.facts.AutofillFacts
 import mozilla.components.feature.awesomebar.facts.AwesomeBarFacts
+import mozilla.components.feature.contextmenu.facts.ContextMenuFacts
 import mozilla.components.feature.customtabs.CustomTabsFacts
 import mozilla.components.feature.media.facts.MediaFacts
 import mozilla.components.feature.prompts.dialog.LoginDialogFacts
@@ -27,13 +29,23 @@ import mozilla.components.support.test.robolectric.testContext
 import mozilla.components.support.webextensions.facts.WebExtensionFacts
 import mozilla.telemetry.glean.testing.GleanTestRule
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mozilla.fenix.GleanMetrics.AndroidAutofill
+import org.mozilla.fenix.GleanMetrics.ContextualMenu
+import org.mozilla.fenix.GleanMetrics.CreditCards
+import org.mozilla.fenix.GleanMetrics.Awesomebar
 import org.mozilla.fenix.GleanMetrics.CustomTab
 import org.mozilla.fenix.GleanMetrics.LoginDialog
 import org.mozilla.fenix.GleanMetrics.MediaNotification
+import org.mozilla.fenix.GleanMetrics.ProgressiveWebApp
+import org.mozilla.fenix.components.metrics.ReleaseMetricController.Companion
+import org.mozilla.fenix.GleanMetrics.SyncedTabs
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.utils.Settings
 
@@ -68,9 +80,6 @@ class MetricControllerTest {
 
         controller.stop(MetricServiceType.Data)
         verify { logger.debug("DebugMetricController: stop") }
-
-        controller.track(Event.OpenedAppFirstRun)
-        verify { logger.debug("DebugMetricController: track event: ${Event.OpenedAppFirstRun}") }
     }
 
     @Test
@@ -190,56 +199,6 @@ class MetricControllerTest {
     }
 
     @Test
-    fun `tracking synced tab event should be sent to enabled service`() {
-        val controller = ReleaseMetricController(
-            listOf(marketingService1),
-            isDataTelemetryEnabled = { true },
-            isMarketingDataTelemetryEnabled = { true },
-            mockk()
-        )
-        every { marketingService1.shouldTrack(Event.SyncedTabSuggestionClicked) } returns true
-        controller.start(MetricServiceType.Marketing)
-
-        controller.track(Event.SyncedTabSuggestionClicked)
-        verify { marketingService1.track(Event.SyncedTabSuggestionClicked) }
-    }
-
-    @Test
-    fun `tracking awesomebar events should be sent to enabled service`() {
-        val controller = ReleaseMetricController(
-            listOf(marketingService1),
-            isDataTelemetryEnabled = { true },
-            isMarketingDataTelemetryEnabled = { true },
-            mockk()
-        )
-        every { marketingService1.shouldTrack(Event.BookmarkSuggestionClicked) } returns true
-        every { marketingService1.shouldTrack(Event.ClipboardSuggestionClicked) } returns true
-        every { marketingService1.shouldTrack(Event.HistorySuggestionClicked) } returns true
-        every { marketingService1.shouldTrack(Event.SearchActionClicked) } returns true
-        every { marketingService1.shouldTrack(Event.SearchSuggestionClicked) } returns true
-        every { marketingService1.shouldTrack(Event.OpenedTabSuggestionClicked) } returns true
-        controller.start(MetricServiceType.Marketing)
-
-        controller.track(Event.BookmarkSuggestionClicked)
-        verify { marketingService1.track(Event.BookmarkSuggestionClicked) }
-
-        controller.track(Event.ClipboardSuggestionClicked)
-        verify { marketingService1.track(Event.ClipboardSuggestionClicked) }
-
-        controller.track(Event.HistorySuggestionClicked)
-        verify { marketingService1.track(Event.HistorySuggestionClicked) }
-
-        controller.track(Event.SearchActionClicked)
-        verify { marketingService1.track(Event.SearchActionClicked) }
-
-        controller.track(Event.SearchSuggestionClicked)
-        verify { marketingService1.track(Event.SearchSuggestionClicked) }
-
-        controller.track(Event.OpenedTabSuggestionClicked)
-        verify { marketingService1.track(Event.OpenedTabSuggestionClicked) }
-    }
-
-    @Test
     fun `web extension fact should set value in SharedPreference`() {
         val enabled = true
         val settings = Settings(testContext)
@@ -271,152 +230,57 @@ class MetricControllerTest {
     }
 
     @Test
-    fun `credit card fact should trigger event`() {
-        val enabled = true
-        val settings: Settings = mockk(relaxed = true)
-        val controller = ReleaseMetricController(
-            services = listOf(dataService1),
-            isDataTelemetryEnabled = { enabled },
-            isMarketingDataTelemetryEnabled = { enabled },
-            settings
-        )
-
-        var fact = Fact(
-            Component.FEATURE_PROMPTS,
-            Action.INTERACTION,
-            CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_FORM_DETECTED
-        )
-
-        var event = controller.factToEvent(fact)
-        assertEquals(event, Event.CreditCardFormDetected)
-
-        fact = Fact(
-            Component.FEATURE_PROMPTS,
-            Action.INTERACTION,
-            CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_SUCCESS
-        )
-
-        event = controller.factToEvent(fact)
-        assertEquals(event, Event.CreditCardAutofilled)
-
-        fact = Fact(
-            Component.FEATURE_PROMPTS,
-            Action.INTERACTION,
-            CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_PROMPT_SHOWN
-        )
-
-        event = controller.factToEvent(fact)
-        assertEquals(event, Event.CreditCardAutofillPromptShown)
-
-        fact = Fact(
-            Component.FEATURE_PROMPTS,
-            Action.INTERACTION,
-            CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_PROMPT_EXPANDED
-        )
-
-        event = controller.factToEvent(fact)
-        assertEquals(event, Event.CreditCardAutofillPromptExpanded)
-
-        fact = Fact(
-            Component.FEATURE_PROMPTS,
-            Action.INTERACTION,
-            CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_PROMPT_DISMISSED
-        )
-
-        event = controller.factToEvent(fact)
-        assertEquals(event, Event.CreditCardAutofillPromptDismissed)
-    }
-
-    @Test
-    fun `credit card events should be sent to enabled service`() {
-        val controller = ReleaseMetricController(
-            listOf(dataService1),
-            isDataTelemetryEnabled = { true },
-            isMarketingDataTelemetryEnabled = { true },
-            mockk()
-        )
-        every { dataService1.shouldTrack(Event.CreditCardSaved) } returns true
-        every { dataService1.shouldTrack(Event.CreditCardDeleted) } returns true
-        every { dataService1.shouldTrack(Event.CreditCardModified) } returns true
-        every { dataService1.shouldTrack(Event.CreditCardFormDetected) } returns true
-        every { dataService1.shouldTrack(Event.CreditCardAutofilled) } returns true
-        every { dataService1.shouldTrack(Event.CreditCardAutofillPromptShown) } returns true
-        every { dataService1.shouldTrack(Event.CreditCardAutofillPromptExpanded) } returns true
-        every { dataService1.shouldTrack(Event.CreditCardAutofillPromptDismissed) } returns true
-        every { dataService1.shouldTrack(Event.CreditCardManagementAddTapped) } returns true
-        every { dataService1.shouldTrack(Event.CreditCardManagementCardTapped) } returns true
-
-        controller.start(MetricServiceType.Data)
-
-        controller.track(Event.CreditCardSaved)
-        controller.track(Event.CreditCardDeleted)
-        controller.track(Event.CreditCardModified)
-        controller.track(Event.CreditCardFormDetected)
-        controller.track(Event.CreditCardAutofilled)
-        controller.track(Event.CreditCardAutofillPromptShown)
-        controller.track(Event.CreditCardAutofillPromptExpanded)
-        controller.track(Event.CreditCardAutofillPromptDismissed)
-        controller.track(Event.CreditCardManagementAddTapped)
-        controller.track(Event.CreditCardManagementCardTapped)
-
-        verify { dataService1.track(Event.CreditCardSaved) }
-        verify { dataService1.track(Event.CreditCardDeleted) }
-        verify { dataService1.track(Event.CreditCardModified) }
-        verify { dataService1.track(Event.CreditCardFormDetected) }
-        verify { dataService1.track(Event.CreditCardAutofilled) }
-        verify { dataService1.track(Event.CreditCardAutofillPromptShown) }
-        verify { dataService1.track(Event.CreditCardAutofillPromptExpanded) }
-        verify { dataService1.track(Event.CreditCardAutofillPromptDismissed) }
-        verify { dataService1.track(Event.CreditCardManagementAddTapped) }
-        verify { dataService1.track(Event.CreditCardManagementCardTapped) }
-    }
-
-    @Test
-    fun `WHEN changing Fact(component, item) without additional vals to events THEN it returns the right event`() {
-        // This naive test was added for a refactoring. It only covers the comparisons that were easy to add.
-        val controller = ReleaseMetricController(emptyList(), { true }, { true }, mockk())
-
-        val simpleMappings = listOf(
-            // CreditCardAutofillDialogFacts.Items is already tested.
-            Triple(Component.FEATURE_PWA, ProgressiveWebAppFacts.Items.HOMESCREEN_ICON_TAP, Event.ProgressiveWebAppOpenFromHomescreenTap),
-            Triple(Component.FEATURE_PWA, ProgressiveWebAppFacts.Items.INSTALL_SHORTCUT, Event.ProgressiveWebAppInstallAsShortcut),
-            Triple(Component.FEATURE_SYNCEDTABS, SyncedTabsFacts.Items.SYNCED_TABS_SUGGESTION_CLICKED, Event.SyncedTabSuggestionClicked),
-            Triple(Component.FEATURE_AWESOMEBAR, AwesomeBarFacts.Items.BOOKMARK_SUGGESTION_CLICKED, Event.BookmarkSuggestionClicked),
-            Triple(Component.FEATURE_AWESOMEBAR, AwesomeBarFacts.Items.CLIPBOARD_SUGGESTION_CLICKED, Event.ClipboardSuggestionClicked),
-            Triple(Component.FEATURE_AWESOMEBAR, AwesomeBarFacts.Items.HISTORY_SUGGESTION_CLICKED, Event.HistorySuggestionClicked),
-            Triple(Component.FEATURE_AWESOMEBAR, AwesomeBarFacts.Items.SEARCH_ACTION_CLICKED, Event.SearchActionClicked),
-            Triple(Component.FEATURE_AWESOMEBAR, AwesomeBarFacts.Items.SEARCH_SUGGESTION_CLICKED, Event.SearchSuggestionClicked),
-            Triple(Component.FEATURE_AWESOMEBAR, AwesomeBarFacts.Items.OPENED_TAB_SUGGESTION_CLICKED, Event.OpenedTabSuggestionClicked),
-        )
-
-        simpleMappings.forEach { (component, item, expectedEvent) ->
-            val fact = Fact(component, Action.CANCEL, item)
-            val message = "$expectedEvent $component $item"
-            assertEquals(message, expectedEvent, controller.factToEvent(fact))
-        }
-    }
-
-    @Test
     fun `WHEN processing a fact with FEATURE_PROMPTS component THEN the right metric is recorded with no extras`() {
         val controller = ReleaseMetricController(emptyList(), { true }, { true }, mockk())
-        val action = mockk<Action>(relaxed = true)
-        val itemsToEvents = listOf(
-            LoginDialogFacts.Items.DISPLAY to LoginDialog.displayed,
-            LoginDialogFacts.Items.CANCEL to LoginDialog.cancelled,
-            LoginDialogFacts.Items.NEVER_SAVE to LoginDialog.neverSave,
-            LoginDialogFacts.Items.SAVE to LoginDialog.saved,
-        )
+        val action = mockk<Action>()
 
-        itemsToEvents.forEach { (item, event) ->
-            val fact = Fact(Component.FEATURE_PROMPTS, action, item)
-            controller.run {
-                fact.process()
-            }
+        // Verify display interaction
+        assertFalse(LoginDialog.displayed.testHasValue())
+        var fact = Fact(Component.FEATURE_PROMPTS, action, LoginDialogFacts.Items.DISPLAY)
 
-            assertEquals(true, event.testHasValue())
-            assertEquals(1, event.testGetValue().size)
-            assertEquals(null, event.testGetValue().single().extra)
+        controller.run {
+            fact.process()
         }
+
+        assertTrue(LoginDialog.displayed.testHasValue())
+        assertEquals(1, LoginDialog.displayed.testGetValue().size)
+        assertNull(LoginDialog.displayed.testGetValue().single().extra)
+
+        // Verify cancel interaction
+        assertFalse(LoginDialog.cancelled.testHasValue())
+        fact = Fact(Component.FEATURE_PROMPTS, action, LoginDialogFacts.Items.CANCEL)
+
+        controller.run {
+            fact.process()
+        }
+
+        assertTrue(LoginDialog.cancelled.testHasValue())
+        assertEquals(1, LoginDialog.cancelled.testGetValue().size)
+        assertNull(LoginDialog.cancelled.testGetValue().single().extra)
+
+        // Verify never save interaction
+        assertFalse(LoginDialog.neverSave.testHasValue())
+        fact = Fact(Component.FEATURE_PROMPTS, action, LoginDialogFacts.Items.NEVER_SAVE)
+
+        controller.run {
+            fact.process()
+        }
+
+        assertTrue(LoginDialog.neverSave.testHasValue())
+        assertEquals(1, LoginDialog.neverSave.testGetValue().size)
+        assertNull(LoginDialog.neverSave.testGetValue().single().extra)
+
+        // Verify save interaction
+        assertFalse(LoginDialog.saved.testHasValue())
+        fact = Fact(Component.FEATURE_PROMPTS, action, LoginDialogFacts.Items.SAVE)
+
+        controller.run {
+            fact.process()
+        }
+
+        assertTrue(LoginDialog.saved.testHasValue())
+        assertEquals(1, LoginDialog.saved.testGetValue().size)
+        assertNull(LoginDialog.saved.testGetValue().single().extra)
     }
 
     @Test
@@ -475,25 +339,266 @@ class MetricControllerTest {
     }
 
     @Test
-    fun `search term group events should be sent to enabled service`() {
-        val controller = ReleaseMetricController(
-            listOf(dataService1),
-            isDataTelemetryEnabled = { true },
-            isMarketingDataTelemetryEnabled = { true },
-            mockk()
+    fun `WHEN processing a FEATURE_AUTOFILL fact THEN the right metric is recorded`() {
+        val controller = ReleaseMetricController(emptyList(), { true }, { true }, mockk())
+        var fact = Fact(
+            Component.FEATURE_AUTOFILL,
+            mockk(relaxed = true),
+            AutofillFacts.Items.AUTOFILL_REQUEST,
+            metadata = mapOf(AutofillFacts.Metadata.HAS_MATCHING_LOGINS to true)
         )
-        every { dataService1.shouldTrack(Event.SearchTermGroupCount(5)) } returns true
-        every { dataService1.shouldTrack(Event.AverageTabsPerSearchTermGroup(2.5)) } returns true
-        every { dataService1.shouldTrack(Event.JumpBackInGroupTapped) } returns true
 
-        controller.start(MetricServiceType.Data)
+        with(controller) {
+            assertFalse(AndroidAutofill.requestMatchingLogins.testHasValue())
 
-        controller.track(Event.SearchTermGroupCount(5))
-        controller.track(Event.AverageTabsPerSearchTermGroup(2.5))
-        controller.track(Event.JumpBackInGroupTapped)
+            fact.process()
 
-        verify { dataService1.track(Event.SearchTermGroupCount(5)) }
-        verify { dataService1.track(Event.AverageTabsPerSearchTermGroup(2.5)) }
-        verify { dataService1.track(Event.JumpBackInGroupTapped) }
+            assertTrue(AndroidAutofill.requestMatchingLogins.testHasValue())
+
+            fact = fact.copy(metadata = mapOf(AutofillFacts.Metadata.HAS_MATCHING_LOGINS to false))
+            assertFalse(AndroidAutofill.requestNoMatchingLogins.testHasValue())
+
+            fact.process()
+
+            assertTrue(AndroidAutofill.requestNoMatchingLogins.testHasValue())
+
+            fact = fact.copy(item = AutofillFacts.Items.AUTOFILL_SEARCH, action = Action.DISPLAY, metadata = null)
+            assertFalse(AndroidAutofill.searchDisplayed.testHasValue())
+
+            fact.process()
+
+            assertTrue(AndroidAutofill.searchDisplayed.testHasValue())
+
+            fact = fact.copy(action = Action.SELECT)
+            assertFalse(AndroidAutofill.searchItemSelected.testHasValue())
+
+            fact.process()
+
+            assertTrue(AndroidAutofill.searchItemSelected.testHasValue())
+
+            fact = fact.copy(item = AutofillFacts.Items.AUTOFILL_CONFIRMATION, action = Action.CONFIRM)
+            assertFalse(AndroidAutofill.confirmSuccessful.testHasValue())
+
+            fact.process()
+
+            assertTrue(AndroidAutofill.confirmSuccessful.testHasValue())
+
+            fact = fact.copy(action = Action.DISPLAY)
+            assertFalse(AndroidAutofill.confirmCancelled.testHasValue())
+
+            fact.process()
+
+            assertTrue(AndroidAutofill.confirmCancelled.testHasValue())
+
+            fact = fact.copy(item = AutofillFacts.Items.AUTOFILL_LOCK, action = Action.CONFIRM)
+            assertFalse(AndroidAutofill.unlockSuccessful.testHasValue())
+
+            fact.process()
+
+            assertTrue(AndroidAutofill.unlockSuccessful.testHasValue())
+
+            fact = fact.copy(action = Action.DISPLAY)
+            assertFalse(AndroidAutofill.unlockCancelled.testHasValue())
+
+            fact.process()
+
+            assertTrue(AndroidAutofill.unlockCancelled.testHasValue())
+        }
+    }
+
+    @Test
+    fun `WHEN processing a ContextualMenu fact THEN the right metric is recorded`() {
+        val controller = ReleaseMetricController(emptyList(), { true }, { true }, mockk())
+        val action = mockk<Action>()
+        // Verify copy button interaction
+        var fact = Fact(
+            Component.FEATURE_CONTEXTMENU,
+            action,
+            ContextMenuFacts.Items.TEXT_SELECTION_OPTION,
+            metadata = mapOf("textSelectionOption" to Companion.CONTEXT_MENU_COPY)
+        )
+        assertFalse(ContextualMenu.copyTapped.testHasValue())
+
+        with(controller) {
+            fact.process()
+        }
+
+        assertTrue(ContextualMenu.copyTapped.testHasValue())
+        assertEquals(1, ContextualMenu.copyTapped.testGetValue().size)
+        assertNull(ContextualMenu.copyTapped.testGetValue().single().extra)
+
+        // Verify search button interaction
+        fact = Fact(
+            Component.FEATURE_CONTEXTMENU,
+            action,
+            ContextMenuFacts.Items.TEXT_SELECTION_OPTION,
+            metadata = mapOf("textSelectionOption" to Companion.CONTEXT_MENU_SEARCH)
+        )
+        assertFalse(ContextualMenu.searchTapped.testHasValue())
+
+        with(controller) {
+            fact.process()
+        }
+
+        assertTrue(ContextualMenu.searchTapped.testHasValue())
+        assertEquals(1, ContextualMenu.searchTapped.testGetValue().size)
+        assertNull(ContextualMenu.searchTapped.testGetValue().single().extra)
+
+        // Verify select all button interaction
+        fact = Fact(
+            Component.FEATURE_CONTEXTMENU,
+            action,
+            ContextMenuFacts.Items.TEXT_SELECTION_OPTION,
+            metadata = mapOf("textSelectionOption" to Companion.CONTEXT_MENU_SELECT_ALL)
+        )
+        assertFalse(ContextualMenu.selectAllTapped.testHasValue())
+
+        with(controller) {
+            fact.process()
+        }
+
+        assertTrue(ContextualMenu.selectAllTapped.testHasValue())
+        assertEquals(1, ContextualMenu.selectAllTapped.testGetValue().size)
+        assertNull(ContextualMenu.selectAllTapped.testGetValue().single().extra)
+
+        // Verify share button interaction
+        fact = Fact(
+            Component.FEATURE_CONTEXTMENU,
+            action,
+            ContextMenuFacts.Items.TEXT_SELECTION_OPTION,
+            metadata = mapOf("textSelectionOption" to Companion.CONTEXT_MENU_SHARE)
+        )
+        assertFalse(ContextualMenu.shareTapped.testHasValue())
+
+        with(controller) {
+            fact.process()
+        }
+
+        assertTrue(ContextualMenu.shareTapped.testHasValue())
+        assertEquals(1, ContextualMenu.shareTapped.testGetValue().size)
+        assertNull(ContextualMenu.shareTapped.testGetValue().single().extra)
+    }
+
+    @Test
+    fun `WHEN processing a CreditCardAutofillDialog fact THEN the right metric is recorded`() {
+        val controller = ReleaseMetricController(emptyList(), { true }, { true }, mockk())
+        val action = mockk<Action>(relaxed = true)
+        val itemsToEvents = listOf(
+            CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_FORM_DETECTED to CreditCards.formDetected,
+            CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_SUCCESS to CreditCards.autofilled,
+            CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_PROMPT_SHOWN to CreditCards.autofillPromptShown,
+            CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_PROMPT_EXPANDED to CreditCards.autofillPromptExpanded,
+            CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_PROMPT_DISMISSED to CreditCards.autofillPromptDismissed,
+        )
+
+        itemsToEvents.forEach { (item, event) ->
+            val fact = Fact(Component.FEATURE_PROMPTS, action, item)
+            controller.run {
+                fact.process()
+            }
+
+            assertEquals(true, event.testHasValue())
+            assertEquals(1, event.testGetValue().size)
+            assertEquals(null, event.testGetValue().single().extra)
+        }
+    }
+
+    @Test
+    fun `GIVEN pwa facts WHEN they are processed THEN the right metric is recorded`() {
+        val controller = ReleaseMetricController(emptyList(), { true }, { true }, mockk())
+        val action = mockk<Action>(relaxed = true)
+
+        // a PWA shortcut from homescreen was opened
+        val openPWA = Fact(
+            Component.FEATURE_PWA,
+            action,
+            ProgressiveWebAppFacts.Items.HOMESCREEN_ICON_TAP,
+        )
+
+        assertFalse(ProgressiveWebApp.homescreenTap.testHasValue())
+        controller.run {
+            openPWA.process()
+        }
+        assertTrue(ProgressiveWebApp.homescreenTap.testHasValue())
+
+        // a PWA shortcut was installed
+        val installPWA = Fact(
+            Component.FEATURE_PWA,
+            action,
+            ProgressiveWebAppFacts.Items.INSTALL_SHORTCUT,
+        )
+
+        assertFalse(ProgressiveWebApp.installTap.testHasValue())
+
+        controller.run {
+            installPWA.process()
+        }
+
+        assertTrue(ProgressiveWebApp.installTap.testHasValue())
+    }
+
+    @Test
+    fun `WHEN processing a suggestion fact THEN the right metric is recorded`() {
+        val controller = ReleaseMetricController(emptyList(), { true }, { true }, mockk())
+
+        // Verify synced tabs suggestion clicked
+        assertFalse(SyncedTabs.syncedTabsSuggestionClicked.testHasValue())
+        var fact = Fact(Component.FEATURE_SYNCEDTABS, Action.CANCEL, SyncedTabsFacts.Items.SYNCED_TABS_SUGGESTION_CLICKED)
+
+        with(controller) {
+            fact.process()
+        }
+
+        assertTrue(SyncedTabs.syncedTabsSuggestionClicked.testHasValue())
+
+        // Verify bookmark suggestion clicked
+        assertFalse(Awesomebar.bookmarkSuggestionClicked.testHasValue())
+        fact = Fact(Component.FEATURE_AWESOMEBAR, Action.CANCEL, AwesomeBarFacts.Items.BOOKMARK_SUGGESTION_CLICKED)
+
+        with(controller) {
+            fact.process()
+        }
+
+        assertTrue(Awesomebar.bookmarkSuggestionClicked.testHasValue())
+
+        // Verify clipboard suggestion clicked
+        assertFalse(Awesomebar.clipboardSuggestionClicked.testHasValue())
+        fact = Fact(Component.FEATURE_AWESOMEBAR, Action.CANCEL, AwesomeBarFacts.Items.CLIPBOARD_SUGGESTION_CLICKED)
+
+        with(controller) {
+            fact.process()
+        }
+
+        assertTrue(Awesomebar.clipboardSuggestionClicked.testHasValue())
+
+        // Verify history suggestion clicked
+        assertFalse(Awesomebar.historySuggestionClicked.testHasValue())
+        fact = Fact(Component.FEATURE_AWESOMEBAR, Action.CANCEL, AwesomeBarFacts.Items.HISTORY_SUGGESTION_CLICKED)
+
+        with(controller) {
+            fact.process()
+        }
+
+        assertTrue(Awesomebar.historySuggestionClicked.testHasValue())
+
+        // Verify search action clicked
+        assertFalse(Awesomebar.searchActionClicked.testHasValue())
+        fact = Fact(Component.FEATURE_AWESOMEBAR, Action.CANCEL, AwesomeBarFacts.Items.SEARCH_ACTION_CLICKED)
+
+        with(controller) {
+            fact.process()
+        }
+
+        assertTrue(Awesomebar.searchActionClicked.testHasValue())
+
+        // Verify bookmark opened tab suggestion clicked
+        assertFalse(Awesomebar.openedTabSuggestionClicked.testHasValue())
+        fact = Fact(Component.FEATURE_AWESOMEBAR, Action.CANCEL, AwesomeBarFacts.Items.OPENED_TAB_SUGGESTION_CLICKED)
+
+        with(controller) {
+            fact.process()
+        }
+
+        assertTrue(Awesomebar.openedTabSuggestionClicked.testHasValue())
     }
 }

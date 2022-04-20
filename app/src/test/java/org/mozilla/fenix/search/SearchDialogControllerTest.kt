@@ -8,8 +8,10 @@ import androidx.appcompat.app.AlertDialog
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import io.mockk.MockKAnnotations
+import io.mockk.Runs
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.spyk
@@ -46,6 +48,7 @@ import org.mozilla.fenix.components.metrics.MetricsUtils
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.search.SearchDialogFragmentDirections.Companion.actionGlobalAddonsManagementFragment
 import org.mozilla.fenix.search.SearchDialogFragmentDirections.Companion.actionGlobalSearchEngineFragment
+import org.mozilla.fenix.search.toolbar.SearchSelectorMenu
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.utils.Settings
 
@@ -78,7 +81,7 @@ class SearchDialogControllerTest {
         every { navController.currentDestination } returns mockk {
             every { id } returns R.id.searchDialogFragment
         }
-        every { MetricsUtils.createSearchEvent(searchEngine, browserStore, any()) } returns null
+        every { MetricsUtils.recordSearchMetrics(searchEngine, any(), any()) } just Runs
     }
 
     @After
@@ -391,6 +394,15 @@ class SearchDialogControllerTest {
         spyController.handleCameraPermissionsNeeded()
 
         verify { dialogBuilder.show() }
+    }
+
+    @Test
+    fun `GIVEN search settings menu item WHEN search selector menu item is tapped THEN show search engine settings`() {
+        val controller = spyk(createController())
+
+        controller.handleMenuItemTapped(SearchSelectorMenu.Item.SearchSettings)
+
+        verify { controller.handleClickSearchEngineSettings() }
     }
 
     private fun createController(

@@ -21,7 +21,7 @@ import mozilla.components.lib.state.MiddlewareContext
 import mozilla.components.support.base.android.Clock
 import mozilla.components.support.base.log.logger.Logger
 import org.mozilla.fenix.GleanMetrics.Events
-import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.GleanMetrics.Metrics
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.utils.Settings
 import org.mozilla.fenix.GleanMetrics.EngineTab as EngineMetrics
@@ -61,6 +61,9 @@ class TelemetryMiddleware(
                 val tab = context.state.findTabOrCustomTab(action.tabId)
                 onEngineSessionKilled(context.state, tab)
             }
+            else -> {
+                // no-op
+            }
         }
 
         next(action)
@@ -75,11 +78,14 @@ class TelemetryMiddleware(
             is TabListAction.RestoreAction -> {
                 // Update/Persist tabs count whenever it changes
                 settings.openTabsCount = context.state.normalTabs.count()
-                if (context.state.normalTabs.count() > 0) {
-                    metrics.track(Event.HaveOpenTabs)
+                if (context.state.normalTabs.isNotEmpty()) {
+                    Metrics.hasOpenTabs.set(true)
                 } else {
-                    metrics.track(Event.HaveNoOpenTabs)
+                    Metrics.hasOpenTabs.set(false)
                 }
+            }
+            else -> {
+                // no-op
             }
         }
     }

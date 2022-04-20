@@ -142,7 +142,6 @@ class SmokeTest {
         featureSettingsHelper.resetAllFeatureFlags()
     }
 
-    @Ignore("Failing, see: https://github.com/mozilla-mobile/fenix/issues/24381")
     // Verifies the first run onboarding screen
     @Test
     fun firstRunScreenTest() {
@@ -468,6 +467,7 @@ class SmokeTest {
         }
     }
 
+    @Ignore("Flaky. See https://github.com/mozilla-mobile/fenix/issues/23136")
     @Test
     // Verifies changing the default engine from the Search Shortcut menu
     fun selectSearchEnginesShortcutTest() {

@@ -13,6 +13,7 @@ import androidx.navigation.NavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import mozilla.components.browser.state.search.SearchEngine
 import mozilla.components.browser.state.selector.getNormalOrPrivateTabs
 import mozilla.components.browser.state.state.availableSearchEngines
 import mozilla.components.browser.state.state.searchEngines
@@ -32,7 +33,11 @@ import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.GleanMetrics.Collections
 import org.mozilla.fenix.GleanMetrics.Events
+import org.mozilla.fenix.GleanMetrics.HomeScreen
 import org.mozilla.fenix.GleanMetrics.Pings
+import org.mozilla.fenix.GleanMetrics.Pocket
+import org.mozilla.fenix.GleanMetrics.RecentBookmarks
+import org.mozilla.fenix.GleanMetrics.RecentTabs
 import org.mozilla.fenix.GleanMetrics.TopSites
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
@@ -43,11 +48,8 @@ import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.appstate.AppState
-import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.components.metrics.MetricsUtils
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.gleanplumb.Message
@@ -212,12 +214,11 @@ interface SessionControlController {
     fun handleReportSessionMetrics(state: AppState)
 }
 
-@Suppress("TooManyFunctions", "LargeClass")
+@Suppress("TooManyFunctions", "LargeClass", "LongParameterList")
 class DefaultSessionControlController(
     private val activity: HomeActivity,
     private val settings: Settings,
     private val engine: Engine,
-    private val metrics: MetricController,
     private val messageController: MessageController,
     private val store: BrowserStore,
     private val tabCollectionStorage: TabCollectionStorage,
@@ -315,13 +316,11 @@ class DefaultSessionControlController(
     }
 
     override fun handleOpenInPrivateTabClicked(topSite: TopSite) {
-        metrics.track(
-            if (topSite is TopSite.Provided) {
-                Event.TopSiteOpenContileInPrivateTab
-            } else {
-                Event.TopSiteOpenInPrivateTab
-            }
-        )
+        if (topSite is TopSite.Provided) {
+            TopSites.openContileInPrivateTab.record(NoExtras())
+        } else {
+            TopSites.openInPrivateTab.record(NoExtras())
+        }
         with(activity) {
             browsingModeManager.mode = BrowsingMode.Private
             openToBrowserAndLoad(
@@ -376,11 +375,11 @@ class DefaultSessionControlController(
     }
 
     override fun handleRemoveTopSiteClicked(topSite: TopSite) {
-        metrics.track(Event.TopSiteRemoved)
+        TopSites.remove.record(NoExtras())
         when (topSite.url) {
-            SupportUtils.POCKET_TRENDING_URL -> metrics.track(Event.PocketTopSiteRemoved)
-            SupportUtils.GOOGLE_URL -> metrics.track(Event.GoogleTopSiteRemoved)
-            SupportUtils.BAIDU_URL -> metrics.track(Event.BaiduTopSiteRemoved)
+            SupportUtils.POCKET_TRENDING_URL -> Pocket.pocketTopSiteRemoved.record(NoExtras())
+            SupportUtils.GOOGLE_URL -> TopSites.googleTopSiteRemoved.record(NoExtras())
+            SupportUtils.BAIDU_URL -> TopSites.baiduTopSiteRemoved.record(NoExtras())
         }
 
         viewLifecycleScope.launch(Dispatchers.IO) {
@@ -401,36 +400,35 @@ class DefaultSessionControlController(
     override fun handleSelectTopSite(topSite: TopSite, position: Int) {
         dismissSearchDialogIfDisplayed()
 
-        metrics.track(Event.TopSiteOpenInNewTab)
+        TopSites.openInNewTab.record(NoExtras())
 
-        metrics.track(
-            when (topSite) {
-                is TopSite.Default -> Event.TopSiteOpenDefault
-                is TopSite.Frecent -> Event.TopSiteOpenFrecent
-                is TopSite.Pinned -> Event.TopSiteOpenPinned
-                is TopSite.Provided -> Event.TopSiteOpenProvided.also {
-                    submitTopSitesImpressionPing(topSite, position)
-                }
+        when (topSite) {
+            is TopSite.Default -> TopSites.openDefault.record(NoExtras())
+            is TopSite.Frecent -> TopSites.openFrecency.record(NoExtras())
+            is TopSite.Pinned -> TopSites.openPinned.record(NoExtras())
+            is TopSite.Provided -> TopSites.openContileTopSite.record(NoExtras()).also {
+                submitTopSitesImpressionPing(topSite, position)
             }
-        )
-
-        when (topSite.url) {
-            SupportUtils.GOOGLE_URL -> metrics.track(Event.TopSiteOpenGoogle)
-            SupportUtils.BAIDU_URL -> metrics.track(Event.TopSiteOpenBaidu)
-            SupportUtils.POCKET_TRENDING_URL -> metrics.track(Event.PocketTopSiteClicked)
         }
 
-        val availableEngines = getAvailableSearchEngines()
-        val searchAccessPoint = Event.PerformedSearch.SearchAccessPoint.TOPSITE
-        val event =
-            availableEngines.firstOrNull { engine ->
-                engine.resultUrls.firstOrNull { it.contains(topSite.url) } != null
-            }?.let { searchEngine ->
-                searchAccessPoint.let { sap ->
-                    MetricsUtils.createSearchEvent(searchEngine, store, sap)
-                }
-            }
-        event?.let { activity.metrics.track(it) }
+        when (topSite.url) {
+            SupportUtils.GOOGLE_URL -> TopSites.openGoogleSearchAttribution.record(NoExtras())
+            SupportUtils.BAIDU_URL -> TopSites.openBaiduSearchAttribution.record(NoExtras())
+            SupportUtils.POCKET_TRENDING_URL -> Pocket.pocketTopSiteClicked.record(NoExtras())
+        }
+
+        val availableEngines: List<SearchEngine> = getAvailableSearchEngines()
+        val searchAccessPoint = MetricsUtils.Source.TOPSITE
+
+        availableEngines.firstOrNull { engine ->
+            engine.resultUrls.firstOrNull { it.contains(topSite.url) } != null
+        }?.let { searchEngine ->
+            MetricsUtils.recordSearchMetrics(
+                searchEngine,
+                searchEngine == store.state.search.selectedOrDefaultSearchEngine,
+                searchAccessPoint
+            )
+        }
 
         val tabId = addTabUseCase.invoke(
             url = appendSearchAttributionToUrlIfNeeded(topSite.url),
@@ -446,10 +444,10 @@ class DefaultSessionControlController(
 
     @VisibleForTesting
     internal fun submitTopSitesImpressionPing(topSite: TopSite.Provided, position: Int) {
-        metrics.track(
-            Event.TopSiteContileClick(
+        TopSites.contileClick.record(
+            TopSites.ContileClickExtra(
                 position = position + 1,
-                source = Event.TopSiteContileClick.Source.NEWTAB
+                source = "newtab"
             )
         )
 
@@ -460,7 +458,7 @@ class DefaultSessionControlController(
     }
 
     override fun handleTopSiteSettingsClicked() {
-        metrics.track(Event.TopSiteContileSettings)
+        TopSites.contileSettings.record(NoExtras())
         navController.nav(
             R.id.homeFragment,
             HomeFragmentDirections.actionGlobalHomeSettingsFragment()
@@ -468,7 +466,7 @@ class DefaultSessionControlController(
     }
 
     override fun handleSponsorPrivacyClicked() {
-        metrics.track(Event.TopSiteContilePrivacy)
+        TopSites.contileSponsorsAndPrivacy.record(NoExtras())
         activity.openToBrowserAndLoad(
             searchTermOrURL = SupportUtils.getGenericSumoURLForTopic(SupportUtils.SumoTopic.SPONSOR_PRIVACY),
             newTab = true,
@@ -511,7 +509,7 @@ class DefaultSessionControlController(
     override fun handleCustomizeHomeTapped() {
         val directions = HomeFragmentDirections.actionGlobalHomeSettingsFragment()
         navController.nav(navController.currentDestination?.id, directions)
-        metrics.track(Event.HomeScreenCustomizedHomeClicked)
+        HomeScreen.customizeHomeClicked.record(NoExtras())
     }
 
     override fun handleShowOnboardingDialog() {
@@ -596,15 +594,12 @@ class DefaultSessionControlController(
         if (clipboardText.isUrl() || searchEngine == null) {
             Events.enteredUrl.record(Events.EnteredUrlExtra(autocomplete = false))
         } else {
-            val searchAccessPoint = Event.PerformedSearch.SearchAccessPoint.ACTION
-            val event = searchAccessPoint.let { sap ->
-                MetricsUtils.createSearchEvent(
-                    searchEngine,
-                    store,
-                    sap
-                )
-            }
-            event?.let { activity.metrics.track(it) }
+            val searchAccessPoint = MetricsUtils.Source.ACTION
+            MetricsUtils.recordSearchMetrics(
+                searchEngine,
+                searchEngine == store.state.search.selectedOrDefaultSearchEngine,
+                searchAccessPoint
+            )
         }
     }
 
@@ -652,16 +647,12 @@ class DefaultSessionControlController(
     }
 
     override fun handleReportSessionMetrics(state: AppState) {
-        with(metrics) {
-            track(
-                if (state.recentTabs.isEmpty()) {
-                    Event.RecentTabsSectionIsNotVisible
-                } else {
-                    Event.RecentTabsSectionIsVisible
-                }
-            )
-
-            track(Event.RecentBookmarkCount(state.recentBookmarks.size))
+        if (state.recentTabs.isEmpty()) {
+            RecentTabs.sectionVisible.set(false)
+        } else {
+            RecentTabs.sectionVisible.set(true)
         }
+
+        RecentBookmarks.recentBookmarksCount.set(state.recentBookmarks.size.toLong())
     }
 }

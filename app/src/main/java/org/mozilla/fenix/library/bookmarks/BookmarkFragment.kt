@@ -202,6 +202,9 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
                         }
                 }
             }
+            else -> {
+                // no-op
+            }
         }
     }
 

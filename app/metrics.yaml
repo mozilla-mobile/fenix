@@ -108,6 +108,7 @@ events:
           * default.suggestion
           * shortcut.action
           * shortcut.suggestion
+        type: string
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/959
       - https://github.com/mozilla-mobile/fenix/issues/19923
@@ -702,6 +703,7 @@ context_menu:
           open_in_new_tab, open_in_private_tab, open_image_in_new_tab,
           save_image, share_link, copy_link, copy_image_location, share_image
           ```
+        type: string
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/957
       - https://github.com/mozilla-mobile/fenix/issues/16076
@@ -3957,6 +3959,20 @@ tabs_tray:
       tab_count:
         description: The number of selected tabs added to colelction.
         type: quantity
+  access_point:
+    type: labeled_counter
+    description: |
+      The area that the tabs tray was accessed from.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/24549
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/24671
+    notification_emails:
+      - android-probes@mozilla.com
+    data_sensitivity:
+      - interaction
+    expires: 114
+
 
 collections:
   renamed:
@@ -4939,6 +4955,7 @@ top_sites:
       A user swiped to change the page of the top sites carousel
     extra_keys:
       page:
+        type: string
         description: |
           The page number the carousel is now on
     bugs:
@@ -4964,6 +4981,7 @@ top_sites:
       A user long pressed on a top site
     extra_keys:
       type:
+        type: string
         description: |
           The type of top site. Options are: "FRECENCY", "DEFAULT",
           "PINNED", or "PROVIDED"
@@ -5275,6 +5293,7 @@ app_theme:
       A user selected Dark Theme
     extra_keys:
       source:
+        type: string
         description: |
           The source from where dark theme was selected. The source can be
           'SETTINGS' or 'ONBOARDING'
@@ -5360,9 +5379,11 @@ pocket:
       User tapped a Pocket recommended story to be opened.
     extra_keys:
       times_shown:
+        type: string
         description: |
           How many times was this story shown, including current.
       position:
+        type: string
         description: |
           Position of the clicked story in the list shown.
           Uses the [row x column] matrix notation.
@@ -5381,12 +5402,15 @@ pocket:
       User tapped a Pocket stories category to filter stories.
     extra_keys:
       category_name:
+        type: string
         description: |
           Pocket set topic name representing the just clicked category.
       selected_total:
+        type: string
         description: |
           How many categories were selected before this being tapped.
       new_state:
+        type: string
         description: |
           Category's new state after being tapped.
           Possible values: [selected], [deselected].
@@ -5662,6 +5686,7 @@ addons:
       addon_id:
         description: |
           The id of the add-on that was interacted with in the toolbar menu
+        type: string
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/6174
       - https://github.com/mozilla-mobile/fenix/issues/19923
@@ -5687,6 +5712,7 @@ addons:
       addon_id:
         description: |
           The id of the add-on that was interacted with
+        type: string
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/17644
     data_reviews:
@@ -6159,7 +6185,8 @@ autoplay:
       autoplay_setting:
         description: |
           The new setting for autoplay: block_cellular,
-          block_audio, or block_all.
+          block_audio, allow_all or block_all.
+        type: string
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/11579
     data_reviews:
@@ -7270,6 +7297,7 @@ search_terms:
       Number of search term group when tabs tray is opened.
     extra_keys:
       count:
+        type: string
         description: |
           The number of tabs per search group
     bugs:
@@ -7287,6 +7315,7 @@ search_terms:
       Number of search term tabs per group when tabs tray is opened.
     extra_keys:
       count:
+        type: string
         description: |
           The average number of tabs per search group
     bugs:
@@ -7570,3 +7599,74 @@ downloads:
     metadata:
       tags:
         - Download
+
+recent_synced_tabs:
+  recent_synced_tab_shown:
+    type: labeled_counter
+    description: |
+      Counts impressions of a recent synced tab on the homepage, labeled by the
+      device type the tab originates from.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/24549
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/24671
+    notification_emails:
+      - android-probes@mozilla.com
+    data_sensitivity:
+      - interaction
+    expires: 114
+  recent_synced_tab_time_to_load:
+    type: timing_distribution
+    time_unit: millisecond
+    description: |
+      Measures the amount of time between the beginning of a sync and the end.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/24549
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/24671
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: 114
+  recent_synced_tab_opened:
+    type: labeled_counter
+    description: |
+      Counts the number of times a recent synced tab is opened, labeled by the
+      device type the tab originates from.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/24549
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/24671
+    notification_emails:
+      - android-probes@mozilla.com
+    data_sensitivity:
+      - interaction
+    expires: 114
+  show_all_synced_tabs_clicked:
+    type: counter
+    description: |
+      Counts how many times "show all synced tabs" button has been clicked.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/24549
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/24671
+    notification_emails:
+      - android-probes@mozilla.com
+    data_sensitivity:
+      - interaction
+    expires: 114
+  latest_synced_tab_is_stale:
+    type: counter
+    description: |
+      Counts how often the loading placeholder is shown and the resulting tab
+      is the same as it was before the load.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/24549
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/24671
+    notification_emails:
+      - android-probes@mozilla.com
+    data_sensitivity:
+      - interaction
+    expires: 114

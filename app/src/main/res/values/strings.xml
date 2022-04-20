@@ -238,6 +238,8 @@
     <string name="search_engine_suggestions_title">Search %s</string>
     <!-- Search engine suggestion description text -->
     <string name="search_engine_suggestions_description">Search directly from the address bar</string>
+    <!-- Menu option in the search selector menu to open the search settings -->
+    <string name="search_settings_menu_item">Search settings</string>
 
     <!-- Home onboarding -->
     <!-- Onboarding home screen dialog title text. Firefox is intentionally hardcoded. -->
@@ -1478,7 +1480,11 @@
     <!-- Content description (not visible, for screen readers etc.): Sort saved logins dropdown menu chevron icon -->
     <string name="saved_logins_menu_dropdown_chevron_icon_content_description">Sort logins menu</string>
 
-    <!-- Credit Cards Autofill -->
+    <!-- Autofill -->
+    <!-- Preference and title for managing the autofill settings -->
+    <string name="preferences_autofill">Autofill</string>
+    <!-- Preference and title for managing the settings for addresses -->
+    <string name="preferences_addresses">Addresses</string>
     <!-- Preference and title for managing the settings for credit cards -->
     <string name="preferences_credit_cards">Credit cards</string>
     <!-- Preference for saving and autofilling credit cards -->
@@ -1493,6 +1499,10 @@
     <string name="preferences_credit_cards_add_credit_card">Add credit card</string>
     <!-- Preference option for managing saved credit cards -->
     <string name="preferences_credit_cards_manage_saved_cards">Manage saved cards</string>
+    <!-- Preference option for adding an address -->
+    <string name="preferences_addresses_add_address">Add address</string>
+    <!-- Preference option for managing saved addresses -->
+    <string name="preferences_addresses_manage_addresses">Manage addresses</string>
     <!-- Title of the "Add card" screen -->
     <string name="credit_cards_add_card">Add card</string>
     <!-- Title of the "Edit card" screen -->
