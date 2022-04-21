@@ -19,6 +19,8 @@ import mozilla.components.feature.media.facts.MediaFacts
 import mozilla.components.feature.prompts.dialog.LoginDialogFacts
 import mozilla.components.feature.prompts.facts.CreditCardAutofillDialogFacts
 import mozilla.components.feature.pwa.ProgressiveWebAppFacts
+import mozilla.components.feature.search.telemetry.ads.AdsTelemetry
+import mozilla.components.feature.search.telemetry.incontent.InContentTelemetry
 import mozilla.components.feature.syncedtabs.facts.SyncedTabsFacts
 import mozilla.components.feature.top.sites.facts.TopSitesFacts
 import mozilla.components.support.base.Component
@@ -37,9 +39,10 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.GleanMetrics.AndroidAutofill
+import org.mozilla.fenix.GleanMetrics.Awesomebar
+import org.mozilla.fenix.GleanMetrics.BrowserSearch
 import org.mozilla.fenix.GleanMetrics.ContextualMenu
 import org.mozilla.fenix.GleanMetrics.CreditCards
-import org.mozilla.fenix.GleanMetrics.Awesomebar
 import org.mozilla.fenix.GleanMetrics.CustomTab
 import org.mozilla.fenix.GleanMetrics.LoginDialog
 import org.mozilla.fenix.GleanMetrics.MediaNotification
@@ -286,21 +289,29 @@ class MetricControllerTest {
     @Test
     fun `WHEN processing a FEATURE_MEDIA NOTIFICATION fact THEN the right metric is recorded`() {
         val controller = ReleaseMetricController(emptyList(), { true }, { true }, mockk())
-        val itemsToEvents = listOf(
-            Action.PLAY to MediaNotification.play,
-            Action.PAUSE to MediaNotification.pause,
-        )
+        // Verify the play action
+        var fact = Fact(Component.FEATURE_MEDIA, Action.PLAY, MediaFacts.Items.NOTIFICATION)
+        assertFalse(MediaNotification.play.testHasValue())
 
-        itemsToEvents.forEach { (action, event) ->
-            val fact = Fact(Component.FEATURE_MEDIA, action, MediaFacts.Items.NOTIFICATION)
-            controller.run {
-                fact.process()
-            }
-
-            assertEquals(true, event.testHasValue())
-            assertEquals(1, event.testGetValue().size)
-            assertEquals(null, event.testGetValue().single().extra)
+        controller.run {
+            fact.process()
         }
+
+        assertTrue(MediaNotification.play.testHasValue())
+        assertEquals(1, MediaNotification.play.testGetValue().size)
+        assertNull(MediaNotification.play.testGetValue().single().extra)
+
+        // Verify the pause action
+        fact = Fact(Component.FEATURE_MEDIA, Action.PAUSE, MediaFacts.Items.NOTIFICATION)
+        assertFalse(MediaNotification.pause.testHasValue())
+
+        controller.run {
+            fact.process()
+        }
+
+        assertTrue(MediaNotification.pause.testHasValue())
+        assertEquals(1, MediaNotification.pause.testGetValue().size)
+        assertNull(MediaNotification.pause.testGetValue().single().extra)
     }
 
     @Test
@@ -600,5 +611,67 @@ class MetricControllerTest {
         }
 
         assertTrue(Awesomebar.openedTabSuggestionClicked.testHasValue())
+    }
+
+    @Test
+    fun `GIVEN advertising search facts WHEN the list is processed THEN the right metric is recorded`() {
+        val controller = ReleaseMetricController(emptyList(), { true }, { false }, mockk())
+        val action = mockk<Action>()
+
+        // an ad was clicked in a Search Engine Result Page
+        val addClickedInSearchFact = Fact(
+            Component.FEATURE_SEARCH,
+            action,
+            AdsTelemetry.SERP_ADD_CLICKED,
+            "provider"
+        )
+
+        assertFalse(BrowserSearch.adClicks["provider"].testHasValue())
+        controller.run {
+            addClickedInSearchFact.process()
+        }
+        assertTrue(BrowserSearch.adClicks["provider"].testHasValue())
+        assertEquals(1, BrowserSearch.adClicks["provider"].testGetValue())
+
+        // the user opened a Search Engine Result Page of one of our search providers which contains ads
+        val searchWithAdsOpenedFact = Fact(
+            Component.FEATURE_SEARCH,
+            action,
+            AdsTelemetry.SERP_SHOWN_WITH_ADDS,
+            "provider"
+        )
+
+        assertFalse(BrowserSearch.withAds["provider"].testHasValue())
+
+        controller.run {
+            searchWithAdsOpenedFact.process()
+        }
+
+        assertTrue(BrowserSearch.withAds["provider"].testHasValue())
+        assertEquals(1, BrowserSearch.withAds["provider"].testGetValue())
+
+        // the user performed a search
+        val inContentSearchFact = Fact(
+            Component.FEATURE_SEARCH,
+            action,
+            InContentTelemetry.IN_CONTENT_SEARCH,
+            "provider"
+        )
+
+        assertFalse(BrowserSearch.inContent["provider"].testHasValue())
+
+        controller.run {
+            inContentSearchFact.process()
+        }
+
+        assertTrue(BrowserSearch.inContent["provider"].testHasValue())
+        assertEquals(1, BrowserSearch.inContent["provider"].testGetValue())
+
+        // the user performed another search
+        controller.run {
+            inContentSearchFact.process()
+        }
+
+        assertEquals(2, BrowserSearch.inContent["provider"].testGetValue())
     }
 }
