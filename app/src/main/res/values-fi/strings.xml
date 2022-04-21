@@ -17,15 +17,10 @@
     <!-- Placeholder text shown in the search bar before a user enters text -->
     <string name="search_hint">Hae tai kirjoita osoite</string>
     <!-- No Open Tabs Message Description -->
-    <string name="no_open_tabs_description">Avoimet välilehdet näytetään tässä.</string>
+    <string name="no_open_tabs_description">Avoimet välilehdet näkyvät tässä.</string>
 
     <!-- No Private Tabs Message Description -->
     <string name="no_private_tabs_description">Yksityiset välilehdet näkyvät tässä.</string>
-
-    <!-- Message announced to the user when tab tray is selected with 1 tab -->
-    <string name="open_tab_tray_single">1 avoin välilehti. Napauta vaihtaaksesi.</string>
-    <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
-    <string name="open_tab_tray_plural">%1$s avointa välilehteä. Napauta vaihtaaksesi.</string>
 
     <!-- Tab tray multi select title in app bar. The first parameter is the number of tabs selected -->
     <string name="tab_tray_multi_select_title">%1$d valittu</string>
@@ -39,53 +34,46 @@
     <string name="tab_tray_close_multiselect_content_description">Poistu monivalintatilasta</string>
     <!-- Content description for save to collection button while in multiselect mode in tab tray -->
     <string name="tab_tray_collection_button_multiselect_content_description">Tallenna valitut välilehdet kokoelmaan</string>
-    <!-- Content description for checkmark while tab is selected while in multiselect mode in tab tray. The first parameter is the title of the tab selected -->
-    <string name="tab_tray_item_selected_multiselect_content_description">Valittu %1$s</string>
-    <!-- Content description when tab is unselected while in multiselect mode in tab tray. The first parameter is the title of the tab unselected -->
-    <string name="tab_tray_item_unselected_multiselect_content_description">Kumottu valinta %1$s</string>
-    <!-- Content description announcement when exiting multiselect mode in tab tray -->
-    <string name="tab_tray_exit_multiselect_content_description">Poistuttiin monivalintatilasta</string>
-    <!-- Content description announcement when entering multiselect mode in tab tray -->
-    <string name="tab_tray_enter_multiselect_content_description">Siirrytty monivalintatilaan, valitse välilehdet tallentaaksesi kokoelmaan</string>
     <!-- Content description on checkmark while tab is selected in multiselect mode in tab tray -->
     <string name="tab_tray_multiselect_selected_content_description">Valittu</string>
 
     <!-- Home - Recently saved bookmarks -->
     <!-- Title for the home screen section with recently saved bookmarks. -->
-    <string name="recently_saved_bookmarks">Äskettäin tallennettu</string>
+    <string name="recent_bookmarks_title">Viimeisimmät kirjanmerkit</string>
     <!-- Content description for the recently saved bookmarks section on the home screen. -->
-    <string name="recently_saved_bookmarks_content_description">Äskettäin tallennetut kirjanmerkit</string>
+    <string moz:removedIn="100" name="recently_saved_bookmarks_content_description" tools:ignore="UnusedResources">Äskettäin tallennetut kirjanmerkit</string>
     <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
-    <string name="recently_saved_show_all">Näytä kaikki</string>
+    <string moz:removedIn="101" name="recently_saved_show_all" tools:ignore="UnusedResources">Näytä kaikki</string>
     <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
-    <string name="recently_saved_show_all_content_description">Näytä kaikki tallennetut kirjanmerkit -painike</string>
+    <string name="recently_saved_show_all_content_description_2">Näytä kaikki tallennetut kirjanmerkit</string>
+
+    <!-- Text for the menu button to remove a recently saved bookmark from the user's home screen -->
+    <string name="recently_saved_menu_item_remove">Poista</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
     <string name="about_content">%1$s on Mozillan tuote.</string>
 
     <!-- Private Browsing -->
-    <!-- Title for private session option -->
-    <string name="private_browsing_title">Olet yksityisessä istunnossa</string>
     <!-- Explanation for private browsing displayed to users on home view when they first enable private mode
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
     <string name="private_browsing_placeholder_description_2">%1$s tyhjentää haku- ja selaushistoriasi, kun suljet sovelluksen tai kaikki yksityiset välilehdet. Vaikka tämä ei tee sinusta anonyymia verkkosivustojen tai internetpalveluntarjoajan suuntaan, se helpottaa piilottamaan verkossa tekemiäsi asioita muilta tätä laitetta käyttäviltä.</string>
     <string name="private_browsing_common_myths">
        Yleiset myytit yksityisestä selaamisesta
     </string>
-    <!-- Delete session button to erase your history in a private session -->
-    <string name="private_browsing_delete_session">Poista istunto</string>
 
     <!-- Private mode shortcut "contextual feature recommendation" (CFR) -->
     <!-- Text for the main message -->
     <string name="cfr_message">Lisää pikakuvake avataksesi yksityisiä välilehtiä aloitusnäytöltä.</string>
     <!-- Text for the positive button -->
-    <string name="cfr_pos_button_text">Lisää pikakuvake</string>
+    <string name="cfr_pos_button_text">Lisää pikavalinta</string>
     <!-- Text for the negative button -->
     <string name="cfr_neg_button_text">Ei kiitos</string>
 
     <!-- Open in App "contextual feature recommendation" (CFR) -->
     <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
-    <string name="open_in_app_cfr_info_message">Voit asettaa Firefoxin avaamaan linkit automaattisesti sovelluksissa.</string>
+    <string moz:RemovedIn="99" name="open_in_app_cfr_info_message" tools:ignore="UnusedResources">Voit asettaa Firefoxin avaamaan linkit automaattisesti sovelluksissa.</string>
+    <!-- Text for the info message. The first parameter is the name of the application.-->
+    <string name="open_in_app_cfr_info_message_2">Voit asettaa %1$sin avaamaan linkit automaattisesti sovelluksissa.</string>
     <!-- Text for the positive action button -->
     <string name="open_in_app_cfr_positive_button_text">Siirry asetuksiin</string>
     <!-- Text for the negative action button -->
@@ -105,14 +93,30 @@
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">Hylkää</string>
 
+    <!-- Text for the banner message to tell users about our inactive tabs feature. -->
+    <string name="tab_tray_inactive_onboarding_message">Välilehdet, joita et ole katsonut kahteen viikkoon, siirretään tänne.</string>
+    <!-- Text for the action link to go to Settings for inactive tabs. -->
+    <string name="tab_tray_inactive_onboarding_button_text">Sammuta asetuksista</string>
+
+    <!-- Text for title for the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_auto_close_title">Suljetaanko automaattisesti kuukauden jälkeen?</string>
+    <!-- Text for the body for the auto-close dialog of the inactive tabs. -->
+    <string moz:RemovedIn="99" name="tab_tray_inactive_auto_close_body" tools:ignore="UnusedResources">Firefox voi sulkea välilehdet, joita et ole katsonut viimeisen kuukauden aikana.</string>
+    <!-- Text for the body for the auto-close dialog of the inactive tabs.
+        The first parameter is the name of the application.-->
+    <string name="tab_tray_inactive_auto_close_body_2">%1$s voi sulkea välilehdet, joita et ole katsonut viimeisen kuukauden aikana.</string>
+    <!-- Content description for close button in the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_auto_close_button_content_description">Sulje</string>
+
+    <!-- Text for turn on auto close tabs button in the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_turn_on_auto_close_button_2">Käytä automaattista sulkemista</string>
+
+
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
     <string name="home_screen_shortcut_open_new_tab_2">Uusi välilehti</string>
     <!-- Shortcut action to open new private tab -->
     <string name="home_screen_shortcut_open_new_private_tab_2">Uusi yksityinen välilehti</string>
-
-    <!-- Heading for the Top Sites block -->
-    <string name="home_screen_top_sites_heading">Ykkössivustot</string>
 
     <!-- Recent Tabs -->
     <!-- Header text for jumping back into the recent tab in the home screen -->
@@ -120,14 +124,36 @@
     <!-- Button text for showing all the tabs in the tabs tray -->
     <string name="recent_tabs_show_all">Näytä kaikki</string>
 
+    <!-- Content description for the button which navigates the user to show all recent tabs in the tabs tray. -->
+    <string name="recent_tabs_show_all_content_description_2">Näytä kaikki viimeisimmät välilehdet -painike</string>
+    <!-- Title for showing a group item in the 'Jump back in' section of the new tab
+        The first parameter is the search term that the user used. (for example: your search for "cat")-->
+    <string name="recent_tabs_search_term">Hakusi ehdoilla \&quot;%1$s\&quot;</string>
+
+    <!-- Text for the number of tabs in a group in the 'Jump back in' section of the new tab
+        %d is a placeholder for the number of sites in the group. This number will always be more than one. -->
+    <string name="recent_tabs_search_term_count_2">%d sivustoa</string>
+
+    <!-- Text for button in synced tab card that opens synced tabs tray -->
+    <string name="recent_tabs_see_all_synced_tabs_button_text">Näytä kaikki synkronoidut välilehdet</string>
+    <!-- Accessibility description for device icon used for recent synced tab -->
+    <string name="recent_tabs_synced_device_icon_content_description">Synkronoidut laitteet</string>
+    <!-- Text for the menu button to remove a grouped highlight from the user's browsing history
+         in the Recently visited section -->
+    <string name="recent_tab_menu_item_remove">Poista</string>
+
     <!-- History Metadata -->
     <!-- Header text for a section on the home screen that displays grouped highlights from the
          user's browsing history, such as topics they have researched or explored on the web -->
-    <string name="history_metadata_header">Aiemmat etsinnät</string>
+    <string name="history_metadata_header_2">Äskettäin vierailtu</string>
+    <!-- Text for the menu button to remove a grouped highlight from the user's browsing history
+         in the Recently visited section -->
+    <string name="recently_visited_menu_item_remove">Poista</string>
+
+    <!-- Content description for the button which navigates the user to show all of their history. -->
+    <string name="past_explorations_show_all_content_description_2">Näytä kaikki aiemmat tutkimukset</string>
 
     <!-- Browser Fragment -->
-    <!-- Content description (not visible, for screen readers etc.): Navigate to open tabs -->
-    <string name="browser_tabs_button">Avoimet välilehdet</string>
     <!-- Content description (not visible, for screen readers etc.): Navigate backward (browsing history) -->
     <string name="browser_menu_back">Taaksepäin</string>
     <!-- Content description (not visible, for screen readers etc.): Navigate forward (browsing history) -->
@@ -136,14 +162,8 @@
     <string name="browser_menu_refresh">Päivitä</string>
     <!-- Content description (not visible, for screen readers etc.): Stop loading current website -->
     <string name="browser_menu_stop">Pysäytä</string>
-    <!-- Content description (not visible, for screen readers etc.): Bookmark the current page -->
-    <string name="browser_menu_bookmark">Lisää kirjanmerkki</string>
-    <!-- Content description (not visible, for screen readers etc.): Un-bookmark the current page -->
-    <string name="browser_menu_edit_bookmark">Muokkaa kirjanmerkkiä</string>
     <!-- Browser menu button that opens the addon manager -->
     <string name="browser_menu_add_ons">Lisäosat</string>
-    <!-- Browser menu button that opens the addon extensions manager -->
-    <string name="browser_menu_extensions">Laajennukset</string>
     <!-- Text displayed when there are no add-ons to be shown -->
     <string name="no_add_ons">Ei lisäosia täällä</string>
     <!-- Browser menu button that sends a user to help articles -->
@@ -160,21 +180,15 @@
     <string name="browser_menu_add_to_homescreen">Lisää aloitusnäytölle</string>
     <!-- Browser menu toggle that installs a Progressive Web App shortcut to the site on the device home screen. -->
     <string name="browser_menu_install_on_homescreen">Asenna</string>
-    <!-- Menu option on the toolbar that takes you to synced tabs page-->
-    <string name="synced_tabs">Synkronoidut välilehdet</string>
     <!-- Content description (not visible, for screen readers etc.) for the Resync tabs button -->
     <string name="resync_button_content_description">Synkronoi uudelleen</string>
     <!-- Browser menu button that opens the find in page menu -->
     <string name="browser_menu_find_in_page">Etsi sivulta</string>
-    <!-- Browser menu button that creates a private tab -->
-    <string name="browser_menu_private_tab">Yksityinen välilehti</string>
     <!-- Browser menu button that saves the current tab to a collection -->
     <string name="browser_menu_save_to_collection_2">Tallenna kokoelmaan</string>
     <!-- Browser menu button that open a share menu to share the current site -->
     <string name="browser_menu_share">Jaa</string>
 
-    <!-- Share menu title, displayed when a user is sharing their current site -->
-    <string name="menu_share_with">Jaa…</string>
     <!-- Browser menu button shown in custom tabs that opens the current tab in Fenix
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
     <string name="browser_menu_open_in_fenix">Avaa sovelluksessa %1$s</string>
@@ -191,8 +205,6 @@
     <string name="browser_menu_read_close">Sulje lukunäkymä</string>
     <!-- Browser menu button to open the current page in an external app -->
     <string name="browser_menu_open_app_link">Avaa sovelluksessa</string>
-    <!-- Browser menu button to configure reader mode appearance e.g. the used font type and size -->
-    <string name="browser_menu_read_appearance">Ulkoasu</string>
 
     <!-- Browser menu button to show reader view appearance controls e.g. the used font type and size -->
     <string name="browser_menu_customize_reader_view">Mukauta lukunäkymää</string>
@@ -202,19 +214,15 @@
     <!-- Browser menu label for editing a bookmark -->
     <string name="browser_menu_edit">Muokkaa</string>
 
+    <!-- Button shown on the home page that opens the Customize home settings -->
+    <string name="browser_menu_customize_home_1">Mukauta kotisivua</string>
     <!-- Browser Toolbar -->
     <!-- Content description for the Home screen button on the browser toolbar -->
     <string name="browser_toolbar_home">Aloitusnäkymä</string>
 
-    <!-- Error message to show when the user tries to access a scheme not
-        handled by the app (Ex: blob, tel etc) -->
-    <string name="unknown_scheme_error_message">Yhteyden muodostaminen epäonnistui. URL-skeeman tunnistaminen ei onnistu.</string>
-
     <!-- Locale Settings Fragment -->
     <!-- Content description for tick mark on selected language -->
     <string name="a11y_selected_locale_content_description">Valittu kieli</string>
-    <!-- Content description for search icon -->
-    <string name="a11y_search_icon_content_description">Haku</string>
     <!-- Text for default locale item -->
     <string name="default_locale_text">Seuraa laitteen kieltä</string>
     <!-- Placeholder text shown in the search bar before a user enters text -->
@@ -227,8 +235,6 @@
     <string name="search_engine_button">Hakukone</string>
     <!-- Button in the search view when shortcuts are displayed that takes a user to the search engine settings -->
     <string name="search_shortcuts_engine_settings">Hakukoneasetukset</string>
-    <!-- Header displayed when selecting a shortcut search engine -->
-    <string name="search_engines_search_with">Tällä kertaa käytä hakuun:</string>
     <!-- Button in the search view that lets a user navigate to the site in their clipboard -->
     <string name="awesomebar_clipboard_title">Täytä linkki leikepöydältä</string>
 
@@ -241,16 +247,43 @@
     <!-- Search suggestion onboarding hint description text, first parameter is the name of the app defined in app_name (for example: Fenix)-->
     <string name="search_suggestions_onboarding_text">%s jakaa kaiken osoitepalkkiin kirjoittamasi asettamallesi oletushakukoneelle.</string>
     <!-- Search suggestion onboarding hint Learn more link text -->
-    <string name="search_suggestions_onboarding_learn_more_link">Lue lisää</string>
+    <string moz:RemovedIn="100" name="search_suggestions_onboarding_learn_more_link" tools:ignore="UnusedResources">Lue lisää</string>
 
     <!-- Search engine suggestion title text. The first parameter is the name of teh suggested engine-->
     <string name="search_engine_suggestions_title">Hae hakukoneella %s</string>
     <!-- Search engine suggestion description text -->
     <string name="search_engine_suggestions_description">Hae suoraan osoitepalkista</string>
 
+    <!-- Home onboarding -->
+    <!-- Onboarding home screen dialog title text. Firefox is intentionally hardcoded. -->
+    <string moz:removedIn="99" name="onboarding_home_screen_title_2" tools:ignore="UnusedResources">Mitä uutta Firefoxissa</string>
+    <!-- Onboarding home screen dialog title text. The first parameter is the name of the application.-->
+    <string name="onboarding_home_screen_title_3">Mitä uutta %1$s sisältää</string>
+    <!-- Onboarding home screen dialog description text. -->
+    <string name="onboarding_home_screen_description_2">Nyt on aiempaa helpompaa jatkaa siitä, mihin jäit.</string>
+    <!-- Onboarding home screen dialog title text for the home section. Firefox is intentionally hardcoded. -->
+    <string moz:RemovedIn="99" name="onboarding_home_screen_section_home_title_2" tools:ignore="UnusedResources">Personoitu Firefox-kotisivu</string>
+    <!-- Onboarding home screen dialog title text for the home section. The first parameter is the name of the application.-->
+    <string name="onboarding_home_screen_section_home_title_3">Personoitu %1$s-kotisivu</string>
+    <!-- Onboarding home screen dialog description text for the home section. -->
+    <string name="onboarding_home_screen_section_home_description_2">Siirry avoimiin välilehtiisi, kirjanmerkkeihisi ja selaushistoriaasi.</string>
+    <!-- Onboarding home screen dialog description text for the tab tray section. -->
+    <string name="onboarding_home_screen_section_cleaner_tab_tray_title_2">Siistit, järjestetyt välilehdet</string>
+    <!-- Onboarding home screen dialog description text for the tab tray section. -->
+    <string name="onboarding_home_screen_section_cleaner_tab_tray_description_2">Estä välilehtien sotku parannetulla asettelulla ja automaattisesti sulkeutuvilla välilehdillä.</string>
+    <!-- Onboarding home screen dialog description text for the history section. -->
+    <string name="onboarding_home_screen_section_useful_history_title_2">Viimeisimmät haut</string>
+    <!-- Onboarding home screen dialog description text for the history section. -->
+    <string name="onboarding_home_screen_section_useful_history_description_2">Palaa viimeisimpiin hakuihin etusivultasi ja välilehdiltäsi.</string>
+
+    <!-- Onboarding home screen popup dialog, shown on top of the Jump back in section. Firefox is intentionally hardcoded. -->
+    <string name="onboarding_home_screen_jump_back_contextual_hint" tools:ignore="UnusedResources">Sinulle mukautetun Firefox-kotisivun avulla on helpompi jatkaa siitä, mihin jäit. Löydä viimeisimmät välilehdet, kirjanmerkit ja hakutulokset.</string>
+
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
-    <string name="search_widget_content_description">Avaa uusi Firefox-välilehti</string>
+    <string moz:RemovedIn="99" name="search_widget_content_description" tools:ignore="UnusedResources">Avaa uusi Firefox-välilehti</string>
+    <!-- Content description for searching with a widget. The first parameter is the name of the application.-->
+    <string name="search_widget_content_description_2">Avaa uusi %1$s-välilehti</string>
     <!-- Text preview for smaller sized widgets -->
     <string name="search_widget_text_short">Hae</string>
     <!-- Text preview for larger sized widgets -->
@@ -262,8 +295,6 @@
     <!-- Preferences -->
     <!-- Title for the settings page-->
     <string name="settings">Asetukset</string>
-    <!-- Preference category for basic settings -->
-    <string name="preferences_category_basics">Perusasetukset</string>
     <!-- Preference category for general settings -->
     <string name="preferences_category_general">Yleiset</string>
     <!-- Preference category for all links about Fenix -->
@@ -274,29 +305,17 @@
     <string name="preferences_search">Haku</string>
     <!-- Preference for settings related to Search address bar -->
     <string name="preferences_search_address_bar">Osoitepalkki</string>
-    <!-- Preference linking to help about Fenix -->
-    <string name="preferences_help">Ohje</string>
     <!-- Preference link to rating Fenix on the Play Store -->
     <string name="preferences_rate">Arvostele Google Playssa</string>
-    <!-- Preference for giving feedback about Fenix -->
-    <string name="preferences_feedback">Anna palautetta</string>
     <!-- Preference linking to about page for Fenix
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
     <string name="preferences_about">Tietoja: %1$s</string>
-    <!-- Preference linking to the your rights SUMO page -->
-    <string name="preferences_your_rights">Oikeutesi</string>
 
 
-    <!-- Preference for settings related to saved passwords -->
-    <string name="preferences_passwords">Salasanat</string>
-    <!-- Preference for settings related to saved credit cards and addresses -->
-    <string name="preferences_credit_cards_addresses">Luottokortit ja osoitteet</string>
     <!-- Preference for settings related to changing the default browser -->
     <string name="preferences_set_as_default_browser">Aseta oletusselaimeksi</string>
     <!-- Preference category for advanced settings -->
     <string name="preferences_category_advanced">Lisäasetukset</string>
-    <!-- Preference category for privacy settings -->
-    <string name="preferences_category_privacy">Yksityisyys</string>
     <!-- Preference category for privacy and security settings -->
     <string name="preferences_category_privacy_security">Tietosuoja ja turvallisuus</string>
     <!-- Preference for advanced site permissions -->
@@ -311,6 +330,26 @@
     <string name="preferences_screenshots_in_private_mode_disclaimer">Jos sallittu, yksityiset välilehdet ovat näkyvissä kun useita sovelluksia on avoinna</string>
     <!-- Preference for adding private browsing shortcut -->
     <string name="preferences_add_private_browsing_shortcut">Lisää yksityisen selauksen pikakuvake</string>
+    <!-- Preference for enabling "HTTPS-Only" mode -->
+    <string name="preferences_https_only_title">Vain HTTPS -tila</string>
+    <!-- Description of the preference to enable "HTTPS-Only" mode. -->
+    <string name="preferences_https_only_summary">Yrittää muodostaa automaattisesti yhteyden sivustoihin käyttämällä salattua HTTPS-protokollaa turvallisuuden parantamiseksi.</string>
+    <!-- Summary of tracking protection preference if tracking protection is set to on -->
+    <string name="preferences_https_only_on">Päällä</string>
+    <!-- Summary of tracking protection preference if tracking protection is set to off -->
+    <string name="preferences_https_only_off">Pois</string>
+    <!-- Text displayed that links to website containing documentation about "HTTPS-Only" mode -->
+    <string name="preferences_http_only_learn_more">Lue lisää</string>
+    <!-- Option for the https only setting -->
+    <string name="preferences_https_only_in_all_tabs">Käytä kaikissa välilehdissä</string>
+    <!-- Option for the https only setting -->
+    <string name="preferences_https_only_in_private_tabs">Käytä vain yksityisissä välilehdissä</string>
+    <!-- Title shown in the error page for when trying to access a http website while https only mode is enabled. -->
+    <string name="errorpage_httpsonly_title">Suojattu sivusto ei saatavilla</string>
+    <!-- Message shown in the error page for when trying to access a http website while https only mode is enabled. The message has two paragraphs. This is the first. -->
+    <string name="errorpage_httpsonly_message_title">Todennäköisesti sivusto ei tue HTTPS:ää.</string>
+    <!-- Message shown in the error page for when trying to access a http website while https only mode is enabled. The message has two paragraphs. This is the second. -->
+    <string name="errorpage_httpsonly_message_summary">On kuitenkin myös mahdollista, että hyökkäävä taho on läsnä. Jos jatkat verkkosivustolle, älä anna arkaluonteisia tietoja. Jos jatkat, &quot;Vain HTTPS&quot;-tila poistetaan väliaikaisesti käytöstä sivustolta.</string>
     <!-- Preference for accessibility -->
     <string name="preferences_accessibility">Saavutettavuus</string>
     <!-- Preference to override the Firefox Account server -->
@@ -321,14 +360,12 @@
     <string name="toast_override_fxa_sync_server_done">Firefox-tilin tai synkronoinnin palvelinta muutettu. Lopetetaan sovellus, jotta muutokset tulevat voimaan…</string>
     <!-- Preference category for account information -->
     <string name="preferences_category_account">Tili</string>
-    <!-- Preference shown on banner to sign into account -->
-    <string name="preferences_sign_in">Kirjaudu sisään</string>
     <!-- Preference for changing where the toolbar is positioned -->
     <string name="preferences_toolbar">Työkalupalkki</string>
     <!-- Preference for changing default theme to dark or light mode -->
     <string name="preferences_theme">Teema</string>
     <!-- Preference for customizing the home screen -->
-    <string name="preferences_home">Koti</string>
+    <string name="preferences_home_2">Kotisivu</string>
     <!-- Preference for gestures based actions -->
     <string name="preferences_gestures">Eleet</string>
     <!-- Preference for settings related to visual options -->
@@ -345,10 +382,6 @@
     <string name="preferences_data_choices">Tietovalinnat</string>
     <!-- Preference for data collection -->
     <string name="preferences_data_collection">Tietojen keruu</string>
-    <!-- Preference linking to the privacy notice -->
-    <string name="preferences_privacy_link">Yksityisyyskäytäntö</string>
-    <!-- Preference category for developer tools -->
-    <string name="developer_tools_category">Kehittäjätyökalut</string>
     <!-- Preference for developers -->
     <string name="preferences_remote_debugging">Etävianjäljitys USB:n kautta</string>
     <!-- Preference title for switch preference to show search engines -->
@@ -396,6 +429,41 @@
     <string name="customize_addon_collection_user_hint">Kokoelman omistaja (käyttäjätunniste)</string>
     <!-- Toast shown after confirming the custom add-on collection configuration -->
     <string name="toast_customize_addon_collection_done">Lisäosakokoelmaa muokattu. Lopetetaan sovellus, jotta muutokset tulevat voimaan…</string>
+
+    <!-- Customize Home -->
+    <!-- Header text for jumping back into the recent tab in customize the home screen -->
+    <string name="customize_toggle_jump_back_in">Palaa takaisin</string>
+    <!-- Title for the customize home screen section with recently saved bookmarks. -->
+    <string name="customize_toggle_recent_bookmarks">Viimeisimmät kirjanmerkit</string>
+    <!-- Title for the customize home screen section with recently visited. Recently visited is
+    a section where users see a list of tabs that they have visited in the past few days -->
+    <string name="customize_toggle_recently_visited">Äskettäin vierailtu</string>
+    <!-- Title for the customize home screen section with Pocket. -->
+    <string name="customize_toggle_pocket">Pocket</string>
+
+    <!-- Title for the opening wallpaper settings screen -->
+    <string name="customize_wallpapers">Taustakuvat</string>
+    <!-- Title for the customize home screen section with sponsored shortcuts. -->
+    <string name="customize_toggle_contile">Sponsoroidut pikavalinnat</string>
+
+    <!-- Wallpapers -->
+    <!-- Content description for various wallpapers. The first parameter is the name of the wallpaper -->
+    <string name="wallpapers_item_name_content_description">Taustakuvatietue: %1$s</string>
+    <!-- Snackbar message for when wallpaper is selected -->
+    <string name="wallpaper_updated_snackbar_message">Taustakuva päivitetty!</string>
+    <!-- Snackbar label for action to view selected wallpaper -->
+    <string name="wallpaper_updated_snackbar_action">Näytä</string>
+    <!-- Label for switch which toggles the "tap-to-switch" behavior on home screen logo -->
+    <string moz:removedIn="99" name="wallpaper_tap_to_change_switch_label" tools:ignore="UnusedResources">Vaihda taustakuvaa napauttamalla logoa</string>
+
+    <!-- Label for switch which toggles the "tap-to-switch" behavior on home screen logo -->
+    <string name="wallpaper_tap_to_change_switch_label_1">Vaihda taustakuvaa napauttamalla Firefoxin etusivun logoa</string>
+    <!-- Description for switch which toggles the "tap-to-switch" behavior on home screen logo -->
+    <string moz:removedIn="99" name="wallpaper_tap_to_change_switch_description" tools:ignore="UnusedResources">Selaa ja päivitä kuva poistumatta kotisivulta.</string>
+
+    <!-- This is the accessibility content description for the wallpapers functionality. Users are
+    able to tap on the app logo in the home screen and can switch to different wallpapers by tapping. -->
+    <string name="wallpaper_logo_content_description">Firefox-logo - vaihda taustakuva, painike</string>
 
     <!-- Add-on Installation from AMO-->
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
@@ -450,23 +518,13 @@
     <string name="fxa_received_tab_channel_description">Ilmoitukset muista Firefox-laitteista vastaanotetuista välilehdistä.</string>
     <!--  The body for these is the URL of the tab received  -->
     <string name="fxa_tab_received_notification_name">Välilehti vastaanotettu</string>
-    <!-- When multiple tabs have been received -->
-    <string name="fxa_tabs_received_notification_name">Välilehtiä vastaanotettu</string>
     <!-- %s is the device name -->
     <string name="fxa_tab_received_from_notification_name">Välilehti laitteesta %s</string>
 
     <!-- Advanced Preferences -->
-    <!-- Preference for tracking protection settings -->
-    <string name="preferences_tracking_protection_settings">Seurannan suojaus</string>
-    <!-- Preference switch for tracking protection -->
-    <string name="preferences_tracking_protection">Seurannan suojaus</string>
-    <!-- Preference switch description for tracking protection -->
-    <string name="preferences_tracking_protection_description">Estä sisältö ja komentosarjat, jotka seuraavat sinua verkossa</string>
     <!-- Preference for tracking protection exceptions -->
     <string name="preferences_tracking_protection_exceptions">Poikkeukset</string>
 
-    <!-- Preference description for tracking protection exceptions -->
-    <string name="preferences_tracking_protection_exceptions_description">Seurannan suojaus on pois käytöstä seuraaville sivustoille</string>
     <!-- Button in Exceptions Preference to turn on tracking protection for all sites (remove all exceptions) -->
     <string name="preferences_tracking_protection_exceptions_turn_on_for_all">Ota käyttöön kaikille sivustoille</string>
 
@@ -475,41 +533,22 @@
     <!-- Text displayed when there are no exceptions, with learn more link that brings users to a tracking protection SUMO page -->
     <string name="exceptions_empty_message_learn_more_link">Lue lisää</string>
 
-    <!-- Preference switch for Telemetry -->
-    <string name="preferences_telemetry">Telemetria</string>
     <!-- Preference switch for usage and technical data collection -->
     <string name="preference_usage_data">Käyttö- ja tekniset tiedot</string>
     <!-- Preference description for usage and technical data collection -->
     <string name="preferences_usage_data_description">Jakaa selaimen suorituskykyyn, käyttöön, laitteistoon ja mukauttamiseen liittyviä tietoja Mozillan kanssa, jotta %1$sia voidaan parantaa</string>
     <!-- Preference switch for marketing data collection -->
     <string name="preferences_marketing_data">Markkinointitiedot</string>
-    <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
-    <string name="preferences_marketing_data_description">Jakaa tietoa %1$sissa käyttämistäsi ominaisuuksista mobiilimarkkinointia meille toteuttavan Leanplumin kanssa.</string>
     <!-- Preference description for marketing data collection -->
     <string name="preferences_marketing_data_description2">Jakaa perustiedot käytöstä mobiilimarkkinointitoimittajamme Adjustin kanssa</string>
     <!-- Title for studies preferences -->
     <string name="preference_experiments_2">Tutkimukset</string>
     <!-- Summary for studies preferences -->
     <string name="preference_experiments_summary_2">Salli Mozillan asentaa ja suorittaa tutkimuksia</string>
-    <!-- Title for experiments preferences -->
-    <string name="preference_experiments">Kokeilut</string>
-    <!-- Summary for experiments preferences -->
-    <string name="preference_experiments_summary">Sallii Mozillan tehdä asennuksia ja kerätä tietoja kokeellisten ominaisuuksien osalta</string>
-    <!-- Preference switch for crash reporter -->
-    <string name="preferences_crash_reporter">Kaatumisilmoitin</string>
-    <!-- Preference switch for Mozilla location service -->
-    <string name="preferences_mozilla_location_service">Mozillan sijaintipalvelu</string>
-
-    <!-- Preference switch for app health report. The first parameter is the name of the application (For example: Fenix) -->
-    <string name="preferences_fenix_health_report">%s-terveysraportti</string>
 
     <!-- Turn On Sync Preferences -->
     <!-- Header of the Turn on Sync preference view -->
     <string name="preferences_sync">Ota Sync käyttöön</string>
-    <!-- Preference for pairing -->
-    <string name="preferences_sync_pair">Skannaa parituskoodi Firefoxin työpöytäversiossa</string>
-    <!-- Preference for account login -->
-    <string name="preferences_sync_sign_in">Kirjaudu sisän</string>
     <!-- Preference for reconnecting to FxA sync -->
     <string name="preferences_sync_sign_in_to_reconnect">Kirjaudu yhdistääksesi uudelleen</string>
     <!-- Preference for removing FxA account -->
@@ -518,10 +557,6 @@
     <!-- Pairing Feature strings -->
     <!-- Instructions on how to access pairing -->
     <string name="pair_instructions_2"><![CDATA[Skannaa sivulla <b>firefox.com/pair</b> näkyvä QR-koodi]]></string>
-    <!-- Button to open camera for pairing -->
-    <string name="pair_open_camera">Avaa kamera</string>
-    <!-- Button to cancel pairing -->
-    <string name="pair_cancel">Peruuta</string>
 
     <!-- Toolbar Preferences -->
     <!-- Preference for using top toolbar -->
@@ -551,10 +586,6 @@
     <string name="preference_gestures_swipe_toolbar_show_tabs">Pyyhkäise työkaluriviä ylös avataksesi välilehdet</string>
 
     <!-- Library -->
-    <!-- Option in Library to open Sessions page -->
-    <string name="library_sessions">Istunnot</string>
-    <!-- Option in Library to open Screenshots page -->
-    <string name="library_screenshots">Kuvakaappaukset</string>
     <!-- Option in Library to open Downloads page -->
     <string name="library_downloads">Lataukset</string>
     <!-- Option in library to open Bookmarks page -->
@@ -571,18 +602,17 @@
     <string name="library_history">Historia</string>
     <!-- Option in Library to open a new tab -->
     <string name="library_new_tab">Uusi välilehti</string>
-    <!-- Option in Library to find text in page -->
-    <string name="library_find_in_page">Etsi sivulta</string>
-    <!-- Option in Library to open Reading List -->
-    <string name="library_reading_list">Lukulista</string>
-    <!-- Menu Item Label for Search in Library -->
-    <string name="library_search">Etsi</string>
     <!-- Settings Page Title -->
     <string name="settings_title">Asetukset</string>
-    <!-- Content description (not visible, for screen readers etc.): "Menu icon for items on a history item" -->
-    <string name="content_description_history_menu">Historiatietue valikossa</string>
     <!-- Content description (not visible, for screen readers etc.): "Close button for library settings" -->
     <string name="content_description_close_button">Sulje</string>
+
+    <!-- Text to show users they have one site in the history group section of the History fragment.
+    %d is a placeholder for the number of sites in the group. -->
+    <string name="history_search_group_site">%d sivusto</string>
+    <!-- Text to show users they have multiple sites in the history group section of the History fragment.
+    %d is a placeholder for the number of sites in the group. -->
+    <string name="history_search_group_sites">%d sivustoa</string>
 
     <!-- Option in library for Recently Closed Tabs -->
     <string name="library_recently_closed_tabs">Viimeksi suljetut välilehdet</string>
@@ -606,6 +636,10 @@
     <string name="tab_view_list">Lista</string>
     <!-- Option for a grid tab view -->
     <string name="tab_view_grid">Ruudukko</string>
+    <!-- Option for search term tab groups -->
+    <string name="tab_view_search_term_tab_groups">Hakuryhmät</string>
+    <!-- Summary text for search term tab groups -->
+    <string name="tab_view_search_term_tab_groups_summary">Ryhmitä toisiinsa liittyvät sivustot yhteen</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
     <string name="preferences_close_tabs">Sulje välilehdet</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
@@ -618,15 +652,18 @@
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">Yhden kuukauden jälkeen</string>
 
-    <!-- Start on Home -->
-    <!-- Title of a preference that allows a user to indicate after a specified amount of time when the app should start on the home screen -->
-    <string name="preferences_start_on_home">Käynnistä aloitusnäkymästä</string>
-    <!-- Option for starting on the home screen after after four hours or inactivity -->
-    <string name="start_on_home_after_four_hours">Neljän tunnin jälkeen</string>
-    <!-- Option for always starting on the home screen -->
-    <string name="start_on_home_always">Aina</string>
-    <!-- Option for never starting on the home screen -->
-    <string name="start_on_home_never">Ei koskaan</string>
+    <!-- Title of preference that allows a user to specify the auto-close settings for open tabs -->
+    <string name="preference_auto_close_tabs" tools:ignore="UnusedResources">Sulje automaattisesti avoimet välilehdet</string>
+
+    <!-- Opening screen -->
+    <!-- Title of a preference that allows a user to choose what screen to show after opening the app -->
+    <string name="preferences_opening_screen">Avautuva näkymä</string>
+    <!-- Option for always opening the homepage when re-opening the app -->
+    <string name="opening_screen_homepage">Kotisivu</string>
+    <!-- Option for always opening the user's last-open tab when re-opening the app -->
+    <string name="opening_screen_last_tab">Viimeisin välilehti</string>
+    <!-- Option for always opening the homepage when re-opening the app after four hours of inactivity -->
+    <string name="opening_screen_after_four_hours_of_inactivity">Kotisivu neljän tunnin käyttämättömyyden jälkeen</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
     <string name="close_tabs_manually_summary">Sulje manuaalisesti</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
@@ -636,13 +673,21 @@
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one month-->
     <string name="close_tabs_after_one_month_summary">Sulje kuukauden kuluttua</string>
 
+    <!-- Inactive tabs -->
+    <!-- Category header of a preference that allows a user to enable or disable the inactive tabs feature -->
+    <string name="preferences_inactive_tabs">Siirrä vanhat välilehdet passiivisiksi</string>
+    <!-- Title of inactive tabs preference -->
+    <string name="preferences_inactive_tabs_title">Välilehdet, joita et ole katsonut kahteen viikkoon, siirretään passiivisten osioon.</string>
+
     <!-- Studies -->
     <!-- Title of the remove studies button -->
     <string name="studies_remove">Poista</string>
     <!-- Title of the active section on the studies list -->
     <string name="studies_active">Käynnissä</string>
     <!-- Description for studies, it indicates why Firefox use studies -->
-    <string name="studies_description">Firefox saattaa asentaa ja suorittaa tutkimuksia silloin tällöin.</string>
+    <string moz:RemovedIn="99" name="studies_description" tools:ignore="UnusedResources">Firefox saattaa asentaa ja suorittaa tutkimuksia silloin tällöin.</string>
+    <!-- Description for studies, it indicates why Firefox use studies. The first parameter is the name of the application. -->
+    <string name="studies_description_2">%1$s saattaa asentaa ja suorittaa tutkimuksia silloin tällöin.</string>
     <!-- Learn more link for studies, links to an article for more information about studies. -->
     <string name="studies_learn_more">Lue lisää</string>
 
@@ -660,8 +705,6 @@
     <!-- Title for the list of tabs -->
     <string name="tab_header_label">Avoimet välilehdet</string>
     <!-- Title for the list of tabs in the current private session -->
-    <string name="tabs_header_private_title">Yksityinen istunto</string>
-    <!-- Title for the list of tabs in the current private session -->
     <string name="tabs_header_private_tabs_title">Yksityiset välilehdet</string>
     <!-- Title for the list of tabs in the synced tabs -->
     <string name="tabs_header_synced_tabs_title">Synkronoidut välilehdet</string>
@@ -673,30 +716,18 @@
     <string name="tab_drawer_fab_content">Yksityinen</string>
     <!-- Text for the new tab button to indicate syncing command on the synced tabs page -->
     <string name="tab_drawer_fab_sync">Synkronoi</string>
-    <!-- Text shown as the title of the open tab tray -->
-    <string name="tab_tray_title">Avoimet välilehdet</string>
-    <!-- Text shown in the menu for saving tabs to a collection -->
-    <string name="tab_tray_menu_item_save">Tallenna kokoelmaan</string>
-    <!-- Text shown in the menu for the collection selector -->
-    <string name="tab_tray_menu_select">Valitse</string>
     <!-- Text shown in the menu for sharing all tabs -->
     <string name="tab_tray_menu_item_share">Jaa kaikki välilehdet</string>
     <!-- Text shown in the menu to view recently closed tabs -->
     <string name="tab_tray_menu_recently_closed">Viimeksi suljetut välilehdet</string>
     <!-- Text shown in the tabs tray inactive tabs section -->
-    <string name="tab_tray_inactive_recently_closed">Viimeksi suljettu</string>
+    <string name="tab_tray_inactive_recently_closed" tools:ignore="UnusedResources">Viimeksi suljettu</string>
     <!-- Text shown in the menu to view account settings -->
     <string name="tab_tray_menu_account_settings">Tilin asetukset</string>
     <!-- Text shown in the menu to view tab settings -->
     <string name="tab_tray_menu_tab_settings">Välilehtiasetukset</string>
     <!-- Text shown in the menu for closing all tabs -->
     <string name="tab_tray_menu_item_close">Sulje kaikki välilehdet</string>
-    <!-- Shortcut action to open new tab -->
-    <string name="tab_tray_menu_open_new_tab">Uusi välilehti</string>
-    <!-- Shortcut action to open the home screen -->
-    <string name="tab_tray_menu_home">Siirry kotiin</string>
-    <!-- Shortcut action to toggle private mode -->
-    <string name="tab_tray_menu_toggle">Vaihda välilehtitilaa</string>
     <!-- Text shown in the multiselect menu for bookmarking selected tabs. -->
     <string name="tab_tray_multiselect_menu_item_bookmark">Lisää kirjanmerkeiksi</string>
     <!-- Text shown in the multiselect menu for closing selected tabs. -->
@@ -715,26 +746,10 @@
     <string name="close_tab_title">Sulje välilehti %s</string>
     <!-- Content description (not visible, for screen readers etc.): Opens the open tabs menu when pressed -->
     <string name="open_tabs_menu">Avointen välilehtien valikko</string>
-    <!-- Open tabs menu item to close all tabs -->
-    <string name="tabs_menu_close_all_tabs">Sulje kaikki välilehdet</string>
-    <!-- Open tabs menu item to share all tabs -->
-    <string name="tabs_menu_share_tabs">Jaa välilehdet</string>
     <!-- Open tabs menu item to save tabs to collection -->
     <string name="tabs_menu_save_to_collection1">Tallenna välilehdet kokoelmaan</string>
     <!-- Content description (not visible, for screen readers etc.): Opens the tab menu when pressed -->
     <string name="tab_menu">Välilehtivalikko</string>
-    <!-- Tab menu item to share the tab -->
-    <string name="tab_share">Jaa välilehti</string>
-    <!-- Button in the current session menu. Deletes the session when pressed -->
-    <string name="current_session_delete">Poista</string>
-    <!-- Button in the current session menu. Saves the session when pressed -->
-    <string name="current_session_save">Tallenna</string>
-    <!-- Button in the current session menu. Opens the share menu when pressed -->
-    <string name="current_session_share">Jaa</string>
-    <!-- Content description (not visible, for screen readers etc.): Title icon for current session menu -->
-    <string name="current_session_image">Nykyisen istunnon kuva</string>
-    <!-- Button to save the current set of tabs into a collection -->
-    <string name="save_to_collection">Tallenna kokoelmaan</string>
     <!-- Text for the menu button to delete a collection -->
     <string name="collection_delete">Poista kokoelma</string>
     <!-- Text for the menu button to rename a collection -->
@@ -755,43 +770,30 @@
     <!-- Postfix for private WebApp titles, placeholder is replaced with app name -->
     <string name="pwa_site_controls_title_private">%1$s (yksityinen tila)</string>
 
-    <!-- Button in the current tab tray header in multiselect mode. Saved the selected tabs to a collection when pressed. -->
-    <string name="tab_tray_save_to_collection">Tallenna</string>
+    <!-- Title text for the normal tabs header in the tabs tray which are not part of any tab grouping. -->
+    <string name="tab_tray_header_title_1">Muut välilehdet</string>
 
     <!-- History -->
+    <!-- Text for the button to search all history -->
+    <string moz:removedIn="99" name="history_search" tools:ignore="UnusedResources">Kirjoita hakuehto</string>
+    <!-- Text for the button to search all history -->
+    <string name="history_search_1">Kirjoita hakuehdot</string>
     <!-- Text for the button to clear all history -->
     <string name="history_delete_all">Poista historia</string>
-    <!-- Text for the dialog to confirm clearing all history -->
-    <string name="history_delete_all_dialog">Haluatko tyhjentää historian?</string>
     <!-- Text for the snackbar to confirm that multiple browsing history items has been deleted -->
     <string name="history_delete_multiple_items_snackbar">Historia poistettu</string>
     <!-- Text for the snackbar to confirm that a single browsing history item has been deleted. The first parameter is the shortened URL of the deleted history item. -->
     <string name="history_delete_single_item_snackbar">%1$s poistettu</string>
-    <!-- Text for positive action to delete history in deleting history dialog -->
-    <string name="history_clear_dialog">Tyhjennä</string>
-    <!-- History overflow menu copy button -->
-    <string name="history_menu_copy_button">Kopioi</string>
-    <!-- History overflow menu share button -->
-    <string name="history_menu_share_button">Jaa</string>
-    <!-- History overflow menu open in new tab button -->
-    <string name="history_menu_open_in_new_tab_button">Avaa uudessa välilehdessä</string>
-    <!-- History overflow menu open in private tab button -->
-    <string name="history_menu_open_in_private_tab_button">Avaa yksityisessä välilehdessä</string>
-    <!-- Text for the button to delete a single history item -->
+    <!-- Context description text for the button to delete a single history item -->
     <string name="history_delete_item">Poista</string>
     <!-- History multi select title in app bar
     The first parameter is the number of bookmarks selected -->
     <string name="history_multi_select_title">%1$d valittu</string>
-    <!-- Text for the button to clear selected history items. The first parameter
-        is a digit showing the number of items you have selected -->
-    <string name="history_delete_some">Poista %1$d tietuetta</string>
 
     <!-- Text for the header that groups the history for today -->
     <string name="history_today">Tänään</string>
     <!-- Text for the header that groups the history for yesterday -->
     <string name="history_yesterday">Eilen</string>
-    <!-- Text for the header that groups the history for last 24 hours -->
-    <string name="history_24_hours">Viimeiset 24 tuntia</string>
     <!-- Text for the header that groups the history the past 7 days -->
     <string name="history_7_days">Viimeiset 7 päivää</string>
     <!-- Text for the header that groups the history the past 30 days -->
@@ -802,10 +804,6 @@
     <string name="history_empty_message">Ei historiaa täällä</string>
 
     <!-- Downloads -->
-    <!-- Text for the button to clear all downloads -->
-    <string name="download_delete_all">Poista lataukset</string>
-    <!-- Text for the dialog to confirm clearing all downloads -->
-    <string name="download_delete_all_dialog">Haluatko varmasti tyhjentää lataukset?</string>
     <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
     <string name="download_delete_multiple_items_snackbar_1">Lataukset poistettu</string>
     <!-- Text for the snackbar to confirm that a single download item has been removed. The first parameter is the name of the download item. -->
@@ -816,9 +814,6 @@
     The first parameter is the number of downloads selected -->
     <string name="download_multi_select_title">%1$d valittu</string>
 
-    <!-- History overflow menu open in new tab button -->
-    <string name="download_menu_open">Avaa</string>
-
 
     <!-- Text for the button to remove a single download item -->
     <string name="download_delete_item_1">Poista</string>
@@ -827,8 +822,6 @@
     <!-- Crashes -->
     <!-- Title text displayed on the tab crash page. This first parameter is the name of the application (For example: Fenix) -->
     <string name="tab_crash_title_2">Pahoittelut, %1$s ei voi ladata tätä sivua.</string>
-    <!-- Description text displayed on the tab crash page -->
-    <string name="tab_crash_description">Voit yrittää palauttaa tai sulkea tämän välilehden alapuolelta.</string>
     <!-- Send crash report checkbox text on the tab crash page -->
     <string name="tab_crash_send_report">Lähetä kaatumisraportti Mozillalle</string>
     <!-- Close tab button text on the tab crash page -->
@@ -836,25 +829,13 @@
     <!-- Restore tab button text on the tab crash page -->
     <string name="tab_crash_restore">Palauta välilehti</string>
 
-    <!-- Content Description for session item menu button -->
-    <string name="content_description_session_menu">Istunnon valinnat</string>
-
-    <!-- Content Description for session item share button -->
-    <string name="content_description_session_share">Jaa istunto</string>
-
     <!-- Bookmarks -->
-    <!-- Content description for bookmarks library menu -->
-    <string name="bookmark_menu_content_description">Kirjanmerkkivalikko</string>
-    <!-- Screen title for editing bookmarks -->
-    <string name="bookmark_edit">Muokkaa kirjanmerkkiä</string>
-    <!-- Screen title for selecting a bookmarks folder -->
-    <string name="bookmark_select_folder">Valitse kansio</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete the selected folder -->
     <string name="bookmark_delete_folder_confirmation_dialog">Haluatko varmasti poistaa tämän kansion?</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete multiple items including folders. Parameter will be replaced by app name. -->
     <string name="bookmark_delete_multiple_folders_confirmation_dialog">%s poistaa valitut kohteet.</string>
-    <!-- Snackbar title shown after a folder has been deleted. This first parameter is the name of the deleted folder -->
-    <string name="bookmark_delete_folder_snackbar">%1$s poistettu</string>
+    <!-- Text for the cancel button on delete bookmark dialog -->
+    <string name="bookmark_delete_negative">Peruuta</string>
     <!-- Screen title for adding a bookmarks folder -->
     <string name="bookmark_add_folder">Lisää kansio</string>
     <!-- Snackbar title shown after a bookmark has been created. -->
@@ -863,8 +844,6 @@
     <string name="edit_bookmark_snackbar_action">MUOKKAA</string>
     <!-- Bookmark overflow menu edit button -->
     <string name="bookmark_menu_edit_button">Muokkaa</string>
-    <!-- Bookmark overflow menu select button -->
-    <string name="bookmark_menu_select_button">Valitse</string>
     <!-- Bookmark overflow menu copy button -->
     <string name="bookmark_menu_copy_button">Kopioi</string>
     <!-- Bookmark overflow menu share button -->
@@ -913,9 +892,10 @@
     <!-- Bookmark undo button for deletion snackbar action -->
     <string name="bookmark_undo_deletion">KUMOA</string>
 
+    <!-- Text for the button to search all bookmarks -->
+    <string name="bookmark_search">Kirjoita hakuehdot</string>
+
     <!-- Site Permissions -->
-    <!-- Site permissions preferences header -->
-    <string name="permissions_header">Oikeudet</string>
     <!-- Button label that take the user to the Android App setting -->
     <string name="phone_feature_go_to_settings">Siirry asetuksiin</string>
     <!-- Content description (not visible, for screen readers etc.): Quick settings sheet
@@ -924,12 +904,18 @@
     <string name="quick_settings_sheet">Pika-asetuslomake</string>
     <!-- Label that indicates that this option it the recommended one -->
     <string name="phone_feature_recommended">Suositeltu</string>
-    <!-- button that allows editing site permissions settings -->
-    <string name="quick_settings_sheet_manage_site_permissions">Hallitse sivustojen oikeuksia</string>
     <!-- Button label for clearing all the information of site permissions-->
     <string name="clear_permissions">Tyhjennä oikeudet</string>
+    <!-- Text for the OK button on Clear permissions dialog -->
+    <string name="clear_permissions_positive">OK</string>
+    <!-- Text for the cancel button on Clear permissions dialog -->
+    <string name="clear_permissions_negative">Peruuta</string>
     <!-- Button label for clearing a site permission-->
     <string name="clear_permission">Tyhjennä oikeus</string>
+    <!-- Text for the OK button on Clear permission dialog -->
+    <string name="clear_permission_positive">OK</string>
+    <!-- Text for the cancel button on Clear permission dialog -->
+    <string name="clear_permission_negative">Peruuta</string>
     <!-- Button label for clearing all the information on all sites-->
     <string name="clear_permissions_on_all_sites">Tyhjennä oikeudet kaikilta sivustoilta</string>
     <!-- Preference for altering video and audio autoplay for all websites -->
@@ -944,6 +930,8 @@
     <string name="preference_phone_feature_notification">Ilmoitus</string>
     <!-- Preference for altering the persistent storage access for all websites -->
     <string name="preference_phone_feature_persistent_storage">Pysyvä tallennustila</string>
+    <!-- Preference for altering the storage access setting for all websites -->
+    <string name="preference_phone_feature_cross_origin_storage_access">Sivustorajat ylittävät evästeet</string>
     <!-- Preference for altering the EME access for all websites -->
     <string name="preference_phone_feature_media_key_system_access">DRM-suojattu sisältö</string>
     <!-- Label that indicates that a permission must be asked always -->
@@ -1029,25 +1017,30 @@
     <!-- Snackbar action to view the collection the user just created or updated -->
     <string name="create_collection_view">Näytä</string>
 
+    <!-- Text for the OK button from collection dialogs -->
+    <string name="create_collection_positive">OK</string>
+    <!-- Text for the cancel button from collection dialogs -->
+    <string name="create_collection_negative">Peruuta</string>
+
     <!-- Default name for a new collection in "name new collection" step of the collection creator. %d is a placeholder for the number of collections-->
     <string name="create_collection_default_name">Kokoelma %d</string>
 
     <!-- Share -->
     <!-- Share screen header -->
-    <string name="share_header">Lähetä ja jaa</string>
-    <!-- Share screen header -->
     <string name="share_header_2">Jaa</string>
     <!-- Content description (not visible, for screen readers etc.):
         "Share" button. Opens the share menu when pressed. -->
     <string name="share_button_content_description">Jaa</string>
-    <!-- Sub-header in the dialog to share a link to another app -->
-    <string name="share_link_subheader">Jaa linkki</string>
     <!-- Sub-header in the dialog to share a link to another sync device -->
     <string name="share_device_subheader">Lähetä laitteeseen</string>
     <!-- Sub-header in the dialog to share a link to an app from the full list -->
     <string name="share_link_all_apps_subheader">Kaikki toiminnot</string>
     <!-- Sub-header in the dialog to share a link to an app from the most-recent sorted list -->
     <string name="share_link_recent_apps_subheader">Äskettäin käytetty</string>
+    <!-- Text for the copy link action in the share screen. -->
+    <string name="share_copy_link_to_clipboard">Kopioi leikepöydälle</string>
+    <!-- Toast shown after copying link to clipboard -->
+    <string name="toast_copy_link_to_clipboard">Kopioitu leikepöydälle</string>
     <!-- An option from the three dot menu to into sync -->
     <string name="sync_menu_sign_in">Kirjaudu Sync-palveluun</string>
     <!-- An option from the share dialog to sign into sync -->
@@ -1077,18 +1070,8 @@
     <string name="sync_add_new_device_connect_button">Yhdistä muu laite…</string>
 
     <!-- Notifications -->
-    <!-- The user visible name of the "notification channel" (Android 8+ feature) for the ongoing notification shown while a browsing session is active. -->
-    <string name="notification_pbm_channel_name">Yksityisen selauksen istunto</string>
-    <!-- Text shown in the notification that pops up to remind the user that a private browsing session is active. -->
-    <string name="notification_pbm_delete_text">Poista yksityiset välilehdet</string>
     <!-- Text shown in the notification that pops up to remind the user that a private browsing session is active. -->
     <string name="notification_pbm_delete_text_2">Sulje yksityiset välilehdet</string>
-    <!-- Notification action to open Fenix and resume the current browsing session. -->
-    <string name="notification_pbm_action_open">Avaa</string>
-    <!-- Notification action to delete all current private browsing sessions AND switch to Fenix (bring it to the foreground) -->
-    <string name="notification_pbm_action_delete_and_open">Poista ja avaa</string>
-    <!-- Name of the "Powered by Fenix" notification channel. Displayed in the "App notifications" system settings for the app -->
-    <string name="notification_powered_by_channel_name">Mahdollistajana</string>
     <!-- Name of the marketing notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="notification_marketing_channel_name">Markkintointi</string>
     <!-- Title shown in the notification that pops up to remind the user to set fenix as default browser.
@@ -1103,36 +1086,24 @@
     <string name="snackbar_collection_deleted">Kokoelma poistettu</string>
     <!-- Text shown in snackbar when user renames a collection -->
     <string name="snackbar_collection_renamed">Kokoelma nimetty uudelleen</string>
-    <!-- Text shown in snackbar when user deletes a tab -->
-    <string name="snackbar_tab_deleted">Välilehti poistettu</string>
-    <!-- Text shown in snackbar when user deletes all tabs -->
-    <string name="snackbar_tabs_deleted">Välilehdet poistettu</string>
     <!-- Text shown in snackbar when user closes a tab -->
     <string name="snackbar_tab_closed">Välilehti suljettu</string>
     <!-- Text shown in snackbar when user closes all tabs -->
     <string name="snackbar_tabs_closed">Välilehdet suljettu</string>
-    <!-- Text shown in snackbar when user closes tabs -->
-    <string name="snackbar_message_tabs_closed">Välilehdet suljettu!</string>
     <!-- Text shown in snackbar when user bookmarks a list of tabs -->
     <string name="snackbar_message_bookmarks_saved">Kirjanmerkit tallennettu!</string>
-    <!-- Text shown in snackbar action for viewing bookmarks -->
-    <string name="snackbar_message_bookmarks_view">Näytä</string>
     <!-- Text shown in snackbar when user adds a site to top sites -->
-    <string name="snackbar_added_to_top_sites">Lisätty ykkössivustoihin!</string>
+    <string moz:RemovedIn="101" name="snackbar_added_to_top_sites" tools:ignore="UnusedResources">Lisätty ykkössivustoihin!</string>
+    <!-- Text shown in snackbar when user adds a site to shortcuts -->
+    <string name="snackbar_added_to_shortcuts">Lisätty pikavalintoihin!</string>
     <!-- Text shown in snackbar when user closes a private tab -->
     <string name="snackbar_private_tab_closed">Yksityinen välilehti suljettu</string>
     <!-- Text shown in snackbar when user closes all private tabs -->
     <string name="snackbar_private_tabs_closed">Yksityiset välilehdet suljettu</string>
-    <!-- Text shown in snackbar when user deletes all private tabs -->
-    <string name="snackbar_private_tabs_deleted">Yksityiset välilehdet poistettu</string>
     <!-- Text shown in snackbar to undo deleting a tab, top site or collection -->
     <string name="snackbar_deleted_undo">KUMOA</string>
     <!-- Text shown in snackbar when user removes a top site -->
     <string name="snackbar_top_site_removed">Sivusto poistettu</string>
-    <!-- Text for action to undo deleting a tab or collection shown in a11y dialog -->
-    <string name="a11y_dialog_deleted_undo">Kumoa</string>
-    <!-- Text for action to confirm deleting a tab or collection shown in a11y dialog -->
-    <string name="a11y_dialog_deleted_confirm">Vahvista</string>
     <!-- QR code scanner prompt which appears after scanning a code, but before navigating to it
         First parameter is the name of the app, second parameter is the URL or text scanned-->
     <string name="qr_scanner_confirmation_dialog_message">Salli %1$sin avata %2$s</string>
@@ -1140,6 +1111,10 @@
     <string name="qr_scanner_dialog_positive">SALLI</string>
     <!-- QR code scanner prompt dialog positive option to deny navigation to scanned link -->
     <string name="qr_scanner_dialog_negative">ESTÄ</string>
+    <!-- QR code scanner prompt dialog error message shown when a hostname does not contain http or https. -->
+    <string name="qr_scanner_dialog_invalid">Verkko-osoite ei ole kelvollinen.</string>
+    <!-- QR code scanner prompt dialog positive option when there is an error -->
+    <string name="qr_scanner_dialog_invalid_ok">OK</string>
     <!-- Tab collection deletion prompt dialog message. Placeholder will be replaced with the collection name -->
     <string name="tab_collection_dialog_message">Poistetaanko %1$s?</string>
     <!-- Collection and tab deletion prompt dialog message. This will show when the last tab from a collection is deleted -->
@@ -1148,8 +1123,6 @@
     <string name="delete_tab_and_collection_dialog_title">Poistetaanko %1$s?</string>
     <!-- Tab collection deletion prompt dialog option to delete the collection -->
     <string name="tab_collection_dialog_positive">Poista</string>
-    <!-- Tab collection deletion prompt dialog option to cancel deleting the collection -->
-    <string moz:removedIn="93" name="tab_collection_dialog_negative" tools:ignore="UnusedResources">Peruuta</string>
 
     <!-- Text displayed in a notification when the user enters full screen mode -->
     <string name="full_screen_notification">Siirrytään koko näytön tilaan</string>
@@ -1179,11 +1152,6 @@
     <!-- Subtitle for the data and history items in delete browsing data, parameter will be replaced with the
         number of history items the user has -->
     <string name="preferences_delete_browsing_data_browsing_data_subtitle">%d osoitetta</string>
-    <!-- Title for history items in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_browsing_history_title">Historia</string>
-    <!-- Subtitle for the history items in delete browsing data, parameter will be replaced with the
-        number of history pages the user has -->
-    <string name="preferences_delete_browsing_data_browsing_history_subtitle">%d sivua</string>
     <!-- Title for the cookies item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_cookies">Evästeet</string>
     <!-- Subtitle for the cookies item in Delete browsing data -->
@@ -1202,8 +1170,6 @@
     <!-- Title for the Delete browsing data on quit preference -->
     <string name="preferences_delete_browsing_data_on_quit">Poista selaustiedot lopettaessa</string>
 
-    <!-- Summary for the Delete browsing data on quit preference. "Quit" translation should match delete_browsing_data_on_quit_action translation. -->
-    <string name="preference_summary_delete_browsing_data_on_quit">Poistaa automaattisesti selaustiedot, kun valitset &quot;Lopeta&quot; päävalikosta</string>
     <!-- Summary for the Delete browsing data on quit preference. "Quit" translation should match delete_browsing_data_on_quit_action translation. -->
     <string name="preference_summary_delete_browsing_data_on_quit_2">Poistaa automaattisesti selaustiedot, kun valitset \&quot;Lopeta\&quot; päävalikosta</string>
 
@@ -1226,73 +1192,54 @@
 
     <!-- Tips -->
     <!-- text for firefox preview moving tip header "Firefox Preview" and "Firefox Nightly" are intentionally hardcoded -->
-    <string name="tip_firefox_preview_moved_header">Firefox Preview on nyt Firefox Nightly</string>
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_header" tools:ignore="UnusedResources">Firefox Preview on nyt Firefox Nightly</string>
     <!-- text for firefox preview moving tip description -->
-    <string name="tip_firefox_preview_moved_description">Firefox Nightly saa päivityksiä joka yö ja se sisältää kokeellisia uusia ominaisuuksia.
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_description" tools:ignore="UnusedResources">Firefox Nightly saa päivityksiä joka yö ja se sisältää kokeellisia uusia ominaisuuksia.
         Se saattaa kuitenkin olla betaversiota epävakaampi. Lataa betavaiheen selain Nightlya vakaamman kokemuksen saamiseksi.</string>
 
     <!-- text for firefox preview moving tip button. "Firefox for Android Beta" is intentionally hardcoded -->
-    <string name="tip_firefox_preview_moved_button_2">Hanki Firefoxin betaversio Androidille</string>
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_button_2" tools:ignore="UnusedResources">Hanki Firefoxin betaversio Androidille</string>
 
     <!-- text for firefox preview moving tip header. "Firefox Nightly" is intentionally hardcoded -->
-    <string name="tip_firefox_preview_moved_header_preview_installed">Firefox Nightly on muuttanut</string>
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_header_preview_installed" tools:ignore="UnusedResources">Firefox Nightly on muuttanut</string>
     <!-- text for firefox preview moving tip description -->
-    <string name="tip_firefox_preview_moved_description_preview_installed">Tämä sovellus ei saa enää tietoturvapäivityksiä. Lopeta tämän sovelluksen käyttö ja vaihda uuteen Nightly-versioon.
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_description_preview_installed" tools:ignore="UnusedResources">Tämä sovellus ei saa enää tietoturvapäivityksiä. Lopeta tämän sovelluksen käyttö ja vaihda uuteen Nightly-versioon.
         \n\nSiirrä kirjanmerkit, kirjautumistiedot ja historia toiseen sovellukseen käyttämällä Firefox-tiliä.</string>
     <!-- text for firefox preview moving tip button  -->
-    <string name="tip_firefox_preview_moved_button_preview_installed">Vaihda uuteen Nightlyyn</string>
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_button_preview_installed" tools:ignore="UnusedResources">Vaihda uuteen Nightlyyn</string>
 
     <!-- text for firefox preview moving tip header. "Firefox Nightly" is intentionally hardcoded -->
-    <string name="tip_firefox_preview_moved_header_preview_not_installed">Firefox Nightly on muuttanut</string>
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_header_preview_not_installed" tools:ignore="UnusedResources">Firefox Nightly on muuttanut</string>
     <!-- text for firefox preview moving tip description -->
-    <string name="tip_firefox_preview_moved_description_preview_not_installed">Tämä sovellus ei saa enää tietoturvapäivityksiä Hanki uusi Nightly ja lopeta tämän sovelluksen käyttö.
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_description_preview_not_installed" tools:ignore="UnusedResources">Tämä sovellus ei saa enää tietoturvapäivityksiä Hanki uusi Nightly ja lopeta tämän sovelluksen käyttö.
         \n\nSiirrä kirjanmerkit, kirjautumistiedot ja historia toiseen sovellukseen käyttämällä Firefox-tiliä.</string>
     <!-- text for firefox preview moving tip button  -->
-    <string name="tip_firefox_preview_moved_button_preview_not_installed">Hanki uusi Nightly</string>
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_button_preview_not_installed" tools:ignore="UnusedResources">Hanki uusi Nightly</string>
 
     <!-- Onboarding -->
     <!-- Text for onboarding welcome message
     The first parameter is the name of the app (e.g. Firefox Preview) -->
     <string name="onboarding_header">Tervetuloa %siin!</string>
-    <!-- text for the Firefox Accounts section header -->
-    <string name="onboarding_fxa_section_header">Onko sinulla jo tili?</string>
-    <!-- text for the "What's New" onboarding card header -->
-    <string name="onboarding_whats_new_header1">Katso, mikä on uutta</string>
-    <!-- text for the "what's new" onboarding card description
-    The first parameter is the short name of the app (e.g. Firefox) -->
-    <string name="onboarding_whats_new_description">Kysymyksiä liittyen uudistettuun %siin? Haluatko tietää, mikä kaikki on muuttunut?</string>
-    <!-- text for underlined clickable link that is part of "what's new" onboarding card description that links to an FAQ -->
-    <string name="onboarding_whats_new_description_linktext">Vastauksia on tarjolla täällä</string>
     <!-- text for the Firefox account onboarding sign in card header. The word "Firefox" should not be translated -->
     <string name="onboarding_account_sign_in_header_1">Synkronoi Firefox laitteidesi välillä</string>
-    <!-- Text for the button to learn more about signing in to your Firefox account -->
-    <string name="onboarding_manual_sign_in_description">Tuo kirjanmerkit, historia ja salasanat Firefoxiin tässä laitteessa.</string>
-    <!-- text for the firefox account onboarding card header when we detect you're already signed in to
-        another Firefox browser. (The word `Firefox` should not be translated)
-        The first parameter is the email of the detected user's account -->
-    <string name="onboarding_firefox_account_auto_signin_header_3">Olet kirjautunut tilillä %s toiseen Firefox-selaimeen tällä laitteella. Haluatko kirjautua sisään tällä tilillä?</string>
-    <!-- text for the button to confirm automatic sign-in -->
-    <string name="onboarding_firefox_account_auto_signin_confirm">Kyllä, kirjaa minut sisään</string>
-    <!-- text for the automatic sign-in button while signing in is in process -->
-    <string name="onboarding_firefox_account_signing_in">Kirjaudutaan sisään…</string>
+    <!-- text for the Firefox account onboarding sign in card header. The first parameter is the name of the application.-->
+    <string moz:RemovedIn="100" name="onboarding_account_sign_in_header_2" tools:ignore="UnusedResources">Synkronoi %1$s laitteiden välillä</string>
+    <!-- Text for the button to learn more about signing in to your Firefox account. The first parameter is the name of the application.-->
+    <string name="onboarding_manual_sign_in_description_2">Tuo kirjanmerkit, historia ja salasanat %1$siin tässä laitteessa.</string>
     <!-- text for the button to manually sign into Firefox account. -->
     <string name="onboarding_firefox_account_sign_in_1">Rekisteröidy</string>
-    <!-- text for the button to stay signed out when presented with an option to automatically sign-in. -->
-    <string name="onboarding_firefox_account_stay_signed_out">Pysy uloskirjautuneena</string>
     <!-- text to display in the snackbar once account is signed-in -->
     <string name="onboarding_firefox_account_sync_is_on">Sync on käytössä</string>
-    <!-- text to display in the snackbar if automatic sign-in fails. user may try again -->
-    <string name="onboarding_firefox_account_automatic_signin_failed">Sisäänkirjautuminen epäonnistui</string>
     <!-- text for the tracking protection onboarding card header -->
     <string name="onboarding_tracking_protection_header_3">Yksityisyys aina päällä</string>
     <!-- text for the tracking protection card description. 'Firefox' intentionally hardcoded here -->
-    <string name="onboarding_tracking_protection_description_3">Firefox estää automaattisesti yrityksiä seuraamasta sinua salaa ympäri verkkoa.</string>
+    <string moz:RemovedIn="99" name="onboarding_tracking_protection_description_3" tools:ignore="UnusedResources">Firefox estää automaattisesti yrityksiä seuraamasta sinua salaa ympäri verkkoa.</string>
+    <!-- text for the tracking protection card description. The first parameter is the name of the application.-->
+    <string name="onboarding_tracking_protection_description_4">%1$s estää automaattisesti yrityksiä seuraamasta sinua salaa ympäri verkkoa.</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
     <string name="onboarding_tracking_protection_standard_button_2">Tavallinen (oletus)</string>
     <!-- text for standard blocking option button description -->
     <string name="onboarding_tracking_protection_standard_button_description_3">Tasapainotettu yksityisyyden ja suorituskyvyn välillä. Sivut latautuvat normaalisti.</string>
-    <!-- text for tracking protection radio button option for strict level of blocking -->
-    <string name="onboarding_tracking_protection_strict_button">Tiukka (suositeltu)</string>
     <!-- text for tracking protection radio button option for strict level of blocking -->
     <string name="onboarding_tracking_protection_strict_option">Tiukka</string>
     <!-- text for strict blocking option button description -->
@@ -1301,15 +1248,6 @@
     <string name="onboarding_toolbar_placement_header_1">Valitse työkalupalkin sijoitus</string>
     <!-- text for the toolbar position card description -->
     <string name="onboarding_toolbar_placement_description_1">Sijoita työkalupalkki helposti ulottuville. Pidä se alhaalla tai siirrä se ylös.</string>
-    <!-- text for the private browsing onboarding card header -->
-    <string name="onboarding_private_browsing_header">Selaa yksityisesti</string>
-    <!-- text for the private browsing onboarding card description
-    The first parameter is an icon that represents private browsing -->
-    <string name="onboarding_private_browsing_description1">Avaa yksityinen välilehti kerran: napauta %s.</string>
-    <!-- text for the private browsing onboarding card description, explaining how to always using private browsing -->
-    <string name="onboarding_private_browsing_always_description">Avaa yksityisiä välilehtiä joka kerta: päivitä yksityisen selauksen asetukset.</string>
-    <!-- text for the private browsing onbording card button, that launches settings -->
-    <string name="onboarding_private_browsing_button">Avaa asetukset</string>
     <!-- text for the privacy notice onboarding card header -->
     <string name="onboarding_privacy_notice_header">Yksityisyytesi</string>
     <!-- text for the privacy notice onboarding card description
@@ -1317,9 +1255,6 @@
     <string name="onboarding_privacy_notice_description2">Olemme suunnitelleet %sin siten, että voit hallita mitä jaat verkossa ja mitä jaat kanssamme.</string>
     <!-- Text for the button to read the privacy notice -->
     <string name="onboarding_privacy_notice_read_button">Lue yksityisyyskäytäntömme</string>
-
-    <!-- Content description (not visible, for screen readers etc.): Close onboarding screen -->
-    <string moz:removedIn="93" name="onboarding_close" tools:ignore="UnusedResources">Sulje</string>
 
     <!-- text for the button to finish onboarding -->
     <string name="onboarding_finish">Aloita selaaminen</string>
@@ -1358,8 +1293,6 @@
     <string name="sign_in_with_email">Käytä sähköpostia</string>
     <!-- Text shown for settings option for create new account text.'Firefox' intentionally hardcoded here.-->
     <string name="sign_in_create_account_text"><![CDATA[Vailla tiliä? <u>Luo tili</u> synkronoidaksesi Firefox laitteiden välillä.]]></string>
-    <!-- Text shown in confirmation dialog to sign out of account -->
-    <string name="sign_out_confirmation_message">Firefox lopettaa tilisi synkronoinnin, mutta ei poista mitään selaustietoja tältä laitteelta.</string>
     <!-- Text shown in confirmation dialog to sign out of account. The first parameter is the name of the app (e.g. Firefox Preview) -->
     <string name="sign_out_confirmation_message_2">%s lopettaa synkronoinnin tilisi kanssa, mutta ei poista selaustietojasi tältä laitteelta.</string>
     <!-- Option to continue signing out of account shown in confirmation dialog to sign out of account -->
@@ -1416,8 +1349,6 @@
     <string name="preference_enhanced_tracking_protection_custom_tracking_content_1">Kaikissa välilehdissä</string>
     <!-- Option for enhanced tracking protection for the custom protection settings for tracking content-->
     <string name="preference_enhanced_tracking_protection_custom_tracking_content_2">Vain yksityisissä välilehdissä</string>
-    <!-- Option for enhanced tracking protection for the custom protection settings for tracking content-->
-    <string name="preference_enhanced_tracking_protection_custom_tracking_content_3">Vain mukautetuissa välilehdissä</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
     <string name="preference_enhanced_tracking_protection_custom_cryptominers">Kryptolouhijat</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
@@ -1448,8 +1379,6 @@
     <string name="etp_tracking_content_title">Seurantaan tarkoitettu sisältö</string>
     <!-- Description of tracking content that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_tracking_content_description">Estää lataamasta ulkopuolisia mainoksia, videoita ja muuta sisältöä, joka sisältää seurantakoodin. Voi vaikuttaa joidenkin verkkosivustojen toimimiseen.</string>
-    <!-- Enhanced Tracking Protection Onboarding Message shown in a dialog above the toolbar. The first parameter is the name of the application (For example: Fenix) -->
-    <string moz:removedIn="93" name="etp_onboarding_cfr_message" tools:ignore="UnusedResources">Aina kun kilven väri on violetti, %s on estänyt seuraimia sivustolla. Napauta saadaksesi lisätietoja.</string>
     <!-- Enhanced Tracking Protection message that protection is currently on for this site -->
     <string name="etp_panel_on">Suojaukset ovat PÄÄLLÄ tällä sivustolla</string>
     <!-- Enhanced Tracking Protection message that protection is currently off for this site -->
@@ -1459,10 +1388,6 @@
     <!-- Content description (not visible, for screen readers etc.): Navigate
     back from ETP details (Ex: Tracking content) -->
     <string name="etp_back_button_content_description">Siirry taaksepäin</string>
-    <!-- About page Your rights link text -->
-    <string name="about_your_rights">Oikeutesi</string>
-    <!-- About page link text to open open source licenses screen -->
-    <string name="about_open_source_licenses">Käyttämämme avoimen lähdekoodin kirjastot</string>
     <!-- About page link text to open what's new link -->
     <string name="about_whats_new">Mitä uutta %s sisältää</string>
     <!-- Open source licenses page title
@@ -1473,6 +1398,12 @@
     <string name="etp_redirect_trackers_title">Uudelleenohjausseuraimet</string>
     <!-- Description of redirect tracker cookies that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_redirect_trackers_description">Tyhjentää evästeet, jotka on asetettu tunnetuille seurantasivustoille johtavilla uudelleenohjauksilla.</string>
+
+    <!-- Description of the SmartBlock Enhanced Tracking Protection feature. The * symbol is intentionally hardcoded here,
+         as we use it on the UI to indicate which trackers have been partially unblocked.  -->
+    <string name="preference_etp_smartblock_description">Jotkin alapuolella näytettävät seuraimet ovat osittain estämättä tällä sivulla, koska olit vuorovaikutuksessa niiden kanssa *.</string>
+    <!-- Text displayed that links to website about enhanced tracking protection SmartBlock -->
+    <string name="preference_etp_smartblock_learn_more">Lue lisää</string>
 
     <!-- About page link text to open support link -->
     <string name="about_support">Tuki</string>
@@ -1491,11 +1422,6 @@
         The first parameter is number of long clicks left to enable the menu -->
     <string name="about_debug_menu_toast_progress">Vianjäljitysvalikko: napsautuksia jäljellä %1$d</string>
     <string name="about_debug_menu_toast_done">Vianjäljitysvalikko käytössä</string>
-
-    <!-- Content description of the tab counter toolbar button when one tab is open -->
-    <string name="tab_counter_content_description_one_tab">1 välilehti</string>
-    <!-- Content description of the tab counter toolbar button when multiple tabs are open. First parameter will be replaced with the number of tabs (always more than one) -->
-    <string name="tab_counter_content_description_multi_tab">%d välilehteä</string>
   
     <!-- Browser long press popup menu -->
     <!-- Copy the current url -->
@@ -1518,7 +1444,7 @@
     <!-- Continue to website button text for the first-time Add to Homescreen dialog -->
     <string name="add_to_homescreen_continue">Jatka sivustolle</string>
     <!-- Placeholder text for the TextView in the Add to Homescreen dialog -->
-    <string name="add_to_homescreen_text_placeholder">Pikakuvakkeen nimi</string>
+    <string name="add_to_homescreen_text_placeholder">Pikavalinnan nimi</string>
 
     <!-- Describes the add to homescreen functionality -->
     <string name="add_to_homescreen_description_2">Voit lisätä tämän sivuston laitteesi aloitusnäytölle, jolloin sivuston käyttö onnistuu nopeasti ja tarjoaa sovelluksen kaltaisen kokemuksen.</string>
@@ -1531,8 +1457,6 @@
     <string name="preferences_passwords_save_logins_ask_to_save">Kysy tallennusta</string>
     <!-- Preference option for never saving passwords in Fenix -->
     <string name="preferences_passwords_save_logins_never_save">Älä tallenna koskaan</string>
-    <!-- Preference for autofilling saved logins in Fenix -->
-    <string moz:removedIn="93" name="preferences_passwords_autofill" tools:ignore="UnusedResources">Automaattinen täyttö</string>
 
     <!-- Preference for autofilling saved logins in Firefox (in web content), %1$s will be replaced with the app name -->
     <string name="preferences_passwords_autofill2">Täytä automaattisesti sovelluksessa %1$s</string>
@@ -1543,14 +1467,13 @@
     <!-- Description for the preference for autofilling logins from Fenix in other apps (e.g. autofilling the Twitter app) -->
     <string name="preferences_android_autofill_description">Täytä käyttäjätunnukset ja salasanat muissa laitteesi sovelluksissa.</string>
 
+    <!-- Preference option for adding a login -->
+    <string name="preferences_logins_add_login">Lisää kirjautumistieto</string>
+
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">Synkronoi kirjautumistiedot</string>
     <!-- Preference for syncing saved logins in Fenix, when not signed in-->
     <string name="preferences_passwords_sync_logins_across_devices">Synkronoi kirjautumistiedot laitteiden välillä</string>
-    <!-- Syncing saved logins in Fenix needs reconnect to sync -->
-    <string name="preferences_passwords_sync_logins_reconnect">Yhdistä uudelleen</string>
-    <!-- Syncing saved logins in Fenix needs login -->
-    <string name="preferences_passwords_sync_logins_sign_in">Kirjaudu Sync-palveluun</string>
     <!-- Preference to access list of saved logins -->
     <string name="preferences_passwords_saved_logins">Tallennetut kirjautumistiedot</string>
     <!-- Description of empty list of saved passwords. Placeholder is replaced with app name.  -->
@@ -1567,36 +1490,16 @@
     <string name="preferences_passwords_exceptions_remove_all">Poista kaikki poikkeukset</string>
     <!-- Hint for search box in logins list -->
     <string name="preferences_passwords_saved_logins_search">Etsi kirjautumistiedoista</string>
-    <!-- Option to sort logins list A-Z, alphabetically -->
-    <string name="preferences_passwords_saved_logins_alphabetically">Aakkosjärjestys</string>
-    <!-- Option to sort logins list by most recently used -->
-    <string name="preferences_passwords_saved_logins_recently_used">Äskettäin käytetty</string>
     <!-- The header for the site that a login is for -->
     <string name="preferences_passwords_saved_logins_site">Sivusto</string>
     <!-- The header for the username for a login -->
     <string name="preferences_passwords_saved_logins_username">Käyttäjätunnus</string>
     <!-- The header for the password for a login -->
     <string name="preferences_passwords_saved_logins_password">Salasana</string>
-    <!-- Message displayed in security prompt to reenter a secret pin to access saved logins -->
-    <string name="preferences_passwords_saved_logins_enter_pin">Kirjoita PIN uudelleen</string>
-    <!-- Message displayed in security prompt to access saved logins -->
-    <string name="preferences_passwords_saved_logins_enter_pin_description">Avaa lukitus nähdäksesi tallennetut kirjautumistiedot</string>
-    <!-- Message displayed when a connection is insecure and we detect the user is entering a password -->
-    <string name="logins_insecure_connection_warning">Tämä yhteys ei ole suojattu. Kirjautumistiedot saattavat vaarantua.</string>
-    <!-- Learn more link that will link to a page with more information displayed when a connection is insecure and we detect the user is entering a password -->
-    <string name="logins_insecure_connection_warning_learn_more">Lue lisää</string>
-    <!-- Prompt message displayed when Fenix detects a user has entered a password and user decides if Fenix should save it. The first parameter is the name of the application (For example: Fenix)  -->
-    <string name="logins_doorhanger_save">Haluatko, että %s tallentaa tämän kirjautumistiedon?</string>
-    <!-- Positive confirmation that Fenix should save the new or updated login -->
-    <string name="logins_doorhanger_save_confirmation">Tallenna</string>
-    <!-- Negative confirmation that Fenix should not save the new or updated login -->
-    <string name="logins_doorhanger_save_dont_save">Älä tallenna</string>
     <!-- Shown in snackbar to tell user that the password has been copied -->
     <string name="logins_password_copied">Salasana kopioitu leikepöydälle</string>
     <!-- Shown in snackbar to tell user that the username has been copied -->
     <string name="logins_username_copied">Käyttäjätunnus kopioitu leikepöydälle</string>
-    <!-- Shown in snackbar to tell user that the site has been copied -->
-    <string name="logins_site_copied">Sivusto kopioitu leikepöydälle</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a password in logins-->
     <string name="saved_logins_copy_password">Kopioi salasana</string>
     <!-- Content Description (for screenreaders etc) read for the button to clear a password while editing a login-->
@@ -1605,8 +1508,8 @@
     <string name="saved_login_copy_username">Kopioi käyttäjätunnus</string>
     <!-- Content Description (for screenreaders etc) read for the button to clear a username while editing a login -->
     <string name="saved_login_clear_username">Tyhjennä käyttäjätunnus</string>
-    <!-- Content Description (for screenreaders etc) read for the button to copy a site in logins -->
-    <string name="saved_login_copy_site">Kopioi sivusto</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear the hostname field while creating a login -->
+    <string name="saved_login_clear_hostname">Tyhjennä isäntänimi</string>
     <!-- Content Description (for screenreaders etc) read for the button to open a site in logins -->
     <string name="saved_login_open_site">Avaa sivusto selaimessa</string>
     <!-- Content Description (for screenreaders etc) read for the button to reveal a password in logins -->
@@ -1668,17 +1571,19 @@
     <string name="credit_cards_expiration_date_year">Vanhenemispäivän vuosi</string>
     <!-- The header for the name on the credit card -->
     <string name="credit_cards_name_on_card">Nimi kortissa</string>
-    <!-- The header for the nickname for a credit card -->
-    <string name="credit_cards_card_nickname">Kortin kutsumanimi</string>
     <!-- The text for the "Delete card" menu item for deleting a credit card -->
     <string name="credit_cards_menu_delete_card">Poista kortti</string>
     <!-- The text for the "Delete card" button for deleting a credit card -->
     <string name="credit_cards_delete_card_button">Poista kortti</string>
+    <!-- The text for the confirmation message of "Delete card" dialog -->
+    <string name="credit_cards_delete_dialog_confirmation">Haluatko varmasti poistaa tämän luottokortin?</string>
+    <!-- The text for the positive button on "Delete card" dialog -->
+    <string name="credit_cards_delete_dialog_button">Poista</string>
     <!-- The title for the "Save" menu item for saving a credit card -->
     <string name="credit_cards_menu_save">Tallenna</string>
     <!-- The text for the "Save" button for saving a credit card -->
     <string name="credit_cards_save_button">Tallenna</string>
-    <!-- The text for the "Cancel" button for cancelling adding or updating a credit card -->
+    <!-- The text for the "Cancel" button for cancelling adding, updating or deleting a credit card -->
     <string name="credit_cards_cancel_button">Peruuta</string>
 
     <!-- Title of the "Saved cards" screen -->
@@ -1726,18 +1631,12 @@
     <string name="search_add_custom_engine_search_string_hint">Käytettävä hakujono</string>
     <!-- Description text for the Search String TextField. The %s is part of the string -->
     <string formatted="false" name="search_add_custom_engine_search_string_example">Korvaa kysely käyttäen ”%s”. Esimerkki:\nhttps://www.google.com/search?q=%s</string>
-    <!-- Text for the button to learn more about adding a custom search engine -->
-    <string name="search_add_custom_engine_learn_more_label">Lue lisää</string>
 
     <!-- Accessibility description for the form in which details about the custom search engine are entered -->
     <string name="search_add_custom_engine_form_description">Mukautetun hakukoneen tiedot</string>
-    <!-- Accessibility description for the 'Learn more' link -->
-    <string name="search_add_custom_engine_learn_more_description">Lue lisää -linkki</string>
 
     <!-- Text shown when a user leaves the name field empty -->
     <string name="search_add_custom_engine_error_empty_name">Anna hakukoneen nimi</string>
-    <!-- Text shown when a user tries to add a search engine that already exists -->
-    <string name="search_add_custom_engine_error_existing_name">Hakukone nimeltä ”%s” on jo olemassa.</string>
     <!-- Text shown when a user leaves the search string field empty -->
     <string name="search_add_custom_engine_error_empty_search_string">Kirjoita hakujono</string>
     <!-- Text shown when a user leaves out the required template string -->
@@ -1752,17 +1651,17 @@
     <string name="search_delete_search_engine_success_message">Poistettiin %s</string>
 
     <!-- Title text shown for the migration screen to the new browser. Placeholder replaced with app name -->
-    <string name="migration_title">Tervetuloa, käytössäsi on täysin uudistunut %s</string>
+    <string moz:removedIn="100" name="migration_title" tools:ignore="UnusedResources">Tervetuloa, käytössäsi on täysin uudistunut %s</string>
     <!-- Description text followed by a list of things migrating (e.g. Bookmarks, History). Placeholder replaced with app name-->
-    <string name="migration_description">Täysin uudistettu selain odottaa sinua. Paranneltu suorityskyky ja ominaisuudet auttavat sinua tekemään aiempaa enemmän verkossa.\n\nOdota kunnes %s päivitetään</string>
+    <string moz:removedIn="100" name="migration_description" tools:ignore="UnusedResources">Täysin uudistettu selain odottaa sinua. Paranneltu suorityskyky ja ominaisuudet auttavat sinua tekemään aiempaa enemmän verkossa.\n\nOdota kunnes %s päivitetään</string>
     <!-- Text on the disabled button while in progress. Placeholder replaced with app name -->
-    <string name="migration_updating_app_button_text">Päivitetään %s…</string>
+    <string moz:removedIn="100" name="migration_updating_app_button_text" tools:ignore="UnusedResources">Päivitetään %s…</string>
     <!-- Text on the enabled button. Placeholder replaced with app name-->
-    <string name="migration_update_app_button">Käynnistä %s</string>
+    <string moz:removedIn="100" name="migration_update_app_button" tools:ignore="UnusedResources">Käynnistä %s</string>
     <!-- Accessibility description text for a completed migration item -->
-    <string name="migration_icon_description">Migraatio valmistui</string>
+    <string moz:removedIn="100" name="migration_icon_description" tools:ignore="UnusedResources">Migraatio valmistui</string>
     <!--Text on list of migrated items (e.g. Settings, History, etc.)-->
-    <string name="migration_text_passwords">Salasanat</string>
+    <string moz:removedIn="100" name="migration_text_passwords" tools:ignore="UnusedResources">Salasanat</string>
 
     <!-- Heading for the instructions to allow a permission -->
     <string name="phone_feature_blocked_intro">Salliaksesi sen:</string>
@@ -1775,9 +1674,13 @@
     <string name="phone_feature_blocked_step_feature"><![CDATA[3. Aseta <b>%1$s</b> PÄÄLLÄ-asentoon]]></string>
 
     <!-- Label that indicates a site is using a secure connection -->
-    <string name="quick_settings_sheet_secure_connection">Suojattu yhteys</string>
+    <string name="quick_settings_sheet_secure_connection_2">Yhteys on suojattu</string>
     <!-- Label that indicates a site is using a insecure connection -->
-    <string name="quick_settings_sheet_insecure_connection">Suojaamaton yhteys</string>
+    <string name="quick_settings_sheet_insecure_connection_2">Yhteys ei ole suojattu</string>
+    <!-- Label to clear site data -->
+    <string name="clear_site_data">Tyhjennä evästeet ja sivustotiedot</string>
+    <!-- Confirmation message for a dialog confirming if the user wants to delete all data for current site -->
+    <string name="confirm_clear_site_data"><![CDATA[Haluatko varmasti poistaa kaikki evästeet ja tyhjentää tiedot sivuston <b>%s</b> osalta?]]></string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete all the permissions for all sites-->
     <string name="confirm_clear_permissions_on_all_sites">Haluatko varmasti tyhjentää kaikki oikeudet kaikkien sivustojen osalta?</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete all the permissions for a site-->
@@ -1786,12 +1689,16 @@
     <string name="confirm_clear_permission_site">Haluatko varmasti tyhjentää tämän oikeuden tämän sivuston osalta?</string>
     <!-- label shown when there are not site exceptions to show in the site exception settings -->
     <string name="no_site_exceptions">Ei sivustopoikkeuksia</string>
-    <!-- Label for the Pocket default top site -->
-    <string name="pocket_top_articles">Suosituimmat artikkelit</string>
     <!-- Bookmark deletion confirmation -->
     <string name="bookmark_deletion_confirmation">Haluatko varmasti poistaa tämän kirjanmerkin?</string>
     <!-- Browser menu button that adds a top site to the home fragment -->
-    <string name="browser_menu_add_to_top_sites">Lisää ykkössivustoihin</string>
+    <string moz:RemovedIn="101" name="browser_menu_add_to_top_sites" tools:ignore="UnusedResources">Lisää ykkössivustoihin</string>
+    <!-- Browser menu button that removes a top site from the home fragment -->
+    <string moz:RemovedIn="101" name="browser_menu_remove_from_top_sites" tools:ignore="UnusedResources">Poista ykkössivustoista</string>
+    <!-- Browser menu button that adds a shortcut to the home fragment -->
+    <string name="browser_menu_add_to_shortcuts">Lisää pikavalintoihin</string>
+    <!-- Browser menu button that removes a shortcut from the home fragment -->
+    <string name="browser_menu_remove_from_shortcuts">Poista pikavalinnoista</string>
     <!-- text shown before the issuer name to indicate who its verified by, parameter is the name of
      the certificate authority that verified the ticket-->
     <string name="certificate_info_verified_by">Varmentanut: %1$s</string>
@@ -1803,6 +1710,8 @@
     <string name="login_deletion_confirmation">Haluatko varmasti poistaa tämän kirjautumistiedon?</string>
     <!-- Positive action of a dialog asking to delete  -->
     <string name="dialog_delete_positive">Poista</string>
+    <!-- Negative action of a dialog asking to delete login -->
+    <string name="dialog_delete_negative">Peruuta</string>
     <!--  The saved login options menu description. -->
     <string name="login_options_menu">Kirjautumistietojen valinnat</string>
     <!--  The editable text field for a login's web address. -->
@@ -1813,12 +1722,16 @@
     <string name="saved_login_password_description">Muokattava tekstikenttä kirjautumisen salasanaa varten.</string>
     <!--  The button description to save changes to an edited login. -->
     <string name="save_changes_to_login">Tallenna muutokset kirjautumistietoihin.</string>
-    <!--  The button description to discard changes to an edited login. -->
-    <string name="discard_changes">Hylkää muutokset</string>
     <!--  The page title for editing a saved login. -->
     <string name="edit">Muokkaa</string>
-    <!--  The error message in edit login view when password field is blank. -->
+    <!--  The page title for adding new login. -->
+    <string name="add_login">Lisää uusi kirjautumistieto</string>
+    <!--  The error message in add/edit login view when password field is blank. -->
     <string name="saved_login_password_required">Salasana vaaditaan</string>
+    <!--  The error message in add login view when username field is blank. -->
+    <string name="saved_login_username_required">Käyttäjätunnus vaaditaan</string>
+    <!--  The error message in add login view when hostname field is blank. -->
+    <string name="saved_login_hostname_required" tools:ignore="UnusedResources">Isäntänimi vaaditaan</string>
     <!-- Voice search button content description  -->
     <string name="voice_search_content_description">Äänihaku</string>
     <!-- Voice search prompt description displayed after the user presses the voice search button -->
@@ -1826,6 +1739,13 @@
 
     <!--  The error message in edit login view when a duplicate username exists. -->
     <string name="saved_login_duplicate">Kirjautumistieto tällä käyttäjänimellä on jo olemassa</string>
+
+    <!-- This is the hint text that is shown inline on the hostname field of the create new login page. 'https://www.example.com' intentionally hardcoded here -->
+    <string name="add_login_hostname_hint_text">https://www.example.com</string>
+    <!-- This is an error message shown below the hostname field of the add login page when a hostname does not contain http or https. -->
+    <string name="add_login_hostname_invalid_text_3">Verkkosivun osoitteen tulee sisältää &quot;https://&quot; tai &quot;http://&quot;</string>
+    <!-- This is an error message shown below the hostname field of the add login page when a hostname is invalid. -->
+    <string name="add_login_hostname_invalid_text_2">Kelvollinen isäntänimi vaaditaan</string>
 
     <!-- Synced Tabs -->
     <!-- Text displayed to ask user to connect another device as no devices found with account -->
@@ -1836,6 +1756,8 @@
     <string name="synced_tabs_enable_tab_syncing">Ota välilehtien synkronointi käyttöön.</string>
     <!-- Text displayed when user has no tabs that have been synced -->
     <string name="synced_tabs_no_tabs">Sinulla ei ole muilla laitteilla avoimia välilehtiä Firefoxissa.</string>
+    <!-- Text displayed when user has no tabs that have been synced. The first parameter is the name of the application.-->
+    <string moz:RemovedIn="100" name="synced_tabs_no_tabs_2" tools:ignore="UnusedResources">Sinulla ei ole %1$sissa avoimia välilehtiä muilla laitteilla.</string>
     <!-- Text displayed in the synced tabs screen when a user is not signed in to Firefox Sync describing Synced Tabs -->
     <string name="synced_tabs_sign_in_message">Katso välilehtilistaus muilta laitteiltasi.</string>
     <!-- Text displayed on a button in the synced tabs screen to link users to sign in when a user is not signed in to Firefox Sync -->
@@ -1844,35 +1766,79 @@
     <!-- The text displayed when a synced device has no tabs to show in the list of Synced Tabs. -->
     <string name="synced_tabs_no_open_tabs">Ei avoimia välilehtiä</string>
 
+    <!-- Content description for expanding a group of synced tabs. -->
+    <string name="synced_tabs_expand_group">Laajenna synkronoitujen välilehtien ryhmää</string>
+    <!-- Content description for collapsing a group of synced tabs. -->
+    <string name="synced_tabs_collapse_group">Supista synkronoitujen välilehtien ryhmää</string>
+
     <!-- Top Sites -->
     <!-- Title text displayed in the dialog when top sites limit is reached. -->
-    <string name="top_sites_max_limit_title">Ykkössivustojen määrä täynnä</string>
+    <string moz:RemovedIn="101" name="top_sites_max_limit_title" tools:ignore="UnusedResources">Ykkössivustojen määrä täynnä</string>
+    <!-- Title text displayed in the dialog when shortcuts limit is reached. -->
+    <string name="shortcut_max_limit_title">Pikavalintojen raja tuli vastaan</string>
     <!-- Content description text displayed in the dialog when top sites limit is reached. -->
-    <string name="top_sites_max_limit_content_2">Lisätäksesi uuden ykkössivuston, poista yksi olemassa oleva. Kosketa sivustoa ja pidä pohjassa, sitten valitse poista.</string>
+    <string moz:RemovedIn="101" name="top_sites_max_limit_content_2" tools:ignore="UnusedResources">Lisätäksesi uuden ykkössivuston, poista yksi olemassa oleva. Kosketa sivustoa ja pidä pohjassa, sitten valitse poista.</string>
+    <!-- Content description text displayed in the dialog when shortcut limit is reached. -->
+    <string name="shortcut_max_limit_content">Lisätäksesi uuden pikavalinnan, poista yksi olemassa oleva. Kosketa sivustoa ja pidä pohjassa, sitten valitse poista.</string>
     <!-- Confirmation dialog button text when top sites limit is reached. -->
     <string name="top_sites_max_limit_confirmation_button">Selvä</string>
 
-    <!-- Label for the show most visited sites preference -->
-    <string name="top_sites_toggle_top_frecent_sites">Näytä vierailluimmat sivustot</string>
-
-    <!-- Title text displayed in the rename top site dialog. -->
+    <!-- Label for the preference to show the shortcuts for the most visited top sites on the homepage -->
+    <string name="top_sites_toggle_top_recent_sites_4">Pikavalinnat</string>
+	<!-- Title text displayed in the rename top site dialog. -->
 	<string name="top_sites_rename_dialog_title">Nimi</string>
 	<!-- Hint for renaming title of a top site -->
-	<string name="top_site_name_hint">Ykkössivuston nimi</string>
+	<string moz:RemovedIn="101" name="top_site_name_hint" tools:ignore="UnusedResources">Ykkössivuston nimi</string>
+    <!-- Hint for renaming title of a shortcut -->
+    <string name="shortcut_name_hint">Pikavalinnan nimi</string>
 	<!-- Button caption to confirm the renaming of the top site. -->
 	<string name="top_sites_rename_dialog_ok">OK</string>
 	<!-- Dialog button text for canceling the rename top site prompt. -->
 	<string name="top_sites_rename_dialog_cancel">Peruuta</string>
 
-    <!-- In-activate tabs in the tabs tray -->
-    <!-- Title text displayed in the tabs tray when a tab has been unused for 4 days. -->
+    <!-- Text for the menu button to open the homepage settings. -->
+    <string name="top_sites_menu_settings">Asetukset</string>
+    <!-- Text for the menu button to navigate to sponsors and privacy support articles. '&amp;' is replaced with the ampersand symbol: & -->
+    <string name="top_sites_menu_sponsor_privacy">Tukijamme ja yksityisyytesi</string>
+    <!-- Label text displayed for a sponsored top site. -->
+    <string name="top_sites_sponsored_label">Sponsoroitu</string>
+
+    <!-- Inactive tabs in the tabs tray -->
+    <!-- Title text displayed in the tabs tray when a tab has been unused for 14 days. -->
     <string name="inactive_tabs_title">Passiiviset välilehdet</string>
-    <!-- A description below the section of "inactive" tabs to notify the user when those tabs will be closed, if appropriate. See strings inactive_tabs_30_days and inactive_tabs_7_days for placeholders options. -->
-    <string name="inactive_tabs_description">Välilehdet pysyvät täällä %s. Sen jälkeen välilehdet suljetaan automattisesti.</string>
-    <!-- The amount of time until a tab in the "inactive" section of the tabs tray will be closed. See string inactive_tabs_description as well -->
-    <string name="inactive_tabs_30_days">30 päivää</string>
-    <!-- The amount of time until a tab in the "inactive" section of the tabs tray will be closed. See string inactive_tabs_description as well -->
-    <string name="inactive_tabs_7_days">1 viikon</string>
+    <!-- Content description for closing all inactive tabs -->
+    <string name="inactive_tabs_delete_all">Sulje kaikki passiiviset välilehdet</string>
+
+    <!-- Inactive tabs auto-close message in the tabs tray -->
+    <!-- The header text of the auto-close message when the user is asked if they want to turn on the auto-closing of inactive tabs. -->
+    <string name="inactive_tabs_auto_close_message_header" tools:ignore="UnusedResources">Suljetaanko automaattisesti kuukauden kuluttua?</string>
+    <!-- A description below the header to notify the user what the inactive tabs auto-close feature is. -->
+    <string name="inactive_tabs_auto_close_message_description" tools:ignore="UnusedResources">Firefox voi sulkea välilehdet, joita et ole katsonut viimeisen kuukauden aikana.</string>
+    <!-- A call to action below the description to allow the user to turn on the auto closing of inactive tabs. -->
+    <string name="inactive_tabs_auto_close_message_action" tools:ignore="UnusedResources">KÄYTÄ AUTOMAATTISTA SULKEMISTA</string>
+
+    <!-- Text for the snackbar to confirm auto-close is enabled for inactive tabs -->
+    <string name="inactive_tabs_auto_close_message_snackbar">Automaattinen sulkeminen käytössä</string>
+
+    <!-- Inactive tabs survey -->
+    <!-- Header text for the inactive tabs survey asking for feedback to improve the inactive tabs feature. -->
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_header_1" tools:ignore="UnusedResources">Auta parantamaan Firefoxia</string>
+
+    <!-- Content text for the inactive tabs survey asking the primary survey feedback question. -->
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_content" tools:ignore="UnusedResources">Miksi poistit passiiviset välilehdet käytöstä?</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_do_not_understand" tools:ignore="UnusedResources">En ymmärrä miten se toimii</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_do_it_myself" tools:ignore="UnusedResources">Haluan sulkea vanhat välilehdet itse</string>
+
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_time_too_long_option_1" tools:ignore="UnusedResources">Kahden viikon aika on liian pitkä</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_time_too_short_option_1" tools:ignore="UnusedResources">Kahden viikon aika on liian lyhyt</string>
+    <!-- Confirmation button text to submit the feedback for the inactive tabs survey. -->
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_send_button" tools:ignore="UnusedResources">Lähetä</string>
+    <!-- Content description for inactive tabs survey close button -->
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_close_button_content_description" tools:ignore="UnusedResources">Sulje</string>
 
     <!-- Default browser experiment -->
     <string name="default_browser_experiment_card_text">Aseta verkkosivustojen, sähköpostien ja viestien linkit avautumaan automaattisesti Firefoxissa.</string>
@@ -1889,4 +1855,22 @@
     <!-- Content description for privacy content close button -->
     <string name="privacy_content_close_button_content_description">Sulje</string>
 
+    <!-- Pocket recommended stories -->
+    <!-- Header text for a section on the home screen. -->
+    <string name="pocket_stories_header_1">Ajatuksia herättäviä tarinoita</string>
+    <!-- Header text for a section on the home screen. -->
+    <string name="pocket_stories_categories_header">Tarinoita aiheittain</string>
+    <!-- Text of a button allowing users to access an external url for more Pocket recommendations. -->
+    <string name="pocket_stories_placeholder_text">Löydä lisää</string>
+    <!-- Title of an app feature. Smaller than a heading.-->
+    <string name="pocket_stories_feature_title">Taustavoimana Pocket.</string>
+    <!-- Caption for describing a certain feature. The placeholder is for a clickable text (eg: Learn more) which will load an url in a new tab when clicked.  -->
+    <string name="pocket_stories_feature_caption">Osa Firefox-perhettä. %s</string>
+    <!-- Clickable text for opening an external link for more information about Pocket. -->
+    <string name="pocket_stories_feature_learn_more">Lue lisää</string>
+
+    <!-- Snackbar message for enrolling in a Nimbus experiment from the secret settings when Studies preference is Off.-->
+    <string name="experiments_snackbar">Ota telemetria käyttöön tietojen lähettämiseksi.</string>
+    <!-- Snackbar button text to navigate to telemetry settings.-->
+    <string name="experiments_snackbar_button">Siirry asetuksiin</string>
 </resources>

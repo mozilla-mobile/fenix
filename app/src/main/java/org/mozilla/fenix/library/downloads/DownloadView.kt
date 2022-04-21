@@ -36,11 +36,6 @@ interface DownloadViewInteractor : SelectionInteractor<DownloadItem> {
      * @param items the downloads items to delete
      */
     fun onDeleteSome(items: Set<DownloadItem>)
-
-    /**
-     * Called when all downloads items are deleted
-     */
-    fun onDeleteAll()
 }
 
 /**
@@ -60,7 +55,7 @@ class DownloadView(
     var mode: DownloadFragmentState.Mode = DownloadFragmentState.Mode.Normal
         private set
 
-    val downloadAdapter = DownloadAdapter(interactor)
+    private val downloadAdapter = DownloadAdapter(interactor)
     private val layoutManager = LinearLayoutManager(container.context)
 
     init {
@@ -109,7 +104,7 @@ class DownloadView(
         }
     }
 
-    fun updateEmptyState(userHasDownloads: Boolean) {
+    private fun updateEmptyState(userHasDownloads: Boolean) {
         binding.downloadList.isVisible = userHasDownloads
         binding.downloadEmptyView.isVisible = !userHasDownloads
         if (!userHasDownloads) {

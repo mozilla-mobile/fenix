@@ -8,6 +8,7 @@ import android.content.Context
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.Engine
 import mozilla.components.concept.storage.BookmarksStorage
+import mozilla.components.concept.storage.HistoryStorage
 import mozilla.components.feature.app.links.AppLinksUseCases
 import mozilla.components.feature.contextmenu.ContextMenuUseCases
 import mozilla.components.feature.downloads.DownloadsUseCases
@@ -24,13 +25,11 @@ import mozilla.components.feature.top.sites.TopSitesUseCases
 import mozilla.components.support.locale.LocaleUseCases
 import org.mozilla.fenix.components.bookmarks.BookmarksUseCase
 import org.mozilla.fenix.perf.lazyMonitored
-import org.mozilla.fenix.utils.Mockable
 
 /**
  * Component group for all use cases. Use cases are provided by feature
  * modules and can be triggered by UI interactions.
  */
-@Mockable
 @Suppress("LongParameterList")
 class UseCases(
     private val context: Context,
@@ -38,7 +37,8 @@ class UseCases(
     private val store: BrowserStore,
     private val shortcutManager: WebAppShortcutManager,
     private val topSitesStorage: TopSitesStorage,
-    private val bookmarksStorage: BookmarksStorage
+    private val bookmarksStorage: BookmarksStorage,
+    private val historyStorage: HistoryStorage
 ) {
     /**
      * Use cases that provide engine interactions for a given browser session.
@@ -63,7 +63,8 @@ class UseCases(
     val searchUseCases by lazyMonitored {
         SearchUseCases(
             store,
-            tabsUseCases
+            tabsUseCases,
+            sessionUseCases
         )
     }
 
@@ -97,5 +98,5 @@ class UseCases(
     /**
      * Use cases that provide bookmark management.
      */
-    val bookmarksUseCases by lazyMonitored { BookmarksUseCase(bookmarksStorage) }
+    val bookmarksUseCases by lazyMonitored { BookmarksUseCase(bookmarksStorage, historyStorage) }
 }

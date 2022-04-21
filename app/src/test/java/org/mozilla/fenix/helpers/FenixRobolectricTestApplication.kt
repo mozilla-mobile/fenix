@@ -4,9 +4,10 @@
 
 package org.mozilla.fenix.helpers
 
+import io.mockk.mockk
 import org.mozilla.fenix.FenixApplication
 import org.mozilla.fenix.R
-import org.mozilla.fenix.components.TestComponents
+import org.mozilla.fenix.components.Components
 
 /**
  * An override of our application for use in Robolectric-based unit tests. We're forced to override
@@ -20,13 +21,15 @@ class FenixRobolectricTestApplication : FenixApplication() {
         setApplicationTheme()
     }
 
-    override val components = TestComponents(this)
+    override val components = mockk<Components>()
 
     override fun initializeGlean() = Unit
 
     override fun setupInAllProcesses() = Unit
 
     override fun setupInMainProcessOnly() = Unit
+
+    override fun downloadWallpapers() = Unit
 
     private fun setApplicationTheme() {
         // According to the Robolectric devs, the application context will not have the <application>'s

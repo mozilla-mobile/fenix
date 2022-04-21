@@ -97,6 +97,11 @@ interface BookmarkViewInteractor : SelectionInteractor<BookmarkNode> {
      *
      */
     fun onRequestSync()
+
+    /**
+     * Handles when search is tapped
+     */
+    fun onSearch()
 }
 
 class BookmarkView(
@@ -149,6 +154,9 @@ class BookmarkView(
                     )
                 )
             }
+            else -> {
+                // no-op
+            }
         }
         binding.bookmarksProgressBar.isVisible = state.isLoading
         binding.swipeRefresh.isEnabled =
@@ -173,12 +181,5 @@ class BookmarkView(
         super.setUiForNormalMode(
             if (BookmarkRoot.Mobile.id == root?.guid) context.getString(R.string.library_bookmarks) else root?.title
         )
-    }
-
-    /**
-     * Returns true if [root] matches the bookmark root ID.
-     */
-    private fun BookmarkRoot.matches(root: BookmarkNode?): Boolean {
-        return root == null || id == root.guid
     }
 }

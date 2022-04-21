@@ -14,15 +14,15 @@ import androidx.core.content.pm.PackageInfoCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
+import mozilla.components.service.glean.private.NoExtras
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
+import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
-import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.crashes.CrashListActivity
 import org.mozilla.fenix.databinding.FragmentAboutBinding
-import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.settings.SupportUtils
@@ -56,7 +56,6 @@ class AboutFragment : Fragment(), AboutPageListener {
         appName = getString(R.string.app_name)
         headerAppName =
             if (Config.channel.isRelease) getString(R.string.daylight_app_name) else appName
-        showToolbar(getString(R.string.preferences_about, appName))
 
         return binding.root
     }
@@ -87,6 +86,11 @@ class AboutFragment : Fragment(), AboutPageListener {
         aboutPageAdapter?.submitList(populateAboutList())
     }
 
+    override fun onResume() {
+        super.onResume()
+        showToolbar(getString(R.string.preferences_about, appName))
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         aboutPageAdapter = null
@@ -98,6 +102,7 @@ class AboutFragment : Fragment(), AboutPageListener {
             val packageInfo =
                 requireContext().packageManager.getPackageInfo(requireContext().packageName, 0)
             val versionCode = PackageInfoCompat.getLongVersionCode(packageInfo).toString()
+            val maybeFenixGitHash = if (BuildConfig.GIT_HASH.isNotBlank()) ", ${BuildConfig.GIT_HASH}" else ""
             val componentsAbbreviation = getString(R.string.components_abbreviation)
             val componentsVersion =
                 mozilla.components.Build.version + ", " + mozilla.components.Build.gitHash
@@ -108,9 +113,10 @@ class AboutFragment : Fragment(), AboutPageListener {
             val appServicesVersion = mozilla.components.Build.applicationServicesVersion
 
             String.format(
-                "%s (Build #%s)\n%s: %s\n%s: %s\n%s: %s",
+                "%s (Build #%s)%s\n%s: %s\n%s: %s\n%s: %s",
                 packageInfo.versionName,
                 versionCode,
+                maybeFenixGitHash,
                 componentsAbbreviation,
                 componentsVersion,
                 maybeGecko,
@@ -196,7 +202,7 @@ class AboutFragment : Fragment(), AboutPageListener {
                 when (item.type) {
                     WHATS_NEW -> {
                         WhatsNew.userViewedWhatsNew(requireContext())
-                        requireComponents.analytics.metrics.track(Event.WhatsNewTapped)
+                        Events.whatsNewTapped.record(NoExtras())
                     }
                     SUPPORT, PRIVACY_NOTICE, LICENSING_INFO, RIGHTS -> {} // no telemetry needed
                 }

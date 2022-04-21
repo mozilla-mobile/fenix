@@ -10,9 +10,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.support.base.log.logger.Logger
@@ -48,6 +48,8 @@ class NimbusBranchesFragment : Fragment() {
         }
 
         controller = NimbusBranchesController(
+            context = requireContext(),
+            navController = findNavController(),
             nimbusBranchesStore = nimbusBranchesStore,
             experiments = requireContext().components.analytics.experiments,
             experimentId = args.experimentId
@@ -61,7 +63,6 @@ class NimbusBranchesFragment : Fragment() {
         return view
     }
 
-    @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         consumeFrom(nimbusBranchesStore) { state ->
             nimbusBranchesView.update(state)

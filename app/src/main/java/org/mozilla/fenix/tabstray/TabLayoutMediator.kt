@@ -5,14 +5,16 @@
 package org.mozilla.fenix.tabstray
 
 import androidx.annotation.VisibleForTesting
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.support.base.feature.LifecycleAwareFeature
+import mozilla.telemetry.glean.private.NoExtras
+import org.mozilla.fenix.GleanMetrics.TabsTray
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
-import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.tabstray.TrayPagerAdapter.Companion.POSITION_NORMAL_TABS
 import org.mozilla.fenix.tabstray.TrayPagerAdapter.Companion.POSITION_PRIVATE_TABS
+import org.mozilla.fenix.tabstray.TrayPagerAdapter.Companion.POSITION_SYNCED_TABS
 import org.mozilla.fenix.utils.Do
 
 /**
@@ -21,13 +23,13 @@ import org.mozilla.fenix.utils.Do
  */
 class TabLayoutMediator(
     private val tabLayout: TabLayout,
+    private val tabPager: ViewPager2,
     interactor: TabsTrayInteractor,
     private val browsingModeManager: BrowsingModeManager,
     private val tabsTrayStore: TabsTrayStore,
-    metrics: MetricController
 ) : LifecycleAwareFeature {
 
-    private val observer = TabLayoutObserver(interactor, metrics)
+    private val observer = TabLayoutObserver(interactor)
 
     /**
      * Start observing the [TabLayout] and select the current tab for initial state.
@@ -45,9 +47,10 @@ class TabLayoutMediator(
     @VisibleForTesting
     internal fun selectActivePage() {
         val selectedPagerPosition =
-            when (browsingModeManager.mode.isPrivate) {
-                true -> POSITION_PRIVATE_TABS
-                false -> POSITION_NORMAL_TABS
+            when {
+                browsingModeManager.mode.isPrivate -> POSITION_PRIVATE_TABS
+                tabsTrayStore.state.selectedPage == Page.SyncedTabs -> POSITION_SYNCED_TABS
+                else -> POSITION_NORMAL_TABS
             }
 
         selectTabAtPosition(selectedPagerPosition)
@@ -55,6 +58,7 @@ class TabLayoutMediator(
 
     fun selectTabAtPosition(position: Int) {
         tabLayout.getTabAt(position)?.select()
+        tabPager.setCurrentItem(position, false)
         tabsTrayStore.dispatch(TabsTrayAction.PageSelected(Page.positionToPage(position)))
     }
 }
@@ -64,7 +68,6 @@ class TabLayoutMediator(
  */
 internal class TabLayoutObserver(
     private val interactor: TabsTrayInteractor,
-    private val metrics: MetricController
 ) : TabLayout.OnTabSelectedListener {
 
     private var initialScroll = true
@@ -81,9 +84,9 @@ internal class TabLayoutObserver(
         interactor.onTrayPositionSelected(tab.position, animate)
 
         Do exhaustive when (Page.positionToPage(tab.position)) {
-            Page.NormalTabs -> metrics.track(Event.TabsTrayNormalModeTapped)
-            Page.PrivateTabs -> metrics.track(Event.TabsTrayPrivateModeTapped)
-            Page.SyncedTabs -> metrics.track(Event.TabsTraySyncedModeTapped)
+            Page.NormalTabs -> TabsTray.normalModeTapped.record(NoExtras())
+            Page.PrivateTabs -> TabsTray.privateModeTapped.record(NoExtras())
+            Page.SyncedTabs -> TabsTray.syncedModeTapped.record(NoExtras())
         }
     }
 

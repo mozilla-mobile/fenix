@@ -13,18 +13,22 @@ import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AlertDialog
 import androidx.navigation.NavController
 import mozilla.components.browser.state.search.SearchEngine
+import mozilla.components.browser.state.state.selectedOrDefaultSearchEngine
 import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.concept.engine.EngineSession.LoadUrlFlags
 import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.support.ktx.kotlin.isUrl
 import org.mozilla.fenix.BrowserDirection
+import org.mozilla.fenix.GleanMetrics.Events
+import org.mozilla.fenix.GleanMetrics.SearchShortcuts
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
-import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.components.metrics.MetricsUtils
 import org.mozilla.fenix.crashes.CrashListActivity
 import org.mozilla.fenix.ext.navigateSafe
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.search.toolbar.SearchSelectorMenu
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.utils.Settings
 
@@ -36,7 +40,7 @@ interface SearchController {
     fun handleUrlCommitted(url: String, fromHomeScreen: Boolean = false)
     fun handleEditingCancelled()
     fun handleTextChanged(text: String)
-    fun handleUrlTapped(url: String)
+    fun handleUrlTapped(url: String, flags: LoadUrlFlags = LoadUrlFlags.none())
     fun handleSearchTermsTapped(searchTerms: String)
     fun handleSearchShortcutEngineSelected(searchEngine: SearchEngine)
     fun handleClickSearchEngineSettings()
@@ -44,6 +48,11 @@ interface SearchController {
     fun handleSearchShortcutsButtonClicked()
     fun handleCameraPermissionsNeeded()
     fun handleSearchEngineSuggestionClicked(searchEngine: SearchEngine)
+
+    /**
+     * @see [ToolbarInteractor.onMenuItemTapped]
+     */
+    fun handleMenuItemTapped(item: SearchSelectorMenu.Item)
 }
 
 @Suppress("TooManyFunctions", "LongParameterList")
@@ -99,24 +108,20 @@ class SearchDialogController(
             requestDesktopMode = fromHomeScreen && activity.settings().openNextTabInDesktopMode
         )
 
-        val event = if (url.isUrl() || searchEngine == null) {
-            Event.EnteredUrl(false)
+        if (url.isUrl() || searchEngine == null) {
+            Events.enteredUrl.record(Events.EnteredUrlExtra(autocomplete = false))
         } else {
             val searchAccessPoint = when (fragmentStore.state.searchAccessPoint) {
-                Event.PerformedSearch.SearchAccessPoint.NONE -> Event.PerformedSearch.SearchAccessPoint.ACTION
+                MetricsUtils.Source.NONE -> MetricsUtils.Source.ACTION
                 else -> fragmentStore.state.searchAccessPoint
             }
 
-            searchAccessPoint?.let { sap ->
-                MetricsUtils.createSearchEvent(
-                    searchEngine,
-                    store,
-                    sap
-                )
-            }
+            MetricsUtils.recordSearchMetrics(
+                searchEngine,
+                searchEngine == store.state.search.selectedOrDefaultSearchEngine,
+                searchAccessPoint
+            )
         }
-
-        event?.let { metrics.track(it) }
     }
 
     override fun handleEditingCancelled() {
@@ -145,16 +150,17 @@ class SearchDialogController(
         )
     }
 
-    override fun handleUrlTapped(url: String) {
+    override fun handleUrlTapped(url: String, flags: LoadUrlFlags) {
         clearToolbarFocus()
 
         activity.openToBrowserAndLoad(
             searchTermOrURL = url,
             newTab = fragmentStore.state.tabId == null,
-            from = BrowserDirection.FromSearchDialog
+            from = BrowserDirection.FromSearchDialog,
+            flags = flags
         )
 
-        metrics.track(Event.EnteredUrl(false))
+        Events.enteredUrl.record(Events.EnteredUrlExtra(autocomplete = false))
     }
 
     override fun handleSearchTermsTapped(searchTerms: String) {
@@ -171,26 +177,27 @@ class SearchDialogController(
         )
 
         val searchAccessPoint = when (fragmentStore.state.searchAccessPoint) {
-            Event.PerformedSearch.SearchAccessPoint.NONE -> Event.PerformedSearch.SearchAccessPoint.SUGGESTION
+            MetricsUtils.Source.NONE -> MetricsUtils.Source.SUGGESTION
             else -> fragmentStore.state.searchAccessPoint
         }
 
-        if (searchAccessPoint != null && searchEngine != null) {
-            MetricsUtils.createSearchEvent(
+        if (searchEngine != null) {
+            MetricsUtils.recordSearchMetrics(
                 searchEngine,
-                store,
+                searchEngine == store.state.search.selectedOrDefaultSearchEngine,
                 searchAccessPoint
-            )?.apply {
-                metrics.track(this)
-            }
+            )
         }
     }
 
     override fun handleSearchShortcutEngineSelected(searchEngine: SearchEngine) {
         focusToolbar()
         fragmentStore.dispatch(SearchFragmentAction.SearchShortcutEngineSelected(searchEngine))
-        val isCustom = searchEngine.type == SearchEngine.Type.CUSTOM
-        metrics.track(Event.SearchShortcutSelected(searchEngine, isCustom))
+        val engine = when (searchEngine.type) {
+            SearchEngine.Type.CUSTOM -> "custom"
+            else -> searchEngine.name
+        }
+        SearchShortcuts.selected.record(SearchShortcuts.SelectedExtra(engine))
     }
 
     override fun handleSearchShortcutsButtonClicked() {
@@ -231,6 +238,13 @@ class SearchDialogController(
     override fun handleSearchEngineSuggestionClicked(searchEngine: SearchEngine) {
         clearToolbar()
         handleSearchShortcutEngineSelected(searchEngine)
+    }
+
+    override fun handleMenuItemTapped(item: SearchSelectorMenu.Item) {
+        when (item) {
+            SearchSelectorMenu.Item.SearchSettings -> handleClickSearchEngineSettings()
+            is SearchSelectorMenu.Item.SearchEngine -> handleSearchShortcutEngineSelected(item.searchEngine)
+        }
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)

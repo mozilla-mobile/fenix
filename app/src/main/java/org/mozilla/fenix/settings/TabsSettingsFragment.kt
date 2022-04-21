@@ -8,12 +8,13 @@ import android.os.Bundle
 import android.view.View
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.SwitchPreference
+import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.FeatureFlags
+import org.mozilla.fenix.GleanMetrics.Events
+import org.mozilla.fenix.GleanMetrics.Tabs
 import org.mozilla.fenix.R
-import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.components.metrics.Event.TabViewSettingChanged
-import org.mozilla.fenix.components.metrics.Event.TabViewSettingChanged.Type
-import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.utils.view.addToRadioGroup
 
@@ -27,9 +28,9 @@ class TabsSettingsFragment : PreferenceFragmentCompat() {
     private lateinit var radioOneDay: RadioButtonPreference
     private lateinit var radioOneWeek: RadioButtonPreference
     private lateinit var radioOneMonth: RadioButtonPreference
-    private lateinit var startOnHomeRadioFourHours: RadioButtonPreference
-    private lateinit var startOnHomeRadioAlways: RadioButtonPreference
-    private lateinit var startOnHomeRadioNever: RadioButtonPreference
+    private lateinit var inactiveTabsCategory: PreferenceCategory
+    private lateinit var inactiveTabs: SwitchPreference
+    private lateinit var searchTermTabGroups: SwitchPreference
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.tabs_preferences, rootKey)
@@ -37,12 +38,13 @@ class TabsSettingsFragment : PreferenceFragmentCompat() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        view.context.components.analytics.metrics.track(Event.TabSettingsOpened)
+        Tabs.settingOpened.record(NoExtras())
     }
 
     override fun onResume() {
         super.onResume()
         showToolbar(getString(R.string.preferences_tabs))
+
         setupPreferences()
     }
 
@@ -54,21 +56,34 @@ class TabsSettingsFragment : PreferenceFragmentCompat() {
         // pref_key_tab_view_grid and look into using the native RadioGroup in the future.
         listRadioButton = requirePreference(R.string.pref_key_tab_view_list_do_not_use)
         gridRadioButton = requirePreference(R.string.pref_key_tab_view_grid)
+        searchTermTabGroups = requirePreference<SwitchPreference>(R.string.pref_key_search_term_tab_groups).also {
+            it.isVisible = FeatureFlags.tabGroupFeature
+            it.isChecked = it.context.settings().searchTermTabGroupsAreEnabled
+            it.onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
 
         radioManual = requirePreference(R.string.pref_key_close_tabs_manually)
-        radioOneDay = requirePreference(R.string.pref_key_close_tabs_after_one_day)
-        radioOneWeek = requirePreference(R.string.pref_key_close_tabs_after_one_week)
         radioOneMonth = requirePreference(R.string.pref_key_close_tabs_after_one_month)
+        radioOneWeek = requirePreference(R.string.pref_key_close_tabs_after_one_week)
+        radioOneDay = requirePreference(R.string.pref_key_close_tabs_after_one_day)
 
-        startOnHomeRadioFourHours = requirePreference(R.string.pref_key_start_on_home_after_four_hours)
-        startOnHomeRadioAlways = requirePreference(R.string.pref_key_start_on_home_always)
-        startOnHomeRadioNever = requirePreference(R.string.pref_key_start_on_home_never)
+        inactiveTabs = requirePreference<SwitchPreference>(R.string.pref_key_inactive_tabs).also {
+            it.isChecked = requireContext().settings().inactiveTabsAreEnabled
+            it.onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
 
-        requirePreference<PreferenceCategory>(R.string.pref_key_start_on_home_category).isVisible =
-            FeatureFlags.showStartOnHomeSettings
+        inactiveTabsCategory = requirePreference<PreferenceCategory>(R.string.pref_key_inactive_tabs_category).also {
+            it.isVisible = FeatureFlags.inactiveTabs
+            it.isEnabled = !(it.context.settings().closeTabsAfterOneDay || it.context.settings().closeTabsAfterOneWeek)
+        }
 
         listRadioButton.onClickListener(::sendTabViewTelemetry)
         gridRadioButton.onClickListener(::sendTabViewTelemetry)
+
+        radioManual.onClickListener(::enableInactiveTabsSetting)
+        radioOneDay.onClickListener(::disableInactiveTabsSetting)
+        radioOneWeek.onClickListener(::disableInactiveTabsSetting)
+        radioOneMonth.onClickListener(::enableInactiveTabsSetting)
 
         setupRadioGroups()
     }
@@ -85,21 +100,27 @@ class TabsSettingsFragment : PreferenceFragmentCompat() {
             radioOneMonth,
             radioOneWeek
         )
-
-        addToRadioGroup(
-            startOnHomeRadioFourHours,
-            startOnHomeRadioAlways,
-            startOnHomeRadioNever
-        )
     }
 
     private fun sendTabViewTelemetry() {
-        val metrics = requireContext().components.analytics.metrics
-
         if (listRadioButton.isChecked && !gridRadioButton.isChecked) {
-            metrics.track(TabViewSettingChanged(Type.LIST))
+            Events.tabViewChanged.record(Events.TabViewChangedExtra("list"))
         } else {
-            metrics.track(TabViewSettingChanged(Type.GRID))
+            Events.tabViewChanged.record(Events.TabViewChangedExtra("grid"))
+        }
+    }
+
+    private fun enableInactiveTabsSetting() {
+        inactiveTabsCategory.apply {
+            isEnabled = true
+        }
+    }
+
+    private fun disableInactiveTabsSetting() {
+        inactiveTabsCategory.apply {
+            isEnabled = false
+            inactiveTabs.isChecked = false
+            context.settings().inactiveTabsAreEnabled = false
         }
     }
 }

@@ -4,18 +4,103 @@
 
 package org.mozilla.fenix.library.history
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+import mozilla.components.concept.storage.HistoryMetadata
+import mozilla.components.concept.storage.HistoryMetadataKey
 import mozilla.components.lib.state.Action
 import mozilla.components.lib.state.State
 import mozilla.components.lib.state.Store
+import mozilla.components.support.ktx.kotlin.tryGetHostFromUrl
 
 /**
- * Class representing a history entry
- * @property id Unique id of the history item
- * @property title Title of the history item
- * @property url URL of the history item
- * @property visitedAt Timestamp of when this history item was visited
+ * Class representing a history entry.
  */
-data class HistoryItem(val id: Int, val title: String, val url: String, val visitedAt: Long)
+sealed class History : Parcelable {
+    abstract val position: Int
+    abstract val title: String
+    abstract val visitedAt: Long
+    abstract val historyTimeGroup: HistoryItemTimeGroup
+    abstract val selected: Boolean
+
+    /**
+     * A regular history item.
+     *
+     * @property position Position of this item in a result list of other [History] items.
+     * @property title Title of the history item.
+     * @property url URL of the history item.
+     * @property visitedAt Timestamp of when this history item was visited.
+     * @property historyTimeGroup [HistoryItemTimeGroup] of the history item.
+     * @property selected Whether or not the history item is selected.
+     */
+    @Parcelize data class Regular(
+        override val position: Int,
+        override val title: String,
+        val url: String,
+        override val visitedAt: Long,
+        override val historyTimeGroup: HistoryItemTimeGroup,
+        override val selected: Boolean = false
+    ) : History()
+
+    /**
+     * A history metadata item.
+     *
+     * @property position Position of this item in a result list of other [History] items.
+     * @property title Title of the history metadata item.
+     * @property url URL of the history metadata item.
+     * @property visitedAt Timestamp of when this history metadata item was visited.
+     * @property historyTimeGroup [HistoryItemTimeGroup] of the history item.
+     * @property totalViewTime Total time the user viewed the page associated with this record.
+     * @property historyMetadataKey The [HistoryMetadataKey] of the new tab in case this tab
+     * was opened from history.
+     * @property selected Whether or not the history metadata item is selected.
+     */
+    @Parcelize data class Metadata(
+        override val position: Int,
+        override val title: String,
+        val url: String,
+        override val visitedAt: Long,
+        override val historyTimeGroup: HistoryItemTimeGroup,
+        val totalViewTime: Int,
+        val historyMetadataKey: HistoryMetadataKey,
+        override val selected: Boolean = false
+    ) : History()
+
+    /**
+     * A history metadata group.
+     *
+     * @property position Position of this item in a result list of other [History] items.
+     * @property title Title of the history metadata group.
+     * @property visitedAt Timestamp of when this history metadata group was visited.
+     * @property historyTimeGroup [HistoryItemTimeGroup] of the history item.
+     * @property items List of history metadata items associated with the group.
+     * @property selected Whether or not the history group is selected.
+     */
+    @Parcelize data class Group(
+        override val position: Int,
+        override val title: String,
+        override val visitedAt: Long,
+        override val historyTimeGroup: HistoryItemTimeGroup,
+        val items: List<Metadata>,
+        override val selected: Boolean = false
+    ) : History()
+}
+
+/**
+ * Extension function for converting a [HistoryMetadata] into a [History.Metadata].
+ */
+fun HistoryMetadata.toHistoryMetadata(position: Int): History.Metadata {
+    return History.Metadata(
+        position = position,
+        title = title?.takeIf(String::isNotEmpty)
+            ?: key.url.tryGetHostFromUrl(),
+        url = key.url,
+        visitedAt = createdAt,
+        historyTimeGroup = HistoryItemTimeGroup.timeGroupForTimestamp(createdAt),
+        totalViewTime = totalViewTime,
+        historyMetadataKey = key
+    )
+}
 
 /**
  * The [Store] for holding the [HistoryFragmentState] and applying [HistoryFragmentAction]s.
@@ -28,8 +113,8 @@ class HistoryFragmentStore(initialState: HistoryFragmentState) :
  */
 sealed class HistoryFragmentAction : Action {
     object ExitEditMode : HistoryFragmentAction()
-    data class AddItemForRemoval(val item: HistoryItem) : HistoryFragmentAction()
-    data class RemoveItemForRemoval(val item: HistoryItem) : HistoryFragmentAction()
+    data class AddItemForRemoval(val item: History) : HistoryFragmentAction()
+    data class RemoveItemForRemoval(val item: History) : HistoryFragmentAction()
     data class AddPendingDeletionSet(val itemIds: Set<Long>) : HistoryFragmentAction()
     data class UndoPendingDeletionSet(val itemIds: Set<Long>) : HistoryFragmentAction()
     object EnterDeletionMode : HistoryFragmentAction()
@@ -40,21 +125,21 @@ sealed class HistoryFragmentAction : Action {
 
 /**
  * The state for the History Screen
- * @property items List of HistoryItem to display
+ * @property items List of History to display
  * @property mode Current Mode of History
  */
 data class HistoryFragmentState(
-    val items: List<HistoryItem>,
+    val items: List<History>,
     val mode: Mode,
     val pendingDeletionIds: Set<Long>,
     val isDeletingItems: Boolean
 ) : State {
     sealed class Mode {
-        open val selectedItems = emptySet<HistoryItem>()
+        open val selectedItems = emptySet<History>()
 
         object Normal : Mode()
         object Syncing : Mode()
-        data class Editing(override val selectedItems: Set<HistoryItem>) : Mode()
+        data class Editing(override val selectedItems: Set<History>) : Mode()
     }
 }
 

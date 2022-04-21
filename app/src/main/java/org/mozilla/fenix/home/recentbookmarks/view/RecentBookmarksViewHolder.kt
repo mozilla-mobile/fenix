@@ -5,52 +5,46 @@
 package org.mozilla.fenix.home.recentbookmarks.view
 
 import android.view.View
-import androidx.navigation.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL
-import mozilla.components.concept.storage.BookmarkNode
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.LifecycleOwner
+import mozilla.components.lib.state.ext.observeAsComposableState
+import mozilla.components.service.glean.private.NoExtras
 import org.mozilla.fenix.R
-import org.mozilla.fenix.databinding.ComponentRecentBookmarksBinding
-import org.mozilla.fenix.home.recentbookmarks.RecentBookmarksItemAdapter
+import org.mozilla.fenix.components.components
+import org.mozilla.fenix.compose.ComposeViewHolder
 import org.mozilla.fenix.home.recentbookmarks.interactor.RecentBookmarksInteractor
-import org.mozilla.fenix.utils.view.ViewHolder
+import org.mozilla.fenix.GleanMetrics.RecentBookmarks as RecentBookmarksMetrics
 
 class RecentBookmarksViewHolder(
-    view: View,
-    val interactor: RecentBookmarksInteractor
-) : ViewHolder(view) {
-
-    private val recentBookmarksAdapter = RecentBookmarksItemAdapter(interactor)
+    composeView: ComposeView,
+    viewLifecycleOwner: LifecycleOwner,
+    val interactor: RecentBookmarksInteractor,
+) : ComposeViewHolder(composeView, viewLifecycleOwner) {
 
     init {
-        val recentBookmarksBinding = ComponentRecentBookmarksBinding.bind(view)
-        val recentBookmarksHeaderBinding = recentBookmarksBinding.recentBookmarksHeader
-
-        val linearLayoutManager = LinearLayoutManager(view.context, HORIZONTAL, false)
-
-        recentBookmarksBinding.recentBookmarksList.apply {
-            adapter = recentBookmarksAdapter
-            layoutManager = linearLayoutManager
-        }
-
-        recentBookmarksHeaderBinding.showAllBookmarksButton.setOnClickListener {
-            dismissSearchDialogIfDisplayed()
-            interactor.onShowAllBookmarksClicked()
-        }
-    }
-
-    fun bind(bookmarks: List<BookmarkNode>) {
-        recentBookmarksAdapter.submitList(bookmarks)
-    }
-
-    private fun dismissSearchDialogIfDisplayed() {
-        val navController = itemView.findNavController()
-        if (navController.currentDestination?.id == R.id.searchDialogFragment) {
-            navController.navigateUp()
-        }
+        RecentBookmarksMetrics.shown.record(NoExtras())
     }
 
     companion object {
-        const val LAYOUT_ID = R.layout.component_recent_bookmarks
+        val LAYOUT_ID = View.generateViewId()
+    }
+
+    @Composable
+    override fun Content() {
+        val recentBookmarks = components.appStore
+            .observeAsComposableState { state -> state.recentBookmarks }
+
+        RecentBookmarks(
+            bookmarks = recentBookmarks.value ?: emptyList(),
+            onRecentBookmarkClick = interactor::onRecentBookmarkClicked,
+            menuItems = listOf(
+                RecentBookmarksMenuItem(
+                    stringResource(id = R.string.recently_saved_menu_item_remove),
+                    onClick = { bookmark -> interactor.onRecentBookmarkRemoved(bookmark) }
+                )
+            )
+        )
     }
 }

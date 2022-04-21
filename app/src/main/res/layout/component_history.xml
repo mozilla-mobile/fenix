@@ -25,7 +25,7 @@
         layout="@layout/recently_closed_nav_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/progress_bar" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/history_empty_view"
@@ -33,7 +33,7 @@
         android:layout_height="0dp"
         android:gravity="center"
         android:text="@string/history_empty_message"
-        android:textColor="?secondaryText"
+        android:textColor="?attr/textSecondary"
         android:textSize="16sp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"

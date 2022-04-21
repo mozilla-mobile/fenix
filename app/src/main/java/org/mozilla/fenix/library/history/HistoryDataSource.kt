@@ -4,50 +4,105 @@
 
 package org.mozilla.fenix.library.history
 
-import androidx.paging.ItemKeyedDataSource
-import mozilla.components.concept.storage.VisitInfo
-import mozilla.components.support.ktx.kotlin.tryGetHostFromUrl
+import androidx.annotation.VisibleForTesting
+import androidx.paging.PagingSource
+import androidx.paging.PagingState
+import org.mozilla.fenix.components.history.HistoryDB
 import org.mozilla.fenix.components.history.PagedHistoryProvider
 
+/**
+ * PagingSource of History items, used in History Screen. It is the data source for the
+ * Flow<PagingData>, that provides HistoryAdapter with items to display.
+ */
 class HistoryDataSource(
     private val historyProvider: PagedHistoryProvider
-) : ItemKeyedDataSource<Int, HistoryItem>() {
+) : PagingSource<Int, History>() {
 
-    // Because the pagination is not based off of they key
-    // we want to start at 1, not 0 to be able to send the correct offset
-    // to the `historyProvider.getHistory` call.
-    override fun getKey(item: HistoryItem): Int = item.id + 1
+    // The refresh key is set to null so that it will always reload the entire list for any data
+    // updates such as pull to refresh, and return the user to the start of the list.
+    override fun getRefreshKey(state: PagingState<Int, History>): Int? = null
 
-    override fun loadInitial(
-        params: LoadInitialParams<Int>,
-        callback: LoadInitialCallback<HistoryItem>
-    ) {
-        historyProvider.getHistory(INITIAL_OFFSET, params.requestedLoadSize.toLong()) { history ->
-            val items = history.mapIndexed(transformVisitInfoToHistoryItem(INITIAL_OFFSET.toInt()))
-            callback.onResult(items)
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, History> {
+        // Get the offset of the last loaded page or default to 0 when it is null on the initial
+        // load or a refresh.
+        val offset = params.key ?: 0
+        val historyItems = historyProvider.getHistory(offset, params.loadSize).run {
+            positionWithOffset(offset)
         }
-    }
-
-    override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<HistoryItem>) {
-        historyProvider.getHistory(params.key.toLong(), params.requestedLoadSize.toLong()) { history ->
-            val items = history.mapIndexed(transformVisitInfoToHistoryItem(params.key))
-            callback.onResult(items)
+        val nextOffset = if (historyItems.isEmpty()) {
+            null
+        } else {
+            historyItems.last().position + 1
         }
+        return LoadResult.Page(
+            data = historyItems,
+            prevKey = null, // Only paging forward.
+            nextKey = nextOffset
+        )
     }
+}
 
-    override fun loadBefore(params: LoadParams<Int>, callback: LoadCallback<HistoryItem>) { /* noop */ }
-
-    companion object {
-        private const val INITIAL_OFFSET = 0L
-
-        fun transformVisitInfoToHistoryItem(offset: Int): (id: Int, visit: VisitInfo) -> HistoryItem {
-            return { id, visit ->
-                val title = visit.title
-                    ?.takeIf(String::isNotEmpty)
-                    ?: visit.url.tryGetHostFromUrl()
-
-                HistoryItem(offset + id, title, visit.url, visit.visitTime)
+@VisibleForTesting
+internal fun List<HistoryDB>.positionWithOffset(offset: Int): List<History> {
+    return this.foldIndexed(listOf()) { index, prev, item ->
+        // Only offset once while folding, so that we don't accumulate the offset for each element.
+        val itemOffset = if (index == 0) {
+            offset
+        } else {
+            0
+        }
+        val previousPosition = prev.lastOrNull()?.position ?: 0
+        when (item) {
+            is HistoryDB.Group -> {
+                // XXX considering an empty group to have a non-zero offset is the obvious
+                // limitation of the current approach, and indicates that we're conflating
+                // two concepts here - position of an element for the sake of a RecyclerView,
+                // and an offset for the sake of our history pagination API.
+                val groupOffset = if (item.items.isEmpty()) {
+                    1
+                } else {
+                    item.items.size
+                }
+                prev + item.positioned(position = previousPosition + itemOffset + groupOffset)
+            }
+            is HistoryDB.Metadata -> {
+                prev + item.positioned(previousPosition + itemOffset + 1)
+            }
+            is HistoryDB.Regular -> {
+                prev + item.positioned(previousPosition + itemOffset + 1)
             }
         }
     }
+}
+
+private fun HistoryDB.Group.positioned(position: Int): History.Group {
+    return History.Group(
+        position = position,
+        items = this.items.mapIndexed { index, item -> item.positioned(index) },
+        title = this.title,
+        visitedAt = this.visitedAt,
+        historyTimeGroup = this.historyTimeGroup,
+    )
+}
+
+private fun HistoryDB.Metadata.positioned(position: Int): History.Metadata {
+    return History.Metadata(
+        position = position,
+        historyMetadataKey = this.historyMetadataKey,
+        title = this.title,
+        totalViewTime = this.totalViewTime,
+        url = this.url,
+        visitedAt = this.visitedAt,
+        historyTimeGroup = this.historyTimeGroup,
+    )
+}
+
+private fun HistoryDB.Regular.positioned(position: Int): History.Regular {
+    return History.Regular(
+        position = position,
+        title = this.title,
+        url = this.url,
+        visitedAt = this.visitedAt,
+        historyTimeGroup = this.historyTimeGroup,
+    )
 }

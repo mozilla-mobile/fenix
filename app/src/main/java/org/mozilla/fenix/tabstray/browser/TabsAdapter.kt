@@ -7,13 +7,11 @@ package org.mozilla.fenix.tabstray.browser
 import androidx.annotation.CallSuper
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
+import mozilla.components.browser.state.state.TabPartition
+import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.tabstray.TabViewHolder
+import mozilla.components.browser.tabstray.TabsTray
 import mozilla.components.browser.tabstray.TabsTrayStyling
-import mozilla.components.concept.tabstray.Tab
-import mozilla.components.concept.tabstray.Tabs
-import mozilla.components.concept.tabstray.TabsTray
-import mozilla.components.support.base.observer.Observable
-import mozilla.components.support.base.observer.ObserverRegistry
 
 /**
  * RecyclerView adapter implementation to display a list/grid of tabs.
@@ -23,53 +21,33 @@ import mozilla.components.support.base.observer.ObserverRegistry
  * for Android UI APIs.
  *
  * TODO Let's upstream this to AC with tests.
- *
- * @param delegate TabsTray.Observer registry to allow `TabsAdapter` to conform to `Observable<TabsTray.Observer>`.
  */
 abstract class TabsAdapter<T : TabViewHolder>(
-    delegate: Observable<TabsTray.Observer> = ObserverRegistry()
-) : ListAdapter<Tab, T>(DiffCallback), TabsTray, Observable<TabsTray.Observer> by delegate {
+    val delegate: TabsTray.Delegate,
+) : ListAdapter<TabSessionState, T>(DiffCallback), TabsTray {
 
-    protected var tabs: Tabs? = null
+    protected var selectedTabId: String? = null
     protected var styling: TabsTrayStyling = TabsTrayStyling()
 
     @CallSuper
-    override fun updateTabs(tabs: Tabs) {
-        this.tabs = tabs
+    override fun updateTabs(tabs: List<TabSessionState>, tabPartition: TabPartition?, selectedTabId: String?) {
+        this.selectedTabId = selectedTabId
 
-        notifyObservers { onTabsUpdated() }
+        submitList(tabs)
     }
 
     @CallSuper
     override fun onBindViewHolder(holder: T, position: Int) {
-        val tabs = tabs ?: return
-
-        holder.bind(tabs.list[position], isTabSelected(tabs, position), styling, this)
+        val tab = getItem(position)
+        holder.bind(getItem(position), tab.id == selectedTabId, styling, delegate)
     }
 
-    override fun getItemCount(): Int = tabs?.list?.size ?: 0
-
-    final override fun isTabSelected(tabs: Tabs, position: Int): Boolean =
-        tabs.selectedIndex == position
-
-    final override fun onTabsChanged(position: Int, count: Int) =
-        notifyItemRangeChanged(position, count)
-
-    final override fun onTabsInserted(position: Int, count: Int) =
-        notifyItemRangeInserted(position, count)
-
-    final override fun onTabsMoved(fromPosition: Int, toPosition: Int) =
-        notifyItemMoved(fromPosition, toPosition)
-
-    final override fun onTabsRemoved(position: Int, count: Int) =
-        notifyItemRangeRemoved(position, count)
-
-    private object DiffCallback : DiffUtil.ItemCallback<Tab>() {
-        override fun areItemsTheSame(oldItem: Tab, newItem: Tab): Boolean {
+    private object DiffCallback : DiffUtil.ItemCallback<TabSessionState>() {
+        override fun areItemsTheSame(oldItem: TabSessionState, newItem: TabSessionState): Boolean {
             return oldItem.id == newItem.id
         }
 
-        override fun areContentsTheSame(oldItem: Tab, newItem: Tab): Boolean {
+        override fun areContentsTheSame(oldItem: TabSessionState, newItem: TabSessionState): Boolean {
             return oldItem == newItem
         }
     }

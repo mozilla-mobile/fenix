@@ -3,7 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/homeFragment">
+    app:startDestination="@id/startupFragment">
+
+    <action
+        android:id="@+id/action_startup_home"
+        app:destination="@id/homeFragment"
+        app:popUpTo="@id/startupFragment"
+        app:popUpToInclusive="true" />
 
     <action
         android:id="@+id/action_global_home"
@@ -24,6 +30,11 @@
         app:popUpToInclusive="false" />
 
     <action
+        android:id="@+id/action_global_home_onboarding_dialog"
+        app:destination="@id/homeOnboardingDialogFragment"
+        app:popUpTo="@id/homeFragment" />
+
+    <action
         android:id="@+id/action_global_search_dialog"
         app:destination="@id/searchDialogFragment"
         app:popUpTo="@id/searchDialogFragment"
@@ -34,11 +45,16 @@
         app:destination="@id/recentlyClosedFragment" />
 
     <action
+        android:id="@+id/action_global_history_metadata_group"
+        app:destination="@id/historyMetadataGroupFragment" />
+
+    <action
+        android:id="@+id/action_global_wallpaperSettingsFragment"
+        app:destination="@id/wallpaperSettingsFragment" />
+
+    <action
         android:id="@+id/action_global_shareFragment"
         app:destination="@id/shareFragment" />
-    <action
-        android:id="@+id/action_global_crash_reporter"
-        app:destination="@id/crashReporterFragment" />
     <action
         android:id="@+id/action_global_turn_on_sync"
         app:destination="@id/turnOnSyncFragment" />
@@ -58,8 +74,8 @@
         android:id="@+id/action_global_settingsFragment"
         app:destination="@id/settingsFragment" />
     <action
-        android:id="@+id/action_global_customizationFragment"
-        app:destination="@id/customizationFragment" />
+        android:id="@+id/action_global_homeSettingsFragment"
+        app:destination="@id/homeSettingsFragment" />
     <action
         android:id="@+id/action_global_privateBrowsingFragment"
         app:destination="@id/privateBrowsingFragment" />
@@ -125,8 +141,8 @@
         android:id="@+id/action_global_savedLoginsAuthFragment"
         app:destination="@id/savedLoginsAuthFragment" />
     <action
-        android:id="@+id/action_global_creditCardsSettingFragment"
-        app:destination="@id/credit_cards_graph" />
+        android:id="@+id/action_global_autofillSettingFragment"
+        app:destination="@id/autofill_graph" />
     <action
         android:id="@+id/action_global_tabHistoryDialogFragment"
         app:destination="@id/tabHistoryDialogFragment" />
@@ -141,7 +157,25 @@
             android:name="enterMultiselect"
             android:defaultValue="false"
             app:argType="boolean" />
+        <argument
+            android:name="focusGroupTabId"
+            app:nullable="true"
+            android:defaultValue="@null"
+            app:argType="string" />
+        <argument
+            android:name="page"
+            android:defaultValue="NormalTabs"
+            app:argType="org.mozilla.fenix.tabstray.Page" />
+        <argument
+            android:name="accessPoint"
+            android:defaultValue="None"
+            app:argType="org.mozilla.fenix.tabstray.TabsTrayAccessPoint" />
     </dialog>
+
+    <fragment
+        android:id="@+id/startupFragment"
+        android:name="org.mozilla.fenix.StartupFragment">
+    </fragment>
 
     <fragment
         android:id="@+id/homeFragment"
@@ -156,6 +190,10 @@
             android:defaultValue="-1L"
             app:argType="long" />
     </fragment>
+    <dialog
+        android:id="@+id/homeOnboardingDialogFragment"
+        android:name="org.mozilla.fenix.onboarding.HomeOnboardingDialogFragment"
+        tools:layout="@layout/fragment_onboarding_home_dialog"/>
 
     <dialog
         android:id="@+id/searchDialogFragment"
@@ -173,7 +211,7 @@
         <argument
             android:name="search_access_point"
             android:defaultValue="NONE"
-            app:argType="org.mozilla.fenix.components.metrics.Event$PerformedSearch$SearchAccessPoint" />
+            app:argType="org.mozilla.fenix.components.metrics.MetricsUtils$Source" />
     </dialog>
 
     <fragment
@@ -203,9 +241,6 @@
             android:id="@+id/action_browserFragment_to_settingsFragment"
             app:destination="@id/settingsFragment" />
         <action
-            android:id="@+id/action_browserFragment_to_customFragment"
-            app:destination="@id/customizationFragment" />
-        <action
             android:id="@+id/action_browserFragment_to_createShortcutFragment"
             app:destination="@id/createShortcutFragment" />
         <action
@@ -234,7 +269,31 @@
         android:id="@+id/historyFragment"
         android:name="org.mozilla.fenix.library.history.HistoryFragment"
         android:label="@string/library_history"
-        tools:layout="@layout/fragment_history" />
+        tools:layout="@layout/fragment_history">
+
+        <action
+            android:id="@+id/action_global_history_search_dialog"
+            app:destination="@id/historySearchDialogFragment"
+            app:popUpTo="@id/historySearchDialogFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <dialog
+        android:id="@+id/historySearchDialogFragment"
+        android:name="org.mozilla.fenix.library.history.HistorySearchDialogFragment"
+        tools:layout="@layout/fragment_history_search_dialog">
+    </dialog>
+
+    <fragment
+        android:id="@+id/historyMetadataGroupFragment"
+        android:name="org.mozilla.fenix.library.historymetadata.HistoryMetadataGroupFragment">
+        <argument
+            android:name="title"
+            app:argType="string" />
+        <argument
+            android:name="historyMetadataItems"
+            app:argType="org.mozilla.fenix.library.history.History[]" />
+    </fragment>
 
     <fragment
         android:id="@+id/downloadsFragment"
@@ -258,7 +317,18 @@
         <action
             android:id="@+id/action_bookmarkFragment_to_bookmarkAddFolderFragment"
             app:destination="@id/bookmarkAddFolderFragment" />
+        <action
+            android:id="@+id/action_bookmarkFragment_to_bookmarkSearchDialogFragment"
+            app:destination="@id/bookmarkSearchDialogFragment"
+            app:popUpTo="@id/bookmarkSearchDialogFragment"
+            app:popUpToInclusive="true" />
     </fragment>
+
+    <dialog
+        android:id="@+id/bookmarkSearchDialogFragment"
+        android:name="org.mozilla.fenix.library.bookmarks.BookmarkSearchDialogFragment"
+        tools:layout="@layout/fragment_bookmark_search_dialog">
+    </dialog>
 
     <fragment
         android:id="@+id/bookmarkEditFragment"
@@ -443,8 +513,8 @@
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
         <action
-            android:id="@+id/action_settingsFragment_to_creditCardsSettingFragment"
-            app:destination="@id/credit_cards_graph"
+            android:id="@+id/action_settingsFragment_to_autofillSettingFragment"
+            app:destination="@id/autofill_graph"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
@@ -520,6 +590,13 @@
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
         <action
+            android:id="@+id/action_settingsFragment_to_httpsOnlyFragment"
+            app:destination="@id/httpsOnlyFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
             android:id="@+id/action_settingsFragment_to_trackingProtectionFragment"
             app:destination="@id/trackingProtectionFragment"
             app:enterAnim="@anim/slide_in_right"
@@ -568,11 +645,34 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_settingsFragment_to_homeSettingsFragment"
+            app:destination="@id/homeSettingsFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/tabsSettingsFragment"
         android:name="org.mozilla.fenix.settings.TabsSettingsFragment"
         android:label="@string/preferences_tabs" />
+    <fragment
+        android:id="@+id/homeSettingsFragment"
+        android:name="org.mozilla.fenix.settings.HomeSettingsFragment"
+        android:label="@string/preferences_home_2">
+        <action
+            android:id="@+id/action_homeSettingsFragment_to_wallpaperSettingsFragment"
+            app:destination="@id/wallpaperSettingsFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/wallpaperSettingsFragment"
+        android:name="org.mozilla.fenix.settings.wallpaper.WallpaperSettingsFragment"
+        android:label="@string/customize_wallpapers"/>
     <fragment
         android:id="@+id/dataChoicesFragment"
         android:name="org.mozilla.fenix.settings.DataChoicesFragment"
@@ -666,14 +766,6 @@
         android:name="org.mozilla.fenix.settings.SecretDebugSettingsFragment"
         android:label="@string/preferences_debug_info" />
     <fragment
-        android:id="@+id/crashReporterFragment"
-        android:name="org.mozilla.fenix.crashes.CrashReporterFragment"
-        tools:layout="@layout/fragment_crash_reporter">
-        <argument
-            android:name="crashIntent"
-            app:argType="android.content.Intent" />
-    </fragment>
-    <fragment
         android:id="@+id/aboutLibrariesFragment"
         android:name="org.mozilla.fenix.settings.about.AboutLibrariesFragment"
         tools:layout="@layout/fragment_about_libraries" />
@@ -685,6 +777,10 @@
         android:id="@+id/privateBrowsingFragment"
         android:name="org.mozilla.fenix.settings.PrivateBrowsingFragment"
         android:label="@string/preferences_private_browsing_options" />
+    <fragment
+        android:id="@+id/httpsOnlyFragment"
+        android:name="org.mozilla.fenix.settings.HttpsOnlyFragment"
+        android:label="@string/preferences_https_only_title" />
     <fragment
         android:id="@+id/trackingProtectionFragment"
         android:name="org.mozilla.fenix.settings.TrackingProtectionFragment">
@@ -1078,25 +1174,33 @@
             <argument
                 android:name="experimentName"
                 app:argType="string" />
+            <action
+                android:id="@+id/action_nimbusBranchesFragment_to_dataChoicesFragment"
+                app:destination="@id/dataChoicesFragment"
+                app:enterAnim="@anim/slide_in_right"
+                app:exitAnim="@anim/slide_out_left"
+                app:popEnterAnim="@anim/slide_in_left"
+                app:popExitAnim="@anim/slide_out_right"
+                app:popUpTo="@id/settingsFragment" />
         </fragment>
     </navigation>
 
     <navigation
-        android:id="@+id/credit_cards_graph"
-        app:startDestination="@id/creditCardsSettingFragment">
+        android:id="@+id/autofill_graph"
+        app:startDestination="@id/autofillSettingFragment">
         <fragment
-            android:id="@+id/creditCardsSettingFragment"
-            android:name="org.mozilla.fenix.settings.creditcards.CreditCardsSettingFragment"
+            android:id="@+id/autofillSettingFragment"
+            android:name="org.mozilla.fenix.settings.autofill.AutofillSettingFragment"
             android:label="@string/preferences_credit_cards">
             <action
-                android:id="@+id/action_creditCardsSettingFragment_to_creditCardEditorFragment"
+                android:id="@+id/action_autofillSettingFragment_to_creditCardEditorFragment"
                 app:destination="@id/creditCardEditorFragment"
                 app:enterAnim="@anim/slide_in_right"
                 app:exitAnim="@anim/slide_out_left"
                 app:popEnterAnim="@anim/slide_in_left"
                 app:popExitAnim="@anim/slide_out_right" />
             <action
-                android:id="@+id/action_creditCardsSettingFragment_to_creditCardsManagementFragment"
+                android:id="@+id/action_autofillSettingFragment_to_creditCardsManagementFragment"
                 app:destination="@id/creditCardsManagementFragment"
                 app:enterAnim="@anim/slide_in_right"
                 app:exitAnim="@anim/slide_out_left"

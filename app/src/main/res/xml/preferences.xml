@@ -61,6 +61,11 @@
             android:title="@string/preferences_tabs" />
 
         <androidx.preference.Preference
+            app:iconSpaceReserved="false"
+            android:key="@string/pref_key_home"
+            android:title="@string/preferences_home_2" />
+
+        <androidx.preference.Preference
             android:key="@string/pref_key_customize"
             app:iconSpaceReserved="false"
             android:title="@string/preferences_customize" />
@@ -99,6 +104,11 @@
             android:key="@string/pref_key_private_browsing"
             app:iconSpaceReserved="false"
             android:title="@string/preferences_private_browsing_options" />
+
+        <androidx.preference.Preference
+            android:key="@string/pref_key_https_only_settings"
+            app:iconSpaceReserved="false"
+            android:title="@string/preferences_https_only_title" />
 
         <androidx.preference.Preference
             android:key="@string/pref_key_tracking_protection_settings"

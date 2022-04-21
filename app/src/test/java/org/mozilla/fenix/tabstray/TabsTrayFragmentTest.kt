@@ -31,17 +31,19 @@ import io.mockk.verify
 import kotlinx.coroutines.CoroutineScope
 import mozilla.components.browser.menu.BrowserMenu
 import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.service.glean.testing.GleanTestRule
 import mozilla.components.support.test.robolectric.testContext
-import org.junit.Assert
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertSame
+import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mozilla.fenix.GleanMetrics.TabsTray
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
-import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.databinding.ComponentTabstray2Binding
 import org.mozilla.fenix.databinding.ComponentTabstrayFabBinding
@@ -49,6 +51,7 @@ import org.mozilla.fenix.databinding.FragmentTabTrayDialogBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
+import org.mozilla.fenix.helpers.MockkRetryTestRule
 import org.mozilla.fenix.home.HomeScreenViewModel
 import org.mozilla.fenix.tabstray.browser.BrowserTrayInteractor
 import org.mozilla.fenix.tabstray.ext.showWithTheme
@@ -62,6 +65,12 @@ class TabsTrayFragmentTest {
     private lateinit var tabsTrayBinding: ComponentTabstray2Binding
     private lateinit var tabsTrayDialogBinding: FragmentTabTrayDialogBinding
     private lateinit var fabButtonBinding: ComponentTabstrayFabBinding
+
+    @get:Rule
+    val mockkRule = MockkRetryTestRule()
+
+    @get:Rule
+    val gleanTestRule = GleanTestRule(testContext)
 
     @Before
     fun setup() {
@@ -217,7 +226,7 @@ class TabsTrayFragmentTest {
 
         val adapter = (tabsTrayBinding.tabsTray.adapter as TrayPagerAdapter)
         assertSame(context, adapter.context)
-        assertSame(store, adapter.store)
+        assertSame(store, adapter.tabsTrayStore)
         assertSame(trayInteractor, adapter.interactor)
         assertSame(browserInteractor, adapter.browserInteractor)
         assertSame(navigationInteractor, adapter.navInteractor)
@@ -242,10 +251,12 @@ class TabsTrayFragmentTest {
             }
             every { fragment.getTrayMenu(any(), any(), any(), any(), any()) } returns menuBuilder
 
+            assertFalse(TabsTray.menuOpened.testHasValue())
+
             fragment.setupMenu(navigationInteractor)
             tabsTrayBinding.tabTrayOverflow.performClick()
 
-            verify { metrics.track(Event.TabsTrayMenuOpened) }
+            assertTrue(TabsTray.menuOpened.testHasValue())
             verify { menuBuilder.build() }
             verify { menu.showWithTheme(tabsTrayBinding.tabTrayOverflow) }
         } finally {
@@ -367,8 +378,8 @@ class TabsTrayFragmentTest {
         )
         val behavior = BottomSheetBehavior.from(tabsTrayBinding.tabWrapper)
 
-        Assert.assertFalse(behavior.isFitToContents)
-        Assert.assertFalse(behavior.skipCollapsed)
+        assertFalse(behavior.isFitToContents)
+        assertFalse(behavior.skipCollapsed)
         assert(behavior.halfExpandedRatio <= 0.001f)
     }
 

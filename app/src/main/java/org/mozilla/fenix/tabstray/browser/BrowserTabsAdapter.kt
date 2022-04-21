@@ -9,14 +9,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.tabstray.TabsAdapter.Companion.PAYLOAD_DONT_HIGHLIGHT_SELECTED_ITEM
 import mozilla.components.browser.tabstray.TabsAdapter.Companion.PAYLOAD_HIGHLIGHT_SELECTED_ITEM
 import mozilla.components.browser.thumbnails.loader.ThumbnailLoader
-import mozilla.components.concept.tabstray.Tab
-import mozilla.components.concept.tabstray.TabsTray
-import mozilla.components.support.base.observer.Observable
-import mozilla.components.support.base.observer.ObserverRegistry
-import org.mozilla.fenix.R
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.databinding.TabTrayGridItemBinding
 import org.mozilla.fenix.databinding.TabTrayItemBinding
@@ -31,37 +27,38 @@ import org.mozilla.fenix.tabstray.TabsTrayStore
  * @param interactor [BrowserTrayInteractor] handling tabs interactions in a tab tray.
  * @param store [TabsTrayStore] containing the complete state of tabs tray and methods to update that.
  * @param featureName [String] representing the name of the feature displaying tabs. Used in telemetry reporting.
- * @param delegate [Observable]<[TabsTray.Observer]> for observing tabs tray changes. Defaults to [ObserverRegistry].
  */
 class BrowserTabsAdapter(
     private val context: Context,
-    private val interactor: BrowserTrayInteractor,
+    val interactor: BrowserTrayInteractor,
     private val store: TabsTrayStore,
-    private val featureName: String,
-    delegate: Observable<TabsTray.Observer> = ObserverRegistry()
-) : TabsAdapter<AbstractBrowserTabViewHolder>(delegate) {
+    override val featureName: String
+) : TabsAdapter<AbstractBrowserTabViewHolder>(interactor), FeatureNameHolder {
 
     /**
      * The layout types for the tabs.
      */
     enum class ViewType(val layoutRes: Int) {
-        LIST(R.layout.tab_tray_item),
-        GRID(R.layout.tab_tray_grid_item)
+        LIST(BrowserTabViewHolder.ListViewHolder.LAYOUT_ID),
+        GRID(BrowserTabViewHolder.GridViewHolder.LAYOUT_ID)
     }
 
     /**
      * Tracks the selected tabs in multi-select mode.
      */
-    var selectionHolder: SelectionHolder<Tab>? = null
+    var selectionHolder: SelectionHolder<TabSessionState>? = null
 
     private val selectedItemAdapterBinding = SelectedItemAdapterBinding(store, this)
     private val imageLoader = ThumbnailLoader(context.components.core.thumbnailStorage)
 
     override fun getItemViewType(position: Int): Int {
-        return if (context.components.settings.gridTabView) {
-            ViewType.GRID.layoutRes
-        } else {
-            ViewType.LIST.layoutRes
+        return when {
+            context.components.settings.gridTabView -> {
+                ViewType.GRID.layoutRes
+            }
+            else -> {
+                ViewType.LIST.layoutRes
+            }
         }
     }
 
@@ -70,9 +67,9 @@ class BrowserTabsAdapter(
 
         return when (viewType) {
             ViewType.GRID.layoutRes ->
-                BrowserTabGridViewHolder(imageLoader, interactor, store, selectionHolder, view, featureName)
+                BrowserTabViewHolder.GridViewHolder(imageLoader, interactor, store, selectionHolder, view, featureName)
             else ->
-                BrowserTabListViewHolder(imageLoader, interactor, store, selectionHolder, view, featureName)
+                BrowserTabViewHolder.ListViewHolder(imageLoader, interactor, store, selectionHolder, view, featureName)
         }
     }
 
@@ -94,7 +91,10 @@ class BrowserTabsAdapter(
             }
 
             selectionHolder?.let {
-                holder.showTabIsMultiSelectEnabled(selectedMaskView, it.selectedItems.contains(tab))
+                holder.showTabIsMultiSelectEnabled(
+                    selectedMaskView,
+                    (it.selectedItems.map { item -> item.id }).contains(tab.id)
+                )
             }
         }
     }
@@ -104,16 +104,15 @@ class BrowserTabsAdapter(
      * display itself.
      */
     override fun onBindViewHolder(holder: AbstractBrowserTabViewHolder, position: Int, payloads: List<Any>) {
-        val tabs = tabs ?: return
-
-        if (tabs.list.isEmpty()) return
+        if (currentList.isEmpty()) return
 
         if (payloads.isEmpty()) {
             onBindViewHolder(holder, position)
             return
         }
 
-        if (position == tabs.selectedIndex) {
+        val tab = getItem(position)
+        if (tab.id == selectedTabId) {
             if (payloads.contains(PAYLOAD_HIGHLIGHT_SELECTED_ITEM)) {
                 holder.updateSelectedTabIndicator(true)
             } else if (payloads.contains(PAYLOAD_DONT_HIGHLIGHT_SELECTED_ITEM)) {
@@ -133,7 +132,10 @@ class BrowserTabsAdapter(
                     selectedMaskView = listBinding.checkboxInclude.selectedMask
                 }
             }
-            holder.showTabIsMultiSelectEnabled(selectedMaskView, it.selectedItems.contains(holder.tab))
+            holder.showTabIsMultiSelectEnabled(
+                selectedMaskView,
+                it.selectedItems.map { item -> item.id }.contains(tab.id)
+            )
         }
     }
 

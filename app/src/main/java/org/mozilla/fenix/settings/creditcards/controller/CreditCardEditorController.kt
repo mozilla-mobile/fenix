@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.settings.creditcards.controller
 
+import android.content.DialogInterface
 import androidx.navigation.NavController
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -11,8 +12,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import mozilla.components.concept.storage.NewCreditCardFields
 import mozilla.components.concept.storage.UpdatableCreditCardFields
+import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.service.sync.autofill.AutofillCreditCardsAddressesStorage
-import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.GleanMetrics.CreditCards
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.settings.creditcards.CreditCardEditorFragment
 import org.mozilla.fenix.settings.creditcards.interactor.CreditCardEditorInteractor
@@ -52,13 +54,16 @@ interface CreditCardEditorController {
  * @param lifecycleScope [CoroutineScope] scope to launch coroutines.
  * @param navController [NavController] used for navigation.
  * @param ioDispatcher [CoroutineDispatcher] used for executing async tasks. Defaults to [Dispatchers.IO].
+ * @param showDeleteDialog [DialogInterface.OnClickListener] used to display a confirmation dialog
+ * before removing credit card.
  */
 class DefaultCreditCardEditorController(
     private val storage: AutofillCreditCardsAddressesStorage,
     private val lifecycleScope: CoroutineScope,
     private val navController: NavController,
     private val metrics: MetricController,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val showDeleteDialog: (DialogInterface.OnClickListener) -> Unit
 ) : CreditCardEditorController {
 
     override fun handleCancelButtonClicked() {
@@ -66,13 +71,16 @@ class DefaultCreditCardEditorController(
     }
 
     override fun handleDeleteCreditCard(guid: String) {
-        lifecycleScope.launch(ioDispatcher) {
-            storage.deleteCreditCard(guid)
+        showDeleteDialog { dialog, _ ->
+            lifecycleScope.launch(ioDispatcher) {
+                storage.deleteCreditCard(guid)
 
-            lifecycleScope.launch(Dispatchers.Main) {
-                navController.popBackStack()
+                lifecycleScope.launch(Dispatchers.Main) {
+                    navController.popBackStack()
+                }
+                CreditCards.deleted.add()
             }
-            metrics.track(Event.CreditCardDeleted)
+            dialog.dismiss()
         }
     }
 
@@ -83,7 +91,7 @@ class DefaultCreditCardEditorController(
             lifecycleScope.launch(Dispatchers.Main) {
                 navController.popBackStack()
             }
-            metrics.track(Event.CreditCardSaved)
+            CreditCards.saved.add()
         }
     }
 
@@ -94,7 +102,7 @@ class DefaultCreditCardEditorController(
             lifecycleScope.launch(Dispatchers.Main) {
                 navController.popBackStack()
             }
-            metrics.track(Event.CreditCardModified)
+            CreditCards.modified.record(NoExtras())
         }
     }
 }

@@ -4,14 +4,10 @@
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 <resources>
     <!-- Name of the application -->
-    <string name="app_name" translatable="false">Firefox Preview</string>
+    <string name="app_name" translatable="false">Firefox Fenix</string>
 
     <!-- Preference for developers -->
     <string name="preference_leakcanary" translatable="false">LeakCanary</string>
-
-    <string name="intent_extra_toolbar_color" translatable="false">android.support.customtabs.extra.TOOLBAR_COLOR</string>
-    <string name="intent_extra_session" translatable="false">android.support.customtabs.extra.SESSION</string>
-    <string name="intent_extra_auth" translatable="false">support.customtabs.extra.AUTH</string>
 
     <!--suppress CheckTagEmptyBody This is a default value for places where we don't want a string set-->
     <string name="empty_string" translatable="false"></string>
@@ -37,10 +33,8 @@
     <string name="preferences_debug_info" translatable="false">Secret Debug Info</string>
     <!-- Label for enabling Address Autofill -->
     <string name="preferences_debug_settings_enable_address_feature" translatable="false">Enable Address Autofill</string>
-    <!-- Label for enabling History Metadata feature -->
-    <string name="preferences_debug_settings_history_metadata_feature" translatable="false">Enable History Metadata</string>
-    <!-- Toast shown after confirming the History Metadata feature configuration -->
-    <string name="toast_history_metadata_feature_done">History Metadata feature modified. Quitting the application to apply changes…</string>
+    <!-- Label for enabling Contile feature -->
+    <string name="preferences_debug_settings_contile_feature" translatable="false">Enable Contile</string>
     <!-- Label for allowing third party root certificates from the Android OS CA store preference -->
     <string name="preferences_debug_settings_allow_third_party_root_certs">Use third party CA certificates</string>
     <!-- Label for a longer description of allowing third party root certificates from the Android OS CA store preference -->
@@ -49,14 +43,13 @@
     <string name="preferences_nimbus_experiments">Nimbus Experiments</string>
     <!-- Label for using the nimbus collections preview -->
     <string name="preferences_nimbus_use_preview_collection">Use Nimbus Preview Collection (requires restart)</string>
-    <!-- Label for the Pocket articles recommendations on homescreen -->
-    <string name="preferences_pocket_homescreen_recommendations">Debug only. Enable Pocket recommended articles on homescreen.</string>
+    <!-- Label for enabling the Task Continuity feature -->
+    <string name="preferences_debug_settings_task_continuity" translatable="false">Enable Task Continuity</string>
+    <!-- Label for enabling the Unified Search feature -->
+    <string name="preferences_debug_settings_unified_search" translatable="false">Enable Unified Search</string>
 
     <!-- A secret menu option in the tabs tray for making a tab inactive for testing. -->
     <string name="inactive_tabs_menu_item">Make inactive</string>
-
-    <!-- Label for showing Synced Tabs in the tabs tray -->
-    <string name="preferences_debug_synced_tabs_tabs_tray">Show Synced Tabs in the tabs tray</string>
 
     <!-- Content description (not visible, for screen readers etc.) used to announce [LinkTextView]. -->
     <string name="link_text_view_type_announcement" translatable="false">link</string>
@@ -64,24 +57,7 @@
     <!-- Name of the application for about page -->
     <string name="daylight_app_name" translatable="false">Firefox Daylight</string>
 
-    <!-- MP Migration -->
-    <string name="mp_homescreen_tip_title">Looking for your logins?</string>
-    <string name="mp_homescreen_tip_message">If you had a master password before Firefox updated, you’ll need to enter it to transfer your saved logins.</string>
-    <string name="mp_homescreen_button">Enter master password</string>
-    <string name="mp_dialog_title_recovery_transfer_saved_logins">Transfer saved logins</string>
-    <string name="mp_dialog_message_recovery_transfer_saved_logins">Enter your previous master password.</string>
-    <string name="mp_dialog_positive_transfer_saved_logins">Continue and transfer</string>
-    <string name="mp_dialog_negative_transfer_saved_logins">Cancel</string>
-    <string name="mp_dialog_error_transfer_saved_logins">Invalid password</string>
-    <string name="mp_dialog_title_transfer_success">Transfer successful</string>
-    <string name="mp_dialog_message_transfer_success">Your saved logins have been transferred to Firefox.</string>
-    <string name="mp_dialog_positive_transfer_success">View saved logins</string>
-    <string name="mp_dialog_close_transfer">Close</string>
-    <string name="mp_dialog_title_transfer_failure">Transfer failed</string>
-    <string name="mp_dialog_message_transfer_failure">An unknown error occurred and logins could not be transferred.</string>
-
     <!-- Secret debug info strings -->
-    <string name="debug_info_telemetry_title" translatable="false">Telemetry</string>
     <string name="debug_info_region_home" translatable="false">Home region</string>
     <string name="debug_info_region_current" translatable="false">Current region</string>
 </resources>

@@ -15,30 +15,31 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.state.state.createTab
 import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.concept.engine.Engine
 import mozilla.components.concept.engine.permission.SitePermissions
 import mozilla.components.concept.engine.permission.SitePermissions.Status.NO_DECISION
 import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.feature.session.TrackingProtectionUseCases
-import mozilla.components.feature.tabs.TabsUseCases
-import mozilla.components.support.test.mock
+import mozilla.components.service.glean.testing.GleanTestRule
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.After
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mozilla.fenix.GleanMetrics.TrackingProtection
 import org.mozilla.fenix.components.PermissionStorage
-import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.directionsEq
@@ -49,7 +50,6 @@ import org.mozilla.fenix.settings.quicksettings.ext.shouldBeEnabled
 import org.mozilla.fenix.settings.toggle
 import org.mozilla.fenix.utils.Settings
 
-@ExperimentalCoroutinesApi
 @RunWith(FenixRobolectricTestRunner::class)
 class DefaultQuickSettingsControllerTest {
     private val context = spyk(testContext)
@@ -74,15 +74,18 @@ class DefaultQuickSettingsControllerTest {
     private lateinit var permissionStorage: PermissionStorage
 
     @MockK(relaxed = true)
-    private lateinit var reload: SessionUseCases.ReloadUrlUseCase
+    private lateinit var engine: Engine
 
     @MockK(relaxed = true)
-    private lateinit var addNewTab: TabsUseCases.AddNewTabUseCase
+    private lateinit var reload: SessionUseCases.ReloadUrlUseCase
 
     @MockK(relaxed = true)
     private lateinit var requestPermissions: (Array<String>) -> Unit
 
     private lateinit var controller: DefaultQuickSettingsController
+
+    @get:Rule
+    val gleanRule = GleanTestRule(testContext)
 
     @Before
     fun setUp() {
@@ -99,15 +102,14 @@ class DefaultQuickSettingsControllerTest {
                 browserStore = browserStore,
                 sessionId = tab.id,
                 ioScope = coroutinesScope,
-                navController = { navController },
+                navController = navController,
                 sitePermissions = sitePermissions,
                 settings = appSettings,
                 permissionStorage = permissionStorage,
                 reload = reload,
-                addNewTab = addNewTab,
                 requestRuntimePermissions = requestPermissions,
-                displayPermissions = {},
-                dismiss = {}
+                engine = engine,
+                displayPermissions = {}
             )
         )
     }
@@ -119,6 +121,7 @@ class DefaultQuickSettingsControllerTest {
 
     @Test
     fun `handlePermissionsShown should delegate to an injected parameter`() {
+        every { testContext.components.core.engine } returns mockk(relaxed = true)
         var displayPermissionsInvoked = false
         createController(
             displayPermissions = {
@@ -169,22 +172,21 @@ class DefaultQuickSettingsControllerTest {
 
     @Test
     fun `handlePermissionToggled blocked by user should navigate to site permission manager`() {
+        every { testContext.components.core.engine } returns mockk(relaxed = true)
         val websitePermission = mockk<WebsitePermission>()
         val invalidSitePermissionsController = DefaultQuickSettingsController(
             context = context,
             quickSettingsStore = store,
             browserStore = BrowserStore(),
             ioScope = coroutinesScope,
-            navController = { navController },
+            navController = navController,
             sessionId = "123",
             sitePermissions = null,
             settings = appSettings,
             permissionStorage = permissionStorage,
             reload = reload,
-            addNewTab = addNewTab,
             requestRuntimePermissions = requestPermissions,
-            displayPermissions = {},
-            dismiss = {}
+            displayPermissions = {}
         )
 
         every { websitePermission.phoneFeature } returns PhoneFeature.CAMERA
@@ -228,7 +230,7 @@ class DefaultQuickSettingsControllerTest {
         every { store.dispatch(any()) } returns mockk()
         every { controller.handleAutoplayAdd(any()) } returns Unit
         every { controller.handlePermissionsChange(any()) } returns Unit
-        every { autoplayValue.updateSitePermissions(any()) } returns mock()
+        every { autoplayValue.updateSitePermissions(any()) } returns mockk()
 
         controller.handleAutoplayChanged(autoplayValue)
 
@@ -262,6 +264,7 @@ class DefaultQuickSettingsControllerTest {
 
     @Test
     fun `handleAndroidPermissionRequest should request from the injected callback`() {
+        every { testContext.components.core.engine } returns mockk(relaxed = true)
         val testPermissions = arrayOf("TestPermission")
 
         var requestRuntimePermissionsInvoked = false
@@ -326,11 +329,12 @@ class DefaultQuickSettingsControllerTest {
         }
 
         isEnabled = false
+        assertFalse(TrackingProtection.exceptionAdded.testHasValue())
 
         controller.handleTrackingProtectionToggled(isEnabled)
 
+        assertTrue(TrackingProtection.exceptionAdded.testHasValue())
         verify {
-            metrics.track(Event.TrackingProtectionException)
             trackingProtectionUseCases.addException(tab.id)
             sessionUseCases.reload.invoke(tab.id)
             store.dispatch(TrackingProtectionAction.ToggleTrackingProtectionEnabled(isEnabled))
@@ -386,10 +390,24 @@ class DefaultQuickSettingsControllerTest {
         }
     }
 
+    @Test
+    fun `WHEN handleClearSiteData THEN call clearSite`() {
+        controller.handleClearSiteDataClicked("mozilla.org")
+
+        verify {
+            engine.clearData(
+                host = "mozilla.org",
+                data = Engine.BrowsingData.select(
+                    Engine.BrowsingData.AUTH_SESSIONS,
+                    Engine.BrowsingData.ALL_SITE_DATA,
+                )
+            )
+        }
+    }
+
     private fun createController(
         requestPermissions: (Array<String>) -> Unit = { _ -> },
-        displayPermissions: () -> Unit = { },
-        dismiss: () -> Unit = { }
+        displayPermissions: () -> Unit = {}
     ): DefaultQuickSettingsController {
         return spyk(
             DefaultQuickSettingsController(
@@ -398,15 +416,13 @@ class DefaultQuickSettingsControllerTest {
                 browserStore = browserStore,
                 sessionId = tab.id,
                 ioScope = coroutinesScope,
-                navController = { navController },
+                navController = navController,
                 sitePermissions = sitePermissions,
                 settings = appSettings,
                 permissionStorage = permissionStorage,
                 reload = reload,
-                addNewTab = addNewTab,
                 requestRuntimePermissions = requestPermissions,
-                displayPermissions = displayPermissions,
-                dismiss = dismiss
+                displayPermissions = displayPermissions
             )
         )
     }

@@ -10,6 +10,7 @@
     style="@style/OnboardingCardLightWithPadding"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginHorizontal="@dimen/home_item_horizontal_margin"
     android:orientation="vertical">
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -39,7 +40,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="14dp"
-        android:text="@string/onboarding_manual_sign_in_description"
+        android:text="@string/onboarding_manual_sign_in_description_2"
         android:textAppearance="@style/Body14TextStyle"
         app:layout_constraintStart_toStartOf="@id/avatar_icon"
         app:layout_constraintTop_toBottomOf="@id/header_text" />

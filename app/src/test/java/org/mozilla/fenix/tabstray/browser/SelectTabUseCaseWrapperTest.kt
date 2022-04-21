@@ -7,36 +7,62 @@ package org.mozilla.fenix.tabstray.browser
 import io.mockk.mockk
 import io.mockk.verify
 import mozilla.components.feature.tabs.TabsUseCases
+import mozilla.components.service.glean.testing.GleanTestRule
+import mozilla.components.support.test.robolectric.testContext
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
+import org.junit.Rule
 import org.junit.Test
-import org.mozilla.fenix.components.metrics.Event
+import org.junit.runner.RunWith
+import org.mozilla.fenix.GleanMetrics.TabsTray
 import org.mozilla.fenix.components.metrics.MetricController
+import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 
+@RunWith(FenixRobolectricTestRunner::class) // for gleanTestRule
 class SelectTabUseCaseWrapperTest {
 
     val metricController = mockk<MetricController>(relaxed = true)
     val selectUseCase: TabsUseCases.SelectTabUseCase = mockk(relaxed = true)
 
+    @get:Rule
+    val gleanTestRule = GleanTestRule(testContext)
+
     @Test
     fun `WHEN invoked with no source name THEN metrics with unknown source, use case and callback are triggered`() {
-        val onSelect: (String) -> Unit = mockk(relaxed = true)
-        val wrapper = SelectTabUseCaseWrapper(metricController, selectUseCase, onSelect)
+        var invoked = ""
+        val onSelect: (String) -> Unit = { invoked = it }
+        val wrapper = SelectTabUseCaseWrapper(selectUseCase, onSelect)
+
+        assertFalse(TabsTray.openedExistingTab.testHasValue())
 
         wrapper("123")
 
-        verify { metricController.track(Event.OpenedExistingTab("unknown")) }
+        assertTrue(TabsTray.openedExistingTab.testHasValue())
+        val snapshot = TabsTray.openedExistingTab.testGetValue()
+        assertEquals(1, snapshot.size)
+        assertEquals("unknown", snapshot.single().extra?.getValue("source"))
+
         verify { selectUseCase("123") }
-        verify { onSelect("123") }
+        assertEquals("123", invoked)
     }
 
     @Test
     fun `WHEN invoked with a source name THEN metrics, use case and callback are triggered`() {
-        val onSelect: (String) -> Unit = mockk(relaxed = true)
-        val wrapper = SelectTabUseCaseWrapper(metricController, selectUseCase, onSelect)
+        var invoked = ""
+        val onSelect: (String) -> Unit = { invoked = it }
+        val wrapper = SelectTabUseCaseWrapper(selectUseCase, onSelect)
+
+        assertFalse(TabsTray.openedExistingTab.testHasValue())
 
         wrapper("123", "Test")
 
-        verify { metricController.track(Event.OpenedExistingTab("Test")) }
+        assertTrue(TabsTray.openedExistingTab.testHasValue())
+        val snapshot = TabsTray.openedExistingTab.testGetValue()
+        assertEquals(1, snapshot.size)
+        assertEquals("Test", snapshot.single().extra?.getValue("source"))
+
         verify { selectUseCase("123") }
-        verify { onSelect("123") }
+        assertEquals("123", invoked)
     }
 }

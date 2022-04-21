@@ -13,28 +13,25 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.ObsoleteCoroutinesApi
 import mozilla.components.lib.state.ext.consumeFrom
+import mozilla.components.service.glean.private.NoExtras
 import org.mozilla.fenix.BrowserDirection
+import org.mozilla.fenix.GleanMetrics.Logins
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.SecureFragment
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.StoreProvider
-import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.databinding.FragmentLoginDetailBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.ext.redirectToReAuth
-import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.ext.simplifiedUrl
@@ -50,8 +47,7 @@ import org.mozilla.fenix.settings.logins.view.LoginDetailsBindingDelegate
  * Displays saved login information for a single website.
  */
 @Suppress("TooManyFunctions", "ForbiddenComment")
-@ExperimentalCoroutinesApi
-class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
+class LoginDetailFragment : SecureFragment(R.layout.fragment_login_detail) {
 
     private val args by navArgs<LoginDetailFragmentArgs>()
     private var login: SavedLogin? = null
@@ -81,8 +77,6 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
         return view
     }
 
-    @ObsoleteCoroutinesApi
-    @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -112,14 +106,6 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        activity?.window?.setFlags(
-            WindowManager.LayoutParams.FLAG_SECURE,
-            WindowManager.LayoutParams.FLAG_SECURE
-        )
     }
 
     /**
@@ -197,7 +183,7 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
     }
 
     private fun editLogin() {
-        requireComponents.analytics.metrics.track(Event.EditLogin)
+        Logins.openLoginEditor.record(NoExtras())
         val directions =
             LoginDetailFragmentDirections.actionLoginDetailFragmentToEditLoginFragment(
                 login!!
@@ -209,11 +195,11 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
         activity?.let { activity ->
             deleteDialog = AlertDialog.Builder(activity).apply {
                 setMessage(R.string.login_deletion_confirmation)
-                setNegativeButton(android.R.string.cancel) { dialog: DialogInterface, _ ->
+                setNegativeButton(R.string.dialog_delete_negative) { dialog: DialogInterface, _ ->
                     dialog.cancel()
                 }
                 setPositiveButton(R.string.dialog_delete_positive) { dialog: DialogInterface, _ ->
-                    requireComponents.analytics.metrics.track(Event.DeleteLogin)
+                    Logins.deleteSavedLogin.record(NoExtras())
                     interactor.onDeleteLogin(args.savedLoginId)
                     dialog.dismiss()
                 }
@@ -235,7 +221,7 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
             val clipboard = view.context.components.clipboardHandler
             clipboard.text = value
             showCopiedSnackbar(view.context.getString(snackbarText))
-            view.context.components.analytics.metrics.track(Event.CopyLogin)
+            Logins.copyLogin.record(NoExtras())
         }
 
         private fun showCopiedSnackbar(copiedItem: String) {

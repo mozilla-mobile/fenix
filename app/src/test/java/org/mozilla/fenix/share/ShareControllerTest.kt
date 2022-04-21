@@ -18,9 +18,7 @@ import io.mockk.slot
 import io.mockk.spyk
 import io.mockk.verify
 import io.mockk.verifyOrder
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.TestCoroutineScope
 import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.concept.sync.Device
@@ -28,19 +26,21 @@ import mozilla.components.concept.sync.DeviceType
 import mozilla.components.concept.sync.TabData
 import mozilla.components.feature.accounts.push.SendTabUseCases
 import mozilla.components.feature.share.RecentAppsStorage
+import mozilla.components.service.glean.testing.GleanTestRule
 import mozilla.components.support.test.robolectric.testContext
 import mozilla.components.support.test.rule.MainCoroutineRule
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mozilla.fenix.GleanMetrics.SyncAccount
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
-import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
@@ -48,7 +48,6 @@ import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.share.listadapters.AppShareOption
 
 @RunWith(FenixRobolectricTestRunner::class)
-@ExperimentalCoroutinesApi
 class ShareControllerTest {
     // Need a valid context to retrieve Strings for example, but we also need it to return our "metrics"
     private val context: Context = spyk(testContext)
@@ -65,20 +64,23 @@ class ShareControllerTest {
         TabData("title1", "url1")
     )
     private val textToShare = "${shareData[0].url}\n\n${shareData[1].url}"
-    private val testDispatcher = TestCoroutineDispatcher()
-    private val testCoroutineScope = TestCoroutineScope()
     private val sendTabUseCases = mockk<SendTabUseCases>(relaxed = true)
     private val snackbar = mockk<FenixSnackbar>(relaxed = true)
     private val navController = mockk<NavController>(relaxed = true)
     private val dismiss = mockk<(ShareController.Result) -> Unit>(relaxed = true)
     private val recentAppStorage = mockk<RecentAppsStorage>(relaxed = true)
+
+    @get:Rule
+    val gleanTestRule = GleanTestRule(testContext)
+
+    @get:Rule
+    val coroutinesTestRule = MainCoroutineRule()
+    private val testDispatcher = coroutinesTestRule.testDispatcher
+    private val testCoroutineScope = TestCoroutineScope(testDispatcher)
     private val controller = DefaultShareController(
         context, shareSubject, shareData, sendTabUseCases, snackbar, navController,
         recentAppStorage, testCoroutineScope, testDispatcher, dismiss
     )
-
-    @get:Rule
-    val coroutinesTestRule = MainCoroutineRule(testDispatcher)
 
     @Before
     fun setUp() {
@@ -191,6 +193,73 @@ class ShareControllerTest {
     }
 
     @Test
+    fun `getShareSubject should return the shareSubject when shareSubject is not null`() {
+        val activityContext: Context = mockk<Activity>()
+        val testController = DefaultShareController(
+            activityContext, shareSubject, shareData, mockk(),
+            mockk(), mockk(), recentAppStorage, testCoroutineScope, testDispatcher, dismiss
+        )
+
+        assertEquals(shareSubject, testController.getShareSubject())
+    }
+
+    @Test
+    fun `getShareSubject should return a combination of non-null titles when shareSubject is null`() {
+        val activityContext: Context = mockk<Activity>()
+        val testController = DefaultShareController(
+            activityContext, null, shareData, mockk(),
+            mockk(), mockk(), recentAppStorage, testCoroutineScope, testDispatcher, dismiss
+        )
+
+        assertEquals("title0, title1", testController.getShareSubject())
+    }
+
+    @Test
+    fun `getShareSubject should return just the not null titles string when shareSubject is  null`() {
+        val activityContext: Context = mockk<Activity>()
+        val partialTitlesShareData = listOf(
+            ShareData(url = "url0", title = null),
+            ShareData(url = "url1", title = "title1")
+        )
+        val testController = DefaultShareController(
+            activityContext, null, partialTitlesShareData, mockk(),
+            mockk(), mockk(), recentAppStorage, testCoroutineScope, testDispatcher, dismiss
+        )
+
+        assertEquals("title1", testController.getShareSubject())
+    }
+
+    @Test
+    fun `getShareSubject should return empty string when shareSubject and all titles are null`() {
+        val activityContext: Context = mockk<Activity>()
+        val noTitleShareData = listOf(
+            ShareData(url = "url0", title = null),
+            ShareData(url = "url1", title = null)
+        )
+        val testController = DefaultShareController(
+            activityContext, null, noTitleShareData, mockk(),
+            mockk(), mockk(), recentAppStorage, testCoroutineScope, testDispatcher, dismiss
+        )
+
+        assertEquals("", testController.getShareSubject())
+    }
+
+    @Test
+    fun `getShareSubject should return empty string when shareSubject is null and and all titles are empty`() {
+        val activityContext: Context = mockk<Activity>()
+        val noTitleShareData = listOf(
+            ShareData(url = "url0", title = ""),
+            ShareData(url = "url1", title = "")
+        )
+        val testController = DefaultShareController(
+            activityContext, null, noTitleShareData, mockk(),
+            mockk(), mockk(), recentAppStorage, testCoroutineScope, testDispatcher, dismiss
+        )
+
+        assertEquals("", testController.getShareSubject())
+    }
+
+    @Test
     @Suppress("DeferredResultUnused")
     fun `handleShareToDevice should share to account device, inform callbacks and dismiss`() {
         val deviceToShareTo = Device(
@@ -201,9 +270,12 @@ class ShareControllerTest {
 
         controller.handleShareToDevice(deviceToShareTo)
 
+        assertTrue(SyncAccount.sendTab.testHasValue())
+        assertEquals(1, SyncAccount.sendTab.testGetValue().size)
+        assertNull(SyncAccount.sendTab.testGetValue().single().extra)
+
         // Verify all the needed methods are called.
-        verifyOrder {
-            metrics.track(Event.SendTab)
+        verify {
             sendTabUseCases.sendToDeviceAsync(capture(deviceId), capture(tabsShared))
             // dismiss() is also to be called, but at the moment cannot test it in a coroutine.
         }
@@ -257,8 +329,11 @@ class ShareControllerTest {
     fun `handleSignIn should navigate to the Sync Fragment and dismiss this one`() {
         controller.handleSignIn()
 
+        assertTrue(SyncAccount.signInToSendTab.testHasValue())
+        assertEquals(1, SyncAccount.signInToSendTab.testGetValue().size)
+        assertNull(SyncAccount.signInToSendTab.testGetValue().single().extra)
+
         verifyOrder {
-            metrics.track(Event.SignInToSendTab)
             navController.nav(
                 R.id.shareFragment,
                 ShareFragmentDirections.actionGlobalTurnOnSync()

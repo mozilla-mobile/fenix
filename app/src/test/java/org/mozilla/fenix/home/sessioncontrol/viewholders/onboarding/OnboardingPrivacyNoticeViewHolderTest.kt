@@ -6,19 +6,30 @@ package org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding
 
 import android.view.LayoutInflater
 import androidx.appcompat.view.ContextThemeWrapper
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import mozilla.components.support.test.robolectric.testContext
+import mozilla.telemetry.glean.testing.GleanTestRule
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mozilla.fenix.GleanMetrics.Onboarding
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.OnboardingPrivacyNoticeBinding
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.home.sessioncontrol.OnboardingInteractor
 
 @RunWith(FenixRobolectricTestRunner::class)
 class OnboardingPrivacyNoticeViewHolderTest {
+
+    @get:Rule
+    val gleanTestRule = GleanTestRule(testContext)
 
     private lateinit var binding: OnboardingPrivacyNoticeBinding
     private lateinit var interactor: OnboardingInteractor
@@ -32,9 +43,14 @@ class OnboardingPrivacyNoticeViewHolderTest {
 
     @Test
     fun `call interactor on click`() {
+        every { testContext.components.analytics } returns mockk(relaxed = true)
         OnboardingPrivacyNoticeViewHolder(binding.root, interactor)
 
         binding.readButton.performClick()
         verify { interactor.onReadPrivacyNoticeClicked() }
+        // Check if the event was recorded
+        assertTrue(Onboarding.privacyNotice.testHasValue())
+        assertEquals(1, Onboarding.privacyNotice.testGetValue().size)
+        assertNull(Onboarding.privacyNotice.testGetValue().single().extra)
     }
 }

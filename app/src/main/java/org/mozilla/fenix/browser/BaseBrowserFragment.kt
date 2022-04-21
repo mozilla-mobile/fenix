@@ -32,7 +32,6 @@ import androidx.preference.PreferenceManager
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
@@ -40,6 +39,7 @@ import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import mozilla.appservices.places.BookmarkRoot
+import mozilla.appservices.places.uniffi.PlacesException
 import mozilla.components.browser.state.action.ContentAction
 import mozilla.components.browser.state.selector.findCustomTab
 import mozilla.components.browser.state.selector.findCustomTabOrSelectedTab
@@ -76,6 +76,7 @@ import mozilla.components.feature.session.PictureInPictureFeature
 import mozilla.components.feature.session.SessionFeature
 import mozilla.components.feature.session.SwipeRefreshFeature
 import mozilla.components.concept.engine.permission.SitePermissions
+import mozilla.components.feature.session.ScreenOrientationFeature
 import mozilla.components.feature.sitepermissions.SitePermissionsFeature
 import mozilla.components.lib.state.ext.consumeFlow
 import mozilla.components.lib.state.ext.flowScoped
@@ -99,7 +100,6 @@ import org.mozilla.fenix.browser.readermode.DefaultReaderModeController
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.FindInPageIntegration
 import org.mozilla.fenix.components.StoreProvider
-import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.toolbar.BrowserFragmentState
 import org.mozilla.fenix.components.toolbar.BrowserFragmentStore
 import org.mozilla.fenix.components.toolbar.BrowserToolbarView
@@ -127,13 +127,18 @@ import org.mozilla.fenix.wifi.SitePermissionsWifiIntegration
 import java.lang.ref.WeakReference
 import mozilla.components.feature.session.behavior.EngineViewBrowserToolbarBehavior
 import mozilla.components.feature.webauthn.WebAuthnFeature
+import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.support.base.feature.ActivityResultHandler
 import mozilla.components.support.ktx.android.view.enterToImmersiveMode
 import mozilla.components.support.ktx.kotlin.getOrigin
+import org.mozilla.fenix.GleanMetrics.Downloads
+import org.mozilla.fenix.GleanMetrics.MediaState
 import org.mozilla.fenix.components.toolbar.interactor.BrowserToolbarInteractor
 import org.mozilla.fenix.components.toolbar.interactor.DefaultBrowserToolbarInteractor
+import org.mozilla.fenix.crashes.CrashContentIntegration
 import org.mozilla.fenix.databinding.FragmentBrowserBinding
 import org.mozilla.fenix.ext.secure
+import org.mozilla.fenix.perf.MarkersFragmentLifecycleCallbacks
 import org.mozilla.fenix.settings.biometric.BiometricPromptFeature
 import mozilla.components.feature.session.behavior.ToolbarPosition as MozacToolbarPosition
 
@@ -142,7 +147,6 @@ import mozilla.components.feature.session.behavior.ToolbarPosition as MozacToolb
  * This class only contains shared code focused on the main browsing content.
  * UI code specific to the app or to custom tabs can be found in the subclasses.
  */
-@ExperimentalCoroutinesApi
 @Suppress("TooManyFunctions", "LargeClass")
 abstract class BaseBrowserFragment :
     Fragment(),
@@ -190,7 +194,9 @@ abstract class BaseBrowserFragment :
         ViewBoundFeatureWrapper<MediaSessionFullscreenFeature>()
     private val searchFeature = ViewBoundFeatureWrapper<SearchFeature>()
     private val webAuthnFeature = ViewBoundFeatureWrapper<WebAuthnFeature>()
+    private val screenOrientationFeature = ViewBoundFeatureWrapper<ScreenOrientationFeature>()
     private val biometricPromptFeature = ViewBoundFeatureWrapper<BiometricPromptFeature>()
+    private val crashContentIntegration = ViewBoundFeatureWrapper<CrashContentIntegration>()
     private var pipFeature: PictureInPictureFeature? = null
 
     var customTabSessionId: String? = null
@@ -212,6 +218,9 @@ abstract class BaseBrowserFragment :
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        // DO NOT ADD ANYTHING ABOVE THIS getProfilerTime CALL!
+        val profilerStartTime = requireComponents.core.engine.profiler?.getProfilerTime()
+
         customTabSessionId = requireArguments().getString(EXTRA_SESSION_ID)
 
         // Diagnostic breadcrumb for "Display already aquired" crash:
@@ -234,10 +243,17 @@ abstract class BaseBrowserFragment :
             )
         }
 
+        // DO NOT MOVE ANYTHING BELOW THIS addMarker CALL!
+        requireComponents.core.engine.profiler?.addMarker(
+            MarkersFragmentLifecycleCallbacks.MARKER_NAME, profilerStartTime, "BaseBrowserFragment.onCreateView",
+        )
         return binding.root
     }
 
     final override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        // DO NOT ADD ANYTHING ABOVE THIS getProfilerTime CALL!
+        val profilerStartTime = requireComponents.core.engine.profiler?.getProfilerTime()
+
         initializeUI(view)
 
         if (customTabSessionId == null) {
@@ -254,6 +270,11 @@ abstract class BaseBrowserFragment :
         }
 
         requireContext().accessibilityManager.addAccessibilityStateChangeListener(this)
+
+        // DO NOT MOVE ANYTHING BELOW THIS addMarker CALL!
+        requireComponents.core.engine.profiler?.addMarker(
+            MarkersFragmentLifecycleCallbacks.MARKER_NAME, profilerStartTime, "BaseBrowserFragment.onViewCreated",
+        )
     }
 
     private fun initializeUI(view: View) {
@@ -306,6 +327,7 @@ abstract class BaseBrowserFragment :
             engineView = binding.engineView,
             homeViewModel = homeViewModel,
             customTabSessionId = customTabSessionId,
+            browserAnimator = browserAnimator,
             onTabCounterClicked = {
                 thumbnailsFeature.get()?.requestScreenshot()
                 findNavController().nav(
@@ -355,6 +377,7 @@ abstract class BaseBrowserFragment :
             scope = viewLifecycleOwner.lifecycleScope,
             tabCollectionStorage = requireComponents.core.tabCollectionStorage,
             topSitesStorage = requireComponents.core.topSitesStorage,
+            pinnedSiteStorage = requireComponents.core.pinnedSiteStorage,
             browserStore = store
         )
 
@@ -364,8 +387,9 @@ abstract class BaseBrowserFragment :
         )
 
         _browserToolbarView = BrowserToolbarView(
+            context = context,
             container = binding.browserLayout,
-            toolbarPosition = context.settings().toolbarPosition,
+            settings = context.settings(),
             interactor = browserToolbarInteractor,
             customTabSession = customTabSessionId?.let { store.state.findCustomTab(it) },
             lifecycleOwner = viewLifecycleOwner
@@ -463,7 +487,7 @@ abstract class BaseBrowserFragment :
                     context
                 ),
                 positiveButtonTextColor = ThemeManager.resolveAttribute(
-                    R.attr.contrastText,
+                    R.attr.textOnColorPrimary,
                     context
                 ),
                 positiveButtonRadius = (resources.getDimensionPixelSize(R.dimen.tab_corner_radius)).toFloat()
@@ -497,6 +521,10 @@ abstract class BaseBrowserFragment :
 
                 dynamicDownloadDialog.show()
                 browserToolbarView.expand()
+
+                if (downloadState.contentType == "application/pdf") {
+                    Downloads.pdfDownloadCount.add()
+                }
             }
         }
 
@@ -597,7 +625,7 @@ abstract class BaseBrowserFragment :
                 creditCardPickerView = binding.creditCardSelectBar,
                 onManageCreditCards = {
                     val directions =
-                        NavGraphDirections.actionGlobalCreditCardsSettingFragment()
+                        NavGraphDirections.actionGlobalAutofillSettingFragment()
                     findNavController().navigate(directions)
                 },
                 onSelectCreditCard = {
@@ -614,6 +642,22 @@ abstract class BaseBrowserFragment :
                 requireComponents.useCases.sessionUseCases.goBack,
                 binding.engineView,
                 customTabSessionId
+            ),
+            owner = this,
+            view = view
+        )
+
+        crashContentIntegration.set(
+            feature = CrashContentIntegration(
+                browserStore = requireComponents.core.store,
+                appStore = requireComponents.appStore,
+                toolbar = browserToolbarView.view,
+                isToolbarPlacedAtTop = !context.settings().shouldUseBottomToolbar,
+                crashReporterView = binding.crashReporterView,
+                components = requireComponents,
+                settings = context.settings(),
+                navController = findNavController(),
+                sessionId = customTabSessionId
             ),
             owner = this,
             view = view
@@ -678,7 +722,7 @@ abstract class BaseBrowserFragment :
         )
 
         // This component feature only works on Fenix when built on Mozilla infrastructure.
-        if (FeatureFlags.webAuthFeature && BuildConfig.MOZILLA_OFFICIAL) {
+        if (BuildConfig.MOZILLA_OFFICIAL) {
             webAuthnFeature.set(
                 feature = WebAuthnFeature(
                     engine = requireComponents.core.engine,
@@ -688,6 +732,15 @@ abstract class BaseBrowserFragment :
                 view = view
             )
         }
+
+        screenOrientationFeature.set(
+            feature = ScreenOrientationFeature(
+                engine = requireComponents.core.engine,
+                activity = requireActivity()
+            ),
+            owner = this,
+            view = view
+        )
 
         context.settings().setSitePermissionSettingListener(viewLifecycleOwner) {
             // If the user connects to WIFI while on the BrowserFragment, this will update the
@@ -722,7 +775,7 @@ abstract class BaseBrowserFragment :
 
         if (binding.swipeRefresh.isEnabled) {
             val primaryTextColor =
-                ThemeManager.resolveAttribute(R.attr.primaryText, context)
+                ThemeManager.resolveAttribute(R.attr.textPrimary, context)
             binding.swipeRefresh.setColorSchemeColors(primaryTextColor)
             swipeRefreshFeature.set(
                 feature = SwipeRefreshFeature(
@@ -738,7 +791,6 @@ abstract class BaseBrowserFragment :
 
         webchannelIntegration.set(
             feature = FxaWebChannelFeature(
-                requireContext(),
                 customTabSessionId,
                 requireComponents.core.engine,
                 requireComponents.core.store,
@@ -1033,10 +1085,6 @@ abstract class BaseBrowserFragment :
             components.useCases.sessionUseCases.reload()
         }
         hideToolbar()
-
-        components.core.store.state.findTabOrCustomTabOrSelectedTab(customTabSessionId)?.let {
-            updateThemeForSession(it)
-        }
     }
 
     @CallSuper
@@ -1217,33 +1265,46 @@ abstract class BaseBrowserFragment :
             }
         } else {
             // Save bookmark, then go to edit fragment
-            val guid = bookmarksStorage.addItem(
-                BookmarkRoot.Mobile.id,
-                url = sessionUrl,
-                title = sessionTitle,
-                position = null
-            )
+            try {
+                val guid = bookmarksStorage.addItem(
+                    BookmarkRoot.Mobile.id,
+                    url = sessionUrl,
+                    title = sessionTitle,
+                    position = null
+                )
 
-            withContext(Main) {
-                requireComponents.analytics.metrics.track(Event.AddBookmark)
-
-                view?.let {
-                    FenixSnackbar.make(
-                        view = binding.browserLayout,
-                        duration = FenixSnackbar.LENGTH_LONG,
-                        isDisplayedWithBrowserToolbar = true
-                    )
-                        .setText(getString(R.string.bookmark_saved_snackbar))
-                        .setAction(getString(R.string.edit_bookmark_snackbar_action)) {
-                            nav(
-                                R.id.browserFragment,
-                                BrowserFragmentDirections.actionGlobalBookmarkEditFragment(
-                                    guid,
-                                    true
+                withContext(Main) {
+                    view?.let {
+                        FenixSnackbar.make(
+                            view = binding.browserLayout,
+                            duration = FenixSnackbar.LENGTH_LONG,
+                            isDisplayedWithBrowserToolbar = true
+                        )
+                            .setText(getString(R.string.bookmark_saved_snackbar))
+                            .setAction(getString(R.string.edit_bookmark_snackbar_action)) {
+                                nav(
+                                    R.id.browserFragment,
+                                    BrowserFragmentDirections.actionGlobalBookmarkEditFragment(
+                                        guid,
+                                        true
+                                    )
                                 )
-                            )
-                        }
-                        .show()
+                            }
+                            .show()
+                    }
+                }
+            } catch (e: PlacesException.UrlParseFailed) {
+                withContext(Main) {
+
+                    view?.let {
+                        FenixSnackbar.make(
+                            view = binding.browserLayout,
+                            duration = FenixSnackbar.LENGTH_LONG,
+                            isDisplayedWithBrowserToolbar = true
+                        )
+                            .setText(getString(R.string.bookmark_invalid_url_error))
+                            .show()
+                    }
                 }
             }
         }
@@ -1262,7 +1323,7 @@ abstract class BaseBrowserFragment :
     }
 
     final override fun onPictureInPictureModeChanged(enabled: Boolean) {
-        if (enabled) requireComponents.analytics.metrics.track(Event.MediaPictureInPictureState)
+        if (enabled) MediaState.pictureInPicture.record(NoExtras())
         pipFeature?.onPictureInPictureModeChanged(enabled)
     }
 
@@ -1298,7 +1359,7 @@ abstract class BaseBrowserFragment :
             // Without this, fullscreen has a margin at the top.
             binding.engineView.setVerticalClipping(0)
 
-            requireComponents.analytics.metrics.track(Event.MediaFullscreenState)
+            MediaState.fullscreen.record(NoExtras())
         } else {
             activity?.exitImmersiveModeIfNeeded()
             (activity as? HomeActivity)?.let { activity ->

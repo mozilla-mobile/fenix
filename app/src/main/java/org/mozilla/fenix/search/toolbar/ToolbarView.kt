@@ -19,19 +19,20 @@ import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.support.ktx.android.content.res.resolveAttribute
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import org.mozilla.fenix.R
-import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.search.SearchFragmentState
+import org.mozilla.fenix.utils.Settings
 
 /**
  * Interface for the Toolbar Interactor. This interface is implemented by objects that want
- * to respond to user interaction on the [ToolbarView]
+ * to respond to user interaction on the [ToolbarView].
  */
 interface ToolbarInteractor {
 
     /**
      * Called when a user hits the return key while [ToolbarView] has focus.
-     * @param url the text inside the [ToolbarView] when committed
-     * @param fromHomeScreen true if the toolbar has been opened from home screen
+     *
+     * @param url The text inside the [ToolbarView] when committed.
+     * @param fromHomeScreen True if the toolbar has been opened from home screen.
      */
     fun onUrlCommitted(url: String, fromHomeScreen: Boolean = false)
 
@@ -42,9 +43,17 @@ interface ToolbarInteractor {
 
     /**
      * Called whenever the text inside the [ToolbarView] changes
-     * @param text the current text displayed by [ToolbarView]
+     *
+     * @param text The current text displayed by [ToolbarView].
      */
     fun onTextChanged(text: String)
+
+    /**
+     * Called when an user taps on a search selector menu item.
+     *
+     * @param item The [SearchSelectorMenu.Item] that was tapped.
+     */
+    fun onMenuItemTapped(item: SearchSelectorMenu.Item)
 }
 
 /**
@@ -53,6 +62,7 @@ interface ToolbarInteractor {
 @Suppress("LongParameterList")
 class ToolbarView(
     private val context: Context,
+    private val settings: Settings,
     private val interactor: ToolbarInteractor,
     private val historyStorage: HistoryStorage?,
     private val isPrivate: Boolean,
@@ -78,19 +88,19 @@ class ToolbarView(
             }
 
             background = AppCompatResources.getDrawable(
-                context, context.theme.resolveAttribute(R.attr.foundation)
+                context, context.theme.resolveAttribute(R.attr.layer1)
             )
 
             edit.hint = context.getString(R.string.search_hint)
 
             edit.colors = edit.colors.copy(
-                text = context.getColorFromAttr(R.attr.primaryText),
-                hint = context.getColorFromAttr(R.attr.secondaryText),
+                text = context.getColorFromAttr(R.attr.textPrimary),
+                hint = context.getColorFromAttr(R.attr.textSecondary),
                 suggestionBackground = ContextCompat.getColor(
                     context,
                     R.color.suggestion_highlight_color
                 ),
-                clear = context.getColorFromAttr(R.attr.primaryText)
+                clear = context.getColorFromAttr(R.attr.textPrimary)
             )
 
             edit.setUrlBackground(
@@ -115,7 +125,7 @@ class ToolbarView(
 
         val engineForSpeculativeConnects = if (!isPrivate) engine else null
 
-        if (context.settings().shouldAutocompleteInAwesomebar) {
+        if (settings.shouldAutocompleteInAwesomebar) {
             ToolbarAutocompleteFeature(
                 view,
                 engineForSpeculativeConnects
@@ -135,9 +145,7 @@ class ToolbarView(
             if (searchState.pastedText.isNullOrEmpty()) {
                 // If we're in edit mode, setting the search term will update the toolbar,
                 // so we make sure we have the correct term/query to show.
-                val termOrQuery = if (searchState.searchTerms.isNotEmpty()) {
-                    searchState.searchTerms
-                } else {
+                val termOrQuery = searchState.searchTerms.ifEmpty {
                     searchState.query
                 }
                 view.setSearchTerms(termOrQuery)
@@ -153,7 +161,7 @@ class ToolbarView(
 
         val searchEngine = searchState.searchEngineSource.searchEngine
 
-        if (searchEngine != null) {
+        if (!settings.showUnifiedSearchFeature && searchEngine != null) {
             val iconSize =
                 context.resources.getDimensionPixelSize(R.dimen.preference_icon_drawable_size)
 

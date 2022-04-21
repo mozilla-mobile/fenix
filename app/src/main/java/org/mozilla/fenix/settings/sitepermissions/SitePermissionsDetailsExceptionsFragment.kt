@@ -32,6 +32,7 @@ import org.mozilla.fenix.settings.PhoneFeature.NOTIFICATION
 import org.mozilla.fenix.settings.PhoneFeature.PERSISTENT_STORAGE
 import org.mozilla.fenix.settings.PhoneFeature.MEDIA_KEY_SYSTEM_ACCESS
 import org.mozilla.fenix.settings.PhoneFeature.AUTOPLAY
+import org.mozilla.fenix.settings.PhoneFeature.CROSS_ORIGIN_STORAGE_ACCESS
 import org.mozilla.fenix.settings.quicksettings.AutoplayValue
 import org.mozilla.fenix.settings.requirePreference
 import org.mozilla.fenix.utils.Settings
@@ -70,6 +71,7 @@ class SitePermissionsDetailsExceptionsFragment : PreferenceFragmentCompat() {
         initPhoneFeature(MICROPHONE)
         initPhoneFeature(NOTIFICATION)
         initPhoneFeature(PERSISTENT_STORAGE)
+        initPhoneFeature(CROSS_ORIGIN_STORAGE_ACCESS)
         initPhoneFeature(MEDIA_KEY_SYSTEM_ACCESS)
         initAutoplayFeature()
         bindClearPermissionsButton()
@@ -131,11 +133,11 @@ class SitePermissionsDetailsExceptionsFragment : PreferenceFragmentCompat() {
             AlertDialog.Builder(requireContext()).apply {
                 setMessage(R.string.confirm_clear_permissions_site)
                 setTitle(R.string.clear_permissions)
-                setPositiveButton(android.R.string.ok) { dialog: DialogInterface, _ ->
+                setPositiveButton(R.string.clear_permissions_positive) { dialog: DialogInterface, _ ->
                     clearSitePermissions()
                     dialog.dismiss()
                 }
-                setNegativeButton(android.R.string.cancel) { dialog: DialogInterface, _ ->
+                setNegativeButton(R.string.clear_permissions_negative) { dialog: DialogInterface, _ ->
                     dialog.cancel()
                 }
             }.show()

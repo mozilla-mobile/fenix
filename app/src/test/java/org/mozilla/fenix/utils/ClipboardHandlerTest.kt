@@ -51,19 +51,29 @@ class ClipboardHandlerTest {
     }
 
     @Test
-    fun getUrl() {
-        assertEquals(null, clipboardHandler.url)
+    fun `extract url from plaintext mime clipboard clip`() {
+        assertEquals(null, clipboardHandler.extractURL())
 
         clipboard.setPrimaryClip(ClipData.newPlainText("Text", clipboardUrl))
-        assertEquals(clipboardUrl, clipboardHandler.url)
+        assertEquals(clipboardUrl, clipboardHandler.extractURL())
     }
 
     @Test
-    fun getUrlfromTextUrlMIME() {
-        assertEquals(null, clipboardHandler.url)
+    fun `extract url from html mime clipboard clip`() {
+        assertEquals(null, clipboardHandler.extractURL())
 
         clipboard.setPrimaryClip(ClipData.newHtmlText("Html", clipboardUrl, clipboardUrl))
-        assertEquals(clipboardUrl, clipboardHandler.url)
+        assertEquals(clipboardUrl, clipboardHandler.extractURL())
+    }
+
+    @Test
+    fun `extract url from url mime clipboard clip`() {
+        assertEquals(null, clipboardHandler.extractURL())
+
+        clipboard.setPrimaryClip(
+            ClipData(clipboardUrl, arrayOf("text/x-moz-url"), ClipData.Item(clipboardUrl))
+        )
+        assertEquals(clipboardUrl, clipboardHandler.extractURL())
     }
 
     @Test

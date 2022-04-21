@@ -10,17 +10,21 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
+import kotlinx.coroutines.runBlocking
 import mozilla.components.concept.storage.CreditCard
 import mozilla.components.concept.storage.CreditCardNumber
 import mozilla.components.concept.storage.NewCreditCardFields
 import mozilla.components.concept.storage.UpdatableCreditCardFields
 import mozilla.components.service.sync.autofill.AutofillCreditCardsAddressesStorage
 import mozilla.components.service.sync.autofill.AutofillCrypto
+import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.support.test.robolectric.testContext
 import mozilla.components.support.utils.CreditCardNetworkType
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -99,7 +103,7 @@ class CreditCardEditorViewTest {
     }
 
     @Test
-    fun `GIVEN a credit card THEN credit card form inputs are displaying the provided credit card information`() {
+    fun `GIVEN a credit card THEN credit card form inputs are displaying the provided credit card information`() = runBlocking {
         creditCardEditorView.bind(creditCard.toCreditCardEditorState(storage))
 
         assertEquals(cardNumber, fragmentCreditCardEditorBinding.cardNumberInput.text.toString())
@@ -120,7 +124,7 @@ class CreditCardEditorViewTest {
     }
 
     @Test
-    fun `GIVEN a credit card WHEN the delete card button is clicked THEN interactor is called`() {
+    fun `GIVEN a credit card WHEN the delete card button is clicked THEN interactor is called`() = runBlocking {
         creditCardEditorView.bind(creditCard.toCreditCardEditorState(storage))
 
         assertEquals(View.VISIBLE, fragmentCreditCardEditorBinding.deleteButton.visibility)
@@ -161,6 +165,11 @@ class CreditCardEditorViewTest {
         }
 
         assertFalse(creditCardEditorView.validateForm())
+        assertNotNull(fragmentCreditCardEditorBinding.cardNumberLayout.error)
+        assertEquals(
+            fragmentCreditCardEditorBinding.cardNumberLayout.errorCurrentTextColors,
+            fragmentCreditCardEditorBinding.root.context.getColorFromAttr(R.attr.textWarning)
+        )
 
         verify(exactly = 0) {
             interactor.onSaveCreditCard(
@@ -181,6 +190,11 @@ class CreditCardEditorViewTest {
         fragmentCreditCardEditorBinding.saveButton.performClick()
 
         assertFalse(creditCardEditorView.validateForm())
+        assertNotNull(fragmentCreditCardEditorBinding.cardNumberLayout.error)
+        assertEquals(
+            fragmentCreditCardEditorBinding.cardNumberLayout.errorCurrentTextColors,
+            fragmentCreditCardEditorBinding.root.context.getColorFromAttr(R.attr.textWarning)
+        )
 
         verify(exactly = 0) {
             interactor.onSaveCreditCard(
@@ -194,6 +208,40 @@ class CreditCardEditorViewTest {
                 )
             )
         }
+    }
+
+    @Test
+    fun `GIVEN invalid credit card values WHEN valid values are entered and the save button is clicked THEN error messages are cleared`() {
+        creditCardEditorView.bind(getInitialCreditCardEditorState())
+
+        var billingName = ""
+        var cardNumber = "1234567891234567"
+        val expiryMonth = 5
+
+        fragmentCreditCardEditorBinding.cardNumberInput.text = cardNumber.toEditable()
+        fragmentCreditCardEditorBinding.nameOnCardInput.text = billingName.toEditable()
+        fragmentCreditCardEditorBinding.expiryMonthDropDown.setSelection(expiryMonth - 1)
+
+        fragmentCreditCardEditorBinding.saveButton.performClick()
+
+        verify {
+            creditCardEditorView.validateForm()
+        }
+
+        billingName = "Banana Apple"
+        cardNumber = "2720994326581252"
+        fragmentCreditCardEditorBinding.nameOnCardInput.text = billingName.toEditable()
+        fragmentCreditCardEditorBinding.cardNumberInput.text = cardNumber.toEditable()
+
+        fragmentCreditCardEditorBinding.saveButton.performClick()
+
+        verify {
+            creditCardEditorView.validateForm()
+        }
+
+        assertTrue(creditCardEditorView.validateForm())
+        assertNull(fragmentCreditCardEditorBinding.cardNumberLayout.error)
+        assertNull(fragmentCreditCardEditorBinding.nameOnCardLayout.error)
     }
 
     @Test
@@ -218,6 +266,11 @@ class CreditCardEditorViewTest {
         }
 
         assertFalse(creditCardEditorView.validateForm())
+        assertNotNull(fragmentCreditCardEditorBinding.nameOnCardLayout.error)
+        assertEquals(
+            fragmentCreditCardEditorBinding.nameOnCardLayout.errorCurrentTextColors,
+            fragmentCreditCardEditorBinding.root.context.getColorFromAttr(R.attr.textWarning)
+        )
 
         verify(exactly = 0) {
             interactor.onSaveCreditCard(
@@ -271,7 +324,7 @@ class CreditCardEditorViewTest {
     }
 
     @Test
-    fun `GIVEN a valid credit card WHEN the save button is clicked THEN interactor is called`() {
+    fun `GIVEN a valid credit card WHEN the save button is clicked THEN interactor is called`() = runBlocking {
         creditCardEditorView.bind(creditCard.toCreditCardEditorState(storage))
 
         fragmentCreditCardEditorBinding.saveButton.performClick()

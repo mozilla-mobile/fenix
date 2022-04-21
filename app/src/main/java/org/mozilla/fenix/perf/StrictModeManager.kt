@@ -21,7 +21,6 @@ import mozilla.components.support.ktx.android.os.resetAfter
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.utils.ManufacturerCodes
-import org.mozilla.fenix.utils.Mockable
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicLong
 
@@ -33,8 +32,7 @@ private val mainLooper = Looper.getMainLooper()
 /**
  * Manages strict mode settings for the application.
  */
-@Mockable
-class StrictModeManager(
+open class StrictModeManager(
     config: Config,
 
     // Ideally, we'd pass in a more specific value but there is a circular dependency: StrictMode
@@ -112,7 +110,19 @@ class StrictModeManager(
      *
      * @return the value returned by [functionBlock].
      */
-    fun <R> resetAfter(policy: StrictMode.ThreadPolicy, functionBlock: () -> R): R {
+    open fun <R> resetAfter(policy: StrictMode.ThreadPolicy, functionBlock: () -> R): R {
+        fun instrumentedFunctionBlock(): R {
+            val startProfilerTime = components.core.engine.profiler?.getProfilerTime()
+
+            val returnValue = functionBlock()
+
+            if (mainLooper.thread === Thread.currentThread()) { // markers only supported on main thread.
+                components.core.engine.profiler?.addMarker("StrictMode.resetAfter", startProfilerTime)
+            }
+
+            return returnValue
+        }
+
         // Calling resetAfter takes 1-2ms (unknown device) so we only execute it if StrictMode can
         // actually be enabled. https://github.com/mozilla-mobile/fenix/issues/11617
         return if (isEnabledByBuildConfig) {
@@ -122,15 +132,11 @@ class StrictModeManager(
             val suppressionCount = suppressionCount.incrementAndGet()
 
             // We log so that devs are more likely to notice that we're suppressing StrictMode violations.
-            // We add profiler markers so that the perf team can easily identify IO locations in profiles.
             logger.warn("StrictMode violation suppressed: #$suppressionCount")
-            if (Thread.currentThread() == mainLooper.thread) { // markers only supported on main thread.
-                components.core.engine.profiler?.addMarker("StrictMode.suppression", "Count: $suppressionCount")
-            }
 
-            policy.resetAfter(functionBlock)
+            policy.resetAfter(::instrumentedFunctionBlock)
         } else {
-            functionBlock()
+            instrumentedFunctionBlock()
         }
     }
 

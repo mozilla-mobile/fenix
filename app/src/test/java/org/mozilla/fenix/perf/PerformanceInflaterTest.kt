@@ -9,6 +9,9 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.mockkStatic
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
@@ -16,6 +19,8 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import java.io.File
 
@@ -27,13 +32,19 @@ class PerformanceInflaterTest {
     private val layoutsNotToTest = setOf(
         "fragment_browser",
         "fragment_add_on_internal_settings",
-        "activity_privacy_content_display"
+        "activity_privacy_content_display",
+        /**
+         *  activity_home.xml contains FragmentContainerView which needs to be
+         *  put inside FragmentActivity in order to get inflated
+         */
+        "activity_home"
     )
 
     @Before
     fun setup() {
         InflationCounter.inflationCount.set(0)
 
+        every { testContext.components.core.engine.profiler } returns mockk(relaxed = true)
         perfInflater = MockInflater(LayoutInflater.from(testContext), testContext)
     }
 
@@ -47,17 +58,23 @@ class PerformanceInflaterTest {
     @Test
     fun `WHEN inflating one of our resource file, the inflater should not crash`() {
         val fileList = File("./src/main/res/layout").listFiles()
-        for (file in fileList!!) {
-            val layoutName = file.name.split(".")[0]
-            val layoutId = testContext.resources.getIdentifier(
-                layoutName,
-                "layout",
-                testContext.packageName
-            )
 
-            assertNotEquals(-1, layoutId)
-            if (!layoutsNotToTest.contains(layoutName)) {
-                perfInflater.inflate(layoutId, FrameLayout(testContext), true)
+        // There might be custom views who try to access `Settings` through the extension function.
+        mockkStatic("org.mozilla.fenix.ext.ContextKt") {
+            every { any<Context>().settings() } returns mockk(relaxed = true)
+
+            for (file in fileList!!) {
+                val layoutName = file.name.split(".")[0]
+                val layoutId = testContext.resources.getIdentifier(
+                    layoutName,
+                    "layout",
+                    testContext.packageName
+                )
+
+                assertNotEquals(-1, layoutId)
+                if (!layoutsNotToTest.contains(layoutName)) {
+                    perfInflater.inflate(layoutId, FrameLayout(testContext), true)
+                }
             }
         }
     }

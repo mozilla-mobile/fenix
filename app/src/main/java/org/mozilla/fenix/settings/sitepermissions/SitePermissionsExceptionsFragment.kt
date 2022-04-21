@@ -16,18 +16,18 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
-import androidx.paging.LivePagedListBuilder
-import androidx.paging.PagedList
-import androidx.paging.PagedListAdapter
+import androidx.paging.LoadState
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import mozilla.components.concept.engine.permission.SitePermissions
 import mozilla.components.support.ktx.kotlin.stripDefaultPort
 import org.mozilla.fenix.NavHostActivity
@@ -60,25 +60,32 @@ class SitePermissionsExceptionsFragment :
         recyclerView = rootView.findViewById(R.id.exceptions)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
-            val sitePermissionsPaged = requireContext().components.core.permissionStorage.getSitePermissionsPaged()
-
-            withContext(Main) {
-                val adapter = ExceptionsAdapter(this@SitePermissionsExceptionsFragment)
-                val liveData = LivePagedListBuilder(sitePermissionsPaged, MAX_ITEMS_PER_PAGE).build()
-
-                liveData.observe(
-                    viewLifecycleOwner,
-                    Observer<PagedList<SitePermissions>> {
-                        if (it.isEmpty()) {
-                            showEmptyListMessage()
-                        } else {
-                            hideEmptyListMessage()
-                            adapter.submitList(it)
-                            recyclerView.adapter = adapter
-                        }
+        val adapter = ExceptionsAdapter(this).apply {
+            addLoadStateListener { loadState ->
+                if (loadState.source.refresh is LoadState.NotLoading &&
+                    loadState.append.endOfPaginationReached &&
+                    itemCount < 1
+                ) {
+                    showEmptyListMessage()
+                } else {
+                    if (itemCount != 0) {
+                        hideEmptyListMessage()
                     }
-                )
+                }
+            }
+            recyclerView.adapter = this
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+            val dataSourceFactory =
+                requireContext().components.core.permissionStorage.getSitePermissionsPaged()
+
+            val permissions = Pager(PagingConfig(MAX_ITEMS_PER_PAGE), null) {
+                dataSourceFactory.asPagingSourceFactory().invoke()
+            }.flow
+
+            permissions.collect {
+                adapter.submitData(it)
             }
         }
     }
@@ -96,7 +103,7 @@ class SitePermissionsExceptionsFragment :
     }
 
     private fun bindEmptyContainerMess(rootView: View) {
-        emptyContainerMessage = rootView.findViewById<View>(R.id.empty_exception_container)
+        emptyContainerMessage = rootView.findViewById(R.id.empty_exception_container)
     }
 
     private fun bindClearButton(rootView: View) {
@@ -105,11 +112,11 @@ class SitePermissionsExceptionsFragment :
             AlertDialog.Builder(requireContext()).apply {
                 setMessage(R.string.confirm_clear_permissions_on_all_sites)
                 setTitle(R.string.clear_permissions)
-                setPositiveButton(android.R.string.ok) { dialog: DialogInterface, _ ->
+                setPositiveButton(R.string.clear_permissions_positive) { dialog: DialogInterface, _ ->
                     deleteAllSitePermissions()
                     dialog.dismiss()
                 }
-                setNegativeButton(android.R.string.cancel) { dialog: DialogInterface, _ ->
+                setNegativeButton(R.string.clear_permissions_negative) { dialog: DialogInterface, _ ->
                     dialog.cancel()
                 }
             }.show()
@@ -134,16 +141,24 @@ class SitePermissionsExceptionsFragment :
     }
 }
 
-class SitePermissionsViewHolder(val view: View, val iconView: ImageView, val siteTextView: TextView) :
+class SitePermissionsViewHolder(
+    val view: View,
+    val iconView: ImageView,
+    val siteTextView: TextView
+) :
     RecyclerView.ViewHolder(view)
 
+/**
+ * Adapter for the list of site permission exceptions.
+ */
 class ExceptionsAdapter(private val clickListener: View.OnClickListener) :
-    PagedListAdapter<SitePermissions, SitePermissionsViewHolder>(diffCallback) {
+    PagingDataAdapter<SitePermissions, SitePermissionsViewHolder>(diffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SitePermissionsViewHolder {
         val context = parent.context
         val inflater = LayoutInflater.from(context)
-        val view = inflater.inflate(R.layout.fragment_site_permissions_exceptions_item, parent, false)
+        val view =
+            inflater.inflate(R.layout.fragment_site_permissions_exceptions_item, parent, false)
         val iconView = view.findViewById<ImageView>(R.id.exception_icon)
         val siteTextView = view.findViewById<TextView>(R.id.exception_text)
         return SitePermissionsViewHolder(view, iconView, siteTextView)
@@ -162,7 +177,9 @@ class ExceptionsAdapter(private val clickListener: View.OnClickListener) :
 
         private val diffCallback = object :
             DiffUtil.ItemCallback<SitePermissions>() {
-            override fun areItemsTheSame(old: SitePermissions, new: SitePermissions) = old.origin == new.origin
+            override fun areItemsTheSame(old: SitePermissions, new: SitePermissions) =
+                old.origin == new.origin
+
             override fun areContentsTheSame(old: SitePermissions, new: SitePermissions) = old == new
         }
     }

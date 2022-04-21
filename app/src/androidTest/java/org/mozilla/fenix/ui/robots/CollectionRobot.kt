@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.ui.robots
 
 import androidx.test.espresso.Espresso.onView
@@ -78,12 +82,20 @@ class CollectionRobot {
                 .check(doesNotExist())
     }
 
-    fun verifyCollectionTabUrl() {
-        onView(withId(R.id.caption)).check(matches(isDisplayed()))
+    fun verifyCollectionTabUrl(visible: Boolean) {
+        onView(withId(R.id.caption))
+            .check(
+                if (visible) matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE))
+                else doesNotExist()
+            )
     }
 
-    fun verifyCollectionTabLogo() {
-        onView(withId(R.id.favicon)).check(matches(isDisplayed()))
+    fun verifyCollectionTabLogo(visible: Boolean) {
+        onView(withId(R.id.favicon))
+            .check(
+                if (visible) matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE))
+                else doesNotExist()
+            )
     }
 
     fun verifyShareCollectionButtonIsVisible(visible: Boolean) {
@@ -93,8 +105,6 @@ class CollectionRobot {
                 else matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE))
             )
     }
-
-    fun clickShareCollectionButton() = onView(withId(R.id.collection_share_button)).click()
 
     fun verifyCollectionMenuIsVisible(visible: Boolean) {
         collectionThreeDotButton()
@@ -239,6 +249,13 @@ class CollectionRobot {
 
             BrowserRobot().interact()
             return BrowserRobot.Transition()
+        }
+
+        fun clickShareCollectionButton(interact: ShareOverlayRobot.() -> Unit): ShareOverlayRobot.Transition {
+            shareCollectionButton().click()
+
+            ShareOverlayRobot().interact()
+            return ShareOverlayRobot.Transition()
         }
     }
 }

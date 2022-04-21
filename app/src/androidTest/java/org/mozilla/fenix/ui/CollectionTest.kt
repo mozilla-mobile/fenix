@@ -11,8 +11,11 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
+import org.mozilla.fenix.helpers.FeatureSettingsHelper
 import org.mozilla.fenix.helpers.HomeActivityTestRule
+import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestAssetHelper.getGenericAsset
 import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.homeScreen
@@ -32,12 +35,18 @@ class CollectionTest {
     private lateinit var mockWebServer: MockWebServer
     private val firstCollectionName = "testcollection_1"
     private val secondCollectionName = "testcollection_2"
+    private val featureSettingsHelper = FeatureSettingsHelper()
 
     @get:Rule
     val activityTestRule = HomeActivityTestRule()
 
     @Before
     fun setUp() {
+        // disabling these features to have better visibility of Collections
+        featureSettingsHelper.setRecentTabsFeatureEnabled(false)
+        featureSettingsHelper.setPocketEnabled(false)
+        featureSettingsHelper.setJumpBackCFREnabled(false)
+
         mockWebServer = MockWebServer().apply {
             dispatcher = AndroidAssetDispatcher()
             start()
@@ -47,6 +56,9 @@ class CollectionTest {
     @After
     fun tearDown() {
         mockWebServer.shutdown()
+
+        // resetting modified features enabled setting to default
+        featureSettingsHelper.resetAllFeatureFlags()
     }
 
     @Test
@@ -152,8 +164,10 @@ class CollectionTest {
         }.openTabDrawer {
             createCollection(webPage.title, firstCollectionName)
             verifySnackBarText("Collection saved!")
-        }.closeTabDrawer {
-        }.goToHomescreen {
+            closeTab()
+        }
+
+        homeScreen {
         }.expandCollection(firstCollectionName) {
             removeTabFromCollection(webPage.title)
             verifyTabSavedInCollection(webPage.title, false)
@@ -210,6 +224,7 @@ class CollectionTest {
         }.openTabDrawer {
         }.openNewTab {
         }.submitQuery(secondWebPage.url.toString()) {
+            mDevice.waitForIdle()
         }.openTabDrawer {
             longClickTab(firstWebPage.title)
             verifyTabsMultiSelectionCounter(1)
@@ -258,6 +273,31 @@ class CollectionTest {
         // verify the browser layout is visible
         browserScreen {
             verifyMenuButton()
+        }
+    }
+
+    @SmokeTest
+    @Test
+    fun undoDeleteCollectionTest() {
+        val webPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(webPage.url) {
+        }.openTabDrawer {
+            createCollection(webPage.title, firstCollectionName)
+            snackBarButtonClick("VIEW")
+        }
+
+        homeScreen {
+        }.expandCollection(firstCollectionName) {
+            clickCollectionThreeDotButton()
+            selectDeleteCollection()
+        }
+
+        homeScreen {
+            verifySnackBarText("Collection deleted")
+            clickUndoCollectionDeletion("UNDO")
+            verifyCollectionIsDisplayed(firstCollectionName, true)
         }
     }
 }

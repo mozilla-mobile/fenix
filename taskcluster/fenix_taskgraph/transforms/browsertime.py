@@ -6,8 +6,6 @@ Apply some defaults and minor modifications to the jobs defined in the build
 kind.
 """
 
-from __future__ import absolute_import, print_function, unicode_literals
-
 import copy
 import json
 
@@ -144,21 +142,6 @@ def build_browsertime_task(config, tasks):
         task["name"] = (
             task["name"].replace("tp6m-", "tp6m-{}-".format(symbol)).replace("-hv", "")
         )
-        yield task
-
-
-@transforms.add
-def enable_webrender(config, tasks):
-    for task in tasks:
-        if not task.pop("web-render-only", False):
-            newtask = copy.deepcopy(task)
-            newtask["name"] = newtask["name"].replace("-qr", "")
-            newtask["description"] = newtask["description"].replace("-qr", "")
-            newtask["treeherder"]["platform"] = newtask["treeherder"][
-                "platform"
-            ].replace("-qr", "")
-            yield newtask
-        task["run"]["command"].append("--enable-webrender")
         yield task
 
 

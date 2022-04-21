@@ -5,10 +5,9 @@
 package org.mozilla.fenix.helpers
 
 import android.net.Uri
-
+import java.util.concurrent.TimeUnit
 import okhttp3.mockwebserver.MockWebServer
 import org.mozilla.fenix.helpers.ext.toUri
-import java.util.concurrent.TimeUnit
 
 /**
  * Helper for hosting web pages locally for testing purposes.
@@ -16,7 +15,7 @@ import java.util.concurrent.TimeUnit
 object TestAssetHelper {
     @Suppress("MagicNumber")
     val waitingTime: Long = TimeUnit.SECONDS.toMillis(15)
-    val waitingTimeShort: Long = TimeUnit.SECONDS.toMillis(1)
+    val waitingTimeShort: Long = TimeUnit.SECONDS.toMillis(3)
 
     data class TestAsset(val url: Uri, val content: String, val title: String)
 
@@ -68,17 +67,11 @@ object TestAssetHelper {
         return TestAsset(url, content, "")
     }
 
-    fun getDownloadAsset(server: MockWebServer): TestAsset {
-        val url = server.url("pages/download.html").toString().toUri()!!
-        val content = "Page content: Globe.svg"
-
-        return TestAsset(url, content, "")
-    }
-
     fun getEnhancedTrackingProtectionAsset(server: MockWebServer): TestAsset {
         val url = server.url("pages/trackingPage.html").toString().toUri()!!
+        val content = "Level 1 (Basic) List"
 
-        return TestAsset(url, "", "")
+        return TestAsset(url, content, "")
     }
 
     fun getImageAsset(server: MockWebServer): TestAsset {

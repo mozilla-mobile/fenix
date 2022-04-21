@@ -33,7 +33,7 @@ class LoginsFragmentStoreTest {
         searchedForText = null,
         sortingStrategy = SortingStrategy.LastUsed,
         highlightedItem = SavedLoginsSortingStrategyMenu.Item.LastUsedSort,
-        duplicateLogins = listOf()
+        duplicateLogin = null,
     )
 
     @Test
@@ -50,7 +50,7 @@ class LoginsFragmentStoreTest {
                 searchedForText = null,
                 sortingStrategy = SortingStrategy.LastUsed,
                 highlightedItem = SavedLoginsSortingStrategyMenu.Item.LastUsedSort,
-                duplicateLogins = emptyList()
+                duplicateLogin = null,
             ),
             createInitialLoginsListState(settings)
         )
@@ -117,7 +117,7 @@ class LoginsFragmentStoreTest {
             baseState.copy(
                 isLoading = true,
                 searchedForText = null,
-                sortingStrategy = SortingStrategy.Alphabetically(mockk()),
+                sortingStrategy = SortingStrategy.Alphabetically,
                 highlightedItem = SavedLoginsSortingStrategyMenu.Item.AlphabeticallySort,
                 loginList = loginList
             )
@@ -139,7 +139,7 @@ class LoginsFragmentStoreTest {
             baseState.copy(
                 isLoading = true,
                 searchedForText = "example",
-                sortingStrategy = SortingStrategy.Alphabetically(mockk()),
+                sortingStrategy = SortingStrategy.Alphabetically,
                 highlightedItem = SavedLoginsSortingStrategyMenu.Item.AlphabeticallySort,
                 loginList = loginList
             )
@@ -167,7 +167,7 @@ class LoginsFragmentStoreTest {
         store.dispatch(LoginsAction.LoginSelected(mockk())).joinBlocking()
 
         assertTrue(store.state.isLoading)
-        assertTrue(store.state.loginList.isEmpty())
-        assertTrue(store.state.filteredItems.isEmpty())
+        assertTrue(store.state.loginList.isNotEmpty())
+        assertTrue(store.state.filteredItems.isNotEmpty())
     }
 }

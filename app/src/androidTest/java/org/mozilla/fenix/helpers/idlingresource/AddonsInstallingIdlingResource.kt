@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.helpers.idlingresource
 
 import androidx.fragment.app.FragmentManager
@@ -6,7 +10,7 @@ import androidx.test.espresso.IdlingResource
 import mozilla.components.feature.addons.ui.AddonInstallationDialogFragment
 
 class AddonsInstallingIdlingResource(
-    val fragmentManager: FragmentManager
+    private val fragmentManager: FragmentManager
 ) :
     IdlingResource {
     private var resourceCallback: IdlingResource.ResourceCallback? = null

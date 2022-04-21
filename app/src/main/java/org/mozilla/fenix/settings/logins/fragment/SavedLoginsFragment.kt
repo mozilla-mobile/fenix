@@ -10,23 +10,21 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import mozilla.components.concept.menu.MenuController
 import mozilla.components.concept.menu.Orientation
 import mozilla.components.lib.state.ext.consumeFrom
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.SecureFragment
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.databinding.FragmentSavedLoginsBinding
 import org.mozilla.fenix.ext.components
@@ -44,7 +42,7 @@ import org.mozilla.fenix.settings.logins.interactor.SavedLoginsInteractor
 import org.mozilla.fenix.settings.logins.view.SavedLoginsListView
 
 @SuppressWarnings("TooManyFunctions")
-class SavedLoginsFragment : Fragment() {
+class SavedLoginsFragment : SecureFragment() {
     private lateinit var savedLoginsStore: LoginsFragmentStore
     private lateinit var savedLoginsListView: SavedLoginsListView
     private lateinit var savedLoginsInteractor: SavedLoginsInteractor
@@ -57,10 +55,6 @@ class SavedLoginsFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        activity?.window?.setFlags(
-            WindowManager.LayoutParams.FLAG_SECURE,
-            WindowManager.LayoutParams.FLAG_SECURE
-        )
         initToolbar()
     }
 
@@ -84,7 +78,6 @@ class SavedLoginsFragment : Fragment() {
                 navController = findNavController(),
                 browserNavigator = ::openToBrowserAndLoad,
                 settings = requireContext().settings(),
-                metrics = requireContext().components.analytics.metrics
             )
         savedLoginsStorageController =
             SavedLoginsStorageController(
@@ -108,7 +101,6 @@ class SavedLoginsFragment : Fragment() {
         return view
     }
 
-    @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         consumeFrom(savedLoginsStore) {
             sortingStrategyMenu.updateMenu(savedLoginsStore.state.highlightedItem)
@@ -122,6 +114,7 @@ class SavedLoginsFragment : Fragment() {
         val searchView: SearchView = searchItem.actionView as SearchView
         searchView.imeOptions = EditorInfo.IME_ACTION_DONE
         searchView.queryHint = getString(R.string.preferences_passwords_saved_logins_search)
+        searchView.maxWidth = Int.MAX_VALUE
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
@@ -148,7 +141,6 @@ class SavedLoginsFragment : Fragment() {
         (activity as HomeActivity).getSupportActionBarAndInflateIfNecessary().setDisplayShowTitleEnabled(true)
         sortingStrategyMenu.menuController.dismiss()
         sortLoginsMenuRoot.setOnClickListener(null)
-        setHasOptionsMenu(false)
 
         redirectToReAuth(
             listOf(R.id.loginDetailFragment, R.id.addLoginFragment),

@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.ui.robots
 
 import android.widget.RelativeLayout
@@ -29,8 +33,8 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.IdlingResourceHelper.registerAddonInstallingIdlingResource
 import org.mozilla.fenix.helpers.IdlingResourceHelper.unregisterAddonInstallingIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
-import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.helpers.TestHelper.appName
+import org.mozilla.fenix.helpers.TestHelper.scrollToElementByText
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
 
@@ -39,29 +43,45 @@ import org.mozilla.fenix.helpers.ext.waitNotNull
  */
 
 class SettingsSubMenuAddonsManagerRobot {
-    fun verifyAddonPrompt(addonName: String) = assertAddonPrompt(addonName)
+    fun verifyAddonPermissionPrompt(addonName: String) = assertAddonPermissionPrompt(addonName)
 
     fun clickInstallAddon(addonName: String) = selectInstallAddon(addonName)
 
-    fun verifyDownloadAddonPrompt(
+    fun closeAddonInstallCompletePrompt(
         addonName: String,
         activityTestRule: ActivityTestRule<HomeActivity>
     ) {
         try {
-            assertDownloadingAddonPrompt(addonName, activityTestRule)
+            assertAddonInstallCompletePrompt(addonName, activityTestRule)
         } catch (e: IdlingResourceTimeoutException) {
             if (mDevice.findObject(UiSelector().text("Failed to install $addonName")).exists()) {
                 clickInstallAddon(addonName)
-                acceptInstallAddon()
-                assertDownloadingAddonPrompt(addonName, activityTestRule)
+                acceptPermissionToInstallAddon()
+                assertAddonInstallCompletePrompt(addonName, activityTestRule)
             }
         }
     }
 
+    fun verifyAddonIsInstalled(addonName: String) {
+        scrollToElementByText(addonName)
+        assertAddonIsInstalled(addonName)
+    }
+
+    fun verifyEnabledTitleDisplayed() {
+        onView(withText("Enabled"))
+            .check(matches(isCompletelyDisplayed()))
+    }
+
     fun cancelInstallAddon() = cancelInstall()
-    fun acceptInstallAddon() = allowInstall()
+    fun acceptPermissionToInstallAddon() = allowPermissionToInstall()
     fun verifyAddonsItems() = assertAddonsItems()
     fun verifyAddonCanBeInstalled(addonName: String) = assertAddonCanBeInstalled(addonName)
+
+    fun selectAllowInPrivateBrowsing(activityTestRule: ActivityTestRule<HomeActivity>) {
+        registerAddonInstallingIdlingResource(activityTestRule)
+        onView(withId(R.id.allow_in_private_browsing)).click()
+        unregisterAddonInstallingIdlingResource(activityTestRule)
+    }
 
     class Transition {
         fun goBack(interact: HomeScreenRobot.() -> Unit): HomeScreenRobot.Transition {
@@ -76,7 +96,7 @@ class SettingsSubMenuAddonsManagerRobot {
             addonName: String,
             interact: SettingsSubMenuAddonsManagerAddonDetailedMenuRobot.() -> Unit
         ): SettingsSubMenuAddonsManagerAddonDetailedMenuRobot.Transition {
-            addonName.chars()
+            scrollToElementByText(addonName)
 
             onView(
                 allOf(
@@ -121,7 +141,7 @@ class SettingsSubMenuAddonsManagerRobot {
             .check(matches(not(isCompletelyDisplayed())))
     }
 
-    private fun assertAddonPrompt(addonName: String) {
+    private fun assertAddonPermissionPrompt(addonName: String) {
         onView(allOf(withId(R.id.title), withText("Add $addonName?")))
             .check(matches(isCompletelyDisplayed()))
 
@@ -140,7 +160,7 @@ class SettingsSubMenuAddonsManagerRobot {
             .check(matches(isCompletelyDisplayed()))
     }
 
-    private fun assertDownloadingAddonPrompt(
+    private fun assertAddonInstallCompletePrompt(
         addonName: String,
         activityTestRule: ActivityTestRule<HomeActivity>
     ) {
@@ -159,10 +179,6 @@ class SettingsSubMenuAddonsManagerRobot {
             .perform(click())
 
         unregisterAddonInstallingIdlingResource(activityTestRule)
-
-        TestHelper.scrollToElementByText(addonName)
-
-        assertAddonIsInstalled(addonName)
     }
 
     private fun assertAddonIsInstalled(addonName: String) {
@@ -181,7 +197,7 @@ class SettingsSubMenuAddonsManagerRobot {
             .perform(click())
     }
 
-    private fun allowInstall() {
+    private fun allowPermissionToInstall() {
         onView(allOf(withId(R.id.allow_button), withText("Add")))
             .check(matches(isCompletelyDisplayed()))
             .perform(click())
@@ -195,11 +211,6 @@ class SettingsSubMenuAddonsManagerRobot {
     private fun assertRecommendedTitleDisplayed() {
         onView(allOf(withId(R.id.title), withText("Recommended")))
             .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-    }
-
-    private fun assertEnabledTitleDisplayed() {
-        onView(withText("Enabled"))
-            .check(matches(isCompletelyDisplayed()))
     }
 
     private fun assertAddons() {
@@ -227,6 +238,7 @@ class SettingsSubMenuAddonsManagerRobot {
     }
 
     private fun assertAddonCanBeInstalled(addonName: String) {
+        scrollToElementByText(addonName)
         device.waitNotNull(Until.findObject(By.text(addonName)), waitingTime)
 
         onView(
@@ -243,4 +255,9 @@ class SettingsSubMenuAddonsManagerRobot {
             )
         ).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
     }
+}
+
+fun addonsMenu(interact: SettingsSubMenuAddonsManagerRobot.() -> Unit): SettingsSubMenuAddonsManagerRobot.Transition {
+    SettingsSubMenuAddonsManagerRobot().interact()
+    return SettingsSubMenuAddonsManagerRobot.Transition()
 }

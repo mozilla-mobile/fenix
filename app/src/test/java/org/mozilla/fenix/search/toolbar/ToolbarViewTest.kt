@@ -24,10 +24,11 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.R
-import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.components.metrics.MetricsUtils
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.search.SearchEngineSource
 import org.mozilla.fenix.search.SearchFragmentState
+import org.mozilla.fenix.utils.Settings
 
 @RunWith(FenixRobolectricTestRunner::class)
 class ToolbarViewTest {
@@ -56,7 +57,7 @@ class ToolbarViewTest {
         showHistorySuggestions = false,
         showBookmarkSuggestions = false,
         showSyncedTabsSuggestions = false,
-        searchAccessPoint = Event.PerformedSearch.SearchAccessPoint.NONE
+        searchAccessPoint = MetricsUtils.Source.NONE
     )
 
     @Before
@@ -154,6 +155,7 @@ class ToolbarViewTest {
 
     private fun buildToolbarView(isPrivate: Boolean) = ToolbarView(
         context,
+        Settings(context),
         interactor,
         historyStorage = null,
         isPrivate = isPrivate,

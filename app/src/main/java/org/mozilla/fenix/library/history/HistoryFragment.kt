@@ -4,8 +4,7 @@
 
 package org.mozilla.fenix.library.history
 
-import android.content.ClipboardManager
-import android.content.Context.CLIPBOARD_SERVICE
+import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.text.SpannableString
@@ -16,51 +15,66 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
-import androidx.lifecycle.Observer
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import mozilla.components.browser.state.action.EngineAction
+import mozilla.components.browser.state.action.HistoryMetadataAction
 import mozilla.components.browser.state.action.RecentlyClosedAction
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.service.fxa.sync.SyncReason
 import mozilla.components.support.base.feature.UserInteractionHandler
+import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.BrowserDirection
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.NavHostActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.addons.showSnackBar
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
-import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.StoreProvider
-import org.mozilla.fenix.components.history.createSynchronousPagedHistoryProvider
-import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.components.history.DefaultPagedHistoryProvider
 import org.mozilla.fenix.databinding.FragmentHistoryBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.setTextColor
 import org.mozilla.fenix.ext.toShortUrl
+import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.library.LibraryPageFragment
 import org.mozilla.fenix.utils.allowUndo
+import org.mozilla.fenix.GleanMetrics.History as GleanHistory
 
 @SuppressWarnings("TooManyFunctions", "LargeClass")
-class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandler {
+class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
     private lateinit var historyStore: HistoryFragmentStore
     private lateinit var historyInteractor: HistoryInteractor
-    private lateinit var viewModel: HistoryViewModel
-    private var undoScope: CoroutineScope? = null
-    private var pendingHistoryDeletionJob: (suspend () -> Unit)? = null
+    private lateinit var historyProvider: DefaultPagedHistoryProvider
+
+    private var userHasHistory = MutableLiveData(true)
+    private var history: Flow<PagingData<History>> = Pager(
+        PagingConfig(PAGE_SIZE),
+        null
+    ) {
+        HistoryDataSource(
+            historyProvider = historyProvider
+        )
+    }.flow
 
     private var _historyView: HistoryView? = null
-    protected val historyView: HistoryView
+    private val historyView: HistoryView
         get() = _historyView!!
     private var _binding: FragmentHistoryBinding? = null
     private val binding get() = _binding!!
@@ -68,7 +82,7 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentHistoryBinding.inflate(inflater, container, false)
         val view = binding.root
@@ -85,16 +99,8 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
         val historyController: HistoryController = DefaultHistoryController(
             store = historyStore,
             navController = findNavController(),
-            resources = resources,
-            snackbar = FenixSnackbar.make(
-                view = view,
-                duration = FenixSnackbar.LENGTH_LONG,
-                isDisplayedWithBrowserToolbar = false
-            ),
-            clipboardManager = activity?.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager,
             scope = lifecycleScope,
             openToBrowser = ::openItem,
-            openInNewTab = ::openItemAndShowTray,
             displayDeleteAll = ::displayDeleteAllDialog,
             invalidateOptionsMenu = ::invalidateOptionsMenu,
             deleteHistoryItems = ::deleteHistoryItems,
@@ -106,13 +112,24 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
         )
         _historyView = HistoryView(
             binding.historyLayout,
-            historyInteractor
+            historyInteractor,
+            onZeroItemsLoaded = { userHasHistory.value = false }
         )
 
         return view
     }
 
-    override val selectedItems get() = historyStore.state.mode.selectedItems
+    /**
+     * All the current selected items. Individual history entries and entries from a group.
+     * When a history group is selected, this will instead contain all the history entries in that group.
+     */
+    override val selectedItems
+        get() = historyStore.state.mode.selectedItems.fold(emptyList<History>()) { accumulator, item ->
+            when (item) {
+                is History.Group -> accumulator + item.items
+                else -> accumulator + item
+            }
+        }.toSet()
 
     private fun invalidateOptionsMenu() {
         activity?.invalidateOptionsMenu()
@@ -121,27 +138,17 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel = HistoryViewModel(
-            requireComponents.core.historyStorage.createSynchronousPagedHistoryProvider()
-        )
+        historyProvider = DefaultPagedHistoryProvider(requireComponents.core.historyStorage)
 
-        viewModel.userHasHistory.observe(
-            this,
-            Observer {
-                historyView.updateEmptyState(it)
-            }
-        )
-
-        requireComponents.analytics.metrics.track(Event.HistoryOpened)
+        GleanHistory.opened.record(NoExtras())
 
         setHasOptionsMenu(true)
     }
 
-    private fun deleteHistoryItems(items: Set<HistoryItem>) {
+    private fun deleteHistoryItems(items: Set<History>) {
         updatePendingHistoryToDelete(items)
-        undoScope = CoroutineScope(IO)
-        undoScope?.allowUndo(
-            requireView(),
+        CoroutineScope(IO).allowUndo(
+            requireActivity().getRootView()!!,
             getMultiSelectSnackBarMessage(items),
             getString(R.string.bookmark_undo_deletion),
             {
@@ -151,7 +158,6 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
         )
     }
 
-    @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -159,12 +165,16 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
             historyView.update(it)
         }
 
-        viewModel.history.observe(
+        userHasHistory.observe(
             viewLifecycleOwner,
-            Observer {
-                historyView.historyAdapter.submitList(it)
-            }
+            historyView::updateEmptyState
         )
+
+        lifecycleScope.launch {
+            history.collect {
+                historyView.historyAdapter.submitData(it)
+            }
+        }
     }
 
     override fun onResume() {
@@ -179,18 +189,42 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
             menu.findItem(R.id.share_history_multi_select)?.isVisible = true
             menu.findItem(R.id.delete_history_multi_select)?.title =
                 SpannableString(getString(R.string.bookmark_menu_delete_button)).apply {
-                    setTextColor(requireContext(), R.attr.destructive)
+                    setTextColor(requireContext(), R.attr.textWarning)
                 }
         } else {
             inflater.inflate(R.menu.history_menu, menu)
+        }
+
+        if (!FeatureFlags.historyImprovementFeatures) {
+            menu.findItem(R.id.history_search)?.isVisible = false
         }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.share_history_multi_select -> {
             val selectedHistory = historyStore.state.mode.selectedItems
-            val shareTabs = selectedHistory.map { ShareData(url = it.url, title = it.title) }
+            val shareTabs = mutableListOf<ShareData>()
+
+            for (history in selectedHistory) {
+                when (history) {
+                    is History.Regular -> {
+                        shareTabs.add(ShareData(url = history.url, title = history.title))
+                    }
+                    is History.Group -> {
+                        shareTabs.addAll(
+                            history.items.map { metadata ->
+                                ShareData(url = metadata.url, title = metadata.title)
+                            }
+                        )
+                    }
+                    else -> {
+                        // no-op, There is no [History.Metadata] in the HistoryFragment.
+                    }
+                }
+            }
+
             share(shareTabs)
+
             true
         }
         R.id.delete_history_multi_select -> {
@@ -200,8 +234,8 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
         }
         R.id.open_history_in_new_tabs_multi_select -> {
             openItemsInNewTab { selectedItem ->
-                requireComponents.analytics.metrics.track(Event.HistoryOpenedInNewTabs)
-                selectedItem.url
+                GleanHistory.openedItemsInNewTabs.record(NoExtras())
+                (selectedItem as? History.Regular)?.url ?: (selectedItem as? History.Metadata)?.url
             }
 
             showTabTray()
@@ -209,8 +243,8 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
         }
         R.id.open_history_in_private_tabs_multi_select -> {
             openItemsInNewTab(private = true) { selectedItem ->
-                requireComponents.analytics.metrics.track(Event.HistoryOpenedInPrivateTabs)
-                selectedItem.url
+                GleanHistory.openedItemsInNewTabs.record(NoExtras())
+                (selectedItem as? History.Regular)?.url ?: (selectedItem as? History.Metadata)?.url
             }
 
             (activity as HomeActivity).apply {
@@ -221,6 +255,11 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
             showTabTray()
             true
         }
+        R.id.history_search -> {
+            GleanHistory.searchIconTapped.record(NoExtras())
+            historyInteractor.onSearch()
+            true
+        }
         R.id.history_delete_all -> {
             historyInteractor.onDeleteAll()
             true
@@ -229,33 +268,30 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
     }
 
     private fun showTabTray() {
-        invokePendingDeletion()
         findNavController().nav(
             R.id.historyFragment,
             HistoryFragmentDirections.actionGlobalTabsTrayFragment()
         )
     }
 
-    private fun getMultiSelectSnackBarMessage(historyItems: Set<HistoryItem>): String {
+    private fun getMultiSelectSnackBarMessage(historyItems: Set<History>): String {
         return if (historyItems.size > 1) {
             getString(R.string.history_delete_multiple_items_snackbar)
         } else {
+            val historyItem = historyItems.first()
+
             String.format(
-                requireContext().getString(
-                    R.string.history_delete_single_item_snackbar
-                ),
-                historyItems.first().url.toShortUrl(requireComponents.publicSuffixList)
+                requireContext().getString(R.string.history_delete_single_item_snackbar),
+                if (historyItem is History.Regular) {
+                    historyItem.url.toShortUrl(requireComponents.publicSuffixList)
+                } else {
+                    historyItem.title
+                }
             )
         }
     }
 
-    override fun onPause() {
-        invokePendingDeletion()
-        super.onPause()
-    }
-
     override fun onBackPressed(): Boolean {
-        invokePendingDeletion()
         return historyView.onBackPressed()
     }
 
@@ -265,29 +301,14 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
         _binding = null
     }
 
-    private fun openItem(item: HistoryItem) {
-        requireComponents.analytics.metrics.track(Event.HistoryItemOpened)
+    private fun openItem(item: History.Regular) {
+        GleanHistory.openedItem.record(NoExtras())
 
         (activity as HomeActivity).openToBrowserAndLoad(
             searchTermOrURL = item.url,
             newTab = true,
             from = BrowserDirection.FromHistory
         )
-    }
-
-    private fun openItemAndShowTray(item: HistoryItem, mode: BrowsingMode) {
-        when (mode.isPrivate) {
-            true -> requireComponents.analytics.metrics.track(Event.HistoryOpenedInPrivateTab)
-            false -> requireComponents.analytics.metrics.track(Event.HistoryOpenedInNewTab)
-        }
-
-        val homeActivity = activity as HomeActivity
-        homeActivity.browsingModeManager.mode = mode
-        homeActivity.components.useCases.tabsUseCases.addTab.invoke(
-            item.url, private = (mode == BrowsingMode.Private)
-        )
-
-        showTabTray()
     }
 
     private fun displayDeleteAllDialog() {
@@ -301,12 +322,12 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
                     historyStore.dispatch(HistoryFragmentAction.EnterDeletionMode)
                     // Use fragment's lifecycle; the view may be gone by the time dialog is interacted with.
                     lifecycleScope.launch(IO) {
-                        requireComponents.analytics.metrics.track(Event.HistoryAllItemsRemoved)
+                        GleanHistory.removedAll.record(NoExtras())
                         requireComponents.core.store.dispatch(RecentlyClosedAction.RemoveAllClosedTabAction)
                         requireComponents.core.historyStorage.deleteEverything()
                         deleteOpenTabsEngineHistory(requireComponents.core.store)
                         launch(Main) {
-                            viewModel.invalidate()
+                            historyView.historyAdapter.refresh()
                             historyStore.dispatch(HistoryFragmentAction.ExitDeletionMode)
                             showSnackBar(
                                 requireView(),
@@ -327,7 +348,7 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
     }
 
     private fun share(data: List<ShareData>) {
-        requireComponents.analytics.metrics.track(Event.HistoryItemShared)
+        GleanHistory.shared.record(NoExtras())
         val directions = HistoryFragmentDirections.actionGlobalShareFragment(
             data = data.toTypedArray()
         )
@@ -335,54 +356,54 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
     }
 
     private fun navigateToHistoryFragment(directions: NavDirections) {
-        invokePendingDeletion()
         findNavController().nav(
             R.id.historyFragment,
             directions
         )
     }
 
-    private fun getDeleteHistoryItemsOperation(items: Set<HistoryItem>): (suspend () -> Unit) {
-        return {
+    private fun getDeleteHistoryItemsOperation(items: Set<History>): (suspend (context: Context) -> Unit) {
+        return { context ->
             CoroutineScope(IO).launch {
                 historyStore.dispatch(HistoryFragmentAction.EnterDeletionMode)
-                context?.components?.run {
-                    for (item in items) {
-                        analytics.metrics.track(Event.HistoryItemRemoved)
-                        core.historyStorage.deleteVisit(item.url, item.visitedAt)
+                for (item in items) {
+                    GleanHistory.removed.record(NoExtras())
+
+                    when (item) {
+                        is History.Regular -> context.components.core.historyStorage.deleteVisitsFor(item.url)
+                        is History.Group -> {
+                            // NB: If we have non-search groups, this logic needs to be updated.
+                            historyProvider.deleteMetadataSearchGroup(item)
+                            context.components.core.store.dispatch(
+                                HistoryMetadataAction.DisbandSearchGroupAction(searchTerm = item.title)
+                            )
+                        }
+                        // We won't encounter individual metadata entries outside of groups.
+                        is History.Metadata -> {}
                     }
                 }
                 historyStore.dispatch(HistoryFragmentAction.ExitDeletionMode)
-                pendingHistoryDeletionJob = null
             }
         }
     }
 
-    private fun updatePendingHistoryToDelete(items: Set<HistoryItem>) {
-        pendingHistoryDeletionJob = getDeleteHistoryItemsOperation(items)
+    private fun updatePendingHistoryToDelete(items: Set<History>) {
         val ids = items.map { item -> item.visitedAt }.toSet()
         historyStore.dispatch(HistoryFragmentAction.AddPendingDeletionSet(ids))
     }
 
-    private fun undoPendingDeletion(items: Set<HistoryItem>) {
-        pendingHistoryDeletionJob = null
+    private fun undoPendingDeletion(items: Set<History>) {
         val ids = items.map { item -> item.visitedAt }.toSet()
         historyStore.dispatch(HistoryFragmentAction.UndoPendingDeletionSet(ids))
-    }
-
-    private fun invokePendingDeletion() {
-        pendingHistoryDeletionJob?.let {
-            viewLifecycleOwner.lifecycleScope.launch {
-                it.invoke()
-            }.invokeOnCompletion {
-                pendingHistoryDeletionJob = null
-            }
-        }
     }
 
     private suspend fun syncHistory() {
         val accountManager = requireComponents.backgroundServices.accountManager
         accountManager.syncNow(SyncReason.User)
-        viewModel.invalidate()
+        historyView.historyAdapter.refresh()
+    }
+
+    companion object {
+        private const val PAGE_SIZE = 25
     }
 }

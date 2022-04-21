@@ -39,7 +39,7 @@ class StudiesFragment : Fragment() {
             interactor,
             requireContext().settings(),
             experiments,
-            ::isAttached
+            ::isAttached,
         ).bind()
 
         return binding.root

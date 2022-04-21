@@ -4,7 +4,7 @@
 
 package org.mozilla.fenix.tabstray
 
-import mozilla.components.concept.tabstray.Tab
+import mozilla.components.browser.state.state.TabSessionState
 
 interface TabsTrayInteractor {
     /**
@@ -22,18 +22,39 @@ interface TabsTrayInteractor {
 
     /**
      * Invoked when a tab is removed from the tabs tray with the given [tabId].
+     * @param source app feature from which the [TabSessionState] with [tabId] was closed.
      */
-    fun onDeleteTab(tabId: String)
+    fun onDeleteTab(tabId: String, source: String? = null)
 
     /**
-     * Invoked when [Tab]s need to be deleted.
+     * Invoked when the user confirmed tab removal that would lead to cancelled private downloads.
+     * @param source is the app feature from which the [TabSessionState] with [tabId] was closed.
      */
-    fun onDeleteTabs(tabs: Collection<Tab>)
+    fun onDeletePrivateTabWarningAccepted(tabId: String, source: String? = null)
+
+    /**
+     * Invoked when [TabSessionState]s need to be deleted.
+     */
+    fun onDeleteTabs(tabs: Collection<TabSessionState>)
 
     /**
      * Called when clicking the debug menu option for inactive tabs.
      */
-    fun onInactiveDebugClicked(tabs: Collection<Tab>)
+    fun onInactiveDebugClicked(tabs: Collection<TabSessionState>)
+
+    /**
+     * Invoked when [tabId] should be moved to before/after [targetId] from a drag-drop operation
+     */
+    fun onTabsMove(
+        tabId: String,
+        targetId: String?,
+        placeAfter: Boolean
+    )
+
+    /**
+     * Deletes all inactive tabs.
+     */
+    fun onDeleteInactiveTabs()
 }
 
 /**
@@ -52,15 +73,31 @@ class DefaultTabsTrayInteractor(
         controller.handleNavigateToBrowser()
     }
 
-    override fun onDeleteTab(tabId: String) {
-        controller.handleTabDeletion(tabId)
+    override fun onDeleteTab(tabId: String, source: String?) {
+        controller.handleTabDeletion(tabId, source)
     }
 
-    override fun onDeleteTabs(tabs: Collection<Tab>) {
+    override fun onDeletePrivateTabWarningAccepted(tabId: String, source: String?) {
+        controller.handleDeleteTabWarningAccepted(tabId, source)
+    }
+
+    override fun onDeleteTabs(tabs: Collection<TabSessionState>) {
         controller.handleMultipleTabsDeletion(tabs)
     }
 
-    override fun onInactiveDebugClicked(tabs: Collection<Tab>) {
+    override fun onTabsMove(
+        tabId: String,
+        targetId: String?,
+        placeAfter: Boolean
+    ) {
+        controller.handleTabsMove(tabId, targetId, placeAfter)
+    }
+
+    override fun onInactiveDebugClicked(tabs: Collection<TabSessionState>) {
         controller.forceTabsAsInactive(tabs)
+    }
+
+    override fun onDeleteInactiveTabs() {
+        controller.handleDeleteAllInactiveTabs()
     }
 }

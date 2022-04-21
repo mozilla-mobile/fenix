@@ -5,33 +5,27 @@
 package org.mozilla.fenix.ui
 
 import android.content.res.Configuration
-import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.FenixApplication
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
+import org.mozilla.fenix.helpers.FeatureSettingsHelper
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
-import org.mozilla.fenix.helpers.TestAssetHelper.getGenericAsset
 import org.mozilla.fenix.helpers.TestAssetHelper.getLoremIpsumAsset
 import org.mozilla.fenix.ui.robots.checkTextSizeOnWebsite
 import org.mozilla.fenix.ui.robots.homeScreen
-import org.mozilla.fenix.ui.robots.navigationToolbar
 
 /**
- *  Tests for verifying the main three dot menu options
+ *  Tests for verifying the General section of the Settings menu
  *
  */
-
 class SettingsBasicsTest {
     /* ktlint-disable no-blank-line-before-rbrace */ // This imposes unreadable grouping.
-
-    private val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
     private lateinit var mockWebServer: MockWebServer
+    private val featureSettingsHelper = FeatureSettingsHelper()
 
     @get:Rule
     val activityIntentTestRule = HomeActivityIntentTestRule()
@@ -42,11 +36,16 @@ class SettingsBasicsTest {
             dispatcher = AndroidAssetDispatcher()
             start()
         }
+
+        featureSettingsHelper.setJumpBackCFREnabled(false)
     }
 
     @After
     fun tearDown() {
         mockWebServer.shutdown()
+
+        // resetting modified features enabled setting to default
+        featureSettingsHelper.resetAllFeatureFlags()
     }
 
     private fun getUiTheme(): Boolean {
@@ -61,80 +60,24 @@ class SettingsBasicsTest {
     }
 
     @Test
-    // Walks through settings menu and sub-menus to ensure all items are present
-    fun settingsMenuBasicsItemsTests() {
+    fun settingsGeneralItemsTests() {
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
-            verifyBasicsHeading()
-            verifySearchEngineButton()
-            verifyDefaultBrowserItem()
-            verifyTabsItem()
-            // drill down to submenu
-        }.openSearchSubMenu {
-            verifyDefaultSearchEngineHeader()
-            verifySearchEngineList()
-            verifyShowSearchSuggestions()
-            verifyShowSearchShortcuts()
-
-            verifyShowClipboardSuggestions()
-            verifySearchBrowsingHistory()
-            verifySearchBookmarks()
-        }.goBack {
-        }.openCustomizeSubMenu {
-            verifyThemes()
-        }.goBack {
-        }.openAccessibilitySubMenu {
-            verifyAutomaticFontSizingMenuItems()
-        }.goBack {
-            // drill down to submenu
+            verifySettingsToolbar()
+            verifyGeneralHeading()
+            verifySearchButton()
+            verifyTabsButton()
+            verifyHomepageButton()
+            verifyCustomizeButton()
+            verifyLoginsAndPasswordsButton()
+            verifyCreditCardsButton()
+            verifyAccessibilityButton()
+            verifyLanguageButton()
+            verifySetAsDefaultBrowserButton()
         }
     }
 
-    @Test
-    fun selectNewDefaultSearchEngine() {
-        // Goes through the settings and changes the default search engine, then verifies it has changed.
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openSearchSubMenu {
-            changeDefaultSearchEngine("DuckDuckGo")
-        }.goBack {
-        }.goBack {
-            verifyDefaultSearchEngine("DuckDuckGo")
-        }
-    }
-
-    @Test
-    fun toggleShowVisitedSitesAndBookmarks() {
-        // Bookmarks a few websites, toggles the history and bookmarks setting to off, then verifies if the visited and bookmarked websites do not show in the suggestions.
-        val page1 = getGenericAsset(mockWebServer, 1)
-        val page2 = getGenericAsset(mockWebServer, 2)
-        val page3 = getGenericAsset(mockWebServer, 3)
-
-        homeScreen {
-        }.openNavigationToolbar {
-        }.enterURLAndEnterToBrowser(page1.url) {
-        }.openThreeDotMenu {
-        }.bookmarkPage { }
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(page2.url) {
-            verifyUrl(page2.url.toString())
-        }.openThreeDotMenu {
-        }.bookmarkPage { }
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(page3.url) {
-            mDevice.waitForIdle()
-        }
-
-        navigationToolbar {
-            verifyNoHistoryBookmarks()
-        }
-    }
-
-    @Ignore("Failing, see: https://github.com/mozilla-mobile/fenix/issues/19016")
     @Test
     fun changeThemeSetting() {
         // Goes through the settings and changes the default search engine, then verifies it changes.
@@ -172,9 +115,6 @@ class SettingsBasicsTest {
         }.openNavigationToolbar {
         }.enterURLAndEnterToBrowser(webpage) {
             checkTextSizeOnWebsite(textSizePercentage, fenixApp.components)
-        }.openTabDrawer {
-        }.openNewTab {
-        }.dismissSearchBar {
         }.openThreeDotMenu {
         }.openSettings {
         }.openAccessibilitySubMenu {

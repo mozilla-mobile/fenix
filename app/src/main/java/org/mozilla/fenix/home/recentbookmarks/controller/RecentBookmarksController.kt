@@ -8,13 +8,16 @@ import androidx.annotation.VisibleForTesting
 import androidx.annotation.VisibleForTesting.PRIVATE
 import androidx.navigation.NavController
 import mozilla.appservices.places.BookmarkRoot
-import mozilla.components.concept.storage.BookmarkNode
+import mozilla.components.concept.engine.EngineSession
+import mozilla.components.concept.engine.EngineSession.LoadUrlFlags.Companion.ALLOW_JAVASCRIPT_URL
 import org.mozilla.fenix.BrowserDirection
+import org.mozilla.fenix.GleanMetrics.RecentBookmarks
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
-import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.components.AppStore
+import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.home.HomeFragmentDirections
+import org.mozilla.fenix.home.recentbookmarks.RecentBookmark
 import org.mozilla.fenix.home.recentbookmarks.interactor.RecentBookmarksInteractor
 
 /**
@@ -26,12 +29,17 @@ interface RecentBookmarksController {
     /**
      * @see [RecentBookmarksInteractor.onRecentBookmarkClicked]
      */
-    fun handleBookmarkClicked(bookmark: BookmarkNode)
+    fun handleBookmarkClicked(bookmark: RecentBookmark)
 
     /**
      * @see [RecentBookmarksInteractor.onShowAllBookmarksClicked]
      */
     fun handleShowAllBookmarksClicked()
+
+    /**
+     * @see [RecentBookmarksInteractor.onRecentBookmarkRemoved]
+     */
+    fun handleBookmarkRemoved(bookmark: RecentBookmark)
 }
 
 /**
@@ -39,25 +47,31 @@ interface RecentBookmarksController {
  */
 class DefaultRecentBookmarksController(
     private val activity: HomeActivity,
-    private val navController: NavController
+    private val navController: NavController,
+    private val appStore: AppStore,
 ) : RecentBookmarksController {
 
-    override fun handleBookmarkClicked(bookmark: BookmarkNode) {
+    override fun handleBookmarkClicked(bookmark: RecentBookmark) {
         dismissSearchDialogIfDisplayed()
         activity.openToBrowserAndLoad(
             searchTermOrURL = bookmark.url!!,
             newTab = true,
-            from = BrowserDirection.FromHome
+            from = BrowserDirection.FromHome,
+            flags = EngineSession.LoadUrlFlags.select(ALLOW_JAVASCRIPT_URL)
         )
-        activity.components.core.metrics.track(Event.BookmarkClicked)
+        RecentBookmarks.bookmarkClicked.add()
     }
 
     override fun handleShowAllBookmarksClicked() {
-        activity.components.core.metrics.track(Event.ShowAllBookmarks)
+        RecentBookmarks.showAllBookmarks.add()
         dismissSearchDialogIfDisplayed()
         navController.navigate(
             HomeFragmentDirections.actionGlobalBookmarkFragment(BookmarkRoot.Mobile.id)
         )
+    }
+
+    override fun handleBookmarkRemoved(bookmark: RecentBookmark) {
+        appStore.dispatch(AppAction.RemoveRecentBookmark(bookmark))
     }
 
     @VisibleForTesting(otherwise = PRIVATE)

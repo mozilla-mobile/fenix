@@ -11,33 +11,32 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.support.base.feature.LifecycleAwareFeature
+import org.mozilla.fenix.components.AppStore
+import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.bookmarks.BookmarksUseCase
-import org.mozilla.fenix.home.HomeFragmentAction
-import org.mozilla.fenix.home.HomeFragmentStore
 
 /**
- *  View-bound feature that retrieves a list of recently added [BookmarkNode]s and dispatches
- *  updates to the [HomeFragmentStore].
+ * View-bound feature that retrieves a list of recently added [BookmarkNode]s and dispatches
+ * updates to the [AppStore].
  *
- *  @param homeStore the [HomeFragmentStore]
- *  @param bookmarksUseCase the [BookmarksUseCase] for retrieving the list of recently saved
-*   bookmarks from storage.
- *  @param scope the [CoroutineScope] used to fetch the bookmarks list
- *  @param ioDispatcher the [CoroutineDispatcher] for performing read/write operations.
+ * @param appStore the [AppStore]
+ * @param bookmarksUseCase the [BookmarksUseCase] for retrieving the list of recently saved
+ * bookmarks from storage.
+ * @param scope the [CoroutineScope] used to fetch the bookmarks list
+ * @param ioDispatcher the [CoroutineDispatcher] for performing read/write operations.
  */
 class RecentBookmarksFeature(
-    private val homeStore: HomeFragmentStore,
+    private val appStore: AppStore,
     private val bookmarksUseCase: BookmarksUseCase,
     private val scope: CoroutineScope,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : LifecycleAwareFeature {
-    internal var job: Job? = null
+    private var job: Job? = null
 
     override fun start() {
         job = scope.launch(ioDispatcher) {
             val bookmarks = bookmarksUseCase.retrieveRecentBookmarks()
-
-            homeStore.dispatch(HomeFragmentAction.RecentBookmarksChange(bookmarks))
+            appStore.dispatch(AppAction.RecentBookmarksChange(bookmarks))
         }
     }
 
@@ -45,3 +44,16 @@ class RecentBookmarksFeature(
         job?.cancel()
     }
 }
+
+/**
+ * A bookmark that was recently added.
+ *
+ * @param title The title of the bookmark.
+ * @param url The url of the bookmark.
+ * @param previewImageUrl A preview image of the page (a.k.a. the hero image), if available.
+ */
+data class RecentBookmark(
+    val title: String? = null,
+    val url: String? = null,
+    val previewImageUrl: String? = null
+)

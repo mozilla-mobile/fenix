@@ -13,7 +13,6 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import mozilla.components.browser.state.selector.findTab
 import mozilla.components.browser.state.state.SessionState
 import mozilla.components.browser.state.state.TabSessionState
@@ -25,14 +24,14 @@ import mozilla.components.feature.contextmenu.ContextMenuCandidate
 import mozilla.components.feature.readerview.ReaderViewFeature
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.tabs.WindowFeature
+import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
-import org.mozilla.fenix.FeatureFlags
+import org.mozilla.fenix.GleanMetrics.ReaderMode
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.toolbar.ToolbarMenu
-import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
@@ -44,7 +43,6 @@ import org.mozilla.fenix.theme.ThemeManager
 /**
  * Fragment used for browsing the web within the main app.
  */
-@ExperimentalCoroutinesApi
 @Suppress("TooManyFunctions", "LargeClass")
 class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
 
@@ -74,23 +72,21 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
             )
         }
 
-        if (FeatureFlags.showHomeButtonFeature) {
-            val homeAction = BrowserToolbar.Button(
-                imageDrawable = AppCompatResources.getDrawable(
-                    context,
-                    R.drawable.mozac_ic_home
-                )!!,
-                contentDescription = context.getString(R.string.browser_toolbar_home),
-                iconTintColorResource = ThemeManager.resolveAttribute(R.attr.primaryText, context),
-                listener = browserToolbarInteractor::onHomeButtonClicked
-            )
+        val homeAction = BrowserToolbar.Button(
+            imageDrawable = AppCompatResources.getDrawable(
+                context,
+                R.drawable.mozac_ic_home
+            )!!,
+            contentDescription = context.getString(R.string.browser_toolbar_home),
+            iconTintColorResource = ThemeManager.resolveAttribute(R.attr.textPrimary, context),
+            listener = browserToolbarInteractor::onHomeButtonClicked
+        )
 
-            browserToolbarView.view.addNavigationAction(homeAction)
-        }
+        browserToolbarView.view.addNavigationAction(homeAction)
 
         if (resources.getBoolean(R.bool.tablet)) {
-            val enableTint = ThemeManager.resolveAttribute(R.attr.primaryText, context)
-            val disableTint = ThemeManager.resolveAttribute(R.attr.disabled, context)
+            val enableTint = ThemeManager.resolveAttribute(R.attr.textPrimary, context)
+            val disableTint = ThemeManager.resolveAttribute(R.attr.textDisabled, context)
             val backAction = BrowserToolbar.TwoStateButton(
                 primaryImage = AppCompatResources.getDrawable(
                     context,
@@ -208,7 +204,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                     binding.readerViewControlsBar
                 ) { available, active ->
                     if (available) {
-                        components.analytics.metrics.track(Event.ReaderModeAvailable)
+                        ReaderMode.available.record(NoExtras())
                     }
 
                     readerModeAvailable = available

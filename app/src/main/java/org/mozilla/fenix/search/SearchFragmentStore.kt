@@ -15,7 +15,7 @@ import mozilla.components.lib.state.Store
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.Components
-import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.components.metrics.MetricsUtils
 
 /**
  * The [Store] for holding the [SearchFragmentState] and applying [SearchFragmentAction]s.
@@ -61,6 +61,7 @@ sealed class SearchEngineSource {
  * @property showHistorySuggestions Whether or not to show history suggestions in the AwesomeBar
  * @property showBookmarkSuggestions Whether or not to show the bookmark suggestion in the AwesomeBar
  * @property pastedText The text pasted from the long press toolbar menu
+ * @property clipboardHasUrl Indicates if the clipboard contains an URL.
  */
 data class SearchFragmentState(
     val query: String,
@@ -79,15 +80,19 @@ data class SearchFragmentState(
     val showSyncedTabsSuggestions: Boolean,
     val tabId: String?,
     val pastedText: String? = null,
-    val searchAccessPoint: Event.PerformedSearch.SearchAccessPoint?
+    val searchAccessPoint: MetricsUtils.Source,
+    val clipboardHasUrl: Boolean = false
 ) : State
 
+/**
+ * Creates the initial state for the search fragment.
+ */
 fun createInitialSearchFragmentState(
     activity: HomeActivity,
     components: Components,
     tabId: String?,
     pastedText: String?,
-    searchAccessPoint: Event.PerformedSearch.SearchAccessPoint
+    searchAccessPoint: MetricsUtils.Source
 ): SearchFragmentState {
     val settings = components.settings
     val tab = tabId?.let { components.core.store.state.findTab(it) }
@@ -129,6 +134,7 @@ sealed class SearchFragmentAction : Action {
     data class ShowSearchShortcutEnginePicker(val show: Boolean) : SearchFragmentAction()
     data class AllowSearchSuggestionsInPrivateModePrompt(val show: Boolean) : SearchFragmentAction()
     data class UpdateQuery(val query: String) : SearchFragmentAction()
+    data class UpdateClipboardHasUrl(val hasUrl: Boolean) : SearchFragmentAction()
 
     /**
      * Updates the local `SearchFragmentState` from the global `SearchState` in `BrowserStore`.
@@ -167,6 +173,11 @@ private fun searchStateReducer(state: SearchFragmentState, action: SearchFragmen
                 } else {
                     state.searchEngineSource
                 }
+            )
+        }
+        is SearchFragmentAction.UpdateClipboardHasUrl -> {
+            state.copy(
+                clipboardHasUrl = action.hasUrl
             )
         }
     }

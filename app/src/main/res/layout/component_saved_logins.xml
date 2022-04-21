@@ -37,7 +37,7 @@
                 android:layout_height="wrap_content"
                 android:padding="4dp"
                 android:text="@string/preferences_passwords_saved_logins_description_empty_text"
-                android:textColor="?secondaryText"
+                android:textColor="?attr/textSecondary"
                 android:textSize="16sp"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
@@ -48,7 +48,7 @@
                 android:layout_height="wrap_content"
                 android:padding="4dp"
                 android:text="@string/preferences_passwords_saved_logins_description_empty_learn_more_link"
-                android:textColor="?secondaryText"
+                android:textColor="?attr/textSecondary"
                 android:textSize="16sp"
                 app:layout_constraintTop_toBottomOf="@id/saved_passwords_empty_message" />
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -56,7 +56,8 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/saved_logins_list"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
                 android:visibility="gone"
                 tools:listitem="@layout/logins_item" />
 
@@ -65,6 +66,7 @@
                 layout="@layout/layout_add_login"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_weight="0"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/saved_logins_list" />
 

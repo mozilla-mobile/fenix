@@ -4,12 +4,12 @@
 
 package org.mozilla.fenix.tabstray.browser
 
-import mozilla.components.concept.tabstray.Tab
+import mozilla.components.browser.state.state.TabSessionState
+import mozilla.components.browser.tabstray.TabsTray
 import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.support.base.feature.UserInteractionHandler
 import org.mozilla.fenix.selection.SelectionInteractor
 import org.mozilla.fenix.tabstray.TabsTrayAction
-import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.tabstray.TabsTrayController
 import org.mozilla.fenix.tabstray.TabsTrayInteractor
 import org.mozilla.fenix.tabstray.TabsTrayState.Mode
@@ -19,23 +19,23 @@ import org.mozilla.fenix.tabstray.TabsTrayStore
  * For interacting with UI that is specifically for [AbstractBrowserTrayList] and other browser
  * tab tray views.
  */
-interface BrowserTrayInteractor : SelectionInteractor<Tab>, UserInteractionHandler {
+interface BrowserTrayInteractor : SelectionInteractor<TabSessionState>, UserInteractionHandler, TabsTray.Delegate {
 
     /**
      * Open a tab.
      *
-     * @param tab [Tab] to open in browser.
+     * @param tab [TabSessionState] to open in browser.
      * @param source app feature from which the [tab] was opened.
      */
-    fun open(tab: Tab, source: String? = null)
+    fun open(tab: TabSessionState, source: String? = null)
 
     /**
      * Close the tab.
      *
-     * @param tab [Tab] to close.
+     * @param tab [TabSessionState] to close.
      * @param source app feature from which the [tab] was closed.
      */
-    fun close(tab: Tab, source: String? = null)
+    fun close(tab: TabSessionState, source: String? = null)
 
     /**
      * TabTray's Floating Action Button clicked.
@@ -51,59 +51,52 @@ interface BrowserTrayInteractor : SelectionInteractor<Tab>, UserInteractionHandl
 /**
  * A default implementation of [BrowserTrayInteractor].
  */
+@Suppress("TooManyFunctions")
 class DefaultBrowserTrayInteractor(
     private val store: TabsTrayStore,
     private val trayInteractor: TabsTrayInteractor,
     private val controller: TabsTrayController,
     private val selectTab: TabsUseCases.SelectTabUseCase,
-    private val metrics: MetricController
 ) : BrowserTrayInteractor {
 
     private val selectTabWrapper by lazy {
-        SelectTabUseCaseWrapper(metrics, selectTab) {
+        SelectTabUseCaseWrapper(selectTab) {
             trayInteractor.onBrowserTabSelected()
-        }
-    }
-
-    private val removeTabWrapper by lazy {
-        RemoveTabUseCaseWrapper(metrics) {
-            // Handle removal from the interactor where we can also handle "undo" visuals.
-            trayInteractor.onDeleteTab(it)
         }
     }
 
     /**
      * See [SelectionInteractor.open]
      */
-    override fun open(item: Tab) {
+    override fun open(item: TabSessionState) {
         open(item, null)
     }
 
     /**
      * See [BrowserTrayInteractor.open].
      */
-    override fun open(tab: Tab, source: String?) {
-        selectTabWrapper.invoke(tab.id, source)
+    override fun open(tab: TabSessionState, source: String?) {
+        selectTab(tab, source)
     }
 
     /**
      * See [BrowserTrayInteractor.close].
      */
-    override fun close(tab: Tab, source: String?) {
-        removeTabWrapper.invoke(tab.id, source)
+    override fun close(tab: TabSessionState, source: String?) {
+        closeTab(tab, source)
     }
 
     /**
      * See [SelectionInteractor.select]
      */
-    override fun select(item: Tab) {
+    override fun select(item: TabSessionState) {
         store.dispatch(TabsTrayAction.AddSelectTab(item))
     }
 
     /**
      * See [SelectionInteractor.deselect]
      */
-    override fun deselect(item: Tab) {
+    override fun deselect(item: TabSessionState) {
         store.dispatch(TabsTrayAction.RemoveSelectTab(item))
     }
 
@@ -120,6 +113,14 @@ class DefaultBrowserTrayInteractor(
         return false
     }
 
+    override fun onTabClosed(tab: TabSessionState, source: String?) {
+        closeTab(tab, source)
+    }
+
+    override fun onTabSelected(tab: TabSessionState, source: String?) {
+        selectTab(tab, source)
+    }
+
     /**
      * See [BrowserTrayInteractor.onFabClicked]
      */
@@ -132,5 +133,13 @@ class DefaultBrowserTrayInteractor(
      */
     override fun onRecentlyClosedClicked() {
         controller.handleNavigateToRecentlyClosed()
+    }
+
+    private fun selectTab(tab: TabSessionState, source: String? = null) {
+        selectTabWrapper.invoke(tab.id, source)
+    }
+
+    private fun closeTab(tab: TabSessionState, source: String? = null) {
+        trayInteractor.onDeleteTab(tab.id, source)
     }
 }

@@ -4,11 +4,14 @@
 
 package org.mozilla.fenix.tabstray
 
-import mozilla.components.concept.tabstray.Tab
+import mozilla.components.browser.state.state.ContentState
+import mozilla.components.browser.state.state.TabPartition
+import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.lib.state.Action
 import mozilla.components.lib.state.Middleware
 import mozilla.components.lib.state.State
 import mozilla.components.lib.state.Store
+import org.mozilla.fenix.tabstray.syncedtabs.SyncedTabsListItem
 
 /**
  * Value type that represents the state of the tabs tray.
@@ -16,13 +19,23 @@ import mozilla.components.lib.state.Store
  * @property selectedPage The current page in the tray can be on.
  * @property mode Whether the browser tab list is in multi-select mode or not with the set of
  * currently selected tabs.
- * @property syncing Whether the Synced Tabs feature should fetch the latest tabs from paired
- * devices.
+ * @property inactiveTabs The list of tabs are considered inactive.
+ * @property searchTermPartition The tab partition for search term groups.
+ * @property normalTabs The list of normal tabs that do not fall under [inactiveTabs] or search term groups.
+ * @property privateTabs The list of tabs that are [ContentState.private].
+ * @property syncing Whether the Synced Tabs feature should fetch the latest tabs from paired devices.
+ * @property focusGroupTabId The search group tab id to focus. Defaults to null.
  */
 data class TabsTrayState(
     val selectedPage: Page = Page.NormalTabs,
     val mode: Mode = Mode.Normal,
-    val syncing: Boolean = false
+    val inactiveTabs: List<TabSessionState> = emptyList(),
+    val searchTermPartition: TabPartition? = null,
+    val normalTabs: List<TabSessionState> = emptyList(),
+    val privateTabs: List<TabSessionState> = emptyList(),
+    val syncedTabs: List<SyncedTabsListItem> = emptyList(),
+    val syncing: Boolean = false,
+    val focusGroupTabId: String? = null
 ) : State {
 
     /**
@@ -33,7 +46,7 @@ data class TabsTrayState(
         /**
          * A set of selected tabs which we would want to perform an action on.
          */
-        open val selectedTabs = emptySet<Tab>()
+        open val selectedTabs = emptySet<TabSessionState>()
 
         /**
          * The default mode the tabs list is in.
@@ -44,7 +57,7 @@ data class TabsTrayState(
          * The multi-select mode that the tabs list is in containing the set of currently
          * selected tabs.
          */
-        data class Select(override val selectedTabs: Set<Tab>) : Mode()
+        data class Select(override val selectedTabs: Set<TabSessionState>) : Mode()
     }
 }
 
@@ -95,14 +108,14 @@ sealed class TabsTrayAction : Action {
     object ExitSelectMode : TabsTrayAction()
 
     /**
-     * Added a new [Tab] to the selection set.
+     * Added a new [TabSessionState] to the selection set.
      */
-    data class AddSelectTab(val tab: Tab) : TabsTrayAction()
+    data class AddSelectTab(val tab: TabSessionState) : TabsTrayAction()
 
     /**
-     * Removed a [Tab] from the selection set.
+     * Removed a [TabSessionState] from the selection set.
      */
-    data class RemoveSelectTab(val tab: Tab) : TabsTrayAction()
+    data class RemoveSelectTab(val tab: TabSessionState) : TabsTrayAction()
 
     /**
      * The active page in the tray that is now in focus.
@@ -119,6 +132,36 @@ sealed class TabsTrayAction : Action {
      * no sync action was able to be performed.
      */
     object SyncCompleted : TabsTrayAction()
+
+    /**
+     * Removes the [TabsTrayState.focusGroupTabId] of the [TabsTrayState].
+     */
+    object ConsumeFocusGroupTabId : TabsTrayAction()
+
+    /**
+     * Updates the list of tabs in [TabsTrayState.inactiveTabs].
+     */
+    data class UpdateInactiveTabs(val tabs: List<TabSessionState>) : TabsTrayAction()
+
+    /**
+     * Updates the list of tab groups in [TabsTrayState.searchTermPartition].
+     */
+    data class UpdateTabPartitions(val tabPartition: TabPartition?) : TabsTrayAction()
+
+    /**
+     * Updates the list of tabs in [TabsTrayState.normalTabs].
+     */
+    data class UpdateNormalTabs(val tabs: List<TabSessionState>) : TabsTrayAction()
+
+    /**
+     * Updates the list of tabs in [TabsTrayState.privateTabs].
+     */
+    data class UpdatePrivateTabs(val tabs: List<TabSessionState>) : TabsTrayAction()
+
+    /**
+     * Updates the list of synced tabs in [TabsTrayState.syncedTabs].
+     */
+    data class UpdateSyncedTabs(val tabs: List<SyncedTabsListItem>) : TabsTrayAction()
 }
 
 /**
@@ -134,7 +177,7 @@ internal object TabsTrayReducer {
             is TabsTrayAction.AddSelectTab ->
                 state.copy(mode = TabsTrayState.Mode.Select(state.mode.selectedTabs + action.tab))
             is TabsTrayAction.RemoveSelectTab -> {
-                val selected = state.mode.selectedTabs - action.tab
+                val selected = state.mode.selectedTabs.filter { it.id != action.tab.id }.toSet()
                 state.copy(
                     mode = if (selected.isEmpty()) {
                         TabsTrayState.Mode.Normal
@@ -149,6 +192,18 @@ internal object TabsTrayReducer {
                 state.copy(syncing = true)
             is TabsTrayAction.SyncCompleted ->
                 state.copy(syncing = false)
+            is TabsTrayAction.ConsumeFocusGroupTabId ->
+                state.copy(focusGroupTabId = null)
+            is TabsTrayAction.UpdateInactiveTabs ->
+                state.copy(inactiveTabs = action.tabs)
+            is TabsTrayAction.UpdateTabPartitions ->
+                state.copy(searchTermPartition = action.tabPartition)
+            is TabsTrayAction.UpdateNormalTabs ->
+                state.copy(normalTabs = action.tabs)
+            is TabsTrayAction.UpdatePrivateTabs ->
+                state.copy(privateTabs = action.tabs)
+            is TabsTrayAction.UpdateSyncedTabs ->
+                state.copy(syncedTabs = action.tabs)
         }
     }
 }

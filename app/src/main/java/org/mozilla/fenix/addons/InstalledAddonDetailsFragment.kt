@@ -20,13 +20,13 @@ import kotlinx.coroutines.launch
 import mozilla.components.feature.addons.Addon
 import mozilla.components.feature.addons.AddonManagerException
 import mozilla.components.feature.addons.ui.translateName
+import org.mozilla.fenix.GleanMetrics.Addons
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
-import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.databinding.FragmentInstalledAddOnDetailsBinding
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
+import org.mozilla.fenix.ext.showToolbar
 
 /**
  * An activity to show the details of a installed add-on.
@@ -60,6 +60,13 @@ class InstalledAddonDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         bindAddon()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        context?.let {
+            showToolbar(title = addon.translateName(it))
+        }
     }
 
     override fun onDestroyView() {
@@ -100,9 +107,6 @@ class InstalledAddonDetailsFragment : Fragment() {
     }
 
     private fun bindUI() {
-        val title = addon.translateName(binding.root.context)
-        showToolbar(title)
-
         bindEnableSwitch()
         bindSettings()
         bindDetails()
@@ -208,9 +212,8 @@ class InstalledAddonDetailsFragment : Fragment() {
         binding.settings.apply {
             isVisible = shouldSettingsBeVisible()
             setOnClickListener {
-                requireContext().components.analytics.metrics.track(
-                    Event.AddonOpenSetting(addon.id)
-                )
+                Addons.openAddonSetting.record(Addons.OpenAddonSettingExtra(addon.id))
+
                 val settingUrl = addon.installedState?.optionsPageUrl ?: return@setOnClickListener
                 val directions = if (addon.installedState?.openOptionsPageInTab == true) {
                     val components = it.context.components

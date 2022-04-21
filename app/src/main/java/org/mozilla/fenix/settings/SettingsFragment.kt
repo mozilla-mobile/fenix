@@ -33,27 +33,27 @@ import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.concept.sync.Profile
+import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.support.ktx.android.view.showKeyboard
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.Config
+import org.mozilla.fenix.GleanMetrics.Addons
+import org.mozilla.fenix.GleanMetrics.Events
+import org.mozilla.fenix.GleanMetrics.TrackingProtection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
-import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.databinding.AmoCollectionOverrideDialogBinding
-import org.mozilla.fenix.experiments.ExperimentBranch
-import org.mozilla.fenix.experiments.FeatureId
 import org.mozilla.fenix.ext.application
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getPreferenceKey
-import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.navigateToNotificationsSettings
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.REQUEST_CODE_BROWSER_ROLE
-import org.mozilla.fenix.ext.getVariables
 import org.mozilla.fenix.ext.openSetDefaultBrowserOption
 import org.mozilla.fenix.ext.showToolbar
-import org.mozilla.fenix.ext.withExperiment
+import org.mozilla.fenix.nimbus.FxNimbus
+import org.mozilla.fenix.nimbus.MessageSurfaceId
 import org.mozilla.fenix.settings.account.AccountUiView
 import org.mozilla.fenix.utils.BrowsersCache
 import org.mozilla.fenix.utils.Settings
@@ -118,20 +118,30 @@ class SettingsFragment : PreferenceFragmentCompat() {
             requireComponents.backgroundServices.accountManager.accountProfile()
         )
 
+        val booleanPreferenceTelemetryAllowList = listOf(
+            requireContext().getString(R.string.pref_key_show_search_suggestions),
+            requireContext().getString(R.string.pref_key_remote_debugging),
+            requireContext().getString(R.string.pref_key_telemetry),
+            requireContext().getString(R.string.pref_key_tracking_protection),
+            requireContext().getString(R.string.pref_key_search_bookmarks),
+            requireContext().getString(R.string.pref_key_search_browsing_history),
+            requireContext().getString(R.string.pref_key_show_clipboard_suggestions),
+            requireContext().getString(R.string.pref_key_show_search_engine_shortcuts),
+            requireContext().getString(R.string.pref_key_open_links_in_a_private_tab),
+            requireContext().getString(R.string.pref_key_sync_logins),
+            requireContext().getString(R.string.pref_key_sync_bookmarks),
+            requireContext().getString(R.string.pref_key_sync_history),
+            requireContext().getString(R.string.pref_key_show_voice_search),
+            requireContext().getString(R.string.pref_key_show_search_suggestions_in_private)
+        )
+
         preferenceManager.sharedPreferences
             .registerOnSharedPreferenceChangeListener(this) { sharedPreferences, key ->
                 try {
-                    context?.let { context ->
-                        context.components.analytics.metrics.track(
-                            Event.PreferenceToggled(
-                                key,
-                                sharedPreferences.getBoolean(key, false),
-                                context
-                            )
-                        )
+                    if (key in booleanPreferenceTelemetryAllowList) {
+                        val enabled = sharedPreferences.getBoolean(key, false)
+                        Events.preferenceToggled.record(Events.PreferenceToggledExtra(enabled, key))
                     }
-                } catch (e: IllegalArgumentException) {
-                    // The event is not tracked
                 } catch (e: ClassCastException) {
                     // The setting is not a boolean, not tracked
                 }
@@ -150,7 +160,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
      * Note: Changing Settings screen before experiment is over requires changing all layouts.
      */
     private fun getPreferenceLayoutId() =
-        if (isDefaultBrowserExperimentBranch() && !isFirefoxDefaultBrowser()) {
+        if (isDefaultBrowserExperimentBranch()) {
             R.xml.preferences_default_browser_experiment
         } else {
             R.xml.preferences
@@ -161,10 +171,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
         super.onResume()
 
         // Use nimbus to set the title, and a trivial addition
-        val experiments = requireContext().components.analytics.experiments
-        val variables = experiments.getVariables(FeatureId.NIMBUS_VALIDATION)
-        val title = variables.getText("settings-title") ?: getString(R.string.settings_title)
-        val suffix = variables.getString("settings-title-punctuation") ?: ""
+        val nimbusValidation = FxNimbus.features.nimbusValidation.value()
+
+        val title = nimbusValidation.settingsTitle
+        val suffix = nimbusValidation.settingsPunctuation
 
         showToolbar("$title$suffix")
 
@@ -229,6 +239,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         updateMakeDefaultBrowserPreference()
     }
 
+    @SuppressLint("InflateParams")
     @Suppress("ComplexMethod", "LongMethod")
     override fun onPreferenceTreeClick(preference: Preference): Boolean {
         // Hide the scrollbar so the animation looks smoother
@@ -242,11 +253,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
             resources.getString(R.string.pref_key_tabs) -> {
                 SettingsFragmentDirections.actionSettingsFragmentToTabsSettingsFragment()
             }
+            resources.getString(R.string.pref_key_home) -> {
+                SettingsFragmentDirections.actionSettingsFragmentToHomeSettingsFragment()
+            }
             resources.getString(R.string.pref_key_search_settings) -> {
                 SettingsFragmentDirections.actionSettingsFragmentToSearchEngineFragment()
             }
             resources.getString(R.string.pref_key_tracking_protection_settings) -> {
-                requireContext().metrics.track(Event.TrackingProtectionSettings)
+                TrackingProtection.etpSettings.record(NoExtras())
                 SettingsFragmentDirections.actionSettingsFragmentToTrackingProtectionFragment()
             }
             resources.getString(R.string.pref_key_site_permissions) -> {
@@ -255,6 +269,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
             resources.getString(R.string.pref_key_private_browsing) -> {
                 SettingsFragmentDirections.actionSettingsFragmentToPrivateBrowsingFragment()
             }
+            resources.getString(R.string.pref_key_https_only_settings) -> {
+                SettingsFragmentDirections.actionSettingsFragmentToHttpsOnlyFragment()
+            }
             resources.getString(R.string.pref_key_accessibility) -> {
                 SettingsFragmentDirections.actionSettingsFragmentToAccessibilityFragment()
             }
@@ -262,7 +279,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 SettingsFragmentDirections.actionSettingsFragmentToLocaleSettingsFragment()
             }
             resources.getString(R.string.pref_key_addons) -> {
-                requireContext().metrics.track(Event.AddonsOpenInSettings)
+                Addons.openAddonsInSettings.record(mozilla.components.service.glean.private.NoExtras())
                 SettingsFragmentDirections.actionSettingsFragmentToAddonsFragment()
             }
             resources.getString(R.string.pref_key_data_choices) -> {
@@ -297,7 +314,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 SettingsFragmentDirections.actionSettingsFragmentToSavedLoginsAuthFragment()
             }
             resources.getString(R.string.pref_key_credit_cards) -> {
-                SettingsFragmentDirections.actionSettingsFragmentToCreditCardsSettingFragment()
+                SettingsFragmentDirections.actionSettingsFragmentToAutofillSettingFragment()
             }
             resources.getString(R.string.pref_key_about) -> {
                 SettingsFragmentDirections.actionSettingsFragmentToAboutFragment()
@@ -463,6 +480,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         setupAmoCollectionOverridePreference(requireContext().settings())
         setupAllowDomesticChinaFxaServerPreference()
+        setupHttpsOnlyPreferences()
     }
 
     /**
@@ -472,9 +490,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
      */
     private fun getClickListenerForMakeDefaultBrowser(): Preference.OnPreferenceClickListener {
         return Preference.OnPreferenceClickListener {
-            if (isDefaultBrowserExperimentBranch() && !isFirefoxDefaultBrowser()) {
-                requireContext().metrics.track(Event.SetDefaultBrowserSettingsScreenClicked)
-            }
             activity?.openSetDefaultBrowserOption()
             true
         }
@@ -603,12 +618,21 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
-    private fun isDefaultBrowserExperimentBranch(): Boolean {
-        val experiments = context?.components?.analytics?.experiments
-        return experiments?.withExperiment(FeatureId.DEFAULT_BROWSER) { experimentBranch ->
-            (experimentBranch == ExperimentBranch.DEFAULT_BROWSER_SETTINGS_MENU)
-        } == true
+    @VisibleForTesting
+    internal fun setupHttpsOnlyPreferences() {
+        val httpsOnlyPreference =
+            requirePreference<Preference>(R.string.pref_key_https_only_settings)
+        httpsOnlyPreference.summary = context?.let {
+            if (it.settings().shouldUseHttpsOnly) {
+                getString(R.string.preferences_https_only_on)
+            } else {
+                getString(R.string.preferences_https_only_off)
+            }
+        }
     }
+
+    private fun isDefaultBrowserExperimentBranch(): Boolean =
+        requireContext().settings().isDefaultBrowserMessageLocation(MessageSurfaceId.SETTINGS)
 
     private fun isFirefoxDefaultBrowser(): Boolean {
         val browsers = BrowsersCache.all(requireContext())

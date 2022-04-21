@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:moz="http://mozac.org/tools">
     <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
     <string name="app_name_private_5">Priwatny %s</string>
     <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
@@ -20,11 +20,6 @@
     <!-- No Private Tabs Message Description -->
     <string name="no_private_tabs_description">Waše priwatne rejtariki se how wócyniju.</string>
 
-    <!-- Message announced to the user when tab tray is selected with 1 tab -->
-    <string name="open_tab_tray_single">Wócynjone rejtariki: %1$s. Pótusniśo, aby rejtariki pśešaltował.</string>
-    <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
-    <string name="open_tab_tray_plural">Wócynjone rejtariki: %1$s. Pótusniśo, aby rejtariki pśešaltował.</string>
-
     <!-- Tab tray multi select title in app bar. The first parameter is the number of tabs selected -->
     <string name="tab_tray_multi_select_title">Wubrane: %1$d</string>
     <!-- Label of button in create collection dialog for creating a new collection  -->
@@ -37,33 +32,26 @@
     <string name="tab_tray_close_multiselect_content_description">Wěcejwuběrański modus spušćiś</string>
     <!-- Content description for save to collection button while in multiselect mode in tab tray -->
     <string name="tab_tray_collection_button_multiselect_content_description">Wubrane rejtariki do zběrki składowaś</string>
-    <!-- Content description for checkmark while tab is selected while in multiselect mode in tab tray. The first parameter is the title of the tab selected -->
-    <string name="tab_tray_item_selected_multiselect_content_description">%1$s wubrany</string>
-    <!-- Content description when tab is unselected while in multiselect mode in tab tray. The first parameter is the title of the tab unselected -->
-    <string name="tab_tray_item_unselected_multiselect_content_description">%1$s wěcej njewubrany</string>
-    <!-- Content description announcement when exiting multiselect mode in tab tray -->
-    <string name="tab_tray_exit_multiselect_content_description">Wěcejwuběrański modus jo se spušćił</string>
-    <!-- Content description announcement when entering multiselect mode in tab tray -->
-    <string name="tab_tray_enter_multiselect_content_description">Wěcejwuběrański modus jo se zmóžnił, wubjeŕśo rejtariki, aby je do zběrki składował</string>
     <!-- Content description on checkmark while tab is selected in multiselect mode in tab tray -->
     <string name="tab_tray_multiselect_selected_content_description">Wubrany</string>
 
     <!-- Home - Recently saved bookmarks -->
     <!-- Title for the home screen section with recently saved bookmarks. -->
-    <string name="recently_saved_bookmarks">Njedawno skłaźone</string>
+    <string name="recent_bookmarks_title">Nejnowše cytańske znamjenja</string>
     <!-- Content description for the recently saved bookmarks section on the home screen. -->
-    <string name="recently_saved_bookmarks_content_description">Njedawno skłaźone cytańske znamjenja</string>
+    <string moz:removedIn="100" name="recently_saved_bookmarks_content_description" tools:ignore="UnusedResources">Njedawno skłaźone cytańske znamjenja</string>
     <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
-    <string name="recently_saved_show_all">Wšykne pokazaś</string>
+    <string moz:removedIn="101" name="recently_saved_show_all" tools:ignore="UnusedResources">Wšykne pokazaś</string>
     <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
-    <string name="recently_saved_show_all_content_description">Tłocašk „Wšykne skłaźone cytańske znamjenja pokazaś“</string>
+    <string name="recently_saved_show_all_content_description_2">Wšykne skłaźone cytańske znamjenja pokazaś</string>
+
+    <!-- Text for the menu button to remove a recently saved bookmark from the user's home screen -->
+    <string name="recently_saved_menu_item_remove">Wótwónoźeś</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
     <string name="about_content">%1$s se pśez Mozilla zgótujo.</string>
 
     <!-- Private Browsing -->
-    <!-- Title for private session option -->
-    <string name="private_browsing_title">Sćo w priwatnem pósejźenju</string>
     <!-- Explanation for private browsing displayed to users on home view when they first enable private mode
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
     <string name="private_browsing_placeholder_description_2">%1$s wašu pytańsku a pśeglědowańsku historjiu z priwatnych rejtarikow wuproznijo, gaž je zacynjaśo abo nałoženje kóńcyśo. Pšez to se wólažcyjo, pśed drugimi, kótarež toś to licadło wužywaju, schowaś,
@@ -71,8 +59,6 @@
     <string name="private_browsing_common_myths">
        Ceste myty wó priwatnem modusu
     </string>
-    <!-- Delete session button to erase your history in a private session -->
-    <string name="private_browsing_delete_session">Pósejźenje lašowaś</string>
 
     <!-- Private mode shortcut "contextual feature recommendation" (CFR) -->
     <!-- Text for the main message -->
@@ -84,7 +70,9 @@
 
     <!-- Open in App "contextual feature recommendation" (CFR) -->
     <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
-    <string name="open_in_app_cfr_info_message">Móžośo Firefox tak nastajiś, aby se wótkazy awtomatiski w nałoženjach wócynili.</string>
+    <string moz:RemovedIn="99" name="open_in_app_cfr_info_message" tools:ignore="UnusedResources">Móžośo Firefox tak nastajiś, aby se wótkazy awtomatiski w nałoženjach wócynili.</string>
+    <!-- Text for the info message. The first parameter is the name of the application.-->
+    <string name="open_in_app_cfr_info_message_2">Móžośo %1$sx tak nastajiś, aby se wótkazy awtomatiski w nałoženjach wócynili.</string>
     <!-- Text for the positive action button -->
     <string name="open_in_app_cfr_positive_button_text">K nastajenjam</string>
     <!-- Text for the negative action button -->
@@ -104,14 +92,30 @@
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">Zachyśiś</string>
 
+    <!-- Text for the banner message to tell users about our inactive tabs feature. -->
+    <string name="tab_tray_inactive_onboarding_message">Rejtariki, kótarež njejsćo se woglědał dwa tyźenja, se sem pśesunu.</string>
+    <!-- Text for the action link to go to Settings for inactive tabs. -->
+    <string name="tab_tray_inactive_onboarding_button_text">W nastajenjach znjemóžniś</string>
+
+    <!-- Text for title for the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_auto_close_title">Pó jadnem mjasecu awtomatiski zacyniś?</string>
+    <!-- Text for the body for the auto-close dialog of the inactive tabs. -->
+    <string moz:RemovedIn="99" name="tab_tray_inactive_auto_close_body" tools:ignore="UnusedResources">Firefox móžo rejtariki zacyniś, kótarež njejsćo se woglědał zajźony mjasec.</string>
+    <!-- Text for the body for the auto-close dialog of the inactive tabs.
+        The first parameter is the name of the application.-->
+    <string name="tab_tray_inactive_auto_close_body_2">%1$s móžo rejtariki zacyniś, kótarež njejsćo se woglědał zajźony mjasec.</string>
+    <!-- Content description for close button in the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_auto_close_button_content_description">Zacyniś</string>
+
+    <!-- Text for turn on auto close tabs button in the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_turn_on_auto_close_button_2">Awtomatiske zacynjanje zmóžniś</string>
+
+
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
     <string name="home_screen_shortcut_open_new_tab_2">Nowy rejtarik</string>
     <!-- Shortcut action to open new private tab -->
     <string name="home_screen_shortcut_open_new_private_tab_2">Nowy priwatny rejtarik</string>
-
-    <!-- Heading for the Top Sites block -->
-    <string name="home_screen_top_sites_heading">Nejcesćej woglědane sedła</string>
 
     <!-- Recent Tabs -->
     <!-- Header text for jumping back into the recent tab in the home screen -->
@@ -119,14 +123,36 @@
     <!-- Button text for showing all the tabs in the tabs tray -->
     <string name="recent_tabs_show_all">Wšykne pokazaś</string>
 
+    <!-- Content description for the button which navigates the user to show all recent tabs in the tabs tray. -->
+    <string name="recent_tabs_show_all_content_description_2">Tłocašk „Njedawno wócynjone rejtariki“ pokazaś</string>
+    <!-- Title for showing a group item in the 'Jump back in' section of the new tab
+        The first parameter is the search term that the user used. (for example: your search for "cat")-->
+    <string name="recent_tabs_search_term">Wašo pytanje za \&quot;%1$s\&quot;</string>
+
+    <!-- Text for the number of tabs in a group in the 'Jump back in' section of the new tab
+        %d is a placeholder for the number of sites in the group. This number will always be more than one. -->
+    <string name="recent_tabs_search_term_count_2">Sedła: %d</string>
+
+    <!-- Text for button in synced tab card that opens synced tabs tray -->
+    <string name="recent_tabs_see_all_synced_tabs_button_text">Synchronizěrowane rejtariki pokazaś</string>
+    <!-- Accessibility description for device icon used for recent synced tab -->
+    <string name="recent_tabs_synced_device_icon_content_description">Synchronizěrowany rěd</string>
+    <!-- Text for the menu button to remove a grouped highlight from the user's browsing history
+         in the Recently visited section -->
+    <string name="recent_tab_menu_item_remove">Wótwónoźeś</string>
+
     <!-- History Metadata -->
     <!-- Header text for a section on the home screen that displays grouped highlights from the
          user's browsing history, such as topics they have researched or explored on the web -->
-    <string name="history_metadata_header">Zajźone wuslěźenja</string>
+    <string name="history_metadata_header_2">Pśed krotkim woglědane</string>
+    <!-- Text for the menu button to remove a grouped highlight from the user's browsing history
+         in the Recently visited section -->
+    <string name="recently_visited_menu_item_remove">Wótwónoźeś</string>
+
+    <!-- Content description for the button which navigates the user to show all of their history. -->
+    <string name="past_explorations_show_all_content_description_2">Wšykne zajźone wuslěźenja pokazaś</string>
 
     <!-- Browser Fragment -->
-    <!-- Content description (not visible, for screen readers etc.): Navigate to open tabs -->
-    <string name="browser_tabs_button">Wócynjone rejtariki</string>
     <!-- Content description (not visible, for screen readers etc.): Navigate backward (browsing history) -->
     <string name="browser_menu_back">Slědk</string>
     <!-- Content description (not visible, for screen readers etc.): Navigate forward (browsing history) -->
@@ -135,14 +161,8 @@
     <string name="browser_menu_refresh">Aktualizěrowaś</string>
     <!-- Content description (not visible, for screen readers etc.): Stop loading current website -->
     <string name="browser_menu_stop">Zastajiś</string>
-    <!-- Content description (not visible, for screen readers etc.): Bookmark the current page -->
-    <string name="browser_menu_bookmark">Ako cytańske znamje składowaś</string>
-    <!-- Content description (not visible, for screen readers etc.): Un-bookmark the current page -->
-    <string name="browser_menu_edit_bookmark">Cytańske znamje wobźěłaś</string>
     <!-- Browser menu button that opens the addon manager -->
     <string name="browser_menu_add_ons">Dodanki</string>
-    <!-- Browser menu button that opens the addon extensions manager -->
-    <string name="browser_menu_extensions">Rozšyrjenja</string>
     <!-- Text displayed when there are no add-ons to be shown -->
     <string name="no_add_ons">Žedne dodanki how</string>
     <!-- Browser menu button that sends a user to help articles -->
@@ -159,20 +179,14 @@
     <string name="browser_menu_add_to_homescreen">Startowej wobrazowce pśidaś</string>
     <!-- Browser menu toggle that installs a Progressive Web App shortcut to the site on the device home screen. -->
     <string name="browser_menu_install_on_homescreen">Instalěrowaś</string>
-    <!-- Menu option on the toolbar that takes you to synced tabs page-->
-    <string name="synced_tabs">Synchronizěrowane rejtariki</string>
     <!-- Content description (not visible, for screen readers etc.) for the Resync tabs button -->
     <string name="resync_button_content_description">Znowego synchronizěrowaś</string>
     <!-- Browser menu button that opens the find in page menu -->
     <string name="browser_menu_find_in_page">Na boku pytaś</string>
-    <!-- Browser menu button that creates a private tab -->
-    <string name="browser_menu_private_tab">Priwatny rejtarik</string>
     <!-- Browser menu button that saves the current tab to a collection -->
     <string name="browser_menu_save_to_collection_2">Do zběrki składowaś</string>
     <!-- Browser menu button that open a share menu to share the current site -->
     <string name="browser_menu_share">Źěliś</string>
-    <!-- Share menu title, displayed when a user is sharing their current site -->
-    <string name="menu_share_with">Źěliś z…</string>
     <!-- Browser menu button shown in custom tabs that opens the current tab in Fenix
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
     <string name="browser_menu_open_in_fenix">W %1$s wócyniś</string>
@@ -188,8 +202,6 @@
     <string name="browser_menu_read_close">Cytański naglěd zacyniś</string>
     <!-- Browser menu button to open the current page in an external app -->
     <string name="browser_menu_open_app_link">W nałoženju wócyniś</string>
-    <!-- Browser menu button to configure reader mode appearance e.g. the used font type and size -->
-    <string name="browser_menu_read_appearance">Wenkowny naglěd</string>
 
     <!-- Browser menu button to show reader view appearance controls e.g. the used font type and size -->
     <string name="browser_menu_customize_reader_view">Cytański naglěd pśiměriś</string>
@@ -198,19 +210,15 @@
     <!-- Browser menu label for editing a bookmark -->
     <string name="browser_menu_edit">Wobźěłaś</string>
 
+    <!-- Button shown on the home page that opens the Customize home settings -->
+    <string name="browser_menu_customize_home_1">Startowy bok pśiměriś</string>
     <!-- Browser Toolbar -->
     <!-- Content description for the Home screen button on the browser toolbar -->
     <string name="browser_toolbar_home">Startowa wobrazowka</string>
 
-    <!-- Error message to show when the user tries to access a scheme not
-        handled by the app (Ex: blob, tel etc) -->
-    <string name="unknown_scheme_error_message">Zwisk njejo móžny. Njespóznawajobna URL-šema.</string>
-
     <!-- Locale Settings Fragment -->
     <!-- Content description for tick mark on selected language -->
     <string name="a11y_selected_locale_content_description">Wubrana rěc</string>
-    <!-- Content description for search icon -->
-    <string name="a11y_search_icon_content_description">Pytaś</string>
     <!-- Text for default locale item -->
     <string name="default_locale_text">Rědowu rěc wužywaś</string>
     <!-- Placeholder text shown in the search bar before a user enters text -->
@@ -223,8 +231,6 @@
     <string name="search_engine_button">Pytnica</string>
     <!-- Button in the search view when shortcuts are displayed that takes a user to the search engine settings -->
     <string name="search_shortcuts_engine_settings">Nastajenja pytnicow</string>
-    <!-- Header displayed when selecting a shortcut search engine -->
-    <string name="search_engines_search_with">Něnto pytaś z:</string>
     <!-- Button in the search view that lets a user navigate to the site in their clipboard -->
     <string name="awesomebar_clipboard_title">Wótkaz z mjazywótkłada zasajźiś</string>
     <!-- Button in the search suggestions onboarding that allows search suggestions in private sessions -->
@@ -236,16 +242,44 @@
     <!-- Search suggestion onboarding hint description text, first parameter is the name of the app defined in app_name (for example: Fenix)-->
     <string name="search_suggestions_onboarding_text">%s wykno źěli, což w adresowem pólu ze swójeju pytnicu zapódajośo.</string>
     <!-- Search suggestion onboarding hint Learn more link text -->
-    <string name="search_suggestions_onboarding_learn_more_link">Dalšne informacije</string>
+    <string moz:RemovedIn="100" name="search_suggestions_onboarding_learn_more_link" tools:ignore="UnusedResources">Dalšne informacije</string>
 
     <!-- Search engine suggestion title text. The first parameter is the name of teh suggested engine-->
     <string name="search_engine_suggestions_title">Z %s pytaś</string>
     <!-- Search engine suggestion description text -->
     <string name="search_engine_suggestions_description">Direktnje z adresowego póla pytaś</string>
 
+    <!-- Home onboarding -->
+    <!-- Onboarding home screen dialog title text. Firefox is intentionally hardcoded. -->
+    <string moz:removedIn="99" name="onboarding_home_screen_title_2" tools:ignore="UnusedResources">Nowe funkcije a změny we Firefox</string>
+    <!-- Onboarding home screen dialog title text. The first parameter is the name of the application.-->
+    <string name="onboarding_home_screen_title_3">Nowe funkcije a změny w %1$s</string>
+    <!-- Onboarding home screen dialog description text. -->
+    <string name="onboarding_home_screen_description_2">Jo něnto lažčej tam pókšacowaś, źož sćo pśestał.</string>
+    <!-- Onboarding home screen dialog title text for the home section. Firefox is intentionally hardcoded. -->
+    <string moz:RemovedIn="99" name="onboarding_home_screen_section_home_title_2" tools:ignore="UnusedResources">Personalizěrowany startowy bok Firefox</string>
+    <!-- Onboarding home screen dialog title text for the home section. The first parameter is the name of the application.-->
+    <string name="onboarding_home_screen_section_home_title_3">Personalizěrowany startowy bok %1$s</string>
+    <!-- Onboarding home screen dialog description text for the home section. -->
+    <string name="onboarding_home_screen_section_home_description_2">Pśejźćo k swójim wócynjonym rejtarikam, cytańskim znamjenjam a pśeglědowańskej historiji.</string>
+    <!-- Onboarding home screen dialog description text for the tab tray section. -->
+    <string name="onboarding_home_screen_section_cleaner_tab_tray_title_2">Pśeglědne, organizěrowane rejtariki</string>
+    <!-- Onboarding home screen dialog description text for the tab tray section. -->
+    <string name="onboarding_home_screen_section_cleaner_tab_tray_description_2">Wótwónoźćo rejtarikowy barłog pśez pólěpšone wugótowanje a awtomatiski zacynjajuce rejtariki.</string>
+    <!-- Onboarding home screen dialog description text for the history section. -->
+    <string name="onboarding_home_screen_section_useful_history_title_2">Nejnowše pytanja</string>
+
+    <!-- Onboarding home screen dialog description text for the history section. -->
+    <string name="onboarding_home_screen_section_useful_history_description_2">Wótwołśo znowego swóje nejnowše pytanja ze swójogo startowego boka a rejtarikow.</string>
+
+    <!-- Onboarding home screen popup dialog, shown on top of the Jump back in section. Firefox is intentionally hardcoded. -->
+    <string name="onboarding_home_screen_jump_back_contextual_hint" tools:ignore="UnusedResources">Waša personalizěrowany startowy bok Firefox něnto wólažcujo tam pókšacowaś, źož sćo pśestał. Namakajśo swóje nejnowše rejtariki, cytańske znamjenja a pytańske wuslědki.</string>
+
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
-    <string name="search_widget_content_description">Nowy rejtarik Firefox wócyniś</string>
+    <string moz:RemovedIn="99" name="search_widget_content_description" tools:ignore="UnusedResources">Nowy rejtarik Firefox wócyniś</string>
+    <!-- Content description for searching with a widget. The first parameter is the name of the application.-->
+    <string name="search_widget_content_description_2">Nowy rejtarik %1$s wócyniś</string>
     <!-- Text preview for smaller sized widgets -->
     <string name="search_widget_text_short">Pytaś</string>
     <!-- Text preview for larger sized widgets -->
@@ -257,8 +291,6 @@
     <!-- Preferences -->
     <!-- Title for the settings page-->
     <string name="settings">Nastajenja</string>
-    <!-- Preference category for basic settings -->
-    <string name="preferences_category_basics">Zakładne nastajenja</string>
     <!-- Preference category for general settings -->
     <string name="preferences_category_general">Powšykne</string>
     <!-- Preference category for all links about Fenix -->
@@ -269,27 +301,15 @@
     <string name="preferences_search">Pytaś</string>
     <!-- Preference for settings related to Search address bar -->
     <string name="preferences_search_address_bar">Adresowe pólo</string>
-    <!-- Preference linking to help about Fenix -->
-    <string name="preferences_help">Pomoc</string>
     <!-- Preference link to rating Fenix on the Play Store -->
     <string name="preferences_rate">Na Google Play pógódnośiś</string>
-    <!-- Preference for giving feedback about Fenix -->
-    <string name="preferences_feedback">Komentar pósłaś</string>
     <!-- Preference linking to about page for Fenix
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
     <string name="preferences_about">Wó %1$s</string>
-    <!-- Preference linking to the your rights SUMO page -->
-    <string name="preferences_your_rights">Waše pšawa</string>
-    <!-- Preference for settings related to saved passwords -->
-    <string name="preferences_passwords">Gronidła</string>
-    <!-- Preference for settings related to saved credit cards and addresses -->
-    <string name="preferences_credit_cards_addresses">Kreditne kórty a adrese</string>
     <!-- Preference for settings related to changing the default browser -->
     <string name="preferences_set_as_default_browser">Ako standardny wobglědowak nastajiś</string>
     <!-- Preference category for advanced settings -->
     <string name="preferences_category_advanced">Rozšyrjone</string>
-    <!-- Preference category for privacy settings -->
-    <string name="preferences_category_privacy">Priwatnosć</string>
     <!-- Preference category for privacy and security settings -->
     <string name="preferences_category_privacy_security">Priwatnosć a wěstota</string>
     <!-- Preference for advanced site permissions -->
@@ -305,6 +325,26 @@
     <string name="preferences_screenshots_in_private_mode_disclaimer">Jolic dowólone, budu priwatne rejtariki teke widobne, gaž někotare nałoženja su wócynjone</string>
     <!-- Preference for adding private browsing shortcut -->
     <string name="preferences_add_private_browsing_shortcut">Skrotconku za priwatny modus pśidaś</string>
+    <!-- Preference for enabling "HTTPS-Only" mode -->
+    <string name="preferences_https_only_title">Modus Jano-HTTPS</string>
+    <!-- Description of the preference to enable "HTTPS-Only" mode. -->
+    <string name="preferences_https_only_summary">Wopytujo z pomocu koděrowańskego protokola HTTPS za pówušonu wěstotu awtomatiski ze sedłami zwězaś.</string>
+    <!-- Summary of tracking protection preference if tracking protection is set to on -->
+    <string name="preferences_https_only_on">Zašaltowany</string>
+    <!-- Summary of tracking protection preference if tracking protection is set to off -->
+    <string name="preferences_https_only_off">Wušaltowany</string>
+    <!-- Text displayed that links to website containing documentation about "HTTPS-Only" mode -->
+    <string name="preferences_http_only_learn_more">Dalšne informacije</string>
+    <!-- Option for the https only setting -->
+    <string name="preferences_https_only_in_all_tabs">We wšych rejtarikach zmóžniś</string>
+    <!-- Option for the https only setting -->
+    <string name="preferences_https_only_in_private_tabs">Jano w priwatnych rejtarikach zmóžniś</string>
+    <!-- Title shown in the error page for when trying to access a http website while https only mode is enabled. -->
+    <string name="errorpage_httpsonly_title">Wěste sedło njejo k dispoziciji</string>
+    <!-- Message shown in the error page for when trying to access a http website while https only mode is enabled. The message has two paragraphs. This is the first. -->
+    <string name="errorpage_httpsonly_message_title">Nejskerjej websedło jadnorje HTTPS njepódpěra.</string>
+    <!-- Message shown in the error page for when trying to access a http website while https only mode is enabled. The message has two paragraphs. This is the second. -->
+    <string name="errorpage_httpsonly_message_summary">Jo pak teke móžno, až se wó napad jadna. Jolic se websedłoju weto woglědujośo, wy njeměł sensibelne informacije zapódaś. Jolic pókšacujośo, se modus Jano-HTTPS nachylu za sedło znjemóžnijo.</string>
     <!-- Preference for accessibility -->
     <string name="preferences_accessibility">Bźezbariernosć</string>
     <!-- Preference to override the Firefox Account server -->
@@ -315,14 +355,12 @@
     <string name="toast_override_fxa_sync_server_done">Kontowy resp. synchronizěrowański serwer Firefox jo se změnił. Nałoženje se kóńcy, aby se změny nałožyli…</string>
     <!-- Preference category for account information -->
     <string name="preferences_category_account">Konto</string>
-    <!-- Preference shown on banner to sign into account -->
-    <string name="preferences_sign_in">Pśizjawiś</string>
     <!-- Preference for changing where the toolbar is positioned -->
     <string name="preferences_toolbar">Symbolowa rědka</string>
     <!-- Preference for changing default theme to dark or light mode -->
     <string name="preferences_theme">Drastwa</string>
     <!-- Preference for customizing the home screen -->
-    <string name="preferences_home">Startowy bok</string>
+    <string name="preferences_home_2">Startowy bok</string>
     <!-- Preference for gestures based actions -->
     <string name="preferences_gestures">Gesty</string>
     <!-- Preference for settings related to visual options -->
@@ -339,10 +377,6 @@
     <string name="preferences_data_choices">Datowy wuběrki</string>
     <!-- Preference for data collection -->
     <string name="preferences_data_collection">Zběranje datow</string>
-    <!-- Preference linking to the privacy notice -->
-    <string name="preferences_privacy_link">Powěźeńka priwatnosći</string>
-    <!-- Preference category for developer tools -->
-    <string name="developer_tools_category">Wuwijarske rědy</string>
     <!-- Preference for developers -->
     <string name="preferences_remote_debugging">Daloke pytanje zmólkow pśez USB</string>
     <!-- Preference title for switch preference to show search engines -->
@@ -389,6 +423,42 @@
     <string name="customize_addon_collection_user_hint">Wobsejźaŕ zběrki (wužywaŕski ID)</string>
     <!-- Toast shown after confirming the custom add-on collection configuration -->
     <string name="toast_customize_addon_collection_done">Dodankowa zběrka jo se změniła. Nałoženje se kóńcy, aby se změny nałožyli…</string>
+
+    <!-- Customize Home -->
+    <!-- Header text for jumping back into the recent tab in customize the home screen -->
+    <string name="customize_toggle_jump_back_in">Slědk skócyś</string>
+    <!-- Title for the customize home screen section with recently saved bookmarks. -->
+    <string name="customize_toggle_recent_bookmarks">Nejnowše cytańske znamjenja</string>
+    <!-- Title for the customize home screen section with recently visited. Recently visited is
+    a section where users see a list of tabs that they have visited in the past few days -->
+    <string name="customize_toggle_recently_visited">Pśed krotkim woglědane</string>
+    <!-- Title for the customize home screen section with Pocket. -->
+    <string name="customize_toggle_pocket">Pocket</string>
+
+    <!-- Title for the opening wallpaper settings screen -->
+    <string name="customize_wallpapers">Slězynowe wobraze</string>
+    <!-- Title for the customize home screen section with sponsored shortcuts. -->
+    <string name="customize_toggle_contile">Sponserowane zwězanja</string>
+
+    <!-- Wallpapers -->
+    <!-- Content description for various wallpapers. The first parameter is the name of the wallpaper -->
+    <string name="wallpapers_item_name_content_description">Element slězynowego wobraza: %1$s</string>
+    <!-- Snackbar message for when wallpaper is selected -->
+    <string name="wallpaper_updated_snackbar_message">Slězynowy wobraz jo se zaktualizěrował!</string>
+    <!-- Snackbar label for action to view selected wallpaper -->
+    <string name="wallpaper_updated_snackbar_action">Pokazaś</string>
+
+    <!-- Label for switch which toggles the "tap-to-switch" behavior on home screen logo -->
+    <string moz:removedIn="99" name="wallpaper_tap_to_change_switch_label" tools:ignore="UnusedResources">Pótusniśo logo, aby slězynowy wobraz změnił</string>
+
+    <!-- Label for switch which toggles the "tap-to-switch" behavior on home screen logo -->
+    <string name="wallpaper_tap_to_change_switch_label_1">Pótusniśo logo startowego boka Firefox, aby slězynowy wobraz změnił</string>
+    <!-- Description for switch which toggles the "tap-to-switch" behavior on home screen logo -->
+    <string moz:removedIn="99" name="wallpaper_tap_to_change_switch_description" tools:ignore="UnusedResources">Pśeglědujśo a aktualizěrujśo wobraze, mimo aby startowy bok spušćił.</string>
+
+    <!-- This is the accessibility content description for the wallpapers functionality. Users are
+    able to tap on the app logo in the home screen and can switch to different wallpapers by tapping. -->
+    <string name="wallpaper_logo_content_description">Logo Firefox - slězynowy wobraz změniś, tłocašk</string>
 
     <!-- Add-on Installation from AMO-->
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
@@ -443,22 +513,12 @@
     <string name="fxa_received_tab_channel_description">Powěźeńki za rejtariki su se dostali z drugich rědow Firefox.</string>
     <!--  The body for these is the URL of the tab received  -->
     <string name="fxa_tab_received_notification_name">Dostany rejtarik</string>
-    <!-- When multiple tabs have been received -->
-    <string name="fxa_tabs_received_notification_name">Dostane rejtariki</string>
     <!-- %s is the device name -->
     <string name="fxa_tab_received_from_notification_name">Rajtark z %s</string>
 
     <!-- Advanced Preferences -->
-    <!-- Preference for tracking protection settings -->
-    <string name="preferences_tracking_protection_settings">Slědowański šćit</string>
-    <!-- Preference switch for tracking protection -->
-    <string name="preferences_tracking_protection">Slědowański šćit</string>
-    <!-- Preference switch description for tracking protection -->
-    <string name="preferences_tracking_protection_description">Wopśimjeśe a skripty blokěrowaś, kótarež wam online slěduju</string>
     <!-- Preference for tracking protection exceptions -->
     <string name="preferences_tracking_protection_exceptions">Wuwześa</string>
-    <!-- Preference description for tracking protection exceptions -->
-    <string name="preferences_tracking_protection_exceptions_description">Slědowański šćit jo něnto znjemóžnjony za toś te websedła</string>
     <!-- Button in Exceptions Preference to turn on tracking protection for all sites (remove all exceptions) -->
     <string name="preferences_tracking_protection_exceptions_turn_on_for_all">Za wšykne sedła zmóžniś</string>
     <!-- Text displayed when there are no exceptions -->
@@ -466,41 +526,22 @@
     <!-- Text displayed when there are no exceptions, with learn more link that brings users to a tracking protection SUMO page -->
     <string name="exceptions_empty_message_learn_more_link">Dalšne informacije</string>
 
-    <!-- Preference switch for Telemetry -->
-    <string name="preferences_telemetry">Telemetrija</string>
     <!-- Preference switch for usage and technical data collection -->
     <string name="preference_usage_data">Wužyśe a techniske daty</string>
     <!-- Preference description for usage and technical data collection -->
     <string name="preferences_usage_data_description">Źěli wugbaśe, wužyśe, hardware a pśiměrjenja wašogo wobglědowaka z Mozilla, aby nam pomagała, %1$spólěpšyś</string>
     <!-- Preference switch for marketing data collection -->
     <string name="preferences_marketing_data">Marketingowe daty</string>
-    <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
-    <string name="preferences_marketing_data_description">Źěli daty wó tom, kótare funkcije w %1$s wužywaśo, z Leanplum, našym póbitowarjom za mobilny marketing.</string>
     <!-- Preference description for marketing data collection -->
     <string name="preferences_marketing_data_description2">Źěli zakładne wužywańske daty z Adjust, našym mobilnym marketingowym póbitowarjom</string>
     <!-- Title for studies preferences -->
     <string name="preference_experiments_2">Studije</string>
     <!-- Summary for studies preferences -->
     <string name="preference_experiments_summary_2">Mozilla dowóliś, studije instalěrowaś a pśewjasć</string>
-    <!-- Title for experiments preferences -->
-    <string name="preference_experiments">Eksperimenty</string>
-
-    <!-- Summary for experiments preferences -->
-    <string name="preference_experiments_summary">Dowólujo Mozilla, eksperimentelne funkcije instalěrowaś a daty wó nich zběraś</string>
-    <!-- Preference switch for crash reporter -->
-    <string name="preferences_crash_reporter">Rozpšawjak wowalenjow</string>
-    <!-- Preference switch for Mozilla location service -->
-    <string name="preferences_mozilla_location_service">Słužba póstajenja stojnišća Mozilla</string>
-    <!-- Preference switch for app health report. The first parameter is the name of the application (For example: Fenix) -->
-    <string name="preferences_fenix_health_report">Statusowa rozpšawa %s</string>
 
     <!-- Turn On Sync Preferences -->
     <!-- Header of the Turn on Sync preference view -->
     <string name="preferences_sync">Synchronizaciju zmóžniś</string>
-    <!-- Preference for pairing -->
-    <string name="preferences_sync_pair">Pórowański kod w desktopowem Firefox skannowaś</string>
-    <!-- Preference for account login -->
-    <string name="preferences_sync_sign_in">Pśizjawiś</string>
     <!-- Preference for reconnecting to FxA sync -->
     <string name="preferences_sync_sign_in_to_reconnect">Pśizjawśo se, aby zasej zwězał</string>
     <!-- Preference for removing FxA account -->
@@ -509,10 +550,6 @@
     <!-- Pairing Feature strings -->
     <!-- Instructions on how to access pairing -->
     <string name="pair_instructions_2"><![CDATA[Skannujśo QR-kod, kótaryž se na <b>firefox.com/pair</b> pokazujo]]></string>
-    <!-- Button to open camera for pairing -->
-    <string name="pair_open_camera">Kameru wócyniś</string>
-    <!-- Button to cancel pairing -->
-    <string name="pair_cancel">Pśetergnuś</string>
 
     <!-- Toolbar Preferences -->
     <!-- Preference for using top toolbar -->
@@ -542,10 +579,6 @@
     <string name="preference_gestures_swipe_toolbar_show_tabs">Trějśo symbolowu rědku górjej, aby rejtariki wócynił</string>
 
     <!-- Library -->
-    <!-- Option in Library to open Sessions page -->
-    <string name="library_sessions">Pósejźenja</string>
-    <!-- Option in Library to open Screenshots page -->
-    <string name="library_screenshots">Fota wobrazowki</string>
     <!-- Option in Library to open Downloads page -->
     <string name="library_downloads">Ześěgnjenja</string>
     <!-- Option in library to open Bookmarks page -->
@@ -562,18 +595,17 @@
     <string name="library_history">Historija</string>
     <!-- Option in Library to open a new tab -->
     <string name="library_new_tab">Nowy rejtarik</string>
-    <!-- Option in Library to find text in page -->
-    <string name="library_find_in_page">Na boku pytaś</string>
-    <!-- Option in Library to open Reading List -->
-    <string name="library_reading_list">Cytańska lisćina</string>
-    <!-- Menu Item Label for Search in Library -->
-    <string name="library_search">Pytaś</string>
     <!-- Settings Page Title -->
     <string name="settings_title">Nastajenja</string>
-    <!-- Content description (not visible, for screen readers etc.): "Menu icon for items on a history item" -->
-    <string name="content_description_history_menu">Menijowy zapisk historije </string>
     <!-- Content description (not visible, for screen readers etc.): "Close button for library settings" -->
     <string name="content_description_close_button">Zacyniś</string>
+
+    <!-- Text to show users they have one site in the history group section of the History fragment.
+    %d is a placeholder for the number of sites in the group. -->
+    <string name="history_search_group_site">%d sedło</string>
+    <!-- Text to show users they have multiple sites in the history group section of the History fragment.
+    %d is a placeholder for the number of sites in the group. -->
+    <string name="history_search_group_sites">%d sedłow</string>
 
     <!-- Option in library for Recently Closed Tabs -->
     <string name="library_recently_closed_tabs">Rowno zacynjone rejtariki</string>
@@ -597,6 +629,10 @@
     <string name="tab_view_list">Lisćina</string>
     <!-- Option for a grid tab view -->
     <string name="tab_view_grid">Kśidno</string>
+    <!-- Option for search term tab groups -->
+    <string name="tab_view_search_term_tab_groups">Pytańske kupki</string>
+    <!-- Summary text for search term tab groups -->
+    <string name="tab_view_search_term_tab_groups_summary">Gromadu słušajuce sedła rědowaś</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
     <string name="preferences_close_tabs">Rejtariki zacyniś</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
@@ -608,15 +644,18 @@
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">Pó jadnom mjasecu</string>
 
-    <!-- Start on Home -->
-    <!-- Title of a preference that allows a user to indicate after a specified amount of time when the app should start on the home screen -->
-    <string name="preferences_start_on_home">Na startowej wobrazowce zachopiś</string>
-    <!-- Option for starting on the home screen after after four hours or inactivity -->
-    <string name="start_on_home_after_four_hours">Pó styrich góźinach</string>
-    <!-- Option for always starting on the home screen -->
-    <string name="start_on_home_always">Pśecej</string>
-    <!-- Option for never starting on the home screen -->
-    <string name="start_on_home_never">Nigda</string>
+    <!-- Title of preference that allows a user to specify the auto-close settings for open tabs -->
+    <string name="preference_auto_close_tabs" tools:ignore="UnusedResources">Rejtariki awtomatiski zacyniś</string>
+
+    <!-- Opening screen -->
+    <!-- Title of a preference that allows a user to choose what screen to show after opening the app -->
+    <string name="preferences_opening_screen">Startowa wobrazowka</string>
+    <!-- Option for always opening the homepage when re-opening the app -->
+    <string name="opening_screen_homepage">Startowy bok</string>
+    <!-- Option for always opening the user's last-open tab when re-opening the app -->
+    <string name="opening_screen_last_tab">Slědny rejtarik</string>
+    <!-- Option for always opening the homepage when re-opening the app after four hours of inactivity -->
+    <string name="opening_screen_after_four_hours_of_inactivity">Startowy bok pó styrich góźinach inaktiwnosći</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
     <string name="close_tabs_manually_summary">Manuelnje zacyniś</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
@@ -626,13 +665,22 @@
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one month-->
     <string name="close_tabs_after_one_month_summary">Pó jadnom mjasecu zacyniś</string>
 
+    <!-- Inactive tabs -->
+    <!-- Category header of a preference that allows a user to enable or disable the inactive tabs feature -->
+    <string name="preferences_inactive_tabs">Stare rejtariki do „inaktiwne“ pśesunuś</string>
+
+    <!-- Title of inactive tabs preference -->
+    <string name="preferences_inactive_tabs_title">Rejtariki, kótarež njejsćo se woglědał dwa tyźenja, se do inaktiwnego wótrězka pśesunu.</string>
+
     <!-- Studies -->
     <!-- Title of the remove studies button -->
     <string name="studies_remove">Wótwónoźeś</string>
     <!-- Title of the active section on the studies list -->
     <string name="studies_active">Aktiwny</string>
     <!-- Description for studies, it indicates why Firefox use studies -->
-    <string name="studies_description">Firefox móžo wótergi studije instalěrowaś a pśewjasć.</string>
+    <string moz:RemovedIn="99" name="studies_description" tools:ignore="UnusedResources">Firefox móžo wótergi studije instalěrowaś a pśewjasć.</string>
+    <!-- Description for studies, it indicates why Firefox use studies. The first parameter is the name of the application. -->
+    <string name="studies_description_2">%1$s móžo wótergi studije instalěrowaś a pśewjasć.</string>
     <!-- Learn more link for studies, links to an article for more information about studies. -->
     <string name="studies_learn_more">Dalšne informacije</string>
 
@@ -644,13 +692,11 @@
     <string name="studies_restart_dialog_cancel">Pśetergnuś</string>
 
     <!-- Toast shown after turning on/off studies preferences -->
-    <string name="studies_toast_quit_application">Nałoženje se kóńcy, aby se změny wustatkowali …</string>
+    <string name="studies_toast_quit_application" tools:ignore="UnusedResources">Nałoženje se kóńcy, aby se změny wustatkowali …</string>
 
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
     <string name="tab_header_label">Wócynjone rejtariki</string>
-    <!-- Title for the list of tabs in the current private session -->
-    <string name="tabs_header_private_title">Priwatne pósejźenje</string>
     <!-- Title for the list of tabs in the current private session -->
     <string name="tabs_header_private_tabs_title">Priwatne rejtariki</string>
     <!-- Title for the list of tabs in the synced tabs -->
@@ -663,30 +709,18 @@
     <string name="tab_drawer_fab_content">Priwatny</string>
     <!-- Text for the new tab button to indicate syncing command on the synced tabs page -->
     <string name="tab_drawer_fab_sync">Snychronizěrowaś</string>
-    <!-- Text shown as the title of the open tab tray -->
-    <string name="tab_tray_title">Wócynjone rejtariki</string>
-    <!-- Text shown in the menu for saving tabs to a collection -->
-    <string name="tab_tray_menu_item_save">Do zběrki składowaś</string>
-    <!-- Text shown in the menu for the collection selector -->
-    <string name="tab_tray_menu_select">Wubraś</string>
     <!-- Text shown in the menu for sharing all tabs -->
     <string name="tab_tray_menu_item_share">Wšykne rejtariki źěliś</string>
     <!-- Text shown in the menu to view recently closed tabs -->
     <string name="tab_tray_menu_recently_closed">Rowno zacynjone rejtariki</string>
     <!-- Text shown in the tabs tray inactive tabs section -->
-    <string name="tab_tray_inactive_recently_closed">Njedawno zacynjone</string>
+    <string name="tab_tray_inactive_recently_closed" tools:ignore="UnusedResources">Njedawno zacynjone</string>
     <!-- Text shown in the menu to view account settings -->
     <string name="tab_tray_menu_account_settings">Kontowe nastajenja</string>
     <!-- Text shown in the menu to view tab settings -->
     <string name="tab_tray_menu_tab_settings">Nastajenja rejtarikow</string>
     <!-- Text shown in the menu for closing all tabs -->
     <string name="tab_tray_menu_item_close">Wšykne rejtariki zacyniś</string>
-    <!-- Shortcut action to open new tab -->
-    <string name="tab_tray_menu_open_new_tab">Nowy rejtarik</string>
-    <!-- Shortcut action to open the home screen -->
-    <string name="tab_tray_menu_home">K startowej wobrazowce</string>
-    <!-- Shortcut action to toggle private mode -->
-    <string name="tab_tray_menu_toggle">Rejtarikowy modus pśešaltowaś</string>
     <!-- Text shown in the multiselect menu for bookmarking selected tabs. -->
     <string name="tab_tray_multiselect_menu_item_bookmark">Cytańske znamje</string>
     <!-- Text shown in the multiselect menu for closing selected tabs. -->
@@ -705,26 +739,10 @@
     <string name="close_tab_title">Rejtarik %s zacyniś</string>
     <!-- Content description (not visible, for screen readers etc.): Opens the open tabs menu when pressed -->
     <string name="open_tabs_menu">Meni wócynjonych rejtarikow</string>
-    <!-- Open tabs menu item to close all tabs -->
-    <string name="tabs_menu_close_all_tabs">Wšykne rejtariki zacyniś</string>
-    <!-- Open tabs menu item to share all tabs -->
-    <string name="tabs_menu_share_tabs">Rejtariki źěliś</string>
     <!-- Open tabs menu item to save tabs to collection -->
     <string name="tabs_menu_save_to_collection1">Rejtariki do zběrki składowaś</string>
     <!-- Content description (not visible, for screen readers etc.): Opens the tab menu when pressed -->
     <string name="tab_menu">Rejtarikowy meni</string>
-    <!-- Tab menu item to share the tab -->
-    <string name="tab_share">Rejtarik źěliś</string>
-    <!-- Button in the current session menu. Deletes the session when pressed -->
-    <string name="current_session_delete">Lašowaś</string>
-    <!-- Button in the current session menu. Saves the session when pressed -->
-    <string name="current_session_save">Składowaś</string>
-    <!-- Button in the current session menu. Opens the share menu when pressed -->
-    <string name="current_session_share">Źěliś</string>
-    <!-- Content description (not visible, for screen readers etc.): Title icon for current session menu -->
-    <string name="current_session_image">Wobraz aktualnego pósejźenja</string>
-    <!-- Button to save the current set of tabs into a collection -->
-    <string name="save_to_collection">Do zběrki składowaś</string>
     <!-- Text for the menu button to delete a collection -->
     <string name="collection_delete">Zběrku wulašowaś</string>
     <!-- Text for the menu button to rename a collection -->
@@ -744,42 +762,29 @@
     <!-- Postfix for private WebApp titles, placeholder is replaced with app name -->
     <string name="pwa_site_controls_title_private">%1$s (priwatny modus)</string>
 
-    <!-- Button in the current tab tray header in multiselect mode. Saved the selected tabs to a collection when pressed. -->
-    <string name="tab_tray_save_to_collection">Składowaś</string>
+    <!-- Title text for the normal tabs header in the tabs tray which are not part of any tab grouping. -->
+    <string name="tab_tray_header_title_1">Druge rejtariki</string>
 
     <!-- History -->
+    <!-- Text for the button to search all history -->
+    <string moz:removedIn="99" name="history_search" tools:ignore="UnusedResources">Pytański wuraz zapódaś</string>
+    <!-- Text for the button to search all history -->
+    <string name="history_search_1">Pytańske wuraze zapódaś</string>
     <!-- Text for the button to clear all history -->
     <string name="history_delete_all">Historiju wulašowaś</string>
-    <!-- Text for the dialog to confirm clearing all history -->
-    <string name="history_delete_all_dialog">Cośo napšawdu historiju wuprozniś?</string>
     <!-- Text for the snackbar to confirm that multiple browsing history items has been deleted -->
     <string name="history_delete_multiple_items_snackbar">Historija jo se wulašowała</string>
     <!-- Text for the snackbar to confirm that a single browsing history item has been deleted. The first parameter is the shortened URL of the deleted history item. -->
     <string name="history_delete_single_item_snackbar">%1$s jo se wulašował</string>
-    <!-- Text for positive action to delete history in deleting history dialog -->
-    <string name="history_clear_dialog">Wuprozniś</string>
-    <!-- History overflow menu copy button -->
-    <string name="history_menu_copy_button">Kopěrowaś</string>
-    <!-- History overflow menu share button -->
-    <string name="history_menu_share_button">Źěliś</string>
-    <!-- History overflow menu open in new tab button -->
-    <string name="history_menu_open_in_new_tab_button">W nowem rejtariku wócyniś</string>
-    <!-- History overflow menu open in private tab button -->
-    <string name="history_menu_open_in_private_tab_button">W nowem priwatnem rejtariku wócyniś</string>
-    <!-- Text for the button to delete a single history item -->
+    <!-- Context description text for the button to delete a single history item -->
     <string name="history_delete_item">Lašowaś</string>
     <!-- History multi select title in app bar
     The first parameter is the number of bookmarks selected -->
     <string name="history_multi_select_title">Wubrane: %1$d</string>
-    <!-- Text for the button to clear selected history items. The first parameter
-        is a digit showing the number of items you have selected -->
-    <string name="history_delete_some">Zapiski za lašowanje: %1$d</string>
     <!-- Text for the header that groups the history for today -->
     <string name="history_today">Źinsa</string>
     <!-- Text for the header that groups the history for yesterday -->
     <string name="history_yesterday">Cora</string>
-    <!-- Text for the header that groups the history for last 24 hours -->
-    <string name="history_24_hours">Zachadne 24 góźinow</string>
     <!-- Text for the header that groups the history the past 7 days -->
     <string name="history_7_days">Zachadne 7 dnjow</string>
     <!-- Text for the header that groups the history the past 30 days -->
@@ -790,10 +795,6 @@
     <string name="history_empty_message">How žedna historija njejo</string>
 
     <!-- Downloads -->
-    <!-- Text for the button to clear all downloads -->
-    <string name="download_delete_all">Ześěgnjenja lašowaś</string>
-    <!-- Text for the dialog to confirm clearing all downloads -->
-    <string name="download_delete_all_dialog">Cośo napšawdu swóje ześěgnjenja lašowaś?</string>
     <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
     <string name="download_delete_multiple_items_snackbar_1">Ześěgnjenja wótwónoźone</string>
     <!-- Text for the snackbar to confirm that a single download item has been removed. The first parameter is the name of the download item. -->
@@ -804,9 +805,6 @@
     The first parameter is the number of downloads selected -->
     <string name="download_multi_select_title">Wubrane: %1$d</string>
 
-    <!-- History overflow menu open in new tab button -->
-    <string name="download_menu_open">Wócyniś</string>
-
 
     <!-- Text for the button to remove a single download item -->
     <string name="download_delete_item_1">Wótwónoźeś</string>
@@ -815,8 +813,6 @@
     <!-- Crashes -->
     <!-- Title text displayed on the tab crash page. This first parameter is the name of the application (For example: Fenix) -->
     <string name="tab_crash_title_2">Bóžko %1$s njamóžo toś ten bok zacytaś.</string>
-    <!-- Description text displayed on the tab crash page -->
-    <string name="tab_crash_description">Móžośo wopytaś, slědujucy rejtarik wótnowiś abo zacyniś.</string>
     <!-- Send crash report checkbox text on the tab crash page -->
     <string name="tab_crash_send_report">Mozilla rozpšawu wowalenja pósłaś</string>
 
@@ -825,26 +821,13 @@
     <!-- Restore tab button text on the tab crash page -->
     <string name="tab_crash_restore">Rejtariki wótnowiś</string>
 
-    <!-- Content Description for session item menu button -->
-    <string name="content_description_session_menu">Pósejźeńske nastajenja</string>
-
-    <!-- Content Description for session item share button -->
-    <string name="content_description_session_share">Pósejźenje źěliś</string>
-
     <!-- Bookmarks -->
-    <!-- Content description for bookmarks library menu -->
-    <string name="bookmark_menu_content_description">Meni cytańskich znamjenjow</string>
-
-    <!-- Screen title for editing bookmarks -->
-    <string name="bookmark_edit">Cytańske znamje wobźěłaś</string>
-    <!-- Screen title for selecting a bookmarks folder -->
-    <string name="bookmark_select_folder">Zarědnik wubraś</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete the selected folder -->
     <string name="bookmark_delete_folder_confirmation_dialog">Cośo napšawdu toś ten zarědnik wulašowaś?</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete multiple items including folders. Parameter will be replaced by app name. -->
     <string name="bookmark_delete_multiple_folders_confirmation_dialog">%s wubrane zapiski wulašujo.</string>
-    <!-- Snackbar title shown after a folder has been deleted. This first parameter is the name of the deleted folder -->
-    <string name="bookmark_delete_folder_snackbar">%1$s jo se wulašował</string>
+    <!-- Text for the cancel button on delete bookmark dialog -->
+    <string name="bookmark_delete_negative">Pśetergnuś</string>
     <!-- Screen title for adding a bookmarks folder -->
     <string name="bookmark_add_folder">Zarědnik pśidaś</string>
     <!-- Snackbar title shown after a bookmark has been created. -->
@@ -853,8 +836,6 @@
     <string name="edit_bookmark_snackbar_action">WOBŹĚŁAŚ</string>
     <!-- Bookmark overflow menu edit button -->
     <string name="bookmark_menu_edit_button">Wobźěłaś</string>
-    <!-- Bookmark overflow menu select button -->
-    <string name="bookmark_menu_select_button">Wubraś</string>
     <!-- Bookmark overflow menu copy button -->
     <string name="bookmark_menu_copy_button">Kopěrowaś</string>
     <!-- Bookmark overflow menu share button -->
@@ -903,9 +884,10 @@
     <!-- Bookmark undo button for deletion snackbar action -->
     <string name="bookmark_undo_deletion">ANULĚROWAŚ</string>
 
+    <!-- Text for the button to search all bookmarks -->
+    <string name="bookmark_search">Pytańske wuraze zapódaś</string>
+
     <!-- Site Permissions -->
-    <!-- Site permissions preferences header -->
-    <string name="permissions_header">Pšawa</string>
     <!-- Button label that take the user to the Android App setting -->
     <string name="phone_feature_go_to_settings">K nastajenjam</string>
     <!-- Content description (not visible, for screen readers etc.): Quick settings sheet
@@ -914,12 +896,18 @@
     <string name="quick_settings_sheet">Malsne nastajenja</string>
     <!-- Label that indicates that this option it the recommended one -->
     <string name="phone_feature_recommended">Dopórucony</string>
-    <!-- button that allows editing site permissions settings -->
-    <string name="quick_settings_sheet_manage_site_permissions">Sedłowe pšawa zastojaś</string>
     <!-- Button label for clearing all the information of site permissions-->
     <string name="clear_permissions">Sedłowe pšawa lašowaś</string>
+    <!-- Text for the OK button on Clear permissions dialog -->
+    <string name="clear_permissions_positive">W pórěźe</string>
+    <!-- Text for the cancel button on Clear permissions dialog -->
+    <string name="clear_permissions_negative">Pśetergnuś</string>
     <!-- Button label for clearing a site permission-->
     <string name="clear_permission">Sedłowe pšawo lašowaś</string>
+    <!-- Text for the OK button on Clear permission dialog -->
+    <string name="clear_permission_positive">W pórěźe</string>
+    <!-- Text for the cancel button on Clear permission dialog -->
+    <string name="clear_permission_negative">Pśetergnuś</string>
     <!-- Button label for clearing all the information on all sites-->
     <string name="clear_permissions_on_all_sites">Pšawa na wšych sedłach lašowaś</string>
     <!-- Preference for altering video and audio autoplay for all websites -->
@@ -934,6 +922,8 @@
     <string name="preference_phone_feature_notification">Powěźeńka</string>
     <!-- Preference for altering the persistent storage access for all websites -->
     <string name="preference_phone_feature_persistent_storage">Trajny składowak</string>
+    <!-- Preference for altering the storage access setting for all websites -->
+    <string name="preference_phone_feature_cross_origin_storage_access">Sedła pśesegajuce cookieje</string>
     <!-- Preference for altering the EME access for all websites -->
     <string name="preference_phone_feature_media_key_system_access">Wopśimjeśe wóźone pśez DRM</string>
     <!-- Label that indicates that a permission must be asked always -->
@@ -1017,25 +1007,30 @@
     <!-- Snackbar action to view the collection the user just created or updated -->
     <string name="create_collection_view">Pokazaś</string>
 
+    <!-- Text for the OK button from collection dialogs -->
+    <string name="create_collection_positive">W pórěźe</string>
+    <!-- Text for the cancel button from collection dialogs -->
+    <string name="create_collection_negative">Pśetergnuś</string>
+
     <!-- Default name for a new collection in "name new collection" step of the collection creator. %d is a placeholder for the number of collections-->
     <string name="create_collection_default_name">Zběrka %d</string>
 
     <!-- Share -->
     <!-- Share screen header -->
-    <string name="share_header">Słaś a źěliś</string>
-    <!-- Share screen header -->
     <string name="share_header_2">Źěliś</string>
     <!-- Content description (not visible, for screen readers etc.):
         "Share" button. Opens the share menu when pressed. -->
     <string name="share_button_content_description">Źěliś</string>
-    <!-- Sub-header in the dialog to share a link to another app -->
-    <string name="share_link_subheader">Wótkaz źěliś</string>
     <!-- Sub-header in the dialog to share a link to another sync device -->
     <string name="share_device_subheader">Rědoju pósłaś</string>
     <!-- Sub-header in the dialog to share a link to an app from the full list -->
     <string name="share_link_all_apps_subheader">Wšykne akcije</string>
     <!-- Sub-header in the dialog to share a link to an app from the most-recent sorted list -->
     <string name="share_link_recent_apps_subheader">Njedawno wužyte</string>
+    <!-- Text for the copy link action in the share screen. -->
+    <string name="share_copy_link_to_clipboard">Do mjazywótkłada kopěrowaś</string>
+    <!-- Toast shown after copying link to clipboard -->
+    <string name="toast_copy_link_to_clipboard">Do mjazyskłada kopěrowane</string>
     <!-- An option from the three dot menu to into sync -->
     <string name="sync_menu_sign_in">Pla Sync pśizjawiś</string>
     <!-- An option from the share dialog to sign into sync -->
@@ -1064,18 +1059,8 @@
     <string name="sync_add_new_device_connect_button">Drugi rěd zwězaś…</string>
 
     <!-- Notifications -->
-    <!-- The user visible name of the "notification channel" (Android 8+ feature) for the ongoing notification shown while a browsing session is active. -->
-    <string name="notification_pbm_channel_name">Priwatne pósejźenje</string>
-    <!-- Text shown in the notification that pops up to remind the user that a private browsing session is active. -->
-    <string name="notification_pbm_delete_text">Priwatne rejtariki lašowaś</string>
     <!-- Text shown in the notification that pops up to remind the user that a private browsing session is active. -->
     <string name="notification_pbm_delete_text_2">Priwatne rejtariki zacyniś</string>
-    <!-- Notification action to open Fenix and resume the current browsing session. -->
-    <string name="notification_pbm_action_open">Wócyniś</string>
-    <!-- Notification action to delete all current private browsing sessions AND switch to Fenix (bring it to the foreground) -->
-    <string name="notification_pbm_action_delete_and_open">Lašowaś a wócyniś</string>
-    <!-- Name of the "Powered by Fenix" notification channel. Displayed in the "App notifications" system settings for the app -->
-    <string name="notification_powered_by_channel_name">Spěchowany wót</string>
     <!-- Name of the marketing notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="notification_marketing_channel_name">Marketing</string>
     <!-- Title shown in the notification that pops up to remind the user to set fenix as default browser.
@@ -1090,36 +1075,24 @@
     <string name="snackbar_collection_deleted">Zběrka jo se wulašowała</string>
     <!-- Text shown in snackbar when user renames a collection -->
     <string name="snackbar_collection_renamed">Zběrka jo se pśemjeniła</string>
-    <!-- Text shown in snackbar when user deletes a tab -->
-    <string name="snackbar_tab_deleted">Rejtarik jo se wulašował</string>
-    <!-- Text shown in snackbar when user deletes all tabs -->
-    <string name="snackbar_tabs_deleted">Rejtariki su se wulašowali</string>
     <!-- Text shown in snackbar when user closes a tab -->
     <string name="snackbar_tab_closed">Rejtarik jo se zacynił</string>
     <!-- Text shown in snackbar when user closes all tabs -->
     <string name="snackbar_tabs_closed">Rejtariki su se zacynili</string>
-    <!-- Text shown in snackbar when user closes tabs -->
-    <string name="snackbar_message_tabs_closed">Rejtariki zacyjone!</string>
     <!-- Text shown in snackbar when user bookmarks a list of tabs -->
     <string name="snackbar_message_bookmarks_saved">Cytańske znamjenja su se składli!</string>
-    <!-- Text shown in snackbar action for viewing bookmarks -->
-    <string name="snackbar_message_bookmarks_view">Pokazaś</string>
     <!-- Text shown in snackbar when user adds a site to top sites -->
-    <string name="snackbar_added_to_top_sites">Woblubowanym sedłam pśidane!</string>
+    <string moz:RemovedIn="101" name="snackbar_added_to_top_sites" tools:ignore="UnusedResources">Woblubowanym sedłam pśidane!</string>
+    <!-- Text shown in snackbar when user adds a site to shortcuts -->
+    <string name="snackbar_added_to_shortcuts">Zwězanjam pśidane!</string>
     <!-- Text shown in snackbar when user closes a private tab -->
     <string name="snackbar_private_tab_closed">Priwatny rejtarik jo se zacynił</string>
     <!-- Text shown in snackbar when user closes all private tabs -->
     <string name="snackbar_private_tabs_closed">Priwatne rejtariki su se zacynili</string>
-    <!-- Text shown in snackbar when user deletes all private tabs -->
-    <string name="snackbar_private_tabs_deleted">Priwatne rejtariki su se wulašowali</string>
     <!-- Text shown in snackbar to undo deleting a tab, top site or collection -->
     <string name="snackbar_deleted_undo">ANULĚROWAŚ</string>
     <!-- Text shown in snackbar when user removes a top site -->
     <string name="snackbar_top_site_removed">Sedło jo se wótwónoźeło</string>
-    <!-- Text for action to undo deleting a tab or collection shown in a11y dialog -->
-    <string name="a11y_dialog_deleted_undo">Anulěrowaś</string>
-    <!-- Text for action to confirm deleting a tab or collection shown in a11y dialog -->
-    <string name="a11y_dialog_deleted_confirm">Wobkšuśiś</string>
     <!-- QR code scanner prompt which appears after scanning a code, but before navigating to it
         First parameter is the name of the app, second parameter is the URL or text scanned-->
     <string name="qr_scanner_confirmation_dialog_message">%1$s dowóliś %2$s wócyniś</string>
@@ -1127,6 +1100,10 @@
     <string name="qr_scanner_dialog_positive">DOWÓLIŚ</string>
     <!-- QR code scanner prompt dialog positive option to deny navigation to scanned link -->
     <string name="qr_scanner_dialog_negative">WÓTPOKAZAŚ</string>
+    <!-- QR code scanner prompt dialog error message shown when a hostname does not contain http or https. -->
+    <string name="qr_scanner_dialog_invalid">Webadresa njejo płaśiwa.</string>
+    <!-- QR code scanner prompt dialog positive option when there is an error -->
+    <string name="qr_scanner_dialog_invalid_ok">W pórěźe</string>
     <!-- Tab collection deletion prompt dialog message. Placeholder will be replaced with the collection name -->
     <string name="tab_collection_dialog_message">Cośo napšawdu %1$s lašowaś?</string>
     <!-- Collection and tab deletion prompt dialog message. This will show when the last tab from a collection is deleted -->
@@ -1135,8 +1112,6 @@
     <string name="delete_tab_and_collection_dialog_title">%1$s lašowaś?</string>
     <!-- Tab collection deletion prompt dialog option to delete the collection -->
     <string name="tab_collection_dialog_positive">Lašowaś</string>
-    <!-- Tab collection deletion prompt dialog option to cancel deleting the collection -->
-    <string name="tab_collection_dialog_negative" tools:ignore="UnusedResources">Pśetergnuś</string>
     <!-- Text displayed in a notification when the user enters full screen mode -->
     <string name="full_screen_notification">Połna wobrazowka se pokazujo</string>
     <!-- Message for copying the URL via long press on the toolbar -->
@@ -1164,11 +1139,6 @@
     <!-- Subtitle for the data and history items in delete browsing data, parameter will be replaced with the
         number of history items the user has -->
     <string name="preferences_delete_browsing_data_browsing_data_subtitle">Adrese: %d</string>
-    <!-- Title for history items in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_browsing_history_title">Historija</string>
-    <!-- Subtitle for the history items in delete browsing data, parameter will be replaced with the
-        number of history pages the user has -->
-    <string name="preferences_delete_browsing_data_browsing_history_subtitle">Boki: %d</string>
     <!-- Title for the cookies item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_cookies">Cookieje</string>
     <!-- Subtitle for the cookies item in Delete browsing data -->
@@ -1185,8 +1155,6 @@
     <string name="preferences_delete_browsing_data_button">Pśeglědowańske daty wulašowaś</string>
     <!-- Title for the Delete browsing data on quit preference -->
     <string name="preferences_delete_browsing_data_on_quit">Pśeglědowańske daty pśi kóńcenju wulašowaś</string>
-    <!-- Summary for the Delete browsing data on quit preference. "Quit" translation should match delete_browsing_data_on_quit_action translation. -->
-    <string name="preference_summary_delete_browsing_data_on_quit">Wulašujo pśeglědowańske daty awtomatiski, gaž „Skóńcyś“ z głownego menija wuběraśo</string>
     <!-- Summary for the Delete browsing data on quit preference. "Quit" translation should match delete_browsing_data_on_quit_action translation. -->
     <string name="preference_summary_delete_browsing_data_on_quit_2">Wulašujo pśeglědowańske daty awtomatiski, gaž „Skóńcyś“ z głownego menija wuběraśo</string>
     <!-- Action item in menu for the Delete browsing data on quit feature -->
@@ -1207,75 +1175,56 @@
 
     <!-- Tips -->
     <!-- text for firefox preview moving tip header "Firefox Preview" and "Firefox Nightly" are intentionally hardcoded -->
-    <string name="tip_firefox_preview_moved_header">Firefox Preview jo něnto Firefox Nightly</string>
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_header" tools:ignore="UnusedResources">Firefox Preview jo něnto Firefox Nightly</string>
 
     <!-- text for firefox preview moving tip description -->
-    <string name="tip_firefox_preview_moved_description">Firefox Nightly se kuždu noc aktualizěrujo a ma eksperimentelne nowe funkcije.
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_description" tools:ignore="UnusedResources">Firefox Nightly se kuždu noc aktualizěrujo a ma eksperimentelne nowe funkcije.
         Móžo mjenjej stabilny byś. Ześěgniśo naš betawobglědowak za stabilnjejše dožywjenje.</string>
 
     <!-- text for firefox preview moving tip button. "Firefox for Android Beta" is intentionally hardcoded -->
-    <string name="tip_firefox_preview_moved_button_2">Wobstarajśo se Firefox za Android Beta</string>
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_button_2" tools:ignore="UnusedResources">Wobstarajśo se Firefox za Android Beta</string>
 
     <!-- text for firefox preview moving tip header. "Firefox Nightly" is intentionally hardcoded -->
-    <string name="tip_firefox_preview_moved_header_preview_installed">Firefox Nightly jo pśeśěgnjony</string>
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_header_preview_installed" tools:ignore="UnusedResources">Firefox Nightly jo pśeśěgnjony</string>
     <!-- text for firefox preview moving tip description -->
-    <string name="tip_firefox_preview_moved_description_preview_installed">Toś to nałoženje wěstotne aktualizacije wěcej njedostawa. Pśestańśo toś to nałoženje wužywaá a wužywajśo město togo nowy Nightly.
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_description_preview_installed" tools:ignore="UnusedResources">Toś to nałoženje wěstotne aktualizacije wěcej njedostawa. Pśestańśo toś to nałoženje wužywaá a wužywajśo město togo nowy Nightly.
         \n\nAby swóje cytańske znamjenja, pśizjawjenja a historiju do drugego nałoženja pśenosował, załožćo konto Firefox.</string>
     <!-- text for firefox preview moving tip button  -->
-    <string name="tip_firefox_preview_moved_button_preview_installed">Pśejźćo k nowemu Nightly</string>
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_button_preview_installed" tools:ignore="UnusedResources">Pśejźćo k nowemu Nightly</string>
 
     <!-- text for firefox preview moving tip header. "Firefox Nightly" is intentionally hardcoded -->
-    <string name="tip_firefox_preview_moved_header_preview_not_installed">Firefox Nightly jo pśeśěgnjony</string>
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_header_preview_not_installed" tools:ignore="UnusedResources">Firefox Nightly jo pśeśěgnjony</string>
     <!-- text for firefox preview moving tip description -->
-    <string name="tip_firefox_preview_moved_description_preview_not_installed">Toś to nałoženje wěstotne aktualizacije wěcej njedostawa. Wobstarajśo se nowy Nightly a pśestańśo toś to nałoženje wužywaś.
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_description_preview_not_installed" tools:ignore="UnusedResources">Toś to nałoženje wěstotne aktualizacije wěcej njedostawa. Wobstarajśo se nowy Nightly a pśestańśo toś to nałoženje wužywaś.
         \n\nAby swóje cytańske znamjenja, pśizjawjenja a historiju do drugego nałoženja pśenosował, załožćo konto Firefox.</string>
     <!-- text for firefox preview moving tip button  -->
-    <string name="tip_firefox_preview_moved_button_preview_not_installed">Wobstarajśo se nowy Nightly</string>
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_button_preview_not_installed" tools:ignore="UnusedResources">Wobstarajśo se nowy Nightly</string>
 
     <!-- Onboarding -->
     <!-- Text for onboarding welcome message
     The first parameter is the name of the app (e.g. Firefox Preview) -->
     <string name="onboarding_header">Witajśo k %s!</string>
-    <!-- text for the Firefox Accounts section header -->
-    <string name="onboarding_fxa_section_header">Maśo južo konto?</string>
 
-    <!-- text for the "What's New" onboarding card header -->
-    <string name="onboarding_whats_new_header1">Cytajśo, což jo nowe</string>
-    <!-- text for the "what's new" onboarding card description
-    The first parameter is the short name of the app (e.g. Firefox) -->
-    <string name="onboarding_whats_new_description">Maśo pšašanja wó nowo wugótowanem %s? Cośo wěźeś, což jo se změniło?</string>
-    <!-- text for underlined clickable link that is part of "what's new" onboarding card description that links to an FAQ -->
-    <string name="onboarding_whats_new_description_linktext">How dostanjośo wótegrona</string>
     <!-- text for the Firefox account onboarding sign in card header. The word "Firefox" should not be translated -->
     <string name="onboarding_account_sign_in_header_1">Firefox mjazy rědami synchronizěrowaś</string>
-    <!-- Text for the button to learn more about signing in to your Firefox account -->
-    <string name="onboarding_manual_sign_in_description">Pśinjasćo cytańske znamjenja, historiju a gronidła k Firefox na toś tom rěźe.</string>
-    <!-- text for the firefox account onboarding card header when we detect you're already signed in to
-        another Firefox browser. (The word `Firefox` should not be translated)
-        The first parameter is the email of the detected user's account -->
-    <string name="onboarding_firefox_account_auto_signin_header_3">Sćo se pśizjawił ako %s w drugem wobglědowaku Firefox na toś tom rěźe. Cośo se z toś tym kontom pśizjawiś?</string>
-    <!-- text for the button to confirm automatic sign-in -->
-    <string name="onboarding_firefox_account_auto_signin_confirm">Jo, pśizjawiś</string>
-    <!-- text for the automatic sign-in button while signing in is in process -->
-    <string name="onboarding_firefox_account_signing_in">Pśizjawja se…</string>
+    <!-- text for the Firefox account onboarding sign in card header. The first parameter is the name of the application.-->
+    <string moz:RemovedIn="100" name="onboarding_account_sign_in_header_2" tools:ignore="UnusedResources">%1$s mjazy rědami synchronizěrowaś</string>
+    <!-- Text for the button to learn more about signing in to your Firefox account. The first parameter is the name of the application.-->
+    <string name="onboarding_manual_sign_in_description_2">Pśinjasćo cytańske znamjenja, historiju a gronidła k %1$s na toś tom rěźe.</string>
     <!-- text for the button to manually sign into Firefox account. -->
     <string name="onboarding_firefox_account_sign_in_1">Registrěrowaś</string>
-    <!-- text for the button to stay signed out when presented with an option to automatically sign-in. -->
-    <string name="onboarding_firefox_account_stay_signed_out">Wótzjawjony wóstaś</string>
     <!-- text to display in the snackbar once account is signed-in -->
     <string name="onboarding_firefox_account_sync_is_on">Synchronizacija jo zmóžnjona</string>
-    <!-- text to display in the snackbar if automatic sign-in fails. user may try again -->
-    <string name="onboarding_firefox_account_automatic_signin_failed">Pśizjawjenje njejo se raźiło</string>
     <!-- text for the tracking protection onboarding card header -->
     <string name="onboarding_tracking_protection_header_3">Priwatnosć pśecej aktiwna</string>
     <!-- text for the tracking protection card description. 'Firefox' intentionally hardcoded here -->
-    <string name="onboarding_tracking_protection_description_3">Firefox awtomatiski pśedewześam zawoborujo, wam kšajźu pó webje slědowaś.</string>
+    <string moz:RemovedIn="99" name="onboarding_tracking_protection_description_3" tools:ignore="UnusedResources">Firefox awtomatiski pśedewześam zawoborujo, wam kšajźu pó webje slědowaś.</string>
+    <!-- text for the tracking protection card description. The first parameter is the name of the application.-->
+    <string name="onboarding_tracking_protection_description_4">%1$s awtomatiski pśedewześam zawoborujo, wam kšajźu pó webje slědowaś.</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
     <string name="onboarding_tracking_protection_standard_button_2">Standard</string>
     <!-- text for standard blocking option button description -->
     <string name="onboarding_tracking_protection_standard_button_description_3">Wuwažony za priwatnosć a wugbaśe. Boki se normalnje zacytaju.</string>
-    <!-- text for tracking protection radio button option for strict level of blocking -->
-    <string name="onboarding_tracking_protection_strict_button">Striktny (dopórucony)</string>
     <!-- text for tracking protection radio button option for strict level of blocking -->
     <string name="onboarding_tracking_protection_strict_option">Striktny</string>
     <!-- text for strict blocking option button description -->
@@ -1284,16 +1233,7 @@
     <string name="onboarding_toolbar_placement_header_1">Wubjeŕśo poziciju za swóju symbolowu rědku</string>
     <!-- text for the toolbar position card description -->
     <string name="onboarding_toolbar_placement_description_1">Pozicioněrujśo symbolowu rědku w swójej bliskosći. Wobchowajśo ju dołojce abo pśesuńśo ju górjej.</string>
-    <!-- text for the private browsing onboarding card header -->
-    <string name="onboarding_private_browsing_header">Priwatnje pśeglědowaś</string>
 
-    <!-- text for the private browsing onboarding card description
-    The first parameter is an icon that represents private browsing -->
-    <string name="onboarding_private_browsing_description1">Wócyńśo priwatny rejtarik jaden raz: Pótusniśo symbol %s.</string>
-    <!-- text for the private browsing onboarding card description, explaining how to always using private browsing -->
-    <string name="onboarding_private_browsing_always_description">Wócyńśo priwatne rejtariki kuždy raz: Aktualizěrujśo nastajenja priwatnego modusa.</string>
-    <!-- text for the private browsing onbording card button, that launches settings -->
-    <string name="onboarding_private_browsing_button">Nastajenja wócyniś</string>
     <!-- text for the privacy notice onboarding card header -->
     <string name="onboarding_privacy_notice_header">Waša priwatnosć</string>
     <!-- text for the privacy notice onboarding card description
@@ -1301,9 +1241,6 @@
     <string name="onboarding_privacy_notice_description2">Smy %s wuwili, aby wam kontrolu wó tom dali, co online źěliśo a co z nami.</string>
     <!-- Text for the button to read the privacy notice -->
     <string name="onboarding_privacy_notice_read_button">Cytajśo našu powěźeńku priwatnosći</string>
-
-    <!-- Content description (not visible, for screen readers etc.): Close onboarding screen -->
-    <string name="onboarding_close" tools:ignore="UnusedResources">Zacyniś</string>
 
     <!-- text for the button to finish onboarding -->
     <string name="onboarding_finish">Pśeglědowanje zachopiś</string>
@@ -1342,8 +1279,6 @@
     <string name="sign_in_with_email">E-mail město togo wužywaś</string>
     <!-- Text shown for settings option for create new account text.'Firefox' intentionally hardcoded here.-->
     <string name="sign_in_create_account_text"><![CDATA[Žedno konto? <u>Załožćo take</u>, aby Firefox mjazy rědami synchronizěrował.]]></string>
-    <!-- Text shown in confirmation dialog to sign out of account -->
-    <string name="sign_out_confirmation_message">Firefox pśestanjo z wašym kontom synchronizěrowaś, ale njewulašujo pśeglědowańske daty na toś tom rěźe.</string>
     <!-- Text shown in confirmation dialog to sign out of account. The first parameter is the name of the app (e.g. Firefox Preview) -->
     <string name="sign_out_confirmation_message_2">%s pśestanjo z wašym kontom synchronizěrowaś, ale njewulašujo pśeglědowańske daty na toś tom rěźe.</string>
     <!-- Option to continue signing out of account shown in confirmation dialog to sign out of account -->
@@ -1399,8 +1334,6 @@
     <string name="preference_enhanced_tracking_protection_custom_tracking_content_1">We wšyknych rejtarikach</string>
     <!-- Option for enhanced tracking protection for the custom protection settings for tracking content-->
     <string name="preference_enhanced_tracking_protection_custom_tracking_content_2">Jano w priwatnych rejtarikach</string>
-    <!-- Option for enhanced tracking protection for the custom protection settings for tracking content-->
-    <string name="preference_enhanced_tracking_protection_custom_tracking_content_3">Jano w swójskich rejtarikach</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
     <string name="preference_enhanced_tracking_protection_custom_cryptominers">Kryptokopaki</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
@@ -1434,8 +1367,6 @@
     <string name="etp_tracking_content_title">Slědujuce wopśimjeśe</string>
     <!-- Description of tracking content that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_tracking_content_description">Zaźujo zacytanjeju wabjenja, wideo a drugego wopśimjeśa, kótarež slědowański kod wopśimuju. Móžo někotare funkcije websedłow kazyś.</string>
-    <!-- Enhanced Tracking Protection Onboarding Message shown in a dialog above the toolbar. The first parameter is the name of the application (For example: Fenix) -->
-    <string name="etp_onboarding_cfr_message" tools:ignore="UnusedResources">Kuždy raz, gaž šćit jo wioletny, jo %s pśeslědowaki na sedle zablokěrował. Pótusniśo za dalšne informacije.</string>
     <!-- Enhanced Tracking Protection message that protection is currently on for this site -->
     <string name="etp_panel_on">Šćit jo zmóžnjony za toś to sedło</string>
     <!-- Enhanced Tracking Protection message that protection is currently off for this site -->
@@ -1445,10 +1376,6 @@
     <!-- Content description (not visible, for screen readers etc.): Navigate
     back from ETP details (Ex: Tracking content) -->
     <string name="etp_back_button_content_description">Slědk nawigěrowaś</string>
-    <!-- About page Your rights link text -->
-    <string name="about_your_rights">Waše pšawa</string>
-    <!-- About page link text to open open source licenses screen -->
-    <string name="about_open_source_licenses">Biblioteki wótwórjonego žrědła, kótarež wužywamy</string>
     <!-- About page link text to open what's new link -->
     <string name="about_whats_new">Nowe funkcije a změny w %s</string>
     <!-- Open source licenses page title
@@ -1459,6 +1386,12 @@
     <string name="etp_redirect_trackers_title">Dalejpósrědnjańske pśeslědowaki</string>
     <!-- Description of redirect tracker cookies that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_redirect_trackers_description">Wulašujo cookije, kótarež su se stajili pśez dalejpósrědnjenja k znatym slědujucym websedłam.</string>
+
+    <!-- Description of the SmartBlock Enhanced Tracking Protection feature. The * symbol is intentionally hardcoded here,
+         as we use it on the UI to indicate which trackers have been partially unblocked.  -->
+    <string name="preference_etp_smartblock_description">Blokěrowanje někotarych dołojce markěrowanych pśeslědowakow jo se pó zdźělach wótpórało na toś tom boku, dokulaž sćo interagěrował z nimi *.</string>
+    <!-- Text displayed that links to website about enhanced tracking protection SmartBlock -->
+    <string name="preference_etp_smartblock_learn_more">Dalšne informacije</string>
 
     <!-- About page link text to open support link -->
     <string name="about_support">Pomoc</string>
@@ -1477,11 +1410,6 @@
         The first parameter is number of long clicks left to enable the menu -->
     <string name="about_debug_menu_toast_progress">Meni pytanja zmólkow - licba lěwych kliknjenjow za zmóžnjenje: %1$d</string>
     <string name="about_debug_menu_toast_done">Meni pytanja zmólkow jo zmóžnjony</string>
-
-    <!-- Content description of the tab counter toolbar button when one tab is open -->
-    <string name="tab_counter_content_description_one_tab">1 rejtarik</string>
-    <!-- Content description of the tab counter toolbar button when multiple tabs are open. First parameter will be replaced with the number of tabs (always more than one) -->
-    <string name="tab_counter_content_description_multi_tab">Rejtariki: %d</string>
 
     <!-- Browser long press popup menu -->
     <!-- Copy the current url -->
@@ -1515,8 +1443,6 @@
     <string name="preferences_passwords_save_logins_ask_to_save">Pśed składowanim se pšašaś</string>
     <!-- Preference option for never saving passwords in Fenix -->
     <string name="preferences_passwords_save_logins_never_save">Nigda njeskładowaś</string>
-    <!-- Preference for autofilling saved logins in Fenix -->
-    <string name="preferences_passwords_autofill" tools:ignore="UnusedResources">Awtomatiski wupołniś</string>
     <!-- Preference for autofilling saved logins in Firefox (in web content), %1$s will be replaced with the app name -->
     <string name="preferences_passwords_autofill2">W %1$s awtomatiski wupołniś</string>
     <!-- Description for the preference for autofilling saved logins in Firefox (in web content), %1$s will be replaced with the app name -->
@@ -1526,14 +1452,13 @@
     <!-- Description for the preference for autofilling logins from Fenix in other apps (e.g. autofilling the Twitter app) -->
     <string name="preferences_android_autofill_description">Wužywaŕske mjenja a gronidła w drugich nałoženjach na wašom rěźe zasajźiś.</string>
 
+    <!-- Preference option for adding a login -->
+    <string name="preferences_logins_add_login">Pśizjawjenje pśidaś</string>
+
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">Pśizjawjenja synchronizěrowaś</string>
     <!-- Preference for syncing saved logins in Fenix, when not signed in-->
     <string name="preferences_passwords_sync_logins_across_devices">Pśizjawjenja mjazy rědami synchronizěrowaś</string>
-    <!-- Syncing saved logins in Fenix needs reconnect to sync -->
-    <string name="preferences_passwords_sync_logins_reconnect">Znowego zwězaś</string>
-    <!-- Syncing saved logins in Fenix needs login -->
-    <string name="preferences_passwords_sync_logins_sign_in">Pla Sync pśizjawiś</string>
     <!-- Preference to access list of saved logins -->
     <string name="preferences_passwords_saved_logins">Skłaźone pśizjawjenja</string>
     <!-- Description of empty list of saved passwords. Placeholder is replaced with app name.  -->
@@ -1550,37 +1475,17 @@
     <string name="preferences_passwords_exceptions_remove_all">Wšykne wuwześa wulašowaś</string>
     <!-- Hint for search box in logins list -->
     <string name="preferences_passwords_saved_logins_search">Pśizjawjenja pytaś</string>
-    <!-- Option to sort logins list A-Z, alphabetically -->
-    <string name="preferences_passwords_saved_logins_alphabetically">Alfabetiski</string>
-    <!-- Option to sort logins list by most recently used -->
-    <string name="preferences_passwords_saved_logins_recently_used">Njedawno wužyte</string>
     <!-- The header for the site that a login is for -->
     <string name="preferences_passwords_saved_logins_site">Sedło</string>
     <!-- The header for the username for a login -->
     <string name="preferences_passwords_saved_logins_username">Wužywarske mě</string>
     <!-- The header for the password for a login -->
     <string name="preferences_passwords_saved_logins_password">Gronidło</string>
-    <!-- Message displayed in security prompt to reenter a secret pin to access saved logins -->
-    <string name="preferences_passwords_saved_logins_enter_pin">Zapódajśo swój PIN znowego</string>
 
-    <!-- Message displayed in security prompt to access saved logins -->
-    <string name="preferences_passwords_saved_logins_enter_pin_description">Za zwobraznjowanje wašych skłaźonych pśizjawjenjow wótwóriś</string>
-    <!-- Message displayed when a connection is insecure and we detect the user is entering a password -->
-    <string name="logins_insecure_connection_warning">Toś ten zwisk njejo wěsty. Pśizjawjenja, kótarež se how zapódawaju, by mógli wobgrožone byś.</string>
-    <!-- Learn more link that will link to a page with more information displayed when a connection is insecure and we detect the user is entering a password -->
-    <string name="logins_insecure_connection_warning_learn_more">Dalšne informacije</string>
-    <!-- Prompt message displayed when Fenix detects a user has entered a password and user decides if Fenix should save it. The first parameter is the name of the application (For example: Fenix)  -->
-    <string name="logins_doorhanger_save">Cośo, až %s toś to pśizjawjenje składujo?</string>
-    <!-- Positive confirmation that Fenix should save the new or updated login -->
-    <string name="logins_doorhanger_save_confirmation">Składowaś</string>
-    <!-- Negative confirmation that Fenix should not save the new or updated login -->
-    <string name="logins_doorhanger_save_dont_save">Njeskładowaś</string>
     <!-- Shown in snackbar to tell user that the password has been copied -->
     <string name="logins_password_copied">Gronidło jo se do mjazywótkłada kopěrowało</string>
     <!-- Shown in snackbar to tell user that the username has been copied -->
     <string name="logins_username_copied">Wužywaŕske mě jo se kopěrowało do mjazywótkłada</string>
-    <!-- Shown in snackbar to tell user that the site has been copied -->
-    <string name="logins_site_copied">Sedło jo se kopěrowało do mjazywótkłada</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a password in logins-->
     <string name="saved_logins_copy_password">Gronidło kopěrowaś</string>
     <!-- Content Description (for screenreaders etc) read for the button to clear a password while editing a login-->
@@ -1589,8 +1494,8 @@
     <string name="saved_login_copy_username">Wužywaŕske mě kopěrowaś</string>
     <!-- Content Description (for screenreaders etc) read for the button to clear a username while editing a login -->
     <string name="saved_login_clear_username">Wužywaŕske mě lašowaś</string>
-    <!-- Content Description (for screenreaders etc) read for the button to copy a site in logins -->
-    <string name="saved_login_copy_site">Sedło kopěrowaś</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear the hostname field while creating a login -->
+    <string name="saved_login_clear_hostname">Hostmě lašowaś</string>
     <!-- Content Description (for screenreaders etc) read for the button to open a site in logins -->
     <string name="saved_login_open_site">Sedło we wobglědowaku wócyniś</string>
     <!-- Content Description (for screenreaders etc) read for the button to reveal a password in logins -->
@@ -1652,17 +1557,19 @@
     <string name="credit_cards_expiration_date_year">Datum płaśiwosći (lěto)</string>
     <!-- The header for the name on the credit card -->
     <string name="credit_cards_name_on_card">Mě na kórśe</string>
-    <!-- The header for the nickname for a credit card -->
-    <string name="credit_cards_card_nickname">Kórtowe pśimě</string>
     <!-- The text for the "Delete card" menu item for deleting a credit card -->
     <string name="credit_cards_menu_delete_card">Kórtu wulašowaś</string>
     <!-- The text for the "Delete card" button for deleting a credit card -->
     <string name="credit_cards_delete_card_button">Kórtu wulašowaś</string>
+    <!-- The text for the confirmation message of "Delete card" dialog -->
+    <string name="credit_cards_delete_dialog_confirmation">Cośo napšawdu toś tu kreditowu kórtu lašowaś?</string>
+    <!-- The text for the positive button on "Delete card" dialog -->
+    <string name="credit_cards_delete_dialog_button">Lašowaś</string>
     <!-- The title for the "Save" menu item for saving a credit card -->
     <string name="credit_cards_menu_save">Składowaś</string>
     <!-- The text for the "Save" button for saving a credit card -->
     <string name="credit_cards_save_button">Składowaś</string>
-    <!-- The text for the "Cancel" button for cancelling adding or updating a credit card -->
+    <!-- The text for the "Cancel" button for cancelling adding, updating or deleting a credit card -->
     <string name="credit_cards_cancel_button">Pśetergnuś</string>
 
     <!-- Title of the "Saved cards" screen -->
@@ -1710,18 +1617,12 @@
     <string name="search_add_custom_engine_search_string_hint">Pytański wuraz, kótaryž ma se wužywaś</string>
     <!-- Description text for the Search String TextField. The %s is part of the string -->
     <string formatted="false" name="search_add_custom_engine_search_string_example">Napšašowanje z „%s“ wuměniś. Pśikład: \nhttps://www.google.com/search?q=%s</string>
-    <!-- Text for the button to learn more about adding a custom search engine -->
-    <string name="search_add_custom_engine_learn_more_label">Dalšne informacije</string>
 
     <!-- Accessibility description for the form in which details about the custom search engine are entered -->
     <string name="search_add_custom_engine_form_description">Drobnostki swójskeje pytnice</string>
-    <!-- Accessibility description for the 'Learn more' link -->
-    <string name="search_add_custom_engine_learn_more_description">Wótkaz „Dalšne informacije“</string>
 
     <!-- Text shown when a user leaves the name field empty -->
     <string name="search_add_custom_engine_error_empty_name">Mě pytnice zapódaś</string>
-    <!-- Text shown when a user tries to add a search engine that already exists -->
-    <string name="search_add_custom_engine_error_existing_name">Pytnica z mjenim „%s“ južo eksistěrujo.</string>
     <!-- Text shown when a user leaves the search string field empty -->
     <string name="search_add_custom_engine_error_empty_search_string">Pytański wuraz zapódaś</string>
     <!-- Text shown when a user leaves out the required template string -->
@@ -1736,17 +1637,17 @@
     <string name="search_delete_search_engine_success_message">Pytnica %s jo wulašowana</string>
 
     <!-- Title text shown for the migration screen to the new browser. Placeholder replaced with app name -->
-    <string name="migration_title">Witajśo k nowučkemu %s</string>
+    <string moz:removedIn="100" name="migration_title" tools:ignore="UnusedResources">Witajśo k nowučkemu %s</string>
     <!-- Description text followed by a list of things migrating (e.g. Bookmarks, History). Placeholder replaced with app name-->
-    <string name="migration_description">Dopołnje nowo wugótowany wobglědowak z pólěpšonym wugbaśim a funkcijami na was caka, aby online wěcej za was cynił.\n\nPšosym cakajśo, mjaztym až %s aktualizěrujomy z </string>
+    <string moz:removedIn="100" name="migration_description" tools:ignore="UnusedResources">Dopołnje nowo wugótowany wobglědowak z pólěpšonym wugbaśim a funkcijami na was caka, aby online wěcej za was cynił.\n\nPšosym cakajśo, mjaztym až %s aktualizěrujomy z </string>
     <!-- Text on the disabled button while in progress. Placeholder replaced with app name -->
-    <string name="migration_updating_app_button_text">%s se aktualizěrujo…</string>
+    <string moz:removedIn="100" name="migration_updating_app_button_text" tools:ignore="UnusedResources">%s se aktualizěrujo…</string>
     <!-- Text on the enabled button. Placeholder replaced with app name-->
-    <string name="migration_update_app_button">%s startowaś</string>
+    <string moz:removedIn="100" name="migration_update_app_button" tools:ignore="UnusedResources">%s startowaś</string>
     <!-- Accessibility description text for a completed migration item -->
-    <string name="migration_icon_description">Migracija jo dokóńcona</string>
+    <string moz:removedIn="100" name="migration_icon_description" tools:ignore="UnusedResources">Migracija jo dokóńcona</string>
     <!--Text on list of migrated items (e.g. Settings, History, etc.)-->
-    <string name="migration_text_passwords">Gronidła</string>
+    <string moz:removedIn="100" name="migration_text_passwords" tools:ignore="UnusedResources">Gronidła</string>
 
     <!-- Heading for the instructions to allow a permission -->
     <string name="phone_feature_blocked_intro">Aby to dowólił:</string>
@@ -1758,9 +1659,13 @@
     <string name="phone_feature_blocked_step_feature"><![CDATA[3. ZAŠALTUJŚO <b>%1$s</b>]]></string>
 
     <!-- Label that indicates a site is using a secure connection -->
-    <string name="quick_settings_sheet_secure_connection">Wěsty zwisk</string>
+    <string name="quick_settings_sheet_secure_connection_2">Zwisk jo wěsty</string>
     <!-- Label that indicates a site is using a insecure connection -->
-    <string name="quick_settings_sheet_insecure_connection">Njewěsty zwisk</string>
+    <string name="quick_settings_sheet_insecure_connection_2">Zwisk njejo wěsty</string>
+    <!-- Label to clear site data -->
+    <string name="clear_site_data">Cookieje a sedłowe daty wulašowaś</string>
+    <!-- Confirmation message for a dialog confirming if the user wants to delete all data for current site -->
+    <string name="confirm_clear_site_data"><![CDATA[Cośo napšawdu wšykne cookieje a daty za sedło <b>%s</b> lašowaś?]]></string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete all the permissions for all sites-->
     <string name="confirm_clear_permissions_on_all_sites">Cośo napšawdu wšykne pšawa za wšykne sedła lašowaś?</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete all the permissions for a site-->
@@ -1769,12 +1674,16 @@
     <string name="confirm_clear_permission_site">Cośo napšawdu toś to pšawo za toś to sedło lašowaś?</string>
     <!-- label shown when there are not site exceptions to show in the site exception settings -->
     <string name="no_site_exceptions">Žedne sedłowe wuwześa</string>
-    <!-- Label for the Pocket default top site -->
-    <string name="pocket_top_articles">Nejwažnjejše nastawki</string>
     <!-- Bookmark deletion confirmation -->
     <string name="bookmark_deletion_confirmation">Cośo napšawdu toś to cytańske znamje lašowaś?</string>
     <!-- Browser menu button that adds a top site to the home fragment -->
-    <string name="browser_menu_add_to_top_sites">Woblubowanym sedłam pśidaś</string>
+    <string moz:RemovedIn="101" name="browser_menu_add_to_top_sites" tools:ignore="UnusedResources">Woblubowanym sedłam pśidaś</string>
+    <!-- Browser menu button that removes a top site from the home fragment -->
+    <string moz:RemovedIn="101" name="browser_menu_remove_from_top_sites" tools:ignore="UnusedResources">Z woblubowanych sedłow wótwónoźeś</string>
+    <!-- Browser menu button that adds a shortcut to the home fragment -->
+    <string name="browser_menu_add_to_shortcuts">Zwězanjam pśidaś</string>
+    <!-- Browser menu button that removes a shortcut from the home fragment -->
+    <string name="browser_menu_remove_from_shortcuts">Ze zwězanjow wótwónoźeś</string>
     <!-- text shown before the issuer name to indicate who its verified by, parameter is the name of
      the certificate authority that verified the ticket-->
     <string name="certificate_info_verified_by">Pśeglědany wót: %1$s </string>
@@ -1786,6 +1695,8 @@
     <string name="login_deletion_confirmation">Cośo napšawdu toś to pśizjawjenje lašowaś?</string>
     <!-- Positive action of a dialog asking to delete  -->
     <string name="dialog_delete_positive">Lašowaś</string>
+    <!-- Negative action of a dialog asking to delete login -->
+    <string name="dialog_delete_negative">Pśetergnuś</string>
     <!--  The saved login options menu description. -->
     <string name="login_options_menu">Pśizjawjeńske nastajenja</string>
     <!--  The editable text field for a login's web address. -->
@@ -1796,12 +1707,16 @@
     <string name="saved_login_password_description">Wobźěłujobne tekstowe pólo za gronidło pśizjawjenja.</string>
     <!--  The button description to save changes to an edited login. -->
     <string name="save_changes_to_login">Změny pśizjawjenja składowaś</string>
-    <!--  The button description to discard changes to an edited login. -->
-    <string name="discard_changes">Změny zachyśiś</string>
     <!--  The page title for editing a saved login. -->
     <string name="edit">Wobźěłaś</string>
-    <!--  The error message in edit login view when password field is blank. -->
+    <!--  The page title for adding new login. -->
+    <string name="add_login">Nowe pśizjawjenje pśidaś</string>
+    <!--  The error message in add/edit login view when password field is blank. -->
     <string name="saved_login_password_required">Gronidło trěbne</string>
+    <!--  The error message in add login view when username field is blank. -->
+    <string name="saved_login_username_required">Wužywaŕske mě trěbne.</string>
+    <!--  The error message in add login view when hostname field is blank. -->
+    <string name="saved_login_hostname_required" tools:ignore="UnusedResources">Hostmě trěbne.</string>
     <!-- Voice search button content description  -->
     <string name="voice_search_content_description">Głosowe pytanje</string>
     <!-- Voice search prompt description displayed after the user presses the voice search button -->
@@ -1809,6 +1724,13 @@
 
     <!--  The error message in edit login view when a duplicate username exists. -->
     <string name="saved_login_duplicate">Pśizjawjenje z tym wužywaŕskim mjenim južo esistěrujo</string>
+
+    <!-- This is the hint text that is shown inline on the hostname field of the create new login page. 'https://www.example.com' intentionally hardcoded here -->
+    <string name="add_login_hostname_hint_text">https://www.example.com</string>
+    <!-- This is an error message shown below the hostname field of the add login page when a hostname does not contain http or https. -->
+    <string name="add_login_hostname_invalid_text_3">Webadresa musy „https://“ abo „http://“ wopśimowaś</string>
+    <!-- This is an error message shown below the hostname field of the add login page when a hostname is invalid. -->
+    <string name="add_login_hostname_invalid_text_2">Płaśiwe hostmě trěbne</string>
 
     <!-- Synced Tabs -->
     <!-- Text displayed to ask user to connect another device as no devices found with account -->
@@ -1820,6 +1742,8 @@
 
     <!-- Text displayed when user has no tabs that have been synced -->
     <string name="synced_tabs_no_tabs">Njamaśo žedne wócynjone rejtariki na swójich drugich rědach.</string>
+    <!-- Text displayed when user has no tabs that have been synced. The first parameter is the name of the application.-->
+    <string moz:RemovedIn="100" name="synced_tabs_no_tabs_2" tools:ignore="UnusedResources">Njamaśo žedne wócynjone rejtariki na swójich drugich rědach w %1$s.</string>
     <!-- Text displayed in the synced tabs screen when a user is not signed in to Firefox Sync describing Synced Tabs -->
     <string name="synced_tabs_sign_in_message">Woglědajśo se lisćinu rejtarikow ze swójich rědow.</string>
     <!-- Text displayed on a button in the synced tabs screen to link users to sign in when a user is not signed in to Firefox Sync -->
@@ -1828,35 +1752,78 @@
     <!-- The text displayed when a synced device has no tabs to show in the list of Synced Tabs. -->
     <string name="synced_tabs_no_open_tabs">Žedne wócynjone rejtarki</string>
 
+    <!-- Content description for expanding a group of synced tabs. -->
+    <string name="synced_tabs_expand_group">Kupku synchronizěrowanych rejtarikow pokazaś</string>
+    <!-- Content description for collapsing a group of synced tabs. -->
+    <string name="synced_tabs_collapse_group">Kupku synchronizěrowanych rejtarikow schowaś</string>
+
     <!-- Top Sites -->
     <!-- Title text displayed in the dialog when top sites limit is reached. -->
-    <string name="top_sites_max_limit_title">Limit za wažne sedła dostany</string>
+    <string moz:RemovedIn="101" name="top_sites_max_limit_title" tools:ignore="UnusedResources">Limit za wažne sedła dostany</string>
+    <!-- Title text displayed in the dialog when shortcuts limit is reached. -->
+    <string name="shortcut_max_limit_title">Zwězański limit dostany</string>
     <!-- Content description text displayed in the dialog when top sites limit is reached. -->
-    <string name="top_sites_max_limit_content_2">Aby nowe wažne sedło pśidał, wótwónoźćo jadno z nich. Dotykniśo a źaržćo sedło a wubjeŕśo „Wótwónoźeś“.</string>
+    <string moz:RemovedIn="101" name="top_sites_max_limit_content_2" tools:ignore="UnusedResources">Aby nowe wažne sedło pśidał, wótwónoźćo jadno z nich. Dotykniśo a źaržćo sedło a wubjeŕśo „Wótwónoźeś“.</string>
+    <!-- Content description text displayed in the dialog when shortcut limit is reached. -->
+    <string name="shortcut_max_limit_content">Aby nowe zwězanje pśidał, wótwónoźćo jadno z nich. Dotykniśo a źaržćo sedło a wubjeŕśo „Wótwónoźeś“.</string>
     <!-- Confirmation dialog button text when top sites limit is reached. -->
     <string name="top_sites_max_limit_confirmation_button">W pórěźe, som zrozměł</string>
 
-    <!-- Label for the show most visited sites preference -->
-    <string name="top_sites_toggle_top_frecent_sites">Nejcesćej woglědane sedła pokazaś</string>
-
-    <!-- Title text displayed in the rename top site dialog. -->
+    <!-- Label for the preference to show the shortcuts for the most visited top sites on the homepage -->
+    <string name="top_sites_toggle_top_recent_sites_4">Zwězanja</string>
+	<!-- Title text displayed in the rename top site dialog. -->
 	<string name="top_sites_rename_dialog_title">Mě</string>
 	<!-- Hint for renaming title of a top site -->
-	<string name="top_site_name_hint">Mě nejcesćej woglědanego boka</string>
+	<string moz:RemovedIn="101" name="top_site_name_hint" tools:ignore="UnusedResources">Mě nejcesćej woglědanego boka</string>
+    <!-- Hint for renaming title of a shortcut -->
+    <string name="shortcut_name_hint">Mě zwězanja</string>
 	<!-- Button caption to confirm the renaming of the top site. -->
 	<string name="top_sites_rename_dialog_ok">W pórěźe</string>
 	<!-- Dialog button text for canceling the rename top site prompt. -->
 	<string name="top_sites_rename_dialog_cancel">Pśetergnuś</string>
 
-    <!-- In-activate tabs in the tabs tray -->
-    <!-- Title text displayed in the tabs tray when a tab has been unused for 4 days. -->
+    <!-- Text for the menu button to open the homepage settings. -->
+    <string name="top_sites_menu_settings">Nastajenja</string>
+    <!-- Text for the menu button to navigate to sponsors and privacy support articles. '&amp;' is replaced with the ampersand symbol: & -->
+    <string name="top_sites_menu_sponsor_privacy">Naše sponsory a waša priwatnosć</string>
+    <!-- Label text displayed for a sponsored top site. -->
+    <string name="top_sites_sponsored_label">Sponserowany</string>
+
+    <!-- Inactive tabs in the tabs tray -->
+    <!-- Title text displayed in the tabs tray when a tab has been unused for 14 days. -->
     <string name="inactive_tabs_title">Inaktiwne rejtariki</string>
-    <!-- A description below the section of "inactive" tabs to notify the user when those tabs will be closed, if appropriate. See strings inactive_tabs_30_days and inactive_tabs_7_days for placeholders options. -->
-    <string name="inactive_tabs_description">Rejtariki su how za %s k dispoziciji. Pó toś tom casu se rejtariki awtomatiski zacyniju.</string>
-    <!-- The amount of time until a tab in the "inactive" section of the tabs tray will be closed. See string inactive_tabs_description as well -->
-    <string name="inactive_tabs_30_days">30 dnjow</string>
-    <!-- The amount of time until a tab in the "inactive" section of the tabs tray will be closed. See string inactive_tabs_description as well -->
-    <string name="inactive_tabs_7_days">1 tyźeń</string>
+    <!-- Content description for closing all inactive tabs -->
+    <string name="inactive_tabs_delete_all">Wšykne inaktiwne rejtariki zacyniś</string>
+
+    <!-- Inactive tabs auto-close message in the tabs tray -->
+    <!-- The header text of the auto-close message when the user is asked if they want to turn on the auto-closing of inactive tabs. -->
+    <string name="inactive_tabs_auto_close_message_header" tools:ignore="UnusedResources">Pó jadnem mjasecu awtomatiski zacyniś?</string>
+    <!-- A description below the header to notify the user what the inactive tabs auto-close feature is. -->
+    <string name="inactive_tabs_auto_close_message_description" tools:ignore="UnusedResources">Firefox móžo rejtariki zacyniś, kótarež njejsćo se woglědał zajźony mjasec.</string>
+    <!-- A call to action below the description to allow the user to turn on the auto closing of inactive tabs. -->
+    <string name="inactive_tabs_auto_close_message_action" tools:ignore="UnusedResources">AWTOMATISKE ZACYNJANJE ZMÓŽNIŚ</string>
+
+    <!-- Text for the snackbar to confirm auto-close is enabled for inactive tabs -->
+    <string name="inactive_tabs_auto_close_message_snackbar">Awtomatiske zacynjanje zmóžnjone</string>
+
+    <!-- Inactive tabs survey -->
+    <!-- Header text for the inactive tabs survey asking for feedback to improve the inactive tabs feature. -->
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_header_1" tools:ignore="UnusedResources">Pomagajśo Firefox pólěpšyś</string>
+
+    <!-- Content text for the inactive tabs survey asking the primary survey feedback question. -->
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_content" tools:ignore="UnusedResources">Cogodla sćo znjemóžnił inaktiwne rejtariki?</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_do_not_understand" tools:ignore="UnusedResources">Njerozmějom, kak to funkcioněrujo</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_do_it_myself" tools:ignore="UnusedResources">Ja by rady sam rumował stare rejtariki</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_time_too_long_option_1" tools:ignore="UnusedResources">Dwójotyźeński cas jo pśedłujki</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_time_too_short_option_1" tools:ignore="UnusedResources">Dwójotyźeński cas jo pśekrotki</string>
+    <!-- Confirmation button text to submit the feedback for the inactive tabs survey. -->
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_send_button" tools:ignore="UnusedResources">Pósłaś</string>
+    <!-- Content description for inactive tabs survey close button -->
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_close_button_content_description" tools:ignore="UnusedResources">Zacyniś</string>
 
     <!-- Default browser experiment -->
     <string name="default_browser_experiment_card_text">Nastajśo wótkaze z websedłow, mejlkow a powěsćow, aby se awtomatiski we Firefox wócynili.</string>
@@ -1873,4 +1840,22 @@
     <!-- Content description for privacy content close button -->
     <string name="privacy_content_close_button_content_description">Zacyniś</string>
 
+    <!-- Pocket recommended stories -->
+    <!-- Header text for a section on the home screen. -->
+    <string name="pocket_stories_header_1">Tšojeńka, kótarež k rozmyslowanju pógnuwaju</string>
+    <!-- Header text for a section on the home screen. -->
+    <string name="pocket_stories_categories_header">Tšojeńka pó temje</string>
+    <!-- Text of a button allowing users to access an external url for more Pocket recommendations. -->
+    <string name="pocket_stories_placeholder_text">Wěcej wuslěźiś</string>
+    <!-- Title of an app feature. Smaller than a heading.-->
+    <string name="pocket_stories_feature_title">Wót Pocket spěchowany</string>
+    <!-- Caption for describing a certain feature. The placeholder is for a clickable text (eg: Learn more) which will load an url in a new tab when clicked.  -->
+    <string name="pocket_stories_feature_caption">Źěl swójźby Firefox. %s</string>
+    <!-- Clickable text for opening an external link for more information about Pocket. -->
+    <string name="pocket_stories_feature_learn_more"></string>
+
+    <!-- Snackbar message for enrolling in a Nimbus experiment from the secret settings when Studies preference is Off.-->
+    <string name="experiments_snackbar">Zmóžniśo telemetriju, aby daty słał.</string>
+    <!-- Snackbar button text to navigate to telemetry settings.-->
+    <string name="experiments_snackbar_button">K nastajenjam</string>
 </resources>

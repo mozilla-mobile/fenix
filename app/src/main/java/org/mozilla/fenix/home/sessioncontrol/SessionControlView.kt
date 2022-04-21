@@ -4,67 +4,73 @@
 
 package org.mozilla.fenix.home.sessioncontrol
 
-import android.content.Context
 import android.view.View
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import mozilla.components.concept.storage.BookmarkNode
-import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.service.pocket.PocketRecommendedStory
-import org.mozilla.fenix.components.tips.Tip
+import org.mozilla.fenix.components.appstate.AppState
+import org.mozilla.fenix.gleanplumb.Message
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.historymetadata.HistoryMetadataGroup
-import org.mozilla.fenix.home.HomeFragmentState
-import org.mozilla.fenix.home.HomeFragmentStore
-import org.mozilla.fenix.home.HomeScreenViewModel
 import org.mozilla.fenix.home.Mode
 import org.mozilla.fenix.home.OnboardingState
-import org.mozilla.fenix.home.recenttabs.view.RecentTabsItemPosition
+import org.mozilla.fenix.home.recentbookmarks.RecentBookmark
+import org.mozilla.fenix.home.recenttabs.RecentTab
+import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem
+import org.mozilla.fenix.onboarding.JumpBackInCFRDialog
+import org.mozilla.fenix.utils.Settings
 
 // This method got a little complex with the addition of the tab tray feature flag
 // When we remove the tabs from the home screen this will get much simpler again.
 @Suppress("ComplexMethod", "LongParameterList")
-private fun normalModeAdapterItems(
-    context: Context,
+@VisibleForTesting
+internal fun normalModeAdapterItems(
+    settings: Settings,
     topSites: List<TopSite>,
     collections: List<TabCollection>,
     expandedCollections: Set<Long>,
-    tip: Tip?,
-    recentBookmarks: List<BookmarkNode>,
+    recentBookmarks: List<RecentBookmark>,
     showCollectionsPlaceholder: Boolean,
-    showSetAsDefaultBrowserCard: Boolean,
-    recentTabs: List<TabSessionState>,
-    historyMetadata: List<HistoryMetadataGroup>,
-    pocketArticles: List<PocketRecommendedStory>
+    nimbusMessageCard: Message? = null,
+    recentTabs: List<RecentTab>,
+    recentVisits: List<RecentlyVisitedItem>,
+    pocketStories: List<PocketRecommendedStory>
 ): List<AdapterItem> {
     val items = mutableListOf<AdapterItem>()
+    var shouldShowCustomizeHome = false
 
-    tip?.let { items.add(AdapterItem.TipItem(it)) }
+    // Add a synchronous, unconditional and invisible placeholder so home is anchored to the top when created.
+    items.add(AdapterItem.TopPlaceholderItem)
 
-    if (showSetAsDefaultBrowserCard) {
-        items.add(AdapterItem.ExperimentDefaultBrowserCard)
+    nimbusMessageCard?.let {
+        items.add(AdapterItem.NimbusMessageCard(it))
     }
 
-    if (topSites.isNotEmpty()) {
+    if (settings.showTopSitesFeature && topSites.isNotEmpty()) {
         items.add(AdapterItem.TopSitePager(topSites))
     }
 
-    if (recentTabs.isNotEmpty()) {
-        showRecentTabs(recentTabs, items)
+    if (settings.showRecentTabsFeature && recentTabs.isNotEmpty()) {
+        shouldShowCustomizeHome = true
+        items.add(AdapterItem.RecentTabsHeader)
+        items.add(AdapterItem.RecentTabItem)
     }
 
-    if (recentBookmarks.isNotEmpty()) {
-        items.add(AdapterItem.RecentBookmarks(recentBookmarks))
+    if (settings.showRecentBookmarksFeature && recentBookmarks.isNotEmpty()) {
+        shouldShowCustomizeHome = true
+        items.add(AdapterItem.RecentBookmarksHeader)
+        items.add(AdapterItem.RecentBookmarks)
     }
 
-    if (historyMetadata.isNotEmpty()) {
-        showHistoryMetadata(historyMetadata, items)
+    if (settings.historyMetadataUIFeature && recentVisits.isNotEmpty()) {
+        shouldShowCustomizeHome = true
+        items.add(AdapterItem.RecentVisitsHeader)
+        items.add(AdapterItem.RecentVisitsItems)
     }
 
     if (collections.isEmpty()) {
@@ -75,67 +81,20 @@ private fun normalModeAdapterItems(
         showCollections(collections, expandedCollections, items)
     }
 
-    if (context.settings().pocketRecommendations && pocketArticles.isNotEmpty()) {
+    if (settings.showPocketRecommendationsFeature && pocketStories.isNotEmpty()) {
+        shouldShowCustomizeHome = true
         items.add(AdapterItem.PocketStoriesItem)
+        items.add(AdapterItem.PocketCategoriesItem)
+        items.add(AdapterItem.PocketRecommendationsFooterItem)
     }
+
+    if (shouldShowCustomizeHome) {
+        items.add(AdapterItem.CustomizeHomeButton)
+    }
+
+    items.add(AdapterItem.BottomSpacer)
 
     return items
-}
-
-/**
- * Constructs the list of items to be shown in the recent tabs section.
- *
- * This section's structure is:
- * - section header
- * - one or more normal tabs
- * - zero or one media tab (if there is a tab opened on which media started playing.
- * This may be a duplicate of one of the normal tabs shown above).
- */
-@VisibleForTesting
-internal fun showRecentTabs(
-    recentTabs: List<TabSessionState>,
-    items: MutableList<AdapterItem>
-) {
-    items.add(AdapterItem.RecentTabsHeader)
-
-    recentTabs.forEachIndexed { index, recentTab ->
-        // If this is the first tab to be shown but more will follow.
-        if (index == 0 && recentTabs.size > 1) {
-            items.add(AdapterItem.RecentTabItem(recentTab, RecentTabsItemPosition.TOP))
-        }
-
-        // if this is the only tab to be shown.
-        else if (index == 0 && recentTabs.size == 1) {
-            items.add(AdapterItem.RecentTabItem(recentTab, RecentTabsItemPosition.SINGLE))
-        }
-
-        // If there are items above and below.
-        else if (index < recentTabs.size - 1) {
-            items.add(AdapterItem.RecentTabItem(recentTab, RecentTabsItemPosition.MIDDLE))
-        }
-
-        // If this is the last recent tab to be shown.
-        else if (index < recentTabs.size) {
-            items.add(AdapterItem.RecentTabItem(recentTab, RecentTabsItemPosition.BOTTOM))
-        }
-    }
-}
-
-private fun showHistoryMetadata(
-    historyMetadata: List<HistoryMetadataGroup>,
-    items: MutableList<AdapterItem>
-) {
-    items.add(AdapterItem.HistoryMetadataHeader)
-
-    historyMetadata.forEach { container ->
-        items.add(AdapterItem.HistoryMetadataGroup(historyMetadataGroup = container))
-
-        if (container.expanded) {
-            container.historyMetadata.forEach {
-                items.add(AdapterItem.HistoryMetadataItem(it))
-            }
-        }
-    }
 }
 
 private fun showCollections(
@@ -175,11 +134,6 @@ private fun onboardingAdapterItems(onboardingState: OnboardingState): List<Adapt
                     AdapterItem.OnboardingManualSignIn
                 )
             }
-            is OnboardingState.SignedOutCanAutoSignIn -> {
-                listOf(
-                    AdapterItem.OnboardingAutomaticSignIn(onboardingState)
-                )
-            }
             OnboardingState.SignedIn -> listOf()
         }
     )
@@ -187,29 +141,36 @@ private fun onboardingAdapterItems(onboardingState: OnboardingState): List<Adapt
     items.addAll(
         listOf(
             AdapterItem.OnboardingPrivacyNotice,
-            AdapterItem.OnboardingFinish
+            AdapterItem.OnboardingFinish,
+            AdapterItem.BottomSpacer
         )
     )
 
     return items
 }
 
-private fun HomeFragmentState.toAdapterList(context: Context): List<AdapterItem> = when (mode) {
+private fun AppState.toAdapterList(settings: Settings): List<AdapterItem> = when (mode) {
     is Mode.Normal -> normalModeAdapterItems(
-        context,
+        settings,
         topSites,
         collections,
         expandedCollections,
-        tip,
         recentBookmarks,
         showCollectionPlaceholder,
-        showSetAsDefaultBrowserCard,
+        messaging.messageToShow,
         recentTabs,
-        historyMetadata,
-        pocketArticles
+        recentHistory,
+        pocketStories
     )
     is Mode.Private -> privateModeAdapterItems()
     is Mode.Onboarding -> onboardingAdapterItems(mode.state)
+}
+
+@VisibleForTesting
+internal fun AppState.shouldShowHomeOnboardingDialog(settings: Settings): Boolean {
+    val isAnySectionsVisible = recentTabs.isNotEmpty() || recentBookmarks.isNotEmpty() ||
+        recentHistory.isNotEmpty() || pocketStories.isNotEmpty()
+    return isAnySectionsVisible && !settings.hasShownHomeOnboardingDialog
 }
 
 private fun collectionTabItems(collection: TabCollection) =
@@ -218,17 +179,14 @@ private fun collectionTabItems(collection: TabCollection) =
     }
 
 class SessionControlView(
-    store: HomeFragmentStore,
     val containerView: View,
     viewLifecycleOwner: LifecycleOwner,
-    interactor: SessionControlInteractor,
-    private var homeScreenViewModel: HomeScreenViewModel
+    internal val interactor: SessionControlInteractor
 ) {
 
     val view: RecyclerView = containerView as RecyclerView
 
     private val sessionControlAdapter = SessionControlAdapter(
-        store,
         interactor,
         viewLifecycleOwner,
         containerView.context.components
@@ -237,7 +195,13 @@ class SessionControlView(
     init {
         view.apply {
             adapter = sessionControlAdapter
-            layoutManager = LinearLayoutManager(containerView.context)
+            layoutManager = object : LinearLayoutManager(containerView.context) {
+                override fun onLayoutCompleted(state: RecyclerView.State?) {
+                    super.onLayoutCompleted(state)
+
+                    JumpBackInCFRDialog(view).showIfNeeded()
+                }
+            }
             val itemTouchHelper =
                 ItemTouchHelper(
                     SwipeToDeleteCallback(
@@ -248,21 +212,13 @@ class SessionControlView(
         }
     }
 
-    fun update(state: HomeFragmentState) {
-        val stateAdapterList = state.toAdapterList(view.context)
-        if (homeScreenViewModel.shouldScrollToTopSites) {
-            sessionControlAdapter.submitList(stateAdapterList) {
-
-                val loadedTopSites = stateAdapterList.find { adapterItem ->
-                    adapterItem is AdapterItem.TopSitePager && adapterItem.topSites.isNotEmpty()
-                }
-                loadedTopSites?.run {
-                    homeScreenViewModel.shouldScrollToTopSites = false
-                    view.scrollToPosition(0)
-                }
-            }
-        } else {
-            sessionControlAdapter.submitList(stateAdapterList)
+    fun update(state: AppState, shouldReportMetrics: Boolean = false) {
+        if (state.shouldShowHomeOnboardingDialog(view.context.settings())) {
+            interactor.showOnboardingDialog()
         }
+
+        if (shouldReportMetrics) interactor.reportSessionMetrics(state)
+
+        sessionControlAdapter.submitList(state.toAdapterList(view.context.settings()))
     }
 }

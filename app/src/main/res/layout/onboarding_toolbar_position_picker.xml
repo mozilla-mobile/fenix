@@ -8,6 +8,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     style="@style/OnboardingCardLight"
+    android:layout_marginHorizontal="@dimen/home_item_horizontal_margin"
     android:paddingTop="16dp"
     android:paddingBottom="16dp">
 
@@ -69,7 +70,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="@string/preference_bottom_toolbar"
-        android:textColor="?primaryText"
+        android:textColor="?attr/textPrimary"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="@+id/toolbar_bottom_image"
         app:layout_constraintStart_toStartOf="@id/toolbar_bottom_image"
@@ -82,7 +83,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="@string/preference_top_toolbar"
-        android:textColor="?primaryText"
+        android:textColor="?attr/textPrimary"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="@+id/toolbar_top_image"
         app:layout_constraintStart_toStartOf="@id/toolbar_top_image"

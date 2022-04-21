@@ -12,7 +12,9 @@ import io.mockk.just
 import io.mockk.verify
 import org.junit.Assert.assertEquals
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+import org.mozilla.fenix.helpers.MockkRetryTestRule
 import org.mozilla.fenix.utils.Settings
 
 class DefaultBrowsingModeManagerTest {
@@ -22,6 +24,9 @@ class DefaultBrowsingModeManagerTest {
     lateinit var manager: BrowsingModeManager
 
     private val initMode = BrowsingMode.Normal
+
+    @get:Rule
+    val mockkRule = MockkRetryTestRule()
 
     @Before
     fun before() {

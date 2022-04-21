@@ -9,6 +9,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.ui.robots.homeScreen
@@ -28,6 +29,7 @@ class ThreeDotMenuMainTest {
 
     @Before
     fun setUp() {
+        activityTestRule.activity.applicationContext.settings().shouldShowJumpBackInCFR = false
         mockWebServer = MockWebServer().apply {
             dispatcher = AndroidAssetDispatcher()
             start()
@@ -52,9 +54,14 @@ class ThreeDotMenuMainTest {
             verifyDesktopSite()
             verifyWhatsNewButton()
             verifyHelpButton()
+            verifyCustomizeHomeButton()
             verifySettingsButton()
         }.openSettings {
             verifySettingsView()
+        }.goBack {
+        }.openThreeDotMenu {
+        }.openCustomizeHome {
+            verifyHomePageView()
         }.goBack {
         }.openThreeDotMenu {
         }.openHelp {

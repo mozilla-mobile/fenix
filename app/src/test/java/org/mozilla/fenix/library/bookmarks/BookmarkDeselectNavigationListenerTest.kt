@@ -24,7 +24,7 @@ class BookmarkDeselectNavigationListenerTest {
         BookmarkNodeType.ITEM,
         BookmarkRoot.Root.id,
         parentGuid = null,
-        position = 0,
+        position = 0u,
         title = null,
         url = null,
         dateAdded = 0,
@@ -36,10 +36,10 @@ class BookmarkDeselectNavigationListenerTest {
         val navController: NavController = mockk(relaxed = true)
         val listener = BookmarkDeselectNavigationListener(navController, mockk(), mockk())
 
-        listener.onResume()
+        listener.onResume(mockk())
         verify { navController.addOnDestinationChangedListener(listener) }
 
-        listener.onDestroy()
+        listener.onDestroy(mockk())
         verify { navController.removeOnDestinationChangedListener(listener) }
     }
 

@@ -5,55 +5,89 @@
 package org.mozilla.fenix.home.recenttabs.view
 
 import android.view.View
-import mozilla.components.browser.icons.BrowserIcons
-import mozilla.components.browser.state.state.ContentState
-import mozilla.components.browser.state.state.TabSessionState
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.LifecycleOwner
+import mozilla.components.lib.state.ext.observeAsComposableState
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
-import org.mozilla.fenix.databinding.RecentTabsListRowBinding
-import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.loadIntoView
+import org.mozilla.fenix.components.components
+import org.mozilla.fenix.compose.ComposeViewHolder
+import org.mozilla.fenix.home.recentsyncedtabs.RecentSyncedTabState
 import org.mozilla.fenix.home.recenttabs.interactor.RecentTabInteractor
-import org.mozilla.fenix.utils.view.ViewHolder
+import org.mozilla.fenix.home.recentsyncedtabs.interactor.RecentSyncedTabInteractor
+import org.mozilla.fenix.home.recentsyncedtabs.view.RecentSyncedTab
 
 /**
  * View holder for a recent tab item.
  *
- * @param interactor [RecentTabInteractor] which will have delegated to all user interactions.
- * @param icons an instance of [BrowserIcons] for rendering the sites icon if one isn't found
- * in [ContentState.icon].
+ * @param composeView [ComposeView] which will be populated with Jetpack Compose UI content.
+ * @param recentTabInteractor [RecentTabInteractor] which will have delegated to all user recent
+ * tab interactions.
+ * @param recentSyncedTabInteractor [RecentSyncedTabInteractor] which will have delegated to all user
+ * recent synced tab interactions.
  */
 class RecentTabViewHolder(
-    private val view: View,
-    private val interactor: RecentTabInteractor,
-    private val icons: BrowserIcons = view.context.components.core.icons
-) : ViewHolder(view) {
+    composeView: ComposeView,
+    viewLifecycleOwner: LifecycleOwner,
+    private val recentTabInteractor: RecentTabInteractor,
+    private val recentSyncedTabInteractor: RecentSyncedTabInteractor,
+) : ComposeViewHolder(composeView, viewLifecycleOwner) {
 
-    fun bindTab(tab: TabSessionState): View {
-        // A page may take a while to retrieve a title, so let's show the url until we get one.
-
-        val biding = RecentTabsListRowBinding.bind(view)
-
-        biding.recentTabTitle.text = if (tab.content.title.isNotEmpty()) {
-            tab.content.title
-        } else {
-            tab.content.url
-        }
-
-        if (tab.content.icon != null) {
-            biding.recentTabIcon.setImageBitmap(tab.content.icon)
-        } else {
-            icons.loadIntoView(biding.recentTabIcon, tab.content.url)
-        }
-        biding.recentTabIcon.setImageBitmap(tab.content.icon)
-
-        itemView.setOnClickListener {
-            interactor.onRecentTabClicked(tab.id)
-        }
-
-        return itemView
+    init {
+        val horizontalPadding =
+            composeView.resources.getDimensionPixelSize(R.dimen.home_item_horizontal_margin)
+        composeView.setPadding(horizontalPadding, 0, horizontalPadding, 0)
     }
 
     companion object {
-        const val LAYOUT_ID = R.layout.recent_tabs_list_row
+        val LAYOUT_ID = View.generateViewId()
+    }
+
+    @Composable
+    override fun Content() {
+        val recentTabs = components.appStore.observeAsComposableState { state -> state.recentTabs }
+        val recentSyncedTabState = components.appStore.observeAsComposableState { state -> state.recentSyncedTabState }
+
+        Column {
+            RecentTabs(
+                recentTabs = recentTabs.value ?: emptyList(),
+                onRecentTabClick = { recentTabInteractor.onRecentTabClicked(it) },
+                onRecentSearchGroupClick = { recentTabInteractor.onRecentSearchGroupClicked(it) },
+                menuItems = listOf(
+                    RecentTabMenuItem(
+                        title = stringResource(id = R.string.recent_tab_menu_item_remove),
+                        onClick = { tab -> recentTabInteractor.onRemoveRecentTab(tab) }
+                    )
+                )
+            )
+
+            recentSyncedTabState.value?.let {
+                if (FeatureFlags.taskContinuityFeature && it != RecentSyncedTabState.None) {
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    val syncedTab = when (it) {
+                        RecentSyncedTabState.None,
+                        RecentSyncedTabState.Loading -> null
+                        is RecentSyncedTabState.Success -> it.tab
+                    }
+                    RecentSyncedTab(
+                        tab = syncedTab,
+                        onRecentSyncedTabClick = { tab ->
+                            recentSyncedTabInteractor.onRecentSyncedTabClicked(tab)
+                        },
+                        onSeeAllSyncedTabsButtonClick = {
+                            recentSyncedTabInteractor.onSyncedTabShowAllClicked()
+                        },
+                    )
+                }
+            }
+        }
     }
 }

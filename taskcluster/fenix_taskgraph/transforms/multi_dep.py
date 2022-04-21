@@ -5,11 +5,11 @@
 Apply some defaults and minor modifications to the single_dep jobs.
 """
 
-from __future__ import absolute_import, print_function, unicode_literals
-
 from taskgraph.transforms.base import TransformSequence
 from taskgraph.util.schema import resolve_keyed_by
 from taskgraph.util.treeherder import inherit_treeherder_from_dep, join_symbol
+
+from fenix_taskgraph.util.scriptworker import generate_beetmover_upstream_artifacts
 
 
 transforms = TransformSequence()
@@ -19,21 +19,20 @@ transforms = TransformSequence()
 def build_name_and_attributes(config, tasks):
     for task in tasks:
         task["dependencies"] = {
-            dep_key: dep.label
-            for dep_key, dep in _get_all_deps(task).items()
+            dep_key: dep.label for dep_key, dep in _get_all_deps(task).items()
         }
         primary_dep = task["primary-dependency"]
         copy_of_attributes = primary_dep.attributes.copy()
-        task.setdefault("attributes", copy_of_attributes)
+        task.setdefault("attributes", {}).update(copy_of_attributes)
         # run_on_tasks_for is set as an attribute later in the pipeline
-        task.setdefault("run-on-tasks-for", copy_of_attributes['run_on_tasks_for'])
+        task.setdefault("run-on-tasks-for", copy_of_attributes["run_on_tasks_for"])
         task["name"] = _get_dependent_job_name_without_its_kind(primary_dep)
 
         yield task
 
 
 def _get_dependent_job_name_without_its_kind(dependent_job):
-    return dependent_job.label[len(dependent_job.kind) + 1:]
+    return dependent_job.label[len(dependent_job.kind) + 1 :]
 
 
 def _get_all_deps(task):
@@ -51,8 +50,8 @@ def resolve_keys(config, tasks):
             "treeherder.job-symbol",
             item_name=task["name"],
             **{
-                'build-type': task["attributes"]["build-type"],
-                'level': config.params["level"],
+                "build-type": task["attributes"]["build-type"],
+                "level": config.params["level"],
             }
         )
         yield task
@@ -65,19 +64,31 @@ def build_upstream_artifacts(config, tasks):
             "upstream-artifacts": [],
         }
 
-        for dep in _get_all_deps(task).values():
-            paths = sorted([
-                apk_metadata["name"]
-                for apk_metadata in dep.attributes.get("apks", {}).values()
-            ])
-            if paths:
-                worker_definition["upstream-artifacts"].append({
-                    "taskId": {"task-reference": "<{}>".format(dep.kind)},
-                    "taskType": dep.kind,
-                    "paths": paths,
-                })
+        if "artifact_map" in task["attributes"]:
+            # Beetmover tasks use declarative artifacts.
+            locale = task["attributes"].get("locale")
+            build_type = task["attributes"]["build-type"]
+            worker_definition[
+                "upstream-artifacts"
+            ] = generate_beetmover_upstream_artifacts(config, task, build_type, locale)
+        else:
+            for dep in _get_all_deps(task).values():
+                paths = sorted(
+                    [
+                        apk_metadata["name"]
+                        for apk_metadata in dep.attributes.get("apks", {}).values()
+                    ]
+                )
+                if paths:
+                    worker_definition["upstream-artifacts"].append(
+                        {
+                            "taskId": {"task-reference": "<{}>".format(dep.kind)},
+                            "taskType": dep.kind,
+                            "paths": paths,
+                        }
+                    )
 
-        task["worker"].update(worker_definition)
+        task.setdefault("worker", {}).update(worker_definition)
         yield task
 
 

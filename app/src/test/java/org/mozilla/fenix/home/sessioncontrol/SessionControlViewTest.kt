@@ -4,80 +4,377 @@
 
 package org.mozilla.fenix.home.sessioncontrol
 
+import androidx.recyclerview.widget.RecyclerView
+import io.mockk.every
 import io.mockk.mockk
-import mozilla.components.browser.state.state.TabSessionState
+import io.mockk.verify
+import mozilla.components.feature.tab.collections.TabCollection
+import mozilla.components.feature.top.sites.TopSite
+import mozilla.components.service.pocket.PocketRecommendedStory
+import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertSame
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import org.mozilla.fenix.home.recenttabs.view.RecentTabsItemPosition
+import org.junit.runner.RunWith
+import org.mozilla.fenix.components.appstate.AppState
+import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.gleanplumb.Message
+import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
+import org.mozilla.fenix.home.recentbookmarks.RecentBookmark
+import org.mozilla.fenix.home.recenttabs.RecentTab
+import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem.RecentHistoryGroup
+import org.mozilla.fenix.utils.Settings
 
+@RunWith(FenixRobolectricTestRunner::class)
 class SessionControlViewTest {
+
     @Test
-    fun `GIVEN two recent tabs WHEN showRecentTabs is called THEN add the header, and two recent items to be shown`() {
-        val recentTab: TabSessionState = mockk()
-        val mediaTab: TabSessionState = mockk()
-        val items = mutableListOf<AdapterItem>()
+    fun `GIVEN recent Bookmarks WHEN calling shouldShowHomeOnboardingDialog THEN show the dialog `() {
+        val recentBookmarks = listOf(RecentBookmark())
+        val settings: Settings = mockk()
 
-        showRecentTabs(listOf(recentTab, mediaTab), items)
+        every { settings.hasShownHomeOnboardingDialog } returns false
 
-        assertEquals(3, items.size)
-        assertTrue(items[0] is AdapterItem.RecentTabsHeader)
-        assertEquals(recentTab, (items[1] as AdapterItem.RecentTabItem).tab)
-        assertEquals(mediaTab, (items[2] as AdapterItem.RecentTabItem).tab)
+        val state = AppState(recentBookmarks = recentBookmarks)
+
+        assertTrue(state.shouldShowHomeOnboardingDialog(settings))
     }
 
     @Test
-    fun `GIVEN one recent tab WHEN showRecentTabs is called THEN add the header and the recent tab to items shown`() {
-        val recentTab: TabSessionState = mockk()
-        val items = mutableListOf<AdapterItem>()
+    fun `GIVEN recentTabs WHEN calling shouldShowHomeOnboardingDialog THEN show the dialog `() {
+        val recentTabs = listOf<RecentTab>(mockk())
+        val settings: Settings = mockk()
 
-        showRecentTabs(listOf(recentTab), items)
+        every { settings.hasShownHomeOnboardingDialog } returns false
 
-        assertEquals(2, items.size)
-        assertTrue(items[0] is AdapterItem.RecentTabsHeader)
-        assertEquals(recentTab, (items[1] as AdapterItem.RecentTabItem).tab)
+        val state = AppState(recentTabs = recentTabs)
+
+        assertTrue(state.shouldShowHomeOnboardingDialog(settings))
     }
 
     @Test
-    fun `GIVEN only one recent tab and no media tab WHEN showRecentTabs is called THEN add the recent item as a single one to be shown`() {
-        val recentTab: TabSessionState = mockk()
-        val items = mutableListOf<AdapterItem>()
+    fun `GIVEN historyMetadata WHEN calling shouldShowHomeOnboardingDialog THEN show the dialog `() {
+        val historyMetadata = listOf(RecentHistoryGroup("title", emptyList()))
+        val settings: Settings = mockk()
 
-        showRecentTabs(listOf(recentTab), items)
+        every { settings.hasShownHomeOnboardingDialog } returns false
 
-        assertEquals(recentTab, (items[1] as AdapterItem.RecentTabItem).tab)
-        assertSame(RecentTabsItemPosition.SINGLE, (items[1] as AdapterItem.RecentTabItem).position)
+        val state = AppState(recentHistory = historyMetadata)
+
+        assertTrue(state.shouldShowHomeOnboardingDialog(settings))
     }
 
     @Test
-    fun `GIVEN two recent tabs WHEN showRecentTabs is called THEN add one item as top and one as bottom to be shown`() {
-        val recentTab: TabSessionState = mockk()
-        val mediaTab: TabSessionState = mockk()
-        val items = mutableListOf<AdapterItem>()
+    fun `GIVEN pocketArticles WHEN calling shouldShowHomeOnboardingDialog THEN show the dialog `() {
+        val pocketArticles = listOf(PocketRecommendedStory("", "", "", "", "", 0, 0))
+        val settings: Settings = mockk()
 
-        showRecentTabs(listOf(recentTab, mediaTab), items)
+        every { settings.hasShownHomeOnboardingDialog } returns false
 
-        assertEquals(recentTab, (items[1] as AdapterItem.RecentTabItem).tab)
-        assertSame(RecentTabsItemPosition.TOP, (items[1] as AdapterItem.RecentTabItem).position)
-        assertEquals(mediaTab, (items[2] as AdapterItem.RecentTabItem).tab)
-        assertSame(RecentTabsItemPosition.BOTTOM, (items[2] as AdapterItem.RecentTabItem).position)
+        val state = AppState(pocketStories = pocketArticles)
+
+        assertTrue(state.shouldShowHomeOnboardingDialog(settings))
     }
 
     @Test
-    fun `GIVEN three recent tabs WHEN showRecentTabs is called THEN add one recent item as top, one as middle and one as bottom to be shown`() {
-        val recentTab1: TabSessionState = mockk()
-        val recentTab2: TabSessionState = mockk()
-        val mediaTab: TabSessionState = mockk()
-        val items = mutableListOf<AdapterItem>()
+    fun `GIVEN the home onboading dialog has been shown before WHEN calling shouldShowHomeOnboardingDialog THEN DO NOT showthe dialog `() {
+        val pocketArticles = listOf(PocketRecommendedStory("", "", "", "", "", 0, 0))
+        val settings: Settings = mockk()
 
-        showRecentTabs(listOf(recentTab1, recentTab2, mediaTab), items)
+        every { settings.hasShownHomeOnboardingDialog } returns true
 
-        assertEquals(recentTab1, (items[1] as AdapterItem.RecentTabItem).tab)
-        assertSame(RecentTabsItemPosition.TOP, (items[1] as AdapterItem.RecentTabItem).position)
-        assertEquals(recentTab2, (items[2] as AdapterItem.RecentTabItem).tab)
-        assertSame(RecentTabsItemPosition.MIDDLE, (items[2] as AdapterItem.RecentTabItem).position)
-        assertEquals(mediaTab, (items[3] as AdapterItem.RecentTabItem).tab)
-        assertSame(RecentTabsItemPosition.BOTTOM, (items[3] as AdapterItem.RecentTabItem).position)
+        val state = AppState(pocketStories = pocketArticles)
+
+        assertFalse(state.shouldShowHomeOnboardingDialog(settings))
+    }
+
+    @Test
+    fun `GIVENs updates WHEN sections recentTabs, recentBookmarks, historyMetadata or pocketArticles are available THEN show the dialog`() {
+        every { testContext.components.settings } returns mockk(relaxed = true)
+        val interactor = mockk<SessionControlInteractor>(relaxed = true)
+        val view = RecyclerView(testContext)
+        val controller = SessionControlView(
+            view,
+            mockk(relaxed = true),
+            interactor
+        )
+        val recentTabs = listOf<RecentTab>(mockk(relaxed = true))
+
+        val state = AppState(recentTabs = recentTabs)
+
+        controller.update(state)
+
+        verify {
+            interactor.showOnboardingDialog()
+        }
+    }
+
+    @Test
+    fun `GIVENs updates WHEN sections recentTabs, recentBookmarks, historyMetadata or pocketArticles are NOT available THEN DO NOT show the dialog`() {
+        every { testContext.components.settings } returns mockk(relaxed = true)
+        val interactor = mockk<SessionControlInteractor>(relaxed = true)
+        val view = RecyclerView(testContext)
+        val controller = SessionControlView(
+            view,
+            mockk(relaxed = true),
+            interactor
+        )
+
+        val state = AppState()
+
+        controller.update(state)
+
+        verify(exactly = 0) {
+            interactor.showOnboardingDialog()
+        }
+    }
+
+    @Test
+    fun `GIVEN recent Bookmarks WHEN normalModeAdapterItems is called THEN add a customize home button`() {
+        val settings: Settings = mockk()
+        val topSites = emptyList<TopSite>()
+        val collections = emptyList<TabCollection>()
+        val expandedCollections = emptySet<Long>()
+        val recentBookmarks = listOf(RecentBookmark())
+        val recentTabs = emptyList<RecentTab.Tab>()
+        val historyMetadata = emptyList<RecentHistoryGroup>()
+        val pocketArticles = emptyList<PocketRecommendedStory>()
+
+        every { settings.showTopSitesFeature } returns true
+        every { settings.showRecentTabsFeature } returns true
+        every { settings.showRecentBookmarksFeature } returns true
+        every { settings.historyMetadataUIFeature } returns true
+        every { settings.showPocketRecommendationsFeature } returns true
+
+        val results = normalModeAdapterItems(
+            settings,
+            topSites,
+            collections,
+            expandedCollections,
+            recentBookmarks,
+            false,
+            null,
+            recentTabs,
+            historyMetadata,
+            pocketArticles
+        )
+
+        assertTrue(results[0] is AdapterItem.TopPlaceholderItem)
+        assertTrue(results[1] is AdapterItem.RecentBookmarksHeader)
+        assertTrue(results[2] is AdapterItem.RecentBookmarks)
+        assertTrue(results[3] is AdapterItem.CustomizeHomeButton)
+    }
+
+    @Test
+    fun `GIVEN a nimbusMessageCard WHEN normalModeAdapterItems is called THEN add a NimbusMessageCard`() {
+        val settings: Settings = mockk()
+        val topSites = emptyList<TopSite>()
+        val collections = emptyList<TabCollection>()
+        val expandedCollections = emptySet<Long>()
+        val recentBookmarks = listOf(RecentBookmark())
+        val recentTabs = emptyList<RecentTab.Tab>()
+        val historyMetadata = emptyList<RecentHistoryGroup>()
+        val pocketArticles = emptyList<PocketRecommendedStory>()
+        val nimbusMessageCard: Message = mockk()
+
+        every { settings.showTopSitesFeature } returns true
+        every { settings.showRecentTabsFeature } returns true
+        every { settings.showRecentBookmarksFeature } returns true
+        every { settings.historyMetadataUIFeature } returns true
+        every { settings.showPocketRecommendationsFeature } returns true
+
+        val results = normalModeAdapterItems(
+            settings,
+            topSites,
+            collections,
+            expandedCollections,
+            recentBookmarks,
+            false,
+            nimbusMessageCard,
+            recentTabs,
+            historyMetadata,
+            pocketArticles
+        )
+
+        assertTrue(results.contains(AdapterItem.NimbusMessageCard(nimbusMessageCard)))
+    }
+
+    @Test
+    fun `GIVEN recent tabs WHEN normalModeAdapterItems is called THEN add a customize home button`() {
+        val settings: Settings = mockk()
+        val topSites = emptyList<TopSite>()
+        val collections = emptyList<TabCollection>()
+        val expandedCollections = emptySet<Long>()
+        val recentBookmarks = listOf<RecentBookmark>()
+        val recentTabs = listOf<RecentTab.Tab>(mockk())
+        val historyMetadata = emptyList<RecentHistoryGroup>()
+        val pocketArticles = emptyList<PocketRecommendedStory>()
+
+        every { settings.showTopSitesFeature } returns true
+        every { settings.showRecentTabsFeature } returns true
+        every { settings.showRecentBookmarksFeature } returns true
+        every { settings.historyMetadataUIFeature } returns true
+        every { settings.showPocketRecommendationsFeature } returns true
+
+        val results = normalModeAdapterItems(
+            settings,
+            topSites,
+            collections,
+            expandedCollections,
+            recentBookmarks,
+            false,
+            null,
+            recentTabs,
+            historyMetadata,
+            pocketArticles
+        )
+
+        assertTrue(results[0] is AdapterItem.TopPlaceholderItem)
+        assertTrue(results[1] is AdapterItem.RecentTabsHeader)
+        assertTrue(results[2] is AdapterItem.RecentTabItem)
+        assertTrue(results[3] is AdapterItem.CustomizeHomeButton)
+    }
+
+    @Test
+    fun `GIVEN history metadata WHEN normalModeAdapterItems is called THEN add a customize home button`() {
+        val settings: Settings = mockk()
+        val topSites = emptyList<TopSite>()
+        val collections = emptyList<TabCollection>()
+        val expandedCollections = emptySet<Long>()
+        val recentBookmarks = listOf<RecentBookmark>()
+        val recentTabs = emptyList<RecentTab.Tab>()
+        val historyMetadata = listOf(RecentHistoryGroup("title", emptyList()))
+        val pocketArticles = emptyList<PocketRecommendedStory>()
+
+        every { settings.showTopSitesFeature } returns true
+        every { settings.showRecentTabsFeature } returns true
+        every { settings.showRecentBookmarksFeature } returns true
+        every { settings.historyMetadataUIFeature } returns true
+        every { settings.showPocketRecommendationsFeature } returns true
+
+        val results = normalModeAdapterItems(
+            settings,
+            topSites,
+            collections,
+            expandedCollections,
+            recentBookmarks,
+            false,
+            null,
+            recentTabs,
+            historyMetadata,
+            pocketArticles
+        )
+
+        assertTrue(results[0] is AdapterItem.TopPlaceholderItem)
+        assertTrue(results[1] is AdapterItem.RecentVisitsHeader)
+        assertTrue(results[2] is AdapterItem.RecentVisitsItems)
+        assertTrue(results[3] is AdapterItem.CustomizeHomeButton)
+    }
+
+    @Test
+    fun `GIVEN pocket articles WHEN normalModeAdapterItems is called THEN add a customize home button`() {
+        val settings: Settings = mockk()
+        val topSites = emptyList<TopSite>()
+        val collections = emptyList<TabCollection>()
+        val expandedCollections = emptySet<Long>()
+        val recentBookmarks = listOf<RecentBookmark>()
+        val recentTabs = emptyList<RecentTab.Tab>()
+        val historyMetadata = emptyList<RecentHistoryGroup>()
+        val pocketArticles = listOf(PocketRecommendedStory("", "", "", "", "", 1, 1))
+
+        every { settings.showTopSitesFeature } returns true
+        every { settings.showRecentTabsFeature } returns true
+        every { settings.showRecentBookmarksFeature } returns true
+        every { settings.historyMetadataUIFeature } returns true
+        every { settings.showPocketRecommendationsFeature } returns true
+
+        val results = normalModeAdapterItems(
+            settings,
+            topSites,
+            collections,
+            expandedCollections,
+            recentBookmarks,
+            false,
+            null,
+            recentTabs,
+            historyMetadata,
+            pocketArticles
+        )
+
+        assertTrue(results[0] is AdapterItem.TopPlaceholderItem)
+        assertTrue(results[1] is AdapterItem.PocketStoriesItem)
+        assertTrue(results[2] is AdapterItem.PocketCategoriesItem)
+        assertTrue(results[3] is AdapterItem.PocketRecommendationsFooterItem)
+        assertTrue(results[4] is AdapterItem.CustomizeHomeButton)
+    }
+
+    @Test
+    fun `GIVEN none recentBookmarks,recentTabs, historyMetadata or pocketArticles WHEN normalModeAdapterItems is called THEN the customize home button is not added`() {
+        val settings: Settings = mockk()
+        val topSites = emptyList<TopSite>()
+        val collections = emptyList<TabCollection>()
+        val expandedCollections = emptySet<Long>()
+        val recentBookmarks = listOf<RecentBookmark>()
+        val recentTabs = emptyList<RecentTab.Tab>()
+        val historyMetadata = emptyList<RecentHistoryGroup>()
+        val pocketArticles = emptyList<PocketRecommendedStory>()
+
+        every { settings.showTopSitesFeature } returns true
+        every { settings.showRecentTabsFeature } returns true
+        every { settings.showRecentBookmarksFeature } returns true
+        every { settings.historyMetadataUIFeature } returns true
+        every { settings.showPocketRecommendationsFeature } returns true
+
+        val results = normalModeAdapterItems(
+            settings,
+            topSites,
+            collections,
+            expandedCollections,
+            recentBookmarks,
+            false,
+            null,
+            recentTabs,
+            historyMetadata,
+            pocketArticles
+        )
+        assertEquals(results.size, 2)
+        assertTrue(results[0] is AdapterItem.TopPlaceholderItem)
+    }
+
+    @Test
+    fun `GIVEN all items THEN top placeholder item is always the first item`() {
+        val settings: Settings = mockk()
+        val collection = mockk<TabCollection> {
+            every { id } returns 123L
+        }
+        val topSites = listOf<TopSite>(mockk())
+        val collections = listOf(collection)
+        val expandedCollections = emptySet<Long>()
+        val recentBookmarks = listOf<RecentBookmark>(mockk())
+        val recentTabs = listOf<RecentTab.Tab>(mockk())
+        val historyMetadata = listOf<RecentHistoryGroup>(mockk())
+        val pocketArticles = listOf<PocketRecommendedStory>(mockk())
+
+        every { settings.showTopSitesFeature } returns true
+        every { settings.showRecentTabsFeature } returns true
+        every { settings.showRecentBookmarksFeature } returns true
+        every { settings.historyMetadataUIFeature } returns true
+        every { settings.showPocketRecommendationsFeature } returns true
+
+        val results = normalModeAdapterItems(
+            settings,
+            topSites,
+            collections,
+            expandedCollections,
+            recentBookmarks,
+            false,
+            null,
+            recentTabs,
+            historyMetadata,
+            pocketArticles
+        )
+
+        assertTrue(results[0] is AdapterItem.TopPlaceholderItem)
     }
 }

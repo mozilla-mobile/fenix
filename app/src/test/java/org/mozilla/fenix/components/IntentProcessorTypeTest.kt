@@ -13,6 +13,7 @@ import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.HomeActivity
@@ -22,6 +23,10 @@ import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 
 @RunWith(FenixRobolectricTestRunner::class)
 class IntentProcessorTypeTest {
+    @Before
+    fun setup() {
+        every { testContext.components.intentProcessors } returns mockk(relaxed = true)
+    }
 
     @Test
     fun `should open intent with flag launched from history`() {
@@ -62,6 +67,15 @@ class IntentProcessorTypeTest {
     }
 
     @Test
+    fun `get type for web notifications intent processor`() {
+        val processor = testContext.components.intentProcessors.webNotificationsIntentProcessor
+        val type = testContext.components.intentProcessors.getType(processor)
+
+        assertEquals(IntentProcessorType.NEW_TAB, type)
+        assertEquals(HomeActivity::class.java.name, type.activityClassName)
+    }
+
+    @Test
     fun `get type for custom tab intent processor`() {
         val processor = testContext.components.intentProcessors.customTabIntentProcessor
         val type = testContext.components.intentProcessors.getType(processor)
@@ -72,6 +86,7 @@ class IntentProcessorTypeTest {
 
     @Test
     fun `get type for private custom tab intent processor`() {
+        every { testContext.components.intentProcessors } returns mockk(relaxed = true)
         val processor = testContext.components.intentProcessors.privateCustomTabIntentProcessor
         val type = testContext.components.intentProcessors.getType(processor)
 
@@ -95,6 +110,15 @@ class IntentProcessorTypeTest {
 
         assertEquals(IntentProcessorType.EXTERNAL_APP, type)
         assertEquals(ExternalAppBrowserActivity::class.java.name, type.activityClassName)
+    }
+
+    @Test
+    fun `get type for Deeplink intent processor`() {
+        val processor = testContext.components.intentProcessors.externalDeepLinkIntentProcessor
+        val type = testContext.components.intentProcessors.getType(processor)
+
+        assertEquals(IntentProcessorType.EXTERNAL_DEEPLINK, type)
+        assertEquals(HomeActivity::class.java.name, type.activityClassName)
     }
 
     @Test

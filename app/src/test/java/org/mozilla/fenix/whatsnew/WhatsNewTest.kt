@@ -1,17 +1,20 @@
-package org.mozilla.fenix.whatsnew
-
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+package org.mozilla.fenix.whatsnew
+
 import androidx.preference.PreferenceManager
+import io.mockk.every
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.ext.clearAndCommit
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
+import org.mozilla.fenix.helpers.perf.TestStrictModeManager
 
 @RunWith(FenixRobolectricTestRunner::class)
 class WhatsNewTest {
@@ -27,6 +30,7 @@ class WhatsNewTest {
 
     @Test
     fun `should highlight after fresh install`() {
+        every { testContext.components.strictMode } returns TestStrictModeManager()
         assertEquals(true, WhatsNew.shouldHighlightWhatsNew(testContext))
     }
 
@@ -80,6 +84,7 @@ class WhatsNewTest {
 
     @Test
     fun `should not highlight after user viewed what's new`() {
+        every { testContext.components.strictMode } returns TestStrictModeManager()
         assertEquals(true, WhatsNew.shouldHighlightWhatsNew(testContext))
 
         WhatsNew.userViewedWhatsNew(testContext)

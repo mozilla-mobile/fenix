@@ -9,6 +9,7 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.RootMatchers.isDialog
 import androidx.test.espresso.matcher.ViewMatchers
+import androidx.test.espresso.matcher.ViewMatchers.hasSibling
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
@@ -19,6 +20,8 @@ import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
 import org.hamcrest.Matchers
 import org.hamcrest.Matchers.allOf
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.click
@@ -51,6 +54,8 @@ class HistoryRobot {
         assertVisitedTimeTitle()
     }
 
+    fun verifyHistoryItemExists(shouldExist: Boolean, item: String) = assertHistoryItemExists(shouldExist, item)
+
     fun verifyFirstTestPageTitle(title: String) = assertTestPageTitle(title)
 
     fun verifyTestPageUrl(expectedUrl: Uri) = assertPageUrl(expectedUrl)
@@ -61,19 +66,11 @@ class HistoryRobot {
 
     fun verifyHomeScreen() = HomeScreenRobot().verifyHomeScreen()
 
-    fun openOverflowMenu() {
-        mDevice.waitNotNull(
-            Until.findObject(
-                By.res("org.mozilla.fenix.debug:id/overflow_menu")
-            ),
-            waitingTime
-        )
-        threeDotMenu().click()
+    fun clickDeleteHistoryButton(item: String) {
+        deleteButton(item).click()
     }
 
-    fun clickDeleteHistoryButton() {
-        deleteAllHistoryButton().click()
-    }
+    fun clickDeleteAllHistoryButton() = deleteAllButton().click()
 
     fun confirmDeleteAllHistory() {
         onView(withText("Delete"))
@@ -91,15 +88,6 @@ class HistoryRobot {
             BrowserRobot().interact()
             return BrowserRobot.Transition()
         }
-
-        fun openThreeDotMenu(interact: ThreeDotMenuHistoryItemRobot.() -> Unit):
-            ThreeDotMenuHistoryItemRobot.Transition {
-
-            threeDotMenu().click()
-
-            ThreeDotMenuHistoryItemRobot().interact()
-            return ThreeDotMenuHistoryItemRobot.Transition()
-        }
     }
 }
 
@@ -112,11 +100,12 @@ private fun testPageTitle() = onView(allOf(withId(R.id.title), withText("Test_Pa
 
 private fun pageUrl() = onView(withId(R.id.url))
 
-private fun threeDotMenu() = onView(withId(R.id.overflow_menu))
+private fun deleteButton(title: String) =
+    onView(allOf(withId(R.id.overflow_menu), hasSibling(withText(title))))
+
+private fun deleteAllButton() = onView(withId(R.id.history_delete_all))
 
 private fun snackBarText() = onView(withId(R.id.snackbar_text))
-
-private fun deleteAllHistoryButton() = onView(withId(R.id.history_delete_all))
 
 private fun assertHistoryMenuView() {
     onView(
@@ -136,6 +125,14 @@ private fun assertEmptyHistoryView() =
 
 private fun assertHistoryListExists() =
     mDevice.findObject(UiSelector().resourceId("R.id.history_list")).waitForExists(waitingTime)
+
+private fun assertHistoryItemExists(shouldExist: Boolean, item: String) {
+    if (shouldExist) {
+        assertTrue(mDevice.findObject(UiSelector().textContains(item)).waitForExists(waitingTime))
+    } else {
+        assertFalse(mDevice.findObject(UiSelector().textContains(item)).waitForExists(waitingTime))
+    }
+}
 
 private fun assertVisitedTimeTitle() =
     onView(withId(R.id.header_title)).check(matches(withText("Today")))

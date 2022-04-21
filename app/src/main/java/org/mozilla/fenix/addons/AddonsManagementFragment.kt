@@ -30,11 +30,9 @@ import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
-import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.databinding.FragmentAddOnsManagementBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getRootView
-import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
@@ -50,8 +48,7 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
 
     private val args by navArgs<AddonsManagementFragmentArgs>()
 
-    private var _binding: FragmentAddOnsManagementBinding? = null
-    private val binding get() = _binding!!
+    private var binding: FragmentAddOnsManagementBinding? = null
 
     /**
      * Whether or not an add-on installation is in progress.
@@ -70,7 +67,7 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        _binding = FragmentAddOnsManagementBinding.bind(view)
+        binding = FragmentAddOnsManagementBinding.bind(view)
         bindRecyclerView()
     }
 
@@ -90,7 +87,7 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
         super.onDestroyView()
         // letting go of the resources to avoid memory leak.
         adapter = null
-        _binding = null
+        binding = null
     }
 
     private fun bindRecyclerView() {
@@ -99,8 +96,8 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
             showPermissionDialog = ::showPermissionDialog
         )
 
-        val recyclerView = binding.addOnsList
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        val recyclerView = binding?.addOnsList
+        recyclerView?.layoutManager = LinearLayoutManager(requireContext())
         val shouldRefresh = adapter != null
 
         // If the fragment was launched to install an "external" add-on from AMO, we deactivate
@@ -129,10 +126,10 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
                             )
                         }
                         isInstallationInProgress = false
-                        binding.addOnsProgressBar.isVisible = false
-                        binding.addOnsEmptyMessage.isVisible = false
+                        binding?.addOnsProgressBar?.isVisible = false
+                        binding?.addOnsEmptyMessage?.isVisible = false
 
-                        recyclerView.adapter = adapter
+                        recyclerView?.adapter = adapter
                         if (shouldRefresh) {
                             adapter?.updateAddons(addons)
                         }
@@ -147,13 +144,12 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
             } catch (e: AddonManagerException) {
                 lifecycleScope.launch(Dispatchers.Main) {
                     runIfFragmentIsAttached {
-                        showSnackBar(
-                            binding.root,
-                            getString(R.string.mozac_feature_addons_failed_to_query_add_ons)
-                        )
+                        binding?.let {
+                            showSnackBar(it.root, getString(R.string.mozac_feature_addons_failed_to_query_add_ons))
+                        }
                         isInstallationInProgress = false
-                        binding.addOnsProgressBar.isVisible = false
-                        binding.addOnsEmptyMessage.isVisible = true
+                        binding?.addOnsProgressBar?.isVisible = false
+                        binding?.addOnsEmptyMessage?.isVisible = true
                     }
                 }
             }
@@ -186,9 +182,9 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
 
     private fun createAddonStyle(context: Context): AddonsManagerAdapter.Style {
         return AddonsManagerAdapter.Style(
-            sectionsTextColor = ThemeManager.resolveAttribute(R.attr.primaryText, context),
-            addonNameTextColor = ThemeManager.resolveAttribute(R.attr.primaryText, context),
-            addonSummaryTextColor = ThemeManager.resolveAttribute(R.attr.secondaryText, context),
+            sectionsTextColor = ThemeManager.resolveAttribute(R.attr.textPrimary, context),
+            addonNameTextColor = ThemeManager.resolveAttribute(R.attr.textPrimary, context),
+            addonSummaryTextColor = ThemeManager.resolveAttribute(R.attr.textSecondary, context),
             sectionsTypeFace = ResourcesCompat.getFont(context, R.font.metropolis_semibold),
             addonAllowPrivateBrowsingLabelDrawableRes = R.drawable.ic_add_on_private_browsing_label
         )
@@ -220,7 +216,7 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
                         requireContext()
                     ),
                     positiveButtonTextColor = ThemeManager.resolveAttribute(
-                        R.attr.contrastText,
+                        R.attr.textOnColorPrimary,
                         requireContext()
                     ),
                     positiveButtonRadius = (resources.getDimensionPixelSize(R.dimen.tab_corner_radius)).toFloat()
@@ -233,7 +229,6 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
 
     private fun showInstallationDialog(addon: Addon) {
         if (!isInstallationInProgress && !hasExistingAddonInstallationDialogFragment()) {
-            requireComponents.analytics.metrics.track(Event.AddonInstalled(addon.id))
             val context = requireContext()
             val addonCollectionProvider = context.components.addonCollectionProvider
 
@@ -255,7 +250,7 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
                         requireContext()
                     ),
                     confirmButtonTextColor = ThemeManager.resolveAttribute(
-                        R.attr.contrastText,
+                        R.attr.textOnColorPrimary,
                         requireContext()
                     ),
                     confirmButtonRadius = (resources.getDimensionPixelSize(R.dimen.tab_corner_radius)).toFloat()
@@ -280,10 +275,10 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
     }
 
     private val onPositiveButtonClicked: ((Addon) -> Unit) = { addon ->
-        binding.addonProgressOverlay.overlayCardView.visibility = View.VISIBLE
+        binding?.addonProgressOverlay?.overlayCardView?.visibility = View.VISIBLE
 
         if (requireContext().settings().accessibilityServicesEnabled) {
-            announceForAccessibility(binding.addonProgressOverlay.addOnsOverlayText.text)
+            binding?.let { announceForAccessibility(it.addonProgressOverlay.addOnsOverlayText.text) }
         }
 
         isInstallationInProgress = true
@@ -294,7 +289,7 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
                 runIfFragmentIsAttached {
                     isInstallationInProgress = false
                     adapter?.updateAddon(it)
-                    binding.addonProgressOverlay.overlayCardView.visibility = View.GONE
+                    binding?.addonProgressOverlay?.overlayCardView?.visibility = View.GONE
                     showInstallationDialog(it)
                 }
             },
@@ -313,17 +308,18 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
                             )
                         }
                     }
-                    binding.addonProgressOverlay.overlayCardView.visibility = View.GONE
+                    binding?.addonProgressOverlay?.overlayCardView?.visibility = View.GONE
                     isInstallationInProgress = false
                 }
             }
         )
 
-        binding.addonProgressOverlay.cancelButton.setOnClickListener {
+        binding?.addonProgressOverlay?.cancelButton?.setOnClickListener {
             lifecycleScope.launch(Dispatchers.Main) {
+                val safeBinding = binding
                 // Hide the installation progress overlay once cancellation is successful.
                 if (installOperation.cancel().await()) {
-                    binding.addonProgressOverlay.overlayCardView.visibility = View.GONE
+                    safeBinding?.addonProgressOverlay?.overlayCardView?.visibility = View.GONE
                 }
             }
         }
@@ -334,11 +330,11 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
             AccessibilityEvent.TYPE_ANNOUNCEMENT
         )
 
-        binding.addonProgressOverlay.overlayCardView.onInitializeAccessibilityEvent(event)
+        binding?.addonProgressOverlay?.overlayCardView?.onInitializeAccessibilityEvent(event)
         event.text.add(announcementText)
         event.contentDescription = null
-        binding.addonProgressOverlay.overlayCardView.parent.requestSendAccessibilityEvent(
-            binding.addonProgressOverlay.overlayCardView,
+        binding?.addonProgressOverlay?.overlayCardView?.parent?.requestSendAccessibilityEvent(
+            binding?.addonProgressOverlay?.overlayCardView,
             event
         )
     }

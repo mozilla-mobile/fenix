@@ -45,7 +45,7 @@ class SwipeToDeleteCallback(
     ) {
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
         val icon = AppCompatResources.getDrawable(recyclerView.context, R.drawable.ic_delete)
-        icon?.setTint(recyclerView.context.getColorFromAttr(R.attr.destructive))
+        icon?.setTint(recyclerView.context.getColorFromAttr(R.attr.textWarning))
 
         val backgroundDrawable = when {
             viewHolder is TabInCollectionViewHolder && viewHolder.isLastItem -> {
@@ -115,7 +115,7 @@ class SwipeToDeleteCallback(
     companion object {
         const val BACKGROUND_CORNER_OFFSET = 40
         const val MARGIN = 32
-        const val DENSITY_CONVERSION = 160f
+        private const val DENSITY_CONVERSION = 160f
 
         private fun draw(
             background: Drawable,

@@ -1,6 +1,6 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.exceptions.trackingprotection
 
@@ -61,15 +61,14 @@ class TrackingProtectionExceptionsInteractorTest {
                 onResult(results)
             }
 
-            override fun removeAll(activeSessions: List<EngineSession>?) {
+            override fun removeAll(activeSessions: List<EngineSession>?, onRemove: () -> Unit) {
                 removedAll = true
             }
 
-            override fun add(session: EngineSession) = Unit
+            override fun add(session: EngineSession, persistInPrivateMode: Boolean) = Unit
             override fun contains(session: EngineSession, onResult: (Boolean) -> Unit) = Unit
             override fun remove(session: EngineSession) = Unit
             override fun remove(exception: TrackingProtectionException) = Unit
-            override fun restore() = Unit
         }
     private val exceptionsItem: (String) -> TrackingProtectionException = {
         object : TrackingProtectionException {

@@ -4,22 +4,14 @@
 
 package org.mozilla.fenix.ext
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.net.Uri
+import android.net.InetAddresses
+import android.os.Build
 import android.text.Editable
 import android.util.Patterns
 import android.webkit.URLUtil
 import androidx.core.net.toUri
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import mozilla.components.concept.fetch.Client
-import mozilla.components.concept.fetch.Request
 import mozilla.components.lib.publicsuffixlist.PublicSuffixList
-import mozilla.components.lib.publicsuffixlist.ext.urlToTrimmedHost
 import mozilla.components.support.ktx.android.net.hostWithoutCommonPrefixes
-import org.mozilla.fenix.perf.runBlockingIncrement
-import java.io.IOException
 import java.net.IDN
 import java.util.Locale
 
@@ -53,8 +45,7 @@ fun String.toShortUrl(publicSuffixList: PublicSuffixList): String {
         return inputString
     }
 
-    if (uri.host?.isIpv4() == true ||
-        uri.isIpv6() ||
+    if (uri.host?.isIpv4OrIpv6() == true ||
         // If inputString is just a hostname and not a FQDN, use the entire hostname.
         uri.host?.contains(".") == false
     ) {
@@ -81,22 +72,27 @@ fun String.toShortUrl(publicSuffixList: PublicSuffixList): String {
 }
 
 // impl via FFTV https://searchfox.org/mozilla-mobile/source/firefox-echo-show/app/src/main/java/org/mozilla/focus/utils/FormattedDomain.java#129
-fun String.isIpv4(): Boolean = Patterns.IP_ADDRESS.matcher(this).matches()
+@Suppress("DEPRECATION")
+internal fun String.isIpv4(): Boolean = Patterns.IP_ADDRESS.matcher(this).matches()
 
 // impl via FFiOS: https://github.com/mozilla-mobile/firefox-ios/blob/deb9736c905cdf06822ecc4a20152df7b342925d/Shared/Extensions/NSURLExtensions.swift#L292
 // True IPv6 validation is difficult. This is slightly better than nothing
-private fun Uri.isIpv6(): Boolean {
-    val host = this.host ?: return false
-    return host.isNotEmpty() && host.contains(":")
+internal fun String.isIpv6(): Boolean {
+    return this.isNotEmpty() && this.contains(":")
 }
 
 /**
- * Trim a host's prefix and suffix
+ * Returns true if the string represents a valid Ipv4 or Ipv6 IP address.
+ * Note: does not validate a dual format Ipv6 ( "y:y:y:y:y:y:x.x.x.x" format).
+ *
  */
-fun String.urlToTrimmedHost(publicSuffixList: PublicSuffixList): String =
-    runBlockingIncrement {
-        urlToTrimmedHost(publicSuffixList).await()
+fun String.isIpv4OrIpv6(): Boolean {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        InetAddresses.isNumericAddress(this)
+    } else {
+        this.isIpv4() || this.isIpv6()
     }
+}
 
 /**
  * Trims a URL string of its scheme and common prefixes.
@@ -120,13 +116,8 @@ fun String.simplifiedUrl(): String {
  */
 fun String.toEditable(): Editable = Editable.Factory.getInstance().newEditable(this)
 
-suspend fun bitmapForUrl(url: String, client: Client): Bitmap? = withContext(Dispatchers.IO) {
-    // Code below will cache it in Gecko's cache, which ensures that as long as we've fetched it once,
-    // we will be able to display this avatar as long as the cache isn't purged (e.g. via 'clear user data').
-    val body = try {
-        client.fetch(Request(url, useCaches = true)).body
-    } catch (e: IOException) {
-        return@withContext null
-    }
-    body.useStream { BitmapFactory.decodeStream(it) }
-}
+/**
+ * Returns a Ipv6 address with consecutive sections of zeroes replaced with a double colon.
+ */
+fun String?.replaceConsecutiveZeros(): String? =
+    this?.replaceFirst(":0", ":")?.replace(":0", "")

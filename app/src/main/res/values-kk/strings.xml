@@ -20,11 +20,6 @@
     <!-- No Private Tabs Message Description -->
     <string name="no_private_tabs_description">Сіздің жекелік беттеріңіз осында көрсетілетін болады.</string>
 
-    <!-- Message announced to the user when tab tray is selected with 1 tab -->
-    <string name="open_tab_tray_single">1 ашық бет. Беттерді ауыстыру үшін шертіңіз.</string>
-    <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
-    <string name="open_tab_tray_plural">%1$s ашық бет. Беттерді ауыстыру үшін шертіңіз.</string>
-
     <!-- Tab tray multi select title in app bar. The first parameter is the number of tabs selected -->
     <string name="tab_tray_multi_select_title">%1$d таңдалды</string>
     <!-- Label of button in create collection dialog for creating a new collection  -->
@@ -37,40 +32,30 @@
     <string name="tab_tray_close_multiselect_content_description">Көп таңдау режимінен шығу</string>
     <!-- Content description for save to collection button while in multiselect mode in tab tray -->
     <string name="tab_tray_collection_button_multiselect_content_description">Таңдалған беттерді жинаққа сақтау</string>
-    <!-- Content description for checkmark while tab is selected while in multiselect mode in tab tray. The first parameter is the title of the tab selected -->
-    <string name="tab_tray_item_selected_multiselect_content_description">Таңдалды %1$s</string>
-    <!-- Content description when tab is unselected while in multiselect mode in tab tray. The first parameter is the title of the tab unselected -->
-    <string name="tab_tray_item_unselected_multiselect_content_description">Таңдау алынды %1$s</string>
-    <!-- Content description announcement when exiting multiselect mode in tab tray -->
-    <string name="tab_tray_exit_multiselect_content_description">Көп таңдау режимінен шығу</string>
-    <!-- Content description announcement when entering multiselect mode in tab tray -->
-    <string name="tab_tray_enter_multiselect_content_description">Көп таңдау режиміне кірдік, жинаққа сақтау үшін беттерді таңдаңыз</string>
     <!-- Content description on checkmark while tab is selected in multiselect mode in tab tray -->
     <string name="tab_tray_multiselect_selected_content_description">Таңдалған</string>
 
     <!-- Home - Recently saved bookmarks -->
     <!-- Title for the home screen section with recently saved bookmarks. -->
-    <string name="recently_saved_bookmarks">Жуырда сақталған</string>
-
+    <string name="recent_bookmarks_title">Жуырдағы бетбелгілер</string>
     <!-- Content description for the recently saved bookmarks section on the home screen. -->
-    <string name="recently_saved_bookmarks_content_description">Жуырда сақталған бетбелгілер</string>
+    <string moz:removedIn="100" name="recently_saved_bookmarks_content_description" tools:ignore="UnusedResources">Жуырда сақталған бетбелгілер</string>
     <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
-    <string name="recently_saved_show_all">Барлығын көрсету</string>
+    <string moz:removedIn="101" name="recently_saved_show_all" tools:ignore="UnusedResources">Барлығын көрсету</string>
     <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
-    <string name="recently_saved_show_all_content_description">Барлық сақталған бетбелгілерді көрсету батырмасы</string>
+    <string name="recently_saved_show_all_content_description_2">Барлық сақталған бетбелгілерді көрсету</string>
+
+    <!-- Text for the menu button to remove a recently saved bookmark from the user's home screen -->
+    <string name="recently_saved_menu_item_remove">Өшіру</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
     <string name="about_content">%1$s жасаған Mozilla.</string>
 
     <!-- Private Browsing -->
-    <!-- Title for private session option -->
-    <string name="private_browsing_title">Сіз жекелік шолу режиміндесіз</string>
     <!-- Explanation for private browsing displayed to users on home view when they first enable private mode
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
     <string name="private_browsing_placeholder_description_2">%1$s қолданба немесе барлық жекелік шолу беттері жабылғанда іздеулер және шолу тарихын өшіреді. Бұл сізді веб-сайттар немесе интернет қызметін ұсынушысына анонимды етпесе де, бұл компьютерді қолданатын басқа адамдардан сіздің интернеттегі белсенділікті жасырын сақтауға жол береді.</string>
     <string name="private_browsing_common_myths">Жекелік шолу туралы кең тараған аңыздар</string>
-    <!-- Delete session button to erase your history in a private session -->
-    <string name="private_browsing_delete_session">Сессияны өшіру</string>
 
     <!-- Private mode shortcut "contextual feature recommendation" (CFR) -->
     <!-- Text for the main message -->
@@ -83,7 +68,9 @@
 
     <!-- Open in App "contextual feature recommendation" (CFR) -->
     <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
-    <string name="open_in_app_cfr_info_message">Firefox-ты сілтемелерді қолданбаларда автоматты түрде ашатын етіп баптауға болады.</string>
+    <string moz:RemovedIn="99" name="open_in_app_cfr_info_message" tools:ignore="UnusedResources">Firefox-ты сілтемелерді қолданбаларда автоматты түрде ашатын етіп баптауға болады.</string>
+    <!-- Text for the info message. The first parameter is the name of the application.-->
+    <string name="open_in_app_cfr_info_message_2">%1$s қолданбасын сілтемелерді қолданбаларда автоматты түрде ашатын етіп баптауға болады.</string>
     <!-- Text for the positive action button -->
     <string name="open_in_app_cfr_positive_button_text">Баптауларға өту</string>
     <!-- Text for the negative action button -->
@@ -103,13 +90,30 @@
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">Тайдыру</string>
 
+    <!-- Text for the banner message to tell users about our inactive tabs feature. -->
+    <string name="tab_tray_inactive_onboarding_message">Сіз екі апта бойы қарамаған беттер осында жылжытылады.</string>
+
+    <!-- Text for the action link to go to Settings for inactive tabs. -->
+    <string name="tab_tray_inactive_onboarding_button_text">Баптауларда сөндіру</string>
+    <!-- Text for title for the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_auto_close_title">Бір айдан кейін автожабу керек пе?</string>
+    <!-- Text for the body for the auto-close dialog of the inactive tabs. -->
+    <string moz:RemovedIn="99" name="tab_tray_inactive_auto_close_body" tools:ignore="UnusedResources">Firefox соңғы айда қаралмаған беттерді жаба алады.</string>
+    <!-- Text for the body for the auto-close dialog of the inactive tabs.
+        The first parameter is the name of the application.-->
+    <string name="tab_tray_inactive_auto_close_body_2">%1$s сіз соңғы айда қарамаған беттерді жаба алады.</string>
+    <!-- Content description for close button in the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_auto_close_button_content_description">Жабу</string>
+
+    <!-- Text for turn on auto close tabs button in the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_turn_on_auto_close_button_2">Автожабуды іске қосу</string>
+
+
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
     <string name="home_screen_shortcut_open_new_tab_2">Жаңа бет</string>
     <!-- Shortcut action to open new private tab -->
     <string name="home_screen_shortcut_open_new_private_tab_2">Жаңа жекелік беті</string>
-    <!-- Heading for the Top Sites block -->
-    <string name="home_screen_top_sites_heading">Үздік сайттар</string>
 
     <!-- Recent Tabs -->
     <!-- Header text for jumping back into the recent tab in the home screen -->
@@ -117,14 +121,36 @@
     <!-- Button text for showing all the tabs in the tabs tray -->
     <string name="recent_tabs_show_all">Барлығын көрсету</string>
 
+    <!-- Content description for the button which navigates the user to show all recent tabs in the tabs tray. -->
+    <string name="recent_tabs_show_all_content_description_2">Барлық соңғы беттерді көрсету батырмасы</string>
+    <!-- Title for showing a group item in the 'Jump back in' section of the new tab
+        The first parameter is the search term that the user used. (for example: your search for "cat")-->
+    <string name="recent_tabs_search_term">\&quot;%1$s\&quot; бойынша іздеуіңіз</string>
+
+    <!-- Text for the number of tabs in a group in the 'Jump back in' section of the new tab
+        %d is a placeholder for the number of sites in the group. This number will always be more than one. -->
+    <string name="recent_tabs_search_term_count_2">%d сайт</string>
+
+    <!-- Text for button in synced tab card that opens synced tabs tray -->
+    <string name="recent_tabs_see_all_synced_tabs_button_text">Барлық синхрондалған беттерді қарау</string>
+    <!-- Accessibility description for device icon used for recent synced tab -->
+    <string name="recent_tabs_synced_device_icon_content_description">Синхрондалған құрылғы</string>
+    <!-- Text for the menu button to remove a grouped highlight from the user's browsing history
+         in the Recently visited section -->
+    <string name="recent_tab_menu_item_remove">Өшіру</string>
+
     <!-- History Metadata -->
     <!-- Header text for a section on the home screen that displays grouped highlights from the
          user's browsing history, such as topics they have researched or explored on the web -->
-    <string name="history_metadata_header">Бұрыңғы зерттеулер</string>
+    <string name="history_metadata_header_2">Жуырда қаралған</string>
+    <!-- Text for the menu button to remove a grouped highlight from the user's browsing history
+         in the Recently visited section -->
+    <string name="recently_visited_menu_item_remove">Өшіру</string>
+
+    <!-- Content description for the button which navigates the user to show all of their history. -->
+    <string name="past_explorations_show_all_content_description_2">Барлық тарихты көрсету</string>
 
     <!-- Browser Fragment -->
-    <!-- Content description (not visible, for screen readers etc.): Navigate to open tabs -->
-    <string name="browser_tabs_button">Ашық беттер</string>
     <!-- Content description (not visible, for screen readers etc.): Navigate backward (browsing history) -->
     <string name="browser_menu_back">Артқа</string>
     <!-- Content description (not visible, for screen readers etc.): Navigate forward (browsing history) -->
@@ -133,14 +159,8 @@
     <string name="browser_menu_refresh">Жаңарту</string>
     <!-- Content description (not visible, for screen readers etc.): Stop loading current website -->
     <string name="browser_menu_stop">Тоқтату</string>
-    <!-- Content description (not visible, for screen readers etc.): Bookmark the current page -->
-    <string name="browser_menu_bookmark">Бетбелгілерге қосу</string>
-    <!-- Content description (not visible, for screen readers etc.): Un-bookmark the current page -->
-    <string name="browser_menu_edit_bookmark">Бетбелгіні түзету</string>
     <!-- Browser menu button that opens the addon manager -->
     <string name="browser_menu_add_ons">Қосымшалар</string>
-    <!-- Browser menu button that opens the addon extensions manager -->
-    <string name="browser_menu_extensions">Кеңейтулер</string>
     <!-- Text displayed when there are no add-ons to be shown -->
     <string name="no_add_ons">Осында қосымшалар жоқ</string>
     <!-- Browser menu button that sends a user to help articles -->
@@ -157,20 +177,14 @@
     <string name="browser_menu_add_to_homescreen">Үй экранына қосу</string>
     <!-- Browser menu toggle that installs a Progressive Web App shortcut to the site on the device home screen. -->
     <string name="browser_menu_install_on_homescreen">Орнату</string>
-    <!-- Menu option on the toolbar that takes you to synced tabs page-->
-    <string name="synced_tabs">Синхрондалған беттер</string>
     <!-- Content description (not visible, for screen readers etc.) for the Resync tabs button -->
     <string name="resync_button_content_description">Қайта синхрондау</string>
     <!-- Browser menu button that opens the find in page menu -->
     <string name="browser_menu_find_in_page">Беттен табу</string>
-    <!-- Browser menu button that creates a private tab -->
-    <string name="browser_menu_private_tab">Жекелік бет</string>
     <!-- Browser menu button that saves the current tab to a collection -->
     <string name="browser_menu_save_to_collection_2">Жинаққа сақтау</string>
     <!-- Browser menu button that open a share menu to share the current site -->
     <string name="browser_menu_share">Бөлісу</string>
-    <!-- Share menu title, displayed when a user is sharing their current site -->
-    <string name="menu_share_with">Көмегімен бөлісу…</string>
     <!-- Browser menu button shown in custom tabs that opens the current tab in Fenix
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
     <string name="browser_menu_open_in_fenix">%1$s көмегімен ашу</string>
@@ -186,8 +200,6 @@
     <string name="browser_menu_read_close">Оқу режимін жабу</string>
     <!-- Browser menu button to open the current page in an external app -->
     <string name="browser_menu_open_app_link">Қолданбада ашу</string>
-    <!-- Browser menu button to configure reader mode appearance e.g. the used font type and size -->
-    <string name="browser_menu_read_appearance">Сыртқы түрі</string>
     <!-- Browser menu button to show reader view appearance controls e.g. the used font type and size -->
     <string name="browser_menu_customize_reader_view">Оқу режимін баптау</string>
     <!-- Browser menu label for adding a bookmark -->
@@ -195,19 +207,15 @@
     <!-- Browser menu label for editing a bookmark -->
     <string name="browser_menu_edit">Түзету</string>
 
+    <!-- Button shown on the home page that opens the Customize home settings -->
+    <string name="browser_menu_customize_home_1">Үй бетін баптау</string>
     <!-- Browser Toolbar -->
     <!-- Content description for the Home screen button on the browser toolbar -->
     <string name="browser_toolbar_home">Бастапқы экран</string>
 
-    <!-- Error message to show when the user tries to access a scheme not
-        handled by the app (Ex: blob, tel etc) -->
-    <string name="unknown_scheme_error_message">Байланысу мүмкін емес. URL схемасы белгісіз.</string>
-
     <!-- Locale Settings Fragment -->
     <!-- Content description for tick mark on selected language -->
     <string name="a11y_selected_locale_content_description">Таңдалған тіл</string>
-    <!-- Content description for search icon -->
-    <string name="a11y_search_icon_content_description">Іздеу</string>
     <!-- Text for default locale item -->
     <string name="default_locale_text">Құрылғы тіліне сүйену</string>
 
@@ -221,8 +229,6 @@
     <string name="search_engine_button">Іздеу жүйесі</string>
     <!-- Button in the search view when shortcuts are displayed that takes a user to the search engine settings -->
     <string name="search_shortcuts_engine_settings">Іздеу жүйесінің параметрлері</string>
-    <!-- Header displayed when selecting a shortcut search engine -->
-    <string name="search_engines_search_with">Осы рет, келесімен іздеу:</string>
     <!-- Button in the search view that lets a user navigate to the site in their clipboard -->
     <string name="awesomebar_clipboard_title">Алмасу буферінен сілтемені кірістіру</string>
     <!-- Button in the search suggestions onboarding that allows search suggestions in private sessions -->
@@ -234,16 +240,44 @@
     <!-- Search suggestion onboarding hint description text, first parameter is the name of the app defined in app_name (for example: Fenix)-->
     <string name="search_suggestions_onboarding_text">%s сіз адрестік жолақта терген барлық нәрсемен сіздің іздеу жүйеңізбен бөлісетін болады.</string>
     <!-- Search suggestion onboarding hint Learn more link text -->
-    <string name="search_suggestions_onboarding_learn_more_link">Көбірек білу</string>
+    <string moz:RemovedIn="100" name="search_suggestions_onboarding_learn_more_link" tools:ignore="UnusedResources">Көбірек білу</string>
 
     <!-- Search engine suggestion title text. The first parameter is the name of teh suggested engine-->
     <string name="search_engine_suggestions_title">%s ішінен іздеу</string>
     <!-- Search engine suggestion description text -->
     <string name="search_engine_suggestions_description">Адрестік жолақтан тікелей іздеу</string>
 
+    <!-- Home onboarding -->
+    <!-- Onboarding home screen dialog title text. Firefox is intentionally hardcoded. -->
+    <string moz:removedIn="99" name="onboarding_home_screen_title_2" tools:ignore="UnusedResources">Firefox ішінде не жаңалық</string>
+
+    <!-- Onboarding home screen dialog title text. The first parameter is the name of the application.-->
+    <string name="onboarding_home_screen_title_3">%1$s ішінде не жаңалық</string>
+    <!-- Onboarding home screen dialog description text. -->
+    <string name="onboarding_home_screen_description_2">Енді тоқтаған жерден жалғастыру оңайырақ.</string>
+    <!-- Onboarding home screen dialog title text for the home section. Firefox is intentionally hardcoded. -->
+    <string moz:RemovedIn="99" name="onboarding_home_screen_section_home_title_2" tools:ignore="UnusedResources">Жеке Firefox басты беті</string>
+    <!-- Onboarding home screen dialog title text for the home section. The first parameter is the name of the application.-->
+    <string name="onboarding_home_screen_section_home_title_3">Жеке %1$s басты беті</string>
+    <!-- Onboarding home screen dialog description text for the home section. -->
+    <string name="onboarding_home_screen_section_home_description_2">Ашық беттер, бетбелгілер және шолу тарихына өтіңіз.</string>
+    <!-- Onboarding home screen dialog description text for the tab tray section. -->
+    <string name="onboarding_home_screen_section_cleaner_tab_tray_title_2">Таза, реттелген беттер</string>
+    <!-- Onboarding home screen dialog description text for the tab tray section. -->
+    <string name="onboarding_home_screen_section_cleaner_tab_tray_description_2">Беттер енді жақсартылған орналастыру және автожабуды қолдану салдарынан көбірек реттелген болды.</string>
+    <!-- Onboarding home screen dialog description text for the history section. -->
+    <string name="onboarding_home_screen_section_useful_history_title_2">Жуырдағы іздеулер</string>
+    <!-- Onboarding home screen dialog description text for the history section. -->
+    <string name="onboarding_home_screen_section_useful_history_description_2">Үй беті және беттерден соңғы іздеулеріңізді қайта қараңыз.</string>
+
+    <!-- Onboarding home screen popup dialog, shown on top of the Jump back in section. Firefox is intentionally hardcoded. -->
+    <string name="onboarding_home_screen_jump_back_contextual_hint" tools:ignore="UnusedResources">Сіздің жекелендірілген Firefox үй беті енді тоқтаған жерден жалғастыруды жеңілдетеді. Соңғы беттерді, бетбелгілерді және іздеу нәтижелерін табыңыз.</string>
+
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
-    <string name="search_widget_content_description">Жаңа Firefox бетін ашу</string>
+    <string moz:RemovedIn="99" name="search_widget_content_description" tools:ignore="UnusedResources">Жаңа Firefox бетін ашу</string>
+    <!-- Content description for searching with a widget. The first parameter is the name of the application.-->
+    <string name="search_widget_content_description_2">Жаңа %1$s бетін ашу</string>
     <!-- Text preview for smaller sized widgets -->
     <string name="search_widget_text_short">Іздеу</string>
     <!-- Text preview for larger sized widgets -->
@@ -254,8 +288,6 @@
     <!-- Preferences -->
     <!-- Title for the settings page-->
     <string name="settings">Баптаулар</string>
-    <!-- Preference category for basic settings -->
-    <string name="preferences_category_basics">Негізгілер</string>
     <!-- Preference category for general settings -->
     <string name="preferences_category_general">Жалпы</string>
     <!-- Preference category for all links about Fenix -->
@@ -267,27 +299,15 @@
 
     <!-- Preference for settings related to Search address bar -->
     <string name="preferences_search_address_bar">Адрес жолағы</string>
-    <!-- Preference linking to help about Fenix -->
-    <string name="preferences_help">Көмек</string>
     <!-- Preference link to rating Fenix on the Play Store -->
     <string name="preferences_rate">Google Play ішінде бағалау</string>
-    <!-- Preference for giving feedback about Fenix -->
-    <string name="preferences_feedback">Кері байланыс хабарламасын беру</string>
     <!-- Preference linking to about page for Fenix
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
     <string name="preferences_about">%1$s туралы</string>
-    <!-- Preference linking to the your rights SUMO page -->
-    <string name="preferences_your_rights">Сіздің құқықтарыңыз</string>
-    <!-- Preference for settings related to saved passwords -->
-    <string name="preferences_passwords">Парольдер</string>
-    <!-- Preference for settings related to saved credit cards and addresses -->
-    <string name="preferences_credit_cards_addresses">Несиелік карталар және адрестер</string>
     <!-- Preference for settings related to changing the default browser -->
     <string name="preferences_set_as_default_browser">Негізгі браузер қылу</string>
     <!-- Preference category for advanced settings -->
     <string name="preferences_category_advanced">Кеңейтілген</string>
-    <!-- Preference category for privacy settings -->
-    <string name="preferences_category_privacy">Жекелік</string>
     <!-- Preference category for privacy and security settings -->
     <string name="preferences_category_privacy_security">Жекелік және қауіпсіздік</string>
     <!-- Preference for advanced site permissions -->
@@ -302,6 +322,26 @@
     <string name="preferences_screenshots_in_private_mode_disclaimer">Рұқсат етілсе, жеке беттер бірнеше қолданба ашық болған кезде де көрінеді</string>
     <!-- Preference for adding private browsing shortcut -->
     <string name="preferences_add_private_browsing_shortcut">Жеке шолу жарлығын қосу</string>
+    <!-- Preference for enabling "HTTPS-Only" mode -->
+    <string name="preferences_https_only_title">Тек-HTTPS режимі</string>
+    <!-- Description of the preference to enable "HTTPS-Only" mode. -->
+    <string name="preferences_https_only_summary">Қауіпсіздікті арттыру үшін сайттарға HTTPS шифрлеу хаттамасын пайдаланып автоматты түрде қосылу әрекетін жасайды.</string>
+    <!-- Summary of tracking protection preference if tracking protection is set to on -->
+    <string name="preferences_https_only_on">Іске қосулы</string>
+    <!-- Summary of tracking protection preference if tracking protection is set to off -->
+    <string name="preferences_https_only_off">Сөндірулі</string>
+    <!-- Text displayed that links to website containing documentation about "HTTPS-Only" mode -->
+    <string name="preferences_http_only_learn_more">Көбірек білу</string>
+    <!-- Option for the https only setting -->
+    <string name="preferences_https_only_in_all_tabs">Барлық беттерде іске қосу</string>
+    <!-- Option for the https only setting -->
+    <string name="preferences_https_only_in_private_tabs">Тек жекелік беттерде іске қосу</string>
+    <!-- Title shown in the error page for when trying to access a http website while https only mode is enabled. -->
+    <string name="errorpage_httpsonly_title">Қауіпсіз сайт қолжетімді емес</string>
+    <!-- Message shown in the error page for when trying to access a http website while https only mode is enabled. The message has two paragraphs. This is the first. -->
+    <string name="errorpage_httpsonly_message_title">Бұл веб-сайт HTTPS қолдамайтын сияқты.</string>
+    <!-- Message shown in the error page for when trying to access a http website while https only mode is enabled. The message has two paragraphs. This is the second. -->
+    <string name="errorpage_httpsonly_message_summary">Дегенмен, шабуылдаушы араласқан болуы да мүмкін. Веб-сайтқа өтуді жалғастырсаңыз, ешқандай құпия ақпаратты енгізбеуіңіз керек. Жалғастырсаңыз, сайт үшін тек-HTTPS режимі уақытша сөндіріледі.</string>
     <!-- Preference for accessibility -->
     <string name="preferences_accessibility">Қолжетерлілік</string>
     <!-- Preference to override the Firefox Account server -->
@@ -312,14 +352,12 @@
     <string name="toast_override_fxa_sync_server_done">Firefox тіркелгісі/синхрондау сервері өзгертілген. Өзгерістерді іске асыру үшін қолданба жұмысын аяқтау…</string>
     <!-- Preference category for account information -->
     <string name="preferences_category_account">Тіркелгі</string>
-    <!-- Preference shown on banner to sign into account -->
-    <string name="preferences_sign_in">Кіру</string>
     <!-- Preference for changing where the toolbar is positioned -->
     <string name="preferences_toolbar">Құралдар панелі</string>
     <!-- Preference for changing default theme to dark or light mode -->
     <string name="preferences_theme">Тема</string>
     <!-- Preference for customizing the home screen -->
-    <string name="preferences_home">Үйге</string>
+    <string name="preferences_home_2">Үй парағы</string>
     <!-- Preference for gestures based actions -->
     <string name="preferences_gestures">Ым қимылдар</string>
     <!-- Preference for settings related to visual options -->
@@ -336,10 +374,6 @@
     <string name="preferences_data_choices">Деректер таңдауы</string>
     <!-- Preference for data collection -->
     <string name="preferences_data_collection">Деректер жинау</string>
-    <!-- Preference linking to the privacy notice -->
-    <string name="preferences_privacy_link">Жекелік ескертуі</string>
-    <!-- Preference category for developer tools -->
-    <string name="developer_tools_category">Әзірлеуші құралдары</string>
     <!-- Preference for developers -->
     <string name="preferences_remote_debugging">USB арқылы қашықтан жөндеу</string>
     <!-- Preference title for switch preference to show search engines -->
@@ -385,6 +419,40 @@
     <string name="customize_addon_collection_user_hint">Жинақ иесі (Пайдаланушы идентификаторы)</string>
     <!-- Toast shown after confirming the custom add-on collection configuration -->
     <string name="toast_customize_addon_collection_done">Қосымшалар жинағы өзгертілген. Өзгерістерді іске асыру үшін қолданба жұмысын аяқтау…</string>
+
+    <!-- Customize Home -->
+    <!-- Header text for jumping back into the recent tab in customize the home screen -->
+    <string name="customize_toggle_jump_back_in">Кері оралу</string>
+    <!-- Title for the customize home screen section with recently saved bookmarks. -->
+    <string name="customize_toggle_recent_bookmarks">Жуырдағы бетбелгілер</string>
+    <!-- Title for the customize home screen section with recently visited. Recently visited is
+    a section where users see a list of tabs that they have visited in the past few days -->
+    <string name="customize_toggle_recently_visited">Жуырда қаралған</string>
+    <!-- Title for the customize home screen section with Pocket. -->
+    <string name="customize_toggle_pocket">Pocket</string>
+
+    <!-- Title for the opening wallpaper settings screen -->
+    <string name="customize_wallpapers">Түсқағаздар</string>
+    <!-- Title for the customize home screen section with sponsored shortcuts. -->
+    <string name="customize_toggle_contile">Демеушілік жарлықтары</string>
+
+    <!-- Wallpapers -->
+    <!-- Content description for various wallpapers. The first parameter is the name of the wallpaper -->
+    <string name="wallpapers_item_name_content_description">Түсқағаз элементі: %1$s</string>
+    <!-- Snackbar message for when wallpaper is selected -->
+    <string name="wallpaper_updated_snackbar_message">Түсқағаз жаңартылды!</string>
+    <!-- Snackbar label for action to view selected wallpaper -->
+    <string name="wallpaper_updated_snackbar_action">Қарап шығу</string>
+    <!-- Label for switch which toggles the "tap-to-switch" behavior on home screen logo -->
+    <string moz:removedIn="99" name="wallpaper_tap_to_change_switch_label" tools:ignore="UnusedResources">Түсқағазды өзгерту үшін логотипті шертіңіз</string>
+    <!-- Label for switch which toggles the "tap-to-switch" behavior on home screen logo -->
+    <string name="wallpaper_tap_to_change_switch_label_1">Firefox басты бетінің логотипін түрту арқылы тұсқағазды өзгертіңіз</string>
+    <!-- Description for switch which toggles the "tap-to-switch" behavior on home screen logo -->
+    <string moz:removedIn="99" name="wallpaper_tap_to_change_switch_description" tools:ignore="UnusedResources">Негізгі беттен шықпай-ақ суретті айналдырыңыз және жаңартыңыз.</string>
+
+    <!-- This is the accessibility content description for the wallpapers functionality. Users are
+    able to tap on the app logo in the home screen and can switch to different wallpapers by tapping. -->
+    <string name="wallpaper_logo_content_description">Firefox логотипі - тұсқағазды, батырманы өзгерту</string>
 
     <!-- Add-on Installation from AMO-->
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
@@ -438,23 +506,12 @@
     <string name="fxa_received_tab_channel_description">Басқа Firefox құрылғыларынан алынған беттер туралы хабарландырулар.</string>
     <!--  The body for these is the URL of the tab received  -->
     <string name="fxa_tab_received_notification_name">Бет алынды</string>
-    <!-- When multiple tabs have been received -->
-    <string name="fxa_tabs_received_notification_name">Беттер алынды</string>
     <!-- %s is the device name -->
     <string name="fxa_tab_received_from_notification_name">%s құрылғысынан бет</string>
 
     <!-- Advanced Preferences -->
-    <!-- Preference for tracking protection settings -->
-    <string name="preferences_tracking_protection_settings">Бақылаудан қорғаныс</string>
-    <!-- Preference switch for tracking protection -->
-    <string name="preferences_tracking_protection">Бақылаудан қорғаныс</string>
-
-    <!-- Preference switch description for tracking protection -->
-    <string name="preferences_tracking_protection_description">Сізді Интернетте бақылайтын мазмұн мен скрипттерді бұғаттау</string>
     <!-- Preference for tracking protection exceptions -->
     <string name="preferences_tracking_protection_exceptions">Ережеден бөлек</string>
-    <!-- Preference description for tracking protection exceptions -->
-    <string name="preferences_tracking_protection_exceptions_description">Бақылаудан қорғаныс бұл сайттар үшін сөндірілген</string>
     <!-- Button in Exceptions Preference to turn on tracking protection for all sites (remove all exceptions) -->
     <string name="preferences_tracking_protection_exceptions_turn_on_for_all">Барлық сайттар үшін іске қосу</string>
     <!-- Text displayed when there are no exceptions -->
@@ -462,40 +519,22 @@
     <!-- Text displayed when there are no exceptions, with learn more link that brings users to a tracking protection SUMO page -->
     <string name="exceptions_empty_message_learn_more_link">Көбірек білу</string>
 
-    <!-- Preference switch for Telemetry -->
-    <string name="preferences_telemetry">Телеметрия</string>
     <!-- Preference switch for usage and technical data collection -->
     <string name="preference_usage_data">Пайдалану және техникалық мәліметтер</string>
     <!-- Preference description for usage and technical data collection -->
     <string name="preferences_usage_data_description">Өнімділік, қолдану, құрылғылар және баптаулар мәліметін Mozilla-ға жіберіп, бізге %1$s жақсартуға көмектеседі</string>
     <!-- Preference switch for marketing data collection -->
     <string name="preferences_marketing_data">Маркетингтік мәліметтер</string>
-    <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
-    <string name="preferences_marketing_data_description">Leanplum, біздің мобильді маркетинг өндірушісімен, %1$s ішінде қандай мүмкіндіктерді пайдаланғаныңыз туралы деректермен бөліседі.</string>
     <!-- Preference description for marketing data collection -->
     <string name="preferences_marketing_data_description2">Біздің мобильді маркетинг вендоры Adjust-пен негізгі пайдалану деректерін бөліседі</string>
     <!-- Title for studies preferences -->
     <string name="preference_experiments_2">Зерттеулер</string>
     <!-- Summary for studies preferences -->
     <string name="preference_experiments_summary_2">Mozilla-ға зерттеулерді орнатуға және жүргізуге рұқсат ету</string>
-    <!-- Title for experiments preferences -->
-    <string name="preference_experiments">Эксперименттер</string>
-    <!-- Summary for experiments preferences -->
-    <string name="preference_experiments_summary">Mozilla-ға эксперимерталды мүмкіндіктер үшін деректерді орнатуға және жинауға мүмкіндік береді</string>
-    <!-- Preference switch for crash reporter -->
-    <string name="preferences_crash_reporter">Құлаулар хабаршысы</string>
-    <!-- Preference switch for Mozilla location service -->
-    <string name="preferences_mozilla_location_service">Mozilla орналасулар қызметі</string>
-    <!-- Preference switch for app health report. The first parameter is the name of the application (For example: Fenix) -->
-    <string name="preferences_fenix_health_report">%s денсаулық есептемесі</string>
 
     <!-- Turn On Sync Preferences -->
     <!-- Header of the Turn on Sync preference view -->
     <string name="preferences_sync">Синхрондауды іске қосу</string>
-    <!-- Preference for pairing -->
-    <string name="preferences_sync_pair">Жұмыс үстеліндегі Firefox-та жұптау кодын сканерлеңіз</string>
-    <!-- Preference for account login -->
-    <string name="preferences_sync_sign_in">Кіру</string>
     <!-- Preference for reconnecting to FxA sync -->
     <string name="preferences_sync_sign_in_to_reconnect">Қайта байланысу үшін кіру</string>
     <!-- Preference for removing FxA account -->
@@ -504,10 +543,6 @@
     <!-- Pairing Feature strings -->
     <!-- Instructions on how to access pairing -->
     <string name="pair_instructions_2"><![CDATA[<b>firefox.com/pair</b> жерінде көрсетілген QR кодын сканерлеңіз]]></string>
-    <!-- Button to open camera for pairing -->
-    <string name="pair_open_camera">Камераны ашу</string>
-    <!-- Button to cancel pairing -->
-    <string name="pair_cancel">Бас тарту</string>
 
     <!-- Toolbar Preferences -->
     <!-- Preference for using top toolbar -->
@@ -536,10 +571,6 @@
     <string name="preference_gestures_swipe_toolbar_show_tabs">Беттерді ашу үшін құралдар тақтасын жоғары қарай сырғытыңыз</string>
 
     <!-- Library -->
-    <!-- Option in Library to open Sessions page -->
-    <string name="library_sessions">Сессиялар</string>
-    <!-- Option in Library to open Screenshots page -->
-    <string name="library_screenshots">Скриншоттар</string>
     <!-- Option in Library to open Downloads page -->
     <string name="library_downloads">Жүктемелер</string>
     <!-- Option in library to open Bookmarks page -->
@@ -556,18 +587,17 @@
     <string name="library_history">Шолу тарихы</string>
     <!-- Option in Library to open a new tab -->
     <string name="library_new_tab">Жаңа бет</string>
-    <!-- Option in Library to find text in page -->
-    <string name="library_find_in_page">Беттен табу</string>
-    <!-- Option in Library to open Reading List -->
-    <string name="library_reading_list">Оқу тізімі</string>
-    <!-- Menu Item Label for Search in Library -->
-    <string name="library_search">Іздеу</string>
     <!-- Settings Page Title -->
     <string name="settings_title">Баптаулар</string>
-    <!-- Content description (not visible, for screen readers etc.): "Menu icon for items on a history item" -->
-    <string name="content_description_history_menu">Шолу тарихы элементінің мәзірі</string>
     <!-- Content description (not visible, for screen readers etc.): "Close button for library settings" -->
     <string name="content_description_close_button">Жабу</string>
+
+    <!-- Text to show users they have one site in the history group section of the History fragment.
+    %d is a placeholder for the number of sites in the group. -->
+    <string name="history_search_group_site">%d сайт</string>
+    <!-- Text to show users they have multiple sites in the history group section of the History fragment.
+    %d is a placeholder for the number of sites in the group. -->
+    <string name="history_search_group_sites">%d сайт</string>
 
     <!-- Option in library for Recently Closed Tabs -->
     <string name="library_recently_closed_tabs">Жуырда жабылған беттер</string>
@@ -591,6 +621,10 @@
     <string name="tab_view_list">Тізім</string>
     <!-- Option for a grid tab view -->
     <string name="tab_view_grid">Тор</string>
+    <!-- Option for search term tab groups -->
+    <string name="tab_view_search_term_tab_groups">Іздеу топтары</string>
+    <!-- Summary text for search term tab groups -->
+    <string name="tab_view_search_term_tab_groups_summary">Байланысқан сайттарды біріктіру</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
     <string name="preferences_close_tabs">Беттерді жабу</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
@@ -602,15 +636,18 @@
     <!-- Option for auto closing tabs that will auto close tabs after one month -->
     <string name="close_tabs_after_one_month">Бір айдан кейін</string>
 
-    <!-- Start on Home -->
-    <!-- Title of a preference that allows a user to indicate after a specified amount of time when the app should start on the home screen -->
-    <string name="preferences_start_on_home">Бастапқы экраннан бастау</string>
-    <!-- Option for starting on the home screen after after four hours or inactivity -->
-    <string name="start_on_home_after_four_hours">Төрт сағаттан кейін</string>
-    <!-- Option for always starting on the home screen -->
-    <string name="start_on_home_always">Әрқашан</string>
-    <!-- Option for never starting on the home screen -->
-    <string name="start_on_home_never">Ешқашан</string>
+    <!-- Title of preference that allows a user to specify the auto-close settings for open tabs -->
+    <string name="preference_auto_close_tabs" tools:ignore="UnusedResources">Ашық беттерді автожабу</string>
+
+    <!-- Opening screen -->
+    <!-- Title of a preference that allows a user to choose what screen to show after opening the app -->
+    <string name="preferences_opening_screen">Бастапқы экраны</string>
+    <!-- Option for always opening the homepage when re-opening the app -->
+    <string name="opening_screen_homepage">Үй парағы</string>
+    <!-- Option for always opening the user's last-open tab when re-opening the app -->
+    <string name="opening_screen_last_tab">Соңғы бет</string>
+    <!-- Option for always opening the homepage when re-opening the app after four hours of inactivity -->
+    <string name="opening_screen_after_four_hours_of_inactivity">Төрт сағат әрекетсіздіктен кейін үй парағы</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
     <string name="close_tabs_manually_summary">Қолмен жабу</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
@@ -620,13 +657,21 @@
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one month-->
     <string name="close_tabs_after_one_month_summary">Бір айдан кейін жабу</string>
 
+    <!-- Inactive tabs -->
+    <!-- Category header of a preference that allows a user to enable or disable the inactive tabs feature -->
+    <string name="preferences_inactive_tabs">Ескі беттерді белсенді емес күйге жылжыту</string>
+    <!-- Title of inactive tabs preference -->
+    <string name="preferences_inactive_tabs_title">Сіз екі апта бойы қарамаған беттер белсенді емес топқа жылжытылады.</string>
+
     <!-- Studies -->
     <!-- Title of the remove studies button -->
     <string name="studies_remove">Өшіру</string>
     <!-- Title of the active section on the studies list -->
     <string name="studies_active">Белсенді</string>
     <!-- Description for studies, it indicates why Firefox use studies -->
-    <string name="studies_description">Firefox кейде зерттеулерді орнатып, орындай алады.</string>
+    <string moz:RemovedIn="99" name="studies_description" tools:ignore="UnusedResources">Firefox кейде зерттеулерді орнатып, орындай алады.</string>
+    <!-- Description for studies, it indicates why Firefox use studies. The first parameter is the name of the application. -->
+    <string name="studies_description_2">%1$s кейде зерттеулерді орнатып, орындай алады.</string>
     <!-- Learn more link for studies, links to an article for more information about studies. -->
     <string name="studies_learn_more">Көбірек білу</string>
 
@@ -643,8 +688,6 @@
     <!-- Title for the list of tabs -->
     <string name="tab_header_label">Ашық беттер</string>
     <!-- Title for the list of tabs in the current private session -->
-    <string name="tabs_header_private_title">Жекелік сессиясы</string>
-    <!-- Title for the list of tabs in the current private session -->
     <string name="tabs_header_private_tabs_title">Жекелік беттер</string>
     <!-- Title for the list of tabs in the synced tabs -->
     <string name="tabs_header_synced_tabs_title">Синхрондалған беттер</string>
@@ -656,30 +699,18 @@
     <string name="tab_drawer_fab_content">Жеке</string>
     <!-- Text for the new tab button to indicate syncing command on the synced tabs page -->
     <string name="tab_drawer_fab_sync">Синхрондау</string>
-    <!-- Text shown as the title of the open tab tray -->
-    <string name="tab_tray_title">Ашық беттер</string>
-    <!-- Text shown in the menu for saving tabs to a collection -->
-    <string name="tab_tray_menu_item_save">Жинаққа сақтау</string>
-    <!-- Text shown in the menu for the collection selector -->
-    <string name="tab_tray_menu_select">Таңдау</string>
     <!-- Text shown in the menu for sharing all tabs -->
     <string name="tab_tray_menu_item_share">Барлық беттермен бөлісу</string>
     <!-- Text shown in the menu to view recently closed tabs -->
     <string name="tab_tray_menu_recently_closed">Жуырда жабылған беттер</string>
     <!-- Text shown in the tabs tray inactive tabs section -->
-    <string name="tab_tray_inactive_recently_closed">Жақында жабылған</string>
+    <string name="tab_tray_inactive_recently_closed" tools:ignore="UnusedResources">Жақында жабылған</string>
     <!-- Text shown in the menu to view account settings -->
     <string name="tab_tray_menu_account_settings">Тіркелгі баптаулары</string>
     <!-- Text shown in the menu to view tab settings -->
     <string name="tab_tray_menu_tab_settings">Бет баптаулары</string>
     <!-- Text shown in the menu for closing all tabs -->
     <string name="tab_tray_menu_item_close">Барлық беттерді жабу</string>
-    <!-- Shortcut action to open new tab -->
-    <string name="tab_tray_menu_open_new_tab">Жаңа бет</string>
-    <!-- Shortcut action to open the home screen -->
-    <string name="tab_tray_menu_home">Үй парағына өту</string>
-    <!-- Shortcut action to toggle private mode -->
-    <string name="tab_tray_menu_toggle">Бет режимін ауыстыру</string>
     <!-- Text shown in the multiselect menu for bookmarking selected tabs. -->
     <string name="tab_tray_multiselect_menu_item_bookmark">Бетбелгілерге қосу</string>
     <!-- Text shown in the multiselect menu for closing selected tabs. -->
@@ -698,26 +729,10 @@
     <string name="close_tab_title">%s бетін жабу</string>
     <!-- Content description (not visible, for screen readers etc.): Opens the open tabs menu when pressed -->
     <string name="open_tabs_menu">Беттер мәзірін ашу</string>
-    <!-- Open tabs menu item to close all tabs -->
-    <string name="tabs_menu_close_all_tabs">Барлық беттерді жабу</string>
-    <!-- Open tabs menu item to share all tabs -->
-    <string name="tabs_menu_share_tabs">Беттермен бөлісу</string>
     <!-- Open tabs menu item to save tabs to collection -->
     <string name="tabs_menu_save_to_collection1">Беттерді жинаққа сақтау</string>
     <!-- Content description (not visible, for screen readers etc.): Opens the tab menu when pressed -->
     <string name="tab_menu">Бет мәзірі</string>
-    <!-- Tab menu item to share the tab -->
-    <string name="tab_share">Бетпен бөлісу</string>
-    <!-- Button in the current session menu. Deletes the session when pressed -->
-    <string name="current_session_delete">Өшіру</string>
-    <!-- Button in the current session menu. Saves the session when pressed -->
-    <string name="current_session_save">Сақтау</string>
-    <!-- Button in the current session menu. Opens the share menu when pressed -->
-    <string name="current_session_share">Бөлісу</string>
-    <!-- Content description (not visible, for screen readers etc.): Title icon for current session menu -->
-    <string name="current_session_image">Ағымдағы сессия суреті</string>
-    <!-- Button to save the current set of tabs into a collection -->
-    <string name="save_to_collection">Жинаққа сақтау</string>
 
     <!-- Text for the menu button to delete a collection -->
     <string name="collection_delete">Жинақты өшіру</string>
@@ -737,42 +752,29 @@
     <!-- Postfix for private WebApp titles, placeholder is replaced with app name -->
     <string name="pwa_site_controls_title_private">%1$s (жекелік режимі)</string>
 
-    <!-- Button in the current tab tray header in multiselect mode. Saved the selected tabs to a collection when pressed. -->
-    <string name="tab_tray_save_to_collection">Сақтау</string>
+    <!-- Title text for the normal tabs header in the tabs tray which are not part of any tab grouping. -->
+    <string name="tab_tray_header_title_1">Басқа беттер</string>
 
     <!-- History -->
+    <!-- Text for the button to search all history -->
+    <string moz:removedIn="99" name="history_search" tools:ignore="UnusedResources">Іздеу жолын енгізіңіз</string>
+    <!-- Text for the button to search all history -->
+    <string name="history_search_1">Іздеу жолын енгізіңіз</string>
     <!-- Text for the button to clear all history -->
     <string name="history_delete_all">Тарихты өшіру</string>
-    <!-- Text for the dialog to confirm clearing all history -->
-    <string name="history_delete_all_dialog">Тарихты өшіруді шынымен қалайсыз ба?</string>
     <!-- Text for the snackbar to confirm that multiple browsing history items has been deleted -->
     <string name="history_delete_multiple_items_snackbar">Тарих өшірілді</string>
     <!-- Text for the snackbar to confirm that a single browsing history item has been deleted. The first parameter is the shortened URL of the deleted history item. -->
     <string name="history_delete_single_item_snackbar">%1$s өшірілді</string>
-    <!-- Text for positive action to delete history in deleting history dialog -->
-    <string name="history_clear_dialog">Тазарту</string>
-    <!-- History overflow menu copy button -->
-    <string name="history_menu_copy_button">Көшіріп алу</string>
-    <!-- History overflow menu share button -->
-    <string name="history_menu_share_button">Бөлісу</string>
-    <!-- History overflow menu open in new tab button -->
-    <string name="history_menu_open_in_new_tab_button">Жаңа бетте ашу</string>
-    <!-- History overflow menu open in private tab button -->
-    <string name="history_menu_open_in_private_tab_button">Жекелік бетте ашу</string>
-    <!-- Text for the button to delete a single history item -->
+    <!-- Context description text for the button to delete a single history item -->
     <string name="history_delete_item">Өшіру</string>
     <!-- History multi select title in app bar
     The first parameter is the number of bookmarks selected -->
     <string name="history_multi_select_title">%1$d таңдалды</string>
-    <!-- Text for the button to clear selected history items. The first parameter
-        is a digit showing the number of items you have selected -->
-    <string name="history_delete_some">%1$d элементті өшіру</string>
     <!-- Text for the header that groups the history for today -->
     <string name="history_today">Бүгін</string>
     <!-- Text for the header that groups the history for yesterday -->
     <string name="history_yesterday">Кеше</string>
-    <!-- Text for the header that groups the history for last 24 hours -->
-    <string name="history_24_hours">Соңғы 24 сағат</string>
     <!-- Text for the header that groups the history the past 7 days -->
     <string name="history_7_days">Соңғы 7 күн</string>
     <!-- Text for the header that groups the history the past 30 days -->
@@ -783,10 +785,6 @@
     <string name="history_empty_message">Осында тарих жоқ</string>
 
     <!-- Downloads -->
-    <!-- Text for the button to clear all downloads -->
-    <string name="download_delete_all">Жүктемелерді тазарту</string>
-    <!-- Text for the dialog to confirm clearing all downloads -->
-    <string name="download_delete_all_dialog">Жүктемелеріңізді өшіруді шынымен қалайсыз ба?</string>
     <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
     <string name="download_delete_multiple_items_snackbar_1">Жүктемелер өшірілді</string>
     <!-- Text for the snackbar to confirm that a single download item has been removed. The first parameter is the name of the download item. -->
@@ -797,9 +795,6 @@
     The first parameter is the number of downloads selected -->
     <string name="download_multi_select_title">%1$d таңдалды</string>
 
-    <!-- History overflow menu open in new tab button -->
-    <string name="download_menu_open">Ашу</string>
-
 
     <!-- Text for the button to remove a single download item -->
     <string name="download_delete_item_1">Өшіру</string>
@@ -808,8 +803,6 @@
     <!-- Crashes -->
     <!-- Title text displayed on the tab crash page. This first parameter is the name of the application (For example: Fenix) -->
     <string name="tab_crash_title_2">Кешіріңіз. %1$s бұл бетті жүктей алмайды.</string>
-    <!-- Description text displayed on the tab crash page -->
-    <string name="tab_crash_description">Төменде бетті қалпына келтіру немесе жабу талабын жасай аласыз,</string>
     <!-- Send crash report checkbox text on the tab crash page -->
     <string name="tab_crash_send_report">Mozilla-ға құлау хабарламасын жіберу</string>
     <!-- Close tab button text on the tab crash page -->
@@ -817,25 +810,13 @@
     <!-- Restore tab button text on the tab crash page -->
     <string name="tab_crash_restore">Бетті қалпына келтіру</string>
 
-    <!-- Content Description for session item menu button -->
-    <string name="content_description_session_menu">Сессия баптаулары</string>
-
-    <!-- Content Description for session item share button -->
-    <string name="content_description_session_share">Сессиямен бөлісу</string>
-
     <!-- Bookmarks -->
-    <!-- Content description for bookmarks library menu -->
-    <string name="bookmark_menu_content_description">Бетбелгілер мәзірі</string>
-    <!-- Screen title for editing bookmarks -->
-    <string name="bookmark_edit">Бетбелгіні түзету</string>
-    <!-- Screen title for selecting a bookmarks folder -->
-    <string name="bookmark_select_folder">Буманы таңдау</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete the selected folder -->
     <string name="bookmark_delete_folder_confirmation_dialog">Бұл буманы өшіруді шынымен қалайсыз ба?</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete multiple items including folders. Parameter will be replaced by app name. -->
     <string name="bookmark_delete_multiple_folders_confirmation_dialog">%s таңдалған элементтерді өшіреді.</string>
-    <!-- Snackbar title shown after a folder has been deleted. This first parameter is the name of the deleted folder -->
-    <string name="bookmark_delete_folder_snackbar">%1$s өшірілді</string>
+    <!-- Text for the cancel button on delete bookmark dialog -->
+    <string name="bookmark_delete_negative">Бас тарту</string>
     <!-- Screen title for adding a bookmarks folder -->
     <string name="bookmark_add_folder">Буманы қосу</string>
     <!-- Snackbar title shown after a bookmark has been created. -->
@@ -844,8 +825,6 @@
     <string name="edit_bookmark_snackbar_action">ТҮЗЕТУ</string>
     <!-- Bookmark overflow menu edit button -->
     <string name="bookmark_menu_edit_button">Түзету</string>
-    <!-- Bookmark overflow menu select button -->
-    <string name="bookmark_menu_select_button">Таңдау</string>
     <!-- Bookmark overflow menu copy button -->
     <string name="bookmark_menu_copy_button">Көшіріп алу</string>
     <!-- Bookmark overflow menu share button -->
@@ -893,9 +872,10 @@
     <!-- Bookmark undo button for deletion snackbar action -->
     <string name="bookmark_undo_deletion">БОЛДЫРМАУ</string>
 
+    <!-- Text for the button to search all bookmarks -->
+    <string name="bookmark_search">Іздеу жолын енгізіңіз</string>
+
     <!-- Site Permissions -->
-    <!-- Site permissions preferences header -->
-    <string name="permissions_header">Рұқсаттар</string>
     <!-- Button label that take the user to the Android App setting -->
     <string name="phone_feature_go_to_settings">Баптауларға өту</string>
     <!-- Content description (not visible, for screen readers etc.): Quick settings sheet
@@ -904,12 +884,18 @@
     <string name="quick_settings_sheet">Жылдам баптаулар парағы</string>
     <!-- Label that indicates that this option it the recommended one -->
     <string name="phone_feature_recommended">Ұсынылатын</string>
-    <!-- button that allows editing site permissions settings -->
-    <string name="quick_settings_sheet_manage_site_permissions">Сайт рұқсаттарын басқару</string>
     <!-- Button label for clearing all the information of site permissions-->
     <string name="clear_permissions">Рұқсаттарды тазарту</string>
+    <!-- Text for the OK button on Clear permissions dialog -->
+    <string name="clear_permissions_positive">ОК</string>
+    <!-- Text for the cancel button on Clear permissions dialog -->
+    <string name="clear_permissions_negative">Бас тарту</string>
     <!-- Button label for clearing a site permission-->
     <string name="clear_permission">Рұқсатты тазарту</string>
+    <!-- Text for the OK button on Clear permission dialog -->
+    <string name="clear_permission_positive">ОК</string>
+    <!-- Text for the cancel button on Clear permission dialog -->
+    <string name="clear_permission_negative">Бас тарту</string>
     <!-- Button label for clearing all the information on all sites-->
     <string name="clear_permissions_on_all_sites">Барлық сайттар рұқсаттарын тазарту</string>
     <!-- Preference for altering video and audio autoplay for all websites -->
@@ -924,6 +910,8 @@
     <string name="preference_phone_feature_notification">Хабарлама</string>
     <!-- Preference for altering the persistent storage access for all websites -->
     <string name="preference_phone_feature_persistent_storage">Тұрақты қойма</string>
+    <!-- Preference for altering the storage access setting for all websites -->
+    <string name="preference_phone_feature_cross_origin_storage_access">Сайтаралық cookie файлдары</string>
     <!-- Preference for altering the EME access for all websites -->
     <string name="preference_phone_feature_media_key_system_access">DRM-мен басқарылатын құрама</string>
     <!-- Label that indicates that a permission must be asked always -->
@@ -1008,25 +996,30 @@
     <!-- Snackbar action to view the collection the user just created or updated -->
     <string name="create_collection_view">Қарау</string>
 
+    <!-- Text for the OK button from collection dialogs -->
+    <string name="create_collection_positive">ОК</string>
+    <!-- Text for the cancel button from collection dialogs -->
+    <string name="create_collection_negative">Бас тарту</string>
+
     <!-- Default name for a new collection in "name new collection" step of the collection creator. %d is a placeholder for the number of collections-->
     <string name="create_collection_default_name">Жинақ %d</string>
 
     <!-- Share -->
     <!-- Share screen header -->
-    <string name="share_header">Жіберу және бөлісу</string>
-    <!-- Share screen header -->
     <string name="share_header_2">Бөлісу</string>
     <!-- Content description (not visible, for screen readers etc.):
         "Share" button. Opens the share menu when pressed. -->
     <string name="share_button_content_description">Бөлісу</string>
-    <!-- Sub-header in the dialog to share a link to another app -->
-    <string name="share_link_subheader">Сілтемемен бөлісу</string>
     <!-- Sub-header in the dialog to share a link to another sync device -->
     <string name="share_device_subheader">Құрылғыға жіберу</string>
     <!-- Sub-header in the dialog to share a link to an app from the full list -->
     <string name="share_link_all_apps_subheader">Барлық әрекеттер</string>
     <!-- Sub-header in the dialog to share a link to an app from the most-recent sorted list -->
     <string name="share_link_recent_apps_subheader">Жуырда қолданылған</string>
+    <!-- Text for the copy link action in the share screen. -->
+    <string name="share_copy_link_to_clipboard">Алмасу буферіне көшіріп алу</string>
+    <!-- Toast shown after copying link to clipboard -->
+    <string name="toast_copy_link_to_clipboard">Алмасу буферіне көшірілді</string>
     <!-- An option from the three dot menu to into sync -->
     <string name="sync_menu_sign_in">Синхрондау ішіне кіру</string>
     <!-- An option from the share dialog to sign into sync -->
@@ -1055,18 +1048,8 @@
     <string name="sync_add_new_device_connect_button">Басқа құрылғыны байланыстыру…</string>
 
     <!-- Notifications -->
-    <!-- The user visible name of the "notification channel" (Android 8+ feature) for the ongoing notification shown while a browsing session is active. -->
-    <string name="notification_pbm_channel_name">Жекелік шолу сессиясы</string>
-    <!-- Text shown in the notification that pops up to remind the user that a private browsing session is active. -->
-    <string name="notification_pbm_delete_text">Жекелік беттерді өшіру</string>
     <!-- Text shown in the notification that pops up to remind the user that a private browsing session is active. -->
     <string name="notification_pbm_delete_text_2">Жекелік беттерді жабу</string>
-    <!-- Notification action to open Fenix and resume the current browsing session. -->
-    <string name="notification_pbm_action_open"></string>
-    <!-- Notification action to delete all current private browsing sessions AND switch to Fenix (bring it to the foreground) -->
-    <string name="notification_pbm_action_delete_and_open">Өшіру және ашу</string>
-    <!-- Name of the "Powered by Fenix" notification channel. Displayed in the "App notifications" system settings for the app -->
-    <string name="notification_powered_by_channel_name">Келесінің негізінде:</string>
     <!-- Name of the marketing notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="notification_marketing_channel_name">Маркетинг</string>
     <!-- Title shown in the notification that pops up to remind the user to set fenix as default browser.
@@ -1081,36 +1064,24 @@
     <string name="snackbar_collection_deleted">Жинақ өшірілді</string>
     <!-- Text shown in snackbar when user renames a collection -->
     <string name="snackbar_collection_renamed">Жинақ атауы өзгертілді</string>
-    <!-- Text shown in snackbar when user deletes a tab -->
-    <string name="snackbar_tab_deleted">Бет өшірілді</string>
-    <!-- Text shown in snackbar when user deletes all tabs -->
-    <string name="snackbar_tabs_deleted">Беттер өшірілді</string>
     <!-- Text shown in snackbar when user closes a tab -->
     <string name="snackbar_tab_closed">Бет жабылды</string>
     <!-- Text shown in snackbar when user closes all tabs -->
     <string name="snackbar_tabs_closed">Беттер жабылды</string>
-    <!-- Text shown in snackbar when user closes tabs -->
-    <string name="snackbar_message_tabs_closed">Беттер жабылды!</string>
     <!-- Text shown in snackbar when user bookmarks a list of tabs -->
     <string name="snackbar_message_bookmarks_saved">Бетбелгілер сақталды!</string>
-    <!-- Text shown in snackbar action for viewing bookmarks -->
-    <string name="snackbar_message_bookmarks_view">Қарап шығу</string>
     <!-- Text shown in snackbar when user adds a site to top sites -->
-    <string name="snackbar_added_to_top_sites">Үздік сайттарға қосылды!</string>
+    <string moz:RemovedIn="101" name="snackbar_added_to_top_sites" tools:ignore="UnusedResources">Үздік сайттарға қосылды!</string>
+    <!-- Text shown in snackbar when user adds a site to shortcuts -->
+    <string name="snackbar_added_to_shortcuts">Жарлықтарға қосылды!</string>
     <!-- Text shown in snackbar when user closes a private tab -->
     <string name="snackbar_private_tab_closed">Жекелік беті жабылды</string>
     <!-- Text shown in snackbar when user closes all private tabs -->
     <string name="snackbar_private_tabs_closed">Жекелік беттер жабылды</string>
-    <!-- Text shown in snackbar when user deletes all private tabs -->
-    <string name="snackbar_private_tabs_deleted">Жекелік беттер өшірілді</string>
     <!-- Text shown in snackbar to undo deleting a tab, top site or collection -->
     <string name="snackbar_deleted_undo">БОЛДЫРМАУ</string>
     <!-- Text shown in snackbar when user removes a top site -->
     <string name="snackbar_top_site_removed">Сайт өшірілді</string>
-    <!-- Text for action to undo deleting a tab or collection shown in a11y dialog -->
-    <string name="a11y_dialog_deleted_undo">Болдырмау</string>
-    <!-- Text for action to confirm deleting a tab or collection shown in a11y dialog -->
-    <string name="a11y_dialog_deleted_confirm">Растау</string>
     <!-- QR code scanner prompt which appears after scanning a code, but before navigating to it
         First parameter is the name of the app, second parameter is the URL or text scanned-->
     <string name="qr_scanner_confirmation_dialog_message">%1$s үшін %2$s ашуды рұқсат ету</string>
@@ -1118,6 +1089,10 @@
     <string name="qr_scanner_dialog_positive">РҰҚСАТ ЕТУ</string>
     <!-- QR code scanner prompt dialog positive option to deny navigation to scanned link -->
     <string name="qr_scanner_dialog_negative">ТЫЙЫМ САЛУ</string>
+    <!-- QR code scanner prompt dialog error message shown when a hostname does not contain http or https. -->
+    <string name="qr_scanner_dialog_invalid">Веб-адресі қате.</string>
+    <!-- QR code scanner prompt dialog positive option when there is an error -->
+    <string name="qr_scanner_dialog_invalid_ok">ОК</string>
     <!-- Tab collection deletion prompt dialog message. Placeholder will be replaced with the collection name -->
     <string name="tab_collection_dialog_message">%1$s өшіруді шынымен қалайсыз ба?</string>
     <!-- Collection and tab deletion prompt dialog message. This will show when the last tab from a collection is deleted -->
@@ -1126,8 +1101,6 @@
     <string name="delete_tab_and_collection_dialog_title">%1$s өшіру керек пе?</string>
     <!-- Tab collection deletion prompt dialog option to delete the collection -->
     <string name="tab_collection_dialog_positive">Өшіру</string>
-    <!-- Tab collection deletion prompt dialog option to cancel deleting the collection -->
-    <string moz:removedIn="93" name="tab_collection_dialog_negative" tools:ignore="UnusedResources">Бас тарту</string>
 
     <!-- Text displayed in a notification when the user enters full screen mode -->
     <string name="full_screen_notification">Толық экран режиміне өту</string>
@@ -1156,11 +1129,6 @@
     <!-- Subtitle for the data and history items in delete browsing data, parameter will be replaced with the
         number of history items the user has -->
     <string name="preferences_delete_browsing_data_browsing_data_subtitle">%d адрес</string>
-    <!-- Title for history items in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_browsing_history_title">Шолу тарихы</string>
-    <!-- Subtitle for the history items in delete browsing data, parameter will be replaced with the
-        number of history pages the user has -->
-    <string name="preferences_delete_browsing_data_browsing_history_subtitle">%d бет</string>
     <!-- Title for the cookies item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_cookies">Cookies файлдары</string>
     <!-- Subtitle for the cookies item in Delete browsing data -->
@@ -1178,8 +1146,6 @@
     <!-- Title for the Delete browsing data on quit preference -->
     <string name="preferences_delete_browsing_data_on_quit">Шығу кезінде шолу деректерін өшіру</string>
 
-    <!-- Summary for the Delete browsing data on quit preference. "Quit" translation should match delete_browsing_data_on_quit_action translation. -->
-    <string name="preference_summary_delete_browsing_data_on_quit">Негізгі мәзірден &quot;Шығу&quot; таңдау кезінде, шолу деректерін автоматты түрде өшіреді</string>
     <!-- Summary for the Delete browsing data on quit preference. "Quit" translation should match delete_browsing_data_on_quit_action translation. -->
     <string name="preference_summary_delete_browsing_data_on_quit_2">Негізгі мәзірден \&quot;Шығу\&quot; таңдау кезінде, шолу деректерін автоматты түрде өшіреді</string>
     <!-- Action item in menu for the Delete browsing data on quit feature -->
@@ -1200,77 +1166,58 @@
 
     <!-- Tips -->
     <!-- text for firefox preview moving tip header "Firefox Preview" and "Firefox Nightly" are intentionally hardcoded -->
-    <string name="tip_firefox_preview_moved_header">Firefox Preview енді Firefox Night болып табылады</string>
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_header" tools:ignore="UnusedResources">Firefox Preview енді Firefox Night болып табылады</string>
 
     <!-- text for firefox preview moving tip description -->
-    <string name="tip_firefox_preview_moved_description">Firefox Nightly әр түн сайын жаңартылып отырады және тәжірибелік жаңа мүмкіндіктерге ие.
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_description" tools:ignore="UnusedResources">Firefox Nightly әр түн сайын жаңартылып отырады және тәжірибелік жаңа мүмкіндіктерге ие.
         Алайда, түрақтылығы аздау болуы мүмкін. Тұрақты тәжірибе алу үшін біздің бета-браузерімізді жүктеп алыңыз.</string>
 
     <!-- text for firefox preview moving tip button. "Firefox for Android Beta" is intentionally hardcoded -->
-    <string name="tip_firefox_preview_moved_button_2">Android үшін Firefox Beta алу</string>
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_button_2" tools:ignore="UnusedResources">Android үшін Firefox Beta алу</string>
 
     <!-- text for firefox preview moving tip header. "Firefox Nightly" is intentionally hardcoded -->
-    <string name="tip_firefox_preview_moved_header_preview_installed">Firefox Nightly көшіп кетті</string>
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_header_preview_installed" tools:ignore="UnusedResources">Firefox Nightly көшіп кетті</string>
 
     <!-- text for firefox preview moving tip description -->
-    <string name="tip_firefox_preview_moved_description_preview_installed">Бұл қолданба енді қауіпсіздік жаңартуларын алмайды. Оны пайдалануды тоқтатыңыз және жаңа Nightly өніміне ауысыңыз.
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_description_preview_installed" tools:ignore="UnusedResources">Бұл қолданба енді қауіпсіздік жаңартуларын алмайды. Оны пайдалануды тоқтатыңыз және жаңа Nightly өніміне ауысыңыз.
         \n\nБетбелгілер, логиндер және тарихыңызды басқа қолданбаға тасымалдау үшін Firefox тіркелгісін жасаңыз.</string>
 
     <!-- text for firefox preview moving tip button  -->
-    <string name="tip_firefox_preview_moved_button_preview_installed">Жаңа Nightly өніміне ауысу</string>
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_button_preview_installed" tools:ignore="UnusedResources">Жаңа Nightly өніміне ауысу</string>
 
     <!-- text for firefox preview moving tip header. "Firefox Nightly" is intentionally hardcoded -->
-    <string name="tip_firefox_preview_moved_header_preview_not_installed">Firefox Nightly көшіп кетті</string>
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_header_preview_not_installed" tools:ignore="UnusedResources">Firefox Nightly көшіп кетті</string>
     <!-- text for firefox preview moving tip description -->
-    <string name="tip_firefox_preview_moved_description_preview_not_installed">Бұл қолданба енді қауіпсіздік жаңартуларын алмайды. Жаңа Nightly өніміне ауысып, осы қолданбаны пайдалануды тоқтатыңыз.
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_description_preview_not_installed" tools:ignore="UnusedResources">Бұл қолданба енді қауіпсіздік жаңартуларын алмайды. Жаңа Nightly өніміне ауысып, осы қолданбаны пайдалануды тоқтатыңыз.
         \n\nБетбелгілер, логиндер және тарихыңызды басқа қолданбаға тасымалдау үшін Firefox тіркелгісін жасаңыз.</string>
     <!-- text for firefox preview moving tip button  -->
-    <string name="tip_firefox_preview_moved_button_preview_not_installed">Жаңа Nightly өнімін алу</string>
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_button_preview_not_installed" tools:ignore="UnusedResources">Жаңа Nightly өнімін алу</string>
 
     <!-- Onboarding -->
     <!-- Text for onboarding welcome message
     The first parameter is the name of the app (e.g. Firefox Preview) -->
     <string name="onboarding_header">%s өніміне қош келдіңіз!</string>
-    <!-- text for the Firefox Accounts section header -->
-    <string name="onboarding_fxa_section_header">Тіркелгіңіз бар ма?</string>
-    <!-- text for the "What's New" onboarding card header -->
-    <string name="onboarding_whats_new_header1">Жаңалықтарын біліңіз</string>
-    <!-- text for the "what's new" onboarding card description
-    The first parameter is the short name of the app (e.g. Firefox) -->
-    <string name="onboarding_whats_new_description">Қайта жасалған %s туралы сұрақтарыңыз бар ма? Не өзгертілгенін білуді қалайсыз ба?</string>
-    <!-- text for underlined clickable link that is part of "what's new" onboarding card description that links to an FAQ -->
-    <string name="onboarding_whats_new_description_linktext">Осы жерден жауап алыңыз</string>
     <!-- text for the Firefox account onboarding sign in card header. The word "Firefox" should not be translated -->
     <string name="onboarding_account_sign_in_header_1">Firefox-ты құрылғылар арасында синхрондау</string>
-    <!-- Text for the button to learn more about signing in to your Firefox account -->
-    <string name="onboarding_manual_sign_in_description">Осы құрылғыдағы Firefox-қа бетбелгілер, шолу тарихын және парольдерді әкелу.</string>
-    <!-- text for the firefox account onboarding card header when we detect you're already signed in to
-        another Firefox browser. (The word `Firefox` should not be translated)
-        The first parameter is the email of the detected user's account -->
-    <string name="onboarding_firefox_account_auto_signin_header_3">Сіз осы құрылғыда басқа Firefox браузерінде %s ретінде кірдіңіз. Осы тіркелгімен кіргіңіз келе ме?</string>
-    <!-- text for the button to confirm automatic sign-in -->
-    <string name="onboarding_firefox_account_auto_signin_confirm">Иә, авторизациялау</string>
-    <!-- text for the automatic sign-in button while signing in is in process -->
-    <string name="onboarding_firefox_account_signing_in">Кіру…</string>
+    <!-- text for the Firefox account onboarding sign in card header. The first parameter is the name of the application.-->
+    <string moz:RemovedIn="100" name="onboarding_account_sign_in_header_2" tools:ignore="UnusedResources">%1$s құрылғылар арасында синхрондау</string>
+    <!-- Text for the button to learn more about signing in to your Firefox account. The first parameter is the name of the application.-->
+    <string name="onboarding_manual_sign_in_description_2">Осы құрылғыдағы %1$s ішіне бетбелгілер, шолу тарихын және парольдерді әкелу.</string>
     <!-- text for the button to manually sign into Firefox account. -->
     <string name="onboarding_firefox_account_sign_in_1">Тіркелу</string>
-    <!-- text for the button to stay signed out when presented with an option to automatically sign-in. -->
-    <string name="onboarding_firefox_account_stay_signed_out">Жүйеге кірмей тұра беру</string>
     <!-- text to display in the snackbar once account is signed-in -->
     <string name="onboarding_firefox_account_sync_is_on">Синхрондау іске қосулы</string>
-    <!-- text to display in the snackbar if automatic sign-in fails. user may try again -->
-    <string name="onboarding_firefox_account_automatic_signin_failed">Кіру сәтсіз аяқталды</string>
 
     <!-- text for the tracking protection onboarding card header -->
     <string name="onboarding_tracking_protection_header_3">Үздіксіз құпиялылық</string>
     <!-- text for the tracking protection card description. 'Firefox' intentionally hardcoded here -->
-    <string name="onboarding_tracking_protection_description_3">Firefox компанияларды интернетте сізді жасырын түрде бақылауын автоматты түрде тоқтатады.</string>
+    <string moz:RemovedIn="99" name="onboarding_tracking_protection_description_3" tools:ignore="UnusedResources">Firefox компанияларды интернетте сізді жасырын түрде бақылауын автоматты түрде тоқтатады.</string>
+    <!-- text for the tracking protection card description. The first parameter is the name of the application.-->
+    <string name="onboarding_tracking_protection_description_4">%1$s компанияларды интернетте сізді жасырын түрде бақылауын автоматты түрде тоқтатады.</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
     <string name="onboarding_tracking_protection_standard_button_2">Стандартты (бастапқы)</string>
     <!-- text for standard blocking option button description -->
     <string name="onboarding_tracking_protection_standard_button_description_3">Жекелік және өнімділік теңгерімі. Беттер әдеттегідей жүктеледі.</string>
-    <!-- text for tracking protection radio button option for strict level of blocking -->
-    <string name="onboarding_tracking_protection_strict_button">Қатаң (ұсынылады)</string>
     <!-- text for tracking protection radio button option for strict level of blocking -->
     <string name="onboarding_tracking_protection_strict_option">Қатаң</string>
     <!-- text for strict blocking option button description -->
@@ -1279,15 +1226,6 @@
     <string name="onboarding_toolbar_placement_header_1">Құралдар панелінің орналасуын таңдау</string>
     <!-- text for the toolbar position card description -->
     <string name="onboarding_toolbar_placement_description_1">Құралдар панелін қолжетімді жерге орнату. Оны төменгі жағында ұстаңыз немесе оны жоғарыға қарай жылжытыңыз.</string>
-    <!-- text for the private browsing onboarding card header -->
-    <string name="onboarding_private_browsing_header">Жекелік түрде шолыңыз</string>
-    <!-- text for the private browsing onboarding card description
-    The first parameter is an icon that represents private browsing -->
-    <string name="onboarding_private_browsing_description1">Жекелік бетін бір рет ашу: %s таңбашасын шертіңіз.</string>
-    <!-- text for the private browsing onboarding card description, explaining how to always using private browsing -->
-    <string name="onboarding_private_browsing_always_description">Жекелік беттерді әрқашан ашу: Жекелік шолу баптауларын жаңартыңыз.</string>
-    <!-- text for the private browsing onbording card button, that launches settings -->
-    <string name="onboarding_private_browsing_button">Баптаулары ашу</string>
     <!-- text for the privacy notice onboarding card header -->
     <string name="onboarding_privacy_notice_header">Сіздің жекелігіңіз</string>
     <!-- text for the privacy notice onboarding card description
@@ -1295,8 +1233,6 @@
     <string name="onboarding_privacy_notice_description2">Біз %s өнімін сіз желіде және бізбен немен бөлісетіңізді басқаруды өз қолыңызға беретіндей етіп жасадық.</string>
     <!-- Text for the button to read the privacy notice -->
     <string name="onboarding_privacy_notice_read_button">Біздің жекелік ескертуімізді оқыңыз</string>
-    <!-- Content description (not visible, for screen readers etc.): Close onboarding screen -->
-    <string moz:removedIn="93" name="onboarding_close" tools:ignore="UnusedResources">Жабу</string>
 
     <!-- text for the button to finish onboarding -->
     <string name="onboarding_finish">Шолуды бастау</string>
@@ -1335,8 +1271,6 @@
     <string name="sign_in_with_email">Оның орнына эл. поштаны пайдалану</string>
     <!-- Text shown for settings option for create new account text.'Firefox' intentionally hardcoded here.-->
     <string name="sign_in_create_account_text"><![CDATA[Тіркелгіңіз жоқ па? Firefox-ты құрылғылар арасында синхрондау үшін, <u>тіркелгі жасаңыз</u>.]]></string>
-    <!-- Text shown in confirmation dialog to sign out of account -->
-    <string name="sign_out_confirmation_message">Firefox тіркелгіңізбен синхрондауды тоқтатады, бірақ, бұл құрылғыда барлық шолу деректері қалады.</string>
     <!-- Text shown in confirmation dialog to sign out of account. The first parameter is the name of the app (e.g. Firefox Preview) -->
     <string name="sign_out_confirmation_message_2">%sтіркелгіңізбен синхрондауды тоқтатады, бірақ, бұл құрылғыда барлық шолу деректері қалады.</string>
     <!-- Option to continue signing out of account shown in confirmation dialog to sign out of account -->
@@ -1396,8 +1330,6 @@
     <string name="preference_enhanced_tracking_protection_custom_tracking_content_1">Барлық беттерде</string>
     <!-- Option for enhanced tracking protection for the custom protection settings for tracking content-->
     <string name="preference_enhanced_tracking_protection_custom_tracking_content_2">Тек жекелік беттерінде</string>
-    <!-- Option for enhanced tracking protection for the custom protection settings for tracking content-->
-    <string name="preference_enhanced_tracking_protection_custom_tracking_content_3">Тек таңдауыңызша беттерінде</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
     <string name="preference_enhanced_tracking_protection_custom_cryptominers">Криптомайнерлер</string>
 
@@ -1429,8 +1361,6 @@
     <string name="etp_tracking_content_title">Бақылайтын құрама</string>
     <!-- Description of tracking content that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_tracking_content_description">Бақылау коды бар сыртқы жарнама, видео және басқа жа мазмұннын жүктеуіне жол бермейді. Кейбір веб-сайттардың жұмысына әсер етуі мүмкін.</string>
-    <!-- Enhanced Tracking Protection Onboarding Message shown in a dialog above the toolbar. The first parameter is the name of the application (For example: Fenix) -->
-    <string moz:removedIn="93" name="etp_onboarding_cfr_message" tools:ignore="UnusedResources">Әр рет қалқан күлгін болған сайын, %s сайттағы трекерлерді бұғаттаған. Қосымша ақпарат алу үшін шертіңіз.</string>
     <!-- Enhanced Tracking Protection message that protection is currently on for this site -->
     <string name="etp_panel_on">Бұл сайт үшін қорғаныс ІСКЕ ҚОСЫЛҒАН</string>
     <!-- Enhanced Tracking Protection message that protection is currently off for this site -->
@@ -1440,10 +1370,6 @@
     <!-- Content description (not visible, for screen readers etc.): Navigate
     back from ETP details (Ex: Tracking content) -->
     <string name="etp_back_button_content_description">Артқа өту</string>
-    <!-- About page Your rights link text -->
-    <string name="about_your_rights">Сіздің құқықтарыңыз</string>
-    <!-- About page link text to open open source licenses screen -->
-    <string name="about_open_source_licenses">Біз пайдаланатын ашық библиотекалар</string>
     <!-- About page link text to open what's new link -->
     <string name="about_whats_new">%s ішінде не жаңалық</string>
     <!-- Open source licenses page title
@@ -1454,6 +1380,12 @@
     <string name="etp_redirect_trackers_title">Қайта бағыттайтын трекерлер</string>
     <!-- Description of redirect tracker cookies that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_redirect_trackers_description">Белгілі бақылайтын веб-сайттарға қайта бағыттау арқылы орнатылған cookie файлдарын тазарту.</string>
+
+    <!-- Description of the SmartBlock Enhanced Tracking Protection feature. The * symbol is intentionally hardcoded here,
+         as we use it on the UI to indicate which trackers have been partially unblocked.  -->
+    <string name="preference_etp_smartblock_description">Төменде белгіленген кейбір трекерлер бұл бетте жартылай бұғатталмаған, себебі сіз олармен әрекеттестіңіз *.</string>
+    <!-- Text displayed that links to website about enhanced tracking protection SmartBlock -->
+    <string name="preference_etp_smartblock_learn_more">Көбірек білу</string>
 
     <!-- About page link text to open support link -->
     <string name="about_support">Қолдау</string>
@@ -1471,11 +1403,6 @@
         The first parameter is number of long clicks left to enable the menu -->
     <string name="about_debug_menu_toast_progress">Жөндеу мәзірі: Іске қосуға дейін %1$d шерту қалды</string>
     <string name="about_debug_menu_toast_done">Жөнде мәзірі іске қосылған</string>
-
-    <!-- Content description of the tab counter toolbar button when one tab is open -->
-    <string name="tab_counter_content_description_one_tab">1 бет</string>
-    <!-- Content description of the tab counter toolbar button when multiple tabs are open. First parameter will be replaced with the number of tabs (always more than one) -->
-    <string name="tab_counter_content_description_multi_tab">%d бет</string>
 
     <!-- Browser long press popup menu -->
     <!-- Copy the current url -->
@@ -1509,8 +1436,6 @@
     <string name="preferences_passwords_save_logins_ask_to_save">Сақтау алдында сұрау</string>
     <!-- Preference option for never saving passwords in Fenix -->
     <string name="preferences_passwords_save_logins_never_save">Ешқашан сақтамау</string>
-    <!-- Preference for autofilling saved logins in Fenix -->
-    <string moz:removedIn="93" name="preferences_passwords_autofill" tools:ignore="UnusedResources">Автотолтыру</string>
 
     <!-- Preference for autofilling saved logins in Firefox (in web content), %1$s will be replaced with the app name -->
     <string name="preferences_passwords_autofill2">%1$s ішінде автотолтыру</string>
@@ -1522,14 +1447,13 @@
     <!-- Description for the preference for autofilling logins from Fenix in other apps (e.g. autofilling the Twitter app) -->
     <string name="preferences_android_autofill_description">Құрылғыңыздағы басқа қолданбаларда пайдаланушы аттары мен парольдерін толтыру.</string>
 
+    <!-- Preference option for adding a login -->
+    <string name="preferences_logins_add_login">Логинді қосу</string>
+
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">Логиндерді синхрондау</string>
     <!-- Preference for syncing saved logins in Fenix, when not signed in-->
     <string name="preferences_passwords_sync_logins_across_devices">Логиндерді құрылғылар арасында синхрондау</string>
-    <!-- Syncing saved logins in Fenix needs reconnect to sync -->
-    <string name="preferences_passwords_sync_logins_reconnect">Қайта байланысу</string>
-    <!-- Syncing saved logins in Fenix needs login -->
-    <string name="preferences_passwords_sync_logins_sign_in">Синхрондау ішіне кіру</string>
     <!-- Preference to access list of saved logins -->
     <string name="preferences_passwords_saved_logins">Сақталған логиндер</string>
     <!-- Description of empty list of saved passwords. Placeholder is replaced with app name.  -->
@@ -1546,36 +1470,16 @@
     <string name="preferences_passwords_exceptions_remove_all">Барлық ережеден тыс жағдайларды өшіру</string>
     <!-- Hint for search box in logins list -->
     <string name="preferences_passwords_saved_logins_search">Логиндерден іздеу</string>
-    <!-- Option to sort logins list A-Z, alphabetically -->
-    <string name="preferences_passwords_saved_logins_alphabetically">Әліпби бойынша</string>
-    <!-- Option to sort logins list by most recently used -->
-    <string name="preferences_passwords_saved_logins_recently_used">Жуырда қолданылған</string>
     <!-- The header for the site that a login is for -->
     <string name="preferences_passwords_saved_logins_site">Сайт</string>
     <!-- The header for the username for a login -->
     <string name="preferences_passwords_saved_logins_username">Пайдаланушы аты</string>
     <!-- The header for the password for a login -->
     <string name="preferences_passwords_saved_logins_password">Пароль</string>
-    <!-- Message displayed in security prompt to reenter a secret pin to access saved logins -->
-    <string name="preferences_passwords_saved_logins_enter_pin">PIN-кодты қайта енгізіңіз</string>
-    <!-- Message displayed in security prompt to access saved logins -->
-    <string name="preferences_passwords_saved_logins_enter_pin_description">Сақталған логиндеріңізді көру үшін бұғаттауын ашыңыз</string>
-    <!-- Message displayed when a connection is insecure and we detect the user is entering a password -->
-    <string name="logins_insecure_connection_warning">Бұл байланыс қауіпсіз емес. Осында енгізілген логиндер ұрлануы мүмкін.</string>
-    <!-- Learn more link that will link to a page with more information displayed when a connection is insecure and we detect the user is entering a password -->
-    <string name="logins_insecure_connection_warning_learn_more">Көбірек білу</string>
-    <!-- Prompt message displayed when Fenix detects a user has entered a password and user decides if Fenix should save it. The first parameter is the name of the application (For example: Fenix)  -->
-    <string name="logins_doorhanger_save">%s осы логинді сақтауды қалайсыз ба?</string>
-    <!-- Positive confirmation that Fenix should save the new or updated login -->
-    <string name="logins_doorhanger_save_confirmation">Сақтау</string>
-    <!-- Negative confirmation that Fenix should not save the new or updated login -->
-    <string name="logins_doorhanger_save_dont_save">Сақтамау</string>
     <!-- Shown in snackbar to tell user that the password has been copied -->
     <string name="logins_password_copied">Пароль алмасу буферіне көшірілді</string>
     <!-- Shown in snackbar to tell user that the username has been copied -->
     <string name="logins_username_copied">Пайдаланушы аты алмасу буферіне көшірілді</string>
-    <!-- Shown in snackbar to tell user that the site has been copied -->
-    <string name="logins_site_copied">Сайт алмасу буферіне көшірілді</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a password in logins-->
     <string name="saved_logins_copy_password">Парольді көшіріп алу</string>
     <!-- Content Description (for screenreaders etc) read for the button to clear a password while editing a login-->
@@ -1584,8 +1488,8 @@
     <string name="saved_login_copy_username">Пайдаланушы атын көшіріп алу</string>
     <!-- Content Description (for screenreaders etc) read for the button to clear a username while editing a login -->
     <string name="saved_login_clear_username">Пайдаланушы атын тазарту</string>
-    <!-- Content Description (for screenreaders etc) read for the button to copy a site in logins -->
-    <string name="saved_login_copy_site">Сайтты көшіріп алу</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear the hostname field while creating a login -->
+    <string name="saved_login_clear_hostname">Хост атауын өшіру</string>
     <!-- Content Description (for screenreaders etc) read for the button to open a site in logins -->
     <string name="saved_login_open_site">Сайтты браузерде ашу</string>
     <!-- Content Description (for screenreaders etc) read for the button to reveal a password in logins -->
@@ -1646,17 +1550,19 @@
     <string name="credit_cards_expiration_date_year">Жарамдылық мерзімінің жылы</string>
     <!-- The header for the name on the credit card -->
     <string name="credit_cards_name_on_card">Картадағы аты</string>
-    <!-- The header for the nickname for a credit card -->
-    <string name="credit_cards_card_nickname">Картаның бүркеншік аты</string>
     <!-- The text for the "Delete card" menu item for deleting a credit card -->
     <string name="credit_cards_menu_delete_card">Картаны өшіру</string>
     <!-- The text for the "Delete card" button for deleting a credit card -->
     <string name="credit_cards_delete_card_button">Картаны өшіру</string>
+    <!-- The text for the confirmation message of "Delete card" dialog -->
+    <string name="credit_cards_delete_dialog_confirmation">Бұл несие картасын өшіруді шынымен қалайсыз ба?</string>
+    <!-- The text for the positive button on "Delete card" dialog -->
+    <string name="credit_cards_delete_dialog_button">Өшіру</string>
     <!-- The title for the "Save" menu item for saving a credit card -->
     <string name="credit_cards_menu_save">Сақтау</string>
     <!-- The text for the "Save" button for saving a credit card -->
     <string name="credit_cards_save_button">Сақтау</string>
-    <!-- The text for the "Cancel" button for cancelling adding or updating a credit card -->
+    <!-- The text for the "Cancel" button for cancelling adding, updating or deleting a credit card -->
     <string name="credit_cards_cancel_button">Бас тарту</string>
 
     <!-- Title of the "Saved cards" screen -->
@@ -1704,17 +1610,11 @@
     <string name="search_add_custom_engine_search_string_hint">Қолданылатын іздеу жолы</string>
     <!-- Description text for the Search String TextField. The %s is part of the string -->
     <string formatted="false" name="search_add_custom_engine_search_string_example">Сұранымды &quot;%s&quot; жолымен алмастырыңыз. Мысалы:\nhttps://www.google.com/search?q=%s</string>
-    <!-- Text for the button to learn more about adding a custom search engine -->
-    <string name="search_add_custom_engine_learn_more_label">Көбірек білу</string>
     <!-- Accessibility description for the form in which details about the custom search engine are entered -->
     <string name="search_add_custom_engine_form_description">Таңдауыңызша іздеу жүйесінің ақпараты</string>
-    <!-- Accessibility description for the 'Learn more' link -->
-    <string name="search_add_custom_engine_learn_more_description">Көбірек білу сілтемесі</string>
 
     <!-- Text shown when a user leaves the name field empty -->
     <string name="search_add_custom_engine_error_empty_name">Іздеу жүйесінің атауын енгізіңіз</string>
-    <!-- Text shown when a user tries to add a search engine that already exists -->
-    <string name="search_add_custom_engine_error_existing_name">&quot;%s&quot; деп аталатын іздеу жүйесі бар болып тұр.</string>
     <!-- Text shown when a user leaves the search string field empty -->
     <string name="search_add_custom_engine_error_empty_search_string">Іздеу жолын енгізіңіз</string>
     <!-- Text shown when a user leaves out the required template string -->
@@ -1729,17 +1629,17 @@
     <string name="search_delete_search_engine_success_message">%s өшірілді</string>
 
     <!-- Title text shown for the migration screen to the new browser. Placeholder replaced with app name -->
-    <string name="migration_title">Су жаңа %s ішіне қош келдіңіз</string>
+    <string moz:removedIn="100" name="migration_title" tools:ignore="UnusedResources">Су жаңа %s ішіне қош келдіңіз</string>
     <!-- Description text followed by a list of things migrating (e.g. Bookmarks, History). Placeholder replaced with app name-->
-    <string name="migration_description">Желіде көбірек бітіруге көмектесетін, жетілдірілген өнімділік пен мүмкіндіктермен толығымен қайта өңделген браузер сізді күтеді.\n\n%s жаңартып болғанша күте тұрыңыз, соның ішінде:</string>
+    <string moz:removedIn="100" name="migration_description" tools:ignore="UnusedResources">Желіде көбірек бітіруге көмектесетін, жетілдірілген өнімділік пен мүмкіндіктермен толығымен қайта өңделген браузер сізді күтеді.\n\n%s жаңартып болғанша күте тұрыңыз, соның ішінде:</string>
     <!-- Text on the disabled button while in progress. Placeholder replaced with app name -->
-    <string name="migration_updating_app_button_text">%s жаңарту…</string>
+    <string moz:removedIn="100" name="migration_updating_app_button_text" tools:ignore="UnusedResources">%s жаңарту…</string>
     <!-- Text on the enabled button. Placeholder replaced with app name-->
-    <string name="migration_update_app_button">%s іске қосу</string>
+    <string moz:removedIn="100" name="migration_update_app_button" tools:ignore="UnusedResources">%s іске қосу</string>
     <!-- Accessibility description text for a completed migration item -->
-    <string name="migration_icon_description">Көшіру аяқталды</string>
+    <string moz:removedIn="100" name="migration_icon_description" tools:ignore="UnusedResources">Көшіру аяқталды</string>
     <!--Text on list of migrated items (e.g. Settings, History, etc.)-->
-    <string name="migration_text_passwords">Парольдер</string>
+    <string moz:removedIn="100" name="migration_text_passwords" tools:ignore="UnusedResources">Парольдер</string>
 
     <!-- Heading for the instructions to allow a permission -->
     <string name="phone_feature_blocked_intro">Рұқсат ету үшін:</string>
@@ -1751,9 +1651,13 @@
     <string name="phone_feature_blocked_step_feature"><![CDATA[3. <b>%1$s</b> ауыстырғышын іске қосыңыз]]></string>
 
     <!-- Label that indicates a site is using a secure connection -->
-    <string name="quick_settings_sheet_secure_connection">Қауіпсіз байланыс</string>
+    <string name="quick_settings_sheet_secure_connection_2">Байланыс қауіпсіз</string>
     <!-- Label that indicates a site is using a insecure connection -->
-    <string name="quick_settings_sheet_insecure_connection">Қауіпсіз емес байланыс</string>
+    <string name="quick_settings_sheet_insecure_connection_2">Байланыс қауіпсіз емес</string>
+    <!-- Label to clear site data -->
+    <string name="clear_site_data">Cookies файлдары және сайт деректерін тазарту</string>
+    <!-- Confirmation message for a dialog confirming if the user wants to delete all data for current site -->
+    <string name="confirm_clear_site_data"><![CDATA[<b>%s</b> сайты үшін барлық cookie файлдары және деректерді өшіруді шынымен қалайсыз ба?]]></string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete all the permissions for all sites-->
     <string name="confirm_clear_permissions_on_all_sites">Барлық сайттардағы барлық рұқсаттарды өшіруді шынымен қалайсыз ба?</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete all the permissions for a site-->
@@ -1762,12 +1666,16 @@
     <string name="confirm_clear_permission_site">Бұл сайт үшін бұл рұқсатты өшіруді шынымен қалайсыз ба?</string>
     <!-- label shown when there are not site exceptions to show in the site exception settings -->
     <string name="no_site_exceptions">Сайт үшін ережеден тыс жағдайлар жоқ</string>
-    <!-- Label for the Pocket default top site -->
-    <string name="pocket_top_articles">Үздік мақалалар</string>
     <!-- Bookmark deletion confirmation -->
     <string name="bookmark_deletion_confirmation">Бұл бетбелгіні өшіруді шынымен қалайсыз ба?</string>
     <!-- Browser menu button that adds a top site to the home fragment -->
-    <string name="browser_menu_add_to_top_sites">Үздік сайттарға қосу</string>
+    <string moz:RemovedIn="101" name="browser_menu_add_to_top_sites" tools:ignore="UnusedResources">Үздік сайттарға қосу</string>
+    <!-- Browser menu button that removes a top site from the home fragment -->
+    <string moz:RemovedIn="101" name="browser_menu_remove_from_top_sites" tools:ignore="UnusedResources">Үздік сайттардан өшіру</string>
+    <!-- Browser menu button that adds a shortcut to the home fragment -->
+    <string name="browser_menu_add_to_shortcuts">Жарлықтарға қосу</string>
+    <!-- Browser menu button that removes a shortcut from the home fragment -->
+    <string name="browser_menu_remove_from_shortcuts">Жарлықтардан өшіру</string>
     <!-- text shown before the issuer name to indicate who its verified by, parameter is the name of
      the certificate authority that verified the ticket-->
     <string name="certificate_info_verified_by">Растаған: %1$s</string>
@@ -1779,6 +1687,8 @@
     <string name="login_deletion_confirmation">Бұл логинді өшіруді қалайсыз ба?</string>
     <!-- Positive action of a dialog asking to delete  -->
     <string name="dialog_delete_positive">Өшіру</string>
+    <!-- Negative action of a dialog asking to delete login -->
+    <string name="dialog_delete_negative">Бас тарту</string>
     <!--  The saved login options menu description. -->
     <string name="login_options_menu">Логин баптаулары</string>
     <!--  The editable text field for a login's web address. -->
@@ -1790,12 +1700,16 @@
 
     <!--  The button description to save changes to an edited login. -->
     <string name="save_changes_to_login">Логин өзгерістерін сақтау.</string>
-    <!--  The button description to discard changes to an edited login. -->
-    <string name="discard_changes">Өзгерістерді елемеу</string>
     <!--  The page title for editing a saved login. -->
     <string name="edit">Түзету</string>
-    <!--  The error message in edit login view when password field is blank. -->
+    <!--  The page title for adding new login. -->
+    <string name="add_login">Жаңа логинді қосу</string>
+    <!--  The error message in add/edit login view when password field is blank. -->
     <string name="saved_login_password_required">Пароль керек</string>
+    <!--  The error message in add login view when username field is blank. -->
+    <string name="saved_login_username_required">Пайдаланушы аты керек</string>
+    <!--  The error message in add login view when hostname field is blank. -->
+    <string name="saved_login_hostname_required" tools:ignore="UnusedResources">Хост атауы керек</string>
     <!-- Voice search button content description  -->
     <string name="voice_search_content_description">Дауыстық іздеу</string>
     <!-- Voice search prompt description displayed after the user presses the voice search button -->
@@ -1803,6 +1717,13 @@
 
     <!--  The error message in edit login view when a duplicate username exists. -->
     <string name="saved_login_duplicate">Бұл пайдаланушы атын қолданатын логин бар болып тұр</string>
+
+    <!-- This is the hint text that is shown inline on the hostname field of the create new login page. 'https://www.example.com' intentionally hardcoded here -->
+    <string name="add_login_hostname_hint_text">https://www.example.com</string>
+    <!-- This is an error message shown below the hostname field of the add login page when a hostname does not contain http or https. -->
+    <string name="add_login_hostname_invalid_text_3">Веб-адресте &quot;https://&quot; немесе &quot;http://&quot; болуы тиіс</string>
+    <!-- This is an error message shown below the hostname field of the add login page when a hostname is invalid. -->
+    <string name="add_login_hostname_invalid_text_2">Жарамды хост атауы керек</string>
 
     <!-- Synced Tabs -->
     <!-- Text displayed to ask user to connect another device as no devices found with account -->
@@ -1813,6 +1734,8 @@
     <string name="synced_tabs_enable_tab_syncing">Беттер синхрондауын іске қосыңыз.</string>
     <!-- Text displayed when user has no tabs that have been synced -->
     <string name="synced_tabs_no_tabs">Сізде басқа құрылғыларыңызда Firefox-та ашық беттер жоқ.</string>
+    <!-- Text displayed when user has no tabs that have been synced. The first parameter is the name of the application.-->
+    <string moz:RemovedIn="100" name="synced_tabs_no_tabs_2" tools:ignore="UnusedResources">Сізде басқа құрылғылардағы %1$s ішіндегі ашық беттер жоқ.</string>
     <!-- Text displayed in the synced tabs screen when a user is not signed in to Firefox Sync describing Synced Tabs -->
     <string name="synced_tabs_sign_in_message">Басқа құрылғыларыңыздан беттер тізімін қарау.</string>
     <!-- Text displayed on a button in the synced tabs screen to link users to sign in when a user is not signed in to Firefox Sync -->
@@ -1821,35 +1744,78 @@
     <!-- The text displayed when a synced device has no tabs to show in the list of Synced Tabs. -->
     <string name="synced_tabs_no_open_tabs">Ашық беттер жоқ</string>
 
+    <!-- Content description for expanding a group of synced tabs. -->
+    <string name="synced_tabs_expand_group">Синхрондалған беттер тобын жазық қылу</string>
+    <!-- Content description for collapsing a group of synced tabs. -->
+    <string name="synced_tabs_collapse_group">Синхрондалған беттер тобын бүктеу</string>
+
     <!-- Top Sites -->
     <!-- Title text displayed in the dialog when top sites limit is reached. -->
-    <string name="top_sites_max_limit_title">Үздік сайттар саны шегіне жетті</string>
+    <string moz:RemovedIn="101" name="top_sites_max_limit_title" tools:ignore="UnusedResources">Үздік сайттар саны шегіне жетті</string>
+    <!-- Title text displayed in the dialog when shortcuts limit is reached. -->
+    <string name="shortcut_max_limit_title">Жарлықтар саны шегіне жетті</string>
     <!-- Content description text displayed in the dialog when top sites limit is reached. -->
-    <string name="top_sites_max_limit_content_2">Жаңа үздік сайтын қосу үшін, біреуін өшіріңіз. Сайтқа басып, басулы ұстаңыз және өшіру таңдаңыз.</string>
+    <string moz:RemovedIn="101" name="top_sites_max_limit_content_2" tools:ignore="UnusedResources">Жаңа үздік сайтын қосу үшін, біреуін өшіріңіз. Сайтқа басып, басулы ұстаңыз және өшіру таңдаңыз.</string>
+    <!-- Content description text displayed in the dialog when shortcut limit is reached. -->
+    <string name="shortcut_max_limit_content">Жаңа жарлықты қосу үшін, біреуін өшіріңіз. Сайтқа басып, басулы ұстаңыз және өшіру таңдаңыз.</string>
     <!-- Confirmation dialog button text when top sites limit is reached. -->
     <string name="top_sites_max_limit_confirmation_button">Жақсы, түсіндім</string>
 
-    <!-- Label for the show most visited sites preference -->
-    <string name="top_sites_toggle_top_frecent_sites">Ең көп қаралған сайттарды көрсету</string>
-
-    <!-- Title text displayed in the rename top site dialog. -->
+    <!-- Label for the preference to show the shortcuts for the most visited top sites on the homepage -->
+    <string name="top_sites_toggle_top_recent_sites_4">Жарлықтар</string>
+	<!-- Title text displayed in the rename top site dialog. -->
 	<string name="top_sites_rename_dialog_title">Аты</string>
 	<!-- Hint for renaming title of a top site -->
-	<string name="top_site_name_hint">Үздік сайт атауы</string>
+	<string moz:RemovedIn="101" name="top_site_name_hint" tools:ignore="UnusedResources">Үздік сайт атауы</string>
+    <!-- Hint for renaming title of a shortcut -->
+    <string name="shortcut_name_hint">Жарлық атауы</string>
 	<!-- Button caption to confirm the renaming of the top site. -->
 	<string name="top_sites_rename_dialog_ok">ОК</string>
 	<!-- Dialog button text for canceling the rename top site prompt. -->
 	<string name="top_sites_rename_dialog_cancel">Бас тарту</string>
 
-    <!-- In-activate tabs in the tabs tray -->
-    <!-- Title text displayed in the tabs tray when a tab has been unused for 4 days. -->
+    <!-- Text for the menu button to open the homepage settings. -->
+    <string name="top_sites_menu_settings">Баптаулар</string>
+    <!-- Text for the menu button to navigate to sponsors and privacy support articles. '&amp;' is replaced with the ampersand symbol: & -->
+    <string name="top_sites_menu_sponsor_privacy">Біздің демеушілеріміз және сіздің жекелігіңіз</string>
+    <!-- Label text displayed for a sponsored top site. -->
+    <string name="top_sites_sponsored_label">Демеуленген</string>
+
+    <!-- Inactive tabs in the tabs tray -->
+    <!-- Title text displayed in the tabs tray when a tab has been unused for 14 days. -->
     <string name="inactive_tabs_title">Белсенді емес беттер</string>
-    <!-- A description below the section of "inactive" tabs to notify the user when those tabs will be closed, if appropriate. See strings inactive_tabs_30_days and inactive_tabs_7_days for placeholders options. -->
-    <string name="inactive_tabs_description">Беттер осында %s ішінде қолжетімді. Осы уақыттан кейін беттер автоматты түрде жабылады.</string>
-    <!-- The amount of time until a tab in the "inactive" section of the tabs tray will be closed. See string inactive_tabs_description as well -->
-    <string name="inactive_tabs_30_days">30 күн</string>
-    <!-- The amount of time until a tab in the "inactive" section of the tabs tray will be closed. See string inactive_tabs_description as well -->
-    <string name="inactive_tabs_7_days">1 апта</string>
+    <!-- Content description for closing all inactive tabs -->
+    <string name="inactive_tabs_delete_all">Барлық белсенді емес беттерді жабу</string>
+
+    <!-- Inactive tabs auto-close message in the tabs tray -->
+    <!-- The header text of the auto-close message when the user is asked if they want to turn on the auto-closing of inactive tabs. -->
+    <string name="inactive_tabs_auto_close_message_header" tools:ignore="UnusedResources">Бір айдан кейін автожабу керек пе?</string>
+    <!-- A description below the header to notify the user what the inactive tabs auto-close feature is. -->
+    <string name="inactive_tabs_auto_close_message_description" tools:ignore="UnusedResources">Firefox соңғы айда қаралмаған беттерді жаба алады.</string>
+    <!-- A call to action below the description to allow the user to turn on the auto closing of inactive tabs. -->
+    <string name="inactive_tabs_auto_close_message_action" tools:ignore="UnusedResources">АВТОЖАБУДЫ ІСКЕ ҚОСУ</string>
+
+    <!-- Text for the snackbar to confirm auto-close is enabled for inactive tabs -->
+    <string name="inactive_tabs_auto_close_message_snackbar">Автожабу іске қосылған</string>
+
+    <!-- Inactive tabs survey -->
+    <!-- Header text for the inactive tabs survey asking for feedback to improve the inactive tabs feature. -->
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_header_1" tools:ignore="UnusedResources">Firefox-ты жақсартуға көмектесіңіз</string>
+
+    <!-- Content text for the inactive tabs survey asking the primary survey feedback question. -->
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_content" tools:ignore="UnusedResources">Белсенді емес беттер мүмкіндігін неліктен сөндірдіңіз?</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_do_not_understand" tools:ignore="UnusedResources">Мен оның қалай жұмыс істейтінін түсінбеймін</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_do_it_myself" tools:ignore="UnusedResources">Мен ескі беттерді өзім тазалағанды қалаймын</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_time_too_long_option_1" tools:ignore="UnusedResources">Екі апталық уақыт кезеңі тым ұзақ</string>
+    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_time_too_short_option_1" tools:ignore="UnusedResources">Екі апталық уақыт кезеңі тым қысқа</string>
+    <!-- Confirmation button text to submit the feedback for the inactive tabs survey. -->
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_send_button" tools:ignore="UnusedResources">Жіберу</string>
+    <!-- Content description for inactive tabs survey close button -->
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_close_button_content_description" tools:ignore="UnusedResources">Жабу</string>
 
     <!-- Default browser experiment -->
     <string name="default_browser_experiment_card_text">Веб-сайттар, эл. пошта хаттары және хабарламалардан сілтемелерді Firefox-та автоматты түрде ашылатындай етіп баптау.</string>
@@ -1866,4 +1832,22 @@
     <!-- Content description for privacy content close button -->
     <string name="privacy_content_close_button_content_description">Жабу</string>
 
+    <!-- Pocket recommended stories -->
+    <!-- Header text for a section on the home screen. -->
+    <string name="pocket_stories_header_1">Ойландыратын әңгімелер</string>
+    <!-- Header text for a section on the home screen. -->
+    <string name="pocket_stories_categories_header">Тақырып бойынша әңгімелер</string>
+    <!-- Text of a button allowing users to access an external url for more Pocket recommendations. -->
+    <string name="pocket_stories_placeholder_text">Көбірек шолу</string>
+    <!-- Title of an app feature. Smaller than a heading.-->
+    <string name="pocket_stories_feature_title">Pocket негізінде.</string>
+    <!-- Caption for describing a certain feature. The placeholder is for a clickable text (eg: Learn more) which will load an url in a new tab when clicked.  -->
+    <string name="pocket_stories_feature_caption">Firefox отбасының бөлігі. %s</string>
+    <!-- Clickable text for opening an external link for more information about Pocket. -->
+    <string name="pocket_stories_feature_learn_more">Көбірек білу</string>
+
+    <!-- Snackbar message for enrolling in a Nimbus experiment from the secret settings when Studies preference is Off.-->
+    <string name="experiments_snackbar">Деректерді жіберу үшін телеметрияны іске қосу.</string>
+    <!-- Snackbar button text to navigate to telemetry settings.-->
+    <string name="experiments_snackbar_button">Баптауларға өту</string>
 </resources>

@@ -4,34 +4,41 @@
 
 package org.mozilla.fenix.tabstray.browser
 
+import android.annotation.SuppressLint
+import android.graphics.PointF
+import android.view.MotionEvent
 import android.view.View
+import android.view.ViewConfiguration
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.AppCompatImageButton
+import androidx.core.view.ViewCompat
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import mozilla.components.browser.state.selector.findTabOrCustomTab
+import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.browser.tabstray.TabViewHolder
+import mozilla.components.browser.tabstray.TabsTray
 import mozilla.components.browser.tabstray.TabsTrayStyling
 import mozilla.components.browser.tabstray.thumbnail.TabThumbnailView
 import mozilla.components.browser.toolbar.MAX_URI_LENGTH
 import mozilla.components.concept.base.images.ImageLoadRequest
 import mozilla.components.concept.base.images.ImageLoader
 import mozilla.components.concept.engine.mediasession.MediaSession
-import mozilla.components.concept.tabstray.Tab
-import mozilla.components.concept.tabstray.TabsTray
-import mozilla.components.support.base.observer.Observable
+import mozilla.telemetry.glean.private.NoExtras
+import org.mozilla.fenix.FeatureFlags
+import org.mozilla.fenix.GleanMetrics.Collections
+import org.mozilla.fenix.GleanMetrics.Tab
 import org.mozilla.fenix.R
-import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.ext.removeAndDisable
 import org.mozilla.fenix.ext.removeTouchDelegate
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showAndEnable
 import org.mozilla.fenix.ext.toShortUrl
 import org.mozilla.fenix.selection.SelectionHolder
@@ -47,18 +54,16 @@ import org.mozilla.fenix.tabstray.ext.isSelect
  * @param trayStore [TabsTrayStore] containing the complete state of tabs tray and methods to update that.
  * @param featureName [String] representing the name of the feature displaying tabs. Used in telemetry reporting.
  * @param store [BrowserStore] containing the complete state of the browser and methods to update that.
- * @param metrics [MetricController] used for handling telemetry events.
  */
 @Suppress("LongParameterList")
 abstract class AbstractBrowserTabViewHolder(
     itemView: View,
     private val imageLoader: ImageLoader,
     private val trayStore: TabsTrayStore,
-    private val selectionHolder: SelectionHolder<Tab>?,
+    private val selectionHolder: SelectionHolder<TabSessionState>?,
     @VisibleForTesting
     internal val featureName: String,
     private val store: BrowserStore = itemView.context.components.core.store,
-    private val metrics: MetricController = itemView.context.components.analytics.metrics
 ) : TabViewHolder(itemView) {
 
     private val faviconView: ImageView? =
@@ -76,35 +81,39 @@ abstract class AbstractBrowserTabViewHolder(
     abstract val browserTrayInteractor: BrowserTrayInteractor
     abstract val thumbnailSize: Int
 
-    override var tab: Tab? = null
+    override var tab: TabSessionState? = null
+
+    internal var beingDragged: Boolean = false
+    private var touchStartPoint: PointF? = null
 
     /**
      * Displays the data of the given session and notifies the given observable about events.
      */
     @Suppress("ComplexMethod", "LongMethod")
     override fun bind(
-        tab: Tab,
+        tab: TabSessionState,
         isSelected: Boolean,
         styling: TabsTrayStyling,
-        observable: Observable<TabsTray.Observer>
+        delegate: TabsTray.Delegate
     ) {
         this.tab = tab
+        beingDragged = false
 
         updateTitle(tab)
         updateUrl(tab)
         updateFavicon(tab)
-        updateCloseButtonDescription(tab.title)
+        updateCloseButtonDescription(tab.content.title)
         updateSelectedTabIndicator(isSelected)
         updateMediaState(tab)
 
         if (selectionHolder != null) {
             setSelectionInteractor(tab, selectionHolder, browserTrayInteractor)
         } else {
-            itemView.setOnClickListener { browserTrayInteractor.open(tab, featureName) }
+            itemView.setOnClickListener { browserTrayInteractor.onTabSelected(tab, featureName) }
         }
 
-        if (tab.thumbnail != null) {
-            thumbnailView.setImageBitmap(tab.thumbnail)
+        if (tab.content.thumbnail != null) {
+            thumbnailView.setImageBitmap(tab.content.thumbnail)
         } else {
             loadIntoThumbnailView(thumbnailView, tab.id)
         }
@@ -115,31 +124,29 @@ abstract class AbstractBrowserTabViewHolder(
         closeView.isInvisible = trayStore.state.mode is TabsTrayState.Mode.Select
     }
 
-    private fun updateFavicon(tab: Tab) {
-        if (tab.icon != null) {
+    private fun updateFavicon(tab: TabSessionState) {
+        if (tab.content.icon != null) {
             faviconView?.visibility = View.VISIBLE
-            faviconView?.setImageBitmap(tab.icon)
+            faviconView?.setImageBitmap(tab.content.icon)
         } else {
             faviconView?.visibility = View.GONE
         }
     }
 
-    private fun updateTitle(tab: Tab) {
-        val title = if (tab.title.isNotEmpty()) {
-            tab.title
-        } else {
-            tab.url
+    private fun updateTitle(tab: TabSessionState) {
+        val title = tab.content.title.ifEmpty {
+            tab.content.url
         }
         titleView.text = title
     }
 
-    private fun updateUrl(tab: Tab) {
+    private fun updateUrl(tab: TabSessionState) {
         // Truncate to MAX_URI_LENGTH to prevent the UI from locking up for
         // extremely large URLs such as data URIs or bookmarklets. The same
         // is done in the toolbar and awesomebar:
         // https://github.com/mozilla-mobile/fenix/issues/1824
         // https://github.com/mozilla-mobile/android-components/issues/6985
-        urlView?.text = tab.url
+        urlView?.text = tab.content.url
             .toShortUrl(itemView.context.components.publicSuffixList)
             .take(MAX_URI_LENGTH)
     }
@@ -149,11 +156,7 @@ abstract class AbstractBrowserTabViewHolder(
             closeView.context.getString(R.string.close_tab_title, title)
     }
 
-    /**
-     * NB: Why do we query for the media state from the store, when we have [Tab.playbackState] and
-     * [Tab.controller] already mapped?
-     */
-    private fun updateMediaState(tab: Tab) {
+    private fun updateMediaState(tab: TabSessionState) {
         // Media state
         playPauseButtonView.increaseTapArea(PLAY_PAUSE_BUTTON_EXTRA_DPS)
 
@@ -188,12 +191,12 @@ abstract class AbstractBrowserTabViewHolder(
             setOnClickListener {
                 when (sessionState?.mediaSessionState?.playbackState) {
                     MediaSession.PlaybackState.PLAYING -> {
-                        metrics.track(Event.TabMediaPause)
+                        Tab.mediaPause.record(NoExtras())
                         sessionState.mediaSessionState?.controller?.pause()
                     }
 
                     MediaSession.PlaybackState.PAUSED -> {
-                        metrics.track(Event.TabMediaPlay)
+                        Tab.mediaPlay.record(NoExtras())
                         sessionState.mediaSessionState?.controller?.play()
                     }
                     else -> throw AssertionError(
@@ -209,27 +212,76 @@ abstract class AbstractBrowserTabViewHolder(
     }
 
     private fun setSelectionInteractor(
-        item: Tab,
-        holder: SelectionHolder<Tab>,
+        item: TabSessionState,
+        holder: SelectionHolder<TabSessionState>,
         interactor: BrowserTrayInteractor
     ) {
         itemView.setOnClickListener {
             val selected = holder.selectedItems
             when {
-                selected.isEmpty() && trayStore.state.mode.isSelect().not() -> interactor.open(item, featureName)
-                item in selected -> interactor.deselect(item)
+                selected.isEmpty() && trayStore.state.mode.isSelect().not() -> {
+                    interactor.onTabSelected(item, featureName)
+                }
+                item.id in selected.map { item -> item.id } -> interactor.deselect(item)
                 else -> interactor.select(item)
             }
         }
 
         itemView.setOnLongClickListener {
             if (holder.selectedItems.isEmpty()) {
-                metrics.track(Event.CollectionTabLongPressed)
+                Collections.longPress.record(NoExtras())
                 interactor.select(item)
                 true
             } else {
                 false
             }
+        }
+        setDragInteractor(item, holder, interactor)
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun setDragInteractor(
+        item: TabSessionState,
+        holder: SelectionHolder<TabSessionState>,
+        interactor: BrowserTrayInteractor
+    ) {
+        // Since I immediately pass the event to onTouchEvent if it's not a move
+        // The ClickableViewAccessibility warning isn't useful
+        itemView.setOnTouchListener { view, motionEvent ->
+            when (motionEvent.actionMasked) {
+                MotionEvent.ACTION_DOWN -> {
+                    touchStartPoint = PointF(motionEvent.x, motionEvent.y)
+                }
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    touchStartPoint = null
+                }
+                MotionEvent.ACTION_MOVE -> {
+                    val touchStart = touchStartPoint
+                    val selected = holder.selectedItems
+                    val selectsOnlyThis = (selected.size == 1 && selected.contains(item))
+                    val featureEnabled = FeatureFlags.tabReorderingFeature &&
+                        !itemView.context.settings().searchTermTabGroupsAreEnabled
+                    if (featureEnabled && selectsOnlyThis && touchStart != null) {
+                        // In a tab group, we do not use a AbstractBrowserTrayList as the parent,
+                        // so we should return early and mark the event as unhandled (return false).
+                        val parent = itemView.parent as? AbstractBrowserTrayList ?: return@setOnTouchListener false
+
+                        // Prevent scrolling if the user tries to start drag vertically
+                        parent.requestDisallowInterceptTouchEvent(true)
+                        // Only start deselect+drag if the user drags far enough
+                        val dist = PointF.length(touchStart.x - motionEvent.x, touchStart.y - motionEvent.y)
+                        if (dist > ViewConfiguration.get(parent.context).scaledTouchSlop) {
+                            interactor.deselect(item) // Exit selection mode
+                            touchStartPoint = null
+                            val dragOffset = PointF(motionEvent.x, motionEvent.y)
+                            val shadow = BlankDragShadowBuilder()
+                            ViewCompat.startDragAndDrop(itemView, null, shadow, TabDragData(item, dragOffset), 0)
+                        }
+                        return@setOnTouchListener true
+                    }
+                }
+            }
+            view.onTouchEvent(motionEvent)
         }
     }
 

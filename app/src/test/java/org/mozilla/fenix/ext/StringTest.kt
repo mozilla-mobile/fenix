@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.ext
 
+import mozilla.components.lib.publicsuffixlist.PublicSuffixList
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -19,14 +20,7 @@ const val IDN = "台灣"
 @RunWith(FenixRobolectricTestRunner::class)
 class StringTest {
 
-    private val publicSuffixList = testContext.components.publicSuffixList
-
-    @Test
-    fun `Url To Trimmed Host`() {
-        val urlTest = "http://www.example.com:1080/docs/resource1.html"
-        val new = urlTest.urlToTrimmedHost(publicSuffixList)
-        assertEquals(new, "example")
-    }
+    private val publicSuffixList = PublicSuffixList(testContext)
 
     @Test
     fun `Simplified Url`() {
@@ -231,8 +225,30 @@ class StringTest {
         assertFalse("2001:db8::1 ".isIpv4())
         assertFalse("2001:db8:0:1:1:1:1:1".isIpv4())
         assertFalse("[2001:db8:a0b:12f0::1]".isIpv4())
+        assertFalse("2001:db8: 3333:4444:5555:6666:1.2.3.4".isIpv4())
+    }
+
+    @Test
+    fun testIsIPv6WithIPv6() {
+        assertTrue("2001:db8::1".isIpv6())
+        assertTrue("2001:db8:0:1:1:1:1:1".isIpv6())
+    }
+
+    @Test
+    fun testIsIPv6WithIPv4() {
+        assertFalse("192.168.1.1".isIpv6())
+        assertFalse("8.8.8.8".isIpv6())
+        assertFalse("63.245.215.20".isIpv6())
     }
     // END test cases borrowed from FFTV
+
+    @Test
+    fun testReplaceConsecutiveZeros() {
+        assertEquals(
+            "2001:db8::ff00:42:8329",
+            "2001:db8:0:0:0:ff00:42:8329".replaceConsecutiveZeros()
+        )
+    }
 
     private infix fun String.shortenedShouldBecome(expect: String) {
         assertEquals(expect, this.shortened())

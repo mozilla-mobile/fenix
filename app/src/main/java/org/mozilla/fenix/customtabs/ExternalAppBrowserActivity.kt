@@ -17,7 +17,6 @@ import mozilla.components.support.utils.SafeIntent
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.NavGraphDirections
-import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import java.security.InvalidParameterException
 
@@ -45,11 +44,15 @@ open class ExternalAppBrowserActivity : HomeActivity() {
         return "Changing to fragment $fragmentName, isCustomTab: true"
     }
 
-    final override fun getIntentSource(intent: SafeIntent) = Event.OpenedApp.Source.CUSTOM_TAB
+    final override fun getIntentSource(intent: SafeIntent) = "CUSTOM_TAB"
 
     final override fun getIntentSessionId(intent: SafeIntent) = intent.getSessionId()
 
     override fun navigateToBrowserOnColdStart() {
+        // No-op for external app
+    }
+
+    override fun navigateToHome() {
         // No-op for external app
     }
 

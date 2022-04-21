@@ -17,7 +17,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.plus
@@ -50,6 +49,7 @@ class QuickSettingsSheetDialogFragment : FenixDialogFragment() {
     private lateinit var quickSettingsController: QuickSettingsController
     private lateinit var websiteInfoView: WebsiteInfoView
     private lateinit var websitePermissionsView: WebsitePermissionsView
+    private lateinit var clearSiteDataView: ClearSiteDataView
 
     @VisibleForTesting
     internal lateinit var trackingProtectionView: TrackingProtectionView
@@ -78,6 +78,7 @@ class QuickSettingsSheetDialogFragment : FenixDialogFragment() {
         val rootView = inflateRootView(container)
         _binding = FragmentQuickSettingsDialogSheetBinding.bind(rootView)
 
+        val navController = findNavController()
         quickSettingsStore = QuickSettingsFragmentStore.createStore(
             context = context,
             websiteUrl = args.url,
@@ -96,19 +97,17 @@ class QuickSettingsSheetDialogFragment : FenixDialogFragment() {
             quickSettingsStore = quickSettingsStore,
             browserStore = components.core.store,
             ioScope = viewLifecycleOwner.lifecycleScope + Dispatchers.IO,
-            navController = { findNavController() },
+            navController = navController,
             sessionId = args.sessionId,
             sitePermissions = args.sitePermissions,
             settings = components.settings,
             permissionStorage = components.core.permissionStorage,
             reload = components.useCases.sessionUseCases.reload,
-            addNewTab = components.useCases.tabsUseCases.addTab,
             requestRuntimePermissions = { permissions ->
                 requestPermissions(permissions, REQUEST_CODE_QUICK_SETTINGS_PERMISSIONS)
                 tryToRequestPermissions = true
             },
-            displayPermissions = ::showPermissionsView,
-            dismiss = ::dismiss
+            displayPermissions = ::showPermissionsView
         )
 
         interactor = QuickSettingsInteractor(quickSettingsController)
@@ -117,11 +116,18 @@ class QuickSettingsSheetDialogFragment : FenixDialogFragment() {
             WebsitePermissionsView(binding.websitePermissionsLayout, interactor)
         trackingProtectionView =
             TrackingProtectionView(binding.trackingProtectionLayout, interactor, context.settings())
+        clearSiteDataView = ClearSiteDataView(
+            context = context,
+            ioScope = viewLifecycleOwner.lifecycleScope + Dispatchers.IO,
+            containerView = binding.clearSiteDataLayout,
+            containerDivider = binding.clearSiteDataDivider,
+            interactor = interactor,
+            navController = navController
+        )
 
         return rootView
     }
 
-    @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         observeTrackersChange(requireComponents.core.store)
@@ -129,6 +135,7 @@ class QuickSettingsSheetDialogFragment : FenixDialogFragment() {
             websiteInfoView.update(it.webInfoState)
             websitePermissionsView.update(it.websitePermissionsState)
             trackingProtectionView.update(it.trackingProtectionState)
+            clearSiteDataView.update(it.webInfoState)
         }
     }
 
@@ -182,7 +189,6 @@ class QuickSettingsSheetDialogFragment : FenixDialogFragment() {
     internal fun provideTabId(): String = args.sessionId
 
     @VisibleForTesting
-    @ExperimentalCoroutinesApi
     internal fun observeTrackersChange(store: BrowserStore) {
         consumeFlow(store) { flow ->
             flow.mapNotNull { state ->

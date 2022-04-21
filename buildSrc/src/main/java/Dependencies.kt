@@ -2,23 +2,25 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+// If you ever need to force a toolchain rebuild (taskcluster) then edit the following comment.
+// FORCE REBUILD 2021-11-24
+
 object Versions {
-    const val kotlin = "1.5.10"
-    const val coroutines = "1.5.0"
+    const val kotlin = "1.6.10"
+    const val coroutines = "1.5.2"
 
     // These versions are linked: lint should be X+23.Y.Z of gradle_plugin version, according to:
     // https://github.com/alexjlockwood/android-lint-checks-demo/blob/0245fc027463137b1b4afb97c5295d60dce998b6/dependencies.gradle#L3
     const val android_gradle_plugin = "7.0.0"
     const val android_lint_api = "30.0.0"
 
-    const val sentry = "1.7.10"
-    const val leakcanary = "2.4"
+    const val sentry = "5.6.2"
+    const val leakcanary = "2.8.1"
     const val osslicenses_plugin = "0.10.4"
-    const val detekt = "1.17.1"
-    const val jna = "5.6.0"
+    const val detekt = "1.19.0"
+    const val jna = "5.8.0"
 
-    const val androidx_activity_compose = "1.3.0"
-    const val androidx_compose = "1.0.0"
+    const val androidx_compose = "1.1.1"
     const val androidx_appcompat = "1.3.0"
     const val androidx_benchmark = "1.0.0"
     const val androidx_biometric = "1.1.0"
@@ -27,14 +29,15 @@ object Versions {
     const val androidx_preference = "1.1.1"
     const val androidx_legacy = "1.0.0"
     const val androidx_annotation = "1.1.0"
-    const val androidx_lifecycle = "2.2.0"
+    const val androidx_lifecycle = "2.4.0"
     const val androidx_fragment = "1.3.4"
     const val androidx_navigation = "2.3.3"
-    const val androidx_recyclerview = "1.2.0-beta01"
+    const val androidx_recyclerview = "1.2.1"
     const val androidx_core = "1.3.2"
-    const val androidx_paging = "2.1.2"
+    const val androidx_paging = "3.1.1"
     const val androidx_transition = "1.4.0"
-    const val androidx_work = "2.5.0"
+    const val androidx_work = "2.7.1"
+    const val androidx_datastore = "1.0.0"
     const val google_material = "1.2.1"
 
     const val mozilla_android_components = AndroidComponents.VERSION
@@ -52,6 +55,8 @@ object Versions {
     const val google_ads_id_version = "16.0.0"
 
     const val google_play_store_version = "1.8.0"
+
+    const val protobuf = "3.11.4" // keep in sync with the version used in AS.
 }
 
 @Suppress("unused")
@@ -66,9 +71,11 @@ object Deps {
     const val kotlin_coroutines_test = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.coroutines}"
     const val kotlin_coroutines_android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.coroutines}"
 
-    const val allopen = "org.jetbrains.kotlin:kotlin-allopen:${Versions.kotlin}"
     const val osslicenses_plugin = "com.google.android.gms:oss-licenses-plugin:${Versions.osslicenses_plugin}"
 
+    const val mozilla_compose_awesomebar = "org.mozilla.components:compose-awesomebar:${Versions.mozilla_android_components}"
+
+    const val mozilla_concept_awesomebar = "org.mozilla.components:concept-awesomebar:${Versions.mozilla_android_components}"
     const val mozilla_concept_base = "org.mozilla.components:concept-base:${Versions.mozilla_android_components}"
     const val mozilla_concept_engine = "org.mozilla.components:concept-engine:${Versions.mozilla_android_components}"
     const val mozilla_concept_menu = "org.mozilla.components:concept-menu:${Versions.mozilla_android_components}"
@@ -78,7 +85,6 @@ object Deps {
     const val mozilla_concept_storage = "org.mozilla.components:concept-storage:${Versions.mozilla_android_components}"
     const val mozilla_concept_sync = "org.mozilla.components:concept-sync:${Versions.mozilla_android_components}"
 
-    const val mozilla_browser_awesomebar = "org.mozilla.components:browser-awesomebar:${Versions.mozilla_android_components}"
     const val mozilla_browser_engine_gecko = "org.mozilla.components:browser-engine-gecko:${Versions.mozilla_android_components}"
     const val mozilla_browser_domains = "org.mozilla.components:browser-domains:${Versions.mozilla_android_components}"
     const val mozilla_browser_icons = "org.mozilla.components:browser-icons:${Versions.mozilla_android_components}"
@@ -128,8 +134,10 @@ object Deps {
     const val mozilla_feature_webcompat = "org.mozilla.components:feature-webcompat:${Versions.mozilla_android_components}"
     const val mozilla_feature_webnotifications = "org.mozilla.components:feature-webnotifications:${Versions.mozilla_android_components}"
     const val mozilla_feature_webcompat_reporter = "org.mozilla.components:feature-webcompat-reporter:${Versions.mozilla_android_components}"
-    const val mozilla_service_pocket = "org.mozilla.components:service-pocket:${Versions.mozilla_android_components}"
 
+    const val mozilla_service_pocket = "org.mozilla.components:service-pocket:${Versions.mozilla_android_components}"
+    const val mozilla_service_contile =
+        "org.mozilla.components:service-contile:${Versions.mozilla_android_components}"
     const val mozilla_service_digitalassetlinks =
         "org.mozilla.components:service-digitalassetlinks:${Versions.mozilla_android_components}"
     const val mozilla_service_sync_autofill =
@@ -147,6 +155,8 @@ object Deps {
     const val mozilla_ui_tabcounter = "org.mozilla.components:ui-tabcounter:${Versions.mozilla_android_components}"
 
     const val mozilla_lib_crash = "org.mozilla.components:lib-crash:${Versions.mozilla_android_components}"
+    const val lib_crash_sentry =
+        "org.mozilla.components:lib-crash-sentry:${Versions.mozilla_android_components}"
     const val mozilla_lib_push_firebase = "org.mozilla.components:lib-push-firebase:${Versions.mozilla_android_components}"
     const val mozilla_lib_dataprotect = "org.mozilla.components:lib-dataprotect:${Versions.mozilla_android_components}"
     const val mozilla_lib_state = "org.mozilla.components:lib-state:${Versions.mozilla_android_components}"
@@ -161,11 +171,10 @@ object Deps {
     const val mozilla_support_utils = "org.mozilla.components:support-utils:${Versions.mozilla_android_components}"
     const val mozilla_support_test = "org.mozilla.components:support-test:${Versions.mozilla_android_components}"
     const val mozilla_support_test_libstate = "org.mozilla.components:support-test-libstate:${Versions.mozilla_android_components}"
-    const val mozilla_support_migration = "org.mozilla.components:support-migration:${Versions.mozilla_android_components}"
     const val mozilla_support_locale = "org.mozilla.components:support-locale:${Versions.mozilla_android_components}"
 
     const val sentry = "io.sentry:sentry-android:${Versions.sentry}"
-    const val leakcanary = "com.squareup.leakcanary:leakcanary-android:${Versions.leakcanary}"
+    const val leakcanary = "com.squareup.leakcanary:leakcanary-android-core:${Versions.leakcanary}"
 
     const val androidx_compose_ui = "androidx.compose.ui:ui:${Versions.androidx_compose}"
     const val androidx_compose_ui_test = "androidx.compose.ui:ui-test-junit4:${Versions.androidx_compose}"
@@ -181,7 +190,7 @@ object Deps {
     const val androidx_coordinatorlayout = "androidx.coordinatorlayout:coordinatorlayout:${Versions.androidx_coordinator_layout}"
     const val androidx_constraintlayout = "androidx.constraintlayout:constraintlayout:${Versions.androidx_constraint_layout}"
     const val androidx_legacy = "androidx.legacy:legacy-support-v4:${Versions.androidx_legacy}"
-    const val androidx_lifecycle_common = "androidx.lifecycle:lifecycle-common-java8:${Versions.androidx_lifecycle}"
+    const val androidx_lifecycle_common = "androidx.lifecycle:lifecycle-common:${Versions.androidx_lifecycle}"
     const val androidx_lifecycle_livedata = "androidx.lifecycle:lifecycle-livedata-ktx:${Versions.androidx_lifecycle}"
     const val androidx_lifecycle_process = "androidx.lifecycle:lifecycle-process:${Versions.androidx_lifecycle}"
     const val androidx_lifecycle_viewmodel = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.androidx_lifecycle}"
@@ -197,7 +206,11 @@ object Deps {
     const val androidx_transition = "androidx.transition:transition:${Versions.androidx_transition}"
     const val androidx_work_ktx = "androidx.work:work-runtime-ktx:${Versions.androidx_work}"
     const val androidx_work_testing = "androidx.work:work-testing:${Versions.androidx_work}"
+    const val androidx_datastore = "androidx.datastore:datastore:${Versions.androidx_datastore}"
     const val google_material = "com.google.android.material:material:${Versions.google_material}"
+
+    const val protobuf_javalite = "com.google.protobuf:protobuf-javalite:${Versions.protobuf}"
+    const val protobuf_compiler = "com.google.protobuf:protoc:${Versions.protobuf}"
 
     const val adjust = "com.adjust.sdk:adjust-android:${Versions.adjust}"
     const val installreferrer = "com.android.installreferrer:installreferrer:${Versions.installreferrer}"

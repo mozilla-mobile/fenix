@@ -7,30 +7,34 @@ package org.mozilla.fenix.tabstray
 import android.content.Context
 import androidx.navigation.NavController
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import mozilla.components.browser.state.selector.getNormalOrPrivateTabs
 import mozilla.components.browser.state.selector.normalTabs
+import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.browser.storage.sync.Tab as SyncTab
 import mozilla.components.concept.engine.prompt.ShareData
-import mozilla.components.concept.tabstray.Tab
 import mozilla.components.service.fxa.manager.FxaAccountManager
+import mozilla.components.service.glean.private.NoExtras
 import org.mozilla.fenix.BrowserDirection
+import org.mozilla.fenix.GleanMetrics.Collections
+import org.mozilla.fenix.GleanMetrics.Events
+import org.mozilla.fenix.GleanMetrics.TabsTray
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.collections.CollectionsDialog
 import org.mozilla.fenix.collections.show
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.bookmarks.BookmarksUseCase
-import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.home.HomeFragment
 import org.mozilla.fenix.tabstray.ext.getTabSessionState
+import org.mozilla.fenix.tabstray.ext.isActiveDownload
 import kotlin.coroutines.CoroutineContext
 
 /**
  * An interactor that helps with navigating to different parts of the app from the tabs tray.
  */
+@Suppress("TooManyFunctions")
 interface NavigationInteractor {
 
     /**
@@ -44,9 +48,9 @@ interface NavigationInteractor {
     fun onAccountSettingsClicked()
 
     /**
-     * Called when sharing a list of [Tab]s.
+     * Called when sharing a list of [TabSessionState]s.
      */
-    fun onShareTabs(tabs: Collection<Tab>)
+    fun onShareTabs(tabs: Collection<TabSessionState>)
 
     /**
      * Called when clicking the share tabs button.
@@ -64,6 +68,11 @@ interface NavigationInteractor {
     fun onCloseAllTabsClicked(private: Boolean)
 
     /**
+     * Called when cancelling private downloads confirmed.
+     */
+    fun onCloseAllPrivateTabsWarningConfirmed(private: Boolean)
+
+    /**
      * Called when opening the recently closed tabs menu button.
      */
     fun onOpenRecentlyClosedClicked()
@@ -71,12 +80,12 @@ interface NavigationInteractor {
     /**
      * Used when opening the add-to-collections user flow.
      */
-    fun onSaveToCollections(tabs: Collection<Tab>)
+    fun onSaveToCollections(tabs: Collection<TabSessionState>)
 
     /**
-     * Used when adding [Tab]s as bookmarks.
+     * Used when adding [TabSessionState]s as bookmarks.
      */
-    fun onSaveToBookmarks(tabs: Collection<Tab>)
+    fun onSaveToBookmarks(tabs: Collection<TabSessionState>)
 
     /**
      * Called when clicking on a SyncedTab item.
@@ -87,7 +96,7 @@ interface NavigationInteractor {
 /**
  * A default implementation of [NavigationInteractor].
  */
-@Suppress("LongParameterList")
+@Suppress("LongParameterList", "TooManyFunctions")
 class DefaultNavigationInteractor(
     private val context: Context,
     private val activity: HomeActivity,
@@ -95,7 +104,7 @@ class DefaultNavigationInteractor(
     private val navController: NavController,
     private val metrics: MetricController,
     private val dismissTabTray: () -> Unit,
-    private val dismissTabTrayAndNavigateHome: (String) -> Unit,
+    private val dismissTabTrayAndNavigateHome: (sessionId: String) -> Unit,
     private val bookmarksUseCase: BookmarksUseCase,
     private val tabsTrayStore: TabsTrayStore,
     private val collectionStorage: TabCollectionStorage,
@@ -105,12 +114,13 @@ class DefaultNavigationInteractor(
         collectionToSelect: Long?
     ) -> Unit,
     private val showBookmarkSnackbar: (tabSize: Int) -> Unit,
+    private val showCancelledDownloadWarning: (downloadCount: Int, tabId: String?, source: String?) -> Unit,
     private val accountManager: FxaAccountManager,
     private val ioDispatcher: CoroutineContext
 ) : NavigationInteractor {
 
     override fun onTabTrayDismissed() {
-        metrics.track(Event.TabsTrayClosed)
+        TabsTray.closed.record(NoExtras())
         dismissTabTray()
     }
 
@@ -135,12 +145,14 @@ class DefaultNavigationInteractor(
         navController.navigate(
             TabsTrayFragmentDirections.actionGlobalRecentlyClosed()
         )
-        metrics.track(Event.RecentlyClosedTabsOpened)
+        Events.recentlyClosedTabsOpened.record(NoExtras())
     }
 
-    override fun onShareTabs(tabs: Collection<Tab>) {
+    override fun onShareTabs(tabs: Collection<TabSessionState>) {
+        TabsTray.shareSelectedTabs.record(TabsTray.ShareSelectedTabsExtra(tabCount = tabs.size))
+
         val data = tabs.map {
-            ShareData(url = it.url, title = it.title)
+            ShareData(url = it.content.url, title = it.content.title)
         }
         val directions = TabsTrayFragmentDirections.actionGlobalShareFragment(
             data = data.toTypedArray()
@@ -159,19 +171,37 @@ class DefaultNavigationInteractor(
         navController.navigate(directions)
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     override fun onCloseAllTabsClicked(private: Boolean) {
+        closeAllTabs(private, isConfirmed = false)
+    }
+
+    override fun onCloseAllPrivateTabsWarningConfirmed(private: Boolean) {
+        closeAllTabs(private, isConfirmed = true)
+    }
+
+    private fun closeAllTabs(private: Boolean, isConfirmed: Boolean) {
         val sessionsToClose = if (private) {
             HomeFragment.ALL_PRIVATE_TABS
         } else {
             HomeFragment.ALL_NORMAL_TABS
         }
 
+        if (private && !isConfirmed) {
+            val privateDownloads = browserStore.state.downloads.filter {
+                it.value.private && it.value.isActiveDownload()
+            }
+            if (privateDownloads.isNotEmpty()) {
+                showCancelledDownloadWarning(privateDownloads.size, null, null)
+                return
+            }
+        }
         dismissTabTrayAndNavigateHome(sessionsToClose)
     }
 
-    override fun onSaveToCollections(tabs: Collection<Tab>) {
-        metrics.track(Event.TabsTraySaveToCollectionPressed)
+    override fun onSaveToCollections(tabs: Collection<TabSessionState>) {
+        TabsTray.selectedTabsToCollection.record(TabsTray.SelectedTabsToCollectionExtra(tabCount = tabs.size))
+
+        TabsTray.saveToCollection.record(NoExtras())
         tabsTrayStore.dispatch(TabsTrayAction.ExitSelectMode)
 
         CollectionsDialog(
@@ -180,28 +210,38 @@ class DefaultNavigationInteractor(
             onPositiveButtonClick = { id, isNewCollection ->
 
                 // If collection is null, a new one was created.
-                val event = if (isNewCollection) {
-                    Event.CollectionSaved(browserStore.state.normalTabs.size, tabs.size)
+                if (isNewCollection) {
+                    Collections.saved.record(
+                        Collections.SavedExtra(
+                            browserStore.state.normalTabs.size.toString(),
+                            tabs.size.toString()
+                        )
+                    )
                 } else {
-                    Event.CollectionTabsAdded(browserStore.state.normalTabs.size, tabs.size)
+                    Collections.tabsAdded.record(
+                        Collections.TabsAddedExtra(
+                            browserStore.state.normalTabs.size.toString(),
+                            tabs.size.toString()
+                        )
+                    )
                 }
                 id?.apply {
                     showCollectionSnackbar(tabs.size, isNewCollection, id)
                 }
-
-                metrics.track(event)
             },
             onNegativeButtonClick = {}
         ).show(context)
     }
 
-    override fun onSaveToBookmarks(tabs: Collection<Tab>) {
+    override fun onSaveToBookmarks(tabs: Collection<TabSessionState>) {
+        TabsTray.bookmarkSelectedTabs.record(TabsTray.BookmarkSelectedTabsExtra(tabCount = tabs.size))
+
         tabs.forEach { tab ->
             // We don't combine the context with lifecycleScope so that our jobs are not cancelled
             // if we leave the fragment, i.e. we still want the bookmarks to be added if the
             // tabs tray closes before the job is done.
             CoroutineScope(ioDispatcher).launch {
-                bookmarksUseCase.addBookmark(tab.url, tab.title)
+                bookmarksUseCase.addBookmark(tab.content.url, tab.content.title)
             }
         }
 
@@ -209,7 +249,7 @@ class DefaultNavigationInteractor(
     }
 
     override fun onSyncedTabClicked(tab: SyncTab) {
-        metrics.track(Event.SyncedTabOpened)
+        Events.syncedTabOpened.record(NoExtras())
 
         dismissTabTray()
         activity.openToBrowserAndLoad(

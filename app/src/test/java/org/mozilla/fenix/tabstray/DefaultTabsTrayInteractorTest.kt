@@ -6,8 +6,8 @@ package org.mozilla.fenix.tabstray
 
 import io.mockk.mockk
 import io.mockk.verifySequence
+import mozilla.components.browser.state.state.TabSessionState
 import org.junit.Test
-import mozilla.components.concept.tabstray.Tab
 
 class DefaultTabsTrayInteractorTest {
     val controller: TabsTrayController = mockk(relaxed = true)
@@ -35,11 +35,25 @@ class DefaultTabsTrayInteractorTest {
     }
 
     @Test
+    fun `GIVEN user confirmed downloads cancellation WHEN onDeletePrivateTabWarningAccepted is called THEN the Interactor delegates the controller`() {
+        trayInteractor.onDeletePrivateTabWarningAccepted("testTabId")
+
+        verifySequence { controller.handleDeleteTabWarningAccepted("testTabId") }
+    }
+
+    @Test
     fun `GIVEN user deleted multiple browser tabs WHEN onDeleteTabs is called THEN the Interactor delegates the controller`() {
-        val tabsToDelete = listOf<Tab>(mockk(), mockk())
+        val tabsToDelete = listOf<TabSessionState>(mockk(), mockk())
 
         trayInteractor.onDeleteTabs(tabsToDelete)
 
         verifySequence { controller.handleMultipleTabsDeletion(tabsToDelete) }
+    }
+
+    @Test
+    fun `GIVEN user selecting delete all inactive tabs WHEN onDeleteTabs is called THEN the Interactor delegates the controller`() {
+        trayInteractor.onDeleteInactiveTabs()
+
+        verifySequence { controller.handleDeleteAllInactiveTabs() }
     }
 }

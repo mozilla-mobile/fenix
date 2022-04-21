@@ -11,7 +11,6 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.content.PermissionHighlightsState
@@ -21,7 +20,6 @@ import mozilla.components.concept.engine.permission.SitePermissions
 import mozilla.components.feature.sitepermissions.SitePermissionsRules
 import mozilla.components.feature.sitepermissions.SitePermissionsRules.Action
 import mozilla.components.feature.sitepermissions.SitePermissionsRules.AutoplayAction
-import mozilla.components.support.test.mock
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -140,6 +138,7 @@ class QuickSettingsFragmentStoreTest {
         every { permissions.notification } returns SitePermissions.Status.BLOCKED
         every { permissions.location } returns SitePermissions.Status.ALLOWED
         every { permissions.localStorage } returns SitePermissions.Status.ALLOWED
+        every { permissions.crossOriginStorageAccess } returns SitePermissions.Status.ALLOWED
         every { permissions.mediaKeySystemAccess } returns SitePermissions.Status.NO_DECISION
         every { permissions.autoplayAudible } returns SitePermissions.AutoplayStatus.ALLOWED
         every { permissions.autoplayInaudible } returns SitePermissions.AutoplayStatus.BLOCKED
@@ -159,6 +158,7 @@ class QuickSettingsFragmentStoreTest {
         assertNotNull(state[PhoneFeature.AUTOPLAY_AUDIBLE])
         assertNotNull(state[PhoneFeature.AUTOPLAY_INAUDIBLE])
         assertNotNull(state[PhoneFeature.PERSISTENT_STORAGE])
+        assertNotNull(state[PhoneFeature.CROSS_ORIGIN_STORAGE_ACCESS])
         assertNotNull(state[PhoneFeature.MEDIA_KEY_SYSTEM_ACCESS])
         assertNotNull(state[PhoneFeature.AUTOPLAY])
     }
@@ -233,7 +233,6 @@ class QuickSettingsFragmentStoreTest {
     }
 
     @Test
-    @ExperimentalCoroutinesApi
     fun `TogglePermission should only modify status and visibility of a specific WebsitePermissionsState`() =
         runBlocking {
             val initialCameraStatus = "initialCameraStatus"
@@ -284,7 +283,7 @@ class QuickSettingsFragmentStoreTest {
             val initialState = QuickSettingsFragmentState(
                 webInfoState = websiteInfoState,
                 websitePermissionsState = initialWebsitePermissionsState,
-                trackingProtectionState = mock()
+                trackingProtectionState = mockk()
             )
             val store = QuickSettingsFragmentStore(initialState)
 
@@ -365,6 +364,7 @@ class QuickSettingsFragmentStoreTest {
         autoplayAudible = AutoplayAction.BLOCKED,
         autoplayInaudible = AutoplayAction.BLOCKED,
         persistentStorage = Action.ASK_TO_ALLOW,
-        mediaKeySystemAccess = Action.ASK_TO_ALLOW
+        mediaKeySystemAccess = Action.ASK_TO_ALLOW,
+        crossOriginStorageAccess = Action.ASK_TO_ALLOW,
     )
 }

@@ -4,21 +4,24 @@
 
 package org.mozilla.fenix.home
 
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import mozilla.components.concept.storage.BookmarkNode
-import mozilla.components.concept.storage.BookmarkNodeType
-import mozilla.components.concept.storage.DocumentType
-import mozilla.components.concept.storage.HistoryMetadata
-import mozilla.components.concept.storage.HistoryMetadataKey
 import mozilla.components.feature.tab.collections.Tab
 import mozilla.components.feature.tab.collections.TabCollection
+import mozilla.components.service.pocket.PocketRecommendedStory
 import org.junit.Before
 import org.junit.Test
-import org.mozilla.fenix.historymetadata.HistoryMetadataGroup
-import org.mozilla.fenix.historymetadata.controller.HistoryMetadataController
+import org.mozilla.fenix.browser.browsingmode.BrowsingMode
+import org.mozilla.fenix.components.appstate.AppState
+import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesCategory
+import org.mozilla.fenix.home.pocket.PocketStoriesController
+import org.mozilla.fenix.home.recentbookmarks.RecentBookmark
 import org.mozilla.fenix.home.recentbookmarks.controller.RecentBookmarksController
+import org.mozilla.fenix.home.recentsyncedtabs.RecentSyncedTab
+import org.mozilla.fenix.home.recentsyncedtabs.controller.RecentSyncedTabController
 import org.mozilla.fenix.home.recenttabs.controller.RecentTabController
+import org.mozilla.fenix.home.recentvisits.controller.RecentVisitsController
 import org.mozilla.fenix.home.sessioncontrol.DefaultSessionControlController
 import org.mozilla.fenix.home.sessioncontrol.SessionControlInteractor
 
@@ -26,8 +29,12 @@ class SessionControlInteractorTest {
 
     private val controller: DefaultSessionControlController = mockk(relaxed = true)
     private val recentTabController: RecentTabController = mockk(relaxed = true)
+    private val recentSyncedTabController: RecentSyncedTabController = mockk(relaxed = true)
     private val recentBookmarksController: RecentBookmarksController = mockk(relaxed = true)
-    private val historyMetadataController: HistoryMetadataController = mockk(relaxed = true)
+    private val pocketStoriesController: PocketStoriesController = mockk(relaxed = true)
+
+    // Note: the recent visits tests are handled in [RecentVisitsInteractorTest] and [RecentVisitsControllerTest]
+    private val recentVisitsController: RecentVisitsController = mockk(relaxed = true)
 
     private lateinit var interactor: SessionControlInteractor
 
@@ -36,8 +43,10 @@ class SessionControlInteractorTest {
         interactor = SessionControlInteractor(
             controller,
             recentTabController,
+            recentSyncedTabController,
             recentBookmarksController,
-            historyMetadataController
+            recentVisitsController,
+            pocketStoriesController
         )
     }
 
@@ -154,75 +163,131 @@ class SessionControlInteractorTest {
     }
 
     @Test
+    fun onRecentSearchGroupClicked() {
+        val tabId = "tabId"
+        interactor.onRecentSearchGroupClicked(tabId)
+        verify { recentTabController.handleRecentSearchGroupClicked(tabId) }
+    }
+
+    @Test
     fun onRecentTabShowAllClicked() {
         interactor.onRecentTabShowAllClicked()
         verify { recentTabController.handleRecentTabShowAllClicked() }
     }
 
     @Test
-    fun onHistoryMetadataItemClicked() {
-        val historyEntry = HistoryMetadata(
-            key = HistoryMetadataKey("http://www.mozilla.com", null, null),
-            title = "mozilla",
-            createdAt = System.currentTimeMillis(),
-            updatedAt = System.currentTimeMillis(),
-            totalViewTime = 10,
-            documentType = DocumentType.Regular
-        )
+    fun `WHEN recent synced tab is clicked THEN the tab is handled`() {
+        val tab: RecentSyncedTab = mockk()
+        interactor.onRecentSyncedTabClicked(tab)
 
-        interactor.onHistoryMetadataItemClicked(historyEntry.key.url, historyEntry.key)
-        verify {
-            historyMetadataController.handleHistoryMetadataItemClicked(
-                historyEntry.key.url,
-                historyEntry.key
-            )
-        }
+        verify { recentSyncedTabController.handleRecentSyncedTabClick(tab) }
     }
 
     @Test
-    fun onHistoryMetadataShowAllClicked() {
-        interactor.onHistoryMetadataShowAllClicked()
-        verify { historyMetadataController.handleHistoryShowAllClicked() }
-    }
+    fun `WHEN recent synced tabs show all is clicked THEN show all synced tabs is handled`() {
+        interactor.onSyncedTabShowAllClicked()
 
-    @Test
-    fun onToggleHistoryMetadataGroupExpanded() {
-        val historyEntry = HistoryMetadata(
-            key = HistoryMetadataKey("http://www.mozilla.com", "mozilla", null),
-            title = "mozilla",
-            createdAt = System.currentTimeMillis(),
-            updatedAt = System.currentTimeMillis(),
-            totalViewTime = 10,
-            documentType = DocumentType.Regular
-        )
-        val historyGroup = HistoryMetadataGroup(
-            title = "mozilla",
-            historyMetadata = listOf(historyEntry)
-        )
-        interactor.onToggleHistoryMetadataGroupExpanded(historyGroup)
-        verify { historyMetadataController.handleToggleHistoryMetadataGroupExpanded(historyGroup) }
+        verify { recentSyncedTabController.handleSyncedTabShowAllClicked() }
     }
 
     @Test
     fun `WHEN a recently saved bookmark is clicked THEN the selected bookmark is handled`() {
-        val bookmark = BookmarkNode(
-            type = BookmarkNodeType.ITEM,
-            guid = "guid#${Math.random() * 1000}",
-            parentGuid = null,
-            position = null,
-            title = null,
-            url = null,
-            dateAdded = 0,
-            children = null
-        )
+        val bookmark = RecentBookmark()
 
         interactor.onRecentBookmarkClicked(bookmark)
         verify { recentBookmarksController.handleBookmarkClicked(bookmark) }
     }
 
     @Test
+    fun `WHEN tapping on the customize home button THEN openCustomizeHomePage`() {
+        interactor.openCustomizeHomePage()
+        verify { controller.handleCustomizeHomeTapped() }
+    }
+
+    @Test
+    fun `WHEN calling showOnboardingDialog THEN handleShowOnboardingDialog`() {
+        interactor.showOnboardingDialog()
+        verify { controller.handleShowOnboardingDialog() }
+    }
+
+    @Test
     fun `WHEN Show All recently saved bookmarks button is clicked THEN the click is handled`() {
         interactor.onShowAllBookmarksClicked()
         verify { recentBookmarksController.handleShowAllBookmarksClicked() }
+    }
+
+    @Test
+    fun `WHEN private mode button is clicked THEN the click is handled`() {
+        val newMode = BrowsingMode.Private
+        val hasBeenOnboarded = true
+
+        interactor.onPrivateModeButtonClicked(newMode, hasBeenOnboarded)
+        verify { controller.handlePrivateModeButtonClicked(newMode, hasBeenOnboarded) }
+    }
+
+    @Test
+    fun `WHEN onSettingsClicked is called THEN handleTopSiteSettingsClicked is called`() {
+        interactor.onSettingsClicked()
+        verify { controller.handleTopSiteSettingsClicked() }
+    }
+
+    @Test
+    fun `WHEN onSponsorPrivacyClicked is called THEN handleSponsorPrivacyClicked is called`() {
+        interactor.onSponsorPrivacyClicked()
+        verify { controller.handleSponsorPrivacyClicked() }
+    }
+
+    @Test
+    fun `GIVEN a PocketStoriesInteractor WHEN stories are shown THEN handle it in a PocketStoriesController`() {
+        val shownStories: List<PocketRecommendedStory> = mockk()
+
+        interactor.onStoriesShown(shownStories)
+
+        verify { pocketStoriesController.handleStoriesShown(shownStories) }
+    }
+
+    @Test
+    fun `GIVEN a PocketStoriesInteractor WHEN a category is clicked THEN handle it in a PocketStoriesController`() {
+        val clickedCategory: PocketRecommendedStoriesCategory = mockk()
+
+        interactor.onCategoryClicked(clickedCategory)
+
+        verify { pocketStoriesController.handleCategoryClick(clickedCategory) }
+    }
+
+    @Test
+    fun `GIVEN a PocketStoriesInteractor WHEN a story is clicked THEN handle it in a PocketStoriesController`() {
+        val clickedStory: PocketRecommendedStory = mockk()
+        val storyGridLocation = 1 to 2
+
+        interactor.onStoryClicked(clickedStory, storyGridLocation)
+
+        verify { pocketStoriesController.handleStoryClicked(clickedStory, storyGridLocation) }
+    }
+
+    @Test
+    fun `GIVEN a PocketStoriesInteractor WHEN discover more clicked THEN handle it in a PocketStoriesController`() {
+        val link = "http://getpocket.com/explore"
+
+        interactor.onDiscoverMoreClicked(link)
+
+        verify { pocketStoriesController.handleDiscoverMoreClicked(link) }
+    }
+
+    @Test
+    fun `GIVEN a PocketStoriesInteractor WHEN learn more clicked THEN handle it in a PocketStoriesController`() {
+        val link = "https://www.mozilla.org/en-US/firefox/pocket/"
+
+        interactor.onLearnMoreClicked(link)
+
+        verify { pocketStoriesController.handleLearnMoreClicked(link) }
+    }
+
+    @Test
+    fun reportSessionMetrics() {
+        val appState: AppState = mockk(relaxed = true)
+        every { appState.recentBookmarks } returns emptyList()
+        interactor.reportSessionMetrics(appState)
+        verify { controller.handleReportSessionMetrics(appState) }
     }
 }

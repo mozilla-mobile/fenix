@@ -4,6 +4,8 @@
 
 package org.mozilla.fenix.home.recenttabs.interactor
 
+import org.mozilla.fenix.home.recenttabs.RecentTab
+
 /**
  * Interface for recent tab related actions in the Home screen.
  */
@@ -16,8 +18,23 @@ interface RecentTabInteractor {
     fun onRecentTabClicked(tabId: String)
 
     /**
+     * Opens the tabs tray and scroll to the search group.  Called when a user clicks on a search group.
+     *
+     * @param tabId The ID of the tab to open.
+     */
+    fun onRecentSearchGroupClicked(tabId: String)
+
+    /**
      * Show the tabs tray. Called when a user clicks on the "Show all" button besides the recent
      * tabs.
      */
     fun onRecentTabShowAllClicked()
+
+    /**
+     * Removes a bookmark from the recent bookmark list. Called when a user clicks the "Remove"
+     * button for recently saved bookmarks on the home screen.
+     *
+     * @param tab The tab that has been removed.
+     */
+    fun onRemoveRecentTab(tab: RecentTab.Tab)
 }

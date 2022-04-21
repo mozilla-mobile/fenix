@@ -11,7 +11,6 @@
     android:layout_height="match_parent"
     android:scrollbars="vertical"
     android:fadeScrollbars="false"
-    app:layout_constraintBottom_toBottomOf="@id/search_divider"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/toolbar">
@@ -19,7 +18,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/foundation"
+        android:background="?attr/layer1"
         android:paddingStart="20dp"
         android:paddingTop="20dp"
         android:paddingEnd="20dp"
@@ -33,7 +32,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_info"
-            tools:tint="@color/contrast_text_private_theme" />
+            tools:tint="@color/fx_mobile_private_text_color_primary" />
 
         <TextView
             android:id="@+id/title"

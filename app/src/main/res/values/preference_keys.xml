@@ -41,19 +41,15 @@
     <string name="pref_key_last_maintenance" translatable="false">pref_key_last_maintenance</string>
     <string name="pref_key_help" translatable="false">pref_key_help</string>
     <string name="pref_key_rate" translatable="false">pref_key_rate</string>
-    <string name="pref_key_feedback" translatable="false">pref_key_feedback</string>
     <string name="pref_key_about" translatable="false">pref_key_about</string>
     <string name="pref_key_your_rights" translatable="false">pref_key_your_rights</string>
     <string name="pref_key_account" translatable="false">pref_key_account</string>
     <string name="pref_key_sign_in" translatable="false">pref_key_sign_in</string>
     <string name="pref_key_account_auth_error" translatable="false">pref_key_account_auth_error</string>
     <string name="pref_key_allow_domestic_china_fxa_server" translatable="false">pref_key_allow_domestic_china_fxa_server</string>
-    <string name="pref_key_have_read_fxa_account_json" translatable="false">pref_key_have_read_fxa_account_json</string>
     <string name="pref_key_override_fxa_server" translatable="false">pref_key_override_fxa_server</string>
     <string name="pref_key_override_sync_tokenserver" translatable="false">pref_key_override_sync_tokenserver</string>
-    <string name="pref_key_private_mode" translatable="false">pref_key_private_mode</string>
     <string name="pref_key_customize" translatable="false">pref_key_customize</string>
-    <string name="pref_key_toolbar" translatable="false">pref_key_toolbar</string>
     <string name="pref_key_private_browsing" translatable="false">pref_key_private_browsing</string>
     <string name="pref_key_leakcanary" translatable="false">pref_key_leakcanary</string>
     <string name="pref_key_remote_debugging" translatable="false">pref_key_remote_debugging</string>
@@ -69,13 +65,14 @@
     <string name="pref_key_last_browse_activity_time" translatable="false">pref_key_last_browse_activity_time</string>
     <string name="pref_key_last_cfr_shown_time" translatable="false">pref_key_last_cfr_shown_time</string>
     <string name="pref_key_should_show_default_browser_notification" translatable="false">pref_key_should_show_default_browser_notification</string>
+    <string name="pref_key_is_first_run" translatable="false">pref_key_is_first_run</string>
+    <string name="pref_key_has_shown_home_onboarding" translatable="false">pref_key_has_shown_home_onboarding</string>
+    <string name="pref_key_home_blocklist">pref_key_home_blocklist</string>
 
     <!-- Data Choices -->
     <string name="pref_key_telemetry" translatable="false">pref_key_telemetry</string>
     <string name="pref_key_marketing_telemetry" translatable="false">pref_key_marketing_telemetry</string>
     <string name="pref_key_crash_reporter" translatable="false">pref_key_crash_reporter</string>
-    <string name="pref_key_mozilla_location_service" translatable="false">pref_key_mozilla_location_service</string>
-    <string name="pref_key_fenix_health_report" translatable="false">pref_key_fenix_health_report</string>
 
     <!-- Account Settings -->
     <string name="pref_key_account_category" translatable="false">pref_key_account_category</string>
@@ -86,12 +83,9 @@
     <string name="pref_key_sync_logins" translatable="false">pref_key_sync_logins</string>
     <string name="pref_key_sync_tabs" translatable="false">pref_key_sync_tabs</string>
     <string name="pref_key_sign_out" translatable="false">pref_key_sign_out</string>
-    <string name="pref_key_cached_account" translatable="false">pref_key_cached_account</string>
-    <string name="pref_key_sync_pair" translatable="false">pref_key_sync_pair</string>
     <string name="pref_key_sync_sign_in" translatable="false">pref_key_sync_sign_in</string>
-    <string name="pref_key_sync_problem" translatable="false">pref_key_sync_problem</string>
     <string name="pref_key_push_project_id" translatable="false">project_id</string>
-    <string name="pref_key_fxa_has_synced_items" translatable="false">pref_key_fxa_has_synced_items</string>
+    <string name="pref_key_fxa_has_authenticated" translatable="false">pref_key_fxa_has_authenticated</string>
     <string name="pref_key_search_widget_installed" translatable="false">pref_key_search_widget_installed</string>
     <string name="pref_key_saved_logins_sorting_strategy" translatable="false">pref_key_saved_logins_sorting_strategy</string>
     <!-- Key for credit cards sync preference in the account settings fragment -->
@@ -113,20 +107,17 @@
     <string name="pref_key_enable_autocomplete_urls" translatable="false">pref_key_enable_domain_autocomplete</string>
 
     <!-- Site Permissions Settings -->
-    <string name="pref_key_optimize" translatable="false">pref_key_optimize</string>
     <string name="pref_key_show_site_exceptions" translatable="false">pref_key_show_site_exceptions</string>
-    <string name="pref_key_recommended_settings" translatable="false">pref_key_recommended_settings</string>
-    <string name="pref_key_custom_settings" translatable="false">pref_key_custom_settings</string>
     <string name="pref_key_browser_feature_autoplay_v2" translatable="false">pref_key_browser_feature_autoplay_v2</string>
     <string name="pref_key_browser_feature_autoplay_audible_v2" translatable="false">pref_key_browser_feature_autoplay_v2</string>
     <string name="pref_key_browser_feature_autoplay_inaudible_v2" translatable="false">pref_key_browser_feature_autoplay_inaudible_v2</string>
     <string name="pref_key_browser_feature_persistent_storage" translatable="false">pref_key_browser_feature_persistent_storage</string>
+    <string name="pref_key_browser_feature_cross_origin_storage_access" translatable="false">pref_key_browser_feature_cross_origin_storage_access</string>
     <string name="pref_key_browser_feature_media_key_system_access" translatable="false">pref_key_browser_feature_media_key_system_access</string>
     <string name="pref_key_phone_feature_camera" translatable="false">pref_key_phone_feature_camera</string>
     <string name="pref_key_phone_feature_location" translatable="false">pref_key_phone_feature_location</string>
     <string name="pref_key_phone_feature_microphone" translatable="false">pref_key_phone_feature_microphone</string>
     <string name="pref_key_phone_feature_notification" translatable="false">pref_key_phone_feature_notification</string>
-    <string name="pref_key_category_phone_feature" translatable="false">pref_key_category_phone_feature</string>
     <string name="pref_key_exceptions_clear_site_permissions" translatable="false">pref_key_exceptions_clear_site_permissions</string>
 
     <!-- Toolbar Settings -->
@@ -149,6 +140,12 @@
     <string name="pref_key_swipe_toolbar_show_tabs" translatable="false">pref_key_swipe_toolbar_show_tabs</string>
     <string name="pref_key_recent_tabs" translatable="false">pref_key_recent_tabs</string>
     <string name="pref_key_recent_bookmarks" translatable="false">pref_key_recent_bookmarks</string>
+
+    <!-- HTTPS Only Settings -->
+    <string name="pref_key_https_only_settings" translatable="false">pref_key_https_only_settings</string>
+    <string name="pref_key_https_only" translatable="false">pref_key_https_only</string>
+    <string name="pref_key_https_only_in_all_tabs" translatable="false">pref_key_https_only_in_all_tabs</string>
+    <string name="pref_key_https_only_in_private_tabs" translatable="false">pref_key_https_only_in_private_tabs</string>
 
     <!-- Tracking Protection Settings -->
     <string name="pref_key_etp_learn_more" translatable="false">pref_key_etp_learn_more</string>
@@ -173,19 +170,20 @@
     <string name="pref_key_android_autofill" translatable="false">pref_key_android_autofill</string>
     <string name="pref_key_never_save_logins" translatable="false">pref_key_never_save_logins</string>
     <string name="pref_key_saved_logins" translatable="false">pref_key_saved_logins</string>
-    <string name="pref_key_password_sync_logins" translatable="false">pref_key_password_sync_logins</string>
     <string name="pref_key_logins_secure_warning_sync" translatable="false">pref_key_logins_secure_warning_sync</string>
     <string name="pref_key_secure_warning" translatable="false">pref_key_secure_warning</string>
 
-    <!-- Credit Cards Settings -->
+    <!-- Autofill Settings -->
     <!-- Key for the "Credit cards" preference in the "Settings" fragment -->
     <string name="pref_key_credit_cards" translatable="false">pref_key_credit_cards</string>
-    <!-- Key for the "Save and autofill cards" preference in the "Credit cards" fragment -->
+    <!-- Key for the "Save and autofill cards" preference in the "Autofill" fragment -->
     <string name="pref_key_credit_cards_save_and_autofill_cards" translatable="false">pref_key_credit_cards_save_and_autofill_cards</string>
-    <!-- Key for the "Sync cards across devices" preference in the "Credit cards" fragment -->
+    <!-- Key for the "Sync cards across devices" preference in the "Autofill" fragment -->
     <string name="pref_key_credit_cards_sync_cards_across_devices" translatable="false">pref_key_credit_cards_sync_cards_across_devices</string>
-    <!-- Key for the "Manage saved cards" preference in the "Credit cards" fragment -->
+    <!-- Key for the "Manage saved cards" preference in the "Autofill" fragment -->
     <string name="pref_key_credit_cards_manage_cards" translatable="false">pref_key_credit_cards_manage_cards</string>
+    <!-- Key for the "Manage addresses" preference in the "Autofill" fragment -->
+    <string name="pref_key_addresses_manage_addresses" translatable="false">pref_key_addresses_manage_addresses</string>
 
     <!-- Privacy Settings -->
     <string name="pref_key_open_links_in_a_private_tab" translatable="false">pref_key_open_links_in_a_private_tab</string>
@@ -193,16 +191,18 @@
     <string name="pref_key_external_download_manager" translatable="false">pref_key_external_download_manager</string>
     <string name="pref_key_allow_screenshots_in_private_mode" translatable="false">pref_key_allow_screenshots_in_private_mode</string>
 
-    <!-- Quick Action Sheet -->
-    <string name="pref_key_bounce_quick_action" translatable="false">pref_key_bounce_quick_action</string>
-    <string name="pref_key_reader_mode_notification" translatable="false">pref_key_reader_mode_notification</string>
     <string name="pref_key_adjust_campaign" translatable="false">pref_key_adjust_campaign</string>
     <string name="pref_key_adjust_network" translatable="false">pref_key_adjust_network</string>
     <string name="pref_key_adjust_adgroup" translatable="false">pref_key_adjust_adgroup</string>
     <string name="pref_key_adjust_creative" translatable="false">pref_key_adjust_creative</string>
-    <string name="pref_key_adjust_install_timestamp" translatable="false">pref_key_adjust_install_timestamp</string>
 
-    <string name="pref_key_testing_stage" translatable="false">pref_key_testing_stage</string>
+    <string name="pref_key_contile_context_id" translatable="false">pref_key_contile_context_id</string>
+
+    <!-- Wallpaper Settings -->
+    <string name="pref_key_wallpapers" translatable="false">pref_key_wallpapers</string>
+    <string name="pref_key_current_wallpaper" translatable="false">pref_key_current_wallpaper</string>
+    <string name="pref_key_wallpapers_switched_by_logo_tap">pref_key_wallpapers_switched_by_logo_tap</string>
+    <string name="pref_key_show_logo_animation" translatable="false">pref_key_show_logo_animation</string>
 
     <string name="pref_key_encryption_key_generated" translatable="false">pref_key_encryption_key_generated</string>
 
@@ -211,8 +211,12 @@
     <string name="pref_key_top_sites_size" translatable="false">pref_key_top_sites_size</string>
     <!-- Maximum number of top sites to display -->
     <string name="pref_key_top_sites_max_limit" translatable="false">pref_key_top_sites_max_limit</string>
-    <!-- Whether or not the top frecent sites are shown along with pinned top sites -->
-    <string name="pref_key_enable_top_frecent_sites" translatable="false">pref_key_top_frecent_sites</string>
+    <!-- Whether or not the top sites section is shown on the home screen -->
+    <string name="pref_key_show_top_sites" translatable="false">pref_key_show_top_sites</string>
+    <!-- Whether or not the sponsored shortcuts are shown along with the top recent sites shortcuts -->
+    <string name="pref_key_enable_contile" translatable="false">pref_key_enable_contile</string>
+    <!-- Whether or not the Task Continuity enhancements are shown -->
+    <string name="pref_key_enable_task_continuity" translatable="false">pref_key_enable_task_continuity</string>
 
     <!-- A value  of `true` means the PWA dialog has been showed or user already has PWAs installed -->
     <string name="pref_key_user_knows_about_pwa" translatable="false">pref_key_user_knows_about_pwa</string>
@@ -223,10 +227,12 @@
     <!-- A value  of `true` means the Auto Close Tabs Banner has not been shown yet -->
     <string name="pref_key_should_show_auto_close_tabs_banner" translatable="false">pref_key_should_show_auto_close_tabs_banner</string>
 
-    <string name="pref_key_migrating_from_fenix_nightly_tip" translatable="false">pref_key_migrating_from_fenix_nightly_tip</string>
-    <string name="pref_key_migrating_from_firefox_nightly_tip" translatable="false">pref_key_migrating_from_firefox_nightly_tip</string>
-    <string name="pref_key_migrating_from_fenix_tip" translatable="false">pref_key_migrating_from_fenix_tip</string>
-    <string name="pref_key_master_password_tip" translatable="false">pref_key_master_password_tip</string>
+    <!-- A value  of `true` means the Inactive tabs onboarding popup has not been shown yet -->
+    <string name="pref_key_should_show_inactive_tabs_popup" translatable="false">pref_key_should_show_inactive_tabs_popup</string>
+    <!-- A value  of `true` means the Inactive tabs auto close dialog has been dismissed by the user -->
+    <string name="pref_key_has_inactive_tabs_auto_close_dialog_dismissed" translatable="false">pref_key_has_inactive_tabs_auto_close_dialog_dismissed</string>
+    <!-- A value  of `true` means the jump back in onboarding popup has not been shown yet -->
+    <string name="pref_key_should_show_jump_back_in_tabs_popup" translatable="false">pref_key_should_show_jump_back_in_tabs_popup</string>
 
     <string name="pref_key_debug_settings" translatable="false">pref_key_debug_settings</string>
 
@@ -237,8 +243,6 @@
     <string name="pref_key_installed_addons_list" translatable="false">pref_key_installed_addons_list</string>
     <string name="pref_key_enabled_addons_count" translatable="false">pref_key_enabled_addons_count</string>
     <string name="pref_key_enabled_addons_list" translatable="false">pref_key_enabled_addons_list</string>
-
-    <string name="pref_key_search_count" translatable="false">pref_key_search_count</string>
 
     <string name="pref_key_mobile_bookmarks_size" translatable="false">pref_key_mobile_bookmarks_size</string>
     <string name="pref_key_desktop_bookmarks_size" translatable="false">pref_key_desktop_bookmarks_size</string>
@@ -256,6 +260,7 @@
     <string name="pref_key_tab_view_list_do_not_use" translatable="false">pref_key_tab_view_list</string>
     <string name="pref_key_tab_view_grid" translatable="false">pref_key_tab_view_grid</string>
     <string name="pref_key_tabs" translatable="false">pref_key_tabs</string>
+    <string name="pref_key_home" translatable="false">pref_key_home</string>
     <string name="pref_key_close_tabs_manually" translatable="false">pref_key_close_tabs_manually</string>
     <string name="pref_key_close_tabs_after_one_day" translatable="false">pref_key_close_tabs_after_one_day</string>
     <string name="pref_key_close_tabs_after_one_week" translatable="false">pref_key_close_tabs_after_one_week</string>
@@ -264,15 +269,14 @@
     <string name="pref_key_start_on_home_after_four_hours" translatable="false">pref_key_start_on_home_after_four_hours</string>
     <string name="pref_key_start_on_home_always" translatable="false">pref_key_start_on_home_always</string>
     <string name="pref_key_start_on_home_never" translatable="false">pref_key_start_on_home_never</string>
-    <string name="pref_key_start_on_home_category" translatable="false">pref_key_start_on_home_category</string>
     <string name="pref_key_camera_permissions_needed" translatable="false">pref_key_camera_permissions_needed</string>
+    <string name="pref_key_inactive_tabs_category" translatable="false">pref_key_inactive_tabs_category</string>
+    <string name="pref_key_inactive_tabs" translatable="false">pref_key_inactive_tabs</string>
+    <string name="pref_key_search_term_tab_groups" translatable="false">pref_key_search_term_tab_groups</string>
 
     <string name="pref_key_return_to_browser" translatable="false">pref_key_return_to_browser</string>
 
     <string name="pref_key_open_next_tab_desktop_mode" translatable="false">pref_key_open_next_tab_desktop_mode</string>
-
-    <!-- Set default browser experiment card-->
-    <string name="pref_key_experiment_card_home" translatable="false">pref_key_experiment_card_home</string>
 
     <!-- Secret Info Setting Keys -->
     <string name="pref_key_secret_debug_info" translatable="false">pref_key_secret_debug_info</string>
@@ -283,4 +287,5 @@
     <string name="pref_key_nimbus_use_preview" translatable="false">pref_key_nimbus_use_preview</string>
     <string name="pref_key_history_metadata_feature" translatable="false">pref_key_history_metadata_feature</string>
     <string name="pref_key_pocket_homescreen_recommendations" translatable="false">pref_key_pocket_homescreen_recommendations</string>
+    <string name="pref_key_show_unified_search" translatable="false">pref_key_show_unified_search</string>
 </resources>

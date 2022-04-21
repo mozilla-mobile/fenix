@@ -67,10 +67,10 @@ buildscript {
         classpath Deps.tools_kotlingradle
         classpath Deps.tools_benchmarkgradle
         classpath Deps.androidx_safeargs
-        classpath Deps.allopen
         classpath Deps.osslicenses_plugin
 
         classpath "org.mozilla.components:tooling-glean-gradle:${Versions.mozilla_android_components}"
+        classpath "org.mozilla.components:tooling-nimbus-gradle:${Versions.mozilla_android_components}"
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -78,7 +78,7 @@ buildscript {
 }
 
 plugins {
-    id("io.gitlab.arturbosch.detekt").version("1.17.1")
+    id("io.gitlab.arturbosch.detekt").version("1.19.0")
 }
 
 allprojects {
@@ -144,7 +144,6 @@ allprojects {
         kotlinOptions.jvmTarget = "1.8"
         kotlinOptions.allWarningsAsErrors = true
         kotlinOptions.freeCompilerArgs += [
-            "-Xuse-experimental=kotlin.Experimental",
             "-Xopt-in=kotlin.RequiresOptIn"
         ]
     }
@@ -155,8 +154,6 @@ tasks.register('clean', Delete) {
 }
 
 detekt {
-    // The version number is duplicated, please refer to plugins block for more details
-    version = "1.17.1"
     input = files("$projectDir/app/src")
     config = files("$projectDir/config/detekt.yml")
 
@@ -168,7 +165,29 @@ detekt {
         xml {
             enabled = false
         }
+        txt {
+            enabled = false
+        }
     }
+}
+
+tasks.withType(io.gitlab.arturbosch.detekt.Detekt).configureEach() {
+    autoCorrect = true
+
+    exclude "**/test/**"
+    exclude "**/androidTest/**"
+    exclude "**/build/**"
+    exclude "**/resources/**"
+    exclude "**/tmp/**"
+}
+
+// Apply same path exclusions as for the main task
+tasks.withType(io.gitlab.arturbosch.detekt.DetektCreateBaselineTask).configureEach() {
+    exclude "**/test/**"
+    exclude "**/androidTest/**"
+    exclude "**/build/**"
+    exclude "**/resources/**"
+    exclude "**/tmp/**"
 }
 
 configurations {

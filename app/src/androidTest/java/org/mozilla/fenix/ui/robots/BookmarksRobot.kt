@@ -32,6 +32,7 @@ import androidx.test.uiautomator.Until
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.containsString
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
@@ -52,6 +53,10 @@ class BookmarksRobot {
         assertBookmarksView()
     }
 
+    fun verifyAddFolderButton() = assertAddFolderButton()
+
+    fun verifyCloseButton() = assertCloseButton()
+
     fun verifyDeleteMultipleBookmarksSnackBar() = assertSnackBarText("Bookmarks deleted")
 
     fun verifyBookmarkFavicon(forUrl: Uri) = assertBookmarkFavicon(forUrl)
@@ -63,10 +68,14 @@ class BookmarksRobot {
         assertFolderTitle(title)
     }
 
+    fun verifyBookmarkFolderIsNotCreated(title: String) = assertBookmarkFolderIsNotCreated(title)
+
     fun verifyBookmarkTitle(title: String) {
         mDevice.findObject(UiSelector().text(title)).waitForExists(waitingTime)
         assertBookmarkTitle(title)
     }
+
+    fun verifyBookmarkIsDeleted(expectedTitle: String) = assertBookmarkIsDeleted(expectedTitle)
 
     fun verifyDeleteSnackBarText() = assertSnackBarText("Deleted")
 
@@ -197,12 +206,20 @@ class BookmarksRobot {
 
     fun longTapDesktopFolder(title: String) = onView(withText(title)).perform(longClick())
 
-    fun confirmFolderDeletion() {
+    fun cancelDeletion() {
+        val cancelButton = mDevice.findObject(UiSelector().textContains("CANCEL"))
+        cancelButton.waitForExists(waitingTime)
+        cancelButton.click()
+    }
+
+    fun confirmDeletion() {
         onView(withText(R.string.delete_browsing_data_prompt_allow))
             .inRoot(RootMatchers.isDialog())
             .check(matches(isDisplayed()))
             .click()
     }
+
+    fun clickDeleteInEditModeButton() = deleteInEditModeButton().click()
 
     class Transition {
         fun closeMenu(interact: HomeScreenRobot.() -> Unit): Transition {
@@ -290,6 +307,8 @@ private fun bookmarkURLEditBox() = onView(withId(R.id.bookmarkUrlEdit))
 
 private fun saveBookmarkButton() = onView(withId(R.id.save_bookmark_button))
 
+private fun deleteInEditModeButton() = onView(withId(R.id.delete_bookmark_button))
+
 private fun signInToSyncButton() = onView(withId(R.id.bookmark_folders_sign_in))
 
 private fun assertBookmarksView() {
@@ -302,8 +321,27 @@ private fun assertBookmarksView() {
         .check(matches(isDisplayed()))
 }
 
+private fun assertAddFolderButton() =
+    addFolderButton().check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+
+private fun assertCloseButton() = closeButton().check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+
 private fun assertEmptyBookmarksList() =
     onView(withId(R.id.bookmarks_empty_view)).check(matches(withText("No bookmarks here")))
+
+private fun assertBookmarkFolderIsNotCreated(title: String) {
+    mDevice.findObject(
+        UiSelector()
+            .resourceId("$packageName:id/bookmarks_wrapper")
+    ).waitForExists(waitingTime)
+
+    assertFalse(
+        mDevice.findObject(
+            UiSelector()
+                .textContains(title)
+        ).waitForExists(waitingTime)
+    )
+}
 
 private fun assertBookmarkFavicon(forUrl: Uri) = bookmarkFavicon(forUrl.toString()).check(
     matches(
@@ -322,6 +360,20 @@ private fun assertFolderTitle(expectedTitle: String) =
 private fun assertBookmarkTitle(expectedTitle: String) =
     onView(withText(expectedTitle)).check(matches(isDisplayed()))
 
+private fun assertBookmarkIsDeleted(expectedTitle: String) {
+    mDevice.findObject(
+        UiSelector()
+            .resourceId("$packageName:id/bookmarks_wrapper")
+    ).waitForExists(waitingTime)
+
+    assertFalse(
+        mDevice.findObject(
+            UiSelector()
+                .resourceId("$packageName:id/title")
+                .textContains(expectedTitle)
+        ).waitForExists(waitingTime)
+    )
+}
 private fun assertUndoDeleteSnackBarButton() =
     snackBarUndoButton().check(matches(withText("UNDO")))
 

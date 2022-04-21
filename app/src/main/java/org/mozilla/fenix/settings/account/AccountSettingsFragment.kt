@@ -22,7 +22,6 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.ConstellationState
@@ -35,11 +34,12 @@ import mozilla.components.service.fxa.sync.SyncReason
 import mozilla.components.service.fxa.sync.SyncStatusObserver
 import mozilla.components.service.fxa.sync.getLastSynced
 import mozilla.components.support.ktx.android.content.getColorFromAttr
+import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.FeatureFlags
+import org.mozilla.fenix.GleanMetrics.SyncAccount
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.StoreProvider
-import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.requireComponents
@@ -82,10 +82,9 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requireComponents.analytics.metrics.track(Event.SyncAccountOpened)
+        SyncAccount.opened.record(NoExtras())
     }
 
-    @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -109,11 +108,11 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
         accountSettingsStore = StoreProvider.get(this) {
             AccountSettingsFragmentStore(
                 AccountSettingsFragmentState(
-                    lastSyncedDate =
-                    if (getLastSynced(requireContext()) == 0L)
+                    lastSyncedDate = if (getLastSynced(requireContext()) == 0L) {
                         LastSyncTime.Never
-                    else
-                        LastSyncTime.Success(getLastSynced(requireContext())),
+                    } else {
+                        LastSyncTime.Success(getLastSynced(requireContext()))
+                    },
                     deviceName = requireComponents.backgroundServices.defaultDeviceName(
                         requireContext()
                     )
@@ -134,7 +133,7 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
             onPreferenceClickListener = getClickListenerForSyncNow()
 
             icon = icon.mutate().apply {
-                setTint(context.getColorFromAttr(R.attr.primaryText))
+                setTint(context.getColorFromAttr(R.attr.textPrimary))
             }
 
             // Current sync state
@@ -328,7 +327,7 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
      */
     private fun syncNow() {
         viewLifecycleOwner.lifecycleScope.launch {
-            requireComponents.analytics.metrics.track(Event.SyncAccountSyncNow)
+            SyncAccount.syncNow.record(NoExtras())
             // Trigger a sync.
             requireComponents.backgroundServices.accountManager.syncNow(SyncReason.User)
             // Poll for device events & update devices.

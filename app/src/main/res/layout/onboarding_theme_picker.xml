@@ -9,7 +9,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     style="@style/OnboardingCardLight"
-    android:paddingTop="16dp">
+    android:paddingTop="16dp"
+    android:layout_marginHorizontal="@dimen/home_item_horizontal_margin">
 
     <TextView
         android:id="@+id/header_text"
@@ -40,7 +41,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="@string/onboarding_theme_light_title"
-        android:textColor="?primaryText"
+        android:textColor="?attr/textPrimary"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="@+id/theme_light_image"
         app:layout_constraintStart_toStartOf="@id/theme_light_image"
@@ -107,7 +108,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="@string/onboarding_theme_dark_title"
-        android:textColor="?primaryText"
+        android:textColor="?attr/textPrimary"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="@+id/theme_dark_image"
         app:layout_constraintStart_toStartOf="@id/theme_dark_image"
@@ -121,7 +122,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="1dp"
         android:layout_marginBottom="16dp"
-        android:background="?attr/neutralFaded"
+        android:background="?attr/borderPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/dark_theme_title" />

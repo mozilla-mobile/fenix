@@ -12,10 +12,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
@@ -25,7 +23,6 @@ import mozilla.components.lib.state.ext.flowScoped
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
-import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.databinding.FragmentDeleteBrowsingDataBinding
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
@@ -96,7 +93,6 @@ class DeleteBrowsingDataFragment : Fragment(R.layout.fragment_delete_browsing_da
         }
     }
 
-    @ExperimentalCoroutinesApi
     override fun onStart() {
         super.onStart()
 
@@ -166,7 +162,6 @@ class DeleteBrowsingDataFragment : Fragment(R.layout.fragment_delete_browsing_da
 
             withContext(Main) {
                 finishDeletion()
-                requireComponents.analytics.metrics.track(Event.ClearedPrivateData)
             }
         }
     }
@@ -195,15 +190,14 @@ class DeleteBrowsingDataFragment : Fragment(R.layout.fragment_delete_browsing_da
             .setText(resources.getString(R.string.preferences_delete_browsing_data_snackbar))
             .show()
 
-        if (popAfter) viewLifecycleOwner.lifecycleScope.launch(
-            Dispatchers.Main
-        ) {
-
-            findNavController().apply {
-                // If the user deletes all open tabs we need to make sure we remove
-                // the BrowserFragment from the backstack.
-                popBackStack(R.id.homeFragment, false)
-                navigate(DeleteBrowsingDataFragmentDirections.actionGlobalSettingsFragment())
+        if (popAfter) {
+            viewLifecycleOwner.lifecycleScope.launch(Main) {
+                findNavController().apply {
+                    // If the user deletes all open tabs we need to make sure we remove
+                    // the BrowserFragment from the backstack.
+                    popBackStack(R.id.homeFragment, false)
+                    navigate(DeleteBrowsingDataFragmentDirections.actionGlobalSettingsFragment())
+                }
             }
         }
     }
@@ -243,9 +237,9 @@ class DeleteBrowsingDataFragment : Fragment(R.layout.fragment_delete_browsing_da
     private fun updateHistoryCount() {
         binding.browsingDataItem.subtitleView.text = ""
 
-        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+        viewLifecycleOwner.lifecycleScope.launch(IO) {
             val historyCount = requireComponents.core.historyStorage.getVisited().size
-            launch(Dispatchers.Main) {
+            launch(Main) {
                 binding.browsingDataItem.apply {
                     subtitleView.text =
                         resources.getString(

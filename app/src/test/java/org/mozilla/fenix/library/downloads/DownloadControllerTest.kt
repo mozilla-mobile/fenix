@@ -1,13 +1,12 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.library.downloads
 
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineScope
 import mozilla.components.browser.state.state.content.DownloadState
 import org.junit.After
@@ -18,7 +17,6 @@ import org.junit.Before
 import org.junit.Test
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 
-@ExperimentalCoroutinesApi
 class DownloadControllerTest {
     private val downloadItem = DownloadItem(
         id = "0",
@@ -40,9 +38,6 @@ class DownloadControllerTest {
     private var openToFileManagerCapturedItem: DownloadItem? = null
     private var openToFileManagerCapturedMode: BrowsingMode? = null
 
-    private val displayDeleteAll: () -> Unit = { wasDisplayDeleteAllCalled = true }
-    private var wasDisplayDeleteAllCalled = false
-
     private val invalidateOptionsMenu: () -> Unit = { wasInvalidateOptionsMenuCalled = true }
     private var wasInvalidateOptionsMenuCalled = false
 
@@ -52,7 +47,6 @@ class DownloadControllerTest {
     private val controller = DefaultDownloadController(
         store,
         openToFileManager,
-        displayDeleteAll,
         invalidateOptionsMenu,
         deleteDownloadItems
     )
@@ -117,13 +111,6 @@ class DownloadControllerTest {
         controller.handleModeSwitched()
 
         assertTrue(wasInvalidateOptionsMenuCalled)
-    }
-
-    @Test
-    fun onDeleteAll() {
-        controller.handleDeleteAll()
-
-        assertTrue(wasDisplayDeleteAllCalled)
     }
 
     @Test

@@ -15,33 +15,46 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
+import android.view.View
 import androidx.browser.customtabs.CustomTabsIntent
-import androidx.preference.PreferenceManager
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.action.ViewActions.longClick
 import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.intent.Intents
+import androidx.test.espresso.intent.Intents.intended
 import androidx.test.espresso.intent.matcher.IntentMatchers
+import androidx.test.espresso.intent.matcher.IntentMatchers.toPackage
+import androidx.test.espresso.matcher.ViewMatchers.hasSibling
+import androidx.test.espresso.matcher.ViewMatchers.withChild
 import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withParent
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
+import androidx.test.uiautomator.UiObject
 import androidx.test.uiautomator.UiScrollable
 import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
+import java.io.File
 import kotlinx.coroutines.runBlocking
+import mozilla.components.browser.state.search.SearchEngine
 import mozilla.components.support.ktx.android.content.appName
 import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.allOf
+import org.hamcrest.Matcher
+import org.junit.Assert
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
+import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
 import org.mozilla.fenix.helpers.ext.waitNotNull
 import org.mozilla.fenix.helpers.idlingresource.NetworkConnectionIdlingResource
+import org.mozilla.fenix.ui.robots.BrowserRobot
 import org.mozilla.fenix.ui.robots.mDevice
-import java.io.File
+import org.mozilla.fenix.utils.IntentUtils
 
 object TestHelper {
 
@@ -67,13 +80,6 @@ object TestHelper {
                 withText(url.toString())
             )
         ).perform(longClick())
-    }
-
-    fun setPreference(context: Context, pref: String, value: Int) {
-        val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-        val editor = preferences.edit()
-        editor.putInt(pref, value)
-        editor.apply()
     }
 
     fun restartApp(activity: HomeActivityIntentTestRule) {
@@ -110,7 +116,7 @@ object TestHelper {
         val intent = Intent().apply {
             action = Intent.ACTION_VIEW
             data = Uri.parse(url)
-            `package` = "org.mozilla.fenix.debug"
+            `package` = packageName
             flags = Intent.FLAG_ACTIVITY_NEW_TASK
         }
         try {
@@ -174,7 +180,7 @@ object TestHelper {
         val appContext = InstrumentationRegistry.getInstrumentation()
             .targetContext
             .applicationContext
-        val pendingIntent = PendingIntent.getActivity(appContext, 0, Intent(), 0)
+        val pendingIntent = PendingIntent.getActivity(appContext, 0, Intent(), IntentUtils.defaultIntentPendingFlags)
         val customTabsIntent = CustomTabsIntent.Builder()
             .addMenuItem(customMenuItemLabel, pendingIntent)
             .setShareState(CustomTabsIntent.SHARE_STATE_ON)
@@ -215,13 +221,44 @@ object TestHelper {
         }
     }
 
-    fun returnToBrowser() {
-        val urlBar =
-            mDevice.findObject(UiSelector().resourceId("$packageName:id/mozac_browser_toolbar_url_view"))
-        do {
+    fun assertNativeAppOpens(appPackageName: String, url: String) {
+        if (isPackageInstalled(appPackageName)) {
+            intended(toPackage(appPackageName))
+        } else {
+            BrowserRobot().verifyUrl(url)
+        }
+    }
+
+    // exit from Menus to home screen or browser
+    fun exitMenu() {
+        val toolbar =
+            mDevice.findObject(UiSelector().resourceId("$packageName:id/toolbar"))
+        while (!toolbar.waitForExists(waitingTimeShort)) {
             mDevice.pressBack()
-        } while (
-            !urlBar.waitForExists(waitingTime)
+        }
+    }
+
+    fun UiDevice.waitForObjects(obj: UiObject, waitingTime: Long = TestAssetHelper.waitingTime) {
+        this.waitForIdle()
+        Assert.assertNotNull(obj.waitForExists(waitingTime))
+    }
+
+    fun hasCousin(matcher: Matcher<View>): Matcher<View> {
+        return withParent(
+            hasSibling(
+                withChild(
+                    matcher
+                )
+            )
         )
+    }
+
+    fun getStringResource(id: Int) = appContext.resources.getString(id, appName)
+
+    fun setCustomSearchEngine(searchEngine: SearchEngine) {
+        with(appContext.components.useCases.searchUseCases) {
+            addSearchEngine(searchEngine)
+            selectSearchEngine(searchEngine)
+        }
     }
 }

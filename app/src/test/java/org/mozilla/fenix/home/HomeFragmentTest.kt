@@ -9,9 +9,9 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import mozilla.components.browser.menu.view.MenuButton
-import org.junit.Assert
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 import org.mozilla.fenix.FenixApplication
@@ -19,7 +19,6 @@ import org.mozilla.fenix.ext.application
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.utils.Settings
 
-@ExperimentalCoroutinesApi
 class HomeFragmentTest {
 
     private lateinit var settings: Settings
@@ -41,23 +40,12 @@ class HomeFragmentTest {
     }
 
     @Test
-    fun `GIVEN showTopFrecentSites is false WHEN getTopSitesConfig is called THEN it returns TopSitesConfig with null frecencyConfig`() {
-        every { settings.showTopFrecentSites } returns false
+    fun `WHEN getTopSitesConfig is called THEN it returns TopSitesConfig with non-null frecencyConfig`() {
         every { settings.topSitesMaxLimit } returns 10
 
         val topSitesConfig = homeFragment.getTopSitesConfig()
 
-        Assert.assertNull(topSitesConfig.frecencyConfig)
-    }
-
-    @Test
-    fun `GIVEN showTopFrecentSites is true WHEN getTopSitesConfig is called THEN it returns TopSitesConfig with non-null frecencyConfig`() {
-        every { settings.showTopFrecentSites } returns true
-        every { settings.topSitesMaxLimit } returns 10
-
-        val topSitesConfig = homeFragment.getTopSitesConfig()
-
-        Assert.assertNotNull(topSitesConfig.frecencyConfig)
+        assertNotNull(topSitesConfig.frecencyConfig)
     }
 
     @Test
@@ -67,7 +55,7 @@ class HomeFragmentTest {
 
         val topSitesConfig = homeFragment.getTopSitesConfig()
 
-        Assert.assertEquals(topSitesMaxLimit, topSitesConfig.totalSites)
+        assertEquals(topSitesMaxLimit, topSitesConfig.totalSites)
     }
 
     @Test

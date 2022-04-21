@@ -17,7 +17,6 @@ import io.mockk.mockkStatic
 import io.mockk.slot
 import io.mockk.unmockkStatic
 import io.mockk.verify
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
 import mozilla.components.concept.engine.Engine
@@ -33,9 +32,10 @@ import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+import org.mozilla.fenix.helpers.MockkRetryTestRule
 
-@ExperimentalCoroutinesApi
 class WebPushEngineIntegrationTest {
 
     private val scope = TestCoroutineScope()
@@ -44,6 +44,9 @@ class WebPushEngineIntegrationTest {
     @MockK(relaxed = true) private lateinit var handler: WebPushHandler
     private lateinit var delegate: CapturingSlot<WebPushDelegate>
     private lateinit var integration: WebPushEngineIntegration
+
+    @get:Rule
+    val mockkRule = MockkRetryTestRule()
 
     @Before
     fun setup() {

@@ -1,22 +1,27 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.trackingprotection
 
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import mozilla.components.service.glean.testing.GleanTestRule
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mozilla.fenix.GleanMetrics.TrackingProtection
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.trackingprotection.TrackingProtectionCategory.CROSS_SITE_TRACKING_COOKIES
 import org.mozilla.fenix.trackingprotection.TrackingProtectionCategory.SOCIAL_MEDIA_TRACKERS
@@ -35,6 +40,9 @@ class TrackingProtectionPanelViewTest {
         mode = TrackingProtectionState.Mode.Normal,
         lastAccessedCategory = ""
     )
+
+    @get:Rule
+    val gleanRule = GleanTestRule(testContext)
 
     @Before
     fun setup() {
@@ -99,6 +107,7 @@ class TrackingProtectionPanelViewTest {
 
     @Test
     fun testSocialMediaTrackerClick() {
+        every { testContext.components.analytics } returns mockk(relaxed = true)
         view.binding.socialMediaTrackers.performClick()
         verify { interactor.openDetails(SOCIAL_MEDIA_TRACKERS, categoryBlocked = true) }
 
@@ -108,7 +117,12 @@ class TrackingProtectionPanelViewTest {
 
     @Test
     fun testCrossSiteTrackerClick() {
+        every { testContext.components.analytics } returns mockk(relaxed = true)
+        assertFalse(TrackingProtection.etpTrackerList.testHasValue())
+
         view.binding.crossSiteTracking.performClick()
+
+        assertTrue(TrackingProtection.etpTrackerList.testHasValue())
         verify { interactor.openDetails(CROSS_SITE_TRACKING_COOKIES, categoryBlocked = true) }
 
         view.binding.crossSiteTrackingLoaded.performClick()

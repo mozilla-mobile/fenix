@@ -8,7 +8,6 @@ import android.content.Context
 import android.util.AttributeSet
 import androidx.annotation.VisibleForTesting
 import androidx.annotation.VisibleForTesting.PACKAGE_PRIVATE
-import mozilla.components.feature.tabs.tabstray.TabsFeature
 import org.mozilla.fenix.ext.components
 
 class PrivateBrowserTrayList @JvmOverloads constructor(
@@ -17,30 +16,23 @@ class PrivateBrowserTrayList @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : AbstractBrowserTrayList(context, attrs, defStyleAttr) {
 
-    override val tabsFeature by lazy {
-        // NB: The use cases here are duplicated because there isn't a nicer
-        // way to share them without a better dependency injection solution.
-        TabsFeature(
-            adapter as TabsAdapter,
-            context.components.core.store,
-            selectTabUseCase,
-            removeTabUseCase,
-            { it.content.private },
-            { }
-        )
+    private val privateTabsBinding by lazy {
+        PrivateTabsBinding(tabsTrayStore, context.components.core.store, adapter as BrowserTabsAdapter)
     }
+
     private val touchHelper by lazy {
         TabsTouchHelper(
-            observable = adapter as TabsAdapter,
+            interactionDelegate = (adapter as BrowserTabsAdapter).delegate,
             onViewHolderTouched = { swipeToDelete.isSwipeable },
-            onViewHolderDraw = { context.components.settings.gridTabView.not() }
+            onViewHolderDraw = { context.components.settings.gridTabView.not() },
+            featureNameHolder = (adapter as BrowserTabsAdapter)
         )
     }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
 
-        tabsFeature.start()
+        privateTabsBinding.start()
         swipeToDelete.start()
 
         adapter?.onAttachedToRecyclerView(this)
@@ -52,7 +44,7 @@ class PrivateBrowserTrayList @JvmOverloads constructor(
     public override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
 
-        tabsFeature.stop()
+        privateTabsBinding.stop()
         swipeToDelete.stop()
 
         // Notify the adapter that it is released from the view preemptively.

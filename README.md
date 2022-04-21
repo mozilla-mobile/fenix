@@ -90,6 +90,8 @@ Pre-requisites:
 
 3. Make sure to select the correct build variant in Android Studio. See the next section.
 
+4. Make sure to select "Default APK" under Installation Options inside Run/Debug configuration: see [this bug](https://bugzilla.mozilla.org/show_bug.cgi?id=1529082).
+
 ### Build Variants
 For general development, we recommend the **debug** build variant. Here's an explanation of each variant:
 
@@ -208,6 +210,8 @@ See a [demo of auto-publication workflow in action](https://www.youtube.com/watc
 In order to build successfully, you need to check out a commit in the dependency repository that has no breaking changes. The two best ways to do this are:
 - Run the `<android-components>/tools/list_compatible_dependency_versions.py` script to output a compatible commit
 - Check out the latest commit from main in this repository and the dependency repository. However, this may fail if there were breaking changes added recently to the dependency.
+
+If you're trying to build fenix with a local ac AND a local GV, you'll have to use another method: see [this doc](https://github.com/mozilla-mobile/fenix/blob/main/docs/substituting-local-ac-and-gv.md).
 
 ### Using Nimbus servers during local development
 If you're working with the Nimbus experiments platform, by default for local development Fenix configures Nimbus to not use a server.

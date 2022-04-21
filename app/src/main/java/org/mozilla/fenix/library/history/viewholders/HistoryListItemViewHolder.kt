@@ -12,37 +12,43 @@ import org.mozilla.fenix.databinding.HistoryListItemBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.hideAndDisable
 import org.mozilla.fenix.ext.showAndEnable
-import org.mozilla.fenix.selection.SelectionHolder
+import org.mozilla.fenix.library.history.History
 import org.mozilla.fenix.library.history.HistoryFragmentState
 import org.mozilla.fenix.library.history.HistoryInteractor
-import org.mozilla.fenix.library.history.HistoryItem
-import org.mozilla.fenix.library.history.HistoryItemMenu
 import org.mozilla.fenix.library.history.HistoryItemTimeGroup
+import org.mozilla.fenix.selection.SelectionHolder
 import org.mozilla.fenix.utils.Do
 
 class HistoryListItemViewHolder(
     view: View,
     private val historyInteractor: HistoryInteractor,
-    private val selectionHolder: SelectionHolder<HistoryItem>
+    private val selectionHolder: SelectionHolder<History>,
 ) : RecyclerView.ViewHolder(view) {
 
-    private var item: HistoryItem? = null
+    private var item: History? = null
     private val binding = HistoryListItemBinding.bind(view)
 
     init {
-        setupMenu()
-
         binding.recentlyClosedNavEmpty.recentlyClosedNav.setOnClickListener {
             historyInteractor.onRecentlyClosedClicked()
+        }
+
+        binding.historyLayout.overflowView.apply {
+            setImageResource(R.drawable.ic_close)
+            contentDescription = view.context.getString(R.string.history_delete_item)
+            setOnClickListener {
+                val item = item ?: return@setOnClickListener
+                historyInteractor.onDeleteSome(setOf(item))
+            }
         }
     }
 
     fun bind(
-        item: HistoryItem,
+        item: History,
         timeGroup: HistoryItemTimeGroup?,
         showTopContent: Boolean,
         mode: HistoryFragmentState.Mode,
-        isPendingDeletion: Boolean = false
+        isPendingDeletion: Boolean = false,
     ) {
         if (isPendingDeletion) {
             binding.historyLayout.visibility = View.GONE
@@ -51,7 +57,20 @@ class HistoryListItemViewHolder(
         }
 
         binding.historyLayout.titleView.text = item.title
-        binding.historyLayout.urlView.text = item.url
+
+        binding.historyLayout.urlView.text = Do exhaustive when (item) {
+            is History.Regular -> item.url
+            is History.Metadata -> item.url
+            is History.Group -> {
+                val numChildren = item.items.size
+                val stringId = if (numChildren == 1) {
+                    R.string.history_search_group_site
+                } else {
+                    R.string.history_search_group_sites
+                }
+                String.format(itemView.context.getString(stringId), numChildren)
+            }
+        }
 
         toggleTopContent(showTopContent, mode === HistoryFragmentState.Mode.Normal)
 
@@ -61,8 +80,12 @@ class HistoryListItemViewHolder(
         binding.historyLayout.setSelectionInteractor(item, selectionHolder, historyInteractor)
         binding.historyLayout.changeSelected(item in selectionHolder.selectedItems)
 
-        if (this.item?.url != item.url) {
+        if (item is History.Regular &&
+            (this.item as? History.Regular)?.url != item.url
+        ) {
             binding.historyLayout.loadFavicon(item.url)
+        } else if (item is History.Group) {
+            binding.historyLayout.iconView.setImageResource(R.drawable.ic_multiple_tabs)
         }
 
         if (mode is HistoryFragmentState.Mode.Editing) {
@@ -85,7 +108,7 @@ class HistoryListItemViewHolder(
 
     private fun toggleTopContent(
         showTopContent: Boolean,
-        isNormalMode: Boolean
+        isNormalMode: Boolean,
     ) {
         binding.recentlyClosedNavEmpty.recentlyClosedNav.isVisible = showTopContent
 
@@ -93,8 +116,11 @@ class HistoryListItemViewHolder(
             val numRecentTabs = itemView.context.components.core.store.state.closedTabs.size
             binding.recentlyClosedNavEmpty.recentlyClosedTabsDescription.text = String.format(
                 itemView.context.getString(
-                    if (numRecentTabs == 1)
-                        R.string.recently_closed_tab else R.string.recently_closed_tabs
+                    if (numRecentTabs == 1) {
+                        R.string.recently_closed_tab
+                    } else {
+                        R.string.recently_closed_tabs
+                    }
                 ),
                 numRecentTabs
             )
@@ -108,21 +134,6 @@ class HistoryListItemViewHolder(
                 }
             }
         }
-    }
-
-    private fun setupMenu() {
-        val historyMenu = HistoryItemMenu(itemView.context) {
-            val item = this.item ?: return@HistoryItemMenu
-            Do exhaustive when (it) {
-                HistoryItemMenu.Item.Copy -> historyInteractor.onCopyPressed(item)
-                HistoryItemMenu.Item.Share -> historyInteractor.onSharePressed(item)
-                HistoryItemMenu.Item.OpenInNewTab -> historyInteractor.onOpenInNormalTab(item)
-                HistoryItemMenu.Item.OpenInPrivateTab -> historyInteractor.onOpenInPrivateTab(item)
-                HistoryItemMenu.Item.Delete -> historyInteractor.onDeleteSome(setOf(item))
-            }
-        }
-
-        binding.historyLayout.attachMenu(historyMenu.menuController)
     }
 
     companion object {
