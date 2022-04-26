@@ -19,6 +19,7 @@ import mozilla.components.feature.addons.update.DefaultAddonUpdater
 import mozilla.components.feature.autofill.AutofillConfiguration
 import mozilla.components.lib.publicsuffixlist.PublicSuffixList
 import mozilla.components.support.base.worker.Frequency
+import mozilla.components.support.locale.LocaleManager
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.HomeActivity
@@ -37,6 +38,7 @@ import org.mozilla.fenix.ext.sort
 import org.mozilla.fenix.home.PocketUpdatesMiddleware
 import org.mozilla.fenix.home.blocklist.BlocklistHandler
 import org.mozilla.fenix.home.blocklist.BlocklistMiddleware
+import org.mozilla.fenix.home.recentsyncedtabs.RecentSyncedTabState
 import org.mozilla.fenix.perf.AppStartReasonProvider
 import org.mozilla.fenix.perf.StartupActivityLog
 import org.mozilla.fenix.perf.StartupStateProvider
@@ -162,11 +164,16 @@ class Components(private val context: Context) {
     val strictMode by lazyMonitored { StrictModeManager(Config, this) }
 
     val wallpaperManager by lazyMonitored {
+        val currentLocale = strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
+            LocaleManager.getCurrentLocale(context)?.toLanguageTag()
+                ?: LocaleManager.getSystemDefault().toLanguageTag()
+        }
         strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
             WallpaperManager(
                 settings,
                 WallpaperDownloader(context, core.client),
-                WallpaperFileManager(context.filesDir)
+                WallpaperFileManager(context.filesDir),
+                currentLocale
             )
         }
     }
@@ -213,6 +220,11 @@ class Components(private val context: Context) {
                     core.store.state.asRecentTabs()
                 } else {
                     emptyList()
+                },
+                recentSyncedTabState = if (settings.hasFxaAuthenticated) {
+                    RecentSyncedTabState.Loading
+                } else {
+                    RecentSyncedTabState.None
                 },
                 recentHistory = emptyList()
             ).run { filterState(blocklistHandler) },
