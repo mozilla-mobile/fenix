@@ -15,7 +15,6 @@ import org.junit.Test
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityTestRule
-import org.mozilla.fenix.helpers.RetryTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.homeScreen
@@ -37,10 +36,6 @@ class MediaNotificationTest {
     @get:Rule
     val activityTestRule = HomeActivityTestRule()
     private lateinit var browserStore: BrowserStore
-
-    @Rule
-    @JvmField
-    val retryTestRule = RetryTestRule(3)
 
     @Before
     fun setUp() {
@@ -93,7 +88,6 @@ class MediaNotificationTest {
         mDevice.pressBack()
     }
 
-    @Ignore("Failing with frequent ANR: https://bugzilla.mozilla.org/show_bug.cgi?id=1764605")
     @Test
     fun mediaSystemNotificationInPrivateModeTest() {
         val audioTestPage = TestAssetHelper.getAudioPageAsset(mockWebServer)

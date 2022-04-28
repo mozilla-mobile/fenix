@@ -19,7 +19,6 @@ import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
-import org.mozilla.fenix.helpers.RetryTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.helpers.TestHelper.appContext
@@ -45,10 +44,6 @@ class SettingsPrivacyTest {
 
     @get:Rule
     val activityTestRule = HomeActivityIntentTestRule()
-
-    @Rule
-    @JvmField
-    val retryTestRule = RetryTestRule(3)
 
     @Before
     fun setUp() {
@@ -392,7 +387,6 @@ class SettingsPrivacyTest {
         }
     }
 
-    @Ignore("Failing with frequent ANR: https://bugzilla.mozilla.org/show_bug.cgi?id=1764605")
     @Test
     fun launchLinksInPrivateToggleOffStateDoesntChangeTest() {
         val settings = activityTestRule.activity.applicationContext.settings()
