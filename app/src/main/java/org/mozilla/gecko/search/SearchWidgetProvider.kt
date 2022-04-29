@@ -24,8 +24,6 @@ import androidx.core.graphics.drawable.toBitmap
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.IntentReceiverActivity
 import org.mozilla.fenix.R
-import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.intent.StartSearchIntentProcessor
 import org.mozilla.fenix.utils.IntentUtils
@@ -40,7 +38,6 @@ class SearchWidgetProvider : AppWidgetProvider() {
 
     override fun onEnabled(context: Context) {
         context.settings().addSearchWidgetInstalled(1)
-        context.metrics.track(Event.SearchWidgetInstalled)
     }
 
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {
@@ -224,8 +221,11 @@ class SearchWidgetProvider : AppWidgetProvider() {
             SearchWidgetProviderSize.LARGE -> R.layout.search_widget_large
             SearchWidgetProviderSize.MEDIUM -> R.layout.search_widget_medium
             SearchWidgetProviderSize.SMALL -> {
-                if (showMic) R.layout.search_widget_small
-                else R.layout.search_widget_small_no_mic
+                if (showMic) {
+                    R.layout.search_widget_small
+                } else {
+                    R.layout.search_widget_small_no_mic
+                }
             }
             SearchWidgetProviderSize.EXTRA_SMALL_V2 -> R.layout.search_widget_extra_small_v2
             SearchWidgetProviderSize.EXTRA_SMALL_V1 -> R.layout.search_widget_extra_small_v1

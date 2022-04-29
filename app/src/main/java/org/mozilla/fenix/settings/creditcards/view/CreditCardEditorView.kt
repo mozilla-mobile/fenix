@@ -62,12 +62,12 @@ class CreditCardEditorView(
 
         binding.cardNumberLayout.setErrorTextColor(
             ColorStateList.valueOf(
-                binding.root.context.getColorFromAttr(R.attr.destructive)
+                binding.root.context.getColorFromAttr(R.attr.textWarning)
             )
         )
         binding.nameOnCardLayout.setErrorTextColor(
             ColorStateList.valueOf(
-                binding.root.context.getColorFromAttr(R.attr.destructive)
+                binding.root.context.getColorFromAttr(R.attr.textWarning)
             )
         )
 
@@ -122,24 +122,24 @@ class CreditCardEditorView(
 
         if (binding.cardNumberInput.text.toString().validateCreditCardNumber()) {
             binding.cardNumberLayout.error = null
-            binding.cardNumberTitle.setTextColor(binding.root.context.getColorFromAttr(R.attr.primaryText))
+            binding.cardNumberTitle.setTextColor(binding.root.context.getColorFromAttr(R.attr.textPrimary))
         } else {
             isValid = false
 
             binding.cardNumberLayout.error =
                 binding.root.context.getString(R.string.credit_cards_number_validation_error_message)
-            binding.cardNumberTitle.setTextColor(binding.root.context.getColorFromAttr(R.attr.destructive))
+            binding.cardNumberTitle.setTextColor(binding.root.context.getColorFromAttr(R.attr.textWarning))
         }
 
         if (binding.nameOnCardInput.text.toString().isNotBlank()) {
-            binding.nameOnCardInput.error = null
-            binding.nameOnCardTitle.setTextColor(binding.root.context.getColorFromAttr(R.attr.primaryText))
+            binding.nameOnCardLayout.error = null
+            binding.nameOnCardTitle.setTextColor(binding.root.context.getColorFromAttr(R.attr.textPrimary))
         } else {
             isValid = false
 
             binding.nameOnCardLayout.error =
                 binding.root.context.getString(R.string.credit_cards_name_on_card_validation_error_message)
-            binding.nameOnCardTitle.setTextColor(binding.root.context.getColorFromAttr(R.attr.destructive))
+            binding.nameOnCardTitle.setTextColor(binding.root.context.getColorFromAttr(R.attr.textWarning))
         }
 
         return isValid

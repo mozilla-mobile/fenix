@@ -18,6 +18,7 @@ import org.junit.runner.RunWith
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.ComponentCreditCardsBinding
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
+import org.mozilla.fenix.settings.autofill.AutofillFragmentState
 import org.mozilla.fenix.settings.creditcards.interactor.CreditCardsManagementInteractor
 import org.mozilla.fenix.settings.creditcards.view.CreditCardsManagementView
 
@@ -41,14 +42,14 @@ class CreditCardsManagementViewTest {
 
     @Test
     fun testUpdate() {
-        creditCardsView.update(CreditCardsListState(creditCards = emptyList()))
+        creditCardsView.update(AutofillFragmentState())
 
         assertTrue(componentCreditCardsBinding.progressBar.isVisible)
         assertFalse(componentCreditCardsBinding.creditCardsList.isVisible)
 
         val creditCards: List<CreditCard> = listOf(mockk(), mockk())
         creditCardsView.update(
-            CreditCardsListState(
+            AutofillFragmentState(
                 creditCards = creditCards,
                 isLoading = false
             )

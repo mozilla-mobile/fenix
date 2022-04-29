@@ -20,12 +20,26 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <View
+        android:id="@+id/top_spacer"
+        android:layout_width="match_parent"
+        android:layout_height="8dp"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone"/>
+
     <include
         android:id="@+id/recently_closed_nav_empty"
         layout="@layout/recently_closed_nav_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/progress_bar" />
+        app:layout_constraintTop_toBottomOf="@+id/top_spacer" />
+
+    <include
+        android:id="@+id/synced_history_nav_empty"
+        layout="@layout/synced_history_nav_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/recently_closed_nav_empty" />
 
     <TextView
         android:id="@+id/history_empty_view"
@@ -33,20 +47,20 @@
         android:layout_height="0dp"
         android:gravity="center"
         android:text="@string/history_empty_message"
-        android:textColor="?secondaryText"
+        android:textColor="?attr/textSecondary"
         android:textSize="16sp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/recently_closed_nav_empty" />
+        app:layout_constraintTop_toBottomOf="@id/synced_history_nav_empty" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/recently_closed_nav_empty">
+        app:layout_constraintTop_toBottomOf="@id/synced_history_nav_empty">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/history_list"

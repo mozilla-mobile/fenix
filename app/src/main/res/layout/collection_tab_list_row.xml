@@ -14,7 +14,7 @@
     android:clipToPadding="false"
     android:focusable="true"
     android:foreground="?android:attr/selectableItemBackground"
-    app:cardBackgroundColor="?above"
+    app:cardBackgroundColor="?attr/layer2"
     app:cardCornerRadius="@dimen/tab_corner_radius"
     app:cardElevation="5dp">
 
@@ -43,7 +43,7 @@
             android:layout_marginStart="8dp"
             android:ellipsize="end"
             android:singleLine="true"
-            android:textColor="?secondaryText"
+            android:textColor="?attr/textSecondary"
             android:textSize="12sp"
             android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@id/favicon_image"
@@ -61,7 +61,7 @@
             android:ellipsize="end"
             android:maxLines="2"
             android:minLines="2"
-            android:textColor="?primaryText"
+            android:textColor="?attr/textPrimary"
             android:textSize="15sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/tab_selected_checkbox"
